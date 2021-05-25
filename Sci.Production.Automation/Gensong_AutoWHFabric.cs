@@ -2126,7 +2126,7 @@ and rd.SentToWMS =1 and rd.CompleteTime is null
             DualResult result;
             string sqlcmd = string.Empty;
             DataTable dtMaster = new DataTable();
-            string strBody = isP99 ? "inner join #tmp s on i2.ukey = s.ukey " : "inner join #tmp s on i2.ID = s.Id ";
+            string strBody = isP99 ? @"inner join #tmp s on i2.id = s.id and i2.Poid = s.Poid and i2.Seq1 = s.Seq1 and i2.Seq2 = s.Seq2 and i2.Roll = s.Roll and i2.Dyelot = s.Dyelot and i2.StockType = s.StockType " : "inner join #tmp s on i2.ID = s.Id ";
             string strQty = isP99 ? "s.Qty" : "i2.Qty";
 
             #region 取得資料
@@ -2294,9 +2294,11 @@ and exists(
                     break;
             }
 
-            if (string.Compare(status, "New", true) == 0)
+            if (!MyUtility.Check.Empty(sqlcmd))
             {
-                sqlcmd += Environment.NewLine + @"
+                if (string.Compare(status, "New", true) == 0)
+                {
+                    sqlcmd += Environment.NewLine + @"
 and exists(
 	select 1
 	from FtyInventory_Detail fd 
@@ -2304,10 +2306,11 @@ and exists(
 	where f.Ukey = fd.Ukey
 	and ml.IsWMS = 1
 )";
-            }
-            else
-            {
-                sqlcmd += Environment.NewLine + @" and i2.SentToWMS = 1";
+                }
+                else
+                {
+                    sqlcmd += Environment.NewLine + @" and i2.SentToWMS = 1";
+                }
             }
 
             if (!MyUtility.Check.Empty(sqlcmd))

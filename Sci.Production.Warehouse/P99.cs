@@ -1641,7 +1641,7 @@ and t1.Type='I'
 
                 // check fabric
                 var r2_list = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["FabricType"].EqualString("F")).ToList();
-                if (!r2_list.Any())
+                if (!r2_list.Any() && dtSource.Rows.Count > 0)
                 {
                     this.comboMaterialType_Sheet1.SelectedIndex = 1;
                 }
@@ -2611,7 +2611,14 @@ and t1.Type='I'
 
             if (this.listControlBindingSource1.DataSource != null)
             {
-                ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = $" FabricType = '{this.strMaterialType_Sheet1}'";
+                if (!MyUtility.Check.Empty(filter))
+                {
+                    ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                }
+                else
+                {
+                    ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = $" FabricType = '{this.strMaterialType_Sheet1}'";
+                }
             }
         }
 
@@ -5451,6 +5458,7 @@ and exists(
             this.gridUpdate.DataSource = this.listControlBindingSource1;
             this.listControlBindingSource1.Position = pos;
             this.gridUpdate.ResumeLayout();
+            this.ChangeGridColor();
         }
         #endregion
 
@@ -7269,5 +7277,10 @@ and exists(
             }
         }
         #endregion
+
+        private void GridUpdate_Sorted(object sender, EventArgs e)
+        {
+            this.ChangeGridColor();
+        }
     }
 }
