@@ -92,26 +92,38 @@ namespace Sci.Production.Warehouse
 	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 order by Export_Detail.ID
 	            	for xml path('')
 	            ),1,1,'')
-    ,[Packages] = isnull((
-        select sum(e2.Packages)
-        from Export e2 with (nolock) 
-        where exists (
-            select 1
-	        from Export_Detail ed with (nolock)
-            inner join Export e with (nolock) on e.id = ed.id
-	        where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
-            and e.blno = e2.Blno)
-        ),0)
-        +
-        isnull((
-	        select sum(Packages)
-            from TransferIn ts with (nolock) 
-	        where ts.Status='Confirmed'
-            and exists(
-                select 1 from TransferIn_Detail tsd with (nolock)
-                where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
-                and tsd.ID = ts.ID)
-        ),0)
+    ,[Packages] =concat(
+        stuff((
+            select concat(char(10),Packages)
+            from(
+                select e2.Blno,Packages = sum(e2.Packages)
+                from Export e2 with (nolock) 
+                where exists (
+                    select 1
+	                from Export_Detail ed with (nolock)
+                    inner join Export e with (nolock) on e.id = ed.id
+	                where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
+                    and e.blno = e2.Blno)
+                group by e2.Blno
+            )x
+	        for xml path('')
+        ),1,1,'')
+        ,
+        stuff((
+            select concat(char(10),Packages)
+            from(
+	            select ts.id,Packages = sum(Packages)
+                from TransferIn ts with (nolock) 
+	            where ts.Status='Confirmed'
+                and exists(
+                    select 1 from TransferIn_Detail tsd with (nolock)
+                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
+                    and tsd.ID = ts.ID)
+                group by ts.id
+            )x
+	        for xml path('')
+        ),1,1,'')
+		)
     ,ContainerNo = stuff((
         select concat(char(10) , ContainerNo)
         from(
@@ -206,26 +218,38 @@ namespace Sci.Production.Warehouse
 	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 order by Export_Detail.ID
 	            	for xml path('')
 	            ),1,1,'')
-    ,[Packages] = isnull((
-        select sum(e2.Packages)
-        from Export e2 with (nolock) 
-        where exists (
-            select 1
-	        from Export_Detail ed with (nolock)
-            inner join Export e with (nolock) on e.id = ed.id
-	        where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
-            and e.blno = e2.Blno)
-        ),0)
-        +
-        isnull((
-	        select sum(Packages)
-            from TransferIn ts with (nolock) 
-	        where ts.Status='Confirmed'
-            and exists(
-                select 1 from TransferIn_Detail tsd with (nolock)
-                where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
-                and tsd.ID = ts.ID)
-        ),0)
+    ,[Packages] =concat(
+        stuff((
+            select concat(char(10),Packages)
+            from(
+                select e2.Blno,Packages = sum(e2.Packages)
+                from Export e2 with (nolock) 
+                where exists (
+                    select 1
+	                from Export_Detail ed with (nolock)
+                    inner join Export e with (nolock) on e.id = ed.id
+	                where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
+                    and e.blno = e2.Blno)
+                group by e2.Blno
+            )x
+	        for xml path('')
+        ),1,1,'')
+        ,
+        stuff((
+            select concat(char(10),Packages)
+            from(
+	            select ts.id,Packages = sum(Packages)
+                from TransferIn ts with (nolock) 
+	            where ts.Status='Confirmed'
+                and exists(
+                    select 1 from TransferIn_Detail tsd with (nolock)
+                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
+                    and tsd.ID = ts.ID)
+                group by ts.id
+            )x
+	        for xml path('')
+        ),1,1,'')
+		)
     ,ContainerNo = stuff((
         select concat(char(10) , ContainerNo)
         from(
