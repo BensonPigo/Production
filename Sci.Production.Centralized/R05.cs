@@ -386,52 +386,6 @@ drop table #tmp
                 worksheet1.Copy(newSummarySheet);
             }
 
-#region detail data
-            MyUtility.Excel.CopyToXls(this.dtAllDetail, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: excelApp, wSheet: excelApp.Sheets[this.listFtyZone.Count + 1], showExcel: false, DisplayAlerts_ForSaveFile: true);
-            worksheet = excelApp.ActiveWorkbook.Worksheets[this.listFtyZone.Count + 1]; // 取得工作表
-            worksheet.Columns.AutoFit();
-
-            worksheet.Columns[1].ColumnWidth = 5.5;
-            worksheet.Columns[2].ColumnWidth = 5.5;
-            worksheet.Columns[3].ColumnWidth = 11.13;
-            worksheet.Columns[4].ColumnWidth = 11.88;
-            worksheet.Columns[5].ColumnWidth = 11.88;
-            worksheet.Columns[6].ColumnWidth = 7.88;
-            worksheet.Columns[7].ColumnWidth = 10;
-            worksheet.Columns[8].ColumnWidth = 7.88;
-            worksheet.Columns[9].ColumnWidth = 10;
-            worksheet.Columns[10].ColumnWidth = 17.75;
-            worksheet.Columns[11].ColumnWidth = 12.75;
-            worksheet.Columns[12].ColumnWidth = 14;
-            worksheet.Columns[13].ColumnWidth = 14;
-            worksheet.Columns[14].ColumnWidth = 14;
-            worksheet.Columns[15].ColumnWidth = 15;
-            worksheet.Columns[16].ColumnWidth = 25;
-            worksheet.Columns[17].ColumnWidth = 11.13;
-            worksheet.Columns[18].ColumnWidth = 25.25;
-            worksheet.Columns[19].ColumnWidth = 20;
-            worksheet.Columns[20].ColumnWidth = 7.63;
-            worksheet.Columns[21].ColumnWidth = 13.38;
-            worksheet.Columns[22].ColumnWidth = 11.88;
-            worksheet.Columns[23].ColumnWidth = 15.25;
-            worksheet.Columns[24].ColumnWidth = 15.25;
-            worksheet.Columns[25].ColumnWidth = 15.25;
-            worksheet.Columns[26].ColumnWidth = 25.75;
-            worksheet.Columns[27].ColumnWidth = 16.38;
-            worksheet.Columns[28].ColumnWidth = 17.5;
-            worksheet.Columns[29].ColumnWidth = 17.5;
-            worksheet.Columns[30].ColumnWidth = 17.5;
-            worksheet.Columns[31].ColumnWidth = 18.13;
-            worksheet.Columns[32].ColumnWidth = 8;
-            worksheet.Columns[33].ColumnWidth = 22;
-            worksheet.Columns[34].ColumnWidth = 16.38;
-            worksheet.Columns[35].ColumnWidth = 6.5;
-            worksheet.Columns[36].ColumnWidth = 19.88;
-            worksheet.Columns[37].ColumnWidth = 16.38;
-            worksheet.Columns[38].ColumnWidth = 16.38;
-            worksheet.Columns[39].ColumnWidth = 16.38;
-#endregion
-
             for (int j = 1; j <= this.listFtyZone.Count; j++)
             {
                 string ftyZone = MyUtility.Convert.GetString(this.listFtyZone[j - 1]);
@@ -468,6 +422,57 @@ drop table #tmp
             {
                 excelApp.ActiveWorkbook.Worksheets[i].Columns[1].ColumnWidth = 11.25;
             }
+
+            #region detail data
+            MyUtility.Excel.CopyToXls(this.dtAllDetail, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: excelApp, wSheet: excelApp.Sheets[this.listFtyZone.Count + 1], showExcel: false, DisplayAlerts_ForSaveFile: true);
+            worksheet = excelApp.ActiveWorkbook.Worksheets[this.listFtyZone.Count + 1]; // 取得工作表
+
+            worksheet.Columns.AutoFit();
+
+            worksheet.Columns[1].ColumnWidth = 5.5;
+            worksheet.Columns[2].ColumnWidth = 5.5;
+            worksheet.Columns[3].ColumnWidth = 11.13;
+            worksheet.Columns[4].ColumnWidth = 11.88;
+            worksheet.Columns[5].ColumnWidth = 11.88;
+            worksheet.Columns[6].ColumnWidth = 7.88;
+            worksheet.Columns[7].ColumnWidth = 10;
+            worksheet.Columns[8].ColumnWidth = 7.88;
+            worksheet.Columns[9].ColumnWidth = 10;
+            worksheet.Columns[10].ColumnWidth = 17.75;
+            worksheet.Columns[11].ColumnWidth = 12.75;
+            worksheet.Columns[12].ColumnWidth = 15;
+            worksheet.Columns[13].ColumnWidth = 14;
+            worksheet.Columns[14].ColumnWidth = 14;
+            worksheet.Columns[15].ColumnWidth = 14;
+            worksheet.Columns[16].ColumnWidth = 15;
+            worksheet.Columns[17].ColumnWidth = 15;
+            worksheet.Columns[18].ColumnWidth = 25;
+            worksheet.Columns[19].ColumnWidth = 11.13;
+            worksheet.Columns[20].ColumnWidth = 25.25;
+            worksheet.Columns[21].ColumnWidth = 20;
+            worksheet.Columns[22].ColumnWidth = 7.63;
+            worksheet.Columns[23].ColumnWidth = 13.38;
+            worksheet.Columns[24].ColumnWidth = 11.88;
+            worksheet.Columns[25].ColumnWidth = 15.25;
+            worksheet.Columns[26].ColumnWidth = 15.25;
+            worksheet.Columns[27].ColumnWidth = 15.25;
+            worksheet.Columns[28].ColumnWidth = 25.75;
+            worksheet.Columns[29].ColumnWidth = 16.38;
+            worksheet.Columns[30].ColumnWidth = 17.5;
+            worksheet.Columns[31].ColumnWidth = 17.5;
+            worksheet.Columns[32].ColumnWidth = 17.5;
+            worksheet.Columns[33].ColumnWidth = 18.13;
+            worksheet.Columns[34].ColumnWidth = 8;
+            worksheet.Columns[35].ColumnWidth = 22;
+            worksheet.Columns[36].ColumnWidth = 16.38;
+            worksheet.Columns[37].ColumnWidth = 6.5;
+            worksheet.Columns[38].ColumnWidth = 19.88;
+            worksheet.Columns[39].ColumnWidth = 16.38;
+            worksheet.Columns[40].ColumnWidth = 16.38;
+            worksheet.Columns[41].ColumnWidth = 16.38;
+            worksheet.Columns[42].ColumnWidth = 16.38;
+            worksheet.Columns[43].ColumnWidth = 60;
+            #endregion
 
             excelApp.Visible = true;
             this.HideWaitMessage();
