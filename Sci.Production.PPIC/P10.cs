@@ -895,9 +895,15 @@ SELECT Stuff((select distinct concat( ',',ID)   from IssueLack where RequestID =
             }
 
             // Lack.PrepareStartDate 與 Lack.PrepardFinishDate 皆有值才能Receive
-            if ((!MyUtility.Check.Empty(this.CurrentMaintain["PrepareStartDate"]) && !MyUtility.Check.Empty(this.CurrentMaintain["PrepardFinishDate"])) || (this.CurrentMaintain["Status"].ToString() == "Confirmed"))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["PrepareStartDate"]) && !MyUtility.Check.Empty(this.CurrentMaintain["PrepardFinishDate"]))
             {
                 this.IsSupportReceive = true;
+                this.ReceiveChkValue = "";
+            }
+            else if (string.Compare(this.CurrentMaintain["Status"].ToString(), "Confirmed", true) == 0)
+            {
+                this.IsSupportReceive = true;
+                this.ReceiveChkValue = "New";
             }
             else
             {

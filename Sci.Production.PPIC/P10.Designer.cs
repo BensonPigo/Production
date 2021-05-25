@@ -113,7 +113,7 @@
             this.masterpanel.Controls.Add(this.labelNo);
             this.masterpanel.Controls.Add(this.dateApvDate);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(1068, 172);
+            this.masterpanel.Size = new System.Drawing.Size(892, 172);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateApvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelNo, 0);
@@ -153,7 +153,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 172);
-            this.detailpanel.Size = new System.Drawing.Size(1068, 277);
+            this.detailpanel.Size = new System.Drawing.Size(892, 177);
             // 
             // gridicon
             // 
@@ -167,7 +167,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1068, 277);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 177);
             // 
             // detail2
             // 
@@ -181,19 +181,9 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1068, 487);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(1068, 449);
-            // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnAutoOutputQuery);
-            this.detailbtm.Location = new System.Drawing.Point(0, 449);
-            this.detailbtm.Size = new System.Drawing.Size(1068, 38);
             this.detailbtm.TabIndex = 0;
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
@@ -542,6 +532,8 @@
             this.txtLocalSupp1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "SubconName", true));
             this.txtLocalSupp1.DisplayBox1Binding = "";
             this.txtLocalSupp1.IsFactory = false;
+            this.txtLocalSupp1.IsMisc = false;
+            this.txtLocalSupp1.IsMiscOverseas = false;
             this.txtLocalSupp1.Location = new System.Drawing.Point(103, 111);
             this.txtLocalSupp1.Name = "txtLocalSupp1";
             this.txtLocalSupp1.Size = new System.Drawing.Size(252, 23);
@@ -579,12 +571,10 @@
             this.GridUniqueKey = "Seq";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
-            this.IsSupportReceive = true;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P10";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
-            this.ReceiveChkValue = "Confirmed";
             this.Text = "P10. Fabric Lacking & Replacement";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";
