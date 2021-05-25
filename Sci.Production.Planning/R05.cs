@@ -398,7 +398,7 @@ drop table #tmp
             worksheet.Columns[38].ColumnWidth = 16.38;
             worksheet.Columns[39].ColumnWidth = 16.38;
             worksheet.Columns[40].ColumnWidth = 16.38;
-            worksheet.Columns[41].ColumnWidth = 20;
+            worksheet.Columns[41].ColumnWidth = 60;
             #endregion
 
             for (int j = 1; j <= this.listFtyZone.Count; j++)
