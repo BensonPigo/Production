@@ -4265,4 +4265,125 @@ FROM Trade_To_Pms.dbo.MtlType a
 LEFT JOIN Production.dbo.[QAMtlTypeSetting] b ON a.id = b.id
 where b.id is null
 
+---------FinanceRate
+Delete Production.dbo.FinanceRate
+from Production.dbo.FinanceRate as a 
+left join Trade_To_Pms.dbo.FinanceRate as b on a.RateTypeID = b.RateTypeID
+                                     and a.BeginDate = b.BeginDate
+                                     and a.OriginalCurrency = b.OriginalCurrency
+                                     and a.ExchangeCurrency = b.ExchangeCurrency
+where b.RateTypeID is null
+
+UPDATE a
+SET   a.EndDate		      =b.EndDate
+      ,a.Rate		      =b.Rate
+      ,a.Remark		      =b.Remark
+      ,a.AddName		      =b.AddName
+      ,a.AddDate		      =b.AddDate
+      ,a.EditName		      =b.EditName
+      ,a.EditDate		      =b.EditDate
+
+from Production.dbo.FinanceRate as a 
+left join Trade_To_Pms.dbo.FinanceRate as b on a.RateTypeID = b.RateTypeID
+                                     and a.BeginDate = b.BeginDate
+                                     and a.OriginalCurrency = b.OriginalCurrency
+                                     and a.ExchangeCurrency = b.ExchangeCurrency
+where a.EndDate <> b.EndDate
+or a.Rate <> b.Rate
+or a.Remark <> b.Remark
+
+INSERT INTO Production.dbo.FinanceRate(
+       RateTypeID
+      ,BeginDate
+      ,EndDate
+      ,OriginalCurrency
+      ,ExchangeCurrency
+      ,Rate
+      ,Remark
+      ,AddName
+      ,AddDate
+      ,EditName
+      ,EditDate
+
+)
+select 
+       RateTypeID
+      ,BeginDate
+      ,EndDate
+      ,OriginalCurrency
+      ,ExchangeCurrency
+      ,Rate
+      ,Remark
+      ,AddName
+      ,AddDate
+      ,EditName
+      ,EditDate
+from Trade_To_Pms.dbo.FinanceRate as b WITH (NOLOCK)
+where not exists(
+    select 1 
+    from Production.dbo.FinanceRate as a WITH (NOLOCK) 
+    where a.RateTypeID = b.RateTypeID
+    and a.BeginDate = b.BeginDate
+    and a.OriginalCurrency = b.OriginalCurrency
+    and a.ExchangeCurrency = b.ExchangeCurrency)
+
+
+---------FinanceTWRate
+Delete Production.dbo.FinanceTWRate
+from Production.dbo.FinanceTWRate as a 
+left join Trade_To_Pms.dbo.FinanceTWRate as b on a.RateTypeID = b.RateTypeID
+                                     and a.BeginDate = b.BeginDate
+                                     and a.OriginalCurrency = b.OriginalCurrency
+                                     and a.ExchangeCurrency = b.ExchangeCurrency
+where b.RateTypeID is null
+
+UPDATE a
+SET   a.EndDate		      =b.EndDate
+      ,a.Rate		      =b.Rate
+      ,a.AddName		      =b.AddName
+      ,a.AddDate		      =b.AddDate
+      ,a.EditName		      =b.EditName
+      ,a.EditDate		      =b.EditDate
+
+from Production.dbo.FinanceTWRate as a 
+left join Trade_To_Pms.dbo.FinanceTWRate as b on a.RateTypeID = b.RateTypeID
+                                     and a.BeginDate = b.BeginDate
+                                     and a.OriginalCurrency = b.OriginalCurrency
+                                     and a.ExchangeCurrency = b.ExchangeCurrency
+where a.EndDate <> b.EndDate
+or a.Rate <> b.Rate
+
+INSERT INTO Production.dbo.FinanceTWRate(
+       RateTypeID
+      ,BeginDate
+      ,EndDate
+      ,OriginalCurrency
+      ,ExchangeCurrency
+      ,Rate
+      ,AddName
+      ,AddDate
+      ,EditName
+      ,EditDate
+
+)
+select 
+       RateTypeID
+      ,BeginDate
+      ,EndDate
+      ,OriginalCurrency
+      ,ExchangeCurrency
+      ,Rate
+      ,AddName
+      ,AddDate
+      ,EditName
+      ,EditDate
+from Trade_To_Pms.dbo.FinanceTWRate as b WITH (NOLOCK)
+where not exists(
+    select 1 
+    from Production.dbo.FinanceTWRate as a WITH (NOLOCK) 
+    where a.RateTypeID = b.RateTypeID
+    and a.BeginDate = b.BeginDate
+    and a.OriginalCurrency = b.OriginalCurrency
+    and a.ExchangeCurrency = b.ExchangeCurrency)
+
 END
