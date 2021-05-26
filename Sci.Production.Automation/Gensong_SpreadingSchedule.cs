@@ -120,7 +120,7 @@ namespace Sci.Production.Automation
                 return new DualResult(true);
             }
 
-            string suppAPIThread = "DeleteSpreadingSchedule";
+            string suppAPIThread = "PMS/GS_WebServices/DeleteSpreadingSchedule";
 
             Dictionary<string, string> apiQueryString = new Dictionary<string, string>();
 
