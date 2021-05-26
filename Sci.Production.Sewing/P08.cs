@@ -148,7 +148,7 @@ group by pd.MDFailQty,pd.OrderID,o.CustPONo,o.StyleID,o.SeasonID,o.BrandID
             string sqlcmd = string.Format(
                 @"
 update PackingList_Detail
-set MDFailQty = {0}, MDScanDate = getdate()
+set MDFailQty = {0}, MDScanDate = getdate(), MDScanName = '{5}'
 where ID = '{3}' and CTNStartNo = '{4}';
 
 
