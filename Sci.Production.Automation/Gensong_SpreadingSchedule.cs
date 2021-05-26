@@ -122,19 +122,15 @@ namespace Sci.Production.Automation
 
             string suppAPIThread = "DeleteSpreadingSchedule";
 
-            var postBody = new
-            {
-                FactoryID = factoryID,
-                EstCutDate = estCutDate.ToString("yyyy-MM-dd"),
-                CutCellID = cutCellID,
-                CmdTime = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified),
-            };
+            Dictionary<string, string> apiQueryString = new Dictionary<string, string>();
 
-            string jsonBody = JsonConvert.SerializeObject(postBody);
+            apiQueryString.Add("delScheFactoryID", factoryID);
+            apiQueryString.Add("delScheEstCutDate", estCutDate.ToString("yyyy/MM/dd"));
+            apiQueryString.Add("delScheCutCellID", cutCellID);
 
             DualResult result = new DualResult(true);
             WebApiBaseResult webApiBaseResult;
-            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiSend(UtilityAutomation.GetSupplierUrl(GensongSuppID, moduleName), suppAPIThread, jsonBody, HttpMethod.Delete, 600);
+            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(UtilityAutomation.GetSupplierUrl(GensongSuppID, moduleName), suppAPIThread, string.Empty, 600, queryStrings: apiQueryString);
 
             if (!webApiBaseResult.isSuccess)
             {
