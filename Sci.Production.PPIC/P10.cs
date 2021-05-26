@@ -819,8 +819,8 @@ SELECT Stuff((select distinct concat( ',',ID)   from IssueLack where RequestID =
                 return;
             }
 
-            // PrepardStartDate 有值就不能UnConfirmed
-            if (!MyUtility.Check.Empty(this.CurrentMaintain["PrepardStartDate"]))
+            // PreparedStartDate 有值就不能UnConfirmed
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["PreparedStartDate"]))
             {
                 MyUtility.Msg.WarningBox($"This order warehouse has already maintained Start Date in WH P53, please clean start date in WH P53 before unconfirm.");
             }
@@ -894,8 +894,8 @@ SELECT Stuff((select distinct concat( ',',ID)   from IssueLack where RequestID =
                 this.btnAutoOutputQuery.Enabled = false;
             }
 
-            // Lack.PrepareStartDate 與 Lack.PrepardFinishDate 皆有值才能Receive
-            if (!MyUtility.Check.Empty(this.CurrentMaintain["PrepareStartDate"]) && !MyUtility.Check.Empty(this.CurrentMaintain["PrepardFinishDate"]))
+            // Lack.PreparedStartDate 與 Lack.PreparedFinishDate 皆有值才能Receive
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["PreparedStartDate"]) && !MyUtility.Check.Empty(this.CurrentMaintain["PreparedFinishDate"]))
             {
                 this.IsSupportReceive = true;
                 this.ReceiveChkValue = "";

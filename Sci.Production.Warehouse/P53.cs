@@ -19,6 +19,9 @@ namespace Sci.Production.Warehouse
         private Color preparingColor = Color.FromArgb(255, 128, 0);
         private Color finishedColor = Color.Yellow;
         private DataTable dtData = new DataTable();
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_Remark;
+        private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_IssueDate;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_ttlRol;
 
         /// <inheritdoc/>
         public P53(ToolStripMenuItem menuitem)
@@ -121,6 +124,33 @@ namespace Sci.Production.Warehouse
                 }
             };
             */
+
+            Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings mask_IssueDate = new DataGridViewGeneratorMaskedTextColumnSettings();
+            mask_IssueDate.CellValidating += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridDetail.GetDataRow(e.RowIndex);
+
+                string strStartDate = this.DateTimeMaskFull(e.FormattedValue.ToString().Replace(" ", "0"));
+                if (this.IsDateTimeFormat(strStartDate))
+                {
+                    dr["IssueDate"] = this.DateTimeMaskFull(e.FormattedValue.ToString());
+                    dr.EndEdit();
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            };
             Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings mask_StartDate = new DataGridViewGeneratorMaskedTextColumnSettings();
             mask_StartDate.CellValidating += (s, e) =>
             {
@@ -222,9 +252,10 @@ namespace Sci.Production.Warehouse
                 .Text("SP", header: "SP", width: Widths.AnsiChars(14), iseditingreadonly: true)
                 .Text("Department", header: "Department", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .DateTime("RequestDate", header: "Request Date", width: Widths.AnsiChars(18), iseditingreadonly: true)
-                .DateTime("IssueDate", header: "Issue Date", width: Widths.AnsiChars(18), iseditingreadonly: true)
-                .Text("ttlRoll", header: "Total Roll", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Text("Remark", header: "Remark", width: Widths.AnsiChars(25), iseditingreadonly: true)
+                // .DateTime("IssueDate", header: "Issue Date", width: Widths.AnsiChars(18), iseditingreadonly: true).Get(out this.col_IssueDate)
+                .MaskedText("IssueDate", "0000/00/00 00:00", header: "Issue Date", width: Widths.AnsiChars(18), iseditingreadonly: false, settings: mask_IssueDate).Get(out this.col_IssueDate)
+                .Numeric("ttlRoll", header: "Total Roll", width: Widths.AnsiChars(8), iseditingreadonly: true).Get(out this.col_ttlRol)
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(25), iseditingreadonly: true).Get(out this.col_Remark)
                 .Text("Worker", header: "Worker", width: Widths.AnsiChars(11), iseditingreadonly: false)
                 .Text("Location", header: "Location", width: Widths.AnsiChars(11), iseditingreadonly: false)
                 .MaskedText("StartDate", "0000/00/00 00:00", header: "Start Date", width: Widths.AnsiChars(18), iseditingreadonly: false, settings: mask_StartDate)
@@ -241,6 +272,34 @@ namespace Sci.Production.Warehouse
             this.gridDetail.Columns["FinishDate"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridDetail.Columns["Scan"].DefaultCellStyle.BackColor = Color.Pink;
             this.ChangeRowColor();
+            this.gridDetail.RowEnter += this.Grid_RowEnter;
+        }
+
+        private void Grid_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+            {
+                return;
+            }
+
+            var data = ((DataRowView)this.gridDetail.Rows[e.RowIndex].DataBoundItem).Row;
+            if (data == null)
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(data["RequestID"]))
+            {
+                this.col_IssueDate.IsEditingReadOnly = false;
+                this.col_Remark.IsEditingReadOnly = false;
+                this.col_ttlRol.IsEditingReadOnly = false;
+            }
+            else
+            {
+                this.col_IssueDate.IsEditingReadOnly = true;
+                this.col_Remark.IsEditingReadOnly = true;
+                this.col_ttlRol.IsEditingReadOnly = true;
+            }
         }
 
         private string DateTimeMaskFull(string value)
@@ -288,14 +347,25 @@ namespace Sci.Production.Warehouse
 
             foreach (DataRow dr in upd_list)
             {
+                if (MyUtility.Check.Empty(dr["RequestID"]))
+                {
+                    string issueDate = MyUtility.Check.Empty(dr["IssueDate"]) ? "null" : (dr["IssueDate"].ToString().Length == 12) ? "'" + this.DateTimeMaskFull(dr["IssueDate"].ToString()) + "'" : "'" + dr["IssueDate"].ToString() + "'";
+                    upd_sql += $@"
+update Lack
+set WHIssueDate = {issueDate}, TotalRoll = '{dr["ttlRoll"]}', WHRemark = '{dr["Remark"]}'
+
+where id = '{dr["LackID"]}'";
+                }
+
                 string startDate = MyUtility.Check.Empty(dr["StartDate"]) ? "null" : "'" + this.DateTimeMaskFull(dr["StartDate"].ToString()) + "'";
                 string endDate = MyUtility.Check.Empty(dr["FinishDate"]) ? "null" : "'" + this.DateTimeMaskFull(dr["FinishDate"].ToString()) + "'";
                 int scan = MyUtility.Check.Empty(dr["Scan"]) ? 0 : 1;
 
                 upd_sql += $@"
-update IssueLack
-set PrepardWorker = '{dr["Worker"]}' ,PrepardLocation = '{dr["Location"]}' ,PrepareStartDate = {startDate} ,PrepardFinishDate = {endDate}, ScanTransferSlip = {scan}
-where id = '{dr["ID"]}'" + Environment.NewLine;
+update Lack
+set PreparedWorker = '{dr["Worker"]}' ,PreparedLocation = '{dr["Location"]}' ,PreparedStartDate = {startDate} ,PreparedFinishDate = {endDate}, ScanTransferSlip = {scan}
+where id = '{dr["LackID"]}'" + Environment.NewLine;
+
             }
 
             DualResult result = DBProxy.Current.Execute(null, upd_sql);
@@ -319,6 +389,7 @@ where id = '{dr["ID"]}'" + Environment.NewLine;
         {
             #region Sql command
             string sqlcmd = $@"
+
 select 
 [Select] = 0
 ,Lack.FactoryID
@@ -326,22 +397,25 @@ select
 ,[SP] = Lack.OrderID
 ,[Department] = Lack.Dept
 ,[RequestDate] = Lack.ApvDate
-,[IssueDate] = iL.EditDate
-,[ttlRoll] = ttlRoll.value
-,iL.Remark
-,[Worker] = iL.PrepardWorker
-,[Location] = iL.PrepardLocation
-,[StartDate] = FORMAT(iL.PrepareStartDate,'yyyyMMddHHmm')
-,[FinishDate] = FORMAT(iL.PrepardFinishDate,'yyyyMMddHHmm')
+,[IssueDate] = IIF(il.RequestID is null, format(Lack.WHIssueDate, 'yyyyMMddHHmm') ,format(iL.EditDate, 'yyyyMMddHHmm'))
+,[ttlRoll] = IIF(il.RequestID is null, Lack.TotalRoll ,ttlRoll.value)
+,[Remark] = IIF(il.RequestID is null, Lack.WHRemark ,iL.Remark)
+,[Worker] = Lack.PreparedWorker
+,[Location] = Lack.PreparedLocation
+,[StartDate] = FORMAT(Lack.PreparedStartDate,'yyyyMMddHHmm')
+,[FinishDate] = FORMAT(Lack.PreparedFinishDate,'yyyyMMddHHmm')
 ,[PreparingTime] = isnull(PreparingTime.value,0)
-,[LeadTime]= case when (iL.PrepareStartDate is null or iL.PrepardFinishDate is null) then ''
+,[LeadTime]= case when (Lack.PreparedStartDate is null or Lack.PreparedFinishDate is null) then ''
 				  when isnull(PreparingTime.ttlMinute,0) <= 420 then 'OK'
 				  else 'Not OK' end
-,[Scan] = iL.ScanTransferSlip
+,[Scan] = lack.ScanTransferSlip
+,[IssueLackID] = iL.Id
+,[LackID] = Lack.ID
 ,iL.Id
 ,iL.MDivisionID
-from IssueLack iL
-left join Lack on Lack.ID = iL.RequestID
+,il.RequestID
+from Lack
+left join IssueLack iL on Lack.ID = iL.RequestID
 outer apply(
 	select value = count(1)
 	from (
@@ -354,7 +428,7 @@ outer apply(
 	select value = CONVERT(varchar,sum(minute)/1440) + ' '  -- day
 	            + SUBSTRING(CONVERT(VARCHAR, DATEADD(MINUTE, sum(minute), 0), 108),1,5)  -- minute: second
 	, ttlMinute = sum(minute)
-	from dbo.GetPreparingTime(iL.PrepareStartDate,iL.PrepardFinishDate,iL.MDivisionID)
+	from dbo.GetPreparingTime(Lack.PreparedStartDate,Lack.PreparedFinishDate,iL.MDivisionID)
 )PreparingTime
 where 1=1
 ";
@@ -381,10 +455,10 @@ where 1=1
                 switch (this.comboStatus.Text)
                 {
                     case "Preparing":
-                        sqlcmd += $" and (iL.PrepareStartDate is not null and iL.PrepardFinishDate is null)";
+                        sqlcmd += $" and (Lack.PreparedStartDate is not null and Lack.PreparedFinishDate is null)";
                         break;
                     case "Finished":
-                        sqlcmd += $" and (iL.PrepareStartDate is not null and iL.PrepardFinishDate is not null)";
+                        sqlcmd += $" and (Lack.PreparedStartDate is not null and Lack.PreparedFinishDate is not null)";
                         break;
                 }
             }
@@ -432,6 +506,19 @@ where 1=1
                     if (this.gridDetail.Rows.Count <= i || i < 0)
                     {
                         return;
+                    }
+
+                    if (MyUtility.Check.Empty(dr["RequestID"]))
+                    {
+                        this.gridDetail.Rows[i].Cells["IssueDate"].Style.BackColor = Color.Pink;
+                        this.gridDetail.Rows[i].Cells["ttlRoll"].Style.BackColor = Color.Pink;
+                        this.gridDetail.Rows[i].Cells["Remark"].Style.BackColor = Color.Pink;
+                    }
+                    else
+                    {
+                        this.gridDetail.Rows[i].Cells["IssueDate"].Style.BackColor = Color.White;
+                        this.gridDetail.Rows[i].Cells["ttlRoll"].Style.BackColor = Color.White;
+                        this.gridDetail.Rows[i].Cells["Remark"].Style.BackColor = Color.White;
                     }
 
                     if (!MyUtility.Check.Empty(dr["StartDate"]))

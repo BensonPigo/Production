@@ -169,7 +169,12 @@ l.OrderID,
 l.POID,
 l.SewingLineID,
 l.issueLackID,
-[Status] = IIF(l.Status='Received','Finished',IIF(l.issueLackID='','Waiting', IIF(il.status='Confirmed','Preparing','Ready')))
+[Status] = case 
+ when (il.status='Closed') or (il.Id is null and l.PreparedStartDate is not null and l.PreparedFinishDate is not null) then 'Ready'
+ when (il.status='Confirmed') or (il.Id is null and l.PreparedStartDate is not null) then 'Preparing'
+ when l.Status='Received' then 'Finished'
+ when l.issueLackID='' then 'Waiting'
+ end
 from Lack l WITH (NOLOCK)
 left join IssueLack il WITH (NOLOCK) on l.issueLackID=il.ID 
 where l.status <> 'New' ";
