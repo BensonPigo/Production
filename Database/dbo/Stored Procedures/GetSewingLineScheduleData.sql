@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[GetSewingLineScheduleData]
+﻿
+CREATE PROCEDURE  [dbo].[GetSewingLineScheduleData]
 	@Inline DATE = null,
 	@Offline DATE = null,
 	@Line1 varchar(10) = '',
@@ -423,21 +424,40 @@ declare @tmpPrintData TABLE(
 	[APSNo] [int] NULL INDEX IDX_TMP_APSColumnGroup CLUSTERED,
 	[TTL_PRINTING (PCS)] numeric(38,6),
 	[TTL_PRINTING PPU (PPU)] numeric(38,6),
-	SubCon nvarchar(20)
+	SubCon nvarchar(max)
 )
 insert into @tmpPrintData
-select a.APSNo, t.[PRINTING (PCS)] * t.Qty, t.[PRINTING PPU (PPU)] * t.Qty, t.SubCon
-from @APSColumnGroup a
+select a.APSNo, [TTL_PRINTING (PCS)] = t.[PRINTING (PCS)] * AlloQty, [TTL_PRINTING PPU (PPU)] = t.[PRINTING PPU (PPU)] * AlloQty, t.SubCon
+from @APSListWorkDay a
 inner join (
-	select t.*,s.SubCon,o.Qty
+	select t.*,SubCon
 	from (
 		select id,[PRINTING (PCS)],[PRINTING PPU (PPU)]
 		from (select id,ColumnN,val from @tmp2)x
 		pivot(min(val) for ColumnN in ([PRINTING (PCS)],[PRINTING PPU (PPU)]))p
 	) t
-	inner join Orders o on o.id = t.id
-	outer apply(select top 1 SubCon = supp from @tmp2 where id = t.id and supp <> '')s
+	outer apply(select top 1 SubCon = supp from @tmp2 where id = t.id)s
 ) t on t.id = a.OrderID
+
+
+declare @tmpPrintDataSum TABLE(
+	[APSNo] [int] NULL INDEX IDX_TMP_APSColumnGroup CLUSTERED,
+	[TTL_PRINTING (PCS)] numeric(38,6),
+	[TTL_PRINTING PPU (PPU)] numeric(38,6),
+	SubCon nvarchar(max)
+)
+insert into @tmpPrintDataSum
+select p.APSNo,sum(p.[TTL_PRINTING (PCS)]),sum(p.[TTL_PRINTING PPU (PPU)]),x.SubCon
+from @tmpPrintData p
+outer apply(
+	select SubCon = stuff((
+		select concat('/', subcon)
+		from @tmpPrintData
+		where APSNo = p.APSNo
+		for xml path('')
+	),1,1,'')
+)x
+group by p.APSNo,x.SubCon
 
 --填入資料串連欄位 by APSNo
 declare @APSMain TABLE(
@@ -489,7 +509,7 @@ declare @APSMain TABLE(
 	[Construction] [nvarchar](50) NULL,
 	[TTL_PRINTING (PCS)] numeric(38,6),
 	[TTL_PRINTING PPU (PPU)] numeric(38,6),
-	SubCon nvarchar(20)
+	SubCon nvarchar(max)
 )
 insert into @APSMain
 select
@@ -569,7 +589,7 @@ outer apply (SELECT MaxSCIDelivery = Max(SCIDelivery),MinSCIDelivery = Min(SCIDe
                     MaxBuyerDelivery = Max(BuyerDelivery),MinBuyerDelivery = Min(BuyerDelivery)
                     from @APSColumnGroup where APSNo = al.APSNo) as OrderDateInfo
 outer apply (SELECT val =  Stuff((select distinct concat( ',',BrandID)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as BrandID
-outer apply (select * from @tmpPrintData where  APSNo = al.APSNo) as PrintingData
+outer apply (select * from @tmpPrintDataSum where  APSNo = al.APSNo) as PrintingData
 --組出所有計畫最大Inline,最小Offline之間所有的日期，後面展開個計畫每日資料使用
 Declare @StartDate date
 Declare @EndDate date
