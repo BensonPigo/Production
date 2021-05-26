@@ -1081,7 +1081,18 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                         PDFDocument pdfDoc = new PDFDocument();
                         pdfDoc.LoadPDF(barcodeObj.FullFileName);
                         pdfDoc.DPI = 300;
-                        Bitmap pic = pdfDoc.ToImage(0);
+                        Bitmap pic = null;
+
+                        // PDF檔理應要有至少一頁，若沒有則跳出詳細訊息
+                        if (pdfDoc.PageCount > 0)
+                        {
+                            pic = pdfDoc.ToImage(0);
+                        }
+                        else
+                        {
+                            Exception noPdf = new Exception($"PDF:[ {barcodeObj.FileName}] can't find any page, please check.");
+                            throw noPdf;
+                        }
 
                         // 準備要寫入DB的資料
                         using (var stream = new MemoryStream())

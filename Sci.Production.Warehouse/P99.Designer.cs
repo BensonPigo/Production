@@ -185,6 +185,7 @@
             this.gridUpdate.Size = new System.Drawing.Size(1046, 341);
             this.gridUpdate.TabIndex = 2;
             this.gridUpdate.TabStop = false;
+            this.gridUpdate.Sorted += new System.EventHandler(this.GridUpdate_Sorted);
             // 
             // panel2
             // 

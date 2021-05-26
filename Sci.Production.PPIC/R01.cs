@@ -1047,8 +1047,8 @@ drop table #tmpFinal_step1
                     this.printData.Columns.Remove("CustPONo");
                     if (this.type == "SP#")
                     {
-                        this.printData.Columns.Remove("PRINTING (PCS)");
-                        this.printData.Columns.Remove("PRINTING PPU (PPU)");
+                        this.printData.Columns.Remove("TTL_PRINTING (PCS)");
+                        this.printData.Columns.Remove("TTL_PRINTING PPU (PPU)");
                         this.printData.Columns.Remove("SubCon");
                     }
 
@@ -2003,10 +2003,10 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
 
             DBProxy.Current.DefaultTimeout = 900;
             result = DBProxy.Current.Select(null, sqlCmd.ToString().Substring(0, sqlCmd.Length - 1), out this.printData);
-            DBProxy.Current.DefaultTimeout = 300;
             this.printData.Columns.Remove("TTL_PRINTING (PCS)");
             this.printData.Columns.Remove("TTL_PRINTING PPU (PPU)");
             this.printData.Columns.Remove("SubCon");
+            DBProxy.Current.DefaultTimeout = 300;
             return result;
         }
 

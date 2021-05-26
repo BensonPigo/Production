@@ -1699,6 +1699,8 @@ and exists(
                             PoId = dr["PoId"].ToString(),
                             Seq1 = dr["Seq1"].ToString(),
                             Seq2 = dr["Seq2"].ToString(),
+                            Roll = dr["Roll"].ToString(),
+                            Dyelot = dr["Dyelot"].ToString(),
                             StockType = dr["StockType"].ToString(),
                             QtyBefore = (decimal)dr["QtyBefore"],
                             QtyAfter = (decimal)dr["QtyAfter"],
@@ -1706,7 +1708,7 @@ and exists(
                             Ukey = (long)dr["Ukey"],
                             Status = dr["Status"].ToString(),
                             CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
-                        });
+                        }); ;
                     break;
                 case "SubTransfer_Detail":
                     bodyObject = dtDetail.AsEnumerable()
@@ -2124,7 +2126,7 @@ and rd.SentToWMS =1 and rd.CompleteTime is null
             DualResult result;
             string sqlcmd = string.Empty;
             DataTable dtMaster = new DataTable();
-            string strBody = isP99 ? "inner join #tmp s on i2.ukey = s.ukey " : "inner join #tmp s on i2.ID = s.Id ";
+            string strBody = isP99 ? @"inner join #tmp s on i2.id = s.id and i2.Poid = s.Poid and i2.Seq1 = s.Seq1 and i2.Seq2 = s.Seq2 and i2.Roll = s.Roll and i2.Dyelot = s.Dyelot and i2.StockType = s.StockType " : "inner join #tmp s on i2.ID = s.Id ";
             string strQty = isP99 ? "s.Qty" : "i2.Qty";
 
             #region 取得資料
@@ -2292,9 +2294,11 @@ and exists(
                     break;
             }
 
-            if (string.Compare(status, "New", true) == 0)
+            if (!MyUtility.Check.Empty(sqlcmd))
             {
-                sqlcmd += Environment.NewLine + @"
+                if (string.Compare(status, "New", true) == 0)
+                {
+                    sqlcmd += Environment.NewLine + @"
 and exists(
 	select 1
 	from FtyInventory_Detail fd 
@@ -2302,10 +2306,11 @@ and exists(
 	where f.Ukey = fd.Ukey
 	and ml.IsWMS = 1
 )";
-            }
-            else
-            {
-                sqlcmd += Environment.NewLine + @" and i2.SentToWMS = 1";
+                }
+                else
+                {
+                    sqlcmd += Environment.NewLine + @" and i2.SentToWMS = 1";
+                }
             }
 
             if (!MyUtility.Check.Empty(sqlcmd))
@@ -2616,6 +2621,8 @@ select distinct
 ,[PoId] = i2.POID
 ,[Seq1] = i2.Seq1
 ,[Seq2] = i2.Seq2
+,[Roll] = i2.Roll
+,[Dyelot] = i2.Dyelot
 ,[Ukey] = i2.ukey
 ,[StockType] = i2.StockType
 ,[QtyBefore] = i2.QtyBefore
@@ -2759,7 +2766,7 @@ select
 ,ir2.Dyelot
 ,ir2.StockType
 ,ir2.Ukey
-,[Barcode] = Barcode.value
+,[Barcode] = f.Barcode
 ,[Description] = dbo.getMtlDesc(ir2.POID,ir2.Seq1,ir2.Seq2,2,0)
 ,[QtyBefore] = ir2.QtyBefore
 ,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
@@ -2768,12 +2775,6 @@ from Stocktaking_Detail ir2
 inner join Production.dbo.Stocktaking i on ir2.id = i.id
 inner join #tmp s on ir2.ID = s.Id
 left join FtyInventory f on ir2.FtyInventoryUkey = f.ukey
-outer apply(
-	select value = fb.Barcode
-	from Production.dbo.FtyInventory_Barcode fb
-	where fb.Ukey = f.Ukey
-    and fb.TransactionID = ir2.Id
-)Barcode
 where 1=1
 and exists(
     select 1

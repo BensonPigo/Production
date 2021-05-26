@@ -345,7 +345,8 @@ drop table #tmp
 
             this.dtAllDetail.Columns.Remove(this.dtAllDetail.Columns["FtyGroup"]);
             this.dtAllDetail.Columns.Remove(this.dtAllDetail.Columns["TransFtyZone"]);
-
+            this.dtAllDetail.Columns.Remove(this.dtAllDetail.Columns["FMSister"]);
+            this.dtAllDetail.Columns.Remove(this.dtAllDetail.Columns["SampleGroup"]);
             for (int j = 1; j < this.listFtyZone.Count; j++)
             {
                 newSummarySheet = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[j];
@@ -397,6 +398,7 @@ drop table #tmp
             worksheet.Columns[38].ColumnWidth = 16.38;
             worksheet.Columns[39].ColumnWidth = 16.38;
             worksheet.Columns[40].ColumnWidth = 16.38;
+            worksheet.Columns[41].ColumnWidth = 60;
             #endregion
 
             for (int j = 1; j <= this.listFtyZone.Count; j++)
