@@ -143,6 +143,7 @@
             this.comboResult.IsSupportUnselect = true;
             this.comboResult.Location = new System.Drawing.Point(930, 10);
             this.comboResult.Name = "comboResult";
+            this.comboResult.OldText = "";
             this.comboResult.ReadOnly = true;
             this.comboResult.Size = new System.Drawing.Size(89, 24);
             this.comboResult.TabIndex = 104;
@@ -289,6 +290,7 @@
             "60"});
             this.comboTempt.Location = new System.Drawing.Point(520, 39);
             this.comboTempt.Name = "comboTempt";
+            this.comboTempt.OldText = "";
             this.comboTempt.Size = new System.Drawing.Size(119, 24);
             this.comboTempt.TabIndex = 119;
             // 
@@ -304,6 +306,7 @@
             "Front Load"});
             this.comboMachineUs.Location = new System.Drawing.Point(520, 68);
             this.comboMachineUs.Name = "comboMachineUs";
+            this.comboMachineUs.OldText = "";
             this.comboMachineUs.Size = new System.Drawing.Size(119, 24);
             this.comboMachineUs.TabIndex = 120;
             // 
@@ -322,6 +325,7 @@
             "25"});
             this.comboCycle.Location = new System.Drawing.Point(756, 38);
             this.comboCycle.Name = "comboCycle";
+            this.comboCycle.OldText = "";
             this.comboCycle.Size = new System.Drawing.Size(171, 24);
             this.comboCycle.TabIndex = 121;
             // 
@@ -339,6 +343,7 @@
             "Tumble dry High"});
             this.comboDryProcess.Location = new System.Drawing.Point(756, 65);
             this.comboDryProcess.Name = "comboDryProcess";
+            this.comboDryProcess.OldText = "";
             this.comboDryProcess.Size = new System.Drawing.Size(171, 24);
             this.comboDryProcess.TabIndex = 122;
             // 
@@ -352,9 +357,11 @@
             "",
             "Woolite",
             "Tide",
-            "AATCC"});
+            "AATCC",
+            "ECE"});
             this.comboDetergent.Location = new System.Drawing.Point(97, 68);
             this.comboDetergent.Name = "comboDetergent";
+            this.comboDetergent.OldText = "";
             this.comboDetergent.Size = new System.Drawing.Size(141, 24);
             this.comboDetergent.TabIndex = 123;
             // 
@@ -402,6 +409,7 @@
             this.GridPopUp = false;
             this.KeyField1 = "ID";
             this.Name = "P06_Detail";
+            this.OnLineHelpID = "Sci.Win.Subs.Input4";
             this.Text = "Color Fastness";
             this.WorkAlias = "ColorFastness_Detail";
             this.Controls.SetChildIndex(this.btmcont, 0);
