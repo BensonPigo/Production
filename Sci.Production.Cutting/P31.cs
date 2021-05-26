@@ -375,6 +375,18 @@ where   ss.EstCutDate <> @EstCutDate and
         }
 
         /// <inheritdoc/>
+        protected override DualResult ClickDeletePost()
+        {
+            DualResult result = new Gensong_SpreadingSchedule().DeleteSpreadingSchedule(this.CurrentMaintain["FactoryID"].ToString(), (DateTime)this.CurrentMaintain["EstCutDate"], this.CurrentMaintain["CutCellID"].ToString());
+            if (!result)
+            {
+                return result;
+            }
+
+            return base.ClickDeletePost();
+        }
+
+        /// <inheritdoc/>
         protected override DualResult OnSaveDetail(IList<DataRow> details, ITableSchema detailtableschema)
         {
             DataView dv = this.DetailDatas.CopyToDataTable().DefaultView;

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using static PmsWebApiUtility20.WebApiTool;
 using static Sci.Production.Automation.UtilityAutomation;
@@ -25,6 +26,7 @@ namespace Sci.Production.Automation
         /// <param name="factoryID">factoryID</param>
         /// <param name="estCutDate">estCutDate</param>
         /// <param name="cutCellID">cutCellID</param>
+        /// <returns>InventorySendSpreadingSchedule</returns>
         public DualResult SendSpreadingSchedule(string factoryID, DateTime estCutDate, string cutCellID)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
@@ -102,6 +104,41 @@ namespace Sci.Production.Automation
                 default:
                     return new DualResult(false, webApiBaseResult.responseContent);
             }
+        }
+
+        /// <summary>
+        /// DeleteSpreadingSchedule
+        /// </summary>
+        /// <param name="factoryID">factoryID</param>
+        /// <param name="estCutDate">estCutDate</param>
+        /// <param name="cutCellID">cutCellID</param>
+        /// <returns>DualResult</returns>
+        public DualResult DeleteSpreadingSchedule(string factoryID, DateTime estCutDate, string cutCellID)
+        {
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
+            {
+                return new DualResult(true);
+            }
+
+            string suppAPIThread = "PMS/GS_WebServices/DeleteSpreadingSchedule";
+
+            Dictionary<string, string> apiQueryString = new Dictionary<string, string>();
+
+            apiQueryString.Add("delScheFactoryID", factoryID);
+            apiQueryString.Add("delScheEstCutDate", estCutDate.ToString("yyyy/MM/dd"));
+            apiQueryString.Add("delScheCutCellID", cutCellID);
+
+            DualResult result = new DualResult(true);
+            WebApiBaseResult webApiBaseResult;
+            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(UtilityAutomation.GetSupplierUrl(GensongSuppID, moduleName), suppAPIThread, string.Empty, 600, queryStrings: apiQueryString);
+
+            if (!webApiBaseResult.isSuccess)
+            {
+                string errMsg = MyUtility.Check.Empty(webApiBaseResult.responseContent) ? webApiBaseResult.exception.ToString() : webApiBaseResult.responseContent;
+                return new DualResult(false, new Ict.BaseResult.MessageInfo(errMsg));
+            }
+
+            return new DualResult(true);
         }
 
         /// <summary>
