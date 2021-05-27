@@ -109,6 +109,14 @@ namespace Sci.Production.Warehouse
 	        for xml path('')
         ),1,1,'')
         ,
+        iif((exists(select 1
+                from TransferIn ts with (nolock) 
+	            where ts.Status='Confirmed'
+                and exists(
+                    select 1 from TransferIn_Detail tsd with (nolock)
+                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
+                    and tsd.ID = ts.ID))),char(10),'')
+        ,
         stuff((
             select concat(char(10),Packages)
             from(
@@ -234,6 +242,14 @@ namespace Sci.Production.Warehouse
             )x
 	        for xml path('')
         ),1,1,'')
+        ,
+        iif((exists(select 1
+                from TransferIn ts with (nolock) 
+	            where ts.Status='Confirmed'
+                and exists(
+                    select 1 from TransferIn_Detail tsd with (nolock)
+                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
+                    and tsd.ID = ts.ID))),char(10),'')
         ,
         stuff((
             select concat(char(10),Packages)
