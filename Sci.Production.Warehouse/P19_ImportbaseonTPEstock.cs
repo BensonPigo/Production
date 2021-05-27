@@ -83,6 +83,7 @@ namespace Sci.Production.Warehouse
                     {
                         dr["qty"] = e.FormattedValue;
                     }
+
                     dr.EndEdit();
                     this.CaculateTotalTransfer();
                 }
@@ -245,7 +246,7 @@ select  selected = cast(0 as bit)
 		, StockUnit
         , StockBalance 
         , Description 
-        , Qty = 0
+        , Qty = 0.00
         , [Location]
         , ToPOID 
         , ToSeq1 
