@@ -1,20 +1,4 @@
-﻿USE [Production]
-GO
-
-/****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 2019/04/15 �U�� 04:35:47 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
--- =============================================
+﻿-- =============================================
 -- Author:		Benson
 -- Create date: 2019/03/11
 -- Description:	Get Hanger Output Data and Insert into SewingOutput�BRFT 
@@ -534,12 +518,12 @@ BEGIN
 
 			-------------Prepare RFT
 			select 
-			[OrderId] =	CASE WHEN MONo LIKE '%-%'
-						THEN SUBSTRING(MONo, 1, CHARINDEX('-', MONo) - 1)
-						ELSE MONo
+			[OrderId] =	CASE WHEN t.MONo LIKE '%-%'
+						THEN SUBSTRING(t.MONo, 1, CHARINDEX('-', t.MONo) - 1)
+						ELSE t.MONo
 						END
-			, [CDate] = dDate
-			, [SewingLineID] = ISNULL(ProductionLineAllocation.SewingLineID, WorkLine)
+			, [CDate] = t.dDate
+			, [SewingLineID] = ISNULL(ProductionLineAllocation.SewingLineID, t.WorkLine)
 			, [FactoryID] = 'SNP'
 			, [InspectQty] =ISNULL( (
 							select sum(OutputQty) 
@@ -547,8 +531,8 @@ BEGIN
 							where 
 							SUBSTRING(tOT.MONo, 1, CHARINDEX('-', tOT.MONo) - 1)
 							= 
-							SUBSTRING(mainTable.MONo, 1, CHARINDEX('-', mainTable.MONo) - 1)
-							AND tOT.dDate  = mainTable.dDate  AND tOT.WorkLine  = mainTable.WorkLine 
+							SUBSTRING(t.MONo, 1, CHARINDEX('-', t.MONo) - 1)
+							AND tOT.dDate  = t.dDate  AND tOT.WorkLine  = t.WorkLine 
 						),0)
 
 			, [RejectQty] = (
@@ -557,18 +541,20 @@ BEGIN
 							where  
 							SUBSTRING(tRT.MONo, 1, CHARINDEX('-', tRT.MONo) - 1)
 							= 
-							SUBSTRING(mainTable.MONo, 1, CHARINDEX('-', mainTable.MONo) - 1)
-							AND tRT.dDate=mainTable.dDate AND tRT.WorkLine  = mainTable.WorkLine 
+							SUBSTRING(t.MONo, 1, CHARINDEX('-', t.MONo) - 1)
+							AND tRT.dDate=t.dDate AND tRT.WorkLine  = t.WorkLine 
 						)
-			, [DefectQty] = sum(Qty)
+			, [DefectQty] = isnull(sum(Qty), 0)
 			, [Shift] = 'D'
 			, [Team] = 'A'
 			, [Status] = 'Confirmed'
 			, [AddName] = 'SCIMIS'
-			, [AddDate] = GetDate() 
-	
+			, [AddDate] = GetDate() 	
 			INTO #tmp_Into_RFT
-			from #tReworkTotal mainTable
+			from #tOutputTotal t
+			left join #tReworkTotal mainTable on SUBSTRING(t.MONo, 1, CHARINDEX('-', t.MONo) - 1) = 
+												 SUBSTRING(mainTable.MONo, 1, CHARINDEX('-', mainTable.MONo) - 1)
+									AND t.dDate  = mainTable.dDate  AND t.WorkLine  = mainTable.WorkLine 
 			OUTER APPLY(			
 				SELECT t2.SewingLineID
 				FROM 
@@ -582,8 +568,8 @@ BEGIN
 				INNER JOIN ProductionLineAllocation_Detail t2 ON t.FactoryID=t2.FactoryID AND t.ProductionDate=t2.ProductionDate
 				WHERE t2.LineLocationID= mainTable.WorkLine AND t2.Team='A'
 			)ProductionLineAllocation
-			where dDate = @DateStart
-			group by MONo, dDate, WorkLine ,ProductionLineAllocation.SewingLineID
+			where t.dDate = @DateStart
+			group by t.MONo, t.dDate, t.WorkLine ,ProductionLineAllocation.SewingLineID
 			
 			SELECT 
 			[OrderID]
