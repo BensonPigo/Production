@@ -716,7 +716,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
                 int selQty = sel.Where(w => w.Pkey == (long)row["Pkey"]).Select(s => s.Qty).FirstOrDefault();
                 if (!MyUtility.Convert.GetBool(row["sel"]))
                 {
-                    row["cutoutput"] = MyUtility.Convert.GetInt(row["cutoutput"]) - selQty;
+                    row["cutoutput"] = this.Negative2Zero(MyUtility.Convert.GetInt(row["cutoutput"]) - selQty);
                 }
                 else
                 {
@@ -732,7 +732,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
                 {
                     row["otherSelQty"] = otherSel.Where(w => w.Pkey == (long)row["Pkey"]).Select(s => s.Qty).FirstOrDefault();
                     int realbalanceQty = MyUtility.Convert.GetInt(row["RealCutOutput"]) - MyUtility.Convert.GetInt(row["CreatedBundleQty"]) - MyUtility.Convert.GetInt(row["OtherSelQty"]) - MyUtility.Convert.GetInt(row["cutOutput"]);
-                    row["RealbalanceQty"] = realbalanceQty < 0 ? 0 : realbalanceQty;
+                    row["RealbalanceQty"] = this.Negative2Zero(realbalanceQty);
                 }
             }
 
@@ -2336,7 +2336,7 @@ and wd.orderid = 'EXCESS'
             }).ToList();
             var selList = qtydataList.Where(w => ukeyList.Contains(w.Ukey) && !w.Qty.Empty()).ToList(); // 要寫入的中上表
             var idenList = selList.Select(s => s.Iden).ToList();
-            var selASList = asList.Where(w => ukeyList.Contains(w.Ukey) && idenList.Contains(w.Iden) && w.Qty > 0).ToList();
+            var selASList = asList.Where(w => ukeyList.Contains(w.Ukey) && idenList.Contains(w.Iden) && w.Qty > 0 && w.Cutoutput > 0).ToList();
             var selpatternList = patternList.Where(w => ukeyList.Contains(w.Ukey) && w.Parts > 0).ToList(); // 要寫入的左下表
             var selallPartList = allPartList.Where(w => ukeyList.Contains(w.Ukey)).ToList(); // 要寫入的右下表
 
@@ -3136,6 +3136,11 @@ VALUES('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{f
             this.GetBalancebyWorkOrder();
             this.GridAutoResizeColumns();
             this.Calpart();
+        }
+
+        private decimal Negative2Zero(decimal n)
+        {
+            return n < 0 ? 0 : n;
         }
     }
 }
