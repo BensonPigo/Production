@@ -83,6 +83,7 @@ namespace Sci.Production.Warehouse
                     {
                         dr["qty"] = e.FormattedValue;
                     }
+
                     dr.EndEdit();
                     this.CaculateTotalTransfer();
                 }
@@ -245,7 +246,7 @@ select  selected = cast(0 as bit)
 		, StockUnit
         , StockBalance 
         , Description 
-        , Qty = 0
+        , Qty = 0.00
         , [Location]
         , ToPOID 
         , ToSeq1 
@@ -280,7 +281,7 @@ select  selected
 		, StockUnit
         , TaipeiLastOutput
         , TaipeiOutput
-        , [TotalTransfer] = 0
+        , [TotalTransfer] = 0.00
 from    #tmpDetail
 group by selected, ToPOID, ToSeq1, ToSeq2, ToFactory, InventoryPOID, Inventoryseq1, InventorySEQ2
         , FabricType, StockUnit, TaipeiLastOutput, TaipeiOutput               
