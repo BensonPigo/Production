@@ -281,7 +281,7 @@ select  selected
 		, StockUnit
         , TaipeiLastOutput
         , TaipeiOutput
-        , [TotalTransfer] = 0
+        , [TotalTransfer] = 0.00
 from    #tmpDetail
 group by selected, ToPOID, ToSeq1, ToSeq2, ToFactory, InventoryPOID, Inventoryseq1, InventorySEQ2
         , FabricType, StockUnit, TaipeiLastOutput, TaipeiOutput               
