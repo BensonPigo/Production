@@ -76,6 +76,7 @@ namespace Sci.Production.Warehouse
             this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["ToPlace"] = this.txtToPlace.DefaultText;
             this.CurrentMaintain["Type"] = "C";
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
         }
@@ -194,6 +195,10 @@ namespace Sci.Production.Warehouse
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            bool isAutomationEnable = Automation.UtilityAutomation.IsAutomationEnable;
+            this.txtToPlace.Visible = isAutomationEnable;
+            this.lblToPlace.Visible = isAutomationEnable;
+
             #region Status Label
             this.labelNotApprove.Text = this.CurrentMaintain["status"].ToString();
             #endregion Status Label

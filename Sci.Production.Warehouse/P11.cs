@@ -464,6 +464,7 @@ Where a.id = '{0}'", masterID);
             this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "B";
+            this.CurrentMaintain["ToPlace"] = this.txtToPlace.DefaultText;
             this.CurrentMaintain["issuedate"] = DateTime.Now;
 
             // leo等確認完工廠有此欄位後開啟
@@ -789,6 +790,10 @@ where Cutplan.id='{0}' and Cutplan.Mdivisionid = '{1}' AND o.Category != 'A'
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            bool isAutomationEnable = Automation.UtilityAutomation.IsAutomationEnable;
+            this.txtToPlace.Visible = isAutomationEnable;
+            this.lblToPlace.Visible = isAutomationEnable;
+
             if (!(this.CurrentMaintain == null))
             {
                 this.displayCutCell.Text = MyUtility.GetValue.Lookup(string.Format("select CutCellID from dbo.cutplan WITH (NOLOCK) where id='{0}'", this.CurrentMaintain["cutplanid"]));

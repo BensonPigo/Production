@@ -51,6 +51,8 @@
             this.displayStyle = new Sci.Win.UI.DisplayBox();
             this.lblStyle = new Sci.Win.UI.Label();
             this.btnCallP99 = new Sci.Win.UI.Button();
+            this.lblToPlace = new Sci.Win.UI.Label();
+            this.txtToPlace = new Sci.Production.Class.TxtToPlace();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -70,6 +72,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.lblToPlace);
+            this.masterpanel.Controls.Add(this.txtToPlace);
             this.masterpanel.Controls.Add(this.displayStyle);
             this.masterpanel.Controls.Add(this.lblStyle);
             this.masterpanel.Controls.Add(this.labelConfirmed);
@@ -108,6 +112,8 @@
             this.masterpanel.Controls.SetChildIndex(this.labelConfirmed, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayStyle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtToPlace, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lblToPlace, 0);
             // 
             // detailpanel
             // 
@@ -117,7 +123,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(3388, 111);
+            this.gridicon.Location = new System.Drawing.Point(3495, 111);
             // 
             // refresh
             // 
@@ -390,6 +396,24 @@
             this.btnCallP99.UseVisualStyleBackColor = true;
             this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
             // 
+            // lblToPlace
+            // 
+            this.lblToPlace.Location = new System.Drawing.Point(451, 70);
+            this.lblToPlace.Name = "lblToPlace";
+            this.lblToPlace.Size = new System.Drawing.Size(75, 23);
+            this.lblToPlace.TabIndex = 79;
+            this.lblToPlace.Text = "To Place";
+            // 
+            // txtToPlace
+            // 
+            this.txtToPlace.BackColor = System.Drawing.Color.White;
+            this.txtToPlace.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ToPlace", true));
+            this.txtToPlace.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtToPlace.Location = new System.Drawing.Point(529, 70);
+            this.txtToPlace.Name = "txtToPlace";
+            this.txtToPlace.Size = new System.Drawing.Size(132, 23);
+            this.txtToPlace.TabIndex = 78;
+            // 
             // P33
             // 
             this.ApvChkValue = "New";
@@ -459,5 +483,7 @@
         private Win.UI.DisplayBox displayStyle;
         private Win.UI.Label lblStyle;
         private Win.UI.Button btnCallP99;
+        private Win.UI.Label lblToPlace;
+        private Class.TxtToPlace txtToPlace;
     }
 }
