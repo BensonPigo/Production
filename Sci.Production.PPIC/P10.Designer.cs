@@ -571,10 +571,12 @@
             this.GridUniqueKey = "Seq";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
+            this.IsSupportReceive = true;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P10";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
+            this.ReceiveChkValue = "Confirmed";
             this.Text = "P10. Fabric Lacking & Replacement";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";

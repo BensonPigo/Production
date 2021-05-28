@@ -894,20 +894,27 @@ SELECT Stuff((select distinct concat( ',',ID)   from IssueLack where RequestID =
                 this.btnAutoOutputQuery.Enabled = false;
             }
 
-            // Lack.PreparedStartDate 與 Lack.PreparedFinishDate 皆有值才能Receive
-            if (!MyUtility.Check.Empty(this.CurrentMaintain["PreparedStartDate"]) && !MyUtility.Check.Empty(this.CurrentMaintain["PreparedFinishDate"]))
+            if (string.Compare(this.CurrentMaintain["Status"].ToString(), "Confirmed", true) == 0)
             {
-                this.IsSupportReceive = true;
-                this.ReceiveChkValue = "";
-            }
-            else if (string.Compare(this.CurrentMaintain["Status"].ToString(), "Confirmed", true) == 0)
-            {
-                this.IsSupportReceive = true;
-                this.ReceiveChkValue = "New";
+                string issueLackStatus = MyUtility.GetValue.Lookup($"select Status from IssueLack where RequestID = '{this.CurrentMaintain["ID"].ToString()}'");
+
+                // Lack.PreparedStartDate 與 Lack.PreparedFinishDate 皆有值才能Receive
+                if (!MyUtility.Check.Empty(this.CurrentMaintain["PreparedStartDate"]) && !MyUtility.Check.Empty(this.CurrentMaintain["PreparedFinishDate"]) && !this.EditMode)
+                {
+                    this.toolbar.cmdReceive.Enabled = true;
+                }
+                else if (issueLackStatus.EqualString("Confirmed") && !this.EditMode)
+                {
+                    this.toolbar.cmdReceive.Enabled = true;
+                }
+                else
+                {
+                    this.toolbar.cmdReceive.Enabled = false;
+                }
             }
             else
             {
-                this.IsSupportReceive = false;
+                this.toolbar.cmdReceive.Enabled = false;
             }
         }
 

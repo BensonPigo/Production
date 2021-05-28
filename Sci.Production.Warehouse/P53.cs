@@ -393,7 +393,7 @@ where id = '{dr["LackID"]}'" + Environment.NewLine;
 select 
 [Select] = 0
 ,Lack.FactoryID
-,[RQNo] = iL.RequestID
+,[RQNo] = Lack.ID
 ,[SP] = Lack.OrderID
 ,[Department] = Lack.Dept
 ,[RequestDate] = Lack.ApvDate
@@ -411,8 +411,7 @@ select
 ,[Scan] = lack.ScanTransferSlip
 ,[IssueLackID] = iL.Id
 ,[LackID] = Lack.ID
-,iL.Id
-,iL.MDivisionID
+,Lack.MDivisionID
 ,il.RequestID
 from Lack
 left join IssueLack iL on Lack.ID = iL.RequestID
@@ -428,7 +427,7 @@ outer apply(
 	select value = CONVERT(varchar,sum(minute)/1440) + ' '  -- day
 	            + SUBSTRING(CONVERT(VARCHAR, DATEADD(MINUTE, sum(minute), 0), 108),1,5)  -- minute: second
 	, ttlMinute = sum(minute)
-	from dbo.GetPreparingTime(Lack.PreparedStartDate,Lack.PreparedFinishDate,iL.MDivisionID)
+	from dbo.GetPreparingTime(Lack.PreparedStartDate,Lack.PreparedFinishDate,Lack.MDivisionID)
 )PreparingTime
 where 1=1
 ";
@@ -447,7 +446,7 @@ where 1=1
 
             if (!MyUtility.Check.Empty(this.txtRequestNo.Text))
             {
-                sqlcmd += $" and iL.RequestID = '{this.txtRequestNo.Text}'";
+                sqlcmd += $" and Lack.id = '{this.txtRequestNo.Text}'";
             }
 
             if (!MyUtility.Check.Empty(this.comboStatus.Text))
@@ -473,7 +472,7 @@ where 1=1
                 sqlcmd += $" and Lack.OrderID = '{this.txtSPNo.Text}'";
             }
 
-            sqlcmd += " order by il.Id,iL.FactoryID,iL.RequestID";
+            sqlcmd += " order by Lack.Id,Lack.FactoryID,iL.ID";
             #endregion
 
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out this.dtData);
