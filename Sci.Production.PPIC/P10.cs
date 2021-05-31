@@ -823,6 +823,7 @@ SELECT Stuff((select distinct concat( ',',ID)   from IssueLack where RequestID =
             if (!MyUtility.Check.Empty(this.CurrentMaintain["PreparedStartDate"]))
             {
                 MyUtility.Msg.WarningBox($"This order warehouse has already maintained Start Date in WH P53, please clean start date in WH P53 before unconfirm.");
+                return;
             }
 
             DialogResult confirmResult;
@@ -846,11 +847,6 @@ SELECT Stuff((select distinct concat( ',',ID)   from IssueLack where RequestID =
         protected override void ClickReceive()
         {
             base.ClickReceive();
-            if (MyUtility.Check.Empty(this.CurrentMaintain["IssueLackId"]))
-            {
-                MyUtility.Msg.WarningBox("< Issue No. > can't empty!");
-                return;
-            }
 
             DualResult result;
             string updateCmd = string.Format("update Lack set Status = 'Received', EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
