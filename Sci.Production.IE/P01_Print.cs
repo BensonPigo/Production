@@ -96,34 +96,168 @@ select Machine = stuff((
 ),1,2,'')";
             this.machineID = MyUtility.GetValue.Lookup(sqlCmd);
 
-            sqlCmd = string.Format(
+            string ietmsUKEY = MyUtility.GetValue.Lookup($@"select i.Ukey from IETMS i WITH (NOLOCK) where  i.ID = '{this.masterData["IETMSID"]}' and i.Version='{this.masterData["IETMSversion"]}'");
+            sqlCmd = $@"
+select 
+    seq = '0',
+	OperationID = '--CUTTING',	
+	MachineTypeID = null,
+	Mold = null,
+	Frequency = round(ProTMS, 4),
+	SMV = round(ProTMS, 4),	
+	PcsPerHour =IIF(ProTMS=0
+                    ,0
+                    ,round(3600/ProTMS, 1)
+                ),
+	Sewer=0,
+	Annotation = null,	
+	DescEN = null,
+	[MasterPlusGroup]='',
+    [Template] = ''
+from[IETMS_Summary]
+where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Cutting'
+and  ArtworkTypeID in ({this.artworktype})
+
+union all
+select 
+    seq = '0',
+	OperationID = 'PROCIPF00001',	
+	MachineTypeID = 'CUT',
+	Mold = null,
+	Frequency = round(ProTMS, 4),
+	SMV = round(ProTMS, 4),	
+	PcsPerHour =IIF(ProTMS=0
+                    ,0
+                    ,round(3600/ProTMS, 1)
+                ),
+	Sewer=0,
+	Annotation = 	null,
+	DescEN = '**Cutting',
+	[MasterPlusGroup]='',
+    [Template] = ''
+from[IETMS_Summary]
+where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Cutting'
+and  ArtworkTypeID in ({this.artworktype})
+
+union all
+";
+            sqlCmd += string.Format(
                 @"
 select
-	rn = ROW_NUMBER() over (order by td.Seq)
-	, td.Seq
+    td.Seq
     , td.OperationID
     , td.MachineTypeID
-    , o.MasterPlusGroup
     , td.Mold
-    , td.Template
-    , [DescEN] = case when '{2}' = 'cn' then isnull(od.DescCHS,o.DescEN)
-                   when '{2}' = 'vn' then isnull(od.DescVI,o.DescEN)
-                   when '{2}' = 'kh' then isnull(od.DescKH,o.DescEN)
-     else o.DescEN end
-    , td.Annotation
     , td.Frequency
     , td.SMV
     , td.PcsPerHour
     , td.Sewer
+    , td.Annotation
+    , [DescEN] = case when '{2}' = 'cn' then isnull(od.DescCHS,o.DescEN)
+                   when '{2}' = 'vn' then isnull(od.DescVI,o.DescEN)
+                   when '{2}' = 'kh' then isnull(od.DescKH,o.DescEN)
+     else o.DescEN end
+    , o.MasterPlusGroup
+    , td.Template
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join OperationDesc od on o.ID = od.ID
-where td.ID = {0}{1}
+left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
+where td.ID = {0}
+{1}
 ",
                 MyUtility.Convert.GetString(this.masterData["ID"]),
-                this.artworktype == "''" ? string.Empty : $" and exists (select 1 from MachineType m WITH (NOLOCK) where td.MachineTypeID = m.ID and m.ArtworkTypeID in ({this.artworktype}))",
+                this.artworktype == "''" ? string.Empty : $"and m.ArtworkTypeID in ({this.artworktype})",
                 this.strLanguage);
 
+            sqlCmd += $@"
+union all
+select 
+    seq = '9960',
+	OperationID = '--IPF',	
+	MachineTypeID = null,
+	Mold = null,
+	Frequency = sum(round(ProTMS, 4)),
+	SMV = sum(round(ProTMS, 4)),	
+	PcsPerHour = sum(
+	                IIF(ProTMS=0
+	                ,0
+	                ,round(3600/ProTMS, 1))	
+	            ),
+	Sewer=0,
+	Annotation = null,	
+	DescEN = null,
+	[MasterPlusGroup]='',
+    [Template] = ''
+from [IETMS_Summary]
+where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID <> 'Cutting'
+and  ArtworkTypeID in ({this.artworktype})
+
+
+union all
+select
+    seq = '9970',
+	OperationID = 'PROCIPF00002',	
+	MachineTypeID = 'M',
+	Mold = null,
+	Frequency = round(ProTMS, 4),
+	SMV = round(ProTMS, 4),	
+	PcsPerHour = IIF(ProTMS=0
+                    ,0
+                    ,round(3600/ProTMS, 1)
+                ),
+	Sewer=0,
+	Annotation = null,
+	DescEN = '**Inspection',
+	[MasterPlusGroup]='',
+    [Template] = ''
+from [IETMS_Summary]
+where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Inspection'
+and  ArtworkTypeID in ({this.artworktype})
+
+union all
+select 
+    seq = '9980',
+	OperationID = 'PROCIPF00004',	
+	MachineTypeID = 'MM2',
+	Mold = null,
+	Frequency = round(ProTMS, 4),
+	SMV = round(ProTMS, 4),	
+	PcsPerHour = IIF(ProTMS=0
+                    ,0
+                    ,round(3600/ProTMS, 1)
+                ),
+	Sewer=0,
+	Annotation = null,
+	DescEN = '**Pressing',
+	[MasterPlusGroup]='',
+    [Template] = ''
+from [IETMS_Summary]
+where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Pressing'
+and  ArtworkTypeID in ({this.artworktype})
+
+union all
+select 	
+    seq = '9990',
+	OperationID = 'PROCIPF00003',	
+	MachineTypeID = 'MM2',
+	Mold = null,
+	Frequency = round(ProTMS, 4),
+	SMV = round(ProTMS, 4),	
+	PcsPerHour = IIF(ProTMS=0
+                    ,0
+                    ,round(3600/ProTMS, 1)
+                ),
+	Sewer=0,
+	Annotation = null,
+	DescEN =  '**Packing',
+	[MasterPlusGroup]='',
+    [Template] = ''
+from [IETMS_Summary]
+where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Packing'
+and  ArtworkTypeID in ({this.artworktype})
+order by seq
+";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printData);
             if (!result)
             {
