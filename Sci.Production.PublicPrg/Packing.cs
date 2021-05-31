@@ -2426,6 +2426,23 @@ select BuyerDelivery = stuff((
                         worksheet.Cells[k, 2] = dT.Rows[j]["CTNStartNo"];
                         worksheet.Cells[k, 3] = dT.Rows[j]["SizeCode"];
                         worksheet.Cells[k, 4] = dT.Rows[j]["ShipQty"];
+
+                        if (MyUtility.Check.Empty(dT.Rows[j]["MDScanDate"]))
+                        {
+                            continue;
+                        }
+
+                        worksheet.Cells[k, 5] = dT.Rows[j]["Result"];
+                        if (dT.Rows[j]["Result"].ToString() == "Pass")
+                        {
+                            worksheet.Cells[k, 5].Interior.Color = System.Drawing.Color.FromArgb(0, 176, 80);
+                        }
+                        else
+                        {
+                            worksheet.Cells[k, 5].Interior.Color = System.Drawing.Color.FromArgb(192, 0, 0);
+                        }
+
+                        worksheet.Cells[k, 6] = dT.Rows[j]["Signature"];
                     }
 
                     page++;
@@ -2472,7 +2489,13 @@ select BuyerDelivery = stuff((
             for (int i = 0; i < custPONoDT.Rows.Count; i++)
             {
                 sqlCmd.Append($@"
-select CTNStartNo,a.SizeCode,b.ShipQty,o.CustPONo
+select  pd.CTNStartNo,
+        a.SizeCode,
+        b.ShipQty,
+        o.CustPONo,
+        [Result] = IIF(sum(isnull(pd.MDFailQty, 0)) = 0, 'Pass', 'Fail'),
+        [Signature] = Signature.Name,
+        pd.MDScanDate
 from PackingList_Detail pd
 left join orders o on o.id = pd.OrderID
 outer apply(
@@ -2493,8 +2516,11 @@ outer apply(
 	order by pd2.seq
 	for xml path('')),1,1,'')
 )b
+outer apply(
+    select Name from pass1 with (nolock) where ID = pd.MDScanName
+) Signature
 where pd.id = '{packingListID}' and o.CustPONo = '{custPONoDT.Rows[i]["CustPONo"]}'
-group by CTNStartNo,a.SizeCode,b.ShipQty,o.CustPONo
+group by CTNStartNo,a.SizeCode,b.ShipQty,o.CustPONo,Signature.Name,pd.MDScanDate
 order by min(pd.seq)
 ");
             }

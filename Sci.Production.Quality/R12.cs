@@ -24,6 +24,7 @@ namespace Sci.Production.Quality
         private string baseReceivingSql = @"
 select	f.POID,
 		[Seq] = CONCAT(f.SEQ1, ' ', f.SEQ2),
+        o.FactoryID,
 		a.ExportId,
 		f.ReceivingID,
 		o.StyleID,
@@ -67,6 +68,7 @@ where 1 = 1
         private string baseTransferInSql = @"
 select	f.POID,
 		[Seq] = CONCAT(f.SEQ1, ' ', f.SEQ2),
+        o.FactoryID,
 		[ExportId] = '',
 		f.ReceivingID,
 		o.StyleID,
@@ -113,6 +115,8 @@ select
 	st.IssueDate,
 	std.FromPOID,
 	FromSeq = CONCAT(std.FromSeq1, '-' + std.FromSeq2),
+    [FromFty] = o.FactoryID,
+    [ToFty] = ToOrder.FactoryID,
 	std.ToPOID,
 	ToSeq = CONCAT(std.ToSeq1, '-' + std.ToSeq2),
 	std.FromSeq1,
@@ -168,6 +172,7 @@ into #tmp{2}
 from SubTransfer st
 inner join SubTransfer_Detail std on std.id = st.id
 inner join Orders O on O.ID = std.FromPOID
+left  join Orders ToOrder on ToOrder.id = std.ToPOID
 inner join PO_Supp_Detail PSD on PSD.ID = std.FromPOID and PSD.SEQ1 = std.FromSeq1 and PSD.SEQ2 = std.FromSeq2
 inner join PO_Supp PS on PSD.ID = PS.ID and PSD.SEQ1 = PS.SEQ1
 inner join Supp S on PS.SuppID = S.ID
@@ -224,6 +229,7 @@ Where st.type = 'B' and st.Status = 'Confirmed' and PSD.FabricType = 'F'
 select
 	f.ToPOID,
 	f.ToSeq,
+    f.ToFty,
 	f.TransferID,
 	f.FromPOID,
 	f.FromSeq,
@@ -260,7 +266,7 @@ left join pass1 p1 with (nolock) on p1.id = f.{1}Inspector
 {2}
 where 1=1
 {8}
-group by f.ToPOID,f.ToSeq,f.TransferID,f.FromPOID,f.FromSeq,f.WK,f.ReceivingID,f.StyleID,f.BrandID,f.Suppid,
+group by f.ToPOID,f.ToSeq,f.FromFty,f.ToFty,f.TransferID,f.FromPOID,f.FromSeq,f.WK,f.ReceivingID,f.StyleID,f.BrandID,f.Suppid,
 	f.Refno,f.ColorID,f.IssueDate,f.WeaveTypeID,f.ctRoll,f.ctDyelot,f.Approve,f.ApproveDate,p1.Name,
 	f.Non{1},f.{1},f.{1}Inspector,f.{1}Date
 	{7}

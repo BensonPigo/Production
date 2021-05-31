@@ -21,6 +21,7 @@
     [ToSisterFty] BIT NOT NULL DEFAULT ((0)), 
     [ToFactory] VARCHAR(8) NULL, 
     [SewLine] VARCHAR(500) NULL, 
+	[ToPlace] VARCHAR(100) NULL, 
     CONSTRAINT [PK_Issue] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
