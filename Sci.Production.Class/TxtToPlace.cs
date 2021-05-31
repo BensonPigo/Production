@@ -30,7 +30,7 @@ namespace Sci.Production.Class
             string sql;
 
             sql = $"select [id] = '{this.DefaultText}' union all select distinct id from Production.dbo.SewingLine WITH (NOLOCK)";
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "100", string.Empty, true, ",")
+            Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sql, "ToPlace", "100", string.Empty, ",")
             {
                 Width = 300,
             };
