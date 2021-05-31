@@ -158,7 +158,8 @@ namespace Sci.Production.PPIC
 
         private void QueryData()
         {
-            string query_sql = $@"select 
+            string query_sql = $@"
+select 
 l.MDivisionID,
 l.FactoryID,
 l.ID,
@@ -171,8 +172,10 @@ l.SewingLineID,
 l.issueLackID,
 [Status] = case 
  when l.Status='Received' then 'Finished'
- when (il.status='Closed') or (il.Id is null and l.PreparedStartDate is not null and l.PreparedFinishDate is not null) then 'Ready'
- when (il.status='Confirmed') or (il.Id is null and l.PreparedStartDate is not null) then 'Preparing'
+ when il.status='Closed' then 'Ready'
+ when il.Status='Confirmed' then 'Preparing'
+ when l.IssueLackId = '' and l.PreparedStartDate is not null and l.PreparedFinishDate is not null then 'Ready'
+ when l.IssueLackId = '' and l.PreparedStartDate is not null then 'Preparing'
  when l.issueLackID='' then 'Waiting'
  end
 from Lack l WITH (NOLOCK)
