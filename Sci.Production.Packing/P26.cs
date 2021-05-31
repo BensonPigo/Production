@@ -1056,7 +1056,6 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                     {
                         byte[] pDFImage = null;
 
-                        /*
                         // 原套件
                         PdfDocument doc = new PdfDocument();
                         doc.LoadFromFile(barcodeObj.FullFileName);
@@ -1075,8 +1074,8 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                         doc.Dispose();
                         bmp.Dispose();
                         pic.Dispose();
-                        */
 
+                        /*
                         // 新套件
                         PDFDocument pdfDoc = new PDFDocument();
                         pdfDoc.LoadPDF(barcodeObj.FullFileName);
@@ -1103,6 +1102,7 @@ ORDER BY  a.PackingListID , b.SCICtnNo
 
                         pic.Dispose();
                         pdfDoc.Dispose();
+                        */
 
                         string cmd = this.InsertImageToDatabase_List(counter.ToString(), pDFImage, packID, sCICtnNo, rank.ToString());
                         filenames.Add(barcode);
