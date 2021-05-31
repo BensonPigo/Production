@@ -889,6 +889,16 @@ SELECT Stuff((select distinct concat( ',',ID)   from IssueLack where RequestID =
             {
                 this.btnAutoOutputQuery.Enabled = false;
             }
+        }
+
+        /// <inheritdoc/>
+        protected override void EnsureToolbarExt()
+        {
+            base.EnsureToolbarExt();
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
 
             if (string.Compare(this.CurrentMaintain["Status"].ToString(), "Confirmed", true) == 0)
             {
