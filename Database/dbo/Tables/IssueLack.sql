@@ -19,6 +19,7 @@
     [PrepareStartDate]  DATETIME      NULL,
     [PrepardFinishDate] DATETIME      NULL,
     [ScanTransferSlip]  BIT           DEFAULT ((0)) NOT NULL,
+	[ToPlace] VARCHAR(100) NULL, 
     CONSTRAINT [PK_IssueLack] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 

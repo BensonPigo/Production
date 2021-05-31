@@ -153,6 +153,7 @@ namespace Sci.Production.Warehouse
             this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["FabricType"] = "A";
+            this.CurrentMaintain["ToPlace"] = this.txtToPlace.DefaultText;
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
             this.txtLocalSupp1.TextBox1.ReadOnly = true;
         }
@@ -293,6 +294,10 @@ namespace Sci.Production.Warehouse
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            bool isAutomationEnable = Automation.UtilityAutomation.IsAutomationEnable;
+            this.txtToPlace.Visible = isAutomationEnable;
+            this.lblToPlace.Visible = isAutomationEnable;
+
             #region Status Label
 
             this.label25.Text = this.CurrentMaintain["status"].ToString();

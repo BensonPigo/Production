@@ -54,6 +54,8 @@
             this.displayBoxShift = new Sci.Win.UI.DisplayBox();
             this.txtLocalSupp1 = new Sci.Production.Class.TxtLocalSupp();
             this.btnCallP99 = new Sci.Win.UI.Button();
+            this.lblToPlace = new Sci.Win.UI.Label();
+            this.txtToPlace = new Sci.Production.Class.TxtToPlace();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -70,6 +72,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.lblToPlace);
+            this.masterpanel.Controls.Add(this.txtToPlace);
             this.masterpanel.Controls.Add(this.txtLocalSupp1);
             this.masterpanel.Controls.Add(this.displayBoxShift);
             this.masterpanel.Controls.Add(this.labelSubconName);
@@ -120,6 +124,8 @@
             this.masterpanel.Controls.SetChildIndex(this.labelSubconName, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBoxShift, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLocalSupp1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtToPlace, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lblToPlace, 0);
             // 
             // detailpanel
             // 
@@ -326,7 +332,7 @@
             this.editRemark.Location = new System.Drawing.Point(97, 78);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(658, 51);
+            this.editRemark.Size = new System.Drawing.Size(352, 51);
             this.editRemark.TabIndex = 3;
             // 
             // labelRequest
@@ -341,7 +347,7 @@
             // 
             this.btnAccumulatedQty.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnAccumulatedQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAccumulatedQty.Location = new System.Drawing.Point(800, 78);
+            this.btnAccumulatedQty.Location = new System.Drawing.Point(836, 78);
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
             this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
             this.btnAccumulatedQty.TabIndex = 5;
@@ -430,6 +436,7 @@
             this.txtLocalSupp1.DisplayBox1Binding = "";
             this.txtLocalSupp1.IsFactory = false;
             this.txtLocalSupp1.IsMisc = false;
+            this.txtLocalSupp1.IsMiscOverseas = false;
             this.txtLocalSupp1.Location = new System.Drawing.Point(765, 45);
             this.txtLocalSupp1.Name = "txtLocalSupp1";
             this.txtLocalSupp1.Size = new System.Drawing.Size(230, 23);
@@ -446,6 +453,24 @@
             this.btnCallP99.Text = "Link To P99";
             this.btnCallP99.UseVisualStyleBackColor = true;
             this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
+            // 
+            // lblToPlace
+            // 
+            this.lblToPlace.Location = new System.Drawing.Point(452, 78);
+            this.lblToPlace.Name = "lblToPlace";
+            this.lblToPlace.Size = new System.Drawing.Size(97, 23);
+            this.lblToPlace.TabIndex = 77;
+            this.lblToPlace.Text = "To Place";
+            // 
+            // txtToPlace
+            // 
+            this.txtToPlace.BackColor = System.Drawing.Color.White;
+            this.txtToPlace.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ToPlace", true));
+            this.txtToPlace.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtToPlace.Location = new System.Drawing.Point(552, 78);
+            this.txtToPlace.Name = "txtToPlace";
+            this.txtToPlace.Size = new System.Drawing.Size(132, 23);
+            this.txtToPlace.TabIndex = 76;
             // 
             // P15
             // 
@@ -521,5 +546,7 @@
         private Win.UI.DisplayBox displayBoxShift;
         private Class.TxtLocalSupp txtLocalSupp1;
         private Win.UI.Button btnCallP99;
+        private Win.UI.Label lblToPlace;
+        private Class.TxtToPlace txtToPlace;
     }
 }

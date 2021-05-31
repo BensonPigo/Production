@@ -99,6 +99,9 @@ namespace Sci.Production.Warehouse
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            bool isAutomationEnable = Automation.UtilityAutomation.IsAutomationEnable;
+            this.txtToPlace.Visible = isAutomationEnable;
+            this.lblToPlace.Visible = isAutomationEnable;
 
             // this.labelConfirmed.Visible = MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? false : true;
             this.labelConfirmed.Text = this.CurrentMaintain["status"].ToString();
@@ -1885,6 +1888,7 @@ GROUP BY Article
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "E";
             this.CurrentMaintain["issuedate"] = DateTime.Now;
+            this.CurrentMaintain["ToPlace"] = this.txtToPlace.DefaultText;
             this.CurrentMaintain["combo"] = 0;
             this.dtIssueBreakDown = null;
             this.gridIssueBreakDown.DataSource = null;
