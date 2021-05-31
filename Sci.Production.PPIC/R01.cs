@@ -1047,8 +1047,8 @@ drop table #tmpFinal_step1
                     this.printData.Columns.Remove("CustPONo");
                     if (this.type == "SP#")
                     {
-                        this.printData.Columns.Remove("PRINTING (PCS)");
-                        this.printData.Columns.Remove("PRINTING PPU (PPU)");
+                        this.printData.Columns.Remove("TTL_PRINTING (PCS)");
+                        this.printData.Columns.Remove("TTL_PRINTING PPU (PPU)");
                         this.printData.Columns.Remove("SubCon");
                     }
 
