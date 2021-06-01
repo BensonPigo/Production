@@ -2325,8 +2325,9 @@ Merge Production.dbo.TradeHis_Order as t
 Using (
 	select * 
 	from Trade_To_Pms.dbo.TradeHis_Order
-	where tableName = 'Orders' 
-		  and histype = 'OrdersBuyerDelivery'
+	where (tableName = 'Orders' 
+		  and histype = 'OrdersBuyerDelivery') or
+		  (TableName = 'Order_QtyShip' and HisType = 'Order_QtyShipFtyKPI' and ReasonTypeID = 'Order_BuyerDelivery')
 ) as s on t.Ukey = s.Ukey
 when matched then update set
 	t.[TableName] = s.[TableName]

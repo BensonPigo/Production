@@ -186,6 +186,12 @@
     <Compile Include="Txtartworktype_fty.Designer.cs">
       <DependentUpon>Txtartworktype_fty.cs</DependentUpon>
     </Compile>
+    <Compile Include="TxtToPlace.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TxtToPlace.Designer.cs">
+      <DependentUpon>TxtToPlace.cs</DependentUpon>
+    </Compile>
     <Compile Include="TxtmulitOperation.cs">
       <SubType>Component</SubType>
     </Compile>

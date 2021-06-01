@@ -481,10 +481,12 @@ select
 				when o.Category='S' then 'Sample'
 				when o.Category='' then 'Forecast'
 				end,
+	[SampleGroup] = SampleGroup.Name,
 	Cancelled=iif(o.Junk=1,'Y',''),
     tb.IsCancelNeedProduction,
 	[Buyback] = IIF(o.IsBuyBack = 1,'Y',''),
     toq.PartialShipment,
+	[FMSister] = IIF(o.SubconInType in (1, 2), 'Y', ''),
     toq.LastBuyerDelivery,
 	o.StyleID,
 	o.SeasonID,
@@ -511,7 +513,8 @@ select
     [PulloutComplete] = iif(o.PulloutComplete = 1, 'OK', ''),
     o.SewInLine,
     o.SewOffLine,
-    tb.TransFtyZone
+    tb.TransFtyZone,
+	[OrderReason] = OrderReason.ResName
 from @tmpBaseByOrderID tb 
 inner join Orders o with(nolock) on o.id = tb.ID
 left join @tmpOrder_QtyShip toq on toq.ID = tb.ID
@@ -519,6 +522,14 @@ left join @tmpPullout_Detail tpd on tpd.OrderID = tb.ID
 left join CDCode with(nolock) on CDCode.ID = o.CdCodeID
 outer apply (select [val] = iif(tb.IsCancelNeedProduction = 'N' and o.Junk = 1, 0, isnull(tb.OrderCPU, 0))) TotalCPU
 outer apply (select [val] =  TotalCPU.val - isnull(tb.SewingOutputCPU, 0) - isnull(tb.OrderShortageCPU, 0)) BalanceCPU
+outer apply (Select TOP 1 ResName=b.Name
+			from dbo.TradeHIS_Order a
+			left join dbo.Reason b on a.ReasonID = b.ID and b.ReasonTypeID = 'Order_BuyerDelivery'
+			where a.TableName = 'Order_QtyShip' and a.HisType = 'Order_QtyShipFtyKPI' and a.SourceID = o.ID
+			order by a.AddDate DESC) OrderReason
+outer apply (SELECT D.Name 
+			from DropDownList D 
+			where D.Type='ForecastSampleGroup' and D.ID= o.ForecastSampleGroup) SampleGroup
 
 if @IsPowerBI = 0
 begin

@@ -70,6 +70,7 @@ namespace Sci.Production.Warehouse
             this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "D";
+            this.CurrentMaintain["ToPlace"] = this.txtToPlace.DefaultText;
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
         }
 
@@ -391,6 +392,10 @@ order by id.POID,SEQ, id.Dyelot,id.Roll
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            bool isAutomationEnable = Automation.UtilityAutomation.IsAutomationEnable;
+            this.txtToPlace.Visible = isAutomationEnable;
+            this.lblToPlace.Visible = isAutomationEnable;
+
             this.txtwhseReason.DisplayBox1.Text = MyUtility.GetValue.Lookup("Description", this.txtwhseReason.Type.ToString() + this.txtwhseReason.TextBox1.Text.ToString(), "WhseReason", "Type+ID");
             #region Status Label
 

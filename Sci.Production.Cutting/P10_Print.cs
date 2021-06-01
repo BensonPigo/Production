@@ -723,6 +723,7 @@ FROM BUNDLE_DETAIL bd with(nolock)
 INNER JOIN BUNDLE B with(nolock) ON B.ID = bd.ID
 WHERE  B.POID ='{poid}' And B.FabricPanelCode='{fabricPanelCode}' And B.Article = '{article}' AND bd.SizeCode='{size}'
 and bd.PrintGroup is null";
+
             if (!MyUtility.Check.Seek(sqlcmd))
             {
                 sqlcmd = $@"
@@ -730,7 +731,7 @@ SELECT bd.id, bd.PrintGroup, DR = DENSE_RANK() over(order by  bd.id, bd.PrintGro
 into #tmp
 FROM BUNDLE_DETAIL bd with(nolock)
 INNER JOIN BUNDLE B with(nolock) ON B.ID = bd.ID
-WHERE  B.POID ='{poid}' And B.FabricPanelCode='{fabricPanelCode}' And B.Article = '{article}' AND bd.SizeCode='{size}'
+WHERE  B.POID ='{poid}' And B.FabricPanelCode='{fabricPanelCode}' AND bd.SizeCode='{size}'
 ORDER BY bd.id,bd.PrintGroup
 
 select
@@ -748,6 +749,8 @@ order by BundleNo
 drop table #tmp
 ";
             }
+
+            // 舊規(未有PrintGroup之前)
             else
             {
                 sqlcmd = $@"

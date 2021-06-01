@@ -61,6 +61,8 @@
             this.lbCustCD = new Sci.Win.UI.Label();
             this.displayCustCD = new Sci.Win.UI.DisplayBox();
             this.btnCallP99 = new Sci.Win.UI.Button();
+            this.txtToPlace = new Sci.Production.Class.TxtToPlace();
+            this.lblToPlace = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -80,6 +82,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.lblToPlace);
+            this.masterpanel.Controls.Add(this.txtToPlace);
             this.masterpanel.Controls.Add(this.displayCustCD);
             this.masterpanel.Controls.Add(this.lbCustCD);
             this.masterpanel.Controls.Add(this.checkByCombo);
@@ -138,6 +142,8 @@
             this.masterpanel.Controls.SetChildIndex(this.checkByCombo, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbCustCD, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayCustCD, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtToPlace, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lblToPlace, 0);
             // 
             // detailpanel
             // 
@@ -147,7 +153,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.gridicon.Location = new System.Drawing.Point(2731, 128);
+            this.gridicon.Location = new System.Drawing.Point(2944, 128);
             // 
             // refresh
             // 
@@ -338,9 +344,9 @@
             // 
             this.btnAutoPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAutoPick.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnAutoPick.Location = new System.Drawing.Point(947, 31);
+            this.btnAutoPick.Location = new System.Drawing.Point(912, 31);
             this.btnAutoPick.Name = "btnAutoPick";
-            this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
+            this.btnAutoPick.Size = new System.Drawing.Size(119, 30);
             this.btnAutoPick.TabIndex = 5;
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
@@ -363,7 +369,7 @@
             this.btnBreakDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBreakDown.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnBreakDown.Enabled = false;
-            this.btnBreakDown.Location = new System.Drawing.Point(912, 63);
+            this.btnBreakDown.Location = new System.Drawing.Point(911, 63);
             this.btnBreakDown.Name = "btnBreakDown";
             this.btnBreakDown.Size = new System.Drawing.Size(120, 30);
             this.btnBreakDown.TabIndex = 6;
@@ -414,9 +420,9 @@
             // 
             this.btnBOA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBOA.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnBOA.Location = new System.Drawing.Point(947, 95);
+            this.btnBOA.Location = new System.Drawing.Point(912, 95);
             this.btnBOA.Name = "btnBOA";
-            this.btnBOA.Size = new System.Drawing.Size(80, 30);
+            this.btnBOA.Size = new System.Drawing.Size(119, 30);
             this.btnBOA.TabIndex = 7;
             this.btnBOA.Text = "BOA";
             this.btnBOA.UseVisualStyleBackColor = true;
@@ -426,9 +432,9 @@
             // 
             this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClear.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnClear.Location = new System.Drawing.Point(826, 128);
+            this.btnClear.Location = new System.Drawing.Point(915, 129);
             this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(103, 30);
+            this.btnClear.Size = new System.Drawing.Size(116, 30);
             this.btnClear.TabIndex = 8;
             this.btnClear.Text = "Clear Qty=0";
             this.btnClear.UseVisualStyleBackColor = true;
@@ -522,6 +528,24 @@
             this.btnCallP99.UseVisualStyleBackColor = true;
             this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
             // 
+            // txtToPlace
+            // 
+            this.txtToPlace.BackColor = System.Drawing.Color.White;
+            this.txtToPlace.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ToPlace", true));
+            this.txtToPlace.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtToPlace.Location = new System.Drawing.Point(760, 132);
+            this.txtToPlace.Name = "txtToPlace";
+            this.txtToPlace.Size = new System.Drawing.Size(150, 23);
+            this.txtToPlace.TabIndex = 55;
+            // 
+            // lblToPlace
+            // 
+            this.lblToPlace.Location = new System.Drawing.Point(682, 132);
+            this.lblToPlace.Name = "lblToPlace";
+            this.lblToPlace.Size = new System.Drawing.Size(75, 23);
+            this.lblToPlace.TabIndex = 56;
+            this.lblToPlace.Text = "To Place";
+            // 
             // P11
             // 
             this.ApvChkValue = "New";
@@ -601,5 +625,7 @@
         private Win.UI.DisplayBox displayCustCD;
         private Win.UI.Label lbCustCD;
         private Win.UI.Button btnCallP99;
+        private Class.TxtToPlace txtToPlace;
+        private Win.UI.Label lblToPlace;
     }
 }
