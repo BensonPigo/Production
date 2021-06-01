@@ -203,6 +203,32 @@ BEGIN
 END
 SET @ErrorMessage = ''
 
+
+--06) Import_QA_R06
+BEGIN TRY
+	set @StartDate = '2020/01/01'
+	set @EndDate = (SELECT dateadd(day ,-1, dateadd(m, datediff(m,0,getdate())+1,0))  )
+	execute [dbo].[P_Import_QA_R06] @StartDate,@EndDate
+END TRY
+BEGIN CATCH
+	SET @ErrorMessage =
+	'
+	[6-Import_QA_R06]' + CHAR(13) +
+	',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
+	',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
+	',錯誤訊息: ' + ERROR_MESSAGE()
+	SET @ErrorStatus = 0
+END CATCH;
+IF (@ErrorMessage IS NULL or @ErrorMessage='')
+BEGIN 
+	set @desc += CHAR(13) +'
+[6-Import_QA_R06] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+END
+BEGIN
+	set @desc +=  CHAR(13) +@ErrorMessage
+END
+SET @ErrorMessage = ''
+
 DECLARE @comboDesc nvarchar(4000);
 
 	set @comboDesc = '
