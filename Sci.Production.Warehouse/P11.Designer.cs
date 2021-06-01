@@ -112,7 +112,7 @@
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(1035, 164);
+            this.masterpanel.Size = new System.Drawing.Size(1035, 183);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -147,13 +147,13 @@
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 164);
-            this.detailpanel.Size = new System.Drawing.Size(1035, 192);
+            this.detailpanel.Location = new System.Drawing.Point(0, 183);
+            this.detailpanel.Size = new System.Drawing.Size(1035, 226);
             // 
             // gridicon
             // 
-            this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.gridicon.Location = new System.Drawing.Point(2944, 128);
+            this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridicon.Location = new System.Drawing.Point(1096, 128);
             // 
             // refresh
             // 
@@ -163,21 +163,21 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1035, 192);
+            this.detailgridcont.Size = new System.Drawing.Size(1035, 226);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1035, 530);
+            this.detail.Size = new System.Drawing.Size(1035, 583);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1035, 356);
+            this.detailcont.Size = new System.Drawing.Size(1035, 409);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnCallP99);
             this.detailbtm.Controls.Add(this.gridIssueBreakDown);
-            this.detailbtm.Location = new System.Drawing.Point(0, 356);
+            this.detailbtm.Location = new System.Drawing.Point(0, 409);
             this.detailbtm.Size = new System.Drawing.Size(1035, 174);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
@@ -189,11 +189,11 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1035, 530);
+            this.browse.Size = new System.Drawing.Size(1035, 583);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1043, 559);
+            this.tabs.Size = new System.Drawing.Size(1043, 612);
             // 
             // createby
             // 
@@ -233,7 +233,7 @@
             // 
             // labelRequest
             // 
-            this.labelRequest.Location = new System.Drawing.Point(9, 40);
+            this.labelRequest.Location = new System.Drawing.Point(9, 38);
             this.labelRequest.Name = "labelRequest";
             this.labelRequest.Size = new System.Drawing.Size(75, 23);
             this.labelRequest.TabIndex = 3;
@@ -244,7 +244,7 @@
             this.txtRequest.BackColor = System.Drawing.Color.White;
             this.txtRequest.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "cutplanID", true));
             this.txtRequest.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRequest.Location = new System.Drawing.Point(87, 40);
+            this.txtRequest.Location = new System.Drawing.Point(87, 38);
             this.txtRequest.Name = "txtRequest";
             this.txtRequest.Size = new System.Drawing.Size(107, 23);
             this.txtRequest.TabIndex = 1;
@@ -270,14 +270,14 @@
             // 
             this.displayLineNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayLineNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayLineNo.Location = new System.Drawing.Point(87, 102);
+            this.displayLineNo.Location = new System.Drawing.Point(87, 96);
             this.displayLineNo.Name = "displayLineNo";
             this.displayLineNo.Size = new System.Drawing.Size(211, 23);
             this.displayLineNo.TabIndex = 8;
             // 
             // labelLineNo
             // 
-            this.labelLineNo.Location = new System.Drawing.Point(9, 102);
+            this.labelLineNo.Location = new System.Drawing.Point(9, 96);
             this.labelLineNo.Name = "labelLineNo";
             this.labelLineNo.Size = new System.Drawing.Size(75, 23);
             this.labelLineNo.TabIndex = 7;
@@ -287,14 +287,14 @@
             // 
             this.displayCutCell.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCutCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCutCell.Location = new System.Drawing.Point(380, 102);
+            this.displayCutCell.Location = new System.Drawing.Point(379, 95);
             this.displayCutCell.Name = "displayCutCell";
             this.displayCutCell.Size = new System.Drawing.Size(100, 23);
             this.displayCutCell.TabIndex = 10;
             // 
             // labelCutCell
             // 
-            this.labelCutCell.Location = new System.Drawing.Point(302, 102);
+            this.labelCutCell.Location = new System.Drawing.Point(301, 95);
             this.labelCutCell.Name = "labelCutCell";
             this.labelCutCell.Size = new System.Drawing.Size(75, 23);
             this.labelCutCell.TabIndex = 9;
@@ -305,14 +305,14 @@
             this.txtRemark.BackColor = System.Drawing.Color.White;
             this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRemark.Location = new System.Drawing.Point(87, 133);
+            this.txtRemark.Location = new System.Drawing.Point(87, 125);
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.Size = new System.Drawing.Size(340, 23);
             this.txtRemark.TabIndex = 4;
             // 
             // labelRemark
             // 
-            this.labelRemark.Location = new System.Drawing.Point(9, 133);
+            this.labelRemark.Location = new System.Drawing.Point(9, 125);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(75, 23);
             this.labelRemark.TabIndex = 11;
@@ -344,9 +344,9 @@
             // 
             this.btnAutoPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAutoPick.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnAutoPick.Location = new System.Drawing.Point(912, 31);
+            this.btnAutoPick.Location = new System.Drawing.Point(914, 31);
             this.btnAutoPick.Name = "btnAutoPick";
-            this.btnAutoPick.Size = new System.Drawing.Size(119, 30);
+            this.btnAutoPick.Size = new System.Drawing.Size(116, 30);
             this.btnAutoPick.TabIndex = 5;
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
@@ -369,9 +369,9 @@
             this.btnBreakDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBreakDown.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnBreakDown.Enabled = false;
-            this.btnBreakDown.Location = new System.Drawing.Point(911, 63);
+            this.btnBreakDown.Location = new System.Drawing.Point(914, 63);
             this.btnBreakDown.Name = "btnBreakDown";
-            this.btnBreakDown.Size = new System.Drawing.Size(120, 30);
+            this.btnBreakDown.Size = new System.Drawing.Size(116, 30);
             this.btnBreakDown.TabIndex = 6;
             this.btnBreakDown.Text = "Issue B\'down";
             this.btnBreakDown.UseVisualStyleBackColor = true;
@@ -384,7 +384,7 @@
             this.editArticle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editArticle.IsSupportEditMode = false;
-            this.editArticle.Location = new System.Drawing.Point(519, 70);
+            this.editArticle.Location = new System.Drawing.Point(519, 66);
             this.editArticle.Multiline = true;
             this.editArticle.Name = "editArticle";
             this.editArticle.ReadOnly = true;
@@ -393,7 +393,7 @@
             // 
             // labelArticle
             // 
-            this.labelArticle.Location = new System.Drawing.Point(441, 71);
+            this.labelArticle.Location = new System.Drawing.Point(441, 67);
             this.labelArticle.Name = "labelArticle";
             this.labelArticle.Size = new System.Drawing.Size(75, 23);
             this.labelArticle.TabIndex = 46;
@@ -403,14 +403,14 @@
             // 
             this.displayPOID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayPOID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayPOID.Location = new System.Drawing.Point(302, 71);
+            this.displayPOID.Location = new System.Drawing.Point(301, 67);
             this.displayPOID.Name = "displayPOID";
             this.displayPOID.Size = new System.Drawing.Size(107, 23);
             this.displayPOID.TabIndex = 49;
             // 
             // labelPOID
             // 
-            this.labelPOID.Location = new System.Drawing.Point(224, 71);
+            this.labelPOID.Location = new System.Drawing.Point(223, 67);
             this.labelPOID.Name = "labelPOID";
             this.labelPOID.Size = new System.Drawing.Size(75, 23);
             this.labelPOID.TabIndex = 48;
@@ -420,9 +420,9 @@
             // 
             this.btnBOA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBOA.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnBOA.Location = new System.Drawing.Point(912, 95);
+            this.btnBOA.Location = new System.Drawing.Point(914, 95);
             this.btnBOA.Name = "btnBOA";
-            this.btnBOA.Size = new System.Drawing.Size(119, 30);
+            this.btnBOA.Size = new System.Drawing.Size(116, 30);
             this.btnBOA.TabIndex = 7;
             this.btnBOA.Text = "BOA";
             this.btnBOA.UseVisualStyleBackColor = true;
@@ -432,7 +432,7 @@
             // 
             this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClear.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnClear.Location = new System.Drawing.Point(915, 129);
+            this.btnClear.Location = new System.Drawing.Point(914, 128);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(116, 30);
             this.btnClear.TabIndex = 8;
@@ -445,7 +445,7 @@
             this.txtOrderID.BackColor = System.Drawing.Color.White;
             this.txtOrderID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderId", true));
             this.txtOrderID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtOrderID.Location = new System.Drawing.Point(87, 71);
+            this.txtOrderID.Location = new System.Drawing.Point(87, 67);
             this.txtOrderID.Name = "txtOrderID";
             this.txtOrderID.Size = new System.Drawing.Size(107, 23);
             this.txtOrderID.TabIndex = 3;
@@ -454,7 +454,7 @@
             // 
             // labelOrderID
             // 
-            this.labelOrderID.Location = new System.Drawing.Point(9, 70);
+            this.labelOrderID.Location = new System.Drawing.Point(9, 67);
             this.labelOrderID.Name = "labelOrderID";
             this.labelOrderID.Size = new System.Drawing.Size(75, 23);
             this.labelOrderID.TabIndex = 52;
@@ -502,7 +502,7 @@
             // 
             // lbCustCD
             // 
-            this.lbCustCD.Location = new System.Drawing.Point(441, 133);
+            this.lbCustCD.Location = new System.Drawing.Point(441, 125);
             this.lbCustCD.Name = "lbCustCD";
             this.lbCustCD.Size = new System.Drawing.Size(75, 23);
             this.lbCustCD.TabIndex = 53;
@@ -512,7 +512,7 @@
             // 
             this.displayCustCD.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCustCD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCustCD.Location = new System.Drawing.Point(519, 132);
+            this.displayCustCD.Location = new System.Drawing.Point(519, 124);
             this.displayCustCD.Name = "displayCustCD";
             this.displayCustCD.Size = new System.Drawing.Size(151, 23);
             this.displayCustCD.TabIndex = 54;
@@ -533,14 +533,14 @@
             this.txtToPlace.BackColor = System.Drawing.Color.White;
             this.txtToPlace.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ToPlace", true));
             this.txtToPlace.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtToPlace.Location = new System.Drawing.Point(760, 132);
+            this.txtToPlace.Location = new System.Drawing.Point(87, 154);
             this.txtToPlace.Name = "txtToPlace";
             this.txtToPlace.Size = new System.Drawing.Size(150, 23);
             this.txtToPlace.TabIndex = 55;
             // 
             // lblToPlace
             // 
-            this.lblToPlace.Location = new System.Drawing.Point(682, 132);
+            this.lblToPlace.Location = new System.Drawing.Point(9, 154);
             this.lblToPlace.Name = "lblToPlace";
             this.lblToPlace.Size = new System.Drawing.Size(75, 23);
             this.lblToPlace.TabIndex = 56;
@@ -549,7 +549,7 @@
             // P11
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1043, 592);
+            this.ClientSize = new System.Drawing.Size(1043, 645);
             this.DefaultControl = "txtRequest";
             this.DefaultControlForEdit = "checkByCombo";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
