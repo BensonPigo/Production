@@ -126,6 +126,8 @@
     <Build Include="dbo\Functions\SplitString.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportLoadingProductionOutput_FTY.sql" />
     <Build Include="dbo\Tables\P_EstShippingReport.sql" />
+    <Build Include="dbo\Tables\P_QA_P09.sql" />
+    <Build Include="dbo\Stored Procedures\P_Import_QA_P09.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
