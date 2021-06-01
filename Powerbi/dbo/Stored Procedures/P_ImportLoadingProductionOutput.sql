@@ -37,7 +37,49 @@ select * into #Final
 from (
 
 	-- 非外代工
-	select t.* 
+	select
+		T.[MDivisionID] ,
+		T.[FtyZone],
+		T.[FactoryID],
+		T.BuyerDelivery,
+		T.SciDelivery,
+		T.SCIKey,
+		T.SCIKeyHalf,
+		T.BuyerKey,
+		T.BuyerKeyHalf,
+		T.[ID],
+		T.Category ,
+		T.Cancelled,
+		T.IsCancelNeedProduction,
+		T.[Buyback],
+		T.PartialShipment,
+		T.LastBuyerDelivery,
+		T.StyleID,
+		T.SeasonID,
+		T.CustPONO,
+		T.BrandID,
+		T.CPU,
+		T.Qty,
+		T.FOCQty,
+		T.PulloutQty,
+		T.OrderShortageCPU,
+		T.[TotalCPU],
+		T.[SewingOutput],
+		T.[SewingOutputCPU],
+		T.[BalanceQty],
+		T.[BalanceCPU],
+		T.[BalanceCPUIrregular],
+		T.SewLine,
+		T.Dest,
+		T.OrderTypeID,
+		T.ProgramID,
+		T.CdCodeID,
+		T.ProductionFamilyID,
+		T.FtyGroup,
+		T.[PulloutComplete],
+		T.SewInLine,
+		T.SewOffLine,
+		T.TransFtyZone
 		,[CDCodeNew] = sty.CDCodeNew
 		,[ProductType] = sty.ProductType
 		,[FabricType] = sty.FabricType
