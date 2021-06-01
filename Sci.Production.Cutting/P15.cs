@@ -1015,7 +1015,7 @@ and o.mDivisionid = '{this.keyWord}'
 {distru_where}
 order by article.article,wd.sizecode,wd.orderid,w.FabricPanelCode
 
-select bdo.qty,wd.id,bdo.BundleNo,bd.PatternCode,bd.BundleGroup,wd.CutRef,wd.Article,wd.Sizecode,bdo.OrderID
+select bdo.qty,wd.id,bdo.BundleNo,bd.PatternCode,bd.BundleGroup,wd.CutRef,wd.Article,wd.Sizecode,bdo.OrderID,bd.IsPair
 into #tmpx
 from Bundle wd with(nolock)
 inner join Bundle_Detail bd with(nolock) on bd.Id = wd.ID
@@ -1032,10 +1032,10 @@ from (
 	from (
 		select id,BundleGroup,CutRef,Article,Sizecode,OrderID, Qty = min(x.Qty)
 		from(
-			select t.ID,t.PatternCode,t.BundleGroup,CutRef,Article,Sizecode,OrderID, Qty = sum(t.Qty)
+			select t.ID,t.PatternCode,t.BundleGroup,CutRef,Article,Sizecode,OrderID, Qty = iif(t.ispair=1, sum(t.Qty) / 2,sum(t.Qty))
 			from #tmpx t
 			where not exists(select 1 from #tmpx where PatternCode = 'ALLPARTS' and id = t.id)
-			group by t.ID,t.PatternCode,t.BundleGroup,CutRef,Article,Sizecode,OrderID
+			group by t.ID,t.PatternCode,t.BundleGroup,CutRef,Article,Sizecode,OrderID,t.ispair
 		)x
 		group by id,BundleGroup,CutRef,Article,Sizecode,OrderID
 	)x
