@@ -19,9 +19,11 @@
     [PrepareStartDate]  DATETIME      NULL,
     [PrepardFinishDate] DATETIME      NULL,
     [ScanTransferSlip]  BIT           DEFAULT ((0)) NOT NULL,
-	[ToPlace] VARCHAR(100) NULL, 
+    [ToPlace]     VARCHAR (100) NULL,
     CONSTRAINT [PK_IssueLack] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 
@@ -95,21 +97,21 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否已經掃描 Transfer Slip (主要用在後續工廠 Audit)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'IssueLack', @level2type = N'COLUMN', @level2name = N'ScanTransferSlip';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'開始備料時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'IssueLack', @level2type = N'COLUMN', @level2name = N'PrepareStartDate';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'倉庫備料人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'IssueLack', @level2type = N'COLUMN', @level2name = N'PrepardWorker';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'取料儲位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'IssueLack', @level2type = N'COLUMN', @level2name = N'PrepardLocation';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'備料完成時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'IssueLack', @level2type = N'COLUMN', @level2name = N'PrepardFinishDate';
+
+
+
+GO
+
+
+
+GO
+
 

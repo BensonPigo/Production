@@ -811,9 +811,18 @@ WHERE l.ID='{this.CurrentMaintain["ID"]}'
 SELECT Stuff((select distinct concat( ',',ID)   from IssueLack where RequestID = '{this.CurrentMaintain["ID"]}' FOR XML PATH('')),1,1,'') 
 ";
             string relatedIssueLackID = MyUtility.GetValue.Lookup(sqlCheckIssueLack);
+
+            // IssueLackID 有值就不能UnConfirmed
             if (!MyUtility.Check.Empty(relatedIssueLackID))
             {
                 MyUtility.Msg.WarningBox($"This order has related issue# {relatedIssueLackID} , please delete it in Warehouse/P16 before unconfirm .");
+                return;
+            }
+
+            // PreparedStartDate 有值就不能UnConfirmed
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["PreparedStartDate"]))
+            {
+                MyUtility.Msg.WarningBox($"This order warehouse has already maintained Start Date in WH P53, please clean start date in WH P53 before unconfirm.");
                 return;
             }
 
@@ -838,11 +847,6 @@ SELECT Stuff((select distinct concat( ',',ID)   from IssueLack where RequestID =
         protected override void ClickReceive()
         {
             base.ClickReceive();
-            if (MyUtility.Check.Empty(this.CurrentMaintain["IssueLackId"]))
-            {
-                MyUtility.Msg.WarningBox("< Issue No. > can't empty!");
-                return;
-            }
 
             DualResult result;
             string updateCmd = string.Format("update Lack set Status = 'Received', EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
@@ -884,6 +888,39 @@ SELECT Stuff((select distinct concat( ',',ID)   from IssueLack where RequestID =
             else
             {
                 this.btnAutoOutputQuery.Enabled = false;
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void EnsureToolbarExt()
+        {
+            base.EnsureToolbarExt();
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
+            if (string.Compare(this.CurrentMaintain["Status"].ToString(), "Confirmed", true) == 0)
+            {
+                string issueLackStatus = MyUtility.GetValue.Lookup($"select Status from IssueLack where RequestID = '{this.CurrentMaintain["ID"].ToString()}'");
+
+                // Lack.PreparedStartDate 與 Lack.PreparedFinishDate 皆有值才能Receive
+                if (!MyUtility.Check.Empty(this.CurrentMaintain["PreparedStartDate"]) && !MyUtility.Check.Empty(this.CurrentMaintain["PreparedFinishDate"]) && !this.EditMode)
+                {
+                    this.toolbar.cmdReceive.Enabled = true;
+                }
+                else if (issueLackStatus.EqualString("Confirmed") && !this.EditMode)
+                {
+                    this.toolbar.cmdReceive.Enabled = true;
+                }
+                else
+                {
+                    this.toolbar.cmdReceive.Enabled = false;
+                }
+            }
+            else
+            {
+                this.toolbar.cmdReceive.Enabled = false;
             }
         }
 
