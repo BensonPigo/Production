@@ -6677,6 +6677,7 @@ WHERE FTI.StockType='O'
             this.di_Reason.Add("Short delivery against packing list", "Short delivery against packing list");
             this.di_Reason.Add("Excess delivery against packing list", "Excess delivery against packing list");
             this.di_Reason.Add("INSPECTION LENGTH OF DIFFERENT(SHORTAGE)", "INSPECTION LENGTH OF DIFFERENT(SHORTAGE)");
+            this.di_Reason.Add("Update wrong receiving arrival quantity", "Update wrong receiving arrival quantity");
             this.di_Reason.Add("No need for WMS", "No need for WMS");
             this.comboReason.DataSource = new BindingSource(this.di_Reason.Values, null);
 
