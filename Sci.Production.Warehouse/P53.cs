@@ -430,7 +430,7 @@ outer apply(
 	from dbo.GetPreparingTime(Lack.PreparedStartDate,Lack.PreparedFinishDate,Lack.MDivisionID)
 )PreparingTime
 where 1=1
-and lack.Status in ('Confirmed','Received')
+and lack.Status in ('Confirmed','Received') and lack.FabricType  = 'F'
 ";
             #endregion
 
