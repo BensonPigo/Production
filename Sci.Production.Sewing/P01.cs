@@ -3051,10 +3051,12 @@ DEALLOCATE Sewingoutput_cursor --將cursor物件從記憶體移除
 
             string sqlSewingOutput_DailyLock = $@"
 update SewingOutput_DailyLock
-set LockDate = ''
-where FactoryID = ''
+set LockDate = '{datelock}',
+    LastLockName = '{Sci.Env.User.UserID}',
+    LastLockDate = GETDATE()
+where FactoryID = '{Env.User.Factory}'
 
-if not exists(select 1 from SewingOutput_DailyLock where FactoryID = '')
+if not exists(select 1 from SewingOutput_DailyLock where FactoryID = '{Env.User.Factory}')
 begin
 INSERT INTO [dbo].[SewingOutput_DailyLock]
            ([FactoryID]
