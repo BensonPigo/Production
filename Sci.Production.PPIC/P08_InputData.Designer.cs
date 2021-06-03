@@ -1047,6 +1047,7 @@
             this.txtFactorySuggesteSolutionAsideFromReplacement.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Suggested", true));
             this.txtFactorySuggesteSolutionAsideFromReplacement.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtFactorySuggesteSolutionAsideFromReplacement.Location = new System.Drawing.Point(350, 594);
+            this.txtFactorySuggesteSolutionAsideFromReplacement.MaxLength = 100;
             this.txtFactorySuggesteSolutionAsideFromReplacement.Name = "txtFactorySuggesteSolutionAsideFromReplacement";
             this.txtFactorySuggesteSolutionAsideFromReplacement.Size = new System.Drawing.Size(384, 23);
             this.txtFactorySuggesteSolutionAsideFromReplacement.TabIndex = 24;
@@ -1096,6 +1097,7 @@
             this.txtAWBofDamageSample.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AWBNo", true));
             this.txtAWBofDamageSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtAWBofDamageSample.Location = new System.Drawing.Point(557, 513);
+            this.txtAWBofDamageSample.MaxLength = 30;
             this.txtAWBofDamageSample.Name = "txtAWBofDamageSample";
             this.txtAWBofDamageSample.Size = new System.Drawing.Size(280, 23);
             this.txtAWBofDamageSample.TabIndex = 19;
@@ -1138,6 +1140,7 @@
             this.txtDefectReason.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ResponsibilityReason", true));
             this.txtDefectReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtDefectReason.Location = new System.Drawing.Point(485, 567);
+            this.txtDefectReason.MaxLength = 100;
             this.txtDefectReason.Name = "txtDefectReason";
             this.txtDefectReason.Size = new System.Drawing.Size(425, 23);
             this.txtDefectReason.TabIndex = 23;
@@ -1162,6 +1165,7 @@
             this.txtNoOfRollsOver50.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BGradeDefect", true));
             this.txtNoOfRollsOver50.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtNoOfRollsOver50.Location = new System.Drawing.Point(321, 261);
+            this.txtNoOfRollsOver50.MaxLength = 20;
             this.txtNoOfRollsOver50.Name = "txtNoOfRollsOver50";
             this.txtNoOfRollsOver50.Size = new System.Drawing.Size(170, 23);
             this.txtNoOfRollsOver50.TabIndex = 9;
@@ -1172,6 +1176,7 @@
             this.txtWidthNoOfRollsWith.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NarrowWidth", true));
             this.txtWidthNoOfRollsWith.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtWidthNoOfRollsWith.Location = new System.Drawing.Point(499, 261);
+            this.txtWidthNoOfRollsWith.MaxLength = 20;
             this.txtWidthNoOfRollsWith.Name = "txtWidthNoOfRollsWith";
             this.txtWidthNoOfRollsWith.Size = new System.Drawing.Size(170, 23);
             this.txtWidthNoOfRollsWith.TabIndex = 10;
