@@ -1,7 +1,7 @@
 ﻿
 
 CREATE PROCEDURE [dbo].[imp_BundleTransfer]
-@RFIDServerName varchar(50)='', @RFIDDatabaseName varchar(20)='', @RFIDloginId varchar(20)='', @RFIDLoginPwd varchar(20)='', @RFIDTable varchar(20)=''
+@RFIDServerName nvarchar(50)='', @RFIDDatabaseName nvarchar(20)='', @RFIDloginId nvarchar(20)='', @RFIDLoginPwd nvarchar(20)='', @RFIDTable nvarchar(20)=''
 AS
 BEGIN
 --若外部沒傳參數進來,則用system上的欄位資訊
@@ -28,10 +28,10 @@ BEGIN
 	END
 
 	--取得建立ARK server位置
-	Declare @ARKServerName varchar(20)
-	Declare @ARKDatabaseName varchar(20)
-	Declare @ARKLoginId varchar(20)
-	Declare @ARKLoginPwd varchar(20)
+	Declare @ARKServerName nvarchar(20)
+	Declare @ARKDatabaseName nvarchar(20)
+	Declare @ARKLoginId nvarchar(20)
+	Declare @ARKLoginPwd nvarchar(20)
 
 	select  @ARKServerName = ARKServerName,
 			@ARKDatabaseName = ARKDatabaseName,
@@ -49,12 +49,12 @@ BEGIN
 
 
 	--Datas處理
-	declare @Cmd1 varchar(max)
-	declare @CmdARK varchar(max)
-	declare @CmdARK2 varchar(max)
-	declare @Cmd2 varchar(max)
-	declare @Cmd3 varchar(max)
-	declare @RaisError varchar(max)
+	declare @Cmd1 nvarchar(max)
+	declare @CmdARK nvarchar(max)
+	declare @CmdARK2 nvarchar(max)
+	declare @Cmd2 nvarchar(max)
+	declare @Cmd3 nvarchar(max)
+	declare @RaisError nvarchar(max)
 	set xact_abort on;
 	Set @Cmd1 = N'
 	Begin Try
@@ -92,7 +92,7 @@ BEGIN
 			) disBundle
 			outer apply (
 				select top 1
-						BundleNo = cast(tmp.EpcId as varchar(10))
+						BundleNo = cast(tmp.EpcId as nvarchar(10))
 						, SubProcessId = RRS.processId
 						, TransDate = tmp.TransDate
 						, AddDate = GetDate()
@@ -249,7 +249,7 @@ BEGIN
 			--add update BundleInOut			
 			-- RFIDReader.Type=1
 		set @Cmd2 =	N' 
-			Declare @BundleNoTB Table(Change VARCHAR(20),BundleNo varchar(10)) -- 紀錄寫入/更新的BundleNo
+			Declare @BundleNoTB Table(Change nvarchar(20),BundleNo nvarchar(10)) -- 紀錄寫入/更新的BundleNo
 
 			Merge Production.dbo.BundleInOut as t
 			Using (
