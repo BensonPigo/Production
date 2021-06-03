@@ -53,7 +53,50 @@ select * into #Final
 from (
 
 	-- 非外代工
-	select * from #tmp 
+	select
+		t.[MDivisionID],
+		t.[FtyZone],
+		t.[FactoryID],
+		T.BuyerDelivery,
+		T.SciDelivery,
+		T.SCIKey,
+		T.SCIKeyHalf,
+		T.BuyerKey,
+		T.BuyerKeyHalf,
+		t.[ID],
+		T.Category ,
+		T.Cancelled,
+		T.IsCancelNeedProduction,
+		t.[Buyback],
+		T.PartialShipment,
+		T.LastBuyerDelivery,
+		T.StyleID,
+		T.SeasonID,
+		T.CustPONO,
+		T.BrandID,
+		T.CPU,
+		T.Qty,
+		T.FOCQty,
+		T.PulloutQty,
+		T.OrderShortageCPU,
+		t.[TotalCPU],
+		t.[SewingOutput],
+		t.[SewingOutputCPU],
+		t.[BalanceQty],
+		t.[BalanceCPU],
+		t.[BalanceCPUIrregular],
+		T.SewLine,
+		T.Dest,
+		T.OrderTypeID,
+		T.ProgramID,
+		T.CdCodeID,
+		T.ProductionFamilyID,
+		T.FtyGroup,
+		t.[PulloutComplete],
+		T.SewInLine,
+		T.SewOffLine,
+		T.TransFtyZone 
+	from #tmp t
 
 	union all
 
