@@ -1,4 +1,4 @@
-USE [PBIReportData]
+USE POWERBIReportData
 GO
 /****** Object:  StoredProcedure [dbo].[P_ImportSDPOrderDetail]    Script Date: 06/01/2021 上午 09:23:42 ******/
 SET ANSI_NULLS ON
@@ -7,10 +7,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-Create PROCEDURE [dbo].[P_Import_QA_P09]	
+Create PROCEDURE [dbo].[P_Import_QA_P09_Fty]	
 	@ETA_s Date,
-	@ETA_e Date,
-	@LinkServerName varchar(50)
+	@ETA_e Date
 AS
 BEGIN
 	DECLARE @SqlCmd_Combin nvarchar(max) =''
@@ -23,11 +22,28 @@ BEGIN
 	DECLARE @ETA_s_varchar varchar(10) = cast( @ETA_s as varchar)
 	DECLARE @ETA_e_varchar varchar(10) = cast( @ETA_e as varchar)
 
+	/*判斷當前Server後, 指定帶入正式機Server名稱*/
+	declare @current_ServerName varchar(50) = (SELECT [Server Name] = @@SERVERNAME)
+	--依不同Server來抓到對應的備機ServerName
+	declare @current_PMS_ServerName nvarchar(50) 
+	= (
+		select [value] = 
+			CASE WHEN @current_ServerName= 'PHL-NEWPMS-02' THEN 'PHL-NEWPMS' -- PH1
+				 WHEN @current_ServerName= 'VT1-PH2-PMS2b' THEN 'VT1-PH2-PMS2' -- PH2
+				 WHEN @current_ServerName= 'system2017BK' THEN 'SYSTEM2017' -- SNP
+				 WHEN @current_ServerName= 'SPS-SQL2' THEN 'SPS-SQL.spscd.com' -- SPS
+				 WHEN @current_ServerName= 'SQLBK' THEN 'PMS-SXR' -- SPR
+				 WHEN @current_ServerName= 'newerp-bak' THEN 'newerp' -- HZG		
+				 WHEN @current_ServerName= 'SQL' THEN 'MainServer' -- HXG
+				 when (select top 1 MDivisionID from Production.dbo.Factory) in ('VM2','VM1') then 'SYSTEM2016' -- ESP & SPT
+			ELSE '' END
+	)
+
 SET @SqlCmd1 = '
 	----準備基礎資料
 	Select RowNo = ROW_NUMBER() OVER(ORDER by Month), ID 
 	Into #probablySeasonList
-	From ['+@LinkServerName+'].Production.dbo.SeasonSCI
+	From ['+@current_PMS_ServerName+'].Production.dbo.SeasonSCI
 
 	select distinct
 	[WK#] = ed.id,
@@ -71,23 +87,23 @@ SET @SqlCmd1 = '
 	ed.Ukey,
     [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, psd.ColorID, Format(Export.CloseDate,''yyyyMM'') order by Export.CloseDate) else 0 end
 into #tmpFinal
-from ['+@LinkServerName+'].Production.dbo.Export_Detail ed with(nolock)
+from ['+@current_PMS_ServerName+'].Production.dbo.Export_Detail ed with(nolock)
  ';
  
 SET @SqlCmd2 = '
-inner join ['+@LinkServerName+'].Production.dbo.Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
-inner join ['+@LinkServerName+'].Production.dbo.orders o with(nolock) on o.id = ed.PoID
-left join ['+@LinkServerName+'].Production.dbo.SentReport sr with(nolock) on sr.Export_DetailUkey = ed.Ukey
-left join ['+@LinkServerName+'].Production.dbo.Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
-left join ['+@LinkServerName+'].Production.dbo.PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
-left join ['+@LinkServerName+'].Production.dbo.Supp with(nolock) on Supp.ID = ps.SuppID
-left join ['+@LinkServerName+'].Production.dbo.Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
-left join ['+@LinkServerName+'].Production.dbo.Factory fty with (nolock) on fty.ID = Export.Consignee
-left join ['+@LinkServerName+'].Production.dbo.Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
+inner join ['+@current_PMS_ServerName+'].Production.dbo.Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
+inner join ['+@current_PMS_ServerName+'].Production.dbo.orders o with(nolock) on o.id = ed.PoID
+left join ['+@current_PMS_ServerName+'].Production.dbo.SentReport sr with(nolock) on sr.Export_DetailUkey = ed.Ukey
+left join ['+@current_PMS_ServerName+'].Production.dbo.Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
+left join ['+@current_PMS_ServerName+'].Production.dbo.PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
+left join ['+@current_PMS_ServerName+'].Production.dbo.Supp with(nolock) on Supp.ID = ps.SuppID
+left join ['+@current_PMS_ServerName+'].Production.dbo.Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
+left join ['+@current_PMS_ServerName+'].Production.dbo.Factory fty with (nolock) on fty.ID = Export.Consignee
+left join ['+@current_PMS_ServerName+'].Production.dbo.Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 Left join #probablySeasonList seasonSCI on seasonSCI.ID = s.SeasonSCIID
 OUTER APPLY(
 	Select Top 1 FirstDyelot,TPEFirstDyelot,SeasonSCIID
-	From ['+@LinkServerName+'].Production.dbo.FirstDyelot fd
+	From ['+@current_PMS_ServerName+'].Production.dbo.FirstDyelot fd
 	Inner join #probablySeasonList season on fd.SeasonSCIID = season.ID
 	WHERE fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
 		And seasonSCI.RowNo >= season.RowNo
@@ -95,21 +111,21 @@ OUTER APPLY(
 )FirstDyelot
 outer apply(
 	select T1InspectedYards=sum(fp.ActualYds)
-	from ['+@LinkServerName+'].Production.dbo.fir f
-	left join ['+@LinkServerName+'].Production.dbo.FIR_Physical fp on fp.id=f.id
-	left join ['+@LinkServerName+'].Production.dbo.Receiving r on r.id= f.ReceivingID
+	from ['+@current_PMS_ServerName+'].Production.dbo.fir f
+	left join ['+@current_PMS_ServerName+'].Production.dbo.FIR_Physical fp on fp.id=f.id
+	left join ['+@current_PMS_ServerName+'].Production.dbo.Receiving r on r.id= f.ReceivingID
 	where r.InvNo=ed.ID and f.POID=ed.PoID and f.SEQ1 =ed.Seq1 and f.SEQ2 =ed.Seq2
 )a
 outer apply(
 	select  T1DefectPoints = sum(fp.TotalPoint)
-	from ['+@LinkServerName+'].Production.dbo.fir f
-	left join ['+@LinkServerName+'].Production.dbo.FIR_Physical fp on fp.id=f.id
-	left join ['+@LinkServerName+'].Production.dbo.Receiving r on r.id= f.ReceivingID
+	from ['+@current_PMS_ServerName+'].Production.dbo.fir f
+	left join ['+@current_PMS_ServerName+'].Production.dbo.FIR_Physical fp on fp.id=f.id
+	left join ['+@current_PMS_ServerName+'].Production.dbo.Receiving r on r.id= f.ReceivingID
 	where r.InvNo=ed.ID and f.POID=ed.PoID and f.SEQ1 =ed.Seq1 and f.SEQ2 =ed.Seq2
 )b
 outer apply(
     select [ColorName] = iif(c.Varicolored > 1, c.Name, c.ID)
-    from ['+@LinkServerName+'].Production.dbo.Color c
+    from ['+@current_PMS_ServerName+'].Production.dbo.Color c
     where c.ID = psd.ColorID
     and c.BrandID = psd.BrandID 
 )c
@@ -117,11 +133,6 @@ where  Export.ETA between '''+@ETA_s_varchar+''' and '''+@ETA_e_varchar+'''
 and psd.FabricType = ''F''
 and (ed.qty + ed.Foc)>0
 and o.Category in(''B'',''M'')
-and exists(
-	select * from ['+@LinkServerName+'].Production.dbo.Factory 
-	where Factory.ID = Export.FactoryID
-	and Factory.MDivisionID = Factory.ProduceM
-)
 
 ';
 
@@ -129,7 +140,7 @@ SET @SqlCmd3 = '
 	drop table #probablySeasonList
 
 	-----開始Merge 
-	MERGE INTO PBIReportData.dbo.P_QA_P09 t
+	MERGE INTO dbo.P_QA_P09 t
 	USING #tmpFinal s 
 	ON t.WK#=s.WK# AND t.SP#=s.SP# AND t.Seq# = s.Seq#
 	WHEN MATCHED THEN   
@@ -177,17 +188,10 @@ SET @SqlCmd3 = '
 
 
 delete t 
-from PBIReportData.dbo.P_QA_P09 t
+from dbo.P_QA_P09 t
 left join #tmpFinal s on t.WK#=s.WK#  AND t.SP#=s.SP# AND t.Seq# = s.Seq#
 where s.WK# is null
 and T.ETA between '''+@ETA_s_varchar+''' and '''+@ETA_e_varchar+'''
-and exists(
-	select * from ['+@LinkServerName+'].Production.dbo.Export 
-	inner join ['+@LinkServerName+'].Production.dbo.Factory on Factory.ID = Export.FactoryID
-	where Factory.MDivisionID = Factory.ProduceM
-	and Export.ID = t.WK#
-)
-
 
 	DROP TABLE #tmpFinal
 ';
