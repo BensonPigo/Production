@@ -95,12 +95,26 @@ BEGIN
 		--update CuttingOutput.ActGarment/ PPH/ ActTTCPU
 		IF(@Run_type = 'Confirm')
 		BEGIN
-			Declare @ActTTCPU numeric(10,3),@PPH numeric(8,2),@ActGarment int,@ncpu numeric
+			Declare @ActTTCPU numeric(10,3),@PPH numeric(8,2),
+			@ActGarment int
 
-			select @ncpu = sum((a.cutqty - isnull(cw.Qty,0)) * a.order_cpu),@ActTTCPU =sum(a.cpu) - sum(a.pre_cpu),@ActGarment = sum(a.cutqty)  - sum(a.pre_cutqty) 
+			select
+				@ActGarment = sum(a.cutqty)  - sum(a.pre_cutqty) 
 			from #tmp3 a
-			left join CuttingOutput_WIP cw WITH (NOLOCK) on cw.Orderid = a.orderid and cw.Article = a.Article and cw.Size = a.SizeCode
-
+			--left join CuttingOutput_WIP cw WITH (NOLOCK) on cw.Orderid = a.orderid and cw.Article = a.Article and cw.Size = a.SizeCode
+			
+			select
+				--w.ID,--cod.CutRef,	
+				--OutputQty = cod.Layer * ws.SizeRatio, -- 此筆實際裁剪數
+				--w.ConsPC, -- 用P02的
+				--ot.price, -- CPU/PC
+				@ActTTCPU = ROUND(sum( (cod.Layer * ws.SizeRatio) * (w.ConsPC / w2.ttlConsPC) * ot.price), 3) -- TotalCPU
+			from  CuttingOutput_Detail cod WITH (NOLOCK) 
+			inner join WorkOrder w WITH (NOLOCK) on w.Ukey = cod.WorkOrderUkey
+			outer apply(select ttlConsPC = sum(ConsPC) from WorkOrder w2 where w2.id = w.id)w2
+			outer apply(select SizeRatio = sum(Qty) from WorkOrder_SizeRatio ws  WITH (NOLOCK) where ws.WorkOrderUkey = cod.WorkOrderUkey)ws
+			inner join Order_TmsCost ot WITH (NOLOCK) on ot.artworktypeid = 'CUTTING' and ot.id = w.ID-- 抓母單
+			where cod.id = @ID
 
 			IF(@ManPower = 0 OR @ManHours = 0 )
 			BEGIN
@@ -108,17 +122,10 @@ BEGIN
 			END
 			ELSE
 			BEGIN
-				IF (@ManHours > 0)
-			    BEGIN
-			       SET @PPH = Round(@ncpu / @ManPower / @ManHours, 2);
-			    END
-			    ELSE
-				BEGIN
-			        SET @PPH = 0
-			    END
+			    SET @PPH = Round(@ActTTCPU / @ManPower / @ManHours, 2);
 			END
 		
-			update CuttingOutput set ActTTCPU=@ActTTCPU,ActGarment =@ActGarment,PPH=@PPH where id = @ID;
+			update CuttingOutput set ActTTCPU=@ActTTCPU, PPH=@PPH, ActGarment = @ActGarment where id = @ID;
 		END
 		ELSE
 		BEGIN
