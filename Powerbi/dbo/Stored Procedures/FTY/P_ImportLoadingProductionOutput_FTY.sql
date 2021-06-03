@@ -20,7 +20,7 @@ BEGIN
 				 WHEN @current_ServerName= 'SPS-SQL2' THEN 'SPS-SQL.spscd.com' -- SPS
 				 WHEN @current_ServerName= 'SQLBK' THEN 'PMS-SXR' -- SPR
 				 WHEN @current_ServerName= 'newerp-bak' THEN 'newerp' -- HZG		
-				 WHEN @current_ServerName= 'SQL' THEN 'NDATA' -- HXG
+				 WHEN @current_ServerName= 'SQL' THEN 'MainServer' -- HXG
 				 when (select top 1 MDivisionID from Production.dbo.Factory) in ('VM2','VM1') then 'SYSTEM2016' -- ESP & SPT
 			ELSE '' END
 	)
