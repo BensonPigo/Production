@@ -2221,50 +2221,6 @@ from SewingOutput_Detail sod
 inner join #updateChild upd on sod.UKey = upd.SewingOutput_DetailUKey
 
 drop table #Child, #updateChild
-
-update SewingOutput_Detail set WorkHour = 0 where id =  @SewingID and QAQty = 0
-
-declare @lastWorkHour decimal(20,3)
-declare @ukey bigint
-select
-	@lastWorkHour=isnull(s.WorkHour,0)+isnull(ss.WorkHour,0),
-	@ukey = ukey
-from SewingOutput_Detail s
-outer apply(
-	select WorkHour=isnull(s3.WorkHour,0)-isnull(sum(sd.WorkHour),0)
-	from SewingOutput s3
-	inner join SewingOutput_Detail sd on s.id = sd.ID
-	where s3.id=s.id and sd.AutoCreate = 0
-	group by sd.ID,s3.SewingLineID,s3.OutputDate,s3.WorkHour,s3.Team,s3.Shift having sum(sd.WorkHour)<> s.WorkHour
-)ss
-where id =  @SewingID
-and ukey = (select max(ukey) from SewingOutput_Detail s2 where s.id =s2.id)
-and QAQty > 0
-
-select ukey = @ukey into #tmpUkey
-while @lastWorkHour < 0
-begin
-	update s set s.WorkHour=0,@ukey=ukey
-	from SewingOutput_Detail s
-	where id =  @SewingID
-	and ukey = @ukey
-    and QAQty > 0
-
-	insert into #tmpUkey values(@ukey)
-	
-	select top 1 @lastWorkHour = s.WorkHour + @lastWorkHour,@ukey = ukey
-	from SewingOutput_Detail s
-	where id =  @SewingID
-	and ukey not in(select ukey from #tmpUkey)
-    and QAQty > 0
-	order by ukey desc
-end
-
-update s set s.WorkHour=@lastWorkHour
-from SewingOutput_Detail s
-where id =  @SewingID
-and ukey = @ukey
-and QAQty > 0
 ";
 
             TransactionScope transactionscope = new TransactionScope();
