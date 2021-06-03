@@ -87,7 +87,7 @@ namespace Sci.Production.Subcon
                 #region sqlcmd
 
                 this.sqlCmd.Append(@"
-select PostSewingSubProcess,NoBundleCardAfterSubprocess,SubprocessId,Bundleno
+select PostSewingSubProcess,NoBundleCardAfterSubprocess,SubprocessId,Bundleno, id
 into #tmp_Bundle_Detail_Art 
 from Bundle_Detail_Art WITH (NOLOCK) 
 where PostSewingSubProcess = 1 or NoBundleCardAfterSubprocess = 1
