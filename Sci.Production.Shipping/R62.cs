@@ -116,7 +116,6 @@ select [Shipper] = g.Shipper
 from GMTBooking g
 {where} KHExportDeclaration_Detail kdd on kdd.Invno=g.id
 {where} KHExportDeclaration kd on kd.id=kdd.id 
-left join PackingList pl on pl.INVNo = g.ID
 outer apply(
 	select
 		pld.OrderID,
@@ -125,7 +124,8 @@ outer apply(
 		NW = sum(pld.NW),
 		GW = sum(pld.GW)
 	from PackingList_Detail pld
-	where pld.ID = pl.ID
+	inner join PackingList pl on pl.id = pld.id
+	where pl.INVNo = g.ID and iif(kdd.orderid is not null, kdd.orderid,'') = iif(kdd.orderid is not null, pld.OrderID,'')
 	group by pld.OrderID
 )pld
 left join Orders o on o.ID = pld.OrderID
