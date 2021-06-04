@@ -761,14 +761,6 @@ where a.RequestQty > a.StockQty",
             base.ClickConfirm();
             DualResult result;
 
-            string updateCmd = string.Format("update Lack set Status = 'Confirmed',ApvName = '{0}',ApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-            result = DBProxy.Current.Execute(null, updateCmd);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox("Confirm fail!\r\n" + result.ToString());
-                return;
-            }
-
             DataTable dt;
             result = DBProxy.Current.Select(null, "SELECT * FROM MailTo WHERE ID = '021'  ", out dt);
 
@@ -778,29 +770,48 @@ where a.RequestQty > a.StockQty",
                 return;
             }
 
-            if (dt.Rows.Count != 0 && dt.Rows[0]["ToAddress"].ToString() != string.Empty)
+            if (dt.Rows.Count == 0)
             {
-                string applyName = MyUtility.GetValue.Lookup($@"
+                MyUtility.Msg.WarningBox("Mail information not exists" + result.ToString());
+                return;
+            }
+
+            if (MyUtility.Check.Empty(dt.Rows[0]["ToAddress"]))
+            {
+                MyUtility.Msg.WarningBox("Mail to address has not maintained" + result.ToString());
+                return;
+            }
+
+            string applyName = MyUtility.GetValue.Lookup($@"
 SELECT p.EMail
 FROM Lack l
 INNER JOIN Pass1 p ON p.ID = l.ApplyName
 WHERE l.ID='{this.CurrentMaintain["ID"]}'
 ");
-                string toAddress = dt.Rows[0]["ToAddress"].ToString();
-                string ccAddress = dt.Rows[0]["CCAddress"].ToString() + $";{applyName}";
-                string subject = dt.Rows[0]["Subject"].ToString();
+            string toAddress = dt.Rows[0]["ToAddress"].ToString();
+            string ccAddress = dt.Rows[0]["CCAddress"].ToString() + $";{applyName}";
+            string subject = dt.Rows[0]["Subject"].ToString();
 
-                // 取得表頭 P10 的單號
-                string content = this.CurrentMaintain["ID"].ToString();
+            // 取得表頭 P10 的單號
+            string content = this.CurrentMaintain["ID"].ToString();
 
-                var email = new MailTo(Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, content, true, true);
-                email.ShowDialog();
+            var email = new MailTo(Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, content, true, true);
+            email.ShowDialog();
 
-                if (email.SendMailResult)
-                {
-                    MyUtility.Msg.InfoBox("Send mail successful.");
-                }
+            if (!email.SendMailResult)
+            {
+                return;
             }
+
+            string updateCmd = string.Format("update Lack set Status = 'Confirmed',ApvName = '{0}',ApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            result = DBProxy.Current.Execute(null, updateCmd);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Confirm fail!\r\n" + result.ToString());
+                return;
+            }
+
+            MyUtility.Msg.InfoBox("Confirm & Send mail successful.");
         }
 
         /// <inheritdoc/>
