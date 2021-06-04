@@ -10,44 +10,47 @@ BEGIN
 		SET @WhseArrival_e = (SELECT dateadd(day ,-1, dateadd(m, datediff(m,0,getdate())+1,0))  )
 	END
 
+	DECLARE @WhseArrival_s_varchar varchar(10) = cast( @WhseArrival_s as varchar)
+	DECLARE @WhseArrival_e_varchar varchar(10) = cast( @WhseArrival_e as varchar)
+
 	select distinct a.PoId,a.Seq1,a.Seq2,ps.SuppID,psd.Refno ,psd.ColorID,f.Clima ,[WhseArrival]=LEFT(convert(varchar, a.WhseArrival , 111),7)
 	,o.FactoryID
 	into #tmp1
 	from
 	(
 		select r.PoId,r.Seq1,r.Seq2 ,[WhseArrival] = r.WhseArrival
-		from dbo.View_AllReceivingDetail r with (nolock)
+		from [MainServer].Production.dbo.View_AllReceivingDetail r with (nolock)
 		where 1=1
 		 and r.WhseArrival >= @WhseArrival_s and r.WhseArrival <= @WhseArrival_e
 		and r.Status = 'Confirmed'
 		union
 		select sd.ToPOID as PoId,sd.ToSeq1 as Seq1,sd.ToSeq2 as Seq2 ,[WhseArrival] = s.IssueDate
-		from SubTransfer s
-		inner join SubTransfer_Detail sd on s.Id = sd.ID
+		from [MainServer].Production.dbo.SubTransfer s
+		inner join [MainServer].Production.dbo.SubTransfer_Detail sd on s.Id = sd.ID
 		where 1=1
 		 and s.IssueDate >= @WhseArrival_s and s.IssueDate <= @WhseArrival_e
 		and s.Status = 'Confirmed'
 		and s.Type = 'B'
 		union
 		select bd.ToPOID as PoId,bd.ToSeq1 as Seq1,bd.ToSeq2 as Seq2 ,[WhseArrival] = b.IssueDate
-		from BorrowBack b
-		inner join BorrowBack_Detail bd on b.Id = bd.ID
+		from [MainServer].Production.dbo.BorrowBack b
+		inner join [MainServer].Production.dbo.BorrowBack_Detail bd on b.Id = bd.ID
 		where 1=1
 		 and b.IssueDate >= @WhseArrival_s and b.IssueDate <= @WhseArrival_e
 		and b.Status = 'Confirmed'
 		and (b.Type = 'A' or b.Type = 'B')
 	) a
-	left join Orders o on o.ID = a.PoId
-	left join PO_Supp ps on ps.ID = a.PoId and ps.SEQ1 = a.Seq1
-	left join PO_Supp_Detail psd on psd.ID = a.PoId and psd.SEQ1 = a.Seq1 and psd.SEQ2 = a.Seq2
-	left join Fabric f on f.SCIRefno = psd.SCIRefno 
+	left join Production.dbo.Orders o on o.ID = a.PoId
+	left join Production.dbo.PO_Supp ps on ps.ID = a.PoId and ps.SEQ1 = a.Seq1
+	left join Production.dbo.PO_Supp_Detail psd on psd.ID = a.PoId and psd.SEQ1 = a.Seq1 and psd.SEQ2 = a.Seq2
+	left join Production.dbo.Fabric f on f.SCIRefno = psd.SCIRefno 
 	where psd.FabricType = 'F'
 
 	------------Fabric Defect ----- 
 	select DISTINCT rd.PoId,rd.Seq1,rd.Seq2,rd.ActualQty,rd.Dyelot,rd.Roll,t.SuppID,t.Refno,t.Colorid ,t.Clima  ,t.WhseArrival ,t.FactoryID
 	into #tmpAllData
 	from #tmp1 t
-	inner join dbo.View_AllReceivingDetail rd on t.PoId = rd.PoId and t.Seq1 = rd.Seq1 and t.Seq2 = rd.Seq2
+	inner join [MainServer].Production.dbo.View_AllReceivingDetail rd on t.PoId = rd.PoId and t.Seq1 = rd.Seq1 and t.Seq2 = rd.Seq2
 	------------Group by Supp 
 	select PoId,Seq1,Seq2,SuppID,WhseArrival,FactoryID,ActualQty = sum(ActualQty)  
 	into #GroupBySupp
@@ -57,20 +60,20 @@ BEGIN
 	select distinct t.SuppID,t.PoId,t.Seq1,t.Seq2 
 	into #tmpsuppEncode
 	from #GroupBySupp t
-	inner join FIR f on t.PoId = f.POID and t.Seq1 = f.SEQ1 and t.Seq2 = f.SEQ2
+	inner join Production.dbo.FIR f on t.PoId = f.POID and t.Seq1 = f.SEQ1 and t.Seq2 = f.SEQ2
 	where f.PhysicalEncode = 1
 	------------Count Total Orders# Group by PoID ---- 
 	select t.SuppID,count(distinct o.ID)cnt 
 	into #tmpCountSP
 	from #tmpAllData t
-	inner join orders o on t.PoId=o.POID
+	inner join Production.dbo.Orders o on t.PoId=o.POID
 	group by t.SuppID
 	------------Total Dyelot group by SuppID-------------
 	select distinct g.SuppID,fp.Dyelot  
 	into #tmpsd
-	from FIR f
+	from Production.dbo.FIR f
 	inner join #GroupBySupp g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2
-	inner join FIR_Physical fp on f.ID=fp.ID
+	inner join Production.dbo.FIR_Physical fp on f.ID=fp.ID
 	where f.PhysicalEncode=1
 
 	select distinct g.SuppID,s.cnt 
@@ -89,13 +92,13 @@ BEGIN
 	SELECT f.*
 	INTO #FirData
 	FROM (SELECT DISTINCT tt.POID,tt.Seq1,tt.Seq2,tt.SuppID,tt.Refno FROM #tmp1 tt)t --**
-	INNER JOIN FIR f ON t.PoId=f.POID AND t.Seq1=f.SEQ1 AND t.Seq2 = f.Seq2 AND t.SuppID = f.Suppid AND t.Refno=f.Refno 
+	INNER JOIN Production.dbo.FIR f ON t.PoId=f.POID AND t.Seq1=f.SEQ1 AND t.Seq2 = f.Seq2 AND t.SuppID = f.Suppid AND t.Refno=f.Refno 
 
 	----從得到的FIR紀錄，取得Fir_shadebone紀錄
 	SELECT a.Suppid, b.ID,b.Roll,b.Dyelot,b.Result
 	INTO #All_Fir_shadebone
 	FROM #FirData a
-	INNER JOIN Fir_shadebone b ON a.id=b.id
+	INNER JOIN Production.dbo.FIR_shadebone b ON a.id=b.id
 
 	----統計有哪些Dyelot，是全部Pass的
 	SELECT t.SuppID  ,[PassCTN]=COUNT(Dyelot)
@@ -115,48 +118,48 @@ BEGIN
 	------------Total Point----------
 	select g.SuppID ,sum(fp.TotalPoint) TotalPoint
 	into #tmpTotalPoint
-	from FIR f
+	from Production.dbo.FIR f
 	inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2
-	inner join FIR_Physical fp on f.ID=fp.ID
+	inner JOIN Production.dbo.FIR_Physical fp on f.ID=fp.ID
 	group by g.SuppID
 	-----Total Roll Count----------
 	select g.SuppID,count(fp.Roll) TotalRoll
 	into #tmpTotalRoll
-	from FIR f
+	from Production.dbo.FIR f
 	inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2
-	inner join FIR_Physical fp on f.ID=fp.ID
+	inner JOIN Production.dbo.FIR_Physical fp on f.ID=fp.ID
 	group by g.SuppID
 	---------Grade A Roll Count---------------------
 	select g.SuppID,count(fp.Grade) GradeA_Roll
 	into #tmpGrade_A
-	from FIR f
+	from Production.dbo.FIR f
 	inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2
-	inner join FIR_Physical fp on f.ID=fp.ID
+	inner JOIN Production.dbo.FIR_Physical fp on f.ID=fp.ID
 	where fp.Grade='A'
 	group by g.SuppID
 	----------Grade B Roll Count---------------------
 	select g.SuppID,count(fp.Grade) GradeB_Roll
 	into #tmpGrade_B
-	from FIR f
+	from Production.dbo.FIR f
 	inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2
-	inner join FIR_Physical fp on f.ID=fp.ID
+	inner JOIN Production.dbo.FIR_Physical fp on f.ID=fp.ID
 	where fp.Grade='B'
 	group by g.SuppID
 	----------Grade C Roll Count---------------------
 	select g.SuppID,count(fp.Grade) GradeC_Roll
 	into #tmpGrade_C
-	from FIR f
+	from Production.dbo.FIR f
 	inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2
-	inner join FIR_Physical fp on f.ID=fp.ID
+	inner JOIN Production.dbo.FIR_Physical fp on f.ID=fp.ID
 	where fp.Grade='C'
 	group by g.SuppID
 	------------Kinds of Fabric Defects (Defect Name)---- 
 	select DISTINCT t.SuppID,fpd.DefectRecord,t.PoId,t.Seq1,t.Seq2 
 	into #tmpsuppdefect
 	from #GroupBySupp t
-	inner join FIR f on t.PoId = f.POID and t.Seq1 = f.SEQ1 and t.Seq2 = f.SEQ2
-	inner join FIR_Physical fp on fp.ID = f.ID
-	inner join FIR_Physical_Defect fpd on fpd.FIR_PhysicalDetailUKey = fp.DetailUkey
+	inner JOIN Production.dbo.FIR f on t.PoId = f.POID and t.Seq1 = f.SEQ1 and t.Seq2 = f.SEQ2
+	inner JOIN Production.dbo.FIR_Physical fp on fp.ID = f.ID
+	inner JOIN Production.dbo.FIR_Physical_Defect fpd on fpd.FIR_PhysicalDetailUKey = fp.DetailUkey
 	where f.PhysicalEncode = 1
 	------------Group by Dyelot------------- 
 	select PoId,Seq1,Seq2,SuppID,Refno,Dyelot,sum(ActualQty) as ActualQty 
@@ -189,7 +192,7 @@ BEGIN
 		,brand.brandid
 		,s.AbbEN
 		,TotalInspYds = (select isnull(sum(a.TotalInspYds),0) 
-						from FIR a 
+						from Production.dbo.FIR a 
 						inner join #GroupBySupp b on a.POID = b.PoId and a.SEQ1 = b.Seq1 and a.Seq2 = b.Seq2 
 						where a.Suppid = s.SuppID and a.refno=ref.Refno )
 		,stockqty = stock.ActualQty
@@ -216,7 +219,7 @@ BEGIN
 	cross apply(	
 		SELECT distinct #tmpAllData.SuppID,Supp.AbbEN
 		FROM #tmpAllData 
-		inner join Supp WITH (NOLOCK) on  Supp.id = #tmpAllData.SuppID
+		inner join Production.dbo.Supp WITH (NOLOCK) on  Supp.id = #tmpAllData.SuppID
 		WHERE #tmpAllData.SuppID = gbs.SuppID 
 	) as s
 	outer apply(
@@ -225,9 +228,9 @@ BEGIN
 			select
 				Defect = dbo.SplitDefectNum(x.Data,0),	
 				Point = cast(dbo.SplitDefectNum(x.Data,1) as int)
-			from dbo.SplitString((select Defect from #spr WHERE SuppID = gbs.SuppID),'/') x
+			from Production.dbo.SplitString((select Defect from #spr WHERE SuppID = gbs.SuppID),'/') x
 		)A 
-		left join FabricDefect fd on id = a.Defect
+		left join Production.dbo.FabricDefect fd on id = a.Defect
 		group by fd.DescriptionEN,fd.ID
 	) as Point
 	outer apply(
@@ -235,7 +238,7 @@ BEGIN
 			select concat(',',BrandID)
 			from (
 				select distinct o.BrandID 
-				from orders o
+				from Production.dbo.orders o
 				inner join #tmpAllData t on o.poid=t.poid
 				where t.refno=ref.refno
 			) t
@@ -263,13 +266,13 @@ BEGIN
 	-----#SHtmp 
 	select FL.POID, FL.SEQ1, FL.seq2, h.Dyelot
 	into #SH1
-	from FIR_Laboratory FL WITH (NOLOCK) 
-	inner join dbo.FIR_Laboratory_Heat h WITH (NOLOCK) on h.ID = FL.ID 	
+	from Production.dbo.FIR_Laboratory FL WITH (NOLOCK) 
+	inner join Production.dbo.FIR_Laboratory_Heat h WITH (NOLOCK) on h.ID = FL.ID 	
 	where FL.HeatEncode=1 and h.Result = 'Fail'
 	select FL.POID, FL.SEQ1, FL.seq2, W.Dyelot
 	into #SH2
-	from dbo.FIR_Laboratory FL WITH (NOLOCK) 
-	inner join dbo.FIR_Laboratory_Wash W WITH (NOLOCK) on W.ID = FL.ID						
+	from Production.dbo.FIR_Laboratory FL WITH (NOLOCK) 
+	inner join Production.dbo.FIR_Laboratory_Wash W WITH (NOLOCK) on W.ID = FL.ID						
 	where FL.WashEncode=1 and W.Result = 'Fail'
 
 	select distinct SHRINKAGEyards = stockqty,SuppID
@@ -277,7 +280,7 @@ BEGIN
 	from(
 		select Sum(rd1.stockqty) stockqty, SuppID	
 		from  #tmp2groupbyDyelot rd WITH (NOLOCK) 
-		inner join dbo.View_AllReceivingDetail rd1 with (nolock) on rd.PoId = rd1.PoId and rd.Seq1 = rd1.Seq1 and rd.Seq2 = rd1.Seq2 
+		inner join [MainServer].Production.dbo.View_AllReceivingDetail rd1 with (nolock) on rd.PoId = rd1.PoId and rd.Seq1 = rd1.Seq1 and rd.Seq2 = rd1.Seq2 
 		Where exists(select * from #SH1 where POID = rd.PoId and SEQ1 = RD.seq1 and seq2 = seq2 and Dyelot = RD.dyelot)
 		or exists(select * from #SH2 where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2 and Dyelot = RD.dyelot)
 		group by SuppID
@@ -285,31 +288,31 @@ BEGIN
 	-----#mtmp 
 	select l.POID,l.SEQ1,l.seq2, F.SuppID
 	INTO #ea
-	from dbo.FIR_Laboratory l WITH (NOLOCK) 
-	inner join dbo.FIR_Laboratory_Heat h WITH (NOLOCK) on h.ID = l.ID
-	INNER JOIN FIR F WITH (NOLOCK) ON L.POID=F.POID
+	from Production.dbo.FIR_Laboratory l WITH (NOLOCK) 
+	inner join Production.dbo.FIR_Laboratory_Heat h WITH (NOLOCK) on h.ID = l.ID
+	INNER JOIN Production.dbo.FIR F WITH (NOLOCK) ON L.POID=F.POID
 	where l.CrockingEncode=1 and h.Result = 'Fail' 
 	select O.poid,OD.seq1,OD.seq2,F.SuppID
 	INTO #eb
-	from Oven O WITH (NOLOCK) 
-	inner join Oven_Detail OD WITH (NOLOCK) on OD.ID = O.ID
-	INNER JOIN FIR F WITH (NOLOCK) ON O.POID=F.POID 
+	from Production.dbo.Oven O WITH (NOLOCK) 
+	inner join Production.dbo.Oven_Detail OD WITH (NOLOCK) on OD.ID = O.ID
+	INNER JOIN Production.dbo.FIR F WITH (NOLOCK) ON O.POID=F.POID 
 	where O.Status ='Confirmed' and OD.Result = 'Fail'
 	select CF.poid,CFD.seq1,CFD.seq2,F.SuppID
 	into #ec
-	from ColorFastness CF WITH (NOLOCK) 
-	inner join ColorFastness_Detail CFD WITH (NOLOCK) on CFD.ID = CF.ID
-	INNER JOIN FIR F WITH (NOLOCK) ON CF.POID=F.POID 
+	from Production.dbo.ColorFastness CF WITH (NOLOCK) 
+	inner join Production.dbo.ColorFastness_Detail CFD WITH (NOLOCK) on CFD.ID = CF.ID
+	INNER JOIN Production.dbo.FIR F WITH (NOLOCK) ON CF.POID=F.POID 
 	where CF.Status ='Confirmed' and CFD.Result = 'Fail' 
 
 	select [MIGRATIONyards] =sum(a.StockQty),tmp.SuppID 
 	into #mtmp
 	from(
 		select rd.poid,rd.seq1,rd.seq2,rd.dyelot,rd.StockQty,ps.SuppID,psd.Refno
-		from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
+		from [MainServer].Production.dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
 		inner join #GroupBySupp r on rd.PoId=r.POID AND rd.Seq1=r.SEQ1 and rd.Seq2=r.SEQ2 
-		left join PO_Supp_Detail psd on psd.id=r.PoId and psd.SEQ1 = r.Seq1 and psd.SEQ2 = r.Seq2
-		left join  PO_Supp ps on ps.id=psd.Id and ps.seq1=psd.seq1
+		left join Production.dbo.PO_Supp_Detail psd on psd.id=r.PoId and psd.SEQ1 = r.Seq1 and psd.SEQ2 = r.Seq2
+		left join Production.dbo.PO_Supp ps on ps.id=psd.Id and ps.seq1=psd.seq1
 	)a
 	inner join (select distinct SuppID from #tmp) tmp on a.SuppID = tmp.SuppID  
 	Where exists(select * from #ea where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND a.SuppID = Tmp.SuppID ) 
@@ -320,23 +323,23 @@ BEGIN
 	-----#Stmp 
 	select f.poid,f.SEQ1,f.seq2,fs.Dyelot,f.SuppID
 	into #sa
-	from fir f WITH (NOLOCK)
-	inner join FIR_Shadebone fs WITH (NOLOCK) on fs.ID = f.ID
+	from Production.dbo.FIR f WITH (NOLOCK)
+	inner JOIN Production.dbo.FIR_Shadebone fs WITH (NOLOCK) on fs.ID = f.ID
 	where f.ShadebondEncode =1 and fs.Result = 'Fail' 
 	select f.poid,f.SEQ1,f.seq2,fc.Dyelot,f.SuppID
 	into #sb
-	from fir f WITH (NOLOCK) 
-	inner join FIR_Continuity fc WITH (NOLOCK) on fc.ID = f.ID
+	from Production.dbo.FIR f WITH (NOLOCK) 
+	inner JOIN Production.dbo.FIR_Continuity fc WITH (NOLOCK) on fc.ID = f.ID
 	where f.ContinuityEncode =1 and fc.Result = 'Fail' 
 
 	select [SHADINGyards] =sum(a.StockQty),tmp.SuppID
 	into #Stmp
 	from(
 		select rd.poid,rd.seq1,rd.seq2,rd.dyelot,rd.StockQty,ps.SuppID,psd.Refno 
-		from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
+		from [MainServer].Production.dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
 		inner join #GroupBySupp r on rd.PoId=r.POID AND rd.Seq1=r.SEQ1 and rd.Seq2=r.SEQ2 
-		left join PO_Supp_Detail psd on psd.id=r.PoId and psd.SEQ1 = r.Seq1 and psd.SEQ2 = r.Seq2
-		left join  PO_Supp ps on ps.id=psd.Id and ps.seq1=psd.seq1
+		left join Production.dbo.PO_Supp_Detail psd on psd.id=r.PoId and psd.SEQ1 = r.Seq1 and psd.SEQ2 = r.Seq2
+		left join Production.dbo.PO_Supp ps on ps.id=psd.Id and ps.seq1=psd.seq1
 	)a
 	inner join (select distinct SuppID from #tmp) tmp on a.SuppID = tmp.SuppID  
 	Where (exists(select * from #sa where poid = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2 and Dyelot  = a.dyelot and a.SuppID = Tmp.SuppID ) 
@@ -347,18 +350,18 @@ BEGIN
 
 	select ActualYds = sum(fp.TicketYds - fp.ActualYds), t.SuppID
 	into #Ltmp
-	from FIR f
-	inner join FIR_Physical fp on f.ID = fp.ID
+	from Production.dbo.FIR f
+	inner JOIN Production.dbo.FIR_Physical fp on f.ID = fp.ID
 	inner join #GroupBySupp t on f.POID = t.PoId and f.SEQ1 = t.Seq1 and f.SEQ2 = t.Seq2
 	where f.PhysicalEncode = 1 and fp.ActualYds < fp.TicketYds
 	group by t.SuppID
 	-----#Sdtmp 
 	select SHORTWIDTH = sum(t.ActualQty)/5, f.SuppID
 	into #Sdtmp
-	from  fir f WITH (NOLOCK) 
-	inner join FIR_Physical fp on f.ID = fp.ID
+	from  Production.dbo.FIR f WITH (NOLOCK) 
+	inner JOIN Production.dbo.FIR_Physical fp on f.ID = fp.ID
 	inner join #tmp2groupByRoll t on f.POID = t.PoId and f.SEQ1 = t.Seq1 and f.SEQ2 = t.Seq2 and fp.Dyelot = t.Dyelot and fp.Roll = t.Roll
-	left join Fabric on Fabric.SCIRefno = f.SCIRefno
+	left join Production.dbo.Fabric on Fabric.SCIRefno = f.SCIRefno
 	where f.PhysicalEncode = 1 and fp.ActualWidth < Fabric.Width
 	group by f.SuppID
 	------#FabricInspDoc TestReport
@@ -375,8 +378,8 @@ BEGIN
 			   , seq2
 		from #tmpAllData
 		) tmp
-		left join Export_Detail b on tmp.PoId =b.PoID and tmp.Seq1 =b.Seq1 and tmp.Seq2 = b.Seq2 and tmp.SuppID = b.SuppID
-		left join SentReport c on b.Ukey = c.Export_DetailUkey
+		left join Production.dbo.Export_Detail b on tmp.PoId =b.PoID and tmp.Seq1 =b.Seq1 and tmp.Seq2 = b.Seq2 and tmp.SuppID = b.SuppID
+		left join Production.dbo.SentReport c on b.Ukey = c.Export_DetailUkey
 		group by tmp.SuppID
 	)a
 	------#FabricInspDoc Inspection Report
@@ -393,8 +396,8 @@ BEGIN
 			   , seq2
 		from #tmpAllData
 		) tmp
-		left join Export_Detail b on tmp.PoId =b.PoID and tmp.Seq1 =b.Seq1 and tmp.Seq2 = b.Seq2 and tmp.SuppID = b.SuppID
-		left join SentReport c on b.Ukey = c.Export_DetailUkey
+		left join Production.dbo.Export_Detail b on tmp.PoId =b.PoID and tmp.Seq1 =b.Seq1 and tmp.Seq2 = b.Seq2 and tmp.SuppID = b.SuppID
+		left join Production.dbo.SentReport c on b.Ukey = c.Export_DetailUkey
 		group by tmp.SuppID
 	)a
 
@@ -411,8 +414,8 @@ BEGIN
 			   , seq2
 		from #tmpAllData
 		) tmp
-		left join Export_Detail b on tmp.PoId =b.PoID and tmp.Seq1 =b.Seq1 and tmp.Seq2 = b.Seq2 and tmp.SuppID = b.SuppID
-		left join SentReport c on b.Ukey = c.Export_DetailUkey
+		left join Production.dbo.Export_Detail b on tmp.PoId =b.PoID and tmp.Seq1 =b.Seq1 and tmp.Seq2 = b.Seq2 and tmp.SuppID = b.SuppID
+		left join Production.dbo.SentReport c on b.Ukey = c.Export_DetailUkey
 		group by tmp.SuppID
 	)a
 
@@ -428,19 +431,19 @@ BEGIN
 		) tmp
 	outer apply (
 		select a.id,a.seq1,a.seq2,a.SCIRefno,a.ColorID,b.SuppID,a.RefNo 
-		from PO_Supp_Detail a
-		inner join PO_Supp b on a.ID = b.ID and a.seq1 = b.seq1 
+		from Production.dbo.PO_Supp_Detail a
+		inner join Production.dbo.PO_Supp b on a.ID = b.ID and a.seq1 = b.seq1 
 		where a.id =  tmp.poid
 		and a.seq1 = tmp.seq1
 		and a.seq2 = tmp.seq2
 	)b
-	LEFT JOIN Export_Detail ED ON ED.PoID = TMP.POID AND ED.Seq1 = TMP.SEQ1 AND ED.Seq2 = TMP.SEQ2
-	left join Export d on ED.ID = D.ID AND D.Confirm = 1
-	left join Factory fty with (nolock) on fty.ID = d.Consignee
-	left join FIRSTDYELOT c on b.Refno = c.Refno and b.ColorID = c.ColorID and b.SuppID = c.SuppID  AND c.TestDocFactoryGroup = fty.TestDocFactoryGroup 
-	left join orders o on ed.PoID = o.id and o.Category in ('B','M')
-	left join Season e on o.SeasonID  = e.ID and o.BrandID = e.BrandID --and e.SeasonSCIID = c.SeasonSCIID
-	left join Fabric f on f.SCIRefno = b.SCIRefno 
+	LEFT JOIN Production.dbo.Export_Detail ED ON ED.PoID = TMP.POID AND ED.Seq1 = TMP.SEQ1 AND ED.Seq2 = TMP.SEQ2
+	left join Production.dbo.Export d on ED.ID = D.ID AND D.Confirm = 1
+	left join Production.dbo.Factory fty with (nolock) on fty.ID = d.Consignee
+	left JOIN Production.dbo.FIRSTDYELOT c on b.Refno = c.Refno and b.ColorID = c.ColorID and b.SuppID = c.SuppID  AND c.TestDocFactoryGroup = fty.TestDocFactoryGroup 
+	left join Production.dbo.Orders o on ed.PoID = o.id and o.Category in ('B','M')
+	left join Production.dbo.Season e on o.SeasonID  = e.ID and o.BrandID = e.BrandID --and e.SeasonSCIID = c.SeasonSCIID
+	left join Production.dbo.Fabric f on f.SCIRefno = b.SCIRefno 
 	group by b.Refno, b.ColorID, b.SuppID, d.Consignee, c.SeasonSCIID, c.FirstDyelot, e.SeasonSCIID,c.Period,f.RibItem 
 
 	 --分母
@@ -459,7 +462,7 @@ BEGIN
 	ROW_NUMBER() OVER(order by month ASC) as rid
 	,* 
 	into #tmp_newSeasonSCI
-	from SeasonSCI 
+	from Production.dbo.SeasonSCI 
 
 	select a.*, b.rid, (b.rid + a.Period -1) maxID
 	into #tmp_DyelotMonth
@@ -564,25 +567,25 @@ BEGIN
 		group by SuppID
 	) totalYds
 	outer apply(
-		select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 
+		select id from Production.dbo.SuppLevel WITH (NOLOCK) where type='F' and Junk=0 
 		and IIF(totalYds.TotalInspYds!=0, round((TLPoint.Fabric_yards/totalYds.TotalInspYds), 4), 0) * 100 between range1 and range2 )sl
 	left join #SHtmp SHRINKAGE on SHRINKAGE.SuppID = tmp.SuppID
 	outer apply(select SHINGKAGE = iif(TmpTotal.totalStockqty = 0 , 0, round(SHRINKAGE.SHRINKAGEyards/TmpTotal.totalStockqty,4)))SHINGKAGELevel
-	outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHINGKAGELevel.SHINGKAGE,0) * 100 between range1 and range2)sl2
+	outer apply(select id from Production.dbo.SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHINGKAGELevel.SHINGKAGE,0) * 100 between range1 and range2)sl2
 	left join #mtmp MIGRATION on MIGRATION.SuppID = tmp.SuppID  
 	outer apply(
 		select MIGRATION =  iif(TmpTotal.totalStockqty = 0, 0, round(MIGRATION.MIGRATIONyards/TmpTotal.totalStockqty,4))
 	)MIGRATIONLevel 
-	outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(MIGRATIONLevel.MIGRATION,0) * 100 between range1 and range2)sl3
+	outer apply(select id from Production.dbo.SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(MIGRATIONLevel.MIGRATION,0) * 100 between range1 and range2)sl3
 	left join #Stmp SHADING on SHADING.SuppID = tmp.SuppID 
 	outer apply(select SHADING = iif(TmpTotal.totalStockqty=0, 0, round(SHADING.SHADINGyards/TmpTotal.totalStockqty,4)))SHADINGLevel 
-	outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHADINGLevel.SHADING,0) * 100 between range1 and range2)sl4
+	outer apply(select id from Production.dbo.SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHADINGLevel.SHADING,0) * 100 between range1 and range2)sl4
 	left join #Ltmp LACKINGYARDAGE on LACKINGYARDAGE.SuppID= Tmp.SuppID 
 	outer apply(select LACKINGYARDAGE = iif(totalYds.TotalInspYds=0, 0, round(LACKINGYARDAGE.ActualYds/totalYds.TotalInspYds,4)))LACKINGYARDAGELevel
-	outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(LACKINGYARDAGELevel.LACKINGYARDAGE,0) * 100 between range1 and range2)sl5
+	outer apply(select id from Production.dbo.SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(LACKINGYARDAGELevel.LACKINGYARDAGE,0) * 100 between range1 and range2)sl5
 	left join #Sdtmp SHORTyards on SHORTyards.SuppID = Tmp.SuppID 
 	outer apply(select SHORTWIDTH = iif(totalYds.TotalInspYds=0, 0, round(SHORTyards.SHORTWIDTH/totalYds.TotalInspYds,4)))SHORTWIDTHLevel 
-	outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 
+	outer apply(select id from Production.dbo.SuppLevel WITH (NOLOCK) where type='F' and Junk=0 
 	and isnull(SHORTWIDTHLevel.SHORTWIDTH,0) * 100 between range1 and range2
 	)sl6
 	outer apply (select cnt from #tmpDyelot where SuppID=Tmp.SuppID ) TLDyelot
@@ -600,59 +603,59 @@ BEGIN
 
 	--準備比重#table不然每筆資料都要重撈7次  
 	select DISTINCT
-		[Fabric Defect] = (select Weight from Inspweight WITH (NOLOCK) where id ='Fabric Defect')
-		,[Lacking Yardage] =  (select Weight from Inspweight WITH (NOLOCK) where id ='Lacking Yardage')
-		,[Migration] = (select Weight from Inspweight WITH (NOLOCK) where id ='Migration')
-		,[Shading] = (select Weight from Inspweight WITH (NOLOCK) where id ='Shading')
-		,[Sharinkage] =  (select Weight from Inspweight WITH (NOLOCK) where id ='Sharinkage')
-		,[Short Width] = (select Weight from Inspweight WITH (NOLOCK) where id ='Short Width') 
+		[Fabric Defect] = (select Weight from Production.dbo.Inspweight WITH (NOLOCK) where id ='Fabric Defect')
+		,[Lacking Yardage] =  (select Weight from Production.dbo.Inspweight WITH (NOLOCK) where id ='Lacking Yardage')
+		,[Migration] = (select Weight from Production.dbo.Inspweight WITH (NOLOCK) where id ='Migration')
+		,[Shading] = (select Weight from Production.dbo.Inspweight WITH (NOLOCK) where id ='Shading')
+		,[Sharinkage] =  (select Weight from Production.dbo.Inspweight WITH (NOLOCK) where id ='Sharinkage')
+		,[Short Width] = (select Weight from Production.dbo.Inspweight WITH (NOLOCK) where id ='Short Width') 
 		,sumWeight = SUM(Weight) OVER()
 	into #Weight
-	FROM Inspweight
+	FROM Production.dbo.Inspweight
 
-
+	
 	--取加權平均數AVG & 取AVG值落在甚麼LEVEL區間 
 	select 	
 		 a.SuppID 
-		,a.refno 
-		,a.abben 
+		,a.Refno 
+		,SupplierName =a.abben 
 		,a.BrandID
-		,a.stockqty 
+		,a.StockQty 
 		,a.TotalInspYds
-		,[Total PoCnt] 
-		,[Total Dyelot]
-		,[Total dye lots accepted(Shadeband)]
-		,[Insp Report]=[Insp Report] *100
-		,[Test Report]=[Test Report] *100
-		,[Continuity Card]=[Continuity Card] *100
-		,[BulkDyelot]=[BulkDyelot] *100
-		,[Total Point] 
-		,[Total Roll]
-		,[GradeA Roll]
-		,[GradeB Roll]
-		,[GradeC Roll]
-		,[Inspected]=[Inspected] *100
-		,[yds]
-		,[Fabric(%)]=[Fabric(%)]  *100      		
-		,a.id
-		,[Point]
-		,[SHRINKAGEyards]
-		,[SHRINKAGE (%)]=[SHRINKAGE (%)] *100
+		,TotalPoCnt= [Total PoCnt] 
+		,TotalDyelot= [Total Dyelot]
+		,TotalDyelotAccepted= [Total dye lots accepted(Shadeband)]
+		,InspReport= [Insp Report] *100
+		,TestReport= [Test Report] *100
+		,ContinuityCard= [Continuity Card] *100
+		,BulkDyelot =[BulkDyelot] *100
+		,TotalPoint= [Total Point] 
+		,TotalRoll= [Total Roll]
+		,GradeARoll = [GradeA Roll]
+		,GradeBRoll = [GradeB Roll]
+		,GradeCRoll = [GradeC Roll]
+		,Inspected = [Inspected] *100
+		,Yds = [yds]
+		,FabricPercent = [Fabric(%)]  *100      		
+		,FabricLevel = a.id
+		,Point
+		,SHRINKAGEyards
+		,SHRINKAGEPercent = [SHRINKAGE (%)] *100
 		,SHINGKAGELevel
-		,[MIGRATIONyards]
-		,[MIGRATION (%)]=[MIGRATION (%)]*100
+		,MIGRATIONyards
+		,MIGRATIONPercent = [MIGRATION (%)]*100
 		,MIGRATIONLevel
-		,[SHADINGyards]
-		,[SHADING (%)]=[SHADING (%)]*100
+		,SHADINGyards
+		,SHADINGPercent=[SHADING (%)]*100
 		,SHADINGLevel
-		,[ActualYds]
-		,[LACKINGYARDAGE(%)]=[LACKINGYARDAGE(%)]*100
+		,ActualYds
+		,LACKINGYARDAGEPercent = [LACKINGYARDAGE(%)]*100
 		,LACKINGYARDAGELevel
-		,[SHORTWIDTH]
-		,[SHORT WIDTH (%)]=[SHORT WIDTH (%)]*100
+		,SHORTWIDTH
+		,SHORTWidthPercent = [SHORT WIDTH (%)]*100
 		,SHORTWIDTHLevel
-		,[TotalDefectRate]=a.Avg *100
-		,[TOTALLEVEL] = s.id
+		,TotalDefectRate = a.Avg *100
+		,TotalLevel = s.id
 		,WhseArrival
 		,FactoryID
 		,Clima 
@@ -663,24 +666,80 @@ BEGIN
 				   [SHADING (%)] * [Shading] + [SHRINKAGE (%)] * [Sharinkage] + [SHORT WIDTH (%)] *  [Short Width])/sumWeight ),0) END
 		from #TmpFinal t,#Weight
 	) a
-	,SuppLevel s
+	,Production.dbo.SuppLevel s
 	where s.type='F' and s.Junk=0 and [AVG] * 100 between s.range1 and s.range2 
-	--AND a.SuppID='1166' --AND a.Refno='60014880'
+	--AND a.SuppID=''1166'' --AND a.Refno=''60014880''
 	ORDER BY  SUPPID,Refno,WhseArrival ,FactoryID
 
 	
-	INSERT INTO dbo.P_QA_R06
-			   (SuppID           ,Refno           ,SupplierName           ,BrandID           ,StockQty           ,TotalInspYds
-			   ,TotalPoCnt           ,TotalDyelot           ,TotalDyelotAccepted           ,InspReport           ,TestReport           ,ContinuityCard
-			   ,BulkDyelot           ,TotalPoint           ,TotalRoll           ,GradeARoll           ,GradeBRoll           ,GradeCRoll
-			   ,Inspected           ,Yds           ,FabricPercent           ,FabricLevel           ,Point           ,SHRINKAGEyards
-			   ,SHRINKAGEPercent           ,SHINGKAGELevel           ,MIGRATIONyards           ,MIGRATIONPercent           ,MIGRATIONLevel
-			   ,SHADINGyards           ,SHADINGPercent           ,SHADINGLevel           ,ActualYds           ,LACKINGYARDAGEPercent
-			   ,LACKINGYARDAGELevel           ,SHORTWIDTH           ,SHORTWidthPercent           ,SHORTWIDTHLevel           ,TotalDefectRate
-			   ,TotalLevel           ,WhseArrival           ,FactoryID           ,Clima)
-	SELECT *
-	FROM #Final
-
+	MERGE INTO POWERBIReportData.dbo.P_QA_R06 t
+	USING #Final s 
+	ON t.SuppID=s.SuppID  AND t.Refno=s.Refno AND t.WhseArrival = s.WhseArrival AND t.FactoryID = s.FactoryID
+	WHEN MATCHED THEN   
+		UPDATE SET 
+		   t.SupplierName = s.SupplierName
+		  ,t.BrandID = s.BrandID
+		  ,t.StockQty = s.StockQty
+		  ,t.TotalInspYds = s.TotalInspYds
+		  ,t.TotalPoCnt = s.TotalPoCnt
+		  ,t.TotalDyelot = s.TotalDyelot
+		  ,t.TotalDyelotAccepted = s.TotalDyelotAccepted
+		  ,t.InspReport = s.InspReport
+		  ,t.TestReport = s.TestReport
+		  ,t.ContinuityCard = s.ContinuityCard
+		  ,t.BulkDyelot = s.BulkDyelot
+		  ,t.TotalPoint = s.TotalPoint
+		  ,t.TotalRoll = s.TotalRoll
+		  ,t.GradeARoll = s.GradeARoll
+		  ,t.GradeBRoll = s.GradeBRoll
+		  ,t.GradeCRoll = s.GradeCRoll
+		  ,t.Inspected = s.Inspected
+		  ,t.Yds = s.Yds
+		  ,t.FabricPercent = s.FabricPercent
+		  ,t.FabricLevel = s.FabricLevel
+		  ,t.Point = s.Point
+		  ,t.SHRINKAGEyards = s.SHRINKAGEyards
+		  ,t.SHRINKAGEPercent = s.SHRINKAGEPercent
+		  ,t.SHINGKAGELevel = s.SHINGKAGELevel
+		  ,t.MIGRATIONyards = s.MIGRATIONyards
+		  ,t.MIGRATIONPercent = s.MIGRATIONPercent
+		  ,t.MIGRATIONLevel = s.MIGRATIONLevel
+		  ,t.SHADINGyards = s.SHADINGyards
+		  ,t.SHADINGPercent = s.SHADINGPercent
+		  ,t.SHADINGLevel = s.SHADINGLevel
+		  ,t.ActualYds = s.ActualYds
+		  ,t.LACKINGYARDAGEPercent = s.LACKINGYARDAGEPercent
+		  ,t.LACKINGYARDAGELevel = s.LACKINGYARDAGELevel
+		  ,t.SHORTWIDTH = s.SHORTWIDTH
+		  ,t.SHORTWidthPercent = s.SHORTWidthPercent
+		  ,t.SHORTWIDTHLevel = s.SHORTWIDTHLevel
+		  ,t.TotalDefectRate = s.TotalDefectRate
+		  ,t.TotalLevel = s.TotalLevel
+		  ,t.Clima = s.Clima	
+	WHEN NOT MATCHED BY TARGET THEN
+		INSERT (SuppID           ,Refno           ,SupplierName           ,BrandID           ,StockQty
+           ,TotalInspYds           ,TotalPoCnt           ,TotalDyelot           ,TotalDyelotAccepted           ,InspReport
+           ,TestReport           ,ContinuityCard           ,BulkDyelot           ,TotalPoint           ,TotalRoll
+           ,GradeARoll           ,GradeBRoll           ,GradeCRoll           ,Inspected           ,Yds
+           ,FabricPercent           ,FabricLevel           ,Point           ,SHRINKAGEyards           ,SHRINKAGEPercent
+           ,SHINGKAGELevel           ,MIGRATIONyards           ,MIGRATIONPercent           ,MIGRATIONLevel           ,SHADINGyards
+           ,SHADINGPercent           ,SHADINGLevel           ,ActualYds           ,LACKINGYARDAGEPercent           ,LACKINGYARDAGELevel
+           ,SHORTWIDTH           ,SHORTWidthPercent           ,SHORTWIDTHLevel           ,TotalDefectRate           ,TotalLevel
+           ,WhseArrival           ,FactoryID           ,Clima)
+		VALUES (SuppID           ,s.Refno           ,s.SupplierName           ,s.BrandID           ,s.StockQty
+           ,s.TotalInspYds           ,s.TotalPoCnt           ,s.TotalDyelot           ,s.TotalDyelotAccepted           ,s.InspReport
+           ,s.TestReport           ,s.ContinuityCard           ,s.BulkDyelot           ,s.TotalPoint           ,s.TotalRoll
+           ,s.GradeARoll           ,s.GradeBRoll           ,s.GradeCRoll           ,s.Inspected           ,s.Yds
+           ,s.FabricPercent           ,s.FabricLevel           ,s.Point           ,s.SHRINKAGEyards           ,s.SHRINKAGEPercent
+           ,s.SHINGKAGELevel           ,s.MIGRATIONyards           ,s.MIGRATIONPercent           ,s.MIGRATIONLevel           ,s.SHADINGyards
+           ,s.SHADINGPercent           ,s.SHADINGLevel           ,s.ActualYds           ,s.LACKINGYARDAGEPercent           ,s.LACKINGYARDAGELevel
+           ,s.SHORTWIDTH           ,s.SHORTWidthPercent           ,s.SHORTWIDTHLevel           ,s.TotalDefectRate           ,s.TotalLevel
+           ,s.WhseArrival           ,s.FactoryID           ,s.Clima)
+	WHEN NOT MATCHED BY SOURCE AND t.WhseArrival >= @WhseArrival_s_varchar  AND t.WhseArrival <= @WhseArrival_e_varchar    THEN 
+		DELETE
+	;
+	
+	
 	drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupbyDyelot,#tmp2groupByRoll,#spr
 	,#SH1,#SH2,#SHtmp,#mtmp,#ea,#eb,#ec,#sa,#sb,#Stmp,#Ltmp,#Sdtmp,#TmpFinal,#Weight
 	,#tmpsd,#tmpDyelot,#tmpTotalPoint,#tmpTotalRoll,#tmpGrade_A,#tmpGrade_B,#tmpGrade_C,#tmpsuppEncode

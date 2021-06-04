@@ -46,7 +46,7 @@ BEGIN
 		from ['+@LinkServerName+'].Production.dbo.SubTransfer s
 		inner join ['+@LinkServerName+'].Production.dbo.SubTransfer_Detail sd on s.Id = sd.ID
 		where 1=1
-		 and s.IssueDate >= @'''+@WhseArrival_s_varchar+''' and s.IssueDate <= '''+@WhseArrival_e_varchar+'''
+		 and s.IssueDate >= '''+@WhseArrival_s_varchar+''' and s.IssueDate <= '''+@WhseArrival_e_varchar+'''
 		and s.Status = ''Confirmed''
 		and s.Type = ''B''
 		union
@@ -54,7 +54,7 @@ BEGIN
 		from ['+@LinkServerName+'].Production.dbo.BorrowBack b
 		inner join ['+@LinkServerName+'].Production.dbo.BorrowBack_Detail bd on b.Id = bd.ID
 		where 1=1
-		 and b.IssueDate >= @'''+@WhseArrival_s_varchar+''' and b.IssueDate <= '''+@WhseArrival_e_varchar+'''
+		 and b.IssueDate >= '''+@WhseArrival_s_varchar+''' and b.IssueDate <= '''+@WhseArrival_e_varchar+'''
 		and b.Status = ''Confirmed''
 		and (b.Type = ''A'' or b.Type = ''B'')
 	) a
@@ -245,11 +245,11 @@ BEGIN
 		select Defect = fd.DescriptionEN, fd.ID, Point = sum(a.point)  
 		from (
 			select
-				Defect = ['+@LinkServerName+'].Production.dbo.SplitDefectNum(x.Data,0),	
-				Point = cast(['+@LinkServerName+'].Production.dbo.SplitDefectNum(x.Data,1) as int)
-			from ['+@LinkServerName+'].Production.dbo.SplitString((select Defect from #spr WHERE SuppID = gbs.SuppID),''/'') x
+				Defect = PBIReportData.dbo.SplitDefectNum(x.Data,0),	
+				Point = cast(PBIReportData.dbo.SplitDefectNum(x.Data,1) as int)
+			from dbo.SplitString((select Defect from #spr WHERE SuppID = gbs.SuppID),''/'') x
 		)A 
-		left join FabricDefect fd on id = a.Defect
+		left join ['+@LinkServerName+'].Production.dbo.FabricDefect fd on id = a.Defect
 		group by fd.DescriptionEN,fd.ID
 	) as Point
 	outer apply(
@@ -295,7 +295,7 @@ BEGIN
 	where FL.HeatEncode=1 and h.Result = ''Fail''
 	select FL.POID, FL.SEQ1, FL.seq2, W.Dyelot
 	into #SH2
-	from ['+@LinkServerName+'].Production.dbo..FIR_Laboratory FL WITH (NOLOCK) 
+	from ['+@LinkServerName+'].Production.dbo.FIR_Laboratory FL WITH (NOLOCK) 
 	inner join ['+@LinkServerName+'].Production.dbo.FIR_Laboratory_Wash W WITH (NOLOCK) on W.ID = FL.ID						
 	where FL.WashEncode=1 and W.Result = ''Fail''
 
@@ -352,7 +352,7 @@ BEGIN
 	where f.ShadebondEncode =1 and fs.Result = ''Fail'' 
 	select f.poid,f.SEQ1,f.seq2,fc.Dyelot,f.SuppID
 	into #sb
-	from ['+@LinkServerName+'].Production.dbo..FIR f WITH (NOLOCK) 
+	from ['+@LinkServerName+'].Production.dbo.FIR f WITH (NOLOCK) 
 	inner join ['+@LinkServerName+'].Production.dbo.FIR_Continuity fc WITH (NOLOCK) on fc.ID = f.ID
 	where f.ContinuityEncode =1 and fc.Result = ''Fail'' 
 
@@ -370,7 +370,8 @@ BEGIN
 	or exists(select * from #sb where poid = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2 and Dyelot  = a.dyelot and a.SuppID = Tmp.SuppID ))
 	group by tmp.SuppID
 ';
-	SET @SqlCmd3='
+
+	SET @SqlCmd4='
 	
 	-----#Ltmp 
 
@@ -473,7 +474,7 @@ BEGIN
 	group by b.Refno, b.ColorID, b.SuppID, d.Consignee, c.SeasonSCIID, c.FirstDyelot, e.SeasonSCIID,c.Period,f.RibItem 
 ';
 
-	SET @SqlCmd4='
+	SET @SqlCmd5='
 	
 	 --分母
 	 select SuppID,  count(*)*1.0 Mcnt
@@ -631,7 +632,7 @@ BEGIN
 	order by Tmp.SuppID
 ';
 
-	SET @SqlCmd5='
+	SET @SqlCmd6='
 	
 	--準備比重#table不然每筆資料都要重撈7次  
 	select DISTINCT
@@ -650,44 +651,44 @@ BEGIN
 	select 	
 		 a.SuppID 
 		,a.refno 
-		,a.abben 
+		,SupplierName =a.abben 
 		,a.BrandID
-		,a.stockqty 
+		,a.StockQty 
 		,a.TotalInspYds
-		,[Total PoCnt] 
-		,[Total Dyelot]
-		,[Total dye lots accepted(Shadeband)]
-		,[Insp Report]=[Insp Report] *100
-		,[Test Report]=[Test Report] *100
-		,[Continuity Card]=[Continuity Card] *100
-		,[BulkDyelot]=[BulkDyelot] *100
-		,[Total Point] 
-		,[Total Roll]
-		,[GradeA Roll]
-		,[GradeB Roll]
-		,[GradeC Roll]
-		,[Inspected]=[Inspected] *100
-		,[yds]
-		,[Fabric(%)]=[Fabric(%)]  *100      		
-		,a.id
-		,[Point]
-		,[SHRINKAGEyards]
-		,[SHRINKAGE (%)]=[SHRINKAGE (%)] *100
+		,TotalPoCnt= [Total PoCnt] 
+		,TotalDyelot= [Total Dyelot]
+		,TotalDyelotAccepted= [Total dye lots accepted(Shadeband)]
+		,InspReport= [Insp Report] *100
+		,TestReport= [Test Report] *100
+		,ContinuityCard= [Continuity Card] *100
+		,BulkDyelot =[BulkDyelot] *100
+		,TotalPoint= [Total Point] 
+		,TotalRoll= [Total Roll]
+		,GradeARoll = [GradeA Roll]
+		,GradeBRoll = [GradeB Roll]
+		,GradeCRoll = [GradeC Roll]
+		,Inspected = [Inspected] *100
+		,Yds = [yds]
+		,FabricPercent = [Fabric(%)]  *100      		
+		,FabricLevel = a.id
+		,Point
+		,SHRINKAGEyards
+		,SHRINKAGEPercent = [SHRINKAGE (%)] *100
 		,SHINGKAGELevel
-		,[MIGRATIONyards]
-		,[MIGRATION (%)]=[MIGRATION (%)]*100
+		,MIGRATIONyards
+		,MIGRATIONPercent = [MIGRATION (%)]*100
 		,MIGRATIONLevel
-		,[SHADINGyards]
-		,[SHADING (%)]=[SHADING (%)]*100
+		,SHADINGyards
+		,SHADINGPercent=[SHADING (%)]*100
 		,SHADINGLevel
-		,[ActualYds]
-		,[LACKINGYARDAGE(%)]=[LACKINGYARDAGE(%)]*100
+		,ActualYds
+		,LACKINGYARDAGEPercent = [LACKINGYARDAGE(%)]*100
 		,LACKINGYARDAGELevel
-		,[SHORTWIDTH]
-		,[SHORT WIDTH (%)]=[SHORT WIDTH (%)]*100
+		,SHORTWIDTH
+		,SHORTWidthPercent = [SHORT WIDTH (%)]*100
 		,SHORTWIDTHLevel
-		,[TotalDefectRate]=a.Avg *100
-		,[TOTALLEVEL] = s.id
+		,TotalDefectRate = a.Avg *100
+		,TotalLevel = s.id
 		,WhseArrival
 		,FactoryID
 		,Clima 
@@ -702,26 +703,88 @@ BEGIN
 	where s.type=''F'' and s.Junk=0 and [AVG] * 100 between s.range1 and s.range2 
 	--AND a.SuppID=''1166'' --AND a.Refno=''60014880''
 	ORDER BY  SUPPID,Refno,WhseArrival ,FactoryID
-
+		
+	MERGE INTO PBIReportData.dbo.P_QA_R06 t
+	USING #Final s 
+	ON t.SuppID=s.SuppID  AND t.Refno=s.Refno AND t.WhseArrival = s.WhseArrival AND t.FactoryID = s.FactoryID
+	WHEN MATCHED THEN   
+		UPDATE SET 
+		   t.SupplierName = s.SupplierName
+		  ,t.BrandID = s.BrandID
+		  ,t.StockQty = s.StockQty
+		  ,t.TotalInspYds = s.TotalInspYds
+		  ,t.TotalPoCnt = s.TotalPoCnt
+		  ,t.TotalDyelot = s.TotalDyelot
+		  ,t.TotalDyelotAccepted = s.TotalDyelotAccepted
+		  ,t.InspReport = s.InspReport
+		  ,t.TestReport = s.TestReport
+		  ,t.ContinuityCard = s.ContinuityCard
+		  ,t.BulkDyelot = s.BulkDyelot
+		  ,t.TotalPoint = s.TotalPoint
+		  ,t.TotalRoll = s.TotalRoll
+		  ,t.GradeARoll = s.GradeARoll
+		  ,t.GradeBRoll = s.GradeBRoll
+		  ,t.GradeCRoll = s.GradeCRoll
+		  ,t.Inspected = s.Inspected
+		  ,t.Yds = s.Yds
+		  ,t.FabricPercent = s.FabricPercent
+		  ,t.FabricLevel = s.FabricLevel
+		  ,t.Point = s.Point
+		  ,t.SHRINKAGEyards = s.SHRINKAGEyards
+		  ,t.SHRINKAGEPercent = s.SHRINKAGEPercent
+		  ,t.SHINGKAGELevel = s.SHINGKAGELevel
+		  ,t.MIGRATIONyards = s.MIGRATIONyards
+		  ,t.MIGRATIONPercent = s.MIGRATIONPercent
+		  ,t.MIGRATIONLevel = s.MIGRATIONLevel
+		  ,t.SHADINGyards = s.SHADINGyards
+		  ,t.SHADINGPercent = s.SHADINGPercent
+		  ,t.SHADINGLevel = s.SHADINGLevel
+		  ,t.ActualYds = s.ActualYds
+		  ,t.LACKINGYARDAGEPercent = s.LACKINGYARDAGEPercent
+		  ,t.LACKINGYARDAGELevel = s.LACKINGYARDAGELevel
+		  ,t.SHORTWIDTH = s.SHORTWIDTH
+		  ,t.SHORTWidthPercent = s.SHORTWidthPercent
+		  ,t.SHORTWIDTHLevel = s.SHORTWIDTHLevel
+		  ,t.TotalDefectRate = s.TotalDefectRate
+		  ,t.TotalLevel = s.TotalLevel
+		  ,t.Clima = s.Clima
 	
-	INSERT INTO PBIReportData.dbo.P_QA_R06
-			   (SuppID           ,Refno           ,SupplierName           ,BrandID           ,StockQty           ,TotalInspYds
-			   ,TotalPoCnt           ,TotalDyelot           ,TotalDyelotAccepted           ,InspReport           ,TestReport           ,ContinuityCard
-			   ,BulkDyelot           ,TotalPoint           ,TotalRoll           ,GradeARoll           ,GradeBRoll           ,GradeCRoll
-			   ,Inspected           ,Yds           ,FabricPercent           ,FabricLevel           ,Point           ,SHRINKAGEyards
-			   ,SHRINKAGEPercent           ,SHINGKAGELevel           ,MIGRATIONyards           ,MIGRATIONPercent           ,MIGRATIONLevel
-			   ,SHADINGyards           ,SHADINGPercent           ,SHADINGLevel           ,ActualYds           ,LACKINGYARDAGEPercent
-			   ,LACKINGYARDAGELevel           ,SHORTWIDTH           ,SHORTWidthPercent           ,SHORTWIDTHLevel           ,TotalDefectRate
-			   ,TotalLevel           ,WhseArrival           ,FactoryID           ,Clima)
-	SELECT *
-	FROM #Final
-
+	WHEN NOT MATCHED BY TARGET THEN
+		INSERT (SuppID           ,Refno           ,SupplierName           ,BrandID           ,StockQty
+           ,TotalInspYds           ,TotalPoCnt           ,TotalDyelot           ,TotalDyelotAccepted           ,InspReport
+           ,TestReport           ,ContinuityCard           ,BulkDyelot           ,TotalPoint           ,TotalRoll
+           ,GradeARoll           ,GradeBRoll           ,GradeCRoll           ,Inspected           ,Yds
+           ,FabricPercent           ,FabricLevel           ,Point           ,SHRINKAGEyards           ,SHRINKAGEPercent
+           ,SHINGKAGELevel           ,MIGRATIONyards           ,MIGRATIONPercent           ,MIGRATIONLevel           ,SHADINGyards
+           ,SHADINGPercent           ,SHADINGLevel           ,ActualYds           ,LACKINGYARDAGEPercent           ,LACKINGYARDAGELevel
+           ,SHORTWIDTH           ,SHORTWidthPercent           ,SHORTWIDTHLevel           ,TotalDefectRate           ,TotalLevel
+           ,WhseArrival           ,FactoryID           ,Clima)
+		VALUES (SuppID           ,s.Refno           ,s.SupplierName           ,s.BrandID           ,s.StockQty
+           ,s.TotalInspYds           ,s.TotalPoCnt           ,s.TotalDyelot           ,s.TotalDyelotAccepted           ,s.InspReport
+           ,s.TestReport           ,s.ContinuityCard           ,s.BulkDyelot           ,s.TotalPoint           ,s.TotalRoll
+           ,s.GradeARoll           ,s.GradeBRoll           ,s.GradeCRoll           ,s.Inspected           ,s.Yds
+           ,s.FabricPercent           ,s.FabricLevel           ,s.Point           ,s.SHRINKAGEyards           ,s.SHRINKAGEPercent
+           ,s.SHINGKAGELevel           ,s.MIGRATIONyards           ,s.MIGRATIONPercent           ,s.MIGRATIONLevel           ,s.SHADINGyards
+           ,s.SHADINGPercent           ,s.SHADINGLevel           ,s.ActualYds           ,s.LACKINGYARDAGEPercent           ,s.LACKINGYARDAGELevel
+           ,s.SHORTWIDTH           ,s.SHORTWidthPercent           ,s.SHORTWIDTHLevel           ,s.TotalDefectRate           ,s.TotalLevel
+           ,s.WhseArrival           ,s.FactoryID           ,s.Clima)
+	WHEN NOT MATCHED BY SOURCE AND t.WhseArrival >= '''+@WhseArrival_s_varchar+'''  AND t.WhseArrival <= '''+@WhseArrival_e_varchar+'''    THEN 
+		DELETE
+	;
+	
+	
 	drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupbyDyelot,#tmp2groupByRoll,#spr
 	,#SH1,#SH2,#SHtmp,#mtmp,#ea,#eb,#ec,#sa,#sb,#Stmp,#Ltmp,#Sdtmp,#TmpFinal,#Weight
 	,#tmpsd,#tmpDyelot,#tmpTotalPoint,#tmpTotalRoll,#tmpGrade_A,#tmpGrade_B,#tmpGrade_C,#tmpsuppEncode
 	,#tmpCountSP,#tmpTestReport,#InspReport,#tmpContinuityCard,#BulkDyelot
 	,#tmp_DyelotMain,#tmp_DyelotMcnt,#tmp_newSeasonSCI,#tmp_DyelotMonth,#tmp_DyelotDcnt
 	,#PassCountByDyelot ,#FirData ,#All_Fir_shadebone,#Final
+	
 ';
 
+
+
+	SET @SqlCmd_Combin = @SqlCmd1 +  @SqlCmd2 +  @SqlCmd3 +  @SqlCmd4 +  @SqlCmd5 + @SqlCmd6;
+	EXEC sp_executesql @SqlCmd_Combin
+	--select @SqlCmd_Combin
 END
