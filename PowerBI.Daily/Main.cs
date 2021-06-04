@@ -66,6 +66,8 @@ namespace PowerBI.Daily
         {
             InitializeComponent();
             isAuto = false;
+            StartTime = DateTime.Now;
+            EndTime = DateTime.Now;
         }
 
         public Main(String _isAuto)
@@ -147,19 +149,17 @@ namespace PowerBI.Daily
             SqlConnection conn;
             DateTime startDate;
             DateTime endDate;
-
             if (!Sci.SQL.GetConnection(out conn)) { return; }
-
             conn.InfoMessage += new SqlInfoMessageEventHandler(InfoMessage);
 
             startDate = DateTime.Now;
+            // type 0 先排除 P_ImportEstShippingReport  跑完並寫 joblog
             DualResult result = AsyncHelper.Current.DataProcess(this, () =>
             {
-                return AsyncUpdateExport(conn);
+                return AsyncUpdateExport(conn, 0);
             });
             endDate = DateTime.Now;
-            // 完成後發信
-            //mymailTo(result.ToSimpleString());
+
 
             if (!result)
             {
@@ -167,25 +167,40 @@ namespace PowerBI.Daily
             }
             else
             {
-                writeJobLog(true);
+                writeJobLog(true, 0);
             }
-           
+
+            // type 1 只跑 P_ImportEstShippingReport 
+            result = AsyncHelper.Current.DataProcess(this, () =>
+            {
+                return AsyncUpdateExport(conn, 1);
+            });
+
+
+            if (!result)
+            {
+                ShowErr(result);
+            }
+            else
+            {
+                writeJobLog(true, 1);
+            }
+
             conn.Close();
             issucess = true;
         }
 
         bool issucess = true;
         #region Export/Update (非同步)
-        private DualResult AsyncUpdateExport(SqlConnection conn)
+        private DualResult AsyncUpdateExport(SqlConnection conn, int type = 0)
         {
-            DualResult result;
             try
             {
                 intHashCode = Guid.NewGuid().GetHashCode();
-                result = DailyUpdate();
+                DualResult result = DailyUpdate(type);
                 if (!result)
                 {
-                    writeJobLog(false); ;
+                    writeJobLog(false, type);
                     return result;
                 }
             }
@@ -228,9 +243,19 @@ namespace PowerBI.Daily
             callTPEWebAPI.CreateJobLogAsnc(jobLog, null);
         }
 
-        private DualResult DailyUpdate()
+        private DualResult DailyUpdate(int type = 0)
         {
             DualResult result;
+            string whereP;
+            if (type == 0)
+            {
+                // 不含財務在看的 ( P_ImportEstShippingReport )
+                whereP = " <> ";
+            }
+            else
+            {
+                whereP = " = ";
+            }
 
             #region Setup Data  
             string sqlCmd = string.Empty;
@@ -249,6 +274,7 @@ SELECT Region
 ,[TSQL] = [TSQL] + ' '+''''+LinkServerName+''''
 FROM P_TransRegion r
 left join P_TransImport i on r.ConnectionName = i.ImportConnectionName
+where i.Name {whereP} 'P_ImportEstShippingReport'
 ";
 
             result = DBProxy.Current.Select("PBIReportData", sqlCmd, out transAll);
@@ -281,19 +307,22 @@ SELECT Region
 ,[TSQL] = [TSQL] + ' '+''''+LinkServerName+''''
 FROM P_TransRegion r
 left join P_TransImport i on r.ConnectionName = i.ImportConnectionName
-where not exists(
-	select * from P_TransLog t
-	where t.TransCode='{intHashCode}' and t.FunctionName not in ('Start Update_PoweBI_InThread','End Update_PowerBI_InThread')
-	and i.Name = t.FunctionName
-	and r.Region = t.RegionID
+where(
+    not exists(
+	    select * from P_TransLog t
+	    where t.TransCode='{intHashCode}' and t.FunctionName not in ('Start Update_PoweBI_InThread','End Update_PowerBI_InThread')
+	    and i.Name = t.FunctionName
+	    and r.Region = t.RegionID
+    )
+    or exists(
+	    select * from P_TransLog t
+	    where t.TransCode = '{intHashCode}'
+	    and t.Description like '%deadlock%'
+	    and i.Name = t.FunctionName
+	    and r.Region = t.RegionID
+    )
 )
-or exists(
-	select * from P_TransLog t
-	where t.TransCode = '{intHashCode}'
-	and t.Description like '%deadlock%'
-	and i.Name = t.FunctionName
-	and r.Region = t.RegionID
-)
+and i.Name {whereP} 'P_ImportEstShippingReport'
 
 ";
 
@@ -594,8 +623,19 @@ END CATCH";
             }
         }
 
-        private void writeJobLog(bool isSucceed)
+        private void writeJobLog(bool isSucceed, int type = 0)
         {
+            string whereP;
+            if (type == 0)
+            {
+                // 不含財務在看的 ( P_ImportEstShippingReport )
+                whereP = " <> ";
+            }
+            else
+            {
+                whereP = " = ";
+            }
+
             // 只要P_TransLog.Description有值, 代表有error msg所以判斷為Failed
             string cmd = $@"
 select FailCnt = SUM(cnt),b.MailName
@@ -606,7 +646,7 @@ from P_TransLog
 where TransCode = {intHashCode}
 group by FunctionName,Description
 ) a
-inner join P_TransImport b on a.FunctionName = b.Name
+inner join P_TransImport b on a.FunctionName = b.Name and b.Name {whereP} 'P_ImportEstShippingReport'
 group by b.MailName
 order by b.MailName";
             DualResult result;
