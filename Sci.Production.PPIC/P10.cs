@@ -798,11 +798,7 @@ WHERE l.ID='{this.CurrentMaintain["ID"]}'
             var email = new MailTo(Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, content, true, true);
             email.ShowDialog();
 
-            if (email.SendMailResult)
-            {
-                MyUtility.Msg.InfoBox("Send mail successful.");
-            }
-            else
+            if (!email.SendMailResult)
             {
                 return;
             }
@@ -814,6 +810,8 @@ WHERE l.ID='{this.CurrentMaintain["ID"]}'
                 MyUtility.Msg.ErrorBox("Confirm fail!\r\n" + result.ToString());
                 return;
             }
+
+            MyUtility.Msg.InfoBox("Confirm & Send mail successful.");
         }
 
         /// <inheritdoc/>
