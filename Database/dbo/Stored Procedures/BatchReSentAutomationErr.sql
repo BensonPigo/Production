@@ -52,7 +52,7 @@ begin
      Select distinct APIThread	from dbo.AutomationErrMsg 
 								where ReSented = 0 and 
 									  JSON <> '' and
-									  SuppAPIThread in ('api/SunriseFinishingProcesses/SentDataByApiTag', 'api/GensongFinishingProcesses/SentDataByApiTag');
+									  SuppAPIThread in ('api/SunriseFinishingProcesses/SentDataByApiTag', 'api/GensongFinishingProcesses/SentDataByApiTag','Api/GensongAutoWHFabric/SentDataByApiTag','Api/VstrongAutoWHAccessory/SentDataByApiTag');
 	declare @APIThread   varchar(50)
 	
 	
@@ -71,7 +71,7 @@ begin
 		 where	APIThread = @APIThread and 
 				ReSented = 0 and 
 				JSON <> '' and
-				SuppAPIThread in ('api/SunriseFinishingProcesses/SentDataByApiTag', 'api/GensongFinishingProcesses/SentDataByApiTag')
+				SuppAPIThread in ('api/SunriseFinishingProcesses/SentDataByApiTag', 'api/GensongFinishingProcesses/SentDataByApiTag','Api/GensongAutoWHFabric/SentDataByApiTag','Api/VstrongAutoWHAccessory/SentDataByApiTag')
 		 order by AddDate
 
 		open cur_ResentUkey;

@@ -2540,12 +2540,15 @@ LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
 LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = po3.ID
 outer apply(
 	select listValue = Stuff((
-			select concat(',',FromLocation)
+			select concat(',',MtlLocationID)
 			from (
 					select 	distinct
-						l.FromLocation
-					from dbo.LocationTrans_detail l
-					where l.FtyInventoryUkey = fi.Ukey
+						fd.MtlLocationID
+					from FtyInventory_Detail fd
+					left join MtlLocation ml on ml.ID = fd.MtlLocationID
+					where fd.Ukey = fi.Ukey
+					and ml.Junk = 0 
+					and ml.StockType = bb2.ToStockType
 				) s
 			for xml path ('')
 		) , 1, 1, '')
