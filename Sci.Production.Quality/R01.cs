@@ -413,7 +413,7 @@ outer apply(select  CrockingInspector = (select name from Pass1 where id = Crock
 )FL
 outer apply
 (
-	SELECT Max(a.EditDate) BulkLocationDate
+	SELECT Min(a.EditDate) BulkLocationDate
 	FROM LocationTrans a WITH (NOLOCK) 
 	inner join LocationTrans_detail as b WITH (NOLOCK) on a.ID = b.ID 
 	WHERE a.status = 'Confirmed' and b.stocktype='B'
