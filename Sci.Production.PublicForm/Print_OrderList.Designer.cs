@@ -50,12 +50,14 @@
             // radioEachConsumption
             // 
             this.radioEachConsumption.AutoSize = true;
+            this.radioEachConsumption.Checked = true;
             this.radioEachConsumption.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.radioEachConsumption.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioEachConsumption.Location = new System.Drawing.Point(6, 16);
             this.radioEachConsumption.Name = "radioEachConsumption";
             this.radioEachConsumption.Size = new System.Drawing.Size(282, 24);
             this.radioEachConsumption.TabIndex = 0;
+            this.radioEachConsumption.TabStop = true;
             this.radioEachConsumption.Text = "Each Consumption (Cutting Combo)";
             this.radioEachConsumption.UseVisualStyleBackColor = true;
             // 
@@ -110,6 +112,7 @@
             this.Controls.Add(this.label5);
             this.Controls.Add(this.groupBox1);
             this.Name = "Print_OrderList";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "Print";
             this.Controls.SetChildIndex(this.groupBox1, 0);
             this.Controls.SetChildIndex(this.label5, 0);
