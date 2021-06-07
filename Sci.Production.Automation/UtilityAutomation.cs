@@ -180,7 +180,8 @@ namespace Sci.Production.Automation
         {
             Dictionary<string, string> requestHeaders = new Dictionary<string, string>();
             StackTrace stackTrace = new StackTrace();
-            var sciStackTrace = stackTrace.GetFrames().Where(s => s.GetMethod().DeclaringType.FullName.Contains("Sci.Production"));
+            var sciStackTrace = stackTrace.GetFrames().Where(s => s.GetMethod().DeclaringType.FullName.Contains("Sci.Production") &&
+                                                                  !s.GetMethod().DeclaringType.FullName.Contains("Sci.Production.Program"));
             MethodBase methodBase = sciStackTrace.Any() ? sciStackTrace.Last().GetMethod() : stackTrace.GetFrame(7).GetMethod();
 
             string callFrom = methodBase.DeclaringType.FullName;
