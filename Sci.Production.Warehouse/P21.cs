@@ -142,6 +142,7 @@ namespace Sci.Production.Warehouse
                  .DateTime("Fabric2LabTime", header: "Fabric to Lab Time", width: Widths.AnsiChars(20), iseditingreadonly: false)
                  .Text("Fabric2LabBy", header: "Fabric to Lab By", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Location", header: "Location", width: Widths.AnsiChars(12), settings: cellLocation)
+                 .Text("Checker", header: "Checker", width: Widths.AnsiChars(12))
                  .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
                  .Numeric("ActualWeight", header: "Act.(kg)", width: Widths.AnsiChars(8), decimal_places: 2, settings: cellActWeight)
                  .Numeric("Differential", header: "Differential", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
@@ -152,6 +153,7 @@ namespace Sci.Production.Warehouse
                  ;
 
             this.gridReceiving.Columns["Location"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridReceiving.Columns["Checker"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["ActualWeight"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["CutShadebandTime"].DefaultCellStyle.BackColor = Color.Pink;
@@ -320,7 +322,7 @@ into #tmpStockType
 from DropDownList WITH (NOLOCK) where Type = 'Pms_StockType'
 
 select r.*
-    , [rid] = cast(ROW_NUMBER() over(order by ExportID, id, PoId) as int)
+     , [rid] = cast(ROW_NUMBER() over(order by  OrderSeq, OrderSeq2) as int)
 from
 (
     select
@@ -365,6 +367,10 @@ from
         ,rd.Fabric2LabBy
         ,[ReceivingTransferInUkey] = rd.Ukey
         ,rd.Ukey
+        ,rd.Checker
+        ,[OldChecker] = rd.Checker
+		,[OrderSeq] = 7
+		,[OrderSeq2] = cast(ROW_NUMBER() over(order by r.ExportID, rd.Id, rd.EncodeSeq, rd.PoId, rd.Seq1, rd.Seq2, rd.Roll, rd.Dyelot) as int)		
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
     inner join Orders o with (nolock) on o.ID = rd.POID 
@@ -447,6 +453,10 @@ from
         ,td.Fabric2LabBy
         ,[ReceivingTransferInUkey] = td.Ukey
         ,td.Ukey
+        ,td.Checker
+        ,[OldChecker] = td.Checker
+		,[OrderSeq] = 18
+		,[OrderSeq2] = cast(ROW_NUMBER() over(order by t.ID, td.PoId, td.Seq1, td.Seq2, td.Roll, td.Dyelot) as int)
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
     INNER JOIN Orders o with (nolock) ON o.ID = td.POID
@@ -600,7 +610,8 @@ drop table #tmp
                                                                              && !x.Field<string>("Location").EqualString(x.Field<string>("OldLocation"))).ToArray();
             var listUpdateReceivingTransferIn = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
                                                                              && (x.Field<decimal>("ActualWeight") != x.Field<decimal>("OldActualWeight") ||
-                                                                                 !MyUtility.Convert.GetDate(x["Fabric2LabTime"]).EqualString(MyUtility.Convert.GetDate(x["OldFabric2LabTime"]))))
+                                                                                 !MyUtility.Convert.GetDate(x["Fabric2LabTime"]).EqualString(MyUtility.Convert.GetDate(x["OldFabric2LabTime"])) ||
+                                                                                 x.Field<string>("Checker") != x.Field<string>("OldChecker")))
                                                                                 .Select(s => new
                                                                                 {
                                                                                     ReceivingSource = s["ReceivingSource"].ToString(),
@@ -608,6 +619,7 @@ drop table #tmp
                                                                                     Ukey = s["ReceivingTransferInUkey"],
                                                                                     Fabric2LabTime = s["Fabric2LabTime"],
                                                                                     IsNeedUpdateFabric2LabBy = !MyUtility.Convert.GetDate(s["Fabric2LabTime"]).EqualString(MyUtility.Convert.GetDate(s["OldFabric2LabTime"])),
+                                                                                    Checker = s["Checker"],
                                                                                 });
 
             DataRow[] drArryCutShadebandTime = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
@@ -651,7 +663,7 @@ drop table #tmp
 
             if (id_list.Count == 0 && listUpdateReceivingTransferIn.Count() == 0 && drArryCutShadebandTime.Length == 0)
             {
-                MyUtility.Msg.WarningBox("There is no Location, Act.(kg), Cut Shadeband Time changed.");
+                MyUtility.Msg.WarningBox("There is no Location, Act.(kg), Cut Shadeband Time, Checker changed.");
                 return;
             }
 
@@ -773,14 +785,14 @@ Insert into LocationTrans_Detail(   ID,
 
                 if (updateItem.ReceivingSource == "Receiving")
                 {
-                    sqlUpdateReceiving_Detail += $@"update Receiving_Detail set ActualWeight  = {updateItem.ActualWeight} {updateFabric2Lab}
+                    sqlUpdateReceiving_Detail += $@"update Receiving_Detail set ActualWeight  = {updateItem.ActualWeight} {updateFabric2Lab}, Checker = '{updateItem.Checker}'
                                                     where   UKey = '{updateItem.Ukey}'
 ";
                 }
 
                 if (updateItem.ReceivingSource == "TransferIn")
                 {
-                    sqlUpdateReceiving_Detail += $@"update TransferIn_Detail set ActualWeight  = {updateItem.ActualWeight} {updateFabric2Lab}
+                    sqlUpdateReceiving_Detail += $@"update TransferIn_Detail set ActualWeight  = {updateItem.ActualWeight} {updateFabric2Lab}, Checker = '{updateItem.Checker}'
                                                     where   UKey = '{updateItem.Ukey}'
 ";
                 }

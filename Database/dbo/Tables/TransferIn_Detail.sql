@@ -19,6 +19,7 @@
     [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
 	[Fabric2LabTime] DATETIME  NULL,
     [Fabric2LabBy] VARCHAR(10) CONSTRAINT [DF_TransferIn_Detail_Fabric2LabBy] DEFAULT ('') not NULL,
+    [Checker] NVARCHAR(30) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_TransferIn_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -103,3 +104,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'TransferIn_Detail',
     @level2type = N'COLUMN',
     @level2name = N'ActualWeight'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'PH 收料時負責秤重 + 剪一小塊布 (ShadeBand) + 搬該物料入庫',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferIn_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Checker'
