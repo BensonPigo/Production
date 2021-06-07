@@ -58,7 +58,7 @@ namespace Sci.Production.Warehouse
     ,[MaterialComplete] = case when psd.Complete = 1 then 'Y' else '' end
     ,[ETA] = psd.FinalETA
     ,[ArriveWHDate] = stuff((
-                    select distinct concat(char(10),isnull(Format(a.date,'yyyy/MM/dd'),'　'))
+                    select distinct concat(';',isnull(Format(a.date,'yyyy/MM/dd'),'　'))
                     from (
 	                    select date = Export.whsearrival
 	                    from Export_Detail with (nolock) 
@@ -87,14 +87,14 @@ namespace Sci.Production.Warehouse
                     for xml path('')
 	            ),1,1,'')
     ,[WK] = stuff((
-	            	select concat(char(10),ID)
+	            	select concat(';',ID)
 	            	from Export_Detail with (nolock) 
 	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 order by Export_Detail.ID
 	            	for xml path('')
 	            ),1,1,'')
     ,[Packages] =concat(
         stuff((
-            select concat(char(10),Packages)
+            select concat(';',Packages)
             from(
                 select e2.Blno,Packages = sum(e2.Packages)
                 from Export e2 with (nolock) 
@@ -122,10 +122,10 @@ namespace Sci.Production.Warehouse
                     select 1 from TransferIn_Detail tsd with (nolock)
                     where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
                     and tsd.ID = ts.ID))
-            ,char(10),'')
+            ,';','')
         ,
         stuff((
-            select concat(char(10),Packages)
+            select concat(';',Packages)
             from(
 	            select ts.id,Packages = sum(Packages)
                 from TransferIn ts with (nolock) 
@@ -140,7 +140,7 @@ namespace Sci.Production.Warehouse
         ),1,1,'')
 		)
     ,ContainerNo = stuff((
-        select concat(char(10) , ContainerNo)
+        select concat(';' , ContainerNo)
         from(
             select distinct ContainerNo = esc.ContainerType + '-' + esc.ContainerNo
 	        from Export_Detail ed with (nolock)
@@ -199,7 +199,7 @@ namespace Sci.Production.Warehouse
     ,[BuyerDelivery]=o.BuyerDelivery
     ,[ETA] = psd.FinalETA
     ,[ArriveWHDate] = stuff((
-                    select distinct concat(char(10),isnull(Format(a.date,'yyyy/MM/dd'),'　'))
+                    select distinct concat(';',isnull(Format(a.date,'yyyy/MM/dd'),'　'))
                     from (
 	                    select date = Export.whsearrival
 	                    from Export_Detail with (nolock) 
@@ -228,14 +228,14 @@ namespace Sci.Production.Warehouse
                     for xml path('')
 	            ),1,1,'')
     ,[WK] = stuff((
-	            	select concat(char(10),ID)
+	            	select concat(';',ID)
 	            	from Export_Detail with (nolock) 
 	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 order by Export_Detail.ID
 	            	for xml path('')
 	            ),1,1,'')
     ,[Packages] =concat(
         stuff((
-            select concat(char(10),Packages)
+            select concat(';',Packages)
             from(
                 select e2.Blno,Packages = sum(e2.Packages)
                 from Export e2 with (nolock) 
@@ -263,10 +263,10 @@ namespace Sci.Production.Warehouse
                     select 1 from TransferIn_Detail tsd with (nolock)
                     where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
                     and tsd.ID = ts.ID))
-            ,char(10),'')
+            ,';','')
         ,
         stuff((
-            select concat(char(10),Packages)
+            select concat(';',Packages)
             from(
 	            select ts.id,Packages = sum(Packages)
                 from TransferIn ts with (nolock) 
@@ -281,7 +281,7 @@ namespace Sci.Production.Warehouse
         ),1,1,'')
 		)
     ,ContainerNo = stuff((
-        select concat(char(10) , ContainerNo)
+        select concat(';' , ContainerNo)
         from(
             select distinct ContainerNo = esc.ContainerType + '-' + esc.ContainerNo
 	        from Export_Detail ed with (nolock)
