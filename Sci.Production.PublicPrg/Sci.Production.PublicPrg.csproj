@@ -149,6 +149,7 @@
     <Compile Include="ExcelPrg.cs" />
     <Compile Include="BundleRFCard.cs" />
     <Compile Include="BundleRFCardUSB.cs" />
+    <Compile Include="FromTradeReport.cs" />
     <Compile Include="ListToDataTable.cs" />
     <Compile Include="ConvertToPDF.cs" />
     <Compile Include="Exts.cs" />
