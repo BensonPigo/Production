@@ -88,18 +88,18 @@ select
 	, [ETD] = g.ETD
 	, [Brand] = g.BrandID
 	, [ShipmodeID] = g.ShipModeID
-	, [POPrice] = r.FOB
+	, [POPrice] = cast(r.FOB as float)
 	, [ShipModeSeqQty] = sum(pd.ShipQty)
 	, [CTNQty] = sum(pd.CTNQty)
 	, [FOB]
-	, [TtlFOB] = r.FOB * sum(pd.ShipQty)
-	, [ActTtlPOPrice] = r.FOB * sum(pd.ShipQty)
-	, [DiffTtlFOB] = r.FOB * sum(pd.ShipQty) - r.FOB * sum(pd.ShipQty) -- [ActTtlPOPrice] - [TtlFOB]
+	, [TtlFOB] = cast(r.FOB * sum(pd.ShipQty) as float)
+	, [ActTtlPOPrice] = cast(r.FOB * sum(pd.ShipQty) as float)
+	, [DiffTtlFOB] = cast(r.FOB * sum(pd.ShipQty) - r.FOB * sum(pd.ShipQty) as float) -- [ActTtlPOPrice] - [TtlFOB]
 	, [Forwarder] = g.Forwarder
-	, [NetKg] = (case when @ShipMode in ('A/C','A/P') then sum(pd.NW) else (sum(pd.NW) + (sum(pd.NW) * 0.05)) end) * isnull(OL.rate, 1) / 100
-	, [WeightKg] = (case when @ShipMode in ('A/C','A/P') then sum(pd.GW) else (sum(pd.GW) + ( sum(pd.GW) * 0.05)) end) * isnull(OL.rate, 1) / 100
-	, [ActNetKg] = (case when @ShipMode in ('A/C','A/P') then sum(pd.NW) else (sum(pd.NW) + ( sum(pd.NW) * 0.05))end) * isnull(OL.rate, 1) / 100
-	, [ActWeightKg] = (case when @ShipMode in ('A/C','A/P') then sum(pd.GW) else (sum(pd.GW) + ( sum(pd.GW) * 0.05))end) * isnull(OL.rate, 1) / 100
+	, [NetKg] = cast(round(((case when @ShipMode in ('A/C','A/P') then sum(pd.NW) else (sum(pd.NW) + (sum(pd.NW) * 0.05)) end) * isnull(OL.rate, 1) / 100),2) as float)
+	, [WeightKg] = cast(round(((case when @ShipMode in ('A/C','A/P') then sum(pd.GW) else (sum(pd.GW) + ( sum(pd.GW) * 0.05)) end) * isnull(OL.rate, 1) / 100),2) as float)
+	, [ActNetKg] = cast(round(((case when @ShipMode in ('A/C','A/P') then sum(pd.NW) else (sum(pd.NW) + ( sum(pd.NW) * 0.05))end) * isnull(OL.rate, 1) / 100),2) as float)
+	, [ActWeightKg] = cast(round(((case when @ShipMode in ('A/C','A/P') then sum(pd.GW) else (sum(pd.GW) + ( sum(pd.GW) * 0.05))end) * isnull(OL.rate, 1) / 100),2) as float)
 	, [DiffNw] = 0
 	, [DiffGW] = 0
 	, [LocalINVNo] = g.id
