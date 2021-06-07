@@ -8,7 +8,7 @@
     [ShipModeSeqQty] INT            CONSTRAINT [DF_KHExportDeclaration_Detail_ShipModeSeqQty] DEFAULT ((0)) NULL,
     [CTNQty]         INT            CONSTRAINT [DF_KHExportDeclaration_Detail_CTNQty] DEFAULT ((0)) NULL,
     [POPrice]        NUMERIC (9, 4) CONSTRAINT [DF_KHExportDeclaration_Detail_POPrice] DEFAULT ((0)) NULL,
-    [ActTtlPOPrice]  NUMERIC (9, 4) CONSTRAINT [DF_KHExportDeclaration_Detail_ActTtlPOPrice] DEFAULT ((0)) NULL,
+    [ActTtlPOPrice]  NUMERIC (12, 4) CONSTRAINT [DF_KHExportDeclaration_Detail_ActTtlPOPrice] DEFAULT ((0)) NULL,
     [LocalINVNo]     VARCHAR (25)   CONSTRAINT [DF_KHExportDeclaration_Detail_LocalINVNo] DEFAULT ('') NULL,
     [NetKg]          NUMERIC (9, 2) CONSTRAINT [DF_KHExportDeclaration_Detail_NetKg] DEFAULT ((0)) NULL,
     [WeightKg]       NUMERIC (9, 2) CONSTRAINT [DF_KHExportDeclaration_Detail_WeightKg] DEFAULT ((0)) NULL,
