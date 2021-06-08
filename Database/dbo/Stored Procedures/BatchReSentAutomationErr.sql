@@ -48,30 +48,41 @@ begin
 	delete AutomationCreateRecord 
 	where Ukey in (select Ukey from #tmpRetryAutomation)
 
+	select	APIThread,
+			[ErrorType] = SUBSTRING(ErrorMsg, 0, 6),
+			Ukey,
+			AddDate
+	into #tmpNeedResentData
+	from dbo.AutomationErrMsg with (nolock)
+	where ReSented = 0 and 
+		  JSON <> '' and
+		  SuppAPIThread in ('api/SunriseFinishingProcesses/SentDataByApiTag', 
+		  'api/GensongFinishingProcesses/SentDataByApiTag',
+		  'Api/GensongAutoWHFabric/SentDataByApiTag',
+		  'Api/VstrongAutoWHAccessory/SentDataByApiTag')
+
 	DECLARE cur_APIThread CURSOR FOR 
-     Select distinct APIThread	from dbo.AutomationErrMsg 
-								where ReSented = 0 and 
-									  JSON <> '' and
-									  SuppAPIThread in ('api/SunriseFinishingProcesses/SentDataByApiTag', 'api/GensongFinishingProcesses/SentDataByApiTag','Api/GensongAutoWHFabric/SentDataByApiTag','Api/VstrongAutoWHAccessory/SentDataByApiTag');
+     Select distinct APIThread, ErrorType
+			from #tmpNeedResentData;
+
 	declare @APIThread   varchar(50)
 	
+	declare @ErrorType   varchar(10)
 	
 	declare @Ukey   bigint
 	
 	Declare @isSuccess nvarchar(max)
 
 	OPEN cur_APIThread --開始run cursor                   
-	FETCH NEXT FROM cur_APIThread INTO @APIThread --將第一筆資料填入變數
+	FETCH NEXT FROM cur_APIThread INTO @APIThread, @ErrorType --將第一筆資料填入變數
 	WHILE @@FETCH_STATUS = 0 --檢查是否有讀取到資料; WHILE用來處理迴圈，當為true時則進入迴圈執行
 	BEGIN
 		print @APIThread
 
 		DECLARE cur_ResentUkey CURSOR FOR 
-	     Select Ukey from dbo.AutomationErrMsg 
+	     Select Ukey from #tmpNeedResentData
 		 where	APIThread = @APIThread and 
-				ReSented = 0 and 
-				JSON <> '' and
-				SuppAPIThread in ('api/SunriseFinishingProcesses/SentDataByApiTag', 'api/GensongFinishingProcesses/SentDataByApiTag','Api/GensongAutoWHFabric/SentDataByApiTag','Api/VstrongAutoWHAccessory/SentDataByApiTag')
+				ErrorType = @ErrorType 
 		 order by AddDate
 
 		open cur_ResentUkey;
@@ -90,11 +101,12 @@ begin
 		CLOSE cur_ResentUkey
 		DEALLOCATE cur_ResentUkey 
 
-	FETCH NEXT FROM cur_APIThread INTO @APIThread 
+	FETCH NEXT FROM cur_APIThread INTO @APIThread , @ErrorType
 	END
 	--關閉cursor與參數的關聯
 	CLOSE cur_APIThread
 	DEALLOCATE cur_APIThread 
 	
+	drop table #tmpNeedResentData
 end
 go
