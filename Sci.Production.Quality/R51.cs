@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -28,13 +29,6 @@ namespace Sci.Production.Quality
             this.comboMDivision1.SetDefalutIndex();
             this.comboFactory1.SetDataSource();
             MyUtility.Tool.SetupCombox(this.comboShift, 1, 1, ",Day,Night");
-            DualResult result = DBProxy.Current.Select(null, "select distinct SubProcessID from SubProDefectCode", out DataTable dt);
-            if (!result)
-            {
-                this.ShowErr(result);
-            }
-
-            MyUtility.Tool.SetupCombox(this.comboSubprocess, 1, dt);
         }
 
         /// <inheritdoc/>
@@ -44,12 +38,20 @@ namespace Sci.Production.Quality
             this.Sqlcmd.Clear();
             this.sqlCol = string.Empty;
             this.CustomColumnDt = null;
+
             if (this.dateInspectionDate.Value1.Empty() && this.txtSP.Text.Empty())
             {
                 MyUtility.Msg.WarningBox("<Inspection Date>, <SP#> can not all empty!");
                 return false;
             }
 
+            if (MyUtility.Check.Empty(this.txtsubprocess.Text))
+            {
+                MyUtility.Msg.WarningBox(" <SubProcess> can not empty!");
+                return false;
+            }
+
+            string subProcessCondition = this.txtsubprocess.Text.Split(',').Select(s => $"'{s}'").JoinToString(",");
             string formatCol;
             string formatCol2 = string.Empty;
             string formatCol3 = string.Empty;
@@ -67,7 +69,7 @@ outer apply(
 )SubProResponseTeamID
 ";
 
-            this.sqlCol = $@"select AssignColumn,DisplayName from SubProCustomColumn where SubProcessID = '{this.comboSubprocess.Text}' order by AssignColumn";
+            this.sqlCol = $@"select AssignColumn,DisplayName,SubProcessID from SubProCustomColumn where SubProcessID in ({subProcessCondition}) order by AssignColumn";
             if (this.radioSummary.Checked)
             {
                 formatJoin = @"outer apply (select [val] = sum(SRD.DefectQty)
@@ -122,13 +124,8 @@ outer apply(select ttlSecond_RD = DATEDIFF(Second, StartResolveDate, EndResolveD
                 declare.Append("\r\ndeclare @Style varchar(15) = @Stylep");
             }
 
-            if (!this.comboSubprocess.Text.Empty())
-            {
-                sqlwhere1.Append("\r\nand SR.SubProcessID= @SubProcessID");
-                sqlwhere2.Append("\r\nand SR.SubProcessID= @SubProcessID");
-                this.Parameters.Add(new SqlParameter("@SubProcessIDp", SqlDbType.VarChar, 15) { Value = this.comboSubprocess.Text });
-                declare.Append("\r\ndeclare @SubProcessID varchar(15) = @SubProcessIDp");
-            }
+            sqlwhere1.Append($"\r\nand SR.SubProcessID in ({subProcessCondition})");
+            sqlwhere2.Append($"\r\nand SR.SubProcessID in ({subProcessCondition})");
 
             if (!this.comboMDivision1.Text.Empty())
             {
@@ -293,24 +290,48 @@ drop table #tmp,#tmp2
 
             string filename = this.radioSummary.Checked ? "Quality_R51_Summary.xltx" : this.radioDetail_DefectType.Checked ? "Quality_R51_Detail_DefectType.xltx" : "Quality_R51_Detail_Responseteam.xltx";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename); // 預先開啟excel app
-            MyUtility.Excel.CopyToXls(this.PrintData, string.Empty, filename, 2, false, null, excelApp, wSheet: excelApp.Sheets[1]);
-            Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
+
+            Excel.Workbook xlWb = excelApp.ActiveWorkbook as Excel.Workbook;
+            Excel.Worksheet xlSht = xlWb.Sheets[1];
+
+            var listSubProcess = this.PrintData.AsEnumerable().Select(s => s["SubProcessID"].ToString()).Distinct();
+            int sheetCnt = 2;
             int customColumn = this.PrintData.Columns.Count; // 自定義欄位最後一欄
-            if (this.CustomColumnDt != null)
+
+            foreach (string subprocessID in listSubProcess)
             {
-                foreach (DataRow dr in this.CustomColumnDt.Rows)
+                xlSht.Copy(Type.Missing, xlWb.Sheets[1]);
+
+                DataTable dtSubprocess = this.PrintData.AsEnumerable().Where(s => s["SubProcessID"].ToString() == subprocessID).CopyToDataTable();
+
+                MyUtility.Excel.CopyToXls(dtSubprocess, string.Empty, filename, 2, false, null, excelApp, wSheet: excelApp.Sheets[sheetCnt]);
+                xlWb.Sheets[sheetCnt].Name = subprocessID;
+
+                if (this.CustomColumnDt != null)
                 {
-                    worksheet.Cells[1, customColumn] = dr["DisplayName"];
-                    customColumn++;
+                    var custColumnNames = this.CustomColumnDt.AsEnumerable().Where(s => s["SubProcessID"].ToString() == subprocessID);
+                    foreach (DataRow dr in custColumnNames)
+                    {
+                        xlWb.Sheets[sheetCnt].Cells[1, customColumn] = dr["DisplayName"];
+                        customColumn++;
+                    }
+
+                    customColumn = this.PrintData.Columns.Count;
                 }
             }
+
+
+            excelApp.DisplayAlerts = false;
+            xlSht.Delete();
 
             excelApp.Visible = true;
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName(filename);
-            Excel.Workbook workbook = excelApp.ActiveWorkbook;
-            workbook.SaveAs(strExcelName);
-            Marshal.ReleaseComObject(workbook);
+
+            xlWb.SaveAs(strExcelName);
+
+            Marshal.ReleaseComObject(xlSht);
+            Marshal.ReleaseComObject(xlWb);
             Marshal.ReleaseComObject(excelApp);
             #endregion
             return true;
