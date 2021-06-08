@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -1168,8 +1169,7 @@ and o.mDivisionid = '{this.keyWord}'
                     this.ShowErr(createPatternResult);
                     return;
                 }
-            }
-            ); // 先依據左上資料建立下方兩個資料表
+            }); // 先依據左上資料建立下方兩個資料表
 
             // 中上每一筆下塞入一組由(iden)對應的下方資料
             this.qtyTb = this.GetNoofBundle(); // 依據右上撈出資料彙整出中上
@@ -2449,31 +2449,57 @@ where b.POID = '{poid}'
             int idcount = 0;
             int bundlenoCount = 0;
             long beforeUkey = -1;
-            StringBuilder insertSql = new StringBuilder();
-            insertSql.Append("declare @inertkey TABLE ( Ukey bigint);\r\n");
 
-            // 將 Dup 重複縮減, 為 Bundle 建立幾張 Cutting_P10, 準備寫入字串
-            foreach (int dup in dupList)
+            DualResult result;
+            using (TransactionScope transactionscope = new TransactionScope())
             {
-                var seldupList = selList.Where(w => w.Dup == dup).ToList();
-                var first = seldupList.First();
+                // 將 Dup 重複縮減, 為 Bundle 建立幾張 Cutting_P10, 準備寫入字串
+                foreach (int dup in dupList)
+                {
+                    var seldupList = selList.Where(w => w.Dup == dup).ToList();
+                    var first = seldupList.First();
 
-                #region 各欄位值 集中區
-                string bundleID = id_list[idcount];
-                idcount++;
-                DataRow drCut = this.CutRefTb.Select($"ukey = {first.Ukey}").First();
-                int sizeRatio = this.SizeRatioTb.AsEnumerable()
-                    .Where(w => MyUtility.Convert.GetLong(w["ukey"]) == first.Ukey && MyUtility.Convert.GetString(w["SizeCode"]) == first.SizeCode)
-                    .Select(s => MyUtility.Convert.GetInt(s["Qty"])).FirstOrDefault();
-                var firstAS = selASList.Where(w => w.Iden == first.Iden).OrderBy(o => o.OrderID).First();
-                string sewingLine = firstAS.Sewingline.Empty() ? string.Empty : firstAS.Sewingline.Length > 2 ? firstAS.Sewingline.Substring(0, 2) : firstAS.Sewingline;
-                bool isEXCESS = selASList.Where(w => seldupList.Select(s => s.Iden).Contains(w.Iden) && w.IsEXCESS == "Y").Any();
-                bool byToneGenerate = selList.Where(w => w.Dup == dup && w.Tone == first.Tone).Count() > 1;
-                int bundleQty = selList.Where(w => w.Dup == dup).Count(); // 合併建單筆數, 寫入 P10 表頭 No of Bundle
-                #endregion
+                    #region 各欄位值 集中區
+                    string bundleID = id_list[idcount];
+                    idcount++;
+                    DataRow drCut = this.CutRefTb.Select($"ukey = {first.Ukey}").First();
+                    int sizeRatio = this.SizeRatioTb.AsEnumerable()
+                        .Where(w => MyUtility.Convert.GetLong(w["ukey"]) == first.Ukey && MyUtility.Convert.GetString(w["SizeCode"]) == first.SizeCode)
+                        .Select(s => MyUtility.Convert.GetInt(s["Qty"])).FirstOrDefault();
+                    var firstAS = selASList.Where(w => w.Iden == first.Iden).OrderBy(o => o.OrderID).First();
+                    string sewingLine = firstAS.Sewingline.Empty() ? string.Empty : firstAS.Sewingline.Length > 2 ? firstAS.Sewingline.Substring(0, 2) : firstAS.Sewingline;
+                    bool isEXCESS = selASList.Where(w => seldupList.Select(s => s.Iden).Contains(w.Iden) && w.IsEXCESS == "Y").Any();
+                    bool byToneGenerate = selList.Where(w => w.Dup == dup && w.Tone == first.Tone).Count() > 1;
+                    int bundleQty = selList.Where(w => w.Dup == dup).Count(); // 合併建單筆數, 寫入 P10 表頭 No of Bundle
+                    #endregion
 
-                // bundle
-                insertSql.Append($@"
+                    // bundle
+                    List<SqlParameter> parameters1 = new List<SqlParameter>
+                    {
+                        new SqlParameter("@ID", bundleID),
+                        new SqlParameter("@POID", MyUtility.Convert.GetString(drCut["POID"])),
+                        new SqlParameter("@mDivisionid", this.keyWord),
+                        new SqlParameter("@SizeCode", first.SizeCode),
+                        new SqlParameter("@Colorid", MyUtility.Convert.GetString(drCut["Colorid"])),
+                        new SqlParameter("@Article", first.Article),
+                        new SqlParameter("@PatternPanel", MyUtility.Convert.GetString(drCut["Fabriccombo"])),
+                        new SqlParameter("@Cutno", MyUtility.Convert.GetString(drCut["Cutno"])),
+                        new SqlParameter("@OrderID", firstAS.OrderID),
+                        new SqlParameter("@SewingLineid", sewingLine),
+                        new SqlParameter("@Item",  MyUtility.Convert.GetString(drCut["Item"])),
+                        new SqlParameter("@SewingCell", firstAS.SewingCell),
+                        new SqlParameter("@Ratio", sizeRatio),
+                        new SqlParameter("@Startno", first.Startno),
+                        new SqlParameter("@Qty", bundleQty),
+                        new SqlParameter("@AllPart", firstAS.TotalParts),
+                        new SqlParameter("@CutRef", MyUtility.Convert.GetString(drCut["CutRef"])),
+                        new SqlParameter("@AddName", this.loginID),
+                        new SqlParameter("@FabricPanelCode", MyUtility.Convert.GetString(drCut["FabricPanelCode"])),
+                        new SqlParameter("@IsEXCESS", isEXCESS),
+                        new SqlParameter("@ByToneGenerate", byToneGenerate),
+                        new SqlParameter("@SubCutNo", first.SubCut),
+                    };
+                    string insert_Bundle = $@"
 Insert Into Bundle
     (ID
     ,POID
@@ -2500,111 +2526,317 @@ Insert Into Bundle
     ,ByToneGenerate
     ,SubCutNo)
 values
-    ('{bundleID}'
-    ,'{drCut["POID"]}'
-    ,'{this.keyWord}'
-    ,'{first.SizeCode}'
-    ,'{drCut["Colorid"]}'
-    ,'{first.Article}'
-    ,'{drCut["Fabriccombo"]}'
-    ,{drCut["Cutno"]}
+    (@ID
+    ,@POID
+    ,@mDivisionid
+    ,@SizeCode
+    ,@Colorid
+    ,@Article
+    ,@PatternPanel
+    ,@Cutno
     ,GETDATE()
-    ,'{firstAS.OrderID}'
-    ,'{sewingLine}'
-    , '{drCut["Item"]}'
-    ,'{firstAS.SewingCell}'
-    ,'{sizeRatio}'
-    ,{first.Startno}
-    ,{bundleQty}
-    ,{firstAS.TotalParts}
-    ,'{drCut["CutRef"]}'
-    ,'{this.loginID}'
+    ,@OrderID
+    ,@SewingLineid
+    ,@Item
+    ,@SewingCell
+    ,@Ratio
+    ,@Startno
+    ,@Qty
+    ,@AllPart
+    ,@CutRef
+    ,@AddName
     ,GETDATE()
-    ,'{drCut["FabricPanelCode"]}'
-    ,'{isEXCESS}'
-    ,'{byToneGenerate}'
-    ,'{first.SubCut}');
-");
-
-                // Bundle_Detail_allpart
-                foreach (var allPart in selallPartList.Where(w => w.Ukey == first.Ukey && w.CombineSubprocessGroup == 0))
-                {
-                    insertSql.Append($@"
-Insert Into Bundle_Detail_allpart(ID, PatternCode, PatternDesc, Parts, isPair, Location) 
-Values('{bundleID}', '{allPart.PatternCode}', '{allPart.PatternDesc}', '{allPart.Parts}', '{allPart.Ispair}', '{allPart.Location}');");
-                }
-
-                // 合併, 只有 bundle, Bundle_Detail_allpart 合併. 其它的資料表有幾組就按實寫入. 排序 Tone 和上方準備 BuundleGroup 排序一樣
-                int bct = 1;
-                int allPartPrintGroup = 0;
-                foreach (var selitem in seldupList.OrderBy(o => o.Tone))
-                {
-                    // Bundle_Detail_Qty
-                    insertSql.Append($@"
-Insert into Bundle_Detail_qty(ID,SizeCode,Qty) Values('{bundleID}', '{selitem.SizeCode}', {selitem.Qty});");
-
-                    // Bundle_Detail, Bundle_Detail_Art, &  P15才有的寫的 Bundle_Detail_Order
-                    foreach (var pattern in selpatternList.Where(w => w.Ukey == selitem.Ukey))
+    ,@FabricPanelCode
+    ,@IsEXCESS
+    ,@ByToneGenerate
+    ,@SubCutNo);
+";
+                    if (!(result = DBProxy.Current.Execute(null, insert_Bundle, parameters1)))
                     {
-                        // 若 tone 相同 寫入 Bundle_Detail 時 ALLPARTS 合為一筆寫入, 若有合併的 ALLPARTS, BundleNo 順序要在最後面
-                        // Tone > 0 使用者有設定, 同 Tone 有兩筆以上, 此次 ALLPARTS 不是合併的最後一筆則跳過
-                        // 合併 ALLPARTS 的 PrintGroup 取第一組
-                        int printGroup_x = selitem.PrintGroup;
-                        int sct = seldupList.Where(w => selitem.Tone > 0 && w.Tone == selitem.Tone).Count();
-                        if (pattern.PatternCode.Equals("ALLPARTS") && sct > 1 && bct < sct)
-                        {
-                            if (allPartPrintGroup == 0)
-                            {
-                                allPartPrintGroup = selitem.PrintGroup;
-                            }
+                        transactionscope.Dispose();
+                        this.ShowErr(result);
+                        return;
+                    }
 
-                            bct++;
-                            continue;
+                    // Bundle_Detail_allpart
+                    foreach (var allPart in selallPartList.Where(w => w.Ukey == first.Ukey && w.CombineSubprocessGroup == 0))
+                    {
+                        List<SqlParameter> parameters2 = new List<SqlParameter>
+                        {
+                            new SqlParameter("@ID", bundleID),
+                            new SqlParameter("@PatternCode", allPart.PatternCode),
+                            new SqlParameter("@PatternDesc", allPart.PatternDesc),
+                            new SqlParameter("@Parts", allPart.Parts),
+                            new SqlParameter("@isPair", allPart.Ispair),
+                            new SqlParameter("@Location", allPart.Location),
+                        };
+                        string insert_Bundle_Detail_allpart = $@"
+Insert Into Bundle_Detail_allpart(ID, PatternCode, PatternDesc, Parts, isPair, Location)
+Values(@ID, @PatternCode, @PatternDesc, @Parts, @isPair, @Location)";
+                        if (!(result = DBProxy.Current.Execute(null, insert_Bundle_Detail_allpart, parameters2)))
+                        {
+                            transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
+                    }
+
+                    // 合併, 只有 bundle, Bundle_Detail_allpart 合併. 其它的資料表有幾組就按實寫入. 排序 Tone 和上方準備 BuundleGroup 排序一樣
+                    int bct = 1;
+                    int allPartPrintGroup = 0;
+                    foreach (var selitem in seldupList.OrderBy(o => o.Tone))
+                    {
+                        // Bundle_Detail_Qty
+                        List<SqlParameter> parameters3 = new List<SqlParameter>
+                        {
+                            new SqlParameter("@ID", bundleID),
+                            new SqlParameter("@SizeCode", selitem.SizeCode),
+                            new SqlParameter("@Qty", selitem.Qty),
+                        };
+                        string insert_Bundle_Detail_qty = $@"Insert into Bundle_Detail_qty(ID,SizeCode,Qty) Values(@ID, @SizeCode, @Qty)";
+                        if (!(result = DBProxy.Current.Execute(null, insert_Bundle_Detail_qty, parameters3)))
+                        {
+                            transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
                         }
 
-                        if (pattern.PatternCode.Equals("ALLPARTS"))
+                        // Bundle_Detail, Bundle_Detail_Art, &  P15才有的寫的 Bundle_Detail_Order
+                        foreach (var pattern in selpatternList.Where(w => w.Ukey == selitem.Ukey))
                         {
-                            bct = 1;
-                            if (allPartPrintGroup == 0)
+                            // 若 tone 相同 寫入 Bundle_Detail 時 ALLPARTS 合為一筆寫入, 若有合併的 ALLPARTS, BundleNo 順序要在最後面
+                            // Tone > 0 使用者有設定, 同 Tone 有兩筆以上, 此次 ALLPARTS 不是合併的最後一筆則跳過
+                            // 合併 ALLPARTS 的 PrintGroup 取第一組
+                            int printGroup_x = selitem.PrintGroup;
+                            int sct = seldupList.Where(w => selitem.Tone > 0 && w.Tone == selitem.Tone).Count();
+                            if (pattern.PatternCode.Equals("ALLPARTS") && sct > 1 && bct < sct)
                             {
-                                allPartPrintGroup = selitem.PrintGroup;
+                                if (allPartPrintGroup == 0)
+                                {
+                                    allPartPrintGroup = selitem.PrintGroup;
+                                }
+
+                                bct++;
+                                continue;
                             }
 
-                            printGroup_x = allPartPrintGroup;
-                            allPartPrintGroup = 0;
-                        }
+                            if (pattern.PatternCode.Equals("ALLPARTS"))
+                            {
+                                bct = 1;
+                                if (allPartPrintGroup == 0)
+                                {
+                                    allPartPrintGroup = selitem.PrintGroup;
+                                }
 
-                        string bundleNo = bundleno_list[bundlenoCount];
-                        bundlenoCount++;
+                                printGroup_x = allPartPrintGroup;
+                                allPartPrintGroup = 0;
+                            }
 
-                        // 有寫入的 bundleNo 記錄下, 下方 GZ API 使用
-                        DataRow bdr = insert_BundleNo.NewRow();
-                        bdr["Bundleno"] = bundleNo;
-                        insert_BundleNo.Rows.Add(bdr);
+                            string bundleNo = bundleno_list[bundlenoCount];
+                            bundlenoCount++;
 
-                        // 相同 Tone ,且 ALLPARTS 的數量總和
-                        var selDTAPList = seldupList.Where(w => w.Tone == selitem.Tone && w.Tone > 0 && pattern.PatternCode.Equals("ALLPARTS")).ToList();
-                        int bdQty = pattern.PatternCode.Equals("ALLPARTS") && selitem.Tone > 0 ? selDTAPList.Sum(s => s.Qty) : selitem.Qty;
-                        insertSql.Append($@"
+                            // 有寫入的 bundleNo 記錄下, 下方 GZ API 使用
+                            DataRow bdr = insert_BundleNo.NewRow();
+                            bdr["Bundleno"] = bundleNo;
+                            insert_BundleNo.Rows.Add(bdr);
+
+                            // 相同 Tone ,且 ALLPARTS 的數量總和
+                            var selDTAPList = seldupList.Where(w => w.Tone == selitem.Tone && w.Tone > 0 && pattern.PatternCode.Equals("ALLPARTS")).ToList();
+                            int bdQty = pattern.PatternCode.Equals("ALLPARTS") && selitem.Tone > 0 ? selDTAPList.Sum(s => s.Qty) : selitem.Qty;
+
+                            List<SqlParameter> parameters4 = new List<SqlParameter>
+                            {
+                                new SqlParameter("@ID", bundleID),
+                                new SqlParameter("@Bundleno", bundleNo),
+                                new SqlParameter("@BundleGroup", selitem.BuundleGroup),
+                                new SqlParameter("@PatternCode", pattern.PatternCode),
+                                new SqlParameter("@PatternDesc", pattern.PatternDesc),
+                                new SqlParameter("@SizeCode", selitem.SizeCode),
+                                new SqlParameter("@Qty", bdQty),
+                                new SqlParameter("@Parts", pattern.Parts),
+                                new SqlParameter("@isPair", pattern.Ispair),
+                                new SqlParameter("@Location", pattern.Location),
+                                new SqlParameter("@Tone", selitem.ToneChar),
+                                new SqlParameter("@PrintGroup", printGroup_x),
+                                new SqlParameter("@RFIDScan", pattern.RFIDScan),
+                            };
+                            string insert_Bundle_Detail = $@"
 Insert into Bundle_Detail (ID, Bundleno, BundleGroup, PatternCode, PatternDesc, SizeCode, Qty, Parts, Farmin, Farmout, isPair, Location, Tone, PrintGroup, RFIDScan)
 Values
-    ('{bundleID}'
-    ,'{bundleNo}'
-    ,{selitem.BuundleGroup}
-    ,'{pattern.PatternCode}'
-    ,'{pattern.PatternDesc.Replace("'", "''")}'
-    ,'{selitem.SizeCode}'
-    ,{bdQty}
-    ,{pattern.Parts}
+    (@ID
+    ,@Bundleno
+    ,@BundleGroup
+    ,@PatternCode
+    ,@PatternDesc
+    ,@SizeCode
+    ,@Qty
+    ,@Parts
     ,0,0 -- Farmin, Farmout
-    ,'{pattern.Ispair}'
-    ,'{pattern.Location}'
-    ,'{selitem.ToneChar}'
-    ,{printGroup_x}
-    ,'{pattern.RFIDScan}');
-");
+    ,@isPair
+    ,@Location
+    ,@Tone
+    ,@PrintGroup
+    ,@RFIDScan);
+";
+                            if (!(result = DBProxy.Current.Execute(null, insert_Bundle_Detail, parameters4)))
+                            {
+                                transactionscope.Dispose();
+                                this.ShowErr(result);
+                                return;
+                            }
 
-                        // Bundle_Detail_Art 將 Art 以+號拆開寫入, 且ALLPARTS 不寫入
+                            // Bundle_Detail_Art 將 Art 以+號拆開寫入, 且ALLPARTS 不寫入
+                            if (!pattern.PatternCode.Equals("ALLPARTS"))
+                            {
+                                string[] ann = pattern.Art.Split('+');
+                                for (int i = 0; i < ann.Length; i++)
+                                {
+                                    bool nb = pattern.NoBundleCardAfterSubprocess_String.Split('+').Contains(ann[i]);
+                                    bool ps = pattern.PostSewingSubProcess_String.Split('+').Contains(ann[i]);
+                                    List<SqlParameter> parameters5 = new List<SqlParameter>
+                                    {
+                                        new SqlParameter("@ID", bundleID),
+                                        new SqlParameter("@Bundleno", bundleNo),
+                                        new SqlParameter("@Subprocessid", ann[i]),
+                                        new SqlParameter("@PatternCode", pattern.PatternCode),
+                                        new SqlParameter("@PostSewingSubProcess", ps),
+                                        new SqlParameter("@NoBundleCardAfterSubprocess", nb),
+                                    };
+                                    string insert_Bundle_Detail_art = $@"
+Insert into Bundle_Detail_art (ID,Bundleno,Subprocessid,PatternCode,PostSewingSubProcess,NoBundleCardAfterSubprocess)
+Values(@ID,@Bundleno,@Subprocessid,@PatternCode,@PostSewingSubProcess,@NoBundleCardAfterSubprocess)";
+                                    if (!(result = DBProxy.Current.Execute(null, insert_Bundle_Detail_art, parameters5)))
+                                    {
+                                        transactionscope.Dispose();
+                                        this.ShowErr(result);
+                                        return;
+                                    }
+                                }
+                            }
+
+                            // Bundle_Detail_Order
+                            if (pattern.PatternCode.Equals("ALLPARTS") && selitem.Tone > 0)
+                            {
+                                var spSumQtyList = selASList.Where(w => selDTAPList.Select(s => s.Iden).Distinct().Contains(w.Iden))
+                                    .GroupBy(g => g.OrderID)
+                                    .Select(s => new { OrderID = s.Key, Cutoutput = s.Sum(su => su.Cutoutput) })
+                                    .ToList();
+                                foreach (var idrAS in spSumQtyList)
+                                {
+                                    List<SqlParameter> parameters6 = new List<SqlParameter>
+                                    {
+                                        new SqlParameter("@ID", bundleID),
+                                        new SqlParameter("@Bundleno", bundleNo),
+                                        new SqlParameter("@OrderID", idrAS.OrderID),
+                                        new SqlParameter("@Qty", idrAS.Cutoutput),
+                                    };
+                                    string insert_Bundle_Detail_Order = $@"
+INSERT INTO [dbo].[Bundle_Detail_Order]([ID],[BundleNo],[OrderID],[Qty]) Values(@ID, @Bundleno, @OrderID, @Qty)";
+                                    if (!(result = DBProxy.Current.Execute(null, insert_Bundle_Detail_Order, parameters6)))
+                                    {
+                                        transactionscope.Dispose();
+                                        this.ShowErr(result);
+                                        return;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                foreach (var idrAS in selASList.Where(w => w.Iden == selitem.Iden))
+                                {
+                                    List<SqlParameter> parameters7 = new List<SqlParameter>
+                                    {
+                                        new SqlParameter("@ID", bundleID),
+                                        new SqlParameter("@Bundleno", bundleNo),
+                                        new SqlParameter("@OrderID", idrAS.OrderID),
+                                        new SqlParameter("@Qty", idrAS.Cutoutput),
+                                    };
+                                    string insert_Bundle_Detail_Order = $@"
+INSERT INTO [dbo].[Bundle_Detail_Order]([ID],[BundleNo],[OrderID],[Qty]) Values(@ID, @Bundleno, @OrderID, @Qty)";
+                                    if (!(result = DBProxy.Current.Execute(null, insert_Bundle_Detail_Order, parameters7)))
+                                    {
+                                        transactionscope.Dispose();
+                                        this.ShowErr(result);
+                                        return;
+                                    }
+                                }
+                            }
+
+                            // Bundle_Detail_CombineSubprocess
+                            foreach (var allPart in selallPartList.Where(w => w.Ukey == first.Ukey && w.CombineSubprocessGroup == pattern.CombineSubprocessGroup && w.CombineSubprocessGroup > 0))
+                            {
+                                List<SqlParameter> parameters8 = new List<SqlParameter>
+                                {
+                                    new SqlParameter("@ID", bundleID),
+                                    new SqlParameter("@Bundleno", bundleNo),
+                                    new SqlParameter("@PatternCode", allPart.PatternCode),
+                                    new SqlParameter("@PatternDesc", allPart.PatternDesc),
+                                    new SqlParameter("@Parts", allPart.Parts),
+                                    new SqlParameter("@Location", allPart.Location),
+                                    new SqlParameter("@IsPair", allPart.Ispair),
+                                    new SqlParameter("@IsMain", allPart.IsMain),
+                                };
+                                string insert_Bundle_Detail_CombineSubprocess = $@"
+INSERT INTO [dbo].[Bundle_Detail_CombineSubprocess]([ID],[BundleNo],[PatternCode],[PatternDesc],[Parts],[Location],[IsPair],[IsMain])
+Values(@ID,@Bundleno, @PatternCode, @PatternDesc, @Parts, @Location, @IsPair,@IsMain)";
+                                if (!(result = DBProxy.Current.Execute(null, insert_Bundle_Detail_CombineSubprocess, parameters8)))
+                                {
+                                    transactionscope.Dispose();
+                                    this.ShowErr(result);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                    List<SqlParameter> parameters9 = new List<SqlParameter>
+                    {
+                        new SqlParameter("@MDivisionID", Sci.Env.User.Keyword),
+                        new SqlParameter("@StyleUkey", first.StyleUkey),
+                        new SqlParameter("@FabricCombo", MyUtility.Convert.GetString(drCut["Fabriccombo"])),
+                        new SqlParameter("@Article", first.Article),
+                    };
+                    string delete_FtyStyleInnovation = $@"
+delete FtyStyleInnovation_Artwork
+where FtyStyleInnovationUkey in(
+    select ukey from FtyStyleInnovation
+    where MDivisionID = @MDivisionID and StyleUkey = @StyleUkey and FabricCombo = @FabricCombo and Article = @Article)
+
+delete FtyStyleInnovation
+where MDivisionID = @MDivisionID and StyleUkey = @StyleUkey and FabricCombo = @FabricCombo and Article = @Article
+
+delete FtyStyleInnovationAllPart
+where MDivisionID = @MDivisionID and StyleUkey = @StyleUkey and FabricCombo = @FabricCombo and Article = @Article
+";
+                    if (!(result = DBProxy.Current.Execute(null, delete_FtyStyleInnovation, parameters9)))
+                    {
+                        transactionscope.Dispose();
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    // 寫入 [FtyStyleInnovation]
+                    foreach (var pattern in selpatternList.Where(w => w.Ukey == first.Ukey))
+                    {
+                        List<SqlParameter> parameters10 = new List<SqlParameter>
+                        {
+                            new SqlParameter("@MDivisionID", Sci.Env.User.Keyword),
+                            new SqlParameter("@StyleUkey", first.StyleUkey),
+                            new SqlParameter("@FabricCombo", MyUtility.Convert.GetString(drCut["Fabriccombo"])),
+                            new SqlParameter("@Article", first.Article),
+                            new SqlParameter("@PatternCode", pattern.PatternCode),
+                            new SqlParameter("@PatternDesc", pattern.PatternDesc),
+                            new SqlParameter("@Location", pattern.Location),
+                            new SqlParameter("@Parts", pattern.Parts),
+                            new SqlParameter("@IsPair", pattern.Ispair),
+                        };
+                        string insert_FtyStyleInnovation = $@"
+declare @inertkey TABLE ( Ukey bigint)
+delete @inertkey
+INSERT INTO [dbo].[FtyStyleInnovation]([MDivisionID],[StyleUkey],[FabricCombo],[Article],[PatternCode],[PatternDesc],[Location],[Parts],[IsPair])
+output inserted.Ukey into @inertkey
+VALUES (@MDivisionID,@StyleUkey,@FabricCombo,@Article,@PatternCode,@PatternDesc,@Location,@Parts,@IsPair)";
+
                         if (!pattern.PatternCode.Equals("ALLPARTS"))
                         {
                             string[] ann = pattern.Art.Split('+');
@@ -2612,120 +2844,99 @@ Values
                             {
                                 bool nb = pattern.NoBundleCardAfterSubprocess_String.Split('+').Contains(ann[i]);
                                 bool ps = pattern.PostSewingSubProcess_String.Split('+').Contains(ann[i]);
-                                insertSql.Append($@"
-Insert into Bundle_Detail_art (ID,Bundleno,Subprocessid,PatternCode,PostSewingSubProcess,NoBundleCardAfterSubprocess)
-Values('{bundleID}','{bundleNo}','{ann[i]}','{pattern.PatternCode}','{ps}','{nb}');
-");
-                            }
-                        }
-
-                        // Bundle_Detail_Order
-                        if (pattern.PatternCode.Equals("ALLPARTS") && selitem.Tone > 0)
-                        {
-                            var spSumQtyList = selASList.Where(w => selDTAPList.Select(s => s.Iden).Distinct().Contains(w.Iden))
-                                .GroupBy(g => g.OrderID)
-                                .Select(s => new { OrderID = s.Key, Cutoutput = s.Sum(su => su.Cutoutput) })
-                                .ToList();
-                            foreach (var idrAS in spSumQtyList)
-                            {
-                                insertSql.Append($@"
-INSERT INTO [dbo].[Bundle_Detail_Order]([ID],[BundleNo],[OrderID],[Qty]) Values('{bundleID}','{bundleNo}','{idrAS.OrderID}','{idrAS.Cutoutput}')
-");
-                            }
-                        }
-                        else
-                        {
-                            foreach (var idrAS in selASList.Where(w => w.Iden == selitem.Iden))
-                            {
-                                insertSql.Append($@"
-INSERT INTO [dbo].[Bundle_Detail_Order]([ID],[BundleNo],[OrderID],[Qty]) Values('{bundleID}','{bundleNo}','{idrAS.OrderID}','{idrAS.Cutoutput}')
-");
-                            }
-                        }
-
-                        // Bundle_Detail_CombineSubprocess
-                        foreach (var allPart in selallPartList.Where(w => w.Ukey == first.Ukey && w.CombineSubprocessGroup == pattern.CombineSubprocessGroup && w.CombineSubprocessGroup > 0))
-                        {
-                            insertSql.Append($@"
-INSERT INTO [dbo].[Bundle_Detail_CombineSubprocess]([ID],[BundleNo],[PatternCode],[PatternDesc],[Parts],[Location],[IsPair],[IsMain])
-Values('{bundleID}','{bundleNo}', '{allPart.PatternCode}', '{allPart.PatternDesc}', '{allPart.Parts}', '{allPart.Location}', '{allPart.Ispair}','{allPart.IsMain}');");
-                        }
-                    }
-                }
-
-                insertSql.Append($@"
-delete FtyStyleInnovation_Artwork
-where FtyStyleInnovationUkey in(
-    select ukey from FtyStyleInnovation
-    where MDivisionID = '{Sci.Env.User.Keyword}' and StyleUkey = {first.StyleUkey} and FabricCombo = '{drCut["Fabriccombo"]}' and Article = '{first.Article}')
-
-delete FtyStyleInnovation
-where MDivisionID = '{Sci.Env.User.Keyword}' and StyleUkey = {first.StyleUkey} and FabricCombo = '{drCut["Fabriccombo"]}' and Article = '{first.Article}'
-
-delete FtyStyleInnovationAllPart
-where MDivisionID = '{Sci.Env.User.Keyword}' and StyleUkey = {first.StyleUkey} and FabricCombo = '{drCut["Fabriccombo"]}' and Article = '{first.Article}'
-");
-
-                // 寫入 [FtyStyleInnovation]
-                foreach (var pattern in selpatternList.Where(w => w.Ukey == first.Ukey))
-                {
-                    insertSql.Append($@"
-delete @inertkey
-INSERT INTO [dbo].[FtyStyleInnovation]([MDivisionID],[StyleUkey],[FabricCombo],[Article],[PatternCode],[PatternDesc],[Location],[Parts],[IsPair])
-output inserted.Ukey into @inertkey
-VALUES ('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{first.Article}'
-,'{pattern.PatternCode}','{pattern.PatternDesc}','{pattern.Location}','{pattern.Parts}','{pattern.Ispair}')");
-
-                    if (!pattern.PatternCode.Equals("ALLPARTS"))
-                    {
-                        string[] ann = pattern.Art.Split('+');
-                        for (int i = 0; i < ann.Length; i++)
-                        {
-                            bool nb = pattern.NoBundleCardAfterSubprocess_String.Split('+').Contains(ann[i]);
-                            bool ps = pattern.PostSewingSubProcess_String.Split('+').Contains(ann[i]);
-                            insertSql.Append($@"
+                                parameters10.Add(new SqlParameter($"@SubprocessId{i}", ann[i]));
+                                parameters10.Add(new SqlParameter($"@PostSewingSubProcess{i}", ps));
+                                parameters10.Add(new SqlParameter($"@NoBundleCardAfterSubprocess{i}", nb));
+                                insert_FtyStyleInnovation += $@"
 Insert into FtyStyleInnovation_Artwork ([FtyStyleInnovationUkey],[SubprocessId],[PostSewingSubProcess],[NoBundleCardAfterSubprocess])
-Values((select ukey from @inertkey),'{ann[i]}','{ps}','{nb}');
-");
+Values((select ukey from @inertkey),@SubprocessId{i},@PostSewingSubProcess{i},@NoBundleCardAfterSubprocess{i});
+";
+                            }
+                        }
+
+                        if (!(result = DBProxy.Current.Execute(null, insert_FtyStyleInnovation, parameters10)))
+                        {
+                            transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
                         }
                     }
-                }
 
-                foreach (var allPart in selallPartList.Where(w => w.Ukey == first.Ukey && w.CombineSubprocessGroup == 0))
-                {
-                    insertSql.Append($@"
-INSERT INTO [dbo].[FtyStyleInnovationAllPart]([MDivisionID],[StyleUkey],[Fabriccombo],[Article],[PatternCode],[PatternDesc],[Location],[Parts],[IsPair])
-VALUES('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{first.Article}'
-,'{allPart.PatternCode}','{allPart.PatternDesc}','{allPart.Location}','{allPart.Parts}','{allPart.Ispair}')");
-                }
-
-                if (MyUtility.Convert.GetBool(drCut["IsCombineSubProcess"]))
-                {
-                    insertSql.Append($@"
-delete FtyStyleInnovationCombineSubprocess
-where MDivisionID = '{Sci.Env.User.Keyword}' and StyleUkey = {first.StyleUkey} and FabricCombo = '{drCut["Fabriccombo"]}' and Article = '{first.Article}'
-");
-
-                    foreach (var allPart in selallPartList.Where(w => w.Ukey == first.Ukey && w.CombineSubprocessGroup > 0))
+                    foreach (var allPart in selallPartList.Where(w => w.Ukey == first.Ukey && w.CombineSubprocessGroup == 0))
                     {
-                        insertSql.Append($@"
-INSERT INTO [dbo].[FtyStyleInnovationCombineSubprocess]([MDivisionID],[StyleUkey],[FabricCombo],[Article],[PatternCode],[PatternDesc],[Location],[Parts],[IsPair],[IsMain],[CombineSubprocessGroup])
-VALUES('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{first.Article}'
-,'{allPart.PatternCode}','{allPart.PatternDesc}','{allPart.Location}','{allPart.Parts}','{allPart.Ispair}','{allPart.IsMain}',{allPart.CombineSubprocessGroup})");
+                        List<SqlParameter> parameters11 = new List<SqlParameter>
+                        {
+                            new SqlParameter("@MDivisionID", Sci.Env.User.Keyword),
+                            new SqlParameter("@StyleUkey", first.StyleUkey),
+                            new SqlParameter("@FabricCombo", MyUtility.Convert.GetString(drCut["Fabriccombo"])),
+                            new SqlParameter("@Article", first.Article),
+                            new SqlParameter("@PatternCode", allPart.PatternCode),
+                            new SqlParameter("@PatternDesc", allPart.PatternDesc),
+                            new SqlParameter("@Location", allPart.Location),
+                            new SqlParameter("@Parts", allPart.Parts),
+                            new SqlParameter("@IsPair", allPart.Ispair),
+                        };
+                        string insert_FtyStyleInnovationAllPart = $@"
+INSERT INTO [dbo].[FtyStyleInnovationAllPart]([MDivisionID],[StyleUkey],[Fabriccombo],[Article],[PatternCode],[PatternDesc],[Location],[Parts],[IsPair])
+VALUES(@MDivisionID,@StyleUkey,@FabricCombo,@Article,@PatternCode,@PatternDesc,@Location,@Parts,@IsPair)";
+                        if (!(result = DBProxy.Current.Execute(null, insert_FtyStyleInnovationAllPart, parameters11)))
+                        {
+                            transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
                     }
-                }
 
-                beforeUkey = first.Ukey;
-            }
+                    if (MyUtility.Convert.GetBool(drCut["IsCombineSubProcess"]))
+                    {
+                        List<SqlParameter> parameters12 = new List<SqlParameter>
+                        {
+                            new SqlParameter("@MDivisionID", Sci.Env.User.Keyword),
+                            new SqlParameter("@StyleUkey", first.StyleUkey),
+                            new SqlParameter("@FabricCombo", MyUtility.Convert.GetString(drCut["Fabriccombo"])),
+                            new SqlParameter("@Article", first.Article),
+                        };
+                        string delete_FtyStyleInnovationCombineSubprocess = $@"
+delete FtyStyleInnovationCombineSubprocess
+where MDivisionID = @MDivisionID and StyleUkey = @StyleUkey and FabricCombo = @FabricCombo and Article = @Article
+";
+                        if (!(result = DBProxy.Current.Execute(null, delete_FtyStyleInnovationCombineSubprocess, parameters12)))
+                        {
+                            transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
 
-            DualResult result;
-            using (TransactionScope transactionscope = new TransactionScope())
-            {
-                if (!(result = DBProxy.Current.Execute(null, insertSql.ToString())))
-                {
-                    transactionscope.Dispose();
-                    this.ShowErr(result);
-                    return;
+                        foreach (var allPart in selallPartList.Where(w => w.Ukey == first.Ukey && w.CombineSubprocessGroup > 0))
+                        {
+                            List<SqlParameter> parameters13 = new List<SqlParameter>
+                            {
+                                new SqlParameter("@MDivisionID", Sci.Env.User.Keyword),
+                                new SqlParameter("@StyleUkey", first.StyleUkey),
+                                new SqlParameter("@FabricCombo", MyUtility.Convert.GetString(drCut["Fabriccombo"])),
+                                new SqlParameter("@Article", first.Article),
+                                new SqlParameter("@PatternCode", allPart.PatternCode),
+                                new SqlParameter("@PatternDesc", allPart.PatternDesc),
+                                new SqlParameter("@Location", allPart.Location),
+                                new SqlParameter("@Parts", allPart.Parts),
+                                new SqlParameter("@IsPair", allPart.Ispair),
+                                new SqlParameter("@IsMain", allPart.IsMain),
+                                new SqlParameter("@CombineSubprocessGroup", allPart.CombineSubprocessGroup),
+                            };
+                            string insert_FtyStyleInnovationCombineSubprocess = $@"
+INSERT INTO [dbo].[FtyStyleInnovationCombineSubprocess]([MDivisionID],[StyleUkey],[FabricCombo],[Article],[PatternCode],[PatternDesc],[Location],[Parts],[IsPair],[IsMain],[CombineSubprocessGroup])
+VALUES(@MDivisionID,@StyleUkey,@FabricCombo,@Article,@PatternCode,@PatternDesc,@Location,@Parts,@IsPair,@IsMain,CombineSubprocessGroup)";
+
+                            if (!(result = DBProxy.Current.Execute(null, insert_FtyStyleInnovationCombineSubprocess, parameters13)))
+                            {
+                                transactionscope.Dispose();
+                                this.ShowErr(result);
+                                return;
+                            }
+                        }
+                    }
+
+                    beforeUkey = first.Ukey;
                 }
 
                 transactionscope.Complete();
