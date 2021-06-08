@@ -9,7 +9,8 @@
     [NewItem]      BIT            CONSTRAINT [DF_InvAdjust_Qty_NewItem] DEFAULT ((0)) NULL,
     [DiffQty]      INT            CONSTRAINT [DF_InvAdjust_Qty_DiffQty] DEFAULT ((0)) NULL,
     [Pullout3Qty]  INT            CONSTRAINT [DF_InvAdjust_Qty_Pullout3Qty] DEFAULT ((0)) NULL,
-    CONSTRAINT [PK_InvAdjust_Qty] PRIMARY KEY CLUSTERED ([ID] ASC, [Article] ASC, [SizeCode] ASC)
+    [Ukey_Pullout] BIGINT NOT NULL DEFAULT ((0)), 
+    CONSTRAINT [PK_InvAdjust_Qty] PRIMARY KEY CLUSTERED ([ID], [Article], [SizeCode], [Ukey_Pullout])
 );
 
 
