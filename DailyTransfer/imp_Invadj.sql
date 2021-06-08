@@ -90,7 +90,7 @@ using (
 	select b.* from Trade_To_Pms.dbo.InvAdjust_Qty as b WITH (NOLOCK)
 	inner join Trade_To_Pms.dbo.InvAdjust as c WITH (NOLOCK) on b.ID=c.ID 
 ) as s
-on t.id=s.id and t.Article=s.Article and t.SizeCode=s.SizeCode
+on t.id=s.id and t.Article=s.Article and t.SizeCode=s.SizeCode and t.Ukey_Pullout and s.Ukey_Pullout
 when not matched by target then
 insert( ID
       ,Article
