@@ -1022,7 +1022,9 @@ and i2.id = '{dr["ID"]}'
                                                 roll = m.Field<string>("roll"),
                                                 dyelot = m.Field<string>("dyelot"),
                                                 Barcode = m.Field<string>("NewBarcode"),
-                                            }).ToList();
+                                            })
+                                            .Distinct()
+                                            .ToList();
 
                 // confirmed 要刪除Barcode, 反之則從Ftyinventory_Barcode補回
                 upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(70, null, false);
