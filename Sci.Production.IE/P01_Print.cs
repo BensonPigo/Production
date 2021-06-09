@@ -1,9 +1,10 @@
-﻿using System;
-using System.Data;
-using System.Text;
-using Ict;
+﻿using Ict;
 using Sci.Data;
+using System;
+using System.Data;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
 
 namespace Sci.Production.IE
 {
@@ -15,7 +16,6 @@ namespace Sci.Production.IE
         private DataRow masterData;
         private string artworktype;
         private string strLanguage;
-        private string custcdID;
         private string machineID;
         private decimal efficiency;
         private DataTable printData;
@@ -31,19 +31,6 @@ namespace Sci.Production.IE
             this.InitializeComponent();
             this.EditMode = true;
             this.masterData = masterData;
-            DataTable artworkType;
-            string sqlCmd = string.Format(
-                @"
-Select distinct ATD.ArtworkTypeID 
-from MachineType MT WITH (NOLOCK) , TimeStudy_Detail WITH (NOLOCK) ,Artworktype_Detail ATD WITH (NOLOCK)
-where MT.ID = TimeStudy_Detail.MachineTypeID 
-and MT.ID=ATD.MachineTypeID
-and TimeStudy_Detail.ID = {0}",
-                MyUtility.Convert.GetString(this.masterData["ID"]));
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out artworkType);
-            MyUtility.Tool.SetupCombox(this.comboArtworkType, 1, artworkType);
-            this.comboArtworkType.SelectedIndex = -1;
-
             MyUtility.Tool.SetupCombox(this.comboLanguage, 2, 1, "en,English,cn,Chinese,vn,Vietnam,kh,Cambodia");
             this.comboLanguage.SelectedIndex = 0;
         }
@@ -61,7 +48,8 @@ and TimeStudy_Detail.ID = {0}",
             }
 
             this.efficiency = MyUtility.Convert.GetInt(this.numEfficiencySetting.Value);
-            this.artworktype = this.comboArtworkType.Text;
+            string[] artworktypearry = this.textArtworkType.Text.Split(',');
+            this.artworktype = "'" + artworktypearry.JoinToString("','") + "'";
             this.strLanguage = this.comboLanguage.SelectedValue.ToString();
 
             return base.ValidateInput();
@@ -93,12 +81,20 @@ and TimeStudy_Detail.ID = {0}",
                 MyUtility.Convert.GetString(this.masterData["BrandID"]));
             DBProxy.Current.Select(null, sqlCmd, out this.dtcustcd);
 
-            this.machineID = MyUtility.GetValue.Lookup(string.Format(
-                @"select CONCAT(b.Machine,', ') from (
-select MachineTypeID+'*'+CONVERT(varchar,cnt) as Machine from (
-select td.MachineTypeID,COUNT(td.MachineTypeID) as cnt from TimeStudy_Detail td WITH (NOLOCK) left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID where td.ID = {0} and td.MachineTypeID <> ''{1} group by MachineTypeID) a) b
-FOR XML PATH('')", MyUtility.Convert.GetString(this.masterData["ID"]),
-                MyUtility.Check.Empty(this.artworktype) ? string.Empty : " and m.ArtworkTypeID = '" + this.artworktype + "'"));
+            sqlCmd = $@"
+select Machine = stuff((
+	select concat(', ', MachineTypeID, '*', cnt) 
+	from (
+		select td.MachineTypeID, cnt = COUNT(td.MachineTypeID)
+		from TimeStudy_Detail td WITH (NOLOCK)
+		left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
+		where td.ID = {this.masterData["ID"]} and td.MachineTypeID <> ''
+        {(this.artworktype == "''" ? string.Empty : $" and m.ArtworkTypeID in({this.artworktype})")}
+		group by MachineTypeID
+	) a
+	FOR XML PATH('')
+),1,2,'')";
+            this.machineID = MyUtility.GetValue.Lookup(sqlCmd);
 
             string ietmsUKEY = MyUtility.GetValue.Lookup($@"select i.Ukey from IETMS i WITH (NOLOCK) where  i.ID = '{this.masterData["IETMSID"]}' and i.Version='{this.masterData["IETMSversion"]}'");
             sqlCmd = $@"
@@ -115,10 +111,13 @@ select
                 ),
 	Sewer=0,
 	Annotation = null,	
-	DescEN = null
-	,[MasterPlusGroup]=''
-    ,[Template] = ''
-from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Cutting'
+	DescEN = null,
+	[MasterPlusGroup]='',
+    [Template] = ''
+from[IETMS_Summary]
+where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Cutting'
+and  ArtworkTypeID in ({this.artworktype})
+
 union all
 select 
     seq = '0',
@@ -133,15 +132,19 @@ select
                 ),
 	Sewer=0,
 	Annotation = 	null,
-	DescEN = '**Cutting'
-	,[MasterPlusGroup]=''
-    ,[Template] = ''
-from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Cutting'
+	DescEN = '**Cutting',
+	[MasterPlusGroup]='',
+    [Template] = ''
+from[IETMS_Summary]
+where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Cutting'
+and  ArtworkTypeID in ({this.artworktype})
+
 union all
 ";
             sqlCmd += string.Format(
                 @"
-select td.Seq
+select
+    td.Seq
     , td.OperationID
     , td.MachineTypeID
     , td.Mold
@@ -150,22 +153,23 @@ select td.Seq
     , td.PcsPerHour
     , td.Sewer
     , td.Annotation
-    , [DescEN] = case when '{3}' = 'cn' then isnull(od.DescCHS,o.DescEN)
-                   when '{3}' = 'vn' then isnull(od.DescVI,o.DescEN)
-                   when '{3}' = 'kh' then isnull(od.DescKH,o.DescEN)
+    , [DescEN] = case when '{2}' = 'cn' then isnull(od.DescCHS,o.DescEN)
+                   when '{2}' = 'vn' then isnull(od.DescVI,o.DescEN)
+                   when '{2}' = 'kh' then isnull(od.DescKH,o.DescEN)
      else o.DescEN end
     , o.MasterPlusGroup
     , td.Template
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join OperationDesc od on o.ID = od.ID
-{0}
-where td.ID = {1}{2}
+left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
+where td.ID = {0}
+{1}
 ",
-                MyUtility.Check.Empty(this.artworktype) ? string.Empty : "LEFT JOIN MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID " + Environment.NewLine + "LEFT JOIN Artworktype_Detail ATD WITH(NOLOCK) ON m.ID = ATD.MachineTypeID",
                 MyUtility.Convert.GetString(this.masterData["ID"]),
-                MyUtility.Check.Empty(this.artworktype) ? string.Empty : string.Format(" and ATD.ArtworkTypeID = '{0}'", this.artworktype),
+                this.artworktype == "''" ? string.Empty : $"and m.ArtworkTypeID in ({this.artworktype})",
                 this.strLanguage);
+
             sqlCmd += $@"
 union all
 select 
@@ -182,10 +186,14 @@ select
 	            ),
 	Sewer=0,
 	Annotation = null,	
-	DescEN = null
-	,[MasterPlusGroup]=''
-    ,[Template] = ''
-from [IETMS_Summary] where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID <> 'Cutting'
+	DescEN = null,
+	[MasterPlusGroup]='',
+    [Template] = ''
+from [IETMS_Summary]
+where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID <> 'Cutting'
+and  ArtworkTypeID in ({this.artworktype})
+
+
 union all
 select
     seq = '9970',
@@ -200,10 +208,13 @@ select
                 ),
 	Sewer=0,
 	Annotation = null,
-	DescEN = '**Inspection'
-	,[MasterPlusGroup]=''
-    ,[Template] = ''
-from [IETMS_Summary] where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Inspection'
+	DescEN = '**Inspection',
+	[MasterPlusGroup]='',
+    [Template] = ''
+from [IETMS_Summary]
+where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Inspection'
+and  ArtworkTypeID in ({this.artworktype})
+
 union all
 select 
     seq = '9980',
@@ -218,10 +229,13 @@ select
                 ),
 	Sewer=0,
 	Annotation = null,
-	DescEN = '**Pressing'
-	,[MasterPlusGroup]=''
-    ,[Template] = ''
-from [IETMS_Summary] where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Pressing'
+	DescEN = '**Pressing',
+	[MasterPlusGroup]='',
+    [Template] = ''
+from [IETMS_Summary]
+where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Pressing'
+and  ArtworkTypeID in ({this.artworktype})
+
 union all
 select 	
     seq = '9990',
@@ -236,10 +250,12 @@ select
                 ),
 	Sewer=0,
 	Annotation = null,
-	DescEN =  '**Packing'
-	,[MasterPlusGroup]=''
-    ,[Template] = ''
-from [IETMS_Summary] where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Packing'
+	DescEN =  '**Packing',
+	[MasterPlusGroup]='',
+    [Template] = ''
+from [IETMS_Summary]
+where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Packing'
+and  ArtworkTypeID in ({this.artworktype})
 order by seq
 ";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printData);
@@ -253,10 +269,10 @@ order by seq
                 @"select isnull(m.ArtworkTypeID,'') as ArtworkTypeID,sum(td.SMV) as ttlSMV
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
-LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON m.ID=ATD.MachineTypeID
 where td.ID = {0}{1}
-group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterData["ID"]),
-                MyUtility.Check.Empty(this.artworktype) ? string.Empty : string.Format(" and ATD.ArtworkTypeID = '{0}'", this.artworktype));
+group by isnull(m.ArtworkTypeID,'')",
+                MyUtility.Convert.GetString(this.masterData["ID"]),
+                this.artworktype == "''" ? string.Empty : $" and m.ArtworkTypeID in ({this.artworktype})");
             result = DBProxy.Current.Select(null, sqlCmd, out this.artworkType);
             if (!result)
             {
@@ -396,11 +412,8 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
             worksheet.Range[string.Format("C{0}:N{0}", intRowsStart)].Merge(Type.Missing);
             worksheet.Range[string.Format("C{0}:N{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
 
-            // 避免machineID為空所產生的錯誤
-            if (this.machineID.Length > 2)
-            {
-                worksheet.Cells[intRowsStart, 3] = this.machineID.Substring(0, this.machineID.Length - 2);
-            }
+            // Machine:
+            worksheet.Cells[intRowsStart, 3] = this.machineID;
 
             worksheet.Range[string.Format("A{0}:N{0}", intRowsStart)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).Weight = 3; // 1: 虛線, 2:實線, 3:粗體線
             worksheet.Range[string.Format("A{0}:N{0}", intRowsStart)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = 1;
@@ -544,6 +557,18 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
             strExcelName.OpenFile();
             #endregion
             return true;
+        }
+
+        private void TextArtworkType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string sqlCmd = "select id from ArtworkType where Seq like '1%' and junk = 0";
+            Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlCmd, string.Empty, string.Empty, this.textArtworkType.Text);
+            if (item.ShowDialog() == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.textArtworkType.Text = item.GetSelectedString();
         }
     }
 }

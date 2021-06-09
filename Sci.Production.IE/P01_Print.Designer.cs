@@ -31,7 +31,6 @@
             this.labelEfficiencySetting = new Sci.Win.UI.Label();
             this.labelArtworkType = new Sci.Win.UI.Label();
             this.numEfficiencySetting = new Sci.Win.UI.NumericBox();
-            this.comboArtworkType = new Sci.Win.UI.ComboBox();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.chkCutting = new System.Windows.Forms.CheckBox();
@@ -40,21 +39,22 @@
             this.chkInspection = new System.Windows.Forms.CheckBox();
             this.comboLanguage = new Sci.Win.UI.ComboBox();
             this.labLanguage = new Sci.Win.UI.Label();
+            this.textArtworkType = new Sci.Win.UI.TextBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(434, 12);
+            this.print.Location = new System.Drawing.Point(553, 12);
             this.print.TabIndex = 7;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(434, 48);
+            this.toexcel.Location = new System.Drawing.Point(553, 48);
             this.toexcel.TabIndex = 8;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(434, 84);
+            this.close.Location = new System.Drawing.Point(553, 84);
             this.close.TabIndex = 9;
             // 
             // labelEfficiencySetting
@@ -98,22 +98,10 @@
             this.numEfficiencySetting.Size = new System.Drawing.Size(50, 23);
             this.numEfficiencySetting.TabIndex = 0;
             this.numEfficiencySetting.Value = new decimal(new int[] {
-            0,
+            100,
             0,
             0,
             0});
-            // 
-            // comboArtworkType
-            // 
-            this.comboArtworkType.BackColor = System.Drawing.Color.White;
-            this.comboArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboArtworkType.FormattingEnabled = true;
-            this.comboArtworkType.IsSupportUnselect = true;
-            this.comboArtworkType.Location = new System.Drawing.Point(138, 48);
-            this.comboArtworkType.Name = "comboArtworkType";
-            this.comboArtworkType.OldText = "";
-            this.comboArtworkType.Size = new System.Drawing.Size(121, 24);
-            this.comboArtworkType.TabIndex = 1;
             // 
             // label1
             // 
@@ -194,9 +182,24 @@
             this.labLanguage.TabIndex = 100;
             this.labLanguage.Text = "Language";
             // 
+            // textArtworkType
+            // 
+            this.textArtworkType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.textArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.textArtworkType.IsSupportEditMode = false;
+            this.textArtworkType.Location = new System.Drawing.Point(138, 48);
+            this.textArtworkType.Name = "textArtworkType";
+            this.textArtworkType.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
+            this.textArtworkType.ReadOnly = true;
+            this.textArtworkType.Size = new System.Drawing.Size(409, 23);
+            this.textArtworkType.TabIndex = 101;
+            this.textArtworkType.Text = "SEWING,PRESSING,PACKING,SEAMSEAL,ULTRASONIC";
+            this.textArtworkType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TextArtworkType_PopUp);
+            // 
             // P01_Print
             // 
-            this.ClientSize = new System.Drawing.Size(526, 202);
+            this.ClientSize = new System.Drawing.Size(645, 202);
+            this.Controls.Add(this.textArtworkType);
             this.Controls.Add(this.labLanguage);
             this.Controls.Add(this.comboLanguage);
             this.Controls.Add(this.chkInspection);
@@ -205,7 +208,6 @@
             this.Controls.Add(this.chkCutting);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.comboArtworkType);
             this.Controls.Add(this.numEfficiencySetting);
             this.Controls.Add(this.labelArtworkType);
             this.Controls.Add(this.labelEfficiencySetting);
@@ -224,7 +226,6 @@
             this.Controls.SetChildIndex(this.labelEfficiencySetting, 0);
             this.Controls.SetChildIndex(this.labelArtworkType, 0);
             this.Controls.SetChildIndex(this.numEfficiencySetting, 0);
-            this.Controls.SetChildIndex(this.comboArtworkType, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.chkCutting, 0);
@@ -233,6 +234,7 @@
             this.Controls.SetChildIndex(this.chkInspection, 0);
             this.Controls.SetChildIndex(this.comboLanguage, 0);
             this.Controls.SetChildIndex(this.labLanguage, 0);
+            this.Controls.SetChildIndex(this.textArtworkType, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -243,7 +245,6 @@
         private Win.UI.Label labelEfficiencySetting;
         private Win.UI.Label labelArtworkType;
         private Win.UI.NumericBox numEfficiencySetting;
-        private Win.UI.ComboBox comboArtworkType;
         private Win.UI.Label label1;
         private Win.UI.Label label2;
         private System.Windows.Forms.CheckBox chkCutting;
@@ -252,5 +253,6 @@
         private System.Windows.Forms.CheckBox chkInspection;
         private Win.UI.ComboBox comboLanguage;
         private Win.UI.Label labLanguage;
+        private Win.UI.TextBox textArtworkType;
     }
 }
