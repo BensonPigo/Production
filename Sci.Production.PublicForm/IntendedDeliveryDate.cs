@@ -120,7 +120,7 @@ ORDER BY ID
                         }
 
                         // sql參數
-                        SqlParameter sp1 = new SqlParameter("@id", MyUtility.Convert.GetString(dr["Reason"]));
+                        SqlParameter sp1 = new SqlParameter("@id", MyUtility.Convert.GetString(e.FormattedValue));
 
                         IList<SqlParameter> cmds = new List<SqlParameter>
                         {
@@ -163,12 +163,15 @@ ORDER BY ID
                 .Date("BuyerDelivery", header: "Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("Qty", header: "Total Q'ty", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .EditText("Invoice", header: "Invoice#", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .CheckBox("AutoLock", header: "Auto Lock", trueValue: 1, falseValue: 0, width: Widths.AnsiChars(4), iseditable: false)
+                //.CheckBox("AutoLock", header: "Auto Lock", trueValue: 1, falseValue: 0, width: Widths.AnsiChars(4), iseditable: false)
                 .Date("IDD", header: "Intended" + Environment.NewLine + "Delivery", width: Widths.AnsiChars(10), iseditingreadonly: false)
                 .Text("Reason", header: "Reason", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: reason)
                 .Text("ReasonName", header: "Reason Name", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("IDDEditName", header: "Edit By", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .DateTime("IDDEditDate", header: "Edit Date", width: Widths.AnsiChars(20), iseditingreadonly: true);
+
+            this.gridIDD.Columns["Reason"].DefaultCellStyle.BackColor = Color.Pink;
+
             this.QueryData();
         }
 
@@ -181,7 +184,7 @@ select  oqs.Id,
         oqs.BuyerDelivery,
         oqs.Qty,
         [Invoice] = Invoice.val,
-        [AutoLock] = iif(isnull(Invoice.val, '') = '', 0, 1),
+        --[AutoLock] = iif(isnull(Invoice.val, '') = '', 0, 1),
         oqs.IDD,
         oqs.IDDEditName,
         oqs.IDDEditDate
@@ -212,7 +215,7 @@ where   oqs.ID = '{this.orderID}'
             }
 
             this.gridIDD.DataSource = dtResult;
-            this.FormatGrid();
+            //this.FormatGrid();
         }
 
         private void FormatGrid()
@@ -226,7 +229,7 @@ where   oqs.ID = '{this.orderID}'
 
         private void GridIDD_Sorted(object sender, EventArgs e)
         {
-            this.FormatGrid();
+            //this.FormatGrid();
         }
 
         private DualResult SaveData()
@@ -234,8 +237,17 @@ where   oqs.ID = '{this.orderID}'
             var listUpdateData = ((DataTable)this.gridIDD.DataSource)
                 .AsEnumerable().Where(s => s.RowState == DataRowState.Modified && s.CompareDataRowVersionValue("IDD"));
 
+            var errorData = ((DataTable)this.gridIDD.DataSource)
+                .AsEnumerable().Where(s => s.RowState == DataRowState.Modified && !MyUtility.Check.Empty(s["Invoice"]) && MyUtility.Check.Empty(s["Reason"]));
+
             if (!listUpdateData.Any())
             {
+                return new DualResult(true);
+            }
+
+            if (errorData.Any())
+            {
+                MyUtility.Msg.InfoBox("Please fill in Reason, coz this order already created GB.");
                 return new DualResult(true);
             }
 
@@ -259,7 +271,7 @@ where exists( select  1 from PackingList pl with (nolock)
                                       ) and
                                  pl.INVNo <> '')
 
-update  oqs set oqs.IDD = t.IDD, oqs.IDDEditName = @IDDEditName, oqs.IDDEditDate = @IDDEditDate
+update  oqs set oqs.IDD = t.IDD, oqs.IDDEditName = @IDDEditName, oqs.IDDEditDate = @IDDEditDate ,oqs.ClogReasonID = t.Reason
 from Order_QtyShip oqs
 inner join #tmp t on t.Id = oqs.ID and t.Seq = oqs.Seq
 where   not exists(select 1 from #tmpExistsGB tegb where tegb.Id = oqs.ID and tegb.Seq = oqs.Seq)
@@ -267,7 +279,7 @@ where   not exists(select 1 from #tmpExistsGB tegb where tegb.Id = oqs.ID and te
 select * from   #tmpExistsGB
 ";
             DataTable dtExistsGB;
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtUpdate, "Id,Seq,IDD", sqlUpdate, out dtExistsGB);
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtUpdate, "Id,Seq,IDD,Reason", sqlUpdate, out dtExistsGB);
             if (!result)
             {
                 return result;
