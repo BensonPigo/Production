@@ -10,7 +10,12 @@
 		[EditName] [varchar](10) NULL,
 		[EditDate] [datetime] NULL,
 		[Ukey] [bigint]  NOT NULL,
-	PRIMARY KEY CLUSTERED 
+	[MachineTypeHem] BIT NULL, 
+    [OperationHem] BIT NULL, 
+    [Tubular] BIT NULL, 
+    [Segment] INT NULL, 
+    [SeamLength] NUMERIC(9, 2) NULL, 
+    PRIMARY KEY CLUSTERED 
 	(
 		[Style_ThreadColorCombo_HistoryUkey] ASC,
 		[Seq] ASC,

@@ -2653,6 +2653,7 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="dbo\Tables\Rate.sql" />
+    <Build Include="dbo\Tables\Style_ThreadColorCombo_History_Version.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

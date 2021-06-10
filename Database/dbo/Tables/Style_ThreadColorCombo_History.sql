@@ -15,7 +15,8 @@
 		[TPDate] [date] NULL,
 		[IETMSID_Thread] [varchar](10) NULL,
 		[IETMSVersion_Thread] [varchar](3) NULL,
-	PRIMARY KEY CLUSTERED 
+	[Version] VARCHAR(5) NULL, 
+    PRIMARY KEY CLUSTERED 
 	(
 		[StyleUkey] ASC,
 		[LockDate] ASC,
