@@ -2340,6 +2340,12 @@ and wd.orderid = 'EXCESS'
             var selpatternList = patternList.Where(w => ukeyList.Contains(w.Ukey) && w.Parts > 0).ToList(); // 要寫入的左下表
             var selallPartList = allPartList.Where(w => ukeyList.Contains(w.Ukey)).ToList(); // 要寫入的右下表
 
+            if (ukeyList.Count > 0 && selASList.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("The Qty must more than 0.");
+                return;
+            }
+
             if (!this.BeforeBarchCreate(idenList, selpatternList))
             {
                 return;
