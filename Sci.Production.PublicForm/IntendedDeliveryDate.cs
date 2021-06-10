@@ -163,7 +163,7 @@ ORDER BY ID
                 .Date("BuyerDelivery", header: "Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("Qty", header: "Total Q'ty", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .EditText("Invoice", header: "Invoice#", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                //.CheckBox("AutoLock", header: "Auto Lock", trueValue: 1, falseValue: 0, width: Widths.AnsiChars(4), iseditable: false)
+                .CheckBox("AutoLock", header: "Auto Lock", trueValue: 1, falseValue: 0, width: Widths.AnsiChars(4), iseditable: false)
                 .Date("IDD", header: "Intended" + Environment.NewLine + "Delivery", width: Widths.AnsiChars(10), iseditingreadonly: false)
                 .Text("Reason", header: "Reason", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: reason)
                 .Text("ReasonName", header: "Reason Name", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -184,7 +184,7 @@ select  oqs.Id,
         oqs.BuyerDelivery,
         oqs.Qty,
         [Invoice] = Invoice.val,
-        --[AutoLock] = iif(isnull(Invoice.val, '') = '', 0, 1),
+        [AutoLock] = iif(isnull(Invoice.val, '') = '', 0, 1),   -- Invoice 沒有值，則Reason不可編輯
         oqs.IDD,
         oqs.IDDEditName,
         oqs.IDDEditDate
@@ -215,7 +215,7 @@ where   oqs.ID = '{this.orderID}'
             }
 
             this.gridIDD.DataSource = dtResult;
-            //this.FormatGrid();
+            this.FormatGrid();
         }
 
         private void FormatGrid()
@@ -223,13 +223,13 @@ where   oqs.ID = '{this.orderID}'
             foreach (DataGridViewRow gridRow in this.gridIDD.Rows)
             {
                 int autoLock = MyUtility.Convert.GetInt(gridRow.Cells["AutoLock"].Value);
-                gridRow.Cells["IDD"].ReadOnly = autoLock == 1 ? true : false;
+                gridRow.Cells["Reason"].ReadOnly = autoLock == 0 ? true : false;
             }
         }
 
         private void GridIDD_Sorted(object sender, EventArgs e)
         {
-            //this.FormatGrid();
+            this.FormatGrid();
         }
 
         private DualResult SaveData()
@@ -237,8 +237,7 @@ where   oqs.ID = '{this.orderID}'
             var listUpdateData = ((DataTable)this.gridIDD.DataSource)
                 .AsEnumerable().Where(s => s.RowState == DataRowState.Modified && s.CompareDataRowVersionValue("IDD"));
 
-            var errorData = ((DataTable)this.gridIDD.DataSource)
-                .AsEnumerable().Where(s => s.RowState == DataRowState.Modified && !MyUtility.Check.Empty(s["Invoice"]) && MyUtility.Check.Empty(s["Reason"]));
+            var errorData = listUpdateData.Where(s => s.RowState == DataRowState.Modified && !MyUtility.Check.Empty(s["Invoice"]) && MyUtility.Check.Empty(s["Reason"]));
 
             if (!listUpdateData.Any())
             {
@@ -271,7 +270,7 @@ where exists( select  1 from PackingList pl with (nolock)
                                       ) and
                                  pl.INVNo <> '')
 
-update  oqs set oqs.IDD = t.IDD, oqs.IDDEditName = @IDDEditName, oqs.IDDEditDate = @IDDEditDate ,oqs.ClogReasonID = t.Reason
+update  oqs set oqs.IDD = t.IDD, oqs.IDDEditName = @IDDEditName, oqs.IDDEditDate = @IDDEditDate ,oqs.ClogReasonID = ISNULL(t.Reason,'')
 from Order_QtyShip oqs
 inner join #tmp t on t.Id = oqs.ID and t.Seq = oqs.Seq
 where   not exists(select 1 from #tmpExistsGB tegb where tegb.Id = oqs.ID and tegb.Seq = oqs.Seq)
