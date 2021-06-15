@@ -67,7 +67,6 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.numTotalSMV = new Sci.Win.UI.NumericBox();
-            this.gridIcon1 = new Sci.Win.UI.GridIcon();
             this.lbCDCodeNew = new Sci.Win.UI.Label();
             this.lbGender = new Sci.Win.UI.Label();
             this.lbProductType = new Sci.Win.UI.Label();
@@ -91,7 +90,6 @@
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
-            this.browse.SuspendLayout();
             this.tabs.SuspendLayout();
             this.ui_pnlBatchUpdate.SuspendLayout();
             this.SuspendLayout();
@@ -144,7 +142,7 @@
             this.masterpanel.Controls.Add(this.labelBrand);
             this.masterpanel.Controls.Add(this.labelSeason);
             this.masterpanel.Controls.Add(this.labelStyle);
-            this.masterpanel.Size = new System.Drawing.Size(987, 181);
+            this.masterpanel.Size = new System.Drawing.Size(892, 181);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelBrand, 0);
@@ -196,7 +194,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 181);
-            this.detailpanel.Size = new System.Drawing.Size(987, 294);
+            this.detailpanel.Size = new System.Drawing.Size(892, 168);
             // 
             // gridicon
             // 
@@ -210,7 +208,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(987, 294);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 168);
             // 
             // detail2
             // 
@@ -224,19 +222,9 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(987, 513);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(987, 475);
-            // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnStdGSDList);
-            this.detailbtm.Location = new System.Drawing.Point(0, 475);
-            this.detailbtm.Size = new System.Drawing.Size(987, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -246,9 +234,7 @@
             // 
             // browse
             // 
-            this.browse.Controls.Add(this.gridIcon1);
             this.browse.Size = new System.Drawing.Size(987, 513);
-            this.browse.Controls.SetChildIndex(this.gridIcon1, 0);
             // 
             // tabs
             // 
@@ -696,14 +682,6 @@
             0,
             0});
             // 
-            // gridIcon1
-            // 
-            this.gridIcon1.Location = new System.Drawing.Point(8, 41);
-            this.gridIcon1.Name = "gridIcon1";
-            this.gridIcon1.Size = new System.Drawing.Size(100, 32);
-            this.gridIcon1.TabIndex = 3;
-            this.gridIcon1.Text = "gridIcon1";
-            // 
             // lbCDCodeNew
             // 
             this.lbCDCodeNew.Location = new System.Drawing.Point(183, 62);
@@ -841,7 +819,6 @@
             this.detailcont.ResumeLayout(false);
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
-            this.browse.ResumeLayout(false);
             this.tabs.ResumeLayout(false);
             this.ui_pnlBatchUpdate.ResumeLayout(false);
             this.ui_pnlBatchUpdate.PerformLayout();
@@ -891,7 +868,6 @@
         private Win.UI.Label label2;
         private Win.UI.Label label3;
         private Win.UI.NumericBox numTotalSMV;
-        private Win.UI.GridIcon gridIcon1;
         private Win.UI.DisplayBox displayCDCodeNew;
         private Win.UI.DisplayBox displayGender;
         private Win.UI.Label lbProductType;

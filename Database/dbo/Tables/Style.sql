@@ -74,6 +74,7 @@
     [CDCodeNew] VARCHAR(5) NULL, 
     [Style] VARCHAR(50) NULL, 
     [CustCD] VARCHAR(50) NULL, 
+    [ThreadVersion] VARCHAR(5) NULL, 
     CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC, [SeasonID] ASC)
 );
 GO

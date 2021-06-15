@@ -129,6 +129,7 @@ a.Ukey	= b.Ukey
 ,a.CDCodeNew	= b.CDCodeNew
 ,a.FitType	= b.FitType
 ,a.GearLine	= b.GearLine
+,a.ThreadVersion = b.ThreadVersion
 from Production.dbo.Style as a 
 inner join Trade_To_Pms.dbo.Style as b ON a.ID	= b.ID AND a.BrandID	= b.BrandID AND a.SeasonID	= b.SeasonID
 
@@ -212,6 +213,7 @@ ID
 ,CDCodeNew
 ,FitType
 ,GearLine
+,ThreadVersion
 )
 output	inserted.ID,
 		inserted.SeasonID,
@@ -283,6 +285,7 @@ select
 ,b.CDCodeNew
 ,b.FitType
 ,b.GearLine
+,b.ThreadVersion
 from Trade_To_Pms.dbo.Style as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.ID=b.ID and a.BrandID=b.BrandID and a.SeasonID=b.SeasonID and a.LocalStyle=1)
 AND not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.Ukey=b.Ukey )
@@ -1705,6 +1708,11 @@ when matched then
       ,t.EditName = s.EditName
       ,t.EditDate = s.EditDate
       ,t.Ukey = s.Ukey
+	  ,t.MachineTypeHem = s.MachineTypeHem
+	  ,t.OperationHem = s.OperationHem
+	  ,t.Tubular = s.Tubular
+	  ,t.Segment = s.Segment
+	  ,t.SeamLength = s.SeamLength
 when not matched by target then
 	INSERT (Style_ThreadColorCombo_HistoryUkey
            ,Seq
@@ -1715,7 +1723,12 @@ when not matched by target then
            ,AddDate
            ,EditName
            ,EditDate
-		   ,Ukey)
+		   ,Ukey
+		   ,MachineTypeHem
+		   ,OperationHem
+		   ,Tubular
+		   ,Segment
+		   ,SeamLength)
 		VALUES  (s.Style_ThreadColorCombo_HistoryUkey
            ,s.Seq
            ,s.OperationID
@@ -1725,7 +1738,12 @@ when not matched by target then
            ,s.AddDate
            ,s.EditName
            ,s.EditDate
-		   ,s.Ukey)
+		   ,s.Ukey
+		   ,s.MachineTypeHem
+		   ,s.OperationHem
+		   ,s.Tubular
+		   ,s.Segment
+		   ,s.SeamLength)
 ;
 ----刪除條件：Trade不存在，且表頭還存在
 DELETE t
@@ -1742,6 +1760,55 @@ AND EXISTS(
 	INNER JOIN Trade_To_Pms.dbo.Style s ON st.StyleUkey = s.Ukey
 	WHERE st.Ukey = t.Style_ThreadColorCombo_HistoryUkey
 )
+-----------------Style_ThreadColorCombo_History_Version-------------------
+Merge Production.dbo.Style_ThreadColorCombo_History_Version as t
+Using (select a.* from Trade_To_Pms.dbo.Style_ThreadColorCombo_History_Version a ) as s
+on t.Ukey=s.Ukey 
+when matched then 
+   update SET t.StyleUkey = s.StyleUkey
+      ,t.Version = s.Version
+      ,t.UseRatioRule = s.UseRatioRule
+      ,t.ThickFabricBulk = s.ThickFabricBulk
+      ,t.FarmOutQuilting = s.FarmOutQuilting
+      ,t.LockHandle = s.LockHandle
+      ,t.LockDate = s.LockDate
+      ,t.Category = s.Category
+      ,t.TPDate = s.TPDate
+      ,t.IETMSID_Thread = s.IETMSID_Thread
+      ,t.IETMSVersion_Thread = s.IETMSVersion_Thread
+	  ,t.AddName = s.AddName
+	  ,t.AddDate = s.AddDate
+when not matched by target then
+	INSERT (StyleUkey
+           ,Version
+           ,UseRatioRule
+           ,ThickFabricBulk
+           ,FarmOutQuilting
+           ,LockHandle
+           ,LockDate
+           ,Category
+           ,TPDate
+           ,IETMSID_Thread
+           ,IETMSVersion_Thread
+		   ,AddName
+		   ,AddDate)
+		VALUES (
+			s.StyleUkey
+           ,s.Version
+           ,s.UseRatioRule
+           ,s.ThickFabricBulk
+           ,s.FarmOutQuilting
+           ,s.LockHandle
+           ,s.LockDate
+           ,s.Category
+           ,s.TPDate
+           ,s.IETMSID_Thread
+           ,s.IETMSVersion_Thread
+		   ,s.AddName
+		   ,s.AddDate)
+when not matched by source AND t.StyleUkey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
+	delete
+;
 
 -----------------Style_ThreadColorCombo_History-------------------
 Merge Production.dbo.Style_ThreadColorCombo_History as t
@@ -1762,6 +1829,7 @@ when matched then
       ,t.TPDate = s.TPDate
       ,t.IETMSID_Thread = s.IETMSID_Thread
       ,t.IETMSVersion_Thread = s.IETMSVersion_Thread
+	  ,t.Version = s.Version
 when not matched by target then
 	INSERT (StyleUkey
            ,Thread_ComboID
@@ -1777,7 +1845,8 @@ when not matched by target then
            ,Category
            ,TPDate
            ,IETMSID_Thread
-           ,IETMSVersion_Thread)
+           ,IETMSVersion_Thread
+		   ,Version)
 		VALUES (
 			s.StyleUkey
            ,s.Thread_ComboID
@@ -1793,7 +1862,8 @@ when not matched by target then
            ,s.Category
            ,s.TPDate
            ,s.IETMSID_Thread
-           ,s.IETMSVersion_Thread )
+           ,s.IETMSVersion_Thread
+		   ,s.Version )
 when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
 	delete
 ;
@@ -1878,6 +1948,7 @@ when matched then
 		  ,t.SCIRefno = s.SCIRefno
 		  ,t.Width = s.Width
 		  ,t.Ukey = s.Ukey
+		  ,t.Version = s.Version
 when not matched by target then
 	insert (StyleUkey
            ,Thread_Quilting_SizeUkey
@@ -1894,7 +1965,8 @@ when not matched by target then
            ,FabricCode
            ,SCIRefno
            ,Width
-           ,Ukey)
+           ,Ukey
+		   ,Version)
 		values (s.StyleUkey
            ,s.Thread_Quilting_SizeUkey
            ,s.FabricPanelCode
@@ -1910,7 +1982,8 @@ when not matched by target then
            ,s.FabricCode
            ,s.SCIRefno
            ,s.Width
-           ,s.Ukey)
+           ,s.Ukey
+		   ,s.Version)
 when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
 	delete
 ;
