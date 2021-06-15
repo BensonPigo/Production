@@ -597,7 +597,7 @@
             // 
             this.numCBM.BackColor = System.Drawing.Color.White;
             this.numCBM.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "cbm", true));
-            this.numCBM.DecimalPlaces = 4;
+            this.numCBM.DecimalPlaces = 7;
             this.numCBM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numCBM.Location = new System.Drawing.Point(90, 51);
             this.numCBM.Maximum = new decimal(new int[] {
@@ -913,6 +913,7 @@
             // 
             this.txtSubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
             this.txtSubconSupplier.DisplayBox1Binding = "";
+            this.txtSubconSupplier.IsFreightForwarder = false;
             this.txtSubconSupplier.IsIncludeJunk = false;
             this.txtSubconSupplier.IsMisc = false;
             this.txtSubconSupplier.IsShipping = false;
