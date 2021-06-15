@@ -2691,9 +2691,9 @@ and exists(
         private void SetAutoAutomationErrMsg(string apiThread, string type = "")
         {
             this.automationErrMsg.apiThread = apiThread;
-            this.automationErrMsg.suppAPIThread = type == "SCI" ? SCIAPIThread : suppAPIThread;
-            this.automationErrMsg.moduleName = moduleName;
-            this.automationErrMsg.suppID = VstrongSuppID;
+            this.automationErrMsg.suppAPIThread = (type == "SCI") ? SCIAPIThread : suppAPIThread;
+            this.automationErrMsg.moduleName = (type == "SCI") ? "SCI" : moduleName;
+            this.automationErrMsg.suppID = (type == "SCI") ? "SCI" : VstrongSuppID;
         }
     }
 }

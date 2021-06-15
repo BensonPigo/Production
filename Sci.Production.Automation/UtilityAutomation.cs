@@ -221,6 +221,9 @@ namespace Sci.Production.Automation
                 Dictionary<string, string> requestHeaders = GetCustomHeaders();
                 webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 600, requestHeaders);
                 automationErrMsg.json = jsonBody;
+                automationErrMsg.suppID = "SCI";
+                automationErrMsg.moduleName = "SCI";
+
                 if (!webApiBaseResult.isSuccess)
                 {
                     automationErrMsg.errorCode = "99";
