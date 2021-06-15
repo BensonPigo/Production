@@ -937,6 +937,7 @@ select  t.*
         , ct.FirstCutDate
         , POSMR = isnull (p.POSMR, '')
         , POHandle = isnull (p.POHandle, '') 
+        , PCHandle = isnull (p.PCHandle, '') 
         , FTYRemark = isnull (s.FTYRemark, '')
         , som.SewQtyTop
         , som.SewQtyBottom
@@ -969,6 +970,10 @@ select  t.*
         , POHandleName = isnull ((select Name 
                                   from TPEPass1 WITH (NOLOCK)
                                   where Id = p.POHandle)
+                                , '')
+        , PCHandleName = isnull ((select Name 
+                                  from TPEPass1 WITH (NOLOCK)
+                                  where Id = p.PCHandle)
                                 , '')
         , MCHandleName = isnull ((select Name 
                                   from Pass1 WITH (NOLOCK) 
@@ -1105,6 +1110,7 @@ select distinct t.*
         , ct.FirstCutDate
         , POSMR = isnull (p.POSMR, '')
         , POHandle = isnull (p.POHandle, '') 
+        , PCHandle = isnull (p.PCHandle, '') 
         , FTYRemark = isnull (s.FTYRemark, '')
         , SewQtyTop = isnull ((select SUM(QAQty) 
                                from SewingOutput_Detail WITH (NOLOCK) 
@@ -1153,6 +1159,10 @@ select distinct t.*
         , POHandleName = isnull ((select Name 
                                   from TPEPass1 WITH (NOLOCK) 
                                   where Id = p.POHandle)
+                                , '')
+        , PCHandleName = isnull ((select Name 
+                                  from TPEPass1 WITH (NOLOCK)
+                                  where Id = p.PCHandle)
                                 , '')
         , MCHandleName = isnull ((select Name 
                                   from Pass1 WITH (NOLOCK) 
@@ -1736,7 +1746,7 @@ drop table #tmp,#tmp2,#tmp3
 
         // 最後一欄 , 有新增欄位要改這
         // 注意!新增欄位也要新增到StandardReport_Detail(Customized)。
-        private int lastColA = 143;
+        private int lastColA = 145;
 
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -1967,30 +1977,32 @@ drop table #tmp,#tmp2,#tmp3
                 objArray[intRowsStart, 116] = dr["POSMRName"];
                 objArray[intRowsStart, 117] = dr["POHandle"];
                 objArray[intRowsStart, 118] = dr["POHandleName"];
-                objArray[intRowsStart, 119] = dr["MCHandle"];
-                objArray[intRowsStart, 120] = dr["MCHandleName"];
-                objArray[intRowsStart, 121] = dr["DoxType"];
-                objArray[intRowsStart, 122] = dr["PackingCTN"];
-                objArray[intRowsStart, 123] = dr["TotalCTN1"];
-                objArray[intRowsStart, 124] = dr["PackErrorCtn"];
-                objArray[intRowsStart, 125] = dr["FtyCtn1"];
-                objArray[intRowsStart, 126] = dr["ClogCTN1"];
-                objArray[intRowsStart, 127] = dr["CFACTN"];
-                objArray[intRowsStart, 128] = dr["ClogRcvDate"];
-                objArray[intRowsStart, 129] = dr["InspDate"];
-                objArray[intRowsStart, 130] = dr["InspResult"];
-                objArray[intRowsStart, 131] = dr["InspHandle"];
-                objArray[intRowsStart, 132] = dr["SewLine"];
-                objArray[intRowsStart, 133] = dr["ShipModeList"];
-                objArray[intRowsStart, 134] = dr["Customize2"];
-                objArray[intRowsStart, 135] = dr["Article"];
-                objArray[intRowsStart, 136] = dr["SpecialMarkName"];
-                objArray[intRowsStart, 137] = dr["FTYRemark"];
-                objArray[intRowsStart, 138] = dr["SampleReasonName"];
-                objArray[intRowsStart, 139] = dr["IsMixMarker"];
-                objArray[intRowsStart, 140] = dr["CuttingSP"];
-                objArray[intRowsStart, 141] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-                objArray[intRowsStart, 142] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
+                objArray[intRowsStart, 119] = dr["PCHandle"];
+                objArray[intRowsStart, 120] = dr["PCHandleName"];
+                objArray[intRowsStart, 121] = dr["MCHandle"];
+                objArray[intRowsStart, 122] = dr["MCHandleName"];
+                objArray[intRowsStart, 123] = dr["DoxType"];
+                objArray[intRowsStart, 124] = dr["PackingCTN"];
+                objArray[intRowsStart, 125] = dr["TotalCTN1"];
+                objArray[intRowsStart, 126] = dr["PackErrorCtn"];
+                objArray[intRowsStart, 127] = dr["FtyCtn1"];
+                objArray[intRowsStart, 128] = dr["ClogCTN1"];
+                objArray[intRowsStart, 129] = dr["CFACTN"];
+                objArray[intRowsStart, 130] = dr["ClogRcvDate"];
+                objArray[intRowsStart, 131] = dr["InspDate"];
+                objArray[intRowsStart, 132] = dr["InspResult"];
+                objArray[intRowsStart, 133] = dr["InspHandle"];
+                objArray[intRowsStart, 134] = dr["SewLine"];
+                objArray[intRowsStart, 135] = dr["ShipModeList"];
+                objArray[intRowsStart, 136] = dr["Customize2"];
+                objArray[intRowsStart, 137] = dr["Article"];
+                objArray[intRowsStart, 138] = dr["SpecialMarkName"];
+                objArray[intRowsStart, 139] = dr["FTYRemark"];
+                objArray[intRowsStart, 140] = dr["SampleReasonName"];
+                objArray[intRowsStart, 141] = dr["IsMixMarker"];
+                objArray[intRowsStart, 142] = dr["CuttingSP"];
+                objArray[intRowsStart, 143] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+                objArray[intRowsStart, 144] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
                 #endregion
 
                 if (this.artwork || this.pap)
