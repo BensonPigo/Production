@@ -74,7 +74,7 @@ namespace Sci.Production.Cutting
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
-            .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(5), decimal_places: 4, iseditingreadonly: true);
+            .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true);
             this.gridDetail.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridDetail.Columns["CutReasonid"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridDetail.Columns["NewSpreadingNoID"].DefaultCellStyle.BackColor = Color.Pink;
