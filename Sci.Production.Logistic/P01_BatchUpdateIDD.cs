@@ -287,12 +287,13 @@ select * from   #tmpExistsGB
                 return;
             }
 
+            /*
             if (dtExistsGB.Rows.Count > 0)
             {
                 string msg = $@"Orders – ShipmodeSeq already create in Garment Booking.
 {dtExistsGB.AsEnumerable().Select(s => s["Id"].ToString() + " - " + s["Seq"].ToString()).JoinToString(Environment.NewLine)}";
                 MyUtility.Msg.WarningBox(msg);
-            }
+            }*/
 
             this.QueryData();
         }
