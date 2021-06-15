@@ -57,6 +57,12 @@
             this.txtfactory1 = new Sci.Production.Class.Txtfactory();
             this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             this.label7 = new Sci.Win.UI.Label();
+            this.dispOngoing = new Sci.Win.UI.DisplayBox();
+            this.dispComplete = new Sci.Win.UI.DisplayBox();
+            this.dispNotYetLoad = new Sci.Win.UI.DisplayBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
@@ -140,7 +146,7 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(984, 426);
+            this.grid1.Size = new System.Drawing.Size(1024, 426);
             this.grid1.TabIndex = 42;
             // 
             // txtPO
@@ -280,7 +286,7 @@
             this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid2.Location = new System.Drawing.Point(945, 85);
+            this.grid2.Location = new System.Drawing.Point(453, 95);
             this.grid2.Name = "grid2";
             this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
@@ -411,9 +417,72 @@
             this.label7.Text = "～";
             this.label7.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // dispOngoing
+            // 
+            this.dispOngoing.BackColor = System.Drawing.Color.Yellow;
+            this.dispOngoing.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.dispOngoing.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.dispOngoing.Location = new System.Drawing.Point(916, 45);
+            this.dispOngoing.Name = "dispOngoing";
+            this.dispOngoing.Size = new System.Drawing.Size(20, 21);
+            this.dispOngoing.TabIndex = 117;
+            // 
+            // dispComplete
+            // 
+            this.dispComplete.BackColor = System.Drawing.Color.Green;
+            this.dispComplete.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.dispComplete.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.dispComplete.Location = new System.Drawing.Point(916, 72);
+            this.dispComplete.Name = "dispComplete";
+            this.dispComplete.Size = new System.Drawing.Size(20, 21);
+            this.dispComplete.TabIndex = 118;
+            // 
+            // dispNotYetLoad
+            // 
+            this.dispNotYetLoad.BackColor = System.Drawing.Color.Red;
+            this.dispNotYetLoad.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.dispNotYetLoad.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.dispNotYetLoad.Location = new System.Drawing.Point(916, 99);
+            this.dispNotYetLoad.Name = "dispNotYetLoad";
+            this.dispNotYetLoad.Size = new System.Drawing.Size(20, 21);
+            this.dispNotYetLoad.TabIndex = 119;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(942, 48);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(69, 17);
+            this.label1.TabIndex = 120;
+            this.label1.Text = "On Going";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(942, 75);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(67, 17);
+            this.label13.TabIndex = 121;
+            this.label13.Text = "Complete";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(942, 101);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(91, 17);
+            this.label14.TabIndex = 122;
+            this.label14.Text = "Not Yet Load";
+            // 
             // P42
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 562);
+            this.ClientSize = new System.Drawing.Size(1048, 562);
+            this.Controls.Add(this.label14);
+            this.Controls.Add(this.label13);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.dispNotYetLoad);
+            this.Controls.Add(this.dispComplete);
+            this.Controls.Add(this.dispOngoing);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.dateLastSewDate);
             this.Controls.Add(this.label6);
@@ -469,6 +538,12 @@
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.dateLastSewDate, 0);
             this.Controls.SetChildIndex(this.label7, 0);
+            this.Controls.SetChildIndex(this.dispOngoing, 0);
+            this.Controls.SetChildIndex(this.dispComplete, 0);
+            this.Controls.SetChildIndex(this.dispNotYetLoad, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.label13, 0);
+            this.Controls.SetChildIndex(this.label14, 0);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
@@ -507,5 +582,11 @@
         private Win.UI.Label label6;
         private Win.UI.DateRange dateLastSewDate;
         private Win.UI.Label label7;
+        private Win.UI.DisplayBox dispOngoing;
+        private Win.UI.DisplayBox dispComplete;
+        private Win.UI.DisplayBox dispNotYetLoad;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
     }
 }
