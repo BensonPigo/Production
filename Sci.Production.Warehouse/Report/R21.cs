@@ -37,6 +37,8 @@ namespace Sci.Production.Warehouse
         private DateTime? BuyerDelivery2;
         private DateTime? ETA1;
         private DateTime? ETA2;
+        private DateTime? OrigBuyerDelivery1;
+        private DateTime? OrigBuyerDelivery2;
         private DateTime? arriveWH1;
         private DateTime? arriveWH2;
         private string sqlcolumn = @"select
@@ -55,6 +57,7 @@ namespace Sci.Production.Warehouse
 	,[OrderType] = o.OrderTypeID
 	,[WeaveType] = d.WeaveTypeID
     ,[BuyerDelivery]=o.BuyerDelivery
+    ,[OrigBuyerDelivery]=o.OrigBuyerDelivery
     ,[MaterialComplete] = case when psd.Complete = 1 then 'Y' else '' end
     ,[ETA] = psd.FinalETA
     ,[ArriveWHDate] = stuff((
@@ -197,6 +200,7 @@ namespace Sci.Production.Warehouse
 	,[OrderType] = o.OrderTypeID
 	,[WeaveType] = d.WeaveTypeID
     ,[BuyerDelivery]=o.BuyerDelivery
+    ,[OrigBuyerDelivery]=o.OrigBuyerDelivery
     ,[ETA] = psd.FinalETA
     ,[ArriveWHDate] = stuff((
                     select distinct concat(';',isnull(Format(a.date,'yyyy/MM/dd'),'　'))
@@ -384,6 +388,8 @@ namespace Sci.Production.Warehouse
             this.BuyerDelivery2 = this.dateBuyerDelivery.Value2;
             this.ETA1 = this.dateETA.Value1;
             this.ETA2 = this.dateETA.Value2;
+            this.OrigBuyerDelivery1 = this.dateOrigBuyerDelivery.Value1;
+            this.OrigBuyerDelivery2 = this.dateOrigBuyerDelivery.Value2;
             this.arriveWH1 = this.dateArriveDate.Value1;
             this.arriveWH2 = this.dateArriveDate.Value2;
             this.WorkNo = this.txtWorkNo.Text;
@@ -400,10 +406,11 @@ namespace Sci.Production.Warehouse
                 !this.dateETA.HasValue &&
                 !this.dateArriveDate.HasValue &&
                 !this.dateBuyerDelivery.HasValue &&
+                !this.dateOrigBuyerDelivery.HasValue &&
                 MyUtility.Check.Empty(this.StartRefno) &&
                 MyUtility.Check.Empty(this.EndRefno))
             {
-                MyUtility.Msg.WarningBox("<SP#>,<ETA>,<Arrive W/H Date>,<Buyer Delivery>,<Refno> at least one entry is required");
+                MyUtility.Msg.WarningBox("<SP#>,<ETA>,<Arrive W/H Date>,<Buyer Delivery>,<Orig.Buyer Dlv>,<Refno> at least one entry is required");
                 return false;
             }
 
@@ -581,6 +588,16 @@ where 1=1
             if (!MyUtility.Check.Empty(this.ETA2))
             {
                 this.sqlcmd.Append($" and psd.FinalETA <='{((DateTime)this.ETA2).ToString("yyyy/MM/dd")}'");
+            }
+
+            if (!MyUtility.Check.Empty(this.OrigBuyerDelivery1))
+            {
+                this.sqlcmd.Append($" and o.OrigBuyerDelivery >='{((DateTime)this.OrigBuyerDelivery1).ToString("yyyy/MM/dd")}'");
+            }
+
+            if (!MyUtility.Check.Empty(this.OrigBuyerDelivery2))
+            {
+                this.sqlcmd.Append($" and o.OrigBuyerDelivery <='{((DateTime)this.OrigBuyerDelivery2).ToString("yyyy/MM/dd")}'");
             }
 
             if (this.bulk || this.sample || this.material || this.smtl)
