@@ -87,12 +87,6 @@ namespace Sci.Production.Subcon
                 #region sqlcmd
 
                 this.sqlCmd.Append(@"
-select PostSewingSubProcess,NoBundleCardAfterSubprocess,SubprocessId,Bundleno, id
-into #tmp_Bundle_Detail_Art 
-from Bundle_Detail_Art WITH (NOLOCK) 
-where PostSewingSubProcess = 1 or NoBundleCardAfterSubprocess = 1
-
-
 Select
     [Bundle#] = bt.BundleNo,
     [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
@@ -133,20 +127,20 @@ Select
 	,bt.PanelNo
 	,CutCellID
 into #tmp
-from BundleTransfer bt WITH (NOLOCK, Index(BundleTransferDate))
+from BundleTransfer bt WITH (NOLOCK)
 left join Bundle_Detail bd WITH (NOLOCK) on bt.BundleNo = bd.BundleNo
 left join Bundle b WITH (NOLOCK) on bd.Id = b.Id
 left join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 outer apply(
     select sub = 1
-    from #tmp_Bundle_Detail_Art bda WITH (NOLOCK) 
+    from Bundle_Detail_Art bda WITH (NOLOCK) 
     where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.PostSewingSubProcess = 1
     and bda.SubprocessId = bt.SubprocessId
 ) as ps
 outer apply(
     select sub = 1
-    from #tmp_Bundle_Detail_Art bda WITH (NOLOCK) 
+    from Bundle_Detail_Art bda WITH (NOLOCK) 
     where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.NoBundleCardAfterSubprocess = 1
     and bda.SubprocessId = bt.SubprocessId
 ) as nbs 
