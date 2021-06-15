@@ -273,9 +273,10 @@ where exists( select  1 from PackingList pl with (nolock)
 update  oqs set oqs.IDD = t.IDD, oqs.IDDEditName = @IDDEditName, oqs.IDDEditDate = @IDDEditDate ,oqs.ClogReasonID = ISNULL(t.Reason,'')
 from Order_QtyShip oqs
 inner join #tmp t on t.Id = oqs.ID and t.Seq = oqs.Seq
-where   not exists(select 1 from #tmpExistsGB tegb where tegb.Id = oqs.ID and tegb.Seq = oqs.Seq)
+--ISP20210767 去除下列條件
+--where   not exists(select 1 from #tmpExistsGB tegb where tegb.Id = oqs.ID and tegb.Seq = oqs.Seq)
 
-select * from   #tmpExistsGB
+--select * from   #tmpExistsGB
 ";
             DataTable dtExistsGB;
             DualResult result = MyUtility.Tool.ProcessWithDatatable(dtUpdate, "Id,Seq,IDD,Reason", sqlUpdate, out dtExistsGB);
