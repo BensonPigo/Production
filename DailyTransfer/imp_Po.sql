@@ -117,6 +117,7 @@ SET
 																	   ,(SELECT Category FROM Orders WHERE ID = a.ID)
 																	  )
 							)
+	  ,a.ThreadVersion    =b.ThreadVersion
 from Production.dbo.PO as a inner join #Trade_To_Pms_PO as b ON a.id=b.id
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.PO(
@@ -152,6 +153,7 @@ INSERT INTO Production.dbo.PO(
       ,EditDate
       ,MTLDelay
 	  ,MinSciDelivery
+	  ,ThreadVersion
 )
 select 
        ID
@@ -189,6 +191,7 @@ select
 																	   ,(SELECT Category FROM Orders WHERE ID = b.ID)
 																	  )
 							)
+	  ,ThreadVersion
 from #Trade_To_Pms_PO as b WITH (NOLOCK)
 where not exists(
 select id from Production.dbo.PO as a WITH (NOLOCK) where a.id = b.id )
