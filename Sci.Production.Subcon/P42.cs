@@ -152,19 +152,19 @@ where b.Orderid = '{drSelected["OrderID"]}'
                     subprocess.CellFormatting += (s, e) =>
                     {
                         DataRow drSelected = this.grid1.GetDataRow(e.RowIndex);
-                        switch (MyUtility.Convert.GetString(drSelected[column.ColumnName]))
+                        decimal val = MyUtility.Convert.GetDecimal(drSelected[column.ColumnName + "_value"]);
+                        decimal totalQty = MyUtility.Convert.GetDecimal(drSelected["totalQty"]);
+                        if (val >= totalQty)
                         {
-                            case "Complete":
-                                e.CellStyle.BackColor = Color.Green;
-                                break;
-                            case "OnGoing":
-                                e.CellStyle.BackColor = Color.Yellow;
-                                break;
-                            case "Not Yet Load":
-                                e.CellStyle.BackColor = Color.Red;
-                                break;
-                            default:
-                                break;
+                            e.CellStyle.BackColor = Color.Green;
+                        }
+                        else if (val > 0 && val < totalQty)
+                        {
+                            e.CellStyle.BackColor = Color.Yellow;
+                        }
+                        else if (val == 0)
+                        {
+                            e.CellStyle.BackColor = Color.Red;
                         }
                     };
                     this.Helper.Controls.Grid.Generator(this.grid1)
@@ -805,7 +805,7 @@ select t.*
                 foreach (string subprocessID in subprocessIDs)
                 {
                     string subprocessIDtmp = subprocessID.Replace("-", string.Empty); // 把PAD-PRT為PADPRT, 命名#table名稱用
-					sqlCmd += $",[{subprocessID}_value] = {subprocessIDtmp}.FinishedQtyBySet";
+                    sqlCmd += $",[{subprocessID}_value] = {subprocessIDtmp}.FinishedQtyBySet";
 
                     dt[0].Columns.Add($"{subprocessID}_value", typeof(decimal));
 
@@ -839,7 +839,7 @@ from #tmp t
                     {
                         foreach (string subprocessID in subprocessIDs)
                         {
-                            dr[$"{subprocessID}_value"] = drs[0][$"{subprocessID}_value"];
+                            dr[$"{subprocessID}_value"] = MyUtility.Convert.GetDecimal(drs[0][$"{subprocessID}_value"]);
                         }
                     }
                 }
