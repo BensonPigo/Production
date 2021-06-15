@@ -187,6 +187,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Sci.Production\TECIT.TFORMer.dll</HintPath>
     </Reference>
+    <Reference Include="XsPDF, Version=7.15.1.1758, Culture=neutral, PublicKeyToken=5af05832079d47a8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Sci.Production\XsPDF.dll</HintPath>
+    </Reference>
     <Reference Include="zxing, Version=0.16.5.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
       <HintPath>..\packages\ZXing.Net.0.16.5\lib\net45\zxing.dll</HintPath>
     </Reference>

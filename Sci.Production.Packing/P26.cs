@@ -21,6 +21,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
+using XsPDF.Pdf;
 
 namespace Sci.Production.Packing
 {
@@ -1055,7 +1056,7 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                     else
                     {
                         byte[] pDFImage = null;
-
+                        /*
                         // 原套件
                         PdfDocument doc = new PdfDocument();
                         doc.LoadFromFile(barcodeObj.FullFileName);
@@ -1074,7 +1075,7 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                         doc.Dispose();
                         bmp.Dispose();
                         pic.Dispose();
-
+                        */
                         /*
                         // 新套件
                         PDFDocument pdfDoc = new PDFDocument();
@@ -1103,6 +1104,35 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                         pic.Dispose();
                         pdfDoc.Dispose();
                         */
+
+                        try
+                        {
+                            // 06/15
+                            PdfImageConverter pdfConverter = new PdfImageConverter(barcodeObj.FullFileName);
+                            pdfConverter.DPI = 300;
+                            pdfConverter.GrayscaleOutput = false;
+
+                            Image bmp = pdfConverter.PageToImage(0);
+
+                            // Note : 工廠換了變出PDF的軟體，因此不需要裁切圖片了，直接把Source轉出
+                            Bitmap pic = new Bitmap(bmp);
+
+                            // 準備要寫入DB的資料
+                            using (var stream = new MemoryStream())
+                            {
+                                pic.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                                pDFImage = stream.ToArray();
+                            }
+
+                            // 將切割後的圖片存檔
+                            pdfConverter.Dispose();
+                            bmp.Dispose();
+                            pic.Dispose();
+                        }
+                        catch (Exception ex)
+                        {
+                            string msg = ex.Message;
+                        }
 
                         string cmd = this.InsertImageToDatabase_List(counter.ToString(), pDFImage, packID, sCICtnNo, rank.ToString());
                         filenames.Add(barcode);
