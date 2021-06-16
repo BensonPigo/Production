@@ -578,9 +578,10 @@ order by bundlegroup,bundleno";
             string cmd = $@"Delete from bundle_Detail_allpart where id ='{masterID}'";
             foreach (DataRow dr in this.Bundle_Detail_Allpart.Rows)
             {
+                string patternDesc = MyUtility.Convert.GetString(dr["PatternDesc"]).Replace("'", "''");
                 cmd += $@"
 insert into bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts,isPair,Location)
-values('{masterID}','{dr["PatternCode"]}','{dr["PatternDesc"]}','{dr["Parts"]}','{dr["isPair"]}','{dr["Location"]}');";
+values('{masterID}','{dr["PatternCode"]}','{patternDesc}','{dr["Parts"]}','{dr["isPair"]}','{dr["Location"]}');";
             }
 
             // bundle_Detail_Qty
@@ -618,9 +619,10 @@ update [Bundle_Detail_Order] set qty = {dr["qty"]} where BundleNo ='{dr["BundleN
             cmd += $@"Delete from Bundle_Detail_CombineSubprocess where id ='{masterID}'";
             foreach (DataRow dr in this.Bundle_Detail_CombineSubprocess.Rows)
             {
+                string patternDesc = MyUtility.Convert.GetString(dr["PatternDesc"]).Replace("'", "''");
                 cmd += $@"
 INSERT INTO [dbo].[Bundle_Detail_CombineSubprocess]([ID],[BundleNo],[PatternCode],[PatternDesc],[Parts],[Location],[IsPair],[IsMain])
-Values('{masterID}','{dr["BundleNo"]}', '{dr["PatternCode"]}', '{dr["PatternDesc"]}', '{dr["Parts"]}', '{dr["Location"]}', '{dr["IsPair"]}','{dr["IsMain"]}');";
+Values('{masterID}','{dr["BundleNo"]}', '{dr["PatternCode"]}', '{patternDesc}', '{dr["Parts"]}', '{dr["Location"]}', '{dr["IsPair"]}','{dr["IsMain"]}');";
             }
 
             #region Bundle_Detail_Art
@@ -660,28 +662,6 @@ select Ukey
 from #tmpOldBundle_Detail_Art tda
 where  not exists(select 1 from bundle_Detail_Art bda with (nolock) where tda.ID = bda.ID and tda.Ukey = bda.Ukey) ";
             #endregion
-
-            // FtyStyleInnovationCombineSubprocess 此紀錄功能先只有 P15
-            /*
-            if (this.Bundle_Detail_CombineSubprocess.AsEnumerable().Any() && FtyStyleInnovationCombineSubprocess.AsEnumerable().Any())
-            {
-                long styleUkey = MyUtility.Convert.GetLong(FtyStyleInnovationCombineSubprocess.Rows[0]["styleUkey"]);
-                string fabriccombo = MyUtility.Convert.GetString(FtyStyleInnovationCombineSubprocess.Rows[0]["Fabriccombo"]);
-                string article = MyUtility.Convert.GetString(FtyStyleInnovationCombineSubprocess.Rows[0]["Article"]);
-                cmd += $@"
-delete FtyStyleInnovationCombineSubprocess
-where MDivisionID = '{Sci.Env.User.Keyword}' and StyleUkey = {styleUkey} and FabricCombo = '{fabriccombo}' and Article = '{article}'
-";
-                foreach (DataRow dr in FtyStyleInnovationCombineSubprocess.Rows)
-                {
-                    cmd += $@"
-INSERT INTO [dbo].[FtyStyleInnovationCombineSubprocess]([MDivisionID],[StyleUkey],[FabricCombo],[Article],[PatternCode],[PatternDesc],[Location],[Parts],[IsPair],[IsMain],[CombineSubprocessGroup])
-VALUES('{Sci.Env.User.Keyword}','{dr["StyleUkey"]}','{dr["Fabriccombo"]}','{dr["Article"]}'
-, '{dr["PatternCode"]}', '{dr["PatternDesc"]}', '{dr["Location"]}', '{dr["Parts"]}', '{dr["Ispair"]}', '{dr["IsMain"]}',{dr["CombineSubprocessGroup"]})
-";
-                }
-            }
-            */
 
             DataTable deleteBundle_Detail_Art = new DataTable();
             using (TransactionScope scope = new TransactionScope())
