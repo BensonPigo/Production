@@ -336,7 +336,7 @@ DROP TABLE #tmp
                         double.Parse(this.numH.Text.ToString()) * 0.00001639;
 
                    // numCBM.Text = MyUtility.Math.Round(i, 4).ToString();
-                    this.CurrentMaintain["CBM"] = MyUtility.Math.Round(i, 4).ToString();
+                    this.CurrentMaintain["CBM"] = Convert.ToDecimal(MyUtility.Math.Round(i, 7)).ToString();
 
                     // this.numericBox3.Text = Math.Round(i, 4).ToString();
                 }
@@ -345,9 +345,9 @@ DROP TABLE #tmp
                     double i = double.Parse(this.numL.Text.ToString()) *
                         double.Parse(this.numW.Text.ToString()) *
                         double.Parse(this.numH.Text.ToString()) / 1000000000;
-                    this.CurrentMaintain["CBM"] = MyUtility.Math.Round(i, 4).ToString();
+                    this.CurrentMaintain["CBM"] = Convert.ToDecimal(MyUtility.Math.Round(i, 7)).ToString();
 
-                   // numCBM.Text = MyUtility.Math.Round(i, 4).ToString();
+                    // numCBM.Text = MyUtility.Math.Round(i, 4).ToString();
                 }
 
                 this.CurrentMaintain["ctnlength"] = MyUtility.Convert.GetDouble(this.numL.Text);
