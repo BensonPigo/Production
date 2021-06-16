@@ -38,7 +38,7 @@ from dbo.PO_Supp_Detail pd WITH (NOLOCK)
 inner join (select ToPOID,ToSeq1,ToSeq2,ToStockType,sum(qty) trans_qty from dbo.SubTransfer_Detail WITH (NOLOCK) where ID='{0}' 
 	group by ToPOID,ToSeq1,ToSeq2,ToStockType) st 
 on st.ToPOID = pd.ID and st.ToSeq1 = pd.SEQ1 and st.ToSeq2 = pd.SEQ2 
---inner join dbo.orders o on o.id = pd.id  --bug fix:352:WAREHOUSE_P23_AccumulatedQty_Accumulate qty
+--inner join View_WH_Orders o on o.id = pd.id  --bug fix:352:WAREHOUSE_P23_AccumulatedQty_Accumulate qty
 cross apply
 	(select max(i.ConfirmDate) taipei_issue_date,sum(iif(i.type='2',i.Qty,0-i.qty)) taipei_qty
 		from dbo.Invtrans i WITH (NOLOCK) inner join dbo.Factory f WITH (NOLOCK) on f.ID = i.FactoryID and f.MDivisionID = '{1}'

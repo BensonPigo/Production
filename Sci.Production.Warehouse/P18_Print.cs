@@ -174,9 +174,9 @@ from dbo.TransferIn_detail a WITH (NOLOCK)
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID 
                                                 and b.SEQ1 = a.Seq1 
                                                 and b.SEQ2=a.seq2
-left join Color c on c.ID = b.ColorID AND c.BrandId = b.BrandId
+left join Color c WITH (NOLOCK) on c.ID = b.ColorID AND c.BrandId = b.BrandId
 LEFT JOIN Fabric f WITH (NOLOCK) ON b.SCIRefNo=f.SCIRefNo
-left join Orders o on o.ID = a.POID
+left join View_WH_Orders o WITH (NOLOCK) on o.ID = a.POID
 WHERE a.ID = '{id}'
 ";
 

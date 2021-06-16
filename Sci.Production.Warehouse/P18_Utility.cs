@@ -18,7 +18,7 @@ namespace Sci.Production.Warehouse
             string strCheckOrders = string.Format(
                 @"
 select  o.id
-from Orders o
+from View_WH_Orders o WITH (NOLOCK)
 inner join dbo.Factory f on o.FactoryID = f.ID
 where   o.id = '{0}'
         and f.MDivisionID = '{1}' 
@@ -28,8 +28,8 @@ where   o.id = '{0}'
                 @"
 select  c.POID 
 from Inventory c WITH (NOLOCK) 
-inner join dbo.Orders o on c.POID = o.id
-inner join dbo.Factory f on o.FactoryID = f.ID
+inner join View_WH_Orders o WITH (NOLOCK) on c.POID = o.id
+inner join dbo.Factory f WITH (NOLOCK) on o.FactoryID = f.ID
 where   c.POID = '{0}'
         and f.MDivisionID = '{1}' 
 ", poID, Env.User.Keyword);

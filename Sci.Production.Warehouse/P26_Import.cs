@@ -106,15 +106,16 @@ select   0 as selected
 from dbo.FtyInventory a WITH (NOLOCK) 
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 left join dbo.PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
-inner join dbo.Factory f on f.ID=p1.factoryID 
-left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
+inner join View_WH_Orders o WITH (NOLOCK) on o.ID = a.ID
+inner join dbo.Factory f WITH (NOLOCK) on f.ID = o.factoryID 
+left join dbo.Receiving_Detail rd WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
 left join dbo.Receiving r WITH (NOLOCK) on r.Id = rd.Id
 Outer apply (
 	select t.val
 	from #tmp_LastEditDate t
 	where t.FtyInventoryUkey = a.Ukey
 )LastEditDate
-where    f.MDivisionID='{0}' 
+where f.MDivisionID='{0}' 
 ", Env.User.Keyword));
 
                 if (!MyUtility.Check.Empty(sp))

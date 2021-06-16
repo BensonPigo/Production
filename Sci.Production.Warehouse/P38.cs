@@ -186,7 +186,7 @@ select 0 as [selected]
 into #tmp_FtyInventory
 from dbo.FtyInventory fi WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = fi.POID and pd.seq1 = fi.seq1 and pd.seq2  = fi.Seq2
-left join dbo.orders o WITH (NOLOCK) on o.id = fi.POID
+left join View_WH_Orders o WITH (NOLOCK) on o.id = fi.POID
 left join dbo.factory f WITH (NOLOCK) on o.FtyGroup=f.id
 left join Receiving_Detail rd WITH (NOLOCK) on rd.PoId = fi.POID and rd.Seq1 = fi.seq1 and rd.seq2 = fi.seq2 and rd.Roll = fi.Roll and rd.Dyelot = fi.Dyelot
 left join Receiving r WITH (NOLOCK) on r.id = rd.id
@@ -194,7 +194,7 @@ cross apply
 (
 	select  earliest_BuyerDelivery = min(o1.BuyerDelivery)  
             , earliest_SciDelivery = min(o1.SciDelivery)  
-	from dbo.orders o1 WITH (NOLOCK) 
+	from View_WH_Orders o1 WITH (NOLOCK) 
     where o1.POID = fi.POID and o1.Junk = 0
 ) x
 {strMtlLocation}

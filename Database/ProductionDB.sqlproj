@@ -2653,6 +2653,7 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="dbo\Tables\Rate.sql" />
+    <Build Include="dbo\Tables\PMS_Orders_History.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

@@ -80,7 +80,7 @@ namespace Sci.Production.Warehouse
     outer apply (
         select value = dbo.GetStockUnitBySPSeq (pd.id, pd.seq1, pd.seq2)
     ) StockUnit
-    inner join dbo.orders o WITH (NOLOCK) on o.id = pd.id
+    inner join View_WH_Orders o WITH (NOLOCK) on o.id = pd.id
     inner join dbo.factory f WITH (NOLOCK) on f.id = o.FtyGroup
     cross apply(
         select  i.InventoryPOID
@@ -100,7 +100,7 @@ namespace Sci.Production.Warehouse
         group by i.InventoryPOID, i.InventorySeq1, i.InventorySeq2
     )x
     where exists (select 1 
-	              from orders o2 WITH (NOLOCK)
+	              from View_WH_Orders o2 WITH (NOLOCK)
 	              inner join Factory f WITH (NOLOCK) on o2.FactoryID = f.ID
 	              where pd.id = o2.ID
 	              and f.IsProduceFty = 1
@@ -179,7 +179,7 @@ inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID
                                                 and fi.seq1 = Inventoryseq1 
                                                 and fi.seq2 = InventorySEQ2 
                                                 and fi.StockType = 'I'
-left join dbo.orders o WITH (NOLOCK) on o.id = fi.POID 
+left join View_WH_Orders o WITH (NOLOCK) on o.id = fi.POID 
 outer apply(
 	select listValue = Stuff((
 			select concat(',',MtlLocationID)

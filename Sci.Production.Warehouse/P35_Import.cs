@@ -72,7 +72,8 @@ select  0 as selected
         , ColorID =dbo.GetColorMultipleID(a.BrandId, a.ColorID)
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
-inner join dbo.Factory f WITH (NOLOCK) on a.FactoryID=f.id
+inner join View_WH_Orders o WITH (NOLOCK) on o.ID = a.ID
+inner join dbo.Factory f WITH (NOLOCK) on o.FactoryID = f.id
 Where   c.lock = 0 
         and f.mdivisionid='{0}'", Env.User.Keyword));
 

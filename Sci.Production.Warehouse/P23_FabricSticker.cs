@@ -71,9 +71,9 @@ select
     , StockUnit = isnull (dbo.GetStockUnitBySPSeq (std.FromPOID, std.FromSeq1, std.FromSeq2), '')
     , Qty = std.Qty
     , [FromLocation]= dbo.Getlocation (fi.ukey)
-from SubTransfer_Detail std
-left join Orders o on std.FromPOID = o.ID
-left join Po_Supp_Detail psd on std.FromPOID = psd.ID
+from SubTransfer_Detail std WITH (NOLOCK)
+left join View_WH_Orders o WITH (NOLOCK) on std.FromPOID = o.ID
+left join Po_Supp_Detail psd WITH (NOLOCK) on std.FromPOID = psd.ID
 								and std.FromSeq1 = psd.SEQ1
 								and std.FromSeq2 = psd.SEQ2
 left join FtyInventory FI on std.FromPoid = fi.poid 

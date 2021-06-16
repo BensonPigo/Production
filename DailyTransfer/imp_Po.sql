@@ -198,11 +198,12 @@ select id from Production.dbo.PO as a WITH (NOLOCK) where a.id = b.id )
 ------------------------------------------------------------------PO2 START
 ----------------------刪除主TABLE多的資料
 Delete Production.dbo.PO_Supp
-from Production.dbo.PO_Supp as a left join Trade_To_Pms.dbo.PO_Supp as b 
-on a.id = b.id and a.SEQ1=b.SEQ1
+from Production.dbo.PO_Supp as a 
+left join Trade_To_Pms.dbo.PO_Supp as b on a.id = b.id and a.SEQ1=b.SEQ1
 where b.id is null
 --and  a.id in (select id from #Trade_To_Pms_PO)
 and exists (select 1 from #TransOrderList where #TransOrderList.POID=a.ID)
+and not exists (select 1 from Trade_To_Pms.dbo.PO_Supp_Detail where a.ID = id and a.SEQ1 = Seq1)
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
@@ -472,17 +473,18 @@ where not exists(select id from Production.dbo.PO_Supp_Detail as a WITH (NOLOCK)
 ----------------------刪除主TABLE多的資料
 Delete Production.dbo.PO_Supp_Detail
 from Production.dbo.PO_Supp_Detail as a 
-left join Trade_To_Pms.dbo.PO_Supp_Detail as b 
-on a.id = b.id and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
+left join Trade_To_Pms.dbo.PO_Supp_Detail as b on a.id = b.id and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
 left join MDivisionPoDetail c on a.id = c.poid and a.SEQ1=c.Seq1 and a.SEQ2=c.Seq2
-where b.id is null and (c.poid is null or c.InQty=0)
-and exists (select 1 from #TransOrderList where #TransOrderList.POID=a.ID)
+where b.id is null and (c.poid is null or c.InQty = 0)
+and exists (select 1 from #TransOrderList where #TransOrderList.POID = a.ID)
+and a.ShipQty = 0
 
 UPDATE a
 SET  
 Junk = 1,
 QTY = 0
-from Production.dbo.PO_Supp_Detail as a inner join #Trade_To_Pms_PO as b ON a.id=b.id
+from Production.dbo.PO_Supp_Detail as a 
+inner join #Trade_To_Pms_PO as b ON a.id=b.id
 where not exists(select id from Trade_To_Pms.dbo.PO_Supp_Detail as c where a.id = c.id)
 and InputQty <> 0
 
@@ -516,6 +518,7 @@ outer apply(
 )MDPoDetail
 where id in (select POID from Trade_To_Pms.dbo.PO_Delete)
 and (MDPoDetail.ttlQty+fty.ttlQty) = 0
+and po3.ShipQty  = 0
 
 
 CREATE CLUSTERED INDEX IDX_PO3_index ON #deletePo3
@@ -587,8 +590,8 @@ END
 --PO4
 ----------------------刪除主TABLE多的資料
 Delete Production.dbo.PO_Supp_Detail_OrderList
-from Production.dbo.PO_Supp_Detail_OrderList as a left join Trade_To_Pms.dbo.PO_Supp_Detail_OrderList as b 
-on a.id = b.id and a.SEQ1 = b.SEQ1 and a.SEQ2 = b.SEQ2 and a.OrderID=b.OrderID
+from Production.dbo.PO_Supp_Detail_OrderList as a 
+left join Trade_To_Pms.dbo.PO_Supp_Detail_OrderList as b on a.id = b.id and a.SEQ1 = b.SEQ1 and a.SEQ2 = b.SEQ2 and a.OrderID = b.OrderID
 where b.id is null
 and  a.id in (select id from #Trade_To_Pms_PO)
 and exists (select 1 from #TransOrderList where #TransOrderList.POID=a.ID)
