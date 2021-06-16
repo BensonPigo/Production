@@ -755,7 +755,7 @@ select  e.poid
         , eta = (SELECT eta from dbo.export WITH (NOLOCK) where id = e.id)
         , M.InQty
         , p.pounit
-        , StockUnit = dbo.GetStockUnitBySPSeq (p.id, p.seq1, p.seq2)
+        , StockUnit = p.StockUnit
         , M.OutQty
         , M.AdjustQty
         , M.ReturnQty
@@ -878,7 +878,7 @@ Order By e.Seq1, e.Seq2, e.Refno";
                         }
                         else
                         {
-                            sqlmcd = $@"select  StockUnit = dbo.GetStockUnitBySPSeq ('{this.CurrentDetailData["poid"]}', '{seq[0]}', '{seq[1]}')";
+                            sqlmcd = $@"select StockUnit from PO_Supp_Detail where ID = '{this.CurrentDetailData["poid"]}' and SEQ1 = '{seq[0]}' and SEQ2 = '{seq[1]}' ";
                             bool unti_result = MyUtility.Check.Seek(sqlmcd, out DataRow dr_StockUnit, null);
                             this.CurrentDetailData["stockunit"] = unti_result ? dr_StockUnit["stockunit"] : dr["stockunit"];
                             this.CurrentDetailData["seq"] = e.FormattedValue;
@@ -2407,7 +2407,7 @@ select
 	, ActualWeight = iif(pll.GW is not null, pll.GW, a.NetKg)
 	, stocktype = iif(c.category='M','I','B')
 	, b.POUnit 
-	, StockUnit = dbo.GetStockUnitBySPSeq (b.id, b.seq1, b.seq2)
+	, StockUnit = b.StockUnit
 	, b.FabricType
 	, seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
 	, stockqty = round(x.qty * v.RateValue,2)
@@ -2431,7 +2431,7 @@ inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id
                                                  and a.Seq1 = b.SEQ1    
                                                  and a.Seq2 = b.SEQ2    
 inner join orders c WITH (NOLOCK) on c.id = a.poid
-inner join View_unitrate v on v.FROM_U = b.POUnit and v.TO_U=dbo.GetStockUnitBySPSeq (b.id, b.seq1, b.seq2)
+inner join View_unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit
 LEFT JOIN Fabric WITH (NOLOCK) ON b.SCIRefNo=Fabric.SCIRefNo
 left join POShippingList_Line pll WITH (NOLOCK) ON pll.Export_Detail_Ukey = a.Ukey and b.FabricType = 'F'
 outer apply(select qty = iif(b.FabricType = 'F' and pll.Export_Detail_Ukey is not null, pll.ShipQty + pll.FOC, a.Qty + a.Foc))x

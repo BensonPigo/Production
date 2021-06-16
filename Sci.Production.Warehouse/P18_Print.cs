@@ -117,7 +117,7 @@ select  a.POID
 			                   AND (b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
 			                  , ''
                               , dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))
-        , StockUnit = dbo.GetStockUnitBySpSeq (a.poid, a.seq1, a.seq2)
+        , b.StockUnit
 	    , a.Qty
         , a.Weight
         , dbo.Getlocation(f.ukey)[Location] 

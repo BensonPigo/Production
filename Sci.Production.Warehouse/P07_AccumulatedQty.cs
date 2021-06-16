@@ -31,7 +31,7 @@ namespace Sci.Production.Warehouse
             {
                 strSqlCmd = $@"
 select poid,seq1,seq2
-,[shipqty] = dbo.GetUnitQty(PoUnit,dbo.GetStockUnitBySPSeq(poid,seq1,seq2),sum(shipqty))
+,[shipqty] = dbo.GetUnitQty(PoUnit, tmp.StockUnit, sum(shipqty))
 ,[received] = sum(accu_rcv) 
 ,[receiving] = sum(rcv) 
 ,description
@@ -39,6 +39,7 @@ select poid,seq1,seq2
 from (
     select a.PoId,a.Seq1,a.Seq2,0 as shipqty,0 as accu_rcv,sum(a.StockQty) as rcv
         ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] ,a.POUnit ,Foc = 0
+        ,a.StockUnit
     from dbo.Receiving_Detail a WITH (NOLOCK) 
     where id='{this.dr["id"]}' 
     group by a.PoId,a.Seq1,a.Seq2,a.POUnit
@@ -47,6 +48,7 @@ from (
 
     select a.id poid,a.Seq1,a.seq2,a.Qty as shipqty,0 as accu_rcv,0 as rcv
         ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [description],a.POUnit,a.Foc
+        ,a.StockUnit
     from dbo.PO_Supp_Detail a WITH (NOLOCK) 
     ,(select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail WITH (NOLOCK) where id='{this.dr["id"]}') c 
     where a.id = c.poid and a.seq1 = c.seq1 and a.seq2 = c.seq2
@@ -58,7 +60,7 @@ group by poid,seq1,seq2,description,POUnit";
                 strSqlCmd = $@"
 
 select ed.poid,ed.seq1,ed.seq2
-,[shipqty] = dbo.GetUnitQty(rd.PoUnit,dbo.GetStockUnitBySPSeq(ed.poid,ed.seq1,ed.seq2),ed.Qty) 
+,[shipqty] = dbo.GetUnitQty(rd.PoUnit, pod.StockUnit, ed.Qty) 
 ,[received] = sum(accu_rcv) 
 ,[receiving] = sum(rcv)
 ,rd.description
