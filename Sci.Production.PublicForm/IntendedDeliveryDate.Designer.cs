@@ -65,7 +65,7 @@
             this.gridIDD.RowTemplate.Height = 24;
             this.gridIDD.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridIDD.ShowCellToolTips = false;
-            this.gridIDD.Size = new System.Drawing.Size(866, 409);
+            this.gridIDD.Size = new System.Drawing.Size(1141, 409);
             this.gridIDD.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridIDD.TabIndex = 1;
             this.gridIDD.Sorted += new System.EventHandler(this.GridIDD_Sorted);
@@ -73,7 +73,7 @@
             // btnEdit
             // 
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEdit.Location = new System.Drawing.Point(712, 427);
+            this.btnEdit.Location = new System.Drawing.Point(987, 427);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(80, 30);
             this.btnEdit.TabIndex = 2;
@@ -84,7 +84,7 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(798, 427);
+            this.btnClose.Location = new System.Drawing.Point(1073, 427);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 3;
@@ -96,7 +96,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(890, 471);
+            this.ClientSize = new System.Drawing.Size(1165, 471);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.gridIDD);
