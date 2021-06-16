@@ -78,14 +78,27 @@ namespace Sci.Production.Logistic
             if (!this.dateSewingOffline.HasValue &&
                 !this.dateBuyerdelivery.HasValue &&
                 MyUtility.Check.Empty(this.txtSPFrom.Text) &&
-                MyUtility.Check.Empty(this.txtSPTo.Text))
+                MyUtility.Check.Empty(this.txtSPTo.Text) &
+                MyUtility.Check.Empty(this.txtPO.Text))
             {
-                MyUtility.Msg.WarningBox("Sewing Offline, Buyer Delivery, SP# At least one must be entered");
+                MyUtility.Msg.WarningBox("Sewing Offline, Buyer Delivery, SP# ,PO# At least one must be entered");
                 return;
             }
 
             string sqlWhere = string.Empty;
+
+            List<string> poList = new List<string>();
+            string tmpPO = this.txtPO.Text;
+            tmpPO = tmpPO.Replace(Environment.NewLine, ",").Replace("-", ",").Replace(".", ",").Replace("&", ",").Replace("/", ",");
+
+            poList = tmpPO.Split(',').Where(o => !MyUtility.Check.Empty(o)).ToList();
+
             List<SqlParameter> listPar = new List<SqlParameter>();
+
+            if (poList.Any())
+            {
+                sqlWhere += $" and o.CustPoNo IN ( '{poList.JoinToString("','")}' )";
+            }
 
             if (!MyUtility.Check.Empty(this.txtFactory.Text))
             {

@@ -127,6 +127,7 @@ SELECT
 	,Order_QS.CFAFinalInspectResult
 	,[CFA3rdInspectDate]=format(Order_QS.CFA3rdInspectDate, 'yyyy/MM/dd')
 	,Order_QS.CFA3rdInspectResult
+    ,[IDDReason] = cr.Description
 into #tmp_main
 FROM Orders o WITH (NOLOCK)
 LEFT JOIN OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
@@ -138,6 +139,7 @@ LEFT JOIN Reason r on r.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_Buyer
 LEFT JOIN Reason rs on rs.id = Order_QS.ReasonID and rs.ReasonTypeID = 'Order_BuyerDelivery_sample'
 Left join Reason rd on rd.id = o.OutstandingReason and rd.ReasonTypeID = 'Delivery_OutStand'
 LEFT JOIN Brand b on o.BrandID = b.ID
+LEFT JOIN ClogReason cr ON cr.ID = Order_QS.ClogReasonID  AND cr.Type='ID'
 where o.Junk = 0  
 and (isnull(ot.IsGMTMaster,0) = 0 or o.OrderTypeID = '') 
 and o.LocalOrder <> 1
@@ -340,6 +342,7 @@ SELECT
 		,t.CFAFinalInspectResult
 		,t.CFA3rdInspectDate
 		,t.CFA3rdInspectResult
+        ,t.IDDReason
 from #tmp_main t
 --出貨次數--
 left join #tmp_Pullout_Detail op on op.OrderID = t.OrderID and op.OrderShipmodeSeq = t.Seq 
@@ -421,6 +424,7 @@ SELECT
 	,t.CFAFinalInspectResult
 	,t.CFA3rdInspectDate
 	,t.CFA3rdInspectResult
+    ,t.IDDReason
 From #tmp_main t 
 --是否有分批出貨
 outer apply (
@@ -506,8 +510,8 @@ SELECT  '' AS CountryID
 , '' AS ReasonName
 , '' AS SewLastDate
 , '' AS CTNLastReceiveDate
-,OutsdReason = ''
-,ReasonRemark = ''
+, OutsdReason = ''
+, ReasonRemark = ''
 , '' AS MR
 , '' AS SMR
 , '' AS POHandle 
@@ -524,6 +528,7 @@ SELECT  '' AS CountryID
 , '' AS CFAFinalInspectResult
 , '' AS CFA3rdInspectDate
 , '' AS CFA3rdInspectResult
+, IDDReason = ''
 FROM ORDERS
 WHERE 1 = 0 ";
                 result = DBProxy.Current.Select(null, strSQL, null, out this.gdtSP);
@@ -759,6 +764,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     , tmp.CFAFinalInspectResult
                     , tmp.CFA3rdInspectDate
                     , tmp.CFA3rdInspectResult
+                    , tmp.IDDReason
                     From #tmp tmp
                     Where tmp.OnTimeQty <> 0
                     Order by tmp.OrderID, tmp.Seq";
@@ -821,7 +827,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 int preRowsStart = intRowsStart;
                 int rownum = intRowsStart; // 每筆資料匯入之位置
                 int intColumns = 7; // 匯入欄位數
-                string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL" };
+                string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM"};
                 object[,] objArray = new object[1, intColumns]; // 每列匯入欄位區間
                 #region 將資料放入陣列並寫入Excel範例檔
 
@@ -851,19 +857,20 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 db_ExcelColumn.Add("T", "ReasonName");
                 db_ExcelColumn.Add("U", "SewLastDate");
                 db_ExcelColumn.Add("V", "CTNLastReceiveDate");
-                db_ExcelColumn.Add("W", "OutsdReason");
-                db_ExcelColumn.Add("X", "ReasonRemark");
-                db_ExcelColumn.Add("Y", "MR");
-                db_ExcelColumn.Add("Z", "SMR");
-                db_ExcelColumn.Add("AA", "POHandle");
-                db_ExcelColumn.Add("AB", "POSMR");
-                db_ExcelColumn.Add("AC", "OrderTypeID");
-                db_ExcelColumn.Add("AD", "isDevSample");
-                db_ExcelColumn.Add("AE", "FOC");
-                db_ExcelColumn.Add("AF", "CFAFinalInspectDate");
-                db_ExcelColumn.Add("AG", "CFAFinalInspectResult");
-                db_ExcelColumn.Add("AH", "CFA3rdInspectDate");
-                db_ExcelColumn.Add("AI", "CFA3rdInspectResult");
+                db_ExcelColumn.Add("W", "IDDReason");
+                db_ExcelColumn.Add("X", "OutsdReason");
+                db_ExcelColumn.Add("Y", "ReasonRemark");
+                db_ExcelColumn.Add("Z", "MR");
+                db_ExcelColumn.Add("AA", "SMR");
+                db_ExcelColumn.Add("AB", "POHandle");
+                db_ExcelColumn.Add("AC", "POSMR");
+                db_ExcelColumn.Add("AD", "OrderTypeID");
+                db_ExcelColumn.Add("AE", "isDevSample");
+                db_ExcelColumn.Add("AF", "FOC");
+                db_ExcelColumn.Add("AG", "CFAFinalInspectDate");
+                db_ExcelColumn.Add("AH", "CFAFinalInspectResult");
+                db_ExcelColumn.Add("AI", "CFA3rdInspectDate");
+                db_ExcelColumn.Add("AJ", "CFA3rdInspectResult");
 
                 orderDetail_ExcelColumn.Add("A", "CountryID");
                 orderDetail_ExcelColumn.Add("B", "KPICode");
@@ -895,12 +902,13 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 orderDetail_ExcelColumn.Add("AB", "FOC");
                 orderDetail_ExcelColumn.Add("AC", "SewLastDate");
                 orderDetail_ExcelColumn.Add("AD", "CTNLastReceiveDate");
-                orderDetail_ExcelColumn.Add("AE", "Order_QtyShipCount");
-                orderDetail_ExcelColumn.Add("AF", "Alias");
-                orderDetail_ExcelColumn.Add("AG", "CFAFinalInspectDate");
-                orderDetail_ExcelColumn.Add("AH", "CFAFinalInspectResult");
-                orderDetail_ExcelColumn.Add("AI", "CFA3rdInspectDate");
-                orderDetail_ExcelColumn.Add("AJ", "CFA3rdInspectResult");
+                orderDetail_ExcelColumn.Add("AE", "IDDReason");
+                orderDetail_ExcelColumn.Add("AF", "Order_QtyShipCount");
+                orderDetail_ExcelColumn.Add("AG", "Alias");
+                orderDetail_ExcelColumn.Add("AH", "CFAFinalInspectDate");
+                orderDetail_ExcelColumn.Add("AI", "CFAFinalInspectResult");
+                orderDetail_ExcelColumn.Add("AJ", "CFA3rdInspectDate");
+                orderDetail_ExcelColumn.Add("AK", "CFA3rdInspectResult");
 
                 db_ExcelColumn2.Add("A", "Alias");
                 db_ExcelColumn2.Add("B", "KPICode");
@@ -920,10 +928,11 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 db_ExcelColumn2.Add("P", "FOC");
                 db_ExcelColumn2.Add("Q", "SewLastDate");
                 db_ExcelColumn2.Add("R", "CTNLastReceiveDate");
-                db_ExcelColumn2.Add("S", "CFAFinalInspectDate");
-                db_ExcelColumn2.Add("T", "CFAFinalInspectResult");
-                db_ExcelColumn2.Add("U", "CFA3rdInspectDate");
-                db_ExcelColumn2.Add("V", "CFA3rdInspectResult");
+                db_ExcelColumn2.Add("S", "IDDReason");
+                db_ExcelColumn2.Add("T", "CFAFinalInspectDate");
+                db_ExcelColumn2.Add("U", "CFAFinalInspectResult");
+                db_ExcelColumn2.Add("V", "CFA3rdInspectDate");
+                db_ExcelColumn2.Add("W", "CFA3rdInspectResult");
 
                 #region 匯出SDP
                 List<string> mSummaryRow = new List<string>();
@@ -1013,7 +1022,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 {
                     worksheet = excel.ActiveWorkbook.Worksheets[2];
                     worksheet.Name = "Fail Order List by SP";
-                    string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode ", "Order Qty", "On Time Qty", "Fail Qty", "Fail PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Last Sewing Output Date", "Last Carton Received Date", "Outstanding Reason", "Reason Remark", "Handle", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample", "FOC Qty", "CFA Inspection Date", "CFA final inspection result", "3rd party Inspection date", "3rd party insp. Result" };
+                    string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode ", "Order Qty", "On Time Qty", "Fail Qty", "Fail PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Last Sewing Output Date", "Last Carton Received Date", "IDD Reason", "Outstanding Reason", "Reason Remark", "Handle", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample", "FOC Qty", "CFA Inspection Date", "CFA final inspection result", "3rd party Inspection date", "3rd party insp. Result" };
                     object[,] objArray_1 = new object[1, aryTitles.Length];
                     for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                     {
@@ -1057,7 +1066,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[3];
                         worksheet.Name = "Order Detail";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle  ", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample", "Sewing Qty", "FOC Qty", "Last sewing output date", "Last Carton Received Date", "Partial shipment", "Alias", "CFA Inspection Date", "CFA final inspection result", "3rd party Inspection date", "3rd party insp. Result" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle  ", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample", "Sewing Qty", "FOC Qty", "Last sewing output date", "Last Carton Received Date", "IDD Reason", "Partial shipment", "Alias", "CFA Inspection Date", "CFA final inspection result", "3rd party Inspection date", "3rd party insp. Result" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
@@ -1101,7 +1110,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[4];
                         worksheet.Name = "On time Order List by PullOut";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "PullOut Qty", "PullOut Date", "ShipMode", "Order Type", "Dev. Sample", "FOC Qty", "Last Sewing Output Date", "Last Carton Received Date", "CFA Inspection Date", "CFA final inspection result", "3rd party Inspection date", "3rd party insp. Result" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "PullOut Qty", "PullOut Date", "ShipMode", "Order Type", "Dev. Sample", "FOC Qty", "Last Sewing Output Date", "Last Carton Received Date", "IDD Reason", "CFA Inspection Date", "CFA final inspection result", "3rd party Inspection date", "3rd party insp. Result" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
@@ -1166,6 +1175,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                                             FOC = data.Field<int>("FOC"),
                                             SewLastDate = data.Field<string>("SewLastDate"),
                                             CTNLastReceiveDate = data.Field<string>("CTNLastReceiveDate"),
+                                            IDDReason = data.Field<string>("IDDReason"),
                                             CFAFinalInspectDate = data.Field<string>("CFAFinalInspectDate"),
                                             CFAFinalInspectResult = data.Field<string>("CFAFinalInspectResult"),
                                             CFA3rdInspectDate = data.Field<string>("CFA3rdInspectDate"),
@@ -1175,7 +1185,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[5];
                         worksheet.Name = "Fail Detail";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "Fail Qty", "PullOut Date", "ShipMode", "ReasonID", "Order Reason", "Handle", "Remark", "Order Type", "Dev. Sample", "FOC Qty", "Last Sewing Output Date", "Last Carton Received Date", "CFA Inspection Date", "CFA final inspection result", "3rd party Inspection date", "3rd party insp. Result" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "Fail Qty", "PullOut Date", "ShipMode", "ReasonID", "Order Reason", "Handle", "Remark", "Order Type", "Dev. Sample", "FOC Qty", "Last Sewing Output Date", "Last Carton Received Date", "IDD Reason", "CFA Inspection Date", "CFA final inspection result", "3rd party Inspection date", "3rd party insp. Result" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
@@ -1215,10 +1225,11 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                             objArray_1[0, 20] = dr.FOC;
                             objArray_1[0, 21] = dr.SewLastDate;
                             objArray_1[0, 22] = dr.CTNLastReceiveDate;
-                            objArray_1[0, 23] = dr.CFAFinalInspectDate;
-                            objArray_1[0, 24] = dr.CFAFinalInspectResult;
-                            objArray_1[0, 25] = dr.CFA3rdInspectDate;
-                            objArray_1[0, 26] = dr.CFA3rdInspectResult;
+                            objArray_1[0, 23] = dr.IDDReason;
+                            objArray_1[0, 24] = dr.CFAFinalInspectDate;
+                            objArray_1[0, 25] = dr.CFAFinalInspectResult;
+                            objArray_1[0, 26] = dr.CFA3rdInspectDate;
+                            objArray_1[0, 27] = dr.CFA3rdInspectResult;
                             worksheet.Range[string.Format("A{0}:{1}{0}", i, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
                         }
 
