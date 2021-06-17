@@ -2496,21 +2496,38 @@ Delete b
 from Production.dbo.PO b
 where id in (select POID from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
+and 0 = (
+	select sum(psd.ShipQty) 
+	from Production.dbo.PO_Supp_Detail psd 
+	where psd.id = b.id)
 -------------------------------------[dbo].[PO_Supp]
 Delete b
 from Production.dbo.PO_Supp b
 where id in (select POID from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
+and 0 = (
+	select sum(psd.ShipQty) 
+	from Production.dbo.PO_Supp_Detail psd 
+	where psd.id = b.id
+	and psd.SEQ1 = b.SEQ1)
 -------------------------------------[dbo].[PO_Supp_Detail]
 Delete b
 from Production.dbo.PO_Supp_Detail b
 where id in (select POID from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
+and b.ShipQty = 0
 -------------------------------------[dbo].[PO_Supp_Detail_OrderList]
 Delete b
 from Production.dbo.PO_Supp_Detail_OrderList b
 where id in (select POID from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
+and exists (
+	select 1 
+	from Production.dbo.PO_Supp_Detail psd 
+	where psd.id = b.id
+	and psd.SEQ1 = b.SEQ1
+	and psd.SEQ2 = b.SEQ2
+	and psd.ShipQty = 0)
 -------------------------------------[dbo].[Cutting]
 Delete b
 from Production.dbo.Cutting b
