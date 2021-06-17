@@ -39,7 +39,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.gridicon.Location = new Point(this.btnBreakDown.Location.X + 20, 128); // 此gridcon位置會跑掉，需強制設定gridcon位置
+            this.gridicon.Location = new Point(this.btnClear.Location.X - 104, 128); // 此gridcon位置會跑掉，需強制設定gridcon位置
             this.gridicon.Anchor = AnchorStyles.Right;
 
             this.DefaultFilter = string.Format("Type='B' and MDivisionID = '{0}'", Env.User.Keyword);

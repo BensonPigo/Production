@@ -127,6 +127,7 @@ namespace Sci.Production.PPIC
                 .Numeric("adjustqty", header: "Adqty", iseditingreadonly: true, width: Ict.Win.Widths.AnsiChars(6))
                 .Numeric("balance", header: "Balance", iseditingreadonly: true, width: Ict.Win.Widths.AnsiChars(6))
                 .Numeric("linvqty", header: "Inventory Qty", iseditingreadonly: true, width: Ict.Win.Widths.AnsiChars(6))
+                .Numeric("LObQty", header: "Scrap Qty", iseditingreadonly: true, width: Ict.Win.Widths.AnsiChars(6))
                 .Text("Status", header: "Status", iseditingreadonly: true, width: Ict.Win.Widths.AnsiChars(8))
                ;
         }

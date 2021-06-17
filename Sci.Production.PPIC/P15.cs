@@ -158,7 +158,8 @@ namespace Sci.Production.PPIC
 
         private void QueryData()
         {
-            string query_sql = $@"select 
+            string query_sql = $@"
+select 
 l.MDivisionID,
 l.FactoryID,
 l.ID,
@@ -169,7 +170,14 @@ l.OrderID,
 l.POID,
 l.SewingLineID,
 l.issueLackID,
-[Status] = IIF(l.Status='Received','Finished',IIF(l.issueLackID='','Waiting', IIF(il.status='Confirmed','Preparing','Ready')))
+[Status] = case 
+ when l.Status='Received' then 'Finished'
+ when il.status='Closed' then 'Ready'
+ when il.Status='Confirmed' then 'Preparing'
+ when l.IssueLackId = '' and l.PreparedStartDate is not null and l.PreparedFinishDate is not null then 'Ready'
+ when l.IssueLackId = '' and l.PreparedStartDate is not null then 'Preparing'
+ when l.issueLackID='' then 'Waiting'
+ end
 from Lack l WITH (NOLOCK)
 left join IssueLack il WITH (NOLOCK) on l.issueLackID=il.ID 
 where l.status <> 'New' ";

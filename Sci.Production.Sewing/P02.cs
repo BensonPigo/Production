@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Linq;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -652,41 +653,30 @@ where   mo.Junk = 0
         // Share < working hours > to SP#
         private void BtnShareWworkingHoursToSP_Click(object sender, EventArgs e)
         {
-            DataTable sumQaQty;
-            try
+            this.DetailDatas.Where(w => MyUtility.Check.Empty(w["QAQty"])).ToList().ForEach(f => f["WorkHour"] = 0);
+            var drs = this.DetailDatas.Where(w => !MyUtility.Convert.GetBool(w["AutoCreate"]) && !MyUtility.Check.Empty(w["QAQty"])).ToArray();
+            decimal ttlQtyTms = drs.Sum(s => MyUtility.Convert.GetDecimal(s["QAQty"]) * MyUtility.Convert.GetDecimal(s["TMS"]));
+            decimal sumWorkhour = 0;
+            foreach (DataRow dr in drs)
             {
-                MyUtility.Tool.ProcessWithDatatable(((DataTable)this.detailgridbs.DataSource).DefaultView.ToTable(), "QAQty,TMS,OrderID", "select isnull(sum(QAQty*TMS),0) as sumQaqty,isnull(count(QAQty),0) as RecCnt from #tmp", out sumQaQty, "#tmp");
-            }
-            catch (Exception ex)
-            {
-                this.ShowErr("Calculate error.", ex);
-                return;
-            }
-
-            if (sumQaQty == null)
-            {
-                return;
+                dr["WorkHour"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]) * MyUtility.Convert.GetDecimal(dr["QAQty"]) * MyUtility.Convert.GetDecimal(dr["TMS"]) / ttlQtyTms, 3);
+                sumWorkhour += MyUtility.Convert.GetDecimal(dr["WorkHour"]);
             }
 
-            int recCnt = MyUtility.Convert.GetInt(sumQaQty.Rows[0]["RecCnt"]);
-            decimal ttlQaqty = MyUtility.Convert.GetDecimal(sumQaQty.Rows[0]["sumQaqty"]);
-
-            decimal subSum = 0;
-            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            // 多或少都可能
+            decimal diff = MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]) - sumWorkhour;
+            for (int i = drs.Count() - 1; i >= 0; i--)
             {
-                if (dr.RowState != DataRowState.Deleted)
+                decimal currWorkHour = MyUtility.Convert.GetDecimal(drs[i]["WorkHour"]);
+                if (currWorkHour + diff >= 0)
                 {
-                    recCnt = recCnt - 1;
-                    if (recCnt == 0)
-                    {
-                        dr["WorkHour"] = MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]) - subSum;
-                    }
-                    else
-                    {
-                        dr["WorkHour"] = ttlQaqty == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(dr["QAQty"]) * MyUtility.Convert.GetDecimal(dr["TMS"]) / ttlQaqty * MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]), 3);
-                    }
-
-                    subSum = subSum + MyUtility.Convert.GetDecimal(dr["WorkHour"]);
+                    drs[i]["WorkHour"] = currWorkHour + diff;
+                    break;
+                }
+                else
+                {
+                    drs[i]["WorkHour"] = 0;
+                    diff += currWorkHour;
                 }
             }
         }

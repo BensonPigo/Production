@@ -41,6 +41,7 @@ namespace Sci.Production.Warehouse
                 { "Receiving Act. (kg)", "0" },
                 { "Cut Shadeband", "1" },
                 { "Fabric to Lab", "2" },
+                { "Checker", "3" },
             };
             this.comboUpdateInfo.DataSource = new BindingSource(updateInfo_source, null);
             this.comboUpdateInfo.DisplayMember = "Key";
@@ -139,12 +140,14 @@ namespace Sci.Production.Warehouse
             string whereReceivingAct = string.Empty;
             string whereCutShadeband = string.Empty;
             string whereFabricLab = string.Empty;
+            string whereChecker = string.Empty;
 
             if (this.status == "AlreadyUpdated")
             {
                 whereReceivingAct += " and ActualWeight != 0 ";
                 whereCutShadeband += " and CutShadebandTime is not null";
                 whereFabricLab += " and Fabric2LabTime is not null";
+                whereChecker += " and ISNULL(Checker,'') <> ''";
             }
 
             if (this.status == "NotYetUpdate")
@@ -152,6 +155,7 @@ namespace Sci.Production.Warehouse
                 whereReceivingAct += " and ActualWeight = 0 ";
                 whereCutShadeband += " and CutShadebandTime is null";
                 whereFabricLab += " and Fabric2LabTime is null";
+                whereChecker += " and ISNULL(Checker,'') = ''";
             }
 
             string strSql = $@"
@@ -180,6 +184,7 @@ select * into #tmpResult
 		    ,cutTime.CutBy
 			,rd.Fabric2LabBy
 			,rd.Fabric2LabTime
+            ,rd.Checker
 		from  Receiving r with (nolock)
 		inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
 		inner join Orders o with (nolock) on o.ID = rd.POID 
@@ -218,6 +223,7 @@ select * into #tmpResult
 		    ,cutTime.CutBy
 			,rd.Fabric2LabBy
 			,rd.Fabric2LabTime
+            ,rd.Checker
 		FROM TransferIn r with (nolock)
 		INNER JOIN TransferIn_Detail rd with (nolock) ON r.ID = rd.ID
 		INNER JOIN Orders o with (nolock) ON o.ID = rd.POID
@@ -293,6 +299,25 @@ select  ReceivingID
 from #tmpResult
 where 1 = 1 {whereFabricLab}
 
+select  ReceivingID
+		,ExportID
+		,ArriveDate
+		,PoId
+		,Seq
+		,BrandID
+		,refno
+		,WeaveTypeID
+		,Color
+		,Roll
+		,Dyelot
+		,StockQty
+		,StockType
+		,Location
+		,Weight
+		,Checker
+from #tmpResult
+where 1 = 1 {whereChecker}
+
 drop table #tmpResult
 ";
             #endregion
@@ -354,6 +379,9 @@ drop table #tmpResult
                         break;
                     case 2:
                         excelName = "Warehouse_R40_FabrictoLab";
+                        break;
+                    case 3:
+                        excelName = "Warehouse_R40_Checker";
                         break;
                     default:
                         continue;

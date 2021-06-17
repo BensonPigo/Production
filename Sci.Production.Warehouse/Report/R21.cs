@@ -37,6 +37,8 @@ namespace Sci.Production.Warehouse
         private DateTime? BuyerDelivery2;
         private DateTime? ETA1;
         private DateTime? ETA2;
+        private DateTime? OrigBuyerDelivery1;
+        private DateTime? OrigBuyerDelivery2;
         private DateTime? arriveWH1;
         private DateTime? arriveWH2;
         private string sqlcolumn = @"select
@@ -55,10 +57,11 @@ namespace Sci.Production.Warehouse
 	,[OrderType] = o.OrderTypeID
 	,[WeaveType] = d.WeaveTypeID
     ,[BuyerDelivery]=o.BuyerDelivery
+    ,[OrigBuyerDelivery]=o.OrigBuyerDelivery
     ,[MaterialComplete] = case when psd.Complete = 1 then 'Y' else '' end
     ,[ETA] = psd.FinalETA
     ,[ArriveWHDate] = stuff((
-                    select distinct concat(char(10),isnull(Format(a.date,'yyyy/MM/dd'),'　'))
+                    select distinct concat(';',isnull(Format(a.date,'yyyy/MM/dd'),'　'))
                     from (
 	                    select date = Export.whsearrival
 	                    from Export_Detail with (nolock) 
@@ -87,11 +90,69 @@ namespace Sci.Production.Warehouse
                     for xml path('')
 	            ),1,1,'')
     ,[WK] = stuff((
-	            	select concat(char(10),ID)
+	            	select concat(';',ID)
 	            	from Export_Detail with (nolock) 
 	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 order by Export_Detail.ID
 	            	for xml path('')
 	            ),1,1,'')
+    ,[Packages] =concat(
+        stuff((
+            select concat(';',Packages)
+            from(
+                select e2.Blno,Packages = sum(e2.Packages)
+                from Export e2 with (nolock) 
+                where exists (
+                    select 1
+	                from Export_Detail ed with (nolock)
+                    inner join Export e with (nolock) on e.id = ed.id
+	                where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
+                    and e.blno = e2.Blno)
+                group by e2.Blno
+            )x
+	        for xml path('')
+        ),1,1,'')
+        ,
+        iif(exists (
+                select 1
+	            from Export_Detail ed with (nolock)
+                inner join Export e with (nolock) on e.id = ed.id
+	            where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2)                
+            and
+            exists(select 1
+                from TransferIn ts with (nolock) 
+	            where ts.Status='Confirmed'
+                and exists(
+                    select 1 from TransferIn_Detail tsd with (nolock)
+                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
+                    and tsd.ID = ts.ID))
+            ,';','')
+        ,
+        stuff((
+            select concat(';',Packages)
+            from(
+	            select ts.id,Packages = sum(Packages)
+                from TransferIn ts with (nolock) 
+	            where ts.Status='Confirmed'
+                and exists(
+                    select 1 from TransferIn_Detail tsd with (nolock)
+                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
+                    and tsd.ID = ts.ID)
+                group by ts.id
+            )x
+	        for xml path('')
+        ),1,1,'')
+		)
+    ,ContainerNo = stuff((
+        select concat(';' , ContainerNo)
+        from(
+            select distinct ContainerNo = esc.ContainerType + '-' + esc.ContainerNo
+	        from Export_Detail ed with (nolock)
+            inner join Export_ShipAdvice_Container esc with (nolock) on esc.Export_Detail_Ukey = ed.Ukey
+	        where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
+            and esc.ContainerType <> '' and esc.ContainerNo  <> ''
+        )x
+        for xml path('')
+    ),1,1,'')
 	,[Brand] = o.BrandID
 	,[Style] = o.StyleID
 	,[Season] = o.SeasonID
@@ -139,9 +200,10 @@ namespace Sci.Production.Warehouse
 	,[OrderType] = o.OrderTypeID
 	,[WeaveType] = d.WeaveTypeID
     ,[BuyerDelivery]=o.BuyerDelivery
+    ,[OrigBuyerDelivery]=o.OrigBuyerDelivery
     ,[ETA] = psd.FinalETA
     ,[ArriveWHDate] = stuff((
-                    select distinct concat(char(10),isnull(Format(a.date,'yyyy/MM/dd'),'　'))
+                    select distinct concat(';',isnull(Format(a.date,'yyyy/MM/dd'),'　'))
                     from (
 	                    select date = Export.whsearrival
 	                    from Export_Detail with (nolock) 
@@ -170,11 +232,69 @@ namespace Sci.Production.Warehouse
                     for xml path('')
 	            ),1,1,'')
     ,[WK] = stuff((
-	            	select concat(char(10),ID)
+	            	select concat(';',ID)
 	            	from Export_Detail with (nolock) 
 	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 order by Export_Detail.ID
 	            	for xml path('')
 	            ),1,1,'')
+    ,[Packages] =concat(
+        stuff((
+            select concat(';',Packages)
+            from(
+                select e2.Blno,Packages = sum(e2.Packages)
+                from Export e2 with (nolock) 
+                where exists (
+                    select 1
+	                from Export_Detail ed with (nolock)
+                    inner join Export e with (nolock) on e.id = ed.id
+	                where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
+                    and e.blno = e2.Blno)
+                group by e2.Blno
+            )x
+	        for xml path('')
+        ),1,1,'')
+        ,
+        iif(exists (
+                select 1
+	            from Export_Detail ed with (nolock)
+                inner join Export e with (nolock) on e.id = ed.id
+	            where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2)                
+            and
+            exists(select 1
+                from TransferIn ts with (nolock) 
+	            where ts.Status='Confirmed'
+                and exists(
+                    select 1 from TransferIn_Detail tsd with (nolock)
+                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
+                    and tsd.ID = ts.ID))
+            ,';','')
+        ,
+        stuff((
+            select concat(';',Packages)
+            from(
+	            select ts.id,Packages = sum(Packages)
+                from TransferIn ts with (nolock) 
+	            where ts.Status='Confirmed'
+                and exists(
+                    select 1 from TransferIn_Detail tsd with (nolock)
+                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
+                    and tsd.ID = ts.ID)
+                group by ts.id
+            )x
+	        for xml path('')
+        ),1,1,'')
+		)
+    ,ContainerNo = stuff((
+        select concat(';' , ContainerNo)
+        from(
+            select distinct ContainerNo = esc.ContainerType + '-' + esc.ContainerNo
+	        from Export_Detail ed with (nolock)
+            inner join Export_ShipAdvice_Container esc with (nolock) on esc.Export_Detail_Ukey = ed.Ukey
+	        where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
+            and esc.ContainerType <> '' and esc.ContainerNo  <> ''
+        )x
+        for xml path('')
+    ),1,1,'')
 	,[Brand] = o.BrandID
 	,[Style] = o.StyleID
 	,[Season] = o.SeasonID
@@ -268,6 +388,8 @@ namespace Sci.Production.Warehouse
             this.BuyerDelivery2 = this.dateBuyerDelivery.Value2;
             this.ETA1 = this.dateETA.Value1;
             this.ETA2 = this.dateETA.Value2;
+            this.OrigBuyerDelivery1 = this.dateOrigBuyerDelivery.Value1;
+            this.OrigBuyerDelivery2 = this.dateOrigBuyerDelivery.Value2;
             this.arriveWH1 = this.dateArriveDate.Value1;
             this.arriveWH2 = this.dateArriveDate.Value2;
             this.WorkNo = this.txtWorkNo.Text;
@@ -284,10 +406,11 @@ namespace Sci.Production.Warehouse
                 !this.dateETA.HasValue &&
                 !this.dateArriveDate.HasValue &&
                 !this.dateBuyerDelivery.HasValue &&
+                !this.dateOrigBuyerDelivery.HasValue &&
                 MyUtility.Check.Empty(this.StartRefno) &&
                 MyUtility.Check.Empty(this.EndRefno))
             {
-                MyUtility.Msg.WarningBox("<SP#>,<ETA>,<Arrive W/H Date>,<Buyer Delivery>,<Refno> at least one entry is required");
+                MyUtility.Msg.WarningBox("<SP#>,<ETA>,<Arrive W/H Date>,<Buyer Delivery>,<Orig.Buyer Dlv>,<Refno> at least one entry is required");
                 return false;
             }
 
@@ -465,6 +588,16 @@ where 1=1
             if (!MyUtility.Check.Empty(this.ETA2))
             {
                 this.sqlcmd.Append($" and psd.FinalETA <='{((DateTime)this.ETA2).ToString("yyyy/MM/dd")}'");
+            }
+
+            if (!MyUtility.Check.Empty(this.OrigBuyerDelivery1))
+            {
+                this.sqlcmd.Append($" and o.OrigBuyerDelivery >='{((DateTime)this.OrigBuyerDelivery1).ToString("yyyy/MM/dd")}'");
+            }
+
+            if (!MyUtility.Check.Empty(this.OrigBuyerDelivery2))
+            {
+                this.sqlcmd.Append($" and o.OrigBuyerDelivery <='{((DateTime)this.OrigBuyerDelivery2).ToString("yyyy/MM/dd")}'");
             }
 
             if (this.bulk || this.sample || this.material || this.smtl)

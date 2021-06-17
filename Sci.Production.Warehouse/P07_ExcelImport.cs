@@ -389,8 +389,8 @@ namespace Sci.Production.Warehouse
                                 string sql = @"
 select  pd.fabrictype
         , pd.POUnit
-        , StockUnit = dbo.GetStockUnitBySPSeq (pd.id, pd.seq1, pd.seq2)
-        , Round(dbo.GetUnitQty(pd.POUnit, dbo.GetStockUnitBySPSeq (pd.id, pd.seq1, pd.seq2), @shipqty), 2) as stockqty 
+        , StockUnit = pd.StockUnit
+        , Round(dbo.GetUnitQty(pd.POUnit, pd.StockUnit, @shipqty), 2) as stockqty 
         , (select o.Category from Orders o WITH (NOLOCK) where o.id= pd.id) as category
         , pd.Refno
         , [ColorID] = isnull(Color.Value,'')

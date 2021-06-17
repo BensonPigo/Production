@@ -245,7 +245,8 @@ outer apply( select top 1 * from Rft WITH (NOLOCK) where rft.OrderID = sd.OrderI
                                and rft.SewinglineID = s.SewingLineID 
                                and rft.Shift = s.Shift 
                                and rft.Team = s.Team) Rft
-where sd.ID = '{0}'",
+where sd.ID = '{0}'
+order by sd.UKey",
                 masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -2220,20 +2221,6 @@ from SewingOutput_Detail sod
 inner join #updateChild upd on sod.UKey = upd.SewingOutput_DetailUKey
 
 drop table #Child, #updateChild
-
-
-update s set
-	s.WorkHour=isnull(s.WorkHour,0)+isnull(ss.WorkHour,0)
-from SewingOutput_Detail s
-outer apply(
-	select WorkHour=isnull(s3.WorkHour,0)-isnull(sum(sd.WorkHour),0)
-	from SewingOutput s3
-	inner join SewingOutput_Detail sd on s.id = sd.ID
-	where s3.id=s.id and sd.AutoCreate = 0
-	group by sd.ID,s3.SewingLineID,s3.OutputDate,s3.WorkHour,s3.Team,s3.Shift having sum(sd.WorkHour)<> s.WorkHour
-)ss
-where id = @SewingID
-and ukey = (select max(ukey) from SewingOutput_Detail s2 where s.id =s2.id)
 ";
 
             TransactionScope transactionscope = new TransactionScope();
@@ -2420,46 +2407,30 @@ and ukey = (select max(ukey) from SewingOutput_Detail s2 where s.id =s2.id)
         // Share < working hours > to SP#
         private void BtnShareWorkingHoursToSP_Click(object sender, EventArgs e)
         {
-            DataTable sumQaQty;
-            try
+            this.DetailDatas.Where(w => MyUtility.Check.Empty(w["QAQty"])).ToList().ForEach(f => f["WorkHour"] = 0);
+            var drs = this.DetailDatas.Where(w => !MyUtility.Convert.GetBool(w["AutoCreate"]) && !MyUtility.Check.Empty(w["QAQty"])).ToArray();
+            decimal ttlQtyTms = drs.Sum(s => MyUtility.Convert.GetDecimal(s["QAQty"]) * MyUtility.Convert.GetDecimal(s["TMS"]));
+            decimal sumWorkhour = 0;
+            foreach (DataRow dr in drs)
             {
-                string strSumQaQty = @"
-select sumQaqty = isnull(sum(QAQty*TMS),0)
-       , RecCnt = isnull(count(QAQty),0)
-from #tmp
-where Convert (bit, AutoCreate) != 1";
-                MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, "QAQty,TMS,OrderID,AutoCreate", strSumQaQty, out sumQaQty, "#tmp");
-            }
-            catch (Exception ex)
-            {
-                this.ShowErr("Calculate error.", ex);
-                return;
+                dr["WorkHour"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]) * MyUtility.Convert.GetDecimal(dr["QAQty"]) * MyUtility.Convert.GetDecimal(dr["TMS"]) / ttlQtyTms, 3);
+                sumWorkhour += MyUtility.Convert.GetDecimal(dr["WorkHour"]);
             }
 
-            if (sumQaQty == null)
+            // 多或少都可能
+            decimal diff = MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]) - sumWorkhour;
+            for (int i = drs.Count() - 1; i >= 0; i--)
             {
-                return;
-            }
-
-            int recCnt = MyUtility.Convert.GetInt(sumQaQty.Rows[0]["RecCnt"]);
-            decimal ttlQaqty = MyUtility.Convert.GetDecimal(sumQaQty.Rows[0]["sumQaqty"]);
-
-            decimal subSum = 0;
-            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Select(" AutoCreate <>'True'"))
-            {
-                if (dr.RowState != DataRowState.Deleted)
+                decimal currWorkHour = MyUtility.Convert.GetDecimal(drs[i]["WorkHour"]);
+                if (currWorkHour + diff >= 0)
                 {
-                    recCnt = recCnt - 1;
-                    if (recCnt == 0)
-                    {
-                        dr["WorkHour"] = MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]) - subSum;
-                    }
-                    else
-                    {
-                        dr["WorkHour"] = ttlQaqty == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(dr["QAQty"]) * MyUtility.Convert.GetDecimal(dr["TMS"]) / ttlQaqty * MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]), 3);
-                    }
-
-                    subSum = subSum + MyUtility.Convert.GetDecimal(dr["WorkHour"]);
+                    drs[i]["WorkHour"] = currWorkHour + diff;
+                    break;
+                }
+                else
+                {
+                    drs[i]["WorkHour"] = 0;
+                    diff += currWorkHour;
                 }
             }
         }
@@ -3036,10 +3007,12 @@ DEALLOCATE Sewingoutput_cursor --將cursor物件從記憶體移除
 
             string sqlSewingOutput_DailyLock = $@"
 update SewingOutput_DailyLock
-set LockDate = ''
-where FactoryID = ''
+set LockDate = '{datelock}',
+    LastLockName = '{Sci.Env.User.UserID}',
+    LastLockDate = GETDATE()
+where FactoryID = '{Env.User.Factory}'
 
-if not exists(select 1 from SewingOutput_DailyLock where FactoryID = '')
+if not exists(select 1 from SewingOutput_DailyLock where FactoryID = '{Env.User.Factory}')
 begin
 INSERT INTO [dbo].[SewingOutput_DailyLock]
            ([FactoryID]

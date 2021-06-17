@@ -50,6 +50,8 @@ DECLARE @ErrorStatus bit = 1;
 DECLARE @StartTime datetime = getdate();
 DECLARE @StartDate date
 DECLARE @EndDate date
+DECLARE @TransCode varchar(100) = (select format(getdate(),'yyyyMMdd_HHmmss'))
+DECLARE @ErrDesc NVARCHAR(4000) = '';
 
 DECLARE @Stime datetime, @Etime datetime
 
@@ -71,6 +73,10 @@ SET @ErrorMessage =
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
 
+SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
 SET @ErrorStatus = 0
 
 END CATCH;
@@ -84,6 +90,12 @@ BEGIN
 	set @desc += CHAR(13) + @ErrorMessage
 END
 SET @ErrorMessage = ''
+
+-- Write in P_TransLog
+	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
+	values('ImportForecastLoadingBI',@ErrDesc,@Stime,@Etime,@TransCode)
+
+	SET @ErrDesc = ''
 
 --02) ImportEfficiencyBI 
 BEGIN TRY
@@ -101,6 +113,10 @@ SET @ErrorMessage =
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
 
+SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
 	SET @ErrorStatus = 0
 END CATCH;
 IF (@ErrorMessage IS NULL or @ErrorMessage='')
@@ -112,6 +128,12 @@ BEGIN
 	set @desc += CHAR(13) + @ErrorMessage
 END
 SET @ErrorMessage = ''
+
+-- Write in P_TransLog
+	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
+	values('ImportEfficiencyBI',@ErrDesc,@Stime,@Etime,@TransCode)
+
+	SET @ErrDesc = ''
 
 --03) ImportSewingLineScheduleBIData
 BEGIN TRY
@@ -130,6 +152,10 @@ SET @ErrorMessage =
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
 
+SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
 SET @ErrorStatus = 0
 
 END CATCH;
@@ -142,6 +168,12 @@ BEGIN
 	set @desc +=  CHAR(13) +@ErrorMessage
 END
 SET @ErrorMessage = ''
+
+-- Write in P_TransLog
+	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
+	values('ImportSewingLineScheduleBIData',@ErrDesc,@Stime,@Etime,@TransCode)
+
+	SET @ErrDesc = ''
 
 --04) P_ImportOustandingPO_Fty、P_ImportSDPOrderDetail
 BEGIN TRY
@@ -163,6 +195,10 @@ SET @ErrorMessage =
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
 
+SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
 SET @ErrorStatus = 0
 
 END CATCH;
@@ -176,8 +212,15 @@ BEGIN
 END
 SET @ErrorMessage = ''
 
+-- Write in P_TransLog
+	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
+	values('P_ImportOustandingPO_Fty & P_ImportSDPOrderDetail',@ErrDesc,@Stime,@Etime,@TransCode)
+
+	SET @ErrDesc = ''
+
 --05) P_ImportLoadingProductionOutput_FTY
 BEGIN TRY
+	set @Stime = getdate()
 	execute [dbo].[P_ImportLoadingProductionOutput_FTY]
 	set @Etime = getdate()
 END TRY
@@ -188,6 +231,10 @@ SET @ErrorMessage =
 [5-LoadingProductionOutput]' + CHAR(13) +
 ',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
+SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
 ',錯誤訊息: ' + ERROR_MESSAGE()
 
 SET @ErrorStatus = 0
@@ -202,6 +249,12 @@ BEGIN
 	set @desc +=  CHAR(13) +@ErrorMessage
 END
 SET @ErrorMessage = ''
+
+-- Write in P_TransLog
+	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
+	values('P_ImportLoadingProductionOutput_FTY',@ErrDesc,@Stime,@Etime,@TransCode)
+
+	SET @ErrDesc = ''
 
 
 --06) Import_QA_R06
@@ -228,6 +281,90 @@ BEGIN
 	set @desc +=  CHAR(13) +@ErrorMessage
 END
 SET @ErrorMessage = ''
+
+
+--07) ImportForecastLoadingBI
+BEGIN TRY
+	set @Stime = getdate()
+	set @StartDate = '2020-01-01'
+	EXEC P_ImportQAInspection_Fty @StartDate
+	set @Etime = getdate()
+END TRY
+
+BEGIN CATCH
+
+SET @ErrorMessage = 
+'
+[6-P_ImportQAInspection]' + CHAR(13) +
+',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
+SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
+SET @ErrorStatus = 0
+
+END CATCH;
+IF (@ErrorMessage IS NULL or @ErrorMessage='')
+BEGIN 
+	set @desc += CHAR(13) + '
+[6-P_ImportQAInspection] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+END
+ELSE
+BEGIN
+	set @desc += CHAR(13) + @ErrorMessage
+END
+SET @ErrorMessage = ''
+
+-- Write in P_TransLog
+	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
+	values('P_ImportQAInspection_Fty',@ErrDesc,@Stime,@Etime,@TransCode)
+
+	SET @ErrDesc = ''
+
+--08) P_Import_QA_P09
+BEGIN TRY
+	set @Stime = getdate()
+	set @StartDate = '2020-01-01'
+	set @EndDate = (select CONVERT(date, DATEADD(MONTH,3, GETDATE())))
+	EXEC P_Import_QA_P09_Fty @StartDate,@EndDate
+	set @Etime = getdate()
+END TRY
+
+BEGIN CATCH
+
+SET @ErrorMessage = 
+'
+[7-P_Import_QA_P09]' + CHAR(13) +
+',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
+SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
+SET @ErrorStatus = 0
+
+END CATCH;
+IF (@ErrorMessage IS NULL or @ErrorMessage='')
+BEGIN 
+	set @desc += CHAR(13) + '
+[7-P_Import_QA_P09] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+END
+ELSE
+BEGIN
+	set @desc += CHAR(13) + @ErrorMessage
+END
+SET @ErrorMessage = ''
+
+-- Write in P_TransLog
+	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
+	values('P_Import_QA_P09',@ErrDesc,@Stime,@Etime,@TransCode)
+
+	SET @ErrDesc = ''
 
 DECLARE @comboDesc nvarchar(4000);
 

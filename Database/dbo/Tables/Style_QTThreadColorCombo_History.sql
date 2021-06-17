@@ -16,7 +16,8 @@ CREATE TABLE [dbo].[Style_QTThreadColorCombo_History](
 	[FabricCode] [varchar](3) NOT NULL,
 	[SCIRefno] [varchar](30) NOT NULL,
 	[Width] [numeric](5, 2) NOT NULL,
- CONSTRAINT [PK_Style_QTThreadColorCombo_History] PRIMARY KEY CLUSTERED 
+ [Version] VARCHAR(5) NULL, 
+    CONSTRAINT [PK_Style_QTThreadColorCombo_History] PRIMARY KEY CLUSTERED 
 (
 	[StyleUkey] ASC,
 	[Thread_Quilting_SizeUkey] ASC,

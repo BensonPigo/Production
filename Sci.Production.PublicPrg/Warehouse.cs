@@ -1087,6 +1087,7 @@ select  p.id,concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq
         , isnull(m.ReturnQty, 0) as ReturnQty
         , isnull(m.inqty, 0) - isnull(m.OutQty, 0) + isnull(m.AdjustQty, 0) - isnull(m.ReturnQty, 0) as balance
         , isnull(m.LInvQty, 0) as LInvQty
+        , isnull(m.LObQty, 0) as LObQty
         , p.fabrictype
         , p.seq1
         , p.seq2
@@ -1141,7 +1142,7 @@ where p.id ='{0}'
 
             DBProxy.Current.Select(null, sqlcmd, out dt);
 
-            Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(dt, "Seq,refno,description,colorid,SizeSpec,FinalETA,inqty,stockunit,outqty,adjustqty,ReturnQty,balance,linvqty", "6,8,35,8,10,6,6,6,6,6,6,6", defaultseq, "Seq,Ref#,Description,Color,Size,ETA,In Qty,Stock Unit,Out Qty,Adqty,Return Qty,Balance,Inventory Qty")
+            Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(dt, "Seq,refno,description,colorid,SizeSpec,FinalETA,inqty,stockunit,outqty,adjustqty,ReturnQty,balance,linvqty,LObQty", "6,8,35,8,10,6,6,6,6,6,6,6,6", defaultseq, "Seq,Ref#,Description,Color,Size,ETA,In Qty,Stock Unit,Out Qty,Adqty,Return Qty,Balance,Inventory Qty,Scrap Qty")
             {
                 Width = 1024,
             };

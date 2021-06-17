@@ -54,6 +54,8 @@
             this.label9 = new Sci.Win.UI.Label();
             this.dateIDD = new Sci.Win.UI.DateBox();
             this.btnUpdateGridIDD = new Sci.Win.UI.PictureBox();
+            this.label10 = new Sci.Win.UI.Label();
+            this.txtPO = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridIDD)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnUpdateGridIDD)).BeginInit();
             this.SuspendLayout();
@@ -73,7 +75,7 @@
             this.gridIDD.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridIDD.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridIDD.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridIDD.Location = new System.Drawing.Point(12, 133);
+            this.gridIDD.Location = new System.Drawing.Point(12, 165);
             this.gridIDD.Name = "gridIDD";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -88,7 +90,7 @@
             this.gridIDD.RowTemplate.Height = 24;
             this.gridIDD.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridIDD.ShowCellToolTips = false;
-            this.gridIDD.Size = new System.Drawing.Size(874, 372);
+            this.gridIDD.Size = new System.Drawing.Size(874, 382);
             this.gridIDD.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridIDD.TabIndex = 1;
             this.gridIDD.Sorted += new System.EventHandler(this.GridIDD_Sorted);
@@ -138,7 +140,7 @@
             // label6
             // 
             this.label6.BackColor = System.Drawing.Color.SkyBlue;
-            this.label6.Location = new System.Drawing.Point(347, 38);
+            this.label6.Location = new System.Drawing.Point(347, 67);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(99, 23);
             this.label6.TabIndex = 7;
@@ -148,7 +150,7 @@
             // label7
             // 
             this.label7.BackColor = System.Drawing.Color.SkyBlue;
-            this.label7.Location = new System.Drawing.Point(347, 67);
+            this.label7.Location = new System.Drawing.Point(347, 96);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(99, 23);
             this.label7.TabIndex = 8;
@@ -243,7 +245,7 @@
             this.dateSewingOffline.DateBox2.Name = "";
             this.dateSewingOffline.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateSewingOffline.DateBox2.TabIndex = 1;
-            this.dateSewingOffline.Location = new System.Drawing.Point(449, 38);
+            this.dateSewingOffline.Location = new System.Drawing.Point(449, 67);
             this.dateSewingOffline.Name = "dateSewingOffline";
             this.dateSewingOffline.Size = new System.Drawing.Size(280, 23);
             this.dateSewingOffline.TabIndex = 16;
@@ -264,7 +266,7 @@
             this.dateBuyerdelivery.DateBox2.Name = "";
             this.dateBuyerdelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateBuyerdelivery.DateBox2.TabIndex = 1;
-            this.dateBuyerdelivery.Location = new System.Drawing.Point(449, 67);
+            this.dateBuyerdelivery.Location = new System.Drawing.Point(449, 96);
             this.dateBuyerdelivery.Name = "dateBuyerdelivery";
             this.dateBuyerdelivery.Size = new System.Drawing.Size(280, 23);
             this.dateBuyerdelivery.TabIndex = 17;
@@ -308,7 +310,7 @@
             this.chkExcludeExistsGB.Checked = true;
             this.chkExcludeExistsGB.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExcludeExistsGB.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkExcludeExistsGB.Location = new System.Drawing.Point(347, 98);
+            this.chkExcludeExistsGB.Location = new System.Drawing.Point(12, 136);
             this.chkExcludeExistsGB.Name = "chkExcludeExistsGB";
             this.chkExcludeExistsGB.Size = new System.Drawing.Size(369, 21);
             this.chkExcludeExistsGB.TabIndex = 21;
@@ -319,7 +321,7 @@
             // label9
             // 
             this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label9.Location = new System.Drawing.Point(12, 510);
+            this.label9.Location = new System.Drawing.Point(12, 552);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(116, 23);
             this.label9.TabIndex = 22;
@@ -328,7 +330,7 @@
             // dateIDD
             // 
             this.dateIDD.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.dateIDD.Location = new System.Drawing.Point(131, 510);
+            this.dateIDD.Location = new System.Drawing.Point(131, 552);
             this.dateIDD.Name = "dateIDD";
             this.dateIDD.Size = new System.Drawing.Size(130, 23);
             this.dateIDD.TabIndex = 23;
@@ -338,7 +340,7 @@
             this.btnUpdateGridIDD.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnUpdateGridIDD.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnUpdateGridIDD.Image = ((System.Drawing.Image)(resources.GetObject("btnUpdateGridIDD.Image")));
-            this.btnUpdateGridIDD.Location = new System.Drawing.Point(267, 510);
+            this.btnUpdateGridIDD.Location = new System.Drawing.Point(267, 552);
             this.btnUpdateGridIDD.Name = "btnUpdateGridIDD";
             this.btnUpdateGridIDD.Size = new System.Drawing.Size(39, 23);
             this.btnUpdateGridIDD.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -347,11 +349,33 @@
             this.btnUpdateGridIDD.WaitOnLoad = true;
             this.btnUpdateGridIDD.Click += new System.EventHandler(this.BtnUpdateGridIDD_Click);
             // 
+            // label10
+            // 
+            this.label10.BackColor = System.Drawing.Color.SkyBlue;
+            this.label10.Location = new System.Drawing.Point(347, 38);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(99, 23);
+            this.label10.TabIndex = 25;
+            this.label10.Text = "PO#";
+            this.label10.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // txtPO
+            // 
+            this.txtPO.BackColor = System.Drawing.Color.White;
+            this.txtPO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPO.Location = new System.Drawing.Point(449, 38);
+            this.txtPO.Multiline = true;
+            this.txtPO.Name = "txtPO";
+            this.txtPO.Size = new System.Drawing.Size(242, 23);
+            this.txtPO.TabIndex = 27;
+            // 
             // P01_BatchUpdateIDD
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(898, 539);
+            this.ClientSize = new System.Drawing.Size(898, 581);
+            this.Controls.Add(this.txtPO);
+            this.Controls.Add(this.label10);
             this.Controls.Add(this.btnUpdateGridIDD);
             this.Controls.Add(this.dateIDD);
             this.Controls.Add(this.label9);
@@ -403,6 +427,8 @@
             this.Controls.SetChildIndex(this.label9, 0);
             this.Controls.SetChildIndex(this.dateIDD, 0);
             this.Controls.SetChildIndex(this.btnUpdateGridIDD, 0);
+            this.Controls.SetChildIndex(this.label10, 0);
+            this.Controls.SetChildIndex(this.txtPO, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridIDD)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnUpdateGridIDD)).EndInit();
             this.ResumeLayout(false);
@@ -436,5 +462,7 @@
         private Win.UI.Label label9;
         private Win.UI.DateBox dateIDD;
         private Win.UI.PictureBox btnUpdateGridIDD;
+        private Win.UI.Label label10;
+        private Win.UI.EditBox txtPO;
     }
 }

@@ -129,6 +129,9 @@
     <Build Include="dbo\Tables\P_QA_R06.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_QA_R06.sql" />
     <Build Include="dbo\Stored Procedures\P_Import_QA_R06.sql" />
+    <Build Include="dbo\Tables\P_QA_P09.sql" />
+    <Build Include="dbo\Stored Procedures\P_Import_QA_P09.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_QA_P09_Fty.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

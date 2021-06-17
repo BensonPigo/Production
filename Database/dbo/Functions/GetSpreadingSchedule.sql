@@ -1,5 +1,4 @@
-﻿
-CREATE FUNCTION [dbo].[GetSpreadingSchedule]
+﻿CREATE FUNCTION [dbo].[GetSpreadingSchedule]
 (	
 	@FactoryID varchar(8),
 	@EstCutDate Date,
@@ -38,7 +37,8 @@ RETURN
 		IsOutStanding = IIF(o.Finished = 0 and w.EstCutDate < CAST(getdate() as date), 'Y', 'N'),
 		o.BuyerDelivery,
 		w.SCIRefno,
-		[ReqQty] = isnull(cp.Cons, 0)  
+		[ReqQty] = isnull(cp.Cons, 0),
+		w.Cons
 	from WorkOrder w with(nolock)
 	inner join orders o with(nolock) on o.id = w.ID
 	left join SpreadingSchedule s with(nolock) on	s.FactoryID = w.FactoryID

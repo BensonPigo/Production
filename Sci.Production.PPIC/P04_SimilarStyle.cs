@@ -65,6 +65,7 @@ namespace Sci.Production.PPIC
             this.Helper.Controls.Grid.Generator(this.gridChildrenStyle)
                  .Text("ChildrenStyleID", header: "Children Style", width: Widths.AnsiChars(15))
                  .Text("ChildrenBrandID", header: "Brand", width: Widths.AnsiChars(8))
+                 .Text("ChildrenSeasonID", header: "Season", width: Widths.AnsiChars(8))
                  .Text("CreateBy", header: "Create by", width: Widths.AnsiChars(30))
                  .Text("EditBy", header: "Edit by", width: Widths.AnsiChars(25));
         }
