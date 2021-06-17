@@ -385,7 +385,7 @@ select  poid = p.ID
         , Description = (select f.DescDetail from fabric f WITH (NOLOCK) where f.SCIRefno = p.scirefno) 
         , p.scirefno
         , p.FabricType
-        , stockunit = dbo.GetStockUnitBySPSeq (p.ID, p.seq1, p.seq2)
+        , stockunit = p.StockUnit
 from dbo.Po_Supp_Detail p WITH (NOLOCK) 
 where p.ID ='{0}'", this.CurrentDetailData["poid"].ToString());
                     }
@@ -401,8 +401,9 @@ select  poid = I.InventoryPOID
         , ColorID=''
         , Description = ''
         , I.FabricType
-        , stockunit = dbo.GetStockUnitBySPSeq (I.InventoryPOID, I.InventorySeq1, I.InventorySeq2)
+        , po.StockUnit
 from dbo.Invtrans I WITH (NOLOCK) 
+left join Po_Supp_Detail po WITH (NOLOCK) on I.InventoryPOID = po.id and I.InventorySeq1 = po.seq1 and I.InventorySeq2 = po.seq2
 where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.CurrentDetailData["poid"].ToString(), this.CurrentMaintain["FromFtyID"]);
                     }
 
@@ -1677,11 +1678,11 @@ select  a.id
         , a.Roll
         , a.Dyelot
         , [Description] = dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0)
-        , StockUnit = dbo.GetStockUnitBySPSeq (a.poid, a.seq1, a.seq2)
+        , StockUnit = p.StockUnit
         , a.Qty
         , TtlQty = convert(varchar(20),
 			iif(a.CombineBarcode is null , a.Qty, 
-				iif(a.Unoriginal is null , ttlQty.value, null))) +' '+ dbo.GetStockUnitBySPSeq (a.poid, a.seq1, a.seq2)
+				iif(a.Unoriginal is null , ttlQty.value, null))) +' '+ p.StockUnit
         , a.StockType
         , a.location
         , a.ukey
