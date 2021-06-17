@@ -81,6 +81,7 @@ select Sel = 0
                                 when trsd.StockType = 'B' then 'Bulk'
                                 else trsd.StockType end
         , [FtyLocation] = FtyLocation.val
+        , [Desc] = iif(trsd.ToPOID = '', '', 'TO POID: ' + trsd.ToPOID + ' , Seq: ' + trsd.ToSeq1 + '-' + trsd.ToSeq2)
 from TransferOut_Detail trsd
 left join TransferOut trs on trs.Id=trsd.ID
 left join Po_Supp_Detail psd on trsd.POID = psd.ID
@@ -148,7 +149,7 @@ order by NewRowNo";
                     Color = row["Color"].ToString().Trim(),
                     StockUnit = row["StockUnit"].ToString().Trim(),
                     Qty = Convert.ToDouble(row["Qty"]),
-                    Remark = this.remark,
+                    Remark = this.remark + " " + row["Desc"].ToString().Trim(),
                 }).ToList();
 
                 ReportDefinition report = new ReportDefinition();
