@@ -42,7 +42,7 @@ from (
         ,a.StockUnit
     from dbo.Receiving_Detail a WITH (NOLOCK) 
     where id='{this.dr["id"]}' 
-    group by a.PoId,a.Seq1,a.Seq2,a.POUnit
+    group by a.PoId,a.Seq1,a.Seq2,a.POUnit,a.StockUnit
 
     union all              
 
@@ -53,7 +53,7 @@ from (
     ,(select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail WITH (NOLOCK) where id='{this.dr["id"]}') c 
     where a.id = c.poid and a.seq1 = c.seq1 and a.seq2 = c.seq2
 ) tmp
-group by poid,seq1,seq2,description,POUnit";
+group by poid,seq1,seq2,description,POUnit,StockUnit";
             }
             else
             {
@@ -90,7 +90,7 @@ outer apply(
 )rd
 
 where ed.id='{this.dr["ExportID"]}'
-group by ed.poid,ed.seq1,ed.seq2,rd.description,rd.PoUnit,ed.Qty,ed.Foc
+group by ed.poid,ed.seq1,ed.seq2,rd.description,rd.PoUnit,ed.Qty,ed.Foc,pod.StockUnit
 order by PoId,Seq1,Seq2
 ";
             }
