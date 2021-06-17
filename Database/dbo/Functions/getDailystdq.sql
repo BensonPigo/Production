@@ -15,7 +15,8 @@ RETURNS
 (
 	APSNo int,
 	Date date,
-	StdQ int
+	StdQ int,
+	StdQPrint int
 )
 AS
 Begin
@@ -386,7 +387,13 @@ SELECT awd.APSNo,awd.WorkDate,[TotalWorkHour] = sum(OriWorkHour)
 FROM @APSExtendWorkDate awd
 group by awd.APSNo,awd.WorkDate
 
-insert into @table
+declare @stdq TABLE 
+(
+	APSNo int,
+	Date date,
+	StdQ int
+)
+insert into @stdq
 select 
 	awd.APSNo
 	, Date = cast(awd.SewingStart as date)
@@ -397,6 +404,94 @@ inner join @OriTotalWorkHour otw on otw.APSNo = awd.APSNo and otw.WorkDate = awd
 left join LearnCurve_Detail lcd with (nolock) on awd.LearnCurveID = lcd.ID and awd.WorkDateSer = lcd.Day
 outer apply(select top 1 [val] = Efficiency from LearnCurve_Detail where ID = awd.LearnCurveID order by Day desc ) LastEff
 group by awd.APSNo,awd.SewingStart,awd.SewingEnd,awd.WorkingTime,ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0)),awd.Sewer
+
+--以下計算Printing的rate
+declare @APSBase Table(
+	[OrderID] [varchar](13) NOT NULL,
+	[ComboType] [varchar](1) NULL,
+	[Inline] [datetime] NULL,
+	[AlloQty] [int] NULL
+)
+
+Insert Into @APSBase
+select
+	s.OrderID,
+	s.ComboType,
+	s.Inline,
+	s.AlloQty
+from SewingSchedule s  WITH (NOLOCK) 
+inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
+inner join Factory f with (nolock) on f.id = s.FactoryID and Type <> 'S'
+where 1 = 1 
+and s.APSNo = @APSNo
+and s.APSno <> 0
+
+-- 找出 < Suncon > 不為空的 OrderID -- < Suncon > not empty rule (ISP20210759)
+declare @SunconNotEmpty TABLE([OrderID] [varchar](13) NOT NULL)
+insert into @SunconNotEmpty
+select distinct ot.ID
+from Order_TmsCost ot WITH (NOLOCK) 
+inner join ArtworkType at WITH (NOLOCK) on at.ID = ot.ArtworkTypeID and at.ID in('PRINTING','PRINTING PPU')
+left join LocalSupp ls on ls.id = ot.LocalSuppID
+where exists(select 1 from @APSBase where orderid = ot.id)
+and ot.ArtworkTypeID = 'PRINTING'
+and IIF(ot.InhouseOSP = 'O', ls.abb, ot.LocalSuppID) <> ''
+
+-- 相同SP有多個ComboType時,只取Inline最早的ComboType -- same SP has more one ComboType,get first Inline data
+declare @SP_ComboType Table(
+	[OrderID] [varchar](13) NOT NULL,
+	[ComboType] [varchar](1) NULL
+)
+insert into @SP_ComboType
+select OrderID,ComboType
+from(
+	select rn =  row_number() over(partition by a.OrderID order by a.Inline),a.OrderID,a.ComboType
+	from @APSBase a
+	where exists(select 1 from @SunconNotEmpty where OrderID = a.OrderID)
+)x
+where rn = 1
+
+declare @Printing_AlloQty int
+declare @TTL_AlloQty int
+
+select @Printing_AlloQty = sum(AlloQty)
+from SewingSchedule s
+inner join @SP_ComboType c on c.OrderID = s.OrderID and c.ComboType = s.ComboType
+where APSNo = @APSNo
+
+select @TTL_AlloQty = sum(AlloQty) from SewingSchedule where APSNo = @APSNo
+
+declare @rate float
+if @TTL_AlloQty = 0
+	select @rate = 0.0
+ELSE
+	SELECT @rate = CAST(@Printing_AlloQty AS FLOAT)  / CAST(@TTL_AlloQty AS FLOAT) 
+
+-- 此APSno每日標準數的總數 * Print的比例 
+-- Print總數, 最後StdQty Print總數要等於此數
+declare @ttlPrintingstd int = round((select sum(StdQ) * @rate from @stdq), 0)
+
+declare @StdQprintRate TABLE 
+(
+	APSNo int,
+	Date date,
+	StdQ int,
+	StdQtyforprinting int
+)
+insert into @StdQprintRate
+select s.APSNo,s.Date,s.StdQ,
+	StdQtyforprinting = ROUND(s.StdQ * @rate, 0)
+from @stdq s
+
+declare @diffPrintQty int = (select @ttlPrintingstd - (select sum(StdQtyforprinting) from @StdQprintRate))
+
+update @StdQprintRate
+set StdQtyforprinting = StdQtyforprinting + @diffPrintQty
+where Date = (select max(date) from @StdQprintRate)
+
+insert into @table
+select APSNo,Date,StdQ,StdQtyforprinting
+from @StdQprintRate
 
 Return;
 
