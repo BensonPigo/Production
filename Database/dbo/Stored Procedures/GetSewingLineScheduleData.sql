@@ -113,7 +113,7 @@ group by	s.APSNo ,
 			o.StyleUkey
 			
 declare  @StyleData TABLE(
-	[APSNo] [int] NULL,
+	[APSNo] [int] NULL INDEX IDX_TMP_APSNNo,
 	[CDCodeNew] [varchar](Max) NULL,
 	[ProductType] [nvarchar](Max) NULL,
 	[FabricType] [nvarchar](Max) NULL,
@@ -146,7 +146,7 @@ Outer apply (
 )sty
 
 declare  @StyleDatabyAPSNo TABLE(
-	[APSNo] [int] NULL,
+	[APSNo] [int] NULL INDEX IDX_TMP_APSNNo,
 	[CDCodeNew] [varchar](Max) NULL,
 	[ProductType] [nvarchar](Max) NULL,
 	[FabricType] [nvarchar](Max) NULL,
@@ -368,8 +368,7 @@ declare @APSColumnGroup TABLE(
 	[SCIDelivery] [date] NULL,
 	[BuyerDelivery] [date] NULL,
 	[BrandID] [nvarchar](8) NULL,
-	[OrderID] [varchar](13) NULL,
-	[FirststCuttingOutputDate] [Date] NULL
+	[OrderID] [varchar](13) NULL
 )
 insert into @APSColumnGroup
 select
@@ -390,19 +389,11 @@ o.SCIDelivery,
 o.BuyerDelivery,
 [BrandID] = o.BrandID
 ,s.OrderID
-,[FirststCuttingOutputDate]=FirststCuttingOutputDate.Date
 from SewingSchedule s with (nolock)
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
 inner join CDCode cd with (nolock) on o.CdCodeID = cd.ID
 left join @tmpOrderArtwork oa on oa.StyleID = o.StyleID
 left join Country c WITH (NOLOCK) on o.Dest = c.ID 
-OUTER APPLY(	
-	SELECT [Date]=MIN(co2.cDate)
-	FROM  WorkOrder_Distribute wd2 WITH (NOLOCK)
-	INNER JOIN CuttingOutput_Detail cod2 WITH (NOLOCK) on cod2.WorkOrderUkey = wd2.WorkOrderUkey
-	INNER JOIN CuttingOutput co2 WITH (NOLOCK) on co2.id = cod2.id and co2.Status <> 'New'
-	where wd2.OrderID =o.ID
-)FirststCuttingOutputDate
 where exists( select 1 from @APSList where APSNo = s.APSNo)
 and (@subprocess = '' or
 	(@subprocess<> '' 
@@ -427,12 +418,19 @@ where exists(select 1 from @APSColumnGroup where orderid = ot.id)
 
 declare @tmpPrintData TABLE(
 	[APSNo] [int] NULL INDEX IDX_TMP_APSColumnGroup CLUSTERED,
-	[TTL_PRINTING (PCS)] numeric(38,6),
-	[TTL_PRINTING PPU (PPU)] numeric(38,6),
-	SubCon nvarchar(max)
+	OrderID varchar(13),
+	[PRINTING (PCS)] numeric(38,6),
+	[PRINTING PPU (PPU)] numeric(38,6),
+	SubCon nvarchar(max),
+	AlloQty int
 )
 insert into @tmpPrintData
-select a.APSNo, [TTL_PRINTING (PCS)] = t.[PRINTING (PCS)] * AlloQty, [TTL_PRINTING PPU (PPU)] = t.[PRINTING PPU (PPU)] * AlloQty, t.SubCon
+select a.APSNo,
+	a.OrderID,
+	t.[PRINTING (PCS)],
+	t.[PRINTING PPU (PPU)],
+	t.SubCon,
+	a.AlloQty
 from @APSListWorkDay a
 inner join (
 	select t.*,SubCon
@@ -447,22 +445,36 @@ inner join (
 
 declare @tmpPrintDataSum TABLE(
 	[APSNo] [int] NULL INDEX IDX_TMP_APSColumnGroup CLUSTERED,
-	[TTL_PRINTING (PCS)] numeric(38,6),
-	[TTL_PRINTING PPU (PPU)] numeric(38,6),
-	SubCon nvarchar(max)
+	SubCon nvarchar(max),
+	[Subcon Qty] int
 )
 insert into @tmpPrintDataSum
-select p.APSNo,sum(p.[TTL_PRINTING (PCS)]),sum(p.[TTL_PRINTING PPU (PPU)]),x.SubCon
+select p.APSNo,x.SubCon, sum(iif(p.SubCon<>'', p.AlloQty, 0))
 from @tmpPrintData p
 outer apply(
 	select SubCon = stuff((
-		select concat('/', subcon)
+		select distinct concat('/', subcon)
 		from @tmpPrintData
 		where APSNo = p.APSNo
 		for xml path('')
 	),1,1,'')
 )x
 group by p.APSNo,x.SubCon
+
+declare @tmpPrintSumbuSP TABLE(
+	[APSNo] [int] NULL INDEX IDX_TMP_APSColumnGroup CLUSTERED,
+	OrderID varchar(13),
+	[PRINTING (PCS)] numeric(38,6),
+	[PRINTING PPU (PPU)] numeric(38,6)
+)
+insert into @tmpPrintSumbuSP
+select p.APSNo,p.OrderID,
+	sum(p.[PRINTING (PCS)]),
+	sum(p.[PRINTING PPU (PPU)])
+from @tmpPrintData p
+where subcon <>''
+group by p.APSNo,p.OrderID
+
 
 --填入資料串連欄位 by APSNo
 declare @APSMain TABLE(
@@ -512,9 +524,8 @@ declare @APSMain TABLE(
 	[Lining] [varchar](Max) NULL,
 	[Gender] [varchar](Max) NULL,
 	[Construction] [nvarchar](Max) NULL,
-	[TTL_PRINTING (PCS)] numeric(38,6),
-	[TTL_PRINTING PPU (PPU)] numeric(38,6),
-	SubCon nvarchar(max)
+	SubCon nvarchar(max),
+	[Subcon Qty] int
 )
 insert into @APSMain
 select
@@ -564,9 +575,8 @@ select
 	sty.Lining,
 	sty.Gender,
 	sty.Construction,
-	PrintingData.[TTL_PRINTING (PCS)],
-	PrintingData.[TTL_PRINTING PPU (PPU)],
-	PrintingData.SubCon
+	PrintingData.SubCon,
+	PrintingData.[Subcon Qty]
 from @APSList al
 left join @APSCuttingOutput aco on al.APSNo = aco.APSNo
 left join @APSOrderQty aoo on al.APSNo = aoo.APSNo
@@ -934,8 +944,11 @@ Declare @APSExtendWorkDateFin table(
 	[New_SwitchTime] [float] NULL,
 	[LearnCurveEff] [int] NOT NULL,
 	[StdOutput] [float] NULL,
+	[Std Qty for printing] [float] NULL,
 	[CPU] [float] NULL,
-	[Efficienycy] [float] NULL
+	[Efficienycy] [float] NULL,
+	[TTL_PRINTING (PCS)] numeric(38,6),
+	[TTL_PRINTING PPU (PPU)] numeric(38,6)
 )
 insert into @APSExtendWorkDateFin
 select  awd.APSNo
@@ -947,14 +960,29 @@ select  awd.APSNo
 		, awd.New_SwitchTime
         , [LearnCurveEff] = ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))
 		, StdOutput = s.StdQ
+		, [Std Qty for printing] = s.StdQPrint
 		, [CPU] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0 or isnull(awd.CPU,0) = 0 or (awd.New_WorkingTime = 0), 0, awd.New_WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.CPU)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0
-         , [Efficienycy] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0 or (awd.TotalSewingTime = 0) or (awd.New_WorkingTime = 0), 0, awd.New_WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.TotalSewingTime)) * iif(isnull(awd.New_WorkingTime,0) = 0 or isnull(awd.Sewer,0) = 0 ,0 , ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0 / (awd.New_WorkingTime * awd.Sewer * 3600.0))
+        , [Efficienycy] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0 or (awd.TotalSewingTime = 0) or (awd.New_WorkingTime = 0), 0, awd.New_WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.TotalSewingTime)) * iif(isnull(awd.New_WorkingTime,0) = 0 or isnull(awd.Sewer,0) = 0 ,0 , ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0 / (awd.New_WorkingTime * awd.Sewer * 3600.0))
+		, [TTL_PRINTING (PCS)] = round([PRINTING (PCS)] * s.StdQPrint, 6)
+		, [TTL_PRINTING PPU (PPU)] = round([PRINTING PPU (PPU)] * s.StdQPrint, 6)
 from @APSExtendWorkDate awd
 inner join @OriTotalWorkHour otw on otw.APSNo = awd.APSNo and otw.WorkDate = awd.WorkDate
 left join LearnCurve_Detail lcd with (nolock) on awd.LearnCurveID = lcd.ID and awd.WorkDateSer = lcd.Day
 left join @APSSewingOutput apo on awd.APSNo = apo.APSNo and awd.WorkDate = apo.OutputDate
 outer apply(select top 1 [val] = Efficiency from LearnCurve_Detail where ID = awd.LearnCurveID order by Day desc ) LastEff
-outer  apply(select * from dbo.[getDailystdq](awd.APSNo)x where x.APSNo=awd.APSNo and x.Date = cast(awd.SewingStart as date))s
+outer apply(select * from dbo.[getDailystdq](awd.APSNo)x where x.APSNo=awd.APSNo and x.Date = cast(awd.SewingStart as date))s
+outer apply(
+	select [PRINTING (PCS)] = sum([PRINTING (PCS)]), [PRINTING PPU (PPU)]=sum([PRINTING PPU (PPU)])
+	from(
+		select tsp.APSNo,tsp.OrderID,
+			[PRINTING (PCS)] = tsp.[PRINTING (PCS)] * sr.Rate,
+			[PRINTING PPU (PPU)] = tsp.[PRINTING PPU (PPU)] * sr.Rate
+		from @tmpPrintSumbuSP tsp
+		outer apply(select * from dbo.getSPRatebyAPSNo(tsp.APSNo)x where x.APSNo=awd.APSNo and x.OrderID = tsp.OrderID)sr
+		where tsp.APSNo = awd.APSNo
+	)x
+	group by x.APSNo
+)x2
 group by awd.APSNo,
 		 awd.SewingStart,
 		 awd.SewingEnd,
@@ -963,9 +991,11 @@ group by awd.APSNo,
 		 awd.New_SwitchTime,
 		 awd.New_WorkingTime,
 		 ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0)),
-		 awd.Sewer
-		  , s.StdQ
-
+		 awd.Sewer,
+		 s.StdQ,
+		 s.StdQPrint,
+		 x2.[PRINTING (PCS)],
+		 x2.[PRINTING PPU (PPU)]
 --計算這一天的標準產量
 --= (工作時數 / 車縫一件成衣需要花費的秒數) * 工人數 * 效率
 --= (WorkingTime / SewingTime) * ManPower * Eff
@@ -1029,17 +1059,14 @@ select
 	[ScannedQty]=apm.ScannedQty,
 	[ClogQty]=apm.ClogQty,
 	[BrandID]=apm.BrandID,
-    apm.[TTL_PRINTING (PCS)],
-    apm.[TTL_PRINTING PPU (PPU)],
-    apm.SubCon
+    apf.[TTL_PRINTING (PCS)],
+    apf.[TTL_PRINTING PPU (PPU)],
+    apm.SubCon,
+	apm.[Subcon Qty],
+	[Std Qty for printing]
 from @APSMain apm
 inner join @APSExtendWorkDateFin apf on apm.APSNo = apf.APSNo
 order by apm.APSNo,apf.SewingStart
 
-
 END
-
-
-
 GO
-
