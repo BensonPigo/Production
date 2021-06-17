@@ -335,10 +335,10 @@ End
             if (articleGroupDT.Rows.Count == 0)
             {
                 sqlPattern_GL_Article = $@"
-if exists (Select * from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' and rtrim(ltrim(Article)) in({articles})  and rtrim(ltrim(SizeRange)) in ({sizes}))
-	Select distinct ArticleGroup from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' and rtrim(ltrim(Article)) in({articles}) and rtrim(ltrim(SizeRange)) in ({sizes})    
-else if exists (Select 1 from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' and rtrim(ltrim(Article)) in ({articles}))
-	Select distinct ArticleGroup from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' and rtrim(ltrim(Article)) in ({articles})
+if exists (Select * from Pattern_GL_Article WITH (NOLOCK) where ArticleGroup <>'F_CODE' and PatternUkey = '{patternukey}' and rtrim(ltrim(Article)) in({articles})  and rtrim(ltrim(SizeRange)) in ({sizes}))
+	Select distinct ArticleGroup from Pattern_GL_Article WITH (NOLOCK) where ArticleGroup <>'F_CODE' and PatternUkey = '{patternukey}' and rtrim(ltrim(Article)) in({articles}) and rtrim(ltrim(SizeRange)) in ({sizes})    
+else if exists (Select 1 from Pattern_GL_Article WITH (NOLOCK) where ArticleGroup <>'F_CODE' and PatternUkey = '{patternukey}' and rtrim(ltrim(Article)) in ({articles}))
+	Select distinct ArticleGroup from Pattern_GL_Article WITH (NOLOCK) where ArticleGroup <>'F_CODE' and PatternUkey = '{patternukey}' and rtrim(ltrim(Article)) in ({articles})
 else
 	Select distinct ArticleGroup from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' 
 ";
