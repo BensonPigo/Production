@@ -11,6 +11,8 @@ using Sci.Production.PublicPrg;
 using System.Runtime.InteropServices;
 using System.Transactions;
 using Sci.Win.Tools;
+using System.Net.Mail;
+using System.Net;
 
 namespace Sci.Production.PPIC
 {
@@ -778,7 +780,6 @@ where a.RequestQty > a.StockQty",
 
             if (!MyUtility.Check.Empty(dt.Rows[0]["ToAddress"]))
             {
-
                 string applyName = MyUtility.GetValue.Lookup($@"
 SELECT p.EMail
 FROM Lack l
@@ -789,14 +790,111 @@ WHERE l.ID='{this.CurrentMaintain["ID"]}'
                 string ccAddress = dt.Rows[0]["CCAddress"].ToString() + $";{applyName}";
                 string subject = dt.Rows[0]["Subject"].ToString();
 
-                // 取得表頭 P10 的單號
-                string content = this.CurrentMaintain["ID"].ToString();
+                string type = string.Empty;
+                string sp = MyUtility.Convert.GetString(this.CurrentMaintain["POID"]);
+                DataTable tmp;
+                string sql = string.Empty;
 
+                sql = $@"
+SELECT Seq = Concat (Seq1, ' ', Seq2), RequestQty
+FROM Lack_Detail WITH(NOLOCK)
+WHERE ID='{this.CurrentMaintain["ID"]}'
+";
+                result = DBProxy.Current.Select(null, sql, out tmp);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                switch (MyUtility.Convert.GetString(this.CurrentMaintain["Type"]))
+                {
+                    case "L":
+                        type = "Lacking";
+                        break;
+                    case "R":
+                        type = "Replacement";
+                        break;
+                    default:
+                        type = MyUtility.Convert.GetString(this.CurrentMaintain["Type"]);
+                        break;
+                }
+
+                // 取得表頭 P10 的單號
+                string content = string.Empty;
+                content = $@"
+<p>{this.CurrentMaintain["ID"]}</p>
+<p>Type : {type}</p>
+<p>SP# : {sp}</p>
+
+";
+
+                string tb = $@"
+<table style=""border-collapse:collapse;width:20%;""border=""1"">
+    <tbody>
+        <tr>
+            <td style=""width:50%;background-color: #99cc00;"">Seq</td>
+            <td style=""width:50%;background-color: #99cc00;"">Request Qty</td>
+        </tr>
+";
+                foreach (DataRow dr in tmp.AsEnumerable())
+                {
+                    tb += $@"
+        <tr>
+            <td style=""width:50%;"">{MyUtility.Convert.GetString(dr["Seq"])}</td>
+            <td style=""width:50%;text-align: right;"">{MyUtility.Convert.GetString(dr["RequestQty"])}</td>
+        </tr>
+";
+                }
+
+                tb += $@"
+    </tbody>
+</table>
+";
+                content += tb;
+
+                /*
                 var email = new MailTo(Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, content, true, true);
                 email.ShowDialog();
 
                 if (!email.SendMailResult)
                 {
+                    return;
+                }
+                */
+
+                // 為了使用HTML呈現，因此棄用上面的寄信方式
+                try
+                {
+                    MailMessage message = new MailMessage();
+                    message.Subject = subject;
+
+                    foreach (var to in toAddress.Split(';'))
+                    {
+                        message.To.Add(to);
+                    }
+
+                    foreach (var cc in ccAddress.Split(';'))
+                    {
+                        message.CC.Add(cc);
+                    }
+
+                    message.From = new MailAddress(Env.Cfg.MailFrom);
+                    message.Body = content;
+                    message.IsBodyHtml = true;
+
+                    // mail Smtp
+                    SmtpClient client = new SmtpClient(Env.Cfg.MailServerIP);
+
+                    // 寄件者 帳密
+                    client.Credentials = new NetworkCredential(Env.Cfg.MailServerAccount, Env.Cfg.MailServerPassword);
+                    client.DeliveryMethod = SmtpDeliveryMethod.Network;
+
+                    client.Send(message);
+                }
+                catch (Exception ex)
+                {
+                    this.ShowErr(ex);
                     return;
                 }
             }
