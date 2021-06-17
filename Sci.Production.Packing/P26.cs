@@ -1104,7 +1104,7 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                         pic.Dispose();
                         pdfDoc.Dispose();
                         */
-
+                        bool isError = false;
                         try
                         {
                             // 06/15
@@ -1132,6 +1132,37 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                         catch (Exception ex)
                         {
                             string msg = ex.Message;
+                            isError = true;
+                        }
+
+                        if (isError)
+                        {
+                            try
+                            {
+                                // 原套件
+                                Spire.Pdf.PdfDocument doc = new Spire.Pdf.PdfDocument();
+                                doc.LoadFromFile(barcodeObj.FullFileName);
+                                Image bmp = doc.SaveAsImage(0, PdfImageType.Bitmap, 300, 300);
+
+                                // Note : 工廠換了變出PDF的軟體，因此不需要裁切圖片了，直接把Source轉出
+                                Bitmap pic = new Bitmap(bmp);
+
+                                // 準備要寫入DB的資料
+                                using (var stream = new MemoryStream())
+                                {
+                                    pic.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                                    pDFImage = stream.ToArray();
+                                }
+
+                                // 將切割後的圖片存檔
+                                doc.Dispose();
+                                bmp.Dispose();
+                                pic.Dispose();
+                            }
+                            catch (Exception ex)
+                            {
+                                string msg = ex.Message;
+                            }
                         }
 
                         string cmd = this.InsertImageToDatabase_List(counter.ToString(), pDFImage, packID, sCICtnNo, rank.ToString());
