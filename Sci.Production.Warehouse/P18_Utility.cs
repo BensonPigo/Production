@@ -75,7 +75,7 @@ select id from Invtrans where InventoryPOID = '{0}' and type = '3'   and Factory
                     string.Format(
                     @"
 select  pounit
-        , stockunit = dbo.GetStockUnitBySPSeq (id, seq1, seq2)
+        , stockunit
         , fabrictype
         , qty
         , scirefno
