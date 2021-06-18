@@ -90,7 +90,8 @@ select a.POID
 	,[DESC] = IIF((b.ID =   lag(b.ID,1,'') over (order by b.id, b.seq1, b.seq2, a.Dyelot, Len(a.Roll), a.Roll) 
 		AND(b.seq1 = lag(b.seq1,1,'')over (order by b.id, b.seq1, b.seq2, a.Dyelot, Len(a.Roll), a.Roll))
 		AND(b.seq2 = lag(b.seq2,1,'')over (order by b.id, b.seq1, b.seq2, a.Dyelot, Len(a.Roll), a.Roll))) 
-		,'',dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0)) + iif(a.ToPOID = '', '', 'TO POID: ' + a.ToPOID + ' , Seq: ' + a.ToSeq1 + '-' + a.ToSeq2)
+		,'',dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))
+    ,[ToPoid] = iif(a.ToPOID = '', '', 'TO POID: ' + a.ToPOID + ' , Seq: ' + a.ToSeq1 + '-' + a.ToSeq2)
 	,CASE a.stocktype
 			WHEN 'B' THEN 'Bulk'
 			WHEN 'I' THEN 'Inventory'
@@ -209,7 +210,7 @@ order by Dyelot, Len(Roll), Roll
                     SEQ = row1["SEQ"].ToString().Trim(),
                     Roll = row1["Roll"].ToString().Trim(),
                     Dyelot = row1["Dyelot"].ToString().Trim(),
-                    DESC = row1["DESC"].ToString().Trim(),
+                    DESC = row1["DESC"].ToString().Trim() + Environment.NewLine + row1["ToPoid"].ToString().Trim(),
                     Stocktype = row1["stocktype"].ToString().Trim(),
                     Unit = row1["unit"].ToString().Trim(),
                     QTY = row1["QTY"].ToString().Trim(),
