@@ -82,7 +82,7 @@ left join Order_Article e WITH (NOLOCK) on b.OrderID = e.Id
 left join Order_SizeCode f WITH (NOLOCK) on d.POID = f.Id 
 											and a.SizeCode = f.SizeCode
 where a.Id = '{0}'
-order by e.Seq, f.Seq", masterID);
+order by e.Seq, iif(f.SizeGroup='N',NULL,f.SizeGroup), f.Seq", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -699,7 +699,7 @@ left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID and os.SizeCode = pd
 left join Country c WITH (NOLOCK) on c.ID = o.Dest
 left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = o.ID and oq.Seq = p.OrderShipmodeSeq
 where p.Id = '{0}'
-order by oa.Seq,os.Seq", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+order by oa.Seq, iif(os.SizeGroup='N',NULL,os.SizeGroup),os.Seq", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             DataTable printData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
             if (!result)
@@ -813,7 +813,7 @@ left join Order_QtyCTN oq WITH (NOLOCK) on o.ID = oq.Id
 left join Order_Article oa WITH (NOLOCK) on o.ID = oa.id and oq.Article = oa.Article
 left join Order_SizeCode os WITH (NOLOCK) on o.POID = os.Id and oq.SizeCode = os.SizeCode
 where o.ID = '{0}'
-order by oa.Seq,os.Seq", MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]));
+order by oa.Seq, iif(os.SizeGroup='N',NULL,os.SizeGroup),os.Seq", MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out qtyCtn);
 
             string strXltName = Env.Cfg.XltPathDir + "\\Packing_P02.xltx";
@@ -1328,7 +1328,7 @@ left join Style_WeightData sw2 WITH (NOLOCK) on sw2.StyleUkey = o.StyleUkey and 
 left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = oqd.SizeCode
 left join Order_Article oa WITH (NOLOCK) on oa.id = oqd.Id and oa.Article = oqd.Article
 where oqd.ID = '{orderID}' and oqd.Seq = '{seq}'
-order by oa.Seq,os.Seq
+order by oa.Seq, iif(os.SizeGroup='N',NULL,os.SizeGroup), os.Seq
 
 ";
                 }
@@ -1391,7 +1391,7 @@ left join Style_WeightData sw2 WITH (NOLOCK) on sw2.StyleUkey = o.StyleUkey and 
 left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = oqd.SizeCode
 left join Order_Article oa WITH (NOLOCK) on oa.id = oqd.Id and oa.Article = oqd.Article
 where oqd.ID = '{orderID}' and oqd.Seq = '{seq}'
-order by oa.Seq,os.Seq
+order by oa.Seq, iif(os.SizeGroup='N',NULL,os.SizeGroup),  os.Seq
 ";
                 }
                 else
@@ -1428,7 +1428,7 @@ left join Style_WeightData sw2 WITH (NOLOCK) on sw2.StyleUkey = o.StyleUkey and 
 left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = oqd.SizeCode
 left join Order_Article oa WITH (NOLOCK) on oa.id = oqd.Id and oa.Article = oqd.Article
 where oqd.ID = '{orderID}' and oqd.Seq = '{seq}'
-order by oa.Seq,os.Seq
+order by oa.Seq, iif(os.SizeGroup='N',NULL,os.SizeGroup), os.Seq
 
 ";
                 }
@@ -1651,7 +1651,7 @@ BEGIN
 				where RefNo= a.RefNoForBalance
 		)lb
 		WHERE a.Id = @id AND a.Article = @article
-		ORDER BY c.Seq
+		ORDER BY iif(c.SizeGroup='N',NULL,c.SizeGroup),c.Seq
 
 	OPEN cursor_packingguide
 	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance ,@PrepackQty
@@ -1971,7 +1971,7 @@ DECLARE cursor_packguide CURSOR FOR
 			) rate
 			where RefNo= a.RefNoForBalance
 	)lb
-	WHERE a.ID = @id ORDER BY c.Seq,d.Seq
+	WHERE a.ID = @id ORDER BY c.Seq, iif(d.SizeGroup='N',NULL,d.SizeGroup),d.Seq
 
 --宣告變數: PackingGuide_Detail相關的參數
 DECLARE @refno VARCHAR(21),
