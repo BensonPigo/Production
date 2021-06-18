@@ -63,6 +63,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.displayBox1 = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
@@ -146,7 +148,7 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(1024, 426);
+            this.grid1.Size = new System.Drawing.Size(1121, 409);
             this.grid1.TabIndex = 42;
             // 
             // txtPO
@@ -419,7 +421,7 @@
             // 
             // dispOngoing
             // 
-            this.dispOngoing.BackColor = System.Drawing.Color.Yellow;
+            this.dispOngoing.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.dispOngoing.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.dispOngoing.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.dispOngoing.Location = new System.Drawing.Point(916, 45);
@@ -429,7 +431,7 @@
             // 
             // dispComplete
             // 
-            this.dispComplete.BackColor = System.Drawing.Color.Green;
+            this.dispComplete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.dispComplete.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.dispComplete.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.dispComplete.Location = new System.Drawing.Point(916, 72);
@@ -439,7 +441,7 @@
             // 
             // dispNotYetLoad
             // 
-            this.dispNotYetLoad.BackColor = System.Drawing.Color.Red;
+            this.dispNotYetLoad.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.dispNotYetLoad.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.dispNotYetLoad.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.dispNotYetLoad.Location = new System.Drawing.Point(916, 99);
@@ -474,9 +476,30 @@
             this.label14.TabIndex = 122;
             this.label14.Text = "Not Yet Load";
             // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(1056, 48);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(89, 17);
+            this.label15.TabIndex = 124;
+            this.label15.Text = "No Schedule";
+            // 
+            // displayBox1
+            // 
+            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox1.Location = new System.Drawing.Point(1030, 45);
+            this.displayBox1.Name = "displayBox1";
+            this.displayBox1.Size = new System.Drawing.Size(20, 21);
+            this.displayBox1.TabIndex = 123;
+            // 
             // P42
             // 
-            this.ClientSize = new System.Drawing.Size(1048, 562);
+            this.ClientSize = new System.Drawing.Size(1144, 562);
+            this.Controls.Add(this.label15);
+            this.Controls.Add(this.displayBox1);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.label1);
@@ -544,6 +567,8 @@
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label13, 0);
             this.Controls.SetChildIndex(this.label14, 0);
+            this.Controls.SetChildIndex(this.displayBox1, 0);
+            this.Controls.SetChildIndex(this.label15, 0);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
@@ -588,5 +613,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label15;
+        private Win.UI.DisplayBox displayBox1;
     }
 }

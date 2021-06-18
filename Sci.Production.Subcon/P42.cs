@@ -24,6 +24,7 @@ namespace Sci.Production.Subcon
             this.dispOngoing.BackColor = Color.Yellow;
             this.dispComplete.BackColor = Color.Green;
             this.dispNotYetLoad.BackColor = Color.Red;
+            this.displayBox1.BackColor = Color.White;
         }
 
         /// <inheritdoc/>
@@ -152,19 +153,27 @@ where b.Orderid = '{drSelected["OrderID"]}'
                     subprocess.CellFormatting += (s, e) =>
                     {
                         DataRow drSelected = this.grid1.GetDataRow(e.RowIndex);
-                        decimal val = MyUtility.Convert.GetDecimal(drSelected[column.ColumnName + "_value"]);
-                        decimal totalQty = MyUtility.Convert.GetDecimal(drSelected["totalQty"]);
-                        if (val >= totalQty)
+                        if (MyUtility.Convert.GetString(drSelected[column.ColumnName]) == "No Schedule")
                         {
-                            e.CellStyle.BackColor = Color.Green;
+                            e.CellStyle.BackColor = Color.White;
+                            e.Value = DBNull.Value;
                         }
-                        else if (val > 0 && val < totalQty)
+                        else
                         {
-                            e.CellStyle.BackColor = Color.Yellow;
-                        }
-                        else if (val == 0)
-                        {
-                            e.CellStyle.BackColor = Color.Red;
+                            decimal val = MyUtility.Convert.GetDecimal(drSelected[column.ColumnName + "_value"]);
+                            decimal totalQty = MyUtility.Convert.GetDecimal(drSelected["totalQty"]);
+                            if (val >= totalQty)
+                            {
+                                e.CellStyle.BackColor = Color.Green;
+                            }
+                            else if (val > 0 && val < totalQty)
+                            {
+                                e.CellStyle.BackColor = Color.Yellow;
+                            }
+                            else if (val == 0)
+                            {
+                                e.CellStyle.BackColor = Color.Red;
+                            }
                         }
                     };
                     this.Helper.Controls.Grid.Generator(this.grid1)
