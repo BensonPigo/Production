@@ -407,43 +407,56 @@ where ID in (select distinct OrderID from Pullout_Detail where ID = '{this.Curre
                             if (t || dr["ShipModeID", DataRowVersion.Original].EqualString(dr["ShipModeID"]) == false)
                             {
                                 result = this.WriteRevise("Revise", dr);
-
-                                #region update PulloutID 到PackingList
-                                string updatePklst = string.Format(@"Update PackingList set pulloutID = '{0}' where id='{1}'", this.CurrentMaintain["ID"], dr["PackingListID"]);
-                                DBProxy.Current.Execute(null, updatePklst);
-                                #endregion
-
                                 if (!result)
                                 {
                                     return result;
                                 }
+
+                                #region update PulloutID 到PackingList
+                                string packingListID;
+                                string pulloutID;
+                                if (MyUtility.Check.Empty(dr["PackingListID"]))
+                                {
+                                    packingListID = MyUtility.Convert.GetString(dr["PackingListID", DataRowVersion.Original]);
+                                    pulloutID = string.Empty;
+                                }
+                                else
+                                {
+                                    packingListID = MyUtility.Convert.GetString(dr["PackingListID"]);
+                                    pulloutID = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+                                }
+
+                                string updatePklst = $@"Update PackingList set pulloutID = '{pulloutID}' where id='{packingListID}'";
+                                result = DBProxy.Current.Execute(null, updatePklst);
+                                if (!result)
+                                {
+                                    return result;
+                                }
+                                #endregion
                             }
                         }
                         else if (dr.RowState == DataRowState.Deleted)
                         {
                             result = this.WriteRevise("Delete", dr);
-
-                            #region update PulloutID 到PackingList
-                            string updatePklst = string.Format(@"Update PackingList set pulloutID = '' where id='{0}'", dr["PackingListID"]);
-                            DBProxy.Current.Execute(null, updatePklst);
-                            #endregion
-
                             if (!result)
                             {
                                 return result;
                             }
+
+                            #region update PulloutID 到PackingList
+                            string updatePklst = $@"Update PackingList set pulloutID = '' where id='{dr["PackingListID", DataRowVersion.Original]}'";
+                            result = DBProxy.Current.Execute(null, updatePklst);
+                            if (!result)
+                            {
+                                return result;
+                            }
+                            #endregion
                         }
                     }
                 }
             }
 
             return base.ClickSave();
-        }
-
-        /// <inheritdoc/>
-        protected override void ClickSaveAfter()
-        {
-            base.ClickSaveAfter();
         }
 
         /// <inheritdoc/>
