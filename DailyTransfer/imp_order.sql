@@ -370,8 +370,8 @@ else
 						, N_CustPONo		= IIF(isnull(a.CustPONo, '') != isnull(b.CustPONo, '') , b.CustPONo, '')
 						, O_ShipModeList	= IIF(isnull(a.ShipModeList, '') != isnull(b.ShipModeList, '') , a.ShipModeList, '')
 						, N_ShipModeList	= IIF(isnull(a.ShipModeList, '') != isnull(b.ShipModeList, '') , b.ShipModeList, '')
-						, O_PFETA			= IIF(isnull(a.PFETA, '') != isnull(b.PFETA, '') , a.PFETA, '')
-						, N_PFETA			= IIF(isnull(a.PFETA, '') != isnull(b.PFETA, '') , b.PFETA, '')
+						, O_PFETA			= IIF(isnull(a.PFETA, '') != isnull(b.PFETA, '') , a.PFETA, null)
+						, N_PFETA			= IIF(isnull(a.PFETA, '') != isnull(b.PFETA, '') , b.PFETA, null)
 				from Production.dbo.Orders a WITH (NOLOCK)
 				inner join Trade_To_Pms.dbo.Orders b on a.id = b.id and a.FactoryID = b.FactoryID
 				where	(isnull(A.QTY, 0) != isnull(B.QTY, 0) 
