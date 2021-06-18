@@ -72,6 +72,7 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
                 .Text("OriginalLETA", header: "SCHD L/ETA\r\n(Master SP)")
                 .Text("OriginalShipModeList", header: "Ship Mode", width: Widths.AnsiChars(10))
                 .Text("KPILETA", header: "KPI\r\nL/ETA", width: Widths.AnsiChars(5))
+                .Text("OriginalPFETA", header: "PF\r\nETA", width: Widths.AnsiChars(5))
                 .Text(string.Empty, header: string.Empty, width: Widths.AnsiChars(0))
                 .Text("TransferToFactory", header: "Transfer to", width: Widths.AnsiChars(8))
                 .Text("NewCustPONo", header: "PO No.", width: Widths.AnsiChars(14))
@@ -137,6 +138,7 @@ select oc.FactoryID
 	   , OriginalShipModeList
        , NewShipModeList
 	   , KPILETA = RIGHT(CONVERT(VARCHAR(20),oc.KPILETA,111),5)
+       , oc.OriginalPFETA
 	   , TransferToFactory
        , NewCustPONo
 	   , NewQty
@@ -200,7 +202,7 @@ order by oc.FactoryID,oc.OrderId";
             DataTable excelTable;
             try
             {
-                MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource1.DataSource, "FactoryID,OrderId,OriginalStyleID,SeasonID,BrandID,OriginalCustPONo,OriginalQty,OriginalBuyerDelivery,OriginalSCIDelivery,OriginalLETA,OriginalShipModeList,KPILETA,TransferToFactory,NewCustPONo,NewQty,NewBuyerDelivery,NewSCIDelivery,NewLETA,NewShipModeList,NewOrder,DeleteOrder,JunkOrder,EachConsApv,NewMnorder,NewSMnorderApv,MnorderApv2", "select * from #tmp", out excelTable);
+                MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource1.DataSource, "FactoryID,OrderId,OriginalStyleID,SeasonID,BrandID,OriginalCustPONo,OriginalQty,OriginalBuyerDelivery,OriginalSCIDelivery,OriginalLETA,OriginalShipModeList,KPILETA,OriginalPFETA,TransferToFactory,NewCustPONo,NewQty,NewBuyerDelivery,NewSCIDelivery,NewLETA,NewShipModeList,NewOrder,DeleteOrder,JunkOrder,EachConsApv,NewMnorder,NewSMnorderApv,MnorderApv2", "select * from #tmp", out excelTable);
             }
             catch (Exception ex)
             {

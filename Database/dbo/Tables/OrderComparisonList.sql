@@ -34,6 +34,8 @@
     [NewCustPONo]           VARCHAR (30) NULL,
     [OriginalShipModeList] VARCHAR(30) NULL, 
     [NewShipModeList ] VARCHAR(30) NULL, 
+    [OriginalPFETA] DATE NULL, 
+    [NewPFETA] DATE NULL, 
     CONSTRAINT [PK_OrderComparisonList] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -165,3 +167,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'UKey', @lev
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'OrderComparisonList', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'update前的 PFETA',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'OrderComparisonList',
+    @level2type = N'COLUMN',
+    @level2name = N'OriginalPFETA'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'update後的 PFETA',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'OrderComparisonList',
+    @level2type = N'COLUMN',
+    @level2name = N'NewPFETA'
