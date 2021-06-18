@@ -147,7 +147,7 @@ namespace Sci.Production.Planning
                     string sqlcmd;
 
                     sqlcmd = @"
-select l.id ,l.abb ,l.currencyid 
+select l.id ,l.abb ,l.currencyid  ,l.IsSintexSubcon
 from LocalSupp l WITH (NOLOCK) 
 WHERE l.Junk=0  AND l.IsFactory = 0
 order by ID
@@ -167,6 +167,17 @@ order by ID
                     this.CurrentDetailData["localsuppid"] = x[0]["id"].ToString();
                     this.CurrentDetailData["suppname"] = x[0]["abb"].ToString();
                     this.CurrentDetailData["currencyid"] = x[0]["currencyid"].ToString();
+                    if (MyUtility.Convert.GetBool(x[0]["IsSintexSubcon"]) && 
+                    MyUtility.Convert.GetString(this.gridArtworkType.CurrentDataRow["ArtworkTypeID"]).ToUpper() == "PRINTING")
+                    {
+                        this.CurrentDetailData["price"] = this.gridArtworkType.CurrentDataRow["cost"];
+                    }
+                    else
+                    {
+                        this.CurrentDetailData["price"] = 0;
+                    }
+
+                    this.CurrentDetailData.EndEdit();
                 }
             };
             #endregion
@@ -181,6 +192,17 @@ order by ID
                         this.CurrentDetailData["localsuppid"] = find["id"].ToString();
                         this.CurrentDetailData["suppname"] = find["abb"].ToString();
                         this.CurrentDetailData["currencyid"] = find["currencyid"].ToString();
+                        if (MyUtility.Convert.GetBool(find["IsSintexSubcon"]) &&
+                    MyUtility.Convert.GetString(this.gridArtworkType.CurrentDataRow["ArtworkTypeID"]).ToUpper() == "PRINTING")
+                        {
+                            this.CurrentDetailData["price"] = this.gridArtworkType.CurrentDataRow["cost"];
+                        }
+                        else
+                        {
+                            this.CurrentDetailData["price"] = 0;
+                        }
+
+                        this.CurrentDetailData.EndEdit();
                         return;
                     }
                     else
@@ -188,6 +210,7 @@ order by ID
                         this.CurrentDetailData["localsuppid"] = string.Empty;
                         this.CurrentDetailData["suppname"] = string.Empty;
                         this.CurrentDetailData["currencyid"] = string.Empty;
+                        this.CurrentDetailData["price"] = 0;
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox("Supplier is not found!", "Warning");
                         return;
@@ -199,6 +222,7 @@ order by ID
                     this.CurrentDetailData["localsuppid"] = string.Empty;
                     this.CurrentDetailData["suppname"] = string.Empty;
                     this.CurrentDetailData["currencyid"] = string.Empty;
+                    this.CurrentDetailData["price"] = 0;
                 }
             };
             #endregion
