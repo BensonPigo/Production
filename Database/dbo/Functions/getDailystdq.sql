@@ -7,7 +7,6 @@
 -- =============================================
 CREATE FUNCTION [dbo].[getDailystdq]
 (
-	--@tSP varchar(20)
 	@APSNo varchar(20)
 )
 RETURNS
@@ -181,7 +180,8 @@ declare @Workhour_step2 TABLE(
 	[OriWorkHour] decimal(30,10),
 	[LNCSERIALNumber] int,
 	[Sewer] int,
-	[SwitchTime] [int] NULL
+	[SwitchTime] [int] NULL,
+	[OrderID] [varchar](13) NOT NULL
 )
 Insert Into @Workhour_step2
 select  APSNo,
@@ -203,7 +203,8 @@ select  APSNo,
 		[OriWorkHour],
 		LNCSERIALNumber,
 		Sewer,		
-		SwitchTime
+		SwitchTime,
+		OrderID
 from @Workhour_step1	
 
 update @Workhour_step2 set StartHour = InlineHour where WorkDate = InlineDate and StartHourSort = 1 and InlineHour > StartHour
@@ -235,13 +236,13 @@ select
 	WorkDate,
 	[Work_Minute] = sum(EndHour - StartHour) * 60,--round(sum(EndHour - StartHour) * 60,4),
 	[WorkingTime] = sum(EndHour - StartHour),--ROUND(sum(EndHour - StartHour),4),
-	[OriWorkDateSer] = ROW_NUMBER() OVER (PARTITION BY APSNo,ComboType ORDER BY WorkDate),
+	[OriWorkDateSer] = ROW_NUMBER() OVER (PARTITION BY APSNo,orderID,ComboType ORDER BY WorkDate),
 	HourOutput,	
 	OriWorkHour,
 	Sewer,
 	LNCSERIALNumber
 from @Workhour_step2 
-group by APSNo,LearnCurveID,WorkDate,HourOutput,OriWorkHour,Sewer,LNCSERIALNumber,ComboType,SwitchTime
+group by APSNo,LearnCurveID,WorkDate,HourOutput,OriWorkHour,Sewer,LNCSERIALNumber,ComboType,SwitchTime,OrderID
 
 
 /* 
