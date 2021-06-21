@@ -104,6 +104,7 @@ namespace Sci.Production.Packing
                 this.rdbtnShippingMarkToUsaInd.Checked ? "7" :
                 this.radioMDform.Checked ? "8" :
                 this.radioWeighingform.Checked ? "9" :
+                this.rdbtnShippingMarkLLL.Checked ? "10" :
                 "4";
             this.ctn1 = this.txtCTNStart.Text;
             this.ctn2 = this.txtCTNEnd.Text;
@@ -136,6 +137,11 @@ namespace Sci.Production.Packing
             {
                 DualResult result = PublicPrg.Prgs.QueryPackingCartonWeighingForm(MyUtility.Convert.GetString(this.masterData["ID"]), out this.printDataA);
                 return result;
+            }
+
+            if (this.reportType == "10")
+            {
+                return this.ShippingmarkLLL(out this.printDataA);
             }
 
             return Ict.Result.True;
@@ -242,12 +248,106 @@ namespace Sci.Production.Packing
                 PublicPrg.Prgs.PackingListToExcel_PackingCartonWeighingReport("\\Packing_P03_PackingCartonWeighingForm.xltx", this.masterData, this.printDataA);
             }
 
+            if (this.reportType == "10")
+            {
+                this.ShippingmarkLLLReport();
+            }
+
             this.HideWaitMessage();
             return true;
         }
 
+        private DualResult ShippingmarkLLL(out DataTable[] dt)
+        {
+            string sqlcmd = $@"
+select * from(
+    select pd.CTNStartno,
+		o.Customize1,
+		a.SizeCode,
+		Article = concat(pd.Article, '/' + pd.Color),
+		CTNStartNostring = concat(pd.CTNStartNo, ' OF ', pd.CTNQty)
+    from PackingList_Detail pd
+    inner join orders o on o.id = pd.orderid
+    outer apply (
+	    select SizeCode=stuff((
+			select concat(',', isnull(x.SizeSpec,z.SizeSpec), '-', pd2.QtyPerCTN) 
+			from PackingList_Detail pd2 
+			outer apply(select SizeSpec from Order_SizeSpec os where os.SizeCode = pd2.SizeCode and os.id = o.poid and os.SizeItem = 'S01')x
+			outer apply(select SizeSpec from Order_SizeSpec_OrderCombo oso where oso.SizeCode = pd2.SizeCode and oso.id = o.poid and oso.OrderComboID = o.OrderComboID and SizeItem = 'S01')z
+			where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo
+			for xml path('')
+		),1,1,'')
+    )a
+    where pd.id = '{this.masterData["ID"]}'
+		  and pd.CTNQty > 0
+)a
+order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
+";
+            return DBProxy.Current.Select(null, sqlcmd, out dt);
+        }
+
+        private void ShippingmarkLLLReport()
+        {
+            string strXltName = Env.Cfg.XltPathDir + "Packing_P03_Shipping Marks LLL.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null)
+            {
+                return;
+            }
+
+            excel.Visible = true;
+            DataTable dt = this.printDataA[0];
+            if (dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found");
+                return;
+            }
+
+            double pageCT = Math.Ceiling(dt.Rows.Count / 8.0);
+
+            if (pageCT > 1)
+            {
+                for (int i = 0; i < pageCT; i++)
+                {
+                    if (i > 0)
+                    {
+                        Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[1];
+                        Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i + 1];
+                        worksheet1.Copy(worksheetn);
+                    }
+                }
+            }
+
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                DataRow dr = dt.Rows[i];
+                int page = (i / 8) + 1;
+                Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[page];
+
+                int col = (int)(i % 2.0) + 1; // 左或右
+                int rowCT = (((i / 2) % 4) * 5) + 1;
+
+                worksheet.Cells[rowCT + 1, col] = dr["Customize1"];
+                worksheet.Cells[rowCT + 2, col] = dr["SizeCode"];
+                worksheet.Cells[rowCT + 3, col] = dr["Article"];
+                worksheet.Cells[rowCT + 4, col] = dr["CTNStartNostring"];
+            }
+
+            #region Save & Show Excel
+            string strExcelName = Class.MicrosoftFile.GetName("Packing_P03_Shipping Marks LLL");
+            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion
+        }
+
         /// <inheritdoc/>
-        public DualResult PrintShippingmark()
+        private DualResult PrintShippingmark()
         {
             #region.
             string sqlcmd = $@"
@@ -707,6 +807,13 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             this.ControlPrintFunction(((Win.UI.RadioButton)sender).Checked);
             this.checkBoxCountry.Enabled = this.radioBarcodePrintOther.Checked;
             this.checkBoxCountry.Checked = this.radioBarcodePrintOther.Checked;
+        }
+
+        private void RdbtnShippingMarkLLL_CheckedChanged(object sender, EventArgs e)
+        {
+            this.ControlPrintFunction(!((Win.UI.RadioButton)sender).Checked);
+            this.checkBoxCountry.Enabled = this.radioNewBarcodePrint.Checked;
+            this.checkBoxCountry.Checked = this.radioNewBarcodePrint.Checked;
         }
     }
 }
