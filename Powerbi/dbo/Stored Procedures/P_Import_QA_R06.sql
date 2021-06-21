@@ -56,6 +56,8 @@ BEGIN
 
 	SELECT * INTO #Factory FROM ['+@LinkServerName+'].Production.dbo.Factory;
 
+	select distinct f.ID INTO #CurrentM from ['+@LinkServerName+'].Production.dbo.Factory f where f.ProduceM = f.MDivisionID;
+
 	SELECT * INTO #FIRSTDYELOT FROM ['+@LinkServerName+'].Production.dbo.FIRSTDYELOT
 
 	SELECT * INTO #Season FROM ['+@LinkServerName+'].Production.dbo.Season ;
@@ -792,6 +794,7 @@ BEGIN
 	) a
 	,#SuppLevel s
 	where s.type=''F'' and s.Junk=0 and [AVG] * 100 between s.range1 and s.range2 
+		and FactoryID in (select id from #CurrentM)
 	--AND a.SuppID=''1166'' --AND a.Refno=''60014880''
 	ORDER BY  SUPPID,Refno,WhseArrival ,FactoryID		
 
@@ -859,7 +862,9 @@ BEGIN
            ,s.SHADINGPercent           ,s.SHADINGLevel           ,s.ActualYds           ,s.LACKINGYARDAGEPercent           ,s.LACKINGYARDAGELevel
            ,s.SHORTWIDTH           ,s.SHORTWidthPercent           ,s.SHORTWIDTHLevel           ,s.TotalDefectRate           ,s.TotalLevel
            ,s.WhseArrival           ,s.FactoryID           ,s.Clima)
-	WHEN NOT MATCHED BY SOURCE AND t.WhseArrival >= '''+@WhseArrival_s_varchar+'''  AND t.WhseArrival <= '''+@WhseArrival_e_varchar+'''    THEN 
+	WHEN NOT MATCHED BY SOURCE AND t.WhseArrival >= '''+@WhseArrival_s_varchar+'''  AND t.WhseArrival <= '''+@WhseArrival_e_varchar+'''    
+			and t.FactoryID in (select id from #CurrentM)
+		THEN 
 		DELETE
 	;
 	
