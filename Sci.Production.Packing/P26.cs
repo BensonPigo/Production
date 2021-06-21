@@ -1134,7 +1134,7 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                             string msg = ex.Message;
                             isError = true;
                         }
-
+                        /*
                         if (isError)
                         {
                             try
@@ -1164,7 +1164,7 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                                 string msg = ex.Message;
                             }
                         }
-
+                        */
                         string cmd = this.InsertImageToDatabase_List(counter.ToString(), pDFImage, packID, sCICtnNo, rank.ToString());
                         filenames.Add(barcode);
                         sQLs.Add(cmd);
