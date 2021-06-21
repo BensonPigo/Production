@@ -1819,7 +1819,7 @@ ORDER BY ph.AddName DESC
                 {
                     DateTime detailTime = MyUtility.Check.Empty(dr["EditDate"]) ? Convert.ToDateTime(dr["AddDate"]) : Convert.ToDateTime(dr["EditDate"]);
 
-                    // detailTime > lastDate才需要檢查
+                    // detailTime > lastDate才需要檢查GMTCompleteCheck()
                     int result = DateTime.Compare(detailTime, lastDate.Value);
                     if (result <= 0)
                     {
