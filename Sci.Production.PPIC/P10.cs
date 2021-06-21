@@ -871,12 +871,24 @@ WHERE ID='{this.CurrentMaintain["ID"]}'
 
                     foreach (var to in toAddress.Split(';'))
                     {
-                        message.To.Add(to);
+                        if (!MyUtility.Check.Empty(to))
+                        {
+                            message.To.Add(to);
+                        }
                     }
 
                     foreach (var cc in ccAddress.Split(';'))
                     {
-                        message.CC.Add(cc);
+                        if (!MyUtility.Check.Empty(cc))
+                        {
+                            message.To.Add(cc);
+                        }
+                    }
+
+                    if (MyUtility.Check.Empty(Env.Cfg.MailFrom))
+                    {
+                        MyUtility.Msg.WarningBox("Please set <Send From> in Basic B02.");
+                        return;
                     }
 
                     message.From = new MailAddress(Env.Cfg.MailFrom);
