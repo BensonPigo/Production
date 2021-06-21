@@ -85,7 +85,8 @@ SET @SqlCmd1 = '
     ed.seq1,
     ed.seq2,
 	ed.Ukey,
-    [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, psd.ColorID, Format(Export.CloseDate,''yyyyMM'') order by Export.CloseDate) else 0 end
+    [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, psd.ColorID, Format(Export.CloseDate,''yyyyMM'') order by Export.CloseDate) else 0 end,
+	[FactoryID] = Export.FactoryID
 into #tmpFinal
 from ['+@current_PMS_ServerName+'].Production.dbo.Export_Detail ed with(nolock)
  ';
@@ -173,17 +174,20 @@ SET @SqlCmd3 = '
 		t.[Grade] =  s.Grade,
 		t.[T1 Inspected Yards] =  s.[T1 Inspected Yards],
 		t.[T1 Defect Points] =  s.[T1 Defect Points],
-		t.[Fabric with clima] =  s.[Fabric with clima]
+		t.[Fabric with clima] =  s.[Fabric with clima],
+		t.FactoryID = s.FactoryID
 	WHEN NOT MATCHED BY TARGET THEN
 		INSERT (WK#,Invoice#,ATA,ETA,Season,[SP#],[Seq#],Brand,Supp,[Supp Name],[Ref#],Color,Qty,[Inspection Report_Fty Received Date]
 				,[Inspection Report_Supp Sent Date],[Test Report_Fty Received Date],[Test Report_ Check Clima],[Test Report_Supp Sent Date]
 				,[Continuity Card_Fty Received Date],[Continuity Card_Supp Sent Date],[Continuity Card_AWB#],[1st Bulk Dyelot_Fty Received Date]
 				,[1st Bulk Dyelot_Supp Sent Date],[T2 Inspected Yards],[T2 Defect Points],[Grade],[T1 Inspected Yards],[T1 Defect Points],[Fabric with clima]
+				,FactoryID
 				)
 		VALUES (s.WK#,s.Invoice#,s.ATA,s.ETA,s.Season,s.[SP#],s.[Seq#],s.Brand,s.Supp,s.[Supp Name],s.[Ref#],s.Color,s.Qty,s.[Inspection Report_Fty Received Date]
 				,s.[Inspection Report_Supp Sent Date],s.[Test Report_Fty Received Date],s.[Test Report_ Check Clima],s.[Test Report_Supp Sent Date]
 				,s.[Continuity Card_Fty Received Date],s.[Continuity Card_Supp Sent Date],s.[Continuity Card_AWB#],s.[1st Bulk Dyelot_Fty Received Date]
 				,s.[1st Bulk Dyelot_Supp Sent Date],s.[T2 Inspected Yards],s.[T2 Defect Points],s.[Grade],s.[T1 Inspected Yards],s.[T1 Defect Points],s.[Fabric with clima]
+				,s.FactoryID
 				);
 
 

@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[P_QA_P09] (
     [WK#]                                 VARCHAR (13)    NULL,
+    [FactoryID]                           VARCHAR (8)     NULL,
     [Invoice#]                            VARCHAR (200)   NULL,
     [ATA]                                 DATE            NULL,
     [ETA]                                 DATE            NULL,
@@ -29,4 +30,6 @@
     [T1 Defect Points]                    NUMERIC (6)     NULL,
     [Fabric with clima]                   BIT             NULL
 );
+
+
 
