@@ -32,6 +32,7 @@
     [IDDEditDate]             DATETIME       NULL,
     [CFAIs3rdInspectHandle] VARCHAR(10) NOT NULL CONSTRAINT [DF_Order_QtyShip_CFAIs3rdInspectHandle] DEFAULT(''),
     [CFAFinalInspectHandle] Varchar(10) NOT NULL CONSTRAINT [DF_Order_QtyShip_CFAFinalInspectHandle] DEFAULT(''), 
+	ClogReasonID varchar(5) NOT NULL CONSTRAINT [DF_Order_QtyShip_ClogReasonID] DEFAULT '',
     CONSTRAINT [PK_Order_QtyShip] PRIMARY KEY CLUSTERED ([Id] ASC, [Seq] ASC)
 );
 

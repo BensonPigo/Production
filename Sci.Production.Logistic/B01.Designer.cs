@@ -81,7 +81,6 @@
             // 
             // labelCode
             // 
-            this.labelCode.Lines = 0;
             this.labelCode.Location = new System.Drawing.Point(47, 41);
             this.labelCode.Name = "labelCode";
             this.labelCode.Size = new System.Drawing.Size(75, 23);
@@ -90,7 +89,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(47, 89);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(75, 23);
@@ -137,6 +135,7 @@
             this.DefaultControlForEdit = "txtCode";
             this.DefaultOrder = "ID";
             this.Name = "B01";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B01. Clog Location Index";
             this.UniqueExpress = "ID";
             this.WorkAlias = "ClogLocation";
