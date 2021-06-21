@@ -555,6 +555,7 @@ stocktype = '{e.FormattedValue}'
                 .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: true) // 3
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 4
+                .Text("Refno", header: "Refno", width: Widths.AnsiChars(8), iseditingreadonly: true) // 4
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 5
                 .Text("colorid", header: "Color", width: Widths.AnsiChars(5), iseditingreadonly: true) // 6
                 .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 7
