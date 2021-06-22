@@ -6,6 +6,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
@@ -50,9 +51,14 @@ namespace Sci.Production.PPIC
             base.OnFormLoaded();
 
             // 撈出所有的Size
-            string sqlCmd = string.Format("select * from Order_SizeCode WITH (NOLOCK) where ID = '{0}' order by Seq", this.poID);
-            DataTable headerData;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out headerData);
+            string sqlCmd = string.Format("select * from Order_SizeCode WITH (NOLOCK) where ID = '{0}' order by iif(SizeGroup = 'N', Null, SizeGroup),seq", this.poID);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable headerData);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
             StringBuilder pivot = new StringBuilder();
 
             // 設定Grid1的顯示欄位
@@ -60,7 +66,7 @@ namespace Sci.Production.PPIC
             this.gridQtyBDown.DataSource = this.listControlBindingSource1;
             var gen = this.Helper.Controls.Grid.Generator(this.gridQtyBDown);
             this.CreateGrid(gen, "int", "TotalQty", "Total", Widths.AnsiChars(6));
-            this.CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(8));
+            this.CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(9));
             if (headerData != null && headerData.Rows.Count > 0)
             {
                 foreach (DataRow dr in headerData.Rows)
@@ -69,6 +75,34 @@ namespace Sci.Production.PPIC
                     pivot.Append(string.Format("[{0}],", MyUtility.Convert.GetString(dr["SizeCode"])));
                 }
             }
+
+            DataTable btop = new DataTable();
+            btop.Columns.Add("TotalQty");
+            btop.Columns.Add("Article");
+            this.Helper.Controls.Grid.Generator(this.gridqtybdownTop)
+                .Text("total", header: string.Empty, width: Widths.AnsiChars(6))
+                .Text("Article", header: string.Empty, width: Widths.AnsiChars(9));
+            if (headerData != null && headerData.Rows.Count > 0)
+            {
+                foreach (DataRow dr in headerData.Rows)
+                {
+                    string sizeCode = MyUtility.Convert.GetString(dr["SizeCode"]);
+                    btop.Columns.Add(sizeCode);
+                    this.Helper.Controls.Grid.Generator(this.gridqtybdownTop)
+                        .Text(sizeCode, header: sizeCode, width: Widths.AnsiChars(8));
+                }
+            }
+
+            DataRow btopdr = btop.NewRow();
+            btopdr["Article"] = "SizeGroup";
+            foreach (DataRow dr in headerData.Rows)
+            {
+                string sizeCode = MyUtility.Convert.GetString(dr["SizeCode"]);
+                btopdr[sizeCode] = dr["SizeGroup"];
+            }
+
+            btop.Rows.Add(btopdr);
+            this.listControlBindingSource5.DataSource = btop;
 
             // 設定Grid2的顯示欄位
             this.gridCombBySPNo.IsEditingReadOnly = true;
@@ -119,6 +153,7 @@ namespace Sci.Production.PPIC
 
             // 凍結欄位
             this.gridQtyBDown.Columns[1].Frozen = true;
+            this.gridqtybdownTop.Columns[1].Frozen = true;
             this.gridCombBySPNo.Columns[2].Frozen = true;
             this.gridColorway.Columns[1].Frozen = true;
             this.gridDelivery.Columns[2].Frozen = true;
@@ -1247,6 +1282,11 @@ EXEC sp_executesql @sql", this.poID);
 
             strExcelName.OpenFile();
             #endregion
+        }
+
+        private void GridQtyBDown_Scroll(object sender, System.Windows.Forms.ScrollEventArgs e)
+        {
+            this.gridqtybdownTop.HorizontalScrollingOffset = e.NewValue;
         }
     }
 }
