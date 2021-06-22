@@ -1113,6 +1113,7 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                             pdfConverter.DPI = 300;
                             pdfConverter.GrayscaleOutput = false;
 
+                            // 直接取用Image轉成byte[]，不需要再轉Bitmap
                             Image bmp = pdfConverter.PageToImage(0);
 
                             // 準備要寫入DB的資料
