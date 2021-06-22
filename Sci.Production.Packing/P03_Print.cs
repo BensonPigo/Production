@@ -265,8 +265,9 @@ select * from(
 		o.Customize1,
 		a.SizeCode,
 		Article = concat(pd.Article, '/' + pd.Color),
-		CTNStartNostring = concat(pd.CTNStartNo, ' OF ', pd.CTNQty)
+		CTNStartNostring = concat(pd.CTNStartNo, ' OF ', p.CTNQty)
     from PackingList_Detail pd
+    inner join PackingList p on p.id = pd.id
     inner join orders o on o.id = pd.orderid
     outer apply (
 	    select SizeCode=stuff((
@@ -295,7 +296,6 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                 return;
             }
 
-            excel.Visible = true;
             DataTable dt = this.printDataA[0];
             if (dt.Rows.Count == 0)
             {
