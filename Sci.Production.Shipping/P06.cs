@@ -395,8 +395,33 @@ where ID in (select distinct OrderID from Pullout_Detail where ID = '{this.Curre
                         }
                         else if (dr.RowState == DataRowState.Modified)
                         {
-                            dr["EditName"] = Sci.Env.User.UserID;
-                            dr["EditDate"] = DateTime.Now;
+                            string cmd = $@"
+SELECT * 
+FROM Pullout_Detail WITH(NOLOCK)
+WHERE Ukey = {MyUtility.Convert.GetString(dr["Ukey"])}
+";
+                            DataTable dataTable;
+                            DBProxy.Current.Select(null, cmd, out dataTable);
+
+                            DataRow dbRow = dataTable.Rows[0];
+
+                            if (MyUtility.Convert.GetString(dbRow["PulloutDate"]) != MyUtility.Convert.GetString(dr["PulloutDate"]) ||
+                                MyUtility.Convert.GetString(dbRow["OrderID"]) != MyUtility.Convert.GetString(dr["OrderID"]) ||
+                                MyUtility.Convert.GetString(dbRow["OrderShipmodeSeq"]) != MyUtility.Convert.GetString(dr["OrderShipmodeSeq"]) ||
+                                MyUtility.Convert.GetString(dbRow["ShipQty"]) != MyUtility.Convert.GetString(dr["ShipQty"]) ||
+                                MyUtility.Convert.GetString(dbRow["OrderQty"]) != MyUtility.Convert.GetString(dr["OrderQty"]) ||
+                                MyUtility.Convert.GetString(dbRow["ShipModeSeqQty"]) != MyUtility.Convert.GetString(dr["ShipModeSeqQty"]) ||
+                                MyUtility.Convert.GetString(dbRow["Status"]) != MyUtility.Convert.GetString(dr["Status"]) ||
+                                MyUtility.Convert.GetString(dbRow["PackingListID"]) != MyUtility.Convert.GetString(dr["PackingListID"]) ||
+                                MyUtility.Convert.GetString(dbRow["PackingListType"]) != MyUtility.Convert.GetString(dr["PackingListType"]) ||
+                                MyUtility.Convert.GetString(dbRow["INVNo"]) != MyUtility.Convert.GetString(dr["INVNo"]) ||
+                                MyUtility.Convert.GetString(dbRow["ShipmodeID"]) != MyUtility.Convert.GetString(dr["ShipmodeID"]) ||
+                                MyUtility.Convert.GetString(dbRow["Remark"]) != MyUtility.Convert.GetString(dr["Remark"]) ||
+                                MyUtility.Convert.GetString(dbRow["ReviseDate"]) != MyUtility.Convert.GetString(dr["ReviseDate"]))
+                            {
+                                dr["EditName"] = Sci.Env.User.UserID;
+                                dr["EditDate"] = DateTime.Now;
+                            }
 
                             bool t = false;
                             DataTable subDetailData;
@@ -442,8 +467,6 @@ where ID in (select distinct OrderID from Pullout_Detail where ID = '{this.Curre
                         }
                         else if (dr.RowState == DataRowState.Deleted)
                         {
-                            dr["EditName"] = Sci.Env.User.UserID;
-                            dr["EditDate"] = DateTime.Now;
 
                             result = this.WriteRevise("Delete", dr);
                             if (!result)
