@@ -64,7 +64,7 @@ namespace Sci.Production.Automation
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "WorkOrder"));
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPISaveAutomationCreateRecord(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -159,7 +159,7 @@ where   BundleNo = '{bundle.BundleNo}'
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Bundle"));
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPISaveAutomationCreateRecord(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -188,7 +188,7 @@ where   BundleNo = '{bundle.BundleNo}'
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "SubProcess"));
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPISaveAutomationCreateRecord(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -228,7 +228,7 @@ from Orders with (nolock) where POID in ({wherePOID})
             bodyObject.ID = dtSentOrderID.AsEnumerable().Select(s => s["ID"].ToString()).ToArray();
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Orders"));
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPISaveAutomationCreateRecord(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -257,7 +257,7 @@ from Orders with (nolock) where POID in ({wherePOID})
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "CutCell"));
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPISaveAutomationCreateRecord(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -286,7 +286,7 @@ from Orders with (nolock) where POID in ({wherePOID})
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "SewingLine"));
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPISaveAutomationCreateRecord(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -319,7 +319,7 @@ from Orders with (nolock) where POID in ({wherePOID})
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "SewingSchedule"));
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPISaveAutomationCreateRecord(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -351,7 +351,7 @@ from Orders with (nolock) where POID in ({wherePOID})
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "WorkOrder"));
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPISaveAutomationCreateRecord(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -380,7 +380,7 @@ from Orders with (nolock) where POID in ({wherePOID})
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "WorkOrder_Distribute"));
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPISaveAutomationCreateRecord(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -436,7 +436,7 @@ from Orders with (nolock) where POID in ({wherePOID})
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Bundle"));
 
-            result = SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            result = SendWebAPISaveAutomationCreateRecord(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
             return result;
         }
 
@@ -467,7 +467,7 @@ from Orders with (nolock) where POID in ({wherePOID})
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Bundle_SubProcess"));
 
-            result = SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            result = SendWebAPISaveAutomationCreateRecord(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
             return result;
         }
 
@@ -498,7 +498,7 @@ from Orders with (nolock) where POID in ({wherePOID})
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Bundle_Order"));
 
-            result = SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            result = SendWebAPISaveAutomationCreateRecord(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
             return result;
         }
 
@@ -527,7 +527,7 @@ from Orders with (nolock) where POID in ({wherePOID})
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "SewingSchedule"));
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPISaveAutomationCreateRecord(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         private class WorkOrderToAGV_PostBody

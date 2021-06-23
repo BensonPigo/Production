@@ -56,7 +56,9 @@ begin
 	from dbo.AutomationErrMsg with (nolock)
 	where ReSented = 0 and 
 		  JSON <> '' and
-		  SuppAPIThread in ('api/SunriseFinishingProcesses/SentDataByApiTag', 
+		  SuppAPIThread in ('api/GuoziAGV/SentDataByApiTag',
+		  'api/GuoziAGV/SentDeleteDataByApiTag',
+		  'api/SunriseFinishingProcesses/SentDataByApiTag', 
 		  'api/GensongFinishingProcesses/SentDataByApiTag',
 		  'Api/GensongAutoWHFabric/SentDataByApiTag',
 		  'Api/VstrongAutoWHAccessory/SentDataByApiTag')
