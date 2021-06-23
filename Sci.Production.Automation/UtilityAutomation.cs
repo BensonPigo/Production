@@ -123,6 +123,30 @@ namespace Sci.Production.Automation
         }
 
         /// <summary>
+        /// SendWebAPISaveAutomationCreateRecord
+        /// </summary>
+        /// <param name="baseUrl">baseUrl</param>
+        /// <param name="requestUri">requestUri</param>
+        /// <param name="jsonBody">jsonBody</param>
+        /// <param name="automationErrMsg">automationErrMsg</param>
+        /// <returns>DualResult</returns>
+        public static DualResult SendWebAPISaveAutomationCreateRecord(string baseUrl, string requestUri, string jsonBody, AutomationErrMsg automationErrMsg)
+        {
+            AutomationCreateRecord automationCreateRecord = new AutomationCreateRecord(automationErrMsg, jsonBody);
+            SqlConnection sqlConnection = new SqlConnection();
+
+            DBProxy._OpenConnection("Production", out sqlConnection);
+            automationCreateRecord.SaveAutomationCreateRecord(sqlConnection);
+
+            DualResult result = SendWebAPI(baseUrl, requestUri, jsonBody, automationErrMsg);
+
+            DBProxy._OpenConnection("Production", out sqlConnection);
+            automationCreateRecord.DeleteAutomationCreateRecord(sqlConnection);
+
+            return result;
+        }
+
+        /// <summary>
         /// SendWebAPI
         /// </summary>
         /// <param name="baseUrl">Base Url</param>
