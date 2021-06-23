@@ -185,9 +185,28 @@ left join FOCData fd on od.ID = fd.ID and od.Article = fd.Article and od.SizeCod
 left join PulloutData pd on pd.OrderID = od.ID and pd.OrderShipmodeSeq = od.Seq and pd.Article = od.Article and pd.SizeCode = od.SizeCode
 left join View_OrderFAColor voc on voc.ID = od.ID and voc.Article = od.Article
 
-select * from #tmp where Price != 0 or ShipQty <= 0
+--Order Unit Price not equal to 0, Please check with MR for modify Unit Price. thanks.
+select * from #tmp where Price != 0
 
-select * from #tmp where ShipQty > 0 and Price = 0
+--Below records are in packing FOC already, Please check again.
+select * from  #tmp t where exists(select 1 
+									from PackingList p with (nolock)
+									inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
+									where	p.Type = 'F' and 
+											pd.OrderID = t.OrderID and
+											pd.Article = t.Article and
+											pd.Color = t.Color and
+											pd.SizeCode = t.SizeCode
+			)	
+
+select * from #tmp t where Price = 0 and not exists(select 1 
+									                from PackingList p with (nolock)
+									                inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
+									                where	p.Type = 'F' and 
+									                		pd.OrderID = t.OrderID and
+									                		pd.Article = t.Article and
+									                		pd.Color = t.Color and
+									                		pd.SizeCode = t.SizeCode)
 
 drop table #tmp;
 ");
@@ -236,7 +255,7 @@ drop table #tmp;
             if (this.result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out dts))
             {
                 StringBuilder msg = new StringBuilder();
-                this.selectDataTable = dts[1];
+                this.selectDataTable = dts[2];
                 if (!MyUtility.Check.Empty(dts[0]) && dts[0].Rows.Count > 0)
                 {
                     foreach (DataRow dr in dts[0].Rows)
@@ -244,7 +263,18 @@ drop table #tmp;
                         msg.Append($@"SP: {dr["OrderID"]}, Colorway: {dr["Article"]}, Size: {dr["SizeCode"]}" + Environment.NewLine);
                     }
 
-                    MyUtility.Msg.WarningBox("Below records are in packing FOC already, please check again" + Environment.NewLine + msg.ToString());
+                    MyUtility.Msg.WarningBox("Order Unit Price not equal to 0, Please check with MR for modify Unit Price. thanks." + Environment.NewLine + msg.ToString());
+                }
+
+                msg = new StringBuilder();
+                if (!MyUtility.Check.Empty(dts[1]) && dts[1].Rows.Count > 0)
+                {
+                    foreach (DataRow dr in dts[1].Rows)
+                    {
+                        msg.Append($@"SP: {dr["OrderID"]}, Colorway: {dr["Article"]}, Size: {dr["SizeCode"]}" + Environment.NewLine);
+                    }
+
+                    MyUtility.Msg.WarningBox("Below records are in packing FOC already, Please check again." + Environment.NewLine + msg.ToString());
                 }
 
                 if (this.selectDataTable.Rows.Count == 0 && MyUtility.Check.Empty(msg.ToString()))
