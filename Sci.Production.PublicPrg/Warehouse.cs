@@ -4470,12 +4470,6 @@ where exists(
         /// <returns>bool</returns>
         public static bool Chk_WMS_Location(string id, string functionName)
         {
-            // 先關閉,待使用者確認後再上線
-            if (true)
-            {
-                return true;
-            }
-
             bool automation = MyUtility.Check.Seek("select 1 from dbo.System where Automation = 1", "Production");
             if (!automation || MyUtility.Check.Empty(id) || MyUtility.Check.Empty(functionName))
             {
@@ -4830,6 +4824,94 @@ select * from(
 				for xml path ('')
 			) , 1, 1, '')
 		) s
+		where t.id=@ID
+	) a
+
+union all
+
+-- Receiving_Detail
+	select  * 
+	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,Location order by IsWMS)
+	from (
+		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,IsWMS = isnull( ml.IsWMS,0),s.Location
+		from Receiving_Detail t
+		inner join FtyInventory f on t.POID = f.POID
+			and t.Seq1= f. Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll
+			and t.Dyelot = f.Dyelot and t.StockType = f.StockType
+		left join FtyInventory_Detail fd on fd.Ukey = f.Ukey
+		left join MtlLocation ml on ml.ID = fd.MtlLocationID
+		outer apply(
+			select Location = Stuff((
+				select concat(',',MtlLocationID)
+				from (
+						select 	distinct
+							MtlLocationID
+						from dbo.FtyInventory_Detail d
+						where d.Ukey = f.Ukey
+					) s
+				for xml path ('')
+			) , 1, 1, '')
+		) s
+		where t.id=@ID
+	) a
+
+	union all 
+
+-- 判斷當前Location
+	select * 
+	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,Location order by IsWMS)
+	from (
+		select distinct POID = t.POID,Seq1 = t.Seq1,Seq2 = t.Seq2,Roll = t.Roll,Dyelot = t.Dyelot,IsWMS = isnull( ml.IsWMS,0),Location = t.Location
+		from Receiving_Detail t
+		outer apply(
+			select ml.IsWMS
+			from MtlLocation ml
+			inner join dbo.SplitString(t.Location,',') sp on sp.Data = ml.ID
+		)ml
+		where t.id=@ID
+	) a
+
+union all
+
+-- TransferIn_Detail
+	select  * 
+	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,Location order by IsWMS)
+	from (
+		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,IsWMS = isnull( ml.IsWMS,0),s.Location
+		from TransferIn_Detail t
+		inner join FtyInventory f on t.POID = f.POID
+			and t.Seq1= f. Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll
+			and t.Dyelot = f.Dyelot and t.StockType = f.StockType
+		left join FtyInventory_Detail fd on fd.Ukey = f.Ukey
+		left join MtlLocation ml on ml.ID = fd.MtlLocationID
+		outer apply(
+			select Location = Stuff((
+				select concat(',',MtlLocationID)
+				from (
+						select 	distinct
+							MtlLocationID
+						from dbo.FtyInventory_Detail d
+						where d.Ukey = f.Ukey
+					) s
+				for xml path ('')
+			) , 1, 1, '')
+		) s
+		where t.id=@ID
+	) a
+
+	union all 
+
+-- 判斷當前Location
+	select * 
+	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,Location order by IsWMS)
+	from (
+		select distinct POID = t.POID,Seq1 = t.Seq1,Seq2 = t.Seq2,Roll = t.Roll,Dyelot = t.Dyelot,IsWMS = isnull( ml.IsWMS,0),Location = t.Location
+		from TransferIn_Detail t
+		outer apply(
+			select ml.IsWMS
+			from MtlLocation ml
+			inner join dbo.SplitString(t.Location,',') sp on sp.Data = ml.ID
+		)ml
 		where t.id=@ID
 	) a
 
