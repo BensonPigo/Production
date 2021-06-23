@@ -707,6 +707,7 @@ GROUP BY i.orderid ,iq.Article ,iq.SizeCode ,i.OrderShipmodeSeq
 ";
             string sqlA = sqlCmd + $@"
 select distinct msg = concat(p.OrderID, ' (', p.OrderShipmodeSeq, ')',' - ', p.Article,' - ',p.SizeCode,' - Ship Qty:',sum(isnull(p.ShipQty,0) + ISNULL(t.DiffQty,0)),' - Order Qty : ',SUM(isnull(oqd.Qty,0)))
+                    ,p.OrderID
 from #tmpPacking p
 left join #tmpOrderShip oqd with(nolock) on oqd.id = p.OrderID and oqd.Seq = p.OrderShipmodeSeq and p.Article = oqd.Article and p.SizeCode = oqd.SizeCode
 lEFT JOIN #TPEAdjust t ON t.OrderID= oqd.id AND t.OrderShipmodeSeq = oqd.Seq AND t.Article=oqd.Article AND t.SizeCode=oqd.SizeCode  ----出貨數必須加上台北端財務可能調整出貨數量，因此必須納入考量(若是減少則是負數，因此用加法即可)
@@ -723,6 +724,7 @@ GROUP BY p.OrderID,p.OrderShipmodeSeq,p.Article,p.SizeCode
 ";
 
             DataTable dt;
+
             DualResult result = DBProxy.Current.Select(null, sqlA, out dt);
             if (!result)
             {
@@ -760,10 +762,74 @@ GROUP BY p.OrderID,p.OrderShipmodeSeq,p.Article,p.SizeCode
                 return result;
             }
 
-            // 僅提示允許繼續 Confirm
-            if (dt.Rows.Count > 0)
+            #region 檢查 Pullout_History
+            DataTable tmpDT;
+            DateTime? lastDate;
+            string cmd = string.Empty;
+            cmd = $@"
+SELECT TOP 1 ph.AddDate 
+FROM Pullout_History ph  WITH(NOLOCK)
+WHERE ph.ID ='{pulloutID}' 
+AND ph.HisType = 'Status' 
+AND ph.NewValue='Unconfirmed' 
+ORDER BY ph.AddName DESC
+";
+            string tmp = MyUtility.GetValue.Lookup(cmd);
+            if (MyUtility.Check.Empty(tmp))
             {
-                var os = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["msg"])).ToList();
+                lastDate = null;
+            }
+            else
+            {
+                lastDate = Convert.ToDateTime(tmp);
+            }
+
+            cmd = $@"
+SELECT ID, AddDate ,EditDate
+FROM Pullout_Detail WITH(NOLOCK)
+WHERE ID='{pulloutID}' 
+";
+            List<string> noNeedCheck = new List<string>();
+            if (lastDate.HasValue)
+            {
+                DualResult r = DBProxy.Current.Select(null, cmd, out tmpDT);
+                if (!r)
+                {
+                    if (showmsg)
+                    {
+                        MyUtility.Msg.WarningBox(r.ToString());
+                    }
+
+                    return r;
+                }
+
+                foreach (DataRow dr in tmpDT.Rows)
+                {
+
+                    if (MyUtility.Check.Empty(dr["AddDate"]) && MyUtility.Check.Empty(dr["EditDate"]))
+                    {
+                        continue;
+                    }
+
+                    DateTime detailTime = MyUtility.Check.Empty(dr["EditDate"]) ? Convert.ToDateTime(dr["AddDate"]) : Convert.ToDateTime(dr["EditDate"]);
+
+                    // detailTime > lastDate才需要檢查GMTCompleteCheck()
+                    int compareResult = DateTime.Compare(detailTime, lastDate.Value);
+                    if (compareResult > 0)
+                    {
+                        // 把需要檢查的SP 紀錄
+                        noNeedCheck.Add(MyUtility.Convert.GetString(dr["ID"]));
+                    }
+                }
+            }
+            #endregion
+
+            var error = dt.AsEnumerable().Where(o => noNeedCheck.Any(x => x == MyUtility.Convert.GetString(o["ID"]))).ToList();
+
+            // 僅提示允許繼續 Confirm
+            if (error.Count > 0)
+            {
+                var os = error.Select(s => MyUtility.Convert.GetString(s["msg"])).ToList();
                 string msg = @"Ship Qty<Order Qty, please be sure this is Short Shipment before Save/Confirm the Packing List.
 " + string.Join("\t", os);
 

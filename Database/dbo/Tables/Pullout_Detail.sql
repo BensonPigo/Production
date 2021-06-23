@@ -15,6 +15,10 @@
     [ReviseDate]       DATETIME      NULL,
     [UKey]             BIGINT        IDENTITY (1, 1) NOT NULL,
     [OldUkey]          VARCHAR (13)  CONSTRAINT [DF_Pullout_Detail_OldUkey] DEFAULT ('') NULL,
+	AddName			VARCHAR(10) CONSTRAINT DF_Pullout_Detail_AddName DEFAULT ('') NOT NULL,
+	AddDate			DATETIME NULL,
+	EditName		VARCHAR(10) CONSTRAINT DF_Pullout_Detail_EditName DEFAULT ('') NOT NULL,
+	EditDate		DATETIME NULL,
     CONSTRAINT [PK_Pullout_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
 
