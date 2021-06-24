@@ -1628,6 +1628,13 @@ where   v.FROM_U ='{0}'
                 return;
             }
 
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P07"))
+            {
+                return;
+            }
+            #endregion
+
             #region 檢查負數庫存
 
             sqlcmd = string.Format(
