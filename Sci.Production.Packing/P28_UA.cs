@@ -719,7 +719,14 @@ where ID = '{packingListID}' AND CustCTN != ''
                     var sizeData = sizeDatas.Where(o => o.Pono == excelData.OrderNumber && o.POItemNo == excelData.ItemNumber).FirstOrDefault();
                     string tmpSize = sizeData.Size;
 
-                    string size = MyUtility.GetValue.Lookup($@"SELECT SizeCode FROM Order_SizeSpec WHERE SizeItem='S01' AND SizeSpec='{tmpSize}' AND ID='{excelData.OrderID}'");
+                    string size = MyUtility.GetValue.Lookup($@"
+SELECT os.SizeCode 
+FROM Orders o 
+INNER JOIN Order_SizeSpec os ON o.POID = os.ID
+WHERE os.SizeItem='S01' 
+AND os.SizeSpec='{tmpSize}' 
+AND o.ID='{excelData.OrderID}'
+");
                     string shipQty = excelData.HUQty;
 
                     excelData.SizeCode = size;
