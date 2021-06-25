@@ -3,10 +3,10 @@
     [KHCustomsDescriptionCDCName] VARCHAR (50)   NOT NULL,
     [OriTtlNetKg]                 NUMERIC (9, 2) CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_OriTtlNetKg] DEFAULT ((0)) NULL,
     [OriTtlWeightKg]              NUMERIC (9, 2) CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_OriTtlWeightKg] DEFAULT ((0)) NULL,
-    [OriTtlCDCAmount]             NUMERIC (9, 4) CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_OriTtlCDCAmount] DEFAULT ((0)) NULL,
+    [OriTtlCDCAmount]             NUMERIC (12, 4) CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_OriTtlCDCAmount] DEFAULT ((0)) NULL,
     [ActTtlNetKg]                 NUMERIC (9, 4) CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_ActTtlNetKg] DEFAULT ((0)) NULL,
     [ActTtlWeightKg]              NUMERIC (9, 4) CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_ActTtlWeightKg] DEFAULT ((0)) NULL,
-    [ActTtlAmount]                NUMERIC (9, 4) CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_ActTtlAmount] DEFAULT ((0)) NULL,
+    [ActTtlAmount]                NUMERIC (12, 4) CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_ActTtlAmount] DEFAULT ((0)) NULL,
     [ActHSCode]                   VARCHAR (14)   CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_ActHSCode] DEFAULT ('') NULL,
     CONSTRAINT [PK_KHImportDeclaration_ShareCDCExpense] PRIMARY KEY CLUSTERED ([ID] ASC, [KHCustomsDescriptionCDCName] ASC)
 );
