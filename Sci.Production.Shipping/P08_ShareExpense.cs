@@ -506,6 +506,8 @@ where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
                 .Text("BLNo", header: "BL/MAWB No.", width: Widths.AnsiChars(13), settings: bLNo)
                 .Text("BL2No", header: "FCR/BL/HAWB", width: Widths.AnsiChars(13), settings: bL2No)
                 .Text(MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT" ? "WKNo" : "InvNo", header: MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT" ? "WK#/Fty WK#" : "GB#/Fty WK#/Packing#", width: Widths.AnsiChars(18), settings: wKNO)
+
+                .Text("DropDownListName", header: "Fty WK# Type", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("ShipModeID", header: "Shipping Mode", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("GW", header: "G.W.", decimal_places: 3, iseditingreadonly: true)
                 .Numeric("CBM", header: "CBM", decimal_places: 4, iseditingreadonly: true)
@@ -731,6 +733,12 @@ select  ShippingAPID
         , GW
         , CBM
         , CurrencyID
+        , DropDownListName = (
+            select Name
+            from DropDownList dl
+            inner join FtyExport f on f.Type = dl.ID
+            where dl.Type='Pms_FtyExportType'
+            and f.ID = se.WKNo)
         , ShipModeID
         , FtyWK
         , isnull(sum(Amount),0) as Amount 

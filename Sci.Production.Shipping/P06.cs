@@ -385,6 +385,8 @@ where ID in (select distinct OrderID from Pullout_Detail where ID = '{this.Curre
                     {
                         if (dr.RowState == DataRowState.Added)
                         {
+                            dr["AddName"] = Sci.Env.User.UserID;
+                            dr["AddDate"] = DateTime.Now;
                             result = this.WriteRevise("Missing", dr);
                             if (!result)
                             {
@@ -393,6 +395,34 @@ where ID in (select distinct OrderID from Pullout_Detail where ID = '{this.Curre
                         }
                         else if (dr.RowState == DataRowState.Modified)
                         {
+                            string cmd = $@"
+SELECT * 
+FROM Pullout_Detail WITH(NOLOCK)
+WHERE Ukey = {MyUtility.Convert.GetString(dr["Ukey"])}
+";
+                            DataTable dataTable;
+                            DBProxy.Current.Select(null, cmd, out dataTable);
+
+                            DataRow dbRow = dataTable.Rows[0];
+
+                            if (MyUtility.Convert.GetString(dbRow["PulloutDate"]) != MyUtility.Convert.GetString(dr["PulloutDate"]) ||
+                                MyUtility.Convert.GetString(dbRow["OrderID"]) != MyUtility.Convert.GetString(dr["OrderID"]) ||
+                                MyUtility.Convert.GetString(dbRow["OrderShipmodeSeq"]) != MyUtility.Convert.GetString(dr["OrderShipmodeSeq"]) ||
+                                MyUtility.Convert.GetString(dbRow["ShipQty"]) != MyUtility.Convert.GetString(dr["ShipQty"]) ||
+                                MyUtility.Convert.GetString(dbRow["OrderQty"]) != MyUtility.Convert.GetString(dr["OrderQty"]) ||
+                                MyUtility.Convert.GetString(dbRow["ShipModeSeqQty"]) != MyUtility.Convert.GetString(dr["ShipModeSeqQty"]) ||
+                                MyUtility.Convert.GetString(dbRow["Status"]) != MyUtility.Convert.GetString(dr["Status"]) ||
+                                MyUtility.Convert.GetString(dbRow["PackingListID"]) != MyUtility.Convert.GetString(dr["PackingListID"]) ||
+                                MyUtility.Convert.GetString(dbRow["PackingListType"]) != MyUtility.Convert.GetString(dr["PackingListType"]) ||
+                                MyUtility.Convert.GetString(dbRow["INVNo"]) != MyUtility.Convert.GetString(dr["INVNo"]) ||
+                                MyUtility.Convert.GetString(dbRow["ShipmodeID"]) != MyUtility.Convert.GetString(dr["ShipmodeID"]) ||
+                                MyUtility.Convert.GetString(dbRow["Remark"]) != MyUtility.Convert.GetString(dr["Remark"]) ||
+                                MyUtility.Convert.GetString(dbRow["ReviseDate"]) != MyUtility.Convert.GetString(dr["ReviseDate"]))
+                            {
+                                dr["EditName"] = Sci.Env.User.UserID;
+                                dr["EditDate"] = DateTime.Now;
+                            }
+
                             bool t = false;
                             DataTable subDetailData;
                             this.GetSubDetailDatas(dr, out subDetailData);
@@ -437,6 +467,7 @@ where ID in (select distinct OrderID from Pullout_Detail where ID = '{this.Curre
                         }
                         else if (dr.RowState == DataRowState.Deleted)
                         {
+
                             result = this.WriteRevise("Delete", dr);
                             if (!result)
                             {
@@ -1775,25 +1806,62 @@ where p.id='{dr["PackingListID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Cate
 
         private bool GMTCompleteCheck()
         {
+            string cmd = string.Empty;
+            DateTime? lastDate;
+            DataTable dt;
+            cmd = $@"
+SELECT TOP 1 ph.AddDate 
+FROM Pullout_History ph 
+WHERE ph.ID ='{this.CurrentMaintain["ID"]}' 
+AND ph.HisType = 'Status' 
+AND ph.NewValue='Unconfirmed' 
+ORDER BY ph.AddName DESC
+";
+            string tmp = MyUtility.GetValue.Lookup(cmd);
+            if (MyUtility.Check.Empty(tmp))
+            {
+                lastDate = null;
+            }
+            else
+            {
+                lastDate = Convert.ToDateTime(tmp);
+            }
+
             #region 表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
             DataTable isGMTComplete = new DataTable();
             isGMTComplete.ColumnsStringAdd("SP#");
             isGMTComplete.ColumnsDateTimeAdd("Complete Date");
             foreach (DataRow dr in this.DetailDatas)
             {
-                // 拆解Order ID
-                List<string> orders = MyUtility.Convert.GetString(dr["OrderID"]).Split(',').ToList();
-                foreach (var order in orders)
+                if (MyUtility.Check.Empty(dr["AddDate"]) && MyUtility.Check.Empty(dr["EditDate"]))
                 {
-                    string cmd = $@"SELECT [SP#]=ID ,[Complete Date]=CMPLTDATE FROM Orders WITH(NOLOCK) WHERE GMTComplete='S' AND ID = '{order}'";
-                    DataTable dt;
-                    DBProxy.Current.Select(null, cmd, out dt);
-                    bool find = dt.Rows.Count > 0;
-                    if (find)
+                    continue;
+                }
+
+                if (lastDate.HasValue)
+                {
+                    DateTime detailTime = MyUtility.Check.Empty(dr["EditDate"]) ? Convert.ToDateTime(dr["AddDate"]) : Convert.ToDateTime(dr["EditDate"]);
+
+                    // detailTime > lastDate才需要檢查GMTCompleteCheck()
+                    int result = DateTime.Compare(detailTime, lastDate.Value);
+                    if (result <= 0)
                     {
-                        foreach (DataRow r in dt.Rows)
+                        continue;
+                    }
+
+                    // 拆解Order ID
+                    List<string> orders = MyUtility.Convert.GetString(dr["OrderID"]).Split(',').ToList();
+                    foreach (var order in orders)
+                    {
+                        cmd = $@"SELECT [SP#]=ID ,[Complete Date]=CMPLTDATE FROM Orders WITH(NOLOCK) WHERE GMTComplete='S' AND ID = '{order}'";
+                        DBProxy.Current.Select(null, cmd, out dt);
+                        bool find = dt.Rows.Count > 0;
+                        if (find)
                         {
-                            isGMTComplete.ImportRow(r);
+                            foreach (DataRow r in dt.Rows)
+                            {
+                                isGMTComplete.ImportRow(r);
+                            }
                         }
                     }
                 }

@@ -930,6 +930,13 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
                 return;
             }
 
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P18"))
+            {
+                return;
+            }
+            #endregion
+
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(
                 @"

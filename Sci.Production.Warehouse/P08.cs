@@ -476,6 +476,13 @@ WHERE   StockType='{0}'
             }
             #endregion
 
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P08"))
+            {
+                return;
+            }
+            #endregion
+
             #region 檢查庫存項lock
             sqlcmd = string.Format(
                 @"
