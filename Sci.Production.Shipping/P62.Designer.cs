@@ -399,7 +399,8 @@
             this.comboShipper.IsSupportUnselect = true;
             this.comboShipper.Items.AddRange(new object[] {
             "SPS",
-            "SPR"});
+            "SPR",
+            "SPX"});
             this.comboShipper.Location = new System.Drawing.Point(140, 37);
             this.comboShipper.Name = "comboShipper";
             this.comboShipper.OldText = "";
