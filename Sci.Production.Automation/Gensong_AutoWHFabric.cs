@@ -1144,7 +1144,7 @@ select lt2.Id
 ,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
 	            , IIF(isnull(po3.SuppColor,'') = '', dbo.GetColorMultipleID(o.BrandID,po3.ColorID),po3.SuppColor)
 	            , dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
-,[Barcode] = Barcode.value
+,[Barcode] = f.Barcode
 ,lt2.Ukey
 ,lt2.StockType
 ,[Description] = dbo.getMtlDesc(po3.ID,po3.Seq1,po3.Seq2,2,0)
@@ -1158,12 +1158,6 @@ left join PO_Supp_Detail po3 on po3.ID = lt2.POID and po3.SEQ1 = lt2.Seq1
     and po3.SEQ2 = lt2.Seq2
 LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo = Fabric.SCIRefNo
 LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = po3.ID
-outer apply(
-	select value = fb.Barcode
-	from Production.dbo.FtyInventory_Barcode fb
-	where fb.Ukey = f.Ukey
-    and fb.TransactionID = lt2.Id
-)Barcode
 where 1=1
 and exists(
     select 1
