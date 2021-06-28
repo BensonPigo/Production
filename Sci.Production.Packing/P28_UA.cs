@@ -739,7 +739,7 @@ WHERE o.ID='{excelData.OrderID}'
                     */
 
                     bool isNotDifferentPattern = sizeGroup.Select("SizeGroup IN  ('D', 'S', 'T', 'X', 'L')").Any();
-                    bool isDifferentPattern = sizeGroup.Select("SizeGroup IN  ('A','N')").Any();
+                    bool isDifferentPattern = sizeGroup.Select("SizeGroup NOT IN ('D', 'S', 'T', 'X', 'L')").Any();
 
                     string size = string.Empty;
 
