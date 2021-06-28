@@ -471,6 +471,236 @@ else
 			update set 
 			t.OriginalStyleID	= s.StyleID;
 -----------------------------------------------------------------------------------------------------------
+
+---------------------PMS_Orders_History delete--------------------------------------
+		------------------------將這次要新增的Orders先從歷史區移除
+		delete t
+		from Production.dbo.PMS_Orders_History t
+		where exists (select 1 from #TOrder s where t.ID = s.ID)
+
+		------------------------將 Orders要刪除的資料 且PO_Supp_Detail.ShipQty  > 0 的資料先搬入歷史區
+		Merge Production.dbo.PMS_Orders_History as t
+		Using (
+			select a.*
+			from Production.dbo.Orders as a 
+			where a.id in (
+				select id from #tmpOrders as t 
+				where not exists(select 1 from #TOrder as s where t.id=s.ID)
+			)
+			and not exists (select 1 from Production.dbo.PO_Supp_Detail p where a.ID = p.ID and p.ShipQty  > 0)
+		) as s
+		on t.id = s.id
+		when matched then 
+		update set
+				t.ProgramID				= s.ProgramID ,
+				t.ProjectID				= s.ProjectID ,
+				t.Category				= s.Category ,
+				t.OrderTypeID			= s.OrderTypeID ,
+				t.BuyMonth				= s.BuyMonth ,
+				t.Dest					= s.Dest ,
+				t.Model					= s.Model ,
+				t.HsCode1				= s.HsCode1 ,
+				t.HsCode2				= s.HsCode2 ,
+				t.PayTermARID			= s.PayTermARID ,
+				t.ShipTermID			= s.ShipTermID ,
+				t.ShipModeList			= s.ShipModeList ,
+				t.PoPrice				= s.PoPrice ,
+				t.CFMPrice				= s.CFMPrice ,
+				t.CurrencyID			= s.CurrencyID ,
+				t.Commission			= s.Commission ,
+				t.BrandAreaCode			= s.BrandAreaCode ,
+				t.BrandFTYCode			= s.BrandFTYCode ,
+				t.CTNQty				= s.CTNQty ,
+				t.CustCDID				= s.CustCDID ,
+				t.CustPONo				= s.CustPONo ,
+				t.Customize1			= s.Customize1 ,
+				t.Customize2			= s.Customize2 ,
+				t.Customize3			= s.Customize3 ,
+				t.CMPUnit				= s.CMPUnit ,
+				t.CMPPrice				= s.CMPPrice ,
+				t.CMPQDate				= s.CMPQDate ,
+				t.CMPQRemark			= s.CMPQRemark ,
+				t.EachConsApv			= s.EachConsApv ,
+				t.MnorderApv			= s.MnorderApv ,
+				t.CRDDate				= s.CRDDate ,
+				t.InitialPlanDate		= s.InitialPlanDate ,
+				t.PlanDate				= s.PlanDate ,
+				t.FirstProduction		= s.FirstProduction ,
+				t.FirstProductionLock	= s.FirstProductionLock ,
+				t.OrigBuyerDelivery		= s.OrigBuyerDelivery ,
+				t.ExCountry				= s.ExCountry ,
+				t.InDCDate				= s.InDCDate ,
+				t.CFMShipment			= s.CFMShipment ,
+				t.PFETA					= s.PFETA ,
+				t.PackLETA				= s.PackLETA ,
+				t.LETA					= s.LETA ,
+				t.MRHandle				= s.MRHandle ,
+				t.SMR					= s.SMR ,
+				t.ScanAndPack			= s.ScanAndPack ,
+				t.VasShas				= s.VasShas ,
+				t.SpecialCust			= s.SpecialCust ,
+				t.TissuePaper			= s.TissuePaper ,
+				t.Packing				= s.Packing ,
+				t.SDPDate				= s.SDPDate, 
+				t.MarkFront				= s.MarkFront ,
+				t.MarkBack				= s.MarkBack ,
+				t.MarkLeft				= s.MarkLeft ,
+				t.MarkRight				= s.MarkRight ,
+				t.Label					= s.Label ,
+				t.OrderRemark			= s.OrderRemark ,
+				t.ArtWorkCost			= s.ArtWorkCost ,
+				t.StdCost				= s.StdCost ,
+				t.CtnType				= s.CtnType ,
+				t.FOCQty				= s.FOCQty ,
+				t.SMnorderApv			= s.SMnorderApv ,
+				t.FOC					= s.FOC ,
+				t.MnorderApv2			= s.MnorderApv2 ,
+				t.Packing2				= s.Packing2 ,
+				t.SampleReason			= s.SampleReason ,
+				t.RainwearTestPassed	= s.RainwearTestPassed ,
+				t.SizeRange				= s.SizeRange ,
+				t.MTLComplete			= s.MTLComplete ,
+				t.SpecialMark			= s.SpecialMark ,
+				t.OutstandingRemark		= s.OutstandingRemark ,
+				t.OutstandingInCharge	= s.OutstandingInCharge ,
+				t.OutstandingDate		= s.OutstandingDate ,
+				t.OutstandingReason		= s.OutstandingReason ,
+				t.StyleUkey				= s.StyleUkey ,
+				t.POID					= s.POID ,
+				t.OrderComboID			= s.OrderComboID ,
+				t.IsNotRepeatOrMapping	= s.IsNotRepeatOrMapping ,
+				t.SplitOrderId			= s.SplitOrderId ,
+				t.FtyKPI				= s.FtyKPI ,
+				t.EditName				= s.EditName ,
+				t.EditDate				= s.EditDate ,
+				t.IsForecast			= s.IsForecast ,
+				t.PulloutComplete		= s.PulloutComplete ,
+				t.PFOrder				= s.PFOrder ,
+				t.KPILETA				= s.KPILETA ,
+				t.MTLETA				= s.MTLETA ,
+				t.SewETA				= s.SewETA ,
+				t.PackETA				= s.PackETA ,
+				t.MTLExport				= s.MTLExport ,
+				t.DoxType				= s.DoxType ,
+				t.MDivisionID			= s.MDivisionID ,
+				t.KPIChangeReason		= s.KPIChangeReason ,
+				t.MDClose				= s.MDClose ,
+				t.CPUFactor				= s.CPUFactor ,
+				t.SizeUnit				= s.SizeUnit ,
+				t.CuttingSP				= s.CuttingSP ,
+				t.IsMixMarker			= s.IsMixMarker ,
+				t.EachConsSource		= s.EachConsSource ,
+				t.KPIEachConsApprove	= s.KPIEachConsApprove ,
+				t.KPICmpq				= s.KPICmpq ,
+				t.KPIMNotice			= s.KPIMNotice ,
+				t.GMTComplete			= s.GMTComplete  ,
+				t.GFR					= s.GFR	,
+				t.FactoryID				= s.FactoryID,
+				t.BrandID				= s.BrandID, 
+				t.StyleID				= s.StyleID, 
+				t.SeasonID				= s.SeasonID, 
+				t.BuyerDelivery			= s.BuyerDelivery,
+				t. SciDelivery			= s.SciDelivery, 
+				t.CFMDate				= s.CFMDate, 
+				t.Junk					= s.Junk ,
+				t.CdCodeID				= s.CdCodeID, 
+				t.CPU					= s.CPU, 
+				t.Qty					= s.Qty, 
+				t.StyleUnit				= s.StyleUnit, 				
+				t.AddName				= s.AddName, 
+				t.AddDate				= s.AddDate,
+				t.FtyGroup              = s.FtyGroup,
+				t.ForecastSampleGroup   = s.ForecastSampleGroup,				
+				t.DyeingLoss			= s.DyeingLoss,
+				t.SubconInType			= s.SubconInType,
+				t.LastProductionDate    = s.LastProductionDate,				
+				t.EstPODD				= s.EstPODD,
+				t.AirFreightByBrand    = s.AirFreightByBrand,
+				t.AllowanceComboID	   = s.AllowanceComboID,
+				t.ChangeMemoDate       = s.ChangeMemoDate,
+				t.ForecastCategory     = s.ForecastCategory,
+				t.OnSiteSample		   = s.OnSiteSample,
+				t.PulloutCmplDate	   = s.PulloutCmplDate ,
+				t.NeedProduction	   = s.NeedProduction ,
+				t.KeepPanels           = s.KeepPanels ,
+				t.IsBuyBack			   = s.IsBuyBack ,
+				t.BuyBackReason           = s.BuyBackReason ,
+				t.IsBuyBackCrossArticle   = s.IsBuyBackCrossArticle ,
+				t.IsBuyBackCrossSizeCode  = s.IsBuyBackCrossSizeCode ,
+				t.KpiEachConsCheck	   = s.KpiEachConsCheck,
+				t.CMPLTDATE	   = s.CMPLTDATE,
+				t.HangerPack = s.HangerPack,
+				t.DelayCode = s.DelayCode,
+				t.DelayDesc = s.DelayDesc,
+				t.SizeUnitWeight = s.SizeUnitWeight
+		when not matched by target then
+		insert (
+			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
+			, ProjectID				, Category				, OrderTypeID			, BuyMonth				, Dest
+			, Model					, HsCode1				, HsCode2				, PayTermARID			, ShipTermID
+			, ShipModeList			, CdCodeID				, CPU					, Qty					, StyleUnit
+			, PoPrice				, CFMPrice				, CurrencyID			, Commission			, FactoryID
+			, BrandAreaCode			, BrandFTYCode			, CTNQty				, CustCDID				, CustPONo
+			, Customize1			, Customize2			, Customize3			, CFMDate				, BuyerDelivery
+			, SciDelivery			, SewOffLine			, CutInLine				, CutOffLine			
+			, CMPUnit				, CMPPrice				, CMPQDate				, CMPQRemark			, EachConsApv
+			, MnorderApv			, CRDDate				, InitialPlanDate		, PlanDate				, FirstProduction
+			, FirstProductionLock	, OrigBuyerDelivery		, ExCountry				, InDCDate				, CFMShipment
+			, PFETA					, PackLETA				, LETA					, MRHandle				, SMR
+			, ScanAndPack			, VasShas				, SpecialCust			, TissuePaper			, Junk
+			, Packing				, MarkFront				, MarkBack				, MarkLeft				, MarkRight
+			, Label					, OrderRemark			, ArtWorkCost			, StdCost				, CtnType
+			, FOCQty				, SMnorderApv			, FOC					, MnorderApv2			, Packing2
+			, SampleReason			, RainwearTestPassed	, SizeRange				, MTLComplete			, SpecialMark
+			, OutstandingRemark		, OutstandingInCharge	, OutstandingDate		, OutstandingReason		, StyleUkey
+			, POID					, OrderComboID			, IsNotRepeatOrMapping	, SplitOrderId			, FtyKPI				
+			, AddName				, AddDate				, EditName				, EditDate				, IsForecast			
+			, GMTComplete			, PFOrder				, KPILETA				, MTLETA				
+			, SewETA				, PackETA				, MTLExport				, DoxType						
+			, MDivisionID			, MCHandle				, KPIChangeReason		, MDClose				, CPUFactor				
+			, SizeUnit				, CuttingSP				, IsMixMarker			, EachConsSource		, KPIEachConsApprove	
+			, KPICmpq				, KPIMNotice			, GFR					, SDPDate				, PulloutComplete		
+			, SewINLINE				, FtyGroup				, ForecastSampleGroup	, DyeingLoss			, SubconInType
+			, LastProductionDate	, EstPODD				, AirFreightByBrand		, AllowanceComboID      , ChangeMemoDate
+			, ForecastCategory		, OnSiteSample			, PulloutCmplDate		, NeedProduction		, KeepPanels
+			, IsBuyBack				, BuyBackReason			, IsBuyBackCrossArticle , IsBuyBackCrossSizeCode
+			, KpiEachConsCheck		, CMPLTDATE				, HangerPack			, DelayCode				, DelayDesc
+			, SizeUnitWeight
+		) values (
+			s.ID					, s.BrandID				, s.ProgramID			, s.StyleID				, s.SeasonID 
+			, s.ProjectID			, s.Category			, s.OrderTypeID			, s.BuyMonth			, s.Dest 
+			, s.Model				, s.HsCode1				, s.HsCode2				, s.PayTermARID			, s.ShipTermID 
+			, s.ShipModeList		, s.CdCodeID			, s.CPU					, s.Qty					, s.StyleUnit 
+			, s.PoPrice				, s.CFMPrice			, s.CurrencyID			, s.Commission			, s.FactoryID 
+			, s.BrandAreaCode		, s.BrandFTYCode		, s.CTNQty				, s.CustCDID			, s.CustPONo 
+			, s.Customize1			, s.Customize2			, s.Customize3			, s.CFMDate				, s.BuyerDelivery 
+			, s.SciDelivery			, s.SewOffLine			, s.CutInLine			, s.CutOffLine			
+			, s.CMPUnit				, s.CMPPrice			, s.CMPQDate			, s.CMPQRemark			, s.EachConsApv 
+			, s.MnorderApv			, s.CRDDate				, s.InitialPlanDate		, s.PlanDate			, s.FirstProduction 
+			, s.FirstProductionLock , s.OrigBuyerDelivery	, s.ExCountry			, s.InDCDate			, s.CFMShipment 
+			, s.PFETA				, s.PackLETA			, s.LETA				, s.MRHandle			, s.SMR 
+			, s.ScanAndPack			, s.VasShas				, s.SpecialCust			, s.TissuePaper			, s.Junk 
+			, s.Packing				, s.MarkFront			, s.MarkBack			, s.MarkLeft			, s.MarkRight 
+			, s.Label				, s.OrderRemark			, s.ArtWorkCost			, s.StdCost				, s.CtnType 
+			, s.FOCQty				, s.SMnorderApv			, s.FOC					, s.MnorderApv2			, s.Packing2 
+			, s.SampleReason		, s.RainwearTestPassed	, s.SizeRange			, s.MTLComplete			, s.SpecialMark 
+			, s.OutstandingRemark	, s.OutstandingInCharge , s.OutstandingDate		, s.OutstandingReason	, s.StyleUkey 
+			, s.POID				, s.OrderComboID		, s.IsNotRepeatOrMapping, s.SplitOrderId		, s.FtyKPI
+			, s.AddName 			, s.AddDate				, s.EditName			, s.EditDate			, s.IsForecast			
+			, s.GMTComplete 		, s.PFOrder				, s.KPILETA				, s.MTLETA				
+			, s.SewETA				, s.PackETA				, s.MTLExport			, s.DoxType				
+			, s.MDivisionID 		, S.MCHandle			, s.KPIChangeReason		, S.MDClose				, s.CPUFactor			
+			, s.SizeUnit			, s.CuttingSP			, s.IsMixMarker			, s.EachConsSource		, s.KPIEachConsApprove	
+			, s.KPICmpq 			, s.KPIMNotice			, s.GFR					, s.SDPDate				, s.PulloutComplete		
+			, s.SewINLINE           , s.FtyGroup			, s.ForecastSampleGroup , s.DyeingLoss          , s.SubconInType
+			, s.LastProductionDate	, s.EstPODD				, s.AirFreightByBrand	, s.AllowanceComboID    , s.ChangeMemoDate
+			, s.ForecastCategory	, s.OnSiteSample		, s.PulloutCmplDate		, s.NeedProduction		, s.KeepPanels
+			, s.IsBuyBack			, s.BuyBackReason		, s.IsBuyBackCrossArticle , s.IsBuyBackCrossSizeCode
+			, s.KpiEachConsCheck	, s.CMPLTDATE			, s.HangerPack			,s.DelayCode			,s.DelayDesc
+			, s.SizeUnitWeight
+		);
+
+-----------------------------------------------------------------------------------------------------------
 ---------------------Order--------------------------------------
 		--------------Order.id= AOrder.id  if eof()
 		declare @OrderT table (ID varchar(13),isInsert bit) 
@@ -2271,21 +2501,38 @@ Delete b
 from Production.dbo.PO b
 where id in (select POID from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
+and 0 = (
+	select sum(psd.ShipQty) 
+	from Production.dbo.PO_Supp_Detail psd 
+	where psd.id = b.id)
 -------------------------------------[dbo].[PO_Supp]
 Delete b
 from Production.dbo.PO_Supp b
 where id in (select POID from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
+and 0 = (
+	select sum(psd.ShipQty) 
+	from Production.dbo.PO_Supp_Detail psd 
+	where psd.id = b.id
+	and psd.SEQ1 = b.SEQ1)
 -------------------------------------[dbo].[PO_Supp_Detail]
 Delete b
 from Production.dbo.PO_Supp_Detail b
 where id in (select POID from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
+and b.ShipQty = 0
 -------------------------------------[dbo].[PO_Supp_Detail_OrderList]
 Delete b
 from Production.dbo.PO_Supp_Detail_OrderList b
 where id in (select POID from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
+and exists (
+	select 1 
+	from Production.dbo.PO_Supp_Detail psd 
+	where psd.id = b.id
+	and psd.SEQ1 = b.SEQ1
+	and psd.SEQ2 = b.SEQ2
+	and psd.ShipQty = 0)
 -------------------------------------[dbo].[Cutting]
 Delete b
 from Production.dbo.Cutting b

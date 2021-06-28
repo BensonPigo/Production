@@ -428,7 +428,7 @@ namespace Sci.Production.Warehouse
             {
                 #region 主要sql Detail
                 this.sqlcmd.Append($@" 
-from Orders o with (nolock)
+from View_WH_Orders o with (nolock)
 inner join PO p with (nolock) on o.id = p.id
 inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id
 {(!string.IsNullOrEmpty(this.WorkNo) ? $"INNER JOIN Export_Detail ed ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{this.WorkNo}'" : string.Empty)}
@@ -458,7 +458,7 @@ where 1=1
             {
                 #region 主要sql summary
                 this.sqlcmd.Append($@"
-from Orders o with (nolock)
+from View_WH_Orders o with (nolock)
 inner join PO p with (nolock) on o.id = p.id
 inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id
 {(!string.IsNullOrEmpty(this.WorkNo) ? $"INNER JOIN Export_Detail ed ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{this.WorkNo}'" : string.Empty)}

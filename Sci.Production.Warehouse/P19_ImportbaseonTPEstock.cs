@@ -182,7 +182,7 @@ from dbo.Invtrans i WITH (NOLOCK)
 inner join PO_Supp_Detail psd WITH (NOLOCK) on i.InventoryPOID = psd.ID
 												and i.InventorySeq1 = psd.SEQ1
 												and i.InventorySeq2 = psd.SEQ2
-inner join Orders o WITH (NOLOCK) on psd.ID = o.ID
+inner join View_WH_Orders o WITH (NOLOCK) on psd.ID = o.ID
 where (i.type='2' or i.type='6')
 		and i.seq70poid = @IssueSP
 		and o.MDivisionID = @MDivisionID

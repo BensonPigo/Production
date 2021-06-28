@@ -320,7 +320,7 @@ WHERE   StockType='{dr["tostocktype"]}'
             , pd.POUnit
             , pd.StockUnit
             , InQty = isnull(xx.InQty,0)
-    from dbo.orders o WITH (NOLOCK) 
+    from View_WH_Orders o WITH (NOLOCK) 
     inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
     inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
     inner join dbo.Factory checkProduceFty With (NoLock) on o.FactoryID = checkProduceFty.ID 
@@ -480,7 +480,7 @@ from #tmp t
 inner join FtyInventory fi WITH (NOLOCK) on  fi.POID = t.poid 
                                              and fi.seq1 = t.seq1 
                                              and fi.Seq2 = t.Seq2
-inner join dbo.orders o WITH (NOLOCK) on fi.POID=o.id
+inner join View_WH_Orders o WITH (NOLOCK) on fi.POID=o.id
 where   fi.StockType = 'I' 
         and fi.Lock = 0 
         and fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty > 0 

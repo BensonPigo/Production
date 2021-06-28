@@ -37,7 +37,7 @@ from dbo.PO_Supp_Detail pd WITH (NOLOCK)
 inner join (select frompoid,fromseq1,fromseq2,sum(qty) trans_qty from dbo.SubTransfer_Detail WITH (NOLOCK) where ID='{0}' 
 	group by frompoid,fromseq1,fromseq2) st 
 	on st.FromPOID = pd.ID and st.FromSeq1 = pd.SEQ1 and st.FromSeq2 = pd.SEQ2 
-inner join dbo.orders o WITH (NOLOCK) on o.id = pd.id
+inner join View_WH_Orders o WITH (NOLOCK) on o.id = pd.id
 inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
 cross apply
 	(select max(i.ConfirmDate) taipei_issue_date,sum(i.Qty) taipei_qty
