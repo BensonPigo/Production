@@ -682,47 +682,7 @@ WHERE o.ID='{dr.OrderID}'");
                         no_barcode_dr = no_barcode_dt.Rows[0];
                     }
 
-                    this.upd_sql_barcode += $@"
-                    /*
-                    update PackingList_Detail
-                    set BarCode = '{this.txtScanEAN.Text}'
-                    where PackingList_Detail.Article 
-                    =  '{no_barcode_dr["Article"]}'
-                    and PackingList_Detail.SizeCode
-                    =  '{no_barcode_dr["SizeCode"]}'
-                    and PackingList_Detail.ID = '{this.selecedPK.ID}'
-                    and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
-                    */
-
-                    select a.Article,a.Color,a.SizeCode,o.StyleUkey
-                    INTO #Base
-                    from PackingList_Detail a
-                    inner join Orders o ON o.ID = a.OrderID
-                    where a.ID = '{this.selecedPK.ID}'
-                    AND a.CTNStartNo = '{this.selecedPK.CTNStartNo}'
-                    AND a.Article = '{no_barcode_dr["Article"]}' 
-                    AND a.SizeCode = '{no_barcode_dr["SizeCode"]}'
-                    
-                    UPDATE pd
-                    SET BarCode = '{this.txtScanEAN.Text}'
-                    from  PackingList_Detail pd
-                    inner join Orders od ON od.ID = pd.OrderID
-                    inner join #Base b ON b.Article = pd.Article
-                    AND b.Color = pd.Color
-                    AND b.SizeCode = pd.SizeCode
-                    AND b.StyleUkey = od.StyleUkey
-
-                    --抓出有更新的PKID，作為後續call WebAPI 更新廠商資料用
-                    select distinct pd.ID
-                    from    PackingList_Detail pd
-                    inner join Orders od ON od.ID = pd.OrderID
-                    inner join #Base b ON b.Article = pd.Article
-                    AND b.Color = pd.Color
-                    AND b.SizeCode = pd.SizeCode
-                    AND b.StyleUkey = od.StyleUkey
-
-                    Drop TABLE #Base
-                    ";
+                    this.upd_sql_barcode += this.Update_barcodestring(no_barcode_dr);
                     foreach (DataRow dr in ((DataTable)this.scanDetailBS.DataSource).Rows)
                     {
                         if (dr["Article"].Equals(no_barcode_dr["Article"]) && dr["SizeCode"].Equals(no_barcode_dr["SizeCode"]))
@@ -1560,47 +1520,7 @@ drop table #tmpUpdatedID
                         no_barcode_dr = no_barcode_dt.Rows[0];
                     }
 
-                    this.upd_sql_barcode += $@"
-                    /*
-                    update PackingList_Detail
-                    set BarCode = '{this.txtScanEAN.Text}'
-                    where PackingList_Detail.Article 
-                    =  '{no_barcode_dr["Article"]}'
-                    and PackingList_Detail.SizeCode
-                    =  '{no_barcode_dr["SizeCode"]}'
-                    and PackingList_Detail.ID = '{this.selecedPK.ID}'
-                    and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
-                    */
-
-                    select a.Article,a.Color,a.SizeCode,o.StyleUkey
-                    INTO #Base
-                    from PackingList_Detail a
-                    inner join Orders o ON o.ID = a.OrderID
-                    where a.ID ='{this.selecedPK.ID}'
-                    AND a.CTNStartNo =  '{this.selecedPK.CTNStartNo}'
-                    AND a.Article =  '{no_barcode_dr["Article"]}'
-                    and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
-
-                    UPDATE pd
-                    SET BarCode = '{this.txtScanEAN.Text}'
-                    from  PackingList_Detail pd
-                    inner join Orders od ON od.ID = pd.OrderID
-                    inner join #Base b ON b.Article = pd.Article
-                    AND b.Color = pd.Color
-                    AND b.SizeCode = pd.SizeCode
-                    AND b.StyleUkey = od.StyleUkey
-
-                    --抓出有更新的PKID，作為後續call WebAPI 更新廠商資料用
-                    select distinct pd.ID
-                    from  PackingList_Detail pd
-                    inner join Orders od ON od.ID = pd.OrderID
-                    inner join #Base b ON b.Article = pd.Article
-                    AND b.Color = pd.Color
-                    AND b.SizeCode = pd.SizeCode
-                    AND b.StyleUkey = od.StyleUkey
-
-                    Drop TABLE #Base
-                    ";
+                    this.upd_sql_barcode += this.Update_barcodestring(no_barcode_dr);
                     foreach (DataRow dr in ((DataTable)this.scanDetailBS.DataSource).Rows)
                     {
                         if (dr["Article"].Equals(no_barcode_dr["Article"]) && dr["SizeCode"].Equals(no_barcode_dr["SizeCode"]))
@@ -1705,6 +1625,42 @@ and CTNStartNo = '{this.selecedPK.CTNStartNo}'
                 // 讓遊標停留在原地
                 this.txtScanEAN.Focus();
             }
+        }
+
+        private string Update_barcodestring(DataRow no_barcode_dr)
+        {
+            return $@"
+UPDATE pd
+SET BarCode = '{this.txtScanEAN.Text}'
+from  PackingList_Detail pd
+inner join Orders od ON od.ID = pd.OrderID
+inner join ({this.Base(no_barcode_dr)}) b ON b.Article = pd.Article
+AND b.Color = pd.Color
+AND b.SizeCode = pd.SizeCode
+AND b.StyleUkey = od.StyleUkey
+
+--抓出有更新的PKID，作為後續call WebAPI 更新廠商資料用
+select distinct pd.ID
+from  PackingList_Detail pd
+inner join Orders od ON od.ID = pd.OrderID
+inner join ({this.Base(no_barcode_dr)}) b ON b.Article = pd.Article
+AND b.Color = pd.Color
+AND b.SizeCode = pd.SizeCode
+AND b.StyleUkey = od.StyleUkey
+";
+        }
+
+        private string Base(DataRow no_barcode_dr)
+        {
+            return $@"
+select a.Article,a.Color,a.SizeCode,o.StyleUkey
+from PackingList_Detail a
+inner join Orders o ON o.ID = a.OrderID
+where a.ID ='{this.selecedPK.ID}'
+AND a.CTNStartNo =  '{this.selecedPK.CTNStartNo}'
+AND a.Article =  '{no_barcode_dr["Article"]}'
+and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
+";
         }
 
         private void TaskCallWebAPI(string id)
