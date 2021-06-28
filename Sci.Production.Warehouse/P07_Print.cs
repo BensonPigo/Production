@@ -124,7 +124,7 @@ select
     ,ColorName = c.Name
 from dbo.Receiving_Detail R WITH (NOLOCK) 
 LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
-left join orders o WITH (NOLOCK) on o.ID = r.PoId
+left join View_WH_Orders o WITH (NOLOCK) on o.ID = r.PoId
 LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
 LEFT JOIN color c on c.id = p.colorid and c.BrandId = p.BrandId 
 OUTER APPLY(

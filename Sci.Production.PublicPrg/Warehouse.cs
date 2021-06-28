@@ -1095,7 +1095,7 @@ select  p.id,concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq
         , Qty = Round (p.qty * v.Ratevalue, 2)
         ,[Status]=IIF(LockStatus.LockCount > 0 ,'Locked','Unlocked')
 from dbo.PO_Supp_Detail p WITH (NOLOCK) 
-inner join Orders o on p.id = o.id
+inner join View_WH_Orders o on p.id = o.id
 inner join Factory f on o.FtyGroup = f.id
 left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2
 LEFT JOIN Fabric WITH (NOLOCK) ON p.SCIRefNo=Fabric.SCIRefNo

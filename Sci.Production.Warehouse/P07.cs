@@ -669,7 +669,7 @@ and ID = '{Sci.Env.User.UserID}'"))
                 {
                     if (MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po WITH (NOLOCK) where id = '{0}')", e.FormattedValue), null))
                     {
-                        string sqlorders = string.Format("select category,FactoryID,OrderTypeID from orders WITH (NOLOCK) where id='{0}'", e.FormattedValue);
+                        string sqlorders = string.Format("select category,FactoryID,OrderTypeID from View_WH_Orders WITH (NOLOCK) where id='{0}'", e.FormattedValue);
                         if (MyUtility.Check.Seek(sqlorders, out DataRow dr))
                         {
                             if (MyUtility.Convert.GetString(dr["category"]) == "M")
@@ -2300,7 +2300,7 @@ select  a.id
         ,[IsSelect] = cast(0 as bit)
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 INNER JOIN Receiving b WITH (NOLOCK) ON a.id= b.Id
-left join orders o WITH (NOLOCK) on o.id = a.PoId
+left join View_WH_Orders o WITH (NOLOCK) on o.id = a.PoId
 LEFT JOIN PO_Supp_Detail p  WITH (NOLOCK) ON p.ID=a.PoId AND p.SEQ1=a.Seq1 AND p.SEQ2 = a.Seq2
 LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
 left join Receiving_Detail cmb on  a.Id = cmb.Id
@@ -2429,8 +2429,8 @@ into #tmp
 from dbo.Export_Detail a WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id   
                                                  and a.Seq1 = b.SEQ1    
-                                                 and a.Seq2 = b.SEQ2    
-inner join orders c WITH (NOLOCK) on c.id = a.poid
+                                                 and a.Seq2 = b.SEQ2
+inner join View_WH_Orders c WITH (NOLOCK) on c.id = a.poid
 inner join View_unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit
 LEFT JOIN Fabric WITH (NOLOCK) ON b.SCIRefNo=Fabric.SCIRefNo
 left join POShippingList_Line pll WITH (NOLOCK) ON pll.Export_Detail_Ukey = a.Ukey and b.FabricType = 'F'

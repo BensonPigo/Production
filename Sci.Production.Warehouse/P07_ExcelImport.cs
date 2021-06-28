@@ -391,7 +391,7 @@ select  pd.fabrictype
         , pd.POUnit
         , StockUnit = pd.StockUnit
         , Round(dbo.GetUnitQty(pd.POUnit, pd.StockUnit, @shipqty), 2) as stockqty 
-        , (select o.Category from Orders o WITH (NOLOCK) where o.id= pd.id) as category
+        , (select o.Category from View_WH_Orders o WITH (NOLOCK) where o.id= pd.id) as category
         , pd.Refno
         , [ColorID] = isnull(Color.Value,'')
 from dbo.PO_Supp_Detail pd WITH (NOLOCK) 

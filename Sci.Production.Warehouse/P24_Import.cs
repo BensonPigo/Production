@@ -65,7 +65,7 @@ select 	selected = 0
 		, fromPoId = a.id
 		, fromseq1 = a.Seq1
 		, fromseq2 = a.Seq2 
-        , fromFactoryID = orders.FactoryID
+        , fromFactoryID = o.FactoryID
 		, fromseq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
 		, Description = dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0)
         , i.Deadline as Deadline
@@ -82,7 +82,7 @@ select 	selected = 0
 		, toseq2 = a.SEQ2 
 		, toroll = c.Roll 
 		, todyelot = c.Dyelot 
-        , toFactoryID = orders.FactoryID
+        , toFactoryID = o.FactoryID
 		, toStocktype = 'O' 
 		, Fromlocation = dbo.Getlocation(c.ukey)
         , Fromlocation2 = Fromlocation2.listValue
@@ -98,8 +98,8 @@ select 	selected = 0
 		                , 1, 1, '')
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
-inner join Orders on c.Poid = orders.id
-inner join Factory on orders.FactoryID = factory.id
+inner join View_WH_Orders o WITH (NOLOCK) on c.Poid = o.id
+inner join Factory WITH (NOLOCK) on o.FactoryID = factory.id
 outer apply(
 	select listValue = Stuff((
 			select concat(',',MtlLocationID)

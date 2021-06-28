@@ -388,7 +388,7 @@ WHERE   StockType='{dr["toStocktype"]}'
             , VarianceQty=ROUND(dbo.GetUnitQty(pd.POUnit, pd.StockUnit, xz.taipei_qty),2) - isnull(x.accu_qty,0.00)
             , pr.PRHandle
             , pd.FinalETA
-    from dbo.orders o WITH (NOLOCK) 
+    from View_WH_Orders o WITH (NOLOCK) 
     inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
     inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
     inner join dbo.Factory checkProduceFty With (NoLock) on o.FactoryID = checkProduceFty.ID
@@ -547,7 +547,7 @@ from #tmp t
 inner join FtyInventory fi WITH (NOLOCK) on  fi.POID = t.POID 
                                              and fi.seq1 = t.Seq1 
                                              and fi.Seq2 = t.Seq2
-left join orders o on fi.poid=o.id
+left join View_WH_Orders o on fi.poid=o.id
 where   fi.StockType = 'B' 
 {where}
         and fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty > 0 
