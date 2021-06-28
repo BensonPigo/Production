@@ -626,7 +626,7 @@ declare @id varchar(20) = @sp1
 
 select distinct StyleID,BrandID,POID,FtyGroup ,CuttingSP
 into #tmpOrder
-from orders where id like @id
+from View_WH_Orders where id like @id
 
 select OrderID,Refno,ThreadColorID,UnitID
 into #tmpLocalPO_Detail
@@ -639,7 +639,7 @@ Select distinct [ID] = PO.POID
 , tcd.SCIRefNo, tcd.ColorID, tcd.Article --Mapping PO_Supp_Detail
 into #ArticleForThread_Detail
 From #tmpOrder PO
-Inner Join dbo.Orders as o On o.ID = po.POID 
+Inner Join View_WH_Orders as o On o.ID = po.POID 
 Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
 Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
 Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey

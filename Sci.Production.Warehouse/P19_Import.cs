@@ -91,10 +91,10 @@ select  0 as selected
 		, [ToSeq]=''
 		, [ToSeq1]=''
 		, [ToSeq2]=''
-FROM FtyInventory FI 
-LEFT JOIN Orders O ON O.ID = FI.POID
-LEFT JOIN Factory F ON F.ID = O.FactoryID
-LEFT JOIN PO_Supp_Detail PSD ON PSD.ID=FI.POID AND PSD.SEQ1 = FI.SEQ1 AND PSD.SEQ2=FI.SEQ2
+FROM FtyInventory FI WITH (NOLOCK)
+LEFT JOIN View_WH_Orders O WITH (NOLOCK) ON O.ID = FI.POID
+LEFT JOIN Factory F WITH (NOLOCK) ON F.ID = O.FactoryID
+LEFT JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID=FI.POID AND PSD.SEQ1 = FI.SEQ1 AND PSD.SEQ2=FI.SEQ2
 Where FI.lock = 0 
 and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
         and FI.inqty - FI.outqty + FI.adjustqty - FI.ReturnQty > 0         

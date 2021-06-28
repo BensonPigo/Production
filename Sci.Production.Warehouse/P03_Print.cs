@@ -134,7 +134,7 @@ namespace Sci.Production.Warehouse
 			                                          (select r.Remark  from dbo.Receiving_Detail r WITH (NOLOCK) where POID =a.id and seq1=a.seq1 and seq2=a.seq2 and remark !='') r for xml path('')) [Remark]
 			                                        ,a.junk
                                             from dbo.PO_Supp_Detail a WITH (NOLOCK) 
-			                                left join dbo.Orders b WITH (NOLOCK) on a.id=b.id
+			                                left join View_WH_Orders b WITH (NOLOCK) on a.id=b.id
 			                                left join dbo.PO_Supp c WITH (NOLOCK) on c.id=a.id and c.SEQ1=a.SEQ1
                                             left join Fabric with(nolock) on Fabric.SCIRefno = a.SCIRefno
 			                                left join dbo.supp d WITH (NOLOCK) on d.id=c.SuppID
@@ -210,7 +210,7 @@ namespace Sci.Production.Warehouse
                                              , [Remark] = '-'
                                              , [junk]  = 'false'
                                               from LocalInventory l
-                                                left join orders o on o.id = l.orderid
+                                                left join View_WH_Orders o on o.id = l.orderid
                                                 left join LocalItem b on l.Refno=b.RefNo
                                                 left join LocalSupp c on b.LocalSuppid=c.ID
                                                  where l.OrderID = @ID     ) as a " + this.junk_where + this.order_by +
@@ -304,7 +304,7 @@ namespace Sci.Production.Warehouse
                                               ,'Y','')
                                              ,a.junk
                                        from dbo.PO_Supp_Detail a WITH (NOLOCK) 
-                                       left join dbo.orders b WITH (NOLOCK) on a.id=b.id
+                                       left join View_WH_Orders b WITH (NOLOCK) on a.id=b.id
                                        left join dbo.PO_Supp c WITH (NOLOCK) on a.id=c.id and a.SEQ1=c.SEQ1
                                        left join Fabric with(nolock) on Fabric.SCIRefno = a.SCIRefno
                                        left join dbo.Fabric_Supp d WITH (NOLOCK) on d.SCIRefno=a.SCIRefno and d.SuppID=c.SuppID

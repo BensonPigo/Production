@@ -47,7 +47,7 @@ Select  a.FtyGroup
         , b.stockunit 
         , md.BLocation
         , [LobQty] = isnull(md.LobQty,0)
-from orders a WITH (NOLOCK) 
+from View_WH_Orders a WITH (NOLOCK) 
      , po_supp_detail b WITH (NOLOCK) 
 left join fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
 left join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
@@ -87,7 +87,7 @@ order by ColorID, SizeSpec ,SewinLine
                 @"
 Select distinct b.sizespec ,a.WhseClose
 into #tmp
-from orders a WITH (NOLOCK) 
+from View_WH_Orders a WITH (NOLOCK) 
 inner join po_supp_detail b WITH (NOLOCK) on a.id = b.id
 inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
 inner join  po_supp c WITH (NOLOCK) on a.id = c.id
@@ -123,7 +123,7 @@ drop table #tmp
 
 Select a.FtyGroup ,a.WhseClose
 into #tmp
-from orders a WITH (NOLOCK) 
+from View_WH_Orders a WITH (NOLOCK) 
 inner join po_supp_detail b WITH (NOLOCK) on a.id = b.id
 inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
 inner join  po_supp c WITH (NOLOCK) on a.id = c.id
@@ -158,7 +158,7 @@ drop table #tmp
                 @"
 Select a.BrandID,b.colorid,a.WhseClose
 into #tmp
-from orders a WITH (NOLOCK) 
+from View_WH_Orders a WITH (NOLOCK) 
 inner join po_supp_detail b WITH (NOLOCK) on a.id = b.id
 inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
 inner join  po_supp c WITH (NOLOCK) on a.id = c.id

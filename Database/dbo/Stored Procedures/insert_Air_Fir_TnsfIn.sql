@@ -1,6 +1,4 @@
-﻿
-
-CREATE PROCEDURE [dbo].[insert_Air_Fir_TnsfIn]
+﻿CREATE PROCEDURE [dbo].[insert_Air_Fir_TnsfIn]
 (
 	@ID varchar(13),
 	@LoginID varchar(20)
@@ -40,7 +38,7 @@ into #tempTableAll
 from TransferIn_Detail a
 inner join PO_Supp_Detail b on a.PoId=b.ID and a.Seq1=b.SEQ1 and a.Seq2=b.SEQ2
 inner join PO_Supp c on c.ID=a.PoId and c.SEQ1 = a.Seq1
-inner join Orders d on d.id=a.PoId
+inner join View_WH_Orders d on d.id=a.PoId
 inner join TransferIn e on a.Id=e.Id
 inner join Fabric fb with (nolock) on b.SCIRefno = fb.SCIRefno
 left join QAWeaveTypeSetting qts with (nolock) on fb.WeaveTypeID = qts.WeaveTypeID

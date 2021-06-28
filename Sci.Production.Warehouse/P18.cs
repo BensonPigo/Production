@@ -137,7 +137,7 @@ namespace Sci.Production.Warehouse
             P18_Print from = new P18_Print(this.CurrentMaintain);
             from.ShowDialog();
 
-            return true;            
+            return true;
         }
 
         // print for SubReport

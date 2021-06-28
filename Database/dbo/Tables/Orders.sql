@@ -1,893 +1,1007 @@
-﻿CREATE TABLE [dbo].[Orders] (
-    [ID]                   VARCHAR (13)   CONSTRAINT [DF_Orders_ID] DEFAULT ('') NOT NULL,
-    [BrandID]              VARCHAR (8)    CONSTRAINT [DF_Orders_BrandID] DEFAULT ('') NULL,
-    [ProgramID]            VARCHAR (12)   CONSTRAINT [DF_Orders_ProgramID] DEFAULT ('') NULL,
-    [StyleID]              VARCHAR (15)   CONSTRAINT [DF_Orders_StyleID] DEFAULT ('') NULL,
-    [SeasonID]             VARCHAR (10)   CONSTRAINT [DF_Orders_SeasonID] DEFAULT ('') NULL,
-    [ProjectID]            VARCHAR (5)    CONSTRAINT [DF_Orders_ProjectID] DEFAULT ('') NULL,
-    [Category]             VARCHAR (1)    CONSTRAINT [DF_Orders_Category] DEFAULT ('') NULL,
-    [OrderTypeID]          VARCHAR (20)   CONSTRAINT [DF_Orders_OrderTypeID] DEFAULT ('') NULL,
-    [BuyMonth]             VARCHAR (16)   CONSTRAINT [DF_Orders_BuyMonth] DEFAULT ('') NULL,
-    [Dest]                 VARCHAR (2)    CONSTRAINT [DF_Orders_Dest] DEFAULT ('') NULL,
-    [Model]                VARCHAR (25)   CONSTRAINT [DF_Orders_Model] DEFAULT ('') NULL,
-    [HsCode1]              VARCHAR (14)   CONSTRAINT [DF_Orders_HsCode1] DEFAULT ('') NULL,
-    [HsCode2]              VARCHAR (14)   CONSTRAINT [DF_Orders_HsCode2] DEFAULT ('') NULL,
-    [PayTermARID]          VARCHAR (10)   CONSTRAINT [DF_Orders_PayTermARID] DEFAULT ('') NULL,
-    [ShipTermID]           VARCHAR (5)    CONSTRAINT [DF_Orders_ShipTermID] DEFAULT ('') NULL,
-    [ShipModeList]         VARCHAR (30)   CONSTRAINT [DF_Orders_ShipModeList] DEFAULT ('') NULL,
-    [CdCodeID]             VARCHAR (6)    CONSTRAINT [DF_Orders_CdCodeID] DEFAULT ('') NULL,
-    [CPU]                  NUMERIC (5, 3) CONSTRAINT [DF_Orders_CPU] DEFAULT ((0)) NULL,
-    [Qty]                  INT            CONSTRAINT [DF_Orders_Qty] DEFAULT ((0)) NULL,
-    [StyleUnit]            VARCHAR (8)    CONSTRAINT [DF_Orders_StyleUnit] DEFAULT ('') NULL,
-    [PoPrice]              NUMERIC (8, 3) CONSTRAINT [DF_Orders_PoPrice] DEFAULT ((0)) NULL,
-    [CFMPrice]             NUMERIC (8, 3) CONSTRAINT [DF_Orders_CFMPrice] DEFAULT ((0)) NULL,
-    [CurrencyID]           VARCHAR (3)    CONSTRAINT [DF_Orders_CurrecnyID] DEFAULT ('') NULL,
-    [Commission]           NUMERIC (3, 2) CONSTRAINT [DF_Orders_Commission] DEFAULT ((0)) NULL,
-    [FactoryID]            VARCHAR (8)    CONSTRAINT [DF_Orders_FactoryID] DEFAULT ('') NULL,
-    [BrandAreaCode]        VARCHAR (10)   CONSTRAINT [DF_Orders_BrandAreaCode] DEFAULT ('') NULL,
-    [BrandFTYCode]         VARCHAR (10)   CONSTRAINT [DF_Orders_BrandFTYCode] DEFAULT ('') NULL,
-    [CTNQty]               SMALLINT       CONSTRAINT [DF_Orders_CTNQty] DEFAULT ((0)) NULL,
-    [CustCDID]             VARCHAR (16)   CONSTRAINT [DF_Orders_CustCDID] DEFAULT ('') NULL,
-    [CustPONo]             VARCHAR (30)   CONSTRAINT [DF_Orders_CustPONo] DEFAULT ('') NULL,
-    [Customize1]           VARCHAR (30)   CONSTRAINT [DF_Orders_Customize1] DEFAULT ('') NULL,
-    [Customize2]           VARCHAR (30)   CONSTRAINT [DF_Orders_Customize2] DEFAULT ('') NULL,
-    [Customize3]           VARCHAR (30)   CONSTRAINT [DF_Orders_Customize3] DEFAULT ('') NULL,
-    [CFMDate]              DATE           NULL,
-    [BuyerDelivery]        DATE           NULL,
-    [SciDelivery]          DATE           NULL,
-    [SewInLine]            DATE           NULL,
-    [SewOffLine]           DATE           NULL,
-    [CutInLine]            DATE           NULL,
-    [CutOffLine]           DATE           NULL,
-    [PulloutDate]          DATE           NULL,
-    [CMPUnit]              VARCHAR (8)    CONSTRAINT [DF_Orders_CMPUnit] DEFAULT ('') NULL,
-    [CMPPrice]             NUMERIC (6, 2) CONSTRAINT [DF_Orders_CMPPrice] DEFAULT ((0)) NULL,
-    [CMPQDate]             DATE           NULL,
-    [CMPQRemark]           NVARCHAR (MAX) CONSTRAINT [DF_Orders_CMPQRemark] DEFAULT ('') NULL,
-    [EachConsApv]          DATETIME       NULL,
-    [MnorderApv]           DATETIME       NULL,
-    [CRDDate]              DATE           NULL,
-    [InitialPlanDate]      DATE           NULL,
-    [PlanDate]             DATE           NULL,
-    [FirstProduction]      DATE           NULL,
-    [FirstProductionLock]  DATE           NULL,
-    [OrigBuyerDelivery]    DATE           NULL,
-    [ExCountry]            DATE           NULL,
-    [InDCDate]             DATE           NULL,
-    [CFMShipment]          DATE           NULL,
-    [PFETA]                DATE           NULL,
-    [PackLETA]             DATE           NULL,
-    [LETA]                 DATE           NULL,
-    [MRHandle]             VARCHAR (10)   CONSTRAINT [DF_Orders_MRHandle] DEFAULT ('') NULL,
-    [SMR]                  VARCHAR (10)   CONSTRAINT [DF_Orders_SMR] DEFAULT ('') NULL,
-    [ScanAndPack]          BIT            CONSTRAINT [DF_Orders_ScanAndPack] DEFAULT ((0)) NULL,
-    [VasShas]              BIT            CONSTRAINT [DF_Orders_VasShas] DEFAULT ((0)) NULL,
-    [SpecialCust]          BIT            CONSTRAINT [DF_Orders_SpecialCust] DEFAULT ((0)) NULL,
-    [TissuePaper]          BIT            CONSTRAINT [DF_Orders_TissuePaper] DEFAULT ((0)) NULL,
-    [Junk]                 BIT            CONSTRAINT [DF_Orders_Junk] DEFAULT ((0)) NULL,
-    [Packing]              NVARCHAR (MAX) CONSTRAINT [DF_Orders_Packing] DEFAULT ('') NULL,
-    [MarkFront]            NVARCHAR (MAX) CONSTRAINT [DF_Orders_MarkFront] DEFAULT ('') NULL,
-    [MarkBack]             NVARCHAR (MAX) CONSTRAINT [DF_Orders_MarkBack] DEFAULT ('') NULL,
-    [MarkLeft]             NVARCHAR (MAX) CONSTRAINT [DF_Orders_MarkLeft] DEFAULT ('') NULL,
-    [MarkRight]            NVARCHAR (MAX) CONSTRAINT [DF_Orders_MarkRight] DEFAULT ('') NULL,
-    [Label]                NVARCHAR (MAX) CONSTRAINT [DF_Orders_Label] DEFAULT ('') NULL,
-    [OrderRemark]          NVARCHAR (MAX) CONSTRAINT [DF_Orders_OrderRemark] DEFAULT ('') NULL,
-    [ArtWorkCost]          VARCHAR (1)    CONSTRAINT [DF_Orders_ArtWorkCost] DEFAULT ('') NULL,
-    [StdCost]              NUMERIC (7, 2) CONSTRAINT [DF_Orders_StdCost] DEFAULT ((0)) NULL,
-    [CtnType]              VARCHAR (1)    CONSTRAINT [DF_Orders_CtnType] DEFAULT ('') NULL,
-    [FOCQty]               INT            CONSTRAINT [DF_Orders_FOCQty] DEFAULT ((0)) NULL,
-    [SMnorderApv]          DATE           NULL,
-    [FOC]                  BIT            CONSTRAINT [DF_Orders_FOC] DEFAULT ((0)) NULL,
-    [MnorderApv2]          DATETIME       NULL,
-    [Packing2]             NVARCHAR (MAX) CONSTRAINT [DF_Orders_Packing2] DEFAULT ('') NULL,
-    [SampleReason]         VARCHAR (5)    CONSTRAINT [DF_Orders_SampleReason] DEFAULT ('') NULL,
-    [RainwearTestPassed]   BIT            CONSTRAINT [DF_Orders_RainwearTestPassed] DEFAULT ((0)) NULL,
-    [SizeRange]            NVARCHAR (MAX) CONSTRAINT [DF_Orders_SizeRange] DEFAULT ('') NULL,
-    [MTLComplete]          BIT            CONSTRAINT [DF_Orders_MTLComplete] DEFAULT ((0)) NULL,
-    [SpecialMark]          VARCHAR (5)    CONSTRAINT [DF_Orders_SpecialMark] DEFAULT ('') NULL,
-    [OutstandingRemark]    NVARCHAR (MAX) CONSTRAINT [DF_Orders_OutstandingRemark] DEFAULT ('') NULL,
-    [OutstandingInCharge]  VARCHAR (10)   CONSTRAINT [DF_Orders_OutstandingInCharge] DEFAULT ('') NULL,
-    [OutstandingDate]      DATETIME       NULL,
-    [OutstandingReason]    VARCHAR (5)    CONSTRAINT [DF_Orders_OutstandingReason] DEFAULT ('') NULL,
-    [StyleUkey]            BIGINT         CONSTRAINT [DF_Orders_StyleUkey] DEFAULT ((0)) NULL,
-    [POID]                 VARCHAR (13)   CONSTRAINT [DF_Orders_POID] DEFAULT ('') NULL,
-    [OrderComboID]         VARCHAR (13)   NULL,
-    [IsNotRepeatOrMapping] BIT            CONSTRAINT [DF_Orders_IsProPhet] DEFAULT ((0)) NULL,
-    [SplitOrderId]         VARCHAR (13)   CONSTRAINT [DF_Orders_SplitOrderId] DEFAULT ('') NULL,
-    [FtyKPI]               DATETIME       NULL,
-    [AddName]              VARCHAR (10)   CONSTRAINT [DF_Orders_AddName] DEFAULT ('') NULL,
-    [AddDate]              DATETIME       NULL,
-    [EditName]             VARCHAR (10)   CONSTRAINT [DF_Orders_EditName] DEFAULT ('') NULL,
-    [EditDate]             DATETIME       NULL,
-    [SewLine]              VARCHAR (60)   CONSTRAINT [DF_Orders_SewLine] DEFAULT ('') NULL,
-    [ActPulloutDate]       DATE           NULL,
-    [ProdSchdRemark]       NVARCHAR (100) CONSTRAINT [DF_Orders_ProdSchdRemark] DEFAULT ('') NULL,
-    [IsForecast]           BIT            CONSTRAINT [DF_Orders_IsForecast] DEFAULT ((0)) NULL,
-    [LocalOrder]           BIT            CONSTRAINT [DF_Orders_LocalOrder] DEFAULT ((0)) NULL,
-    [GMTClose]             DATE           NULL,
-    [TotalCTN]             INT            CONSTRAINT [DF_Orders_TotalCTN] DEFAULT ((0)) NULL,
-    [ClogCTN]              INT            CONSTRAINT [DF_Orders_ClogCTN] DEFAULT ((0)) NULL,
-    [FtyCTN]               INT            CONSTRAINT [DF_Orders_FtyCTN] DEFAULT ((0)) NULL,
-    [PulloutComplete]      BIT            CONSTRAINT [DF_Orders_PulloutComplete] DEFAULT ((0)) NULL,
-    [ReadyDate]            DATE           NULL,
-    [PulloutCTNQty]        INT            CONSTRAINT [DF_Orders_PulloutCTNQty] DEFAULT ((0)) NULL,
-    [Finished]             BIT            CONSTRAINT [DF_Orders_Finished] DEFAULT ((0)) NULL,
-    [PFOrder]              BIT            CONSTRAINT [DF_Orders_PFOrder] DEFAULT ((0)) NULL,
-    [SDPDate]              DATE           NULL,
-    [InspDate]             DATE           NULL,
-    [InspResult]           VARCHAR (1)    CONSTRAINT [DF_Orders_InspResult] DEFAULT ('') NULL,
-    [InspHandle]           VARCHAR (10)   CONSTRAINT [DF_Orders_InspHandle] DEFAULT ('') NULL,
-    [KPILETA]              DATE           NULL,
-    [MTLETA]               DATE           NULL,
-    [SewETA]               DATE           NULL,
-    [PackETA]              DATE           NULL,
-    [MTLExport]            VARCHAR (2)    CONSTRAINT [DF_Orders_MTLExport] DEFAULT ('') NULL,
-    [DoxType]              VARCHAR (8)    CONSTRAINT [DF_Orders_DoxType] DEFAULT ('') NULL,
-    [FtyGroup]             VARCHAR (8)    CONSTRAINT [DF_Orders_FtyGroup] DEFAULT ('') NULL,
-    [MDivisionID]          VARCHAR (8)    CONSTRAINT [DF_Orders_MDivisionID] DEFAULT ('') NULL,
-    [CutReadyDate]         DATE           NULL,
-    [SewRemark]            NVARCHAR (60)  CONSTRAINT [DF_Orders_SewRemark] DEFAULT ('') NULL,
-    [WhseClose]            DATE           NULL,
-    [SubconInSisterFty]    BIT            CONSTRAINT [DF_Orders_SubconInSisterFty] DEFAULT ((0)) NULL,
-    [MCHandle]             VARCHAR (10)   CONSTRAINT [DF_Orders_MCHandle] DEFAULT ('') NULL,
-    [LocalMR]              VARCHAR (10)   CONSTRAINT [DF_Orders_LocalMR] DEFAULT ('') NULL,
-    [KPIChangeReason]      VARCHAR (5)    CONSTRAINT [DF_Orders_KPIChangeReason] DEFAULT ('') NULL,
-    [MDClose]              DATE           NULL,
-    [MDEditName]           VARCHAR (10)   CONSTRAINT [DF_Orders_MDEditName] DEFAULT ('') NULL,
-    [MDEditDate]           DATETIME       NULL,
-    [ClogLastReceiveDate]  DATE           NULL,
-    [CPUFactor]            NUMERIC (3, 1) NULL,
-    [SizeUnit]             VARCHAR (8)    CONSTRAINT [DF_Orders_SizeUnit] DEFAULT ('') NULL,
-    [CuttingSP]            VARCHAR (13)   CONSTRAINT [DF_Orders_CuttingSP] DEFAULT ('') NULL,
-    [IsMixMarker]          INT            CONSTRAINT [DF_Orders_IsMixMarker] DEFAULT ((0)) NULL,
-    [EachConsSource]       VARCHAR (1)    NULL,
-    [KPIEachConsApprove]   DATE           NULL,
-    [KPICmpq]              DATE           NULL,
-    [KPIMNotice]           DATE           NULL,
-    [GMTComplete]          VARCHAR (1)    CONSTRAINT [DF__Orders__GMTCompl__6C39D5A3] DEFAULT ('') NULL,
-    [GFR]                  BIT            CONSTRAINT [DF__Orders__GFR__6D2DF9DC] DEFAULT ((0)) NULL,
-    [CfaCTN]               INT            CONSTRAINT [DF_Orders_CfaCTN] DEFAULT ((0)) NULL,
-    [DRYCTN]               INT            CONSTRAINT [DF_Orders_DRYCTN] DEFAULT ((0)) NOT NULL,
-    [PackErrCTN]           INT            CONSTRAINT [DF_Orders_PackErrCTN] DEFAULT ((0)) NULL,
-    [ForecastSampleGroup]  VARCHAR (1)    CONSTRAINT [DF_Orders_ForecastSampleGroup] DEFAULT ('') NULL,
-    [DyeingLoss]           NUMERIC (3)    DEFAULT ((0)) NULL,
-    [SubconInType]         VARCHAR (1)    NULL,
-    [LastProductionDate]   DATE           NULL,
-    [EstPODD]              DATE           NULL,
-    [AirFreightByBrand]    BIT            DEFAULT ((0)) NULL,
-    [AllowanceComboID]     VARCHAR (13)   NULL,
-    [ChangeMemoDate]       DATE           NULL,
-    [BuyBack]              VARCHAR (20)   NULL,
-    [BuyBackOrderID]       VARCHAR (13)   NULL,
-    [ForecastCategory]     VARCHAR (1)    DEFAULT ('') NULL,
-    [OnSiteSample]         BIT            DEFAULT ((0)) NULL,
-    [PulloutCmplDate]      DATE           NULL,
-    [NeedProduction]       BIT            DEFAULT ((0)) NULL,
-    [IsBuyBack]            BIT            DEFAULT ((0)) NOT NULL,
-    [KeepPanels]           BIT            DEFAULT ((0)) NULL,
-    [BuyBackReason] varchar(20) NOT NULL CONSTRAINT [DF_Orders_BuyBackReason] DEFAULT (''),
-    [IsBuyBackCrossArticle] BIT NOT NULL CONSTRAINT [DF_Orders_IsBuyBackCrossArticle] DEFAULT (0), 
-    [IsBuyBackCrossSizeCode] BIT NOT NULL CONSTRAINT [DF_Orders_IsBuyBackCrossSizeCode] DEFAULT (0), 
-    [KpiEachConsCheck] DATE NULL, 
-	[NonRevenue] bit NOT NULL CONSTRAINT [DF_Orders_NonRevenue] DEFAULT ((0)),
-    [CAB] Varchar(10) NOT NULL CONSTRAINT [DF_Orders_CAB] DEFAULT(''), 
-    [FinalDest] Varchar(50) NOT NULL CONSTRAINT [DF_Orders_FinalDest] DEFAULT(''), 
-    [Customer_PO] Varchar(50) NOT NULL CONSTRAINT [DF_Orders_Customer_PO] DEFAULT(''), 
-    [AFS_STOCK_CATEGORY] Varchar(50) NOT NULL CONSTRAINT [DF_Orders_AFS_STOCK_CATEGORY] DEFAULT(''), 
-    [CMPLTDATE] DATE NULL, 
-    [HangerPack] BIT NULL DEFAULT ((0)), 
-    [CDCodeNew] VARCHAR(5) NULL, 
-    [SizeUnitWeight] VARCHAR(8) NULL, 
-    CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
-);
-
+﻿CREATE TABLE [dbo].[Orders](
+	[ID] [varchar](13) NOT NULL,
+	[BrandID] [varchar](8) NULL,
+	[ProgramID] [varchar](12) NULL,
+	[StyleID] [varchar](15) NULL,
+	[SeasonID] [varchar](10) NULL,
+	[ProjectID] [varchar](5) NULL,
+	[Category] [varchar](1) NULL,
+	[OrderTypeID] [varchar](20) NULL,
+	[BuyMonth] [varchar](16) NULL,
+	[Dest] [varchar](2) NULL,
+	[Model] [varchar](25) NULL,
+	[HsCode1] [varchar](14) NULL,
+	[HsCode2] [varchar](14) NULL,
+	[PayTermARID] [varchar](10) NULL,
+	[ShipTermID] [varchar](5) NULL,
+	[ShipModeList] [varchar](30) NULL,
+	[CdCodeID] [varchar](6) NULL,
+	[CPU] [numeric](8, 3) NULL,
+	[Qty] [int] NULL,
+	[StyleUnit] [varchar](8) NULL,
+	[PoPrice] [numeric](16, 3) NULL,
+	[CFMPrice] [numeric](16, 3) NULL,
+	[CurrencyID] [varchar](3) NULL,
+	[Commission] [numeric](3, 2) NULL,
+	[FactoryID] [varchar](8) NULL,
+	[BrandAreaCode] [varchar](10) NULL,
+	[BrandFTYCode] [varchar](10) NULL,
+	[CTNQty] [smallint] NULL,
+	[CustCDID] [varchar](16) NULL,
+	[CustPONo] [varchar](30) NULL,
+	[Customize1] [varchar](30) NULL,
+	[Customize2] [varchar](30) NULL,
+	[Customize3] [varchar](30) NULL,
+	[CFMDate] [date] NULL,
+	[BuyerDelivery] [date] NULL,
+	[SciDelivery] [date] NULL,
+	[SewInLine] [date] NULL,
+	[SewOffLine] [date] NULL,
+	[CutInLine] [date] NULL,
+	[CutOffLine] [date] NULL,
+	[PulloutDate] [date] NULL,
+	[CMPUnit] [varchar](8) NULL,
+	[CMPPrice] [numeric](16, 4) NULL,
+	[CMPQDate] [date] NULL,
+	[CMPQRemark] [nvarchar](max) NULL,
+	[EachConsApv] [datetime] NULL,
+	[MnorderApv] [datetime] NULL,
+	[CRDDate] [date] NULL,
+	[InitialPlanDate] [date] NULL,
+	[PlanDate] [date] NULL,
+	[FirstProduction] [date] NULL,
+	[FirstProductionLock] [date] NULL,
+	[OrigBuyerDelivery] [date] NULL,
+	[ExCountry] [date] NULL,
+	[InDCDate] [date] NULL,
+	[CFMShipment] [date] NULL,
+	[PFETA] [date] NULL,
+	[PackLETA] [date] NULL,
+	[LETA] [date] NULL,
+	[MRHandle] [varchar](10) NULL,
+	[SMR] [varchar](10) NULL,
+	[ScanAndPack] [bit] NULL,
+	[VasShas] [bit] NULL,
+	[SpecialCust] [bit] NULL,
+	[TissuePaper] [bit] NULL,
+	[Junk] [bit] NULL,
+	[Packing] [nvarchar](max) NULL,
+	[MarkFront] [nvarchar](max) NULL,
+	[MarkBack] [nvarchar](max) NULL,
+	[MarkLeft] [nvarchar](max) NULL,
+	[MarkRight] [nvarchar](max) NULL,
+	[Label] [nvarchar](max) NULL,
+	[OrderRemark] [nvarchar](max) NULL,
+	[ArtWorkCost] [varchar](1) NULL,
+	[StdCost] [numeric](7, 2) NULL,
+	[CtnType] [varchar](1) NULL,
+	[FOCQty] [int] NULL,
+	[SMnorderApv] [date] NULL,
+	[FOC] [bit] NULL,
+	[MnorderApv2] [datetime] NULL,
+	[Packing2] [nvarchar](max) NULL,
+	[SampleReason] [varchar](5) NULL,
+	[RainwearTestPassed] [bit] NULL,
+	[SizeRange] [nvarchar](max) NULL,
+	[MTLComplete] [bit] NULL,
+	[SpecialMark] [varchar](5) NULL,
+	[OutstandingRemark] [nvarchar](max) NULL,
+	[OutstandingInCharge] [varchar](10) NULL,
+	[OutstandingDate] [datetime] NULL,
+	[OutstandingReason] [varchar](5) NULL,
+	[StyleUkey] [bigint] NULL,
+	[POID] [varchar](13) NULL,
+	[OrderComboID] [varchar](13) NULL,
+	[IsNotRepeatOrMapping] [bit] NULL,
+	[SplitOrderId] [varchar](13) NULL,
+	[FtyKPI] [datetime] NULL,
+	[AddName] [varchar](10) NULL,
+	[AddDate] [datetime] NULL,
+	[EditName] [varchar](10) NULL,
+	[EditDate] [datetime] NULL,
+	[SewLine] [varchar](60) NULL,
+	[ActPulloutDate] [date] NULL,
+	[ProdSchdRemark] [nvarchar](100) NULL,
+	[IsForecast] [bit] NULL,
+	[LocalOrder] [bit] NULL,
+	[GMTClose] [date] NULL,
+	[TotalCTN] [int] NULL,
+	[ClogCTN] [int] NULL,
+	[FtyCTN] [int] NULL,
+	[PulloutComplete] [bit] NULL,
+	[ReadyDate] [date] NULL,
+	[PulloutCTNQty] [int] NULL,
+	[Finished] [bit] NULL,
+	[PFOrder] [bit] NULL,
+	[SDPDate] [date] NULL,
+	[InspDate] [date] NULL,
+	[InspResult] [varchar](1) NULL,
+	[InspHandle] [varchar](10) NULL,
+	[KPILETA] [date] NULL,
+	[MTLETA] [date] NULL,
+	[SewETA] [date] NULL,
+	[PackETA] [date] NULL,
+	[MTLExport] [varchar](2) NULL,
+	[DoxType] [varchar](8) NULL,
+	[FtyGroup] [varchar](8) NULL,
+	[MDivisionID] [varchar](8) NULL,
+	[CutReadyDate] [date] NULL,
+	[SewRemark] [nvarchar](60) NULL,
+	[WhseClose] [date] NULL,
+	[SubconInSisterFty] [bit] NULL,
+	[MCHandle] [varchar](10) NULL,
+	[LocalMR] [varchar](10) NULL,
+	[KPIChangeReason] [varchar](5) NULL,
+	[MDClose] [date] NULL,
+	[MDEditName] [varchar](10) NULL,
+	[MDEditDate] [datetime] NULL,
+	[ClogLastReceiveDate] [date] NULL,
+	[CPUFactor] [numeric](3, 1) NULL,
+	[SizeUnit] [varchar](8) NULL,
+	[CuttingSP] [varchar](13) NULL,
+	[IsMixMarker] [int] NULL,
+	[EachConsSource] [varchar](1) NULL,
+	[KPIEachConsApprove] [date] NULL,
+	[KPICmpq] [date] NULL,
+	[KPIMNotice] [date] NULL,
+	[GMTComplete] [varchar](1) NULL,
+	[GFR] [bit] NULL,
+	[CfaCTN] [int] NULL,
+	[DRYCTN] [int] NOT NULL,
+	[PackErrCTN] [int] NULL,
+	[ForecastSampleGroup] [varchar](1) NULL,
+	[DyeingLoss] [numeric](3, 0) NULL,
+	[SubconInType] [varchar](1) NULL,
+	[LastProductionDate] [date] NULL,
+	[EstPODD] [date] NULL,
+	[AirFreightByBrand] [bit] NULL,
+	[AllowanceComboID] [varchar](13) NULL,
+	[ChangeMemoDate] [date] NULL,
+	[BuyBack] [varchar](20) NULL,
+	[BuyBackOrderID] [varchar](13) NULL,
+	[ForecastCategory] [varchar](1) NULL,
+	[OnSiteSample] [bit] NULL,
+	[PulloutCmplDate] [date] NULL,
+	[NeedProduction] [bit] NULL,
+	[IsBuyBack] [bit] NOT NULL,
+	[KeepPanels] [bit] NULL,
+	[BuyBackReason] [varchar](20) NOT NULL,
+	[IsBuyBackCrossArticle] [bit] NOT NULL,
+	[IsBuyBackCrossSizeCode] [bit] NOT NULL,
+	[KpiEachConsCheck] [date] NULL,
+	[NonRevenue] [bit] NOT NULL,
+	[CAB] [varchar](10) NOT NULL,
+	[FinalDest] [varchar](50) NOT NULL,
+	[Customer_PO] [varchar](50) NOT NULL,
+	[AFS_STOCK_CATEGORY] [varchar](50) NOT NULL,
+	[CMPLTDATE] [date] NULL,
+	[DelayCode] [varchar](4) NULL,
+	[DelayDesc] [varchar](100) NULL,
+	[HangerPack] [bit] NULL,
+	[CDCodeNew] [varchar](5) NULL,
+	[SizeUnitWeight] [varchar](8) NULL,
+ CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-
-CREATE NONCLUSTERED INDEX [Index_CuttingSP]
-    ON [dbo].[Orders]([CuttingSP] ASC)
-    INCLUDE([IsForecast], [LocalOrder]);
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_ID]  DEFAULT ('') FOR [ID]
 GO
 
-CREATE NONCLUSTERED INDEX [Index_ForShipmentSchedule]
-    ON [dbo].[Orders]([Category] ASC, [PulloutComplete] ASC, [Finished] ASC, [MDivisionID] ASC, [Qty] ASC)
-    INCLUDE([ID], [ScanAndPack], [RainwearTestPassed], [SewLine], [InspDate], [DoxType], [CustPONo], [Customize1], [Customize2], [SciDelivery], [SewOffLine], [CRDDate], [BrandID], [StyleID], [BuyMonth], [Dest], [FactoryID], [CustCDID]);
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_BrandID]  DEFAULT ('') FOR [BrandID]
 GO
 
-CREATE NONCLUSTERED INDEX [Index_POID]
-    ON [dbo].[Orders]([POID] ASC)
-    INCLUDE([ID]);
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_ProgramID]  DEFAULT ('') FOR [ProgramID]
 GO
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_StyleID]  DEFAULT ('') FOR [StyleID]
 GO
-
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Order', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_SeasonID]  DEFAULT ('') FOR [SeasonID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'ID';
-
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_ProjectID]  DEFAULT ('') FOR [ProjectID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'品牌', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'BrandID';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_Category]  DEFAULT ('') FOR [Category]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客戶品牌', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'ProgramID';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_OrderTypeID]  DEFAULT ('') FOR [OrderTypeID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'款式', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'StyleID';
-
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_BuyMonth]  DEFAULT ('') FOR [BuyMonth]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'季節', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'SeasonID';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_Dest]  DEFAULT ('') FOR [Dest]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'專案代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'ProjectID';
-
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_Model]  DEFAULT ('') FOR [Model]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單分類', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'Category';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_HsCode1]  DEFAULT ('') FOR [HsCode1]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'分類細項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'OrderTypeID';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_HsCode2]  DEFAULT ('') FOR [HsCode2]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'月份', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'BuyMonth';
-
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_PayTermARID]  DEFAULT ('') FOR [PayTermARID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'進口國別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'Dest';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_ShipTermID]  DEFAULT ('') FOR [ShipTermID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'場域模式', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'Model';
-
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_ShipModeList]  DEFAULT ('') FOR [ShipModeList]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'中國海關HS編碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'HsCode1';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_CdCodeID]  DEFAULT ('') FOR [CdCodeID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'中國海關HS編碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'HsCode2';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_CPU]  DEFAULT ((0)) FOR [CPU]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'付款方式', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'PayTermARID';
-
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_Qty]  DEFAULT ((0)) FOR [Qty]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'交貨條件', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'ShipTermID';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_StyleUnit]  DEFAULT ('') FOR [StyleUnit]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'交貨方式', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'ShipModeList';
-
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_PoPrice]  DEFAULT ((0)) FOR [PoPrice]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CD#', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CdCodeID';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_CFMPrice]  DEFAULT ((0)) FOR [CFMPrice]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'圖片與商標位置', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'Label';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_CurrecnyID]  DEFAULT ('') FOR [CurrencyID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'OrderRemark';
-
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_Commission]  DEFAULT ((0)) FOR [Commission]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'加工的展開方式', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'ArtWorkCost';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_FactoryID]  DEFAULT ('') FOR [FactoryID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'標準成本', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'StdCost';
-
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_BrandAreaCode]  DEFAULT ('') FOR [BrandAreaCode]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'包裝配比方式', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CtnType';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_BrandFTYCode]  DEFAULT ('') FOR [BrandFTYCode]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'免費數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'FOCQty';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_CTNQty]  DEFAULT ((0)) FOR [CTNQty]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SMNotice Approved', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'SMnorderApv';
-
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_CustCDID]  DEFAULT ('') FOR [CustCDID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'免費', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'FOC';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_CustPONo]  DEFAULT ('') FOR [CustPONo]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'mnoti_apv第二階段', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'MnorderApv2';
-
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_Customize1]  DEFAULT ('') FOR [Customize1]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Packing第二階段資料', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'Packing2';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_Customize2]  DEFAULT ('') FOR [Customize2]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SAMPLE REASON', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'SampleReason';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_Customize3]  DEFAULT ('') FOR [Customize3]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'水洗測式', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'RainwearTestPassed';
-
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_CMPUnit]  DEFAULT ('') FOR [CMPUnit]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'尺寸範圍', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'SizeRange';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_CMPPrice]  DEFAULT ((0)) FOR [CMPPrice]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'物料出清', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'MTLComplete';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_CMPQRemark]  DEFAULT ('') FOR [CMPQRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Special Mark', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'SpecialMark';
-
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_MRHandle]  DEFAULT ('') FOR [MRHandle]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'延出備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'OutstandingRemark';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_SMR]  DEFAULT ('') FOR [SMR]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'延出原因修改人', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'OutstandingInCharge';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_ScanAndPack]  DEFAULT ((0)) FOR [ScanAndPack]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'延出原因修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'OutstandingDate';
-
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_VasShas]  DEFAULT ((0)) FOR [VasShas]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'延出備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'OutstandingReason';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_SpecialCust]  DEFAULT ((0)) FOR [SpecialCust]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'款式的唯一值', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'StyleUkey';
-
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_TissuePaper]  DEFAULT ((0)) FOR [TissuePaper]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'POID';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_Junk]  DEFAULT ((0)) FOR [Junk]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否為非格子布或非Repeat或非Body Mapping', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = 'IsNotRepeatOrMapping';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_Packing]  DEFAULT ('') FOR [Packing]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'拆單的原訂單單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'SplitOrderId';
-
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_MarkFront]  DEFAULT ('') FOR [MarkFront]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'FtyKPI';
 
-
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_MarkBack]  DEFAULT ('') FOR [MarkBack]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'AddName';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_MarkLeft]  DEFAULT ('') FOR [MarkLeft]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_MarkRight]  DEFAULT ('') FOR [MarkRight]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'AddDate';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_Label]  DEFAULT ('') FOR [Label]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_OrderRemark]  DEFAULT ('') FOR [OrderRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'EditName';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_ArtWorkCost]  DEFAULT ('') FOR [ArtWorkCost]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_StdCost]  DEFAULT ((0)) FOR [StdCost]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'EditDate';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_CtnType]  DEFAULT ('') FOR [CtnType]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_FOCQty]  DEFAULT ((0)) FOR [FOCQty]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'車縫組別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'SewLine';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_FOC]  DEFAULT ((0)) FOR [FOC]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_Packing2]  DEFAULT ('') FOR [Packing2]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'實際出貨日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'ActPulloutDate';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_SampleReason]  DEFAULT ('') FOR [SampleReason]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_RainwearTestPassed]  DEFAULT ((0)) FOR [RainwearTestPassed]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Production Schedules Remark', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'ProdSchdRemark';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_SizeRange]  DEFAULT ('') FOR [SizeRange]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_MTLComplete]  DEFAULT ((0)) FOR [MTLComplete]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'預估單', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'IsForecast';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_SpecialMark]  DEFAULT ('') FOR [SpecialMark]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_OutstandingRemark]  DEFAULT ('') FOR [OutstandingRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠自行接單', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'LocalOrder';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_OutstandingInCharge]  DEFAULT ('') FOR [OutstandingInCharge]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_OutstandingReason]  DEFAULT ('') FOR [OutstandingReason]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Garment 結單', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'GMTClose';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_StyleUkey]  DEFAULT ((0)) FOR [StyleUkey]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_POID]  DEFAULT ('') FOR [POID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單總箱數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'TotalCTN';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_IsProPhet]  DEFAULT ((0)) FOR [IsNotRepeatOrMapping]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_SplitOrderId]  DEFAULT ('') FOR [SplitOrderId]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'cLog 已收到箱數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'ClogCTN';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_AddName]  DEFAULT ('') FOR [AddName]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_EditName]  DEFAULT ('') FOR [EditName]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠已完成箱數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'FtyCTN';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_SewLine]  DEFAULT ('') FOR [SewLine]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_ProdSchdRemark]  DEFAULT ('') FOR [ProdSchdRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大貨出貨結清', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'PulloutComplete';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_IsForecast]  DEFAULT ((0)) FOR [IsForecast]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_LocalOrder]  DEFAULT ((0)) FOR [LocalOrder]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大貨Ready 的日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'ReadyDate';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_TotalCTN]  DEFAULT ((0)) FOR [TotalCTN]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_ClogCTN]  DEFAULT ((0)) FOR [ClogCTN]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Pullout箱數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'PulloutCTNQty';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_FtyCTN]  DEFAULT ((0)) FOR [FtyCTN]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_PulloutComplete]  DEFAULT ((0)) FOR [PulloutComplete]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Shipment(Pull out)完成', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'Finished';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_PulloutCTNQty]  DEFAULT ((0)) FOR [PulloutCTNQty]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_Finished]  DEFAULT ((0)) FOR [Finished]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Pull forward 訂單', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'PFOrder';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_PFOrder]  DEFAULT ((0)) FOR [PFOrder]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_InspResult]  DEFAULT ('') FOR [InspResult]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠交期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'SDPDate';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_InspHandle]  DEFAULT ('') FOR [InspHandle]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_MTLExport]  DEFAULT ('') FOR [MTLExport]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'成衣首次通過檢驗日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'InspDate';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_DoxType]  DEFAULT ('') FOR [DoxType]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_FtyGroup]  DEFAULT ('') FOR [FtyGroup]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CFA檢驗結果', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'InspResult';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_MDivisionID]  DEFAULT ('') FOR [MDivisionID]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_SewRemark]  DEFAULT ('') FOR [SewRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CFA Finial檢驗人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'InspHandle';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_SubconInSisterFty]  DEFAULT ((0)) FOR [SubconInSisterFty]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_MCHandle]  DEFAULT ('') FOR [MCHandle]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'KPI L/ETA', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'KPILETA';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_LocalMR]  DEFAULT ('') FOR [LocalMR]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_KPIChangeReason]  DEFAULT ('') FOR [KPIChangeReason]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'物料到達日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'MTLETA';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_MDEditName]  DEFAULT ('') FOR [MDEditName]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_SizeUnit]  DEFAULT ('') FOR [SizeUnit]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Sewing Mtl ETA', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'SewETA';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_CuttingSP]  DEFAULT ('') FOR [CuttingSP]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_IsMixMarker]  DEFAULT ((0)) FOR [IsMixMarker]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Packing Mtl ETA', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'PackETA';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF__Orders__GMTCompl__6C39D5A3]  DEFAULT ('') FOR [GMTComplete]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF__Orders__GFR__6D2DF9DC]  DEFAULT ((0)) FOR [GFR]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'物料出貨結清', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'MTLExport';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_CfaCTN]  DEFAULT ((0)) FOR [CfaCTN]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_DRYCTN]  DEFAULT ((0)) FOR [DRYCTN]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'FormA', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'DoxType';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_PackErrCTN]  DEFAULT ((0)) FOR [PackErrCTN]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_ForecastSampleGroup]  DEFAULT ('') FOR [ForecastSampleGroup]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Factory Group', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'FtyGroup';
 
+ALTER TABLE [dbo].[Orders] ADD  DEFAULT ((0)) FOR [DyeingLoss]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  DEFAULT ((0)) FOR [AirFreightByBrand]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Cutting Ready Date', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CutReadyDate';
 
+ALTER TABLE [dbo].[Orders] ADD  DEFAULT ('') FOR [ForecastCategory]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  DEFAULT ((0)) FOR [OnSiteSample]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Sewing Remark', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'SewRemark';
 
+ALTER TABLE [dbo].[Orders] ADD  DEFAULT ((0)) FOR [NeedProduction]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  DEFAULT ((0)) FOR [IsBuyBack]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'倉庫關單', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'WhseClose';
 
+ALTER TABLE [dbo].[Orders] ADD  DEFAULT ((0)) FOR [KeepPanels]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_BuyBackReason]  DEFAULT ('') FOR [BuyBackReason]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Subcon In From Sister Factory', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'SubconInSisterFty';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_IsBuyBackCrossArticle]  DEFAULT ((0)) FOR [IsBuyBackCrossArticle]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_IsBuyBackCrossSizeCode]  DEFAULT ((0)) FOR [IsBuyBackCrossSizeCode]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MC Handle', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'MCHandle';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_NonRevenue]  DEFAULT ((0)) FOR [NonRevenue]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_CAB]  DEFAULT ('') FOR [CAB]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Local MR', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'LocalMR';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_FinalDest]  DEFAULT ('') FOR [FinalDest]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_Customer_PO]  DEFAULT ('') FOR [Customer_PO]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'KPI Date變更理由', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'KPIChangeReason';
 
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_AFS_STOCK_CATEGORY]  DEFAULT ('') FOR [AFS_STOCK_CATEGORY]
+GO
 
+ALTER TABLE [dbo].[Orders] ADD  DEFAULT ((0)) FOR [HangerPack]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MD Finished', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'MDClose';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'ID'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'品牌' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'BrandID'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MD 最後編輯人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'MDEditName';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'客戶品牌' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'ProgramID'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'款式' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'StyleID'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MD 最後編輯時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'MDEditDate';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'季節' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'SeasonID'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'專案代號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'ProjectID'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後收箱日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'ClogLastReceiveDate';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單分類' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'Category'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'分類細項' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'OrderTypeID'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單件耗用產能', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CPU';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'月份' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'BuyMonth'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'進口國別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'Dest'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'Qty';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'場域模式' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'Model'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'中國海關HS編碼' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'HsCode1'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'款式單位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'StyleUnit';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'中國海關HS編碼' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'HsCode2'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'付款方式' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'PayTermARID'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'平均單價', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'PoPrice';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'交貨條件' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'ShipTermID'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'交貨方式' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'ShipModeList'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'確認單價', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CFMPrice';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'CD#' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CdCodeID'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'單件耗用產能' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CPU'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'幣別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CurrencyID';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單數量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'Qty'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'款式單位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'StyleUnit'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'應付佣金%', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'Commission';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'平均單價' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'PoPrice'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'確認單價' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CFMPrice'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'FactoryID';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'幣別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CurrencyID'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'應付佣金%' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'Commission'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客人的區域代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'BrandAreaCode';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'FactoryID'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'客人的區域代號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'BrandAreaCode'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客人的工廠代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'BrandFTYCode';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'客人的工廠代碼' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'BrandFTYCode'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'每箱的包裝數量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CTNQty'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'每箱的包裝數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CTNQty';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'客戶資料' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CustCDID'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'客戶訂單單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CustPONo'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客戶資料', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CustCDID';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'客人的自訂欄位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'Customize1'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'客人的自訂欄位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'Customize2'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客戶訂單單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CustPONo';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'客人的自訂欄位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'Customize3'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CFMDate'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客人的自訂欄位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'Customize1';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'客戶交期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'BuyerDelivery'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'飛雁交期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'SciDelivery'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客人的自訂欄位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'Customize2';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠上線日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'SewInLine'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠下線日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'SewOffLine'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客人的自訂欄位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'Customize3';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁剪上線日　' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CutInLine'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁剪下線日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CutOffLine'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CFMDate';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠出口日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'PulloutDate'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'cmp單位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CMPUnit'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客戶交期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'BuyerDelivery';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'cmp單價' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CMPPrice'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'CMPQ的確認日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CMPQDate'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'飛雁交期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'SciDelivery';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'CMPQ上的備註' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CMPQRemark'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Each-con 確認日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'EachConsApv'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠上線日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'SewInLine';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'製造單確認日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'MnorderApv'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'CRD date.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CRDDate'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠下線日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'SewOffLine';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Initial Plan Date' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'InitialPlanDate'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Plan Date' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'PlanDate'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁剪上線日　', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CutInLine';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'First production date' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'FirstProduction'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'1st Production Lock' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'FirstProductionLock'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁剪下線日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CutOffLine';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Orig. buyer delivery date:' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'OrigBuyerDelivery'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ex-Country Date' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'ExCountry'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠出口日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'PulloutDate';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'In DC Date' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'InDCDate'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Confirm Shipment Date' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CFMShipment'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'cmp單位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CMPUnit';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'P/F ETA' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'PFETA'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'包材的預計到貨日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'PackLETA'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'cmp單價', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CMPPrice';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'14天LOCK的採購單交期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'LETA'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單Handle' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'MRHandle'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CMPQ的確認日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CMPQDate';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'組長' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'SMR'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Scan and Pack' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'ScanAndPack'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CMPQ上的備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CMPQRemark';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'VAS/SHAS' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'VasShas'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Special customer' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'SpecialCust'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Each-con 確認日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'EachConsApv';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'棉紙' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'TissuePaper'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'取消' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'Junk'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'製造單確認日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'MnorderApv';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'包裝說明' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'Packing'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'大貨嘜頭(正面)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'MarkFront'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CRD date.', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CRDDate';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'大貨嘜頭(背面)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'MarkBack'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'大貨嘜頭(左面)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'MarkLeft'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Initial Plan Date', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'InitialPlanDate';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'大貨嘜頭(右面)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'MarkRight'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'圖片與商標位置' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'Label'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Plan Date', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'PlanDate';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單備註' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'OrderRemark'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工的展開方式' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'ArtWorkCost'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'First production date', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'FirstProduction';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'標準成本' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'StdCost'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'包裝配比方式' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CtnType'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'1st Production Lock', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'FirstProductionLock';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'免費數量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'FOCQty'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SMNotice Approved' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'SMnorderApv'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Orig. buyer delivery date:', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'OrigBuyerDelivery';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'免費' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'FOC'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'mnoti_apv第二階段' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'MnorderApv2'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ex-Country Date', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'ExCountry';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Packing第二階段資料' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'Packing2'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SAMPLE REASON' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'SampleReason'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'In DC Date', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'InDCDate';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'水洗測式' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'RainwearTestPassed'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'尺寸範圍' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'SizeRange'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Confirm Shipment Date', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CFMShipment';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'物料出清' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'MTLComplete'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Special Mark' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'SpecialMark'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'P/F ETA', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'PFETA';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'延出備註' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'OutstandingRemark'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'延出原因修改人' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'OutstandingInCharge'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'包材的預計到貨日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'PackLETA';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'延出原因修改時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'OutstandingDate'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'延出備註' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'OutstandingReason'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'14天LOCK的採購單交期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'LETA';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'款式的唯一值' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'StyleUkey'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'採購單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'POID'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單Handle', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'MRHandle';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'是否為非格子布或非Repeat或非Body Mapping' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'IsNotRepeatOrMapping'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'拆單的原訂單單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'SplitOrderId'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組長', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'SMR';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'FtyKPI'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'新增人員' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'AddName'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Scan and Pack', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'ScanAndPack';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'新增時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'AddDate'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最後修改人員' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'EditName'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'VAS/SHAS', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'VasShas';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最後修改時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'EditDate'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'車縫組別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'SewLine'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Special customer', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'SpecialCust';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'實際出貨日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'ActPulloutDate'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Production Schedules Remark' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'ProdSchdRemark'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'棉紙', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'TissuePaper';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'預估單' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'IsForecast'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠自行接單' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'LocalOrder'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'取消', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'Junk';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Garment 結單' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'GMTClose'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單總箱數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'TotalCTN'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'包裝說明', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'Packing';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'cLog 已收到箱數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'ClogCTN'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠已完成箱數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'FtyCTN'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大貨嘜頭(正面)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'MarkFront';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'大貨出貨結清' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'PulloutComplete'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'大貨Ready 的日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'ReadyDate'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大貨嘜頭(背面)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'MarkBack';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Pullout箱數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'PulloutCTNQty'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Shipment(Pull out)完成' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'Finished'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大貨嘜頭(左面)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'MarkLeft';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Pull forward 訂單' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'PFOrder'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠交期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'SDPDate'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大貨嘜頭(右面)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'MarkRight';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'成衣首次通過檢驗日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'InspDate'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'CFA檢驗結果' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'InspResult'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'CFA Finial檢驗人員' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'InspHandle'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'KPI L/ETA' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'KPILETA'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否為MixMarker ', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'IsMixMarker';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'物料到達日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'MTLETA'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Sewing Mtl ETA' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'SewETA'
 GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Packing Mtl ETA' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'PackETA'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'物料出貨結清' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'MTLExport'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'FormA' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'DoxType'
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'Each Cons. KPI Date (PMS only)',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Orders',
-    @level2type = N'COLUMN',
-    @level2name = N'KPIEachConsApprove'
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Factory Group' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'FtyGroup'
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'Cmpq KPI Date (PMS only)',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Orders',
-    @level2type = N'COLUMN',
-    @level2name = N'KPICmpq'
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Manufacturing Division ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'MDivisionID'
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'M Notice KPI Date (PMS only)',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Orders',
-    @level2type = N'COLUMN',
-    @level2name = N'KPIMNotice'
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Cutting Ready Date' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CutReadyDate'
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'Garment Complete ( From Trade)',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Orders',
-    @level2type = N'COLUMN',
-    @level2name = 'GMTComplete'
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Sewing Remark' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'SewRemark'
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'Global Foundation Range',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Orders',
-    @level2type = N'COLUMN',
-    @level2name = N'GFR'
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'倉庫關單' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'WhseClose'
 GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Subcon In From Sister Factory' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'SubconInSisterFty'
 GO
-CREATE NONCLUSTERED INDEX [IX_SciDelivery]
-    ON [dbo].[Orders]([SciDelivery] ASC, [MDivisionID] ASC, [ID] ASC);
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'MC Handle' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'MCHandle'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Local MR' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'LocalMR'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CFA箱數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CfaCTN';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'KPI Date變更理由' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'KPIChangeReason'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'MD Finished' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'MDClose'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'MD 最後編輯人員' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'MDEditName'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'MD 最後編輯時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'MDEditDate'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'除溼室箱數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'DRYCTN';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最後收箱日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'ClogLastReceiveDate'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'是否為MixMarker ' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'IsMixMarker'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Each Cons. KPI Date (PMS only)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'KPIEachConsApprove'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Cmpq KPI Date (PMS only)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'KPICmpq'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'預估單分類', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'ForecastCategory';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'M Notice KPI Date (PMS only)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'KPIMNotice'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Garment Complete ( From Trade)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'GMTComplete'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Global Foundation Range' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'GFR'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'PulloutComplete 最後的更新時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'PulloutCmplDate';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'CFA箱數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CfaCTN'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'表示可以跨Article領用', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'IsBuyBackCrossArticle';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'除溼室箱數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'DRYCTN'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'預估單分類' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'ForecastCategory'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'表示可以跨Size領用', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'IsBuyBackCrossSizeCode';
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'PulloutComplete 最後的更新時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'PulloutCmplDate'
 GO
-CREATE NONCLUSTERED INDEX [IDX_Orders_MES_EndlineR01]
-    ON [dbo].[Orders]([CustPONo] ASC, [StyleUkey] ASC)
-    INCLUDE([StyleUnit]);
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'表示可以跨Article領用' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'IsBuyBackCrossArticle'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'表示可以跨Size領用' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'IsBuyBackCrossSizeCode'
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'Each Cons KPI檢查日期',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Orders',
-    @level2type = N'COLUMN',
-    @level2name = N'KpiEachConsCheck'
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Each Cons KPI檢查日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'KpiEachConsCheck'
 GO
 
-EXEC sp_addextendedproperty @name = N'MS_Description',
-	@value = N'排除此訂單生產成本，1:排除，0不排除',
-	@level0type = N'SCHEMA',
-	@level0name = N'dbo',
-	@level1type = N'TABLE',
-	@level1name = N'Orders',
-	@level2type = N'COLUMN',
-	@level2name = N'NonRevenue'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'排除此訂單生產成本，1:排除，0不排除' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'NonRevenue'
+GO
 
-	;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Nike - Mercury - CAB' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'CAB'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nike - Mercury - CAB'
-	, @level0type = N'SCHEMA', @level0name = N'dbo'
-	, @level1type = N'TABLE', @level1name = N'Orders'
-	, @level2type = N'COLUMN', @level2name = N'CAB';
-;
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Nike - Mercury - FinalDest' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'FinalDest'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nike - Mercury - FinalDest'
-	, @level0type = N'SCHEMA', @level0name = N'dbo'
-	, @level1type = N'TABLE', @level1name = N'Orders'
-	, @level2type = N'COLUMN', @level2name = N'FinalDest';
-;
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Nike - Mercury - Customer_PO' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'Customer_PO'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nike - Mercury - Customer_PO'
-	, @level0type = N'SCHEMA', @level0name = N'dbo'
-	, @level1type = N'TABLE', @level1name = N'Orders'
-	, @level2type = N'COLUMN', @level2name = N'Customer_PO';
-;
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Nike - Mercury - AFS_STOCK_CATEGORY' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'AFS_STOCK_CATEGORY'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nike - Mercury - AFS_STOCK_CATEGORY'
-	, @level0type = N'SCHEMA', @level0name = N'dbo'
-	, @level1type = N'TABLE', @level1name = N'Orders'
-	, @level2type = N'COLUMN', @level2name = N'AFS_STOCK_CATEGORY';
-;
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Order' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders'
 GO
