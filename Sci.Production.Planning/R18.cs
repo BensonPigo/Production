@@ -65,8 +65,8 @@ namespace Sci.Production.Planning
     select dateadd(day,1,workdate),endDate , CONVERT(CHAR(10),dateadd(day,1,workdate),111) from expend_date 
     where dateadd(day,1,workdate) <= endDate)
     select * from expend_date option (maxrecursion 365)",
-                Convert.ToDateTime(this.sewingDate1).ToString("d"),
-                Convert.ToDateTime(this.sewingDate2).ToString("d"));
+                Convert.ToDateTime(this.sewingDate1).ToString("yyyy/MM/dd"),
+                Convert.ToDateTime(this.sewingDate2).ToString("yyyy/MM/dd"));
             if (!(result = DBProxy.Current.Select(string.Empty, sql, out this.dtDateList)))
             {
                 MyUtility.Msg.ErrorBox("Sewing date can not more than 365 days !!");
@@ -135,21 +135,21 @@ AND Order_TmsCost.TMS > 0
             this.condition.Clear();
             if (!MyUtility.Check.Empty(this.sewingDate1) && !MyUtility.Check.Empty(this.sewingDate2))
             {
-                sqlCmd.Append(string.Format(@" AND ((SewingSchedule.Inline BETWEEN '{0:d}' AND '{1}') OR (SewingSchedule.Offline BETWEEN '{0:d}' AND '{1}'))", this.sewingDate1, Convert.ToDateTime(this.sewingDate2).ToString("d")));
-                this.condition.Append(string.Format(@"SCI Delivery : {0} ~ {1}", Convert.ToDateTime(this.sewingDate1).ToString("d"), Convert.ToDateTime(this.sewingDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" AND ((SewingSchedule.Inline BETWEEN '{0:d}' AND '{1}') OR (SewingSchedule.Offline BETWEEN '{0:d}' AND '{1}'))", this.sewingDate1, Convert.ToDateTime(this.sewingDate2).ToString("yyyy/MM/dd")));
+                this.condition.Append(string.Format(@"SCI Delivery : {0} ~ {1}", Convert.ToDateTime(this.sewingDate1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.sewingDate2).ToString("yyyy/MM/dd")));
             }
             else
             {
                 if (!MyUtility.Check.Empty(this.sewingDate1))
                 {
-                    sqlCmd.Append(string.Format(@" and SewingSchedule.Inline >= '{0}' or SewingSchedule.Offline >='{0}' ", Convert.ToDateTime(this.sewingDate1).ToString("d")));
-                    this.condition.Append(string.Format(@"SCI Delivery : {0} ~ ", Convert.ToDateTime(this.sewingDate1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and SewingSchedule.Inline >= '{0}' or SewingSchedule.Offline >='{0}' ", Convert.ToDateTime(this.sewingDate1).ToString("yyyy/MM/dd")));
+                    this.condition.Append(string.Format(@"SCI Delivery : {0} ~ ", Convert.ToDateTime(this.sewingDate1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.sewingDate2))
                 {
-                    sqlCmd.Append(string.Format(@" and SewingSchedule.Inline <= '{0}' or SewingSchedule.Offline <='{0}'", Convert.ToDateTime(this.sewingDate2).ToString("d")));
-                    this.condition.Append(string.Format(@"SCI Delivery :  ~ {0} ", Convert.ToDateTime(this.sewingDate2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and SewingSchedule.Inline <= '{0}' or SewingSchedule.Offline <='{0}'", Convert.ToDateTime(this.sewingDate2).ToString("yyyy/MM/dd")));
+                    this.condition.Append(string.Format(@"SCI Delivery :  ~ {0} ", Convert.ToDateTime(this.sewingDate2).ToString("yyyy/MM/dd")));
                 }
             }
 

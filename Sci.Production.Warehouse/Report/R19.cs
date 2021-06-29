@@ -99,14 +99,14 @@ with cte as (
                 {
                     sqlcmd.Append(string.Format(
                         @" 
-            and '{0}' <= a.estbackdate", Convert.ToDateTime(returnDate1).ToString("d")));
+            and '{0}' <= a.estbackdate", Convert.ToDateTime(returnDate1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(returnDate2))
                 {
                     sqlcmd.Append(string.Format(
                         @" 
-            and a.estbackdate <= '{0}'", Convert.ToDateTime(returnDate2).ToString("d")));
+            and a.estbackdate <= '{0}'", Convert.ToDateTime(returnDate2).ToString("yyyy/MM/dd")));
                 }
             }
 
@@ -115,13 +115,13 @@ with cte as (
                 if (!MyUtility.Check.Empty(borrowDate1))
                 {
                     sqlcmd.Append($@"
-            and '{Convert.ToDateTime(borrowDate1).ToString("d")}' <= a.issuedate");
+            and '{Convert.ToDateTime(borrowDate1).ToString("yyyy/MM/dd")}' <= a.issuedate");
                 }
 
                 if (!MyUtility.Check.Empty(borrowDate2))
                 {
                     sqlcmd.Append($@" 
-            and a.issuedate <= '{Convert.ToDateTime(borrowDate2).ToString("d")}'");
+            and a.issuedate <= '{Convert.ToDateTime(borrowDate2).ToString("yyyy/MM/dd")}'");
                 }
             }
 
@@ -130,13 +130,13 @@ with cte as (
                 if (!MyUtility.Check.Empty(buyDeliveryDate1))
                 {
                     sqlcmd.Append($@"
-            and '{Convert.ToDateTime(buyDeliveryDate1).ToString("d")}' <= o.BuyerDelivery");
+            and '{Convert.ToDateTime(buyDeliveryDate1).ToString("yyyy/MM/dd")}' <= o.BuyerDelivery");
                 }
 
                 if (!MyUtility.Check.Empty(buyDeliveryDate2))
                 {
                     sqlcmd.Append($@" 
-            and o.BuyerDelivery <= '{Convert.ToDateTime(buyDeliveryDate2).ToString("d")}'");
+            and o.BuyerDelivery <= '{Convert.ToDateTime(buyDeliveryDate2).ToString("yyyy/MM/dd")}'");
                 }
             }
 

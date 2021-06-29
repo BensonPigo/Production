@@ -67,12 +67,12 @@ namespace Sci.Production.Shipping
             #region 組Where 條件
             if (!MyUtility.Check.Empty(this.pulloutDate1))
             {
-                sqlList.Add(string.Format(" p.PulloutDate >= '{0}' ", Convert.ToDateTime(this.pulloutDate1).ToString("d")));
+                sqlList.Add(string.Format(" p.PulloutDate >= '{0}' ", Convert.ToDateTime(this.pulloutDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.pulloutDate2))
             {
-                sqlList.Add(string.Format(" p.PulloutDate <= '{0}' ", Convert.ToDateTime(this.pulloutDate2).ToString("d")));
+                sqlList.Add(string.Format(" p.PulloutDate <= '{0}' ", Convert.ToDateTime(this.pulloutDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.brand))

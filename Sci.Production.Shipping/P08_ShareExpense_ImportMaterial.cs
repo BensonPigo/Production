@@ -68,12 +68,12 @@ from FtyExport WITH (NOLOCK)
 where Type = 3 ");
                 if (!MyUtility.Check.Empty(this.dateArrivePortDate.Value1))
                 {
-                    sqlCmd.Append(string.Format(" and PortArrival >= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and PortArrival >= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.dateArrivePortDate.Value2))
                 {
-                    sqlCmd.Append(string.Format(" and PortArrival <= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and PortArrival <= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.txtInvoiceNo.Text))
@@ -105,12 +105,12 @@ as
  where 1 = 1 ");
                     if (!MyUtility.Check.Empty(this.dateArrivePortDate.Value1))
                     {
-                        sqlCmd.Append(string.Format(" and PortArrival >= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and PortArrival >= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.dateArrivePortDate.Value2))
                     {
-                        sqlCmd.Append(string.Format(" and PortArrival <= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and PortArrival <= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.txtInvoiceNo.Text))
@@ -149,12 +149,12 @@ as
  where Type <> 3 ");
                     if (!MyUtility.Check.Empty(this.dateArrivePortDate.Value1))
                     {
-                        sqlCmd.Append(string.Format(" and PortArrival >= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and PortArrival >= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.dateArrivePortDate.Value2))
                     {
-                        sqlCmd.Append(string.Format(" and PortArrival <= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and PortArrival <= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.txtInvoiceNo.Text))

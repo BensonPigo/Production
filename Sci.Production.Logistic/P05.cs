@@ -159,14 +159,14 @@ WHERE       cr.MDivisionID = '{Env.User.Keyword}'
             {
                 sqlCmd.Append(string.Format(
                     @" 
-            and cr.ReceiveDate >= '{0}'", Convert.ToDateTime(this.dateReceiveDate.Value1).ToString("d")));
+            and cr.ReceiveDate >= '{0}'", Convert.ToDateTime(this.dateReceiveDate.Value1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateReceiveDate.Value2))
             {
                 sqlCmd.Append(string.Format(
                     @" 
-            and cr.ReceiveDate <= '{0}'", Convert.ToDateTime(this.dateReceiveDate.Value2).ToString("d")));
+            and cr.ReceiveDate <= '{0}'", Convert.ToDateTime(this.dateReceiveDate.Value2).ToString("yyyy/MM/dd")));
             }
 
             sqlCmd.Append(

@@ -41,7 +41,7 @@ namespace Sci.Production.Cutting
             string sqlwhere = string.Empty;
             if (!MyUtility.Check.Empty(addDate1))
             {
-                sqlwhere += $@" and convert(date, b.adddate)  between '{Convert.ToDateTime(addDate1).ToString("d")}' and '{Convert.ToDateTime(addDate2).ToString("d")}'";
+                sqlwhere += $@" and convert(date, b.adddate)  between '{Convert.ToDateTime(addDate1).ToString("yyyy/MM/dd")}' and '{Convert.ToDateTime(addDate2).ToString("yyyy/MM/dd")}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtSPNo.Text) && !MyUtility.Check.Empty(this.txtSPNo1.Text))

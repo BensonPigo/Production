@@ -164,25 +164,25 @@ where not exists (select 1 from Factory f WITH (NOLOCK) where f.ID = o.FactoryID
             this.condition.Clear();
             if (!MyUtility.Check.Empty(this.sciDelivery1))
             {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDelivery2))
             {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")));
             }
             #region [condition]處理
             if (!MyUtility.Check.Empty(this.sciDelivery1) && !MyUtility.Check.Empty(this.sciDelivery2))
             {
-                this.condition.Append(string.Format(@"SCI Delivery : {0} ~ {1} ", Convert.ToDateTime(this.sciDelivery1).ToString("d"), Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+                this.condition.Append(string.Format(@"SCI Delivery : {0} ~ {1} ", Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")));
             }
             else if (!MyUtility.Check.Empty(this.sciDelivery1) && MyUtility.Check.Empty(this.sciDelivery2))
             {
-                this.condition.Append(string.Format(@"SCI Delivery : {0} ~ ", Convert.ToDateTime(this.sciDelivery1).ToString("d")));
+                this.condition.Append(string.Format(@"SCI Delivery : {0} ~ ", Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")));
             }
             else if (MyUtility.Check.Empty(this.sciDelivery1) && !MyUtility.Check.Empty(this.sciDelivery2))
             {
-                this.condition.Append(string.Format(@"SCI Delivery :  ~ {0}", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+                this.condition.Append(string.Format(@"SCI Delivery :  ~ {0}", Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")));
             }
             #endregion
             if (!MyUtility.Check.Empty(this.mdivision))

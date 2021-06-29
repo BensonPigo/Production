@@ -182,14 +182,14 @@ where   1=1");
             {
                 sqlcmd.Append(string.Format(
                     @" 
-        and '{0}' <= orders.scidelivery", Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("d")));
+        and '{0}' <= orders.scidelivery", Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
             {
                 sqlcmd.Append(string.Format(
                     @" 
-        and orders.scidelivery <= '{0}'", Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("d")));
+        and orders.scidelivery <= '{0}'", Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(spno))

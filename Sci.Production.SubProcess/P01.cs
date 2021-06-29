@@ -676,7 +676,7 @@ Order by Feature",
                 string check = string.Format(
                     @"select 1 from SubProcessOutput s WITH(NOLOCK) where s.TypeID = '{0}' and s.OutputDate = '{1}' and s.Shift = '{2}' and s.Team = '{3}'",
                     this.CurrentMaintain["TypeID"],
-                    ((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d"),
+                    ((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd"),
                     this.CurrentMaintain["Shift"],
                     this.CurrentMaintain["Team"],
                     this.CurrentMaintain["id"]);

@@ -117,7 +117,7 @@ namespace Sci.Production.Logistic
 
             if (!MyUtility.Check.Empty(this.dateBuyer.Value1))
             {
-                where += $@" and o.BuyerDelivery between '{((DateTime)this.dateBuyer.Value1).ToString("d")}' and '{((DateTime)this.dateBuyer.Value2).ToString("d")}'";
+                where += $@" and o.BuyerDelivery between '{((DateTime)this.dateBuyer.Value1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateBuyer.Value2).ToString("yyyy/MM/dd")}'";
             }
 
             string sqlcmd = $@"

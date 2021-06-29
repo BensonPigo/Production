@@ -142,14 +142,14 @@ from (
             {
                 sqlCmd.Append(string.Format(
                     @" 
-            and cr.ReturnDate >= '{0}'", Convert.ToDateTime(this.dateReturnDate.Value1).ToString("d")));
+            and cr.ReturnDate >= '{0}'", Convert.ToDateTime(this.dateReturnDate.Value1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateReturnDate.Value2))
             {
                 sqlCmd.Append(string.Format(
                     @" 
-            and cr.ReturnDate <= '{0}'", Convert.ToDateTime(this.dateReturnDate.Value2).ToString("d")));
+            and cr.ReturnDate <= '{0}'", Convert.ToDateTime(this.dateReturnDate.Value2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.txtPackID.Text))

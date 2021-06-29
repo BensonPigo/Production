@@ -91,12 +91,12 @@ where 1=1
 
             if (!MyUtility.Check.Empty(this.Buyerdelivery1))
             {
-                sqlCmd.Append(string.Format(@" and a.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.Buyerdelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and a.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.Buyerdelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.Buyerdelivery2))
             {
-                sqlCmd.Append(string.Format(@" and a.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.Buyerdelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and a.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.Buyerdelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.Style))
@@ -133,12 +133,12 @@ where 1=1
 
             if (!MyUtility.Check.Empty(this.InspectionDate1))
             {
-                sqlCmd.Append(string.Format(@" and a.InspDate >= '{0}'", Convert.ToDateTime(this.InspectionDate1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and a.InspDate >= '{0}'", Convert.ToDateTime(this.InspectionDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.InspectionDate2))
             {
-                sqlCmd.Append(string.Format(@" and a.InspDate <= '{0}'", Convert.ToDateTime(this.InspectionDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and a.InspDate <= '{0}'", Convert.ToDateTime(this.InspectionDate2).ToString("yyyy/MM/dd")));
             }
             #endregion
 
@@ -180,19 +180,19 @@ order by a.ID
 
             if (!MyUtility.Check.Empty(this.Buyerdelivery1))
             {
-                c.Append(string.Format(@"{0}", Convert.ToDateTime(this.Buyerdelivery1).ToString("d")));
+                c.Append(string.Format(@"{0}", Convert.ToDateTime(this.Buyerdelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.Buyerdelivery2))
             {
-                c.Append(string.Format(@"~ {0}", Convert.ToDateTime(this.Buyerdelivery2).ToString("d")));
+                c.Append(string.Format(@"~ {0}", Convert.ToDateTime(this.Buyerdelivery2).ToString("yyyy/MM/dd")));
             }
 
             objSheets.Cells[3, 2] = c.ToString();
 
             if (!MyUtility.Check.Empty(this.InspectionDate1))
             {
-                objSheets.Cells[4, 2] = Convert.ToDateTime(this.InspectionDate1).ToString("d") + "~" + Convert.ToDateTime(this.InspectionDate2).ToString("d");
+                objSheets.Cells[4, 2] = Convert.ToDateTime(this.InspectionDate1).ToString("yyyy/MM/dd") + "~" + Convert.ToDateTime(this.InspectionDate2).ToString("yyyy/MM/dd");
             }
 
             objSheets.Cells[2, 6] = this.Style;

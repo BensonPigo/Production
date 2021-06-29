@@ -80,12 +80,12 @@ namespace Sci.Production.Cutting
             string nl = Environment.NewLine;
             if (!MyUtility.Check.Empty(addDate1))
             {
-                sqlwhere += nl + $@" and convert(date, b.adddate) between '{((DateTime)addDate1).ToString("d")}' and '{((DateTime)addDate2).ToString("d")}'";
+                sqlwhere += nl + $@" and convert(date, b.adddate) between '{((DateTime)addDate1).ToString("yyyy/MM/dd")}' and '{((DateTime)addDate2).ToString("yyyy/MM/dd")}'";
             }
 
             if (!MyUtility.Check.Empty(estCutDate))
             {
-                sqlwhere += nl + $@" and estdate.estcutdate = '{((DateTime)estCutDate).ToString("d")}'";
+                sqlwhere += nl + $@" and estdate.estcutdate = '{((DateTime)estCutDate).ToString("yyyy/MM/dd")}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtCutRef.Text))

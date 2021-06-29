@@ -95,12 +95,12 @@ where 1 = 1");
 
             if (!MyUtility.Check.Empty(this.sciDate1))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDate2))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDate2).ToString("yyyy/MM/dd")));
             }
 
             sqlCmd.Append(" order by s.ID,s.BrandID,s.SeasonID,sa.ArtworkTypeID");

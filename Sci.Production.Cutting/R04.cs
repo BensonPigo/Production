@@ -146,8 +146,8 @@ while @startDate <= @EndDate
 begin
 	insert into #dateranges values(@startDate)	set @startDate =  DATEADD(DAY, 1,@startDate)
 end",
-                Convert.ToDateTime(this.Est_CutDate1).ToString("d"),
-                Convert.ToDateTime(this.Est_CutDate2).ToString("d")));
+                Convert.ToDateTime(this.Est_CutDate1).ToString("yyyy/MM/dd"),
+                Convert.ToDateTime(this.Est_CutDate2).ToString("yyyy/MM/dd")));
 
             #region radiobtnByM
             if (this.radioByM.Checked)
@@ -576,12 +576,12 @@ where 1=1
 
                 if (!MyUtility.Check.Empty(this.Est_CutDate1))
                 {
-                    sqlCmd.Append(string.Format(" and wo.EstCutDate >= '{0}' ", Convert.ToDateTime(this.Est_CutDate1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and wo.EstCutDate >= '{0}' ", Convert.ToDateTime(this.Est_CutDate1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.Est_CutDate2))
                 {
-                    sqlCmd.Append(string.Format(" and wo.EstCutDate <= '{0}' ", Convert.ToDateTime(this.Est_CutDate2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and wo.EstCutDate <= '{0}' ", Convert.ToDateTime(this.Est_CutDate2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.CutCell1))
@@ -594,7 +594,7 @@ where 1=1
                     sqlCmd.Append(string.Format(" and wo.CutCellid <= '{0}'", this.CutCell2));
                 }
 
-                string d1 = Convert.ToDateTime(this.Est_CutDate1).ToString("d");
+                string d1 = Convert.ToDateTime(this.Est_CutDate1).ToString("yyyy/MM/dd");
                 if (!MyUtility.Check.Empty(this.Est_CutDate1))
                 {
                     sqlCmd.Append(string.Format(" and (wo.EstCutDate ='{0}' or (wo.EstCutDate< '{1}' and (act.CDate >= '{2}' or (act.cDate is null and C.Finished = 0))))", d1, d1, d1));
@@ -633,7 +633,7 @@ order by wo.MDivisionID, wo.CutCellID, wo.OrderID, wo.CutRef, wo.Cutno
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_R04_Cutting BCSReportByM.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Cutting_R04_Cutting BCSReportByM.xltx", 3, false, null, objApp);      // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                objSheets.Cells[1, 3] = string.Format(@"{0} ~ {1}", Convert.ToDateTime(this.Est_CutDate1).ToString("d"), Convert.ToDateTime(this.Est_CutDate2).ToString("d")); // 條件字串寫入excel
+                objSheets.Cells[1, 3] = string.Format(@"{0} ~ {1}", Convert.ToDateTime(this.Est_CutDate1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.Est_CutDate2).ToString("yyyy/MM/dd")); // 條件字串寫入excel
 
                 #region Save & Show Excel
                 string strExcelName = Class.MicrosoftFile.GetName("Cutting_R04_Cutting BCSReportByM");
@@ -656,7 +656,7 @@ order by wo.MDivisionID, wo.CutCellID, wo.OrderID, wo.CutRef, wo.Cutno
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_R04_Cutting BCSReportByFactory.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Cutting_R04_Cutting BCSReportByFactory.xltx", 3, false, null, objApp);      // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                objSheets.Cells[1, 3] = string.Format(@"{0} ~ {1}", Convert.ToDateTime(this.Est_CutDate1).ToString("d"), Convert.ToDateTime(this.Est_CutDate2).ToString("d")); // 條件字串寫入excel
+                objSheets.Cells[1, 3] = string.Format(@"{0} ~ {1}", Convert.ToDateTime(this.Est_CutDate1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.Est_CutDate2).ToString("yyyy/MM/dd")); // 條件字串寫入excel
 
                 #region Save & Show Excel
                 string strExcelName = Class.MicrosoftFile.GetName("Cutting_R04_Cutting BCSReportByFactory");
@@ -678,7 +678,7 @@ order by wo.MDivisionID, wo.CutCellID, wo.OrderID, wo.CutRef, wo.Cutno
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_R04_CuttingBCSReportByCutCell.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Cutting_R04_CuttingBCSReportByCutCell.xltx", 3, false, null, objApp);      // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                objSheets.Cells[1, 3] = string.Format(@"{0} ~ {1}", Convert.ToDateTime(this.Est_CutDate1).ToString("d"), Convert.ToDateTime(this.Est_CutDate2).ToString("d"));  // 條件字串寫入excel
+                objSheets.Cells[1, 3] = string.Format(@"{0} ~ {1}", Convert.ToDateTime(this.Est_CutDate1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.Est_CutDate2).ToString("yyyy/MM/dd"));  // 條件字串寫入excel
 
                 #region Save & Show Excel
                 string strExcelName = Class.MicrosoftFile.GetName("Cutting_R04_CuttingBCSReportByCutCell");

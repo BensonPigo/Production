@@ -189,14 +189,14 @@ where   Cutplan.MDivisionID ='{this.MD}'";
                 //        and Cutplan.CutCellID <='{4}'
                 //        {5}
                 // order by CutCellID"
-                // , Convert.ToDateTime(dateR_CuttingDate1).ToString("d")
-                // , Convert.ToDateTime(dateR_CuttingDate2).ToString("d")
+                // , Convert.ToDateTime(dateR_CuttingDate1).ToString("yyyy/MM/dd")
+                // , Convert.ToDateTime(dateR_CuttingDate2).ToString("yyyy/MM/dd")
                 // , MD
                 // , CutCell1
                 // , CutCell2
                 // , (Factory.Empty() ? "" : string.Format("and Cutting.FactoryID = '{0}'", Factory)));
-                scell += Environment.NewLine + $"        and Cutplan.EstCutdate >= '{Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d")}'";
-                scell += Environment.NewLine + $"        and Cutplan.EstCutdate <= '{Convert.ToDateTime(this.dateR_CuttingDate2).ToString("d")}'";
+                scell += Environment.NewLine + $"        and Cutplan.EstCutdate >= '{Convert.ToDateTime(this.dateR_CuttingDate1).ToString("yyyy/MM/dd")}'";
+                scell += Environment.NewLine + $"        and Cutplan.EstCutdate <= '{Convert.ToDateTime(this.dateR_CuttingDate2).ToString("yyyy/MM/dd")}'";
             }
             else
             {
@@ -210,12 +210,12 @@ where   Cutplan.MDivisionID ='{this.MD}'";
 //        and Cutplan.CutCellID <='{3}'
 //        {4}
 // order by CutCellID"
-// , Convert.ToDateTime(dateR_CuttingDate1).ToString("d")
+// , Convert.ToDateTime(dateR_CuttingDate1).ToString("yyyy/MM/dd")
 // , MD
 // , CutCell1
 // , CutCell2
 // , (Factory.Empty() ? "" : string.Format("and Cutting.FactoryID = '{0}'", Factory)));
-                scell += Environment.NewLine + $"        and Cutplan.EstCutdate = '{Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d")}'";
+                scell += Environment.NewLine + $"        and Cutplan.EstCutdate = '{Convert.ToDateTime(this.dateR_CuttingDate1).ToString("yyyy/MM/dd")}'";
             }
 
             if (!MyUtility.Check.Empty(this.Factory))
@@ -345,12 +345,12 @@ where 1 = 1
 ");
                     if (!MyUtility.Check.Empty(this.dateR_CuttingDate1))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.EstCutdate >= '{0}' ", Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and Cutplan.EstCutdate >= '{0}' ", Convert.ToDateTime(this.dateR_CuttingDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.dateR_CuttingDate2))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.EstCutdate <= '{0}' ", Convert.ToDateTime(this.dateR_CuttingDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and Cutplan.EstCutdate <= '{0}' ", Convert.ToDateTime(this.dateR_CuttingDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.MD))
@@ -557,7 +557,7 @@ where 1 = 1 --??? AND fe.ETA IS NOT NULL
 ");
                     if (!MyUtility.Check.Empty(this.dateR_CuttingDate1))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.EstCutdate = '{0}' ", Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and Cutplan.EstCutdate = '{0}' ", Convert.ToDateTime(this.dateR_CuttingDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.MD))
@@ -767,12 +767,12 @@ where 1 = 1
 ");
                     if (!MyUtility.Check.Empty(this.dateR_CuttingDate1))
                     {
-                        sqlCmd.Append(string.Format(" and c.EstCutdate >= '{0}' ", Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and c.EstCutdate >= '{0}' ", Convert.ToDateTime(this.dateR_CuttingDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.dateR_CuttingDate2))
                     {
-                        sqlCmd.Append(string.Format(" and c.EstCutdate <= '{0}' ", Convert.ToDateTime(this.dateR_CuttingDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and c.EstCutdate <= '{0}' ", Convert.ToDateTime(this.dateR_CuttingDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.MD))
@@ -1009,7 +1009,7 @@ drop table #tmp{i}
                             objSheets.get_Range("A" + (8 + j), "A" + (8 + j)).Font.Bold = true; // 指定粗體
                             if (!MyUtility.Check.Empty(this.printData[i].Rows[j]["SCI Delivery"]))
                             {
-                                objSheets.Cells[7 + j, 1] = "SCI Delivery: " + Convert.ToDateTime(this.printData[i].Rows[j]["SCI Delivery"]).ToString("d");
+                                objSheets.Cells[7 + j, 1] = "SCI Delivery: " + Convert.ToDateTime(this.printData[i].Rows[j]["SCI Delivery"]).ToString("yyyy/MM/dd");
                             }
                         }
 
@@ -1022,7 +1022,7 @@ drop table #tmp{i}
 
                     objSheets.Columns["U"].Clear();
                     objSheets.Name = (this.selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + this.Maintb.Rows[i][0].ToString(); // 工作表名稱
-                    objSheets.Cells[3, 2] = Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(this.dateR_CuttingDate2).ToString("d"); // 查詢日期
+                    objSheets.Cells[3, 2] = Convert.ToDateTime(this.dateR_CuttingDate1).ToString("yyyy/MM/dd") + "~" + Convert.ToDateTime(this.dateR_CuttingDate2).ToString("yyyy/MM/dd"); // 查詢日期
                     objSheets.Cells[3, 5] = this.selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No"; // CutCell或SpreadingNo
                     objSheets.Cells[3, 6] = this.Maintb.Rows[i][0].ToString(); // CutCell或SpreadingNo
                     objSheets.Cells[3, 9] = this.MD;
@@ -1101,7 +1101,7 @@ drop table #tmp{i}
                         {
                             objSheets.get_Range("A" + (8 + j), "B" + (8 + j)).Merge(false); // 合併欄位
                             objSheets.get_Range("A" + (8 + j), "A" + (8 + j)).Font.Bold = true; // 指定粗體
-                            objSheets.Cells[7 + j, 1] = "SCI Delivery: " + Convert.ToDateTime(this.printData[i].Rows[j]["SCI Delivery"]).ToString("d");
+                            objSheets.Cells[7 + j, 1] = "SCI Delivery: " + Convert.ToDateTime(this.printData[i].Rows[j]["SCI Delivery"]).ToString("yyyy/MM/dd");
                         }
 
                         if (this.printData[i].Rows[j]["Ref#"].Empty())
@@ -1113,7 +1113,7 @@ drop table #tmp{i}
 
                     objSheets.Columns["W"].Clear();
                     objSheets.Name = (this.selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + this.Maintb.Rows[i][0].ToString(); // 工作表名稱
-                    objSheets.Cells[3, 2] = Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d"); // 查詢日期
+                    objSheets.Cells[3, 2] = Convert.ToDateTime(this.dateR_CuttingDate1).ToString("yyyy/MM/dd"); // 查詢日期
                     objSheets.Cells[3, 5] = this.selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No"; // CutCell或SpreadingNo
                     objSheets.Cells[3, 6] = this.Maintb.Rows[i][0].ToString(); // CutCell或SpreadingNo
                     objSheets.Cells[3, 9] = this.MD;
@@ -1198,7 +1198,7 @@ drop table #tmp{i}
                     com.WriteTable(this.printData[i], 6);
 
                     objSheets.Name = (this.selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + this.Maintb.Rows[i][0].ToString(); // 工作表名稱
-                    objSheets.Cells[3, 2] = Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(this.dateR_CuttingDate2).ToString("d"); // 查詢日期
+                    objSheets.Cells[3, 2] = Convert.ToDateTime(this.dateR_CuttingDate1).ToString("yyyy/MM/dd") + "~" + Convert.ToDateTime(this.dateR_CuttingDate2).ToString("yyyy/MM/dd"); // 查詢日期
                     objSheets.Cells[3, 5] = this.selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No"; // CutCell或SpreadingNo
                     objSheets.Cells[3, 6] = this.Maintb.Rows[i][0].ToString(); // CutCell或SpreadingNo
                     objSheets.Cells[3, 9] = this.MD;
@@ -1251,12 +1251,12 @@ drop table #tmp{i}
             cuttingDate.Clear();
             if (!MyUtility.Check.Empty(this.dateR_CuttingDate1))
             {
-                cuttingDate.Append(string.Format(@"{0}", Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d")));
+                cuttingDate.Append(string.Format(@"{0}", Convert.ToDateTime(this.dateR_CuttingDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateR_CuttingDate2))
             {
-                cuttingDate.Append(string.Format(@"~{0}", Convert.ToDateTime(this.dateR_CuttingDate2).ToString("d")));
+                cuttingDate.Append(string.Format(@"~{0}", Convert.ToDateTime(this.dateR_CuttingDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.CutCell1))

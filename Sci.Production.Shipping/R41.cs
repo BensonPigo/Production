@@ -56,12 +56,12 @@ namespace Sci.Production.Shipping
             StringBuilder sqlCondition = new StringBuilder();
             if (!MyUtility.Check.Empty(this.date1))
             {
-                sqlCondition.Append(string.Format(" and v.CDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("d")));
+                sqlCondition.Append(string.Format(" and v.CDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.date2))
             {
-                sqlCondition.Append(string.Format(" and v.CDate <= '{0}' ", Convert.ToDateTime(this.date2).ToString("d")));
+                sqlCondition.Append(string.Format(" and v.CDate <= '{0}' ", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.nlCode))

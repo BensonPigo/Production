@@ -88,12 +88,12 @@ namespace Sci.Production.Planning
             #region --- 條件組合  ---
             if (!MyUtility.Check.Empty(this.sciDelivery1))
             {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDelivery2))
             {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.mdivision))
@@ -113,7 +113,7 @@ namespace Sci.Production.Planning
             sqlCmd.Append($" and o.Category in ({this.category})");
             #endregion
             this.condition.Clear();
-            this.condition.Append(string.Format(@"SCI Delivery : {0} ~ {1}", Convert.ToDateTime(this.sciDelivery1).ToString("d"), Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+            this.condition.Append(string.Format(@"SCI Delivery : {0} ~ {1}", Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")));
             sqlCmd.Append(@"
 Select 
 	[Factory Name] = o.FactoryID,

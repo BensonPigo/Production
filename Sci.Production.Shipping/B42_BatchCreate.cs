@@ -779,7 +779,7 @@ Insert into VNConsumption (
                             newID,
                             MyUtility.Convert.GetString(dr["CustomSP"]),
                             MyUtility.Convert.GetString(dr["VNContractID"]),
-                            Convert.ToDateTime(dr["CDate"]).ToString("d"),
+                            Convert.ToDateTime(dr["CDate"]).ToString("yyyy/MM/dd"),
                             MyUtility.Convert.GetString(dr["StyleID"]),
                             MyUtility.Convert.GetString(dr["StyleUKey"]),
                             MyUtility.Convert.GetString(dr["SeasonID"]),

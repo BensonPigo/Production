@@ -80,7 +80,7 @@ namespace Sci.Production.PPIC
                         {
                             foreach (DataRow currentRecord in sewingLine.Rows)
                             {
-                                sqlCommand = string.Format("select Date from WorkHour WITH (NOLOCK) where SewingLineID = '{0}' and FactoryID = '{1}' and Date = '{2}'", currentRecord["ID"].ToString(), Env.User.Factory, startDate.ToString("d"));
+                                sqlCommand = string.Format("select Date from WorkHour WITH (NOLOCK) where SewingLineID = '{0}' and FactoryID = '{1}' and Date = '{2}'", currentRecord["ID"].ToString(), Env.User.Factory, startDate.ToString("yyyy/MM/dd"));
                                 if (!MyUtility.Check.Seek(sqlCommand, null))
                                {
                                    insertCmds.Add(string.Format(
@@ -89,7 +89,7 @@ Insert into WorkHour (SewingLineID,FactoryID,Date,Hours,AddName,AddDate)
 Values('{0}','{1}','{2}','{3}','{4}','{5}');",
                                        currentRecord["ID"].ToString(),
                                        Env.User.Factory,
-                                       startDate.ToString("d"),
+                                       startDate.ToString("yyyy/MM/dd"),
                                        this.numHours.Text.ToString(),
                                        Env.User.UserID,
                                        DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));

@@ -246,28 +246,28 @@ where b.Orderid = '{drSelected["OrderID"]}'
 
             if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
             {
-                where += $" and o.SCIDelivery between '{((DateTime)this.dateSCIDelivery.Value1).ToString("d")}' and '{((DateTime)this.dateSCIDelivery.Value2).ToString("d")}' ";
+                where += $" and o.SCIDelivery between '{((DateTime)this.dateSCIDelivery.Value1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateSCIDelivery.Value2).ToString("yyyy/MM/dd")}' ";
             }
 
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
             {
-                where += $" and o.BuyerDelivery between '{((DateTime)this.dateBuyerDelivery.Value1).ToString("d")}' and '{((DateTime)this.dateBuyerDelivery.Value2).ToString("d")}' ";
+                where += $" and o.BuyerDelivery between '{((DateTime)this.dateBuyerDelivery.Value1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateBuyerDelivery.Value2).ToString("yyyy/MM/dd")}' ";
             }
 
             if (this.dateLastSewDate.HasValue)
             {
-                where += $" and vsis.LastSewDate between '{((DateTime)this.dateLastSewDate.Value1).ToString("d")}' and '{((DateTime)this.dateLastSewDate.Value2).ToString("d")}' ";
+                where += $" and vsis.LastSewDate between '{((DateTime)this.dateLastSewDate.Value1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateLastSewDate.Value2).ToString("yyyy/MM/dd")}' ";
             }
 
             if (!MyUtility.Check.Empty(this.dateInline.Value1))
             {
                 if (summaryType == 0)
                 {
-                    where += $" and o.SewInLine between '{((DateTime)this.dateInline.Value1).ToString("d")}' and '{((DateTime)this.dateInline.Value2).ToString("d")}' ";
+                    where += $" and o.SewInLine between '{((DateTime)this.dateInline.Value1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateInline.Value2).ToString("yyyy/MM/dd")}' ";
                 }
                 else
                 {
-                    where += $" and Inline between '{((DateTime)this.dateInline.Value1).ToString("d")}' and '{((DateTime)this.dateInline.Value2).ToString("d")}' ";
+                    where += $" and Inline between '{((DateTime)this.dateInline.Value1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateInline.Value2).ToString("yyyy/MM/dd")}' ";
                 }
             }
             #endregion

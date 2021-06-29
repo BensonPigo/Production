@@ -115,12 +115,12 @@ namespace Sci.Production.Subcon
 
             if (!MyUtility.Check.Empty(this.issuedate1))
             {
-                sqlCmd.Append(string.Format(" and a.issuedate >= '{0}' ", Convert.ToDateTime(this.issuedate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and a.issuedate >= '{0}' ", Convert.ToDateTime(this.issuedate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.issuedate2))
             {
-                sqlCmd.Append(string.Format(" and a.issuedate <= '{0}' ", Convert.ToDateTime(this.issuedate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and a.issuedate <= '{0}' ", Convert.ToDateTime(this.issuedate2).ToString("yyyy/MM/dd")));
             }
 
             System.Data.SqlClient.SqlParameter sp_artworktype = new System.Data.SqlClient.SqlParameter();
