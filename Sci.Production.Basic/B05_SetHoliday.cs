@@ -19,7 +19,7 @@ namespace Sci.Production.Basic
         public B05_SetHoliday(DateTime date)
         {
             this.InitializeComponent();
-            this.txtDate.Text = date.ToString("d");
+            this.txtDate.Text = date.ToString("yyyy/MM/dd");
             this.reviseDate = date;
         }
 
@@ -50,7 +50,7 @@ namespace Sci.Production.Basic
             {
                 if (this.newRecord == 0)
                 {
-                    string deleteCmd = string.Format("delete Holiday where HolidayDate = '{0}' and FactoryID = '{1}'", this.reviseDate.ToString("d"), Env.User.Factory);
+                    string deleteCmd = string.Format("delete Holiday where HolidayDate = '{0}' and FactoryID = '{1}'", this.reviseDate.ToString("yyyy/MM/dd"), Env.User.Factory);
                     DualResult result = DBProxy.Current.Execute(null, deleteCmd);
                     if (!result)
                     {
@@ -63,7 +63,7 @@ namespace Sci.Production.Basic
             {
                 if (this.newRecord == 0)
                 {
-                    string updateCmd = string.Format("update Holiday set Name = '{0}' where HolidayDate = '{1}' and FactoryID = '{2}'", this.txtDescription.Text, this.reviseDate.ToString("d"), Env.User.Factory);
+                    string updateCmd = string.Format("update Holiday set Name = '{0}' where HolidayDate = '{1}' and FactoryID = '{2}'", this.txtDescription.Text, this.reviseDate.ToString("yyyy/MM/dd"), Env.User.Factory);
                     DualResult result = DBProxy.Current.Execute(null, updateCmd);
                     if (!result)
                     {
@@ -77,7 +77,7 @@ namespace Sci.Production.Basic
                         @"insert into Holiday(FactoryID,HolidayDate,Name,AddName,AddDate)
 values ('{0}','{1}','{2}','{3}',GETDATE());",
                         Env.User.Factory,
-                        this.reviseDate.ToString("d"),
+                        this.reviseDate.ToString("yyyy/MM/dd"),
                         this.txtDescription.Text,
                         Env.User.UserID);
                     DualResult result = DBProxy.Current.Execute(null, insertCmd);

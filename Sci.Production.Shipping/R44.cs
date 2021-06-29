@@ -46,14 +46,14 @@ namespace Sci.Production.Shipping
             string whereP04 = string.Empty;
             if (!MyUtility.Check.Empty(this.dateOnBoardDate1))
             {
-                whereP03 += $@" and cast(e.Eta as date) between '{((DateTime)this.dateOnBoardDate1).ToString("d")}' and '{((DateTime)this.dateOnBoardDate2).ToString("d")}'";
-                whereP04 += $@" and cast(e.OnBoard as date) between '{((DateTime)this.dateOnBoardDate1).ToString("d")}' and '{((DateTime)this.dateOnBoardDate2).ToString("d")}'";
+                whereP03 += $@" and cast(e.Eta as date) between '{((DateTime)this.dateOnBoardDate1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateOnBoardDate2).ToString("yyyy/MM/dd")}'";
+                whereP04 += $@" and cast(e.OnBoard as date) between '{((DateTime)this.dateOnBoardDate1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateOnBoardDate2).ToString("yyyy/MM/dd")}'";
             }
 
             if (!MyUtility.Check.Empty(this.dateArrivalPortDate1))
             {
-                whereP03 += $@" and cast(e.PortArrival as date) between '{((DateTime)this.dateArrivalPortDate1).ToString("d")}' and '{((DateTime)this.dateArrivalPortDate2).ToString("d")}'";
-                whereP04 += $@" and cast(e.PortArrival as date) between '{((DateTime)this.dateArrivalPortDate1).ToString("d")}' and '{((DateTime)this.dateArrivalPortDate2).ToString("d")}'";
+                whereP03 += $@" and cast(e.PortArrival as date) between '{((DateTime)this.dateArrivalPortDate1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateArrivalPortDate2).ToString("yyyy/MM/dd")}'";
+                whereP04 += $@" and cast(e.PortArrival as date) between '{((DateTime)this.dateArrivalPortDate1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateArrivalPortDate2).ToString("yyyy/MM/dd")}'";
             }
 
             StringBuilder sqlCmd = new StringBuilder();

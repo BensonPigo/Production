@@ -32,8 +32,8 @@ namespace Sci.Production.PPIC
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            this.readyDate1 = MyUtility.Check.Empty(this.dateReadydate.Value1) ? string.Empty : Convert.ToDateTime(this.dateReadydate.Value1).ToString("d");
-            this.readyDate2 = MyUtility.Check.Empty(this.dateReadydate.Value2) ? string.Empty : Convert.ToDateTime(this.dateReadydate.Value2).ToString("d");
+            this.readyDate1 = MyUtility.Check.Empty(this.dateReadydate.Value1) ? string.Empty : Convert.ToDateTime(this.dateReadydate.Value1).ToString("yyyy/MM/dd");
+            this.readyDate2 = MyUtility.Check.Empty(this.dateReadydate.Value2) ? string.Empty : Convert.ToDateTime(this.dateReadydate.Value2).ToString("yyyy/MM/dd");
 
             return base.ValidateInput();
         }

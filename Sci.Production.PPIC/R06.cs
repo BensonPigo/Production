@@ -182,22 +182,22 @@ where 1=1", this._excludeReplacement == 1 ? "and psd.SEQ1 not between '50' and '
 
             if (!MyUtility.Check.Empty(this._sciDate1))
             {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this._sciDate1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this._sciDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this._sciDate2))
             {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this._sciDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this._sciDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this._buyerDelDate1))
             {
-                sqlCmd.Append(string.Format(@" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this._buyerDelDate1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this._buyerDelDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this._buyerDelDate2))
             {
-                sqlCmd.Append(string.Format(@" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this._buyerDelDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this._buyerDelDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this._mDivision))
@@ -278,7 +278,7 @@ where 1=1", this._excludeReplacement == 1 ? "and psd.SEQ1 not between '50' and '
             }
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            worksheet.Cells[2, 2] = string.Format("{0}~{1}", MyUtility.Check.Empty(this._sciDate1) ? string.Empty : Convert.ToDateTime(this._sciDate1).ToString("d"), MyUtility.Check.Empty(this._sciDate2) ? string.Empty : Convert.ToDateTime(this._sciDate2).ToString("d"));
+            worksheet.Cells[2, 2] = string.Format("{0}~{1}", MyUtility.Check.Empty(this._sciDate1) ? string.Empty : Convert.ToDateTime(this._sciDate1).ToString("yyyy/MM/dd"), MyUtility.Check.Empty(this._sciDate2) ? string.Empty : Convert.ToDateTime(this._sciDate2).ToString("yyyy/MM/dd"));
 
             worksheet.Cells[2, 7] = this._mDivision;
             worksheet.Cells[2, 9] = this._factory;

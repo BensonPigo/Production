@@ -64,8 +64,8 @@ namespace Sci.Production.Shipping
         protected override bool ValidateInput()
         {
             this.reportType = this.radioDetailReport.Checked ? "1" : "2";
-            this.eta1 = MyUtility.Check.Empty(this.dateETA.Value1) ? string.Empty : Convert.ToDateTime(this.dateETA.Value1).ToString("d");
-            this.eta2 = MyUtility.Check.Empty(this.dateETA.Value2) ? string.Empty : Convert.ToDateTime(this.dateETA.Value2).ToString("d");
+            this.eta1 = MyUtility.Check.Empty(this.dateETA.Value1) ? string.Empty : Convert.ToDateTime(this.dateETA.Value1).ToString("yyyy/MM/dd");
+            this.eta2 = MyUtility.Check.Empty(this.dateETA.Value2) ? string.Empty : Convert.ToDateTime(this.dateETA.Value2).ToString("yyyy/MM/dd");
             this.factory = this.txtfactory.Text;
             this.shipmode = this.comboBox1.Text;
             return base.ValidateInput();
@@ -134,16 +134,16 @@ order by e.ID",
 
                 worksheet.Cells[2, 2] = MyUtility.Convert.GetString(this.masterData["ID"]);
                 worksheet.Cells[2, 6] = MyUtility.Convert.GetString(this.masterData["INVNo"]);
-                worksheet.Cells[2, 9] = MyUtility.Check.Empty(this.masterData["PackingArrival"]) ? string.Empty : Convert.ToDateTime(this.masterData["PackingArrival"]).ToString("d");
-                worksheet.Cells[3, 2] = MyUtility.Check.Empty(this.masterData["Eta"]) ? string.Empty : Convert.ToDateTime(this.masterData["Eta"]).ToString("d");
+                worksheet.Cells[2, 9] = MyUtility.Check.Empty(this.masterData["PackingArrival"]) ? string.Empty : Convert.ToDateTime(this.masterData["PackingArrival"]).ToString("yyyy/MM/dd");
+                worksheet.Cells[3, 2] = MyUtility.Check.Empty(this.masterData["Eta"]) ? string.Empty : Convert.ToDateTime(this.masterData["Eta"]).ToString("yyyy/MM/dd");
                 worksheet.Cells[3, 6] = MyUtility.Convert.GetString(this.masterData["Payer"]) == "S" ? "By Sci Taipei Office(Sender)" : MyUtility.Convert.GetString(this.masterData["Payer"]) == "M" ? "By Mill(Sender)" : MyUtility.Convert.GetString(this.masterData["Payer"]) == "F" ? "By Factory(Receiver)" : string.Empty;
-                worksheet.Cells[3, 9] = MyUtility.Check.Empty(this.masterData["PortArrival"]) ? string.Empty : Convert.ToDateTime(this.masterData["PortArrival"]).ToString("d");
+                worksheet.Cells[3, 9] = MyUtility.Check.Empty(this.masterData["PortArrival"]) ? string.Empty : Convert.ToDateTime(this.masterData["PortArrival"]).ToString("yyyy/MM/dd");
                 worksheet.Cells[4, 2] = MyUtility.Convert.GetString(this.masterData["Consignee"]);
                 worksheet.Cells[4, 6] = MyUtility.Convert.GetString(this.masterData["Blno"]);
-                worksheet.Cells[4, 9] = MyUtility.Check.Empty(this.masterData["WhseArrival"]) ? string.Empty : Convert.ToDateTime(this.masterData["WhseArrival"]).ToString("d");
+                worksheet.Cells[4, 9] = MyUtility.Check.Empty(this.masterData["WhseArrival"]) ? string.Empty : Convert.ToDateTime(this.masterData["WhseArrival"]).ToString("yyyy/MM/dd");
                 worksheet.Cells[5, 2] = MyUtility.Convert.GetString(this.masterData["Packages"]);
                 worksheet.Cells[5, 6] = MyUtility.Convert.GetString(this.masterData["Vessel"]);
-                worksheet.Cells[5, 9] = MyUtility.Check.Empty(this.masterData["DocArrival"]) ? string.Empty : Convert.ToDateTime(this.masterData["DocArrival"]).ToString("d");
+                worksheet.Cells[5, 9] = MyUtility.Check.Empty(this.masterData["DocArrival"]) ? string.Empty : Convert.ToDateTime(this.masterData["DocArrival"]).ToString("yyyy/MM/dd");
                 worksheet.Cells[6, 2] = MyUtility.Convert.GetString(this.masterData["CYCFS"]);
                 worksheet.Cells[6, 6] = MyUtility.Convert.GetString(this.masterData["NetKg"]) + " / " + MyUtility.Convert.GetString(this.masterData["WeightKg"]);
                 worksheet.Cells[7, 2] = MyUtility.Convert.GetString(this.masterData["Sono"]);

@@ -72,15 +72,15 @@ namespace Sci.Production.Thread
                 if (!MyUtility.Check.Empty(this.dateDate.Value1.ToString()))
                 {
                     sqlWhere.Add("@date1 <= Convert(datetime, convert(varchar(10), ti.AddDate, 126))");
-                    this.sqlPar.Add(new SqlParameter("@date1", Convert.ToDateTime(this.dateDate.Value1).ToString("d")));
-                    date1 = Convert.ToDateTime(this.dateDate.Value1).ToString("d");
+                    this.sqlPar.Add(new SqlParameter("@date1", Convert.ToDateTime(this.dateDate.Value1).ToString("yyyy/MM/dd")));
+                    date1 = Convert.ToDateTime(this.dateDate.Value1).ToString("yyyy/MM/dd");
                 }
 
                 if (!MyUtility.Check.Empty(this.dateDate.Value2.ToString()))
                 {
                     sqlWhere.Add("Convert(datetime, convert(varchar(10), ti.AddDate, 126)) <= @date2");
-                    this.sqlPar.Add(new SqlParameter("@date2", Convert.ToDateTime(this.dateDate.Value2).ToString("d")));
-                    date2 = Convert.ToDateTime(this.dateDate.Value2).ToString("d");
+                    this.sqlPar.Add(new SqlParameter("@date2", Convert.ToDateTime(this.dateDate.Value2).ToString("yyyy/MM/dd")));
+                    date2 = Convert.ToDateTime(this.dateDate.Value2).ToString("yyyy/MM/dd");
                 }
 
                 this.excelHead.Add("Date", date1 + " ~ " + date2);

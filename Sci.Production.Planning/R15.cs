@@ -448,24 +448,24 @@ namespace Sci.Production.Planning
 
             if (!MyUtility.Check.Empty(this.sciDelivery1))
             {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDelivery2))
             {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sewingInline1))
             {
-                // sqlCmd.Append(string.Format(@" and o.SewInLine >= '{0}'", Convert.ToDateTime(this.sewingInline1).ToString("d")));
-                sqlCmd.Append($@"and ( o.SewInLine >= '{this.sewingInline1.Value.ToString("d")}' OR '{this.sewingInline1.Value.ToString("d")}' BETWEEN o.SewInLine AND o.SewOffLine )");
+                // sqlCmd.Append(string.Format(@" and o.SewInLine >= '{0}'", Convert.ToDateTime(this.sewingInline1).ToString("yyyy/MM/dd")));
+                sqlCmd.Append($@"and ( o.SewInLine >= '{this.sewingInline1.Value.ToString("yyyy/MM/dd")}' OR '{this.sewingInline1.Value.ToString("yyyy/MM/dd")}' BETWEEN o.SewInLine AND o.SewOffLine )");
             }
 
             if (!MyUtility.Check.Empty(this.sewingInline2))
             {
-                // sqlCmd.Append(string.Format(@" and o.SewInLine <= '{0}'", Convert.ToDateTime(this.sewingInline2).ToString("d")));
-                sqlCmd.Append($@"and ( o.SewInLine <= '{this.sewingInline2.Value.ToString("d")}' OR '{this.sewingInline2.Value.ToString("d")}' BETWEEN o.SewInLine AND o.SewOffLine )");
+                // sqlCmd.Append(string.Format(@" and o.SewInLine <= '{0}'", Convert.ToDateTime(this.sewingInline2).ToString("yyyy/MM/dd")));
+                sqlCmd.Append($@"and ( o.SewInLine <= '{this.sewingInline2.Value.ToString("yyyy/MM/dd")}' OR '{this.sewingInline2.Value.ToString("yyyy/MM/dd")}' BETWEEN o.SewInLine AND o.SewOffLine )");
             }
 
             if (!MyUtility.Check.Empty(this.BuyerDelivery1) && !MyUtility.Check.Empty(this.BuyerDelivery2))
@@ -478,8 +478,8 @@ namespace Sci.Production.Planning
             where s.id = o.ID
             and s.BuyerDelivery between '{0}' and '{1}'
       )",
-                    Convert.ToDateTime(this.BuyerDelivery1).ToString("d"),
-                    Convert.ToDateTime(this.BuyerDelivery2).ToString("d")));
+                    Convert.ToDateTime(this.BuyerDelivery1).ToString("yyyy/MM/dd"),
+                    Convert.ToDateTime(this.BuyerDelivery2).ToString("yyyy/MM/dd")));
             }
             else if (!MyUtility.Check.Empty(this.BuyerDelivery1))
             {
@@ -491,7 +491,7 @@ namespace Sci.Production.Planning
             where s.id = o.ID
                   and s.BuyerDelivery >= '{0}'
       )",
-                    Convert.ToDateTime(this.BuyerDelivery1).ToString("d")));
+                    Convert.ToDateTime(this.BuyerDelivery1).ToString("yyyy/MM/dd")));
             }
             else if (!MyUtility.Check.Empty(this.BuyerDelivery2))
             {
@@ -503,37 +503,37 @@ namespace Sci.Production.Planning
             where s.id = o.ID
                   and s.BuyerDelivery <= '{0}'
       )",
-                    Convert.ToDateTime(this.BuyerDelivery2).ToString("d")));
+                    Convert.ToDateTime(this.BuyerDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.CustRqsDate1))
             {
-                sqlCmd.Append(string.Format(@" and o.CRDDate >= '{0}'", Convert.ToDateTime(this.CustRqsDate1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.CRDDate >= '{0}'", Convert.ToDateTime(this.CustRqsDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.CustRqsDate2))
             {
-                sqlCmd.Append(string.Format(@" and o.CRDDate <= '{0}'", Convert.ToDateTime(this.CustRqsDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.CRDDate <= '{0}'", Convert.ToDateTime(this.CustRqsDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.CutOffDate1))
             {
-                sqlCmd.Append(string.Format(@" and o.SDPDate >= '{0}'", Convert.ToDateTime(this.CutOffDate1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.SDPDate >= '{0}'", Convert.ToDateTime(this.CutOffDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.CutOffDate2))
             {
-                sqlCmd.Append(string.Format(@" and o.SDPDate <= '{0}'", Convert.ToDateTime(this.CutOffDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.SDPDate <= '{0}'", Convert.ToDateTime(this.CutOffDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.planDate1))
             {
-                sqlCmd.Append(string.Format(@" and o.PlanDate >= '{0}'", Convert.ToDateTime(this.planDate1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.PlanDate >= '{0}'", Convert.ToDateTime(this.planDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.planDate2))
             {
-                sqlCmd.Append(string.Format(@" and o.PlanDate <= '{0}'", Convert.ToDateTime(this.planDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.PlanDate <= '{0}'", Convert.ToDateTime(this.planDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.spno1))
@@ -1144,24 +1144,24 @@ WHERE 1=1 {whereIncludeCancelOrder} "));
             #region --- 條件組合  ---
             if (!MyUtility.Check.Empty(this.sciDelivery1))
             {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDelivery2))
             {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sewingInline1))
             {
-                // sqlCmd.Append(string.Format(@" and o.SewInLine >= '{0}'", Convert.ToDateTime(this.sewingInline1).ToString("d")));
-                sqlCmd.Append($@"and ( o.SewInLine >= '{this.sewingInline1.Value.ToString("d")}' OR '{this.sewingInline1.Value.ToString("d")}' BETWEEN o.SewInLine AND o.SewOffLine )");
+                // sqlCmd.Append(string.Format(@" and o.SewInLine >= '{0}'", Convert.ToDateTime(this.sewingInline1).ToString("yyyy/MM/dd")));
+                sqlCmd.Append($@"and ( o.SewInLine >= '{this.sewingInline1.Value.ToString("yyyy/MM/dd")}' OR '{this.sewingInline1.Value.ToString("yyyy/MM/dd")}' BETWEEN o.SewInLine AND o.SewOffLine )");
             }
 
             if (!MyUtility.Check.Empty(this.sewingInline2))
             {
-                // sqlCmd.Append(string.Format(@" and o.SewInLine <= '{0}'", Convert.ToDateTime(this.sewingInline2).ToString("d")));
-                sqlCmd.Append($@"and ( o.SewInLine <= '{this.sewingInline2.Value.ToString("d")}' OR '{this.sewingInline2.Value.ToString("d")}' BETWEEN o.SewInLine AND o.SewOffLine )");
+                // sqlCmd.Append(string.Format(@" and o.SewInLine <= '{0}'", Convert.ToDateTime(this.sewingInline2).ToString("yyyy/MM/dd")));
+                sqlCmd.Append($@"and ( o.SewInLine <= '{this.sewingInline2.Value.ToString("yyyy/MM/dd")}' OR '{this.sewingInline2.Value.ToString("yyyy/MM/dd")}' BETWEEN o.SewInLine AND o.SewOffLine )");
             }
 
             if (!MyUtility.Check.Empty(this.BuyerDelivery1) && !MyUtility.Check.Empty(this.BuyerDelivery2))
@@ -1174,8 +1174,8 @@ WHERE 1=1 {whereIncludeCancelOrder} "));
             where s.id = o.ID
             and s.BuyerDelivery between '{0}' and '{1}'
       )",
-                    Convert.ToDateTime(this.BuyerDelivery1).ToString("d"),
-                    Convert.ToDateTime(this.BuyerDelivery2).ToString("d")));
+                    Convert.ToDateTime(this.BuyerDelivery1).ToString("yyyy/MM/dd"),
+                    Convert.ToDateTime(this.BuyerDelivery2).ToString("yyyy/MM/dd")));
             }
             else if (!MyUtility.Check.Empty(this.BuyerDelivery1))
             {
@@ -1187,7 +1187,7 @@ WHERE 1=1 {whereIncludeCancelOrder} "));
             where s.id = o.ID
                   and s.BuyerDelivery >= '{0}'
       )",
-                    Convert.ToDateTime(this.BuyerDelivery1).ToString("d")));
+                    Convert.ToDateTime(this.BuyerDelivery1).ToString("yyyy/MM/dd")));
             }
             else if (!MyUtility.Check.Empty(this.BuyerDelivery2))
             {
@@ -1199,37 +1199,37 @@ WHERE 1=1 {whereIncludeCancelOrder} "));
             where s.id = o.ID
                   and s.BuyerDelivery <= '{0}'
       )",
-                    Convert.ToDateTime(this.BuyerDelivery2).ToString("d")));
+                    Convert.ToDateTime(this.BuyerDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.CustRqsDate1))
             {
-                sqlCmd.Append(string.Format(@" and o.CRDDate >= '{0}'", Convert.ToDateTime(this.CustRqsDate1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.CRDDate >= '{0}'", Convert.ToDateTime(this.CustRqsDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.CustRqsDate2))
             {
-                sqlCmd.Append(string.Format(@" and o.CRDDate <= '{0}'", Convert.ToDateTime(this.CustRqsDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.CRDDate <= '{0}'", Convert.ToDateTime(this.CustRqsDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.CutOffDate1))
             {
-                sqlCmd.Append(string.Format(@" and o.SDPDate >= '{0}'", Convert.ToDateTime(this.CutOffDate1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.SDPDate >= '{0}'", Convert.ToDateTime(this.CutOffDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.CutOffDate2))
             {
-                sqlCmd.Append(string.Format(@" and o.SDPDate <= '{0}'", Convert.ToDateTime(this.CutOffDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.SDPDate <= '{0}'", Convert.ToDateTime(this.CutOffDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.planDate1))
             {
-                sqlCmd.Append(string.Format(@" and o.PlanDate >= '{0}'", Convert.ToDateTime(this.planDate1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.PlanDate >= '{0}'", Convert.ToDateTime(this.planDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.planDate2))
             {
-                sqlCmd.Append(string.Format(@" and o.PlanDate <= '{0}'", Convert.ToDateTime(this.planDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.PlanDate <= '{0}'", Convert.ToDateTime(this.planDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.spno1))

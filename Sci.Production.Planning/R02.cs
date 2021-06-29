@@ -144,22 +144,22 @@ namespace Sci.Production.Planning
             #region --- 條件組合  ---
             if (!MyUtility.Check.Empty(this.buyerDelivery1))
             {
-                sqlCmd.Append(string.Format(@" and o1.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o1.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.buyerDelivery2))
             {
-                sqlCmd.Append(string.Format(@" and o1.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o1.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDelivery1))
             {
-                sqlCmd.Append(string.Format(@" and o1.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o1.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDelivery2))
             {
-                sqlCmd.Append(string.Format(@" and o1.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o1.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.spno1))
@@ -178,22 +178,22 @@ namespace Sci.Production.Planning
 
             if (!MyUtility.Check.Empty(this.sewinline1))
             {
-                sqlCmd.Append(string.Format(@" and o1.sewinline >= '{0}'", Convert.ToDateTime(this.sewinline1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o1.sewinline >= '{0}'", Convert.ToDateTime(this.sewinline1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sewinline2))
             {
-                sqlCmd.Append(string.Format(@" and o1.sewinline <= '{0}'", Convert.ToDateTime(this.sewinline2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o1.sewinline <= '{0}'", Convert.ToDateTime(this.sewinline2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.cutinline1))
             {
-                sqlCmd.Append(string.Format(@" and o1.cutinline >= '{0}'", Convert.ToDateTime(this.cutinline1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o1.cutinline >= '{0}'", Convert.ToDateTime(this.cutinline1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.cutinline2))
             {
-                sqlCmd.Append(string.Format(@" and o1.cutinline <= '{0}'", Convert.ToDateTime(this.cutinline2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o1.cutinline <= '{0}'", Convert.ToDateTime(this.cutinline2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.artworktype))

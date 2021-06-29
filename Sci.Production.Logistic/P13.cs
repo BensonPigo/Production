@@ -86,7 +86,7 @@ namespace Sci.Production.Logistic
 
             if (!MyUtility.Check.Empty(this.datepullout.Value1))
             {
-                where += $@" and pld.ClogPulloutDate between '{((DateTime)this.datepullout.Value1).ToString("d")}' and '{((DateTime)this.datepullout.Value2).ToString("d")}'";
+                where += $@" and pld.ClogPulloutDate between '{((DateTime)this.datepullout.Value1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.datepullout.Value2).ToString("yyyy/MM/dd")}'";
             }
 
             string sqlcmd = $@"

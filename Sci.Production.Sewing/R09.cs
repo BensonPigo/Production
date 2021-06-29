@@ -31,12 +31,12 @@ namespace Sci.Production.Sewing
 
             if (!MyUtility.Check.Empty(this.dateConfirm.Value1))
             {
-                where += "\r\n" + $"and cast(oca.ConfirmedDate as date) >= '{((DateTime)this.dateConfirm.Value1).ToString("d")}'";
+                where += "\r\n" + $"and cast(oca.ConfirmedDate as date) >= '{((DateTime)this.dateConfirm.Value1).ToString("yyyy/MM/dd")}'";
             }
 
             if (!MyUtility.Check.Empty(this.dateConfirm.Value2))
             {
-                where += "\r\n" + $"and  cast(oca.ConfirmedDate as date) <= '{((DateTime)this.dateConfirm.Value2).ToString("d")}'";
+                where += "\r\n" + $"and  cast(oca.ConfirmedDate as date) <= '{((DateTime)this.dateConfirm.Value2).ToString("yyyy/MM/dd")}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtMdivision1.Text))

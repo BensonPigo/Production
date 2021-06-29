@@ -142,7 +142,7 @@ and (o.Junk=0 or (o.Junk=1 and o.NeedProduction=1))
 and (oq.EstPulloutDate <= '{1}' or oq.EstPulloutDate is null or iif(o.PulloutDate is null, dateadd(day,4,o.SewOffLine) , o.PulloutDate) <= '{1}')
 and o.Category in ({2})",
                 Env.User.Keyword,
-                Convert.ToDateTime(this.dateExpPoutDate.Value).ToString("d"),
+                Convert.ToDateTime(this.dateExpPoutDate.Value).ToString("yyyy/MM/dd"),
                 category));
 
             sqlCmd.Append(@"
@@ -315,7 +315,7 @@ drop table #tmpClocationids,#tmpIDSeq,#tmp1,#tmp2,#Order_QtyShip_Detail,#MtlForm
                     {
                         updateCmds.Add(string.Format(
                             @"update Order_QtyShip set SDPDate = {0}, ShipRemark = '{1}', EditName = '{2}', EditDate = GETDATE() where ID = '{3}' and Seq = '{4}'",
-                            MyUtility.Check.Empty(dr["SDPDate"]) ? "null" : "'" + Convert.ToDateTime(dr["SDPDate"]).ToString("d") + "'",
+                            MyUtility.Check.Empty(dr["SDPDate"]) ? "null" : "'" + Convert.ToDateTime(dr["SDPDate"]).ToString("yyyy/MM/dd") + "'",
                             dr["ShipRemark"].ToString(),
                             Env.User.UserID,
                             dr["ID"].ToString(),
@@ -346,7 +346,7 @@ drop table #tmpClocationids,#tmpIDSeq,#tmp1,#tmp2,#Order_QtyShip_Detail,#MtlForm
                     {
                         updateCmds.Add(string.Format(
                             "update Orders set SDPDate = {0} where ID = '{1}'",
-                            MyUtility.Check.Empty(dr["SDPDate"]) ? "null" : "'" + Convert.ToDateTime(dr["SDPDate"]).ToString("d") + "'",
+                            MyUtility.Check.Empty(dr["SDPDate"]) ? "null" : "'" + Convert.ToDateTime(dr["SDPDate"]).ToString("yyyy/MM/dd") + "'",
                             dr["Id"].ToString()));
                     }
                 }

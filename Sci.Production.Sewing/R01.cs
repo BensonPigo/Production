@@ -68,7 +68,7 @@ namespace Sci.Production.Sewing
                     and Status in('','NEW')
                     and FactoryID = '{1}'
             ",
-            Convert.ToDateTime(this.dateDate.Value).ToString("d"),
+            Convert.ToDateTime(this.dateDate.Value).ToString("yyyy/MM/dd"),
             this.comboFactory.Text);
             DualResult result = DBProxy.Current.Select(null, sql, out DataTable dt);
             if (!result)
@@ -82,7 +82,7 @@ namespace Sci.Production.Sewing
                 errMsg += MyUtility.Check.Empty(errMsg) ? "Please lock data first! \r\n" : "\r\n";
                 errMsg += string.Format(
                     "Date:{0},Factory: {1}, Line#: {2}, Team:{3}, Shift:{4}, SubconOut-Fty:{5}, SubconOut_Contract#:{6}.",
-                    Convert.ToDateTime(dr["OutputDate"].ToString()).ToString("d"),
+                    Convert.ToDateTime(dr["OutputDate"].ToString()).ToString("yyyy/MM/dd"),
                     dr["FactoryID"],
                     dr["SewingLineID"],
                     dr["Team"],
@@ -166,7 +166,7 @@ Outer apply (
 where s.OutputDate = '{0}'
 	  and s.FactoryID = '{1}'
       and (o.CateGory NOT IN ( 'G' ,'A') or s.Category='M')  ",
-                Convert.ToDateTime(this._date).ToString("d"),
+                Convert.ToDateTime(this._date).ToString("yyyy/MM/dd"),
                 this._factory));
 
             if (!MyUtility.Check.Empty(this._team))

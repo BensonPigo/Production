@@ -97,7 +97,7 @@ order by psd.Refno,isd.POID,isd.Roll
                 Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + excelName);
                 Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
                 worksheet.Cells[3, 3] = MyUtility.Convert.GetString(this.DataRow["cutplanID"]);
-                worksheet.Cells[4, 3] = ((DateTime)MyUtility.Convert.GetDate(this.DataRow["issuedate"])).ToString("d");
+                worksheet.Cells[4, 3] = ((DateTime)MyUtility.Convert.GetDate(this.DataRow["issuedate"])).ToString("yyyy/MM/dd");
 
                 #region 插入需要row數量
                 for (int i = 1; i < this.dtExcel.Rows.Count; i++)

@@ -76,8 +76,8 @@ namespace Sci.Production.Warehouse
             this.condition.Clear();
             this.condition.Append(string.Format(
                 @"ETA : {0} ~ {1}" + Environment.NewLine,
-                Convert.ToDateTime(this.eta1).ToString("d"),
-                Convert.ToDateTime(this.eta2).ToString("d")));
+                Convert.ToDateTime(this.eta1).ToString("yyyy/MM/dd"),
+                Convert.ToDateTime(this.eta2).ToString("yyyy/MM/dd")));
             this.condition.Append(string.Format(
                 @"Material Type : {0}" + Environment.NewLine,
                 this.comboFabricType.Text));
@@ -135,12 +135,12 @@ WHERE  D.Category in {0}", this.ordertype));
 
             if (!MyUtility.Check.Empty(this.eta1))
             {
-                sqlCmd.Append(string.Format(" and '{0}' <= a.eta", Convert.ToDateTime(this.eta1).ToString("d")));
+                sqlCmd.Append(string.Format(" and '{0}' <= a.eta", Convert.ToDateTime(this.eta1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.eta2))
             {
-                sqlCmd.Append(string.Format(" and a.eta <= '{0}'", Convert.ToDateTime(this.eta2).ToString("d")));
+                sqlCmd.Append(string.Format(" and a.eta <= '{0}'", Convert.ToDateTime(this.eta2).ToString("yyyy/MM/dd")));
             }
             #region --- 條件組合  ---
             if (!MyUtility.Check.Empty(this.factory))

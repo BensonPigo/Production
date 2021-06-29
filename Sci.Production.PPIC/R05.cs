@@ -120,12 +120,12 @@ where l.Type = 'R'"));
 
             if (!MyUtility.Check.Empty(this._apvDate1))
             {
-                sqlCmd.Append(string.Format(@" and convert(date,l.ApvDate) >= '{0}'", Convert.ToDateTime(this._apvDate1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and convert(date,l.ApvDate) >= '{0}'", Convert.ToDateTime(this._apvDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this._apvDate2))
             {
-                sqlCmd.Append(string.Format(@" and convert(date,l.ApvDate) <= '{0}'", Convert.ToDateTime(this._apvDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and convert(date,l.ApvDate) <= '{0}'", Convert.ToDateTime(this._apvDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this._reportType))
@@ -214,11 +214,11 @@ drop table #tmpData");
             }
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            worksheet.Cells[3, 3] = string.Format("{0}~{1}", MyUtility.Check.Empty(this._apvDate1) ? string.Empty : Convert.ToDateTime(this._apvDate1).ToString("d"), MyUtility.Check.Empty(this._apvDate2) ? string.Empty : Convert.ToDateTime(this._apvDate2).ToString("d"));
+            worksheet.Cells[3, 3] = string.Format("{0}~{1}", MyUtility.Check.Empty(this._apvDate1) ? string.Empty : Convert.ToDateTime(this._apvDate1).ToString("yyyy/MM/dd"), MyUtility.Check.Empty(this._apvDate2) ? string.Empty : Convert.ToDateTime(this._apvDate2).ToString("yyyy/MM/dd"));
             worksheet.Cells[4, 3] = this._reportTypeName;
             worksheet.Cells[3, 8] = this._mDivision;
             worksheet.Cells[4, 8] = this._factory;
-            worksheet.Cells[3, 12] = DateTime.Today.ToString("d");
+            worksheet.Cells[3, 12] = DateTime.Today.ToString("yyyy/MM/dd");
 
             // 填內容值
             int intRowsStart = 6;

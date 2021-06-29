@@ -149,12 +149,12 @@ where 1=1
 
             if (!MyUtility.Check.Empty(this.Est_CutDate1))
             {
-                sqlCmd.Append(string.Format(" and wo.EstCutDate >= '{0}' ", Convert.ToDateTime(this.Est_CutDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and wo.EstCutDate >= '{0}' ", Convert.ToDateTime(this.Est_CutDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.Est_CutDate2))
             {
-                sqlCmd.Append(string.Format(" and wo.EstCutDate <= '{0}' ", Convert.ToDateTime(this.Est_CutDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and wo.EstCutDate <= '{0}' ", Convert.ToDateTime(this.Est_CutDate2).ToString("yyyy/MM/dd")));
             }
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
@@ -187,7 +187,7 @@ where 1=1
 
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Cutting_R05_CuttingMonthlyForecast.xltx", 2, false, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.Cells[1, 2] = string.Format(@"{0} ~ {1}", Convert.ToDateTime(this.Est_CutDate1).ToString("d"), Convert.ToDateTime(this.Est_CutDate2).ToString("d")); // 條件字串寫入excel
+            objSheets.Cells[1, 2] = string.Format(@"{0} ~ {1}", Convert.ToDateTime(this.Est_CutDate1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.Est_CutDate2).ToString("yyyy/MM/dd")); // 條件字串寫入excel
             objSheets.Cells[1, 6] = this.WorkOrder.ToString();   // 條件字串寫入excel
             objSheets.Cells[1, 8] = this.factory.ToString();   // 條件字串寫入excel
             objSheets.Columns[8].ColumnWidth = 13.5;

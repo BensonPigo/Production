@@ -155,28 +155,28 @@ with IniBulkPack as (
             {
                 sqlCmd.Append(string.Format(
                     @" 
-            and SDPDate >= '{0}' ", Convert.ToDateTime(this.dateSDPDate.Value1).ToString("d")));
+            and SDPDate >= '{0}' ", Convert.ToDateTime(this.dateSDPDate.Value1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateSDPDate.Value2))
             {
                 sqlCmd.Append(string.Format(
                     @" 
-            and SDPDate <= '{0}' ", Convert.ToDateTime(this.dateSDPDate.Value2).ToString("d")));
+            and SDPDate <= '{0}' ", Convert.ToDateTime(this.dateSDPDate.Value2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateDelivery.Value1))
             {
                 sqlCmd.Append(string.Format(
                     @" 
-            and BuyerDelivery >= '{0}' ", Convert.ToDateTime(this.dateDelivery.Value1).ToString("d")));
+            and BuyerDelivery >= '{0}' ", Convert.ToDateTime(this.dateDelivery.Value1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateDelivery.Value2))
             {
                 sqlCmd.Append(string.Format(
                     @" 
-            and BuyerDelivery <= '{0}' ", Convert.ToDateTime(this.dateDelivery.Value2).ToString("d")));
+            and BuyerDelivery <= '{0}' ", Convert.ToDateTime(this.dateDelivery.Value2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.txtSpStart.Text))

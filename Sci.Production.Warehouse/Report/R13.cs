@@ -115,12 +115,12 @@ Where a.Status = 'Confirmed' ");
 
             if (!MyUtility.Check.Empty(this.issueDate1))
             {
-                sqlCmd.Append(string.Format(" and '{0}' <= a.issuedate", Convert.ToDateTime(this.issueDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and '{0}' <= a.issuedate", Convert.ToDateTime(this.issueDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.issueDate2))
             {
-                sqlCmd.Append(string.Format(" and a.issuedate <= '{0}'", Convert.ToDateTime(this.issueDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and a.issuedate <= '{0}'", Convert.ToDateTime(this.issueDate2).ToString("yyyy/MM/dd")));
             }
 
             #region --- 條件組合  ---

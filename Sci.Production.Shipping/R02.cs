@@ -83,32 +83,32 @@ where 1=1"));
 
             if (!MyUtility.Check.Empty(this.pulloutDate1))
             {
-                sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}' ", Convert.ToDateTime(this.pulloutDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}' ", Convert.ToDateTime(this.pulloutDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.pulloutDate2))
             {
-                sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}' ", Convert.ToDateTime(this.pulloutDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}' ", Convert.ToDateTime(this.pulloutDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sdpDate1))
             {
-                sqlCmd.Append(string.Format(" and oq.SDPDate >= '{0}' ", Convert.ToDateTime(this.sdpDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.SDPDate >= '{0}' ", Convert.ToDateTime(this.sdpDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sdpDate2))
             {
-                sqlCmd.Append(string.Format(" and oq.SDPDate <= '{0}' ", Convert.ToDateTime(this.sdpDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.SDPDate <= '{0}' ", Convert.ToDateTime(this.sdpDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDlv1))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}' ", Convert.ToDateTime(this.sciDlv1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}' ", Convert.ToDateTime(this.sciDlv1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDlv2))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}' ", Convert.ToDateTime(this.sciDlv2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}' ", Convert.ToDateTime(this.sciDlv2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.mDivisionID))

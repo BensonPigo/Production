@@ -71,12 +71,12 @@ namespace Sci.Production.Warehouse
 
             if (!MyUtility.Check.Empty(pulloutdate1))
             {
-                sqlWhere += $@" and o.ActPulloutDate between '{Convert.ToDateTime(pulloutdate1).ToString("d")}' and '{Convert.ToDateTime(pulloutdate2).ToString("d")}'";
+                sqlWhere += $@" and o.ActPulloutDate between '{Convert.ToDateTime(pulloutdate1).ToString("yyyy/MM/dd")}' and '{Convert.ToDateTime(pulloutdate2).ToString("yyyy/MM/dd")}'";
             }
 
             if (!MyUtility.Check.Empty(buyerDelivery1))
             {
-                sqlWhere += $@" and o.BuyerDelivery between '{Convert.ToDateTime(buyerDelivery1).ToString("d")}' and '{Convert.ToDateTime(buyerDelivery2).ToString("d")}'";
+                sqlWhere += $@" and o.BuyerDelivery between '{Convert.ToDateTime(buyerDelivery1).ToString("yyyy/MM/dd")}' and '{Convert.ToDateTime(buyerDelivery2).ToString("yyyy/MM/dd")}'";
             }
 
             if (!MyUtility.Check.Empty(sp1) || !MyUtility.Check.Empty(sp2))

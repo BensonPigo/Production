@@ -82,7 +82,7 @@ namespace Sci.Production.Shipping
 
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
             {
-                where += $@" and o.BuyerDelivery between '{((DateTime)this.dateBuyerDelivery.Value1).ToString("d")}' and '{((DateTime)this.dateBuyerDelivery.Value2).ToString("d")}' ";
+                where += $@" and o.BuyerDelivery between '{((DateTime)this.dateBuyerDelivery.Value1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateBuyerDelivery.Value2).ToString("yyyy/MM/dd")}' ";
             }
 
             if (!MyUtility.Check.Empty(this.txtfactory.Text))

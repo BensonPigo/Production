@@ -508,7 +508,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
                 }
 
                 worksheet.Cells[row + 7, column] = MyUtility.Convert.GetString(dr["Description"]) + "(" + MyUtility.Convert.GetString(dr["Seq1"]) + " -" + MyUtility.Convert.GetString(dr["Seq2"]) + ")";
-                worksheet.Cells[row + 8, column] = MyUtility.Convert.GetString(dr["INVNo"]) + ", " + (MyUtility.Check.Empty(dr["ETA"]) ? string.Empty : "ETA" + Convert.ToDateTime(dr["ETA"]).ToString("d"));
+                worksheet.Cells[row + 8, column] = MyUtility.Convert.GetString(dr["INVNo"]) + ", " + (MyUtility.Check.Empty(dr["ETA"]) ? string.Empty : "ETA" + Convert.ToDateTime(dr["ETA"]).ToString("yyyy/MM/dd"));
                 worksheet.Cells[row + 9, column] = MyUtility.Convert.GetString(dr["ColorID"]);
                 worksheet.Cells[row + 10, column] = MyUtility.Convert.GetString(dr["EstInQty"]) + "/" + MyUtility.Convert.GetString(dr["ActInQty"]);
                 worksheet.Cells[row + 11, column] = MyUtility.Convert.GetString(dr["AGradeRequest"]);
@@ -516,9 +516,9 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
                 worksheet.Cells[row + 13, column] = MyUtility.Convert.GetString(dr["NarrowRequest"]);
                 string finalNeedQty = string.Format("{0:N2}", MyUtility.Convert.GetDecimal(dr["TotalRequest"])) + (MyUtility.Check.Empty(dr["ReplacementUnit"]) ? string.Empty : "  " + dr["ReplacementUnit"].ToString());
                 worksheet.Cells[row + 14, column] = finalNeedQty;
-                worksheet.Cells[row + 15, column] = MyUtility.Check.Empty(dr["DamageSendDate"]) ? string.Empty : Convert.ToDateTime(dr["DamageSendDate"]).ToString("d");
+                worksheet.Cells[row + 15, column] = MyUtility.Check.Empty(dr["DamageSendDate"]) ? string.Empty : Convert.ToDateTime(dr["DamageSendDate"]).ToString("yyyy/MM/dd");
                 worksheet.Cells[row + 16, column] = MyUtility.Convert.GetString(dr["AWBNo"]);
-                worksheet.Cells[row + 17, column] = MyUtility.Check.Empty(dr["ReplacementETA"]) ? string.Empty : Convert.ToDateTime(dr["ReplacementETA"]).ToString("d");
+                worksheet.Cells[row + 17, column] = MyUtility.Check.Empty(dr["ReplacementETA"]) ? string.Empty : Convert.ToDateTime(dr["ReplacementETA"]).ToString("yyyy/MM/dd");
                 worksheet.Cells[row + 18, 3] = responsibility == "M" ? "V" : string.Empty;
                 worksheet.Cells[row + 18, column] = responsibility == "M" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : string.Empty;
                 worksheet.Cells[row + 19, 3] = responsibility == "T" ? "V" : string.Empty;

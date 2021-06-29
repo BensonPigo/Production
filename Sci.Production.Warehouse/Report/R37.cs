@@ -129,12 +129,12 @@ where 1=1 ");
             #region 條件組合
             if (!MyUtility.Check.Empty(this.issueDelivery1))
             {
-                sqlcmd.Append(string.Format(@" and '{0}' <= rr.issueDate ", Convert.ToDateTime(this.issueDelivery1).ToString("d")));
+                sqlcmd.Append(string.Format(@" and '{0}' <= rr.issueDate ", Convert.ToDateTime(this.issueDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.issueDelivery2))
             {
-                sqlcmd.Append(string.Format(@" and rr.issueDate <= '{0}' ", Convert.ToDateTime(this.issueDelivery2).ToString("d")));
+                sqlcmd.Append(string.Format(@" and rr.issueDate <= '{0}' ", Convert.ToDateTime(this.issueDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.spno1) && !MyUtility.Check.Empty(this.spno2))

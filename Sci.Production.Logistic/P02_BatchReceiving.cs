@@ -40,7 +40,7 @@ namespace Sci.Production.Logistic
         public P02_BatchReceiving(DateTime receiveDate, DataTable detailData)
         {
             this.InitializeComponent();
-            this.Text = "Carton Receiving - Batch Receive (Receive Date - " + receiveDate.ToString("d") + ")";
+            this.Text = "Carton Receiving - Batch Receive (Receive Date - " + receiveDate.ToString("yyyy/MM/dd") + ")";
             this.receiveDetailData = detailData;
         }
 

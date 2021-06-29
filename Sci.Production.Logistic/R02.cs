@@ -86,7 +86,7 @@ namespace Sci.Production.Logistic
 
             if (!MyUtility.Check.Empty(this.bdate1))
             {
-                sqlWHERE.Append(string.Format(" and o.BuyerDelivery between '{0}' and '{1}'", Convert.ToDateTime(this.bdate1).ToString("d"), Convert.ToDateTime(this.bdate2).ToString("d")));
+                sqlWHERE.Append(string.Format(" and o.BuyerDelivery between '{0}' and '{1}'", Convert.ToDateTime(this.bdate1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.bdate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sp2))

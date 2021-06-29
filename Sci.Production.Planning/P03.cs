@@ -434,32 +434,32 @@ where   a.Finished = 0
 
             if (!MyUtility.Check.Empty(sciDelivery_b))
             {
-                sqlcmd += string.Format(@" and a.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery_b).ToString("d"));
+                sqlcmd += string.Format(@" and a.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery_b).ToString("yyyy/MM/dd"));
             }
 
             if (!MyUtility.Check.Empty(sciDelivery_e))
             {
-                sqlcmd += string.Format(@" and a.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery_e).ToString("d"));
+                sqlcmd += string.Format(@" and a.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery_e).ToString("yyyy/MM/dd"));
             }
 
             if (!string.IsNullOrWhiteSpace(sewinline_b))
             {
-                sqlcmd += string.Format(@" and c.OffLine >= '{0}'", Convert.ToDateTime(sewinline_b).ToString("d"));
+                sqlcmd += string.Format(@" and c.OffLine >= '{0}'", Convert.ToDateTime(sewinline_b).ToString("yyyy/MM/dd"));
             }
 
             if (!string.IsNullOrWhiteSpace(sewinline_e))
             {
-                sqlcmd += string.Format(@" and c.InLine <= '{0}'", Convert.ToDateTime(sewinline_e).ToString("d"));
+                sqlcmd += string.Format(@" and c.InLine <= '{0}'", Convert.ToDateTime(sewinline_e).ToString("yyyy/MM/dd"));
             }
 
             if (!string.IsNullOrWhiteSpace(inline_b))
             {
-                sqlcmd += string.Format(@" and b.artworkOffLine >= '{0}'", Convert.ToDateTime(inline_b).ToString("d"));
+                sqlcmd += string.Format(@" and b.artworkOffLine >= '{0}'", Convert.ToDateTime(inline_b).ToString("yyyy/MM/dd"));
             }
 
             if (!string.IsNullOrWhiteSpace(inline_e))
             {
-                sqlcmd += string.Format(@" and b.artworkInLine <= '{0}'", Convert.ToDateTime(inline_e).ToString("d"));
+                sqlcmd += string.Format(@" and b.artworkInLine <= '{0}'", Convert.ToDateTime(inline_e).ToString("yyyy/MM/dd"));
             }
 
             sqlcmd += string.Format(@" ORDER BY a.FactoryID, a.StyleID, a.SeasonID,a.ID ");

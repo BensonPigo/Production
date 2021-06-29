@@ -83,14 +83,14 @@ Where sub.sub like '%PRT%'
 ");
             if (!MyUtility.Check.Empty(this.Date1))
             {
-                sql.Append(string.Format("And (Convert (date, b.AddDate)  >= '{0}' Or Convert (date, b.EditDate) >= '{0}')", Convert.ToDateTime(this.Date1).ToString("d")));
-                sql2.Append(string.Format("And (Convert (date, b.AddDate)  >= '{0}' Or Convert (date, b.EditDate) >= '{0}')", Convert.ToDateTime(this.Date1).ToString("d")));
+                sql.Append(string.Format("And (Convert (date, b.AddDate)  >= '{0}' Or Convert (date, b.EditDate) >= '{0}')", Convert.ToDateTime(this.Date1).ToString("yyyy/MM/dd")));
+                sql2.Append(string.Format("And (Convert (date, b.AddDate)  >= '{0}' Or Convert (date, b.EditDate) >= '{0}')", Convert.ToDateTime(this.Date1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.Date2))
             {
-                sql.Append(string.Format("And (Convert (date, b.AddDate)  <= '{0}' Or Convert (date, b.EditDate) <= '{0}')", Convert.ToDateTime(this.Date2).ToString("d")));
-                sql2.Append(string.Format("And (Convert (date, b.AddDate)  <= '{0}' Or Convert (date, b.EditDate) <= '{0}')", Convert.ToDateTime(this.Date2).ToString("d")));
+                sql.Append(string.Format("And (Convert (date, b.AddDate)  <= '{0}' Or Convert (date, b.EditDate) <= '{0}')", Convert.ToDateTime(this.Date2).ToString("yyyy/MM/dd")));
+                sql2.Append(string.Format("And (Convert (date, b.AddDate)  <= '{0}' Or Convert (date, b.EditDate) <= '{0}')", Convert.ToDateTime(this.Date2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.FromBundleNO))
