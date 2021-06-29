@@ -117,7 +117,7 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
 
             string sqlwhere = string.Empty;
             sqlwhere += MyUtility.Check.Empty(factoryID) ? $@" and oc.MDivisionID = '{Env.User.Keyword}'" : $@" and oc.FactoryID = '{factoryID}'";
-            sqlwhere += MyUtility.Check.Empty(updateDate) ? @" and UpdateDate is null" : $@" and UpdateDate='{Convert.ToDateTime(updateDate).ToString("d")}'";
+            sqlwhere += MyUtility.Check.Empty(updateDate) ? @" and UpdateDate is null" : $@" and UpdateDate='{Convert.ToDateTime(updateDate).ToString("yyyy/MM/dd")}'";
             if (!MyUtility.Check.Empty(this.txtbrand1.Text))
             {
                 sqlwhere += $@" and oc.BrandID='{this.txtbrand1.Text}'";

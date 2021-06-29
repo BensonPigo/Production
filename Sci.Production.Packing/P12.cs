@@ -118,7 +118,7 @@ and (oq.EstPulloutDate <= '{1}' or dateadd(day,4,o.SewOffLine) <= '{1}')
 and o.Category in ({2})
 ",
                 Env.User.Keyword,
-                Convert.ToDateTime(this.dateExpPoutDate.Value).ToString("d"),
+                Convert.ToDateTime(this.dateExpPoutDate.Value).ToString("yyyy/MM/dd"),
                 category));
             sqlCmd.Append(@"
 select distinct id,seq into #tmpIDSeq from  #tmpClocationids

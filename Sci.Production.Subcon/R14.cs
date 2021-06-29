@@ -153,18 +153,18 @@ namespace Sci.Production.Subcon
                     {
                         sqlCmd_Where.Append(string.Format(
                             @" where a.apvdate is not null and a.issuedate between '{0}' and '{1}'",
-                            Convert.ToDateTime(this.Issuedate1).ToString("d"), Convert.ToDateTime(this.Issuedate2).ToString("d")));
+                            Convert.ToDateTime(this.Issuedate1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.Issuedate2).ToString("yyyy/MM/dd")));
                     }
                     else
                     {
                         if (!MyUtility.Check.Empty(this.Issuedate1))
                         {
-                            sqlCmd_Where.Append(string.Format(@" where a.apvdate is not null and a.issuedate >= '{0}' ", Convert.ToDateTime(this.Issuedate1).ToString("d")));
+                            sqlCmd_Where.Append(string.Format(@" where a.apvdate is not null and a.issuedate >= '{0}' ", Convert.ToDateTime(this.Issuedate1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.Issuedate2))
                         {
-                            sqlCmd_Where.Append(string.Format(@" where a.apvdate is not null and  a.issuedate <= '{0}' ", Convert.ToDateTime(this.Issuedate2).ToString("d")));
+                            sqlCmd_Where.Append(string.Format(@" where a.apvdate is not null and  a.issuedate <= '{0}' ", Convert.ToDateTime(this.Issuedate2).ToString("yyyy/MM/dd")));
                         }
                     }
 
@@ -179,18 +179,18 @@ namespace Sci.Production.Subcon
                     {
                         sqlCmd_Where.Append(string.Format(
                             @" where (a.issuedate between '{0}' and '{1}')",
-                            Convert.ToDateTime(this.Issuedate1).ToString("d"), Convert.ToDateTime(this.Issuedate2).ToString("d")));
+                            Convert.ToDateTime(this.Issuedate1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.Issuedate2).ToString("yyyy/MM/dd")));
                     }
                     else
                     {
                         if (!MyUtility.Check.Empty(this.Issuedate1))
                         {
-                            sqlCmd_Where.Append(string.Format(@" where (a.issuedate >= '{0}') ", Convert.ToDateTime(this.Issuedate1).ToString("d")));
+                            sqlCmd_Where.Append(string.Format(@" where (a.issuedate >= '{0}') ", Convert.ToDateTime(this.Issuedate1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.Issuedate2))
                         {
-                            sqlCmd_Where.Append(string.Format(@" where (a.issuedate <= '{0}') ", Convert.ToDateTime(this.Issuedate2).ToString("d")));
+                            sqlCmd_Where.Append(string.Format(@" where (a.issuedate <= '{0}') ", Convert.ToDateTime(this.Issuedate2).ToString("yyyy/MM/dd")));
                         }
                     }
 

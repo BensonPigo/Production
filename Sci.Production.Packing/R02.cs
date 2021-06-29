@@ -64,7 +64,7 @@ namespace Sci.Production.Packing
 
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
             {
-                this._bdate1 = Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString("d");
+                this._bdate1 = Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString("yyyy/MM/dd");
             }
             else
             {
@@ -73,7 +73,7 @@ namespace Sci.Production.Packing
 
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
             {
-                this._bdate2 = Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString("d");
+                this._bdate2 = Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString("yyyy/MM/dd");
             }
             else
             {
@@ -82,7 +82,7 @@ namespace Sci.Production.Packing
 
             if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
             {
-                this._scidate1 = Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("d");
+                this._scidate1 = Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("yyyy/MM/dd");
             }
             else
             {
@@ -91,7 +91,7 @@ namespace Sci.Production.Packing
 
             if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
             {
-                this._scidate2 = Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("d");
+                this._scidate2 = Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("yyyy/MM/dd");
             }
             else
             {
@@ -100,7 +100,7 @@ namespace Sci.Production.Packing
 
             if (!MyUtility.Check.Empty(this.dateOffline.Value1))
             {
-                this._offdate1 = Convert.ToDateTime(this.dateOffline.Value1).ToString("d");
+                this._offdate1 = Convert.ToDateTime(this.dateOffline.Value1).ToString("yyyy/MM/dd");
             }
             else
             {
@@ -109,7 +109,7 @@ namespace Sci.Production.Packing
 
             if (!MyUtility.Check.Empty(this.dateOffline.Value2))
             {
-                this._offdate2 = Convert.ToDateTime(this.dateOffline.Value2).ToString("d");
+                this._offdate2 = Convert.ToDateTime(this.dateOffline.Value2).ToString("yyyy/MM/dd");
             }
             else
             {
@@ -118,7 +118,7 @@ namespace Sci.Production.Packing
 
             if (!MyUtility.Check.Empty(this.dateScanDate.Value1))
             {
-                this._scanDate1 = Convert.ToDateTime(this.dateScanDate.Value1).ToString("d");
+                this._scanDate1 = Convert.ToDateTime(this.dateScanDate.Value1).ToString("yyyy/MM/dd");
             }
             else
             {

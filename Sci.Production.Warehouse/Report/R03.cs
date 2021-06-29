@@ -336,12 +336,12 @@ where 1=1
             #region --- 條件組合  ---
             if (!MyUtility.Check.Empty(this.sciDelivery1))
             {
-                sqlCmd.Append(string.Format(@" and '{0}' <= O.SciDelivery ", Convert.ToDateTime(this.sciDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and '{0}' <= O.SciDelivery ", Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDelivery2))
             {
-                sqlCmd.Append(string.Format(@" and O.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and O.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.style))
@@ -386,12 +386,12 @@ where 1=1
             {
                 if (!MyUtility.Check.Empty(this.suppDelivery1))
                 {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= Coalesce(PSD.finaletd, PSD.CFMETD, PSD.SystemETD)", Convert.ToDateTime(this.suppDelivery1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and '{0}' <= Coalesce(PSD.finaletd, PSD.CFMETD, PSD.SystemETD)", Convert.ToDateTime(this.suppDelivery1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.suppDelivery2))
                 {
-                    sqlCmd.Append(string.Format(@" and Coalesce(PSD.finaletd, PSD.CFMETD, PSD.SystemETD) <= '{0}'", Convert.ToDateTime(this.suppDelivery2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and Coalesce(PSD.finaletd, PSD.CFMETD, PSD.SystemETD) <= '{0}'", Convert.ToDateTime(this.suppDelivery2).ToString("yyyy/MM/dd")));
                 }
             }
 
@@ -399,12 +399,12 @@ where 1=1
             {
                 if (!MyUtility.Check.Empty(this.eta1))
                 {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= PSD.ETA", Convert.ToDateTime(this.eta1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and '{0}' <= PSD.ETA", Convert.ToDateTime(this.eta1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.eta2))
                 {
-                    sqlCmd.Append(string.Format(@" and PSD.ETA <= '{0}'", Convert.ToDateTime(this.eta2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and PSD.ETA <= '{0}'", Convert.ToDateTime(this.eta2).ToString("yyyy/MM/dd")));
                 }
             }
 
@@ -412,12 +412,12 @@ where 1=1
             {
                 if (!MyUtility.Check.Empty(this.ata1))
                 {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= PSD.FinalETA", Convert.ToDateTime(this.ata1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and '{0}' <= PSD.FinalETA", Convert.ToDateTime(this.ata1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.ata2))
                 {
-                    sqlCmd.Append(string.Format(@" and PSD.FinalETA <= '{0}'", Convert.ToDateTime(this.ata2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and PSD.FinalETA <= '{0}'", Convert.ToDateTime(this.ata2).ToString("yyyy/MM/dd")));
                 }
             }
 

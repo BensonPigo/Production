@@ -1012,10 +1012,10 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             worksheet.Cells[1, 1] = MyUtility.Convert.GetString(this.CurrentMaintain["Shipper"]);
             worksheet.Cells[3, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
             worksheet.Cells[4, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["InvSerial"]);
-            worksheet.Cells[5, 2] = MyUtility.Check.Empty(this.CurrentMaintain["InvDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["InvDate"]).ToString("d");
+            worksheet.Cells[5, 2] = MyUtility.Check.Empty(this.CurrentMaintain["InvDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["InvDate"]).ToString("yyyy/MM/dd");
             worksheet.Cells[6, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["Shipper"]);
             worksheet.Cells[7, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]);
-            worksheet.Cells[8, 2] = MyUtility.Check.Empty(this.CurrentMaintain["FCRDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["FCRDate"]).ToString("d");
+            worksheet.Cells[8, 2] = MyUtility.Check.Empty(this.CurrentMaintain["FCRDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["FCRDate"]).ToString("yyyy/MM/dd");
             worksheet.Cells[9, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["CustCDID"]);
             worksheet.Cells[10, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["PayTermARID"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Description from PayTermAR WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["PayTermARID"])));
             worksheet.Cells[11, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["Description"]);
@@ -1037,10 +1037,10 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             worksheet.Cells[6, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["SONo"]);
             worksheet.Cells[7, 9] = MyUtility.GetValue.Lookup("WhseNo", MyUtility.Convert.GetString(this.CurrentMaintain["ForwarderWhse_DetailUKey"]), "ForwarderWhse_Detail", "UKey");
             worksheet.Cells[8, 9] = MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["CutOffDate"]).ToString("yyyy/MM/dd HH:mm:ss");
-            worksheet.Cells[9, 9] = MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["SOCFMDate"]).ToString("d");
+            worksheet.Cells[9, 9] = MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["SOCFMDate"]).ToString("yyyy/MM/dd");
             worksheet.Cells[10, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["Vessel"]);
-            worksheet.Cells[11, 9] = MyUtility.Check.Empty(this.CurrentMaintain["ETD"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ETD"]).ToString("d");
-            worksheet.Cells[12, 9] = MyUtility.Check.Empty(this.CurrentMaintain["ETA"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ETA"]).ToString("d");
+            worksheet.Cells[11, 9] = MyUtility.Check.Empty(this.CurrentMaintain["ETD"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ETD"]).ToString("yyyy/MM/dd");
+            worksheet.Cells[12, 9] = MyUtility.Check.Empty(this.CurrentMaintain["ETA"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ETA"]).ToString("yyyy/MM/dd");
 
             int intRowsStart = 14;
             DataTable gridData = (DataTable)this.detailgridbs.DataSource;

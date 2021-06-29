@@ -116,12 +116,12 @@ where 1=1");
             #region 組Where條件
             if (!this.dateAddDate.Value1.Empty() && !this.dateAddDate.Value2.Empty())
             {
-                sqlcmd.Append($@" and CONVERT(date,sc.AddDate) between '{Convert.ToDateTime(this.dateAddDate1).ToString("d")}' and '{Convert.ToDateTime(this.dateAddDate2).ToString("d")}'");
+                sqlcmd.Append($@" and CONVERT(date,sc.AddDate) between '{Convert.ToDateTime(this.dateAddDate1).ToString("yyyy/MM/dd")}' and '{Convert.ToDateTime(this.dateAddDate2).ToString("yyyy/MM/dd")}'");
             }
 
             if (!this.dateApproveDate.Value1.Empty() && !this.dateApproveDate.Value2.Empty())
             {
-                sqlcmd.Append($@" and CONVERT(date,sc.EditDate) between '{Convert.ToDateTime(this.dateApproveDate1).ToString("d")}' and '{Convert.ToDateTime(this.dateApproveDate2).ToString("d")}' and sc.Status='Confirmed'");
+                sqlcmd.Append($@" and CONVERT(date,sc.EditDate) between '{Convert.ToDateTime(this.dateApproveDate1).ToString("yyyy/MM/dd")}' and '{Convert.ToDateTime(this.dateApproveDate2).ToString("yyyy/MM/dd")}' and sc.Status='Confirmed'");
             }
 
             if (!MyUtility.Check.Empty(this.strBrand))

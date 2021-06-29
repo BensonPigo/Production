@@ -138,7 +138,7 @@ and sp.ProductionKitsGroup='{Env.User.Keyword}'
 
             if (!MyUtility.Check.Empty(this.dateSendDate.Value))
             {
-               sqlCmd.Append(string.Format(" and sp.SendDate = '{0}'", Convert.ToDateTime(this.dateSendDate.Value).ToString("d")));
+               sqlCmd.Append(string.Format(" and sp.SendDate = '{0}'", Convert.ToDateTime(this.dateSendDate.Value).ToString("yyyy/MM/dd")));
             }
 
             sqlCmd.Append(@" order by FactoryID, StyleID");
@@ -194,7 +194,7 @@ and sp.ProductionKitsGroup='{Env.User.Keyword}'
                 if (dr.RowState == DataRowState.Modified)
                 {
                     cmds.Clear();
-                    cmds.Append(string.Format(@"update Style_ProductionKits set ReceiveDate = {0}, FtyRemark = '{1}'", MyUtility.Check.Empty(dr["ReceiveDate"]) ? "null" : "'" + Convert.ToDateTime(dr["ReceiveDate"]).ToString("d") + "'", dr["FtyRemark"].ToString()));
+                    cmds.Append(string.Format(@"update Style_ProductionKits set ReceiveDate = {0}, FtyRemark = '{1}'", MyUtility.Check.Empty(dr["ReceiveDate"]) ? "null" : "'" + Convert.ToDateTime(dr["ReceiveDate"]).ToString("yyyy/MM/dd") + "'", dr["FtyRemark"].ToString()));
                     if (!MyUtility.Check.Empty(dr["ReceiveDate"]))
                     {
                         cmds.Append(string.Format(@", FtyHandle = '{0}', FtyLastDate = GETDATE()", Env.User.UserID));

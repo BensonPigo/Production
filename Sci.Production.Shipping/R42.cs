@@ -95,12 +95,12 @@ and oqd.Qty > 0"));
 
             if (!MyUtility.Check.Empty(this.date1))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(this.date1).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.date2))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(this.date2).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.mDivision))

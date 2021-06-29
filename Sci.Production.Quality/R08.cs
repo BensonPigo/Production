@@ -67,8 +67,8 @@ namespace Sci.Production.Quality
             StringBuilder sqlCmdW = new StringBuilder();
             sqlCmdW.Append(string.Format(
                 " and FP.InspDate between '{0}' and '{1}'",
-                ((DateTime)this.InspectionDate1).ToString("d"),
-                ((DateTime)this.InspectionDate2).ToString("d")));
+                ((DateTime)this.InspectionDate1).ToString("yyyy/MM/dd"),
+                ((DateTime)this.InspectionDate2).ToString("yyyy/MM/dd")));
             if (!MyUtility.Check.Empty(this.uid))
             {
                 string strUserid = string.Empty;

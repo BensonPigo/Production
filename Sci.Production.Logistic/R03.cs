@@ -32,22 +32,22 @@ namespace Sci.Production.Logistic
             #region "Where 條件"
             if (!MyUtility.Check.Empty(this.dateDisposeDate.Value1))
             {
-                this.sqlWHERE.Append(string.Format(" and c.DisposeDate >= cast('{0}' as date)", Convert.ToDateTime(this.dateDisposeDate.Value1).ToString("d")));
+                this.sqlWHERE.Append(string.Format(" and c.DisposeDate >= cast('{0}' as date)", Convert.ToDateTime(this.dateDisposeDate.Value1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateDisposeDate.Value2))
             {
-                this.sqlWHERE.Append(string.Format(" and c.DisposeDate <= cast('{0}' as date)", Convert.ToDateTime(this.dateDisposeDate.Value2).ToString("d")));
+                this.sqlWHERE.Append(string.Format(" and c.DisposeDate <= cast('{0}' as date)", Convert.ToDateTime(this.dateDisposeDate.Value2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
             {
-                this.sqlWHERE.Append(string.Format(" and oqs.BuyerDelivery >= cast('{0}' as date)", Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString("d")));
+                this.sqlWHERE.Append(string.Format(" and oqs.BuyerDelivery >= cast('{0}' as date)", Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
             {
-                this.sqlWHERE.Append(string.Format(" and oqs.BuyerDelivery <= cast('{0}' as date)", Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString("d")));
+                this.sqlWHERE.Append(string.Format(" and oqs.BuyerDelivery <= cast('{0}' as date)", Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.txtPONoStart.Text))

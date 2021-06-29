@@ -82,12 +82,12 @@ namespace Sci.Production.PPIC
             sqlCondition.Append(string.Format(@"where l.FabricType = '{0}' ", this.reportType == 0 ? "F" : "A"));
             if (!MyUtility.Check.Empty(this.date1))
             {
-                sqlCondition.Append(string.Format(" and convert(date,l.ApvDate) >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                sqlCondition.Append(string.Format(" and convert(date,l.ApvDate) >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.date2))
             {
-                sqlCondition.Append(string.Format(" and convert(date,l.ApvDate) <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                sqlCondition.Append(string.Format(" and convert(date,l.ApvDate) <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.mDivision))
@@ -272,7 +272,7 @@ order by MDivisionID,FactoryID",
                     xlsSheet++;
                     worksheet = excel.ActiveWorkbook.Worksheets[xlsSheet];
                     worksheet.Name = MyUtility.Convert.GetString(dr["FactoryID"]);
-                    worksheet.Cells[3, 8] = string.Format("{0} ~ {1}", Convert.ToDateTime(this.date1).ToString("d"), Convert.ToDateTime(this.date2).ToString("d"));
+                    worksheet.Cells[3, 8] = string.Format("{0} ~ {1}", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd"));
                     worksheet.Cells[4, 8] = this.comboLeadtime.Text;
                     xlsFactory = MyUtility.Convert.GetString(dr["FactoryID"]);
                     ttlCount = 0;

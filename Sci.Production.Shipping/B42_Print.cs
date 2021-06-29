@@ -95,12 +95,12 @@ where 1=1 and vc.Status = 'Confirmed'"));
 
                 if (!MyUtility.Check.Empty(this.date1))
                 {
-                    sqlCmd.Append(string.Format(" and vc.CDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and vc.CDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.date2))
                 {
-                    sqlCmd.Append(string.Format(" and vc.CDate <= '{0}' ", Convert.ToDateTime(this.date2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and vc.CDate <= '{0}' ", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.customSP1))
@@ -134,12 +134,12 @@ and 1=1"));
 
                 if (!MyUtility.Check.Empty(this.date1))
                 {
-                    sqlCmd.Append(string.Format(" and CDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and CDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.date2))
                 {
-                    sqlCmd.Append(string.Format(" and CDate <= '{0}' ", Convert.ToDateTime(this.date2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and CDate <= '{0}' ", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.customSP1))
@@ -171,12 +171,12 @@ and 1=1 "));
 
                 if (!MyUtility.Check.Empty(this.date1))
                 {
-                    sqlCmd.Append(string.Format(" and vc.CDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and vc.CDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.date2))
                 {
-                    sqlCmd.Append(string.Format(" and vc.CDate <= '{0}' ", Convert.ToDateTime(this.date2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and vc.CDate <= '{0}' ", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.customSP1))
@@ -216,12 +216,12 @@ and 1=1"));
 
                 if (!MyUtility.Check.Empty(this.date1))
                 {
-                    sqlCmd.Append(string.Format(" and v.CDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and v.CDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.date2))
                 {
-                    sqlCmd.Append(string.Format(" and v.CDate <= '{0}' ", Convert.ToDateTime(this.date2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and v.CDate <= '{0}' ", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.customSP1))
@@ -335,8 +335,8 @@ and 1=1"));
                     if (stt == 0)
                     {
                         worksheet.Cells[3, 3] = MyUtility.Convert.GetString(dr["VNContractID"]);
-                        worksheet.Cells[3, 7] = MyUtility.Check.Empty(dr["StartDate"]) ? string.Empty : Convert.ToDateTime(dr["StartDate"]).ToString("d");
-                        worksheet.Cells[3, 9] = MyUtility.Check.Empty(dr["EndDate"]) ? string.Empty : Convert.ToDateTime(dr["EndDate"]).ToString("d");
+                        worksheet.Cells[3, 7] = MyUtility.Check.Empty(dr["StartDate"]) ? string.Empty : Convert.ToDateTime(dr["StartDate"]).ToString("yyyy/MM/dd");
+                        worksheet.Cells[3, 9] = MyUtility.Check.Empty(dr["EndDate"]) ? string.Empty : Convert.ToDateTime(dr["EndDate"]).ToString("yyyy/MM/dd");
                         worksheet.Cells[5, 2] = "Bªn thuª gia c«ng: " + MyUtility.Convert.GetString(dr["SubConName"]);
                         worksheet.Cells[5, 6] = "§Þa chØ: " + MyUtility.Convert.GetString(dr["SubConAddress"]);
                         worksheet.Cells[7, 7] = MyUtility.Convert.GetString(dr["TotalQty"]);

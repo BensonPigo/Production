@@ -768,9 +768,9 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
             this.updateCmds.Add(string.Format(
                 "update PackingList set ShipPlanID = '{0}', InspDate = {1}, InspStatus = '{2}', PulloutDate = {3} where ID = '{4}' AND INVno='{5}';",
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                MyUtility.Check.Empty(pldatarow["InspDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["InspDate"]).ToString("d") + "'",
+                MyUtility.Check.Empty(pldatarow["InspDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["InspDate"]).ToString("yyyy/MM/dd") + "'",
                 MyUtility.Convert.GetString(pldatarow["InspStatus"]),
-                MyUtility.Check.Empty(pldatarow["PulloutDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["PulloutDate"]).ToString("d") + "'",
+                MyUtility.Check.Empty(pldatarow["PulloutDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["PulloutDate"]).ToString("yyyy/MM/dd") + "'",
                 MyUtility.Convert.GetString(pldatarow["ID"]),
                 iNVno));
         }
@@ -784,13 +784,13 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
         // 檢查Pullout report是否已經Confirm
         private bool CheckPullout(DateTime pulloutDate, string mdivisionid)
         {
-            return MyUtility.Check.Seek(string.Format("select ID from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}' and Status <> 'New'", Convert.ToDateTime(pulloutDate).ToString("d"), mdivisionid));
+            return MyUtility.Check.Seek(string.Format("select ID from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}' and Status <> 'New'", Convert.ToDateTime(pulloutDate).ToString("yyyy/MM/dd"), mdivisionid));
         }
 
         // Process Pullout Date Message
         private void PulloutMsg(DataRow dr, DateTime dt)
         {
-            MyUtility.Msg.WarningBox("Pullout date:" + Convert.ToDateTime(dt).ToString("d") + " already exist pullout report and have been confirmed, can't modify!");
+            MyUtility.Msg.WarningBox("Pullout date:" + Convert.ToDateTime(dt).ToString("yyyy/MM/dd") + " already exist pullout report and have been confirmed, can't modify!");
             dr["PulloutDate"] = dr["PulloutDate"];
         }
 
@@ -864,7 +864,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
                 return;
             }
 
-            string updateCmd = string.Format("update ShipPlan set Status = 'Checked', CFMDate = '{0}', EditName = '{1}', EditDate = GETDATE() where ID = '{2}'", DateTime.Today.ToString("d"), Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update ShipPlan set Status = 'Checked', CFMDate = '{0}', EditName = '{1}', EditDate = GETDATE() where ID = '{2}'", DateTime.Today.ToString("yyyy/MM/dd"), Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)

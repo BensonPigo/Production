@@ -111,28 +111,28 @@ namespace Sci.Production.Subcon
 
             if (!MyUtility.Check.Empty(this.dateBundle1))
             {
-                sqlWhere.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(this.dateBundle1).ToString("d")));
+                sqlWhere.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(this.dateBundle1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateBundle2))
             {
-                sqlWhere.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(this.dateBundle2).ToString("d")));
+                sqlWhere.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(this.dateBundle2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateBundleScanDate1) && !MyUtility.Check.Empty(this.dateBundleScanDate2))
             {
-                sqlWhere.Append(string.Format(@" and ((convert (date, bio.InComing) >= '{0}' and convert (date, bio.InComing) <= '{1}' ) or (convert (date, bio.OutGoing) >= '{0}' and convert (date, bio.OutGoing) <= '{1}'))", Convert.ToDateTime(this.dateBundleScanDate1).ToString("d"), Convert.ToDateTime(this.dateBundleScanDate2).ToString("d")));
+                sqlWhere.Append(string.Format(@" and ((convert (date, bio.InComing) >= '{0}' and convert (date, bio.InComing) <= '{1}' ) or (convert (date, bio.OutGoing) >= '{0}' and convert (date, bio.OutGoing) <= '{1}'))", Convert.ToDateTime(this.dateBundleScanDate1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.dateBundleScanDate2).ToString("yyyy/MM/dd")));
             }
             else
             {
                 if (!MyUtility.Check.Empty(this.dateBundleScanDate1))
                 {
-                    sqlWhere.Append(string.Format(@" and (convert (date, bio.InComing)  >= '{0}' or convert (date, bio.OutGoing) >= '{0}')", Convert.ToDateTime(this.dateBundleScanDate1).ToString("d")));
+                    sqlWhere.Append(string.Format(@" and (convert (date, bio.InComing)  >= '{0}' or convert (date, bio.OutGoing) >= '{0}')", Convert.ToDateTime(this.dateBundleScanDate1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.dateBundleScanDate2))
                 {
-                    sqlWhere.Append(string.Format(@" and (convert (date, bio.InComing)  <= '{0}' or convert (date, bio.OutGoing) <= '{0}')", Convert.ToDateTime(this.dateBundleScanDate2).ToString("d")));
+                    sqlWhere.Append(string.Format(@" and (convert (date, bio.InComing)  <= '{0}' or convert (date, bio.OutGoing) <= '{0}')", Convert.ToDateTime(this.dateBundleScanDate2).ToString("yyyy/MM/dd")));
                 }
             }
 
@@ -153,22 +153,22 @@ namespace Sci.Production.Subcon
 
             if (!MyUtility.Check.Empty(this.dateBDelivery1))
             {
-                sqlWhere.Append(string.Format(@" and o.BuyerDelivery >= convert(date,'{0}')", Convert.ToDateTime(this.dateBDelivery1).ToString("d")));
+                sqlWhere.Append(string.Format(@" and o.BuyerDelivery >= convert(date,'{0}')", Convert.ToDateTime(this.dateBDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateBDelivery2))
             {
-                sqlWhere.Append(string.Format(@" and o.BuyerDelivery <= convert(date,'{0}')", Convert.ToDateTime(this.dateBDelivery2).ToString("d")));
+                sqlWhere.Append(string.Format(@" and o.BuyerDelivery <= convert(date,'{0}')", Convert.ToDateTime(this.dateBDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateSewInLine1))
             {
-                sqlWhere.Append(string.Format(@" and o.SewInLine >= convert(date,'{0}')", Convert.ToDateTime(this.dateSewInLine1).ToString("d")));
+                sqlWhere.Append(string.Format(@" and o.SewInLine >= convert(date,'{0}')", Convert.ToDateTime(this.dateSewInLine1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateSewInLine2))
             {
-                sqlWhere.Append(string.Format(@" and o.SewInLine <= convert(date,'{0}')", Convert.ToDateTime(this.dateSewInLine2).ToString("d")));
+                sqlWhere.Append(string.Format(@" and o.SewInLine <= convert(date,'{0}')", Convert.ToDateTime(this.dateSewInLine2).ToString("yyyy/MM/dd")));
             }
 
             #endregion

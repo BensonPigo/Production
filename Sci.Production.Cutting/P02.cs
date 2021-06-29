@@ -2631,7 +2631,7 @@ END";
             {
                 if (MyUtility.Check.Empty(dr["cutno"]) && !MyUtility.Check.Empty(dr["estcutdate"]))
                 {
-                    string estcutdate = ((DateTime)dr["estcutdate"]).ToString("d");
+                    string estcutdate = ((DateTime)dr["estcutdate"]).ToString("yyyy/MM/dd");
                     DataTable wk = (DataTable)this.detailgridbs.DataSource;
 
                     // 編碼組合找出最大 + 1

@@ -500,22 +500,22 @@ where	a.Finished = 0
 
             if (!MyUtility.Check.Empty(sciDelivery_b))
             {
-                sqlcmd += string.Format(@" and a.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery_b).ToString("d"));
+                sqlcmd += string.Format(@" and a.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery_b).ToString("yyyy/MM/dd"));
             }
 
             if (!MyUtility.Check.Empty(sciDelivery_e))
             {
-                sqlcmd += string.Format(@" and a.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery_e).ToString("d"));
+                sqlcmd += string.Format(@" and a.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery_e).ToString("yyyy/MM/dd"));
             }
 
             if (!string.IsNullOrWhiteSpace(sewinline_b))
             {
-                sqlcmd += string.Format(@" and a.SewOffLine >= '{0}'", Convert.ToDateTime(sewinline_b).ToString("d"));
+                sqlcmd += string.Format(@" and a.SewOffLine >= '{0}'", Convert.ToDateTime(sewinline_b).ToString("yyyy/MM/dd"));
             }
 
             if (!string.IsNullOrWhiteSpace(sewinline_e))
             {
-                sqlcmd += string.Format(@" and a.SewInLine <= '{0}'", Convert.ToDateTime(sewinline_e).ToString("d"));
+                sqlcmd += string.Format(@" and a.SewInLine <= '{0}'", Convert.ToDateTime(sewinline_e).ToString("yyyy/MM/dd"));
             }
 
             sqlcmd += string.Format(@" ORDER BY a.FactoryID, a.StyleID, a.SeasonID,a.ID ");

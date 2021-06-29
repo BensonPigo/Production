@@ -867,7 +867,7 @@ Carton has been output from the hanger system or transferred to clog.";
                 }
 
                 // 如果Pullout report已存在且狀態為Confirmed時，需出訊息告知
-                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(this.CurrentMaintain["PulloutDate"].ToString()).ToString("d"), Env.User.Keyword), out this.dr))
+                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(this.CurrentMaintain["PulloutDate"].ToString()).ToString("yyyy/MM/dd"), Env.User.Keyword), out this.dr))
                 {
                     if (this.dr["Status"].ToString() != "New")
                     {
@@ -1138,7 +1138,7 @@ Packing list is locked in the hanger system.";
             if (!MyUtility.Check.Empty(this.datePullOutDate.Value) && this.datePullOutDate.Value !=
                 this.datePullOutDate.OldValue)
             {
-                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(this.datePullOutDate.Value.ToString()).ToString("d"), Env.User.Keyword), out this.dr))
+                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(this.datePullOutDate.Value.ToString()).ToString("yyyy/MM/dd"), Env.User.Keyword), out this.dr))
                 {
                     if (this.dr["Status"].ToString() != "New")
                     {

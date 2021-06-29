@@ -178,23 +178,23 @@ where 1=1
 
                 if (!MyUtility.Check.Empty(this.dateBundle1))
                 {
-                    this.sqlCmd.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(this.dateBundle1).ToString("d")));
+                    this.sqlCmd.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(this.dateBundle1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.dateBundle2))
                 {
-                    this.sqlCmd.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(this.dateBundle2).ToString("d")));
+                    this.sqlCmd.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(this.dateBundle2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.dateBundleTransDate1))
                 {
-                    this.sqlCmd.Append(string.Format(@" and bt.TransferDate >= '{0}'", Convert.ToDateTime(this.dateBundleTransDate1).ToString("d")));
+                    this.sqlCmd.Append(string.Format(@" and bt.TransferDate >= '{0}'", Convert.ToDateTime(this.dateBundleTransDate1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.dateBundleTransDate2))
                 {
                     // TransferDate 是 datetime, 直接用日期做判斷的話要加一天才不會漏掉最後一天的資料
-                    this.sqlCmd.Append(string.Format(@" and bt.TransferDate <= '{0}'", Convert.ToDateTime(((DateTime)this.dateBundleTransDate2).AddDays(1)).ToString("d")));
+                    this.sqlCmd.Append(string.Format(@" and bt.TransferDate <= '{0}'", Convert.ToDateTime(((DateTime)this.dateBundleTransDate2).AddDays(1)).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.M))
@@ -307,13 +307,13 @@ where 1=1
 
                 if (!MyUtility.Check.Empty(this.dateBundleTransDate1))
                 {
-                    this.sqlCmd.Append($@" and bt.TransferDate >= '{Convert.ToDateTime(this.dateBundleTransDate1).ToString("d")}'" + Environment.NewLine);
+                    this.sqlCmd.Append($@" and bt.TransferDate >= '{Convert.ToDateTime(this.dateBundleTransDate1).ToString("yyyy/MM/dd")}'" + Environment.NewLine);
                 }
 
                 if (!MyUtility.Check.Empty(this.dateBundleTransDate2))
                 {
                     // TransferDate 是 datetime, 直接用日期做判斷的話要加一天才不會漏掉最後一天的資料
-                    this.sqlCmd.Append($@" and bt.TransferDate <= '{Convert.ToDateTime(((DateTime)this.dateBundleTransDate2).AddDays(1)).ToString("d")}'" + Environment.NewLine + Environment.NewLine);
+                    this.sqlCmd.Append($@" and bt.TransferDate <= '{Convert.ToDateTime(((DateTime)this.dateBundleTransDate2).AddDays(1)).ToString("yyyy/MM/dd")}'" + Environment.NewLine + Environment.NewLine);
                 }
 
                 if (!MyUtility.Check.Empty(this.CutRef1) && (!MyUtility.Check.Empty(this.CutRef1)))
@@ -328,12 +328,12 @@ where 1=1
 
                 if (!MyUtility.Check.Empty(this.dateBundle1))
                 {
-                    this.sqlCmd.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(this.dateBundle1).ToString("d")));
+                    this.sqlCmd.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(this.dateBundle1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.dateBundle2))
                 {
-                    this.sqlCmd.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(this.dateBundle2).ToString("d")));
+                    this.sqlCmd.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(this.dateBundle2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.M))

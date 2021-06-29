@@ -70,12 +70,12 @@ namespace Sci.Production.Warehouse
             this.condition.Clear();
             this.condition.Append(string.Format(
                 @"Issue Date : {0} ~ {1}" + "   ",
-                Convert.ToDateTime(this.issuedate1).ToString("d"),
-                Convert.ToDateTime(this.issuedate2).ToString("d")));
+                Convert.ToDateTime(this.issuedate1).ToString("yyyy/MM/dd"),
+                Convert.ToDateTime(this.issuedate2).ToString("yyyy/MM/dd")));
             this.condition.Append(string.Format(
                 @"Approve Date : {0} ~ {1}" + "   ",
-                Convert.ToDateTime(this.approveDate1).ToString("d"),
-                Convert.ToDateTime(this.approveDate2).ToString("d")));
+                Convert.ToDateTime(this.approveDate1).ToString("yyyy/MM/dd"),
+                Convert.ToDateTime(this.approveDate2).ToString("yyyy/MM/dd")));
             this.condition.Append(string.Format(
                 @"M : {0}" + "   ",
                 this.txtMdivision.Text));
@@ -152,12 +152,12 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
             {
                 if (!MyUtility.Check.Empty(this.issuedate1))
                 {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= a.issuedate", Convert.ToDateTime(this.issuedate1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and '{0}' <= a.issuedate", Convert.ToDateTime(this.issuedate1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.issuedate2))
                 {
-                    sqlCmd.Append(string.Format(@" and a.issuedate <= '{0}'", Convert.ToDateTime(this.issuedate2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and a.issuedate <= '{0}'", Convert.ToDateTime(this.issuedate2).ToString("yyyy/MM/dd")));
                 }
             }
 
@@ -165,12 +165,12 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
             {
                 if (!MyUtility.Check.Empty(this.approveDate1))
                 {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= a.apvdate", Convert.ToDateTime(this.approveDate1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and '{0}' <= a.apvdate", Convert.ToDateTime(this.approveDate1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.approveDate2))
                 {
-                    sqlCmd.Append(string.Format(@" and a.apvdate <= '{0}'", Convert.ToDateTime(this.approveDate2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and a.apvdate <= '{0}'", Convert.ToDateTime(this.approveDate2).ToString("yyyy/MM/dd")));
                 }
             }
 
@@ -238,14 +238,14 @@ where id = '{0}'", Env.User.Keyword));
             // Lacking Date (3, 2)
             objSheets.Cells[3, 2] = string.Format(
                 @"{0} ~ {1}" + "   ",
-                Convert.ToDateTime(this.issuedate1).ToString("d"),
-                Convert.ToDateTime(this.issuedate2).ToString("d"));
+                Convert.ToDateTime(this.issuedate1).ToString("yyyy/MM/dd"),
+                Convert.ToDateTime(this.issuedate2).ToString("yyyy/MM/dd"));
 
             // Approve Date (3, 4)
             objSheets.Cells[3, 4] = string.Format(
                 @"{0} ~ {1}" + "   ",
-                Convert.ToDateTime(this.approveDate1).ToString("d"),
-                Convert.ToDateTime(this.approveDate2).ToString("d"));
+                Convert.ToDateTime(this.approveDate1).ToString("yyyy/MM/dd"),
+                Convert.ToDateTime(this.approveDate2).ToString("yyyy/MM/dd"));
 
             // Shift (3, 6)
             objSheets.Cells[3, 6] = string.Format(

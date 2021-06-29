@@ -214,7 +214,7 @@ namespace Sci.Production.Logistic
                                     dr1["ClogLocationId"] = seekPacklistData["ClogLocationId"].ToString().Trim();
                                     if (!MyUtility.Check.Empty(seekPacklistData["ReceiveDate"]))
                                     {
-                                        dr1["ReceiveDate"] = Convert.ToDateTime(seekPacklistData["ReceiveDate"].ToString()).ToString("d");
+                                        dr1["ReceiveDate"] = Convert.ToDateTime(seekPacklistData["ReceiveDate"].ToString()).ToString("yyyy/MM/dd");
                                     }
 
                                     if (MyUtility.Check.Empty(dr1["ClogReturnID"]))

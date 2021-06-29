@@ -364,12 +364,12 @@ where   1=1");
 
             if (!MyUtility.Check.Empty(sqlPar.DateBuyerDeliveryFrom))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(sqlPar.DateBuyerDeliveryFrom).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(sqlPar.DateBuyerDeliveryFrom).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(sqlPar.DateBuyerDeliveryTo))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(sqlPar.DateBuyerDeliveryTo).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(sqlPar.DateBuyerDeliveryTo).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(sqlPar.Style))

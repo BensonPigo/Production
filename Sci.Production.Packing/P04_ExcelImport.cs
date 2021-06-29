@@ -281,7 +281,7 @@ WHERE o.Category = 'S'
 
                 DataRow[] findDR = tmpPackData.Select($@"
 OrderID = '{dr["OrderID"]}' 
-AND BuyerDelivery = {(MyUtility.Check.Empty(dr["BuyerDelivery"]) ? "null" : "'" + Convert.ToDateTime(dr["BuyerDelivery"]).ToString("d") + "'")} 
+AND BuyerDelivery = {(MyUtility.Check.Empty(dr["BuyerDelivery"]) ? "null" : "'" + Convert.ToDateTime(dr["BuyerDelivery"]).ToString("yyyy/MM/dd") + "'")} 
 AND ShipmodeID = '{dr["ShipmodeID"]}' 
 AND Article = '{dr["Article"]}' 
 AND SizeCode = '{dr["SizeCode"]}' 

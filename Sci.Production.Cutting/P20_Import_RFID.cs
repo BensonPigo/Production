@@ -183,12 +183,12 @@ namespace Sci.Production.Cutting
 
             if (!MyUtility.Check.Empty(rfidDate1))
             {
-                woUkeyCondition.Append(string.Format(@" and BIO.AddDate >='{0}' ", Convert.ToDateTime(rfidDate1).ToString("d")));
+                woUkeyCondition.Append(string.Format(@" and BIO.AddDate >='{0}' ", Convert.ToDateTime(rfidDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(rfidDate2))
             {
-                woUkeyCondition.Append(string.Format(@" and BIO.AddDate <='{0}'", Convert.ToDateTime(rfidDate2).ToString("d") + " 23:59:59"));
+                woUkeyCondition.Append(string.Format(@" and BIO.AddDate <='{0}'", Convert.ToDateTime(rfidDate2).ToString("yyyy/MM/dd") + " 23:59:59"));
             }
 
             if (!MyUtility.Check.Empty(spno))

@@ -141,12 +141,12 @@ namespace Sci.Production.Warehouse
 
                 if (!MyUtility.Check.Empty(this.sciDelivery1))
                 {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= o.SciDelivery ", Convert.ToDateTime(this.sciDelivery1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and '{0}' <= o.SciDelivery ", Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.sciDelivery2))
                 {
-                    sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")));
                 }
 
                 // if (!MyUtility.Check.Empty(spno1))
@@ -273,12 +273,12 @@ where 1=1 and c.ThirdCountry = 1"));
             {
                 if (!MyUtility.Check.Empty(this.suppDelivery1))
                 {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= b.finaletd", Convert.ToDateTime(this.suppDelivery1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and '{0}' <= b.finaletd", Convert.ToDateTime(this.suppDelivery1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.suppDelivery2))
                 {
-                    sqlCmd.Append(string.Format(@" and b.finaletd <= '{0}'", Convert.ToDateTime(this.suppDelivery2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and b.finaletd <= '{0}'", Convert.ToDateTime(this.suppDelivery2).ToString("yyyy/MM/dd")));
                 }
             }
 
@@ -286,12 +286,12 @@ where 1=1 and c.ThirdCountry = 1"));
             {
                 if (!MyUtility.Check.Empty(this.eta1))
                 {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= b.ETA", Convert.ToDateTime(this.eta1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and '{0}' <= b.ETA", Convert.ToDateTime(this.eta1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.eta2))
                 {
-                    sqlCmd.Append(string.Format(@" and b.ETA <= '{0}'", Convert.ToDateTime(this.eta2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and b.ETA <= '{0}'", Convert.ToDateTime(this.eta2).ToString("yyyy/MM/dd")));
                 }
             }
 
@@ -299,12 +299,12 @@ where 1=1 and c.ThirdCountry = 1"));
             {
                 if (!MyUtility.Check.Empty(this.ata1))
                 {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= b.FinalETA", Convert.ToDateTime(this.ata1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and '{0}' <= b.FinalETA", Convert.ToDateTime(this.ata1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.ata2))
                 {
-                    sqlCmd.Append(string.Format(@" and b.FinalETA <= '{0}'", Convert.ToDateTime(this.ata2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and b.FinalETA <= '{0}'", Convert.ToDateTime(this.ata2).ToString("yyyy/MM/dd")));
                 }
             }
 

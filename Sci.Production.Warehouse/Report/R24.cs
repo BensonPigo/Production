@@ -51,12 +51,12 @@ namespace Sci.Production.Warehouse
                 string sqlFilter = string.Empty;
                 if (!MyUtility.Check.Empty(this.strIssueDate1))
                 {
-                    sqlFilter += string.Format(" and '{0}' <= a.issuedate ", Convert.ToDateTime(this.strIssueDate1).ToString("d"));
+                    sqlFilter += string.Format(" and '{0}' <= a.issuedate ", Convert.ToDateTime(this.strIssueDate1).ToString("yyyy/MM/dd"));
                 }
 
                 if (!MyUtility.Check.Empty(this.strIssueDate2))
                 {
-                    sqlFilter += string.Format(" and a.issuedate <= '{0}'", Convert.ToDateTime(this.strIssueDate2).ToString("d"));
+                    sqlFilter += string.Format(" and a.issuedate <= '{0}'", Convert.ToDateTime(this.strIssueDate2).ToString("yyyy/MM/dd"));
                 }
 
                 if (!MyUtility.Check.Empty(this.strM))

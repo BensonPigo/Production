@@ -489,9 +489,9 @@ values ('{0}','Status','','New','{1}',GETDATE())",
             }
 
             worksheet.Cells[3, 5] = status;
-            worksheet.Cells[3, 8] = Convert.ToDateTime(DateTime.Today).ToString("d");
+            worksheet.Cells[3, 8] = Convert.ToDateTime(DateTime.Today).ToString("yyyy/MM/dd");
             worksheet.Cells[4, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
-            worksheet.Cells[4, 7] = MyUtility.Check.Empty(this.dateBuyerDelivery.Value) ? string.Empty : Convert.ToDateTime(this.dateBuyerDelivery.Value).ToString("d");
+            worksheet.Cells[4, 7] = MyUtility.Check.Empty(this.dateBuyerDelivery.Value) ? string.Empty : Convert.ToDateTime(this.dateBuyerDelivery.Value).ToString("yyyy/MM/dd");
             worksheet.Cells[5, 7] = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["MRHandle"])));
             worksheet.Cells[6, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]);
             worksheet.Cells[6, 6] = this.displayFactory.Value;

@@ -338,12 +338,12 @@ as
 
             if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.txtstyle.Text))
@@ -407,9 +407,9 @@ select *,iif(isnull(SewOutQty,0) >= Qty, tmpActSewOffLine, null) as ActSewOffLin
                         updateCmds.Add(string.Format(
                             @"update Orders set SewLine = '{0}', SewInLine = {1}, SewOffLine = {2}, CutReadyDate = {3}, SewRemark = '{4}' where ID = '{5}'",
                             MyUtility.Convert.GetString(dr["SewLine"]),
-                            MyUtility.Check.Empty(dr["SewInLine"]) ? "null" : "'" + Convert.ToDateTime(dr["SewInLine"]).ToString("d") + "'",
-                            MyUtility.Check.Empty(dr["SewOffLine"]) ? "null" : "'" + Convert.ToDateTime(dr["SewOffLine"]).ToString("d") + "'",
-                            MyUtility.Check.Empty(dr["CutReadyDate"]) ? "null" : "'" + Convert.ToDateTime(dr["CutReadyDate"]).ToString("d") + "'",
+                            MyUtility.Check.Empty(dr["SewInLine"]) ? "null" : "'" + Convert.ToDateTime(dr["SewInLine"]).ToString("yyyy/MM/dd") + "'",
+                            MyUtility.Check.Empty(dr["SewOffLine"]) ? "null" : "'" + Convert.ToDateTime(dr["SewOffLine"]).ToString("yyyy/MM/dd") + "'",
+                            MyUtility.Check.Empty(dr["CutReadyDate"]) ? "null" : "'" + Convert.ToDateTime(dr["CutReadyDate"]).ToString("yyyy/MM/dd") + "'",
                             MyUtility.Convert.GetString(dr["SewRemark"]),
                             MyUtility.Convert.GetString(dr["ID"])));
                         allSP.Append(string.Format("'{0}',", MyUtility.Convert.GetString(dr["ID"])));
@@ -441,8 +441,8 @@ select *,iif(isnull(SewOutQty,0) >= Qty, tmpActSewOffLine, null) as ActSewOffLin
                             updateCmds.Add(string.Format(
                                 @"insert into Order_History (ID,HisType,OldValue,NewValue,Remark,AddName,AddDate)
 values ('{0}','SewInOffLine',{1},{2},'Sewing Inline Update','{3}',GETDATE()) ", MyUtility.Convert.GetString(dr["ID"]),
-                                MyUtility.Check.Empty(dr["OInline"]) ? "null" : "'" + Convert.ToDateTime(dr["OInline"]).ToString("d") + "'",
-                                MyUtility.Check.Empty(dr["TInLine"]) ? "null" : "'" + Convert.ToDateTime(dr["TInLine"]).ToString("d") + "'",
+                                MyUtility.Check.Empty(dr["OInline"]) ? "null" : "'" + Convert.ToDateTime(dr["OInline"]).ToString("yyyy/MM/dd") + "'",
+                                MyUtility.Check.Empty(dr["TInLine"]) ? "null" : "'" + Convert.ToDateTime(dr["TInLine"]).ToString("yyyy/MM/dd") + "'",
                                 Env.User.UserID));
                         }
 
@@ -451,8 +451,8 @@ values ('{0}','SewInOffLine',{1},{2},'Sewing Inline Update','{3}',GETDATE()) ", 
                             updateCmds.Add(string.Format(
                                 @"insert into Order_History (ID,HisType,OldValue,NewValue,Remark,AddName,AddDate)
 values ('{0}','SewInOffLine',{1},{2},'Sewing Offline Update','{3}',GETDATE()) ", MyUtility.Convert.GetString(dr["ID"]),
-                                MyUtility.Check.Empty(dr["OOffLine"]) ? "null" : "'" + Convert.ToDateTime(dr["OOffLine"]).ToString("d") + "'",
-                                MyUtility.Check.Empty(dr["TOffLine"]) ? "null" : "'" + Convert.ToDateTime(dr["TOffLine"]).ToString("d") + "'",
+                                MyUtility.Check.Empty(dr["OOffLine"]) ? "null" : "'" + Convert.ToDateTime(dr["OOffLine"]).ToString("yyyy/MM/dd") + "'",
+                                MyUtility.Check.Empty(dr["TOffLine"]) ? "null" : "'" + Convert.ToDateTime(dr["TOffLine"]).ToString("yyyy/MM/dd") + "'",
                                 Env.User.UserID));
                         }
                     }

@@ -811,7 +811,7 @@ order by NO
             worksheet.Cells[9, 6] = this.styleCPU;
 
             // 右下簽名位置
-            worksheet.Cells[29, 20] = DateTime.Now.ToString("d");
+            worksheet.Cells[29, 20] = DateTime.Now.ToString("yyyy/MM/dd");
             worksheet.Cells[32, 20] = Env.User.UserName;
 
             // 左下表頭資料
