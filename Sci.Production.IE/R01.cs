@@ -19,7 +19,9 @@ namespace Sci.Production.IE
         private string team;
         private string inline1;
         private string inline2;
+        private bool bolSummary;
         private DataTable printData;
+        private StringBuilder sqlCmd = new StringBuilder();
 
         /// <summary>
         /// R01
@@ -94,7 +96,7 @@ namespace Sci.Production.IE
             this.team = this.comboTeam.SelectedIndex == -1 || this.comboTeam.SelectedIndex == 0 ? string.Empty : this.comboTeam.SelectedIndex == 1 ? "A" : "B";
             this.inline1 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value1);
             this.inline2 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value2);
-
+            this.bolSummary = this.radioSummary.Checked;
             return base.ValidateInput();
         }
 
@@ -105,8 +107,10 @@ namespace Sci.Production.IE
         /// <returns>DualResult</returns>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"
+            this.sqlCmd.Clear();
+            if (this.bolSummary)
+            {
+                this.sqlCmd.Append(@"
 select
 	lm.FactoryID,
 	lm.StyleID,
@@ -126,11 +130,39 @@ select
 	EffTarget = EffTarget.Target / 100.0,
 	IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.HighestCycle/lm.CurrentOperators) as LB,
 	LinebalancingTarget.Target / 100.0,
-	NotHitTargetReason = (select Description from IEReason i where i.ID = lm.IEReasonID and Type = 'LM'),
+	[NotHitTargetType] =  (select STUFF ((
+				select distinct CONCAT (',', a.TypeGroup) 
+					from (
+						select lbr.TypeGroup
+						from LineMapping_Detail l2 WITH (NOLOCK)
+                        inner join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on l2.IEReasonLBRNotHit_DetailUkey = lbr.Ukey and lbr.junk = 0
+						where lm.ID = l2.ID
+					) a 
+					for xml path('')
+			), 1, 1, '')) ,
+    [TotalNoofNotHitTarget] = (select cnt = iif(count(*) = 0, '', cast(count(*) as varchar))
+                    from (
+	                    select distinct l2.NO, l2.IEReasonLBRNotHit_DetailUkey
+	                    from LineMapping_Detail l2 WITH (NOLOCK)
+	                    where lm.ID = l2.ID
+	                    and ISNULL(l2.IEReasonLBRNotHit_DetailUkey, '') <> ''
+                    )a ),
+	[NotHitTargetReason] =  (select STUFF ((
+				select distinct CONCAT (',', a.Name ) 
+					from (
+						select lbr.Name 
+						from LineMapping_Detail l2 WITH (NOLOCK)
+                        inner join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on l2.IEReasonLBRNotHit_DetailUkey = lbr.Ukey and lbr.junk = 0
+						where lm.ID = l2.ID
+					) a 
+					for xml path('')
+			), 1, 1, '')) ,
 	IIF(lm.TaktTime*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.TaktTime/lm.CurrentOperators) as LLEF,
 	IIF(lm.HighestCycle * lm.CurrentOperators = 0,0,(ROUND(3600.0/lm.HighestCycle, 2) * (select isnull(CPU,0) from Style WITH (NOLOCK) where lm.BrandID = BrandID and lm.StyleID = ID and lm.SeasonID = SeasonID)/lm.CurrentOperators)) as PPH,
-	isnull((select Name from Pass1 WITH (NOLOCK) where ID = lm.AddName),'') as CreateBy,lm.AddDate,
-	isnull((select Name from Pass1 WITH (NOLOCK) where ID = lm.EditName),'') as EditBy,lm.EditDate
+	isnull((select Name from Pass1 WITH (NOLOCK) where ID = lm.AddName),'') as CreateBy,
+    lm.AddDate,
+	isnull((select Name from Pass1 WITH (NOLOCK) where ID = lm.EditName),'') as EditBy,
+    lm.EditDate
 from LineMapping lm WITH (NOLOCK) 
 outer apply(
 	select top 1 c.Target
@@ -147,6 +179,34 @@ outer apply(
 	order by EffectiveDate desc
 )LinebalancingTarget 
 ");
+            }
+            else
+            {
+                this.sqlCmd.Append(@"
+select
+	lm.FactoryID,
+	lm.StyleID,
+	lm.ComboType,
+	lm.SeasonID,
+	lm.BrandID,
+	lm.Version,
+	lmd.No,
+	lmd.TotalCycle,
+	lmdavg.avgTotalCycle,
+	[diffCycle] = (lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle,
+	lbr.name
+from LineMapping lm WITH (NOLOCK) 
+inner join LineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+left join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on lmd.IEReasonLBRNotHit_DetailUkey = lbr.Ukey and lbr.junk = 0
+outer apply (
+	select [avgTotalCycle] = avg(TotalCycle)
+	from LineMapping_Detail 
+	where lm.ID = ID
+	and No <> '' 
+)lmdavg
+");
+            }
+
             if (!MyUtility.Check.Empty(this.inline1) || !MyUtility.Check.Empty(this.inline2))
             {
                 string dateQuery = string.Empty;
@@ -160,7 +220,7 @@ outer apply(
                     dateQuery += string.Format("and convert(varchar(10), Inline, 120) <= '{0}' ", this.inline2);
                 }
 
-                sqlCmd.Append(string.Format(
+                this.sqlCmd.Append(string.Format(
                     @"
 inner join(
 	select distinct Orders.StyleID
@@ -173,32 +233,30 @@ inner join(
 ", dateQuery));
             }
 
-            sqlCmd.Append("where 1 = 1");
+            this.sqlCmd.Append("where 1 = 1");
+            if (!this.bolSummary)
+            {
+                this.sqlCmd.Append(" and lmd.IsHide = 0");
+            }
+
             if (!MyUtility.Check.Empty(this.factory))
             {
-                sqlCmd.Append(string.Format(" and lm.FactoryID = '{0}'", this.factory));
+                this.sqlCmd.Append(string.Format(" and lm.FactoryID = '{0}'", this.factory));
             }
 
             if (!MyUtility.Check.Empty(this.style))
             {
-                sqlCmd.Append(string.Format(" and lm.StyleID = '{0}'", this.style));
+                this.sqlCmd.Append(string.Format(" and lm.StyleID = '{0}'", this.style));
             }
 
             if (!MyUtility.Check.Empty(this.season))
             {
-                sqlCmd.Append(string.Format(" and lm.SeasonID = '{0}'", this.season));
+                this.sqlCmd.Append(string.Format(" and lm.SeasonID = '{0}'", this.season));
             }
 
             if (!MyUtility.Check.Empty(this.team))
             {
-                sqlCmd.Append(string.Format(" and lm.Team = '{0}'", this.team));
-            }
-
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
-            if (!result)
-            {
-                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
-                return failResult;
+                this.sqlCmd.Append(string.Format(" and lm.Team = '{0}'", this.team));
             }
 
             return Ict.Result.True;
@@ -211,6 +269,13 @@ inner join(
         /// <returns>bool</returns>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
+            DualResult result = DBProxy.Current.Select(null, this.sqlCmd.ToString(), out this.printData);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.printData.Rows.Count);
 
@@ -221,20 +286,21 @@ inner join(
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Env.Cfg.XltPathDir + "\\IE_R01_LineMappingList.xltx";
+            string fileName = this.bolSummary ? "IE_R01_Summary" : "IE_R01_Detail";
+            string strXltName = Env.Cfg.XltPathDir + $"\\{fileName}.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
                 return false;
             }
 
-            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "IE_R01_LineMappingList.xltx", 1, false, null, excel);
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, fileName + ".xltx", 1, false, null, excel);
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Class.MicrosoftFile.GetName("IE_R01_LineMappingList");
+            string strExcelName = Class.MicrosoftFile.GetName(fileName);
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

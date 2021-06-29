@@ -28,6 +28,7 @@ CREATE TABLE [dbo].[LineMapping] (
     [EditDate]         DATETIME       NULL,
     [TimeStudyPhase]   VARCHAR(10)    CONSTRAINT [DF_LineMapping_TimeStudyPhase] DEFAULT ('') NOT NULL, 
     [TimeStudyVersion] VARCHAR(2)     CONSTRAINT [DF_LineMapping_TimeStudyVersion] DEFAULT ('') NOT NULL, 
+    [IEReasonLBRNotHit_1stUkey] BIGINT NULL, 
     CONSTRAINT [PK_LineMapping] PRIMARY KEY CLUSTERED ([StyleID] ASC, [SeasonID] ASC, [BrandID] ASC, [StyleUKey] ASC, [Version] ASC)
 );
 
@@ -170,3 +171,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'LineMapping',
     @level2type = N'COLUMN',
     @level2name = N'TimeStudyVersion'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'IEReasonLBRNotHit_1st Ukey',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping',
+    @level2type = N'COLUMN',
+    @level2name = N'IEReasonLBRNotHit_1stUkey'

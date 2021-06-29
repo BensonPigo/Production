@@ -205,6 +205,24 @@
     <Compile Include="B12.Designer.cs">
       <DependentUpon>B12.cs</DependentUpon>
     </Compile>
+    <Compile Include="B90.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B90.Designer.cs">
+      <DependentUpon>B90.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B91.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B91.Designer.cs">
+      <DependentUpon>B91.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B92.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B92.Designer.cs">
+      <DependentUpon>B92.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -308,7 +326,7 @@
     </Compile>
     <Compile Include="R06.Designer.cs">
       <DependentUpon>R06.cs</DependentUpon>
-	</Compile>
+    </Compile>
     <Compile Include="R07.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -400,6 +418,15 @@
     <EmbeddedResource Include="B12.resx">
       <DependentUpon>B12.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B90.resx">
+      <DependentUpon>B90.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B91.resx">
+      <DependentUpon>B91.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B92.resx">
+      <DependentUpon>B92.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -459,7 +486,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R06.resx">
       <DependentUpon>R06.cs</DependentUpon>
-	</EmbeddedResource>
+    </EmbeddedResource>
     <EmbeddedResource Include="R07.resx">
       <DependentUpon>R07.cs</DependentUpon>
     </EmbeddedResource>

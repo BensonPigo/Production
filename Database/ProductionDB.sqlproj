@@ -2655,6 +2655,10 @@
     <Build Include="dbo\Tables\Rate.sql" />
     <Build Include="dbo\Tables\Style_ThreadColorCombo_History_Version.sql" />
     <Build Include="dbo\Functions\getSPRatebyAPSNo.sql" />
+    <Build Include="dbo\Tables\IEReasonType.sql" />
+    <Build Include="dbo\Tables\IEReasonTypeGroup.sql" />
+    <Build Include="dbo\Tables\IEReasonLBRnotHit_1st.sql" />
+    <Build Include="dbo\Tables\IEReasonLBRnotHit_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

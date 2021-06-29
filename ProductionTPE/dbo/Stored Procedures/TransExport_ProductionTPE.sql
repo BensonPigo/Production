@@ -122,6 +122,22 @@ BEGIN
 	RAISERROR('ChgOverTarget  - Starts',0,0)
 	select * into dbo.ChgOverTarget from (select * from ProductionTPE.dbo.ChgOverTarget where junk <> 1 ) as tmp
 
+	-------------IEReasonType-------------------
+	RAISERROR('IEReasonType  - Starts',0,0)
+	select * into dbo.IEReasonType from (select * from ProductionTPE.dbo.IEReasonType ) as tmp
+
+	-------------IEReasonTypeGroup-------------------
+	RAISERROR('IEReasonTypeGroup  - Starts',0,0)
+	select * into dbo.IEReasonTypeGroup from (select * from ProductionTPE.dbo.IEReasonTypeGroup ) as tmp
+
+	-------------IEReasonLBRnotHit_1st-------------------
+	RAISERROR('IEReasonLBRnotHit_1st  - Starts',0,0)
+	select * into dbo.IEReasonLBRnotHit_1st from (select * from ProductionTPE.dbo.IEReasonLBRnotHit_1st ) as tmp
+
+	-------------IEReasonLBRnotHit_Detail-------------------
+	RAISERROR('IEReasonLBRnotHit_Detail  - Starts',0,0)
+	select * into dbo.IEReasonLBRnotHit_Detail from (select * from ProductionTPE.dbo.IEReasonLBRnotHit_Detail ) as tmp
+
 	set transaction isolation level read committed
 END
 
