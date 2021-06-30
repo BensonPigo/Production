@@ -374,8 +374,8 @@ outer apply(
 )c7
 outer apply(
 	select [Qty] = sum(QtyPerCTN) - sum(ScanQty) 
-	from PackingList_Detail pld 
-	where pld.ID=t.Packing# and pld.OrderID=t.SP# and pld.CTNStartNo=t.CTN#
+	from PackingList_Detail pld with (nolock)
+	where pld.ID=t.[Packing#] and pld.OrderID=t.SP# and pld.CTNStartNo = t.[CTN#]
 	and pld.Lacking=1
 )LackingQty
 group by [Packing#]	,[Factory]	,[Shipmode]	,[SP#]	,[Style]	,[Brand]	,[Season], [Sewingline]	,Customize1	,[P.O.#]	,[Buyer]	,[Destination]
