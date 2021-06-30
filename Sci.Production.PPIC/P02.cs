@@ -219,7 +219,7 @@ order by oc.FactoryID,oc.OrderId";
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_P02.xltx");
             MyUtility.Excel.CopyToXls(excelTable, string.Empty, "PPIC_P02.xltx", 3, false, string.Empty, objApp);
             objApp.Cells[2, 3] = "Last Date " + this.dateLastDate.Value.Value.ToShortDateString();
-            objApp.Cells[2, 9] = "Update Date " + (this.dateUpdatedDate.Value.HasValue ? this.dateUpdatedDate.Value.Value.ToShortDateString() : null);
+            objApp.Cells[2, 14] = "Update Date " + (this.dateUpdatedDate.Value.HasValue ? this.dateUpdatedDate.Value.Value.ToShortDateString() : null);
             int number = 3;
             for (int j = 0; j < excelTable.Rows.Count; j++)
             {
@@ -236,11 +236,8 @@ order by oc.FactoryID,oc.OrderId";
             objApp.get_Range("B" + 4, "B" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             objApp.get_Range("B" + 4, "B" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
 
-            objApp.get_Range("L" + 4, "L" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("L" + 4, "L" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-
-            objApp.get_Range("S" + 4, "S" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("S" + 4, "S" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+            objApp.get_Range("M" + 4, "M" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("M" + 4, "M" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
 
             objApp.get_Range("T" + 4, "T" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             objApp.get_Range("T" + 4, "T" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
@@ -263,8 +260,11 @@ order by oc.FactoryID,oc.OrderId";
             objApp.get_Range("Z" + 4, "Z" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             objApp.get_Range("Z" + 4, "Z" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
 
-            objApp.get_Range("A" + number, "Z" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("A" + number, "Z" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 2;
+            objApp.get_Range("AA" + 4, "AA" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("AA" + 4, "AA" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+
+            objApp.get_Range("A" + number, "AA" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("A" + number, "AA" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 2;
 
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("PPIC_P02");
