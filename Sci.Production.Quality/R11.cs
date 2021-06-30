@@ -403,7 +403,7 @@ select
 	t.TicketYds,
 	t.ActualYds,
 	LackingYard = isnull(t.TicketYds, 0) - isnull(t.ActualYds, 0),
-	t.InspDate
+	[InspDate] = FORMAT(t.InspDate, 'yyyy/MM/dd')
 from #tmp1 t
 where t.InspDate is not null
 
@@ -430,7 +430,7 @@ select
 	t.TicketYds,
 	t.ActualYds,
 	LackingYard = isnull(t.TicketYds, 0) - isnull(t.ActualYds, 0),
-	t.InspDate
+	[InspDate] = FORMAT(t.InspDate, 'yyyy/MM/dd')
 from #tmp2 t
 where t.InspDate is not null
 
@@ -931,7 +931,7 @@ select
 	t.TicketYds,
 	t.ActualYds,
 	LackingYard = isnull(t.TicketYds, 0) - isnull(t.ActualYds, 0),
-	t.InspDate
+	[InspDate] = FORMAT(t.InspDate, 'yyyy/MM/dd')
 from #tmp1 t
 where t.InspDate is not null
 
@@ -961,7 +961,7 @@ select
 	t.TicketYds,
 	t.ActualYds,
 	LackingYard = isnull(t.TicketYds, 0) - isnull(t.ActualYds, 0),
-	t.InspDate
+	[InspDate] = FORMAT(t.InspDate, 'yyyy/MM/dd')
 from #tmp2 t
 where t.InspDate is not null
 
