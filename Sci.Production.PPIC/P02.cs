@@ -138,7 +138,7 @@ select oc.FactoryID
 	   , OriginalShipModeList
        , NewShipModeList
 	   , KPILETA = RIGHT(CONVERT(VARCHAR(20),oc.KPILETA,111),5)
-       , oc.OriginalPFETA
+	   , OriginalPFETA = RIGHT(CONVERT(VARCHAR(20),oc.OriginalPFETA,111),5)
 	   , TransferToFactory
        , NewCustPONo
 	   , NewQty
