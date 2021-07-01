@@ -55,8 +55,7 @@ outer apply (
 		, [PoQty] = sum(apd.PoQty)
 	from ArtworkPO ap WITH (NOLOCK) 
 	inner join ArtworkPO_Detail apd WITH (NOLOCK) on ap.id=apd.id 
-	where ap.ID = '{0}'
-	and ap.ArtworkTypeID = '{1}'
+	where ap.ArtworkTypeID = '{1}'
 	and ap.ApvDate is not null
 	and apd.OrderID = oq.ID
 	group by apd.OrderID
@@ -99,7 +98,7 @@ select apd.OrderID
 	, [PoQty] = sum(apd.PoQty)
 from ArtworkPO ap WITH (NOLOCK) 
 inner join ArtworkPO_Detail apd WITH (NOLOCK) on ap.id=apd.id 
-where ap.ID = '{0}'
+where exists (select 1 from ArtworkPO_Detail ad with (nolock) where ad.ID = '{0}' and ad.OrderID = apd.OrderID)
 and ap.ArtworkTypeID = '{1}'
 and ap.ApvDate is not null
 group by apd.OrderID, apd.Article, apd.SizeCode",
@@ -179,8 +178,8 @@ group by apd.OrderID, apd.Article, apd.SizeCode",
             this.gridAccumulated.IsEditingReadOnly = true;
             this.gridAccumulated.DataSource = this.bindingSource3;
             this.Helper.Controls.Grid.Generator(this.gridAccumulated)
-                 .Text("Article", header: "Dyelot", width: Widths.AnsiChars(13))
-                 .Text("SizeCode", header: "Rolls", width: Widths.AnsiChars(13))
+                 .Text("Article", header: "Article", width: Widths.AnsiChars(13))
+                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(13))
                  .Numeric("PoQty", header: "Accumulated PO Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2);
         }
 
