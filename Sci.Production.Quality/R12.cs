@@ -417,8 +417,8 @@ outer apply(
     )x
 )ct3
 ";
-                column1 = "ct3.Dyelot,";
-                groupColumn = ",ct3.Dyelot";
+                column1 = "ct3.Dyelot,[NotInspectedDyelot]= f.ctDyelot - ct3.Dyelot,";
+                groupColumn = ",ct3.Dyelot,f.ctDyelot";
             }
 
             if (this.radioWKSeq.Checked)
@@ -607,6 +607,7 @@ left join pass1 p2 with (nolock) on p2.id = f.Approve
 
                     string colPhysical = $@"
 Dyelot2=ct3.Dyelot,
+[NotInspectedDyelot]= ct2.Dyelot - ct3.Dyelot,
 [NonPhysical] = iif(f.NonPhysical = 1, 'Y', ''),
 f.Physical,
 {colPhysicalWKSeqOnly}
