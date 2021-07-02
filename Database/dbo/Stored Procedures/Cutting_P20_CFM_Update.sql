@@ -101,20 +101,57 @@ BEGIN
 			select
 				@ActGarment = sum(a.cutqty)  - sum(a.pre_cutqty) 
 			from #tmp3 a
-			--left join CuttingOutput_WIP cw WITH (NOLOCK) on cw.Orderid = a.orderid and cw.Article = a.Article and cw.Size = a.SizeCode
 			
+			--以下計算@ActTTCPU
+			--找出相同WorkOrder.ID, Article, SizeCode (會有不在 CuttingOutput_Detail內的資料)
+			select w.ID, w.Ukey, wd.Article, wd.SizeCode, w.FabricCombo,
+				w.ConsPC
+			into #tmpAllworkorder
+			from WorkOrder w WITH (NOLOCK)
+			inner join WorkOrder_Distribute wd WITH (NOLOCK) on wd.WorkOrderUkey = w.Ukey and wd.OrderID <> 'EXCESS' 
+			where exists(
+				--先找到 CuttingOutput_Detail 對應的 WorkOrder Article,SizeCode
+				select 1
+				from  CuttingOutput_Detail cod WITH (NOLOCK) 
+				inner join WorkOrder_Distribute wd2 WITH (NOLOCK) on wd2.WorkOrderUkey = cod.WorkOrderUkey and wd.OrderID <> 'EXCESS'
+				inner join WorkOrder w2 WITH (NOLOCK) on w2.Ukey = cod.WorkOrderUkey
+				where cod.id = @ID
+				and w2.id = w.id and wd2.Article = wd.Article and wd2.SizeCode = wd.SizeCode
+			)
+
+			--準備相同 t.FabricCombo, t.Article, t.SizeCode 的 ConsPC
+			--取min是因相同 t.FabricCombo, t.Article, t.SizeCode 的 ConsPC, 有時會有0.0001的差距
+			select t.id, t.FabricCombo, t.Article, t.SizeCode, ConsPC = min(t.ConsPC)
+			into #tmpASF
+			from #tmpAllworkorder t
+			group by t.id, t.FabricCombo, t.Article, t.SizeCode
+
+			--by ID,FabricCombo,Article,SizeCode 計算 ConsPC 佔比率
+			select a.ID,a.FabricCombo,a.Article,a.SizeCode,
+				 ConsRate = (a.ConsPC / x.TTLCons)
+			into #tmpConsRate
+			from #tmpASF a
+			inner join (
+				select t.id, t.Article, t.SizeCode, TTLCons = sum(ConsPC)
+				from #tmpASF t
+				group by t.id, t.Article, t.SizeCode
+			)x on x.ID = a.ID and x.Article = a.Article and x.SizeCode = a.SizeCode
+
 			select
 				--w.ID,--cod.CutRef,	
 				--OutputQty = cod.Layer * ws.SizeRatio, -- 此筆實際裁剪數
 				--w.ConsPC, -- 用P02的
 				--ot.price, -- CPU/PC
-				@ActTTCPU = ROUND(sum( (cod.Layer * ws.SizeRatio) * (w.ConsPC / w2.ttlConsPC) * ot.price), 3) -- TotalCPU
+				@ActTTCPU = ROUND(sum( (cod.Layer * ws.SizeRatio) * t.ConsRate * ot.price), 3) -- TotalCPU
 			from  CuttingOutput_Detail cod WITH (NOLOCK) 
 			inner join WorkOrder w WITH (NOLOCK) on w.Ukey = cod.WorkOrderUkey
-			outer apply(select ttlConsPC = sum(ConsPC) from WorkOrder w2 where w2.id = w.id)w2
-			outer apply(select SizeRatio = sum(Qty) from WorkOrder_SizeRatio ws  WITH (NOLOCK) where ws.WorkOrderUkey = cod.WorkOrderUkey)ws
+			inner join WorkOrder_Distribute wd WITH (NOLOCK) on wd.WorkOrderUkey = cod.WorkOrderUkey and wd.OrderID <> 'EXCESS'
+			inner join #tmpConsRate t on t.id = w.ID and t.FabricCombo = w.FabricCombo and t.Article = wd.Article and t.SizeCode = wd.SizeCode
+			outer apply(select SizeRatio = sum(Qty) from WorkOrder_SizeRatio ws  WITH (NOLOCK) where ws.WorkOrderUkey = cod.WorkOrderUkey and ws.SizeCode = t.SizeCode)ws
 			inner join Order_TmsCost ot WITH (NOLOCK) on ot.artworktypeid = 'CUTTING' and ot.id = w.ID-- 抓母單
 			where cod.id = @ID
+
+			drop table #tmpASF,#tmpAllworkorder,#tmpConsRate
 
 			IF(@ManPower = 0 OR @ManHours = 0 )
 			BEGIN
