@@ -22,8 +22,8 @@ namespace Sci.Production.Warehouse
         {
             this.InitializeComponent();
             this.drMain = data;
-            this.displayRefno.Text = this.drMain["Refno"].ToString();
-            this.displayDesc.Text = this.drMain["Description"].ToString();
+            this.displaySeq.Text = this.drMain["Seq"].ToString();
+            this.displayDesc.Text = this.drMain["Desc"].ToString();
             this.displayInQty.Text = this.drMain["InQty"].ToString();
             this.displayOutQty.Text = this.drMain["OutQty"].ToString();
             this.displayBalQty.Text = this.drMain["Balance"].ToString();
@@ -37,6 +37,7 @@ namespace Sci.Production.Warehouse
             this.Helper.Controls.Grid.Generator(this.gridLeft)
             .Text("Roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(8))
             .Text("Dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8))
+            .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(8))
             .Numeric("InQty", header: "In Qty", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4))
             .Numeric("OutQty", header: "Out Qty", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4))
             .Numeric("AdjustQty", header: "Adjust Qty", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4))
@@ -60,13 +61,14 @@ namespace Sci.Production.Warehouse
             string sqlQuery = $@"
 select  Roll,
         Dyelot,
+        Tone,
         InQty,
         OutQty,
         AdjustQty,
         [Balance] = InQty - OutQty + AdjustQty
 from    SemiFinishedInventory with (nolock)
 where   POID = '{this.drMain["POID"]}' and
-        Refno = '{this.drMain["Refno"]}' and
+        Seq = '{this.drMain["Seq"]}' and
         StockType = '{this.drMain["StockType"]}'
 
 select  *   
@@ -80,14 +82,14 @@ from (
             [AdjustQty] = 0,
             sfrd.Location,
             sfrd.POID,
-            sfrd.Refno,
+            sfrd.Seq,
             sfrd.Roll,
             sfrd.Dyelot,
             sfrd.StockType
     from    SemiFinishedReceiving sfr with (nolock)
     inner   join  SemiFinishedReceiving_Detail sfrd with (nolock) on sfr.ID = sfrd.ID
     where   sfrd.POID = '{this.drMain["POID"]}' and
-            sfrd.Refno = '{this.drMain["Refno"]}' and
+            sfrd.Seq = '{this.drMain["Seq"]}' and
             sfrd.StockType = '{this.drMain["StockType"]}' and
             sfr.Status = 'Confirmed'
     union all
@@ -99,14 +101,14 @@ from (
             [AdjustQty] = 0,
             [Location] = '',
             sfid.POID,
-            sfid.Refno,
+            sfid.Seq,
             sfid.Roll,
             sfid.Dyelot,
             sfid.StockType
     from    SemiFinishedIssue sfi with (nolock)
     inner   join  SemiFinishedIssue_Detail sfid with (nolock) on sfi.ID = sfid.ID
     where   sfid.POID = '{this.drMain["POID"]}' and
-            sfid.Refno = '{this.drMain["Refno"]}' and
+            sfid.Seq = '{this.drMain["Seq"]}' and
             sfid.StockType = '{this.drMain["StockType"]}' and
             sfi.Status = 'Confirmed'
     union all
@@ -118,20 +120,20 @@ from (
             [AdjustQty] = sfad.QtyAfter - sfad.QtyBefore,
             [Location] = '',
             sfad.POID,
-            sfad.Refno,
+            sfad.Seq,
             sfad.Roll,
             sfad.Dyelot,
             sfad.StockType
     from    SemiFinishedAdjust sfa with (nolock)
     inner   join  SemiFinishedAdjust_Detail sfad with (nolock) on sfa.ID = sfad.ID
     where   sfad.POID = '{this.drMain["POID"]}' and
-            sfad.Refno = '{this.drMain["Refno"]}' and
+            sfad.Seq = '{this.drMain["Seq"]}' and
             sfad.StockType = '{this.drMain["StockType"]}' and
             sfa.Status = 'Confirmed'
 ) a
 
 select  *,
-        [Balance] = SUM(InQty - OutQty + AdjustQty) OVER (PARTITION BY POID, Refno, Roll, Dyelot, StockType ORDER BY IssueDate,ID)
+        [Balance] = SUM(InQty - OutQty + AdjustQty) OVER (PARTITION BY POID, Seq, Roll, Dyelot, StockType ORDER BY IssueDate,ID)
 from    #tmpDetail
 
 ";

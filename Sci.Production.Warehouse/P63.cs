@@ -49,8 +49,9 @@ namespace Sci.Production.Warehouse
 
             this.Helper.Controls.Grid.Generator(this.gridSemiFinishedInventory)
             .Text("POID", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
-            .Text("Refno", header: "Refno", iseditingreadonly: true, width: Widths.AnsiChars(16))
-            .ExtText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25))
+            .Text("Seq", header: "Seq", iseditingreadonly: true, width: Widths.AnsiChars(6))
+            .ExtText("Desc", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25))
+            .Text("Color", header: "Color", iseditingreadonly: true, width: Widths.AnsiChars(10))
             .Text("Unit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5))
             .Numeric("InQty", header: "In Qty", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4))
             .Numeric("OutQty", header: "Out Qty", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4))
@@ -66,34 +67,37 @@ namespace Sci.Production.Warehouse
 
             if (!MyUtility.Check.Empty(this.txtSP.Text))
             {
-                sqlWhere += $"and sfi.POID = '{this.txtSP.Text}'";
+                sqlWhere += $"and sf.POID = '{this.txtSP.Text}'";
             }
 
             string sqlQuery = $@"
-select  sfi.POID,
-        sfi.Refno,
-        sf.Description,
+select  sf.POID,
+        sf.Seq,
+        sf.[Desc],
         sf.Unit,
         [InQty] = sum(isnull(sfi.InQty, 0)),
         [OutQty] = sum(isnull(sfi.OutQty, 0)),
         [AdjustQty] = sum(isnull(sfi.AdjustQty, 0)),
         [Balance] = sum(isnull(sfi.InQty, 0)) - sum(isnull(sfi.OutQty, 0)) + sum(isnull(sfi.AdjustQty, 0)),
         [BulkLocation] = BulkLocation.val,
-        sfi.StockType
+        sfi.StockType,
+        sf.Color,
+        sf.Unit
 from    SemiFinishedInventory sfi with (nolock) 
-inner join  SemiFinished sf with (nolock) on sf.Refno = sfi.Refno
+inner join  SemiFinished sf with (nolock) on sf.Seq = sfi.Seq and sf.POID = sfi.POID
 outer apply(SELECT val =  Stuff((select distinct concat( ',',sfl.MtlLocationID)   
                                     from SemiFinishedInventory_Location sfl with (nolock)
-                                    where   sfl.POID        = sfi.POID          and
-                                            sfl.Refno       = sfi.Refno         and
+                                    where   sfl.POID        = sf.POID          and
+                                            sfl.Seq       = sf.Seq         and
                                             sfl.StockType   = sfi.StockType
                                 FOR XML PATH('')),1,1,'') 
                 ) BulkLocation
 where   sfi.StockType  = 'B' {sqlWhere}
-group by    sfi.POID,
-            sfi.Refno,
-            sf.Description,
+group by    sf.POID,
+            sf.Seq,
+            sf.[Desc],
             sf.Unit,
+			sf.Color,
             sfi.StockType,
             BulkLocation.val
 ";
@@ -139,6 +143,41 @@ group by    sfi.POID,
         private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.Query();
+        }
+
+        private void BtnCreateSeq_Click(object sender, EventArgs e)
+        {
+            var frm = new P63_CreateSeq(true);
+            frm.ShowDialog();
+            if (frm.GetBoolImport())
+            {
+                DataTable dt = frm.GetResultImportDatas();
+                this.txtSP.Text = dt.Rows[0]["POID"].ToString();
+                this.Query();
+            }
+        }
+
+        private void Edit_Seq_Click(object sender, EventArgs e)
+        {
+            if (this.gridSemiFinishedInventory == null || this.gridSemiFinishedInventory.Rows.Count == 0)
+            {
+                return;
+            }
+
+            int rowIndex = this.gridSemiFinishedInventory.CurrentCell.RowIndex;
+            DataRow dr = this.gridSemiFinishedInventory.GetDataRow(rowIndex);
+            if (dr == null)
+            {
+                return;
+            }
+
+            var frm = new P63_CreateSeq(false, dr);
+            frm.ShowDialog();
+            if (frm.GetBoolImport())
+            {
+                DataTable dt = frm.GetResultImportDatas();
+                this.Query();
+            }
         }
     }
 }

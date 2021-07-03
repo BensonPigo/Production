@@ -31,19 +31,15 @@
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
             this.txtSP_From = new Sci.Win.UI.TextBox();
             this.label8 = new Sci.Win.UI.Label();
             this.txtSP_To = new Sci.Win.UI.TextBox();
             this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.txtFactory = new Sci.Production.Class.Txtfactory();
-            this.txtRefnoFrom = new Sci.Win.UI.TextBox();
             this.radioDetail = new Sci.Win.UI.RadioButton();
             this.radioSummary = new Sci.Win.UI.RadioButton();
             this.checkQty = new Sci.Win.UI.CheckBox();
-            this.txtRefnoTo = new Sci.Win.UI.TextBox();
-            this.label6 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -87,17 +83,9 @@
             this.label3.TabIndex = 99;
             this.label3.Text = "Factory";
             // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(9, 109);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(98, 23);
-            this.label4.TabIndex = 100;
-            this.label4.Text = "Refno";
-            // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(9, 139);
+            this.label5.Location = new System.Drawing.Point(9, 108);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(98, 23);
             this.label5.TabIndex = 101;
@@ -109,7 +97,7 @@
             this.txtSP_From.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSP_From.Location = new System.Drawing.Point(110, 19);
             this.txtSP_From.Name = "txtSP_From";
-            this.txtSP_From.Size = new System.Drawing.Size(114, 24);
+            this.txtSP_From.Size = new System.Drawing.Size(114, 23);
             this.txtSP_From.TabIndex = 102;
             // 
             // label8
@@ -128,7 +116,7 @@
             this.txtSP_To.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSP_To.Location = new System.Drawing.Point(250, 19);
             this.txtSP_To.Name = "txtSP_To";
-            this.txtSP_To.Size = new System.Drawing.Size(114, 24);
+            this.txtSP_To.Size = new System.Drawing.Size(114, 23);
             this.txtSP_To.TabIndex = 104;
             // 
             // txtMdivision
@@ -137,7 +125,7 @@
             this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtMdivision.Location = new System.Drawing.Point(110, 48);
             this.txtMdivision.Name = "txtMdivision";
-            this.txtMdivision.Size = new System.Drawing.Size(66, 24);
+            this.txtMdivision.Size = new System.Drawing.Size(66, 23);
             this.txtMdivision.TabIndex = 105;
             // 
             // txtFactory
@@ -151,26 +139,17 @@
             this.txtFactory.Location = new System.Drawing.Point(110, 78);
             this.txtFactory.MDivision = null;
             this.txtFactory.Name = "txtFactory";
-            this.txtFactory.Size = new System.Drawing.Size(66, 24);
+            this.txtFactory.Size = new System.Drawing.Size(66, 23);
             this.txtFactory.TabIndex = 106;
-            // 
-            // txtRefnoFrom
-            // 
-            this.txtRefnoFrom.BackColor = System.Drawing.Color.White;
-            this.txtRefnoFrom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefnoFrom.Location = new System.Drawing.Point(110, 109);
-            this.txtRefnoFrom.Name = "txtRefnoFrom";
-            this.txtRefnoFrom.Size = new System.Drawing.Size(114, 24);
-            this.txtRefnoFrom.TabIndex = 107;
             // 
             // radioDetail
             // 
             this.radioDetail.AutoSize = true;
             this.radioDetail.Checked = true;
             this.radioDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioDetail.Location = new System.Drawing.Point(110, 140);
+            this.radioDetail.Location = new System.Drawing.Point(110, 109);
             this.radioDetail.Name = "radioDetail";
-            this.radioDetail.Size = new System.Drawing.Size(63, 22);
+            this.radioDetail.Size = new System.Drawing.Size(62, 21);
             this.radioDetail.TabIndex = 108;
             this.radioDetail.TabStop = true;
             this.radioDetail.Text = "Detail";
@@ -180,9 +159,9 @@
             // 
             this.radioSummary.AutoSize = true;
             this.radioSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioSummary.Location = new System.Drawing.Point(179, 140);
+            this.radioSummary.Location = new System.Drawing.Point(179, 109);
             this.radioSummary.Name = "radioSummary";
-            this.radioSummary.Size = new System.Drawing.Size(90, 22);
+            this.radioSummary.Size = new System.Drawing.Size(85, 21);
             this.radioSummary.TabIndex = 109;
             this.radioSummary.Text = "Summary";
             this.radioSummary.UseVisualStyleBackColor = true;
@@ -191,50 +170,27 @@
             // 
             this.checkQty.AutoSize = true;
             this.checkQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkQty.Location = new System.Drawing.Point(9, 177);
+            this.checkQty.Location = new System.Drawing.Point(9, 146);
             this.checkQty.Name = "checkQty";
-            this.checkQty.Size = new System.Drawing.Size(75, 22);
+            this.checkQty.Size = new System.Drawing.Size(73, 21);
             this.checkQty.TabIndex = 110;
             this.checkQty.Text = "Qty > 0";
             this.checkQty.UseVisualStyleBackColor = true;
             // 
-            // txtRefnoTo
-            // 
-            this.txtRefnoTo.BackColor = System.Drawing.Color.White;
-            this.txtRefnoTo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefnoTo.Location = new System.Drawing.Point(250, 109);
-            this.txtRefnoTo.Name = "txtRefnoTo";
-            this.txtRefnoTo.Size = new System.Drawing.Size(114, 24);
-            this.txtRefnoTo.TabIndex = 112;
-            // 
-            // label6
-            // 
-            this.label6.BackColor = System.Drawing.SystemColors.Control;
-            this.label6.Location = new System.Drawing.Point(227, 109);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(20, 31);
-            this.label6.TabIndex = 111;
-            this.label6.Text = "~";
-            this.label6.TextStyle.Color = System.Drawing.Color.Black;
-            // 
             // R39
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(507, 235);
-            this.Controls.Add(this.txtRefnoTo);
-            this.Controls.Add(this.label6);
+            this.ClientSize = new System.Drawing.Size(507, 202);
             this.Controls.Add(this.checkQty);
             this.Controls.Add(this.radioSummary);
             this.Controls.Add(this.radioDetail);
-            this.Controls.Add(this.txtRefnoFrom);
             this.Controls.Add(this.txtFactory);
             this.Controls.Add(this.txtMdivision);
             this.Controls.Add(this.txtSP_To);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.txtSP_From);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -250,19 +206,15 @@
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.txtSP_From, 0);
             this.Controls.SetChildIndex(this.label8, 0);
             this.Controls.SetChildIndex(this.txtSP_To, 0);
             this.Controls.SetChildIndex(this.txtMdivision, 0);
             this.Controls.SetChildIndex(this.txtFactory, 0);
-            this.Controls.SetChildIndex(this.txtRefnoFrom, 0);
             this.Controls.SetChildIndex(this.radioDetail, 0);
             this.Controls.SetChildIndex(this.radioSummary, 0);
             this.Controls.SetChildIndex(this.checkQty, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.txtRefnoTo, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -273,19 +225,15 @@
         private Win.UI.Label label1;
         private Win.UI.Label label2;
         private Win.UI.Label label3;
-        private Win.UI.Label label4;
         private Win.UI.Label label5;
         private Win.UI.TextBox txtSP_From;
         private Win.UI.Label label8;
         private Win.UI.TextBox txtSP_To;
         private Class.TxtMdivision txtMdivision;
         private Class.Txtfactory txtFactory;
-        private Win.UI.TextBox txtRefnoFrom;
         private Win.UI.RadioButton radioDetail;
         private Win.UI.RadioButton radioSummary;
         private Win.UI.CheckBox checkQty;
-        private Win.UI.TextBox txtRefnoTo;
-        private Win.UI.Label label6;
     }
 
 }
