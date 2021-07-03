@@ -80,6 +80,7 @@ inner join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = bi.BundleNo
 inner join Bundle b with(nolock) on b.id = bd.id
 left join dbo.SciMES_BundleDefectReason bdr with(nolock) on bdr.ID = bi.ReasonID and bdr.SubProcessID = bi.SubProcessID
 where b.Orderid = '{drSelected["OrderID"]}' 
+and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 {where}
 ";
                 DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
@@ -153,27 +154,39 @@ where b.Orderid = '{drSelected["OrderID"]}'
                     subprocess.CellFormatting += (s, e) =>
                     {
                         DataRow drSelected = this.grid1.GetDataRow(e.RowIndex);
-                        if (MyUtility.Convert.GetString(drSelected[column.ColumnName]) == "No Schedule")
+                        switch (MyUtility.Convert.GetString(e.Value))
                         {
-                            e.CellStyle.BackColor = Color.White;
-                            e.Value = DBNull.Value;
-                        }
-                        else
-                        {
-                            decimal val = MyUtility.Convert.GetDecimal(drSelected[column.ColumnName + "_value"]);
-                            decimal totalQty = MyUtility.Convert.GetDecimal(drSelected["totalQty"]);
-                            if (val >= totalQty)
-                            {
+                            case "Complete":
                                 e.CellStyle.BackColor = Color.Green;
-                            }
-                            else if (val > 0 && val < totalQty)
-                            {
+                                break;
+                            case "OnGoing":
                                 e.CellStyle.BackColor = Color.Yellow;
-                            }
-                            else if (val == 0)
-                            {
+                                break;
+                            case "Not Yet Load":
                                 e.CellStyle.BackColor = Color.Red;
-                            }
+                                break;
+                            default:
+                                break;
+                        }
+                    };
+
+                    subprocess.CellFormatting += (s, e) =>
+                    {
+                        DataRow drSelected = this.grid1.GetDataRow(e.RowIndex);
+                        switch (MyUtility.Convert.GetString(drSelected[column.ColumnName]))
+                        {
+                            case "Complete":
+                                e.CellStyle.BackColor = Color.Green;
+                                break;
+                            case "OnGoing":
+                                e.CellStyle.BackColor = Color.Yellow;
+                                break;
+                            case "Not Yet Load":
+                                e.CellStyle.BackColor = Color.Red;
+                                break;
+                            default:
+                                e.CellStyle.BackColor = Color.White;
+                                break;
                         }
                     };
                     this.Helper.Controls.Grid.Generator(this.grid1)
@@ -337,6 +350,7 @@ cross join(
 	from SubProcess s
 	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1 AND s.IsSelection=0
 )s
+where not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 
 select Orderid,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS,
 	NoBundleCardAfterSubprocess=  isnull(x.NoBundleCardAfterSubprocess,0),
@@ -492,7 +506,9 @@ where exists(select 1   from #tmpOrders o
 						inner join Bundle b with(nolock) on o.id = b.Orderid and  b.MDivisionID = o.MDivisionID
 						inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.id
 						where bi.BundleNo = bd.BundleNo
-						)  and isnull(bi.DefectQty,0) <> isnull(bi.ReplacementQty,0)
+						and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
+						)
+and isnull(bi.DefectQty,0) <> isnull(bi.ReplacementQty,0)
 
 declare @sql nvarchar(max)=N'
 select Orderid,'+@Col+N'
@@ -515,6 +531,7 @@ outer apply(
 		inner join Bundle_Detail_Order bdo WITH (NOLOCK) on bdo.Orderid = o.ID and bdo.BundleNo = bi.BundleNo
         inner join Bundle b with(nolock) on b.id = bdo.id
 		where o.MDivisionID = b.MDivisionID
+		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 	    group by bi.ReasonID
 	    for xml path('''')
     ),1,1,'''')
@@ -585,6 +602,7 @@ cross join(
 	from SubProcess s
 	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1 AND s.IsSelection=0
 )s
+where not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 
 select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,b.IsEXCESS,
 	NoBundleCardAfterSubprocess= isnull(x.NoBundleCardAfterSubprocess,0),
@@ -749,6 +767,7 @@ where exists(select 1   from #tmpOrders o
 						inner join Bundle b with(nolock) on b.MDivisionID = o.MDivisionID
 						inner join Bundle_Detail_Order bdo WITH (NOLOCK) on b.id = bdo.id and o.id = bdo.Orderid
 						where bi.BundleNo = bdo.BundleNo
+						and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 						)  and isnull(bi.DefectQty,0) <> isnull(bi.ReplacementQty,0)
 
 declare @sql nvarchar(max)=N'
@@ -773,6 +792,7 @@ outer apply(
         inner join Bundle b with(nolock) on b.id = bdo.id
 		where o.MDivisionID = b.MDivisionID
 		and b.Article = o.Article and b.SizeCode = o.Sizecode
+		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 	    group by ReasonID
 	    for xml path('''')
     ),1,1,'''')
@@ -949,6 +969,7 @@ outer apply(
 		For XML path('')
 	),1,1,'')
 )SubProcess
+where not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 
 select   Orderid
         ,BundleNo
@@ -1199,6 +1220,7 @@ outer apply(
 		For XML path('')
 	),1,1,'')
 )SubProcess
+where not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 
 select Orderid,SubProcess,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS
 	,NoBundleCardAfterSubprocess= isnull(x.NoBundleCardAfterSubprocess,0) 
@@ -1313,6 +1335,7 @@ outer apply(
 	from Bundle_Detail bd with(nolock)
 	inner join Bundle b WITH (NOLOCK) on b.id = bd.Id
 	where bd.BundleNo = t.BundleNo and b.Article = t.Article and b.Sizecode = t.Sizecode
+	and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 )b
 outer apply(
     select top 1 PostSewingSubProcess
