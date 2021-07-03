@@ -32,6 +32,7 @@ namespace PowerBI.Daily
         private string mailServer = "172.17.2.8";
         private string eMailID = "foxpro";
         private string eMailPwd = "orpxof";
+        private DataTable dtFailContinue;
 
         private int intHashCode;
         bool isAuto = false;
@@ -160,12 +161,11 @@ namespace PowerBI.Daily
             });
             endDate = DateTime.Now;
 
-
-            if (!result)
+            // 手動才彈談窗顯示
+            if (!isAuto && !result)
             {
                 ShowErr(result);
             }
-            else
             {
                 writeJobLog(true, 0);
             }
@@ -176,8 +176,8 @@ namespace PowerBI.Daily
                 return AsyncUpdateExport(conn, 1);
             });
 
-
-            if (!result)
+            // 手動才彈談窗顯示
+            if (!isAuto && !result)
             {
                 ShowErr(result);
             }
@@ -640,11 +640,11 @@ END CATCH";
             string cmd = $@"
 select FailCnt = SUM(cnt),b.MailName
 from(
-select cnt = case when Description !='' then count(1) else 0 end
-,FunctionName
-from P_TransLog 
-where TransCode = {intHashCode}
-group by FunctionName,Description
+    select cnt = case when Description !='' then count(1) else 0 end
+    ,FunctionName
+    from P_TransLog 
+    where TransCode = {intHashCode}
+    group by FunctionName,Description
 ) a
 inner join P_TransImport b on a.FunctionName = b.Name and b.Name {whereP} 'P_ImportEstShippingReport'
 group by b.MailName
@@ -656,11 +656,21 @@ order by b.MailName";
                 ShowErr(result);
             }
 
+            if (type == 0)
+            {
+                dtFailContinue = dtFail;
+            }
+            else
+            {
+                // 跑第2段 P_ImportEstShippingReport, 不論跑第一段是成功或失敗, 都延續第一段撈出資料寫入 joblog 以維持前面格式
+                dtFailContinue.Merge(dtFail);
+            }
+
             string desc = $@"
 Please check below information.
 Transfer date: {DateTime.Now.ToString("yyyy-MM-dd")}
 M: TPE" + Environment.NewLine;
-            foreach (DataRow dr in dtFail.Rows)
+            foreach (DataRow dr in dtFailContinue.Rows)
             {
                 string status = MyUtility.Check.Empty(dr["FailCnt"]) ? "is completed" : "Failed";
                 desc += $"[{dr["MailName"]}] " + status + Environment.NewLine;
