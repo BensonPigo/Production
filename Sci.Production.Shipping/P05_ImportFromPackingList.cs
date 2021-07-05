@@ -7,6 +7,9 @@ using Ict.Win;
 using Sci.Data;
 using System.Linq;
 using System.Data.SqlClient;
+using Sci.Production.CallPmsAPI;
+using static Sci.Production.CallPmsAPI.PackingA2BWebAPI_Model;
+using Newtonsoft.Json;
 
 namespace Sci.Production.Shipping
 {
@@ -35,6 +38,7 @@ namespace Sci.Production.Shipping
             this.masterData = masterData;
             this.detailData = detailData;
             this.txtmultifactoryFactory.CheckProduceFty = true;
+            this.txtmultifactoryFactory.IsForPackingA2B = true;
         }
 
         /// <inheritdoc/>
@@ -267,7 +271,38 @@ select  pd.Selected
 from PackData pd");
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), listPar, out this.gridData);
+            DualResult result;
+
+            if (this.txtmultifactoryFactory.IsDataFromA2B)
+            {
+                // 動態connection string
+                //string connString = PackingA2BWebAPI.GetConnString(this.txtmultifactoryFactory.SystemName);
+                //SqlConnection sqlConnection = new SqlConnection(connString);
+                //result = DBProxy.Current.SelectByConn(sqlConnection, sqlCmd.ToString(), listPar, out this.gridData);
+
+                P05_ImportFromPackingListQuery p05_ImportFromPackingList = new P05_ImportFromPackingListQuery()
+                {
+                    ShipModeID = MyUtility.Convert.GetString(this.masterData["ShipModeID"]),
+                    BrandID = MyUtility.Convert.GetString(this.masterData["BrandID"]),
+                    Dest = MyUtility.Convert.GetString(this.masterData["Dest"]),
+                    CustCDID = MyUtility.Convert.GetString(this.masterData["CustCDID"]),
+                    DateSDPDateFrom = this.dateSDPDate.Value1 == null ? string.Empty : Convert.ToDateTime(this.dateSDPDate.Value1).ToString("yyyyMMdd"),
+                    DateSDPDateTo = this.dateSDPDate.Value2 == null ? string.Empty : Convert.ToDateTime(this.dateSDPDate.Value2).ToString("yyyyMMdd"),
+                    BuyerDeliveryFrom = this.dateDelivery.Value1 == null ? string.Empty : Convert.ToDateTime(this.dateDelivery.Value1).ToString("yyyyMMdd"),
+                    BuyerDeliveryTo = this.dateDelivery.Value2 == null ? string.Empty : Convert.ToDateTime(this.dateDelivery.Value2).ToString("yyyyMMdd"),
+                    OrderIDFrom = this.txtSpStart.Text,
+                    OrderIDTo = this.txtSPEnd.Text,
+                    DateIDD = this.dateSDPDate.Value1 == null ? string.Empty : Convert.ToDateTime(this.dateIDD.Value).ToString("yyyyMMdd"),
+                    MultifactoryFactory = this.txtmultifactoryFactory.Text,
+                };
+
+                result = PackingA2BWebAPI.GetP05_ImportFromPackingListQuery(this.txtmultifactoryFactory.SystemName, p05_ImportFromPackingList, out this.gridData);
+            }
+            else
+            {
+                result = DBProxy.Current.Select(null, sqlCmd.ToString(), listPar, out this.gridData);
+            }
+
             if (result)
             {
                 if (this.gridData.Rows.Count == 0)
@@ -336,7 +371,18 @@ from (
 ) a, PackingList_Detail b
 where b.ID in ({0})
 and a.OrderID = b.OrderID", allPackID.ToString().Substring(0, allPackID.Length - 1));
-                        DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.selectData);
+                        DualResult result;
+
+                        if (this.txtmultifactoryFactory.IsDataFromA2B)
+                        {
+                            DataBySql dataBySql = new DataBySql() { SqlString = sqlCmd };
+                            result = PackingA2BWebAPI.GetDataBySql<P05_ImportFromPackingList_CheckSpInDiffPacking>(this.txtmultifactoryFactory.SystemName, dataBySql, out this.selectData);
+                        }
+                        else
+                        {
+                            result = DBProxy.Current.Select(null, sqlCmd, out this.selectData);
+                        }
+
                         if (result)
                         {
                             if (this.selectData.Rows.Count > 0)
@@ -381,7 +427,24 @@ inner join PackingList_Detail pd with(nolock) on pd.id = t.id
 inner join AirPP with(nolock) on AirPP.OrderID = pd.OrderID and AirPP.OrderShipmodeSeq = pd.OrderShipmodeSeq
 ";
                         DataTable dt;
-                        DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(tmp, string.Empty, sqlcmd, out dt);
+                        DualResult dualResult;
+                        if (this.txtmultifactoryFactory.IsDataFromA2B)
+                        {
+                            DataBySql dataBySql = new DataBySql()
+                            {
+                                SqlString = sqlcmd,
+                                TmpTable = JsonConvert.SerializeObject(tmp),
+                                TmpTableType = "P05_CommomTmpCol",
+                                TmpCols = "id",
+                                TmpTableName = "#tmp",
+                            };
+                            dualResult = PackingA2BWebAPI.GetDataBySql<P05_ImportFromPackingList_CheckSpInDiffPacking>(this.txtmultifactoryFactory.SystemName, dataBySql, out dt);
+                        }
+                        else
+                        {
+                            dualResult = MyUtility.Tool.ProcessWithDatatable(tmp, string.Empty, sqlcmd, out dt);
+                        }
+
                         if (!dualResult)
                         {
                             this.ShowErr(dualResult);

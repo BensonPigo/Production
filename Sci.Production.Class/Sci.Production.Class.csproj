@@ -177,6 +177,12 @@
     <Compile Include="PictureSubPage.Designer.cs">
       <DependentUpon>PictureSubPage.cs</DependentUpon>
     </Compile>
+    <Compile Include="PopupFactoryForAtoB.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PopupFactoryForAtoB.Designer.cs">
+      <DependentUpon>PopupFactoryForAtoB.cs</DependentUpon>
+    </Compile>
     <Compile Include="ProductionGridExts.cs" />
     <Compile Include="ProductionEnv.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -752,6 +758,9 @@
     <EmbeddedResource Include="PictureSubPage.resx">
       <DependentUpon>PictureSubPage.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="PopupFactoryForAtoB.resx">
+      <DependentUpon>PopupFactoryForAtoB.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TxtClogReason.resx">
       <DependentUpon>TxtClogReason.cs</DependentUpon>
     </EmbeddedResource>
@@ -862,6 +871,12 @@
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sci.Production.CallPmsAPI\Sci.Production.CallPmsAPI.csproj">
+      <Project>{fc94fcaf-9216-4a2d-9e89-15fe27aef028}</Project>
+      <Name>Sci.Production.CallPmsAPI</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

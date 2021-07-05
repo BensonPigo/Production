@@ -115,6 +115,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\PMSToolApplication\_DLL\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PmsWebApiUtility20">
+      <HintPath>..\_Dll\PmsWebApiUtility20.dll</HintPath>
+    </Reference>
     <Reference Include="Sci">
       <HintPath>..\_Dll\Sci.dll</HintPath>
     </Reference>
@@ -1443,6 +1446,10 @@
     <ProjectReference Include="..\Sci.Production.Automation\Sci.Production.Automation.csproj">
       <Project>{cb61a07f-7d72-490e-aeb6-ba5080f8d652}</Project>
       <Name>Sci.Production.Automation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.CallPmsAPI\Sci.Production.CallPmsAPI.csproj">
+      <Project>{fc94fcaf-9216-4a2d-9e89-15fe27aef028}</Project>
+      <Name>Sci.Production.CallPmsAPI</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
       <Project>{0E35FD31-4A86-4D4E-A393-B6C5E3D7C956}</Project>
