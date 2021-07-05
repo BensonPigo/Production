@@ -253,7 +253,7 @@ select poid
 /*
 	TPE Current Stock
 */
-select	TPEInQty.FactoryID
+select	TPEInQty.M
 		, TPEInQty.POID
 		, TPEInQty.Seq1
 		, TPEInQty.Seq2 
@@ -261,7 +261,7 @@ select	TPEInQty.FactoryID
 into #TPEIn
 from (
 	-- Type 1, 4 --
-	select FactoryID = f.ID
+	select		M  = f.MDivisionID
 			, POID = inv.InventoryPOID
 			, Seq1 = inv.InventorySeq1
 			, Seq2 = inv.InventorySeq2
@@ -278,7 +278,7 @@ from (
 	union all
 
 	-- Type 3 --
-	select FactoryID = f.ID
+	select       M = f.MDivisionID
 			, POID = inv.InventoryPOID
 			, Seq1 = inv.InventorySeq1
 			, Seq2 = inv.InventorySeq2
@@ -296,9 +296,9 @@ left join PO_Supp_Detail psd on TPEInQty.POID = psd.ID
 outer apply (
 	select RateValue = dbo.GetUnitRate(psd.POUnit, psd.StockUnit)
 ) v
-group by TPEInQty.FactoryID, TPEInQty.POID, TPEInQty.Seq1, TPEInQty.Seq2 
+group by TPEInQty.M, TPEInQty.POID, TPEInQty.Seq1, TPEInQty.Seq2 
 
-select	TPEAllocatedQty.FactoryID
+select	TPEAllocatedQty.M
 		, TPEAllocatedQty.POID
 		, TPEAllocatedQty.Seq1
 		, TPEAllocatedQty.Seq2 
@@ -306,7 +306,7 @@ select	TPEAllocatedQty.FactoryID
 into #TPEAllocated
 from (
 	-- Type 2, 3, 5 --
-	select FactoryID = f.ID
+	select       M = f.MDivisionID
 			, POID = inv.InventoryPOID
 			, Seq1 = inv.InventorySeq1
 			, Seq2 = inv.InventorySeq2
@@ -320,7 +320,7 @@ from (
 	union all
 
 	-- Type 4, 6 --
-	select FactoryID = f.ID
+	select       M = f.MDivisionID
 			, POID = inv.InventoryPOID
 			, Seq1 = inv.InventorySeq1
 			, Seq2 = inv.InventorySeq2
@@ -341,17 +341,17 @@ left join PO_Supp_Detail psd on TPEAllocatedQty.POID = psd.ID
 outer apply (
 	select RateValue = dbo.GetUnitRate(psd.POUnit, psd.StockUnit)
 ) v
-group by TPEAllocatedQty.FactoryID, TPEAllocatedQty.POID, TPEAllocatedQty.Seq1, TPEAllocatedQty.Seq2 
+group by TPEAllocatedQty.M, TPEAllocatedQty.POID, TPEAllocatedQty.Seq1, TPEAllocatedQty.Seq2 
 
-select FactoryID = iif (ti.FactoryID is not null, ti.FactoryID, ta.FactoryID)
-		, POID = iif (ti.FactoryID is not null, ti.POID, ta.POID)
-		, Seq1 = iif (ti.FactoryID is not null, ti.Seq1, ta.Seq1)
-		, Seq2 = iif (ti.FactoryID is not null, ti.Seq2, ta.Seq2)
+select M = iif (ti.M is not null, ti.M, ta.M)
+		, POID = iif (ti.M is not null, ti.POID, ta.POID)
+		, Seq1 = iif (ti.M is not null, ti.Seq1, ta.Seq1)
+		, Seq2 = iif (ti.M is not null, ti.Seq2, ta.Seq2)
 		, InQty = isnull (ti.Qty, 0)
 		, AllocatedQty = isnull (ta.Qty, 0)
 into #TPECurrentStock
 from #TPEIn ti
-full outer join #TPEAllocated ta on ti.FactoryID = ta.FactoryID
+full outer join #TPEAllocated ta on ti.M = ta.M
 									and ti.POID = ta.POID
 									and ti.Seq1 = ta.Seq1
 									and ti.Seq2 = ta.Seq2
@@ -361,7 +361,7 @@ full outer join #TPEAllocated ta on ti.FactoryID = ta.FactoryID
 	Factory Current Stock
 */
 
-select	FactoryID = o.FactoryID
+select	M = o.MDivisionID
 		, fi.POID
 		, fi.Seq1
 		, fi.Seq2
@@ -374,7 +374,7 @@ from @stock s
 inner join FtyInventory fi on s.POID = fi.POID
 inner join Orders o on fi.POID = o.ID
 where fi.StockType = 'I'
-group by o.FactoryID, fi.POID, fi.Seq1, fi.Seq2
+group by o.MDivisionID, fi.POID, fi.Seq1, fi.Seq2
 
 
 ------------------------------------------------------------------
@@ -382,10 +382,10 @@ group by o.FactoryID, fi.POID, fi.Seq1, fi.Seq2
 	Comparison
 */
 
-select  FactoryID = iif (tcs.FactoryID is not null, tcs.FactoryID, fcs.FactoryID)
-		, POID = iif (tcs.FactoryID is not null, tcs.POID, fcs.POID)
-		, Seq1 = iif (tcs.FactoryID is not null, tcs.Seq1, fcs.Seq1)
-		, Seq2 = iif (tcs.FactoryID is not null, tcs.Seq2, fcs.Seq2)
+select       M = iif (tcs.M is not null, tcs.M, fcs.M)
+		, POID = iif (tcs.M is not null, tcs.POID, fcs.POID)
+		, Seq1 = iif (tcs.M is not null, tcs.Seq1, fcs.Seq1)
+		, Seq2 = iif (tcs.M is not null, tcs.Seq2, fcs.Seq2)
 		, TPEInQty = isnull (tcs.InQty, 0)
 		, TPEAllocatedQty = isnull (tcs.AllocatedQty, 0)
 		, TPEBalance = isnull (tcs.InQty, 0) - isnull (tcs.AllocatedQty, 0)
@@ -396,7 +396,7 @@ select  FactoryID = iif (tcs.FactoryID is not null, tcs.FactoryID, fcs.FactoryID
 		, FtyBalance = isnull (fcs.InQty, 0) - isnull (fcs.OutQty, 0) + isnull (fcs.AdjustQty, 0) - isnull (fcs.ReturnQty, 0)
 into #StockList
 from #TPECurrentStock tcs
-full outer join #FtyCurrentStock fcs on tcs.FactoryID = fcs.FactoryID
+full outer join #FtyCurrentStock fcs on tcs.M = fcs.M
 										and tcs.POID = fcs.POID
 										and tcs.Seq1 = fcs.Seq1
 										and tcs.Seq2 = fcs.Seq2
@@ -405,7 +405,7 @@ full outer join #FtyCurrentStock fcs on tcs.FactoryID = fcs.FactoryID
 	Final
 */
 
-select	FactoryID = sl.FactoryID
+select	   M = sl.M
 		, SP = sl.POID
 		, Seq = Concat (sl.Seq1, ' ', sl.Seq2)
 		, OrderType = o.OrderTypeID
