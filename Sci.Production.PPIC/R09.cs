@@ -142,7 +142,7 @@ select	UpdateDate
 		, OriginalLETA			= RIGHT (CONVERT (VARCHAR (20), OriginalLETA,111), 5) 
         , OriginalShipModeList
 		, KPILETA				= RIGHT (CONVERT (VARCHAR (20), KPILETA,111), 5) 
-        , OriginalPFETA 
+        , OriginalPFETA 		= RIGHT (CONVERT (VARCHAR (20), OriginalPFETA,111), 5) 
 		, TransferToFactory
         , NewCustPONo
 		, NewQty				= iif (convert (varchar, NewQty) = 0, ''
