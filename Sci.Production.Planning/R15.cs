@@ -614,7 +614,7 @@ this.artworktypes.ToString().Substring(0, this.artworktypes.ToString().Length - 
             #endregion
 
             string[] subprocessIDs = new string[] { "Sorting", "Loading", "Emb", "BO", "PRT", "AT", "PAD-PRT", "SubCONEMB", "HT", "SewingLine" };
-            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#cte", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
+            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#cte", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "0");
 
             #region SummaryBy SP#
             sqlCmd.Append($@"
@@ -1309,7 +1309,7 @@ pivot
             }
             #endregion
             string[] subprocessIDs = new string[] { "Sorting", "Loading", "Emb", "BO", "PRT", "AT", "PAD-PRT", "SubCONEMB", "HT", "SewingLine" };
-            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#cte", bySP: false, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
+            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#cte", bySP: false, isNeedCombinBundleGroup: true, isMorethenOrderQty: "0");
             #region SummaryBy Acticle/Size
             sqlCmd.Append($@"
 -- 依撈出來的order資料(cte)去找各製程的WIP
