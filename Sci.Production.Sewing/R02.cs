@@ -920,6 +920,11 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor"),
                         this.SewOutPutData,
                         "OrderId,ComboType,QAQty,LastShift,SubconInType",
                         string.Format(@"
+alter table #tmp alter column OrderId varchar(13)
+alter table #tmp alter column ComboType varchar(1)
+alter table #tmp alter column QAQty int
+alter table #tmp alter column LastShift varchar(1)
+alter table #tmp alter column SubconInType varchar(1)
 
     Select ID
 		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
@@ -1004,6 +1009,14 @@ order by t1.ID"),
                         this.SewOutPutData,
                         "OrderId,ComboType,QAQty,LastShift,SubconInType,Program",
                         string.Format(@"
+
+alter table #tmp alter column OrderId varchar(13)
+alter table #tmp alter column ComboType varchar(1)
+alter table #tmp alter column QAQty int
+alter table #tmp alter column LastShift varchar(1)
+alter table #tmp alter column SubconInType varchar(1)
+alter table #tmp alter column Program varchar(12)
+
 Select ID
 		, rs = iif(ProductionUnit = 'TMS', 'CPU'
 		   								, iif(ProductionUnit = 'QTY', 'AMT'
@@ -1087,6 +1100,13 @@ order by t1.ID"),
                         this.SewOutPutData,
                         "OrderId,ComboType,QAQty,LastShift,SubconInType,SubconOutFty",
                         string.Format(@"
+alter table #tmp alter column OrderId varchar(13)
+alter table #tmp alter column ComboType varchar(1)
+alter table #tmp alter column QAQty int
+alter table #tmp alter column LastShift varchar(1)
+alter table #tmp alter column SubconInType varchar(1)
+alter table #tmp alter column SubconOutFty varchar(8)
+
 Select ID
 		, rs = iif(ProductionUnit = 'TMS', 'CPU'
 		   								, iif(ProductionUnit = 'QTY', 'AMT'
