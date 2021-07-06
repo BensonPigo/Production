@@ -83,8 +83,8 @@ select  sf.POID,
         sfi.StockType,
         sf.Color,
         sf.Unit
-from    SemiFinishedInventory sfi with (nolock) 
-inner join  SemiFinished sf with (nolock) on sf.Seq = sfi.Seq and sf.POID = sfi.POID
+from  SemiFinished sf with (nolock)
+left join SemiFinishedInventory sfi with (nolock) on sf.Seq = sfi.Seq and sf.POID = sfi.POID
 outer apply(SELECT val =  Stuff((select distinct concat( ',',sfl.MtlLocationID)   
                                     from SemiFinishedInventory_Location sfl with (nolock)
                                     where   sfl.POID        = sf.POID          and
@@ -92,7 +92,7 @@ outer apply(SELECT val =  Stuff((select distinct concat( ',',sfl.MtlLocationID)
                                             sfl.StockType   = sfi.StockType
                                 FOR XML PATH('')),1,1,'') 
                 ) BulkLocation
-where   sfi.StockType  = 'B' {sqlWhere}
+where   1=1 {sqlWhere}
 group by    sf.POID,
             sf.Seq,
             sf.[Desc],

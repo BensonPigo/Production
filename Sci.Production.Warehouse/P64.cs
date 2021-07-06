@@ -139,7 +139,7 @@ where   sfd.ID = '{masterID}'
                     new SqlParameter("@Seq", newvalue),
                 };
                 DataRow drSeq;
-                bool isPOIDnotExists = !MyUtility.Check.Seek("select [Desc], Unit from SemiFinished with (nolock) where Seq = @Seq and Poid = @POID", par, out drSeq);
+                bool isPOIDnotExists = !MyUtility.Check.Seek("select [Desc], Unit,Color from SemiFinished with (nolock) where Seq = @Seq and Poid = @POID", par, out drSeq);
 
                 if (isPOIDnotExists)
                 {
@@ -151,6 +151,7 @@ where   sfd.ID = '{masterID}'
                 this.CurrentDetailData["Seq"] = newvalue;
                 this.CurrentDetailData["Desc"] = drSeq["Desc"];
                 this.CurrentDetailData["Unit"] = drSeq["Unit"];
+                this.CurrentDetailData["Color"] = drSeq["Color"];
             };
 
             colSeq.EditingMouseDown += (s, e) =>
@@ -167,7 +168,7 @@ where   sfd.ID = '{masterID}'
 
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    SelectItem item = new SelectItem($@"select Seq, [Desc], Unit from SemiFinished with (nolock) where poid = '{this.CurrentDetailData["POID"]}'", null, null);
+                    SelectItem item = new SelectItem($@"select Seq, [Desc], Unit, Color from SemiFinished with (nolock) where poid = '{this.CurrentDetailData["POID"]}'", null, null);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -177,6 +178,7 @@ where   sfd.ID = '{masterID}'
                     this.CurrentDetailData["Seq"] = item.GetSelecteds()[0]["Seq"];
                     this.CurrentDetailData["Desc"] = item.GetSelecteds()[0]["Desc"];
                     this.CurrentDetailData["Unit"] = item.GetSelecteds()[0]["Unit"];
+                    this.CurrentDetailData["Color"] = item.GetSelecteds()[0]["Color"];
                     this.CurrentDetailData.EndEdit();
                 }
             };
@@ -334,8 +336,8 @@ inner join #tmp t on sfi.POID         = t.POID        and
                      sfi.Tone         = t.Tone        and
                      sfi.StockType    = t.StockType
 
-insert into SemiFinishedInventory(POID, Seq, Roll, Dyelot, StockType, InQty)
-            select  t.POID, t.Seq, t.Roll, t.Dyelot, t.StockType, t.Qty
+insert into SemiFinishedInventory(POID, Seq, Roll, Dyelot, Tone, StockType, InQty)
+            select  t.POID, t.Seq, t.Roll, t.Dyelot, t.Tone, t.StockType, t.Qty
             from    #tmp t
             where   not exists( select 1 
                                 from SemiFinishedInventory sfi 
@@ -347,8 +349,8 @@ insert into SemiFinishedInventory(POID, Seq, Roll, Dyelot, StockType, InQty)
                                       sfi.StockType    = t.StockType)
 
 --SemiFinishedInventory_Location
-insert into SemiFinishedInventory_Location(POID, Seq, Roll, Dyelot, StockType, MtlLocationID)
-            select  t.POID, t.Seq, t.Roll, t.Dyelot, t.StockType, isnull(location.data, '')
+insert into SemiFinishedInventory_Location(POID, Seq, Roll, Dyelot, Tone, StockType, MtlLocationID)
+            select  t.POID, t.Seq, t.Roll, t.Dyelot, t.Tone, t.StockType, isnull(location.data, '')
             from    #tmp t
             outer apply(select data from dbo.SplitString(t.Location,',')) location
             where   location.data <> '' and
@@ -391,7 +393,7 @@ ALTER TABLE #tmp ALTER COLUMN Dyelot varchar(8)
 ALTER TABLE #tmp ALTER COLUMN StockType char(1)
 ALTER TABLE #tmp ALTER COLUMN Tone varchar(8)
 
-select  sfi.POID, sfi.Seq, sfi.Roll, sfi.Dyelot
+select  sfi.POID, sfi.Seq, sfi.Roll, sfi.Dyelot, sfi.Tone
 into    #tmpCheckSemiInventory
 from    SemiFinishedInventory sfi
 inner join #tmp t on sfi.POID         = t.POID        and

@@ -35,6 +35,9 @@ namespace Sci.Production.Warehouse
             this.txtSeq.ReadOnly = this.boolIsCreate ? false : true;
             this.txtSP.Text = this.boolIsCreate ? string.Empty : this.drDetail["POID"].ToString();
             this.txtSeq.Text = this.boolIsCreate ? string.Empty : this.drDetail["Seq"].ToString();
+            this.EditDesc.Text = this.boolIsCreate ? string.Empty : this.drDetail["Desc"].ToString();
+            this.txtColor.Text = this.boolIsCreate ? string.Empty : this.drDetail["Color"].ToString();
+            this.txtUnit.Text = this.boolIsCreate ? string.Empty : this.drDetail["Unit"].ToString();
         }
 
         /// <inheritdoc/>

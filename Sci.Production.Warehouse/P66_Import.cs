@@ -141,7 +141,8 @@ where   sfi.StockType = 'B' and sfi.POID = '{this.txtSP.Text}'
                 if (checkMainDetail.Any(s => s["POID"].ToString() == drImportSource["POID"].ToString() &&
                                              s["Seq"].ToString() == drImportSource["Seq"].ToString() &&
                                              s["Roll"].ToString() == drImportSource["Roll"].ToString() &&
-                                             s["Dyelot"].ToString() == drImportSource["Dyelot"].ToString()))
+                                             s["Dyelot"].ToString() == drImportSource["Dyelot"].ToString() &&
+                                             s["Tone"].ToString() == drImportSource["Tone"].ToString()))
                 {
                     continue;
                 }

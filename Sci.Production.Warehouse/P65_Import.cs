@@ -127,7 +127,8 @@ where   (sfi.InQty - sfi.OutQty + sfi.AdjustQty) > 0 and sfi.StockType = 'B' and
                 if (checkMainDetail.Any(s => s["POID"].ToString() == drImportSource["POID"].ToString() &&
                                              s["Seq"].ToString() == drImportSource["Seq"].ToString() &&
                                              s["Roll"].ToString() == drImportSource["Roll"].ToString() &&
-                                             s["Dyelot"].ToString() == drImportSource["Dyelot"].ToString()))
+                                             s["Dyelot"].ToString() == drImportSource["Dyelot"].ToString() &&
+                                             s["Tone"].ToString() == drImportSource["Tone"].ToString()))
                 {
                     continue;
                 }

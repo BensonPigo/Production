@@ -44,9 +44,9 @@ namespace Sci.Production.Warehouse
             .Numeric("Balance", header: "Balance", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4));
 
             this.Helper.Controls.Grid.Generator(this.gridRight)
-            .Text("IssueDate", header: "Date", iseditingreadonly: true, width: Widths.AnsiChars(13))
-            .Text("ID", header: "Transaction ID", iseditingreadonly: true, width: Widths.AnsiChars(16))
-            .Text("Name", header: "Name", iseditingreadonly: true, width: Widths.AnsiChars(20))
+            .Text("IssueDate", header: "Date", iseditingreadonly: true, width: Widths.AnsiChars(9))
+            .Text("ID", header: "Transaction ID", iseditingreadonly: true, width: Widths.AnsiChars(14))
+            .Text("Name", header: "Name", iseditingreadonly: true, width: Widths.AnsiChars(30))
             .Numeric("InQty", header: "In Qty", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4))
             .Numeric("OutQty", header: "Out Qty", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4))
             .Numeric("AdjustQty", header: "Adjust Qty", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4))
@@ -85,6 +85,7 @@ from (
             sfrd.Seq,
             sfrd.Roll,
             sfrd.Dyelot,
+            sfrd.Tone,
             sfrd.StockType
     from    SemiFinishedReceiving sfr with (nolock)
     inner   join  SemiFinishedReceiving_Detail sfrd with (nolock) on sfr.ID = sfrd.ID
@@ -104,6 +105,7 @@ from (
             sfid.Seq,
             sfid.Roll,
             sfid.Dyelot,
+            sfid.Tone,
             sfid.StockType
     from    SemiFinishedIssue sfi with (nolock)
     inner   join  SemiFinishedIssue_Detail sfid with (nolock) on sfi.ID = sfid.ID
@@ -123,6 +125,7 @@ from (
             sfad.Seq,
             sfad.Roll,
             sfad.Dyelot,
+            sfad.Tone,
             sfad.StockType
     from    SemiFinishedAdjust sfa with (nolock)
     inner   join  SemiFinishedAdjust_Detail sfad with (nolock) on sfa.ID = sfad.ID
@@ -133,7 +136,7 @@ from (
 ) a
 
 select  *,
-        [Balance] = SUM(InQty - OutQty + AdjustQty) OVER (PARTITION BY POID, Seq, Roll, Dyelot, StockType ORDER BY IssueDate,ID)
+        [Balance] = SUM(InQty - OutQty + AdjustQty) OVER (PARTITION BY POID, Seq, Roll, Dyelot, Tone, StockType ORDER BY IssueDate,ID)
 from    #tmpDetail
 
 ";

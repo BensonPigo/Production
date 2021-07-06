@@ -91,7 +91,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(569, 113);
+            this.gridicon.Location = new System.Drawing.Point(535, 113);
             // 
             // detailgridcont
             // 
@@ -242,7 +242,6 @@
             // 
             this.numPackages.BackColor = System.Drawing.Color.White;
             this.numPackages.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Packages", true));
-            this.numPackages.DecimalPlaces = 3;
             this.numPackages.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numPackages.Location = new System.Drawing.Point(534, 11);
             this.numPackages.Name = "numPackages";

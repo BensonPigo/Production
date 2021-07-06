@@ -132,7 +132,7 @@ ALTER TABLE #tmp ALTER COLUMN Dyelot varchar(8)
 ALTER TABLE #tmp ALTER COLUMN StockType char(1)
 ALTER TABLE #tmp ALTER COLUMN Tone varchar(8)
 
-select  sfi.POID, sfi.Seq, sfi.Roll, sfi.Dyelot
+select  sfi.POID, sfi.Seq, sfi.Roll, sfi.Dyelot, sfi.Tone
 into    #tmpCheckSemiInventory
 from    SemiFinishedInventory sfi
 inner join #tmp t on sfi.POID         = t.POID        and

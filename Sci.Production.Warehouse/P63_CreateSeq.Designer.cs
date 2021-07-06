@@ -50,14 +50,14 @@
             this.txtSP.Location = new System.Drawing.Point(130, 15);
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(100, 23);
-            this.txtSP.TabIndex = 7;
+            this.txtSP.TabIndex = 0;
             // 
             // labelLocation
             // 
             this.labelLocation.Location = new System.Drawing.Point(40, 15);
             this.labelLocation.Name = "labelLocation";
             this.labelLocation.Size = new System.Drawing.Size(87, 23);
-            this.labelLocation.TabIndex = 6;
+            this.labelLocation.TabIndex = 7;
             this.labelLocation.Text = "SP#";
             // 
             // txtSeq
@@ -68,7 +68,7 @@
             this.txtSeq.Location = new System.Drawing.Point(130, 47);
             this.txtSeq.Name = "txtSeq";
             this.txtSeq.Size = new System.Drawing.Size(100, 23);
-            this.txtSeq.TabIndex = 9;
+            this.txtSeq.TabIndex = 1;
             // 
             // label1
             // 
@@ -85,7 +85,7 @@
             this.txtColor.Location = new System.Drawing.Point(130, 173);
             this.txtColor.Name = "txtColor";
             this.txtColor.Size = new System.Drawing.Size(100, 23);
-            this.txtColor.TabIndex = 11;
+            this.txtColor.TabIndex = 3;
             // 
             // label2
             // 
@@ -102,14 +102,14 @@
             this.txtUnit.Location = new System.Drawing.Point(130, 208);
             this.txtUnit.Name = "txtUnit";
             this.txtUnit.Size = new System.Drawing.Size(100, 23);
-            this.txtUnit.TabIndex = 13;
+            this.txtUnit.TabIndex = 4;
             // 
             // label3
             // 
             this.label3.Location = new System.Drawing.Point(40, 208);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(87, 23);
-            this.label3.TabIndex = 12;
+            this.label3.TabIndex = 11;
             this.label3.Text = "Unit";
             // 
             // label4
@@ -117,7 +117,7 @@
             this.label4.Location = new System.Drawing.Point(40, 80);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(87, 23);
-            this.label4.TabIndex = 14;
+            this.label4.TabIndex = 9;
             this.label4.Text = "Descrition";
             // 
             // EditDesc
@@ -128,7 +128,7 @@
             this.EditDesc.Multiline = true;
             this.EditDesc.Name = "EditDesc";
             this.EditDesc.Size = new System.Drawing.Size(328, 77);
-            this.EditDesc.TabIndex = 15;
+            this.EditDesc.TabIndex = 2;
             // 
             // btnCreate
             // 
@@ -136,7 +136,7 @@
             this.btnCreate.Location = new System.Drawing.Point(291, 204);
             this.btnCreate.Name = "btnCreate";
             this.btnCreate.Size = new System.Drawing.Size(80, 30);
-            this.btnCreate.TabIndex = 16;
+            this.btnCreate.TabIndex = 5;
             this.btnCreate.Text = "Create";
             this.btnCreate.UseVisualStyleBackColor = true;
             this.btnCreate.Click += new System.EventHandler(this.BtnCreate_Click);
@@ -147,7 +147,7 @@
             this.btnClose.Location = new System.Drawing.Point(377, 204);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
-            this.btnClose.TabIndex = 17;
+            this.btnClose.TabIndex = 6;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
