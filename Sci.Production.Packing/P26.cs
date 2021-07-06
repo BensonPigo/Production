@@ -162,7 +162,6 @@ namespace Sci.Production.Packing
 
                         string fullFileName = fullFileNames.Where(o => o.Contains(safeFileName)).FirstOrDefault();
                         tmpPath.Add(fullFileName);
-                        continue;
                         try
                         {
                             #region ZPL
