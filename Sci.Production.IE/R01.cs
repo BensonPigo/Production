@@ -199,10 +199,15 @@ from LineMapping lm WITH (NOLOCK)
 inner join LineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
 left join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on lmd.IEReasonLBRNotHit_DetailUkey = lbr.Ukey and lbr.junk = 0
 outer apply (
-	select [avgTotalCycle] = avg(TotalCycle)
-	from LineMapping_Detail 
-	where lm.ID = ID
-	and No <> '' 
+	select avgTotalCycle = avg(TotalCycle)
+	from 
+	(
+		select ID, NO, TotalCycle
+		from LineMapping_Detail
+		where ID = lm.ID
+		and No <> '' 
+		group by ID, NO, TotalCycle
+	) lmdavg
 )lmdavg
 ");
             }
