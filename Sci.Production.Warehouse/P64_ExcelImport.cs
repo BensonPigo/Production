@@ -248,7 +248,7 @@ namespace Sci.Production.Warehouse
 
                                 if (MyUtility.Check.Empty(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "N")) || MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "N").EqualString("0"))
                                 {
-                                    errStr.Add($@"< Qty cannot be empty or zero. ");
+                                    errStr.Add($@"Qty cannot be empty or zero. ");
                                     allPass = false;
                                 }
                                 #endregion
@@ -258,7 +258,7 @@ namespace Sci.Production.Warehouse
 
                                 if (!this.CheckLocation(newRow))
                                 {
-                                    errStr.Add($@"< Row: {intRowsRead} >,Cannot found Location <{newRow["Location"]}> ");
+                                    errStr.Add($@"Cannot found Location <{newRow["Location"]}> ");
                                     allPass = false;
                                 }
                                 #endregion

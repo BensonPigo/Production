@@ -162,8 +162,9 @@ from    #tmpDetail
 
             string roll = this.gridLeft.SelectedRows[0].Cells["Roll"].Value.ToString();
             string dyelot = this.gridLeft.SelectedRows[0].Cells["Dyelot"].Value.ToString();
+            string tone = this.gridLeft.SelectedRows[0].Cells["Tone"].Value.ToString();
             var srcRight = this.dtRight.AsEnumerable()
-                                        .Where(s => s["Roll"].ToString() == roll && s["Dyelot"].ToString() == dyelot)
+                                        .Where(s => s["Roll"].ToString() == roll && s["Dyelot"].ToString() == dyelot && s["Tone"].ToString() == tone)
                                         .OrderBy(s => s["IssueDate"]);
 
             if (!srcRight.Any())
