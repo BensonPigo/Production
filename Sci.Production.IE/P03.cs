@@ -1472,7 +1472,7 @@ WHERE Ukey={item["Ukey"]}
             return MyUtility.GetValue.Lookup($@"
 select top 1 c.Target
 from factory f
-left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and c.EffectiveDate < GETDATE() and c. Type ='{type}.'
+left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and c.EffectiveDate < GETDATE() and c. Type ='{type}'
 where f.id = '{Sci.Env.User.Factory}'
 order by EffectiveDate desc
 ");
@@ -1530,7 +1530,7 @@ order by EffectiveDate desc
             else
             {
                 // Version != 1 檢查表身
-                decimal decLBR = 100 - Convert.ToDecimal(this.numLBR.Value);
+                decimal decLBR = 100 - Convert.ToDecimal(lBRTarget);
                 DataTable detail = (DataTable)this.listControlBindingSource1.DataSource;
                 decimal? avgCycle = detail.AsEnumerable().Average(x => x.Field<decimal?>("TotalCycle"));
                 List<GridList> gridLists = detail.AsEnumerable()

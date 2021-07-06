@@ -183,7 +183,7 @@ outer apply(
             else
             {
                 this.sqlCmd.Append(@"
-select
+select distinct
 	lm.FactoryID,
 	lm.StyleID,
 	lm.ComboType,
