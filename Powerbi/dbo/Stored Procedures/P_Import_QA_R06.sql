@@ -25,8 +25,8 @@ BEGIN
 	END
 
 	----
-	DECLARE @WhseArrival_s_varchar varchar(10) = cast( @WhseArrival_s as varchar)
-	DECLARE @WhseArrival_e_varchar varchar(10) = cast( @WhseArrival_e as varchar)
+	DECLARE @WhseArrival_s_varchar varchar(10) =REPLACE(LEFT( cast( @WhseArrival_s as varchar),7),'-','/')
+	DECLARE @WhseArrival_e_varchar varchar(10) =REPLACE(LEFT( cast( @WhseArrival_e as varchar),7),'-','/')
 	
 	SET @SqlCmd1='
 

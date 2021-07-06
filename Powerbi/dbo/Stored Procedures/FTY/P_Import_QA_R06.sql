@@ -9,9 +9,9 @@ BEGIN
 	BEGIN
 		SET @WhseArrival_e = (SELECT dateadd(day ,-1, dateadd(m, datediff(m,0,getdate())+1,0))  )
 	END
-
-	DECLARE @WhseArrival_s_varchar varchar(10) = cast( @WhseArrival_s as varchar)
-	DECLARE @WhseArrival_e_varchar varchar(10) = cast( @WhseArrival_e as varchar)
+	
+	DECLARE @WhseArrival_s_varchar varchar(10) =REPLACE(LEFT( cast( @WhseArrival_s as varchar),7),'-','/')
+	DECLARE @WhseArrival_e_varchar varchar(10) =REPLACE(LEFT( cast( @WhseArrival_e as varchar),7),'-','/')
 
 	
 	SELECT * INTO #View_AllReceivingDetail 	FROM [MainServer].Production.dbo.View_AllReceivingDetail WHERE WhseArrival >= '2020/01/01';
