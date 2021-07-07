@@ -175,7 +175,7 @@
             this.radioByOneDayDetial.Name = "radioByOneDayDetial";
             this.radioByOneDayDetial.Size = new System.Drawing.Size(135, 21);
             this.radioByOneDayDetial.TabIndex = 5;
-            this.radioByOneDayDetial.Text = "By one day detial";
+            this.radioByOneDayDetial.Text = "By one day detail";
             this.radioByOneDayDetial.UseVisualStyleBackColor = true;
             this.radioByOneDayDetial.CheckedChanged += new System.EventHandler(this.RadioByOneDayDetial_CheckedChanged);
             // 
@@ -361,7 +361,11 @@
             this.DefaultControl = "dateCuttingDate";
             this.DefaultControlForEdit = "dateCuttingDate";
             this.Name = "R02";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R02.Cutting Daily Plan Summary Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.print, 0);
