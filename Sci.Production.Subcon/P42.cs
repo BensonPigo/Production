@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
@@ -20,6 +21,10 @@ namespace Sci.Production.Subcon
             this.InitializeComponent();
             MyUtility.Tool.SetupCombox(this.cmbSummaryBy, 2, 1, "0,SP#,1,Article / Size");
             this.txtfactory1.MDivision = this.txtMdivision1;
+            this.dispOngoing.BackColor = Color.Yellow;
+            this.dispComplete.BackColor = Color.Green;
+            this.dispNotYetLoad.BackColor = Color.Red;
+            this.displayBox1.BackColor = Color.White;
         }
 
         /// <inheritdoc/>
@@ -75,6 +80,7 @@ inner join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = bi.BundleNo
 inner join Bundle b with(nolock) on b.id = bd.id
 left join dbo.SciMES_BundleDefectReason bdr with(nolock) on bdr.ID = bi.ReasonID and bdr.SubProcessID = bi.SubProcessID
 where b.Orderid = '{drSelected["OrderID"]}' 
+and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 {where}
 ";
                 DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
@@ -125,9 +131,10 @@ where b.Orderid = '{drSelected["OrderID"]}'
 
             this.Helper.Controls.Grid.Generator(this.grid1)
                 .Date("LastSewDate", header: "Last Sew. Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("SewQty", header: "Sew. Qty", width: Widths.AnsiChars(6), iseditingreadonly: true);
+                .Numeric("SewQty", header: "Sew. Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Numeric("TotalQty", header: "Total Qty", width: Widths.AnsiChars(6), iseditingreadonly: true);
 
-            int subprocessStartColumn = ((DataTable)this.listControlBindingSource1.DataSource).Columns["SewQty"].Ordinal;
+            int subprocessStartColumn = ((DataTable)this.listControlBindingSource1.DataSource).Columns["TotalQty"].Ordinal;
             int bundleReplacementColumn = ((DataTable)this.listControlBindingSource1.DataSource).Columns["BundleReplacement"].Ordinal;
             foreach (DataColumn column in ((DataTable)this.listControlBindingSource1.DataSource).Columns)
             {
@@ -162,8 +169,29 @@ where b.Orderid = '{drSelected["OrderID"]}'
                                 break;
                         }
                     };
+
+                    subprocess.CellFormatting += (s, e) =>
+                    {
+                        DataRow drSelected = this.grid1.GetDataRow(e.RowIndex);
+                        switch (MyUtility.Convert.GetString(drSelected[column.ColumnName]))
+                        {
+                            case "Complete":
+                                e.CellStyle.BackColor = Color.Green;
+                                break;
+                            case "OnGoing":
+                                e.CellStyle.BackColor = Color.Yellow;
+                                break;
+                            case "Not Yet Load":
+                                e.CellStyle.BackColor = Color.Red;
+                                break;
+                            default:
+                                drSelected[column.ColumnName + "_value"] = DBNull.Value;
+                                e.CellStyle.BackColor = Color.White;
+                                break;
+                        }
+                    };
                     this.Helper.Controls.Grid.Generator(this.grid1)
-                    .Text(column.ColumnName, header: column.ColumnName, width: Widths.AnsiChars(12), iseditingreadonly: true, settings: subprocess);
+                    .Text(column.ColumnName + "_value", header: column.ColumnName, width: Widths.AnsiChars(12), iseditingreadonly: true, settings: subprocess);
                 }
             }
 
@@ -292,7 +320,8 @@ select
 	InLineDate=o.SewInLine,
 	OffLineDate=o.SewOffLine,
     vsis.LastSewDate,
-    vsis.SewQty
+    vsis.SewQty,
+	TotalQty = (select sum(Qty) from Order_Qty oq where oq.id = o.id)
 into #tmpOrders
 from orders o with(nolock)
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
@@ -322,6 +351,7 @@ cross join(
 	from SubProcess s
 	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1 AND s.IsSelection=0
 )s
+where not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 
 select Orderid,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS,
 	NoBundleCardAfterSubprocess=  isnull(x.NoBundleCardAfterSubprocess,0),
@@ -477,7 +507,9 @@ where exists(select 1   from #tmpOrders o
 						inner join Bundle b with(nolock) on o.id = b.Orderid and  b.MDivisionID = o.MDivisionID
 						inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.id
 						where bi.BundleNo = bd.BundleNo
-						)  and isnull(bi.DefectQty,0) <> isnull(bi.ReplacementQty,0)
+						and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
+						)
+and isnull(bi.DefectQty,0) <> isnull(bi.ReplacementQty,0)
 
 declare @sql nvarchar(max)=N'
 select Orderid,'+@Col+N'
@@ -488,6 +520,7 @@ PIVOT(min(Status) for SubProcessID in('+@AllSubprocess+N'))as pt
 select 
 	o.FactoryID,OrderID=o.ID,o.POID,o.CustPONo,o.ProgramID,o.StyleID,o.BrandID,o.SeasonID,o.CutCellid,o.SewLine,o.InLineDate,o.OffLineDate, o.LastSewDate,
     o.SewQty,
+	o.TotalQty,
 	'+@Col+N'
     ,BundleReplacement=RQ
 from #tmpOrders o
@@ -499,12 +532,15 @@ outer apply(
 		inner join Bundle_Detail_Order bdo WITH (NOLOCK) on bdo.Orderid = o.ID and bdo.BundleNo = bi.BundleNo
         inner join Bundle b with(nolock) on b.id = bdo.id
 		where o.MDivisionID = b.MDivisionID
+		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 	    group by bi.ReasonID
 	    for xml path('''')
     ),1,1,'''')
 )BR
 '
 exec(@sql)
+
+select distinct SubProcessID,s.ShowSeq from #tmpBundleNo_SubProcess s order by s.ShowSeq,s.SubProcessID
 
 drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete,#tmp ,#tmpBundleNo_Complete2, #tmpBundleInspection
 ";
@@ -529,7 +565,8 @@ select
 	InLineDate=s.Inline,
 	OffLineDate=s.Offline,
     vsis.LastSewDate,
-    vsis.SewQty
+    vsis.SewQty,
+	TotalQty = oq.Qty
 into #tmpOrders
 from orders o with(nolock)
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
@@ -566,6 +603,7 @@ cross join(
 	from SubProcess s
 	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1 AND s.IsSelection=0
 )s
+where not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 
 select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,b.IsEXCESS,
 	NoBundleCardAfterSubprocess= isnull(x.NoBundleCardAfterSubprocess,0),
@@ -730,6 +768,7 @@ where exists(select 1   from #tmpOrders o
 						inner join Bundle b with(nolock) on b.MDivisionID = o.MDivisionID
 						inner join Bundle_Detail_Order bdo WITH (NOLOCK) on b.id = bdo.id and o.id = bdo.Orderid
 						where bi.BundleNo = bdo.BundleNo
+						and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 						)  and isnull(bi.DefectQty,0) <> isnull(bi.ReplacementQty,0)
 
 declare @sql nvarchar(max)=N'
@@ -741,6 +780,7 @@ PIVOT(min(Status) for SubProcessID in('+@AllSubprocess+N'))as pt
 select 
 	o.FactoryID,OrderID=o.ID,o.POID,o.CustPONo,o.ProgramID,o.StyleID,o.BrandID,o.SeasonID,o.Article,o.Sizecode,o.CutCellid,o.SewLine,o.InLineDate,o.OffLineDate, o.LastSewDate,
     o.SewQty,
+	o.TotalQty,
 	'+@Col+N'
     ,BundleReplacement=RQ
 from #tmpOrders o
@@ -753,6 +793,7 @@ outer apply(
         inner join Bundle b with(nolock) on b.id = bdo.id
 		where o.MDivisionID = b.MDivisionID
 		and b.Article = o.Article and b.SizeCode = o.Sizecode
+		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 	    group by ReasonID
 	    for xml path('''')
     ),1,1,'''')
@@ -760,25 +801,80 @@ outer apply(
 '
 exec(@sql)
 
+select distinct SubProcessID,s.ShowSeq from #tmpBundleNo_SubProcess s order by s.ShowSeq,s.SubProcessID
+
 drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete,#tmp ,#tmpBundleNo_Complete2, #tmpBundleInspection
 ";
             }
 
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable[] dt);
             if (!result)
             {
                 this.ShowErr(result);
                 return;
             }
 
-            if (dt.Rows.Count == 0)
+            if (dt[0].Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return;
             }
             else
             {
-                this.listControlBindingSource1.DataSource = dt;
+                string[] subprocessIDs = dt[1].AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SubProcessID"])).ToArray();
+                bool bySP = summaryType == 0;
+                string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#enn", bySP: bySP, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
+                string columns = bySP ? "OrderID" : "OrderID,Article,SizeCode";
+                string sqlCmd = $@"
+select distinct {columns}, InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null into #enn from #tmp
+{qtyBySetPerSubprocess}
+
+select t.*
+";
+                string tmpjoin = string.Empty;
+                foreach (string subprocessID in subprocessIDs)
+                {
+                    string subprocessIDtmp = subprocessID.Replace("-", string.Empty); // 把PAD-PRT為PADPRT, 命名#table名稱用
+                    sqlCmd += $",[{subprocessID}_value] = {subprocessIDtmp}.FinishedQtyBySet";
+
+                    dt[0].Columns.Add($"{subprocessID}_value", typeof(decimal));
+
+                    if (bySP)
+                    {
+                        tmpjoin += $@"
+left join #{subprocessIDtmp} {subprocessIDtmp} on {subprocessIDtmp}.OrderID = t.OrderID";
+                    }
+                    else
+                    {
+                        tmpjoin += $@"
+left join #QtyBySetPerSubprocess{subprocessIDtmp} {subprocessIDtmp} on {subprocessIDtmp}.OrderID = t.OrderID and {subprocessIDtmp}.Article = t.Article and  {subprocessIDtmp}.SizeCode = t.SizeCode ";
+                    }
+                }
+
+                sqlCmd += $@"
+from #tmp t
+{tmpjoin}
+";
+                result = MyUtility.Tool.ProcessWithDatatable(dt[0], columns, sqlCmd, out DataTable dtp);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                foreach (DataRow dr in dt[0].Rows)
+                {
+                    DataRow[] drs = bySP ? dtp.Select($"OrderID = '{dr["OrderID"]}'") : dtp.Select($"OrderID = '{dr["OrderID"]}' and Article = '{dr["Article"]}' and SizeCode = '{dr["SizeCode"]}'");
+                    if (drs.Length > 0)
+                    {
+                        foreach (string subprocessID in subprocessIDs)
+                        {
+                            dr[$"{subprocessID}_value"] = MyUtility.Convert.GetDecimal(drs[0][$"{subprocessID}_value"]);
+                        }
+                    }
+                }
+
+                this.listControlBindingSource1.DataSource = dt[0];
                 this.GridSetup(summaryType);
             }
         }
@@ -874,6 +970,7 @@ outer apply(
 		For XML path('')
 	),1,1,'')
 )SubProcess
+where not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 
 select   Orderid
         ,BundleNo
@@ -1124,6 +1221,7 @@ outer apply(
 		For XML path('')
 	),1,1,'')
 )SubProcess
+where not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 
 select Orderid,SubProcess,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS
 	,NoBundleCardAfterSubprocess= isnull(x.NoBundleCardAfterSubprocess,0) 
@@ -1238,6 +1336,7 @@ outer apply(
 	from Bundle_Detail bd with(nolock)
 	inner join Bundle b WITH (NOLOCK) on b.id = bd.Id
 	where bd.BundleNo = t.BundleNo and b.Article = t.Article and b.Sizecode = t.Sizecode
+	and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 )b
 outer apply(
     select top 1 PostSewingSubProcess
