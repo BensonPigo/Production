@@ -233,12 +233,15 @@ select 1 from Orders o WITH (NOLOCK) where o.ID = @orderid and o.category in ('B
                                         DialogResult returnResult = item.ShowDialog();
                                         if (returnResult == DialogResult.Cancel)
                                         {
-                                            this.CurrentMaintain["OrderShipmodeSeq"] = string.Empty;
+                                            this.CurrentDetailData["OrderShipmodeSeq"] = string.Empty;
                                         }
                                         else
                                         {
-                                            this.CurrentMaintain["OrderShipmodeSeq"] = item.GetSelectedString();
+                                            this.CurrentDetailData["OrderShipmodeSeq"] = item.GetSelectedString();
+                                            this.CurrentDetailData["Qty"] = item.GetSelecteds()[0]["Qty"];
                                         }
+
+                                        this.CurrentDetailData.EndEdit();
                                     }
                                 }
                                 #endregion
@@ -269,12 +272,12 @@ select 1 from Orders o WITH (NOLOCK) where o.ID = @orderid and o.category in ('B
                             else
                             {
                                 dr["OrderShipmodeSeq"] = item.GetSelectedString();
+                                dr["Qty"] = item.GetSelecteds()[0]["Qty"];
                             }
 
                             dr["Article"] = string.Empty;
                             dr["Color"] = string.Empty;
                             dr["SizeCode"] = string.Empty;
-                            dr["qty"] = 0;
                             dr["ShipQty"] = 0;
                             dr["OtherConfirmQty"] = 0;
                             dr["InvAdjustQty"] = 0;
