@@ -163,7 +163,7 @@ BEGIN
 	into #tmpAllData
 	from #tmp1 t
 	inner join #View_AllReceivingDetail rd on t.PoId = rd.PoId and t.Seq1 = rd.Seq1 and t.Seq2 = rd.Seq2 AND rd.FactoryID=t.FactoryID 
-	AND LEFT(convert(varchar, rd.WhseArrival , 111),7) = t.WhseArrival	
+	--AND LEFT(convert(varchar, rd.WhseArrival , 111),7) = t.WhseArrival	
 	------------Group by Supp 
 	select PoId,Seq1,Seq2,SuppID,Refno,WhseArrival,FactoryID,ActualQty = sum(ActualQty)  
 	into #GroupBySupp
