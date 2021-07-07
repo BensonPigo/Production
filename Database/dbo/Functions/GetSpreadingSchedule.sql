@@ -38,7 +38,8 @@ RETURN
 		o.BuyerDelivery,
 		w.SCIRefno,
 		[ReqQty] = isnull(cp.Cons, 0),
-		w.Cons
+		w.Cons,
+		w.Refno
 	from WorkOrder w with(nolock)
 	inner join orders o with(nolock) on o.id = w.ID
 	left join SpreadingSchedule s with(nolock) on	s.FactoryID = w.FactoryID
