@@ -185,6 +185,7 @@ and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternP
                                 e.CellStyle.BackColor = Color.Red;
                                 break;
                             default:
+                                drSelected[column.ColumnName + "_value"] = DBNull.Value;
                                 e.CellStyle.BackColor = Color.White;
                                 break;
                         }
