@@ -270,6 +270,7 @@ select distinct
 	[SP#] = Cutplan_Detail.OrderID,
 	[Seq#] = CONCAT(WorkOrder.Seq1, '-', WorkOrder.Seq2),
 	[Style#] = o.StyleID,
+    [FabRef#] = WorkOrder.refno,
 	[Ref#] = Cutplan_Detail.CutRef,
 	[Cut#] = Cutplan_Detail.CutNo,
 	[Comb.] = WorkOrder.FabricCombo,
@@ -394,6 +395,7 @@ select
 [Style#1] = case when ((Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#],[Style#] 
 	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
 	and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Style#] end,
+[FabRef#] = [FabRef#],
 [Ref#] = [Ref#],
 [Cut#] = [Cut#],
 [Comb.] = [Comb.],
@@ -442,6 +444,7 @@ select	distinct
 	[SP#] = Cutplan_Detail.OrderID,
 	[Seq#] = CONCAT(WorkOrder.Seq1, '-', WorkOrder.Seq2),
 	[Style#] = o.StyleID,
+    [FabRef#] = WorkOrder.Refno,
 	[Ref#] = Cutplan_Detail.CutRef,
 	[Cut#] = Cutplan_Detail.CutNo,
 	[Comb.] = WorkOrder.FabricCombo,
@@ -602,6 +605,7 @@ select
 [Style#1] = case when ((Row_number() over (partition by [Line#],[Request#],[Fab ETA],[SP#],[Seq#],[Style#] 
 	order by [Line#],[Request#],[SP#],[Seq#],[Fab ETA],[Comb.],[ms] desc)) >1 
     and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[SP#],[Seq#],[Fab ETA],[Comb.],[ms] desc))then '' else [Style#] end,
+[FabRef#] = [FabRef#],
 [Ref#] = [Ref#],
 [Cut#] = [Cut#],
 [Comb.] = [Comb.],
@@ -1015,12 +1019,12 @@ drop table #tmp{i}
 
                         if (this.printData[i].Rows[j]["Ref#"].Empty())
                         {
-                            objSheets.get_Range("L" + (6 + j), "O" + (6 + j)).Font.Bold = true; // 指定粗體
+                            objSheets.get_Range("M" + (6 + j), "P" + (6 + j)).Font.Bold = true; // 指定粗體
                             objSheets.Cells[6 + j, 14] = "Total Cons.";
                         }
                     }
 
-                    objSheets.Columns["U"].Clear();
+                    objSheets.Columns["V"].Clear();
                     objSheets.Name = (this.selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + this.Maintb.Rows[i][0].ToString(); // 工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(this.dateR_CuttingDate1).ToString("yyyy/MM/dd") + "~" + Convert.ToDateTime(this.dateR_CuttingDate2).ToString("yyyy/MM/dd"); // 查詢日期
                     objSheets.Cells[3, 5] = this.selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No"; // CutCell或SpreadingNo
@@ -1033,19 +1037,20 @@ drop table #tmp{i}
                     objSheets.get_Range("D1").ColumnWidth = 14.75;
                     objSheets.get_Range("E1").ColumnWidth = 13;
                     objSheets.get_Range("F1").ColumnWidth = 15.25;
-                    objSheets.get_Range("G1").ColumnWidth = 8.75;
-                    objSheets.get_Range("H1").ColumnWidth = 7.38;
-                    objSheets.get_Range("I1").ColumnWidth = 9;
-                    objSheets.get_Range("J1").ColumnWidth = 12.13;
-                    objSheets.get_Range("K1").ColumnWidth = 11.75;
-                    objSheets.get_Range("L1").ColumnWidth = 14;
-                    objSheets.get_Range("M1").ColumnWidth = 8.13;
-                    objSheets.get_Range("N1").ColumnWidth = 12.25;
-                    objSheets.get_Range("O1").ColumnWidth = 12.13;
+                    objSheets.get_Range("G1").ColumnWidth = 12;
+                    objSheets.get_Range("H1").ColumnWidth = 8.75;
+                    objSheets.get_Range("I1").ColumnWidth = 7.38;
+                    objSheets.get_Range("J1").ColumnWidth = 9;
+                    objSheets.get_Range("K1").ColumnWidth = 12.13;
+                    objSheets.get_Range("L1").ColumnWidth = 11.75;
+                    objSheets.get_Range("M1").ColumnWidth = 14;
+                    objSheets.get_Range("N1").ColumnWidth = 8.13;
+                    objSheets.get_Range("O1").ColumnWidth = 12.25;
                     objSheets.get_Range("P1").ColumnWidth = 12.13;
-                    objSheets.get_Range("Q1").ColumnWidth = 20.3;
-                    objSheets.get_Range("R1").ColumnWidth = 50;
-                    objSheets.get_Range("T1").ColumnWidth = 41;
+                    objSheets.get_Range("Q1").ColumnWidth = 12.13;
+                    objSheets.get_Range("R1").ColumnWidth = 20.3;
+                    objSheets.get_Range("T1").ColumnWidth = 50;
+                    objSheets.get_Range("U1").ColumnWidth = 41;
                     objSheets.Rows.AutoFit();
 
                     Marshal.ReleaseComObject(objSheets); // 釋放sheet
@@ -1106,12 +1111,12 @@ drop table #tmp{i}
 
                         if (this.printData[i].Rows[j]["Ref#"].Empty())
                         {
-                            objSheets.get_Range("L" + (6 + j), "Q" + (6 + j)).Font.Bold = true; // 指定粗體
+                            objSheets.get_Range("M" + (6 + j), "R" + (6 + j)).Font.Bold = true; // 指定粗體
                             objSheets.Cells[6 + j, 16] = "Total Cons.";
                         }
                     }
 
-                    objSheets.Columns["W"].Clear();
+                    objSheets.Columns["X"].Clear();
                     objSheets.Name = (this.selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + this.Maintb.Rows[i][0].ToString(); // 工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(this.dateR_CuttingDate1).ToString("yyyy/MM/dd"); // 查詢日期
                     objSheets.Cells[3, 5] = this.selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No"; // CutCell或SpreadingNo
@@ -1125,20 +1130,21 @@ drop table #tmp{i}
                     objSheets.get_Range("E1").ColumnWidth = 13;
                     objSheets.get_Range("F1").ColumnWidth = 15.25;
                     objSheets.get_Range("G1").ColumnWidth = 8.75;
-                    objSheets.get_Range("H1").ColumnWidth = 7.38;
-                    objSheets.get_Range("I1").ColumnWidth = 9;
-                    objSheets.get_Range("J1").ColumnWidth = 11.88;
-                    objSheets.get_Range("K1").ColumnWidth = 12.38;
-                    objSheets.get_Range("L1").ColumnWidth = 13.5;
-                    objSheets.get_Range("M1").ColumnWidth = 8;
-                    objSheets.get_Range("N1").ColumnWidth = 12.75;
+                    objSheets.get_Range("H1").ColumnWidth = 12;
+                    objSheets.get_Range("I1").ColumnWidth = 7.38;
+                    objSheets.get_Range("J1").ColumnWidth = 9;
+                    objSheets.get_Range("K1").ColumnWidth = 11.88;
+                    objSheets.get_Range("L1").ColumnWidth = 12.38;
+                    objSheets.get_Range("M1").ColumnWidth = 13.5;
+                    objSheets.get_Range("N1").ColumnWidth = 8;
                     objSheets.get_Range("O1").ColumnWidth = 12.75;
                     objSheets.get_Range("P1").ColumnWidth = 12.75;
-                    objSheets.get_Range("Q1").ColumnWidth = 12;
-                    objSheets.get_Range("R1").ColumnWidth = 9.25;
-                    objSheets.get_Range("S1").ColumnWidth = 21.38;
-                    objSheets.get_Range("T1").ColumnWidth = 12.88;
-                    objSheets.get_Range("V1").ColumnWidth = 41;
+                    objSheets.get_Range("Q1").ColumnWidth = 12.75;
+                    objSheets.get_Range("R1").ColumnWidth = 12;
+                    objSheets.get_Range("S1").ColumnWidth = 9.25;
+                    objSheets.get_Range("T1").ColumnWidth = 21.38;
+                    objSheets.get_Range("V1").ColumnWidth = 12.88;
+                    objSheets.get_Range("W1").ColumnWidth = 41;
                     objSheets.Rows.AutoFit();
 
                     Marshal.ReleaseComObject(objSheets); // 釋放sheet
