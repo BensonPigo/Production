@@ -25,6 +25,8 @@ BEGIN
 	END
 
 	----
+	DECLARE @WhseArrival_s_cast varchar(10) = cast( @WhseArrival_s as varchar)
+	DECLARE @WhseArrival_e_cast varchar(10) = cast( @WhseArrival_e as varchar)
 	DECLARE @WhseArrival_s_varchar varchar(10) =REPLACE(LEFT( cast( @WhseArrival_s as varchar),7),'-','/')
 	DECLARE @WhseArrival_e_varchar varchar(10) =REPLACE(LEFT( cast( @WhseArrival_e as varchar),7),'-','/')
 	
@@ -132,14 +134,14 @@ BEGIN
 		select r.PoId,r.Seq1,r.Seq2 ,[WhseArrival] = r.WhseArrival,r.FactoryID
 		from #View_AllReceivingDetail r with (nolock)
 		where 1=1
-		 and r.WhseArrival >= '''+@WhseArrival_s_varchar+''' and r.WhseArrival <= '''+@WhseArrival_e_varchar+'''
+		 and r.WhseArrival >= '''+@WhseArrival_s_cast+''' and r.WhseArrival <= '''+@WhseArrival_e_cast+'''
 		and r.Status = ''Confirmed''
 		union
 		select sd.ToPOID as PoId,sd.ToSeq1 as Seq1,sd.ToSeq2 as Seq2 ,[WhseArrival] = s.IssueDate, s.FactoryID
 		from #SubTransfer s
 		inner join #SubTransfer_Detail sd on s.Id = sd.ID
 		where 1=1
-		 and s.IssueDate >= '''+@WhseArrival_s_varchar+''' and s.IssueDate <= '''+@WhseArrival_e_varchar+'''
+		 and s.IssueDate >= '''+@WhseArrival_s_cast+''' and s.IssueDate <= '''+@WhseArrival_e_cast+'''
 		and s.Status = ''Confirmed''
 		and s.Type = ''B''
 		union
@@ -147,7 +149,7 @@ BEGIN
 		from #BorrowBack b
 		inner join #BorrowBack_Detail bd on b.Id = bd.ID
 		where 1=1
-		 and b.IssueDate >= '''+@WhseArrival_s_varchar+''' and b.IssueDate <= '''+@WhseArrival_e_varchar+'''
+		 and b.IssueDate >= '''+@WhseArrival_s_cast+''' and b.IssueDate <= '''+@WhseArrival_e_cast+'''
 		and b.Status = ''Confirmed''
 		and (b.Type = ''A'' or b.Type = ''B'')
 	) a
