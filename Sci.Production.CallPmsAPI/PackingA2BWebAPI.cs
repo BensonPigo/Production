@@ -17,6 +17,29 @@ namespace Sci.Production.CallPmsAPI
     /// </summary>
     public static class PackingA2BWebAPI
     {
+        public class PackingA2BResult : DualResult
+        {
+            public bool isDataExists { get; set; } = false;
+
+
+            public PackingA2BResult(bool result) : base(result)
+            {
+                this.isDataExists = isDataExists;
+            }
+
+            public PackingA2BResult(bool result, bool isDataExists) : base(result)
+            {
+                this.isDataExists = isDataExists;
+            }
+
+            public PackingA2BResult(bool result, Exception exception) : base(result, exception)
+            {
+            }
+
+            public PackingA2BResult(bool result, string description) : base(result, description)
+            {
+            }
+        }
 
         /// <summary>
         /// IsDummy
@@ -138,7 +161,7 @@ namespace Sci.Production.CallPmsAPI
                 WebApiBaseResult webApiBaseResult;
                 dataBySql.SqlString = dataBySql.SqlString.Base64Encrypt();
                 webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, "api/PackingA2B/GetDataBySql", dataBySql, 75);
-                string aa = JsonConvert.SerializeObject(dataBySql);
+
                 if (!webApiBaseResult.isSuccess)
                 {
                     dtResult = null;
@@ -154,6 +177,148 @@ namespace Sci.Production.CallPmsAPI
                 dtResult = null;
                 return new DualResult(false, ex);
             }
+        }
+
+        public static DualResult GetDataBySql(string systemName, DataBySql dataBySql, out DataTable dtResult)
+        {
+            try
+            {
+                string apiUrl = GetWebAPIUrl(systemName);
+                WebApiBaseResult webApiBaseResult;
+                dataBySql.SqlString = dataBySql.SqlString.Base64Encrypt();
+                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, "api/PackingA2B/GetDataBySql", dataBySql, 75);
+
+                if (!webApiBaseResult.isSuccess)
+                {
+                    dtResult = null;
+                    return new DualResult(false, GetWebApiBaseResultError(webApiBaseResult));
+                }
+
+                dtResult = (DataTable)JsonConvert.DeserializeObject(webApiBaseResult.responseContent, (typeof(DataTable)));
+                return new DualResult(true);
+            }
+            catch (Exception ex)
+            {
+                dtResult = null;
+                return new DualResult(false, ex);
+            }
+        }
+
+        public static DualResult ExecuteBySql(string systemName, DataBySql dataBySql)
+        {
+            try
+            {
+                string apiUrl = GetWebAPIUrl(systemName);
+                WebApiBaseResult webApiBaseResult;
+                dataBySql.SqlString = dataBySql.SqlString.Base64Encrypt();
+                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, "api/PackingA2B/GetDataBySql", dataBySql, 75);
+
+                if (!webApiBaseResult.isSuccess)
+                {
+                    return new DualResult(false, GetWebApiBaseResultError(webApiBaseResult));
+                }
+
+                return new DualResult(true);
+            }
+            catch (Exception ex)
+            {
+                return new DualResult(false, ex);
+            }
+        }
+
+        public static PackingA2BResult SeekBySql(string systemName, DataBySql dataBySql, out DataRow drResult)
+        {
+            try
+            {
+                string apiUrl = GetWebAPIUrl(systemName);
+                WebApiBaseResult webApiBaseResult;
+                dataBySql.SqlString = dataBySql.SqlString.Base64Encrypt();
+                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, "api/PackingA2B/SeekBySql", dataBySql, 75);
+
+                if (!webApiBaseResult.isSuccess)
+                {
+                    drResult = null;
+                    return new PackingA2BResult(false, GetWebApiBaseResultError(webApiBaseResult));
+                }
+
+
+                SeekDataResult seekDataResult = JsonConvert.DeserializeObject<SeekDataResult>(webApiBaseResult.responseContent);
+                if (seekDataResult.isExists)
+                {
+                    drResult = seekDataResult.resultDt.Rows[0];
+                }
+                else
+                {
+                    drResult = null;
+                }
+                return new PackingA2BResult(true, seekDataResult.isExists);
+            }
+            catch (Exception ex)
+            {
+                drResult = null;
+                return new PackingA2BResult(false, ex);
+            }
+        }
+
+        public static PackingA2BResult SeekBySql(string systemName, string seekSel, out DataRow drResult)
+        {
+            DataBySql dataBySql = new DataBySql() { SqlString = seekSel };
+            return SeekBySql(systemName, dataBySql, out drResult);
+        }
+
+        public static PackingA2BResult SeekBySql(string systemName, string seekSel)
+        {
+            DataRow noUsingDr;
+            DataBySql dataBySql = new DataBySql() { SqlString = seekSel };
+            return SeekBySql(systemName, dataBySql, out noUsingDr);
+        }
+
+        public static List<PackingA2BResult> SeekBySql(string[] systemNames, string seekSel)
+        {
+            List<PackingA2BResult> packingA2BResults = new List<PackingA2BResult>();
+
+            foreach (string systemName in systemNames)
+            {
+                DataRow noUsingDr;
+                DataBySql dataBySql = new DataBySql() { SqlString = seekSel };
+                packingA2BResults.Add(SeekBySql(systemName, dataBySql, out noUsingDr));
+            }
+
+            
+            return packingA2BResults;
+        }
+
+        public static List<PackingA2BResult> SeekBySql(Dictionary<string, string> dicSeekSql)
+        {
+            List<PackingA2BResult> packingA2BResults = new List<PackingA2BResult>();
+
+            foreach (KeyValuePair<string, string> seekSql in dicSeekSql)
+            {
+                DataRow noUsingDr;
+                DataBySql dataBySql = new DataBySql() { SqlString = seekSql.Value };
+                packingA2BResults.Add(SeekBySql(seekSql.Key, dataBySql, out noUsingDr));
+            }
+
+
+            return packingA2BResults;
+        }
+
+        public static DualResult GetDataBySql<T>(string systemName, string sqlCmd, out DataTable dtResult)
+        {
+            DataBySql dataBySql = new DataBySql() { SqlString = sqlCmd };
+            return GetDataBySql<T>(systemName, dataBySql, out dtResult);
+        }
+
+        public static DualResult GetDataBySql(string systemName, string sqlCmd, out DataTable dtResult)
+        {
+            DataBySql dataBySql = new DataBySql() { SqlString = sqlCmd };
+            return GetDataBySql(systemName, dataBySql, out dtResult);
+        }
+
+        public static DualResult ExecuteBySql(string systemName, string sqlCmd)
+        {
+            DataBySql dataBySql = new DataBySql() { SqlString = sqlCmd };
+            return ExecuteBySql(systemName, dataBySql);
         }
 
     }

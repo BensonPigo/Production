@@ -202,7 +202,9 @@ with IniBulkPack as (
                 listPar.Add(new SqlParameter("@IDD", this.dateIDD.Value));
             }
 
-            sqlCmd.Append(@"
+            string pLFromRgCode = this.txtmultifactoryFactory.IsDataFromA2B ? this.txtmultifactoryFactory.SystemName : string.Empty;
+
+            sqlCmd.Append($@"
 ), PackData as (
     select  Selected
             , ID
@@ -268,6 +270,7 @@ select  pd.Selected
                           (select sum (APPEstAmtVW) 
                           from PackingList_Detail pld with(Nolock)
                           where pld.id = pd.id), 0)
+        , [PLFromRgCode] = '{pLFromRgCode}'
 from PackData pd");
             #endregion
 
@@ -280,23 +283,30 @@ from PackData pd");
                 //SqlConnection sqlConnection = new SqlConnection(connString);
                 //result = DBProxy.Current.SelectByConn(sqlConnection, sqlCmd.ToString(), listPar, out this.gridData);
 
-                P05_ImportFromPackingListQuery p05_ImportFromPackingList = new P05_ImportFromPackingListQuery()
-                {
-                    ShipModeID = MyUtility.Convert.GetString(this.masterData["ShipModeID"]),
-                    BrandID = MyUtility.Convert.GetString(this.masterData["BrandID"]),
-                    Dest = MyUtility.Convert.GetString(this.masterData["Dest"]),
-                    CustCDID = MyUtility.Convert.GetString(this.masterData["CustCDID"]),
-                    DateSDPDateFrom = this.dateSDPDate.Value1 == null ? string.Empty : Convert.ToDateTime(this.dateSDPDate.Value1).ToString("yyyyMMdd"),
-                    DateSDPDateTo = this.dateSDPDate.Value2 == null ? string.Empty : Convert.ToDateTime(this.dateSDPDate.Value2).ToString("yyyyMMdd"),
-                    BuyerDeliveryFrom = this.dateDelivery.Value1 == null ? string.Empty : Convert.ToDateTime(this.dateDelivery.Value1).ToString("yyyyMMdd"),
-                    BuyerDeliveryTo = this.dateDelivery.Value2 == null ? string.Empty : Convert.ToDateTime(this.dateDelivery.Value2).ToString("yyyyMMdd"),
-                    OrderIDFrom = this.txtSpStart.Text,
-                    OrderIDTo = this.txtSPEnd.Text,
-                    DateIDD = this.dateSDPDate.Value1 == null ? string.Empty : Convert.ToDateTime(this.dateIDD.Value).ToString("yyyyMMdd"),
-                    MultifactoryFactory = this.txtmultifactoryFactory.Text,
-                };
+                //P05_ImportFromPackingListQuery p05_ImportFromPackingList = new P05_ImportFromPackingListQuery()
+                //{
+                //    ShipModeID = MyUtility.Convert.GetString(this.masterData["ShipModeID"]),
+                //    BrandID = MyUtility.Convert.GetString(this.masterData["BrandID"]),
+                //    Dest = MyUtility.Convert.GetString(this.masterData["Dest"]),
+                //    CustCDID = MyUtility.Convert.GetString(this.masterData["CustCDID"]),
+                //    DateSDPDateFrom = this.dateSDPDate.Value1 == null ? string.Empty : Convert.ToDateTime(this.dateSDPDate.Value1).ToString("yyyyMMdd"),
+                //    DateSDPDateTo = this.dateSDPDate.Value2 == null ? string.Empty : Convert.ToDateTime(this.dateSDPDate.Value2).ToString("yyyyMMdd"),
+                //    BuyerDeliveryFrom = this.dateDelivery.Value1 == null ? string.Empty : Convert.ToDateTime(this.dateDelivery.Value1).ToString("yyyyMMdd"),
+                //    BuyerDeliveryTo = this.dateDelivery.Value2 == null ? string.Empty : Convert.ToDateTime(this.dateDelivery.Value2).ToString("yyyyMMdd"),
+                //    OrderIDFrom = this.txtSpStart.Text,
+                //    OrderIDTo = this.txtSPEnd.Text,
+                //    DateIDD = this.dateSDPDate.Value1 == null ? string.Empty : Convert.ToDateTime(this.dateIDD.Value).ToString("yyyyMMdd"),
+                //    MultifactoryFactory = this.txtmultifactoryFactory.Text,
+                //};
 
-                result = PackingA2BWebAPI.GetP05_ImportFromPackingListQuery(this.txtmultifactoryFactory.SystemName, p05_ImportFromPackingList, out this.gridData);
+                DataBySql dataBySql = new DataBySql()
+                {
+                    SqlString = sqlCmd.ToString(),
+                    SqlParameter = listPar.ToListSqlPar(),
+                };
+                result = PackingA2BWebAPI.GetDataBySql(this.txtmultifactoryFactory.SystemName, dataBySql, out this.gridData);
+
+                //result = PackingA2BWebAPI.GetP05_ImportFromPackingListQuery(this.txtmultifactoryFactory.SystemName, p05_ImportFromPackingList, out this.gridData);
             }
             else
             {

@@ -7,6 +7,7 @@ using Sci.Data;
 using Ict;
 using System.Data.SqlClient;
 using Sci.Win.UI;
+using Sci.Production.CallPmsAPI;
 
 namespace Sci.Production.PublicPrg
 {
@@ -238,19 +239,19 @@ please check again.");
                                    .Select(z => new { z.Key.ID, z.Key.NLCode, duplicateData = z.ToList() })
                                    .Where(x => x.duplicateData.Count > 1) // 抓出ID,NLCode相同，但HSCode,UnitID不同的資料
 
-                                                                          // 回串原本的detail datatable抓出明細資料
+                                   // 回串原本的detail datatable抓出明細資料
                                    .Join(
                                        checkList,
                                        dupData => new { dupData.ID, dupData.NLCode },
                                        drDetail => new { ID = drDetail["ID"], NLCode = drDetail["NLCode"] },
                                        (dupData, drDetail) => new
-                                            {
-                                                dupData.ID,
-                                                dupData.NLCode,
-                                                Refno = drDetail["Refno"],
-                                                HSCode = drDetail["HSCode"],
-                                                UnitID = drDetail["UnitID"],
-                                            });
+                                       {
+                                           dupData.ID,
+                                           dupData.NLCode,
+                                           Refno = drDetail["Refno"],
+                                           HSCode = drDetail["HSCode"],
+                                           UnitID = drDetail["UnitID"],
+                                       });
 
             if (listDupNLCodeData.Any())
             {
@@ -1251,8 +1252,9 @@ drop table #tmpthreadStyle");
         /// Check CancelOrder cannot confirmed
         /// </summary>
         /// <param name="id">id</param>
+        /// <param name="dtA2B">dtA2B</param>
         /// <returns>string</returns>
-        public static string ChkCancelOrder(string id)
+        public static string ChkCancelOrder(string id, DataTable dtA2B = null)
         {
             DualResult result;
             string errmsg = string.Empty;
@@ -1275,6 +1277,38 @@ and exists (select 1 from orders where id = pd.OrderID and Junk = 1)
             {
                 errmsg = "Confirmed data fail!!\r\n" + result.ToString();
                 return errmsg;
+            }
+
+            if (dtA2B != null && dtA2B.Rows.Count > 0)
+            {
+                string sqlCmdForA2B = @"
+select distinct pd.OrderID
+from PackingList p
+inner join PackingList_Detail pd on p.ID=pd.ID
+where p.id in ({0})
+and exists (select 1 from orders where id = pd.OrderID and Junk = 1)
+";
+
+                var listA2BByPLFromRgCode = dtA2B.AsEnumerable()
+                    .GroupBy(s => s["PLFromRgCode"].ToString())
+                    .Select(s => new
+                    {
+                        PLFromRgCode = s.Key,
+                        WherePackingIDs = s.Select(dr => $"'{dr["ID"].ToString()}'").JoinToString(","),
+                    });
+
+                foreach (var item in listA2BByPLFromRgCode)
+                {
+                    DataTable dtCheckA2B;
+                    result = PackingA2BWebAPI.GetDataBySql(item.PLFromRgCode, string.Format(sqlCmdForA2B, item.WherePackingIDs), out dtCheckA2B);
+                    if (!result)
+                    {
+                        errmsg = "Confirmed data fail!!\r\n" + result.ToString();
+                        return errmsg;
+                    }
+
+                    dtCancel.Merge(dtCheckA2B);
+                }
             }
 
             string msgCancel = string.Empty;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -80,6 +81,23 @@ namespace Sci.Production.CallPmsAPI
             }
         }
 
+        public static List<SqlPar> ToListSqlPar(this List<SqlParameter> listPar)
+        {
+            List<SqlPar> resultList = new List<SqlPar>();
+
+            foreach (SqlParameter par in listPar)
+            {
+                SqlPar addItem = new SqlPar()
+                {
+                    ParameterName = par.ParameterName,
+                    ParameterValue = par.Value,
+                    ParameterType = par.Value.GetType().Name
+                };
+                resultList.Add(addItem);
+            }
+            return resultList;
+        }
+
         /// <summary>
         /// RegionFactory
         /// </summary>
@@ -155,10 +173,34 @@ namespace Sci.Production.CallPmsAPI
         /// <summary>
         /// RegionFactory
         /// </summary>
+        public class SeekDataResult
+        {
+            public bool isExists { get; set; }
+            public DataTable resultDt { get; set; }
+        }
+
         public class P05_ImportFromPackingList_CheckSpInDiffPacking
         {
             public string OrderID { get; set; }
             public string ID { get; set; }
+        }
+
+        public class P05_DetailData
+        {
+            public string GMTBookingLock { get; set; }
+            public string FactoryID { get; set; }
+            public string ID { get; set; }
+            public string OrderID { get; set; }
+            public string OrderShipmodeSeq { get; set; }
+            public string IDD { get; set; }
+            public string PONo { get; set; }
+            public string AirPPID { get; set; }
+            public DateTime? CargoReadyDate { get; set; }
+            public DateTime? BuyerDelivery { get; set; }
+            public DateTime? SDPDate { get; set; }
+            public DateTime? PulloutDate { get; set; }
+            public string ShipQty { get; set; }
+
         }
 
         /// <summary>
