@@ -2661,6 +2661,13 @@
     <Build Include="dbo\Tables\Bundle_Detail_History.sql" />
     <Build Include="dbo\Tables\BundleInOut_History.sql" />
     <Build Include="dbo\Tables\BundleTransfer_History.sql" />
+    <Build Include="dbo\Tables\Bundle_History.sql" />
+    <Build Include="dbo\Views\View_Bundle_Detail_Art.sql" />
+    <Build Include="dbo\Views\View_Bundle_Detail_Allpart.sql" />
+    <Build Include="dbo\Views\View_BundleInOut.sql" />
+    <Build Include="dbo\Views\View_BundleTransfer.sql" />
+    <Build Include="dbo\Views\View_Bundle_Detail.sql" />
+    <Build Include="dbo\Views\View_Bundle.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
