@@ -189,15 +189,20 @@ left join View_OrderFAColor voc on voc.ID = od.ID and voc.Article = od.Article
 select * from #tmp where Price != 0
 
 --Below records are in packing FOC already, Please check again.
-select * from  #tmp t where exists(select 1 
-									from PackingList p with (nolock)
-									inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
-									where	p.Type = 'F' and 
-											pd.OrderID = t.OrderID and
-											pd.Article = t.Article and
-											pd.Color = t.Color and
-											pd.SizeCode = t.SizeCode
-			)	
+select * from  #tmp t 
+left join Order_QtyShip oq on t.OrderID = oq.Id and t.OrderShipmodeSeq = oq.Seq
+left join PackingList_Detail pd on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.OrderShipmodeSeq
+where exists(
+    select 1 
+    from PackingList p with (nolock)
+    inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
+    where	p.Type = 'F' and 
+		    pd.OrderID = t.OrderID and
+		    pd.Article = t.Article and
+		    pd.Color = t.Color and
+		    pd.SizeCode = t.SizeCode
+)	
+and oq.Qty <= pd.ShipQty
 
 select * from #tmp t where Price = 0 and not exists(select 1 
 									                from PackingList p with (nolock)
