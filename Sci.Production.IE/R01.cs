@@ -209,6 +209,16 @@ outer apply (
 		group by ID, NO, TotalCycle
 	) lmdavg
 )lmdavg
+outer apply(
+	select top 1 c.Target
+	from factory f
+	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID 
+				--and lm.status = 'Confirmed' 
+				--and c.EffectiveDate < lm.Editdate 
+				and c. Type ='LBR'
+	where f.id = lm.factoryid
+	order by EffectiveDate desc
+)LinebalancingTarget 
 ");
             }
 
@@ -241,7 +251,11 @@ inner join(
             this.sqlCmd.Append("where 1 = 1");
             if (!this.bolSummary)
             {
-                this.sqlCmd.Append(" and lmd.IsHide = 0");
+                this.sqlCmd.Append(@" 
+and lmd.IsHide = 0
+and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (100 - LinebalancingTarget.Target) 
+	or  ((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 < (100 - LinebalancingTarget.Target) * -1 )
+");
             }
 
             if (!MyUtility.Check.Empty(this.factory))

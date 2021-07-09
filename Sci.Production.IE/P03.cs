@@ -24,6 +24,8 @@ namespace Sci.Production.IE
         private object totalCycleTime;
         private DataTable EmployeeData;
         private DataTable distdt;
+        private List<GridList> ConfirmLists;
+        private bool ConfirmColor = false;
 
         /// <summary>
         /// P03
@@ -875,7 +877,7 @@ where Junk = 0
 
                     DataTable dt = this.GetLBRNotHitName();
 
-                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(dt, "ReasonName", "100,", null, headercaptions: "ReasonName")
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(dt, "ReasonName,Code,Type,TypeGroup,Ukey", "100,10,10,10,10", null, headercaptions: "ReasonName,Code,Type,TypeGroup,Ukey")
                     {
                         Width = 700,
                     };
@@ -953,7 +955,7 @@ where Junk = 0
 
         private DataTable GetLBRNotHitName()
         {
-            string sqlCmd = "select distinct [ReasonName] = Name from IEReasonLBRNotHit_Detail WITH (NOLOCK) where junk = 0";
+            string sqlCmd = "select distinct [ReasonName] = Name,Code,Type,TypeGroup,Ukey from IEReasonLBRNotHit_Detail WITH (NOLOCK) where junk = 0";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, null, out DataTable dt);
             if (!result)
@@ -1147,7 +1149,7 @@ where Junk = 0
                 {
                     updCmd += $@"
 UPDATE ld
-    SET ld.IEReasonLBRNotHit_DetailUkey = (select top 1 Ukey from IEReasonLBRNotHit_Detail where Name = '{item["ReasonName"]}')
+    SET ld.IEReasonLBRNotHit_DetailUkey = (select top 1 Ukey from IEReasonLBRNotHit_Detail where Name = '{item["ReasonName"]}' and Junk = 0)
 from LineMapping_Detail ld
 WHERE No = '{item["No"]}'
 and ID = {masterID}";
@@ -1506,34 +1508,29 @@ order by EffectiveDate desc
             bool checkEFF = !MyUtility.Check.Empty(lLERTarget) && Convert.ToDecimal(this.numEffieiency.Value) < Convert.ToDecimal(lLERTarget);
             string notHitReasonID = string.Empty;
             string lbrReasion = string.Empty;
-            if (this.CurrentMaintain["Version"].ToString().EqualString("1"))
+
+            StringBuilder msg = new StringBuilder();
+            if (checkLBR)
             {
-                // Version = 1 檢查表頭
-                StringBuilder msg = new StringBuilder();
-                if (checkLBR)
-                {
-                    msg.Append("LBR is lower than target.\r\n");
-                }
-
-                MyUtility.Msg.WarningBox(msg.ToString() + "Please select not hit target reason.");
-                string sqlCmd = "select Ukey, Name from IEReasonLBRNotHit_1st WITH (NOLOCK) where junk = 0";
-                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "5,30", string.Empty);
-                DialogResult returnResult = item.ShowDialog();
-                if (returnResult == DialogResult.Cancel)
-                {
-                    return;
-                }
-
-                IList<DataRow> selectedData = item.GetSelecteds();
-                lbrReasion = selectedData[0]["Ukey"].ToString();
+                msg.Append("LBR is lower than target.\r\n");
             }
-            else
+
+            MyUtility.Msg.WarningBox(msg.ToString() + "Please select not hit target reason.");
+            string sqlCmd = "select Ukey, Name from IEReasonLBRNotHit_1st WITH (NOLOCK) where junk = 0";
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "5,30", string.Empty);
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            if (!this.CurrentMaintain["Version"].ToString().EqualString("1"))
             {
                 // Version != 1 檢查表身
                 decimal decLBR = 100 - Convert.ToDecimal(lBRTarget);
                 DataTable detail = (DataTable)this.listControlBindingSource1.DataSource;
                 decimal? avgCycle = detail.AsEnumerable().Average(x => x.Field<decimal?>("TotalCycle"));
-                List<GridList> gridLists = detail.AsEnumerable()
+                this.ConfirmLists = detail.AsEnumerable()
                     .Select(x => new GridList()
                     {
                         No = x.Field<string>("No"),
@@ -1543,32 +1540,42 @@ order by EffectiveDate desc
                     .Where(x => (x.TotalCycle > decLBR || x.TotalCycle < decLBR * -1) && x.ReasonName.Empty())
                     .ToList();
 
-                if (gridLists.Count > 0)
+                if (this.ConfirmLists.Count > 0)
                 {
-                    MyUtility.Msg.WarningBox("No of " + string.Join(",", gridLists.Select(x => x.No)) + " need to input not hit target reason ");
-                    return;
+                    this.ConfirmColor = true;
+                    this.ConfirmChangeGridColor();
+
+                    if (checkLBR)
+                    {
+                        MyUtility.Msg.WarningBox("No of " + string.Join(",", this.ConfirmLists.Select(x => x.No)) + " need to input not hit target reason ");
+                        return;
+                    }
+                }
+                else
+                {
+                    this.ConfirmColor = false;
                 }
             }
 
+            IList<DataRow> selectedData = item.GetSelecteds();
+            lbrReasion = selectedData[0]["Ukey"].ToString();
+
+            msg = new StringBuilder();
             if (checkEFF)
             {
-                StringBuilder msg = new StringBuilder();
-                if (checkEFF)
-                {
-                    msg.Append("Efficiency is lower than target.\r\n");
-                }
-
-                MyUtility.Msg.WarningBox(msg.ToString() + "Please select not hit target reason.");
-                string sqlCmd = "select ID, Description from IEReason WITH (NOLOCK) where Type = 'LM' and Junk = 0";
-                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "5,30", string.Empty);
-                DialogResult returnResult = item.ShowDialog();
-                if (returnResult == DialogResult.Cancel)
-                {
-                    return;
-                }
-
-                notHitReasonID = item.GetSelectedString();
+                msg.Append("Efficiency is lower than target.\r\n");
             }
+
+            MyUtility.Msg.WarningBox(msg.ToString() + "Please select not hit target reason.");
+            sqlCmd = "select ID, Description from IEReason WITH (NOLOCK) where Type = 'LM' and Junk = 0";
+            item = new Win.Tools.SelectItem(sqlCmd, "5,30", string.Empty);
+            returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            notHitReasonID = item.GetSelectedString();
 
             DualResult result;
             string updateCmd = "update LineMapping set Status = 'Confirmed', ";
@@ -1588,6 +1595,21 @@ order by EffectiveDate desc
             {
                 MyUtility.Msg.ErrorBox("Confirm fail!\r\n" + result.ToString());
                 return;
+            }
+        }
+
+        private void ConfirmChangeGridColor()
+        {
+            if (!this.ConfirmColor)
+            {
+                return;
+            }
+
+            DataTable detail = (DataTable)this.listControlBindingSource1.DataSource;
+            for (int i = 0; i <= detail.Rows.Count - 1; i++)
+            {
+                DataGridViewRow dr = this.grid1.Rows[i];
+                dr.DefaultCellStyle.BackColor = this.ConfirmLists.Select(x => x.No).Contains(dr.Cells["No"].Value) ? Color.FromArgb(255, 255, 128) : dr.DefaultCellStyle.BackColor;
             }
         }
 
@@ -2086,6 +2108,8 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing'
 
             this.listControlBindingSource1.DataSource = gridLists.ToDataTable<GridList>();
             this.grid1.DataSource = this.listControlBindingSource1;
+
+            this.ConfirmChangeGridColor();
         }
 
         private void IsShowTable()
@@ -2102,6 +2126,7 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing'
                 }
             }
         }
+
     }
 
     /// <inheritdoc/>
