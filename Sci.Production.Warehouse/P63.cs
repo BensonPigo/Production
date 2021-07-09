@@ -65,9 +65,11 @@ namespace Sci.Production.Warehouse
         {
             string sqlWhere = string.Empty;
 
-            if (!MyUtility.Check.Empty(this.txtSP.Text))
+            if (MyUtility.Check.Empty(this.txtSP.Text))
             {
-                sqlWhere += $"and sf.POID = '{this.txtSP.Text}'";
+                MyUtility.Msg.WarningBox("SP# can't be empty. Please fill SP# first!");
+                this.txtSP.Focus();
+                return;
             }
 
             string sqlQuery = $@"
@@ -92,7 +94,7 @@ outer apply(SELECT val =  Stuff((select distinct concat( ',',sfl.MtlLocationID)
                                             sfl.StockType   = sfi.StockType
                                 FOR XML PATH('')),1,1,'') 
                 ) BulkLocation
-where   1=1 {sqlWhere}
+where    sf.POID like '{this.txtSP.Text}%'
 group by    sf.POID,
             sf.Seq,
             sf.[Desc],
