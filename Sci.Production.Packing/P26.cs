@@ -1023,13 +1023,13 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                 int totalNeedInsertCount = dt_ShippingMarkPic_Detail.Rows.Count;
 
                 /*
-                 圖片 <= 500張：圖片全部轉完、存下，一次性寫入
-                 圖片 >  500張：分批進行，轉完、存下500張後，存入一次，例如1080張，就會分三次
+                 圖片 <= 200張：圖片全部轉完、存下，一次性寫入
+                 圖片 >  200張：分批進行，轉完、存下200張後，存入一次，例如1080張，就會分三次
                  */
 
                 try
                 {
-                    // 每500張寫入DB一次
+                    // 每200張寫入DB一次
                     foreach (DataRow dr in dt_ShippingMarkPic_Detail.Rows)
                     {
                         string packID = MyUtility.Convert.GetString(dr["PackingListID"]);
@@ -1112,7 +1112,7 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                             counter++;
                         }
 
-                        if (imageCount == 499)
+                        if (imageCount == 199)
                         {
                             this.InsertImage(sQLs, filenames, images);
                             sQLs = new List<string>();
