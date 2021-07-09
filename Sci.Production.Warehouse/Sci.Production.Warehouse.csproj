@@ -187,13 +187,13 @@
     <Compile Include="P03_ReturnQty.Designer.cs">
       <DependentUpon>P03_ReturnQty.cs</DependentUpon>
     </Compile>
-    <Compile Include="B08.cs">
+    <Compile Include="P34_PrintData.cs" />
+    <Compile Include="P63_CreateSeq.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="B08.Designer.cs">
-      <DependentUpon>B08.cs</DependentUpon>
+    <Compile Include="P63_CreateSeq.Designer.cs">
+      <DependentUpon>P63_CreateSeq.cs</DependentUpon>
     </Compile>
-    <Compile Include="P34_PrintData.cs" />
     <Compile Include="P63_Transaction.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -211,6 +211,18 @@
     </Compile>
     <Compile Include="P63.Designer.cs">
       <DependentUpon>P63.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P64_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P64_AccumulatedQty.Designer.cs">
+      <DependentUpon>P64_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P64_ExcelImport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P64_ExcelImport.designer.cs">
+      <DependentUpon>P64_ExcelImport.cs</DependentUpon>
     </Compile>
     <Compile Include="P66.cs">
       <SubType>Form</SubType>
@@ -1414,9 +1426,6 @@
     <EmbeddedResource Include="B07.resx">
       <DependentUpon>B07.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="B08.resx">
-      <DependentUpon>B08.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
     </EmbeddedResource>
@@ -1450,6 +1459,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P43.resx">
       <DependentUpon>P43.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P63_CreateSeq.resx">
+      <DependentUpon>P63_CreateSeq.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P63_Transaction.resx">
       <DependentUpon>P63_Transaction.cs</DependentUpon>
@@ -1698,6 +1710,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P63.resx">
       <DependentUpon>P63.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P64_AccumulatedQty.resx">
+      <DependentUpon>P64_AccumulatedQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P64_ExcelImport.resx">
+      <DependentUpon>P64_ExcelImport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P66.resx">
       <DependentUpon>P66.cs</DependentUpon>

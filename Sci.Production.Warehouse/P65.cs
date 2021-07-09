@@ -43,17 +43,19 @@ namespace Sci.Production.Warehouse
 
             this.DetailSelectCommand = $@"
 select  sfd.*,
-        sf.Description,
+        sf.[Desc],
         sf.Unit,
+        sf.Color,
         [Location] = Location.val
 from    SemiFinishedIssue_Detail sfd
-left join   SemiFinished sf with (nolock) on sf.Refno = sfd.Refno
+left join   SemiFinished sf with (nolock) on sf.Poid = sfd.Poid and sfd.seq = sf.seq
 outer apply (SELECT val =  Stuff((select distinct concat( ',',MtlLocationID)   
                                 from SemiFinishedInventory_Location sfl with (nolock)
                                 where sfl.POID         = sfd.POID        and
-                                      sfl.Refno        = sfd.Refno       and
+                                      sfl.Seq          = sfd.Seq         and
                                       sfl.Roll         = sfd.Roll        and
                                       sfl.Dyelot       = sfd.Dyelot      and
+                                      sfl.Tone         = sfd.Tone        and
                                       sfl.StockType    = sfd.StockType
                                 FOR XML PATH('')),1,1,'')  ) Location
 where   sfd.ID = '{masterID}'
@@ -68,10 +70,12 @@ where   sfd.ID = '{masterID}'
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("POID", header: "SP#", width: Widths.AnsiChars(11), iseditingreadonly: true)
-            .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .EditText("Description", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
+            .Text("Seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .EditText("Desc", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
+            .Text("Color", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Numeric("Qty", header: "Issue Qty", decimal_places: 2, width: Widths.AnsiChars(8))
             .Text("Unit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Location", header: "Location", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -122,18 +126,20 @@ where   sfd.ID = '{masterID}'
 
             string sqlUpdateSemiInventory = $@"
 ALTER TABLE #tmp ALTER COLUMN POID varchar(13)
-ALTER TABLE #tmp ALTER COLUMN Refno varchar(21)
+ALTER TABLE #tmp ALTER COLUMN Seq varchar(6)
 ALTER TABLE #tmp ALTER COLUMN Roll varchar(8)
 ALTER TABLE #tmp ALTER COLUMN Dyelot varchar(8)
 ALTER TABLE #tmp ALTER COLUMN StockType char(1)
+ALTER TABLE #tmp ALTER COLUMN Tone varchar(8)
 
-select  sfi.POID, sfi.Refno, sfi.Roll, sfi.Dyelot
+select  sfi.POID, sfi.Seq, sfi.Roll, sfi.Dyelot, sfi.Tone
 into    #tmpCheckSemiInventory
 from    SemiFinishedInventory sfi
 inner join #tmp t on sfi.POID         = t.POID        and
-                     sfi.Refno        = t.Refno       and
+                     sfi.Seq          = t.Seq         and
                      sfi.Roll         = t.Roll        and
                      sfi.Dyelot       = t.Dyelot      and
+                     sfi.Tone         = t.Tone        and
                      sfi.StockType    = t.StockType
 where   (sfi.InQty - sfi.OutQty + sfi.AdjustQty) < t.Qty
 
@@ -145,9 +151,10 @@ begin
     update sfi  set sfi.OutQty = sfi.OutQty + t.Qty
     from    SemiFinishedInventory sfi
     inner join #tmp t on sfi.POID         = t.POID        and
-                         sfi.Refno        = t.Refno       and
+                         sfi.Seq          = t.Seq         and
                          sfi.Roll         = t.Roll        and
                          sfi.Dyelot       = t.Dyelot      and
+                         sfi.Tone         = t.Tone        and
                          sfi.StockType    = t.StockType
 
     update  SemiFinishedIssue set Status = 'Confirmed' where ID = '{this.CurrentMaintain["ID"]}'
@@ -176,17 +183,19 @@ end
         {
             string sqlCheckSemiInventory = $@"
 ALTER TABLE #tmp ALTER COLUMN POID varchar(13)
-ALTER TABLE #tmp ALTER COLUMN Refno varchar(21)
+ALTER TABLE #tmp ALTER COLUMN Seq varchar(6)
 ALTER TABLE #tmp ALTER COLUMN Roll varchar(8)
 ALTER TABLE #tmp ALTER COLUMN Dyelot varchar(8)
 ALTER TABLE #tmp ALTER COLUMN StockType char(1)
+ALTER TABLE #tmp ALTER COLUMN Tone varchar(8)
 
     update sfi  set sfi.OutQty = sfi.OutQty - t.Qty
     from    SemiFinishedInventory sfi
     inner join #tmp t on sfi.POID         = t.POID        and
-                         sfi.Refno        = t.Refno       and
+                         sfi.Seq          = t.Seq         and
                          sfi.Roll         = t.Roll        and
                          sfi.Dyelot       = t.Dyelot      and
+                         sfi.Tone         = t.Tone        and
                          sfi.StockType    = t.StockType
 
     update  SemiFinishedIssue set Status = 'New' where ID = '{this.CurrentMaintain["ID"]}'
@@ -214,12 +223,12 @@ ALTER TABLE #tmp ALTER COLUMN StockType char(1)
             }
 
             bool isDetailKeyColEmpty = this.DetailDatas
-                                        .Where(s => MyUtility.Check.Empty(s["POID"]) || MyUtility.Check.Empty(s["Refno"]) || MyUtility.Check.Empty(s["Qty"]))
+                                        .Where(s => MyUtility.Check.Empty(s["POID"]) || MyUtility.Check.Empty(s["Seq"]) || MyUtility.Check.Empty(s["Qty"]))
                                         .Any();
 
             if (isDetailKeyColEmpty)
             {
-                MyUtility.Msg.WarningBox("<SP#>, <Refno>, <Qty> cannot be empty.");
+                MyUtility.Msg.WarningBox("<SP#>, <Seq>, <Qty> cannot be empty.");
                 return false;
             }
 

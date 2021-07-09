@@ -32,20 +32,20 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
-            this.label1 = new Sci.Win.UI.Label();
+            this.labSeq = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
-            this.displayRefno = new Sci.Win.UI.DisplayBox();
+            this.displaySeq = new Sci.Win.UI.DisplayBox();
             this.displayInQty = new Sci.Win.UI.DisplayBox();
-            this.displayDesc = new Sci.Win.UI.DisplayBox();
             this.displayOutQty = new Sci.Win.UI.DisplayBox();
             this.displayBalQty = new Sci.Win.UI.DisplayBox();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.gridLeft = new Sci.Win.UI.Grid();
             this.gridRight = new Sci.Win.UI.Grid();
             this.btnClose = new Sci.Win.UI.Button();
+            this.displayDesc = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -55,17 +55,17 @@
             ((System.ComponentModel.ISupportInitialize)(this.gridRight)).BeginInit();
             this.SuspendLayout();
             // 
-            // label1
+            // labSeq
             // 
-            this.label1.Location = new System.Drawing.Point(9, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Refno";
+            this.labSeq.Location = new System.Drawing.Point(9, 9);
+            this.labSeq.Name = "labSeq";
+            this.labSeq.Size = new System.Drawing.Size(75, 23);
+            this.labSeq.TabIndex = 0;
+            this.labSeq.Text = "Seq";
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(9, 42);
+            this.label2.Location = new System.Drawing.Point(9, 69);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(75, 23);
             this.label2.TabIndex = 1;
@@ -73,7 +73,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(201, 42);
+            this.label3.Location = new System.Drawing.Point(201, 69);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(89, 23);
             this.label3.TabIndex = 2;
@@ -89,55 +89,46 @@
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(435, 42);
+            this.label5.Location = new System.Drawing.Point(435, 69);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(89, 23);
             this.label5.TabIndex = 4;
             this.label5.Text = "Bal. Qty";
             // 
-            // displayRefno
+            // displaySeq
             // 
-            this.displayRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayRefno.Location = new System.Drawing.Point(87, 8);
-            this.displayRefno.Name = "displayRefno";
-            this.displayRefno.Size = new System.Drawing.Size(111, 24);
-            this.displayRefno.TabIndex = 5;
+            this.displaySeq.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySeq.Location = new System.Drawing.Point(87, 8);
+            this.displaySeq.Name = "displaySeq";
+            this.displaySeq.Size = new System.Drawing.Size(111, 23);
+            this.displaySeq.TabIndex = 5;
             // 
             // displayInQty
             // 
             this.displayInQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayInQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayInQty.Location = new System.Drawing.Point(87, 41);
+            this.displayInQty.Location = new System.Drawing.Point(87, 68);
             this.displayInQty.Name = "displayInQty";
-            this.displayInQty.Size = new System.Drawing.Size(111, 24);
+            this.displayInQty.Size = new System.Drawing.Size(111, 23);
             this.displayInQty.TabIndex = 6;
-            // 
-            // displayDesc
-            // 
-            this.displayDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayDesc.Location = new System.Drawing.Point(293, 8);
-            this.displayDesc.Name = "displayDesc";
-            this.displayDesc.Size = new System.Drawing.Size(703, 24);
-            this.displayDesc.TabIndex = 7;
             // 
             // displayOutQty
             // 
             this.displayOutQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayOutQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayOutQty.Location = new System.Drawing.Point(293, 41);
+            this.displayOutQty.Location = new System.Drawing.Point(293, 68);
             this.displayOutQty.Name = "displayOutQty";
-            this.displayOutQty.Size = new System.Drawing.Size(139, 24);
+            this.displayOutQty.Size = new System.Drawing.Size(139, 23);
             this.displayOutQty.TabIndex = 8;
             // 
             // displayBalQty
             // 
             this.displayBalQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBalQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBalQty.Location = new System.Drawing.Point(527, 41);
+            this.displayBalQty.Location = new System.Drawing.Point(527, 68);
             this.displayBalQty.Name = "displayBalQty";
-            this.displayBalQty.Size = new System.Drawing.Size(139, 24);
+            this.displayBalQty.Size = new System.Drawing.Size(139, 23);
             this.displayBalQty.TabIndex = 9;
             // 
             // splitContainer
@@ -145,7 +136,7 @@
             this.splitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer.Location = new System.Drawing.Point(9, 71);
+            this.splitContainer.Location = new System.Drawing.Point(9, 95);
             this.splitContainer.Name = "splitContainer";
             // 
             // splitContainer.Panel1
@@ -155,7 +146,7 @@
             // splitContainer.Panel2
             // 
             this.splitContainer.Panel2.Controls.Add(this.gridRight);
-            this.splitContainer.Size = new System.Drawing.Size(993, 394);
+            this.splitContainer.Size = new System.Drawing.Size(993, 370);
             this.splitContainer.SplitterDistance = 435;
             this.splitContainer.TabIndex = 10;
             // 
@@ -187,7 +178,7 @@
             this.gridLeft.RowTemplate.Height = 25;
             this.gridLeft.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridLeft.ShowCellToolTips = false;
-            this.gridLeft.Size = new System.Drawing.Size(435, 394);
+            this.gridLeft.Size = new System.Drawing.Size(435, 370);
             this.gridLeft.TabIndex = 0;
             this.gridLeft.SelectionChanged += new System.EventHandler(this.GridLeft_SelectionChanged);
             // 
@@ -219,7 +210,7 @@
             this.gridRight.RowTemplate.Height = 25;
             this.gridRight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridRight.ShowCellToolTips = false;
-            this.gridRight.Size = new System.Drawing.Size(554, 394);
+            this.gridRight.Size = new System.Drawing.Size(554, 370);
             this.gridRight.TabIndex = 1;
             // 
             // btnClose
@@ -233,21 +224,33 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
+            // displayDesc
+            // 
+            this.displayDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayDesc.IsSupportEditMode = false;
+            this.displayDesc.Location = new System.Drawing.Point(293, 8);
+            this.displayDesc.Multiline = true;
+            this.displayDesc.Name = "displayDesc";
+            this.displayDesc.ReadOnly = true;
+            this.displayDesc.Size = new System.Drawing.Size(709, 54);
+            this.displayDesc.TabIndex = 12;
+            // 
             // P63_Transaction
             // 
             this.ClientSize = new System.Drawing.Size(1014, 510);
+            this.Controls.Add(this.displayDesc);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.splitContainer);
             this.Controls.Add(this.displayBalQty);
             this.Controls.Add(this.displayOutQty);
-            this.Controls.Add(this.displayDesc);
             this.Controls.Add(this.displayInQty);
-            this.Controls.Add(this.displayRefno);
+            this.Controls.Add(this.displaySeq);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labSeq);
             this.Name = "P63_Transaction";
             this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Transaction Detail";
@@ -265,19 +268,19 @@
 
         #endregion
         private Win.UI.BindingSource bindingSource1;
-        private Win.UI.Label label1;
+        private Win.UI.Label labSeq;
         private Win.UI.Label label2;
         private Win.UI.Label label3;
         private Win.UI.Label label4;
         private Win.UI.Label label5;
-        private Win.UI.DisplayBox displayRefno;
+        private Win.UI.DisplayBox displaySeq;
         private Win.UI.DisplayBox displayInQty;
-        private Win.UI.DisplayBox displayDesc;
         private Win.UI.DisplayBox displayOutQty;
         private Win.UI.DisplayBox displayBalQty;
         private System.Windows.Forms.SplitContainer splitContainer;
         private Win.UI.Grid gridLeft;
         private Win.UI.Grid gridRight;
         private Win.UI.Button btnClose;
+        private Win.UI.EditBox displayDesc;
     }
 }

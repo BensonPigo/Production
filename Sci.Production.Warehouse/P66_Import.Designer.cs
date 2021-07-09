@@ -31,8 +31,8 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label1 = new Sci.Win.UI.Label();
             this.txtSP = new Sci.Win.UI.TextBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.txtRefno = new Sci.Win.UI.TextBox();
+            this.labSeq = new Sci.Win.UI.Label();
+            this.txtSeq = new Sci.Win.UI.TextBox();
             this.txtLocation = new Sci.Win.UI.TextBox();
             this.label3 = new Sci.Win.UI.Label();
             this.btnFind = new Sci.Win.UI.Button();
@@ -56,25 +56,25 @@
             this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSP.Location = new System.Drawing.Point(87, 8);
             this.txtSP.Name = "txtSP";
-            this.txtSP.Size = new System.Drawing.Size(110, 24);
+            this.txtSP.Size = new System.Drawing.Size(110, 23);
             this.txtSP.TabIndex = 2;
             // 
-            // label2
+            // labSeq
             // 
-            this.label2.Location = new System.Drawing.Point(200, 9);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Refno";
+            this.labSeq.Location = new System.Drawing.Point(200, 9);
+            this.labSeq.Name = "labSeq";
+            this.labSeq.Size = new System.Drawing.Size(75, 23);
+            this.labSeq.TabIndex = 3;
+            this.labSeq.Text = "Seq";
             // 
-            // txtRefno
+            // txtSeq
             // 
-            this.txtRefno.BackColor = System.Drawing.Color.White;
-            this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefno.Location = new System.Drawing.Point(278, 8);
-            this.txtRefno.Name = "txtRefno";
-            this.txtRefno.Size = new System.Drawing.Size(110, 24);
-            this.txtRefno.TabIndex = 4;
+            this.txtSeq.BackColor = System.Drawing.Color.White;
+            this.txtSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSeq.Location = new System.Drawing.Point(278, 8);
+            this.txtSeq.Name = "txtSeq";
+            this.txtSeq.Size = new System.Drawing.Size(110, 23);
+            this.txtSeq.TabIndex = 4;
             // 
             // txtLocation
             // 
@@ -82,7 +82,7 @@
             this.txtLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLocation.Location = new System.Drawing.Point(469, 8);
             this.txtLocation.Name = "txtLocation";
-            this.txtLocation.Size = new System.Drawing.Size(110, 24);
+            this.txtLocation.Size = new System.Drawing.Size(110, 23);
             this.txtLocation.TabIndex = 6;
             // 
             // label3
@@ -162,7 +162,7 @@
             // 
             // P66_Import
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(865, 450);
             this.Controls.Add(this.btnCancel);
@@ -171,8 +171,8 @@
             this.Controls.Add(this.btnFind);
             this.Controls.Add(this.txtLocation);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.txtRefno);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.txtSeq);
+            this.Controls.Add(this.labSeq);
             this.Controls.Add(this.txtSP);
             this.Controls.Add(this.label1);
             this.Name = "P66_Import";
@@ -180,8 +180,8 @@
             this.Text = "P65 Import";
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.txtSP, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.txtRefno, 0);
+            this.Controls.SetChildIndex(this.labSeq, 0);
+            this.Controls.SetChildIndex(this.txtSeq, 0);
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.txtLocation, 0);
             this.Controls.SetChildIndex(this.btnFind, 0);
@@ -198,8 +198,8 @@
 
         private Win.UI.Label label1;
         private Win.UI.TextBox txtSP;
-        private Win.UI.Label label2;
-        private Win.UI.TextBox txtRefno;
+        private Win.UI.Label labSeq;
+        private Win.UI.TextBox txtSeq;
         private Win.UI.TextBox txtLocation;
         private Win.UI.Label label3;
         private Win.UI.Button btnFind;

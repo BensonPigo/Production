@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,10 +49,12 @@ namespace Sci.Production.Warehouse
 
             this.DetailSelectCommand = $@"
 select  sfd.*,
-        sf.Description,
-        sf.Unit
+        sf.[Desc],
+        sf.Unit,
+        sf.Color
 from    SemiFinishedReceiving_Detail sfd
-left join   SemiFinished sf with (nolock) on sf.Refno = sfd.Refno
+left join   SemiFinished sf with (nolock) on sf.PoID = sfd.Poid
+and sf.Seq = sfd.Seq
 where   sfd.ID = '{masterID}'
 ";
             return base.OnDetailSelectCommandPrepare(e);
@@ -103,10 +106,10 @@ where   sfd.ID = '{masterID}'
             };
             #endregion
 
-            #region Refno event
-            DataGridViewGeneratorTextColumnSettings colRefno = new DataGridViewGeneratorTextColumnSettings();
+            #region Seq event
+            DataGridViewGeneratorTextColumnSettings colSeq = new DataGridViewGeneratorTextColumnSettings();
 
-            colRefno.CellValidating += (s, e) =>
+            colSeq.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -118,7 +121,7 @@ where   sfd.ID = '{masterID}'
                     return;
                 }
 
-                string oldvalue = MyUtility.Convert.GetString(this.CurrentDetailData["Refno"]);
+                string oldvalue = MyUtility.Convert.GetString(this.CurrentDetailData["Seq"]);
                 string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
                 if (oldvalue == newvalue)
                 {
@@ -130,23 +133,28 @@ where   sfd.ID = '{masterID}'
                     return;
                 }
 
-                List<SqlParameter> par = new List<SqlParameter>() { new SqlParameter("@Refno", newvalue) };
-                DataRow drRefno;
-                bool isPOIDnotExists = !MyUtility.Check.Seek("select Description, Unit from SemiFinished with (nolock) where Refno = @Refno", par, out drRefno);
+                List<SqlParameter> par = new List<SqlParameter>()
+                {
+                    new SqlParameter("@POID", this.CurrentDetailData["POID"]),
+                    new SqlParameter("@Seq", newvalue),
+                };
+                DataRow drSeq;
+                bool isPOIDnotExists = !MyUtility.Check.Seek("select [Desc], Unit,Color from SemiFinished with (nolock) where Seq = @Seq and Poid = @POID", par, out drSeq);
 
                 if (isPOIDnotExists)
                 {
                     e.Cancel = true;
-                    MyUtility.Msg.WarningBox("Refno is not exist.");
+                    MyUtility.Msg.WarningBox("Seq is not exist.");
                     return;
                 }
 
-                this.CurrentDetailData["Refno"] = newvalue;
-                this.CurrentDetailData["Description"] = drRefno["Description"];
-                this.CurrentDetailData["Unit"] = drRefno["Unit"];
+                this.CurrentDetailData["Seq"] = newvalue;
+                this.CurrentDetailData["Desc"] = drSeq["Desc"];
+                this.CurrentDetailData["Unit"] = drSeq["Unit"];
+                this.CurrentDetailData["Color"] = drSeq["Color"];
             };
 
-            colRefno.EditingMouseDown += (s, e) =>
+            colSeq.EditingMouseDown += (s, e) =>
             {
                 if (this.CurrentDetailData == null)
                 {
@@ -160,16 +168,17 @@ where   sfd.ID = '{masterID}'
 
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    SelectItem item = new SelectItem("select Refno, Description, Unit from SemiFinished with (nolock)", null, null);
+                    SelectItem item = new SelectItem($@"select Seq, [Desc], Unit, Color from SemiFinished with (nolock) where poid = '{this.CurrentDetailData["POID"]}'", null, null);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
                         return;
                     }
 
-                    this.CurrentDetailData["Refno"] = item.GetSelecteds()[0]["Refno"];
-                    this.CurrentDetailData["Description"] = item.GetSelecteds()[0]["Description"];
+                    this.CurrentDetailData["Seq"] = item.GetSelecteds()[0]["Seq"];
+                    this.CurrentDetailData["Desc"] = item.GetSelecteds()[0]["Desc"];
                     this.CurrentDetailData["Unit"] = item.GetSelecteds()[0]["Unit"];
+                    this.CurrentDetailData["Color"] = item.GetSelecteds()[0]["Color"];
                     this.CurrentDetailData.EndEdit();
                 }
             };
@@ -251,11 +260,13 @@ WHERE   StockType='{this.CurrentDetailData["stocktype"].ToString()}'
 
             #endregion Location 右鍵開窗
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("POID", header: "SP#", width: Widths.AnsiChars(11), settings: colSP)
-            .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), settings: colRefno)
-            .EditText("Description", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
+            .Text("POID", header: "SP#", width: Widths.AnsiChars(13), settings: colSP)
+            .Text("Seq", header: "Seq", width: Widths.AnsiChars(6), settings: colSeq)
+              .EditText("Desc", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
+            .Text("Color", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8))
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8))
+            .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(8))
             .Numeric("Qty", header: "Qty", decimal_places: 2, width: Widths.AnsiChars(8))
             .Text("Unit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Location", header: "Location", width: Widths.AnsiChars(15), settings: colLocation)
@@ -309,44 +320,48 @@ WHERE   StockType='{this.CurrentDetailData["stocktype"].ToString()}'
             {
                 string sqlUpdateSemiInventory = $@"
 ALTER TABLE #tmp ALTER COLUMN POID varchar(13)
-ALTER TABLE #tmp ALTER COLUMN Refno varchar(21)
+ALTER TABLE #tmp ALTER COLUMN Seq varchar(6)
 ALTER TABLE #tmp ALTER COLUMN Roll varchar(8)
 ALTER TABLE #tmp ALTER COLUMN Dyelot varchar(8)
+ALTER TABLE #tmp ALTER COLUMN Tone varchar(8)
 ALTER TABLE #tmp ALTER COLUMN StockType char(1)
 
 --更新半成品庫存
 update sfi set sfi.InQty = sfi.InQty + t.Qty
 from    SemiFinishedInventory sfi
 inner join #tmp t on sfi.POID         = t.POID        and
-                     sfi.Refno        = t.Refno       and
+                     sfi.Seq          = t.Seq         and
                      sfi.Roll         = t.Roll        and
                      sfi.Dyelot       = t.Dyelot      and
+                     sfi.Tone         = t.Tone        and
                      sfi.StockType    = t.StockType
 
-insert into SemiFinishedInventory(POID, Refno, Roll, Dyelot, StockType, InQty)
-            select  t.POID, t.Refno, t.Roll, t.Dyelot, t.StockType, t.Qty
+insert into SemiFinishedInventory(POID, Seq, Roll, Dyelot, Tone, StockType, InQty)
+            select  t.POID, t.Seq, t.Roll, t.Dyelot, t.Tone, t.StockType, t.Qty
             from    #tmp t
             where   not exists( select 1 
                                 from SemiFinishedInventory sfi 
                                 where sfi.POID         = t.POID        and
-                                      sfi.Refno        = t.Refno       and
+                                      sfi.Seq          = t.Seq         and
                                       sfi.Roll         = t.Roll        and
                                       sfi.Dyelot       = t.Dyelot      and
+                                      sfi.Tone         = t.Tone        and
                                       sfi.StockType    = t.StockType)
 
 --SemiFinishedInventory_Location
-insert into SemiFinishedInventory_Location(POID, Refno, Roll, Dyelot, StockType, MtlLocationID)
-            select  t.POID, t.Refno, t.Roll, t.Dyelot, t.StockType, isnull(location.data, '')
+insert into SemiFinishedInventory_Location(POID, Seq, Roll, Dyelot, Tone, StockType, MtlLocationID)
+            select  t.POID, t.Seq, t.Roll, t.Dyelot, t.Tone, t.StockType, isnull(location.data, '')
             from    #tmp t
             outer apply(select data from dbo.SplitString(t.Location,',')) location
             where   location.data <> '' and
                     not exists( select 1 
                                 from SemiFinishedInventory_Location sfil 
                                 where sfil.POID         = t.POID        and
-                                      sfil.Refno        = t.Refno       and
+                                      sfil.Seq          = t.Seq         and
                                       sfil.Roll         = t.Roll        and
                                       sfil.Dyelot       = t.Dyelot      and
                                       sfil.StockType    = t.StockType   and
+                                      sfil.Tone         = t.Tone        and
                                       sfil.MtlLocationID    = isnull(location.data, ''))
 
 update  SemiFinishedReceiving set Status = 'Confirmed' where ID = '{this.CurrentMaintain["ID"]}'
@@ -372,18 +387,20 @@ update  SemiFinishedReceiving set Status = 'Confirmed' where ID = '{this.Current
         {
             string sqlCheckSemiInventory = $@"
 ALTER TABLE #tmp ALTER COLUMN POID varchar(13)
-ALTER TABLE #tmp ALTER COLUMN Refno varchar(21)
+ALTER TABLE #tmp ALTER COLUMN Seq varchar(21)
 ALTER TABLE #tmp ALTER COLUMN Roll varchar(8)
 ALTER TABLE #tmp ALTER COLUMN Dyelot varchar(8)
 ALTER TABLE #tmp ALTER COLUMN StockType char(1)
+ALTER TABLE #tmp ALTER COLUMN Tone varchar(8)
 
-select  sfi.POID, sfi.Refno, sfi.Roll, sfi.Dyelot
+select  sfi.POID, sfi.Seq, sfi.Roll, sfi.Dyelot, sfi.Tone
 into    #tmpCheckSemiInventory
 from    SemiFinishedInventory sfi
 inner join #tmp t on sfi.POID         = t.POID        and
-                     sfi.Refno        = t.Refno       and
+                     sfi.Seq          = t.Seq         and
                      sfi.Roll         = t.Roll        and
                      sfi.Dyelot       = t.Dyelot      and
+                     sfi.Tone         = t.Tone        and
                      sfi.StockType    = t.StockType
 where   (sfi.InQty - sfi.OutQty + sfi.AdjustQty) < t.Qty
 
@@ -395,9 +412,10 @@ begin
     update sfi  set sfi.InQty = sfi.InQty - t.Qty
     from    SemiFinishedInventory sfi
     inner join #tmp t on sfi.POID         = t.POID        and
-                         sfi.Refno        = t.Refno       and
+                         sfi.Seq          = t.Seq         and
                          sfi.Roll         = t.Roll        and
                          sfi.Dyelot       = t.Dyelot      and
+                         sfi.Tone         = t.Tone        and
                          sfi.StockType    = t.StockType
 
     update  SemiFinishedReceiving set Status = 'New' where ID = '{this.CurrentMaintain["ID"]}'
@@ -432,12 +450,12 @@ end
             }
 
             bool isDetailKeyColEmpty = this.DetailDatas
-                                        .Where(s => MyUtility.Check.Empty(s["POID"]) || MyUtility.Check.Empty(s["Refno"]) || MyUtility.Check.Empty(s["Qty"]))
+                                        .Where(s => MyUtility.Check.Empty(s["POID"]) || MyUtility.Check.Empty(s["Seq"]) || MyUtility.Check.Empty(s["Qty"]))
                                         .Any();
 
             if (isDetailKeyColEmpty)
             {
-                MyUtility.Msg.WarningBox("<SP#>, <Refno>, <Qty> cannot be empty.");
+                MyUtility.Msg.WarningBox("<SP#>, <Seq>, <Qty> cannot be empty.");
                 return false;
             }
 
@@ -447,6 +465,37 @@ end
             }
 
             return base.ClickSaveBefore();
+        }
+
+        private void BtnAccumulatedQty_Click(object sender, EventArgs e)
+        {
+            if (this.DetailDatas.Count == 0)
+            {
+                return;
+            }
+
+            var frm = new P64_AccumulatedQty((DataTable)this.detailgridbs.DataSource);
+            frm.ShowDialog();
+        }
+
+        private void BtnDownloadSampleFile_Click(object sender, EventArgs e)
+        {
+            // 呼叫執行檔絕對路徑
+            DirectoryInfo dir = new DirectoryInfo(Application.StartupPath);
+            string strXltName = Env.Cfg.XltPathDir + "\\Warehouse_P64_DownloadSampleFile.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null)
+            {
+                return;
+            }
+
+            excel.Visible = true;
+        }
+
+        private void BtnImportFromExcel_Click(object sender, EventArgs e)
+        {
+            P64_ExcelImport callNextForm = new P64_ExcelImport((DataTable)this.detailgridbs.DataSource);
+            callNextForm.ShowDialog(this);
         }
     }
 }
