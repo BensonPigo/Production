@@ -1235,7 +1235,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             if (MyUtility.Check.Empty(MyUtility.GetValue.Lookup(string.Format("select Accountant from ShippingAP WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))))
             {
                 // Approve
-                if (MyUtility.Check.Empty(this.CurrentMaintain["SubType"]) || (MyUtility.Convert.GetString(this.CurrentMaintain["SubType"]) != "OTHER" && !MyUtility.Check.Seek(string.Format("select ShippingAPID from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))))
+                if (MyUtility.Check.Empty(this.CurrentMaintain["SubType"]) || (MyUtility.Convert.GetString(this.CurrentMaintain["SubType"]) != "OTHER" && !MyUtility.Check.Seek(string.Format("select ShippingAPID from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}' and junk = 0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))))
                 {
                     MyUtility.Msg.WarningBox("No share expense, can't approve!");
                     return;
