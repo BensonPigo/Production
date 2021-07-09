@@ -21,8 +21,8 @@ select [ID], [BrandID], [ProgramID], [StyleID], [SeasonID], [ProjectID], [Catego
 	, [BuyBackOrderID], [ForecastCategory], [OnSiteSample], [PulloutCmplDate], [NeedProduction], [IsBuyBack], [KeepPanels]
 	, [BuyBackReason], [IsBuyBackCrossArticle], [IsBuyBackCrossSizeCode], [KpiEachConsCheck], [NonRevenue], [CAB], [FinalDest]
 	, [Customer_PO], [AFS_STOCK_CATEGORY], [CMPLTDATE], [DelayCode], [DelayDesc], [HangerPack], [CDCodeNew], [SizeUnitWeight]
-from Orders WITH (NOLOCK)
-union
+from DBO.Orders WITH (NOLOCK)
+union ALL
 select [ID], [BrandID], [ProgramID], [StyleID], [SeasonID], [ProjectID], [Category], [OrderTypeID], [BuyMonth], [Dest]
 	, [Model], [HsCode1], [HsCode2], [PayTermARID], [ShipTermID], [ShipModeList], [CdCodeID], [CPU], [Qty], [StyleUnit]
 	, [PoPrice], [CFMPrice], [CurrencyID], [Commission], [FactoryID], [BrandAreaCode], [BrandFTYCode], [CTNQty], [CustCDID]
@@ -44,4 +44,4 @@ select [ID], [BrandID], [ProgramID], [StyleID], [SeasonID], [ProjectID], [Catego
 	, [BuyBackOrderID], [ForecastCategory], [OnSiteSample], [PulloutCmplDate], [NeedProduction], [IsBuyBack], [KeepPanels]
 	, [BuyBackReason], [IsBuyBackCrossArticle], [IsBuyBackCrossSizeCode], [KpiEachConsCheck], [NonRevenue], [CAB], [FinalDest]
 	, [Customer_PO], [AFS_STOCK_CATEGORY], [CMPLTDATE], [DelayCode], [DelayDesc], [HangerPack], [CDCodeNew], [SizeUnitWeight]
-from PMS_Orders_History WITH (NOLOCK)
+from DBO.PMS_Orders_History WITH (NOLOCK)
