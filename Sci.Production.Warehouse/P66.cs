@@ -168,7 +168,11 @@ begin
                          sfi.Tone          = t.Tone        and
                          sfi.StockType     = t.StockType
 
-    update  SemiFinishedAdjust set Status = 'Confirmed' where ID = '{this.CurrentMaintain["ID"]}'
+    update  SemiFinishedAdjust 
+    set Status = 'Confirmed'
+        , editdate = getdate()
+        , editname = '{Env.User.UserID}' 
+    where ID = '{this.CurrentMaintain["ID"]}'
 end
 ";
             DataTable dtInvShort;
@@ -225,7 +229,11 @@ begin
                          sfi.Tone         = t.Tone        and
                          sfi.StockType    = t.StockType
 
-    update  SemiFinishedAdjust set Status = 'New' where ID = '{this.CurrentMaintain["ID"]}'
+    update  SemiFinishedAdjust
+    set Status = 'New'
+        , editdate = getdate()
+        , editname = '{Env.User.UserID}' 
+    where ID = '{this.CurrentMaintain["ID"]}'
 end
 ";
             DataTable dtInvShort;

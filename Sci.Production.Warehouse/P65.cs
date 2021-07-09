@@ -157,7 +157,11 @@ begin
                          sfi.Tone         = t.Tone        and
                          sfi.StockType    = t.StockType
 
-    update  SemiFinishedIssue set Status = 'Confirmed' where ID = '{this.CurrentMaintain["ID"]}'
+    update  SemiFinishedIssue 
+    set Status = 'Confirmed'
+        , editdate = getdate()
+        , editname = '{Env.User.UserID}' 
+    where ID = '{this.CurrentMaintain["ID"]}'
 end
 ";
             DataTable dtInvShort;
@@ -198,7 +202,11 @@ ALTER TABLE #tmp ALTER COLUMN Tone varchar(8)
                          sfi.Tone         = t.Tone        and
                          sfi.StockType    = t.StockType
 
-    update  SemiFinishedIssue set Status = 'New' where ID = '{this.CurrentMaintain["ID"]}'
+    update  SemiFinishedIssue 
+    set Status = 'New'
+        , editdate = getdate()
+        , editname = '{Env.User.UserID}' 
+    where ID = '{this.CurrentMaintain["ID"]}'
 
 ";
             DataTable dtEmpty;

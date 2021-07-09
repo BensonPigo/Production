@@ -364,7 +364,11 @@ insert into SemiFinishedInventory_Location(POID, Seq, Roll, Dyelot, Tone, StockT
                                       sfil.Tone         = t.Tone        and
                                       sfil.MtlLocationID    = isnull(location.data, ''))
 
-update  SemiFinishedReceiving set Status = 'Confirmed' where ID = '{this.CurrentMaintain["ID"]}'
+update  SemiFinishedReceiving 
+set Status = 'Confirmed'
+    , editdate = getdate()
+    , editname = '{Env.User.UserID}' 
+where ID = '{this.CurrentMaintain["ID"]}'
 ";
                 DataTable dtEmpty;
                 DualResult result = MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), null, sqlUpdateSemiInventory, out dtEmpty);
@@ -418,7 +422,11 @@ begin
                          sfi.Tone         = t.Tone        and
                          sfi.StockType    = t.StockType
 
-    update  SemiFinishedReceiving set Status = 'New' where ID = '{this.CurrentMaintain["ID"]}'
+    update  SemiFinishedReceiving 
+    set Status = 'New'
+        , editdate = getdate()
+        , editname = '{Env.User.UserID}' 
+    where ID = '{this.CurrentMaintain["ID"]}'
 end
 
 ";
