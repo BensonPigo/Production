@@ -189,24 +189,63 @@ left join View_OrderFAColor voc on voc.ID = od.ID and voc.Article = od.Article
 select * from #tmp where Price != 0
 
 --Below records are in packing FOC already, Please check again.
-select * from  #tmp t where exists(select 1 
-									from PackingList p with (nolock)
-									inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
-									where	p.Type = 'F' and 
-											pd.OrderID = t.OrderID and
-											pd.Article = t.Article and
-											pd.Color = t.Color and
-											pd.SizeCode = t.SizeCode
-			)	
+select * from  #tmp t 
+left join Order_QtyShip oq on t.OrderID = oq.Id and t.OrderShipmodeSeq = oq.Seq
+outer apply(
+	select ShipQty = sum(pd.ShipQty)
+	from PackingList p with (nolock)
+	inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
+	where	p.Type = 'F' and
+	pd.OrderID = t.OrderID and
+	pd.Article = t.Article and
+	pd.Color = t.Color and
+	pd.SizeCode = t.SizeCode and
+	pd.OrderShipmodeSeq = t.OrderShipmodeSeq
+)pd
+where exists(
+    select 1 
+    from PackingList p with (nolock)
+    inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
+    where	p.Type = 'F' and 
+		    pd.OrderID = t.OrderID and
+		    pd.Article = t.Article and
+		    pd.Color = t.Color and
+		    pd.SizeCode = t.SizeCode
+)	
+and isnull(oq.Qty,0) <= isnull(pd.ShipQty,0)
 
-select * from #tmp t where Price = 0 and not exists(select 1 
-									                from PackingList p with (nolock)
-									                inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
-									                where	p.Type = 'F' and 
-									                		pd.OrderID = t.OrderID and
-									                		pd.Article = t.Article and
-									                		pd.Color = t.Color and
-									                		pd.SizeCode = t.SizeCode)
+-- 扣除已存在Packinglist加總的數量,且扣除後ShipQty數量要 > 0 
+select  0 as Selected
+        , t.OrderID
+        , t.OrderShipmodeSeq
+        , t.StyleID
+        , t.BuyerDelivery
+        , t.CustPONo
+        , t.Article
+        , t.SizeCode
+        , ShipQty = t.ShipQty - isnull(pd.ShipQty,0)
+        , t.Color
+        , t.PulloutQty
+        , t.Price
+        , t.SeasonID
+        , t.Factory
+        , t.CustCDID
+        , t.Dest
+        , t.OrderTypeID
+from #tmp t
+outer apply(
+	select ShipQty = sum(pd.ShipQty)
+	from PackingList p with (nolock)
+	inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
+	where	p.Type = 'F' and
+	pd.OrderID = t.OrderID and
+	pd.Article = t.Article and
+	pd.Color = t.Color and
+	pd.SizeCode = t.SizeCode and
+	pd.OrderShipmodeSeq = t.OrderShipmodeSeq
+)pd
+where Price = 0 
+and t.ShipQty - isnull(pd.ShipQty,0) > 0
 
 drop table #tmp;
 ");
