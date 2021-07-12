@@ -204,14 +204,37 @@ where exists(
 )	
 and oq.Qty <= pd.ShipQty
 
-select * from #tmp t where Price = 0 and not exists(select 1 
-									                from PackingList p with (nolock)
-									                inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
-									                where	p.Type = 'F' and 
-									                		pd.OrderID = t.OrderID and
-									                		pd.Article = t.Article and
-									                		pd.Color = t.Color and
-									                		pd.SizeCode = t.SizeCode)
+-- 扣除已存在的Packinglist 且ShipQty數量要 > 0 
+select distinct 0 as Selected
+        , t.OrderID
+        , t.OrderShipmodeSeq
+        , t.StyleID
+        , t.BuyerDelivery
+        , t.CustPONo
+        , t.Article
+        , t.SizeCode
+        , ShipQty = t.ShipQty - isnull(pd.ShipQty,0)
+        , t.Color
+        , t.PulloutQty
+        , t.Price
+        , t.SeasonID
+        , t.Factory
+        , t.CustCDID
+        , t.Dest
+        , t.OrderTypeID
+from #tmp t
+left join (
+	select pd.* 
+	from PackingList p with (nolock)
+	inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
+	where	p.Type = 'F'
+)pd on pd.OrderID = t.OrderID and
+	pd.Article = t.Article and
+	pd.Color = t.Color and
+	pd.SizeCode = t.SizeCode and
+	pd.OrderShipmodeSeq = t.OrderShipmodeSeq
+where Price = 0 
+and t.ShipQty - isnull(pd.ShipQty,0) > 0
 
 drop table #tmp;
 ");
