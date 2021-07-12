@@ -31,7 +31,6 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-
             string sqlQuery = string.Empty;
             string sqlWhere = string.Empty;
             string sqlHaving = string.Empty;
@@ -61,18 +60,6 @@ namespace Sci.Production.Warehouse
                 listPar.Add(new SqlParameter("@FtyGroup", this.txtFactory.Text));
             }
 
-            if (!MyUtility.Check.Empty(this.txtRefnoFrom.Text))
-            {
-                sqlWhere += $@" and sfi.Refno >= @RefnoFrom";
-                listPar.Add(new SqlParameter("@RefnoFrom", this.txtSP_From.Text));
-            }
-
-            if (!MyUtility.Check.Empty(this.txtRefnoTo.Text))
-            {
-                sqlWhere += $@" and sfi.Refno <= @RefnoTo";
-                listPar.Add(new SqlParameter("@RefnoTo", this.txtRefnoTo.Text));
-            }
-
             if (this.checkQty.Checked)
             {
                 if (this.radioDetail.Checked)
@@ -89,8 +76,9 @@ namespace Sci.Production.Warehouse
             {
                 sqlQuery = $@"
 select  sfi.POID,
-        sfi.Refno,
-        sf.Description,
+        sfi.Seq,
+        sf.[Desc],
+        sf.Color,
         sf.Unit,
         [InQty] = sum(isnull(sfi.InQty, 0)),
         [OutQty] = sum(isnull(sfi.OutQty, 0)),
@@ -99,20 +87,21 @@ select  sfi.POID,
         [BulkLocation] = BulkLocation.val
 from    SemiFinishedInventory sfi with (nolock) 
 inner join orders o  with (nolock) on o.ID = sfi.POID
-inner join  SemiFinished sf with (nolock) on sf.Refno = sfi.Refno
+inner join  SemiFinished sf with (nolock) on sf.Poid = sfi.Poid and sf.Seq = sfi.Seq
 outer apply(SELECT val =  Stuff((select distinct concat( ',',sfl.MtlLocationID)   
                                     from SemiFinishedInventory_Location sfl with (nolock)
                                     where   sfl.POID        = sfi.POID          and
-                                            sfl.Refno       = sfi.Refno         and
+                                            sfl.Seq         = sfi.Seq           and
                                             sfl.StockType   = sfi.StockType
                                 FOR XML PATH('')),1,1,'') 
                 ) BulkLocation
 where   sfi.StockType  = 'B' {sqlWhere}
 group by    sfi.POID,
-            sfi.Refno,
-            sf.Description,
+            sfi.Seq,
+            sf.[Desc],
             sf.Unit,
             sfi.StockType,
+            sf.Color,
             BulkLocation.val
 {sqlHaving}
 ";
@@ -121,11 +110,13 @@ group by    sfi.POID,
             {
                 sqlQuery = $@"
 select  sfi.POID,
-        sfi.Refno,
-        sf.Description,
+        sfi.Seq,
+        sf.[Desc],
+        sf.Color,
         sf.Unit,
         sfi.Roll,
         sfi.Dyelot,
+        sfi.Tone,
         sfi.InQty,
         sfi.OutQty,
         sfi.AdjustQty,
@@ -133,14 +124,15 @@ select  sfi.POID,
         [BulkLocation] = BulkLocation.val
 from    SemiFinishedInventory sfi with (nolock) 
 inner join orders o  with (nolock) on o.ID = sfi.POID
-inner join  SemiFinished sf with (nolock) on sf.Refno = sfi.Refno
+inner join  SemiFinished sf with (nolock) on sf.Poid = sfi.Poid and sf.Seq = sfi.Seq
 outer apply(SELECT val =  Stuff((select distinct concat( ',',sfl.MtlLocationID)   
                                     from SemiFinishedInventory_Location sfl with (nolock)
                                     where   sfl.POID        = sfi.POID          and
-                                            sfl.Refno       = sfi.Refno         and
+                                            sfl.seq         = sfi.seq           and
                                             sfl.StockType   = sfi.StockType     and
-                                            sfl.Roll   = sfi.Roll     and
-                                            sfl.Dyelot   = sfi.Dyelot     
+                                            sfl.Roll        = sfi.Roll          and
+                                            sfl.Tone        = sfi.Tone          and
+                                            sfl.Dyelot      = sfi.Dyelot     
                                 FOR XML PATH('')),1,1,'') 
                 ) BulkLocation
 where   StockType = 'B' {sqlWhere}

@@ -74,25 +74,24 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 116);
-            this.detailpanel.Size = new System.Drawing.Size(842, 357);
+            this.detailpanel.Size = new System.Drawing.Size(842, 359);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(734, 78);
+            this.gridicon.Location = new System.Drawing.Point(726, 78);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(842, 357);
+            this.detailgridcont.Size = new System.Drawing.Size(842, 359);
             // 
             // detail2
             // 
-            this.detail2.Location = new System.Drawing.Point(4, 27);
-            this.detail2.Size = new System.Drawing.Size(892, 385);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 339);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
@@ -100,22 +99,20 @@
             // 
             // detail
             // 
-            this.detail.Location = new System.Drawing.Point(4, 27);
-            this.detail.Size = new System.Drawing.Size(842, 511);
+            this.detail.Size = new System.Drawing.Size(842, 513);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(842, 473);
+            this.detailcont.Size = new System.Drawing.Size(842, 475);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 473);
+            this.detailbtm.Location = new System.Drawing.Point(0, 475);
             this.detailbtm.Size = new System.Drawing.Size(842, 38);
             // 
             // browse
             // 
-            this.browse.Location = new System.Drawing.Point(4, 27);
-            this.browse.Size = new System.Drawing.Size(842, 511);
+            this.browse.Size = new System.Drawing.Size(842, 513);
             // 
             // tabs
             // 
@@ -136,7 +133,7 @@
             this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayID.Location = new System.Drawing.Point(92, 11);
             this.displayID.Name = "displayID";
-            this.displayID.Size = new System.Drawing.Size(129, 24);
+            this.displayID.Size = new System.Drawing.Size(129, 23);
             this.displayID.TabIndex = 2;
             // 
             // label2
@@ -152,7 +149,7 @@
             this.dateIssueDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IssueDate", true));
             this.dateIssueDate.Location = new System.Drawing.Point(366, 11);
             this.dateIssueDate.Name = "dateIssueDate";
-            this.dateIssueDate.Size = new System.Drawing.Size(130, 24);
+            this.dateIssueDate.Size = new System.Drawing.Size(130, 23);
             this.dateIssueDate.TabIndex = 4;
             // 
             // label3
@@ -190,7 +187,8 @@
             // btnImport
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnImport.Location = new System.Drawing.Point(734, 42);
+            this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnImport.Location = new System.Drawing.Point(733, 42);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(100, 30);
             this.btnImport.TabIndex = 45;
@@ -201,7 +199,7 @@
             // P65
             // 
             this.ApvChkValue = "New";
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(850, 575);
             this.GridAlias = "SemiFinishedIssue_Detail";

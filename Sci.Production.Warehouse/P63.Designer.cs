@@ -30,12 +30,16 @@
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.gridSemiFinishedInventory = new Sci.Win.UI.Grid();
+            this.detail_contextMenuStrip = new Sci.Win.UI.ContextMenuStrip();
+            this.Edit_Seq = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new Sci.Win.UI.Label();
             this.txtSP = new Sci.Win.UI.TextBox();
             this.btnNewSearch = new Sci.Win.UI.Button();
             this.btnQuery = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
+            this.btnCreateSeq = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridSemiFinishedInventory)).BeginInit();
+            this.detail_contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // gridSemiFinishedInventory
@@ -49,6 +53,7 @@
             this.gridSemiFinishedInventory.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridSemiFinishedInventory.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridSemiFinishedInventory.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridSemiFinishedInventory.ContextMenuStrip = this.detail_contextMenuStrip;
             this.gridSemiFinishedInventory.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridSemiFinishedInventory.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridSemiFinishedInventory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -71,6 +76,20 @@
             this.gridSemiFinishedInventory.Size = new System.Drawing.Size(847, 429);
             this.gridSemiFinishedInventory.TabIndex = 1;
             // 
+            // detail_contextMenuStrip
+            // 
+            this.detail_contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.Edit_Seq});
+            this.detail_contextMenuStrip.Name = "art_contextMenuStrip";
+            this.detail_contextMenuStrip.Size = new System.Drawing.Size(124, 26);
+            // 
+            // Edit_Seq
+            // 
+            this.Edit_Seq.Name = "Edit_Seq";
+            this.Edit_Seq.Size = new System.Drawing.Size(123, 22);
+            this.Edit_Seq.Text = "Edit Seq";
+            this.Edit_Seq.Click += new System.EventHandler(this.Edit_Seq_Click);
+            // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(9, 9);
@@ -85,7 +104,7 @@
             this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSP.Location = new System.Drawing.Point(55, 8);
             this.txtSP.Name = "txtSP";
-            this.txtSP.Size = new System.Drawing.Size(133, 24);
+            this.txtSP.Size = new System.Drawing.Size(133, 23);
             this.txtSP.TabIndex = 3;
             // 
             // btnNewSearch
@@ -119,11 +138,22 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
+            // btnCreateSeq
+            // 
+            this.btnCreateSeq.Location = new System.Drawing.Point(428, 4);
+            this.btnCreateSeq.Name = "btnCreateSeq";
+            this.btnCreateSeq.Size = new System.Drawing.Size(111, 30);
+            this.btnCreateSeq.TabIndex = 7;
+            this.btnCreateSeq.Text = "Create Seq";
+            this.btnCreateSeq.UseVisualStyleBackColor = true;
+            this.btnCreateSeq.Click += new System.EventHandler(this.BtnCreateSeq_Click);
+            // 
             // P63
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(860, 511);
+            this.Controls.Add(this.btnCreateSeq);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnQuery);
             this.Controls.Add(this.btnNewSearch);
@@ -139,7 +169,9 @@
             this.Controls.SetChildIndex(this.btnNewSearch, 0);
             this.Controls.SetChildIndex(this.btnQuery, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
+            this.Controls.SetChildIndex(this.btnCreateSeq, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridSemiFinishedInventory)).EndInit();
+            this.detail_contextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -153,5 +185,8 @@
         private Win.UI.Button btnNewSearch;
         private Win.UI.Button btnQuery;
         private Win.UI.Button btnClose;
+        private Win.UI.Button btnCreateSeq;
+        private Win.UI.ContextMenuStrip detail_contextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem Edit_Seq;
     }
 }

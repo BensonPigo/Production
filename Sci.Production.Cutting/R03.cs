@@ -114,6 +114,7 @@ select
 	[SP#] = wo.OrderID,
     [Brand]=o.BrandID,
 	[Style#] = o.StyleID,
+    [FabRef#] = wo.Refno,
     [Switch to Workorder]=Iif(c.WorkType='1','Combination’',Iif(c.WorkType='2','By SP#’','')),
 	[Ref#] = wo.CutRef,
 	[Seq]=Concat (wo.Seq1, ' ', wo.Seq2),
@@ -384,7 +385,7 @@ where 1=1
             sqlCmd.Append(@"
 select 
 [M],[Factory],[Fabrication],[FinalETA],[PPIC Close],WKETA,[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
-,[Style#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination]
+,[Style#],[FabRef#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination]
 ,[Color Way],[Color],Artwork.Artwork,[Layers],[LackingLayers],[Qty],[Ratio],[OrderQty],[ExcessQty],[Consumption],[ActConsOutput]
 ,[Spreading Time (mins)],[Cutting Time (mins)]
 ,t.Markername,t.MarkerNo,w.Width

@@ -154,6 +154,7 @@ where   BundleNo = '{bundle.BundleNo}'
                 s.BundleGroup,
                 s.SizeCode,
                 s.SewingLineID,
+                s.RFUID,
                 s.AddDate,
             });
 
@@ -631,6 +632,11 @@ from Orders with (nolock) where POID in ({wherePOID})
             /// SewingLine ID
             /// </summary>
             public string SewingLineID { get; set; }
+
+            /// <summary>
+            /// RFUID
+            /// </summary>
+            public string RFUID { get; set; }
 
             /// <summary>
             /// AddDate

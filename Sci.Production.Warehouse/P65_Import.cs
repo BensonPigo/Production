@@ -38,11 +38,13 @@ namespace Sci.Production.Warehouse
 
             this.Helper.Controls.Grid.Generator(this.gridImport)
             .CheckBox("selected", trueValue: 1, falseValue: 0, iseditable: true)
-            .Text("POID", header: "SP#", width: Widths.AnsiChars(11), iseditingreadonly: true)
-            .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .EditText("Description", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
+            .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("Seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .EditText("Desc", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
+            .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Qty", header: "Issue Qty", decimal_places: 2, width: Widths.AnsiChars(8))
             .Text("Unit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Location", header: "Location", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -57,31 +59,34 @@ namespace Sci.Production.Warehouse
                 return;
             }
 
-            string whereRefno = MyUtility.Check.Empty(this.txtRefno.Text) ? string.Empty : $" and sfi.Refno = '{this.txtRefno.Text}' ";
+            string whereSeq = MyUtility.Check.Empty(this.txtSeq.Text) ? string.Empty : $" and sfi.Seq = '{this.txtSeq.Text}' ";
             string whereLocation = MyUtility.Check.Empty(this.txtLocation.Text) ? string.Empty : $" and Location.val like '%{this.txtLocation.Text}%' ";
 
             string sqlQuery = $@"
 select  [selected] = 0,
         sfi.POID,
-        sfi.Refno,
-        sf.Description,
+        sfi.Seq,
+        sf.[Desc],
         sfi.Roll,
         sfi.Dyelot,
+        sfi.Tone,
+        sf.Color,
         sf.Unit,
         [Qty] = sfi.InQty - sfi.OutQty + sfi.AdjustQty,
         [Location] = Location.val
 from    SemiFinishedInventory sfi with (nolock)
-left join   SemiFinished sf with (nolock) on sf.Refno = sfi.Refno
+left join   SemiFinished sf with (nolock) on sf.Poid = sfi.Poid and sf.Seq = sfi.Seq
 outer apply (SELECT val =  Stuff((select distinct concat( ',',MtlLocationID)   
                                 from SemiFinishedInventory_Location sfl with (nolock)
                                 where sfl.POID         = sfi.POID        and
-                                      sfl.Refno        = sfi.Refno       and
+                                      sfl.Seq          = sfi.Seq         and
                                       sfl.Roll         = sfi.Roll        and
                                       sfl.Dyelot       = sfi.Dyelot      and
+                                      sfl.Tone         = sfi.Tone        and
                                       sfl.StockType    = sfi.StockType
                                 FOR XML PATH('')),1,1,'')  ) Location
 where   (sfi.InQty - sfi.OutQty + sfi.AdjustQty) > 0 and sfi.StockType = 'B' and sfi.POID = '{this.txtSP.Text}'
-        {whereRefno}{whereLocation}
+        {whereSeq}{whereLocation}
 ";
             DataTable dtResult;
             DualResult result = DBProxy.Current.Select(null, sqlQuery, out dtResult);
@@ -120,21 +125,24 @@ where   (sfi.InQty - sfi.OutQty + sfi.AdjustQty) > 0 and sfi.StockType = 'B' and
             foreach (DataRow drImportSource in selectedItems)
             {
                 if (checkMainDetail.Any(s => s["POID"].ToString() == drImportSource["POID"].ToString() &&
-                                             s["Refno"].ToString() == drImportSource["Refno"].ToString() &&
+                                             s["Seq"].ToString() == drImportSource["Seq"].ToString() &&
                                              s["Roll"].ToString() == drImportSource["Roll"].ToString() &&
-                                             s["Dyelot"].ToString() == drImportSource["Dyelot"].ToString()))
+                                             s["Dyelot"].ToString() == drImportSource["Dyelot"].ToString() &&
+                                             s["Tone"].ToString() == drImportSource["Tone"].ToString()))
                 {
                     continue;
                 }
 
                 DataRow drMainDetail = this.mainDetail.NewRow();
                 drMainDetail["POID"] = drImportSource["POID"];
-                drMainDetail["Refno"] = drImportSource["Refno"];
+                drMainDetail["Seq"] = drImportSource["Seq"];
                 drMainDetail["Roll"] = drImportSource["Roll"];
                 drMainDetail["Dyelot"] = drImportSource["Dyelot"];
+                drMainDetail["Color"] = drImportSource["Color"];
+                drMainDetail["Tone"] = drImportSource["Tone"];
                 drMainDetail["StockType"] = "B";
                 drMainDetail["Qty"] = drImportSource["Qty"];
-                drMainDetail["Description"] = drImportSource["Description"];
+                drMainDetail["Desc"] = drImportSource["Desc"];
                 drMainDetail["Unit"] = drImportSource["Unit"];
                 drMainDetail["Location"] = drImportSource["Location"];
                 this.mainDetail.Rows.Add(drMainDetail);

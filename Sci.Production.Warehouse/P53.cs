@@ -508,19 +508,6 @@ and lack.Status in ('Confirmed','Received') and lack.FabricType  = 'F'
                         return;
                     }
 
-                    if (MyUtility.Check.Empty(dr["RequestID"]))
-                    {
-                        this.gridDetail.Rows[i].Cells["IssueDate"].Style.BackColor = Color.Pink;
-                        this.gridDetail.Rows[i].Cells["ttlRoll"].Style.BackColor = Color.Pink;
-                        this.gridDetail.Rows[i].Cells["Remark"].Style.BackColor = Color.Pink;
-                    }
-                    else
-                    {
-                        this.gridDetail.Rows[i].Cells["IssueDate"].Style.BackColor = Color.White;
-                        this.gridDetail.Rows[i].Cells["ttlRoll"].Style.BackColor = Color.White;
-                        this.gridDetail.Rows[i].Cells["Remark"].Style.BackColor = Color.White;
-                    }
-
                     if (!MyUtility.Check.Empty(dr["StartDate"]))
                     {
                         // Preparing
@@ -535,6 +522,18 @@ and lack.Status in ('Confirmed','Received') and lack.FabricType  = 'F'
                             this.gridDetail.Rows[i].DefaultCellStyle.BackColor = this.finishedColor;
                             this.gridDetail.Rows[i].DefaultCellStyle.SelectionBackColor = this.finishedColor;
                         }
+                    }
+                    else if (MyUtility.Check.Empty(dr["RequestID"]))
+                    {
+                        this.gridDetail.Rows[i].Cells["IssueDate"].Style.BackColor = Color.Pink;
+                        this.gridDetail.Rows[i].Cells["ttlRoll"].Style.BackColor = Color.Pink;
+                        this.gridDetail.Rows[i].Cells["Remark"].Style.BackColor = Color.Pink;
+                    }
+                    else
+                    {
+                        this.gridDetail.Rows[i].Cells["IssueDate"].Style.BackColor = Color.White;
+                        this.gridDetail.Rows[i].Cells["ttlRoll"].Style.BackColor = Color.White;
+                        this.gridDetail.Rows[i].Cells["Remark"].Style.BackColor = Color.White;
                     }
                 }
             }

@@ -142,13 +142,19 @@ namespace Sci.Production.Warehouse
 
         private void BtnQuery_Click(object sender, EventArgs e)
         {
-            string sewinline_b, sewinline_e, sciDelivery_b, sciDelivery_e, buyerdlv_b, buyerdlv_e;
+            string sewinline_b, sewinline_e, sciDelivery_b, sciDelivery_e, buyerdlv_b, buyerdlv_e, strFty;
             sewinline_b = null;
             sewinline_e = null;
             sciDelivery_b = null;
             sciDelivery_e = null;
             buyerdlv_b = null;
             buyerdlv_e = null;
+            strFty = null;
+
+            if (this.txtfactory.Text != null)
+            {
+                strFty = this.txtfactory.Text;
+            }
 
             if (this.dateSewingInline.Value1 != null)
             {
@@ -212,12 +218,19 @@ select 0 as Selected,c.POID,EachConsApv = format(a.EachConsApv,'yyyy/MM/dd'),b.F
 	,min(a.BuyerDelivery) FstBuyerDlv
 	,(select color.Name from color WITH (NOLOCK) where color.id = b.ColorID and color.BrandId = a.brandid ) as color
     ,a.StyleID
-from orders a WITH (NOLOCK) inner join Po_supp_detail b WITH (NOLOCK) on a.poid = b.id
+from orders a WITH (NOLOCK) 
+inner join Po_supp_detail b WITH (NOLOCK) on a.poid = b.id
 inner join dbo.cuttingtape_detail c WITH (NOLOCK) on c.mdivisionid = '{0}' and c.poid = b.id and c.seq1 = b.seq1 and c.seq2 = b.seq2
 outer apply( select value =  iif(b.stockunit = '',dbo.GetStockUnitBySPSeq( b.id,B.SEQ1,B.SEQ2),b.stockunit) ) stockunit
 WHERE A.IsForecast = 0 AND A.Junk = 0 AND A.LocalOrder = 0 AND a.category not in('M','T')
 AND B.SEQ1 = 'A1'
 AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Env.User.Keyword);
+
+            if (!MyUtility.Check.Empty(strFty))
+            {
+                sqlcmd += $@" and b.FactoryID ='{strFty}' ";
+            }
+
             if (!MyUtility.Check.Empty(sciDelivery_b))
             {
                 sqlcmd += string.Format(@" and a.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e);

@@ -256,34 +256,7 @@ SET @ErrorMessage = ''
 
 	SET @ErrDesc = ''
 
-
---06) Import_QA_R06
-BEGIN TRY
-	set @StartDate = '2020/01/01'
-	set @EndDate = (SELECT dateadd(day ,-1, dateadd(m, datediff(m,0,getdate())+1,0))  )
-	execute [dbo].[P_Import_QA_R06] @StartDate,@EndDate
-END TRY
-BEGIN CATCH
-	SET @ErrorMessage =
-	'
-	[6-Import_QA_R06]' + CHAR(13) +
-	',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
-	',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
-	',錯誤訊息: ' + ERROR_MESSAGE()
-	SET @ErrorStatus = 0
-END CATCH;
-IF (@ErrorMessage IS NULL or @ErrorMessage='')
-BEGIN 
-	set @desc += CHAR(13) +'
-[6-Import_QA_R06] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
-END
-BEGIN
-	set @desc +=  CHAR(13) +@ErrorMessage
-END
-SET @ErrorMessage = ''
-
-
---07) ImportForecastLoadingBI
+--06) P_ImportQAInspection_Fty
 BEGIN TRY
 	set @Stime = getdate()
 	set @StartDate = '2020-01-01'
@@ -324,10 +297,10 @@ SET @ErrorMessage = ''
 
 	SET @ErrDesc = ''
 
---08) P_Import_QA_P09
+--08-1) P_Import_QA_P09
 BEGIN TRY
 	set @Stime = getdate()
-	set @StartDate = '2020-01-01'
+	set @StartDate = dateadd(month,-6, dateadd(day, -datepart(day, getdate())+1 ,convert(date, getdate())))
 	set @EndDate = (select CONVERT(date, DATEADD(MONTH,3, GETDATE())))
 	EXEC P_Import_QA_P09_Fty @StartDate,@EndDate
 	set @Etime = getdate()
@@ -337,7 +310,7 @@ BEGIN CATCH
 
 SET @ErrorMessage = 
 '
-[7-P_Import_QA_P09]' + CHAR(13) +
+[8-P_Import_QA_P09]' + CHAR(13) +
 ',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
@@ -352,7 +325,7 @@ END CATCH;
 IF (@ErrorMessage IS NULL or @ErrorMessage='')
 BEGIN 
 	set @desc += CHAR(13) + '
-[7-P_Import_QA_P09] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+[8-P_Import_QA_P09] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
 END
 ELSE
 BEGIN
@@ -365,6 +338,97 @@ SET @ErrorMessage = ''
 	values('P_Import_QA_P09',@ErrDesc,@Stime,@Etime,@TransCode)
 
 	SET @ErrDesc = ''
+/****************************************************************************************************************************/
+
+--08-2) P_Import_QA_R06
+BEGIN TRY
+	set @Stime = getdate()  
+	set @Etime = getdate()
+	set @StartDate = dateadd(month,-6, dateadd(day, -datepart(day, getdate())+1 ,convert(date, getdate())))
+	set @EndDate = (SELECT dateadd(day ,-1, dateadd(m, datediff(m,0,getdate())+1,0))  )
+	execute [dbo].[P_Import_QA_R06] @StartDate,@EndDate
+END TRY
+
+BEGIN CATCH
+
+SET @ErrorMessage = 
+'
+[8-P_Import_QA_R06]' + CHAR(13) +
+',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
+SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
+SET @ErrorStatus = 0
+
+END CATCH;
+IF (@ErrorMessage IS NULL or @ErrorMessage='')
+BEGIN 
+	set @desc += CHAR(13) + '
+[8-P_Import_QA_R06] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+END
+ELSE
+BEGIN
+	set @desc += CHAR(13) + @ErrorMessage
+END
+SET @ErrorMessage = ''
+
+-- Write in P_TransLog
+	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
+	values('P_Import_QA_R06',@ErrDesc,@Stime,@Etime,@TransCode)
+
+	SET @ErrDesc = ''
+
+/****************************************************************************************************************************/
+
+--Sunday Job) P_ImportAdiCompReport
+
+if (select DATEPART(WEEKDAY,GETDATE())) = 1
+BEGIN
+	BEGIN TRY
+		set @Stime = getdate()
+		EXEC P_ImportAdiCompReport
+		set @Etime = getdate()
+	END TRY
+
+	BEGIN CATCH
+
+	SET @ErrorMessage = 
+	'
+	[Sunday_Job-P_ImportAdiCompReport]' + CHAR(13) +
+	',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
+	',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
+	',錯誤訊息: ' + ERROR_MESSAGE()
+
+	SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
+	',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
+	',錯誤訊息: ' + ERROR_MESSAGE()
+
+	SET @ErrorStatus = 0
+
+	END CATCH;
+
+
+	IF (@ErrorMessage IS NULL or @ErrorMessage='')
+	BEGIN 
+		set @desc += CHAR(13) + '
+	[Sunday-Job-P_ImportAdiCompReport] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+	END
+	ELSE
+	BEGIN
+		set @desc += CHAR(13) + @ErrorMessage
+	END
+	SET @ErrorMessage = ''
+
+	-- Write in P_TransLog
+		insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
+		values('P_ImportAdiCompReport',@ErrDesc,@Stime,@Etime,@TransCode)
+
+		SET @ErrDesc = ''
+END
 
 DECLARE @comboDesc nvarchar(4000);
 
