@@ -87,13 +87,16 @@ namespace Sci.Production.Warehouse
 
             // IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "OrderID", DataType = typeof(string) });
             issueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Article", DataType = typeof(string) });
+            issueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "SizeCode", DataType = typeof(string) });
             issueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(int) });
 
-            var groupByData = this._IssueQtyBreakdownList.GroupBy(o => new { o.Article }).Select(o => new
+            var groupByData = this._IssueQtyBreakdownList.GroupBy(o => new { o.Article, o.SizeCode }).Select(o => new
             {
                 o.Key.Article,
+                o.Key.SizeCode,
                 Qty = o.Sum(x => x.Qty),
             }).ToList();
+
             foreach (var model in groupByData)
             {
                 if (model.Qty > 0)
@@ -102,6 +105,7 @@ namespace Sci.Production.Warehouse
 
                     // newDr["OrderID"] = model.OrderID;
                     newDr["Article"] = model.Article;
+                    newDr["SizeCode"] = model.SizeCode;
                     newDr["Qty"] = model.Qty;
 
                     issueBreakDown_Dt.Rows.Add(newDr);

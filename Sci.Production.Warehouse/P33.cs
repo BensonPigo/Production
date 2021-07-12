@@ -1,22 +1,22 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci;
+using Sci.Data;
+using Sci.Production.Automation;
+using Sci.Production.PublicPrg;
+using Sci.Win;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Sci;
-using Ict.Win;
-using Ict;
-using Sci.Data;
-using System.Linq;
-using System.Transactions;
-using Sci.Production.PublicPrg;
-using Sci.Win;
 using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
 using System.Reflection;
-using Sci.Production.Automation;
+using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
+using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
@@ -2759,23 +2759,30 @@ WHERE o.id = '{currentOrderID}'  AND o.sewline != '') t FOR xml path('')
 
             foreach (DataRow tempRow in this.dtIssueBreakDown.Rows)
             {
+
+                int totalQty = 0;
+                foreach (DataColumn col in this.dtIssueBreakDown.Columns)
+                {
                     IssueQtyBreakdown m = new IssueQtyBreakdown()
                     {
                         OrderID = tempRow["OrderID"].ToString(),
                         Article = tempRow["Article"].ToString(),
                     };
 
-                    int totalQty = 0;
-                    foreach (DataColumn col in this.dtIssueBreakDown.Columns)
+                    if (tempRow[col].GetType().Name == "Decimal")
                     {
-                        if (tempRow[col].GetType().Name == "Decimal")
-                        {
-                            totalQty += Convert.ToInt32(tempRow[col]);
-                        }
+                        totalQty += Convert.ToInt32(tempRow[col]);
                     }
 
-                    m.Qty = totalQty;
-                    modelList.Add(m);
+                    if (col.ColumnName != "OrderID" && col.ColumnName != "Article")
+                    {
+                        m.SizeCode = col.ColumnName;
+
+                        m.Qty = totalQty;
+                        modelList.Add(m);
+                        totalQty = 0;
+                    }
+                }
             }
 
             var frm = new P33_AutoPick(this.CurrentMaintain["id"].ToString(), this.poid, this.txtOrderID.Text.ToString(), this.dtIssueBreakDown, this.sbSizecode, this.checkByCombo.Checked, modelList);
@@ -3530,6 +3537,9 @@ order by [OrderID],[Article]
 
         /// <inheritdoc/>
         public string Article { get; set; }
+
+        /// <inheritdoc/>
+        public string SizeCode { get; set; }
 
         /// <inheritdoc/>
         public int Qty { get; set; }
