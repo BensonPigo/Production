@@ -34,7 +34,6 @@ namespace Sci.Production.Packing
         private string BarcodeReader_RegistrationName = MyUtility.Convert.GetString(ConfigurationManager.AppSettings["BarcodeReader_RegistrationName"]);
         private string BarcodeReader_RegistrationKey = MyUtility.Convert.GetString(ConfigurationManager.AppSettings["BarcodeReader_RegistrationKey"]);
         private bool GridBool = false;
-        private List<string> tmpPath;
 
         /// <summary>
         /// 目前處理的檔案格式
@@ -147,7 +146,6 @@ namespace Sci.Production.Packing
                 try
                 {
                     int i = 0;
-                    tmpPath = new List<string>();
                     foreach (string safeFileName in safeFileNames)
                     {
                         // 取得CustCTN，作為檔名
@@ -161,7 +159,6 @@ namespace Sci.Production.Packing
                         string[] contentsOfZPL; // 從原始ZPL檔拆出來的多個ZPL檔
 
                         string fullFileName = fullFileNames.Where(o => o.Contains(safeFileName)).FirstOrDefault();
-                        tmpPath.Add(fullFileName);
                         try
                         {
                             #region ZPL
@@ -2239,50 +2236,5 @@ WHERE PackingListID IN ('{packingListIDs.JoinToString("','")}')
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            try
-            {
-
-                List<byte[]> tmpImages = new List<byte[]>();
-                int idx = 0;
-                foreach (var path in this.tmpPath)
-                {
-                    byte[] pDFImage = null;
-                    PdfImageConverter pdfConverter = new PdfImageConverter(path);
-                    pdfConverter.DPI = 300;
-                    pdfConverter.GrayscaleOutput = false;
-
-                    // 直接取用Image轉成byte[]，不需要再轉Bitmap
-                    Image bmp = pdfConverter.PageToImage(0);
-
-                    // 準備要寫入DB的資料
-                    using (var stream = new MemoryStream())
-                    {
-                        bmp.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                        pDFImage = stream.ToArray();
-                    }
-
-                    bmp.Dispose();
-                    pdfConverter.Dispose();
-
-                    tmpImages.Add(pDFImage);
-
-                    if (idx == 499)
-                    {
-                        tmpImages = new List<byte[]>();
-                        idx = 0;
-                    }
-                    else
-                    {
-                        idx++;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                this.ShowErr(ex);
-            }
-        }
     }
 }
