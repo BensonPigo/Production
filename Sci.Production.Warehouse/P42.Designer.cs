@@ -57,6 +57,8 @@
             this.labelCheckedQty = new Sci.Win.UI.Label();
             this.displayCheckedQty = new Sci.Win.UI.DisplayBox();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.labelFactory = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridCuttingTapeQuickAdjust)).BeginInit();
@@ -68,6 +70,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.txtfactory);
+            this.panel1.Controls.Add(this.labelFactory);
             this.panel1.Controls.Add(this.btnFind);
             this.panel1.Controls.Add(this.btnQuery);
             this.panel1.Controls.Add(this.txtLocateForSP);
@@ -83,15 +87,15 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 106);
+            this.panel1.Size = new System.Drawing.Size(1008, 140);
             this.panel1.TabIndex = 0;
             // 
             // btnFind
             // 
-            this.btnFind.Location = new System.Drawing.Point(272, 70);
+            this.btnFind.Location = new System.Drawing.Point(272, 99);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(98, 30);
-            this.btnFind.TabIndex = 7;
+            this.btnFind.TabIndex = 8;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
             this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
@@ -101,7 +105,7 @@
             this.btnQuery.Location = new System.Drawing.Point(867, 5);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 5;
+            this.btnQuery.TabIndex = 7;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
@@ -110,24 +114,24 @@
             // 
             this.txtLocateForSP.BackColor = System.Drawing.Color.White;
             this.txtLocateForSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocateForSP.Location = new System.Drawing.Point(121, 74);
+            this.txtLocateForSP.Location = new System.Drawing.Point(121, 103);
             this.txtLocateForSP.Name = "txtLocateForSP";
             this.txtLocateForSP.Size = new System.Drawing.Size(145, 23);
             this.txtLocateForSP.TabIndex = 6;
             // 
             // labelLocateForSP
             // 
-            this.labelLocateForSP.Location = new System.Drawing.Point(9, 74);
+            this.labelLocateForSP.Location = new System.Drawing.Point(9, 103);
             this.labelLocateForSP.Name = "labelLocateForSP";
             this.labelLocateForSP.Size = new System.Drawing.Size(109, 23);
-            this.labelLocateForSP.TabIndex = 16;
+            this.labelLocateForSP.TabIndex = 12;
             this.labelLocateForSP.Text = "Locate for SP#";
             // 
             // checkEmptyMtlETA
             // 
             this.checkEmptyMtlETA.AutoSize = true;
             this.checkEmptyMtlETA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkEmptyMtlETA.Location = new System.Drawing.Point(643, 40);
+            this.checkEmptyMtlETA.Location = new System.Drawing.Point(646, 38);
             this.checkEmptyMtlETA.Name = "checkEmptyMtlETA";
             this.checkEmptyMtlETA.Size = new System.Drawing.Size(157, 21);
             this.checkEmptyMtlETA.TabIndex = 4;
@@ -149,36 +153,78 @@
             // 
             // dateBuyerDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateBuyerDelivery.DateBox1.Name = "";
+            this.dateBuyerDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateBuyerDelivery.DateBox2.Name = "";
+            this.dateBuyerDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox2.TabIndex = 1;
             this.dateBuyerDelivery.Location = new System.Drawing.Point(122, 40);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
             this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateBuyerDelivery.TabIndex = 1;
+            this.dateBuyerDelivery.TabIndex = 2;
             // 
             // labelBuyerDelivery
             // 
             this.labelBuyerDelivery.Location = new System.Drawing.Point(9, 40);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
             this.labelBuyerDelivery.Size = new System.Drawing.Size(109, 23);
-            this.labelBuyerDelivery.TabIndex = 13;
+            this.labelBuyerDelivery.TabIndex = 10;
             this.labelBuyerDelivery.Text = "Buyer  Delivery";
             // 
             // dateSewingInline
             // 
+            // 
+            // 
+            // 
+            this.dateSewingInline.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSewingInline.DateBox1.Name = "";
+            this.dateSewingInline.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingInline.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSewingInline.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSewingInline.DateBox2.Name = "";
+            this.dateSewingInline.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingInline.DateBox2.TabIndex = 1;
             this.dateSewingInline.Location = new System.Drawing.Point(540, 9);
             this.dateSewingInline.Name = "dateSewingInline";
             this.dateSewingInline.Size = new System.Drawing.Size(280, 23);
-            this.dateSewingInline.TabIndex = 2;
+            this.dateSewingInline.TabIndex = 1;
             // 
             // labelSewingInline
             // 
             this.labelSewingInline.Location = new System.Drawing.Point(423, 9);
             this.labelSewingInline.Name = "labelSewingInline";
             this.labelSewingInline.Size = new System.Drawing.Size(114, 23);
-            this.labelSewingInline.TabIndex = 11;
+            this.labelSewingInline.TabIndex = 13;
             this.labelSewingInline.Text = "1st Sewing Inline";
             // 
             // dateSCIDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.Location = new System.Drawing.Point(122, 9);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
             this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
@@ -196,9 +242,9 @@
             // 
             this.panel2.Controls.Add(this.gridCuttingTapeQuickAdjust);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(0, 106);
+            this.panel2.Location = new System.Drawing.Point(0, 140);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1008, 555);
+            this.panel2.Size = new System.Drawing.Size(1008, 521);
             this.panel2.TabIndex = 1;
             // 
             // gridCuttingTapeQuickAdjust
@@ -222,7 +268,8 @@
             this.gridCuttingTapeQuickAdjust.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCuttingTapeQuickAdjust.RowTemplate.Height = 24;
             this.gridCuttingTapeQuickAdjust.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridCuttingTapeQuickAdjust.Size = new System.Drawing.Size(1002, 486);
+            this.gridCuttingTapeQuickAdjust.ShowCellToolTips = false;
+            this.gridCuttingTapeQuickAdjust.Size = new System.Drawing.Size(1002, 452);
             this.gridCuttingTapeQuickAdjust.TabIndex = 0;
             this.gridCuttingTapeQuickAdjust.TabStop = false;
             // 
@@ -337,6 +384,28 @@
             this.displayCheckedQty.Size = new System.Drawing.Size(100, 23);
             this.displayCheckedQty.TabIndex = 0;
             // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.BoolFtyGroupList = false;
+            this.txtfactory.FilteMDivision = true;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsProduceFty = false;
+            this.txtfactory.IssupportJunk = true;
+            this.txtfactory.Location = new System.Drawing.Point(121, 71);
+            this.txtfactory.MDivision = null;
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(86, 23);
+            this.txtfactory.TabIndex = 5;
+            // 
+            // labelFactory
+            // 
+            this.labelFactory.Location = new System.Drawing.Point(9, 71);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(109, 23);
+            this.labelFactory.TabIndex = 11;
+            this.labelFactory.Text = "Factory";
+            // 
             // P42
             // 
             this.ClientSize = new System.Drawing.Size(1008, 661);
@@ -346,6 +415,7 @@
             this.DefaultControl = "dateSCIDelivery";
             this.DefaultControlForEdit = "dateSCIDelivery";
             this.Name = "P42";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P42. Cutting Tape Quick Adjust";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel2, 0);
@@ -392,5 +462,7 @@
         private Win.UI.Label labelCheckedQty;
         private Win.UI.DisplayBox displayCheckedQty;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Class.Txtfactory txtfactory;
+        private Win.UI.Label labelFactory;
     }
 }
