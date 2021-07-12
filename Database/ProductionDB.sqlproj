@@ -2668,6 +2668,7 @@
     <Build Include="dbo\Views\View_BundleTransfer.sql" />
     <Build Include="dbo\Views\View_Bundle_Detail.sql" />
     <Build Include="dbo\Views\View_Bundle.sql" />
+    <Build Include="dbo\Views\View_WH_Orders.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
