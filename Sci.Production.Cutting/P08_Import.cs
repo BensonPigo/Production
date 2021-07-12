@@ -226,6 +226,11 @@ order by MarkerName, ColorID
                 return;
             }
 
+            if (this.gridTable.Select("isnull(Seq1, '') = ''").Any() || this.gridTable.Select("isnull(Seq2, '') = ''").Any())
+            {
+                MyUtility.Msg.WarningBox("Cannot found seq of 'Cutting Tape', please contact with MR.");
+            }
+
             DataTable dt0 = Prgs.GetCuttingTapeData(this.txtCuttingID.Text);
             if (dt0.Rows.Count > 0)
             {
@@ -278,6 +283,12 @@ order by MarkerName, ColorID
             if (this.gridTable.Select("selected = 1").Length == 0)
             {
                 MyUtility.Msg.WarningBox("Please select data first!");
+                return;
+            }
+
+            if (this.gridTable.Select("selected = 1 and isnull(Seq1, '') = ''").Any() || this.gridTable.Select("selected = 1 and isnull(Seq2, '') = ''").Any())
+            {
+                MyUtility.Msg.WarningBox("Cannot found seq of 'Cutting Tape', please contact with MR.");
                 return;
             }
 
