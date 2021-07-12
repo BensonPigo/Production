@@ -191,7 +191,17 @@ select * from #tmp where Price != 0
 --Below records are in packing FOC already, Please check again.
 select * from  #tmp t 
 left join Order_QtyShip oq on t.OrderID = oq.Id and t.OrderShipmodeSeq = oq.Seq
-left join PackingList_Detail pd on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.OrderShipmodeSeq
+outer apply(
+	select ShipQty = sum(pd.ShipQty)
+	from PackingList p with (nolock)
+	inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
+	where	p.Type = 'F' and
+	pd.OrderID = t.OrderID and
+	pd.Article = t.Article and
+	pd.Color = t.Color and
+	pd.SizeCode = t.SizeCode and
+	pd.OrderShipmodeSeq = t.OrderShipmodeSeq
+)pd
 where exists(
     select 1 
     from PackingList p with (nolock)
@@ -202,7 +212,7 @@ where exists(
 		    pd.Color = t.Color and
 		    pd.SizeCode = t.SizeCode
 )	
-and oq.Qty <= pd.ShipQty
+and isnull(oq.Qty,0) <= isnull(pd.ShipQty,0)
 
 -- 扣除已存在Packinglist加總的數量,且扣除後ShipQty數量要 > 0 
 select  0 as Selected
