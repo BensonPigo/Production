@@ -2288,6 +2288,39 @@ from Trade_To_Pms.dbo.[OrderChangeApplication_History] s
 left join Production.dbo.[OrderChangeApplication_History] t on s.ID = t.ID and s.Status = t.Status
 where s.Status = 'Closed' and t.id is null
 
+
+----------------Order_PatternPanel-----------------
+Select o.ID
+,o.POID
+,oq.Article
+,oq.SizeCode
+,occ.PatternPanel
+,cons.FabricPanelCode
+into #Order_PatternPanel
+from Orders o WITH (NOLOCK)
+inner join Order_qty oq on o.ID=oq.ID
+inner join Order_ColorCombo occ on o.poid = occ.id and occ.Article = oq.Article
+inner join order_Eachcons cons on occ.id = cons.id and cons.FabricCombo = occ.PatternPanel and cons.CuttingPiece='0'
+where occ.FabricCode !='' and occ.FabricCode is not null 
+and exists(select 1 from #TOrder where ID = o.ID)
+group by o.ID, o.POID, oq.Article, oq.SizeCode, occ.PatternPanel, cons.FabricPanelCode
+
+select *
+into #tmp_Order_PatternPanel_Detele
+from Order_PatternPanel t
+where exists (select 1 from #Order_PatternPanel where t.ID = ID and t.Article = Article and t.SizeCode = SizeCode)
+and not exists (select 1 from #Order_PatternPanel where t.ID = ID and t.Article = Article and t.SizeCode = SizeCode 
+											and t.POID = POID and t.PatternPanel = PatternPanel and t.FabricPanelCode = FabricPanelCode)
+
+delete t
+from Order_PatternPanel t
+where exists (select 1 from #tmp_Order_PatternPanel_Detele  where t.ID = ID and t.Article = Article and t.SizeCode = SizeCode)
+ 
+insert into Order_PatternPanel ([ID], [POID], [Article], [SizeCode], [PatternPanel], [FabricPanelCode])
+select [ID], [POID], [Article], [SizeCode], [PatternPanel], [FabricPanelCode]
+from #Order_PatternPanel t
+where not exists (select 1 from Order_PatternPanel where t.ID = ID and t.Article = Article and t.SizeCode = SizeCode)
+
 ----------------ppaschedule-----------------
 
 ----若有跨M轉廠的訂單(orders.mdivisionid不同)。(例:PM1 to PM2)
