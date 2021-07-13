@@ -224,11 +224,11 @@ where id = '{this.CurrentMaintain["ID"]}'
             {
                 // <Local Invoice No.>、<N.W.>、<G.W.>、<HS Code>不能為空
                 if (MyUtility.Check.Empty(dr["LocalINVNo"]) ||
-                    MyUtility.Check.Empty(dr["NetKg"]) ||
-                    MyUtility.Check.Empty(dr["WeightKg"]) ||
+                    MyUtility.Check.Empty(dr["ActNetKg"]) ||
+                    MyUtility.Check.Empty(dr["ActWeightKg"]) ||
                     MyUtility.Check.Empty(dr["HSCode"]))
                 {
-                    MyUtility.Msg.WarningBox(@"<Local Invoice No.>, <N.W.>, <G.W.>and <HS Code> cannot be empty.");
+                    MyUtility.Msg.WarningBox(@"<Local Invoice No.>, <Act N.W.>, <Act G.W.>and <HS Code> cannot be empty.");
                     return false;
                 }
 
