@@ -220,7 +220,7 @@ bun.AddDate, bun.PatternPanel, bun.FabricPanelCode, bun.Article
 ";
             foreach (string subprocessID in subprocessIDs)
             {
-                string subprocessIDtmp = SubprocesstmpTableName(subprocessID);
+                string subprocessIDtmp = SubprocesstmpNoSymbol(subprocessID);
 
                 // --Step 2. --
                 //-- * 2.找出所有 Fabric Combo +Fabric Panel Code +Article + SizeCode->Cartpart(包含同部位數量)
@@ -410,9 +410,8 @@ OUTER APPLY(  --取得這個bundle no的指定加工段
     FROM Bundle_Detail_Art bda 
     WHERE bda.BundleNo = bunD.BundleNo and bda.SubProcessId = st0.SubprocessId
 )BundleArt
-where 1=1 
-{(subprocessIDtmp.ToUpper() != "SUBCONEMB" && subprocessIDtmp.ToUpper() != "SUBCONPRT" ? "and (st0.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0)" : string.Empty)}
- {(subprocessIDtmp.ToUpper() != "SORTING" && subprocessIDtmp.ToUpper() != "LOADING" && subprocessIDtmp.ToUpper() != "SEWINGLINE" && subprocessIDtmp.ToUpper() != "SUBCONEMB" && subprocessIDtmp.ToUpper() != "SUBCONPRT" ? $"and BundleArt.SubprocessId='{subprocessID}'" : string.Empty)}
+ where (st0.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0)
+ {(subprocessIDtmp.ToUpper() != "SORTING" && subprocessIDtmp.ToUpper() != "LOADING" && subprocessIDtmp.ToUpper() != "SEWINGLINE" ? $"and BundleArt.SubprocessId='{subprocessID}'" : string.Empty)}
 
 select
 	st3.*
@@ -723,7 +722,7 @@ group by OrderID, InStartDate,InEndDate,OutStartDate,OutEndDate
         /// </summary>
         /// <param name="subprocessID">subprocessID</param>
         /// <returns>Subprocess tmpTableName</returns>
-        public static string SubprocesstmpTableName(string subprocessID)
+        public static string SubprocesstmpNoSymbol(string subprocessID)
         {
             return subprocessID.Replace("-", string.Empty); // 把PAD-PRT為PADPRT, 命名#table名稱用
         }

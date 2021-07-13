@@ -647,6 +647,9 @@
     <None Include="XLT\Planning_R15_WIP_byArticleSize_SingleSubprocess.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Planning_R15_WIP_bySPLine_SingleSubprocess.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Planning_R15_WIP_SingleSubprocess.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

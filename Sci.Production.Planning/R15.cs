@@ -46,7 +46,7 @@ namespace Sci.Production.Planning
         private DataTable dtArtworkType;
         private StringBuilder artworktypes = new StringBuilder();
         private bool isArtwork;
-        private List<string> notExistsBundle_Detail_Art = new List<string>() { "SORTING", "LOADING", "SEWINGLINE", "SUBCONEMB", "SUBCONPRT" };
+        private List<string> notExistsBundle_Detail_Art = new List<string>() { "SORTING", "LOADING", "SEWINGLINE" };
 
         /// <summary>
         /// R15
@@ -228,6 +228,14 @@ namespace Sci.Production.Planning
 
                 if (this.FormParameter == "2")
                 {
+                    if (this.subprocessInoutColumnCount > 1)
+                    {
+                        Microsoft.Office.Interop.Excel.Range range = objSheets.get_Range("AW1").EntireColumn;
+                        range.EntireColumn.Insert(
+                            Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight,
+                            Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromLeftOrAbove);
+                    }
+
                     for (int i = 0; i < this.subprocessInoutColumnCount; i++)
                     {
                         objSheets.Cells[1, 48 + i] = this.printData.Columns[47 + i].ColumnName;
@@ -277,6 +285,14 @@ namespace Sci.Production.Planning
 
                 if (this.FormParameter == "2")
                 {
+                    if (this.subprocessInoutColumnCount > 1)
+                    {
+                        Microsoft.Office.Interop.Excel.Range range = objSheets.get_Range("AX1").EntireColumn;
+                        range.EntireColumn.Insert(
+                            Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight,
+                            Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromLeftOrAbove);
+                    }
+
                     for (int i = 0; i < this.subprocessInoutColumnCount; i++)
                     {
                         objSheets.Cells[1, 49 + i] = this.printData.Columns[48 + i].ColumnName;
@@ -318,10 +334,27 @@ namespace Sci.Production.Planning
             }
             else
             {
-                string filename = "Planning_R15_WIP_bySPLine";
+                string filename = this.FormParameter == "1" ? "Planning_R15_WIP_bySPLine" : "Planning_R15_WIP_bySPLine_SingleSubprocess";
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"{filename}.xltx");
-                MyUtility.Excel.CopyToXls(this.printData, string.Empty, $"{filename}.xltx", 1, false, null, objApp);
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+
+                if (this.FormParameter == "2")
+                {
+                    if (this.subprocessInoutColumnCount > 1)
+                    {
+                        Microsoft.Office.Interop.Excel.Range range = objSheets.get_Range("AX1").EntireColumn;
+                        range.EntireColumn.Insert(
+                            Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight,
+                            Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromLeftOrAbove);
+                    }
+
+                    for (int i = 0; i < this.subprocessInoutColumnCount; i++)
+                    {
+                        objSheets.Cells[1, 49 + i] = this.printData.Columns[48 + i].ColumnName;
+                    }
+                }
+
+                MyUtility.Excel.CopyToXls(this.printData, string.Empty, $"{filename}.xltx", 1, false, null, objApp);
                 if (this.isArtwork)
                 {
                     // 列印動態欄位的表頭
@@ -675,7 +708,7 @@ outer apply(select v = case when #HT.OutQtyBySet is null or #HT.OutQtyBySet >= t
             {
                 subprocessIDs = new string[] { this.subprocessID };
                 subprocessQtyColumns = this.SingleSubprocessColumn();
-                string subprocessIDtmp = Prgs.SubprocesstmpTableName(this.subprocessID);
+                string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(this.subprocessID);
                 subprocessQtyColumnsSource = $@"left join #{subprocessIDtmp} on #{subprocessIDtmp}.OrderID = t.OrderID";
             }
 
@@ -1055,7 +1088,7 @@ outer apply(
             sqlCmd.Append(" drop table #cte, #cte2, #tmp_PackingList_Detail, #imp_LastSewnDate;" + Environment.NewLine);
             foreach (string subprocess in subprocessIDs)
             {
-                string whereSubprocess = Prgs.SubprocesstmpTableName(subprocess);
+                string whereSubprocess = Prgs.SubprocesstmpNoSymbol(subprocess);
                 sqlCmd.Append(string.Format(@" drop table #QtyBySetPerSubprocess{0}, #{0};" + Environment.NewLine, whereSubprocess));
             }
 
@@ -1380,13 +1413,9 @@ outer apply(select v = case when HT.OutQtyBySet is null or HT.OutQtyBySet >= t.Q
             if (this.formParameter == "2")
             {
                 subprocessIDs = new string[] { this.subprocessID };
-                subprocessQtyColumns = this.SingleSubprocessColumn();
-                string subprocessIDtmp = Prgs.SubprocesstmpTableName(this.subprocessID);
-                if (this.sbyindex == 1)
-                {
-                    subprocessIDtmp = "QtyBySetPerSubprocess" + subprocessIDtmp;
-                }
-
+                subprocessQtyColumns = this.SingleSubprocessColumn(1);
+                string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(this.subprocessID);
+                subprocessIDtmp = "QtyBySetPerSubprocess" + subprocessIDtmp;
                 subprocessQtyColumnsSource = $@"left join #{subprocessIDtmp} on #{subprocessIDtmp}.OrderID = t.OrderID and #{subprocessIDtmp}.Article = t.Article and #{subprocessIDtmp}.SizeCode = t.SizeCode ";
             }
 
@@ -1806,6 +1835,50 @@ outer apply(
                 }
             }
 
+            string subprocessQtyColumns = @"
+    , [RFID Cut Qty] = SUM([RFID Cut Qty])
+    , [RFID SewingLine In Qty] = SUM([RFID SewingLine In Qty])
+    , [RFID Loading Qty] = SUM([RFID Loading Qty])
+    , [RFID Emb Farm In Qty] = SUM([RFID Emb Farm In Qty])
+    , [RFID Emb Farm Out Qty] = SUM([RFID Emb Farm Out Qty])
+    , [RFID Bond Farm In Qty] = SUM([RFID Bond Farm In Qty])
+    , [RFID Bond Farm Out Qty] = SUM([RFID Bond Farm Out Qty])
+    , [RFID Print Farm In Qty] = SUM([RFID Print Farm In Qty])
+    , [RFID Print Farm Out Qty] = SUM([RFID Print Farm Out Qty])
+    , [RFID AT Farm In Qty] = SUM([RFID AT Farm In Qty])
+    , [RFID AT Farm Out Qty] = SUM([RFID AT Farm Out Qty])
+    , [RFID Pad Print Farm In Qty] = SUM([RFID Pad Print Farm In Qty])
+    , [RFID Pad Print Farm Out Qty] = SUM([RFID Pad Print Farm Out Qty])
+    , [RFID Emboss Farm In Qty] = SUM([RFID Emboss Farm In Qty])
+    , [RFID Emboss Farm Out Qty] = SUM([RFID Emboss Farm Out Qty])
+    , [RFID HT Farm In Qty] = SUM([RFID HT Farm In Qty])
+    , [RFID HT Farm Out Qty] = SUM([RFID HT Farm Out Qty])
+    , ss.SubProcessStatus";
+            string subprocessQtyColumnsSource = @"
+outer apply(
+	select SubProcessStatus = IIF(
+		exists(
+			select 1
+			from #lasttmp t2 
+			where t2.OrderID = t.OrderID and t2.SewingLineID = t.SewingLineID
+			and SubProcessStatus is null
+		)
+		or not exists(
+			select 1
+			from #lasttmp t2 
+			where t2.OrderID = t.OrderID and t2.SewingLineID = t.SewingLineID
+		),
+		null , 'Y')
+)ss
+";
+            string subprocessQtyColumnGroup = ", ss.SubProcessStatus";
+            if (this.formParameter == "2")
+            {
+                subprocessQtyColumns = this.SingleSubprocessColumn(2);
+                subprocessQtyColumnsSource = string.Empty;
+                subprocessQtyColumnGroup = string.Empty;
+            }
+
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append($@"
 
@@ -1858,24 +1931,7 @@ select
     , EstimatedCutDate = MIN(t.EstimatedCutDate)
     , first_cut_date = MIN(t.first_cut_date)
     , cut_qty = SUM(cut_qty)
-    , [RFID Cut Qty] = SUM([RFID Cut Qty])
-    , [RFID SewingLine In Qty] = SUM([RFID SewingLine In Qty])
-    , [RFID Loading Qty] = SUM([RFID Loading Qty])
-    , [RFID Emb Farm In Qty] = SUM([RFID Emb Farm In Qty])
-    , [RFID Emb Farm Out Qty] = SUM([RFID Emb Farm Out Qty])
-    , [RFID Bond Farm In Qty] = SUM([RFID Bond Farm In Qty])
-    , [RFID Bond Farm Out Qty] = SUM([RFID Bond Farm Out Qty])
-    , [RFID Print Farm In Qty] = SUM([RFID Print Farm In Qty])
-    , [RFID Print Farm Out Qty] = SUM([RFID Print Farm Out Qty])
-    , [RFID AT Farm In Qty] = SUM([RFID AT Farm In Qty])
-    , [RFID AT Farm Out Qty] = SUM([RFID AT Farm Out Qty])
-    , [RFID Pad Print Farm In Qty] = SUM([RFID Pad Print Farm In Qty])
-    , [RFID Pad Print Farm Out Qty] = SUM([RFID Pad Print Farm Out Qty])
-    , [RFID Emboss Farm In Qty] = SUM([RFID Emboss Farm In Qty])
-    , [RFID Emboss Farm Out Qty] = SUM([RFID Emboss Farm Out Qty])
-    , [RFID HT Farm In Qty] = SUM([RFID HT Farm In Qty])
-    , [RFID HT Farm Out Qty] = SUM([RFID HT Farm Out Qty])
-    , ss.SubProcessStatus
+{subprocessQtyColumns}
     , EMBROIDERY_qty = SUM(t.EMBROIDERY_qty)
     , BONDING_qty = SUM(t.BONDING_qty)
     , PRINTING_qty = SUM(t.PRINTING_qty)
@@ -1973,21 +2029,7 @@ outer apply(
 			for xml path('')
 		),1,1,'')
 )Artwork
-outer apply(
-	select SubProcessStatus = IIF(
-		exists(
-			select 1
-			from #lasttmp t2 
-			where t2.OrderID = t.OrderID and t2.SewingLineID = t.SewingLineID
-			and SubProcessStatus is null
-		)
-		or not exists(
-			select 1
-			from #lasttmp t2 
-			where t2.OrderID = t.OrderID and t2.SewingLineID = t.SewingLineID
-		),
-		null , 'Y')
-)ss
+{subprocessQtyColumnsSource}
 
 group by 
 t.MDivisionID
@@ -2029,7 +2071,7 @@ t.MDivisionID
 , aann.AddedArtwork
 , Artwork.Artwork
 , t.SubProcessDest
-, ss.SubProcessStatus
+{subprocessQtyColumnGroup}
 , t.[pack_rate]
 , t.TotalCTN
 , t.FtyCtn
@@ -2056,7 +2098,7 @@ t.MDivisionID
             return sqlCmd;
         }
 
-        private string SingleSubprocessColumn()
+        private string SingleSubprocessColumn(int type = 0)
         {
             string subprocessInoutRule = MyUtility.GetValue.Lookup($"select inoutRule from subprocess where id = '{this.subprocessID}'");
             string subprocessColumnName = MyUtility.GetValue.Lookup($"select iif(ArtworkTypeID = '', ID, ArtworkTypeID) from subprocess where id = '{this.subprocessID}'");
@@ -2064,32 +2106,39 @@ t.MDivisionID
             {
                 case "1":
                     this.subprocessInoutColumnCount = 1;
-                    return this.FarmInColmun(subprocessColumnName);
+                    return this.FarmInColmun(subprocessColumnName, type);
                 case "2":
                     this.subprocessInoutColumnCount = 1;
-                    return this.FarmOutColumn(subprocessColumnName);
+                    return this.FarmOutColumn(subprocessColumnName, type);
                 default:
                     this.subprocessInoutColumnCount = 2;
-                    return this.FarmInColmun(subprocessColumnName) + this.FarmOutColumn(subprocessColumnName);
+                    return this.FarmInColmun(subprocessColumnName, type) + this.FarmOutColumn(subprocessColumnName, type);
             }
         }
 
-        private string FarmInColmun(string subprocessColumnName)
+        private string FarmInColmun(string subprocessColumnName, int type = 0)
         {
-            string subprocessIDtmp = Prgs.SubprocesstmpTableName(this.subprocessID);
-            if (this.sbyindex == 1)
+            string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(this.subprocessID);
+            if (this.sbyindex == 1 || this.sbyindex == 2)
             {
                 subprocessIDtmp = "QtyBySetPerSubprocess" + subprocessIDtmp;
             }
 
-            if (this.notExistsBundle_Detail_Art.Contains(this.subprocessID))
+            if (type == 2)
             {
                 return $@"
-    , [RFID {subprocessColumnName} Farm In Qty] = #{subprocessIDtmp}.InQtyBySet";
+    , [RFID {subprocessColumnName} Farm In Qty] = SUM([RFID {subprocessColumnName} Farm In Qty])";
             }
             else
             {
-                return $@"
+                if (this.notExistsBundle_Detail_Art.Contains(this.subprocessID))
+                {
+                    return $@"
+    , [RFID {subprocessColumnName} Farm In Qty] = #{subprocessIDtmp}.InQtyBySet";
+                }
+                else
+                {
+                    return $@"
     , [RFID {subprocessColumnName} Farm In Qty] =
         IIF(EXISTS (
                 SELECT 1
@@ -2100,25 +2149,33 @@ t.MDivisionID
             ),
             ISNULL( #{subprocessIDtmp}.InQtyBySet ,0),
             #{subprocessIDtmp}.InQtyBySet)";
+                }
             }
         }
 
-        private string FarmOutColumn(string subprocessColumnName)
+        private string FarmOutColumn(string subprocessColumnName, int type = 0)
         {
-            string subprocessIDtmp = Prgs.SubprocesstmpTableName(this.subprocessID);
-            if (this.sbyindex == 1)
+            string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(this.subprocessID);
+            if (this.sbyindex == 1 || this.sbyindex == 2)
             {
                 subprocessIDtmp = "QtyBySetPerSubprocess" + subprocessIDtmp;
             }
 
-            if (this.notExistsBundle_Detail_Art.Contains(this.subprocessID))
+            if (type == 2)
             {
                 return $@"
-    , [RFID {subprocessColumnName} Farm Out Qty] = #{subprocessIDtmp}.OutQtyBySet";
+    , [RFID {subprocessColumnName} Farm Out Qty] = SUM([RFID {subprocessColumnName} Farm Out Qty])";
             }
             else
             {
-                return $@"
+                if (this.notExistsBundle_Detail_Art.Contains(this.subprocessID))
+                {
+                    return $@"
+    , [RFID {subprocessColumnName} Farm Out Qty] = #{subprocessIDtmp}.OutQtyBySet";
+                }
+                else
+                {
+                    return $@"
     , [RFID {subprocessColumnName} Farm Out Qty] =
         IIF(EXISTS (
                 SELECT 1
@@ -2129,6 +2186,7 @@ t.MDivisionID
             ),
             ISNULL( #{subprocessIDtmp}.OutQtyBySet ,0),
             #{subprocessIDtmp}.OutQtyBySet)";
+                }
             }
         }
 
