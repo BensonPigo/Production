@@ -875,8 +875,17 @@ where Junk = 0
                 {
                     DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
 
-                    DataTable dt = this.GetLBRNotHitName();
+                    if (!this.ConfirmColor || this.ConfirmLists.Count == 0)
+                    {
+                        return;
+                    }
 
+                    if (!this.ConfirmLists.Select(x => x.No).Contains(dr["No"].ToString()))
+                    {
+                        return;
+                    }
+
+                    DataTable dt = this.GetLBRNotHitName();
                     Win.Tools.SelectItem item = new Win.Tools.SelectItem(dt, "ReasonName,Code,Type,TypeGroup,Ukey", "100,10,10,10,10", null, headercaptions: "ReasonName,Code,Type,TypeGroup,Ukey")
                     {
                         Width = 700,
@@ -1508,57 +1517,39 @@ order by EffectiveDate desc
             bool checkEFF = !MyUtility.Check.Empty(lLERTarget) && Convert.ToDecimal(this.numEffieiency.Value) < Convert.ToDecimal(lLERTarget);
             string notHitReasonID = string.Empty;
             string lbrReasion = string.Empty;
-
+            string sqlCmd;
             StringBuilder msg = new StringBuilder();
+            Win.Tools.SelectItem item;
+            DialogResult returnResult;
+
             if (checkLBR)
             {
-                msg.Append("LBR is lower than target.\r\n");
-            }
-
-            MyUtility.Msg.WarningBox(msg.ToString() + "Please select not hit target reason.");
-            string sqlCmd = "select Ukey, Name from IEReasonLBRNotHit_1st WITH (NOLOCK) where junk = 0";
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "5,30", string.Empty);
-            DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel)
-            {
-                return;
-            }
-
-            if (!this.CurrentMaintain["Version"].ToString().EqualString("1"))
-            {
-                // Version != 1 檢查表身
-                decimal decLBR = 100 - Convert.ToDecimal(lBRTarget);
-                DataTable detail = (DataTable)this.listControlBindingSource1.DataSource;
-                decimal? avgCycle = detail.AsEnumerable().Average(x => x.Field<decimal?>("TotalCycle"));
-                this.ConfirmLists = detail.AsEnumerable()
-                    .Select(x => new GridList()
-                    {
-                        No = x.Field<string>("No"),
-                        TotalCycle = ((avgCycle - x.Field<decimal?>("TotalCycle")) / avgCycle) * 100,
-                        ReasonName = x.Field<string>("ReasonName"),
-                    })
-                    .Where(x => (x.TotalCycle > decLBR || x.TotalCycle < decLBR * -1) && x.ReasonName.Empty())
-                    .ToList();
-
-                if (this.ConfirmLists.Count > 0)
+                if (this.CurrentMaintain["Version"].ToString().EqualString("1"))
                 {
-                    this.ConfirmColor = true;
-                    this.ConfirmChangeGridColor();
+                    msg.Append("LBR is lower than target.\r\n");
+                    MyUtility.Msg.WarningBox(msg.ToString() + "Please select not hit target reason.");
+                    sqlCmd = "select Ukey, Name from IEReasonLBRNotHit_1st WITH (NOLOCK) where junk = 0";
+                    item = new Win.Tools.SelectItem(sqlCmd, "5,30", string.Empty);
+                    returnResult = item.ShowDialog();
+                    if (returnResult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
 
-                    if (checkLBR)
+                    IList<DataRow> selectedData = item.GetSelecteds();
+                    lbrReasion = selectedData[0]["Ukey"].ToString();
+                }
+                else
+                {
+                    // Version != 1 檢查表身
+                    this.ConfirmChangeGridColor();
+                    if (this.ConfirmColor && this.ConfirmLists.Count > 0)
                     {
                         MyUtility.Msg.WarningBox("No of " + string.Join(",", this.ConfirmLists.Select(x => x.No)) + " need to input not hit target reason ");
                         return;
                     }
                 }
-                else
-                {
-                    this.ConfirmColor = false;
-                }
             }
-
-            IList<DataRow> selectedData = item.GetSelecteds();
-            lbrReasion = selectedData[0]["Ukey"].ToString();
 
             msg = new StringBuilder();
             if (checkEFF)
@@ -1600,16 +1591,33 @@ order by EffectiveDate desc
 
         private void ConfirmChangeGridColor()
         {
-            if (!this.ConfirmColor)
-            {
-                return;
-            }
-
+            string lBRTarget = this.FindTarget("LBR");
+            decimal decLBR = 100 - Convert.ToDecimal(lBRTarget);
             DataTable detail = (DataTable)this.listControlBindingSource1.DataSource;
-            for (int i = 0; i <= detail.Rows.Count - 1; i++)
+            decimal? avgCycle = detail.AsEnumerable().Average(x => x.Field<decimal?>("TotalCycle"));
+            this.ConfirmLists = detail.AsEnumerable()
+                .Select(x => new GridList()
+                {
+                    No = x.Field<string>("No"),
+                    TotalCycle = ((avgCycle - x.Field<decimal?>("TotalCycle")) / avgCycle) * 100,
+                    ReasonName = x.Field<string>("ReasonName"),
+                })
+                .Where(x => (x.TotalCycle > decLBR || x.TotalCycle < decLBR * -1) && x.ReasonName.Empty())
+                .ToList();
+
+            if (this.ConfirmLists.Count > 0)
             {
-                DataGridViewRow dr = this.grid1.Rows[i];
-                dr.DefaultCellStyle.BackColor = this.ConfirmLists.Select(x => x.No).Contains(dr.Cells["No"].Value) ? Color.FromArgb(255, 255, 128) : dr.DefaultCellStyle.BackColor;
+                this.ConfirmColor = true;
+
+                for (int i = 0; i <= detail.Rows.Count - 1; i++)
+                {
+                    DataGridViewRow dr = this.grid1.Rows[i];
+                    dr.DefaultCellStyle.BackColor = this.ConfirmLists.Select(x => x.No).Contains(dr.Cells["No"].Value) ? Color.FromArgb(255, 255, 128) : dr.DefaultCellStyle.BackColor;
+                }
+            }
+            else
+            {
+                this.ConfirmColor = false;
             }
         }
 

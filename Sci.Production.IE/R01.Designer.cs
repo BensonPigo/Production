@@ -42,22 +42,23 @@
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.radioSummary = new Sci.Win.UI.RadioButton();
             this.radioDetail = new Sci.Win.UI.RadioButton();
+            this.chkBalancing = new Sci.Win.UI.CheckBox();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(347, 6);
+            this.print.Location = new System.Drawing.Point(430, 6);
             this.print.TabIndex = 4;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(347, 42);
+            this.toexcel.Location = new System.Drawing.Point(430, 42);
             this.toexcel.TabIndex = 5;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(347, 78);
+            this.close.Location = new System.Drawing.Point(430, 78);
             this.close.TabIndex = 6;
             // 
             // labelFactory
@@ -208,9 +209,21 @@
             this.radioDetail.Text = "Detail";
             this.radioDetail.UseVisualStyleBackColor = true;
             // 
+            // chkBalancing
+            // 
+            this.chkBalancing.AutoSize = true;
+            this.chkBalancing.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkBalancing.Location = new System.Drawing.Point(102, 219);
+            this.chkBalancing.Name = "chkBalancing";
+            this.chkBalancing.Size = new System.Drawing.Size(297, 21);
+            this.chkBalancing.TabIndex = 234;
+            this.chkBalancing.Text = "Only show not hit line balancing target item";
+            this.chkBalancing.UseVisualStyleBackColor = true;
+            // 
             // R01
             // 
-            this.ClientSize = new System.Drawing.Size(443, 258);
+            this.ClientSize = new System.Drawing.Size(515, 286);
+            this.Controls.Add(this.chkBalancing);
             this.Controls.Add(this.lbReportType);
             this.Controls.Add(this.radioPanel1);
             this.Controls.Add(this.dateInlineDate);
@@ -247,6 +260,7 @@
             this.Controls.SetChildIndex(this.dateInlineDate, 0);
             this.Controls.SetChildIndex(this.radioPanel1, 0);
             this.Controls.SetChildIndex(this.lbReportType, 0);
+            this.Controls.SetChildIndex(this.chkBalancing, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -270,5 +284,6 @@
         private Win.UI.RadioPanel radioPanel1;
         private Win.UI.RadioButton radioSummary;
         private Win.UI.RadioButton radioDetail;
+        private Win.UI.CheckBox chkBalancing;
     }
 }

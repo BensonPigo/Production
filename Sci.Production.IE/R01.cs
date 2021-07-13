@@ -20,6 +20,7 @@ namespace Sci.Production.IE
         private string inline1;
         private string inline2;
         private bool bolSummary;
+        private bool bolBalancing;
         private DataTable printData;
         private StringBuilder sqlCmd = new StringBuilder();
 
@@ -97,6 +98,7 @@ namespace Sci.Production.IE
             this.inline1 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value1);
             this.inline2 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value2);
             this.bolSummary = this.radioSummary.Checked;
+            this.bolBalancing = this.chkBalancing.Checked;
             return base.ValidateInput();
         }
 
@@ -253,9 +255,24 @@ inner join(
             {
                 this.sqlCmd.Append(@" 
 and lmd.IsHide = 0
+");
+            }
+
+            if (this.bolBalancing)
+            {
+                if (this.bolSummary)
+                {
+                    this.sqlCmd.Append(@"
+and IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.HighestCycle/lm.CurrentOperators) < LinebalancingTarget.Target
+");
+                }
+                else
+                {
+                    this.sqlCmd.Append(@"
 and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (100 - LinebalancingTarget.Target) 
 	or  ((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 < (100 - LinebalancingTarget.Target) * -1 )
 ");
+                }
             }
 
             if (!MyUtility.Check.Empty(this.factory))
