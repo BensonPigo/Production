@@ -1,11 +1,8 @@
 ﻿using Bytescout.BarCodeReader;
 using Ict;
 using Ict.Win;
-using PQScan.PDFToImage;
 using Sci.Data;
 using Sci.Production.Automation;
-using Spire.Pdf;
-using Spire.Pdf.Graphics;
 //using Spire.Pdf;
 //using Spire.Pdf.Graphics;
 using System;
@@ -21,6 +18,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
+using XsPDF.Pdf;
 
 namespace Sci.Production.Packing
 {
@@ -161,7 +159,6 @@ namespace Sci.Production.Packing
                         string[] contentsOfZPL; // 從原始ZPL檔拆出來的多個ZPL檔
 
                         string fullFileName = fullFileNames.Where(o => o.Contains(safeFileName)).FirstOrDefault();
-
                         try
                         {
                             #region ZPL
@@ -1019,166 +1016,199 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                 int counter = 0;
                 int rank = 0;
                 string currentSCICtnNo = string.Empty;
-                foreach (DataRow dr in dt_ShippingMarkPic_Detail.Rows)
+                int imageCount = 0;
+                int totalNeedInsertCount = dt_ShippingMarkPic_Detail.Rows.Count;
+
+                /*
+                 圖片 <= 200張：圖片全部轉完、存下，一次性寫入
+                 圖片 >  200張：分批進行，轉完、存下200張後，存入一次，例如1080張，就會分三次
+                 */
+
+                try
                 {
-                    string packID = MyUtility.Convert.GetString(dr["PackingListID"]);
-                    string sCICtnNo = MyUtility.Convert.GetString(dr["SCICtnNo"]);
-
-                    if (currentSCICtnNo == sCICtnNo)
+                    // 每200張寫入DB一次
+                    foreach (DataRow dr in dt_ShippingMarkPic_Detail.Rows)
                     {
-                        rank++;
-                    }
-                    else
-                    {
-                        rank = 1;
-                        currentSCICtnNo = sCICtnNo;
-                    }
+                        string packID = MyUtility.Convert.GetString(dr["PackingListID"]);
+                        string sCICtnNo = MyUtility.Convert.GetString(dr["SCICtnNo"]);
 
-                    BarcodeObj barcodeObj = this.BarcodeObjs.Where(o => o.PackingListID == packID && o.SCICtnNo == sCICtnNo).FirstOrDefault();
-
-                    var barcodeObjs = this.BarcodeObjs.Where(o => o.PackingListID == packID && o.SCICtnNo == sCICtnNo);
-                    string barcode = barcodeObj.Barcode;
-
-                    // 如果Image是null，代表是PDF
-                    if (barcodeObjs.FirstOrDefault().Image != null)
-                    {
-                        foreach (var item in barcodeObjs)
+                        if (currentSCICtnNo == sCICtnNo)
                         {
-                            string cmd = this.InsertImageToDatabase_List(counter.ToString(), item.Image, packID, sCICtnNo, rank.ToString());
-                            filenames.Add(barcode);
-                            sQLs.Add(cmd);
-                            images.Add(item.Image);
                             rank++;
-                            counter++;
-                        }
-                    }
-                    else
-                    {
-                        byte[] pDFImage = null;
-
-                        // 原套件
-                        PdfDocument doc = new PdfDocument();
-                        doc.LoadFromFile(barcodeObj.FullFileName);
-                        Image bmp = doc.SaveAsImage(0, PdfImageType.Bitmap, 300, 300);
-                        // Note : 工廠換了變出PDF的軟體，因此不需要裁切圖片了，直接把Source轉出
-                        Bitmap pic = new Bitmap(bmp);
-
-                        // 準備要寫入DB的資料
-                        using (var stream = new MemoryStream())
-                        {
-                            pic.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                            pDFImage = stream.ToArray();
-                        }
-
-                        // 將切割後的圖片存檔
-                        doc.Dispose();
-                        bmp.Dispose();
-                        pic.Dispose();
-
-                        /*
-                        // 新套件
-                        PDFDocument pdfDoc = new PDFDocument();
-                        pdfDoc.LoadPDF(barcodeObj.FullFileName);
-                        pdfDoc.DPI = 300;
-                        Bitmap pic = null;
-
-                        // PDF檔理應要有至少一頁，若沒有則跳出詳細訊息
-                        if (pdfDoc.PageCount > 0)
-                        {
-                            pic = pdfDoc.ToImage(0);
                         }
                         else
                         {
-                            Exception noPdf = new Exception($"PDF:[ {barcodeObj.FileName}] can't find any page, please check.");
-                            throw noPdf;
+                            rank = 1;
+                            currentSCICtnNo = sCICtnNo;
                         }
 
-                        // 準備要寫入DB的資料
-                        using (var stream = new MemoryStream())
+                        BarcodeObj barcodeObj = this.BarcodeObjs.Where(o => o.PackingListID == packID && o.SCICtnNo == sCICtnNo).FirstOrDefault();
+
+                        var barcodeObjs = this.BarcodeObjs.Where(o => o.PackingListID == packID && o.SCICtnNo == sCICtnNo);
+                        string barcode = barcodeObj.Barcode;
+
+                        // 如果Image是null，代表是PDF
+                        if (barcodeObjs.FirstOrDefault().Image != null)
                         {
-                            pic.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                            pDFImage = stream.ToArray();
-                        }
-
-                        pic.Dispose();
-                        pdfDoc.Dispose();
-                        */
-
-                        string cmd = this.InsertImageToDatabase_List(counter.ToString(), pDFImage, packID, sCICtnNo, rank.ToString());
-                        filenames.Add(barcode);
-                        sQLs.Add(cmd);
-                        images.Add(pDFImage);
-                        counter++;
-                    }
-                }
-
-                using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
-                {
-                    DBProxy.Current.DefaultTimeout = 3600;
-                    try
-                    {
-                        int idxw = 0;
-                        List<SqlParameter> para = new List<SqlParameter>();
-
-                        // 組合寫入圖片的SQL
-                        string finalSQL = string.Empty;
-
-                        // SqlParameter上限是2100個，因此訂一個上限值，超過的話就分段
-                        int sqlParameterLimit = 1000;
-                        int limitCounter = 0;
-
-                        List<Task<DualResult>> dualResults = new List<Task<DualResult>>();
-                        int total = 1;
-
-                        foreach (var sql in sQLs)
-                        {
-                            finalSQL += sql + Environment.NewLine;
-
-                            string name = filenames[idxw];
-                            byte[] image = images[idxw];
-
-                            para.Add(new SqlParameter($"@FileName{idxw}", name));
-                            para.Add(new SqlParameter($"@Image{idxw}", image));
-                            idxw++;
-
-                            limitCounter += 2;
-                            if (limitCounter >= sqlParameterLimit || total == sQLs.Count)
+                            foreach (var item in barcodeObjs)
                             {
-                                result = DBProxy.Current.Execute(null, finalSQL, para);
-                                if (!result)
-                                {
-                                    transactionscope.Dispose();
-                                    throw result.GetException();
-                                }
+                                string cmd = this.GetSQL_InsertImageToDatabase(counter.ToString(), item.Image, packID, sCICtnNo, rank.ToString());
+                                filenames.Add(barcode);
+                                sQLs.Add(cmd);
+                                images.Add(item.Image);
+                                rank++;
+                                counter++;
+                            }
+                        }
+                        else
+                        {
+                            byte[] pDFImage = null;
+                            /*
+                            // 原套件
+                            PdfDocument doc = new PdfDocument();
+                            doc.LoadFromFile(barcodeObj.FullFileName);
+                            Image bmp = doc.SaveAsImage(0, PdfImageType.Bitmap, 300, 300);
+                            // Note : 工廠換了變出PDF的軟體，因此不需要裁切圖片了，直接把Source轉出
+                            Bitmap pic = new Bitmap(bmp);
 
-                                finalSQL = string.Empty;
-                                para = new List<SqlParameter>();
-                                limitCounter = 0;
+                            // 準備要寫入DB的資料
+                            using (var stream = new MemoryStream())
+                            {
+                                pic.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                                pDFImage = stream.ToArray();
                             }
 
-                            total++;
+                            // 將切割後的圖片存檔
+                            doc.Dispose();
+                            bmp.Dispose();
+                            pic.Dispose();
+                            */
+
+                            // XsPDF套件
+                            PdfImageConverter pdfConverter = new PdfImageConverter(barcodeObj.FullFileName);
+                            pdfConverter.DPI = 300;
+                            pdfConverter.GrayscaleOutput = false;
+
+                            // 直接取用Image轉成byte[]，不需要再轉Bitmap
+                            Image bmp = pdfConverter.PageToImage(0);
+
+                            // 準備要寫入DB的資料
+                            using (var stream = new MemoryStream())
+                            {
+                                bmp.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                                pDFImage = stream.ToArray();
+                            }
+
+                            bmp.Dispose();
+                            pdfConverter.Dispose();
+
+                            string cmd = this.GetSQL_InsertImageToDatabase(imageCount.ToString(), pDFImage, packID, sCICtnNo, rank.ToString());
+                            filenames.Add(barcode);
+                            sQLs.Add(cmd);
+                            images.Add(pDFImage);
+                            counter++;
                         }
 
-                        transactionscope.Complete();
-                        transactionscope.Dispose();
+                        if (imageCount == 199)
+                        {
+                            this.InsertImage(sQLs, filenames, images);
+                            sQLs = new List<string>();
+                            filenames = new List<string>();
+                            images = new List<byte[]>();
+
+                            imageCount = 0;
+                        }
+                        else
+                        {
+                            imageCount++;
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        transactionscope.Dispose();
-                        this.ShowErr(ex);
-                        return false;
-                    }
+                }
+                catch (Exception ex)
+                {
+                    // 該Packing只要其中一張圖片除錯，則該Packing全部把先前的圖片刪除
+                    string cmd = $@"
+UPDATE b
+SET Image = NULL
+from ShippingMarkPic a 
+inner join ShippingMarkPic_Detail b on a.Ukey = b.ShippingMarkPicUkey
+where a.PackingListID IN ('{packingID}')
+";
+                    DBProxy.Current.Execute(null, cmd);
+
+                    this.ShowErr(ex);
+                }
+
+                if (totalNeedInsertCount < 500)
+                {
+                    this.InsertImage(sQLs, filenames, images);
                 }
             }
 
             return true;
         }
 
-        private DualResult InsertImage(string sql, List<SqlParameter> para, SqlConnection sqlConn)
+        private bool InsertImage(List<string> sQLs, List<string> filenames, List<byte[]> images)
         {
-            DualResult result = DBProxy.Current.ExecuteByConn(sqlConn, sql, para);
+            DualResult result;
+            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
+            {
+                DBProxy.Current.DefaultTimeout = 3600;
+                try
+                {
+                    int idxw = 0;
+                    List<SqlParameter> para = new List<SqlParameter>();
 
-            return result;
+                    // 組合寫入圖片的SQL
+                    string finalSQL = string.Empty;
+
+                    // SqlParameter上限是2100個，因此訂一個上限值，超過的話就分段
+                    int sqlParameterLimit = 1000;
+                    int limitCounter = 0;
+
+                    List<Task<DualResult>> dualResults = new List<Task<DualResult>>();
+                    int total = 1;
+
+                    foreach (var sql in sQLs)
+                    {
+                        finalSQL += sql + Environment.NewLine;
+
+                        string name = filenames[idxw];
+                        byte[] image = images[idxw];
+
+                        para.Add(new SqlParameter($"@FileName{idxw}", name));
+                        para.Add(new SqlParameter($"@Image{idxw}", image));
+                        idxw++;
+
+                        limitCounter += 2;
+                        if (limitCounter >= sqlParameterLimit || total == sQLs.Count)
+                        {
+                            result = DBProxy.Current.Execute(null, finalSQL, para);
+                            if (!result)
+                            {
+                                transactionscope.Dispose();
+                                throw result.GetException();
+                            }
+
+                            finalSQL = string.Empty;
+                            para = new List<SqlParameter>();
+                            limitCounter = 0;
+                        }
+
+                        total++;
+                    }
+
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    transactionscope.Dispose();
+                    throw ex;
+                }
+            }
+
+            return true;
         }
 
         private string Get_MatchSQL(string packingListID, string sSCC)
@@ -1979,7 +2009,7 @@ AND sd.Seq = (
             }
         }
 
-        private string InsertImageToDatabase_List(string counter, byte[] dataArry, string packingListID, string sCICtnNo, string rank)
+        private string GetSQL_InsertImageToDatabase(string counter, byte[] dataArry, string packingListID, string sCICtnNo, string rank)
         {
             // 第一張圖片，對應Combnation的最小Seq，第二張圖片對應第二小Seq，以此類推
 
@@ -2205,5 +2235,6 @@ WHERE PackingListID IN ('{packingListIDs.JoinToString("','")}')
                 this.GetInfoByPackingList(dr);
             }
         }
+
     }
 }
