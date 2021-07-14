@@ -1542,7 +1542,7 @@ order by EffectiveDate desc
                 else
                 {
                     // Version != 1 檢查表身
-                    this.ConfirmChangeGridColor();
+                    this.ConfirmChangeGridColor(true);
                     if (this.ConfirmColor && this.ConfirmLists.Count > 0)
                     {
                         MyUtility.Msg.WarningBox("No of " + string.Join(",", this.ConfirmLists.Select(x => x.No)) + " need to input not hit target reason ");
@@ -1555,18 +1555,17 @@ order by EffectiveDate desc
             if (checkEFF)
             {
                 msg.Append("Efficiency is lower than target.\r\n");
-            }
+                MyUtility.Msg.WarningBox(msg.ToString() + "Please select not hit target reason.");
+                sqlCmd = "select ID, Description from IEReason WITH (NOLOCK) where Type = 'LM' and Junk = 0";
+                item = new Win.Tools.SelectItem(sqlCmd, "5,30", string.Empty);
+                returnResult = item.ShowDialog();
+                if (returnResult == DialogResult.Cancel)
+                {
+                    return;
+                }
 
-            MyUtility.Msg.WarningBox(msg.ToString() + "Please select not hit target reason.");
-            sqlCmd = "select ID, Description from IEReason WITH (NOLOCK) where Type = 'LM' and Junk = 0";
-            item = new Win.Tools.SelectItem(sqlCmd, "5,30", string.Empty);
-            returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel)
-            {
-                return;
+                notHitReasonID = item.GetSelectedString();
             }
-
-            notHitReasonID = item.GetSelectedString();
 
             DualResult result;
             string updateCmd = "update LineMapping set Status = 'Confirmed', ";
@@ -1589,7 +1588,7 @@ order by EffectiveDate desc
             }
         }
 
-        private void ConfirmChangeGridColor()
+        private void ConfirmChangeGridColor(bool chkEmpty)
         {
             string lBRTarget = this.FindTarget("LBR");
             decimal decLBR = 100 - Convert.ToDecimal(lBRTarget);
@@ -1602,7 +1601,7 @@ order by EffectiveDate desc
                     TotalCycle = ((avgCycle - x.Field<decimal?>("TotalCycle")) / avgCycle) * 100,
                     ReasonName = x.Field<string>("ReasonName"),
                 })
-                .Where(x => (x.TotalCycle > decLBR || x.TotalCycle < decLBR * -1) && x.ReasonName.Empty())
+                .Where(x => (x.TotalCycle > decLBR || x.TotalCycle < decLBR * -1) && (!chkEmpty || x.ReasonName.Empty()))
                 .ToList();
 
             if (this.ConfirmLists.Count > 0)
@@ -2117,7 +2116,7 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing'
             this.listControlBindingSource1.DataSource = gridLists.ToDataTable<GridList>();
             this.grid1.DataSource = this.listControlBindingSource1;
 
-            this.ConfirmChangeGridColor();
+            this.ConfirmChangeGridColor(false);
         }
 
         private void IsShowTable()

@@ -263,7 +263,7 @@ and lmd.IsHide = 0
                 if (this.bolSummary)
                 {
                     this.sqlCmd.Append(@"
-and IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.HighestCycle/lm.CurrentOperators) < LinebalancingTarget.Target
+and IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.HighestCycle/lm.CurrentOperators) * 100 < LinebalancingTarget.Target
 ");
                 }
                 else
