@@ -6,6 +6,8 @@ using Ict;
 using Sci.Data;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using Sci.Production.CallPmsAPI;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -20,6 +22,7 @@ namespace Sci.Production.Shipping
         private DataTable detailData;
         private DataTable detail2Data;
         private DataRow masterData;
+        private List<string> listPLFromRgCode = new List<string>();
 
         /// <summary>
         /// P10_ImportData
@@ -73,9 +76,34 @@ namespace Sci.Production.Shipping
         // Query
         private void BtnQuery_Click(object sender, EventArgs e)
         {
+            this.listPLFromRgCode = new List<string>();
             #region 組SQL
             StringBuilder sqlCmd = new StringBuilder();
-            List<SqlParameter> listPar = new List<SqlParameter>();
+            string sqlGetInvNoForA2B = string.Empty;
+            string sqlGetDataFromA2B = string.Empty;
+
+            sqlGetInvNoForA2B = $@"
+select  distinct gd.PLFromRgCode ,g.ID
+FROM   gmtbooking g WITH (nolock)
+inner  join  GMTBooking_Detail gd with (nolock) on g.ID = gd.ID
+where   g.shipplanid = '' and
+        g.socfmdate IS NOT NULL 
+";
+            sqlGetDataFromA2B = @"
+select  distinct    [id] = p.InvNo,
+                    [ClogCTNQty] = (SELECT Isnull(Sum(pd.ctnqty), 0) 
+                                    FROM   packinglist p WITH (nolock), 
+                                           packinglist_detail pd WITH (nolock) 
+                                    WHERE  p.invno = g.id 
+                                           AND p.id = pd.id 
+                                           AND pd.receivedate IS NOT NULL)
+from    packinglist p WITH (nolock)
+inner join  packinglist_detail pd WITH (nolock) on p.id = pd.id
+inner join  order_qtyship oq WITH (nolock) on pd.orderid = oq.id and pd.ordershipmodeseq = oq.seq
+WHERE   p.InvNo in ({0})
+        o.junk = 0 and
+        o.GMTComplete != 'S'
+";
 
             sqlCmd.Append(@"
 SELECT DISTINCT [Selected] = 1, 
@@ -102,87 +130,205 @@ SELECT DISTINCT [Selected] = 1,
                  WHERE  p.invno = g.id 
                         AND p.id = pd.id 
                         AND pd.receivedate IS NOT NULL)
-FROM   gmtbooking g WITH (nolock), 
-       order_qtyship oq WITH (nolock), 
-       packinglist p WITH (nolock), 
-       packinglist_detail pd WITH (nolock), 
-       localsupp ls WITH (nolock),
-	   orders o WITH (nolock)
+FROM   gmtbooking g WITH (nolock)
+inner join  localsupp ls WITH (nolock) on g.forwarder = ls.id
+inner join  packinglist p WITH (nolock) on g.id = p.invno
+inner join  packinglist_detail pd WITH (nolock) on p.id = pd.id
+inner join  order_qtyship oq WITH (nolock) on pd.orderid = oq.id and pd.ordershipmodeseq = oq.seq
+inner join  orders o WITH (nolock) on o.ID = oq.Id
 WHERE  g.shipplanid = '' 
        AND g.socfmdate IS NOT NULL 
-       AND g.id = p.invno 
-       AND p.id = pd.id 
-       AND pd.orderid = oq.id 
-       AND pd.ordershipmodeseq = oq.seq 
-       AND g.forwarder = ls.id 
-	   AND o.ID = oq.Id 
        AND o.junk = 0 
        AND o.GMTComplete != 'S'
 ");
             if (!MyUtility.Check.Empty(this.txtGBNoStart.Text))
             {
                 sqlCmd.Append(string.Format(" and g.id >= '{0}'", this.txtGBNoStart.Text));
+                sqlGetInvNoForA2B += string.Format(" and g.id >= '{0}'", this.txtGBNoStart.Text);
             }
 
             if (!MyUtility.Check.Empty(this.txtGBNoEnd.Text))
             {
                 sqlCmd.Append(string.Format(" and g.id <= '{0}'", this.txtGBNoEnd.Text));
+                sqlGetInvNoForA2B += string.Format(" and g.id <= '{0}'", this.txtGBNoEnd.Text);
             }
 
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString("yyyyMMdd")));
+                sqlGetDataFromA2B += string.Format(" and oq.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString("yyyyMMdd"));
             }
 
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString("yyyyMMdd")));
+                sqlGetDataFromA2B += string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString("yyyyMMdd"));
             }
 
             if (!MyUtility.Check.Empty(this.dateCutoffDate.Value))
             {
                 // 20161126 撈取DateBox1用法怪怪的
                 // sqlCmd.Append(string.Format(" and g.CutOffDate >= '{0}' and g.CutOffDate < '{1}'", Convert.ToDateTime(dateRange1.Value1).ToString("d"), (Convert.ToDateTime(dateRange1.Value1).AddDays(1)).ToString("d")));
-                sqlCmd.Append(string.Format(" and g.CutOffDate >= '{0}' and g.CutOffDate < '{1}'", Convert.ToDateTime(this.dateCutoffDate.Value).ToString("d"), Convert.ToDateTime(this.dateCutoffDate.Value).AddDays(1).ToString("d")));
+                sqlCmd.Append(string.Format(" and g.CutOffDate >= '{0}' and g.CutOffDate < '{1}'", Convert.ToDateTime(this.dateCutoffDate.Value).ToString("yyyyMMdd"), Convert.ToDateTime(this.dateCutoffDate.Value).AddDays(1).ToString("yyyyMMdd")));
+                sqlGetInvNoForA2B += string.Format(" and g.CutOffDate >= '{0}' and g.CutOffDate < '{1}'", Convert.ToDateTime(this.dateCutoffDate.Value).ToString("yyyyMMdd"), Convert.ToDateTime(this.dateCutoffDate.Value).AddDays(1).ToString("yyyyMMdd"));
             }
 
             if (!MyUtility.Check.Empty(this.txtshipmode.SelectedValue))
             {
                 sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}'", MyUtility.Convert.GetString(this.txtshipmode.SelectedValue)));
+                sqlGetInvNoForA2B += string.Format(" and g.ShipModeID = '{0}'", MyUtility.Convert.GetString(this.txtshipmode.SelectedValue));
             }
 
             if (!MyUtility.Check.Empty(this.txtbrand.Text))
             {
                 sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", this.txtbrand.Text));
+                sqlGetInvNoForA2B += string.Format(" and g.BrandID = '{0}'", this.txtbrand.Text);
             }
 
             if (!MyUtility.Check.Empty(this.txtSubconForwarder.TextBox1.Text))
             {
                 sqlCmd.Append(string.Format(" and g.Forwarder = '{0}'", this.txtSubconForwarder.TextBox1.Text));
+                sqlGetInvNoForA2B += string.Format(" and g.Forwarder = '{0}'", this.txtSubconForwarder.TextBox1.Text);
             }
 
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
                 sqlCmd.Append(string.Format(" and pd.OrderID = '{0}'", this.txtSPNo.Text));
+                sqlGetDataFromA2B += string.Format(" and pd.OrderID = '{0}'", this.txtSPNo.Text);
             }
 
             if (!MyUtility.Check.Empty(this.comboContainerType.Text))
             {
                 sqlCmd.Append(string.Format(" and g.CYCFS = '{0}'", this.comboContainerType.Text));
+                sqlGetInvNoForA2B += string.Format(" and g.CYCFS = '{0}'", this.comboContainerType.Text);
             }
 
             if (!MyUtility.Check.Empty(this.dateIDD.Value))
             {
-                sqlCmd.Append($@"AND  oq.IDD = @IDD ");
-                listPar.Add(new SqlParameter("@IDD", this.dateIDD.Value));
+                sqlCmd.Append($@" AND  oq.IDD = {Convert.ToDateTime(this.dateIDD.Value).ToString("yyyyMMdd")} ");
+                sqlGetDataFromA2B += $@" AND  oq.IDD = {Convert.ToDateTime(this.dateIDD.Value).ToString("yyyyMMdd")} ";
             }
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), listPar, out this.gbData);
+            DualResult result;
+            DataTable dtInvNoA2B;
+
+            result = DBProxy.Current.Select(null, sqlGetInvNoForA2B, out dtInvNoA2B);
+
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query GB error:" + result.ToString());
+                this.ShowErr(result);
                 return;
+            }
+
+            if (dtInvNoA2B.Rows.Count > 0)
+            {
+                this.listPLFromRgCode = dtInvNoA2B.AsEnumerable().Select(s => $"'{s["PLFromRgCode"].ToString()}'").Distinct().ToList();
+                #region get A2B Data
+                string whereInvNo = dtInvNoA2B.AsEnumerable().Select(s => $"'{s["ID"].ToString()}'").JoinToString(",");
+
+                DataTable dtGmtFromA2B = new DataTable();
+                foreach (string plFromRgCode in this.listPLFromRgCode)
+                {
+                    DataTable dtResultFromA2B;
+                    result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, string.Format(sqlGetDataFromA2B, whereInvNo), out dtResultFromA2B);
+
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    if (dtGmtFromA2B.Rows.Count == 0)
+                    {
+                        dtGmtFromA2B = dtResultFromA2B;
+                    }
+                    else
+                    {
+                        dtGmtFromA2B.MergeBySyncColType(dtResultFromA2B);
+                    }
+                }
+
+                string sqlGetGMTInfo = $@"
+alter table #tmp alter column id varchar(25)
+select id, [ClogCTNQty] = sum(ClogCTNQty)
+into #tmpA2B_GMT
+from #tmp group by id
+
+select  Selected, 
+        id, 
+        brandid, 
+        shipmodeid, 
+        Forwarder, 
+        cutoffdate, 
+        cycfs, 
+        sono, 
+        forwarderwhse_detailukey, 
+        WhseNo, 
+        Status, 
+        totalctnqty, 
+        totalshipqty, 
+        totalcbm, 
+        [ClogCTNQty] = sum(ClogCTNQty)
+from    (
+            SELECT  [Selected] = 1, 
+                    g.id, 
+                    g.brandid, 
+                    g.shipmodeid, 
+                    [Forwarder] = ( g.forwarder + ' - ' + ls.abb ), 
+                    g.cutoffdate, 
+                    g.cycfs, 
+                    g.sono, 
+                    g.forwarderwhse_detailukey, 
+                    [WhseNo] = Isnull((SELECT whseno 
+                            FROM   forwarderwhse_detail WITH (nolock) 
+                            WHERE  ukey = g.forwarderwhse_detailukey), ''), 
+                    [Status] = Iif(
+            			g.status = 'Confirmed', 'GB Confirmed', 
+            			Iif(g.socfmdate IS NULL, '', 'S/O Confirmed')), 
+                    g.totalctnqty, 
+                    g.totalshipqty, 
+                    g.totalcbm, 
+                    gmtAtoB.ClogCTNQty
+            FROM   gmtbooking g WITH (nolock)
+            inner join  localsupp ls WITH (nolock) on g.forwarder = ls.id
+            inner join  #tmpA2B_GMT gmtAtoB on g.ID = gmtAtoB.id
+            union all
+            {sqlCmd}
+        )   result
+group by    Selected, 
+            id, 
+            brandid, 
+            shipmodeid, 
+            Forwarder, 
+            cutoffdate, 
+            cycfs, 
+            sono, 
+            forwarderwhse_detailukey, 
+            WhseNo, 
+            Status, 
+            totalctnqty, 
+            totalshipqty, 
+            totalcbm
+";
+
+                result = MyUtility.Tool.ProcessWithDatatable(dtGmtFromA2B, null, sqlGetGMTInfo, out this.gbData);
+
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+                #endregion
+            }
+            else
+            {
+                result = DBProxy.Current.Select(null, sqlCmd.ToString(), null, out this.gbData);
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox("Query GB error:" + result.ToString());
+                    return;
+                }
             }
 
             StringBuilder allID = new StringBuilder();
@@ -206,6 +352,23 @@ where p.INVNo in ({0})
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox("Query PL error:" + result.ToString());
+                    return;
+                }
+
+                if (dtInvNoA2B.Rows.Count > 0)
+                {
+                    foreach (string plFromRgCode in this.listPLFromRgCode)
+                    {
+                        DataTable dtPackDataA2B;
+                        result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, sqlCmd.ToString(), out dtPackDataA2B);
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        this.plData.MergeBySyncColType(dtPackDataA2B);
+                    }
                 }
             }
 
@@ -263,8 +426,7 @@ where p.INVNo in ({0})
 
             if (allID.Length > 0)
             {
-                string sqlCmd = string.Format(
-                    @"
+                string sqlCmd = @"
 select    p.ID
 		, [OrderID]=iif(p.OrderID='',(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')),p.OrderID) 
 		, [BuyerDelivery]=iif(p.type = 'B',(select BuyerDelivery from Order_QtyShip WITH (NOLOCK) where ID = p.OrderID and Seq = p.OrderShipmodeSeq),(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq)) 
@@ -278,15 +440,32 @@ select    p.ID
 		, p.InvNo
 		, p.MDivisionID
 		, p.ShipQty
+        , [PLFromRgCode] = '{1}'
 from PackingList p WITH (NOLOCK) 
 LEFT JOIN Express e WITH (NOLOCK) ON e.ID=p.ExpressID
-where p.InvNo in ({0})", allID.ToString().Substring(0, allID.Length - 1));
+where p.InvNo in ({0})";
+
+                string wherePackID = allID.ToString().Substring(0, allID.Length - 1);
+
                 DataTable packData;
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, out packData);
+                DualResult result = DBProxy.Current.Select(null, string.Format(sqlCmd, wherePackID, string.Empty), out packData);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox("Import query packinglist error:" + result.ToString());
                     return;
+                }
+
+                foreach (string plFromRgCode in this.listPLFromRgCode)
+                {
+                    DataTable dtPackDataA2B;
+                    result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, string.Format(sqlCmd, wherePackID, plFromRgCode), out dtPackDataA2B);
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    packData.MergeBySyncColType(dtPackDataA2B);
                 }
 
                 foreach (DataRow dr in packData.Rows)

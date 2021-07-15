@@ -1341,6 +1341,7 @@
             // 
             this.txtSubconForwarder.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder", true));
             this.txtSubconForwarder.DisplayBox1Binding = "";
+            this.txtSubconForwarder.IsFreightForwarder = false;
             this.txtSubconForwarder.IsIncludeJunk = false;
             this.txtSubconForwarder.IsMisc = false;
             this.txtSubconForwarder.IsShipping = false;

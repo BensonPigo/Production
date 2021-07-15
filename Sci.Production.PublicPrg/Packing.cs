@@ -651,6 +651,7 @@ order by a.Seq ASC,a.CTNQty DESC", packingListID);
         /// <param name="shipPlanID">shipPlanID</param>
         /// <param name="pulloutID">pulloutID</param>
         /// <param name="showmsg">showmsg</param>
+        /// <param name="plFromRgCode">plFromRgCode</param>
         /// <returns>DualResult</returns>
         public static DualResult CheckExistsOrder_QtyShip_Detail(string packingListID = "", string iNVNo = "", string shipPlanID = "", string pulloutID = "", bool showmsg = true, string plFromRgCode = "")
         {

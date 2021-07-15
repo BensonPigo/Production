@@ -119,30 +119,47 @@ namespace Sci.Production.CallPmsAPI
             }
         }
 
-
-        public static DualResult GetP05_ImportFromPackingListQuery(string systemName, P05_ImportFromPackingListQuery p05_ImportFromPackingList, out DataTable dtResult)
+        public static List<string> GetPLFromRgCodeByInvNo(string InvNo)
         {
-            try
+            string sqlGetPLFromRgCode = $"select distinct PLFromRgCode from GMTBooking_Detail with (nolock) where ID = '{InvNo}'";
+            DataTable dtResult;
+            DualResult result = DBProxy.Current.Select(null, sqlGetPLFromRgCode, out dtResult);
+            if (!result)
             {
-                string apiUrl = GetWebAPIUrl(systemName);
-                WebApiBaseResult webApiBaseResult;
-                string postBody = PmsWebApiUtility20.Json.ConvertToJson(p05_ImportFromPackingList);
-                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, "api/PackingA2B/GetP05_ImportFromPackingListQuery", postBody, 60);
-
-                if (!webApiBaseResult.isSuccess)
-                {
-                    dtResult = null;
-                    return new DualResult(false, GetWebApiBaseResultError(webApiBaseResult));
-                }
-
-                List<P05_ImportFromPackingListQueryResult> resultList = PmsWebApiUtility20.Json.ConvertToObject<List<P05_ImportFromPackingListQueryResult>>(webApiBaseResult.responseContent);
-                dtResult = ToDataTable<P05_ImportFromPackingListQueryResult>(resultList);
-                return new DualResult(true);
+                throw result.GetException();
             }
-            catch (Exception ex)
+
+            if (dtResult.Rows.Count == 0)
             {
-                dtResult = null;
-                return new DualResult(false, ex);
+                return new List<string>();
+            }
+            else
+            {
+                return dtResult.AsEnumerable().Select(s => s["PLFromRgCode"].ToString()).ToList(); ;
+            }
+        }
+
+        public static List<string> GetPLFromRgCodeByShipPlanID(string shipPlanID)
+        {
+            string sqlGetPLFromRgCode = $@"
+select distinct gd.PLFromRgCode 
+from GMTBooking_Detail gd with (nolock) 
+where exists(select 1 from GMTBooking g with (nolock) where g.ShipPlanID = '{shipPlanID}')";
+            
+            DataTable dtResult;
+            DualResult result = DBProxy.Current.Select(null, sqlGetPLFromRgCode, out dtResult);
+            if (!result)
+            {
+                throw result.GetException();
+            }
+
+            if (dtResult.Rows.Count == 0)
+            {
+                return new List<string>();
+            }
+            else
+            {
+                return dtResult.AsEnumerable().Select(s => s["PLFromRgCode"].ToString()).ToList(); ;
             }
         }
 
@@ -195,6 +212,7 @@ namespace Sci.Production.CallPmsAPI
                 }
 
                 dtResult = (DataTable)JsonConvert.DeserializeObject(webApiBaseResult.responseContent, (typeof(DataTable)));
+
                 return new DualResult(true);
             }
             catch (Exception ex)

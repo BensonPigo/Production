@@ -3,6 +3,7 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
 using Sci.Production.PublicPrg;
+using Sci.Win.Tems;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,6 @@ namespace Sci.Production.Shipping
         private string empmask;
         private string dtmask;
         private DateTime? FBDate_Ori;
-        private DataTable dtGMTBooking_Detail;
 
         /// <summary>
         /// ListGMTBooking_Detail
@@ -244,16 +244,25 @@ this.masterID);
 
         private DualResult MergeDetailA2B()
         {
-            DualResult result;
+            string sqlGetGMTBooking_Detail = $"select PLFromRgCode, PackingListID from GMTBooking_Detail with (nolock) where ID = '{this.CurrentMaintain["ID"]}'";
+            DataTable dtGMTBooking_Detail;
+            DualResult result = DBProxy.Current.Select(null, sqlGetGMTBooking_Detail, out dtGMTBooking_Detail);
 
-            if (this.dtGMTBooking_Detail.Rows.Count == 0)
+            if (!result)
+            {
+                return result;
+            }
+
+            if (dtGMTBooking_Detail.Rows.Count == 0)
             {
                 return new DualResult(true);
             }
 
-            foreach (string pLFromRgCode in this.ListPLFromRgCode)
+            var listPLFromRgCode = dtGMTBooking_Detail.AsEnumerable().Select(s => s["PLFromRgCode"].ToString()).Distinct();
+
+            foreach (string pLFromRgCode in listPLFromRgCode)
             {
-                string sqlWhere = this.GetPackingIDForA2BWhere(this.ListGMTBooking_Detail, pLFromRgCode);
+                string sqlWhere = this.GetPackingIDForA2BWhere(dtGMTBooking_Detail.AsEnumerable(), pLFromRgCode);
                 string sqlGetA2B = string.Format(this.baseDetailSql, pLFromRgCode) + $" where p.ID in ({sqlWhere})";
 
                 DataTable dtResult;
@@ -264,7 +273,7 @@ this.masterID);
                     return result;
                 }
 
-                ((DataTable)this.detailgridbs.DataSource).Merge(dtResult);
+                ((DataTable)this.detailgridbs.DataSource).MergeBySyncColType(dtResult);
             }
 
             return new DualResult(true);
@@ -281,15 +290,6 @@ this.masterID);
             this.btnRemark.Enabled = this.CurrentMaintain != null;
             this.btnRemark.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["Remark"]) ? Color.Blue : Color.Black;
 
-            string sqlGetGMTBooking_Detail = $"select PLFromRgCode, PackingListID from GMTBooking_Detail with (nolock) where ID = '{this.CurrentMaintain["ID"]}'";
-
-            DualResult result = DBProxy.Current.Select(null, sqlGetGMTBooking_Detail, out this.dtGMTBooking_Detail);
-
-            if (!result)
-            {
-                this.ShowErr(result);
-            }
-
             #region AirPP List按鈕變色
             if (!this.EditMode)
             {
@@ -303,13 +303,7 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                 {
                     foreach (string plFromRgCode in this.ListPLFromRgCode)
                     {
-                        string sqlWhere = this.GetPackingIDForA2BWhere(this.ListGMTBooking_Detail, plFromRgCode);
-                        string sqlCheckA2B = $@"
-select 1
-from PackingList p WITH (NOLOCK) , PackingList_Detail pd WITH (NOLOCK) , AirPP a WITH (NOLOCK) 
-where p.ID in ({sqlWhere}) and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShipmodeSeq = pd.OrderShipmodeSeq
-";
-                        packingA2BResult = PackingA2BWebAPI.SeekBySql(plFromRgCode, sqlCheckA2B);
+                        packingA2BResult = PackingA2BWebAPI.SeekBySql(plFromRgCode, sqlCmd);
 
                         if (!packingA2BResult)
                         {
@@ -380,12 +374,6 @@ where p.ID in ({sqlWhere}) and p.ID = pd.ID and a.OrderID = pd.OrderID and a.Ord
             this.txtPulloutPort1.ShipModeID = this.txtShipmodeShippingMode.SelectedValue;
 
             this.ControlColor();
-
-            result = this.MergeDetailA2B();
-            if (!result)
-            {
-                this.ShowErr(result);
-            }
         }
 
         /// <inheritdoc/>
@@ -511,6 +499,12 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
+            DualResult result = this.MergeDetailA2B();
+            if (!result)
+            {
+                return result;
+            }
+
             #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
             bool gMTCompleteCheck = this.GMTCompleteCheck();
             if (!gMTCompleteCheck)
@@ -657,12 +651,30 @@ where   pl.INVNo = '{0}'
         protected override DualResult OnDeleteDetails()
         {
             IList<string> updateCmd = new List<string>();
-            updateCmd.Add(string.Format("update PackingList set GMTBookingLock = '', INVNo = '', ShipPlanID = '' where INVNo = '{0}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            string sqlClearPacking = string.Format("update PackingList set GMTBookingLock = '', INVNo = '', ShipPlanID = '', PLToRgCode = '' where INVNo = '{0}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+            updateCmd.Add(sqlClearPacking);
             updateCmd.Add(string.Format("Delete GMTBooking_CTNR where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             updateCmd.Add(string.Format("Delete GMTBooking_History where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             DualResult result = DBProxy.Current.Executes(null, updateCmd);
-            return result;
+
+            if (!result)
+            {
+                return result;
+            }
+
+            List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(this.CurrentMaintain["ID"].ToString());
+            foreach (string plFromRgCode in listPLFromRgCode)
+            {
+                result = PackingA2BWebAPI.ExecuteBySql(plFromRgCode, sqlClearPacking);
+                if (!result)
+                {
+                    return result;
+                }
+            }
+
+            return new DualResult(true);
         }
 
         /// <inheritdoc/>
@@ -981,7 +993,7 @@ order by cc.CNT desc", allPackID.ToString().Substring(0, allPackID.Length - 1));
                             return false;
                         }
 
-                        this.selectData.Merge(dtPaymentCheckAtoB);
+                        this.selectData.MergeBySyncColType(dtPaymentCheckAtoB);
                     }
                 }
 
@@ -1104,7 +1116,42 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             this.CurrentMaintain["TotalCBM"] = MyUtility.Math.Round(ttlcbm, 4);
             this.CurrentMaintain["TotalAPPBookingVW"] = ttlAPPBookingVW;
             this.CurrentMaintain["TotalAPPEstAmtVW"] = ttlAPPEstAmtVW;
+
+            // 將集合表身PLFromRgCode 給 PLFromRgCode
+            var listDetailPLFromRgCode = this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["PLFromRgCode"]));
+            if (listDetailPLFromRgCode.Any())
+            {
+                this.CurrentMaintain["PLFromRgCode"] = listDetailPLFromRgCode.Select(s => s["PLFromRgCode"].ToString()).Distinct().JoinToString(",");
+            }
+            else
+            {
+                this.CurrentMaintain["PLFromRgCode"] = string.Empty;
+            }
+
             return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult OnDetailViewPost()
+        {
+            DualResult result = this.MergeDetailA2B();
+            if (!result)
+            {
+                return result;
+            }
+
+            return base.OnDetailViewPost();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+            DualResult result = this.MergeDetailA2B();
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
         }
 
         /// <inheritdoc/>
@@ -1113,28 +1160,44 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             IList<string> updateCmds = new List<string>();
             Dictionary<string, List<string>> dicUpdateCmdsA2B = new Dictionary<string, List<string>>();
             IList<string> updateGMTBooking_DetailCmd = new List<string>();
+            string plToRgCode = MyUtility.GetValue.Lookup("select Rgcode from system");
 
             foreach (DataRow dr in details)
             {
                 string updateSql = string.Empty;
                 string plFromRgCode = string.Empty;
+                string updPLToRgCode = string.Empty;
 
                 if (dr.RowState == DataRowState.Modified)
                 {
                     plFromRgCode = dr["PLFromRgCode"].ToString();
-                    updateSql = string.Format("update PackingList set GMTBookingLock = '{0}' , ShipPlanID = '{2}' where ID = '{1}';", MyUtility.Convert.GetString(dr["GMTBookingLock"]), MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ShipPlanID"]));
+                    updPLToRgCode = MyUtility.Check.Empty(plFromRgCode) ? string.Empty : plToRgCode;
+                    updateSql = string.Format(
+                        "update PackingList set GMTBookingLock = '{0}', ShipPlanID = '{2}', PLToRgCode = '{3}' where ID = '{1}';",
+                        MyUtility.Convert.GetString(dr["GMTBookingLock"]),
+                        MyUtility.Convert.GetString(dr["ID"]),
+                        MyUtility.Convert.GetString(this.CurrentMaintain["ShipPlanID"]),
+                        updPLToRgCode);
                 }
 
                 if (dr.RowState == DataRowState.Added)
                 {
                     plFromRgCode = dr["PLFromRgCode"].ToString();
-                    updateSql = string.Format("update PackingList set GMTBookingLock = '{0}', INVNo = '{1}', ShipPlanID = '{2}' where ID = '{3}';", MyUtility.Convert.GetString(dr["GMTBookingLock"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ShipPlanID"]), MyUtility.Convert.GetString(dr["ID"]));
+                    updPLToRgCode = MyUtility.Check.Empty(plFromRgCode) ? string.Empty : plToRgCode;
+                    updateSql = string.Format(
+                        "update PackingList set GMTBookingLock = '{0}', INVNo = '{1}', ShipPlanID = '{2}', PLToRgCode = '{4}' where ID = '{3}';",
+                        MyUtility.Convert.GetString(dr["GMTBookingLock"]),
+                        MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+                        MyUtility.Convert.GetString(this.CurrentMaintain["ShipPlanID"]),
+                        MyUtility.Convert.GetString(dr["ID"]),
+                        updPLToRgCode);
                 }
 
                 if (dr.RowState == DataRowState.Deleted)
                 {
-                    plFromRgCode = dr["PLFromRgCode", DataRowVersion.Original].ToString();
-                    updateSql = string.Format("update PackingList set GMTBookingLock = '', INVNo = '', ShipPlanID = '' where ID = '{0}';", MyUtility.Convert.GetString(dr["ID", DataRowVersion.Original]));
+                    updateSql = string.Format(
+                        "update PackingList set GMTBookingLock = '', INVNo = '', ShipPlanID = '', PLToRgCode = '' where ID = '{0}';",
+                        MyUtility.Convert.GetString(dr["ID", DataRowVersion.Original]));
                 }
 
                 if (MyUtility.Check.Empty(updateSql))
@@ -1165,7 +1228,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                         updateGMTBooking_DetailCmd.Add($@" 
 if not exists(select 1 from GMTBooking_Detail where ID = '{this.CurrentMaintain["ID"]}' and PLFromRgCode = '{dr["PLFromRgCode"]}' and PackingListID = '{dr["ID"]}')
 begin
-insert into GMTBooking_Detail(ID, PLFromRgCode, PackingListID) values('{this.CurrentMaintain["ID"]}', '{dr["PLFromRgCode", DataRowVersion.Original]}', '{dr["ID", DataRowVersion.Original]}');
+insert into GMTBooking_Detail(ID, PLFromRgCode, PackingListID) values('{this.CurrentMaintain["ID"]}', '{dr["PLFromRgCode"]}', '{dr["ID"]}');
 end");
                     }
                 }

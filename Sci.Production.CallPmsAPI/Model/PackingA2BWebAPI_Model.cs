@@ -223,5 +223,15 @@ namespace Sci.Production.CallPmsAPI
         {
             return Convert.ToBase64String(encode.GetBytes(input));
         }
+
+        public static void MergeBySyncColType(this DataTable sourceDt, DataTable targetDt)
+        {
+            foreach (DataRow dr in targetDt.Rows)
+            {
+                sourceDt.ImportRow(dr);
+            }
+
+            sourceDt.AcceptChanges();
+        }
     }
 }
