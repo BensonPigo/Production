@@ -76,6 +76,7 @@
             this.txtmfactory = new Sci.Production.Class.Txtfactory();
             this.txtuserApprove = new Sci.Production.Class.Txtuser();
             this.txtsubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
+            this.btnImportCartonReplacement = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -93,6 +94,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnImportCartonReplacement);
             this.masterpanel.Controls.Add(this.txtLocalPurchaseItem);
             this.masterpanel.Controls.Add(this.txtuserClose);
             this.masterpanel.Controls.Add(this.displayCloseDate);
@@ -179,6 +181,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtuserClose, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLocalPurchaseItem, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImportCartonReplacement, 0);
             // 
             // detailpanel
             // 
@@ -632,7 +635,7 @@
             // 
             // btnIrrPriceReason
             // 
-            this.btnIrrPriceReason.Location = new System.Drawing.Point(850, 95);
+            this.btnIrrPriceReason.Location = new System.Drawing.Point(850, 150);
             this.btnIrrPriceReason.Name = "btnIrrPriceReason";
             this.btnIrrPriceReason.Size = new System.Drawing.Size(160, 46);
             this.btnIrrPriceReason.TabIndex = 49;
@@ -766,6 +769,7 @@
             // 
             this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
             this.txtsubconSupplier.DisplayBox1Binding = "";
+            this.txtsubconSupplier.IsFreightForwarder = false;
             this.txtsubconSupplier.IsIncludeJunk = false;
             this.txtsubconSupplier.IsMisc = false;
             this.txtsubconSupplier.IsShipping = false;
@@ -775,6 +779,17 @@
             this.txtsubconSupplier.Size = new System.Drawing.Size(167, 23);
             this.txtsubconSupplier.TabIndex = 0;
             this.txtsubconSupplier.TextBox1Binding = "";
+            // 
+            // btnImportCartonReplacement
+            // 
+            this.btnImportCartonReplacement.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImportCartonReplacement.Location = new System.Drawing.Point(850, 95);
+            this.btnImportCartonReplacement.Name = "btnImportCartonReplacement";
+            this.btnImportCartonReplacement.Size = new System.Drawing.Size(160, 49);
+            this.btnImportCartonReplacement.TabIndex = 59;
+            this.btnImportCartonReplacement.Text = "Import Carton Replacement";
+            this.btnImportCartonReplacement.UseVisualStyleBackColor = true;
+            this.btnImportCartonReplacement.Click += new System.EventHandler(this.BtnImportCartonReplacement_Click);
             // 
             // P30
             // 
@@ -877,5 +892,6 @@
         private Win.UI.Label label5;
         private System.Windows.Forms.Button btnBatchApprove;
         private Class.TxtLocalPurchaseItem txtLocalPurchaseItem;
+        private Win.UI.Button btnImportCartonReplacement;
     }
 }
