@@ -72,7 +72,7 @@ namespace Sci.Production.Planning
             this.ReportType = "SP#";
             this.Text = formParameter == "1" ? "R15. WIP" : "R15-1. WIP By Specific Subprocess";
             this.panel1.Visible = formParameter == "2";
-            this.comboRFIDProcessLocation1.SetDataSource();
+            this.comboRFIDProcessLocation1.SetDataSource(false);
             this.comboRFIDProcessLocation1.SelectedIndex = 0;
         }
 
