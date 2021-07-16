@@ -223,7 +223,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
 
             this.CalculateValue(0);
             this.SaveCalculateValue();
-            this.btnNotHitTargetReason.Enabled = !MyUtility.Check.Empty(this.CurrentMaintain["IEReasonID"]);
+            this.btnNotHitTargetReason.Enabled = !MyUtility.Check.Empty(this.CurrentMaintain["IEReasonID"]) || !MyUtility.Check.Empty(this.CurrentMaintain["IEReasonLBRnotHit_1stUkey"]);
             this.listControlBindingSource1.DataSource = this.distdt;
 
             this.Distable();
@@ -1641,7 +1641,15 @@ order by EffectiveDate desc
         private void BtnNotHitTargetReason_Click(object sender, EventArgs e)
         {
             // 不使用MyUtility.Msg.InfoBox的原因為MyUtility.Msg.InfoBox都有MessageBoxIcon
-            MessageBox.Show(MyUtility.GetValue.Lookup(string.Format("select Description from IEReason WITH (NOLOCK) where Type = 'LM' and ID = '{0}'", this.CurrentMaintain["IEReasonID"].ToString())).PadRight(60), caption: "Not hit target reason");
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["IEReasonID"]))
+            { 
+                MessageBox.Show(MyUtility.GetValue.Lookup(string.Format("select Description from IEReason WITH (NOLOCK) where Type = 'LM' and ID = '{0}'", this.CurrentMaintain["IEReasonID"].ToString())).PadRight(60), caption: "Not hit target reason"); 
+            }
+            else
+            {
+                MessageBox.Show(MyUtility.GetValue.Lookup(string.Format("select Name from IEReasonLBRnotHit_1st WITH (NOLOCK) where Ukey = '{0}'", this.CurrentMaintain["IEReasonLBRnotHit_1stUkey"].ToString())).PadRight(60), caption: "Not hit target reason");
+            }
+            
         }
 
         // Copy from other line mapping

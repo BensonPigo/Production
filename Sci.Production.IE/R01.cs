@@ -132,7 +132,9 @@ select
 	EffTarget = EffTarget.Target / 100.0,
 	IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.HighestCycle/lm.CurrentOperators) as LB,
 	LinebalancingTarget.Target / 100.0,
-	[NotHitTargetType] =  (select STUFF ((
+	[NotHitTargetType] =  iif(lm.Version = 1, (select TypeGroup
+from IEReasonLBRnotHit_1st
+where Ukey = lm.IEReasonLBRnotHit_1stUkey),(select STUFF ((
 				select distinct CONCAT (',', a.TypeGroup) 
 					from (
 						select lbr.TypeGroup
@@ -141,15 +143,17 @@ select
 						where lm.ID = l2.ID
 					) a 
 					for xml path('')
-			), 1, 1, '')) ,
-    [TotalNoofNotHitTarget] = (select cnt = iif(count(*) = 0, '', cast(count(*) as varchar))
+			), 1, 1, ''))) ,
+    [TotalNoofNotHitTarget] = iif(lm.Version = 1,0,(select cnt = iif(count(*) = 0, '', cast(count(*) as varchar))
                     from (
 	                    select distinct l2.NO, l2.IEReasonLBRNotHit_DetailUkey
 	                    from LineMapping_Detail l2 WITH (NOLOCK)
 	                    where lm.ID = l2.ID
 	                    and ISNULL(l2.IEReasonLBRNotHit_DetailUkey, '') <> ''
-                    )a ),
-	[NotHitTargetReason] =  (select STUFF ((
+                    )a )),
+	[NotHitTargetReason] =  iif(lm.Version = 1, (select Name
+from IEReasonLBRnotHit_1st
+where Ukey = lm.IEReasonLBRnotHit_1stUkey),(select STUFF ((
 				select distinct CONCAT (',', a.Name ) 
 					from (
 						select lbr.Name 
@@ -158,7 +162,7 @@ select
 						where lm.ID = l2.ID
 					) a 
 					for xml path('')
-			), 1, 1, '')) ,
+			), 1, 1, ''))) ,
 	IIF(lm.TaktTime*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.TaktTime/lm.CurrentOperators) as LLEF,
 	IIF(lm.HighestCycle * lm.CurrentOperators = 0,0,(ROUND(3600.0/lm.HighestCycle, 2) * (select isnull(CPU,0) from Style WITH (NOLOCK) where lm.BrandID = BrandID and lm.StyleID = ID and lm.SeasonID = SeasonID)/lm.CurrentOperators)) as PPH,
 	isnull((select Name from Pass1 WITH (NOLOCK) where ID = lm.AddName),'') as CreateBy,
@@ -169,14 +173,14 @@ from LineMapping lm WITH (NOLOCK)
 outer apply(
 	select top 1 c.Target
 	from factory f
-	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and lm.status = 'Confirmed' and c.EffectiveDate < lm.Editdate and c. Type ='EFF.'
+	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and c.EffectiveDate < lm.Editdate and c. Type ='EFF.'
 	where f.id = lm.factoryid
 	order by EffectiveDate desc
 )EffTarget
 outer apply(
 	select top 1 c.Target
 	from factory f
-	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and lm.status = 'Confirmed' and c.EffectiveDate < lm.Editdate and c. Type ='LBR'
+	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and c.EffectiveDate < lm.Editdate and c. Type ='LBR'
 	where f.id = lm.factoryid
 	order by EffectiveDate desc
 )LinebalancingTarget 
