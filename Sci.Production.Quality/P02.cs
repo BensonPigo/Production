@@ -89,7 +89,8 @@ c.whseArrival,
 ) as unit,
 (
     Select AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id
-) as SuppEn
+) as SuppEn,
+Encode = iif (a.Status = 'Confirmed', 1, 0) 
 
 From AIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
 OUTER APPLY(
@@ -166,6 +167,7 @@ Where a.poid='{0}' order by seq1,seq2
                 .Text("DefectDescription", header: "Defect Type", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: detail)
                 .Text("Inspdate", header: "Insp. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
+                .CheckBox("Encode", header: "Encode", width: Widths.AnsiChars(3), iseditable: false)
                 .Text("Inspector2", header: "Inspector", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("ReplacementID", header: "1st ReplacementID", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -177,6 +179,7 @@ Where a.poid='{0}' order by seq1,seq2
             this.detailgrid.Columns["Inspdate"].DefaultCellStyle.BackColor = Color.LemonChiffon;
             this.detailgrid.Columns["inspector2"].DefaultCellStyle.BackColor = Color.LemonChiffon;
             this.detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            this.detailgrid.Columns["Encode"].DefaultCellStyle.BackColor = Color.LemonChiffon;
             #endregion
 
         }
