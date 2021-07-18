@@ -1498,7 +1498,7 @@ drop table #tmp,#tmp2";
             {
                 if (j < tmpRow)
                 {
-                    DataRow[] oridrs = bundle_detail_tmp.Select($"PatternCode = '{dr["PatternCode"]}' and sizecode = '{dr["sizecode"]}' and Qty = '{dr["Qty"]}' and ran = 0");
+                    DataRow[] oridrs = bundle_detail_tmp.Select($"BundleGroup ='{dr["BundleGroup"]}' and PatternCode = '{dr["PatternCode"]}' and sizecode = '{dr["sizecode"]}' and ran = 0");
                     if (oridrs.Length == 0)
                     {
                         oridrs = bundle_detail_tmp.Select($"PatternCode = '{dr["PatternCode"]}' and sizecode = '{dr["sizecode"]}' and ran = 0");
