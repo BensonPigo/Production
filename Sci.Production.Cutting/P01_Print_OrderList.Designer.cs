@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioGroup1 = new Sci.Win.UI.RadioGroup();
+            this.rdIncludeCancelQty = new Sci.Win.UI.RadioButton();
+            this.rdExcludeCancelQty = new Sci.Win.UI.RadioButton();
             this.radioCuttingTape = new Sci.Win.UI.RadioButton();
             this.radioCuttingschedule = new Sci.Win.UI.RadioButton();
             this.radioQtyBreakdown_PoCombbySPList = new Sci.Win.UI.RadioButton();
@@ -42,15 +45,16 @@
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.label5 = new Sci.Win.UI.Label();
-            this.rdExcludeCancelQty = new Sci.Win.UI.RadioButton();
-            this.rdIncludeCancelQty = new Sci.Win.UI.RadioButton();
-            this.radioGroup1 = new Sci.Win.UI.RadioGroup();
+            this.comboTapeSort = new Sci.Win.UI.ComboBox();
+            this.label1 = new Sci.Win.UI.Label();
             this.groupBox1.SuspendLayout();
             this.radioGroup1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.comboTapeSort);
             this.groupBox1.Controls.Add(this.radioGroup1);
             this.groupBox1.Controls.Add(this.radioCuttingTape);
             this.groupBox1.Controls.Add(this.radioCuttingschedule);
@@ -67,6 +71,40 @@
             this.groupBox1.Size = new System.Drawing.Size(410, 354);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
+            // 
+            // radioGroup1
+            // 
+            this.radioGroup1.Controls.Add(this.rdIncludeCancelQty);
+            this.radioGroup1.Controls.Add(this.rdExcludeCancelQty);
+            this.radioGroup1.Location = new System.Drawing.Point(28, 190);
+            this.radioGroup1.Name = "radioGroup1";
+            this.radioGroup1.Size = new System.Drawing.Size(298, 36);
+            this.radioGroup1.TabIndex = 183;
+            this.radioGroup1.TabStop = false;
+            // 
+            // rdIncludeCancelQty
+            // 
+            this.rdIncludeCancelQty.AutoSize = true;
+            this.rdIncludeCancelQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdIncludeCancelQty.Location = new System.Drawing.Point(1, 12);
+            this.rdIncludeCancelQty.Name = "rdIncludeCancelQty";
+            this.rdIncludeCancelQty.Size = new System.Drawing.Size(144, 21);
+            this.rdIncludeCancelQty.TabIndex = 188;
+            this.rdIncludeCancelQty.Text = "Include Cancel Qty";
+            this.rdIncludeCancelQty.UseVisualStyleBackColor = true;
+            // 
+            // rdExcludeCancelQty
+            // 
+            this.rdExcludeCancelQty.AutoSize = true;
+            this.rdExcludeCancelQty.Checked = true;
+            this.rdExcludeCancelQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdExcludeCancelQty.Location = new System.Drawing.Point(148, 12);
+            this.rdExcludeCancelQty.Name = "rdExcludeCancelQty";
+            this.rdExcludeCancelQty.Size = new System.Drawing.Size(148, 21);
+            this.rdExcludeCancelQty.TabIndex = 189;
+            this.rdExcludeCancelQty.TabStop = true;
+            this.rdExcludeCancelQty.Text = "Exclude Cancel Qty";
+            this.rdExcludeCancelQty.UseVisualStyleBackColor = true;
             // 
             // radioCuttingTape
             // 
@@ -221,39 +259,28 @@
             this.label5.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.label5.TextStyle.Color = System.Drawing.Color.Blue;
             // 
-            // rdExcludeCancelQty
+            // comboTapeSort
             // 
-            this.rdExcludeCancelQty.AutoSize = true;
-            this.rdExcludeCancelQty.Checked = true;
-            this.rdExcludeCancelQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdExcludeCancelQty.Location = new System.Drawing.Point(148, 12);
-            this.rdExcludeCancelQty.Name = "rdExcludeCancelQty";
-            this.rdExcludeCancelQty.Size = new System.Drawing.Size(148, 21);
-            this.rdExcludeCancelQty.TabIndex = 189;
-            this.rdExcludeCancelQty.TabStop = true;
-            this.rdExcludeCancelQty.Text = "Exclude Cancel Qty";
-            this.rdExcludeCancelQty.UseVisualStyleBackColor = true;
+            this.comboTapeSort.BackColor = System.Drawing.Color.White;
+            this.comboTapeSort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboTapeSort.FormattingEnabled = true;
+            this.comboTapeSort.IsSupportUnselect = true;
+            this.comboTapeSort.Items.AddRange(new object[] {
+            "",
+            "Color"});
+            this.comboTapeSort.Location = new System.Drawing.Point(203, 50);
+            this.comboTapeSort.Name = "comboTapeSort";
+            this.comboTapeSort.OldText = "";
+            this.comboTapeSort.Size = new System.Drawing.Size(99, 24);
+            this.comboTapeSort.TabIndex = 184;
             // 
-            // rdIncludeCancelQty
+            // label1
             // 
-            this.rdIncludeCancelQty.AutoSize = true;
-            this.rdIncludeCancelQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdIncludeCancelQty.Location = new System.Drawing.Point(1, 12);
-            this.rdIncludeCancelQty.Name = "rdIncludeCancelQty";
-            this.rdIncludeCancelQty.Size = new System.Drawing.Size(144, 21);
-            this.rdIncludeCancelQty.TabIndex = 188;
-            this.rdIncludeCancelQty.Text = "Include Cancel Qty";
-            this.rdIncludeCancelQty.UseVisualStyleBackColor = true;
-            // 
-            // radioGroup1
-            // 
-            this.radioGroup1.Controls.Add(this.rdIncludeCancelQty);
-            this.radioGroup1.Controls.Add(this.rdExcludeCancelQty);
-            this.radioGroup1.Location = new System.Drawing.Point(28, 190);
-            this.radioGroup1.Name = "radioGroup1";
-            this.radioGroup1.Size = new System.Drawing.Size(298, 36);
-            this.radioGroup1.TabIndex = 183;
-            this.radioGroup1.TabStop = false;
+            this.label1.Location = new System.Drawing.Point(145, 50);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(55, 23);
+            this.label1.TabIndex = 185;
+            this.label1.Text = "Sort By";
             // 
             // P01_Print_OrderList
             // 
@@ -296,5 +323,7 @@
         private Win.UI.RadioButton rdExcludeCancelQty;
         private Win.UI.RadioButton rdIncludeCancelQty;
         private Win.UI.RadioGroup radioGroup1;
+        private Win.UI.Label label1;
+        private Win.UI.ComboBox comboTapeSort;
     }
 }

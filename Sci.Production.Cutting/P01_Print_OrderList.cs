@@ -168,7 +168,7 @@ select [SP] =
                 #endregion
 
                 #region Body
-                DataTable dt0 = Prgs.GetCuttingTapeData(this._id);
+                DataTable dt0 = Prgs.GetCuttingTapeData(this._id, this.comboTapeSort.Text);
                 if (dt0 == null || dt0.Rows.Count == 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!");

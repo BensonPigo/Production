@@ -502,9 +502,15 @@ and x.APSNo is not null
         /// Get Cutting TapeData
         /// </summary>
         /// <param name="cuttingID">cuttingID</param>
+        /// <param name="sortby">sortby</param>
         /// <returns>DataTable</returns>
-        public static DataTable GetCuttingTapeData(string cuttingID)
+        public static DataTable GetCuttingTapeData(string cuttingID, string sortby = "")
         {
+            if (sortby == "Color")
+            {
+                sortby = ",a.ColorID";
+            }
+
             string sqlcmd = $@"
 declare @CuttingSP varchar(13) = '{cuttingID}'
 
@@ -528,7 +534,7 @@ left join dbo.Order_EachCons_Color_Article a on a.Order_EachCons_ColorUkey= c.Uk
 left join dbo.Order_EachCons_SizeQty s on s.Order_EachConsUkey = e.Ukey and s.SizeCode = a.SizeCode
 where e.Id = @CuttingSP
 and e. CuttingPiece = 1
-ORDER BY e.MarkerName
+ORDER BY e.MarkerName{sortby}
 
 select
 	[SP] = o.ID  
