@@ -39,7 +39,7 @@ Where Type = '{type}'";
             base.OnDetailGridSetup();
             this.detailgrid.IsEditingReadOnly = true;
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("TypeGroup", header: "TypeGroup", width: Widths.AnsiChars(10), iseditingreadonly: false)
+                .Text("TypeGroup", header: "TypeGroup", width: Widths.AnsiChars(30), iseditingreadonly: false)
                 .CheckBox("junk", header: "Junk", width: Widths.AnsiChars(5), iseditable: true)
                 ;
         }
