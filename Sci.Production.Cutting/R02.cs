@@ -623,7 +623,6 @@ select
 [Fab Cons.] = [Fab Cons.],
 [Layer] = [Layer],
 [Length] = [Length],
-[Fab Refno] = [Fab Refno],
 [Shift]=[Shift],
 [Remark] = [Remark],
 [SCI Delivery] = [SCI Delivery],
