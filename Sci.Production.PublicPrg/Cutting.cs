@@ -506,11 +506,6 @@ and x.APSNo is not null
         /// <returns>DataTable</returns>
         public static DataTable GetCuttingTapeData(string cuttingID, string sortby = "")
         {
-            if (sortby == "Color")
-            {
-                sortby = ",a.ColorID";
-            }
-
             string sqlcmd = $@"
 declare @CuttingSP varchar(13) = '{cuttingID}'
 
@@ -534,7 +529,7 @@ left join dbo.Order_EachCons_Color_Article a on a.Order_EachCons_ColorUkey= c.Uk
 left join dbo.Order_EachCons_SizeQty s on s.Order_EachConsUkey = e.Ukey and s.SizeCode = a.SizeCode
 where e.Id = @CuttingSP
 and e. CuttingPiece = 1
-ORDER BY e.MarkerName{sortby}
+ORDER BY e.MarkerName
 
 select
 	[SP] = o.ID  
@@ -627,6 +622,19 @@ order by o.SewInLine
                 ThenBy(o => MyUtility.Convert.GetString(o["SizeCode"])).
                 ThenBy(o => MyUtility.Convert.GetString(o["SP"])).
                 CopyToDataTable();
+
+            if (sortby == "Color")
+            {
+                dtf2 = dtf.AsEnumerable().
+                OrderBy(o => MyUtility.Convert.GetString(o["MarkerName"]).Substring(0, 5)).
+                ThenBy(o => MyUtility.Convert.GetString(o["ColorID"])).
+                ThenBy(o => MyUtility.Convert.GetString(o["MarkerName"])).
+                ThenBy(o => MyUtility.Convert.GetString(o["Article"])).
+                ThenBy(o => MyUtility.Convert.GetString(o["SizeCode"])).
+                ThenBy(o => MyUtility.Convert.GetString(o["SP"])).
+                CopyToDataTable();
+            }
+
             #region 排序完後處理Type of Cutting Node **用Marker Name前5碼做群組分類, 取最後一筆字串
             DataTable dtf3 = dtf2.Clone();
             int i = 0;
