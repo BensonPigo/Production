@@ -179,13 +179,56 @@ and ID = '{Sci.Env.User.UserID}'"))
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
+            string orderID = (e.Master == null) ? string.Empty : e.Master["OrderID"].ToString();
 
             this.Ismatrix_Reload = true;
             this.DetailSelectCommand = $@"
 
+----------------Quiting用量計算--------------------------
+WITH tmpQT as (
+    select P.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
+    ,OE.ConsPC
+    ,[Number of Needle for QT] =  ceiling(sqh.Width/sqh.HSize/sqh.NeedleDistance)
+    from Orders O
+    Inner join Order_Qty OQ on O.ID=OQ.ID
+    Inner join PO P on O.POID=P.ID
+    inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
+    inner join Order_EachCons oe WITH (NOLOCK) on oe.id = occ.id and oe.FabricCombo = occ.PatternPanel and oe.CuttingPiece = 0 
+    inner join Order_EachCons_SizeQty OEZ on OE.Ukey=OEZ.Order_EachConsUkey and OQ.SizeCode=OEZ.SizeCode 
+    Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OE.FabricCode and SQH.FabricPanelCode=OE.FabricPanelCode and P.ThreadVersion=SQH.Version
+    where o.ID = '{orderID}'
+
+)
+, tmpQTFinal as (
+    select O.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
+    ,SQHD.Seq,SQHD.SCIRefno,SQHD.ColorID,QTt.Val
+    from Orders O
+    Inner join Order_Qty OQ on O.ID=OQ.ID
+    Inner join PO P on O.POID=P.ID
+    inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
+    Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OCC.FabricCode and SQH.FabricPanelCode=OCC.FabricPanelCode and P.ThreadVersion=SQH.Version
+    Inner join Style_QTThreadColorCombo_History_Detail SQHD on SQH.Ukey=SQHD.Style_QTThreadColorCombo_HistoryUkey and OQ.Article=SQHD.Article
+    OUTER APPLY(
+	    SELECT Val=[Number of Needle for QT]* SQHD.Ratio * 0.9144 * qt.ConsPC * s.Qty
+	    FROM tmpQT qt
+	    LEFT JOIN (
+		    SELECT Article, SizeCode,Qty=SUM(Qty)
+		    FROM Issue_Breakdown
+		    WHERE ID='{masterID}' AND OrderID='{orderID}'
+		    GROUP BY Article, SizeCode
+	    )
+	        s ON qt.Article = s.Article AND qt.SizeCode = s.SizeCode
+	    WHERE qt.ID=o.ID AND qt.Article=oq.Article AND qt.SizeCode=oq.SizeCode
+	    AND qt.FabricPanelCode=OCC.FabricPanelCode AND qt.FabricCode =OCC.FabricCode
+    )QTt
+    where o.ID = '{orderID}'
+)
+----------------Quiting用量計算--------------------------
+
+--------------------------------------------------------
 
 ----  先By Article撈取資料再加總
-WITH BreakdownByArticle as (
+, BreakdownByArticle as (
 
     SELECT   DISTINCT
               iis.SCIRefno
@@ -193,7 +236,7 @@ WITH BreakdownByArticle as (
             , iis.ColorID
 		    , iis.SuppColor
 		    , f.DescDetail
-		    , [@Qty]= ISNULL(ThreadUsedQtyByBOT.Val,0)
+		    , [@Qty]= ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)
 		    , [AccuIssued] = (
 					    select isnull(sum([IS].qty),0)
 					    from dbo.issue I2 WITH (NOLOCK) 
@@ -202,11 +245,11 @@ WITH BreakdownByArticle as (
 					    and [IS].Poid=iis.POID AND [IS].SCIRefno=iis.SCIRefno AND [IS].ColorID=iis.ColorID and i2.[EditDate]<I.AddDate AND i2.ID <> i.ID
 				    )
 		    , [IssueQty]=iis.Qty
-		    , [Use Qty By Stock Unit] = CEILING( ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ISNULL(ThreadUsedQtyByBOT.Val,0)/ 100 * ISNULL(UnitRate.RateValue,1))
+		    , [Use Qty By Stock Unit] = CEILING( ISNULL(ThreadUsedQtyByBOT.Qty,0) * (ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)) / 100 * ISNULL(UnitRate.RateValue,1))
 		    , [Stock Unit]=StockUnit.StockUnit
 
 		    , [Use Unit]='CM'
-		    , [Use Qty By Use Unit]=(ThreadUsedQtyByBOT.Qty * ISNULL(ThreadUsedQtyByBOT.Val,0) )
+		    , [Use Qty By Use Unit]=(ThreadUsedQtyByBOT.Qty * (ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)) )
 
 		    , [Stock Unit Desc.]=StockUnit.Description
 		    , [OutputQty] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
@@ -250,7 +293,7 @@ WITH BreakdownByArticle as (
 			    WHERE SCIRefNo=iis.SCIRefNo AND  ColorID= iis.ColorID AND a.Article=g.Article
 			    GROUP BY a.Article
 		    )
-	    FROM DBO.GetThreadUsedQtyByBOT(iis.POID) g
+	    FROM DBO.GetThreadUsedQtyByBOT(iis.POID,default) g
 	    WHERE SCIRefNo= iis.SCIRefNo AND ColorID = iis.ColorID  
 	    AND Article IN (		
             SELECt Article
@@ -259,6 +302,11 @@ WITH BreakdownByArticle as (
 	    )
 	    GROUP BY SCIRefNo,ColorID , Article
     )ThreadUsedQtyByBOT
+    OUTER APPLY(
+	    SELECT Val = SUM(t.Val)
+	    FROM tmpQTFinal　ｔ
+	    WHERE t.SCIRefNo=iis.SCIRefno AND t.ColorID=iis.ColorID 
+    )QT
     OUTER APPLY(
 	    SELECT TOP 1 psd2.StockUnit ,u.Description
 	    FROM PO_Supp_Detail psd2
@@ -563,12 +611,46 @@ Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
 Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
 WHERE O.ID='{this.poid}' AND tcd.Article IN ( SELECT Article FROM #tmp )
 
+----------------Quiting用量計算--------------------------
+
+select P.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
+,OE.ConsPC
+,[Number of Needle for QT] =  ceiling(sqh.Width/sqh.HSize/sqh.NeedleDistance)
+INTO #tmpQT
+from Orders O
+Inner join Order_Qty OQ on O.ID=OQ.ID
+Inner join PO P on O.POID=P.ID
+inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
+inner join Order_EachCons oe WITH (NOLOCK) on oe.id = occ.id and oe.FabricCombo = occ.PatternPanel and oe.CuttingPiece = 0 
+inner join Order_EachCons_SizeQty OEZ on OE.Ukey=OEZ.Order_EachConsUkey and OQ.SizeCode=OEZ.SizeCode 
+Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OE.FabricCode and SQH.FabricPanelCode=OE.FabricPanelCode and P.ThreadVersion=SQH.Version
+where o.ID = '{this.poid}'
+
+select O.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
+,SQHD.Seq,SQHD.SCIRefno,SQHD.ColorID,QTt.Val
+INTO #tmpQTFinal
+from Orders O
+Inner join Order_Qty OQ on O.ID=OQ.ID
+Inner join PO P on O.POID=P.ID
+inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
+Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OCC.FabricCode and SQH.FabricPanelCode=OCC.FabricPanelCode and P.ThreadVersion=SQH.Version
+Inner join Style_QTThreadColorCombo_History_Detail SQHD on SQH.Ukey=SQHD.Style_QTThreadColorCombo_HistoryUkey and OQ.Article=SQHD.Article
+OUTER APPLY(
+	SELECT Val=[Number of Needle for QT]* SQHD.Ratio * 0.9144 * qt.ConsPC * s.Qty
+	FROM #tmpQT qt
+	LEFT JOIN #tmp s ON qt.Article = s.Article AND qt.SizeCode = s.SizeCode
+	WHERE qt.ID=o.ID AND qt.Article=oq.Article AND qt.SizeCode=oq.SizeCode
+	AND qt.FabricPanelCode=OCC.FabricPanelCode AND qt.FabricCode =OCC.FabricCode
+)QTt
+where o.ID = '{this.poid}'
+
+
 SELECT  DISTINCT
   psd.SCIRefno
 , psd.Refno
 , psd.ColorID
 , f.DescDetail
-, [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0)
+, [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)
 , [AccuIssued] = (
 					select isnull(sum([IS].qty),0)
 					from dbo.issue I WITH (NOLOCK) 
@@ -577,9 +659,9 @@ SELECT  DISTINCT
 					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].ColorID=PSD.ColorID and i.[EditDate]<GETDATE()
 				)
 , [IssueQty]=0.00
-, [Use Qty By Stock Unit] = CEILING (ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ISNULL(ThreadUsedQtyByBOT.Val,0)/ 100 * ISNULL(UnitRate.RateValue,1) )
+, [Use Qty By Stock Unit] = CEILING (ISNULL(ThreadUsedQtyByBOT.Qty,0) * (ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0))/ 100 * ISNULL(UnitRate.RateValue,1) )
 , [Stock Unit]=StockUnit.StockUnit
-, [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty * ISNULL(ThreadUsedQtyByBOT.Val,0) )
+, [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty * (ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)) )
 , [Use Unit]='CM'
 , [Stock Unit Desc.]=StockUnit.Description
 , [OutputQty] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
@@ -611,13 +693,18 @@ OUTER APPLY(
 			WHERE SCIRefNo=psd.SCIRefNo AND  ColorID= psd.ColorID AND a.Article=g.Article
 			GROUP BY a.Article
 		)
-	FROM DBO.GetThreadUsedQtyByBOT(psd.ID) g
+	FROM DBO.GetThreadUsedQtyByBOT(psd.ID,default) g
 	WHERE SCIRefNo= psd.SCIRefNo AND ColorID = psd.ColorID  
 	AND Article IN (
 		SELECt Article FROM #step1 WHERE SCIRefNo = psd.SCIRefNo  AND ColorID = psd.ColorID 
 	)
 	GROUP BY SCIRefNo,ColorID , Article
 )ThreadUsedQtyByBOT
+OUTER APPLY(
+	SELECT Val = SUM(t.Val)
+	FROM #tmpQTFinal　ｔ
+	WHERE t.SCIRefNo=psd.SCIRefno AND t.ColorID=psd.ColorID
+)QT
 OUTER APPLY(
 	SELECT RateValue
 	FROM Unit_Rate
@@ -798,8 +885,62 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                             return;
                         }
 
-                        DataTable issueBreakDown_Dt = this.Convert_IssueBreakDown_ToDataTable();
+                        List<IssueQtyBreakdown> modelList = new List<IssueQtyBreakdown>();
+                        foreach (DataRow tempRow in this.dtIssueBreakDown.Rows)
+                        {
+                            int totalQty = 0;
+                            foreach (DataColumn col in this.dtIssueBreakDown.Columns)
+                            {
+                                IssueQtyBreakdown m = new IssueQtyBreakdown()
+                                {
+                                    OrderID = tempRow["OrderID"].ToString(),
+                                    Article = tempRow["Article"].ToString(),
+                                };
 
+                                if (tempRow[col].GetType().Name == "Decimal")
+                                {
+                                    totalQty += Convert.ToInt32(tempRow[col]);
+                                }
+
+                                if (col.ColumnName != "OrderID" && col.ColumnName != "Article")
+                                {
+                                    m.SizeCode = col.ColumnName;
+
+                                    m.Qty = totalQty;
+                                    modelList.Add(m);
+                                    totalQty = 0;
+                                }
+                            }
+                        }
+
+                        DataTable t = new DataTable();
+
+                        // IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "OrderID", DataType = typeof(string) });
+                        t.Columns.Add(new DataColumn() { ColumnName = "Article", DataType = typeof(string) });
+                        t.Columns.Add(new DataColumn() { ColumnName = "SizeCode", DataType = typeof(string) });
+                        t.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(int) });
+
+                        var groupByData = modelList.GroupBy(o => new { o.Article, o.SizeCode }).Select(o => new
+                        {
+                            o.Key.Article,
+                            o.Key.SizeCode,
+                            Qty = o.Sum(x => x.Qty),
+                        }).ToList();
+
+                        foreach (var model in groupByData)
+                        {
+                            if (model.Qty > 0)
+                            {
+                                DataRow newDr = t.NewRow();
+
+                                // newDr["OrderID"] = model.OrderID;
+                                newDr["Article"] = model.Article;
+                                newDr["SizeCode"] = model.SizeCode;
+                                newDr["Qty"] = model.Qty;
+
+                                t.Rows.Add(newDr);
+                            }
+                        }
                         #endregion
 
                         string colorID = MyUtility.Convert.GetString(this.CurrentDetailData["ColorID"]);
@@ -819,13 +960,47 @@ Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
 Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
 WHERE O.ID='{this.poid}' AND tcd.Article IN ( SELECT Article FROM #tmp )
 
+----------------Quiting用量計算--------------------------
+
+select P.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
+,OE.ConsPC
+,[Number of Needle for QT] =  ceiling(sqh.Width/sqh.HSize/sqh.NeedleDistance)
+INTO #tmpQT
+from Orders O
+Inner join Order_Qty OQ on O.ID=OQ.ID
+Inner join PO P on O.POID=P.ID
+inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
+inner join Order_EachCons oe WITH (NOLOCK) on oe.id = occ.id and oe.FabricCombo = occ.PatternPanel and oe.CuttingPiece = 0 
+inner join Order_EachCons_SizeQty OEZ on OE.Ukey=OEZ.Order_EachConsUkey and OQ.SizeCode=OEZ.SizeCode 
+Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OE.FabricCode and SQH.FabricPanelCode=OE.FabricPanelCode and P.ThreadVersion=SQH.Version
+where o.ID = '{this.poid}'
+
+select O.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
+,SQHD.Seq,SQHD.SCIRefno,SQHD.ColorID,QTt.Val
+INTO #tmpQTFinal
+from Orders O
+Inner join Order_Qty OQ on O.ID=OQ.ID
+Inner join PO P on O.POID=P.ID
+inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
+Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OCC.FabricCode and SQH.FabricPanelCode=OCC.FabricPanelCode and P.ThreadVersion=SQH.Version
+Inner join Style_QTThreadColorCombo_History_Detail SQHD on SQH.Ukey=SQHD.Style_QTThreadColorCombo_HistoryUkey and OQ.Article=SQHD.Article
+OUTER APPLY(
+	SELECT Val=[Number of Needle for QT]* SQHD.Ratio * 0.9144 * qt.ConsPC * s.Qty
+	FROM #tmpQT qt
+	LEFT JOIN #tmp s ON qt.Article = s.Article AND qt.SizeCode = s.SizeCode
+	WHERE qt.ID=o.ID AND qt.Article=oq.Article AND qt.SizeCode=oq.SizeCode
+	AND qt.FabricPanelCode=OCC.FabricPanelCode AND qt.FabricCode =OCC.FabricCode
+)QTt
+where o.ID = '{this.poid}'
+
+----------------Quiting用量計算--------------------------
 
 SELECT  DISTINCT
   psd.SCIRefno
 , psd.Refno
 , psd.ColorID
 , f.DescDetail
-, [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0)
+, [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)
 , [AccuIssued] = (
 					select isnull(sum([IS].qty),0)
 					from dbo.issue I WITH (NOLOCK) 
@@ -834,9 +1009,9 @@ SELECT  DISTINCT
 					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].ColorID=PSD.ColorID and i.[EditDate]<GETDATE()
 				)
 , [IssueQty]=0.00
-, [Use Qty By Stock Unit] = CEILING( ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ISNULL(ThreadUsedQtyByBOT.Val,0)/ 100 * ISNULL(UnitRate.RateValue,1) )
+, [Use Qty By Stock Unit] = CEILING( ISNULL(ThreadUsedQtyByBOT.Qty,0) * (ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)) / 100 * ISNULL(UnitRate.RateValue,1) )
 , [Stock Unit]=StockUnit.StockUnit
-, [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty * ISNULL(ThreadUsedQtyByBOT.Val,0) )
+, [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty * (ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)) )
 , [Use Unit]='CM'
 , [Stock Unit Desc.]=StockUnit.Description
 , [OutputQty] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
@@ -868,13 +1043,18 @@ OUTER APPLY(
 			WHERE SCIRefNo=psd.SCIRefNo AND  ColorID= psd.ColorID AND a.Article=g.Article
 			GROUP BY a.Article
 		)
-	FROM DBO.GetThreadUsedQtyByBOT(psd.ID) g
+	FROM DBO.GetThreadUsedQtyByBOT(psd.ID,default) g
 	WHERE SCIRefNo= psd.SCIRefNo AND ColorID = psd.ColorID  
 	AND Article IN (
 		SELECt Article FROM #step1 WHERE SCIRefNo = psd.SCIRefNo  AND ColorID = psd.ColorID 
 	)
 	GROUP BY SCIRefNo,ColorID , Article
 )ThreadUsedQtyByBOT
+OUTER APPLY(
+	SELECT Val = SUM(t.Val)
+	FROM #tmpQTFinal　ｔ
+	WHERE t.SCIRefNo=psd.SCIRefno AND t.ColorID=psd.ColorID
+)QT
 OUTER APPLY(
 	SELECT RateValue
 	FROM Unit_Rate
@@ -984,7 +1164,7 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
 
                         DataRow row;
                         DataTable rtn = null;
-                        MyUtility.Tool.ProcessWithDatatable(issueBreakDown_Dt, string.Empty, sqlcmd, out rtn, "#tmp");
+                        MyUtility.Tool.ProcessWithDatatable(t, string.Empty, sqlcmd, out rtn, "#tmp");
                         if (rtn == null || rtn.Rows.Count == 0)
                         {
                             e.Cancel = true;
@@ -1233,12 +1413,47 @@ Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
 Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
 WHERE O.ID='{this.poid}' AND tcd.Article IN ( SELECT Article FROM #tmp )
 
+----------------Quiting用量計算--------------------------
+
+select P.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
+,OE.ConsPC
+,[Number of Needle for QT] =  ceiling(sqh.Width/sqh.HSize/sqh.NeedleDistance)
+INTO #tmpQT
+from Orders O
+Inner join Order_Qty OQ on O.ID=OQ.ID
+Inner join PO P on O.POID=P.ID
+inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
+inner join Order_EachCons oe WITH (NOLOCK) on oe.id = occ.id and oe.FabricCombo = occ.PatternPanel and oe.CuttingPiece = 0 
+inner join Order_EachCons_SizeQty OEZ on OE.Ukey=OEZ.Order_EachConsUkey and OQ.SizeCode=OEZ.SizeCode 
+Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OE.FabricCode and SQH.FabricPanelCode=OE.FabricPanelCode and P.ThreadVersion=SQH.Version
+where o.ID = '{this.poid}'
+
+select O.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
+,SQHD.Seq,SQHD.SCIRefno,SQHD.ColorID,QTt.Val
+INTO #tmpQTFinal
+from Orders O
+Inner join Order_Qty OQ on O.ID=OQ.ID
+Inner join PO P on O.POID=P.ID
+inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
+Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OCC.FabricCode and SQH.FabricPanelCode=OCC.FabricPanelCode and P.ThreadVersion=SQH.Version
+Inner join Style_QTThreadColorCombo_History_Detail SQHD on SQH.Ukey=SQHD.Style_QTThreadColorCombo_HistoryUkey and OQ.Article=SQHD.Article
+OUTER APPLY(
+	SELECT Val=[Number of Needle for QT]* SQHD.Ratio * 0.9144 * qt.ConsPC * s.Qty
+	FROM #tmpQT qt
+	LEFT JOIN #tmp s ON qt.Article = s.Article AND qt.SizeCode = s.SizeCode
+	WHERE qt.ID=o.ID AND qt.Article=oq.Article AND qt.SizeCode=oq.SizeCode
+	AND qt.FabricPanelCode=OCC.FabricPanelCode AND qt.FabricCode =OCC.FabricCode
+)QTt
+where o.ID = '{this.poid}'
+
+----------------Quiting用量計算--------------------------
+
 SELECT  DISTINCT
   psd.SCIRefno
 , psd.Refno
 , psd.ColorID
 , f.DescDetail
-, [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0)
+, [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)
 , [AccuIssued] = (
 					select isnull(sum([IS].qty),0)
 					from dbo.issue I WITH (NOLOCK) 
@@ -1247,9 +1462,9 @@ SELECT  DISTINCT
 					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].ColorID=PSD.ColorID and i.[EditDate]<GETDATE()
 				)
 , [IssueQty]=0.00
-, [Use Qty By Stock Unit] = CEILING (ISNULL(ThreadUsedQtyByBOT.Qty,0) * ISNULL(ThreadUsedQtyByBOT.Val,0)/ 100 * ISNULL(UnitRate.RateValue,1) )
+, [Use Qty By Stock Unit] = CEILING (ISNULL(ThreadUsedQtyByBOT.Qty,0) * ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)/ 100 * ISNULL(UnitRate.RateValue,1) )
 , [Stock Unit]=StockUnit.StockUnit
-, [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty *  ISNULL(ThreadUsedQtyByBOT.Val,0) )
+, [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty *  ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0) )
 , [Use Unit]='CM'
 , [Stock Unit Desc.]=StockUnit.Description
 , [OutputQty] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
@@ -1281,13 +1496,18 @@ OUTER APPLY(
 			WHERE SCIRefNo=psd.SCIRefNo AND  ColorID= psd.ColorID AND a.Article=g.Article
 			GROUP BY a.Article
 		)
-	FROM DBO.GetThreadUsedQtyByBOT(psd.ID) g
+	FROM DBO.GetThreadUsedQtyByBOT(psd.ID,default) g
 	WHERE SCIRefNo= psd.SCIRefNo AND ColorID = psd.ColorID  
 	AND Article IN (
 		SELECt Article FROM #step1 WHERE SCIRefNo = psd.SCIRefNo  AND ColorID = psd.ColorID 
 	)
 	GROUP BY SCIRefNo,ColorID , Article
 )ThreadUsedQtyByBOT
+OUTER APPLY(
+	SELECT Val = SUM(t.Val)
+	FROM #tmpQTFinal　ｔ
+	WHERE t.SCIRefNo=psd.SCIRefno AND t.ColorID=psd.ColorID
+)QT
 OUTER APPLY(
 	SELECT RateValue
 	FROM Unit_Rate
@@ -1468,7 +1688,62 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                             return;
                         }
 
-                        DataTable issueBreakDown_Dt = this.Convert_IssueBreakDown_ToDataTable();
+                        List<IssueQtyBreakdown> modelList = new List<IssueQtyBreakdown>();
+                        foreach (DataRow tempRow in this.dtIssueBreakDown.Rows)
+                        {
+                            int totalQty = 0;
+                            foreach (DataColumn col in this.dtIssueBreakDown.Columns)
+                            {
+                                IssueQtyBreakdown m = new IssueQtyBreakdown()
+                                {
+                                    OrderID = tempRow["OrderID"].ToString(),
+                                    Article = tempRow["Article"].ToString(),
+                                };
+
+                                if (tempRow[col].GetType().Name == "Decimal")
+                                {
+                                    totalQty += Convert.ToInt32(tempRow[col]);
+                                }
+
+                                if (col.ColumnName != "OrderID" && col.ColumnName != "Article")
+                                {
+                                    m.SizeCode = col.ColumnName;
+
+                                    m.Qty = totalQty;
+                                    modelList.Add(m);
+                                    totalQty = 0;
+                                }
+                            }
+                        }
+
+                        DataTable t = new DataTable();
+
+                        // IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "OrderID", DataType = typeof(string) });
+                        t.Columns.Add(new DataColumn() { ColumnName = "Article", DataType = typeof(string) });
+                        t.Columns.Add(new DataColumn() { ColumnName = "SizeCode", DataType = typeof(string) });
+                        t.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(int) });
+
+                        var groupByData = modelList.GroupBy(o => new { o.Article, o.SizeCode }).Select(o => new
+                        {
+                            o.Key.Article,
+                            o.Key.SizeCode,
+                            Qty = o.Sum(x => x.Qty),
+                        }).ToList();
+
+                        foreach (var model in groupByData)
+                        {
+                            if (model.Qty > 0)
+                            {
+                                DataRow newDr = t.NewRow();
+
+                                // newDr["OrderID"] = model.OrderID;
+                                newDr["Article"] = model.Article;
+                                newDr["SizeCode"] = model.SizeCode;
+                                newDr["Qty"] = model.Qty;
+
+                                t.Rows.Add(newDr);
+                            }
+                        }
 
                         #endregion
 
@@ -1488,13 +1763,47 @@ Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
 Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
 WHERE O.ID='{this.poid}' AND tcd.Article IN ( SELECT Article FROM #tmp )
 
+----------------Quiting用量計算--------------------------
+
+select P.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
+,OE.ConsPC
+,[Number of Needle for QT] =  ceiling(sqh.Width/sqh.HSize/sqh.NeedleDistance)
+INTO #tmpQT
+from Orders O
+Inner join Order_Qty OQ on O.ID=OQ.ID
+Inner join PO P on O.POID=P.ID
+inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
+inner join Order_EachCons oe WITH (NOLOCK) on oe.id = occ.id and oe.FabricCombo = occ.PatternPanel and oe.CuttingPiece = 0 
+inner join Order_EachCons_SizeQty OEZ on OE.Ukey=OEZ.Order_EachConsUkey and OQ.SizeCode=OEZ.SizeCode 
+Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OE.FabricCode and SQH.FabricPanelCode=OE.FabricPanelCode and P.ThreadVersion=SQH.Version
+where o.ID = '{this.poid}'
+
+select O.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
+,SQHD.Seq,SQHD.SCIRefno,SQHD.ColorID,QTt.Val
+INTO #tmpQTFinal
+from Orders O
+Inner join Order_Qty OQ on O.ID=OQ.ID
+Inner join PO P on O.POID=P.ID
+inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
+Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OCC.FabricCode and SQH.FabricPanelCode=OCC.FabricPanelCode and P.ThreadVersion=SQH.Version
+Inner join Style_QTThreadColorCombo_History_Detail SQHD on SQH.Ukey=SQHD.Style_QTThreadColorCombo_HistoryUkey and OQ.Article=SQHD.Article
+OUTER APPLY(
+	SELECT Val=[Number of Needle for QT]* SQHD.Ratio * 0.9144 * qt.ConsPC * s.Qty
+	FROM #tmpQT qt
+	LEFT JOIN #tmp s ON qt.Article = s.Article AND qt.SizeCode = s.SizeCode
+	WHERE qt.ID=o.ID AND qt.Article=oq.Article AND qt.SizeCode=oq.SizeCode
+	AND qt.FabricPanelCode=OCC.FabricPanelCode AND qt.FabricCode =OCC.FabricCode
+)QTt
+where o.ID = '{this.poid}'
+
+----------------Quiting用量計算--------------------------
 
 SELECT  DISTINCT
   psd.SCIRefno
 , psd.Refno
 , psd.ColorID
 , f.DescDetail
-, [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0)
+, [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)
 , [AccuIssued] = (
 					select isnull(sum([IS].qty),0)
 					from dbo.issue I WITH (NOLOCK) 
@@ -1503,9 +1812,9 @@ SELECT  DISTINCT
 					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].ColorID=PSD.ColorID and i.[EditDate]<GETDATE()
 				)
 , [IssueQty]=0.00
-, [Use Qty By Stock Unit] = CEILING( ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ISNULL(ThreadUsedQtyByBOT.Val,0)/ 100 * ISNULL(UnitRate.RateValue,1) )
+, [Use Qty By Stock Unit] = CEILING( ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)/ 100 * ISNULL(UnitRate.RateValue,1) )
 , [Stock Unit]=StockUnit.StockUnit
-, [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty *  ISNULL(ThreadUsedQtyByBOT.Val,0) )
+, [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty *  ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0) )
 , [Use Unit]='CM'
 , [Stock Unit Desc.]=StockUnit.Description
 , [OutputQty] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
@@ -1537,13 +1846,18 @@ OUTER APPLY(
 			WHERE SCIRefNo=psd.SCIRefNo AND  ColorID= psd.ColorID AND a.Article=g.Article
 			GROUP BY a.Article
 		)
-	FROM DBO.GetThreadUsedQtyByBOT(psd.ID) g
+	FROM DBO.GetThreadUsedQtyByBOT(psd.ID,default) g
 	WHERE SCIRefNo= psd.SCIRefNo AND ColorID = psd.ColorID  
 	AND Article IN (
 		SELECt Article FROM #step1 WHERE SCIRefNo = psd.SCIRefNo  AND ColorID = psd.ColorID 
 	)
 	GROUP BY SCIRefNo,ColorID , Article
 )ThreadUsedQtyByBOT
+OUTER APPLY(
+	SELECT Val = SUM(t.Val)
+	FROM #tmpQTFinal　ｔ
+	WHERE t.SCIRefNo=psd.SCIRefno AND t.ColorID=psd.ColorID
+)QT
 OUTER APPLY(
 	SELECT RateValue
 	FROM Unit_Rate
@@ -1652,7 +1966,7 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
 
                         DataRow row;
                         DataTable rtn = null;
-                        MyUtility.Tool.ProcessWithDatatable(issueBreakDown_Dt, string.Empty, sqlcmd, out rtn, "#tmp");
+                        MyUtility.Tool.ProcessWithDatatable(t, string.Empty, sqlcmd, out rtn, "#tmp");
 
                         if (rtn == null || rtn.Rows.Count == 0)
                         {
@@ -1775,7 +2089,7 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                 string cmd = $@"
 
 SELECT Article, [Qty]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance * Segment))) 
-FROM dbo.GetThreadUsedQtyByBOT('{this.poid}')
+FROM dbo.GetThreadUsedQtyByBOT('{this.poid}',default)
 WHERE SCIRefNo='{sCIRefNo}' 
 AND ColorID='{colorID}'
 AND Article IN ('{articles.JoinToString("','")}')
@@ -2863,17 +3177,17 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
                         List<string> allSuppColor = new List<string>();
                         foreach (var issued in issuedList)
                         {
+                            string suppColor = issued["SuppColor"].ToString();
+
+                            // 重複就不加進去了
+                            if (!allSuppColor.Contains(suppColor))
+                            {
+                                allSuppColor.Add(suppColor);
+                            }
+
                             if (MyUtility.Convert.GetDecimal(issued["Qty"]) != 0)
                             {
                                 totalQty += (decimal)issued["Qty"];
-
-                                string suppColor = issued["SuppColor"].ToString();
-
-                                // 重複就不加進去了
-                                if (!allSuppColor.Contains(suppColor))
-                                {
-                                    allSuppColor.Add(suppColor);
-                                }
 
                                 issued.AcceptChanges();
                                 issued.SetAdded();
@@ -2968,6 +3282,7 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
             // 回採購單找資料
             string sql = $@"
 
+-----由於這時候觸發的SQL，還沒有Issue Breakdown，因此不用加入QUILTING數量
 SELECT  DISTINCT
   psd.SCIRefno
 , psd.Refno
@@ -3007,7 +3322,7 @@ OUTER APPLY(
 )StockUnit
 OUTER APPLY(
 	SELECT Val=SUM((SeamLength * Frequency * UseRatio) +  (Allowance * Segment) )
-	FROM dbo.GetThreadUsedQtyByBOT(psd.ID)
+	FROM dbo.GetThreadUsedQtyByBOT(psd.ID,default)
 	WHERE SCIRefNo = psd.SCIRefno AND ColorID = psd.ColorID AND Article IN (
         {articleWhere}
 	)
@@ -3525,6 +3840,15 @@ order by [OrderID],[Article]
         private void BtnCallP99_Click(object sender, EventArgs e)
         {
             P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P33", this);
+        }
+
+        private void BtnThreadColorComb_Click(object sender, EventArgs e)
+        {
+            if (!MyUtility.Check.Empty(this.poid))
+            {
+                P33_ThreadColorCombination form = new P33_ThreadColorCombination(this.poid);
+                form.ShowDialog();
+            }
         }
     }
 

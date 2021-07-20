@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
@@ -20,10 +21,12 @@ namespace Sci.Production.Warehouse
         private string orderid;
         private DataTable BOA_PO;
         private DataTable dtIssueBreakDown;
+        private DataTable tmpTable_IssueBreakDown;
         private Dictionary<DataRow, DataTable> dictionaryDatas = new Dictionary<DataRow, DataTable>();
         private List<IssueQtyBreakdown> _IssueQtyBreakdownList = new List<IssueQtyBreakdown>();
         private bool combo;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private bool selectAllMachineType = true;
 
         /// <inheritdoc/>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
@@ -57,6 +60,116 @@ namespace Sci.Production.Warehouse
                 return;
             }
 
+            this.SetDefaultTxtMachineType();
+
+            this.Query(true, this.txtMachineType.Text);
+
+            DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
+
+            qty.CellMouseDoubleClick += (s, e) =>
+            {
+                DataTable detail = (DataTable)this.listControlBindingSource1.DataSource;
+                DataRow currentRow = detail.Rows[e.RowIndex];
+
+                string sCIRefNo = currentRow["SCIRefNo"].ToString();
+                string colorID = currentRow["ColorID"].ToString();
+                string sqmIsQuiting = this.chkQuiting.Checked ? "1" : "0";
+                List<string> articles = this._IssueQtyBreakdownList.Where(o => o.Qty > 0).Select(o => o.Article).Distinct().ToList();
+                string cmd = $@"
+
+
+----------------Quiting用量計算--------------------------
+
+select P.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
+,OE.ConsPC
+,[Number of Needle for QT] =  ceiling(sqh.Width/sqh.HSize/sqh.NeedleDistance)
+INTO #tmpQT
+from Orders O
+Inner join Order_Qty OQ on O.ID=OQ.ID
+Inner join PO P on O.POID=P.ID
+inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
+inner join Order_EachCons oe WITH (NOLOCK) on oe.id = occ.id and oe.FabricCombo = occ.PatternPanel and oe.CuttingPiece = 0 
+inner join Order_EachCons_SizeQty OEZ on OE.Ukey=OEZ.Order_EachConsUkey and OQ.SizeCode=OEZ.SizeCode 
+Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OE.FabricCode and SQH.FabricPanelCode=OE.FabricPanelCode and P.ThreadVersion=SQH.Version
+where o.ID = '{this.poid}'
+
+select O.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
+,SQHD.Seq,SQHD.SCIRefno,SQHD.ColorID,QTt.Val
+INTO #tmpQTFinal
+from Orders O
+Inner join Order_Qty OQ on O.ID=OQ.ID
+Inner join PO P on O.POID=P.ID
+inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
+Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OCC.FabricCode and SQH.FabricPanelCode=OCC.FabricPanelCode and P.ThreadVersion=SQH.Version
+Inner join Style_QTThreadColorCombo_History_Detail SQHD on SQH.Ukey=SQHD.Style_QTThreadColorCombo_HistoryUkey and OQ.Article=SQHD.Article
+OUTER APPLY(
+	SELECT Val=[Number of Needle for QT]* SQHD.Ratio * 0.9144 * qt.ConsPC * s.Qty
+	FROM #tmpQT qt
+	LEFT JOIN #tmp s ON qt.Article = s.Article AND qt.SizeCode = s.SizeCode
+	WHERE qt.ID=o.ID AND qt.Article=oq.Article AND qt.SizeCode=oq.SizeCode
+	AND qt.FabricPanelCode=OCC.FabricPanelCode AND qt.FabricCode =OCC.FabricCode
+)QTt
+where o.ID = '{this.poid}'
+AND SQHD.SCIRefno='{sCIRefNo}' AND SQHD.ColorID='{colorID}'
+------------------------------------------
+
+SELECT Article, [Qty]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance *Segment))) + ISNULL(Qt.Val,0)
+FROM dbo.GetThreadUsedQtyByBOT('{this.poid}',default) f
+OUTER APPLY(
+    SELECT Val = SUM(Val)
+    FROM #tmpQTFinal t
+    WHERE t.SCIRefno = f.SCIRefno AND t.ColorID = f.ColorID AND 1={sqmIsQuiting}
+)Qt
+WHERE SCIRefNo='{sCIRefNo}' 
+AND ColorID='{colorID}'
+AND Article IN ('{articles.JoinToString("','")}')
+GROUP BY Article, Qt.Val
+
+DROP TABLE #tmpQT,#tmpQTFinal,#tmp
+";
+
+                DataTable dt;
+                DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(this.tmpTable_IssueBreakDown, string.Empty, cmd, out dt, "#tmp"); ; // DBProxy.Current.Select(null, cmd, out dt);
+
+                if (!dualResult)
+                {
+                    this.ShowErr(dualResult);
+                    return;
+                }
+
+                MyUtility.Msg.ShowMsgGrid_LockScreen(dt, caption: $"@Qty by Article");
+            };
+
+            #region --設定Grid1的顯示欄位--
+
+            this.gridAutoPick.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridAutoPick.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridAutoPick)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
+                 .Text("SCIRefno", header: "SCIRefno", width: Widths.AnsiChars(25), iseditingreadonly: true)
+                 .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                 .Text("ColorID", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                 .Text("SuppColor", header: "SuppColor", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                 .Text("DescDetail", header: "Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                 .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(15), decimal_places: 2, iseditingreadonly: true, settings: qty)
+                 .Numeric("Use Qty By Stock Unit", header: "Use Qty\r\nBy Stock Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
+                 .Text("Stock Unit", header: "Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                 .Numeric("Use Qty By Use Unit", header: "Use Qty\r\nBy Use Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
+                 .Text("Use Unit", header: "Use Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                 .Text("Stock Unit Desc.", header: "Stock Unit Desc.", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                 .Numeric("Output Qty(Garment)", header: "Output Qty\r\n(Garment)", width: Widths.AnsiChars(6), decimal_places: 0, iseditingreadonly: true)
+                 .Text("Bulk Balance(Stock Unit)", header: "Bulk Balance\r\n(Stock Unit)", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 ;
+            this.gridAutoPick.Columns["Selected"].DefaultCellStyle.BackColor = Color.Pink;
+            #endregion
+
+        }
+
+        private void Query(bool isQuiting, string machineTypeIDs)
+        {
+            string sqlcmd;
+            string sqmIsQuiting = isQuiting ? "1" : "0";
+            string sqmMachineTypeIDs = MyUtility.Check.Empty(machineTypeIDs) ? "'NULL'" : "'" + machineTypeIDs + "'";
             decimal sum = 0;
             foreach (DataRow dr in this.dtIssueBreakDown.Rows)
             {
@@ -112,7 +225,7 @@ namespace Sci.Production.Warehouse
                 }
             }
 
-            string sqlcmd;
+            this.tmpTable_IssueBreakDown = issueBreakDown_Dt;
 
             #region SQL
             sqlcmd = $@"
@@ -161,6 +274,40 @@ WHERE OrderID IS NOT NULL
 --SELECT * FROM #SelectList1
 --SELECT * FROM #SelectList2
 
+
+----------------Quiting用量計算--------------------------
+
+select P.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
+,OE.ConsPC
+,[Number of Needle for QT] =  ceiling(sqh.Width/sqh.HSize/sqh.NeedleDistance)
+INTO #tmpQT
+from Orders O
+Inner join Order_Qty OQ on O.ID=OQ.ID
+Inner join PO P on O.POID=P.ID
+inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
+inner join Order_EachCons oe WITH (NOLOCK) on oe.id = occ.id and oe.FabricCombo = occ.PatternPanel and oe.CuttingPiece = 0 
+inner join Order_EachCons_SizeQty OEZ on OE.Ukey=OEZ.Order_EachConsUkey and OQ.SizeCode=OEZ.SizeCode 
+Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OE.FabricCode and SQH.FabricPanelCode=OE.FabricPanelCode and P.ThreadVersion=SQH.Version
+where o.ID = '{this.poid}'
+
+select O.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
+,SQHD.Seq,SQHD.SCIRefno,SQHD.ColorID,QTt.Val
+INTO #tmpQTFinal
+from Orders O
+Inner join Order_Qty OQ on O.ID=OQ.ID
+Inner join PO P on O.POID=P.ID
+inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
+Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OCC.FabricCode and SQH.FabricPanelCode=OCC.FabricPanelCode and P.ThreadVersion=SQH.Version
+Inner join Style_QTThreadColorCombo_History_Detail SQHD on SQH.Ukey=SQHD.Style_QTThreadColorCombo_HistoryUkey and OQ.Article=SQHD.Article
+OUTER APPLY(
+	SELECT Val=[Number of Needle for QT]* SQHD.Ratio * 0.9144 * qt.ConsPC * s.Qty
+	FROM #tmpQT qt
+	LEFT JOIN #tmp s ON qt.Article = s.Article AND qt.SizeCode = s.SizeCode
+	WHERE qt.ID=o.ID AND qt.Article=oq.Article AND qt.SizeCode=oq.SizeCode
+	AND qt.FabricPanelCode=OCC.FabricPanelCode AND qt.FabricCode =OCC.FabricCode
+)QTt
+where o.ID = '{this.poid}'
+
 --------------取得哪些要打勾--------------
 
 
@@ -172,10 +319,10 @@ SELECT  DISTINCT
         , psd.Refno
         , psd.ColorID
 		, f.DescDetail
-		, [@Qty]= ThreadUsedQtyByBOT.Val
-		, [Use Qty By Stock Unit] = CEILING (ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) )--並轉換為Stock Unit
+		, [@Qty]= ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)
+		, [Use Qty By Stock Unit] = CEILING (ISNULL(ThreadUsedQtyByBOT.Qty,0) * (ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0))/ 100 * ISNULL(UnitRate.RateValue,1) )--並轉換為Stock Unit
 		, [Stock Unit]=StockUnit.StockUnit
-		, [Use Qty By Use Unit]= (ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val  )
+		, [Use Qty By Use Unit]= (ISNULL(ThreadUsedQtyByBOT.Qty,0) *  (ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0))  )
 		, [Use Unit]='CM'
 		, [Stock Unit Desc.]=StockUnit.Description
 		, [Output Qty(Garment)] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
@@ -213,13 +360,18 @@ OUTER APPLY(
 			WHERE SCIRefNo=psd.SCIRefNo AND  ColorID= psd.ColorID AND a.Article=g.Article
 			GROUP BY a.Article
 		)
-	FROM DBO.GetThreadUsedQtyByBOT(psd.ID) g
+	FROM DBO.GetThreadUsedQtyByBOT(psd.ID,{sqmMachineTypeIDs}) g
 	WHERE SCIRefNo= psd.SCIRefNo AND ColorID = psd.ColorID  
 	AND Article IN (
 		SELECt Article FROM #step1 WHERE SCIRefNo = psd.SCIRefNo  AND ColorID = psd.ColorID 
 	)
 	GROUP BY SCIRefNo,ColorID , Article
 )ThreadUsedQtyByBOT
+OUTER APPLY(
+	SELECT Val = SUM(t.Val)
+	FROM #tmpQTFinal　ｔ
+	WHERE t.SCIRefNo=psd.SCIRefno AND t.ColorID=psd.ColorID AND 1 = {sqmIsQuiting}
+)QT
 WHERE psd.ID='{this.poid}'
 AND psd.FabricType ='A'
 AND EXISTS(
@@ -230,6 +382,7 @@ AND EXISTS(
 	AND m.IsThread=1 
 )
 AND psd.ColorID <> ''
+
 
 SELECT  [Selected] 
 		, SCIRefno 
@@ -247,7 +400,7 @@ SELECT  [Selected]
         , [POID]
 		, [AccuIssued]
 INTO #final2
-FROM #final
+FROM #final f
 GROUP BY [Selected] 
 		, SCIRefno 
         , Refno
@@ -259,7 +412,6 @@ GROUP BY [Selected]
         , [POID]
 		, [AccuIssued]
 		, [Bulk Balance(Stock Unit)] 
-
 
 SELECT  [Selected] 
 		, SCIRefno 
@@ -341,62 +493,6 @@ DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final,#final2,#tmp,#tmp_s
             this.gridAutoPick.DataSource = this.listControlBindingSource1;
 
             this.gridAutoPick.AutoResizeColumns();
-
-            DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
-
-            qty.CellMouseDoubleClick += (s, e) =>
-            {
-                DataTable detail = (DataTable)this.listControlBindingSource1.DataSource;
-                DataRow currentRow = detail.Rows[e.RowIndex];
-
-                string sCIRefNo = currentRow["SCIRefNo"].ToString();
-                string colorID = currentRow["ColorID"].ToString();
-                List<string> articles = this._IssueQtyBreakdownList.Where(o => o.Qty > 0).Select(o => o.Article).Distinct().ToList();
-                string cmd = $@"
-
-SELECT Article, [Qty]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance *Segment))) 
-FROM dbo.GetThreadUsedQtyByBOT('{this.poid}')
-WHERE SCIRefNo='{sCIRefNo}' 
-AND ColorID='{colorID}'
-AND Article IN ('{articles.JoinToString("','")}')
-GROUP BY Article
-
-";
-
-                DataTable dt;
-                DualResult dualResult = DBProxy.Current.Select(null, cmd, out dt);
-                if (!dualResult)
-                {
-                    this.ShowErr(dualResult);
-                    return;
-                }
-
-                MyUtility.Msg.ShowMsgGrid_LockScreen(dt, caption: $"@Qty by Article");
-            };
-
-            #region --設定Grid1的顯示欄位--
-
-            this.gridAutoPick.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
-            this.gridAutoPick.DataSource = this.listControlBindingSource1;
-            this.Helper.Controls.Grid.Generator(this.gridAutoPick)
-                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
-                 .Text("SCIRefno", header: "SCIRefno", width: Widths.AnsiChars(25), iseditingreadonly: true)
-                 .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                 .Text("ColorID", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)
-                 .Text("SuppColor", header: "SuppColor", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                 .Text("DescDetail", header: "Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                 .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(15), decimal_places: 2, iseditingreadonly: true, settings: qty)
-                 .Numeric("Use Qty By Stock Unit", header: "Use Qty\r\nBy Stock Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
-                 .Text("Stock Unit", header: "Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                 .Numeric("Use Qty By Use Unit", header: "Use Qty\r\nBy Use Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
-                 .Text("Use Unit", header: "Use Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                 .Text("Stock Unit Desc.", header: "Stock Unit Desc.", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                 .Numeric("Output Qty(Garment)", header: "Output Qty\r\n(Garment)", width: Widths.AnsiChars(6), decimal_places: 0, iseditingreadonly: true)
-                 .Text("Bulk Balance(Stock Unit)", header: "Bulk Balance\r\n(Stock Unit)", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 ;
-            this.gridAutoPick.Columns["Selected"].DefaultCellStyle.BackColor = Color.Pink;
-            #endregion
-
         }
 
         /// <inheritdoc/>
@@ -617,6 +713,99 @@ GROUP BY Article
             // {
             //    item.Value.AcceptChanges();
             // }
+        }
+
+        private void TxtMachineType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string sqlcmd;
+
+            sqlcmd = $@"
+SELECT  DISTINCT sth.MachineTypeID
+FROM  Orders o
+INNER JOIN PO p ON o.POID = p.ID
+INNER JOIN Style_ThreadColorCombo_History sth ON sth.StyleUkey=o.StyleUkey AND sth.Version=p.ThreadVersion
+where o.ID = '{this.poid}'
+";
+
+            Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, string.Empty, this.txtMachineType.Text);
+
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtMachineType.Text = item.GetSelectedString();
+            this.selectAllMachineType = false;
+            this.chkSewingType.Checked = true;
+        }
+
+        private void TxtMachineType_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string machineTypeIDs = this.txtMachineType.Text;
+
+            if (!MyUtility.Check.Empty(machineTypeIDs))
+            {
+                var machineTypeID_List = machineTypeIDs.Replace("'", string.Empty).Split(',').ToList();
+
+                string sqlcmd;
+
+                sqlcmd = $@"
+SELECT STUFF((
+SELECT  DISTINCT ','+sth.MachineTypeID
+FROM  Orders o
+INNER JOIN PO p ON o.POID = p.ID
+INNER JOIN Style_ThreadColorCombo_History sth ON sth.StyleUkey=o.StyleUkey AND sth.Version=p.ThreadVersion
+where o.ID = '{this.poid}' AND sth.MachineTypeID IN ('{machineTypeID_List.JoinToString("','")}')
+FOR XML PATH('')
+),1,1,'')
+";
+
+                string result = MyUtility.GetValue.Lookup(sqlcmd);
+                this.txtMachineType.Text = result;
+            }
+        }
+
+        /// <summary>
+        /// 取得所有MachineTypeID
+        /// </summary>
+        private void SetDefaultTxtMachineType()
+        {
+            string sqlcmd;
+
+            sqlcmd = $@"
+SELECT STUFF((
+SELECT  DISTINCT ','+sth.MachineTypeID
+FROM  Orders o
+INNER JOIN PO p ON o.POID = p.ID
+INNER JOIN Style_ThreadColorCombo_History sth ON sth.StyleUkey=o.StyleUkey AND sth.Version=p.ThreadVersion
+where o.ID = '{this.poid}'
+FOR XML PATH('')
+),1,1,'')
+";
+            string machineType = MyUtility.GetValue.Lookup(sqlcmd);
+            this.txtMachineType.Text = machineType;
+        }
+
+        private void BtnAutoCacu_Click(object sender, EventArgs e)
+        {
+            this.Query(this.chkQuiting.Checked, this.txtMachineType.Text);
+        }
+
+        private void ChkSewingType_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.chkSewingType.Checked && this.selectAllMachineType)
+            {
+                this.SetDefaultTxtMachineType();
+            }
+            else if (this.chkSewingType.Checked && !this.selectAllMachineType)
+            {
+                this.selectAllMachineType = true;
+            }
+            else
+            {
+                this.txtMachineType.Text = string.Empty;
+            }
         }
     }
 }

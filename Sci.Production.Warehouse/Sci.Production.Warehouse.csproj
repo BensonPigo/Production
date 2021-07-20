@@ -193,6 +193,30 @@
     <Compile Include="B08.Designer.cs">
       <DependentUpon>B08.cs</DependentUpon>
     </Compile>
+    <Compile Include="P33_QTThread_Detail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P33_QTThread_Detail.Designer.cs">
+      <DependentUpon>P33_QTThread_Detail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P33_Thread_Detail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P33_Thread_Detail.Designer.cs">
+      <DependentUpon>P33_Thread_Detail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P33_Style_ThreadColorCombo_Operation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P33_Style_ThreadColorCombo_Operation.Designer.cs">
+      <DependentUpon>P33_Style_ThreadColorCombo_Operation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P33_ThreadColorCombination.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P33_ThreadColorCombination.Designer.cs">
+      <DependentUpon>P33_ThreadColorCombination.cs</DependentUpon>
+    </Compile>
     <Compile Include="P34_PrintData.cs" />
     <Compile Include="P63_Transaction.cs">
       <SubType>Form</SubType>
@@ -1444,6 +1468,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P03_ReturnQty.resx">
       <DependentUpon>P03_ReturnQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P33_QTThread_Detail.resx">
+      <DependentUpon>P33_QTThread_Detail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P33_Thread_Detail.resx">
+      <DependentUpon>P33_Thread_Detail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P33_Style_ThreadColorCombo_Operation.resx">
+      <DependentUpon>P33_Style_ThreadColorCombo_Operation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P33_ThreadColorCombination.resx">
+      <DependentUpon>P33_ThreadColorCombination.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P35.resx">
       <DependentUpon>P35.cs</DependentUpon>
