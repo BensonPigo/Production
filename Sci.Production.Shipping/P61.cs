@@ -934,6 +934,30 @@ where id = '{this.CurrentMaintain["ID"]}'
             }
         }
 
+        private DataTable GetbyCustomsTypeDescription()
+        {
+            var xlist = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+                .Where(w => w.RowState != DataRowState.Deleted)
+                .Select(s => new
+                {
+                    CustomsType = MyUtility.Convert.GetString(s["CustomsType"]),
+                    CDCCode = MyUtility.Convert.GetString(s["CDCCode"]),
+                    CustomsDescription = MyUtility.Convert.GetString(s["CustomsDescription"]),
+                    CDCUnit = MyUtility.Convert.GetString(s["CDCUnit"]),
+                    NetKg = MyUtility.Convert.GetDecimal(s["NetKg"]),
+                    WeightKg = MyUtility.Convert.GetDecimal(s["WeightKg"]),
+                    CDCAmount = MyUtility.Convert.GetDecimal(s["CDCAmount"]),
+                    ActNetKg = MyUtility.Convert.GetDecimal(s["ActNetKg"]),
+                    ActWeightKg = MyUtility.Convert.GetDecimal(s["ActWeightKg"]),
+                    ActAmount = MyUtility.Convert.GetDecimal(s["ActAmount"]),
+                    ActHSCode = MyUtility.Convert.GetString(s["ActHSCode"]),
+                    Qty = MyUtility.Convert.GetDecimal(s["Qty"]),
+                })
+                .Where(w => this.customsTypelist.Contains(w.CustomsType))
+                .ToList();
+            return PublicPrg.ListToDataTable.ToDataTable(xlist);
+        }
+
         private DataTable GetSumbyCustomsTypeDescription()
         {
             var xlist = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
@@ -951,6 +975,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                     ActWeightKg = MyUtility.Convert.GetDecimal(s["ActWeightKg"]),
                     ActAmount = MyUtility.Convert.GetDecimal(s["ActAmount"]),
                     ActHSCode = MyUtility.Convert.GetString(s["ActHSCode"]),
+                    Qty = MyUtility.Convert.GetDecimal(s["Qty"]),
                 })
                 .Where(w => this.customsTypelist.Contains(w.CustomsType))
                 .ToList();
@@ -969,12 +994,14 @@ where id = '{this.CurrentMaintain["ID"]}'
                     ActTtlNetKg = s.Sum(su => su.ActNetKg),
                     ActTtlWeightKg = s.Sum(su => su.ActWeightKg),
                     ActTtlAmount = s.Sum(su => su.ActAmount),
+                    TtlQty = s.Sum(su => su.Qty),
                 }).ToList();
             return PublicPrg.ListToDataTable.ToDataTable(sumlist);
         }
 
         private DataTable GetRatebyCustomsTypeDescription()
         {
+            DataTable dt = this.GetbyCustomsTypeDescription();
             DataTable sumDt = this.GetSumbyCustomsTypeDescription();
             string filter = "CustomsType = '{0}' and CustomsDescription = '{1}'";
             var ratelist = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
@@ -987,6 +1014,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                     NetKg = MyUtility.Convert.GetDecimal(s["ActNetKg"]),
                     WeightKg = MyUtility.Convert.GetDecimal(s["ActWeightKg"]),
                     CDCAmount = MyUtility.Convert.GetDecimal(s["CDCAmount"]),
+                    Qty = MyUtility.Convert.GetDecimal(s["Qty"]),
                 })
                 .Where(w => this.customsTypelist.Contains(w.CustomsType))
                 .Select(s => new
@@ -994,9 +1022,20 @@ where id = '{this.CurrentMaintain["ID"]}'
                     s.rn,
                     s.CustomsType,
                     s.CustomsDescription,
-                    RateNetKg = MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlNetKg"]) == 0 ? 0 : s.NetKg / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlNetKg"]),
-                    RateWeightKg = MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlWeightKg"]) == 0 ? 0 : s.WeightKg / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlWeightKg"]),
-                    RateCDCAmount = MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlCDCAmount"]) == 0 ? 0 : s.CDCAmount / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlCDCAmount"]),
+                    RateNetKg = dt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription) + " and NetKg = 0").Any() ?
+                    (MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["TtlQty"]) == 0 ? 0 : s.Qty / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["TtlQty"]))
+                    :
+                    (MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlNetKg"]) == 0 ? 0 : s.NetKg / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlNetKg"])),
+
+                    RateWeightKg = dt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription) + " and WeightKg = 0").Any() ?
+                    (MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["TtlQty"]) == 0 ? 0 : s.Qty / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["TtlQty"]))
+                    :
+                    (MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlWeightKg"]) == 0 ? 0 : s.WeightKg / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlWeightKg"])),
+
+                    RateCDCAmount = dt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription) + " and CDCAmount = 0").Any() ?
+                    (MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["TtlQty"]) == 0 ? 0 : s.Qty / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["TtlQty"]))
+                    :
+                    (MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlCDCAmount"]) == 0 ? 0 : s.CDCAmount / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlCDCAmount"])),
                 }).ToList();
             return PublicPrg.ListToDataTable.ToDataTable(ratelist);
         }
