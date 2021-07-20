@@ -174,6 +174,7 @@
             this.DefaultControl = "dateDate";
             this.DefaultControlForEdit = "numTarget";
             this.DefaultOrder = "EffectiveDate";
+            this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
             this.IsSupportNew = false;
