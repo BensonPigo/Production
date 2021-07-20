@@ -444,7 +444,6 @@ inner join AirPP with(nolock) on AirPP.OrderID = pd.OrderID and AirPP.OrderShipm
                             {
                                 SqlString = sqlcmd,
                                 TmpTable = JsonConvert.SerializeObject(tmp),
-                                TmpTableType = "P05_CommomTmpCol",
                                 TmpCols = "id",
                                 TmpTableName = "#tmp",
                             };

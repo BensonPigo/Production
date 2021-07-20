@@ -160,7 +160,7 @@ namespace Sci.Production.Class
 
         private void ComboFactory_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!MyUtility.Check.Empty(this.comboFactory.Text))
+            if (!MyUtility.Check.Empty(this.comboFactory.Text) && !MyUtility.Check.Empty(this.localRgcode))
             {
                 this.Query();
             }

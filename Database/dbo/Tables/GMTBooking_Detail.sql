@@ -1,7 +1,8 @@
 ﻿CREATE TABLE [dbo].[GMTBooking_Detail] (
     [ID]       VARCHAR (25) CONSTRAINT [DF_GMTBooking_Detail_ID] DEFAULT ('') NOT NULL,
     [PLFromRgCode]     VARCHAR (3) CONSTRAINT [DF_GMTBooking_Detail_PLFromRgCode] DEFAULT ('') NOT NULL,
-    [PackingListID]   VARCHAR (13) CONSTRAINT [DF_GMTBooking_Detail_PackingListID] DEFAULT ('') NOT NULL
+    [PackingListID]   VARCHAR (13) CONSTRAINT [DF_GMTBooking_Detail_PackingListID] DEFAULT ('') NOT NULL,
+	[PulloutDate]   date  NULL
 );
 
 GO

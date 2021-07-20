@@ -244,6 +244,12 @@ this.masterID);
 
         private DualResult MergeDetailA2B()
         {
+            bool isExistsA2BinDetail = this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["PLFromRgCode"])).Any();
+            if (isExistsA2BinDetail)
+            {
+                return new DualResult(true);
+            }
+
             string sqlGetGMTBooking_Detail = $"select PLFromRgCode, PackingListID from GMTBooking_Detail with (nolock) where ID = '{this.CurrentMaintain["ID"]}'";
             DataTable dtGMTBooking_Detail;
             DualResult result = DBProxy.Current.Select(null, sqlGetGMTBooking_Detail, out dtGMTBooking_Detail);
@@ -1778,6 +1784,13 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
         }
 
         /// <inheritdoc/>
+        protected override void DoConfirm()
+        {
+            base.DoConfirm();
+            this.MergeDetailA2B();
+        }
+
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -2035,7 +2048,7 @@ Please follow up based on the Air-Prepaid Status.");
                         return;
                     }
 
-                    dtPkCheck.Merge(dtPackingConfirmCheckA2B);
+                    dtPkCheck.MergeBySyncColType(dtPackingConfirmCheckA2B);
                 }
             }
 
@@ -2050,7 +2063,7 @@ Please follow up based on the Air-Prepaid Status.");
                         mSG.Append(string.Format("Packing NO : {0}\n\r", dr["ID"]));
                     }
 
-                    MyUtility.Msg.WarningBox(@"PackingList not yet confirmed,please confirm listed below first!! " + mSG.ToString());
+                    MyUtility.Msg.WarningBox(@"PackingList not yet confirmed,please confirm listed below first!! " + Environment.NewLine + mSG.ToString());
                     return;
                 }
             }
@@ -2091,9 +2104,8 @@ Please follow up based on the Air-Prepaid Status.");
             }
 
             string updateCmd = string.Format(
-@"update a 
+@"update GMTBooking
 set TotalCBM = @TotalCBM, Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE()
-from GMTBooking 
 where ID = '{1}'",
 Env.User.UserID,
 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
@@ -2105,6 +2117,12 @@ MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 MyUtility.Msg.ErrorBox("Confirm fail !\r\n" + result1.ToString());
                 return;
             }
+        }
+
+        protected override void DoUnconfirm()
+        {
+            base.DoUnconfirm();
+            this.MergeDetailA2B();
         }
 
         /// <inheritdoc/>

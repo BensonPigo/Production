@@ -119,12 +119,17 @@ select p.ID
                             where pd.ID = p.id and oqs.IDD is not null
                             for xml path('')
                           ), 1, 1, '') 
-[PLFromRgCode] = '{1}'
+,[PLFromRgCode] = '{1}'
 from PackingList p WITH (NOLOCK) 
 left join Pullout WITH (NOLOCK)  on Pullout.ID = p.PulloutID and Pullout.Status <> 'NEW'
 where {0} 
 order by p.ID";
             DualResult result = DBProxy.Current.Select(null, string.Format(sqlCmd, whereDetail, string.Empty), out this.plData);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
 
             masterID = (e.Master == null) ? "1=0" : string.Format("g.ShipPlanID ='{0}'", MyUtility.Convert.GetString(e.Master["ID"]));
             string sqlGMTBooking_Detail = $@"
@@ -395,7 +400,7 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
             {
                 this.gridDetailPackingList.ValidateControl();
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(this.detailgrid.GetSelectedRowIndex());
-                if (dr != null)
+                if (dr != null && this.plData != null)
                 {
                     string filter = string.Format("InvNo = '{0}'", MyUtility.Convert.GetString(dr["ID"]));
                     this.plData.DefaultView.RowFilter = filter;
@@ -868,15 +873,36 @@ where not exists (select 1 from ShipPlan_DeleteGBHistory sdh where sdh.ID = t.ID
             List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByShipPlanID(this.CurrentMaintain["ID"].ToString());
 
             string sqlCmd = string.Format(
-                @"select p.ShipPlanID,p.INVNo,g.BrandID,g.ShipModeID, (g.Forwarder+'-'+ls.Abb) as Forwarder, g.CYCFS,
-g.SONo,g.CutOffDate,concat(fd.WhseNo,'-',fd.Address) as WhseNo,
-iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed')) as Status,
-g.TotalCTNQty,g.TotalCBM,
-(select isnull(sum(pd1.CTNQty),0) from PackingList p1 WITH (NOLOCK) ,PackingList_Detail pd1 WITH (NOLOCK) where p1.INVNo = g.ID and p1.ID = pd1.ID and pd1.ReceiveDate is not null) as ClogCTNQty,
-p.ID,(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')) as OrderID,
-(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery,
-p.Status as PLStatus,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID and pd.ReceiveDate is not null) as PLClogCTNQty,
-p.InspDate,p.InspStatus,p.PulloutDate
+                @"select 
+p.ShipPlanID,
+p.INVNo,
+g.BrandID,
+g.ShipModeID, 
+[Forwarder] = (g.Forwarder+'-'+ls.Abb), 
+g.CYCFS,
+g.SONo,
+g.CutOffDate,
+[WhseNo] = concat(fd.WhseNo,'-',fd.Address),
+[Status] = iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed')),
+g.TotalCTNQty,
+g.TotalCBM,
+[ClogCTNQty] = (select isnull(sum(pd1.CTNQty),0) 
+                from PackingList p1 WITH (NOLOCK) ,
+                PackingList_Detail pd1 WITH (NOLOCK) where p1.INVNo = p.INVNo and p1.ID = pd1.ID and pd1.ReceiveDate is not null),
+p.ID,
+[OrderID] = (select cast(a.OrderID as nvarchar) +',' 
+                from (select distinct OrderID 
+                        from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')),
+[BuyerDelivery] = (select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq 
+                    from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, 
+                        Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq),
+[PLStatus] = p.Status,
+p.CTNQty,
+p.CBM,
+[PLClogCTNQty] = (select sum(CTNQty) from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID and pd.ReceiveDate is not null),
+p.InspDate,
+p.InspStatus,
+p.PulloutDate
 from PackingList p WITH (NOLOCK) 
 left join GMTBooking g WITH (NOLOCK) on p.INVNo = g.ID
 left join ForwarderWhse_Detail fd WITH (NOLOCK) on g.ForwarderWhse_DetailUKey = fd.UKey
@@ -893,12 +919,51 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
                 return false;
             }
 
+            string sqlGetGMTBookingInfoForA2B = @"
+alter table #tmp alter column INVNo varchar(25)
+
+select  t.ShipPlanID,
+        t.INVNo,
+        g.BrandID,
+        g.ShipModeID, 
+        [Forwarder] = (g.Forwarder+'-'+ls.Abb), 
+        g.CYCFS,
+        g.SONo,
+        g.CutOffDate,
+        [WhseNo] = concat(fd.WhseNo,'-',fd.Address),
+        [Status] = iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed')),
+        g.TotalCTNQty,
+        g.TotalCBM,
+        t.ClogCTNQty,
+        t.ID,
+        t.OrderID,
+        t.BuyerDelivery,
+        t.PLStatus,
+        t.CTNQty,
+        t.CBM,
+        t.PLClogCTNQty,
+        t.InspDate,
+        t.InspStatus,
+        t.PulloutDate
+from #tmp t
+left join GMTBooking g WITH (NOLOCK) on t.INVNo = g.ID
+left join ForwarderWhse_Detail fd WITH (NOLOCK) on g.ForwarderWhse_DetailUKey = fd.UKey
+left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
+";
+
             foreach (string plFromRgCode in listPLFromRgCode)
             {
                 DataTable dtExcelDataA2B;
 
                 result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, sqlCmd, out dtExcelDataA2B);
 
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox("Query data fail!!\r\n" + result.ToString());
+                    return false;
+                }
+
+                result = MyUtility.Tool.ProcessWithDatatable(dtExcelDataA2B, null, sqlGetGMTBookingInfoForA2B, out dtExcelDataA2B);
                 if (!result)
                 {
                     MyUtility.Msg.WarningBox("Query data fail!!\r\n" + result.ToString());

@@ -91,16 +91,17 @@ where   g.shipplanid = '' and
 ";
             sqlGetDataFromA2B = @"
 select  distinct    [id] = p.InvNo,
-                    [ClogCTNQty] = (SELECT Isnull(Sum(pd.ctnqty), 0) 
-                                    FROM   packinglist p WITH (nolock), 
-                                           packinglist_detail pd WITH (nolock) 
-                                    WHERE  p.invno = g.id 
-                                           AND p.id = pd.id 
-                                           AND pd.receivedate IS NOT NULL)
+                    [ClogCTNQty] = (SELECT Isnull(Sum(pd1.ctnqty), 0) 
+                                    FROM   packinglist p1 WITH (nolock), 
+                                           packinglist_detail pd1 WITH (nolock) 
+                                    WHERE  p.invno = p1.invno
+                                           AND p1.id = pd1.id 
+                                           AND pd1.receivedate IS NOT NULL)
 from    packinglist p WITH (nolock)
 inner join  packinglist_detail pd WITH (nolock) on p.id = pd.id
 inner join  order_qtyship oq WITH (nolock) on pd.orderid = oq.id and pd.ordershipmodeseq = oq.seq
-WHERE   p.InvNo in ({0})
+inner join  orders o WITH (nolock) on o.ID = oq.Id
+WHERE   p.InvNo in ({0}) and
         o.junk = 0 and
         o.GMTComplete != 'S'
 ";
@@ -223,7 +224,7 @@ WHERE  g.shipplanid = ''
 
             if (dtInvNoA2B.Rows.Count > 0)
             {
-                this.listPLFromRgCode = dtInvNoA2B.AsEnumerable().Select(s => $"'{s["PLFromRgCode"].ToString()}'").Distinct().ToList();
+                this.listPLFromRgCode = dtInvNoA2B.AsEnumerable().Select(s => s["PLFromRgCode"].ToString()).Distinct().ToList();
                 #region get A2B Data
                 string whereInvNo = dtInvNoA2B.AsEnumerable().Select(s => $"'{s["ID"].ToString()}'").JoinToString(",");
 
@@ -311,13 +312,24 @@ group by    Selected,
             totalshipqty, 
             totalcbm
 ";
-
-                result = MyUtility.Tool.ProcessWithDatatable(dtGmtFromA2B, null, sqlGetGMTInfo, out this.gbData);
-
-                if (!result)
+                if (dtGmtFromA2B.Rows.Count > 0)
                 {
-                    this.ShowErr(result);
-                    return;
+                    result = MyUtility.Tool.ProcessWithDatatable(dtGmtFromA2B, null, sqlGetGMTInfo, out this.gbData);
+
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+                }
+                else
+                {
+                    result = DBProxy.Current.Select(null, sqlCmd.ToString(), null, out this.gbData);
+                    if (!result)
+                    {
+                        MyUtility.Msg.ErrorBox("Query GB error:" + result.ToString());
+                        return;
+                    }
                 }
                 #endregion
             }

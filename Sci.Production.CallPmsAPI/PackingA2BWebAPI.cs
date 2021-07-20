@@ -119,6 +119,49 @@ namespace Sci.Production.CallPmsAPI
             }
         }
 
+        public static string GetPLFromRgCodeByPackID(string packID)
+        {
+            string sqlGetPLFromRgCode = $"select distinct PLFromRgCode from GMTBooking_Detail with (nolock) where PackingListID = '{packID}'";
+            DataTable dtResult;
+            DualResult result = DBProxy.Current.Select(null, sqlGetPLFromRgCode, out dtResult);
+            if (!result)
+            {
+                throw result.GetException();
+            }
+
+            if (dtResult.Rows.Count == 0)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return dtResult.AsEnumerable().Select(s => s["PLFromRgCode"].ToString()).First(); ;
+            }
+        }
+
+        public static List<string> GetPLFromRgCodeByPulloutID(string pulloutID)
+        {
+            string sqlGetPLFromRgCode = $@"
+select distinct PLFromRgCode 
+from GMTBooking_Detail with (nolock) 
+where ID in (select InvNo from Pullout_Detail with (nolock) where ID = '{pulloutID}')";
+            DataTable dtResult;
+            DualResult result = DBProxy.Current.Select(null, sqlGetPLFromRgCode, out dtResult);
+            if (!result)
+            {
+                throw result.GetException();
+            }
+
+            if (dtResult.Rows.Count == 0)
+            {
+                return new List<string>();
+            }
+            else
+            {
+                return dtResult.AsEnumerable().Select(s => s["PLFromRgCode"].ToString()).ToList(); ;
+            }
+        }
+
         public static List<string> GetPLFromRgCodeByInvNo(string InvNo)
         {
             string sqlGetPLFromRgCode = $"select distinct PLFromRgCode from GMTBooking_Detail with (nolock) where ID = '{InvNo}'";
@@ -144,7 +187,7 @@ namespace Sci.Production.CallPmsAPI
             string sqlGetPLFromRgCode = $@"
 select distinct gd.PLFromRgCode 
 from GMTBooking_Detail gd with (nolock) 
-where exists(select 1 from GMTBooking g with (nolock) where g.ShipPlanID = '{shipPlanID}')";
+where exists(select 1 from GMTBooking g with (nolock) where g.ShipPlanID = '{shipPlanID}' and g.ID = gd.ID)";
             
             DataTable dtResult;
             DualResult result = DBProxy.Current.Select(null, sqlGetPLFromRgCode, out dtResult);
@@ -337,6 +380,16 @@ where exists(select 1 from GMTBooking g with (nolock) where g.ShipPlanID = '{shi
         {
             DataBySql dataBySql = new DataBySql() { SqlString = sqlCmd };
             return ExecuteBySql(systemName, dataBySql);
+        }
+
+        public static void AddSqlCmdByPLFromRgCode(this Dictionary<string, List<string>> srcDic, string plFromRgCode, string sqlCmd)
+        {
+            if (!srcDic.ContainsKey(plFromRgCode))
+            {
+                srcDic.Add(plFromRgCode, new List<string>());
+            }
+
+            srcDic[plFromRgCode].Add(sqlCmd);
         }
 
     }

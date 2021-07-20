@@ -140,7 +140,6 @@ namespace Sci.Production.CallPmsAPI
             public string TmpTable;
             public string TmpTableName;
             public string TmpCols;
-            public string TmpTableType;
         }
 
         public class P05_ImportFromPackingListQueryResult
