@@ -106,7 +106,7 @@
             // 
             this.lbRemark.Location = new System.Drawing.Point(32, 162);
             this.lbRemark.Name = "lbRemark";
-            this.lbRemark.Size = new System.Drawing.Size(125, 23);
+            this.lbRemark.Size = new System.Drawing.Size(58, 23);
             this.lbRemark.TabIndex = 25;
             this.lbRemark.Text = "Remark";
             // 
@@ -114,7 +114,7 @@
             // 
             this.lbName.Location = new System.Drawing.Point(32, 98);
             this.lbName.Name = "lbName";
-            this.lbName.Size = new System.Drawing.Size(125, 23);
+            this.lbName.Size = new System.Drawing.Size(58, 23);
             this.lbName.TabIndex = 23;
             this.lbName.Text = "Name";
             // 
@@ -122,7 +122,7 @@
             // 
             this.lbCode.Location = new System.Drawing.Point(32, 61);
             this.lbCode.Name = "lbCode";
-            this.lbCode.Size = new System.Drawing.Size(125, 23);
+            this.lbCode.Size = new System.Drawing.Size(58, 23);
             this.lbCode.TabIndex = 21;
             this.lbCode.Text = "Code";
             // 
@@ -130,7 +130,7 @@
             // 
             this.labelType.Location = new System.Drawing.Point(32, 26);
             this.labelType.Name = "labelType";
-            this.labelType.Size = new System.Drawing.Size(125, 23);
+            this.labelType.Size = new System.Drawing.Size(58, 23);
             this.labelType.TabIndex = 19;
             this.labelType.Text = "Type";
             // 
@@ -139,7 +139,7 @@
             this.editName.BackColor = System.Drawing.Color.White;
             this.editName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Name", true));
             this.editName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editName.Location = new System.Drawing.Point(160, 98);
+            this.editName.Location = new System.Drawing.Point(93, 98);
             this.editName.Multiline = true;
             this.editName.Name = "editName";
             this.editName.Size = new System.Drawing.Size(456, 50);
@@ -150,7 +150,7 @@
             this.editRemark.BackColor = System.Drawing.Color.White;
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(160, 162);
+            this.editRemark.Location = new System.Drawing.Point(93, 162);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.Size = new System.Drawing.Size(456, 50);
@@ -161,7 +161,7 @@
             this.txtCode.BackColor = System.Drawing.Color.White;
             this.txtCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Code", true));
             this.txtCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCode.Location = new System.Drawing.Point(160, 61);
+            this.txtCode.Location = new System.Drawing.Point(93, 61);
             this.txtCode.MaxLength = 10;
             this.txtCode.Name = "txtCode";
             this.txtCode.Size = new System.Drawing.Size(194, 23);
@@ -173,12 +173,12 @@
             this.txtType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Type", true));
             this.txtType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtType.IsSupportEditMode = false;
-            this.txtType.Location = new System.Drawing.Point(160, 26);
+            this.txtType.Location = new System.Drawing.Point(93, 26);
             this.txtType.MaxLength = 10;
             this.txtType.Name = "txtType";
             this.txtType.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.txtType.ReadOnly = true;
-            this.txtType.Size = new System.Drawing.Size(194, 23);
+            this.txtType.Size = new System.Drawing.Size(261, 23);
             this.txtType.TabIndex = 32;
             this.txtType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtType_PopUp);
             // 
@@ -187,7 +187,7 @@
             this.displayTypeGroup.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayTypeGroup.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TypeGroup", true));
             this.displayTypeGroup.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTypeGroup.Location = new System.Drawing.Point(360, 28);
+            this.displayTypeGroup.Location = new System.Drawing.Point(360, 26);
             this.displayTypeGroup.Name = "displayTypeGroup";
             this.displayTypeGroup.Size = new System.Drawing.Size(256, 23);
             this.displayTypeGroup.TabIndex = 33;
