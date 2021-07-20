@@ -1,18 +1,14 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Win.Tools;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
-using Sci.Production.PublicPrg;
-using System.Runtime.InteropServices;
-using System.Transactions;
-using Sci.Win.Tools;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
@@ -24,7 +20,6 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            //this.DefaultFilter = "MDivisionID = '" + Env.User.Keyword + "' and FabricType = 'F'";
             this.txtuserApprove.TextBox1.ReadOnly = true;
             this.txtuserApprove.TextBox1.IsSupportEditMode = false;
             this.InsertDetailGridOnDoubleClick = false;
@@ -34,7 +29,6 @@ namespace Sci.Production.PPIC
         public P22(ToolStripMenuItem menuitem, string id)
         {
             this.InitializeComponent();
-            //this.DefaultFilter = "MDivisionID = '" + Env.User.Keyword + "' and FabricType = 'F' and ID = '" + id + "'";
             this.txtuserApprove.TextBox1.ReadOnly = true;
             this.txtuserApprove.TextBox1.IsSupportEditMode = false;
             this.InsertDetailGridOnDoubleClick = false;
@@ -68,15 +62,6 @@ where r.ID = '{masterID}'
             this.lbStatus.Text = this.CurrentMaintain["status"].ToString().Trim();
 
             this.comboType.ReadOnly = true;
-            //this.txtLocalSupp.TextBox1.ReadOnly = false;
-            //if (this.CurrentMaintain["Shift"].Equals("O") && this.EditMode)
-            //{
-            //    this.txtLocalSupp.TextBox1.ReadOnly = false;
-            //}
-            //else
-            //{
-            //    this.txtLocalSupp.TextBox1.ReadOnly = true;
-            //}
         }
 
         /// <inheritdoc/>
@@ -146,7 +131,6 @@ where Junk = 0 AND Category = 'Carton'
 
                 if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
-
                     List<SqlParameter> sqlpara = new List<SqlParameter>
                     {
                         new SqlParameter("@RefNo", e.FormattedValue),
@@ -418,6 +402,12 @@ AND Refno = '{dr["Refno"]}'
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
+            if (((DataTable)this.detailgridbs.DataSource).Select("isnull(ReplacementLocalItemReasonID, '') = ''").Any())
+            {
+                MyUtility.Msg.WarningBox("Reason ID can't empty!");
+                return;
+            }
+
             base.ClickConfirm();
 
             DualResult result;
@@ -571,8 +561,8 @@ where MDivisionID = '{0}'", Env.User.Keyword);
 
         private void ComboShift_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //if (!MyUtility.Check.Empty(this.comboShift.SelectedValue) && this.EditMode)
-            //{
+            // if (!MyUtility.Check.Empty(this.comboShift.SelectedValue) && this.EditMode)
+            // {
             //    if (this.comboShift.SelectedValue.Equals("O"))
             //    {
             //        this.txtLocalSupp.TextBox1.ReadOnly = false;
@@ -583,7 +573,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             //        this.CurrentMaintain["Shift"] = this.comboShift.SelectedValue;
             //        this.CurrentMaintain["SubconName"] = string.Empty;
             //    }
-            //}
+            // }
         }
 
         private void ComboType_Validating(object sender, CancelEventArgs e)

@@ -226,6 +226,12 @@
     <Compile Include="P05_ReqQtyList.Designer.cs">
       <DependentUpon>P05_ReqQtyList.cs</DependentUpon>
     </Compile>
+    <Compile Include="P30_ImportCartonReplacement.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P30_ImportCartonReplacement.Designer.cs">
+      <DependentUpon>P30_ImportCartonReplacement.cs</DependentUpon>
+    </Compile>
     <Compile Include="P30_Qty.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -735,6 +741,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P30_BatchApprove.resx">
       <DependentUpon>P30_BatchApprove.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P30_ImportCartonReplacement.resx">
+      <DependentUpon>P30_ImportCartonReplacement.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="P30_IrregularPriceReason.resx">
       <DependentUpon>P30_IrregularPriceReason.cs</DependentUpon>

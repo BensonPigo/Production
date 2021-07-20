@@ -136,7 +136,7 @@ select distinct iif(sum(b.CTNQty) -isnull(lp.qty,0)<=0,0,1) as Selected
        , d.UnitID
        , d.Price
        , sum(b.CTNQty) * d.Price as amount
-       , [std_price] = round(y.order_amt /iif(y.order_qty=0,1,y.order_qty),3) 
+       , [std_price] = round(ot.Price, 3) 
        , '' as remark 
        , a.EstCTNArrive etd 
        , a.ID as requestid
@@ -151,16 +151,7 @@ inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID
 inner join Brand br WITH (NOLOCK) on c.BrandID = br.ID
 inner join LocalItem d WITH (NOLOCK) on b.RefNo = d.RefNo
 inner join factory WITH (NOLOCK) on c.FactoryID = factory.id
-outer apply(
-    select o1.POID
-           , isnull(sum(o1.qty),0) order_qty
-           , sum(o1.qty*ot.Price) order_amt 
-    from orders o1 WITH (NOLOCK) 
-    inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = o1.ID 
-    where o1.poid = c.poid 
-          and ot.ArtworkTypeID = '{2}'
-    group by o1.poid
-) y
+left join Order_TmsCost ot WITH (NOLOCK) on ot.id = c.ID 
 outer apply(
 	select qty   = sum(qty)                    
 	from LocalPo_Detail lpd WITH (NOLOCK) 
@@ -246,7 +237,7 @@ where a.ApvToPurchase = 1
                     }
 
                     strSQLCmd += string.Format(@" 
-group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID,c.FactoryID ,c.SewInLine,c.SciDelivery,y.order_amt,y.order_qty,y.POID,br.BuyerID,lp.qty
+group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID,c.FactoryID ,c.SewInLine,c.SciDelivery,ot.Price,br.BuyerID,lp.qty
 ");
 
                     #region 準備sql參數資料
@@ -291,7 +282,7 @@ select distinct 1 as Selected
        , d.UnitID
        , [Price] = iif(tc.price is null , iif(tc2.price is null , d.Price,tc2.price) ,tc.price)
        , b.PurchaseQty * iif(tc.price is null , iif(tc2.price is null , d.Price,tc2.price) ,tc.price) as amount 
-       , [std_price] = round(y.order_amt /iif(y.order_qty=0,1,y.order_qty),3)
+       , [std_price] = round(ot.Price, 3) 
        , '' as remark 
        , a.EstArriveDate etd 
        , a.OrderID as requestid
@@ -313,16 +304,8 @@ left join LocalItem_ThreadBuyerColorGroupPrice tc with (nolock)
 left join LocalItem_ThreadBuyerColorGroupPrice tc2 with (nolock) 
     on tc2.refno=b.Refno and tc2.ThreadColorGroupID=t.ThreadColorGroupID and tc2.BuyerID = ''
 --inner join LocalPO_Detail e WITH (NOLOCK) on c.id=e.OrderId
-outer apply(
-    select o1.POID
-           ,isnull(sum(o1.qty),0) order_qty
-           ,sum(o1.qty*ot.Price) order_amt 
-    from orders o1 WITH (NOLOCK) 
-    inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = o1.ID 
-    where o1.poid= c.poid 
-          and ot.ArtworkTypeID = '{2}'
-    group by o1.poid
-) y
+left join Order_TmsCost ot WITH (NOLOCK) on ot.id = c.ID and ot.ArtworkTypeID = '{2}'
+
 where a.status = 'Approved' 
       and factory.IsProduceFty = 1
       --and a.factoryid = '{0}'
@@ -427,6 +410,7 @@ where a.status = 'Approved'
                 else
                 {
                     this.ShowErr(strSQLCmd, result);
+                    return;
                 }
 
                 #region 加工remark欄位
