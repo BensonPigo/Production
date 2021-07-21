@@ -2629,6 +2629,9 @@ DROP TABLE #beforeTmp
             public string Replacement1 { get; set; }
 
             /// <inheritdoc/>
+            public string CutCell { get; set; }
+
+            /// <inheritdoc/>
             public string Group_right2 { get; set; }
 
             /// <inheritdoc/>
