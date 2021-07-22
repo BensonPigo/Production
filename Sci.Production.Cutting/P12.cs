@@ -784,6 +784,7 @@ OPTION (RECOMPILE)"
                 Cut = MyUtility.Convert.GetString(row1["cut"]),
                 GroupCombCut = 0,
                 BundleID = row1["BundleID"].ToString(),
+                CutCell = row1["CutCell"].ToString(),
             }).ToList();
             string fileName = "Cutting_P10_Layout1";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
