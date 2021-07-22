@@ -626,7 +626,7 @@ select --distinct
     ,Tmp.abben 
 	,Tmp.BrandID
     ,Tmp.stockqty 
-    ,totalYds.TotalInspYds 
+    ,TotalInspYds = ROUND(totalYds.TotalInspYds ,0)
     ,[Total PoCnt] = isnull(TLSP.cnt,0)
     ,[Total Dyelot] =isnull(TLDyelot.cnt,0)
      ,[Total dye lots accepted(Shadeband)] = ISNULL( PassCountByDyelot.PassCTN ,0)
@@ -639,9 +639,9 @@ select --distinct
 	,[GradeA Roll]= isnull(GACount.GradeA_Roll,0)
 	,[GradeB Roll]= isnull(GBCount.GradeB_Roll,0)
 	,[GradeC Roll]= isnull(GCCount.GradeC_Roll,0)
-    ,[Inspected] = iif(Tmp.stockqty = 0, 0, round(totalYds.TotalInspYds/totalStockqty.stockqty,4)) 
+    ,[Inspected] = iif(Tmp.stockqty = 0, 0, round(ROUND(totalYds.TotalInspYds ,0)/totalStockqty.stockqty,4)) 
     ,[yds] = isnull(TLPoint.Fabric_yards,0)   
-	,[Fabric(%)] = IIF(totalYds.TotalInspYds!=0, round((TLPoint.Fabric_yards/totalYds.TotalInspYds), 4), 0)        		
+	,[Fabric(%)] = IIF(ROUND(totalYds.TotalInspYds ,0)!=0, round((TLPoint.Fabric_yards/totalYds.TotalInspYds), 4), 0)        		
     ,id = sl.ID
     ,[Point] = point.defect
     ,[SHRINKAGEyards] = isnull(SHRINKAGE.SHRINKAGEyards,0)
@@ -825,7 +825,7 @@ where s.type='F' and s.Junk=0 and [AVG] * 100 between s.range1 and s.range2
 	
 	MERGE INTO POWERBIReportData.dbo.P_QA_R06 t
 	USING #Final s 
-	ON t.SuppID=s.SuppID  AND t.Refno=s.Refno AND t.WhseArrival = s.WhseArrival AND t.FactoryID = s.FactoryID
+	ON t.SuppID=s.SuppID  AND t.Refno=s.Refno AND t.WhseArrival = s.WhseArrival AND t.FactoryID = s.FactoryID AND t.POID = s.POID
 	WHEN MATCHED THEN   
 		UPDATE SET 
 		   t.SupplierName = s.SupplierName
