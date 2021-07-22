@@ -832,11 +832,10 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
                         // objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]].Style = rang.Style;
                         rang2 = objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]];
                         rang2.Copy();
-                        //rang2.PasteSpecial(
-                        //    Microsoft.Office.Interop.Excel.XlPasteType.xlPasteFormats,
-                        //    Microsoft.Office.Interop.Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+                        rang2.PasteSpecial(
+                            Microsoft.Office.Interop.Excel.XlPasteType.xlPasteFormats,
+                            Microsoft.Office.Interop.Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
 
-                        rang2.PasteSpecial(Microsoft.Office.Interop.Excel.XlPasteType.xlPasteAll);
                     }
                 }
 
