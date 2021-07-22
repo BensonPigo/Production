@@ -1000,6 +1000,7 @@ SET
 	  ,a.FtyZone      =b.FtyZone
 	  ,a.Foundry	  =b.Foundry
 	  ,a.ProduceM	  =b.MDivisionID
+	  ,a.LoadingFactoryGroup	  =b.LoadingFactoryGroup
 from Production.dbo.Factory as a inner join Trade_To_Pms.dbo.Factory as b ON a.id=b.id
 --Factory1
 --Factory_TMS
