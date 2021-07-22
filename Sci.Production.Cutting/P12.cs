@@ -293,6 +293,7 @@ select
 	, [BundleID] = b.ID
     , a.RFPrintDate
     , a.RFIDScan
+    , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -384,6 +385,7 @@ select
 	, [BundleID] = b.ID
     , a.RFPrintDate
     , a.RFIDScan
+    , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -519,6 +521,7 @@ select
 	, [BundleID] = b.ID
     , a.RFPrintDate
     , a.RFIDScan
+    , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -610,6 +613,7 @@ select
 	, [BundleID] = b.ID
     , a.RFPrintDate
     , a.RFIDScan
+    , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -979,6 +983,7 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 BundleID = dr["BundleID"].ToString(),
                 BundleNo = dr["Bundle"].ToString(),
                 RFIDScan = MyUtility.Convert.GetBool(dr["RFIDScan"]),
+                CutCell = dr["CutCell"].ToString(),
             }).ToList();
             if (data.Count > 0)
             {
