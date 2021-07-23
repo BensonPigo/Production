@@ -238,6 +238,13 @@ where RefNo='{e.FormattedValue}' and junk=0
                     dr["Description"] = string.Empty;
                     dr["UnitID"] = string.Empty;
                     dr["Refno"] = string.Empty;
+
+                    dr["CustomsType"] = string.Empty;
+                    dr["CustomsDescription"] = string.Empty;
+                    dr["CDCUnit"] = string.Empty;
+                    dr["CDCUnitPrice"] = 0;
+                    dr["CDCCode"] = string.Empty;
+                    dr["HSCode"] = string.Empty;
                     e.Cancel = true;
                     dr.EndEdit();
                     return;
@@ -251,6 +258,8 @@ Select kd.CDCUnit, Ki.CDCUnitPrice,kd.CustomsType
 ,[CustomsDescription] = kd.CDCName  
 , [CDCUnit] = kd.CDCUnit  
 , [CDCUnitPrice] = ki.CDCUnitPrice  
+, kd.CDCCode
+, HSCode = (select HSCode from KHCustomsItem_Detail kid where kid.KHCustomsItemUkey = ki.ukey and kid.Port = '{this.CurrentMaintain["ImportPort"]}')
 from view_KHImportItem vk
 inner join KHCustomsItem ki on vk.Refno=Ki.Refno
 inner join KHCustomsDescription kd on  kd.CDCName=ki.KHCustomsDescriptionCDCName and vk.CustomsType = kd.CustomsType
@@ -263,6 +272,8 @@ where vk.Refno = '{e.FormattedValue}'
                     dr["CustomsDescription"] = drSeek["CustomsDescription"];
                     dr["CDCUnit"] = drSeek["CDCUnit"];
                     dr["CDCUnitPrice"] = drSeek["CDCUnitPrice"];
+                    dr["CDCCode"] = drSeek["CDCCode"];
+                    dr["HSCode"] = drSeek["HSCode"];
                 }
                 else
                 {
@@ -270,6 +281,8 @@ where vk.Refno = '{e.FormattedValue}'
                     dr["CustomsDescription"] = string.Empty;
                     dr["CDCUnit"] = string.Empty;
                     dr["CDCUnitPrice"] = 0;
+                    dr["CDCCode"] = string.Empty;
+                    dr["HSCode"] = string.Empty;
                 }
 
                 dr["Refno"] = e.FormattedValue;
@@ -586,7 +599,6 @@ left  join KHCustomsDescription_Detail kdd on kd.CDCName=kdd.CDCName and kdd.Pur
             {
                 if (MyUtility.Check.Empty(dr["CustomsType"]) ||
                     MyUtility.Check.Empty(dr["CustomsDescription"]) ||
-                    MyUtility.Check.Empty(dr["CDCQty"]) ||
                     MyUtility.Check.Empty(dr["CDCUnit"]) ||
                     MyUtility.Check.Empty(dr["CDCUnitPrice"]) ||
                     MyUtility.Check.Empty(dr["ActNetKg"]) ||
@@ -594,7 +606,7 @@ left  join KHCustomsDescription_Detail kdd on kd.CDCName=kdd.CDCName and kdd.Pur
                     MyUtility.Check.Empty(dr["ActAmount"]) ||
                     MyUtility.Check.Empty(dr["ActHSCode"]))
                 {
-                    MyUtility.Msg.WarningBox(@"These columns <Customs Type>, <Customs Description>, <CDC Qty>, <CDC Unit>, <CDC Unit Price>, <Act N.W.>, <Act. G.W.>, <Act. Amount>, <Act. HS code> cannot be empty.");
+                    MyUtility.Msg.WarningBox(@"These columns <Customs Type>, <Customs Description>, <CDC Unit>, <CDC Unit Price>, <Act N.W.>, <Act. G.W.>, <Act. Amount>, <Act. HS code> cannot be empty.");
                     return false;
                 }
             }
