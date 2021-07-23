@@ -203,6 +203,7 @@ from (
             and b.DisposeFromClog= 0
             and a.MDivisionID = '{0}' 
             and (a.Type = 'B' or a.Type = 'L')
+            and a.PLCtnTrToRgCodeDate is null
 ", Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
@@ -714,6 +715,23 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                     MyUtility.Msg.WarningBox($@"<CNT#:{dr["PackingListID"]}{dr["CTNStartNo"]}> does not exist Clog!");
                     return;
                 }
+            }
+
+            string wherePackID = selectedData.Select(s => $"'{s["PackingListID"].ToString()}'").Distinct().JoinToString(",");
+            DataTable dtTransedPack;
+            string sqlCheckTransedPack = $"select ID from PAckingList with (nolock) where ID in ({wherePackID}) and PLCtnTrToRgCodeDate is not null";
+            DualResult resultCheck = DBProxy.Current.Select(null, sqlCheckTransedPack, out dtTransedPack);
+            if (!resultCheck)
+            {
+                this.ShowErr(resultCheck);
+                return;
+            }
+
+            if (dtTransedPack.Rows.Count > 0)
+            {
+                string transedPackID = dtTransedPack.AsEnumerable().Select(s => s["ID"].ToString()).JoinToString(",");
+                MyUtility.Msg.WarningBox($"PL[{transedPackID}] already transfer to shipping factory, cannot return to production.");
+                return;
             }
 
             string sql = $@"

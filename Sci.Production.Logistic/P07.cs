@@ -146,6 +146,7 @@ and p2.TransferCFADate is null
 and p2.CFAReturnClogDate is null
 and p2.DisposeFromClog= 0
 and (po.Status = 'New' or po.Status is null)
+and p1.PLCtnTrToRgCodeDate is null
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 order by p2.ID,p2.CTNStartNo";
 
@@ -476,6 +477,23 @@ order by p2.ID,p2.CTNStartNo
             if (selectedData.Length == 0)
             {
                 MyUtility.Msg.WarningBox("No data need to import!");
+                return;
+            }
+
+            string wherePackID = selectedData.Select(s => $"'{s["ID"].ToString()}'").Distinct().JoinToString(",");
+            DataTable dtTransedPack;
+            string sqlCheckTransedPack = $"select ID from PAckingList with (nolock) where ID in ({wherePackID}) and PLCtnTrToRgCodeDate is not null";
+            DualResult resultCheck = DBProxy.Current.Select(null, sqlCheckTransedPack, out dtTransedPack);
+            if (!resultCheck)
+            {
+                this.ShowErr(resultCheck);
+                return;
+            }
+
+            if (dtTransedPack.Rows.Count > 0)
+            {
+                string transedPackID = dtTransedPack.AsEnumerable().Select(s => s["ID"].ToString()).JoinToString(",");
+                MyUtility.Msg.WarningBox($"PL[{transedPackID}] already transfer to shipping factory, cannot transfer to CFA Inspection.");
                 return;
             }
 

@@ -131,6 +131,18 @@ namespace Sci.Production.CallPmsAPI
             public string ParameterName;
             public object ParameterValue;
             public string ParameterType;
+
+            public SqlPar()
+            { 
+            
+            }
+
+            public SqlPar(string parameterName, object parameterValue, string parameterType)
+            {
+                this.ParameterName = parameterName;
+                this.ParameterType = parameterType;
+                this.ParameterValue = parameterValue;
+            }
         }
 
         public class DataBySql
