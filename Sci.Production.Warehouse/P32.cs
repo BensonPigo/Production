@@ -1610,9 +1610,16 @@ Where a.id = '{0}'", masterID);
                 return;
             }
 
+            string cmd = $@"
+select DISTINCT a.Status,a.BackDate
+from BorrowBack a
+inner join BorrowBack_Detail b on a.Id = b.ID
+inner join Factory f on f.ID = b.ToFactoryID
+where a.id='{this.txtBorrowID.Text}' AND  f.MDivisionID = '{Env.User.Keyword}'  and a.type='A'
+";
+
             // BorrowBack MDivisionID 是P31 寫入 => Sci.Env.User.Keyword
-            if (!MyUtility.Check.Seek(
-                $@"select [status],[backdate] from dbo.borrowback where id='{this.txtBorrowID.Text}' and type='A' and mdivisionid='{Env.User.Keyword}'", out DataRow dr, null))
+            if (!MyUtility.Check.Seek(cmd, out DataRow dr, null))
             {
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("Please check borrow id is existed.", "Data not found!!");
