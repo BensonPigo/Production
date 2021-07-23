@@ -193,7 +193,7 @@ outer apply(
 				inner join Receiving r on rd.Id = r.Id
 				where rd.PoId = td.POID and rd.Seq1 = td.Seq1
 				and rd.Seq2 = td.Seq2 and rd.Roll = td.Roll
-				and rd.Dyelot = td.Dyelot and rd.StockType = td.StockType
+				and rd.Dyelot = td.Dyelot
 			) s
 		for xml path ('')
 	) , 1, 1, '')
