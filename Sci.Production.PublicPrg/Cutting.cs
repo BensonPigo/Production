@@ -502,8 +502,9 @@ and x.APSNo is not null
         /// Get Cutting TapeData
         /// </summary>
         /// <param name="cuttingID">cuttingID</param>
+        /// <param name="sortby">sortby</param>
         /// <returns>DataTable</returns>
-        public static DataTable GetCuttingTapeData(string cuttingID)
+        public static DataTable GetCuttingTapeData(string cuttingID, string sortby = "")
         {
             string sqlcmd = $@"
 declare @CuttingSP varchar(13) = '{cuttingID}'
@@ -621,6 +622,19 @@ order by o.SewInLine
                 ThenBy(o => MyUtility.Convert.GetString(o["SizeCode"])).
                 ThenBy(o => MyUtility.Convert.GetString(o["SP"])).
                 CopyToDataTable();
+
+            if (sortby == "Color")
+            {
+                dtf2 = dtf.AsEnumerable().
+                OrderBy(o => MyUtility.Convert.GetString(o["MarkerName"]).Substring(0, 5)).
+                ThenBy(o => MyUtility.Convert.GetString(o["ColorID"])).
+                ThenBy(o => MyUtility.Convert.GetString(o["MarkerName"])).
+                ThenBy(o => MyUtility.Convert.GetString(o["Article"])).
+                ThenBy(o => MyUtility.Convert.GetString(o["SizeCode"])).
+                ThenBy(o => MyUtility.Convert.GetString(o["SP"])).
+                CopyToDataTable();
+            }
+
             #region 排序完後處理Type of Cutting Node **用Marker Name前5碼做群組分類, 取最後一筆字串
             DataTable dtf3 = dtf2.Clone();
             int i = 0;

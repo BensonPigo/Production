@@ -27,6 +27,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.DefaultFilter = $"MDivisionID  = '{Sci.Env.User.Keyword}'";
             this.gridicon.Append.Enabled = false;
             this.gridicon.Append.Visible = false;
             this.gridicon.Insert.Enabled = false;
@@ -42,7 +43,7 @@ namespace Sci.Production.Warehouse
             : this(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format(" id='{0}'", transID);
+            this.DefaultFilter = string.Format(" id='{0}' AND MDivisionID  = '{Sci.Env.User.Keyword}'", transID);
             this.IsSupportNew = false;
             this.IsSupportEdit = false;
             this.IsSupportDelete = false;

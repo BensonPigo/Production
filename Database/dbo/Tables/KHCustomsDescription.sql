@@ -1,15 +1,18 @@
 ﻿CREATE TABLE [dbo].[KHCustomsDescription] (
-    [CDCCode]     VARCHAR (5)   NOT NULL,
-    [CDCName]     VARCHAR (50)  NOT NULL,
-    [CustomsType] VARCHAR (10)  NOT NULL,
-    [CDCUnit]     NVARCHAR (50) NOT NULL,
-    [Junk]        BIT           CONSTRAINT [DF_KHCustomsDescription_Junk] DEFAULT ((0)) NOT NULL,
-    [AddName]     VARCHAR (10)  CONSTRAINT [DF_KHCustomsDescription_AddName] DEFAULT ('') NULL,
-    [AddDate]     DATETIME      NULL,
-    [EditName]    VARCHAR (10)  CONSTRAINT [DF_KHCustomsDescription_EditName] DEFAULT ('') NULL,
-    [EditDate]    DATETIME      NULL,
+    [CDCCode]          VARCHAR (5)   NOT NULL,
+    [CDCName]          VARCHAR (50)  NOT NULL,
+    [CustomsType]      VARCHAR (10)  NOT NULL,
+    [CDCUnit]          NVARCHAR (50) NOT NULL,
+    [IsDeclareByNetKg] BIT           CONSTRAINT [DF_KHCustomsDescription_IsDeclareByNetKg] DEFAULT ((0)) NOT NULL,
+    [Junk]             BIT           CONSTRAINT [DF_KHCustomsDescription_Junk] DEFAULT ((0)) NOT NULL,
+    [AddName]          VARCHAR (10)  CONSTRAINT [DF_KHCustomsDescription_AddName] DEFAULT ('') NULL,
+    [AddDate]          DATETIME      NULL,
+    [EditName]         VARCHAR (10)  CONSTRAINT [DF_KHCustomsDescription_EditName] DEFAULT ('') NULL,
+    [EditDate]         DATETIME      NULL,
     CONSTRAINT [PK_KHCustomsDescription_1] PRIMARY KEY CLUSTERED ([CDCName] ASC)
 );
+
+
 
 
 
@@ -56,4 +59,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'海關物�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'海關大類編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHCustomsDescription', @level2type = N'COLUMN', @level2name = N'CDCCode';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否根據N.W.報關', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHCustomsDescription', @level2type = N'COLUMN', @level2name = N'IsDeclareByNetKg';
 

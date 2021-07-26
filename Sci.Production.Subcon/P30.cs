@@ -841,6 +841,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             #region Batch Import, Special record button
             this.btnImportThread.Enabled = this.EditMode;
             this.btnBatchUpdateDellivery.Enabled = this.EditMode;
+            this.btnImportCartonReplacement.Enabled = this.EditMode;
             #endregion
 
             #region Irregular Price判斷
@@ -1251,40 +1252,78 @@ where refno = '{0}'
                     return;
                 }
 
-                bool isExists = MyUtility.Check.Seek($@"SELECT * FROM SubconReason WHERE ID ='{e.FormattedValue}' AND Type = 'WR'");
-
-                if (isExists)
+                if (!MyUtility.Check.Empty(drr["ReplacementLocalItemID"]))
                 {
-                    string reason = MyUtility.GetValue.Lookup($@"SELECT Reason FROM SubconReason WHERE ID ='{e.FormattedValue}' AND Type = 'WR'");
-                    this.CurrentDetailData["ReasonID"] = e.FormattedValue;
-                    this.CurrentDetailData["Reason"] = reason;
-                    this.CurrentDetailData.EndEdit();
+                    if (MyUtility.Check.Seek($@"SELECT * FROM ReplacementLocalItemReason WHERE ID ='{e.FormattedValue}' AND Type = 'R'"))
+                    {
+                        string reason = MyUtility.GetValue.Lookup($@"SELECT description FROM ReplacementLocalItemReason WHERE ID ='{e.FormattedValue}' AND Type = 'R'");
+                        this.CurrentDetailData["ReasonID"] = e.FormattedValue;
+                        this.CurrentDetailData["Reason"] = reason;
+                        this.CurrentDetailData.EndEdit();
+                    }
+                    else
+                    {
+                        this.CurrentDetailData["Reason"] = string.Empty;
+                        MyUtility.Msg.ErrorBox("< Reason ID :" + e.FormattedValue + " > not found!!!");
+                        return;
+                    }
                 }
                 else
                 {
-                    this.CurrentDetailData["Reason"] = string.Empty;
-                    MyUtility.Msg.ErrorBox("< Reason ID :" + e.FormattedValue + " > not found!!!");
-                    return;
+                    bool isExists = MyUtility.Check.Seek($@"SELECT * FROM SubconReason WHERE ID ='{e.FormattedValue}' AND Type = 'WR'");
+
+                    if (isExists)
+                    {
+                        string reason = MyUtility.GetValue.Lookup($@"SELECT Reason FROM SubconReason WHERE ID ='{e.FormattedValue}' AND Type = 'WR'");
+                        this.CurrentDetailData["ReasonID"] = e.FormattedValue;
+                        this.CurrentDetailData["Reason"] = reason;
+                        this.CurrentDetailData.EndEdit();
+                    }
+                    else
+                    {
+                        this.CurrentDetailData["Reason"] = string.Empty;
+                        MyUtility.Msg.ErrorBox("< Reason ID :" + e.FormattedValue + " > not found!!!");
+                        return;
+                    }
                 }
             };
             reasonIDSetting.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(
-                        @"SELECT ID ,Reason FROM SubconReason  WITH (NOLOCK) where JUNK=0 AND Type = 'WR' order by ID", "10,45", null);
-                    item.Size = new Size(630, 535);
-                    DialogResult result = item.ShowDialog();
-                    if (result == DialogResult.Cancel)
+                    DataRow drr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                    if (!MyUtility.Check.Empty(drr["ReplacementLocalItemID"]))
                     {
-                        return;
+                        Win.Tools.SelectItem item = new Win.Tools.SelectItem(
+                            @"SELECT ID, Description FROM ReplacementLocalItemReason WITH (NOLOCK) where JUNK=0 AND Type = 'R' order by ID", "10,45", null);
+                        item.Size = new Size(630, 535);
+                        DialogResult result = item.ShowDialog();
+                        if (result == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+
+                        IList<DataRow> selectedRow = item.GetSelecteds();
+                        this.CurrentDetailData["ReasonID"] = selectedRow[0][0];
+                        this.CurrentDetailData["Reason"] = selectedRow[0][1];
+                        this.CurrentDetailData.EndEdit();
                     }
+                    else
+                    {
+                        Win.Tools.SelectItem item = new Win.Tools.SelectItem(
+                            @"SELECT ID ,Reason FROM SubconReason  WITH (NOLOCK) where JUNK=0 AND Type = 'WR' order by ID", "10,45", null);
+                        item.Size = new Size(630, 535);
+                        DialogResult result = item.ShowDialog();
+                        if (result == DialogResult.Cancel)
+                        {
+                            return;
+                        }
 
-                    IList<DataRow> selectedRow = item.GetSelecteds();
-                    this.CurrentDetailData["ReasonID"] = selectedRow[0][0];
-                    this.CurrentDetailData["Reason"] = selectedRow[0][1];
-
-                    this.CurrentDetailData.EndEdit();
+                        IList<DataRow> selectedRow = item.GetSelecteds();
+                        this.CurrentDetailData["ReasonID"] = selectedRow[0][0];
+                        this.CurrentDetailData["Reason"] = selectedRow[0][1];
+                        this.CurrentDetailData.EndEdit();
+                    }
                 }
             };
             #endregion
@@ -1314,6 +1353,7 @@ where refno = '{0}'
             .Text("ReasonID", header: "Reason ID", width: Widths.AnsiChars(8), settings: reasonIDSetting) // 18
             .Text("Reason", header: "Reason", width: Widths.AnsiChars(25), iseditingreadonly: true)
             .Text("BuyerID", header: "Buyer", width: Widths.AnsiChars(6), iseditingreadonly: true) // 19
+            .Text("ReplacementLocalItemID", header: "Carton Replacement#", width: Widths.AnsiChars(16), iseditingreadonly: true)
             ;
             #endregion
 
@@ -1834,18 +1874,19 @@ where refno = '{0}'
 where id='{e.Master["ID"].ToString()}' ");
 
             this.DetailSelectCommand = $@"
-select [Selected] = 0,[Amount]= isnull(loc2.Price*loc2.Qty,0),[std_price]=isnull(std.std_price,0),*,o.factoryid,o.sewinline,loc.description
-,sr.Reason
+select [Selected] = 0
+    ,[Amount]= isnull(loc2.Price*loc2.Qty,0)
+    ,[std_price]=round(b.Price, 3) 
+    ,o.factoryid,o.sewinline
+    ,loc.description
+    ,Reason = iif(loc2.ReplacementLocalItemID is not null, rl.description, sr.Reason)
+    ,*
 from localpo_detail loc2 WITH (NOLOCK) 
 left join orders o WITH (NOLOCK) on loc2.orderid = o.id
 left join localitem loc WITH (NOLOCK) on loc.refno = loc2.refno 
 LEFT JOIN SubconReason sr WITH (NOLOCK) on sr.ID = loc2.ReasonID AND sr.Type = 'WR'
-outer apply(
-	select [std_price]=round(sum(a.qty*b.Price)/iif(isnull(sum(a.qty),0)=0,1,isnull(sum(a.qty),0)),3) 
-	from orders a WITH (NOLOCK) 
-	inner join Order_TmsCost b WITH (NOLOCK) on b.id = a.ID
-	where a.poid = loc2.POID and b.ArtworkTypeID='{category}'
-)std
+left join ReplacementLocalItemReason rl on rl.id = loc2.ReasonID AND rl.type = 'R'
+left join  Order_TmsCost b WITH (NOLOCK) on b.id = o.ID and b.ArtworkTypeID='{category}'
 Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
 ";
 
@@ -2064,6 +2105,26 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             {
                 this.GridUniqueKey = "orderid,refno,threadcolorid,Requestid";
             }
+        }
+
+        private void BtnImportCartonReplacement_Click(object sender, EventArgs e)
+        {
+            var dr = this.CurrentMaintain;
+            if (dr == null)
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(dr["localsuppid"]) || MyUtility.Convert.GetString(dr["category"]).ToUpper() != "CARTON")
+            {
+                MyUtility.Msg.WarningBox("Please input CARTON to category and input Supplier first ");
+                this.txtLocalPurchaseItem.Focus();
+                return;
+            }
+
+            var frm = new P30_ImportCartonReplacement(dr, (DataTable)this.detailgridbs.DataSource);
+            frm.ShowDialog(this);
+            this.Calttlqty();
         }
     }
 }
