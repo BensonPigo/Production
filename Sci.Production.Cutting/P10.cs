@@ -688,7 +688,7 @@ where  not exists(select 1 from bundle_Detail_Art bda with (nolock) where tda.ID
 
             #region sent data to GZ WebAPI
             string compareCol = "CutRef,OrderID,Article,PatternPanel,FabricPanelCode,SewingLineID,AddDate";
-            string compareDetailCol = "ID,BundleNo,PatternCode,PatternDesc,BundleGroup,SizeCode,Qty,SubProcessID";
+            string compareDetailCol = "ID,BundleNo,PatternCode,PatternDesc,BundleGroup,SizeCode,Qty,SubProcessID,PostSewingSubProcess_String,NoBundleCardAfterSubprocess_String";
             var listChangedDetail = ((DataTable)this.detailgridbs.DataSource).AsEnumerable();
             if (this.CurrentMaintain.CompareDataRowVersionValue(compareCol))
             {
@@ -742,11 +742,6 @@ where  not exists(select 1 from bundle_Detail_Art bda with (nolock) where tda.ID
                 })
                 .CopyToDataTable();
                 Task.Run(() => new Guozi_AGV().SentDeleteBundle(deletedDetail));
-            }
-
-            if (deleteBundle_Detail_Art.Rows.Count > 0)
-            {
-                Task.Run(() => new Guozi_AGV().SentDeleteBundle_SubProcess(deleteBundle_Detail_Art));
             }
             #endregion
 

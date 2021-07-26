@@ -41,6 +41,7 @@ namespace Sci.Production.Warehouse
             deliveryDate2 = this.dateRangeBuyerDelivery.Value2;
             string spno1 = this.txtSPNoStart.Text;
             string spno2 = this.txtSPNoEnd.Text;
+            string mDivisionID = Sci.Env.User.Keyword;
             string category = this.txtartworktype_ftyCategory.Text;
 
             if (MyUtility.Check.Empty(localpoid) && MyUtility.Check.Empty(spno1) && MyUtility.Check.Empty(spno2) && MyUtility.Check.Empty(issueDate1) && MyUtility.Check.Empty(deliveryDate1))
@@ -81,8 +82,7 @@ namespace Sci.Production.Warehouse
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             #endregion
 
-            string strSQLCmd = string.Format(
-                @"
+            string strSQLCmd = $@"
 select  1 as selected 
         , '' id
         , a.id as LocalPoId
@@ -105,7 +105,8 @@ inner join dbo.LocalPO_Detail b WITH (NOLOCK) on b.id = a.Id
 left JOIN dbo.Orders o  WITH (NOLOCK) on o.ID = b.OrderId
 Where b.Qty - b.InQty >0
     and a.status = 'Approved' 
-    and a.LocalSuppID = '{0}'", this.dr_master["localsuppid"]);
+    AND a.MDivisionID = '{mDivisionID}'
+    and a.LocalSuppID = '{this.dr_master["localsuppid"]}'";
 
             if (!MyUtility.Check.Empty(localpoid))
             {
