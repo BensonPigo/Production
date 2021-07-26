@@ -37,6 +37,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.txtCDCCode = new Sci.Win.UI.TextBox();
             this.comboCustomsType = new Sci.Win.UI.ComboBox();
+            this.checkBox1 = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -53,6 +54,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.checkBox1);
             this.masterpanel.Controls.Add(this.comboCustomsType);
             this.masterpanel.Controls.Add(this.txtCDCCode);
             this.masterpanel.Controls.Add(this.label2);
@@ -73,6 +75,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCDCCode, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboCustomsType, 0);
+            this.masterpanel.Controls.SetChildIndex(this.checkBox1, 0);
             // 
             // detailpanel
             // 
@@ -237,6 +240,18 @@
             this.comboCustomsType.Size = new System.Drawing.Size(151, 24);
             this.comboCustomsType.TabIndex = 18;
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsDeclareByNetKg", true));
+            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBox1.Location = new System.Drawing.Point(381, 70);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(131, 21);
+            this.checkBox1.TabIndex = 19;
+            this.checkBox1.Text = "Declare By N.W.";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
             // B61
             // 
             this.ClientSize = new System.Drawing.Size(732, 449);
@@ -284,5 +299,6 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.ComboBox comboCustomsType;
+        private Win.UI.CheckBox checkBox1;
     }
 }

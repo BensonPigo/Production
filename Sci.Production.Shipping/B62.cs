@@ -129,6 +129,26 @@ where 1=1
             this.txtCustomsDesc.BackColor = Color.FromArgb(183, 227, 255);
             this.txtCustomsDesc.ForeColor = Color.FromArgb(0, 0, 255);
             base.OnDetailEntered();
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain))
+            {
+                string sqlcmd = this.GetRefNoSqlCmd();
+                sqlcmd += Environment.NewLine + $" and SCIRefNo= '{this.txtSCIRefno.Text}'";
+
+                if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
+                {
+                    this.txtRefno.Text = dr["Refno"].ToString();
+                }
+            }
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain))
+            {
+                string sqlcmd = $@"select CDCUnit from KHCustomsDescription where junk=0 and CustomsType = '{this.CurrentMaintain["CustomsType"]}'";
+                if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
+                {
+                    this.txtCDCUnit.Text = dr["CDCUnit"].ToString();
+                }
+            }
         }
 
         /// <inheritdoc/>
