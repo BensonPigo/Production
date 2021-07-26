@@ -325,7 +325,8 @@ where a.id= @ID";
                     row["todyelot"] = string.Empty;
                 }
 
-                string toFactoryID = MyUtility.Convert.GetString(row["ToFactoryID"]);
+                string toPOID = MyUtility.Convert.GetString(row["ToPoID"]);
+                string toFactoryID = MyUtility.GetValue.Lookup($@"select FactoryID from Orders where id='{toPOID}'");
                 toFactoryIDs.Add(toFactoryID);
             }
 
