@@ -718,6 +718,7 @@ with acc as(
     select  bd1.ToPoid
             ,bd1.ToSeq1
             ,bd1.ToSeq2
+			,bd1.FromFactoryID
             ,qty = sum(bd1.qty) 
     from dbo.BorrowBack b1 WITH (NOLOCK) 
     inner join dbo.BorrowBack_Detail bd1 WITH (NOLOCK) on b1.id = bd1.id 
@@ -728,6 +729,7 @@ with acc as(
     select  bd.FromPoId
             ,bd.FromSeq1
             ,bd.FromSeq2
+			,bd.ToFactoryID
             ,borrowedqty = sum(bd.Qty) 
     from dbo.BorrowBack_Detail bd WITH (NOLOCK) 
     left join PO_Supp_Detail p WITH (NOLOCK) on p.id = bd.FromPoId and p.SEQ1 = bd.FromSeq1 and p.SEQ2 = bd.FromSeq2
@@ -736,7 +738,7 @@ with acc as(
     )
 select @reccount = count(*)
 from borrow 
-left join acc on borrow.FromPoId = acc.ToPoid and borrow.FromSeq1 = acc.ToSeq1 and borrow.FromSeq2 = acc.ToSeq2
+left join acc on borrow.FromPoId = acc.ToPoid and borrow.FromSeq1 = acc.ToSeq1 and borrow.FromSeq2 = acc.ToSeq2 and borrow.ToFactoryID=acc.FromFactoryID
 where borrowedqty > isnull(acc.qty,0.00);
 
 if @reccount = 0 
@@ -1153,6 +1155,7 @@ with acc as(
     select  bd1.ToPoid
             ,bd1.ToSeq1
             ,bd1.ToSeq2
+			,bd1.FromFactoryID
             ,qty = sum(bd1.qty) 
     from dbo.BorrowBack b1 WITH (NOLOCK) 
     inner join dbo.BorrowBack_Detail bd1 WITH (NOLOCK) on b1.id = bd1.id 
@@ -1163,6 +1166,7 @@ with acc as(
     select  bd.FromPoId
             ,bd.FromSeq1
             ,bd.FromSeq2
+			,bd.ToFactoryID
             ,borrowedqty = sum(bd.Qty) 
     from dbo.BorrowBack_Detail bd WITH (NOLOCK) 
     left join PO_Supp_Detail p WITH (NOLOCK) on p.id = bd.FromPoId and p.SEQ1 = bd.FromSeq1 and p.SEQ2 = bd.FromSeq2
@@ -1171,7 +1175,7 @@ with acc as(
     )
 select @reccount = count(*)
 from borrow 
-left join acc on borrow.FromPoId = acc.ToPoid and borrow.FromSeq1 = acc.ToSeq1 and borrow.FromSeq2 = acc.ToSeq2
+left join acc on borrow.FromPoId = acc.ToPoid and borrow.FromSeq1 = acc.ToSeq1 and borrow.FromSeq2 = acc.ToSeq2 and borrow.ToFactoryID=acc.FromFactoryID
 where borrowedqty > isnull(acc.qty,0.00);
 
 if @reccount = 0 
