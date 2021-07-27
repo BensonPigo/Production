@@ -300,7 +300,6 @@ where a.id= @ID";
 
             #endregion 必輸檢查
 
-            List<string> toFactoryIDs = new List<string>();
             foreach (DataRow row in this.DetailDatas)
             {
                 if (MyUtility.Check.Empty(row["fromseq1"]) || MyUtility.Check.Empty(row["fromseq2"]))
@@ -324,18 +323,6 @@ where a.id= @ID";
                     row["toroll"] = string.Empty;
                     row["todyelot"] = string.Empty;
                 }
-
-                string toPOID = MyUtility.Convert.GetString(row["ToPoID"]);
-                string toFactoryID = MyUtility.GetValue.Lookup($@"select FactoryID from Orders where id='{toPOID}'");
-                toFactoryIDs.Add(toFactoryID);
-            }
-
-            // To Factory 對應的 M 是否有 1 個以上，如果出現 1 個以上的 M 則不允許存檔
-            int mCount = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($@"select COUNT(MDivisionID) from factory where id IN ('{toFactoryIDs.JoinToString("','")}')"));
-            if (mCount > 1)
-            {
-                MyUtility.Msg.WarningBox("Only can lend material to one M in one record.");
-                return false;
             }
 
             if (!MyUtility.Check.Empty(warningmsg.ToString()))
