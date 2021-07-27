@@ -115,7 +115,7 @@ BEGIN
 		or (@isSCIDelivery = 0 and Orders.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0)))
 	
 	Select Orders.ID
-	, rtrim(iif(Factory.FactorySort = '999', Factory.KpiCode, Factory.ID)) as FactoryID
+	, rtrim(Factory.LoadingFactoryGroup) as FactoryID
 	, CPURate
 	, iif(Factory.Type = 'S', 'Sample', Orders.MDivisionID) as MDivisionID
 	, Factory.CountryID	
@@ -163,7 +163,7 @@ BEGIN
 	---------------------------------------------------------------------------------------------------------------------------------
 	--Fty Local Order
 	select Orders.ID, Orders.CPU, Qty
-		, iif(Factory.FactorySort = '999', Factory.KpiCode, Factory.ID) as FactoryID
+		, Factory.LoadingFactoryGroup as FactoryID
 		, BuyerDelivery, SCIDelivery, SewOutputQty, SewLastDate
 		, SubconInSisterFty, SubconInType, ProgramID, BrandID, StyleID, SeasonID
 		, Factory.Zone
@@ -215,7 +215,7 @@ BEGIN
 	, (cCPU * SewOutputQty * CpuRate) as SewCapacity
 	, SubconInSisterFty
 	, SubconInType
-	, iif(f2.FactorySort = '999', f2.KpiCode, f2.ID) as ProgramID
+	, f2.LoadingFactoryGroup as ProgramID
 	, FactoryOrder.Zone
 	, FactoryOrder.BrandID
 	into #tmpFactoryOrder1 from #FactoryOrder FactoryOrder
@@ -239,7 +239,7 @@ BEGIN
 	---------------------------------------------------------------------------------------------------------------------------------
 	--Forecast
 	Select Orders.ID
-	, rtrim(iif(Factory.FactorySort = '999', Factory.KpiCode, Factory.ID)) as FactoryID
+	, rtrim(Factory.LoadingFactoryGroup) as FactoryID
 	, iif(Factory.Type = 'S', 'Sample', Orders.MDivisionID) as MDivisionID
 	, Factory.CountryID
 	, cTms as ArtworkTypeTMS
@@ -339,7 +339,7 @@ BEGIN
 	if(@ReportType = 1)
 	Begin
 	--Report1 : 每個月區間為某一整年----------------------------------------------------------------------------------------------------------------------------------
-		CREATE TABLE #tmpFtyList
+		CREATE TABLE #tmpFty1
 		(
 			CountryID varchar(2)
 			, CountryName varchar(50)
@@ -348,68 +348,77 @@ BEGIN
 			, Type varchar(1)
 			, FactorySort varchar(3)
 		)
-
-		select distinct 
+		
+		--找出所有Factory
+		select
 			CountryID
 			, CountryName = Factory.CountryID + '-' + Country.Alias
-			, fty.FactoryID
+			, Factory.LoadingFactoryGroup as FactoryID
 			, MDivisionID = iif(Factory.Type = 'S', 'Sample', Factory.MDivisionID)
-			, BrandID
+			, BrandID = ''
 			, Type
 			, FactorySort
-		into #tmpFtyList1
-		from (
-			select FactoryID, BrandID from #tmpOrder1 where isnull(OrderCapacity, 0) != 0 union
-			select FactoryID, BrandID from #tmpForecast1 where isnull(ForecastCapacity, 0) != 0
-		) fty
-		inner join Factory on Factory.ID = fty.FactoryID
+		into #tmpFtyAll1
+		from Factory
 		inner join Country on Factory.CountryID = Country.ID
 		where Type in ('B','S') and isnull(FactorySort,'') <> ''		
 		And (@MDivisionID = '' or Factory.MDivisionID = @MDivisionID)
 		And (@Fty = '' or Factory.ID = @Fty) -- PMS這才有
 		And (@Zone = '' or Factory.Zone = @Zone)
 		AND Factory.IsProduceFty = 1
-		order by FactorySort
-
-		insert into #tmpFtyList1
-		select
-			CountryID
-			, CountryName = Factory.CountryID + '-' + Country.Alias
-			, iif(Factory.FactorySort = '999', Factory.KpiCode, Factory.ID) as FactoryID
-			, MDivisionID = iif(Factory.Type = 'S', 'Sample', Factory.MDivisionID)
-			, BrandID = ''
-			, Type
-			, FactorySort
-		from Factory
-		inner join Country on Factory.CountryID = Country.ID
-		WHERE Type in ('B','S') and isnull(FactorySort,'') <> ''
-		And (@MDivisionID = '' or Factory.MDivisionID = @MDivisionID)
-		And (@Fty = '' or Factory.ID = @Fty) -- PMS這才有
-		And (@Zone = '' or Factory.Zone = @Zone)
-		and (@HideFoundry = 0 or (@HideFoundry = 1 and isnull(Foundry,0) = 0))
-		AND Factory.IsProduceFty = 1
+		
+		select FactoryID = Factory.LoadingFactoryGroup, BrandID
+		into #tmpFtyData1
+		from (
+			select FactoryID, BrandID from #tmpOrder1 where isnull(OrderCapacity, 0) != 0 union
+			select FactoryID, BrandID from #tmpForecast1 where isnull(ForecastCapacity, 0) != 0
+		) f
+		inner join Factory on Factory.ID = f.FactoryID
 
 		if(@CalculateByBrand = 0)
 		BEGIN
+			--移除Foundry
+			IF @HideFoundry = 1
+			BEGIN
+				DELETE FROM #tmpFtyAll1 WHERE 
+				--不存在Data
+				not exists( select 1 from #tmpFtyData1 where #tmpFtyAll1.FactoryID = #tmpFtyData1.FactoryID )
+				--且Foundry
+				and exists( select 1 from Factory where #tmpFtyAll1.FactoryID = Factory.ID and Factory.Foundry = 1 )
+			END
+
 			--By 所有 CountryID, MDisision, FactoryID
-			insert into #tmpFtyList
-			select CountryID, CountryName, FactoryID, MDivisionID, Type, FactorySort from #tmpFtyList1
+			insert into #tmpFty1
+			select CountryID, CountryName, FactoryID, MDivisionID, Type, FactorySort from #tmpFtyAll1
 			where FactoryID != ''
 			group by CountryID, CountryName, FactoryID, MDivisionID, Type, FactorySort
 		END
 		ELSE
 		BEGIN
-			insert into #tmpFtyList
-			select CountryID, CountryName, BrandID, MDivisionID, Type, FactorySort from #tmpFtyList1
-			where BrandID != ''
-			group by CountryID, CountryName, BrandID, MDivisionID, Type, FactorySort
-		END
+			--戴出有數值的Brand
+			insert into #tmpFty1
+			select
+				tmp.CountryID
+				, tmp.CountryName
+				, isnull(tmp2.BrandID, '')
+				, tmp.MDivisionID
+				, tmp.Type
+				, tmp.FactorySort
+			from #tmpFtyAll1 tmp
+			left join #tmpFtyData1 tmp2 on tmp.FactoryID = tmp2.FactoryID
+			GROUP BY tmp.CountryID, tmp.CountryName, tmp2.BrandID, tmp.MDivisionID, tmp.Type, tmp.FactorySort
 
-		select * from #tmpFtyList ORDER BY FactorySort, FactoryID
+			--清除有數值且Brand為空
+			DELETE FROM #tmpFty1 WHERE FactoryID = '' 
+				and exists(select 1 from #tmpFty1 tmp 
+					where #tmpFty1.CountryID = tmp.CountryID and #tmpFty1.MDivisionID = tmp.MDivisionID and tmp.FactoryID != '' );
+		END
+		
+		select * from #tmpFty1 ORDER BY FactorySort, FactoryID
 
 		--(A)+(B)By MDivisionID (C)By Factory
 		select 
-			a.CountryID, a.MDivisionID, a.tmpBrandFty as FactoryID, a.OrderYYMM as Month, a.CountryName, Zone
+			a.Zone, a.CountryID, a.MDivisionID, a.tmpBrandFty as FactoryID, a.OrderYYMM as Month, a.CountryName
 			, sum(a.Capacity) as Capacity
 			, sum(a.Tms) as Tms
 			, sum(a.FtyTmsCapa) as FtyTmsCapa
@@ -419,19 +428,18 @@ BEGIN
 			select * from 
 			(
 				select 
-					Factory.CountryID, c.MDivisionID, tmpBrandFty, FactoryID, OrderYYMM
+					Factory.Zone, Factory.CountryID, c.MDivisionID, tmpBrandFty, FactoryID, OrderYYMM
 					, CountryName = Factory.CountryID + '-' + Country.Alias
-					, SUM(OrderCapacity) as Capacity, SUM(FtyTmsCapa) as FtyTmsCapa, SUM(OrderShortage) as OrderShortage, Factory.Zone
+					, SUM(OrderCapacity) as Capacity, SUM(FtyTmsCapa) as FtyTmsCapa, SUM(OrderShortage) as OrderShortage
 				from (
-					select CountryID, MDivisionID, FactoryID, iif(@CalculateByBrand = 1, BrandID, FactoryID) as tmpBrandFty, OrderYYMM, OrderCapacity, 0 as FtyTmsCapa, OrderShortage from #tmpOrder1 union all
-					select CountryID, MDivisionID, FactoryID, iif(@CalculateByBrand = 1, BrandID, FactoryID) as tmpBrandFty, OrderYYMM, ForecastCapacity,	0, 0 from #tmpForecast1 union all
-					select CountryID, MDivisionID, FactoryID, iif(@CalculateByBrand = 1, '', FactoryID) as tmpBrandFty, OrderYYMM, 0,	Loading as FtyTmsCapa, 0 from #tmpFactory
+					select MDivisionID, FactoryID, iif(@CalculateByBrand = 1, BrandID, FactoryID) as tmpBrandFty, OrderYYMM, OrderCapacity, 0 as FtyTmsCapa, OrderShortage from #tmpOrder1 union all
+					select MDivisionID, FactoryID, iif(@CalculateByBrand = 1, BrandID, FactoryID) as tmpBrandFty, OrderYYMM, ForecastCapacity,	0, 0 from #tmpForecast1 union all
+					select MDivisionID, FactoryID, iif(@CalculateByBrand = 1, '', FactoryID) as tmpBrandFty, OrderYYMM, 0,	Loading as FtyTmsCapa, 0 from #tmpFactory
 				) c
 				inner join Factory on c.FactoryID = Factory.ID
 				inner join Country on Factory.CountryID = Country.ID
-				where c.FactoryID in (select FactoryID from #tmpFtyList1)
-				AND Factory.IsProduceFty = 1
-				GROUP BY Factory.CountryID, c.MDivisionID, tmpBrandFty, FactoryID, OrderYYMM, Country.Alias, Factory.Zone
+				where c.FactoryID in (select FactoryID from #tmpFtyAll1)
+				GROUP BY Factory.Zone, Factory.CountryID, c.MDivisionID, tmpBrandFty, FactoryID, OrderYYMM, Country.Alias
 			) tmpC
 			left join 
 			(
@@ -446,9 +454,9 @@ BEGIN
 				GROUP BY Factory_Tms.ID
 			) d on tmpC.FactoryID = d.ID
 		) a
-		group by a.CountryID, a.MDivisionID, a.tmpBrandFty, a.OrderYYMM, a.CountryName, Zone
+		group by a.Zone, a.CountryID, a.MDivisionID, a.tmpBrandFty, a.OrderYYMM, a.CountryName
 		ORDER BY a.CountryID, a.MDivisionID, a.tmpBrandFty
-
+		
 		--For Forecast shared
 		select Zone, CountryID, MDivisionID, iif(@CalculateByBrand = 1, BrandID, FactoryID) as FactoryID, OrderYYMM as Month, sum(ForecastCapacity) as Capacity 
 		from #tmpForecast1 
@@ -481,8 +489,8 @@ BEGIN
 		--By 所有 CountryID, MDisision, FactoryID
 		--select CountryID,MDivisionID,FactoryID,FactorySort from #tmpFinal group by CountryID,MDivisionID,FactoryID,FactorySort
 		--order by FactorySort
-
-		CREATE TABLE #tmpFtyList2
+		
+		CREATE TABLE #tmpFty2
 		(
 			CountryID varchar(2)
 			, CountryName varchar(50)
@@ -491,65 +499,74 @@ BEGIN
 			, Type varchar(1)
 			, FactorySort varchar(3)
 		)
-
-		select distinct 
+		
+		--找出所有Factory
+		select
 			CountryID
 			, CountryName = Factory.CountryID + '-' + Country.Alias
-			, fty.FactoryID
+			, Factory.LoadingFactoryGroup as FactoryID
 			, MDivisionID = iif(Factory.Type = 'S', 'Sample', Factory.MDivisionID)
-			, BrandID
+			, BrandID = ''
 			, Type
 			, FactorySort
-		into #tmpFtyList3
-		from (
-			select BrandID = '', FactoryID from #tmpFactory ft where ft.HalfLoading1 + ft.HalfLoading2 > 0 union
-			select ft.BrandID, FactoryID from #tmpFinal ft where ft.OrderLoadingCPU > 0 union
-			select BrandID, FactoryID from #tmpFactoryOrder1 --#tmpFactoryOrder1的Brand跟Factory在#tmpFinal的時候只有篩選SubconInSisterFty = 0，所以在此重新加入
-		) fty
-		inner join Factory on Factory.ID = fty.FactoryID
+		into #tmpFtyAll2
+		from Factory
 		inner join Country on Factory.CountryID = Country.ID
 		where Type in ('B','S') and isnull(FactorySort,'') <> ''		
 		And (@MDivisionID = '' or Factory.MDivisionID = @MDivisionID)
 		And (@Fty = '' or Factory.ID = @Fty) -- PMS這才有
 		And (@Zone = '' or Factory.Zone = @Zone)		
 		AND Factory.IsProduceFty = 1
-		order by FactorySort
-
-		insert into #tmpFtyList3
-		select
-			CountryID
-			, CountryName = Factory.CountryID + '-' + Country.Alias
-			, iif(Factory.FactorySort = '999', Factory.KpiCode, Factory.ID) as FactoryID
-			, MDivisionID = iif(Factory.Type = 'S', 'Sample', Factory.MDivisionID)
-			, BrandID = ''
-			, Type
-			, FactorySort		
-		from Factory
-		inner join Country on Factory.CountryID = Country.ID
-		WHERE Type in ('B','S') and isnull(FactorySort,'') <> '' 
-		And (@MDivisionID = '' or Factory.MDivisionID = @MDivisionID)
-		And (@Fty = '' or Factory.ID = @Fty) -- PMS這才有
-		And (@Zone = '' or Factory.Zone = @Zone)	
-		and (@HideFoundry = 0 or (@HideFoundry = 1 and isnull(Foundry,0) = 0))
-		AND Factory.IsProduceFty = 1
+		
+		select FactoryID = Factory.LoadingFactoryGroup, BrandID
+		into #tmpFtyData2
+		from (
+			select BrandID = '', FactoryID from #tmpFactory ft where ft.HalfLoading1 + ft.HalfLoading2 > 0 union
+			select ft.BrandID, FactoryID from #tmpFinal ft where ft.OrderLoadingCPU > 0 union
+			select BrandID, FactoryID from #tmpFactoryOrder1 --#tmpFactoryOrder1的Brand跟Factory在#tmpFinal的時候只有篩選SubconInSisterFty = 0，所以在此重新加入
+		) f
+		inner join Factory on Factory.ID = f.FactoryID
 
 		if(@CalculateByBrand = 0)
 		BEGIN
+			--移除Foundry
+			IF @HideFoundry = 1
+			BEGIN
+				DELETE FROM #tmpFtyAll2 WHERE 
+				--不存在Data
+				not exists( select 1 from #tmpFtyData2 where #tmpFtyAll2.FactoryID = #tmpFtyData2.FactoryID )
+				--且Foundry
+				and exists( select 1 from Factory where #tmpFtyAll2.FactoryID = Factory.ID and Factory.Foundry = 1 )
+			END
+
 			--By 所有 CountryID, MDisision, FactoryID
-			insert into #tmpFtyList2
-			select CountryID, CountryName, FactoryID, MDivisionID, Type, FactorySort from #tmpFtyList3
+			insert into #tmpFty2
+			select CountryID, CountryName, FactoryID, MDivisionID, Type, FactorySort from #tmpFtyAll2
 			where FactoryID != ''
 			group by CountryID, CountryName, FactoryID, MDivisionID, Type, FactorySort
 		END
 		ELSE
 		BEGIN
-			insert into #tmpFtyList2
-			select CountryID, CountryName, BrandID, MDivisionID, Type, FactorySort from #tmpFtyList3
-			where BrandID != ''
-			group by CountryID, CountryName, BrandID, MDivisionID, Type, FactorySort
-		END
+			--戴出有數值的Brand
+			insert into #tmpFty2
+			select
+				tmp.CountryID
+				, tmp.CountryName
+				, isnull(tmp2.BrandID, '')
+				, tmp.MDivisionID
+				, tmp.Type
+				, tmp.FactorySort
+			from #tmpFtyAll2 tmp
+			left join #tmpFtyData2 tmp2 on tmp.FactoryID = tmp2.FactoryID
+			GROUP BY tmp.CountryID, tmp.CountryName, tmp2.BrandID, tmp.MDivisionID, tmp.Type, tmp.FactorySort
 
-		select * from #tmpFtyList2 ORDER BY FactorySort, FactoryID
+			--清除有數值且Brand為空
+			DELETE FROM #tmpFty2 WHERE FactoryID = '' 
+				and exists(select 1 from #tmpFty2 tmp 
+					where #tmpFty2.CountryID = tmp.CountryID and #tmpFty2.MDivisionID = tmp.MDivisionID and tmp.FactoryID != '' );
+		END
+		
+		select * from #tmpFty2 ORDER BY FactorySort, FactoryID
 
 		/*select distinct CountryID, IIF(@CalculateByBrand = 1, '', Factory.ID) as FactoryID, Factory.FactorySort
 		, iif(Factory.Type = 'S', 'Sample', Factory.MDivisionID) as MDivisionID
@@ -568,7 +585,7 @@ BEGIN
 		order by FactorySort
 
 		select * from #tmpFtyList2 order by FactorySort*/
-
+		
 		----(K) By Factory 最細的上下半月Capacity
 		--(L) By Factory Loading CPU
 		select a.Zone, a.CountryID, a.MDivisionID, a.tmpBrandFty as FactoryID, a.OrderYYMM as MONTH, b.OrderLoadingCPU as Capacity1, c.OrderLoadingCPU as Capacity2, a.FtyTmsCapa1, a.FtyTmsCapa2
@@ -589,7 +606,7 @@ BEGIN
 			) ma
 			inner join Factory on ma.FactoryID = Factory.ID
 			inner join Country on Factory.CountryID = Country.ID
-			where ma.tmpBrandFty in (select FactoryID from #tmpFtyList2)
+			where ma.tmpBrandFty in (select FactoryID from #tmpFty2)
 			group by Factory.Zone, Factory.CountryID, ma.MDivisionID, tmpBrandFty, OrderYYMM, Country.Alias
 		) a 
 		left join (
@@ -615,7 +632,7 @@ BEGIN
 			group by IIF(@CalculateByBrand = 1, BrandID, FactoryID), MDivisionID, substring(OrderYYMM,1,6), CountryID
 		) c on a.CountryID = c.CountryID and a.tmpBrandFty = c.tmpBrandFty and a.MDivisionID = c.MDivisionID and substring(a.OrderYYMM,1,6) = c.OrderYYMM
 		
-
+		
 		--For Forecast shared
 		select a.Zone, a.CountryID, a.MDivisionID, a.tmpBrandFty as FactoryID, a.OrderYYMM as MONTH, sum(b.ForecastCapacity) as Capacity1, sum(c.ForecastCapacity) as Capacity2 from (
 			select DISTINCT a.Zone, a.CountryID,a.MDivisionID,iif(@CalculateByBrand = 1, BrandID, FactoryID) as tmpBrandFty,substring(OrderYYMM,1,6) as OrderYYMM from #tmpForecast1 a
@@ -630,7 +647,7 @@ BEGIN
 		) c on a.Zone = c.Zone and a.CountryID = c.CountryID and a.tmpBrandFty = c.tmpBrandFty and a.OrderYYMM = c.OrderYYMM and a.MDivisionID = c.MDivisionID
 		group by a.Zone, a.CountryID,a.MDivisionID,a.OrderYYMM,a.tmpBrandFty
 
-
+		
 		--For Output, 及Output後面的Max日期
 		select 
 			CountryID, CountryID2, MDivisionID, MDivisionID2, tmpBrandFty as FactoryID, tmpBrandFty2 as FactoryID2
@@ -661,25 +678,12 @@ drop table #tmpFinal
 drop table #Orders
 drop table #FactoryOrder
 
-If Object_ID('tempdb..#tmpFtyList') Is not Null
-Begin
-	drop table #tmpFtyList
-End;
-
-If Object_ID('tempdb..#tmpFtyList1') Is not Null
-Begin
-	drop table #tmpFtyList1
-End;
-
-If Object_ID('tempdb..#tmpFtyList2') Is not Null
-Begin
-	drop table #tmpFtyList2
-End;
-
-If Object_ID('tempdb..#tmpFtyList3') Is not Null
-Begin
-	drop table #tmpFtyList3
-End;
+If Object_ID('tempdb..#tmpFtyAll1') Is not Null drop table #tmpFtyAll1
+If Object_ID('tempdb..#tmpFtyAll2') Is not Null drop table #tmpFtyAll2
+If Object_ID('tempdb..#tmpFtyData1') Is not Null drop table #tmpFtyData1
+If Object_ID('tempdb..#tmpFtyData2') Is not Null drop table #tmpFtyData2
+If Object_ID('tempdb..#tmpFty1') Is not Null drop table #tmpFty1
+If Object_ID('tempdb..#tmpFty2') Is not Null drop table #tmpFty2
 
 set transaction isolation level read committed
 
