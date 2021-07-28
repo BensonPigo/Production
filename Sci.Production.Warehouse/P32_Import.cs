@@ -70,7 +70,7 @@ namespace Sci.Production.Warehouse
             , qty = sum(bd.qty) 
     from borrowback_detail bd WITH (NOLOCK) 
 	inner join Orders orders on bd.FromPOID = orders.ID
-	inner join Factory factory on orders.FtyGroup = factory.ID
+    inner join Factory factory on bd.ToFactoryID = factory.ID
     where bd.id = '{this.dr_master["BorrowId"]}' and factory.MDivisionID = '{Env.User.Keyword}'  and orders.Category <> 'A'
     group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2, bd.FromStocktype
     )
@@ -83,7 +83,7 @@ namespace Sci.Production.Warehouse
     from borrowback b WITH (NOLOCK) 
     inner join borrowback_detail bd WITH (NOLOCK) on b.Id= bd.ID 
 	inner join Orders orders on bd.FromPOID = orders.ID
-	inner join Factory factory on orders.FtyGroup = factory.ID
+	inner join Factory factory on bd.ToFactoryID= factory.ID
     where b.BorrowId='{this.dr_master["BorrowId"]}' and b.Status = 'Confirmed' and factory.MDivisionID = '{Env.User.Keyword}'
     group by bd.ToPoid, bd.ToSeq1, bd.ToSeq2, bd.ToStocktype
     )
@@ -213,18 +213,19 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
             sqlcmd = string.Format(
                 @"
 ;with cte1 as(
+	-- 找出這個BorrowBack，發給 登入者所屬 M 的數量
     select  bd.FromPoId
             , bd.FromSeq1
             , bd.FromSeq2
             , bd.FromStocktype
-                  , FromFactoryID = orders.FactoryID
-            , qty = sum(bd.qty) 
+            , FromFactoryID = bd.FromFactoryID
+            , qty = sum(bd.qty)
             ,bd.ToPOID
-    from borrowback_detail bd WITH (NOLOCK) 
-      inner join Orders orders on bd.FromPOID = orders.ID
-      inner join Factory factory on orders.FtyGroup = factory.ID
+    from borrowback_detail bd WITH(NOLOCK)
+    inner join Orders orders on bd.FromPOID = orders.ID
+    inner join Factory factory on bd.ToFactoryID = factory.ID
     where bd.id = '{0}' and factory.MDivisionID = '{1}' and orders.Category <> 'A'
-    group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2, bd.FromStocktype, orders.FactoryID ,bd.ToPOID
+    group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2, bd.FromStocktype, bd.FromFactoryID, bd.ToPOID
     )
 ,cte2 as(
     select  bd.ToPoid
@@ -234,8 +235,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
             , qty = sum(bd.qty) 
     from borrowback b WITH (NOLOCK) 
     inner join borrowback_detail bd WITH (NOLOCK) on b.Id= bd.ID 
-      inner join Orders orders on bd.FromPOID = orders.ID
-      inner join Factory factory on orders.FtyGroup = factory.ID
+    inner join Factory factory on bd.ToFactoryID = factory.ID
     where b.BorrowId='{0}' and b.Status = 'Confirmed' and factory.MDivisionID = '{1}'
     group by bd.ToPoid, bd.ToSeq1, bd.ToSeq2, bd.ToStocktype
     )
@@ -256,10 +256,10 @@ SELECT DISTINCT Refno, SizeSpec, ColorID ,BrandId INTO #tmp2 FROM #tmp
 select  distinct selected = 0 
         , id = '' 
         , FromFtyinventoryUkey = c.ukey 
-        , FromPoId = p.id 
-        , FromSeq1 = p.Seq1 
-        , FromSeq2 = p.Seq2 
-        , fromseq =concat(Ltrim(Rtrim(p.Seq1)), ' ', p.Seq2) 
+        , FromPoId = bd.ToPOID
+        , FromSeq1 = bd.ToSeq1 
+        , FromSeq2 = bd.ToSeq2 
+        , fromseq =concat(Ltrim(Rtrim(bd.ToSeq1 )), ' ', bd.ToSeq2) 
         , FromDyelot = c.dyelot 
         , FromRoll = c.roll 
         , FromFactoryID = orders.FactoryID
@@ -286,7 +286,7 @@ INNER join #tmp on bd.FromPoId = #tmp.FromPOID and bd.FromSeq1 = #tmp.FromSeq1 a
 INNER join PO_Supp_Detail p WITH (NOLOCK) on p.ID= #tmp.ToPOID AND #tmp.BrandId=p.BrandId  and #tmp.Refno=p.Refno and #tmp.ColorID=p.ColorID  and #tmp.SizeSpec=p.SizeSpec
 INNER join ftyinventory c WITH (NOLOCK) on  p.id = c.poid and  p.Seq1  = c.seq1 and  p.Seq2 = c.seq2 --and bd.toDyelot = c.Dyelot
 INNER join Orders orders on c.POID = orders.ID
-INNER join Factory factory on orders.FtyGroup = factory.ID
+INNER join Factory factory on bd.ToFactoryID= factory.ID
 OUTER apply(
 	select	Top 1 Roll
 			, Dyelot
