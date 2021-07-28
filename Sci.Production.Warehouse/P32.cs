@@ -718,25 +718,27 @@ with acc as(
     select  bd1.ToPoid
             ,bd1.ToSeq1
             ,bd1.ToSeq2
+			,bd1.FromFactoryID
             ,qty = sum(bd1.qty) 
     from dbo.BorrowBack b1 WITH (NOLOCK) 
     inner join dbo.BorrowBack_Detail bd1 WITH (NOLOCK) on b1.id = bd1.id 
     where b1.BorrowId='{1}' and b1.Status = 'Confirmed'
-    group by bd1.ToPoid,bd1.ToSeq1,bd1.ToSeq2
+    group by bd1.ToPoid,bd1.ToSeq1,bd1.ToSeq2,bd1.FromFactoryID
     )
 , borrow as(
     select  bd.FromPoId
             ,bd.FromSeq1
             ,bd.FromSeq2
+			,bd.ToFactoryID
             ,borrowedqty = sum(bd.Qty) 
     from dbo.BorrowBack_Detail bd WITH (NOLOCK) 
     left join PO_Supp_Detail p WITH (NOLOCK) on p.id = bd.FromPoId and p.SEQ1 = bd.FromSeq1 and p.SEQ2 = bd.FromSeq2
     where bd.id='{1}'
-    group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2
+    group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2,bd.ToFactoryID
     )
 select @reccount = count(*)
 from borrow 
-left join acc on borrow.FromPoId = acc.ToPoid and borrow.FromSeq1 = acc.ToSeq1 and borrow.FromSeq2 = acc.ToSeq2
+left join acc on borrow.FromPoId = acc.ToPoid and borrow.FromSeq1 = acc.ToSeq1 and borrow.FromSeq2 = acc.ToSeq2 and borrow.ToFactoryID=acc.FromFactoryID
 where borrowedqty > isnull(acc.qty,0.00);
 
 if @reccount = 0 
@@ -1153,25 +1155,27 @@ with acc as(
     select  bd1.ToPoid
             ,bd1.ToSeq1
             ,bd1.ToSeq2
+			,bd1.FromFactoryID
             ,qty = sum(bd1.qty) 
     from dbo.BorrowBack b1 WITH (NOLOCK) 
     inner join dbo.BorrowBack_Detail bd1 WITH (NOLOCK) on b1.id = bd1.id 
     where b1.BorrowId='{1}' and b1.Status = 'Confirmed'
-    group by bd1.ToPoid, bd1.ToSeq1, bd1.ToSeq2
+    group by bd1.ToPoid, bd1.ToSeq1, bd1.ToSeq2,bd1.FromFactoryID
     )
 , borrow as(
     select  bd.FromPoId
             ,bd.FromSeq1
             ,bd.FromSeq2
+			,bd.ToFactoryID
             ,borrowedqty = sum(bd.Qty) 
     from dbo.BorrowBack_Detail bd WITH (NOLOCK) 
     left join PO_Supp_Detail p WITH (NOLOCK) on p.id = bd.FromPoId and p.SEQ1 = bd.FromSeq1 and p.SEQ2 = bd.FromSeq2
     where bd.id='{1}'
-    group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2
+    group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2,bd.ToFactoryID
     )
 select @reccount = count(*)
 from borrow 
-left join acc on borrow.FromPoId = acc.ToPoid and borrow.FromSeq1 = acc.ToSeq1 and borrow.FromSeq2 = acc.ToSeq2
+left join acc on borrow.FromPoId = acc.ToPoid and borrow.FromSeq1 = acc.ToSeq1 and borrow.FromSeq2 = acc.ToSeq2 and borrow.ToFactoryID=acc.FromFactoryID
 where borrowedqty > isnull(acc.qty,0.00);
 
 if @reccount = 0 
@@ -1610,9 +1614,16 @@ Where a.id = '{0}'", masterID);
                 return;
             }
 
+            string cmd = $@"
+select DISTINCT a.Status,a.BackDate
+from BorrowBack a
+inner join BorrowBack_Detail b on a.Id = b.ID
+inner join Factory f on f.ID = b.ToFactoryID
+where a.id='{this.txtBorrowID.Text}' AND  f.MDivisionID = '{Env.User.Keyword}'  and a.type='A'
+";
+
             // BorrowBack MDivisionID 是P31 寫入 => Sci.Env.User.Keyword
-            if (!MyUtility.Check.Seek(
-                $@"select [status],[backdate] from dbo.borrowback where id='{this.txtBorrowID.Text}' and type='A' and mdivisionid='{Env.User.Keyword}'", out DataRow dr, null))
+            if (!MyUtility.Check.Seek(cmd, out DataRow dr, null))
             {
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("Please check borrow id is existed.", "Data not found!!");
