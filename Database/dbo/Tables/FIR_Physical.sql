@@ -24,8 +24,11 @@
     [IsQMS]            BIT            DEFAULT ((0)) NULL,
     [Issue_DetailUkey] BIGINT         DEFAULT ((0)) NOT NULL,
     [TransactionID]    VARCHAR (30)   NULL,
+    [QMSMachineID]     VARCHAR (20)   NULL DEFAULT (''),
     CONSTRAINT [PK_FIR_Physical] PRIMARY KEY CLUSTERED ([DetailUkey] ASC)
 );
+
+
 
 
 
@@ -143,4 +146,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否為QM
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Issue_Detail Ukey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Physical', @level2type = N'COLUMN', @level2name = N'Issue_DetailUkey';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'機器編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Physical', @level2type = N'COLUMN', @level2name = N'QMSMachineID';
 
