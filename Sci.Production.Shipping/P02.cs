@@ -1484,7 +1484,9 @@ inner join Supp su on su.ID = ca.SuppID
 where FromTag='{fromTag}' 
 and ToTag='{toTag}' 
 and (FromInclude like'%{fromCountry}%' or FromInclude = '')
-and (ToInclude like'%{toCountry}%' or ToInclude = '')";
+and (ToInclude like'%{toCountry}%' or ToInclude = '')
+and ca.junk = 0
+";
             SelectItem item = new SelectItem(sqlCmd, "8,8,10,20", this.txtCarrier.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
