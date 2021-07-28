@@ -723,7 +723,7 @@ with acc as(
     from dbo.BorrowBack b1 WITH (NOLOCK) 
     inner join dbo.BorrowBack_Detail bd1 WITH (NOLOCK) on b1.id = bd1.id 
     where b1.BorrowId='{1}' and b1.Status = 'Confirmed'
-    group by bd1.ToPoid,bd1.ToSeq1,bd1.ToSeq2
+    group by bd1.ToPoid,bd1.ToSeq1,bd1.ToSeq2,bd1.FromFactoryID
     )
 , borrow as(
     select  bd.FromPoId
@@ -734,7 +734,7 @@ with acc as(
     from dbo.BorrowBack_Detail bd WITH (NOLOCK) 
     left join PO_Supp_Detail p WITH (NOLOCK) on p.id = bd.FromPoId and p.SEQ1 = bd.FromSeq1 and p.SEQ2 = bd.FromSeq2
     where bd.id='{1}'
-    group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2
+    group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2,bd.ToFactoryID
     )
 select @reccount = count(*)
 from borrow 
@@ -1160,7 +1160,7 @@ with acc as(
     from dbo.BorrowBack b1 WITH (NOLOCK) 
     inner join dbo.BorrowBack_Detail bd1 WITH (NOLOCK) on b1.id = bd1.id 
     where b1.BorrowId='{1}' and b1.Status = 'Confirmed'
-    group by bd1.ToPoid, bd1.ToSeq1, bd1.ToSeq2
+    group by bd1.ToPoid, bd1.ToSeq1, bd1.ToSeq2,bd1.FromFactoryID
     )
 , borrow as(
     select  bd.FromPoId
@@ -1171,7 +1171,7 @@ with acc as(
     from dbo.BorrowBack_Detail bd WITH (NOLOCK) 
     left join PO_Supp_Detail p WITH (NOLOCK) on p.id = bd.FromPoId and p.SEQ1 = bd.FromSeq1 and p.SEQ2 = bd.FromSeq2
     where bd.id='{1}'
-    group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2
+    group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2,bd.ToFactoryID
     )
 select @reccount = count(*)
 from borrow 
