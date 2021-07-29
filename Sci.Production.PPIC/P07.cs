@@ -65,7 +65,7 @@ update factory set LastDownloadAPSDate  = getdate() where id = '{2}'
                 Env.User.Factory,
                 Env.User.UserID);
 
-            DBProxy.Current.DefaultTimeout = 1200;
+            DBProxy.Current.DefaultTimeout = 2400; // 40分鐘
             DataTable[] dsForAutomation;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out dsForAutomation);
             if (!result)
@@ -97,6 +97,8 @@ update factory set LastDownloadAPSDate  = getdate() where id = '{2}'
 
             this.HideWaitMessage();
             MyUtility.Msg.InfoBox("Download successful !!");
+
+            DBProxy.Current.DefaultTimeout = 300; // 5 分鐘
         }
 
         // Close
@@ -213,8 +215,6 @@ join (
             }
 
             #endregion
-
-            DBProxy.Current.DefaultTimeout = 0;
         }
     }
 }
