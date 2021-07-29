@@ -151,7 +151,7 @@ inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID
 inner join Brand br WITH (NOLOCK) on c.BrandID = br.ID
 inner join LocalItem d WITH (NOLOCK) on b.RefNo = d.RefNo
 inner join factory WITH (NOLOCK) on c.FactoryID = factory.id
-left join Order_TmsCost ot WITH (NOLOCK) on ot.id = c.ID 
+left join Order_TmsCost ot WITH (NOLOCK) on ot.id = c.ID and ot.ArtworkTypeID = '{2}'
 outer apply(
 	select qty   = sum(qty)                    
 	from LocalPo_Detail lpd WITH (NOLOCK) 
