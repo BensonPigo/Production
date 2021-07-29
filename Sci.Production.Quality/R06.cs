@@ -621,7 +621,7 @@ select --distinct
     ,TotalInspYds = ROUND(totalYds.TotalInspYds ,0)
     ,[Total PoCnt] = isnull(TLSP.cnt,0)
     ,[Total Dyelot] =isnull(TLDyelot.cnt,0)
-     ,[Total dye lots accepted(Shadeband)] = ISNULL( PassCountByDyelot.PassCTN ,0)
+    {(this.reportType.Equals("supplier") ? " ,[Total dye lots accepted(Shadeband)] = ISNULL( PassCountByDyelot.PassCTN ,0)" : string.Empty)}
     ,[Insp Report] = isnull(InspReport.cnt,0)
 	,[Test Report] = isnull(TestReport.cnt,0)
 	,[Continuity Card] = isnull(Contcard.cnt,0)
