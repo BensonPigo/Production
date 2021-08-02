@@ -522,6 +522,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             .Text("CLocation", header: "Crap Location", iseditingreadonly: true, settings: ts12) // 32
             .Text("FIR", header: "FIR", iseditingreadonly: true, settings: ts10) // 33
             .Text("WashLab", header: "WashLab Report", iseditingreadonly: true, settings: ts10) // 33
+            .Date("TestReport", header: "Supp. test report \r\n received date", iseditingreadonly: true)
             .Text("Preshrink", header: "Preshrink", iseditingreadonly: true) // 34
             .EditText("Remark", header: "Remark", iseditingreadonly: true) // 35
             .EditText("TPERemark", header: "TPE Remark", iseditingreadonly: true) // 36
@@ -770,6 +771,7 @@ from(
             , FabricCombo
 			, SustainableMaterial
 			, TPERemark
+			, TestReport
     from (
         select  *
                 , -len(description) as len_D 
@@ -866,6 +868,7 @@ from(
 					, EachCons.FabricCombo 
 					, [SustainableMaterial] = IIF(fs.SustainableMaterial='Recycled' and fabric.MtlTypeID='HANGTAG',1,0)
 					, [TPERemark]=a.Remark
+					, [TestReport] = TestReport.value
             from #tmpOrder as orders WITH (NOLOCK) 
             inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
 	        left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
@@ -893,6 +896,14 @@ from(
 				))
 				,1,1,'')
 			)EachCons
+			outer apply
+			(
+				select value = Min(sr.TestReport) 
+				from Export_Detail ed with(nolock)
+				inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
+				inner join SentReport sr with(nolock) on sr.Export_DetailUkey = ed.Ukey
+				where ed.poid = a.ID and ed.seq1 = a.SEQ1 and ed.seq2 = a.SEQ2
+			) TestReport
 --很重要要看到,修正欄位要上下一起改
             union
 
@@ -984,6 +995,7 @@ from(
 					, EachCons.FabricCombo 
 					, [SustainableMaterial] = IIF(fs.SustainableMaterial='Recycled' and fabric.MtlTypeID='HANGTAG',1,0)
 					, [TPERemark]=a.Remark
+					, [TestReport] = TestReport.value
         from dbo.MDivisionPoDetail m WITH (NOLOCK) 
         inner join #tmpOrder as o on o.poid = m.poid
         left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 
@@ -1010,6 +1022,14 @@ from(
 			))
 			,1,1,'')
 		)EachCons
+		outer apply
+		(
+			select value = Min(sr.TestReport) 
+			from Export_Detail ed with(nolock)
+			inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
+			inner join SentReport sr with(nolock) on sr.Export_DetailUkey = ed.Ukey
+			where ed.poid = a.ID and ed.seq1 = a.SEQ1 and ed.seq2 = a.SEQ2
+		) TestReport
         where   1=1 
                 AND a.id IS NOT NULL  
                ) as xxx
@@ -1073,6 +1093,7 @@ select ROW_NUMBER_D = 1
        , [FabricCombo] = ''
        , [SustainableMateria] = ''
 	   , [TPERemark]=''
+	   , [TestReport] = null
 from #tmpLocalPO_Detail a
 left join LocalInventory l on a.OrderId = l.OrderID and a.Refno = l.Refno and a.ThreadColorID = l.ThreadColorID
 left join LocalItem b on a.Refno=b.RefNo
