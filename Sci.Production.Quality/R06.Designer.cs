@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.labelReportType = new Sci.Win.UI.Label();
             this.labelArriveWHDate = new Sci.Win.UI.Label();
             this.txtseason = new Sci.Production.Class.Txtseason();
             this.txtbrand = new Sci.Production.Class.Txtbrand();
@@ -39,16 +41,19 @@
             this.labelRef = new Sci.Win.UI.Label();
             this.labelSupplier = new Sci.Win.UI.Label();
             this.dateArriveWHDate = new Sci.Win.UI.DateRange();
-            this.labelReportType = new Sci.Win.UI.Label();
+            this.radioPanel = new Sci.Win.UI.RadioPanel();
             this.radioRefNo = new Sci.Win.UI.RadioButton();
             this.radioSupplier = new Sci.Win.UI.RadioButton();
-            this.radioPanel = new Sci.Win.UI.RadioPanel();
+            this.comboDropDownList = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.label1 = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.radioPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.comboDropDownList);
             this.panel1.Controls.Add(this.labelReportType);
             this.panel1.Controls.Add(this.labelArriveWHDate);
             this.panel1.Controls.Add(this.txtseason);
@@ -63,8 +68,16 @@
             this.panel1.Controls.Add(this.radioPanel);
             this.panel1.Location = new System.Drawing.Point(29, 24);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(477, 292);
+            this.panel1.Size = new System.Drawing.Size(477, 350);
             this.panel1.TabIndex = 94;
+            // 
+            // labelReportType
+            // 
+            this.labelReportType.Location = new System.Drawing.Point(16, 226);
+            this.labelReportType.Name = "labelReportType";
+            this.labelReportType.Size = new System.Drawing.Size(113, 23);
+            this.labelReportType.TabIndex = 98;
+            this.labelReportType.Text = "Report Type";
             // 
             // labelArriveWHDate
             // 
@@ -171,13 +184,15 @@
             this.dateArriveWHDate.Size = new System.Drawing.Size(280, 23);
             this.dateArriveWHDate.TabIndex = 17;
             // 
-            // labelReportType
+            // radioPanel
             // 
-            this.labelReportType.Location = new System.Drawing.Point(16, 226);
-            this.labelReportType.Name = "labelReportType";
-            this.labelReportType.Size = new System.Drawing.Size(113, 23);
-            this.labelReportType.TabIndex = 98;
-            this.labelReportType.Text = "Report Type";
+            this.radioPanel.Controls.Add(this.radioRefNo);
+            this.radioPanel.Controls.Add(this.radioSupplier);
+            this.radioPanel.Location = new System.Drawing.Point(132, 215);
+            this.radioPanel.Name = "radioPanel";
+            this.radioPanel.Size = new System.Drawing.Size(195, 69);
+            this.radioPanel.TabIndex = 109;
+            this.radioPanel.Value = "supplier";
             // 
             // radioRefNo
             // 
@@ -205,22 +220,38 @@
             this.radioSupplier.UseVisualStyleBackColor = true;
             this.radioSupplier.Value = "supplier";
             // 
-            // radioPanel
+            // comboDropDownList
             // 
-            this.radioPanel.Controls.Add(this.radioRefNo);
-            this.radioPanel.Controls.Add(this.radioSupplier);
-            this.radioPanel.Location = new System.Drawing.Point(132, 215);
-            this.radioPanel.Name = "radioPanel";
-            this.radioPanel.Size = new System.Drawing.Size(195, 69);
-            this.radioPanel.TabIndex = 109;
-            this.radioPanel.Value = "supplier";
+            this.comboDropDownList.AddAllItem = true;
+            this.comboDropDownList.BackColor = System.Drawing.Color.White;
+            this.comboDropDownList.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDropDownList.FormattingEnabled = true;
+            this.comboDropDownList.IsSupportUnselect = true;
+            this.comboDropDownList.Location = new System.Drawing.Point(132, 296);
+            this.comboDropDownList.Name = "comboDropDownList";
+            this.comboDropDownList.OldText = "";
+            this.comboDropDownList.Size = new System.Drawing.Size(195, 24);
+            this.comboDropDownList.TabIndex = 110;
+            this.comboDropDownList.Type = "Pms_MtlCategory";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(16, 296);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(113, 23);
+            this.label1.TabIndex = 111;
+            this.label1.Text = "Category";
             // 
             // R06
             // 
-            this.ClientSize = new System.Drawing.Size(627, 345);
+            this.ClientSize = new System.Drawing.Size(627, 410);
             this.Controls.Add(this.panel1);
             this.Name = "R06";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R06. Supplier Score - Fabric";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -251,5 +282,7 @@
         private Win.UI.RadioButton radioRefNo;
         private Win.UI.RadioButton radioSupplier;
         private Win.UI.RadioPanel radioPanel;
+        private Win.UI.Label label1;
+        private Class.ComboDropDownList comboDropDownList;
     }
 }

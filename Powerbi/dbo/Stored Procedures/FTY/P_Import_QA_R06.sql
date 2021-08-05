@@ -756,7 +756,7 @@ order by Tmp.SuppID,tmp.Refno,tmp.WhseArrival,tmp.FactoryID,tmp.PoId
 
 --準備比重#table不然每筆資料都要重撈7次  
 select DISTINCT
-	[#Fabric Defect] = (select Weight from #Inspweight WITH (NOLOCK) where id ='#Fabric Defect')
+	[Fabric Defect] = (select Weight from #Inspweight WITH (NOLOCK) where id ='Fabric Defect')
 	,[Lacking Yardage] =  (select Weight from #Inspweight WITH (NOLOCK) where id ='Lacking Yardage')
 	,[Migration] = (select Weight from #Inspweight WITH (NOLOCK) where id ='Migration')
 	,[Shading] = (select Weight from #Inspweight WITH (NOLOCK) where id ='Shading')
@@ -815,8 +815,8 @@ select
 INTO #Final
 from(
 	select t.*
-	,[Avg] = CASE WHEN sumWeight=0 THEN 0 ELSE isnull((([Fabric(%)] * [#Fabric Defect] + [LACKINGYARDAGE(%)] * [Lacking Yardage] +[MIGRATION (%)] * [Migration] + 
-			   [SHADING (%)] * [Shading] + [SHRINKAGE (%)] * [Sharinkage] + [SHORT WIDTH (%)] *  [Short Width])/sumWeight ),0) END
+	,[Avg] = CASE WHEN sumWeight=0 THEN 0 ELSE isnull((([Fabric(%)] * [Fabric Defect] + [LACKINGYARDAGE(%)] * [Lacking Yardage] +[MIGRATION (%)] * [Migration] + 
+			   [SHADING (%)] * [Shading] + [SHRINKAGE (%)] * [Sharinkage] + [SHORT WIDTH (%)] *  [Short Width])/sumWeight ),0)*100 END
 	from #TmpFinal t,#Weight
 ) a
 ,#SuppLevel s

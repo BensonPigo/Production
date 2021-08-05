@@ -31,6 +31,25 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
             this.print.Enabled = false;
             this.txtbrand.MultiSelect = true;
+
+            string selectCommand = $@"
+select *
+from (
+    select [ID] = '', [Name] = '' , [Seq] = 0 
+    union all
+    select  ID
+            , Name = rtrim(Name)
+            , Seq
+    from DropDownList WITH (NOLOCK) 
+    where Type = 'Pms_MtlCategory' AND Name <>'Allowance'
+    ) a
+order by Seq
+
+";
+            DualResult returnResult;
+            DataTable dropDownListTable = new DataTable();
+            returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable);
+            this.comboDropDownList.DataSource = dropDownListTable;
         }
 
         /// <inheritdoc/>
@@ -65,6 +84,11 @@ namespace Sci.Production.Quality
             {
                 sqlSuppWhere = " and a.SuppID = @Supp ";
                 this.lis.Add(new SqlParameter("@Supp", this.Supp));
+            }
+
+            if (!MyUtility.Check.Empty(this.comboDropDownList.SelectedValue))
+            {
+                sqlWheres.Add($" o.Category IN ({this.comboDropDownList.SelectedValue}) ");
             }
 
             if (!this.refno.Empty())
