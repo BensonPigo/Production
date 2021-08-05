@@ -38,7 +38,7 @@ BEGIN
 				select * from [PMS\pmsdb\SPS].[Production].dbo.factory  union all
 				select * from [PMS\pmsdb\HZG].[Production].dbo.factory  union all
 				select * from [PMS\pmsdb\HXG].[Production].dbo.factory  union all
-				select * from [PMS\pmsdb\NAI].[Production].dbo.factory  
+				select * from [PMS\pmsdb\SWR].[Production].dbo.factory  
 			)a
 			where CountryID = @CountryID)
 		begin 
