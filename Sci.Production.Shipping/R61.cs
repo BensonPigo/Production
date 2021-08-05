@@ -156,17 +156,39 @@ select kc.CustomsType as [Customs Type]
 	, kc.CDCName as [Customs Description]
 	, kc.CDCCode as [CDC Code]
 	, kc.CDCUnit as [CDC Unit]
+	, kdQty.Value as [Total Qty]
 	, ks.OriTtlNetKg as [Ori Ttl N.W.]
 	, ks.OriTtlWeightKg as [Ori Ttl G.W.]
 	, ks.OriTtlCDCAmount as [Ori Ttl CDC Amount]
 	, ks.ActTtlNetKg as [Act. Ttl N.W.]
 	, ks.ActTtlWeightKg as [Act. Ttl G.W.]
 	, ks.ActTtlAmount as [Act. Ttl Amount]
+	, diffNW.Value as [N.W. Diff]
+	, diffGW.Value as [G.W. Diff]
 from KHImportDeclaration_ShareCDCExpense ks
 inner join KHImportDeclaration ki on ki.id = ks.id
 inner join KHCustomsDescription kc on ks.KHCustomsDescriptionCDCName=kc.CDCName
+outer apply(
+	select sum(Qty) as Value
+	from KHImportDeclaration_Detail kd
+	inner join KHCustomsItem khi on kd.KHCustomsItemUkey = khi.Ukey
+	where kd.ID = ki.ID and khi.KHCustomsDescriptionCDCName = kc.CDCName
+)kdQty
+outer apply(
+	select sum(kd.NetKg) - sum(kd.ActNetKg) as Value
+	from KHImportDeclaration_Detail kd
+	inner join KHCustomsItem khi on kd.KHCustomsItemUkey = khi.Ukey
+	where kd.ID = ki.ID and khi.KHCustomsDescriptionCDCName = kc.CDCName
+)diffNW
+outer apply(
+	select sum(kd.WeightKg) - sum(kd.ActWeightKg) as Value
+	from KHImportDeclaration_Detail kd
+	inner join KHCustomsItem khi on kd.KHCustomsItemUkey = khi.Ukey
+	where kd.ID = ki.ID and khi.KHCustomsDescriptionCDCName = kc.CDCName
+)diffGW
 where 1=1
 and kc.CustomsType in ('Fabric','Accessory','Machine')
+
 ";
 
                 #region where
