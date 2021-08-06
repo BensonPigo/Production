@@ -303,7 +303,7 @@ outer apply (select * from CriticalActivity where OrderID = o.id and DropDownLis
 outer apply (select * from CriticalActivity where OrderID = o.id and DropDownListID = 'Factory PP Meeting') FactoryPPMeeting 
 outer apply (select * from CriticalActivity where OrderID = o.id and DropDownListID = 'Wash Test Result Receiving') WashTestResultReceiving 
 outer apply (select * from CriticalActivity where OrderID = o.id and DropDownListID = 'Carton Finished') CartonFinished 
-where o.LocalOrder = 0 {whereIncludeCancelOrder}
+where o.LocalOrder = 0 and exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1) {whereIncludeCancelOrder}
 "));
 
             #region --- 條件組合  ---

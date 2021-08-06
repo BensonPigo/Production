@@ -235,8 +235,50 @@ namespace Sci.Production.CallPmsAPI
             return Convert.ToBase64String(encode.GetBytes(input));
         }
 
+        public static void MergeTo(this DataTable targetDt, ref DataTable sourceDt)
+        {
+            if (targetDt == null)
+            {
+                return;
+            }
+
+            if (targetDt.Rows.Count == 0)
+            {
+                return;
+            }
+
+            if (sourceDt == null)
+            {
+                sourceDt = targetDt;
+                return;
+            }
+
+            if (sourceDt.Rows.Count == 0)
+            {
+                sourceDt = targetDt;
+                return;
+            }
+
+            foreach (DataRow dr in targetDt.Rows)
+            {
+                sourceDt.ImportRow(dr);
+            }
+
+            sourceDt.AcceptChanges();
+        }
+
         public static void MergeBySyncColType(this DataTable sourceDt, DataTable targetDt)
         {
+            if (targetDt == null)
+            {
+                return;
+            }
+
+            if (targetDt.Rows.Count == 0)
+            {
+                return;
+            }
+
             foreach (DataRow dr in targetDt.Rows)
             {
                 sourceDt.ImportRow(dr);

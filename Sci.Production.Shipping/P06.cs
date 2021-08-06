@@ -410,7 +410,7 @@ group by pd.OrderID
                 }
                 else
                 {
-                    dtResult.MergeBySyncColType(dtResultA2B);
+                    dtResultA2B.MergeTo(ref dtResult);
                 }
             }
 
@@ -1007,7 +1007,7 @@ where   p.PulloutID = '{this.CurrentMaintain["id"]}' and
                     return;
                 }
 
-                dtCfa.MergeBySyncColType(dtCfaA2B);
+                dtCfaA2B.MergeTo(ref dtCfa);
             }
 
             if (dtCfa.Rows.Count > 0)
@@ -1326,7 +1326,7 @@ where   ID in ({0}) and
                         return false;
                     }
 
-                    packDataconfirm.MergeBySyncColType(dtResultA2B);
+                    dtResultA2B.MergeTo(ref packDataconfirm);
                 }
             }
 
@@ -1488,7 +1488,7 @@ select  pd.ID as PackingListID
                     }
                     else
                     {
-                        dtPulloutA2B.MergeBySyncColType(dtResultA2B);
+                        dtResultA2B.MergeTo(ref dtPulloutA2B);
                     }
                 }
             }
@@ -1978,7 +1978,7 @@ select  pd.ID as PackingListID
                     }
                     else
                     {
-                        dtPulloutA2BForPullOut.MergeBySyncColType(dtResultA2B);
+                        dtResultA2B.MergeTo(ref dtPulloutA2BForPullOut);
                     }
                 }
             }

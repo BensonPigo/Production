@@ -131,7 +131,7 @@ where p.ShipPlanID = '{0}'";
                     return;
                 }
 
-                gridData.MergeBySyncColType(dtGridDataA2B);
+                dtGridDataA2B.MergeTo(ref gridData);
             }
 
             this.listControlBindingSource1.DataSource = gridData;
@@ -362,7 +362,7 @@ inner join #tmp t on t.PackingListID = pd.ID
                         return;
                     }
 
-                    dtResult.MergeBySyncColType(dtResultA2B);
+                    dtResultA2B.MergeTo(ref dtResult);
                 }
             }
 

@@ -158,7 +158,7 @@ where exists(select 1 from GMTBooking g with (nolock) where g.ID = gd.ID and {ma
                         goto continuMain;
                     }
 
-                    this.plData.MergeBySyncColType(dtPlDataA2B);
+                    dtPlDataA2B.MergeTo(ref this.plData);
                 }
             }
 
@@ -700,7 +700,7 @@ where not exists (select 1 from ShipPlan_DeleteGBHistory sdh where sdh.ID = t.ID
                             return result;
                         }
 
-                        packingListDt_new.MergeBySyncColType(dtpPckingListDt_newA2B);
+                        dtpPckingListDt_newA2B.MergeTo(ref packingListDt_new);
                     }
 
                     foreach (DataRow pldatarow in packingListDt_new.Rows)
@@ -970,7 +970,7 @@ left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
                     return false;
                 }
 
-                excelData.MergeBySyncColType(dtExcelDataA2B);
+                dtExcelDataA2B.MergeTo(ref excelData);
             }
 
             string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P10.xltx";
@@ -1190,7 +1190,7 @@ left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
                     return;
                 }
 
-                dt.MergeBySyncColType(dtCheckPulloutA2B);
+                dtCheckPulloutA2B.MergeTo(ref dt);
             }
 
             StringBuilder msg = new StringBuilder();
@@ -1224,7 +1224,7 @@ left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
                     return;
                 }
 
-                dt.MergeBySyncColType(dtCheckInspectionA2B);
+                dtCheckInspectionA2B.MergeTo(ref dt);
             }
 
             StringBuilder msg1 = new StringBuilder();
@@ -1310,7 +1310,7 @@ and p.PLCtnRecvFMRgCodeDate is null ", this.CurrentMaintain["id"]);
                         return;
                     }
 
-                    dtRec.MergeBySyncColType(dtCheckReceiveDateA2B);
+                    dtCheckReceiveDateA2B.MergeTo(ref dtRec);
                 }
             }
 
@@ -1361,7 +1361,7 @@ and p2.CTNQty > 0";
                     return;
                 }
 
-                dtCfa.MergeBySyncColType(dtCheckCfaA2B);
+                dtCheckCfaA2B.MergeTo(ref dtCfa);
             }
 
             if (dtCfa.Rows.Count > 0)
@@ -1410,7 +1410,7 @@ and p1.Type <> 'S'
                     return;
                 }
 
-                dtCLog.MergeBySyncColType(dtCheckClogA2B);
+                dtCheckClogA2B.MergeTo(ref dtCLog);
             }
 
             if (dtCLog.Rows.Count > 0)
@@ -1492,7 +1492,7 @@ AND EXISTS (SELECT 1 FROM Express e WHERE  p.ExpressID=e.ID AND p.PulloutDate <>
                     return;
                 }
 
-                dt.MergeBySyncColType(dtCheckHCDateA2B);
+                dtCheckHCDateA2B.MergeTo(ref dt);
             }
 
             msg2 = new StringBuilder();
@@ -1541,7 +1541,7 @@ AND e.ID IS NULL
                     return;
                 }
 
-                dt.MergeBySyncColType(dtCheckHCDateA2B);
+                dtCheckHCDateA2B.MergeTo(ref dt);
             }
 
             msg2 = new StringBuilder();
@@ -1652,7 +1652,7 @@ where p.INVNo='{dr["ID"]}' and o.Category <> 'S' and oq.ShipmodeID <> '{dr["Ship
                             return result;
                         }
 
-                        dtCheckResult.MergeBySyncColType(dtCheckA2bResult);
+                        dtCheckA2bResult.MergeTo(ref dtCheckResult);
                     }
                 }
 

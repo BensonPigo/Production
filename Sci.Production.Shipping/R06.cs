@@ -5,6 +5,9 @@ using System.Windows.Forms;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
+using System.Linq;
+using Sci.Production.CallPmsAPI;
+using Newtonsoft.Json;
 
 namespace Sci.Production.Shipping
 {
@@ -213,9 +216,10 @@ select
 		,[AccountName]= ISNULL(an.Name, ShippingAP_Deatai.AccountName)
         ,[SPNO] = air.OrderID
         ,[AirNO] = sp.AirPPID
-		,[ShipQty] = isnull(PackingList_Detail.ShipQty,0)
+		,[ShipQty] = isnull(PackingList_Detail.ShipQty, 0)
 		,[NW] = isnull(sp.NW,0)
 		,[shipMode] = p.ShipModeID
+        ,sp.PackingListID
 into #tmp
 from ShippingAP s WITH (NOLOCK)
 left join LocalSupp ls WITH (NOLOCK) on s.LocalSuppID = ls.ID
@@ -239,7 +243,7 @@ OUTER APPLY (
 	from PackingList_Detail pd WITH (NOLOCK) 
 	where pd.ID = sp.PackingListID
 		and pd.OrderID = air.OrderID
-)PackingList_Detail
+) PackingList_Detail
 outer apply (
 	select top 1 Foundry 
 	from GMTBooking WITH (NOLOCK) 
@@ -388,6 +392,79 @@ select * from #tmp where 1 = 1");
                 return failResult;
             }
 
+            #region get A2B data
+            if (this.radioByAPP.Checked && this.printData.Rows.Count > 0)
+            {
+                string sqlGetGMTBooking_Detail = $@"
+alter table #tmp alter column PackingListID varchar(13)
+
+select  distinct
+        gd.PLFromRgCode,
+        gd.PackingListID,
+        t.SPNO
+from GMTBooking_Detail gd with (nolock)
+inner join #tmp t on t.PackingListID = gd.PackingListID
+";
+                DataTable dtGMTBooking_Detail;
+
+                result = MyUtility.Tool.ProcessWithDatatable(this.printData, "SPNO,PackingListID", sqlGetGMTBooking_Detail, out dtGMTBooking_Detail);
+                if (!result)
+                {
+                    return result;
+                }
+
+                if (dtGMTBooking_Detail.Rows.Count > 0)
+                {
+                    string sqlGetShipQtyA2B = @"
+alter table #tmp alter column PackingListID varchar(13)
+alter table #tmp alter column SPNO varchar(13)
+
+select  t.PackingListID,
+        t.SPNO,
+        [ShipQty] = sum(pd.ShipQty)
+from PackingList_Detail pd WITH (NOLOCK) 
+inner join #tmp t with (nolock) on pd.ID = t.PackingListID and pd.OrderID = t.SPNO
+group by    t.PackingListID,
+            t.SPNO
+";
+                    var groupGMTBooking_Detail = dtGMTBooking_Detail.AsEnumerable()
+                        .GroupBy(s => s["PLFromRgCode"].ToString())
+                        .Select(s => new
+                        {
+                            PLFromRgCode = s.Key,
+                            GroupTmpTable = s.CopyToDataTable(),
+                        });
+
+                    foreach (var groupItem in groupGMTBooking_Detail)
+                    {
+                        PackingA2BWebAPI_Model.DataBySql dataBySql = new PackingA2BWebAPI_Model.DataBySql()
+                        {
+                            SqlString = sqlGetShipQtyA2B,
+                            TmpTable = JsonConvert.SerializeObject(groupItem.GroupTmpTable),
+                        };
+
+                        DataTable dtResultA2B;
+
+                        result = PackingA2BWebAPI.GetDataBySql(groupItem.PLFromRgCode, dataBySql, out dtResultA2B);
+                        if (!result)
+                        {
+                            return result;
+                        }
+
+                        foreach (DataRow drA2B in dtResultA2B.Rows)
+                        {
+                            DataRow[] mainRows = this.printData.Select($"PackingListID = '{drA2B["PackingListID"]}' and SPNO = '{drA2B["SPNO"]}'");
+                            foreach (DataRow drMain in mainRows)
+                            {
+                                drMain["ShipQty"] = drA2B["ShipQty"];
+                            }
+                        }
+                    }
+                }
+            }
+
+            #endregion
+
             return Ict.Result.True;
         }
 
@@ -455,6 +532,7 @@ select * from #tmp where 1 = 1");
             }
             else if (this.radioByAPP.Checked == true)
             {
+                this.printData.Columns.Remove("PackingListID");
                 Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByAPP.xltx", excel);
                 if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
                 {

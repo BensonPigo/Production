@@ -246,7 +246,7 @@ WHERE  g.shipplanid = ''
                     }
                     else
                     {
-                        dtGmtFromA2B.MergeBySyncColType(dtResultFromA2B);
+                        dtResultFromA2B.MergeTo(ref dtGmtFromA2B);
                     }
                 }
 
@@ -379,7 +379,7 @@ where p.INVNo in ({0})
                             return;
                         }
 
-                        this.plData.MergeBySyncColType(dtPackDataA2B);
+                        dtPackDataA2B.MergeTo(ref this.plData);
                     }
                 }
             }
@@ -477,7 +477,7 @@ where p.InvNo in ({0})";
                         return;
                     }
 
-                    packData.MergeBySyncColType(dtPackDataA2B);
+                    dtPackDataA2B.MergeTo(ref packData);
                 }
 
                 foreach (DataRow dr in packData.Rows)

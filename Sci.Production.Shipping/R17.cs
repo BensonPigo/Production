@@ -1,7 +1,10 @@
 ﻿using Ict;
+using Newtonsoft.Json;
 using Sci.Data;
+using Sci.Production.CallPmsAPI;
 using Sci.Win;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -93,10 +96,10 @@ from PackingList_Detail pld with(nolock)
 inner join PackingList pl with(nolock) on pld.id=pl.id and pl.Type in('B','S')
 inner join orders o with(nolock) on pld.OrderID=o.id
 left join Order_QtyShip oq with(nolock) on pld.OrderID=oq.id and pld.OrderShipmodeSeq = oq.Seq
-left join GMTBooking g with(nolock) on g.id = pl.INVNo
+left join {"{0}"} g with(nolock) on g.id = pl.INVNo
 where 1=1
 {where}
- 
+{"{1}"}
  
 select 
 	o.ID,
@@ -108,6 +111,7 @@ inner join orders o with(nolock) on pld.OrderID=o.id
 inner join Order_QtyShip oq with(nolock) on pld.OrderID=oq.id
 where 1=1
 {where}
+{"{1}"}
 union
 select 
 	pld.OrderID,
@@ -117,7 +121,8 @@ inner join PackingList pl with(nolock) on pld.id=pl.id and pl.Type in('B','S')
 inner join orders o with(nolock) on pld.OrderID=o.id
 where 1=1
 {where}
- 
+{"{1}"}
+
 select d.ID,d.Seq
 into #diffSeq
 from #DistinctSeq d
@@ -146,7 +151,7 @@ inner join Order_QtyShip oq with(nolock) on oq.id = d.ID and oq.Seq = d.Seq
 inner join orders o with(nolock) on oq.ID=o.id
 left join PackingList_Detail pld with(nolock) on pld.OrderID=oq.id and pld.OrderShipmodeSeq = oq.Seq
 left join PackingList pl with(nolock) on pld.id=pl.id and pl.Type in('B','S')
-left join GMTBooking g with(nolock) on g.id = pl.INVNo
+left join {"{0}"} g with(nolock) on g.id = pl.INVNo
 
 union all
 
@@ -170,7 +175,7 @@ from #diffSeq d
 inner join PackingList_Detail pld with(nolock) on pld.OrderID = d.ID and pld.OrderShipmodeSeq = d.Seq
 inner join PackingList pl with(nolock) on pld.id=pl.id and pl.Type in('B','S')
 inner join orders o with(nolock) on pld.OrderID=o.id
-left join GMTBooking g with(nolock) on g.id = pl.INVNo
+left join {"{0}"} g with(nolock) on g.id = pl.INVNo
 
 
 select *
@@ -184,8 +189,67 @@ order by FactoryID, ID, Seq
 
 drop table #tmp,#DistinctSeq,#diffSeq,#diffSeqData
 ";
+            DualResult result = DBProxy.Current.Select(null, string.Format(sqlcmd, "GMTBooking", string.Empty), out this.PrintTable);
+            if (!result)
+            {
+                return result;
+            }
 
-            return DBProxy.Current.Select(null, sqlcmd, out this.PrintTable);
+            #region get A2B data
+            List<string> listPLFromRgCode = PackingA2BWebAPI.GetAllPLFromRgCode();
+            if (listPLFromRgCode.Count > 0)
+            {
+                string sqlWhereA2B = string.Empty;
+                if (!MyUtility.Check.Empty(this.PulloutDate1))
+                {
+                    sqlWhereA2B += $@" and gd.PulloutDate between '{this.PulloutDate1}' and '{this.PulloutDate2}'";
+                }
+
+                string sqlGetGMTBookingA2B = $@"
+select  g.ID,
+        g.ShipModeID,
+        g.Handle
+from GMTBooking g with (nolock)
+where exists (select 1 from GMTBooking_Detail gd with (nolock) where g.ID = gd.ID {sqlWhereA2B})
+";
+
+                DataTable dtGMT;
+
+                result = DBProxy.Current.Select(null, sqlGetGMTBookingA2B, out dtGMT);
+                if (!result)
+                {
+                    return result;
+                }
+
+                if (dtGMT.Rows.Count > 0)
+                {
+                    string whereForA2B = @" and exists (select 1 from #tmpGMT t where t.ID = pl.INVNo )";
+                    string sqlcmdA2B = @"
+alter table #tmpGMT alter column ID varchar(25)
+" + string.Format(sqlcmd, "#tmpGMT", whereForA2B);
+
+                    PackingA2BWebAPI_Model.DataBySql dataBySql = new PackingA2BWebAPI_Model.DataBySql()
+                    {
+                        SqlString = sqlcmdA2B,
+                        TmpTable = JsonConvert.SerializeObject(dtGMT),
+                        TmpTableName = "#tmpGMT",
+                    };
+                    foreach (string plFromRgCode in listPLFromRgCode)
+                    {
+                        result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, dataBySql, out DataTable dtResultA2B);
+
+                        if (!result)
+                        {
+                            return result;
+                        }
+
+                        dtResultA2B.MergeTo(ref this.PrintTable);
+                    }
+                }
+            }
+            #endregion
+
+            return result;
         }
 
         /// <inheritdoc/>

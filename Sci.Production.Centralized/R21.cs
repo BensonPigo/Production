@@ -479,6 +479,7 @@ or (
 	exists (select 1 from Order_Finish Where ID = o.ID)
 	and (select FOCQty from Order_Finish Where ID = o.ID) < (select dbo.GetFocStockByOrder(o.ID))
 ))
+and exists (select 1 from Factory f where o.FactoryId = id and f.IsProduceFty = 1)
 {this.whereExcludePullout}
 ");
 
@@ -572,6 +573,7 @@ where 1=1 and isnull(ot.IsGMTMaster,0) != 1
 and o.PulloutComplete=0
 and o.Qty > 0
 and isnull(oq.Qty,0) - isnull(ShipQty.ShipQty,0) > 0
+and exists (select 1 from Factory f where o.FactoryId = id and f.IsProduceFty = 1)
 ");
 
             return sqlCmd;
@@ -691,6 +693,7 @@ or (
 	exists (select 1 from Order_Finish Where ID = o.ID)
 	and (select FOCQty from Order_Finish Where ID = o.ID) < (select dbo.GetFocStockByOrder(o.ID))
 ))
+and exists (select 1 from Factory f where o.FactoryId = id and f.IsProduceFty = 1)
 {this.whereExcludePullout}
 ");
 
@@ -804,6 +807,7 @@ or (
 	and (select FOCQty from Order_Finish Where ID = o.ID) < (select dbo.GetFocStockByOrder(o.ID))
 ))
 AND p.PulloutDate IS NOT NULL
+and exists (select 1 from Factory f where o.FactoryId = id and f.IsProduceFty = 1)
 {this.whereExcludePullout}
  ");
 

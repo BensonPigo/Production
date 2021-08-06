@@ -999,7 +999,7 @@ order by cc.CNT desc", allPackID.ToString().Substring(0, allPackID.Length - 1));
                             return false;
                         }
 
-                        this.selectData.MergeBySyncColType(dtPaymentCheckAtoB);
+                        dtPaymentCheckAtoB.MergeTo(ref this.selectData);
                     }
                 }
 
@@ -2048,7 +2048,7 @@ Please follow up based on the Air-Prepaid Status.");
                         return;
                     }
 
-                    dtPkCheck.MergeBySyncColType(dtPackingConfirmCheckA2B);
+                    dtPackingConfirmCheckA2B.MergeTo(ref dtPkCheck);
                 }
             }
 

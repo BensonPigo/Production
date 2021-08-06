@@ -139,6 +139,28 @@ namespace Sci.Production.CallPmsAPI
             }
         }
 
+        public static List<string> GetAllPLFromRgCode()
+        {
+            string sqlGetPLFromRgCode = $@"
+select distinct PLFromRgCode 
+from GMTBooking_Detail with (nolock) ";
+            DataTable dtResult;
+            DualResult result = DBProxy.Current.Select(null, sqlGetPLFromRgCode, out dtResult);
+            if (!result)
+            {
+                throw result.GetException();
+            }
+
+            if (dtResult.Rows.Count == 0)
+            {
+                return new List<string>();
+            }
+            else
+            {
+                return dtResult.AsEnumerable().Select(s => s["PLFromRgCode"].ToString()).ToList(); ;
+            }
+        }
+
         public static List<string> GetPLFromRgCodeByPulloutID(string pulloutID)
         {
             string sqlGetPLFromRgCode = $@"
@@ -188,7 +210,7 @@ where ID in (select InvNo from Pullout_Detail with (nolock) where ID = '{pullout
 select distinct gd.PLFromRgCode 
 from GMTBooking_Detail gd with (nolock) 
 where exists(select 1 from GMTBooking g with (nolock) where g.ShipPlanID = '{shipPlanID}' and g.ID = gd.ID)";
-            
+
             DataTable dtResult;
             DualResult result = DBProxy.Current.Select(null, sqlGetPLFromRgCode, out dtResult);
             if (!result)
@@ -345,7 +367,7 @@ where exists(select 1 from GMTBooking g with (nolock) where g.ShipPlanID = '{shi
                 packingA2BResults.Add(SeekBySql(systemName, dataBySql, out noUsingDr));
             }
 
-            
+
             return packingA2BResults;
         }
 

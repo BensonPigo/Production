@@ -95,7 +95,8 @@ inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
 inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.Id = oqd.Id and oq.Seq = oqd.Seq and q.Article = oqd.Article and q.SizeCode = oqd.SizeCode
 left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
-where 1=1 and isnull(ot.IsGMTMaster,0) != 1");
+where 1=1 and isnull(ot.IsGMTMaster,0) != 1
+and exists (select 1 from Factory f where o.FactoryId = id and f.IsProduceFty = 1)");
 
             if (!MyUtility.Check.Empty(this.sciDlv1))
             {
