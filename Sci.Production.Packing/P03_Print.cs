@@ -263,7 +263,7 @@ namespace Sci.Production.Packing
 select * from(
     select pd.CTNStartno,
 		o.Customize1,
-		a.SizeCode,
+		SizeCode = IIF(a.SizeCode like '%,%', a.SizeCode, SUBSTRING(a.SizeCode,1,PATINDEX('%-%',a.SizeCode) - 1)),
 		Article = concat(pd.Article, '/' + pd.Color),
 		CTNStartNostring = concat(pd.CTNStartNo, ' OF ', p.CTNQty)
     from PackingList_Detail pd
@@ -271,7 +271,7 @@ select * from(
     inner join orders o on o.id = pd.orderid
     outer apply (
 	    select SizeCode=stuff((
-			select concat(',', isnull(x.SizeSpec,z.SizeSpec)) 
+			select concat(',', isnull(x.SizeSpec,z.SizeSpec), '-', pd2.QtyPerCTN) 
 			from PackingList_Detail pd2 
 			outer apply(select SizeSpec from Order_SizeSpec os where os.SizeCode = pd2.SizeCode and os.id = o.poid and os.SizeItem = 'S01')x
 			outer apply(select SizeSpec from Order_SizeSpec_OrderCombo oso where oso.SizeCode = pd2.SizeCode and oso.id = o.poid and oso.OrderComboID = o.OrderComboID and SizeItem = 'S01')z
