@@ -99,6 +99,13 @@ namespace Sci.Production.CallPmsAPI
             try
             {
                 string apiUrl = GetWebAPIUrl(systemName);
+
+                if (MyUtility.Check.Empty(apiUrl))
+                {
+                    dtResult = new DataTable();
+                    return new DualResult(true);
+                }
+
                 WebApiBaseResult webApiBaseResult;
                 webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiGet(apiUrl, "api/PackingA2B/GetRegionFactory", 30);
 

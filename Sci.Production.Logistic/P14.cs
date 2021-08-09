@@ -141,6 +141,12 @@ select [ID] as [Pack ID]
         private void GridStyleChange()
         {
             DataTable dtGridData = (DataTable)this.gridImport.DataSource;
+
+            if (dtGridData == null)
+            {
+                return;
+            }
+
             bool isShowRemark = dtGridData.AsEnumerable().Any(s => !MyUtility.Check.Empty(s["Remark"]));
 
             if (isShowRemark)

@@ -32,7 +32,11 @@ namespace Sci.Production.Class
             this.InitializeComponent();
             this.EditMode = true;
             this.DialogResult = DialogResult.Cancel;
-            string sqlGetRegion = "select distinct SystemName from SystemWebAPIURL where countryID = (select Region from system )";
+            string sqlGetRegion = @"
+select distinct SystemName from SystemWebAPIURL where countryID = (select Region from system )
+union
+select [SystemName] = RgCode from System
+";
             this.defaultCheckedItem = defaultCheckedItem;
             DataTable dtFactory;
             DualResult result = DBProxy.Current.Select(null, sqlGetRegion, out dtFactory);

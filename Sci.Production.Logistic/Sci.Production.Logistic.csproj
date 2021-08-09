@@ -195,6 +195,18 @@
     <Compile Include="P01_CFAFinalinspResult.Designer.cs">
       <DependentUpon>P01_CFAFinalinspResult.cs</DependentUpon>
     </Compile>
+    <Compile Include="P19.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P19.Designer.cs">
+      <DependentUpon>P19.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P18.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P18.Designer.cs">
+      <DependentUpon>P18.cs</DependentUpon>
+    </Compile>
     <Compile Include="P15.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -376,6 +388,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_CFAFinalinspResult.resx">
       <DependentUpon>P01_CFAFinalinspResult.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P19.resx">
+      <DependentUpon>P19.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P18.resx">
+      <DependentUpon>P18.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P15.resx">
       <DependentUpon>P15.cs</DependentUpon>
