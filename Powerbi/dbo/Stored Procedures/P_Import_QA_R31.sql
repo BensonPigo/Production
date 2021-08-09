@@ -1,7 +1,7 @@
 ﻿-- =============================================
 -- Description:	Import PMS system QA R31 to PowerBI
 -- =============================================
-CREATE PROCEDURE [P_Import_QA_R31]
+CREATE PROCEDURE [dbo].[P_Import_QA_R31]
 	@LinkServerName varchar(50)
 AS
 BEGIN
@@ -251,7 +251,7 @@ SELECT [InspResult]=CASE WHEN EXISTS(
 									)
 								) )
 	,[Notyetinspqty] = (
-								SELECT SUM(pd.ShipQty)
+								SELECT isnull(SUM(pd.ShipQty),0)
 								FROM #PackingList_Detail pd
 								WHERE pd.OrderID=need.ID AND pd.OrderShipmodeSeq=need.Seq
 								AND NOT EXISTS(
@@ -308,7 +308,7 @@ SET @SqlCmd4 = '
 									)
 								) )
 	,[FailQty] =(
-					SELECT sum(pd.ShipQty)
+					SELECT isnull(sum(pd.ShipQty),0)
 					FROM #PackingList_Detail pd
 					WHERE pd.OrderID=need.ID AND pd.OrderShipmodeSeq=need.Seq
 					AND pd.StaggeredCFAInspectionRecordID = ''''
@@ -371,9 +371,9 @@ SELECT [InspResult]=CASE WHEN NOT EXISTS(
 					)THEN ''Fail''
 					ELSE ''''
 					END
-	,[NotyetinspCtn#]=NULL
-	,[Notyetinspctn]=NULL
-	,[Notyetinspqty]=NULL
+	,[NotyetinspCtn#] = NULL
+	,[Notyetinspctn]  = NULL
+	,[Notyetinspqty]  = 0
 	,[FailCtn#]=(
 		SELECt TOP 1  cfoq.Carton
 		FROM #CFAInspectionRecord  cr
@@ -393,7 +393,7 @@ SELECT [InspResult]=CASE WHEN NOT EXISTS(
 						ORDER BY cr.AuditDate DESC, cr.EditDate DESC
 		),'','')
 	)
-	,[FailQty]=null
+	,[FailQty] = 0
 	,need.*
 FROM #NeedCkeck need
 WHERE need.Stage = ''Final''
