@@ -263,7 +263,7 @@ namespace Sci.Production.Packing
 select * from(
     select pd.CTNStartno,
 		o.Customize1,
-		a.SizeCode,
+		SizeCode = IIF(a.SizeCode like '%,%', a.SizeCode, SUBSTRING(a.SizeCode,1,PATINDEX('%-%',a.SizeCode) - 1)),
 		Article = concat(pd.Article, '/' + pd.Color),
 		CTNStartNostring = concat(pd.CTNStartNo, ' OF ', p.CTNQty)
     from PackingList_Detail pd
