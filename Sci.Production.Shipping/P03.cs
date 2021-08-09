@@ -359,7 +359,7 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
         // Expense Data
         private void BtnExpenseData_Click(object sender, EventArgs e)
         {
-            P05_ExpenseData callNextForm = new P05_ExpenseData(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "WKNo", true);
+            P05_ExpenseData callNextForm = new P05_ExpenseData(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "TWWK", false);
             callNextForm.ShowDialog(this);
         }
 

@@ -75,6 +75,7 @@
     [CustomOTRespFty2] VARCHAR(8) NOT NULL DEFAULT (''), 
     [OTFee] NUMERIC(10, 2) NOT NULL DEFAULT ((0)), 
     [CIFTerms] BIT    CONSTRAINT [DF_Export_CIFTerms] DEFAULT ((0)) NOT NULL,
+    [FtyDisburseSD] VARCHAR(13) NULL DEFAULT (''), 
     CONSTRAINT [PK_Export] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
