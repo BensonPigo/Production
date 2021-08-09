@@ -319,6 +319,7 @@ SELECT  lbd.IsDefault
 	,lbd.ID
 	,lb.PKey
 	,lbd.Ukey
+	,lbd.VNBankBranch
 FROM LocalSupp_Bank lb WITH (NOLOCK)  
 INNER JOIN LocalSupp_Bank_Detail lbd ON lb.ID=lbd.ID AND  lb.PKey=lbd.PKey 
 LEFT JOIN Country c WITH (NOLOCK)  ON c.ID=lbd.CountryID
@@ -471,6 +472,7 @@ order by ID
                 .Text("MidSWIFTCode", header: "Intermediary Bank", width: Widths.AnsiChars(13), settings: midSWIFTCode)
                 .Text("MidBankName", header: "Intermediary Bank-SWIFT Code", width: Widths.AnsiChars(13), settings: midBankName)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(13))
+                .Text("VNBankBranch", header: "VN Bank/Branch", width: Widths.AnsiChars(20))
                 ;
         }
 
