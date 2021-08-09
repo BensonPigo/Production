@@ -271,7 +271,7 @@ select * from(
     inner join orders o on o.id = pd.orderid
     outer apply (
 	    select SizeCode=stuff((
-			select concat(',', isnull(x.SizeSpec,z.SizeSpec), '-', pd2.QtyPerCTN) 
+			select concat(',', isnull(x.SizeSpec,z.SizeSpec)) 
 			from PackingList_Detail pd2 
 			outer apply(select SizeSpec from Order_SizeSpec os where os.SizeCode = pd2.SizeCode and os.id = o.poid and os.SizeItem = 'S01')x
 			outer apply(select SizeSpec from Order_SizeSpec_OrderCombo oso where oso.SizeCode = pd2.SizeCode and oso.id = o.poid and oso.OrderComboID = o.OrderComboID and SizeItem = 'S01')z
