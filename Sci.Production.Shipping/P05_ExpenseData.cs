@@ -69,6 +69,18 @@ from ShareExpense se WITH (NOLOCK)
 LEFT JOIN dbo.SciFMS_AccountNo a on se.AccountID = a.ID
 where se.WKNo = '{0}' and se.junk=0", this.id);
                     break;
+                case "TWWK":
+                    this.sqlCmd = $@"
+select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount
+, DebitID = IIF(se.DebitID = '' or se.DebitID is null
+			,(select FtyDisburseSD  from Export where id = se.WKNo) , se.DebitID)
+,se.ShippingAPID,se.BLNo,se.WKNo,se.InvNo,se.AccountID
+from ShareExpense se WITH (NOLOCK) 
+LEFT JOIN dbo.SciFMS_AccountNo a on se.AccountID = a.ID
+where se.WKNo = '{this.id}' 
+and se.junk=0
+";
+                    break;
                 default:
                     this.sqlCmd = "select Type,CurrencyID,Amount,ShippingAPID from ShareExpense WITH (NOLOCK) where 1=2";
                     break;
