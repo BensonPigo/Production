@@ -31,6 +31,25 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
             this.print.Enabled = false;
             this.txtbrand.MultiSelect = true;
+
+            string selectCommand = $@"
+select *
+from (
+    select [ID] = '', [Name] = '' , [Seq] = 0 
+    union all
+    select  ID
+            , Name = rtrim(Name)
+            , Seq
+    from DropDownList WITH (NOLOCK) 
+    where Type = 'Pms_MtlCategory' AND Name <>'Allowance' AND Name <> 'ALL'
+    ) a
+order by Seq
+
+";
+            DualResult returnResult;
+            DataTable dropDownListTable = new DataTable();
+            returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable);
+            this.comboDropDownList.DataSource = dropDownListTable;
         }
 
         /// <inheritdoc/>
@@ -65,6 +84,11 @@ namespace Sci.Production.Quality
             {
                 sqlSuppWhere = " and a.SuppID = @Supp ";
                 this.lis.Add(new SqlParameter("@Supp", this.Supp));
+            }
+
+            if (!MyUtility.Check.Empty(this.comboDropDownList.SelectedValue))
+            {
+                sqlWheres.Add($" o.Category IN ({this.comboDropDownList.SelectedValue}) ");
             }
 
             if (!this.refno.Empty())
@@ -425,9 +449,9 @@ from(
 	WHERE rd.WhseArrival >= '{this.DateArrStart.Value.ToShortDateString()}' and rd.WhseArrival <= '{this.DateArrEnd.Value.ToShortDateString()}'
 )a
 inner join (select distinct SuppID,Refno from #tmp) tmp on a.SuppID = tmp.SuppID AND a.Refno = tmp.Refno 
-Where exists(select * from #ea where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND a.SuppID = Tmp.SuppID AND a.Refno = Tmp.Refno) 
-or exists(select * from #eb where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND a.SuppID = Tmp.SuppID AND a.Refno = Tmp.Refno) 
-or exists(select * from #ec where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND a.SuppID = Tmp.SuppID AND a.Refno = Tmp.Refno)
+Where exists(select * from #ea where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND SuppID = Tmp.SuppID AND Refno = Tmp.Refno) 
+or exists(select * from #eb where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND SuppID = Tmp.SuppID AND Refno = Tmp.Refno) 
+or exists(select * from #ec where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND SuppID = Tmp.SuppID AND Refno = Tmp.Refno)
 group by a.SuppID, a.Refno
 
 -----#Stmp 
@@ -454,8 +478,8 @@ from(
 	WHERE rd.WhseArrival >= '{this.DateArrStart.Value.ToShortDateString()}' and rd.WhseArrival <= '{this.DateArrEnd.Value.ToShortDateString()}'
 )a
 inner join (select distinct SuppID, Refno from #tmp) tmp on a.SuppID = tmp.SuppID AND a.Refno = tmp.Refno 
-Where (exists(select * from #sa where poid = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2 and Dyelot  = a.dyelot and a.SuppID = Tmp.SuppID and a.Refno = Tmp.Refno ) 
-or exists(select * from #sb where poid = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2 and Dyelot  = a.dyelot and a.SuppID = Tmp.SuppID and a.Refno = Tmp.Refno ))
+Where (exists(select * from #sa where poid = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2 and Dyelot  = a.dyelot and SuppID = Tmp.SuppID and Refno = Tmp.Refno ) 
+or exists(select * from #sb where poid = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2 and Dyelot  = a.dyelot and SuppID = Tmp.SuppID and Refno = Tmp.Refno ))
 group by tmp.SuppID, tmp.Refno
 
 -----#Ltmp 

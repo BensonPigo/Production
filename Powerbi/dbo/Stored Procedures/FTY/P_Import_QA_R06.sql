@@ -102,18 +102,18 @@ BEGIN
 
 
 	
-select distinct a.PoId,a.Seq1,a.Seq2,ps.SuppID,psd.Refno ,psd.ColorID,f.Clima,o.FactoryID
+select distinct a.PoId,a.Seq1,a.Seq2,ps.SuppID,psd.Refno ,psd.ColorID,f.Clima, a.FactoryID
 ,[WhseArrival]=LEFT(convert(varchar, a.WhseArrival , 111),7)
 into #tmp1
 from
 (
-	select r.PoId,r.Seq1,r.Seq2,r.WhseArrival
+	select r.PoId,r.Seq1,r.Seq2,r.WhseArrival ,r.FactoryID
 	from #View_AllReceivingDetail r with (nolock)
 	where 1=1
      and r.WhseArrival >= @WhseArrival_s and r.WhseArrival <= @WhseArrival_e
 	and r.Status = 'Confirmed'
 	union
-	select sd.ToPOID as PoId,sd.ToSeq1 as Seq1,sd.ToSeq2 as Seq2,WhseArrival=s.IssueDate
+	select sd.ToPOID as PoId,sd.ToSeq1 as Seq1,sd.ToSeq2 as Seq2,WhseArrival=s.IssueDate ,s.FactoryID
 	from #SubTransfer s
 	inner join #SubTransfer_Detail sd on s.Id = sd.ID
 	where 1=1
@@ -121,7 +121,7 @@ from
 	and s.Status = 'Confirmed'
 	and s.Type = 'B'
 	union
-	select bd.ToPOID as PoId,bd.ToSeq1 as Seq1,bd.ToSeq2 as Seq2,WhseArrival=b.IssueDate
+	select bd.ToPOID as PoId,bd.ToSeq1 as Seq1,bd.ToSeq2 as Seq2,WhseArrival=b.IssueDate ,b.FactoryID
 	from #BorrowBack b
 	inner join #BorrowBack_Detail bd on b.Id = bd.ID
 	where 1=1
@@ -429,9 +429,9 @@ from(
 )a
 inner join (select distinct SuppID,Refno,WhseArrival,FactoryID,PoId from #tmp) tmp on a.SuppID = tmp.SuppID AND a.Refno = tmp.Refno 
 AND a.WhseArrival = tmp.WhseArrival AND a.FactoryID = tmp.FactoryID AND a.PoId = tmp.PoId
-Where exists(select * from #ea where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND a.SuppID = Tmp.SuppID AND a.Refno = Tmp.Refno) 
-or exists(select * from #eb where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND a.SuppID = Tmp.SuppID AND a.Refno = Tmp.Refno) 
-or exists(select * from #ec where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND a.SuppID = Tmp.SuppID AND a.Refno = Tmp.Refno)
+Where exists(select * from #ea where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND SuppID = Tmp.SuppID AND Refno = Tmp.Refno) 
+or exists(select * from #eb where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND SuppID = Tmp.SuppID AND Refno = Tmp.Refno) 
+or exists(select * from #ec where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND SuppID = Tmp.SuppID AND Refno = Tmp.Refno)
 group by a.SuppID, a.Refno,a.WhseArrival, a.FactoryID,a.PoId
 
 -----#Stmp 
@@ -457,8 +457,9 @@ from(
 	WHERE rd.WhseArrival >= @WhseArrival_s and rd.WhseArrival <= @WhseArrival_e
 )a
 inner join (select distinct SuppID, Refno,WhseArrival,FactoryID,POID from #tmp) tmp on a.SuppID = tmp.SuppID AND a.Refno = tmp.Refno 
-Where (exists(select * from #sa where poid = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2 and Dyelot  = a.dyelot and a.SuppID = Tmp.SuppID and a.Refno = Tmp.Refno ) 
-or exists(select * from #sb where poid = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2 and Dyelot  = a.dyelot and a.SuppID = Tmp.SuppID and a.Refno = Tmp.Refno ))
+and a.WhseArrival = tmp.WhseArrival AND a.FactoryID = tmp.FactoryID AND a.poid = tmp.poid 
+Where (exists(select * from #sa where poid = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2 and Dyelot  = a.dyelot and SuppID = Tmp.SuppID and Refno = Tmp.Refno ) 
+or exists(select * from #sb where poid = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2 and Dyelot  = a.dyelot and SuppID = Tmp.SuppID and Refno = Tmp.Refno ))
 group by tmp.SuppID, tmp.Refno,tmp.WhseArrival, tmp.FactoryID,tmp.POID
 
 -----#Ltmp 
@@ -755,7 +756,7 @@ order by Tmp.SuppID,tmp.Refno,tmp.WhseArrival,tmp.FactoryID,tmp.PoId
 
 --準備比重#table不然每筆資料都要重撈7次  
 select DISTINCT
-	[#Fabric Defect] = (select Weight from #Inspweight WITH (NOLOCK) where id ='#Fabric Defect')
+	[Fabric Defect] = (select Weight from #Inspweight WITH (NOLOCK) where id ='Fabric Defect')
 	,[Lacking Yardage] =  (select Weight from #Inspweight WITH (NOLOCK) where id ='Lacking Yardage')
 	,[Migration] = (select Weight from #Inspweight WITH (NOLOCK) where id ='Migration')
 	,[Shading] = (select Weight from #Inspweight WITH (NOLOCK) where id ='Shading')
@@ -814,7 +815,7 @@ select
 INTO #Final
 from(
 	select t.*
-	,[Avg] = CASE WHEN sumWeight=0 THEN 0 ELSE isnull((([Fabric(%)] * [#Fabric Defect] + [LACKINGYARDAGE(%)] * [Lacking Yardage] +[MIGRATION (%)] * [Migration] + 
+	,[Avg] = CASE WHEN sumWeight=0 THEN 0 ELSE isnull((([Fabric(%)] * [Fabric Defect] + [LACKINGYARDAGE(%)] * [Lacking Yardage] +[MIGRATION (%)] * [Migration] + 
 			   [SHADING (%)] * [Shading] + [SHRINKAGE (%)] * [Sharinkage] + [SHORT WIDTH (%)] *  [Short Width])/sumWeight ),0) END
 	from #TmpFinal t,#Weight
 ) a
