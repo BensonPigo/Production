@@ -41,7 +41,7 @@ from (
             , Name = rtrim(Name)
             , Seq
     from DropDownList WITH (NOLOCK) 
-    where Type = 'Pms_MtlCategory' AND Name <>'Allowance'
+    where Type = 'Pms_MtlCategory' AND Name <>'Allowance' AND Name <> 'ALL'
     ) a
 order by Seq
 
