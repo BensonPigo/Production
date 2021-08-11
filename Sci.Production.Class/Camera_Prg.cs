@@ -26,7 +26,7 @@ namespace Sci.Production.Class
             // 取得當前Config moudle位置 Dummy or Formal
             string dbName = DBProxy.Current.DefaultModuleName;
             string picPath = MyUtility.GetValue.Lookup(@"select ClipPath from Production..System WITH (NOLOCK)");
-            string yyyyMM = DateTime.Now.ToString("yyyyMM");
+            string yyyyMM = MyUtility.GetValue.Lookup("select Now = FORMAT(GETDATE(),'yyyyMM')");
             if (!MyUtility.Check.Empty(OldyyyyMM))
             {
                 yyyyMM = OldyyyyMM;
