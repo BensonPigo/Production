@@ -12,7 +12,6 @@ namespace Sci.Production.Shipping
     public partial class P61_ShareByCDCItem : Win.Tems.QueryForm
     {
         private readonly string nNoEmpty = "_CantEmpty";
-        private readonly string nPink = "_Pink";
         private readonly DataTable rateDt;
 
         /// <inheritdoc/>

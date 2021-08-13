@@ -991,15 +991,28 @@ where id = '{this.CurrentMaintain["ID"]}'
                 })
                 .Where(w => this.customsTypelist.Contains(w.CustomsType))
                 .ToList();
-            var sumlist = xlist
+            var groupNoActHSCode = xlist
                 .GroupBy(g => new { g.CustomsType, g.CDCCode, g.CustomsDescription, g.CDCUnit, g.ActHSCode })
+                .Select(s => new { s.Key.CustomsType, s.Key.CDCCode, s.Key.CustomsDescription, s.Key.CDCUnit, s.Key.ActHSCode, })
+                .GroupBy(g => new { g.CustomsType, g.CDCCode, g.CustomsDescription, g.CDCUnit })
                 .Select(s => new
                 {
                     s.Key.CustomsType,
                     s.Key.CDCCode,
                     s.Key.CustomsDescription,
                     s.Key.CDCUnit,
-                    s.Key.ActHSCode,
+                    ActHSCode = s.Count() == 1 ? s.Max(su => su.ActHSCode) : string.Empty,
+                }).ToList();
+
+            var sumlist = xlist
+                .GroupBy(g => new { g.CustomsType, g.CDCCode, g.CustomsDescription, g.CDCUnit })
+                .Select(s => new
+                {
+                    s.Key.CustomsType,
+                    s.Key.CDCCode,
+                    s.Key.CustomsDescription,
+                    s.Key.CDCUnit,
+                    ActHSCode = groupNoActHSCode.Where(w => w.CustomsType == s.Key.CustomsType && w.CDCCode == s.Key.CDCCode && w.CustomsDescription == s.Key.CustomsDescription && w.CDCUnit == s.Key.CDCUnit).Select(s1 => s1.ActHSCode).FirstOrDefault(),
                     OriTtlNetKg = s.Sum(su => su.NetKg),
                     OriTtlWeightKg = s.Sum(su => su.WeightKg),
                     OriTtlCDCAmount = s.Sum(su => su.CDCAmount),
