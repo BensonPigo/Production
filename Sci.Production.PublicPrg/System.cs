@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -16,6 +17,16 @@ namespace Sci.Production.PublicPrg
     /// </summary>
     public static partial class Prgs
     {
+        /// <inheritdoc/>
+        public static byte[] ImageToByteArray(System.Drawing.Image image)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, image.RawFormat);
+                return ms.ToArray();
+            }
+        }
+
         /// <inheritdoc/>
         public static void SetGridColumnsColor(Win.UI.Grid grid, string tag, Color color)
         {
