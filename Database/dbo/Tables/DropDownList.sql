@@ -3,10 +3,12 @@
     [ID]          VARCHAR (50)   CONSTRAINT [DF_DropDownList_ID] DEFAULT ('') NOT NULL,
     [Name]        NVARCHAR (50)  CONSTRAINT [DF_DropDownList_Name] DEFAULT ('') NULL,
     [RealLength]  NUMERIC (2)    CONSTRAINT [DF_DropDownList_RealLength] DEFAULT ((0)) NOT NULL,
-    [Description] NVARCHAR (150) CONSTRAINT [DF_DropDownList_Description] DEFAULT ('') NULL,
-    [Seq]         TINYINT        CONSTRAINT [DF_DropDownList_Seq] DEFAULT ((0)) NULL,
+    [Description] NVARCHAR (200) CONSTRAINT [DF_DropDownList_Description] DEFAULT ('') NULL,
+    [Seq]         INT            CONSTRAINT [DF_DropDownList_Seq] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_DropDownList] PRIMARY KEY CLUSTERED ([Type] ASC, [ID] ASC)
 );
+
+
 
 
 GO
