@@ -1,15 +1,23 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using Sci.Production.PublicPrg;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class B09 : Win.Tems.Input1
     {
         private readonly string destination_path; // 放圖檔的路徑
         private bool attach_flag = false;
 
+        /// <inheritdoc/>
         public B09(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -23,11 +31,15 @@ namespace Sci.Production.Quality
         {
             base.OnDetailEntered();
             this.chkJunk.ForeColor = Color.Blue;
-            this.chkGarmentTest.ForeColor = Color.Blue;
-            this.chkP10.ForeColor = Color.Blue;
-            this.chkP11.ForeColor = Color.Blue;
-            this.chkP12.ForeColor = Color.Blue;
-            this.chkP13.ForeColor = Color.Blue;
+            this.chkBulkGarmentTest.ForeColor = Color.Blue;
+            this.chkBulkCrocking.ForeColor = Color.Blue;
+            this.chkBulkOven.ForeColor = Color.Blue;
+            this.chkBulkWash.ForeColor = Color.Blue;
+
+            this.chkSampleGarment.ForeColor = Color.Blue;
+            this.chkSampleCrocking.ForeColor = Color.Blue;
+            this.chkSampleOven.ForeColor = Color.Blue;
+            this.chkSampleWash.ForeColor = Color.Blue;
             this.txtID.SetReadOnly(false);
             if (this.EditMode == true)
             {
@@ -40,30 +52,42 @@ namespace Sci.Production.Quality
                 this.btnDelete.Enabled = false;
             }
 
-            /*判斷路徑下圖片檔找不到,就將ImageLocation帶空值*/
-            if (MyUtility.Check.Empty(this.CurrentMaintain["SignaturePic"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["Signature"]))
             {
-                this.pictureBoxSignature.ImageLocation = string.Empty;
+                using (MemoryStream ms = new MemoryStream((byte[])this.CurrentMaintain["Signature"]))
+                {
+                    this.pictureBoxSignature.Image = Image.FromStream(ms);
+                }
             }
             else
             {
-                if (File.Exists(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["SignaturePic"])))
-                {
-                    try
-                    {
-                        this.pictureBoxSignature.ImageLocation = this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["SignaturePic"]);
-                    }
-                    catch (Exception e)
-                    {
-                        MyUtility.Msg.WarningBox("Picture1 process error. Please check it !!" + Environment.NewLine + e.ToString());
-                        this.pictureBoxSignature.ImageLocation = string.Empty;
-                    }
-                }
-                else
-                {
-                    this.pictureBoxSignature.ImageLocation = string.Empty;
-                }
+                this.pictureBoxSignature.ImageLocation = string.Empty;
             }
+
+            /*判斷路徑下圖片檔找不到,就將ImageLocation帶空值*/
+            //if (MyUtility.Check.Empty(this.CurrentMaintain["SignaturePic"]))
+            //{
+            //    this.pictureBoxSignature.ImageLocation = string.Empty;
+            //}
+            //else
+            //{
+            //    if (File.Exists(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["SignaturePic"])))
+            //    {
+            //        try
+            //        {
+            //            this.pictureBoxSignature.ImageLocation = this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["SignaturePic"]);
+            //        }
+            //        catch (Exception e)
+            //        {
+            //            MyUtility.Msg.WarningBox("Picture1 process error. Please check it !!" + Environment.NewLine + e.ToString());
+            //            this.pictureBoxSignature.ImageLocation = string.Empty;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        this.pictureBoxSignature.ImageLocation = string.Empty;
+            //    }
+            //}
         }
 
         /// <inheritdoc/>
@@ -141,6 +165,32 @@ namespace Sci.Production.Quality
             }
 
             return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            List<SqlParameter> paras = new List<SqlParameter>();
+            string col;
+            if (this.pictureBoxSignature.Image != null)
+            {
+                byte[] buffer = Prgs.ImageToByteArray(this.pictureBoxSignature.Image);
+                paras.Add(new SqlParameter($"@Signature", buffer));
+                col = "@Signature";
+            }
+            else
+            {
+                col = "NULL";
+            }
+
+            string sqlcmd = $@"update Technician set Signature = {col} where ID = '{this.CurrentMaintain["ID"]}'";
+            DualResult result = DBProxy.Current.Execute(null, sqlcmd, paras);
+            if (!result)
+            {
+                return result;
+            }
+
+            return base.ClickSavePost();
         }
     }
 }

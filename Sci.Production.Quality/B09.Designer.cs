@@ -35,12 +35,18 @@
             this.btnDelete = new Sci.Win.UI.Button();
             this.pictureBoxSignature = new Sci.Win.UI.PictureBox();
             this.chkJunk = new Sci.Win.UI.CheckBox();
-            this.chkP10 = new Sci.Win.UI.CheckBox();
-            this.chkP11 = new Sci.Win.UI.CheckBox();
-            this.chkP12 = new Sci.Win.UI.CheckBox();
+            this.chkSampleGarment = new Sci.Win.UI.CheckBox();
+            this.chkSampleCrocking = new Sci.Win.UI.CheckBox();
+            this.chkSampleOven = new Sci.Win.UI.CheckBox();
             this.chkP13 = new Sci.Win.UI.CheckBox();
             this.txtID = new Sci.Production.Class.Txtuser();
-            this.chkGarmentTest = new Sci.Win.UI.CheckBox();
+            this.chkBulkGarmentTest = new Sci.Win.UI.CheckBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.chkSampleWash = new Sci.Win.UI.CheckBox();
+            this.chkBulkWash = new Sci.Win.UI.CheckBox();
+            this.chkBulkCrocking = new Sci.Win.UI.CheckBox();
+            this.chkBulkOven = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -48,19 +54,18 @@
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSignature)).BeginInit();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(735, 303);
+            this.detail.Size = new System.Drawing.Size(735, 408);
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.chkGarmentTest);
-            this.detailcont.Controls.Add(this.chkP13);
-            this.detailcont.Controls.Add(this.chkP12);
-            this.detailcont.Controls.Add(this.chkP11);
-            this.detailcont.Controls.Add(this.chkP10);
+            this.detailcont.Controls.Add(this.groupBox2);
+            this.detailcont.Controls.Add(this.groupBox1);
             this.detailcont.Controls.Add(this.chkJunk);
             this.detailcont.Controls.Add(this.pictureBoxSignature);
             this.detailcont.Controls.Add(this.btnDelete);
@@ -69,11 +74,11 @@
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(735, 265);
+            this.detailcont.Size = new System.Drawing.Size(735, 370);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 265);
+            this.detailbtm.Location = new System.Drawing.Point(0, 370);
             this.detailbtm.Size = new System.Drawing.Size(735, 38);
             // 
             // browse
@@ -82,7 +87,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(743, 332);
+            this.tabs.Size = new System.Drawing.Size(743, 437);
             // 
             // label1
             // 
@@ -150,48 +155,48 @@
             this.chkJunk.Text = "Junk";
             this.chkJunk.UseVisualStyleBackColor = true;
             // 
-            // chkP10
+            // chkSampleGarment
             // 
-            this.chkP10.AutoSize = true;
-            this.chkP10.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SampleGarmentWash", true));
-            this.chkP10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkP10.Location = new System.Drawing.Point(460, 108);
-            this.chkP10.Name = "chkP10";
-            this.chkP10.Size = new System.Drawing.Size(247, 21);
-            this.chkP10.TabIndex = 10;
-            this.chkP10.Text = "P10. Sample Order Garment Wash";
-            this.chkP10.UseVisualStyleBackColor = true;
+            this.chkSampleGarment.AutoSize = true;
+            this.chkSampleGarment.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SampleGarmentWash", true));
+            this.chkSampleGarment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkSampleGarment.Location = new System.Drawing.Point(10, 22);
+            this.chkSampleGarment.Name = "chkSampleGarment";
+            this.chkSampleGarment.Size = new System.Drawing.Size(114, 21);
+            this.chkSampleGarment.TabIndex = 10;
+            this.chkSampleGarment.Text = "Garment Test";
+            this.chkSampleGarment.UseVisualStyleBackColor = true;
             // 
-            // chkP11
+            // chkSampleCrocking
             // 
-            this.chkP11.AutoSize = true;
-            this.chkP11.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MockupCrocking", true));
-            this.chkP11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkP11.Location = new System.Drawing.Point(460, 135);
-            this.chkP11.Name = "chkP11";
-            this.chkP11.Size = new System.Drawing.Size(209, 21);
-            this.chkP11.TabIndex = 11;
-            this.chkP11.Text = "P11. Mockup - Crocking Test";
-            this.chkP11.UseVisualStyleBackColor = true;
+            this.chkSampleCrocking.AutoSize = true;
+            this.chkSampleCrocking.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MockupCrocking", true));
+            this.chkSampleCrocking.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkSampleCrocking.Location = new System.Drawing.Point(10, 49);
+            this.chkSampleCrocking.Name = "chkSampleCrocking";
+            this.chkSampleCrocking.Size = new System.Drawing.Size(167, 21);
+            this.chkSampleCrocking.TabIndex = 11;
+            this.chkSampleCrocking.Text = "Mockup Crocking Test";
+            this.chkSampleCrocking.UseVisualStyleBackColor = true;
             // 
-            // chkP12
+            // chkSampleOven
             // 
-            this.chkP12.AutoSize = true;
-            this.chkP12.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MockupOven", true));
-            this.chkP12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkP12.Location = new System.Drawing.Point(460, 162);
-            this.chkP12.Name = "chkP12";
-            this.chkP12.Size = new System.Drawing.Size(188, 21);
-            this.chkP12.TabIndex = 12;
-            this.chkP12.Text = "P12. Mockup - Oven Test";
-            this.chkP12.UseVisualStyleBackColor = true;
+            this.chkSampleOven.AutoSize = true;
+            this.chkSampleOven.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MockupOven", true));
+            this.chkSampleOven.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkSampleOven.Location = new System.Drawing.Point(10, 76);
+            this.chkSampleOven.Name = "chkSampleOven";
+            this.chkSampleOven.Size = new System.Drawing.Size(146, 21);
+            this.chkSampleOven.TabIndex = 12;
+            this.chkSampleOven.Text = "Mockup Oven Test";
+            this.chkSampleOven.UseVisualStyleBackColor = true;
             // 
             // chkP13
             // 
             this.chkP13.AutoSize = true;
             this.chkP13.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MockupWash", true));
             this.chkP13.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkP13.Location = new System.Drawing.Point(460, 189);
+            this.chkP13.Location = new System.Drawing.Point(6, 130);
             this.chkP13.Name = "chkP13";
             this.chkP13.Size = new System.Drawing.Size(190, 21);
             this.chkP13.TabIndex = 13;
@@ -208,21 +213,96 @@
             this.txtID.TabIndex = 5;
             this.txtID.TextBox1Binding = "";
             // 
-            // chkGarmentTest
+            // chkBulkGarmentTest
             // 
-            this.chkGarmentTest.AutoSize = true;
-            this.chkGarmentTest.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "GarmentTest", true));
-            this.chkGarmentTest.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkGarmentTest.Location = new System.Drawing.Point(460, 81);
-            this.chkGarmentTest.Name = "chkGarmentTest";
-            this.chkGarmentTest.Size = new System.Drawing.Size(221, 21);
-            this.chkGarmentTest.TabIndex = 14;
-            this.chkGarmentTest.Text = "P04. Laboratory-Garment Test";
-            this.chkGarmentTest.UseVisualStyleBackColor = true;
+            this.chkBulkGarmentTest.AutoSize = true;
+            this.chkBulkGarmentTest.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "GarmentTest", true));
+            this.chkBulkGarmentTest.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkBulkGarmentTest.Location = new System.Drawing.Point(6, 22);
+            this.chkBulkGarmentTest.Name = "chkBulkGarmentTest";
+            this.chkBulkGarmentTest.Size = new System.Drawing.Size(114, 21);
+            this.chkBulkGarmentTest.TabIndex = 14;
+            this.chkBulkGarmentTest.Text = "Garment Test";
+            this.chkBulkGarmentTest.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.chkBulkWash);
+            this.groupBox1.Controls.Add(this.chkBulkCrocking);
+            this.groupBox1.Controls.Add(this.chkBulkOven);
+            this.groupBox1.Controls.Add(this.chkBulkGarmentTest);
+            this.groupBox1.Controls.Add(this.chkP13);
+            this.groupBox1.Location = new System.Drawing.Point(460, 92);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(209, 127);
+            this.groupBox1.TabIndex = 15;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Bulk Stage";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.chkSampleWash);
+            this.groupBox2.Controls.Add(this.chkSampleGarment);
+            this.groupBox2.Controls.Add(this.chkSampleCrocking);
+            this.groupBox2.Controls.Add(this.chkSampleOven);
+            this.groupBox2.Location = new System.Drawing.Point(460, 225);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(209, 129);
+            this.groupBox2.TabIndex = 16;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Sample Stage";
+            // 
+            // chkSampleWash
+            // 
+            this.chkSampleWash.AutoSize = true;
+            this.chkSampleWash.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MockupWash", true));
+            this.chkSampleWash.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkSampleWash.Location = new System.Drawing.Point(10, 103);
+            this.chkSampleWash.Name = "chkSampleWash";
+            this.chkSampleWash.Size = new System.Drawing.Size(148, 21);
+            this.chkSampleWash.TabIndex = 13;
+            this.chkSampleWash.Text = "Mockup Wash Test";
+            this.chkSampleWash.UseVisualStyleBackColor = true;
+            // 
+            // chkBulkWash
+            // 
+            this.chkBulkWash.AutoSize = true;
+            this.chkBulkWash.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BulkMockWash", true));
+            this.chkBulkWash.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkBulkWash.Location = new System.Drawing.Point(6, 103);
+            this.chkBulkWash.Name = "chkBulkWash";
+            this.chkBulkWash.Size = new System.Drawing.Size(148, 21);
+            this.chkBulkWash.TabIndex = 17;
+            this.chkBulkWash.Text = "Mockup Wash Test";
+            this.chkBulkWash.UseVisualStyleBackColor = true;
+            // 
+            // chkBulkCrocking
+            // 
+            this.chkBulkCrocking.AutoSize = true;
+            this.chkBulkCrocking.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BulkMockupCrocking", true));
+            this.chkBulkCrocking.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkBulkCrocking.Location = new System.Drawing.Point(6, 49);
+            this.chkBulkCrocking.Name = "chkBulkCrocking";
+            this.chkBulkCrocking.Size = new System.Drawing.Size(167, 21);
+            this.chkBulkCrocking.TabIndex = 15;
+            this.chkBulkCrocking.Text = "Mockup Crocking Test";
+            this.chkBulkCrocking.UseVisualStyleBackColor = true;
+            // 
+            // chkBulkOven
+            // 
+            this.chkBulkOven.AutoSize = true;
+            this.chkBulkOven.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BulkMockupOven", true));
+            this.chkBulkOven.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkBulkOven.Location = new System.Drawing.Point(6, 76);
+            this.chkBulkOven.Name = "chkBulkOven";
+            this.chkBulkOven.Size = new System.Drawing.Size(146, 21);
+            this.chkBulkOven.TabIndex = 16;
+            this.chkBulkOven.Text = "Mockup Oven Test";
+            this.chkBulkOven.UseVisualStyleBackColor = true;
             // 
             // B09
             // 
-            this.ClientSize = new System.Drawing.Size(743, 365);
+            this.ClientSize = new System.Drawing.Size(743, 470);
             this.Name = "B09";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B09. Technician List";
@@ -236,6 +316,10 @@
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSignature)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -247,14 +331,20 @@
         private Win.UI.Label label3;
         private Win.UI.Label label1;
         private Win.UI.CheckBox chkP13;
-        private Win.UI.CheckBox chkP12;
-        private Win.UI.CheckBox chkP11;
-        private Win.UI.CheckBox chkP10;
+        private Win.UI.CheckBox chkSampleOven;
+        private Win.UI.CheckBox chkSampleCrocking;
+        private Win.UI.CheckBox chkSampleGarment;
         private Win.UI.CheckBox chkJunk;
         private Win.UI.PictureBox pictureBoxSignature;
         private Win.UI.Button btnDelete;
         private Win.UI.Button btnAttach;
         private Class.Txtuser txtID;
-        private Win.UI.CheckBox chkGarmentTest;
+        private Win.UI.CheckBox chkBulkGarmentTest;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private Win.UI.CheckBox chkSampleWash;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private Win.UI.CheckBox chkBulkWash;
+        private Win.UI.CheckBox chkBulkCrocking;
+        private Win.UI.CheckBox chkBulkOven;
     }
 }
