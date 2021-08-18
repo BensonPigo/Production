@@ -2242,7 +2242,6 @@
     <Build Include="dbo\Tables\SampleGarmentTest.sql" />
     <Build Include="dbo\Tables\SampleGarmentTest_Detail.sql" />
     <Build Include="dbo\Stored Procedures\GenSampleGarmentTest.sql" />
-    <Build Include="dbo\Tables\Technician.sql" />
     <Build Include="dbo\Stored Procedures\usp_switchWorkorder_BySP.sql" />
     <Build Include="dbo\Tables\MockupCrocking.sql" />
     <Build Include="dbo\Tables\MockupCrocking_Detail.sql" />
@@ -2674,6 +2673,7 @@
     <Build Include="dbo\Tables\IEReasonLBRnotHit_1st.sql" />
     <Build Include="dbo\Tables\IEReasonLBRnotHit_Detail.sql" />
     <Build Include="dbo\Tables\KHImportDeclaration_ShareCDCExpense.sql" />
+    <Build Include="dbo\Tables\Technician.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
