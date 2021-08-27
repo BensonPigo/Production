@@ -1478,15 +1478,15 @@ WHERE Ukey={item["Ukey"]}
         }
 
         // 撈出ChgOverTarget資料
-        private string FindTarget(string type)
+        private decimal FindTarget(string type)
         {
-            return MyUtility.GetValue.Lookup($@"
+            return MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($@"
 select top 1 c.Target
 from factory f
 left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and c.EffectiveDate < GETDATE() and c. Type ='{type}'
 where f.id = '{Sci.Env.User.Factory}'
 order by EffectiveDate desc
-");
+"));
         }
 
         /// <inheritdoc/>
@@ -1511,10 +1511,10 @@ order by EffectiveDate desc
 
             this.ComputeTaktTime();
 
-            string lBRTarget = this.FindTarget("LBR");
-            string lLERTarget = this.FindTarget("EFF.");
-            bool checkLBR = !MyUtility.Check.Empty(lBRTarget) && Convert.ToDecimal(this.numLBR.Value) < Convert.ToDecimal(lBRTarget);
-            bool checkEFF = !MyUtility.Check.Empty(lLERTarget) && Convert.ToDecimal(this.numEffieiency.Value) < Convert.ToDecimal(lLERTarget);
+            decimal lBRTarget = this.FindTarget("LBR");
+            decimal lLERTarget = this.FindTarget("EFF.");
+            bool checkLBR = !MyUtility.Check.Empty(lBRTarget) && Convert.ToDecimal(this.numLBR.Value) < lBRTarget;
+            bool checkEFF = !MyUtility.Check.Empty(lLERTarget) && Convert.ToDecimal(this.numEffieiency.Value) < lLERTarget;
             string notHitReasonID = string.Empty;
             string lbrReasion = string.Empty;
             string sqlCmd;
@@ -1590,8 +1590,8 @@ order by EffectiveDate desc
 
         private void ConfirmChangeGridColor(bool chkEmpty)
         {
-            string lBRTarget = this.FindTarget("LBR");
-            decimal decLBR = 100 - Convert.ToDecimal(lBRTarget);
+            decimal lBRTarget = this.FindTarget("LBR");
+            decimal decLBR = 100 - lBRTarget;
             DataTable detail = (DataTable)this.listControlBindingSource1.DataSource;
             decimal? avgCycle = detail.AsEnumerable().Average(x => x.Field<decimal?>("TotalCycle"));
             this.ConfirmLists = detail.AsEnumerable()
