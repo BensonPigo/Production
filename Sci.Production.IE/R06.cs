@@ -181,10 +181,10 @@ where exists (select 1 from #tmp_TimeStudy t where t.IETMSID = i.ID and t.IETMSV
 group by i.ID, i.Version, m.ArtworkTypeID
 having Sum(round(id.SMV * (isnull(id.MtlFactorRate, 0) / 100 + 1) * id.Frequency * 60, 3)) > 0
 
-declare @columnsNameFTY nvarchar(max) = stuff((select distinct concat(',[',ArtworkTypeID,']') from #tmp_ftyArtworkType for xml path('')),1,1,'')
-declare @NameFTY nvarchar(max) = (select distinct concat(',[',ArtworkTypeID,']')from #tmp_ftyArtworkType for xml path(''))
-declare @columnsNameGSD nvarchar(max) = stuff((select distinct concat(',[',ArtworkTypeID,']') from #tmp_GSDArtworkType for xml path('')),1,1,'')
-declare @NameGSD nvarchar(max) = (select distinct concat(',[',ArtworkTypeID,']')from #tmp_GSDArtworkType for xml path(''))
+declare @columnsNameFTY nvarchar(max) = stuff((select distinct concat(',[',ArtworkTypeID,']') from #tmp_ftyArtworkType where ArtworkTypeID<> '' for xml path('')),1,1,'')
+declare @NameFTY nvarchar(max) = (select distinct concat(',[',ArtworkTypeID,']')from #tmp_ftyArtworkType where ArtworkTypeID<> '' for xml path(''))
+declare @columnsNameGSD nvarchar(max) = stuff((select distinct concat(',[',ArtworkTypeID,']') from #tmp_GSDArtworkType where ArtworkTypeID<> '' for xml path('')),1,1,'')
+declare @NameGSD nvarchar(max) = (select distinct concat(',[',ArtworkTypeID,']')from #tmp_GSDArtworkType where ArtworkTypeID<> '' for xml path(''))
 
 set @lastSql += N'
 select ID'+@NameFTY+N'
