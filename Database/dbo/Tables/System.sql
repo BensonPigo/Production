@@ -64,6 +64,7 @@ CREATE TABLE [dbo].[System] (
     [NoRestrictOrdersDelivery]   BIT            CONSTRAINT [DF_System_NoRestrictOrdersDelivery] DEFAULT ((0)) NOT NULL,
     [RFCardEraseBeforePrinting]  BIT            DEFAULT ((0)) NOT NULL,
     [Region] Varchar (2) NOT NULL CONSTRAINT [DF_System_Region]  DEFAULT(''), 
+    [FinalInspection_CTNMoisureStandard] NUMERIC(5, 2) CONSTRAINT [DF_System_FinalInspection_CTNMoisureStandard] DEFAULT ((0)) NOT NULL, 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
@@ -100,6 +101,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Picture Pat
 
 GO
 
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Final Inspection Carton Moisure Standard', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'FinalInspection_CTNMoisureStandard';
 
 
 GO
