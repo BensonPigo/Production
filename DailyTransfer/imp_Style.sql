@@ -654,6 +654,9 @@ StyleUkey
 ,TissuePaper
 ,ArticleName
 ,Contents
+,SourceFile
+,Description
+,FDUploadDate
 )
 select 
  b.StyleUkey
@@ -662,6 +665,9 @@ select
 ,b.TissuePaper
 ,b.ArticleName
 ,b.Contents
+,b.SourceFile
+,b.Description
+,b.FDUploadDate
 from Trade_To_Pms.dbo.Style_Article as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_Article as a WITH (NOLOCK) where a.StyleUkey	= b.StyleUkey AND a.Article	= b.Article)
 
@@ -2073,6 +2079,48 @@ when not matched by target then
 when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
 	delete;
 	
+
+-----------------Style_RRLRReport-------------------
+Merge Production.dbo.Style_RRLRReport as t
+Using (select a.* from Trade_To_Pms.dbo.Style_RRLRReport a ) as s
+on t.StyleUkey=s.StyleUkey and t.SuppID=s.SuppID
+and t.Refno=s.Refno and t.ColorID=s.ColorID
+when matched then 
+	update set	t.Material	  = s.Material	,
+				t.LabDipStatus		  = s.LabDipStatus		,
+				t.RR = s.RR,
+				t.RRRemark = s.RRRemark,
+				t.LifecycleState = s.LifecycleState,
+				t.LR = s.LR,
+				t.AddName		  = s.AddName		,
+				t.AddDate		  = s.AddDate		
+when not matched by target then
+	insert  (  [StyleUkey]
+			  ,[SuppID]
+			  ,[Refno]
+			  ,[Material]
+			  ,[ColorID]
+			  ,[LabDipStatus]
+			  ,[RR]
+			  ,[RRRemark]
+			  ,[LifecycleState]
+			  ,[LR]
+			  ,[AddName]
+			  ,[AddDate])
+	  values  (s.[StyleUkey]
+			  ,s.[SuppID]
+			  ,s.[Refno]
+			  ,s.[Material]
+			  ,s.[ColorID]
+			  ,s.[LabDipStatus]
+			  ,s.[RR]
+			  ,s.[RRRemark]
+			  ,s.[LifecycleState]
+			  ,s.[LR]
+			  ,s.[AddName]
+			  ,s.[AddDate])
+when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
+	delete;
 
 END
 

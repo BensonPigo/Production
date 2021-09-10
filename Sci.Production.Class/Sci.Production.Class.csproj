@@ -155,6 +155,7 @@
     <Compile Include="LinkLabelRFCardEraseBeforePrinting.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="MailTools.cs" />
     <Compile Include="MergeRowGrid.cs">
       <SubType>Component</SubType>
     </Compile>
