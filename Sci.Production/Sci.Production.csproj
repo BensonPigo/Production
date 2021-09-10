@@ -1076,6 +1076,12 @@
     <None Include="XLT\Quality_R33.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Quality_R34.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Quality_R34_Style.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Quality_R40_ByFactory.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

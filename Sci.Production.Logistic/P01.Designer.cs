@@ -155,6 +155,7 @@
             this.displayConstruction = new Sci.Win.UI.DisplayBox();
             this.lbConstruction = new Sci.Win.UI.Label();
             this.shapeContainer6 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.chkBrokenneedles = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -171,6 +172,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkBrokenneedles);
             this.detailcont.Controls.Add(this.displayConstruction);
             this.detailcont.Controls.Add(this.lbConstruction);
             this.detailcont.Controls.Add(this.displayGender);
@@ -1679,6 +1681,20 @@
             this.shapeContainer6.TabIndex = 85;
             this.shapeContainer6.TabStop = false;
             // 
+            // chkBrokenneedles
+            // 
+            this.chkBrokenneedles.AutoSize = true;
+            this.chkBrokenneedles.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BrokenNeedles", true));
+            this.chkBrokenneedles.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkBrokenneedles.IsSupportEditMode = false;
+            this.chkBrokenneedles.Location = new System.Drawing.Point(258, 88);
+            this.chkBrokenneedles.Name = "chkBrokenneedles";
+            this.chkBrokenneedles.ReadOnly = true;
+            this.chkBrokenneedles.Size = new System.Drawing.Size(126, 21);
+            this.chkBrokenneedles.TabIndex = 115;
+            this.chkBrokenneedles.Text = "Broken needles";
+            this.chkBrokenneedles.UseVisualStyleBackColor = true;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(984, 662);
@@ -1838,5 +1854,6 @@
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer4;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer5;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer6;
+        private Win.UI.CheckBox chkBrokenneedles;
     }
 }

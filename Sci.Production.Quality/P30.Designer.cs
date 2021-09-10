@@ -63,6 +63,7 @@
             this.txtuserMCHandle = new Sci.Production.Class.Txtuser();
             this.btnAccessoryInspectionList = new Sci.Win.UI.Button();
             this.btnFabricInspectionList = new Sci.Win.UI.Button();
+            this.btnMDFailbyCarton = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -79,6 +80,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnMDFailbyCarton);
             this.masterpanel.Controls.Add(this.btnAccessoryInspectionList);
             this.masterpanel.Controls.Add(this.btnFabricInspectionList);
             this.masterpanel.Controls.Add(this.numOrderQty);
@@ -151,6 +153,7 @@
             this.masterpanel.Controls.SetChildIndex(this.numOrderQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFabricInspectionList, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAccessoryInspectionList, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnMDFailbyCarton, 0);
             // 
             // detailpanel
             // 
@@ -556,7 +559,7 @@
             // 
             // btnAccessoryInspectionList
             // 
-            this.btnAccessoryInspectionList.Location = new System.Drawing.Point(702, 134);
+            this.btnAccessoryInspectionList.Location = new System.Drawing.Point(702, 106);
             this.btnAccessoryInspectionList.Name = "btnAccessoryInspectionList";
             this.btnAccessoryInspectionList.Size = new System.Drawing.Size(194, 27);
             this.btnAccessoryInspectionList.TabIndex = 100;
@@ -566,13 +569,23 @@
             // 
             // btnFabricInspectionList
             // 
-            this.btnFabricInspectionList.Location = new System.Drawing.Point(702, 104);
+            this.btnFabricInspectionList.Location = new System.Drawing.Point(702, 73);
             this.btnFabricInspectionList.Name = "btnFabricInspectionList";
             this.btnFabricInspectionList.Size = new System.Drawing.Size(194, 27);
             this.btnFabricInspectionList.TabIndex = 99;
             this.btnFabricInspectionList.Text = "Fabric inspection list";
             this.btnFabricInspectionList.UseVisualStyleBackColor = true;
             this.btnFabricInspectionList.Click += new System.EventHandler(this.BtnFabricInspectionList_Click);
+            // 
+            // btnMDFailbyCarton
+            // 
+            this.btnMDFailbyCarton.Location = new System.Drawing.Point(702, 139);
+            this.btnMDFailbyCarton.Name = "btnMDFailbyCarton";
+            this.btnMDFailbyCarton.Size = new System.Drawing.Size(194, 27);
+            this.btnMDFailbyCarton.TabIndex = 102;
+            this.btnMDFailbyCarton.Text = "MD Fail by Carton";
+            this.btnMDFailbyCarton.UseVisualStyleBackColor = true;
+            this.btnMDFailbyCarton.Click += new System.EventHandler(this.BtnMDFailbyCarton_Click);
             // 
             // P30
             // 
@@ -592,6 +605,7 @@
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
             this.Name = "P30";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultBounds;
             this.Text = "P30.MD Master List";
             this.UniqueExpress = "ID";
@@ -653,5 +667,6 @@
         private Win.UI.NumericBox numOrderQty;
         private Win.UI.Button btnAccessoryInspectionList;
         private Win.UI.Button btnFabricInspectionList;
+        private Win.UI.Button btnMDFailbyCarton;
     }
 }

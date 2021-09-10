@@ -582,9 +582,12 @@ FROM Orders o
 LEFT JOIN CustCD cc ON o.BrandID=cc.BrandID AND o.CustCDID=cc.ID
 WHERE o.ID='{dr.OrderID}'");
             this.boxPackingRemark.Text = dr.Remark;
-            this.chkVasShas.Checked = MyUtility.Convert.GetBool(
-                MyUtility.GetValue.Lookup($"SELECT VasShas FROM Orders WHERE ID = '{dr.OrderID}'")
-                );
+            this.chkVasShas.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"SELECT VasShas FROM Orders WHERE ID = '{dr.OrderID}'"));
+            this.chkBrokenneedles.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"SELECT BrokenNeedles FROM Orders WHERE ID = '{dr.OrderID}'"));
+            if (this.chkBrokenneedles.Checked)
+            {
+                MyUtility.Msg.InfoBox($"PO {dr.CustPoNo} ever broken needle in production line");
+            }
         }
 
         private void ChkBoxNotScan_CheckedChanged(object sender, EventArgs e)
