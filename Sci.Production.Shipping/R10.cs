@@ -3195,6 +3195,15 @@ FOR AccountID IN ({account})) a
                 reportData.A_61052106 = null;
             }
 
+            // 針對全區 6109 欄位加總
+            reportData.A_6109 =
+                MyUtility.Convert.GetDecimal(reportData.A_61092101) +
+                MyUtility.Convert.GetDecimal(reportData.A_61092102) +
+                MyUtility.Convert.GetDecimal(reportData.A_61092103) +
+                MyUtility.Convert.GetDecimal(reportData.A_61092104) +
+                MyUtility.Convert.GetDecimal(reportData.A_61092105) +
+                MyUtility.Convert.GetDecimal(reportData.A_61092106);
+
             return reportData;
         }
 
