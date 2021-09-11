@@ -1291,7 +1291,12 @@ WHERE   StockType='{this.CurrentDetailData["stocktype"].ToString()}'
             .Text("FactoryID", header: "Prod. Factory", iseditingreadonly: true) // 19
             .Text("OrderTypeID", header: "Order Type", width: Widths.AnsiChars(15), iseditingreadonly: true) // 20
             .Text("ContainerType", header: "ContainerType & No", width: Widths.AnsiChars(15), iseditingreadonly: true) // 21
+            .Text("MINDQRCode", header: "MIND QR Code", width: Widths.AnsiChars(30))
+            .Text("MINDChecker", header: "Checker", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .DateTime("CheckDate", header: "Check Date", width: Widths.AnsiChars(20), iseditingreadonly: true)
             ;
+            this.detailgrid.Columns["MINDQRCode"].DefaultCellStyle.BackColor = Color.Pink;
+
             this.col_Roll.MaxLength = 8;
             this.col_Dyelot.MaxLength = 8;
             cbb_Seq.MaxLength = 6;
@@ -2305,6 +2310,9 @@ select  a.id
 		,[SortCmbDyelot] = ISNULL(cmb.Dyelot,a.Dyelot)
         ,clickInsert = 1 -- 用來處理按+插入列狀況
         ,[IsSelect] = cast(0 as bit)
+        ,a.MINDQRCode
+        ,MINDChecker = a.MINDChecker+'-'+(select name from [ExtendServer].ManufacturingExecution.dbo.Pass1 where id = a.MINDChecker)
+        ,CheckDate= IIF(a.MINDCheckEditDate IS NULL, a.MINDCheckAddDate,a.MINDCheckEditDate)
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 INNER JOIN Receiving b WITH (NOLOCK) ON a.id= b.Id
 left join View_WH_Orders o WITH (NOLOCK) on o.id = a.PoId
