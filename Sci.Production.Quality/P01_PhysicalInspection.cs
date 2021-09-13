@@ -691,7 +691,10 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
                 if (dr.RowState == DataRowState.Deleted)
                 {
                     update_cmd = update_cmd + string.Format(
-                    @"Delete From Fir_physical Where DetailUkey = {0} ;Delete From FIR_Physical_Defect Where FIR_PhysicalDetailUKey = {0} ; Delete From FIR_Physical_Defect_Realtime Where FIR_PhysicalDetailUKey = {0} ;",
+                    @"
+Delete From Fir_physical Where DetailUkey = {0} ;
+Delete From FIR_Physical_Defect Where FIR_PhysicalDetailUKey = {0} ; 
+Delete From FIR_Physical_Defect_Realtime Where FIR_PhysicalDetailUKey = {0} ;",
                     dr["DetailUKey", DataRowVersion.Original]);
                     continue;
                 }

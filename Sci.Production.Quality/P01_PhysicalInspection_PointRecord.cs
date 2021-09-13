@@ -1,9 +1,15 @@
 ﻿using Ict;
+using Ict.Resources;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Class;
 using Sci.Production.PublicPrg;
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 
 namespace Sci.Production.Quality
 {
@@ -14,6 +20,8 @@ namespace Sci.Production.Quality
         private readonly string def_num;
         private readonly DataRow def_dr;
         private readonly Ict.Win.UI.DataGridViewNumericBoxColumn col_Points;
+        private readonly bool b_edit;
+        private List<Endline_Camera_Schema> picList = new List<Endline_Camera_Schema>();
 
         /// <inheritdoc/>
         public P01_PhysicalInspection_PointRecord(DataRow data_dr, string n_column, bool edit)
@@ -23,8 +31,16 @@ namespace Sci.Production.Quality
             string[] defect = defect_str.Split(new char[] { '/' });
             this.def_num = n_column;
             this.def_dr = data_dr;
-            string where = edit ? "where junk = 0" : string.Empty;
-            string sqlcmd = $"Select ID,Type,DescriptionEN,0 as points From FabricDefect WITH (NOLOCK) {where}";
+            this.b_edit = edit;
+            string where = edit ? "where fd.junk = 0" : string.Empty;
+            string sqlcmd = $@"
+Select distinct fd.ID,Type,DescriptionEN,0 as points ,c.UniqueKey
+,[existsPic] = IIF(isnull(c.SourceFile,'') != '' , 1,0)
+From FabricDefect fd WITH (NOLOCK) 
+left join FIR_Physical_Defect_Realtime r on fd.ID = r.FabricdefectID and r.FIR_PhysicalDetailUkey = {this.def_dr["DetailUkey"]}
+left join ManufacturingExecution.dbo.Clip c on c.UniqueKey = r.Id and c.TableName = 'FIR_Physical_Defect_Realtime'
+{where}
+order by fd.ID ";
             DBProxy.Current.Select(null, sqlcmd, out this.defRecord);
             string defid;
             int point;
@@ -49,14 +65,146 @@ namespace Sci.Production.Quality
                 }
             }
 
+            DataGridViewGeneratorImageColumnSettings col_img = new DataGridViewGeneratorImageColumnSettings();
+
+            col_img.CellClick += (s, a) =>
+            {
+                // 小心連點太快會直接刪除新開窗資料
+                if (a.RowIndex != -1)
+                {
+                    DataRow dr = this.gridPhysicalInspection.GetDataRow(a.RowIndex);
+                    List<Endline_Camera_Schema> tempShow = this.picList.Where(t => t.ID == dr["UniqueKey"].ToString()).ToList();
+                    if (tempShow.Count != 0)
+                    {
+                        var frm = new Camera_ShowNew(dr["ID"].ToString(), dr["UniqueKey"].ToString(), this.picList);
+                        frm.ShowDialog();
+                    }
+
+                    foreach (var item in tempShow)
+                    {
+                        if (Camera_Prg.MasterSchemas.Where(r => r.Pkey.Equals(item.Pkey) && r.ID.Equals(item.ID)).Any() == false)
+                        {
+                            // 刪除檔案
+                            if (System.IO.File.Exists(item.imgPath))
+                            {
+                                try
+                                {
+                                    item.image.Dispose();
+                                    System.IO.File.Delete(item.imgPath);
+                                }
+                                catch (Exception ex)
+                                {
+                                    this.ShowErr(ex.Message.ToString());
+                                    return;
+                                }
+                            }
+
+                            string sqlcmdDelete = $@"
+delete from ManufacturingExecution.dbo.Clip 
+where PKey = '{item.Pkey}'
+";
+                            DualResult result;
+                            if (!(result = DBProxy.Current.Execute(string.Empty, sqlcmdDelete)))
+                            {
+                                this.ShowErr(result);
+                                return;
+                            }
+                        }
+                    }
+
+                    List<Endline_Camera_Schema> tempShowChk = this.picList.Where(t => t.ID == dr["UniqueKey"].ToString()).ToList();
+                    if (tempShowChk.Count != 0)
+                    {
+                        this.gridPhysicalInspection.Rows[a.RowIndex].Cells["showPic"].Value = Resource.image_icon1;
+                    }
+                    else
+                    {
+                        this.gridPhysicalInspection.Rows[a.RowIndex].Cells["showPic"].Value = null;
+                    }
+                }
+            };
+
             this.gridPhysicalInspection.DataSource = this.defRecord;
             this.gridPhysicalInspection.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.gridPhysicalInspection)
             .Text("ID", header: "Code", width: Widths.AnsiChars(1), iseditingreadonly: true)
             .Text("Type", header: "Type", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("DescriptionEN", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Numeric("Points", header: "Points", width: Widths.AnsiChars(4), integer_places: 4).Get(out this.col_Points);
+            .Numeric("Points", header: "Points", width: Widths.AnsiChars(4), integer_places: 4).Get(out this.col_Points)
+            .Image("showPic", header: "Defect" + Environment.NewLine + "Picture", width: Widths.AnsiChars(5), settings: col_img)
+            ;
             this.GridEditing(edit);
+
+        }
+
+        private void ReLoadImage()
+        {
+            DataTable tmp_dt = (DataTable)this.gridPhysicalInspection.DataSource;
+
+            #region 存放照片在暫存檔
+
+            // 重新載入照片
+            if (this.picList != null && this.picList.Count > 0)
+            {
+                this.picList.Clear();
+            }
+
+            DataTable dt;
+            string where = this.b_edit ? "and fd.junk = 0" : string.Empty;
+            string sqlcmd = $@"
+select r.FabricdefectID,r.FIR_PhysicalDetailUkey,c.SourceFile,c.UniqueKey,c.Description,c.Pkey
+,[yyyyMM] = format(c.AddDate,'yyyyMM')
+from FIR_Physical_Defect_Realtime r 
+inner join ManufacturingExecution.dbo.Clip c on c.UniqueKey = r.Id and c.TableName = 'FIR_Physical_Defect_Realtime'
+where 1 = 1 
+{where}
+and r.FIR_PhysicalDetailUkey = {this.def_dr["DetailUkey"]}
+order by r.FabricdefectID,r.FIR_PhysicalDetailUkey,c.SourceFile";
+            DBProxy.Current.Select(null, sqlcmd, out dt);
+
+            foreach (DataRow item in dt.Rows)
+            {
+                string strpath = Path.Combine(Camera_Prg.GetCameraPath(item["yyyyMM"].ToString()), item["SourceFile"].ToString());
+                Image image = Image.FromFile(strpath);
+                var temp1 = new Endline_Camera_Schema()
+                {
+                    Pkey = item["Pkey"].ToString(),
+                    ID = item["UniqueKey"].ToString(),
+                    desc = item["Description"].ToString(),
+                    image = (Bitmap)image,
+                    FabricdefectID = item["FabricdefectID"].ToString(),
+                    imgPath = strpath,
+                };
+
+                this.picList.Add(temp1);
+            }
+
+            Camera_Prg.MasterSchemas = this.picList;
+            #endregion
+
+            // 暫存的照片存在就顯示圖片
+            if (this.gridPhysicalInspection.Rows.Count > 0 || tmp_dt != null)
+            {
+                for (int i = 0; i < this.gridPhysicalInspection.Rows.Count; i++)
+                {
+                    DataRow dr = this.gridPhysicalInspection.GetDataRow(i);
+                    if (this.gridPhysicalInspection.Rows.Count <= i || i < 0)
+                    {
+                        return;
+                    }
+
+                    if (!MyUtility.Check.Empty(dr["existsPic"]))
+                    {
+                        this.gridPhysicalInspection.Rows[i].Cells["showPic"].Value = Resource.image_icon1;
+                    }
+                    else
+                    {
+                        this.gridPhysicalInspection.Rows[i].Cells["showPic"].Value = null;
+                    }
+                }
+            }
+
+            this.gridPhysicalInspection.ValidateControl();
         }
 
         private void GridEditing(bool isEditing)
@@ -91,6 +239,12 @@ namespace Sci.Production.Quality
             this.def_dr["def" + this.def_num] = def; // 填入DefectRecord
             this.def_dr["Point" + this.def_num] = totalPoint;
             this.Dispose();
+        }
+
+        private void P01_PhysicalInspection_PointRecord_FormLoaded(object sender, EventArgs e)
+        {
+            this.ReLoadImage();
+
         }
     }
 }
