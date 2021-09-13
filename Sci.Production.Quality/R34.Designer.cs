@@ -174,7 +174,9 @@
             this.comboReportType.IsSupportUnselect = true;
             this.comboReportType.Items.AddRange(new object[] {
             "SP#, Seq",
-            "Style"});
+            "Style",
+            "Ctn# current status",
+            "Ctn# packing error list"});
             this.comboReportType.Location = new System.Drawing.Point(120, 219);
             this.comboReportType.Name = "comboReportType";
             this.comboReportType.OldText = "";

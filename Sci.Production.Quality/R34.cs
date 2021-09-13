@@ -155,7 +155,7 @@ and exists (select 1 from PackingList_Detail pd with(nolock) inner join PackingL
 {where}
 ");
             }
-            else
+            else if (this.comboReportType.SelectedIndex == 1)
             {
                 // Style
                 this.sqlcmd.Append($@"
@@ -226,7 +226,139 @@ and exists (select 1 from PackingList_Detail pd with(nolock) inner join PackingL
 group by o.StyleID,o.SeasonID,o.BrandID,o.FactoryID
 ");
             }
+            else if (this.comboReportType.SelectedIndex == 2)
+            {
+                // Ctn# current status
+                this.sqlcmd.Append($@"
+select
+	pd.ID,
+	pd.CTNStartNo,
+	pd.OrderID,
+	pd.OrderShipmodeSeq,
+	ShipQty = sum(pd.ShipQty),
+	ScanQty = sum(iif(pd.ScanEditDate is  not null and pd.Lacking = 0,pd.ScanQty, 0)),
+	PackingError = Concat(pd.PackingErrorID, '-', (select top 1 Description from PackingError where Type = 'TP' and id = pd.PackingErrorID)),
+	pd.PackingErrQty,
+	pd.PackErrTransferDate
+into #tmpPD
+from  PackingList_Detail pd
+inner join orders o on o.ID = pd.OrderID
+inner join Order_QtyShip oq on oq.ID = o.ID and oq.Seq = pd.OrderShipmodeSeq
+where 1=1
+{where}
 
+Group by pd.ID,pd.CTNStartNo,pd.OrderID,pd.OrderShipmodeSeq,pd.PackingErrQty,pd.PackingErrorID,pd.PackErrTransferDate
+
+select
+	pd.ID,
+	pd.CTNStartNo,
+	pd.OrderID,
+	pd.OrderShipmodeSeq,
+	o.StyleID,
+	o.SeasonID,
+	o.BrandID,
+	o.FactoryID,
+	oq.BuyerDelivery,
+	Articles,
+	SizeCodes,
+	ShipQty,
+	ScanQty,
+	PassRate =
+	    case when isnull(ShipQty, 0) = 0 then concat(0, '%')
+		when isnull(ScanQty, 0) < isnull(ShipQty, 0) then Null
+	    else concat(round((isnull(ShipQty, 0) - isnull(PackingErrQty1st, 0)) / cast(isnull(ShipQty, 0)as float) * 100, 2),  '%')
+	    end,
+	PackingError,
+	PackingErrQty,
+	pd.PackErrTransferDate
+from #tmpPD pd
+inner join orders o on o.ID = pd.OrderID
+inner join Order_QtyShip oq on oq.ID = o.ID and oq.Seq = pd.OrderShipmodeSeq
+outer apply(select top 1 PackingErrQty1st = ErrQty from PackErrTransfer pe with(nolock) where pe.PackingListID = pd.id and pe.CTNStartNo = pd.CTNStartNo and pe.PackingErrorID  = '00006' order by AddDate)ErrQty
+outer apply(
+	select Articles = stuff((
+		select distinct concat(',', pd2.Article)
+		from PackingList_Detail pd2 with(nolock)
+		where pd2.OrderID = pd.OrderID and pd2.OrderShipmodeSeq = pd.OrderShipmodeSeq
+		for xml path('')
+	),1,1,'')
+)Article
+outer apply(
+	select SizeCodes = stuff((
+		select distinct concat(',', pd2.SizeCode)
+		from PackingList_Detail pd2 with(nolock)
+		where pd2.OrderID = pd.OrderID and pd2.OrderShipmodeSeq = pd.OrderShipmodeSeq
+		for xml path('')
+	),1,1,'')
+)SizeCode
+order by pd.id,iif(ISNUMERIC(pd.CTNStartNo)=0,'ZZZZZZZZ',RIGHT(REPLICATE('0', 8) + pd.CTNStartNo, 8)), RIGHT(REPLICATE('0', 8) + pd.CTNStartNo, 8)
+
+drop table #tmpPD
+");
+            }
+            else
+            {
+                this.sqlcmd.Append($@"
+select
+	pd.ID,
+	pd.CTNStartNo,
+	pd.OrderID,
+	pd.OrderShipmodeSeq,
+	ShipQty = sum(pd.ShipQty)
+into #tmpPD
+from  PackingList_Detail pd
+inner join orders o on o.ID = pd.OrderID
+inner join Order_QtyShip oq on oq.ID = o.ID and oq.Seq = pd.OrderShipmodeSeq
+where 1=1
+{where}
+
+Group by pd.ID,pd.CTNStartNo,pd.OrderID,pd.OrderShipmodeSeq,pd.PackingErrQty
+
+select
+	pd.ID,
+	pd.CTNStartNo,
+	pd.OrderID,
+	pd.OrderShipmodeSeq,
+	o.StyleID,
+	o.SeasonID,
+	o.BrandID,
+	o.FactoryID,
+	oq.BuyerDelivery,
+	Articles,
+	SizeCodes,
+	ShipQty,
+	ErrorType = concat(pe.PackingErrorID, '-' + per.Description),
+	pe.ErrQty,
+	pe.TransferDate,
+	TransferredBy = dbo.getPass1(pe.AddName)
+from #tmpPD pd
+inner join orders o on o.ID = pd.OrderID
+inner join Order_QtyShip oq on oq.ID = o.ID and oq.Seq = pd.OrderShipmodeSeq
+inner join PackErrTransfer pe with(nolock) on pe.PackingListID = pd.id and pe.CTNStartNo = pd.CTNStartNo
+left join PackingError per on per.ID = pe.PackingErrorID and per.Type = 'TP'
+
+outer apply(select top 1 PackingErrQty1st = ErrQty from PackErrTransfer pe with(nolock) where pe.PackingListID = pd.id and pe.CTNStartNo = pd.CTNStartNo and pe.PackingErrorID  = '00006' order by AddDate)ErrQty
+outer apply(
+	select Articles = stuff((
+		select distinct concat(',', pd2.Article)
+		from PackingList_Detail pd2 with(nolock)
+		where pd2.OrderID = pd.OrderID and pd2.OrderShipmodeSeq = pd.OrderShipmodeSeq
+		for xml path('')
+	),1,1,'')
+)Article
+outer apply(
+	select SizeCodes = stuff((
+		select distinct concat(',', pd2.SizeCode)
+		from PackingList_Detail pd2 with(nolock)
+		where pd2.OrderID = pd.OrderID and pd2.OrderShipmodeSeq = pd.OrderShipmodeSeq
+		for xml path('')
+	),1,1,'')
+)SizeCode
+order by pd.id,iif(ISNUMERIC(pd.CTNStartNo)=0,'ZZZZZZZZ',RIGHT(REPLICATE('0', 8) + pd.CTNStartNo, 8)), RIGHT(REPLICATE('0', 8) + pd.CTNStartNo, 8)
+
+drop table #tmpPD
+");
+            }
             #region
 
             // // Exception Report
@@ -309,7 +441,23 @@ group by o.StyleID,o.SeasonID,o.BrandID,o.FactoryID
 
             if (this.printData.Rows.Count > 0)
             {
-                string fileName = this.comboReportType.SelectedIndex == 0 ? "Quality_R34" : "Quality_R34_Style";
+                string fileName = string.Empty;
+                switch (this.comboReportType.SelectedIndex)
+                {
+                    case 0:
+                        fileName = "Quality_R34";
+                        break;
+                    case 1:
+                        fileName = "Quality_R34_Style";
+                        break;
+                    case 2:
+                        fileName = "Quality_R34_Ctn current status";
+                        break;
+                    case 3:
+                        fileName = "Quality_R34_Ctn packing error list";
+                        break;
+                }
+
                 Microsoft.Office.Interop.Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, $"{fileName}.xltx", 1, false, null, excelApp);
 
