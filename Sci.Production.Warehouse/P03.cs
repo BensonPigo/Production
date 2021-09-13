@@ -900,7 +900,7 @@ from(
                     , [GarmentSize]=dbo.GetGarmentSizeByOrderIDSeq(a.Id, a.SEQ1,a.SEQ2)
 					, [Article] = aft.Article
 					, EachCons.FabricCombo 
-					, [SustainableMaterial] = IIF(fs.SustainableMaterial='Recycled' and fabric.MtlTypeID='HANGTAG',1,0)
+					, [SustainableMaterial] = IIF(fabric.IsRecycled = 1 and fabric.MtlTypeID='HANGTAG',1,0)
 					, [TPERemark]=a.Remark
 					, [TestReport] = TestReport.value
             from #tmpOrder as orders WITH (NOLOCK) 
@@ -1055,7 +1055,7 @@ from(
                     , [GarmentSize]=dbo.GetGarmentSizeByOrderIDSeq(a.Id, a.SEQ1,a.SEQ2)
 					, [Article] = aft.Article
 					, EachCons.FabricCombo 
-					, [SustainableMaterial] = IIF(fs.SustainableMaterial='Recycled' and fabric.MtlTypeID='HANGTAG',1,0)
+					, [SustainableMaterial] = IIF(fabric.IsRecycled = 1 and fabric.MtlTypeID='HANGTAG',1,0)
 					, [TPERemark]=a.Remark
 					, [TestReport] = TestReport.value
         from dbo.MDivisionPoDetail m WITH (NOLOCK) 
