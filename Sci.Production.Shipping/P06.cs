@@ -16,6 +16,7 @@ using static Sci.Production.PublicPrg.Prgs;
 using Sci.Production.CallPmsAPI;
 using static Sci.Production.CallPmsAPI.PackingA2BWebAPI_Model;
 using Newtonsoft.Json;
+using System.Transactions;
 
 namespace Sci.Production.Shipping
 {
@@ -482,7 +483,6 @@ inner join  #tmp t on o.ID = t.OrderID
                         }
                     }
                 }
-
             }
             else
             {
@@ -706,32 +706,40 @@ HAVING COUNT([UKey]) > 1
             }
             #endregion
 
-            if (this.updatePackinglist.Trim() != string.Empty)
+            using (TransactionScope scope = new TransactionScope())
             {
-                result = DBProxy.Current.Execute(null, this.updatePackinglist);
-                if (!result)
+                if (this.updatePackinglist.Trim() != string.Empty)
                 {
-                    DualResult failResult = new DualResult(false, "Update Packinglist fail!!\r\n" + result.ToString());
-                    return failResult;
+                    result = DBProxy.Current.Execute(null, this.updatePackinglist);
+                    if (!result)
+                    {
+                        scope.Dispose();
+                        DualResult failResult = new DualResult(false, "Update Packinglist fail!!\r\n" + result.ToString());
+                        return failResult;
+                    }
                 }
-            }
 
-            // 將Pullout箱數回寫回Orders.PulloutCTNQty
-            result = this.UpdateOrdersPulloutCTNQty();
+                // 將Pullout箱數回寫回Orders.PulloutCTNQty
+                result = this.UpdateOrdersPulloutCTNQty();
 
-            if (!result)
-            {
-                return result;
-            }
-
-            // update A2B Packing Pullout Info
-            foreach (KeyValuePair<string, List<string>> itemUpdateA2B in this.dicUpdatePackinglistA2B)
-            {
-                result = PackingA2BWebAPI.ExecuteBySql(itemUpdateA2B.Key, itemUpdateA2B.Value.JoinToString(" "));
                 if (!result)
                 {
+                    scope.Dispose();
                     return result;
                 }
+
+                // update A2B Packing Pullout Info
+                foreach (KeyValuePair<string, List<string>> itemUpdateA2B in this.dicUpdatePackinglistA2B)
+                {
+                    result = PackingA2BWebAPI.ExecuteBySql(itemUpdateA2B.Key, itemUpdateA2B.Value.JoinToString(" "));
+                    if (!result)
+                    {
+                        scope.Dispose();
+                        return result;
+                    }
+                }
+
+                scope.Complete();
             }
 
             return base.ClickSavePost();
@@ -1035,10 +1043,23 @@ where   p.PulloutID = '{this.CurrentMaintain["id"]}' and
 
             updateCmds.Add(
                     $@"
+declare  @updateOrderInfo table
+	(
+		OrderID varchar(13),
+        ActPulloutDate date,
+        PulloutComplete bit,
+        PulloutCmplDate date
+	)
+
 update o
 set ActPulloutDate = ActPulloutDate.value
 	, PulloutComplete = PulloutComplete.value
     , PulloutCmplDate = CAST(GetDate() AS DATE)
+output	inserted.ID,
+	    inserted.ActPulloutDate,
+        inserted.PulloutComplete,
+        inserted.PulloutCmplDate
+		into @updateOrderInfo
 from Orders o
 outer apply (
 	SELECT value =  Max(p.pulloutdate)
@@ -1077,13 +1098,65 @@ where	exists (
 			from Pullout_Detail pd
 			where pd.ID = '{this.CurrentMaintain["ID"]}'
 				  and pd.OrderID = o.ID 
-		)");
+                )
 
-            DualResult result = DBProxy.Current.Executes(null, updateCmds);
-            if (!result)
+
+select  distinct
+        uo.OrderID,
+        uo.ActPulloutDate,
+        uo.PulloutComplete,
+        uo.PulloutCmplDate,
+        gd.PLFromRgCode
+from    Pullout_Detail pd with (nolock)   
+inner join  @updateOrderInfo uo on uo.OrderID = pd.OrderID
+inner join  GMTBooking_Detail gd with (nolock) on gd.ID = pd.INVNo and gd.PackingListID = pd.PackingListID
+where   pd.ID = '{this.CurrentMaintain["ID"]}'
+
+");
+            using (TransactionScope scope = new TransactionScope())
             {
-                MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());
-                return;
+                DataTable dtNeedUpdateA2BOrders;
+                DualResult result = DBProxy.Current.Select(null, updateCmds.JoinToString(" "), out dtNeedUpdateA2BOrders);
+                if (!result)
+                {
+                    scope.Dispose();
+                    MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());
+                    return;
+                }
+
+                if (dtNeedUpdateA2BOrders.Rows.Count > 0)
+                {
+                    string sqlUpdOrdersA2B = @"
+alter table #tmp alter column OrderID varchar(13)
+
+update o set o.ActPulloutDate = t.ActPulloutDate,
+        o.PulloutComplete = t.PulloutComplete,
+        o.PulloutCmplDate = t.PulloutCmplDate
+from    Orders o 
+inner join  #tmp t on t.OrderID = o.ID
+";
+
+                    var groupNeedUpdateA2BOrders = dtNeedUpdateA2BOrders.AsEnumerable().GroupBy(s => s["PLFromRgCode"].ToString());
+                    foreach (var groupA2BItem in groupNeedUpdateA2BOrders)
+                    {
+                        DataTable dtUpdTmp = groupA2BItem.CopyToDataTable();
+                        DataBySql dataBySql = new DataBySql()
+                        {
+                            SqlString = sqlUpdOrdersA2B,
+                            TmpTable = JsonConvert.SerializeObject(dtUpdTmp),
+                        };
+
+                        result = PackingA2BWebAPI.ExecuteBySql(groupA2BItem.Key, dataBySql);
+                        if (!result)
+                        {
+                            scope.Dispose();
+                            MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());
+                            return;
+                        }
+                    }
+                }
+
+                scope.Complete();
             }
 
             #region ISP20200757 資料交換 - Sunrise
@@ -1163,25 +1236,94 @@ left join PulloutDate pd on pd.OrderID = po.OrderID", MyUtility.Convert.GetStrin
                 return;
             }
 
+            sqlCmds.Add(@"
+declare  @updateOrderInfo table
+	(
+		OrderID varchar(13),
+        ActPulloutDate date,
+        PulloutComplete bit,
+        PulloutCmplDate date
+	)
+");
+
             foreach (DataRow dr in updateOrderData.Rows)
             {
                 string actPulloutDate = MyUtility.Check.Empty(dr["PulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["PulloutDate"]).ToString("yyyyMMdd") + "'";
                 string orderid = MyUtility.Convert.GetString(dr["OrderID"]);
                 sqlCmds.Add($@"
+
+
 update Orders set 
 ActPulloutDate = {actPulloutDate}, 
 PulloutComplete = case when exists(select 1 from Order_Finish ox where ox.ID = orders.id) 
                        then pulloutcomplete else 0 end,
 PulloutCmplDate  = Cast(GetDate() as date)
+output	inserted.ID,
+	    inserted.ActPulloutDate,
+        inserted.PulloutComplete,
+        inserted.PulloutCmplDate
+		into @updateOrderInfo
 where ID = '{orderid}'
-;");
+;
+");
             }
 
-            result = DBProxy.Current.Executes(null, sqlCmds);
-            if (!result)
+            sqlCmds.Add($@"
+select  distinct
+        uo.OrderID,
+        uo.ActPulloutDate,
+        uo.PulloutComplete,
+        uo.PulloutCmplDate,
+        gd.PLFromRgCode
+from    Pullout_Detail pd with (nolock)   
+inner join  @updateOrderInfo uo on uo.OrderID = pd.OrderID
+inner join  GMTBooking_Detail gd with (nolock) on gd.ID = pd.INVNo and gd.PackingListID = pd.PackingListID
+where   pd.ID = '{this.CurrentMaintain["ID"]}'
+");
+
+            using (TransactionScope scope = new TransactionScope())
             {
-                MyUtility.Msg.WarningBox("Amend fail!!\r\n" + result.ToString());
-                return;
+                DataTable dtNeedUpdateA2BOrders;
+                result = DBProxy.Current.Select(null, sqlCmds.ToString(), out dtNeedUpdateA2BOrders);
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox("Amend fail!!\r\n" + result.ToString());
+                    return;
+                }
+
+                if (dtNeedUpdateA2BOrders.Rows.Count > 0)
+                {
+                    string sqlUpdOrdersA2B = @"
+alter table #tmp alter column OrderID varchar(13)
+
+update o set o.ActPulloutDate = t.ActPulloutDate,
+        o.PulloutComplete = t.PulloutComplete,
+        o.PulloutCmplDate = t.PulloutCmplDate
+from    Orders o 
+inner join  #tmp t on t.OrderID = o.ID
+";
+
+                    var groupNeedUpdateA2BOrders = dtNeedUpdateA2BOrders.AsEnumerable().GroupBy(s => s["PLFromRgCode"].ToString());
+                    foreach (var groupA2BItem in groupNeedUpdateA2BOrders)
+                    {
+                        DataTable dtUpdTmp = groupA2BItem.CopyToDataTable();
+                        DataBySql dataBySql = new DataBySql()
+                        {
+                            SqlString = sqlUpdOrdersA2B,
+                            TmpTable = JsonConvert.SerializeObject(dtUpdTmp),
+                        };
+
+                        result = PackingA2BWebAPI.ExecuteBySql(groupA2BItem.Key, dataBySql);
+                        if (!result)
+                        {
+                            scope.Dispose();
+                            MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());
+                            return;
+                        }
+                    }
+                }
+
+                scope.Complete();
             }
 
             #region ISP20200757 資料交換 - Sunrise

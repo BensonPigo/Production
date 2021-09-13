@@ -103,7 +103,7 @@ namespace Sci.Production.CallPmsAPI
         /// </summary>
         public class RegionFactory
         {
-            public int Selected { get; set; } = 0;
+            public int Selected { get; set; } = 1;
             public string Factory { get; set; }
         }
 

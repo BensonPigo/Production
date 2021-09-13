@@ -553,7 +553,7 @@
             this.displayInvoiceNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayInvoiceNo.Location = new System.Drawing.Point(755, 51);
             this.displayInvoiceNo.Name = "displayInvoiceNo";
-            this.displayInvoiceNo.Size = new System.Drawing.Size(160, 23);
+            this.displayInvoiceNo.Size = new System.Drawing.Size(120, 23);
             this.displayInvoiceNo.TabIndex = 16;
             // 
             // displayShipPlanNo
@@ -563,7 +563,7 @@
             this.displayShipPlanNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayShipPlanNo.Location = new System.Drawing.Point(755, 74);
             this.displayShipPlanNo.Name = "displayShipPlanNo";
-            this.displayShipPlanNo.Size = new System.Drawing.Size(120, 23);
+            this.displayShipPlanNo.Size = new System.Drawing.Size(160, 23);
             this.displayShipPlanNo.TabIndex = 17;
             // 
             // dateCartonEstBooking
@@ -1107,7 +1107,7 @@
             this.displayPLToRgCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayPLToRgCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PLToRgCode", true));
             this.displayPLToRgCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayPLToRgCode.Location = new System.Drawing.Point(875, 74);
+            this.displayPLToRgCode.Location = new System.Drawing.Point(875, 51);
             this.displayPLToRgCode.Name = "displayPLToRgCode";
             this.displayPLToRgCode.Size = new System.Drawing.Size(40, 23);
             this.displayPLToRgCode.TabIndex = 82;

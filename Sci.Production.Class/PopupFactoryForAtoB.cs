@@ -79,7 +79,7 @@ select [SystemName] = RgCode from System
             {
                 if (this.localRgcode == this.comboFactory.Text)
                 {
-                    string sqlGetFactoryData = $@"select [Selected] = 0, [Factory] = ID from Factory WITH (NOLOCK) where Junk = 0 and IsProduceFty = 1 order by ID";
+                    string sqlGetFactoryData = $@"select [Selected] = 1, [Factory] = ID from Factory WITH (NOLOCK) where Junk = 0 and IsProduceFty = 1 order by ID";
 
                     result = DBProxy.Current.Select(null, sqlGetFactoryData, out dtFactory);
                 }
@@ -101,10 +101,7 @@ select [SystemName] = RgCode from System
 
             foreach (DataGridViewRow gridRow in this.gridFactory.Rows)
             {
-                if (this.defaultCheckedItem.Contains(gridRow.Cells["Factory"].Value.ToString()))
-                {
-                    gridRow.Cells["Selected"].Value = 1;
-                }
+                gridRow.Cells["Selected"].Value = 1;
             }
         }
 

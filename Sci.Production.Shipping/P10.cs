@@ -841,21 +841,38 @@ where not exists (select 1 from ShipPlan_DeleteGBHistory sdh where sdh.ID = t.ID
 
             string sqlDeletePackingByShipPlanID = this.DeletePLCmd("ShipPlanID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             updateCmds.Add(sqlDeletePackingByShipPlanID);
-            DualResult result = DBProxy.Current.Executes(null, updateCmds);
 
-            if (!result)
+            using (TransactionScope scope = new TransactionScope())
             {
-                return result;
-            }
-
-            List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByShipPlanID(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-
-            foreach (string plFromRgCode in listPLFromRgCode)
-            {
-                result = PackingA2BWebAPI.ExecuteBySql(plFromRgCode, sqlDeletePackingByShipPlanID);
-                if (!result)
+                try
                 {
-                    return result;
+                    DualResult result = DBProxy.Current.Executes(null, updateCmds);
+
+                    if (!result)
+                    {
+                        scope.Dispose();
+                        return result;
+                    }
+
+                    List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByShipPlanID(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+                    foreach (string plFromRgCode in listPLFromRgCode)
+                    {
+                        result = PackingA2BWebAPI.ExecuteBySql(plFromRgCode, sqlDeletePackingByShipPlanID);
+                        if (!result)
+                        {
+                            scope.Dispose();
+                            return result;
+                        }
+                    }
+
+                    scope.Complete();
+                    scope.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    scope.Dispose();
+                    return new DualResult(false, ex);
                 }
             }
 
