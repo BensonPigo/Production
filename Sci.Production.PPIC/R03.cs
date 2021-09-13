@@ -990,7 +990,7 @@ select  t.*
                                            and ID = t.SpecialMark)
                                     , '') 
         , MTLExportTimes = isnull ([dbo].getMTLExport (t.POID, t.MTLExport), '')
-        , GMTLT = dbo.GetStyleGMTLT (t.BrandID, t.StyleID, t.SeasonID, t.FactoryID)
+        , GMTLT = dbo.GetGMTLT(t.BrandID, t.StyleID, t.SeasonID, t.FactoryID,t.ID)
         , SimilarStyle = su.GetStyleUkey         
         , MTLDelay = isnull(mt.MTLDelay ,0)
         , InvoiceAdjQty = dbo.getInvAdjQty (t.ID, t.Seq) 
@@ -1179,7 +1179,7 @@ select distinct t.*
                                             and ID = t.SpecialMark)
                                    , '')
         , MTLExportTimes = isnull ([dbo].getMTLExport (t.POID, t.MTLExport), '')
-        , GMTLT = dbo.GetStyleGMTLT (t.BrandID, t.StyleID, t.SeasonID, t.FactoryID)
+        , GMTLT = dbo.GetGMTLT(t.BrandID, t.StyleID, t.SeasonID, t.FactoryID, t.ID)
         , SimilarStyle = su.GetStyleUkey
         , MTLDelay = isnull(mt.MTLDelay,0)
         , PackingQty = isnull(pa.PackingQty ,0)
