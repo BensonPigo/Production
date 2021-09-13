@@ -69,12 +69,12 @@ namespace Sci.Production.PPIC
             string where = string.Empty;
             if (!MyUtility.Check.Empty(this.dateCreateDate.Value1))
             {
-                where += $@"and rr.CDate >='{((DateTime)this.dateCreateDate.Value1).ToString("d")}'" + "\r\n";
+                where += $@"and rr.CDate >='{((DateTime)this.dateCreateDate.Value1).ToString("yyyy/MM/dd")}'" + "\r\n";
             }
 
             if (!MyUtility.Check.Empty(this.dateCreateDate.Value2))
             {
-                where += $@"and rr.CDate <='{((DateTime)this.dateCreateDate.Value2).ToString("d")}'" + "\r\n";
+                where += $@"and rr.CDate <='{((DateTime)this.dateCreateDate.Value2).ToString("yyyy/MM/dd")}'" + "\r\n";
             }
 
             if (!MyUtility.Check.Empty(this.comboDropDownList1.SelectedValue))
@@ -84,7 +84,7 @@ namespace Sci.Production.PPIC
 
             if (!MyUtility.Check.Empty(this.dateLock.Value))
             {
-                where += $@"and rr.LockDate ='{((DateTime)this.dateLock.Value).ToString("d")}'" + "\r\n";
+                where += $@"and rr.LockDate ='{((DateTime)this.dateLock.Value).ToString("yyyy/MM/dd")}'" + "\r\n";
             }
             #endregion
 

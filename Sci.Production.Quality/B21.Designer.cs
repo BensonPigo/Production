@@ -39,6 +39,7 @@
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.label1 = new Sci.Win.UI.Label();
             this.displayHangerFailCode = new Sci.Win.UI.DisplayBox();
+            this.chk_isCriticalDefect = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -53,6 +54,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chk_isCriticalDefect);
             this.detailcont.Controls.Add(this.displayHangerFailCode);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.checkJunk);
@@ -74,7 +76,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(831, 395);
+            this.browse.Size = new System.Drawing.Size(831, 441);
             // 
             // tabs
             // 
@@ -203,6 +205,18 @@
             this.displayHangerFailCode.Size = new System.Drawing.Size(135, 23);
             this.displayHangerFailCode.TabIndex = 12;
             // 
+            // chk_isCriticalDefect
+            // 
+            this.chk_isCriticalDefect.AutoSize = true;
+            this.chk_isCriticalDefect.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsCriticalDefect", true));
+            this.chk_isCriticalDefect.ForeColor = System.Drawing.Color.Blue;
+            this.chk_isCriticalDefect.Location = new System.Drawing.Point(344, 335);
+            this.chk_isCriticalDefect.Name = "chk_isCriticalDefect";
+            this.chk_isCriticalDefect.Size = new System.Drawing.Size(128, 21);
+            this.chk_isCriticalDefect.TabIndex = 13;
+            this.chk_isCriticalDefect.Text = "Is Critical Defect";
+            this.chk_isCriticalDefect.UseVisualStyleBackColor = true;
+            // 
             // B21
             // 
             this.ClientSize = new System.Drawing.Size(839, 503);
@@ -246,5 +260,6 @@
         private Win.UI.CheckBox checkJunk;
         private Win.UI.DisplayBox displayHangerFailCode;
         private Win.UI.Label label1;
+        private Win.UI.CheckBox chk_isCriticalDefect;
     }
 }

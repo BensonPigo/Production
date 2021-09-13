@@ -112,6 +112,7 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
         /// <param name="bySP">是否要計算出bySP的Temp table</param>
         /// <param name="isNeedCombinBundleGroup">是否要依照 BundleGroup 算成衣件數 true/false</param>
         /// <param name="isMorethenOrderQty">回傳Qty值是否超過訂單數, (生產有可能超過) </param>
+        /// <param name="rfidProcessLocationID">rfidProcessLocationID </param>
         /// <returns>回傳字串, 提供接下去的Sql指令使用#temp Table</returns>
         // 非常重要 更新此處一定要把此dll檔案更新到MES
         // 非常重要 更新此處一定要把此dll檔案更新到MES
@@ -123,7 +124,8 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
             string tempTable = "#cte",
             bool bySP = false,
             bool isNeedCombinBundleGroup = false,
-            string isMorethenOrderQty = "0")
+            string isMorethenOrderQty = "0",
+            string rfidProcessLocationID = "")
         {
             // 若 WIP_ByShell ，從 Order_BOF 判斷必須是 Kind = 1
             string sqlcmd = $@"
@@ -218,7 +220,7 @@ bun.AddDate, bun.PatternPanel, bun.FabricPanelCode, bun.Article
 ";
             foreach (string subprocessID in subprocessIDs)
             {
-                string subprocessIDtmp = subprocessID.Replace("-", string.Empty); // 把PAD-PRT為PADPRT, 命名#table名稱用
+                string subprocessIDtmp = SubprocesstmpNoSymbol(subprocessID);
 
                 // --Step 2. --
                 //-- * 2.找出所有 Fabric Combo +Fabric Panel Code +Article + SizeCode->Cartpart(包含同部位數量)
@@ -390,7 +392,7 @@ left join #tmp_Bundle_QtyBySubprocess bund on bunD.Orderid = st0.Orderid
 							and	bunD.Article = st0.Article  
 							and	bunD.Patterncode = st0.Patterncode 
 							and	bunD.Sizecode = st0.SizeCode
-left join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId = st0.SubprocessId and isnull(bunIO.RFIDProcessLocationID,'') = ''
+left join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId = st0.SubprocessId {(rfidProcessLocationID.ToUpper() == "ALL" ? string.Empty : $"and isnull(bunIO.RFIDProcessLocationID,'') = '{rfidProcessLocationID}'")} 
 left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = bunD.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
 left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = bunD.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
 OUTER APPLY(  --BundleNo + SubProcessId 可能多筆，故這樣處理
@@ -408,8 +410,8 @@ OUTER APPLY(  --取得這個bundle no的指定加工段
     FROM Bundle_Detail_Art bda 
     WHERE bda.BundleNo = bunD.BundleNo and bda.SubProcessId = st0.SubprocessId
 )BundleArt
-where (st0.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0)
- {(subprocessIDtmp != "Sorting" && subprocessIDtmp != "Loading" && subprocessIDtmp != "SewingLine" ? $"and BundleArt.SubprocessId='{subprocessID}'" : string.Empty)}
+ where (st0.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0)
+ {(subprocessIDtmp.ToUpper() != "SORTING" && subprocessIDtmp.ToUpper() != "LOADING" && subprocessIDtmp.ToUpper() != "SEWINGLINE" ? $"and BundleArt.SubprocessId='{subprocessID}'" : string.Empty)}
 
 select
 	st3.*
@@ -713,6 +715,16 @@ group by OrderID, InStartDate,InEndDate,OutStartDate,OutEndDate
 
             sqlcmd += Environment.NewLine + " drop table #AllOrders, #tmp_Bundle_QtyBySubprocess " + Environment.NewLine;
             return sqlcmd;
+        }
+
+        /// <summary>
+        /// EX: 把PAD-PRT為PADPRT, 命名#table名稱用
+        /// </summary>
+        /// <param name="subprocessID">subprocessID</param>
+        /// <returns>Subprocess tmpTableName</returns>
+        public static string SubprocesstmpNoSymbol(string subprocessID)
+        {
+            return subprocessID.Replace("-", string.Empty); // 把PAD-PRT為PADPRT, 命名#table名稱用
         }
         #endregion
     }

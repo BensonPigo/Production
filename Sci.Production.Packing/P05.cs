@@ -233,12 +233,15 @@ select 1 from Orders o WITH (NOLOCK) where o.ID = @orderid and o.category in ('B
                                         DialogResult returnResult = item.ShowDialog();
                                         if (returnResult == DialogResult.Cancel)
                                         {
-                                            this.CurrentMaintain["OrderShipmodeSeq"] = string.Empty;
+                                            this.CurrentDetailData["OrderShipmodeSeq"] = string.Empty;
                                         }
                                         else
                                         {
-                                            this.CurrentMaintain["OrderShipmodeSeq"] = item.GetSelectedString();
+                                            this.CurrentDetailData["OrderShipmodeSeq"] = item.GetSelectedString();
+                                            this.CurrentDetailData["Qty"] = item.GetSelecteds()[0]["Qty"];
                                         }
+
+                                        this.CurrentDetailData.EndEdit();
                                     }
                                 }
                                 #endregion
@@ -269,12 +272,12 @@ select 1 from Orders o WITH (NOLOCK) where o.ID = @orderid and o.category in ('B
                             else
                             {
                                 dr["OrderShipmodeSeq"] = item.GetSelectedString();
+                                dr["Qty"] = item.GetSelecteds()[0]["Qty"];
                             }
 
                             dr["Article"] = string.Empty;
                             dr["Color"] = string.Empty;
                             dr["SizeCode"] = string.Empty;
-                            dr["qty"] = 0;
                             dr["ShipQty"] = 0;
                             dr["OtherConfirmQty"] = 0;
                             dr["InvAdjustQty"] = 0;
@@ -867,7 +870,7 @@ Carton has been output from the hanger system or transferred to clog.";
                 }
 
                 // 如果Pullout report已存在且狀態為Confirmed時，需出訊息告知
-                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(this.CurrentMaintain["PulloutDate"].ToString()).ToString("d"), Env.User.Keyword), out this.dr))
+                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(this.CurrentMaintain["PulloutDate"].ToString()).ToString("yyyy/MM/dd"), Env.User.Keyword), out this.dr))
                 {
                     if (this.dr["Status"].ToString() != "New")
                     {
@@ -1138,7 +1141,7 @@ Packing list is locked in the hanger system.";
             if (!MyUtility.Check.Empty(this.datePullOutDate.Value) && this.datePullOutDate.Value !=
                 this.datePullOutDate.OldValue)
             {
-                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(this.datePullOutDate.Value.ToString()).ToString("d"), Env.User.Keyword), out this.dr))
+                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(this.datePullOutDate.Value.ToString()).ToString("yyyy/MM/dd"), Env.User.Keyword), out this.dr))
                 {
                     if (this.dr["Status"].ToString() != "New")
                     {

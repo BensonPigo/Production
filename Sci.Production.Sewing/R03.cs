@@ -131,32 +131,32 @@ namespace Sci.Production.Sewing
 
             if (!MyUtility.Check.Empty(this.output1))
             {
-                sqlCmd.Append(string.Format(" and so.OutputDate >= '{0}'", Convert.ToDateTime(this.output1).ToString("d")));
+                sqlCmd.Append(string.Format(" and so.OutputDate >= '{0}'", Convert.ToDateTime(this.output1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.output2))
             {
-                sqlCmd.Append(string.Format(" and so.OutputDate <= '{0}'", Convert.ToDateTime(this.output2).ToString("d")));
+                sqlCmd.Append(string.Format(" and so.OutputDate <= '{0}'", Convert.ToDateTime(this.output2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.buyerDel1))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDel1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDel1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.buyerDel2))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDel2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDel2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDel1))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDel1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDel1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDel2))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDel2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDel2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.season))

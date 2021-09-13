@@ -366,7 +366,8 @@ declare @APSColumnGroup TABLE(
 	[InspDate] [date] NULL,
 	[Category] [varchar](1) NULL,
 	[SCIDelivery] [date] NULL,
-	[BuyerDelivery] [date] NULL,
+	[MaxBuyerDelivery] [date] NULL,
+	[MinBuyerDelivery] [date] NULL,
 	[BrandID] [nvarchar](8) NULL,
 	[OrderID] [varchar](13) NULL
 )
@@ -386,12 +387,14 @@ o.MTLETA,
 o.InspDate,
 o.Category,
 o.SCIDelivery,
-o.BuyerDelivery,
+oq.MaxBuyerDelivery,
+oq.MinBuyerDelivery,
 [BrandID] = o.BrandID
 ,s.OrderID
 from SewingSchedule s with (nolock)
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
 inner join CDCode cd with (nolock) on o.CdCodeID = cd.ID
+outer apply(select MaxBuyerDelivery = max(oq.BuyerDelivery), MinBuyerDelivery = min(oq.BuyerDelivery) from Order_QtyShip oq where oq.id = o.id) oq
 left join @tmpOrderArtwork oa on oa.StyleID = o.StyleID
 left join Country c WITH (NOLOCK) on o.Dest = c.ID 
 where exists( select 1 from @APSList where APSNo = s.APSNo)
@@ -602,7 +605,7 @@ outer apply (SELECT val =  Stuff((select distinct concat( ',',Artwork)   from @A
 outer apply (select [KPILETA] = MAX(KPILETA),[MTLETA] = MAX(MTLETA),[InspDate] = MAX(InspDate) from @APSColumnGroup where APSNo = al.APSNo) as OrderMax
 outer apply (SELECT val =  Stuff((select distinct concat( ',',Remarks)   from @APSRemarks where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Remarks
 outer apply (SELECT MaxSCIDelivery = Max(SCIDelivery),MinSCIDelivery = Min(SCIDelivery),
-                    MaxBuyerDelivery = Max(BuyerDelivery),MinBuyerDelivery = Min(BuyerDelivery)
+                    MaxBuyerDelivery = Max(MaxBuyerDelivery),MinBuyerDelivery = Min(MinBuyerDelivery)
                     from @APSColumnGroup where APSNo = al.APSNo) as OrderDateInfo
 outer apply (SELECT val =  Stuff((select distinct concat( ',',BrandID)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as BrandID
 outer apply (select * from @tmpPrintDataSum where  APSNo = al.APSNo) as PrintingData

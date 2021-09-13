@@ -155,18 +155,18 @@ where p.ShipPlanID = '{0}'";
         {
             if (MyUtility.Check.Empty(mdivisionid))
             {
-                return MyUtility.Check.Seek(string.Format("select ID from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and Status = 'New'", Convert.ToDateTime(pulloutDate).ToString("d")));
+                return MyUtility.Check.Seek(string.Format("select ID from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and Status = 'New'", Convert.ToDateTime(pulloutDate).ToString("yyyy/MM/dd")));
             }
             else
             {
-                return MyUtility.Check.Seek(string.Format("select ID from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}' and Status <> 'New'", Convert.ToDateTime(pulloutDate).ToString("d"), mdivisionid));
+                return MyUtility.Check.Seek(string.Format("select ID from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}' and Status <> 'New'", Convert.ToDateTime(pulloutDate).ToString("yyyy/MM/dd"), mdivisionid));
             }
         }
 
         // Process Pullout Date Message
         private void PulloutMsg(DataRow dr, DateTime dt)
         {
-            MyUtility.Msg.WarningBox("Pullout date:" + Convert.ToDateTime(dt).ToString("d") + " already exist pullout report and have been confirmed, can't modify!");
+            MyUtility.Msg.WarningBox("Pullout date:" + Convert.ToDateTime(dt).ToString("yyyy/MM/dd") + " already exist pullout report and have been confirmed, can't modify!");
             if (dr != null)
             {
                 dr["PulloutDate"] = dr["PulloutDate"];
@@ -187,7 +187,7 @@ where p.ShipPlanID = '{0}'";
             DataRow[] drfound = dt.Select("Selected = 1");
             foreach (DataRow dr in drfound)
             {
-                string drPulloutDate = MyUtility.Check.Empty(dr["PulloutDate"]) ? string.Empty : Convert.ToDateTime(dr["PulloutDate"]).ToString("d");
+                string drPulloutDate = MyUtility.Check.Empty(dr["PulloutDate"]) ? string.Empty : Convert.ToDateTime(dr["PulloutDate"]).ToString("yyyy/MM/dd");
 
                 if (!MyUtility.Check.Empty(dr["PulloutDate"]) && this.CheckPullout(Convert.ToDateTime(dr["PulloutDate"]), MyUtility.Convert.GetString(dr["MDivisionID"])))
                 {

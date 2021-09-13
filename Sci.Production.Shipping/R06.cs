@@ -307,32 +307,32 @@ where s.Status = 'Approved'");
 
             if (!MyUtility.Check.Empty(this.date1))
             {
-                sqlCmd.Append(string.Format(" and s.CDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                sqlCmd.Append(string.Format(" and s.CDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.date2))
             {
-                sqlCmd.Append(string.Format(" and s.CDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                sqlCmd.Append(string.Format(" and s.CDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.apvDate1))
             {
-                sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apvDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apvDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.apvDate2))
             {
-                sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apvDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apvDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.VoucherDate1))
             {
-                sqlCmd.Append(string.Format(" and CONVERT(DATE,s.VoucherDate) >= '{0}'", Convert.ToDateTime(this.VoucherDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and CONVERT(DATE,s.VoucherDate) >= '{0}'", Convert.ToDateTime(this.VoucherDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.VoucherDate2))
             {
-                sqlCmd.Append(string.Format(" and CONVERT(DATE,s.VoucherDate) <= '{0}'", Convert.ToDateTime(this.VoucherDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and CONVERT(DATE,s.VoucherDate) <= '{0}'", Convert.ToDateTime(this.VoucherDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.blno1))

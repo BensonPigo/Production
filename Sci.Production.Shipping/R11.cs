@@ -1335,14 +1335,15 @@ FtyExportData as (
 				select 1 
 				from ShareExpense WITH (NOLOCK) 
 				where WKNo = f.ID)");
+
                     if (!MyUtility.Check.Empty(this.date1))
                     {
-                        sqlCmd.Append(string.Format(" and f.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyyMMdd")));
+                        sqlCmd.Append(string.Format(" and f.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.date2))
                     {
-                        sqlCmd.Append(string.Format(" and f.PortArrival <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyyMMdd")));
+                        sqlCmd.Append(string.Format(" and f.PortArrival <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.dest))

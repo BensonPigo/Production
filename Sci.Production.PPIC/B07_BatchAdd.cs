@@ -57,8 +57,8 @@ namespace Sci.Production.PPIC
             // 填預設值
             this.txtLineNoStart.Text = this.MotherData["SewingLineID"].ToString();
             this.txtLineNoEnd.Text = this.MotherData["SewingLineID"].ToString();
-            this.dateDate.Text1 = Convert.ToDateTime(this.MotherData["Date"]).ToString("d");
-            this.dateDate.Text2 = Convert.ToDateTime(this.MotherData["Date"]).ToString("d");
+            this.dateDate.Text1 = Convert.ToDateTime(this.MotherData["Date"]).ToString("yyyy/MM/dd");
+            this.dateDate.Text2 = Convert.ToDateTime(this.MotherData["Date"]).ToString("yyyy/MM/dd");
             this.comboWeekDay.SelectedValue = "7";
             this.numHours.Text = this.MotherData["Hours"].ToString();
             this.checkItsAHoliday.Checked = false;
@@ -215,7 +215,7 @@ namespace Sci.Production.PPIC
                     {
                         foreach (DataRow currentRecord in sewingLine.Rows)
                         {
-                            sqlCommand = string.Format("select Date from WorkHour WITH (NOLOCK) where SewingLineID = '{0}' and FactoryID = '{1}' and Date = '{2}'", currentRecord["ID"].ToString(), Env.User.Factory, startDate.ToString("d"));
+                            sqlCommand = string.Format("select Date from WorkHour WITH (NOLOCK) where SewingLineID = '{0}' and FactoryID = '{1}' and Date = '{2}'", currentRecord["ID"].ToString(), Env.User.Factory, startDate.ToString("yyyy/MM/dd"));
                             if (!MyUtility.Check.Seek(sqlCommand, null))
                             {
                                 insertCmds.Add(string.Format(
@@ -224,14 +224,14 @@ Insert into WorkHour (SewingLineID,FactoryID,Date,Hours,Holiday,AddName,AddDate)
 Values('{0}','{1}','{2}','{3}','{4}','{5}',GETDATE());",
                                     currentRecord["ID"].ToString(),
                                     Env.User.Factory,
-                                    startDate.ToString("d"),
+                                    startDate.ToString("yyyy/MM/dd"),
                                     this.numHours.Text.ToString(),
                                     this.checkItsAHoliday.Checked,
                                     Env.User.UserID));
                             }
                             else
                             {
-                                insertCmds.Add(string.Format("Update WorkHour set Hours = '{0}', Holiday = '{1}', EditName = '{2}', EditDate = GETDATE() where SewingLineID = '{3}' and FactoryID = '{4}' and Date = '{5}';", this.numHours.Text.ToString(), this.checkItsAHoliday.Checked, Env.User.UserID, currentRecord["ID"].ToString(), Env.User.Factory, startDate.ToString("d")));
+                                insertCmds.Add(string.Format("Update WorkHour set Hours = '{0}', Holiday = '{1}', EditName = '{2}', EditDate = GETDATE() where SewingLineID = '{3}' and FactoryID = '{4}' and Date = '{5}';", this.numHours.Text.ToString(), this.checkItsAHoliday.Checked, Env.User.UserID, currentRecord["ID"].ToString(), Env.User.Factory, startDate.ToString("yyyy/MM/dd")));
                             }
                         }
                     }

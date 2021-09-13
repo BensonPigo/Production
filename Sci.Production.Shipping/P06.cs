@@ -238,7 +238,7 @@ order by os.Seq", masterID);
             if (dr == DialogResult.OK)
             {
                 // 檢查此日期是否已存在資料庫
-                if (MyUtility.Check.Seek(string.Format("select ID from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(callNextForm.PulloutDate).ToString("yyyyMMdd"), Env.User.Keyword)))
+                if (MyUtility.Check.Seek(string.Format("select ID from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(callNextForm.PulloutDate).ToString("yyyy/MM/dd"), Env.User.Keyword)))
                 {
                     MyUtility.Msg.WarningBox(string.Format("Pull-out date:{0} already exists!!", callNextForm.PulloutDate.ToAppDateFormatString()));
                     return false;
@@ -258,7 +258,7 @@ order by os.Seq", masterID);
                         @"insert into Pullout(ID,PulloutDate,MDivisionID,FactoryID,Status,AddName,AddDate)
 values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
                         newID,
-                        Convert.ToDateTime(callNextForm.PulloutDate).ToString("yyyyMMdd"),
+                        Convert.ToDateTime(callNextForm.PulloutDate).ToString("yyyy/MM/dd"),
                         Env.User.Keyword,
                         Env.User.Factory,
                         Env.User.UserID);
@@ -843,7 +843,7 @@ group by t.PackingListID, t.OrderID
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             worksheet.Cells[1, 1] = MyUtility.Convert.GetString(this.CurrentMaintain["MDivisionID"]);
-            worksheet.Cells[3, 2] = Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("yyyyMMdd");
+            worksheet.Cells[3, 2] = Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("yyyy/MM/dd");
             worksheet.Cells[3, 12] = DateTime.Now.ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
 
             int intRowsStart = 5;
@@ -1248,7 +1248,7 @@ declare  @updateOrderInfo table
 
             foreach (DataRow dr in updateOrderData.Rows)
             {
-                string actPulloutDate = MyUtility.Check.Empty(dr["PulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["PulloutDate"]).ToString("yyyyMMdd") + "'";
+                string actPulloutDate = MyUtility.Check.Empty(dr["PulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["PulloutDate"]).ToString("yyyy/MM/dd") + "'";
                 string orderid = MyUtility.Convert.GetString(dr["OrderID"]);
                 sqlCmds.Add($@"
 
@@ -1385,7 +1385,6 @@ where PulloutDate = '{Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).To
             this.updatePackinglist = string.Empty;
             this.dicUpdatePackinglistA2B = new Dictionary<string, List<string>>();
             #region 檢查資料是否有還沒做Confirmed的
-            string pulloutDate = Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("yyyyMMdd");
             string pulloutID = MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? "XXXXXXXXXX" : MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
 
             StringBuilder msgString = new StringBuilder();
@@ -1396,7 +1395,7 @@ where PulloutDate = '{0}'
 and MDivisionID = '{1}'
 and Status = 'New' 
 and (Type = 'F' or Type = 'L')",
-                pulloutDate,
+                Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("yyyy/MM/dd"),
                 Env.User.Keyword);
 
             DataTable packlistData;
@@ -1415,13 +1414,8 @@ and (Type = 'F' or Type = 'L')",
 
             sqlCmd = string.Format(
                 @"
-select distinct p.ID 
-from PackingList p WITH (NOLOCK) 
-where   p.PulloutDate = '{0}' and
-        p.MDivisionID = '{1}' and 
-        p.ShipPlanID != '' and 
-        p.Status = 'New'",
-                pulloutDate,
+select distinct p.ID from PackingList p WITH (NOLOCK) where p.PulloutDate = '{0}' and p.MDivisionID = '{1}'and p.ShipPlanID != ''and p.Status = 'New'",
+                Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("yyyy/MM/dd"),
                 Env.User.Keyword);
 
             DataTable packDataconfirm;
@@ -1505,7 +1499,7 @@ inner join ShipPlan s WITH (NOLOCK) on s.ID = g.ShipPlanID
 where   gd.PulloutDate = '{0}'  and
         s.Status != 'Confirmed'
 ",
-                pulloutDate,
+                Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("yyyy/MM/dd"),
                 Env.User.Keyword);
 
             DataTable shipPlanData;
@@ -1778,9 +1772,8 @@ select  'S' as DataType
                                    inner join SummaryData b on i.OrderID = b.OrderID), 0))  
 from SummaryData",
                 Env.User.Keyword,
-                Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("yyyyMMdd"),
-                MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? "XXXXXXXXXX" : MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                sqlUnionA2B);
+                Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("yyyy/MM/dd"),
+                MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? "XXXXXXXXXX" : MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             #endregion
             DataTable allPackData;
@@ -2270,9 +2263,8 @@ select  'S' as DataType
                                    inner join SummaryData b on i.OrderID = b.OrderID), 0))  
 from SummaryData",
                 Env.User.Keyword,
-                Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("yyyyMMdd"),
-                MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? "XXXXXXXXXX" : MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                sqlUnionA2BForPullOut);
+                Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("yyyy/MM/dd"),
+                MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? "XXXXXXXXXX" : MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             #endregion
 

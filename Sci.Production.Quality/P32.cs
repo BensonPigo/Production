@@ -168,7 +168,7 @@ namespace Sci.Production.Quality
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataTable dt;
-                    string sqlcmd = "SELECT ID , Description ,GarmentDefectTypeID FROM GarmentDefectCode WITH(NOLOCK)";
+                    string sqlcmd = "SELECT ID , Description ,GarmentDefectTypeID FROM GarmentDefectCode WITH(NOLOCK) Where Junk=0";
 
                     IList<DataRow> selectedDatas;
                     DualResult dresult;
@@ -221,7 +221,7 @@ namespace Sci.Production.Quality
                         DataRow row;
                         List<SqlParameter> paras = new List<SqlParameter>();
                         paras.Add(new SqlParameter("@ID", e.FormattedValue));
-                        string sqlcmd = $"SELECT ID , Description ,GarmentDefectTypeID FROM GarmentDefectCode WITH(NOLOCK) WHERE ID = @ID ";
+                        string sqlcmd = $"SELECT ID , Description ,GarmentDefectTypeID FROM GarmentDefectCode WITH(NOLOCK) WHERE ID = @ID and Junk=0";
 
                         DualResult dresult;
                         if (!(dresult = DBProxy.Current.Select(null, sqlcmd, paras, out dt)))

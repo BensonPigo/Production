@@ -114,6 +114,7 @@ select
 	[SP#] = wo.OrderID,
     [Brand]=o.BrandID,
 	[Style#] = o.StyleID,
+    [FabRef#] = wo.Refno,
     [Switch to Workorder]=Iif(c.WorkType='1','Combination’',Iif(c.WorkType='2','By SP#’','')),
 	[Ref#] = wo.CutRef,
 	[Seq]=Concat (wo.Seq1, ' ', wo.Seq2),
@@ -288,52 +289,52 @@ where 1=1
 
             if (!MyUtility.Check.Empty(this.Est_CutDate1))
             {
-                sqlCmd.Append(string.Format(" and wo.EstCutDate >= cast('{0}' as date) ", Convert.ToDateTime(this.Est_CutDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and wo.EstCutDate >= cast('{0}' as date) ", Convert.ToDateTime(this.Est_CutDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.Est_CutDate2))
             {
-                sqlCmd.Append(string.Format(" and wo.EstCutDate <= cast('{0}' as date) ", Convert.ToDateTime(this.Est_CutDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and wo.EstCutDate <= cast('{0}' as date) ", Convert.ToDateTime(this.Est_CutDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.ActCuttingDate1))
             {
-                sqlCmd.Append(string.Format(" and MincDate.MincoDate >= cast('{0}' as date) ", Convert.ToDateTime(this.ActCuttingDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and MincDate.MincoDate >= cast('{0}' as date) ", Convert.ToDateTime(this.ActCuttingDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.ActCuttingDate2))
             {
-                sqlCmd.Append(string.Format(" and MincDate.MincoDate <= cast('{0}' as date) ", Convert.ToDateTime(this.ActCuttingDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and MincDate.MincoDate <= cast('{0}' as date) ", Convert.ToDateTime(this.ActCuttingDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.BuyerDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= cast('{0}' as date)", Convert.ToDateTime(this.BuyerDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= cast('{0}' as date)", Convert.ToDateTime(this.BuyerDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.BuyerDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= cast('{0}' as date) ", Convert.ToDateTime(this.BuyerDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= cast('{0}' as date) ", Convert.ToDateTime(this.BuyerDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.SCIDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.SCIDelivery >= cast('{0}' as date) ", Convert.ToDateTime(this.SCIDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SCIDelivery >= cast('{0}' as date) ", Convert.ToDateTime(this.SCIDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.SCIDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.SCIDelivery <= cast('{0}' as date)", Convert.ToDateTime(this.SCIDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SCIDelivery <= cast('{0}' as date)", Convert.ToDateTime(this.SCIDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.SewingInline1))
             {
-                sqlCmd.Append(string.Format(" and o.SewInLine >= cast('{0}' as date)", Convert.ToDateTime(this.SewingInline1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SewInLine >= cast('{0}' as date)", Convert.ToDateTime(this.SewingInline1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.SewingInline2))
             {
-                sqlCmd.Append(string.Format(" and o.SewInLine <= cast('{0}' as date) ", Convert.ToDateTime(this.SewingInline2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SewInLine <= cast('{0}' as date) ", Convert.ToDateTime(this.SewingInline2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.Style))
@@ -343,32 +344,32 @@ where 1=1
 
             if (!MyUtility.Check.Empty(this.EarliestBuyerDelivery1))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinOBD >= cast('{0}' as date)", Convert.ToDateTime(this.EarliestBuyerDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinOBD >= cast('{0}' as date)", Convert.ToDateTime(this.EarliestBuyerDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.EarliestBuyerDelivery2))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinOBD <= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestBuyerDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinOBD <= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestBuyerDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.EarliestSCIDelivery1))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinSCI >= cast('{0}' as date)", Convert.ToDateTime(this.EarliestSCIDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinSCI >= cast('{0}' as date)", Convert.ToDateTime(this.EarliestSCIDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.EarliestSCIDelivery2))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinSCI <= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestSCIDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinSCI <= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestSCIDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.EarliestSewingInline1))
             {
-                sqlCmd.Append(string.Format(@" and c.SewInLine >= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestSewingInline1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and c.SewInLine >= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestSewingInline1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.EarliestSewingInline2))
             {
-                sqlCmd.Append(string.Format(" and c.SewInLine <= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestSewingInline2).ToString("d")));
+                sqlCmd.Append(string.Format(" and c.SewInLine <= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestSewingInline2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.WorkOrder))
@@ -384,7 +385,7 @@ where 1=1
             sqlCmd.Append(@"
 select 
 [M],[Factory],[Fabrication],[FinalETA],[PPIC Close],WKETA,[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
-,[Style#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination]
+,[Style#],[FabRef#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination]
 ,[Color Way],[Color],Artwork.Artwork,[Layers],[LackingLayers],[Qty],[Ratio],[OrderQty],[ExcessQty],[Consumption],[ActConsOutput]
 ,[Spreading Time (mins)],[Cutting Time (mins)]
 ,t.Markername,t.MarkerNo,w.Width
@@ -514,7 +515,7 @@ drop table #tmp,#tmpL");
 
             // Perimeter(Decimal)
             int perimeterCol = this.printData[0].Columns.Count - 3;
-            excelapp.Cells[3, perimeterCol] = $"=IFERROR(LEFT(AM3,SEARCH(\"yd\",AM3,1)-1)+0+(IFERROR(RIGHT(LEFT(AM3,SEARCH(\"\"\"\",AM3,1)-1),2)+0,0)+IFERROR(VLOOKUP(RIGHT(AM3,2)+0,data!$A$1:$B$8,2,TRUE),0))/36,\"\")";
+            excelapp.Cells[3, perimeterCol] = $"=IFERROR(LEFT(AP3,SEARCH(\"yd\",AP3,1)-1)+0+(IFERROR(RIGHT(LEFT(AP3,SEARCH(\"\"\"\",AP3,1)-1),2)+0,0)+IFERROR(VLOOKUP(RIGHT(AP3,2)+0,data!$A$1:$B$8,2,TRUE),0))/36,\"\")";
             int rowct = this.printData[0].Rows.Count + 2;
 
             // 複製公式 貼到全部列

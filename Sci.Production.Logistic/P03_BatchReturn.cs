@@ -40,7 +40,7 @@ namespace Sci.Production.Logistic
         public P03_BatchReturn(DateTime receiveDate, DataTable detailData)
         {
             this.InitializeComponent();
-            this.Text = "Carton Return - Batch Return (Return Date - " + receiveDate.ToString("d") + ")";
+            this.Text = "Carton Return - Batch Return (Return Date - " + receiveDate.ToString("yyyy/MM/dd") + ")";
             this.returnDetailData = detailData;
         }
 
@@ -98,7 +98,7 @@ namespace Sci.Production.Logistic
 
             if (!MyUtility.Check.Empty(this.dateReceiveDate.Value))
             {
-                sqlCmd.Append(string.Format(" and b.ReceiveDate = '{0}'", Convert.ToDateTime(this.dateReceiveDate.Text).ToString("d")));
+                sqlCmd.Append(string.Format(" and b.ReceiveDate = '{0}'", Convert.ToDateTime(this.dateReceiveDate.Text).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.txtPONo.Text))

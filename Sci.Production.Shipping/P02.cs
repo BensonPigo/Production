@@ -1484,7 +1484,9 @@ inner join Supp su on su.ID = ca.SuppID
 where FromTag='{fromTag}' 
 and ToTag='{toTag}' 
 and (FromInclude like'%{fromCountry}%' or FromInclude = '')
-and (ToInclude like'%{toCountry}%' or ToInclude = '')";
+and (ToInclude like'%{toCountry}%' or ToInclude = '')
+and ca.junk = 0
+";
             SelectItem item = new SelectItem(sqlCmd, "8,8,10,20", this.txtCarrier.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
@@ -1793,7 +1795,7 @@ update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName =
                 Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
-            string shipDate = MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? "NULL" : "'" + ((DateTime)this.CurrentMaintain["ShipDate"]).ToString("d") + "'";
+            string shipDate = MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? "NULL" : "'" + ((DateTime)this.CurrentMaintain["ShipDate"]).ToString("yyyy/MM/dd") + "'";
             updateCmd += $" update PackingList set PulloutDate = {shipDate} where ExpressID = '{this.CurrentMaintain["ID"]}' and type = 'F'";
 
             result = DBProxy.Current.Execute(null, updateCmd);

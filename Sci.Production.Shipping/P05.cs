@@ -511,14 +511,6 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
                 return result;
             }
 
-            #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
-            bool gMTCompleteCheck = this.GMTCompleteCheck();
-            if (!gMTCompleteCheck)
-            {
-                return false;
-            }
-            #endregion
-
             return base.ClickEditBefore();
         }
 
@@ -1288,10 +1280,10 @@ end");
             worksheet.Cells[1, 1] = MyUtility.Convert.GetString(this.CurrentMaintain["Shipper"]);
             worksheet.Cells[3, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
             worksheet.Cells[4, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["InvSerial"]);
-            worksheet.Cells[5, 2] = MyUtility.Check.Empty(this.CurrentMaintain["InvDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["InvDate"]).ToString("d");
+            worksheet.Cells[5, 2] = MyUtility.Check.Empty(this.CurrentMaintain["InvDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["InvDate"]).ToString("yyyy/MM/dd");
             worksheet.Cells[6, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["Shipper"]);
             worksheet.Cells[7, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]);
-            worksheet.Cells[8, 2] = MyUtility.Check.Empty(this.CurrentMaintain["FCRDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["FCRDate"]).ToString("d");
+            worksheet.Cells[8, 2] = MyUtility.Check.Empty(this.CurrentMaintain["FCRDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["FCRDate"]).ToString("yyyy/MM/dd");
             worksheet.Cells[9, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["CustCDID"]);
             worksheet.Cells[10, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["PayTermARID"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Description from PayTermAR WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["PayTermARID"])));
             worksheet.Cells[11, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["Description"]);
@@ -1313,10 +1305,10 @@ end");
             worksheet.Cells[6, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["SONo"]);
             worksheet.Cells[7, 9] = MyUtility.GetValue.Lookup("WhseNo", MyUtility.Convert.GetString(this.CurrentMaintain["ForwarderWhse_DetailUKey"]), "ForwarderWhse_Detail", "UKey");
             worksheet.Cells[8, 9] = MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["CutOffDate"]).ToString("yyyy/MM/dd HH:mm:ss");
-            worksheet.Cells[9, 9] = MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["SOCFMDate"]).ToString("d");
+            worksheet.Cells[9, 9] = MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["SOCFMDate"]).ToString("yyyy/MM/dd");
             worksheet.Cells[10, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["Vessel"]);
-            worksheet.Cells[11, 9] = MyUtility.Check.Empty(this.CurrentMaintain["ETD"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ETD"]).ToString("d");
-            worksheet.Cells[12, 9] = MyUtility.Check.Empty(this.CurrentMaintain["ETA"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ETA"]).ToString("d");
+            worksheet.Cells[11, 9] = MyUtility.Check.Empty(this.CurrentMaintain["ETD"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ETD"]).ToString("yyyy/MM/dd");
+            worksheet.Cells[12, 9] = MyUtility.Check.Empty(this.CurrentMaintain["ETA"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ETA"]).ToString("yyyy/MM/dd");
 
             int intRowsStart = 14;
             DataTable gridData = (DataTable)this.detailgridbs.DataSource;
@@ -1622,14 +1614,6 @@ end");
         // S/O Confirm/UnConfirm
         private void BtnCFM_Click(object sender, EventArgs e)
         {
-            #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
-            bool gMTCompleteCheck = this.GMTCompleteCheck();
-            if (!gMTCompleteCheck)
-            {
-                return;
-            }
-            #endregion
-
             if (MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
                 this.CheckIDD();
@@ -1798,14 +1782,6 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
             #region 檢查LocalSupp_Bank
             DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["Forwarder"].ToString(), Prgs.CallFormAction.Confirm);
             if (!resultCheckLocalSupp_BankStatus)
-            {
-                return;
-            }
-            #endregion
-
-            #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
-            bool gMTCompleteCheck = this.GMTCompleteCheck();
-            if (!gMTCompleteCheck)
             {
                 return;
             }
@@ -2606,47 +2582,6 @@ Offline Order: S/O#
         {
             SelectItem selectItem = new SelectItem("select [Brand] = ID, [Content] = Name from DropDownList where Type = 'DocumentRefNoFormat' order by Seq", "18,12", string.Empty);
             selectItem.ShowDialog();
-        }
-
-        private bool GMTCompleteCheck()
-        {
-            #region 表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
-            DataTable isGMTComplete = new DataTable();
-            isGMTComplete.ColumnsStringAdd("SP#");
-            isGMTComplete.ColumnsDateTimeAdd("Complete Date");
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                // 拆解Order ID
-                List<string> orders = MyUtility.Convert.GetString(dr["OrderID"]).Split(',').ToList();
-                foreach (var order in orders)
-                {
-                    string cmd = $@"SELECT [SP#]=ID ,[Complete Date]=CMPLTDATE FROM Orders WITH(NOLOCK) WHERE GMTComplete='S' AND ID = '{order}'";
-                    DBProxy.Current.Select(null, cmd, out DataTable dt);
-                    bool find = dt.Rows.Count > 0;
-                    if (find)
-                    {
-                        foreach (DataRow r in dt.Rows)
-                        {
-                            isGMTComplete.ImportRow(r);
-                        }
-                    }
-                }
-            }
-
-            if (isGMTComplete.Rows.Count > 0)
-            {
-                var m = MyUtility.Msg.ShowMsgGrid(isGMTComplete, "GMT Complete Status is updated to S on following dates, assuming the shipment is still to be arranged, please contact TPE Finance Dept. to update GMT Complete Status", "GMT Complete Status check");
-                m.Width = 800;
-                m.grid1.Columns[0].Width = 150;
-                m.grid1.Columns[1].Width = 150;
-                m.TopMost = true;
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-            #endregion
         }
 
         private bool DischargePortIDCheck()

@@ -112,6 +112,9 @@ namespace Sci.Production.PPIC
             this.CreateGrid(gen, "string", "ID", "SP#", Widths.AnsiChars(15));
             this.CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(8));
             this.CreateGrid(gen, "string", "ColorID", "Color", Widths.AnsiChars(8));
+            this.CreateGrid(gen, "string", "Alias", "Destination", Widths.AnsiChars(15));
+            this.CreateGrid(gen, "string", "CustCDID", "CustCD", Widths.AnsiChars(12));
+            this.CreateGrid(gen, "string", "Kit", "KIT#", Widths.AnsiChars(10));
             if (headerData != null && headerData.Rows.Count > 0)
             {
                 foreach (DataRow dr in headerData.Rows)
@@ -261,12 +264,17 @@ with tmpData as (
       select o.ID
              , oq.Article
              , Order_ColorCombo.ColorID
+			 , c.Alias
+			 , o.CustCDID
+			 , CustCD.Kit
              , iif(o.junk = 1 , '' ,oq.SizeCode) as SizeCode
              , iif(o.junk = 1 , 0 ,oq.Qty) as Qty 
              , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
              , BuyerDelivery = o.BuyerDelivery
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+	  left join Country c  WITH (NOLOCK) on c.ID = o.Dest
+	  left join CustCD WITH (NOLOCK) on CustCD.BrandID  = o.BrandID  and CustCD.ID = o.CustCDID 
       outer apply (
 			select top 1 ColorID
 			from Order_ColorCombo occ WITH (NOLOCK)
@@ -278,6 +286,9 @@ SubTotal as (
       select ID = ''
              , Article = 'TTL'
              , ColorID = ''
+			 , Alias = ''
+			 , CustCDID = ''
+			 , Kit = ''
              , SizeCode
              , Qty = SUM(Qty)
              , rnk = 99999
@@ -312,12 +323,17 @@ with tmpData as (
       select o.ID
              , oq.Article
              , Order_ColorCombo.ColorID
+			 , c.Alias
+			 , o.CustCDID
+			 , CustCD.Kit
              , iif(o.junk = 1 , '' ,oq.SizeCode) as SizeCode
              , iif(o.junk = 1 , 0 ,oq.OriQty) as OriQty
              , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
              , BuyerDelivery = o.BuyerDelivery
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+	  left join Country c  WITH (NOLOCK) on c.ID = o.Dest
+	  left join CustCD WITH (NOLOCK) on CustCD.BrandID  = o.BrandID  and CustCD.ID = o.CustCDID 
       outer apply (
 			select top 1 ColorID
 			from Order_ColorCombo occ WITH (NOLOCK)
@@ -329,6 +345,9 @@ SubTotal as (
       select ID = ''
              , Article = 'TTL'
              , ColorID = ''
+			 , Alias = ''
+			 , CustCDID = ''
+			 , Kit = ''
              , SizeCode
              , Qty = SUM(OriQty)
              , rnk = 99999 

@@ -17,6 +17,7 @@ BEGIN
 	if(isnull(@Url, '') <> '')
 	begin
 		exec dbo.SentOrderQtyToAGV
+		exec dbo.SentOrderPatternPanelToAGV
 	end
 	
 	--傳送Order資訊給Sunrise

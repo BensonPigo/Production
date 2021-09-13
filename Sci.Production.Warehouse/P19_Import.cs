@@ -276,6 +276,7 @@ AND exists (select 1
             {
                 DataRow[] findrow = this.dt_detail.AsEnumerable()
                     .Where(w => w.RowState != DataRowState.Deleted
+                        && w["ExportID"].EqualString(tmp["ExportID"].ToString())
                         && w["poid"].EqualString(tmp["poid"].ToString())
                         && w["seq1"].EqualString(tmp["seq1"])
                         && w["seq2"].EqualString(tmp["seq2"].ToString())

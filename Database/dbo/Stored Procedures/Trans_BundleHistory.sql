@@ -16,21 +16,13 @@ Begin try
 		select distinct o.ID
 		into #tmp_orders_ID
 		from Orders o
-		where o.Finished = 1
-		and o.PulloutComplete = 1 
+		where o.WhseClose is not null
 		and not exists(select 1 from Bundle_History where o.ID = OrderID)
 
 		select *
 		into #tmp_Bundle
 		from Bundle b 
 		where exists (select 1 from #tmp_orders_ID where id = b.Orderid)
-		AND NOT EXISTS(
-			select distinct ad.orderid 
-			from ArtworkPO_Detail ad
-			inner join ArtworkPO a on a.id = ad.id
-			where PoQty > ApQty and OrderID= b.Orderid
-			and a.Status='Approved'
-		)
 
 		select *
 		into #tmp_Bundle_Detail
@@ -43,9 +35,9 @@ Begin try
 			into #tmp_Bundle_Detail_Art
 			from Bundle_Detail_Art bdr
 			where exists (select 1 from #tmp_Bundle where id = bdr.ID)
-			
-			insert into Bundle_Detail_Art_History([Bundleno], [SubprocessId], [PatternCode], [ID],[PostSewingSubProcess],[NoBundleCardAfterSubprocess])
-			select [Bundleno], [SubprocessId], [PatternCode], [ID],[PostSewingSubProcess],[NoBundleCardAfterSubprocess]
+
+			insert into Bundle_Detail_Art_History([Bundleno], [SubprocessId], [PatternCode], [ID], [PostSewingSubProcess], [NoBundleCardAfterSubprocess])
+			select [Bundleno], [SubprocessId], [PatternCode], [ID], [PostSewingSubProcess], [NoBundleCardAfterSubprocess]
 			from #tmp_Bundle_Detail_Art
 
 			delete from bdr
@@ -111,8 +103,8 @@ Begin try
 
 		/*****************************  Bundle_Detail  ************************************/
 		Begin
-			insert into Bundle_Detail_History([BundleNo], [Id], [BundleGroup], [Patterncode], [PatternDesc], [SizeCode], [Qty], [Parts], [Farmin], [FarmOut], [PrintDate], [IsPair], [Location])
-			select [BundleNo], [Id], [BundleGroup], [Patterncode], [PatternDesc], [SizeCode], [Qty], [Parts], [Farmin], [FarmOut], [PrintDate], [IsPair], [Location]
+			insert into Bundle_Detail_History([BundleNo], [Id], [BundleGroup], [Patterncode], [PatternDesc], [SizeCode], [Qty], [Parts], [Farmin], [FarmOut], [PrintDate], [IsPair], [Location], [RFUID], [Tone], [RFPrintDate], [PrintGroup], [RFIDScan])
+			select [BundleNo], [Id], [BundleGroup], [Patterncode], [PatternDesc], [SizeCode], [Qty], [Parts], [Farmin], [FarmOut], [PrintDate], [IsPair], [Location], [RFUID], [Tone], [RFPrintDate], [PrintGroup], [RFIDScan]
 			from #tmp_Bundle_Detail 
 
 			delete from bd
@@ -124,8 +116,8 @@ Begin try
 
 		/*****************************  Bundle  ************************************/
 		Begin
-			insert into Bundle_History([ID], [POID], [MDivisionid], [Sizecode], [Colorid], [Article], [PatternPanel], [Cutno], [Cdate], [Orderid], [Sewinglineid], [Item], [SewingCell], [Ratio], [Startno], [Qty], [PrintDate], [AllPart], [CutRef], [AddName], [AddDate], [EditName], [EditDate], [oldid], [FabricPanelCode], [IsEXCESS])
-			select [ID], [POID], [MDivisionid], [Sizecode], [Colorid], [Article], [PatternPanel], [Cutno], [Cdate], [Orderid], [Sewinglineid], [Item], [SewingCell], [Ratio], [Startno], [Qty], [PrintDate], [AllPart], [CutRef], [AddName], [AddDate], [EditName], [EditDate], [oldid], [FabricPanelCode], [IsEXCESS]
+			insert into Bundle_History([ID], [POID], [MDivisionid], [Sizecode], [Colorid], [Article], [PatternPanel], [Cutno], [Cdate], [Orderid], [Sewinglineid], [Item], [SewingCell], [Ratio], [Startno], [Qty], [PrintDate], [AllPart], [CutRef], [AddName], [AddDate], [EditName], [EditDate], [oldid], [FabricPanelCode], [IsEXCESS], [ByToneGenerate], [SubCutNo])
+			select [ID], [POID], [MDivisionid], [Sizecode], [Colorid], [Article], [PatternPanel], [Cutno], [Cdate], [Orderid], [Sewinglineid], [Item], [SewingCell], [Ratio], [Startno], [Qty], [PrintDate], [AllPart], [CutRef], [AddName], [AddDate], [EditName], [EditDate], [oldid], [FabricPanelCode], [IsEXCESS], [ByToneGenerate], [SubCutNo]
 			from #tmp_Bundle
 
 			delete from b
@@ -159,7 +151,6 @@ End Catch
 
 
 END
-
 GO
 
 

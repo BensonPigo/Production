@@ -68,8 +68,8 @@ namespace Sci.Production.Warehouse
             this.condition.Clear();
             this.condition.Append(string.Format(
                 @"Issue Date : {0} ~ {1}" + "   ",
-                Convert.ToDateTime(this.cfmdate1).ToString("d"),
-                Convert.ToDateTime(this.cfmdate2).ToString("d")));
+                Convert.ToDateTime(this.cfmdate1).ToString("yyyy/MM/dd"),
+                Convert.ToDateTime(this.cfmdate2).ToString("yyyy/MM/dd")));
             this.condition.Append(string.Format(
                 @"M : {0}" + "   ",
                 this.mdivisionid));
@@ -214,12 +214,12 @@ where 1=1 "));
 
             if (!MyUtility.Check.Empty(this.cfmdate1))
             {
-                whereStr += string.Format(" AND '{0} 00:00:00.000' <= a.ConfirmDate ", Convert.ToDateTime(this.cfmdate1).ToString("d"));
+                whereStr += string.Format(" AND '{0} 00:00:00.000' <= a.ConfirmDate ", Convert.ToDateTime(this.cfmdate1).ToString("yyyy/MM/dd"));
             }
 
             if (!MyUtility.Check.Empty(this.cfmdate2))
             {
-                whereStr += string.Format(" AND a.ConfirmDate <= '{0} 23:59:59.999' ", Convert.ToDateTime(this.cfmdate2).ToString("d"));
+                whereStr += string.Format(" AND a.ConfirmDate <= '{0} 23:59:59.999' ", Convert.ToDateTime(this.cfmdate2).ToString("yyyy/MM/dd"));
             }
 
             sqlCmd.Append(whereStr);

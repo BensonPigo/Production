@@ -35,6 +35,11 @@
             this.label3 = new Sci.Win.UI.Label();
             this.editRemark = new Sci.Win.UI.EditBox();
             this.labelStatus = new Sci.Win.UI.Label();
+            this.labelPackages = new Sci.Win.UI.Label();
+            this.btnAccumulatedQty = new Sci.Win.UI.Button();
+            this.btnDownloadSampleFile = new Sci.Win.UI.Button();
+            this.btnImportFromExcel = new Sci.Win.UI.Button();
+            this.numPackages = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -51,44 +56,54 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numPackages);
+            this.masterpanel.Controls.Add(this.btnImportFromExcel);
+            this.masterpanel.Controls.Add(this.btnDownloadSampleFile);
+            this.masterpanel.Controls.Add(this.btnAccumulatedQty);
+            this.masterpanel.Controls.Add(this.labelPackages);
             this.masterpanel.Controls.Add(this.labelStatus);
             this.masterpanel.Controls.Add(this.editRemark);
             this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.dateIssueDate);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(834, 100);
+            this.masterpanel.Controls.Add(this.dateIssueDate);
+            this.masterpanel.Size = new System.Drawing.Size(858, 151);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStatus, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPackages, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnAccumulatedQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnDownloadSampleFile, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImportFromExcel, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numPackages, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Size = new System.Drawing.Size(834, 308);
+            this.detailpanel.Location = new System.Drawing.Point(0, 151);
+            this.detailpanel.Size = new System.Drawing.Size(858, 259);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(726, 62);
+            this.gridicon.Location = new System.Drawing.Point(535, 113);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(834, 308);
+            this.detailgridcont.Size = new System.Drawing.Size(858, 259);
             // 
             // detail2
             // 
-            this.detail2.Location = new System.Drawing.Point(4, 27);
-            this.detail2.Size = new System.Drawing.Size(892, 385);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 339);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
@@ -96,26 +111,24 @@
             // 
             // detail
             // 
-            this.detail.Location = new System.Drawing.Point(4, 27);
-            this.detail.Size = new System.Drawing.Size(834, 446);
+            this.detail.Size = new System.Drawing.Size(858, 448);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(834, 408);
+            this.detailcont.Size = new System.Drawing.Size(858, 410);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 408);
-            this.detailbtm.Size = new System.Drawing.Size(834, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 410);
+            this.detailbtm.Size = new System.Drawing.Size(858, 38);
             // 
             // browse
             // 
-            this.browse.Location = new System.Drawing.Point(4, 27);
-            this.browse.Size = new System.Drawing.Size(792, 386);
+            this.browse.Size = new System.Drawing.Size(858, 448);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(842, 477);
+            this.tabs.Size = new System.Drawing.Size(866, 477);
             // 
             // label1
             // 
@@ -132,12 +145,12 @@
             this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayID.Location = new System.Drawing.Point(92, 11);
             this.displayID.Name = "displayID";
-            this.displayID.Size = new System.Drawing.Size(129, 24);
+            this.displayID.Size = new System.Drawing.Size(129, 23);
             this.displayID.TabIndex = 2;
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(277, 11);
+            this.label2.Location = new System.Drawing.Point(224, 11);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(86, 23);
             this.label2.TabIndex = 3;
@@ -146,9 +159,9 @@
             // dateIssueDate
             // 
             this.dateIssueDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IssueDate", true));
-            this.dateIssueDate.Location = new System.Drawing.Point(366, 11);
+            this.dateIssueDate.Location = new System.Drawing.Point(313, 11);
             this.dateIssueDate.Name = "dateIssueDate";
-            this.dateIssueDate.Size = new System.Drawing.Size(130, 24);
+            this.dateIssueDate.Size = new System.Drawing.Size(130, 23);
             this.dateIssueDate.TabIndex = 4;
             // 
             // label3
@@ -167,7 +180,7 @@
             this.editRemark.Location = new System.Drawing.Point(92, 38);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(577, 56);
+            this.editRemark.Size = new System.Drawing.Size(577, 67);
             this.editRemark.TabIndex = 6;
             // 
             // labelStatus
@@ -182,12 +195,75 @@
             this.labelStatus.Text = "Not Approve";
             this.labelStatus.TextStyle.Color = System.Drawing.Color.Red;
             // 
+            // labelPackages
+            // 
+            this.labelPackages.Location = new System.Drawing.Point(457, 11);
+            this.labelPackages.Name = "labelPackages";
+            this.labelPackages.Size = new System.Drawing.Size(74, 23);
+            this.labelPackages.TabIndex = 45;
+            this.labelPackages.Text = "Packages";
+            // 
+            // btnAccumulatedQty
+            // 
+            this.btnAccumulatedQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAccumulatedQty.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnAccumulatedQty.Location = new System.Drawing.Point(682, 39);
+            this.btnAccumulatedQty.Name = "btnAccumulatedQty";
+            this.btnAccumulatedQty.Size = new System.Drawing.Size(158, 30);
+            this.btnAccumulatedQty.TabIndex = 47;
+            this.btnAccumulatedQty.Text = "Accumulated Qty";
+            this.btnAccumulatedQty.UseVisualStyleBackColor = true;
+            this.btnAccumulatedQty.Click += new System.EventHandler(this.BtnAccumulatedQty_Click);
+            // 
+            // btnDownloadSampleFile
+            // 
+            this.btnDownloadSampleFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDownloadSampleFile.Location = new System.Drawing.Point(682, 75);
+            this.btnDownloadSampleFile.Name = "btnDownloadSampleFile";
+            this.btnDownloadSampleFile.Size = new System.Drawing.Size(158, 30);
+            this.btnDownloadSampleFile.TabIndex = 48;
+            this.btnDownloadSampleFile.Text = "Download Sample File";
+            this.btnDownloadSampleFile.UseVisualStyleBackColor = true;
+            this.btnDownloadSampleFile.Click += new System.EventHandler(this.BtnDownloadSampleFile_Click);
+            // 
+            // btnImportFromExcel
+            // 
+            this.btnImportFromExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImportFromExcel.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnImportFromExcel.Location = new System.Drawing.Point(682, 111);
+            this.btnImportFromExcel.Name = "btnImportFromExcel";
+            this.btnImportFromExcel.Size = new System.Drawing.Size(158, 30);
+            this.btnImportFromExcel.TabIndex = 49;
+            this.btnImportFromExcel.Text = "Import From Excel";
+            this.btnImportFromExcel.UseVisualStyleBackColor = true;
+            this.btnImportFromExcel.Click += new System.EventHandler(this.BtnImportFromExcel_Click);
+            // 
+            // numPackages
+            // 
+            this.numPackages.BackColor = System.Drawing.Color.White;
+            this.numPackages.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Packages", true));
+            this.numPackages.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numPackages.Location = new System.Drawing.Point(534, 11);
+            this.numPackages.Name = "numPackages";
+            this.numPackages.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numPackages.Size = new System.Drawing.Size(90, 23);
+            this.numPackages.TabIndex = 50;
+            this.numPackages.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // P64
             // 
             this.ApvChkValue = "New";
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(842, 510);
+            this.ClientSize = new System.Drawing.Size(866, 510);
             this.GridAlias = "SemiFinishedReceiving_Detail";
             this.IsSupportClip = false;
             this.IsSupportConfirm = true;
@@ -229,5 +305,10 @@
         private Win.UI.DisplayBox displayID;
         private Win.UI.Label label1;
         private Win.UI.Label labelStatus;
+        private Win.UI.Label labelPackages;
+        private Win.UI.Button btnImportFromExcel;
+        private Win.UI.Button btnDownloadSampleFile;
+        private Win.UI.Button btnAccumulatedQty;
+        private Win.UI.NumericBox numPackages;
     }
 }

@@ -719,7 +719,56 @@ where ID = '{packingListID}' AND CustCTN != ''
                     var sizeData = sizeDatas.Where(o => o.Pono == excelData.OrderNumber && o.POItemNo == excelData.ItemNumber).FirstOrDefault();
                     string tmpSize = sizeData.Size;
 
-                    string size = MyUtility.GetValue.Lookup($@"SELECT SizeCode FROM Order_SizeSpec WHERE SizeItem='S01' AND SizeSpec='{tmpSize}' AND ID='{excelData.OrderID}'");
+                    DataTable sizeGroup;
+
+                    // 1.區分SizeGroup
+                    string sql = $@"
+SELECT DISTINCT os.SizeGroup
+FROM Orders o 
+INNER JOIN Order_SizeCode os ON o.POID = os.ID
+WHERE o.ID='{excelData.OrderID}'
+--AND os.SizeGroup IN ('D', 'S', 'T', 'X', 'L')
+";
+                    DBProxy.Current.Select(null, sql, out sizeGroup);
+
+                    /* 「同尺碼多版型」說明：
+                     * 報表上的Size欄位 = Order_SizeSpec.SizeSpec，意思是UA的尺碼定義
+                     * Order_SizeSpec.SizeCode為我們工廠內的尺碼定義
+                     * UA的尺碼為SM，但在工廠內可區分成SM、ASM兩種，差別為版型不同（SM為美國大隻佬版型，ASM為亞洲人版型），但對UA來說都是SM
+                     * 透過SizeGroup區分是否有這種情況發生
+                    */
+
+                    bool isNotDifferentPattern = sizeGroup.Select("SizeGroup IN  ('D', 'S', 'T', 'X', 'L')").Any();
+                    bool isDifferentPattern = sizeGroup.Select("SizeGroup NOT IN ('D', 'S', 'T', 'X', 'L')").Any();
+
+                    string size = string.Empty;
+
+                    // 沒有同尺碼多版型
+                    if (isNotDifferentPattern)
+                    {
+                        size = MyUtility.GetValue.Lookup($@"
+SELECT DISTINCT os.SizeCode 
+FROM Orders o 
+INNER JOIN Order_SizeSpec os ON o.POID = os.ID
+WHERE os.SizeItem='S01' 
+AND os.SizeSpec='{tmpSize}' 
+AND o.ID='{excelData.OrderID}'
+");
+                    }
+                    else if (isDifferentPattern)
+                    {
+                        // 有同尺碼多版型：Order_Qty已經定義好，UA的尺碼，會對應到我們哪一種SizeCode，因此多串一個Order_Qty，找出唯一的尺碼
+                        size = MyUtility.GetValue.Lookup($@"
+SELECT os.SizeCode
+FROM Orders o 
+INNER JOIN Order_Qty oq on o.id = oq.ID
+INNER JOIN Order_SizeSpec os ON o.POID = os.ID AND  os.SizeItem = 'S01' AND oq.SizeCode = os.SizeCode
+WHERE os.SizeItem='S01' 
+AND os.SizeSpec='{tmpSize}' 
+AND o.ID='{excelData.OrderID}'
+");
+                    }
+
                     string shipQty = excelData.HUQty;
 
                     excelData.SizeCode = size;

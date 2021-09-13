@@ -258,22 +258,22 @@ namespace Sci.Production.PPIC
 
                     if (!MyUtility.Check.Empty(this.buyerDelivery1))
                     {
-                        whereList += $" and o.BuyerDelivery >= '{Convert.ToDateTime(this.buyerDelivery1).ToString("d")}'";
+                        whereList += $" and o.BuyerDelivery >= '{Convert.ToDateTime(this.buyerDelivery1).ToString("yyyy/MM/dd")}'";
                     }
 
                     if (!MyUtility.Check.Empty(this.buyerDelivery2))
                     {
-                        whereList += $" and o.BuyerDelivery <= '{Convert.ToDateTime(this.buyerDelivery2).ToString("d")}'";
+                        whereList += $" and o.BuyerDelivery <= '{Convert.ToDateTime(this.buyerDelivery2).ToString("yyyy/MM/dd")}'";
                     }
 
                     if (!MyUtility.Check.Empty(this.sciDelivery1))
                     {
-                        whereList += $" and o.SciDelivery >= '{Convert.ToDateTime(this.sciDelivery1).ToString("d")}'";
+                        whereList += $" and o.SciDelivery >= '{Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")}'";
                     }
 
                     if (!MyUtility.Check.Empty(this.sciDelivery2))
                     {
-                        whereList += $" and o.SciDelivery <= '{Convert.ToDateTime(this.sciDelivery2).ToString("d")}'";
+                        whereList += $" and o.SciDelivery <= '{Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")}'";
                     }
 
                     if (!MyUtility.Check.Empty(this.brand))
@@ -289,8 +289,8 @@ and exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and s
                     #endregion
 
                     string sqlcmd = $@"
-DECLARE @sewinginline DATETIME ='{Convert.ToDateTime(this.SewingDate1).ToString("d")}'
-DECLARE @sewingoffline DATETIME ='{Convert.ToDateTime(this.SewingDate2).ToString("d")}'
+DECLARE @sewinginline DATETIME ='{Convert.ToDateTime(this.SewingDate1).ToString("yyyy/MM/dd")}'
+DECLARE @sewingoffline DATETIME ='{Convert.ToDateTime(this.SewingDate2).ToString("yyyy/MM/dd")}'
 DECLARE @LINE1 VARCHAR(10) = '{this.line1}'
 DECLARE @LINE2 VARCHAR(10) = '{this.line2}'
 --整個月 table
@@ -620,7 +620,7 @@ select SewingLineID,SewingDay,FactoryID
 ,[CPU] = sum(CPU)
 into #tmpFinal_step1
 from #tmp
-where SewingDay between '{Convert.ToDateTime(this.SewingDate1).ToString("d")}' and '{Convert.ToDateTime(this.SewingDate2).ToString("d")}'
+where SewingDay between '{Convert.ToDateTime(this.SewingDate1).ToString("yyyy/MM/dd")}' and '{Convert.ToDateTime(this.SewingDate2).ToString("yyyy/MM/dd")}'
 group by SewingLineID,SewingDay,SewingCPU,Sewer,FactoryID
 
 select 
@@ -914,7 +914,7 @@ drop table #tmpFinal_step1
                             rngColor.Cells.Font.Color = Color.Black;
                         }
 
-                        worksheet.Cells[intRowsStart, startCol] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["StyleID"]), MyUtility.Check.Empty(dr["MinBuyerDelivery"]) ? string.Empty : " " + Convert.ToDateTime(dr["MinBuyerDelivery"]).ToString("d"));
+                        worksheet.Cells[intRowsStart, startCol] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["StyleID"]), MyUtility.Check.Empty(dr["MinBuyerDelivery"]) ? string.Empty : " " + Convert.ToDateTime(dr["MinBuyerDelivery"]).ToString("yyyy/MM/dd"));
 
                         // 從Detail by Style,by line,by Sewing Date 填入StdQty,PPH, CPU
                         int dateRange = ((TimeSpan)(MyUtility.Convert.GetDate(dr["OffLine"]) - MyUtility.Convert.GetDate(dr["InLine"]))).Days;
@@ -1373,32 +1373,32 @@ select  s.SewingLineID
 
             if (!MyUtility.Check.Empty(this.SewingDate1))
             {
-                sqlCmd.Append(string.Format(" and (convert(date,s.Inline) >= '{0}' or ('{0}' between convert(date,s.Inline) and convert(date,s.Offline)))", Convert.ToDateTime(this.SewingDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and (convert(date,s.Inline) >= '{0}' or ('{0}' between convert(date,s.Inline) and convert(date,s.Offline)))", Convert.ToDateTime(this.SewingDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.SewingDate2))
             {
-                sqlCmd.Append(string.Format(" and (convert(date,s.Offline) <= '{0}' or ('{0}' between convert(date,s.Inline) and convert(date,s.Offline)))", Convert.ToDateTime(this.SewingDate2).AddDays(1).ToString("d")));
+                sqlCmd.Append(string.Format(" and (convert(date,s.Offline) <= '{0}' or ('{0}' between convert(date,s.Inline) and convert(date,s.Offline)))", Convert.ToDateTime(this.SewingDate2).AddDays(1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.buyerDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.buyerDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.brand))
@@ -1697,32 +1697,32 @@ select  s.SewingLineID
 
             if (!MyUtility.Check.Empty(this.SewingDate1))
             {
-                sqlCmd.Append(string.Format(" and (convert(date,s.Inline) >= '{0}' or ('{0}' between convert(date,s.Inline) and convert(date,s.Offline)))", Convert.ToDateTime(this.SewingDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and (convert(date,s.Inline) >= '{0}' or ('{0}' between convert(date,s.Inline) and convert(date,s.Offline)))", Convert.ToDateTime(this.SewingDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.SewingDate2))
             {
-                sqlCmd.Append(string.Format(" and (convert(date,s.Offline) <= '{0}' or ('{0}' between convert(date,s.Inline) and convert(date,s.Offline)))", Convert.ToDateTime(this.SewingDate2).AddDays(1).ToString("d")));
+                sqlCmd.Append(string.Format(" and (convert(date,s.Offline) <= '{0}' or ('{0}' between convert(date,s.Inline) and convert(date,s.Offline)))", Convert.ToDateTime(this.SewingDate2).AddDays(1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.buyerDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.buyerDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.brand))
@@ -1976,8 +1976,8 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
             #region where條件
 
             // 搜尋時判斷的是在 Inline - Offline 的期間有包含到 SewingDate1 這一段區間的 Schedule
-            sqlCmd.Append(!MyUtility.Check.Empty(this.SewingDate1) ? $" '{Convert.ToDateTime(this.SewingDate1).ToString("d")}'," : " null,");
-            sqlCmd.Append(!MyUtility.Check.Empty(this.SewingDate2) ? $" '{Convert.ToDateTime(this.SewingDate2).ToString("d")}'," : " null,");
+            sqlCmd.Append(!MyUtility.Check.Empty(this.SewingDate1) ? $" '{Convert.ToDateTime(this.SewingDate1).ToString("yyyy/MM/dd")}'," : " null,");
+            sqlCmd.Append(!MyUtility.Check.Empty(this.SewingDate2) ? $" '{Convert.ToDateTime(this.SewingDate2).ToString("yyyy/MM/dd")}'," : " null,");
 
             // SewingLineID
             sqlCmd.Append(!MyUtility.Check.Empty(this.line1) ? $" '{this.line1}'," : " '',");
@@ -1988,12 +1988,12 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
             sqlCmd.Append(!MyUtility.Check.Empty(this.factory) ? $" '{this.factory}'," : " '',");
 
             // BuyerDelivery
-            sqlCmd.Append(!MyUtility.Check.Empty(this.buyerDelivery1) ? $" '{Convert.ToDateTime(this.buyerDelivery1).ToString("d")}'," : " null,");
-            sqlCmd.Append(!MyUtility.Check.Empty(this.buyerDelivery2) ? $" '{Convert.ToDateTime(this.buyerDelivery2).ToString("d")}'," : " null,");
+            sqlCmd.Append(!MyUtility.Check.Empty(this.buyerDelivery1) ? $" '{Convert.ToDateTime(this.buyerDelivery1).ToString("yyyy/MM/dd")}'," : " null,");
+            sqlCmd.Append(!MyUtility.Check.Empty(this.buyerDelivery2) ? $" '{Convert.ToDateTime(this.buyerDelivery2).ToString("yyyy/MM/dd")}'," : " null,");
 
             // SCIDelivery
-            sqlCmd.Append(!MyUtility.Check.Empty(this.sciDelivery1) ? $" '{Convert.ToDateTime(this.sciDelivery1).ToString("d")}'," : " null,");
-            sqlCmd.Append(!MyUtility.Check.Empty(this.sciDelivery2) ? $" '{Convert.ToDateTime(this.sciDelivery2).ToString("d")}'," : " null,");
+            sqlCmd.Append(!MyUtility.Check.Empty(this.sciDelivery1) ? $" '{Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")}'," : " null,");
+            sqlCmd.Append(!MyUtility.Check.Empty(this.sciDelivery2) ? $" '{Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")}'," : " null,");
 
             // Brand
             sqlCmd.Append(!MyUtility.Check.Empty(this.brand) ? $" '{this.brand}'," : " '',");

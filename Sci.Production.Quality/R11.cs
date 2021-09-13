@@ -184,10 +184,12 @@ select
 	FP.TicketYds,
 	FP.DetailUkey,
 	FP.ActualYds,
-	Composition
+	Composition,
+	Inspector = Concat (Fp.Inspector, ' ', p.Name) 
 into #tmp1
 from #tmpR t
 Left join FIR_Physical FP on FP.ID = t.ID and FP.Roll = t.Roll and FP.Dyelot = t.Dyelot
+Left JOIN Pass1 p ON p.ID = Fp.Inspector
 outer apply(
 	select Composition = STUFF((
 		select CONCAT('+', FLOOR(fc.percentage), '%', fc.MtltypeId)
@@ -206,10 +208,12 @@ select
 	FP.TicketYds,
 	FP.DetailUkey,
 	FP.ActualYds,
-	Composition
+	Composition,
+	Inspector = Concat (Fp.Inspector, ' ', p.Name) 
 into #tmp2
 from #tmpT t
 Left join FIR_Physical FP on FP.ID = t.ID and FP.Roll = t.Roll and FP.Dyelot = t.Dyelot
+Left JOIN Pass1 p ON p.ID = Fp.Inspector
 outer apply(
 	select Composition = STUFF((
 		select CONCAT('+', FLOOR(fc.percentage), '%', fc.MtltypeId)
@@ -312,6 +316,7 @@ select
 		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
 		else isnull(Defect.point,  0) / t.TicketYds
 		end
+	,t.Inspector
 INTO #Sheet2
 from #tmp1 t
 outer apply(
@@ -360,6 +365,7 @@ select
 		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
 		else isnull(Defect.point,  0) / t.TicketYds 
 		end
+	,t.Inspector
 from #tmp2 t
 outer apply(
     select 
@@ -377,7 +383,7 @@ SELECT
 	POID,seq,WK,ReceivingID,StyleID,Brandid,Supplier,Refno,ColorID,
 	ArriveWHDate,ArriveQty,WeaveTypeID,Dyelot,Width,Weight,Composition,
 	Description,ConstructionID,Roll,InspDate,Result,Grade,DefectRecord,
-	Type,DescriptionEN,point,Defectrate
+	Type,DescriptionEN,point,Defectrate,Inspector
 FROM #Sheet2
 
 --Lacking yard分頁
@@ -403,7 +409,7 @@ select
 	t.TicketYds,
 	t.ActualYds,
 	LackingYard = isnull(t.TicketYds, 0) - isnull(t.ActualYds, 0),
-	t.InspDate
+	[InspDate] = FORMAT(t.InspDate, 'yyyy/MM/dd')
 from #tmp1 t
 where t.InspDate is not null
 
@@ -430,7 +436,7 @@ select
 	t.TicketYds,
 	t.ActualYds,
 	LackingYard = isnull(t.TicketYds, 0) - isnull(t.ActualYds, 0),
-	t.InspDate
+	[InspDate] = FORMAT(t.InspDate, 'yyyy/MM/dd')
 from #tmp2 t
 where t.InspDate is not null
 
@@ -713,10 +719,12 @@ select
 	TotalDefectyds = isnull((select SUM(Point) from FIR_Physical_Defect fpd where FPD.FIR_PhysicalDetailUKey = FP.DetailUkey), 0) * 0.25,
 	FP.TicketYds,
 	FP.DetailUkey,
-	FP.ActualYds
+	FP.ActualYds,
+	Inspector = Concat (Fp.Inspector, ' ', p.Name) 
 into #tmp1
 from #tmpR t
 Left join FIR_Physical FP on FP.ID = t.ID and FP.Roll = t.Roll and FP.Dyelot = t.Dyelot
+Left JOIN Pass1 p ON p.ID = Fp.Inspector
 
 select
 	t.*,
@@ -726,10 +734,12 @@ select
 	TotalDefectyds = isnull((select SUM(Point) from FIR_Physical_Defect fpd where FPD.FIR_PhysicalDetailUKey = FP.DetailUkey), 0) * 0.25,
 	FP.TicketYds,
 	FP.DetailUkey,
-	FP.ActualYds
+	FP.ActualYds,
+	Inspector = Concat (Fp.Inspector, ' ', p.Name)  
 into #tmp2
 from #tmpT t
 Left join FIR_Physical FP on FP.ID = t.ID and FP.Roll = t.Roll and FP.Dyelot = t.Dyelot
+Left JOIN Pass1 p ON p.ID = Fp.Inspector
 
 --Summary分頁
 select
@@ -833,6 +843,7 @@ select
 		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
 		else isnull(Defect.point,  0) / t.TicketYds
 		end
+	,t.Inspector
 INTO #Sheet2
 from #tmp1 t
 outer apply(
@@ -884,6 +895,7 @@ select
 		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
 		else isnull(Defect.point,  0) / t.TicketYds 
 		end
+	,t.Inspector
 from #tmp2 t
 outer apply(
     select 
@@ -902,7 +914,7 @@ SELECT
 	Inventory_SEQ,WK,ReceivingID,StyleID,Brandid,Supplier,Refno,ColorID,	
 	IssueDate,	TransferQty,WeaveTypeID,Dyelot,Width,Weight,Composition,
 	Description,ConstructionID,Roll,InspDate,Result,Grade,DefectRecord,
-	Type,DescriptionEN,point,Defectrate
+	Type,DescriptionEN,point,Defectrate,Inspector
 FROM #Sheet2
 
 --Lacking yard分頁
@@ -931,7 +943,7 @@ select
 	t.TicketYds,
 	t.ActualYds,
 	LackingYard = isnull(t.TicketYds, 0) - isnull(t.ActualYds, 0),
-	t.InspDate
+	[InspDate] = FORMAT(t.InspDate, 'yyyy/MM/dd')
 from #tmp1 t
 where t.InspDate is not null
 
@@ -961,7 +973,7 @@ select
 	t.TicketYds,
 	t.ActualYds,
 	LackingYard = isnull(t.TicketYds, 0) - isnull(t.ActualYds, 0),
-	t.InspDate
+	[InspDate] = FORMAT(t.InspDate, 'yyyy/MM/dd')
 from #tmp2 t
 where t.InspDate is not null
 

@@ -26,8 +26,8 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            this.reviseDate1 = MyUtility.Check.Empty(this.dateReviseDate.Value1) ? string.Empty : Convert.ToDateTime(this.dateReviseDate.Value1).ToString("d");
-            this.reviseDate2 = MyUtility.Check.Empty(this.dateReviseDate.Value2) ? string.Empty : Convert.ToDateTime(this.dateReviseDate.Value2).ToString("d");
+            this.reviseDate1 = MyUtility.Check.Empty(this.dateReviseDate.Value1) ? string.Empty : Convert.ToDateTime(this.dateReviseDate.Value1).ToString("yyyy/MM/dd");
+            this.reviseDate2 = MyUtility.Check.Empty(this.dateReviseDate.Value2) ? string.Empty : Convert.ToDateTime(this.dateReviseDate.Value2).ToString("yyyy/MM/dd");
 
             return base.ValidateInput();
         }
@@ -108,7 +108,7 @@ order by l.EditDate,l.ID",
             foreach (DataRow dr in this.printData.Rows)
             {
                 rownum = intRowsStart + counter;
-                objArray[0, 0] = Convert.ToDateTime(dr["EditDate"]).ToString("d");
+                objArray[0, 0] = Convert.ToDateTime(dr["EditDate"]).ToString("yyyy/MM/dd");
                 objArray[0, 1] = dr["ID"];
                 objArray[0, 2] = dr["Description"];
                 objArray[0, 3] = MyUtility.Convert.GetString(dr["LocalSuppID"]) + " / " + MyUtility.Convert.GetString(dr["LastLocalSuppID"]);

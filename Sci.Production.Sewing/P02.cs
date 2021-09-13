@@ -354,7 +354,7 @@ where   mo.Junk = 0
             base.ClickNewAfter();
             this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Category"] = "M";
-            this.CurrentMaintain["OutputDate"] = DateTime.Today.AddDays(-1).ToString("d");
+            this.CurrentMaintain["OutputDate"] = DateTime.Today.AddDays(-1).ToString("yyyy/MM/dd");
             this.CurrentMaintain["Shift"] = "D";
             this.CurrentMaintain["Team"] = "A";
             this.CurrentMaintain["WorkHour"] = 0;
@@ -581,7 +581,7 @@ where   mo.Junk = 0
                 {
                     this.dateDate.Value = null;
                     e.Cancel = true;
-                    MyUtility.Msg.WarningBox("< Date > can't early than System Lock Date:" + ((DateTime)this.SewingMonthlyLockDate).ToString("d"));
+                    MyUtility.Msg.WarningBox("< Date > can't early than System Lock Date:" + ((DateTime)this.SewingMonthlyLockDate).ToString("yyyy/MM/dd"));
                     return;
                 }
             }

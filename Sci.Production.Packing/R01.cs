@@ -92,7 +92,7 @@ namespace Sci.Production.Packing
             this._packingno2 = this.txtPackingEnd.Text;
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
             {
-                this._bdate1 = Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString("d");
+                this._bdate1 = Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString("yyyy/MM/dd");
             }
             else
             {
@@ -101,7 +101,7 @@ namespace Sci.Production.Packing
 
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
             {
-                this._bdate2 = Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString("d");
+                this._bdate2 = Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString("yyyy/MM/dd");
             }
             else
             {
@@ -374,8 +374,8 @@ outer apply(
 )c7
 outer apply(
 	select [Qty] = sum(QtyPerCTN) - sum(ScanQty) 
-	from PackingList_Detail pld 
-	where pld.ID=t.Packing# and pld.OrderID=t.SP# and pld.CTNStartNo=t.CTN#
+	from PackingList_Detail pld with (nolock)
+	where pld.ID=t.[Packing#] and pld.OrderID=t.SP# and pld.CTNStartNo = t.[CTN#]
 	and pld.Lacking=1
 )LackingQty
 group by [Packing#]	,[Factory]	,[Shipmode]	,[SP#]	,[Style]	,[Brand]	,[Season], [Sewingline]	,Customize1	,[P.O.#]	,[Buyer]	,[Destination]

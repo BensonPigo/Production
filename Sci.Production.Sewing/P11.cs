@@ -1349,11 +1349,19 @@ inner join #tmp t on t.[UKey] = sod.[UKey]
         private bool UpdateMESInspection(TransactionScope scope)
         {
             string sqlcmd = string.Empty;
+            int idx = 0;
 
             // 跑 P11 表身迴圈，在MES inspection一筆資料是一件，更新是用 Top (TransferQty) 數量。一筆轉移就只會有一段update
             foreach (DataRow item in this.DetailDatas)
             {
                 sqlcmd += $@"
+select top {item["TransferQty"]} ID, AddDate
+INTO #tmp{idx}
+from Inspection with(nolock)
+where Status in ('Pass','Fixed') and OrderId = '{item["FromOrderID"]}' and Location = '{item["FromComboType"]}'
+and Article='{item["Article"]}' and Size='{item["SizeCode"]}'
+order by AddDate 
+
 update Inspection set 
 	OrderId = '{item["ToOrderID"]}',
 	Location = '{item["ToComboType"]}', 
@@ -1361,18 +1369,16 @@ update Inspection set
 	Size = '{item["ToSizeCode"]}',  
 	StyleUkey = {item["styleUkey"]}, 
 	SewingOutputTransfer_DetailUkey = {item["Ukey"]}
-from Inspection with(nolock)
-where Status in ('Pass','Fixed') and OrderId = '{item["FromOrderID"]}' and Location = '{item["FromComboType"]}'
-and Article='{item["Article"]}' and Size='{item["SizeCode"]}'
-and AddDate in (
-	select top {item["TransferQty"]} AddDate
-	from Inspection with(nolock)
-	where Status in ('Pass','Fixed') and OrderId = '{item["FromOrderID"]}' and Location = '{item["FromComboType"]}'
-    and Article='{item["Article"]}' and Size='{item["SizeCode"]}'
-	order by AddDate 
+from Inspection
+WHERE ID IN (
+    SELECT ID FROM #tmp{idx}
 )
 ;
+DROP TABLE #tmp{idx}
+;
+
 ";
+                idx++;
             }
 
             DualResult result = DBProxy.Current.Execute("ManufacturingExecution", sqlcmd);

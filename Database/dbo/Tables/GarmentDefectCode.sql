@@ -10,6 +10,7 @@
     [LocalDescription]    NVARCHAR (100) NOT NULL,
     [ReworkTotalFailCode] NVARCHAR(10) NULL CONSTRAINT [DF_GarmentDefectCode_ReworkTotalFailCode] DEFAULT (''), 
     [IsCFA] BIT NOT NULL CONSTRAINT [DF_GarmentDefectCode_IsCFA] DEFAULT ((0)), 
+    [IsCriticalDefect] BIT NULL CONSTRAINT [DF_GarmentDefectCode_IsCriticalDefect] DEFAULT ((0)), 
     CONSTRAINT [PK_GarmentDefectCode] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -25,6 +26,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Defect Code
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'瑕疵代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GarmentDefectCode', @level2type = N'COLUMN', @level2name = N'ID';
 
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否為嚴重defect code', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GarmentDefectCode', @level2type = N'COLUMN', @level2name = N'IsCriticalDefect';
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'描述', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GarmentDefectCode', @level2type = N'COLUMN', @level2name = N'Description';
@@ -51,6 +54,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Hanger System的FailCode', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GarmentDefectCode', @level2type = N'COLUMN', @level2name = N'ReworkTotalFailCode';
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否為嚴重defect code', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GarmentDefectCode', @level2type = N'COLUMN', @level2name = N'IsCriticalDefect';
 
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',

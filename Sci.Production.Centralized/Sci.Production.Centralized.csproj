@@ -162,6 +162,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IE_B92.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IE_B92.Designer.cs">
+      <DependentUpon>IE_B92.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IE_B91.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IE_B91.Designer.cs">
+      <DependentUpon>IE_B91.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IE_B90.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IE_B90.Designer.cs">
+      <DependentUpon>IE_B90.cs</DependentUpon>
+    </Compile>
     <Compile Include="Clog_B02.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -445,6 +463,15 @@
       <DependentUpon>WH_B01.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="IE_B92.resx">
+      <DependentUpon>IE_B92.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IE_B91.resx">
+      <DependentUpon>IE_B91.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IE_B90.resx">
+      <DependentUpon>IE_B90.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Clog_B02.resx">
       <DependentUpon>Clog_B02.cs</DependentUpon>
     </EmbeddedResource>

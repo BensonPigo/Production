@@ -129,7 +129,8 @@ inner join PackingList p on g.ID = p.INVNo
 inner join PackingList_Detail pd on pd.id = p.id
 inner join Orders o on pd.OrderID = o.ID
 inner join Style s on s.Ukey = o.StyleUkey
-inner join Buyer b2 on o.BrandID =b2.id
+inner join Brand b on b.id=o.BrandID 
+inner join Buyer b2 on b.BuyerID =b2.id
 left join Order_Location OL on OL.OrderID = pd.OrderID
 outer apply (
 	select kd.status 

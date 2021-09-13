@@ -76,8 +76,8 @@ namespace Sci.Production.Subcon
             IList<SqlParameter> cmds = new List<SqlParameter>
             {
                 new SqlParameter("@SubProcess", this.SubProcess),
-                new SqlParameter("@BundleReceive1", Convert.ToDateTime(this.dateBundleReceive1).ToString("d")),
-                new SqlParameter("@BundleReceive2", Convert.ToDateTime(this.dateBundleReceive2).ToString("d")),
+                new SqlParameter("@BundleReceive1", Convert.ToDateTime(this.dateBundleReceive1).ToString("yyyy/MM/dd")),
+                new SqlParameter("@BundleReceive2", Convert.ToDateTime(this.dateBundleReceive2).ToString("yyyy/MM/dd")),
                 new SqlParameter("@M", this.M),
                 new SqlParameter("@Factory", this.Factory),
             };

@@ -81,14 +81,14 @@ with cte_order as(
             {
                 strSQLCmd.Append(string.Format(
                     @" and orders.ActPulloutDate between '{0}' and '{1}'",
-                    Convert.ToDateTime(pulloutdate1).ToString("d"), Convert.ToDateTime(pulloutdate2).ToString("d")));
+                    Convert.ToDateTime(pulloutdate1).ToString("yyyy/MM/dd"), Convert.ToDateTime(pulloutdate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(buyerDelivery1))
             {
                 strSQLCmd.Append(string.Format(
                     @" and BuyerDelivery between '{0}' and '{1}'",
-                    Convert.ToDateTime(buyerDelivery1).ToString("d"), Convert.ToDateTime(buyerDelivery2).ToString("d")));
+                    Convert.ToDateTime(buyerDelivery1).ToString("yyyy/MM/dd"), Convert.ToDateTime(buyerDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(sp1) || !MyUtility.Check.Empty(sp2))

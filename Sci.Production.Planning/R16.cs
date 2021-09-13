@@ -310,12 +310,12 @@ where o.LocalOrder = 0 and exists (select 1 from Factory where o.FactoryId = id 
             this.condition.Clear();
             if (!MyUtility.Check.Empty(this.sciDelivery1))
             {
-                sqlCmd.Append(string.Format(@" and o.scidelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.scidelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDelivery2))
             {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sewingDate1) && !MyUtility.Check.Empty(this.sewingDate2))
@@ -326,12 +326,12 @@ where o.LocalOrder = 0 and exists (select 1 from Factory where o.FactoryId = id 
             {
                 if (!MyUtility.Check.Empty(this.sewingDate1))
                 {
-                    sqlCmd.Append(string.Format(@" and O.sewoffline !< '{0}'", Convert.ToDateTime(this.sewingDate1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and O.sewoffline !< '{0}'", Convert.ToDateTime(this.sewingDate1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.sewingDate2))
                 {
-                    sqlCmd.Append(string.Format(@" and o.sewInline !> '{0}'", Convert.ToDateTime(this.sewingDate2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and o.sewInline !> '{0}'", Convert.ToDateTime(this.sewingDate2).ToString("yyyy/MM/dd")));
                 }
             }
 

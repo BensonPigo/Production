@@ -40,13 +40,13 @@ namespace Sci.Production.Shipping
                 return false;
             }
 
-            this.BuyerDelivery1 = ((DateTime)this.dateBuyerDelivery.Value1).ToString("d");
-            this.BuyerDelivery2 = ((DateTime)this.dateBuyerDelivery.Value2).ToString("d");
+            this.BuyerDelivery1 = ((DateTime)this.dateBuyerDelivery.Value1).ToString("yyyy/MM/dd");
+            this.BuyerDelivery2 = ((DateTime)this.dateBuyerDelivery.Value2).ToString("yyyy/MM/dd");
 
             if (!MyUtility.Check.Empty(this.datePulloutDate.Value1))
             {
-                this.PulloutDate1 = ((DateTime)this.datePulloutDate.Value1).ToString("d");
-                this.PulloutDate2 = ((DateTime)this.datePulloutDate.Value2).ToString("d");
+                this.PulloutDate1 = ((DateTime)this.datePulloutDate.Value1).ToString("yyyy/MM/dd");
+                this.PulloutDate2 = ((DateTime)this.datePulloutDate.Value2).ToString("yyyy/MM/dd");
             }
             else
             {

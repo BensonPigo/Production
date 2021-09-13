@@ -718,6 +718,7 @@ GROUP BY p.OrderID,p.OrderShipmodeSeq,p.Article,p.SizeCode
 ";
             string sqlB = sqlCmd + $@"
 select distinct msg = concat(p.OrderID, ' (', p.OrderShipmodeSeq, ')',' - ', p.Article,' - ',p.SizeCode,' - Ship Qty:',sum(isnull(p.ShipQty,0) + ISNULL(t.DiffQty,0)),' - Order Qty : ',SUM(isnull(oqd.Qty,0)))
+,p.OrderID
 from #tmpOrderShip oqd
 left join #tmpPacking p with(nolock) on oqd.id = p.OrderID and oqd.Seq = p.OrderShipmodeSeq and p.Article = oqd.Article and p.SizeCode = oqd.SizeCode
 lEFT JOIN #TPEAdjust t ON t.OrderID= oqd.id AND t.OrderShipmodeSeq = oqd.Seq AND t.Article=oqd.Article AND t.SizeCode=oqd.SizeCode  ----出貨數必須加上台北端財務可能調整出貨數量，因此必須納入考量(若是減少則是負數，因此用加法即可)
@@ -844,7 +845,7 @@ WHERE ID='{pulloutID}'
             }
             #endregion
 
-            var error = dt.AsEnumerable().Where(o => noNeedCheck.Any(x => x == MyUtility.Convert.GetString(o["ID"]))).ToList();
+            var error = dt.AsEnumerable().Where(o => noNeedCheck.Any(x => x == MyUtility.Convert.GetString(o["OrderID"]))).ToList();
 
             // 僅提示允許繼續 Confirm
             if (error.Count > 0)
@@ -1510,7 +1511,7 @@ select * from @tempQtyBDown";
                 worksheet.Cells[titleShipModeRow, titleShipModeColumn] = MyUtility.Convert.GetString(dr["ShipModeID"]);
                 worksheet.Cells[titleInClogRow, titleInClogColumn] = (MyUtility.Check.Empty(MyUtility.Convert.GetString(printData.Tables[dr["ID"].ToString()].Rows[0]["InClogQty"])) ? "0" : MyUtility.Convert.GetString(printData.Tables[dr["ID"].ToString()].Rows[0]["InClogQty"])) + " / " + MyUtility.Convert.GetString(dr["CTNQty"]) + "   ( " + MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(printData.Tables[dr["ID"].ToString()].Rows[0]["InClogQty"]) / MyUtility.Convert.GetDecimal(dr["CTNQty"]), 4) * 100) + "% )";
                 worksheet.Cells[titleDestinationRow, titleDestinationColumn] = MyUtility.Convert.GetString(printData.Tables[dr["ID"].ToString()].Rows[0]["Alias"]);
-                worksheet.Cells[titleShipmentDateRow, titleShipmentDateColumn] = MyUtility.Check.Empty(printData.Tables[dr["ID"].ToString()].Rows[0]["EstPulloutDate"]) ? "  /  /    " : Convert.ToDateTime(printData.Tables[dr["ID"].ToString()].Rows[0]["EstPulloutDate"]).ToString("d");
+                worksheet.Cells[titleShipmentDateRow, titleShipmentDateColumn] = MyUtility.Check.Empty(printData.Tables[dr["ID"].ToString()].Rows[0]["EstPulloutDate"]) ? "  /  /    " : Convert.ToDateTime(printData.Tables[dr["ID"].ToString()].Rows[0]["EstPulloutDate"]).ToString("yyyy/MM/dd");
                 #endregion
 
                 #region Set Body

@@ -1,12 +1,14 @@
-﻿using System;
+﻿using EASendMail;
+using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using Sci.Data;
-using Ict;
-using EASendMail;
-using System.Windows.Forms;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace Sci.Production.PublicPrg
 {
@@ -15,6 +17,62 @@ namespace Sci.Production.PublicPrg
     /// </summary>
     public static partial class Prgs
     {
+        /// <inheritdoc/>
+        public static byte[] ImageToByteArray(System.Drawing.Image image)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, image.RawFormat);
+                return ms.ToArray();
+            }
+        }
+
+        /// <inheritdoc/>
+        public static void SetGridColumnsColor(Win.UI.Grid grid, string tag, Color color)
+        {
+            foreach (DataGridViewColumn column in grid.Columns)
+            {
+                if (column.Name.Contains(tag))
+                {
+                    column.CellTemplate.Style.BackColor = color;
+                }
+            }
+        }
+
+        /// <inheritdoc/>
+        public static Dictionary<string, string> GetColumnsDataPropertyNameWithTag(Win.UI.Grid grid, string tag)
+        {
+            Dictionary<string, string> columnHeaderandName = new Dictionary<string, string>();
+            foreach (DataGridViewColumn column in grid.Columns)
+            {
+                if (column.Name.Contains(tag))
+                {
+                    columnHeaderandName.Add(column.DataPropertyName, column.HeaderText);
+                }
+            }
+
+            return columnHeaderandName;
+        }
+
+        /// <inheritdoc/>
+        public static bool CheckEmptyColumn(DataTable dt, Dictionary<string, string> columns, bool showmsg = false)
+        {
+            foreach (var keyValue in columns)
+            {
+                if (keyValue.Key != string.Empty && dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted && MyUtility.Check.Empty(w[keyValue.Key])).Any())
+                {
+                    if (showmsg)
+                    {
+                        MyUtility.Msg.WarningBox($"<{keyValue.Value}> can not be empty.");
+                    }
+
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// Compare Arr 內容相同返回true,反之返回false。
         /// </summary>

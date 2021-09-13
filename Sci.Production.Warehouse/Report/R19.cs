@@ -78,19 +78,31 @@ with cte as (
             , estbackdate
             , backdate
             , o.MCHandle
-            , [ReturnRoll] = rt.[Return Roll#]
-			, [ReturnDyelot] = rt.[Return Dyelot]
+            , [ReturnRoll] = rt_Roll.Roll
+			, [ReturnDyelot] = rt_Dyelot.Dyelot
     from borrowback a WITH (NOLOCK) 
     inner join borrowback_detail b WITH (NOLOCK) on b.id = a.id 
     left join Orders o WITH (NOLOCK)  on b.FromPOID=o.ID
-	outer apply(
-		SELECT BBD.FromRoll AS [Return Roll#] 
-		,BBD.FromDyelot AS [Return Dyelot] 
-		from BorrowBack ABB
-		LEFT JOIN BorrowBack BBB ON BBB.BorrowId = ABB.ID
-		LEFT JOIN BorrowBack_Detail BBD ON BBB.ID = BBD.ID
-		WHERE ABB.ID =a.Id                              
-	)rt
+	outer apply(		
+		SELECT Roll = STUFF((
+			SELECT DISTINCT ','+ BBD.FromRoll 
+			from BorrowBack ABB
+			LEFT JOIN BorrowBack BBB ON BBB.BorrowId = ABB.ID
+			LEFT JOIN BorrowBack_Detail BBD ON BBB.ID = BBD.ID
+			WHERE ABB.ID = a.Id   
+			FOR XML PATH('')
+		),1,1,'')                
+	)rt_Roll
+	outer apply(		
+		SELECT Dyelot = STUFF((
+			SELECT DISTINCT ','+ BBD.FromDyelot 
+			from BorrowBack ABB
+			LEFT JOIN BorrowBack BBB ON BBB.BorrowId = ABB.ID
+			LEFT JOIN BorrowBack_Detail BBD ON BBB.ID = BBD.ID
+			WHERE ABB.ID = a.Id   
+			FOR XML PATH('')
+		),1,1,'')                
+	)rt_Dyelot
     Where   a.type='A'
             and a.Status = 'Confirmed'");
             if (!MyUtility.Check.Empty(returnDate1) || !MyUtility.Check.Empty(returnDate2))
@@ -99,14 +111,14 @@ with cte as (
                 {
                     sqlcmd.Append(string.Format(
                         @" 
-            and '{0}' <= a.estbackdate", Convert.ToDateTime(returnDate1).ToString("d")));
+            and '{0}' <= a.estbackdate", Convert.ToDateTime(returnDate1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(returnDate2))
                 {
                     sqlcmd.Append(string.Format(
                         @" 
-            and a.estbackdate <= '{0}'", Convert.ToDateTime(returnDate2).ToString("d")));
+            and a.estbackdate <= '{0}'", Convert.ToDateTime(returnDate2).ToString("yyyy/MM/dd")));
                 }
             }
 
@@ -115,13 +127,13 @@ with cte as (
                 if (!MyUtility.Check.Empty(borrowDate1))
                 {
                     sqlcmd.Append($@"
-            and '{Convert.ToDateTime(borrowDate1).ToString("d")}' <= a.issuedate");
+            and '{Convert.ToDateTime(borrowDate1).ToString("yyyy/MM/dd")}' <= a.issuedate");
                 }
 
                 if (!MyUtility.Check.Empty(borrowDate2))
                 {
                     sqlcmd.Append($@" 
-            and a.issuedate <= '{Convert.ToDateTime(borrowDate2).ToString("d")}'");
+            and a.issuedate <= '{Convert.ToDateTime(borrowDate2).ToString("yyyy/MM/dd")}'");
                 }
             }
 
@@ -130,13 +142,13 @@ with cte as (
                 if (!MyUtility.Check.Empty(buyDeliveryDate1))
                 {
                     sqlcmd.Append($@"
-            and '{Convert.ToDateTime(buyDeliveryDate1).ToString("d")}' <= o.BuyerDelivery");
+            and '{Convert.ToDateTime(buyDeliveryDate1).ToString("yyyy/MM/dd")}' <= o.BuyerDelivery");
                 }
 
                 if (!MyUtility.Check.Empty(buyDeliveryDate2))
                 {
                     sqlcmd.Append($@" 
-            and o.BuyerDelivery <= '{Convert.ToDateTime(buyDeliveryDate2).ToString("d")}'");
+            and o.BuyerDelivery <= '{Convert.ToDateTime(buyDeliveryDate2).ToString("yyyy/MM/dd")}'");
                 }
             }
 
@@ -187,7 +199,7 @@ with cte as (
 			, a.Shift, frompoid, fromseq1, FromSeq2
 			, b.FromRoll, b.FromDyelot, FromStockType
             , issuedate, estbackdate, backdate, o.MCHandle
-            , rt.[Return Dyelot],rt.[Return Roll#]
+            , rt_Roll.Roll,rt_Dyelot.Dyelot
 )
 select  cte.id
 		, cte.FactoryID

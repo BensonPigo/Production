@@ -607,7 +607,14 @@ when matched AND t.junk=1 then
 	t.junk=0
 when not matched by target then 
 	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk)
-	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk);";
+	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk);
+
+update se set Junk = 1
+from ShareExpense se
+inner join ShippingAP sa on sa.id = se.ShippingAPID
+where se.ShippingAPID = '{this.apData["ID"]}'
+and not exists(select 1 from GMTBooking where id=se.InvNo and (BLNo = sa.BLNo or BL2No = sa.BLNo))
+";
 
             DualResult result;
 

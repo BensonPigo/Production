@@ -132,6 +132,9 @@
     <Build Include="dbo\Tables\P_QA_P09.sql" />
     <Build Include="dbo\Stored Procedures\P_Import_QA_P09.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_QA_P09_Fty.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_ImportAdiCompReport.sql" />
+    <Build Include="dbo\Tables\P_QA_R31.sql" />
+    <Build Include="dbo\Stored Procedures\P_Import_QA_R31.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

@@ -522,6 +522,10 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             .Text("CLocation", header: "Crap Location", iseditingreadonly: true, settings: ts12) // 32
             .Text("FIR", header: "FIR", iseditingreadonly: true, settings: ts10) // 33
             .Text("WashLab", header: "WashLab Report", iseditingreadonly: true, settings: ts10) // 33
+            .Date("TestReport", header: "Supp. test report \r\n received date", iseditingreadonly: true)
+            .CheckBox("T2TestingReport", header: "T2 Testing\r\nReport", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
+            .CheckBox("T2InspectionReport", header: "T2 Inspection\r\nReport", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
+            .CheckBox("T1InspectionReport", header: "T1 Inspection\r\nReport", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             .Text("Preshrink", header: "Preshrink", iseditingreadonly: true) // 34
             .EditText("Remark", header: "Remark", iseditingreadonly: true) // 35
             .EditText("TPERemark", header: "TPE Remark", iseditingreadonly: true) // 36
@@ -761,6 +765,9 @@ from(
             , currencyid
             , FIR
             , washlab
+            , T2TestingReport
+            , T2InspectionReport
+            , T1InspectionReport
             , Preshrink
             , Remark
             , OrderIdList
@@ -770,6 +777,7 @@ from(
             , FabricCombo
 			, SustainableMaterial
 			, TPERemark
+			, TestReport
     from (
         select  *
                 , -len(description) as len_D 
@@ -841,6 +849,34 @@ from(
                                        and wqa.seq2 = a.seq2 
                                for xml path('')
                                ),1,1,'') washlab
+                    ,T2TestingReport = iif(
+                        exists 
+                        (
+                            select 1
+                            from Export_Detail ed with(nolock)
+                            inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
+                            inner join SentReport sr with(nolock) on sr.Export_DetailUkey = ed.Ukey and sr.TestReport is not null
+							where  ed.poid = a.id and ed.seq1 = a.seq1 and ed.seq2 = a.seq2
+                        ), 1, 0)
+                    ,T2InspectionReport = iif(
+                        exists 
+                        (
+                            select 1
+                            from Export_Detail ed with(nolock)
+                            inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
+                            inner join SentReport sr with(nolock) on sr.Export_DetailUkey = ed.Ukey and sr.InspectionReport is not null
+							where ed.poid = a.id and ed.seq1 = a.seq1 and ed.seq2 = a.seq2
+                        ), 1, 0)
+                    ,T1InspectionReport = iif(
+                        exists 
+                        (
+                            select 1
+                            from Export_Detail ed with(nolock)
+                            inner join fir f on f.POID=ed.PoID and f.SEQ1 =ed.Seq1 and f.SEQ2 =ed.Seq2
+                            inner join FIR_Physical fp on fp.id=f.id
+                            inner join Receiving r on r.id= f.ReceivingID and r.InvNo=ed.ID 
+							where ed.poid = a.id and ed.seq1 = a.seq1 and ed.seq2 = a.seq2
+                        ), 1, 0)
                     , iif(Fabric.Preshrink=1,'V','') Preshrink
                     ,(Select cast(tmp.Remark as nvarchar)+',' 
                       from (
@@ -866,6 +902,7 @@ from(
 					, EachCons.FabricCombo 
 					, [SustainableMaterial] = IIF(fs.SustainableMaterial='Recycled' and fabric.MtlTypeID='HANGTAG',1,0)
 					, [TPERemark]=a.Remark
+					, [TestReport] = TestReport.value
             from #tmpOrder as orders WITH (NOLOCK) 
             inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
 	        left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
@@ -893,6 +930,14 @@ from(
 				))
 				,1,1,'')
 			)EachCons
+			outer apply
+			(
+				select value = Min(sr.TestReport) 
+				from Export_Detail ed with(nolock)
+				inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
+				inner join SentReport sr with(nolock) on sr.Export_DetailUkey = ed.Ukey
+				where ed.poid = a.ID and ed.seq1 = a.SEQ1 and ed.seq2 = a.SEQ2
+			) TestReport
 --很重要要看到,修正欄位要上下一起改
             union
 
@@ -959,6 +1004,34 @@ from(
                                        and wqa.seq2 = a.seq2 
                                for xml path('')
                                ),1,1,'') washlab
+                    ,T2TestingReport = iif(
+                        exists 
+                        (
+                            select 1
+                            from Export_Detail ed with(nolock)
+                            inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
+                            inner join SentReport sr with(nolock) on sr.Export_DetailUkey = ed.Ukey and sr.TestReport is not null
+							where  ed.poid = a.id and ed.seq1 = a.seq1 and ed.seq2 = a.seq2
+                        ), 1, 0)
+                    ,T2InspectionReport = iif(
+                        exists 
+                        (
+                            select 1
+                            from Export_Detail ed with(nolock)
+                            inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
+                            inner join SentReport sr with(nolock) on sr.Export_DetailUkey = ed.Ukey and sr.InspectionReport is not null
+							where ed.poid = a.id and ed.seq1 = a.seq1 and ed.seq2 = a.seq2
+                        ), 1, 0)
+                    ,T1InspectionReport = iif(
+                        exists 
+                        (
+                            select 1
+                            from Export_Detail ed with(nolock)
+                            inner join fir f on f.POID=ed.PoID and f.SEQ1 =ed.Seq1 and f.SEQ2 =ed.Seq2
+                            inner join FIR_Physical fp on fp.id=f.id
+                            inner join Receiving r on r.id= f.ReceivingID and r.InvNo=ed.ID 
+							where ed.poid = a.id and ed.seq1 = a.seq1 and ed.seq2 = a.seq2
+                        ), 1, 0)
                     , iif(Fabric.Preshrink=1,'V','') Preshrink
                     , (Select cast(tmp.Remark as nvarchar)+',' 
                        from (
@@ -984,6 +1057,7 @@ from(
 					, EachCons.FabricCombo 
 					, [SustainableMaterial] = IIF(fs.SustainableMaterial='Recycled' and fabric.MtlTypeID='HANGTAG',1,0)
 					, [TPERemark]=a.Remark
+					, [TestReport] = TestReport.value
         from dbo.MDivisionPoDetail m WITH (NOLOCK) 
         inner join #tmpOrder as o on o.poid = m.poid
         left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 
@@ -1010,6 +1084,14 @@ from(
 			))
 			,1,1,'')
 		)EachCons
+		outer apply
+		(
+			select value = Min(sr.TestReport) 
+			from Export_Detail ed with(nolock)
+			inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
+			inner join SentReport sr with(nolock) on sr.Export_DetailUkey = ed.Ukey
+			where ed.poid = a.ID and ed.seq1 = a.SEQ1 and ed.seq2 = a.SEQ2
+		) TestReport
         where   1=1 
                 AND a.id IS NOT NULL  
                ) as xxx
@@ -1064,6 +1146,9 @@ select ROW_NUMBER_D = 1
        , [currencyid] = '-'
        , [FIR] = '-'
        , [washlab] = '-'
+       , [T2TestingReport] = 0
+       , [T2InspectionReport] = 0
+       , [T1InspectionReport] = 0
        , [Preshrink]= ''
        , [Remark] = '-'
        , [OrderIdList] = l.OrderID
@@ -1073,6 +1158,7 @@ select ROW_NUMBER_D = 1
        , [FabricCombo] = ''
        , [SustainableMateria] = ''
 	   , [TPERemark]=''
+	   , [TestReport] = null
 from #tmpLocalPO_Detail a
 left join LocalInventory l on a.OrderId = l.OrderID and a.Refno = l.Refno and a.ThreadColorID = l.ThreadColorID
 left join LocalItem b on a.Refno=b.RefNo

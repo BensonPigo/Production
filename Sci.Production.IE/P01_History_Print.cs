@@ -143,7 +143,7 @@ FOR XML PATH('')", id));
             worksheet.Cells[3, 2] = MyUtility.Convert.GetString(this.masterData["StyleID"]);
             worksheet.Cells[3, 4] = MyUtility.Convert.GetString(this.masterData["SeasonID"]);
             worksheet.Cells[3, 6] = this.custCD;
-            worksheet.Cells[3, 8] = Convert.ToDateTime(DateTime.Today).ToString("d");
+            worksheet.Cells[3, 8] = Convert.ToDateTime(DateTime.Today).ToString("yyyy/MM/dd");
             worksheet.Cells[4, 9] = MyUtility.Convert.GetString(this.efficiency) + "%";
 
             // 填內容值

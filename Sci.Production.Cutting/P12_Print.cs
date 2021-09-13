@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Automation;
 using Sci.Production.Prg;
 using Sci.Win;
 using System;
@@ -10,7 +11,9 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using static Sci.Production.Automation.Guozi_AGV;
 using static Sci.Production.PublicPrg.Prgs;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -45,59 +48,59 @@ namespace Sci.Production.Cutting
         /// <inheritdoc/>
         protected override bool OnToPrint(ReportDefinition report)
         {
-#if DEBUG
-            //string fileName = "rfidscan.png";
-            //Bitmap bitmap = new Bitmap("data\\" + fileName);
+//#if DEBUG
+//            //string fileName = "rfidscan.png";
+//            //Bitmap bitmap = new Bitmap("data\\" + fileName);
 
-//            MyUtility.Msg.InfoBox($@"
-//{System.Environment.CurrentDirectory}
-//{System.Windows.Forms.Application.StartupPath}
-//{Directory.GetCurrentDirectory()}
-//");
-            try
-            {
-                DualResult resulta = BundleRFCard.CardSetRfidScanImage(null);
+////            MyUtility.Msg.InfoBox($@"
+////{System.Environment.CurrentDirectory}
+////{System.Windows.Forms.Application.StartupPath}
+////{Directory.GetCurrentDirectory()}
+////");
+//            try
+//            {
+//                DualResult resulta = BundleRFCard.CardSetRfidScanImage(null);
 
-                if (!resulta)
-                {
-                    this.ShowErr(resulta);
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                this.ShowErr(ex);
-                return false;
-            }
+//                if (!resulta)
+//                {
+//                    this.ShowErr(resulta);
+//                    return false;
+//                }
+//            }
+//            catch (Exception ex)
+//            {
+//                this.ShowErr(ex);
+//                return false;
+//            }
 
-            // write DB
-            int cardUID = 1;
-            foreach (P10_PrintData item in this.p10_PrintDatas)
-            {
-                DualResult resultTest = BundleRFCard.UpdateBundleDetailRFUID(item.BundleID.ToString(), item.BundleNo.ToString(), cardUID.ToString());
-                if (!resultTest)
-                {
-                    this.ShowErr(resultTest);
-                    return false;
-                }
+//            // write DB
+//            int cardUID = 1;
+//            foreach (P10_PrintData item in this.p10_PrintDatas)
+//            {
+//                DualResult resultTest = BundleRFCard.UpdateBundleDetailRFUID(item.BundleID.ToString(), item.BundleNo.ToString(), cardUID.ToString());
+//                if (!resultTest)
+//                {
+//                    this.ShowErr(resultTest);
+//                    return false;
+//                }
 
-                // write SunriseExch
-                if (item.RFIDScan)
-                {
-                    resultTest = BundleRFCard.UpdateSunriseExch(item.BundleNo.ToString(), cardUID.ToString());
-                    if (!resultTest)
-                    {
-                        this.ShowErr(resultTest);
-                        return false;
-                    }
-                }
+//                // write SunriseExch
+//                if (item.RFIDScan)
+//                {
+//                    resultTest = BundleRFCard.UpdateSunriseExch(item.BundleNo.ToString(), cardUID.ToString());
+//                    if (!resultTest)
+//                    {
+//                        this.ShowErr(resultTest);
+//                        return false;
+//                    }
+//                }
 
-                cardUID++;
-            }
+//                cardUID++;
+//            }
 
-            MyUtility.Msg.InfoBox("test update complete");
-            return true;
-            #endif
+//            MyUtility.Msg.InfoBox("test update complete");
+//            return true;
+//            #endif
 
             if (this.radioBundleCardRF.Checked)
             {
@@ -121,6 +124,70 @@ namespace Sci.Production.Cutting
                         MyUtility.Msg.ErrorBox(result.ToString());
                         return false;
                     }
+
+                    #region sent data to GZ WebAPI
+                    var bundlenoList = this.p10_PrintDatas.Select(s => new { BundleNo = s.BundleNo }).Distinct().ToList();
+                    DataTable insert_BundleNo = PublicPrg.ListToDataTable.ToDataTable(bundlenoList);
+
+                    List<BundleToAGV_PostBody> FunListBundle()
+                    {
+                        string sqlGetData = $@"
+            select  bd.ID          ,
+                    b.POID          ,
+                    bd.BundleNo    ,
+                    b.CutRef             ,
+                    b.OrderID            ,
+                    b.Article            ,
+                    b.PatternPanel       ,
+                    b.FabricPanelCode    ,
+                    bd.PatternCode ,
+                    bd.PatternDesc ,
+                    bd.BundleGroup ,
+                    bd.SizeCode    ,
+                    bd.Qty         ,
+                    b.SewingLineID       ,
+                    b.AddDate,
+                    bd.RFUID
+            from #tmp t
+            inner join Bundle_Detail bd with (nolock) on t.BundleNo = bd.BundleNo
+            inner join Bundle b with (nolock) on bd.ID = b.ID
+            ";
+                        result = MyUtility.Tool.ProcessWithDatatable(insert_BundleNo, "BundleNo", sqlGetData, out DataTable dtBundleGZ);
+
+                        if (dtBundleGZ.Rows.Count > 0)
+                        {
+                            return dtBundleGZ.AsEnumerable().Select(
+                               dr => new BundleToAGV_PostBody()
+                               {
+                                   ID = dr["ID"].ToString(),
+                                   POID = dr["POID"].ToString(),
+                                   BundleNo = dr["BundleNo"].ToString(),
+                                   CutRef = dr["CutRef"].ToString(),
+                                   OrderID = dr["OrderID"].ToString(),
+                                   Article = dr["Article"].ToString(),
+                                   PatternPanel = dr["PatternPanel"].ToString(),
+                                   FabricPanelCode = dr["FabricPanelCode"].ToString(),
+                                   PatternCode = dr["PatternCode"].ToString(),
+                                   PatternDesc = dr["PatternDesc"].ToString(),
+                                   BundleGroup = (decimal)dr["BundleGroup"],
+                                   SizeCode = dr["SizeCode"].ToString(),
+                                   Qty = (decimal)dr["Qty"],
+                                   SewingLineID = dr["SewingLineID"].ToString(),
+                                   RFUID = dr["RFUID"].ToString(),
+                                   AddDate = (DateTime?)dr["AddDate"],
+                               })
+                               .ToList();
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+
+                    Task.Run(() => new Guozi_AGV().SentBundleToAGV(FunListBundle))
+                        .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+
+                    #endregion
 
                     MyUtility.Msg.InfoBox("Printed success, Please check result in Bin Box.");
                 }

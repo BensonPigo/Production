@@ -144,7 +144,7 @@
             this.checkDisplayonreport.Name = "checkDisplayonreport";
             this.checkDisplayonreport.Size = new System.Drawing.Size(135, 21);
             this.checkDisplayonreport.TabIndex = 7;
-            this.checkDisplayonreport.Text = "Display on report";
+            this.checkDisplayonreport.Text = "Is RFID Default";
             this.checkDisplayonreport.UseVisualStyleBackColor = true;
             // 
             // checkSelected
@@ -168,7 +168,7 @@
             this.checkProcess.Name = "checkProcess";
             this.checkProcess.Size = new System.Drawing.Size(78, 21);
             this.checkProcess.TabIndex = 5;
-            this.checkProcess.Text = "Process";
+            this.checkProcess.Text = "Is RFID Process";
             this.checkProcess.UseVisualStyleBackColor = true;
             // 
             // labelArtworkType

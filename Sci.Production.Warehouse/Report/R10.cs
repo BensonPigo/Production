@@ -107,12 +107,12 @@ namespace Sci.Production.Warehouse
                 string sqlBuyerDelivery = string.Empty;
                 if (!MyUtility.Check.Empty(this.buyerDelivery1))
                 {
-                    sqlBuyerDelivery += string.Format(" '{0}' <= o.BuyerDelivery ", Convert.ToDateTime(this.buyerDelivery1).ToString("d"));
+                    sqlBuyerDelivery += string.Format(" '{0}' <= o.BuyerDelivery ", Convert.ToDateTime(this.buyerDelivery1).ToString("yyyy/MM/dd"));
                 }
 
                 if (!MyUtility.Check.Empty(this.buyerDelivery2))
                 {
-                    sqlBuyerDelivery += (MyUtility.Check.Empty(sqlBuyerDelivery) ? string.Empty : " and ") + string.Format(" o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("d"));
+                    sqlBuyerDelivery += (MyUtility.Check.Empty(sqlBuyerDelivery) ? string.Empty : " and ") + string.Format(" o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("yyyy/MM/dd"));
                 }
 
                 sqlCmd.Append(string.Format(
@@ -176,12 +176,12 @@ where LInvQty > 0 "));
             {
                 if (!MyUtility.Check.Empty(this.deadline1))
                 {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= a.deadline", Convert.ToDateTime(this.deadline1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and '{0}' <= a.deadline", Convert.ToDateTime(this.deadline1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.deadline2))
                 {
-                    sqlCmd.Append(string.Format(@" and a.deadline <= '{0}'", Convert.ToDateTime(this.deadline2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and a.deadline <= '{0}'", Convert.ToDateTime(this.deadline2).ToString("yyyy/MM/dd")));
                 }
             }
 
@@ -213,12 +213,12 @@ where LInvQty > 0 "));
             {
                 if (!MyUtility.Check.Empty(this.eta1))
                 {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= a.eta", Convert.ToDateTime(this.eta1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and '{0}' <= a.eta", Convert.ToDateTime(this.eta1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.eta2))
                 {
-                    sqlCmd.Append(string.Format(@" and a.eta <= '{0}'", Convert.ToDateTime(this.eta2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and a.eta <= '{0}'", Convert.ToDateTime(this.eta2).ToString("yyyy/MM/dd")));
                 }
             }
 

@@ -764,27 +764,27 @@ and exists (select 1 from Factory f where o.FactoryId = id and f.IsProduceFty = 
         {
             if (!MyUtility.Check.Empty(this.fCRDate1))
             {
-                sqlCmd.Append(string.Format(" and gb2.FCRDate >= '{0}' ", Convert.ToDateTime(this.fCRDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and gb2.FCRDate >= '{0}' ", Convert.ToDateTime(this.fCRDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.fCRDate2))
             {
-                sqlCmd.Append(string.Format(" and gb2.FCRDate <= '{0}' ", Convert.ToDateTime(this.fCRDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and gb2.FCRDate <= '{0}' ", Convert.ToDateTime(this.fCRDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.buyerDlv1))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(this.buyerDlv1).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(this.buyerDlv1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.buyerDlv2))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(this.buyerDlv2).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(this.buyerDlv2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.estPullout1))
             {
-                sqlCmd.Append(string.Format(" and oq.EstPulloutDate between '{0}' and '{1}'", Convert.ToDateTime(this.estPullout1).ToString("d"), Convert.ToDateTime(this.estPullout2).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.EstPulloutDate between '{0}' and '{1}'", Convert.ToDateTime(this.estPullout1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.estPullout2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.brand))
