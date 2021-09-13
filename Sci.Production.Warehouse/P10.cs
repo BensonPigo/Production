@@ -1259,5 +1259,10 @@ and i2.id = '{this.CurrentMaintain["ID"]}'
         {
             P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P10", this);
         }
+
+        private void BtnMINDReleaser_Click(object sender, EventArgs e)
+        {
+            new P10_AssignReleaser(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+        }
     }
 }
