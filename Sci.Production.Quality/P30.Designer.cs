@@ -63,6 +63,8 @@
             this.txtuserMCHandle = new Sci.Production.Class.Txtuser();
             this.btnAccessoryInspectionList = new Sci.Win.UI.Button();
             this.btnFabricInspectionList = new Sci.Win.UI.Button();
+            this.btnMDFailbyCarton = new Sci.Win.UI.Button();
+            this.checkBox1 = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -79,6 +81,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.checkBox1);
+            this.masterpanel.Controls.Add(this.btnMDFailbyCarton);
             this.masterpanel.Controls.Add(this.btnAccessoryInspectionList);
             this.masterpanel.Controls.Add(this.btnFabricInspectionList);
             this.masterpanel.Controls.Add(this.numOrderQty);
@@ -151,6 +155,8 @@
             this.masterpanel.Controls.SetChildIndex(this.numOrderQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFabricInspectionList, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAccessoryInspectionList, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnMDFailbyCarton, 0);
+            this.masterpanel.Controls.SetChildIndex(this.checkBox1, 0);
             // 
             // detailpanel
             // 
@@ -392,7 +398,7 @@
             this.checkCancelledOrder.AutoSize = true;
             this.checkCancelledOrder.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkCancelledOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkCancelledOrder.Location = new System.Drawing.Point(451, 13);
+            this.checkCancelledOrder.Location = new System.Drawing.Point(466, 13);
             this.checkCancelledOrder.Name = "checkCancelledOrder";
             this.checkCancelledOrder.Size = new System.Drawing.Size(130, 21);
             this.checkCancelledOrder.TabIndex = 20;
@@ -556,7 +562,7 @@
             // 
             // btnAccessoryInspectionList
             // 
-            this.btnAccessoryInspectionList.Location = new System.Drawing.Point(702, 134);
+            this.btnAccessoryInspectionList.Location = new System.Drawing.Point(702, 106);
             this.btnAccessoryInspectionList.Name = "btnAccessoryInspectionList";
             this.btnAccessoryInspectionList.Size = new System.Drawing.Size(194, 27);
             this.btnAccessoryInspectionList.TabIndex = 100;
@@ -566,13 +572,37 @@
             // 
             // btnFabricInspectionList
             // 
-            this.btnFabricInspectionList.Location = new System.Drawing.Point(702, 104);
+            this.btnFabricInspectionList.Location = new System.Drawing.Point(702, 73);
             this.btnFabricInspectionList.Name = "btnFabricInspectionList";
             this.btnFabricInspectionList.Size = new System.Drawing.Size(194, 27);
             this.btnFabricInspectionList.TabIndex = 99;
             this.btnFabricInspectionList.Text = "Fabric inspection list";
             this.btnFabricInspectionList.UseVisualStyleBackColor = true;
             this.btnFabricInspectionList.Click += new System.EventHandler(this.BtnFabricInspectionList_Click);
+            // 
+            // btnMDFailbyCarton
+            // 
+            this.btnMDFailbyCarton.Location = new System.Drawing.Point(702, 139);
+            this.btnMDFailbyCarton.Name = "btnMDFailbyCarton";
+            this.btnMDFailbyCarton.Size = new System.Drawing.Size(194, 27);
+            this.btnMDFailbyCarton.TabIndex = 102;
+            this.btnMDFailbyCarton.Text = "MD Fail by Carton";
+            this.btnMDFailbyCarton.UseVisualStyleBackColor = true;
+            this.btnMDFailbyCarton.Click += new System.EventHandler(this.BtnMDFailbyCarton_Click);
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BrokenNeedles", true));
+            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkBox1.IsSupportEditMode = false;
+            this.checkBox1.Location = new System.Drawing.Point(466, 37);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.ReadOnly = true;
+            this.checkBox1.Size = new System.Drawing.Size(128, 21);
+            this.checkBox1.TabIndex = 103;
+            this.checkBox1.Text = "Broken Needles";
+            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // P30
             // 
@@ -592,6 +622,7 @@
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
             this.Name = "P30";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultBounds;
             this.Text = "P30.MD Master List";
             this.UniqueExpress = "ID";
@@ -653,5 +684,7 @@
         private Win.UI.NumericBox numOrderQty;
         private Win.UI.Button btnAccessoryInspectionList;
         private Win.UI.Button btnFabricInspectionList;
+        private Win.UI.Button btnMDFailbyCarton;
+        private Win.UI.CheckBox checkBox1;
     }
 }

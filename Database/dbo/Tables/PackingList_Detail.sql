@@ -69,9 +69,13 @@
     [PackingReasonERID]                   VARCHAR (5)     CONSTRAINT [DF_PackingList_Detail_PackingReasonERID] DEFAULT ('') NOT NULL,
     [ErrQty]                              SMALLINT        CONSTRAINT [DF_PackingList_Detail_ErrQty] DEFAULT ((0)) NOT NULL,
     [AuditQCName]                         VARCHAR (30)    CONSTRAINT [DF_PackingList_Detail_AuditQCName] DEFAULT ('') NOT NULL,
-    [MDScanName] VARCHAR(10) CONSTRAINT [DF_PackingList_Detail_MDScanName] DEFAULT ('') NOT NULL,
+    [MDScanName]                          VARCHAR (10)    CONSTRAINT [DF_PackingList_Detail_MDScanName] DEFAULT ('') NOT NULL,
+    [PackingErrQty]                       SMALLINT        CONSTRAINT [DF_PackingList_Detail_PackingErrQty] DEFAULT ((0)) NOT NULL,
+    [PackingErrorID]                      VARCHAR (8)     CONSTRAINT [DF_PackingList_Detail_PackingErrorID] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -271,4 +275,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'此次檢�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CFA �D�c�����', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'CFASelectInspDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'包裝異常的數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'PackingErrQty';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'包裝異常的原因', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'PackingErrorID';
 

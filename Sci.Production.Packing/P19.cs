@@ -9,6 +9,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
@@ -24,28 +26,32 @@ namespace Sci.Production.Packing
         private string mainPackQuerySql = $@"
 set ARITHABORT on
 select
-[selected] = 0,
-pd.ID,
-pd.CTNStartNo,
-[OrderID] = Stuff((select distinct concat( '/',OrderID)   
-    from PackingList_Detail where ID = pd.ID 
-    and CTNStartNo = pd.CTNStartNo and DisposeFromClog= 0  FOR XML PATH('')),1,1,''),
-o.CustPONo,
-o.StyleID,
-o.SeasonID,
-o.BrandID,
-c.Alias,
-o.BuyerDelivery,
-pd.Remark,
-pd.TransferDate,
-pd.DRYReceiveDate,
-pd.PackErrTransferDate,
-pu.Status,
-[MainSP] = pd.OrderID,
-[ErrorID]='',
-[ErrorType] = '',
-pd.SCICtnNo,
-ShipQty=(select sum(ShipQty) from PackingList_Detail pd2 with(nolock) where pd2.id=pd.id and pd2.ctnstartno=pd.ctnstartno)
+    [selected] = 0,
+    pd.ID,
+    pd.CTNStartNo,
+    [OrderID] = Stuff((select distinct concat( '/',OrderID)   
+        from PackingList_Detail where ID = pd.ID 
+        and CTNStartNo = pd.CTNStartNo and DisposeFromClog= 0  FOR XML PATH('')),1,1,''),
+    o.CustPONo,
+    o.StyleID,
+    o.SeasonID,
+    o.BrandID,
+    c.Alias,
+    o.BuyerDelivery,
+    pd.Remark,
+    pd.TransferDate,
+    pd.DRYReceiveDate,
+    pd.PackErrTransferDate,
+    pu.Status,
+    [MainSP] = pd.OrderID,
+    [ErrorID]='',
+    [ErrorType] = '',
+    pd.SCICtnNo,
+    ShipQty=(select sum(ShipQty) from PackingList_Detail pd2 with(nolock) where pd2.id=pd.id and pd2.ctnstartno=pd.ctnstartno),
+    ErrQty=0,
+    o.FtyGroup,
+    pd.SizeCode,
+    o.SewLine
 from PackingList_Detail pd with (nolock)
 inner join PackingList p with (nolock) on pd.ID = p.ID
 left join Orders o with (nolock) on o.ID = pd.OrderID
@@ -96,6 +102,7 @@ where Type='TP' and Junk=0";
            .Text("ID", header: "Pack ID", width: Widths.AnsiChars(16), iseditingreadonly: true)
            .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(8), iseditingreadonly: true)
            .Numeric("ShipQty", header: "Pack Qty", iseditingreadonly: true)
+           .Numeric("ErrQty", header: "ErrQty")
            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
            .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(16), iseditingreadonly: true)
            .Text("StyleID", header: "Style", width: Widths.AnsiChars(16), iseditingreadonly: true)
@@ -273,12 +280,32 @@ where Type='TP' and Junk=0";
                 {
                     foreach (DataRow dr in drSelected)
                     {
+                        if (MyUtility.Convert.GetString(dr["ErrorID"]) == "00006")
+                        {
+                            if (MyUtility.Convert.GetInt(dr["ErrQty"]) == 0)
+                            {
+                                updateScope.Dispose();
+                                this.HideWaitMessage();
+                                MyUtility.Msg.WarningBox("Error qty cannot be 0 when Error Type is 00006.");
+                                return;
+                            }
+
+                            if (MyUtility.Convert.GetInt(dr["ErrQty"]) > MyUtility.Convert.GetInt(dr["ShipQty"]))
+                            {
+                                updateScope.Dispose();
+                                this.HideWaitMessage();
+                                MyUtility.Msg.WarningBox("Error Qty cannot more than Pack Qty when Error Type is 00006.");
+                                return;
+                            }
+                        }
+
                         saveSql = $@"
 update PackingList_Detail 
-set PackErrTransferDate = GETDATE() 
+set PackErrTransferDate = GETDATE() ,PackingErrQty = {dr["ErrQty"]},PackingErrorID ='{dr["ErrorID"]}'
 where ID = '{dr["ID"]}' and CTNStartNo = '{dr["CTNStartNo"]}' and DisposeFromClog= 0;
-insert into PackErrTransfer(TransferDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate,PackingErrorID,SCICtnNo)
-                    values(GETDATE(),'{Env.User.Keyword}','{dr["MainSP"]}','{dr["ID"]}','{dr["CTNStartNo"]}','{Env.User.UserID}',GETDATE(),'{dr["ErrorID"]}','{dr["SCICtnNo"]}')
+
+insert into PackErrTransfer(TransferDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate,PackingErrorID,SCICtnNo,ErrQty)
+values(GETDATE(),'{Env.User.Keyword}','{dr["MainSP"]}','{dr["ID"]}','{dr["CTNStartNo"]}','{Env.User.UserID}',GETDATE(),'{dr["ErrorID"]}','{dr["SCICtnNo"]}',{dr["ErrQty"]})
 ";
                         updateResult = DBProxy.Current.Execute(null, saveSql);
                         if (!updateResult)
@@ -304,13 +331,8 @@ insert into PackErrTransfer(TransferDate,MDivisionID,OrderID,PackingListID,CTNSt
                     }
 
                     updateScope.Complete();
-
-                    foreach (DataRow item in drSelected)
-                    {
-                        this.dtPackErrTransfer.Rows.Remove(item);
-                    }
-
                     updateScope.Dispose();
+
                     MyUtility.Msg.InfoBox("Save successfully");
                     this.HideWaitMessage();
                 }
@@ -321,6 +343,160 @@ insert into PackErrTransfer(TransferDate,MDivisionID,OrderID,PackingListID,CTNSt
                     this.HideWaitMessage();
                     return;
                 }
+            }
+
+            var mdFaillist = drSelected.Where(w => MyUtility.Convert.GetString(w["ErrorID"]) == "00006").ToList();
+            if (mdFaillist.Any())
+            {
+                var ftyGroupList = mdFaillist.Select(s => MyUtility.Convert.GetString(s["ftyGroup"])).Distinct().ToList();
+                foreach (var ftyGroup in ftyGroupList)
+                {
+                    var byFtyGroup = mdFaillist.Where(w => MyUtility.Convert.GetString(w["ftyGroup"]) == ftyGroup).ToList();
+                    string sqlcmd = $"select * from MailGroup where Code  = '103' and FactoryID = '{ftyGroup}'";
+                    if (MyUtility.Check.Seek(sqlcmd, out DataRow drm) && !MyUtility.Check.Empty(drm["ToAddress"]))
+                    {
+                        sqlcmd = $"select * from MailTo  where ID  = '103'";
+                        MyUtility.Check.Seek(sqlcmd, out DataRow drMailTo);
+                        string mailTotoAddress = MyUtility.Convert.GetString(drMailTo["ToAddress"]);
+                        string mailToCcAddress = MyUtility.Convert.GetString(drMailTo["CcAddress"]);
+
+                        string toAddress = MyUtility.Convert.GetString(drm["ToAddress"]) + ";" + mailTotoAddress;
+                        string ccAddress = MyUtility.Convert.GetString(drm["CcAddress"]) + ";" + mailToCcAddress;
+                        string subject = MyUtility.Convert.GetString(drMailTo["Subject"]);
+                        string content =
+                            @"
+<style type='text/css'>
+    .tg {
+        border-collapse:collapse;
+        border-spacing:0;
+    }
+    .tg td {
+        font-family:Arial, sans-serif;
+        font-size:14px;
+        padding:10px 5px;
+        border-style:solid;
+        border-width:1px;
+        overflow:hidden;
+        word-break:normal;
+        border-color:black;
+    }
+    .tg th {
+        font-family:Arial, sans-serif;
+        font-size:14px;
+        font-weight:normal;
+        padding:10px 5px;
+        border-style:solid;
+        border-width:1px;
+        overflow:hidden;
+        word-break:normal;
+        border-color:black;
+    }
+    .tg .tg-2cz9 {
+        font-weight:bold;
+        background-color:#ccffcc;
+        text-align:center;
+        vertical-align:middle
+    }
+    .tg .tg-nrix {
+        text-align:center;
+        vertical-align:middle
+    }
+</style>";
+
+                        content += $@"
+<table class='tg' align='left' >
+    <thead>
+        <tr>
+          <th class='tg-2cz9'>Pack ID</th>
+          <th class='tg-2cz9'>CTN#</th>
+          <th class='tg-2cz9'>Size</th>
+          <th class='tg-2cz9'>SP#</th>
+          <th class='tg-2cz9'>PO No.</th>
+          <th class='tg-2cz9'>Style</th>
+          <th class='tg-2cz9'>Season</th>
+          <th class='tg-2cz9'>Brand</th>
+          <th class='tg-2cz9'>Sewing Line</th>
+          <th class='tg-2cz9'>MD Fail Qty </th>
+        </tr>
+    </thead>
+    <tbody>";
+                        foreach (var item in byFtyGroup)
+                        {
+                            content += $@"
+        <tr>
+            <td>{item["ID"]}</td>
+            <td>{item["ctnStartNo"]}</td>
+            <td>{item["SizeCode"]}</td>
+            <td>{item["MainSP"]}</td>
+            <td>{item["custPONo"]}</td>
+            <td>{item["StyleID"]}</td>
+            <td>{item["SeasonID"]}</td>
+            <td>{item["BrandID"]}</td>
+            <td>{item["SewLine"]}</td>
+            <td>{item["ErrQty"]}</td>
+        </tr>";
+                        }
+
+                        content += @"
+    </tbody>
+</table>
+<br/><br/><br/>
+<br/><br/><br/>
+<br/><br/><br/>
+";
+
+                        try
+                        {
+                            MailMessage message = new MailMessage();
+                            message.Subject = subject;
+
+                            foreach (var to in toAddress.Split(';'))
+                            {
+                                if (!MyUtility.Check.Empty(to))
+                                {
+                                    message.To.Add(to);
+                                }
+                            }
+
+                            foreach (var cc in ccAddress.Split(';'))
+                            {
+                                if (!MyUtility.Check.Empty(cc))
+                                {
+                                    message.CC.Add(cc);
+                                }
+                            }
+
+                            if (MyUtility.Check.Empty(Env.Cfg.MailFrom))
+                            {
+                                MyUtility.Msg.WarningBox("Please set <Send From> in Basic B02.");
+                                return;
+                            }
+
+                            message.From = new MailAddress(Env.Cfg.MailFrom);
+                            message.Body = content;
+                            message.IsBodyHtml = true;
+
+                            // mail Smtp
+                            SmtpClient client = new SmtpClient(Env.Cfg.MailServerIP);
+
+                            // 寄件者 帳密
+                            client.Credentials = new NetworkCredential(Env.Cfg.MailServerAccount, Env.Cfg.MailServerPassword);
+                            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+
+                            client.Send(message);
+                        }
+                        catch (Exception ex)
+                        {
+                            this.ShowErr(ex);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            foreach (DataRow item in drSelected)
+            {
+                this.dtPackErrTransfer.Rows.Remove(item);
             }
         }
 

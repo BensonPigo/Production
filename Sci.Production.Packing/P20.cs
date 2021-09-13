@@ -239,7 +239,7 @@ left join PackingError pe with (nolock) on x.PackingErrorID=pe.ID and pe.Type='T
                     {
                         saveSql = $@"
 update PackingList_Detail 
-set PackErrTransferDate = null 
+set PackErrTransferDate = null ,PackingErrQty =0,PackingErrorID =''
 where ID = '{dr["ID"]}' and CTNStartNo = '{dr["CTNStartNo"]}' and DisposeFromClog= 0;
 
 insert into PackErrCFM(CFMDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate,SCICtnNo)
