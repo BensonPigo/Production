@@ -279,7 +279,7 @@ outer apply(
 	select Articles = stuff((
 		select distinct concat(',', pd2.Article)
 		from PackingList_Detail pd2 with(nolock)
-		where pd2.OrderID = pd.OrderID and pd2.OrderShipmodeSeq = pd.OrderShipmodeSeq
+		where pd2.ID = pd.id and pd2.CTNStartNo = pd.CTNStartNo
 		for xml path('')
 	),1,1,'')
 )Article
@@ -287,7 +287,7 @@ outer apply(
 	select SizeCodes = stuff((
 		select distinct concat(',', pd2.SizeCode)
 		from PackingList_Detail pd2 with(nolock)
-		where pd2.OrderID = pd.OrderID and pd2.OrderShipmodeSeq = pd.OrderShipmodeSeq
+		where pd2.ID = pd.id and pd2.CTNStartNo = pd.CTNStartNo
 		for xml path('')
 	),1,1,'')
 )SizeCode
@@ -342,7 +342,7 @@ outer apply(
 	select Articles = stuff((
 		select distinct concat(',', pd2.Article)
 		from PackingList_Detail pd2 with(nolock)
-		where pd2.OrderID = pd.OrderID and pd2.OrderShipmodeSeq = pd.OrderShipmodeSeq
+		where pd2.ID = pd.id and pd2.CTNStartNo = pd.CTNStartNo
 		for xml path('')
 	),1,1,'')
 )Article
@@ -350,7 +350,7 @@ outer apply(
 	select SizeCodes = stuff((
 		select distinct concat(',', pd2.SizeCode)
 		from PackingList_Detail pd2 with(nolock)
-		where pd2.OrderID = pd.OrderID and pd2.OrderShipmodeSeq = pd.OrderShipmodeSeq
+		where pd2.ID = pd.id and pd2.CTNStartNo = pd.CTNStartNo
 		for xml path('')
 	),1,1,'')
 )SizeCode
