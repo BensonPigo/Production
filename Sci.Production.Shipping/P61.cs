@@ -446,11 +446,24 @@ declare @BLNo varchar(30) = '{blNo}'
 	,GW = sum(ed.WeightKg)
 	from Export e 
 	inner join Export_Detail ed on e.id=ed.ID  
-	left join PO_Supp_Detail po3 on po3.ID = ed.PoID and ed.Seq1 = po3.SEQ1 and ed.Seq2 = po3.SEQ2
+	inner join PO_Supp_Detail po3 on po3.ID = ed.PoID and ed.Seq1 = po3.SEQ1 and ed.Seq2 = po3.SEQ2
 	where 1=1 
+	and ed.PoType <> 'M' 
 	and e.NonDeclare=0
 	and e.Blno = @BLNo
 	group by e.Consignee,e.FactoryID,e.Eta,po3.SCIRefno,ed.UnitId,e.ID
+), tmpExportTypeM as (
+	select e.Consignee,e.FactoryID,e.Eta,SCIRefno = ed.Refno,ed.UnitId,e.ID
+	,Qty = sum(ed.Qty)
+	,NW = sum(ed.NetKg)
+	,GW = sum(ed.WeightKg)
+	from Export e 
+	inner join Export_Detail ed on e.id=ed.ID  
+	where 1=1 
+	and ed.PoType = 'M' and ed.FabricType in ('M','P','O' )
+	and e.NonDeclare=0
+	and e.Blno = @BLNo
+	group by e.Consignee,e.FactoryID,e.Eta,ed.Refno,ed.UnitId,e.ID
 )
 ,tmpFtyExport as (
 	select fe.Consignee,f2.SCIRefno,fed.UnitId,fe.id
@@ -499,6 +512,46 @@ select distinct [ExportID] = e.ID
              , [ActHSCode] = kcd.HSCode     
              , [KHCustomsItemUkey] = kc.Ukey 
 from tmpExport s
+inner join Export e on s.ID = e.ID
+inner join KHCustomsItem kc on kc.RefNo = s.SCIRefno
+left  join KHCustomsItem_Detail kcd on kc.Ukey=kcd.KHCustomsItemUkey and kcd.Port=e.ImportPort          
+left  join KHCustomsDescription kd on kd.CDCName = kc.KHCustomsDescriptionCDCName
+    and kd.CustomsType in ('Fabric', 'Accessory', 'Machine')
+left  join KHCustomsDescription_Detail kdd on kd.CDCName=kdd.CDCName and kdd.PurchaseUnit = s.UnitId   
+
+union all
+
+select distinct [ExportID] = e.ID
+             , [BlNo] = e.Blno
+             , [Consignee] = e.Consignee 
+             , [FactoryID] = e.FactoryID
+             , [ETA] = e.Eta
+             , [PortArrival] = e.PortArrival 
+             , [WhseArrival] = e.WhseArrival
+             , [ShipModeID] = e.ShipModeID
+             , [Vessel] = e.Vessel
+             , [ExportPort] = e.ExportPort
+             , [RefNo] = kc.Refno
+             , [Description] = kc.Description 
+             , [QTY] = s.Qty
+             , [UnitID] = s.UnitId 
+             , [NetKg] = s.NW 
+             , [WeightKg] = s.GW
+             , [CustomsType] = kd.CustomsType  
+             , kd.CDCCode
+             , [CustomsDescription] = kd.CDCName
+             , [CDCQty] = iif(kd.IsDeclareByNetKg = 1, s.NW, s.Qty*kdd.Ratio)
+             , [CDCUnit] = kd.CDCUnit  
+             , [CDCUnitPrice] = kc.CDCUnitPrice  
+             , [CDCAmount] = iif(kd.IsDeclareByNetKg = 1, s.NW, s.Qty*kdd.Ratio)*kc.CDCUnitPrice  
+             , [ActNetKg] = s.NW  
+             , [ActWeightKg] = s.GW  
+             , [ActAmount] = iif(kd.IsDeclareByNetKg = 1, s.NW, s.Qty*kdd.Ratio)*kc.CDCUnitPrice  
+             , [NWDiff] = (s.NW-s.nw)  
+             , [HSCode] = kcd.HSCode  
+             , [ActHSCode] = kcd.HSCode     
+             , [KHCustomsItemUkey] = kc.Ukey 
+from tmpExportTypeM s
 inner join Export e on s.ID = e.ID
 inner join KHCustomsItem kc on kc.RefNo = s.SCIRefno
 left  join KHCustomsItem_Detail kcd on kc.Ukey=kcd.KHCustomsItemUkey and kcd.Port=e.ImportPort          
