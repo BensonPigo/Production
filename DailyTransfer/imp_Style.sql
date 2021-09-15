@@ -2073,6 +2073,112 @@ when not matched by target then
 when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
 	delete;
 	
+------------Thread_Replace_Detail_Detail
+UPDATE a
+   SET [Thread_Replace_DetailUkey] =b.[Thread_Replace_DetailUkey]
+      ,[SuppID] = 					b.[SuppID]
+      ,[ToSCIRefno] = 				b.[ToSCIRefno]
+      ,[ToBrandColorID] = 			b.[ToBrandColorID]
+      ,[ToBrandSuppColor] = 		b.[ToBrandSuppColor]
+      ,[AddName] = 					b.[AddName]
+      ,[AddDate] = 					b.[AddDate]
+      ,[EditName] =					b.[EditName]
+      ,[EditDate] = 				b.[EditDate]
+from Production.dbo.Thread_Replace_Detail_Detail a
+inner join Trade_To_Pms.dbo.Thread_Replace_Detail_Detail b on b.Ukey = a.Ukey
+
+
+INSERT INTO [dbo].[Thread_Replace_Detail_Detail]
+           ([Thread_Replace_DetailUkey]
+           ,[SuppID]
+           ,[ToSCIRefno]
+           ,[ToBrandColorID]
+           ,[ToBrandSuppColor]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate])
+select
+	 a.[Thread_Replace_DetailUkey]
+	,a.[SuppID]
+	,a.[ToSCIRefno]
+	,a.[ToBrandColorID]
+	,a.[ToBrandSuppColor]
+	,a.[AddName]
+	,a.[AddDate]
+	,a.[EditName]
+	,a.[EditDate]
+from Trade_To_Pms.dbo.Thread_Replace_Detail_Detail a
+left join Production.dbo.Thread_Replace_Detail_Detail b on b.Ukey = a.Ukey
+where b.Ukey is null
+
+------------Thread_Replace_Detail
+UPDATE a
+   SET [Thread_ReplaceUkey]=b.[Thread_ReplaceUkey]
+      ,[StartDate]		   =b.[StartDate]
+      ,[EndDate]		   =b.[EndDate]
+      ,[AddName]		   =b.[AddName]
+      ,[AddDate]		   =b.[AddDate]
+      ,[EditName]		   =b.[EditName]
+      ,[EditDate]		   =b.[EditDate]
+from Production.dbo.Thread_Replace_Detail a
+inner join Trade_To_Pms.dbo.Thread_Replace_Detail b on b.Ukey = a.Ukey
+
+
+INSERT INTO [dbo].[Thread_Replace_Detail]
+           ([Thread_ReplaceUkey]
+           ,[StartDate]
+           ,[EndDate]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate])
+select
+	 a.[Thread_ReplaceUkey]
+	,a.[StartDate]
+	,a.[EndDate]
+	,a.[AddName]
+	,a.[AddDate]
+	,a.[EditName]
+	,a.[EditDate]
+from Trade_To_Pms.dbo.Thread_Replace_Detail a
+left join Production.dbo.Thread_Replace_Detail b on b.Ukey = a.Ukey
+where b.Ukey is null
+
+
+------------Thread_Replace
+UPDATE a
+   SET [BrandID]      =b.[BrandID]
+      ,[FromSCIRefno] =b.[FromSCIRefno]
+      ,[FromSuppColor]=b.[FromSuppColor]
+      ,[AddName]	  =b.[AddName]
+      ,[AddDate]	  =b.[AddDate]
+      ,[EditName]	  =b.[EditName]
+      ,[EditDate]	  =b.[EditDate]
+from Production.dbo.Thread_Replace a
+inner join Trade_To_Pms.dbo.Thread_Replace b on b.Ukey = a.Ukey
+
+
+INSERT INTO [dbo].[Thread_Replace]
+           ([BrandID]
+           ,[FromSCIRefno]
+           ,[FromSuppColor]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate])
+select
+		a.[BrandID]
+	,a.[FromSCIRefno]
+	,a.[FromSuppColor]
+	,a.[AddName]
+	,a.[AddDate]
+	,a.[EditName]
+	,a.[EditDate]
+from Trade_To_Pms.dbo.Thread_Replace a
+left join Production.dbo.Thread_Replace b on b.Ukey = a.Ukey
+where b.Ukey is null
+
 
 END
 
