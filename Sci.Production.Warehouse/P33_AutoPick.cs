@@ -239,7 +239,7 @@ GROUP BY Article
 --------------取得哪些要打勾--------------
 ---- 從Issue breakdown的Article，找到包含在哪些物料裡面
 ---- 傳入OrderID
-Select distinct tcd.SCIRefNo,tcd.Article ,tcd.ColorID
+Select distinct tcd.SCIRefNo,tcd.Article, tcd.ColorID, tcd.SuppColor
 INTO #step1
 From dbo.Orders as o
 Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
@@ -250,22 +250,22 @@ WHERE O.ID='{this.poid}' AND tcd.Article IN ( SELECT Article FROM #tmp )
 
 ----取得這些物料的項次號，然後取得Order List，如果NULL就直接打勾不用判斷後續
 ---- 傳入OrderID
-SELECT DISTINCT  pso.OrderID,a.SCIRefNo, a.ColorID
+SELECT DISTINCT  pso.OrderID,a.SCIRefNo, a.ColorID, a.SuppColor
 INTO #step2
 FROM PO_Supp_Detail a
 LEFT JOIN  PO_Supp_Detail_OrderList pso ON a.ID = pso.ID AND a.SEQ1 = pso.SEQ1 AND a.SEQ2 = pso.SEQ2
 WHERE a.ID = '{this.poid}'
 AND EXISTS(
 	SELECT * FROM #step1
-	WHERE SCIRefNo = a.SCIRefNo AND ColorID = a.ColorID
+	WHERE SCIRefNo = a.SCIRefNo AND SuppColor = a.SuppColor
 )
 
-SELECT DISTINCT SCIRefno,ColorID
+SELECT DISTINCT SCIRefno,ColorID,SuppColor
 INTO #SelectList1
 FROM #step2 
 WHERE OrderID IS NULL 
 
-SELECT DISTINCT a.SCIRefno,a.ColorID--,b.* 
+SELECT DISTINCT a.SCIRefno,a.ColorID,a.SuppColor--,b.* 
 INTO #SelectList2
 FROM #step2 a
 INNER JOIN Order_Article b ON a.OrderID = b.id
@@ -291,7 +291,7 @@ Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and
 where o.ID = '{this.poid}'
 
 select O.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
-,SQHD.Seq,SQHD.SCIRefno,SQHD.ColorID,QTt.Val
+,SQHD.Seq,SQHD.SCIRefno,SQHD.ColorID,SQHD.SuppColor,QTt.Val
 INTO #tmpQTFinal
 from Orders O
 Inner join Order_Qty OQ on O.ID=OQ.ID
@@ -312,8 +312,13 @@ where o.ID = '{this.poid}'
 
 
 SELECT  DISTINCT 
-		[Selected] = IIF(   EXISTS(SELECT 1 FROM #SelectList1 WHERE SCIRefno =psd.SCIRefno AND ColorID=psd.ColorID) OR
-							EXISTS(SELECT 1 FROM #SelectList2 WHERE SCIRefno =psd.SCIRefno AND ColorID=psd.ColorID)
+		[Selected] = IIF( (psd.IsForOtherBrand = 0 and 
+                            (EXISTS(SELECT 1 FROM #SelectList1 WHERE SCIRefno =psd.SCIRefno AND SuppColor = psd.SuppColor) OR
+							 EXISTS(SELECT 1 FROM #SelectList2 WHERE SCIRefno =psd.SCIRefno AND SuppColor = psd.SuppColor)))
+                          OR
+                          (psd.IsForOtherBrand = 1 and 
+                            (EXISTS(SELECT 1 FROM #SelectList1 WHERE SCIRefno =TR.FromSCIRefno AND SuppColor = TR.FromSuppColor) OR
+							 EXISTS(SELECT 1 FROM #SelectList2 WHERE SCIRefno =TR.FromSCIRefno AND SuppColor = TR.FromSuppColor)))
 						,1 ,0)
 		, psd.SCIRefno 
         , psd.Refno
@@ -350,28 +355,49 @@ OUTER APPLY(
 	WHERE UnitFrom='M' and  UnitTo = StockUnit.StockUnit
 )UnitRate
 OUTER APPLY(
-	SELECT SCIRefNo
-		,ColorID
-		,[Val]=SUM(((SeamLength  * Frequency * UseRatio ) +  (Allowance * Segment) )) 
-		,[Qty] = (	
-			SELECt [Qty]=SUM(b.Qty)
-			FROM #step1 a
-			INNER JOIN #tmp_sumQty b ON a.Article = b.Article
-			WHERE SCIRefNo=psd.SCIRefNo AND  ColorID= psd.ColorID AND a.Article=g.Article
-			GROUP BY a.Article
-		)
+    SELECT top 1 TR.FromSCIRefno,TR.FromSuppColor -- 理應是唯一
+    FROM PO_Supp PS 
+    INNER JOIN Thread_Replace_Detail_Detail TRDD ON PSD.SCIRefNo=TRDD.ToSCIRefno AND PSD.SuppColor=TRDD.ToBrandSuppColor AND PS.SuppID=TRDD.SuppID 
+    INNER JOIN Thread_Replace_Detail TRD ON TRDD.Thread_Replace_DetailUkey = TRD.Ukey
+    INNER JOIN Thread_Replace TR ON TRD.Thread_ReplaceUkey = TR.Ukey
+    WHERE PS.ID = PSD.ID AND PSD.SEQ1=PS.SEQ1
+)TR
+OUTER APPLY(
+	SELECT
+		 [Val]=SUM(((SeamLength  * Frequency * UseRatio ) +  (Allowance * Segment) )) 
+		,[Qty] = b.QTY
 	FROM DBO.GetThreadUsedQtyByBOT(psd.ID,{sqmMachineTypeIDs}) g
-	WHERE SCIRefNo= psd.SCIRefNo AND ColorID = psd.ColorID  
-	AND Article IN (
-		SELECt Article FROM #step1 WHERE SCIRefNo = psd.SCIRefNo  AND ColorID = psd.ColorID 
-	)
-	GROUP BY SCIRefNo,ColorID , Article
+    INNER JOIN #step1 s1 on s1.SCIRefNo = g.SCIRefNo AND s1.SuppColor = g.SuppColor AND s1.Article = g.Article
+	INNER JOIN #tmp_sumQty b ON s1.Article = b.Article
+	WHERE g.SCIRefNo= psd.SCIRefNo AND g.SuppColor = psd.SuppColor  
+	GROUP BY g.SCIRefNo, g.ColorID, g.Article, b.QTY
+)ThreadUsedQtyByBOT1
+OUTER APPLY(
+	SELECT
+		 [Val]=SUM(((SeamLength  * Frequency * UseRatio ) +  (Allowance * Segment) )) 
+		,[Qty] = b.QTY
+	FROM DBO.GetThreadUsedQtyByBOT(psd.ID,{sqmMachineTypeIDs}) g
+    INNER JOIN #step1 s1 on s1.SCIRefNo = g.SCIRefNo AND s1.SuppColor = g.SuppColor AND s1.Article = g.Article
+	INNER JOIN #tmp_sumQty b ON s1.Article = b.Article
+	WHERE g.SCIRefNo= TR.FromSCIRefno AND g.SuppColor = TR.FromSuppColor  
+	GROUP BY g.SCIRefNo, g.ColorID, g.Article, b.QTY
+)ThreadUsedQtyByBOT2
+OUTER APPLY(
+    select
+        Qty = iif(psd.IsForOtherBrand = 1, ThreadUsedQtyByBOT2.Qty, ThreadUsedQtyByBOT1.Qty),
+        Val = iif(psd.IsForOtherBrand = 1, ThreadUsedQtyByBOT2.Val, ThreadUsedQtyByBOT1.Val)
 )ThreadUsedQtyByBOT
 OUTER APPLY(
 	SELECT Val = SUM(t.Val)
 	FROM #tmpQTFinal　ｔ
-	WHERE t.SCIRefNo=psd.SCIRefno AND t.ColorID=psd.ColorID AND 1 = {sqmIsQuiting}
-)QT
+	WHERE t.SCIRefNo = psd.SCIRefno AND t.SuppColor = psd.SuppColor AND 1 = {sqmIsQuiting}
+)QT1
+OUTER APPLY(
+	SELECT Val = SUM(t.Val)
+	FROM #tmpQTFinal　ｔ
+	WHERE t.SCIRefNo = TR.FromSCIRefno AND t.SuppColor = TR.FromSuppColor AND 1 = {sqmIsQuiting}
+)QT2
+OUTER APPLY(select Val = iif(psd.IsForOtherBrand = 1, QT2.Val, QT1.Val))QT
 WHERE psd.ID='{this.poid}'
 AND psd.FabricType ='A'
 AND EXISTS(
@@ -455,9 +481,7 @@ OUTER APPLY(
 	),1,1,'')
 )SuppCol
 
-DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final,#final2,#tmp,#tmp_sumQty
-
-
+DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final,#final2,#tmp,#tmp_sumQty,#tmpQT,#tmpQTFinal
 ";
             #endregion
 
