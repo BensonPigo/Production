@@ -1051,6 +1051,7 @@ from #tmp a
 inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
 inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
 where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
+		and a.LastShift not in('O','D','N')
 		and ot.Price > 0 		    
 		and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
 			or ot.ArtworkTypeID <> 'SP_THREAD')
@@ -1141,6 +1142,7 @@ from #tmp a
 inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
 inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
 where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
+		and a.LastShift not in('I','D','N')
 		and ot.Price > 0 		    
 and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
 	or ot.ArtworkTypeID <> 'SP_THREAD')
