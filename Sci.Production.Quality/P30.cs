@@ -591,5 +591,11 @@ where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
             P02 callNextForm = new P02(MyUtility.Convert.GetString(this.txtSP.Text));
             callNextForm.ShowDialog(this);
         }
+
+        private void BtnMDFailbyCarton_Click(object sender, EventArgs e)
+        {
+            var form = new P30_MDFailbyCarton(this.CurrentMaintain["ID"].ToString());
+            form.ShowDialog();
+        }
     }
 }

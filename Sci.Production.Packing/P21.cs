@@ -32,6 +32,7 @@ namespace Sci.Production.Packing
             .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditingreadonly: false)
             .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditingreadonly: false)
             .Numeric("ShipQty", header: "Pack Qty", iseditingreadonly: true)
+            .Numeric("ErrQty", header: "Error Qty", iseditingreadonly: true)
             .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditingreadonly: false)
             .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditingreadonly: false)
             .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditingreadonly: false)
@@ -102,6 +103,7 @@ select distinct
     ,[RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
     ,[RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
     , ShipQty=(select sum(ShipQty) from PackingList_Detail pd2 with(nolock) where pd2.id=pd.id and pd2.ctnstartno=pd.ctnstartno)
+    , pe.ErrQty
 from PackErrTransfer pe with(nolock)
 left join orders o with(nolock) on pe.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest

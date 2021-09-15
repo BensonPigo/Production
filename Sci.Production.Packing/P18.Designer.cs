@@ -94,6 +94,7 @@
             this.boxPackingRemark = new Sci.Win.UI.EditBox();
             this.txtDest = new Sci.Production.Class.Txtcountry();
             this.chkVasShas = new Sci.Win.UI.CheckBox();
+            this.chkBrokenneedles = new Sci.Win.UI.CheckBox();
             this.tabControlScanArea.SuspendLayout();
             this.tabPageCarton.SuspendLayout();
             this.tabPageScan.SuspendLayout();
@@ -839,9 +840,23 @@
             this.chkVasShas.Text = "VAS/SHAS";
             this.chkVasShas.UseVisualStyleBackColor = true;
             // 
+            // chkBrokenneedles
+            // 
+            this.chkBrokenneedles.AutoSize = true;
+            this.chkBrokenneedles.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkBrokenneedles.IsSupportEditMode = false;
+            this.chkBrokenneedles.Location = new System.Drawing.Point(354, 153);
+            this.chkBrokenneedles.Name = "chkBrokenneedles";
+            this.chkBrokenneedles.ReadOnly = true;
+            this.chkBrokenneedles.Size = new System.Drawing.Size(126, 21);
+            this.chkBrokenneedles.TabIndex = 120;
+            this.chkBrokenneedles.Text = "Broken needles";
+            this.chkBrokenneedles.UseVisualStyleBackColor = true;
+            // 
             // P18
             // 
             this.ClientSize = new System.Drawing.Size(934, 662);
+            this.Controls.Add(this.chkBrokenneedles);
             this.Controls.Add(this.chkVasShas);
             this.Controls.Add(this.boxPackingRemark);
             this.Controls.Add(this.displayKIT);
@@ -948,6 +963,7 @@
             this.Controls.SetChildIndex(this.displayKIT, 0);
             this.Controls.SetChildIndex(this.boxPackingRemark, 0);
             this.Controls.SetChildIndex(this.chkVasShas, 0);
+            this.Controls.SetChildIndex(this.chkBrokenneedles, 0);
             this.tabControlScanArea.ResumeLayout(false);
             this.tabPageCarton.ResumeLayout(false);
             this.tabPageCarton.PerformLayout();
@@ -1029,5 +1045,6 @@
         private Win.UI.DisplayBox displayKIT;
         private Win.UI.EditBox boxPackingRemark;
         private Win.UI.CheckBox chkVasShas;
+        private Win.UI.CheckBox chkBrokenneedles;
     }
 }
