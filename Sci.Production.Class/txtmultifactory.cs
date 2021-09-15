@@ -21,25 +21,57 @@ namespace Sci.Production.Class
         /// </summary>
         public bool CheckProduceFty { get; set; } = false;
 
+        /// <summary>
+        /// IsForPackingA2B
+        /// </summary>
+        public bool IsForPackingA2B { get; set; } = false;
+
+        /// <summary>
+        /// IsForPackingA2B
+        /// </summary>
+        public bool IsDataFromA2B { get; set; } = false;
+
+        /// <summary>
+        /// SystemName
+        /// </summary>
+        public string SystemName { get; set; } = string.Empty;
+
         /// <inheritdoc/>
         protected override void OnPopUp(Win.UI.TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
-            string sqlWhere = "select ID from Factory WITH (NOLOCK) where Junk = 0 order by ID";
-            if (this.CheckProduceFty)
+
+            if (this.IsForPackingA2B)
             {
-                sqlWhere = "select ID from Factory WITH (NOLOCK) where Junk = 0 and IsProduceFty = 1 order by ID";
+                PopupFactoryForAtoB popupFactoryForAtoB = new PopupFactoryForAtoB(this.Text);
+                DialogResult result = popupFactoryForAtoB.ShowDialog();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.Text = popupFactoryForAtoB.ResultFactory;
+                this.IsDataFromA2B = popupFactoryForAtoB.IsDataFromA2B;
+                this.SystemName = popupFactoryForAtoB.SystemName;
             }
-
-            Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.Text, null, null, null);
-
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel)
+            else
             {
-                return;
-            }
+                string sqlWhere = "select ID from Factory WITH (NOLOCK) where Junk = 0 order by ID";
+                if (this.CheckProduceFty)
+                {
+                    sqlWhere = "select ID from Factory WITH (NOLOCK) where Junk = 0 and IsProduceFty = 1 order by ID";
+                }
 
-            this.Text = item.GetSelectedString();
+                Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.Text, null, null, null);
+
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.Text = item.GetSelectedString();
+            }
         }
     }
 }

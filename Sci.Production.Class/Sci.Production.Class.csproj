@@ -190,6 +190,12 @@
     <Compile Include="PictureSubPage.Designer.cs">
       <DependentUpon>PictureSubPage.cs</DependentUpon>
     </Compile>
+    <Compile Include="PopupFactoryForAtoB.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PopupFactoryForAtoB.Designer.cs">
+      <DependentUpon>PopupFactoryForAtoB.cs</DependentUpon>
+    </Compile>
     <Compile Include="ProductionGridExts.cs" />
     <Compile Include="ProductionEnv.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -780,6 +786,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="PopupFactoryForAtoB.resx">
+      <DependentUpon>PopupFactoryForAtoB.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TxtClogReason.resx">
       <DependentUpon>TxtClogReason.cs</DependentUpon>
     </EmbeddedResource>
@@ -895,6 +904,10 @@
     <None Include="Resources\delete.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <ProjectReference Include="..\Sci.Production.CallPmsAPI\Sci.Production.CallPmsAPI.csproj">
+      <Project>{fc94fcaf-9216-4a2d-9e89-15fe27aef028}</Project>
+      <Name>Sci.Production.CallPmsAPI</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

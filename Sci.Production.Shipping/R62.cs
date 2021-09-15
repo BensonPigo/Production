@@ -1,11 +1,13 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.CallPmsAPI;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -62,11 +64,145 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            string where = " left join ";
+            string sqlJoin = " left join ";
             if (this.ex)
             {
-                where = " inner join ";
+                sqlJoin = " inner join ";
             }
+
+            string sqlWhere = string.Empty;
+            #region where
+            if (!MyUtility.Check.Empty(this.dateDecDate1) && !MyUtility.Check.Empty(this.dateDecDate2))
+            {
+                sqlWhere += $@" and kd.Cdate between '{((DateTime)this.dateDecDate1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateDecDate2).ToString("yyyy/MM/dd")}'" + Environment.NewLine;
+            }
+
+            if (!MyUtility.Check.Empty(this.dateETD1) && !MyUtility.Check.Empty(this.dateETD2))
+            {
+                sqlWhere += $@"   and g.ETD between '{((DateTime)this.dateETD1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateETD2).ToString("yyyy/MM/dd")}'" + Environment.NewLine;
+            }
+
+            if (!MyUtility.Check.Empty(this.strDecNo1))
+            {
+                sqlWhere += $@" and kd.DeclareNo >= '{this.strDecNo1}'" + Environment.NewLine;
+            }
+
+            if (!MyUtility.Check.Empty(this.strDecNo2))
+            {
+                sqlWhere += $@" and kd.DeclareNo <= '{this.strDecNo2}'" + Environment.NewLine;
+            }
+
+            if (!MyUtility.Check.Empty(this.strInvNo1))
+            {
+                sqlWhere += $@" and g.id >= '{this.strInvNo1}'" + Environment.NewLine;
+            }
+
+            if (!MyUtility.Check.Empty(this.strInvNo2))
+            {
+                sqlWhere += $@" and g.id <= '{this.strInvNo2}'" + Environment.NewLine;
+            }
+
+            #endregion
+
+            #region get A2B data
+            string sqlGetGMTForA2B = $@"
+select  distinct
+        gd.PLFromRgCode,
+        g.ID
+from    GMTBooking g with (nolock)
+inner join  GMTBooking_Detail gd with (nolock) on g.ID = gd.ID
+{sqlJoin} KHExportDeclaration_Detail kdd with (nolock) on kdd.Invno=g.id
+{sqlJoin} KHExportDeclaration kd with (nolock) on kd.id=kdd.id 
+where 1 = 1
+{sqlWhere}
+";
+            DataTable dtGMTForA2B;
+            this.result = DBProxy.Current.Select(null, sqlGetGMTForA2B, out dtGMTForA2B);
+
+            if (!this.result)
+            {
+                return this.result;
+            }
+
+            DataTable dtPackingA2B;
+            string sqlFakePackingA2B = @"
+create table #tmpPackingA2B
+(
+    OrderID varchar(13),  
+    ShipQty int,
+    CTNQty  int,
+    NW  int,
+    GW  int,
+    AvgPrice  int
+)
+select * from #tmpPackingA2B
+";
+
+            this.result = DBProxy.Current.Select(null, sqlFakePackingA2B, out dtPackingA2B);
+            if (!this.result)
+            {
+                return this.result;
+            }
+
+            if (dtGMTForA2B.Rows.Count > 0)
+            {
+                var groupGMTForA2B = dtGMTForA2B.AsEnumerable().GroupBy(s => s["PLFromRgCode"].ToString())
+                                                .Select(s => new
+                                                {
+                                                    PLFromRgCode = s.Key,
+                                                    WhereInvNo = s.Select(groupItem => $"'{groupItem["ID"].ToString()}'").JoinToString(","),
+                                                });
+
+                foreach (var groupItem in groupGMTForA2B)
+                {
+                    string sqlGetPackingA2B = $@"
+
+select  pack.INVNo,
+        pack.OrderID,    
+        pack.ShipQty,
+        pack.CTNQty,
+        pack.NW,
+        pack.GW,
+        POPrice.AvgPrice
+from    (
+            select  pl.INVNo,
+                    pld.OrderID,
+            		ShipQty = sum(pld.ShipQty),
+            		CTNQty = sum(pld.CTNQty),
+            		NW = sum(pld.NW),
+            		GW = sum(pld.GW)
+            	from PackingList_Detail pld
+            	inner join PackingList pl on pl.id = pld.id
+            	where pl.INVNo in ({groupItem.WhereInvNo})
+            	group by pl.INVNo, pld.OrderID
+        ) pack
+left join (
+	        select a.INVNo, a.OrderID, [AvgPrice] = sum(ShipQty*POPrice)/sum(ShipQty)
+	        from (
+	        	select pl.INVNo,ShipQty = sum(pd2.ShipQty),pd2.OrderID,oup.SizeCode,oup.Article ,oup.POPrice
+	        	from PackingList_Detail pd2
+	        	inner join PackingList pl on pd2.ID = pl.ID
+	        	inner join Order_UnitPrice oup on   oup.Id= pd2.OrderID and 
+                                                    oup.Article = pd2.Article and 
+                                                    oup.SizeCode = pd2.SizeCode
+	        	where pl.INVNo in ({groupItem.WhereInvNo})
+	        	group by pl.INVNo, pd2.OrderID,oup.SizeCode,oup.Article,oup.POPrice
+	        ) a
+	        group by a.INVNo, OrderID
+)   POPrice on  POPrice.ORderID = pack.OrderID
+";
+                    this.result = PackingA2BWebAPI.GetDataBySql(groupItem.PLFromRgCode, sqlGetPackingA2B, out DataTable dtResultA2B);
+
+                    if (!this.result)
+                    {
+                        return this.result;
+                    }
+
+                    dtResultA2B.MergeTo(ref dtPackingA2B);
+                }
+            }
+
+            #endregion
 
             string sqlcmd = $@"
 select [Shipper] = g.Shipper 
@@ -113,78 +249,70 @@ select [Shipper] = g.Shipper
 					isnull(kdd.ActNetKg, (case when g.ShipModeID in ('A/C','A/P') then pld.NW else (pld.NW + ( pld.NW * 0.05))end)))
 	 , [Diff GW] = (isnull(kdd.WeightKg, (case when g.ShipModeID in ('A/C','A/P') then pld.GW else (pld.GW + ( pld.GW * 0.05)) end)) - 
 					isnull(kdd.ActWeightKg, (case when g.ShipModeID in ('A/C','A/P') then pld.GW else (pld.GW + ( pld.GW * 0.05))end)))
-from GMTBooking g
-{where} KHExportDeclaration_Detail kdd on kdd.Invno=g.id
-{where} KHExportDeclaration kd on kd.id=kdd.id 
+from GMTBooking g with (nolock)
+{sqlJoin} KHExportDeclaration_Detail kdd with (nolock) on kdd.Invno=g.id
+{sqlJoin} KHExportDeclaration kd with (nolock) on kd.id=kdd.id 
 outer apply(
-	select
-		pld.OrderID,
-		ShipQty = sum(pld.ShipQty),
-		CTNQty = sum(pld.CTNQty),
-		NW = sum(pld.NW),
-		GW = sum(pld.GW)
-	from PackingList_Detail pld
-	inner join PackingList pl on pl.id = pld.id
-	where pl.INVNo = g.ID and iif(kdd.orderid is not null, kdd.orderid,'') = iif(kdd.orderid is not null, pld.OrderID,'')
-	group by pld.OrderID
-)pld
+    select  OrderID,
+		    ShipQty = sum(ShipQty),
+		    CTNQty = sum(CTNQty),
+		    NW = sum(NW),
+		    GW = sum(GW)
+    from    (
+	            select
+	            	pld.OrderID,
+	            	ShipQty = sum(pld.ShipQty),
+	            	CTNQty = sum(pld.CTNQty),
+	            	NW = sum(pld.NW),
+	            	GW = sum(pld.GW)
+	            from PackingList_Detail pld
+	            inner join PackingList pl on pl.id = pld.id
+	            where pl.INVNo = g.ID and iif(kdd.orderid is not null, kdd.orderid,'') = iif(kdd.orderid is not null, pld.OrderID,'')
+	            group by pld.OrderID
+                union all
+                select  OrderID,
+	            	    ShipQty,
+	            	    CTNQty,
+	            	    NW,
+	            	    GW
+                from    #tmpPackingA2B
+                where   INVNo = g.ID and iif(kdd.orderid is not null, kdd.orderid,'') = iif(kdd.orderid is not null, OrderID,'')
+            ) mergeA2B group by OrderID
+) pld
 left join Orders o on o.ID = pld.OrderID
 left join Order_Location OL on OL.OrderID = pld.OrderID and ol.Location  = kdd.Location
 left join Brand b on b.ID = o.BrandID
 left join Country c on c.ID = kd.Dest
 outer apply(
-	select OrderID,AvgPrice = sum(ShipQty*POPrice)/sum(ShipQty)
-	from (
-		select ShipQty = sum(pd2.ShipQty),pd2.OrderID,oup.SizeCode,oup.Article ,oup.POPrice
-		from PackingList_Detail pd2
-		inner join PackingList p1 on pd2.ID = p1.ID
-		inner join Order_UnitPrice oup on oup.Id= pd2.OrderID
-		and oup.Article = pd2.Article and oup.SizeCode = pd2.SizeCode
-		where INVNo = g.ID
-		group by pd2.OrderID,oup.SizeCode,oup.Article,oup.POPrice
-	) a
-	where OrderID = o.ID
-	group by OrderID
-)POPrice
+    select  OrderID, AvgPrice = (sum(AvgPrice) * 1.0 / count(*))
+    from    (
+	        select OrderID,AvgPrice = sum(ShipQty*POPrice)/sum(ShipQty)
+	        from (
+	        	select ShipQty = sum(pd2.ShipQty),pd2.OrderID,oup.SizeCode,oup.Article ,oup.POPrice
+	        	from PackingList_Detail pd2
+	        	inner join PackingList p1 on pd2.ID = p1.ID
+	        	inner join Order_UnitPrice oup on   oup.Id= pd2.OrderID and 
+                                                    oup.Article = pd2.Article and 
+                                                    oup.SizeCode = pd2.SizeCode
+	        	where INVNo = g.ID
+	        	group by pd2.OrderID,oup.SizeCode,oup.Article,oup.POPrice
+	        ) a
+	        where OrderID = o.ID
+	        group by OrderID
+            union all
+            select  OrderID,AvgPrice
+            from    #tmpPackingA2B
+            where INVNo = g.ID
+    )   mergeA2B
+    group by OrderID
+) POPrice
 outer apply(select FOB = isnull(PoPrice.AvgPrice,o.PoPrice) * isnull(OL.rate, 1) / 100)r
-where 1=1
+where 1=1 
+{sqlWhere}
+order by kd.CDate, kd.DeclareNo, g.id
 ";
-            #region where
-            if (!MyUtility.Check.Empty(this.dateDecDate1) && !MyUtility.Check.Empty(this.dateDecDate2))
-            {
-                sqlcmd += $@" and kd.Cdate between '{((DateTime)this.dateDecDate1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateDecDate2).ToString("yyyy/MM/dd")}'" + Environment.NewLine;
-            }
 
-            if (!MyUtility.Check.Empty(this.dateETD1) && !MyUtility.Check.Empty(this.dateETD2))
-            {
-                sqlcmd += $@"   and g.ETD between '{((DateTime)this.dateETD1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateETD2).ToString("yyyy/MM/dd")}'" + Environment.NewLine;
-            }
-
-            if (!MyUtility.Check.Empty(this.strDecNo1))
-            {
-                sqlcmd += $@" and kd.DeclareNo >= '{this.strDecNo1}'" + Environment.NewLine;
-            }
-
-            if (!MyUtility.Check.Empty(this.strDecNo2))
-            {
-                sqlcmd += $@" and kd.DeclareNo <= '{this.strDecNo2}'" + Environment.NewLine;
-            }
-
-            if (!MyUtility.Check.Empty(this.strInvNo1))
-            {
-                sqlcmd += $@" and g.id >= '{this.strInvNo1}'" + Environment.NewLine;
-            }
-
-            if (!MyUtility.Check.Empty(this.strInvNo2))
-            {
-                sqlcmd += $@" and g.id <= '{this.strInvNo2}'" + Environment.NewLine;
-            }
-
-            sqlcmd += @" order by kd.CDate, kd.DeclareNo, g.id  ";
-
-            #endregion
-
-            if (!(this.result = DBProxy.Current.Select(null, sqlcmd, out this.printData)))
+            if (!(this.result = MyUtility.Tool.ProcessWithDatatable(dtPackingA2B, null, sqlcmd, out this.printData, temptablename: "#tmpPackingA2B")))
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + this.result.ToString());
                 return failResult;

@@ -144,7 +144,7 @@ oq.CFAFinalInspectResult
 ,oq.CFA3rdInspectDate
 ,oq.CFARemark
 FROM Order_QtyShip oq
-INNER JOIN Orders o ON o.ID = oq.Id
+INNER JOIN Orders o ON o.ID = oq.Id and exists (select 1 from Factory f where o.FactoryId = id and f.IsProduceFty = 1)
 LEFT JOIN OrderType ot ON o.OrderTypeID = ot.ID AND o.BrandID = ot.BrandID
 INNER JOIN Factory f ON o.FactoryID = f.ID
 LEFT JOIN Country c ON o.Dest = c.ID
@@ -322,7 +322,7 @@ o.MDivisionID
 ,oq.CFARemark
 INTO #tmp
 FROM Order_QtyShip oq
-INNER JOIN Orders o ON o.ID = oq.Id
+INNER JOIN Orders o ON o.ID = oq.Id and exists (select 1 from Factory f where o.FactoryId = id and f.IsProduceFty = 1)
 LEFT JOIN OrderType ot ON o.OrderTypeID = ot.ID AND o.BrandID = ot.BrandID
 INNER JOIN Factory f ON o.FactoryID = f.ID
 LEFT JOIN Country c ON o.Dest = c.ID

@@ -64,6 +64,7 @@ CREATE TABLE [dbo].[System] (
     [NoRestrictOrdersDelivery]   BIT            CONSTRAINT [DF_System_NoRestrictOrdersDelivery] DEFAULT ((0)) NOT NULL,
     [RFCardEraseBeforePrinting]  BIT            DEFAULT ((0)) NOT NULL,
     [Region] Varchar (2) NOT NULL CONSTRAINT [DF_System_Region]  DEFAULT(''), 
+    [CartonTransferToSisterFty] BIT NOT NULL CONSTRAINT [DF_System_CartonTransferToSisterFty]  DEFAULT((0)), 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
@@ -79,6 +80,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Misc Local 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Misc Local Purchase �۰�Approve���Ѽ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'MiscPOApproveDay';
 
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否要將箱子轉至姊妹廠', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'CartonTransferToSisterFty';
 
 
 

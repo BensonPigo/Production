@@ -11,7 +11,9 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.CallPmsAPI;
 using Sci.Production.PublicPrg;
+using static Sci.Production.CallPmsAPI.PackingA2BWebAPI;
 using static Sci.Production.PublicPrg.Prgs;
 
 namespace Sci.Production.Shipping
@@ -26,7 +28,6 @@ namespace Sci.Production.Shipping
         private DataTable plData;
         private DataTable dtDeleteGBHistory;
         private DataSet allData = new DataSet();
-        private IList<string> updateCmds = new List<string>();
 
         /// <summary>
         /// P10
@@ -46,9 +47,9 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "1=0" : string.Format("p.ShipPlanID ='{0}'", MyUtility.Convert.GetString(e.Master["ID"]));
-            string sqlCmd = string.Format(
-                @"
+            string masterID;
+            string whereDetail = (e.Master == null) ? "1=0" : string.Format("p.ShipPlanID ='{0}'", MyUtility.Convert.GetString(e.Master["ID"]));
+            string sqlCmd = @"
 select p.ID
 , OrderID = STUFF((	
 	select CONCAT(',',cast(a.OrderID as nvarchar)) 
@@ -78,7 +79,6 @@ select p.ID
 , p.ShipQty
 , p.PulloutID
 , Pullout.SendToTPE
-
 , [OrderShipmodeSeq] = STUFF ((select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar)) 
                                 from (
                                     select pd.OrderShipmodeSeq 
@@ -119,11 +119,50 @@ select p.ID
                             where pd.ID = p.id and oqs.IDD is not null
                             for xml path('')
                           ), 1, 1, '') 
+,[PLFromRgCode] = '{1}'
 from PackingList p WITH (NOLOCK) 
 left join Pullout WITH (NOLOCK)  on Pullout.ID = p.PulloutID and Pullout.Status <> 'NEW'
 where {0} 
-order by p.ID", masterID);
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.plData);
+order by p.ID";
+            DualResult result = DBProxy.Current.Select(null, string.Format(sqlCmd, whereDetail, string.Empty), out this.plData);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+
+            masterID = (e.Master == null) ? "1=0" : string.Format("g.ShipPlanID ='{0}'", MyUtility.Convert.GetString(e.Master["ID"]));
+            string sqlGMTBooking_Detail = $@"
+select distinct gd.PLFromRgCode 
+from GMTBooking_Detail gd with (nolock) 
+where exists(select 1 from GMTBooking g with (nolock) where g.ID = gd.ID and {masterID} )";
+
+            DataTable dtPLFromRgCode;
+            result = DBProxy.Current.Select(null, sqlGMTBooking_Detail, out dtPLFromRgCode);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                goto continuMain;
+            }
+            else
+            {
+                foreach (DataRow drPLFromRgCode in dtPLFromRgCode.Rows)
+                {
+                    DataTable dtPlDataA2B;
+                    string plFromRgCode = drPLFromRgCode["PLFromRgCode"].ToString();
+                    result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, string.Format(sqlCmd, whereDetail, plFromRgCode), out dtPlDataA2B);
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        goto continuMain;
+                    }
+
+                    dtPlDataA2B.MergeTo(ref this.plData);
+                }
+            }
+
+        continuMain:
 
             masterID = (e.Master == null) ? "1=0" : string.Format("g.ShipPlanID ='{0}'", MyUtility.Convert.GetString(e.Master["ID"]));
             this.DetailSelectCommand = string.Format(
@@ -154,6 +193,60 @@ where {0}
 order by g.ID", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
+        }
+
+        private DualResult RefreshDetailClogCTNQtyFromA2B()
+        {
+            DualResult result;
+            string sqlGMTBooking_Detail = $@"
+select distinct gd.PLFromRgCode 
+from GMTBooking_Detail gd with (nolock) 
+where exists(select 1 from GMTBooking g with (nolock) where g.ID = gd.ID and g.ShipPlanID ='{this.CurrentMaintain["ID"]}' )";
+
+            DataTable dtPLFromRgCode;
+            result = DBProxy.Current.Select(null, sqlGMTBooking_Detail, out dtPLFromRgCode);
+
+            if (!result)
+            {
+                return result;
+            }
+
+            if (dtPLFromRgCode.Rows.Count == 0)
+            {
+                return new DualResult(true);
+            }
+
+            string sqlCmd = $@"
+select  p.INVNo,
+        [ClogCTNQty] = isnull(sum(pd.CTNQty),0) 
+from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
+	where   p.ShipPlanID ='{this.CurrentMaintain["ID"]}' and 
+            p.ID = pd.ID and 
+            pd.ReceiveDate is not null and
+            pd.CFAReceiveDate is null
+group by    p.INVNo
+";
+
+            foreach (DataRow drPLFromRgCode in dtPLFromRgCode.Rows)
+            {
+                DataTable dtClogCTNQtyByInvNo;
+                result = PackingA2BWebAPI.GetDataBySql(drPLFromRgCode["PLFromRgCode"].ToString(), sqlCmd, out dtClogCTNQtyByInvNo);
+                if (!result)
+                {
+                    return result;
+                }
+
+                foreach (DataRow dr in dtClogCTNQtyByInvNo.Rows)
+                {
+                    var matchInvNoDatas = this.DetailDatas.Where(s => s["ID"].ToString() == dr["INVNo"].ToString());
+                    foreach (var matchedItem in matchInvNoDatas)
+                    {
+                        matchedItem["ClogCTNQty"] = MyUtility.Convert.GetInt(matchedItem["ClogCTNQty"]) + MyUtility.Convert.GetInt(dr["ClogCTNQty"]);
+                    }
+                }
+            }
+
+            return new DualResult(true);
         }
 
         /// <inheritdoc/>
@@ -216,7 +309,7 @@ select [Type] = 'T'
 	, sdh.AddDate
 from ShipPlan_DeleteGBHistory sdh
 left join ShippingReason sr on sdh.ReasonID = sr.ID
-where sdh.ID = '{0}'",  this.CurrentMaintain["id"]);
+where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
             DualResult result = DBProxy.Current.Select(null, sqlctnr, out this.dtDeleteGBHistory);
             this.btnDeleteGBHistory.Enabled = false;
             this.btnDeleteGBHistory.ForeColor = Color.Black;
@@ -307,7 +400,7 @@ where sdh.ID = '{0}'",  this.CurrentMaintain["id"]);
             {
                 this.gridDetailPackingList.ValidateControl();
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(this.detailgrid.GetSelectedRowIndex());
-                if (dr != null)
+                if (dr != null && this.plData != null)
                 {
                     string filter = string.Format("InvNo = '{0}'", MyUtility.Convert.GetString(dr["ID"]));
                     this.plData.DefaultView.RowFilter = filter;
@@ -405,6 +498,12 @@ where sdh.ID = '{0}'",  this.CurrentMaintain["id"]);
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
+            DualResult result = this.RefreshDetailClogCTNQtyFromA2B();
+            if (!result)
+            {
+                return result;
+            }
+
             #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
             bool gMTCompleteCheck = this.GMTCompleteCheck();
             if (!gMTCompleteCheck)
@@ -420,6 +519,18 @@ where sdh.ID = '{0}'",  this.CurrentMaintain["id"]);
             }
 
             return base.ClickEditBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult OnDetailViewPost()
+        {
+            DualResult result = this.RefreshDetailClogCTNQtyFromA2B();
+            if (!result)
+            {
+                return result;
+            }
+
+            return base.OnDetailViewPost();
         }
 
         /// <inheritdoc/>
@@ -518,23 +629,26 @@ where not exists (select 1 from ShipPlan_DeleteGBHistory sdh where sdh.ID = t.ID
         }
 
         /// <inheritdoc/>
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+
+            DualResult result = this.RefreshDetailClogCTNQtyFromA2B();
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+        }
+
+        /// <inheritdoc/>
         protected override DualResult OnSaveDetail(IList<DataRow> details, ITableSchema detailtableschema)
         {
-            this.updateCmds.Clear();
+            IList<string> updateCmds = new List<string>();
+            Dictionary<string, IList<string>> updateCmdsA2B = new Dictionary<string, IList<string>>();
             this.gridDetailPackingList.EndEdit();
             this.listControlBindingSource1.EndEdit();
 
             DataTable packingListDt = (DataTable)this.listControlBindingSource1.DataSource;
-
-            // 避免ISP20181052的狀況發生，因此從修改PackingList的語法要跟GMTBooking綁在一起，分開作
-            // foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
-            // {
-            //    if (dr.RowState == DataRowState.Modified || dr.RowState == DataRowState.Added)
-            //    {
-            //        this.UpdatePLCmd(dr);
-            //        continue;
-            //    }
-            // }
 
             // 未篩選過的packingList
             DataTable packingList_List = (DataTable)this.listControlBindingSource1.DataSource;
@@ -543,11 +657,12 @@ where not exists (select 1 from ShipPlan_DeleteGBHistory sdh where sdh.ID = t.ID
             {
                 if (dr.RowState == DataRowState.Modified || dr.RowState == DataRowState.Added)
                 {
-                    this.updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '{0}' where ID = '{1}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(dr["ID"])));
+                    updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '{0}' where ID = '{1}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(dr["ID"])));
+                    string invNo = MyUtility.Convert.GetString(dr["ID"]);
 
                     // 根據GMTBooking.ID篩選出對應的PackingList，這些是預先存在Form裡面的，不是DB裡面最新的資料
                     DataTable packingListDt_on_Form = null;
-                    var rows = packingList_List.AsEnumerable().Where(o => o["INVNo"].ToString() == MyUtility.Convert.GetString(dr["ID"]));
+                    var rows = packingList_List.AsEnumerable().Where(o => o["INVNo"].ToString() == invNo);
 
                     if (rows.Any())
                     {
@@ -556,43 +671,79 @@ where not exists (select 1 from ShipPlan_DeleteGBHistory sdh where sdh.ID = t.ID
 
                     // DB可能已經被修改，因此回DB撈出GMTBooking底下最新的PackingList
                     DataTable packingListDt_new;
-                    string sqlCmd = string.Format("SELECT ID,InspDate,InspStatus,PulloutDate FROM PackingList WHERE INVNo='{0}' ", MyUtility.Convert.GetString(dr["ID"]));
-                    DualResult result = DBProxy.Current.Select(null, sqlCmd, out packingListDt_new);
-                    if (result)
-                    {
-                        foreach (DataRow pldatarow in packingListDt_new.Rows)
-                        {
-                            // 因為User會修改InspDate、InspStatus、PulloutDate三個欄位，這些欄會在Form上面，因此要把Form上面的PackingList、DB裡的PackingList比對
-                            // packingListDt_new是最新的PackingList清單，packingListDt_on_Form是User修改過的PackingList清單
-                            DataTable packingList_Merge = null;
-                            if (packingListDt_on_Form == null)
-                            {
-                                return new DualResult(false, $"<GB#>:{MyUtility.Convert.GetString(dr["ID"])} does not have <Packinglist#>");
-                            }
+                    string sqlCmd = "SELECT ID, InspDate, InspStatus, PulloutDate, [PLFromRgCode] = '{1}' FROM PackingList WHERE INVNo='{0}' ";
+                    DualResult result = DBProxy.Current.Select(null, string.Format(sqlCmd, invNo, string.Empty), out packingListDt_new);
 
-                            var rows1 = packingListDt_on_Form.AsEnumerable().Where(o => o["ID"].ToString() == pldatarow["ID"].ToString());
-                            if (rows1.Any())
-                            {
-                                packingList_Merge = rows1.CopyToDataTable();
-                            }
-
-                            // 如果該筆資料packingListDt_on_Form有，但不存在packingListDt_new，表示這筆PackingList是被Import到Form上面後，其他功能在DB裡面異動過
-                            // 這類的PackingList就不UPDATE
-                            if (packingList_Merge.Rows.Count > 0)
-                            {
-                                pldatarow["InspDate"] = packingList_Merge.Rows[0]["InspDate"];
-                                pldatarow["InspStatus"] = packingList_Merge.Rows[0]["InspStatus"];
-                                pldatarow["PulloutDate"] = packingList_Merge.Rows[0]["PulloutDate"];
-                                this.UpdatePLCmd(pldatarow, MyUtility.Convert.GetString(dr["ID"]));
-                            }
-
-                            continue;
-                        }
-                    }
-                    else
+                    if (!result)
                     {
                         DualResult failResult = new DualResult(false, "Update fail!!\r\n" + result.ToString());
                         return failResult;
+                    }
+
+                    DataTable dtPLFromRgCode;
+                    string sqlGetPLFromRgCode = $"select distinct PLFromRgCode from GMTBooking_Detail with (nolock) where ID = '{invNo}'";
+
+                    result = DBProxy.Current.Select(null, sqlGetPLFromRgCode, out dtPLFromRgCode);
+                    if (!result)
+                    {
+                        return result;
+                    }
+
+                    foreach (DataRow drPLFromRgCode in dtPLFromRgCode.Rows)
+                    {
+                        DataTable dtpPckingListDt_newA2B;
+                        string plFromRgCode = drPLFromRgCode["PLFromRgCode"].ToString();
+
+                        result = PackingA2BWebAPI.GetDataBySql(drPLFromRgCode["PLFromRgCode"].ToString(), string.Format(sqlCmd, invNo, plFromRgCode), out dtpPckingListDt_newA2B);
+                        if (!result)
+                        {
+                            return result;
+                        }
+
+                        dtpPckingListDt_newA2B.MergeTo(ref packingListDt_new);
+                    }
+
+                    foreach (DataRow pldatarow in packingListDt_new.Rows)
+                    {
+                        // 因為User會修改InspDate、InspStatus、PulloutDate三個欄位，這些欄會在Form上面，因此要把Form上面的PackingList、DB裡的PackingList比對
+                        // packingListDt_new是最新的PackingList清單，packingListDt_on_Form是User修改過的PackingList清單
+                        DataTable packingList_Merge = null;
+                        if (packingListDt_on_Form == null)
+                        {
+                            return new DualResult(false, $"<GB#>:{MyUtility.Convert.GetString(dr["ID"])} does not have <Packinglist#>");
+                        }
+
+                        var rows1 = packingListDt_on_Form.AsEnumerable().Where(o => o["ID"].ToString() == pldatarow["ID"].ToString());
+                        if (rows1.Any())
+                        {
+                            packingList_Merge = rows1.CopyToDataTable();
+                        }
+
+                        // 如果該筆資料packingListDt_on_Form有，但不存在packingListDt_new，表示這筆PackingList是被Import到Form上面後，其他功能在DB裡面異動過
+                        // 這類的PackingList就不UPDATE
+                        if (packingList_Merge.Rows.Count > 0)
+                        {
+                            pldatarow["InspDate"] = packingList_Merge.Rows[0]["InspDate"];
+                            pldatarow["InspStatus"] = packingList_Merge.Rows[0]["InspStatus"];
+                            pldatarow["PulloutDate"] = packingList_Merge.Rows[0]["PulloutDate"];
+                            string updatePlSql = this.UpdatePLCmd(pldatarow, MyUtility.Convert.GetString(dr["ID"]));
+                            if (MyUtility.Check.Empty(pldatarow["PLFromRgCode"]))
+                            {
+                                updateCmds.Add(updatePlSql);
+                            }
+                            else
+                            {
+                                string plFromRgCode = pldatarow["PLFromRgCode"].ToString();
+                                if (!updateCmdsA2B.ContainsKey(plFromRgCode))
+                                {
+                                    updateCmdsA2B.Add(plFromRgCode, new List<string>());
+                                }
+
+                                updateCmdsA2B[plFromRgCode].Add(updatePlSql);
+                            }
+                        }
+
+                        continue;
                     }
 
                     continue;
@@ -600,24 +751,28 @@ where not exists (select 1 from ShipPlan_DeleteGBHistory sdh where sdh.ID = t.ID
 
                 if (dr.RowState == DataRowState.Deleted)
                 {
-                    this.updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '' where ID = '{0}';", MyUtility.Convert.GetString(dr["ID", DataRowVersion.Original])));
-                    this.updateCmds.Add(this.DeletePLCmd("InvNo", MyUtility.Convert.GetString(dr["ID", DataRowVersion.Original])));
+                    updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '' where ID = '{0}';", MyUtility.Convert.GetString(dr["ID", DataRowVersion.Original])));
+
+                    string updateSqlDeletePacking = this.DeletePLCmd("InvNo", MyUtility.Convert.GetString(dr["ID", DataRowVersion.Original]));
+                    updateCmds.Add(updateSqlDeletePacking);
+                    List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(dr["ID", DataRowVersion.Original].ToString());
+
+                    foreach (string plFromRgCode in listPLFromRgCode)
+                    {
+                        if (!updateCmdsA2B.ContainsKey(plFromRgCode))
+                        {
+                            updateCmdsA2B.Add(plFromRgCode, new List<string>());
+                        }
+
+                        updateCmdsA2B[plFromRgCode].Add(updateSqlDeletePacking);
+                    }
+
                     continue;
                 }
             }
 
-            // DataTable dtPklst = plData;
-            //            int count = plData.Rows.Count;
-
-            // foreach (DataRow dr in dtPklst.Rows)
-            //            {
-            //                // 20161206 確認正確的值都有insert
-            //                updateCmds.Add(string.Format("update PackingList set ShipPlanID = '{0}', InspDate='{1}' , InspStatus='{2}',PulloutDate='{3}' where id = '{4}';", MyUtility.Convert.GetString(CurrentMaintain["ID"]), dr["InspDate"], dr["InspStatus"],Convert.ToDateTime(dr["PulloutDate"]).ToString("yyyy/MM/dd"),
-            // MyUtility.Convert.GetString(dr["ID"])));
-            //            }
-
             // 執行更新
-            if (this.updateCmds.Count != 0)
+            if (updateCmds.Count != 0)
             {
                 DualResult result;
 
@@ -625,12 +780,25 @@ where not exists (select 1 from ShipPlan_DeleteGBHistory sdh where sdh.ID = t.ID
                 {
                     try
                     {
-                        result = DBProxy.Current.Executes(null, this.updateCmds);
+                        result = DBProxy.Current.Executes(null, updateCmds);
                         if (!result)
                         {
                             scope.Dispose();
                             DualResult failResult = new DualResult(false, "Update fail!!\r\n" + result.ToString());
                             return failResult;
+                        }
+
+                        foreach (KeyValuePair<string, IList<string>> updA2BItems in updateCmdsA2B)
+                        {
+                            string updateA2BSQL = updA2BItems.Value.JoinToString(string.Empty);
+                            result = PackingA2BWebAPI.ExecuteBySql(updA2BItems.Key, updateA2BSQL);
+
+                            if (!result)
+                            {
+                                scope.Dispose();
+                                DualResult failResult = new DualResult(false, "Update fail!!\r\n" + result.ToString());
+                                return failResult;
+                            }
                         }
 
                         scope.Complete();
@@ -668,12 +836,47 @@ where not exists (select 1 from ShipPlan_DeleteGBHistory sdh where sdh.ID = t.ID
         /// <inheritdoc/>
         protected override DualResult OnDeleteDetails()
         {
-            this.updateCmds.Clear();
-            this.updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '' where ShipPlanID = '{0}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
-            this.updateCmds.Add(this.DeletePLCmd("ShipPlanID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
-            DualResult result = DBProxy.Current.Executes(null, this.updateCmds);
+            List<string> updateCmds = new List<string>();
+            updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '' where ShipPlanID = '{0}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
-            return result;
+            string sqlDeletePackingByShipPlanID = this.DeletePLCmd("ShipPlanID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            updateCmds.Add(sqlDeletePackingByShipPlanID);
+
+            using (TransactionScope scope = new TransactionScope())
+            {
+                try
+                {
+                    DualResult result = DBProxy.Current.Executes(null, updateCmds);
+
+                    if (!result)
+                    {
+                        scope.Dispose();
+                        return result;
+                    }
+
+                    List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByShipPlanID(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+                    foreach (string plFromRgCode in listPLFromRgCode)
+                    {
+                        result = PackingA2BWebAPI.ExecuteBySql(plFromRgCode, sqlDeletePackingByShipPlanID);
+                        if (!result)
+                        {
+                            scope.Dispose();
+                            return result;
+                        }
+                    }
+
+                    scope.Complete();
+                    scope.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    scope.Dispose();
+                    return new DualResult(false, ex);
+                }
+            }
+
+            return new DualResult(true);
         }
 
         /// <inheritdoc/>
@@ -684,28 +887,107 @@ where not exists (select 1 from ShipPlan_DeleteGBHistory sdh where sdh.ID = t.ID
                 return false;
             }
 
+            List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByShipPlanID(this.CurrentMaintain["ID"].ToString());
+
             string sqlCmd = string.Format(
-                @"select p.ShipPlanID,p.INVNo,g.BrandID,g.ShipModeID, (g.Forwarder+'-'+ls.Abb) as Forwarder, g.CYCFS,
-g.SONo,g.CutOffDate,concat(fd.WhseNo,'-',fd.Address) as WhseNo,
-iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed')) as Status,
-g.TotalCTNQty,g.TotalCBM,
-(select isnull(sum(pd1.CTNQty),0) from PackingList p1 WITH (NOLOCK) ,PackingList_Detail pd1 WITH (NOLOCK) where p1.INVNo = g.ID and p1.ID = pd1.ID and pd1.ReceiveDate is not null) as ClogCTNQty,
-p.ID,(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')) as OrderID,
-(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery,
-p.Status as PLStatus,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID and pd.ReceiveDate is not null) as PLClogCTNQty,
-p.InspDate,p.InspStatus,p.PulloutDate
+                @"select 
+p.ShipPlanID,
+p.INVNo,
+g.BrandID,
+g.ShipModeID, 
+[Forwarder] = (g.Forwarder+'-'+ls.Abb), 
+g.CYCFS,
+g.SONo,
+g.CutOffDate,
+[WhseNo] = concat(fd.WhseNo,'-',fd.Address),
+[Status] = iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed')),
+g.TotalCTNQty,
+g.TotalCBM,
+[ClogCTNQty] = (select isnull(sum(pd1.CTNQty),0) 
+                from PackingList p1 WITH (NOLOCK) ,
+                PackingList_Detail pd1 WITH (NOLOCK) where p1.INVNo = p.INVNo and p1.ID = pd1.ID and pd1.ReceiveDate is not null),
+p.ID,
+[OrderID] = (select cast(a.OrderID as nvarchar) +',' 
+                from (select distinct OrderID 
+                        from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')),
+[BuyerDelivery] = (select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq 
+                    from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, 
+                        Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq),
+[PLStatus] = p.Status,
+p.CTNQty,
+p.CBM,
+[PLClogCTNQty] = (select sum(CTNQty) from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID and pd.ReceiveDate is not null),
+p.InspDate,
+p.InspStatus,
+p.PulloutDate
 from PackingList p WITH (NOLOCK) 
 left join GMTBooking g WITH (NOLOCK) on p.INVNo = g.ID
 left join ForwarderWhse_Detail fd WITH (NOLOCK) on g.ForwarderWhse_DetailUKey = fd.UKey
 left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
 where p.ShipPlanID = '{0}'
 order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
             DataTable excelData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out excelData);
+
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Query data fail!!\r\n" + result.ToString());
                 return false;
+            }
+
+            string sqlGetGMTBookingInfoForA2B = @"
+alter table #tmp alter column INVNo varchar(25)
+
+select  t.ShipPlanID,
+        t.INVNo,
+        g.BrandID,
+        g.ShipModeID, 
+        [Forwarder] = (g.Forwarder+'-'+ls.Abb), 
+        g.CYCFS,
+        g.SONo,
+        g.CutOffDate,
+        [WhseNo] = concat(fd.WhseNo,'-',fd.Address),
+        [Status] = iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed')),
+        g.TotalCTNQty,
+        g.TotalCBM,
+        t.ClogCTNQty,
+        t.ID,
+        t.OrderID,
+        t.BuyerDelivery,
+        t.PLStatus,
+        t.CTNQty,
+        t.CBM,
+        t.PLClogCTNQty,
+        t.InspDate,
+        t.InspStatus,
+        t.PulloutDate
+from #tmp t
+left join GMTBooking g WITH (NOLOCK) on t.INVNo = g.ID
+left join ForwarderWhse_Detail fd WITH (NOLOCK) on g.ForwarderWhse_DetailUKey = fd.UKey
+left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
+";
+
+            foreach (string plFromRgCode in listPLFromRgCode)
+            {
+                DataTable dtExcelDataA2B;
+
+                result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, sqlCmd, out dtExcelDataA2B);
+
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox("Query data fail!!\r\n" + result.ToString());
+                    return false;
+                }
+
+                result = MyUtility.Tool.ProcessWithDatatable(dtExcelDataA2B, null, sqlGetGMTBookingInfoForA2B, out dtExcelDataA2B);
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox("Query data fail!!\r\n" + result.ToString());
+                    return false;
+                }
+
+                dtExcelDataA2B.MergeTo(ref excelData);
             }
 
             string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P10.xltx";
@@ -763,16 +1045,16 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
         }
 
         // 組Update PackingList的SQL
-        private void UpdatePLCmd(DataRow pldatarow, string iNVno)
+        private string UpdatePLCmd(DataRow pldatarow, string iNVno)
         {
-            this.updateCmds.Add(string.Format(
+            return string.Format(
                 "update PackingList set ShipPlanID = '{0}', InspDate = {1}, InspStatus = '{2}', PulloutDate = {3} where ID = '{4}' AND INVno='{5}';",
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
                 MyUtility.Check.Empty(pldatarow["InspDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["InspDate"]).ToString("yyyy/MM/dd") + "'",
                 MyUtility.Convert.GetString(pldatarow["InspStatus"]),
                 MyUtility.Check.Empty(pldatarow["PulloutDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["PulloutDate"]).ToString("yyyy/MM/dd") + "'",
                 MyUtility.Convert.GetString(pldatarow["ID"]),
-                iNVno));
+                iNVno);
         }
 
         // 組(Delete)Update PackingList的SQL
@@ -903,6 +1185,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
 
             this.CheckIDD();
             this.CheckPulloutputIDD();
+            List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByShipPlanID(this.CurrentMaintain["ID"].ToString());
 
             // Pullout Date有空值就不可以Confirm
             string sqlCmd = string.Format("select ID,InvNo from PackingList WITH (NOLOCK) where ShipPlanID = '{0}' and PulloutDate is null", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
@@ -913,19 +1196,30 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
                 MyUtility.Msg.ErrorBox("Check Pullout Date error:\r\n" + result.ToString());
                 return;
             }
-            else
-            {
-                StringBuilder msg = new StringBuilder();
-                if (dt.Rows.Count > 0)
-                {
-                    foreach (DataRow dr in dt.Rows)
-                    {
-                        msg.Append(string.Format("GB#: {0}, Packing No:{1}\n\r", MyUtility.Convert.GetString(dr["InvNo"]), MyUtility.Convert.GetString(dr["ID"])));
-                    }
 
-                    MyUtility.Msg.WarningBox("Below data's pullout date is empty, can't confirm!!\r\n" + msg.ToString());
+            foreach (string plFromRgCode in listPLFromRgCode)
+            {
+                DataTable dtCheckPulloutA2B;
+                result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, sqlCmd, out dtCheckPulloutA2B);
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox("Check Pullout Date error:\r\n" + result.ToString());
                     return;
                 }
+
+                dtCheckPulloutA2B.MergeTo(ref dt);
+            }
+
+            StringBuilder msg = new StringBuilder();
+            if (dt.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    msg.Append(string.Format("GB#: {0}, Packing No:{1}\n\r", MyUtility.Convert.GetString(dr["InvNo"]), MyUtility.Convert.GetString(dr["ID"])));
+                }
+
+                MyUtility.Msg.WarningBox("Below data's pullout date is empty, can't confirm!!\r\n" + msg.ToString());
+                return;
             }
 
             // Inspection date不為空但是Inspection status為空就不可以Confirm
@@ -936,27 +1230,36 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
                 MyUtility.Msg.ErrorBox("Check Inspection error:\r\n" + result.ToString());
                 return;
             }
-            else
-            {
-                StringBuilder msg1 = new StringBuilder();
-                if (dt.Rows.Count > 0)
-                {
-                    foreach (DataRow dr in dt.Rows)
-                    {
-                        msg1.Append(string.Format("GB#: {0}, Packing No:{1}\n\r", MyUtility.Convert.GetString(dr["InvNo"]), MyUtility.Convert.GetString(dr["ID"])));
-                    }
 
-                    MyUtility.Msg.WarningBox("Below data's est. inspection date not empty but inspection status is empty, can't confirm!!\r\n" + msg1.ToString());
+            foreach (string plFromRgCode in listPLFromRgCode)
+            {
+                DataTable dtCheckInspectionA2B;
+                result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, sqlCmd, out dtCheckInspectionA2B);
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox("Check Inspection error:\r\n" + result.ToString());
                     return;
                 }
+
+                dtCheckInspectionA2B.MergeTo(ref dt);
+            }
+
+            StringBuilder msg1 = new StringBuilder();
+            if (dt.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    msg1.Append(string.Format("GB#: {0}, Packing No:{1}\n\r", MyUtility.Convert.GetString(dr["InvNo"]), MyUtility.Convert.GetString(dr["ID"])));
+                }
+
+                MyUtility.Msg.WarningBox("Below data's est. inspection date not empty but inspection status is empty, can't confirm!!\r\n" + msg1.ToString());
+                return;
             }
 
             #region 檢查PackingList_Detail.ReceiveDate欄位不可為空白
             StringBuilder msgReceDate = new StringBuilder();
             DataTable dtRec;
-            DBProxy.Current.Select(
-                null,
-                string.Format(
+            string sqlCheckReceiveDate = string.Format(
                     @"
 select distinct p1.id 
 from PackingList p1
@@ -964,7 +1267,70 @@ inner join PackingList_Detail p2 on p1.ID=p2.ID
 where ShipPlanID='{0}'
 and p1.Type='B'
 and p2.CTNQty > 0
-and p2.ReceiveDate is null ", this.CurrentMaintain["id"]), out dtRec);
+and p2.ReceiveDate is null ", this.CurrentMaintain["id"]);
+
+            string sqlCheckPLCtnRecvFMRgCodeDate = string.Format(
+                    @"
+select distinct p.id 
+from PackingList p
+where ShipPlanID='{0}'
+and p.Type='B'
+and p.CTNQty > 0
+and p.PLCtnRecvFMRgCodeDate is null ", this.CurrentMaintain["id"]);
+
+            result = DBProxy.Current.Select(null, sqlCheckReceiveDate, out dtRec);
+
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Check ReceiveDate error:\r\n" + result.ToString());
+                return;
+            }
+
+            foreach (string plFromRgCode in listPLFromRgCode)
+            {
+                string sqlCheckA2BSisterFty = "select CartonTransferToSisterFty from system with (nolock)";
+                DataRow drResult;
+                PackingA2BResult seekDataResult = PackingA2BWebAPI.SeekBySql(plFromRgCode, sqlCheckA2BSisterFty, out drResult);
+
+                if (!seekDataResult)
+                {
+                    MyUtility.Msg.ErrorBox("Check ReceiveDate error:\r\n" + seekDataResult.ToString());
+                    return;
+                }
+
+                if (MyUtility.Convert.GetBool(drResult["CartonTransferToSisterFty"]))
+                {
+                    DataTable dtCheckPLCtnRecvA2B;
+                    result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, sqlCheckPLCtnRecvFMRgCodeDate, out dtCheckPLCtnRecvA2B);
+                    if (!result)
+                    {
+                        MyUtility.Msg.ErrorBox("Check PLCtnRecvA2B error:\r\n" + result.ToString());
+                        return;
+                    }
+
+                    if (dtCheckPLCtnRecvA2B.Rows.Count > 0)
+                    {
+                        string unCfmPackIDs = dtCheckPLCtnRecvA2B.AsEnumerable().Select(s => s["id"].ToString()).JoinToString(Environment.NewLine);
+                        MyUtility.Msg.WarningBox($@"The below PL not yet received from sister factory!! Cannot confirm!
+{unCfmPackIDs}
+");
+                        return;
+                    }
+                }
+                else
+                {
+                    DataTable dtCheckReceiveDateA2B;
+                    result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, sqlCheckReceiveDate, out dtCheckReceiveDateA2B);
+                    if (!result)
+                    {
+                        MyUtility.Msg.ErrorBox("Check ReceiveDate error:\r\n" + result.ToString());
+                        return;
+                    }
+
+                    dtCheckReceiveDateA2B.MergeTo(ref dtRec);
+                }
+            }
+
             if (!MyUtility.Check.Empty(dtRec) || dtRec.Rows.Count > 0)
             {
                 foreach (DataRow dr in dtRec.Rows)
@@ -993,19 +1359,38 @@ where ShipPlanID='{this.CurrentMaintain["id"]}'
 and p2.CFAReceiveDate is not null
 and p2.CFAReturnClogDate is null
 and p2.CTNQty > 0";
-            if (result = DBProxy.Current.Select(null, strSqlcmd, out dtCfa))
-            {
-                if (dtCfa.Rows.Count > 0)
-                {
-                    foreach (DataRow dr in dtCfa.Rows)
-                    {
-                        warningmsg.Append($@"GB#: {dr["INVNo"]}, SP: {dr["OrderID"]}
-, Packing#: {dr["ID"]}" + Environment.NewLine);
-                    }
 
-                    MyUtility.Msg.WarningBox("The CTNs are in CFA now, Cannot confirm!" + Environment.NewLine + warningmsg.ToString());
+            result = DBProxy.Current.Select(null, strSqlcmd, out dtCfa);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            foreach (string plFromRgCode in listPLFromRgCode)
+            {
+                DataTable dtCheckCfaA2B;
+                result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, strSqlcmd, out dtCheckCfaA2B);
+                if (!result)
+                {
+                    this.ShowErr(result);
                     return;
                 }
+
+                dtCheckCfaA2B.MergeTo(ref dtCfa);
+            }
+
+            if (dtCfa.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dtCfa.Rows)
+                {
+                    warningmsg.Append($@"GB#: {dr["INVNo"]}, SP: {dr["OrderID"]}
+, Packing#: {dr["ID"]}" + Environment.NewLine);
+                }
+
+                MyUtility.Msg.WarningBox("The CTNs are in CFA now, Cannot confirm!" + Environment.NewLine + warningmsg.ToString());
+                return;
             }
 
             #endregion
@@ -1024,18 +1409,36 @@ and (TransferCFADate is not null or ReceiveDate is null)
 and p2.CTNQty > 0
 and p1.Type <> 'S'
 ";
-            if (result = DBProxy.Current.Select(null, strSqlcmdCLog, out dtCLog))
-            {
-                if (dtCLog.Rows.Count > 0)
-                {
-                    foreach (DataRow dr in dtCLog.Rows)
-                    {
-                        warningmsgCLog.Append($@"<PackingList#:{dr["ID"]}, CTN#:{dr["CTNStartNo"]}>" + Environment.NewLine);
-                    }
+            result = DBProxy.Current.Select(null, strSqlcmdCLog, out dtCLog);
 
-                    MyUtility.Msg.WarningBox("Below records are not in clog, cannot confirm!!\r\n" + warningmsgCLog.ToString());
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            foreach (string plFromRgCode in listPLFromRgCode)
+            {
+                DataTable dtCheckClogA2B;
+                result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, strSqlcmdCLog, out dtCheckClogA2B);
+                if (!result)
+                {
+                    this.ShowErr(result);
                     return;
                 }
+
+                dtCheckClogA2B.MergeTo(ref dtCLog);
+            }
+
+            if (dtCLog.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dtCLog.Rows)
+                {
+                    warningmsgCLog.Append($@"<PackingList#:{dr["ID"]}, CTN#:{dr["CTNStartNo"]}>" + Environment.NewLine);
+                }
+
+                MyUtility.Msg.WarningBox("Below records are not in clog, cannot confirm!!\r\n" + warningmsgCLog.ToString());
+                return;
             }
 
             #endregion
@@ -1047,6 +1450,7 @@ and p1.Type <> 'S'
             }
 
             // Garment Booking還沒Confirm就不可以做Confirm
+            StringBuilder msg2 = new StringBuilder();
             sqlCmd = string.Format("select ID from GMTBooking WITH (NOLOCK) where ShipPlanID = '{0}' and Status = 'New'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out dt);
             if (!result)
@@ -1054,19 +1458,17 @@ and p1.Type <> 'S'
                 MyUtility.Msg.ErrorBox("Check GMTBooking error:\r\n" + result.ToString());
                 return;
             }
-            else
-            {
-                StringBuilder msg2 = new StringBuilder();
-                if (dt.Rows.Count > 0)
-                {
-                    foreach (DataRow dr in dt.Rows)
-                    {
-                        msg2.Append(string.Format("GB#:{0}", MyUtility.Convert.GetString(dr["ID"])));
-                    }
 
-                    MyUtility.Msg.WarningBox("Garment Booking's status not yet confirm, can't confirm!!\r\n" + msg2.ToString());
-                    return;
+            msg2 = new StringBuilder();
+            if (dt.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    msg2.Append(string.Format("GB#:{0}", MyUtility.Convert.GetString(dr["ID"])));
                 }
+
+                MyUtility.Msg.WarningBox("Garment Booking's status not yet confirm, can't confirm!!\r\n" + msg2.ToString());
+                return;
             }
 
             if (!Prgs.CheckExistsOrder_QtyShip_Detail(shipPlanID: MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
@@ -1074,12 +1476,19 @@ and p1.Type <> 'S'
                 return;
             }
 
+            foreach (string plFromRgCode in listPLFromRgCode)
+            {
+                if (!Prgs.CheckExistsOrder_QtyShip_Detail(shipPlanID: MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), plFromRgCode: plFromRgCode))
+                {
+                    return;
+                }
+            }
+
             #region 一張 HC 的出貨日期都必須與 PL 上的出貨日期一致  ISP20191473
             sqlCmd = $@"
 
-select DISTINCT p.ID ,p.ExpressID ,p.PulloutDate 
+select p.ID ,p.ExpressID ,p.PulloutDate 
 from PackingList p
-inner join PackingList_Detail p2 on p.ID=p2.ID
 WHERE p.ShipPlanID='{this.CurrentMaintain["ID"]}' AND p.ExpressID <> ''
 AND EXISTS (SELECT 1 FROM Express e WHERE  p.ExpressID=e.ID AND p.PulloutDate <> e.ShipDate)
 ";
@@ -1089,21 +1498,31 @@ AND EXISTS (SELECT 1 FROM Express e WHERE  p.ExpressID=e.ID AND p.PulloutDate <>
                 MyUtility.Msg.ErrorBox("Check Express error:\r\n" + result.ToString());
                 return;
             }
-            else
-            {
-                StringBuilder msg2 = new StringBuilder();
-                if (dt.Rows.Count > 0)
-                {
-                    foreach (DataRow dr in dt.Rows)
-                    {
-                        msg2.Append($"Packing List#:{dr["ID"]}" + Environment.NewLine);
-                    }
 
-                    MyUtility.Msg.WarningBox("HC Ship Date is different with Pull Out Date." + Environment.NewLine + msg2.ToString());
+            foreach (string plFromRgCode in listPLFromRgCode)
+            {
+                DataTable dtCheckHCDateA2B;
+                result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, sqlCmd, out dtCheckHCDateA2B);
+                if (!result)
+                {
+                    this.ShowErr(result);
                     return;
                 }
+
+                dtCheckHCDateA2B.MergeTo(ref dt);
             }
 
+            msg2 = new StringBuilder();
+            if (dt.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    msg2.Append($"Packing List#:{dr["ID"]}" + Environment.NewLine);
+                }
+
+                MyUtility.Msg.WarningBox("HC Ship Date is different with Pull Out Date." + Environment.NewLine + msg2.ToString());
+                return;
+            }
             #endregion
 
             #region 檢查ShipMode，是否被設定「必須建立HC」ISP20191473
@@ -1128,17 +1547,29 @@ AND e.ID IS NULL
                 MyUtility.Msg.ErrorBox("Check Express error:\r\n" + result.ToString());
                 return;
             }
-            else
-            {
-                StringBuilder msg2 = new StringBuilder();
-                if (dt.Rows.Count > 0)
-                {
-                    foreach (DataRow dr in dt.Rows)
-                    {
-                        msg2.Append($"Packing List#:{dr["ID"]}" + Environment.NewLine);
-                    }
 
-                    string strCmdFindShipmode = @"
+            foreach (string plFromRgCode in listPLFromRgCode)
+            {
+                DataTable dtCheckHCDateA2B;
+                result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, sqlCmd, out dtCheckHCDateA2B);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                dtCheckHCDateA2B.MergeTo(ref dt);
+            }
+
+            msg2 = new StringBuilder();
+            if (dt.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    msg2.Append($"Packing List#:{dr["ID"]}" + Environment.NewLine);
+                }
+
+                string strCmdFindShipmode = @"
 select STUFF((
             SELECT Concat (',', ID )
             FROM ShipMode
@@ -1146,13 +1577,11 @@ select STUFF((
             for xml path(''))
         , 1, 1, '')";
 
-                    string strListShipmode = MyUtility.GetValue.Lookup(strCmdFindShipmode);
+                string strListShipmode = MyUtility.GetValue.Lookup(strCmdFindShipmode);
 
-                    MyUtility.Msg.WarningBox($"Ship mode ({strListShipmode}) needs to Create International Express. Please create data at [Shippping P02]." + Environment.NewLine + msg2.ToString());
-                    return;
-                }
+                MyUtility.Msg.WarningBox($"Ship mode ({strListShipmode}) needs to Create International Express. Please create data at [Shippping P02]." + Environment.NewLine + msg2.ToString());
+                return;
             }
-
             #endregion
 
             // 有Cancel Order 不能confirmed
@@ -1219,10 +1648,29 @@ inner join Orders o with (nolock) on o.ID = pd.OrderID
 where p.INVNo='{dr["ID"]}' and o.Category <> 'S' and oq.ShipmodeID <> '{dr["ShipModeID"]}'";
 
                 result = DBProxy.Current.Select(null, strSql, out dtCheckResult);
+
                 if (!result)
                 {
                     this.ShowErr(result);
                     return result;
+                }
+
+                List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(dr["ID"].ToString());
+
+                if (listPLFromRgCode.Count > 0)
+                {
+                    DataTable dtCheckA2bResult;
+                    foreach (string plFromRgCode in listPLFromRgCode)
+                    {
+                        result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, strSql, out dtCheckA2bResult);
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            return result;
+                        }
+
+                        dtCheckA2bResult.MergeTo(ref dtCheckResult);
+                    }
                 }
 
                 if (dtCheckResult.Rows.Count > 0)
@@ -1280,15 +1728,15 @@ GB#:{dr["ID"]},   Shipping Mode:{dr["ShipModeID"]}
             #region 檢查傳入的SP 維護的IDD是否都為同一天(沒維護度不判斷)
             List<Order_QtyShipKey> listOrder_QtyShipKey = new List<Order_QtyShipKey>();
 
-            string sqlGetOrderSeq = $@"
-alter table #tmp alter column ID varchar(13)
-select  distinct OrderID,OrderShipmodeSeq
+            string wherePackIDs = this.plData.AsEnumerable().Select(s => $"'{s["ID"].ToString()}'").Distinct().JoinToString(",");
+            string sqlGetOrderSeq = @"
+select  distinct pd.OrderID, pd.OrderShipmodeSeq
 from PackingList_Detail pd with (nolock)
-where exists(select 1 from #tmp t where t.ID = pd.ID)
+where   pd.ID in ({0})
 ";
             DataTable dtOrderSeq;
 
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.plData, "ID", sqlGetOrderSeq, out dtOrderSeq);
+            DualResult result = DBProxy.Current.Select(null, string.Format(sqlGetOrderSeq, wherePackIDs), out dtOrderSeq);
 
             if (!result)
             {
@@ -1303,6 +1751,35 @@ where exists(select 1 from #tmp t where t.ID = pd.ID)
                     SP = dr["OrderID"].ToString(),
                     Seq = dr["OrderShipmodeSeq"].ToString(),
                 });
+            }
+
+            var needGetDataFromA2B = this.plData.AsEnumerable().Where(s => !MyUtility.Check.Empty(s["PLFromRgCode"]));
+
+            if (needGetDataFromA2B.Any())
+            {
+                var listPLFromRgCode = needGetDataFromA2B.Select(s => s["PLFromRgCode"].ToString()).Distinct();
+
+                foreach (string plFromRgCode in listPLFromRgCode)
+                {
+                    wherePackIDs = needGetDataFromA2B.Where(s => s["PLFromRgCode"].ToString() == plFromRgCode)
+                        .Select(s => $"'{s["ID"].ToString()}'").Distinct().JoinToString(",");
+                    result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, string.Format(sqlGetOrderSeq, wherePackIDs), out dtOrderSeq);
+
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    foreach (DataRow dr in dtOrderSeq.Rows)
+                    {
+                        listOrder_QtyShipKey.Add(new Order_QtyShipKey
+                        {
+                            SP = dr["OrderID"].ToString(),
+                            Seq = dr["OrderShipmodeSeq"].ToString(),
+                        });
+                    }
+                }
             }
 
             Prgs.CheckIDDSame(listOrder_QtyShipKey);
@@ -1360,7 +1837,7 @@ inner join #tmp t on t.ID = pd.ID
 
             var frm = new P10_DeleteGarmentBookingHistory(this.dtDeleteGBHistory);
             frm.ShowDialog(this);
-		}
+        }
         private bool GMTCompleteCheck()
         {
             #region 表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'

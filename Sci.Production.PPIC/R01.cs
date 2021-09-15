@@ -350,7 +350,7 @@ select
 	,s.ComboType
 into #Sewtmp
 from SewingSchedule s WITH (NOLOCK) 
-left join Orders o WITH (NOLOCK) on s.OrderID = o.ID
+left join Orders o WITH (NOLOCK) on s.OrderID = o.ID and exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
 left join Style st WITH (NOLOCK) on st.Ukey = o.StyleUkey
 outer apply(select [val] = iif(isnull(s.OriEff,0) = 0 or isnull(s.SewLineEff,0) = 0,s.MaxEff, isnull(s.OriEff,100) * isnull(s.SewLineEff,100) / 100) ) ScheduleEff
 where (

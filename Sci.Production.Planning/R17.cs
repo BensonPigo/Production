@@ -144,6 +144,7 @@ where o.Junk = 0
 and (isnull(ot.IsGMTMaster,0) = 0 or o.OrderTypeID = '') 
 and o.LocalOrder <> 1
 and o.IsForecast <> 1
+and exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
 ";
 
                 if (this.radioBulk.Checked)
