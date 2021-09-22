@@ -34,7 +34,7 @@ namespace Sci.Production.Shipping
             this.InitializeComponent();
 
             // this.txtmultifactoryFactory.Text = Sci.Env.User.FactoryList;
-            this.txtmultifactoryFactory.Text = MyUtility.GetValue.Lookup("select stuff((select distinct concat(',',ID)  from Factory WITH (NOLOCK) where Junk = 0 and IsProduceFty = 1 for xml path('')),1,1,'')");
+            this.txtmultifactoryFactory.Text = MyUtility.GetValue.Lookup("select stuff((select distinct concat(',',F.ID)  from Factory F WITH (NOLOCK) INNER JOIN System S ON S.RgCode=F.NegoRegion where F.Junk = 0 and F.IsProduceFty = 1 for xml path('')),1,1,'')");
             this.masterData = masterData;
             this.detailData = detailData;
             this.txtmultifactoryFactory.CheckProduceFty = true;

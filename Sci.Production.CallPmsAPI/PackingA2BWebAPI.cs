@@ -42,38 +42,35 @@ namespace Sci.Production.CallPmsAPI
         }
 
         /// <summary>
-        /// IsDummy
-        /// </summary>
-        public static bool IsDummy
-        {
-            get
-            {
-                return DBProxy.Current.DefaultModuleName.Contains("testing") ||
-                        DBProxy.Current.DefaultModuleName.Contains("Training") ||
-                        DBProxy.Current.DefaultModuleName.Contains("Dummy");
-            }
-        }
-
-        /// <summary>
         /// GetWebAPIUrl
         /// </summary>
         /// <param name="systemName">systemName</param>
         /// <returns>string</returns>
         public static string GetWebAPIUrl(string systemName)
         {
-            string environment = IsDummy ? "Dummy" : "Formal";
-            return MyUtility.GetValue.Lookup($"select URL from SystemWebAPIURL with (nolock) where SystemName = '{systemName}' and Environment = '{environment}'");
-        }
+            string environment = string.Empty;
 
-        /// <summary>
-        /// GetWebAPIUrl
-        /// </summary>
-        /// <param name="systemName">systemName</param>
-        /// <returns>string</returns>
-        public static string GetConnString(string systemName)
-        {
-            string environment = IsDummy ? "Dummy" : "Formal";
-            return MyUtility.GetValue.Lookup($"select SqlConnection from SystemWebAPIURL with (nolock) where SystemName = '{systemName}' and Environment = '{environment}'");
+            if (DBProxy.Current.DefaultModuleName.Contains("testing"))
+            {
+                environment = "Testing";
+            }
+
+            if (DBProxy.Current.DefaultModuleName.Contains("Training"))
+            {
+                environment = "Training";
+            }
+
+            if (DBProxy.Current.DefaultModuleName.Contains("Dummy"))
+            {
+                environment = "Dummy";
+            }
+
+            if (DBProxy.Current.DefaultModuleName.Contains("Formal"))
+            {
+                environment = "Formal";
+            }
+
+            return MyUtility.GetValue.Lookup($"select URL from SystemWebAPIURL with (nolock) where SystemName = '{systemName}' and Environment = '{environment}'");
         }
 
         public static string GetWebApiBaseResultError(WebApiBaseResult webApiBaseResult)
