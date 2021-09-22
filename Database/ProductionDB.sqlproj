@@ -2675,6 +2675,7 @@
     <Build Include="dbo\Tables\KHImportDeclaration_ShareCDCExpense.sql" />
     <Build Include="dbo\Tables\Technician.sql" />
     <Build Include="dbo\Tables\MailGroup.sql" />
+    <Build Include="dbo\Functions\GetGMTLT.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
