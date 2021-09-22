@@ -386,13 +386,6 @@ where p.junk = 1
                     this.dateArriveWHDate.Focus();
                     return false;
                 }
-
-                if (DateTime.Compare(whseArrival, arrivePortDate.AddDays(20)) > 0)
-                {
-                    MyUtility.Msg.WarningBox("Arrive Warehouse date can't be later than arrive port 20 days!!");
-                    this.dateArriveWHDate.Focus();
-                    return false;
-                }
             }
 
             if (!MyUtility.Check.Empty(this.CurrentMaintain["WhseArrival"]) && !MyUtility.Check.Empty(this.CurrentMaintain["eta"]))
