@@ -96,7 +96,7 @@ Select
 into #tmp
 From [Order_ECMNFailed] f
 Left Join Orders o on f.id	= o.ID
-Outer Apply(Select GMTLT = dbo.GetStyleGMTLT(o.BrandID,o.StyleID,o.SeasonID,o.FactoryID)) as GetGMTLT
+Outer Apply(Select GMTLT = dbo.GetGMTLT(o.BrandID,o.StyleID,o.SeasonID,o.FactoryID, o.ID)) as GetGMTLT
 Outer Apply (
     select IdAndName
     from dbo.GetPassName(o.SMR)
