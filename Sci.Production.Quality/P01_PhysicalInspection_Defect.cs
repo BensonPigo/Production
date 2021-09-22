@@ -40,7 +40,7 @@ namespace Sci.Production.Quality
                 this.DefectFilterTb.Rows[i]["DefectLocationT"] = this.DefectFilterTb.Rows[i]["DefectLocation"].ToString().Split('-')[1];
             }
 
-            string cmd = string.Format("Select '' AS yds1, '' AS def1, 0 as point1,'' AS yds2,'' AS def2, 0 as point2,'' AS yds3,'' AS def3, 0 as point3");
+            string cmd = string.Format($"Select '' AS yds1, '' AS def1, 0 as point1,'' AS yds2,'' AS def2, 0 as point2,'' AS yds3,'' AS def3, 0 as point3, DetailUkey = {this.CurrentData["DetailUkey"]}");
             DBProxy.Current.Select(null, cmd, out this.gridTb);
             this.gridTb.Clear();
             #region 計算碼長分配入TABLE
@@ -71,6 +71,7 @@ namespace Sci.Production.Quality
                 {
                     DataRow ndr = this.gridTb.NewRow();
                     ndr["yds1"] = cStr;
+                    ndr["DetailUkey"] = this.CurrentData["DetailUkey"];
                     if (ary.Length > 0)
                     {
                         ndr["def1"] = ary[0]["DefectRecord"];

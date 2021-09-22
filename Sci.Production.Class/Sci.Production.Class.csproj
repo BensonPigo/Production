@@ -59,6 +59,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AutoClosingMessageBox.cs" />
+    <Compile Include="Camera_Prg.cs" />
+    <Compile Include="Camera_ShowNew.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Camera_ShowNew.designer.cs">
+      <DependentUpon>Camera_ShowNew.cs</DependentUpon>
+    </Compile>
     <Compile Include="CartonRefnoCommon.cs" />
     <Compile Include="CellDropDownList.cs" />
     <Compile Include="CellTextDropDownList.cs" />
@@ -148,6 +155,12 @@
     </Compile>
     <Compile Include="Command\User.cs" />
     <Compile Include="Command\UserPrg.cs" />
+    <Compile Include="Controls\CameraDisplay.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\CameraDisplay.designer.cs">
+      <DependentUpon>CameraDisplay.cs</DependentUpon>
+    </Compile>
     <Compile Include="ExcelFileNameExtension.cs" />
     <Compile Include="InchTextBox.cs">
       <SubType>Component</SubType>
@@ -180,6 +193,11 @@
     <Compile Include="ProductionGridExts.cs" />
     <Compile Include="ProductionEnv.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resource1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource1.resx</DependentUpon>
+    </Compile>
     <Compile Include="Txtartworktype_fty.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -722,6 +740,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Camera_ShowNew.resx">
+      <DependentUpon>Camera_ShowNew.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ComboFabricType.resx">
       <DependentUpon>ComboFabricType.cs</DependentUpon>
     </EmbeddedResource>
@@ -746,11 +767,18 @@
     <EmbeddedResource Include="ComboxMaterialTypeAndID.resx">
       <DependentUpon>ComboxMaterialTypeAndID.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CameraDisplay.resx">
+      <DependentUpon>CameraDisplay.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Holiday.resx">
       <DependentUpon>Holiday.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PictureSubPage.resx">
       <DependentUpon>PictureSubPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource1.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="TxtClogReason.resx">
       <DependentUpon>TxtClogReason.cs</DependentUpon>
@@ -862,6 +890,11 @@
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\delete.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

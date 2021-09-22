@@ -61,6 +61,7 @@
             this.gridPhysicalInspection.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridPhysicalInspection.RowTemplate.Height = 24;
             this.gridPhysicalInspection.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridPhysicalInspection.ShowCellToolTips = false;
             this.gridPhysicalInspection.Size = new System.Drawing.Size(600, 428);
             this.gridPhysicalInspection.TabIndex = 0;
             this.gridPhysicalInspection.TabStop = false;
@@ -81,6 +82,8 @@
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.gridPhysicalInspection);
             this.Name = "P01_PhysicalInspection_PointRecord";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
+            this.FormLoaded += new System.EventHandler(this.P01_PhysicalInspection_PointRecord_FormLoaded);
             ((System.ComponentModel.ISupportInitialize)(this.gridPhysicalInspection)).EndInit();
             this.ResumeLayout(false);
 
