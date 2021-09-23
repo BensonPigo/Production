@@ -219,6 +219,15 @@ from Issue_MIND im where id = '{this.id}'";
         {
             if (this.EditMode)
             {
+                foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
+                {
+                    if (MyUtility.Check.Empty(dr["Releaser"]))
+                    {
+                        dr.AcceptChanges();
+                        dr.Delete();
+                    }
+                }
+
                 DualResult result = DBProxy.Current.GetTableSchema(null, "Issue_MIND", out ITableSchema tableSchema);
                 if (!result)
                 {
