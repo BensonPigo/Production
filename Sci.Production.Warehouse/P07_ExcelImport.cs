@@ -487,10 +487,16 @@ where   stocktype='{0}'
 
                                 sqlpar.Clear();
                                 sqlpar.Add(new SqlParameter("@MINDQRCode", newRow["MINDQRCode"].ToString().Trim()));
-                                sql = $@"select r.InvNo from Receiving_Detail rd inner join Receiving r on r.id = rd.id where rd.MINDQRCode = @MINDQRCode";
+                                sql = $@"select r.InvNo from Receiving_Detail rd inner join Receiving r on r.id = rd.id where rd.MINDQRCode = @MINDQRCode and rd.id <> '{this.master["id"]}'";
                                 if (MyUtility.Check.Seek(sql, sqlpar, out dr2))
                                 {
-                                    listNewRowErrMsg.Add($"This QR Code aleady exist WK#{dr2["InvNo"]}, cannot import.");
+                                    listNewRowErrMsg.Add($"This QR Code already exist WK#{dr2["InvNo"]}, cannot import.");
+                                }
+
+                                if (this.detailData.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted)
+                                    .Any(a => MyUtility.Convert.GetString(a["MINDQRCode"]) == MyUtility.Convert.GetString(newRow["MINDQRCode"])))
+                                {
+                                    listNewRowErrMsg.Add($"This QR Code already exist WK#{dr2["InvNo"]}, cannot import.");
                                 }
 
                                 if (listNewRowErrMsg.Count == 0)
@@ -503,6 +509,24 @@ where   stocktype='{0}'
                                 }
 
                                 this.grid2Data.Rows.Add(newRow);
+                            }
+
+                            var dupMINDQRCode = this.grid2Data.AsEnumerable()
+                                .Where(w => !MyUtility.Check.Empty(w["MINDQRCode"]))
+                                .GroupBy(g => MyUtility.Convert.GetString(g["MINDQRCode"]))
+                                .Select(s => new { MINDQRCode = s.Key, ct = s.Count() })
+                                .Where(w => w.ct > 1).ToList();
+                            foreach (var item in dupMINDQRCode)
+                            {
+                                foreach (var dupqr in this.grid2Data.Select($"MINDQRCode = '{item.MINDQRCode}'"))
+                                {
+                                    if (MyUtility.Check.Empty(dupqr["ErrMsg"]))
+                                    {
+                                        count--;
+                                    }
+
+                                    dupqr["ErrMsg"] += "\r\n" + $"This QR Code already exist WK#{this.master["InvNo"]}, cannot import.";
+                                }
                             }
 
                             dr["Status"] = (intRowsCount - 1 == count) ? "Check & Import Completed." : "Some Data Faild. Please check Error Message.";

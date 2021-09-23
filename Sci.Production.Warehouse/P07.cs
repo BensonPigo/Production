@@ -342,6 +342,42 @@ where x.value > 1
             }
             #endregion
 
+            #region 檢查是否重複 MINDQRCode
+
+            // 檢查畫面上
+            var dupMINDQRCode = this.DetailDatas.AsEnumerable()
+                .Where(w => !MyUtility.Check.Empty(w["MINDQRCode"]))
+                .GroupBy(g => MyUtility.Convert.GetString(g["MINDQRCode"]))
+                .Select(s => new { MINDQRCode = s.Key, ct = s.Count() })
+                .Where(w => w.ct > 1).ToList();
+
+            // 檢查DB
+            var mINDQRCodes = "'" + this.DetailDatas.AsEnumerable()
+                .Where(w => !MyUtility.Check.Empty(w["MINDQRCode"]) && !dupMINDQRCode.Select(s => s.MINDQRCode).Contains(MyUtility.Convert.GetString(w["MINDQRCode"])))
+                .Select(s => MyUtility.Convert.GetString(s["MINDQRCode"]))
+                .ToList().JoinToString("','") + "'";
+            string sqlQR = $@"select r.Invno, rd.MINDQRCode from Receiving_Detail rd inner join Receiving r on r.id = rd.id where r.id <> '{this.CurrentMaintain["id"]}' and rd.MINDQRCode in({mINDQRCodes})";
+            DBProxy.Current.Select(null, sqlQR, out DataTable qrDT);
+            if (dupMINDQRCode.Count > 0 || qrDT.Rows.Count > 0)
+            {
+                string msgDupQR = "Below QR Code already exist, cannot save!\r\n";
+
+                foreach (var item in dupMINDQRCode)
+                {
+                    msgDupQR += MyUtility.Convert.GetString(this.CurrentMaintain["Invno"]) + "," + item + "\r\n";
+                }
+
+                foreach (DataRow row in qrDT.Rows)
+                {
+                    msgDupQR += MyUtility.Convert.GetString(row["Invno"]) + "," + MyUtility.Convert.GetString(row["MINDQRCode"]) + "\r\n";
+                }
+
+                MyUtility.Msg.WarningBox(msgDupQR);
+                return false;
+            }
+
+            #endregion
+
             #region 表身的資料存在Po_Supp_Detail中但是已被Junk，就要跳出訊息告知且不做任何動作
             string sqlchkPSDJunk = $@"
 select distinct concat('SP#: ',p.id,', Seq#: ',Ltrim(Rtrim(p.seq1)), '-', p.seq2) as seq
