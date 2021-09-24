@@ -355,12 +355,25 @@ OUTER APPLY(
 	WHERE UnitFrom='M' and  UnitTo = StockUnit.StockUnit
 )UnitRate
 OUTER APPLY(
-    SELECT top 1 TR.FromSCIRefno,TR.FromSuppColor -- 理應是唯一
-    FROM PO_Supp PS 
-    INNER JOIN Thread_Replace_Detail_Detail TRDD ON PSD.SCIRefNo=TRDD.ToSCIRefno AND PSD.SuppColor=TRDD.ToBrandSuppColor AND PS.SuppID=TRDD.SuppID 
-    INNER JOIN Thread_Replace_Detail TRD ON TRDD.Thread_Replace_DetailUkey = TRD.Ukey
-    INNER JOIN Thread_Replace TR ON TRD.Thread_ReplaceUkey = TR.Ukey
-    WHERE PS.ID = PSD.ID AND PSD.SEQ1=PS.SEQ1
+	SELECT top 1 TR.FromSCIRefno,TR.FromSuppColor -- 理應是唯一
+	FROM PO_Supp PS 
+	INNER JOIN Thread_Replace_Detail_Detail TRDD ON PSD.SCIRefNo=TRDD.ToSCIRefno AND PSD.SuppColor=TRDD.ToBrandSuppColor AND PS.SuppID=TRDD.SuppID 
+	INNER JOIN Thread_Replace_Detail TRD ON TRDD.Thread_Replace_DetailUkey = TRD.Ukey
+	INNER JOIN Thread_Replace TR ON TRD.Thread_ReplaceUkey = TR.Ukey
+	WHERE PS.ID = PSD.ID AND PSD.SEQ1=PS.SEQ1	
+)TR1
+OUTER APPLY(
+	SELECT top 1 TR.FromSCIRefno,TR.FromSuppColor -- 理應是唯一
+	FROM PO_Supp PS 
+	INNER JOIN Thread_Replace_Detail_Detail TRDD ON PSD.SCIRefNo=TRDD.ToSCIRefno AND PSD.SuppColor=TRDD.ToBrandSuppColor
+	INNER JOIN Thread_Replace_Detail TRD ON TRDD.Thread_Replace_DetailUkey = TRD.Ukey
+	INNER JOIN Thread_Replace TR ON TRD.Thread_ReplaceUkey = TR.Ukey
+	WHERE PS.ID = PSD.ID AND PSD.SEQ1=PS.SEQ1	
+)TR2
+OUTER APPLY(
+	SELECT
+		FromSCIRefno = iif(TR1.FromSCIRefno is not null, TR1.FromSCIRefno, TR2.FromSCIRefno),
+		FromSuppColor = iif(TR1.FromSuppColor is not null, TR1.FromSuppColor, TR2.FromSuppColor)
 )TR
 OUTER APPLY(
 	SELECT

@@ -3227,6 +3227,7 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
 
             string pOID = this.poid;
             string articleWhere = string.Empty;
+            string articleWhere2 = string.Empty;
 
             // 判斷訂單會用到那些物料
             // 勾選By Combo與否，會造成Article不一樣，因此在這個時候就必須找出：這些OrderID，用到哪些Article，這些Article用到哪些SCIRefno + ColorID 的物料
@@ -3253,6 +3254,27 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
 	WHERE q.SCIRefNo=psd.SCIRefno AND q.ColorID = psd.ColorID
 
 ";
+                articleWhere2 = $@"
+
+	SELECT Article FROM(
+		Select  distinct tcd.SCIRefNo, tcd.SuppColor ,tcd.Article 
+		From dbo.Orders as b
+		INNER JOIN dbo.order_qty a WITH (NOLOCK)  on b.id = a.id
+		Inner Join dbo.Style as s On s.Ukey = b.StyleUkey
+		Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
+		Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+		WHERE b.ID='{pOID}'
+		AND tcd.Article IN (
+			select DISTINCT a.Article
+			from dbo.order_qty a WITH (NOLOCK) 
+			inner join dbo.orders b WITH (NOLOCK) on b.id = a.id
+			where b.POID=( select poid from dbo.orders WITH (NOLOCK) where id = '{pOID}' )
+			--AND a.id = b.poid
+		)
+	)Q
+	WHERE q.SCIRefNo=TR.FromSCIRefno AND q.SuppColor = TR.FromSuppColor
+
+";
             }
             else
             {
@@ -3275,6 +3297,27 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
 		)
 	)Q
 	WHERE q.SCIRefNo=psd.SCIRefno AND q.ColorID = psd.ColorID
+
+";
+                articleWhere2 = $@"
+
+	SELECT Article FROM(
+		Select  distinct tcd.SCIRefNo, tcd.SuppColor ,tcd.Article 
+		From dbo.Orders as b
+		INNER JOIN dbo.order_qty a WITH (NOLOCK)  on b.id = a.id
+		Inner Join dbo.Style as s On s.Ukey = b.StyleUkey
+		Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
+		Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+		WHERE b.ID='{pOID}'
+		AND tcd.Article IN (
+			select DISTINCT a.Article
+			from dbo.order_qty a WITH (NOLOCK) 
+			inner join dbo.orders b WITH (NOLOCK) on b.id = a.id
+			where b.POID=( select poid from dbo.orders WITH (NOLOCK) where id = '{pOID}' )
+			AND a.id = b.poid
+		)
+	)Q
+	WHERE q.SCIRefNo=TR.FromSCIRefno AND q.SuppColor = TR.FromSuppColor
 
 ";
             }
@@ -3321,11 +3364,45 @@ OUTER APPLY(
 	AND PSD2.ColorID=psd.ColorID
 )StockUnit
 OUTER APPLY(
+	SELECT top 1 TR.FromSCIRefno,TR.FromSuppColor -- 理應是唯一
+	FROM PO_Supp PS 
+	INNER JOIN Thread_Replace_Detail_Detail TRDD ON PSD.SCIRefNo=TRDD.ToSCIRefno AND PSD.SuppColor=TRDD.ToBrandSuppColor AND PS.SuppID=TRDD.SuppID 
+	INNER JOIN Thread_Replace_Detail TRD ON TRDD.Thread_Replace_DetailUkey = TRD.Ukey
+	INNER JOIN Thread_Replace TR ON TRD.Thread_ReplaceUkey = TR.Ukey
+	WHERE PS.ID = PSD.ID AND PSD.SEQ1=PS.SEQ1	
+)TR1
+OUTER APPLY(
+	SELECT top 1 TR.FromSCIRefno,TR.FromSuppColor -- 理應是唯一
+	FROM PO_Supp PS 
+	INNER JOIN Thread_Replace_Detail_Detail TRDD ON PSD.SCIRefNo=TRDD.ToSCIRefno AND PSD.SuppColor=TRDD.ToBrandSuppColor --AND PS.SuppID=TRDD.SuppID 
+	INNER JOIN Thread_Replace_Detail TRD ON TRDD.Thread_Replace_DetailUkey = TRD.Ukey
+	INNER JOIN Thread_Replace TR ON TRD.Thread_ReplaceUkey = TR.Ukey
+	WHERE PS.ID = PSD.ID AND PSD.SEQ1=PS.SEQ1	
+)TR2
+OUTER APPLY(
+	SELECT
+		FromSCIRefno = iif(TR1.FromSCIRefno is not null, TR1.FromSCIRefno, TR2.FromSCIRefno),
+		FromSuppColor = iif(TR1.FromSuppColor is not null, TR1.FromSuppColor, TR2.FromSuppColor)
+)TR
+OUTER APPLY(
 	SELECT Val=SUM((SeamLength * Frequency * UseRatio) +  (Allowance * Segment) )
 	FROM dbo.GetThreadUsedQtyByBOT(psd.ID,default)
-	WHERE SCIRefNo = psd.SCIRefno AND ColorID = psd.ColorID AND Article IN (
+	WHERE SCIRefNo = psd.SCIRefno AND SuppColor = psd.SuppColor
+    AND Article IN (
         {articleWhere}
 	)
+)ThreadUsedQtyByBOT1
+OUTER APPLY(
+	SELECT Val=SUM((SeamLength * Frequency * UseRatio) +  (Allowance * Segment) )
+	FROM dbo.GetThreadUsedQtyByBOT(psd.ID,default)  
+	WHERE SCIRefNo= TR.FromSCIRefno AND SuppColor = TR.FromSuppColor  
+    AND Article IN (
+        {articleWhere2}
+	)
+)ThreadUsedQtyByBOT2
+OUTER APPLY(
+    select
+        Val = iif(psd.IsForOtherBrand = 1, ThreadUsedQtyByBOT2.Val, ThreadUsedQtyByBOT1.Val)
 )ThreadUsedQtyByBOT
 WHERE psd.id ='{pOID}' 
 AND m.IsThread=1 
@@ -3339,7 +3416,7 @@ SELECT
 	, ColorID
 	, [SuppColor]=SuppCol.Val
 	, DescDetail
-	, [@Qty] 
+	, [@Qty]  = sum([@Qty] )
 	, [AccuIssued] = SUM(AccuIssued)
 	, [IssueQty]
 	, [Use Qty By Stock Unit]
@@ -3375,7 +3452,6 @@ GROUP BY
 	, ColorID
 	, SuppCol.Val
 	, DescDetail
-	, [@Qty] 
 	, [IssueQty]
 	, [Use Qty By Stock Unit]
 	, [Stock Unit]
