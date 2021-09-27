@@ -43,6 +43,7 @@
     [Clima]                  BIT             CONSTRAINT [DF_Fabric_Clima] DEFAULT ((0)) NOT NULL,
     [NLCode2]                VARCHAR (9)     CONSTRAINT [DF_Fabric_NLCode2] DEFAULT ('') NOT NULL,
     [BomTypeCalculateWeight] BIT             NULL,
+    [IsRecycled] BIT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Fabric] PRIMARY KEY CLUSTERED ([SCIRefno] ASC)
 );
 
@@ -210,3 +211,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'平方米重', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric', @level2type = N'COLUMN', @level2name = N'WeightM2';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'物料是否為回收材質（WH 用再判斷 Hangtag 是否需要避檢針）',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Fabric',
+    @level2type = N'COLUMN',
+    @level2name = N'IsRecycled'
