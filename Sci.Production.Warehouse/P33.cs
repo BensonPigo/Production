@@ -3171,7 +3171,7 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
 
                     detail.Rows.Add(nRow);
                     decimal totalQty = 0;
-                    if (this.GetSubDetailDatas(detail.Rows[detail.Rows.Count - 1], out subDetail) && subDetail.Rows.Count > 0)
+                    if (this.GetSubDetailDatas(detail.Rows[detail.Rows.Count - 1], out subDetail))
                     {
                         List<DataRow> issuedList = Prgs.Thread_AutoPick(key, Convert.ToDecimal(accuIssued));
                         List<string> allSuppColor = new List<string>();
@@ -3195,7 +3195,11 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
                             }
                         }
 
-                        detail.Rows[detail.Rows.Count - 1]["SuppColor"] = allSuppColor.JoinToString(",");
+                        if (allSuppColor.JoinToString(",").Length > 0)
+                        {
+                            detail.Rows[detail.Rows.Count - 1]["SuppColor"] = allSuppColor.JoinToString(",");
+                        }
+
                         Sum_subDetail(detail.Rows[detail.Rows.Count - 1], subDetail);
                     }
 
