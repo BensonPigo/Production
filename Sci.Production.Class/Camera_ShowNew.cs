@@ -12,19 +12,17 @@ namespace Sci.Production.Class
 {
     public partial class Camera_ShowNew : Sci.Win.Forms.Base
     {
-        private string key;
         private List<Endline_Camera_Schema> schemas;
 
         private double oldWidth;
         private double oldHeight;
 
-        public Camera_ShowNew(string formName, string strKey, List<Endline_Camera_Schema> src)
+        public Camera_ShowNew(string formName, List<Endline_Camera_Schema> src)
         {
             InitializeComponent();
             oldWidth = this.Width;
             oldHeight = this.Height;
 
-            this.key = strKey;
             this.schemas = src;
             this.Text = formName;
             this.Reload(false);
@@ -37,17 +35,11 @@ namespace Sci.Production.Class
                 return;
             }
 
-            List<Endline_Camera_Schema> tempShow = this.schemas.Where(t => t.ID == this.key).ToList();
-            if (tempShow.Count == 0)
-            {
-                return;
-            }
-
             double x = (this.Width / oldWidth);
             double y = (this.Height / oldHeight);
             this.panel1.Controls.Clear();
 
-            foreach (var item in tempShow)
+            foreach (var item in this.schemas)
             {
                 CameraDisplay picItem = new CameraDisplay();
                 picItem.SetPictureDisplay(item.desc, item.Pkey, item.image, item.imgPath, x, y, resize);
