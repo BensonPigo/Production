@@ -24,7 +24,7 @@
     [CDCUnitPrice]      NUMERIC (9, 4)  CONSTRAINT [DF_KHImportDeclaration_Detail_CDCUnitPrice] DEFAULT ((0)) NULL,
     [ActNetKg]          NUMERIC (9, 2)  CONSTRAINT [DF_KHImportDeclaration_Detail_ActNetKg] DEFAULT ((0)) NULL,
     [ActWeightKg]       NUMERIC (9, 2)  CONSTRAINT [DF_KHImportDeclaration_Detail_ActWeightKg] DEFAULT ((0)) NULL,
-    [ActAmount]         NUMERIC (9, 4)  CONSTRAINT [DF_KHImportDeclaration_Detail_ActAmount] DEFAULT ((0)) NULL,
+    [ActAmount]         NUMERIC (11, 4)  CONSTRAINT [DF_KHImportDeclaration_Detail_ActAmount] DEFAULT ((0)) NULL,
     [ActHSCode]         VARCHAR (14)    CONSTRAINT [DF_KHImportDeclaration_Detail_ActHSCode] DEFAULT ('') NULL,
     CONSTRAINT [PK_KHImportDeclaration_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
