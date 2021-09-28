@@ -131,7 +131,6 @@ where PKey = '{item.Pkey}'
             .Image("showPic", header: "Defect" + Environment.NewLine + "Picture", width: Widths.AnsiChars(5), settings: col_img)
             ;
             this.GridEditing(edit);
-
         }
 
         private void ReLoadImage()
@@ -171,7 +170,13 @@ inner join #MES_Clip  c on c.UniqueKey = r.Id
 where r.FIR_PhysicalDetailUkey = {this.def_dr["DetailUkey"]}
 order by r.FabricdefectID,r.FIR_PhysicalDetailUkey,c.SourceFile";
 
-            DBProxy.Current.Select(null, sqlcmd, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
 
             foreach (DataRow item in dt.Rows)
             {
