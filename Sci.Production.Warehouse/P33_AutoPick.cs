@@ -247,15 +247,52 @@ Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
 Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
 WHERE O.ID='{this.poid}' AND tcd.Article IN ( SELECT Article FROM #tmp )
 
+select
+	SCIRefNo = iif(IsForOtherBrand = 1,TR.FromSCIRefno, psd.SCIRefno),
+	SuppColor = iif(IsForOtherBrand = 1, TR.FromSuppColor, psd.SuppColor),
+	ID,SEQ1,SEQ2,ColorID
+into #tmpPO_Supp_Detail
+from PO_Supp_Detail psd
+OUTER APPLY(
+	SELECT top 1 TR.FromSCIRefno,TR.FromSuppColor -- 理應是唯一
+	FROM PO_Supp PS 
+	INNER JOIN Thread_Replace_Detail_Detail TRDD ON PSD.SCIRefNo=TRDD.ToSCIRefno AND PSD.SuppColor=TRDD.ToBrandSuppColor AND PS.SuppID=TRDD.SuppID 
+	INNER JOIN Thread_Replace_Detail TRD ON TRDD.Thread_Replace_DetailUkey = TRD.Ukey
+	INNER JOIN Thread_Replace TR ON TRD.Thread_ReplaceUkey = TR.Ukey
+	WHERE PS.ID = PSD.ID AND PSD.SEQ1=PS.SEQ1	
+)TR1
+OUTER APPLY(
+	SELECT top 1 TR.FromSCIRefno,TR.FromSuppColor -- 理應是唯一
+	FROM PO_Supp PS 
+	INNER JOIN Thread_Replace_Detail_Detail TRDD ON PSD.SCIRefNo=TRDD.ToSCIRefno AND PSD.SuppColor=TRDD.ToBrandSuppColor
+	INNER JOIN Thread_Replace_Detail TRD ON TRDD.Thread_Replace_DetailUkey = TRD.Ukey
+	INNER JOIN Thread_Replace TR ON TRD.Thread_ReplaceUkey = TR.Ukey
+	WHERE PS.ID = PSD.ID AND PSD.SEQ1=PS.SEQ1	
+)TR2
+OUTER APPLY(
+	SELECT
+		FromSCIRefno = iif(TR1.FromSCIRefno is not null, TR1.FromSCIRefno, TR2.FromSCIRefno),
+		FromSuppColor = iif(TR1.FromSuppColor is not null, TR1.FromSuppColor, TR2.FromSuppColor)
+)TR
+WHERE psd.ID='{this.poid}'
+AND psd.FabricType ='A'
+AND EXISTS(
+	SELECT 1
+	FROM Fabric f
+	INNER JOIN MtlType m on m.id= f.MtlTypeID
+	WHERE f.SCIRefno = psd.SCIRefNo
+	AND m.IsThread=1 
+)
+AND psd.ColorID <> ''
 
 ----取得這些物料的項次號，然後取得Order List，如果NULL就直接打勾不用判斷後續
 ---- 傳入OrderID
-SELECT DISTINCT  pso.OrderID,a.SCIRefNo, a.ColorID, a.SuppColor
+SELECT DISTINCT 
+	pso.OrderID,a.SCIRefNo, a.ColorID, a.SuppColor,a.SEQ1,a.SEQ2,a.ID
 INTO #step2
-FROM PO_Supp_Detail a
+FROM #tmpPO_Supp_Detail a
 LEFT JOIN  PO_Supp_Detail_OrderList pso ON a.ID = pso.ID AND a.SEQ1 = pso.SEQ1 AND a.SEQ2 = pso.SEQ2
-WHERE a.ID = '{this.poid}'
-AND EXISTS(
+WHERE EXISTS(
 	SELECT * FROM #step1
 	WHERE SCIRefNo = a.SCIRefNo AND SuppColor = a.SuppColor
 )
@@ -270,10 +307,6 @@ INTO #SelectList2
 FROM #step2 a
 INNER JOIN Order_Article b ON a.OrderID = b.id
 WHERE OrderID IS NOT NULL 
-
---SELECT * FROM #SelectList1
---SELECT * FROM #SelectList2
-
 
 ----------------Quiting用量計算--------------------------
 
@@ -342,6 +375,7 @@ SELECT  DISTINCT
 				)
 INTO #final
 FROM PO_Supp_Detail psd
+inner join #step2 tpsd on tpsd.ID = psd.id and tpsd.SEQ1 = psd.SEQ1 and tpsd.SEQ2 = psd.SEQ2
 INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
 OUTER APPLY(
 	SELECT TOP 1 a.StockUnit ,u.Description
