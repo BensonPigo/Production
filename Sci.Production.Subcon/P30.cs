@@ -2103,7 +2103,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             }
             else
             {
-                this.GridUniqueKey = "orderid,refno,threadcolorid,Requestid";
+                this.GridUniqueKey = "orderid,refno,threadcolorid,Requestid,ReplacementLocalItemID";
             }
         }
 
