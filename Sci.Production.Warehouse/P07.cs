@@ -356,7 +356,7 @@ where x.value > 1
                 .Where(w => !MyUtility.Check.Empty(w["MINDQRCode"]) && !dupMINDQRCode.Select(s => s.MINDQRCode).Contains(MyUtility.Convert.GetString(w["MINDQRCode"])))
                 .Select(s => MyUtility.Convert.GetString(s["MINDQRCode"]))
                 .ToList().JoinToString("','") + "'";
-            string sqlQR = $@"select r.Invno, rd.MINDQRCode from Receiving_Detail rd inner join Receiving r on r.id = rd.id where r.id <> '{this.CurrentMaintain["id"]}' and rd.MINDQRCode in({mINDQRCodes})";
+            string sqlQR = $@"select r.Invno, rd.MINDQRCode from Receiving_Detail rd inner join Receiving r on r.id = rd.id where r.id <> '{this.CurrentMaintain["id"]}' and rd.MINDQRCode <>'' and rd.MINDQRCode in({mINDQRCodes})";
             DBProxy.Current.Select(null, sqlQR, out DataTable qrDT);
             if (dupMINDQRCode.Count > 0 || qrDT.Rows.Count > 0)
             {
@@ -364,7 +364,7 @@ where x.value > 1
 
                 foreach (var item in dupMINDQRCode)
                 {
-                    msgDupQR += MyUtility.Convert.GetString(this.CurrentMaintain["Invno"]) + "," + item + "\r\n";
+                    msgDupQR += MyUtility.Convert.GetString(this.CurrentMaintain["Invno"]) + "," + item.MINDQRCode + "\r\n";
                 }
 
                 foreach (DataRow row in qrDT.Rows)
