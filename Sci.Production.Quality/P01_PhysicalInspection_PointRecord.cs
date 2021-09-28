@@ -10,6 +10,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
@@ -34,14 +35,18 @@ namespace Sci.Production.Quality
             this.b_edit = edit;
             string where = edit ? "where fd.junk = 0" : string.Empty;
             string sqlcmd = $@"
-Select distinct fd.ID,Type,DescriptionEN,0 as points ,c.UniqueKey
-,[existsPic] = IIF(isnull(c.SourceFile,'') != '' , 1,0)
+Select distinct fd.ID,Type,DescriptionEN,0 as points 
 From FabricDefect fd WITH (NOLOCK) 
-left join FIR_Physical_Defect_Realtime r on fd.ID = r.FabricdefectID and r.FIR_PhysicalDetailUkey = {this.def_dr["DetailUkey"]}
-left join ManufacturingExecution.dbo.Clip c on c.UniqueKey = r.Id and c.TableName = 'FIR_Physical_Defect_Realtime'
 {where}
 order by fd.ID ";
-            DBProxy.Current.Select(null, sqlcmd, out this.defRecord);
+            DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out this.defRecord);
+
+            if (!dualResult)
+            {
+                this.ShowErr(dualResult);
+                return;
+            }
+
             string defid;
             int point;
             if (!MyUtility.Check.Empty(defect_str))
@@ -73,10 +78,10 @@ order by fd.ID ";
                 if (a.RowIndex != -1)
                 {
                     DataRow dr = this.gridPhysicalInspection.GetDataRow(a.RowIndex);
-                    List<Endline_Camera_Schema> tempShow = this.picList.Where(t => t.ID == dr["UniqueKey"].ToString()).ToList();
-                    if (tempShow.Count != 0)
+                    var tempShow = this.picList.Where(t => t.FabricdefectID == dr["ID"].ToString());
+                    if (tempShow.Count() != 0)
                     {
-                        var frm = new Camera_ShowNew(dr["ID"].ToString(), dr["UniqueKey"].ToString(), this.picList);
+                        var frm = new Camera_ShowNew(dr["ID"].ToString(), tempShow.ToList());
                         frm.ShowDialog();
                     }
 
@@ -95,7 +100,7 @@ order by fd.ID ";
                                 catch (Exception ex)
                                 {
                                     this.ShowErr(ex.Message.ToString());
-                                    return;
+                                    break;
                                 }
                             }
 
@@ -107,20 +112,12 @@ where PKey = '{item.Pkey}'
                             if (!(result = DBProxy.Current.Execute(string.Empty, sqlcmdDelete)))
                             {
                                 this.ShowErr(result);
-                                return;
+                                break;
                             }
                         }
                     }
 
-                    List<Endline_Camera_Schema> tempShowChk = this.picList.Where(t => t.ID == dr["UniqueKey"].ToString()).ToList();
-                    if (tempShowChk.Count != 0)
-                    {
-                        this.gridPhysicalInspection.Rows[a.RowIndex].Cells["showPic"].Value = Resource.image_icon1;
-                    }
-                    else
-                    {
-                        this.gridPhysicalInspection.Rows[a.RowIndex].Cells["showPic"].Value = null;
-                    }
+                    this.ReLoadImage();
                 }
             };
 
@@ -134,7 +131,6 @@ where PKey = '{item.Pkey}'
             .Image("showPic", header: "Defect" + Environment.NewLine + "Picture", width: Widths.AnsiChars(5), settings: col_img)
             ;
             this.GridEditing(edit);
-
         }
 
         private void ReLoadImage()
@@ -150,57 +146,74 @@ where PKey = '{item.Pkey}'
             }
 
             DataTable dt;
-            string where = this.b_edit ? "and fd.junk = 0" : string.Empty;
             string sqlcmd = $@"
-select r.FabricdefectID,r.FIR_PhysicalDetailUkey,c.SourceFile,c.UniqueKey,c.Description,c.Pkey
-,[yyyyMM] = format(c.AddDate,'yyyyMM')
+select  c.SourceFile,
+        c.UniqueKey,
+        c.Description,
+        c.Pkey,
+        [yyyyMM] = format(c.AddDate,'yyyyMM')
+into    #MES_Clip        
+from    [ExtendServer].ManufacturingExecution.dbo.Clip c
+where   c.TableName = 'FIR_Physical_Defect_Realtime' and
+        c.UniqueKey in (select ID from FIR_Physical_Defect_Realtime with (nolock) where FIR_PhysicalDetailUkey = {this.def_dr["DetailUkey"]})
+
+
+select  r.FabricdefectID,
+        r.FIR_PhysicalDetailUkey,
+        c.SourceFile,
+        c.UniqueKey,
+        c.Description,
+        c.Pkey,
+        c.yyyyMM
 from FIR_Physical_Defect_Realtime r 
-inner join ManufacturingExecution.dbo.Clip c on c.UniqueKey = r.Id and c.TableName = 'FIR_Physical_Defect_Realtime'
-where 1 = 1 
-{where}
-and r.FIR_PhysicalDetailUkey = {this.def_dr["DetailUkey"]}
+inner join #MES_Clip  c on c.UniqueKey = r.Id
+where r.FIR_PhysicalDetailUkey = {this.def_dr["DetailUkey"]}
 order by r.FabricdefectID,r.FIR_PhysicalDetailUkey,c.SourceFile";
-            DBProxy.Current.Select(null, sqlcmd, out dt);
+
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
 
             foreach (DataRow item in dt.Rows)
             {
                 string strpath = Path.Combine(Camera_Prg.GetCameraPath(item["yyyyMM"].ToString()), item["SourceFile"].ToString());
-                Image image = Image.FromFile(strpath);
-                var temp1 = new Endline_Camera_Schema()
+                if (!File.Exists(strpath))
                 {
-                    Pkey = item["Pkey"].ToString(),
-                    ID = item["UniqueKey"].ToString(),
-                    desc = item["Description"].ToString(),
-                    image = (Bitmap)image,
-                    FabricdefectID = item["FabricdefectID"].ToString(),
-                    imgPath = strpath,
-                };
+                    continue;
+                }
 
-                this.picList.Add(temp1);
+                using (var fs = new System.IO.FileStream(strpath, System.IO.FileMode.Open))
+                {
+                    var temp1 = new Endline_Camera_Schema()
+                    {
+                        Pkey = item["Pkey"].ToString(),
+                        ID = item["UniqueKey"].ToString(),
+                        desc = item["Description"].ToString(),
+                        image = new Bitmap(fs),
+                        FabricdefectID = item["FabricdefectID"].ToString(),
+                        imgPath = strpath,
+                    };
+                    this.picList.Add(temp1);
+                }
             }
 
-            Camera_Prg.MasterSchemas = this.picList;
+            Camera_Prg.MasterSchemas = this.picList.ToList();
             #endregion
 
             // 暫存的照片存在就顯示圖片
-            if (this.gridPhysicalInspection.Rows.Count > 0 || tmp_dt != null)
+            foreach (DataGridViewRow drFabricDefect in this.gridPhysicalInspection.Rows)
             {
-                for (int i = 0; i < this.gridPhysicalInspection.Rows.Count; i++)
+                if (this.picList.Any(s => s.FabricdefectID == drFabricDefect.Cells["ID"].Value.ToString()))
                 {
-                    DataRow dr = this.gridPhysicalInspection.GetDataRow(i);
-                    if (this.gridPhysicalInspection.Rows.Count <= i || i < 0)
-                    {
-                        return;
-                    }
-
-                    if (!MyUtility.Check.Empty(dr["existsPic"]))
-                    {
-                        this.gridPhysicalInspection.Rows[i].Cells["showPic"].Value = Resource.image_icon1;
-                    }
-                    else
-                    {
-                        this.gridPhysicalInspection.Rows[i].Cells["showPic"].Value = null;
-                    }
+                    drFabricDefect.Cells["showPic"].Value = Resource.image_icon1;
+                }
+                else
+                {
+                    drFabricDefect.Cells["showPic"].Value = null;
                 }
             }
 
@@ -244,7 +257,6 @@ order by r.FabricdefectID,r.FIR_PhysicalDetailUkey,c.SourceFile";
         private void P01_PhysicalInspection_PointRecord_FormLoaded(object sender, EventArgs e)
         {
             this.ReLoadImage();
-
         }
     }
 }
