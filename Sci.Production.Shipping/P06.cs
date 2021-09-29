@@ -26,7 +26,6 @@ namespace Sci.Production.Shipping
     public partial class P06 : Win.Tems.Input8
     {
         private string id;
-        private DateTime pulloutDate;
         private DataGridViewGeneratorNumericColumnSettings shipqty = new DataGridViewGeneratorNumericColumnSettings();
         private DataGridViewGeneratorTextColumnSettings status = new DataGridViewGeneratorTextColumnSettings();
         private ITableSchema revisedTS;
@@ -271,7 +270,6 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
                     }
 
                     this.id = newID;
-                    this.pulloutDate = callNextForm.PulloutDate;
                     DataRow newrow = this.CurrentDataRow.Table.NewRow();
                     newrow["ID"] = newID;
                     newrow["PulloutDate"] = callNextForm.PulloutDate;
@@ -1385,6 +1383,7 @@ where PulloutDate = '{Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).To
             this.updatePackinglist = string.Empty;
             this.dicUpdatePackinglistA2B = new Dictionary<string, List<string>>();
             #region 檢查資料是否有還沒做Confirmed的
+            string pulloutDate = Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("yyyyMMdd");
             string pulloutID = MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? "XXXXXXXXXX" : MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
 
             StringBuilder msgString = new StringBuilder();
