@@ -5,6 +5,9 @@
     [TissuePaper] BIT            CONSTRAINT [DF_Style_Article_TissuePaper] DEFAULT ((0)) NULL,
     [ArticleName] NVARCHAR (100) CONSTRAINT [DF_Style_Article_ArticleName] DEFAULT ('') NULL,
     [Contents]     NVARCHAR (MAX) CONSTRAINT [DF_Style_Article_Content] DEFAULT ('') NULL,
+    [SourceFile] NVARCHAR(266) NOT NULL DEFAULT (''), 
+    [Description] NVARCHAR(60) NOT NULL DEFAULT (''), 
+    [FDUploadDate] DATETIME NULL, 
     CONSTRAINT [PK_Style_Article] PRIMARY KEY CLUSTERED ([StyleUkey] ASC, [Article] ASC)
 );
 
@@ -36,3 +39,31 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'顏色組�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'成衣成份', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_Article', @level2type = N'COLUMN', @level2name = 'Contents';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'FD 檔案名稱',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Style_Article',
+    @level2type = N'COLUMN',
+    @level2name = N'SourceFile'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'FD 描述',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Style_Article',
+    @level2type = N'COLUMN',
+    @level2name = N'Description'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'FD 上傳日期',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Style_Article',
+    @level2type = N'COLUMN',
+    @level2name = N'FDUploadDate'
