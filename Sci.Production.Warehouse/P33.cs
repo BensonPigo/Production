@@ -3240,7 +3240,7 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
                 articleWhere = $@"
 
 	SELECT Article FROM(
-		Select  distinct tcd.SCIRefNo, tcd.ColorID ,tcd.Article 
+		Select  distinct tcd.SCIRefNo, tcd.SuppColor ,tcd.Article 
 		From dbo.Orders as b
 		INNER JOIN dbo.order_qty a WITH (NOLOCK)  on b.id = a.id
 		Inner Join dbo.Style as s On s.Ukey = b.StyleUkey
@@ -3255,7 +3255,7 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
 			--AND a.id = b.poid
 		)
 	)Q
-	WHERE q.SCIRefNo=psd.SCIRefno AND q.ColorID = psd.ColorID
+	WHERE q.SCIRefNo=psd.SCIRefno AND q.SuppColor = psd.SuppColor
 
 ";
                 articleWhere2 = $@"
@@ -3285,7 +3285,7 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
                 articleWhere = $@"
 
 	SELECT Article FROM(
-		Select  distinct tcd.SCIRefNo, tcd.ColorID ,tcd.Article 
+		Select  distinct tcd.SCIRefNo, tcd.SuppColor ,tcd.Article 
 		From dbo.Orders as b
 		INNER JOIN dbo.order_qty a WITH (NOLOCK)  on b.id = a.id
 		Inner Join dbo.Style as s On s.Ukey = b.StyleUkey
@@ -3300,7 +3300,7 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
 			AND a.id = b.poid
 		)
 	)Q
-	WHERE q.SCIRefNo=psd.SCIRefno AND q.ColorID = psd.ColorID
+	WHERE q.SCIRefNo=psd.SCIRefno AND q.SuppColor = psd.SuppColor
 
 ";
                 articleWhere2 = $@"
