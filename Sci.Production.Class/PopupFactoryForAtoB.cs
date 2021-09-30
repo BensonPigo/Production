@@ -89,7 +89,14 @@ where F.Junk = 0 and F.IsProduceFty = 1 order by F.ID";
                 }
                 else
                 {
-                    result = PackingA2BWebAPI.GetRegionFactory(this.comboFactory.Text, out dtFactory);
+                    string rgCode = MyUtility.GetValue.Lookup("select RgCode from system");
+                    string sqlGetFactoryData = $@"
+select ID AS [Factory] from Factory
+INNER JOIN [System] ON System.RgCode!= Factory.NegoRegion
+where Factory.Junk = 0 and Factory.IsProduceFty = 1 AND NegoRegion='{rgCode}'
+order by ID";
+
+                    result = PackingA2BWebAPI.GetDataBySql(this.comboFactory.Text, sqlGetFactoryData, out dtFactory);
                 }
 
                 if (!result)
