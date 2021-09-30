@@ -132,6 +132,13 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
+            bool isConfirmed = MyUtility.Check.Seek($"select 1 from Transferout with (nolock) where ID = '{this.CurrentMaintain["ID"]}' and Status = 'Confirmed'");
+            if (isConfirmed)
+            {
+                MyUtility.Msg.WarningBox("This record already Confirmed, can not save");
+                return false;
+            }
+
             #endregion 必輸檢查
             this.detailgrid.ValidateControl();
             this.detailgridbs.EndEdit();
