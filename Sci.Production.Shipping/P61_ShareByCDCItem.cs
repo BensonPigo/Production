@@ -63,9 +63,11 @@ namespace Sci.Production.Shipping
 
             DataTable sumDt = (DataTable)this.gridbs.DataSource;
             string filter = "CustomsType = '{0}' and CustomsDescription = '{1}'";
-            var calDatas = this.rateDt.AsEnumerable().Select(s => new
+            var calDatas = this.rateDt.AsEnumerable().Select(s => new CalData
             {
-                rn = MyUtility.Convert.GetLong(s["rn"]),
+                Rn = MyUtility.Convert.GetLong(s["rn"]),
+                CustomsType = MyUtility.Convert.GetString(s["CustomsType"]),
+                CustomsDescription = MyUtility.Convert.GetString(s["CustomsDescription"]),
                 ActNetKg = MyUtility.Math.Round(
                     MyUtility.Convert.GetDecimal(s["RateNetKg"])
                     * MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s["CustomsType"].ToString(), s["CustomsDescription"].ToString()))[0]["ActTtlNetKg"]), 2),
@@ -77,8 +79,52 @@ namespace Sci.Production.Shipping
                     * MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s["CustomsType"].ToString(), s["CustomsDescription"].ToString()))[0]["ActTtlAmount"]), 2),
                 ActHSCode = MyUtility.Convert.GetString(sumDt.Select(string.Format(filter, s["CustomsType"].ToString(), s["CustomsDescription"].ToString()))[0]["ActHSCode"]),
             }).ToList();
+
+            var groupNew = calDatas
+                .GroupBy(g => new { g.CustomsType, g.CustomsDescription })
+                .Select(s => new { s.Key.CustomsType, s.Key.CustomsDescription, maxrn = s.Max(m => m.Rn), ActNetKg = s.Sum(su => su.ActNetKg), ActWeightKg = s.Sum(su => su.ActWeightKg), ActAmount = s.Sum(su => su.ActAmount) })
+                .ToList();
+
+            var lastDiff = groupNew.Select(s => new
+            {
+                Rn = s.maxrn,
+                s.CustomsType,
+                s.CustomsDescription,
+                ActNetKg = s.ActNetKg - MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["ActTtlNetKg"]),
+                ActWeightKg = s.ActWeightKg - MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["ActTtlWeightKg"]),
+                ActAmount = s.ActAmount - MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["ActTtlAmount"]),
+            }).ToList();
+
+            foreach (var item in calDatas)
+            {
+                var lastSamern = lastDiff.Where(w => w.CustomsType == item.CustomsType && w.CustomsDescription == item.CustomsDescription).First();
+                if (lastSamern.Rn == item.Rn)
+                {
+                    item.ActNetKg = item.ActNetKg - lastSamern.ActNetKg;
+                    item.ActWeightKg = item.ActWeightKg - lastSamern.ActWeightKg;
+                    item.ActAmount = item.ActAmount - lastSamern.ActAmount;
+                }
+            }
+
             P61.ShareDt = PublicPrg.ListToDataTable.ToDataTable(calDatas);
             this.Close();
+        }
+
+        private class CalData
+        {
+            public long Rn { get; set; }
+
+            public string CustomsType { get; set; }
+
+            public string CustomsDescription { get; set; }
+
+            public decimal ActNetKg { get; set; }
+
+            public decimal ActWeightKg { get; set; }
+
+            public decimal ActAmount { get; set; }
+
+            public string ActHSCode { get; set; }
         }
     }
 }
