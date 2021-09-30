@@ -30,6 +30,8 @@ namespace Sci.Production.Shipping
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_ActWeightKg;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_ActAmount;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ActHSCode;
+        private DataTable RateDt;
+
         /// <inheritdoc/>
         public static DataTable ShareDt { get; set; }
 
@@ -787,6 +789,7 @@ where id = '{this.CurrentMaintain["ID"]}'
         {
             this.InitReadOnly(true);
             base.ClickEditAfter();
+            this.RateDt = this.GetRatebyCustomsTypeDescription();
         }
 
         /// <inheritdoc/>
@@ -963,6 +966,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                 }
 
                 dt.AsEnumerable().ToList().ForEach(row => ((DataTable)this.detailgridbs.DataSource).ImportRowAdded(row));
+                this.RateDt = this.GetRatebyCustomsTypeDescription();
             }
         }
 
@@ -985,7 +989,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                 return;
             }
 
-            var frm = new P61_ShareByCDCItem(this.GetSumbyCustomsTypeDescription(), this.GetRatebyCustomsTypeDescription());
+            var frm = new P61_ShareByCDCItem(this.GetSumbyCustomsTypeDescription(), this.RateDt);
             frm.ShowDialog();
             if (ShareDt != null)
             {

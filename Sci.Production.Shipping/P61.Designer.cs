@@ -531,6 +531,7 @@
             // 
             // btnSharebyCDC
             // 
+            this.btnSharebyCDC.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnSharebyCDC.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnSharebyCDC.Location = new System.Drawing.Point(642, 90);
             this.btnSharebyCDC.Name = "btnSharebyCDC";
