@@ -175,7 +175,7 @@
             this.btnAutoCacu.Name = "btnAutoCacu";
             this.btnAutoCacu.Size = new System.Drawing.Size(136, 30);
             this.btnAutoCacu.TabIndex = 2;
-            this.btnAutoCacu.Text = "Auto Caculate";
+            this.btnAutoCacu.Text = "Auto Calculate";
             this.btnAutoCacu.UseVisualStyleBackColor = true;
             this.btnAutoCacu.Click += new System.EventHandler(this.BtnAutoCacu_Click);
             // 
