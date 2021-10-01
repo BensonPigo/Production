@@ -1415,7 +1415,7 @@
     <None Include="XLT\Shipping_R43_NonDeclarationReportExport.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Shipping_R61_SummaryByCustomsDescription.xltx">
+    <None Include="XLT\Shipping_R61_Summary.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Shipping_R61.xltx">
