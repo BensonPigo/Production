@@ -1930,7 +1930,6 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["exportid"], this.Curre
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
 
-
             #region FD, RR, LR 寄信 (QKPI - Exception)
 
             List<SqlParameter> sqlParameters = new List<SqlParameter>
@@ -1941,66 +1940,63 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["exportid"], this.Curre
             string sqlcmdQKPI = @"
 declare @ID varchar(15) = @mainID
 
--- FD
-select distinct
-o.FtyGroup
-, Style = s.StyleName
-,[Brand] = s.BrandID
-,[Season] = s.SeasonID
-,[Remark] = REPLACE('The FD was failed due to {Style.ExceptionFormRemark}.','{Style.ExceptionFormRemark}',s.ExpectionFormRemark)
-from Style s 
-inner join Orders o on s.Ukey = o.StyleUkey
-inner join Receiving_Detail rd on rd.PoId = o.ID
-where s.ExpectionFormStatus in ('A','R')
-and rd.Id = @ID
+select * from (
 
--- RR
-select distinct
-o.FtyGroup
-,[Style] = s.StyleName
-,[Brand] = s.BrandID
-,[Season] = s.SeasonID
-,[Remark] = Replace(REPLACE('The RR under {Refno} was failed due to {RR Remark}.','{Refno}',sr.Refno),'{RR Remark}',sr.RRRemark)
-from Style_RRLRReport sr
-left join Style s on sr.StyleUkey = s.Ukey
-left join Orders o on s.Ukey = o.StyleUkey
-where exists(
-	select 
-	1
-	from Receiving_Detail rd
-	left join PO_Supp_Detail p on rd.PoId = p.ID and rd.Seq1 = p.SEQ1 and rd.Seq2 = p.SEQ2
-	left join PO_Supp p1 on p1.ID = p.ID and p.SEQ1 = p1.SEQ1
-	left join Orders o on p.ID = o.ID
-	where sr.StyleUkey = o.StyleUkey
-	and sr.SuppID = p1.SuppID and sr.Refno = p.Refno
-	and sr.ColorID = p.ColorID
-	and rd.Id = @ID
-)
-and sr.RR = 1
+    -- FD
+    select distinct
+    o.FtyGroup
+    , Style = s.ID
+    ,[Brand] = s.BrandID
+    ,[Season] = s.SeasonID
+    ,[Remark] = REPLACE('The FD was failed due to {Style.ExceptionFormRemark}.','{Style.ExceptionFormRemark}',s.ExpectionFormRemark)
+    from Style s 
+    inner join Orders o on s.Ukey = o.StyleUkey
+    inner join Receiving_Detail rd on rd.PoId = o.ID
+    where s.ExpectionFormStatus in ('A','R')
+    and rd.Id = @ID
 
--- LR 
-select distinct
-o.FtyGroup
-,[Style] = s.StyleName
-,[Brand] = s.BrandID
-,[Season] = s.SeasonID
-,[Remark] = REPLACE('The LR under {Refno} was failed.','{Refno}',sr.Refno)
-from Style_RRLRReport sr
-left join Style s on sr.StyleUkey = s.Ukey
-left join Orders o on s.Ukey = o.StyleUkey
-where exists(
-	select 
-	1
-	from Receiving_Detail rd
-	left join PO_Supp_Detail p on rd.PoId = p.ID and rd.Seq1 = p.SEQ1 and rd.Seq2 = p.SEQ2
-	left join PO_Supp p1 on p1.ID = p.ID and p.SEQ1 = p1.SEQ1
-	left join Orders o on p.ID = o.ID
-	where sr.StyleUkey = o.StyleUkey
-	and sr.SuppID = p1.SuppID and sr.Refno = p.Refno
-	and sr.ColorID = p.ColorID
-	and rd.Id = @ID
-)
-and sr.LR= 1
+    union 
+    -- RR
+    select distinct
+    o.FtyGroup
+    ,[Style] = s.ID
+    ,[Brand] = s.BrandID
+    ,[Season] = s.SeasonID
+    ,[Remark] = Replace(REPLACE('The RR under {Refno} was failed due to {RR Remark}.','{Refno}',sr.Refno),'{RR Remark}',sr.RRRemark)
+    from Receiving_Detail rd
+    inner join PO_Supp_Detail p on rd.PoId = p.ID and rd.Seq1 = p.SEQ1 and rd.Seq2 = p.SEQ2
+    inner join PO_Supp p1 on p1.ID = p.ID and p.SEQ1 = p1.SEQ1
+    inner join Orders o on p.ID = o.ID
+    inner join Style s on o.StyleUkey = s.Ukey
+    inner join Style_RRLRReport sr on sr.StyleUkey = s.Ukey and sr.SuppID = p1.SuppID
+    and sr.Refno = p.Refno and sr.ColorID = p.ColorID
+    where sr.RR= 1
+    and rd.Id=@ID
+
+
+    union 
+
+    -- LR 
+    select distinct
+    o.FtyGroup
+    ,[Style] = s.ID
+    ,[Brand] = s.BrandID
+    ,[Season] = s.SeasonID
+    ,[Remark] = Replace(REPLACE('The RR under {Refno} was failed due to {RR Remark}.','{Refno}',sr.Refno),'{RR Remark}',sr.RRRemark)
+    from Receiving_Detail rd
+    inner join PO_Supp_Detail p on rd.PoId = p.ID and rd.Seq1 = p.SEQ1 and rd.Seq2 = p.SEQ2
+    inner join PO_Supp p1 on p1.ID = p.ID and p.SEQ1 = p1.SEQ1
+    inner join Orders o on p.ID = o.ID
+    inner join Style s on o.StyleUkey = s.Ukey
+    inner join Style_RRLRReport sr on sr.StyleUkey = s.Ukey and sr.SuppID = p1.SuppID
+    and sr.Refno = p.Refno and sr.ColorID = p.ColorID
+    where rd.Id=@ID
+    and sr.LR= 1
+
+) a
+order by Style,Brand,Season,Remark
+
+
 
 select * from MailGroup where Code= '104'
 
@@ -2017,43 +2013,24 @@ from MailTo where ID ='104'
                 return;
             }
 
-            DataTable dtFD = dts[0];
-            DataTable dtRR = dts[1];
-            DataTable dtLR = dts[2];
-            DataTable dtMailGroup = dts[3];
-            DataTable dtMailTo = dts[4];
+            DataTable dtAll = dts[0];
+            DataTable dtMailGroup = dts[1];
+            DataTable dtMailTo = dts[2];
 
             foreach (DataRow drGroup in dtMailGroup.Rows)
             {
                 string ToAddress = string.Empty;
                 string CCAddress = string.Empty;
                 bool dataExists = false;
-                string content = Class.MailTools.HtmlStyle() + Environment.NewLine + "<h4>Please do further actions.</h4>" + Environment.NewLine;
+                string content = Class.MailTools.HtmlStyle() + Environment.NewLine + "<h3>Please do further actions.</h4>" + Environment.NewLine;
 
                 // FD
-                DataRow[] filterFD = dtFD.Select($"FtyGroup = '{drGroup["FactoryID"]}'");
+                DataRow[] filterFD = dtAll.Select($"FtyGroup = '{drGroup["FactoryID"]}'");
                 if (filterFD.Length > 0)
                 {
-                    content += "<h2>FD</h2>" + Environment.NewLine;
-                    content += Class.MailTools.DataTableChangeHtml_WithOutStyleHtml(filterFD.CopyToDataTable());
-                    dataExists = true;
-                }
-
-                // RR
-                DataRow[] filterRR = dtRR.Select($"FtyGroup = '{drGroup["FactoryID"]}'");
-                if (filterRR.Length > 0)
-                {
-                    content += "<h2>RR</h2>" + Environment.NewLine;
-                    content += Class.MailTools.DataTableChangeHtml_WithOutStyleHtml(filterRR.CopyToDataTable());
-                    dataExists = true;
-                }
-
-                // LR
-                DataRow[] filterLR = dtLR.Select($"FtyGroup = '{drGroup["FactoryID"]}'");
-                if (filterLR.Length > 0)
-                {
-                    content += "<h2>LR</h2>" + Environment.NewLine;
-                    content += Class.MailTools.DataTableChangeHtml_WithOutStyleHtml(filterLR.CopyToDataTable());
+                    DataTable dt = filterFD.CopyToDataTable();
+                    dt.Columns.Remove("FtyGroup");
+                    content += Class.MailTools.DataTableChangeHtml_WithOutStyleHtml(dt);
                     dataExists = true;
                 }
 

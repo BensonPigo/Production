@@ -43,10 +43,6 @@ namespace Sci.Production.Warehouse
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(792, 388);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.editBox2);
@@ -55,12 +51,6 @@ namespace Sci.Production.Warehouse
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(792, 350);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 350);
-            this.detailbtm.Size = new System.Drawing.Size(792, 38);
             // 
             // browse
             // 
@@ -143,7 +133,7 @@ namespace Sci.Production.Warehouse
             this.IsSupportPrint = false;
             this.Name = "B08";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
-            this.Text = "B08. MD Fail Mail To ";
+            this.Text = "B08 Material Exception Mail To";
             this.WorkAlias = "MailGroup";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();

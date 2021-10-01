@@ -187,10 +187,20 @@ namespace Sci.Production.Class
         /// <returns>string</returns>
         public static string DataTableChangeHtml_WithOutStyleHtml(DataTable dt)
         {
-            string html = string.Empty;
+            string html = "<html> ";
+
+            html += @"
+<style>
+    .tg {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+        }
+</style>
+";
+
             html += "<body> ";
-            html += "<table class='DataTable'> ";
-            html += "<thead><tr> ";
+            html += "<table class='tg'> ";
+            html += "<thead><tr bgcolor=\"#FFDEA1\" > ";
             for (int i = 0; i <= dt.Columns.Count - 1; i++)
             {
                 html += "<th>" + dt.Columns[i].ColumnName + "</th> ";
@@ -212,6 +222,7 @@ namespace Sci.Production.Class
             html += "</tbody> ";
             html += "</table> ";
             html += "</body> ";
+            html += "</html> ";
             return html;
         }
 
