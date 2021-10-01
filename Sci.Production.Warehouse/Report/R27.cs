@@ -108,6 +108,8 @@ select	I.ID,
 		ID.POID,
 		i.SewLine,
 		[Seq] = concat(Ltrim(Rtrim( ID.seq1)), ' ',  ID.seq2),
+        [Refno] = Fabric.Refno,
+		[Material Type] = Fabric.MtlTypeID,
 		[Description] = dbo.getmtldesc(ID.poid, ID.seq1,ID.seq2,2,0),
 		[Color] = dbo.GetColorMultipleID( PSD.BrandId,  PSD.ColorID),
 		[Size] = PSD.SizeSpec,
@@ -142,6 +144,7 @@ from Issue I with (nolock)
 Inner join Issue_Detail ID with (nolock) on I.ID=ID.ID
 Inner join po_supp_detail PSD on ID.POID=PSD.ID and ID.SEQ1=PSD.SEQ1 and ID.SEQ2=PSD.SEQ2
 Inner join FtyInventory F on ID.Poid = F.Poid and ID.Seq1 = F.seq1 and ID.seq2 = F.seq2 and ID.roll = F.roll
+left join Fabric on Fabric.SCIRefno = psd.SCIRefno
 where 1 = 1 {sqlWhere}
 
 ";
