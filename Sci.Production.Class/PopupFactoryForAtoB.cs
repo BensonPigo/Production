@@ -91,7 +91,7 @@ where F.Junk = 0 and F.IsProduceFty = 1 order by F.ID";
                 {
                     string rgCode = MyUtility.GetValue.Lookup("select RgCode from system");
                     string sqlGetFactoryData = $@"
-select ID AS [Factory] from Factory
+select [Selected] = 1, ID AS [Factory] from Factory
 INNER JOIN [System] ON System.RgCode!= Factory.NegoRegion
 where Factory.Junk = 0 and Factory.IsProduceFty = 1 AND NegoRegion='{rgCode}'
 order by ID";
