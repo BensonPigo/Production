@@ -120,6 +120,8 @@
             this.txtpaytermarPaymentTerm = new Sci.Production.Class.Txtpaytermar();
             this.txtCountryDestination = new Sci.Production.Class.Txtcountry();
             this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.displayCategory = new Sci.Win.UI.DisplayBox();
+            this.labCategory = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -136,6 +138,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayCategory);
+            this.masterpanel.Controls.Add(this.labCategory);
             this.masterpanel.Controls.Add(this.txtPulloutPort1);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnDocumentRefNoFormat);
@@ -321,6 +325,8 @@
             this.masterpanel.Controls.SetChildIndex(this.btnDocumentRefNoFormat, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtPulloutPort1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labCategory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayCategory, 0);
             // 
             // detailpanel
             // 
@@ -1341,6 +1347,7 @@
             // 
             this.txtSubconForwarder.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder", true));
             this.txtSubconForwarder.DisplayBox1Binding = "";
+            this.txtSubconForwarder.IsFreightForwarder = false;
             this.txtSubconForwarder.IsIncludeJunk = false;
             this.txtSubconForwarder.IsMisc = false;
             this.txtSubconForwarder.IsShipping = false;
@@ -1416,6 +1423,24 @@
             this.txtbrand.Size = new System.Drawing.Size(84, 23);
             this.txtbrand.TabIndex = 5;
             this.txtbrand.Validated += new System.EventHandler(this.Txtbrand_Validated);
+            // 
+            // displayCategory
+            // 
+            this.displayCategory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCategory.Location = new System.Drawing.Point(447, 352);
+            this.displayCategory.Name = "displayCategory";
+            this.displayCategory.Size = new System.Drawing.Size(100, 23);
+            this.displayCategory.TabIndex = 93;
+            // 
+            // labCategory
+            // 
+            this.labCategory.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labCategory.Location = new System.Drawing.Point(304, 352);
+            this.labCategory.Name = "labCategory";
+            this.labCategory.Size = new System.Drawing.Size(140, 23);
+            this.labCategory.TabIndex = 94;
+            this.labCategory.Text = "Category";
             // 
             // P05
             // 
@@ -1553,5 +1578,7 @@
         private Win.UI.Button btnDocumentRefNoFormat;
         private Class.TxtPulloutPort txtPulloutPort1;
         private Win.UI.Label label1;
+        private Win.UI.DisplayBox displayCategory;
+        private Win.UI.Label labCategory;
     }
 }
