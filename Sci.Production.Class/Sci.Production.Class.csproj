@@ -105,6 +105,12 @@
     <Compile Include="ComboConstruction.Designer.cs">
       <DependentUpon>ComboConstruction.cs</DependentUpon>
     </Compile>
+    <Compile Include="ComboPictureSize.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ComboPictureSize.Designer.cs">
+      <DependentUpon>ComboPictureSize.cs</DependentUpon>
+    </Compile>
     <Compile Include="ComboGender.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -748,6 +754,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ComboConstruction.resx">
       <DependentUpon>ComboConstruction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ComboPictureSize.resx">
+      <DependentUpon>ComboPictureSize.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ComboGender.resx">
       <DependentUpon>ComboGender.cs</DependentUpon>
