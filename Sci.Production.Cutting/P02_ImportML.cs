@@ -568,6 +568,15 @@ namespace Sci.Production.Cutting
                             markerItemSet.Straight = this.GetValue(mKeyword, mTmp);
                         }
 
+                        if (string.IsNullOrEmpty(markerItemSet.Straight))
+                        {
+                            mKeyword = "Straight lines:";
+                            if (mTmp.IndexOf(mKeyword) >= 0)
+                            {
+                                markerItemSet.Straight = this.GetValue(mKeyword, mTmp);
+                            }
+                        }
+
                         mKeyword = markerItemSet.Version == "1" ? "曲線:" : "Curved:";
                         if (mTmp.IndexOf(mKeyword) >= 0)
                         {
