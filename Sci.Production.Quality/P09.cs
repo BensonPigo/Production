@@ -840,7 +840,7 @@ and (ed.qty + ed.Foc)>0
 and o.Category in('B','M')
 
 select 
-fty.TestDocFactoryGroup
+[TestDocFactoryGroup] = iif(fty.TestDocFactoryGroup is null, b.TestDocFactoryGroup, fty.TestDocFactoryGroup)
 ,[suppid] = iif(a.SuppID is null, b.SuppID,a.Suppid)
 ,[AbbEN] = iif(a.AbbEN is null, (select abben from supp where id=b.suppid), a.abben)
 ,[Refno] = iif(a.Refno is null ,b.Refno,a.refno)
@@ -849,7 +849,12 @@ fty.TestDocFactoryGroup
 ,[SeasonSCIID] = iif(a.SeasonSCIID is null,b.SeasonSCIID,a.SeasonSCIID)
 ,[Period] = iif(a.Period is null, b.Period , a.Period)
 ,[FirstDyelot] = iif(a.FirstDyelot is null, b.FirstDyelot, a.FirstDyelot)
-,a.[TPEFirstDyelot]
+,[TPEFirstDyelot] = iif(a.[TPEFirstDyelot] is null, 
+                        IIF(b.SeasonSCIID is null
+                            ,'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
+                            ,format(b.TPEFirstDyelot,'yyyy/MM/dd')
+                        ),
+                        a.[TPEFirstDyelot])
 from #tmp a
 inner join Factory fty with (nolock) on fty.ID = a.Consignee
 full join FirstDyelot b on fty.TestDocFactoryGroup = b.TestDocFactoryGroup

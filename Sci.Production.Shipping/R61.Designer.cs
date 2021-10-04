@@ -254,11 +254,11 @@
             this.cbmReporttype.IsSupportUnselect = true;
             this.cbmReporttype.Items.AddRange(new object[] {
             "Detail",
-            "Summary By Customs Description"});
+            "Summary"});
             this.cbmReporttype.Location = new System.Drawing.Point(136, 165);
             this.cbmReporttype.Name = "cbmReporttype";
             this.cbmReporttype.OldText = "";
-            this.cbmReporttype.Size = new System.Drawing.Size(233, 24);
+            this.cbmReporttype.Size = new System.Drawing.Size(172, 24);
             this.cbmReporttype.TabIndex = 103;
             // 
             // R61

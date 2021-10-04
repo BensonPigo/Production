@@ -405,7 +405,7 @@ where vk.Refno = '{dr["Refno"]}'
            .Text("CustomsType", header: "Customs Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
            .Text("CDCCode", header: "CDC Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
            .Text("CustomsDescription", header: "Customs Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
-           .Numeric("CDCQty", header: "CDCQty", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
+           .Numeric("CDCQty", header: "CDC Qty", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
            .Text("CDCUnit", header: "CDC Unit", width: Widths.AnsiChars(25), iseditingreadonly: true)
            .Numeric("CDCUnitPrice", header: "CDC Unit Price", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
            .Numeric("CDCAmount", header: "CDC Amount", width: Widths.AnsiChars(11), decimal_places: 4, integer_places: 9, iseditingreadonly: true)
@@ -1045,6 +1045,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                     ActAmount = MyUtility.Convert.GetDecimal(s["ActAmount"]),
                     ActHSCode = MyUtility.Convert.GetString(s["ActHSCode"]),
                     Qty = MyUtility.Convert.GetDecimal(s["Qty"]),
+                    CDCQty = MyUtility.Convert.GetDecimal(s["CDCQty"]),
                 })
                 .Where(w => this.customsTypelist.Contains(w.CustomsType))
                 .ToList();
@@ -1077,6 +1078,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                     ActTtlWeightKg = s.Sum(su => su.ActWeightKg),
                     ActTtlAmount = s.Sum(su => su.ActAmount),
                     TtlQty = s.Sum(su => su.Qty),
+                    TtlCDCQty = s.Sum(su => su.CDCQty),
                 }).ToList();
             return PublicPrg.ListToDataTable.ToDataTable(sumlist);
         }
