@@ -1567,7 +1567,7 @@
           <Top>4.50131cm</Top>
           <Left>1.62592cm</Left>
           <Height>0.62646cm</Height>
-          <Width>7.85072cm</Width>
+          <Width>4.09836cm</Width>
           <ZIndex>8</ZIndex>
           <Style>
             <Border>
@@ -1629,8 +1629,8 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox4</rd:DefaultName>
-          <Top>5.13835cm</Top>
-          <Left>0.11779cm</Left>
+          <Top>4.49073cm</Top>
+          <Left>5.83011cm</Left>
           <Height>0.62646cm</Height>
           <Width>1.50813cm</Width>
           <ZIndex>10</ZIndex>
@@ -1661,10 +1661,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox8</rd:DefaultName>
-          <Top>5.13835cm</Top>
-          <Left>1.62592cm</Left>
+          <Top>4.49073cm</Top>
+          <Left>7.33824cm</Left>
           <Height>0.635cm</Height>
-          <Width>7.85072cm</Width>
+          <Width>4.09836cm</Width>
           <ZIndex>11</ZIndex>
           <Style>
             <Border>
@@ -1802,6 +1802,70 @@
           <Height>0.62646cm</Height>
           <Width>5.45346cm</Width>
           <ZIndex>15</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox6">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>Email:</Value>
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox4</rd:DefaultName>
+          <Top>5.13835cm</Top>
+          <Left>0.1413cm</Left>
+          <Height>0.62646cm</Height>
+          <Width>1.50813cm</Width>
+          <ZIndex>16</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox10">
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>=Parameters!Email.Value</Value>
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                    <FontSize>9pt</FontSize>
+                  </Style>
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox8</rd:DefaultName>
+          <Top>5.13835cm</Top>
+          <Left>1.64943cm</Left>
+          <Height>0.62646cm</Height>
+          <Width>9.78717cm</Width>
+          <ZIndex>17</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>
@@ -1991,6 +2055,12 @@
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
     <ReportParameter Name="AddName">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Email">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
