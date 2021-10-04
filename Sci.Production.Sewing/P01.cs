@@ -46,7 +46,7 @@ namespace Sci.Production.Sewing
             this.InitializeComponent();
             this.DefaultFilter = string.Format("FactoryID = '{0}' and Category = 'O'", Env.User.Factory);
             MyUtility.Tool.SetupCombox(this.comboTeam, 1, 1, "A,B");
-            this.DoSubForm = new P01_QAOutput();
+            this.DoSubForm = new P01_QAOutput(this);
 
             // 當Grid目前在最後一筆的最後一欄時，按Enter要自動新增一筆Record
             this.detailgrid.StatusNotification += (s, e) =>
@@ -4502,6 +4502,11 @@ drop table #tmp,#tmp2
                 return true;
             }
 
+            if (this.IsUnlockFromMonthLock)
+            {
+                return true;
+            }
+
             string outputDate = ((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd");
             string sqlcmd2 = $@"
 select 1
@@ -4518,6 +4523,38 @@ and dul.OutputDate = '{outputDate}'
             {
                 MyUtility.Msg.WarningBox($"This Output Date {outputDate} already lock, cannot {action} it.");
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// IsUnlockFromMonthLock
+        /// </summary>
+        /// <returns>bool</returns>
+        public bool IsUnlockFromMonthLock
+        {
+            get
+            {
+                // 如果資料是經由[月解鎖]的資料,不用檢查
+                bool isUnlockFromMonthLock = this.CurrentMaintain["Status"].ToString() == "New" &&
+                    MyUtility.Check.Seek($@"
+declare @OldValue varchar(20)
+declare @NewValue varchar(20)
+
+select top 1 @OldValue = OldValue, @NewValue = NewValue
+from    SewingOutput_History with (nolock)
+where ID = '{this.CurrentMaintain["ID"]}' and HisType = 'Status' and AddDate >=  cast(GetDate() as Date)
+order by AddDate Desc
+
+if(@OldValue = 'Locked' and @NewValue = 'New')
+begin
+    select EmailID from System
+end
+else
+begin
+    select EmailID from System where 1 = 0
+end
+");
+                return isUnlockFromMonthLock;
             }
         }
     }

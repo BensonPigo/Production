@@ -278,6 +278,7 @@
             this.IsSupportDelete = false;
             this.IsSupportNew = false;
             this.Name = "P01_QAOutput";
+            this.OnLineHelpID = "Sci.Win.Subs.Input8A";
             this.Text = "QA Output";
             this.Controls.SetChildIndex(this.labelSPNo, 0);
             this.Controls.SetChildIndex(this.labelArticle, 0);
