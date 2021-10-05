@@ -1982,7 +1982,7 @@ select * from (
     ,[Style] = s.ID
     ,[Brand] = s.BrandID
     ,[Season] = s.SeasonID
-    ,[Remark] = Replace(REPLACE('The RR under {Refno} was failed due to {RR Remark}.','{Refno}',sr.Refno),'{RR Remark}',sr.RRRemark)
+    ,[Remark] = Replace('The LR under {Refno} was failed.','{Refno}',sr.Refno)
     from Receiving_Detail rd
     inner join PO_Supp_Detail p on rd.PoId = p.ID and rd.Seq1 = p.SEQ1 and rd.Seq2 = p.SEQ2
     inner join PO_Supp p1 on p1.ID = p.ID and p.SEQ1 = p1.SEQ1
