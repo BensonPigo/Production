@@ -583,7 +583,7 @@ merge ShareExpense t
 using (
 select distinct
     [ShippingAPID] = '{this.apData["ID"]}'
-    ,[BLNo] = '{this.apData["BLNO"]}'
+    ,[BLNo] = iif(BLNo is null or BLNo='', BL2No,BLNo)
     ,[WKNo] = ''
     ,[InvNo] = id
     ,[Type] = '{this.apData["SubType"]}'
