@@ -678,7 +678,7 @@ WHERE bio.RFIDProcessLocationID=''
 
             sqlCmd += string.Format(
                 @"
-SELECT distinct	Selected = 0 
+SELECT Selected = 0 
 		, o.FTYGroup
 		, orderid = o.ID
 		, ard.Article
@@ -693,7 +693,7 @@ SELECT distinct	Selected = 0
 		, ard.PatternDesc
 		, LocalSuppID = rtrim(ar.LocalSuppID) 
         , [Cost] = isnull(cost.value,0)
-		, costStitch = oa.qty
+		, costStitch = vsa.qty
 		, stitch = ard.Stitch
 		, unitprice = isnull(unitprice.value,0)
 		, qtygarment = ard.QtyGarment
@@ -707,7 +707,7 @@ SELECT distinct	Selected = 0
         , [IrregularQtyReason] = sr.ID +'-'+sr.Reason
 		,[Farmout] = ISNULL(FarmOut.Value,0)
 		,[FarmIn] = ISNULL(FarmIn.Value,0)
-        , [QuotArticle] = isnull(oa.Article, '')
+        , [QuotArticle] = isnull(vsa.Article, '')
         , [QuotSizeCode] = isnull(sao.SizeCode, '')
 into    #quoteDetailBase
 FROM Orders o WITH (NOLOCK) 
@@ -716,19 +716,13 @@ inner join ArtworkType awt WITH (NOLOCK) on awt.ID = '{1}'
 inner join ArtworkReq_Detail ard with (nolock) on   ard.OrderId = o.ID and 
                                                     ard.ArtworkPOID = ''
 inner join ArtworkReq ar WITH (NOLOCK) on ar.ID = ard.ID and ar.ArtworkTypeID = awt.ID and ar.Status = 'Approved' 
-left join dbo.View_Order_Artworks oa on   oa.ID = o.ID and
-										  (ard.Article = oa.Article or ard.Article = '') and
-                                          ar.ArtworkTypeID = oa.ArtworkTypeID and
-                                          ard.ArtworkID = oa.ArtworkID and 
-                                          ard.PatternCode = oa.PatternCode and 
-                                          ard.PatternDesc = oa.PatternDesc 
+outer apply (select top 1 Article from Order_Qty with (nolock) where ID = o.ID) oq
 left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey and 
-                                        vsa.Article = oa.Article and 
-                                        vsa.ArtworkID = oa.ArtworkID and
-										vsa.ArtworkName = oa.ArtworkName and 
-                                        vsa.ArtworkTypeID = oa.ArtworkTypeID and 
-                                        vsa.PatternCode = oa.PatternCode and
-										vsa.PatternDesc = oa.PatternDesc 
+                                        (vsa.Article = ard.Article or (ard.Article = '' and vsa.Article = oq.Article)) and
+                                        vsa.ArtworkID = ard.ArtworkID and
+                                        vsa.ArtworkTypeID = ar.ArtworkTypeID and 
+                                        vsa.PatternCode = ard.PatternCode and
+										vsa.PatternDesc = ard.PatternDesc 
 left join ArtworkReq_IrregularQty ai with (nolock) on ai.OrderID = ard.OrderID and ai.ArtworkTypeID = ar.ArtworkTypeID and ard.ExceedQty > 0
 left join SubconReason sr with (nolock) on sr.Type = 'SQ' and sr.ID = ai.SubconReasonID
 left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = vsa.StyleArtworkUkey and 
@@ -736,10 +730,10 @@ left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = vsa.StyleArtworkU
                                                     sao.LocalSuppID = ar.LocalSuppID  and 
                                                     sao.Price > 0  and sao.PriceApv = 'Y'
 left join LocalSupp ls with (nolock) on ls.id = ar.LocalSuppID
-outer apply (select value = iif(ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1), oa.Cost,sao.Price)) unitprice
+outer apply (select value = iif(ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1), vsa.Cost,sao.Price)) unitprice
 outer apply (
     select value = 
-        case when ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1) then oa.Cost
+        case when ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1) then vsa.Cost
              when awt.isArtwork = 1 then vsa.Cost
              else sao.Price
              end
@@ -751,8 +745,8 @@ OUTER APPLY(
     AND (bd.Article = ard.Article or ard.Article = '')
     AND (bd.SizeCode = ard.SizeCode or ard.SizeCode = '')
 	AND bd.ArtworkTypeId = awt.ID
-	AND bd.Patterncode = oa.PatternCode 
-	AND bd.PatternDesc = oa.PatternDesc
+	AND bd.Patterncode = ard.PatternCode 
+	AND bd.PatternDesc = ard.PatternDesc
 	AND bd.OutGoing IS NOT NULL 
 )FarmOut
 OUTER APPLY(	
@@ -762,8 +756,8 @@ OUTER APPLY(
     AND (bd.Article = ard.Article or ard.Article = '')
     AND (bd.SizeCode = ard.SizeCode or ard.SizeCode = '')
 	AND bd.ArtworkTypeId = awt.ID
-	AND bd.Patterncode = oa.PatternCode 
-	AND bd.PatternDesc = oa.PatternDesc
+	AND bd.Patterncode = ard.PatternCode 
+	AND bd.PatternDesc = ard.PatternDesc
 	AND bd.InComing IS NOT NULL
 )FarmIn
 WHERE 	 o.IsForecast = 0      
