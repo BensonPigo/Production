@@ -599,7 +599,8 @@ select distinct
 		    or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1))
     ,[Junk] = 0
 from GMTBooking g WITH (NOLOCK) 
-where BLNo='{this.apData["BLNO"]}' or BL2No='{this.apData["BLNO"]}' ) as s 
+where BLNo='{this.apData["BLNO"]}' or BL2No='{this.apData["BLNO"]}' 
+) as s 
 on	t.ShippingAPID = s.ShippingAPID 
 	and t.WKNO = s.WKNO	and t.InvNo = s.InvNo
 when matched AND t.junk=1 then
