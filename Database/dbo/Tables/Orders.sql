@@ -181,8 +181,11 @@
     [CDCodeNew]              VARCHAR (5)     NULL,
     [SizeUnitWeight]         VARCHAR (8)     NULL,
     [BrokenNeedles]          BIT             CONSTRAINT [DF_Orders_BrokenNeedles] DEFAULT ((0)) NOT NULL,
+    [InTheNameOfBrandID]     VARCHAR (8)     CONSTRAINT [DF_Orders_InTheNameOfBrandID] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

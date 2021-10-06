@@ -72,6 +72,10 @@
     [POAmt] NUMERIC(16, 4) NOT NULL DEFAULT ((0)), 
     [ShipAmt] NUMERIC(16, 4) NOT NULL DEFAULT ((0)), 
     [StockSuppID] VARCHAR(6) CONSTRAINT [DF_Po_Supp_Detail_StockSuppID] NOT NULL DEFAULT (''), 
+    [IsForOtherBrand] BIT NOT NULL DEFAULT 0, 
+    [ToMtlPOID] VARCHAR(13) NOT NULL DEFAULT (''), 
+    [ToMtlSeq1] VARCHAR(3) NOT NULL DEFAULT (''), 
+    [ToMtlSeq2] VARCHAR(2) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_PO_Supp_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [SEQ1] ASC, [SEQ2] ASC)
 );
 
