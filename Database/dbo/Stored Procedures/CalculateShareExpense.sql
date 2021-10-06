@@ -155,8 +155,8 @@ BEGIN
 					from ShippingAP sp WITH (NOLOCK)
 					inner join  GMTBooking g WITH (NOLOCK) on sp.BLNo = g.BLNo or sp.BLNo = g.BL2No
 					where sp.ID = s.ShippingAPID 	
-					and s.BLNo != g.BLNo
-					and s.BLNo != g.BL2No)
+					and sp.BLNo != g.BLNo
+					and sp.BLNo != g.BL2No)
 			END
 
 			/*
@@ -541,6 +541,7 @@ BEGIN
 
 			select  t.InvNo,pld.ID,AirPPID=app.ID,t.AccountID,pld.OrderID,pld.OrderShipmodeSeq, t.PLSharedAmtFin
 				, [TtlNW] = ROUND(sum(pld.NWPerPcs * pld.ShipQty),3)
+				, [TtlGW] = ROUND(sum(pld.GW),3)
 				, [OrderSharedAmt] =iif(TtlNW.Value = 0,0,ROUND(t.PLSharedAmtFin / TtlNW.Value * sum(pld.NWPerPcs * pld.ShipQty),2))  
 				, [QtyPerCTN] = sum(QtyPerCTN), [RatioFty] = isnull(app.RatioFty,0)		
 			into #OrderSharedAmtStep1
@@ -585,6 +586,7 @@ BEGIN
 			when matched then update set 
 				t.[CurrencyID]	  =@CurrencyID
 				,t.[NW]			  =s.ttlNw
+				,t.[GW]			  =s.TtlGW
 				,t.[RatioFty]	  =s.[RatioFty]
 				,t.[AmtFty]		  =s.SharedAmtFactory
 				,t.[RatioOther]	  =s.[RatioOther]

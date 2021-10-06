@@ -562,6 +562,7 @@ where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
             .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(16))
             .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(3))
             .Numeric("NW", header: "N.W.", decimal_places: 3)
+            .Numeric("GW", header: "G.W.", decimal_places: 3)
             .Text("AirPPID", header: "APP#", width: Widths.AnsiChars(16))
             .Text("AccountID", header: "Account No", width: Widths.AnsiChars(10))
             .Text("Name", header: "Account Name", width: Widths.AnsiChars(20))
@@ -599,7 +600,8 @@ select distinct
 		    or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1))
     ,[Junk] = 0
 from GMTBooking g WITH (NOLOCK) 
-where BLNo='{this.apData["BLNO"]}' or BL2No='{this.apData["BLNO"]}' ) as s 
+where BLNo='{this.apData["BLNO"]}' or BL2No='{this.apData["BLNO"]}' 
+) as s 
 on	t.ShippingAPID = s.ShippingAPID 
 	and t.WKNO = s.WKNO	and t.InvNo = s.InvNo
 when matched AND t.junk=1 then
@@ -703,6 +705,7 @@ select
 	AirPP.OrderShipmodeSeq,
 	sa.AirPPID,
 	sa.NW,
+    sa.GW,
 	sa.AccountID,
 	Name = (select Name from FinanceEN.dbo.AccountNo a with(Nolock) where a.ID = sa.AccountID),
 	sa.RatioFty,

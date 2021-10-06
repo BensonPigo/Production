@@ -342,6 +342,28 @@ drop table #tmp;
                 return;
             }
 
+            // check AirPP是否存在
+            string sqlchk = @"
+select s.* 
+from #tmp s
+inner join AirPP A on a.OrderID = s.OrderID and a.OrderShipmodeSeq = s.OrderShipmodeSeq
+where 1=1
+AND A.Status <> 'Junked'
+and Selected = 1
+";
+            DualResult result;
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(gridData,null,sqlchk, out DataTable dt)))
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                MyUtility.Msg.ShowMsgGrid_LockScreen(dt, msg: @"The following sp has Air PP. that cannot be imported to packing Foc, please import to packing sample.");
+                return;
+            }
+
             DataRow[] dr = gridData.Select("Selected = 1");
             if (dr.Length > 0)
             {

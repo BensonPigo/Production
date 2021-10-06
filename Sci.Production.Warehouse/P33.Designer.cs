@@ -53,6 +53,7 @@
             this.btnCallP99 = new Sci.Win.UI.Button();
             this.lblToPlace = new Sci.Win.UI.Label();
             this.txtToPlace = new Sci.Production.Class.TxtToPlace();
+            this.btnThreadColorComb = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -72,6 +73,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnThreadColorComb);
             this.masterpanel.Controls.Add(this.lblToPlace);
             this.masterpanel.Controls.Add(this.txtToPlace);
             this.masterpanel.Controls.Add(this.displayStyle);
@@ -114,6 +116,7 @@
             this.masterpanel.Controls.SetChildIndex(this.displayStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtToPlace, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblToPlace, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnThreadColorComb, 0);
             // 
             // detailpanel
             // 
@@ -123,7 +126,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(3495, 111);
+            this.gridicon.Location = new System.Drawing.Point(3816, 111);
             // 
             // refresh
             // 
@@ -135,6 +138,18 @@
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(999, 248);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(999, 553);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(993, 507);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(993, 40);
             // 
             // detail
             // 
@@ -270,7 +285,7 @@
             this.btnBreakDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBreakDown.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnBreakDown.Enabled = false;
-            this.btnBreakDown.Location = new System.Drawing.Point(876, 63);
+            this.btnBreakDown.Location = new System.Drawing.Point(787, 31);
             this.btnBreakDown.Name = "btnBreakDown";
             this.btnBreakDown.Size = new System.Drawing.Size(120, 30);
             this.btnBreakDown.TabIndex = 9;
@@ -414,6 +429,17 @@
             this.txtToPlace.Size = new System.Drawing.Size(132, 23);
             this.txtToPlace.TabIndex = 78;
             // 
+            // btnThreadColorComb
+            // 
+            this.btnThreadColorComb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnThreadColorComb.Location = new System.Drawing.Point(787, 67);
+            this.btnThreadColorComb.Name = "btnThreadColorComb";
+            this.btnThreadColorComb.Size = new System.Drawing.Size(204, 30);
+            this.btnThreadColorComb.TabIndex = 80;
+            this.btnThreadColorComb.Text = "Thread Color Combination";
+            this.btnThreadColorComb.UseVisualStyleBackColor = true;
+            this.btnThreadColorComb.Click += new System.EventHandler(this.BtnThreadColorComb_Click);
+            // 
             // P33
             // 
             this.ApvChkValue = "New";
@@ -485,5 +511,6 @@
         private Win.UI.Button btnCallP99;
         private Win.UI.Label lblToPlace;
         private Class.TxtToPlace txtToPlace;
+        private Win.UI.Button btnThreadColorComb;
     }
 }

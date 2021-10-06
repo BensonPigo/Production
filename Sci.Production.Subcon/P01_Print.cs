@@ -107,6 +107,7 @@ select ART.id
        , ART.LocalSuppID+'-'+L.name AS TITLETO
        , L.Tel
        , L.Address
+       , L.Email
        , L.fax
        , A.Orderid
        , O.styleID
@@ -148,6 +149,7 @@ order by ID", this.masterData["LocalSuppID"]);
                 string tO = dtDetail.Rows[0]["TITLETO"].ToString().Trim();
                 string tEL = dtDetail.Rows[0]["Tel"].ToString().Trim();
                 string aDDRESS = dtDetail.Rows[0]["Address"].ToString().Trim();
+                string email = dtDetail.Rows[0]["Email"].ToString().Trim();
                 string fAX = dtDetail.Rows[0]["fax"].ToString().Trim().Trim();
                 string style = dtDetail.Rows[0]["styleID"].ToString().Trim();
                 decimal totalQty = MyUtility.Convert.GetDecimal(dtDetail.Compute("sum(poqty)", "1=1"));
@@ -158,6 +160,7 @@ order by ID", this.masterData["LocalSuppID"]);
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TO", tO));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TEL", tEL));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ADDRESS", aDDRESS));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Email", email));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FAX", fAX));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalQty", totalQty.ToString()));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalAmount", totalAmount.ToString()));
@@ -209,18 +212,20 @@ order by ID", this.masterData["LocalSuppID"]);
                 pars = new List<SqlParameter>();
                 pars.Add(new SqlParameter("@ID", id));
                 DataTable dtDetail;
-                string sqlcmd = @"select 
-            F.nameEn,F.AddressEN,F.Tel,ART.LocalSuppID+'-'+L.name AS TITLETO,L.Tel,L.Address,L.fax,
-            A.Orderid,O.styleID,A.poQty,A.artworkid,A.Stitch,A.Unitprice,A.Qtygarment,format(A.Amount,'#,###,###,##0.00')Amount ,ART.apvName
-            from DBO.artworkpo ART WITH (NOLOCK) 
-			LEFT JOIN dbo.factory F WITH (NOLOCK) 
-			ON  F.ID = ART.factoryid
-			LEFT JOIN dbo.LocalSupp L WITH (NOLOCK) 
-			ON  L.ID = ART.LocalSuppID
-			LEFT JOIN dbo.Artworkpo_Detail A WITH (NOLOCK) 
-			ON  A.ID = ART.ID
-			LEFT JOIN dbo.Orders O WITH (NOLOCK) 
-			ON  O.id = A.OrderID where ART.id= @ID";
+                string sqlcmd = @"
+select 
+F.nameEn,F.AddressEN,F.Tel
+,ART.LocalSuppID+'-'+L.name AS TITLETO
+,L.Tel,L.Address,L.fax,L.Email
+,A.Orderid,O.styleID,A.poQty,A.artworkid,A.Stitch,A.Unitprice,A.Qtygarment
+,format(A.Amount,'#,###,###,##0.00')Amount ,ART.apvName
+from DBO.artworkpo ART WITH (NOLOCK) 
+LEFT JOIN dbo.factory F WITH (NOLOCK) ON  F.ID = ART.factoryid
+LEFT JOIN dbo.LocalSupp L WITH (NOLOCK) ON  L.ID = ART.LocalSuppID
+LEFT JOIN dbo.Artworkpo_Detail A WITH (NOLOCK) ON  A.ID = ART.ID
+LEFT JOIN dbo.Orders O WITH (NOLOCK) ON  O.id = A.OrderID 
+where ART.id= @ID
+";
                 result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out dtDetail);
                 if (!result)
                 {
@@ -239,6 +244,7 @@ order by ID", this.masterData["LocalSuppID"]);
                 string tO = dtDetail.Rows[0]["TITLETO"].ToString().Trim();
                 string tEL = dtDetail.Rows[0]["Tel"].ToString().Trim();
                 string aDDRESS = dtDetail.Rows[0]["Address"].ToString().Trim();
+                string email = dtDetail.Rows[0]["Email"].ToString().Trim();
                 string fAX = dtDetail.Rows[0]["fax"].ToString().Trim();
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", title1));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", title2));
@@ -246,6 +252,7 @@ order by ID", this.masterData["LocalSuppID"]);
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TO", tO));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TEL", tEL));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ADDRESS", aDDRESS));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Email", email));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FAX", fAX));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalQty", this.TotalPoQty));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalAmount", tOTAL.ToString("#,0.00")));
