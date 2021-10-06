@@ -37,6 +37,8 @@ namespace Sci.Production.PPIC
             this.comboLining1.SetDataSource();
             this.comboGender1.SetDataSource();
             this.comboConstruction1.SetDataSource();
+            this.comboPictureSize1.SetDataSource(this.pictureBox1);
+            this.comboPictureSize2.SetDataSource(this.pictureBox2);
         }
 
         /// <inheritdoc/>
