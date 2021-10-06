@@ -155,8 +155,8 @@ BEGIN
 					from ShippingAP sp WITH (NOLOCK)
 					inner join  GMTBooking g WITH (NOLOCK) on sp.BLNo = g.BLNo or sp.BLNo = g.BL2No
 					where sp.ID = s.ShippingAPID 	
-					and s.BLNo != g.BLNo
-					and s.BLNo != g.BL2No)
+					and sp.BLNo != g.BLNo
+					and sp.BLNo != g.BL2No)
 			END
 
 			/*
