@@ -3851,12 +3851,22 @@ order by p.EditDate desc
             #endregion
 
             int icount = this.DetailDatas.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["ImportML"])).Count();
-            for (int i = 0; i <= icount; i++)
+            if (icount > 0)
             {
-                this.detailgrid.CurrentCell = this.detailgrid.Rows[i].Cells["Layer"]; // 移動到指定cell 觸發 Con 計算
+                for (int i = 0; i < icount; i++)
+                {
+                    if (this.detailgrid.CurrentCell != null)
+                    {
+                        this.detailgrid.CurrentCell = this.detailgrid.Rows[i].Cells["Layer"]; // 移動到指定cell 觸發 Con 計算
+                    }
+                }
             }
 
-            this.detailgrid.SelectRowTo(0);
+            if (icount > 0)
+            {
+                this.detailgrid.CurrentCell = this.detailgrid.Rows[0].Cells["Layer"];
+                this.detailgrid.SelectRowTo(0);
+            }
         }
 
         private void Distribute_grid_DataError(object sender, DataGridViewDataErrorEventArgs e)
