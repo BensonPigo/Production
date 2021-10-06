@@ -307,38 +307,6 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
             this.CurrentMaintain["amount"] = MyUtility.Math.Round((decimal)detail_a, exact);
             this.CurrentMaintain["vat"] = MyUtility.Math.Round((decimal)detail_a * (decimal)this.CurrentMaintain["vatrate"] / 100, exact);
 
-            // 除了sample單, 表身不重複欄位 id,artworkid,patterncode,OrderId,ArtworkReqID,Article,SizeCode,Price,Cost
-            bool dup = this.DetailDatas.AsEnumerable().Where(w => w["Category"].ToString() != "S")
-                .GroupBy(g => new
-                {
-                    id = MyUtility.Convert.GetString(g["id"]),
-                    artworkid = MyUtility.Convert.GetString(g["artworkid"]),
-                    patterncode = MyUtility.Convert.GetString(g["patterncode"]),
-                    OrderId = MyUtility.Convert.GetString(g["OrderId"]),
-                    ArtworkReqID = MyUtility.Convert.GetString(g["ArtworkReqID"]),
-                    Article = MyUtility.Convert.GetString(g["Article"]),
-                    SizeCode = MyUtility.Convert.GetString(g["SizeCode"]),
-                    Price = MyUtility.Convert.GetString(g["Price"]),
-                    Cost = MyUtility.Convert.GetString(g["Cost"]),
-                })
-                .Select(s => new
-                {
-                    s.Key.id,
-                    s.Key.artworkid,
-                    s.Key.patterncode,
-                    s.Key.OrderId,
-                    s.Key.ArtworkReqID,
-                    s.Key.Article,
-                    s.Key.SizeCode,
-                    s.Key.Price,
-                    s.Key.Cost,
-                    ct = s.Count(),
-                }).Any(a => a.ct > 1);
-            if (dup)
-            {
-                MyUtility.Msg.WarningBox("id,artworkid,patterncode,OrderId,ArtworkReqID,Article,SizeCode,Price,Cost detail key cannot duplicate.");
-                return false;
-            }
             #endregion
             return base.ClickSaveBefore();
         }

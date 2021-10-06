@@ -184,12 +184,13 @@ select  orderid = ard.OrderID
         , ard.SizeCode
         , o.StyleUkey
         , ar.LocalSuppId
+        , [OrderQtyArticle] = OrderQty.Article
 into #baseArtworkReq
 from orders o WITH (NOLOCK) 
 inner join ArtworkReq_Detail ard with (nolock) on   ard.OrderId = o.ID and 
                                                     ard.ArtworkPOID = ''
 inner join ArtworkReq ar WITH (NOLOCK) on ar.ID = ard.ID and ar.Status = 'Approved' 
-outer apply (select [val] = sum(oq.Qty) from Order_Qty oq with (nolock) where  oq.ID = o.ID and 
+outer apply (select [Article] = max(Article), [val] = sum(oq.Qty) from Order_Qty oq with (nolock) where  oq.ID = o.ID and 
                                                                     (oq.Article = ard.Article or ard.Article = '') and
                                                                     (oq.SizeCode = ard.SizeCode or ard.SizeCode = '')
             ) OrderQty  
@@ -383,32 +384,10 @@ WHERE   bio.RFIDProcessLocationID='' and
             {
                 foreach (DataRow tmp in dr2)
                 {
-                    DataRow[] findrow = this.dt_artworkpoDetail.Select($@"orderid = '{tmp["orderid"].ToString()}' and 
-ArtworkId = '{tmp["ArtworkId"].ToString()}' and 
-patterncode = '{tmp["patterncode"].ToString()}' and 
-cost='{tmp["Cost"]}' and
-ArtworkReqID = '{tmp["ArtworkReqID"]}' and
-Article =  '{tmp["Article"]}' and
-SizeCode = '{tmp["SizeCode"]}'
-");
-
-                    if (findrow.Length > 0)
-                    {
-                        findrow[0]["unitprice"] = tmp["unitprice"];
-                        findrow[0]["Price"] = tmp["Price"];
-                        findrow[0]["amount"] = tmp["amount"];
-                        findrow[0]["poqty"] = tmp["PoQty"];
-                        findrow[0]["qtygarment"] = 1;
-                        findrow[0]["FarmOut"] = tmp["FarmOut"];
-                        findrow[0]["FarmIn"] = tmp["FarmIn"];
-                    }
-                    else
-                    {
-                        tmp["id"] = this.dr_artworkpo["id"];
-                        tmp.AcceptChanges();
-                        tmp.SetAdded();
-                        this.dt_artworkpoDetail.ImportRow(tmp);
-                    }
+                    tmp["id"] = this.dr_artworkpo["id"];
+                    tmp.AcceptChanges();
+                    tmp.SetAdded();
+                    this.dt_artworkpoDetail.ImportRow(tmp);
                 }
             }
             else
@@ -425,7 +404,7 @@ SizeCode = '{tmp["SizeCode"]}'
             string strSQLCmd = string.Empty;
 
             strSQLCmd += $@"
-select  distinct
+select  
         Selected = 0
         , sao.LocalSuppId
         , id = ''
@@ -438,7 +417,7 @@ select  distinct
         , bar.PatternCode
         , bar.SewInLIne
         , bar.SciDelivery
-        , coststitch = oa.qty
+        , coststitch = vsa.qty
         , bar.Stitch 
         , bar.PatternDesc
         , bar.QtyGarment
@@ -455,29 +434,22 @@ select  distinct
 		, [FarmIn] = ISNULL(FarmIn.Value,0)
         , bar.Article
         , bar.SizeCode
-        , [QuotArticle] = isnull(oa.Article, '')
+        , [QuotArticle] = isnull(vsa.Article, '')
         , [QuotSizeCode] = isnull(sao.SizeCode, '')
 into #quoteFromPlanningB03Base
 from  #baseArtworkReq bar
-left join dbo.View_Order_Artworks oa on   oa.ID = bar.OrderID and
-										  (bar.Article = oa.Article or bar.Article = '') and
-                                          bar.ArtworkTypeID = oa.ArtworkTypeID and
-                                          bar.ArtworkID = oa.ArtworkID and 
-                                          bar.PatternCode = oa.PatternCode and 
-                                          bar.PatternDesc = oa.PatternDesc 
 left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = bar.StyleUkey and 
-                                        vsa.Article = oa.Article and 
-                                        vsa.ArtworkID = oa.ArtworkID and
-										vsa.ArtworkName = oa.ArtworkName and 
-                                        vsa.ArtworkTypeID = oa.ArtworkTypeID and 
-                                        vsa.PatternCode = oa.PatternCode and
-										vsa.PatternDesc = oa.PatternDesc 
+										(bar.Article = vsa.Article or (bar.Article = '' and vsa.Article = bar.OrderQtyArticle)) and
+                                        vsa.ArtworkID = bar.ArtworkID and
+                                        vsa.ArtworkTypeID = bar.ArtworkTypeID and 
+                                        vsa.PatternCode = bar.PatternCode and
+										vsa.PatternDesc = bar.PatternDesc 
 left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = vsa.StyleArtworkUkey and 
                                                     sao.PriceApv = 'Y' and 
                                                     sao.Price > 0 and 
                                                     sao.LocalSuppId = bar.LocalSuppId and
 												    sao.SizeCode = bar.SizeCode
-left join ArtworkType at WITH (NOLOCK) on at.id = oa.ArtworkTypeID
+left join ArtworkType at WITH (NOLOCK) on at.id = bar.ArtworkTypeID
 {this.sqlFarmOutApply}
 ";
 
@@ -592,14 +564,14 @@ select  Selected = 0
         , bar.PatternCode
         , bar.SewInLIne
         , bar.SciDelivery
-        , coststitch = sum(isnull(oa.Qty, 0)) / count(1)
+        , coststitch = isnull(oa.Qty, 0)
         , bar.Stitch
         , bar.PatternDesc
         , bar.QtyGarment
-        , Cost = sum(isnull(oa.Cost, 0)) / count(1)
-        , unitprice = sum(isnull(oa.Cost, 0)) / count(1)
-        , price = sum(isnull(oa.Cost, 0)) / count(1)
-        , amount = bar.ReqQty *  sum(isnull(oa.Cost, 0)) / count(1)
+        , Cost = isnull(oa.Cost, 0)
+        , unitprice = isnull(oa.Cost, 0)
+        , price = isnull(oa.Cost, 0)
+        , amount = bar.ReqQty *  isnull(oa.Cost, 0)
         , Style = o.StyleID
         , bar.ArtworkReqID
         , bar.Article
@@ -610,34 +582,17 @@ select  Selected = 0
 		, [FarmIn] = ISNULL(FarmIn.Value,0)
 from  #baseArtworkReq bar
 inner join Orders o with (nolock) on o.ID = bar.OrderID
+--ISP20211197 P05維護的Article為空白時，要從Order_Qty抓第一筆Article，作為抓取Order_Artwork的條件
 inner join dbo.Order_Artwork oa WITH (NOLOCK) on oa.ID = bar.OrderID and 
-                                                 (bar.Article = oa.Article or bar.Article = '' or oa.Article = '----') and
+                                                 (bar.Article = oa.Article or 
+                                                  (bar.Article = '' and oa.Article = bar.OrderQtyArticle) or 
+                                                  oa.Article = '----') and
                                                  oa.ArtworkTypeID = bar.ArtworkTypeID and
                                                  oa.ArtworkID = bar.ArtworkID      and
                                                  oa.PatternCode = bar.PatternCode  and
                                                  oa.PatternDesc = bar.PatternDesc 
 {this.sqlFarmOutApply}
 where  ((o.Category = 'B' and  oa.price > 0) or (o.category !='B'))
-group by  bar.OrderID
-        , bar.OrderQty
-        , bar.IssueQty 
-        , bar.ReqQty
-        , bar.ArtworkTypeID
-        , bar.ArtworkID
-        , bar.PatternCode
-        , bar.SewInLIne
-        , bar.SciDelivery
-        , bar.Stitch
-        , bar.PatternDesc
-        , bar.QtyGarment
-        , o.StyleID
-        , bar.Article
-        , bar.SizeCode
-        , bar.Category
-        , bar.IrregularQtyReason 
-		, FarmOut.Value
-		, FarmIn.Value
-        , bar.ArtworkReqID
 ";
 
             return strSQLCmd;
