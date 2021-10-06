@@ -353,15 +353,15 @@ namespace Sci.Production.Cutting
                         continueb = MyUtility.Msg.QuestionBox("The following workorder data duplicated. Do you want to continue?\r\n" + msgQ) == DialogResult.Yes;
                     }
                     #endregion
-
+                    var workOrder = this.WorkOrder.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted);
                     mergeInTable.AsEnumerable().Where(w => continueb || MyUtility.Convert.GetBool(w["continue"])).ToList()
                         .ForEach(row =>
                         {
                             row["Ukey"] = 0;
                             row["NewKey"] = maxKey++;
-                            row["Type"] = this.WorkOrder.AsEnumerable().Select(s => s["Type"]).FirstOrDefault();
+                            row["Type"] = workOrder.Select(s => s["Type"]).FirstOrDefault();
                             row["MDivisionId"] = Sci.Env.User.Keyword;
-                            row["FactoryID"] = this.WorkOrder.AsEnumerable().Select(s => s["FactoryID"]).FirstOrDefault();
+                            row["FactoryID"] = workOrder.Select(s => s["FactoryID"]).FirstOrDefault();
                             row["OrderID"] = this.WorkOrderID; // 此處不用管 Type，因為用檔案匯入沒有dist
                             row["MarkerNo"] = this.MarkerNo;
                             row["EachconsMarkerNo"] = this.MarkerNo;
