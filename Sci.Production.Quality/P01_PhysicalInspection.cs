@@ -11,6 +11,7 @@ using System.Transactions;
 using Sci.Win.Tools;
 using System.Runtime.InteropServices;
 using Sci.Utility.Excel;
+using System.IO;
 
 namespace Sci.Production.Quality
 {
@@ -1476,7 +1477,6 @@ where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", this.textID.Text, dtGrid.Row
             if (MyUtility.Convert.GetBool(this.maindr["PhysicalEncode"]) && this.maindr["Status"].ToString() != "Approved")
             {
                 // Excel Email 需寄給Encoder的Teamleader 與 Supervisor*****
-                DataRow dr;
                 string cmd_leader = $@"
 select ToAddress = stuff ((select concat (';', tmp.email)
 from (
@@ -1487,7 +1487,7 @@ from (
 for xml path('')
 ), 1, 1, '')";
 
-                if (MyUtility.Check.Seek(cmd_leader, out dr))
+                if (MyUtility.Check.Seek(cmd_leader, out DataRow dr))
                 {
                     string mailto = dr["ToAddress"].ToString();
                     string ccAddress = Env.User.MailAddress;
@@ -1504,16 +1504,92 @@ for xml path('')
             if (MyUtility.Convert.GetBool(this.maindr["PhysicalEncode"]) && this.maindr["Status"].ToString() == "Approved")
             {
                 // *****Send Excel Email 完成 需寄給Factory MC*****
-                string strToAddress = MyUtility.GetValue.Lookup("ToAddress", "007", "MailTo", "ID");
+                string sqlcmd = $@"select EMail from pass1 p inner join Orders o on o.MCHandle = p.id where o.id='{this.maindr["POID"]}'";
+                string strToAddress = MyUtility.GetValue.Lookup("ToAddress", "007", "MailTo", "ID") + ";" + MyUtility.GetValue.Lookup(sqlcmd);
                 string mailto = strToAddress;
                 string mailCC = MyUtility.GetValue.Lookup("CCAddress", "007", "MailTo", "ID");
                 string subject = string.Format(MyUtility.GetValue.Lookup("Subject", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
                 string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
 
+                List<string> attachment = new List<string>();
+                List<string> attachmentPic = this.GetAttachment();
+                if (attachmentPic != null && attachmentPic.Count > 0)
+                {
+                    attachment = attachmentPic;
+                }
+
                 this.ToExcel(true, "Regular");
-                var email = new MailTo(Env.Cfg.MailFrom, mailto, mailCC, subject, this.excelFile, content, false, true);
+                attachment.Add(this.excelFile);
+
+                var email = new MailTo(Env.Cfg.MailFrom, mailto, mailCC, subject, content, attachment, false, true);
                 email.ShowDialog(this);
+
+                foreach (var item in attachment)
+                {
+                    try
+                    {
+                        File.Delete(item);
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                }
             }
+        }
+
+        private List<string> GetAttachment()
+        {
+            List<string> attachment = new List<string>();
+            string sqlcmd = $@"
+select fdr.Id, f.Roll, f.Dyelot, fdr.FabricDefectID, fd.DefectLocation
+from FIR_Physical_Defect_Realtime fdr
+inner join FIR_Physical f on fdr.FIR_PhysicalDetailUKey = f.DetailUkey
+inner join FIR_Physical_Defect fd on fd.FIR_PhysicalDetailUKey = fdr.FIR_PhysicalDetailUkey
+where f.id =  '{this.maindr["ID"]}'";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return null;
+            }
+
+            // 找到所有圖檔名稱
+            string ukeys = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["id"])).JoinToString(",");
+            if (!MyUtility.Check.Empty(ukeys))
+            {
+                sqlcmd = $@"
+select distinct SourceFile, AddDate = format(AddDate,'yyyyMM'),UniqueKey
+from Clip
+where TableName = 'FIR_Physical_Defect_Realtime'
+and UniqueKey in ({ukeys})
+order by UniqueKey
+";
+                result = DBProxy.Current.Select("ManufacturingExecution", sqlcmd, out DataTable dt2);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return null;
+                }
+
+                int virtualSeqnum = 1;
+                foreach (DataRow dr2 in dt2.Rows)
+                {
+                    string roll = MyUtility.Convert.GetString(dt.Select($"ID = {dr2["UniqueKey"]}")[0]["Roll"]);
+                    string dyelot = MyUtility.Convert.GetString(dt.Select($"ID = {dr2["UniqueKey"]}")[0]["dyelot"]);
+                    string defectLocation = MyUtility.Convert.GetString(dt.Select($"ID = {dr2["UniqueKey"]}")[0]["DefectLocation"]);
+                    string fabricDefectID = MyUtility.Convert.GetString(dt.Select($"ID = {dr2["UniqueKey"]}")[0]["FabricDefectID"]);
+                    string virtualSeq = virtualSeqnum.ToString().PadLeft(2, '0');
+                    string newFileName = $"{this.maindr["POID"]}_{this.maindr["seq1"]}{this.maindr["seq2"]}_{roll}_{dyelot}_{defectLocation}_{fabricDefectID}_{virtualSeq}.png";
+                    virtualSeqnum++;
+                    string oripath = Path.Combine(Env.Cfg.ClipDir, MyUtility.Convert.GetString(dr2["AddDate"]), MyUtility.Convert.GetString(dr2["SourceFile"]));
+                    string newpath = Path.Combine(Env.Cfg.ReportTempDir, newFileName);
+                    File.Copy(oripath, newpath, true);
+                    attachment.Add(newpath);
+                }
+            }
+
+            return attachment;
         }
     }
 }
