@@ -153,6 +153,10 @@ BEGIN
 	-------------Brand_PullingTestStandarList-------------------
 	RAISERROR('Brand_PullingTestStandarList  - Starts',0,0)
 	select * into dbo.Brand_PullingTestStandarList from (select * from ProductionTPE.dbo.Brand_PullingTestStandarList ) as tmp
+	
+	-------------GarmentTestShrinkage-------------------
+	RAISERROR('GarmentTestShrinkage  - Starts',0,0)
+	select * into dbo.GarmentTestShrinkage from (select * from ProductionTPE.dbo.GarmentTestShrinkage ) as tmp
 
 	set transaction isolation level read committed
 END

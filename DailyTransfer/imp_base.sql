@@ -4676,4 +4676,30 @@ from Trade_To_Pms.dbo.Brand_PullingTestStandarList a
 left join production.dbo.Brand_PullingTestStandarList b on a.BrandID = b.BrandID and a.TestItem = b.TestItem and a.PullForceUnit = b.PullForceUnit
 where b.BrandID is null
 
+--GarmentTestShrinkage
+delete a
+from production.dbo.GarmentTestShrinkage a
+left join Trade_To_Pms.dbo.GarmentTestShrinkage b on a.Ukey = b.Ukey 
+where b.Ukey is null
+
+update a set 
+ [BrandID] = b.[BrandID]
+,[LocationGroup] = b.[LocationGroup]
+,[Location] = b.[Location]
+,[Seq] = b.[Seq]
+,[Type] = b.[Type]
+from production.dbo.GarmentTestShrinkage a
+inner join Trade_To_Pms.dbo.GarmentTestShrinkage b on a.Ukey = b.Ukey 
+
+insert production.dbo.GarmentTestShrinkage 
+           ([BrandID]
+           ,[LocationGroup]
+           ,[Location]
+           ,[Seq]
+           ,[Type])
+select a.[BrandID],a.[LocationGroup],a.[Location],a.[Seq],a.[Type]
+from Trade_To_Pms.dbo.GarmentTestShrinkage a
+left join production.dbo.GarmentTestShrinkage b on  a.Ukey = b.Ukey 
+where b.BrandID is null
+
 END
