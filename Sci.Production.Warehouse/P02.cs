@@ -364,7 +364,7 @@ drop table #tmp, #tmp_MachinePO, #tmp_MiscPO, #tmp_PartPO", masterID);
         /// <inheritdoc/>
         protected override bool ClickPrint()
         {
-            Shipping.P03_Print callNextForm = new Shipping.P03_Print(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            Shipping.P03_Print callNextForm = new Shipping.P03_Print(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, "WHP02");
             callNextForm.ShowDialog(this);
             return base.ClickPrint();
         }

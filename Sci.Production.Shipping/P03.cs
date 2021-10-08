@@ -90,8 +90,6 @@ select
 ,c.COName
 ,c.ReceiveDate
 ,c.SendDate
-, f.RefNo
-, f.MtlTypeID
 from Export_Detail ed WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 left join Supp s WITH (NOLOCK) on s.id = ed.SuppID 

@@ -1154,6 +1154,9 @@
     <None Include="XLT\Shipping_P02_Print_DHL_XCCA.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Shipping_P03_Detail.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Shipping_P11_BIRSalesReport.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -1211,7 +1214,7 @@
     <None Include="XLT\Shipping_P02_Print_PackingList.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Shipping_P03_Detail.xltx">
+    <None Include="XLT\Warehouse_P02_Detail.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Shipping_P03_List.xltx">
