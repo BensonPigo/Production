@@ -38,6 +38,9 @@
             this.DisplayBox1.Name = "displayBox1";
             this.DisplayBox1.Size = new System.Drawing.Size(391, 22);
             this.DisplayBox1.TabIndex = 3;
+            this.DisplayBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // textBox1
             // 

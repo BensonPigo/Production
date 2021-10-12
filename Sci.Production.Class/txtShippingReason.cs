@@ -4,6 +4,7 @@ using System.Data;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
+using Sci.Data;
 using Sci.Win.Tools;
 
 namespace Sci.Production.Class
@@ -27,6 +28,8 @@ namespace Sci.Production.Class
         [Category("Custom Properties")]
         [Description("填入Reason Type。例如：AQ")]
         public string Type { get; set; }
+
+        public string LinkDB { get; set; } = "Production";
 
         /// <inheritdoc/>
         public Win.UI.TextBox TextBox1 { get; private set; }
@@ -62,7 +65,7 @@ namespace Sci.Production.Class
             if (!string.IsNullOrWhiteSpace(textValue))
             {
                 string sql = string.Format("Select 1 from ShippingReason WITH (NOLOCK) where ID='{0}' and Type='{1}'", textValue, this.Type);
-                if (!MyUtility.Check.Seek(sql, "Production"))
+                if (!MyUtility.Check.Seek(sql, LinkDB))
                 {
                     this.TextBox1.Text = string.Empty;
                     e.Cancel = true;
@@ -72,7 +75,7 @@ namespace Sci.Production.Class
                 else
                 {
                     string sql_cmd = string.Format("Select Description from ShippingReason WITH (NOLOCK) where ID='{0}' and Type='{1}'", textValue, this.Type);
-                    this.DisplayBox1.Text = MyUtility.GetValue.Lookup(sql_cmd, "Production");
+                    this.DisplayBox1.Text = MyUtility.GetValue.Lookup(sql_cmd, LinkDB);
                 }
             }
 
@@ -82,20 +85,25 @@ namespace Sci.Production.Class
         private void TextBox1_TextChanged(object sender, EventArgs e)
         {
             string sql_cmd = string.Format("Select Description from ShippingReason WITH (NOLOCK) where ID='{0}' and Type='{1}'", this.TextBox1.Text, this.Type);
-            this.DisplayBox1.Text = MyUtility.GetValue.Lookup(sql_cmd, "Production");
+            this.DisplayBox1.Text = MyUtility.GetValue.Lookup(sql_cmd, LinkDB);
         }
 
         private void TextBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
-                string.Format("Select Id, Description from ShippingReason WITH (NOLOCK) where type='{0}' order by id", this.Type), "10,40", this.TextBox1.Text);
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel)
+            DataTable dtPopResult;
+
+            DualResult result = DBProxy.Current.Select(this.LinkDB, string.Format("Select Id, Description from ShippingReason WITH (NOLOCK) where type='{0}' order by id", this.Type), out dtPopResult);
+
+            SelectItem selectItem = new SelectItem(dtPopResult, "ID,Description", null, null);
+
+            DialogResult dialogResult = selectItem.ShowDialog();
+
+            if (dialogResult == DialogResult.Cancel)
             {
                 return;
             }
 
-            this.TextBox1.Text = item.GetSelectedString();
+            this.TextBox1.Text = selectItem.GetSelectedString();
             this.Validate();
         }
 

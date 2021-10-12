@@ -13,6 +13,7 @@ using Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Common;
 using System.Linq;
 using System.Xml.Linq;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Win
 {
@@ -400,6 +401,7 @@ Script
                 this.comboBox2.ValueMember = "Key";
                 this.comboBox2.DisplayMember = "Value";
                 this.comboBox2.DataSource = new BindingSource(systemOption, null);
+                StaticEntity.LoginRegionList = systemOption;
             }
         }
 
