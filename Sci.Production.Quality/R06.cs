@@ -406,14 +406,20 @@ where FL.WashEncode=1 and W.Result = 'Fail'
 select distinct SHRINKAGEyards = stockqty,SuppID,Refno
 into #SHtmp
 from(
-	select Sum(rd1.stockqty) stockqty, SuppID,rd.Refno
-	from  #tmp2groupbyDyelot rd WITH (NOLOCK) 
-    inner join dbo.View_AllReceivingDetail rd1 with (nolock) on rd.PoId = rd1.PoId and rd.Seq1 = rd1.Seq1 and rd.Seq2 = rd1.Seq2
-	--inner join PO_Supp_Detail psd ON rd.PoId=psd.ID AND rd.Seq1=psd.seq1 AND rd.Seq2=psd.seq2 AND rd.Refno=psd.Refno
-	Where (exists(select * from #SH1 where POID = rd.PoId and SEQ1 = RD.seq1 and seq2 = seq2 and Dyelot = RD.dyelot AND Refno=rd.Refno)
-	or exists(select * from #SH2 where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2 and Dyelot = RD.dyelot AND Refno=rd.Refno))
+
+    select Sum(rd1.ActualQty) stockqty, rd.SuppID,rd.Refno
+	from (
+		select distinct rd.poid,rd.seq1,rd.seq2 ,rd.SuppID,rd.Refno
+		from  #tmp2groupbyDyelot rd WITH (NOLOCK) 	
+		Where (exists(select * from #SH1 where POID = rd.PoId and SEQ1 = RD.seq1 and seq2 = seq2 and Dyelot = RD.dyelot AND Refno=rd.Refno)
+		or exists(select * from #SH2 where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2 and Dyelot = RD.dyelot AND Refno=rd.Refno))
+	) rd 
+	inner join dbo.View_AllReceivingDetail rd1 with (nolock) on rd.PoId = rd1.PoId and rd.Seq1 = rd1.Seq1 and rd.Seq2 = rd1.Seq2
+	inner join PO_Supp_Detail psd ON rd.PoId=psd.ID AND rd.Seq1=psd.seq1 AND rd.Seq2=psd.seq2 AND rd.Refno=psd.Refno
+	inner join  PO_Supp ps on ps.id=psd.Id and ps.seq1=psd.seq1 and ps.SuppID=rd.SuppID
+	where 1=1
 	AND  rd1.WhseArrival >= '{this.DateArrStart.Value.ToShortDateString()}' and rd1.WhseArrival <= '{this.DateArrEnd.Value.ToShortDateString()}'
-	group by SuppID,rd.Refno
+	group by rd.SuppID,rd.Refno
 ) a
 
 -----#mtmp 
