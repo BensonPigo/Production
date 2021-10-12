@@ -621,7 +621,7 @@ WITH BreakdownByArticle as (
 			    WHERE SCIRefNo=iis.SCIRefNo AND  ColorID= iis.ColorID AND a.Article=g.Article
 			    GROUP BY a.Article
 		    )
-	    FROM DBO.GetThreadUsedQtyByBOT(iis.POID) g
+	    FROM DBO.GetThreadUsedQtyByBOT(iis.POID,default) g
 	    WHERE SCIRefNo= iis.SCIRefNo AND ColorID = iis.ColorID  
 	    AND Article IN (		
             SELECt Article

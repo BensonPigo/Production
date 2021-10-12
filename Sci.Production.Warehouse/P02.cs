@@ -154,6 +154,8 @@ select FactoryID = iif(ed.PoType='M'
                                 , dateadd(day,-34
                         , o.SciDelivery))) 
         , (SUBSTRING(ed.Seq1,1,3)+' '+ed.Seq2) as Seq
+        , f.RefNo
+        , f.MtlTypeID
         , (ed.SuppID+'-'+s.AbbEN) as Supp
         , Description = iif(ed.Description = '', isnull(f.DescDetail,'')
                                                , ed.Description)
@@ -291,6 +293,8 @@ drop table #tmp, #tmp_MachinePO, #tmp_MiscPO, #tmp_PartPO", masterID);
                 .Text("Category", header: "Category", width: Widths.AnsiChars(8))
                 .Date("InspDate", header: "Inspect Dead Line", width: Widths.AnsiChars(9))
                 .Text("Seq", header: "SEQ", width: Widths.AnsiChars(3))
+                .Text("Refno", header: "Refno", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("Preshrink", header: "Preshrink", iseditingreadonly: true)
                 .Text("Supp", header: "Supplier", width: Widths.AnsiChars(13))
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(6))
@@ -360,7 +364,7 @@ drop table #tmp, #tmp_MachinePO, #tmp_MiscPO, #tmp_PartPO", masterID);
         /// <inheritdoc/>
         protected override bool ClickPrint()
         {
-            Shipping.P03_Print callNextForm = new Shipping.P03_Print(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            Shipping.P03_Print callNextForm = new Shipping.P03_Print(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, "WHP02");
             callNextForm.ShowDialog(this);
             return base.ClickPrint();
         }

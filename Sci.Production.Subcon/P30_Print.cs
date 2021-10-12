@@ -69,6 +69,7 @@ namespace Sci.Production.Subcon
                     ,b.AddressEN
                     ,[fTel] =b.Tel
                     ,c.Fax
+                    ,c.Email
             from dbo.localpo a WITH (NOLOCK) 
             inner join dbo.factory  b WITH (NOLOCK) on b.id = a.factoryid   
 	        left join dbo.LocalSupp c WITH (NOLOCK) on c.id=a.LocalSuppID
@@ -141,6 +142,7 @@ order by a.Delivery, a.Refno
                     ,[fTel] =b.Tel
                     ,c.Fax
                     , AddName = p.Name
+                    ,c.Email
             from dbo.localpo a WITH (NOLOCK) 
             inner join dbo.factory  b WITH (NOLOCK) on b.id = a.factoryid   
 	        left join dbo.LocalSupp c WITH (NOLOCK) on c.id=a.LocalSuppID
@@ -243,6 +245,7 @@ order by orderid,a.refno,threadcolorid", this.currentID);
                 string addressEN = this.dtHeader.Rows[0]["AddressEN"].ToString().Trim();
                 string fTel = this.dtHeader.Rows[0]["fTel"].ToString().Trim();
                 string fax = this.dtHeader.Rows[0]["Fax"].ToString().Trim();
+                string email = this.dtHeader.Rows[0]["Email"].ToString().Trim();
                 decimal amount = MyUtility.Convert.GetDecimal(this.CurrentDataRow["amount"]);
                 decimal vat = MyUtility.Convert.GetDecimal(this.CurrentDataRow["vat"]);
                 string currencyID = this.CurrentDataRow["CurrencyID"].ToString();
@@ -260,6 +263,7 @@ order by orderid,a.refno,threadcolorid", this.currentID);
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddressEN", addressEN));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("fTel", fTel));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Fax", fax));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Email", email));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", factoryID));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("amount", amount.ToString("#,0.00")));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vat", vat.ToString("#,0.00")));
@@ -303,6 +307,7 @@ order by orderid,a.refno,threadcolorid", this.currentID);
                 string addressEN = this.dtHeader.Rows[0]["AddressEN"].ToString().Trim();
                 string fTel = this.dtHeader.Rows[0]["fTel"].ToString().Trim();
                 string fax = this.dtHeader.Rows[0]["Fax"].ToString().Trim();
+                string email = this.dtHeader.Rows[0]["Email"].ToString().Trim();
                 decimal amount = MyUtility.Convert.GetDecimal(this.CurrentDataRow["amount"]);
                 string currencyID = this.CurrentDataRow["CurrencyID"].ToString();
                 decimal vat = MyUtility.Convert.GetDecimal(this.CurrentDataRow["vat"]);
@@ -319,6 +324,7 @@ order by orderid,a.refno,threadcolorid", this.currentID);
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddressEN", addressEN));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("fTel", fTel));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Fax", fax));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Email", email));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("amount", amount.ToString("#,0.00")));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("total", total.ToString("#,0.00")));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("currency", currencyID));

@@ -96,6 +96,7 @@ namespace Sci.Production.Warehouse
 			                                       --,f.HsCode [HS Code]
                                                     ,[HS Code]= FabricHsCode.value
 			                                       ,concat(mt.fabrictype2,'-',Fabric.MtlTypeID) Material_Type
+                                                   ,Fabric.WeaveTypeID
 			                                       ,dbo.GetColorMultipleID(b.BrandID,a.ColorID) [Color]
 			                                       ,a.SizeSpec [Size]
 			                                       ,h.Currencyid [Currency]
@@ -179,6 +180,7 @@ namespace Sci.Production.Warehouse
                                              , [Chinese Abb] = '-'
                                              , [HS Code] = '-'
                                              , [Material_Type] = l.UnitID
+                                             , [WeaveTypeID] = ''
                                              , [Color] = l.ThreadColorID
                                                 , [Size] = '-'
                                              , [Currency] = '-'
@@ -228,6 +230,7 @@ namespace Sci.Production.Warehouse
 	                                                , [Chinese Abb] 
 	                                                , [HS Code] 
 	                                                , [Material_Type] 
+                                                    , [WeaveTypeID]
 	                                                , [Color] 
 	                                                , [Size] 
 	                                                , [Currency] 
@@ -281,6 +284,7 @@ namespace Sci.Production.Warehouse
                                               ,[Desc]=dbo.getMtlDesc(a.id,a.SEQ1,a.seq2,2,0)
                                               ,chinese_abb=d.AbbCH
 			                                  ,concat(mt.fabrictype2,'-',Fabric.MtlTypeID) Material_Type
+                                              ,[WeaveTypeID] = Fabric.WeaveTypeID
                                               --,Hs_code=e.HsCode
                                               ,[HS Code]= FabricHsCode.value
                                               ,supp=c.SuppID
@@ -339,6 +343,7 @@ namespace Sci.Production.Warehouse
                                     	 , [description]  = b.Description
                                     	 , [Chinese Abb] = '-'
                                     	 , [Material_Type] = l.UnitID
+                                         , [WeaveTypeID] = ''
                                     	 , [HS Code] = '-'
                                     	 , [Supp]  = c.ID 
                                     	 , [Supp Name] = '-'
@@ -389,11 +394,11 @@ namespace Sci.Production.Warehouse
                 {
                     if (this.dt.Rows[i]["junk"].ToString().Equals("True"))
                     {
-                        worksheet.Range[worksheet.Cells[1][i + 2], worksheet.Cells[41][i + 2]].Interior.ColorIndex = 15;
+                        worksheet.Range[worksheet.Cells[1][i + 2], worksheet.Cells[42][i + 2]].Interior.ColorIndex = 15;
                     }
                 }
 
-                worksheet.Columns[42].Delete();
+                worksheet.Columns[43].Delete();
                 string strExcelName = Class.MicrosoftFile.GetName("Warehouse_P03");
 
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
@@ -414,11 +419,11 @@ namespace Sci.Production.Warehouse
                 {
                     if (this.dt.Rows[i]["junk"].ToString().Equals("True"))
                     {
-                        worksheet.Range[worksheet.Cells[1][i + 2], worksheet.Cells[21][i + 2]].Interior.ColorIndex = 15;
+                        worksheet.Range[worksheet.Cells[1][i + 2], worksheet.Cells[22][i + 2]].Interior.ColorIndex = 15;
                     }
                 }
 
-                worksheet.Columns[22].Delete();
+                worksheet.Columns[23].Delete();
                 string strExcelName = Class.MicrosoftFile.GetName("Warehouse_P03");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.ActiveWorkbook.Close(true);

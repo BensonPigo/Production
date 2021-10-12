@@ -19,16 +19,13 @@ namespace Sci.Production.Shipping
         private string handle;
         private string ext;
         private string email;
+        private string type;
         private DataRow masterData;
         private DataTable detailData;
         private DataTable printData;
 
-        /// <summary>
-        /// P03_Print
-        /// </summary>
-        /// <param name="masterData">masterData</param>
-        /// <param name="detailData">detailData</param>
-        public P03_Print(DataRow masterData, DataTable detailData)
+        /// <inheritdoc/>
+        public P03_Print(DataRow masterData, DataTable detailData, string type = "")
         {
             this.InitializeComponent();
             this.radioDetailReport.Checked = true;
@@ -36,6 +33,7 @@ namespace Sci.Production.Shipping
             this.txtfactory.Enabled = false;
             this.masterData = masterData;
             this.detailData = detailData;
+            this.type = type;
 
             DataTable dt;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from ShipMode WITH (NOLOCK) where UseFunction like '%WK%' ", out dt);
@@ -123,7 +121,8 @@ order by e.ID",
         {
             if (this.reportType == "1")
             {
-                string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P03_Detail.xltx";
+                string filename = this.type == string.Empty ? "Shipping_P03_Detail" : "Warehouse_P02_Detail";
+                string strXltName = Env.Cfg.XltPathDir + $"\\{filename}.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (excel == null)
                 {
@@ -155,7 +154,7 @@ order by e.ID",
                 worksheet.Cells[9, 8] = this.email;
 
                 int rownum = 11;
-                object[,] objArray = new object[1, 18];
+                object[,] objArray = new object[1, 20];
                 foreach (DataRow dr in this.detailData.Rows)
                 {
                     objArray[0, 0] = dr["FactoryID"];
@@ -165,18 +164,38 @@ order by e.ID",
                     objArray[0, 4] = dr["Category"];
                     objArray[0, 5] = dr["InspDate"];
                     objArray[0, 6] = dr["Seq"];
-                    objArray[0, 7] = dr["Preshrink"];
-                    objArray[0, 8] = dr["Supp"];
-                    objArray[0, 9] = dr["Description"];
-                    objArray[0, 10] = dr["UnitId"];
-                    objArray[0, 11] = dr["ColorID"];
-                    objArray[0, 12] = dr["SizeSpec"];
-                    objArray[0, 13] = dr["Qty"];
-                    objArray[0, 14] = dr["Foc"];
-                    objArray[0, 15] = dr["BalanceQty"];
-                    objArray[0, 16] = dr["NetKg"];
-                    objArray[0, 17] = dr["WeightKg"];
-                    worksheet.Range[string.Format("A{0}:R{0}", rownum)].Value2 = objArray;
+                    if (this.type == string.Empty)
+                    {
+                        objArray[0, 7] = dr["Preshrink"];
+                        objArray[0, 8] = dr["Supp"];
+                        objArray[0, 9] = dr["Description"];
+                        objArray[0, 10] = dr["UnitId"];
+                        objArray[0, 11] = dr["ColorID"];
+                        objArray[0, 12] = dr["SizeSpec"];
+                        objArray[0, 13] = dr["Qty"];
+                        objArray[0, 14] = dr["Foc"];
+                        objArray[0, 15] = dr["BalanceQty"];
+                        objArray[0, 16] = dr["NetKg"];
+                        objArray[0, 17] = dr["WeightKg"];
+                    }
+                    else
+                    {
+                        objArray[0, 7] = dr["RefNo"];
+                        objArray[0, 8] = dr["MtlTypeID"];
+                        objArray[0, 9] = dr["Preshrink"];
+                        objArray[0, 10] = dr["Supp"];
+                        objArray[0, 11] = dr["Description"];
+                        objArray[0, 12] = dr["UnitId"];
+                        objArray[0, 13] = dr["ColorID"];
+                        objArray[0, 14] = dr["SizeSpec"];
+                        objArray[0, 15] = dr["Qty"];
+                        objArray[0, 16] = dr["Foc"];
+                        objArray[0, 17] = dr["BalanceQty"];
+                        objArray[0, 18] = dr["NetKg"];
+                        objArray[0, 19] = dr["WeightKg"];
+                    }
+
+                    worksheet.Range[string.Format("A{0}:T{0}", rownum)].Value2 = objArray;
 
                     rownum++;
                 }

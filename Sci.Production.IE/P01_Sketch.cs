@@ -21,6 +21,8 @@ namespace Sci.Production.IE
         {
             this.InitializeComponent();
             this.masterData = masterData;
+            this.comboPictureSize1.SetDataSource(this.picture1);
+            this.comboPictureSize2.SetDataSource(this.picture2);
         }
 
         /// <summary>

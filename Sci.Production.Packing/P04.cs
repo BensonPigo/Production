@@ -1210,6 +1210,48 @@ Packing list is locked in the hanger system.";
                 return;
             }
 
+            // 表身有AirPP資料, GW加總不可為0
+            string sqlChkAirPP = $@"
+select * 
+from (
+	SELECT pd.ID,pd.OrderID,pd.OrderShipmodeSeq,ttlGW = sum(pd.gw) 
+	FROM PackingList_Detail pd
+	inner join AirPP a on a.OrderID=pd.OrderID and a.OrderShipmodeSeq = pd.OrderShipmodeSeq
+	WHERE 1=1
+	AND PD.ID = '{this.CurrentMaintain["ID"]}' 
+	AND A.Status <> 'Junked'
+	group by pd.OrderID,pd.OrderShipmodeSeq,pd.ID
+) a
+where ttlGW = 0
+";
+            if (MyUtility.Check.Seek(sqlChkAirPP))
+            {
+                string sqlAirPPList = $@"
+select * 
+from (
+     SELECT PD.OrderID, PD.OrderShipmodeSeq AS [Ship Mode], pd.CTNStartNo [CTN. No.], pd.CTNQty [CTN. Qty], pd.NW, PD.GW 
+     ,ttlGW = SUM(pd.GW)
+     FROM PackingList_Detail pd 
+     inner join AirPP a on a.OrderID=pd.OrderID and a.OrderShipmodeSeq = pd.OrderShipmodeSeq
+     WHERE 1=1
+     and PD.ID = '{this.CurrentMaintain["ID"]}' 
+     and a.Status != 'Junked'
+     group by PD.OrderID, PD.OrderShipmodeSeq, pd.CTNStartNo, pd.CTNQty, pd.NW, PD.GW
+ ) a
+ where ttlGW = 0
+";
+                DualResult result_App = DBProxy.Current.Select(null, sqlAirPPList, out DataTable dt);
+                if (!result_App)
+                {
+                    this.ShowErr(result_App);
+                    return;
+                }
+
+                MyUtility.Msg.ShowMsgGrid_LockScreen(dt, msg: @"There is Air PP in the list below, please fill in the all G.W. before click confirm.");
+
+                return;
+            }
+
             string sqlchk = $@"
 SELECT  msg=concat(pd.OrderID,'(',pd.OrderShipmodeSeq,')')
 FROm PackingList p
