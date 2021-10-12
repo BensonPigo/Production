@@ -2,8 +2,11 @@
     [Ukey]        BIGINT          IDENTITY (1, 1) NOT NULL,
     [AIRID]       BIGINT          CONSTRAINT [DF_AIR_DefectImage_AIRID] DEFAULT ((0)) NOT NULL,
     [ReceivingID] VARCHAR (13)    CONSTRAINT [DF_AIR_DefectImage_ReceivingID] DEFAULT ('') NOT NULL,
-    [Image]       VARBINARY (MAX) NULL
+    [Image]       VARBINARY (MAX) NULL,
+    CONSTRAINT [PK_AIR_DefectImage] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO
