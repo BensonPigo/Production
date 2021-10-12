@@ -290,6 +290,23 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
             this.txtPulloutPort1.BrandID = this.txtbrand.Text;
             this.txtPulloutPort1.ShipModeID = this.txtShipmodeShippingMode.SelectedValue;
 
+            // combo Category
+            this.displayCategory.Text = MyUtility.GetValue.Lookup($@"
+SELECT listValue = isnull(Stuff((SELECT Concat(',', S.NAME)
+FROM (SELECT D.NAME
+FROM packinglist_detail pd
+INNER JOIN orders o ON o.id = pd.orderid
+INNER JOIN dropdownlist D ON D.id = O.category
+	AND D.type = 'Category'
+WHERE exists(
+	select 1 from PackingList p
+	where p.id = pd.id
+	and p.INVNo = '{this.CurrentMaintain["ID"]}'
+)
+GROUP BY D.NAME) s
+FOR xml path ('')), 1, 1, '') ,'')
+");
+
             this.ControlColor();
         }
 
@@ -560,6 +577,26 @@ where   pl.INVNo = '{0}'
         protected override bool ClickSaveBefore()
         {
             DualResult result;
+            #region 如果[Category]有[Sample]跟別的[Category], 則return. by ISP20211121
+            if (!MyUtility.Check.Empty(this.displayCategory.Text))
+            {
+                string[] strCategory = this.displayCategory.Text.Split(new char[] { ',' });
+                if (strCategory.Length > 1)
+                {
+                    for (int i = 0; i < strCategory.Length; i++)
+                    {
+                        if (strCategory[i].Trim().ToUpper() == "SAMPLE")
+                        {
+                            MyUtility.Msg.WarningBox("Sample order cannot be imported to the same GB with other category orders.");
+                            return false;
+                        }
+                    }
+                }
+
+            }
+
+            #endregion
+
             #region 檢查必輸欄位
 
             // [S/O#], [Terminal/Whse#], [Cut-Off Date]都輸入, 或是都不輸入

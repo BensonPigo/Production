@@ -13,6 +13,7 @@
     [Junk]          BIT             CONSTRAINT [DF_ShareExpense_APP_Junk] DEFAULT ((0)) NOT NULL,
     [EditName]      VARCHAR (10)    CONSTRAINT [DF_ShareExpense_APP_EditName] DEFAULT ('') NOT NULL,
     [EditDate]      DATETIME        NULL,
+    [GW] NUMERIC(10, 3) NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_ShareExpense_APP] PRIMARY KEY CLUSTERED ([ShippingAPID] ASC, [InvNo] ASC, [PackingListID] ASC, [AirPPID] ASC, [AccountID] ASC)
 );
 

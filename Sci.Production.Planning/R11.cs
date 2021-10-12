@@ -63,7 +63,7 @@ namespace Sci.Production.Planning
             this.months = this.numNewStyleBaseOn.Value;
 
             DualResult result;
-            if (!(result = DBProxy.Current.Select(string.Empty, "select id from dbo.artworktype WITH (NOLOCK) where istms=1 or isprice= 1 order by seq", out this.dtArtworkType)))
+            if (!(result = DBProxy.Current.Select(string.Empty, "select id,seq from dbo.artworktype WITH (NOLOCK) where istms=1 or isprice= 1 order by seq", out this.dtArtworkType)))
             {
                 MyUtility.Msg.WarningBox(result.ToString());
                 return false;
@@ -88,7 +88,7 @@ namespace Sci.Production.Planning
                     this.artworktypes.Append(string.Format(@", [{0}]", this.dtArtworkType.Rows[i]["id"].ToString()));
                 }
 
-                this.pvtid.Append($"{"\v"}, [{this.dtArtworkType.Rows[i]["id"].ToString()}] = isnull([{this.dtArtworkType.Rows[i]["id"].ToString()}], 0) {"\n"}");
+                this.pvtid.Append($"{"\v"}, [{this.dtArtworkType.Rows[i]["id"]}-{this.dtArtworkType.Rows[i]["seq"]}] = isnull([{this.dtArtworkType.Rows[i]["id"]}], 0) {"\n"}");
             }
 
             return base.ValidateInput();
@@ -314,7 +314,7 @@ from
 pivot
 (
     sum(price_tms)
-    for artworktypeid in ({this.artworktypes.ToString()})
+    for artworktypeid in ({this.artworktypes})
 )as pvt 
 
 select o.FtyGroup
@@ -335,7 +335,7 @@ select o.FtyGroup
 	   , a.A
 	   , R = isnull(r.R,'New Style')
 	   , W = iif(w.P=0 or w.P is null,'N','Y')
-	   {this.pvtid.ToString()}
+	   {this.pvtid}
 from #tmpol o
 left join #tmp_A a on a.StyleID = o.StyleID
 left join #tmp_R r on r.StyleID = o.StyleID
@@ -467,7 +467,7 @@ drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls");
                 }
                 #endregion
 
-                objSheets.Cells[3, 19 + i] = strArtworkType;
+                objSheets.Cells[3, 19 + i] = strArtworkType + "-" + this.dtArtworkType.Rows[i]["seq"].ToString();
             }
 
             objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬

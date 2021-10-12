@@ -125,6 +125,7 @@ l.ID
 , [Country]=c.Alias --lbd.CountryID
 , lbd.City
 , l.TaxNo
+, lbd.VNBankBranch
 FROM LocalSupp l
 INNER JOIN LocalSupp_Bank lb ON l.ID=lb.ID
 INNER JOIN LocalSupp_Bank_Detail lbd ON lb.ID = lbd.ID AND lb.PKey=lbd.Pkey
