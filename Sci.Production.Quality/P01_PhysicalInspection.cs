@@ -1504,11 +1504,11 @@ for xml path('')
             if (MyUtility.Convert.GetBool(this.maindr["PhysicalEncode"]) && this.maindr["Status"].ToString() == "Approved")
             {
                 // *****Send Excel Email 完成 需寄給Factory MC*****
-                string sqlcmd = $@"select EMail from Pass1 p inner join Orders o on o.MCHandle = p.id where o.id='{this.poid}'";
+                string sqlcmd = $@"select EMail from Pass1 p inner join Orders o on o.MCHandle = p.id where o.id='{this.maindr["POID"]}'";
                 string mailto = MyUtility.GetValue.Lookup(sqlcmd);
                 if (MyUtility.Check.Empty(mailto))
                 {
-                    sqlcmd = $@"select EMail from TPEPass1 p inner join Orders o on o.MCHandle = p.id where o.id='{this.poid}'";
+                    sqlcmd = $@"select EMail from TPEPass1 p inner join Orders o on o.MCHandle = p.id where o.id='{this.maindr["POID"]}'";
                     mailto = MyUtility.GetValue.Lookup(sqlcmd);
                 }
 
