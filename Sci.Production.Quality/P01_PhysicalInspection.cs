@@ -1504,7 +1504,7 @@ for xml path('')
             if (MyUtility.Convert.GetBool(this.maindr["PhysicalEncode"]) && this.maindr["Status"].ToString() == "Approved")
             {
                 // *****Send Excel Email 完成 需寄給Factory MC*****
-                string sqlcmd = $@"select EMail from pass1 p inner join Orders o on o.MCHandle = p.id where o.id='{this.maindr["POID"]}'";
+                string sqlcmd = $@"select EMail from TPEPass1 p inner join Orders o on o.MCHandle = p.id where o.id='{this.maindr["POID"]}'";
                 string strToAddress = MyUtility.GetValue.Lookup("ToAddress", "007", "MailTo", "ID") + ";" + MyUtility.GetValue.Lookup(sqlcmd);
                 string mailto = strToAddress;
                 string mailCC = MyUtility.GetValue.Lookup("CCAddress", "007", "MailTo", "ID");
