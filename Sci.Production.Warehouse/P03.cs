@@ -493,6 +493,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             .CheckBox("SustainableMaterial", header: "Recycled", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(33)) // 8
             .Text("fabrictype2", header: "Material\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 7
+            .Text("WeaveTypeID", header: "Weave\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(9)) // 7
             .EditText("Article", header: "Article", iseditingreadonly: true, width: Widths.AnsiChars(15)) // 8
             .Text("ColorID", header: "Color", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 9
             .Text("SizeSpec", header: "Size", iseditingreadonly: true, width: Widths.AnsiChars(2)) // 10
@@ -734,6 +735,7 @@ from(
             , SCIRefno
             , FabricType 
             , fabrictype2
+			, WeaveTypeID
             , fabrictypeOrderby
             , ColorID
             , SizeSpec
@@ -795,6 +797,7 @@ from(
                     , a.SCIRefno
                     , a.FabricType 
                     , concat(mt.fabrictype2,'-'+Fabric.MtlTypeID) as fabrictype2
+					, Fabric.WeaveTypeID
                     , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
                     --, ColorID = dbo.GetColorMultipleID(Orders.BrandID,a.ColorID) 
                      , ColorID = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
@@ -954,6 +957,7 @@ from(
                     , a.SCIRefno
                     , a.FabricType 
                     , concat(mt.fabrictype2,'-'+Fabric.MtlTypeID) as fabrictype2
+					, Fabric.WeaveTypeID
                     , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
                     --, ColorID = dbo.GetColorMultipleID(o.BrandID,a.ColorID) 
                     , ColorID = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
@@ -1115,6 +1119,7 @@ select ROW_NUMBER_D = 1
        , [SCIRefno] = '-'
        , [FabricType] = a.UnitID
        , [fabrictype2] = '-'
+	   , [WeaveTypeID] = '-'
        , [fabrictypeOrderby] = null
        , [ColorID] = a.ThreadColorID
        , [SizeSpec] = '-'
