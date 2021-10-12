@@ -218,7 +218,6 @@
     <Compile Include="P33_ThreadColorCombination.Designer.cs">
       <DependentUpon>P33_ThreadColorCombination.cs</DependentUpon>
     </Compile>
-    <Compile Include="P34_PrintData.cs" />
     <Compile Include="P63_Transaction.cs">
       <SubType>Form</SubType>
     </Compile>
