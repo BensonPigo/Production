@@ -656,12 +656,9 @@ left  join KHCustomsDescription_Detail kdd on kd.CDCName=kdd.CDCName and kdd.Pur
                     MyUtility.Check.Empty(dr["CustomsDescription"]) ||
                     MyUtility.Check.Empty(dr["CDCUnit"]) ||
                     MyUtility.Check.Empty(dr["CDCUnitPrice"]) ||
-                    MyUtility.Check.Empty(dr["ActNetKg"]) ||
-                    MyUtility.Check.Empty(dr["ActWeightKg"]) ||
-                    MyUtility.Check.Empty(dr["ActAmount"]) ||
                     MyUtility.Check.Empty(dr["ActHSCode"]))
                 {
-                    MyUtility.Msg.WarningBox(@"These columns <Customs Type>, <Customs Description>, <CDC Unit>, <CDC Unit Price>, <Act N.W.>, <Act. G.W.>, <Act. Amount>, <Act. HS code> cannot be empty.");
+                    MyUtility.Msg.WarningBox(@"These columns <Customs Type>, <Customs Description>, <CDC Unit>, <CDC Unit Price>, <Act. HS code> cannot be empty.");
                     return false;
                 }
             }
@@ -1070,6 +1067,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                     s.Key.CDCCode,
                     s.Key.CustomsDescription,
                     s.Key.CDCUnit,
+                    ct = s.Count(),
                     ActHSCode = groupNoActHSCode.Where(w => w.CustomsType == s.Key.CustomsType && w.CDCCode == s.Key.CDCCode && w.CustomsDescription == s.Key.CustomsDescription && w.CDCUnit == s.Key.CDCUnit).Select(s1 => s1.ActHSCode).FirstOrDefault(),
                     OriTtlNetKg = s.Sum(su => su.NetKg),
                     OriTtlWeightKg = s.Sum(su => su.WeightKg),
