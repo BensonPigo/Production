@@ -1,6 +1,8 @@
 ﻿using Ict.Win;
+using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -48,10 +50,10 @@ namespace Sci.Production.Shipping
                 .Text("ActHSCode", header: "Act.\r\nHS Code", width: Widths.AnsiChars(14), iseditingreadonly: false, name: this.nNoEmpty)
                 ;
 
-            this.grid1.Columns[7].DefaultCellStyle.BackColor = Color.Pink;
             this.grid1.Columns[8].DefaultCellStyle.BackColor = Color.Pink;
             this.grid1.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
             this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns[11].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void BtnSave_Click(object sender, EventArgs e)
@@ -62,9 +64,24 @@ namespace Sci.Production.Shipping
                 return;
             }
 
-            DataTable sumDt = (DataTable)this.gridbs.DataSource;
+            DataTable sumDt = ((DataTable)this.gridbs.DataSource).Select($"ct > 1").TryCopyToDataTable((DataTable)this.gridbs.DataSource);
+            DataTable sumDtct1 = ((DataTable)this.gridbs.DataSource).Select($"ct = 1").TryCopyToDataTable((DataTable)this.gridbs.DataSource);
+            var ct1 = sumDtct1.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["CustomsDescription"])).ToList();
+            var ct1Datas = sumDtct1.AsEnumerable()
+                .Select(s => new CalData
+                {
+                    Rn = MyUtility.Convert.GetLong(this.rateDt.Select($"CustomsDescription = '{s["CustomsDescription"]}'")[0]["Rn"]),
+                    CustomsType = MyUtility.Convert.GetString(s["CustomsType"]),
+                    CustomsDescription = MyUtility.Convert.GetString(s["CustomsDescription"]),
+                    ActNetKg = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(s["ActTtlNetKg"]), 2),
+                    ActWeightKg = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(s["ActTtlWeightKg"]), 2),
+                    ActAmount = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(s["ActTtlAmount"]), 2),
+                    ActHSCode = MyUtility.Convert.GetString(s["ActHSCode"]),
+                }).ToList();
+
             string filter = "CustomsType = '{0}' and CustomsDescription = '{1}'";
-            var calDatas = this.rateDt.AsEnumerable().Select(s => new CalData
+            var calDatas = this.rateDt.AsEnumerable().Where(w => !ct1.Contains(MyUtility.Convert.GetString(w["CustomsDescription"])))
+                .Select(s => new CalData
             {
                 Rn = MyUtility.Convert.GetLong(s["rn"]),
                 CustomsType = MyUtility.Convert.GetString(s["CustomsType"]),
@@ -101,13 +118,14 @@ namespace Sci.Production.Shipping
                 var lastSamern = lastDiff.Where(w => w.CustomsType == item.CustomsType && w.CustomsDescription == item.CustomsDescription).First();
                 if (lastSamern.Rn == item.Rn)
                 {
-                    item.ActNetKg = item.ActNetKg - lastSamern.ActNetKg;
-                    item.ActWeightKg = item.ActWeightKg - lastSamern.ActWeightKg;
-                    item.ActAmount = item.ActAmount - lastSamern.ActAmount;
+                    item.ActNetKg -= lastSamern.ActNetKg;
+                    item.ActWeightKg -= lastSamern.ActWeightKg;
+                    item.ActAmount -= lastSamern.ActAmount;
                 }
             }
 
-            P61.ShareDt = PublicPrg.ListToDataTable.ToDataTable(calDatas);
+            P61.ShareDt = ListToDataTable.ToDataTable(calDatas);
+            P61.ShareDt.Merge(ListToDataTable.ToDataTable(ct1Datas));
             this.Close();
         }
 
