@@ -467,7 +467,7 @@ drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls");
                 }
                 #endregion
 
-                objSheets.Cells[3, 19 + i] = strArtworkType;
+                objSheets.Cells[3, 19 + i] = strArtworkType + "-" + this.dtArtworkType.Rows[i]["seq"].ToString();
             }
 
             objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬
