@@ -694,8 +694,14 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
 
         private void BtnSendMail_Click(object sender, EventArgs e)
         {
-            string sqlcmd = $@"select EMail from TPEPass1 p inner join Orders o on o.MCHandle = p.id where o.id='{this.poid}'";
+            string sqlcmd = $@"select EMail from Pass1 p inner join Orders o on o.MCHandle = p.id where o.id='{this.poid}'";
             string mailto = MyUtility.GetValue.Lookup(sqlcmd);
+            if (MyUtility.Check.Empty(mailto))
+            {
+                sqlcmd = $@"select EMail from TPEPass1 p inner join Orders o on o.MCHandle = p.id where o.id='{this.poid}'";
+                mailto = MyUtility.GetValue.Lookup(sqlcmd);
+            }
+
             string ccAddress = string.Empty;
             string subject = $@"Accessory Inspection SP#: {this.poid}, Ref#:{this.txtRefno.Text}, Color#: {this.txtColor.Text}";
             string content = $@"<Information>

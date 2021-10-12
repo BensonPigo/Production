@@ -1504,9 +1504,16 @@ for xml path('')
             if (MyUtility.Convert.GetBool(this.maindr["PhysicalEncode"]) && this.maindr["Status"].ToString() == "Approved")
             {
                 // *****Send Excel Email 完成 需寄給Factory MC*****
-                string sqlcmd = $@"select EMail from TPEPass1 p inner join Orders o on o.MCHandle = p.id where o.id='{this.maindr["POID"]}'";
-                string strToAddress = MyUtility.GetValue.Lookup("ToAddress", "007", "MailTo", "ID") + ";" + MyUtility.GetValue.Lookup(sqlcmd);
-                string mailto = strToAddress;
+                string sqlcmd = $@"select EMail from Pass1 p inner join Orders o on o.MCHandle = p.id where o.id='{this.poid}'";
+                string mailto = MyUtility.GetValue.Lookup(sqlcmd);
+                if (MyUtility.Check.Empty(mailto))
+                {
+                    sqlcmd = $@"select EMail from TPEPass1 p inner join Orders o on o.MCHandle = p.id where o.id='{this.poid}'";
+                    mailto = MyUtility.GetValue.Lookup(sqlcmd);
+                }
+
+                string strToAddress = MyUtility.GetValue.Lookup("ToAddress", "007", "MailTo", "ID");
+                mailto = mailto + ";" + strToAddress;
                 string mailCC = MyUtility.GetValue.Lookup("CCAddress", "007", "MailTo", "ID");
                 string subject = string.Format(MyUtility.GetValue.Lookup("Subject", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
                 string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
