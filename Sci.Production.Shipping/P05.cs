@@ -291,21 +291,7 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
             this.txtPulloutPort1.ShipModeID = this.txtShipmodeShippingMode.SelectedValue;
 
             // combo Category
-            this.displayCategory.Text = MyUtility.GetValue.Lookup($@"
-SELECT listValue = isnull(Stuff((SELECT Concat(',', S.NAME)
-FROM (SELECT D.NAME
-FROM packinglist_detail pd
-INNER JOIN orders o ON o.id = pd.orderid
-INNER JOIN dropdownlist D ON D.id = O.category
-	AND D.type = 'Category'
-WHERE exists(
-	select 1 from PackingList p
-	where p.id = pd.id
-	and p.INVNo = '{this.CurrentMaintain["ID"]}'
-)
-GROUP BY D.NAME) s
-FOR xml path ('')), 1, 1, '') ,'')
-");
+            this.RefreshDisplayCategory();
 
             this.ControlColor();
         }
@@ -1493,6 +1479,8 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
 
             P05_ImportFromPackingList callNextForm = new P05_ImportFromPackingList(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             callNextForm.ShowDialog(this);
+
+            this.RefreshDisplayCategory();
         }
 
         /// <inheritdoc/>
@@ -2207,6 +2195,32 @@ and BrandID =  '{this.CurrentMaintain["BrandID"]}'";
         private void TxtShipmodeShippingMode_SelectedValueChanged(object sender, EventArgs e)
         {
             this.txtPulloutPort1.ShipModeID = this.txtShipmodeShippingMode.SelectedValue;
+        }
+
+        private void RefreshDisplayCategory()
+        {
+            if (this.DetailDatas.Count == 0)
+            {
+                this.displayCategory.Text = string.Empty;
+                return;
+            }
+
+            string whereDetailOrderIDs = this.DetailDatas.Select(s => s["OrderID"].ToString())
+                .JoinToString(",")
+                .Split(',')
+                .Distinct()
+                .Select(s => $"'{s}'")
+                .JoinToString(",");
+
+            this.displayCategory.Text = MyUtility.GetValue.Lookup($@"
+SELECT listValue = isnull(Stuff((SELECT Concat(',', S.NAME)
+FROM (SELECT D.NAME
+FROM orders o
+INNER JOIN dropdownlist D ON D.id = O.category AND D.type = 'Category'
+WHERE o.ID in ({whereDetailOrderIDs})
+GROUP BY D.NAME) s
+FOR xml path ('')), 1, 1, '') ,'')
+");
         }
     }
 }
