@@ -46,6 +46,7 @@
             this.txtFullName = new Sci.Win.UI.TextBox();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.Txtartworktype_fty();
             this.chkIsBoundedProcess = new Sci.Win.UI.CheckBox();
+            this.checkBox1 = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -60,6 +61,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.chkIsBoundedProcess);
             this.detailcont.Controls.Add(this.txtFullName);
             this.detailcont.Controls.Add(this.label2);
@@ -142,7 +144,7 @@
             this.checkDisplayonreport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkDisplayonreport.Location = new System.Drawing.Point(412, 112);
             this.checkDisplayonreport.Name = "checkDisplayonreport";
-            this.checkDisplayonreport.Size = new System.Drawing.Size(135, 21);
+            this.checkDisplayonreport.Size = new System.Drawing.Size(121, 21);
             this.checkDisplayonreport.TabIndex = 7;
             this.checkDisplayonreport.Text = "Is RFID Default";
             this.checkDisplayonreport.UseVisualStyleBackColor = true;
@@ -166,7 +168,7 @@
             this.checkProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkProcess.Location = new System.Drawing.Point(412, 57);
             this.checkProcess.Name = "checkProcess";
-            this.checkProcess.Size = new System.Drawing.Size(78, 21);
+            this.checkProcess.Size = new System.Drawing.Size(127, 21);
             this.checkProcess.TabIndex = 5;
             this.checkProcess.Text = "Is RFID Process";
             this.checkProcess.UseVisualStyleBackColor = true;
@@ -242,7 +244,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(315, 277);
+            this.label2.Location = new System.Drawing.Point(70, 323);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(89, 23);
             this.label2.TabIndex = 24;
@@ -265,7 +267,7 @@
             this.txtFullName.BackColor = System.Drawing.Color.White;
             this.txtFullName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FullName", true));
             this.txtFullName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFullName.Location = new System.Drawing.Point(407, 277);
+            this.txtFullName.Location = new System.Drawing.Point(162, 323);
             this.txtFullName.MaxLength = 15;
             this.txtFullName.Name = "txtFullName";
             this.txtFullName.Size = new System.Drawing.Size(156, 23);
@@ -296,6 +298,19 @@
             this.chkIsBoundedProcess.TabIndex = 26;
             this.chkIsBoundedProcess.Text = "Is Bounded Process";
             this.chkIsBoundedProcess.UseVisualStyleBackColor = true;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsSubprocessInspection", true));
+            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkBox1.Location = new System.Drawing.Point(315, 276);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.ReadOnly = true;
+            this.checkBox1.Size = new System.Drawing.Size(184, 21);
+            this.checkBox1.TabIndex = 27;
+            this.checkBox1.Text = "Is Subprocess Inspection";
+            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // Cutting_B01
             // 
@@ -345,5 +360,6 @@
         private Win.UI.CheckBox chkIsLackingAndReplacement;
         private Win.UI.TextBox txtFullName;
         private Win.UI.CheckBox chkIsBoundedProcess;
+        private Win.UI.CheckBox checkBox1;
     }
 }

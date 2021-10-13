@@ -43,6 +43,7 @@
             this.combInOutRule = new Sci.Win.UI.ComboBox();
             this.label1 = new Sci.Win.UI.Label();
             this.chkIsBoundedProcess = new Sci.Win.UI.CheckBox();
+            this.checkBox1 = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -57,6 +58,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.chkIsBoundedProcess);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.combInOutRule);
@@ -261,6 +263,20 @@
             this.chkIsBoundedProcess.Text = "Is Bounded Process";
             this.chkIsBoundedProcess.UseVisualStyleBackColor = true;
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsSubprocessInspection", true));
+            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkBox1.IsSupportEditMode = false;
+            this.checkBox1.Location = new System.Drawing.Point(315, 221);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.ReadOnly = true;
+            this.checkBox1.Size = new System.Drawing.Size(184, 21);
+            this.checkBox1.TabIndex = 20;
+            this.checkBox1.Text = "Is Subprocess Inspection";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(836, 457);
@@ -307,5 +323,6 @@
         private Win.UI.ComboBox combInOutRule;
         private Win.UI.Label label1;
         private Win.UI.CheckBox chkIsBoundedProcess;
+        private Win.UI.CheckBox checkBox1;
     }
 }
