@@ -169,6 +169,7 @@ select
 	O.styleID,
 	B.Colorid,
 	BD.SizeCode,
+    BD.PatternDesc,
 	BD.Qty,
 	SR.RejectQty,
 	SR.Machine,
@@ -216,6 +217,7 @@ select
 	O.styleID,
 	BR.Colorid,
 	BRD.SizeCode,
+    BRD.PatternDesc,
 	BRD.Qty,
 	SR.RejectQty,
 	SR.Machine,
@@ -319,7 +321,6 @@ drop table #tmp,#tmp2
                     customColumn = this.PrintData.Columns.Count;
                 }
             }
-
 
             excelApp.DisplayAlerts = false;
             xlSht.Delete();
