@@ -478,6 +478,11 @@ and AccountID != ''";
         protected override void ClickCopyAfter()
         {
             base.ClickCopyAfter();
+            this.CurrentMaintain["ApvDate"] = DBNull.Value;
+            this.CurrentMaintain["VoucherID"] = string.Empty;
+            this.CurrentMaintain["VoucherDate"] = DBNull.Value;
+            this.CurrentMaintain["Accountant"] = string.Empty;
+            this.disExVoucherID.Text = string.Empty;
             this.CurrentMaintain["Handle"] = Env.User.UserID;
             this.CurrentMaintain["ID"] = string.Empty;
             this.CurrentMaintain["VoucherID"] = string.Empty;
