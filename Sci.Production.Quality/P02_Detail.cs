@@ -7,6 +7,9 @@ using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
 using System.Data.SqlClient;
+using System.Linq;
+using System.IO;
+using System.Drawing;
 
 namespace Sci.Production.Quality
 {
@@ -72,6 +75,7 @@ namespace Sci.Production.Quality
         {
             base.OnFormLoaded();
             this.Button_enable(this.canedit);
+            this.LoadPicture();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
@@ -363,16 +367,12 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
                                 if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
                                 {
                                     transactionscope.Dispose();
-                                    MyUtility.Msg.WarningBox("Update Fail!!");
+                                    this.ShowErr(upResult);
                                     return;
                                 }
 
+                                this.SavePricture(transactionscope);
                                 transactionscope.Complete();
-                                transactionscope.Dispose();
-                                MyUtility.Msg.InfoBox("Successfully");
-                                this.btnAmend.Text = "Encode";
-                                this.btnEdit.Text = "Edit";
-                                this.btnAmend.Enabled = true;
                             }
                             catch (Exception ex)
                             {
@@ -381,6 +381,11 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
                                 return;
                             }
                         }
+
+                        MyUtility.Msg.InfoBox("Successfully");
+                        this.btnAmend.Text = "Encode";
+                        this.btnEdit.Text = "Edit";
+                        this.btnAmend.Enabled = true;
                         #endregion
                         this.txtInspectedQty.ReadOnly = true;
                         this.txtRejectedQty.ReadOnly = true;
@@ -508,6 +513,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
                 DialogResult buttonQ = MyUtility.Msg.QuestionBox("Ensure undo?", "Question", MessageBoxButtons.OKCancel);
                 if (buttonQ == DialogResult.OK)
                 {
+                    this.LoadPicture();
                     this.txtInspectedQty.ReadOnly = true;
                     this.txtRejectedQty.ReadOnly = true;
                     this.dateInspectDate.ReadOnly = true;
@@ -600,6 +606,157 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
             this.dateInspectDate.Value = MyUtility.Convert.GetDate(this.CurrentData["InspDate"]);
             this.txtInspector.TextBox1.Text = this.CurrentData["Inspector"].ToString();
             this.comboResult.SelectedValue = this.CurrentData["Result1"].ToString();
+        }
+
+        private void BtnUploadDefectPicture_Click(object sender, EventArgs e)
+        {
+            // 呼叫File 選擇視窗
+            OpenFileDialog file = new OpenFileDialog
+            {
+                InitialDirectory = "c:\\", // 預設路徑
+                Filter = "Image Files(*.PNG;*.JPG)|*.PNG;*.JPG", // 使用檔名
+                FilterIndex = 1,
+                RestoreDirectory = true,
+                Multiselect = true,
+            };
+            if (file.ShowDialog() == DialogResult.OK)
+            {
+                int virtualSeqnum = this.ListDefectImg.Count == 0 ? 1 : this.ListDefectImg.Max(s => MyUtility.Convert.GetInt(s.VirtualSeq)) + 1;
+                foreach (string fileName in file.FileNames)
+                {
+                    string virtualSeq = virtualSeqnum.ToString().PadLeft(3, '0');
+                    this.ListDefectImg.Add(new DefectImg { VirtualSeq = virtualSeq, Img = File.ReadAllBytes(fileName), Insert = true });
+                    virtualSeqnum++;
+                }
+            }
+
+            this.SetPicCombox();
+        }
+
+        private void SavePricture(TransactionScope transactionscope)
+        {
+            foreach (var item in this.ListDefectImg.Where(w => w.Img != null && w.Insert))
+            {
+                List<SqlParameter> paras = new List<SqlParameter> { new SqlParameter($"@Image", item.Img) };
+                string sqlcmd = $@"INSERT INTO [dbo].[AIR_DefectImage]([AIRID],[ReceivingID],[Image])VALUES('{this.id}','{this.receivingID}',@Image)";
+                DualResult result = DBProxy.Current.Execute("PMSFile", sqlcmd, paras);
+                if (!result)
+                {
+                    transactionscope.Dispose();
+                    this.ShowErr(result);
+                    return;
+                }
+            }
+
+            this.ListDefectImg.ForEach(f => f.Insert = false);
+        }
+
+        private void LoadPicture()
+        {
+            string sqlcmd = $@"select * from AIR_DefectImage where AIRID = '{this.id}' and ReceivingID = '{this.receivingID}' order by ukey";
+            DualResult result = DBProxy.Current.Select("PMSFile", sqlcmd, out DataTable dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.ListDefectImg.Clear();
+            int virtualSeqnum = 1;
+            foreach (DataRow dr in dt.Rows)
+            {
+                string virtualSeq = virtualSeqnum.ToString().PadLeft(3, '0');
+                this.ListDefectImg.Add(new DefectImg { VirtualSeq = virtualSeq, Img = (byte[])dr["Image"], Insert = false });
+                virtualSeqnum++;
+            }
+
+            this.SetPicCombox();
+        }
+
+        private void SetPicCombox()
+        {
+            MyUtility.Tool.SetupCombox(this.cmbDefectPicture, 1, 1, this.ListDefectImg.Select(s => s.VirtualSeq).JoinToString(","));
+            this.cmbDefectPicture.SelectedIndex = -1;
+            this.cmbDefectPicture.SelectedIndex = 0;
+        }
+
+        private void CmbDefectPicture_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            DefectImg defectoicture = this.ListDefectImg.Where(w => w.VirtualSeq == this.cmbDefectPicture.Text).FirstOrDefault();
+            if (defectoicture != null && !MyUtility.Check.Empty(defectoicture.Img))
+            {
+                using (MemoryStream ms = new MemoryStream(defectoicture.Img))
+                {
+                    this.pictureBox1.Image = Image.FromStream(ms);
+                }
+            }
+        }
+
+        private void BtnSendMail_Click(object sender, EventArgs e)
+        {
+            string sqlcmd = $@"select EMail from Pass1 p inner join Orders o on o.MCHandle = p.id where o.id='{this.poid}'";
+            string mailto = MyUtility.GetValue.Lookup(sqlcmd);
+            if (MyUtility.Check.Empty(mailto))
+            {
+                sqlcmd = $@"select EMail from TPEPass1 p inner join Orders o on o.MCHandle = p.id where o.id='{this.poid}'";
+                mailto = MyUtility.GetValue.Lookup(sqlcmd);
+            }
+
+            string ccAddress = string.Empty;
+            string subject = $@"Accessory Inspection SP#: {this.poid}, Ref#:{this.txtRefno.Text}, Color#: {this.txtColor.Text}";
+            string content = $@"<Information>
+[SP#]: {this.poid}
+[SEQ]: {this.seq1} {this.seq2}
+[WK#]: {this.txtWKNO.Text}
+[Ref#]: {this.txtRefno.Text}
+[Color#]: {this.txtColor.Text}
+[Arrive Qty]: {this.txtArriveQty.Text}
+[Unit]: {this.txtUnit.Text}
+[Size]: {this.txtSize.Text}
+
+<Inspection Result>
+[Inspected Qty]: {this.txtInspectedQty.Text}
+[Reject Qty]: {this.txtRejectedQty}
+[Inspected Date]: {this.dateInspectDate.Text}
+[Inspector]: {this.txtInspector.TextBox1.Text}-{this.txtInspector.DisplayBox1.Text}
+[Remark]: {this.txtRemark.Text}
+[Result]: {this.comboResult.Text}";
+
+            List<string> attachment = new List<string>();
+            foreach (var item in this.ListDefectImg)
+            {
+                Image img = Image.FromStream(new MemoryStream(item.Img));
+                string imageName = this.poid + "_" + this.seq1 + this.seq2 + "_" + this.editDefect.Text + item.VirtualSeq + ".jpg";
+                string imgPath = Path.Combine(Env.Cfg.ReportTempDir, imageName);
+                img.Save(imgPath);
+                attachment.Add(imgPath);
+            }
+
+            var email = new MailTo(Env.Cfg.MailFrom, mailto, ccAddress, subject, content, attachment, false, true);
+            email.ShowDialog(this);
+
+            foreach (var item in attachment)
+            {
+                try
+                {
+                    File.Delete(item);
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+        }
+
+        private List<DefectImg> ListDefectImg = new List<DefectImg>();
+
+        private class DefectImg
+        {
+            public string VirtualSeq { get; set; }
+
+            public byte[] Img { get; set; }
+
+            public bool Insert { get; set; }
         }
     }
 }

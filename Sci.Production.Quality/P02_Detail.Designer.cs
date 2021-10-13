@@ -59,14 +59,20 @@
             this.comboResult = new Sci.Win.UI.ComboBox();
             this.editDefect = new Sci.Win.UI.EditBox();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.btnUploadDefectPicture = new Sci.Win.UI.Button();
+            this.txtInspector = new Sci.Production.Class.Txtuser();
             this.dateInspectDate = new Sci.Win.UI.DateBox();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnEdit = new Sci.Win.UI.Button();
             this.txtsupplier = new Sci.Production.Class.Txtsupplier();
-            this.txtInspector = new Sci.Production.Class.Txtuser();
+            this.btnSendMail = new Sci.Win.UI.Button();
+            this.cmbDefectPicture = new Sci.Win.UI.ComboBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // btmcont
@@ -74,7 +80,7 @@
             this.btmcont.Controls.Add(this.btnEdit);
             this.btmcont.Controls.Add(this.btnClose);
             this.btmcont.Location = new System.Drawing.Point(0, 376);
-            this.btmcont.Size = new System.Drawing.Size(670, 40);
+            this.btmcont.Size = new System.Drawing.Size(966, 40);
             this.btmcont.Controls.SetChildIndex(this.left, 0);
             this.btmcont.Controls.SetChildIndex(this.right, 0);
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
@@ -84,14 +90,14 @@
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(580, 5);
+            this.undo.Location = new System.Drawing.Point(876, 5);
             this.undo.Text = "Close";
             this.undo.Visible = false;
             // 
             // save
             // 
             this.save.Enabled = true;
-            this.save.Location = new System.Drawing.Point(500, 5);
+            this.save.Location = new System.Drawing.Point(796, 5);
             this.save.Text = "Edit";
             this.save.Visible = false;
             // 
@@ -377,6 +383,7 @@
             this.comboResult.IsSupportUnselect = true;
             this.comboResult.Location = new System.Drawing.Point(112, 321);
             this.comboResult.Name = "comboResult";
+            this.comboResult.OldText = "";
             this.comboResult.Size = new System.Drawing.Size(121, 24);
             this.comboResult.TabIndex = 129;
             // 
@@ -397,6 +404,7 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.Border3DStyle.Raised;
+            this.panel1.Controls.Add(this.btnUploadDefectPicture);
             this.panel1.Controls.Add(this.txtInspector);
             this.panel1.Controls.Add(this.dateInspectDate);
             this.panel1.Controls.Add(this.editDefect);
@@ -407,6 +415,27 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(639, 209);
             this.panel1.TabIndex = 133;
+            // 
+            // btnUploadDefectPicture
+            // 
+            this.btnUploadDefectPicture.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnUploadDefectPicture.Location = new System.Drawing.Point(422, 130);
+            this.btnUploadDefectPicture.Name = "btnUploadDefectPicture";
+            this.btnUploadDefectPicture.Size = new System.Drawing.Size(197, 30);
+            this.btnUploadDefectPicture.TabIndex = 136;
+            this.btnUploadDefectPicture.Text = "Upload Defect Picture";
+            this.btnUploadDefectPicture.UseVisualStyleBackColor = true;
+            this.btnUploadDefectPicture.Click += new System.EventHandler(this.BtnUploadDefectPicture_Click);
+            // 
+            // txtInspector
+            // 
+            this.txtInspector.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Inspector", true));
+            this.txtInspector.DisplayBox1Binding = "";
+            this.txtInspector.Location = new System.Drawing.Point(102, 132);
+            this.txtInspector.Name = "txtInspector";
+            this.txtInspector.Size = new System.Drawing.Size(301, 23);
+            this.txtInspector.TabIndex = 135;
+            this.txtInspector.TextBox1Binding = "";
             // 
             // dateInspectDate
             // 
@@ -448,19 +477,55 @@
             this.txtsupplier.TabIndex = 134;
             this.txtsupplier.TextBox1Binding = "";
             // 
-            // txtInspector
+            // btnSendMail
             // 
-            this.txtInspector.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Inspector", true));
-            this.txtInspector.DisplayBox1Binding = "";
-            this.txtInspector.Location = new System.Drawing.Point(102, 132);
-            this.txtInspector.Name = "txtInspector";
-            this.txtInspector.Size = new System.Drawing.Size(301, 23);
-            this.txtInspector.TabIndex = 135;
-            this.txtInspector.TextBox1Binding = "";
+            this.btnSendMail.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnSendMail.Location = new System.Drawing.Point(532, 66);
+            this.btnSendMail.Name = "btnSendMail";
+            this.btnSendMail.Size = new System.Drawing.Size(117, 30);
+            this.btnSendMail.TabIndex = 135;
+            this.btnSendMail.Text = "Send Mail";
+            this.btnSendMail.UseVisualStyleBackColor = true;
+            this.btnSendMail.Click += new System.EventHandler(this.BtnSendMail_Click);
+            // 
+            // cmbDefectPicture
+            // 
+            this.cmbDefectPicture.BackColor = System.Drawing.Color.White;
+            this.cmbDefectPicture.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.cmbDefectPicture.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cmbDefectPicture.FormattingEnabled = true;
+            this.cmbDefectPicture.IsSupportUnselect = true;
+            this.cmbDefectPicture.Location = new System.Drawing.Point(769, 31);
+            this.cmbDefectPicture.Name = "cmbDefectPicture";
+            this.cmbDefectPicture.OldText = "";
+            this.cmbDefectPicture.Size = new System.Drawing.Size(176, 24);
+            this.cmbDefectPicture.TabIndex = 136;
+            this.cmbDefectPicture.SelectedIndexChanged += new System.EventHandler(this.CmbDefectPicture_SelectedIndexChanged);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(652, 31);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(114, 23);
+            this.label1.TabIndex = 137;
+            this.label1.Text = "Defect Picture";
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(652, 66);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(293, 299);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 138;
+            this.pictureBox1.TabStop = false;
             // 
             // P02_Detail
             // 
-            this.ClientSize = new System.Drawing.Size(670, 416);
+            this.ClientSize = new System.Drawing.Size(966, 416);
+            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.cmbDefectPicture);
+            this.Controls.Add(this.btnSendMail);
             this.Controls.Add(this.txtsupplier);
             this.Controls.Add(this.comboResult);
             this.Controls.Add(this.labelResult);
@@ -490,11 +555,11 @@
             this.Controls.Add(this.labelInspectedQty);
             this.Controls.Add(this.panel1);
             this.Name = "P02_Detail";
+            this.OnLineHelpID = "Sci.Win.Subs.Input6A";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.Text = "Accessory Inspection- SP+SEQ+Detail";
             this.WorkAlias = "AIR";
             this.Controls.SetChildIndex(this.panel1, 0);
-            this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.labelInspectedQty, 0);
             this.Controls.SetChildIndex(this.labelUnit, 0);
             this.Controls.SetChildIndex(this.labelColor, 0);
@@ -522,10 +587,16 @@
             this.Controls.SetChildIndex(this.labelResult, 0);
             this.Controls.SetChildIndex(this.comboResult, 0);
             this.Controls.SetChildIndex(this.txtsupplier, 0);
+            this.Controls.SetChildIndex(this.btnSendMail, 0);
+            this.Controls.SetChildIndex(this.cmbDefectPicture, 0);
+            this.Controls.SetChildIndex(this.btmcont, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.pictureBox1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -569,6 +640,10 @@
         private Win.UI.Button btnClose;
         private Win.UI.Button btnEdit;
         private Class.Txtuser txtInspector;
-
+        private Win.UI.Button btnUploadDefectPicture;
+        private Win.UI.Button btnSendMail;
+        private Win.UI.ComboBox cmbDefectPicture;
+        private Win.UI.Label label1;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
