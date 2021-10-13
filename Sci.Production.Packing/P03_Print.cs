@@ -264,11 +264,12 @@ select * from(
     select pd.CTNStartno,
 		o.Customize1,
 		SizeCode = IIF(a.SizeCode like '%,%', a.SizeCode, SUBSTRING(a.SizeCode,1,PATINDEX('%-%',a.SizeCode) - 1)),
-		Article = concat(pd.Article, '/' + pd.Color),
+		Article = concat(pd.Article, '/' + sa.ArticleName),
 		CTNStartNostring = concat(pd.CTNStartNo, ' OF ', p.CTNQty)
     from PackingList_Detail pd
     inner join PackingList p on p.id = pd.id
     inner join orders o on o.id = pd.orderid
+	left join Style_Article sa WITH (NOLOCK) on sa.StyleUkey = o.StyleUkey and sa.Article = pd.Article
     outer apply (
 	    select SizeCode=stuff((
 			select concat(',', isnull(x.SizeSpec,z.SizeSpec), '-', pd2.QtyPerCTN) 

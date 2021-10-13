@@ -616,6 +616,7 @@ select  a.*
         ,oqs.IDD
         ,[PrepackQtyShow] = IIF(a.PrepackQty = 0 , NULL , a.PrepackQty)
         ,[Customize1] = o.Customize1
+        ,sa.ArticleName
 from PackingList_Detail a WITH (NOLOCK) 
 left join LocalItem b WITH (NOLOCK) on b.RefNo = a.RefNo
 left join AccuPKQty pd on a.OrderID = pd.OrderID 
@@ -637,6 +638,7 @@ left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = a.OrderID
 left join Order_QtyShip oqs with (nolock) on        oqs.ID  = a.OrderID and
                                                     oqs.Seq = a.OrderShipmodeSeq 
 left join Orders o WITH (NOLOCK) on o.ID = a.OrderID
+left join Style_Article sa WITH (NOLOCK) on sa.StyleUkey = o.StyleUkey and sa.Article = a.Article
 where a.id = '{0}'
 order by a.Seq ASC,a.CTNQty DESC", packingListID);
         }
