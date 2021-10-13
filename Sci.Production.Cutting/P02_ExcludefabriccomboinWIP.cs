@@ -51,6 +51,8 @@ namespace Sci.Production.Cutting
                 .Text("FabricCode", header: "Fabric#", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Description", header: "Description", width: Widths.AnsiChars(55), iseditingreadonly: true)
+                .Text("AddName", header: "Add Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
+                .DateTime("AddDate", header: "Add Date", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 ;
         }
 
@@ -60,10 +62,13 @@ namespace Sci.Production.Cutting
 select distinct
 	oe.FabricCombo,
 	ExWip=CAST(isnull((select 1 from Cutting_WIPExcludePatternPanel cw with(nolock) where cw.ID = oe.Id and cw.PatternPanel = oe.FabricCombo), 0) as bit),
-	oe.FabricCode,f.Refno,f.Description
+	oe.FabricCode,f.Refno,f.Description,
+    [AddName] = concat(cw.AddName, '-'+ (select name from pass1 where id=cw.AddName)),
+	cw.AddDate
 from Order_EachCons oe with(nolock)
 inner join Order_BOF bof with(nolock) on bof.Id = oe.Id and bof.FabricCode = oe.FabricCode
 LEFT JOIN Fabric f with(nolock) ON bof.SCIRefno=f.SCIRefno
+left join Cutting_WIPExcludePatternPanel cw with(nolock) on cw.ID = oe.Id and cw.PatternPanel = oe.FabricCombo
 where oe.Id = '{this.id}'
 and oe.CuttingPiece <> 1
 ";
