@@ -95,6 +95,8 @@
             this.txtDest = new Sci.Production.Class.Txtcountry();
             this.chkVasShas = new Sci.Win.UI.CheckBox();
             this.chkBrokenneedles = new Sci.Win.UI.CheckBox();
+            this.label5 = new Sci.Win.UI.Label();
+            this.displayCustCD = new Sci.Win.UI.DisplayBox();
             this.tabControlScanArea.SuspendLayout();
             this.tabPageCarton.SuspendLayout();
             this.tabPageScan.SuspendLayout();
@@ -832,7 +834,7 @@
             this.chkVasShas.AutoSize = true;
             this.chkVasShas.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkVasShas.IsSupportEditMode = false;
-            this.chkVasShas.Location = new System.Drawing.Point(354, 127);
+            this.chkVasShas.Location = new System.Drawing.Point(352, 156);
             this.chkVasShas.Name = "chkVasShas";
             this.chkVasShas.ReadOnly = true;
             this.chkVasShas.Size = new System.Drawing.Size(95, 21);
@@ -845,7 +847,7 @@
             this.chkBrokenneedles.AutoSize = true;
             this.chkBrokenneedles.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkBrokenneedles.IsSupportEditMode = false;
-            this.chkBrokenneedles.Location = new System.Drawing.Point(354, 153);
+            this.chkBrokenneedles.Location = new System.Drawing.Point(502, 156);
             this.chkBrokenneedles.Name = "chkBrokenneedles";
             this.chkBrokenneedles.ReadOnly = true;
             this.chkBrokenneedles.Size = new System.Drawing.Size(126, 21);
@@ -853,9 +855,28 @@
             this.chkBrokenneedles.Text = "Broken needles";
             this.chkBrokenneedles.UseVisualStyleBackColor = true;
             // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(352, 125);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(118, 23);
+            this.label5.TabIndex = 121;
+            this.label5.Text = "Cust CD";
+            // 
+            // displayCustCD
+            // 
+            this.displayCustCD.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCustCD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCustCD.Location = new System.Drawing.Point(473, 125);
+            this.displayCustCD.Name = "displayCustCD";
+            this.displayCustCD.Size = new System.Drawing.Size(155, 23);
+            this.displayCustCD.TabIndex = 122;
+            // 
             // P18
             // 
             this.ClientSize = new System.Drawing.Size(934, 662);
+            this.Controls.Add(this.displayCustCD);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.chkBrokenneedles);
             this.Controls.Add(this.chkVasShas);
             this.Controls.Add(this.boxPackingRemark);
@@ -964,6 +985,8 @@
             this.Controls.SetChildIndex(this.boxPackingRemark, 0);
             this.Controls.SetChildIndex(this.chkVasShas, 0);
             this.Controls.SetChildIndex(this.chkBrokenneedles, 0);
+            this.Controls.SetChildIndex(this.label5, 0);
+            this.Controls.SetChildIndex(this.displayCustCD, 0);
             this.tabControlScanArea.ResumeLayout(false);
             this.tabPageCarton.ResumeLayout(false);
             this.tabPageCarton.PerformLayout();
@@ -1046,5 +1069,7 @@
         private Win.UI.EditBox boxPackingRemark;
         private Win.UI.CheckBox chkVasShas;
         private Win.UI.CheckBox chkBrokenneedles;
+        private Win.UI.Label label5;
+        private Win.UI.DisplayBox displayCustCD;
     }
 }
