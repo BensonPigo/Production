@@ -219,7 +219,7 @@ from Issue_MIND im where id = '{this.id}'";
         {
             if (this.EditMode)
             {
-                foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
+                foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
                 {
                     if (MyUtility.Check.Empty(dr["Releaser"]))
                     {
