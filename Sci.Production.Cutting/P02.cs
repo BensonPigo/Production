@@ -3445,7 +3445,7 @@ where wd.WorkOrderUkey is null
             }
             #endregion
             #region 新增
-            foreach (DataRow dr in this.PatternPanelTb.AsEnumerable().Where(x => x.RowState == DataRowState.Added))
+            foreach (DataRow dr in this.PatternPanelTb.AsEnumerable().Where(x => x.RowState == DataRowState.Added && MyUtility.Convert.GetLong(x["WorkOrderUkey"]) != 0))
             {
                 insertsql += string.Format("Insert into WorkOrder_PatternPanel(WorkOrderUkey,PatternPanel,FabricPanelCode,ID) values({0},'{1}','{2}','{3}'); ", dr["WorkOrderUkey"], dr["PatternPanel"], dr["FabricPanelCode"], cId);
             }
@@ -3846,6 +3846,7 @@ order by p.EditDate desc
                 drNEW["WorkOrderUkey"] = 0;  // 新增WorkOrderUkey塞0
                 drNEW["PatternPanel"] = row["PatternPanel"];
                 drNEW["FabricPanelCode"] = row["FabricPanelCode"];
+                drNEW["newkey"] = row["newkey"];
                 this.PatternPanelTb.Rows.Add(drNEW);
             });
             #endregion
