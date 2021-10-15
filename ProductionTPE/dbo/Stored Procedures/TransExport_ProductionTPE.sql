@@ -138,6 +138,14 @@ BEGIN
 	RAISERROR('IEReasonLBRnotHit_Detail  - Starts',0,0)
 	select * into dbo.IEReasonLBRnotHit_Detail from (select * from ProductionTPE.dbo.IEReasonLBRnotHit_Detail ) as tmp
 
+	-------------FabricDefect-------------------
+	RAISERROR('FabricDefect  - Starts',0,0)
+	select * into dbo.FabricDefect from (select * from ProductionTPE.dbo.FabricDefect ) as tmp
+
+	-------------AccessoryDefect-------------------
+	RAISERROR('AccessoryDefect  - Starts',0,0)
+	select * into dbo.AccessoryDefect from (select * from ProductionTPE.dbo.AccessoryDefect ) as tmp
+
 	set transaction isolation level read committed
 END
 
