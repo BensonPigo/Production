@@ -2640,7 +2640,7 @@ END";
                     // 找合併組合相同資料, 且還沒產生Cutref
                     DataRow[] sdr = wk.Select($"FabricCombo ='{dr["FabricCombo"]}' and FabricPanelCode ='{dr["FabricPanelCode"]}' and MarkerNo ='{dr["MarkerNo"]}' and Markername ='{dr["Markername"]}' and estcutdate ='{estcutdate}' and SizeCode ='{dr["SizeCode"]}' and isnull(CutRef,'') = ''");
 
-                    decimal sumLayer = MyUtility.Convert.GetDecimal(sdr.CopyToDataTable().Compute("sum(Layer)", string.Empty));
+                    decimal sumLayer = sdr.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Sum(s => MyUtility.Convert.GetDecimal(s["Layer"]));
 
                     // 最大裁剪數看其中一筆即可
                     if (sumLayer > MyUtility.Convert.GetDecimal(dr["CuttingLayer"]))
@@ -2649,7 +2649,12 @@ END";
                     }
                     else
                     {
-                        decimal hm = sdr.AsEnumerable().Max(m => MyUtility.Convert.GetDecimal(m["cutno"]));
+                        decimal hm = 0;
+                        if (sdr.Length > 0)
+                        {
+                            hm = sdr.AsEnumerable().Max(m => MyUtility.Convert.GetDecimal(m["cutno"]));
+                        }
+
                         if (hm != 0)
                         {
                             foreach (var item in sdr.AsEnumerable().Where(w => MyUtility.Check.Empty(w["cutno"])))
