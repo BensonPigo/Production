@@ -159,7 +159,7 @@ Where o.LocalOrder = 0
 
             if (!this.chkGMTComplete.Checked)
             {
-                sqlCmd.Append(" and o.GMTComplete = 0");
+                sqlCmd.Append(" and isnull(o.GMTComplete, '') <> 'C'");
             }
 
             sqlCmd.Append($" and o.Category in ({this.category})");
