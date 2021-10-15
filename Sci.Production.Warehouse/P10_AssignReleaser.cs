@@ -46,7 +46,7 @@ namespace Sci.Production.Warehouse
                 {
                     DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
 
-                    string sqlcmd = "select ID,Name from Pass1 where Resign is not null order by ID";
+                    string sqlcmd = "select ID,Name from Pass1 where Resign is null order by ID";
                     DualResult result = DBProxy.Current.Select("ManufacturingExecution", sqlcmd, out DataTable dt);
                     if (!result)
                     {
@@ -81,7 +81,7 @@ namespace Sci.Production.Warehouse
                     return;
                 }
 
-                string sqlcmd = $@"select ID,Name from Pass1 where Resign is not null and ID = '{e.FormattedValue}'";
+                string sqlcmd = $@"select ID,Name from Pass1 where Resign is null and ID = '{e.FormattedValue}'";
                 if (!MyUtility.Check.Seek(sqlcmd, out DataRow row, "ManufacturingExecution"))
                 {
                     dr["Releaser"] = string.Empty;
