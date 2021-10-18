@@ -201,8 +201,8 @@ into #tmp_Pullout_Detail_pd
 From Pullout_Detail pd  with (nolock)
 inner join #tmp_main t on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.Seq
 inner join Pullout_Detail_Detail pdd with (nolock) on pd.Ukey = pdd.Pullout_DetailUKey
-Outer apply (Select Qty = IIF(pd.pulloutdate <= iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), pdd.shipqty, 0)) rA --On Time
-Outer apply (Select Qty = IIF(pd.pulloutdate >  iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), pdd.shipqty, 0)) rB --Fail
+Outer apply (Select Qty = IIF(pd.pulloutdate <= iif(t.ShipmodeID in ('E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), pdd.shipqty, 0)) rA --On Time
+Outer apply (Select Qty = IIF(pd.pulloutdate >  iif(t.ShipmodeID in ('E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), pdd.shipqty, 0)) rB --Fail
 group by pd.OrderID, pd.OrderShipmodeSeq
 
 select max(p.PulloutDate)PulloutDate ,pd.OrderID,pd.OrderShipmodeSeq
@@ -305,7 +305,7 @@ SELECT
 		,t.BrandID
 		,BuyerDelivery = convert(varchar(10),t.BuyerDelivery,111)--G
 		,FtyKPI= convert(varchar(10),t.FtyKPI,111)
-		,Extension = convert(varchar(10),iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), 111)--I
+		,Extension = convert(varchar(10),iif(t.ShipmodeID in ('E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), 111)--I
 		,DeliveryByShipmode = t.ShipmodeID
 		,t.OrderQty 
         ,OnTimeQty = CASE WHEN t.OnsiteSample = 1 THEN IIF(GetOnsiteSampleFail.isFail = 1 or sew.SewLastDate is null, 0, Cast(t.OrderQty as int))
@@ -363,7 +363,7 @@ outer apply(
 )ps
 -----------isDevSample=1-----------
 outer apply (
-    Select top 1 iif(pd.PulloutDate > iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.FtyKPI, DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI)), 1, 0) isFail, pd.PulloutDate
+    Select top 1 iif(pd.PulloutDate > iif(t.ShipmodeID in ('E/C', 'E/P'), t.FtyKPI, DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI)), 1, 0) isFail, pd.PulloutDate
     From pullout p
 	inner join Pullout_Detail pd with (nolock) on p.ID  = pd.id
     where pd.OrderID = t.OrderID
@@ -393,7 +393,7 @@ SELECT
     ,t.BrandID  
     , BuyerDelivery = convert(varchar(10),t.BuyerDelivery,111)
     , FtyKPI = convert(varchar(10),t.FtyKPI,111)
-    , Extension = convert(varchar(10),iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), 111)
+    , Extension = convert(varchar(10),iif(t.ShipmodeID in ('E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), 111)
     , DeliveryByShipmode = t.ShipmodeID
     , OrderQty = 0
     , OnTimeQty =  0
@@ -540,7 +540,6 @@ WHERE 1 = 0 ";
                 #endregion Fail Order List by SP
 
                 #region get Order_QtyShip Data
-                DataTable dtOrder_QtyShip;
                 strSQL = @"
 Select Order_QS.ID
 , Convert(varchar, Order_QS.ShipmodeID) + '-' + Convert(varchar, Order_QS.Qty) + '(' +  convert(varchar(10),Order_QS.BuyerDelivery,111) + ')' as strData
@@ -579,7 +578,7 @@ Where Order_QS.ID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.
                     strSQL += string.Format(" AND f.KPICode = '{0}' ", this.txtFactory.Text);
                 }
 
-                if (!(result = DBProxy.Current.Select(null, strSQL, null, out dtOrder_QtyShip)))
+                if (!(result = DBProxy.Current.Select(null, strSQL, null, out DataTable dtOrder_QtyShip)))
                 {
                     return result;
                 }
@@ -588,7 +587,6 @@ Where Order_QS.ID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.
                 #endregion get Order_QtyShip Data
 
                 #region Get TradeHis_Order Data
-                DataTable dtTradeHis_Order;
                 strSQL = @"Select o.ID
 , TH_Order.ReasonID 
 , r.Name
@@ -630,7 +628,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 }
 
                 strSQL += "  order by TH_Order.AddDate desc ";
-                if (!(result = DBProxy.Current.Select(null, strSQL, null, out dtTradeHis_Order)))
+                if (!(result = DBProxy.Current.Select(null, strSQL, null, out DataTable dtTradeHis_Order)))
                 {
                     return result;
                 }
@@ -827,7 +825,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 int preRowsStart = intRowsStart;
                 int rownum = intRowsStart; // 每筆資料匯入之位置
                 int intColumns = 7; // 匯入欄位數
-                string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM"};
+                string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM" };
                 object[,] objArray = new object[1, intColumns]; // 每列匯入欄位區間
                 #region 將資料放入陣列並寫入Excel範例檔
 
