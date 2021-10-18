@@ -150,6 +150,7 @@ namespace Sci.Production.Packing
                                            ,p.Remark
 										   ,pd.Ukey
 										   ,[IsFirstTimeScan] = Cast(1 as bit)
+                                           ,o.CustCDID
                                 from PackingList_Detail pd WITH (NOLOCK)
                                 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
                                 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -504,6 +505,7 @@ INSERT INTO [dbo].[PackingScan_History]
                                                               PKseq = g.Max(st => st.Field<string>("PKseq")),
                                                               PassName = g.Select(st => st.Field<string>("PassName")).FirstOrDefault(), // 一箱只會有一個掃描人員，因此抓第一筆就好
                                                               ActCTNWeight = g.Max(st => st.Field<decimal>("ActCTNWeight")),
+                                                              CustCD = string.Join("/", g.Select(st => st.Field<string>("CustCDID")).Distinct().ToArray()),
                                                           }).OrderBy(s => s.ID).ThenBy(s => s.PKseq).ToList();
             string default_where = " 1 = 1 ";
 
@@ -555,6 +557,7 @@ INSERT INTO [dbo].[PackingScan_History]
             this.displayPackID.Text = dr.ID;
             this.displayCtnNo.Text = dr.CTNStartNo;
             this.displaySPNo.Text = dr.OrderID;
+            this.displayCustCD.Text = dr.CustCD;
             this.displayPoNo.Text = dr.CustPoNo;
             this.displayBrand.Text = dr.BrandId;
             this.displayStyle.Text = dr.StyleId;
@@ -833,6 +836,7 @@ WHERE o.ID='{dr.OrderID}'");
                 this.displayPackID.Text = string.Empty;
                 this.displayCtnNo.Text = string.Empty;
                 this.displaySPNo.Text = string.Empty;
+                this.displayCustCD.Text = string.Empty;
                 this.displayPoNo.Text = string.Empty;
                 this.displayBrand.Text = string.Empty;
                 this.displayStyle.Text = string.Empty;
@@ -863,6 +867,7 @@ WHERE o.ID='{dr.OrderID}'");
                 this.displayPackID.Text = string.Empty;
                 this.displayCtnNo.Text = string.Empty;
                 this.displaySPNo.Text = string.Empty;
+                this.displayCustCD.Text = string.Empty;
                 this.displayPoNo.Text = string.Empty;
                 this.displayBrand.Text = string.Empty;
                 this.displayStyle.Text = string.Empty;
@@ -1144,6 +1149,11 @@ WHERE o.ID='{dr.OrderID}'");
                     this._remark = value;
                 }
             }
+
+            /// <summary>
+            /// CustCD
+            /// </summary>
+            public string CustCD { get; set; }
         }
 
         /// <inheritdoc/>
@@ -1380,6 +1390,7 @@ drop table #tmpUpdatedID
                                            ,p.Remark
 										   ,pd.Ukey
 										   ,[IsFirstTimeScan] = Cast(1 as bit)
+                                           ,o.CustCDID
                                 from PackingList_Detail pd WITH (NOLOCK)
                                 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
                                 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
