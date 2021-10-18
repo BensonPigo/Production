@@ -77,6 +77,7 @@ namespace Sci.Production.Shipping
 Select 
 o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 ,Category=IIF(o.Category = 'B', 'Bulk',IIF(o.Category = 'S','Sample','Forecast'))
+,o.OrderTypeID
 ,o.CustPONo
 ,o.Qty
 ,o.CustCDID
@@ -113,7 +114,8 @@ outer apply
 ) cpucost
 outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'AMT')   ) sub_Process_AMT
 outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'CPU')   ) sub_Process_CPU
-Where o.LocalOrder = 0 ");
+Where o.LocalOrder = 0 
+");
 
             if (!MyUtility.Check.Empty(this.buyerDlv1))
             {
@@ -150,6 +152,16 @@ Where o.LocalOrder = 0 ");
                 sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", this.factory));
             }
 
+            if (!this.chkIncludeCancelOrder.Checked)
+            {
+                sqlCmd.Append(" and o.Junk = 0");
+            }
+
+            if (!this.chkGMTComplete.Checked)
+            {
+                sqlCmd.Append(" and isnull(o.GMTComplete, '') <> 'C'");
+            }
+
             sqlCmd.Append($" and o.Category in ({this.category})");
 
             sqlCmd.Append(@" ) 
@@ -157,6 +169,8 @@ Where o.LocalOrder = 0 ");
                             ,FtyCMPCostUnit=ROUND(cte.CPU * cte.CPUCost + cte.SubPSCost + cte.LocalPSCost, 2)
                             ,TotalCMPDeclaredtoCustomer=ROUND(cte.Qty*ROUND(cte.CPU * cte.CPUCost + cte.SubPSCost + cte.LocalPSCost, 2),5)
                             from cte");
+
+
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)

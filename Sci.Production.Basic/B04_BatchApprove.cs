@@ -65,6 +65,7 @@ namespace Sci.Production.Basic
                 .Text("MidBankName", header: "Intermediary Bank", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("MidSWIFTCode", header: "Intermediary Bank-SWIFT Code", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("VNBankBranch", header: "VN Bank/Branch", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 ;
 
             for (int i = 0; i < this.grid2.Columns.Count; i++)
@@ -116,6 +117,7 @@ SELECT
     ,MidSWIFTCode
     ,Remark
 	,l.PKey
+    ,lbd.VNBankBranch
 FROM LocalSupp_Bank_Detail lbd
 INNER JOIN #Master l ON l.ID=lbd.ID AND l.PKey = lbd.PKey
 LEFT JOIN Country c ON c.ID=lbd.CountryID

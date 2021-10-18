@@ -48,6 +48,7 @@ namespace Sci.Production.Logistic
                 .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditable: false)
                 .Text("seq", header: "SEQ", width: Widths.Auto(), iseditable: false)
                 .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditable: false)
+                .Numeric("QtyPerCTN", header: "Qty", width: Widths.Auto(), iseditable: false)
                 .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditable: false)
                 .Text("BrandID", header: "Brand", width: Widths.Auto(), iseditable: false)
                 .Text("Customize1", header: "Order#", width: Widths.Auto(), iseditable: false)
@@ -177,6 +178,7 @@ select  1 as selected
         , OrderID
         , Seq
         , CTNStartNo
+        , QtyPerCTN
         , StyleID
         , BrandID
         , Customize1
@@ -211,6 +213,12 @@ from (
             , [OrderID] = iif(t.OrigOrderID = '' OR t.OrigOrderID IS NULL,t.OrderID, t.OrigOrderID)
             , oq.Seq
             , [CTNStartNo] = iif(t.OrigCTNStartNo = '' OR t.OrigCTNStartNo IS NULL,t.CTNStartNo, t.OrigCTNStartNo)
+            , QtyPerCTN = isnull((
+                select sum (pld.QtyPerCTN) 
+                from PackingList_Detail pld
+                where pld.ID = t.PackingListID 
+                and pld.OrderID = t.OrderID
+                and pld.CTNStartNo = t.CTNStartNo), 0)
             , isnull(o.StyleID,'') as StyleID
             , isnull(o.BrandID,'') as BrandID
             , isnull(o.Customize1,'') as Customize1

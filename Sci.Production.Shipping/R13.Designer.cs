@@ -41,6 +41,8 @@
             this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
             this.lbSCIDelivery = new Sci.Win.UI.Label();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
+            this.chkGMTComplete = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -153,6 +155,7 @@
             // 
             // comboCategory
             // 
+            this.comboCategory.AddAllItem = false;
             this.comboCategory.BackColor = System.Drawing.Color.White;
             this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCategory.FormattingEnabled = true;
@@ -194,9 +197,37 @@
             this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateSCIDelivery.TabIndex = 144;
             // 
+            // chkJunk
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.Checked = true;
+            this.chkIncludeCancelOrder.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(13, 230);
+            this.chkIncludeCancelOrder.Name = "chkJunk";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(160, 21);
+            this.chkIncludeCancelOrder.TabIndex = 145;
+            this.chkIncludeCancelOrder.Text = "Include Cancel Order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
+            // chkGMTComplete
+            // 
+            this.chkGMTComplete.AutoSize = true;
+            this.chkGMTComplete.Checked = true;
+            this.chkGMTComplete.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkGMTComplete.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkGMTComplete.Location = new System.Drawing.Point(13, 257);
+            this.chkGMTComplete.Name = "chkGMTComplete";
+            this.chkGMTComplete.Size = new System.Drawing.Size(174, 21);
+            this.chkGMTComplete.TabIndex = 146;
+            this.chkGMTComplete.Text = "Include GMT. Complete";
+            this.chkGMTComplete.UseVisualStyleBackColor = true;
+            // 
             // R13
             // 
-            this.ClientSize = new System.Drawing.Size(526, 271);
+            this.ClientSize = new System.Drawing.Size(526, 337);
+            this.Controls.Add(this.chkGMTComplete);
+            this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.dateSCIDelivery);
             this.Controls.Add(this.lbSCIDelivery);
             this.Controls.Add(this.comboCategory);
@@ -211,7 +242,11 @@
             this.Controls.Add(this.labelBuyerDelivery);
             this.IsSupportToPrint = false;
             this.Name = "R13";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R13. Factory CMT Forecast";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelBuyerDelivery, 0);
             this.Controls.SetChildIndex(this.labelBrand, 0);
             this.Controls.SetChildIndex(this.labelShipper, 0);
@@ -227,6 +262,8 @@
             this.Controls.SetChildIndex(this.comboCategory, 0);
             this.Controls.SetChildIndex(this.lbSCIDelivery, 0);
             this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
+            this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
+            this.Controls.SetChildIndex(this.chkGMTComplete, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -246,5 +283,7 @@
         private Class.ComboDropDownList comboCategory;
         private Win.UI.Label lbSCIDelivery;
         private Win.UI.DateRange dateSCIDelivery;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
+        private Win.UI.CheckBox chkGMTComplete;
     }
 }

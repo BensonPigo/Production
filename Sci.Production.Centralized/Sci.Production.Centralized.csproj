@@ -139,6 +139,12 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PmsWebApiUtility20">
+      <HintPath>..\_Dll\PmsWebApiUtility20.dll</HintPath>
+    </Reference>
+    <Reference Include="PmsWebApiUtility45">
+      <HintPath>..\_Dll\PmsWebApiUtility45.dll</HintPath>
+    </Reference>
     <Reference Include="Sci, Version=1.0.17.832, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Sci.dll</HintPath>
@@ -420,6 +426,18 @@
     <Compile Include="Shipping_B08.Designer.cs">
       <DependentUpon>Shipping_B08.cs</DependentUpon>
     </Compile>
+    <Compile Include="Shipping_P06.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Shipping_P06.Designer.cs">
+      <DependentUpon>Shipping_P06.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Shipping_P06_History.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Shipping_P06_History.Designer.cs">
+      <DependentUpon>Shipping_P06_History.cs</DependentUpon>
+    </Compile>
     <Compile Include="SubCon_B02.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -588,6 +606,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Shipping_B08.resx">
       <DependentUpon>Shipping_B08.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shipping_P06.resx">
+      <DependentUpon>Shipping_P06.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shipping_P06_History.resx">
+      <DependentUpon>Shipping_P06_History.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SubCon_B02.resx">
       <DependentUpon>SubCon_B02.cs</DependentUpon>

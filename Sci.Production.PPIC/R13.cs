@@ -232,7 +232,7 @@ into #enn
 from #orders_tmp
 ";
 
-            string[] subprocessIDs = new string[] { "Emb", "BO", "PRT", "AT", "PAD-PRT", "SUBCONEMB", "HT", "Loading", "SORTING" };
+            string[] subprocessIDs = new string[] { "Emb", "BO", "PRT", "AT", "PAD-PRT", "SUBCONEMB", "HT", "Loading", "SORTING", "FM" };
             string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#enn", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
             this.tsql += qtyBySetPerSubprocess + $@"
 --抓取subprocess in
@@ -259,6 +259,8 @@ outer apply (
     select SubprocessId='HT',FinishedQtyBySet from #HT t where t.OrderID = o.ID
     union all
     select SubprocessId='Loading',FinishedQtyBySet from #Loading t where t.OrderID = o.ID
+    union all
+    select SubprocessId='FM',FinishedQtyBySet from #FM t where t.OrderID = o.ID
 ) subporcessQty
 
 select *
@@ -270,7 +272,7 @@ from #tmpInOut
 pivot
 	(
 	  sum(FinishedQtyBySet)
-	  for Subprocessid in ( [AT],[BO],[Emb],[HT],[PAD-PRT],[PRT])
+	  for Subprocessid in ( [AT],[BO],[Emb],[HT],[PAD-PRT],[PRT],[FM])
 	)as pvt
 
 -----------cutting完成成衣件數-------------------------------------------------------------------------------------------------------------------------
@@ -345,6 +347,7 @@ select	o.MDivisionID,
 		[HT] = SubProcess.HT,
 		[PAD-PRT] = SubProcess.[PAD-PRT],
 		[PRINTING] = SubProcess.PRT,
+        [FM] = SubProcess.FM,
 		[SubCon] = ls.abb,
 		[ReadyDate] = o.OriReadyDate,
 		[LoadingStatus] = iif(LoadingQty.value >= o.Qty,'Y',''),
@@ -381,7 +384,7 @@ outer apply(
         from #tmpInOut
 		where SP = o.ID
         and Factory = o.FtyGroup
-        and SubProcessId in ('Emb','BO','PRT','AT','PAD-PRT','HT','Loading')
+        and SubProcessId in ('Emb','BO','PRT','AT','PAD-PRT','HT','Loading','FM')
 	)xxx
 )subprocessqty
 outer apply(
@@ -412,6 +415,7 @@ select  FtyGroup,
 		[HT],
 		[PAD-PRT],
 		[PRINTING],
+        [FM],
 		[SubCon],
 		[ReadyDate],
 		[LoadingStatus],
@@ -440,7 +444,7 @@ select t.Factory
 from #tmpInOut t
 inner join #detailResult s on s.ID = t.SP
 and t.Factory = s.FtyGroup
-where t.SubProcessID in ('Emb','BO','PRT','AT','PAD-PRT','HT','Loading')
+where t.SubProcessID in ('Emb','BO','PRT','AT','PAD-PRT','HT','Loading','FM')
 group by t.Factory,t.SubProcessID
 order by t.Factory,t.SubProcessID
 
