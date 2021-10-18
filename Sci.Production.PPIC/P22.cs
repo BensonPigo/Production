@@ -45,13 +45,20 @@ SELECT rd.ID
 	,rd.ReplacementLocalItemReasonID
 	,rr.Description
 	,rd.Remark
+    ,lpd.LocalPO_DetailID
 FROM ReplacementLocalItem r
 INNER JOIN ReplacementLocalItem_Detail rd ON r.ID = rd.ID
 LEFT JOIN ReplacementLocalItemReason rr ON rd.ReplacementLocalItemReasonID = rr.ID
-
+outer apply(
+	select LocalPO_DetailID = STUFF((
+		select distinct concat(',', ID)
+		from LocalPO_Detail lpd
+		where lpd.OrderId =r.OrderId and lpd.ReplacementLocalItemID = r.id
+		for xml path('')
+	),1,1,'')
+)lpd
 where r.ID = '{masterID}'
 ";
-
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -267,7 +274,9 @@ AND ID  = @ID
                 .Numeric("RequestQty", header: "Request Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, maximum: 99999999.99M, minimum: 0)
                 .Text("ReplacementLocalItemReasonID", header: "Reason Id", width: Widths.AnsiChars(5), iseditingreadonly: false, settings: reason)
                 .EditText("Description", header: "Reason", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: false);
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: false)
+                .Text("LocalPO_DetailID", header: "PO ID", width: Widths.AnsiChars(20), iseditingreadonly: false)
+                ;
         }
 
         /// <inheritdoc/>
