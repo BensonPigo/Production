@@ -1968,7 +1968,7 @@ select * from (
     inner join PO_Supp p1 on p1.ID = p.ID and p.SEQ1 = p1.SEQ1
     inner join Orders o on p.ID = o.ID
     inner join Style s on o.StyleUkey = s.Ukey
-    inner join Style_RRLRReport sr on sr.StyleUkey = s.Ukey and sr.SuppID = p1.SuppID
+    inner join Style_RRLR_Report sr on sr.StyleUkey = s.Ukey and sr.SuppID = p1.SuppID
     and sr.Refno = p.Refno and sr.ColorID = p.ColorID
     where sr.RR= 1
     and rd.Id=@ID
@@ -1988,7 +1988,7 @@ select * from (
     inner join PO_Supp p1 on p1.ID = p.ID and p.SEQ1 = p1.SEQ1
     inner join Orders o on p.ID = o.ID
     inner join Style s on o.StyleUkey = s.Ukey
-    inner join Style_RRLRReport sr on sr.StyleUkey = s.Ukey and sr.SuppID = p1.SuppID
+    inner join Style_RRLR_Report sr on sr.StyleUkey = s.Ukey and sr.SuppID = p1.SuppID
     and sr.Refno = p.Refno and sr.ColorID = p.ColorID
     where rd.Id=@ID
     and sr.LR= 1

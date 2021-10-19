@@ -2080,8 +2080,8 @@ when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo
 	delete;
 	
 
------------------Style_RRLRReport-------------------
-Merge Production.dbo.Style_RRLRReport as t
+-----------------Style_RRLR_Report-------------------
+Merge Production.dbo.Style_RRLR_Report as t
 Using (select a.* from Trade_To_Pms.dbo.Style_RRLRReport a ) as s
 on t.StyleUkey=s.StyleUkey and t.SuppID=s.SuppID
 and t.Refno=s.Refno and t.ColorID=s.ColorID
