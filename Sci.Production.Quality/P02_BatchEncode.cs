@@ -202,14 +202,17 @@ order by a.seq1,a.seq2
 select         iif ((select SampleSize
                 from AcceptableQualityLevels
                 where InspectionLevels = '{this.comboDropDownList1.SelectedValue}'
+                and AQLType = 1.5
                 and {MyUtility.Math.Round(arriveQty)} between LotSize_Start and LotSize_End) is not null
               , (select SampleSize
                 from AcceptableQualityLevels
                 where InspectionLevels = '{this.comboDropDownList1.SelectedValue}'
+                and AQLType = 1.5
                 and {MyUtility.Math.Round(arriveQty)} between LotSize_Start and LotSize_End)
               , (select SampleSize
                 from AcceptableQualityLevels
                 where InspectionLevels = '{this.comboDropDownList1.SelectedValue}'
+                and AQLType = 1.5
                       and {MyUtility.Math.Round(arriveQty)} >= LotSize_Start
                       and LotSize_End = -1))
 ";
@@ -224,14 +227,17 @@ select
         iif ((select SampleSize
                 from AcceptableQualityLevels
                 where InspectionLevels = q.AQL_InspectionLevels
+                and AQLType = 1.5
                 and {MyUtility.Math.Round(arriveQty)} between LotSize_Start and LotSize_End) is not null
               , (select SampleSize
                 from AcceptableQualityLevels
                 where InspectionLevels = q.AQL_InspectionLevels
+                and AQLType = 1.5
                 and {MyUtility.Math.Round(arriveQty)} between LotSize_Start and LotSize_End)
               , (select SampleSize
                 from AcceptableQualityLevels
                 where InspectionLevels = q.AQL_InspectionLevels
+                and AQLType = 1.5
                       and {MyUtility.Math.Round(arriveQty)} >= LotSize_Start
                       and LotSize_End = -1))
 	end

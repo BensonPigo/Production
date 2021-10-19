@@ -28,9 +28,11 @@ namespace Sci.Production.Quality
         private void GridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.grid1)
+                .Numeric("AQLType", header: "AQL Type", width: Widths.AnsiChars(6), decimal_places: 1, iseditingreadonly: true)
                 .Text("Name", header: "Inspection Levels", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("LotSize", header: "LotSize", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Numeric("SampleSize", header: "SampleSize", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Numeric("AcceptedQty", header: "Accepted Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 ;
         }
 
@@ -38,12 +40,17 @@ namespace Sci.Production.Quality
         {
             string sqlcmd = $@"
 select 
+    a.AQLType,
 	a.InspectionLevels,
 	d.Name,
 	LotSize = Concat (Format(LotSize_Start, '#,0'), ' to ', iif (LotSize_End < 0, '', Format(LotSize_End, '#,0'))),
-	a.SampleSize
+	a.SampleSize,
+    a.AcceptedQty
 from AcceptableQualityLevels a
 left join DropDownList d on d.ID = a.InspectionLevels and d.Type = 'PMS_QA_AQL'
+order by
+    a.AQLType,
+	a.InspectionLevels
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)
