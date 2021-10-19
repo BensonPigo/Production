@@ -2029,6 +2029,23 @@ else
 			delete
 		;
 
+------------Order_ShipPerformance----------------------
+	Merge Production.dbo.Order_ShipPerformance as t
+	Using (select a.* from Trade_To_Pms.dbo.Order_ShipPerformance a inner join #TOrder b on a.id = b.id) as s
+	on t.[ID] = s.[ID] and t.[Seq] = s.[Seq]
+	when matched then update set
+		t.[BookDate] = s.[BookDate]
+		,t.[PKManifestCreateDate] = s.[PKManifestCreateDate]
+		,t.[AddName] = s.[AddName]
+		,t.[AddDate] = s.[AddDate]
+		,t.[EditName] = s.[EditName]
+		,t.[EditDate] = s.[EditDate]
+	when not matched by target then
+		insert([Id],[Seq],[BookDate],[PKManifestCreateDate],[AddName],[AddDate],[EditName],[EditDate])
+		values(s.[Id],s.[Seq],s.[BookDate],s.[PKManifestCreateDate],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])
+	when not matched by source and t.id in (select id from #TOrder)then
+			delete;
+
 ----------------order_markerlist_Article-----------------
 	Merge Production.dbo.order_markerlist_Article as t
 	Using (select a.* from Trade_To_Pms.dbo.order_markerlist_Article a inner join #TOrder b on a.id = b.id) as s
