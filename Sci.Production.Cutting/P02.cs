@@ -2640,7 +2640,7 @@ END";
                     // 找合併組合相同資料, 且還沒產生Cutref
                     DataRow[] sdr = wk.Select($"FabricCombo ='{dr["FabricCombo"]}' and FabricPanelCode ='{dr["FabricPanelCode"]}' and MarkerNo ='{dr["MarkerNo"]}' and Markername ='{dr["Markername"]}' and estcutdate ='{estcutdate}' and SizeCode ='{dr["SizeCode"]}' and isnull(CutRef,'') = ''");
 
-                    decimal sumLayer = MyUtility.Convert.GetDecimal(sdr.CopyToDataTable().Compute("sum(Layer)", string.Empty));
+                    decimal sumLayer = sdr.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Sum(s => MyUtility.Convert.GetDecimal(s["Layer"]));
 
                     // 最大裁剪數看其中一筆即可
                     if (sumLayer > MyUtility.Convert.GetDecimal(dr["CuttingLayer"]))
@@ -2649,7 +2649,12 @@ END";
                     }
                     else
                     {
-                        decimal hm = sdr.AsEnumerable().Max(m => MyUtility.Convert.GetDecimal(m["cutno"]));
+                        decimal hm = 0;
+                        if (sdr.Length > 0)
+                        {
+                            hm = sdr.AsEnumerable().Max(m => MyUtility.Convert.GetDecimal(m["cutno"]));
+                        }
+
                         if (hm != 0)
                         {
                             foreach (var item in sdr.AsEnumerable().Where(w => MyUtility.Check.Empty(w["cutno"])))
@@ -3445,7 +3450,7 @@ where wd.WorkOrderUkey is null
             }
             #endregion
             #region 新增
-            foreach (DataRow dr in this.PatternPanelTb.AsEnumerable().Where(x => x.RowState == DataRowState.Added))
+            foreach (DataRow dr in this.PatternPanelTb.AsEnumerable().Where(x => x.RowState == DataRowState.Added && MyUtility.Convert.GetLong(x["WorkOrderUkey"]) != 0))
             {
                 insertsql += string.Format("Insert into WorkOrder_PatternPanel(WorkOrderUkey,PatternPanel,FabricPanelCode,ID) values({0},'{1}','{2}','{3}'); ", dr["WorkOrderUkey"], dr["PatternPanel"], dr["FabricPanelCode"], cId);
             }
@@ -3846,6 +3851,7 @@ order by p.EditDate desc
                 drNEW["WorkOrderUkey"] = 0;  // 新增WorkOrderUkey塞0
                 drNEW["PatternPanel"] = row["PatternPanel"];
                 drNEW["FabricPanelCode"] = row["FabricPanelCode"];
+                drNEW["newkey"] = row["newkey"];
                 this.PatternPanelTb.Rows.Add(drNEW);
             });
             #endregion

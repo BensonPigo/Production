@@ -147,7 +147,7 @@ namespace Sci.Production.Cutting
             var type = this.FileType;
             string filter;
 
-            filter = "txt files (*.txt)|*.txt";
+            filter = "txt & wri files (*.txt;*.wri)|*.txt;*.wri";
 
             string[] fileNames = null;
             SciFileDialog.ShowDialog(
@@ -478,14 +478,17 @@ namespace Sci.Production.Cutting
                         linesAtThisItemSet = new List<string>();
                         mTmp = mTmp.Substring(0, mTmp.LastIndexOf(".PLX---"));
                         var plxName = mTmp.Split("\\".ToCharArray()).LastOrDefault();
+                        string rawMarkerName;
                         if (plxName.IndexOf(this.MarkerNo) < 0)
                         {
-                            MyUtility.Msg.InfoBox("File doesn't belong to this Marker!!");
-                            return false;
+                            rawMarkerName = plxName.Substring(plxName.IndexOf(" ") + 1);
+                        }
+                        else
+                        {
+                            var markerNo = this.MarkerNo;
+                            rawMarkerName = mTmp.Substring(mTmp.IndexOf(markerNo) + markerNo.Length, mTmp.Length - mTmp.IndexOf(markerNo) - markerNo.Length);
                         }
 
-                        var markerNo = this.MarkerNo;
-                        var rawMarkerName = mTmp.Substring(mTmp.IndexOf(markerNo) + markerNo.Length, mTmp.Length - mTmp.IndexOf(markerNo) - markerNo.Length);
                         var refinedMarkerName = rawMarkerName;
                         if (rawMarkerName.Length > 10)
                         {
@@ -567,11 +570,14 @@ namespace Sci.Production.Cutting
                         {
                             markerItemSet.Straight = this.GetValue(mKeyword, mTmp);
                         }
-
-                        if (string.IsNullOrEmpty(markerItemSet.Straight))
+                        else
                         {
-                            mKeyword = "Straight lines:";
-                            if (mTmp.IndexOf(mKeyword) >= 0)
+                            if (mTmp.IndexOf("Straight lines:") >= 0)
+                            {
+                                markerItemSet.Straight = this.GetValue(mKeyword, mTmp);
+                            }
+
+                            if (mTmp.IndexOf("Straight Area:") >= 0)
                             {
                                 markerItemSet.Straight = this.GetValue(mKeyword, mTmp);
                             }
