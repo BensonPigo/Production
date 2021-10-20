@@ -5,6 +5,8 @@
     [SampleSize]       INT         CONSTRAINT [DF_AcceptableQualityLevels_SampleSize] DEFAULT ((0)) NOT NULL,
     [Ukey]             BIGINT      IDENTITY (1, 1) NOT NULL,
     [Junk]             BIT         CONSTRAINT [DF_AcceptableQualityLevels_Junk] DEFAULT ((0)) NOT NULL,
+	[AQLType]          numeric(2,1)         CONSTRAINT [DF_AcceptableQualityLevels_AQLType] DEFAULT ((0)) NOT NULL,
+	[AcceptedQty]      int         CONSTRAINT [DF_AcceptableQualityLevels_AcceptedQty] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_AcceptableQualityLevels] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -15,6 +17,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'抽樣數',
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'產品總數 - 判斷範圍結束值', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AcceptableQualityLevels', @level2type = N'COLUMN', @level2name = N'LotSize_End';
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'AQL類型', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AcceptableQualityLevels', @level2type = N'COLUMN', @level2name = N'AQLType';
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'可容忍檢驗失敗數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AcceptableQualityLevels', @level2type = N'COLUMN', @level2name = N'AcceptedQty';
 
 
 GO
