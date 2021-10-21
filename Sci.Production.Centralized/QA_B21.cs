@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using Ict;
 using Sci.Data;
 
-namespace Sci.Production.Quality
+namespace Sci.Production.Centralized
 {
     /// <inheritdoc/>
     public partial class QA_B21 : Win.Tems.Input1
@@ -35,6 +35,13 @@ namespace Sci.Production.Quality
              this.txtDefectcode.ReadOnly = false;
              return base.ClickNewBefore();
          }
+
+        /// <inheritdoc/>
+        protected override void ClickNewAfter()
+        {
+            base.ClickNewAfter();
+            this.checkJunk.ReadOnly = true;
+        }
 
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
@@ -86,7 +93,7 @@ namespace Sci.Production.Quality
 
             DataTable dtCode;
             string sQLCmd = string.Format(@"select ID,junk from GarmentDefectType where ID='{0}' ", firstword);
-            if (!(this.result = DBProxy.Current.Select(null, sQLCmd, out dtCode)))
+            if (!(this.result = DBProxy.Current.Select(this.ConnectionName, sQLCmd, out dtCode)))
              {
                  MyUtility.Msg.ErrorBox(this.result.ToString());
                  return;

@@ -28,13 +28,11 @@ namespace Sci.Production.Centralized
             .Numeric("Seq", header: "Seq", width: Widths.AnsiChars(5), minimum: 1, maximum: 255)
             .Text("ID", header: "Defect Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Description", header: "Description", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            .Text("LocalDescription", header: "Local Desc", width: Widths.AnsiChars(13), iseditingreadonly: true)
             ;
             this.grid1.Columns["Seq"].DefaultCellStyle.BackColor = Color.Pink;
 
             string sql = $@"select * from GarmentDefectType order by seq";
-            DataTable dt;
-            DBProxy.Current.Select(null, sql, out dt);
+            DBProxy.Current.Select(this.ConnectionName, sql, out DataTable dt);
             this.listControlBindingSource1.DataSource = dt;
         }
 
@@ -47,7 +45,7 @@ namespace Sci.Production.Centralized
                 update += $@" update GarmentDefectType set seq = '{dr["seq"]}' , editname = '{Env.User.UserID}',editDate = getdate() where id = '{dr["id"]}'; ";
             }
 
-            DBProxy.Current.Execute(null, update);
+            DBProxy.Current.Execute(this.ConnectionName, update);
             MyUtility.Msg.InfoBox("Success!");
             this.Close();
         }

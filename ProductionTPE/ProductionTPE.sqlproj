@@ -89,5 +89,7 @@
     <Build Include="dbo\Tables\IEReasonTypeGroup.sql" />
     <Build Include="dbo\Tables\IEReasonLBRnotHit_1st.sql" />
     <Build Include="dbo\Tables\IEReasonLBRnotHit_Detail.sql" />
+    <Build Include="dbo\Tables\GarmentDefectType.sql" />
+    <Build Include="dbo\Tables\GarmentDefectCode.sql" />
   </ItemGroup>
 </Project>

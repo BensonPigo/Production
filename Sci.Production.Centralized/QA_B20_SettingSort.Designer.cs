@@ -59,13 +59,13 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(709, 432);
+            this.grid1.Size = new System.Drawing.Size(468, 558);
             this.grid1.TabIndex = 0;
             // 
             // btnSave
             // 
             this.btnSave.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnSave.Location = new System.Drawing.Point(310, 455);
+            this.btnSave.Location = new System.Drawing.Point(190, 581);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(114, 30);
             this.btnSave.TabIndex = 1;
@@ -77,7 +77,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(733, 497);
+            this.ClientSize = new System.Drawing.Size(492, 623);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.grid1);
             this.Name = "QA_B20_SettingSort";

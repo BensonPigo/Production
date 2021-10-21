@@ -50,7 +50,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(826, 395);
+            this.detail.Size = new System.Drawing.Size(864, 395);
             // 
             // detailcont
             // 
@@ -60,21 +60,21 @@
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.labelDefectType);
             this.detailcont.Controls.Add(this.labelDescription);
-            this.detailcont.Size = new System.Drawing.Size(826, 357);
+            this.detailcont.Size = new System.Drawing.Size(864, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(826, 38);
+            this.detailbtm.Size = new System.Drawing.Size(864, 38);
             // 
             // browse
             // 
             this.browse.Controls.Add(this.btnSettingSort);
-            this.browse.Size = new System.Drawing.Size(826, 395);
+            this.browse.Size = new System.Drawing.Size(864, 395);
             this.browse.Controls.SetChildIndex(this.btnSettingSort, 0);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(834, 424);
+            this.tabs.Size = new System.Drawing.Size(872, 424);
             // 
             // createby
             // 
@@ -172,12 +172,12 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(810, 231);
+            this.grid1.Size = new System.Drawing.Size(848, 231);
             this.grid1.TabIndex = 8;
             // 
             // QA_B20
             // 
-            this.ClientSize = new System.Drawing.Size(834, 457);
+            this.ClientSize = new System.Drawing.Size(872, 457);
             this.DefaultControl = "txtDefectType";
             this.DefaultControlForEdit = "editDescription";
             this.DefaultOrder = "Seq";
