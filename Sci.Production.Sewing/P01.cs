@@ -348,7 +348,7 @@ inner join Orders o With (NoLock) on ss.OrderID = o.ID
 where   ss.FactoryID = '{0}' 
         and ss.SewingLineID = '{1}' 
         and ss.OrderFinished = 0
-		and o.Category != 'G'
+		and o.Category not in ('G','M','T')
         and not exists (select 1 from Orders exludeOrder with (nolock) 
                             where ((exludeOrder.junk = 1 and exludeOrder.NeedProduction = 0 AND exludeOrder.Category='B') or 
                                   (exludeOrder.IsBuyBack = 1 and exludeOrder.BuyBackReason = 'Garment')) and
@@ -377,6 +377,12 @@ where   ss.FactoryID = '{0}'
                     if (this.CurrentDetailData["OrderID"].Empty() == false && this.CheckRemoveRow() == false)
                     {
                         this.detailgrid.GetDataRow<DataRow>(e.RowIndex)["OrderID"] = this.CurrentDetailData["OrderID"];
+                        return;
+                    }
+
+                    if (MyUtility.Check.Seek($@"select 1 from orders where id = '{e.FormattedValue}' and Category in ('M','T') "))
+                    {
+                        MyUtility.Msg.WarningBox("Material and sample material order cannot be imported into sewingoutput.");
                         return;
                     }
 
@@ -419,7 +425,7 @@ from Orders o WITH (NOLOCK)
 inner join Factory f on o.FactoryID = f.ID
 where   o.FtyGroup = @factoryid 
         and o.ID = @id
-		and o.Category NOT IN ('G','A')
+		and o.Category not in ('G','M','T')
         and f.IsProduceFty = 1
         and not exists (select 1 from Orders exludeOrder with (nolock) 
                             where ((exludeOrder.junk = 1 and exludeOrder.NeedProduction = 0 AND exludeOrder.Category='B') or 
