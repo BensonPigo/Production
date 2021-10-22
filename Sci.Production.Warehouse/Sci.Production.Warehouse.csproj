@@ -187,6 +187,7 @@
     <Compile Include="P03_ReturnQty.Designer.cs">
       <DependentUpon>P03_ReturnQty.cs</DependentUpon>
     </Compile>
+    <Compile Include="P34_PrintData.cs" />
     <Compile Include="P63_CreateSeq.cs">
       <SubType>Form</SubType>
     </Compile>
