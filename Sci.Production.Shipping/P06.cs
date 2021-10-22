@@ -1282,7 +1282,7 @@ where   pd.ID = '{this.CurrentMaintain["ID"]}'
             using (TransactionScope scope = new TransactionScope())
             {
                 DataTable dtNeedUpdateA2BOrders;
-                result = DBProxy.Current.Select(null, sqlCmds.ToString(), out dtNeedUpdateA2BOrders);
+                result = DBProxy.Current.Select(null, sqlCmds.JoinToString(Environment.NewLine), out dtNeedUpdateA2BOrders);
                 if (!result)
                 {
                     MyUtility.Msg.WarningBox("Amend fail!!\r\n" + result.ToString());
@@ -1772,7 +1772,8 @@ select  'S' as DataType
 from SummaryData",
                 Env.User.Keyword,
                 Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("yyyy/MM/dd"),
-                MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? "XXXXXXXXXX" : MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? "XXXXXXXXXX" : MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+                sqlUnionA2B);
 
             #endregion
             DataTable allPackData;
@@ -2263,7 +2264,8 @@ select  'S' as DataType
 from SummaryData",
                 Env.User.Keyword,
                 Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("yyyy/MM/dd"),
-                MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? "XXXXXXXXXX" : MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? "XXXXXXXXXX" : MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+                sqlUnionA2BForPullOut);
 
             #endregion
 
