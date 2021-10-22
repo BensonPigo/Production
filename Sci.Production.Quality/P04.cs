@@ -884,10 +884,13 @@ where s.id='{this.CurrentMaintain["StyleID"]}' AND s.BrandID='{this.CurrentMaint
                                 sqlcmd += $@"INSERT INTO[dbo].[Garment_Detail_Spirality]([ID],[No],[Location])VALUES('{dr["ID"]}','{dr["NO"]}','B');";
                             }
 
-                            result = DBProxy.Current.Execute(null, sqlcmd);
-                            if (!result)
+                            if (!MyUtility.Check.Empty(sqlcmd))
                             {
-                                return result;
+                                result = DBProxy.Current.Execute(null, sqlcmd);
+                                if (!result)
+                                {
+                                    return result;
+                                }
                             }
                         }
                     }
