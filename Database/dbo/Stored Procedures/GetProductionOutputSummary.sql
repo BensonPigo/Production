@@ -26,6 +26,11 @@ declare @SpecialDay date = (select date = DATEADD(DAY,6, DATEADD(m,5, dateadd(m,
 declare @SpecialDay2 date = (select date = DATEADD(DAY,0, DATEADD(m,5, dateadd(m, datediff(m,0,getdate()),0))))
 declare @SewLock date = (select top 1 sewLock from dbo.System)
 
+declare @StartYYYY varchar(4) = iif(isnull(@Year, '') = '', Year(getdate()), @Year)
+declare @StartDateForBI date = cast(@StartYYYY + '0108' as date)
+declare @EndSCIDeliveryForBI date = dateadd(YEAR, 2, dateadd(day, -1, @StartDateForBI))
+declare @EndBuyerDeliveryForBI date = dateadd(YEAR, 2, dateadd(day, -8, @StartDateForBI))
+
 declare @tmpBaseOrderID TABLE(
 	[ID] [VARCHAR](13) NULL,  
 	[FACTORYID] [VARCHAR](8) NULL,
@@ -46,9 +51,9 @@ from
 			 (	-- if use in PowerBI then filter SciDelivery or BuyerDelivery
 				(@IsPowerBI = 1 and 
 					(
-						Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year
+						o.SciDelivery between @StartDateForBI and @EndSCIDeliveryForBI
 						or
-						Year(o.BuyerDelivery) = @Year
+						o.BuyerDelivery between @StartDateForBI and @EndBuyerDeliveryForBI
 					)
 				)
 				or -- if not use in PowerBI then depend on @DateType
@@ -91,9 +96,9 @@ from
 			 (	-- if use in PowerBI then filter SciDelivery or BuyerDelivery
 				(@IsPowerBI = 1 and 
 					(
-						Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year
+						o.SciDelivery between @StartDateForBI and @EndSCIDeliveryForBI
 						or
-						Year(o.BuyerDelivery) = @Year
+						o.BuyerDelivery between @StartDateForBI and @EndBuyerDeliveryForBI
 					)
 				)
 				or -- if not use in PowerBI then depend on @DateType
@@ -151,9 +156,9 @@ from (
 		(	-- if use in PowerBI then filter SciDelivery or BuyerDelivery
 			(@IsPowerBI = 1 and 
 				(
-					Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year
+					o.SciDelivery between @StartDateForBI and @EndSCIDeliveryForBI
 					or
-					Year(o.BuyerDelivery) = @Year
+					o.BuyerDelivery between @StartDateForBI and @EndBuyerDeliveryForBI
 				)
 			)
 			or -- if not use in PowerBI then depend on @DateType
@@ -188,9 +193,9 @@ from (
 		 (	-- if use in PowerBI then filter SciDelivery or BuyerDelivery
 		 	(@IsPowerBI = 1 and 
 		 		(
-		 			Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year
-		 			or
-		 			Year(o.BuyerDelivery) = @Year
+		 			o.SciDelivery between @StartDateForBI and @EndSCIDeliveryForBI
+					or
+					o.BuyerDelivery between @StartDateForBI and @EndBuyerDeliveryForBI
 		 		)
 		 	)
 		 	or -- if not use in PowerBI then depend on @DateType
