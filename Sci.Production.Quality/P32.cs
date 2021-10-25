@@ -154,6 +154,18 @@ namespace Sci.Production.Quality
             this.gridSpSeq.DataSource = null;
             this.gridSpSeq.DataSource = dt_GridSpSeq;
             #endregion 欄位設定
+
+            // IsImportFromMES = true 不可編輯
+            if (MyUtility.Check.Empty(this.CurrentMaintain["IsImportFromMES"]))
+            {
+                this.EditMode = false;
+                this.labImportFromMES.Visible = true;
+            }
+            else
+            {
+                this.EditMode = true;
+                this.labImportFromMES.Visible = false;
+            }
         }
 
         /// <inheritdoc/>

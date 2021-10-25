@@ -84,6 +84,8 @@
             this.btnSettingSpSeq = new Sci.Win.UI.Button();
             this.gridSpSeq = new Sci.Win.UI.Grid();
             this.chkFirstInspection = new Sci.Win.UI.CheckBox();
+            this.chkIsImportFromMES = new Sci.Win.UI.CheckBox();
+            this.labImportFromMES = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -103,6 +105,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.labImportFromMES);
+            this.masterpanel.Controls.Add(this.chkIsImportFromMES);
             this.masterpanel.Controls.Add(this.chkFirstInspection);
             this.masterpanel.Controls.Add(this.gridSpSeq);
             this.masterpanel.Controls.Add(this.btnSettingSpSeq);
@@ -209,6 +213,8 @@
             this.masterpanel.Controls.SetChildIndex(this.btnSettingSpSeq, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridSpSeq, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkFirstInspection, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkIsImportFromMES, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labImportFromMES, 0);
             // 
             // detailpanel
             // 
@@ -715,7 +721,7 @@
             this.labelStatus.BackColor = System.Drawing.Color.Transparent;
             this.labelStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
             this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.labelStatus.Location = new System.Drawing.Point(604, 8);
+            this.labelStatus.Location = new System.Drawing.Point(675, 6);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(125, 25);
             this.labelStatus.TabIndex = 69;
@@ -832,13 +838,40 @@
             this.chkFirstInspection.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FirstInspection", true));
             this.chkFirstInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkFirstInspection.IsSupportEditMode = false;
-            this.chkFirstInspection.Location = new System.Drawing.Point(464, 10);
+            this.chkFirstInspection.Location = new System.Drawing.Point(422, 10);
             this.chkFirstInspection.Name = "chkFirstInspection";
             this.chkFirstInspection.ReadOnly = true;
             this.chkFirstInspection.Size = new System.Drawing.Size(114, 21);
             this.chkFirstInspection.TabIndex = 76;
             this.chkFirstInspection.Text = "1st Inspection";
             this.chkFirstInspection.UseVisualStyleBackColor = true;
+            // 
+            // chkIsImportFromMES
+            // 
+            this.chkIsImportFromMES.AutoSize = true;
+            this.chkIsImportFromMES.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsImportFromMES", true));
+            this.chkIsImportFromMES.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkIsImportFromMES.IsSupportEditMode = false;
+            this.chkIsImportFromMES.Location = new System.Drawing.Point(542, 10);
+            this.chkIsImportFromMES.Name = "chkIsImportFromMES";
+            this.chkIsImportFromMES.ReadOnly = true;
+            this.chkIsImportFromMES.Size = new System.Drawing.Size(149, 21);
+            this.chkIsImportFromMES.TabIndex = 77;
+            this.chkIsImportFromMES.Text = "Is Import From MES";
+            this.chkIsImportFromMES.UseVisualStyleBackColor = true;
+            // 
+            // labImportFromMES
+            // 
+            this.labImportFromMES.BackColor = System.Drawing.Color.Transparent;
+            this.labImportFromMES.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
+            this.labImportFromMES.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labImportFromMES.Location = new System.Drawing.Point(464, 263);
+            this.labImportFromMES.Name = "labImportFromMES";
+            this.labImportFromMES.Size = new System.Drawing.Size(191, 25);
+            this.labImportFromMES.TabIndex = 78;
+            this.labImportFromMES.Text = "Import From MES";
+            this.labImportFromMES.TextStyle.BorderColor = System.Drawing.Color.Red;
+            this.labImportFromMES.TextStyle.Color = System.Drawing.Color.Red;
             // 
             // P32
             // 
@@ -937,5 +970,7 @@
         private Win.UI.Button btnSettingSpSeq;
         private Win.UI.CheckBox chkIsCombinePO;
         private Win.UI.CheckBox chkFirstInspection;
+        private Win.UI.CheckBox chkIsImportFromMES;
+        private Win.UI.Label labImportFromMES;
     }
 }
