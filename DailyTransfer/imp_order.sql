@@ -487,7 +487,7 @@ else
 				select id from #tmpOrders as t 
 				where not exists(select 1 from #TOrder as s where t.id=s.ID)
 			)
-			and not exists (select 1 from Production.dbo.PO_Supp_Detail p where a.ID = p.ID and p.ShipQty  > 0)
+			and exists (select 1 from Production.dbo.PO_Supp_Detail p where a.ID = p.ID and p.ShipQty  > 0)
 		) as s
 		on t.id = s.id
 		when matched then 
