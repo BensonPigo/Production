@@ -1005,7 +1005,13 @@ where id='{this.ID}'";
                 this.ShowErr(upResult);
             }
 
-            return base.OnSave();
+            DualResult result = base.OnSave();
+            if (!result && MyUtility.Check.Empty(this.maindr))
+            {
+                this.newOven = true;
+            }
+
+            return result;
         }
 
         #region 表頭Article 右鍵事件: 1.右鍵selectItem 2.判斷validated
