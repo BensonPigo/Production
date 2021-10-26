@@ -10,6 +10,7 @@ using Ict;
 using System.Drawing.Imaging;
 using Sci.Win.Tools;
 using System.Threading;
+using System.Data;
 
 namespace Sci.Production.Class
 {
@@ -141,6 +142,26 @@ namespace Sci.Production.Class
             string[] pkeys = GetPKeys(sc.Count);
             string sqlcmd = string.Empty;
             string seq = "00000";
+
+            string sqlSeq = $@"
+select [MaxSeq] = SUBSTRING(split.Data,0 ,LEN(split.Data) - 3) -- 去除.png
+from (
+	select [MaxSourceFile] = max( c.SourceFile) 
+	from ManufacturingExecution.dbo.Clip c
+	where TableName = '{TableName}'
+	and UniqueKey = '{UniqueID}'
+) a
+outer apply(
+	select data 
+	from Production.dbo.SplitString(a.MaxSourceFile,'_')
+	where no='3'
+)split
+where (a.MaxSourceFile != '' or a.MaxSourceFile is not null)
+";
+            if (MyUtility.Check.Seek(sqlSeq, out DataRow drSeq, "ManufacturingExecution"))
+            {
+                seq = drSeq["MaxSeq"].ToString();
+            }
 
             foreach (var item in sc)
             {
