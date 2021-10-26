@@ -154,18 +154,6 @@ namespace Sci.Production.Quality
             this.gridSpSeq.DataSource = null;
             this.gridSpSeq.DataSource = dt_GridSpSeq;
             #endregion 欄位設定
-
-            // IsImportFromMES = true 不可編輯
-            if (MyUtility.Check.Empty(this.CurrentMaintain["IsImportFromMES"]))
-            {
-                this.EditMode = false;
-                this.labImportFromMES.Visible = true;
-            }
-            else
-            {
-                this.EditMode = true;
-                this.labImportFromMES.Visible = false;
-            }
         }
 
         /// <inheritdoc/>
@@ -730,7 +718,7 @@ WHERE  {tmpOrder_QtyShip.JoinToString(" OR ")}
                 }
 
                 // 檢查：Line、Shift
-                if (this.CurrentMaintain["Stage"].ToString() == "Staggered" && (MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]) || MyUtility.Check.Empty(this.CurrentMaintain["Shift"])))
+                if (this.CurrentMaintain["Stage"].ToString() == "Stagger" && (MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]) || MyUtility.Check.Empty(this.CurrentMaintain["Shift"])))
                 {
                     MyUtility.Msg.WarningBox("Line、Shift can't be empty!!");
                     return false;
@@ -771,7 +759,7 @@ SELECT 1 FROM Orders WHERE ID='{this.topOrderID}' AND FtyGroup = '{Sci.Env.User.
                 }
 
                 // 檢查：[首次檢驗] 與 [非首次檢驗]
-                if (this.CurrentMaintain["Stage"].ToString() == "Staggered")
+                if (this.CurrentMaintain["Stage"].ToString() == "Stagger")
                 {
                     foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
                     {
@@ -826,7 +814,7 @@ AND CTNStartNo IN ('{carontList.JoinToString("','")}')
                 }
 
                 if (cartons.Where(o => !MyUtility.Check.Empty(o)).Count() == 0 &&
-                    (this.CurrentMaintain["Stage"].ToString() == "Staggered" ||
+                    (this.CurrentMaintain["Stage"].ToString() == "Stagger" ||
                     this.CurrentMaintain["Stage"].ToString() == "Final" ||
                     this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party") &&
                     !this.IsSapmle &&
@@ -845,7 +833,7 @@ AND CTNStartNo IN ('{cartons.JoinToString("','")}')
 AND StaggeredCFAInspectionRecordID <> '{this.CurrentMaintain["ID"]}'
 AND StaggeredCFAInspectionRecordID <> ''
 ";
-                if (this.CurrentMaintain["Stage"].ToString() == "Staggered")
+                if (this.CurrentMaintain["Stage"].ToString() == "Stagger")
                 {
                     bool duplicate = MyUtility.Check.Seek(cmd);
 
@@ -991,7 +979,7 @@ WHERE FirstStaggeredCFAInspectionRecordID  = '{this.CurrentMaintain["ID"]}'
 ";
 
             // 寫入StaggeredCFAInspectionRecordID
-            if (this.CurrentMaintain["Stage"].ToString() == "Staggered" && this.CurrentMaintain["Result"].ToString() == "Pass")
+            if (this.CurrentMaintain["Stage"].ToString() == "Stagger" && this.CurrentMaintain["Result"].ToString() == "Pass")
             {
                 cmd += $@"
 UPDATE PackingList_Detail
@@ -1025,7 +1013,7 @@ AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
             }
 
             // FirstStaggeredCFAInspectionRecordID
-            if (this.CurrentMaintain["Stage"].ToString() == "Staggered" && MyUtility.Convert.GetBool(this.CurrentMaintain["FirstInspection"]))
+            if (this.CurrentMaintain["Stage"].ToString() == "Stagger" && MyUtility.Convert.GetBool(this.CurrentMaintain["FirstInspection"]))
             {
                 cmd += $@"
 UPDATE PackingList_Detail
@@ -1107,7 +1095,7 @@ WHERE NOT EXISTS(
             }
 
             #region 檢查是否還有其他Staggered記錄（排除當下這個ID）
-            if (this.CurrentMaintain["Stage"].ToString() == "Staggered" && MyUtility.Convert.GetBool(this.CurrentMaintain["FirstInspection"]))
+            if (this.CurrentMaintain["Stage"].ToString() == "Stagger" && MyUtility.Convert.GetBool(this.CurrentMaintain["FirstInspection"]))
             {
                 List<string> hasOtherInspect = new List<string>();
                 foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
@@ -1124,7 +1112,7 @@ WHERE NOT EXISTS(
 SELECT DISTINCT a.ID
 FROM CFAInspectionRecord a
 INNER JOIN CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
-WHERE a.Stage='Staggered'
+WHERE a.Stage='Stagger'
 AND a.ID != '{this.CurrentMaintain["ID"]}'
 AND b.OrderID='{orderid}' 
 AND b.SEQ='{seq}'
@@ -1206,6 +1194,25 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
                 this.toolbar.cmdConfirm.Visible = true;
                 this.toolbar.cmdUnconfirm.Visible = true;
             }
+
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
+            // IsImportFromMES = true 不可編輯
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["IsImportFromMES"]))
+            {
+                this.toolbar.cmdUnconfirm.Enabled = false;
+                this.toolbar.cmdEdit.Enabled = false;
+                this.labImportFromMES.Visible = true;
+            }
+            else
+            {
+                this.toolbar.cmdUnconfirm.Enabled = true;
+                this.toolbar.cmdEdit.Enabled = true;
+                this.labImportFromMES.Visible = false;
+            }
         }
 
         /// <inheritdoc/>
@@ -1263,7 +1270,7 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
 
             bool isSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.topOrderID}' "));
             this.IsSapmle = isSample;
-            if (isSample && this.comboStage.Items.Contains("Staggered"))
+            if (isSample && this.comboStage.Items.Contains("Stagger"))
             {
                 this.comboStage.Items.RemoveAt(2);
             }
@@ -1274,7 +1281,7 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
                 {
             string.Empty,
             "Inline",
-            "Staggered",
+            "Stagger",
             "Final",
             "3rd party",
                 });
@@ -1309,7 +1316,7 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
             {
                 string sqlCmd = $"SELECT DISTINCT ID FROM SewingLine WITH(NOLOCK) WHERE FactoryID = '{Sci.Env.User.Factory}'";
 
-                if (this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Stage"]) == "Staggered")
+                if (this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Stage"]) == "Stagger")
                 {
                     Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "ID", "10", this.txtSewingLine.Text, null, null, null);
                     DialogResult result = item.ShowDialog();
@@ -1338,7 +1345,7 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
             {
                 List<string> lines = this.txtSewingLine.Text.Split(',').Where(o => !MyUtility.Check.Empty(o)).Distinct().ToList();
 
-                if (this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Stage"]) == "Staggered")
+                if (this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Stage"]) == "Stagger")
                 {
                     lines.Clear();
                     lines.Add(this.txtSewingLine.Text.Split(',').Where(o => !MyUtility.Check.Empty(o)).Distinct().ToList().FirstOrDefault());
@@ -1673,7 +1680,7 @@ AND CTNStartNo = @CTNStartNo
             }
 
             // 只有選擇Staggered時Inspected Carton、Shift才可以欄位才可以編輯，選到其他Stage時請一併清除這些欄位資料。
-            if (stage == "Staggered")
+            if (stage == "Stagger")
             {
                 this.txtInspectedCarton.IsSupportEditMode = true;
                 this.txtInspectedCarton.ReadOnly = false;
@@ -1861,7 +1868,7 @@ SELECT STUFF(
             {
                 string.Empty,
                 "Inline",
-                "Staggered",
+                "Stagger",
                 "Final",
                 "3rd party",
             });

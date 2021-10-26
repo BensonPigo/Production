@@ -72,7 +72,7 @@ OUTER APPLY(
 	SELECT [Val]=Sum(pd.ShipQty)
 	From ['+@LinkServerName+'].Production.dbo.PackingList_Detail pd
 	INNER JOIN ['+@LinkServerName+'].Production.dbo.CFAInspectionRecord cfa on pd.StaggeredCFAInspectionRecordID	 = cfa.ID
-	Where cfa.Status=''Confirmed'' and cfa.Stage=''Staggered'' and pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
+	Where cfa.Status=''Confirmed'' and cfa.Stage=''Stagger'' and pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
 )StaggeredOutput
 OUTER APPLY(
 	SELECT [Val] = 
@@ -111,7 +111,7 @@ OUTER APPLY(
 	From ['+@LinkServerName+'].Production.dbo.PackingList_Detail pd 
 	INNER JOIN ['+@LinkServerName+'].Production.dbo.CFAInspectionRecord CFA on pd.StaggeredCFAInspectionRecordID=CFA.ID
 	Where CFA.Status=''Confirmed'' 
-	AND CFA.Stage=''Staggered''
+	AND CFA.Stage=''Stagger''
 	AND pd.CTNQty=1
 	AND pd.OrderID = oq.ID 
 	AND pd.OrderShipmodeSeq = oq.Seq
@@ -146,7 +146,7 @@ AND f.IsProduceFty = 1
 AND o.Category IN (''B'',''G'') 
 
 	----戴上要檢驗的Stage帽子
-SELECT DISTINCT [Stage]=''Staggered'',t.*
+SELECT DISTINCT [Stage]=''Stagger'',t.*
 INTO #NeedCkeck
 FROM  #tmp t 
 UNION 
@@ -188,7 +188,7 @@ WHERE ID IN(
 	'
 
 	SET @SqlCmd3 = '
-/*-----Staggered-----*/
+/*-----Stagger-----*/
 select * into #tmpFinal from (
 SELECT [InspResult]=CASE WHEN EXISTS(
 								-- Result  - Fail的情況
@@ -197,7 +197,7 @@ SELECT [InspResult]=CASE WHEN EXISTS(
 								INNER JOIN #PackingList_Detail pd ON pd.OrderID = a.Id ANd pd.OrderShipmodeSeq =a.Seq
 								INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cfo.OrderID = pd.OrderID AND cfo.SEQ = pd.OrderShipmodeSeq
 								INNER JOIN #CFAInspectionRecord cf ON cf.ID = cfo.ID
-								WHERE cf.Stage = ''Staggered'' AND a.Category != ''Sample'' AND cf.Result = ''Fail'' AND cf.Status =''Confirmed''
+								WHERE cf.Stage = ''Stagger'' AND a.Category != ''Sample'' AND cf.Result = ''Fail'' AND cf.Status =''Confirmed''
 								AND a.Id = need.Id AND a.Seq = need.Seq
 							)
 						THEN ''Fail''	
@@ -208,7 +208,7 @@ SELECT [InspResult]=CASE WHEN EXISTS(
 						INNER JOIN #PackingList_Detail pd ON pd.OrderID = a.Id ANd pd.OrderShipmodeSeq =a.Seq
 						INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cfo.OrderID = pd.OrderID AND cfo.SEQ = pd.OrderShipmodeSeq
 						INNER JOIN #CFAInspectionRecord cf ON cf.ID = cfo.ID
-						WHERE cf.Stage = ''Staggered'' AND a.Category != ''Sample'' AND  cf.Status =''Confirmed''
+						WHERE cf.Stage = ''Stagger'' AND a.Category != ''Sample'' AND  cf.Status =''Confirmed''
 						AND a.Id = need.Id AND a.Seq = need.Seq
 					)
 			 THEN ''''
@@ -223,7 +223,7 @@ SELECT [InspResult]=CASE WHEN EXISTS(
 									FROM #CFAInspectionRecord cf
 									INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
 									WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
-									AND cf.Stage=''Staggered'' AND cf.Status=''Confirmed''
+									AND cf.Stage=''Stagger'' AND cf.Status=''Confirmed''
 									AND (	
 											cfo.Carton = pd.CTNStartNo
 										OR cfo.Carton LIKE  pd.CTNStartNo +'',%'' 
@@ -242,7 +242,7 @@ SELECT [InspResult]=CASE WHEN EXISTS(
 									FROM #CFAInspectionRecord cf
 									INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
 									WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
-									AND cf.Stage=''Staggered'' AND cf.Status=''Confirmed''
+									AND cf.Stage=''Stagger'' AND cf.Status=''Confirmed''
 									AND (	
 											cfo.Carton = pd.CTNStartNo
 										OR cfo.Carton LIKE  pd.CTNStartNo +'',%'' 
@@ -259,7 +259,7 @@ SELECT [InspResult]=CASE WHEN EXISTS(
 									FROM #CFAInspectionRecord cf
 									INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
 									WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
-									AND cf.Stage=''Staggered'' AND cf.Status=''Confirmed''
+									AND cf.Stage=''Stagger'' AND cf.Status=''Confirmed''
 									AND (	
 										cfo.Carton = pd.CTNStartNo
 										OR cfo.Carton LIKE  pd.CTNStartNo +'',%'' 
@@ -279,7 +279,7 @@ SET @SqlCmd4 = '
 									FROM #CFAInspectionRecord cf
 									INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
 									WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
-									AND cf.Stage=''Staggered'' AND cf.Status=''Confirmed'' AND cf.Result=''Fail''
+									AND cf.Stage=''Stagger'' AND cf.Status=''Confirmed'' AND cf.Result=''Fail''
 									AND (	
 											cfo.Carton = pd.CTNStartNo
 										OR cfo.Carton LIKE  pd.CTNStartNo +'',%'' 
@@ -299,7 +299,7 @@ SET @SqlCmd4 = '
 									FROM #CFAInspectionRecord cf
 									INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
 									WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
-									AND cf.Stage=''Staggered'' AND cf.Status=''Confirmed'' AND cf.Result=''Fail''
+									AND cf.Stage=''Stagger'' AND cf.Status=''Confirmed'' AND cf.Result=''Fail''
 									AND (	
 											cfo.Carton = pd.CTNStartNo
 										OR cfo.Carton LIKE  pd.CTNStartNo +'',%'' 
@@ -317,7 +317,7 @@ SET @SqlCmd4 = '
 						FROM #CFAInspectionRecord cf
 						INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
 						WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
-						AND cf.Stage=''Staggered'' AND cf.Status=''Confirmed'' AND cf.Result=''Fail''
+						AND cf.Stage=''Stagger'' AND cf.Status=''Confirmed'' AND cf.Result=''Fail''
 						AND (	
 								cfo.Carton = pd.CTNStartNo
 							OR cfo.Carton LIKE  pd.CTNStartNo +'',%'' 
@@ -328,7 +328,7 @@ SET @SqlCmd4 = '
 				)
 	,need.*
 FROM #NeedCkeck need
-WHERE need.Stage = ''Staggered'' AND need.Category != ''Sample''	
+WHERE need.Stage = ''Stagger'' AND need.Category != ''Sample''	
 AND (
 		SELECT COUNT(DISTINCT CTNStartNo)
 		FROM #PackingList_Detail pd
@@ -338,7 +338,7 @@ AND (
 			FROM #CFAInspectionRecord cf
 			INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
 			WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
-			AND cf.Stage=''Staggered'' AND cf.Status=''Confirmed'' AND cf.Result!=''Pass''
+			AND cf.Stage=''Stagger'' AND cf.Status=''Confirmed'' AND cf.Result!=''Pass''
 			AND (	
 					cfo.Carton = pd.CTNStartNo
 				OR cfo.Carton LIKE  pd.CTNStartNo +'',%'' 

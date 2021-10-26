@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataSourceCtnSummary = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.dataSourceQtyBreakdown = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label2 = new Sci.Win.UI.Label();
@@ -84,7 +84,6 @@
             this.btnSettingSpSeq = new Sci.Win.UI.Button();
             this.gridSpSeq = new Sci.Win.UI.Grid();
             this.chkFirstInspection = new Sci.Win.UI.CheckBox();
-            this.chkIsImportFromMES = new Sci.Win.UI.CheckBox();
             this.labImportFromMES = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -106,7 +105,6 @@
             // masterpanel
             // 
             this.masterpanel.Controls.Add(this.labImportFromMES);
-            this.masterpanel.Controls.Add(this.chkIsImportFromMES);
             this.masterpanel.Controls.Add(this.chkFirstInspection);
             this.masterpanel.Controls.Add(this.gridSpSeq);
             this.masterpanel.Controls.Add(this.btnSettingSpSeq);
@@ -213,7 +211,6 @@
             this.masterpanel.Controls.SetChildIndex(this.btnSettingSpSeq, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridSpSeq, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkFirstInspection, 0);
-            this.masterpanel.Controls.SetChildIndex(this.chkIsImportFromMES, 0);
             this.masterpanel.Controls.SetChildIndex(this.labImportFromMES, 0);
             // 
             // detailpanel
@@ -606,7 +603,7 @@
             this.comboStage.Items.AddRange(new object[] {
             "",
             "Inline",
-            "Staggered",
+            "Stagger",
             "Final",
             "3rd party"});
             this.comboStage.Location = new System.Drawing.Point(604, 62);
@@ -721,7 +718,7 @@
             this.labelStatus.BackColor = System.Drawing.Color.Transparent;
             this.labelStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
             this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.labelStatus.Location = new System.Drawing.Point(675, 6);
+            this.labelStatus.Location = new System.Drawing.Point(630, 6);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(125, 25);
             this.labelStatus.TabIndex = 69;
@@ -816,14 +813,14 @@
             this.gridSpSeq.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridSpSeq.Location = new System.Drawing.Point(720, 35);
             this.gridSpSeq.Name = "gridSpSeq";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridSpSeq.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridSpSeq.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridSpSeq.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSpSeq.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSpSeq.RowTemplate.Height = 24;
@@ -838,7 +835,7 @@
             this.chkFirstInspection.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FirstInspection", true));
             this.chkFirstInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkFirstInspection.IsSupportEditMode = false;
-            this.chkFirstInspection.Location = new System.Drawing.Point(422, 10);
+            this.chkFirstInspection.Location = new System.Drawing.Point(464, 10);
             this.chkFirstInspection.Name = "chkFirstInspection";
             this.chkFirstInspection.ReadOnly = true;
             this.chkFirstInspection.Size = new System.Drawing.Size(114, 21);
@@ -846,24 +843,9 @@
             this.chkFirstInspection.Text = "1st Inspection";
             this.chkFirstInspection.UseVisualStyleBackColor = true;
             // 
-            // chkIsImportFromMES
-            // 
-            this.chkIsImportFromMES.AutoSize = true;
-            this.chkIsImportFromMES.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsImportFromMES", true));
-            this.chkIsImportFromMES.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.chkIsImportFromMES.IsSupportEditMode = false;
-            this.chkIsImportFromMES.Location = new System.Drawing.Point(542, 10);
-            this.chkIsImportFromMES.Name = "chkIsImportFromMES";
-            this.chkIsImportFromMES.ReadOnly = true;
-            this.chkIsImportFromMES.Size = new System.Drawing.Size(149, 21);
-            this.chkIsImportFromMES.TabIndex = 77;
-            this.chkIsImportFromMES.Text = "Is Import From MES";
-            this.chkIsImportFromMES.UseVisualStyleBackColor = true;
-            // 
             // labImportFromMES
             // 
             this.labImportFromMES.BackColor = System.Drawing.Color.Transparent;
-            this.labImportFromMES.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
             this.labImportFromMES.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labImportFromMES.Location = new System.Drawing.Point(464, 263);
             this.labImportFromMES.Name = "labImportFromMES";
@@ -970,7 +952,6 @@
         private Win.UI.Button btnSettingSpSeq;
         private Win.UI.CheckBox chkIsCombinePO;
         private Win.UI.CheckBox chkFirstInspection;
-        private Win.UI.CheckBox chkIsImportFromMES;
         private Win.UI.Label labImportFromMES;
     }
 }

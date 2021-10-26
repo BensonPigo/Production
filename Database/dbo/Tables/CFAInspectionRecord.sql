@@ -22,7 +22,8 @@ CREATE TABLE [dbo].[CFAInspectionRecord](
 	[EditDate] [datetime] NULL,
 	FirstInspection Bit NOT NULL CONSTRAINT [DF_CFAInspectionRecord_FirstInspection] DEFAULT 0,
 	IsCombinePO Bit NOT NULL CONSTRAINT [DF_CFAInspectionRecord_IsCombinePO] DEFAULT 0,
-	CONSTRAINT [PK_CFAInspectionRecord] PRIMARY KEY CLUSTERED 
+	[IsImportFromMES] BIT NULL DEFAULT ((0)), 
+    CONSTRAINT [PK_CFAInspectionRecord] PRIMARY KEY CLUSTERED 
 	(
 		[ID] ASC
 	)
@@ -83,3 +84,11 @@ GO
 
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'該單據所有的紙箱是否是第一次檢驗 Stagger', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAInspectionRecord', @level2type = N'COLUMN', @level2name = N'FirstInspection';
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否為從MES轉入的資料',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'CFAInspectionRecord',
+    @level2type = N'COLUMN',
+    @level2name = N'IsImportFromMES'
