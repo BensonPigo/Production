@@ -105,7 +105,7 @@ order by fd.ID ";
                             }
 
                             string sqlcmdDelete = $@"
-delete from ManufacturingExecution.dbo.Clip 
+delete from [ExtendServer].ManufacturingExecution.dbo.Clip 
 where PKey = '{item.Pkey}'
 ";
                             DualResult result;
