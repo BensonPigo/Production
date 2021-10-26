@@ -99,8 +99,11 @@ select
 	,[EstPODD]=o.EstPODD
 	,[ReasonRemark]=o.OutstandingRemark
 	,[PackingListRemark]=p.Remark
+    ,[PKManifestCreateDate] = Format(os.PKManifestCreateDate, 'yyyy/MM/dd')
+    ,[BookDate] = Format(os.BookDate, 'yyyy/MM/dd')
 from Orders o
 inner join Order_QtyShip oq on o.ID=oq.Id
+left join Order_ShipPerformance os with (nolock) on oq.ID = os.ID and oq.Seq = os.Seq
 left join Brand b on b.id=o.BrandID
 inner join Factory f with(nolock) on f.id = o.FactoryID
 outer apply (
