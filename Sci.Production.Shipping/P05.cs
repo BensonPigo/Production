@@ -1193,6 +1193,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
 
                 if (dr.RowState == DataRowState.Deleted)
                 {
+                    plFromRgCode = dr["PLFromRgCode", DataRowVersion.Original].ToString();
                     updateSql = string.Format(
                         "update PackingList set GMTBookingLock = '', INVNo = '', ShipPlanID = '', PLToRgCode = '' where ID = '{0}';",
                         MyUtility.Convert.GetString(dr["ID", DataRowVersion.Original]));
@@ -1642,6 +1643,7 @@ end");
             this.ReloadSOCFMDate();
             this.RenewData();
             this.OnDetailEntered();
+            this.MergeDetailA2B();
         }
 
         // 檢查表身的ShipMode與表頭的ShipMode要相同 & ShipModeID 不存在Order_QtyShip 就return

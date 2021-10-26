@@ -846,6 +846,8 @@ where not exists (select 1 from ShipPlan_DeleteGBHistory sdh where sdh.ID = t.ID
             {
                 try
                 {
+                    List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByShipPlanID(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
                     DualResult result = DBProxy.Current.Executes(null, updateCmds);
 
                     if (!result)
@@ -853,8 +855,6 @@ where not exists (select 1 from ShipPlan_DeleteGBHistory sdh where sdh.ID = t.ID
                         scope.Dispose();
                         return result;
                     }
-
-                    List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByShipPlanID(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
                     foreach (string plFromRgCode in listPLFromRgCode)
                     {

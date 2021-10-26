@@ -11,6 +11,7 @@ using Sci.Production.PublicPrg;
 using System.Linq;
 using System.Configuration;
 using System.Data.SqlClient;
+using Sci.Production.CallPmsAPI;
 
 namespace Sci.Production.Shipping
 {
@@ -1339,10 +1340,34 @@ select [resultType] = 'OK',
 ";
 
             DataTable dtResult;
-            DualResult result = DBProxy.Current.Select(null, sqlCheckGarmentBookingAndPackingList, new List<SqlParameter>() { new SqlParameter("@inputInvNo", shareExpenseItem["InvNo"]) }, out dtResult);
+            List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@inputInvNo", shareExpenseItem["InvNo"]) };
+            DualResult result = DBProxy.Current.Select(null, sqlCheckGarmentBookingAndPackingList, listPar, out dtResult);
             if (!result)
             {
                 return result;
+            }
+
+            List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(shareExpenseItem["InvNo"].ToString());
+            foreach (string plFromRgCode in listPLFromRgCode)
+            {
+                DataTable dtResultA2B;
+                PackingA2BWebAPI_Model.DataBySql dataBySql = new PackingA2BWebAPI_Model.DataBySql()
+                {
+                    SqlString = sqlCheckGarmentBookingAndPackingList,
+                    SqlParameter = listPar.ToListSqlPar(),
+                };
+
+                result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, dataBySql, out dtResultA2B);
+
+                if (!result)
+                {
+                    return result;
+                }
+
+                if (dtResultA2B.Rows.Count > 0)
+                {
+                    dtResult.MergeBySyncColType(dtResultA2B);
+                }
             }
 
             bool isCheckNotPass = dtResult.Rows[0]["resultType"].ToString() != "OK";
