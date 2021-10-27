@@ -380,13 +380,15 @@ where   ss.FactoryID = '{0}'
                         return;
                     }
 
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (MyUtility.Check.Seek($@"select 1 from orders where id = '{e.FormattedValue}' and Category in ('M','T') "))
                     {
                         MyUtility.Msg.WarningBox("Material and sample material order cannot be imported into sewingoutput.");
+                        dr["OrderID"] = string.Empty;
+                        dr.EndEdit();
                         return;
                     }
 
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["OrderID"]))
                     {
                         // 資料有異動過就先刪除SubDetail資料
