@@ -22,7 +22,7 @@ CREATE TABLE [dbo].[CFAInspectionRecord](
 	[EditDate] [datetime] NULL,
 	FirstInspection Bit NOT NULL CONSTRAINT [DF_CFAInspectionRecord_FirstInspection] DEFAULT 0,
 	IsCombinePO Bit NOT NULL CONSTRAINT [DF_CFAInspectionRecord_IsCombinePO] DEFAULT 0,
-	[IsImportFromMES] BIT NULL DEFAULT ((0)), 
+	[IsImportFromMES] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_CFAInspectionRecord] PRIMARY KEY CLUSTERED 
 	(
 		[ID] ASC
