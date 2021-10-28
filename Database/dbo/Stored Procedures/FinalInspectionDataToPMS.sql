@@ -15,7 +15,7 @@ BEGIN
 Merge Production.dbo.CFAInspectionRecord as t
 Using (
 	select f.* 
-	,[IsCombinePO] = iif(Forder.cnt >1 , 0 , 1)
+	,[IsCombinePO] = iif(Forder.cnt >1 , 1 , 0)
 	,[FirstInspection] = IIF(f.InspectionTimes = 1, 1 , 0)
 	,[ClogReceivedPercentage] = clog.Value
 	from [ExtendServer].[ManufacturingExecution].dbo.FinalInspection f
