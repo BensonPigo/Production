@@ -51,6 +51,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(826, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.grid1);
@@ -61,6 +65,11 @@
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.labelDefectType);
             this.detailcont.Controls.Add(this.labelDescription);
+            this.detailcont.Size = new System.Drawing.Size(826, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(826, 38);
             // 
             // browse
             // 
@@ -105,9 +114,11 @@
             // 
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkJunk.IsSupportEditMode = false;
             this.checkJunk.Location = new System.Drawing.Point(297, 17);
             this.checkJunk.Name = "checkJunk";
+            this.checkJunk.ReadOnly = true;
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
             this.checkJunk.TabIndex = 2;
             this.checkJunk.Text = "Junk";
@@ -115,22 +126,26 @@
             // 
             // txtDefectType
             // 
-            this.txtDefectType.BackColor = System.Drawing.Color.White;
+            this.txtDefectType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtDefectType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.txtDefectType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDefectType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtDefectType.IsSupportEditMode = false;
             this.txtDefectType.Location = new System.Drawing.Point(104, 15);
             this.txtDefectType.Name = "txtDefectType";
+            this.txtDefectType.ReadOnly = true;
             this.txtDefectType.Size = new System.Drawing.Size(132, 23);
             this.txtDefectType.TabIndex = 0;
             // 
             // editDescription
             // 
-            this.editDescription.BackColor = System.Drawing.Color.White;
+            this.editDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
-            this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editDescription.IsSupportEditMode = false;
             this.editDescription.Location = new System.Drawing.Point(104, 50);
             this.editDescription.Multiline = true;
             this.editDescription.Name = "editDescription";
+            this.editDescription.ReadOnly = true;
             this.editDescription.Size = new System.Drawing.Size(293, 64);
             this.editDescription.TabIndex = 1;
             // 
@@ -195,7 +210,7 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(881, 231);
+            this.grid1.Size = new System.Drawing.Size(810, 231);
             this.grid1.TabIndex = 8;
             // 
             // B20
@@ -207,7 +222,6 @@
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportEdit = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B20";
