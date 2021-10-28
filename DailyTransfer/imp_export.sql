@@ -17,7 +17,12 @@ BEGIN
 
 	---create temp table---------
 
-	select * into #TExport from Trade_To_Pms.dbo.Export e WITH (NOLOCK)
+	select e.*,PrepaidFtyImportFee2 = iif(isnull(e.MainWK, '')<>'', MainWK.PrepaidFtyImportFee2, MainExportID08.PrepaidFtyImportFee2) into #TExport from Trade_To_Pms.dbo.Export e WITH (NOLOCK)
+	outer apply(
+		select PrepaidFtyImportFee2=e2.PrepaidFtyImportFee
+		from Trade_To_Pms.dbo.Export e2
+		where e.MainWK  = e2.id
+	)MainWK 
 	outer apply(
 		select PrepaidFtyImportFee2=e2.PrepaidFtyImportFee
 		from Trade_To_Pms.dbo.Export e2
@@ -100,20 +105,21 @@ BEGIN
 		, t.OTFee = s.OTFee
 		, t.CIFTerms = s.CIFTerms
 		, t.FtyDisburseSD = s.FtyDisburseSD
+		, t.MainWK = s.MainWK
 	  when not matched  by target then 
 		insert (ID ,ScheduleID ,ScheduleDate ,LoadDate ,CloseDate ,Etd ,Eta ,ExportCountry ,ImportCountry ,ExportPort ,ImportPort 
 		,CYCFS ,ShipModeID ,ShipmentTerm ,FactoryID ,ShipMark ,ShipMarkDesc ,Consignee ,Handle ,Posting ,Payer ,CompanyID 
 		,Confirm ,LastEdit ,Remark ,Ecfa ,FormStatus ,Carrier ,Forwarder ,Vessel ,ShipTo ,Sono ,Blno ,InvNo ,Exchange 
 		,Packages ,WeightKg ,NetKg ,Cbm ,CbmFor ,Takings ,TakingFee ,PortArrival ,DocArrival ,Broker 
 		,Insurer ,Trailer1 ,Trailer2 ,Freight ,Insurance ,Junk ,AddName ,AddDate ,EditName ,EditDate,MainExportID ,Replacement ,Delay ,PrepaidFtyImportFee,NoImportCharges
-		,MainExportID08 ,FormE, SQCS, FtyTruckFee, FtyTrucker, OTFee, CIFTerms,FtyDisburseSD)
+		,MainExportID08 ,FormE, SQCS, FtyTruckFee, FtyTrucker, OTFee, CIFTerms,FtyDisburseSD,MainWK)
 	    values( 
 		s.ID ,s.ScheduleID ,s.ScheduleDate ,s.LoadDate ,s.CloseDate ,s.Etd ,s.Eta ,s.ExportCountry ,s.ImportCountry ,s.ExportPort ,s.ImportPort 
 		,s.CYCFS,s.ShipModeID ,s.ShipmentTerm ,s.FactoryID ,s.ShipMark ,s.ShipMarkDesc ,s.Consignee ,s.Handle ,s.Posting ,s.Payer ,s.CompanyID 
 		,s.Confirm ,s.LastEdit ,s.Remark ,s.Ecfa ,s.FormStatus,s.Carrier ,s.Forwarder ,s.Vessel ,s.ShipTo ,s.Sono ,s.Blno ,s.InvNo ,s.Exchange 
 		,s.Packages ,s.WeightKg ,s.NetKg ,s.Cbm ,s.CbmFor ,s.Takings ,s.TakingFee ,s.PortArrival ,s.DocArrival ,s.Broker 
 		,s.Insurer ,s.Trailer1 ,s.Trailer2 ,s.Freight ,s.Insurance ,s.Junk ,s.AddName ,s.AddDate ,s.EditName ,s.EditDate,s.MainExportID ,s.Replacement ,s.Delay, s.PrepaidFtyImportFee, iif(s.PrepaidFtyImportFee2 > 0, 1 ,0)
-		,s.MainExportID08 ,s.FormE, s.SQCS, s.FtyTruckFee, s.FtyTrucker, s.OTFee, s.CIFTerms,s.FtyDisburseSD)
+		,s.MainExportID08 ,s.FormE, s.SQCS, s.FtyTruckFee, s.FtyTrucker, s.OTFee, s.CIFTerms,s.FtyDisburseSD,MainWK)
 	  output inserted.id into @T; 
 
 -----------------------Export_detail-----------------------------
@@ -766,6 +772,41 @@ insert into Production.dbo.FormType(	ID		,
 					where not exists (select 1 from Production.dbo.FormType b where a.ID = b.ID)
 
 
+-----------------------TransferExport-----------------------------
+update a set	
+	a.TruckFree = b.TruckFree
+	,a.OTFee = b.OTFee
+from Production.dbo.TransferExport a
+inner join Trade_To_Pms.dbo.TransferExport b on b.ID = a.ID
+
+INSERT INTO Production.dbo.TransferExport_ShipAdvice_Container
+	(Ukey,TransferExport_DetailUkey,ContainerType,ContainerNo,AddName,AddDate,EditName,EditDate)
+SELECT Ukey,TransferExport_DetailUkey,ContainerType,ContainerNo,AddName,AddDate,EditName,EditDate
+FROM Trade_To_Pms.dbo.TransferExport_ShipAdvice_Container s
+WHERE NOT EXISTS (SELECT 1 FROM Production.dbo.TransferExport_ShipAdvice_Container WHERE Ukey = s.Ukey)
+
+UPDATE t
+SET
+	 t.TransferExport_DetailUkey = s.TransferExport_DetailUkey
+	,t.ContainerType			 = s.ContainerType
+	,t.ContainerNo				 = s.ContainerNo
+	,t.AddName				     = s.AddName
+	,t.AddDate				     = s.AddDate
+	,t.EditName				     = s.EditName
+	,t.EditDate				     = s.EditDate
+FROM Production.dbo.TransferExport_ShipAdvice_Container t
+INNER JOIN Trade_To_Pms.dbo.TransferExport_ShipAdvice_Container s ON t.Ukey = s.Ukey
+
+DELETE t 
+FROM Production.dbo.TransferExport_ShipAdvice_Container t 
+WHERE NOT EXISTS(SELECT 1 FROM Trade_To_Pms.dbo.TransferExport_ShipAdvice_Container s where t.Ukey = s.Ukey)
+----只刪除轉出區間內，有少的 TransferExport
+AND exists (		
+	SELECT 1
+	FROM Trade_To_Pms.dbo.TransferExport a
+	inner join Trade_To_Pms.dbo.TransferExport_Detail b on a.ID = b.ID
+	WHERE b.Ukey = t.TransferExport_DetailUkey	
+)
 END
 
 
