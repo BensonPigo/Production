@@ -18,5 +18,12 @@ namespace Sci.Production.Centralized
                 this.ConnectionName = "ProductionTPE";
             }
         }
+
+        /// <inheritdoc/>
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            this.txtCode.ReadOnly = true;
+        }
     }
 }
