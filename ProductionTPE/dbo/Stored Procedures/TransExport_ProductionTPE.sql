@@ -1,7 +1,7 @@
 USE [Trade]
 GO
 
-/****** Object:  StoredProcedure [dbo].[TransExport_ProductionTPE]    Script Date: 2019/12/24 ¤W¤È 11:24:45 ******/
+/****** Object:  StoredProcedure [dbo].[TransExport_ProductionTPE]    Script Date: 2019/12/24 ï¿½Wï¿½ï¿½ 11:24:45 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -145,6 +145,13 @@ BEGIN
 	-------------GarmentDefectCode-------------------
 	RAISERROR('GarmentDefectCode  - Starts',0,0)
 	select * into dbo.GarmentDefectCode from (select * from ProductionTPE.dbo.GarmentDefectCode ) as tmp
+	-------------FabricDefect-------------------
+	RAISERROR('FabricDefect  - Starts',0,0)
+	select * into dbo.FabricDefect from (select * from ProductionTPE.dbo.FabricDefect ) as tmp
+
+	-------------AccessoryDefect-------------------
+	RAISERROR('AccessoryDefect  - Starts',0,0)
+	select * into dbo.AccessoryDefect from (select * from ProductionTPE.dbo.AccessoryDefect ) as tmp
 
 	set transaction isolation level read committed
 END

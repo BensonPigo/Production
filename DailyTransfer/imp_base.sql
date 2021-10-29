@@ -4554,4 +4554,43 @@ FROM Trade_To_Pms.dbo.IEReasonLBRNotHit_Detail a
 LEFT JOIN Production.dbo.IEReasonLBRNotHit_Detail b ON a.Type = b.Type and a.TypeGroup = b.TypeGroup and a.Code = b.Code
 WHERE b.Type is null
 
+--FabricDefect
+update a set	a.Type = b.Type,
+				a.DescriptionEN = b.DescriptionEN,
+				a.Junk = b.Junk,
+				a.AddName = b.AddName,
+				a.AddDate = b.AddDate,
+				a.EditName = b.EditName,
+				a.EditDate = b.EditDate
+FROM Production.dbo.FabricDefect a
+INNER JOIN Trade_To_Pms.dbo.FabricDefect b ON a.ID = b.ID
+
+update a set a.Junk = 1
+FROM Production.dbo.FabricDefect a
+where not exists(select 1 from Trade_To_Pms.dbo.FabricDefect b where a.ID = b.ID)
+
+insert into Production.dbo.FabricDefect(ID, Type, DescriptionEN, Junk, AddName, AddDate, EditName, EditDate)
+select	b.ID, b.Type, b.DescriptionEN, b.Junk, b.AddName, b.AddDate, b.EditName, b.EditDate
+from Trade_To_Pms.dbo.FabricDefect b
+where not exists(select 1 from Production.dbo.FabricDefect a where a.ID = b.ID)
+
+--AccessoryDefect
+update a set	a.Description = b.Description,
+				a.Junk = b.Junk,
+				a.AddName = b.AddName,
+				a.AddDate = b.AddDate,
+				a.EditName = b.EditName,
+				a.EditDate = b.EditDate
+FROM Production.dbo.AccessoryDefect a
+INNER JOIN Trade_To_Pms.dbo.AccessoryDefect b ON a.ID = b.ID
+
+update a set a.Junk = 1
+FROM Production.dbo.AccessoryDefect a
+where not exists(select 1 from Trade_To_Pms.dbo.AccessoryDefect b where a.ID = b.ID)
+
+insert into Production.dbo.AccessoryDefect(ID, Description, Junk, AddName, AddDate, EditName, EditDate)
+select	b.ID, b.Description, b.Junk, b.AddName, b.AddDate, b.EditName, b.EditDate
+from Trade_To_Pms.dbo.AccessoryDefect b
+where not exists(select 1 from Production.dbo.AccessoryDefect a where a.ID = b.ID)
+
 END
