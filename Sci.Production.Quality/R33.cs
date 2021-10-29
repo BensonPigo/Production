@@ -33,7 +33,7 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
             this.AuditDate.Value1 = DateTime.Now;
             this.AuditDate.Value2 = DateTime.Now;
-            this.comboStage.Text = "Staggered";
+            this.comboStage.Text = "Stagger";
             this.comboM.SetDefalutIndex(false);
             this.comboFactory.SetDataSource();
         }
@@ -118,7 +118,7 @@ INNER JOIN CFAInspectionRecord_OrderSEQ co ON c.ID = co.ID
 INNER JOIN Orders O ON o.ID = co.OrderID
 WHERE 1=1
 AND c.AuditDate BETWEEN @StartDate AND @EndDate
-AND Stage='Staggered' 
+AND Stage='Stagger' 
 AND Status='Confirmed'
 AND c.FirstInspection = 1
 {where}

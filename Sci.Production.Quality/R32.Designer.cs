@@ -161,7 +161,7 @@
             this.comboStage.Items.AddRange(new object[] {
             "",
             "Inline",
-            "Staggered",
+            "Stagger",
             "Final",
             "3rd party"});
             this.comboStage.Location = new System.Drawing.Point(128, 250);
