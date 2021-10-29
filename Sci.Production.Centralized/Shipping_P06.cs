@@ -125,7 +125,7 @@ insert into ShippingHistory(ID, MDivisionID, Type, ReasonTypeID, ReasonID, Remar
         {
             get
             {
-                string getUrlSql = $"select URL from SystemWebAPIURL with (nolock) where SystemName = '{this.comboRegion.Text.Replace("PH1", "PH2")}' and Environment = {"'{0}'"} and junk = 0";
+                string getUrlSql = $"select URL from SystemWebAPIURL with (nolock) where SystemName = '{this.comboRegion.Text.Replace("PH1", "PHI")}' and Environment = {"'{0}'"} and junk = 0";
                 string resultUrl = string.Empty;
                 if (DBProxy.Current.DefaultModuleName.Contains("PMSDB"))
                 {
