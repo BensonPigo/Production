@@ -108,7 +108,7 @@
             this.comboStage.FormattingEnabled = true;
             this.comboStage.IsSupportUnselect = true;
             this.comboStage.Items.AddRange(new object[] {
-            "Staggered"});
+            "Stagger"});
             this.comboStage.Location = new System.Drawing.Point(128, 175);
             this.comboStage.Name = "comboStage";
             this.comboStage.OldText = "";

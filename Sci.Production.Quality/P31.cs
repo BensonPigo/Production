@@ -150,7 +150,7 @@ SELECT ISNULL(Sum(ISNULL(ShipQty,0)),0)
 From PackingList_Detail P
 Inner join CFAInspectionRecord CFA on P.StaggeredCFAInspectionRecordID=CFA.ID
 Where CFA.Status='Confirmed' 
-and CFA.Stage='Staggered' 
+and CFA.Stage='Stagger' 
 and P.OrderID='{this.CurrentMaintain["ID"].ToString()}' 
 and P.OrderShipmodeSeq='{this.CurrentMaintain["Seq"].ToString()}'
 ");
@@ -271,7 +271,7 @@ OUTER APPLY(
 	SELECT [Qty]=Sum(p.ShipQty)
 	From PackingList_Detail P 
 	Inner join CFAInspectionRecord CFA on P.StaggeredCFAInspectionRecordID=CFA.ID
-	Where CFA.Status='Confirmed' and CFA.Stage='Staggered' and p.Article=oqd.Article and P.SizeCode=oqd.SizeCode and P.OrderID=oqd.ID and P.OrderShipmodeSeq=oqd.Seq
+	Where CFA.Status='Confirmed' and CFA.Stage='Stagger' and p.Article=oqd.Article and P.SizeCode=oqd.SizeCode and P.OrderID=oqd.ID and P.OrderShipmodeSeq=oqd.Seq
 )Staggered
 OUTER APPLY(
 	SELECT [Qty]=SUM(IIF( pd.CFAReceiveDate IS NOT NULL OR pd.ReceiveDate IS NOT NULL,pd.ShipQty,0))
@@ -508,7 +508,7 @@ OUTER APPLY(
         AND t.Article = oqd.Article
         AND t.SizeCode = oqd.SizeCode
         AND CFA.Status = 'Confirmed'
-        AND CFA.Stage = 'Staggered'
+        AND CFA.Stage = 'Stagger'
     GROUP BY t.Article, t.SizeCode
 )CFA_StaggeredCTN
 OUTER APPLY(
@@ -552,7 +552,7 @@ OUTER APPLY(
     WHERE  t2.OrderID = t.OrderID
         AND t2.OrderShipmodeSeq = t.OrderShipmodeSeq
         AND CFA.Status = 'Confirmed'
-        AND CFA.Stage = 'Staggered'
+        AND CFA.Stage = 'Stagger'
 )CFA_StaggeredCTN
 OUTER APPLY(
     SELECT[Val] = SUM(Ctn)

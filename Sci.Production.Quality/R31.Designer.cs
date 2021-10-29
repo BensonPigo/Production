@@ -230,7 +230,7 @@
             this.comboStage.IsSupportUnselect = true;
             this.comboStage.Items.AddRange(new object[] {
             "",
-            "Staggered",
+            "Stagger",
             "Final",
             "3rd party"});
             this.comboStage.Location = new System.Drawing.Point(123, 283);
