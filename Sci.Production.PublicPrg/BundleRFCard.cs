@@ -2149,7 +2149,7 @@ where t.CardNo in (select CardNo from #tmp) and not exists(select 1 from #tmp tm
 
             settings.AddRange(new List<string>()
             {
-                $"Style#:{printData.Style}",
+                $"Style#:{printData.Style} CutCell:{printData.CutCell}",
                 $"Cut#:{printData.Body_Cut}",
                 $"Color:{printData.Color}",
                 $"Size:{printData.Size}     Part:{printData.Parts}",
