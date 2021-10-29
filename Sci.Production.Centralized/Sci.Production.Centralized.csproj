@@ -168,6 +168,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="QA_B20.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QA_B20.Designer.cs">
+      <DependentUpon>QA_B20.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QA_B20_SettingSort.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QA_B20_SettingSort.Designer.cs">
+      <DependentUpon>QA_B20_SettingSort.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QA_B21.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QA_B21.Designer.cs">
+      <DependentUpon>QA_B21.cs</DependentUpon>
+    </Compile>
     <Compile Include="IE_B92.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -493,6 +511,15 @@
       <DependentUpon>WH_B01.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="QA_B20.resx">
+      <DependentUpon>QA_B20.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QA_B20_SettingSort.resx">
+      <DependentUpon>QA_B20_SettingSort.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QA_B21.resx">
+      <DependentUpon>QA_B21.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="IE_B92.resx">
       <DependentUpon>IE_B92.cs</DependentUpon>
     </EmbeddedResource>

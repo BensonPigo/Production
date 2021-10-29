@@ -40,6 +40,7 @@
             this.label1 = new Sci.Win.UI.Label();
             this.displayHangerFailCode = new Sci.Win.UI.DisplayBox();
             this.chk_isCriticalDefect = new Sci.Win.UI.CheckBox();
+            this.checkBox1 = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -54,6 +55,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.chk_isCriticalDefect);
             this.detailcont.Controls.Add(this.displayHangerFailCode);
             this.detailcont.Controls.Add(this.label1);
@@ -225,6 +227,18 @@
             this.chk_isCriticalDefect.Text = "Is Critical Defect";
             this.chk_isCriticalDefect.UseVisualStyleBackColor = true;
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsCFA", true));
+            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBox1.Location = new System.Drawing.Point(478, 335);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(111, 21);
+            this.checkBox1.TabIndex = 15;
+            this.checkBox1.Text = "For CFA Only";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
             // B21
             // 
             this.ClientSize = new System.Drawing.Size(839, 503);
@@ -268,5 +282,6 @@
         private Win.UI.DisplayBox displayHangerFailCode;
         private Win.UI.Label label1;
         private Win.UI.CheckBox chk_isCriticalDefect;
+        private Win.UI.CheckBox checkBox1;
     }
 }
