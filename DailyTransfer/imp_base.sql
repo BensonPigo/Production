@@ -4676,4 +4676,151 @@ select	b.ID, b.Description, b.Junk, b.AddName, b.AddDate, b.EditName, b.EditDate
 from Trade_To_Pms.dbo.AccessoryDefect b
 where not exists(select 1 from Production.dbo.AccessoryDefect a where a.ID = b.ID)
 
+---Adidas_FGWT
+delete a
+from production.dbo.Adidas_FGWT a
+left join Trade_To_Pms.dbo.Adidas_FGWT b on 
+		a.[Location] 		  = b.[Location] 
+	and a.[ReportType] 		  = b.[ReportType] 
+	and a.[MtlTypeID] 		  = b.[MtlTypeID] 
+	and a.[Washing] 		  = b.[Washing] 
+	and a.[FabricComposition] = b.[FabricComposition]
+where b.[Location] is null
+
+update a set
+	 Seq	    = b.Seq		
+	,TestName   = b.TestName  
+	,SystemType = b.SystemType
+	,TestDetail = b.TestDetail
+	,Scale	    = b.Scale	   
+	,Criteria   = b.Criteria  
+	,Criteria2  = b.Criteria2 
+from production.dbo.Adidas_FGWT a
+inner join Trade_To_Pms.dbo.Adidas_FGWT b on 
+		a.[Location] 		  = b.[Location] 
+	and a.[ReportType] 		  = b.[ReportType] 
+	and a.[MtlTypeID] 		  = b.[MtlTypeID] 
+	and a.[Washing] 		  = b.[Washing] 
+	and a.[FabricComposition] = b.[FabricComposition]
+	
+insert into production.dbo.Adidas_FGWT 
+           ([Seq]
+           ,[TestName]
+           ,[Location]
+           ,[SystemType]
+           ,[ReportType]
+           ,[MtlTypeID]
+           ,[Washing]
+           ,[FabricComposition]
+           ,[TestDetail]
+           ,[Scale]
+           ,[Criteria]
+           ,[Criteria2])
+select		a.[Seq]
+           ,a.[TestName]
+           ,a.[Location]
+           ,a.[SystemType]
+           ,a.[ReportType]
+           ,a.[MtlTypeID]
+           ,a.[Washing]
+           ,a.[FabricComposition]
+           ,a.[TestDetail]
+           ,a.[Scale]
+           ,a.[Criteria]
+           ,a.[Criteria2]
+from Trade_To_Pms.dbo.Adidas_FGWT a
+LEFT join production.dbo.Adidas_FGWT b on 
+		a.[Location] 		  = b.[Location] 
+	and a.[ReportType] 		  = b.[ReportType] 
+	and a.[MtlTypeID] 		  = b.[MtlTypeID] 
+	and a.[Washing] 		  = b.[Washing] 
+	and a.[FabricComposition] = b.[FabricComposition]
+where b.Location is null
+
+
+-- TypeSelection
+delete a
+from production.dbo.TypeSelection a
+left join Trade_To_Pms.dbo.TypeSelection b on a.VersionID = b.VersionID and a.Seq = b.Seq 
+where b.VersionID is null
+
+update a set 
+	Code = b.Code
+from production.dbo.TypeSelection a
+inner join Trade_To_Pms.dbo.TypeSelection b on a.VersionID = b.VersionID and a.Seq = b.Seq 
+
+insert production.dbo.TypeSelection (VersionID,Seq,Code)
+select 
+	 a.VersionID
+	,a.Seq
+	,a.Code
+from Trade_To_Pms.dbo.TypeSelection a
+left join production.dbo.TypeSelection b on a.VersionID = b.VersionID and a.Seq = b.Seq 
+where b.VersionID is null
+
+
+--QABrandSetting
+update a set
+	a.PullingTest_PullForceUnit = b.PullingTest_PullForceUnit 
+from  production.dbo.QABrandSetting a
+inner join Trade_To_Pms.dbo.QABrandSetting b on a.BrandID = b.BrandID
+
+INSERT INTO production.[dbo].[QABrandSetting]
+           ([BrandID]
+           ,PullingTest_PullForceUnit
+           ,[AddDate]
+           ,[AddName])
+select 
+	a.BrandID
+	,a.PullingTest_PullForceUnit
+	,GETDATE()
+	,'SCIMIS'
+from  Trade_To_Pms.dbo.QABrandSetting a
+left join production.dbo.QABrandSetting b on a.BrandID = b.BrandID
+where b.BrandID is null
+
+--Brand_PullingTestStandarList
+delete a
+from production.dbo.Brand_PullingTestStandarList a
+left join Trade_To_Pms.dbo.Brand_PullingTestStandarList b on a.BrandID = b.BrandID and a.TestItem = b.TestItem and a.PullForceUnit = b.PullForceUnit
+where b.BrandID is null
+
+update a set 
+	PullForce = b.PullForce,
+	Time = b.Time
+from production.dbo.Brand_PullingTestStandarList a
+inner join Trade_To_Pms.dbo.Brand_PullingTestStandarList b on a.BrandID = b.BrandID and a.TestItem = b.TestItem and a.PullForceUnit = b.PullForceUnit
+
+insert production.dbo.Brand_PullingTestStandarList (BrandID,TestItem,PullForceUnit,PullForce,Time)
+select a.BrandID,a.TestItem,a.PullForceUnit,a.PullForce,a.Time
+from Trade_To_Pms.dbo.Brand_PullingTestStandarList a
+left join production.dbo.Brand_PullingTestStandarList b on a.BrandID = b.BrandID and a.TestItem = b.TestItem and a.PullForceUnit = b.PullForceUnit
+where b.BrandID is null
+
+--GarmentTestShrinkage
+delete a
+from production.dbo.GarmentTestShrinkage a
+left join Trade_To_Pms.dbo.GarmentTestShrinkage b on a.Ukey = b.Ukey 
+where b.Ukey is null
+
+update a set 
+ [BrandID] = b.[BrandID]
+,[LocationGroup] = b.[LocationGroup]
+,[Location] = b.[Location]
+,[Seq] = b.[Seq]
+,[Type] = b.[Type]
+from production.dbo.GarmentTestShrinkage a
+inner join Trade_To_Pms.dbo.GarmentTestShrinkage b on a.Ukey = b.Ukey 
+
+insert production.dbo.GarmentTestShrinkage 
+           ([BrandID]
+           ,[LocationGroup]
+           ,[Location]
+           ,[Seq]
+           ,[Type])
+select a.[BrandID],a.[LocationGroup],a.[Location],a.[Seq],a.[Type]
+from Trade_To_Pms.dbo.GarmentTestShrinkage a
+left join production.dbo.GarmentTestShrinkage b on  a.Ukey = b.Ukey 
+where b.BrandID is null
+
 END
