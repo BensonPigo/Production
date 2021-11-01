@@ -4555,6 +4555,127 @@ LEFT JOIN Production.dbo.IEReasonLBRNotHit_Detail b ON a.Type = b.Type and a.Typ
 WHERE b.Type is null
 
 
+---------------GarmentDefectType
+
+update b set
+	 b.[ID]			 = a.[ID]
+	,b.[Description] = a.[Description]
+	,b.[Junk]		 = a.[Junk]
+	,b.[AddName]	 = a.[AddName]
+	,b.[AddDate]	 = a.[AddDate]
+	,b.[EditName]	 = a.[EditName]
+	,b.[EditDate]	 = a.[EditDate]
+	,b.[Seq]		 = a.[Seq]
+FROM Trade_To_Pms.dbo.[GarmentDefectType] a
+inner JOIN Production.dbo.[GarmentDefectType] b ON a.ID = b.ID
+
+INSERT INTO [dbo].[GarmentDefectType]
+           ([ID]
+           ,[Description]
+           ,[Junk]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate]
+           ,[Seq])
+select		a.[ID]
+           ,a.[Description]
+           ,a.[Junk]
+           ,a.[AddName]
+           ,a.[AddDate]
+           ,a.[EditName]
+           ,a.[EditDate]
+           ,a.[Seq]
+FROM Trade_To_Pms.dbo.[GarmentDefectType] a
+LEFT JOIN Production.dbo.[GarmentDefectType] b ON a.ID = b.ID
+WHERE b.ID is null
+
+---------------GarmentDefectCode
+update b set
+	 b.[ID]						= a.[ID]
+	,b.[Description]			= a.[Description]
+	,b.[GarmentDefectTypeID]	= a.[GarmentDefectTypeID]
+	,b.[AddName]				= a.[AddName]
+	,b.[AddDate]				= a.[AddDate]
+	,b.[EditName]				= a.[EditName]
+	,b.[EditDate]				= a.[EditDate]
+	,b.[Junk]					= a.[Junk]
+	,b.[Seq]					= a.[Seq]
+	,b.[ReworkTotalFailCode]	= a.[ReworkTotalFailCode]
+	,b.[IsCFA]					= a.[IsCFA]
+	,b.[IsCriticalDefect]		= a.[IsCriticalDefect]
+FROM Trade_To_Pms.dbo.[GarmentDefectCode] a
+inner JOIN Production.dbo.[GarmentDefectCode] b ON a.ID = b.ID
+
+INSERT INTO [dbo].[GarmentDefectCode]
+           ([ID]
+           ,[Description]
+           ,[GarmentDefectTypeID]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate]
+           ,[Junk]
+           ,[Seq]
+           ,[ReworkTotalFailCode]
+           ,[IsCFA]
+           ,[IsCriticalDefect])
+select
+			a.[ID]
+           ,a.[Description]
+           ,a.[GarmentDefectTypeID]
+           ,a.[AddName]
+           ,a.[AddDate]
+           ,a.[EditName]
+           ,a.[EditDate]
+           ,a.[Junk]
+           ,a.[Seq]
+           ,a.[ReworkTotalFailCode]
+           ,a.[IsCFA]
+           ,a.[IsCriticalDefect]  
+FROM Trade_To_Pms.dbo.[GarmentDefectCode] a
+LEFT JOIN Production.dbo.[GarmentDefectCode] b ON a.ID = b.ID
+WHERE b.ID is null
+
+--FabricDefect
+update a set	a.Type = b.Type,
+				a.DescriptionEN = b.DescriptionEN,
+				a.Junk = b.Junk,
+				a.AddName = b.AddName,
+				a.AddDate = b.AddDate,
+				a.EditName = b.EditName,
+				a.EditDate = b.EditDate
+FROM Production.dbo.FabricDefect a
+INNER JOIN Trade_To_Pms.dbo.FabricDefect b ON a.ID = b.ID
+
+update a set a.Junk = 1
+FROM Production.dbo.FabricDefect a
+where not exists(select 1 from Trade_To_Pms.dbo.FabricDefect b where a.ID = b.ID)
+
+insert into Production.dbo.FabricDefect(ID, Type, DescriptionEN, Junk, AddName, AddDate, EditName, EditDate)
+select	b.ID, b.Type, b.DescriptionEN, b.Junk, b.AddName, b.AddDate, b.EditName, b.EditDate
+from Trade_To_Pms.dbo.FabricDefect b
+where not exists(select 1 from Production.dbo.FabricDefect a where a.ID = b.ID)
+
+--AccessoryDefect
+update a set	a.Description = b.Description,
+				a.Junk = b.Junk,
+				a.AddName = b.AddName,
+				a.AddDate = b.AddDate,
+				a.EditName = b.EditName,
+				a.EditDate = b.EditDate
+FROM Production.dbo.AccessoryDefect a
+INNER JOIN Trade_To_Pms.dbo.AccessoryDefect b ON a.ID = b.ID
+
+update a set a.Junk = 1
+FROM Production.dbo.AccessoryDefect a
+where not exists(select 1 from Trade_To_Pms.dbo.AccessoryDefect b where a.ID = b.ID)
+
+insert into Production.dbo.AccessoryDefect(ID, Description, Junk, AddName, AddDate, EditName, EditDate)
+select	b.ID, b.Description, b.Junk, b.AddName, b.AddDate, b.EditName, b.EditDate
+from Trade_To_Pms.dbo.AccessoryDefect b
+where not exists(select 1 from Production.dbo.AccessoryDefect a where a.ID = b.ID)
+
 ---Adidas_FGWT
 delete a
 from production.dbo.Adidas_FGWT a

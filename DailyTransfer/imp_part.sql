@@ -586,6 +586,25 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 
 	drop table #tmpMachinePO_Detail_TPEAP
 
+	
+------------------MachinePO_Detail_TPETTbefore----------------------
+INSERT INTO [dbo].MachinePO_Detail_TPETTbefore([ID],[APDate],[VoucherID],TPEPOID)
+select a.[ID],a.[APDate],a.[VoucherID],a.[POID]
+from SciTrade_To_Pms_MmsTTbefore a
+left join MachinePO_Detail_TPETTbefore b on a.ID = b.ID and a.[APDate] = b.[APDate] and a.[VoucherID] = b.[VoucherID] and a.[POID] = b.TPEPOID
+where b.ID is null
+
+------------------MachinePO_Detail_TPESurcharge----------------------
+
+INSERT INTO [dbo].[MachinePO_Detail_TPESurcharge]([ID],[APDate],[VoucherID],TPEPOID,[Seq1],[Seq2])
+select a.[ID],a.[APDate],a.[VoucherID],a.[POID],a.[Seq1],a.[Seq2]
+from SciTrade_To_Pms_MmsSurcharge a
+left join MachinePO_Detail_TPESurcharge b on a.ID = b.ID and a.[APDate] = b.[APDate] and a.[VoucherID] = b.[VoucherID] and a.[POID] = b.TPEPOID
+and a.[Seq1] = b.[Seq1] and a.[Seq2] = b.[Seq2]
+where b.ID is null
+
+
+
 ------------------MiscPO_Detail_TPEAP----------------------
 	select b.ID,a.Seq1,a.Seq2,[TPEPOID] = b.POID,b.APDATE,b.VoucherID,b.Price, [Qty] = sum(b.Qty) 
 	into #tmpMiscPO_Detail

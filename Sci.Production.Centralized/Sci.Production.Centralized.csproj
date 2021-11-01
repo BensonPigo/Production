@@ -168,6 +168,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="QA_B20.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QA_B20.Designer.cs">
+      <DependentUpon>QA_B20.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QA_B20_SettingSort.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QA_B20_SettingSort.Designer.cs">
+      <DependentUpon>QA_B20_SettingSort.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QA_B21.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QA_B21.Designer.cs">
+      <DependentUpon>QA_B21.cs</DependentUpon>
+    </Compile>
     <Compile Include="IE_B92.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -197,6 +215,18 @@
     </Compile>
     <Compile Include="IE_B02.Designer.cs">
       <DependentUpon>IE_B02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QA_B02.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QA_B02.Designer.cs">
+      <DependentUpon>QA_B02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QA_B01.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QA_B01.Designer.cs">
+      <DependentUpon>QA_B01.cs</DependentUpon>
     </Compile>
     <Compile Include="Shipping_B09.cs">
       <SubType>Form</SubType>
@@ -481,6 +511,15 @@
       <DependentUpon>WH_B01.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="QA_B20.resx">
+      <DependentUpon>QA_B20.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QA_B20_SettingSort.resx">
+      <DependentUpon>QA_B20_SettingSort.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QA_B21.resx">
+      <DependentUpon>QA_B21.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="IE_B92.resx">
       <DependentUpon>IE_B92.cs</DependentUpon>
     </EmbeddedResource>
@@ -496,6 +535,12 @@
     <EmbeddedResource Include="IE_B02.resx">
       <DependentUpon>IE_B02.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QA_B02.resx">
+      <DependentUpon>QA_B02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QA_B01.resx">
+      <DependentUpon>QA_B01.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Shipping_B09.resx">
       <DependentUpon>Shipping_B09.cs</DependentUpon>

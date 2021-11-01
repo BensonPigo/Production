@@ -40,6 +40,7 @@
             this.label1 = new Sci.Win.UI.Label();
             this.displayHangerFailCode = new Sci.Win.UI.DisplayBox();
             this.chk_isCriticalDefect = new Sci.Win.UI.CheckBox();
+            this.checkBox1 = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -54,6 +55,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.chk_isCriticalDefect);
             this.detailcont.Controls.Add(this.displayHangerFailCode);
             this.detailcont.Controls.Add(this.label1);
@@ -121,11 +123,13 @@
             // 
             // txtDefectcode
             // 
-            this.txtDefectcode.BackColor = System.Drawing.Color.White;
+            this.txtDefectcode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtDefectcode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.txtDefectcode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDefectcode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtDefectcode.IsSupportEditMode = false;
             this.txtDefectcode.Location = new System.Drawing.Point(194, 66);
             this.txtDefectcode.Name = "txtDefectcode";
+            this.txtDefectcode.ReadOnly = true;
             this.txtDefectcode.Size = new System.Drawing.Size(135, 23);
             this.txtDefectcode.TabIndex = 0;
             this.txtDefectcode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtDefectcode_Validating);
@@ -145,13 +149,15 @@
             // 
             // editDescription
             // 
-            this.editDescription.BackColor = System.Drawing.Color.White;
+            this.editDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editDescription.CausesValidation = false;
             this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
-            this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editDescription.IsSupportEditMode = false;
             this.editDescription.Location = new System.Drawing.Point(194, 132);
             this.editDescription.Multiline = true;
             this.editDescription.Name = "editDescription";
+            this.editDescription.ReadOnly = true;
             this.editDescription.Size = new System.Drawing.Size(460, 94);
             this.editDescription.TabIndex = 2;
             this.editDescription.Leave += new System.EventHandler(this.EditDescription_Leave);
@@ -179,9 +185,11 @@
             // 
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkJunk.IsSupportEditMode = false;
             this.checkJunk.Location = new System.Drawing.Point(344, 68);
             this.checkJunk.Name = "checkJunk";
+            this.checkJunk.ReadOnly = true;
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
             this.checkJunk.TabIndex = 10;
             this.checkJunk.Text = "Junk";
@@ -209,13 +217,27 @@
             // 
             this.chk_isCriticalDefect.AutoSize = true;
             this.chk_isCriticalDefect.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsCriticalDefect", true));
-            this.chk_isCriticalDefect.ForeColor = System.Drawing.Color.Blue;
+            this.chk_isCriticalDefect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chk_isCriticalDefect.IsSupportEditMode = false;
             this.chk_isCriticalDefect.Location = new System.Drawing.Point(344, 335);
             this.chk_isCriticalDefect.Name = "chk_isCriticalDefect";
+            this.chk_isCriticalDefect.ReadOnly = true;
             this.chk_isCriticalDefect.Size = new System.Drawing.Size(128, 21);
             this.chk_isCriticalDefect.TabIndex = 13;
             this.chk_isCriticalDefect.Text = "Is Critical Defect";
             this.chk_isCriticalDefect.UseVisualStyleBackColor = true;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsCFA", true));
+            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBox1.Location = new System.Drawing.Point(478, 335);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(111, 21);
+            this.checkBox1.TabIndex = 15;
+            this.checkBox1.Text = "For CFA Only";
+            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // B21
             // 
@@ -226,7 +248,6 @@
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportEdit = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.KeyPreview = true;
@@ -261,5 +282,6 @@
         private Win.UI.DisplayBox displayHangerFailCode;
         private Win.UI.Label label1;
         private Win.UI.CheckBox chk_isCriticalDefect;
+        private Win.UI.CheckBox checkBox1;
     }
 }

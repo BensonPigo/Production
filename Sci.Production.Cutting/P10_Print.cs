@@ -109,6 +109,7 @@ from (
         , a.BundleNo
         , b.SubCutNo
         , a.RFIDScan
+        , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -380,6 +381,7 @@ order by x.[Bundle]");
                     FabricPanelCode = MyUtility.Convert.GetString(row1["FabricPanelCode"]),
                     BundleID = row1["BundleID"].ToString(),
                     RFIDScan = MyUtility.Convert.GetBool(row1["RFIDScan"]),
+                    CutCell = row1["CutCell"].ToString(),
                 }).ToList();
                 string fileName = "Cutting_P10_Layout1";
                 Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
@@ -505,6 +507,7 @@ order by x.[Bundle]");
                         BundleID = dr["BundleID"].ToString(),
                         BundleNo = dr["BundleNo"].ToString(),
                         RFIDScan = MyUtility.Convert.GetBool(dr["RFIDScan"]),
+                        CutCell = dr["CutCell"].ToString(),
                     }).ToList();
 
                     this.ShowWaitMessage("Process Print!");
@@ -728,7 +731,7 @@ order by x.[Bundle]");
                 string contian;
                 contian = $@"Grp: {r.Group_right}  Tone: {r.Tone}  Line#: {r.Line}  {r.Group_left}
 SP#:{r.SP}
-Style#: {r.Style}
+Style#: {r.Style} Cell: {r.CutCell}
 Cut#: {r.Body_Cut}
 Color: {r.Color}
 Size: {r.Size}     Part: {r.Parts}

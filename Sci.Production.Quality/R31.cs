@@ -161,7 +161,7 @@ OUTER APPLY(
 	SELECT [Val]=Sum(pd.ShipQty)
 	From PackingList_Detail pd
 	INNER JOIN CFAInspectionRecord cfa on pd.StaggeredCFAInspectionRecordID	 = cfa.ID
-	Where cfa.Status='Confirmed' and cfa.Stage='Staggered' and pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
+	Where cfa.Status='Confirmed' and cfa.Stage='Stagger' and pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
 )StaggeredOutput
 OUTER APPLY(
 	SELECT [Val] = IIF( (SELECT COUNT(oq2.Seq) FROM Order_QtyShip oq2 WHERE oq2.ID = oq.ID) > 1
@@ -188,7 +188,7 @@ OUTER APPLY(
 	From PackingList_Detail pd 
 	INNER JOIN CFAInspectionRecord CFA on pd.StaggeredCFAInspectionRecordID=CFA.ID
 	Where CFA.Status='Confirmed' 
-	AND CFA.Stage='Staggered'
+	AND CFA.Stage='Stagger'
 	AND pd.CTNQty=1
 	AND pd.OrderID = oq.ID 
 	AND pd.OrderShipmodeSeq = oq.Seq
@@ -339,7 +339,7 @@ OUTER APPLY(
 	SELECT [Val]=Sum(pd.ShipQty)
 	From PackingList_Detail pd
 	INNER JOIN CFAInspectionRecord cfa on pd.StaggeredCFAInspectionRecordID	 = cfa.ID
-	Where cfa.Status='Confirmed' and cfa.Stage='Staggered' and pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
+	Where cfa.Status='Confirmed' and cfa.Stage='Stagger' and pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
 )StaggeredOutput
 OUTER APPLY(
 	SELECT [Val] = IIF( (SELECT COUNT(oq2.Seq) FROM Order_QtyShip oq2 WHERE oq2.ID = oq.ID) > 1
@@ -366,7 +366,7 @@ OUTER APPLY(
 	From PackingList_Detail pd 
 	INNER JOIN CFAInspectionRecord CFA on pd.StaggeredCFAInspectionRecordID=CFA.ID
 	Where CFA.Status='Confirmed' 
-	AND CFA.Stage='Staggered'
+	AND CFA.Stage='Stagger'
 	AND pd.CTNQty=1
 	AND pd.OrderID = oq.ID 
 	AND pd.OrderShipmodeSeq = oq.Seq
@@ -461,7 +461,7 @@ WHERE 1=1
 
                 sqlCmd.Append($@"
 ----戴上要檢驗的Stage帽子
-SELECT DISTINCT [Stage]='Staggered',t.*
+SELECT DISTINCT [Stage]='Stagger',t.*
 INTO #NeedCkeck
 FROM  #tmp t 
 UNION 
@@ -506,7 +506,7 @@ WHERE ID IN(
                 #region Outstanding WHERE
                 List<string> outstandingWHERE = new List<string>();
 
-                if (MyUtility.Check.Empty(this.Stage) || this.Stage == "Staggered")
+                if (MyUtility.Check.Empty(this.Stage) || this.Stage == "Stagger")
                 {
                     string stageSql = $@"
 
@@ -519,7 +519,7 @@ SELECT need.Stage
 								INNER JOIN #PackingList_Detail pd ON pd.OrderID = a.Id ANd pd.OrderShipmodeSeq =a.Seq
 								INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cfo.OrderID = pd.OrderID AND cfo.SEQ = pd.OrderShipmodeSeq
 								INNER JOIN #CFAInspectionRecord cf ON cf.ID = cfo.ID
-								WHERE cf.Stage = 'Staggered' AND a.Category != 'Sample' AND cf.Result = 'Fail' AND cf.Status ='Confirmed'
+								WHERE cf.Stage = 'Stagger' AND a.Category != 'Sample' AND cf.Result = 'Fail' AND cf.Status ='Confirmed'
 								AND a.Id = need.Id AND a.Seq = need.Seq
 							)
 						THEN 'Fail'	
@@ -530,7 +530,7 @@ SELECT need.Stage
 						INNER JOIN #PackingList_Detail pd ON pd.OrderID = a.Id ANd pd.OrderShipmodeSeq =a.Seq
 						INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cfo.OrderID = pd.OrderID AND cfo.SEQ = pd.OrderShipmodeSeq
 						INNER JOIN #CFAInspectionRecord cf ON cf.ID = cfo.ID
-						WHERE cf.Stage = 'Staggered' AND a.Category != 'Sample' AND  cf.Status ='Confirmed'
+						WHERE cf.Stage = 'Stagger' AND a.Category != 'Sample' AND  cf.Status ='Confirmed'
 						AND a.Id = need.Id AND a.Seq = need.Seq
 					)
 			 THEN ''
@@ -545,7 +545,7 @@ SELECT need.Stage
 									FROM #CFAInspectionRecord cf
 									INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
 									WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
-									AND cf.Stage='Staggered' AND cf.Status='Confirmed'
+									AND cf.Stage='Stagger' AND cf.Status='Confirmed'
 									AND (	
 											cfo.Carton = pd.CTNStartNo
 										OR cfo.Carton LIKE  pd.CTNStartNo +',%' 
@@ -564,7 +564,7 @@ SELECT need.Stage
 									FROM #CFAInspectionRecord cf
 									INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
 									WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
-									AND cf.Stage='Staggered' AND cf.Status='Confirmed'
+									AND cf.Stage='Stagger' AND cf.Status='Confirmed'
 									AND (	
 											cfo.Carton = pd.CTNStartNo
 										OR cfo.Carton LIKE  pd.CTNStartNo +',%' 
@@ -582,7 +582,7 @@ SELECT need.Stage
 									FROM #CFAInspectionRecord cf
 									INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
 									WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
-									AND cf.Stage='Staggered' AND cf.Status='Confirmed' AND cf.Result='Fail'
+									AND cf.Stage='Stagger' AND cf.Status='Confirmed' AND cf.Result='Fail'
 									AND (	
 											cfo.Carton = pd.CTNStartNo
 										OR cfo.Carton LIKE  pd.CTNStartNo +',%' 
@@ -602,7 +602,7 @@ SELECT need.Stage
 									FROM #CFAInspectionRecord cf
 									INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
 									WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
-									AND cf.Stage='Staggered' AND cf.Status='Confirmed' AND cf.Result='Fail'
+									AND cf.Stage='Stagger' AND cf.Status='Confirmed' AND cf.Result='Fail'
 									AND (	
 											cfo.Carton = pd.CTNStartNo
 										OR cfo.Carton LIKE  pd.CTNStartNo +',%' 
@@ -612,7 +612,7 @@ SELECT need.Stage
 								) )
 	,need.*
 FROM #NeedCkeck need
-WHERE need.Stage = 'Staggered' AND need.Category != 'Sample'	
+WHERE need.Stage = 'Stagger' AND need.Category != 'Sample'	
 AND (
 		SELECT COUNT(DISTINCT CTNStartNo)
 		FROM #PackingList_Detail pd
@@ -622,7 +622,7 @@ AND (
 			FROM #CFAInspectionRecord cf
 			INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
 			WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
-			AND cf.Stage='Staggered' AND cf.Status='Confirmed' AND cf.Result!='Pass'
+			AND cf.Stage='Stagger' AND cf.Status='Confirmed' AND cf.Result!='Pass'
 			AND (	
 					cfo.Carton = pd.CTNStartNo
 				OR cfo.Carton LIKE  pd.CTNStartNo +',%' 
