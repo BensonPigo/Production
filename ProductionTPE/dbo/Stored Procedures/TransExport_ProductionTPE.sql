@@ -137,6 +137,26 @@ BEGIN
 	-------------IEReasonLBRnotHit_Detail-------------------
 	RAISERROR('IEReasonLBRnotHit_Detail  - Starts',0,0)
 	select * into dbo.IEReasonLBRnotHit_Detail from (select * from ProductionTPE.dbo.IEReasonLBRnotHit_Detail ) as tmp
+	
+	-------------Adidas_FGWT-------------------
+	RAISERROR('Adidas_FGWT  - Starts',0,0)
+	select * into dbo.Adidas_FGWT from (select * from ProductionTPE.dbo.Adidas_FGWT ) as tmp
+	
+	-------------TypeSelection-------------------
+	RAISERROR('TypeSelection  - Starts',0,0)
+	select * into dbo.TypeSelection from (select * from ProductionTPE.dbo.TypeSelection ) as tmp
+	
+	-------------QABrandSetting-------------------
+	RAISERROR('QABrandSetting  - Starts',0,0)
+	select * into dbo.QABrandSetting from (select * from ProductionTPE.dbo.QABrandSetting ) as tmp
+	
+	-------------Brand_PullingTestStandarList-------------------
+	RAISERROR('Brand_PullingTestStandarList  - Starts',0,0)
+	select * into dbo.Brand_PullingTestStandarList from (select * from ProductionTPE.dbo.Brand_PullingTestStandarList ) as tmp
+	
+	-------------GarmentTestShrinkage-------------------
+	RAISERROR('GarmentTestShrinkage  - Starts',0,0)
+	select * into dbo.GarmentTestShrinkage from (select * from ProductionTPE.dbo.GarmentTestShrinkage ) as tmp
 
 	set transaction isolation level read committed
 END
