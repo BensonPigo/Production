@@ -64,6 +64,8 @@ CREATE TABLE [dbo].[System] (
     [NoRestrictOrdersDelivery]   BIT            CONSTRAINT [DF_System_NoRestrictOrdersDelivery] DEFAULT ((0)) NOT NULL,
     [RFCardEraseBeforePrinting]  BIT            DEFAULT ((0)) NOT NULL,
     [Region] Varchar (2) NOT NULL CONSTRAINT [DF_System_Region]  DEFAULT(''), 
+    [StyleFDFilePath] VARCHAR(80) NOT NULL DEFAULT (''), 
+    [StyleRRLRPath] VARCHAR(80) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
@@ -310,3 +312,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否不�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否combine subprocess產生bundle', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'IsCombineSubProcess';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'FD 檔案路徑',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'StyleFDFilePath'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'RR, LR 檔案路徑',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'StyleRRLRPath'
