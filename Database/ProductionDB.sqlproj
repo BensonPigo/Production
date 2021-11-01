@@ -2682,6 +2682,7 @@
     <Build Include="dbo\Tables\Thread_Replace.sql" />
     <Build Include="dbo\Tables\ShippingHistory.sql" />
     <Build Include="dbo\Tables\Order_ShipPerformance.sql" />
+    <Build Include="dbo\Tables\Brand_PullingTestStandarList.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
