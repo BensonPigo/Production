@@ -2683,6 +2683,7 @@
     <Build Include="dbo\Tables\ShippingHistory.sql" />
     <Build Include="dbo\Tables\Order_ShipPerformance.sql" />
     <Build Include="dbo\Stored Procedures\FinalInspectionDataToPMS.sql" />
+    <Build Include="dbo\Tables\Style_RRLR_Report.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
