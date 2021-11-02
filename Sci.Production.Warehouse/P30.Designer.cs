@@ -44,16 +44,17 @@
             this.labelFabricType = new Sci.Win.UI.Label();
             this.labelCategory = new Sci.Win.UI.Label();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.comboMtlTypeID = new Sci.Win.UI.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtSP_e = new Sci.Win.UI.TextBox();
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.comboMaterialType = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.txtmfactory = new Sci.Production.Class.Txtfactory();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.gridComplete = new Sci.Win.UI.Grid();
             this.gridRel = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.txtSP_e = new Sci.Win.UI.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
-            this.comboFabricType = new Sci.Production.Class.ComboDropDownList(this.components);
-            this.txtmfactory = new Sci.Production.Class.Txtfactory();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -216,10 +217,11 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.comboMtlTypeID);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.txtSP_e);
             this.panel1.Controls.Add(this.comboCategory);
-            this.panel1.Controls.Add(this.comboFabricType);
+            this.panel1.Controls.Add(this.comboMaterialType);
             this.panel1.Controls.Add(this.txtmfactory);
             this.panel1.Controls.Add(this.labelCategory);
             this.panel1.Controls.Add(this.labelFabricType);
@@ -235,6 +237,79 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 90);
             this.panel1.TabIndex = 2;
+            // 
+            // comboMtlTypeID
+            // 
+            this.comboMtlTypeID.BackColor = System.Drawing.Color.White;
+            this.comboMtlTypeID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboMtlTypeID.FormattingEnabled = true;
+            this.comboMtlTypeID.IsSupportUnselect = true;
+            this.comboMtlTypeID.Location = new System.Drawing.Point(777, 45);
+            this.comboMtlTypeID.Name = "comboMtlTypeID";
+            this.comboMtlTypeID.OldText = "";
+            this.comboMtlTypeID.Size = new System.Drawing.Size(122, 24);
+            this.comboMtlTypeID.TabIndex = 20;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(261, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(16, 17);
+            this.label1.TabIndex = 19;
+            this.label1.Text = "~";
+            // 
+            // txtSP_e
+            // 
+            this.txtSP_e.BackColor = System.Drawing.Color.White;
+            this.txtSP_e.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP_e.Location = new System.Drawing.Point(283, 15);
+            this.txtSP_e.Name = "txtSP_e";
+            this.txtSP_e.Size = new System.Drawing.Size(117, 23);
+            this.txtSP_e.TabIndex = 2;
+            // 
+            // comboCategory
+            // 
+            this.comboCategory.AddAllItem = false;
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(553, 47);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
+            this.comboCategory.Size = new System.Drawing.Size(121, 24);
+            this.comboCategory.TabIndex = 5;
+            this.comboCategory.Type = "Pms_MtlCategory";
+            // 
+            // comboMaterialType
+            // 
+            this.comboMaterialType.AddAllItem = false;
+            this.comboMaterialType.BackColor = System.Drawing.Color.White;
+            this.comboMaterialType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboMaterialType.FormattingEnabled = true;
+            this.comboMaterialType.IsSupportUnselect = true;
+            this.comboMaterialType.Location = new System.Drawing.Point(777, 15);
+            this.comboMaterialType.Name = "comboMaterialType";
+            this.comboMaterialType.OldText = "";
+            this.comboMaterialType.Size = new System.Drawing.Size(121, 24);
+            this.comboMaterialType.TabIndex = 6;
+            this.comboMaterialType.Type = "Pms_FabricType";
+            this.comboMaterialType.SelectedIndexChanged += new System.EventHandler(this.ComboMaterialType_SelectedIndexChanged);
+            // 
+            // txtmfactory
+            // 
+            this.txtmfactory.BackColor = System.Drawing.Color.White;
+            this.txtmfactory.BoolFtyGroupList = true;
+            this.txtmfactory.FilteMDivision = true;
+            this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IsProduceFty = false;
+            this.txtmfactory.IssupportJunk = false;
+            this.txtmfactory.Location = new System.Drawing.Point(553, 15);
+            this.txtmfactory.MDivision = null;
+            this.txtmfactory.Name = "txtmfactory";
+            this.txtmfactory.Size = new System.Drawing.Size(121, 23);
+            this.txtmfactory.TabIndex = 4;
             // 
             // splitContainer1
             // 
@@ -302,64 +377,6 @@
             this.gridRel.TabIndex = 0;
             this.gridRel.TabStop = false;
             // 
-            // txtSP_e
-            // 
-            this.txtSP_e.BackColor = System.Drawing.Color.White;
-            this.txtSP_e.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP_e.Location = new System.Drawing.Point(283, 15);
-            this.txtSP_e.Name = "txtSP_e";
-            this.txtSP_e.Size = new System.Drawing.Size(117, 23);
-            this.txtSP_e.TabIndex = 2;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(261, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(16, 17);
-            this.label1.TabIndex = 19;
-            this.label1.Text = "~";
-            // 
-            // comboCategory
-            // 
-            this.comboCategory.BackColor = System.Drawing.Color.White;
-            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCategory.FormattingEnabled = true;
-            this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(553, 47);
-            this.comboCategory.Name = "comboCategory";
-            this.comboCategory.OldText = "";
-            this.comboCategory.Size = new System.Drawing.Size(121, 24);
-            this.comboCategory.TabIndex = 5;
-            this.comboCategory.Type = "Pms_MtlCategory";
-            // 
-            // comboFabricType
-            // 
-            this.comboFabricType.BackColor = System.Drawing.Color.White;
-            this.comboFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFabricType.FormattingEnabled = true;
-            this.comboFabricType.IsSupportUnselect = true;
-            this.comboFabricType.Location = new System.Drawing.Point(777, 15);
-            this.comboFabricType.Name = "comboFabricType";
-            this.comboFabricType.OldText = "";
-            this.comboFabricType.Size = new System.Drawing.Size(121, 24);
-            this.comboFabricType.TabIndex = 6;
-            this.comboFabricType.Type = "Pms_FabricType";
-            // 
-            // txtmfactory
-            // 
-            this.txtmfactory.BackColor = System.Drawing.Color.White;
-            this.txtmfactory.BoolFtyGroupList = true;
-            this.txtmfactory.FilteMDivision = true;
-            this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtmfactory.IsProduceFty = false;
-            this.txtmfactory.IssupportJunk = false;
-            this.txtmfactory.Location = new System.Drawing.Point(553, 15);
-            this.txtmfactory.MDivision = null;
-            this.txtmfactory.Name = "txtmfactory";
-            this.txtmfactory.Size = new System.Drawing.Size(121, 23);
-            this.txtmfactory.TabIndex = 4;
-            // 
             // P30
             // 
             this.ClientSize = new System.Drawing.Size(1008, 601);
@@ -411,11 +428,12 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private Win.UI.Grid gridComplete;
         private Win.UI.Grid gridRel;
-        private Class.ComboDropDownList comboFabricType;
+        private Class.ComboDropDownList comboMaterialType;
         private Class.ComboDropDownList comboCategory;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
         private System.Windows.Forms.Label label1;
         private Win.UI.TextBox txtSP_e;
+        public Win.UI.ComboBox comboMtlTypeID;
     }
 }
