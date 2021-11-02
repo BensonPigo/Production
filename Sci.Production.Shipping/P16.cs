@@ -187,6 +187,7 @@ where ted.ID = '{0}'", masterID);
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
+            this.detailgrid.IsEditingReadOnly = true;
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("InventoryPOID", header: "From SP#", width: Ict.Win.Widths.AnsiChars(13))
                 .Text("InventorySEQ", header: "From SEQ", width: Ict.Win.Widths.AnsiChars(8))
@@ -241,37 +242,15 @@ where ted.ID = '{0}'", masterID);
             }
         }
 
-        private void BtnExpenseData_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void ControlColor()
         {
-            string col = MyUtility.Convert.GetString(this.CurrentMaintain["Type"]) == "3" ? "InvNo" : "WKNo";
             DataTable gridData;
             string sqlCmd = string.Empty;
 
-            switch (col)
-            {
-                case "InvNo":
-                    sqlCmd = string.Format(
-                        @"select 1
+            sqlCmd = string.Format(
+                   @"select 1
 from ShareExpense se WITH (NOLOCK) 
-LEFT JOIN SciFMS_AccountNo a on se.AccountID = a.ID
-where se.InvNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-                    break;
-                case "WKNo":
-                    sqlCmd = string.Format(
-                        @"select 1
-from ShareExpense se WITH (NOLOCK) 
-LEFT JOIN SciFMS_AccountNo a on se.AccountID = a.ID
 where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-                    break;
-                default:
-                    sqlCmd = "select 1 from ShareExpense WITH (NOLOCK) where 1=2";
-                    break;
-            }
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
             if (!result)
@@ -306,6 +285,12 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
             #endregion
 
             return base.ClickPrint();
+        }
+
+        private void BtnExpenseData_Click_1(object sender, EventArgs e)
+        {
+            P05_ExpenseData callNextForm = new P05_ExpenseData(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "WKNo", false);
+            callNextForm.ShowDialog(this);
         }
     }
 }

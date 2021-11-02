@@ -93,12 +93,12 @@
             this.dateDoxRcvDate = new Sci.Win.UI.DateBox();
             this.numTPEPaidUSD = new Sci.Win.UI.NumericBox();
             this.chkImportChange = new Sci.Win.UI.CheckBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.checkBox2 = new Sci.Win.UI.CheckBox();
-            this.checkBox3 = new Sci.Win.UI.CheckBox();
+            this.chkCustomOT = new Sci.Win.UI.CheckBox();
+            this.chkReplacement = new Sci.Win.UI.CheckBox();
+            this.chkDelay = new Sci.Win.UI.CheckBox();
             this.ChkDoortoDoorDelivery = new Sci.Win.UI.CheckBox();
-            this.checkBox5 = new Sci.Win.UI.CheckBox();
-            this.checkBox6 = new Sci.Win.UI.CheckBox();
+            this.chkSQCS = new Sci.Win.UI.CheckBox();
+            this.chkCIFTerms = new Sci.Win.UI.CheckBox();
             this.btnExpenseData = new Sci.Win.UI.Button();
             this.btnShippingMark = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
@@ -119,12 +119,12 @@
             // 
             this.masterpanel.Controls.Add(this.btnShippingMark);
             this.masterpanel.Controls.Add(this.btnExpenseData);
-            this.masterpanel.Controls.Add(this.checkBox6);
-            this.masterpanel.Controls.Add(this.checkBox5);
+            this.masterpanel.Controls.Add(this.chkCIFTerms);
+            this.masterpanel.Controls.Add(this.chkSQCS);
             this.masterpanel.Controls.Add(this.ChkDoortoDoorDelivery);
-            this.masterpanel.Controls.Add(this.checkBox3);
-            this.masterpanel.Controls.Add(this.checkBox2);
-            this.masterpanel.Controls.Add(this.checkBox1);
+            this.masterpanel.Controls.Add(this.chkDelay);
+            this.masterpanel.Controls.Add(this.chkReplacement);
+            this.masterpanel.Controls.Add(this.chkCustomOT);
             this.masterpanel.Controls.Add(this.chkImportChange);
             this.masterpanel.Controls.Add(this.numTPEPaidUSD);
             this.masterpanel.Controls.Add(this.dateDoxRcvDate);
@@ -256,12 +256,12 @@
             this.masterpanel.Controls.SetChildIndex(this.dateDoxRcvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTPEPaidUSD, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkImportChange, 0);
-            this.masterpanel.Controls.SetChildIndex(this.checkBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.checkBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.checkBox3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkCustomOT, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkReplacement, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkDelay, 0);
             this.masterpanel.Controls.SetChildIndex(this.ChkDoortoDoorDelivery, 0);
-            this.masterpanel.Controls.SetChildIndex(this.checkBox5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.checkBox6, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkSQCS, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkCIFTerms, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnExpenseData, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnShippingMark, 0);
@@ -737,7 +737,7 @@
             // numTruckFee
             // 
             this.numTruckFee.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTruckFee.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TruckFee", true));
+            this.numTruckFee.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FtyTruckFee", true));
             this.numTruckFee.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTruckFee.IsSupportEditMode = false;
             this.numTruckFee.Location = new System.Drawing.Point(894, 218);
@@ -986,45 +986,45 @@
             this.chkImportChange.Text = "No Import Charge";
             this.chkImportChange.UseVisualStyleBackColor = true;
             // 
-            // checkBox1
+            // chkCustomOT
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CustomOT", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkBox1.IsSupportEditMode = false;
-            this.checkBox1.Location = new System.Drawing.Point(578, 274);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.ReadOnly = true;
-            this.checkBox1.Size = new System.Drawing.Size(98, 21);
-            this.checkBox1.TabIndex = 185;
-            this.checkBox1.Text = "Custom OT";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.chkCustomOT.AutoSize = true;
+            this.chkCustomOT.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FtyOT", true));
+            this.chkCustomOT.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkCustomOT.IsSupportEditMode = false;
+            this.chkCustomOT.Location = new System.Drawing.Point(578, 274);
+            this.chkCustomOT.Name = "chkCustomOT";
+            this.chkCustomOT.ReadOnly = true;
+            this.chkCustomOT.Size = new System.Drawing.Size(98, 21);
+            this.chkCustomOT.TabIndex = 185;
+            this.chkCustomOT.Text = "Custom OT";
+            this.chkCustomOT.UseVisualStyleBackColor = true;
             // 
-            // checkBox2
+            // chkReplacement
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Replacement", true));
-            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox2.IsSupportEditMode = false;
-            this.checkBox2.Location = new System.Drawing.Point(578, 297);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(110, 21);
-            this.checkBox2.TabIndex = 186;
-            this.checkBox2.Text = "Replacement";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.chkReplacement.AutoSize = true;
+            this.chkReplacement.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Replacement", true));
+            this.chkReplacement.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkReplacement.IsSupportEditMode = false;
+            this.chkReplacement.Location = new System.Drawing.Point(578, 297);
+            this.chkReplacement.Name = "chkReplacement";
+            this.chkReplacement.Size = new System.Drawing.Size(110, 21);
+            this.chkReplacement.TabIndex = 186;
+            this.chkReplacement.Text = "Replacement";
+            this.chkReplacement.UseVisualStyleBackColor = true;
             // 
-            // checkBox3
+            // chkDelay
             // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Delay", true));
-            this.checkBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox3.IsSupportEditMode = false;
-            this.checkBox3.Location = new System.Drawing.Point(699, 275);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(63, 21);
-            this.checkBox3.TabIndex = 187;
-            this.checkBox3.Text = "Delay";
-            this.checkBox3.UseVisualStyleBackColor = true;
+            this.chkDelay.AutoSize = true;
+            this.chkDelay.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Delay", true));
+            this.chkDelay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkDelay.IsSupportEditMode = false;
+            this.chkDelay.Location = new System.Drawing.Point(699, 275);
+            this.chkDelay.Name = "chkDelay";
+            this.chkDelay.Size = new System.Drawing.Size(63, 21);
+            this.chkDelay.TabIndex = 187;
+            this.chkDelay.Text = "Delay";
+            this.chkDelay.UseVisualStyleBackColor = true;
             // 
             // ChkDoortoDoorDelivery
             // 
@@ -1039,33 +1039,33 @@
             this.ChkDoortoDoorDelivery.Text = "Door to Door Delivery";
             this.ChkDoortoDoorDelivery.UseVisualStyleBackColor = true;
             // 
-            // checkBox5
+            // chkSQCS
             // 
-            this.checkBox5.AutoSize = true;
-            this.checkBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SQCS", true));
-            this.checkBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkBox5.IsSupportEditMode = false;
-            this.checkBox5.Location = new System.Drawing.Point(699, 297);
-            this.checkBox5.Name = "checkBox5";
-            this.checkBox5.ReadOnly = true;
-            this.checkBox5.Size = new System.Drawing.Size(65, 21);
-            this.checkBox5.TabIndex = 189;
-            this.checkBox5.Text = "SQCS";
-            this.checkBox5.UseVisualStyleBackColor = true;
+            this.chkSQCS.AutoSize = true;
+            this.chkSQCS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SQCS", true));
+            this.chkSQCS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkSQCS.IsSupportEditMode = false;
+            this.chkSQCS.Location = new System.Drawing.Point(699, 297);
+            this.chkSQCS.Name = "chkSQCS";
+            this.chkSQCS.ReadOnly = true;
+            this.chkSQCS.Size = new System.Drawing.Size(65, 21);
+            this.chkSQCS.TabIndex = 189;
+            this.chkSQCS.Text = "SQCS";
+            this.chkSQCS.UseVisualStyleBackColor = true;
             // 
-            // checkBox6
+            // chkCIFTerms
             // 
-            this.checkBox6.AutoSize = true;
-            this.checkBox6.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CIFTerms", true));
-            this.checkBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkBox6.IsSupportEditMode = false;
-            this.checkBox6.Location = new System.Drawing.Point(770, 297);
-            this.checkBox6.Name = "checkBox6";
-            this.checkBox6.ReadOnly = true;
-            this.checkBox6.Size = new System.Drawing.Size(159, 21);
-            this.checkBox6.TabIndex = 190;
-            this.checkBox6.Text = "CIF terms by supplier";
-            this.checkBox6.UseVisualStyleBackColor = true;
+            this.chkCIFTerms.AutoSize = true;
+            this.chkCIFTerms.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CIFTerms", true));
+            this.chkCIFTerms.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkCIFTerms.IsSupportEditMode = false;
+            this.chkCIFTerms.Location = new System.Drawing.Point(770, 297);
+            this.chkCIFTerms.Name = "chkCIFTerms";
+            this.chkCIFTerms.ReadOnly = true;
+            this.chkCIFTerms.Size = new System.Drawing.Size(159, 21);
+            this.chkCIFTerms.TabIndex = 190;
+            this.chkCIFTerms.Text = "CIF terms by supplier";
+            this.chkCIFTerms.UseVisualStyleBackColor = true;
             // 
             // btnExpenseData
             // 
@@ -1077,6 +1077,7 @@
             this.btnExpenseData.TabIndex = 191;
             this.btnExpenseData.Text = "Expense Data";
             this.btnExpenseData.UseVisualStyleBackColor = true;
+            this.btnExpenseData.Click += new System.EventHandler(this.BtnExpenseData_Click_1);
             // 
             // btnShippingMark
             // 
@@ -1092,6 +1093,10 @@
             // 
             this.ClientSize = new System.Drawing.Size(1008, 582);
             this.GridAlias = "TransferExport_Detail";
+            this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
+            this.IsSupportNew = false;
+            this.KeyField1 = "ID";
             this.Name = "P16";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "Shipping P16. Transfer Material WK";
@@ -1183,12 +1188,12 @@
         private Win.UI.DateBox dateDoxRcvDate;
         private Win.UI.NumericBox numTPEPaidUSD;
         private Win.UI.CheckBox chkImportChange;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.CheckBox checkBox2;
-        private Win.UI.CheckBox checkBox3;
+        private Win.UI.CheckBox chkCustomOT;
+        private Win.UI.CheckBox chkReplacement;
+        private Win.UI.CheckBox chkDelay;
         private Win.UI.CheckBox ChkDoortoDoorDelivery;
-        private Win.UI.CheckBox checkBox5;
-        private Win.UI.CheckBox checkBox6;
+        private Win.UI.CheckBox chkSQCS;
+        private Win.UI.CheckBox chkCIFTerms;
         private Win.UI.Button btnExpenseData;
         private Win.UI.Button btnShippingMark;
     }
