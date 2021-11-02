@@ -1268,6 +1268,14 @@ when matched then
                         return;
                     }
 
+                    // 更新表頭
+                    if (MyUtility.Check.Seek($"select 1 from TransferIn where ID = '{this.CurrentMaintain["ID"]}' and Status = 'Confirmed'"))
+                    {
+                        transactionscope.Dispose();
+                        MyUtility.Msg.WarningBox("Other user already confirmed!");
+                        return;
+                    }
+
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         transactionscope.Dispose();
@@ -1644,6 +1652,13 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                         }
                     }
                     #endregion
+
+                    if (MyUtility.Check.Seek($"select 1 from TransferIn where ID = '{this.CurrentMaintain["ID"]}' and Status = 'New'"))
+                    {
+                        transactionscope.Dispose();
+                        MyUtility.Msg.WarningBox("Other user already unconfirmed!");
+                        return;
+                    }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
