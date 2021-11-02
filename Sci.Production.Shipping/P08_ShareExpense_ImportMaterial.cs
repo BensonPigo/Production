@@ -191,6 +191,35 @@ select * from FtyExportData");
             }
             #endregion
 
+            #region 組TransferExport SQL
+            sqlCmd.Append(@"
+union all
+select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, ID as InvNo
+, '' as ShippingAPID, '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
+from TransferExport WITH (NOLOCK) 
+where 1=1
+");
+            if (!MyUtility.Check.Empty(this.dateArrivePortDate.Value1))
+            {
+                sqlCmd.Append(string.Format(" and PortArrival >= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value1).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this.dateArrivePortDate.Value2))
+            {
+                sqlCmd.Append(string.Format(" and PortArrival <= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value2).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtBLNo.Text))
+            {
+                sqlCmd.Append(string.Format(" and BLNo = '{0}' ", this.txtBLNo.Text));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtWKNo.Text))
+            {
+                sqlCmd.Append(string.Format(" and ID = '{0}' ", this.txtWKNo.Text));
+            }
+            #endregion
+
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData);
             if (!result)
             {

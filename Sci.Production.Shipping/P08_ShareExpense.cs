@@ -505,7 +505,7 @@ where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
             this.Helper.Controls.Grid.Generator(this.gridBLNo)
                 .Text("BLNo", header: "BL/MAWB No.", width: Widths.AnsiChars(13), settings: bLNo)
                 .Text("BL2No", header: "FCR/BL/HAWB", width: Widths.AnsiChars(13), settings: bL2No)
-                .Text(MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT" ? "WKNo" : "InvNo", header: MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT" ? "WK#/Fty WK#" : "GB#/Fty WK#/Packing#", width: Widths.AnsiChars(18), settings: wKNO)
+                .Text(MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT" ? "WKNo" : "InvNo", header: MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT" ? "WK#/Transfer WK#/Fty WK#" : "GB#/Transfer WK#/Fty WK#/Packing#", width: Widths.AnsiChars(25), settings: wKNO)
 
                 .Text("DropDownListName", header: "Fty WK# Type", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("ShipModeID", header: "Shipping Mode", width: Widths.AnsiChars(5), iseditingreadonly: true)

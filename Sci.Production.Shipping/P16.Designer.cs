@@ -76,7 +76,6 @@
             this.labTruckFee = new Sci.Win.UI.Label();
             this.numOTFee = new Sci.Win.UI.NumericBox();
             this.label3 = new Sci.Win.UI.Label();
-            this.txtSeq1 = new Sci.Production.Class.TxtSeq();
             this.btnFind = new Sci.Win.UI.Button();
             this.txtLocateForSP = new Sci.Win.UI.TextBox();
             this.labelLocateForSP = new Sci.Win.UI.Label();
@@ -86,7 +85,6 @@
             this.numPackages = new Sci.Win.UI.NumericBox();
             this.displayContainerType = new Sci.Win.UI.DisplayBox();
             this.displayShipModeID = new Sci.Win.UI.DisplayBox();
-            this.txttpeuserHandle = new Sci.Production.Class.Txttpeuser();
             this.datePLRcvDate = new Sci.Win.UI.DateBox();
             this.dateArrivePortDate = new Sci.Win.UI.DateBox();
             this.dateArriveWHDate = new Sci.Win.UI.DateBox();
@@ -101,6 +99,8 @@
             this.chkCIFTerms = new Sci.Win.UI.CheckBox();
             this.btnExpenseData = new Sci.Win.UI.Button();
             this.btnShippingMark = new Sci.Win.UI.Button();
+            this.txttpeuserHandle = new Sci.Production.Class.Txttpeuser();
+            this.txtSeq1 = new Sci.Production.Class.TxtSeq();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -190,7 +190,7 @@
             this.masterpanel.Controls.Add(this.labETA);
             this.masterpanel.Controls.Add(this.displayNo);
             this.masterpanel.Controls.Add(this.labWkNo);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 340);
+            this.masterpanel.Size = new System.Drawing.Size(984, 325);
             this.masterpanel.Controls.SetChildIndex(this.labWkNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labETA, 0);
@@ -268,16 +268,17 @@
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 340);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 142);
+            this.detailpanel.Location = new System.Drawing.Point(0, 325);
+            this.detailpanel.Size = new System.Drawing.Size(984, 157);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(446, 297);
+            this.gridicon.Location = new System.Drawing.Point(879, 180);
+            this.gridicon.Visible = false;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 142);
+            this.detailgridcont.Size = new System.Drawing.Size(984, 157);
             // 
             // detail2
             // 
@@ -293,24 +294,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1000, 520);
+            this.detail.Size = new System.Drawing.Size(984, 520);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 482);
+            this.detailcont.Size = new System.Drawing.Size(984, 482);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 482);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
+            this.detailbtm.Size = new System.Drawing.Size(984, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 520);
+            this.browse.Size = new System.Drawing.Size(984, 520);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1008, 549);
+            this.tabs.Size = new System.Drawing.Size(992, 549);
             // 
             // displayNo
             // 
@@ -794,16 +795,6 @@
             this.label3.TabIndex = 158;
             this.label3.Text = "OT Fee";
             // 
-            // txtSeq1
-            // 
-            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq1.Location = new System.Drawing.Point(269, 278);
-            this.txtSeq1.Name = "txtSeq1";
-            this.txtSeq1.Seq1 = "";
-            this.txtSeq1.Seq2 = "";
-            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq1.TabIndex = 162;
-            // 
             // btnFind
             // 
             this.btnFind.Location = new System.Drawing.Point(335, 274);
@@ -812,6 +803,7 @@
             this.btnFind.TabIndex = 163;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // txtLocateForSP
             // 
@@ -837,7 +829,7 @@
             this.labJunk.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labJunk.Location = new System.Drawing.Point(787, 10);
             this.labJunk.Name = "labJunk";
-            this.labJunk.Size = new System.Drawing.Size(115, 23);
+            this.labJunk.Size = new System.Drawing.Size(104, 23);
             this.labJunk.TabIndex = 172;
             this.labJunk.Text = "Junk";
             this.labJunk.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -847,7 +839,7 @@
             // 
             this.labFromE.BackColor = System.Drawing.Color.Transparent;
             this.labFromE.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.labFromE.Location = new System.Drawing.Point(915, 10);
+            this.labFromE.Location = new System.Drawing.Point(900, 10);
             this.labFromE.Name = "labFromE";
             this.labFromE.Size = new System.Drawing.Size(85, 23);
             this.labFromE.TabIndex = 173;
@@ -905,16 +897,6 @@
             this.displayShipModeID.Name = "displayShipModeID";
             this.displayShipModeID.Size = new System.Drawing.Size(142, 23);
             this.displayShipModeID.TabIndex = 177;
-            // 
-            // txttpeuserHandle
-            // 
-            this.txttpeuserHandle.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "Handle", true));
-            this.txttpeuserHandle.DisplayBox1Binding = "";
-            this.txttpeuserHandle.DisplayBox2Binding = "";
-            this.txttpeuserHandle.Location = new System.Drawing.Point(657, 36);
-            this.txttpeuserHandle.Name = "txttpeuserHandle";
-            this.txttpeuserHandle.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuserHandle.TabIndex = 178;
             // 
             // datePLRcvDate
             // 
@@ -1005,7 +987,6 @@
             this.chkReplacement.AutoSize = true;
             this.chkReplacement.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Replacement", true));
             this.chkReplacement.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkReplacement.IsSupportEditMode = false;
             this.chkReplacement.Location = new System.Drawing.Point(578, 297);
             this.chkReplacement.Name = "chkReplacement";
             this.chkReplacement.Size = new System.Drawing.Size(110, 21);
@@ -1018,7 +999,6 @@
             this.chkDelay.AutoSize = true;
             this.chkDelay.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Delay", true));
             this.chkDelay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkDelay.IsSupportEditMode = false;
             this.chkDelay.Location = new System.Drawing.Point(699, 275);
             this.chkDelay.Name = "chkDelay";
             this.chkDelay.Size = new System.Drawing.Size(63, 21);
@@ -1077,7 +1057,7 @@
             this.btnExpenseData.TabIndex = 191;
             this.btnExpenseData.Text = "Expense Data";
             this.btnExpenseData.UseVisualStyleBackColor = true;
-            this.btnExpenseData.Click += new System.EventHandler(this.BtnExpenseData_Click_1);
+            this.btnExpenseData.Click += new System.EventHandler(this.BtnExpenseData_Click);
             // 
             // btnShippingMark
             // 
@@ -1089,17 +1069,40 @@
             this.btnShippingMark.UseVisualStyleBackColor = true;
             this.btnShippingMark.Click += new System.EventHandler(this.BtnShippingMark_Click);
             // 
+            // txttpeuserHandle
+            // 
+            this.txttpeuserHandle.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "Handle", true));
+            this.txttpeuserHandle.DisplayBox1Binding = "";
+            this.txttpeuserHandle.DisplayBox2Binding = "";
+            this.txttpeuserHandle.Location = new System.Drawing.Point(657, 36);
+            this.txttpeuserHandle.Name = "txttpeuserHandle";
+            this.txttpeuserHandle.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuserHandle.TabIndex = 178;
+            // 
+            // txtSeq1
+            // 
+            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq1.Location = new System.Drawing.Point(269, 278);
+            this.txtSeq1.Name = "txtSeq1";
+            this.txtSeq1.Seq1 = "";
+            this.txtSeq1.Seq2 = "";
+            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq1.TabIndex = 162;
+            // 
             // P16
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 582);
+            this.ClientSize = new System.Drawing.Size(992, 582);
             this.GridAlias = "TransferExport_Detail";
+            this.GridUniqueKey = "Ukey";
+            this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportNew = false;
             this.KeyField1 = "ID";
             this.Name = "P16";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
-            this.Text = "Shipping P16. Transfer Material WK";
+            this.Text = "P16. Transfer Material WK";
+            this.UniqueExpress = "ID";
             this.WorkAlias = "TransferExport";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();

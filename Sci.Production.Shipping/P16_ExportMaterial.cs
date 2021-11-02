@@ -33,11 +33,10 @@ select ttlQty = sum(Qty) from TransferExport_Detail_Carton where TransferExport_
             this.GridSetUp();
         }
 
-        protected override void OnAttached(DataRow data)
+        protected override void OnPostFormLoaded()
         {
-            base.OnAttached(data);
             string sqlCmd =
-              $@"
+             $@"
 select td.UnitID,* 
 from TransferExport_Detail_Carton tc
 inner join TransferExport_Detail td on td.Ukey = tc.TransferExport_DetailUkey
@@ -50,6 +49,7 @@ where TransferExport_DetailUkey = '{this.mainrow["Ukey"]}'";
             }
 
             this.listControlBindingSource1.DataSource = gridData;
+            base.OnPostFormLoaded();
         }
 
         public void GridSetUp()
