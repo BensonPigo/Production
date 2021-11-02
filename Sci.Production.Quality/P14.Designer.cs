@@ -349,6 +349,8 @@
             this.GridAlias = "MockupOven_Detail";
             this.GridNew = 0;
             this.IsSupportCopy = false;
+            this.IsSupportNew = false;
+            this.IsSupportEdit = false;
             this.KeyField1 = "ID";
             this.Name = "P14";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";

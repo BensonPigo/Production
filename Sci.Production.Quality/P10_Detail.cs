@@ -1051,9 +1051,10 @@ ex: 150.423");
         private void Btnenable()
         {
             string detailstatus = MyUtility.GetValue.Lookup($"select Status from SampleGarmentTest_Detail where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["NO"]}");
-            this.btnEncode.Enabled = detailstatus.EqualString("New");
-            this.btnAmend.Enabled = detailstatus.EqualString("Confirmed");
-            this.btnEdit.Enabled = !detailstatus.EqualString("Confirmed");
+
+            // this.btnEncode.Enabled = detailstatus.EqualString("New");
+            // this.btnAmend.Enabled = detailstatus.EqualString("Confirmed");
+            // this.btnEdit.Enabled = !detailstatus.EqualString("Confirmed");
             this.rdbtnLine.Enabled = this.EditMode;
             this.rdbtnTumble.Enabled = this.EditMode;
             this.rdbtnHand.Enabled = this.EditMode;
@@ -1329,7 +1330,7 @@ order by f.Seq ASC,  LocationText DESC";
             }
             else
             {
-                this.btnGenerateFGWT.Enabled = true;
+                this.btnGenerateFGWT.Enabled = false;
             }
         }
 
@@ -1571,7 +1572,7 @@ and  t.id = {this.Deatilrow["ID"]} and t.No = {this.Deatilrow["No"]}
             }
             else
             {
-                this.btnGenerateFGWT.Enabled = true;
+                this.btnGenerateFGWT.Enabled = false;
             }
         }
 

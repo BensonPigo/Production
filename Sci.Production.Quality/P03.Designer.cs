@@ -528,6 +528,7 @@
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportNew = false;
+            this.IsSupportEdit = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
             this.KeyField2 = "POID";
