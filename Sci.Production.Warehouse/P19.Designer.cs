@@ -48,6 +48,7 @@
             this.btnPrintFabricSticker = new Sci.Win.UI.Button();
             this.btnImportonTPE = new Sci.Win.UI.Button();
             this.btnCallP99 = new Sci.Win.UI.Button();
+            this.btnTransferWK = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -64,6 +65,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnTransferWK);
             this.masterpanel.Controls.Add(this.btnImportonTPE);
             this.masterpanel.Controls.Add(this.btnPrintFabricSticker);
             this.masterpanel.Controls.Add(this.txtFromFactory);
@@ -102,6 +104,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtFromFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnPrintFabricSticker, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportonTPE, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnTransferWK, 0);
             // 
             // detailpanel
             // 
@@ -297,16 +300,16 @@
             this.editRemark.MaxLength = 100;
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(658, 86);
+            this.editRemark.Size = new System.Drawing.Size(449, 86);
             this.editRemark.TabIndex = 2;
             // 
             // btnAccumulatedQty
             // 
             this.btnAccumulatedQty.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnAccumulatedQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAccumulatedQty.Location = new System.Drawing.Point(819, 87);
+            this.btnAccumulatedQty.Location = new System.Drawing.Point(761, 87);
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
-            this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
+            this.btnAccumulatedQty.Size = new System.Drawing.Size(203, 31);
             this.btnAccumulatedQty.TabIndex = 4;
             this.btnAccumulatedQty.Text = "Accumulated Qty";
             this.btnAccumulatedQty.UseVisualStyleBackColor = true;
@@ -349,9 +352,9 @@
             // 
             this.btnPrintFabricSticker.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnPrintFabricSticker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnPrintFabricSticker.Location = new System.Drawing.Point(799, 123);
+            this.btnPrintFabricSticker.Location = new System.Drawing.Point(761, 123);
             this.btnPrintFabricSticker.Name = "btnPrintFabricSticker";
-            this.btnPrintFabricSticker.Size = new System.Drawing.Size(165, 31);
+            this.btnPrintFabricSticker.Size = new System.Drawing.Size(203, 31);
             this.btnPrintFabricSticker.TabIndex = 64;
             this.btnPrintFabricSticker.Text = "Print Fabric Sticker";
             this.btnPrintFabricSticker.UseVisualStyleBackColor = true;
@@ -379,6 +382,18 @@
             this.btnCallP99.Text = "Link To P99";
             this.btnCallP99.UseVisualStyleBackColor = true;
             this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
+            // 
+            // btnTransferWK
+            // 
+            this.btnTransferWK.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnTransferWK.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnTransferWK.Location = new System.Drawing.Point(552, 50);
+            this.btnTransferWK.Name = "btnTransferWK";
+            this.btnTransferWK.Size = new System.Drawing.Size(203, 31);
+            this.btnTransferWK.TabIndex = 66;
+            this.btnTransferWK.Text = "Transfer WK# Import";
+            this.btnTransferWK.UseVisualStyleBackColor = true;
+            this.btnTransferWK.Click += new System.EventHandler(this.BtnTransferWK_Click);
             // 
             // P19
             // 
@@ -443,5 +458,6 @@
         private Win.UI.Button btnPrintFabricSticker;
         private Win.UI.Button btnImportonTPE;
         private Win.UI.Button btnCallP99;
+        private Win.UI.Button btnTransferWK;
     }
 }

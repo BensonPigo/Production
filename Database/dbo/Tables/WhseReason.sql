@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[WhseReason] (
     [Type]        VARCHAR (2)    CONSTRAINT [DF_WhseReason_Type] DEFAULT ('') NOT NULL,
     [ID]          VARCHAR (5)    CONSTRAINT [DF_WhseReason_ID] DEFAULT ('') NOT NULL,
-    [Description] NVARCHAR (60)  CONSTRAINT [DF_WhseReason_Description] DEFAULT ('') NOT NULL,
+    [Description] NVARCHAR (200)  CONSTRAINT [DF_WhseReason_Description] DEFAULT ('') NOT NULL,
     [Remark]      NVARCHAR (100) CONSTRAINT [DF_WhseReason_Remark] DEFAULT ('') NULL,
     [Junk]        BIT            CONSTRAINT [DF_WhseReason_Junk] DEFAULT ((0)) NULL,
     [ActionCode]  VARCHAR (30)   CONSTRAINT [DF_WhseReason_ActionCode] DEFAULT ('') NULL,
