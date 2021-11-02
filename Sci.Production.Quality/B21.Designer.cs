@@ -41,6 +41,8 @@
             this.displayHangerFailCode = new Sci.Win.UI.DisplayBox();
             this.chk_isCriticalDefect = new Sci.Win.UI.CheckBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.displayPivot88DefectCodeID = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -56,6 +58,8 @@
             // detailcont
             // 
             this.detailcont.Controls.Add(this.checkBox1);
+            this.detailcont.Controls.Add(this.displayPivot88DefectCodeID);
+            this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.chk_isCriticalDefect);
             this.detailcont.Controls.Add(this.displayHangerFailCode);
             this.detailcont.Controls.Add(this.label1);
@@ -219,6 +223,7 @@
             this.chk_isCriticalDefect.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsCriticalDefect", true));
             this.chk_isCriticalDefect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chk_isCriticalDefect.IsSupportEditMode = false;
+            this.chk_isCriticalDefect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chk_isCriticalDefect.Location = new System.Drawing.Point(344, 335);
             this.chk_isCriticalDefect.Name = "chk_isCriticalDefect";
             this.chk_isCriticalDefect.ReadOnly = true;
@@ -231,13 +236,32 @@
             // 
             this.checkBox1.AutoSize = true;
             this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsCFA", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkBox1.IsSupportEditMode = false;
             this.checkBox1.Location = new System.Drawing.Point(478, 335);
             this.checkBox1.Name = "checkBox1";
+            this.checkBox1.ReadOnly = true;
             this.checkBox1.Size = new System.Drawing.Size(111, 21);
             this.checkBox1.TabIndex = 15;
             this.checkBox1.Text = "For CFA Only";
             this.checkBox1.UseVisualStyleBackColor = true;
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(58, 368);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(133, 23);
+            this.label2.TabIndex = 14;
+            this.label2.Text = "P88DefectCode";
+            // 
+            // displayPivot88DefectCodeID
+            // 
+            this.displayPivot88DefectCodeID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayPivot88DefectCodeID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Pivot88DefectCodeID", true));
+            this.displayPivot88DefectCodeID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayPivot88DefectCodeID.Location = new System.Drawing.Point(194, 368);
+            this.displayPivot88DefectCodeID.Name = "displayPivot88DefectCodeID";
+            this.displayPivot88DefectCodeID.Size = new System.Drawing.Size(135, 23);
+            this.displayPivot88DefectCodeID.TabIndex = 15;
             // 
             // B21
             // 
@@ -283,5 +307,7 @@
         private Win.UI.Label label1;
         private Win.UI.CheckBox chk_isCriticalDefect;
         private Win.UI.CheckBox checkBox1;
+        private Win.UI.DisplayBox displayPivot88DefectCodeID;
+        private Win.UI.Label label2;
     }
 }
