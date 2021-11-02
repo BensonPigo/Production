@@ -28,6 +28,7 @@ namespace Sci.Production.Centralized
             this.InitializeComponent();
             this.EditMode = true;
             this.txtShippingReason.Type = "PL";
+            this.txtShippingReason.LinkDB = "ProductionTPE";
         }
 
         private string LinkDB

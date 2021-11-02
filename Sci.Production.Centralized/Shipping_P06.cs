@@ -31,6 +31,7 @@ namespace Sci.Production.Centralized
             this.InitializeComponent();
 
             this.txtShippingReason.Type = "PL";
+            this.txtShippingReason.LinkDB = "ProductionTPE";
             this.comboRegion.ValueMember = "Key";
             this.comboRegion.DisplayMember = "Value";
             this.comboRegion.DataSource = new BindingSource(StaticEntity.LoginRegionList, null);
@@ -147,6 +148,11 @@ insert into ShippingHistory(ID, MDivisionID, Type, ReasonTypeID, ReasonID, Remar
         private void BtnHistory_Click(object sender, EventArgs e)
         {
             new Shipping_P06_History().ShowDialog();
+        }
+
+        private void BtnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
