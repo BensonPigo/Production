@@ -8,10 +8,17 @@ using Sci.Data;
 
 namespace Sci.Production.Quality
 {
+    /// <summary>
+    /// B21
+    /// </summary>
     public partial class B21 : Win.Tems.Input1
     {
         private DualResult result;
 
+        /// <summary>
+        /// B21
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public B21(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

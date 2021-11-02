@@ -11,6 +11,7 @@
     [ReworkTotalFailCode] NVARCHAR(10) NULL CONSTRAINT [DF_GarmentDefectCode_ReworkTotalFailCode] DEFAULT (''), 
     [IsCFA] BIT NOT NULL CONSTRAINT [DF_GarmentDefectCode_IsCFA] DEFAULT ((0)), 
     [IsCriticalDefect] BIT NULL CONSTRAINT [DF_GarmentDefectCode_IsCriticalDefect] DEFAULT ((0)), 
+    [Pivot88DefectCodeID] VARCHAR(50) NOT NULL CONSTRAINT [DF_GarmentDefectCode_Pivot88DefectCodeID] DEFAULT (''), 
     CONSTRAINT [PK_GarmentDefectCode] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -67,3 +68,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'GarmentDefectCode',
     @level2type = N'COLUMN',
     @level2name = N'IsCFA'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'對應P88 Defect Code',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'GarmentDefectCode',
+    @level2type = N'COLUMN',
+    @level2name = N'Pivot88DefectCodeID'
