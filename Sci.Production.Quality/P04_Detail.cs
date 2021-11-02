@@ -1226,7 +1226,7 @@ order by Seq ASC, LocationText DESC";
             }
             else
             {
-                this.btnGenerateFGWT.Enabled = true;
+                this.btnGenerateFGWT.Enabled = false;
             }
         }
 
@@ -1483,7 +1483,7 @@ where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["NO"]}
             }
             else
             {
-                this.btnGenerateFGWT.Enabled = true;
+                this.btnGenerateFGWT.Enabled = false;
             }
         }
 

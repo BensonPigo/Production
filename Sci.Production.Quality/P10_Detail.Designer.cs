@@ -223,6 +223,7 @@
             // btnGenerateFGWT
             // 
             this.btnGenerateFGWT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnGenerateFGWT.Enabled = false;
             this.btnGenerateFGWT.Location = new System.Drawing.Point(992, 384);
             this.btnGenerateFGWT.Name = "btnGenerateFGWT";
             this.btnGenerateFGWT.Size = new System.Drawing.Size(136, 30);
@@ -689,9 +690,9 @@
             // tabSpirality
             // 
             this.tabSpirality.Controls.Add(this.flowLayoutPanel1);
-            this.tabSpirality.Location = new System.Drawing.Point(4, 25);
+            this.tabSpirality.Location = new System.Drawing.Point(4, 22);
             this.tabSpirality.Name = "tabSpirality";
-            this.tabSpirality.Size = new System.Drawing.Size(1134, 420);
+            this.tabSpirality.Size = new System.Drawing.Size(1134, 423);
             this.tabSpirality.TabIndex = 4;
             this.tabSpirality.Text = "Spirality";
             // 
@@ -702,7 +703,7 @@
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1134, 420);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1134, 423);
             this.flowLayoutPanel1.TabIndex = 62;
             // 
             // panelTop

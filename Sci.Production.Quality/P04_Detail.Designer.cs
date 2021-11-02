@@ -315,6 +315,7 @@
             // btnGenerateFGWT
             // 
             this.btnGenerateFGWT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnGenerateFGWT.Enabled = false;
             this.btnGenerateFGWT.Location = new System.Drawing.Point(907, 432);
             this.btnGenerateFGWT.Name = "btnGenerateFGWT";
             this.btnGenerateFGWT.Size = new System.Drawing.Size(136, 30);
