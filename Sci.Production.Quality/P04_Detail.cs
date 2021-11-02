@@ -1584,9 +1584,10 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
         private void Btnenable()
         {
             string detailstatus = MyUtility.GetValue.Lookup($"select Status from GarmentTest_Detail where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["NO"]}");
-            this.btnEncode.Enabled = detailstatus.EqualString("New");
-            this.btnAmend.Enabled = detailstatus.EqualString("Confirmed");
-            this.btnEdit.Enabled = !detailstatus.EqualString("Confirmed");
+
+            // this.btnEncode.Enabled = detailstatus.EqualString("New");
+            // this.btnAmend.Enabled = detailstatus.EqualString("Confirmed");
+            // this.btnEdit.Enabled = !detailstatus.EqualString("Confirmed");
             this.rdbtnLine.Enabled = this.EditMode;
             this.rdbtnTumble.Enabled = this.EditMode;
             this.rdbtnHand.Enabled = this.EditMode;

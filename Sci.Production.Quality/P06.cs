@@ -12,8 +12,6 @@ namespace Sci.Production.Quality
     /// <inheritdoc/>
     public partial class P06 : Win.Tems.Input6
     {
-        private new readonly bool IsSupportEdit = true;
-
         // 宣告Context Menu Item
         private ToolStripMenuItem add;
 
@@ -330,12 +328,12 @@ namespace Sci.Production.Quality
             var dr = this.CurrentDetailData;
             DataTable dtCheck;
             DataTable dtCheckDelete;
-            this.add.Enabled = true;
+            this.add.Enabled = false;
 
             // ColorFastness 空的
             if (dr == null)
             {
-                this.add.Enabled = true;
+                this.add.Enabled = false;
                 this.edit.Enabled = false;
                 this.delete.Enabled = false;
                 return;
@@ -357,7 +355,7 @@ namespace Sci.Production.Quality
                     if (dtCheck.Rows[0]["Status"].ToString().Trim() == "New")
                     {
                         this.edit.Enabled = true;
-                        this.delete.Enabled = true;
+                        this.delete.Enabled = false;
                     }
                     else
                     {
