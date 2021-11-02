@@ -119,3 +119,7 @@ FPS/FPS.jfm
 PMSFile/bin/Debug
 PMSFile/obj/Debug
 PMSFile/PMSFile.dbmdl
+Sci.Production.CallPmsAPI/bin/
+Sci.Production.CallPmsAPI/obj/
+FPS/bin/
+FPS/obj/
