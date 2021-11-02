@@ -107,7 +107,7 @@ select  sh.ID,
         [Unlocker] = sh.AddName + '-' + p.Name
 from    ShippingHistory sh with (nolock)
 inner join ShippingReason sr with (nolock) on sh.ReasonID = sr.ID and sh.ReasonTypeID = sr.Type
-inner join pass1 p with (nolock) on p.ID = sh.AddName
+inner join Trade.dbo.Pass1Fty p with (nolock) on p.ID = sh.AddName
 where 1 = 1 {sqlWhere}
 ";
 

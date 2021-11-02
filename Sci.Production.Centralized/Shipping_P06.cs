@@ -84,7 +84,7 @@ insert into ShippingHistory(ID, MDivisionID, Type, ReasonTypeID, ReasonID, Remar
             {
                 try
                 {
-                    DualResult result = DBProxy.Current.Execute(null, sqlInsertShippingHistory, sqlPar);
+                    DualResult result = DBProxy.Current.Execute(this.LinkDB, sqlInsertShippingHistory, sqlPar);
 
                     if (!result)
                     {
@@ -142,6 +142,19 @@ insert into ShippingHistory(ID, MDivisionID, Type, ReasonTypeID, ReasonID, Remar
 #endif
 
                 return resultUrl;
+            }
+        }
+
+        private string LinkDB
+        {
+            get
+            {
+                string linkDB = "ProductionTPE";
+
+#if DEBUG
+                linkDB = "Production";
+#endif
+                return linkDB;
             }
         }
 
