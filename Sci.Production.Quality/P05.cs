@@ -1,18 +1,22 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using System.Transactions;
 using System.Windows.Forms;
+using Sci.Data;
+using System.Transactions;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Quality
 {
     /// <inheritdoc/>
     public partial class P05 : Win.Tems.Input6
     {
+        private new readonly bool IsSupportEdit = true;
+        private readonly string loginID = Env.User.UserID;
+        private readonly string Factory = Env.User.Keyword;
+
         // 宣告Context Menu Item
         private ToolStripMenuItem add;
 
@@ -316,7 +320,7 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
             DataTable dtCheck;
             DataTable dtCheckDelete;
 
-            this.add.Enabled = false;
+            this.add.Enabled = true;
 
             if (dr == null)
             {
@@ -342,7 +346,7 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
                     if (dtCheck.Rows[0]["Status"].ToString().Trim() == "New")
                     {
                         this.edit.Enabled = true;
-                        this.delete.Enabled = false;
+                        this.delete.Enabled = true;
                     }
                     else
                     {

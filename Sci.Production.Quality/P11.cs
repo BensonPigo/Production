@@ -61,9 +61,6 @@ masterID);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Create New Test", onclick: (s, e) => this.CreateNewTest()).Get(out this.add);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Record's detail", onclick: (s, e) => this.EditThisDetail()).Get(out this.edit);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Delete this Record's detail", onclick: (s, e) => this.DeleteThisDetail()).Get(out this.delete);
-            this.add.Enabled = false;
-            this.edit.Enabled = false;
-            this.delete.Enabled = false;
         }
 
         // Context Menu選擇Create New test

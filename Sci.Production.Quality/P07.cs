@@ -342,7 +342,7 @@ namespace Sci.Production.Quality
 
         private void OvenTest()
         {
-            if (this.EditMode)
+            if (!this.IsSupportEdit || this.EditMode)
             {
                 return;
             }
@@ -357,7 +357,7 @@ namespace Sci.Production.Quality
             string currentseq1 = this.CurrentDetailData["SEQ1"].ToString();
             string currentseq2 = this.CurrentDetailData["SEQ2"].ToString();
 
-            P07_Oven callOvenDetailForm = new P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+            P07_Oven callOvenDetailForm = new P07_Oven(true, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
 
             callOvenDetailForm.ShowDialog(this);
             callOvenDetailForm.Dispose();
@@ -383,7 +383,7 @@ namespace Sci.Production.Quality
 
         private void WashTest()
         {
-            if (this.EditMode)
+            if (!this.IsSupportEdit || this.EditMode)
             {
                 return;
             }
@@ -394,7 +394,7 @@ namespace Sci.Production.Quality
                 return;
             }
 
-            P07_Wash callWasHDetailForm = new P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+            P07_Wash callWasHDetailForm = new P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
             callWasHDetailForm.ShowDialog(this);
             callWasHDetailForm.Dispose();
             this.RenewData();

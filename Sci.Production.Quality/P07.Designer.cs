@@ -478,7 +478,6 @@
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportNew = false;
-            this.IsSupportEdit = false;
             this.KeyField1 = "id";
             this.KeyField2 = "POID";
             this.Name = "P07";

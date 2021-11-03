@@ -323,8 +323,6 @@
             this.ClientSize = new System.Drawing.Size(1008, 449);
             this.GridAlias = "MockupCrocking_Detail";
             this.GridNew = 0;
-            this.IsSupportNew = false;
-            this.IsSupportEdit = false;
             this.KeyField1 = "ID";
             this.Name = "P11";
             this.Text = "P11. Mockup Crocking Test";

@@ -348,8 +348,6 @@
             this.ClientSize = new System.Drawing.Size(1008, 493);
             this.GridAlias = "MockupOven_Detail";
             this.GridNew = 0;
-            this.IsSupportNew = false;
-            this.IsSupportEdit = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
             this.Name = "P12";
