@@ -3251,7 +3251,7 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
         and a.Article = tcd.Article
 		-----whereByCombo-----
 	)
-    AND tcd.Article = g.Article
+    
 ";
             string articleWhere1 = articleWhere + $@"
     AND tcd.SCIRefNo = psd.SCIRefno
@@ -3261,6 +3261,9 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
 	AND tcd.SCIRefNo = TR.FromSCIRefno
     AND tcd.SuppColor = TR.FromSuppColor
 ";
+
+            string articleWhere1_outer = articleWhere1 + "\r\nAND tcd.Article = g.Article";
+            string articleWhere2_outer = articleWhere2 + "\r\nAND tcd.Article = g.Article";
 
             // 回採購單找資料
             string sql = $@"
@@ -3329,7 +3332,7 @@ OUTER APPLY(
 	FROM dbo.GetThreadUsedQtyByBOT(psd.ID,default) g
 	WHERE g.SCIRefNo = psd.SCIRefno AND g.SuppColor = psd.SuppColor
     AND exists (
-        {articleWhere1}
+        {articleWhere1_outer}
 	)
 )ThreadUsedQtyByBOT1
 OUTER APPLY(
@@ -3337,7 +3340,7 @@ OUTER APPLY(
 	FROM dbo.GetThreadUsedQtyByBOT(psd.ID,default) g
 	WHERE g.SCIRefNo= TR.FromSCIRefno AND g.SuppColor = TR.FromSuppColor  
     AND exists (
-        {articleWhere2}
+        {articleWhere2_outer}
 	)
 )ThreadUsedQtyByBOT2
 OUTER APPLY(
@@ -3353,7 +3356,7 @@ and ((psd.IsForOtherBrand = 1 and exists(
 ))
 or
 (psd.IsForOtherBrand = 0 and exists(
-    {articleWhere}
+    {articleWhere1}
 )))
 
 
