@@ -549,6 +549,7 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_WashLab,#tmp_Air,#tmp_Air_Lab
 
                 this.listControlBindingSource1.DataSource = dtData;
                 dtData.DefaultView.Sort = "poid,seq1,seq2,dyelot,roll,stocktype";
+                this.listControlBindingSource1.Filter = this.comboFIR.Text == "ALL" ? string.Empty : $"FIR = '{this.comboFIR.Text}'";
             }
             else
             {
@@ -780,6 +781,16 @@ inner join ftyinventory f with (NoLock) on t.ukey = f.ukey";
             #endregion
 
             return true;
+        }
+
+        private void ComboFIR_TextChanged(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.comboFIR.Text))
+            {
+                return;
+            }
+
+            this.listControlBindingSource1.Filter = this.comboFIR.Text == "ALL" ? string.Empty : $"FIR = '{this.comboFIR.Text}'";
         }
     }
 }

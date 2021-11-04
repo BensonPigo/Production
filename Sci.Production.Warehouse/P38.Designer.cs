@@ -30,6 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.comboFIR = new Sci.Win.UI.ComboBox();
+            this.label5 = new Sci.Win.UI.Label();
             this.labLocation = new Sci.Win.UI.Label();
             this.txtMtlLocation = new Sci.Production.Class.TxtMtlLocation(this.components);
             this.dateATA = new Sci.Win.UI.DateRange();
@@ -57,8 +59,6 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.btnUnlock = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label5 = new Sci.Win.UI.Label();
-            this.comboFIR = new Sci.Win.UI.ComboBox();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridMaterialLock)).BeginInit();
@@ -94,6 +94,27 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 105);
             this.panel1.TabIndex = 0;
+            // 
+            // comboFIR
+            // 
+            this.comboFIR.BackColor = System.Drawing.Color.White;
+            this.comboFIR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFIR.FormattingEnabled = true;
+            this.comboFIR.IsSupportUnselect = true;
+            this.comboFIR.Location = new System.Drawing.Point(71, 75);
+            this.comboFIR.Name = "comboFIR";
+            this.comboFIR.OldText = "";
+            this.comboFIR.Size = new System.Drawing.Size(122, 24);
+            this.comboFIR.TabIndex = 20;
+            this.comboFIR.TextChanged += new System.EventHandler(this.ComboFIR_TextChanged);
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(9, 76);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(59, 23);
+            this.label5.TabIndex = 19;
+            this.label5.Text = "FIR";
             // 
             // labLocation
             // 
@@ -385,30 +406,6 @@
             this.btnUnlock.Text = "Unlock";
             this.btnUnlock.UseVisualStyleBackColor = true;
             this.btnUnlock.Click += new System.EventHandler(this.BtnUnlock_Click);
-            // 
-            // label5
-            // 
-            this.label5.Location = new System.Drawing.Point(9, 76);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(59, 23);
-            this.label5.TabIndex = 19;
-            this.label5.Text = "FIR";
-            // 
-            // comboFIR
-            // 
-            this.comboFIR.BackColor = System.Drawing.Color.White;
-            this.comboFIR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFIR.FormattingEnabled = true;
-            this.comboFIR.IsSupportUnselect = true;
-            this.comboFIR.Items.AddRange(new object[] {
-            "All",
-            "Locked",
-            "Unlocked"});
-            this.comboFIR.Location = new System.Drawing.Point(71, 75);
-            this.comboFIR.Name = "comboFIR";
-            this.comboFIR.OldText = "";
-            this.comboFIR.Size = new System.Drawing.Size(122, 24);
-            this.comboFIR.TabIndex = 20;
             // 
             // P38
             // 
