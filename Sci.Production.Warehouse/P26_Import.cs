@@ -657,36 +657,6 @@ stocktype = '{e.FormattedValue}'
             }
         }
 
-        // private void radioPanel1_ValueChanged(object sender, EventArgs e)
-        // {
-        //    Sci.Win.UI.RadioPanel rdoG = (Sci.Win.UI.RadioPanel)sender;
-        //    switch (rdoG.Value)
-        //    {
-        //        case "1":
-        //            txtSPNo.ReadOnly = false;
-        //            txtSeq.txtSeq_ReadOnly(false);
-        //            txtRef.ReadOnly = false;
-        //            txtLocation.ReadOnly = false;
-        //            txtDyelot.ReadOnly = false;
-        //            txtTransactionID.ReadOnly = true;
-        //            txtTransactionID.Text = "";
-        //            break;
-        //        case "2":
-        //            txtSPNo.ReadOnly = true;
-        //            txtSeq.txtSeq_ReadOnly(true);
-        //            txtRef.ReadOnly = true;
-        //            txtLocation.ReadOnly = true;
-        //            txtDyelot.ReadOnly = true;
-        //            txtSPNo.Text = "";
-        //            txtSeq.seq1 = "";
-        //            txtSeq.seq2 = "";
-        //            txtRef.Text = "";
-        //            txtLocation.Text = "";
-        //            txtDyelot.Text = "";
-        //            txtTransactionID.ReadOnly = false;
-        //            break;
-        //    }
-        // }
         private void BtnUpdateAllLocation_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1.EndEdit();
@@ -707,30 +677,6 @@ stocktype = '{e.FormattedValue}'
             }
         }
 
-        // protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        // {
-        //    bool re = base.ProcessCmdKey(ref msg, keyData);
-        //    if (radioTransactionID.Focused && radioTransactionID.Checked == true)
-        //    {
-        //        if (keyData == Keys.Tab || keyData == Keys.Enter)
-        //        {
-        //            txtTransactionID.Select();
-        //            return true;
-        //        }
-        //    }
-
-        // if (txtTransactionID.Focused)
-        //    {
-        //        if(keyData == Keys.Tab || keyData == Keys.Enter)
-        //        {
-        //            txtTransactionID.TabStop = false;
-        //            btnQuery.Select();
-        //            return true;
-        //        }
-        //    }
-        //    return re;
-        // }
-
         // 動態顯示列表資料
         private void BalanceQty_CheckedChanged(object sender, EventArgs e)
         {
@@ -739,34 +685,18 @@ stocktype = '{e.FormattedValue}'
 
         private void Grid_Filter()
         {
-            string filter = string.Empty;
-            if (this.gridImport.RowCount > 0)
+            if (this.listControlBindingSource1.DataSource == null)
             {
-                switch (this.BalanceQty.Checked)
-                {
-                    case true:
-                        if (MyUtility.Check.Empty(this.gridImport))
-                        {
-                            break;
-                        }
-
-                        // 這裡過濾的欄位，必須是剛剛SQL查出來的欄位，不是WHERE裡面的條件
-                        filter = $@"qty > 0";
-
-                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
-                        break;
-
-                    case false:
-                        if (MyUtility.Check.Empty(this.gridImport))
-                        {
-                            break;
-                        }
-
-                        filter = string.Empty;
-                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
-                        break;
-                }
+                return;
             }
+
+            string filter = string.Empty;
+            if (this.BalanceQty.Checked)
+            {
+                filter = $@"qty > 0";
+            }
+
+            ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
         }
     }
 }
