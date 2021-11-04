@@ -57,6 +57,8 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.btnUnlock = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label5 = new Sci.Win.UI.Label();
+            this.comboFIR = new Sci.Win.UI.ComboBox();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridMaterialLock)).BeginInit();
@@ -66,6 +68,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.comboFIR);
+            this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.labLocation);
             this.panel1.Controls.Add(this.txtMtlLocation);
             this.panel1.Controls.Add(this.dateATA);
@@ -88,14 +92,14 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 80);
+            this.panel1.Size = new System.Drawing.Size(1008, 105);
             this.panel1.TabIndex = 0;
             // 
             // labLocation
             // 
-            this.labLocation.Location = new System.Drawing.Point(765, 9);
+            this.labLocation.Location = new System.Drawing.Point(782, 11);
             this.labLocation.Name = "labLocation";
-            this.labLocation.Size = new System.Drawing.Size(65, 23);
+            this.labLocation.Size = new System.Drawing.Size(91, 23);
             this.labLocation.TabIndex = 14;
             this.labLocation.Text = "Location";
             // 
@@ -103,9 +107,9 @@
             // 
             this.txtMtlLocation.BackColor = System.Drawing.Color.White;
             this.txtMtlLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMtlLocation.Location = new System.Drawing.Point(831, 10);
+            this.txtMtlLocation.Location = new System.Drawing.Point(876, 11);
             this.txtMtlLocation.Name = "txtMtlLocation";
-            this.txtMtlLocation.Size = new System.Drawing.Size(76, 23);
+            this.txtMtlLocation.Size = new System.Drawing.Size(121, 23);
             this.txtMtlLocation.StockTypeFilte = "B,I";
             this.txtMtlLocation.TabIndex = 4;
             // 
@@ -132,6 +136,7 @@
             // 
             // comboDropDownList1
             // 
+            this.comboDropDownList1.AddAllItem = false;
             this.comboDropDownList1.BackColor = System.Drawing.Color.White;
             this.comboDropDownList1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboDropDownList1.FormattingEnabled = true;
@@ -197,20 +202,20 @@
             // 
             // labelSEQ
             // 
-            this.labelSEQ.Location = new System.Drawing.Point(196, 10);
+            this.labelSEQ.Location = new System.Drawing.Point(196, 11);
             this.labelSEQ.Name = "labelSEQ";
-            this.labelSEQ.Size = new System.Drawing.Size(59, 23);
+            this.labelSEQ.Size = new System.Drawing.Size(86, 23);
             this.labelSEQ.TabIndex = 11;
             this.labelSEQ.Text = "SEQ";
             // 
             // txtSeq
             // 
             this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq.Location = new System.Drawing.Point(258, 10);
+            this.txtSeq.Location = new System.Drawing.Point(285, 11);
             this.txtSeq.Name = "txtSeq";
             this.txtSeq.Seq1 = "";
             this.txtSeq.Seq2 = "";
-            this.txtSeq.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq.Size = new System.Drawing.Size(72, 23);
             this.txtSeq.TabIndex = 1;
             // 
             // comboStockType
@@ -223,7 +228,7 @@
             "ALL",
             "Bulk",
             "Inventory"});
-            this.comboStockType.Location = new System.Drawing.Point(648, 9);
+            this.comboStockType.Location = new System.Drawing.Point(680, 10);
             this.comboStockType.Name = "comboStockType";
             this.comboStockType.OldText = "";
             this.comboStockType.Size = new System.Drawing.Size(100, 24);
@@ -231,7 +236,7 @@
             // 
             // labelStockType
             // 
-            this.labelStockType.Location = new System.Drawing.Point(550, 9);
+            this.labelStockType.Location = new System.Drawing.Point(582, 11);
             this.labelStockType.Name = "labelStockType";
             this.labelStockType.Size = new System.Drawing.Size(95, 23);
             this.labelStockType.TabIndex = 13;
@@ -241,7 +246,7 @@
             // 
             this.txtSP.BackColor = System.Drawing.Color.White;
             this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP.Location = new System.Drawing.Point(71, 10);
+            this.txtSP.Location = new System.Drawing.Point(71, 11);
             this.txtSP.MaxLength = 13;
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(122, 23);
@@ -249,7 +254,7 @@
             // 
             // labelSP
             // 
-            this.labelSP.Location = new System.Drawing.Point(9, 10);
+            this.labelSP.Location = new System.Drawing.Point(9, 11);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(59, 23);
             this.labelSP.TabIndex = 10;
@@ -257,7 +262,7 @@
             // 
             // labelStatus
             // 
-            this.labelStatus.Location = new System.Drawing.Point(333, 9);
+            this.labelStatus.Location = new System.Drawing.Point(410, 11);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(74, 23);
             this.labelStatus.TabIndex = 12;
@@ -273,15 +278,16 @@
             "All",
             "Locked",
             "Unlocked"});
-            this.comboStatus.Location = new System.Drawing.Point(410, 9);
+            this.comboStatus.Location = new System.Drawing.Point(487, 10);
             this.comboStatus.Name = "comboStatus";
             this.comboStatus.OldText = "";
-            this.comboStatus.Size = new System.Drawing.Size(121, 24);
+            this.comboStatus.Size = new System.Drawing.Size(94, 24);
             this.comboStatus.TabIndex = 2;
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(916, 5);
+            this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnQuery.Location = new System.Drawing.Point(917, 69);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 9;
@@ -293,9 +299,9 @@
             // 
             this.panel2.Controls.Add(this.gridMaterialLock);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(0, 80);
+            this.panel2.Location = new System.Drawing.Point(0, 105);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1008, 581);
+            this.panel2.Size = new System.Drawing.Size(1008, 556);
             this.panel2.TabIndex = 0;
             // 
             // gridMaterialLock
@@ -320,7 +326,7 @@
             this.gridMaterialLock.RowTemplate.Height = 24;
             this.gridMaterialLock.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridMaterialLock.ShowCellToolTips = false;
-            this.gridMaterialLock.Size = new System.Drawing.Size(1002, 512);
+            this.gridMaterialLock.Size = new System.Drawing.Size(1002, 487);
             this.gridMaterialLock.TabIndex = 0;
             this.gridMaterialLock.TabStop = false;
             // 
@@ -380,6 +386,30 @@
             this.btnUnlock.UseVisualStyleBackColor = true;
             this.btnUnlock.Click += new System.EventHandler(this.BtnUnlock_Click);
             // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(9, 76);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(59, 23);
+            this.label5.TabIndex = 19;
+            this.label5.Text = "FIR";
+            // 
+            // comboFIR
+            // 
+            this.comboFIR.BackColor = System.Drawing.Color.White;
+            this.comboFIR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFIR.FormattingEnabled = true;
+            this.comboFIR.IsSupportUnselect = true;
+            this.comboFIR.Items.AddRange(new object[] {
+            "All",
+            "Locked",
+            "Unlocked"});
+            this.comboFIR.Location = new System.Drawing.Point(71, 75);
+            this.comboFIR.Name = "comboFIR";
+            this.comboFIR.OldText = "";
+            this.comboFIR.Size = new System.Drawing.Size(122, 24);
+            this.comboFIR.TabIndex = 20;
+            // 
             // P38
             // 
             this.ClientSize = new System.Drawing.Size(1008, 661);
@@ -389,6 +419,7 @@
             this.DefaultControl = "txtSP";
             this.DefaultControlForEdit = "txtSP";
             this.Name = "P38";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P38. Material Lock/Unlock for All Transaction";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel2, 0);
@@ -433,5 +464,7 @@
         private Win.UI.DateRange dateATA;
         private Win.UI.Label labLocation;
         private Class.TxtMtlLocation txtMtlLocation;
+        private Win.UI.ComboBox comboFIR;
+        private Win.UI.Label label5;
     }
 }
