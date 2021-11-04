@@ -3230,101 +3230,37 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
             DualResult result;
 
             string pOID = this.poid;
-            string articleWhere = string.Empty;
-            string articleWhere2 = string.Empty;
 
             // 判斷訂單會用到那些物料
             // 勾選By Combo與否，會造成Article不一樣，因此在這個時候就必須找出：這些OrderID，用到哪些Article，這些Article用到哪些SCIRefno + ColorID 的物料
-            if (this.checkByCombo.Checked)
-            {
-                articleWhere = $@"
-
-	SELECT Article FROM(
-		Select  distinct tcd.SCIRefNo, tcd.SuppColor ,tcd.Article 
-		From dbo.Orders as b
-		INNER JOIN dbo.order_qty a WITH (NOLOCK)  on b.id = a.id
-		Inner Join dbo.Style as s On s.Ukey = b.StyleUkey
-		Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
-		Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
-		WHERE b.ID='{pOID}'
-		AND tcd.Article IN (
-			select DISTINCT a.Article
-			from dbo.order_qty a WITH (NOLOCK) 
-			inner join dbo.orders b WITH (NOLOCK) on b.id = a.id
-			where b.POID=( select poid from dbo.orders WITH (NOLOCK) where id = '{pOID}' )
-			--AND a.id = b.poid
-		)
-	)Q
-	WHERE q.SCIRefNo=psd.SCIRefno AND q.SuppColor = psd.SuppColor
-
+            // 下行註解, 先帶出此 POID 下全部子單的 Article, 按鈕 AutoPick 會排除不是此子單的 Article, 之後要改再說
+            // string whereByCombo = this.checkByCombo.Checked ? string.Empty : "AND a.id = b.id";
+            string articleWhere = $@"
+	Select 1
+	From dbo.Orders as b
+	INNER JOIN dbo.order_qty a WITH (NOLOCK)  on b.id = a.id
+	Inner Join dbo.Style as s On s.Ukey = b.StyleUkey
+	Inner Join dbo.Style_ThreadColorCombo_History  as tc On tc.StyleUkey = s.Ukey
+	Inner Join dbo.Style_ThreadColorCombo_History_Detail as tcd On tcd.Style_ThreadColorCombo_HistoryUkey = tc.Ukey
+	WHERE b.ID = '{pOID}'
+	AND exists (
+		select 1
+		from dbo.order_qty a WITH (NOLOCK)
+		inner join dbo.orders b WITH (NOLOCK) on b.id = a.id
+		where b.poid = '{pOID}' -- 找存在母單底下所有的 Article
+        and a.Article = tcd.Article
+		-----whereByCombo-----
+	)
+    AND tcd.Article = g.Article
 ";
-                articleWhere2 = $@"
-
-	SELECT Article FROM(
-		Select  distinct tcd.SCIRefNo, tcd.SuppColor ,tcd.Article 
-		From dbo.Orders as b
-		INNER JOIN dbo.order_qty a WITH (NOLOCK)  on b.id = a.id
-		Inner Join dbo.Style as s On s.Ukey = b.StyleUkey
-		Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
-		Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
-		WHERE b.ID='{pOID}'
-		AND tcd.Article IN (
-			select DISTINCT a.Article
-			from dbo.order_qty a WITH (NOLOCK) 
-			inner join dbo.orders b WITH (NOLOCK) on b.id = a.id
-			where b.POID=( select poid from dbo.orders WITH (NOLOCK) where id = '{pOID}' )
-			--AND a.id = b.poid
-		)
-	)Q
-	WHERE q.SCIRefNo=TR.FromSCIRefno AND q.SuppColor = TR.FromSuppColor
-
+            string articleWhere1 = articleWhere + $@"
+    AND tcd.SCIRefNo = psd.SCIRefno
+    AND tcd.SuppColor = psd.SuppColor
 ";
-            }
-            else
-            {
-                articleWhere = $@"
-
-	SELECT Article FROM(
-		Select  distinct tcd.SCIRefNo, tcd.SuppColor ,tcd.Article 
-		From dbo.Orders as b
-		INNER JOIN dbo.order_qty a WITH (NOLOCK)  on b.id = a.id
-		Inner Join dbo.Style as s On s.Ukey = b.StyleUkey
-		Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
-		Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
-		WHERE b.ID='{pOID}'
-		AND tcd.Article IN (
-			select DISTINCT a.Article
-			from dbo.order_qty a WITH (NOLOCK) 
-			inner join dbo.orders b WITH (NOLOCK) on b.id = a.id
-			where b.POID=( select poid from dbo.orders WITH (NOLOCK) where id = '{pOID}' )
-			AND a.id = b.poid
-		)
-	)Q
-	WHERE q.SCIRefNo=psd.SCIRefno AND q.SuppColor = psd.SuppColor
-
+            string articleWhere2 = articleWhere + $@"
+	AND tcd.SCIRefNo = TR.FromSCIRefno
+    AND tcd.SuppColor = TR.FromSuppColor
 ";
-                articleWhere2 = $@"
-
-	SELECT Article FROM(
-		Select  distinct tcd.SCIRefNo, tcd.SuppColor ,tcd.Article 
-		From dbo.Orders as b
-		INNER JOIN dbo.order_qty a WITH (NOLOCK)  on b.id = a.id
-		Inner Join dbo.Style as s On s.Ukey = b.StyleUkey
-		Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
-		Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
-		WHERE b.ID='{pOID}'
-		AND tcd.Article IN (
-			select DISTINCT a.Article
-			from dbo.order_qty a WITH (NOLOCK) 
-			inner join dbo.orders b WITH (NOLOCK) on b.id = a.id
-			where b.POID=( select poid from dbo.orders WITH (NOLOCK) where id = '{pOID}' )
-			AND a.id = b.poid
-		)
-	)Q
-	WHERE q.SCIRefNo=TR.FromSCIRefno AND q.SuppColor = TR.FromSuppColor
-
-";
-            }
 
             // 回採購單找資料
             string sql = $@"
@@ -3390,17 +3326,17 @@ OUTER APPLY(
 )TR
 OUTER APPLY(
 	SELECT Val=SUM((SeamLength * Frequency * UseRatio) +  (Allowance * Segment) )
-	FROM dbo.GetThreadUsedQtyByBOT(psd.ID,default)
-	WHERE SCIRefNo = psd.SCIRefno AND SuppColor = psd.SuppColor
-    AND Article IN (
-        {articleWhere}
+	FROM dbo.GetThreadUsedQtyByBOT(psd.ID,default) g
+	WHERE g.SCIRefNo = psd.SCIRefno AND g.SuppColor = psd.SuppColor
+    AND exists (
+        {articleWhere1}
 	)
 )ThreadUsedQtyByBOT1
 OUTER APPLY(
 	SELECT Val=SUM((SeamLength * Frequency * UseRatio) +  (Allowance * Segment) )
-	FROM dbo.GetThreadUsedQtyByBOT(psd.ID,default)  
-	WHERE SCIRefNo= TR.FromSCIRefno AND SuppColor = TR.FromSuppColor  
-    AND Article IN (
+	FROM dbo.GetThreadUsedQtyByBOT(psd.ID,default) g
+	WHERE g.SCIRefNo= TR.FromSCIRefno AND g.SuppColor = TR.FromSuppColor  
+    AND exists (
         {articleWhere2}
 	)
 )ThreadUsedQtyByBOT2
@@ -3473,6 +3409,10 @@ DROP TABLE #tmp
 
 ";
             result = DBProxy.Current.Select(null, sql, out subData);
+            if (!result)
+            {
+                return result;
+            }
 
             if (subData.Rows.Count == 0)
             {
