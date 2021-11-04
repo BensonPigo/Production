@@ -3348,6 +3348,13 @@ WHERE psd.id ='{pOID}'
 AND m.IsThread=1 
 AND psd.FabricType ='A'
 and psd.ColorID <> ''
+and ((psd.IsForOtherBrand = 1 and exists(
+    {articleWhere2}
+))
+or
+(psd.IsForOtherBrand = 0 and exists(
+    {articleWhere}
+)))
 
 
 SELECT  
