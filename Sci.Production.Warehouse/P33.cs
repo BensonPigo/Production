@@ -3233,7 +3233,8 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
 
             // 判斷訂單會用到那些物料
             // 勾選By Combo與否，會造成Article不一樣，因此在這個時候就必須找出：這些OrderID，用到哪些Article，這些Article用到哪些SCIRefno + ColorID 的物料
-            string whereByCombo = this.checkByCombo.Checked ? string.Empty : "AND a.id = b.poid";
+            // 下行註解, 先帶出此 POID 下全部子單的 Article, 按鈕 AutoPick 會排除不是此子單的 Article, 之後要改再說
+            // string whereByCombo = this.checkByCombo.Checked ? string.Empty : "AND a.id = b.id";
             string articleWhere = $@"
 	Select 1
 	From dbo.Orders as b
@@ -3246,9 +3247,9 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
 		select 1
 		from dbo.order_qty a WITH (NOLOCK)
 		inner join dbo.orders b WITH (NOLOCK) on b.id = a.id
-		where exists ( select 1 from dbo.orders WITH (NOLOCK) where id = '{pOID}' and poid = b.POID )
+		where b.poid = '{pOID}' -- 找存在母單底下所有的 Article
         and a.Article = tcd.Article
-		{whereByCombo}
+		-----whereByCombo-----
 	)
     AND tcd.Article = g.Article
 ";
