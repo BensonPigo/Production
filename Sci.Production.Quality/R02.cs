@@ -197,6 +197,7 @@ select A.POID
 	,x.BrandID
 	,x.StyleID
 	,x.SeasonID
+    ,et.ShipModeID
 	,t.ExportId
 	,t.InvNo
 	,t.WhseArrival
@@ -234,6 +235,7 @@ inner join (
         from dbo.View_AllReceivingDetail r WITH (NOLOCK)   
 		{0}
 ) t on t.PoId = A.POID and t.Seq1 = A.SEQ1 and t.Seq2 = A.SEQ2 AND T.ID=a.ReceivingID
+inner join Export et with (nolock) on et.ID = t.ExportId
 inner join (
 		select distinct id,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,O.StyleUkey
 		from dbo.Orders o WITH (NOLOCK)  

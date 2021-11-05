@@ -36,6 +36,7 @@ namespace Sci.Production.Quality
                .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(7), iseditingreadonly: true)
                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+               .Text("Customize1", header: "ORDER#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Text("StyleID", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Text("SeasonID", header: "Season", width: Widths.AnsiChars(7), iseditingreadonly: true)
                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -97,6 +98,7 @@ CFANeedInsp
 ,p2.CTNStartNo
 ,o1.OrderID 
 ,o.CustPONo
+,o.Customize1
 ,o.StyleID
 ,o.SeasonID
 ,o.BrandID
