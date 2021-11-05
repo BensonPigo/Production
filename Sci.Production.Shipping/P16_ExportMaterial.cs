@@ -11,10 +11,12 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public partial class P16_ExportMaterial : Sci.Win.Subs.Input6A
     {
         private DataRow mainrow;
 
+        /// <inheritdoc/>
         public P16_ExportMaterial(DataRow maindr)
         {
             this.InitializeComponent();
@@ -22,6 +24,7 @@ namespace Sci.Production.Shipping
             this.EditMode = false;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -33,6 +36,7 @@ select ttlQty = sum(Qty) from TransferExport_Detail_Carton where TransferExport_
             this.GridSetUp();
         }
 
+        /// <inheritdoc/>
         protected override void OnPostFormLoaded()
         {
             string sqlCmd =
@@ -52,6 +56,7 @@ where TransferExport_DetailUkey = '{this.mainrow["Ukey"]}'";
             base.OnPostFormLoaded();
         }
 
+        /// <inheritdoc/>
         public void GridSetUp()
         {
             this.Helper.Controls.Grid.Generator(this.grid3)

@@ -13,6 +13,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public partial class P16 : Sci.Win.Tems.Input6
     {
         private DataGridViewNumericBoxColumn col_NW;
@@ -20,12 +21,14 @@ namespace Sci.Production.Shipping
         private DataGridViewNumericBoxColumn col_CBM;
         private bool isProduceFty;
 
+        /// <inheritdoc/>
         public P16(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -142,6 +145,7 @@ where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
             this.ControlColor();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
@@ -173,7 +177,7 @@ ted.ID
 ,ted.WeightKg
 ,ted.CBM
 ,ContainerType = isnull(ContainerType.Value,'')
-,[FindColumn] = rtrim(ted.PoID)+(SUBSTRING(ted.Seq1,1,3)+'-'+ted.Seq2)
+,[FindColumn] = rtrim(ted.InventoryPOID)+'-'+(SUBSTRING(ted.InventorySeq1,1,3)+'-'+ted.InventorySeq2)
 ,ted.ukey
 -- print column
 ,o.FactoryID
@@ -223,10 +227,11 @@ where ted.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
-            DataGridViewGeneratorNumericColumnSettings ExportQtycell = new DataGridViewGeneratorNumericColumnSettings();
-            ExportQtycell.EditingMouseDoubleClick += (s, e) =>
+            DataGridViewGeneratorNumericColumnSettings exportQtycell = new DataGridViewGeneratorNumericColumnSettings();
+            exportQtycell.EditingMouseDoubleClick += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -253,7 +258,7 @@ where ted.ID = '{0}'", masterID);
                 .Text("Color", header: "Color", width: Ict.Win.Widths.AnsiChars(6))
                 .Text("Size", header: "Size", width: Ict.Win.Widths.AnsiChars(6))
                 .Numeric("PoQty", header: "Po  Q'ty", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5))
-                .Numeric("ExportQty", header: "Export Q'ty", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5), settings: ExportQtycell)
+                .Numeric("ExportQty", header: "Export Q'ty", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5), settings: exportQtycell)
                 .Numeric("FOC", header: "F.O.C.", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(2))
                 .Numeric("BalanceQty", header: "Balance", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5))
                 .Text("TransferExportReason", header: "Reason", width: Ict.Win.Widths.AnsiChars(10))
@@ -296,6 +301,7 @@ where ted.ID = '{0}'", masterID);
             }
         }
 
+        /// <inheritdoc/>
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
@@ -323,6 +329,7 @@ where ted.ID = '{0}'", masterID);
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.isProduceFty == false)
@@ -334,6 +341,7 @@ where ted.ID = '{0}'", masterID);
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (!MyUtility.Check.Empty(this.numTPEPaidUSD.Value))
@@ -347,9 +355,9 @@ where ted.ID = '{0}'", masterID);
                 MyUtility.Msg.WarningBox("WK has been shared expense,  [No Import Charge] shouldn't tick, please double check.");
             }
 
-            DateTime PortArrival = DateTime.Parse(this.CurrentMaintain["PortArrival"].ToString());
-            DateTime WhseArrival = DateTime.Parse(this.CurrentMaintain["WhseArrival"].ToString());
-            DateTime ETA = DateTime.Parse(this.CurrentMaintain["ETA"].ToString());
+            DateTime portArrival = DateTime.Parse(this.CurrentMaintain["PortArrival"].ToString());
+            DateTime whseArrival = DateTime.Parse(this.CurrentMaintain["WhseArrival"].ToString());
+            DateTime eTA = DateTime.Parse(this.CurrentMaintain["ETA"].ToString());
 
             // 如果 Export Country 與 Import Country 相同
             if (string.Compare(this.CurrentMaintain["ExportCountry"].ToString(), this.CurrentMaintain["ImportCountry"].ToString()) == 0)
@@ -358,27 +366,27 @@ where ted.ID = '{0}'", masterID);
                 if (this.CurrentMaintain["ShipModeID"].ToString().ToUpper() == "TRUCK")
                 {
                     // PortArrival 與 WhseArrival 皆不為空值
-                    if (!MyUtility.Check.Empty(PortArrival) && !MyUtility.Check.Empty(WhseArrival))
+                    if (!MyUtility.Check.Empty(portArrival) && !MyUtility.Check.Empty(whseArrival))
                     {
                         // 到港日不可晚於到 WH 日期
-                        if (DateTime.Compare(PortArrival, WhseArrival) == 1)
+                        if (DateTime.Compare(portArrival, whseArrival) == 1)
                         {
                             MyUtility.Msg.WarningBox("< Arrive Port Date > can't later than < Arrive W/H Date >");
                             return false;
                         }
                     }
 
-                    if (!MyUtility.Check.Empty(PortArrival) && !MyUtility.Check.Empty(ETA))
+                    if (!MyUtility.Check.Empty(portArrival) && !MyUtility.Check.Empty(eTA))
                     {
-                        // 到港日 = ETA 
-                        if (DateTime.Compare(PortArrival, ETA) == 0)
+                        // 到港日 = ETA
+                        if (DateTime.Compare(portArrival, eTA) == 0)
                         {
                             // 可正常存檔
                         }
 
-                        //	且 PortArrival < ETA, 到港日早於 ETA 10 天內
-                        if (DateTime.Compare(PortArrival, ETA) < 0 &&
-                            ((TimeSpan)(MyUtility.Convert.GetDate(PortArrival) - MyUtility.Convert.GetDate(ETA))).Days < 10)
+                        // 且 PortArrival < ETA, 到港日早於 ETA 10 天內
+                        if (DateTime.Compare(portArrival, eTA) < 0 &&
+                            ((TimeSpan)(MyUtility.Convert.GetDate(portArrival) - MyUtility.Convert.GetDate(eTA))).Days < 10)
                         {
                             DialogResult diaR = MyUtility.Msg.QuestionBox("< Arrive Port Date > earlier than < ETA >." + Environment.NewLine + "Are you sure you want to save this data?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
                             if (diaR == DialogResult.No)
@@ -387,9 +395,9 @@ where ted.ID = '{0}'", masterID);
                             }
                         }
 
-                        //	且 PortArrival > ETA, 到港日早於 ETA 10 天內
-                        if (DateTime.Compare(PortArrival, ETA) > 0 &&
-                           ((TimeSpan)(MyUtility.Convert.GetDate(PortArrival) - MyUtility.Convert.GetDate(ETA))).Days < 10)
+                        // 且 PortArrival > ETA, 到港日早於 ETA 10 天內
+                        if (DateTime.Compare(portArrival, eTA) > 0 &&
+                           ((TimeSpan)(MyUtility.Convert.GetDate(portArrival) - MyUtility.Convert.GetDate(eTA))).Days < 10)
                         {
                             DialogResult diaR = MyUtility.Msg.QuestionBox("< Arrive Port Date > later than < ETA >." + Environment.NewLine + "Are you sure you want to save this data?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
                             if (diaR == DialogResult.No)
@@ -398,7 +406,7 @@ where ted.ID = '{0}'", masterID);
                             }
                         }
 
-                        if (((TimeSpan)(MyUtility.Convert.GetDate(PortArrival) - MyUtility.Convert.GetDate(ETA))).Days > 10)
+                        if (((TimeSpan)(MyUtility.Convert.GetDate(portArrival) - MyUtility.Convert.GetDate(eTA))).Days > 10)
                         {
                             MyUtility.Msg.WarningBox("< Arrive Port Date > earlier or later more than <ETA> 10 days, Cannot be saved.");
                             return false;
@@ -410,6 +418,7 @@ where ted.ID = '{0}'", masterID);
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             if (this.isProduceFty == false)
@@ -419,7 +428,7 @@ where ted.ID = '{0}'", masterID);
             }
             else
             {
-                DualResult resultAPI = Sci.Production.Prg.APITransfer.SendTransferExport(this.CurrentMaintain["ID"].ToString());
+                DualResult resultAPI = Prg.APITransfer.SendTransferExport(this.CurrentMaintain["ID"].ToString());
                 if (resultAPI == true)
                 {
                     string sqlcmd = $@"
@@ -477,6 +486,7 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
             callNextForm.ShowDialog(this);
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             #region To Excel
@@ -580,7 +590,6 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
             strExcelName.OpenFile();
             #endregion
 
-
             #endregion
 
             return base.ClickPrint();
@@ -594,7 +603,7 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
 
         private void BtnFind_Click(object sender, EventArgs e)
         {
-            string poID = this.txtLocateForSP.Text + "-" + this.txtSeq1.Text;
+            string poID = this.txtLocateForSP.Text + "-" + this.txtSeq1.Seq1 + "-" + this.txtSeq1.Seq2;
 
             if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
             {

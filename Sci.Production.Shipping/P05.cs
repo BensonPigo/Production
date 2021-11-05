@@ -578,7 +578,6 @@ where   pl.INVNo = '{0}'
                         }
                     }
                 }
-
             }
 
             #endregion
