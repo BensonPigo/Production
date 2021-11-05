@@ -1,5 +1,5 @@
 ﻿
-Create FUNCTION GetArtWork
+Create FUNCTION GetArtwork
 (
 	@XML xml --= '<row Article="001" PatternUkey="233209"/><row Article="100" PatternUkey="233209"/>'
 	,@SizeCode varchar(8) -- 這只能輸入一個 Size = '3030'
@@ -8,7 +8,7 @@ Create FUNCTION GetArtWork
 RETURNS nvarchar(256)
 AS
 BEGIN
-	declare  @ArtWork nvarchar(256)
+	declare  @Artwork nvarchar(256)
 
 	declare @PatternUkey bigint =(select top 1  PatternUkey=Tbl.Col.value('@PatternUkey', 'bigint') FROM @xml.nodes('/row') Tbl(Col))
 
@@ -19,22 +19,22 @@ BEGIN
 
 	--找出要篩選哪些 ArticleGroup
 	declare  @ArticleGroup table (ArticleGroup varchar(6))
-	if exists (Select ArticleGroup from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = @PatternUkey and rtrim(ltrim(Article)) in (select Article from @Article) and SizeRange like '%,%')
-		insert into @ArticleGroup
-		Select distinct ArticleGroup
-		from Pattern_GL_Article WITH (NOLOCK)
+
+	insert into @ArticleGroup
+	Select distinct ArticleGroup
+	from Pattern_GL_Article WITH (NOLOCK)
+	where PatternUkey = @PatternUkey
+	and rtrim(ltrim(Article)) in (select Article from @Article)
+	and SizeRange  = (
+		select SizeRange
+		from Pattern_GL_Article
+		outer apply(select * from SplitString(SizeRange, ',') s)s
 		where PatternUkey = @PatternUkey
 		and rtrim(ltrim(Article)) in (select Article from @Article)
-		and SizeRange  = (
-			select SizeRange
-			from Pattern_GL_Article
-			outer apply(select * from SplitString(SizeRange, ',') s)s
-			where PatternUkey = @PatternUkey
-			and rtrim(ltrim(Article)) in (select Article from @Article)
-			and rtrim(ltrim(Data)) = @SizeCode
-			group by SizeRange
-			having COUNT(1) = 1
-		)
+		and rtrim(ltrim(Data)) = @SizeCode
+		group by SizeRange
+		having COUNT(1) = 1
+	)
 	
 	if not exists(select 1 from @ArticleGroup)
 		insert into @ArticleGroup
@@ -46,7 +46,7 @@ BEGIN
 		insert into @ArticleGroup
 		Select distinct ArticleGroup from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = @PatternUkey 
 
-	select @ArtWork = stuff((
+	select @Artwork = stuff((
 		Select distinct concat('+', pg.Annotation)
 		from Pattern_GL pg
 		inner join Pattern_GL_LectraCode pgl on pgl.PatternUKEY = pg. PatternUKEY and pgl.ID = pg.ID and pgl.Version = pg.Version and pgl.SEQ = pg.SEQ
@@ -57,8 +57,8 @@ BEGIN
 		for xml path('')
 	),1,1,'')
 
-	if isnull(@ArtWork, '') = ''
-	select @ArtWork = stuff((
+	if isnull(@Artwork, '') = ''
+	select @Artwork = stuff((
 		Select distinct concat('+', pg.Annotation)
 		from Pattern_GL pg
 		inner join Pattern_GL_LectraCode pgl on pgl.PatternUKEY = pg. PatternUKEY and pgl.ID = pg.ID and pgl.Version = pg.Version and pgl.SEQ = pg.SEQ
@@ -68,5 +68,5 @@ BEGIN
 		for xml path('')
 	),1,1,'')
 
-	return @ArtWork ;
+	return @Artwork ;
 END
