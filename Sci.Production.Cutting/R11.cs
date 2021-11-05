@@ -233,8 +233,8 @@ drop table #tmp,#byArticle,#tmpOrders,#allAS,#byArticleALL,#sizePatternUkey,#Mar
         protected override bool OnToExcel(ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            this.SetCount(this.printData[1].Rows.Count);
-            if (this.printData[1].Rows.Count <= 0)
+            this.SetCount(this.printData[0].Rows.Count);
+            if (this.printData[0].Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
