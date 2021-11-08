@@ -25,5 +25,10 @@ namespace Sci.Production.Packing
         private void P18_MessageBox_FormClosing(object sender, FormClosingEventArgs e)
         {
         }
+
+        private void BtnEndScanning_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+        }
     }
 }
