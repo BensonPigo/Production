@@ -97,6 +97,7 @@
             this.chkBrokenneedles = new Sci.Win.UI.CheckBox();
             this.label5 = new Sci.Win.UI.Label();
             this.displayCustCD = new Sci.Win.UI.DisplayBox();
+            this.chkAutoScan = new Sci.Win.UI.CheckBox();
             this.tabControlScanArea.SuspendLayout();
             this.tabPageCarton.SuspendLayout();
             this.tabPageScan.SuspendLayout();
@@ -460,7 +461,7 @@
             this.chkBoxNotScan.Checked = true;
             this.chkBoxNotScan.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBoxNotScan.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkBoxNotScan.Location = new System.Drawing.Point(13, 475);
+            this.chkBoxNotScan.Location = new System.Drawing.Point(13, 464);
             this.chkBoxNotScan.Name = "chkBoxNotScan";
             this.chkBoxNotScan.Size = new System.Drawing.Size(198, 21);
             this.chkBoxNotScan.TabIndex = 3;
@@ -519,7 +520,7 @@
             this.gridSelectCartonDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridSelectCartonDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridSelectCartonDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridSelectCartonDetail.Location = new System.Drawing.Point(13, 503);
+            this.gridSelectCartonDetail.Location = new System.Drawing.Point(13, 511);
             this.gridSelectCartonDetail.MultiSelect = false;
             this.gridSelectCartonDetail.Name = "gridSelectCartonDetail";
             this.gridSelectCartonDetail.ReadOnly = true;
@@ -872,9 +873,21 @@
             this.displayCustCD.Size = new System.Drawing.Size(155, 23);
             this.displayCustCD.TabIndex = 122;
             // 
+            // chkAutoScan
+            // 
+            this.chkAutoScan.AutoSize = true;
+            this.chkAutoScan.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkAutoScan.Location = new System.Drawing.Point(13, 487);
+            this.chkAutoScan.Name = "chkAutoScan";
+            this.chkAutoScan.Size = new System.Drawing.Size(181, 21);
+            this.chkAutoScan.TabIndex = 123;
+            this.chkAutoScan.Text = "Auto Scan Next Cartons.";
+            this.chkAutoScan.UseVisualStyleBackColor = true;
+            // 
             // P18
             // 
-            this.ClientSize = new System.Drawing.Size(934, 662);
+            this.ClientSize = new System.Drawing.Size(934, 672);
+            this.Controls.Add(this.chkAutoScan);
             this.Controls.Add(this.displayCustCD);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.chkBrokenneedles);
@@ -987,6 +1000,7 @@
             this.Controls.SetChildIndex(this.chkBrokenneedles, 0);
             this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.displayCustCD, 0);
+            this.Controls.SetChildIndex(this.chkAutoScan, 0);
             this.tabControlScanArea.ResumeLayout(false);
             this.tabPageCarton.ResumeLayout(false);
             this.tabPageCarton.PerformLayout();
@@ -1071,5 +1085,6 @@
         private Win.UI.CheckBox chkBrokenneedles;
         private Win.UI.Label label5;
         private Win.UI.DisplayBox displayCustCD;
+        private Win.UI.CheckBox chkAutoScan;
     }
 }

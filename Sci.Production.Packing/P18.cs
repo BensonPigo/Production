@@ -171,6 +171,11 @@ namespace Sci.Production.Packing
                     this.ShowErr(result_load);
                 }
             }
+
+            if (this.chkAutoScan.Checked)
+            {
+                DualResult result_load = this.LoadScanDetail(0);
+            }
             #endregion
         }
 
@@ -185,41 +190,43 @@ namespace Sci.Production.Packing
             {
                 this.txtScanCartonSP.Text.Length > 13 ? $" and  pd.ID = '{this.PackingListID}' and  pd.CTNStartNo = '{this.CTNStarNo}'" : " and 1=0 ",
                 $" and  pd.ID = '{this.txtScanCartonSP.Text}'",
-                $@" and o.ID = '{this.txtScanCartonSP.Text}' or o.CustPoNo = '{this.txtScanCartonSP.Text}'",
-                $@" and pd.CustCTN = '{this.txtScanCartonSP.Text}'",
+                $" and o.ID = '{this.txtScanCartonSP.Text}' or o.CustPoNo = '{this.txtScanCartonSP.Text}'",
+                $" and pd.CustCTN = '{this.txtScanCartonSP.Text}'",
             };
 
-            string scanDetail_sql = $@"select distinct
-                                           pd.ID,
-                                           pd.CTNStartNo  ,
-                                           pd.OrderID,
-                                           o.CustPoNo ,
-                                           pd.Article    ,
-                                           pd.Color,
-                                           pd.SizeCode  ,
-                                           pd.QtyPerCTN,
-                                           ScanQty = pd.ScanQty,
-                                           pd.ScanEditDate,
-                                           pd.ScanName,
-                                           pd.barcode,
-                                           p.BrandID,
-                                           o.StyleID,
-                                           os.Seq,
-                                           pd.Ukey,
-                                           [PKseq] = pd.Seq,
-                                           o.Dest,
-                                           isnull(pd.ActCTNWeight,0) as ActCTNWeight, 
-                                           isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
-                                           ,p.Remark
-										   ,pd.Ukey
-										   ,[IsFirstTimeScan] = Cast(1 as bit)
-                                           ,o.CustCDID
-                                from PackingList_Detail pd WITH (NOLOCK)
-                                inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
-                                inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-                                left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = pd.SizeCode 
-                                left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
-                                where p.Type in ('B','L') ";
+            string scanDetail_sql = $@"
+select distinct
+    pd.ID,
+    pd.CTNStartNo,
+    pd.OrderID,
+    o.CustPoNo,
+    pd.Article,
+    pd.Color,
+    pd.SizeCode  ,
+    pd.QtyPerCTN,
+    ScanQty = pd.ScanQty,
+    pd.ScanEditDate,
+    pd.ScanName,
+    pd.barcode,
+    p.BrandID,
+    o.StyleID,
+    os.Seq,
+    pd.Ukey,
+    [PKseq] = pd.Seq,
+    o.Dest,
+    isnull(pd.ActCTNWeight,0) as ActCTNWeight, 
+    isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
+    ,p.Remark
+	,pd.Ukey
+	,[IsFirstTimeScan] = Cast(1 as bit)
+    ,o.CustCDID
+from PackingList_Detail pd WITH (NOLOCK)
+inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
+inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = pd.SizeCode 
+left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
+where p.Type in ('B','L')
+";
 
             foreach (string where in aLLwhere)
             {
@@ -286,6 +293,27 @@ namespace Sci.Production.Packing
         private DualResult LoadScanDetail(int rowidx)
         {
             DualResult result = new DualResult(true);
+            if (rowidx == 0 && this.chkAutoScan.Checked)
+            {
+                var scanFirst = this.dt_scanDetail.AsEnumerable()
+                       .GroupBy(g => new { ID = MyUtility.Convert.GetString(g["ID"]), CTNStartNo = MyUtility.Convert.GetString(g["CTNStartNo"]) })
+                       .Select(s => new
+                       {
+                           s.Key.ID,
+                           s.Key.CTNStartNo,
+                           ScanQty = s.Sum(su => MyUtility.Convert.GetInt(su["ScanQty"])),
+                           QtyPerCTN = s.Sum(su => MyUtility.Convert.GetInt(su["QtyPerCTN"])),
+                           Seq = s.Min(f => MyUtility.Convert.GetString(f["Seq"])),
+                       })
+                       .Where(w => w.QtyPerCTN > w.ScanQty)
+                       .OrderBy(o => o.Seq)
+                       .FirstOrDefault();
+
+                var obj = this.selcartonBS.List.OfType<SelectCartonDetail>().ToList().Find(f => f.CTNStartNo.Equals(scanFirst.CTNStartNo) && f.ID == scanFirst.ID);
+                rowidx = this.selcartonBS.IndexOf(obj);
+                this.selcartonBS.Position = rowidx;
+                }
+
             SelectCartonDetail dr = (SelectCartonDetail)this.gridSelectCartonDetail.GetData(rowidx);
 
             if (this.selecedPK != null && this.numBoxScanQty.Value > 0)
@@ -312,6 +340,8 @@ namespace Sci.Production.Packing
                 {
                     return result;
                 }
+
+                this.LoadSelectCarton();
             }
 
             DataRow[] dr_scanDetail = this.dt_scanDetail.Select($"ID = '{dr.ID}' and CTNStartNo = '{dr.CTNStartNo}' ");
@@ -817,6 +847,12 @@ WHERE o.ID='{dr.OrderID}'");
                 }
 
                 this.AfterCompleteScanCarton();
+
+                DualResult result_load = this.LoadScanDetail(0);
+                if (!result_load)
+                {
+                    this.ShowErr(result_load);
+                }
             }
             else
             {
