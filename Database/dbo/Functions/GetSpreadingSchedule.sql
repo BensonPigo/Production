@@ -34,6 +34,7 @@ RETURN
 		EstCutDate = iif(@Ukey = 0 , w.EstCutDate, s.EstCutDate),
 		act.actcutdate,
 		w.CutplanID,
+		IssueID = Issues.IssueID,
 		IsOutStanding = IIF(o.Finished = 0 and w.EstCutDate < CAST(getdate() as date), 'Y', 'N'),
 		o.BuyerDelivery,
 		w.SCIRefno,
@@ -80,6 +81,17 @@ RETURN
 			inner join cuttingoutput_detail cut_b WITH (NOLOCK) on cut.id = cut_b.id
 			Where cut_b.workorderukey = w.Ukey and cut.Status != 'New'
 	) act
+	outer apply
+	(
+		select IssueID = stuff(
+		(
+			Select concat(', ', i.ID)
+			From Issue i WITH (NOLOCK) 
+			Where i.CutplanID = w.CutplanID
+			For XML path('')
+		),1,1,'')
+	) Issues
+
 	where 1=1
 	and o.Finished = 0
 	and w.FactoryID = @FactoryID
