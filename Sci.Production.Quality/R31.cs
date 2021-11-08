@@ -145,10 +145,10 @@ oq.CFAFinalInspectResult
 ,oq.CFARemark
 FROM Order_QtyShip oq
 INNER JOIN Orders o ON o.ID = oq.Id
-LEFT JOIN OrderType ot ON o.OrderTypeID = ot.ID AND o.BrandID = ot.BrandID
 INNER JOIN Factory f ON o.FactoryID = f.ID
+INNER JOIN Style s ON o.StyleUkey = s.Ukey
+LEFT JOIN OrderType ot ON o.OrderTypeID = ot.ID AND o.BrandID = ot.BrandID
 LEFT JOIN Country c ON o.Dest = c.ID
-INNER JOIN Style s ON o.StyleID=s.ID AND s.SeasonID = o.SeasonID
 OUTER APPLY(
 	SELECT [Val]=STUFF((
 	SELECT DISTINCT ',' + Article
@@ -323,10 +323,10 @@ o.MDivisionID
 INTO #tmp
 FROM Order_QtyShip oq
 INNER JOIN Orders o ON o.ID = oq.Id
-LEFT JOIN OrderType ot ON o.OrderTypeID = ot.ID AND o.BrandID = ot.BrandID
 INNER JOIN Factory f ON o.FactoryID = f.ID
+INNER JOIN Style s ON o.StyleUkey = s.Ukey
+LEFT JOIN OrderType ot ON o.OrderTypeID = ot.ID AND o.BrandID = ot.BrandID
 LEFT JOIN Country c ON o.Dest = c.ID
-INNER JOIN Style s ON o.StyleID=s.ID AND s.SeasonID = o.SeasonID
 OUTER APPLY(
 	SELECT [Val]=STUFF((
 	SELECT DISTINCT ',' + Article

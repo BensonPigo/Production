@@ -1,5 +1,8 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Data;
+using Sci.Production.Automation;
+using Sci.Production.Class;
 using Sci.Production.PublicForm;
 using Sci.Production.PublicPrg;
 using System;
@@ -9,13 +12,10 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
-using Sci.Production.Class;
 using Excel = Microsoft.Office.Interop.Excel;
-using Sci.Production.Automation;
-using System.Threading.Tasks;
-using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
@@ -39,7 +39,7 @@ namespace Sci.Production.Warehouse
         {
             this.InitializeComponent();
             this.comboCategory.SelectedIndex = 0;
-            this.comboFabricType.SelectedIndex = 0;
+            this.comboMaterialType.SelectedIndex = 0;
 
             #region -- Grid1 設定 --
             this.gridComplete.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
@@ -272,7 +272,7 @@ WHERE   StockType='{dr["tostocktype"]}'
             #region Filter 表頭條件
 
             int selectindex = this.comboCategory.SelectedIndex;
-            int selectindex2 = this.comboFabricType.SelectedIndex;
+            int selectindex2 = this.comboMaterialType.SelectedIndex;
             string strCfmDate1 = null;
             string strCfmDate2 = null;
             string strSP_s = this.txtSP_s.Text;
@@ -300,7 +300,7 @@ WHERE   StockType='{dr["tostocktype"]}'
 
             sqlcmd.Append($@"
 ;with cte as (
-    select  
+    select distinct
 	        convert(bit,0) as selected
             , iif(y.cnt > 0 ,'Y','') complete
             , f.MDivisionID
@@ -396,10 +396,16 @@ WHERE   StockType='{dr["tostocktype"]}'
                     break;
             }
 
+            if (!MyUtility.Check.Empty(this.comboMtlTypeID.Text))
+            {
+                sqlcmd.Append($"\r\nAND exists (select 1 from Fabric f where f.SCIRefno = pd.SCIRefno and f.MtlTypeID = '{this.comboMtlTypeID.Text}')");
+            }
+
             if (!MyUtility.Check.Empty(strSP_s) && !MyUtility.Check.Empty(strSP_e))
             {
-                sqlcmd.Append($@" 
-            and pd.id >= '{strSP_s}'
+                sqlcmd.Append($@"
+
+        and pd.id >= '{strSP_s}'
             and pd.id <= '{strSP_e}'");
             }
             else if (!MyUtility.Check.Empty(strSP_s) && MyUtility.Check.Empty(strSP_e))
@@ -547,12 +553,12 @@ drop table #tmp
 
         private void BtnClose_Click(object sender, EventArgs e)
         {
-             this.Close();
+            this.Close();
         }
 
         private void GridComplete_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-             this.gridRel.ValidateControl();
+            this.gridRel.ValidateControl();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
@@ -761,7 +767,7 @@ from #tmp
                     }
 
                     transactionscope.Complete();
-                    transactionscope.Dispose(); 
+                    transactionscope.Dispose();
 
                     // AutoWHFabric WebAPI for Gensong
                     if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
@@ -1069,6 +1075,21 @@ and i2.id = '{dr["ID"]}'
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P30.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(exceldt, string.Empty, "Warehouse_P30.xltx", 2, showExcel: true, showSaveMsg: true, excelApp: excelApp);      // 將datatable copy to excel
             Marshal.ReleaseComObject(excelApp);
+        }
+
+        private void ComboMaterialType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            DataTable dt = new DataTable();
+            if (this.comboMaterialType.Text.ToUpper() != "ALL")
+            {
+                string type = this.comboMaterialType.SelectedValue.ToString();
+                string sqlcmd = $"select distinct MtlTypeID from Fabric where Type in ({type}) order by MtlTypeID";
+                DBProxy.Current.Select(null, sqlcmd, out dt);
+            }
+
+            this.comboMtlTypeID.DataSource = dt;
+            this.comboMtlTypeID.ValueMember = "MtlTypeID";
+            this.comboMtlTypeID.DisplayMember = "MtlTypeID";
         }
     }
 }
