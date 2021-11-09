@@ -385,13 +385,12 @@ outer apply (select [Result] = case	when f.NonMoisture = 1 then 'N/A'
 									when f.Moisture <> '' then f.Moisture
 									when exists(select 1 from FIR_Odor fo where f.id=fo.ID and f.Dyelot=fo.Dyelot and f.Roll=fo.Roll) then 'Blank'
 									else '' end) Moisture
-where f.Result = ''
 
 
-update f set f.Result = case when f.Result <> '' then f.Result
-						when Physical.Result = 'N/A' and Weight.Result = 'N/A' and ShadeBond.Result = 'N/A' and Continuity.Result = 'N/A' and Odor.Result = 'N/A' and Moisture.Result = 'N/A' then 'N/A'
+update f set f.Result = case when Physical.Result = 'N/A' and Weight.Result = 'N/A' and ShadeBond.Result = 'N/A' and Continuity.Result = 'N/A' and Odor.Result = 'N/A' and Moisture.Result = 'N/A' then 'N/A'
+						when f.Result <> '' then f.Result
 						when Physical.Result = 'Fail' or Weight.Result = 'Fail' or ShadeBond.Result = 'Fail' or Continuity.Result = 'Fail' or Odor.Result = 'Fail' or Moisture.Result = 'Fail' then 'Fail'
-						when Physical.Result = 'Blank' or Weight.Result = 'Blank' or ShadeBond.Result = 'Blank' or Continuity.Result = 'Blank' or Odor.Result = 'Blank' or Moisture.Result = 'Blank' then 'Blank'
+						when Physical.Result in ('Blank', '') or Weight.Result in ('Blank', '') or ShadeBond.Result in ('Blank', '') or Continuity.Result in ('Blank', '') or Odor.Result in ('Blank', '') or Moisture.Result in ('Blank', '') then 'Blank'
 						else 'Pass' end
 from #tmpFirDetail f
 outer apply (select [Result] = case when f.Physical <> '' then f.Physical

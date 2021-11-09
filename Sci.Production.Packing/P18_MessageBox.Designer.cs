@@ -32,6 +32,7 @@
             this.btnContinue = new Sci.Win.UI.Button();
             this.labelmsg = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.btnEndScanning = new Sci.Win.UI.Button();
             this.SuspendLayout();
             // 
             // btnLacking
@@ -62,9 +63,9 @@
             this.labelmsg.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.labelmsg.Location = new System.Drawing.Point(12, 18);
             this.labelmsg.Name = "labelmsg";
-            this.labelmsg.Size = new System.Drawing.Size(240, 20);
+            this.labelmsg.Size = new System.Drawing.Size(263, 20);
             this.labelmsg.TabIndex = 6;
-            this.labelmsg.Text = "This CTN# is not scan finished. ";
+            this.labelmsg.Text = "This CTN# scan is not yet finished.";
             // 
             // label1
             // 
@@ -72,15 +73,26 @@
             this.label1.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label1.Location = new System.Drawing.Point(15, 49);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(162, 20);
+            this.label1.Size = new System.Drawing.Size(337, 20);
             this.label1.TabIndex = 7;
-            this.label1.Text = "Please select option.";
+            this.label1.Text = "Please select one option from the following.";
+            // 
+            // btnEndScanning
+            // 
+            this.btnEndScanning.Location = new System.Drawing.Point(280, 90);
+            this.btnEndScanning.Name = "btnEndScanning";
+            this.btnEndScanning.Size = new System.Drawing.Size(100, 44);
+            this.btnEndScanning.TabIndex = 8;
+            this.btnEndScanning.Text = "End Scanning";
+            this.btnEndScanning.UseVisualStyleBackColor = true;
+            this.btnEndScanning.Click += new System.EventHandler(this.BtnEndScanning_Click);
             // 
             // P18_MessageBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(282, 146);
+            this.ClientSize = new System.Drawing.Size(414, 146);
+            this.Controls.Add(this.btnEndScanning);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.labelmsg);
             this.Controls.Add(this.btnContinue);
@@ -103,5 +115,6 @@
         private Win.UI.Button btnContinue;
         private System.Windows.Forms.Label labelmsg;
         private System.Windows.Forms.Label label1;
+        private Win.UI.Button btnEndScanning;
     }
 }

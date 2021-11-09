@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
+using System.Linq;
 
 namespace Sci.Production.Sewing
 {
@@ -11,13 +12,16 @@ namespace Sci.Production.Sewing
     public partial class P01_QAOutput : Win.Subs.Input8A
     {
         private DataGridViewGeneratorNumericColumnSettings qaqty = new DataGridViewGeneratorNumericColumnSettings();
+        P01 p01;
 
         /// <summary>
         /// P01_QAOutput
         /// </summary>
-        public P01_QAOutput()
+        /// <param name="p01">p01</param>
+        public P01_QAOutput(P01 p01)
         {
             this.InitializeComponent();
+            this.p01 = p01;
         }
 
         /// <inheritdoc/>
@@ -30,6 +34,20 @@ namespace Sci.Production.Sewing
         protected override bool OnSaveBefore()
         {
             this.grid.ValidateControl();
+
+            // 經由[月解鎖]的資料在點選[QA Output]後, 改為可以修正[QA Qty], 但點選存檔時, [QA Qty]的總數需要與原本的相同
+            // 如不相同則不可存檔顯示以下訊息並return,
+            // [Ttl.QA Qty] Can’t be different from the original.
+            if (this.p01.IsUnlockFromMonthLock)
+            {
+                int subOutputQty = this.CurrentSubDetailDatas.AsEnumerable().Sum(s => MyUtility.Convert.GetInt(s["QAQty"]));
+                if (subOutputQty != MyUtility.Convert.GetInt(this.CurrentDetailData["QAQty"]))
+                {
+                    MyUtility.Msg.WarningBox("[Ttl. QA Qty] Can’t be different from the original.");
+                    return false;
+                }
+            }
+
             foreach (DataRow row in this.CurrentSubDetailDatas.Rows)
             {
                 if (row.RowState != DataRowState.Deleted)
