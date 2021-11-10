@@ -10,9 +10,11 @@
     [LocationID]            VARCHAR (10)  DEFAULT ('') NOT NULL,
     [RFIDProcessLocationID] VARCHAR (15)  CONSTRAINT [DF_BundleTransfer_RFIDProcessLocationID] DEFAULT ('') NOT NULL,
     [PanelNo]               VARCHAR (24)  CONSTRAINT [DF_BundleTransfer_PanelNo] DEFAULT ('') NOT NULL,
-    [CutCellID]             VARCHAR (10)  CONSTRAINT [DF_BundleTransfer_CutCellID] DEFAULT ('') NOT NULL, 
-    [SewingLineID] VARCHAR(2) NOT NULL DEFAULT ('')
+    [CutCellID]             VARCHAR (10)  CONSTRAINT [DF_BundleTransfer_CutCellID] DEFAULT ('') NOT NULL,
+    [SewingLineID]          VARCHAR (5)   DEFAULT ('') NULL
 );
+
+
 
 
 
@@ -53,4 +55,10 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Sid', @leve
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Bundle transfer record', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'BundleTransfer';
+
+
+GO
+CREATE NONCLUSTERED INDEX [BundleTransferDate]
+    ON [dbo].[BundleTransfer]([TransferDate] ASC)
+    INCLUDE([RFIDReaderId], [Type], [SubProcessId], [TagId], [BundleNo], [LocationID], [RFIDProcessLocationID], [PanelNo], [CutCellID]);
 

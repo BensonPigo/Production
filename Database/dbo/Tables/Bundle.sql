@@ -9,7 +9,7 @@
     [Cutno]           NUMERIC (6)   CONSTRAINT [DF_Bundle_Cutno] DEFAULT ((0)) NULL,
     [Cdate]           DATE          NULL,
     [Orderid]         VARCHAR (13)  CONSTRAINT [DF_Bundle_Orderid] DEFAULT ('') NOT NULL,
-    [Sewinglineid]    VARCHAR (2)   CONSTRAINT [DF_Bundle_Sewinglineid] DEFAULT ('') NOT NULL,
+    [Sewinglineid]    VARCHAR (5)   CONSTRAINT [DF_Bundle_Sewinglineid] DEFAULT ('') NULL,
     [Item]            VARCHAR (20)  CONSTRAINT [DF_Bundle_Item] DEFAULT ('') NULL,
     [SewingCell]      VARCHAR (2)   CONSTRAINT [DF_Bundle_SewingCell] DEFAULT ('') NOT NULL,
     [Ratio]           VARCHAR (100) CONSTRAINT [DF_Bundle_Ratio] DEFAULT ('') NULL,
@@ -29,6 +29,8 @@
     [SubCutNo]        VARCHAR (2)   CONSTRAINT [DF_Bundle_SubCutNo] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Bundle] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -202,5 +204,7 @@ CREATE NONCLUSTERED INDEX [BundleCdate]
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'子裁次', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle', @level2type = N'COLUMN', @level2name = N'SubCutNo';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�l���', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle', @level2type = N'COLUMN', @level2name = N'SubCutNo';
+
+
 

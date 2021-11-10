@@ -1,10 +1,4 @@
 ﻿
-
--- =============================================
--- Author:		JIMMY
--- Create date: 2017/05/06
--- Description:	<SP#>
--- =============================================
 CREATE FUNCTION [dbo].[getDailystdq]
 (
 	@APSNo varchar(20)
@@ -24,7 +18,7 @@ declare @APSListWorkDay Table(
 	[id] [bigint] NOT NULL,
 	[APSNo] [int] NULL,
 	[MDivisionID] [varchar](8) NULL,
-	[SewingLineID] [varchar](2) NULL,
+	[SewingLineID] [varchar](5) NULL,
 	[FactoryID] [varchar](8) NULL,
 	[InlineDate] [date] NULL,
 	[OfflineDate] [date] NULL,
@@ -110,7 +104,7 @@ AND DATEADD(DAY,number,(select CAST(min(Inline)AS date) from @APSListWorkDay)) <
 declare @Workhour_step1 TABLE(
 	[APSNo] [int] NULL,
 	[LearnCurveID] [int] NULL,
-	[SewingLineID] [varchar](2) NULL,
+	[SewingLineID] [varchar](5) NULL,
 	[FactoryID] [varchar](8) NULL,
 	[WorkDate] [datetime] NULL,
 	[inline] [datetime] NULL,
@@ -163,7 +157,7 @@ delete @Workhour_step1 where WorkDate = OfflineDate and StartHour >= OfflineHour
 declare @Workhour_step2 TABLE(
 	[APSNo] [int] NULL,
 	[LearnCurveID] [int] NULL,
-	[SewingLineID] [varchar](2) NULL,
+	[SewingLineID] [varchar](5) NULL,
 	[WorkDate] [datetime] NULL,
 	[inline] [datetime] NULL,
 	[Offline] [datetime] NULL,
@@ -446,8 +440,8 @@ declare @SP_ComboType Table(
 insert into @SP_ComboType
 select OrderID,ComboType
 from(
-	select rn =  row_number() over(partition by a.OrderID order by a.Inline),a.OrderID,a.ComboType
-	from @APSBase a
+	select rn =  row_number() over(partition by a.OrderID order by a.Inline,a.id),a.OrderID,a.ComboType
+	from SewingSchedule a
 	where exists(select 1 from @SunconNotEmpty where OrderID = a.OrderID)
 )x
 where rn = 1

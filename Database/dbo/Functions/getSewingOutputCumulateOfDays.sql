@@ -1,11 +1,7 @@
-﻿-- =============================================
--- Author:		<Author,,Name>
--- Create date: <Create Date,,>
--- Description:	<Description,,>
--- =============================================
+﻿
 CREATE FUNCTION [dbo].[getSewingOutputCumulateOfDays]
 (	
-	@style VARCHAR(15), @sewingline VARCHAR(2), @outputdate DATE, @factory VARCHAR(8)
+	@style VARCHAR(15), @sewingline VARCHAR(5), @outputdate DATE, @factory VARCHAR(8)
 )
 RETURNS TABLE 
 AS

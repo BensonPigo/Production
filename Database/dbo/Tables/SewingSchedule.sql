@@ -1,8 +1,8 @@
 ﻿CREATE TABLE [dbo].[SewingSchedule] (
-    [ID]              BIGINT         IDENTITY (1, 1) NOT NULL,
+    [ID]              BIGINT         IDENTITY (1, 1) NOT FOR REPLICATION NOT NULL,
     [OrderID]         VARCHAR (13)   CONSTRAINT [DF_SewingSchedule_OrderID] DEFAULT ('') NOT NULL,
     [ComboType]       VARCHAR (1)    CONSTRAINT [DF_SewingSchedule_ComboType] DEFAULT ('') NULL,
-    [SewingLineID]    VARCHAR (2)    CONSTRAINT [DF_SewingSchedule_SewingLineID] DEFAULT ('') NULL,
+    [SewingLineID]    VARCHAR (5)    CONSTRAINT [DF_SewingSchedule_SewingLineID] DEFAULT ('') NULL,
     [AlloQty]         INT            CONSTRAINT [DF_SewingSchedule_AlloQty] DEFAULT ((0)) NULL,
     [Inline]          DATETIME       NULL,
     [Offline]         DATETIME       NULL,
@@ -27,6 +27,8 @@
     [SwitchTime]      INT            DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_SewingSchedule] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

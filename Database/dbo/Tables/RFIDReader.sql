@@ -1,18 +1,19 @@
 ﻿CREATE TABLE [dbo].[RFIDReader] (
-    [Id]           VARCHAR (24) CONSTRAINT [DF_RFIDReader_Id] DEFAULT ('') NOT NULL,
-    [ProcessId]    VARCHAR (10) CONSTRAINT [DF_RFIDReader_ProcessId] DEFAULT ('') NULL,
-    [Type]         VARCHAR (1)  CONSTRAINT [DF_RFIDReader_Type] DEFAULT ('') NULL,
-    [AddName]      VARCHAR (10) CONSTRAINT [DF_RFIDReader_AddName] DEFAULT ('') NULL,
-    [AddDate]      DATETIME     NULL,
-    [EditName]     VARCHAR (10) CONSTRAINT [DF_RFIDReader_EditName] DEFAULT ('') NULL,
-    [EditDate]     DATETIME     NULL,
-    [SewingLineID] VARCHAR (2)  NULL,
-    [MDivisionID]  VARCHAR (8)  NULL,
-    [FactoryID]    VARCHAR (8)  CONSTRAINT [DF_RFIDReader_FactoryID] DEFAULT ('') NOT NULL,
-    [Location]     VARCHAR (50) CONSTRAINT [DF_RFIDReader_Location] DEFAULT ('') NOT NULL, 
-    [RFIDProcessLocationID] VARCHAR(15) CONSTRAINT [DF_RFIDReader_RFIDProcessLocationID] DEFAULT ('') NOT NULL,
+    [Id]                    VARCHAR (24) CONSTRAINT [DF_RFIDReader_Id] DEFAULT ('') NOT NULL,
+    [Type]                  VARCHAR (1)  CONSTRAINT [DF_RFIDReader_Type] DEFAULT ('') NULL,
+    [AddName]               VARCHAR (10) CONSTRAINT [DF_RFIDReader_AddName] DEFAULT ('') NULL,
+    [AddDate]               DATETIME     NULL,
+    [EditName]              VARCHAR (10) CONSTRAINT [DF_RFIDReader_EditName] DEFAULT ('') NULL,
+    [EditDate]              DATETIME     NULL,
+    [SewingLineID]          VARCHAR (5)  NULL,
+    [MDivisionID]           VARCHAR (8)  NOT NULL,
+    [FactoryID]             VARCHAR (8)  CONSTRAINT [DF_RFIDReader_FactoryID] DEFAULT ('') NOT NULL,
+    [Location]              VARCHAR (50) CONSTRAINT [DF_RFIDReader_Location] DEFAULT ('') NOT NULL,
+    [RFIDProcessLocationID] VARCHAR (15) CONSTRAINT [DF_RFIDReader_RFIDProcessLocationID] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_RFIDReader] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 
@@ -38,7 +39,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Type', @lev
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Sub-Process Id', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'RFIDReader', @level2type = N'COLUMN', @level2name = N'ProcessId';
+
 
 
 GO

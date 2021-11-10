@@ -3,7 +3,7 @@
     [OrderID]       VARCHAR (13)  CONSTRAINT [DF_Cfa_OrderID] DEFAULT ('') NULL,
     [cDate]         DATE          NULL,
     [FactoryID]     VARCHAR (8)   CONSTRAINT [DF_Cfa_FactoryID] DEFAULT ('') NULL,
-    [SewingLineID]  VARCHAR (2)   CONSTRAINT [DF_Cfa_SewingLineID] DEFAULT ('') NULL,
+    [SewingLineID]  VARCHAR (5)   CONSTRAINT [DF_Cfa_SewingLineID] DEFAULT ('') NULL,
     [InspectQty]    NUMERIC (7)   CONSTRAINT [DF_Cfa_InspectQty] DEFAULT ((0)) NULL,
     [DefectQty]     NUMERIC (7)   CONSTRAINT [DF_Cfa_DefectQty] DEFAULT ((0)) NULL,
     [Team]          VARCHAR (1)   CONSTRAINT [DF_Cfa_Team] DEFAULT ('') NULL,
@@ -21,6 +21,8 @@
     [MDivisionid]   VARCHAR (8)   CONSTRAINT [DF_Cfa_MDivisionid] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Cfa] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -103,4 +105,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編輯日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cfa', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+CREATE NONCLUSTERED INDEX [NonClusteredIndex-CFAOrderID]
+    ON [dbo].[Cfa]([OrderID] ASC);
 

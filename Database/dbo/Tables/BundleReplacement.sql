@@ -9,7 +9,7 @@
     [Cutno]           NUMERIC (6)   NULL,
     [Cdate]           DATE          NULL,
     [Orderid]         VARCHAR (13)  DEFAULT ('') NOT NULL,
-    [Sewinglineid]    VARCHAR (2)   DEFAULT ('') NOT NULL,
+    [Sewinglineid]    VARCHAR (5)   DEFAULT ('') NULL,
     [Item]            VARCHAR (20)  NULL,
     [SewingCell]      VARCHAR (2)   DEFAULT ('') NOT NULL,
     [Ratio]           VARCHAR (100) NULL,
@@ -27,6 +27,8 @@
     [Remake]          BIT           DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_BundleReplacement] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

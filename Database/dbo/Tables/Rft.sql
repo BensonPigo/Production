@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[Rft] (
     [OrderID]      VARCHAR (13)  CONSTRAINT [DF_Rft_OrderID] DEFAULT ('') NULL,
     [CDate]        DATE          NULL,
-    [SewinglineID] VARCHAR (2)   CONSTRAINT [DF_Rft_SewinglineID] DEFAULT ('') NULL,
+    [SewinglineID] VARCHAR (5)   CONSTRAINT [DF_Rft_SewinglineID] DEFAULT ('') NULL,
     [FactoryID]    VARCHAR (8)   CONSTRAINT [DF_Rft_FactoryID] DEFAULT ('') NULL,
     [InspectQty]   NUMERIC (7)   CONSTRAINT [DF_Rft_InspectQty] DEFAULT ((0)) NULL,
     [RejectQty]    NUMERIC (7)   CONSTRAINT [DF_Rft_RejectQty] DEFAULT ((0)) NULL,
@@ -10,7 +10,7 @@
     [Team]         VARCHAR (1)   CONSTRAINT [DF_Rft_Team] DEFAULT ('') NULL,
     [Status]       VARCHAR (15)  CONSTRAINT [DF_Rft_Encode] DEFAULT ('') NULL,
     [Remark]       NVARCHAR (60) CONSTRAINT [DF_Rft_Remark] DEFAULT ('') NULL,
-    [ID]           BIGINT        IDENTITY (1, 1) NOT NULL,
+    [ID]           BIGINT        IDENTITY (1, 1) NOT FOR REPLICATION NOT NULL,
     [AddName]      VARCHAR (10)  CONSTRAINT [DF_Rft_AddName] DEFAULT ('') NULL,
     [AddDate]      DATETIME      NULL,
     [EditName]     VARCHAR (10)  CONSTRAINT [DF_Rft_EditName] DEFAULT ('') NULL,
@@ -18,6 +18,8 @@
     [MDivisionid]  VARCHAR (8)   CONSTRAINT [DF_Rft_MDivisionid] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Rft] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

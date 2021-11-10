@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[WorkHour] (
-    [SewingLineID] VARCHAR (2)    CONSTRAINT [DF_WorkHour_SewingLineID] DEFAULT ('') NOT NULL,
+    [SewingLineID] VARCHAR (5)    CONSTRAINT [DF_WorkHour_SewingLineID] DEFAULT ('') NOT NULL,
     [FactoryID]    VARCHAR (8)    CONSTRAINT [DF_WorkHour_FactoryID] DEFAULT ('') NOT NULL,
     [Date]         DATE           NOT NULL,
     [Remark]       NVARCHAR (50)  CONSTRAINT [DF_WorkHour_Remark] DEFAULT ('') NULL,
