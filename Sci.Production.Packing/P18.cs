@@ -315,6 +315,10 @@ where p.Type in ('B','L')
                 }
 
             SelectCartonDetail dr = (SelectCartonDetail)this.gridSelectCartonDetail.GetData(rowidx);
+            if (dr == null)
+            {
+                return result;
+            }
 
             if (this.selecedPK != null && this.numBoxScanQty.Value > 0)
             {
