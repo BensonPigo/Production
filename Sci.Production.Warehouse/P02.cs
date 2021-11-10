@@ -187,11 +187,13 @@ select FactoryID = iif(ed.PoType='M'
         , ed.Carton
 		, o.OrderTypeID
 		,[TPERemark] = psd.Remark
+        ,pll.QRCode
 from Export_Detail ed WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 left join Supp s WITH (NOLOCK) on s.id = ed.SuppID 
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+left join POShippingList_Line pll WITH (NOLOCK) ON pll.Export_Detail_Ukey = ed.Ukey and psd.FabricType = 'F'
 OUTER APPLY(
 		SELECT [Val] = STUFF((
 		SELECT DISTINCT ','+esc.ContainerType + '-' +esc.ContainerNo

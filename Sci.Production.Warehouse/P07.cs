@@ -53,7 +53,7 @@ namespace Sci.Production.Warehouse
                     this.detailgrid.CurrentCell = this.detailgrid.Rows[this.detailgrid.RowCount - 1].Cells[0];
                 }
             };
-            MyUtility.Tool.SetupCombox(this.comboTypeFilter, 2, 1, "ALL,ALL,Fabric,Fabric,Accessory,Accessory");
+            MyUtility.Tool.SetupCombox(this.comboTypeFilter, 2, 1, "ALL,ALL,Fabric,Fabric,Accessory,Accessory,No QR Code,No QR Code");
             this.comboTypeFilter.SelectedIndex = 0;
             this.comboStockType.DataSource = new BindingSource(this.di_stocktype, null);
             this.comboStockType.ValueMember = "Key";
@@ -1330,6 +1330,8 @@ WHERE   StockType='{this.CurrentDetailData["stocktype"].ToString()}'
             .Text("MINDQRCode", header: "MIND QR Code", width: Widths.AnsiChars(30))
             .Text("MINDChecker", header: "Checker", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .DateTime("CheckDate", header: "Check Date", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("FullRoll", header: "Full Roll", width: Widths.AnsiChars(25))
+            .Text("FullDyelot", header: "Full Dyelot", width: Widths.AnsiChars(25))
             ;
             this.detailgrid.Columns["MINDQRCode"].DefaultCellStyle.BackColor = Color.Pink;
 
@@ -2349,6 +2351,8 @@ select  a.id
         ,a.MINDQRCode
         ,MINDChecker = a.MINDChecker+'-'+(select name from [ExtendServer].ManufacturingExecution.dbo.Pass1 where id = a.MINDChecker)
         ,CheckDate= IIF(a.MINDCheckEditDate IS NULL, a.MINDCheckAddDate,a.MINDCheckEditDate)
+        ,a.FullRoll
+        ,a.FullDyelot
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 INNER JOIN Receiving b WITH (NOLOCK) ON a.id= b.Id
 left join View_WH_Orders o WITH (NOLOCK) on o.id = a.PoId
@@ -2465,7 +2469,9 @@ select
 	, shipqty = x.qty
 	, Actualqty = x.qty
 	, Roll = convert(varchar(8), isnull(pll.PackageNo, ''))
+    , FullRoll = convert(varchar(50), isnull(pll.PackageNo, ''))
 	, Dyelot = convert(varchar(8), isnull(pll.BatchNo, ''))
+    , FullDyelot = convert(varchar(50), isnull(pll.BatchNo, ''))
 	, remark = ''
 	, location = ''
 	, b.Refno
@@ -2474,6 +2480,7 @@ select
 	, c.OrderTypeID
 	, [ContainerType] = Container.Val
 	, pll.QRCode -- b.FabricType = 'F'  相同 QRCode 其中一筆為 [+] 剩下為 [-]
+    , [MINDQRCode] = pll.QRCode
     , clickInsert = 1
 	, DRQ = IIF(isnull(pll.QRCode, '') = '', Null, DENSE_RANK() over(order by pll.QRCode))
 into #tmp
@@ -2582,6 +2589,9 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
                 case "Accessory":
                     listCanDeleteDetail = this.DetailDatas.Where(s => s["fabrictype"].ToString() == "A").ToList();
                     break;
+                case "No QR Code":
+                    listCanDeleteDetail = this.DetailDatas.Where(s => MyUtility.Check.Empty(s["MINDQRCode"])).ToList();
+                    break;
                 default:
                     listCanDeleteDetail = this.DetailDatas.ToList();
                     break;
@@ -2617,6 +2627,10 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
                 case 2:
                     this.detailgridbs.Filter = "fabrictype ='A'";
                     this.btnDeleteAll.Text = "Delete all acc.";
+                    break;
+                case 3:
+                    this.detailgridbs.Filter = "MINDQRCode = '' or MINDQRCode is null";
+                    this.btnDeleteAll.Text = "Delete All No QR Code";
                     break;
             }
 

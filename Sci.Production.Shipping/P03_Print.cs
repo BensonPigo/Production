@@ -155,7 +155,15 @@ order by e.ID",
                 worksheet.Cells[9, 8] = this.email;
 
                 int rownum = 11;
-                object[,] objArray = new object[1, 18];
+                bool isExistsQRCode = this.detailData.Columns["QRCode"] != null;
+
+                if (!isExistsQRCode)
+                {
+                    Microsoft.Office.Interop.Excel.Range rangeColumnS = (Microsoft.Office.Interop.Excel.Range)worksheet.Columns["S", System.Type.Missing];
+                    rangeColumnS.Hidden = true;
+                }
+
+                object[,] objArray = new object[1, 19];
                 foreach (DataRow dr in this.detailData.Rows)
                 {
                     objArray[0, 0] = dr["FactoryID"];
@@ -176,7 +184,12 @@ order by e.ID",
                     objArray[0, 15] = dr["BalanceQty"];
                     objArray[0, 16] = dr["NetKg"];
                     objArray[0, 17] = dr["WeightKg"];
-                    worksheet.Range[string.Format("A{0}:R{0}", rownum)].Value2 = objArray;
+                    if (isExistsQRCode)
+                    {
+                        objArray[0, 18] = dr["QRCode"];
+                    }
+
+                    worksheet.Range[string.Format("A{0}:S{0}", rownum)].Value2 = objArray;
 
                     rownum++;
                 }

@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.comboType = new Sci.Win.UI.ComboBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.radioQRCodeSticker = new Sci.Win.UI.RadioButton();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.radioArriveWHReport = new Sci.Win.UI.RadioButton();
@@ -38,6 +41,9 @@
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.comboType);
+            this.radioPanel1.Controls.Add(this.label2);
+            this.radioPanel1.Controls.Add(this.radioQRCodeSticker);
             this.radioPanel1.Controls.Add(this.txtSPNo);
             this.radioPanel1.Controls.Add(this.label1);
             this.radioPanel1.Controls.Add(this.radioArriveWHReport);
@@ -48,6 +54,41 @@
             this.radioPanel1.TabIndex = 94;
             this.radioPanel1.Value = "P/L Rcv Report";
             this.radioPanel1.ValueChanged += new System.EventHandler(this.RadioGroup1_ValueChanged);
+            // 
+            // comboType
+            // 
+            this.comboType.BackColor = System.Drawing.Color.White;
+            this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboType.FormattingEnabled = true;
+            this.comboType.IsSupportUnselect = true;
+            this.comboType.Location = new System.Drawing.Point(242, 92);
+            this.comboType.Name = "comboType";
+            this.comboType.OldText = "";
+            this.comboType.Size = new System.Drawing.Size(121, 24);
+            this.comboType.TabIndex = 6;
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.Location = new System.Drawing.Point(200, 93);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(39, 23);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Type:";
+            this.label2.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // radioQRCodeSticker
+            // 
+            this.radioQRCodeSticker.AutoSize = true;
+            this.radioQRCodeSticker.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioQRCodeSticker.Location = new System.Drawing.Point(32, 95);
+            this.radioQRCodeSticker.Name = "radioQRCodeSticker";
+            this.radioQRCodeSticker.Size = new System.Drawing.Size(131, 21);
+            this.radioQRCodeSticker.TabIndex = 4;
+            this.radioQRCodeSticker.TabStop = true;
+            this.radioQRCodeSticker.Text = "QR Code Sticker";
+            this.radioQRCodeSticker.UseVisualStyleBackColor = true;
+            this.radioQRCodeSticker.Value = "QR Code Sticker";
             // 
             // txtSPNo
             // 
@@ -61,7 +102,6 @@
             // label1
             // 
             this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(200, 59);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(39, 23);
@@ -102,7 +142,11 @@
             this.ClientSize = new System.Drawing.Size(627, 314);
             this.Controls.Add(this.radioPanel1);
             this.Name = "P07_Print";
-            this.Text = "() ";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
+            this.Text = "() () ";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -121,6 +165,8 @@
         private Win.UI.RadioButton radioPLRcvReport;
         private Win.UI.TextBox txtSPNo;
         private Win.UI.Label label1;
-
+        private Win.UI.ComboBox comboType;
+        private Win.UI.Label label2;
+        private Win.UI.RadioButton radioQRCodeSticker;
     }
 }

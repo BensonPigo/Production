@@ -2226,6 +2226,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="P34_Print.rdlc" />
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\DataSources\P08_PrintFabircSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P10_PrintBarcodeData.datasource" />

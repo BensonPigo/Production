@@ -981,6 +981,7 @@
   <ItemGroup>
     <EmbeddedResource Include="P05_Print.rdlc" />
     <EmbeddedResource Include="P05_Print_Comb.rdlc" />
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\DataSources\P01_PrintData.datasource" />
     <None Include="Properties\DataSources\P05_PrintData.datasource" />

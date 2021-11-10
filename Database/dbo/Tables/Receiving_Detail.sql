@@ -31,6 +31,8 @@
     [MINDChecker]       VARCHAR (10)    CONSTRAINT [DF_Receiving_Detail_MINDChecker] DEFAULT ('') NOT NULL,
     [MINDCheckAddDate]  DATETIME        NULL,
     [MINDCheckEditDate] DATETIME        NULL,
+    [FullRoll] VARCHAR(50) CONSTRAINT [DF_Receiving_Detail_FullRoll] DEFAULT ('') NOT NULL, 
+    [FullDyelot] VARCHAR(50) CONSTRAINT [DF_Receiving_Detail_FullDyelot] DEFAULT ('') NOT NULL, 
     CONSTRAINT [PK_Receiving_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
