@@ -150,6 +150,11 @@ from Issue_MIND im where id = '{this.id}'";
         {
             foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
             {
+                if (dr.RowState == DataRowState.Deleted)
+                {
+                    continue;
+                }
+
                 if (!this.CheckReleaser(dr))
                 {
                     dr.AcceptChanges();
@@ -166,7 +171,7 @@ from Issue_MIND im where id = '{this.id}'";
 
         private void BtnImport_Click(object sender, EventArgs e)
         {
-            string sqlcmd = "select ID,Name from Pass1 where Resign is not null order by ID";
+            string sqlcmd = "select ID,Name from Pass1 where Resign is null order by ID";
             DualResult result = DBProxy.Current.Select("ManufacturingExecution", sqlcmd, out DataTable dt);
             if (!result)
             {
