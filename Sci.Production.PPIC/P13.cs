@@ -166,7 +166,7 @@ namespace Sci.Production.PPIC
                 .Text("OrderTypeID", header: "Order Type", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", iseditingreadonly: true)
                 .Numeric("CPU", header: "CPU", decimal_places: 3, iseditingreadonly: true)
-                .Text("SewLine", header: "Line#", width: Widths.AnsiChars(2), settings: this.sewLine)
+                .Text("SewLine", header: "Line#", width: Widths.AnsiChars(5), settings: this.sewLine)
                 .Date("SewInLine", header: "In Line Date", settings: this.sewInLine)
                 .Date("SewOffLine", header: "Off Line Date", settings: this.sewOffLine)
                 .Date("CutReadyDate", header: "Cutting Ready Date", settings: this.cutReadyDate)
