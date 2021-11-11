@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[P_SewingLineSchedule] (
     [APSNo]                    INT             NULL,
-    [SewingLineID]             VARCHAR (2)     NULL,
+    [SewingLineID]             VARCHAR (5)     NULL,
     [SewingDay]                DATE            NULL,
     [SewingStartTime]          DATETIME        NULL,
     [SewingEndTime]            DATETIME        NULL,

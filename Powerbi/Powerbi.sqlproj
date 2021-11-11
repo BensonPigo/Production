@@ -94,7 +94,6 @@
     <Build Include="dbo\Stored Procedures\F_F001_COPBasic.sql" />
     <Build Include="dbo\Stored Procedures\P_DeleteEfficiencyBI.sql" />
     <Build Include="dbo\Tables\P_SewingLineSchedule.sql" />
-    <Build Include="dbo\Tables\SewingLineScheduleBI.sql" />
     <Build Include="dbo\Tables\ForecastLoadingBI.sql" />
     <Build Include="dbo\Tables\ForecastLoadingBI_Summary.sql" />
     <Build Include="dbo\Stored Procedures\P_ImportOustandingPO.sql" />

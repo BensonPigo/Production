@@ -11,7 +11,7 @@
     [FactoryID]       VARCHAR (8)    NULL,
     [GarmentOutput]   DECIMAL (5, 2) NULL,
     [InspectionStage] VARCHAR (30)   NULL,
-    [Line]            VARCHAR (2)    NULL,
+    [Line]            VARCHAR (5)    NULL,
     [NumberDefect]    NUMERIC (5)    NULL,
     [OrderQty]        INT            NULL,
     [POID]            VARCHAR (30)   NULL,
