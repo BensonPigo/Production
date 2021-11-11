@@ -6,7 +6,7 @@
     [SewingLineID]  VARCHAR (5)   CONSTRAINT [DF_Cfa_SewingLineID] DEFAULT ('') NULL,
     [InspectQty]    NUMERIC (7)   CONSTRAINT [DF_Cfa_InspectQty] DEFAULT ((0)) NULL,
     [DefectQty]     NUMERIC (7)   CONSTRAINT [DF_Cfa_DefectQty] DEFAULT ((0)) NULL,
-    [Team]          VARCHAR (1)   CONSTRAINT [DF_Cfa_Team] DEFAULT ('') NULL,
+    [Team]          VARCHAR (5)   CONSTRAINT [DF_Cfa_Team] DEFAULT ('') NULL,
     [Shift]         VARCHAR (1)   CONSTRAINT [DF_Cfa_Shift] DEFAULT ('') NULL,
     [Result]        VARCHAR (5)   CONSTRAINT [DF_Cfa_Result] DEFAULT ('') NULL,
     [GarmentOutput] NUMERIC (7)   CONSTRAINT [DF_Cfa_GarmentOutput] DEFAULT ((0)) NULL,

@@ -6,7 +6,7 @@ CREATE TABLE [dbo].[CFAInspectionRecord] (
     [FactoryID]              VARCHAR (8)    DEFAULT ('') NOT NULL,
     [MDivisionid]            VARCHAR (8)    DEFAULT ('') NOT NULL,
     [SewingLineID]           VARCHAR (100)  DEFAULT ('') NOT NULL,
-    [Team]                   VARCHAR (1)    DEFAULT ('') NOT NULL,
+    [Team]                   VARCHAR (5)    DEFAULT ('') NOT NULL,
     [Shift]                  VARCHAR (1)    DEFAULT ('') NOT NULL,
     [Stage]                  VARCHAR (10)   DEFAULT ('') NOT NULL,
     [InspectQty]             NUMERIC (7)    DEFAULT ((0)) NOT NULL,

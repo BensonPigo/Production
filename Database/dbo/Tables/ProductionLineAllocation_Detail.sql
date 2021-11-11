@@ -4,7 +4,7 @@ CREATE TABLE [dbo].[ProductionLineAllocation_Detail](
 	[ProductionDate] [date] NOT NULL,
 	[LineLocationID] [varchar](2) NOT NULL,
 	[SewingLineID] [varchar](5) NOT NULL,
-	[Team] [varchar](1) NOT NULL,
+	[Team] [varchar](5) NOT NULL,
  CONSTRAINT [PK_ProductionLineAllocation_Detail] PRIMARY KEY CLUSTERED 
 (
 	[FactoryID] ASC,

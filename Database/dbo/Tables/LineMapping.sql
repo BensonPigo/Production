@@ -7,7 +7,7 @@
     [FactoryID]                 VARCHAR (8)    CONSTRAINT [DF_LineMapping_FactoryID] DEFAULT ('') NULL,
     [ComboType]                 VARCHAR (1)    CONSTRAINT [DF_LineMapping_ComboType] DEFAULT ('') NULL,
     [SewingLineID]              VARCHAR (5)    CONSTRAINT [DF_LineMapping_SewingLineID] DEFAULT ('') NULL,
-    [Team]                      VARCHAR (1)    CONSTRAINT [DF_LineMapping_Team] DEFAULT ('') NULL,
+    [Team]                      VARCHAR (5)    CONSTRAINT [DF_LineMapping_Team] DEFAULT ('') NULL,
     [IdealOperators]            TINYINT        CONSTRAINT [DF_LineMapping_IdealOperators] DEFAULT ((0)) NULL,
     [CurrentOperators]          SMALLINT       CONSTRAINT [DF_LineMapping_CurrentOperators] DEFAULT ((0)) NULL,
     [StandardOutput]            INT            CONSTRAINT [DF_LineMapping_StandardOutput] DEFAULT ((0)) NULL,

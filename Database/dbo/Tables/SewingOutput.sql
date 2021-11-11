@@ -10,7 +10,7 @@
     [ManHour]                 NUMERIC (9, 3) CONSTRAINT [DF_SewingOutput_ManHour] DEFAULT ((0)) NULL,
     [Efficiency]              NUMERIC (6, 1) CONSTRAINT [DF_SewingOutput_Efficiency] DEFAULT ((0)) NULL,
     [Shift]                   VARCHAR (1)    CONSTRAINT [DF_SewingOutput_Shift] DEFAULT ('') NULL,
-    [Team]                    VARCHAR (1)    CONSTRAINT [DF_SewingOutput_Team] DEFAULT ('') NULL,
+    [Team]                    VARCHAR (5)    CONSTRAINT [DF_SewingOutput_Team] DEFAULT ('') NULL,
     [Status]                  VARCHAR (15)   CONSTRAINT [DF_SewingOutput_Status] DEFAULT ('') NULL,
     [LockDate]                DATE           NULL,
     [WorkHour]                NUMERIC (6, 2) CONSTRAINT [DF_SewingOutput_WorkHour] DEFAULT ((0)) NULL,
