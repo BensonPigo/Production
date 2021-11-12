@@ -29,31 +29,33 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.comboBox1 = new Sci.Win.UI.ComboBox();
+            this.label1 = new Sci.Win.UI.Label();
             this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.dateETA = new Sci.Win.UI.DateRange();
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelETA = new Sci.Win.UI.Label();
             this.radioListReport = new Sci.Win.UI.RadioButton();
             this.radioDetailReport = new Sci.Win.UI.RadioButton();
-            this.label1 = new Sci.Win.UI.Label();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
+            this.radioRollDyelot = new Sci.Win.UI.RadioButton();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(409, 12);
+            this.print.Location = new System.Drawing.Point(439, 12);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(409, 48);
+            this.toexcel.Location = new System.Drawing.Point(439, 48);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(409, 84);
+            this.close.Location = new System.Drawing.Point(439, 84);
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.radioRollDyelot);
             this.radioPanel1.Controls.Add(this.comboBox1);
             this.radioPanel1.Controls.Add(this.label1);
             this.radioPanel1.Controls.Add(this.txtfactory);
@@ -64,16 +66,40 @@
             this.radioPanel1.Controls.Add(this.radioDetailReport);
             this.radioPanel1.Location = new System.Drawing.Point(13, 8);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(373, 151);
+            this.radioPanel1.Size = new System.Drawing.Size(373, 173);
             this.radioPanel1.TabIndex = 94;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.BackColor = System.Drawing.Color.White;
+            this.comboBox1.Enabled = false;
+            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.IsSupportUnselect = true;
+            this.comboBox1.Location = new System.Drawing.Point(104, 119);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.OldText = "";
+            this.comboBox1.Size = new System.Drawing.Size(121, 24);
+            this.comboBox1.TabIndex = 7;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(27, 119);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(74, 23);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Ship Mode";
             // 
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
             this.txtfactory.Location = new System.Drawing.Point(85, 89);
+            this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 5;
@@ -141,34 +167,29 @@
             this.radioDetailReport.Text = "Detail Report";
             this.radioDetailReport.UseVisualStyleBackColor = true;
             // 
-            // label1
+            // radioRollDyelot
             // 
-            this.label1.Location = new System.Drawing.Point(27, 119);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(74, 23);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Ship Mode";
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.Enabled = false;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(104, 119);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.OldText = "";
-            this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 7;
+            this.radioRollDyelot.AutoSize = true;
+            this.radioRollDyelot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioRollDyelot.Location = new System.Drawing.Point(6, 149);
+            this.radioRollDyelot.Name = "radioRollDyelot";
+            this.radioRollDyelot.Size = new System.Drawing.Size(141, 21);
+            this.radioRollDyelot.TabIndex = 8;
+            this.radioRollDyelot.TabStop = true;
+            this.radioRollDyelot.Text = "Roll Dyelot Report";
+            this.radioRollDyelot.UseVisualStyleBackColor = true;
             // 
             // P03_Print
             // 
-            this.ClientSize = new System.Drawing.Size(501, 192);
+            this.ClientSize = new System.Drawing.Size(531, 207);
             this.Controls.Add(this.radioPanel1);
             this.IsSupportToPrint = false;
             this.Name = "P03_Print";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "Print";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -191,5 +212,6 @@
         private Class.Txtfactory txtfactory;
         private Win.UI.ComboBox comboBox1;
         private Win.UI.Label label1;
+        private Win.UI.RadioButton radioRollDyelot;
     }
 }

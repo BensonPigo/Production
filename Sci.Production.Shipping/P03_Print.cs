@@ -3,6 +3,8 @@ using System.Data;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Shipping
 {
@@ -11,7 +13,6 @@ namespace Sci.Production.Shipping
     /// </summary>
     public partial class P03_Print : Win.Tems.PrintForm
     {
-        private string reportType;
         private string eta1;
         private string eta2;
         private string factory;
@@ -63,7 +64,6 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            this.reportType = this.radioDetailReport.Checked ? "1" : "2";
             this.eta1 = MyUtility.Check.Empty(this.dateETA.Value1) ? string.Empty : Convert.ToDateTime(this.dateETA.Value1).ToString("yyyy/MM/dd");
             this.eta2 = MyUtility.Check.Empty(this.dateETA.Value2) ? string.Empty : Convert.ToDateTime(this.dateETA.Value2).ToString("yyyy/MM/dd");
             this.factory = this.txtfactory.Text;
@@ -74,7 +74,7 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            if (this.reportType == "1")
+            if (this.radioDetailReport.Checked)
             {
                 string sqlCmd = string.Format("select * from TPEPass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["Handle"]));
                 DataTable tPEPass1;
@@ -90,6 +90,37 @@ namespace Sci.Production.Shipping
                     this.handle = MyUtility.Convert.GetString(tPEPass1.Rows[0]["Name"]);
                     this.ext = MyUtility.Convert.GetString(tPEPass1.Rows[0]["ExtNo"]);
                     this.email = MyUtility.Convert.GetString(tPEPass1.Rows[0]["EMail"]);
+                }
+            }
+            else if (this.radioRollDyelot.Checked)
+            {
+                string sqlCmd = @"
+select 
+ed.id as [WK#],
+ED.PoID AS [SP#],
+ED.Seq1 as [SEQ1],
+ED.Seq2 AS [SEQ2],
+right(pl.PackageNo,8) as [C/No],
+pl.PackageNo as [Full C/No],
+right(pl.BatchNo,8) as [LOT NO.],
+pl.BatchNo as [Full LOT NO.],
+ed.Qty as [Qty],
+ed.Foc as [F.O.C],
+ed.NetKg as [NetKg],
+ed.WeightKg as [WeiKg],
+'' as [Location],
+pl.QRCode as [MIND QR Code] ,
+ed.Remark as [Remark]
+from Export_Detail ed
+left join POShippingList_Line pl on pl.Export_Detail_Ukey=ed.Ukey
+WHERE ed.id = @ExportID
+";
+                List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@ExportID", this.masterData["ID"]) };
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, listPar, out this.printData);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    return failResult;
                 }
             }
             else
@@ -121,7 +152,7 @@ order by e.ID",
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (this.reportType == "1")
+            if (this.radioDetailReport.Checked)
             {
                 string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P03_Detail.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
@@ -155,15 +186,8 @@ order by e.ID",
                 worksheet.Cells[9, 8] = this.email;
 
                 int rownum = 11;
-                bool isExistsQRCode = this.detailData.Columns["QRCode"] != null;
 
-                if (!isExistsQRCode)
-                {
-                    Microsoft.Office.Interop.Excel.Range rangeColumnS = (Microsoft.Office.Interop.Excel.Range)worksheet.Columns["S", System.Type.Missing];
-                    rangeColumnS.Hidden = true;
-                }
-
-                object[,] objArray = new object[1, 19];
+                object[,] objArray = new object[1, 18];
                 foreach (DataRow dr in this.detailData.Rows)
                 {
                     objArray[0, 0] = dr["FactoryID"];
@@ -184,12 +208,8 @@ order by e.ID",
                     objArray[0, 15] = dr["BalanceQty"];
                     objArray[0, 16] = dr["NetKg"];
                     objArray[0, 17] = dr["WeightKg"];
-                    if (isExistsQRCode)
-                    {
-                        objArray[0, 18] = dr["QRCode"];
-                    }
 
-                    worksheet.Range[string.Format("A{0}:S{0}", rownum)].Value2 = objArray;
+                    worksheet.Range[string.Format("A{0}:R{0}", rownum)].Value2 = objArray;
 
                     rownum++;
                 }
@@ -203,6 +223,35 @@ order by e.ID",
 
                 strExcelName.OpenFile();
                 #endregion
+            }
+            else if (this.radioRollDyelot.Checked)
+            {
+                // 顯示筆數於PrintForm上Count欄位
+                this.SetCount(this.printData.Rows.Count);
+
+                if (this.printData.Rows.Count <= 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!");
+                    return false;
+                }
+
+                string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P03_RollDyelot.xltx";
+                Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+                if (excel == null)
+                {
+                    return false;
+                }
+
+                Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+
+                bool result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "Shipping_P03_RollDyelot.xltx", headerRow: 1, excelApp: excel, showSaveMsg: false, wSheet: worksheet);
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                }
+
+                Marshal.ReleaseComObject(worksheet);
+                Marshal.ReleaseComObject(excel);
             }
             else
             {
