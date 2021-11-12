@@ -27,7 +27,7 @@ namespace Sci.Production.SubProcess
             : base(menuitem)
         {
             this.InitializeComponent();
-            MyUtility.Tool.SetupCombox(this.comboTeam, 1, 1, "A,B");
+            this.comboSewingTeam1.SetDataSource();
             this.DoSubForm = new P01_QAOutput();
             this.DefaultFilter = $"MDivisionID = '{Env.User.Keyword}'";
         }
@@ -645,7 +645,7 @@ Order by Feature",
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["Team"]))
             {
-                this.comboTeam.Focus();
+                this.comboSewingTeam1.Focus();
                 MyUtility.Msg.WarningBox("Team can't empty!!");
                 return false;
             }

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
             this.labelSeason = new Sci.Win.UI.Label();
@@ -35,7 +36,6 @@
             this.txtFactory = new Sci.Win.UI.TextBox();
             this.txtStyle = new Sci.Win.UI.TextBox();
             this.txtSeason = new Sci.Win.UI.TextBox();
-            this.comboTeam = new Sci.Win.UI.ComboBox();
             this.labelInlineDate = new Sci.Win.UI.Label();
             this.dateInlineDate = new Sci.Win.UI.DateRange();
             this.lbReportType = new Sci.Win.UI.Label();
@@ -43,22 +43,23 @@
             this.radioSummary = new Sci.Win.UI.RadioButton();
             this.radioDetail = new Sci.Win.UI.RadioButton();
             this.chkBalancing = new Sci.Win.UI.CheckBox();
+            this.comboSewingTeam1 = new Sci.Production.Class.ComboSewingTeam(this.components);
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(430, 6);
+            this.print.Location = new System.Drawing.Point(446, 13);
             this.print.TabIndex = 4;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(430, 42);
+            this.toexcel.Location = new System.Drawing.Point(446, 49);
             this.toexcel.TabIndex = 5;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(430, 78);
+            this.close.Location = new System.Drawing.Point(446, 85);
             this.close.TabIndex = 6;
             // 
             // labelFactory
@@ -125,18 +126,6 @@
             this.txtSeason.TabIndex = 2;
             this.txtSeason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeason_PopUp);
             this.txtSeason.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSeason_Validating);
-            // 
-            // comboTeam
-            // 
-            this.comboTeam.BackColor = System.Drawing.Color.White;
-            this.comboTeam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboTeam.FormattingEnabled = true;
-            this.comboTeam.IsSupportUnselect = true;
-            this.comboTeam.Location = new System.Drawing.Point(102, 120);
-            this.comboTeam.Name = "comboTeam";
-            this.comboTeam.OldText = "";
-            this.comboTeam.Size = new System.Drawing.Size(70, 24);
-            this.comboTeam.TabIndex = 3;
             // 
             // labelInlineDate
             // 
@@ -220,15 +209,29 @@
             this.chkBalancing.Text = "Only show not hit line balancing target item";
             this.chkBalancing.UseVisualStyleBackColor = true;
             // 
+            // comboSewingTeam1
+            // 
+            this.comboSewingTeam1.BackColor = System.Drawing.Color.White;
+            this.comboSewingTeam1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSewingTeam1.FormattingEnabled = true;
+            this.comboSewingTeam1.IssupportEmptyitem = true;
+            this.comboSewingTeam1.IssupportJunk = true;
+            this.comboSewingTeam1.IsSupportUnselect = true;
+            this.comboSewingTeam1.Location = new System.Drawing.Point(102, 119);
+            this.comboSewingTeam1.Name = "comboSewingTeam1";
+            this.comboSewingTeam1.OldText = "";
+            this.comboSewingTeam1.Size = new System.Drawing.Size(88, 24);
+            this.comboSewingTeam1.TabIndex = 235;
+            // 
             // R01
             // 
-            this.ClientSize = new System.Drawing.Size(515, 286);
+            this.ClientSize = new System.Drawing.Size(531, 320);
+            this.Controls.Add(this.comboSewingTeam1);
             this.Controls.Add(this.chkBalancing);
             this.Controls.Add(this.lbReportType);
             this.Controls.Add(this.radioPanel1);
             this.Controls.Add(this.dateInlineDate);
             this.Controls.Add(this.labelInlineDate);
-            this.Controls.Add(this.comboTeam);
             this.Controls.Add(this.txtSeason);
             this.Controls.Add(this.txtStyle);
             this.Controls.Add(this.txtFactory);
@@ -255,12 +258,12 @@
             this.Controls.SetChildIndex(this.txtFactory, 0);
             this.Controls.SetChildIndex(this.txtStyle, 0);
             this.Controls.SetChildIndex(this.txtSeason, 0);
-            this.Controls.SetChildIndex(this.comboTeam, 0);
             this.Controls.SetChildIndex(this.labelInlineDate, 0);
             this.Controls.SetChildIndex(this.dateInlineDate, 0);
             this.Controls.SetChildIndex(this.radioPanel1, 0);
             this.Controls.SetChildIndex(this.lbReportType, 0);
             this.Controls.SetChildIndex(this.chkBalancing, 0);
+            this.Controls.SetChildIndex(this.comboSewingTeam1, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -277,7 +280,6 @@
         private Win.UI.TextBox txtFactory;
         private Win.UI.TextBox txtStyle;
         private Win.UI.TextBox txtSeason;
-        private Win.UI.ComboBox comboTeam;
         private Win.UI.Label labelInlineDate;
         private Win.UI.DateRange dateInlineDate;
         private Win.UI.Label lbReportType;
@@ -285,5 +287,6 @@
         private Win.UI.RadioButton radioSummary;
         private Win.UI.RadioButton radioDetail;
         private Win.UI.CheckBox chkBalancing;
+        private Class.ComboSewingTeam comboSewingTeam1;
     }
 }

@@ -31,6 +31,7 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.comboSewingTeam1.SetDataSource();
             this.Text = type == "1" ? "P32. CFA Inspection Record " : "P321. CFA Inspection Record (History)";
             this._Type = type;
             this._sourceHeader = null;
@@ -49,8 +50,6 @@ namespace Sci.Production.Quality
                 this.IsSupportCopy = false;
                 this.IsSupportClip = false;
             }
-
-            this.comboTeam.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -76,8 +75,6 @@ namespace Sci.Production.Quality
                 this.IsSupportCopy = false;
                 this.IsSupportClip = false;
             }
-
-            this.comboTeam.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -1292,14 +1289,6 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
         {
             this.CurrentMaintain["InspectQty"] = this.numInspectQty.Value;
             this.CauculateSQR();
-        }
-
-        private void ComboTeam_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (this.CurrentMaintain != null)
-            {
-                // this.CurrentMaintain["Team"] = this.comboTeam.SelectedItem.ToString();
-            }
         }
 
         private void ComboResult_SelectedIndexChanged(object sender, EventArgs e)

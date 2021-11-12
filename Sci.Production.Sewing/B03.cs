@@ -166,7 +166,7 @@ and a.ProductionDate  = '{1}'",
                 .Text("LineLocationID", header: "Line Location ID", width: Widths.AnsiChars(2), settings: lineLocationID)
                 .Text("LineLocationName", header: "Location Name", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("SewingLineID", header: "Line #", width: Widths.AnsiChars(2), settings: sewingLineID)
-                .Text("Team", header: "Team", width: Widths.AnsiChars(1), settings: team, iseditingreadonly: true);
+                .Text("Team", header: "Team", width: Widths.AnsiChars(5), settings: team, iseditingreadonly: true);
         }
 
         /// <inheritdoc/>

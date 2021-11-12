@@ -53,14 +53,14 @@
             this.displayFactory = new Sci.Win.UI.DisplayBox();
             this.displayStyle = new Sci.Win.UI.DisplayBox();
             this.displayDestination = new Sci.Win.UI.DisplayBox();
-            this.comboTeam = new Sci.Win.UI.ComboBox();
             this.txtRFT = new Sci.Win.UI.TextBox();
             this.labConfirm = new System.Windows.Forms.Label();
             this.txtCPU = new Sci.Win.UI.TextBox();
-            this.txtLine = new Sci.Production.Class.TxtSewingScheduleLine();
-            this.comboShift = new Sci.Production.Class.Txtdropdownlist();
             this.labBuyerDelivery = new Sci.Win.UI.Label();
             this.dateBuyerDelivery = new Sci.Win.UI.DateBox();
+            this.comboSewingTeam1 = new Sci.Production.Class.ComboSewingTeam();
+            this.txtLine = new Sci.Production.Class.TxtSewingScheduleLine();
+            this.comboShift = new Sci.Production.Class.Txtdropdownlist();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -77,15 +77,15 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.dateBuyerDelivery);
+            this.masterpanel.Controls.Add(this.comboSewingTeam1);
             this.masterpanel.Controls.Add(this.labBuyerDelivery);
             this.masterpanel.Controls.Add(this.txtLine);
             this.masterpanel.Controls.Add(this.txtCPU);
             this.masterpanel.Controls.Add(this.labConfirm);
             this.masterpanel.Controls.Add(this.txtRFT);
-            this.masterpanel.Controls.Add(this.comboTeam);
             this.masterpanel.Controls.Add(this.comboShift);
             this.masterpanel.Controls.Add(this.displayDestination);
+            this.masterpanel.Controls.Add(this.dateBuyerDelivery);
             this.masterpanel.Controls.Add(this.displayFactory);
             this.masterpanel.Controls.Add(this.labelFactory);
             this.masterpanel.Controls.Add(this.labelRFT);
@@ -136,15 +136,15 @@
             this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayDestination, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboShift, 0);
-            this.masterpanel.Controls.SetChildIndex(this.comboTeam, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtRFT, 0);
             this.masterpanel.Controls.SetChildIndex(this.labConfirm, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCPU, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLine, 0);
             this.masterpanel.Controls.SetChildIndex(this.labBuyerDelivery, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboSewingTeam1, 0);
             // 
             // detailpanel
             // 
@@ -461,19 +461,6 @@
             this.displayDestination.Size = new System.Drawing.Size(252, 21);
             this.displayDestination.TabIndex = 10;
             // 
-            // comboTeam
-            // 
-            this.comboTeam.BackColor = System.Drawing.Color.White;
-            this.comboTeam.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Team", true));
-            this.comboTeam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboTeam.FormattingEnabled = true;
-            this.comboTeam.IsSupportUnselect = true;
-            this.comboTeam.Location = new System.Drawing.Point(576, 6);
-            this.comboTeam.Name = "comboTeam";
-            this.comboTeam.OldText = "";
-            this.comboTeam.Size = new System.Drawing.Size(121, 24);
-            this.comboTeam.TabIndex = 2;
-            // 
             // txtRFT
             // 
             this.txtRFT.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -507,6 +494,37 @@
             this.txtCPU.Size = new System.Drawing.Size(121, 23);
             this.txtCPU.TabIndex = 140;
             // 
+            // labBuyerDelivery
+            // 
+            this.labBuyerDelivery.Location = new System.Drawing.Point(243, 31);
+            this.labBuyerDelivery.Name = "labBuyerDelivery";
+            this.labBuyerDelivery.Size = new System.Drawing.Size(100, 23);
+            this.labBuyerDelivery.TabIndex = 141;
+            this.labBuyerDelivery.Text = "Buyer Delivery ";
+            // 
+            // dateBuyerDelivery
+            // 
+            this.dateBuyerDelivery.IsSupportEditMode = false;
+            this.dateBuyerDelivery.Location = new System.Drawing.Point(346, 33);
+            this.dateBuyerDelivery.Name = "dateBuyerDelivery";
+            this.dateBuyerDelivery.ReadOnly = true;
+            this.dateBuyerDelivery.Size = new System.Drawing.Size(120, 23);
+            this.dateBuyerDelivery.TabIndex = 142;
+            // 
+            // comboSewingTeam1
+            // 
+            this.comboSewingTeam1.BackColor = System.Drawing.Color.White;
+            this.comboSewingTeam1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Team", true));
+            this.comboSewingTeam1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSewingTeam1.FormattingEnabled = true;
+            this.comboSewingTeam1.IssupportJunk = false;
+            this.comboSewingTeam1.IsSupportUnselect = true;
+            this.comboSewingTeam1.Location = new System.Drawing.Point(576, 7);
+            this.comboSewingTeam1.Name = "comboSewingTeam1";
+            this.comboSewingTeam1.OldText = "";
+            this.comboSewingTeam1.Size = new System.Drawing.Size(121, 24);
+            this.comboSewingTeam1.TabIndex = 2;
+            // 
             // txtLine
             // 
             this.txtLine.BackColor = System.Drawing.Color.White;
@@ -535,23 +553,6 @@
             this.comboShift.TabIndex = 1;
             this.comboShift.Type = "SewingOutput_Shift";
             // 
-            // labBuyerDelivery
-            // 
-            this.labBuyerDelivery.Location = new System.Drawing.Point(243, 31);
-            this.labBuyerDelivery.Name = "labBuyerDelivery";
-            this.labBuyerDelivery.Size = new System.Drawing.Size(100, 23);
-            this.labBuyerDelivery.TabIndex = 141;
-            this.labBuyerDelivery.Text = "Buyer Delivery ";
-            // 
-            // dateBuyerDelivery
-            // 
-            this.dateBuyerDelivery.IsSupportEditMode = false;
-            this.dateBuyerDelivery.Location = new System.Drawing.Point(346, 33);
-            this.dateBuyerDelivery.Name = "dateBuyerDelivery";
-            this.dateBuyerDelivery.ReadOnly = true;
-            this.dateBuyerDelivery.Size = new System.Drawing.Size(120, 23);
-            this.dateBuyerDelivery.TabIndex = 142;
-            // 
             // P20
             // 
             this.ApvChkValue = "New";
@@ -567,6 +568,7 @@
             this.KeyField1 = "ID";
             this.KeyField2 = "ID";
             this.Name = "P20";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P20.Right First Time";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";
@@ -620,11 +622,11 @@
         private Win.UI.DisplayBox displayDestination;
         private Win.UI.DisplayBox displayStyle;
         private Class.Txtdropdownlist comboShift;
-        private Win.UI.ComboBox comboTeam;
         private Win.UI.TextBox txtRFT;
         private System.Windows.Forms.Label labConfirm;
         private Win.UI.TextBox txtCPU;
         private Win.UI.Label labBuyerDelivery;
         private Win.UI.DateBox dateBuyerDelivery;
+        private Class.ComboSewingTeam comboSewingTeam1;
     }
 }

@@ -23,18 +23,8 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.GenComboBox();
+            this.comboSewingTeam1.SetDataSource();
             this.DefaultFilter = "MDivisionID = '" + Env.User.Keyword + "'";
-        }
-
-        private void GenComboBox()
-        {
-            Dictionary<string, string> dicComboBox = new Dictionary<string, string>();
-            dicComboBox.Add("A", "A");
-            dicComboBox.Add("B", "B");
-            this.comboTeam.DataSource = new BindingSource(dicComboBox, null);
-            this.comboTeam.ValueMember = "key";
-            this.comboTeam.DisplayMember = "value";
         }
 
         // 新增時預設資料
@@ -468,7 +458,7 @@ order by GarmentDefectCodeID,GarmentDefectTypeID
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["Team"]))
             {
-                this.comboTeam.Select();
+                this.comboSewingTeam1.Select();
                 MyUtility.Msg.WarningBox("< Team >  can't be empty!", "Warning");
                 return false;
             }
@@ -536,7 +526,7 @@ order by GarmentDefectCodeID,GarmentDefectTypeID
             DataTable dt;
             string sql = string.Format(
                 @"select * from rft WITH (NOLOCK) where OrderID='{0}' and CDate='{1}' and SewinglineID = '{2}' 
-  and FactoryID='{3}' and [Shift]='{4}' and Team='{5}' ", this.txtSP.Text, ((DateTime)this.dateDate.Value).ToShortDateString(), this.txtLine.Text, this.displayFactory.Text, this.comboShift.SelectedValue, this.comboTeam.Text);
+  and FactoryID='{3}' and [Shift]='{4}' and Team='{5}' ", this.txtSP.Text, ((DateTime)this.dateDate.Value).ToShortDateString(), this.txtLine.Text, this.displayFactory.Text, this.comboShift.SelectedValue, this.comboSewingTeam1.Text);
             DBProxy.Current.Select(null, sql, out dt);
             if (dt.Rows.Count > 0 && this.isNew)
             {

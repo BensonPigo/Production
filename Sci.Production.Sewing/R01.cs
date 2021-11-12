@@ -35,7 +35,7 @@ namespace Sci.Production.Sewing
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.dateDate.Value = DateTime.Today.AddDays(-1);
             this.comboFactory.Text = Env.User.Factory;
-            this.comboTeam.SelectedIndex = 0;
+            this.comboSewingTeam1.SetDataSource();
         }
 
         /// <inheritdoc/>
@@ -99,7 +99,7 @@ namespace Sci.Production.Sewing
 
             this._date = this.dateDate.Value;
             this._factory = this.comboFactory.Text;
-            this._team = this.comboTeam.Text;
+            this._team = this.comboSewingTeam1.Text;
             return base.ValidateInput();
         }
 

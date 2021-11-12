@@ -64,7 +64,6 @@
             this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.comboSewingLineTeam = new Sci.Win.UI.ComboBox();
             this.label14 = new Sci.Win.UI.Label();
             this.labelCPUPC = new Sci.Win.UI.Label();
             this.numCPUPC = new Sci.Win.UI.NumericBox();
@@ -112,6 +111,7 @@
             this.displayGSDStatus = new Sci.Win.UI.DisplayBox();
             this.displayGSDVersion = new Sci.Win.UI.DisplayBox();
             this.labVersionWarning = new System.Windows.Forms.Label();
+            this.comboSewingTeam1 = new Sci.Production.Class.ComboSewingTeam(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -133,6 +133,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.comboSewingTeam1);
             this.masterpanel.Controls.Add(this.labVersionWarning);
             this.masterpanel.Controls.Add(this.displayGSDVersion);
             this.masterpanel.Controls.Add(this.displayGSDStatus);
@@ -175,7 +176,6 @@
             this.masterpanel.Controls.Add(this.numCPUPC);
             this.masterpanel.Controls.Add(this.labelCPUPC);
             this.masterpanel.Controls.Add(this.label14);
-            this.masterpanel.Controls.Add(this.comboSewingLineTeam);
             this.masterpanel.Controls.Add(this.txtsewingline);
             this.masterpanel.Controls.Add(this.numTaktTimeIdeal);
             this.masterpanel.Controls.Add(this.numDailydemandshiftIdeal);
@@ -229,7 +229,6 @@
             this.masterpanel.Controls.SetChildIndex(this.numDailydemandshiftIdeal, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTaktTimeIdeal, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtsewingline, 0);
-            this.masterpanel.Controls.SetChildIndex(this.comboSewingLineTeam, 0);
             this.masterpanel.Controls.SetChildIndex(this.label14, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelCPUPC, 0);
             this.masterpanel.Controls.SetChildIndex(this.numCPUPC, 0);
@@ -273,6 +272,7 @@
             this.masterpanel.Controls.SetChildIndex(this.displayGSDStatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayGSDVersion, 0);
             this.masterpanel.Controls.SetChildIndex(this.labVersionWarning, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboSewingTeam1, 0);
             // 
             // detailpanel
             // 
@@ -773,19 +773,6 @@
             this.lineShape1.X2 = 454;
             this.lineShape1.Y1 = 6;
             this.lineShape1.Y2 = 6;
-            // 
-            // comboSewingLineTeam
-            // 
-            this.comboSewingLineTeam.BackColor = System.Drawing.Color.White;
-            this.comboSewingLineTeam.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Team", true));
-            this.comboSewingLineTeam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboSewingLineTeam.FormattingEnabled = true;
-            this.comboSewingLineTeam.IsSupportUnselect = true;
-            this.comboSewingLineTeam.Location = new System.Drawing.Point(400, 147);
-            this.comboSewingLineTeam.Name = "comboSewingLineTeam";
-            this.comboSewingLineTeam.OldText = "";
-            this.comboSewingLineTeam.Size = new System.Drawing.Size(51, 23);
-            this.comboSewingLineTeam.TabIndex = 5;
             // 
             // label14
             // 
@@ -1453,6 +1440,20 @@
             this.labVersionWarning.TabIndex = 82;
             this.labVersionWarning.Text = "GSD version or FSD Statusis not latest";
             // 
+            // comboSewingTeam1
+            // 
+            this.comboSewingTeam1.BackColor = System.Drawing.Color.White;
+            this.comboSewingTeam1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Team", true));
+            this.comboSewingTeam1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSewingTeam1.FormattingEnabled = true;
+            this.comboSewingTeam1.IssupportJunk = false;
+            this.comboSewingTeam1.IsSupportUnselect = true;
+            this.comboSewingTeam1.Location = new System.Drawing.Point(395, 147);
+            this.comboSewingTeam1.Name = "comboSewingTeam1";
+            this.comboSewingTeam1.OldText = "";
+            this.comboSewingTeam1.Size = new System.Drawing.Size(85, 23);
+            this.comboSewingTeam1.TabIndex = 5;
+            // 
             // P03
             // 
             this.ApvChkValue = "New";
@@ -1533,7 +1534,6 @@
         private Win.UI.NumericBox numCPUPC;
         private Win.UI.Label labelCPUPC;
         private Win.UI.Label label14;
-        private Win.UI.ComboBox comboSewingLineTeam;
         private Class.Txtsewingline txtsewingline;
         private Win.UI.NumericBox numTaktTimeIdeal;
         private Win.UI.NumericBox numDailydemandshiftIdeal;
@@ -1585,5 +1585,6 @@
         private Win.UI.DisplayBox displayGSDVersion;
         private Win.UI.DisplayBox displayGSDStatus;
         private System.Windows.Forms.Label labVersionWarning;
+        private Class.ComboSewingTeam comboSewingTeam1;
     }
 }
