@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -142,22 +143,24 @@ and a.ProductionDate  = '{1}'",
             #region team Left Click
             team.EditingMouseDown += (s, e) =>
             {
-                if (e.Button == MouseButtons.Left &&
-                    this.EditMode &&
-                    e.RowIndex != -1)
+                if (!this.EditMode || e.RowIndex == -1 || this.CurrentDetailData == null)
                 {
-                    dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    return;
+                }
 
-                    switch (MyUtility.Convert.GetString(dr["Team"]))
+                if (e.Button == MouseButtons.Right)
+                {
+                    string sqlcmd = $@"select ID from sewingTeam where junk = 0 order by ID";
+                    DataRow dr1 = this.detailgrid.GetDataRow(e.RowIndex);
+                    DBProxy.Current.Select(null, sqlcmd, out DataTable dt1);
+                    SelectItem sele = new SelectItem(dt1, "ID", "20", dr1["Team"].ToString());
+                    if (sele.ShowDialog() == DialogResult.Cancel)
                     {
-                        case "A":
-                            dr["Team"] = "B";
-                            break;
-                        case "B":
-                        default:
-                            dr["Team"] = "A";
-                            break;
+                        return;
                     }
+
+                    dr1["Team"] = sele.GetSelectedString();
+                    dr1.EndEdit();
                 }
             };
             #endregion
