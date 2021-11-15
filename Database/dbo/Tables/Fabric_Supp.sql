@@ -2,7 +2,7 @@
     [SCIRefno]      VARCHAR (30)   NOT NULL,
     [BrandID]       VARCHAR (8)    NULL,
     [Refno]         VARCHAR (20)   NULL,
-    [SuppRefno]     VARCHAR (30)   NULL,
+    [SuppRefno]     VARCHAR (50)   NULL,
     [NOForecast]    BIT            NULL,
     [IsECFA]        BIT            NULL,
     [SuppID]        VARCHAR (6)    NOT NULL,
