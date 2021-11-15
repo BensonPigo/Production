@@ -47,7 +47,7 @@ BEGIN
 
 	--宣告變數: 記錄程式中的資料
 	DECLARE @factoryid VARCHAR(8), --工廠別
-			@sewinglineid VARCHAR(2), --Sewing Line ID
+			@sewinglineid VARCHAR(5), --Sewing Line ID
 			@inline DATETIME, --上線日
 			@apsno INT, --APS系統Sewing Schedule的ID
 			@combotype VARCHAR(1), --組合型態
