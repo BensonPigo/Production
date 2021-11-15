@@ -25,6 +25,7 @@ namespace Sci.Production.PPIC
         private DataTable[] dtList;
         private List<string> listSQLFilter;
         private string boolHoliday;
+        private bool IsIDD = false;
         private StringBuilder sbFtycode;
         private Color BackRed = Color.FromArgb(255, 155, 155);
         private Color FontRed = Color.FromArgb(255, 0, 0);
@@ -49,8 +50,9 @@ namespace Sci.Production.PPIC
             this.Brand = this.txtbrand.Text;
             this.dateRangeReady1 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value1) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value1).ToString("yyyy/MM/dd");
             this.dateRangeReady2 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).ToString("yyyy/MM/dd");
-
-            this.boolHoliday = string.Empty;
+            this.IsIDD = this.chkIDD.Checked;
+			
+			this.boolHoliday = string.Empty;
             this.listSQLFilter = new List<string>();
             #region Sql where Filter
 
@@ -176,6 +178,7 @@ SELECT
 		,[M] = o.MDivisionID
 		,[Factory] = o.FtyGroup		
 		,[BuyerDelivery] = os.BuyerDelivery
+		{(this.IsIDD ? ",os.IDD" : string.Empty)}
 		,[SPNO] = o.ID
 		,[Category] = 
 		case	when o.Category ='B' then 'Bulk'
@@ -283,6 +286,7 @@ SELECT
 		,[M] = o.MDivisionID
 		,[Factory] = o.FtyGroup
 		,[BuyerDelivery] = os.BuyerDelivery
+		{(this.IsIDD ? ",os.IDD" : string.Empty)}
 		,[SPNO] = o.ID
 		,[Category] = 
 		case	when o.Category ='B' then 'Bulk'
@@ -318,7 +322,7 @@ SELECT
 		into #tmp2
 		FROM Orders o 
 		left join Order_QtyShip os on o.ID=os.Id
-		inner join #Calendar AllDate on AllDate.Dates= os.BuyerDelivery
+		inner join #Calendar AllDate on AllDate.Dates= {(this.IsIDD ? "ISNULL(os.IDD, os.BuyerDelivery)" : "os.BuyerDelivery")} 
 		outer apply(
 			select top 1 [CfaName] =pass1.ID+'-'+pass1.Name
 			,case when cfa.Result='P' then 'Pass'
@@ -390,7 +394,7 @@ from
 並且BuyerDelivery > ReadyDate。*/
 
 	select * from #tmp1
-	where BuyerDelivery >= ReadyDate	
+	where {(this.IsIDD ? "ISNULL(IDD, BuyerDelivery)" : "BuyerDelivery")}  >= ReadyDate	
 
 union all
 
@@ -405,15 +409,15 @@ union all
 	)Sunday
 	where ReadyDate >= OffLine
 	and Sunday.dates = ReadyDate
-	and DATEDIFF(day,convert(date,offline),BuyerDelivery) <= {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
-    and not exists(select 1 from #tmp1 where  BuyerDelivery >= ReadyDate and t.SPNO=SPNO )
+	and DATEDIFF(day,convert(date,offline),{(this.IsIDD ? "ISNULL(IDD, BuyerDelivery)" : "BuyerDelivery")}) <= {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
+    and not exists(select 1 from #tmp1 where  {(this.IsIDD ? "ISNULL(IDD, BuyerDelivery)" : "BuyerDelivery")} >= ReadyDate and t.SPNO=SPNO )
 
 union all
 
 /*Offline > BuyerDelivery= Ready Date*/
 
 	select * from #tmp2 t
-	where OffLine > BuyerDelivery
+	where OffLine > {(this.IsIDD ? "ISNULL(IDD, BuyerDelivery)" : "BuyerDelivery")}
 
 union all
 
@@ -425,6 +429,7 @@ select [ReadyDate] = AllDate.ReadyDate
 		,[M] = o.MDivisionID
 		,[Factory] = o.FtyGroup
 		,[BuyerDelivery] = oq.BuyerDelivery
+		{(this.IsIDD ? ",oq.IDD" : string.Empty)}
 		,[SPNO] = oq.id
 		,[Category] = 
 		case	when o.Category ='B' then 'Bulk'
@@ -480,7 +485,7 @@ cross apply(
 		from #Calendar			
 		where (DATEPART(WEEKDAY, Dates) = 1  --只能是星期天
 		or exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FtyGroup)) -- 只能是假日)		
-		and dates = oq.BuyerDelivery
+		and dates = {(this.IsIDD ? "ISNULL(oq.IDD, oq.BuyerDelivery)" : "oq.BuyerDelivery")} 
 		and Dates > Ready.ReadyDate
 	)isHoliday
 	cross apply(
@@ -548,9 +553,9 @@ outer apply(
 		and datepart(HH, c.AddDate) <= 17 -- 下午5點)
 	) Receive	
 where O.Category ='B' and o.junk !=1
-and oq.BuyerDelivery = AllDate.HolidayDates  
-and oq.BuyerDelivery < AllDate.WorkDates 
-and not exists(select 1 from #tmp1 where  BuyerDelivery >= ReadyDate and o.ID=SPNO)
+and {(this.IsIDD ? "ISNULL(oq.IDD, oq.BuyerDelivery)" : "oq.BuyerDelivery")}  = AllDate.HolidayDates  
+and {(this.IsIDD ? "ISNULL(oq.IDD, oq.BuyerDelivery)" : "oq.BuyerDelivery")}  < AllDate.WorkDates 
+and not exists(select 1 from #tmp1 where  {(this.IsIDD ? "ISNULL(IDD, BuyerDelivery)" : "BuyerDelivery")}  >= ReadyDate and o.ID=SPNO)
 {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 
 ) a 
@@ -688,7 +693,8 @@ drop table #Calendar,#CalendarData,#tmp,#tmp1,#tmp2
             }
             #endregion
             this.SetCount(this.dtList[0].Rows.Count);
-            string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir + "\\PPIC_R11.xltx");
+            string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir + (this.IsIDD ? "\\PPIC_R11_IDD.xltx" : "\\PPIC_R11.xltx"));
+
             sxrc sxr = new sxrc(xltPath, keepApp: true)
             {
                 BoOpenFile = true,
