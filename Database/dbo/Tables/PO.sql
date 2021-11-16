@@ -10,7 +10,7 @@
     [PCSMR]                         VARCHAR (10)   CONSTRAINT [DF_PO_PCSMR] DEFAULT ('') NOT NULL,
     [McHandle]                      VARCHAR (10)   CONSTRAINT [DF_PO_McHandle] DEFAULT ('') NOT NULL,
     [ShipMark]                      NVARCHAR (MAX) CONSTRAINT [DF_PO_ShipMark] DEFAULT ('') NULL,
-    [FTYMark]                       VARCHAR (8)    CONSTRAINT [DF_PO_FTYMark] DEFAULT ('') NULL,
+    [FTYMark]                       VARCHAR (10)    CONSTRAINT [DF_PO_FTYMark] DEFAULT ('') NULL,
     [Complete]                      BIT            CONSTRAINT [DF_PO_Complete] DEFAULT ((0)) NULL,
     [PoRemark]                      NVARCHAR (MAX) CONSTRAINT [DF_PO_PoRemark] DEFAULT ('') NULL,
     [CostRemark]                    NVARCHAR (MAX) CONSTRAINT [DF_PO_CostRemark] DEFAULT ('') NULL,
