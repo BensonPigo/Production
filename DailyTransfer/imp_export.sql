@@ -776,6 +776,8 @@ insert into Production.dbo.FormType(	ID		,
 update a set	
 	a.TruckFree = b.TruckFree
 	,a.OTFee = b.OTFee
+	,a.CloseDate = b.CloseDate
+	,a.LoadDate = b.LoadDate
 from Production.dbo.TransferExport a
 inner join Trade_To_Pms.dbo.TransferExport b on b.ID = a.ID
 
