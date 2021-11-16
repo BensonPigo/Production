@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[SewingOutput] (
     [ID]                      VARCHAR (13)   CONSTRAINT [DF_SewingOutput_ID] DEFAULT ('') NOT NULL,
     [OutputDate]              DATE           NOT NULL,
-    [SewingLineID]            VARCHAR (5)    CONSTRAINT [DF_SewingOutput_SewingLineID] DEFAULT ('') NULL,
+    [SewingLineID]            VARCHAR (5)    CONSTRAINT [DF_SewingOutput_SewingLineID] DEFAULT ('') NOT NULL,
     [QAQty]                   INT            CONSTRAINT [DF_SewingOutput_QAQty] DEFAULT ((0)) NULL,
     [DefectQty]               INT            CONSTRAINT [DF_SewingOutput_DefectQty] DEFAULT ((0)) NULL,
     [InlineQty]               INT            CONSTRAINT [DF_SewingOutput_InlineQty] DEFAULT ((0)) NULL,
@@ -27,6 +27,8 @@
     [ReDailyTransferDate]     DATE           NULL,
     CONSTRAINT [PK_SewingOutput] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

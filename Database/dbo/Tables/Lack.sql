@@ -8,7 +8,7 @@
     [FactoryID]          VARCHAR (8)   CONSTRAINT [DF_Lack_FactoryID] DEFAULT ('') NOT NULL,
     [OrderID]            VARCHAR (13)  CONSTRAINT [DF_Lack_OrderID] DEFAULT ('') NOT NULL,
     [POID]               VARCHAR (13)  CONSTRAINT [DF_Lack_POID] DEFAULT ('') NULL,
-    [SewingLineID]       VARCHAR (5)   CONSTRAINT [DF_Lack_SewingLineID] DEFAULT ('') NULL,
+    [SewingLineID]       VARCHAR (5)   CONSTRAINT [DF_Lack_SewingLineID] DEFAULT ('') NOT NULL,
     [Remark]             NVARCHAR (60) CONSTRAINT [DF_Lack_Remark] DEFAULT ('') NULL,
     [ApplyName]          VARCHAR (10)  CONSTRAINT [DF_Lack_ApplyName] DEFAULT ('') NOT NULL,
     [ApvName]            VARCHAR (10)  CONSTRAINT [DF_Lack_ApvName] DEFAULT ('') NULL,
@@ -32,6 +32,8 @@
     [ScanTransferSlip]   BIT           DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Lack] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

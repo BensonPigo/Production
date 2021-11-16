@@ -9,7 +9,7 @@
     [Cutno]           NUMERIC (6)   CONSTRAINT [DF_Bundle_History_Cutno] DEFAULT ((0)) NULL,
     [Cdate]           DATE          NULL,
     [Orderid]         VARCHAR (13)  CONSTRAINT [DF_Bundle_History_Orderid] DEFAULT ('') NOT NULL,
-    [Sewinglineid]    VARCHAR (5)   CONSTRAINT [DF_Bundle_History_Sewinglineid] DEFAULT ('') NULL,
+    [Sewinglineid]    VARCHAR (5)   CONSTRAINT [DF_Bundle_History_Sewinglineid] DEFAULT ('') NOT NULL,
     [Item]            VARCHAR (20)  CONSTRAINT [DF_Bundle_History_Item] DEFAULT ('') NULL,
     [SewingCell]      VARCHAR (2)   CONSTRAINT [DF_Bundle_History_SewingCell] DEFAULT ('') NOT NULL,
     [Ratio]           VARCHAR (100) CONSTRAINT [DF_Bundle_History_Ratio] DEFAULT ('') NULL,
@@ -29,6 +29,8 @@
     [SubCutNo]        VARCHAR (2)   CONSTRAINT [DF_Bundle_History_SubCutNo] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Bundle_History] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

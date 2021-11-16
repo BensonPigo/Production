@@ -11,8 +11,10 @@
     [RFIDProcessLocationID] VARCHAR (15)  CONSTRAINT [DF_BundleTransfer_History_RFIDProcessLocationID] DEFAULT ('') NOT NULL,
     [PanelNo]               VARCHAR (24)  CONSTRAINT [DF_BundleTransfer_History_PanelNo] DEFAULT ('') NOT NULL,
     [CutCellID]             VARCHAR (10)  CONSTRAINT [DF_BundleTransfer_History_CutCellID] DEFAULT ('') NOT NULL,
-    [SewingLineID]          VARCHAR (5)   DEFAULT ('') NULL
+    [SewingLineID]          VARCHAR (5)   DEFAULT ('') NOT NULL
 );
+
+
 
 
 GO

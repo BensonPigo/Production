@@ -1,19 +1,14 @@
 ﻿--ProductionLineAllocation_Detail
-CREATE TABLE [dbo].[ProductionLineAllocation_Detail](
-	[FactoryID] [varchar](8) NOT NULL,
-	[ProductionDate] [date] NOT NULL,
-	[LineLocationID] [varchar](2) NOT NULL,
-	[SewingLineID] [varchar](5) NOT NULL,
-	[Team] [varchar](5) NOT NULL,
- CONSTRAINT [PK_ProductionLineAllocation_Detail] PRIMARY KEY CLUSTERED 
-(
-	[FactoryID] ASC,
-	[ProductionDate] ASC,
-	[LineLocationID] ASC,
-	[SewingLineID] ASC,
-	[Team] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+CREATE TABLE [dbo].[ProductionLineAllocation_Detail] (
+    [FactoryID]      VARCHAR (8) NOT NULL,
+    [ProductionDate] DATE        NOT NULL,
+    [LineLocationID] VARCHAR (2) NOT NULL,
+    [SewingLineID]   VARCHAR (5) NOT NULL,
+    [Team]           VARCHAR (5) NOT NULL,
+    CONSTRAINT [PK_ProductionLineAllocation_Detail] PRIMARY KEY CLUSTERED ([FactoryID] ASC, [ProductionDate] ASC, [LineLocationID] ASC, [SewingLineID] ASC, [Team] ASC)
+);
+
+
 
 GO
 

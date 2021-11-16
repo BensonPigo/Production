@@ -26,6 +26,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Right First Time', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Rft';
 
@@ -97,4 +99,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編�
 GO
 CREATE NONCLUSTERED INDEX [Cdate]
     ON [dbo].[Rft]([CDate] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDX_RFT_SewP01]
+    ON [dbo].[Rft]([OrderID] ASC, [CDate] DESC, [SewinglineID] ASC, [FactoryID] ASC, [MDivisionid] ASC, [Shift] ASC, [Team] ASC);
 

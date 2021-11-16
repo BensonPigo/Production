@@ -41,6 +41,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Sewing Schedule', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingSchedule';
 
@@ -156,4 +158,10 @@ GO
 CREATE NONCLUSTERED INDEX [APSNoforP_SewingLineSchedule]
     ON [dbo].[SewingSchedule]([APSNo] ASC)
     INCLUDE([OrderID]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [SP_GetSewingLineScheduleData]
+    ON [dbo].[SewingSchedule]([APSNo] ASC)
+    INCLUDE([OrderID], [ComboType], [SewingLineID], [AlloQty], [Inline], [Offline], [MDivisionID], [FactoryID], [Sewer], [TotalSewingTime], [MaxEff], [LearnCurveID], [OriEff], [SewLineEff], [LNCSERIALNumber], [SwitchTime]);
 

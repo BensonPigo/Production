@@ -6,13 +6,15 @@
     [Skill]           NVARCHAR (20) CONSTRAINT [DF_Employee_Skill] DEFAULT ('') NULL,
     [OnBoardDate]     DATE          NULL,
     [ResignationDate] DATE          NULL,
-    [SewingLineID]    VARCHAR (5)   CONSTRAINT [DF_Employee_SewingLineID] DEFAULT ('') NULL,
+    [SewingLineID]    VARCHAR (5)   CONSTRAINT [DF_Employee_SewingLineID] DEFAULT ('') NOT NULL,
     [AddName]         VARCHAR (10)  CONSTRAINT [DF_Employee_AddName] DEFAULT ('') NULL,
     [AddDate]         DATETIME      NULL,
     [EditName]        VARCHAR (10)  CONSTRAINT [DF_Employee_EditName] DEFAULT ('') NULL,
     [EditDate]        DATETIME      NULL,
     CONSTRAINT [PK_Employee] PRIMARY KEY CLUSTERED ([FactoryID] ASC, [ID] ASC)
 );
+
+
 
 
 

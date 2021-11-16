@@ -9,7 +9,7 @@
     [Cutno]           NUMERIC (6)   CONSTRAINT [DF_Bundle_Cutno] DEFAULT ((0)) NULL,
     [Cdate]           DATE          NULL,
     [Orderid]         VARCHAR (13)  CONSTRAINT [DF_Bundle_Orderid] DEFAULT ('') NOT NULL,
-    [Sewinglineid]    VARCHAR (5)   CONSTRAINT [DF_Bundle_Sewinglineid] DEFAULT ('') NULL,
+    [Sewinglineid]    VARCHAR (5)   CONSTRAINT [DF_Bundle_Sewinglineid] DEFAULT ('') NOT NULL,
     [Item]            VARCHAR (20)  CONSTRAINT [DF_Bundle_Item] DEFAULT ('') NULL,
     [SewingCell]      VARCHAR (2)   CONSTRAINT [DF_Bundle_SewingCell] DEFAULT ('') NOT NULL,
     [Ratio]           VARCHAR (100) CONSTRAINT [DF_Bundle_Ratio] DEFAULT ('') NULL,
@@ -29,6 +29,8 @@
     [SubCutNo]        VARCHAR (2)   CONSTRAINT [DF_Bundle_SubCutNo] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Bundle] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -188,14 +190,11 @@ CREATE NONCLUSTERED INDEX [cuttingMB]
 
 
 GO
-CREATE NONCLUSTERED INDEX [Testindex]
-    ON [dbo].[Bundle]([MDivisionid] ASC, [CutRef] ASC)
-    INCLUDE([ID], [POID], [Colorid], [Article], [PatternPanel], [Cutno], [Orderid], [Sewinglineid], [Item], [SewingCell], [AddDate], [FabricPanelCode]);
+
 
 
 GO
-CREATE NONCLUSTERED INDEX [CutRef]
-    ON [dbo].[Bundle]([CutRef] ASC, [MDivisionid] ASC);
+
 
 
 GO

@@ -13,11 +13,13 @@
     [AddDate]      DATETIME       NULL,
     [EditName]     VARCHAR (10)   CONSTRAINT [DF_BorrowBack_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME       NULL,
-    [SewingLineID] VARCHAR (5)    CONSTRAINT [DF_BorrowBack_SewingLineID] DEFAULT ('') NULL,
+    [SewingLineID] VARCHAR (5)    CONSTRAINT [DF_BorrowBack_SewingLineID] DEFAULT ('') NOT NULL,
     [DepartmentID] VARCHAR (8)    CONSTRAINT [DF_BorrowBack_DepartmentID] DEFAULT ('') NOT NULL,
     [Shift]        VARCHAR (1)    CONSTRAINT [DF_BorrowBack_Shift] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_BorrowBack] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 

@@ -6,13 +6,15 @@ CREATE TABLE [dbo].[BundleInOut_History] (
     [OutGoing]              DATETIME     NULL,
     [AddDate]               DATETIME     NOT NULL,
     [EditDate]              DATETIME     NULL,
-    [SewingLineID]          VARCHAR (5)  CONSTRAINT [DF_BundleInOut_History_SewingLineID] DEFAULT ('') NULL,
+    [SewingLineID]          VARCHAR (5)  CONSTRAINT [DF_BundleInOut_History_SewingLineID] DEFAULT ('') NOT NULL,
     [LocationID]            VARCHAR (10) CONSTRAINT [DF_BundleInOut_History_LocationID] DEFAULT ('') NOT NULL,
     [RFIDProcessLocationID] VARCHAR (15) CONSTRAINT [DF_BundleInOut_History_RFIDProcessLocationID] DEFAULT ('') NOT NULL,
     [PanelNo]               VARCHAR (24) CONSTRAINT [DF_BundleInOut_History_PanelNo] DEFAULT ('') NOT NULL,
     [CutCellID]             VARCHAR (10) CONSTRAINT [DF_BundleInOut_History_CutCellID] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_BundleInOut_History] PRIMARY KEY CLUSTERED ([BundleNo] ASC, [SubProcessId] ASC, [RFIDProcessLocationID] ASC)
 );
+
+
 
 
 GO
