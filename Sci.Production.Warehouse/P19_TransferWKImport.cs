@@ -142,7 +142,7 @@ where   te.ID = @ID and
         te.FtyStatus = 'New' and
         te.Sent = 1 and
         exists(select 1 from Factory f with (nolock) 
-                                where f.ID = te.FactoryID and 
+                                where f.ID = te.FromFactoryID and 
                                       f.IsproduceFty = 1 and 
                                       f.MDivisionID  = '{Env.User.Keyword}' ) and
         not exists( select 1 from TransferOut_Detail td with (nolock)
