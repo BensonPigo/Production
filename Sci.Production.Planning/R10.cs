@@ -711,9 +711,9 @@ namespace Sci.Production.Planning
             int sheetStart_sum = 5; // 起始位置
             int spaceRow = 3; // 每個Artwork間隔 n - 1 格空白列
 
-            /*#if DEBUG
-                            sxrc.ExcelApp.Visible = true;
-            #endif*/
+#if DEBUG
+            sxrc.ExcelApp.Visible = true;
+#endif
 
             try
             {

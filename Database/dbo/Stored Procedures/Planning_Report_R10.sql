@@ -13,7 +13,7 @@ CREATE PROCEDURE [dbo].[Planning_Report_R10]
 	,@Zone varchar(8) = ''
 	,@CalculateCPU bit = 0
 	,@CalculateByBrand bit = 0
-	,@IncludeCancelOrder bit = 0
+	,@IncludeCancelOrder bit = 1
 AS
 BEGIN
 	/*
@@ -111,8 +111,9 @@ BEGIN
 	AND @HasOrders = 1
 	And localorder = 0
 	and Factory.IsProduceFty = 1
-	and ((@isSCIDelivery = 1 and Orders.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))
-		or (@isSCIDelivery = 0 and Orders.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0)))
+	-- Trade 沒有這一段
+	--and ((@isSCIDelivery = 1 and Orders.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))
+	--	or (@isSCIDelivery = 0 and Orders.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0)))
 	
 	Select Orders.ID
 	, rtrim(Factory.LoadingFactoryGroup) as FactoryID
@@ -130,7 +131,7 @@ BEGIN
 	, SewLastDate as OutputDate
 	, iif(@ReportType = 1, sDate1, sDate2) as SewingYYMM
 	, SewLastDate as SewingYYMM_Ori
-	, (cCPU * SewOutputQty * CPURate) as SewCapacity
+	, (cCPU * SewOutputQty * CPURate) + isnull(TransferQty, 0) as SewCapacity
 	, Orders.Zone
 	, BrandID
 	into #tmpOrder1 from #Orders Orders
@@ -275,8 +276,9 @@ BEGIN
 	And localorder = 0
 	AND Orders.IsForecast = 1 -- PMS此處才加, 預估單 在trade是記錄在Table:FactoryOrder
 	and Factory.IsProduceFty = 1
-	and ((@isSCIDelivery = 1 and Orders.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))
-		or (@isSCIDelivery = 0 and Orders.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0)))
+	-- Trade 沒有下面這段所以註解掉
+	--and ((@isSCIDelivery = 1 and Orders.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))
+	--	or (@isSCIDelivery = 0 and Orders.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0)))
 
 	---------------------------------------------------------------------------------------------------------------------------------
 	
@@ -567,24 +569,6 @@ BEGIN
 		END
 		
 		select * from #tmpFty2 ORDER BY FactorySort, FactoryID
-
-		/*select distinct CountryID, IIF(@CalculateByBrand = 1, '', Factory.ID) as FactoryID, Factory.FactorySort
-		, iif(Factory.Type = 'S', 'Sample', Factory.MDivisionID) as MDivisionID
-		into #tmpFtyList2
-		from Factory
-		inner join Country on Factory.CountryID = Country.ID
-		where Type in ('B','S') and isnull(FactorySort,'') <> ''
-		and (Factory.ID in (
-			select distinct IIF(@CalculateByBrand = 1, '', ft.FactoryID) FactoryID from #tmpFactory ft where ft.HalfLoading1 + ft.HalfLoading2 > 0 AND @CalculateByBrand = 0
-			union
-			select distinct IIF(@CalculateByBrand = 1, ft.BrandID, ft.FactoryID) FactoryID from #tmpFinal ft where ft.OrderLoadingCPU > 0
-		) OR
-		EXISTS (select tmp.ID from Factory tmp WHERE (@HideFoundry = 0 or (@HideFoundry = 1 and tmp.Foundry = 0)) and Factory.ID = tmp.ID ))
-		And (@MDivisionID = '' or Factory.MDivisionID = @MDivisionID)
-		And (@Zone = '' or Factory.Zone = @Zone)
-		order by FactorySort
-
-		select * from #tmpFtyList2 order by FactorySort*/
 		
 		----(K) By Factory 最細的上下半月Capacity
 		--(L) By Factory Loading CPU
@@ -617,7 +601,8 @@ BEGIN
 				, substring(OrderYYMM,1,6) as OrderYYMM
 				, sum(OrderLoadingCPU) as OrderLoadingCPU
 				, sum(OrderShortage) as OrderShortage
-			from #tmpFinal where RIGHT(OrderYYMM,1) = 1 
+			from #tmpFinal 
+			where RIGHT(OrderYYMM,1) = 1 
 			group by IIF(@CalculateByBrand = 1, BrandID, FactoryID), MDivisionID, substring(OrderYYMM,1,6), CountryID
 		) b on a.CountryID = b.CountryID and a.tmpBrandFty = b.tmpBrandFty and a.MDivisionID = b.MDivisionID and substring(a.OrderYYMM,1,6) = b.OrderYYMM
 		left join (
@@ -628,7 +613,8 @@ BEGIN
 				, substring(OrderYYMM,1,6) as OrderYYMM
 				, sum(OrderLoadingCPU) as OrderLoadingCPU
 				, sum(OrderShortage) as OrderShortage
-			from #tmpFinal where RIGHT(OrderYYMM,1) = 2 
+			from #tmpFinal 
+			where RIGHT(OrderYYMM,1) = 2 
 			group by IIF(@CalculateByBrand = 1, BrandID, FactoryID), MDivisionID, substring(OrderYYMM,1,6), CountryID
 		) c on a.CountryID = c.CountryID and a.tmpBrandFty = c.tmpBrandFty and a.MDivisionID = c.MDivisionID and substring(a.OrderYYMM,1,6) = c.OrderYYMM
 		
