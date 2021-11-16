@@ -64,6 +64,8 @@
     [NoCharges] BIT NOT NULL CONSTRAINT [DF_TransferExport_NoCharges] DEFAULT ((0)), 
 	[FtyTruckFee] numeric(10,2) NOT NULL CONSTRAINT [DF_TransferExport_FtyTruckFee] DEFAULT ((0)), 
 	[MainWK] varchar(13) NOT NULL CONSTRAINT [DF_TransferExport_MainWK] DEFAULT ('') ,
+	[CloseDate] date NULL, 
+	[LoadDate] date NULL, 
     CONSTRAINT [PK_TransferExport] PRIMARY KEY CLUSTERED ([ID] ASC)
 )
 
