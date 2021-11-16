@@ -169,7 +169,7 @@ BEGIN
 	FROM ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory
 		,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Holiday
 	WHERE Holiday.FactoryId = Factory.Id
-		  and (Holiday.FromDate >= DATEADD(DAY,-10,GETDATE()) or Holiday.UPDATEDATE >= DATEADD(DAY,-10,GETDATE()))'
+		  and (Holiday.FromDate >= DATEADD(DAY,-10,GETDATE()) or Holiday.ToDate >= DATEADD(DAY,-10,GETDATE()) or Holiday.UPDATEDATE >= DATEADD(DAY,-10,GETDATE()))'
 	execute (@cmd)
 
 	--準備日期範圍
@@ -245,7 +245,9 @@ BEGIN
 	--刪除PMS多的資料
 	CREATE TABLE #tmpHoliday 
 	(FromDate datetime, ToDate datetime);
-
+	
+	set @startDate = (select min(startDate) from (select startDate = @startDate union select DATEADD(DAY,-10,GETDATE()))x)
+	declare @startDateString nvarchar(10) = (select format(@startDate,'yyyy/MM/dd'))
 	SET @cmd = '
 	insert into #tmpHoliday 
 	SELECT Holiday.FromDate
@@ -254,9 +256,8 @@ BEGIN
 		 , ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Holiday 
 	WHERE Factory.CODE = '''+ @factoryid + ''' 
 		  and Holiday.FactoryId = Factory.Id 
-		  and (Holiday.FromDate >= DATEADD(DAY,-10,GETDATE()) 
-			   or Holiday.ToDate >= DATEADD(DAY,-10,GETDATE())
-			   or Holiday.UPDATEDATE >= DATEADD(DAY,-10,GETDATE()))'
+		  and (Holiday.FromDate >= '''+ @startDateString + '''
+			   or Holiday.ToDate >= '''+@startDateString + ''')'
 	execute (@cmd)
 
 	DECLARE cursor_holiday CURSOR FOR 
