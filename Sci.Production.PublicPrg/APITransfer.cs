@@ -72,7 +72,12 @@ where ID = '{id}'
 
             string tradeWebApiUri = PmsWebAPI.TradeWebApiUri;
             string jsonBody = JsonConvert.SerializeObject(obj);
-            string requestUri = string.Empty; // 等trade給了後補上
+            string requestUri = "http://sintexeditest.sportscity.com.tw:8002/api/GetTradeData/ConfirmTK"; // 測試
+            if (DBProxy.Current.DefaultModuleName.Contains("Formal"))
+            {
+                requestUri = "http://sintexedi.sportscity.com.tw:8001/api/GetTradeData/ConfirmTK"; // 正式
+            }
+
             WebApiBaseResult webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(tradeWebApiUri, requestUri, jsonBody, 600);
 
             switch (webApiBaseResult.webApiResponseStatus)
