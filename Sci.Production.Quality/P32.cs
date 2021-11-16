@@ -424,7 +424,7 @@ WHERE a.ID ='{masterID}'
                 this.CurrentMaintain["Result"] = string.Empty;
                 this.CurrentMaintain["Team"] = string.Empty;
                 this.CurrentMaintain["IsCombinePO"] = false;
-                //this.disInsCtn.Value = 0;
+                // this.disInsCtn.Value = 0;
 
                 this.ComboStage_Change(this.CurrentMaintain["Stage"].ToString());
 
@@ -1927,29 +1927,29 @@ SELECT STUFF(
                 return;
             }
             */
-            List<string> tmp = new List<string>();
-            foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
-            {
-                tmp.Add($@" (b.OrderID= '{dr["OrderID"]}' AND b.Seq = '{dr["Seq"]}') ");
-            }
+            // List<string> tmp = new List<string>();
+            // foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
+            // {
+            //    tmp.Add($@" (b.OrderID= '{dr["OrderID"]}' AND b.Seq = '{dr["Seq"]}') ");
+            // }
 
-            if (!tmp.Any())
-            {
-                tmp.Add("1=0");
-            }
+            // if (!tmp.Any())
+            // {
+            //    tmp.Add("1=0");
+            // }
 
-//            cmd = $@"
-//SELECT COUNT(1) + 1
-//FROM CFAInspectionRecord a
-//INNER JOIN CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
-//WHERE ( {tmp.JoinToString(" OR ")} )
-//AND Status = 'Confirmed'
-//AND Stage='{this.CurrentMaintain["Stage"]}'
-//AND AuditDate <= '{MyUtility.Convert.GetDate(this.CurrentMaintain["AuditDate"]).Value.ToString("yyyy/MM/dd")}'
-//AND a.ID  != '{this.CurrentMaintain["ID"]}'
-//";
+// cmd = $@"
+// SELECT COUNT(1) + 1
+// FROM CFAInspectionRecord a
+// INNER JOIN CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
+// WHERE ( {tmp.JoinToString(" OR ")} )
+// AND Status = 'Confirmed'
+// AND Stage='{this.CurrentMaintain["Stage"]}'
+// AND AuditDate <= '{MyUtility.Convert.GetDate(this.CurrentMaintain["AuditDate"]).Value.ToString("yyyy/MM/dd")}'
+// AND a.ID  != '{this.CurrentMaintain["ID"]}'
+// ";
 
-//            this.disInsCtn.Value = MyUtility.GetValue.Lookup(cmd);
+// this.disInsCtn.Value = MyUtility.GetValue.Lookup(cmd);
         }
 
         private void ChkIsCombinePO_CheckedChanged(object sender, EventArgs e)
