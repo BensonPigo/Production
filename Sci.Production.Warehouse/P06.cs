@@ -122,7 +122,7 @@ namespace Sci.Production.Warehouse
                 return;
             }
 
-            if (this.IsSent)
+            if (!this.IsSent)
             {
                 MyUtility.Msg.WarningBox("TPE shipping not yet send transfer working.");
                 return;
@@ -305,7 +305,7 @@ left join PO_Supp_Detail psd with (nolock) on	ted.PoID = psd.ID and
 												ted.Seq1 = psd.SEQ1 and
 												ted.Seq2 = psd.SEQ2
 left join Supp s WITH (NOLOCK) on s.id = ted.SuppID 
-left join Fabric f WITH (NOLOCK) on ted.SCIRefno = psd.SCIRefno
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = ted.SCIRefno
 outer apply(select	[ExportQty] = isnull(sum(isnull(tdc.Qty, 0)), 0) ,
 					[Foc] = isnull(sum(isnull(tdc.Foc, 0)), 0) 
 			from TransferExport_Detail_Carton tdc with (nolock) where tdc.TransferExport_DetailUkey = ted.Ukey) ExportCarton
