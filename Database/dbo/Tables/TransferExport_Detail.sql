@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[TransferExport_Detail]
 (
 	[ID] VARCHAR(13) NOT NULL , 
-    [Ukey] BIGINT NOT NULL IDENTITY, 
+    [Ukey] BIGINT NOT NULL, 
     [PoID] VARCHAR(13) NOT NULL CONSTRAINT [DF_TransferExport_Detail_PoID] DEFAULT (''), 
     [Seq1] VARCHAR(3) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Seq1] DEFAULT (''),  
     [Seq2] VARCHAR(2) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Seq2] DEFAULT (''), 
