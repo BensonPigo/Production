@@ -899,7 +899,7 @@ delete  tedc
 from    TransferExport_Detail_Carton tedc
 where   exists(select 1 from #tmp t where 
                 t.TransferExport_DetailUkey = tedc.TransferExport_DetailUkey and
-                t.Roll = tedc.LotNo and
+                t.Roll = tedc.Carton and
                 t.Dyelot = tedc.LotNo
                 )         
 ";

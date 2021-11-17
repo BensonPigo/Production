@@ -168,18 +168,8 @@ where   ted.ID = @ID and
             }
 
             // 檢查是否有漏填Reason
-            string sqlCheckReason = @"
-select  1
-from    TransferExport_Detail ted with (nolock)
-where   ted.ID = @ID and
-        exists( select 1 from TransferExport_Detail_Carton tedc with (nolock)
-                    where   tedc.TransferExport_DetailUkey = ted.Ukey and
-                            tedc.Qty <> tedc.StockQty
-                ) and
-        ted.TransferExportReason = ''
-";
-            List<SqlParameter> listParCheckReason = new List<SqlParameter>() { new SqlParameter("@ID", this.CurrentMaintain["ID"]) };
-            if (MyUtility.Check.Seek(sqlCheckReason, listParCheckReason))
+            bool isNeedInputReason = this.DetailDatas.Any(s => MyUtility.Convert.GetDecimal(s["PoQty"]) != MyUtility.Convert.GetDecimal(s["BalanceQty"]) && MyUtility.Check.Empty(s["TransferExportReason"]));
+            if (isNeedInputReason)
             {
                 MyUtility.Msg.WarningBox("Export q'ty less than PO q'ty must input the reason.");
                 return;
@@ -197,6 +187,8 @@ where   ted.ID = @ID and
                 this.ShowErr(result);
                 return;
             }
+
+            MyUtility.Msg.InfoBox("Send success");
         }
 
         /// <inheritdoc/>
@@ -220,6 +212,8 @@ where   ted.ID = @ID and
                 this.ShowErr(result);
                 return;
             }
+
+            MyUtility.Msg.InfoBox("Recall success");
         }
 
         /// <inheritdoc/>
@@ -295,7 +289,8 @@ select	ted.InventoryPOID,
         [Color] = Color.Value,
         ted.Ukey,
         PoidSeq1 = rtrim(ted.InventoryPOID) + Ltrim(Rtrim(ted.InventorySeq1)),
-        PoidSeq = rtrim(ted.InventoryPOID)+(Ltrim(Rtrim(ted.InventorySeq1)) + ' ' + ted.InventorySeq2)
+        PoidSeq = rtrim(ted.InventoryPOID)+(Ltrim(Rtrim(ted.InventorySeq1)) + ' ' + ted.InventorySeq2),
+        ted.Refno
 from TransferExport_Detail ted with (nolock) 
 left join Orders o with (nolock) on ted.PoID = o.ID
 left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID and 

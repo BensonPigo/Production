@@ -2083,7 +2083,7 @@ where   tdc.ID in (select  te.ID
 					        exists(select 1 from Factory f with (nolock) 
 					                where f.ID = te.FactoryID and 
 					                      f.IsproduceFty = 1 and 
-					                      f.MDivisionID  = 'PM2' ) and
+					                      f.MDivisionID  = '{Env.User.Keyword}' ) and
 							not exists(select 1 from TransferIn tf with (nolock) where tf.TransferExportID = te.ID)
 				) and
         tdc.StockQty > 0
