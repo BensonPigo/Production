@@ -211,6 +211,12 @@
     <Compile Include="Txtartworktype_fty.Designer.cs">
       <DependentUpon>Txtartworktype_fty.cs</DependentUpon>
     </Compile>
+    <Compile Include="TxtmulitFSRCpuCost.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TxtmulitFSRCpuCost.Designer.cs">
+      <DependentUpon>TxtmulitFSRCpuCost.cs</DependentUpon>
+    </Compile>
     <Compile Include="TxtToPlace.cs">
       <SubType>Component</SubType>
     </Compile>

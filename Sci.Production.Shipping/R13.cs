@@ -31,12 +31,7 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             this.InitializeComponent();
-            DataTable shipperID, factory;
-            DBProxy.Current.Select(null, "select '' as ShipperID union all select ShipperID from FSRCpuCost WITH (NOLOCK) ", out shipperID);
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             this.dateBuyerDelivery.Value1 = DateTime.Today;
-
-            // comboBox2.SelectedIndex = -1;
         }
 
         /// <inheritdoc/>
