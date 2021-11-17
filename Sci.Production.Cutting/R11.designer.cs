@@ -46,6 +46,7 @@
             this.txtbrand1 = new Sci.Production.Class.Txtbrand();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
+            this.chkIncludeArtworkData = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -220,7 +221,7 @@
             this.label5.Text = "Sewing Inline";
             this.label5.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // dateSewingInline
+            // dateSewInLine
             // 
             // 
             // 
@@ -237,7 +238,7 @@
             this.dateSewInLine.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateSewInLine.DateBox2.TabIndex = 1;
             this.dateSewInLine.Location = new System.Drawing.Point(117, 70);
-            this.dateSewInLine.Name = "dateSewingInline";
+            this.dateSewInLine.Name = "dateSewInLine";
             this.dateSewInLine.Size = new System.Drawing.Size(280, 23);
             this.dateSewInLine.TabIndex = 2;
             // 
@@ -288,9 +289,21 @@
             this.label7.TabIndex = 135;
             this.label7.Text = "Brand";
             // 
+            // chkIncludeArtworkData
+            // 
+            this.chkIncludeArtworkData.AutoSize = true;
+            this.chkIncludeArtworkData.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeArtworkData.Location = new System.Drawing.Point(13, 241);
+            this.chkIncludeArtworkData.Name = "chkIncludeArtworkData";
+            this.chkIncludeArtworkData.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeArtworkData.TabIndex = 136;
+            this.chkIncludeArtworkData.Text = "Include Artwork Data";
+            this.chkIncludeArtworkData.UseVisualStyleBackColor = true;
+            // 
             // R11
             // 
-            this.ClientSize = new System.Drawing.Size(538, 278);
+            this.ClientSize = new System.Drawing.Size(538, 298);
+            this.Controls.Add(this.chkIncludeArtworkData);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.txtbrand1);
@@ -336,6 +349,7 @@
             this.Controls.SetChildIndex(this.txtbrand1, 0);
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.label7, 0);
+            this.Controls.SetChildIndex(this.chkIncludeArtworkData, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -361,5 +375,6 @@
         private Class.Txtbrand txtbrand1;
         private Win.UI.Label label6;
         private Win.UI.Label label7;
+        private Win.UI.CheckBox chkIncludeArtworkData;
     }
 }

@@ -103,6 +103,12 @@ namespace Sci.Production.Cutting
                 this.sqlParameters.Add(new SqlParameter("@FtyGroup", SqlDbType.VarChar, 8) { Value = this.txtfactory.Text });
             }
 
+            string artwork = string.Empty;
+            if (!this.chkIncludeArtworkData.Checked)
+            {
+                artwork = "--";
+            }
+
             this.sqlcmd.Append($@"
 select ID, poid, StyleID, o.StyleUkey into #tmpOrders from Orders o where 1=1 {where}
 
@@ -186,7 +192,7 @@ select
 	t.Ratio,
 	ConsPC = t.ConsPC_SizeRatio,
 
-	m.xml,
+{artwork}	m.xml,
 	t.FabricPanelCode
 into #xmlArticle
 from #tmp t
@@ -195,9 +201,9 @@ outer apply(
 )m
 
 --相同 << POID, SizeCode, FabricPanelCode, (多個Article), PatternUkey >> 組合 先縮減 再分別找 Artwork (為了提升效能)
-select t.*, Artwork = dbo.GetArtwork(t.xml,t.SizeCode,t.FabricPanelCode)
-into #ArtworkS
-from(select distinct t.POID, t.SizeCode, t.FabricPanelCode, t.xml from #xmlArticle t)t
+{artwork}select t.*, Artwork = dbo.GetArtwork(t.xml,t.SizeCode,t.FabricPanelCode)
+{artwork}into #ArtworkS
+{artwork}from(select distinct t.POID, t.SizeCode, t.FabricPanelCode, t.xml from #xmlArticle t)t
 
 --sheet 2  展開到 MarkerName, SizeCode (多個 Article)
 select
@@ -211,13 +217,14 @@ select
 	t.Width,
 	t.SizeCode,
 	t.Ratio,
-	t.ConsPC,
-	b.Artwork
+	t.ConsPC
+{artwork}	,b.Artwork
 from #xmlArticle t
-inner join #ArtworkS b on b.POID = t.POID and b.SizeCode = t.SizeCode and b.FabricPanelCode = t.FabricPanelCode and b.xml = t.xml
+{artwork}inner join #ArtworkS b on b.POID = t.POID and b.SizeCode = t.SizeCode and b.FabricPanelCode = t.FabricPanelCode and b.xml = t.xml
 order by t.POID, t.StyleID, t.FabricCombo, t.Refno, t.MarkerNo, t.MarkerName
 
-drop table #tmp,#byArticle,#tmpOrders,#allAS,#byArticleALL,#sizePatternUkey,#MarkerName_AS,#xmlArticle,#ArtworkS
+drop table #tmp,#byArticle,#tmpOrders,#allAS,#byArticleALL,#sizePatternUkey,#MarkerName_AS,#xmlArticle
+{artwork}drop table #ArtworkS
 ");
 
             return base.ValidateInput();
@@ -250,6 +257,12 @@ drop table #tmp,#byArticle,#tmpOrders,#allAS,#byArticleALL,#sizePatternUkey,#Mar
             if (this.printData[1].Rows.Count > 0)
             {
                 MyUtility.Excel.CopyToXls(this.printData[1], string.Empty, filename, 1, false, null, excelapp, wSheet: excelapp.Sheets[2]);
+            }
+
+            if (!this.chkIncludeArtworkData.Checked)
+            {
+                Excel.Worksheet worksheet = excelapp.Sheets[2];
+                worksheet.Columns[12].Delete();
             }
 
             excelapp.Columns.AutoFit();
