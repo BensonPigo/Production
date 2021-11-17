@@ -196,9 +196,9 @@ select
 	t.FabricPanelCode
 into #xmlArticle
 from #tmp t
-outer apply(
-	select xml = (select distinct Article,PatternUkey from #MarkerName_AS m where  m.POID = t.POID and m.SizeCode = t.SizeCode and m.MarkerNo = t.MarkerNo  and m.MarkerName = t.MarkerName for XML RAW)
-)m
+{artwork}outer apply(
+{artwork}	select xml = (select distinct Article,PatternUkey from #MarkerName_AS m where  m.POID = t.POID and m.SizeCode = t.SizeCode and m.MarkerNo = t.MarkerNo  and m.MarkerName = t.MarkerName for XML RAW)
+{artwork})m
 
 --相同 << POID, SizeCode, FabricPanelCode, (多個Article), PatternUkey >> 組合 先縮減 再分別找 Artwork (為了提升效能)
 {artwork}select t.*, Artwork = dbo.GetArtwork(t.xml,t.SizeCode,t.FabricPanelCode)
