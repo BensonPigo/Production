@@ -752,7 +752,7 @@ select distinct
     ,[Seq2] = wo.SEQ2
     ,[Refno] = wo.Refno
     ,[Article] = Article.value
-    ,[Color] = cp2.Colorid
+    ,[Color] = LTRIM(RTRIM(cp2.Colorid))
     ,[SizeCode] = SizeCode.value
     ,cp2.WorkorderUkey
     ,[Status] = case '{isConfirmed}' when 'True' then 'New' 
@@ -2060,7 +2060,7 @@ SELECT [ID] = rd.id
 ,[Seq1] = rd.Seq1
 ,[Seq2] = rd.Seq2
 ,[Refno] = po3.Refno
-,[Color] = po3.ColorID
+,[Color] = LTRIM(RTRIM(po3.ColorID))
 ,[Roll] = rd.Roll
 ,[Dyelot] = rd.Dyelot
 ,[StockUnit] = dbo.GetStockUnitBySPSeq(rd.POID,rd.Seq1,rd.Seq2)
