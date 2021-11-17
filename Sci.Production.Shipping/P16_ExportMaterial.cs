@@ -28,9 +28,12 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            this.dispFromSP.Value = this.mainrow["InventoryPOID"].ToString();
+            this.dispToSP.Value = this.mainrow["POID"].ToString();
             this.dispFromSeq.Value = this.mainrow["InventorySEQ"].ToString();
             this.dispToSeq.Value = this.mainrow["SEQ"].ToString();
             this.dispColor.Value = this.mainrow["Color"].ToString();
+            this.dispRefno.Value = this.mainrow["Refno"].ToString();
             this.dispExportQty.Value = MyUtility.GetValue.Lookup($@"
 select ttlQty = sum(Qty) from TransferExport_Detail_Carton where TransferExport_DetailUkey = '{this.mainrow["Ukey"]}'");
             this.GridSetUp();
@@ -63,12 +66,17 @@ where TransferExport_DetailUkey = '{this.mainrow["Ukey"]}'";
             .Text("Carton", header: "Carton", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("LotNo", header: "LotNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Numeric("StockQty", header: "Export Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
-            .Text("StockUnit", header: "Stock Unit", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("StockUnitID", header: "Stock Unit", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Numeric("Qty", header: "Export Qty" + Environment.NewLine + "(Unit)", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
             .Text("UnitID", header: "Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("EditName", header: "Edit Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .DateTime("EditDate", header: "Edit Date", width: Widths.AnsiChars(18), iseditingreadonly: true)
                  ;
+        }
+
+        private void BtnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

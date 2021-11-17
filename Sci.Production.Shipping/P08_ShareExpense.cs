@@ -157,10 +157,22 @@ Expt as
 (select 0 as Selected,ID as WKNo,ShipModeID,WeightKg as GW, Cbm, '' as ShippingAPID, Blno,
 '' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
 from Export WITH (NOLOCK) 
- where blno='{0}')
+ where blno='{0}'),
+TransferExpt as
+(select 0 as Selected,ID as WKNo,ShipModeID,t2.WeightKg as GW, t2.Cbm, '' as ShippingAPID, Blno,
+'' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
+from TransferExport t WITH (NOLOCK) 
+outer apply(
+	select WeightKg = sum(s.WeightKg) , Cbm = sum(s.CBM)
+	from TransferExport_Detail s
+	where s.ID = t.ID
+)t2
+ where blno = '{0}')
 select * from FTY
 union all 
-select * from Expt", e.FormattedValue.ToString());
+select * from Expt
+union all
+select * from TransferExpt", e.FormattedValue.ToString());
                         DataTable dtImp;
                         DBProxy.Current.Select(null, chkImp, out dtImp);
                         if (MyUtility.Check.Empty(dtImp))
@@ -443,9 +455,22 @@ FtyExportData as
  '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
  from FtyExport WITH (NOLOCK) 
  where Type <> 3  and id='{0}') 
+ ,
+TransferExportData as 
+(select 0 as Selected,ID as WKNo,Blno,ShipModeID,t2.WeightKg as GW, t2.Cbm, '' as InvNo, '' as ShippingAPID, 
+ '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK
+from TransferExport t WITH (NOLOCK) 
+outer apply(
+	select WeightKg = sum(s.WeightKg) , Cbm = sum(s.CBM)
+	from TransferExport_Detail s
+	where s.ID = t.ID
+)t2
+ where 1 = 1 and id='{0}' )
 select * from ExportData 
 union all 
-select * from FtyExportData ", e.FormattedValue.ToString());
+select * from FtyExportData
+union all
+select * from TransferExportData ", e.FormattedValue.ToString());
                         DataTable dtImp;
                         DBProxy.Current.Select(null, chkImp, out dtImp);
                         if (MyUtility.Check.Empty(dtImp))

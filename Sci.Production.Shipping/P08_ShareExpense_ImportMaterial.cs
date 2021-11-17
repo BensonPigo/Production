@@ -194,9 +194,14 @@ select * from FtyExportData");
             #region 組TransferExport SQL
             sqlCmd.Append(@"
 union all
-select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, ID as InvNo
+select 0 as Selected,ID as WKNo,Blno,ShipModeID,t2.WeightKg as GW, t2.Cbm, '' as InvNo
 , '' as ShippingAPID, '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
-from TransferExport WITH (NOLOCK) 
+from TransferExport t1 WITH (NOLOCK) 
+outer apply(
+	select WeightKg = sum(s.WeightKg) , Cbm = sum(s.CBM)
+	from TransferExport_Detail s
+	where s.ID = t1.ID
+)t2
 where 1=1
 ");
             if (!MyUtility.Check.Empty(this.dateArrivePortDate.Value1))

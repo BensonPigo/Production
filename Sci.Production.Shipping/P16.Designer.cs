@@ -307,7 +307,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(984, 520);
+            this.browse.Size = new System.Drawing.Size(1000, 520);
             // 
             // tabs
             // 
@@ -360,7 +360,7 @@
             // dispToFactory
             // 
             this.dispToFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dispToFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.dispToFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
             this.dispToFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.dispToFactory.Location = new System.Drawing.Point(117, 88);
             this.dispToFactory.Name = "dispToFactory";
@@ -493,7 +493,7 @@
             // displayBox9
             // 
             this.displayBox9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox9.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayBox9.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Blno", true));
             this.displayBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox9.Location = new System.Drawing.Point(339, 88);
             this.displayBox9.Name = "displayBox9";
@@ -529,7 +529,7 @@
             // numNetKg
             // 
             this.numNetKg.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numNetKg.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NetKg", true));
+            this.numNetKg.DecimalPlaces = 2;
             this.numNetKg.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numNetKg.IsSupportEditMode = false;
             this.numNetKg.Location = new System.Drawing.Point(339, 140);
@@ -570,7 +570,7 @@
             // numWeightKg
             // 
             this.numWeightKg.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numWeightKg.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WeightKg", true));
+            this.numWeightKg.DecimalPlaces = 2;
             this.numWeightKg.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numWeightKg.IsSupportEditMode = false;
             this.numWeightKg.Location = new System.Drawing.Point(446, 140);
@@ -592,7 +592,7 @@
             // numCBM
             // 
             this.numCBM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numCBM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Cbm", true));
+            this.numCBM.DecimalPlaces = 5;
             this.numCBM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numCBM.IsSupportEditMode = false;
             this.numCBM.Location = new System.Drawing.Point(339, 166);
@@ -741,6 +741,7 @@
             // 
             this.numTruckFee.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTruckFee.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FtyTruckFee", true));
+            this.numTruckFee.DecimalPlaces = 2;
             this.numTruckFee.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTruckFee.IsSupportEditMode = false;
             this.numTruckFee.Location = new System.Drawing.Point(911, 218);
@@ -771,6 +772,7 @@
             // 
             this.numOTFee.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numOTFee.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OTFee", true));
+            this.numOTFee.DecimalPlaces = 2;
             this.numOTFee.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numOTFee.IsSupportEditMode = false;
             this.numOTFee.Location = new System.Drawing.Point(911, 244);

@@ -60,31 +60,31 @@ select Blno
 						from dbo.DropDownList
 						where id = FormStatus
 							  and Type = 'WK_FormStatus')--, display_FormMode
-from Export e
+from View_ShippingP15 e
 outer apply (
 	select	TtlWeightKg = sum (TtlE.WeightKg)
 			, TtlPackages = sum (TtlE.Packages)
 			, FOBCBM = sum(Isnull(getCBMFOB.Cbm,0))
 			, FORCBM = sum(Isnull(getCBMFOR.Cbm,0))
 			, FOR_CYCBM = sum(Isnull(getCBMFOR_CY.CbmFor, 0))
-	from Export TtlE
+	from View_ShippingP15 TtlE
 	outer apply (
-		select export.Cbm 
-		from export 
-		where export.id = e.id 
-			  and (export.ShipmentTerm In ('FOB', 'FCA', 'EXW'))
+		select s.Cbm 
+		from View_ShippingP15 s 
+		where s.id = e.id 
+			  and (s.ShipmentTerm In ('FOB', 'FCA', 'EXW'))
 	) as getCBMFOB
 	outer apply (
-		select export.Cbm 
-		from export 
-		where export.id = e.id 
-			  and (export.ShipmentTerm = 'FOR')
+		select s.Cbm 
+		from View_ShippingP15 s 
+		where s.id = e.id 
+			  and (s.ShipmentTerm = 'FOR')
 	) as getCBMFOR
 	outer apply (
-		select export.CbmFor 
-		from export 
-		where export.id = e.id 
-			  and (export.ShipmentTerm = 'FOR')
+		select s.CbmFor 
+		from View_ShippingP15 s 
+		where s.id = e.id 
+			  and (s.ShipmentTerm = 'FOR')
 	) as getCBMFOR_CY
 	where TtlE.MainExportID = e.ID
 		  and Junk = 0
@@ -113,7 +113,7 @@ select	TtlPackages = sum (TtlE.Packages)
 		, FOBCBM = sum(Isnull(getCBMFOB.Cbm,0))
 		, FORCBM = sum(Isnull(getCBMFOR.Cbm,0))
 		, FOR_CYCBM = sum(Isnull(getCBMFOR_CY.CbmFor, 0))
-from Export TtlE
+from View_ShippingP15 TtlE--Export TtlE
 outer apply (
 	select	Count20 = sum (case when ex.Type = '20' then 1 else 0 end)
 			, Count40 = sum (case when ex.Type = '40' then 1 else 0 end)
@@ -123,22 +123,22 @@ outer apply (
 		  and TtlE.CYCFS not like '%CFS%'
 ) Container
 outer apply (
-	select export.Cbm 
-	from export 
-	where export.id = TtlE.id 
-			and (export.ShipmentTerm In ('FOB', 'FCA', 'EXW'))
+	select s.Cbm 
+	from View_ShippingP15 s
+	where s.id = TtlE.id 
+			and (s.ShipmentTerm In ('FOB', 'FCA', 'EXW'))
 ) as getCBMFOB
 outer apply (
-	select export.Cbm 
-	from export 
-	where export.id = TtlE.id 
-			and (export.ShipmentTerm = 'FOR')
+	select s.Cbm 
+	from View_ShippingP15 s 
+	where s.id = TtlE.id 
+			and (s.ShipmentTerm = 'FOR')
 ) as getCBMFOR
 outer apply (
-	select export.CbmFor 
-	from export 
-	where export.id = TtlE.id 
-			and (export.ShipmentTerm = 'FOR')
+	select s.CbmFor 
+	from View_ShippingP15 s 
+	where s.id = TtlE.id 
+			and (s.ShipmentTerm = 'FOR')
 ) as getCBMFOR_CY
 where TtlE.MainExportID = '{this.CurrentMaintain["ID"]}'
 and Junk = 0
@@ -201,12 +201,12 @@ select	e.ID
 		, Count40 = isnull (ContainerInfo.Count40, 0)
 		, CountHQ = isnull (ContainerInfo.CountHQ, 0)
 		, e.ShipmentTerm
-		, e.CBM
+		, e.CBM 
 		, e.Packages
 		, e.WeightKg
 		, e.NoImportCharges
 		, ContainerNo = ContainerNo.v
-from Export e
+from View_ShippingP15 e
 outer apply (
 	select	Count20 = sum (case when ex.Type = '20' then 1 else 0 end)
 			, Count40 = sum (case when ex.Type = '40' then 1 else 0 end)

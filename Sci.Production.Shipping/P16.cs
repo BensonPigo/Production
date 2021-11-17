@@ -105,6 +105,19 @@ namespace Sci.Production.Shipping
                     break;
             }
 
+            // 表頭NW,GW,CBM 要從表身加總取得
+            string sqlTtl = $@"
+select NetKg = isnull(sum(NetKg),0) , WeightKg = isnull(sum(WeightKg),0), Cbm = isnull(sum(cbm),0)
+from TransferExport_Detail
+where ID = '{this.CurrentMaintain["ID"]}'
+";
+            if (MyUtility.Check.Seek(sqlTtl, out DataRow drTTl))
+            {
+                this.numCBM.Value = MyUtility.Convert.GetDecimal(drTTl["Cbm"]);
+                this.numWeightKg.Value = MyUtility.Convert.GetDecimal(drTTl["WeightKg"]);
+                this.numNetKg.Value = MyUtility.Convert.GetDecimal(drTTl["NetKg"]);
+            }
+
             this.dispExportCountry.Value = this.CurrentMaintain["ExportPort"].ToString() + "-" + this.CurrentMaintain["ExportCountry"].ToString();
 
             this.dispDischarge.Value = this.CurrentMaintain["ImportPort"].ToString() + "-" + this.CurrentMaintain["ImportCountry"].ToString();
@@ -176,6 +189,7 @@ ted.ID
 ,ted.NetKg
 ,ted.WeightKg
 ,ted.CBM
+,ted.Refno
 ,ContainerType = isnull(ContainerType.Value,'')
 ,[FindColumn] = rtrim(ted.InventoryPOID)+'-'+(SUBSTRING(ted.InventorySeq1,1,3)+'-'+ted.InventorySeq2)
 ,ted.ukey
@@ -526,6 +540,22 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
+            // 表頭NW,GW,CBM 要從表身加總取得
+            decimal numCBM = 0;
+            decimal numWeightKg = 0;
+            decimal numNetKg = 0;
+            string sqlTtl = $@"
+select NetKg = isnull(sum(NetKg),0) , WeightKg = isnull(sum(WeightKg),0), Cbm = isnull(sum(cbm),0)
+from TransferExport_Detail
+where ID = '{this.CurrentMaintain["ID"]}'
+";
+            if (MyUtility.Check.Seek(sqlTtl, out DataRow drTTl))
+            {
+                numCBM = MyUtility.Convert.GetDecimal(drTTl["Cbm"]);
+                numWeightKg = MyUtility.Convert.GetDecimal(drTTl["WeightKg"]);
+                numNetKg = MyUtility.Convert.GetDecimal(drTTl["NetKg"]);
+            }
+
             worksheet.Cells[2, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
             worksheet.Cells[2, 6] = MyUtility.Convert.GetString(this.CurrentMaintain["INVNo"]);
 
@@ -539,10 +569,10 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
             worksheet.Cells[5, 6] = MyUtility.Convert.GetString(this.CurrentMaintain["Vessel"]);
 
             worksheet.Cells[6, 2] = "TransferExport";
-            worksheet.Cells[6, 6] = MyUtility.Convert.GetString(this.CurrentMaintain["NetKg"]) + " / " + MyUtility.Convert.GetString(this.CurrentMaintain["WeightKg"]);
+            worksheet.Cells[6, 6] = MyUtility.Convert.GetString(numNetKg) + " / " + MyUtility.Convert.GetString(numWeightKg);
 
             worksheet.Cells[7, 2] = string.Empty;
-            worksheet.Cells[7, 6] = MyUtility.Convert.GetString(this.CurrentMaintain["Cbm"]);
+            worksheet.Cells[7, 6] = MyUtility.Convert.GetString(numCBM);
 
             worksheet.Cells[8, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["ImportPort"] + "-" + this.CurrentMaintain["ImportCountry"]);
             worksheet.Cells[8, 6] = MyUtility.Convert.GetString(this.CurrentMaintain["Remark"]);
