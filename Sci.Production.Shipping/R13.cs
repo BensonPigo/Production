@@ -33,10 +33,7 @@ namespace Sci.Production.Shipping
             this.InitializeComponent();
             DataTable shipperID, factory;
             DBProxy.Current.Select(null, "select '' as ShipperID union all select ShipperID from FSRCpuCost WITH (NOLOCK) ", out shipperID);
-            MyUtility.Tool.SetupCombox(this.comboShipper, 1, shipperID);
-            this.comboShipper.Text = Env.User.Keyword;
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.dateBuyerDelivery.Value1 = DateTime.Today;
 
             // comboBox2.SelectedIndex = -1;
@@ -63,8 +60,8 @@ namespace Sci.Production.Shipping
             this.sciDlv1 = this.dateSCIDelivery.Value1;
             this.sciDlv2 = this.dateSCIDelivery.Value2;
             this.brand = this.txtbrand.Text;
-            this.Shipper = this.comboShipper.Text.ToString().Trim();
-            this.factory = this.comboFactory.Text;
+            this.Shipper = this.txtmultiShipper.Text;
+            this.factory = this.txtmultifactory.Text;
             this.category = this.comboCategory.SelectedValue.ToString();
             return base.ValidateInput();
         }
@@ -144,12 +141,14 @@ Where o.LocalOrder = 0
 
             if (!MyUtility.Check.Empty(this.Shipper))
             {
-                sqlCmd.Append(string.Format(" and isnull(fd1.ShipperID,fd2.ShipperID) = '{0}' ", this.Shipper));
+                //sqlCmd.Append(string.Format(" and isnull(fd1.ShipperID,fd2.ShipperID) = '{0}' ", this.Shipper));
+                sqlCmd.Append($" and isnull(fd1.ShipperID,fd2.ShipperID) IN ( '{this.Shipper.Split(',').JoinToString("','")}' )");
             }
 
             if (!MyUtility.Check.Empty(this.factory))
             {
-                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", this.factory));
+                //sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", this.factory));
+                sqlCmd.Append($" and o.FtyGroup IN ( '{this.factory.Split(',').JoinToString("','")}' ) ");
             }
 
             if (!this.chkIncludeCancelOrder.Checked)
@@ -159,7 +158,7 @@ Where o.LocalOrder = 0
 
             if (!this.chkGMTComplete.Checked)
             {
-                sqlCmd.Append(" and isnull(o.GMTComplete, '') <> 'C'");
+                sqlCmd.Append(" and isnull(o.GMTComplete, '') NOT IN ( 'C','S') ");
             }
 
             sqlCmd.Append($" and o.Category in ({this.category})");
