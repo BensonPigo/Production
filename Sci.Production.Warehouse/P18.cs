@@ -2064,28 +2064,40 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
 
             List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@ID", this.txtTransferExportID.Text) };
             string sqlGetTrasnferExport = $@"
-select  tdc.POID,
-        [Seq] = concat(Ltrim(Rtrim(tdc.Seq1)), ' ', tdc.Seq2),
-        tdc.Seq1,
-        tdc.Seq2,
+select  ted.POID,
+        [Seq] = concat(Ltrim(Rtrim(ted.Seq1)), ' ', ted.Seq2),
+        ted.Seq1,
+        ted.Seq2,
         [Roll] = tdc.Carton,
         [Dyelot] = tdc.LotNo,
         [StockType] = 'B',
         [Qty] = isnull(dbo.GetUnitQty(tdc.StockUnitID, psd.StockUnit, tdc.StockQty), 0),
-        ted.FabricType
-from    TransferExport_Detail_Carton tdc with (nolock)
-inner join TransferExport_Detail ted with (nolock) on ted.Ukey = tdc.TransferExport_DetailUkey
-left join Po_Supp_Detail psd with (nolock) on psd.ID = tdc.POID and psd.Seq1 = tdc.Seq1 and psd.Seq2 = tdc.Seq2
-where   tdc.ID in (select  te.ID
-					from    TransferExport te with (nolock)
-					where   te.ID = @ID and
-					        te.Confirm  = 1 and
-					        exists(select 1 from Factory f with (nolock) 
-					                where f.ID = te.FactoryID and 
-					                      f.IsproduceFty = 1 and 
-					                      f.MDivisionID  = '{Env.User.Keyword}' ) and
-							not exists(select 1 from TransferIn tf with (nolock) where tf.TransferExportID = te.ID)
-				) and
+        ted.FabricType,
+        [Fabric] = case when ted.FabricType = 'F' then 'Fabric' 
+                             when ted.FabricType = 'A' then 'Accessory'
+                        else '' end,
+        [Description] = dbo.getMtlDesc(ted.poid, ted.seq1, ted.seq2,2,0),
+        psd.StockUnit,
+        psd.Refno,
+        [ColorID] = Color.Value
+from    TransferExport te with (nolock)
+inner join TransferExport_Detail ted with (nolock) on ted.ID = te.ID 
+inner join TransferExport_Detail_Carton tdc with (nolock) on ted.Ukey = tdc.TransferExport_DetailUkey
+left join Po_Supp_Detail psd with (nolock) on psd.ID = ted.POID and psd.Seq1 = ted.Seq1 and psd.Seq2 = ted.Seq2
+LEFT JOIN Fabric f WITH (NOLOCK) ON psd.SCIRefNo = f.SCIRefNo
+OUTER APPLY(
+ SELECT [Value]=
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF( isnull(psd.SuppColor,'') = '',dbo.GetColorMultipleID(psd.BrandID,psd.ColorID),psd.SuppColor)
+		 ELSE dbo.GetColorMultipleID(psd.BrandID,psd.ColorID)
+	 END
+)Color
+where   te.ID = @ID and
+		te.Confirm  = 1 and
+		exists(select 1 from Factory f with (nolock) 
+		        where f.ID = te.FactoryID and 
+		              f.IsproduceFty = 1 and 
+		              f.MDivisionID  = '{Env.User.Keyword}' ) and
+		not exists(select 1 from TransferIn tf with (nolock) where tf.TransferExportID = te.ID and tf.ID <> '{this.CurrentMaintain["ID"]}') and
         tdc.StockQty > 0
 ";
 
@@ -2122,9 +2134,16 @@ where   tdc.ID in (select  te.ID
                 drNew["StockType"] = drImport["StockType"];
                 drNew["Qty"] = drImport["Qty"];
                 drNew["FabricType"] = drImport["FabricType"];
+                drNew["Fabric"] = drImport["Fabric"];
+                drNew["Description"] = drImport["Description"];
+                drNew["StockUnit"] = drImport["StockUnit"];
+                drNew["Refno"] = drImport["Refno"];
+                drNew["ColorID"] = drImport["ColorID"];
 
                 dtDetail.Rows.Add(drNew);
             }
+
+            this.Change_record();
         }
     }
 }

@@ -356,6 +356,11 @@ where ted.ID = '{0}'
                     return;
                 }
 
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
                 if (e.Button != MouseButtons.Right)
                 {
                     return;
