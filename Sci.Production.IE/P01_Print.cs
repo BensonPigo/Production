@@ -153,15 +153,14 @@ select
     , td.PcsPerHour
     , td.Sewer
     , td.Annotation
-    , [DescEN] = case when '{2}' = 'cn' then isnull(od.DescCHS,o.DescEN)
-                   when '{2}' = 'vn' then isnull(od.DescVI,o.DescEN)
-                   when '{2}' = 'kh' then isnull(od.DescKH,o.DescEN)
+    , [DescEN] = case when '{2}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                   when '{2}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                   when '{2}' = 'kh' then isnull(o.DescKH,o.DescEN)
      else o.DescEN end
     , o.MasterPlusGroup
     , td.Template
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
-left join OperationDesc od on o.ID = od.ID
 left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
 where td.ID = {0}
 and td.OperationID not like '--%'
@@ -179,15 +178,14 @@ select
     , td.PcsPerHour
     , td.Sewer
     , td.Annotation
-    , [DescEN] = case when '{2}' = 'cn' then isnull(od.DescCHS,o.DescEN)
-                   when '{2}' = 'vn' then isnull(od.DescVI,o.DescEN)
-                   when '{2}' = 'kh' then isnull(od.DescKH,o.DescEN)
+    , [DescEN] = case when '{2}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                   when '{2}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                   when '{2}' = 'kh' then isnull(o.DescKH,o.DescEN)
      else o.DescEN end
     , o.MasterPlusGroup
     , td.Template
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
-left join OperationDesc od on o.ID = od.ID
 left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
 where td.ID = {0}
 and td.OperationID like '--%'
