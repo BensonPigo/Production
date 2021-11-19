@@ -96,10 +96,10 @@ select
 	, [ActTtlPOPrice] = cast(r.FOB * sum(pd.ShipQty) as float)
 	, [DiffTtlFOB] = cast(r.FOB * sum(pd.ShipQty) - r.FOB * sum(pd.ShipQty) as float) -- [ActTtlPOPrice] - [TtlFOB]
 	, [Forwarder] = g.Forwarder
-	, [NetKg] = cast(round(((case when @ShipMode in ('A/C','A/P') then sum(pd.NW) else (sum(pd.NW) + (sum(pd.NW) * 0.05)) end) * isnull(OL.rate, 1) / 100),2) as float)
-	, [WeightKg] = cast(round(((case when @ShipMode in ('A/C','A/P') then sum(pd.GW) else (sum(pd.GW) + ( sum(pd.GW) * 0.05)) end) * isnull(OL.rate, 1) / 100),2) as float)
-	, [ActNetKg] = cast(round(((case when @ShipMode in ('A/C','A/P') then sum(pd.NW) else (sum(pd.NW) + ( sum(pd.NW) * 0.05))end) * isnull(OL.rate, 1) / 100),2) as float)
-	, [ActWeightKg] = cast(round(((case when @ShipMode in ('A/C','A/P') then sum(pd.GW) else (sum(pd.GW) + ( sum(pd.GW) * 0.05))end) * isnull(OL.rate, 1) / 100),2) as float)
+	, [NetKg] = cast(round((sum(pd.NW) * isnull(OL.rate, 1) / 100),2) as float)
+	, [WeightKg] = cast(round((sum(pd.GW) * isnull(OL.rate, 1) / 100),2) as float)
+	, [ActNetKg] = cast(round((sum(pd.NW) * isnull(OL.rate, 1) / 100),2) as float)
+	, [ActWeightKg] = cast(round((sum(pd.GW) * isnull(OL.rate, 1) / 100),2) as float)
 	, [DiffNw] = 0
 	, [DiffGW] = 0
 	, [LocalINVNo] = g.id
