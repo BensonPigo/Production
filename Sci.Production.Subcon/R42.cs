@@ -90,6 +90,7 @@ namespace Sci.Production.Subcon
 Select
     [Bundle#] = bt.BundleNo,
     [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
+    [RFIDProcessTable] = bt.RFIDProcessTable,
 	[FabricKind] = FabricKind.val,
     [Cut Ref#] = b.CutRef,
     [SP#] = dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo order by OrderID for XML RAW)),
@@ -226,6 +227,7 @@ where PostSewingSubProcess = 1 or NoBundleCardAfterSubprocess = 1
 Select 
     [Bundle#] = bt.BundleNo,
     [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
+    [RFIDProcessTable] = bt.RFIDProcessTable,
     [FabricKind] = FabricKind.val,
     [Cut Ref#] = b.CutRef,
     [SP#] = dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo order by OrderID for XML RAW)),
@@ -348,7 +350,7 @@ where 1=1
             }
 
             this.sqlCmd.Append(@"
-select [Bundle#],[RFIDProcessLocationID],[FabricKind],[Cut Ref#],
+select [Bundle#],[RFIDProcessLocationID],[RFIDProcessTable],[FabricKind],[Cut Ref#],
 	[SP#],
 	[Master SP#],[M],[Factory],[Style],[Season],[Brand],[Comb],[Cutno],[Article],[Color],[Line],SewingLineID,
 	[Cell],[Pattern],[PtnDesc],[Group],[Size],[Qty],[RFID Reader],[Sub-process],[Post Sewing SubProcess],

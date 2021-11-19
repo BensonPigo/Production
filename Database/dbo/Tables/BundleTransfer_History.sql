@@ -1,51 +1,54 @@
-﻿CREATE TABLE [dbo].[BundleTransfer_History](
-	[Sid] [bigint] NULL,
-	[RFIDReaderId] [varchar](24) NULL,
-	[Type] [varchar](1) NULL,
-	[SubProcessId] [varchar](15) NULL,
-	[TagId] [varchar](24) NULL,
-	[BundleNo] [nvarchar](43) NULL,
-	[TransferDate] [datetime] NULL,
-	[AddDate] [datetime] NULL,
-	[LocationID] [varchar](10) NOT NULL,
-	[RFIDProcessLocationID] [varchar](15) NOT NULL,
-	[PanelNo] [varchar](24) NOT NULL,
-	[CutCellID] [varchar](10) NOT NULL,
-	[SewingLineID] [varchar](2) NOT NULL
-) ON [PRIMARY]
+CREATE TABLE [dbo].[BundleTransfer_History] (
+    [Sid]                   BIGINT        CONSTRAINT [DF_BundleTransfer_History_Sid] DEFAULT ((0)) NULL,
+    [RFIDReaderId]          VARCHAR (24)  CONSTRAINT [DF_BundleTransfer_History_RFIDReaderId] DEFAULT ('') NULL,
+    [Type]                  VARCHAR (1)   CONSTRAINT [DF_BundleTransfer_History_Type] DEFAULT ('') NULL,
+    [SubProcessId]          VARCHAR (15)  CONSTRAINT [DF_BundleTransfer_History_SubProcessId] DEFAULT ('') NULL,
+    [TagId]                 VARCHAR (24)  CONSTRAINT [DF_BundleTransfer_History_TagId] DEFAULT ('') NULL,
+    [BundleNo]              NVARCHAR (43) CONSTRAINT [DF_BundleTransfer_History_BundleNo] DEFAULT ('') NULL,
+    [TransferDate]          DATETIME      NULL,
+    [AddDate]               DATETIME      NULL,
+    [LocationID]            VARCHAR (10)  CONSTRAINT [DF_BundleTransfer_History_LocationID] DEFAULT ('') NOT NULL,
+    [RFIDProcessLocationID] VARCHAR (15)  CONSTRAINT [DF_BundleTransfer_History_RFIDProcessLocationID] DEFAULT ('') NOT NULL,
+    [PanelNo]               VARCHAR (24)  CONSTRAINT [DF_BundleTransfer_History_PanelNo] DEFAULT ('') NOT NULL,
+    [CutCellID]             VARCHAR (10)  CONSTRAINT [DF_BundleTransfer_History_CutCellID] DEFAULT ('') NOT NULL,
+    [SewingLineID]          VARCHAR (5)   DEFAULT ('') NULL,
+    [RFIDProcessTable]      VARCHAR (2)   CONSTRAINT [DF_BundleTransfer_History_RFIDProcessTable] DEFAULT ('') NULL
+);
+
+
 GO
 
-ALTER TABLE [dbo].[BundleTransfer_History] ADD  CONSTRAINT [DF_BundleTransfer_History_Sid]  DEFAULT ((0)) FOR [Sid]
+
 GO
 
-ALTER TABLE [dbo].[BundleTransfer_History] ADD  CONSTRAINT [DF_BundleTransfer_History_RFIDReaderId]  DEFAULT ('') FOR [RFIDReaderId]
+
 GO
 
-ALTER TABLE [dbo].[BundleTransfer_History] ADD  CONSTRAINT [DF_BundleTransfer_History_Type]  DEFAULT ('') FOR [Type]
+
 GO
 
-ALTER TABLE [dbo].[BundleTransfer_History] ADD  CONSTRAINT [DF_BundleTransfer_History_SubProcessId]  DEFAULT ('') FOR [SubProcessId]
+
 GO
 
-ALTER TABLE [dbo].[BundleTransfer_History] ADD  CONSTRAINT [DF_BundleTransfer_History_TagId]  DEFAULT ('') FOR [TagId]
+
 GO
 
-ALTER TABLE [dbo].[BundleTransfer_History] ADD  CONSTRAINT [DF_BundleTransfer_History_BundleNo]  DEFAULT ('') FOR [BundleNo]
+
 GO
 
-ALTER TABLE [dbo].[BundleTransfer_History] ADD  CONSTRAINT [DF_BundleTransfer_History_LocationID]  DEFAULT ('') FOR [LocationID]
+
 GO
 
-ALTER TABLE [dbo].[BundleTransfer_History] ADD  CONSTRAINT [DF_BundleTransfer_History_RFIDProcessLocationID]  DEFAULT ('') FOR [RFIDProcessLocationID]
+
 GO
 
-ALTER TABLE [dbo].[BundleTransfer_History] ADD  CONSTRAINT [DF_BundleTransfer_History_PanelNo]  DEFAULT ('') FOR [PanelNo]
+
 GO
 
-ALTER TABLE [dbo].[BundleTransfer_History] ADD  CONSTRAINT [DF_BundleTransfer_History_CutCellID]  DEFAULT ('') FOR [CutCellID]
+
 GO
 
-ALTER TABLE [dbo].[BundleTransfer_History] ADD  DEFAULT ('') FOR [SewingLineID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Sid' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'BundleTransfer_History', @level2type=N'COLUMN',@level2name=N'Sid'
@@ -74,5 +77,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Bundle transfer record History' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'BundleTransfer_History'
 GO
-
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'產線桌子', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'BundleTransfer_History', @level2type = N'COLUMN', @level2name = N'RFIDProcessTable';
 
