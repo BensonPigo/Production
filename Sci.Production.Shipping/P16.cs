@@ -40,8 +40,8 @@ namespace Sci.Production.Shipping
             }
 
             // from factoryid is Factory.IsproduceFty
-            this.isToProduceFty = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"select IsProduceFty from Factory where id ='{this.CurrentMaintain["FactoryID "]}' and IsProduceFty = 1"));
-            this.isFromProduceFty = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"select IsProduceFty from Factory where id ='{this.CurrentMaintain["FromFactoryID "]}' and IsProduceFty = 1"));
+            this.isToProduceFty = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"select IsProduceFty from Factory where id ='{this.CurrentMaintain["FactoryID"]}' and IsProduceFty = 1"));
+            this.isFromProduceFty = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"select IsProduceFty from Factory where id ='{this.CurrentMaintain["FromFactoryID"]}' and IsProduceFty = 1"));
 
             if (this.isToProduceFty == true && this.EditMode == true)
             {
@@ -352,7 +352,7 @@ where ted.ID = '{0}'", masterID);
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (this.isProduceFty == false)
+            if (this.isFromProduceFty == false)
             {
                 MyUtility.Msg.WarningBox("Only from or to factory can use edit button.");
                 return false;
@@ -441,7 +441,7 @@ where ted.ID = '{0}'", masterID);
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
-            if (this.isProduceFty == false)
+            if (this.isFromProduceFty == false)
             {
                 MyUtility.Msg.WarningBox("Only from factory can use Confirm button.");
                 return;

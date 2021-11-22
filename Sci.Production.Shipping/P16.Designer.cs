@@ -427,13 +427,14 @@
             // 
             // editRemark
             // 
-            this.editRemark.BackColor = System.Drawing.Color.White;
+            this.editRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editRemark.Location = new System.Drawing.Point(117, 218);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
+            this.editRemark.ReadOnly = true;
             this.editRemark.Size = new System.Drawing.Size(434, 51);
             this.editRemark.TabIndex = 118;
             // 
@@ -990,9 +991,10 @@
             // 
             this.chkReplacement.AutoSize = true;
             this.chkReplacement.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Replacement", true));
-            this.chkReplacement.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkReplacement.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkReplacement.Location = new System.Drawing.Point(578, 297);
             this.chkReplacement.Name = "chkReplacement";
+            this.chkReplacement.ReadOnly = true;
             this.chkReplacement.Size = new System.Drawing.Size(110, 21);
             this.chkReplacement.TabIndex = 186;
             this.chkReplacement.Text = "Replacement";
@@ -1002,9 +1004,10 @@
             // 
             this.chkDelay.AutoSize = true;
             this.chkDelay.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Delay", true));
-            this.chkDelay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkDelay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkDelay.Location = new System.Drawing.Point(699, 275);
             this.chkDelay.Name = "chkDelay";
+            this.chkDelay.ReadOnly = true;
             this.chkDelay.Size = new System.Drawing.Size(63, 21);
             this.chkDelay.TabIndex = 187;
             this.chkDelay.Text = "Delay";

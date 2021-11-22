@@ -108,7 +108,12 @@ namespace Sci.Production.Shipping
 select 0 as Selected,ID as WKNo,ShipModeID,WeightKg as GW, Cbm, '' as ShippingAPID, Blno,
 '' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
 from FtyExport WITH (NOLOCK) 
- where Type = 3  and blno='{0}'
+ where Type = 3  and blno = '{0}'
+union all
+select 0 as Selected,ID as WKNo,ShipModeID,WeightKg as GW, Cbm, '' as ShippingAPID, Blno,
+'' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,0 as FtyWK
+from TransferExport WITH (NOLOCK) 
+where blno = '{0}'
  ", e.FormattedValue.ToString());
                         DataTable dtExp;
                         DBProxy.Current.Select(null, chkExp, out dtExp);
@@ -155,12 +160,12 @@ from FtyExport WITH (NOLOCK)
  ),
 Expt as
 (select 0 as Selected,ID as WKNo,ShipModeID,WeightKg as GW, Cbm, '' as ShippingAPID, Blno,
-'' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
+'' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,0 as FtyWK
 from Export WITH (NOLOCK) 
  where blno='{0}'),
 TransferExpt as
 (select 0 as Selected,ID as WKNo,ShipModeID,t2.WeightKg as GW, t2.Cbm, '' as ShippingAPID, Blno,
-'' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
+'' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,0 as FtyWK
 from TransferExport t WITH (NOLOCK) 
 outer apply(
 	select WeightKg = sum(s.WeightKg) , Cbm = sum(s.CBM)
@@ -383,12 +388,21 @@ FTY AS
     '' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
     from FtyExport fe WITH (NOLOCK) 
     where fe.Type = 3  and fe.id='{0}'
+) ,
+TransExport AS
+(
+     select 0 as Selected,te.ID as WKNo,te.ShipModeID,te.WeightKg as GW, te.Cbm, '' as ShippingAPID, Blno, '' as Bl2No,
+    '' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
+    from TransferExport te WITH (NOLOCK) 
+    where  te.id='{0}'
 )
 select * from GB 
 union all 
 select * from PL
 union all
 SELECT * FROM FTY
+union all
+SELECT * FROM TransExport
  ", e.FormattedValue.ToString());
                         DataTable dtExp;
                         DBProxy.Current.Select(null, chkExp, out dtExp);
