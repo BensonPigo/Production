@@ -1867,7 +1867,15 @@ ORDER BY ph.AddName DESC
                 }
             }
 
-            if (isGMTComplete.Rows.Count > 0)
+            string sqlChk = $@"
+select p.ID,P.AddDate,P.EditDate,PD.AddDate,PD.EditDate--,
+from Pullout_Detail pd 
+INNER JOIN Pullout P ON P.ID=PD.ID
+where pd.id ='{this.CurrentMaintain["ID"]}'
+and (PD.EditDate>IIF(P.EditDate IS NULL,P.AddDate,P.EditDate))
+";
+
+            if (isGMTComplete.Rows.Count > 0 && MyUtility.Check.Seek(sqlChk))
             {
                 var m = MyUtility.Msg.ShowMsgGrid(isGMTComplete, "GMT Complete Status is updated to S on following dates, assuming the shipment is still to be arranged, please contact TPE Finance Dept. to update GMT Complete Status", "GMT Complete Status check");
                 m.Width = 800;
