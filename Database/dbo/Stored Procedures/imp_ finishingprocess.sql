@@ -24,7 +24,7 @@ Begin
 		[CustCTN] [varchar](30) NOT NULL,
 		[GW] [numeric](7, 3) NULL,
 		[ClogLocationId] [varchar](10) NULL,
-		[Pallet] [varchar](10) NULL,
+		[Pallet] [varchar](50) NULL,
 		[Time] [datetime] NOT NULL,
 		[SCIUpdate] [bit] NOT NULL DEFAULT ((0)),
 		[Type] [varchar](15) NOT NULL DEFAULT (''),
@@ -46,7 +46,7 @@ UpdLocation : Clog 儲位調整', N'SCHEMA', N'dbo', N'TABLE', N'TransferLocatio
 		[SCICtnNo] [varchar](15) NOT NULL,
 		[CustCTN] [varchar](30) NOT NULL,
 		[ClogLocationId] [varchar](10) NOT NULL,
-		[Pallet] [varchar](10) NULL,
+		[Pallet] [varchar](50) NULL,
 		[Time] [datetime] NOT NULL,
 		[SCIUpdate] [bit] NOT NULL DEFAULT ((0)),
 	 CONSTRAINT [PK_MiniToPallet] PRIMARY KEY CLUSTERED 
