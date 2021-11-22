@@ -19,7 +19,8 @@ namespace Sci.Production.Shipping
         private DataGridViewNumericBoxColumn col_NW;
         private DataGridViewNumericBoxColumn col_GW;
         private DataGridViewNumericBoxColumn col_CBM;
-        private bool isProduceFty;
+        private bool isToProduceFty;
+        private bool isFromProduceFty;
 
         /// <inheritdoc/>
         public P16(ToolStripMenuItem menuitem)
@@ -39,17 +40,22 @@ namespace Sci.Production.Shipping
             }
 
             // from factoryid is Factory.IsproduceFty
-            this.isProduceFty = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"select IsProduceFty from Factory where id ='{this.CurrentMaintain["FromFactoryID"]}'"));
+            this.isToProduceFty = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"select IsProduceFty from Factory where id ='{this.CurrentMaintain["FactoryID "]}' and IsProduceFty = 1"));
+            this.isFromProduceFty = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"select IsProduceFty from Factory where id ='{this.CurrentMaintain["FromFactoryID "]}' and IsProduceFty = 1"));
 
-            if (this.isProduceFty == true && this.EditMode == true)
+            if (this.isToProduceFty == true && this.EditMode == true)
             {
                 this.dateArrivePortDate.ReadOnly = false;
                 this.dateDoxRcvDate.ReadOnly = false;
+                this.dispRespFty.ReadOnly = false;
+                this.chkImportChange.ReadOnly = false;
             }
             else
             {
                 this.dateArrivePortDate.ReadOnly = true;
                 this.dateDoxRcvDate.ReadOnly = true;
+                this.dispRespFty.ReadOnly = true;
+                this.chkImportChange.ReadOnly = true;
             }
 
             // TPE Status
@@ -262,24 +268,24 @@ where ted.ID = '{0}'", masterID);
             base.OnDetailGridSetup();
             this.detailgrid.IsEditingReadOnly = true;
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("InventoryPOID", header: "From SP#", width: Ict.Win.Widths.AnsiChars(13))
-                .Text("InventorySEQ", header: "From SEQ", width: Ict.Win.Widths.AnsiChars(8))
-                .Text("PoID", header: "To SP#", width: Ict.Win.Widths.AnsiChars(13))
-                .Text("SEQ", header: "To SEQ", width: Ict.Win.Widths.AnsiChars(8))
-                .Text("SuppID", header: "Supplier", width: Ict.Win.Widths.AnsiChars(13))
-                .Text("Description", header: "Description", width: Ict.Win.Widths.AnsiChars(20))
-                .Text("UnitID", header: "Unit", width: Ict.Win.Widths.AnsiChars(6))
-                .Text("Color", header: "Color", width: Ict.Win.Widths.AnsiChars(6))
-                .Text("Size", header: "Size", width: Ict.Win.Widths.AnsiChars(6))
-                .Numeric("PoQty", header: "Po  Q'ty", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5))
-                .Numeric("ExportQty", header: "Export Q'ty", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5), settings: exportQtycell)
-                .Numeric("FOC", header: "F.O.C.", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(2))
-                .Numeric("BalanceQty", header: "Balance", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5))
-                .Text("TransferExportReason", header: "Reason", width: Ict.Win.Widths.AnsiChars(10))
-                .Text("ReasonDesc", header: "Reason Desc", width: Ict.Win.Widths.AnsiChars(15))
-                .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2).Get(out this.col_NW)
-                .Numeric("WeightKg", header: "G.W.(kg)", decimal_places: 2).Get(out this.col_GW)
-                .Numeric("CBM", header: "CBM", decimal_places: 4).Get(out this.col_CBM)
+                .Text("InventoryPOID", header: "From SP#", width: Ict.Win.Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("InventorySEQ", header: "From SEQ", width: Ict.Win.Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("PoID", header: "To SP#", width: Ict.Win.Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("SEQ", header: "To SEQ", width: Ict.Win.Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("SuppID", header: "Supplier", width: Ict.Win.Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("Description", header: "Description", width: Ict.Win.Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("UnitID", header: "Unit", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("Color", header: "Color", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("Size", header: "Size", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
+                .Numeric("PoQty", header: "Po  Q'ty", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
+                .Numeric("ExportQty", header: "Export Q'ty", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5), settings: exportQtycell, iseditingreadonly: true)
+                .Numeric("FOC", header: "F.O.C.", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(2), iseditingreadonly: true)
+                .Numeric("BalanceQty", header: "Balance", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("TransferExportReason", header: "Reason", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("ReasonDesc", header: "Reason Desc", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
+                .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2, iseditingreadonly: true).Get(out this.col_NW)
+                .Numeric("WeightKg", header: "G.W.(kg)", decimal_places: 2, iseditingreadonly: true).Get(out this.col_GW)
+                .Numeric("CBM", header: "CBM", decimal_places: 4, iseditingreadonly: true).Get(out this.col_CBM)
                 .Text("ContainerType", header: "ContainerType & No", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
                 ;
 
@@ -301,7 +307,7 @@ where ted.ID = '{0}'", masterID);
             }
 
             // 只有 isProduceFty = 1 才允許編輯此欄位
-            if (this.isProduceFty == true)
+            if (this.isFromProduceFty == true)
             {
                 this.col_NW.IsEditingReadOnly = false;
                 this.col_GW.IsEditingReadOnly = false;
@@ -369,9 +375,9 @@ where ted.ID = '{0}'", masterID);
                 MyUtility.Msg.WarningBox("WK has been shared expense,  [No Import Charge] shouldn't tick, please double check.");
             }
 
-            DateTime portArrival = DateTime.Parse(this.CurrentMaintain["PortArrival"].ToString());
-            DateTime whseArrival = DateTime.Parse(this.CurrentMaintain["WhseArrival"].ToString());
-            DateTime eTA = DateTime.Parse(this.CurrentMaintain["ETA"].ToString());
+            DateTime portArrival = MyUtility.Check.Empty(this.CurrentMaintain["PortArrival"]) ? default(DateTime) : DateTime.Parse(this.CurrentMaintain["PortArrival"].ToString());
+            DateTime whseArrival = MyUtility.Check.Empty(this.CurrentMaintain["WhseArrival"]) ? default(DateTime) : DateTime.Parse(this.CurrentMaintain["WhseArrival"].ToString());
+            DateTime eTA = MyUtility.Check.Empty(this.CurrentMaintain["ETA"]) ? default(DateTime) : DateTime.Parse(this.CurrentMaintain["ETA"].ToString());
 
             // 如果 Export Country 與 Import Country 相同
             if (string.Compare(this.CurrentMaintain["ExportCountry"].ToString(), this.CurrentMaintain["ImportCountry"].ToString()) == 0)
