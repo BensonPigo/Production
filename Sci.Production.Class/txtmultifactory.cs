@@ -21,6 +21,11 @@ namespace Sci.Production.Class
         /// </summary>
         public bool CheckProduceFty { get; set; } = false;
 
+        /// <summary>
+        /// check Produce Fty
+        /// </summary>
+        public bool CheckFtyGroup { get; set; } = false;
+
         /// <inheritdoc/>
         protected override void OnPopUp(Win.UI.TextBoxPopUpEventArgs e)
         {
@@ -29,6 +34,11 @@ namespace Sci.Production.Class
             if (this.CheckProduceFty)
             {
                 sqlWhere = "select ID from Factory WITH (NOLOCK) where Junk = 0 and IsProduceFty = 1 order by ID";
+            }
+
+            if (this.CheckFtyGroup)
+            {
+                sqlWhere = "select distinct FtyGroup from Factory WITH (NOLOCK) order by FtyGroup";
             }
 
             Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.Text, null, null, null);
