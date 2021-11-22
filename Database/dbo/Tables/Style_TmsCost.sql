@@ -4,7 +4,7 @@
     [Seq]           VARCHAR (4)    CONSTRAINT [DF_Style_TmsCost_Seq] DEFAULT ('') NOT NULL,
     [Qty]           INT            CONSTRAINT [DF_Style_TmsCost_Qty] DEFAULT ((0)) NULL,
     [ArtworkUnit]   VARCHAR (10)   CONSTRAINT [DF_Style_TmsCost_ArtworkUnit] DEFAULT ('') NULL,
-    [TMS]           INT            CONSTRAINT [DF_Style_TmsCost_TMS] DEFAULT ((0)) NULL,
+    [TMS]           NUMERIC(5)            CONSTRAINT [DF_Style_TmsCost_TMS] DEFAULT ((0)) NULL,
     [Price]         NUMERIC (16, 4) CONSTRAINT [DF_Style_TmsCost_Price] DEFAULT ((0)) NOT NULL,
     [AddName]       VARCHAR (10)   CONSTRAINT [DF_Style_TmsCost_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME       NULL,

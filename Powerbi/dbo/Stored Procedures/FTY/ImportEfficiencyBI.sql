@@ -85,7 +85,6 @@ outer apply
 outer apply( select BrandID from Production.dbo.orders o1 where o.CustPONo = o1.id) Order2
 outer apply( select top 1 BrandID from Production.dbo.Style where id = o.StyleID and SeasonID = o.SeasonID and BrandID != 'SUBCON-I') StyleBrand
 where 1=1 
-and s.Shift <>'O'
 --�ư�non sister�����o.LocalOrder = 1 and o.SubconInSisterFty = 0
 and((o.LocalOrder <> 1 and o.SubconInType not in (1, 2)) or (o.LocalOrder = 1 and o.SubconInType <> 0))
 and (s.OutputDate between @SDate and  @EDate

@@ -34,15 +34,15 @@
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelCategory = new Sci.Win.UI.Label();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
-            this.comboFactory = new Sci.Win.UI.ComboBox();
             this.labelShipper = new Sci.Win.UI.Label();
-            this.comboShipper = new Sci.Win.UI.ComboBox();
-            this.txtbrand = new Sci.Production.Class.Txtbrand();
-            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
             this.lbSCIDelivery = new Sci.Win.UI.Label();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.chkGMTComplete = new Sci.Win.UI.CheckBox();
+            this.txtmultifactory = new Sci.Production.Class.Txtmultifactory();
+            this.txtmultiShipper = new Sci.Production.Class.TxtmulitFSRCpuCost();
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.SuspendLayout();
             // 
             // print
@@ -112,18 +112,6 @@
             this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateBuyerDelivery.TabIndex = 102;
             // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(112, 159);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.OldText = "";
-            this.comboFactory.Size = new System.Drawing.Size(74, 24);
-            this.comboFactory.TabIndex = 108;
-            // 
             // labelShipper
             // 
             this.labelShipper.Location = new System.Drawing.Point(13, 120);
@@ -131,41 +119,6 @@
             this.labelShipper.Size = new System.Drawing.Size(95, 23);
             this.labelShipper.TabIndex = 98;
             this.labelShipper.Text = "Shipper";
-            // 
-            // comboShipper
-            // 
-            this.comboShipper.BackColor = System.Drawing.Color.White;
-            this.comboShipper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboShipper.FormattingEnabled = true;
-            this.comboShipper.IsSupportUnselect = true;
-            this.comboShipper.Location = new System.Drawing.Point(112, 119);
-            this.comboShipper.Name = "comboShipper";
-            this.comboShipper.OldText = "";
-            this.comboShipper.Size = new System.Drawing.Size(74, 24);
-            this.comboShipper.TabIndex = 112;
-            // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(112, 84);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(84, 23);
-            this.txtbrand.TabIndex = 105;
-            // 
-            // comboCategory
-            // 
-            this.comboCategory.AddAllItem = false;
-            this.comboCategory.BackColor = System.Drawing.Color.White;
-            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCategory.FormattingEnabled = true;
-            this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(112, 194);
-            this.comboCategory.Name = "comboCategory";
-            this.comboCategory.OldText = "";
-            this.comboCategory.Size = new System.Drawing.Size(238, 24);
-            this.comboCategory.TabIndex = 142;
-            this.comboCategory.Type = "Pms_RepGMTForecast";
             // 
             // lbSCIDelivery
             // 
@@ -197,14 +150,14 @@
             this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateSCIDelivery.TabIndex = 144;
             // 
-            // chkJunk
+            // chkIncludeCancelOrder
             // 
             this.chkIncludeCancelOrder.AutoSize = true;
             this.chkIncludeCancelOrder.Checked = true;
             this.chkIncludeCancelOrder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkIncludeCancelOrder.Location = new System.Drawing.Point(13, 230);
-            this.chkIncludeCancelOrder.Name = "chkJunk";
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
             this.chkIncludeCancelOrder.Size = new System.Drawing.Size(160, 21);
             this.chkIncludeCancelOrder.TabIndex = 145;
             this.chkIncludeCancelOrder.Text = "Include Cancel Order";
@@ -223,16 +176,65 @@
             this.chkGMTComplete.Text = "Include GMT. Complete";
             this.chkGMTComplete.UseVisualStyleBackColor = true;
             // 
+            // txtmultifactory
+            // 
+            this.txtmultifactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtmultifactory.CheckFtyGroup = true;
+            this.txtmultifactory.CheckProduceFty = false;
+            this.txtmultifactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtmultifactory.IsSupportEditMode = false;
+            this.txtmultifactory.Location = new System.Drawing.Point(112, 159);
+            this.txtmultifactory.Name = "txtmultifactory";
+            this.txtmultifactory.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditMode;
+            this.txtmultifactory.ReadOnly = true;
+            this.txtmultifactory.Size = new System.Drawing.Size(308, 23);
+            this.txtmultifactory.TabIndex = 148;
+            // 
+            // txtmultiShipper
+            // 
+            this.txtmultiShipper.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtmultiShipper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtmultiShipper.IsSupportEditMode = false;
+            this.txtmultiShipper.Location = new System.Drawing.Point(112, 120);
+            this.txtmultiShipper.Name = "txtmultiShipper";
+            this.txtmultiShipper.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditMode;
+            this.txtmultiShipper.ReadOnly = true;
+            this.txtmultiShipper.Size = new System.Drawing.Size(308, 23);
+            this.txtmultiShipper.TabIndex = 147;
+            // 
+            // comboCategory
+            // 
+            this.comboCategory.AddAllItem = false;
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(112, 194);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
+            this.comboCategory.Size = new System.Drawing.Size(238, 24);
+            this.comboCategory.TabIndex = 142;
+            this.comboCategory.Type = "Pms_RepGMTForecast";
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(112, 84);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(84, 23);
+            this.txtbrand.TabIndex = 105;
+            // 
             // R13
             // 
             this.ClientSize = new System.Drawing.Size(526, 337);
+            this.Controls.Add(this.txtmultifactory);
+            this.Controls.Add(this.txtmultiShipper);
             this.Controls.Add(this.chkGMTComplete);
             this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.dateSCIDelivery);
             this.Controls.Add(this.lbSCIDelivery);
             this.Controls.Add(this.comboCategory);
-            this.Controls.Add(this.comboShipper);
-            this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.dateBuyerDelivery);
             this.Controls.Add(this.labelCategory);
@@ -254,16 +256,16 @@
             this.Controls.SetChildIndex(this.labelCategory, 0);
             this.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
-            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.comboShipper, 0);
             this.Controls.SetChildIndex(this.comboCategory, 0);
             this.Controls.SetChildIndex(this.lbSCIDelivery, 0);
             this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
             this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             this.Controls.SetChildIndex(this.chkGMTComplete, 0);
+            this.Controls.SetChildIndex(this.txtmultiShipper, 0);
+            this.Controls.SetChildIndex(this.txtmultifactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -277,13 +279,13 @@
         private Win.UI.Label labelCategory;
         private Win.UI.DateRange dateBuyerDelivery;
         private Class.Txtbrand txtbrand;
-        private Win.UI.ComboBox comboFactory;
         private Win.UI.Label labelShipper;
-        private Win.UI.ComboBox comboShipper;
         private Class.ComboDropDownList comboCategory;
         private Win.UI.Label lbSCIDelivery;
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.CheckBox chkIncludeCancelOrder;
         private Win.UI.CheckBox chkGMTComplete;
+        private Class.TxtmulitFSRCpuCost txtmultiShipper;
+        private Class.Txtmultifactory txtmultifactory;
     }
 }

@@ -2685,6 +2685,7 @@
     <Build Include="dbo\Stored Procedures\FinalInspectionDataToPMS.sql" />
     <Build Include="dbo\Tables\Style_RRLR_Report.sql" />
     <Build Include="dbo\Tables\Brand_PullingTestStandarList.sql" />
+    <Build Include="dbo\Functions\GetArtWork.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
