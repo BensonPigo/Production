@@ -34,12 +34,13 @@
             this.labFactory = new Sci.Win.UI.Label();
             this.labDateGap = new Sci.Win.UI.Label();
             this.numDateGap = new Sci.Win.UI.NumericBox();
-            this.txtfactory = new Sci.Production.Class.Txtfactory();
-            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.labBrand = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.chkHoliday = new Sci.Win.UI.CheckBox();
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.chkIDD = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -132,29 +133,6 @@
             0,
             0});
             // 
-            // txtfactory
-            // 
-            this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.BoolFtyGroupList = true;
-            this.txtfactory.FilteMDivision = false;
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory.IsProduceFty = false;
-            this.txtfactory.IssupportJunk = false;
-            this.txtfactory.Location = new System.Drawing.Point(202, 59);
-            this.txtfactory.MDivision = null;
-            this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 100;
-            // 
-            // txtMdivision
-            // 
-            this.txtMdivision.BackColor = System.Drawing.Color.White;
-            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision.Location = new System.Drawing.Point(58, 59);
-            this.txtMdivision.Name = "txtMdivision";
-            this.txtMdivision.Size = new System.Drawing.Size(71, 23);
-            this.txtMdivision.TabIndex = 101;
-            // 
             // labBrand
             // 
             this.labBrand.Location = new System.Drawing.Point(286, 59);
@@ -162,15 +140,6 @@
             this.labBrand.Size = new System.Drawing.Size(43, 23);
             this.labBrand.TabIndex = 102;
             this.labBrand.Text = "Brand";
-            // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(332, 59);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(66, 23);
-            this.txtbrand.TabIndex = 103;
             // 
             // chkHoliday
             // 
@@ -196,9 +165,53 @@
             this.chkIncludeCancelOrder.Text = "Include Cancel order";
             this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
             // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(332, 59);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand.TabIndex = 103;
+            // 
+            // txtMdivision
+            // 
+            this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision.Location = new System.Drawing.Point(58, 59);
+            this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.Size = new System.Drawing.Size(71, 23);
+            this.txtMdivision.TabIndex = 101;
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.BoolFtyGroupList = true;
+            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsProduceFty = false;
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(202, 59);
+            this.txtfactory.MDivision = null;
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 100;
+            // 
+            // chkIDD
+            // 
+            this.chkIDD.AutoSize = true;
+            this.chkIDD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIDD.Location = new System.Drawing.Point(188, 125);
+            this.chkIDD.Name = "chkIDD";
+            this.chkIDD.Size = new System.Drawing.Size(72, 21);
+            this.chkIDD.TabIndex = 162;
+            this.chkIDD.Text = "via IDD";
+            this.chkIDD.UseVisualStyleBackColor = true;
+            // 
             // R11
             // 
             this.ClientSize = new System.Drawing.Size(542, 196);
+            this.Controls.Add(this.chkIDD);
             this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.chkHoliday);
             this.Controls.Add(this.txtbrand);
@@ -232,6 +245,7 @@
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
+            this.Controls.SetChildIndex(this.chkIDD, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -251,5 +265,6 @@
         private Class.Txtbrand txtbrand;
         private Win.UI.CheckBox chkHoliday;
         private Win.UI.CheckBox chkIncludeCancelOrder;
+        private Win.UI.CheckBox chkIDD;
     }
 }
