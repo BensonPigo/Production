@@ -62,7 +62,8 @@ namespace Sci.Production.Shipping
             if (MyUtility.Convert.GetString(this.apData["Type"]) == "EXPORT")
             {
                 #region FtyExport (Type = 3)
-                sqlCmd.Append(@"select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, ID as InvNo, '' as ShippingAPID, 
+                sqlCmd.Append(@"
+select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, ID as InvNo, '' as ShippingAPID, 
 '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
 from FtyExport WITH (NOLOCK) 
 where Type = 3 ");
@@ -194,7 +195,7 @@ select * from FtyExportData");
             #region 組TransferExport SQL
             sqlCmd.Append(@"
 union all
-select 0 as Selected,ID as WKNo,Blno,ShipModeID,t2.WeightKg as GW, t2.Cbm, '' as InvNo
+select 0 as Selected,ID as WKNo,Blno,ShipModeID,t2.WeightKg as GW, t2.Cbm, ID as InvNo
 , '' as ShippingAPID, '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
 from TransferExport t1 WITH (NOLOCK) 
 outer apply(

@@ -278,7 +278,7 @@ where ted.ID = '{0}'", masterID);
                 .Numeric("PoQty", header: "Po  Q'ty", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("ExportQty", header: "Export Q'ty", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5), settings: exportQtycell, iseditingreadonly: true)
                 .Numeric("FOC", header: "F.O.C.", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(2), iseditingreadonly: true)
-                .Numeric("BalanceQty", header: "Balance", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
+                .Numeric("Balance", header: "Balance", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("TransferExportReason", header: "Reason", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("ReasonDesc", header: "Reason Desc", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
                 .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2, iseditingreadonly: true).Get(out this.col_NW)

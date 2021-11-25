@@ -110,9 +110,14 @@ select 0 as Selected,ID as WKNo,ShipModeID,WeightKg as GW, Cbm, '' as ShippingAP
 from FtyExport WITH (NOLOCK) 
  where Type = 3  and blno = '{0}'
 union all
-select 0 as Selected,ID as WKNo,ShipModeID,WeightKg as GW, Cbm, '' as ShippingAPID, Blno,
+select 0 as Selected,ID as WKNo,ShipModeID,t2.WeightKg as GW, t2.Cbm, '' as ShippingAPID, Blno,
 '' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,0 as FtyWK
-from TransferExport WITH (NOLOCK) 
+from TransferExport t1 WITH (NOLOCK) 
+outer apply(
+	select WeightKg = sum(s.WeightKg) , Cbm = sum(s.CBM)
+	from TransferExport_Detail s
+	where s.ID = t1.ID
+)t2
 where blno = '{0}'
  ", e.FormattedValue.ToString());
                         DataTable dtExp;
@@ -391,9 +396,14 @@ FTY AS
 ) ,
 TransExport AS
 (
-     select 0 as Selected,te.ID as WKNo,te.ShipModeID,te.WeightKg as GW, te.Cbm, '' as ShippingAPID, Blno, '' as Bl2No,
+     select 0 as Selected,te.ID as WKNo,te.ShipModeID,t2.WeightKg as GW, t2.Cbm, '' as ShippingAPID, Blno, '' as Bl2No,
     '' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
     from TransferExport te WITH (NOLOCK) 
+    outer apply(
+	    select WeightKg = sum(s.WeightKg) , Cbm = sum(s.CBM)
+	    from TransferExport_Detail s
+	    where s.ID = te.ID
+    )t2
     where  te.id='{0}'
 )
 select * from GB 
