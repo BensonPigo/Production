@@ -2,7 +2,7 @@
     [ID]           BIGINT       CONSTRAINT [DF_SewingSchedule_Detail_ID] DEFAULT ((0)) NOT NULL,
     [OrderID]      VARCHAR (13) CONSTRAINT [DF_SewingSchedule_Detail_OrderID] DEFAULT ('') NOT NULL,
     [ComboType]    VARCHAR (1)  CONSTRAINT [DF_SewingSchedule_Detail_ComboType] DEFAULT ('') NOT NULL,
-    [SewingLineID] VARCHAR (2)  CONSTRAINT [DF_SewingSchedule_Detail_SewingLineID] DEFAULT ('') NOT NULL,
+    [SewingLineID] VARCHAR (5)  CONSTRAINT [DF_SewingSchedule_Detail_SewingLineID] DEFAULT ('') NOT NULL,
     [Article]      VARCHAR (8)  CONSTRAINT [DF_SewingSchedule_Detail_Article] DEFAULT ('') NOT NULL,
     [SizeCode]     VARCHAR (8)  CONSTRAINT [DF_SewingSchedule_Detail_SizeCode] DEFAULT ('') NOT NULL,
     [AlloQty]      INT          CONSTRAINT [DF_SewingSchedule_Detail_AlloQty] DEFAULT ((0)) NOT NULL,

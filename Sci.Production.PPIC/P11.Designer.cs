@@ -355,7 +355,7 @@
             this.displayFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayFactory.Location = new System.Drawing.Point(323, 4);
             this.displayFactory.Name = "displayFactory";
-            this.displayFactory.Size = new System.Drawing.Size(60, 23);
+            this.displayFactory.Size = new System.Drawing.Size(67, 23);
             this.displayFactory.TabIndex = 1;
             // 
             // txtSPNo
@@ -387,7 +387,7 @@
             this.txtSewingLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSewingLine.Location = new System.Drawing.Point(323, 84);
             this.txtSewingLine.Name = "txtSewingLine";
-            this.txtSewingLine.Size = new System.Drawing.Size(60, 23);
+            this.txtSewingLine.Size = new System.Drawing.Size(67, 23);
             this.txtSewingLine.TabIndex = 4;
             // 
             // labelHandle
@@ -529,6 +529,9 @@
             // 
             this.txtLocalSupp1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "SubconName", true));
             this.txtLocalSupp1.DisplayBox1Binding = "";
+            this.txtLocalSupp1.IsFactory = false;
+            this.txtLocalSupp1.IsMisc = false;
+            this.txtLocalSupp1.IsMiscOverseas = false;
             this.txtLocalSupp1.Location = new System.Drawing.Point(103, 113);
             this.txtLocalSupp1.Name = "txtLocalSupp1";
             this.txtLocalSupp1.Size = new System.Drawing.Size(252, 23);

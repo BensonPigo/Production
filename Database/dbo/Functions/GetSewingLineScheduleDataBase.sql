@@ -1,4 +1,5 @@
-﻿CREATE FUNCTION [dbo].[GetSewingLineScheduleDataBase]
+﻿
+CREATE FUNCTION [dbo].[GetSewingLineScheduleDataBase]
 (
 	@Inline DATE = null,
 	@Offline DATE = null,
@@ -39,7 +40,7 @@ BEGIN
 declare  @APSListWorkDay TABLE(
 	[APSNo] [int] NULL,
 	[MDivisionID] [varchar](8) NULL,
-	[SewingLineID] [varchar](2) NULL,
+	[SewingLineID] [varchar](5) NULL,
 	[FactoryID] [varchar](8) NULL,
 	[InlineDate] [date] NULL,
 	[OfflineDate] [date] NULL,
@@ -142,7 +143,7 @@ AND DATEADD(DAY,number,(select CAST(min(Inline)AS date) from @APSListWorkDay)) <
 Declare @Workhour_step1 table(
 	[APSNo] [int] NULL,
 	[LearnCurveID] [int] NULL,
-	[SewingLineID] [varchar](2) NULL,
+	[SewingLineID] [varchar](5) NULL,
 	[FactoryID] [varchar](8) NULL,
 	[WorkDate] [datetime] NULL,
 	[inline] [datetime] NULL,
@@ -200,7 +201,7 @@ delete @Workhour_step1 where WorkDate = OfflineDate and StartHour >= OfflineHour
 Declare @Workhour_step2 table(
 	[APSNo] [int] NULL,
 	[LearnCurveID] [int] NULL,
-	[SewingLineID] [varchar](2) NULL,
+	[SewingLineID] [varchar](5) NULL,
 	[FactoryID] [varchar](8) NULL,
 	[WorkDate] [datetime] NULL,
 	[inline] [datetime] NULL,

@@ -32,7 +32,7 @@ namespace Sci.Production.IE
             : base(menuitem)
         {
             this.InitializeComponent();
-            MyUtility.Tool.SetupCombox(this.comboTeam, 1, 1, ",A,B");
+            this.comboSewingTeam1.SetDataSource();
         }
 
         // Factory
@@ -94,7 +94,7 @@ namespace Sci.Production.IE
             this.factory = this.txtFactory.Text;
             this.style = this.txtStyle.Text;
             this.season = this.txtSeason.Text;
-            this.team = this.comboTeam.SelectedIndex == -1 || this.comboTeam.SelectedIndex == 0 ? string.Empty : this.comboTeam.SelectedIndex == 1 ? "A" : "B";
+            this.team = this.comboSewingTeam1.Text;
             this.inline1 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value1);
             this.inline2 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value2);
             this.bolSummary = this.radioSummary.Checked;

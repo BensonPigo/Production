@@ -1,32 +1,36 @@
 ﻿CREATE TABLE [dbo].[SewingOutput] (
-    [ID]           VARCHAR (13)   CONSTRAINT [DF_SewingOutput_ID] DEFAULT ('') NOT NULL,
-    [OutputDate]   DATE           NOT NULL,
-    [SewingLineID] VARCHAR (2)    CONSTRAINT [DF_SewingOutput_SewingLineID] DEFAULT ('') NOT NULL,
-    [QAQty]        INT            CONSTRAINT [DF_SewingOutput_QAQty] DEFAULT ((0)) NULL,
-    [DefectQty]    INT            CONSTRAINT [DF_SewingOutput_DefectQty] DEFAULT ((0)) NULL,
-    [InlineQty]    INT            CONSTRAINT [DF_SewingOutput_InlineQty] DEFAULT ((0)) NULL,
-    [TMS]          INT            CONSTRAINT [DF_SewingOutput_TMS] DEFAULT ((0)) NULL,
-    [Manpower]     NUMERIC (4, 1) CONSTRAINT [DF_SewingOutput_Manpower] DEFAULT ((0)) NULL,
-    [ManHour]      NUMERIC (9, 3) CONSTRAINT [DF_SewingOutput_ManHour] DEFAULT ((0)) NULL,
-    [Efficiency]   NUMERIC (6, 1) CONSTRAINT [DF_SewingOutput_Efficiency] DEFAULT ((0)) NULL,
-    [Shift]        VARCHAR (1)    CONSTRAINT [DF_SewingOutput_Shift] DEFAULT ('') NULL,
-    [Team]         VARCHAR (1)    CONSTRAINT [DF_SewingOutput_Team] DEFAULT ('') NULL,
-    [Status]       VARCHAR (15)   CONSTRAINT [DF_SewingOutput_Status] DEFAULT ('') NULL,
-    [LockDate]     DATE           NULL,
-    [WorkHour]     NUMERIC (6, 2) CONSTRAINT [DF_SewingOutput_WorkHour] DEFAULT ((0)) NULL,
-    [FactoryID]    VARCHAR (8)    CONSTRAINT [DF_SewingOutput_FactoryID] DEFAULT ('') NULL,
-    [MDivisionID]  VARCHAR (8)    CONSTRAINT [DF_SewingOutput_MDivisionID] DEFAULT ('') NULL,
-    [Category]     VARCHAR (1)    CONSTRAINT [DF_SewingOutput_Category] DEFAULT ('') NULL,
-    [SFCData]      BIT            CONSTRAINT [DF_SewingOutput_SFCData] DEFAULT ((0)) NULL,
-	[SubconOutFty] varchar(8)     DEFAULT ('') NULL,
-	[SubConOutContractNumber] varchar(50)  CONSTRAINT [DF_SewingOutput_SubConOutContractNumber]  DEFAULT ('') NULL,
-    [AddName]      VARCHAR (10)   CONSTRAINT [DF_SewingOutput_AddName] DEFAULT ('') NULL,
-    [AddDate]      DATETIME       NULL,
-    [EditName]     VARCHAR (10)   CONSTRAINT [DF_SewingOutput_EditName] DEFAULT ('') NULL,
-    [EditDate]     DATETIME       NULL,
-    [ReDailyTransferDate] DATE NULL, 
+    [ID]                      VARCHAR (13)   CONSTRAINT [DF_SewingOutput_ID] DEFAULT ('') NOT NULL,
+    [OutputDate]              DATE           NOT NULL,
+    [SewingLineID]            VARCHAR (5)    CONSTRAINT [DF_SewingOutput_SewingLineID] DEFAULT ('') NOT NULL,
+    [QAQty]                   INT            CONSTRAINT [DF_SewingOutput_QAQty] DEFAULT ((0)) NULL,
+    [DefectQty]               INT            CONSTRAINT [DF_SewingOutput_DefectQty] DEFAULT ((0)) NULL,
+    [InlineQty]               INT            CONSTRAINT [DF_SewingOutput_InlineQty] DEFAULT ((0)) NULL,
+    [TMS]                     INT            CONSTRAINT [DF_SewingOutput_TMS] DEFAULT ((0)) NULL,
+    [Manpower]                NUMERIC (4, 1) CONSTRAINT [DF_SewingOutput_Manpower] DEFAULT ((0)) NULL,
+    [ManHour]                 NUMERIC (9, 3) CONSTRAINT [DF_SewingOutput_ManHour] DEFAULT ((0)) NULL,
+    [Efficiency]              NUMERIC (6, 1) CONSTRAINT [DF_SewingOutput_Efficiency] DEFAULT ((0)) NULL,
+    [Shift]                   VARCHAR (1)    CONSTRAINT [DF_SewingOutput_Shift] DEFAULT ('') NULL,
+    [Team]                    VARCHAR (5)    CONSTRAINT [DF_SewingOutput_Team] DEFAULT ('') NULL,
+    [Status]                  VARCHAR (15)   CONSTRAINT [DF_SewingOutput_Status] DEFAULT ('') NULL,
+    [LockDate]                DATE           NULL,
+    [WorkHour]                NUMERIC (6, 2) CONSTRAINT [DF_SewingOutput_WorkHour] DEFAULT ((0)) NULL,
+    [FactoryID]               VARCHAR (8)    CONSTRAINT [DF_SewingOutput_FactoryID] DEFAULT ('') NULL,
+    [MDivisionID]             VARCHAR (8)    CONSTRAINT [DF_SewingOutput_MDivisionID] DEFAULT ('') NULL,
+    [Category]                VARCHAR (1)    CONSTRAINT [DF_SewingOutput_Category] DEFAULT ('') NULL,
+    [SFCData]                 BIT            CONSTRAINT [DF_SewingOutput_SFCData] DEFAULT ((0)) NULL,
+    [AddName]                 VARCHAR (10)   CONSTRAINT [DF_SewingOutput_AddName] DEFAULT ('') NULL,
+    [AddDate]                 DATETIME       NULL,
+    [EditName]                VARCHAR (10)   CONSTRAINT [DF_SewingOutput_EditName] DEFAULT ('') NULL,
+    [EditDate]                DATETIME       NULL,
+    [SubconOutFty]            VARCHAR (8)    DEFAULT ('') NULL,
+    [SubConOutContractNumber] VARCHAR (50)   CONSTRAINT [DF_SewingOutput_SubConOutContractNumber] DEFAULT ('') NULL,
+    [ReDailyTransferDate]     DATE           NULL,
     CONSTRAINT [PK_SewingOutput] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
+
+
 
 
 
@@ -152,11 +156,5 @@ CREATE NONCLUSTERED INDEX [IX_SewingOutput_OutputDate]
 	ON [dbo].[SewingOutput] ([OutputDate])
 	INCLUDE ([ID],[Shift],[FactoryID],[MDivisionID],[Category],[SubconOutFty],[SubConOutContractNumber])
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'需重新資料交換',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'SewingOutput',
-    @level2type = N'COLUMN',
-    @level2name = N'ReDailyTransferDate'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�ݭ��s��ƥ洫', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput', @level2type = N'COLUMN', @level2name = N'ReDailyTransferDate';
+

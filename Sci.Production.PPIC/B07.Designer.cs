@@ -102,7 +102,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(30, 30);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(96, 23);
@@ -111,7 +110,6 @@
             // 
             // labelDate
             // 
-            this.labelDate.Lines = 0;
             this.labelDate.Location = new System.Drawing.Point(30, 65);
             this.labelDate.Name = "labelDate";
             this.labelDate.Size = new System.Drawing.Size(96, 23);
@@ -120,7 +118,6 @@
             // 
             // labelDay
             // 
-            this.labelDay.Lines = 0;
             this.labelDay.Location = new System.Drawing.Point(30, 100);
             this.labelDay.Name = "labelDay";
             this.labelDay.Size = new System.Drawing.Size(96, 23);
@@ -129,7 +126,6 @@
             // 
             // labelSewingLine
             // 
-            this.labelSewingLine.Lines = 0;
             this.labelSewingLine.Location = new System.Drawing.Point(30, 135);
             this.labelSewingLine.Name = "labelSewingLine";
             this.labelSewingLine.Size = new System.Drawing.Size(96, 23);
@@ -138,7 +134,6 @@
             // 
             // labelWorkingHours
             // 
-            this.labelWorkingHours.Lines = 0;
             this.labelWorkingHours.Location = new System.Drawing.Point(30, 170);
             this.labelWorkingHours.Name = "labelWorkingHours";
             this.labelWorkingHours.Size = new System.Drawing.Size(96, 23);
@@ -147,7 +142,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(30, 205);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(96, 23);
@@ -161,7 +155,7 @@
             this.displayFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayFactory.Location = new System.Drawing.Point(130, 30);
             this.displayFactory.Name = "displayFactory";
-            this.displayFactory.Size = new System.Drawing.Size(60, 23);
+            this.displayFactory.Size = new System.Drawing.Size(69, 23);
             this.displayFactory.TabIndex = 0;
             // 
             // dateDate
@@ -250,7 +244,7 @@
             this.txtSewingLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSewingLine.Location = new System.Drawing.Point(130, 135);
             this.txtSewingLine.Name = "txtSewingLine";
-            this.txtSewingLine.Size = new System.Drawing.Size(60, 23);
+            this.txtSewingLine.Size = new System.Drawing.Size(69, 23);
             this.txtSewingLine.TabIndex = 3;
             // 
             // B07
@@ -260,6 +254,7 @@
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
             this.Name = "B07";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B07. Work hours by sewing line ";
             this.UniqueExpress = "FactoryID,SewingLineID,Date";
             this.WorkAlias = "WorkHour";

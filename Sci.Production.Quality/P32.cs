@@ -31,6 +31,7 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.comboSewingTeam1.SetDataSource();
             this.Text = type == "1" ? "P32. CFA Inspection Record " : "P321. CFA Inspection Record (History)";
             this._Type = type;
             this._sourceHeader = null;
@@ -49,8 +50,6 @@ namespace Sci.Production.Quality
                 this.IsSupportCopy = false;
                 this.IsSupportClip = false;
             }
-
-            this.comboTeam.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -76,8 +75,6 @@ namespace Sci.Production.Quality
                 this.IsSupportCopy = false;
                 this.IsSupportClip = false;
             }
-
-            this.comboTeam.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -427,7 +424,7 @@ WHERE a.ID ='{masterID}'
                 this.CurrentMaintain["Result"] = string.Empty;
                 this.CurrentMaintain["Team"] = string.Empty;
                 this.CurrentMaintain["IsCombinePO"] = false;
-                //this.disInsCtn.Value = 0;
+                // this.disInsCtn.Value = 0;
 
                 this.ComboStage_Change(this.CurrentMaintain["Stage"].ToString());
 
@@ -1294,14 +1291,6 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
             this.CauculateSQR();
         }
 
-        private void ComboTeam_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (this.CurrentMaintain != null)
-            {
-                // this.CurrentMaintain["Team"] = this.comboTeam.SelectedItem.ToString();
-            }
-        }
-
         private void ComboResult_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.CurrentMaintain != null)
@@ -1938,29 +1927,29 @@ SELECT STUFF(
                 return;
             }
             */
-            List<string> tmp = new List<string>();
-            foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
-            {
-                tmp.Add($@" (b.OrderID= '{dr["OrderID"]}' AND b.Seq = '{dr["Seq"]}') ");
-            }
+            // List<string> tmp = new List<string>();
+            // foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
+            // {
+            //    tmp.Add($@" (b.OrderID= '{dr["OrderID"]}' AND b.Seq = '{dr["Seq"]}') ");
+            // }
 
-            if (!tmp.Any())
-            {
-                tmp.Add("1=0");
-            }
+            // if (!tmp.Any())
+            // {
+            //    tmp.Add("1=0");
+            // }
 
-//            cmd = $@"
-//SELECT COUNT(1) + 1
-//FROM CFAInspectionRecord a
-//INNER JOIN CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
-//WHERE ( {tmp.JoinToString(" OR ")} )
-//AND Status = 'Confirmed'
-//AND Stage='{this.CurrentMaintain["Stage"]}'
-//AND AuditDate <= '{MyUtility.Convert.GetDate(this.CurrentMaintain["AuditDate"]).Value.ToString("yyyy/MM/dd")}'
-//AND a.ID  != '{this.CurrentMaintain["ID"]}'
-//";
+// cmd = $@"
+// SELECT COUNT(1) + 1
+// FROM CFAInspectionRecord a
+// INNER JOIN CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
+// WHERE ( {tmp.JoinToString(" OR ")} )
+// AND Status = 'Confirmed'
+// AND Stage='{this.CurrentMaintain["Stage"]}'
+// AND AuditDate <= '{MyUtility.Convert.GetDate(this.CurrentMaintain["AuditDate"]).Value.ToString("yyyy/MM/dd")}'
+// AND a.ID  != '{this.CurrentMaintain["ID"]}'
+// ";
 
-//            this.disInsCtn.Value = MyUtility.GetValue.Lookup(cmd);
+// this.disInsCtn.Value = MyUtility.GetValue.Lookup(cmd);
         }
 
         private void ChkIsCombinePO_CheckedChanged(object sender, EventArgs e)

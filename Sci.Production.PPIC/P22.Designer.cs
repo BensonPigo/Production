@@ -205,6 +205,8 @@ namespace Sci.Production.PPIC
             this.txtLocalSupp.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "SubconName", true));
             this.txtLocalSupp.DisplayBox1Binding = "";
             this.txtLocalSupp.IsFactory = false;
+            this.txtLocalSupp.IsMisc = false;
+            this.txtLocalSupp.IsMiscOverseas = false;
             this.txtLocalSupp.Location = new System.Drawing.Point(103, 113);
             this.txtLocalSupp.Name = "txtLocalSupp";
             this.txtLocalSupp.Size = new System.Drawing.Size(252, 23);
@@ -286,7 +288,7 @@ namespace Sci.Production.PPIC
             this.txtsewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtsewingline.Location = new System.Drawing.Point(323, 86);
             this.txtsewingline.Name = "txtsewingline";
-            this.txtsewingline.Size = new System.Drawing.Size(60, 23);
+            this.txtsewingline.Size = new System.Drawing.Size(69, 23);
             this.txtsewingline.TabIndex = 58;
             // 
             // displayFactory
@@ -296,7 +298,7 @@ namespace Sci.Production.PPIC
             this.displayFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayFactory.Location = new System.Drawing.Point(323, 6);
             this.displayFactory.Name = "displayFactory";
-            this.displayFactory.Size = new System.Drawing.Size(60, 23);
+            this.displayFactory.Size = new System.Drawing.Size(69, 23);
             this.displayFactory.TabIndex = 55;
             // 
             // displayMasterSP
@@ -463,6 +465,7 @@ namespace Sci.Production.PPIC
             // 
             // P22
             // 
+            this.ApvChkValue = "New";
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1076, 549);
@@ -477,7 +480,6 @@ namespace Sci.Production.PPIC
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P22. Carton Replacement";
             this.UnApvChkValue = "Confirmed";
-            this.ApvChkValue = "New";
             this.WorkAlias = "ReplacementLocalItem";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();

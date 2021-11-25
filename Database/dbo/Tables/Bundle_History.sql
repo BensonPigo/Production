@@ -1,103 +1,104 @@
-﻿CREATE TABLE [dbo].[Bundle_History](
-	[ID] [varchar](13) NOT NULL,
-	[POID] [varchar](13) NOT NULL,
-	[MDivisionid] [varchar](8) NOT NULL,
-	[Sizecode] [varchar](100) NOT NULL,
-	[Colorid] [varchar](6) NOT NULL,
-	[Article] [varchar](8) NOT NULL,
-	[PatternPanel] [varchar](2) NOT NULL,
-	[Cutno] [numeric](6, 0) NULL,
-	[Cdate] [date] NULL,
-	[Orderid] [varchar](13) NOT NULL,
-	[Sewinglineid] [varchar](2) NOT NULL,
-	[Item] [varchar](20) NULL,
-	[SewingCell] [varchar](2) NOT NULL,
-	[Ratio] [varchar](100) NULL,
-	[Startno] [numeric](5, 0) NULL,
-	[Qty] [numeric](2, 0) NULL,
-	[PrintDate] [datetime] NULL,
-	[AllPart] [numeric](5, 0) NULL,
-	[CutRef] [varchar](8) NULL,
-	[AddName] [varchar](10) NULL,
-	[AddDate] [datetime] NULL,
-	[EditName] [varchar](10) NULL,
-	[EditDate] [datetime] NULL,
-	[oldid] [varchar](13) NULL,
-	[FabricPanelCode] [varchar](2) NULL,
-	[IsEXCESS] [bit] NOT NULL,
-	[ByToneGenerate] [bit] NOT NULL,
-	[SubCutNo] [varchar](2) NOT NULL,
- CONSTRAINT [PK_Bundle_History] PRIMARY KEY CLUSTERED 
-(
-	[ID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[Bundle_History] (
+    [ID]              VARCHAR (13)  CONSTRAINT [DF_Bundle_History_ID] DEFAULT ('') NOT NULL,
+    [POID]            VARCHAR (13)  CONSTRAINT [DF_Bundle_History_CuttingID] DEFAULT ('') NOT NULL,
+    [MDivisionid]     VARCHAR (8)   CONSTRAINT [DF_Bundle_History_Factoryid] DEFAULT ('') NOT NULL,
+    [Sizecode]        VARCHAR (100) CONSTRAINT [DF_Bundle_History_Sizecode] DEFAULT ('') NOT NULL,
+    [Colorid]         VARCHAR (6)   CONSTRAINT [DF_Bundle_History_Colorid] DEFAULT ('') NOT NULL,
+    [Article]         VARCHAR (8)   CONSTRAINT [DF_Bundle_History_Article] DEFAULT ('') NOT NULL,
+    [PatternPanel]    VARCHAR (2)   CONSTRAINT [DF_Bundle_History_FabricCombo] DEFAULT ('') NOT NULL,
+    [Cutno]           NUMERIC (6)   CONSTRAINT [DF_Bundle_History_Cutno] DEFAULT ((0)) NULL,
+    [Cdate]           DATE          NULL,
+    [Orderid]         VARCHAR (13)  CONSTRAINT [DF_Bundle_History_Orderid] DEFAULT ('') NOT NULL,
+    [Sewinglineid]    VARCHAR (5)   CONSTRAINT [DF_Bundle_History_Sewinglineid] DEFAULT ('') NOT NULL,
+    [Item]            VARCHAR (20)  CONSTRAINT [DF_Bundle_History_Item] DEFAULT ('') NULL,
+    [SewingCell]      VARCHAR (2)   CONSTRAINT [DF_Bundle_History_SewingCell] DEFAULT ('') NOT NULL,
+    [Ratio]           VARCHAR (100) CONSTRAINT [DF_Bundle_History_Ratio] DEFAULT ('') NULL,
+    [Startno]         NUMERIC (5)   CONSTRAINT [DF_Bundle_History_Startno] DEFAULT ((0)) NULL,
+    [Qty]             NUMERIC (2)   CONSTRAINT [DF_Bundle_History_Qty] DEFAULT ((0)) NULL,
+    [PrintDate]       DATETIME      NULL,
+    [AllPart]         NUMERIC (5)   CONSTRAINT [DF_Bundle_History_AllPart] DEFAULT ((0)) NULL,
+    [CutRef]          VARCHAR (8)   CONSTRAINT [DF_Bundle_History_CutRef] DEFAULT ('') NULL,
+    [AddName]         VARCHAR (10)  CONSTRAINT [DF_Bundle_History_AddName] DEFAULT ('') NULL,
+    [AddDate]         DATETIME      NULL,
+    [EditName]        VARCHAR (10)  CONSTRAINT [DF_Bundle_History_EditName] DEFAULT ('') NULL,
+    [EditDate]        DATETIME      NULL,
+    [oldid]           VARCHAR (13)  NULL,
+    [FabricPanelCode] VARCHAR (2)   NULL,
+    [IsEXCESS]        BIT           DEFAULT ((0)) NOT NULL,
+    [ByToneGenerate]  BIT           DEFAULT ((0)) NOT NULL,
+    [SubCutNo]        VARCHAR (2)   CONSTRAINT [DF_Bundle_History_SubCutNo] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_Bundle_History] PRIMARY KEY CLUSTERED ([ID] ASC)
+);
+
+
+
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_ID]  DEFAULT ('') FOR [ID]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_CuttingID]  DEFAULT ('') FOR [POID]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_Factoryid]  DEFAULT ('') FOR [MDivisionid]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_Sizecode]  DEFAULT ('') FOR [Sizecode]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_Colorid]  DEFAULT ('') FOR [Colorid]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_Article]  DEFAULT ('') FOR [Article]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_FabricCombo]  DEFAULT ('') FOR [PatternPanel]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_Cutno]  DEFAULT ((0)) FOR [Cutno]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_Orderid]  DEFAULT ('') FOR [Orderid]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_Sewinglineid]  DEFAULT ('') FOR [Sewinglineid]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_Item]  DEFAULT ('') FOR [Item]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_SewingCell]  DEFAULT ('') FOR [SewingCell]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_Ratio]  DEFAULT ('') FOR [Ratio]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_Startno]  DEFAULT ((0)) FOR [Startno]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_Qty]  DEFAULT ((0)) FOR [Qty]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_AllPart]  DEFAULT ((0)) FOR [AllPart]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_CutRef]  DEFAULT ('') FOR [CutRef]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_AddName]  DEFAULT ('') FOR [AddName]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_EditName]  DEFAULT ('') FOR [EditName]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  DEFAULT ((0)) FOR [IsEXCESS]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  DEFAULT ((0)) FOR [ByToneGenerate]
+
 GO
 
-ALTER TABLE [dbo].[Bundle_History] ADD  CONSTRAINT [DF_Bundle_History_SubCutNo]  DEFAULT ('') FOR [SubCutNo]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Bundle ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Bundle_History', @level2type=N'COLUMN',@level2name=N'ID'

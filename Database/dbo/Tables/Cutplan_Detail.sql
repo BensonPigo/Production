@@ -1,8 +1,8 @@
 ﻿CREATE TABLE [dbo].[Cutplan_Detail] (
     [ID]            VARCHAR (13)   CONSTRAINT [DF_Cutplan_Detail_ID] DEFAULT ('') NOT NULL,
-    [Sewinglineid]  VARCHAR (2)    CONSTRAINT [DF_Cutplan_Detail_SewingInline] DEFAULT ('') NOT NULL,
+    [Sewinglineid]  VARCHAR (5)    CONSTRAINT [DF_Cutplan_Detail_SewingInline] DEFAULT ('') NOT NULL,
     [CutRef]        VARCHAR (6)    CONSTRAINT [DF_Cutplan_Detail_CutRef] DEFAULT ('') NOT NULL,
-    [CutNo]         NUMERIC (6)    CONSTRAINT [DF_Cutplan_Detail_CutNo] DEFAULT ((0)) NOT NULL,
+    [CutNo]         NUMERIC (6)    CONSTRAINT [DF_Cutplan_Detail_CutNo] DEFAULT ((0)) NULL,
     [OrderID]       VARCHAR (13)   CONSTRAINT [DF_Cutplan_Detail_OrderID] DEFAULT ('') NOT NULL,
     [StyleID]       VARCHAR (15)   CONSTRAINT [DF_Cutplan_Detail_StyleID] DEFAULT ('') NOT NULL,
     [Colorid]       VARCHAR (6)    CONSTRAINT [DF_Cutplan_Detail_Colorid] DEFAULT ('') NOT NULL,
@@ -12,6 +12,10 @@
     [POID]          VARCHAR (13)   CONSTRAINT [DF_Cutplan_Detail_POID] DEFAULT ('') NULL,
     CONSTRAINT [PK_Cutplan_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [WorkorderUkey] ASC)
 );
+
+
+
+
 
 
 

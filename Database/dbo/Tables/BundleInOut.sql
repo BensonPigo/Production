@@ -5,13 +5,17 @@
     [OutGoing]              DATETIME     NULL,
     [AddDate]               DATETIME     NOT NULL,
     [EditDate]              DATETIME     NULL,
-    [SewingLineID]          VARCHAR (2)  NOT NULL DEFAULT (''),
+    [SewingLineID]          VARCHAR (5)  CONSTRAINT [DF_BundleInOut_SewingLineID] DEFAULT ('') NOT NULL,
     [LocationID]            VARCHAR (10) DEFAULT ('') NOT NULL,
     [RFIDProcessLocationID] VARCHAR (15) CONSTRAINT [DF_BundleInOut_RFIDProcessLocationID] DEFAULT ('') NOT NULL,
     [PanelNo]               VARCHAR (24) CONSTRAINT [DF_BundleInOut_PanelNo] DEFAULT ('') NOT NULL,
-    [CutCellID]             VARCHAR (10) CONSTRAINT [DF_BundleInOut_CutCellID] DEFAULT ('') NOT NULL, 
-    CONSTRAINT [PK_BundleInOut] PRIMARY KEY ([SubProcessId], [BundleNo], [RFIDProcessLocationID])
+    [CutCellID]             VARCHAR (10) CONSTRAINT [DF_BundleInOut_CutCellID] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_BundleInOut] PRIMARY KEY CLUSTERED ([BundleNo] ASC, [SubProcessId] ASC, [RFIDProcessLocationID] ASC)
 );
+
+
+
+
 
 
 

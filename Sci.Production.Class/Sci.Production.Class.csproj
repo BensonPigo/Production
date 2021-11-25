@@ -205,6 +205,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource1.resx</DependentUpon>
     </Compile>
+    <Compile Include="ComboSewingTeam.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ComboSewingTeam.Designer.cs">
+      <DependentUpon>ComboSewingTeam.cs</DependentUpon>
+    </Compile>
     <Compile Include="Txtartworktype_fty.cs">
       <SubType>Component</SubType>
     </Compile>

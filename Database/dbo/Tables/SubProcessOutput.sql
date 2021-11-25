@@ -3,7 +3,7 @@
     [TypeID]      VARCHAR (10)   NULL,
     [OutputDate]  DATE           NULL,
     [Shift]       VARCHAR (1)    NULL,
-    [Team]        VARCHAR (1)    NULL,
+    [Team]        VARCHAR (5)    NULL,
     [QAQty]       INT            NULL,
     [ProdQty]     INT            NULL,
     [DefectQty]   INT            NULL,

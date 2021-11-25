@@ -36,7 +36,7 @@ BEGIN
 	--sent data to GZ WebAPI 會在PPIC P07使用此temp table傳送異動資料
 	Create table #tmpSewingLineGZ
 	(
-		ID varchar(2) null,
+		ID varchar(5) null,
 		FactoryID varchar(8) null,
 		[Action] varchar(5) null
 	)
@@ -48,7 +48,7 @@ BEGIN
 	)
 
 	DECLARE @sewingcell varchar(2),
-			@sewinglineid varchar(2),
+			@sewinglineid varchar(5),
 			@description nvarchar(500),
 			@sewer int,
 			@set numeric(24,10),
@@ -112,7 +112,7 @@ BEGIN
 	DEALLOCATE cursor_sewingline
 
 	--刪除PMS多的資料
-	CREATE TABLE #tmpSewingLine (ID Varchar(2));
+	CREATE TABLE #tmpSewingLine (ID Varchar(5));
 	SET @cmd = '
 		insert into #tmpSewingLine 
 		SELECT SUBSTRING(Facility.NAME,1,2) as ID 

@@ -8,7 +8,7 @@
     [FactoryID]          VARCHAR (8)   CONSTRAINT [DF_Lack_FactoryID] DEFAULT ('') NOT NULL,
     [OrderID]            VARCHAR (13)  CONSTRAINT [DF_Lack_OrderID] DEFAULT ('') NOT NULL,
     [POID]               VARCHAR (13)  CONSTRAINT [DF_Lack_POID] DEFAULT ('') NULL,
-    [SewingLineID]       VARCHAR (2)   CONSTRAINT [DF_Lack_SewingLineID] DEFAULT ('') NOT NULL,
+    [SewingLineID]       VARCHAR (5)   CONSTRAINT [DF_Lack_SewingLineID] DEFAULT ('') NOT NULL,
     [Remark]             NVARCHAR (60) CONSTRAINT [DF_Lack_Remark] DEFAULT ('') NULL,
     [ApplyName]          VARCHAR (10)  CONSTRAINT [DF_Lack_ApplyName] DEFAULT ('') NOT NULL,
     [ApvName]            VARCHAR (10)  CONSTRAINT [DF_Lack_ApvName] DEFAULT ('') NULL,
@@ -25,13 +25,17 @@
     [WHIssueDate]        DATETIME      NULL,
     [TotalRoll]          INT           DEFAULT ((0)) NOT NULL,
     [WHRemark]           NVARCHAR (60) DEFAULT ('') NOT NULL,
-    [ScanTransferSlip]   BIT           DEFAULT ((0)) NOT NULL,
     [PreparedWorker]     VARCHAR (10)  DEFAULT ('') NOT NULL,
     [PreparedLocation]   VARCHAR (100) DEFAULT ('') NOT NULL,
     [PreparedStartDate]  DATETIME      NULL,
     [PreparedFinishDate] DATETIME      NULL,
+    [ScanTransferSlip]   BIT           DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Lack] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
+
+
 
 
 
@@ -131,33 +135,49 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturi
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'倉庫註記', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lack', @level2type = N'COLUMN', @level2name = N'WHRemark';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�ܮw���O', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lack', @level2type = N'COLUMN', @level2name = N'WHRemark';
+
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'倉庫最後更新時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lack', @level2type = N'COLUMN', @level2name = N'WHIssueDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�ܮw�̫��s�ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lack', @level2type = N'COLUMN', @level2name = N'WHIssueDate';
+
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布捲數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lack', @level2type = N'COLUMN', @level2name = N'TotalRoll';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'������', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lack', @level2type = N'COLUMN', @level2name = N'TotalRoll';
+
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否已經掃描 Transfer Slip (主要用在後續工廠 Audit)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lack', @level2type = N'COLUMN', @level2name = N'ScanTransferSlip';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�O�_�w�g���y Transfer Slip (�D�n�Φb����u�t Audit)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lack', @level2type = N'COLUMN', @level2name = N'ScanTransferSlip';
+
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'倉庫備料人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lack', @level2type = N'COLUMN', @level2name = N'PreparedWorker';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�ܮw�ƮƤH��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lack', @level2type = N'COLUMN', @level2name = N'PreparedWorker';
+
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'開始備料時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lack', @level2type = N'COLUMN', @level2name = N'PreparedStartDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�}�l�ƮƮɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lack', @level2type = N'COLUMN', @level2name = N'PreparedStartDate';
+
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'取料儲位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lack', @level2type = N'COLUMN', @level2name = N'PreparedLocation';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�����x��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lack', @level2type = N'COLUMN', @level2name = N'PreparedLocation';
+
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'備料完成時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lack', @level2type = N'COLUMN', @level2name = N'PreparedFinishDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�ƮƧ����ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lack', @level2type = N'COLUMN', @level2name = N'PreparedFinishDate';
+
+
 
