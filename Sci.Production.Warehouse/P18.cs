@@ -1301,11 +1301,11 @@ when matched then
 
                     if (!MyUtility.Check.Empty(this.CurrentMaintain["TransferExportID"]))
                     {
-                        string sqlUpdateTransferExport = @" update TransferExport set WhseArrival = @WhseArrival, PortArrival = @PortArrival where ID = @TransferExportID";
+                        string sqlUpdateTransferExport = @" update TransferExport set WhseArrival = @WhseArrival, PackingArrival = @PackingArrival where ID = @TransferExportID";
                         List<SqlParameter> listParTransferExport = new List<SqlParameter>()
                         {
                             new SqlParameter("@WhseArrival", this.CurrentMaintain["IssueDate"]),
-                            new SqlParameter("@PortArrival", this.CurrentMaintain["PackingArrival"]),
+                            new SqlParameter("@PackingArrival", this.CurrentMaintain["PackingArrival"]),
                             new SqlParameter("@TransferExportID", this.CurrentMaintain["TransferExportID"]),
                         };
 
@@ -1688,7 +1688,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
 
                     if (!MyUtility.Check.Empty(this.CurrentMaintain["TransferExportID"]))
                     {
-                        string sqlUpdateTransferExport = @" update TransferExport set WhseArrival = null, PortArrival = null where ID = @TransferExportID";
+                        string sqlUpdateTransferExport = @" update TransferExport set WhseArrival = null, PackingArrival = null where ID = @TransferExportID";
                         List<SqlParameter> listParTransferExport = new List<SqlParameter>()
                         {
                             new SqlParameter("@TransferExportID", this.CurrentMaintain["TransferExportID"]),
