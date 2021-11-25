@@ -70,7 +70,6 @@
             this.dispDischarge = new Sci.Win.UI.DisplayBox();
             this.labPortofDischarge = new Sci.Win.UI.Label();
             this.labTPEPaid = new Sci.Win.UI.Label();
-            this.dispRespFty = new Sci.Win.UI.DisplayBox();
             this.labRespFty = new Sci.Win.UI.Label();
             this.numTruckFee = new Sci.Win.UI.NumericBox();
             this.labTruckFee = new Sci.Win.UI.Label();
@@ -101,6 +100,8 @@
             this.btnShippingMark = new Sci.Win.UI.Button();
             this.txttpeuserHandle = new Sci.Production.Class.Txttpeuser();
             this.txtSeq1 = new Sci.Production.Class.TxtSeq();
+            this.txtOTResponsibleFty2 = new Sci.Production.Class.Txtfactory();
+            this.txtOTResponsibleFty1 = new Sci.Production.Class.Txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -117,6 +118,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtOTResponsibleFty2);
+            this.masterpanel.Controls.Add(this.txtOTResponsibleFty1);
             this.masterpanel.Controls.Add(this.btnShippingMark);
             this.masterpanel.Controls.Add(this.btnExpenseData);
             this.masterpanel.Controls.Add(this.chkCIFTerms);
@@ -146,7 +149,6 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.numTruckFee);
             this.masterpanel.Controls.Add(this.labTruckFee);
-            this.masterpanel.Controls.Add(this.dispRespFty);
             this.masterpanel.Controls.Add(this.labRespFty);
             this.masterpanel.Controls.Add(this.labTPEPaid);
             this.masterpanel.Controls.Add(this.dispDischarge);
@@ -234,7 +236,6 @@
             this.masterpanel.Controls.SetChildIndex(this.dispDischarge, 0);
             this.masterpanel.Controls.SetChildIndex(this.labTPEPaid, 0);
             this.masterpanel.Controls.SetChildIndex(this.labRespFty, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dispRespFty, 0);
             this.masterpanel.Controls.SetChildIndex(this.labTruckFee, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTruckFee, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -265,6 +266,8 @@
             this.masterpanel.Controls.SetChildIndex(this.btnExpenseData, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnShippingMark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtOTResponsibleFty1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtOTResponsibleFty2, 0);
             // 
             // detailpanel
             // 
@@ -431,6 +434,7 @@
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editRemark.IsSupportEditMode = false;
             this.editRemark.Location = new System.Drawing.Point(117, 218);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
@@ -721,15 +725,6 @@
             this.labTPEPaid.TabIndex = 152;
             this.labTPEPaid.Text = "TPE Paid(USD)";
             // 
-            // dispRespFty
-            // 
-            this.dispRespFty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dispRespFty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dispRespFty.Location = new System.Drawing.Point(674, 244);
-            this.dispRespFty.Name = "dispRespFty";
-            this.dispRespFty.Size = new System.Drawing.Size(152, 23);
-            this.dispRespFty.TabIndex = 153;
-            // 
             // labRespFty
             // 
             this.labRespFty.Location = new System.Drawing.Point(560, 244);
@@ -965,9 +960,11 @@
             // 
             this.chkImportChange.AutoSize = true;
             this.chkImportChange.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NoImportCharges", true));
-            this.chkImportChange.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkImportChange.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkImportChange.IsSupportEditMode = false;
             this.chkImportChange.Location = new System.Drawing.Point(413, 274);
             this.chkImportChange.Name = "chkImportChange";
+            this.chkImportChange.ReadOnly = true;
             this.chkImportChange.Size = new System.Drawing.Size(138, 21);
             this.chkImportChange.TabIndex = 184;
             this.chkImportChange.Text = "No Import Charge";
@@ -992,6 +989,7 @@
             this.chkReplacement.AutoSize = true;
             this.chkReplacement.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Replacement", true));
             this.chkReplacement.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkReplacement.IsSupportEditMode = false;
             this.chkReplacement.Location = new System.Drawing.Point(578, 297);
             this.chkReplacement.Name = "chkReplacement";
             this.chkReplacement.ReadOnly = true;
@@ -1005,6 +1003,7 @@
             this.chkDelay.AutoSize = true;
             this.chkDelay.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Delay", true));
             this.chkDelay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkDelay.IsSupportEditMode = false;
             this.chkDelay.Location = new System.Drawing.Point(699, 275);
             this.chkDelay.Name = "chkDelay";
             this.chkDelay.ReadOnly = true;
@@ -1096,6 +1095,39 @@
             this.txtSeq1.Size = new System.Drawing.Size(61, 23);
             this.txtSeq1.TabIndex = 162;
             // 
+            // txtOTResponsibleFty2
+            // 
+            this.txtOTResponsibleFty2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtOTResponsibleFty2.BoolFtyGroupList = true;
+            this.txtOTResponsibleFty2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OTResponsibleFty2", true));
+            this.txtOTResponsibleFty2.FilteMDivision = false;
+            this.txtOTResponsibleFty2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtOTResponsibleFty2.IsProduceFty = false;
+            this.txtOTResponsibleFty2.IsSupportEditMode = false;
+            this.txtOTResponsibleFty2.IssupportJunk = false;
+            this.txtOTResponsibleFty2.Location = new System.Drawing.Point(750, 244);
+            this.txtOTResponsibleFty2.MDivision = null;
+            this.txtOTResponsibleFty2.Name = "txtOTResponsibleFty2";
+            this.txtOTResponsibleFty2.ReadOnly = true;
+            this.txtOTResponsibleFty2.Size = new System.Drawing.Size(73, 23);
+            this.txtOTResponsibleFty2.TabIndex = 194;
+            // 
+            // txtOTResponsibleFty1
+            // 
+            this.txtOTResponsibleFty1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtOTResponsibleFty1.BoolFtyGroupList = true;
+            this.txtOTResponsibleFty1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OTResponsibleFty1", true));
+            this.txtOTResponsibleFty1.FilteMDivision = false;
+            this.txtOTResponsibleFty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtOTResponsibleFty1.IsProduceFty = false;
+            this.txtOTResponsibleFty1.IssupportJunk = false;
+            this.txtOTResponsibleFty1.Location = new System.Drawing.Point(675, 244);
+            this.txtOTResponsibleFty1.MDivision = null;
+            this.txtOTResponsibleFty1.Name = "txtOTResponsibleFty1";
+            this.txtOTResponsibleFty1.ReadOnly = true;
+            this.txtOTResponsibleFty1.Size = new System.Drawing.Size(72, 23);
+            this.txtOTResponsibleFty1.TabIndex = 193;
+            // 
             // P16
             // 
             this.ClientSize = new System.Drawing.Size(1008, 582);
@@ -1174,7 +1206,6 @@
         private Win.UI.Label label3;
         private Win.UI.NumericBox numTruckFee;
         private Win.UI.Label labTruckFee;
-        private Win.UI.DisplayBox dispRespFty;
         private Win.UI.Label labRespFty;
         private Win.UI.Label labTPEPaid;
         private Win.UI.DisplayBox dispDischarge;
@@ -1206,5 +1237,7 @@
         private Win.UI.CheckBox chkCIFTerms;
         private Win.UI.Button btnExpenseData;
         private Win.UI.Button btnShippingMark;
+        private Class.Txtfactory txtOTResponsibleFty2;
+        private Class.Txtfactory txtOTResponsibleFty1;
     }
 }

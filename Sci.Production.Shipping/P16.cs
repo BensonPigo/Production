@@ -39,22 +39,22 @@ namespace Sci.Production.Shipping
                 return;
             }
 
-            // from factoryid is Factory.IsproduceFty
-            this.isToProduceFty = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"select IsProduceFty from Factory where id ='{this.CurrentMaintain["FactoryID"]}' and IsProduceFty = 1"));
-            this.isFromProduceFty = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"select IsProduceFty from Factory where id ='{this.CurrentMaintain["FromFactoryID"]}' and IsProduceFty = 1"));
+            this.GetProduceFTY();
 
             if (this.isToProduceFty == true && this.EditMode == true)
             {
                 this.dateArrivePortDate.ReadOnly = false;
                 this.dateDoxRcvDate.ReadOnly = false;
-                this.dispRespFty.ReadOnly = false;
+                this.txtOTResponsibleFty1.ReadOnly = false;
+                this.txtOTResponsibleFty2.ReadOnly = false;
                 this.chkImportChange.ReadOnly = false;
             }
             else
             {
                 this.dateArrivePortDate.ReadOnly = true;
                 this.dateDoxRcvDate.ReadOnly = true;
-                this.dispRespFty.ReadOnly = true;
+                this.txtOTResponsibleFty1.ReadOnly = true;
+                this.txtOTResponsibleFty2.ReadOnly = true;
                 this.chkImportChange.ReadOnly = true;
             }
 
@@ -65,11 +65,11 @@ namespace Sci.Production.Shipping
             }
             else if (!MyUtility.Check.Empty(this.CurrentMaintain["Confirm"]))
             {
-                this.dispTPEStatus.Text = "[Confirm] To fty can start to Transfer Out.";
+                this.dispTPEStatus.Text = "[Confirm] To fty can start to Transfer In.";
             }
             else if (!MyUtility.Check.Empty(this.CurrentMaintain["Sent"]))
             {
-                this.dispTPEStatus.Text = "[Sent] From fty can start to Transfer In.";
+                this.dispTPEStatus.Text = "[Sent] From fty can start to Transfer Out.";
             }
             else if (MyUtility.Check.Empty(this.CurrentMaintain["Sent"]))
             {
@@ -104,7 +104,7 @@ namespace Sci.Production.Shipping
                 case "Send":
                     this.dispFtyStatus.Value = "[Send] From fty WH Confirm";
                     break;
-                case "Confirm":
+                case "Confirmed":
                     this.dispFtyStatus.Value = "[Confirm] From fty Shipping Confirm";
                     break;
                 default:
@@ -134,8 +134,6 @@ isnull(cast(round(TransferExport.PrepaidFtyImportFee * (select Rate from[dbo].[G
 from TransferExport
 where id = '{this.CurrentMaintain["ID"]}'");
             this.numTPEPaidUSD.Value = MyUtility.Convert.GetDecimal(currencyRate);
-
-            this.dispRespFty.Value = this.CurrentMaintain["OTResponsibleFty1"].ToString() + "-" + this.CurrentMaintain["OTResponsibleFty2"].ToString();
 
             #region Door to Door
             string chkdtd = $@"
@@ -315,9 +313,9 @@ where ted.ID = '{0}'", masterID);
             }
             else
             {
-                this.col_NW.IsEditingReadOnly = false;
-                this.col_GW.IsEditingReadOnly = false;
-                this.col_CBM.IsEditingReadOnly = false;
+                this.col_NW.IsEditingReadOnly = true;
+                this.col_GW.IsEditingReadOnly = true;
+                this.col_CBM.IsEditingReadOnly = true;
             }
         }
 
@@ -329,6 +327,8 @@ where ted.ID = '{0}'", masterID);
             {
                 return;
             }
+
+            this.GetProduceFTY();
 
             if (string.Compare(this.CurrentMaintain["FtyStatus"].ToString(), "New", true) != 0)
             {
@@ -347,15 +347,29 @@ where ted.ID = '{0}'", masterID);
             {
                 this.toolbar.cmdConfirm.Enabled = false;
             }
+
+            // Confirmed and FromFactory 不可編輯
+            if (this.isFromProduceFty == true &&
+                string.Compare(this.CurrentMaintain["FtyStatus"].ToString(), "Confirmed", true) == 0)
+            {
+                this.toolbar.cmdEdit.Enabled = false;
+            }
+            else
+            {
+                this.toolbar.cmdEdit.Enabled = true;
+            }
         }
 
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (this.isFromProduceFty == false)
+            if (this.isToProduceFty == false)
             {
-                MyUtility.Msg.WarningBox("Only from or to factory can use edit button.");
-                return false;
+                if (this.isFromProduceFty == false)
+                {
+                    MyUtility.Msg.WarningBox("Only from or to factory can use edit button.");
+                    return false;
+                }
             }
 
             return base.ClickEditBefore();
@@ -655,6 +669,12 @@ where ID = '{this.CurrentMaintain["ID"]}'
             {
                 this.detailgridbs.Position = index;
             }
+        }
+
+        private void GetProduceFTY()
+        {
+            this.isToProduceFty = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"select IsProduceFty from Factory where id ='{this.CurrentMaintain["FactoryID"]}' and IsProduceFty = 1"));
+            this.isFromProduceFty = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"select IsProduceFty from Factory where id ='{this.CurrentMaintain["FromFactoryID"]}' and IsProduceFty = 1"));
         }
     }
 }
