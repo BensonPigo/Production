@@ -542,6 +542,50 @@ where f.lock = 1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             }
             #endregion
 
+            #region 檢查From/To Location是否為空值
+            DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
+
+            // From Location
+            DataRow[] dtArry = dtDetail.Select(@"Fromlocation = '' or Fromlocation is null");
+            if (dtArry != null && dtArry.Length > 0)
+            {
+                DataTable dtFromLocation_Empty = dtArry.CopyToDataTable();
+
+                // change column name
+                dtFromLocation_Empty.Columns["FromPoId"].ColumnName = "From SP#";
+                dtFromLocation_Empty.Columns["Fromseq"].ColumnName = "From Seq";
+                dtFromLocation_Empty.Columns["FromRoll"].ColumnName = "From Roll";
+                dtFromLocation_Empty.Columns["FromDyelot"].ColumnName = "From Dyelot";
+                dtFromLocation_Empty.Columns["fromstocktype"].ColumnName = "From Stock Type";
+                dtFromLocation_Empty.Columns["topoid"].ColumnName = "To SP#";
+                dtFromLocation_Empty.Columns["toroll"].ColumnName = "To Roll";
+                dtFromLocation_Empty.Columns["todyelot"].ColumnName = "To Dyelot";
+
+                Prgs.ChkLocationEmpty(dtFromLocation_Empty, "From", @"From SP#,From Seq,From Roll,From Dyelot,From Stock Type,To SP#,To Seq,To Roll,To Dyelot");
+                return;
+            }
+
+            // To Location
+            dtArry = dtDetail.Select(@"ToLocation = '' or ToLocation is null");
+            if (dtArry != null && dtArry.Length > 0)
+            {
+                DataTable dtToLocation_Empty = dtArry.CopyToDataTable();
+
+                // change column name
+                dtToLocation_Empty.Columns["FromPoId"].ColumnName = "From SP#";
+                dtToLocation_Empty.Columns["Fromseq"].ColumnName = "From Seq";
+                dtToLocation_Empty.Columns["FromRoll"].ColumnName = "From Roll";
+                dtToLocation_Empty.Columns["FromDyelot"].ColumnName = "From Dyelot";
+                dtToLocation_Empty.Columns["fromstocktype"].ColumnName = "From Stock Type";
+                dtToLocation_Empty.Columns["topoid"].ColumnName = "To SP#";
+                dtToLocation_Empty.Columns["toroll"].ColumnName = "To Roll";
+                dtToLocation_Empty.Columns["todyelot"].ColumnName = "To Dyelot";
+
+                Prgs.ChkLocationEmpty(dtToLocation_Empty, "To", @"From SP#,From Seq,From Roll,From Dyelot,From Stock Type,To SP#,To Seq,To Roll,To Dyelot");
+                return;
+            }
+            #endregion
+
             #region -- 檢查負數庫存 --
 
             sqlcmd = string.Format(

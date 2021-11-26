@@ -305,7 +305,8 @@ WHERE   StockType='{0}'
 
             try
             {
-                DualResult result = Prgs.P24confirm(this.CurrentMaintain["ID"].ToString());
+                DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
+                DualResult result = Prgs.P24confirm(this.CurrentMaintain["ID"].ToString(), dtDetail);
                 if (!result)
                 {
                     if (!MyUtility.Check.Empty(result.ToString()))
@@ -717,6 +718,7 @@ select [Selected] = 0
     ,a.FromStockType
     ,a.Qty
     ,a.ToPoId
+    ,ToSeq = concat(Ltrim(Rtrim(a.ToSeq1)), ' ', a.ToSeq2)
     ,a.ToSeq1
     ,a.ToSeq2
     ,a.ToDyelot

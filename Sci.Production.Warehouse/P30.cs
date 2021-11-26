@@ -456,6 +456,7 @@ select  convert(bit,0) as selected
         , fi.Ukey FromFtyInventoryUkey
         , o.FactoryID FromFactoryID
         , fi.POID FromPoid
+        , concat(Ltrim(Rtrim(fi.Seq1)), ' ', fi.Seq2) as Fromseq
         , fi.Seq1 FromSeq1
         , fi.Seq2 Fromseq2
         , fi.Roll FromRoll
@@ -465,6 +466,7 @@ select  convert(bit,0) as selected
         , 0.00 as Qty
         , t.FactoryID  toFactoryID 
         , rtrim(t.poID) topoid
+        , concat(Ltrim(Rtrim(t.Seq1)), ' ', t.Seq2) as toseq
         , t.seq1 toseq1
         , t.seq2 toseq2
         , fi.Roll toRoll
@@ -702,6 +704,9 @@ from #tmp
             dtDetail.Columns.Add("ToDyelot");
             dtDetail.Columns.Add("Qty");
             dtDetail.Columns.Add("ToLocation");
+            dtDetail.Columns.Add("FromLocation");
+            dtDetail.Columns.Add("FromSeq");
+            dtDetail.Columns.Add("toSeq");
 
             for (int i = 0; i < listPoid.Count; i++)
             {
@@ -741,6 +746,9 @@ from #tmp
                 drNewDetail["ToDyelot"] = item["toDyelot"];
                 drNewDetail["Qty"] = item["qty"];
                 drNewDetail["ToLocation"] = item["tolocation"];
+                drNewDetail["FromLocation"] = item["FromLocation"];
+                drNewDetail["FromSeq"] = item["FromSeq"];
+                drNewDetail["toSeq"] = item["toSeq"];
                 dtDetail.Rows.Add(drNewDetail);
             }
             #endregion
@@ -759,7 +767,12 @@ from #tmp
                         return;
                     }
 
-                    if ((result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, insertDetail, out dtResult)) == false)
+                    DataTable dtcopy = dtDetail.Copy();
+                    dtcopy.Columns.Remove("FromLocation");
+                    dtcopy.Columns.Remove("FromSeq");
+                    dtcopy.Columns.Remove("toSeq");
+
+                    if ((result = MyUtility.Tool.ProcessWithDatatable(dtcopy, null, insertDetail, out dtResult)) == false)
                     {
                         transactionscope.Dispose();
                         MyUtility.Msg.WarningBox(result.ToString(), "Create failed");
@@ -791,7 +804,8 @@ from #tmp
             List<string> fail_list = new List<string>();
             foreach (DataRow dr in dtMaster.Rows)
             {
-                if (Prgs.P24confirm(dr["ID"].ToString()))
+                DataTable dtd = dtDetail.Select($" id ='{dr["id"]}'").CopyToDataTable();
+                if (Prgs.P24confirm(dr["ID"].ToString(), dtd))
                 {
                     success_list.Add(dr["ID"].ToString());
                 }

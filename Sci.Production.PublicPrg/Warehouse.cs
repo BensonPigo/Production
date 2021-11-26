@@ -2033,6 +2033,41 @@ and d.Id = '{0}'", dr["id"]);
             }
             #endregion
 
+            #region 檢查From/To Location是否為空值
+
+            // From Location
+            DataRow[] dtArry = dt.Select(@"Fromlocation = '' or Fromlocation is null");
+            if (dtArry != null && dtArry.Length > 0)
+            {
+                DataTable dtFromLocation_Empty = dtArry.CopyToDataTable();
+
+                // change column name
+                dtFromLocation_Empty.Columns["FromPoId"].ColumnName = "SP#";
+                dtFromLocation_Empty.Columns["Fromseq"].ColumnName = "Seq";
+                dtFromLocation_Empty.Columns["FromRoll"].ColumnName = "Roll";
+                dtFromLocation_Empty.Columns["FromDyelot"].ColumnName = "Dyelot";
+
+                ChkLocationEmpty(dtFromLocation_Empty, "From", "SP#,Seq,Roll,Dyelot");
+                return false;
+            }
+
+            // To Location
+            dtArry = dt.Select(@"ToLocation = '' or ToLocation is null");
+            if (dtArry != null && dtArry.Length > 0)
+            {
+                DataTable dtToLocation_Empty = dtArry.CopyToDataTable();
+
+                // change column name
+                dtToLocation_Empty.Columns["ToPoid"].ColumnName = "SP#";
+                dtToLocation_Empty.Columns["toseq"].ColumnName = "Seq";
+                dtToLocation_Empty.Columns["ToRoll"].ColumnName = "Roll";
+                dtToLocation_Empty.Columns["ToDyelot"].ColumnName = "Dyelot";
+
+                ChkLocationEmpty(dtToLocation_Empty, "To","SP#,Seq,Roll,Dyelot");
+                return false;
+            }
+            #endregion
+
             #region -- 檢查負數庫存 --
 
             sqlcmd = string.Format(
@@ -2253,7 +2288,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
 
         /// <inheritdoc/>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
-        public static DualResult P23confirm(string subTransfer_ID)
+        public static DualResult P23confirm(string subTransfer_ID, DataTable dt)
         {
             string upd_MD_4T = string.Empty;
             string upd_MD_8T = string.Empty;
@@ -2316,6 +2351,45 @@ where   f.lock=1
             if (!Prgs.ChkWMSLock(subTransfer_ID, "SubTransfer_Detail_From"))
             {
                 return new DualResult(false, "Material WMS Locked!!");
+            }
+            #endregion
+
+            #region 檢查From/To Location是否為空值
+
+            // From Location
+            DataRow[] dtArry = dt.Select(@"Fromlocation = '' or Fromlocation is null");
+            if (dtArry != null && dtArry.Length > 0)
+            {
+                DataTable dtFromLocation_Empty = dtArry.CopyToDataTable();
+
+                // change column name
+                dtFromLocation_Empty.Columns["FromPoId"].ColumnName = "Inventory SP#";
+                dtFromLocation_Empty.Columns["Fromseq"].ColumnName = "Inventory Seq";
+                dtFromLocation_Empty.Columns["FromRoll"].ColumnName = "Roll";
+                dtFromLocation_Empty.Columns["FromDyelot"].ColumnName = "Dyelot";
+                dtFromLocation_Empty.Columns["topoid"].ColumnName = "Bulk SP#";
+                dtFromLocation_Empty.Columns["toseq"].ColumnName = "Bulk Seq";
+
+                ChkLocationEmpty(dtFromLocation_Empty, "From", "Inventory SP#,Inventory Seq,Roll,Dyelot,Bulk SP#,Bulk Seq");
+                return new DualResult(false, "From or To Location is empty!!");
+            }
+
+            // To Location
+            dtArry = dt.Select(@"ToLocation = '' or ToLocation is null");
+            if (dtArry != null && dtArry.Length > 0)
+            {
+                DataTable dtToLocation_Empty = dtArry.CopyToDataTable();
+
+                // change column name
+                dtToLocation_Empty.Columns["FromPoId"].ColumnName = "Inventory SP#";
+                dtToLocation_Empty.Columns["Fromseq"].ColumnName = "Inventory Seq";
+                dtToLocation_Empty.Columns["FromRoll"].ColumnName = "Roll";
+                dtToLocation_Empty.Columns["FromDyelot"].ColumnName = "Dyelot";
+                dtToLocation_Empty.Columns["topoid"].ColumnName = "Bulk SP#";
+                dtToLocation_Empty.Columns["toseq"].ColumnName = "Bulk Seq";
+
+                ChkLocationEmpty(dtToLocation_Empty, "To", "Inventory SP#,Inventory Seq,Roll,Dyelot,Bulk SP#,Bulk Seq");
+                return new DualResult(false, "From or To Location is empty!!");
             }
             #endregion
 
@@ -2669,7 +2743,7 @@ inner join #tmpD as src on   target.ID = src.ToPoid
 
         /// <inheritdoc/>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
-        public static DualResult P24confirm(string subTransfer_ID)
+        public static DualResult P24confirm(string subTransfer_ID, DataTable dt)
         {
             string upd_MD_16T = string.Empty;
             string upd_MD_8T = string.Empty;
@@ -2734,6 +2808,41 @@ and d.Id = '{0}'", subTransfer_ID);
             if (!Prgs.ChkWMSLock(subTransfer_ID, "SubTransfer_Detail_From"))
             {
                 return new DualResult(false, "Material WMS Locked!!");
+            }
+            #endregion
+
+            #region 檢查From/To Location是否為空值
+
+            // From Location
+            DataRow[] dtArry = dt.Select(@"Fromlocation = '' or Fromlocation is null");
+            if (dtArry != null && dtArry.Length > 0)
+            {
+                DataTable dtFromLocation_Empty = dtArry.CopyToDataTable();
+
+                // change column name
+                dtFromLocation_Empty.Columns["FromPoId"].ColumnName = "SP#";
+                dtFromLocation_Empty.Columns["Fromseq"].ColumnName = "Seq";
+                dtFromLocation_Empty.Columns["FromRoll"].ColumnName = "Roll";
+                dtFromLocation_Empty.Columns["FromDyelot"].ColumnName = "Dyelot";
+
+                ChkLocationEmpty(dtFromLocation_Empty, "From", "SP#,Seq,Roll,Dyelot");
+                return new DualResult(false, "From or To Location is empty!!");
+            }
+
+            // To Location
+            dtArry = dt.Select(@"ToLocation = '' or ToLocation is null");
+            if (dtArry != null && dtArry.Length > 0)
+            {
+                DataTable dtToLocation_Empty = dtArry.CopyToDataTable();
+
+                // change column name
+                dtToLocation_Empty.Columns["ToPoid"].ColumnName = "SP#";
+                dtToLocation_Empty.Columns["toseq"].ColumnName = "Seq";
+                dtToLocation_Empty.Columns["ToRoll"].ColumnName = "Roll";
+                dtToLocation_Empty.Columns["ToDyelot"].ColumnName = "Dyelot";
+
+                ChkLocationEmpty(dtToLocation_Empty, "To", "SP#,Seq,Roll,Dyelot");
+                return new DualResult(false, "From or To Location is empty!!");
             }
             #endregion
 
@@ -3586,6 +3695,44 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             else
             {
                 return true;
+            }
+        }
+
+        /// <summary>
+        /// ISP20211385
+        /// </summary>
+        /// <param name="dt">dt</param>
+        /// <param name="type">type</param>
+        /// <param name="columns">columns</param>
+        public static void ChkLocationEmpty(DataTable dt, string type, string columns)
+        {
+        /*
+            清單內容會根據不同的功能顯示不同的欄位資訊
+            1. P22, P28, P24, P30, P36
+                > SP#, Seq, Roll, Dyelot
+            2. P23, P29
+                > Inventory SP#, Inventory Seq, Roll, Dyelot, Bulk SP#, Bulk Seq
+            3. 借還料 : P31, P32
+                > From SP#, From Seq, From Roll, From Dyelot, From Stock Type, To SP#, To Seq, To Roll, To Dyelot
+        */
+            switch (type)
+            {
+                case "From":
+                    var m = MyUtility.Msg.ShowMsgGrid(dt, msg: @"From location cannot be empty, please update material current location as below list in WH P26 first.", caption: "Result", shownColumns: columns);
+                    m.Width = 800;
+                    m.grid1.Columns[0].Width = 150;
+                    m.Visible = false;
+                    m.ShowDialog();
+                    break;
+                case "To":
+                    var m2 = MyUtility.Msg.ShowMsgGrid(dt, msg: @"To Location cannot be empty, please update to location.", caption: "Result", shownColumns: columns);
+                    m2.Width = 800;
+                    m2.grid1.Columns[0].Width = 150;
+                    m2.Visible = false;
+                    m2.ShowDialog();
+                    break;
+                default:
+                    break;
             }
         }
 
