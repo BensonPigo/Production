@@ -31,10 +31,11 @@ BEGIN
 	
 	set transaction isolation level read uncommitted
 
-	declare @HasOrders bit = 0, @HasForecast bit = 0, @HasFtyLocalOrder bit = 0
+	declare @HasOrders bit = 0, @HasForecast bit = 0, @HasFtyLocalOrder bit = 0 ,  @NoRestrictOrdersDelivery bit = 0
 	set @HasOrders = iif(exists(select 1 from dbo.SplitString(@SourceStr,',') where Data = 'Order'), 1, 0)
 	set @HasForecast = iif(exists(select 1 from dbo.SplitString(@SourceStr,',') where Data = 'Forecast'), 1, 0)
-	set @HasFtyLocalOrder = iif(exists(select 1 from dbo.SplitString(@SourceStr,',') where Data = 'Fty Local Order'), 1, 0)
+	set @HasFtyLocalOrder = iif(exists(select 1 from dbo.SplitString(@SourceStr,',') where Data = 'Fty Local Order'), 1, 0)	
+	set @NoRestrictOrdersDelivery = (select NoRestrictOrdersDelivery from system)
 
 	IF (@ArtWorkType = 'SEWING')
 	BEGIN
@@ -111,9 +112,17 @@ BEGIN
 	AND @HasOrders = 1
 	And localorder = 0
 	and Factory.IsProduceFty = 1
-	-- Trade 沒有這一段
-	--and ((@isSCIDelivery = 1 and Orders.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))
-	--	or (@isSCIDelivery = 0 and Orders.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0)))
+	and 
+	(
+		(
+			@NoRestrictOrdersDelivery = 0 and
+			(
+				(@isSCIDelivery = 1 and Orders.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))
+				or (@isSCIDelivery = 0 and Orders.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0))
+			)
+		) 
+		or @NoRestrictOrdersDelivery = 1
+	)
 	
 	Select Orders.ID
 	, rtrim(Factory.LoadingFactoryGroup) as FactoryID
@@ -131,7 +140,7 @@ BEGIN
 	, SewLastDate as OutputDate
 	, iif(@ReportType = 1, sDate1, sDate2) as SewingYYMM
 	, SewLastDate as SewingYYMM_Ori
-	, (cCPU * SewOutputQty * CPURate) + isnull(TransferQty, 0) as SewCapacity
+	, (cCPU * SewOutputQty * CPURate) as SewCapacity
 	, Orders.Zone
 	, BrandID
 	into #tmpOrder1 from #Orders Orders
@@ -191,8 +200,17 @@ BEGIN
 	AND Orders.LocalOrder = 1 -- PMS此處才加, 當地訂單在trade是記錄在Table:FactoryOrder
 	AND Orders.IsForecast = 0
 	and Factory.IsProduceFty = 1
-	and ((@isSCIDelivery = 1 and Orders.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))
-		or (@isSCIDelivery = 0 and Orders.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0)))
+	and 
+	(
+		(
+			@NoRestrictOrdersDelivery = 0 and
+			(
+				(@isSCIDelivery = 1 and Orders.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))
+				or (@isSCIDelivery = 0 and Orders.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0))
+			)
+		) 
+		or @NoRestrictOrdersDelivery = 1
+	)
 
 	Select FactoryOrder.ID, rtrim(FactoryOrder.FactoryID) as FactoryID
 	, iif(Factory.Type = 'S', 'Sample', Factory.MDivisionID) as MDivisionID
@@ -276,10 +294,19 @@ BEGIN
 	And localorder = 0
 	AND Orders.IsForecast = 1 -- PMS此處才加, 預估單 在trade是記錄在Table:FactoryOrder
 	and Factory.IsProduceFty = 1
-	-- Trade 沒有下面這段所以註解掉
-	--and ((@isSCIDelivery = 1 and Orders.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))
-	--	or (@isSCIDelivery = 0 and Orders.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0)))
+	and 
+	(
+		(
+			@NoRestrictOrdersDelivery = 0 and
+			(
+				(@isSCIDelivery = 1 and Orders.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))
+				or (@isSCIDelivery = 0 and Orders.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0))
+			)
+		) 
+		or @NoRestrictOrdersDelivery = 1
+	)
 
+	
 	---------------------------------------------------------------------------------------------------------------------------------
 	
 	declare @tmpFinal table (
@@ -340,7 +367,7 @@ BEGIN
 	
 	if(@ReportType = 1)
 	Begin
-	--Report1 : 每個月區間為某一整年----------------------------------------------------------------------------------------------------------------------------------
+	---Report1 : 每個月區間為某一整年----------------------------------------------------------------------------------------------------------------------------------
 		CREATE TABLE #tmpFty1
 		(
 			CountryID varchar(2)
@@ -569,9 +596,6 @@ BEGIN
 		END
 		
 		select * from #tmpFty2 ORDER BY FactorySort, FactoryID
-		
-		----(K) By Factory 最細的上下半月Capacity
-		--(L) By Factory Loading CPU
 		select a.Zone, a.CountryID, a.MDivisionID, a.tmpBrandFty as FactoryID, a.OrderYYMM as MONTH, b.OrderLoadingCPU as Capacity1, c.OrderLoadingCPU as Capacity2, a.FtyTmsCapa1, a.FtyTmsCapa2
 		,a.CountryName, b.OrderShortage as OrderShortage1, c.OrderShortage as OrderShortage2
 		from (
@@ -601,8 +625,7 @@ BEGIN
 				, substring(OrderYYMM,1,6) as OrderYYMM
 				, sum(OrderLoadingCPU) as OrderLoadingCPU
 				, sum(OrderShortage) as OrderShortage
-			from #tmpFinal 
-			where RIGHT(OrderYYMM,1) = 1 
+			from #tmpFinal where RIGHT(OrderYYMM,1) = 1 
 			group by IIF(@CalculateByBrand = 1, BrandID, FactoryID), MDivisionID, substring(OrderYYMM,1,6), CountryID
 		) b on a.CountryID = b.CountryID and a.tmpBrandFty = b.tmpBrandFty and a.MDivisionID = b.MDivisionID and substring(a.OrderYYMM,1,6) = b.OrderYYMM
 		left join (
@@ -613,8 +636,7 @@ BEGIN
 				, substring(OrderYYMM,1,6) as OrderYYMM
 				, sum(OrderLoadingCPU) as OrderLoadingCPU
 				, sum(OrderShortage) as OrderShortage
-			from #tmpFinal 
-			where RIGHT(OrderYYMM,1) = 2 
+			from #tmpFinal where RIGHT(OrderYYMM,1) = 2 
 			group by IIF(@CalculateByBrand = 1, BrandID, FactoryID), MDivisionID, substring(OrderYYMM,1,6), CountryID
 		) c on a.CountryID = c.CountryID and a.tmpBrandFty = c.tmpBrandFty and a.MDivisionID = c.MDivisionID and substring(a.OrderYYMM,1,6) = c.OrderYYMM
 		
