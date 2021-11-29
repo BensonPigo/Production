@@ -62,6 +62,8 @@ a.FromGSD	= b.FromGSD
 ,a.Hem = b.Hem
 ,a.Segment = b.Segment
 ,a.Tubular = b.Tubular
+,a.DescVN = b.DescVN
+,a.DescKH = b.DescKH
 
 from Production.dbo.Operation as a inner join Trade_To_Pms.dbo.Operation as b ON a.id=b.id
 -------------------------- INSERT INTO ��
@@ -104,6 +106,8 @@ ID
 ,Hem
 ,Segment
 ,Tubular
+,DescVN
+,DescKH
 )
 select 
 ID
@@ -144,6 +148,8 @@ ID
 ,Hem
 ,Segment
 ,Tubular
+,DescVN
+,DescKH
 from Trade_To_Pms.dbo.Operation as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Operation as a WITH (NOLOCK) where a.id = b.id)
 

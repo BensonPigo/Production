@@ -78,13 +78,13 @@ with a as (
 ),b as(
     Select c.ComboType,seq,operationid,d.annotation,e.SeamLength,d.MachineTypeID,
         Description = case when '{3}' = 'English' then e.descEN
-                                    when '{3}' = 'Chinese' then g.DescCHS
-                                    when '{3}' = 'Vietnamese' then g.DescVI
-                                    when '{3}' = 'Cambodian' then g.DescKH end,
+                                    when '{3}' = 'Chinese' then e.DescCH
+                                    when '{3}' = 'Vietnamese' then e.DescVN
+                                    when '{3}' = 'Cambodian' then e.DescKH end,
         styleid,seasonid,brandid,d.Frequency
     from timestudy c WITH (NOLOCK) ,timestudy_Detail d WITH (NOLOCK)  
-    join operation e on e.id = d.operationid left join MachineType f on d.MachineTypeID=f.id
-    left join OperationDesc g WITH (NOLOCK) on g.id = e.id
+    join operation e on e.id = d.operationid 
+    left join MachineType f on d.MachineTypeID=f.id
     where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and e.SeamLength>0 and f.isThread=1
 )
 

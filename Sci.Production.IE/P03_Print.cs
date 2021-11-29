@@ -180,9 +180,9 @@ select   a.GroupKey
         ,a.Attachment
         ,a.Template
         ,a.ThreadColor
-        ,DescEN = case when '{1}' = 'cn' then isnull(od.DescCHS,o.DescEN)
-                       when '{1}' = 'vn' then isnull(od.DescVI,o.DescEN)
-                       when '{1}' = 'kh' then isnull(od.DescKH,o.DescEN)
+        ,DescEN = case when '{1}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                       when '{1}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                       when '{1}' = 'kh' then isnull(o.DescKH,o.DescEN)
             else o.DescEN end
         ,rn = ROW_NUMBER() over(order by case when left(a.No, 1) = 'P' then 1 when a.No <> '' then 2 else 3 end
 										,a.GroupKey ,iif(IsPPa=1,1,0) ,a.NO, a.MachineTypeID, a.Attachment, a.Template, a.ThreadColor)
@@ -196,7 +196,6 @@ select   a.GroupKey
         ,[OtherBy] = concat(a.MachineTypeID,a.Attachment,a.Template,a.ThreadColor)
 from LineMapping_Detail a 
 left join Operation o WITH (NOLOCK) on o.ID = a.OperationID
-left join OperationDesc od on o.ID = od.ID
 left join MachineType m WITH (NOLOCK) on m.id =  a.MachineTypeID
 outer apply
 (
@@ -252,14 +251,13 @@ where a.ID = {0}
 select   ld.OperationID
         ,ld.MachineTypeID--MachineTypeID = iif(m.MachineGroupID = '','',ld.MachineTypeID)
         ,ld.Annotation
-        ,DescEN = case when '{1}' = 'cn' then isnull(od.DescCHS,o.DescEN)
-                       when '{1}' = 'vn' then isnull(od.DescVI,o.DescEN)
-                       when '{1}' = 'kh' then isnull(od.DescKH,o.DescEN)
+        ,DescEN = case when '{1}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                       when '{1}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                       when '{1}' = 'kh' then isnull(o.DescKH,o.DescEN)
             else o.DescEN end
 from LineMapping_Detail ld WITH (NOLOCK)
 left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 left join Operation o WITH (NOLOCK) on o.ID = ld.OperationID
-left join OperationDesc od on o.ID = od.ID
 where ld.ID = {0} and (ld.IsHide = 1 or ld.IsPPa  = 1)
 and left(ld.OperationID, 2) != '--'
 order by ld.No,ld.GroupKey",
@@ -290,9 +288,9 @@ OUTER APPLY(
 		FROM 
 		(
 			select  ld.*
-					, Description = case when '{1}' = 'cn' then isnull(od.DescCHS,o.DescEN)
-                                         when '{1}' = 'vn' then isnull(od.DescVI,o.DescEN)
-                                         when '{1}' = 'kh' then isnull(od.DescKH,o.DescEN)
+					, Description = case when '{1}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                                         when '{1}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                                         when '{1}' = 'kh' then isnull(o.DescKH,o.DescEN)
                                          else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
@@ -300,7 +298,6 @@ OUTER APPLY(
 			from LineMapping_Detail ld WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-            left join OperationDesc od on o.ID = od.ID
 			where ld.ID = {0} AND No <> ''
 		)a
 	)b
@@ -349,9 +346,9 @@ OUTER APPLY(
 		FROM 
 		(
 			select  ld.*
-					, Description = case when '{2}' = 'cn' then isnull(od.DescCHS,o.DescEN)
-                                         when '{2}' = 'vn' then isnull(od.DescVI,o.DescEN)
-                                         when '{2}' = 'kh' then isnull(od.DescKH,o.DescEN)
+					, Description = case when '{2}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                                         when '{2}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                                         when '{2}' = 'kh' then isnull(o.DescKH,o.DescEN)
                                          else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
@@ -359,7 +356,6 @@ OUTER APPLY(
 			from LineMapping_Detail ld WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-            left join OperationDesc od on o.ID = od.ID
 			where ld.ID = {0} AND No <> ''
 		)a
 	)b
@@ -405,9 +401,9 @@ OUTER APPLY(
 		FROM 
 		(
 			select  ld.*
-					, Description = case when '{2}' = 'cn' then isnull(od.DescCHS,o.DescEN)
-                                         when '{2}' = 'vn' then isnull(od.DescVI,o.DescEN)
-                                         when '{2}' = 'kh' then isnull(od.DescKH,o.DescEN)
+					, Description = case when '{2}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                                         when '{2}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                                         when '{2}' = 'kh' then isnull(o.DescKH,o.DescEN)
                                          else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
@@ -415,7 +411,6 @@ OUTER APPLY(
 			from LineMapping_Detail ld WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-            left join OperationDesc od on o.ID = od.ID
 			where ld.ID = {0} AND No <> ''
 		)a
 	)b
@@ -457,9 +452,9 @@ OUTER APPLY(
 		FROM 
 		(
 			select  ld.*
-					, Description = case when '{1}' = 'cn' then isnull(od.DescCHS,o.DescEN)
-                                         when '{1}' = 'vn' then isnull(od.DescVI,o.DescEN)
-                                         when '{1}' = 'kh' then isnull(od.DescKH,o.DescEN)
+					, Description = case when '{1}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                                         when '{1}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                                         when '{1}' = 'kh' then isnull(o.DescKH,o.DescEN)
                                          else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
@@ -467,7 +462,6 @@ OUTER APPLY(
 			from LineMapping_Detail ld WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-            left join OperationDesc od on o.ID = od.ID
 			where ld.ID = {0} and IsPPa = 1 and IsHide = 0
 		)a
 	)b
@@ -514,9 +508,9 @@ OUTER APPLY(
 		FROM 
 		(
 			select  ld.*
-					, Description = case when '{2}' = 'cn' then isnull(od.DescCHS,o.DescEN)
-                                         when '{2}' = 'vn' then isnull(od.DescVI,o.DescEN)
-                                         when '{2}' = 'kh' then isnull(od.DescKH,o.DescEN)
+					, Description = case when '{2}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                                         when '{2}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                                         when '{2}' = 'kh' then isnull(o.DescKH,o.DescEN)
                                          else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
@@ -524,7 +518,6 @@ OUTER APPLY(
 			from LineMapping_Detail ld WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-            left join OperationDesc od on o.ID = od.ID
 			where ld.ID = {0} AND No <> '' and IsPPa = 1 and IsHide = 0
 		)a
 	)b
@@ -570,9 +563,9 @@ OUTER APPLY(
 		FROM 
 		(
 			select  ld.*
-					, Description = case when '{2}' = 'cn' then isnull(od.DescCHS,o.DescEN)
-                                         when '{2}' = 'vn' then isnull(od.DescVI,o.DescEN)
-                                         when '{2}' = 'kh' then isnull(od.DescKH,o.DescEN)
+					, Description = case when '{2}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                                         when '{2}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                                         when '{2}' = 'kh' then isnull(o.DescKH,o.DescEN)
                                          else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
@@ -580,7 +573,6 @@ OUTER APPLY(
 			from LineMapping_Detail ld WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-            left join OperationDesc od on o.ID = od.ID
 			where ld.ID = {0} AND IsPPa = 1 and IsHide = 0 
 		)a
 	)b
