@@ -1,33 +1,42 @@
 ﻿CREATE TABLE [dbo].[Receiving_Detail] (
-    [Id]           VARCHAR (13)    CONSTRAINT [DF_Receiving_Detail_Id] DEFAULT ('') NOT NULL,
-    [MDivisionID]  VARCHAR (8)     CONSTRAINT [DF_Receiving_Detail_MDivisionID] DEFAULT ('') NULL,
-    [PoId]         VARCHAR (13)    CONSTRAINT [DF_Receiving_Detail_PoId] DEFAULT ('') NOT NULL,
-    [Seq1]         VARCHAR (3)     CONSTRAINT [DF_Receiving_Detail_Seq1] DEFAULT ('') NOT NULL,
-    [Seq2]         VARCHAR (2)     CONSTRAINT [DF_Receiving_Detail_Seq2] DEFAULT ('') NOT NULL,
-    [Roll]         VARCHAR (8)     CONSTRAINT [DF_Receiving_Detail_Roll] DEFAULT ('') NOT NULL,
-    [Dyelot]       VARCHAR (8)     CONSTRAINT [DF_Receiving_Detail_Dyelot] DEFAULT ('') NOT NULL,
-    [ShipQty]      NUMERIC (11, 2) CONSTRAINT [DF_Receiving_Detail_ShipQty] DEFAULT ((0)) NULL,
-    [ActualQty]    NUMERIC (11, 2) CONSTRAINT [DF_Receiving_Detail_ActualQty] DEFAULT ((0)) NOT NULL,
-    [PoUnit]       VARCHAR (8)     CONSTRAINT [DF_Receiving_Detail_PoUnit] DEFAULT ('') NULL,
-    [Weight]       NUMERIC (7, 2)  CONSTRAINT [DF_Receiving_Detail_Weight] DEFAULT ((0)) NULL,
-    [ActualWeight] NUMERIC (7, 2)  CONSTRAINT [DF_Receiving_Detail_ActualWeight] DEFAULT ((0)) NULL,
-    [StockUnit]    VARCHAR (8)     CONSTRAINT [DF_Receiving_Detail_StockUnit] DEFAULT ('') NULL,
-    [Price]        NUMERIC (11, 3) CONSTRAINT [DF_Receiving_Detail_Price] DEFAULT ((0)) NULL,
-    [Location]     VARCHAR (500)    CONSTRAINT [DF_Receiving_Detail_Location] DEFAULT ('') NULL,
-    [Remark]       NVARCHAR (100)  CONSTRAINT [DF_Receiving_Detail_Remark] DEFAULT ('') NULL,
-    [StockQty]     NUMERIC (11, 2) CONSTRAINT [DF_Receiving_Detail_StockQty] DEFAULT ((0)) NULL,
-    [StockType]    VARCHAR (1)     CONSTRAINT [DF_Receiving_Detail_StockType] DEFAULT ('') NULL,
-    [Ukey]         BIGINT          IDENTITY (1, 1) NOT NULL,
-    [CompleteTime] DATETIME NULL, 
-    [CombineBarcode] VARCHAR NULL, 
-    [Unoriginal] BIT NULL, 
-    [EncodeSeq] INT NOT NULL DEFAULT ((0)), 
-    [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
-    [Fabric2LabTime] DATETIME  NULL,
-    [Fabric2LabBy] VARCHAR(10) CONSTRAINT [DF_Receiving_Detail_Fabric2LabBy] DEFAULT ('') not NULL,
-    [Checker] NVARCHAR(30) NOT NULL DEFAULT (''), 
+    [Id]                VARCHAR (13)    CONSTRAINT [DF_Receiving_Detail_Id] DEFAULT ('') NOT NULL,
+    [MDivisionID]       VARCHAR (8)     CONSTRAINT [DF_Receiving_Detail_MDivisionID] DEFAULT ('') NULL,
+    [PoId]              VARCHAR (13)    CONSTRAINT [DF_Receiving_Detail_PoId] DEFAULT ('') NOT NULL,
+    [Seq1]              VARCHAR (3)     CONSTRAINT [DF_Receiving_Detail_Seq1] DEFAULT ('') NOT NULL,
+    [Seq2]              VARCHAR (2)     CONSTRAINT [DF_Receiving_Detail_Seq2] DEFAULT ('') NOT NULL,
+    [Roll]              VARCHAR (8)     CONSTRAINT [DF_Receiving_Detail_Roll] DEFAULT ('') NOT NULL,
+    [Dyelot]            VARCHAR (8)     CONSTRAINT [DF_Receiving_Detail_Dyelot] DEFAULT ('') NOT NULL,
+    [ShipQty]           NUMERIC (11, 2) CONSTRAINT [DF_Receiving_Detail_ShipQty] DEFAULT ((0)) NULL,
+    [ActualQty]         NUMERIC (11, 2) CONSTRAINT [DF_Receiving_Detail_ActualQty] DEFAULT ((0)) NOT NULL,
+    [PoUnit]            VARCHAR (8)     CONSTRAINT [DF_Receiving_Detail_PoUnit] DEFAULT ('') NULL,
+    [Weight]            NUMERIC (7, 2)  CONSTRAINT [DF_Receiving_Detail_Weight] DEFAULT ((0)) NULL,
+    [ActualWeight]      NUMERIC (7, 2)  CONSTRAINT [DF_Receiving_Detail_ActualWeight] DEFAULT ((0)) NULL,
+    [StockUnit]         VARCHAR (8)     CONSTRAINT [DF_Receiving_Detail_StockUnit] DEFAULT ('') NULL,
+    [Price]             NUMERIC (11, 3) CONSTRAINT [DF_Receiving_Detail_Price] DEFAULT ((0)) NULL,
+    [Location]          VARCHAR (500)   CONSTRAINT [DF_Receiving_Detail_Location] DEFAULT ('') NULL,
+    [Remark]            NVARCHAR (100)  CONSTRAINT [DF_Receiving_Detail_Remark] DEFAULT ('') NULL,
+    [StockQty]          NUMERIC (11, 2) CONSTRAINT [DF_Receiving_Detail_StockQty] DEFAULT ((0)) NULL,
+    [StockType]         VARCHAR (1)     CONSTRAINT [DF_Receiving_Detail_StockType] DEFAULT ('') NULL,
+    [Ukey]              BIGINT          IDENTITY (1, 1) NOT NULL,
+    [OriQty]            NUMERIC (11, 2) NULL,
+    [CompleteTime]      DATETIME        NULL,
+    [CombineBarcode]    VARCHAR (1)     NULL,
+    [Unoriginal]        BIT             NULL,
+    [EncodeSeq]         INT             DEFAULT ((0)) NOT NULL,
+    [SentToWMS]         BIT             DEFAULT ((0)) NOT NULL,
+    [Fabric2LabTime]    DATETIME        NULL,
+    [Fabric2LabBy]      VARCHAR (10)    CONSTRAINT [DF_Receiving_Detail_Fabric2LabBy] DEFAULT ('') NOT NULL,
+    [Checker]           NVARCHAR (30)   CONSTRAINT [DF_Receiving_Detail_Checker] DEFAULT ('') NOT NULL,
+    [MINDQRCode]        VARCHAR (80)    CONSTRAINT [DF_Receiving_Detail_MINDQRCode] DEFAULT ('') NOT NULL,
+    [MINDChecker]       VARCHAR (10)    CONSTRAINT [DF_Receiving_Detail_MINDChecker] DEFAULT ('') NOT NULL,
+    [MINDCheckAddDate]  DATETIME        NULL,
+    [MINDCheckEditDate] DATETIME        NULL,
+    [FullRoll] VARCHAR(50) CONSTRAINT [DF_Receiving_Detail_FullRoll] DEFAULT ('') NOT NULL, 
+    [FullDyelot] VARCHAR(50) CONSTRAINT [DF_Receiving_Detail_FullDyelot] DEFAULT ('') NOT NULL, 
     CONSTRAINT [PK_Receiving_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -45,10 +54,14 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Receiving D
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'倉庫剪布給實驗室的時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'Fabric2LabTime';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�ܮw�ť�������Ǫ��ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'Fabric2LabTime';
+
+
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'更新倉庫剪布給實驗室時間的人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'Fabric2LabBy';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��s�ܮw�ť�������Ǯɶ����H��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'Fabric2LabBy';
+
+
 
 
 GO
@@ -135,38 +148,29 @@ CREATE NONCLUSTERED INDEX [id_UKEY]
 
 
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'用來當作合併布卷條碼判斷值',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Receiving_Detail',
-    @level2type = N'COLUMN',
-    @level2name = N'CombineBarcode'
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'是否是來源值',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Receiving_Detail',
-    @level2type = N'COLUMN',
-    @level2name = N'Unoriginal'
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'使用者匯入 / 新增資料的順序',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Receiving_Detail',
-    @level2type = N'COLUMN',
-    @level2name = N'EncodeSeq'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�ϥΪ̶פJ / �s�W��ƪ�����', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'EncodeSeq';
+
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'PH 收料時負責秤重 + 剪一小塊布 (ShadeBand) + 搬該物料入庫',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Receiving_Detail',
-    @level2type = N'COLUMN',
-    @level2name = N'Checker'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'PH ���Ʈɭt�d���� + �Ť@�p��� (ShadeBand) + �h�Ӫ��ƤJ�w', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'Checker';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'T2 QR Code', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'MINDQRCode';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MIND收料人', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'MINDChecker';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MIND收料修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'MINDCheckEditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MIND第一次收料時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'MINDCheckAddDate';
+

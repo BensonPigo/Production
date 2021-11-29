@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Data;
 using System.Reflection;
+using System.Drawing;
+using ZXing;
+using ZXing.QrCode;
+using ZXing.QrCode.Internal;
 
 namespace Sci.Production.Prg
 {
@@ -281,6 +285,43 @@ namespace Sci.Production.Prg
             }
             // put a breakpoint here and check datatable
             return dataTable;
+        }
+
+        /// <summary>
+        /// 將 QR code 轉換成圖片
+        /// </summary>
+        /// <param name="strBarcode">Barcode 內容</param>
+        /// <returns>Image</returns>
+        public static Bitmap ToBitmapQRcode(this string strBarcode, int height, int width)
+        {
+            /*
+  Level L (Low)      7%  of codewords can be restored.
+  Level M (Medium)   15% of codewords can be restored.
+  Level Q (Quartile) 25% of codewords can be restored.
+  Level H (High)     30% of codewords can be restored.
+*/
+            BarcodeWriter writer = new BarcodeWriter
+            {
+                Format = BarcodeFormat.QR_CODE,
+                Options = new QrCodeEncodingOptions
+                {
+                    // Create Photo
+                    Height = height,
+                    Width = width,
+                    Margin = 0,
+                    CharacterSet = "UTF-8",
+                    PureBarcode = true,
+
+                    // 錯誤修正容量
+                    // L水平    7%的字碼可被修正
+                    // M水平    15%的字碼可被修正
+                    // Q水平    25%的字碼可被修正
+                    // H水平    30%的字碼可被修正
+                    ErrorCorrection = ErrorCorrectionLevel.L,
+                },
+            };
+
+            return writer.Write(strBarcode);
         }
     }
 }

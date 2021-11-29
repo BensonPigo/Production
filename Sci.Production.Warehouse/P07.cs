@@ -54,7 +54,7 @@ namespace Sci.Production.Warehouse
                     this.detailgrid.CurrentCell = this.detailgrid.Rows[this.detailgrid.RowCount - 1].Cells[0];
                 }
             };
-            MyUtility.Tool.SetupCombox(this.comboTypeFilter, 2, 1, "ALL,ALL,Fabric,Fabric,Accessory,Accessory");
+            MyUtility.Tool.SetupCombox(this.comboTypeFilter, 2, 1, "ALL,ALL,Fabric,Fabric,Accessory,Accessory,No QR Code,No QR Code");
             this.comboTypeFilter.SelectedIndex = 0;
             this.comboStockType.DataSource = new BindingSource(this.di_stocktype, null);
             this.comboStockType.ValueMember = "Key";
@@ -341,6 +341,42 @@ where x.value > 1
                 MyUtility.Msg.WarningBox(resultCheck.Description);
                 return false;
             }
+            #endregion
+
+            #region 檢查是否重複 MINDQRCode
+
+            // 檢查畫面上
+            var dupMINDQRCode = this.DetailDatas.AsEnumerable()
+                .Where(w => !MyUtility.Check.Empty(w["MINDQRCode"]))
+                .GroupBy(g => MyUtility.Convert.GetString(g["MINDQRCode"]))
+                .Select(s => new { MINDQRCode = s.Key, ct = s.Count() })
+                .Where(w => w.ct > 1).ToList();
+
+            // 檢查DB
+            var mINDQRCodes = "'" + this.DetailDatas.AsEnumerable()
+                .Where(w => !MyUtility.Check.Empty(w["MINDQRCode"]) && !dupMINDQRCode.Select(s => s.MINDQRCode).Contains(MyUtility.Convert.GetString(w["MINDQRCode"])))
+                .Select(s => MyUtility.Convert.GetString(s["MINDQRCode"]))
+                .ToList().JoinToString("','") + "'";
+            string sqlQR = $@"select r.Invno, rd.MINDQRCode from Receiving_Detail rd inner join Receiving r on r.id = rd.id where r.id <> '{this.CurrentMaintain["id"]}' and rd.MINDQRCode <>'' and rd.MINDQRCode in({mINDQRCodes})";
+            DBProxy.Current.Select(null, sqlQR, out DataTable qrDT);
+            if (dupMINDQRCode.Count > 0 || qrDT.Rows.Count > 0)
+            {
+                string msgDupQR = "Below QR Code already exist, cannot save!\r\n";
+
+                foreach (var item in dupMINDQRCode)
+                {
+                    msgDupQR += MyUtility.Convert.GetString(this.CurrentMaintain["Invno"]) + "," + item.MINDQRCode + "\r\n";
+                }
+
+                foreach (DataRow row in qrDT.Rows)
+                {
+                    msgDupQR += MyUtility.Convert.GetString(row["Invno"]) + "," + MyUtility.Convert.GetString(row["MINDQRCode"]) + "\r\n";
+                }
+
+                MyUtility.Msg.WarningBox(msgDupQR);
+                return false;
+            }
+
             #endregion
 
             #region 表身的資料存在Po_Supp_Detail中但是已被Junk，就要跳出訊息告知且不做任何動作
@@ -1285,7 +1321,14 @@ WHERE   StockType='{this.CurrentDetailData["stocktype"].ToString()}'
             .Text("FactoryID", header: "Prod. Factory", iseditingreadonly: true) // 19
             .Text("OrderTypeID", header: "Order Type", width: Widths.AnsiChars(15), iseditingreadonly: true) // 20
             .Text("ContainerType", header: "ContainerType & No", width: Widths.AnsiChars(15), iseditingreadonly: true) // 21
+            .Text("MINDQRCode", header: "MIND QR Code", width: Widths.AnsiChars(30))
+            .Text("MINDChecker", header: "Checker", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .DateTime("CheckDate", header: "Check Date", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("FullRoll", header: "Full Roll", width: Widths.AnsiChars(25))
+            .Text("FullDyelot", header: "Full Dyelot", width: Widths.AnsiChars(25))
             ;
+            this.detailgrid.Columns["MINDQRCode"].DefaultCellStyle.BackColor = Color.Pink;
+
             this.col_Roll.MaxLength = 8;
             this.col_Dyelot.MaxLength = 8;
             cbb_Seq.MaxLength = 6;
@@ -2422,6 +2465,11 @@ select  a.id
 		,[SortCmbDyelot] = ISNULL(cmb.Dyelot,a.Dyelot)
         ,clickInsert = 1 -- 用來處理按+插入列狀況
         ,[IsSelect] = cast(0 as bit)
+        ,a.MINDQRCode
+        ,MINDChecker = a.MINDChecker+'-'+(select name from [ExtendServer].ManufacturingExecution.dbo.Pass1 where id = a.MINDChecker)
+        ,CheckDate= IIF(a.MINDCheckEditDate IS NULL, a.MINDCheckAddDate,a.MINDCheckEditDate)
+        ,a.FullRoll
+        ,a.FullDyelot
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 INNER JOIN Receiving b WITH (NOLOCK) ON a.id= b.Id
 left join View_WH_Orders o WITH (NOLOCK) on o.id = a.PoId
@@ -2538,7 +2586,9 @@ select
 	, shipqty = x.qty
 	, Actualqty = x.qty
 	, Roll = convert(varchar(8), isnull(pll.PackageNo, ''))
+    , FullRoll = convert(varchar(50), isnull(pll.PackageNo, ''))
 	, Dyelot = convert(varchar(8), isnull(pll.BatchNo, ''))
+    , FullDyelot = convert(varchar(50), isnull(pll.BatchNo, ''))
 	, remark = ''
 	, location = ''
 	, b.Refno
@@ -2547,6 +2597,7 @@ select
 	, c.OrderTypeID
 	, [ContainerType] = Container.Val
 	, pll.QRCode -- b.FabricType = 'F'  相同 QRCode 其中一筆為 [+] 剩下為 [-]
+    , [MINDQRCode] = pll.QRCode
     , clickInsert = 1
 	, DRQ = IIF(isnull(pll.QRCode, '') = '', Null, DENSE_RANK() over(order by pll.QRCode))
 into #tmp
@@ -2655,6 +2706,9 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
                 case "Accessory":
                     listCanDeleteDetail = this.DetailDatas.Where(s => s["fabrictype"].ToString() == "A").ToList();
                     break;
+                case "No QR Code":
+                    listCanDeleteDetail = this.DetailDatas.Where(s => MyUtility.Check.Empty(s["MINDQRCode"])).ToList();
+                    break;
                 default:
                     listCanDeleteDetail = this.DetailDatas.ToList();
                     break;
@@ -2690,6 +2744,10 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
                 case 2:
                     this.detailgridbs.Filter = "fabrictype ='A'";
                     this.btnDeleteAll.Text = "Delete all acc.";
+                    break;
+                case 3:
+                    this.detailgridbs.Filter = "MINDQRCode = '' or MINDQRCode is null";
+                    this.btnDeleteAll.Text = "Delete All No QR Code";
                     break;
             }
 

@@ -10,13 +10,19 @@
     [Roll]              VARCHAR (8)     CONSTRAINT [DF_Issue_Detail_Roll] DEFAULT ('') NULL,
     [Dyelot]            VARCHAR (8)     CONSTRAINT [DF_Issue_Detail_Dyelot] DEFAULT ('') NULL,
     [StockType]         CHAR (1)        CONSTRAINT [DF_Issue_Detail_StockType] DEFAULT ('') NULL,
-    [ukey]              BIGINT          IDENTITY (1, 1) NOT NULL,
-    [CompleteTime] DATETIME NULL,
-    [IsQMS] BIT NOT NULL DEFAULT 0, 
-    [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
+    [ukey]              BIGINT          IDENTITY (1, 1) NOT FOR REPLICATION NOT NULL,
+    [BarcodeNo]         VARCHAR (13)    NULL,
+    [OriQty]            NUMERIC (11, 2) NULL,
+    [CompleteTime]      DATETIME        NULL,
+    [IsQMS]             BIT             DEFAULT ((0)) NOT NULL,
+    [SentToWMS]         BIT             DEFAULT ((0)) NOT NULL,
+    [MINDReleaser]      VARCHAR (10)    CONSTRAINT [DF_Issue_Detail_MINDReleaser] DEFAULT ('') NOT NULL,
+    [MINDReleaseDate]   DATETIME        NULL,
     CONSTRAINT [PK_Issue_Detail] PRIMARY KEY CLUSTERED ([ukey] ASC),
     CONSTRAINT [FK_Issue_Detail_Issue_Detail] FOREIGN KEY ([ukey]) REFERENCES [dbo].[Issue_Detail] ([ukey])
 );
+
+
 
 
 
@@ -93,4 +99,12 @@ CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
 GO
 CREATE NONCLUSTERED INDEX [NonClusteredIndex-20180413-155915]
     ON [dbo].[Issue_Detail]([Issue_SummaryUkey] ASC);
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'	MIND實際發料人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'MINDReleaser';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MIND發料時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'MINDReleaseDate';
 
