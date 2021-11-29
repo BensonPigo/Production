@@ -2188,18 +2188,18 @@ where b.Ukey is null
 
 -----------------Style_RRLR_Report-------------------
 Merge Production.dbo.Style_RRLR_Report as t
-Using (select a.* from Trade_To_Pms.dbo.Style_RRLRReport a ) as s
+Using (select a.* from Trade_To_Pms.dbo.Style_RRLR_Report a ) as s
 on t.StyleUkey=s.StyleUkey and t.SuppID=s.SuppID
 and t.Refno=s.Refno and t.ColorID=s.ColorID
 when matched then 
-	update set	t.Material	  = s.Material	,
-				t.LabDipStatus		  = s.LabDipStatus		,
-				t.RR = s.RR,
-				t.RRRemark = s.RRRemark,
-				t.LifecycleState = s.LifecycleState,
-				t.LR = s.LR,
-				t.AddName		  = s.AddName		,
-				t.AddDate		  = s.AddDate		
+	update set	t.Material	  = ISNULL(s.Material,'')	,
+				t.LabDipStatus		  = ISNULL(s.LabDipStatus,'')		,
+				t.RR = IIF(s.RR IS NULL OR TRY_CONVERT(bit, s.RR) IS NULL,  0  ,s.RR),   --NULL or 非bit值的東西，塞0
+				t.RRRemark = ISNULL(s.RRRemark,''),
+				t.LifecycleState = ISNULL(s.LifecycleState,''),
+				t.LR = IIF(s.LR IS NULL OR TRY_CONVERT(bit, s.LR) IS NULL,  0  ,s.LR),	  --NULL or 非bit值的東西，塞0
+				t.AddName		  = ISNULL(s.AddName,'')		,
+				t.AddDate		  = ISNULL(s.AddDate,'')		
 when not matched by target then
 	insert  (  [StyleUkey]
 			  ,[SuppID]
@@ -2214,19 +2214,18 @@ when not matched by target then
 			  ,[AddName]
 			  ,[AddDate])
 	  values  (s.[StyleUkey]
-			  ,s.[SuppID]
-			  ,s.[Refno]
-			  ,s.[Material]
-			  ,s.[ColorID]
-			  ,s.[LabDipStatus]
-			  ,s.[RR]
-			  ,s.[RRRemark]
-			  ,s.[LifecycleState]
-			  ,s.[LR]
-			  ,s.[AddName]
+			  ,ISNULL(s.[SuppID],'')
+			  ,ISNULL(s.[Refno],'')
+			  ,ISNULL(s.[Material],'')
+			  ,ISNULL(s.[ColorID],'')
+			  ,ISNULL(s.[LabDipStatus],'')
+			  ,IIF(s.RR IS NULL OR TRY_CONVERT(bit, s.RR) IS NULL,  0  ,s.RR) --NULL or 非bit值的東西，塞0
+			  ,ISNULL(s.[RRRemark],'')
+			  ,ISNULL(s.[LifecycleState],'')
+			  ,IIF(s.LR IS NULL OR TRY_CONVERT(bit, s.LR) IS NULL,  0  ,s.LR) --NULL or 非bit值的東西，塞0
+			  ,ISNULL(s.[AddName],'')
 			  ,s.[AddDate])
 when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
 	delete;
 
 END
-
