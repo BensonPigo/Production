@@ -46,6 +46,7 @@
             this.labelNotApprove = new Sci.Win.UI.Label();
             this.btnCutRef = new Sci.Win.UI.Button();
             this.btnCallP99 = new Sci.Win.UI.Button();
+            this.btnMINDReleaser = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -62,6 +63,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnMINDReleaser);
             this.masterpanel.Controls.Add(this.btnCutRef);
             this.masterpanel.Controls.Add(this.labelNotApprove);
             this.masterpanel.Controls.Add(this.btnAutoPick);
@@ -98,6 +100,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnAutoPick, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelNotApprove, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnCutRef, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnMINDReleaser, 0);
             // 
             // detailpanel
             // 
@@ -107,7 +110,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(4295, 74);
+            this.gridicon.Location = new System.Drawing.Point(4529, 74);
             // 
             // refresh
             // 
@@ -330,6 +333,18 @@
             this.btnCallP99.UseVisualStyleBackColor = true;
             this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
             // 
+            // btnMINDReleaser
+            // 
+            this.btnMINDReleaser.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnMINDReleaser.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnMINDReleaser.Location = new System.Drawing.Point(839, 70);
+            this.btnMINDReleaser.Name = "btnMINDReleaser";
+            this.btnMINDReleaser.Size = new System.Drawing.Size(162, 30);
+            this.btnMINDReleaser.TabIndex = 46;
+            this.btnMINDReleaser.Text = "MIND Releaser";
+            this.btnMINDReleaser.UseVisualStyleBackColor = true;
+            this.btnMINDReleaser.Click += new System.EventHandler(this.BtnMINDReleaser_Click);
+            // 
             // P10
             // 
             this.ApvChkValue = "New";
@@ -393,5 +408,6 @@
         private Win.UI.Label labelNotApprove;
         private Win.UI.Button btnCutRef;
         private Win.UI.Button btnCallP99;
+        private Win.UI.Button btnMINDReleaser;
     }
 }

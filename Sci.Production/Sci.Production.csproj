@@ -1173,6 +1173,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Shipping_P03_Detail.xltx">
+	<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Shipping_P03_RollDyelot.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Shipping_P11_BIRSalesReport.xltx">
@@ -1642,6 +1645,12 @@
     </None>
     <None Include="XLT\Warehouse_P07_PackingListReveivingReport.xltx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Warehouse_P07_Sticker10.dotx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Warehouse_P07_Sticker5.dotx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Warehouse_P08.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

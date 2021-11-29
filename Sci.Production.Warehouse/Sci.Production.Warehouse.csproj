@@ -175,6 +175,12 @@
     <Compile Include="P03_Seq.Designer.cs">
       <DependentUpon>P03_Seq.cs</DependentUpon>
     </Compile>
+    <Compile Include="P10_AssignReleaser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10_AssignReleaser.Designer.cs">
+      <DependentUpon>P10_AssignReleaser.cs</DependentUpon>
+    </Compile>
     <Compile Include="P18_Print.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1498,6 +1504,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P33_ThreadColorCombination.resx">
       <DependentUpon>P33_ThreadColorCombination.cs</DependentUpon>
+	</EmbeddedResource>
+    <EmbeddedResource Include="P10_AssignReleaser.resx">
+      <DependentUpon>P10_AssignReleaser.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P35.resx">
       <DependentUpon>P35.cs</DependentUpon>
@@ -2262,6 +2271,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="P34_Print.rdlc" />
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\DataSources\P08_PrintFabircSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P10_PrintBarcodeData.datasource" />
