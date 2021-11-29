@@ -2036,35 +2036,38 @@ and d.Id = '{0}'", dr["id"]);
             #region 檢查From/To Location是否為空值
 
             // From Location
-            DataRow[] dtArry = dt.Select(@"Fromlocation = '' or Fromlocation is null");
-            if (dtArry != null && dtArry.Length > 0)
+            if (MyUtility.Check.Seek(@"select * from System where WH_MtlTransChkLocation = 1"))
             {
-                DataTable dtFromLocation_Empty = dtArry.CopyToDataTable();
+                DataRow[] dtArry = dt.Select(@"Fromlocation = '' or Fromlocation is null");
+                if (dtArry != null && dtArry.Length > 0)
+                {
+                    DataTable dtFromLocation_Empty = dtArry.CopyToDataTable();
 
-                // change column name
-                dtFromLocation_Empty.Columns["FromPoId"].ColumnName = "SP#";
-                dtFromLocation_Empty.Columns["Fromseq"].ColumnName = "Seq";
-                dtFromLocation_Empty.Columns["FromRoll"].ColumnName = "Roll";
-                dtFromLocation_Empty.Columns["FromDyelot"].ColumnName = "Dyelot";
+                    // change column name
+                    dtFromLocation_Empty.Columns["FromPoId"].ColumnName = "SP#";
+                    dtFromLocation_Empty.Columns["Fromseq"].ColumnName = "Seq";
+                    dtFromLocation_Empty.Columns["FromRoll"].ColumnName = "Roll";
+                    dtFromLocation_Empty.Columns["FromDyelot"].ColumnName = "Dyelot";
 
-                ChkLocationEmpty(dtFromLocation_Empty, "From", "SP#,Seq,Roll,Dyelot");
-                return false;
-            }
+                    ChkLocationEmpty(dtFromLocation_Empty, "From", "SP#,Seq,Roll,Dyelot");
+                    return false;
+                }
 
-            // To Location
-            dtArry = dt.Select(@"ToLocation = '' or ToLocation is null");
-            if (dtArry != null && dtArry.Length > 0)
-            {
-                DataTable dtToLocation_Empty = dtArry.CopyToDataTable();
+                // To Location
+                dtArry = dt.Select(@"ToLocation = '' or ToLocation is null");
+                if (dtArry != null && dtArry.Length > 0)
+                {
+                    DataTable dtToLocation_Empty = dtArry.CopyToDataTable();
 
-                // change column name
-                dtToLocation_Empty.Columns["ToPoid"].ColumnName = "SP#";
-                dtToLocation_Empty.Columns["toseq"].ColumnName = "Seq";
-                dtToLocation_Empty.Columns["ToRoll"].ColumnName = "Roll";
-                dtToLocation_Empty.Columns["ToDyelot"].ColumnName = "Dyelot";
+                    // change column name
+                    dtToLocation_Empty.Columns["ToPoid"].ColumnName = "SP#";
+                    dtToLocation_Empty.Columns["toseq"].ColumnName = "Seq";
+                    dtToLocation_Empty.Columns["ToRoll"].ColumnName = "Roll";
+                    dtToLocation_Empty.Columns["ToDyelot"].ColumnName = "Dyelot";
 
-                ChkLocationEmpty(dtToLocation_Empty, "To","SP#,Seq,Roll,Dyelot");
-                return false;
+                    ChkLocationEmpty(dtToLocation_Empty, "To", "SP#,Seq,Roll,Dyelot");
+                    return false;
+                }
             }
             #endregion
 
@@ -2357,39 +2360,42 @@ where   f.lock=1
             #region 檢查From/To Location是否為空值
 
             // From Location
-            DataRow[] dtArry = dt.Select(@"Fromlocation = '' or Fromlocation is null");
-            if (dtArry != null && dtArry.Length > 0)
+            if (MyUtility.Check.Seek(@"select * from System where WH_MtlTransChkLocation = 1"))
             {
-                DataTable dtFromLocation_Empty = dtArry.CopyToDataTable();
+                DataRow[] dtArry = dt.Select(@"Fromlocation = '' or Fromlocation is null");
+                if (dtArry != null && dtArry.Length > 0)
+                {
+                    DataTable dtFromLocation_Empty = dtArry.CopyToDataTable();
 
-                // change column name
-                dtFromLocation_Empty.Columns["FromPoId"].ColumnName = "Inventory SP#";
-                dtFromLocation_Empty.Columns["Fromseq"].ColumnName = "Inventory Seq";
-                dtFromLocation_Empty.Columns["FromRoll"].ColumnName = "Roll";
-                dtFromLocation_Empty.Columns["FromDyelot"].ColumnName = "Dyelot";
-                dtFromLocation_Empty.Columns["topoid"].ColumnName = "Bulk SP#";
-                dtFromLocation_Empty.Columns["toseq"].ColumnName = "Bulk Seq";
+                    // change column name
+                    dtFromLocation_Empty.Columns["FromPoId"].ColumnName = "Inventory SP#";
+                    dtFromLocation_Empty.Columns["Fromseq"].ColumnName = "Inventory Seq";
+                    dtFromLocation_Empty.Columns["FromRoll"].ColumnName = "Roll";
+                    dtFromLocation_Empty.Columns["FromDyelot"].ColumnName = "Dyelot";
+                    dtFromLocation_Empty.Columns["topoid"].ColumnName = "Bulk SP#";
+                    dtFromLocation_Empty.Columns["toseq"].ColumnName = "Bulk Seq";
 
-                ChkLocationEmpty(dtFromLocation_Empty, "From", "Inventory SP#,Inventory Seq,Roll,Dyelot,Bulk SP#,Bulk Seq");
-                return new DualResult(false, "From or To Location is empty!!");
-            }
+                    ChkLocationEmpty(dtFromLocation_Empty, "From", "Inventory SP#,Inventory Seq,Roll,Dyelot,Bulk SP#,Bulk Seq");
+                    return new DualResult(false);
+                }
 
-            // To Location
-            dtArry = dt.Select(@"ToLocation = '' or ToLocation is null");
-            if (dtArry != null && dtArry.Length > 0)
-            {
-                DataTable dtToLocation_Empty = dtArry.CopyToDataTable();
+                // To Location
+                dtArry = dt.Select(@"ToLocation = '' or ToLocation is null");
+                if (dtArry != null && dtArry.Length > 0)
+                {
+                    DataTable dtToLocation_Empty = dtArry.CopyToDataTable();
 
-                // change column name
-                dtToLocation_Empty.Columns["FromPoId"].ColumnName = "Inventory SP#";
-                dtToLocation_Empty.Columns["Fromseq"].ColumnName = "Inventory Seq";
-                dtToLocation_Empty.Columns["FromRoll"].ColumnName = "Roll";
-                dtToLocation_Empty.Columns["FromDyelot"].ColumnName = "Dyelot";
-                dtToLocation_Empty.Columns["topoid"].ColumnName = "Bulk SP#";
-                dtToLocation_Empty.Columns["toseq"].ColumnName = "Bulk Seq";
+                    // change column name
+                    dtToLocation_Empty.Columns["FromPoId"].ColumnName = "Inventory SP#";
+                    dtToLocation_Empty.Columns["Fromseq"].ColumnName = "Inventory Seq";
+                    dtToLocation_Empty.Columns["FromRoll"].ColumnName = "Roll";
+                    dtToLocation_Empty.Columns["FromDyelot"].ColumnName = "Dyelot";
+                    dtToLocation_Empty.Columns["topoid"].ColumnName = "Bulk SP#";
+                    dtToLocation_Empty.Columns["toseq"].ColumnName = "Bulk Seq";
 
-                ChkLocationEmpty(dtToLocation_Empty, "To", "Inventory SP#,Inventory Seq,Roll,Dyelot,Bulk SP#,Bulk Seq");
-                return new DualResult(false, "From or To Location is empty!!");
+                    ChkLocationEmpty(dtToLocation_Empty, "To", "Inventory SP#,Inventory Seq,Roll,Dyelot,Bulk SP#,Bulk Seq");
+                    return new DualResult(false);
+                }
             }
             #endregion
 
@@ -2814,35 +2820,38 @@ and d.Id = '{0}'", subTransfer_ID);
             #region 檢查From/To Location是否為空值
 
             // From Location
-            DataRow[] dtArry = dt.Select(@"Fromlocation = '' or Fromlocation is null");
-            if (dtArry != null && dtArry.Length > 0)
+            if (MyUtility.Check.Seek(@"select * from System where WH_MtlTransChkLocation = 1"))
             {
-                DataTable dtFromLocation_Empty = dtArry.CopyToDataTable();
+                DataRow[] dtArry = dt.Select(@"Fromlocation = '' or Fromlocation is null");
+                if (dtArry != null && dtArry.Length > 0)
+                {
+                    DataTable dtFromLocation_Empty = dtArry.CopyToDataTable();
 
-                // change column name
-                dtFromLocation_Empty.Columns["FromPoId"].ColumnName = "SP#";
-                dtFromLocation_Empty.Columns["Fromseq"].ColumnName = "Seq";
-                dtFromLocation_Empty.Columns["FromRoll"].ColumnName = "Roll";
-                dtFromLocation_Empty.Columns["FromDyelot"].ColumnName = "Dyelot";
+                    // change column name
+                    dtFromLocation_Empty.Columns["FromPoId"].ColumnName = "SP#";
+                    dtFromLocation_Empty.Columns["Fromseq"].ColumnName = "Seq";
+                    dtFromLocation_Empty.Columns["FromRoll"].ColumnName = "Roll";
+                    dtFromLocation_Empty.Columns["FromDyelot"].ColumnName = "Dyelot";
 
-                ChkLocationEmpty(dtFromLocation_Empty, "From", "SP#,Seq,Roll,Dyelot");
-                return new DualResult(false, "From or To Location is empty!!");
-            }
+                    ChkLocationEmpty(dtFromLocation_Empty, "From", "SP#,Seq,Roll,Dyelot");
+                    return new DualResult(false);
+                }
 
-            // To Location
-            dtArry = dt.Select(@"ToLocation = '' or ToLocation is null");
-            if (dtArry != null && dtArry.Length > 0)
-            {
-                DataTable dtToLocation_Empty = dtArry.CopyToDataTable();
+                // To Location
+                dtArry = dt.Select(@"ToLocation = '' or ToLocation is null");
+                if (dtArry != null && dtArry.Length > 0)
+                {
+                    DataTable dtToLocation_Empty = dtArry.CopyToDataTable();
 
-                // change column name
-                dtToLocation_Empty.Columns["ToPoid"].ColumnName = "SP#";
-                dtToLocation_Empty.Columns["toseq"].ColumnName = "Seq";
-                dtToLocation_Empty.Columns["ToRoll"].ColumnName = "Roll";
-                dtToLocation_Empty.Columns["ToDyelot"].ColumnName = "Dyelot";
+                    // change column name
+                    dtToLocation_Empty.Columns["ToPoid"].ColumnName = "SP#";
+                    dtToLocation_Empty.Columns["toseq"].ColumnName = "Seq";
+                    dtToLocation_Empty.Columns["ToRoll"].ColumnName = "Roll";
+                    dtToLocation_Empty.Columns["ToDyelot"].ColumnName = "Dyelot";
 
-                ChkLocationEmpty(dtToLocation_Empty, "To", "SP#,Seq,Roll,Dyelot");
-                return new DualResult(false, "From or To Location is empty!!");
+                    ChkLocationEmpty(dtToLocation_Empty, "To", "SP#,Seq,Roll,Dyelot");
+                    return new DualResult(false);
+                }
             }
             #endregion
 

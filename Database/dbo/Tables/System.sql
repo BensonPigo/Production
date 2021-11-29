@@ -66,6 +66,7 @@ CREATE TABLE [dbo].[System] (
     [Region] Varchar (2) NOT NULL CONSTRAINT [DF_System_Region]  DEFAULT(''), 
     [StyleFDFilePath] VARCHAR(80) NOT NULL DEFAULT (''), 
     [StyleRRLRPath] VARCHAR(80) NOT NULL DEFAULT (''), 
+    [WH_MtlTransChkLocation] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
@@ -331,3 +332,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'System',
     @level2type = N'COLUMN',
     @level2name = N'StyleRRLRPath'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'判斷轉倉庫 (包含借料, 轉庫存, 領庫 等) 是否需要填寫 From & To Location',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'WH_MtlTransChkLocation'
