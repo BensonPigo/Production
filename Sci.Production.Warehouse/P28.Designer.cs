@@ -95,6 +95,7 @@
             // 
             // Category
             // 
+            this.Category.AddAllItem = false;
             this.Category.BackColor = System.Drawing.Color.White;
             this.Category.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.Category.FormattingEnabled = true;
