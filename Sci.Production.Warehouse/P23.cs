@@ -314,7 +314,8 @@ WHERE   StockType='{0}'
                 return;
             }
 
-            DualResult result = Prgs.P23confirm(this.CurrentMaintain["ID"].ToString());
+            DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
+            DualResult result = Prgs.P23confirm(this.CurrentMaintain["ID"].ToString(), dtDetail);
             if (!result)
             {
                 if (!MyUtility.Check.Empty(result.ToString()))
