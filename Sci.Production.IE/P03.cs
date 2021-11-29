@@ -35,11 +35,10 @@ namespace Sci.Production.IE
             : base(menuitem)
         {
             this.InitializeComponent();
-            MyUtility.Tool.SetupCombox(this.comboSewingLineTeam, 1, 1, "A,B");
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
             this.gridicon.Append.Visible = false;
-
+            this.comboSewingTeam1.SetDataSource();
             this.splitContainer1.Panel1.Controls.Add(this.detailpanel);
             this.detailpanel.Dock = DockStyle.Fill;
         }

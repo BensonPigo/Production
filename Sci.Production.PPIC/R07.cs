@@ -182,7 +182,7 @@ order by c.FactoryID,c.SewingLineID,c.date
 --建立tmpe table存放最後要列印的資料
 DECLARE @tempPintData TABLE (
    FactoryID VARCHAR(8),
-   SewingLineID VARCHAR(2),
+   SewingLineID VARCHAR(5),
    StyleID VARCHAR(MAX),
    InLine DATE,
    OffLine DATE,
@@ -194,7 +194,7 @@ DECLARE @tempPintData TABLE (
 )
 --
 DECLARE @factory VARCHAR(8),
-		@sewingline VARCHAR(2),
+		@sewingline VARCHAR(5),
 		@StyleID VARCHAR(200),
 		@IsLastMonth int,
 		@IsNextMonth int,
@@ -203,7 +203,7 @@ DECLARE @factory VARCHAR(8),
 		@BuyerDelivery DATE,
 		@date DATE,
 		@beforefactory VARCHAR(8) = '',
-		@beforesewingline VARCHAR(2) = '',
+		@beforesewingline VARCHAR(5) = '',
 		@beforeStyleID VARCHAR(200) = '',
 		@beforeIsLastMonth int,
 		@beforeIsNextMonth int,

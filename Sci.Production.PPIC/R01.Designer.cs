@@ -154,7 +154,7 @@
             this.txtSewingLineStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSewingLineStart.Location = new System.Drawing.Point(114, 84);
             this.txtSewingLineStart.Name = "txtSewingLineStart";
-            this.txtSewingLineStart.Size = new System.Drawing.Size(41, 23);
+            this.txtSewingLineStart.Size = new System.Drawing.Size(69, 23);
             this.txtSewingLineStart.TabIndex = 2;
             this.txtSewingLineStart.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSewingLineStart_PopUp);
             this.txtSewingLineStart.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSewingLineStart_Validating);
@@ -162,7 +162,7 @@
             // label9
             // 
             this.label9.BackColor = System.Drawing.Color.Transparent;
-            this.label9.Location = new System.Drawing.Point(156, 84);
+            this.label9.Location = new System.Drawing.Point(186, 84);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(20, 23);
             this.label9.TabIndex = 105;
@@ -176,9 +176,9 @@
             // 
             this.txtSewingLineEnd.BackColor = System.Drawing.Color.White;
             this.txtSewingLineEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSewingLineEnd.Location = new System.Drawing.Point(177, 84);
+            this.txtSewingLineEnd.Location = new System.Drawing.Point(209, 84);
             this.txtSewingLineEnd.Name = "txtSewingLineEnd";
-            this.txtSewingLineEnd.Size = new System.Drawing.Size(41, 23);
+            this.txtSewingLineEnd.Size = new System.Drawing.Size(69, 23);
             this.txtSewingLineEnd.TabIndex = 3;
             this.txtSewingLineEnd.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSewingLineEnd_PopUp);
             this.txtSewingLineEnd.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSewingLineEnd_Validating);

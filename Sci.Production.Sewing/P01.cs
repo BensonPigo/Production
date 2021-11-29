@@ -45,7 +45,7 @@ namespace Sci.Production.Sewing
         {
             this.InitializeComponent();
             this.DefaultFilter = string.Format("FactoryID = '{0}' and Category = 'O'", Env.User.Factory);
-            MyUtility.Tool.SetupCombox(this.comboTeam, 1, 1, "A,B");
+            this.comboSewingTeam1.SetDataSource();
             this.DoSubForm = new P01_QAOutput(this);
 
             // 當Grid目前在最後一筆的最後一欄時，按Enter要自動新增一筆Record
@@ -1265,7 +1265,7 @@ order by a.OrderId,os.Seq",
             if (MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= sewingMonthlyLockDate)
             {
                 this.txtdropdownlistShift.ReadOnly = true;
-                this.comboTeam.ReadOnly = true;
+                this.comboSewingTeam1.ReadOnly = true;
                 this.numManpower.ReadOnly = true;
                 this.numWHours.ReadOnly = true;
                 this.txtSubconOutFty.TextBox1.ReadOnly = true;
@@ -1379,7 +1379,7 @@ order by a.OrderId,os.Seq",
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["Team"]))
             {
-                this.comboTeam.Focus();
+                this.comboSewingTeam1.Focus();
                 MyUtility.Msg.WarningBox("Team can't empty!!");
                 return false;
             }
@@ -4484,11 +4484,11 @@ drop table #tmp,#tmp2
             }
         }
 
-        private void ComboTeam_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboSewingTeam1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (this.EditMode && this.comboTeam.Text != MyUtility.Convert.GetString(this.comboTeam.OldValue))
+            if (this.EditMode && this.comboSewingTeam1.Text != MyUtility.Convert.GetString(this.comboSewingTeam1.OldValue))
             {
-                this.CurrentMaintain["Team"] = this.comboTeam.Text;
+                this.CurrentMaintain["Team"] = this.comboSewingTeam1.Text;
                 this.CurrentMaintain.EndEdit();
                 this.FromDQS();
             }

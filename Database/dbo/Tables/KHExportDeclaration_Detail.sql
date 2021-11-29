@@ -18,6 +18,8 @@
     [COFormType]     VARCHAR (20)   CONSTRAINT [DF_KHExportDeclaration_Detail_COFormType] DEFAULT ('') NULL,
     [COID]           VARCHAR (25)   CONSTRAINT [DF_KHExportDeclaration_Detail_COID] DEFAULT ('') NULL,
     [CODate]         DATE           NULL,
+    [FOBRemark] VARCHAR(200) NULL DEFAULT (''), 
+    [WeightRemark] VARCHAR(200) NULL DEFAULT (''), 
     CONSTRAINT [PK_KHExportDeclaration_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [INVNo] ASC, [OrderID] ASC)
 );
 
@@ -99,3 +101,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'出口報�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'實際FOB總價', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHExportDeclaration_Detail', @level2type = N'COLUMN', @level2name = N'ActTtlPOPrice';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'價格差異備註',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'KHExportDeclaration_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'FOBRemark'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'重量差異備註',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'KHExportDeclaration_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'WeightRemark'

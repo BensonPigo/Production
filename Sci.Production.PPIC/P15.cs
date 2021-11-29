@@ -122,7 +122,7 @@ namespace Sci.Production.PPIC
                 .Text("FabricType", header: "FabricType", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(14), iseditingreadonly: true)
                 .Text("POID", header: "Master SP#", width: Widths.AnsiChars(12), iseditingreadonly: true)
-                .Text("SewingLineID", header: "Sewing" + Environment.NewLine + "Line", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("SewingLineID", header: "Sewing" + Environment.NewLine + "Line", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("issueLackID", header: "Issue No.", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: ts_issueid);
             this.ChangeRowColor();
         }

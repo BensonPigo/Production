@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataSourceCtnSummary = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.dataSourceQtyBreakdown = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label2 = new Sci.Win.UI.Label();
@@ -66,7 +65,6 @@
             this.disSeason = new Sci.Win.UI.DisplayBox();
             this.disM = new Sci.Win.UI.DisplayBox();
             this.txtSewingLine = new Sci.Win.UI.TextBox();
-            this.comboTeam = new Sci.Win.UI.ComboBox();
             this.numClogReceivedPercentage = new Sci.Win.UI.NumericBox();
             this.comboStage = new Sci.Win.UI.ComboBox();
             this.comboResult = new Sci.Win.UI.ComboBox();
@@ -85,6 +83,7 @@
             this.gridSpSeq = new Sci.Win.UI.Grid();
             this.chkFirstInspection = new Sci.Win.UI.CheckBox();
             this.labImportFromMES = new Sci.Win.UI.Label();
+            this.comboSewingTeam1 = new Sci.Production.Class.ComboSewingTeam(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -104,6 +103,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.comboSewingTeam1);
             this.masterpanel.Controls.Add(this.labImportFromMES);
             this.masterpanel.Controls.Add(this.chkFirstInspection);
             this.masterpanel.Controls.Add(this.gridSpSeq);
@@ -119,7 +119,6 @@
             this.masterpanel.Controls.Add(this.comboResult);
             this.masterpanel.Controls.Add(this.comboStage);
             this.masterpanel.Controls.Add(this.numClogReceivedPercentage);
-            this.masterpanel.Controls.Add(this.comboTeam);
             this.masterpanel.Controls.Add(this.txtSewingLine);
             this.masterpanel.Controls.Add(this.txtshift);
             this.masterpanel.Controls.Add(this.disM);
@@ -196,7 +195,6 @@
             this.masterpanel.Controls.SetChildIndex(this.disM, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtshift, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSewingLine, 0);
-            this.masterpanel.Controls.SetChildIndex(this.comboTeam, 0);
             this.masterpanel.Controls.SetChildIndex(this.numClogReceivedPercentage, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboStage, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboResult, 0);
@@ -212,6 +210,7 @@
             this.masterpanel.Controls.SetChildIndex(this.gridSpSeq, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkFirstInspection, 0);
             this.masterpanel.Controls.SetChildIndex(this.labImportFromMES, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboSewingTeam1, 0);
             // 
             // detailpanel
             // 
@@ -492,7 +491,7 @@
             // 
             this.label24.Location = new System.Drawing.Point(268, 204);
             this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(153, 23);
+            this.label24.Size = new System.Drawing.Size(95, 23);
             this.label24.TabIndex = 53;
             this.label24.Text = "Team";
             // 
@@ -550,24 +549,6 @@
             this.txtSewingLine.TabIndex = 6;
             this.txtSewingLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSewingLine_PopUp);
             this.txtSewingLine.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSewingLine_Validating);
-            // 
-            // comboTeam
-            // 
-            this.comboTeam.BackColor = System.Drawing.Color.White;
-            this.comboTeam.DataBindings.Add(new System.Windows.Forms.Binding("SelectedItem", this.mtbs, "Team", true));
-            this.comboTeam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboTeam.FormattingEnabled = true;
-            this.comboTeam.IsSupportUnselect = true;
-            this.comboTeam.Items.AddRange(new object[] {
-            "",
-            "A",
-            "B"});
-            this.comboTeam.Location = new System.Drawing.Point(422, 204);
-            this.comboTeam.Name = "comboTeam";
-            this.comboTeam.OldText = "";
-            this.comboTeam.Size = new System.Drawing.Size(39, 24);
-            this.comboTeam.TabIndex = 7;
-            this.comboTeam.SelectedIndexChanged += new System.EventHandler(this.ComboTeam_SelectedIndexChanged);
             // 
             // numClogReceivedPercentage
             // 
@@ -813,14 +794,6 @@
             this.gridSpSeq.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridSpSeq.Location = new System.Drawing.Point(720, 35);
             this.gridSpSeq.Name = "gridSpSeq";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridSpSeq.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridSpSeq.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSpSeq.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSpSeq.RowTemplate.Height = 24;
@@ -854,6 +827,21 @@
             this.labImportFromMES.Text = "Import From MES";
             this.labImportFromMES.TextStyle.BorderColor = System.Drawing.Color.Red;
             this.labImportFromMES.TextStyle.Color = System.Drawing.Color.Red;
+            // 
+            // comboSewingTeam1
+            // 
+            this.comboSewingTeam1.BackColor = System.Drawing.Color.White;
+            this.comboSewingTeam1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Team", true));
+            this.comboSewingTeam1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSewingTeam1.FormattingEnabled = true;
+            this.comboSewingTeam1.IssupportEmptyitem = true;
+            this.comboSewingTeam1.IssupportJunk = false;
+            this.comboSewingTeam1.IsSupportUnselect = true;
+            this.comboSewingTeam1.Location = new System.Drawing.Point(364, 204);
+            this.comboSewingTeam1.Name = "comboSewingTeam1";
+            this.comboSewingTeam1.OldText = "";
+            this.comboSewingTeam1.Size = new System.Drawing.Size(97, 24);
+            this.comboSewingTeam1.TabIndex = 7;
             // 
             // P32
             // 
@@ -937,7 +925,6 @@
         private Win.UI.DisplayBox disM;
         private Class.TxtDropDownList txtshift;
         private Win.UI.TextBox txtSewingLine;
-        private Win.UI.ComboBox comboTeam;
         private Win.UI.NumericBox numClogReceivedPercentage;
         private Win.UI.ComboBox comboStage;
         private Win.UI.ComboBox comboResult;
@@ -953,5 +940,6 @@
         private Win.UI.CheckBox chkIsCombinePO;
         private Win.UI.CheckBox chkFirstInspection;
         private Win.UI.Label labImportFromMES;
+        private Class.ComboSewingTeam comboSewingTeam1;
     }
 }

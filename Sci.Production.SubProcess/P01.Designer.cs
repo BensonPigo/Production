@@ -33,7 +33,6 @@
             this.txtTypeID = new Sci.Win.UI.TextBox();
             this.dateDate = new Sci.Win.UI.DateBox();
             this.labelShift = new Sci.Win.UI.Label();
-            this.comboTeam = new Sci.Win.UI.ComboBox();
             this.labelTeam = new Sci.Win.UI.Label();
             this.numTTLhours = new Sci.Win.UI.NumericBox();
             this.labelManhours = new Sci.Win.UI.Label();
@@ -51,6 +50,7 @@
             this.lbstatus = new Sci.Win.UI.Label();
             this.numTotalCPU = new Sci.Win.UI.NumericBox();
             this.label2 = new Sci.Win.UI.Label();
+            this.comboSewingTeam1 = new Sci.Production.Class.ComboSewingTeam();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -67,6 +67,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.comboSewingTeam1);
             this.masterpanel.Controls.Add(this.numTotalCPU);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.lbstatus);
@@ -83,7 +84,6 @@
             this.masterpanel.Controls.Add(this.labelQAOutput);
             this.masterpanel.Controls.Add(this.numTTLhours);
             this.masterpanel.Controls.Add(this.labelManhours);
-            this.masterpanel.Controls.Add(this.comboTeam);
             this.masterpanel.Controls.Add(this.labelTeam);
             this.masterpanel.Controls.Add(this.labelShift);
             this.masterpanel.Controls.Add(this.dateDate);
@@ -97,7 +97,6 @@
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelShift, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelTeam, 0);
-            this.masterpanel.Controls.SetChildIndex(this.comboTeam, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelManhours, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTTLhours, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelQAOutput, 0);
@@ -115,6 +114,7 @@
             this.masterpanel.Controls.SetChildIndex(this.lbstatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTotalCPU, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboSewingTeam1, 0);
             // 
             // detailpanel
             // 
@@ -195,18 +195,6 @@
             this.labelShift.Size = new System.Drawing.Size(40, 23);
             this.labelShift.TabIndex = 6;
             this.labelShift.Text = "Shift";
-            // 
-            // comboTeam
-            // 
-            this.comboTeam.BackColor = System.Drawing.Color.White;
-            this.comboTeam.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Team", true));
-            this.comboTeam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboTeam.FormattingEnabled = true;
-            this.comboTeam.IsSupportUnselect = true;
-            this.comboTeam.Location = new System.Drawing.Point(48, 93);
-            this.comboTeam.Name = "comboTeam";
-            this.comboTeam.Size = new System.Drawing.Size(57, 24);
-            this.comboTeam.TabIndex = 3;
             // 
             // labelTeam
             // 
@@ -349,6 +337,7 @@
             this.txtdropdownlistShift.IsSupportUnselect = true;
             this.txtdropdownlistShift.Location = new System.Drawing.Point(48, 63);
             this.txtdropdownlistShift.Name = "txtdropdownlistShift";
+            this.txtdropdownlistShift.OldText = "";
             this.txtdropdownlistShift.Size = new System.Drawing.Size(121, 24);
             this.txtdropdownlistShift.TabIndex = 2;
             this.txtdropdownlistShift.Type = "PMS_PPAOutput_Shift";
@@ -470,6 +459,21 @@
             this.label2.TabIndex = 31;
             this.label2.Text = "TTL CPU";
             // 
+            // comboSewingTeam1
+            // 
+            this.comboSewingTeam1.BackColor = System.Drawing.Color.White;
+            this.comboSewingTeam1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Team", true));
+            this.comboSewingTeam1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSewingTeam1.FormattingEnabled = true;
+            this.comboSewingTeam1.IssupportEmptyitem = false;
+            this.comboSewingTeam1.IssupportJunk = false;
+            this.comboSewingTeam1.IsSupportUnselect = true;
+            this.comboSewingTeam1.Location = new System.Drawing.Point(48, 93);
+            this.comboSewingTeam1.Name = "comboSewingTeam1";
+            this.comboSewingTeam1.OldText = "";
+            this.comboSewingTeam1.Size = new System.Drawing.Size(84, 24);
+            this.comboSewingTeam1.TabIndex = 3;
+            // 
             // P01
             // 
             this.ApvChkValue = "New";
@@ -483,6 +487,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P01";
+            this.OnLineHelpID = "Sci.Win.Tems.Input8";
             this.SubDetailKeyField1 = "ID,ukey";
             this.SubDetailKeyField2 = "id,SubProcessOutput_DetailUKey";
             this.SubGridAlias = "SubProcessOutput_Detail_Detail";
@@ -518,7 +523,6 @@
         private Win.UI.TextBox txtTypeID;
         private Win.UI.DateBox dateDate;
         private Win.UI.Label labelShift;
-        private Win.UI.ComboBox comboTeam;
         private Win.UI.Label labelTeam;
         private Win.UI.NumericBox numTTLhours;
         private Win.UI.Label labelManhours;
@@ -536,5 +540,6 @@
         private Win.UI.Label lbstatus;
         private Win.UI.NumericBox numTotalCPU;
         private Win.UI.Label label2;
+        private Class.ComboSewingTeam comboSewingTeam1;
     }
 }

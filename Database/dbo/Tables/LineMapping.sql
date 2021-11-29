@@ -1,36 +1,38 @@
-CREATE TABLE [dbo].[LineMapping] (
-    [StyleID]          VARCHAR (15)   CONSTRAINT [DF_LineMapping_StyleID] DEFAULT ('') NOT NULL,
-    [SeasonID]         VARCHAR (10)   CONSTRAINT [DF_LineMapping_SeasonID] DEFAULT ('') NOT NULL,
-    [BrandID]          VARCHAR (8)    CONSTRAINT [DF_LineMapping_BrandID] DEFAULT ('') NOT NULL,
-    [StyleUKey]        BIGINT         CONSTRAINT [DF_LineMapping_StyleUKey] DEFAULT ((0)) NOT NULL,
-    [Version]          TINYINT        CONSTRAINT [DF_LineMapping_Version] DEFAULT ((0)) NOT NULL,
-    [FactoryID]        VARCHAR (8)    CONSTRAINT [DF_LineMapping_FactoryID] DEFAULT ('') NULL,
-    [ComboType]        VARCHAR (1)    CONSTRAINT [DF_LineMapping_ComboType] DEFAULT ('') NULL,
-    [SewingLineID]     VARCHAR (2)    CONSTRAINT [DF_LineMapping_SewingLineID] DEFAULT ('') NULL,
-    [Team]             VARCHAR (1)    CONSTRAINT [DF_LineMapping_Team] DEFAULT ('') NULL,
-    [IdealOperators]   TINYINT        CONSTRAINT [DF_LineMapping_IdealOperators] DEFAULT ((0)) NULL,
-    [CurrentOperators] SMALLINT        CONSTRAINT [DF_LineMapping_CurrentOperators] DEFAULT ((0)) NULL,
-    [StandardOutput]   INT            CONSTRAINT [DF_LineMapping_StandardOutput] DEFAULT ((0)) NULL,
-    [DailyDemand]      INT            CONSTRAINT [DF_LineMapping_DailyDemand] DEFAULT ((0)) NULL,
-    [Workhour]         NUMERIC (4, 1) CONSTRAINT [DF_LineMapping_Workhour] DEFAULT ((0)) NULL,
-    [NetTime]          INT            CONSTRAINT [DF_LineMapping_NetTime] DEFAULT ((0)) NULL,
-    [TaktTime]         INT            CONSTRAINT [DF_LineMapping_TaktTime] DEFAULT ((0)) NULL,
-    [TotalGSD]         INT            CONSTRAINT [DF_LineMapping_TotalGSD] DEFAULT ((0)) NULL,
-    [TotalCycle]       INT            CONSTRAINT [DF_LineMapping_TotalCycle] DEFAULT ((0)) NULL,
-    [HighestGSD]       NUMERIC (7, 2) CONSTRAINT [DF_LineMapping_HighestGSD] DEFAULT ((0)) NULL,
-    [HighestCycle]     NUMERIC (7, 2) CONSTRAINT [DF_LineMapping_HighestCycle] DEFAULT ((0)) NULL,
-    [ID]               BIGINT         IDENTITY (1, 1) NOT NULL,
-    [Status]           VARCHAR (15)   CONSTRAINT [DF_LineMapping_Status] DEFAULT ('') NULL,
-    [IEReasonID]       VARCHAR (5)    CONSTRAINT [DF_LineMapping_IEReasonID] DEFAULT ('') NULL,
-    [AddName]          VARCHAR (10)   CONSTRAINT [DF_LineMapping_AddName] DEFAULT ('') NULL,
-    [AddDate]          DATETIME       NULL,
-    [EditName]         VARCHAR (10)   CONSTRAINT [DF_LineMapping_EditName] DEFAULT ('') NULL,
-    [EditDate]         DATETIME       NULL,
-    [TimeStudyPhase]   VARCHAR(10)    CONSTRAINT [DF_LineMapping_TimeStudyPhase] DEFAULT ('') NOT NULL, 
-    [TimeStudyVersion] VARCHAR(2)     CONSTRAINT [DF_LineMapping_TimeStudyVersion] DEFAULT ('') NOT NULL, 
-    [IEReasonLBRNotHit_1stUkey] BIGINT NULL, 
+﻿CREATE TABLE [dbo].[LineMapping] (
+    [StyleID]                   VARCHAR (15)   CONSTRAINT [DF_LineMapping_StyleID] DEFAULT ('') NOT NULL,
+    [SeasonID]                  VARCHAR (10)   CONSTRAINT [DF_LineMapping_SeasonID] DEFAULT ('') NOT NULL,
+    [BrandID]                   VARCHAR (8)    CONSTRAINT [DF_LineMapping_BrandID] DEFAULT ('') NOT NULL,
+    [StyleUKey]                 BIGINT         CONSTRAINT [DF_LineMapping_StyleUKey] DEFAULT ((0)) NOT NULL,
+    [Version]                   TINYINT        CONSTRAINT [DF_LineMapping_Version] DEFAULT ((0)) NOT NULL,
+    [FactoryID]                 VARCHAR (8)    CONSTRAINT [DF_LineMapping_FactoryID] DEFAULT ('') NULL,
+    [ComboType]                 VARCHAR (1)    CONSTRAINT [DF_LineMapping_ComboType] DEFAULT ('') NULL,
+    [SewingLineID]              VARCHAR (5)    CONSTRAINT [DF_LineMapping_SewingLineID] DEFAULT ('') NULL,
+    [Team]                      VARCHAR (5)    CONSTRAINT [DF_LineMapping_Team] DEFAULT ('') NULL,
+    [IdealOperators]            TINYINT        CONSTRAINT [DF_LineMapping_IdealOperators] DEFAULT ((0)) NULL,
+    [CurrentOperators]          SMALLINT       CONSTRAINT [DF_LineMapping_CurrentOperators] DEFAULT ((0)) NULL,
+    [StandardOutput]            INT            CONSTRAINT [DF_LineMapping_StandardOutput] DEFAULT ((0)) NULL,
+    [DailyDemand]               INT            CONSTRAINT [DF_LineMapping_DailyDemand] DEFAULT ((0)) NULL,
+    [Workhour]                  NUMERIC (4, 1) CONSTRAINT [DF_LineMapping_Workhour] DEFAULT ((0)) NULL,
+    [NetTime]                   INT            CONSTRAINT [DF_LineMapping_NetTime] DEFAULT ((0)) NULL,
+    [TaktTime]                  INT            CONSTRAINT [DF_LineMapping_TaktTime] DEFAULT ((0)) NULL,
+    [TotalGSD]                  INT            CONSTRAINT [DF_LineMapping_TotalGSD] DEFAULT ((0)) NULL,
+    [TotalCycle]                INT            CONSTRAINT [DF_LineMapping_TotalCycle] DEFAULT ((0)) NULL,
+    [HighestGSD]                NUMERIC (7, 2) CONSTRAINT [DF_LineMapping_HighestGSD] DEFAULT ((0)) NULL,
+    [HighestCycle]              NUMERIC (7, 2) CONSTRAINT [DF_LineMapping_HighestCycle] DEFAULT ((0)) NULL,
+    [ID]                        BIGINT         IDENTITY (1, 1) NOT FOR REPLICATION NOT NULL,
+    [Status]                    VARCHAR (15)   CONSTRAINT [DF_LineMapping_Status] DEFAULT ('') NULL,
+    [IEReasonID]                VARCHAR (5)    CONSTRAINT [DF_LineMapping_IEReasonID] DEFAULT ('') NULL,
+    [AddName]                   VARCHAR (10)   CONSTRAINT [DF_LineMapping_AddName] DEFAULT ('') NULL,
+    [AddDate]                   DATETIME       NULL,
+    [EditName]                  VARCHAR (10)   CONSTRAINT [DF_LineMapping_EditName] DEFAULT ('') NULL,
+    [EditDate]                  DATETIME       NULL,
+    [TimeStudyPhase]            VARCHAR (10)   CONSTRAINT [DF_LineMapping_TimeStudyPhase] DEFAULT ('') NOT NULL,
+    [TimeStudyVersion]          VARCHAR (2)    CONSTRAINT [DF_LineMapping_TimeStudyVersion] DEFAULT ('') NOT NULL,
+    [IEReasonLBRNotHit_1stUkey] BIGINT         NULL,
     CONSTRAINT [PK_LineMapping] PRIMARY KEY CLUSTERED ([StyleID] ASC, [SeasonID] ASC, [BrandID] ASC, [StyleUKey] ASC, [Version] ASC)
 );
+
+
 
 
 
@@ -154,23 +156,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ID', @level
 
 
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'Fty GSD的 Phase',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'LineMapping',
-    @level2type = N'COLUMN',
-    @level2name = N'TimeStudyPhase'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Fty GSD�� Phase', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'TimeStudyPhase';
+
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'Fty GSD的 version',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'LineMapping',
-    @level2type = N'COLUMN',
-    @level2name = N'TimeStudyVersion'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Fty GSD�� version', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'TimeStudyVersion';
+
+
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',
     @value = N'IEReasonLBRNotHit_1st Ukey',

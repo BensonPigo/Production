@@ -21,7 +21,7 @@ BEGIN
 declare  @APSListWorkDay TABLE(
 	[APSNo] [int] NULL,
 	[MDivisionID] [varchar](8) NULL,
-	[SewingLineID] [varchar](2) NULL,
+	[SewingLineID] [varchar](5) NULL,
 	[FactoryID] [varchar](8) NULL,
 	[InlineDate] [date] NULL,
 	[OfflineDate] [date] NULL,
@@ -167,7 +167,7 @@ outer apply (SELECT [Construction] =  Stuff((select distinct concat( '/',[Constr
 declare @APSList TABLE(
 	[APSNo] [int] NULL,
 	[MDivisionID] [varchar](8) NULL,
-	[SewingLineID] [varchar](2) NULL,
+	[SewingLineID] [varchar](5) NULL,
 	[FactoryID] [varchar](8) NULL,
 	[Inline] [datetime] NULL,
 	[Offline] [datetime] NULL,
@@ -482,7 +482,7 @@ group by p.APSNo,p.OrderID
 --填入資料串連欄位 by APSNo
 declare @APSMain TABLE(
 	[APSNo] [int] NULL,
-	[SewingLineID] [varchar](2) NULL,
+	[SewingLineID] [varchar](5) NULL,
 	[CustPO] [nvarchar](max) NULL,
 	[CustPoCnt] [bigint] NULL,
 	[SP] [nvarchar](max) NULL,
@@ -630,7 +630,7 @@ AND DATEADD(DAY,number,@StartDate) <= @EndDate
 Declare @Workhour_step1 table(
 	[APSNo] [int] NULL,
 	[LearnCurveID] [int] NULL,
-	[SewingLineID] [varchar](2) NULL,
+	[SewingLineID] [varchar](5) NULL,
 	[FactoryID] [varchar](8) NULL,
 	[WorkDate] [datetime] NULL,
 	[inline] [datetime] NULL,
@@ -688,7 +688,7 @@ delete @Workhour_step1 where WorkDate = OfflineDate and StartHour >= OfflineHour
 Declare @Workhour_step2 table(
 	[APSNo] [int] NULL,
 	[LearnCurveID] [int] NULL,
-	[SewingLineID] [varchar](2) NULL,
+	[SewingLineID] [varchar](5) NULL,
 	[FactoryID] [varchar](8) NULL,
 	[WorkDate] [datetime] NULL,
 	[inline] [datetime] NULL,

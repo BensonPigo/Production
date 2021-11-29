@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelDate = new Sci.Win.UI.Label();
             this.labelLine = new Sci.Win.UI.Label();
             this.labelShift = new Sci.Win.UI.Label();
             this.labelTeam = new Sci.Win.UI.Label();
             this.dateDate = new Sci.Win.UI.DateBox();
             this.displayFactory = new Sci.Win.UI.DisplayBox();
-            this.comboTeam = new Sci.Win.UI.ComboBox();
             this.labelManpower = new Sci.Win.UI.Label();
             this.labelWHours = new Sci.Win.UI.Label();
             this.labelManhours = new Sci.Win.UI.Label();
@@ -63,6 +63,7 @@
             this.btnRequestUnlock = new Sci.Win.UI.Button();
             this.btnBatchRecall = new Sci.Win.UI.Button();
             this.lbstatus = new Sci.Win.UI.Label();
+            this.comboSewingTeam1 = new Sci.Production.Class.ComboSewingTeam(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -79,6 +80,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.comboSewingTeam1);
             this.masterpanel.Controls.Add(this.lbstatus);
             this.masterpanel.Controls.Add(this.btnRequestUnlock);
             this.masterpanel.Controls.Add(this.txtSubConOutContractNumber);
@@ -105,7 +107,6 @@
             this.masterpanel.Controls.Add(this.labelManhours);
             this.masterpanel.Controls.Add(this.labelWHours);
             this.masterpanel.Controls.Add(this.labelManpower);
-            this.masterpanel.Controls.Add(this.comboTeam);
             this.masterpanel.Controls.Add(this.txtdropdownlistShift);
             this.masterpanel.Controls.Add(this.txtsewinglineLine);
             this.masterpanel.Controls.Add(this.labelTeam);
@@ -121,7 +122,6 @@
             this.masterpanel.Controls.SetChildIndex(this.labelTeam, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtsewinglineLine, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtdropdownlistShift, 0);
-            this.masterpanel.Controls.SetChildIndex(this.comboTeam, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelManpower, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelWHours, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelManhours, 0);
@@ -149,6 +149,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnRequestUnlock, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbstatus, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboSewingTeam1, 0);
             // 
             // detailpanel
             // 
@@ -254,20 +255,6 @@
             this.displayFactory.Name = "displayFactory";
             this.displayFactory.Size = new System.Drawing.Size(41, 23);
             this.displayFactory.TabIndex = 4;
-            // 
-            // comboTeam
-            // 
-            this.comboTeam.BackColor = System.Drawing.Color.White;
-            this.comboTeam.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Team", true));
-            this.comboTeam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboTeam.FormattingEnabled = true;
-            this.comboTeam.IsSupportUnselect = true;
-            this.comboTeam.Location = new System.Drawing.Point(111, 58);
-            this.comboTeam.Name = "comboTeam";
-            this.comboTeam.OldText = "";
-            this.comboTeam.Size = new System.Drawing.Size(57, 24);
-            this.comboTeam.TabIndex = 3;
-            this.comboTeam.SelectedIndexChanged += new System.EventHandler(this.ComboTeam_SelectedIndexChanged);
             // 
             // labelManpower
             // 
@@ -595,6 +582,9 @@
             // 
             this.txtSubconOutFty.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "SubconOutFty", true));
             this.txtSubconOutFty.DisplayBox1Binding = "";
+            this.txtSubconOutFty.IsFactory = false;
+            this.txtSubconOutFty.IsMisc = false;
+            this.txtSubconOutFty.IsMiscOverseas = false;
             this.txtSubconOutFty.Location = new System.Drawing.Point(112, 84);
             this.txtSubconOutFty.Name = "txtSubconOutFty";
             this.txtSubconOutFty.Size = new System.Drawing.Size(252, 23);
@@ -654,6 +644,22 @@
             this.lbstatus.TextStyle.Color = System.Drawing.Color.Fuchsia;
             this.lbstatus.TextStyle.ExtBorderColor = System.Drawing.Color.Fuchsia;
             this.lbstatus.TextStyle.GradientColor = System.Drawing.Color.Fuchsia;
+            // 
+            // comboSewingTeam1
+            // 
+            this.comboSewingTeam1.BackColor = System.Drawing.Color.White;
+            this.comboSewingTeam1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Team", true));
+            this.comboSewingTeam1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSewingTeam1.FormattingEnabled = true;
+            this.comboSewingTeam1.IssupportEmptyitem = false;
+            this.comboSewingTeam1.IssupportJunk = false;
+            this.comboSewingTeam1.IsSupportUnselect = true;
+            this.comboSewingTeam1.Location = new System.Drawing.Point(112, 59);
+            this.comboSewingTeam1.Name = "comboSewingTeam1";
+            this.comboSewingTeam1.OldText = "";
+            this.comboSewingTeam1.Size = new System.Drawing.Size(84, 24);
+            this.comboSewingTeam1.TabIndex = 3;
+            this.comboSewingTeam1.SelectedIndexChanged += new System.EventHandler(this.ComboSewingTeam1_SelectedIndexChanged);
             // 
             // P01
             // 
@@ -724,7 +730,6 @@
         private Win.UI.Label labelManhours;
         private Win.UI.Label labelWHours;
         private Win.UI.Label labelManpower;
-        private Win.UI.ComboBox comboTeam;
         private Class.Txtdropdownlist txtdropdownlistShift;
         private Class.Txtsewingline txtsewinglineLine;
         private Win.UI.DateBox dateDate;
@@ -740,5 +745,6 @@
         private Win.UI.Button btnRequestUnlock;
         private Win.UI.Button btnBatchRecall;
         private Win.UI.Label lbstatus;
+        private Class.ComboSewingTeam comboSewingTeam1;
     }
 }

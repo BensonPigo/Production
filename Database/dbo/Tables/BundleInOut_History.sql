@@ -1,44 +1,43 @@
 ﻿
-CREATE TABLE [dbo].[BundleInOut_History](
-	[BundleNo] [varchar](10) NOT NULL,
-	[SubProcessId] [varchar](15) NOT NULL,
-	[InComing] [datetime] NULL,
-	[OutGoing] [datetime] NULL,
-	[AddDate] [datetime] NOT NULL,
-	[EditDate] [datetime] NULL,
-	[SewingLineID] [varchar](2) NOT NULL,
-	[LocationID] [varchar](10) NOT NULL,
-	[RFIDProcessLocationID] [varchar](15) NOT NULL,
-	[PanelNo] [varchar](24) NOT NULL,
-	[CutCellID] [varchar](10) NOT NULL,
- CONSTRAINT [PK_BundleInOut_History] PRIMARY KEY CLUSTERED 
-(
-	[BundleNo] ASC,
-	[SubProcessId] ASC,
-	[RFIDProcessLocationID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+CREATE TABLE [dbo].[BundleInOut_History] (
+    [BundleNo]              VARCHAR (10) CONSTRAINT [DF_BundleInOut_History_BundleNo] DEFAULT ('') NOT NULL,
+    [SubProcessId]          VARCHAR (15) CONSTRAINT [DF_BundleInOut_History_SubProcessId] DEFAULT ('') NOT NULL,
+    [InComing]              DATETIME     NULL,
+    [OutGoing]              DATETIME     NULL,
+    [AddDate]               DATETIME     NOT NULL,
+    [EditDate]              DATETIME     NULL,
+    [SewingLineID]          VARCHAR (5)  CONSTRAINT [DF_BundleInOut_History_SewingLineID] DEFAULT ('') NOT NULL,
+    [LocationID]            VARCHAR (10) CONSTRAINT [DF_BundleInOut_History_LocationID] DEFAULT ('') NOT NULL,
+    [RFIDProcessLocationID] VARCHAR (15) CONSTRAINT [DF_BundleInOut_History_RFIDProcessLocationID] DEFAULT ('') NOT NULL,
+    [PanelNo]               VARCHAR (24) CONSTRAINT [DF_BundleInOut_History_PanelNo] DEFAULT ('') NOT NULL,
+    [CutCellID]             VARCHAR (10) CONSTRAINT [DF_BundleInOut_History_CutCellID] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_BundleInOut_History] PRIMARY KEY CLUSTERED ([BundleNo] ASC, [SubProcessId] ASC, [RFIDProcessLocationID] ASC)
+);
+
+
+
+
 GO
 
-ALTER TABLE [dbo].[BundleInOut_History] ADD  CONSTRAINT [DF_BundleInOut_History_BundleNo]  DEFAULT ('') FOR [BundleNo]
+
 GO
 
-ALTER TABLE [dbo].[BundleInOut_History] ADD  CONSTRAINT [DF_BundleInOut_History_SubProcessId]  DEFAULT ('') FOR [SubProcessId]
+
 GO
 
-ALTER TABLE [dbo].[BundleInOut_History] ADD  CONSTRAINT [DF_BundleInOut_History_SewingLineID]  DEFAULT ('') FOR [SewingLineID]
+
 GO
 
-ALTER TABLE [dbo].[BundleInOut_History] ADD  CONSTRAINT [DF_BundleInOut_History_LocationID]  DEFAULT ('') FOR [LocationID]
+
 GO
 
-ALTER TABLE [dbo].[BundleInOut_History] ADD  CONSTRAINT [DF_BundleInOut_History_RFIDProcessLocationID]  DEFAULT ('') FOR [RFIDProcessLocationID]
+
 GO
 
-ALTER TABLE [dbo].[BundleInOut_History] ADD  CONSTRAINT [DF_BundleInOut_History_PanelNo]  DEFAULT ('') FOR [PanelNo]
+
 GO
 
-ALTER TABLE [dbo].[BundleInOut_History] ADD  CONSTRAINT [DF_BundleInOut_History_CutCellID]  DEFAULT ('') FOR [CutCellID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Bundle No' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'BundleInOut_History', @level2type=N'COLUMN',@level2name=N'BundleNo'

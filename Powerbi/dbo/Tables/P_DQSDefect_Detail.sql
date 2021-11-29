@@ -2,7 +2,7 @@
     [FtyZon]              VARCHAR (8)    NULL,
     [BrandID]             VARCHAR (8)    NULL,
     [BuyerDelivery]       DATE           NULL,
-    [Line]                VARCHAR (2)    NULL,
+    [Line]                VARCHAR (5)    NULL,
     [FactoryID]           VARCHAR (8)    NULL,
     [Team]                VARCHAR (8)    NULL,
     [Shift]               VARCHAR (5)    NULL,

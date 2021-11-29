@@ -1,4 +1,5 @@
 ﻿
+
 CREATE PROCEDURE [dbo].[GetProductionOutputSummary]
 
 	@Year varchar(10) = '',
@@ -25,6 +26,7 @@ BEGIN
 declare @SpecialDay date = (select date = DATEADD(DAY,6, DATEADD(m,5, dateadd(m, datediff(m,0,getdate()),0))))
 declare @SpecialDay2 date = (select date = DATEADD(DAY,0, DATEADD(m,5, dateadd(m, datediff(m,0,getdate()),0))))
 declare @SewLock date = (select top 1 sewLock from dbo.System)
+declare @NoRestrictOrdersDelivery bit = (select NoRestrictOrdersDelivery from system)
 
 declare @StartYYYY varchar(4) = iif(isnull(@Year, '') = '', Year(getdate()), @Year)
 declare @StartDateForBI date = cast(@StartYYYY + '0108' as date)
@@ -75,7 +77,17 @@ from
 				(@ExcludeSampleFactory = 0)
 			 )
 			 and (
-				(@IsFtySide = 1 and ((@DateType = 1 and O.SciDelivery <= @SpecialDay) or (@DateType = 2 and o.BuyerDelivery < @SpecialDay2)))
+				(@IsFtySide = 1 and
+					(
+						(
+							@NoRestrictOrdersDelivery = 0 and
+							(
+								((@DateType = 1 and O.SciDelivery <= @SpecialDay) or (@DateType = 2 and o.BuyerDelivery < @SpecialDay2))	
+							)
+						)
+						or @NoRestrictOrdersDelivery = 1
+					)
+				)
 				or 
 				(@IsFtySide = 0)
 			 )
@@ -120,10 +132,20 @@ from
 				(@ExcludeSampleFactory = 0)
 			 )
 			 and (
-				(@IsFtySide = 1 and ((@DateType = 1 and O.SciDelivery <= @SpecialDay) or (@DateType = 2 and o.BuyerDelivery < @SpecialDay2)))
+				(@IsFtySide = 1 and
+					(
+						(
+							@NoRestrictOrdersDelivery = 0 and
+							(
+								((@DateType = 1 and O.SciDelivery <= @SpecialDay) or (@DateType = 2 and o.BuyerDelivery < @SpecialDay2))	
+							)
+						)
+						or @NoRestrictOrdersDelivery = 1
+					)
+				)
 				or 
 				(@IsFtySide = 0)
-			)
+			 )
 			and (
 				@IncludeCancelOrder = 0 and o.Junk = 0
 				or
@@ -132,7 +154,7 @@ from
 ) a
 
 
---�N�u���q��A�HProgramID��X�ۤv�u�t����ơA����n��ܦbdetail�æ���summary�����
+--?N?u???q??A?HProgramID??X??v?u?t?????A????n???bdetail?????summary?????
 declare @tmpBaseTransOrderID TABLE(
 	[ID] [VARCHAR](13) NULL,
 	[TransFtyZone] [VARCHAR](8) NULL
@@ -176,11 +198,22 @@ from (
 				or
 				@IncludeCancelOrder = 1 and 1 = 1
 		)
-		 and (
-				(@IsFtySide = 1 and ((@DateType = 1 and O.SciDelivery <= @SpecialDay) or (@DateType = 2 and o.BuyerDelivery < @SpecialDay2)))
-				or 
-				(@IsFtySide = 0)
+		and 
+		(
+			(@IsFtySide = 1 and
+				(
+					(
+						@NoRestrictOrdersDelivery = 0 and
+						(
+							((@DateType = 1 and O.SciDelivery <= @SpecialDay) or (@DateType = 2 and o.BuyerDelivery < @SpecialDay2))	
+						)
+					)
+					or @NoRestrictOrdersDelivery = 1
+				)
 			)
+			or 
+			(@IsFtySide = 0)
+		)
 		and o.ProgramID in (select distinct FactoryID from @tmpBaseOrderID)
 
 	union all
@@ -213,11 +246,22 @@ from (
 				or
 				@IncludeCancelOrder = 1 and 1 = 1
 		 )
-		 and (
-				(@IsFtySide = 1 and ((@DateType = 1 and O.SciDelivery <= @SpecialDay) or (@DateType = 2 and o.BuyerDelivery < @SpecialDay2)))
-				or 
-				(@IsFtySide = 0)
+		and (
+		(@IsFtySide = 1 and
+			(
+				(
+					@NoRestrictOrdersDelivery = 0 and
+					(
+						((@DateType = 1 and O.SciDelivery <= @SpecialDay) or (@DateType = 2 and o.BuyerDelivery < @SpecialDay2))	
+					)
+				)
+				or @NoRestrictOrdersDelivery = 1
 			)
+		)
+		or 
+		(
+			@IsFtySide = 0)
+		)
 		 and (o.BrandID = @Brand or @Brand = '')
 		 and o.ProgramID in (select distinct FactoryID from @tmpBaseOrderID)
 )a
@@ -390,11 +434,11 @@ select  ID,
         SewingOutput,
         SewingOutputCPU,
         IsProduceFty,
-        --summary��������Junk�q��ϥΡAForecast�S�Ʊ��O�]��Planning R10���t
+        --summary????????Junk?q???�TAForecast?S????O?]??Planning R10???t
         [isNormalOrderCanceled] = iif(  Junk = 1 and 
-                                        --���`�q��
+                                        --???`?q??
                                         (( Category in ('B','S')  and (localorder = 0 or SubconInType=2)) or
-                                        --��a�q��
+                                        --??a?q??
                                         (LocalOrder = 1 )),1,0),
         FtyZone,
         ProgramID,

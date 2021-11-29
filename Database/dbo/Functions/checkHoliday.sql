@@ -8,7 +8,7 @@ CREATE FUNCTION [dbo].[checkHoliday]
 	-- Add the parameters for the function here
 	@factoryid as varchar(8),
 	@checkdate as date,
-	@sewinglineid as varchar(2)
+	@sewinglineid as varchar(5)
 )
 RETURNS bit
 AS

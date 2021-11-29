@@ -28,29 +28,38 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelDate = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelTeam = new Sci.Win.UI.Label();
             this.dateDate = new Sci.Win.UI.DateBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
-            this.comboTeam = new Sci.Win.UI.ComboBox();
             this.label5 = new Sci.Win.UI.Label();
+            this.comboSewingTeam1 = new Sci.Production.Class.ComboSewingTeam(this.components);
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(302, 12);
+            this.print.Location = new System.Drawing.Point(238, 12);
             this.print.TabIndex = 5;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(302, 48);
+            this.toexcel.Location = new System.Drawing.Point(238, 48);
             this.toexcel.TabIndex = 6;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(302, 84);
+            this.close.Location = new System.Drawing.Point(238, 84);
             this.close.TabIndex = 7;
+            // 
+            // checkUseCustomized
+            // 
+            this.checkUseCustomized.Location = new System.Drawing.Point(188, 37);
+            // 
+            // txtVersion
+            // 
+            this.txtVersion.Location = new System.Drawing.Point(188, 37);
             // 
             // labelDate
             // 
@@ -95,22 +104,6 @@
             this.comboFactory.Size = new System.Drawing.Size(75, 24);
             this.comboFactory.TabIndex = 1;
             // 
-            // comboTeam
-            // 
-            this.comboTeam.BackColor = System.Drawing.Color.White;
-            this.comboTeam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboTeam.FormattingEnabled = true;
-            this.comboTeam.IsSupportUnselect = true;
-            this.comboTeam.Items.AddRange(new object[] {
-            "",
-            "A",
-            "B"});
-            this.comboTeam.Location = new System.Drawing.Point(88, 84);
-            this.comboTeam.Name = "comboTeam";
-            this.comboTeam.OldText = "";
-            this.comboTeam.Size = new System.Drawing.Size(63, 24);
-            this.comboTeam.TabIndex = 2;
-            // 
             // label5
             // 
             this.label5.BackColor = System.Drawing.Color.Transparent;
@@ -124,11 +117,25 @@
             this.label5.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
             this.label5.TextStyle.GradientColor = System.Drawing.Color.Red;
             // 
+            // comboSewingTeam1
+            // 
+            this.comboSewingTeam1.BackColor = System.Drawing.Color.White;
+            this.comboSewingTeam1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSewingTeam1.FormattingEnabled = true;
+            this.comboSewingTeam1.IssupportEmptyitem = true;
+            this.comboSewingTeam1.IssupportJunk = true;
+            this.comboSewingTeam1.IsSupportUnselect = true;
+            this.comboSewingTeam1.Location = new System.Drawing.Point(88, 84);
+            this.comboSewingTeam1.Name = "comboSewingTeam1";
+            this.comboSewingTeam1.OldText = "";
+            this.comboSewingTeam1.Size = new System.Drawing.Size(88, 24);
+            this.comboSewingTeam1.TabIndex = 2;
+            // 
             // R01
             // 
-            this.ClientSize = new System.Drawing.Size(394, 170);
+            this.ClientSize = new System.Drawing.Size(330, 177);
+            this.Controls.Add(this.comboSewingTeam1);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.comboTeam);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.dateDate);
             this.Controls.Add(this.labelTeam);
@@ -138,17 +145,21 @@
             this.DefaultControlForEdit = "dateDate";
             this.IsSupportToPrint = false;
             this.Name = "R01";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R01. Daily CMP Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelDate, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.labelTeam, 0);
             this.Controls.SetChildIndex(this.dateDate, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
-            this.Controls.SetChildIndex(this.comboTeam, 0);
             this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.comboSewingTeam1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -161,7 +172,7 @@
         private Win.UI.Label labelTeam;
         private Win.UI.DateBox dateDate;
         private Win.UI.ComboBox comboFactory;
-        private Win.UI.ComboBox comboTeam;
         private Win.UI.Label label5;
+        private Class.ComboSewingTeam comboSewingTeam1;
     }
 }

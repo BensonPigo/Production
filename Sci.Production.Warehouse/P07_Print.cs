@@ -5,10 +5,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-
+using Word = Microsoft.Office.Interop.Word;
 // using System.Data.SqlClient;
 using Sci.Win;
 using System.Runtime.InteropServices;
+using System.Drawing;
+using Sci.Production.Prg;
+using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
@@ -30,6 +33,16 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
             this.CheckControlEnable();
             this.poidList = polist;
+            this.comboType.Add("10X10", "10X10");
+            this.comboType.Add("5X5", "5X5");
+            this.comboType.SelectedIndex = 0;
+
+            string country = MyUtility.GetValue.Lookup($"select CountryID from Factory where ID = '{Env.User.Factory}'");
+
+            if (country != "PH")
+            {
+                this.comboType.SelectedIndex = 1;
+            }
         }
 
         private List<string> poidList;
@@ -46,6 +59,7 @@ namespace Sci.Production.Warehouse
                 }
             }
 
+            this.id = this.CurrentDataRow["ID"].ToString();
             return base.ValidateInput();
         }
 
@@ -54,7 +68,6 @@ namespace Sci.Production.Warehouse
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             DataRow row = this.CurrentDataRow;
-            this.id = row["ID"].ToString();
             this.Date1 = MyUtility.Check.Empty(row["PackingReceive"]) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(row["PackingReceive"])).ToShortDateString();
             this.Date2 = MyUtility.Check.Empty(row["WhseArrival"]) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(row["WhseArrival"])).ToShortDateString();
             this.ETA = MyUtility.Check.Empty(row["ETA"]) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(row["ETA"])).ToShortDateString();
@@ -88,62 +101,7 @@ namespace Sci.Production.Warehouse
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Wk", this.Wk));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FTYID", this.FTYID));
 
-            string sql = @"
-select  
-	R.Roll
-	,R.Dyelot
-	,R.PoId
-	,R.Seq1+'-'+R.Seq2 AS SEQ
-	,[RefNo]=p.RefNo
-	, [ColorID]=Color.Value 
-	,f.WeaveTypeID
-	,o.BrandID
-	,IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2)  
-			AND (p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))  
-			AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
-				,'',dbo.getMtlDesc(R.poid,R.seq1,R.seq2,2,0))[Desc]            
-	,R.ShipQty
-	,R.pounit
-	,R.StockQty
-	,R.StockUnit
-	,r.ActualQty
-	,[QtyVaniance]=R.ShipQty-R.ActualQty
-	,R.Weight
-	,R.ActualWeight
-	,[Vaniance]=R.ActualWeight - R.Weight 
-	,[SubQty]=sum(R.ShipQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
-	,[SubGW]=sum(R.Weight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 ) 
-	,[SubAW]=sum(R.ActualWeight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
-	,[SubStockQty]=sum(R.StockQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
-	,[TotalReceivingQty]=IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2)  
-			AND (p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))  
-			AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
-				,null,sum(R.StockQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 ))
-	,[SubVaniance]=R.ShipQty - R.ActualQty
-	,R.Remark		
-    ,ColorName = c.Name
-from dbo.Receiving_Detail R WITH (NOLOCK) 
-LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
-left join View_WH_Orders o WITH (NOLOCK) on o.ID = r.PoId
-LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
-LEFT JOIN color c on c.id = p.colorid and c.BrandId = p.BrandId 
-OUTER APPLY(
- SELECT [Value]=
-	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(p.SuppColor = '' or p.SuppColor is null, dbo.GetColorMultipleID(o.BrandID,p.ColorID),p.SuppColor)
-		 ELSE dbo.GetColorMultipleID(o.BrandID,p.ColorID)
-	 END
-)Color
-where R.id = @ID";
-
-            if (!MyUtility.Check.Empty(this.txtSPNo.Text))
-            {
-                pars.Add(new SqlParameter("@poid", this.txtSPNo.Text));
-                sql += " and R.Poid = @poid";
-            }
-
-            DualResult result = DBProxy.Current.Select(
-                string.Empty,
-                sql, pars, out this.dt);
+            DualResult result = this.LoadData();
             if (!result)
             {
                 return result;
@@ -200,6 +158,76 @@ where R.id = @ID";
             return Ict.Result.True;
         }
 
+        private DualResult LoadData()
+        {
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", this.id));
+
+            string sql = @"
+select  
+	R.Roll
+	,R.Dyelot
+	,R.PoId
+	,R.Seq1+'-'+R.Seq2 AS SEQ
+	,[RefNo]=p.RefNo
+	, [ColorID]=Color.Value 
+	,f.WeaveTypeID
+	,o.BrandID
+	,IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2)  
+			AND (p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))  
+			AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
+				,'',dbo.getMtlDesc(R.poid,R.seq1,R.seq2,2,0))[Desc]            
+	,R.ShipQty
+	,R.pounit
+	,R.StockQty
+	,R.StockUnit
+	,r.ActualQty
+	,[QtyVaniance]=R.ShipQty-R.ActualQty
+	,R.Weight
+	,R.ActualWeight
+	,[Vaniance]=R.ActualWeight - R.Weight 
+	,[SubQty]=sum(R.ShipQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
+	,[SubGW]=sum(R.Weight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 ) 
+	,[SubAW]=sum(R.ActualWeight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
+	,[SubStockQty]=sum(R.StockQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
+	,[TotalReceivingQty]=IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2)  
+			AND (p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))  
+			AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
+				,null,sum(R.StockQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 ))
+	,[SubVaniance]=R.ShipQty - R.ActualQty
+	,R.Remark		
+    ,ColorName = c.Name
+    ,R.MINDQRCode
+    ,[SuppColor] = p.ColorID
+    ,R.ActualQty
+from dbo.Receiving_Detail R WITH (NOLOCK) 
+LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
+left join View_WH_Orders o WITH (NOLOCK) on o.ID = r.PoId
+LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
+LEFT JOIN color c on c.id = p.colorid and c.BrandId = p.BrandId 
+OUTER APPLY(
+ SELECT [Value]=
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(p.SuppColor = '' or p.SuppColor is null, dbo.GetColorMultipleID(o.BrandID,p.ColorID),p.SuppColor)
+		 ELSE dbo.GetColorMultipleID(o.BrandID,p.ColorID)
+	 END
+)Color
+where R.id = @ID";
+
+            if (!MyUtility.Check.Empty(this.txtSPNo.Text))
+            {
+                pars.Add(new SqlParameter("@poid", this.txtSPNo.Text));
+                sql += " and R.Poid = @poid";
+            }
+
+            DualResult result = DBProxy.Current.Select(
+                string.Empty,
+                sql,
+                pars,
+                out this.dt);
+
+            return result;
+        }
+
         /// <inheritdoc/>
         public DataRow CurrentDataRow { get; set; }
 
@@ -208,6 +236,7 @@ where R.id = @ID";
             this.ReportResourceNamespace = typeof(P07_PrintData);
             this.ReportResourceAssembly = this.ReportResourceNamespace.Assembly;
             this.ReportResourceName = this.radioPanel1.Value == this.radioPLRcvReport.Value ? "P07_Report1.rdlc" : "P07_Report2.rdlc";
+            this.CheckControlEnable();
         }
 
         private void RadioPLRcvReport_CheckedChanged(object sender, EventArgs e)
@@ -217,14 +246,9 @@ where R.id = @ID";
 
         private void CheckControlEnable()
         {
-            if (this.radioPLRcvReport.Checked == true)
-            {
-                this.txtSPNo.Enabled = false;
-            }
-            else
-            {
-                this.txtSPNo.Enabled = true;
-            }
+            this.txtSPNo.Enabled = this.radioArriveWHReport.Checked;
+            this.comboType.Enabled = this.radioQRCodeSticker.Checked;
+            this.toexcel.Enabled = !this.radioQRCodeSticker.Checked;
         }
 
         /// <inheritdoc/>
@@ -320,6 +344,107 @@ where R.id = @ID";
                 strExcelName.OpenFile();
                 #endregion
             }
+
+            return true;
+        }
+
+        /// <inheritdoc/>
+        protected override bool ToPrint()
+        {
+            if (!this.radioQRCodeSticker.Checked)
+            {
+                return base.ToPrint();
+            }
+
+            this.ValidateInput();
+            DualResult result = this.LoadData();
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return true;
+            }
+
+            this.ShowWaitMessage("Data Loading ...");
+            Word._Application winword = new Word.Application();
+            Word._Document document;
+            Word.Table tables = null;
+
+            string fileName = this.comboType.Text == "5X5" ? "\\Warehouse_P07_Sticker5.dotx" : "\\Warehouse_P07_Sticker10.dotx";
+            object printFile = Sci.Env.Cfg.XltPathDir + fileName;
+            document = winword.Documents.Add(ref printFile);
+
+            var barcodeDatas = this.dt.AsEnumerable().Where(s => !MyUtility.Check.Empty(s["MINDQRCode"]));
+
+            if (barcodeDatas.Count() == 0)
+            {
+                MyUtility.Msg.InfoBox("No Data can print");
+                this.HideWaitMessage();
+                return true;
+            }
+
+            #region PrintBarCode
+            try
+            {
+                document.Activate();
+                Word.Tables table = document.Tables;
+
+                // 計算頁數
+                winword.Selection.Tables[1].Select();
+                winword.Selection.Copy();
+                for (int j = 1; j < barcodeDatas.Count(); j++)
+                {
+                    winword.Selection.MoveDown();
+                    if (barcodeDatas.Count() > 1)
+                    {
+                        winword.Selection.InsertNewPage();
+                    }
+
+                    winword.Selection.Paste();
+                }
+
+                int qrCodeWidth = this.comboType.Text == "10X10" ? 180 : 90;
+
+                // 填入資料
+                int i = 0;
+                foreach (var printItem in barcodeDatas)
+                {
+                    tables = table[i + 1];
+                    tables.Cell(1, 1).Range.Text = $"SP:{printItem["PoId"]}";
+                    tables.Cell(1, 2).Range.Text = $"SEQ:{printItem["SEQ"]}";
+                    tables.Cell(2, 1).Range.Text = $"Ref:{printItem["RefNo"]}";
+                    tables.Cell(2, 2).Range.Text = $"Lot:{printItem["Dyelot"]}";
+                    Bitmap oriBitmap = printItem["MINDQRCode"].ToString().ToBitmapQRcode(qrCodeWidth, qrCodeWidth);
+                    Clipboard.SetImage(oriBitmap);
+                    tables.Cell(3, 1).Range.Paste();
+                    tables.Cell(3, 2).Range.Paste();
+                    tables.Cell(4, 1).Range.Text = $"Color:{printItem["SuppColor"]}";
+                    tables.Cell(5, 1).Range.Text = $"Roll:{printItem["Roll"]}";
+                    tables.Cell(5, 2).Range.Text = $"Qty:{printItem["ActualQty"]}";
+                    i++;
+                }
+
+                // 產生的Word檔不可編輯
+                winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyReading);
+                winword.Visible = true;
+            }
+            catch (Exception ex)
+            {
+                if (winword != null)
+                {
+                    winword.Quit();
+                }
+
+                return new DualResult(false, "Export Word error.", ex);
+            }
+            finally
+            {
+                Marshal.ReleaseComObject(winword);
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+            #endregion
+            this.HideWaitMessage();
 
             return true;
         }

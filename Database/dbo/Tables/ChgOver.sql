@@ -5,7 +5,7 @@
     [FactoryID]       VARCHAR (8)    CONSTRAINT [DF_ChgOver_FactoryID] DEFAULT ('') NULL,
     [StyleID]         VARCHAR (15)   CONSTRAINT [DF_ChgOver_StyleID] DEFAULT ('') NULL,
     [SeasonID]        VARCHAR (10)   CONSTRAINT [DF_ChgOver_SeasonID] DEFAULT ('') NULL,
-    [SewingLineID]    VARCHAR (2)    CONSTRAINT [DF_ChgOver_SewingLineID] DEFAULT ('') NULL,
+    [SewingLineID]    VARCHAR (5)    CONSTRAINT [DF_ChgOver_SewingLineID] DEFAULT ('') NULL,
     [CDCodeID]        VARCHAR (6)    CONSTRAINT [DF_ChgOver_CDCodeID] DEFAULT ('') NULL,
     [Inline]          DATETIME       NULL,
     [TotalSewingTime] INT            CONSTRAINT [DF_ChgOver_TotalSewingTime] DEFAULT ((0)) NULL,
@@ -22,12 +22,14 @@
     [APSNo]           INT            CONSTRAINT [DF_ChgOver_APSSewID] DEFAULT ((0)) NULL,
     [Status]          VARCHAR (15)   CONSTRAINT [DF_ChgOver_Status] DEFAULT ('') NULL,
     [MDivisionID]     VARCHAR (8)    CONSTRAINT [DF_ChgOver_MDivisionID] DEFAULT ('') NULL,
-	[AddName]         VARCHAR (10)   CONSTRAINT [DF_ChgOver_AddName] DEFAULT ('') NULL,
+    [AddName]         VARCHAR (10)   CONSTRAINT [DF_ChgOver_AddName] DEFAULT ('') NULL,
     [AddDate]         DATETIME       NULL,
     [EditName]        VARCHAR (10)   CONSTRAINT [DF_ChgOver_EditName] DEFAULT ('') NULL,
     [EditDate]        DATETIME       NULL,
     CONSTRAINT [PK_ChgOver] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

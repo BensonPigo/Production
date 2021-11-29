@@ -1,23 +1,27 @@
 ﻿CREATE TABLE [dbo].[BorrowBack] (
-    [Id]          VARCHAR (13)   CONSTRAINT [DF_BorrowBack_Id] DEFAULT ('') NOT NULL,
-    [MDivisionID] VARCHAR (8)    CONSTRAINT [DF_BorrowBack_MDivisionID] DEFAULT ('') NULL,
-    [FactoryID]   VARCHAR (8)    NULL,
-    [Type]        VARCHAR (1)    CONSTRAINT [DF_BorrowBack_Type] DEFAULT ('') NULL,
-    [EstBackDate] DATE           NULL,
-    [BackDate]    DATE           NULL,
-    [BorrowId]    VARCHAR (13)   CONSTRAINT [DF_BorrowBack_BorrowId] DEFAULT ('') NULL,
-    [IssueDate]   DATE           NOT NULL,
-    [Status]      VARCHAR (15)   CONSTRAINT [DF_BorrowBack_Status] DEFAULT ('') NULL,
-    [Remark]      NVARCHAR (100) CONSTRAINT [DF_BorrowBack_Remark] DEFAULT ('') NULL,
-    [AddName]     VARCHAR (10)   CONSTRAINT [DF_BorrowBack_AddName] DEFAULT ('') NULL,
-    [AddDate]     DATETIME       NULL,
-    [EditName]    VARCHAR (10)   CONSTRAINT [DF_BorrowBack_EditName] DEFAULT ('') NULL,
-    [EditDate]    DATETIME       NULL,
-	[SewingLineID]    VARCHAR (2)   CONSTRAINT [DF_BorrowBack_SewingLineID] DEFAULT ('') NOT NULL,
-	[DepartmentID]    VARCHAR (8)   CONSTRAINT [DF_BorrowBack_DepartmentID] DEFAULT ('') NOT NULL,
-	[Shift]    VARCHAR (1)   CONSTRAINT [DF_BorrowBack_Shift] DEFAULT ('') NOT NULL,
+    [Id]           VARCHAR (13)   CONSTRAINT [DF_BorrowBack_Id] DEFAULT ('') NOT NULL,
+    [MDivisionID]  VARCHAR (8)    CONSTRAINT [DF_BorrowBack_MDivisionID] DEFAULT ('') NULL,
+    [FactoryID]    VARCHAR (8)    NULL,
+    [Type]         VARCHAR (1)    CONSTRAINT [DF_BorrowBack_Type] DEFAULT ('') NULL,
+    [EstBackDate]  DATE           NULL,
+    [BackDate]     DATE           NULL,
+    [BorrowId]     VARCHAR (13)   CONSTRAINT [DF_BorrowBack_BorrowId] DEFAULT ('') NULL,
+    [IssueDate]    DATE           NOT NULL,
+    [Status]       VARCHAR (15)   CONSTRAINT [DF_BorrowBack_Status] DEFAULT ('') NULL,
+    [Remark]       NVARCHAR (100) CONSTRAINT [DF_BorrowBack_Remark] DEFAULT ('') NULL,
+    [AddName]      VARCHAR (10)   CONSTRAINT [DF_BorrowBack_AddName] DEFAULT ('') NULL,
+    [AddDate]      DATETIME       NULL,
+    [EditName]     VARCHAR (10)   CONSTRAINT [DF_BorrowBack_EditName] DEFAULT ('') NULL,
+    [EditDate]     DATETIME       NULL,
+    [SewingLineID] VARCHAR (5)    CONSTRAINT [DF_BorrowBack_SewingLineID] DEFAULT ('') NOT NULL,
+    [DepartmentID] VARCHAR (8)    CONSTRAINT [DF_BorrowBack_DepartmentID] DEFAULT ('') NOT NULL,
+    [Shift]        VARCHAR (1)    CONSTRAINT [DF_BorrowBack_Shift] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_BorrowBack] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
+
+
 
 
 

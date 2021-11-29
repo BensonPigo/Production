@@ -1,94 +1,87 @@
 
 
-CREATE TABLE [dbo].[CFAInspectionRecord](
-	[ID] [varchar](13) NOT NULL,
-	[AuditDate] [date] NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[MDivisionid] [varchar](8) NOT NULL,
-	[SewingLineID] [varchar](100) NOT NULL,
-	[Team] [varchar](1) NOT NULL,
-	[Shift] [varchar](1) NOT NULL,
-	[Stage] [varchar](10) NOT NULL,
-	[InspectQty] [numeric](7, 0) NOT NULL,
-	[DefectQty] [numeric](7, 0) NOT NULL,
-	[ClogReceivedPercentage] [numeric](3, 0) NOT NULL,
-	[Result] [varchar](15) NOT NULL,
-	[CFA] [varchar](10) NOT NULL,
-	[Status] [varchar](15) NOT NULL,
-	[Remark] [nvarchar](500) NOT NULL,
-	[AddName] [varchar](10) NOT NULL,
-	[AddDate] [datetime] NULL,
-	[EditName] [varchar](10) NOT NULL,
-	[EditDate] [datetime] NULL,
-	FirstInspection Bit NOT NULL CONSTRAINT [DF_CFAInspectionRecord_FirstInspection] DEFAULT 0,
-	IsCombinePO Bit NOT NULL CONSTRAINT [DF_CFAInspectionRecord_IsCombinePO] DEFAULT 0,
-	[IsImportFromMES] BIT NOT NULL DEFAULT ((0)), 
-    CONSTRAINT [PK_CFAInspectionRecord] PRIMARY KEY CLUSTERED 
-	(
-		[ID] ASC
-	)
-) 
+CREATE TABLE [dbo].[CFAInspectionRecord] (
+    [ID]                     VARCHAR (13)   NOT NULL,
+    [AuditDate]              DATE           NULL,
+    [FactoryID]              VARCHAR (8)    DEFAULT ('') NOT NULL,
+    [MDivisionid]            VARCHAR (8)    DEFAULT ('') NOT NULL,
+    [SewingLineID]           VARCHAR (100)  DEFAULT ('') NOT NULL,
+    [Team]                   VARCHAR (5)    DEFAULT ('') NOT NULL,
+    [Shift]                  VARCHAR (1)    DEFAULT ('') NOT NULL,
+    [Stage]                  VARCHAR (10)   DEFAULT ('') NOT NULL,
+    [InspectQty]             NUMERIC (7)    DEFAULT ((0)) NOT NULL,
+    [DefectQty]              NUMERIC (7)    DEFAULT ((0)) NOT NULL,
+    [ClogReceivedPercentage] NUMERIC (3)    DEFAULT ((0)) NOT NULL,
+    [Result]                 VARCHAR (16)   DEFAULT ('') NOT NULL,
+    [CFA]                    VARCHAR (10)   DEFAULT ('') NOT NULL,
+    [Status]                 VARCHAR (15)   DEFAULT ('') NOT NULL,
+    [Remark]                 NVARCHAR (500) DEFAULT ('') NOT NULL,
+    [AddName]                VARCHAR (10)   DEFAULT ('') NOT NULL,
+    [AddDate]                DATETIME       NULL,
+    [EditName]               VARCHAR (10)   DEFAULT ('') NOT NULL,
+    [EditDate]               DATETIME       NULL,
+    [IsCombinePO]            BIT            CONSTRAINT [DF_CFAInspectionRecord_IsCombinePO] DEFAULT ((0)) NOT NULL,
+    [FirstInspection]        BIT            CONSTRAINT [DF_CFAInspectionRecord_FirstInspection] DEFAULT ((0)) NOT NULL,
+    [IsImportFromMES]        BIT            DEFAULT ((0)) NULL,
+    CONSTRAINT [PK_CFAInspectionRecord] PRIMARY KEY CLUSTERED ([ID] ASC)
+);
+
+ 
 GO
 ;
 
 
-ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [MDivisionid]
-GO
 
-ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [SewingLineID]
-GO
-
-ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [Team]
-GO
-
-ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [Shift]
-GO
-
-ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [Stage]
 GO
 
 
 GO
 
-ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ((0)) FOR [InspectQty]
-GO
 
-ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ((0)) FOR [DefectQty]
-GO
-
-ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ((0)) FOR [ClogReceivedPercentage]
-GO
-
-ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [Result]
-GO
-
-ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [CFA]
-GO
-
-ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [Status]
-GO
-
-ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [Remark]
-GO
-
-ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [AddName]
-GO
-
-ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [EditName]
 GO
 
 
-
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'∏”≥Êæ⁄©“¶≥™∫Ø»Ωc¨Oß_¨O≤ƒ§@¶∏¿À≈Á Stagger', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAInspectionRecord', @level2type = N'COLUMN', @level2name = N'FirstInspection';
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'¨Oß_¨∞±qMES¬‡§J™∫∏ÍÆ∆',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'CFAInspectionRecord',
-    @level2type = N'COLUMN',
-    @level2name = N'IsImportFromMES'
+
+
+GO
+
+
+GO
+
+
+GO
+
+
+GO
+
+
+GO
+
+
+GO
+
+
+GO
+
+
+GO
+
+
+GO
+
+
+GO
+
+
+GO
+
+
+
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ÔøΩ”≥ÔøΩ⁄©“¶ÔøΩÔøΩÔøΩÔøΩ»ΩcÔøΩOÔøΩ_ÔøΩOÔøΩƒ§@ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ Stagger', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAInspectionRecord', @level2type = N'COLUMN', @level2name = N'FirstInspection';
+GO
+EXECUTE sp_addextendedproperty @name = N'IsImportFromMES', @value = N'ÊòØÂê¶ÁÇ∫ÂæûMESËΩâÂÖ•ÁöÑË≥áÊñô', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAInspectionRecord', @level2type = N'COLUMN', @level2name = N'IsImportFromMES';
+

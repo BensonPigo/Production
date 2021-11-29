@@ -33,12 +33,7 @@ namespace Sci.Production.Quality
         {
             base.OnFormLoaded();
             #region Combox setting
-            Dictionary<string, string> team_RowSource = new Dictionary<string, string>();
-            team_RowSource.Add("A", "A");
-            team_RowSource.Add("B", "B");
-            this.comboTeam.DataSource = new BindingSource(team_RowSource, null);
-            this.comboTeam.ValueMember = "Key";
-            this.comboTeam.DisplayMember = "Value";
+            this.comboSewingTeam1.SetDataSource();
 
             Dictionary<string, string> stage_RowSource = new Dictionary<string, string>();
             stage_RowSource.Add("I", "Comments/Roving");
@@ -542,9 +537,9 @@ where a.ID='{0}'",
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.comboTeam.Text))
+            if (MyUtility.Check.Empty(this.comboSewingTeam1.Text))
             {
-                this.comboTeam.Select();
+                this.comboSewingTeam1.Select();
                 MyUtility.Msg.WarningBox("<Team> cannot be empty", "Warning");
                 return false;
             }

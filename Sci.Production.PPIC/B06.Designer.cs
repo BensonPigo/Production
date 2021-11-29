@@ -155,7 +155,7 @@
             this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLine.Location = new System.Drawing.Point(112, 61);
             this.txtLine.Name = "txtLine";
-            this.txtLine.Size = new System.Drawing.Size(40, 23);
+            this.txtLine.Size = new System.Drawing.Size(69, 23);
             this.txtLine.TabIndex = 1;
             this.txtLine.Validating += new System.ComponentModel.CancelEventHandler(this.TxtLine_Validating);
             // 
