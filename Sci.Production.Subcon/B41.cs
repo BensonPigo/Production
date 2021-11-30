@@ -23,11 +23,7 @@ namespace Sci.Production.Subcon
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
-            if (this.grid1 != null)
-            {
-                bool edit = this.EditMode && !MyUtility.Convert.GetBool(this.CurrentMaintain["junk"]);
-                this.grid1.IsEditingReadOnly = !edit;
-            }
+            this.GridEdit();
         }
 
         /// <inheritdoc/>
@@ -59,10 +55,27 @@ namespace Sci.Production.Subcon
         }
 
         /// <inheritdoc/>
+        protected override void ClickNewAfter()
+        {
+            base.ClickNewAfter();
+            this.GridEdit();
+        }
+
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
             this.txtLocation.ReadOnly = true;
+            this.GridEdit();
+        }
+
+        private void GridEdit()
+        {
+            if (this.grid1 != null && this.CurrentMaintain != null)
+            {
+                bool edit = this.EditMode && !MyUtility.Convert.GetBool(this.CurrentMaintain["junk"]);
+                this.grid1.IsEditingReadOnly = !edit;
+            }
         }
 
         /// <inheritdoc/>
