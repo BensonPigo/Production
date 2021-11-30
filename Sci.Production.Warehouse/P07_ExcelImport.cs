@@ -695,10 +695,9 @@ where   stocktype='{0}'
                     return;
                 }
 
-                if (tmpPacking.AsEnumerable().Where(w => w["ErrMsg"].ToString().Contains("This QR Code aleady exist")).Any()
-                    || tmpPacking.AsEnumerable().GroupBy(g => MyUtility.Convert.GetString(g["MINDQRCode"]))
-                    .Select(s => new { s.Key, ct = s.Count() })
-                    .Any(a => a.ct > 1))
+                if (tmpPacking.AsEnumerable().Where(w => w["ErrMsg"].ToString().Contains("This QR Code aleady exist")).Any() ||
+                    tmpPacking.AsEnumerable().GroupBy(g => MyUtility.Convert.GetString(g["MINDQRCode"].ToString()))
+                    .Any(a => !MyUtility.Check.Empty(a.Key) && a.Count() > 1))
                 {
                     MyUtility.Msg.WarningBox("QR Code are duplicated!!");
                     return;
