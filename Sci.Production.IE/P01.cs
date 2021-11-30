@@ -130,6 +130,7 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,(isnull(td.Frequency,0) * isnull(o.SeamLength,0)) as ttlSeamLength
 	  ,o.MasterPlusGroup
       ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.val, 0)) as bit)
+      ,IsSubprocess
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join Mold m WITH (NOLOCK) on m.ID=td.Mold
@@ -786,6 +787,7 @@ where Junk = 0";
                 .Numeric("Frequency", header: "Frequency", integer_places: 2, decimal_places: 2, maximum: 99.99M, minimum: 0, settings: this.frequency)
                 .Text("MtlFactorID", header: "Factor", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("SMV", header: "SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, settings: this.smvsec)
+                 .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(7), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("MachineTypeID", header: "ST/MC Type", width: Widths.AnsiChars(8), settings: this.machine)
                 .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(8), settings: txtSubReason)
                 .Text("Mold", header: "Attachment", width: Widths.AnsiChars(8), settings: this.mold)

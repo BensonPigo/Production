@@ -28,8 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.checkThreadcons = new Sci.Win.UI.CheckBox();
+            this.components = new System.ComponentModel.Container();
+            this.panel3 = new Sci.Win.UI.Panel();
             this.btnThreadRatio = new Sci.Win.UI.Button();
+            this.checkThreadcons = new Sci.Win.UI.CheckBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.label10 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
@@ -43,100 +45,74 @@
             this.labelArtworkType = new Sci.Win.UI.Label();
             this.labelDescription = new Sci.Win.UI.Label();
             this.labelCode = new Sci.Win.UI.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
-            this.masterpanel.SuspendLayout();
-            this.detailpanel.SuspendLayout();
-            this.detail2.SuspendLayout();
-            this.detailpanel2.SuspendLayout();
+            this.gridDetail = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
+            this.panel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // masterpanel
-            // 
-            this.masterpanel.Controls.Add(this.checkThreadcons);
-            this.masterpanel.Controls.Add(this.btnThreadRatio);
-            this.masterpanel.Controls.Add(this.checkJunk);
-            this.masterpanel.Controls.Add(this.label10);
-            this.masterpanel.Controls.Add(this.label9);
-            this.masterpanel.Controls.Add(this.numManualAllowance);
-            this.masterpanel.Controls.Add(this.numMachineAllowance);
-            this.masterpanel.Controls.Add(this.displayArtworkType);
-            this.masterpanel.Controls.Add(this.displayDescription);
-            this.masterpanel.Controls.Add(this.displayCode);
-            this.masterpanel.Controls.Add(this.labelManualAllowance);
-            this.masterpanel.Controls.Add(this.labelMachineAllowance);
-            this.masterpanel.Controls.Add(this.labelArtworkType);
-            this.masterpanel.Controls.Add(this.labelDescription);
-            this.masterpanel.Controls.Add(this.labelCode);
-            this.masterpanel.Size = new System.Drawing.Size(829, 197);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelCode, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelDescription, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelArtworkType, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelMachineAllowance, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelManualAllowance, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayCode, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayDescription, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayArtworkType, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numMachineAllowance, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numManualAllowance, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label10, 0);
-            this.masterpanel.Controls.SetChildIndex(this.checkJunk, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnThreadRatio, 0);
-            this.masterpanel.Controls.SetChildIndex(this.checkThreadcons, 0);
-            // 
-            // detailpanel
-            // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 197);
-            this.detailpanel.Size = new System.Drawing.Size(829, 221);
-            // 
-            // gridicon
-            // 
-            this.gridicon.Location = new System.Drawing.Point(702, 162);
-            // 
-            // detailgridcont
-            // 
-            this.detailgridcont.Size = new System.Drawing.Size(829, 221);
-            // 
-            // detail2
-            // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
-            // 
-            // detailgridcont2
-            // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
-            // 
-            // detailpanel2
-            // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(829, 456);
+            this.detail.Size = new System.Drawing.Size(757, 505);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(829, 418);
+            this.detailcont.Controls.Add(this.gridDetail);
+            this.detailcont.Controls.Add(this.panel3);
+            this.detailcont.Size = new System.Drawing.Size(757, 467);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 418);
-            this.detailbtm.Size = new System.Drawing.Size(829, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 467);
+            this.detailbtm.Size = new System.Drawing.Size(757, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(829, 456);
+            this.browse.Size = new System.Drawing.Size(831, 505);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(837, 485);
+            this.tabs.Size = new System.Drawing.Size(765, 534);
+            // 
+            // panel3
+            // 
+            this.panel3.Controls.Add(this.btnThreadRatio);
+            this.panel3.Controls.Add(this.checkThreadcons);
+            this.panel3.Controls.Add(this.checkJunk);
+            this.panel3.Controls.Add(this.label10);
+            this.panel3.Controls.Add(this.label9);
+            this.panel3.Controls.Add(this.numManualAllowance);
+            this.panel3.Controls.Add(this.numMachineAllowance);
+            this.panel3.Controls.Add(this.displayArtworkType);
+            this.panel3.Controls.Add(this.displayDescription);
+            this.panel3.Controls.Add(this.displayCode);
+            this.panel3.Controls.Add(this.labelManualAllowance);
+            this.panel3.Controls.Add(this.labelMachineAllowance);
+            this.panel3.Controls.Add(this.labelArtworkType);
+            this.panel3.Controls.Add(this.labelDescription);
+            this.panel3.Controls.Add(this.labelCode);
+            this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel3.Location = new System.Drawing.Point(0, 0);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(757, 190);
+            this.panel3.TabIndex = 4;
+            // 
+            // btnThreadRatio
+            // 
+            this.btnThreadRatio.Location = new System.Drawing.Point(605, 10);
+            this.btnThreadRatio.Name = "btnThreadRatio";
+            this.btnThreadRatio.Size = new System.Drawing.Size(111, 30);
+            this.btnThreadRatio.TabIndex = 62;
+            this.btnThreadRatio.Text = "Thread Ratio";
+            this.btnThreadRatio.UseVisualStyleBackColor = true;
+            this.btnThreadRatio.Click += new System.EventHandler(this.BtnThreadRatio_Click);
             // 
             // checkThreadcons
             // 
@@ -144,23 +120,13 @@
             this.checkThreadcons.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "isthread", true));
             this.checkThreadcons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkThreadcons.IsSupportEditMode = false;
-            this.checkThreadcons.Location = new System.Drawing.Point(498, 14);
+            this.checkThreadcons.Location = new System.Drawing.Point(415, 10);
             this.checkThreadcons.Name = "checkThreadcons";
             this.checkThreadcons.ReadOnly = true;
             this.checkThreadcons.Size = new System.Drawing.Size(173, 21);
-            this.checkThreadcons.TabIndex = 47;
+            this.checkThreadcons.TabIndex = 61;
             this.checkThreadcons.Text = "Calculate Thread cons.";
             this.checkThreadcons.UseVisualStyleBackColor = true;
-            // 
-            // btnThreadRatio
-            // 
-            this.btnThreadRatio.Location = new System.Drawing.Point(691, 10);
-            this.btnThreadRatio.Name = "btnThreadRatio";
-            this.btnThreadRatio.Size = new System.Drawing.Size(111, 30);
-            this.btnThreadRatio.TabIndex = 46;
-            this.btnThreadRatio.Text = "Thread Ratio";
-            this.btnThreadRatio.UseVisualStyleBackColor = true;
-            this.btnThreadRatio.Click += new System.EventHandler(this.BtnThreadRatio_Click);
             // 
             // checkJunk
             // 
@@ -168,28 +134,28 @@
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkJunk.IsSupportEditMode = false;
-            this.checkJunk.Location = new System.Drawing.Point(435, 14);
+            this.checkJunk.Location = new System.Drawing.Point(352, 10);
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.ReadOnly = true;
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
-            this.checkJunk.TabIndex = 43;
+            this.checkJunk.TabIndex = 58;
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(215, 157);
+            this.label10.Location = new System.Drawing.Point(215, 153);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(18, 23);
-            this.label10.TabIndex = 45;
+            this.label10.TabIndex = 60;
             this.label10.Text = "%";
             // 
             // label9
             // 
-            this.label9.Location = new System.Drawing.Point(215, 122);
+            this.label9.Location = new System.Drawing.Point(215, 118);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(18, 23);
-            this.label9.TabIndex = 44;
+            this.label9.TabIndex = 59;
             this.label9.Text = "%";
             // 
             // numManualAllowance
@@ -199,7 +165,7 @@
             this.numManualAllowance.DecimalPlaces = 2;
             this.numManualAllowance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numManualAllowance.IsSupportEditMode = false;
-            this.numManualAllowance.Location = new System.Drawing.Point(162, 157);
+            this.numManualAllowance.Location = new System.Drawing.Point(162, 153);
             this.numManualAllowance.Name = "numManualAllowance";
             this.numManualAllowance.NullValue = new decimal(new int[] {
             0,
@@ -208,7 +174,7 @@
             0});
             this.numManualAllowance.ReadOnly = true;
             this.numManualAllowance.Size = new System.Drawing.Size(50, 23);
-            this.numManualAllowance.TabIndex = 41;
+            this.numManualAllowance.TabIndex = 56;
             this.numManualAllowance.Value = new decimal(new int[] {
             0,
             0,
@@ -222,7 +188,7 @@
             this.numMachineAllowance.DecimalPlaces = 2;
             this.numMachineAllowance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numMachineAllowance.IsSupportEditMode = false;
-            this.numMachineAllowance.Location = new System.Drawing.Point(162, 122);
+            this.numMachineAllowance.Location = new System.Drawing.Point(162, 118);
             this.numMachineAllowance.Name = "numMachineAllowance";
             this.numMachineAllowance.NullValue = new decimal(new int[] {
             0,
@@ -231,7 +197,7 @@
             0});
             this.numMachineAllowance.ReadOnly = true;
             this.numMachineAllowance.Size = new System.Drawing.Size(50, 23);
-            this.numMachineAllowance.TabIndex = 39;
+            this.numMachineAllowance.TabIndex = 54;
             this.numMachineAllowance.Value = new decimal(new int[] {
             0,
             0,
@@ -243,98 +209,114 @@
             this.displayArtworkType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ArtworkTypeID", true));
             this.displayArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayArtworkType.Location = new System.Drawing.Point(162, 87);
+            this.displayArtworkType.Location = new System.Drawing.Point(162, 83);
             this.displayArtworkType.Name = "displayArtworkType";
             this.displayArtworkType.Size = new System.Drawing.Size(140, 23);
-            this.displayArtworkType.TabIndex = 37;
+            this.displayArtworkType.TabIndex = 52;
             // 
             // displayDescription
             // 
             this.displayDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayDescription.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Description", true));
             this.displayDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayDescription.Location = new System.Drawing.Point(162, 49);
+            this.displayDescription.Location = new System.Drawing.Point(162, 45);
             this.displayDescription.Name = "displayDescription";
             this.displayDescription.Size = new System.Drawing.Size(380, 23);
-            this.displayDescription.TabIndex = 35;
+            this.displayDescription.TabIndex = 50;
             // 
             // displayCode
             // 
             this.displayCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
             this.displayCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCode.Location = new System.Drawing.Point(162, 14);
+            this.displayCode.Location = new System.Drawing.Point(162, 10);
             this.displayCode.Name = "displayCode";
             this.displayCode.Size = new System.Drawing.Size(80, 23);
-            this.displayCode.TabIndex = 33;
+            this.displayCode.TabIndex = 48;
             // 
             // labelManualAllowance
             // 
-            this.labelManualAllowance.Location = new System.Drawing.Point(33, 157);
+            this.labelManualAllowance.Location = new System.Drawing.Point(33, 153);
             this.labelManualAllowance.Name = "labelManualAllowance";
             this.labelManualAllowance.Size = new System.Drawing.Size(125, 23);
-            this.labelManualAllowance.TabIndex = 42;
+            this.labelManualAllowance.TabIndex = 57;
             this.labelManualAllowance.Text = "Manual Allowance";
             // 
             // labelMachineAllowance
             // 
-            this.labelMachineAllowance.Location = new System.Drawing.Point(33, 122);
+            this.labelMachineAllowance.Location = new System.Drawing.Point(33, 118);
             this.labelMachineAllowance.Name = "labelMachineAllowance";
             this.labelMachineAllowance.Size = new System.Drawing.Size(125, 23);
-            this.labelMachineAllowance.TabIndex = 40;
+            this.labelMachineAllowance.TabIndex = 55;
             this.labelMachineAllowance.Text = "Machine Allowance";
             // 
             // labelArtworkType
             // 
-            this.labelArtworkType.Location = new System.Drawing.Point(33, 87);
+            this.labelArtworkType.Location = new System.Drawing.Point(33, 83);
             this.labelArtworkType.Name = "labelArtworkType";
             this.labelArtworkType.Size = new System.Drawing.Size(125, 23);
-            this.labelArtworkType.TabIndex = 38;
+            this.labelArtworkType.TabIndex = 53;
             this.labelArtworkType.Text = "Artwork Type";
             // 
             // labelDescription
             // 
-            this.labelDescription.Location = new System.Drawing.Point(33, 49);
+            this.labelDescription.Location = new System.Drawing.Point(33, 45);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(125, 23);
-            this.labelDescription.TabIndex = 36;
+            this.labelDescription.TabIndex = 51;
             this.labelDescription.Text = "Description";
             // 
             // labelCode
             // 
-            this.labelCode.Location = new System.Drawing.Point(33, 14);
+            this.labelCode.Location = new System.Drawing.Point(33, 10);
             this.labelCode.Name = "labelCode";
             this.labelCode.Size = new System.Drawing.Size(125, 23);
-            this.labelCode.TabIndex = 34;
+            this.labelCode.TabIndex = 49;
             this.labelCode.Text = "ST/MC type";
+            // 
+            // gridDetail
+            // 
+            this.gridDetail.AllowUserToAddRows = false;
+            this.gridDetail.AllowUserToDeleteRows = false;
+            this.gridDetail.AllowUserToResizeRows = false;
+            this.gridDetail.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridDetail.DataSource = this.listControlBindingSource1;
+            this.gridDetail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridDetail.Location = new System.Drawing.Point(0, 190);
+            this.gridDetail.Name = "gridDetail";
+            this.gridDetail.RowHeadersVisible = false;
+            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridDetail.RowTemplate.Height = 24;
+            this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridDetail.ShowCellToolTips = false;
+            this.gridDetail.Size = new System.Drawing.Size(757, 277);
+            this.gridDetail.TabIndex = 5;
+            this.gridDetail.TabStop = false;
             // 
             // B05
             // 
-            this.ClientSize = new System.Drawing.Size(837, 518);
-            this.ConnectionName = "Trade";
+            this.ClientSize = new System.Drawing.Size(765, 567);
             this.DefaultControl = "displayCode";
             this.DefaultControlForEdit = "displayCode";
             this.DefaultOrder = "ID";
             this.EnableGridJunkColor = true;
-            this.GridAlias = "MachineType_Detail";
-            this.GridUniqueKey = "ID,FactoryID";
+            this.IsDeleteOnBrowse = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B05";
-            this.OnLineHelpID = "Sci.Win.Tems.Input6";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B05. ST/MC type";
-            this.UniqueExpress = "ID";
             this.WorkAlias = "MachineType";
-            this.Controls.SetChildIndex(this.tabs, 0);
-            ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
-            this.masterpanel.ResumeLayout(false);
-            this.masterpanel.PerformLayout();
-            this.detailpanel.ResumeLayout(false);
-            this.detail2.ResumeLayout(false);
-            this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
@@ -342,6 +324,10 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
+            this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -349,8 +335,9 @@
 
         #endregion
 
+        private Win.UI.Panel panel3;
+        private Win.UI.Grid gridDetail;
         private Win.UI.CheckBox checkThreadcons;
-        private Win.UI.Button btnThreadRatio;
         private Win.UI.CheckBox checkJunk;
         private Win.UI.Label label10;
         private Win.UI.Label label9;
@@ -364,5 +351,7 @@
         private Win.UI.Label labelArtworkType;
         private Win.UI.Label labelDescription;
         private Win.UI.Label labelCode;
+        private Win.UI.Button btnThreadRatio;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
     }
 }
