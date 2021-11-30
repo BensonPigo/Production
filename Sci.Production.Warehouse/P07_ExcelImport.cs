@@ -542,17 +542,20 @@ where   stocktype='{0}'
                                 }
 
                                 sqlpar.Clear();
-                                sqlpar.Add(new SqlParameter("@MINDQRCode", newRow["MINDQRCode"].ToString().Trim()));
-                                sql = $@"select r.InvNo from Receiving_Detail rd inner join Receiving r on r.id = rd.id where rd.MINDQRCode = @MINDQRCode and rd.id <> '{this.master["id"]}'";
-                                if (MyUtility.Check.Seek(sql, sqlpar, out dr2))
+                                if (!MyUtility.Check.Empty(newRow["MINDQRCode"].ToString().Trim()))
                                 {
-                                    listNewRowErrMsg.Add($"This QR Code already exist WK#{dr2["InvNo"]}, cannot import.");
-                                }
+                                    sqlpar.Add(new SqlParameter("@MINDQRCode", newRow["MINDQRCode"].ToString().Trim()));
+                                    sql = $@"select r.InvNo from Receiving_Detail rd inner join Receiving r on r.id = rd.id where rd.MINDQRCode = @MINDQRCode and rd.id <> '{this.master["id"]}'";
+                                    if (MyUtility.Check.Seek(sql, sqlpar, out dr2))
+                                    {
+                                        listNewRowErrMsg.Add($"This QR Code already exist WK#{dr2["InvNo"]}, cannot import.");
+                                    }
 
-                                if (this.detailData.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted)
-                                    .Any(a => MyUtility.Convert.GetString(a["MINDQRCode"]) == MyUtility.Convert.GetString(newRow["MINDQRCode"])))
-                                {
-                                    listNewRowErrMsg.Add($"This QR Code already exist, cannot import.");
+                                    if (this.detailData.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted)
+                                        .Any(a => MyUtility.Convert.GetString(a["MINDQRCode"]) == MyUtility.Convert.GetString(newRow["MINDQRCode"])))
+                                    {
+                                        listNewRowErrMsg.Add($"This QR Code already exist, cannot import.");
+                                    }
                                 }
 
                                 if (listNewRowHintMsg.Count > 0 && listNewRowErrMsg.Count == 0)
