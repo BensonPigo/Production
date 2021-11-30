@@ -403,7 +403,7 @@ where   ss.EstCutDate <> @EstCutDate and
                 return result;
             }
 
-            // 3.再把這些單重新傳給廠商新增
+            // 3.呼叫中間API再把這些單重新傳給廠商新增 (呼叫中間API會依據Key重撈資料)
             foreach (DataRow dr in dt.Rows)
             {
                 result = new Gensong_SpreadingSchedule().SendSpreadingSchedule(dr["FactoryID"].ToString(), (DateTime)dr["EstCutDate"], dr["CutCellID"].ToString());
