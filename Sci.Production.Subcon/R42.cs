@@ -92,7 +92,9 @@ Select
     [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
 	[FabricKind] = FabricKind.val,
     [Cut Ref#] = b.CutRef,
-    [SP#] = dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo order by OrderID for XML RAW)),
+	[SP#] =iif((select count(1) from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo) = 1
+		, b.OrderID
+		, dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo order by OrderID for XML RAW))),
     [Master SP#] = b.POID,
     [M] = b.MDivisionid,
     [Factory] = o.FtyGroup,
@@ -128,9 +130,9 @@ Select
 	,CutCellID
 into #tmp
 from BundleTransfer bt WITH (NOLOCK)
-left join Bundle_Detail bd WITH (NOLOCK) on bt.BundleNo = bd.BundleNo
-left join Bundle b WITH (NOLOCK) on bd.Id = b.Id
-left join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
+inner join Bundle_Detail bd WITH (NOLOCK) on bt.BundleNo = bd.BundleNo
+inner join Bundle b WITH (NOLOCK) on bd.Id = b.Id
+inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 outer apply(
     select sub = 1
@@ -228,7 +230,9 @@ Select
     [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
     [FabricKind] = FabricKind.val,
     [Cut Ref#] = b.CutRef,
-    [SP#] = dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo order by OrderID for XML RAW)),
+	[SP#] =iif((select count(1) from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo) = 1
+		, b.OrderID
+		, dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo order by OrderID for XML RAW))),
     [Master SP#] = b.POID,
     [M] = b.MDivisionid,
     [Factory] = o.FtyGroup,
@@ -265,8 +269,8 @@ Select
 into #tmp
 from BundleTransfer bt WITH (NOLOCK, Index(BundleTransferDate))
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = bt.BundleNo
-left join Bundle b WITH (NOLOCK) on b.id = bd.id
-left join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
+inner join Bundle b WITH (NOLOCK) on b.id = bd.id
+inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 outer apply(
     select sub = 1
