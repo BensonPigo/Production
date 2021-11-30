@@ -339,7 +339,46 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.
         /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
-            #region ISP20210219 檢查此次有存檔CutRef是否有存在未來的日期，若有就刪除，已完成與這次維護的資料不刪除
+            List<SqlParameter> listPar = new List<SqlParameter>();
+            listPar.Add(new SqlParameter("@EstCutDate", this.CurrentMaintain["EstCutDate"]));
+            listPar.Add(new SqlParameter("@FactoryID", this.CurrentMaintain["FactoryID"]));
+            listPar.Add(new SqlParameter("@CutCellID", this.CurrentMaintain["CutCellID"]));
+
+            // 1.檢查此次有存檔CutRef是否有存在未來的日期，這些將會刪除的單資訊先撈出，Call廠商API做整單刪除
+            string sqlDeleteList = $@"
+declare @today date = getdate()
+
+select distinct ss.FactoryID, ss.EstCutDate, ss.CutCellID
+from SpreadingSchedule ss
+inner join SpreadingSchedule_Detail ssd on ss.Ukey = ssd.SpreadingScheduleUkey
+where   ss.EstCutDate <> @EstCutDate and
+		ss.EstCutDate >= @today and
+		ss.FactoryID = @FactoryID and
+		ss.CutCellID = @CutCellID  and
+        ssd.IsAGVArrived = 0 and
+        ssd.CutRef in (select  sd.CutRef from	SpreadingSchedule s with(nolock)
+						 inner join SpreadingSchedule_Detail sd with(nolock) on s.Ukey = sd.SpreadingScheduleUkey
+						 where	s.EstCutDate = @EstCutDate and
+                                s.FactoryID = @FactoryID and
+                                s.CutCellID = @CutCellID
+						)
+";
+            DualResult result = DBProxy.Current.Select(null, sqlDeleteList, listPar, out DataTable dt);
+            if (!result)
+            {
+                return result;
+            }
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                result = new Gensong_SpreadingSchedule().DeleteSpreadingSchedule(dr["FactoryID"].ToString(), (DateTime)dr["EstCutDate"], dr["CutCellID"].ToString());
+                if (!result)
+                {
+                    return result;
+                }
+            }
+
+            // 2.檢查此次有存檔CutRef是否有存在未來的日期，若有就刪除，已完成與這次維護的資料不刪除 (ISP20210219)
             string sqlDeleteSameFutureCutRef = $@"
 declare @today date = getdate()
 
@@ -358,22 +397,29 @@ where   ss.EstCutDate <> @EstCutDate and
                                 s.CutCellID = @CutCellID
 						)
 ";
-            List<SqlParameter> listPar = new List<SqlParameter>();
-            listPar.Add(new SqlParameter("@EstCutDate", this.CurrentMaintain["EstCutDate"]));
-            listPar.Add(new SqlParameter("@FactoryID", this.CurrentMaintain["FactoryID"]));
-            listPar.Add(new SqlParameter("@CutCellID", this.CurrentMaintain["CutCellID"]));
-            DualResult result = DBProxy.Current.Execute(null, sqlDeleteSameFutureCutRef, listPar);
+            result = DBProxy.Current.Execute(null, sqlDeleteSameFutureCutRef, listPar);
             if (!result)
             {
                 return result;
             }
 
+            // 3.再把這些單重新傳給廠商新增
+            foreach (DataRow dr in dt.Rows)
+            {
+                result = new Gensong_SpreadingSchedule().SendSpreadingSchedule(dr["FactoryID"].ToString(), (DateTime)dr["EstCutDate"], dr["CutCellID"].ToString());
+                if (!result)
+                {
+                    return result;
+                }
+            }
+
+            // 4.呼叫中間API 傳送當前這張單
             result = new Gensong_SpreadingSchedule().SendSpreadingSchedule(this.CurrentMaintain["FactoryID"].ToString(), (DateTime)this.CurrentMaintain["EstCutDate"], this.CurrentMaintain["CutCellID"].ToString());
             if (!result)
             {
                 return result;
             }
-            #endregion
+
             return base.ClickSavePost();
         }
 
