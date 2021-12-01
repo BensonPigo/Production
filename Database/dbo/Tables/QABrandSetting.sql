@@ -9,6 +9,7 @@
 		EditName varchar(10) NOT NULL CONSTRAINT [DF_QABrandSetting_EditName] DEFAULT (''),
 		CrockingTestOption tinyint  NOT NULL CONSTRAINT [DF_QABrandSetting_CrockingTestOption] DEFAULT (0),
 		SkewnessOption Varchar(1) NOT NULL CONSTRAINT [DF_QABrandSetting_SkewnessOption] DEFAULT '1',
+		PullingTest_PullForceUnit varchar(6) NOT NULL CONSTRAINT [DF_QABrandSetting_PullingTest_PullForceUnit]  DEFAULT ('') ,
     CONSTRAINT [PK_QABrandSetting] PRIMARY KEY CLUSTERED 
 	(
 		BrandID ASC
@@ -36,4 +37,13 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
 		@level1name = N'QABrandSetting',
 		@level2type = N'COLUMN',
 		@level2name = N'CrockingTestOption'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'拉力單位',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'QABrandSetting',
+	@level2type = N'COLUMN',
+	@level2name = N'PullingTest_PullForceUnit'
 GO

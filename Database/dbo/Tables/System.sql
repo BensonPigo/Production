@@ -67,6 +67,7 @@ CREATE TABLE [dbo].[System] (
     [StyleFDFilePath] VARCHAR(80) NOT NULL DEFAULT (''), 
     [StyleRRLRPath] VARCHAR(80) NOT NULL DEFAULT (''), 
     [WH_MtlTransChkLocation] BIT NOT NULL DEFAULT ((0)), 
+    CartonTransferToSisterFty bit NOT NULL CONSTRAINT [DF_System_CartonTransferToSisterFty] DEFAULT 0,
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
@@ -287,32 +288,17 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QMS���
 Go
 
 
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���ҽd���ɸ�|', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'ShippingMarkTemplatePath';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���ҽd���ɸ�|', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'ShippingMarkTemplatePath';
 
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'RF Card Erase Before Printing', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'RFCardEraseBeforePrinting';
-
-
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'以下判斷 smalll logo 的長度標準 (CM)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'SmallLogoCM';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'PH 產線平均一天的 CPU', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'SewlineAvgCPU';
-
-
-GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠區', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'Region';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否不產生AllParts', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'IsNoneShellNoCreateAllParts';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否combine subprocess產生bundle', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'IsCombineSubProcess';
-
 
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',
@@ -341,3 +327,4 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'System',
     @level2type = N'COLUMN',
     @level2name = N'WH_MtlTransChkLocation'
+GO

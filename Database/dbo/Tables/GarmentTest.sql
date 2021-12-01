@@ -18,6 +18,10 @@
     [EditName]      VARCHAR (10)  CONSTRAINT [DF_GarmentTest_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME      NULL,
     [OldUkey] VARCHAR(10) NULL DEFAULT (''), 
+    SeamBreakageResult varchar(1)  CONSTRAINT [DF_GarmentTest_SeamBreakageResult] default('') NOT NULL,
+    SeamBreakageLastTestDate Date NULL,
+    OdourResult varchar(1)  CONSTRAINT [DF_GarmentTest_OdourResult] default('') NOT NULL,
+    WashResult varchar(1)  CONSTRAINT [DF_GarmentTest_WashResult] default('') NOT NULL,
     CONSTRAINT [PK_GarmentTest] PRIMARY KEY CLUSTERED ([MDivisionid], [BrandID], [StyleID], [SeasonID], [Article])
 );
 
@@ -96,4 +100,44 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編輯時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GarmentTest', @level2type = N'COLUMN', @level2name = N'EditDate';
+GO
 
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'Adidas-PHX-AP0450 SeamBrakage 最後一次檢驗的結果',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'GarmentTest',
+	@level2type = N'COLUMN',
+	@level2name = N'SeamBreakageResult'
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'Adidas-PHX-AP0450 SeamBrakage 最後一次檢驗的日期',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'GarmentTest',
+	@level2type = N'COLUMN',
+	@level2name = N'SeamBreakageLastTestDate'
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'Adidas-PHX-AP0451 最後一次檢驗的結果',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'GarmentTest',
+	@level2type = N'COLUMN',
+	@level2name = N'OdourResult'
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'Adidas-PHX-AP0701 / PHX-AP0710 最後一次檢驗的結果',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'GarmentTest',
+	@level2type = N'COLUMN',
+	@level2name = N'WashResult'
+GO
