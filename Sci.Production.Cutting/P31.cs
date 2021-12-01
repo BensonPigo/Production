@@ -95,6 +95,7 @@ namespace Sci.Production.Cutting
             base.ClickNewAfter();
             this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             ((DataTable)this.detailgridbs.DataSource).Clear();
+            this.GridIconEnable();
         }
 
         /// <inheritdoc/>
@@ -103,6 +104,13 @@ namespace Sci.Production.Cutting
             base.ClickEditAfter();
             this.dateEstCut.ReadOnly = true;
             this.txtCell1.ReadOnly = true;
+            this.GridIconEnable();
+        }
+
+        private void GridIconEnable()
+        {
+            DateTime? toDay = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select format(getdate(), 'yyyy/MM/dd')"));
+            this.gridicon.Append.Enabled = !(MyUtility.Convert.GetDate(this.CurrentMaintain["EstCutDate"]) < toDay);
         }
 
         /// <inheritdoc/>
@@ -207,6 +215,13 @@ select *, [MtlStatusValue] = '' from dbo.GetSpreadingSchedule('{factoryID}','{es
                     return;
                 }
 
+                if (this.CheckCutrefToDay(newvalue))
+                {
+                    MyUtility.Msg.WarningBox($"Cannot add in curtref# {newvalue}, the cutref# has exists today.");
+                    dr["CutRef"] = string.Empty;
+                    return;
+                }
+
                 string sqlcmd = $@"
 select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.FormattedValue}')";
                 DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
@@ -297,6 +312,15 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.
                 return false;
             }
 
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                if (this.CheckCutrefToDay(MyUtility.Convert.GetString(dr["CutRef"])))
+                {
+                    MyUtility.Msg.WarningBox($"Cannot add in curtref# {dr["CutRef"]}, the cutref# has exists today.");
+                    return false;
+                }
+            }
+
             if (!this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["SpreadingSchdlSeq"])))
             {
                 MyUtility.Msg.WarningBox("Please enter at least one SCHDL Seq");
@@ -352,7 +376,7 @@ select distinct ss.FactoryID, ss.EstCutDate, ss.CutCellID
 from SpreadingSchedule ss
 inner join SpreadingSchedule_Detail ssd on ss.Ukey = ssd.SpreadingScheduleUkey
 where   ss.EstCutDate <> @EstCutDate and
-		ss.EstCutDate >= @today and
+		ss.EstCutDate > @today and
 		ss.FactoryID = @FactoryID and
 		ss.CutCellID = @CutCellID  and
         ssd.IsAGVArrived = 0 and
@@ -386,7 +410,7 @@ delete  ssd
 from SpreadingSchedule ss
 inner join SpreadingSchedule_Detail ssd on ss.Ukey = ssd.SpreadingScheduleUkey
 where   ss.EstCutDate <> @EstCutDate and
-		ss.EstCutDate >= @today and
+		ss.EstCutDate > @today and
 		ss.FactoryID = @FactoryID and
 		ss.CutCellID = @CutCellID  and
         ssd.IsAGVArrived = 0 and
@@ -458,6 +482,18 @@ select
 from #tmp
 ";
             return MyUtility.Tool.ProcessWithDatatable(dis, string.Empty, sqlcmd, out DataTable dt);
+        }
+
+        private bool CheckCutrefToDay(string cutref)
+        {
+            string sqlcmd = $@"
+            declare @today date = getdate()
+select 1
+from SpreadingSchedule ss
+inner join SpreadingSchedule_Detail ssd on ss.Ukey = ssd.SpreadingScheduleUkey
+where ssd.CutRef = '{cutref}'
+and ss.EstCutDate = @today";
+            return MyUtility.Check.Seek(sqlcmd);
         }
 
         private void SeqtoNull()
