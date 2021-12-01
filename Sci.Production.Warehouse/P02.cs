@@ -83,12 +83,13 @@ select distinct ed.FabricType
 	, ed.PoID
 	, ed.Seq1
 	, ed.Seq2
+	, ed.Qty
 into #tmp
 from Export_Detail ed WITH (NOLOCK) 
 where ed.ID = '{0}'
 and ed.PoType = 'M'
 
-select mpod.ID, mpod.Seq1, mpod.Seq2, mpo.FactoryID 
+select mpod.ID, mpod.Seq1, mpod.Seq2, mpo.FactoryID, OrderQty = sum(mpod.Qty)
 into #tmp_MachinePO
 from SciMachine_MachinePO mpo
 inner join SciMachine_MachinePO_Detail mpod on mpo.ID = mpod.ID 
@@ -99,8 +100,9 @@ where exists (
 		and mpod.ID = ed.PoID 
 		and mpod.Seq1 = ed.Seq1 
 		and mpod.Seq2 = ed.Seq2)
+group by  mpod.ID, mpod.Seq1, mpod.Seq2, mpo.FactoryID
 		
-select ppod.TPEPOID, ppod.Seq1, ppod.Seq2, ppo.FactoryID 
+select ppod.TPEPOID, ppod.Seq1, ppod.Seq2, ppo.FactoryID, OrderQty = sum(ppod.Qty)
 into #tmp_PartPO
 from SciMachine_PartPO ppo
 inner join SciMachine_PartPO_Detail ppod on ppo.ID = ppod.ID 
@@ -111,8 +113,9 @@ where exists (
 	 and ppod.TPEPOID = ed.PoID 
      and ppod.Seq1 = ed.Seq1 
      and ppod.Seq2 = ed.Seq2)
+group by ppod.TPEPOID, ppod.Seq1, ppod.Seq2, ppo.FactoryID
 
-select mpod.TPEPOID, mpod.Seq1, mpod.Seq2, mpo.Factoryid 
+select mpod.TPEPOID, mpod.Seq1, mpod.Seq2, mpo.Factoryid, OrderQty = sum(mpod.Qty) 
 into #tmp_MiscPO
 from SciMachine_MiscPO mpo
 inner join SciMachine_MiscPO_Detail mpod on mpo.ID = mpod.ID 
@@ -122,7 +125,8 @@ where exists (
      where ed.FabricType = 'O'
 	 and mpod.TPEPOID = ed.PoID 
      and mpod.Seq1 = ed.Seq1 
-     and mpod.Seq2 = ed.Seq2)        
+     and mpod.Seq2 = ed.Seq2)      
+group by mpod.TPEPOID, mpod.Seq1, mpod.Seq2, mpo.Factoryid
 
 select FactoryID = iif(ed.PoType='M'
                         , (case when ed.FabricType = 'M' then mpo.FactoryID
@@ -168,6 +172,13 @@ select FactoryID = iif(ed.PoType='M'
         , ed.UnitId
         , ColorID = Color.Value
         , SizeSpec = isnull(psd.SizeSpec,'')
+		,[OrderQty] =  iif(ed.PoType='M'
+                        , (case when ed.FabricType = 'M' then mpo.OrderQty
+                                when ed.FabricType = 'P' then ppo.OrderQty 
+			                    when ed.FabricType = 'O' then mipo.OrderQty 
+			                    else o.FactoryID 
+                            end)
+                        ,ed.Qty)
         , ed.Qty
         , ed.Foc
         , ed.BalanceQty
@@ -204,21 +215,21 @@ OUTER APPLY(
 	),1,1,'')
 )Container
 Outer APPLY (
-	select mpo.FactoryID 
+	select mpo.FactoryID, mpo.OrderQty 
 	from #tmp_MachinePO mpo
 	where mpo.ID = ed.PoID 
 	and mpo.Seq1 = ed.Seq1 
 	and mpo.Seq2 = ed.Seq2
 )mpo
 Outer APPLY (
-	select top 1 ppo.FactoryID 
+	select top 1 ppo.FactoryID ,ppo.OrderQty
     from #tmp_PartPO ppo
     where ppo.TPEPOID = ed.PoID 
     and ppo.Seq1 = ed.Seq1 
     and ppo.Seq2 = ed.Seq2
 )ppo
 Outer APPLY (
-	select mpo.Factoryid 
+	select mpo.Factoryid , mpo.OrderQty
     from #tmp_MiscPO mpo
 	where mpo.TPEPOID = ed.PoID 
     and mpo.Seq1 = ed.Seq1 
@@ -302,6 +313,7 @@ drop table #tmp, #tmp_MachinePO, #tmp_MiscPO, #tmp_PartPO", masterID);
                 .Text("UnitId", header: "Unit", width: Widths.AnsiChars(4))
                 .Text("ColorID", header: "Color", width: Widths.AnsiChars(5))
                 .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(5))
+                .Numeric("OrderQty", header: "Order Q'ty", decimal_places: 2, width: Widths.AnsiChars(5))
                 .Numeric("Qty", header: "Export Q'ty", decimal_places: 2, width: Widths.AnsiChars(5))
                 .Numeric("Foc", header: "F.O.C.", decimal_places: 2, width: Widths.AnsiChars(2))
                 .Numeric("BalanceQty", header: "Balance", decimal_places: 2, width: Widths.AnsiChars(2))
