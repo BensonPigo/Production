@@ -752,7 +752,7 @@ select distinct
     ,[Seq2] = wo.SEQ2
     ,[Refno] = wo.Refno
     ,[Article] = Article.value
-    ,[Color] = LTRIM(RTRIM(cp2.Colorid))
+    ,[Color] = LTRIM(RTRIM(Color.va;ue))
     ,[SizeCode] = SizeCode.value
     ,cp2.WorkorderUkey
     ,[Status] = case '{isConfirmed}' when 'True' then 'New' 
@@ -761,6 +761,16 @@ select distinct
     from  Production.dbo.Cutplan_Detail cp2
     inner join Production.dbo.Cutplan cp1 on cp2.id = cp1.id
     inner join Production.dbo.WorkOrder wo on cp2.WorkorderUkey = wo.Ukey
+    LEFT join Production.dbo.PO_Supp_Detail po3 on po3.ID= cp2.PoId 
+	    and po3.SEQ1=wo.Seq1 and po3.SEQ2=wo.Seq2
+    LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+    OUTER APPLY(
+     SELECT [Value]=
+	     CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') 
+                THEN IIF(po3.SuppColor = '',dbo.GetColorMultipleID(po3.BrandID,po3.ColorID), po3.SuppColor)
+                ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
+	     END
+    )Color
     outer apply(
         select value = STUFF((
             select CONCAT(',',SizeCode)
@@ -1930,7 +1940,7 @@ SELECT [ID] = rd.id
 ,[Seq1] = rd.Seq1
 ,[Seq2] = rd.Seq2
 ,[Refno] = po3.Refno
-,[Color] = po3.ColorID
+,[Color] = Color.Value
 ,[Roll] = rd.Roll
 ,[Dyelot] = rd.Dyelot
 ,[StockUnit] = dbo.GetStockUnitBySPSeq(rd.POID,rd.Seq1,rd.Seq2)
@@ -1951,6 +1961,7 @@ inner join Production.dbo.TransferIn r on rd.id = r.id
 {Environment.NewLine + strBody}
 inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
 	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
 outer apply(
 	select value = fb.Barcode
 	from FtyInventory_Barcode fb 
@@ -1961,6 +1972,13 @@ outer apply(
 	and f.StockType = rd.StockType
     and fb.TransactionID = rd.Id
 )Barcode
+OUTER APPLY(
+ SELECT [Value]=
+	 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') 
+            THEN IIF(po3.SuppColor = '',dbo.GetColorMultipleID(po3.BrandID,po3.ColorID), po3.SuppColor)
+            ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
+	 END
+)Color
 where 1=1
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
@@ -2060,7 +2078,7 @@ SELECT [ID] = rd.id
 ,[Seq1] = rd.Seq1
 ,[Seq2] = rd.Seq2
 ,[Refno] = po3.Refno
-,[Color] = LTRIM(RTRIM(po3.ColorID))
+,[Color] = LTRIM(RTRIM(Color.Value))
 ,[Roll] = rd.Roll
 ,[Dyelot] = rd.Dyelot
 ,[StockUnit] = dbo.GetStockUnitBySPSeq(rd.POID,rd.Seq1,rd.Seq2)
@@ -2083,6 +2101,14 @@ inner join #tmp s on s.POID = rd.PoId
     and s.StockType = rd.StockType
 inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
 	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+OUTER APPLY(
+ SELECT [Value]=
+	 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') 
+            THEN IIF(po3.SuppColor = '',dbo.GetColorMultipleID(po3.BrandID,po3.ColorID), po3.SuppColor)
+            ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
+	 END
+)Color
 outer apply(
 	select value = fb.Barcode
 	from FtyInventory_Barcode fb 

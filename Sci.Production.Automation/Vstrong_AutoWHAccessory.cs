@@ -2066,7 +2066,7 @@ select distinct
 ,[PoId] = i2.POID
 ,[Seq1] = i2.Seq1
 ,[Seq2] = i2.Seq2
-,[Color] = po3.ColorID
+,[Color] = Color.value
 ,[SizeCode] = po3.SizeSpec
 ,[StockType] = i2.StockType
 ,[Qty] = {strQty}
@@ -2084,6 +2084,14 @@ left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
     and f.StockType = i2.StockType
 left join PO_Supp_Detail po3 on po3.ID = i2.POID
 	and po3.SEQ1 = i2.Seq1 and po3.SEQ2 = i2.Seq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+    OUTER APPLY(
+     SELECT [Value]=
+	     CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') 
+                THEN IIF(po3.SuppColor = '',dbo.GetColorMultipleID(po3.BrandID,po3.ColorID), po3.SuppColor)
+                ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
+	     END
+)Color
 where 1=1
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
@@ -2100,7 +2108,7 @@ select distinct
 ,[PoId] = i2.POID
 ,[Seq1] = i2.Seq1
 ,[Seq2] = i2.Seq2
-,[Color] = po3.ColorID
+,[Color] = Color.Value
 ,[SizeCode] = po3.SizeSpec
 ,[StockType] = i2.StockType
 ,[Qty] = {strQty}
@@ -2118,6 +2126,14 @@ left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
     and f.StockType = i2.StockType
 left join PO_Supp_Detail po3 on po3.ID = i2.POID
 	and po3.SEQ1 = i2.Seq1 and po3.SEQ2 = i2.Seq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+    OUTER APPLY(
+     SELECT [Value]=
+	     CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') 
+                THEN IIF(po3.SuppColor = '',dbo.GetColorMultipleID(po3.BrandID,po3.ColorID), po3.SuppColor)
+                ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
+	     END
+)Color
 where i.Type = 'R' and i.FabricType='A'
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
@@ -2134,7 +2150,7 @@ select distinct
 ,[PoId] = i2.POID
 ,[Seq1] = i2.Seq1
 ,[Seq2] = i2.Seq2
-,[Color] = po3.ColorID
+,[Color] = Color.Value
 ,[SizeCode] = po3.SizeSpec
 ,[StockType] = i2.StockType
 ,[Qty] = {strQty}
@@ -2152,6 +2168,14 @@ left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
     and f.StockType = i2.StockType
 left join PO_Supp_Detail po3 on po3.ID = i2.POID
 	and po3.SEQ1 = i2.Seq1 and po3.SEQ2 = i2.Seq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+    OUTER APPLY(
+     SELECT [Value]=
+	     CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') 
+                THEN IIF(po3.SuppColor = '',dbo.GetColorMultipleID(po3.BrandID,po3.ColorID), po3.SuppColor)
+                ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
+	     END
+)Color
 where 1=1
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
