@@ -2686,6 +2686,7 @@
     <Build Include="dbo\Tables\Style_RRLR_Report.sql" />
     <Build Include="dbo\Tables\Brand_PullingTestStandarList.sql" />
     <Build Include="dbo\Functions\GetArtWork.sql" />
+    <Build Include="dbo\Tables\MachineType_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

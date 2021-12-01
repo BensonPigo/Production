@@ -704,6 +704,37 @@ when not matched by target then
 when not matched by source then
 	delete;
 
+------ Merge MachineType_Detail
+
+merge Production.dbo.MachineType_Detail as t
+Using Trade_TO_Pms.dbo.MachineType_Detail as s
+on t.id = s.id and t.FactoryID = s.FactoryID
+when matched then
+		update set 
+		t.IsSubprocess		=s.IsSubprocess	
+		,t.IsNonSewingLine	=s.IsNonSewingLine		    
+		,t.IsNotShownInP01	=s.IsNotShownInP01		    
+		,t.IsNotShownInP03	=s.IsNotShownInP03	
+when not matched by target then
+	insert(
+		[ID]
+		,[FactoryID]
+		,[IsSubprocess]
+		,[IsNonSewingLine]
+		,[IsNotShownInP01]
+		,[IsNotShownInP03]
+	)
+	values(
+	   s.[ID]
+      ,s.[FactoryID]
+      ,s.[IsSubprocess]
+      ,s.[IsNonSewingLine]
+      ,s.[IsNotShownInP01]
+      ,s.[IsNotShownInP03]
+	)
+when not matched by source then
+	delete;
+
 --CustCD CustCD
 --ACustCD
 --PMS¦hªº [Dest]

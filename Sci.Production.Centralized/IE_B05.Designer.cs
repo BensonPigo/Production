@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.gridIcon1 = new Sci.Win.UI.GridIcon();
             this.btnThreadRatio = new Sci.Win.UI.Button();
             this.checkThreadcons = new Sci.Win.UI.CheckBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
@@ -47,7 +48,6 @@
             this.labelCode = new Sci.Win.UI.Label();
             this.gridDetail = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.gridIcon1 = new Sci.Win.UI.GridIcon();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -105,6 +105,16 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(831, 190);
             this.panel3.TabIndex = 4;
+            // 
+            // gridIcon1
+            // 
+            this.gridIcon1.Location = new System.Drawing.Point(708, 152);
+            this.gridIcon1.Name = "gridIcon1";
+            this.gridIcon1.Size = new System.Drawing.Size(100, 32);
+            this.gridIcon1.TabIndex = 63;
+            this.gridIcon1.Text = "gridIcon1";
+            this.gridIcon1.AppendClick += new System.EventHandler(this.GridIcon1_AppendClick);
+            this.gridIcon1.RemoveClick += new System.EventHandler(this.GridIcon1_RemoveClick);
             // 
             // btnThreadRatio
             // 
@@ -301,16 +311,6 @@
             this.gridDetail.Size = new System.Drawing.Size(831, 277);
             this.gridDetail.TabIndex = 5;
             this.gridDetail.TabStop = false;
-            // 
-            // gridIcon1
-            // 
-            this.gridIcon1.Location = new System.Drawing.Point(708, 152);
-            this.gridIcon1.Name = "gridIcon1";
-            this.gridIcon1.Size = new System.Drawing.Size(100, 32);
-            this.gridIcon1.TabIndex = 63;
-            this.gridIcon1.Text = "gridIcon1";
-            this.gridIcon1.AppendClick += new System.EventHandler(this.GridIcon1_AppendClick);
-            this.gridIcon1.RemoveClick += new System.EventHandler(this.GridIcon1_RemoveClick);
             // 
             // IE_B05
             // 

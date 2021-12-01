@@ -58,24 +58,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(757, 505);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.gridDetail);
             this.detailcont.Controls.Add(this.panel3);
-            this.detailcont.Size = new System.Drawing.Size(757, 467);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 467);
-            this.detailbtm.Size = new System.Drawing.Size(757, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(831, 505);
+            this.browse.Size = new System.Drawing.Size(757, 505);
             // 
             // tabs
             // 
@@ -101,7 +91,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(757, 190);
+            this.panel3.Size = new System.Drawing.Size(897, 190);
             this.panel3.TabIndex = 4;
             // 
             // btnThreadRatio
@@ -296,7 +286,7 @@
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDetail.ShowCellToolTips = false;
-            this.gridDetail.Size = new System.Drawing.Size(757, 277);
+            this.gridDetail.Size = new System.Drawing.Size(897, 167);
             this.gridDetail.TabIndex = 5;
             this.gridDetail.TabStop = false;
             // 
