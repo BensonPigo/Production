@@ -492,7 +492,9 @@ select 1
 from SpreadingSchedule ss
 inner join SpreadingSchedule_Detail ssd on ss.Ukey = ssd.SpreadingScheduleUkey
 where ssd.CutRef = '{cutref}'
-and ss.EstCutDate = @today";
+and ss.EstCutDate = @today
+and ss.Ukey <> '{this.CurrentMaintain["Ukey"]}'
+";
             return MyUtility.Check.Seek(sqlcmd);
         }
 
