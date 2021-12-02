@@ -414,39 +414,43 @@ namespace Sci.Production.Warehouse
                                 sqlpar.Add(new SqlParameter("@poid", newRow["poid"].ToString().Trim()));
                                 sqlpar.Add(new SqlParameter("@seq1", newRow["seq1"].ToString().Trim()));
                                 sqlpar.Add(new SqlParameter("@seq2", newRow["seq2"].ToString().Trim()));
+                                sqlpar.Add(new SqlParameter("@roll", newRow["roll"].ToString().Trim()));
+                                sqlpar.Add(new SqlParameter("@dyelot", newRow["dyelot"].ToString().Trim()));
                                 sqlpar.Add(new SqlParameter("@shipqty", newRow["shipqty"].ToString().Trim()));
 
-                                string sqlCheckQRCode = @"
+                                if (!MyUtility.Check.Empty(newRow["MINDQRCode"]))
+                                {
+                                    string sqlCheckQRCode = @"
 select PL.QRCode
 from POShippingList P
-INNER JOIN POShippingList_Line PL ON P.Ukey=PL.POShippingList_Ukey
-INNER JOIN Export_Detail ED ON ED.Ukey=PL.Export_Detail_Ukey
-WHERE P.POID= @poid AND P.Seq1 = @seq1  AND PL.Line = @seq2
+INNER JOIN POShippingList_Line PL ON P.Ukey = PL.POShippingList_Ukey
+WHERE P.POID= @poid AND P.Seq1 = @seq1  AND PL.Line = @seq2 and PL.PackageNo = @roll and PL.BatchNo = @dyelot
 GROUP BY PL.QRCode
 ";
-                                DataTable dtCheckQRCode;
+                                    DataTable dtCheckQRCode;
 
-                                DualResult result = DBProxy.Current.Select(null, sqlCheckQRCode, sqlpar, out dtCheckQRCode);
+                                    DualResult result = DBProxy.Current.Select(null, sqlCheckQRCode, sqlpar, out dtCheckQRCode);
 
-                                if (!result)
-                                {
-                                    listNewRowErrMsg.Add(result.GetException().ToString());
-                                }
-                                else
-                                {
-                                    if (dtCheckQRCode.Rows.Count > 1)
+                                    if (!result)
                                     {
-                                        listNewRowErrMsg.Add("There are more than two QR Code, please right-click on [MIND QR Code] to select one of the QR Code.");
+                                        listNewRowErrMsg.Add(result.GetException().ToString());
                                     }
-
-                                    if (dtCheckQRCode.Rows.Count == 1)
+                                    else
                                     {
-                                        if (dtCheckQRCode.Rows[0]["QRCode"].ToString() != newRow["MINDQRCode"].ToString() && !MyUtility.Check.Empty(newRow["MINDQRCode"]))
+                                        if (dtCheckQRCode.Rows.Count > 1)
                                         {
-                                            listNewRowHintMsg.Add("The keyin [MIND QR Code] is different from supplier, and has been updated to the QR Code of supplier.");
+                                            listNewRowErrMsg.Add("There are more than two QR Code, please right-click on [MIND QR Code] to select one of the QR Code.");
                                         }
 
-                                        newRow["MINDQRCode"] = dtCheckQRCode.Rows[0]["QRCode"];
+                                        if (dtCheckQRCode.Rows.Count == 1)
+                                        {
+                                            if (dtCheckQRCode.Rows[0]["QRCode"].ToString() != newRow["MINDQRCode"].ToString())
+                                            {
+                                                listNewRowHintMsg.Add("The keyin [MIND QR Code] is different from supplier, and has been updated to the QR Code of supplier.");
+                                            }
+
+                                            newRow["MINDQRCode"] = dtCheckQRCode.Rows[0]["QRCode"];
+                                        }
                                     }
                                 }
 
