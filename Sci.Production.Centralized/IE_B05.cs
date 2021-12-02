@@ -212,6 +212,12 @@ where ID = '{this.CurrentMaintain["ID"]}'
 
         protected override DualResult ClickSave()
         {
+            // 修改表身資料,不寫入表頭EditName and EditDate
+            ITableSchema dtSchema;
+            var ok = DBProxy.Current.GetTableSchema("Trade", "MachineType", out dtSchema);
+            dtSchema.IsSupportEditDate = false;
+            dtSchema.IsSupportEditName = false;
+
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             #region 手動存檔
             if (dt != null && dt.Rows.Count > 0)
@@ -248,12 +254,12 @@ delete;
                 DualResult result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlUpdate, out DataTable data, conn: sqlConn);
                 if (result == false)
                 {
-                    return result;
+                    return Ict.Result.F(result.ToString());
                 }
             }
 
             #endregion
-            return base.ClickSave();
+            return Ict.Result.True;
         }
 
         private void BtnThreadRatio_Click(object sender, EventArgs e)
