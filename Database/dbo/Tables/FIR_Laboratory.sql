@@ -25,6 +25,12 @@ CREATE TABLE [dbo].[FIR_Laboratory] (
     [CrockingInspector] VARCHAR (10)  CONSTRAINT [DF_FIR_Laboratory_CrockingInspector] DEFAULT ('') NOT NULL,
     [HeatInspector]     VARCHAR (10)  CONSTRAINT [DF_FIR_Laboratory_HeatInspector] DEFAULT ('') NOT NULL,
     [WashInspector]     VARCHAR (10)  CONSTRAINT [DF_FIR_Laboratory_WashInspector] DEFAULT ('') NOT NULL,
+    CrockingTestBeforePicture varbinary(max) NULL,
+    CrockingTestAfterPicture varbinary(max) NULL,
+    HeatTestBeforePicture varbinary(max) NULL,
+    HeatTestAfterPicture varbinary(max) NULL,
+    WashTestBeforePicture varbinary(max) NULL,
+    WashTestAfterPicture varbinary(max) NULL,
     CONSTRAINT [PK_FIR_Laboratory] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -135,3 +141,64 @@ GO
 CREATE NONCLUSTERED INDEX [ID_FIR_Laboratory_POID_SEQ]
     ON [dbo].[FIR_Laboratory]([POID] ASC, [SEQ1] ASC, [SEQ2] ASC);
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'摩擦測試前的照片',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'FIR_Laboratory',
+	@level2type = N'COLUMN',
+	@level2name = N'CrockingTestBeforePicture'
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'摩擦測試後的照片',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'FIR_Laboratory',
+	@level2type = N'COLUMN',
+	@level2name = N'CrockingTestAfterPicture'
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'烘箱測試前的照片',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'FIR_Laboratory',
+	@level2type = N'COLUMN',
+	@level2name = N'HeatTestBeforePicture'
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'烘箱測試後的照片',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'FIR_Laboratory',
+	@level2type = N'COLUMN',
+	@level2name = N'HeatTestAfterPicture'
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'水洗測試前的照片',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'FIR_Laboratory',
+	@level2type = N'COLUMN',
+	@level2name = N'WashTestBeforePicture'
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'水洗測試後的照片',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'FIR_Laboratory',
+	@level2type = N'COLUMN',
+	@level2name = N'WashTestAfterPicture'
+GO
