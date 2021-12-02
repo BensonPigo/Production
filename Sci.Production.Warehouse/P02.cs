@@ -176,9 +176,9 @@ select FactoryID = iif(ed.PoType='M'
                         , (case when ed.FabricType = 'M' then mpo.OrderQty
                                 when ed.FabricType = 'P' then ppo.OrderQty 
 			                    when ed.FabricType = 'O' then mipo.OrderQty 
-			                    else o.FactoryID 
+			                    else 0 
                             end)
-                        ,ed.Qty)
+                        ,psd.Qty)
         , ed.Qty
         , ed.Foc
         , ed.BalanceQty
