@@ -185,7 +185,7 @@ order by e.ID",
                 worksheet.Cells[9, 8] = this.email;
 
                 int rownum = 11;
-                object[,] objArray = new object[1, 20];
+                object[,] objArray = new object[1, 21];
 
                 foreach (DataRow dr in this.detailData.Rows)
                 {
@@ -204,11 +204,12 @@ order by e.ID",
                         objArray[0, 10] = dr["UnitId"];
                         objArray[0, 11] = dr["ColorID"];
                         objArray[0, 12] = dr["SizeSpec"];
-                        objArray[0, 13] = dr["Qty"];
-                        objArray[0, 14] = dr["Foc"];
-                        objArray[0, 15] = dr["BalanceQty"];
-                        objArray[0, 16] = dr["NetKg"];
-                        objArray[0, 17] = dr["WeightKg"];
+                        objArray[0, 13] = dr["OrderQty"];
+                        objArray[0, 14] = dr["Qty"];
+                        objArray[0, 15] = dr["Foc"];
+                        objArray[0, 16] = dr["BalanceQty"];
+                        objArray[0, 17] = dr["NetKg"];
+                        objArray[0, 18] = dr["WeightKg"];
                     }
                     else
                     {
@@ -220,14 +221,15 @@ order by e.ID",
                         objArray[0, 12] = dr["UnitId"];
                         objArray[0, 13] = dr["ColorID"];
                         objArray[0, 14] = dr["SizeSpec"];
-                        objArray[0, 15] = dr["Qty"];
-                        objArray[0, 16] = dr["Foc"];
-                        objArray[0, 17] = dr["BalanceQty"];
-                        objArray[0, 18] = dr["NetKg"];
-                        objArray[0, 19] = dr["WeightKg"];
+                        objArray[0, 15] = dr["OrderQty"];
+                        objArray[0, 16] = dr["Qty"];
+                        objArray[0, 17] = dr["Foc"];
+                        objArray[0, 18] = dr["BalanceQty"];
+                        objArray[0, 19] = dr["NetKg"];
+                        objArray[0, 20] = dr["WeightKg"];
                     }
 
-                    worksheet.Range[string.Format("A{0}:T{0}", rownum)].Value2 = objArray;
+                    worksheet.Range[string.Format("A{0}:U{0}", rownum)].Value2 = objArray;
 
                     rownum++;
                 }
