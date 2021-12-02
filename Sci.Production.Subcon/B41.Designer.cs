@@ -28,21 +28,29 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new Sci.Win.UI.Label();
             this.txtLocation = new Sci.Win.UI.TextBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.label2 = new Sci.Win.UI.Label();
             this.txtDESC = new Sci.Win.UI.TextBox();
+            this.grid1 = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.gridIcon1 = new Sci.Win.UI.GridIcon();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.gridIcon1);
+            this.detailcont.Controls.Add(this.grid1);
             this.detailcont.Controls.Add(this.txtDESC);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.checkJunk);
@@ -79,6 +87,7 @@
             this.checkJunk.TabIndex = 2;
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
+            this.checkJunk.CheckedChanged += new System.EventHandler(this.CheckJunk_CheckedChanged);
             // 
             // label2
             // 
@@ -99,6 +108,39 @@
             this.txtDESC.Size = new System.Drawing.Size(624, 23);
             this.txtDESC.TabIndex = 4;
             // 
+            // grid1
+            // 
+            this.grid1.AllowUserToAddRows = false;
+            this.grid1.AllowUserToDeleteRows = false;
+            this.grid1.AllowUserToResizeRows = false;
+            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid1.DataSource = this.listControlBindingSource1;
+            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.grid1.Location = new System.Drawing.Point(54, 120);
+            this.grid1.Name = "grid1";
+            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.grid1.RowTemplate.Height = 24;
+            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid1.ShowCellToolTips = false;
+            this.grid1.Size = new System.Drawing.Size(240, 209);
+            this.grid1.TabIndex = 5;
+            // 
+            // gridIcon1
+            // 
+            this.gridIcon1.Location = new System.Drawing.Point(194, 82);
+            this.gridIcon1.Name = "gridIcon1";
+            this.gridIcon1.Size = new System.Drawing.Size(100, 32);
+            this.gridIcon1.TabIndex = 6;
+            this.gridIcon1.Text = "gridIcon1";
+            this.gridIcon1.AppendClick += new System.EventHandler(this.GridIcon1_AppendClick);
+            this.gridIcon1.RemoveClick += new System.EventHandler(this.GridIcon1_RemoveClick);
+            // 
             // B41
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -111,6 +153,7 @@
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B41";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B41. RFID Process Location";
             this.WorkAlias = "RFIDProcessLocation";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -121,6 +164,8 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -133,5 +178,8 @@
         private Win.UI.CheckBox checkJunk;
         private Win.UI.TextBox txtLocation;
         private Win.UI.Label label1;
+        private Win.UI.GridIcon gridIcon1;
+        private Win.UI.Grid grid1;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
     }
 }
