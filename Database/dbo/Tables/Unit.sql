@@ -1,19 +1,21 @@
 ﻿CREATE TABLE [dbo].[Unit] (
-    [ID]            VARCHAR (8)    CONSTRAINT [DF_Unit_ID] DEFAULT ('') NOT NULL,
-    [PriceRate]     INT            CONSTRAINT [DF_Unit_PriceRate] DEFAULT ((0)) NULL,
-    [Round]         TINYINT        CONSTRAINT [DF_Unit_Round] DEFAULT ((0)) NULL,
-    [Description]   NVARCHAR (120) CONSTRAINT [DF_Unit_Description] DEFAULT ('') NULL,
-    [ExtensionUnit] VARCHAR (8)    CONSTRAINT [DF_Unit_ExtensionUnit] DEFAULT ('') NOT NULL,
-    [Junk]          BIT            CONSTRAINT [DF_Unit_Junk] DEFAULT ((0)) NULL,
-    [AddName]       VARCHAR (10)   CONSTRAINT [DF_Unit_AddName] DEFAULT ('') NULL,
-    [AddDate]       DATETIME       NULL,
-    [EditName]      VARCHAR (10)   CONSTRAINT [DF_Unit_EditName] DEFAULT ('') NULL,
-    [EditDate]      DATETIME       NULL,
-    [MiAdidasRound] NUMERIC (2)    NULL,
-    [RoundStep]     NUMERIC (4, 2) NULL,
-    [StockRound] NUMERIC(2) NOT NULL DEFAULT ((0)), 
+    [ID]            VARCHAR (8)     CONSTRAINT [DF_Unit_ID] DEFAULT ('') NOT NULL,
+    [PriceRate]     NUMERIC (12, 4) CONSTRAINT [DF_Unit_PriceRate] DEFAULT ((0)) NOT NULL,
+    [Round]         TINYINT         CONSTRAINT [DF_Unit_Round] DEFAULT ((0)) NULL,
+    [Description]   NVARCHAR (120)  CONSTRAINT [DF_Unit_Description] DEFAULT ('') NULL,
+    [ExtensionUnit] VARCHAR (8)     CONSTRAINT [DF_Unit_ExtensionUnit] DEFAULT ('') NOT NULL,
+    [Junk]          BIT             CONSTRAINT [DF_Unit_Junk] DEFAULT ((0)) NULL,
+    [AddName]       VARCHAR (10)    CONSTRAINT [DF_Unit_AddName] DEFAULT ('') NULL,
+    [AddDate]       DATETIME        NULL,
+    [EditName]      VARCHAR (10)    CONSTRAINT [DF_Unit_EditName] DEFAULT ('') NULL,
+    [EditDate]      DATETIME        NULL,
+    [MiAdidasRound] NUMERIC (2)     NULL,
+    [RoundStep]     NUMERIC (4, 2)  NULL,
+    [StockRound]    NUMERIC (2)     CONSTRAINT [DF_Unit_StockRound] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Unit] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
