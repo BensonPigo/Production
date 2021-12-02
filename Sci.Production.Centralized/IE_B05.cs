@@ -222,7 +222,7 @@ where ID = '{this.CurrentMaintain["ID"]}'
             #region 手動存檔
             if (dt != null && dt.Rows.Count > 0)
             {
-                string sqlUpdate = @"
+                string sqlUpdate = $@"
 merge ProductionTPE.dbo.MachineType_Detail as t
 using #tmp as s
 on t.id = s.id and t.FactoryID = s.FactoryID
@@ -245,7 +245,7 @@ when not matched by target then
       ,s.[IsNonSewingLine]
       ,s.[IsNotShownInP01]
       ,s.[IsNotShownInP03])
-when not matched by source then
+when not matched by source and t.ID = '{this.CurrentMaintain["ID"]}' then
 delete;
 ;	
 ";
