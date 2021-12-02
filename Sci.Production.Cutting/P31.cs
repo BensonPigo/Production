@@ -95,6 +95,7 @@ namespace Sci.Production.Cutting
             base.ClickNewAfter();
             this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             ((DataTable)this.detailgridbs.DataSource).Clear();
+            this.GridIconEnable();
         }
 
         /// <inheritdoc/>
@@ -103,6 +104,13 @@ namespace Sci.Production.Cutting
             base.ClickEditAfter();
             this.dateEstCut.ReadOnly = true;
             this.txtCell1.ReadOnly = true;
+            this.GridIconEnable();
+        }
+
+        private void GridIconEnable()
+        {
+            DateTime? toDay = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select format(getdate(), 'yyyy/MM/dd')"));
+            this.gridicon.Append.Enabled = !(MyUtility.Convert.GetDate(this.CurrentMaintain["EstCutDate"]) < toDay);
         }
 
         /// <inheritdoc/>
@@ -207,6 +215,13 @@ select *, [MtlStatusValue] = '' from dbo.GetSpreadingSchedule('{factoryID}','{es
                     return;
                 }
 
+                if (this.CheckCutrefToDay(newvalue))
+                {
+                    MyUtility.Msg.WarningBox($"Cannot add in curtref# {newvalue}, the cutref# has exists today.");
+                    dr["CutRef"] = string.Empty;
+                    return;
+                }
+
                 string sqlcmd = $@"
 select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.FormattedValue}')";
                 DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
@@ -297,6 +312,15 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.
                 return false;
             }
 
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                if (this.CheckCutrefToDay(MyUtility.Convert.GetString(dr["CutRef"])))
+                {
+                    MyUtility.Msg.WarningBox($"Cannot add in curtref# {dr["CutRef"]}, the cutref# has exists today.");
+                    return false;
+                }
+            }
+
             if (!this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["SpreadingSchdlSeq"])))
             {
                 MyUtility.Msg.WarningBox("Please enter at least one SCHDL Seq");
@@ -339,15 +363,20 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.
         /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
-            #region ISP20210219 檢查此次有存檔CutRef是否有存在未來的日期，若有就刪除，已完成與這次維護的資料不刪除
-            string sqlDeleteSameFutureCutRef = $@"
+            List<SqlParameter> listPar = new List<SqlParameter>();
+            listPar.Add(new SqlParameter("@EstCutDate", this.CurrentMaintain["EstCutDate"]));
+            listPar.Add(new SqlParameter("@FactoryID", this.CurrentMaintain["FactoryID"]));
+            listPar.Add(new SqlParameter("@CutCellID", this.CurrentMaintain["CutCellID"]));
+
+            // 1.檢查此次有存檔CutRef是否有存在未來的日期，這些將會刪除的單資訊先撈出，Call廠商API做整單刪除
+            string sqlDeleteList = $@"
 declare @today date = getdate()
 
-delete  ssd
+select distinct ss.FactoryID, ss.EstCutDate, ss.CutCellID
 from SpreadingSchedule ss
 inner join SpreadingSchedule_Detail ssd on ss.Ukey = ssd.SpreadingScheduleUkey
 where   ss.EstCutDate <> @EstCutDate and
-		ss.EstCutDate >= @today and
+		ss.EstCutDate > @today and
 		ss.FactoryID = @FactoryID and
 		ss.CutCellID = @CutCellID  and
         ssd.IsAGVArrived = 0 and
@@ -358,22 +387,63 @@ where   ss.EstCutDate <> @EstCutDate and
                                 s.CutCellID = @CutCellID
 						)
 ";
-            List<SqlParameter> listPar = new List<SqlParameter>();
-            listPar.Add(new SqlParameter("@EstCutDate", this.CurrentMaintain["EstCutDate"]));
-            listPar.Add(new SqlParameter("@FactoryID", this.CurrentMaintain["FactoryID"]));
-            listPar.Add(new SqlParameter("@CutCellID", this.CurrentMaintain["CutCellID"]));
-            DualResult result = DBProxy.Current.Execute(null, sqlDeleteSameFutureCutRef, listPar);
+            DualResult result = DBProxy.Current.Select(null, sqlDeleteList, listPar, out DataTable dt);
             if (!result)
             {
                 return result;
             }
 
+            foreach (DataRow dr in dt.Rows)
+            {
+                result = new Gensong_SpreadingSchedule().DeleteSpreadingSchedule(dr["FactoryID"].ToString(), (DateTime)dr["EstCutDate"], dr["CutCellID"].ToString());
+                if (!result)
+                {
+                    return result;
+                }
+            }
+
+            // 2.檢查此次有存檔CutRef是否有存在未來的日期，若有就刪除，已完成與這次維護的資料不刪除 (ISP20210219)
+            string sqlDeleteSameFutureCutRef = $@"
+declare @today date = getdate()
+
+delete  ssd
+from SpreadingSchedule ss
+inner join SpreadingSchedule_Detail ssd on ss.Ukey = ssd.SpreadingScheduleUkey
+where   ss.EstCutDate <> @EstCutDate and
+		ss.EstCutDate > @today and
+		ss.FactoryID = @FactoryID and
+		ss.CutCellID = @CutCellID  and
+        ssd.IsAGVArrived = 0 and
+        ssd.CutRef in (select  sd.CutRef from	SpreadingSchedule s with(nolock)
+						 inner join SpreadingSchedule_Detail sd with(nolock) on s.Ukey = sd.SpreadingScheduleUkey
+						 where	s.EstCutDate = @EstCutDate and
+                                s.FactoryID = @FactoryID and
+                                s.CutCellID = @CutCellID
+						)
+";
+            result = DBProxy.Current.Execute(null, sqlDeleteSameFutureCutRef, listPar);
+            if (!result)
+            {
+                return result;
+            }
+
+            // 3.呼叫中間API再把這些單重新傳給廠商新增 (呼叫中間API會依據Key重撈資料)
+            foreach (DataRow dr in dt.Rows)
+            {
+                result = new Gensong_SpreadingSchedule().SendSpreadingSchedule(dr["FactoryID"].ToString(), (DateTime)dr["EstCutDate"], dr["CutCellID"].ToString());
+                if (!result)
+                {
+                    return result;
+                }
+            }
+
+            // 4.呼叫中間API 傳送當前這張單
             result = new Gensong_SpreadingSchedule().SendSpreadingSchedule(this.CurrentMaintain["FactoryID"].ToString(), (DateTime)this.CurrentMaintain["EstCutDate"], this.CurrentMaintain["CutCellID"].ToString());
             if (!result)
             {
                 return result;
             }
-            #endregion
+
             return base.ClickSavePost();
         }
 
@@ -412,6 +482,20 @@ select
 from #tmp
 ";
             return MyUtility.Tool.ProcessWithDatatable(dis, string.Empty, sqlcmd, out DataTable dt);
+        }
+
+        private bool CheckCutrefToDay(string cutref)
+        {
+            string sqlcmd = $@"
+            declare @today date = getdate()
+select 1
+from SpreadingSchedule ss
+inner join SpreadingSchedule_Detail ssd on ss.Ukey = ssd.SpreadingScheduleUkey
+where ssd.CutRef = '{cutref}'
+and ss.EstCutDate = @today
+and ss.Ukey <> '{this.CurrentMaintain["Ukey"]}'
+";
+            return MyUtility.Check.Seek(sqlcmd);
         }
 
         private void SeqtoNull()
