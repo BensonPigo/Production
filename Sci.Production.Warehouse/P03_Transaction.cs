@@ -534,9 +534,9 @@ namespace Sci.Production.Warehouse
                 	) arrived
 			outer apply(
 				select Location = (
-					select distinct concat(c.Location,'')
+					select distinct concat(c.Location,',')
 					from Receiving_Detail c WITH (NOLOCK) 
-					where c.Id = a.Id and c.Seq1 = '{1}' and c.Seq2 = '{2}'
+					where c.Id = a.Id and c.Poid = '{0}' and c.Seq1 = '{1}' and c.Seq2 = '{2}'
 					for xml path('')
 				)
 			)X
@@ -636,9 +636,9 @@ namespace Sci.Production.Warehouse
                 	) released
 			outer apply(
 				select Location = (
-					select distinct concat(c.toLocation,'')
+					select distinct concat(c.toLocation,',')
 					from SubTransfer_Detail c WITH (NOLOCK) 
-					where c.Id = a.Id  and c.Fromseq1 = '{1}' and c.FromSeq2 = '{2}'
+					where c.Id = a.Id and c.Frompoid = '{0}' and c.Fromseq1 = '{1}' and c.FromSeq2 = '{2}'
 					for xml path('')
 				)
 			)X
