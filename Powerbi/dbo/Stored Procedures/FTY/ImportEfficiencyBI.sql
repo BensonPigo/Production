@@ -2,7 +2,7 @@
 -- Create date: 2020/03/20
 -- Description:	Data Query Logic by PMS.Sewing R04, Import Data to P_SewingDailyOutput
 -- =============================================
-CREATE PROCEDURE [dbo].[ImportEfficiencyBI]
+Create PROCEDURE [dbo].[ImportEfficiencyBI]
 
 @StartDate date,
 @EndDate date
@@ -85,7 +85,7 @@ outer apply
 outer apply( select BrandID from Production.dbo.orders o1 where o.CustPONo = o1.id) Order2
 outer apply( select top 1 BrandID from Production.dbo.Style where id = o.StyleID and SeasonID = o.SeasonID and BrandID != 'SUBCON-I') StyleBrand
 where 1=1 
---�ư�non sister�����o.LocalOrder = 1 and o.SubconInSisterFty = 0
+--???non sister?????o.LocalOrder = 1 and o.SubconInSisterFty = 0
 and((o.LocalOrder <> 1 and o.SubconInType not in (1, 2)) or (o.LocalOrder = 1 and o.SubconInType <> 0))
 and (s.OutputDate between @SDate and  @EDate
 	OR cast(s.EditDate as date) between @SDate and @EDate )
@@ -119,6 +119,12 @@ select distinct ID
     ,SubConOutContractNumber
     ,SubconInSisterFty
     ,SewingReasonDesc
+	,sty.CDCodeNew
+	,[ProductType] = sty.ProductType
+	,[FabricType] = sty.FabricType
+	,[Lining] = sty.Lining
+	,[Gender] = sty.Gender
+	,[Construction] = sty.Construction
 into #tmpSewingGroup
 from #tmpSewingDetail t
 outer apply(
@@ -126,6 +132,23 @@ outer apply(
 	from Production.dbo.SewingOutput s
 	where s.ID = t.ID
 )s
+Outer apply (
+	SELECT ProductType = r2.Name
+		, FabricType = r1.Name
+		, Lining
+		, Gender
+		, Construction = d1.Name
+		, s.CDCodeNew
+	FROM Production.dbo.Style s WITH(NOLOCK)
+	left join Production.dbo.DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+	left join Production.dbo.Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+	left join Production.dbo.Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+	where s.ID = t.OrderStyle 
+	and s.SeasonID = t.OrderSeason 
+	and s.BrandID = t.OrderBrandID
+)sty
+
+
  
 select distinct s.SewingLineID,s.FactoryID,[OrderStyle] = o.StyleID, [MockupStyle] = mo.StyleID,s.OutputDate
 into #tmp_s1
@@ -195,7 +218,12 @@ select * INTO #Final from(
 		,InlineQty,Diff = t.QAQty-InlineQty
 		,rate
         ,isnull(t.SewingReasonDesc,'')SewingReasonDesc
-		 
+		,t.CDCodeNew
+		,t.ProductType
+		,t.FabricType
+		,t.Lining
+		,t.Gender
+		,t.Construction
     from #tmp1stFilter t )a
 order by MDivisionID,FactoryID,OutputDate,SewingLineID,Shift,Team,OrderId
 
@@ -258,6 +286,12 @@ WHEN MATCHED THEN
 		,t.Rate = s.Rate
 		,t.SewingReasonDesc = s.SewingReasonDesc
 		,t.SciDelivery = s.SciDelivery
+		,t.CDCodeNew = s.CDCodeNew
+		,t.ProductType = s.ProductType
+		,t.FabricType = s.FabricType
+		,t.Lining = s.Lining
+		,t.Gender = s.Gender
+		,t.Construction = s.Construction
 WHEN NOT MATCHED THEN
     INSERT VALUES (
 			s.MDivisionID
@@ -303,6 +337,12 @@ WHEN NOT MATCHED THEN
            ,s.Rate
            ,s.SewingReasonDesc
 		   ,s.SciDelivery
+		   ,s.CDCodeNew
+		   ,s.ProductType
+		   ,s.FabricType
+		   ,s.Lining
+		   ,s.Gender
+		   ,s.Construction
 		  );
 
 delete t
@@ -321,6 +361,8 @@ select OrderID from #Final s
 	AND t.OutputDate = s.OutputDate);
 
 End
+
+
 
 GO
 
