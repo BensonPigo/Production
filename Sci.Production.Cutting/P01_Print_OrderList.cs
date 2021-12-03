@@ -1017,7 +1017,7 @@ select distinct sizecode,Seq
                     }
 
                     SaveXltReportCls.XlsColumnInfo citbl = new SaveXltReportCls.XlsColumnInfo(i, true, 0, xha);
-                    if (i == 6 | i == 9 | i == 11 | i == 13)
+                    if (i == 6 | i == 9 | i == 11 | i == 12 | i == 14 | i == 16)
                     {
                         citbl.PointCnt = 2; // 小數點兩位
                         citbl.NumberFormate = "##,##0.0#";
@@ -1353,6 +1353,7 @@ select distinct sizecode,Seq
             this.ChangeColumnDataType(dt, "Q'ty/PCS", typeof(string));
             this.ChangeColumnDataType(dt, "CONSUMPTION.", typeof(string));
             this.ChangeColumnDataType(dt, "CONSUMPTION", typeof(string));
+            this.ChangeColumnDataType(dt, "CONSUMPTIONFactory", typeof(string));
 
             this.AddTotal(dt, new int[] { 0, 1 });
             this.RemoveRepeat(dt, new int[] { 0, 1, 2 });
@@ -1405,7 +1406,10 @@ select distinct sizecode,Seq
 
             decimal sOrderQty = 0;
             decimal sUsageCon = 0;
+            decimal sUsageConFactory = 0;
+            decimal consgarment = 0;            
             string unit = string.Empty;
+            string unitfactory = string.Empty;
 
             string pUnit = string.Empty;
             decimal pCon = 0;
@@ -1433,7 +1437,7 @@ select distinct sizecode,Seq
                     else
                     {
                         col2tmp = col2;
-                        this.AddSubTotalRow_06(unit, dt, sOrderQty, sUsageCon, i);
+                        this.AddSubTotalRow_06(unit, dt, sOrderQty, sUsageCon, i, unitfactory, sUsageConFactory, consgarment);
                         this.AddSubTotalRow_06_2(pUnit, pLUSName, dt, pCon, total, i + 1);
 
                         // if (exRow)
@@ -1442,7 +1446,8 @@ select distinct sizecode,Seq
                         //    dt.Rows.RemoveAt(i - 1);
                         sOrderQty = 0;
                         sUsageCon = 0;
-
+                        sUsageConFactory = 0;
+                        consgarment = 0;
                         i += 3;
 
                         // if (exRow) i += 2;
@@ -1453,10 +1458,13 @@ select distinct sizecode,Seq
                 }
 
                 unit = dt.Rows[i]["Unit"].ToString();
+                unitfactory = dt.Rows[i]["Unitfactory"].ToString();
                 dt.Rows[i]["Unit"] = DBNull.Value;
+                dt.Rows[i]["Unitfactory"] = DBNull.Value;
                 sOrderQty += decimal.Parse(dt.Rows[i]["Order Qty"].ToString());
                 sUsageCon += decimal.Parse(dt.Rows[i]["CONSUMPTION"].ToString());
-
+                sUsageConFactory += decimal.Parse(dt.Rows[i]["CONSUMPTIONFactory"].ToString());
+                consgarment += decimal.Parse(dt.Rows[i]["Consgarment"].ToString());
                 pUnit = dt.Rows[i]["Unit."].ToString();
                 dt.Rows[i]["Unit."] = DBNull.Value;
                 pCon = decimal.Parse(dt.Rows[i]["CONSUMPTION."].ToString());
@@ -1467,7 +1475,7 @@ select distinct sizecode,Seq
                 dt.Rows[i]["TOTAL"] = DBNull.Value;
             }
 
-            this.AddSubTotalRow_06(unit, dt, sOrderQty, sUsageCon, dt.Rows.Count);
+            this.AddSubTotalRow_06(unit, dt, sOrderQty, sUsageCon, dt.Rows.Count, unitfactory, sUsageConFactory, consgarment);
             this.AddSubTotalRow_06_2(pUnit, pLUSName, dt, pCon, total, dt.Rows.Count);
         }
 
@@ -1512,13 +1520,17 @@ select distinct sizecode,Seq
             }
         }
 
-        private void AddSubTotalRow_06(string unit, DataTable dt, decimal sOrderQty, decimal sUsageCon, int idx)
+        private void AddSubTotalRow_06(string unit, DataTable dt, decimal sOrderQty, decimal sUsageCon, int idx, string unitFactory, decimal sUsageConFactory, decimal consgarment)
         {
             DataRow dr = dt.NewRow();
             dr["Q'ty/PCS"] = "TTL";
             dr["Unit"] = unit;
             dr["Order Qty"] = sOrderQty;
             dr["CONSUMPTION"] = sUsageCon;
+
+            dr["UnitFactory"] = unitFactory;
+            dr["CONSUMPTIONFactory"] = sUsageConFactory;
+            dr["Consgarment"] = consgarment;
             dt.Rows.InsertAt(dr, idx);
         }
 

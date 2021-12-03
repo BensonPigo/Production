@@ -99,6 +99,9 @@ BEGIN
 		,a.OrderQty as [Order Qty]
 		,a.UsageUnit as [Unit]
 		,a.UsageQty as [CONSUMPTION]
+		, 'YDS' as [UnitFactory]
+		, uf.[CONSUMPTIONFactory]
+		, iif(isnull(a.OrderQty, 0) = 0 , 0, uf.[CONSUMPTIONFactory] / a.OrderQty) as [Consgarment]
 		,a.POUnit as [Unit.]
 		,b.mNetQty as [CONSUMPTION.]
 		,b.mPlusN as [PLUS(YDS/%)]
@@ -126,7 +129,8 @@ BEGIN
 			Production.dbo.GetCeiling(a.LossYds,0,0)) as mLossQty) ee
 		--Total
 		outer apply (select Production.dbo.GetCeiling(dd.mNetQty+ee.mLossQty,a.nRound,a.mStep) as Ttlcons) ff	
-	) b on a.Refno = b.Refno and a.ColorID = b.ColorID --and a.SizeItem = b.SizeItem 		
+	) b on a.Refno = b.Refno and a.ColorID = b.ColorID --and a.SizeItem = b.SizeItem 
+	outer apply(select [CONSUMPTIONFactory] = a.UsageQty * (select RateValue from Unit_Rate where UnitTo = 'YDS' and UnitFrom = a.UsageUnit))uf
 	order by [REF# Accessotry],Color,a.SizeItem,Seq
 	
 	--select * from #LossAcc
