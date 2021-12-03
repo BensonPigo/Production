@@ -151,8 +151,8 @@ outer apply(
 	FROM Style s
 	WHERE s.Ukey = o.StyleUkey 
 ) PRGM
-outer apply(select top 1 MasterStyleID from Style_SimilarStyle WITH (NOLOCK) where MasterStyleUkey = o.StyleUkey)MasterStyleID1
-outer apply(select top 1 MasterStyleID from Style_SimilarStyle WITH (NOLOCK) where ChildrenStyleUkey = o.StyleUkey)MasterStyleID2
+outer apply(select top 1 MasterStyleID from Style_SimilarStyle WITH (NOLOCK) where MasterStyleID = o.StyleID and MasterBrandID = o.BrandID)MasterStyleID1
+outer apply(select top 1 MasterStyleID from Style_SimilarStyle WITH (NOLOCK) where ChildrenStyleID = o.StyleID and ChildrenBrandID = o.BrandID)MasterStyleID2
 Where 
 (o.SCIDelivery >= DATEADD(DAY, -15, CONVERT(date,GETDATE())) or o.EditDate >= DATEADD(DAY, -7, CONVERT(date,GETDATE())))
 and (o.Category = ''B'' or o.Category = ''S'')
