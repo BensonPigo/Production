@@ -1,15 +1,18 @@
 ﻿CREATE TABLE [dbo].[KHImportDeclaration_ShareCDCExpense] (
-    [ID]                          VARCHAR (13)   NOT NULL,
-    [KHCustomsDescriptionCDCName] VARCHAR (50)   NOT NULL,
-    [OriTtlNetKg]                 NUMERIC (9, 2) CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_OriTtlNetKg] DEFAULT ((0)) NULL,
-    [OriTtlWeightKg]              NUMERIC (9, 2) CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_OriTtlWeightKg] DEFAULT ((0)) NULL,
+    [ID]                          VARCHAR (13)    NOT NULL,
+    [KHCustomsDescriptionCDCName] VARCHAR (50)    NOT NULL,
+    [OriTtlNetKg]                 NUMERIC (9, 2)  CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_OriTtlNetKg] DEFAULT ((0)) NULL,
+    [OriTtlWeightKg]              NUMERIC (9, 2)  CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_OriTtlWeightKg] DEFAULT ((0)) NULL,
     [OriTtlCDCAmount]             NUMERIC (12, 4) CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_OriTtlCDCAmount] DEFAULT ((0)) NULL,
-    [ActTtlNetKg]                 NUMERIC (9, 4) CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_ActTtlNetKg] DEFAULT ((0)) NULL,
-    [ActTtlWeightKg]              NUMERIC (9, 4) CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_ActTtlWeightKg] DEFAULT ((0)) NULL,
+    [ActTtlNetKg]                 NUMERIC (9, 4)  CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_ActTtlNetKg] DEFAULT ((0)) NULL,
+    [ActTtlWeightKg]              NUMERIC (9, 4)  CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_ActTtlWeightKg] DEFAULT ((0)) NULL,
     [ActTtlAmount]                NUMERIC (12, 4) CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_ActTtlAmount] DEFAULT ((0)) NULL,
-    [ActHSCode]                   VARCHAR (14)   CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_ActHSCode] DEFAULT ('') NULL,
+    [ActHSCode]                   VARCHAR (14)    CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_ActHSCode] DEFAULT ('') NULL,
+    [ActCDCQty]                   NUMERIC (9, 4)  CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_ActCDCQty] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_KHImportDeclaration_ShareCDCExpense] PRIMARY KEY CLUSTERED ([ID] ASC, [KHCustomsDescriptionCDCName] ASC)
 );
+
+
 
 
 GO
@@ -46,4 +49,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'海關物�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHImportDeclaration_ShareCDCExpense', @level2type = N'COLUMN', @level2name = N'ID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'實際進口報關數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHImportDeclaration_ShareCDCExpense', @level2type = N'COLUMN', @level2name = N'ActCDCQty';
 

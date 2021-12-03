@@ -164,6 +164,7 @@ select
 	, sum(ks.OriTtlNetKg) as [Ori Ttl N.W.]
 	, sum(ks.OriTtlWeightKg) as [Ori Ttl G.W.]
 	, sum(ks.OriTtlCDCAmount) as [Ori Ttl CDC Amount]
+    , sum(ks.ActCDCQty) as [ActCDCQty]
 	, sum(ks.ActTtlNetKg) as [Act. Ttl N.W.]
 	, sum(ks.ActTtlWeightKg) as [Act. Ttl G.W.]
 	, sum(ks.ActTtlAmount) as [Act. Ttl Amount]

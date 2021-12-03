@@ -44,6 +44,7 @@ namespace Sci.Production.Shipping
                 .Numeric("OriTtlNetKg", header: "Ori Ttl\r\nN.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
                 .Numeric("OriTtlWeightKg", header: "Ori Ttl\r\nG.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
                 .Numeric("OriTtlCDCAmount", header: "Ori Ttl CDC\r\nAmount", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
+                .Numeric("ActCDCQty", header: "Act. Ttl\r\nN.W.", width: Widths.AnsiChars(11), decimal_places: 4, integer_places: 5, name: this.nNoEmpty)
                 .Numeric("ActTtlNetKg", header: "Act. Ttl\r\nN.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, name: this.nNoEmpty)
                 .Numeric("ActTtlWeightKg", header: "Act. Ttl\r\nG.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, name: this.nNoEmpty)
                 .Numeric("ActTtlAmount", header: "Act. Ttl\r\nAmount", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, name: this.nNoEmpty)
@@ -54,13 +55,14 @@ namespace Sci.Production.Shipping
             this.grid1.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
             this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
             this.grid1.Columns[11].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns[12].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
             if (!Prgs.CheckEmptyColumn((DataTable)this.gridbs.DataSource, Prgs.GetColumnsDataPropertyNameWithTag(this.grid1, this.nNoEmpty)))
             {
-                MyUtility.Msg.WarningBox("<Act. Ttl N.W.>, <Act. Ttl G.W.>, <Act. Ttl CDC Amount>, <Act. HS Code> cannot be empty.");
+                MyUtility.Msg.WarningBox("<Act. CDC Qty>, <Act. Ttl N.W.>, <Act. Ttl G.W.>, <Act. Ttl CDC Amount>, <Act. HS Code> cannot be empty.");
                 return;
             }
 

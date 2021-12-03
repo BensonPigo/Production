@@ -700,6 +700,7 @@ INSERT INTO [dbo].[KHImportDeclaration_ShareCDCExpense]
            ,[OriTtlNetKg]
            ,[OriTtlWeightKg]
            ,[OriTtlCDCAmount]
+           ,[ActCDCQty]
            ,[ActTtlNetKg]
            ,[ActTtlWeightKg]
            ,[ActTtlAmount]
@@ -710,6 +711,7 @@ select
            ,[OriTtlNetKg]
            ,[OriTtlWeightKg]
            ,[OriTtlCDCAmount]
+           ,[ActCDCQty]
            ,[ActTtlNetKg]
            ,[ActTtlWeightKg]
            ,[ActTtlAmount]
@@ -1077,6 +1079,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                     ActTtlAmount = s.Sum(su => su.ActAmount),
                     TtlQty = s.Sum(su => su.Qty),
                     TtlCDCQty = s.Sum(su => su.CDCQty),
+                    ActCDCQty = s.Sum(su => su.CDCQty),
                 }).ToList();
             return PublicPrg.ListToDataTable.ToDataTable(sumlist);
         }
