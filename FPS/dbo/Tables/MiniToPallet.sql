@@ -2,7 +2,7 @@
     [ID]             BIGINT       NOT NULL,
     [SCICtnNo]       VARCHAR (15) NOT NULL,
     [CustCTN]        VARCHAR (30) NOT NULL,
-    [ClogLocationId] VARCHAR (10) NOT NULL,
+    [ClogLocationId] NVARCHAR(50) NOT NULL,
     [Pallet]         NVARCHAR (50) NULL,
     [Time]           DATETIME     NOT NULL,
     [SCIUpdate]      BIT          DEFAULT ((0)) NOT NULL,
