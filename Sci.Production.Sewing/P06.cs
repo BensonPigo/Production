@@ -393,10 +393,19 @@ where	pd.CTNStartNo != '' and
             foreach (var item in checkData)
             {
                 updSql = $@"
-update PackingList_Detail set DRYReceiveDate = GETDATE() where ID = '{item["ID"]}' 
+update PackingList_Detail 
+set DRYReceiveDate = GETDATE() 
+where ID = '{item["ID"]}' 
 and CTNStartNo = '{item["CTNStartNo"]}' and DisposeFromClog= 0;
+
 insert into DRYReceive(ReceiveDate, MDivisionID, OrderID, PackingListID, CTNStartNo, AddName, AddDate,SCICtnNo)
-            values(GETDATE(),'{Env.User.Keyword}','{item["OrderID"]}','{item["ID"]}','{item["CTNStartNo"]}','{Env.User.UserID}',GETDATE(),'{item["SCICtnNo"]}');
+values(GETDATE(),'{Env.User.Keyword}','{item["OrderID"]}','{item["ID"]}','{item["CTNStartNo"]}','{Env.User.UserID}',GETDATE(),'{item["SCICtnNo"]}');
+
+update o
+set o.DryRoomRecdDate = GETDATE()
+from Orders o
+inner join PackingList_Detail pd on pd.OrderID = o.ID
+where pd.ID = '{item["ID"]}' and pd.OrderID = '{item["OrderID"]}' 
 ";
                 result = DBProxy.Current.Execute(null, updSql);
                 if (result == false)

@@ -151,9 +151,14 @@ update PackingList_Detail
 set MDFailQty = {0}, MDScanDate = getdate(), MDScanName = '{5}'
 where ID = '{3}' and CTNStartNo = '{4}';
 
-
 insert into MDScan([ScanDate], [MDivisionID], [OrderID], [PackingListID], [CTNStartNo], [AddName], [AddDate], [SCICtnNo], [MDFailQty], [CartonQty])
-values(getdate(), '{1}', '{2}', '{3}', '{4}', '{5}', getdate(), '{6}', {0}, {7})
+values(getdate(), '{1}', '{2}', '{3}', '{4}', '{5}', getdate(), '{6}', {0}, {7});
+
+update o
+set o.MdRoomScanDate  = GETDATE()
+from Orders o
+inner join PackingList_Detail pd on pd.OrderID = o.ID
+where pd.ID = '{3}' and pd.OrderID = '{2}'; 
                 ",
                 this.numericBoxDiscrepancy.Text,
                 Env.User.Keyword,

@@ -182,6 +182,11 @@
     [SizeUnitWeight]         VARCHAR (8)     NULL,
     [BrokenNeedles]          BIT             CONSTRAINT [DF_Orders_BrokenNeedles] DEFAULT ((0)) NOT NULL,
     [InTheNameOfBrandID]     VARCHAR (8)     CONSTRAINT [DF_Orders_InTheNameOfBrandID] DEFAULT ('') NOT NULL,
+    [LastCTNTransDate] DATETIME NULL, 
+    [LastCTNRecdDate] DATETIME NULL, 
+    [DryRoomRecdDate] DATETIME NULL, 
+    [DryRoomTransDate] DATETIME NULL, 
+    [MdRoomScanDate] DATETIME NULL, 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
