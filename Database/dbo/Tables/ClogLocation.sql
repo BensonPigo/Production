@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[ClogLocation] (
-    [ID]          VARCHAR (10)  CONSTRAINT [DF_ClogLocation_ID] DEFAULT ('') NOT NULL,
+    [ID]          NVARCHAR(50)  CONSTRAINT [DF_ClogLocation_ID] DEFAULT ('') NOT NULL,
     [MDivisionID] VARCHAR (8)   CONSTRAINT [DF_ClogLocation_MDivisionID] DEFAULT ('') NOT NULL,
     [Description] NVARCHAR (40) CONSTRAINT [DF_ClogLocation_Description] DEFAULT ('') NOT NULL,
     [Junk]        BIT           CONSTRAINT [DF_ClogLocation_Junk] DEFAULT ((0)) NULL,
