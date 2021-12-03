@@ -75,6 +75,7 @@ namespace Sci.Production.Warehouse
 																		and d.seq2 = fty.seq2 
 																		and d.roll = fty.roll 
 																		and d.dyelot = fty.dyelot 
+                                                                        and d.stockType = fty.stockType
 										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
 										where a.id = d.id 
 												and d.poid = '{0}' 
@@ -133,6 +134,7 @@ namespace Sci.Production.Warehouse
 																		and d.FromSeq2 = fty.seq2 
 																		and d.FromRoll = fty.roll 
 																		and d.FromDyelot = fty.dyelot 
+                                                                        and d.FromStockType = fty.StockType
 										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
 										where a.id = d.id 
 												and d.FromPoId = '{0}' 
@@ -173,7 +175,19 @@ namespace Sci.Production.Warehouse
             		,adjust = 0 
                     ,ReturnQty = 0
             		,remark 
-            		,location = MtlLocation.location
+            		,location =
+                     (select  location = stuff((select ',' + x.location								
+							from(select distinct location = ToLocation
+									from BorrowBack a1 WITH (NOLOCK) 
+							inner join BorrowBack_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
+						        where a1.status = 'Confirmed' 
+						        and a.id = b1.id 
+						        and b1.ToPoId = '{0}'
+						        and b1.ToSeq1 = '{1}' 
+						        and b1.ToSeq2 = '{2}'  
+							)x			
+							for xml path('')),1,1,'') 
+					)
             		,AddDate
             from BorrowBack a WITH (NOLOCK)
             outer apply (
@@ -181,26 +195,6 @@ namespace Sci.Production.Warehouse
 	                    	from BorrowBack_Detail b WITH (NOLOCK)
 	                    	where a.id = b.id and  b.ToPoId='{0}' and b.ToSeq1 = '{1}' and b.ToSeq2 = '{2}' 
 	                    ) arrived
-            outer apply(
-				select  location = stuff((select ',' + x.location								
-								    from(select distinct location = fty_d.MtlLocationID
-									    from BorrowBack_Detail d with (nolock)
-										inner join ftyinventory fty with (nolock) on d.ToPoId = fty.poid 
-																		and d.ToSeq1 = fty.seq1 
-																		and d.ToSeq2 = fty.seq2 
-																		and d.ToRoll = fty.roll 
-																		and d.ToDyelot = fty.dyelot 
-										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
-										where a.id = d.id 
-												and d.ToPoId = '{0}' 
-												and d.ToSeq1 = '{1}'
-												and d.ToSeq2 = '{2}'
-												and fty_d.mtllocationid != '' 
-												and fty_d.mtllocationid is not null
-																	
-								    )x			
-								    for xml path('')),1,1,'') 
-			) MtlLocation             
             where type='A' and Status='Confirmed'  
                         and exists (
 			                    	select 1
@@ -246,6 +240,7 @@ namespace Sci.Production.Warehouse
 																		and d.FromSeq2 = fty.seq2 
 																		and d.FromRoll = fty.roll 
 																		and d.FromDyelot = fty.dyelot 
+                                                                        and d.FromStockType = fty.StockType
 										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
 										where a.id = d.id 
 												and d.FromPoId = '{0}' 
@@ -286,7 +281,19 @@ namespace Sci.Production.Warehouse
             		,adjust = 0
                     ,ReturnQty = 0
             		,remark 
-            		,location = MtlLocation.location
+            		,location = 
+                    (select  location = stuff((select ',' + x.location								
+							from(select distinct location = ToLocation
+									from BorrowBack a1 WITH (NOLOCK) 
+							inner join BorrowBack_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
+						        where a1.status = 'Confirmed' 
+						        and a.id = b1.id 
+						        and b1.ToPoId = '{0}'
+						        and b1.ToSeq1 = '{1}' 
+						        and b1.ToSeq2 = '{2}'  
+							)x			
+							for xml path('')),1,1,'') 
+					)
             		,AddDate
             from BorrowBack a WITH (NOLOCK)
             outer apply (
@@ -294,26 +301,6 @@ namespace Sci.Production.Warehouse
 	                    	from BorrowBack_Detail b WITH (NOLOCK)
 	                    	where a.id = b.id and  b.ToPoId='{0}' and b.ToSeq1 = '{1}' and b.ToSeq2 = '{2}' 
 	                    ) arrived
-            outer apply(
-				select  location = stuff((select ',' + x.location								
-								    from(select distinct location = fty_d.MtlLocationID
-									    from BorrowBack_Detail d with (nolock)
-										inner join ftyinventory fty with (nolock) on d.ToPoId = fty.poid 
-																		and d.ToSeq1 = fty.seq1 
-																		and d.ToSeq2 = fty.seq2 
-																		and d.ToRoll = fty.roll 
-																		and d.ToDyelot = fty.dyelot 
-										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
-										where a.id = d.id 
-												and d.ToPoId = '{0}' 
-												and d.ToSeq1 = '{1}'
-												and d.ToSeq2 = '{2}'
-												and fty_d.mtllocationid != '' 
-												and fty_d.mtllocationid is not null
-																	
-								    )x			
-								    for xml path('')),1,1,'') 
-			) MtlLocation             
             where type='B' and Status='Confirmed'  
                         and exists (
 			                    	select 1
@@ -366,6 +353,7 @@ namespace Sci.Production.Warehouse
 																		and d.seq2 = fty.seq2 
 																		and d.roll = fty.roll 
 																		and d.dyelot = fty.dyelot 
+                                                                        and d.StockType = fty.StockType
 										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
 										where a.id = d.id 
 												and d.poid = '{0}' 
@@ -426,6 +414,7 @@ namespace Sci.Production.Warehouse
 																		and d.seq2 = fty.seq2 
 																		and d.roll = fty.roll 
 																		and d.dyelot = fty.dyelot 
+                                                                        and d.StockType = fty.StockType
 										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
 										where a.id = d.id 
 												and d.poid = '{0}' 
@@ -466,7 +455,7 @@ namespace Sci.Production.Warehouse
             		,adjust = 0
                     ,ReturnQty = 0
             		,remark
-            		,location = MtlLocation.location
+            		,location = x.location
             		,AddDate
             from IssueReturn a WITH (NOLOCK)
             outer apply (
@@ -475,25 +464,14 @@ namespace Sci.Production.Warehouse
                 		where a.id = b.id and b.poid = '{0}' and b.seq1 = '{1}' and b.seq2 = '{2}' 
                 	) released
             outer apply(
-				select  location = stuff((select ',' + x.location								
-								    from(select distinct location = fty_d.MtlLocationID
-									    from IssueReturn_Detail d with (nolock)
-										inner join ftyinventory fty with (nolock) on d.poid = fty.poid 
-																		and d.seq1 = fty.seq1 
-																		and d.seq2 = fty.seq2 
-																		and d.roll = fty.roll 
-																		and d.dyelot = fty.dyelot 
-										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
-										where a.id = d.id 
-												and d.poid = '{0}' 
-												and d.seq1 = '{1}'
-												and d.seq2 = '{2}'
-												and fty_d.mtllocationid != '' 
-												and fty_d.mtllocationid is not null
-																	
-								    )x			
-								    for xml path('')),1,1,'') 
-			) MtlLocation   
+	            (select  location = stuff((select ',' + x.location								
+		                from(		select distinct location = c.Location
+				                from IssueReturn_Detail c WITH (NOLOCK) 
+		                        where c.Id = a.Id and c.Poid = '{0}' and c.Seq1 = '{1}' and c.Seq2 = '{2}'
+		                    )x			
+		                    for xml path('')),1,1,'') 
+                        )
+            )X
             where status='Confirmed' 
                 			and exists (
                 				select 1
@@ -533,12 +511,13 @@ namespace Sci.Production.Warehouse
                 		where a.id = b.id and b.poid = '{0}' and b.seq1 = '{1}' and b.seq2 = '{2}' 
                 	) arrived
 			outer apply(
-				select Location = (
-					select distinct concat(c.Location,'')
-					from Receiving_Detail c WITH (NOLOCK) 
-					where c.Id = a.Id and c.Seq1 = '{1}' and c.Seq2 = '{2}'
-					for xml path('')
-				)
+				(select  location = stuff((select ',' + x.location								
+		              from(		select distinct location = c.Location
+				                from Receiving_Detail c WITH (NOLOCK) 
+		                        where c.Id = a.Id and c.Poid = '{0}' and c.Seq1 = '{1}' and c.Seq2 = '{2}'
+		                    )x			
+		                    for xml path('')),1,1,'') 
+                        )
 			)X
             where Status='Confirmed'
                     and exists (
@@ -586,6 +565,7 @@ namespace Sci.Production.Warehouse
 																		and d.seq2 = fty.seq2 
 																		and d.roll = fty.roll 
 																		and d.dyelot = fty.dyelot 
+                                                                        and d.StockType = fty.StockType
 										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
 										where a.id = d.id 
 												and d.poid = '{0}' 
@@ -626,7 +606,7 @@ namespace Sci.Production.Warehouse
                     , adjust = 0
                     , ReturnQty = 0
                     , remark = ''  
-                    , X.Location
+                    , MtlLocation.location
                     , AddDate
             from SubTransfer a WITH (NOLOCK)
             outer apply (
@@ -634,14 +614,27 @@ namespace Sci.Production.Warehouse
                 		from SubTransfer_Detail b WITH (NOLOCK)
                 		where a.id = b.id and b.Frompoid = '{0}' and b.Fromseq1 = '{1}' and b.FromSeq2 = '{2}' 
                 	) released
-			outer apply(
-				select Location = (
-					select distinct concat(c.toLocation,'')
-					from SubTransfer_Detail c WITH (NOLOCK) 
-					where c.Id = a.Id  and c.Fromseq1 = '{1}' and c.FromSeq2 = '{2}'
-					for xml path('')
-				)
-			)X
+            outer apply(
+            select  location = stuff((select ',' + x.location								
+		            from(select distinct location = fty_d.MtlLocationID
+			            from SubTransfer_Detail d with (nolock)
+			            inner join ftyinventory fty with (nolock) on d.FromPOID = fty.poid 
+											            and d.Fromseq1 = fty.seq1 
+											            and d.Fromseq2 = fty.seq2 
+											            and d.Fromroll = fty.roll 
+											            and d.Fromdyelot = fty.dyelot 
+                                                        and d.FromStockType = fty.StockType
+			            inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+			            where a.id = d.id 
+					            and d.Frompoid = '{0}' 
+					            and d.Fromseq1 = '{1}'
+					            and d.Fromseq2 = '{2}'
+					            and fty_d.mtllocationid != '' 
+					            and fty_d.mtllocationid is not null
+																	
+		            )x			
+		            for xml path('')),1,1,'') 
+            ) MtlLocation     
             where a.Status='Confirmed' and a.type = 'B'
                     and exists (
                 				select 1
@@ -670,15 +663,21 @@ namespace Sci.Production.Warehouse
                         ,0 as adjust
                         ,0 as ReturnQty
                         , remark
-	                    ,ToLocation = (Select cast(tmp.ToLocation as nvarchar)+',' 
-                                       from (select b1.ToLocation 
-                                                   from SubTransfer a1 WITH (NOLOCK) 
-                                                   inner join SubTransfer_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
-                                                   where a1.status = 'Confirmed' and (b1.ToLocation is not null or b1.ToLocation !='')
-                                                       and b1.ToPoid = '{0}'
-                                                       and b1.ToSeq1 = '{1}'
-                                                       and b1.ToSeq2 = '{2}'  group by b1.ToLocation) tmp 
-                                       for XML PATH(''))
+	                    ,ToLocation = 
+                        (select  location = stuff((select ',' + x.location								
+		                        from(select distinct location = ToLocation
+				                        from SubTransfer a1 WITH (NOLOCK) 
+		                                inner join SubTransfer_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
+		                                where a1.status = 'Confirmed' 
+                                        and (b1.ToLocation is not null or b1.ToLocation !='')
+		                                and a.id = b1.id 
+				                        and b1.ToPoId = '{0}'
+				                        and b1.ToSeq1 = '{1}' 
+				                        and b1.ToSeq2 = '{2}'  
+		                        )x			
+		                        for xml path('')),1,1,'') 
+                        )
+
                         ,AddDate
             from SubTransfer a WITH (NOLOCK)
             outer apply (
@@ -716,15 +715,20 @@ namespace Sci.Production.Warehouse
                         , 0 as adjust
                         , 0 as ReturnQty
                         , a.remark
-	                    , (Select cast(tmp.Location as nvarchar)+',' 
-                                    from (select b1.Location 
-                                                from TransferIn a1 WITH (NOLOCK) 
-                                                inner join TransferIn_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
-                                                where a1.status = 'Confirmed' and (b1.Location is not null or b1.Location !='')
-                                                    and b1.Poid = '{0}'
-                                                    and b1.Seq1 = '{1}'
-                                                    and b1.Seq2 = '{2}' group by b1.Location) tmp 
-                                    for XML PATH('')) as Location
+	                    , Location = 
+                        (select  location = stuff((select ',' + x.location								
+		                        from(select distinct location = Location
+				                        from TransferIn a1 WITH (NOLOCK) 
+		                                inner join TransferIn_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
+		                                where a1.status = 'Confirmed' 
+                                        and (b1.Location is not null or b1.Location !='')
+		                                and a.id = b1.id 
+				                        and b1.PoId = '{0}'
+				                        and b1.Seq1 = '{1}' 
+				                        and b1.Seq2 = '{2}'  
+		                        )x			
+		                        for xml path('')),1,1,'') 
+                        )
                         , AddDate
             from TransferIn a WITH (NOLOCK) 
             outer apply (
@@ -778,6 +782,7 @@ namespace Sci.Production.Warehouse
 																		and d.seq2 = fty.seq2 
 																		and d.roll = fty.roll 
 																		and d.dyelot = fty.dyelot 
+                                                                        and d.StockType = fty.StockType
 										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
 										where a.id = d.id 
 												and d.poid = '{0}' 
@@ -818,15 +823,20 @@ namespace Sci.Production.Warehouse
                 , 0 as adjust 
                 , 0 as ReturnQty
                 , isnull(a.remark,'') remark 
-				,(Select cast(tmp.ToLocation as nvarchar)+',' 
-                                    from (select b1.ToLocation 
-                                                from SubTransfer a1 WITH (NOLOCK) 
-                                                inner join SubTransfer_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
-                                                where a1.status = 'Confirmed' and (b1.ToLocation is not null or b1.ToLocation !='')
-                                                    and b1.ToPoid = '{0}'
-                                                    and b1.ToSeq1 = '{1}'
-                                                    and b1.ToSeq2 = '{2}' group by b1.ToLocation) tmp 
-                                    for XML PATH('')) as ToLocation
+				, ToLocation = 
+                (select  location = stuff((select ',' + x.location								
+		                from(select distinct location = ToLocation
+				                from SubTransfer a1 WITH (NOLOCK) 
+		                        inner join SubTransfer_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
+		                        where a1.status = 'Confirmed' 
+                                and (b1.ToLocation is not null or b1.ToLocation !='')
+		                        and a.id = b1.id 
+				                and b1.ToPoId = '{0}'
+				                and b1.ToSeq1 = '{1}' 
+				                and b1.ToSeq2 = '{2}'  
+		                )x			
+		                for xml path('')),1,1,'') 
+                )
 				,AddDate
             from SubTransfer a WITH (NOLOCK)
             outer apply (
@@ -879,7 +889,7 @@ namespace Sci.Production.Warehouse
 				select Location = (
 					select distinct concat(c.Location,',')
 					from RequestCrossM_Receive c WITH (NOLOCK) 
-					where c.Id = a.Id and c.Seq1 = '{1}'  and c.Seq2 = '{2}' 
+					where c.Id = a.Id and c.Poid = '{0}' and c.Seq1 = '{1}'  and c.Seq2 = '{2}' 
 					for xml path('')
 				)
 			)X
@@ -914,15 +924,7 @@ namespace Sci.Production.Warehouse
                     , 0 as adjust 
                     , 0 as ReturnQty
                     , isnull(a.remark,'') remark 
-			        , (Select cast(tmp.ToLocation as nvarchar)+',' 
-                                    from (select b1.ToLocation 
-                                                from SubTransfer a1 WITH (NOLOCK) 
-                                                inner join SubTransfer_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
-                                                where a1.status = 'Confirmed' and (b1.ToLocation is not null or b1.ToLocation !='')
-                                                    and b1.ToPoid = '{0}' 
-                                                    and b1.ToSeq1 = '{1}' 
-                                                    and b1.ToSeq2 = '{2}'  group by b1.ToLocation) tmp 
-                                    for XML PATH('')) as ToLocation
+			        , ToLocation = MtlLocation.location
 					 , AddDate
             from SubTransfer a WITH (NOLOCK)
             outer apply (
@@ -930,6 +932,27 @@ namespace Sci.Production.Warehouse
                 		from SubTransfer_Detail b WITH (NOLOCK)
                 		where a.id = b.id and b.Frompoid = '{0}' and b.Fromseq1 = '{1}' and b.FromSeq2 = '{2}' 
                 	) released
+            outer apply(
+            select  location = stuff((select ',' + x.location								
+					            from(select distinct location = fty_d.MtlLocationID
+						            from SubTransfer_Detail d with (nolock)
+						            inner join ftyinventory fty with (nolock) on d.ToPOID = fty.poid 
+														            and d.FromSeq1 = fty.seq1 
+														            and d.Fromseq2 = fty.seq2 
+														            and d.Fromroll = fty.roll 
+														            and d.Fromdyelot = fty.dyelot 
+														            and d.FromStockType = fty.StockType
+						            inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+						            where a.id = d.id 
+								            and d.Frompoid = '{0}' 
+								            and d.Fromseq1 = '{1}'
+								            and d.Fromseq2 = '{2}'
+								            and fty_d.mtllocationid != '' 
+								            and fty_d.mtllocationid is not null
+																	
+					            )x			
+				            for xml path('')),1,1,'') 
+            ) MtlLocation 
             where (type='D' or type='E') and Status='Confirmed' 
                     and exists (
                 				select 1
