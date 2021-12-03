@@ -5,7 +5,7 @@
     [PackingListID]  VARCHAR (13) CONSTRAINT [DF_ClogReceive_Detail_PackingListId] DEFAULT ('') NOT NULL,
     [OrderID]        VARCHAR (13) CONSTRAINT [DF_ClogReceive_Detail_OrderId] DEFAULT ('') NOT NULL,
     [CTNStartNo]     VARCHAR (6)  CONSTRAINT [DF_ClogReceive_Detail_CTNStartNo] DEFAULT ('') NOT NULL,
-    [ClogLocationID] VARCHAR (10) CONSTRAINT [DF_ClogReceive_Detail_ClogLocationId] DEFAULT ('') NULL,
+    [ClogLocationID] NVARCHAR(50) CONSTRAINT [DF_ClogReceive_Detail_ClogLocationId] DEFAULT ('') NULL,
     [AddDate]        DATETIME     NULL,
     [OldID]          VARCHAR (13) CONSTRAINT [DF_ClogReceive_Detail_OldID] DEFAULT ('') NULL,
     [AddName]        VARCHAR (10) CONSTRAINT [DF_ClogReceive_AddName] DEFAULT ('') NULL, 

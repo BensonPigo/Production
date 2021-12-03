@@ -3,7 +3,7 @@
     [SCICtnNo]       VARCHAR (15)   NOT NULL,
     [CustCTN]        VARCHAR (30)   NOT NULL,
     [GW]             NUMERIC (7, 3) NULL,
-    [ClogLocationId] VARCHAR (10)   NULL,
+    [ClogLocationId] NVARCHAR(50)   NULL,
     [Pallet]         NVARCHAR (50)   NULL,
     [Time]           DATETIME       NOT NULL,
     [SCIUpdate]      BIT            DEFAULT ((0)) NOT NULL,

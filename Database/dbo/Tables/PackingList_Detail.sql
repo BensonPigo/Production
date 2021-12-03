@@ -18,7 +18,7 @@
     [NWPerPcs]                            NUMERIC (7, 3)  CONSTRAINT [DF_PackingList_Detail_NWPerPcs] DEFAULT ((0)) NULL,
     [TransferDate]                        DATE            NULL,
     [ReceiveDate]                         DATE            NULL,
-    [ClogLocationId]                      VARCHAR (10)    CONSTRAINT [DF_PackingList_Detail_ClogLocationId] DEFAULT ('') NULL,
+    [ClogLocationId]                      NVarchar(50)    CONSTRAINT [DF_PackingList_Detail_ClogLocationId] DEFAULT ('') NULL,
     [ReturnDate]                          DATE            NULL,
     [Barcode]                             VARCHAR (30)    CONSTRAINT [DF_PackingList_Detail_Barcode] DEFAULT ('') NULL,
     [ScanQty]                             SMALLINT        CONSTRAINT [DF_PackingList_Detail_ScanQty] DEFAULT ((0)) NULL,
