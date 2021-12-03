@@ -295,6 +295,12 @@ where p.Type in ('B','L')
             DualResult result = new DualResult(true);
             if (rowidx == 0 && this.chkAutoScan.Checked)
             {
+                string nowPKseq = "0";
+                if (this.gridSelectCartonDetail != null && this.selcartonBS != null && this.selcartonBS.DataSource != null && this.selcartonBS.Current != null)
+                {
+                    nowPKseq = MyUtility.Convert.GetString(((SelectCartonDetail)this.selcartonBS.Current).PKseq);
+                }
+
                 var scanFirst = this.dt_scanDetail.AsEnumerable()
                        .GroupBy(g => new { ID = MyUtility.Convert.GetString(g["ID"]), CTNStartNo = MyUtility.Convert.GetString(g["CTNStartNo"]) })
                        .Select(s => new
@@ -303,10 +309,10 @@ where p.Type in ('B','L')
                            s.Key.CTNStartNo,
                            ScanQty = s.Sum(su => MyUtility.Convert.GetInt(su["ScanQty"])),
                            QtyPerCTN = s.Sum(su => MyUtility.Convert.GetInt(su["QtyPerCTN"])),
-                           Seq = s.Min(f => MyUtility.Convert.GetString(f["Seq"])),
+                           PKseq = s.Min(f => MyUtility.Convert.GetString(f["PKseq"])),
                        })
-                       .Where(w => w.QtyPerCTN > w.ScanQty)
-                       .OrderBy(o => o.Seq)
+                       .Where(w => w.QtyPerCTN > w.ScanQty && MyUtility.Convert.GetInt(w.PKseq) >= MyUtility.Convert.GetInt(nowPKseq))
+                       .OrderBy(o => o.PKseq)
                        .FirstOrDefault();
 
                 var obj = this.selcartonBS.List.OfType<SelectCartonDetail>().ToList().Find(f => f.CTNStartNo.Equals(scanFirst.CTNStartNo) && f.ID == scanFirst.ID);
