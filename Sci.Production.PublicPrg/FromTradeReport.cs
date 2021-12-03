@@ -111,10 +111,15 @@ namespace Sci.Production.PublicPrg
         /// Trade Purchase_P01_02
         /// </summary>
         /// <inheritdoc/>
-        public static bool TTLConsumption(string id)
+        public static bool TTLConsumption(string id, string reportFormat = "T")
         {
             #region TTL consumption (PO Combo)
-            DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01print_TTLconsumption", new List<SqlParameter> { new SqlParameter("@OrderID", id) }, out DataTable[] dts);
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@OrderID", id),
+                new SqlParameter("@ReportFormat", reportFormat),
+            };
+            DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01print_TTLconsumption", parameters, out DataTable[] dts);
 
             if (!res)
             {
@@ -132,7 +137,10 @@ namespace Sci.Production.PublicPrg
             decimal orderQty = MyUtility.Convert.GetDecimal(dr["Qty"]);
             Extra_P01_Report_TTLconsumptionPOCombo(dts[1], orderQty);
 
-            string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_TTLconsumptionPOCombo.xltx");
+            string fileName = reportFormat == "S" ? "Cutting_P01_TTLconsumptionPOCombo_Segmentation" : "Cutting_P01_TTLconsumptionPOCombo";
+            int col_Segmentation = reportFormat == "S" ? 3 : 0;
+
+            string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, $"{fileName}.xltx");
             sxrc sxr = new sxrc(xltPath, true);
             sxr.DicDatas.Add(sxr.VPrefix + "APPLYNO", dr["APPLYNO"]);
             sxr.DicDatas.Add(sxr.VPrefix + "MARKERNO", dr["MARKERNO"]);
@@ -152,19 +160,19 @@ namespace Sci.Production.PublicPrg
             SaveXltReportCls.XltRptTable dt = new SaveXltReportCls.XltRptTable(dts[1]);
 
             // 欄位水平對齊
-            for (int i = 3; i <= dt.Columns.Count; i++)
+            for (int i = 3 + col_Segmentation; i <= dt.Columns.Count; i++)
             {
                 SaveXltReportCls.XlsColumnInfo citbl = new SaveXltReportCls.XlsColumnInfo(i, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight);
 
-                if (i == 4 | i == 6 | i == 8 | i == 7)
+                if (i == 4 + col_Segmentation | i == 6 + col_Segmentation | i == 8 + col_Segmentation | i == 7 + col_Segmentation)
                 {
                     citbl.PointCnt = 2; // 小數點兩位
                 }
-                else if (i == 9)
+                else if (i == 9 + col_Segmentation)
                 {
                     citbl.PointCnt = 1;
                 }
-                else if (i == 13)
+                else if (i == 13 + col_Segmentation)
                 {
                     citbl.PointCnt = 3;
                 }

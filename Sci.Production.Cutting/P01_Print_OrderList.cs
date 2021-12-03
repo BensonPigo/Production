@@ -289,7 +289,7 @@ select [SP] =
             // Trade Purchase_P01_02
             if (this.radioTTLConsumption.Checked)
             {
-                return Prgs.TTLConsumption(this._id);
+                return Prgs.TTLConsumption(this._id, this.radioGroupTTLConsumption.Value);
             }
 
             // Trade Order_Report03
