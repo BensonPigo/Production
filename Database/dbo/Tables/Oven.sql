@@ -14,6 +14,8 @@
     [EditDate]    DATETIME       NULL,
     [Temperature] INT            DEFAULT ((0)) NOT NULL,
     [Time]        INT            DEFAULT ((0)) NOT NULL,
+    TestBeforePicture varbinary(max) NULL,
+    TestAfterPicture varbinary(max) NULL,
     CONSTRAINT [PK_Oven] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -82,3 +84,23 @@ GO
 CREATE NONCLUSTERED INDEX [Index_Oven_GetFirQaRecord]
     ON [dbo].[Oven]([POID] ASC);
 
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'測試前的照片',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'Oven',
+	@level2type = N'COLUMN',
+	@level2name = N'TestBeforePicture'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'測試後的照片',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'Oven',
+	@level2type = N'COLUMN',
+	@level2name = N'TestAfterPicture'
+GO

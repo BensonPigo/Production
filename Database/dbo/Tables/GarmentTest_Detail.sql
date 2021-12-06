@@ -18,6 +18,13 @@
     [FGWTMtlTypeID] VARCHAR(20) NOT NULL  CONSTRAINT DF_GarmentTest_Detail_FGWTMtlTypeID DEFAULT('') , 
     [Above50NaturalFibres] BIT NOT NULL CONSTRAINT [DF_GarmentTest_Detail_Above50NaturalFibres] DEFAULT 0, 
     [Above50SyntheticFibres] BIT NOT NULL CONSTRAINT [DF_GarmentTest_Detail_Above50SyntheticFibres] DEFAULT 0, 
+    OrderID varchar(13) CONSTRAINT [DF_GarmentTest_Detail_OrderID] default('') NOT NULL,
+    NonSeamBreakageTest bit CONSTRAINT [DF_GarmentTest_Detail_NonSeamBreakageTest] default(0) NOT NULL,
+    SeamBreakageResult varchar(1)  CONSTRAINT [DF_GarmentTest_Detail_SeamBreakageResult] default('') NOT NULL,
+    OdourResult varchar(1)  CONSTRAINT [DF_GarmentTest_Detail_OdourResult] default('') NOT NULL,
+    WashResult varchar(1)  CONSTRAINT [DF_GarmentTest_Detail_WashResult] default('') NOT NULL,
+    TestBeforePicture varbinary(max) NULL,
+    TestAfterPicture varbinary(max) NULL,
     CONSTRAINT [PK_GarmentTest_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [No] ASC)
 );
 
@@ -94,4 +101,75 @@ GO
 	, @level1type = N'TABLE', @level1name = N'GarmentTest_Detail'
 	, @level2type = N'COLUMN', @level2name = N'Above50SyntheticFibres';
 	;
+GO
+
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'測試的訂單號碼',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'GarmentTest_Detail',
+	@level2type = N'COLUMN',
+	@level2name = N'OrderID'
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'紀錄該次測試中是否包含 PHX-AP0450 SeamBrakage 的測試',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'GarmentTest_Detail',
+	@level2type = N'COLUMN',
+	@level2name = N'NonSeamBreakageTest'
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'Adidas-PHX-AP0450 SeamBrakage 檢驗結果',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'GarmentTest_Detail',
+	@level2type = N'COLUMN',
+	@level2name = N'SeamBreakageResult'
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'Adidas-PHX-AP0451 檢驗結果',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'GarmentTest_Detail',
+	@level2type = N'COLUMN',
+	@level2name = N'OdourResult'
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'Adidas-PHX-AP0701/PHX-AP0710 檢驗結果',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'GarmentTest_Detail',
+	@level2type = N'COLUMN',
+	@level2name = N'WashResult'
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'測試前的照片',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'GarmentTest_Detail',
+	@level2type = N'COLUMN',
+	@level2name = N'TestBeforePicture'
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'測試後的照片',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'GarmentTest_Detail',
+	@level2type = N'COLUMN',
+	@level2name = N'TestAfterPicture'
 GO

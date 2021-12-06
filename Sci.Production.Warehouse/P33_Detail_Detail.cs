@@ -62,7 +62,7 @@ SELECT 0 as selected
        , psd.ID
        , psd.Seq1
        , psd.Seq2
-       , [BulkQty] =ISNULL( a.inqty - a.outqty + a.adjustqty,0.00)
+       , [BulkQty] = ISNULL( a.inqty - a.outqty + a.adjustqty,0.00)
 	   , [Qty]=0.00
 	   , [BulkLocation]= ISNULL( Location.MtlLocationID ,'')
        , a.stocktype
@@ -83,6 +83,7 @@ WHERE psd.id = '{this.dr_master["poid"]}'
 AND psd.SCIRefno='{this.dr_master["SCIRefno"]}' 
 AND psd.ColorID='{this.dr_master["ColorID"]}'
 AND (a.stocktype = 'B' OR a.stocktype IS NULL)
+and ISNULL(a.inqty - a.outqty + a.adjustqty,0.00) > 0
 
 ");
             #endregion

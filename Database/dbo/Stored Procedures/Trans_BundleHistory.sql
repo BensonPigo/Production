@@ -90,8 +90,8 @@ Begin try
 			from BundleTransfer bt
 			where exists (select 1 from #tmp_Bundle_Detail where BundleNo = bt.BundleNo)
 	 
-			insert into BundleTransfer_History([Sid], [RFIDReaderId], [Type], [SubProcessId], [TagId], [BundleNo], [TransferDate], [AddDate], [LocationID], [RFIDProcessLocationID], [PanelNo], [CutCellID], [SewingLineID])
-			select [Sid], [RFIDReaderId], [Type], [SubProcessId], [TagId], [BundleNo], [TransferDate], [AddDate], [LocationID], [RFIDProcessLocationID], [PanelNo], [CutCellID], [SewingLineID]
+			insert into BundleTransfer_History([Sid], [RFIDReaderId], [Type], [SubProcessId], [TagId], [BundleNo], [TransferDate], [AddDate], [LocationID], [RFIDProcessLocationID], [PanelNo], [CutCellID], [SewingLineID],[RFIDProcessTable])
+			select [Sid], [RFIDReaderId], [Type], [SubProcessId], [TagId], [BundleNo], [TransferDate], [AddDate], [LocationID], [RFIDProcessLocationID], [PanelNo], [CutCellID], [SewingLineID],[RFIDProcessTable]
 			from #tmp_BundleTransfer
 
 			delete from bt

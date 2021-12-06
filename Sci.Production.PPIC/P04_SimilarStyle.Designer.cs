@@ -29,12 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.displaySeason = new Sci.Win.UI.DisplayBox();
-            this.labelSeason = new Sci.Win.UI.Label();
             this.displayMasterStyle = new Sci.Win.UI.DisplayBox();
             this.displayBrand = new Sci.Win.UI.DisplayBox();
             this.labelMasterStyle = new Sci.Win.UI.Label();
@@ -50,6 +47,8 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridChildrenStyle = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.displaySeason = new Sci.Win.UI.DisplayBox();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -89,29 +88,11 @@
             this.panel3.Size = new System.Drawing.Size(570, 98);
             this.panel3.TabIndex = 2;
             // 
-            // displaySeason
-            // 
-            this.displaySeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displaySeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySeason.Location = new System.Drawing.Point(320, 58);
-            this.displaySeason.Name = "displaySeason";
-            this.displaySeason.Size = new System.Drawing.Size(92, 23);
-            this.displaySeason.TabIndex = 6;
-            // 
-            // labelSeason
-            // 
-            this.labelSeason.Lines = 0;
-            this.labelSeason.Location = new System.Drawing.Point(265, 58);
-            this.labelSeason.Name = "labelSeason";
-            this.labelSeason.Size = new System.Drawing.Size(51, 23);
-            this.labelSeason.TabIndex = 5;
-            this.labelSeason.Text = "Season";
-            // 
             // displayMasterStyle
             // 
             this.displayMasterStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayMasterStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayMasterStyle.Location = new System.Drawing.Point(96, 58);
+            this.displayMasterStyle.Location = new System.Drawing.Point(100, 27);
             this.displayMasterStyle.Name = "displayMasterStyle";
             this.displayMasterStyle.Size = new System.Drawing.Size(140, 23);
             this.displayMasterStyle.TabIndex = 4;
@@ -120,15 +101,14 @@
             // 
             this.displayBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBrand.Location = new System.Drawing.Point(96, 31);
+            this.displayBrand.Location = new System.Drawing.Point(338, 27);
             this.displayBrand.Name = "displayBrand";
             this.displayBrand.Size = new System.Drawing.Size(73, 23);
             this.displayBrand.TabIndex = 3;
             // 
             // labelMasterStyle
             // 
-            this.labelMasterStyle.Lines = 0;
-            this.labelMasterStyle.Location = new System.Drawing.Point(11, 58);
+            this.labelMasterStyle.Location = new System.Drawing.Point(15, 27);
             this.labelMasterStyle.Name = "labelMasterStyle";
             this.labelMasterStyle.Size = new System.Drawing.Size(81, 23);
             this.labelMasterStyle.TabIndex = 2;
@@ -136,8 +116,7 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
-            this.labelBrand.Location = new System.Drawing.Point(11, 31);
+            this.labelBrand.Location = new System.Drawing.Point(253, 27);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(81, 23);
             this.labelBrand.TabIndex = 1;
@@ -147,7 +126,6 @@
             // 
             this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(15, 4);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(62, 23);
@@ -253,21 +231,31 @@
             this.gridChildrenStyle.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridChildrenStyle.Location = new System.Drawing.Point(0, 0);
             this.gridChildrenStyle.Name = "gridChildrenStyle";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridChildrenStyle.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridChildrenStyle.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridChildrenStyle.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridChildrenStyle.RowTemplate.Height = 24;
             this.gridChildrenStyle.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridChildrenStyle.ShowCellToolTips = false;
             this.gridChildrenStyle.Size = new System.Drawing.Size(570, 319);
             this.gridChildrenStyle.TabIndex = 0;
             this.gridChildrenStyle.TabStop = false;
+            // 
+            // labelSeason
+            // 
+            this.labelSeason.Location = new System.Drawing.Point(15, 57);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(81, 23);
+            this.labelSeason.TabIndex = 5;
+            this.labelSeason.Text = "Season";
+            // 
+            // displaySeason
+            // 
+            this.displaySeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySeason.Location = new System.Drawing.Point(100, 57);
+            this.displaySeason.Name = "displaySeason";
+            this.displaySeason.Size = new System.Drawing.Size(311, 23);
+            this.displaySeason.TabIndex = 6;
             // 
             // P04_SimilarStyle
             // 
@@ -278,8 +266,8 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Name = "P04_SimilarStyle";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Similar Style";
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
@@ -302,8 +290,6 @@
         private Win.UI.Grid gridChildrenStyle;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Label label1;
-        private Win.UI.DisplayBox displaySeason;
-        private Win.UI.Label labelSeason;
         private Win.UI.DisplayBox displayMasterStyle;
         private Win.UI.DisplayBox displayBrand;
         private Win.UI.Label labelMasterStyle;
@@ -313,5 +299,7 @@
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape3;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape2;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
+        private Win.UI.DisplayBox displaySeason;
+        private Win.UI.Label labelSeason;
     }
 }

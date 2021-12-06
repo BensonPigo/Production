@@ -190,7 +190,8 @@ namespace Sci.Production.Warehouse
 	,[Location] = f.MtlLocationID
     ,[MCHandle] = isnull(dbo.getPassEmail(o.MCHandle) ,'')
 	,[POHandle] = isnull(dbo.getPassEmail(p.POHandle) ,'')
-	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'')     
+	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'')
+    ,[Supplier] = concat(Supp.ID, '-' + Supp.AbbEN)
     ";
 
         private string sqlcolumn_sum = @"select
@@ -331,6 +332,7 @@ namespace Sci.Production.Warehouse
     ,[MCHandle] = isnull(dbo.getPassEmail(o.MCHandle) ,'')
 	,[POHandle] = isnull(dbo.getPassEmail(p.POHandle) ,'')
 	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'') 
+    ,[Supplier] = concat(Supp.ID, '-' + Supp.AbbEN)
     ";
 
         private string sql_yyyy = @"select distinct left(CONVERT(CHAR(8),o.SciDelivery, 112),4) as SciYYYY";
@@ -430,10 +432,12 @@ namespace Sci.Production.Warehouse
                 this.sqlcmd.Append($@" 
 from View_WH_Orders o with (nolock)
 inner join PO p with (nolock) on o.id = p.id
-inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id
+inner join PO_Supp ps with (nolock) on p.id = ps.id
+inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id and ps.seq1 = psd.seq1
 {(!string.IsNullOrEmpty(this.WorkNo) ? $"INNER JOIN Export_Detail ed ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{this.WorkNo}'" : string.Empty)}
 left join FtyInventory fi with (nolock) on fi.POID = psd.id and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
 left join Fabric WITH (NOLOCK) on psd.SCIRefno = fabric.SCIRefno
+left join Supp on Supp.id = ps.SuppID 
 outer apply
 (
 	select MtlLocationID = stuff(
@@ -460,10 +464,12 @@ where 1=1
                 this.sqlcmd.Append($@"
 from View_WH_Orders o with (nolock)
 inner join PO p with (nolock) on o.id = p.id
-inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id
+inner join PO_Supp ps with (nolock) on p.id = ps.id
+inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id and ps.seq1 = psd.seq1
 {(!string.IsNullOrEmpty(this.WorkNo) ? $"INNER JOIN Export_Detail ed ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{this.WorkNo}'" : string.Empty)}
 left join MDivisionPoDetail mpd with (nolock) on mpd.POID = psd.id and mpd.Seq1 = psd.SEQ1 and mpd.seq2 = psd.SEQ2
 left join Fabric WITH (NOLOCK) on psd.SCIRefno = fabric.SCIRefno
+left join Supp on Supp.id = ps.SuppID 
 outer apply
 (
 	select Description ,WeaveTypeID
