@@ -34,7 +34,6 @@
     [AdditionalOptional5] NVARCHAR (MAX)  NOT NULL,
     [AddName]             VARCHAR (10)    NOT NULL,
     [AddDate]             DATETIME        NULL,
-    [Export_Detail_Ukey]  BIGINT          NOT NULL,
     CONSTRAINT [PK_POShippingList_Line] PRIMARY KEY CLUSTERED ([POShippingList_Ukey] ASC, [QRCode] ASC, [Line] ASC)
 );
 

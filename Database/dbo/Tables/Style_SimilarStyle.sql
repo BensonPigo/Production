@@ -1,17 +1,13 @@
 ﻿CREATE TABLE [dbo].[Style_SimilarStyle] (
-    [MasterBrandID]     VARCHAR (8)  CONSTRAINT [DF_Style_SimilarStyle_MasterBrandID] DEFAULT ('') NULL,
-    [MasterStyleID]     VARCHAR (15) CONSTRAINT [DF_Style_SimilarStyle_MasterStyleID] DEFAULT ('') NULL,
-    [MasterSeasonID]    VARCHAR (10) CONSTRAINT [DF_Style_SimilarStyle_MasterSeasonID] DEFAULT ('') NULL,
-    [MasterStyleUkey]   BIGINT       CONSTRAINT [DF_Style_SimilarStyle_MasterStyleUkey] DEFAULT ((0)) NOT NULL,
-    [ChildrenBrandID]   VARCHAR (8)  CONSTRAINT [DF_Style_SimilarStyle_ChildrenBrandID] DEFAULT ('') NULL,
-    [ChildrenStyleID]   VARCHAR (15) CONSTRAINT [DF_Style_SimilarStyle_ChildrenStyleID] DEFAULT ('') NULL,
-    [ChildrenSeasonID]  VARCHAR (10) CONSTRAINT [DF_Style_SimilarStyle_ChildrenSeasonID] DEFAULT ('') NULL,
-    [ChildrenStyleUkey] BIGINT       CONSTRAINT [DF_Style_SimilarStyle_ChildrenStyleUkey] DEFAULT ((0)) NOT NULL,
+    [MasterBrandID]     VARCHAR (8)  not NULL,
+    [MasterStyleID]     VARCHAR (15) not NULL,
+    [ChildrenBrandID]   VARCHAR (8)  not NULL,
+    [ChildrenStyleID]   VARCHAR (15) not NULL,
     [AddName]           VARCHAR (10) CONSTRAINT [DF_Style_SimilarStyle_AddName] DEFAULT ('') NULL,
     [AddDate]           DATETIME     NULL,
     [EditName]          VARCHAR (10) CONSTRAINT [DF_Style_SimilarStyle_EditName] DEFAULT ('') NULL,
     [EditDate]          DATETIME     NULL,
-    CONSTRAINT [PK_Style_SimilarStyle] PRIMARY KEY CLUSTERED ([MasterStyleUkey] ASC, [ChildrenStyleUkey] ASC)
+    CONSTRAINT [PK_Style_SimilarStyle] PRIMARY KEY CLUSTERED ([MasterBrandID] ASC, [MasterStyleID] ASC, [ChildrenBrandID] ASC, [ChildrenStyleID] ASC)
 );
 
 
