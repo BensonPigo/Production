@@ -110,7 +110,8 @@ ed.WeightKg as [WeiKg],
 pl.QRCode as [MIND QR Code] ,
 ed.Remark as [Remark]
 from Export_Detail ed
-left join POShippingList_Line pl on pl.Export_Detail_Ukey=ed.Ukey
+left join POShippingList p with (nolock) on p.POID = ed.POID and p.Seq1 = ed.Seq1
+left join POShippingList_Line pl with (nolock) on pl.POShippingList_Ukey = p.Ukey and pl.Line = ed.Seq2
 WHERE ed.id = @ExportID
 ";
                 List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@ExportID", this.masterData["ID"]) };
