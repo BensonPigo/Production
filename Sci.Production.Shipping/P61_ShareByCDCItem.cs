@@ -44,7 +44,7 @@ namespace Sci.Production.Shipping
                 .Numeric("OriTtlNetKg", header: "Ori Ttl\r\nN.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
                 .Numeric("OriTtlWeightKg", header: "Ori Ttl\r\nG.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
                 .Numeric("OriTtlCDCAmount", header: "Ori Ttl CDC\r\nAmount", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
-                .Numeric("ActCDCQty", header: "Act. Ttl\r\nN.W.", width: Widths.AnsiChars(11), decimal_places: 4, integer_places: 5, name: this.nNoEmpty)
+                .Numeric("ActCDCQty", header: "Act. CDC \r\nQty.", width: Widths.AnsiChars(11), decimal_places: 4, integer_places: 5, name: this.nNoEmpty)
                 .Numeric("ActTtlNetKg", header: "Act. Ttl\r\nN.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, name: this.nNoEmpty)
                 .Numeric("ActTtlWeightKg", header: "Act. Ttl\r\nG.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, name: this.nNoEmpty)
                 .Numeric("ActTtlAmount", header: "Act. Ttl\r\nAmount", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, name: this.nNoEmpty)
@@ -64,6 +64,22 @@ namespace Sci.Production.Shipping
             {
                 MyUtility.Msg.WarningBox("<Act. CDC Qty>, <Act. Ttl N.W.>, <Act. Ttl G.W.>, <Act. Ttl CDC Amount>, <Act. HS Code> cannot be empty.");
                 return;
+            }
+
+            P61.KHImportDeclaration_ShareCDCExpense.Clear();
+            foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).Rows)
+            {
+                DataRow newdr = P61.KHImportDeclaration_ShareCDCExpense.NewRow();
+                newdr["KHCustomsDescriptionCDCName"] = dr["CustomsDescription"];
+                newdr["OriTtlNetKg"] = dr["OriTtlNetKg"];
+                newdr["OriTtlWeightKg"] = dr["OriTtlWeightKg"];
+                newdr["OriTtlCDCAmount"] = dr["OriTtlCDCAmount"];
+                newdr["ActCDCQty"] = dr["ActCDCQty"];
+                newdr["ActTtlNetKg"] = dr["ActTtlNetKg"];
+                newdr["ActTtlWeightKg"] = dr["ActTtlWeightKg"];
+                newdr["ActTtlAmount"] = dr["ActTtlAmount"];
+                newdr["ActHSCode"] = dr["ActHSCode"];
+                P61.KHImportDeclaration_ShareCDCExpense.Rows.Add(newdr);
             }
 
             DataTable sumDt = ((DataTable)this.gridbs.DataSource).Select($"ct > 1").TryCopyToDataTable((DataTable)this.gridbs.DataSource);
