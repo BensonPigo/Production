@@ -103,12 +103,55 @@ select a.POID
 	,a.Qty
 	,[Location]=dbo.Getlocation(fi.ukey)
     ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 ) 	        
+    ,[RecvKG] = case when rd.ActualQty is not null 
+						then case when rd.ActualQty <> a.Qty
+								then ''
+								else cast(iif(ISNULL(rd.ActualWeight,0) > 0, rd.ActualWeight, rd.Weight) as varchar(20))
+							 end
+						else case when td.ActualQty <> a.Qty
+								then ''
+								else cast(iif(ISNULL(td.ActualWeight,0) > 0, td.ActualWeight, td.Weight) as varchar(20))
+							 end							
+					end
+into #tmp
 from dbo.TransferOut_Detail a WITH (NOLOCK) 
 LEFT join dbo.PO_Supp_Detail b WITH (NOLOCK) on  b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2 and a.Dyelot = fi.Dyelot
     and a.roll = fi.roll and a.stocktype = fi.stocktype
+Outer apply (
+	select [Weight] = SUM(rd.Weight)
+		, [ActualWeight] = SUM(rd.ActualWeight)
+		, [ActualQty] = SUM(rd.ActualQty)
+	from Receiving_Detail rd WITH (NOLOCK) 
+	where fi.POID = rd.PoId
+	and fi.Seq1 = rd.Seq1
+	and fi.Seq2 = rd.Seq2 
+	and fi.Dyelot = rd.Dyelot
+	and fi.Roll = rd.Roll
+	and fi.StockType = rd.StockType
+	and b.FabricType = 'F'
+)rd
+Outer apply (
+	select [Weight] = SUM(td.Weight)
+		, [ActualWeight] = SUM(td.ActualWeight)
+		, [ActualQty] = SUM(td.Qty)
+	from TransferIn_Detail td WITH (NOLOCK) 
+	where fi.POID = td.PoId
+	and fi.Seq1 = td.Seq1
+	and fi.Seq2 = td.Seq2 
+	and fi.Dyelot = td.Dyelot
+	and fi.Roll = td.Roll
+	and fi.StockType = td.StockType
+	and b.FabricType = 'F'
+)td
 where a.id= @ID
-order by b.id, b.seq1, b.seq2, a.Dyelot, Len(a.Roll), a.Roll";
+
+select POID,SEQ,Roll,Dyelot, [DESC] = IIF( [DESC] != '' , [DESC] +char(10)+char(13)+'Recv (Kg) :'+ RecvKG , [DESC])
+,ToPoid,stocktype,unit,Qty,Location,Total
+from #tmp
+	
+drop table #tmp
+";
 
                 result = DBProxy.Current.Select(string.Empty, tmp, pars, out this.dtResult);
                 if (!result)
