@@ -1437,7 +1437,7 @@ select distinct sizecode,Seq
                     else
                     {
                         col2tmp = col2;
-                        this.AddSubTotalRow_06(unit, dt, sOrderQty, sUsageCon, i, unitfactory, sUsageConFactory, consgarment);
+                        this.AddSubTotalRow_06(unit, dt, sOrderQty, sUsageCon, i, unitfactory, sUsageConFactory, sOrderQty == 0 ? 0 : sUsageConFactory / sOrderQty);
                         this.AddSubTotalRow_06_2(pUnit, pLUSName, dt, pCon, total, i + 1);
 
                         // if (exRow)
