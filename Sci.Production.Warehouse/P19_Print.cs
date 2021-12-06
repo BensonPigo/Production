@@ -113,7 +113,6 @@ select a.POID
 								else cast(iif(ISNULL(td.ActualWeight,0) > 0, td.ActualWeight, td.Weight) as varchar(20))
 							 end							
 					end
-into #tmp
 from dbo.TransferOut_Detail a WITH (NOLOCK) 
 LEFT join dbo.PO_Supp_Detail b WITH (NOLOCK) on  b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2 and a.Dyelot = fi.Dyelot
@@ -145,14 +144,8 @@ Outer apply (
 	and b.FabricType = 'F'
 )td
 where a.id= @ID
-
-select POID,SEQ,Roll,Dyelot, [DESC] = IIF( [DESC] != '' , [DESC] +char(10)+char(13)+'Recv (Kg) :'+ RecvKG , [DESC])
-,ToPoid,stocktype,unit,Qty,Location,Total
-from #tmp
-	
-drop table #tmp
+order by b.id, b.seq1, b.seq2, a.Dyelot, Len(a.Roll), a.Roll
 ";
-
                 result = DBProxy.Current.Select(string.Empty, tmp, pars, out this.dtResult);
                 if (!result)
                 {
@@ -253,7 +246,7 @@ order by Dyelot, Len(Roll), Roll
                     SEQ = row1["SEQ"].ToString().Trim(),
                     Roll = row1["Roll"].ToString().Trim(),
                     Dyelot = row1["Dyelot"].ToString().Trim(),
-                    DESC = row1["DESC"].ToString().Trim() + Environment.NewLine + row1["ToPoid"].ToString().Trim(),
+                    DESC = (MyUtility.Check.Empty(row1["DESC"]) == false) ? row1["DESC"].ToString().Trim() + Environment.NewLine + row1["ToPoid"].ToString().Trim() + Environment.NewLine + "Recv (Kg) : " + row1["RecvKG"].ToString().Trim() : "Recv(Kg) :" + row1["RecvKG"].ToString().Trim(),
                     Stocktype = row1["stocktype"].ToString().Trim(),
                     Unit = row1["unit"].ToString().Trim(),
                     QTY = row1["QTY"].ToString().Trim(),
