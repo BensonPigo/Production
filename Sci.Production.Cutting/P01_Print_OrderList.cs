@@ -1407,7 +1407,7 @@ select distinct sizecode,Seq
             decimal sOrderQty = 0;
             decimal sUsageCon = 0;
             decimal sUsageConFactory = 0;
-            decimal consgarment = 0;            
+            decimal consgarment = 0;
             string unit = string.Empty;
             string unitfactory = string.Empty;
 
@@ -1464,7 +1464,6 @@ select distinct sizecode,Seq
                 sOrderQty += decimal.Parse(dt.Rows[i]["Order Qty"].ToString());
                 sUsageCon += decimal.Parse(dt.Rows[i]["CONSUMPTION"].ToString());
                 sUsageConFactory += decimal.Parse(dt.Rows[i]["CONSUMPTIONFactory"].ToString());
-                consgarment += decimal.Parse(dt.Rows[i]["Consgarment"].ToString());
                 pUnit = dt.Rows[i]["Unit."].ToString();
                 dt.Rows[i]["Unit."] = DBNull.Value;
                 pCon = decimal.Parse(dt.Rows[i]["CONSUMPTION."].ToString());
@@ -1475,7 +1474,7 @@ select distinct sizecode,Seq
                 dt.Rows[i]["TOTAL"] = DBNull.Value;
             }
 
-            this.AddSubTotalRow_06(unit, dt, sOrderQty, sUsageCon, dt.Rows.Count, unitfactory, sUsageConFactory, consgarment);
+            this.AddSubTotalRow_06(unit, dt, sOrderQty, sUsageCon, dt.Rows.Count, unitfactory, sUsageConFactory, sOrderQty == 0 ? 0 : sUsageConFactory / sOrderQty);
             this.AddSubTotalRow_06_2(pUnit, pLUSName, dt, pCon, total, dt.Rows.Count);
         }
 
