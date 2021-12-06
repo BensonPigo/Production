@@ -2575,8 +2575,8 @@ select
 	, a.seq1
 	, a.seq2
 	, a.UnitId
-	, Weight = iif(pll.GW is not null, pll.GW, a.WeightKg)
-	, ActualWeight = iif(pll.GW is not null, pll.GW, a.NetKg)
+	, Weight = isnull(pll.GW, isnull(edc.WeightKg, a.WeightKg))
+	, ActualWeight = isnull(pll.GW, isnull(edc.NetKg, a.NetKg))
 	, stocktype = iif(c.category='M','I','B')
 	, b.POUnit 
 	, StockUnit = b.StockUnit
@@ -2585,10 +2585,10 @@ select
 	, stockqty = round(x.qty * v.RateValue,2)
 	, shipqty = x.qty
 	, Actualqty = x.qty
-	, Roll = convert(varchar(8), isnull(pll.PackageNo, ''))
-    , FullRoll = convert(varchar(50), isnull(pll.PackageNo, ''))
-	, Dyelot = convert(varchar(8), isnull(pll.BatchNo, ''))
-    , FullDyelot = convert(varchar(50), isnull(pll.BatchNo, ''))
+	, Roll = convert(varchar(8), isnull(pll.PackageNo, isnull(edc.Carton, '')))
+    , FullRoll = convert(varchar(50), isnull(pll.PackageNo, isnull(edc.Carton, '')))
+	, Dyelot = convert(varchar(8), isnull(pll.BatchNo, isnull(edc.LotNo, '')))
+    , FullDyelot = convert(varchar(50), isnull(pll.BatchNo, isnull(edc.LotNo, '')))
 	, remark = ''
 	, location = ''
 	, b.Refno
@@ -2608,8 +2608,14 @@ inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id
 inner join View_WH_Orders c WITH (NOLOCK) on c.id = a.poid
 inner join View_unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit
 LEFT JOIN Fabric WITH (NOLOCK) ON b.SCIRefNo=Fabric.SCIRefNo
-left join POShippingList_Line pll WITH (NOLOCK) ON pll.Export_Detail_Ukey = a.Ukey and b.FabricType = 'F'
-outer apply(select qty = iif(b.FabricType = 'F' and pll.Export_Detail_Ukey is not null, pll.ShipQty + pll.FOC, a.Qty + a.Foc))x
+left join Export_Detail_Carton edc with (nolock) on a.Ukey = edc.Export_DetailUkey
+left join Poshippinglist pl with (nolock) on pl.POID = a.POID and pl.Seq1 = a.Seq1
+left join POShippingList_Line pll WITH (NOLOCK) ON  pll.POShippingList_Ukey = pl.Ukey and 
+                                                    pll.Line = a.Seq2 and
+                                                    pll.PackageNo = isnull(edc.Carton, pll.PackageNo) and
+                                                    pll.BatchNo = isnull(edc.LotNo, pll.BatchNo) and
+                                                    b.FabricType = 'F' 
+outer apply(select qty = isnull(pll.ShipQty + pll.FOC, isnull(edc.Qty + edc.Foc, a.Qty + a.Foc)) )x
 OUTER APPLY(
 	SELECT [Val] = STUFF((
 		SELECT DISTINCT ','+esc.ContainerType + '-' +esc.ContainerNo

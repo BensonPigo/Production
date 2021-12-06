@@ -250,13 +250,11 @@ AND t.Export_Detail_Ukey IN (
 --刪除:存在Trade_To_Pms.Export_Detail不存在Trade_To_Pms.POShippingList_Line
 delete t
 from Production.dbo.POShippingList_Line t
-where exists (select 1 from Trade_To_Pms.dbo.Export_Detail s where s.Ukey = t.Export_Detail_Ukey)
-and not exists (select 1 from Trade_To_Pms.dbo.POShippingList_Line s where s.POShippingList_Ukey = t.POShippingList_Ukey and s.QRCode = t.QRCode and s.Line = t.Line)
+where not exists (select 1 from Trade_To_Pms.dbo.POShippingList_Line s where s.POShippingList_Ukey = t.POShippingList_Ukey and s.QRCode = t.QRCode and s.Line = t.Line)
 
 --更新:存在Trade_To_Pms.Export_Detail存在Production.POShippingList_Line
 update t set
-	 [Export_Detail_Ukey]	=s.[Export_Detail_Ukey]
-	,[RefNo]				=s.[RefNo]
+	 [RefNo]				=s.[RefNo]
 	,[Description]			=s.[Description]
 	,[MaterialColor]		=s.[MaterialColor]
 	,[Weight]				=s.[Weight]
@@ -294,7 +292,6 @@ inner join Production.dbo.POShippingList_Line t on s.POShippingList_Ukey = t.POS
 --刪除:存在Trade_To_Pms.Export_Detail不存在Production.POShippingList_Line
 INSERT INTO [dbo].[POShippingList_Line]
            ([POShippingList_Ukey]
-           ,[Export_Detail_Ukey]
            ,[QRCode]
            ,[Line]
            ,[RefNo]
@@ -331,7 +328,6 @@ INSERT INTO [dbo].[POShippingList_Line]
            ,[AddDate])
 select
 	 s.[POShippingList_Ukey]
-	,s.[Export_Detail_Ukey]
 	,s.[QRCode]
 	,s.[Line]
 	,s.[RefNo]
@@ -368,8 +364,7 @@ select
 	,s.[AddDate]
 from Trade_To_Pms.dbo.POShippingList_Line s
 left join Production.dbo.POShippingList_Line t on s.POShippingList_Ukey = t.POShippingList_Ukey and s.QRCode = t.QRCode and s.Line = t.Line
-where exists (select 1 from Trade_To_Pms.dbo.Export_Detail e where e.Ukey = s.Export_Detail_Ukey and e.id in (select ID from @T))
-and t.POShippingList_Ukey is null
+where t.QRCode is null
 
 -----------------------POShippingList-----------------------------
 --更新: 存在表身 Production.dbo.POShippingList_Line, 表頭存在
