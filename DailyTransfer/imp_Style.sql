@@ -1409,40 +1409,26 @@ where not exists(select 1 from Production.dbo.Style_GMTLTFty as a WITH (NOLOCK) 
 RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_SimilarStyle
 from Production.dbo.Style_SimilarStyle as a 
-INNER JOIN Trade_To_Pms.dbo.Style as t on a.MasterStyleUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_SimilarStyle as b
-on a.MasterStyleUkey	= b.MasterStyleUkey AND a.ChildrenStyleUkey	= b.ChildrenStyleUkey
-where b.MasterStyleUkey is null
+on a.MasterBrandID	= b.MasterBrandID AND a.MasterStyleID	= b.MasterStyleID and a.ChildrenBrandID = b.ChildrenBrandID and a.ChildrenStyleID = b.ChildrenStyleID
+where b.MasterStyleID is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
-a.MasterBrandID	= b.MasterBrandID
-,a.MasterStyleID	= b.MasterStyleID
-,a.MasterSeasonID	= b.MasterSeasonID
---,a.MasterStyleUkey	= b.MasterStyleUkey
-,a.ChildrenBrandID	= b.ChildrenBrandID
-,a.ChildrenStyleID	= b.ChildrenStyleID
-,a.ChildrenSeasonID	= b.ChildrenSeasonID
---,a.ChildrenStyleUkey	= b.ChildrenStyleUkey
-,a.AddName	= b.AddName
+a.AddName	= b.AddName
 ,a.AddDate	= b.AddDate
 ,a.EditName	= b.EditName
 ,a.EditDate	= b.EditDate
-
 from Production.dbo.Style_SimilarStyle as a 
-inner join Trade_To_Pms.dbo.Style_SimilarStyle as b ON a.MasterStyleUkey	= b.MasterStyleUkey AND a.ChildrenStyleUkey	= b.ChildrenStyleUkey
+inner join Trade_To_Pms.dbo.Style_SimilarStyle as b ON a.MasterBrandID	= b.MasterBrandID AND a.MasterStyleID	= b.MasterStyleID and a.ChildrenBrandID = b.ChildrenBrandID and a.ChildrenStyleID = b.ChildrenStyleID
 -------------------------- INSERT INTO 抓
 RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_SimilarStyle(
 MasterBrandID
 ,MasterStyleID
-,MasterSeasonID
-,MasterStyleUkey
 ,ChildrenBrandID
 ,ChildrenStyleID
-,ChildrenSeasonID
-,ChildrenStyleUkey
 ,AddName
 ,AddDate
 ,EditName
@@ -1452,19 +1438,15 @@ MasterBrandID
 select 
  b.MasterBrandID
 ,b.MasterStyleID
-,b.MasterSeasonID
-,b.MasterStyleUkey
 ,b.ChildrenBrandID
 ,b.ChildrenStyleID
-,b.ChildrenSeasonID
-,b.ChildrenStyleUkey
 ,b.AddName
 ,b.AddDate
 ,b.EditName
 ,b.EditDate
-
 from Trade_To_Pms.dbo.Style_SimilarStyle as b WITH (NOLOCK)
-where not exists(select 1 from Production.dbo.Style_SimilarStyle as a WITH (NOLOCK) where a.MasterStyleUkey	= b.MasterStyleUkey AND a.ChildrenStyleUkey	= b.ChildrenStyleUkey)
+where not exists(select 1 from Production.dbo.Style_SimilarStyle as a WITH (NOLOCK) 
+			where a.MasterBrandID	= b.MasterBrandID AND a.MasterStyleID	= b.MasterStyleID and a.ChildrenBrandID = b.ChildrenBrandID and a.ChildrenStyleID = b.ChildrenStyleID)
 
 -----------------Style_SizeItem-------------------
 RAISERROR('imp_Style - Starts',0,0)
