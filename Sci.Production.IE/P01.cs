@@ -1932,6 +1932,13 @@ and s.BrandID = @brandid";
                 return;
             }
 
+            if (this.SelectedDetailGridDataRow
+                .Where(o => o["IsSubprocess"].ToString() == "True").Any())
+            {
+                MyUtility.Msg.WarningBox("Subprocess checked! This operation cannot delete!");
+                return;
+            }
+
             this.SelectedDetailGridDataRow
                 .Where(o => o["IsSubprocess"].ToString() == "False")
                 .ToList()

@@ -11,8 +11,10 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Centralized
 {
+    /// <inheritdoc/>
     public partial class IE_B05_CopyFromOtherFactory : Sci.Win.Tems.QueryForm
     {
+        /// <inheritdoc/>
         public IE_B05_CopyFromOtherFactory()
         {
             this.InitializeComponent();
@@ -85,7 +87,7 @@ where FactoryID = '{this.txtFromFty.Text}';
             if (!MyUtility.Check.Seek(sqlChk, connectionName: "Trade"))
             {
                 MyUtility.Msg.WarningBox($"The <{this.txtFromFty.Text}> has not been setting.");
-                this.txtFromFty.Select();
+                e.Cancel = true;
                 return;
             }
         }
@@ -104,7 +106,7 @@ and ID = '{this.txtToFty.Text}';
             if (!MyUtility.Check.Seek(sqlChk, connectionName: "Trade"))
             {
                 MyUtility.Msg.WarningBox($"The <{this.txtToFty.Text}> not exists");
-                this.txtToFty.Select();
+                e.Cancel = true;
                 return;
             }
         }

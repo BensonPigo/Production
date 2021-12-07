@@ -14,12 +14,14 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Centralized
 {
+    /// <inheritdoc/>
     public partial class IE_B05 : Sci.Win.Tems.Input1
     {
+        /// <inheritdoc/>
         public IE_B05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.gridIcon1.Insert.Visible = false;
         }
 
@@ -28,7 +30,7 @@ namespace Sci.Production.Centralized
         {
             base.OnDetailEntered();
 
-            if (EditMode == true)
+            if (this.EditMode == true)
             {
                 this.gridDetail.IsEditingReadOnly = false;
             }
@@ -65,12 +67,13 @@ where ID = '{this.CurrentMaintain["ID"]}'
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
             if (this.gridDetail != null)
             {
-                if (EditMode == true)
+                if (this.EditMode == true)
                 {
                     this.gridDetail.IsEditingReadOnly = false;
                 }
@@ -81,9 +84,10 @@ where ID = '{this.CurrentMaintain["ID"]}'
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (EditMode == true)
+            if (this.EditMode == true)
             {
                 this.gridDetail.IsEditingReadOnly = false;
             }
@@ -95,6 +99,7 @@ where ID = '{this.CurrentMaintain["ID"]}'
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -164,7 +169,7 @@ where ID = '{this.CurrentMaintain["ID"]}'
                     dr["FactoryID"] = string.Empty;
                     dr.EndEdit();
                     e.Cancel = true;
-                    MyUtility.Msg.WarningBox($@"<Factory: { e.FormattedValue}> doesn't exist in Data!");
+                    MyUtility.Msg.WarningBox($@"<Factory: {e.FormattedValue}> doesn't exist in Data!");
                 }
             };
 
@@ -184,11 +189,12 @@ where ID = '{this.CurrentMaintain["ID"]}'
         private void BtnCopyFrom_Click(object sender, EventArgs e)
         {
             IE_B05_CopyFromOtherFactory callForm = new IE_B05_CopyFromOtherFactory();
-            DialogResult result = callForm.ShowDialog(this);
+            callForm.ShowDialog(this);
             this.ReloadDatas();
             this.RenewData();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
@@ -210,6 +216,7 @@ where ID = '{this.CurrentMaintain["ID"]}'
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             // 修改表身資料,不寫入表頭EditName and EditDate
