@@ -86,11 +86,11 @@ BEGIN
 		select @Return = Poprice from [PMS\testing\HZG].Production.dbo.Order_UnitPrice where ID = @ID and Article = @Article and SizeCode = @SizeCode
 	END
 	
-	IF(@ServerName='[PMS\testing\NAI]')
+	IF(@ServerName='[PMS\testing\SWR]')
 	BEGIN
-		Set @DefaultPrice = isnull((select Poprice from [PMS\testing\NAI].Production.dbo.Order_UnitPrice where ID = @ID and article = '----' and SizeCode = '----'),0) 
+		Set @DefaultPrice = isnull((select Poprice from [PMS\testing\SWR].Production.dbo.Order_UnitPrice where ID = @ID and article = '----' and SizeCode = '----'),0) 
 
-		select @Return = Poprice from [PMS\testing\NAI].Production.dbo.Order_UnitPrice where ID = @ID and Article = @Article and SizeCode = @SizeCode
+		select @Return = Poprice from [PMS\testing\SWR].Production.dbo.Order_UnitPrice where ID = @ID and Article = @Article and SizeCode = @SizeCode
 	END
 
 
@@ -159,11 +159,11 @@ BEGIN
 		select @Return = Poprice from [PMS\pmsdb\HZG].Production.dbo.Order_UnitPrice where ID = @ID and Article = @Article and SizeCode = @SizeCode
 	END
 	
-	IF(@ServerName='[PMS\pmsdb\NAI]')
+	IF(@ServerName='[PMS\pmsdb\SWR]')
 	BEGIN
-		Set @DefaultPrice = isnull((select Poprice from [PMS\pmsdb\NAI].Production.dbo.Order_UnitPrice where ID = @ID and article = '----' and SizeCode = '----'),0) 
+		Set @DefaultPrice = isnull((select Poprice from [PMS\pmsdb\SWR].Production.dbo.Order_UnitPrice where ID = @ID and article = '----' and SizeCode = '----'),0) 
 
-		select @Return = Poprice from [PMS\pmsdb\NAI].Production.dbo.Order_UnitPrice where ID = @ID and Article = @Article and SizeCode = @SizeCode
+		select @Return = Poprice from [PMS\pmsdb\SWR].Production.dbo.Order_UnitPrice where ID = @ID and Article = @Article and SizeCode = @SizeCode
 	END
 
 

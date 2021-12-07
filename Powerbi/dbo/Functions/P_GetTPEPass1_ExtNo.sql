@@ -82,11 +82,11 @@ BEGIN
 		from [PMS\testing\HZG].Production.dbo.TPEPASS1 a WITH (NOLOCK) where a.ID = @id;
 	END
 	
-	IF(@ServerName='[PMS\testing\NAI]')
+	IF(@ServerName='[PMS\testing\SWR]')
 	BEGIN
 		-- Add the T-SQL statements to compute the return value here
 		SELECT @rtn = CONCAT(a.id, ':', a.Name, iif(a.ExtNo is null or  a.ExtNo = '','', CONCAT(' #', a.ExtNo))) 
-		from [PMS\testing\NAI].Production.dbo.TPEPASS1 a WITH (NOLOCK) where a.ID = @id;
+		from [PMS\testing\SWR].Production.dbo.TPEPASS1 a WITH (NOLOCK) where a.ID = @id;
 	END
 	----PMSDB
 	
@@ -153,11 +153,11 @@ BEGIN
 		from [PMS\pmsdb\HZG].Production.dbo.TPEPASS1 a WITH (NOLOCK) where a.ID = @id;
 	END
 	
-	IF(@ServerName='[PMS\pmsdb\NAI]')
+	IF(@ServerName='[PMS\pmsdb\SWR]')
 	BEGIN
 		-- Add the T-SQL statements to compute the return value here
 		SELECT @rtn = CONCAT(a.id, ':', a.Name, iif(a.ExtNo is null or  a.ExtNo = '','', CONCAT(' #', a.ExtNo))) 
-		from [PMS\pmsdb\NAI].Production.dbo.TPEPASS1 a WITH (NOLOCK) where a.ID = @id;
+		from [PMS\pmsdb\SWR].Production.dbo.TPEPASS1 a WITH (NOLOCK) where a.ID = @id;
 	END
 	-- Return the result of the function
 	RETURN @rtn;

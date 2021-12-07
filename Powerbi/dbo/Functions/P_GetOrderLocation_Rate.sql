@@ -142,16 +142,16 @@ BEGIN
 		-- Return the result of the function
 	
 	END
-	IF(@ServerName='[PMS\testing\NAI]')
+	IF(@ServerName='[PMS\testing\SWR]')
 	BEGIN
 		-- Add the T-SQL statements to compute the return value here
-		IF (select b.styleunit from [PMS\testing\NAI].Production.dbo.orders a WITH (NOLOCK) inner join [PMS\testing\NAI].Production.dbo.style b WITH (NOLOCK) on  b.ukey = a.StyleUkey where a.id = @OrderId) = 'PCS'
+		IF (select b.styleunit from [PMS\testing\SWR].Production.dbo.orders a WITH (NOLOCK) inner join [PMS\testing\SWR].Production.dbo.style b WITH (NOLOCK) on  b.ukey = a.StyleUkey where a.id = @OrderId) = 'PCS'
 		Begin
 			set @Rate = 100
 		End
 		Else
 		Begin
-			select @Rate = Rate from [PMS\testing\NAI].Production.dbo.Order_Location With(nolock) where OrderId =@OrderId and Location = @ComboType
+			select @Rate = Rate from [PMS\testing\SWR].Production.dbo.Order_Location With(nolock) where OrderId =@OrderId and Location = @ComboType
 		End
 		-- Return the result of the function
 	
@@ -286,16 +286,16 @@ BEGIN
 		-- Return the result of the function
 	
 	END
-	IF(@ServerName='[PMS\pmsdb\NAI]')
+	IF(@ServerName='[PMS\pmsdb\SWR]')
 	BEGIN
 		-- Add the T-SQL statements to compute the return value here
-		IF (select b.styleunit from [PMS\pmsdb\NAI].Production.dbo.orders a WITH (NOLOCK) inner join [PMS\pmsdb\NAI].Production.dbo.style b WITH (NOLOCK) on  b.ukey = a.StyleUkey where a.id = @OrderId) = 'PCS'
+		IF (select b.styleunit from [PMS\pmsdb\SWR].Production.dbo.orders a WITH (NOLOCK) inner join [PMS\pmsdb\SWR].Production.dbo.style b WITH (NOLOCK) on  b.ukey = a.StyleUkey where a.id = @OrderId) = 'PCS'
 		Begin
 			set @Rate = 100
 		End
 		Else
 		Begin
-			select @Rate = Rate from [PMS\pmsdb\NAI].Production.dbo.Order_Location With(nolock) where OrderId =@OrderId and Location = @ComboType
+			select @Rate = Rate from [PMS\pmsdb\SWR].Production.dbo.Order_Location With(nolock) where OrderId =@OrderId and Location = @ComboType
 		End
 		-- Return the result of the function
 	

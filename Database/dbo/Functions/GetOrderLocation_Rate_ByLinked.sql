@@ -122,13 +122,13 @@ BEGIN
 	else if @MDivisionID = 'CM3'
 	begin
 		select @styleunit = b.styleunit 
-		from [PMS\pmsdb\NAI].[Production].dbo.orders a WITH (NOLOCK) 
-		inner join [PMS\pmsdb\NAI].[Production].dbo.style b WITH (NOLOCK) on  b.ukey = a.StyleUkey 
+		from [PMS\pmsdb\SWR].[Production].dbo.orders a WITH (NOLOCK) 
+		inner join [PMS\pmsdb\SWR].[Production].dbo.style b WITH (NOLOCK) on  b.ukey = a.StyleUkey 
 		where a.id = @OrderId and a.MDivisionID = @MDivisionID
 
 		select @Rate = Rate
-		from [PMS\pmsdb\NAI].[Production].dbo.Order_Location ol With(nolock) 
-		inner join [PMS\pmsdb\NAI].[Production].dbo.Orders o With(nolock) on ol.OrderId = o.ID		
+		from [PMS\pmsdb\SWR].[Production].dbo.Order_Location ol With(nolock) 
+		inner join [PMS\pmsdb\SWR].[Production].dbo.Orders o With(nolock) on ol.OrderId = o.ID		
 		where ol.OrderId =@OrderId and ol.Location = @ComboType and o.MDivisionID = @MDivisionID 
 	end
 
