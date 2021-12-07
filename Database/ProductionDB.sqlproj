@@ -2689,6 +2689,7 @@
     <Build Include="dbo\Tables\Workhour_Detail.sql" />
     <Build Include="dbo\Tables\Issue_MIND.sql" />
     <Build Include="dbo\Tables\RFIDProcessLocation_Detail.sql" />
+    <Build Include="dbo\Stored Procedures\GetCapacityForTrade.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
