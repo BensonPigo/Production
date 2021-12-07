@@ -91,7 +91,7 @@ fetch next from PMS_Data_cursor into @CountryID,@FtyZone
 While @@FETCH_STATUS = 0
 Begin	
 	insert into #PAMSAttendance
-	exec tradedb.trade.dbo.GetPAMSAttendance @CountryID, @FtyZone ,@OutputMonth--, 'Capacity'
+	exec tradedb.trade.dbo.GetPAMSAttendance @CountryID, @FtyZone ,@OutputMonth, 'Capacity'
 
 	insert into #PAMSAttendance_Key
 	select @CountryID, @FtyZone, [Direct Manpower (Monthly CMP)] from #PAMSAttendance
