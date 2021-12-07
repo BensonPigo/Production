@@ -135,7 +135,7 @@ namespace Sci.Production.PublicPrg
 
             DataRow dr = dts[0].Rows[0];
             decimal orderQty = MyUtility.Convert.GetDecimal(dr["Qty"]);
-            Extra_P01_Report_TTLconsumptionPOCombo(dts[1], orderQty);
+            Extra_P01_Report_TTLconsumptionPOCombo(dts[1], orderQty, reportFormat);
 
             string fileName = reportFormat == "S" ? "Cutting_P01_TTLconsumptionPOCombo_Segmentation" : "Cutting_P01_TTLconsumptionPOCombo";
             int col_Segmentation = reportFormat == "S" ? 3 : 0;
@@ -298,7 +298,7 @@ namespace Sci.Production.PublicPrg
             oSheet.PageSetup.PrintTitleRows = pTitleRow;
         }
 
-        private static void Extra_P01_Report_TTLconsumptionPOCombo(DataTable dt, decimal orderQty)
+        private static void Extra_P01_Report_TTLconsumptionPOCombo(DataTable dt, decimal orderQty, string reportFormat)
         {
             string coltmp = string.Empty;
             decimal totaltmp = 0;
@@ -324,6 +324,12 @@ namespace Sci.Production.PublicPrg
                 else
                 {
                     dt.Rows[i][0] = DBNull.Value;
+                    if (reportFormat != "T")
+                    {
+                        dt.Rows[i][1] = DBNull.Value;
+                        dt.Rows[i][2] = DBNull.Value;
+                    }
+
                     dt.Rows[i]["M/WIDTH"] = DBNull.Value;
                     dt.Rows[i]["M/WEIGHT"] = DBNull.Value;
                     dt.Rows[i]["STYLE DATA CONS/PC"] = DBNull.Value;
