@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.comboTapeSort = new Sci.Win.UI.ComboBox();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
             this.rdIncludeCancelQty = new Sci.Win.UI.RadioButton();
             this.rdExcludeCancelQty = new Sci.Win.UI.RadioButton();
@@ -45,14 +47,17 @@
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.label5 = new Sci.Win.UI.Label();
-            this.comboTapeSort = new Sci.Win.UI.ComboBox();
-            this.label1 = new Sci.Win.UI.Label();
+            this.radioGroupTTLConsumption = new Sci.Win.UI.RadioGroup();
+            this.radioButton1 = new Sci.Win.UI.RadioButton();
+            this.radioButton2 = new Sci.Win.UI.RadioButton();
             this.groupBox1.SuspendLayout();
             this.radioGroup1.SuspendLayout();
+            this.radioGroupTTLConsumption.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.radioGroupTTLConsumption);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.comboTapeSort);
             this.groupBox1.Controls.Add(this.radioGroup1);
@@ -68,15 +73,38 @@
             this.groupBox1.Controls.Add(this.radioEachConsVSOrderQtyBDown);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(410, 354);
+            this.groupBox1.Size = new System.Drawing.Size(410, 379);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(145, 50);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(55, 23);
+            this.label1.TabIndex = 185;
+            this.label1.Text = "Sort By";
+            // 
+            // comboTapeSort
+            // 
+            this.comboTapeSort.BackColor = System.Drawing.Color.White;
+            this.comboTapeSort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboTapeSort.FormattingEnabled = true;
+            this.comboTapeSort.IsSupportUnselect = true;
+            this.comboTapeSort.Items.AddRange(new object[] {
+            "",
+            "Color"});
+            this.comboTapeSort.Location = new System.Drawing.Point(203, 50);
+            this.comboTapeSort.Name = "comboTapeSort";
+            this.comboTapeSort.OldText = "";
+            this.comboTapeSort.Size = new System.Drawing.Size(99, 24);
+            this.comboTapeSort.TabIndex = 184;
             // 
             // radioGroup1
             // 
             this.radioGroup1.Controls.Add(this.rdIncludeCancelQty);
             this.radioGroup1.Controls.Add(this.rdExcludeCancelQty);
-            this.radioGroup1.Location = new System.Drawing.Point(28, 190);
+            this.radioGroup1.Location = new System.Drawing.Point(28, 219);
             this.radioGroup1.Name = "radioGroup1";
             this.radioGroup1.Size = new System.Drawing.Size(298, 36);
             this.radioGroup1.TabIndex = 183;
@@ -135,7 +163,7 @@
             this.radioQtyBreakdown_PoCombbySPList.AutoSize = true;
             this.radioQtyBreakdown_PoCombbySPList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.radioQtyBreakdown_PoCombbySPList.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioQtyBreakdown_PoCombbySPList.Location = new System.Drawing.Point(6, 227);
+            this.radioQtyBreakdown_PoCombbySPList.Location = new System.Drawing.Point(6, 256);
             this.radioQtyBreakdown_PoCombbySPList.Name = "radioQtyBreakdown_PoCombbySPList";
             this.radioQtyBreakdown_PoCombbySPList.Size = new System.Drawing.Size(296, 24);
             this.radioQtyBreakdown_PoCombbySPList.TabIndex = 6;
@@ -173,7 +201,7 @@
             this.radioConsumptionCalculateByMarkerListConsPerPC.AutoSize = true;
             this.radioConsumptionCalculateByMarkerListConsPerPC.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.radioConsumptionCalculateByMarkerListConsPerPC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioConsumptionCalculateByMarkerListConsPerPC.Location = new System.Drawing.Point(6, 317);
+            this.radioConsumptionCalculateByMarkerListConsPerPC.Location = new System.Drawing.Point(6, 346);
             this.radioConsumptionCalculateByMarkerListConsPerPC.Name = "radioConsumptionCalculateByMarkerListConsPerPC";
             this.radioConsumptionCalculateByMarkerListConsPerPC.Size = new System.Drawing.Size(383, 24);
             this.radioConsumptionCalculateByMarkerListConsPerPC.TabIndex = 9;
@@ -197,7 +225,7 @@
             this.radioMarkerList.AutoSize = true;
             this.radioMarkerList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.radioMarkerList.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioMarkerList.Location = new System.Drawing.Point(6, 287);
+            this.radioMarkerList.Location = new System.Drawing.Point(6, 316);
             this.radioMarkerList.Name = "radioMarkerList";
             this.radioMarkerList.Size = new System.Drawing.Size(105, 24);
             this.radioMarkerList.TabIndex = 8;
@@ -209,7 +237,7 @@
             this.radioColorQtyBDown.AutoSize = true;
             this.radioColorQtyBDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.radioColorQtyBDown.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioColorQtyBDown.Location = new System.Drawing.Point(6, 170);
+            this.radioColorQtyBDown.Location = new System.Drawing.Point(6, 199);
             this.radioColorQtyBDown.Name = "radioColorQtyBDown";
             this.radioColorQtyBDown.Size = new System.Drawing.Size(249, 24);
             this.radioColorQtyBDown.TabIndex = 5;
@@ -221,7 +249,7 @@
             this.radioEachConsVSOrderQtyBDown.AutoSize = true;
             this.radioEachConsVSOrderQtyBDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.radioEachConsVSOrderQtyBDown.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioEachConsVSOrderQtyBDown.Location = new System.Drawing.Point(6, 257);
+            this.radioEachConsVSOrderQtyBDown.Location = new System.Drawing.Point(6, 286);
             this.radioEachConsVSOrderQtyBDown.Name = "radioEachConsVSOrderQtyBDown";
             this.radioEachConsVSOrderQtyBDown.Size = new System.Drawing.Size(350, 24);
             this.radioEachConsVSOrderQtyBDown.TabIndex = 7;
@@ -259,32 +287,46 @@
             this.label5.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.label5.TextStyle.Color = System.Drawing.Color.Blue;
             // 
-            // comboTapeSort
+            // radioGroupTTLConsumption
             // 
-            this.comboTapeSort.BackColor = System.Drawing.Color.White;
-            this.comboTapeSort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboTapeSort.FormattingEnabled = true;
-            this.comboTapeSort.IsSupportUnselect = true;
-            this.comboTapeSort.Items.AddRange(new object[] {
-            "",
-            "Color"});
-            this.comboTapeSort.Location = new System.Drawing.Point(203, 50);
-            this.comboTapeSort.Name = "comboTapeSort";
-            this.comboTapeSort.OldText = "";
-            this.comboTapeSort.Size = new System.Drawing.Size(99, 24);
-            this.comboTapeSort.TabIndex = 184;
+            this.radioGroupTTLConsumption.Controls.Add(this.radioButton1);
+            this.radioGroupTTLConsumption.Controls.Add(this.radioButton2);
+            this.radioGroupTTLConsumption.Location = new System.Drawing.Point(29, 162);
+            this.radioGroupTTLConsumption.Name = "radioGroupTTLConsumption";
+            this.radioGroupTTLConsumption.Size = new System.Drawing.Size(337, 36);
+            this.radioGroupTTLConsumption.TabIndex = 186;
+            this.radioGroupTTLConsumption.TabStop = false;
+            this.radioGroupTTLConsumption.Value = "S";
             // 
-            // label1
+            // radioButton1
             // 
-            this.label1.Location = new System.Drawing.Point(145, 50);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(55, 23);
-            this.label1.TabIndex = 185;
-            this.label1.Text = "Sort By";
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioButton1.Location = new System.Drawing.Point(1, 12);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(156, 21);
+            this.radioButton1.TabIndex = 188;
+            this.radioButton1.Text = "Trade system format";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioButton1.Value = "T";
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Checked = true;
+            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioButton2.Location = new System.Drawing.Point(163, 12);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(157, 21);
+            this.radioButton2.TabIndex = 189;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "Segmentation format";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            this.radioButton2.Value = "S";
             // 
             // P01_Print_OrderList
             // 
-            this.ClientSize = new System.Drawing.Size(558, 378);
+            this.ClientSize = new System.Drawing.Size(558, 400);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnToExcel);
             this.Controls.Add(this.label5);
@@ -300,6 +342,8 @@
             this.groupBox1.PerformLayout();
             this.radioGroup1.ResumeLayout(false);
             this.radioGroup1.PerformLayout();
+            this.radioGroupTTLConsumption.ResumeLayout(false);
+            this.radioGroupTTLConsumption.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -325,5 +369,8 @@
         private Win.UI.RadioGroup radioGroup1;
         private Win.UI.Label label1;
         private Win.UI.ComboBox comboTapeSort;
+        private Win.UI.RadioGroup radioGroupTTLConsumption;
+        private Win.UI.RadioButton radioButton1;
+        private Win.UI.RadioButton radioButton2;
     }
 }
