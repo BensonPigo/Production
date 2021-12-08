@@ -10,6 +10,8 @@
     [Ukey]            BIGINT          NOT NULL,
     [Junk]            BIT             NULL,
     [ConsPC]          NUMERIC (12, 4) NULL,
-    CONSTRAINT [PK__Order_La__5F39671C27E876C0] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+    CONSTRAINT [PK__Order_Label_Detail__Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
