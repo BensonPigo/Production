@@ -752,7 +752,7 @@ select distinct
     ,[Seq2] = wo.SEQ2
     ,[Refno] = wo.Refno
     ,[Article] = Article.value
-    ,[Color] = LTRIM(RTRIM(Color.va;ue))
+    ,[Color] = LTRIM(RTRIM(Color.value))
     ,[SizeCode] = SizeCode.value
     ,cp2.WorkorderUkey
     ,[Status] = case '{isConfirmed}' when 'True' then 'New' 
