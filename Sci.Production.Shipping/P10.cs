@@ -1047,14 +1047,22 @@ left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
         // 組Update PackingList的SQL
         private string UpdatePLCmd(DataRow pldatarow, string iNVno)
         {
-            return string.Format(
-                "update PackingList set ShipPlanID = '{0}', InspDate = {1}, InspStatus = '{2}', PulloutDate = {3} where ID = '{4}' AND INVno='{5}';",
-                MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                MyUtility.Check.Empty(pldatarow["InspDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["InspDate"]).ToString("yyyy/MM/dd") + "'",
-                MyUtility.Convert.GetString(pldatarow["InspStatus"]),
-                MyUtility.Check.Empty(pldatarow["PulloutDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["PulloutDate"]).ToString("yyyy/MM/dd") + "'",
-                MyUtility.Convert.GetString(pldatarow["ID"]),
-                iNVno);
+            string updateCmd = string.Empty;
+            if (!MyUtility.Check.Empty(pldatarow["PLFromRgCode"]))
+            {
+                updateCmd += string.Format("update GMTBooking_Detail set PulloutDate = '{0}' where PackingListID = '{1}'; ", Convert.ToDateTime(pldatarow["PulloutDate"]).ToString("yyyyMMdd"), MyUtility.Convert.GetString(pldatarow["ID"]));
+            }
+
+            updateCmd += string.Format(
+            "update PackingList set ShipPlanID = '{0}', InspDate = {1}, InspStatus = '{2}', PulloutDate = {3} where ID = '{4}' AND INVno='{5}';",
+            MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+            MyUtility.Check.Empty(pldatarow["InspDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["InspDate"]).ToString("yyyy/MM/dd") + "'",
+            MyUtility.Convert.GetString(pldatarow["InspStatus"]),
+            MyUtility.Check.Empty(pldatarow["PulloutDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["PulloutDate"]).ToString("yyyy/MM/dd") + "'",
+            MyUtility.Convert.GetString(pldatarow["ID"]),
+            iNVno);
+
+            return updateCmd;
         }
 
         // 組(Delete)Update PackingList的SQL
