@@ -291,6 +291,7 @@ select  [Poid] = IIF (( t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1
         , MDesc = 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno)
         , t.Roll
         , t.Dyelot
+        , ShadeboneTone.Tone
         , t.Qty
         , p.StockUnit
         , [location]=dbo.Getlocation(b.ukey)      
@@ -310,6 +311,12 @@ outer apply (
     select value = iif (left (t.seq1, 1) != '7', ''
                                                , '**PLS USE STOCK FROM SP#:' + iif (isnull (concat (p.StockPOID, p.StockSeq1, p.StockSeq2), '') = '', '',concat (p.StockPOID, p.StockSeq1, p.StockSeq2)) + '**')
 ) as stock7X
+outer apply (select [Tone] = MAX(fs.Tone)
+            from FtyInventory fi with (nolock) 
+            Left join FIR f with (nolock) on f.poid = fi.poid and f.seq1 = fi.seq1 and f.seq2 = fi.seq2
+	        Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
+	        where fi.Ukey = b.Ukey
+			) ShadeboneTone
 where t.id= @ID";
                 result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable bb);
                 if (!result)
@@ -337,6 +344,7 @@ where t.id= @ID";
                         Unit = row1["StockUnit"].ToString().Trim(),
                         Roll = row1["Roll"].ToString().Trim(),
                         Dyelot = row1["Dyelot"].ToString().Trim(),
+                        Tone = row1["Tone"].ToString().Trim(),
                         Qty = row1["Qty"].ToString().Trim(),
                         Total = row1["Total"].ToString().Trim(),
                     }).OrderBy(s => s.GroupPoid).ThenBy(s => s.GroupSeq).ThenBy(s => s.Dyelot).ThenBy(s => s.Roll).ToList();
