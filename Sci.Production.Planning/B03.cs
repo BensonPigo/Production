@@ -172,10 +172,6 @@ order by ID
                     {
                         this.CurrentDetailData["price"] = this.gridArtworkType.CurrentDataRow["cost"];
                     }
-                    else
-                    {
-                        this.CurrentDetailData["price"] = 0;
-                    }
 
                     this.CurrentDetailData.EndEdit();
                 }
@@ -196,10 +192,6 @@ order by ID
                     MyUtility.Convert.GetString(this.gridArtworkType.CurrentDataRow["ArtworkTypeID"]).ToUpper() == "PRINTING")
                         {
                             this.CurrentDetailData["price"] = this.gridArtworkType.CurrentDataRow["cost"];
-                        }
-                        else
-                        {
-                            this.CurrentDetailData["price"] = 0;
                         }
 
                         this.CurrentDetailData.EndEdit();
