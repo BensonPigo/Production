@@ -733,6 +733,8 @@ where not exists (select 1 from ShipPlan_DeleteGBHistory sdh where sdh.ID = t.ID
                             }
                             else
                             {
+                                updateCmds.Add(string.Format("update GMTBooking_Detail set PulloutDate = '{0}' where PackingListID = '{1}'; ", Convert.ToDateTime(pldatarow["PulloutDate"]).ToString("yyyyMMdd"), MyUtility.Convert.GetString(pldatarow["ID"])));
+
                                 string plFromRgCode = pldatarow["PLFromRgCode"].ToString();
                                 if (!updateCmdsA2B.ContainsKey(plFromRgCode))
                                 {
@@ -1048,10 +1050,6 @@ left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
         private string UpdatePLCmd(DataRow pldatarow, string iNVno)
         {
             string updateCmd = string.Empty;
-            if (!MyUtility.Check.Empty(pldatarow["PLFromRgCode"]))
-            {
-                updateCmd += string.Format("update GMTBooking_Detail set PulloutDate = '{0}' where PackingListID = '{1}'; ", Convert.ToDateTime(pldatarow["PulloutDate"]).ToString("yyyyMMdd"), MyUtility.Convert.GetString(pldatarow["ID"]));
-            }
 
             updateCmd += string.Format(
             "update PackingList set ShipPlanID = '{0}', InspDate = {1}, InspStatus = '{2}', PulloutDate = {3} where ID = '{4}' AND INVno='{5}';",
