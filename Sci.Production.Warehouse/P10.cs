@@ -136,6 +136,7 @@ namespace Sci.Production.Warehouse
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
             .Text("SCIRefno", header: "SCIRefno", width: Widths.AnsiChars(23), iseditingreadonly: true) // 1
             .Text("Refno", header: "Refno", width: Widths.AnsiChars(17), iseditingreadonly: true) // 1
+            .Text("WeaveTypeID", header: "Weave Type", width: Widths.AnsiChars(10), iseditingreadonly: true) // 1
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
             .EditText("Description", header: "Description", width: Widths.AnsiChars(40), iseditingreadonly: true) // 4
             .Numeric("requestqty", name: "requestqty", header: "Request", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 5
@@ -241,6 +242,7 @@ namespace Sci.Production.Warehouse
                                 where f.poid = a.poid and f.SCIRefno = a.SCIRefno and
                                       exists(select 1 from Issue_Detail with (nolock) where Issue_SummaryUkey = a.Ukey and f.seq1 = seq1 and f.seq2 = seq2)
                                 FOR XML PATH('')),1,1,'') )
+			,f.WeaveTypeID 
 	from dbo.Issue_Summary a WITH (NOLOCK) 
     left join Fabric f on a.SciRefno = f.SciRefno
     outer apply (
@@ -539,10 +541,12 @@ with main as(
            , [description] = (select DescDetail 
                               from fabric WITH (NOLOCK) 
                               where scirefno = t.scirefno)
+            ,f.WeaveTypeID  
     from dbo.Cutplan_Detail_Cons c WITH (NOLOCK) 
     inner join dbo.PO_Supp_Detail t WITH (NOLOCK) on t.id = c.Poid 
                                                      and t.seq1 = c.seq1 
                                                      and t.seq2 = c.Seq2
+    left join Fabric f WITH (NOLOCK) on t.SCIRefno = f.SCIRefno 
     outer apply (
         select top 1 NetQty = isnull (psdAll.NetQty, 0)
         from Cutplan_Detail_Cons cdc WITH (NOLOCK) 
@@ -579,7 +583,7 @@ with main as(
 		select value = iif (Normal.NetQty != 0, Normal.NetQty, NonNormal.NetQty)
 	) NetQty
     where c.ID = '{0}'
-    group by poid, t.SCIRefno, t.ColorID, t.Refno, NetQty.value
+    group by poid, t.SCIRefno, t.ColorID, t.Refno, NetQty.value, f.WeaveTypeID  
 )
 select a.*
        , unit = (select top 1 StockUnit 
