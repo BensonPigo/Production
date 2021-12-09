@@ -2643,8 +2643,8 @@ from (
 		, a.seq1
 		, a.seq2
 		, a.UnitId
-		, Weight = isnull(pll.GW, isnull(edc.WeightKg, a.WeightKg))
-		, ActualWeight = isnull(pll.GW, isnull(edc.NetKg, a.NetKg))
+		, Weight = isnull(edc.WeightKg, a.WeightKg)
+		, ActualWeight = isnull(edc.NetKg, a.NetKg)
 		, stocktype = iif(c.category='M','I','B')
 		, b.POUnit 
 		, StockUnit = b.StockUnit
@@ -2685,10 +2685,7 @@ from (
 		where Export_DetailUkey = a.Ukey
 		group by edc.Export_DetailUkey, edc.Id, edc.PoID, edc.Seq1, edc.Seq2
 	) edc
-	left join Poshippinglist pl with (nolock) on pl.POID = a.POID and pl.Seq1 = a.Seq1
-	left join POShippingList_Line pll WITH (NOLOCK) ON  pll.POShippingList_Ukey = pl.Ukey and 
-														pll.Line = a.Seq2
-	outer apply(select qty = isnull(pll.ShipQty + pll.FOC, isnull(edc.Qty + edc.Foc, a.Qty + a.Foc)) )x
+	outer apply(select qty = isnull(edc.Qty + edc.Foc, a.Qty + a.Foc))x
 	OUTER APPLY(
 		SELECT [Val] = STUFF((
 			SELECT DISTINCT ','+esc.ContainerType + '-' +esc.ContainerNo
