@@ -2569,68 +2569,141 @@ where id = '{this.txtInvoiceNo.Text}'
                     this.CurrentMaintain["third"] = 0;
                     this.dateETA.Enabled = false;
                     string selCom = $@"
-select
-	a.id
-	, a.poid
-	, a.seq1
-	, a.seq2
-	, a.UnitId
-	, Weight = isnull(pll.GW, isnull(edc.WeightKg, a.WeightKg))
-	, ActualWeight = isnull(pll.GW, isnull(edc.NetKg, a.NetKg))
-	, stocktype = iif(c.category='M','I','B')
-	, b.POUnit 
-	, StockUnit = b.StockUnit
-	, b.FabricType
-	, seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
-	, stockqty = round(x.qty * v.RateValue,2)
-	, shipqty = x.qty
-	, Actualqty = x.qty
-	, Roll = convert(varchar(8), isnull(pll.PackageNo, isnull(edc.Carton, '')))
-    , FullRoll = convert(varchar(50), isnull(pll.PackageNo, isnull(edc.Carton, '')))
-	, Dyelot = convert(varchar(8), isnull(pll.BatchNo, isnull(edc.LotNo, '')))
-    , FullDyelot = convert(varchar(50), isnull(pll.BatchNo, isnull(edc.LotNo, '')))
-	, remark = ''
-	, location = ''
-	, b.Refno
-	, [ColorID] = Color.Value
-	, c.FactoryID
-	, c.OrderTypeID
-	, [ContainerType] = Container.Val
-	, pll.QRCode -- b.FabricType = 'F'  相同 QRCode 其中一筆為 [+] 剩下為 [-]
-    , [MINDQRCode] = pll.QRCode
-    , clickInsert = 1
-	, DRQ = IIF(isnull(pll.QRCode, '') = '', Null, DENSE_RANK() over(order by pll.QRCode))
+select *
 into #tmp
-from dbo.Export_Detail a WITH (NOLOCK) 
-inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id   
-                                                 and a.Seq1 = b.SEQ1    
-                                                 and a.Seq2 = b.SEQ2
-inner join View_WH_Orders c WITH (NOLOCK) on c.id = a.poid
-inner join View_unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit
-LEFT JOIN Fabric WITH (NOLOCK) ON b.SCIRefNo=Fabric.SCIRefNo
-left join Export_Detail_Carton edc with (nolock) on a.Ukey = edc.Export_DetailUkey
-left join Poshippinglist pl with (nolock) on pl.POID = a.POID and pl.Seq1 = a.Seq1
-left join POShippingList_Line pll WITH (NOLOCK) ON  pll.POShippingList_Ukey = pl.Ukey and 
-                                                    pll.Line = a.Seq2 and
-                                                    pll.PackageNo = isnull(edc.Carton, pll.PackageNo) and
-                                                    pll.BatchNo = isnull(edc.LotNo, pll.BatchNo) and
-                                                    b.FabricType = 'F' 
-outer apply(select qty = isnull(pll.ShipQty + pll.FOC, isnull(edc.Qty + edc.Foc, a.Qty + a.Foc)) )x
-OUTER APPLY(
-	SELECT [Val] = STUFF((
-		SELECT DISTINCT ','+esc.ContainerType + '-' +esc.ContainerNo
-		FROM Export_ShipAdvice_Container esc
-		WHERE esc.Export_Detail_Ukey = a.Ukey
-		FOR XML PATH('')
-	),1,1,'')
-)Container
-OUTER APPLY(
- SELECT [Value]=
-	 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(b.SuppColor = '' or b.SuppColor is null,dbo.GetColorMultipleID(b.BrandID,b.ColorID),b.SuppColor)
-		 ELSE dbo.GetColorMultipleID(b.BrandID,b.ColorID)
-	 END
-)Color
-where a.id='{this.CurrentMaintain["exportid"]}'
+from (
+	select
+		a.Ukey
+		, a.id
+		, a.poid
+		, a.seq1
+		, a.seq2
+		, a.UnitId
+		, Weight = isnull(pll.GW, isnull(edc.WeightKg, a.WeightKg))
+		, ActualWeight = isnull(pll.GW, isnull(edc.NetKg, a.NetKg))
+		, stocktype = iif(c.category='M','I','B')
+		, b.POUnit 
+		, StockUnit = b.StockUnit
+		, b.FabricType
+		, seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
+		, stockqty = round(x.qty * v.RateValue,2)
+		, shipqty = x.qty
+		, Actualqty = x.qty
+		, Roll = convert(varchar(8), isnull(pll.PackageNo, isnull(edc.Carton, '')))
+		, FullRoll = convert(varchar(50), isnull(pll.PackageNo, isnull(edc.Carton, '')))
+		, Dyelot = convert(varchar(8), isnull(pll.BatchNo, isnull(edc.LotNo, '')))
+		, FullDyelot = convert(varchar(50), isnull(pll.BatchNo, isnull(edc.LotNo, '')))
+		, remark = ''
+		, location = ''
+		, b.Refno
+		, [ColorID] = Color.Value
+		, c.FactoryID
+		, c.OrderTypeID
+		, [ContainerType] = Container.Val
+		, [QRCode] = pll.QRCode -- b.FabricType = 'F'  相同 QRCode 其中一筆為 [+] 剩下為 [-]
+		, [MINDQRCode] = pll.QRCode
+		, clickInsert = 1
+		, DRQ = IIF(isnull(pll.QRCode, '') = '', Null, DENSE_RANK() over(order by pll.QRCode))
+	from dbo.Export_Detail a WITH (NOLOCK) 
+	inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id   
+													 and a.Seq1 = b.SEQ1    
+													 and a.Seq2 = b.SEQ2
+	inner join View_WH_Orders c WITH (NOLOCK) on c.id = a.poid
+	inner join View_unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit
+	left join Fabric WITH (NOLOCK) ON b.SCIRefNo=Fabric.SCIRefNo
+	left join Export_Detail_Carton edc with (nolock) on a.Ukey = edc.Export_DetailUkey
+	left join Poshippinglist pl with (nolock) on pl.POID = a.POID and pl.Seq1 = a.Seq1
+	left join POShippingList_Line pll WITH (NOLOCK) ON  pll.POShippingList_Ukey = pl.Ukey and 
+														pll.Line = a.Seq2 and
+														pll.PackageNo = isnull(edc.Carton, pll.PackageNo) and
+														pll.BatchNo = isnull(edc.LotNo, pll.BatchNo)
+	outer apply(select qty = isnull(pll.ShipQty + pll.FOC, isnull(edc.Qty + edc.Foc, a.Qty + a.Foc)) )x
+	OUTER APPLY(
+		SELECT [Val] = STUFF((
+			SELECT DISTINCT ','+esc.ContainerType + '-' +esc.ContainerNo
+			FROM Export_ShipAdvice_Container esc
+			WHERE esc.Export_Detail_Ukey = a.Ukey
+			FOR XML PATH('')
+		),1,1,'')
+	)Container
+	OUTER APPLY(
+	 SELECT [Value]=
+		 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(b.SuppColor = '' or b.SuppColor is null,dbo.GetColorMultipleID(b.BrandID,b.ColorID),b.SuppColor)
+			 ELSE dbo.GetColorMultipleID(b.BrandID,b.ColorID)
+		 END
+	)Color
+	where b.FabricType = 'F'
+	and a.id = '{this.CurrentMaintain["exportid"]}'
+	union 
+
+	select
+		a.Ukey
+		, a.id
+		, a.poid
+		, a.seq1
+		, a.seq2
+		, a.UnitId
+		, Weight = isnull(edc.WeightKg, a.WeightKg)
+		, ActualWeight = isnull(edc.NetKg, a.NetKg)
+		, stocktype = iif(c.category='M','I','B')
+		, b.POUnit 
+		, StockUnit = b.StockUnit
+		, b.FabricType
+		, seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
+		, stockqty = round(x.qty * v.RateValue,2)
+		, shipqty = x.qty
+		, Actualqty = x.qty
+		, Roll = ''
+		, FullRoll = ''
+		, Dyelot = ''
+		, FullDyelot = ''
+		, remark = ''
+		, location = ''
+		, b.Refno
+		, [ColorID] = Color.Value
+		, c.FactoryID
+		, c.OrderTypeID
+		, [ContainerType] = Container.Val
+		, [QRCode] = ''
+		, [MINDQRCode] = ''
+		, clickInsert = 1
+		, DRQ = ''
+	from dbo.Export_Detail a WITH (NOLOCK) 
+	inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id   
+													 and a.Seq1 = b.SEQ1    
+													 and a.Seq2 = b.SEQ2
+	inner join View_WH_Orders c WITH (NOLOCK) on c.id = a.poid
+	inner join View_unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit
+	left join Fabric WITH (NOLOCK) ON b.SCIRefNo=Fabric.SCIRefNo
+	outer apply (
+		select edc.Export_DetailUkey, edc.Id, edc.PoID, edc.Seq1, edc.Seq2
+			, Qty = SUM(edc.Qty)
+			, Foc = SUM(edc.Foc)
+			, NetKg = SUM(edc.NetKg)
+			, WeightKg = SUM(edc.WeightKg)
+		from Export_Detail_Carton edc
+		where Export_DetailUkey = a.Ukey
+		group by edc.Export_DetailUkey, edc.Id, edc.PoID, edc.Seq1, edc.Seq2
+	) edc
+	outer apply(select qty = isnull(edc.Qty + edc.Foc, a.Qty + a.Foc))x
+	OUTER APPLY(
+		SELECT [Val] = STUFF((
+			SELECT DISTINCT ','+esc.ContainerType + '-' +esc.ContainerNo
+			FROM Export_ShipAdvice_Container esc
+			WHERE esc.Export_Detail_Ukey = a.Ukey
+			FOR XML PATH('')
+		),1,1,'')
+	)Container
+	OUTER APPLY(
+	 SELECT [Value]=
+		 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(b.SuppColor = '' or b.SuppColor is null,dbo.GetColorMultipleID(b.BrandID,b.ColorID),b.SuppColor)
+			 ELSE dbo.GetColorMultipleID(b.BrandID,b.ColorID)
+		 END
+	)Color
+	where b.FabricType = 'A'
+	and a.id = '{this.CurrentMaintain["exportid"]}'
+)a
+order by a.Ukey
 
 select *,
 	Unoriginal_0 =  IIF(isnull(QRCode, '') <> '' and COUNT(1) over(partition by DRQ) > 1,
