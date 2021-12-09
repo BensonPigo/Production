@@ -113,6 +113,59 @@ namespace Sci.Production.Automation
         }
 
         /// <summary>
+        /// Save Automation Check Msg
+        /// </summary>
+        /// <param name="automationErrMsg">Automation Err Msg</param>
+        public static void SaveAutomationTransRecord(AutomationErrMsg automationErrMsg)
+        {
+            string saveSql = $@"
+insert into AutomationTransRecord(
+[CallFrom]     ,
+Activity       ,
+SuppID         ,
+ModuleName     ,
+SuppAPIThread  ,
+JSON           ,
+TransJson      ,
+AddName        ,
+AddDate
+)
+values
+(
+@CallFrom     ,
+@Activity       ,
+@SuppID         ,
+@ModuleName     ,
+@SuppAPIThread  ,
+@JSON           ,
+@TransJson      ,
+@AddName        ,
+getdate()
+)
+";
+            Dictionary<string, string> requestHeaders = GetCustomHeaders();
+
+            List<SqlParameter> listPar = new List<SqlParameter>()
+            {
+               new SqlParameter("@CallFrom", requestHeaders["CallFrom"]),
+               new SqlParameter("@Activity", requestHeaders["Activity"]),
+               new SqlParameter("@SuppID", automationErrMsg.suppID),
+               new SqlParameter("@ModuleName", automationErrMsg.moduleName),
+               new SqlParameter("@SuppAPIThread", automationErrMsg.suppAPIThread),
+               new SqlParameter("@JSON", automationErrMsg.json),
+               new SqlParameter("@TransJson", automationErrMsg.json),
+               new SqlParameter("@AddName", Env.User.UserID),
+            };
+
+            DualResult result = DBProxy.Current.Execute("FPS", saveSql, listPar);
+
+            if (!result)
+            {
+                throw result.GetException();
+            }
+        }
+
+        /// <summary>
         /// AutomationExceptionHandler
         /// </summary>
         /// <param name="task">Task</param>
