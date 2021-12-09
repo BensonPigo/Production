@@ -48,9 +48,11 @@ namespace Sci.Production.Automation
 
             string jsonBody = JsonConvert.SerializeObject(postBody);
 
+            Dictionary<string, string> requestHeaders = GetCustomHeaders();
+
             DualResult result = new DualResult(true);
             WebApiBaseResult webApiBaseResult;
-            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, 600);
+            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, 600, headers: requestHeaders);
 
             if (!webApiBaseResult.isSuccess)
             {
@@ -129,6 +131,15 @@ namespace Sci.Production.Automation
             apiQueryString.Add("delScheCutCellID", cutCellID);
 
             DualResult result = new DualResult(true);
+
+            AutomationErrMsg automationErrMsg = new AutomationErrMsg();
+            automationErrMsg.suppID = GensongSuppID;
+            automationErrMsg.moduleName = moduleName;
+            automationErrMsg.suppAPIThread = suppAPIThread;
+            automationErrMsg.json = JsonConvert.SerializeObject(apiQueryString);
+
+            SaveAutomationTransRecord(automationErrMsg);
+
             WebApiBaseResult webApiBaseResult;
             webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(UtilityAutomation.GetSupplierUrl(GensongSuppID, moduleName), suppAPIThread, string.Empty, 600, queryStrings: apiQueryString);
 
