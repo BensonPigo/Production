@@ -39,15 +39,15 @@ namespace Sci.Production.Shipping
                 .Text("CustomsType", header: "Customs Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CDCCode", header: "CDC Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CustomsDescription", header: "Customs Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
-                .Numeric("TtlCDCQty", header: "CDC Qty", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
+                .Numeric("TtlCDCQty", header: "CDC Qty", width: Widths.AnsiChars(9), decimal_places: 2, iseditingreadonly: true)
                 .Text("CDCUnit", header: "CDC Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("OriTtlNetKg", header: "Ori Ttl\r\nN.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
-                .Numeric("OriTtlWeightKg", header: "Ori Ttl\r\nG.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
-                .Numeric("OriTtlCDCAmount", header: "Ori Ttl CDC\r\nAmount", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
-                .Numeric("ActCDCQty", header: "Act. CDC \r\nQty.", width: Widths.AnsiChars(11), decimal_places: 4, integer_places: 5, name: this.nNoEmpty)
-                .Numeric("ActTtlNetKg", header: "Act. Ttl\r\nN.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, name: this.nNoEmpty)
-                .Numeric("ActTtlWeightKg", header: "Act. Ttl\r\nG.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, name: this.nNoEmpty)
-                .Numeric("ActTtlAmount", header: "Act. Ttl\r\nAmount", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, name: this.nNoEmpty)
+                .Numeric("OriTtlNetKg", header: "Ori Ttl\r\nN.W.", width: Widths.AnsiChars(11), decimal_places: 2, iseditingreadonly: true)
+                .Numeric("OriTtlWeightKg", header: "Ori Ttl\r\nG.W.", width: Widths.AnsiChars(11), decimal_places: 2, iseditingreadonly: true)
+                .Numeric("OriTtlCDCAmount", header: "Ori Ttl CDC\r\nAmount", width: Widths.AnsiChars(11), decimal_places: 2, iseditingreadonly: true)
+                .Numeric("ActCDCQty", header: "Act. CDC \r\nQty.", width: Widths.AnsiChars(11), decimal_places: 4, name: this.nNoEmpty)
+                .Numeric("ActTtlNetKg", header: "Act. Ttl\r\nN.W.", width: Widths.AnsiChars(11), decimal_places: 2, name: this.nNoEmpty)
+                .Numeric("ActTtlWeightKg", header: "Act. Ttl\r\nG.W.", width: Widths.AnsiChars(11), decimal_places: 2, name: this.nNoEmpty)
+                .Numeric("ActTtlAmount", header: "Act. Ttl\r\nAmount", width: Widths.AnsiChars(11), decimal_places: 2, name: this.nNoEmpty)
                 .Text("ActHSCode", header: "Act.\r\nHS Code", width: Widths.AnsiChars(14), iseditingreadonly: false, name: this.nNoEmpty)
                 ;
 
@@ -64,6 +64,57 @@ namespace Sci.Production.Shipping
             {
                 MyUtility.Msg.WarningBox("<Act. CDC Qty>, <Act. Ttl N.W.>, <Act. Ttl G.W.>, <Act. Ttl CDC Amount>, <Act. HS Code> cannot be empty.");
                 return;
+            }
+
+            foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).Rows)
+            {
+                if (MyUtility.Convert.GetDecimal(dr["OriTtlNetKg"]) >= 10000000)
+                {
+                    MyUtility.Msg.WarningBox("<Ori Ttl N.W.> can't over than 10,000,000");
+                    return;
+                }
+
+                if (MyUtility.Convert.GetDecimal(dr["OriTtlWeightKg"]) >= 10000000)
+                {
+                    MyUtility.Msg.WarningBox("<Ori Ttl G.W.> can't over than 10,000,000");
+                    return;
+                }
+
+                if (MyUtility.Convert.GetDecimal(dr["OriTtlCDCAmount"]) >= 100000000)
+                {
+                    MyUtility.Msg.WarningBox("<Ori Ttl CDC Amount> can't over than 100,000,000");
+                    return;
+                }
+
+                if (MyUtility.Convert.GetDecimal(dr["ActTtlNetKg"]) >= 100000)
+                {
+                    MyUtility.Msg.WarningBox("<Act. Ttl N.W.> can't over than 100,000");
+                    return;
+                }
+
+                if (MyUtility.Convert.GetDecimal(dr["ActTtlWeightKg"]) >= 100000)
+                {
+                    MyUtility.Msg.WarningBox("<Act. Ttl G.W.> can't over than 100,000");
+                    return;
+                }
+
+                if (MyUtility.Convert.GetDecimal(dr["ActTtlAmount"]) >= 100000000)
+                {
+                    MyUtility.Msg.WarningBox("<Act. Ttl Amount> can't over than 100,000,000");
+                    return;
+                }
+
+                if (MyUtility.Convert.GetDecimal(dr["ActCDCQty"]) >= 100000000)
+                {
+                    MyUtility.Msg.WarningBox("<Act. CDC Qty.> can't over than 100,000,000");
+                    return;
+                }
+
+                if (MyUtility.Convert.GetString(dr["ActHSCode"]).Length > 14)
+                {
+                    MyUtility.Msg.WarningBox("<Act.HS Code> length can't over than 14");
+                    return;
+                }
             }
 
             P61.KHImportDeclaration_ShareCDCExpense.Clear();

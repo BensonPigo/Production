@@ -673,6 +673,27 @@ left  join KHCustomsDescription_Detail kdd on kd.CDCName=kdd.CDCName and kdd.Pur
                 }
             }
 
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                if (MyUtility.Convert.GetDecimal(dr["ActNetKg"]) >= 10000000)
+                {
+                    MyUtility.Msg.WarningBox("<Act. N.W.> can't over than 10,000,000");
+                    return false;
+                }
+
+                if (MyUtility.Convert.GetDecimal(dr["ActWeightKg"]) >= 10000000)
+                {
+                    MyUtility.Msg.WarningBox("<Act. G.W.> can't over than 10,000,000");
+                    return false;
+                }
+
+                if (MyUtility.Convert.GetDecimal(dr["ActAmount"]) >= 1000000)
+                {
+                    MyUtility.Msg.WarningBox("<Act. Amount> can't over than 1,000,000");
+                    return false;
+                }
+            }
+
             this.ReCalculat();
 
             // 取單號

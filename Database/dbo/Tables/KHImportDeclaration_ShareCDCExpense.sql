@@ -8,7 +8,7 @@
     [ActTtlWeightKg]              NUMERIC (9, 4)  CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_ActTtlWeightKg] DEFAULT ((0)) NULL,
     [ActTtlAmount]                NUMERIC (12, 4) CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_ActTtlAmount] DEFAULT ((0)) NULL,
     [ActHSCode]                   VARCHAR (14)    CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_ActHSCode] DEFAULT ('') NULL,
-    [ActCDCQty]                   NUMERIC (9, 4)  CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_ActCDCQty] DEFAULT ((0)) NULL,
+    [ActCDCQty]                   NUMERIC (12, 4)  CONSTRAINT [DF_KHImportDeclaration_ShareCDCExpense_ActCDCQty] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_KHImportDeclaration_ShareCDCExpense] PRIMARY KEY CLUSTERED ([ID] ASC, [KHCustomsDescriptionCDCName] ASC)
 );
 
