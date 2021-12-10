@@ -88,21 +88,25 @@ namespace Sci.Production.Warehouse
             #region Grid1 - Sql command
             string selectCommand1
                 = string.Format(
-                    @"Select a.Roll,a.Dyelot
-                                ,[stocktype] = case when stocktype = 'B' then 'Bulk'
-                                                    when stocktype = 'I' then 'Invertory'
-			                                        when stocktype = 'O' then 'Scrap' End
-                                                ,a.InQty,a.OutQty,a.AdjustQty,a.ReturnQty
-                                                ,a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty as balance
-                                                ,dbo.Getlocation(a.ukey)  MtlLocationID 
-                                            from FtyInventory a WITH (NOLOCK) 
-                                            where a.Poid = '{0}'
-                                                and a.Seq1 = '{1}'
-                                                and a.Seq2 = '{2}' 
-                                                --and MDivisionPoDetailUkey is not null  --避免下面Relations發生問題
-                                                --and MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
-                                                and StockType <> 'O'  --C倉不用算
-                                            order by a.dyelot,a.roll,a.stocktype",
+                    @"
+Select a.Roll,a.Dyelot, rd.FullRoll, rd.FullDyelot
+,[stocktype] = case when a.stocktype = 'B' then 'Bulk'
+                when a.stocktype = 'I' then 'Invertory'
+			    when a.stocktype = 'O' then 'Scrap' End
+            ,a.InQty,a.OutQty,a.AdjustQty,a.ReturnQty
+            ,a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty as balance
+            ,dbo.Getlocation(a.ukey)  MtlLocationID 
+from FtyInventory a WITH (NOLOCK) 
+left join Receiving_Detail rd WITH (NOLOCK) on a.POID = rd.PoId and a.Seq1 = rd.Seq1
+and a.Seq2 = rd.Seq2 and a.Dyelot = rd.Dyelot and a.Roll = rd.Roll and a.StockType = rd.StockType
+where a.Poid = '{0}'
+    and a.Seq1 = '{1}'
+    and a.Seq2 = '{2}' 
+    --and MDivisionPoDetailUkey is not null  --避免下面Relations發生問題
+    --and MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
+    and a.StockType <> 'O'  --C倉不用算
+order by a.dyelot,a.roll,a.stocktype
+",
                     this.dr["id"].ToString(),
                     this.dr["seq1"].ToString(),
                     this.dr["seq2"].ToString(),
@@ -554,7 +558,9 @@ group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp
                 this.gridFtyinventory.DataSource = this.bindingSource1;
                 this.Helper.Controls.Grid.Generator(this.gridFtyinventory)
                      .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8))
+                     .Text("FullRoll", header: "Full Roll#", width: Widths.AnsiChars(10))
                      .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8))
+                     .Text("FullDyelot", header: "Full Dyelot", width: Widths.AnsiChars(10))
                      .Text("stocktype", header: "Stock Type", width: Widths.AnsiChars(10))
                      .Numeric("InQty", header: "Arrived Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("OutQty", header: "Released Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
@@ -738,8 +744,8 @@ where   a.id = @ID
             }
 
             string cmdText = @"
-select  c.Roll[Roll]
-        , c.Dyelot [Dyelot]
+select  c.Roll[Roll], rd.FullRoll
+        , c.Dyelot [Dyelot], rd.FullDyelot		
         , [Stock_Type] = Case c.StockType 
                             when 'B' THEN 'Bulk' 
                             WHEN 'I' THEN 'Inventory' 
@@ -752,6 +758,8 @@ select  c.Roll[Roll]
         , c.InQty-c.OutQty+c.AdjustQty-c.ReturnQty [Balance]
         , [Location]=dbo.Getlocation(c.Ukey)
 from dbo.FtyInventory c WITH (NOLOCK) 
+left join Receiving_Detail rd WITH (NOLOCK) on c.POID = rd.PoId and c.Seq1 = rd.Seq1
+and c.Seq2 = rd.Seq2 and c.Dyelot = rd.Dyelot and c.Roll = rd.Roll and c.StockType = rd.StockType
 where   c.poid = @ID 
         and c.seq1 = @seq1 
         and c.seq2 = @seq2";
