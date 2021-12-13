@@ -176,7 +176,7 @@ From IETMS i
 inner join IETMS_Detail id on i.Ukey = id.IETMSUkey
 Left join Operation o on o.id = id.OperationID
 Left join machineType m on m.id = o. MachineTypeID
-where exists (select 1 from #tmp_TimeStudy t where t.IETMSID = i.ID and t.IETMSVersion = i.Version and t.ComboType=id.Location and t.ComboType=id.Location) 
+where exists (select 1 from #tmp_TimeStudy t where t.IETMSID = i.ID and t.IETMSVersion = i.Version and t.ComboType=id.ComboType and t.Location=id.Location) 
 {whereArtworkType}
 group by i.ID, i.Version, m.ArtworkTypeID
 having Sum(round(id.SMV * (isnull(id.MtlFactorRate, 0) / 100 + 1) * id.Frequency * 60, 3)) > 0
