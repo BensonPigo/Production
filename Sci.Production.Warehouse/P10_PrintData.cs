@@ -22,6 +22,8 @@
 
         public string Dyelot { get; set; }
 
+        public string Tone { get; set; }
+
         public string Qty { get; set; }
 
         public string Total { get; set; }
