@@ -111,6 +111,8 @@ namespace Sci.Production.Sewing
 			--,ManPower1= IIF(sod.QAQty = 0, so.Manpower, so.Manpower * sod.QAQty)
             , ActManPower= so.Manpower 
 		    , SCategory = so.Category
+			, [MockupCPU] = isnull(mo.Cpu,0)
+			, [MockupCPUFactor] = isnull(mo.CPUFactor,0)
     into #tmp_1stData
     from Orders o WITH (NOLOCK) 
     inner join SewingOutput_Detail sod WITH (NOLOCK) on sod.OrderId = o.ID
@@ -118,6 +120,7 @@ namespace Sci.Production.Sewing
     inner join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
     inner join CDCode c WITH (NOLOCK) on c.ID = o.CdCodeID
     left join Factory f WITH (NOLOCK) on o.FactoryID = f.id
+	left join MockupOrder mo WITH (NOLOCK) on mo.ID = sod.OrderId
     outer apply(
 		    select BrandID from orders o1 
 		    where o.CustPONo=o1.id
@@ -195,29 +198,6 @@ namespace Sci.Production.Sewing
             }
 
             sqlCmd.Append(@"
-	select OutputDate,Category
-		   , Shift
-		   , SewingLineID
-		   , Team
-		   , OrderId
-		   , ComboType
-           , ActManPower= ActManPower
-		   , WorkHour = sum(Round(WorkHour,3))
-		   , QAQty = sum(QAQty)
-		   , SCategory
-		   , LocalOrder
-		   , FactoryID
-		   , ProgramID
-		   , CPU
-		   , CPUFactor
-		   , StyleID
-		   , Rate
-		   , IIF(Shift <> 'O' and Category NOT IN ('M','A') and LocalOrder = 1, 'I',Shift) as LastShift
-		   , FtyZone
-    into #tmp_forttlcpu
-	from #tmp_1stData
-	group by OutputDate, Category, Shift, SewingLineID, Team, OrderId, ComboType, SCategory, LocalOrder, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,FtyZone,ActManPower
-
     Select  ProgramID
             , StyleID
             , SeasonID
@@ -242,6 +222,14 @@ namespace Sci.Production.Sewing
             , CPUAdjusted 
             , Category
             , OutputDate
+			, ActManPower
+			, WorkHour
+			, CPU
+			, CPUFactor
+			, Rate
+			, QAQty
+			, MockupCPU
+			, MockupCPUFactor
     into #tmp_2ndData
     from #tmp_1stData t
     Outer apply (
@@ -279,22 +267,8 @@ namespace Sci.Production.Sewing
             , SewingLineID
             , ModularParent
             , CPUAdjusted
-            , TotalCPU = (select Sum(Round(CPU * CPUFactor * Rate * QAQty,2))  
-                          from #tmp_forttlcpu f 
-                          where f.FtyZone = a.FtyZone 
-                          and f.FactoryID = a.FactoryID 
-                          and f.ProgramID = a.ProgramID 
-                          and f.StyleID = a.StyleID 
-                          and f.SewingLineID = a.SewingLineID 
-                          and (select POID from orders where id = f.OrderId) = a.POID)
-            , TtlManhour = (select sum(ROUND( ActManPower * WorkHour, 2)) 
-                            from #tmp_forttlcpu f 
-                            where  f.FtyZone = a.FtyZone 
-                            and f.FactoryID = a.FactoryID 
-                            and f.ProgramID = a.ProgramID 
-                            and f.StyleID = a.StyleID 
-                            and f.SewingLineID = a.SewingLineID 
-                            and (select POID from orders where id = f.OrderId) = a.POID)
+            , TotalCPU = Sum(ROUND(IIF(Category='M',MockupCPU*MockupCPUFactor, CPU*CPUFactor*Rate)*QAQty,3))
+            , TtlManhour = sum(ROUND( ActManPower * WorkHour, 2))
             , Output = Sum(RateOutput)  
             , Category
             , OutputDate = Max(OutputDate)
