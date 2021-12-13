@@ -77,7 +77,7 @@ SELECT pd.OrderID
     , b.SCICtnNo
     , b.FileName
     , [HTMLFile] = IIF(b.FileName = '' ,0 , 1)
-    , [ShippingMark]=Cast( IIF(b.Image IS NULL , 0 , 1 ) as bit)
+    , [ShippingMark]=Cast( IIF(PmsFile.Image IS NULL , 0 , 1 ) as bit)
     , b.ShippingMarkCombinationUkey
     , b.ShippingMarkTypeUkey
     , b.Side
@@ -98,6 +98,9 @@ SELECT pd.OrderID
     ,pd.SortCTNStartNo
 FROm ShippingMarkPic a
 INNER JOIN ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey
+INNER JOIN ShippingMarkPic_Detail PmsFile on  b.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
+                                        AND b.SCICtnNo=PmsFile.SCICtnNo 
+                                        AND b.ShippingMarkTypeUkey=PmsFile.ShippingMarkTypeUkey 
 INNER JOIN PackingListDetail pd ON pd.ID = a.PackingListID AND b.SCICtnNo = pd.SCICtnNo
 INNER JOIN Orders o ON o.ID = pd.OrderID
 INNER JOIN ShippingMarkCombination comb ON comb.Ukey = b.ShippingMarkCombinationUkey
@@ -416,78 +419,7 @@ ORDER BY pd.SortCTNStartNo
 
         /// <inheritdoc/>
         protected override DualResult ClickSavePost()
-        {/*
-            List<string> updateCmds = new List<string>();
-            List<string> deleteCmds = new List<string>();
-            List<SqlParameter> paras = new List<SqlParameter>();
-            List<SqlParameter> paras_D = new List<SqlParameter>();
-
-            int idx = 0;
-            foreach (ShippingMarkPic_Detail body in this.readToSave)
-            {
-                paras.Add(new SqlParameter($"@Image{idx}", body.Image));
-                paras.Add(new SqlParameter($"@FileName{idx}", body.FileName));
-
-                string updateCmd = $@"
-UPDATE ShippingMarkPic_Detail WITH(NOLOCK)
-SET Image = @Image{idx} , FileName = @FileName{idx}
-WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkPicUkey='{body.ShippingMarkPicUkey}' AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
-";
-                updateCmds.Add(updateCmd);
-
-                idx++;
-            }
-
-            foreach (ShippingMarkPic_Detail body in this.readToDelete)
-            {
-                string deleteCmd = $@"
-UPDATE ShippingMarkPic_Detail WITH(NOLOCK)
-SET Image = NULL , FileName = ''
-WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkPicUkey='{body.ShippingMarkPicUkey}' AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
-";
-                deleteCmds.Add(deleteCmd);
-
-                idx++;
-            }
-
-            using (TransactionScope transactionscope = new TransactionScope())
-            {
-                try
-                {
-                    DualResult r;
-
-                    if (updateCmds.Count > 0)
-                    {
-                        r = DBProxy.Current.Execute(null, updateCmds.JoinToString(Environment.NewLine), paras);
-
-                        if (!r)
-                        {
-                            transactionscope.Dispose();
-                            return r;
-                        }
-                    }
-
-                    if (deleteCmds.Count > 0)
-                    {
-                        r = DBProxy.Current.Execute(null, deleteCmds.JoinToString(Environment.NewLine));
-
-                        if (!r)
-                        {
-                            transactionscope.Dispose();
-                            return r;
-                        }
-                    }
-
-                    transactionscope.Complete();
-                }
-                catch (Exception ex)
-                {
-                    transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
-                    return new DualResult(false);
-                }
-            }
-            */
+        {
             return base.ClickSavePost();
         }
 
@@ -508,9 +440,9 @@ WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkPicUkey='{body.ShippingMarkPicU
                 paras.Add(new SqlParameter($"@FileName{idx}", body.FileName));
 
                 string updateCmd = $@"
-UPDATE ShippingMarkPic_Detail
+UPDATE [testing\SNP].PMSFile.dbo.ShippingMarkPic_Detail
 SET Image = @Image{idx} , FileName = @FileName{idx}
-WHERE SCICtnNo='{body.SCICtnNo}' /*AND ShippingMarkPicUkey='{body.ShippingMarkPicUkey}'*/ AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
+WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
 ";
                 updateCmds.Add(updateCmd);
 
@@ -520,9 +452,9 @@ WHERE SCICtnNo='{body.SCICtnNo}' /*AND ShippingMarkPicUkey='{body.ShippingMarkPi
             foreach (ShippingMarkPic_Detail body in this.readToDelete)
             {
                 string deleteCmd = $@"
-UPDATE ShippingMarkPic_Detail
+UPDATE [testing\SNP].PMSFile.dbo.ShippingMarkPic_Detail
 SET Image = NULL , FileName = ''
-WHERE SCICtnNo='{body.SCICtnNo}' /*AND ShippingMarkPicUkey='{body.ShippingMarkPicUkey}'*/ AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
+WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
 ";
                 deleteCmds.Add(deleteCmd);
 
@@ -953,13 +885,26 @@ AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'
                     paras.Add(new SqlParameter($"@FileName{idx}", fileName));
 
                     string updateCmd = $@"
+
 UPDATE b
-SET Image = @Image{idx} , FileName = @FileName{idx}
+SET FileName = @FileName{idx}
 FROM ShippingMarkPic a
 INNER JOIN ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey
 WHERE a.PackingListID='{item.PackingListID}'
 AND b.SCICtnNo='{item.SCICtnNo}'
-AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'";
+AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}
+
+UPDATE PmsFile
+SET PmsFile.Image = @Image{idx} 
+FROM ShippingMarkPic a
+INNER JOIN ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey
+INNER JOIN [testing\SNP].PMSFile.dbo.ShippingMarkPic_Detail PmsFile on  b.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
+                                                                    AND b.SCICtnNo=PmsFile.SCICtnNo 
+                                                                    AND b.ShippingMarkTypeUkey=PmsFile.ShippingMarkTypeUkey 
+WHERE a.PackingListID='{item.PackingListID}'
+AND b.SCICtnNo='{item.SCICtnNo}'
+AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'
+";
 
                     updateCmds.Add(updateCmd);
                     idx++;

@@ -638,7 +638,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
             foreach (var item in this.ListDefectImg.Where(w => w.Img != null && w.Insert))
             {
                 List<SqlParameter> paras = new List<SqlParameter> { new SqlParameter($"@Image", item.Img) };
-                string sqlcmd = $@"INSERT INTO [dbo].[AIR_DefectImage]([AIRID],[ReceivingID],[Image])VALUES('{this.id}','{this.receivingID}',@Image)";
+                string sqlcmd = $@"INSERT INTO [testing\SNP].PMSFile.dbo.AIR_DefectImage([AIRID],[ReceivingID],[Image])VALUES('{this.id}','{this.receivingID}',@Image)";
                 DualResult result = DBProxy.Current.Execute("PMSFile", sqlcmd, paras);
                 if (!result)
                 {
@@ -653,7 +653,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
 
         private void LoadPicture()
         {
-            string sqlcmd = $@"select * from AIR_DefectImage where AIRID = '{this.id}' and ReceivingID = '{this.receivingID}' order by ukey";
+            string sqlcmd = $@"select * from [testing\SNP].PMSFile.dbo.AIR_DefectImage where AIRID = '{this.id}' and ReceivingID = '{this.receivingID}' order by ukey";
             DualResult result = DBProxy.Current.Select("PMSFile", sqlcmd, out DataTable dt);
             if (!result)
             {

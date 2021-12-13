@@ -884,6 +884,9 @@ WHERE ID IN ('{templateFields.JoinToString("','")}')
 ---刪除舊有資料
 DELETE FROM ShippingMarkPic_Detail
 WHERE ShippingMarkPicUkey IN (SELECT Ukey FROM ShippingMarkPic WHERE PackingListID = '{packingListID}')
+----PMSFile也刪掉
+DELETE FROM [testing\SNP].PMSFile.dbo.ShippingMarkPic_Detail
+WHERE ShippingMarkPicUkey IN (SELECT Ukey FROM ShippingMarkPic WHERE PackingListID = '{packingListID}')
 
 DELETE FROM ShippingMarkPic
 WHERE PackingListID = '{packingListID}'
@@ -925,8 +928,16 @@ BEGIN
     SET FilePath = '{p24_Template.FilePath}'
         ,FileName = '{p24_Template.FileName}'
         ,DPI = {dPI}
-        ,Image = NULL
+        --,Image = NULL
         ,IsSSCC = (SELECT IsSSCC FROM ShippingMarkType WHERE Ukey = {p24_Template.ShippingMarkTypeUkey})
+    WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
+    AND SCICtnNo = '{p24_Template.SCICtnNo}'
+    AND ShippingMarkTypeUkey = '{p24_Template.ShippingMarkTypeUkey}'
+    AND ShippingMarkTypeUkey IN (SELECT Ukey FROM ShippingMarkType t WHERE t.FromTemplate = 1)
+
+    ---- Image寫進PMSFile
+    UPDATE [testing\SNP].PMSFile.dbo.ShippingMarkPic_Detail
+    SET Image = NULL
     WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
     AND SCICtnNo = '{p24_Template.SCICtnNo}'
     AND ShippingMarkTypeUkey = '{p24_Template.ShippingMarkTypeUkey}'
@@ -965,6 +976,14 @@ BEGIN
                ,{p24_Template.IsOverCtnHt}
                ,{p24_Template.NotAutomate}
                 )
+    ;
+
+    INSERT INTO [testing\SNP].PMSFile.dbo.ShippingMarkPic_Detail
+               (ShippingMarkPicUkey,  SCICtnNo ,ShippingMarkTypeUkey )
+         VALUES
+               ( (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
+               ,'{p24_Template.SCICtnNo}'
+               ,{p24_Template.ShippingMarkTypeUkey} )
 END
 ;
 ";

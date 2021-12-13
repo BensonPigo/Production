@@ -767,6 +767,11 @@ FROM ShippingMarkPic pic
 INNER JOIN ShippingMarkPic_Detail picd ON pic.Ukey = picd.ShippingMarkPicUkey
 INNER JOIN #tmp_Pic{ii} t ON pic.PackingListID = t.PackingListID 
 
+DELETE picd
+FROM ShippingMarkPic pic
+INNER JOIN [testing\SNP].PMSFile.dbo.ShippingMarkPic_Detail picd ON pic.Ukey = picd.ShippingMarkPicUkey
+INNER JOIN #tmp_Pic{ii} t ON pic.PackingListID = t.PackingListID 
+
 DELETE p
 FROM ShippingMarkPic p
 INNER JOIN  #tmp_Pic{ii} t ON p.PackingListID = t.PackingListID 
@@ -932,6 +937,21 @@ INNER JOIN StickerSize s ON s.ID = b.StickerSizeID
 --INNER JOIN #tmp{i} dt ON t.PackingListID = dt.PackingListID AND t.RefNo = dt.RefNo AND t.SCICtnNo = dt.SCICtnNo
 INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
 
+----圖片專用Table也寫入一筆
+INSERT [testing\SNP].PMSFile.dbo.ShippingMarkPic_Detail 
+		(ShippingMarkPicUkey,SCICtnNo,ShippingMarkTypeUkey)
+SELECT 
+	 [ShippingMarkPicUkey]=pic.Ukey
+	,t.SCICtnNo
+	,t.ShippingMarkCombinationUkey
+	,t.ShippingMarkTypeUkey
+FROM #tmp_Pic_Detail{i} t
+INNER JOIN ShippingMarkPicture a ON a.BrandID = t.BrandID AND a.CTNRefno = t.RefNo AND a.ShippingMarkCombinationUkey = t.ShippingMarkCombinationUkey AND a.Category ='PIC' 
+INNER JOIN ShippingMarkPicture_Detail b ON a.Ukey = b.ShippingMarkPictureUkey AND b.ShippingMarkTypeUkey = t.ShippingMarkTypeUkey
+INNER JOIN ShippingMarkCombination comb ON comb.Ukey = a.ShippingMarkCombinationUkey
+INNER JOIN StickerSize s ON s.ID = b.StickerSizeID
+--INNER JOIN #tmp{i} dt ON t.PackingListID = dt.PackingListID AND t.RefNo = dt.RefNo AND t.SCICtnNo = dt.SCICtnNo
+INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
 ";
                 p24_BodyList.Add(cmd);
                 i++;
@@ -1126,12 +1146,12 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                 }
                 catch (Exception ex)
                 {
-                    // 該Packing只要其中一張圖片除錯，則該Packing全部把先前的圖片刪除
+                    // 該Packing只要其中一張圖片出錯，則該Packing全部把先前的圖片刪除
                     string cmd = $@"
 UPDATE b
 SET Image = NULL
 from ShippingMarkPic a 
-inner join ShippingMarkPic_Detail b on a.Ukey = b.ShippingMarkPicUkey
+inner join [testing\SNP].PMSFile.dbo.ShippingMarkPic_Detail b on a.Ukey = b.ShippingMarkPicUkey
 where a.PackingListID IN ('{packingID}')
 ";
                     DBProxy.Current.Execute(null, cmd);
@@ -1530,6 +1550,14 @@ WHERE a.PackingListID IN ('{selecteds.AsEnumerable().Select(o => MyUtility.Conve
 
                                     string disposeSQL = $@"
 DELETE FROM ShippingMarkPic_Detail
+WHERE ShippingMarkTypeUkey IN (
+    SELECT a.Ukey 
+    FROM ShippingMarkPic a 
+    WHERE a.PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["ID"].ToString()))}') 
+)
+
+----圖片專用Table也刪除
+DELETE FROM [testing\SNP].PMSFile.dbo.ShippingMarkPic_Detail
 WHERE ShippingMarkTypeUkey IN (
     SELECT a.Ukey 
     FROM ShippingMarkPic a 
@@ -1970,10 +1998,13 @@ WHERE PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["I
 ";
 
             string cmd = $@"
-----寫入圖片
-UPDATE sd
-SET sd.Image=@Image{this.imageIdx}
+----寫入圖片(Image欄位單獨寫進PMSFile)
+UPDATE PmsFile
+SET PmsFile.Image=@Image{this.imageIdx}
 FROM ShippingMarkPic_Detail sd 
+INNER JOIN [testing\SNP].PMSFile.dbo.ShippingMarkPic_Detail PmsFile on  sd.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
+                                                                    AND sd.SCICtnNo=PmsFile.SCICtnNo 
+                                                                    AND sd.ShippingMarkTypeUkey=PmsFile.ShippingMarkTypeUkey 
 INNER JOIN ShippingMarkPic s ON s.Ukey = sd.ShippingMarkPicUkey
 INNER JOIN ShippingMarkType st ON st.Ukey = sd.ShippingMarkTypeUkey
 WHERE 1=1 
@@ -2026,10 +2057,13 @@ from ShippingMarkPic a with(nolock)
 inner join ShippingMarkPic_Detail b with(nolock) on a.Ukey = b.ShippingMarkPicUkey
 where a.PackingListID = '{packingListID}'  and b.SCICtnNo ='{sCICtnNo}'
 
-----寫入圖片
-UPDATE sd
-SET sd.Image=@Image{counter}
+----寫入圖片 (Image欄位單獨寫進PMSFile)
+UPDATE PmsFile
+SET PmsFile.Image=@Image{counter}
 FROM ShippingMarkPic_Detail sd 
+INNER JOIN [testing\SNP].PMSFile.dbo.ShippingMarkPic_Detail PmsFile on  sd.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
+                                                                    AND sd.SCICtnNo=PmsFile.SCICtnNo 
+                                                                    AND sd.ShippingMarkTypeUkey=PmsFile.ShippingMarkTypeUkey 
 INNER JOIN #tmp{counter} t on sd.ShippingMarkPicUkey = t.ShippingMarkPicUkey 
                     AND sd.SCICtnNo = t.SCICtnNo 
                     AND sd.ShippingMarkTypeUkey = t.ShippingMarkTypeUkey
@@ -2055,6 +2089,13 @@ WHERE t.Rank = {rank}
             string cmd = $@"
 DELETE s
 FROM ShippingMarkPic_Detail s
+WHERE ShippingMarkPicUkey IN (
+    SELECT Ukey FROM ShippingMarkPic
+    where PackingListID IN ('{packingListIDs.JoinToString("','")}')
+)
+----圖片專用Table也寫刪除
+DELETE s
+FROM [testing\SNP].PMSFile.dbo.ShippingMarkPic_Detail s
 WHERE ShippingMarkPicUkey IN (
     SELECT Ukey FROM ShippingMarkPic
     where PackingListID IN ('{packingListIDs.JoinToString("','")}')
