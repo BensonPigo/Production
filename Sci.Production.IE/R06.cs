@@ -176,7 +176,7 @@ From IETMS i
 inner join IETMS_Detail id on i.Ukey = id.IETMSUkey
 Left join Operation o on o.id = id.OperationID
 Left join machineType m on m.id = o. MachineTypeID
-where exists (select 1 from #tmp_TimeStudy t where t.IETMSID = i.ID and t.IETMSVersion = i.Version) 
+where exists (select 1 from #tmp_TimeStudy t where t.IETMSID = i.ID and t.IETMSVersion = i.Version and t.ComboType=id.Location) 
 {whereArtworkType}
 group by i.ID, i.Version, m.ArtworkTypeID
 having Sum(round(id.SMV * (isnull(id.MtlFactorRate, 0) / 100 + 1) * id.Frequency * 60, 3)) > 0
@@ -255,7 +255,7 @@ Outer apply (
 	inner join IETMS_Detail id on id.IETMSUkey = i.ukey 
 	Left join Operation o on o.id = id.OperationID
 	Left join machineType m on m.id = o. MachineTypeID
-	where exists (select 1 from #tmp_TimeStudy t2 where t.ID = t2.ID and t2.IETMSID = i.ID and t2.IETMSVersion = i.Version)
+	where exists (select 1 from #tmp_TimeStudy t2 where t.ID = t2.ID and t2.IETMSID = i.ID and t2.IETMSVersion = i.Version and t2.ComboType=id.Location)
 )STDTotal
 '
 --print @lastSql
@@ -289,7 +289,7 @@ From IETMS i
 inner join IETMS_Detail id on i.Ukey = id.IETMSUkey
 Left join Operation o on o.id = id.OperationID
 Left join machineType m on m.id = o. MachineTypeID
-where exists (select 1 from #tmp_TimeStudy t where t.IETMSID = i.ID and t.IETMSVersion = i.Version) 
+where exists (select 1 from #tmp_TimeStudy t where t.IETMSID = i.ID and t.IETMSVersion = i.Version　and t.ComboType=id.Location) 
 {whereArtworkType}
 group by i.ID, i.Version, m.ArtworkTypeID
 having sum(round(id.SMV * (isnull(id.MtlFactorRate, 0) / 100 + 1) * id.Frequency * 60, 3)) > 0
