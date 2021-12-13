@@ -1187,7 +1187,13 @@ and not exists
             int gridCounts = 0;
             if (this.gridbs.DataSource == null || this.grid == null)
             {
-                string sqlcmd = $@"select * from Production.dbo.FIR_Physical where id = {this.textID.Text}";
+                string sqlcmd = $@"
+select rd.FullRoll, rd.FullDyelot,fp.* 
+from Production.dbo.FIR_Physical fp
+left join Receiving_Detail rd on rd.PoId = '{this.maindr["POID"]}' 
+and rd.Seq1 = '{this.maindr["Seq1"]}' and rd.Seq2= '{this.maindr["Seq2"]}'
+and fp.Roll = rd.Roll and fp.Dyelot = rd.Dyelot
+where fp.id = {this.textID.Text}";
                 if (result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtGrid))
                 {
                     gridCounts = dtGrid.Rows.Count;
@@ -1216,6 +1222,41 @@ and not exists
             else
             {
                 dtGrid = (DataTable)this.gridbs.DataSource;
+
+                if (dtGrid.Columns.Contains("FullRoll") == false)
+                {
+                    dtGrid.Columns.Add("FullRoll", typeof(string));
+                }
+
+                if (dtGrid.Columns.Contains("FullDyelot") == false)
+                {
+                    dtGrid.Columns.Add("FullDyelot", typeof(string));
+                }
+
+                string sqlFull = $@"
+select distinct Roll,Dyelot,FullRoll,FullDyelot 
+from Receiving_Detail 
+where PoId = '{this.maindr["POID"]}' 
+and Seq1 = '{this.maindr["Seq1"]}' and Seq2= '{this.maindr["Seq2"]}'
+and id = '{this.maindr["Receivingid"]}'
+";
+                if (result = DBProxy.Current.Select(string.Empty, sqlFull, out DataTable dtFull))
+                {
+                    if (dtFull != null || dtFull.Rows.Count > 0)
+                    {
+                        foreach (DataRow dr in dtGrid.Rows)
+                        {
+                            DataRow[] drFilter = dtFull.Select($@"roll = '{dr["roll"]}' and Dyelot = '{dr["Dyelot"]}'");
+                            if (drFilter.Length > 0)
+                            {
+                                DataTable dtFilter = drFilter.CopyToDataTable();
+                                dr["FullRoll"] = dtFilter.Rows[0]["FullRoll"];
+                                dr["FullDyelot"] = dtFilter.Rows[0]["FullDyelot"];
+                            }
+                        }
+                    }
+                }
+
                 gridCounts = this.grid.RowCount;
             }
 
@@ -1224,22 +1265,24 @@ and not exists
             for (int i = 0; i < gridCounts; i++)
             {
                 excel.Cells[19 + (i * 8) + addline, 1] = dtGrid.Rows[rowcount]["Roll"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 2] = dtGrid.Rows[rowcount]["Dyelot"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 3] = dtGrid.Rows[rowcount]["Ticketyds"].ToString();
+                excel.Cells[19 + (i * 8) + addline, 2] = dtGrid.Rows[rowcount]["FullRoll"].ToString();
+                excel.Cells[19 + (i * 8) + addline, 3] = dtGrid.Rows[rowcount]["Dyelot"].ToString();
+                excel.Cells[19 + (i * 8) + addline, 4] = dtGrid.Rows[rowcount]["FullDyelot"].ToString();
+                excel.Cells[19 + (i * 8) + addline, 5] = dtGrid.Rows[rowcount]["Ticketyds"].ToString();
 
                 // 指定欄位轉型
-                Microsoft.Office.Interop.Excel.Range cell = worksheet.Cells[19 + (i * 8) + addline, 3];
+                Microsoft.Office.Interop.Excel.Range cell = worksheet.Cells[19 + (i * 8) + addline, 5];
                 worksheet.get_Range(cell, cell).NumberFormat = "0.00";
 
-                excel.Cells[19 + (i * 8) + addline, 4] = dtGrid.Rows[rowcount]["Actualyds"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 5] = dtGrid.Rows[rowcount]["Cutwidth"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 6] = dtGrid.Rows[rowcount]["fullwidth"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 7] = dtGrid.Rows[rowcount]["actualwidth"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 8] = dtGrid.Rows[rowcount]["totalpoint"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 9] = dtGrid.Rows[rowcount]["pointRate"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 10] = dtGrid.Rows[rowcount]["Grade"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 11] = dtGrid.Rows[rowcount]["Result"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 12] = dtGrid.Rows[rowcount]["Remark"].ToString();
+                excel.Cells[19 + (i * 8) + addline, 6] = dtGrid.Rows[rowcount]["Actualyds"].ToString();
+                excel.Cells[19 + (i * 8) + addline, 7] = dtGrid.Rows[rowcount]["Cutwidth"].ToString();
+                excel.Cells[19 + (i * 8) + addline, 8] = dtGrid.Rows[rowcount]["fullwidth"].ToString();
+                excel.Cells[19 + (i * 8) + addline, 9] = dtGrid.Rows[rowcount]["actualwidth"].ToString();
+                excel.Cells[19 + (i * 8) + addline, 10] = dtGrid.Rows[rowcount]["totalpoint"].ToString();
+                excel.Cells[19 + (i * 8) + addline, 11] = dtGrid.Rows[rowcount]["pointRate"].ToString();
+                excel.Cells[19 + (i * 8) + addline, 12] = dtGrid.Rows[rowcount]["Grade"].ToString();
+                excel.Cells[19 + (i * 8) + addline, 13] = dtGrid.Rows[rowcount]["Result"].ToString();
+                excel.Cells[19 + (i * 8) + addline, 14] = dtGrid.Rows[rowcount]["Remark"].ToString();
                 rowcount++;
 
                 #region FIR_Physical_Defect

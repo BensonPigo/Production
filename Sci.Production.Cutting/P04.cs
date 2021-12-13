@@ -93,8 +93,11 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                 For XML path('')
             ) as CutQty,
 			e.FabricPanelCode
-            From Cutplan_Detail a WITH (NOLOCK) , WorkOrder e WITH (NOLOCK) 
-            where a.id = '{0}' and a.WorkOrderUkey = e.Ukey
+			,f.WeaveTypeID
+            From Cutplan_Detail a 
+			INNER JOIN WorkOrder e WITH (NOLOCK) ON a.WorkOrderUkey = e.Ukey
+			LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno=e.SCIRefno
+            where a.id = '{0}'
             ", masterID);
             this.DetailSelectCommand = cmdsql;
             return base.OnDetailSelectCommandPrepare(e);
@@ -120,6 +123,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             .Text("CutQty", header: "Total CutQty", width: Widths.Auto(), iseditingreadonly: true)
             .Text("SCIRefno", header: "SCIRefno", width: Widths.Auto(), iseditingreadonly: true)
             .Text("Refno", header: "Refno", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("WeaveTypeID", header: "Weave Type", width: Widths.Auto(), iseditingreadonly: true)
             .Numeric("Cons", header: "Cons", width: Widths.Auto(), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.Auto());
             this.detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;

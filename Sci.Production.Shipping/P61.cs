@@ -33,6 +33,9 @@ namespace Sci.Production.Shipping
         private DataTable RateDt;
 
         /// <inheritdoc/>
+        public static DataTable KHImportDeclaration_ShareCDCExpense { get; set; }
+
+        /// <inheritdoc/>
         public static DataTable ShareDt { get; set; }
 
         /// <inheritdoc/>
@@ -45,6 +48,13 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
+            DualResult result = DBProxy.Current.Select(null, $"select * from KHImportDeclaration_ShareCDCExpense where id = '{this.CurrentMaintain["ID"]}'", out DataTable dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+
+            KHImportDeclaration_ShareCDCExpense = dt;
             this.labelNotApprove.Text = this.CurrentMaintain["status"].ToString();
             this.displayPortofDischarge.Text = "KH";
 
@@ -663,6 +673,27 @@ left  join KHCustomsDescription_Detail kdd on kd.CDCName=kdd.CDCName and kdd.Pur
                 }
             }
 
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                if (MyUtility.Convert.GetDecimal(dr["ActNetKg"]) >= 10000000)
+                {
+                    MyUtility.Msg.WarningBox("<Act. N.W.> can't over than 10,000,000");
+                    return false;
+                }
+
+                if (MyUtility.Convert.GetDecimal(dr["ActWeightKg"]) >= 10000000)
+                {
+                    MyUtility.Msg.WarningBox("<Act. G.W.> can't over than 10,000,000");
+                    return false;
+                }
+
+                if (MyUtility.Convert.GetDecimal(dr["ActAmount"]) >= 1000000)
+                {
+                    MyUtility.Msg.WarningBox("<Act. Amount> can't over than 1,000,000");
+                    return false;
+                }
+            }
+
             this.ReCalculat();
 
             // 取單號
@@ -691,7 +722,25 @@ left  join KHCustomsDescription_Detail kdd on kd.CDCName=kdd.CDCName and kdd.Pur
         /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
-            DataTable dt = this.GetSumbyCustomsTypeDescription();
+            if (KHImportDeclaration_ShareCDCExpense.Rows.Count == 0)
+            {
+                DataTable dt = this.GetSumbyCustomsTypeDescription();
+                foreach (DataRow dr in dt.Rows)
+                {
+                    DataRow newdr = P61.KHImportDeclaration_ShareCDCExpense.NewRow();
+                    newdr["KHCustomsDescriptionCDCName"] = dr["CustomsDescription"];
+                    newdr["OriTtlNetKg"] = dr["OriTtlNetKg"];
+                    newdr["OriTtlWeightKg"] = dr["OriTtlWeightKg"];
+                    newdr["OriTtlCDCAmount"] = dr["OriTtlCDCAmount"];
+                    newdr["ActCDCQty"] = dr["ActCDCQty"];
+                    newdr["ActTtlNetKg"] = dr["ActTtlNetKg"];
+                    newdr["ActTtlWeightKg"] = dr["ActTtlWeightKg"];
+                    newdr["ActTtlAmount"] = dr["ActTtlAmount"];
+                    newdr["ActHSCode"] = dr["ActHSCode"];
+                    P61.KHImportDeclaration_ShareCDCExpense.Rows.Add(newdr);
+                }
+            }
+
             string sqlcmd = $@"
 DELETE KHImportDeclaration_ShareCDCExpense where id = '{this.CurrentMaintain["ID"]}'
 INSERT INTO [dbo].[KHImportDeclaration_ShareCDCExpense]
@@ -700,23 +749,25 @@ INSERT INTO [dbo].[KHImportDeclaration_ShareCDCExpense]
            ,[OriTtlNetKg]
            ,[OriTtlWeightKg]
            ,[OriTtlCDCAmount]
+           ,[ActCDCQty]
            ,[ActTtlNetKg]
            ,[ActTtlWeightKg]
            ,[ActTtlAmount]
            ,[ActHSCode])
 select 
             [ID] = '{this.CurrentMaintain["ID"]}'
-           ,[CustomsDescription]
+           ,[KHCustomsDescriptionCDCName]
            ,[OriTtlNetKg]
            ,[OriTtlWeightKg]
            ,[OriTtlCDCAmount]
+           ,[ActCDCQty]
            ,[ActTtlNetKg]
            ,[ActTtlWeightKg]
            ,[ActTtlAmount]
            ,[ActHSCode]
 from #tmp
 ";
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlcmd, out DataTable odt);
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(KHImportDeclaration_ShareCDCExpense, string.Empty, sqlcmd, out DataTable odt);
             if (!result)
             {
                 return result;
@@ -1077,6 +1128,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                     ActTtlAmount = s.Sum(su => su.ActAmount),
                     TtlQty = s.Sum(su => su.Qty),
                     TtlCDCQty = s.Sum(su => su.CDCQty),
+                    ActCDCQty = KHImportDeclaration_ShareCDCExpense.Select($"KHCustomsDescriptionCDCName = '{s.Key.CustomsDescription}'").Length == 0 || MyUtility.Convert.GetDecimal(KHImportDeclaration_ShareCDCExpense.Select($"KHCustomsDescriptionCDCName = '{s.Key.CustomsDescription}'")[0]["ActCDCQty"]) == 0 ? s.Sum(su => su.CDCQty) : MyUtility.Convert.GetDecimal(KHImportDeclaration_ShareCDCExpense.Select($"KHCustomsDescriptionCDCName = '{s.Key.CustomsDescription}'")[0]["ActCDCQty"]),
                 }).ToList();
             return PublicPrg.ListToDataTable.ToDataTable(sumlist);
         }
