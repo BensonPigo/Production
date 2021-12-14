@@ -542,10 +542,23 @@ values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE(),'{4}','{5}');",
                 updateCmds.Add(string.Format(
                     @"update PackingList_Detail 
 set TransferDate = GETDATE(), ReceiveDate = null, ClogLocationId = '', ReturnDate = null 
-where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}' and DisposeFromClog= 0; ",
+where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}' and DisposeFromClog= 0
+; ",
                     MyUtility.Convert.GetString(dr["PackingListID"]),
                     MyUtility.Convert.GetString(dr["OrderID"]),
                     MyUtility.Convert.GetString(dr["CTNStartNo"])));
+
+                // 也要順便更新Orders.LastCTNTransDate
+                updateCmds.Add(string.Format(
+                   @"
+update o
+set o.LastCTNTransDate = GETDATE()
+from Orders o
+inner join PackingList_Detail pd on pd.OrderID = o.ID
+where pd.ID = '{0}' and pd.OrderID = '{1}'
+; ",
+                   MyUtility.Convert.GetString(dr["PackingListID"]),
+                   MyUtility.Convert.GetString(dr["OrderID"])));
             }
 
             foreach (string packingListID in selectedData.Select(s => s["PackingListID"].ToString()).Distinct())
