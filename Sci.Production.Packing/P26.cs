@@ -1155,6 +1155,12 @@ SET XACT_ABORT ON
 UPDATE b
 SET Image = NULL
 from ShippingMarkPic a 
+inner join ShippingMarkPic_Detail b on a.Ukey = b.ShippingMarkPicUkey
+where a.PackingListID IN ('{packingID}')
+
+UPDATE b
+SET Image = NULL
+from ShippingMarkPic a 
 inner join [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail b on a.Ukey = b.ShippingMarkPicUkey
 where a.PackingListID IN ('{packingID}')
 ";
@@ -2005,6 +2011,18 @@ WHERE PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["I
 
             string cmd = $@"
 SET XACT_ABORT ON
+
+----寫入圖片
+UPDATE sd
+SET sd.Image=@Image{this.imageIdx}
+FROM ShippingMarkPic_Detail sd 
+INNER JOIN ShippingMarkPic s ON s.Ukey = sd.ShippingMarkPicUkey
+INNER JOIN ShippingMarkType st ON st.Ukey = sd.ShippingMarkTypeUkey
+WHERE 1=1 
+AND sd.FileName=@FileName{this.imageIdx}
+AND sd.Seq = (
+    {seqCmd}
+)
 
 ----寫入圖片(Image欄位單獨寫進PMSFile)
 UPDATE PmsFile
