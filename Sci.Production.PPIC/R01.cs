@@ -1069,7 +1069,7 @@ drop table #tmpFinal_step1
                     // Summary By = SP# 則刪除欄位Size
                     if (this.type == "SP#")
                     {
-                        worksheet.get_Range("F:F").EntireColumn.Delete();
+                        worksheet.get_Range("G:G").EntireColumn.Delete();
                     }
                     #region Set Excel Title
                     string factoryName = MyUtility.GetValue.Lookup(
@@ -1091,12 +1091,12 @@ where id = '{0}'", Env.User.Factory), null);
                         if (!frontRow["StyleID"].EqualString(row["StyleID"]))
                         {
                             // [2] = header 所佔的行數 + Excel 從 1 開始編號 = 1 + 1
-                            Excel.Range excelRange = worksheet.get_Range("A" + (i + 5) + ":Z" + (i + 5));
+                            Excel.Range excelRange = worksheet.get_Range("A" + (i + 5) + ":AA" + (i + 5));
                             excelRange.Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = Excel.XlLineStyle.xlDash;
                         }
                     }
 
-                    worksheet.Columns[26].ColumnWidth = 30;
+                    worksheet.Columns[27].ColumnWidth = 30;
                     worksheet.Activate();
 
                     #region Save & Show Excel
@@ -1134,11 +1134,11 @@ where id = '{0}'", Env.User.Factory), null);
                     // Summary By = SP# 則刪除欄位Size
                     if (this.type == "SP#")
                     {
-                        worksheet.get_Range("H:H").EntireColumn.Delete();
+                        worksheet.get_Range("I:I").EntireColumn.Delete();
                     }
                     else
                     {
-                        worksheet.get_Range("AR:AT").EntireColumn.Delete();
+                        worksheet.get_Range("AT:AU").EntireColumn.Delete();
                     }
 
                     #region Save & Show Excel
@@ -1255,7 +1255,8 @@ select  s.SewingLineID
                 from (  select distinct Article 
                         from SewingSchedule_Detail sd WITH (NOLOCK) 
                         where sd.ID = s.ID
-                ) a for xml path('')) as Article
+                ) a for xml path('')) as Article            
+            , o.SeasonID
             , [SizeCode] = ''
             , o.CdCodeID
             , o.StyleID
@@ -1516,6 +1517,7 @@ select  SewingLineID
 		, CustPONo
         , ComboType
         , IIF(Article = '', '', SUBSTRING(Article, 1, LEN(Article) - 1)) as Article
+        , SeasonID
         , SizeCode
         , CdCodeID
 	    , CDCodeNew
@@ -1598,6 +1600,7 @@ select  s.SewingLineID
 			, o.CustPONo
             , s.ComboType 
             , sd.Article
+            , o.SeasonID
 			, sd.SizeCode
             , o.CdCodeID
             , o.StyleID 
@@ -1887,7 +1890,9 @@ select  SewingLineID
         , FactoryID
         , OrderID
 		, CustPONo
-        , ComboType, Article 
+        , ComboType
+        , Article 
+        , SeasonID
         , SizeCode
         , CdCodeID
 	    , CDCodeNew
