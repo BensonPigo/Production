@@ -130,7 +130,7 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,td.Template
       ,(isnull(td.Frequency,0) * isnull(o.SeamLength,0)) as ttlSeamLength
 	  ,o.MasterPlusGroup
-      ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.val, 0)) as bit)
+      ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.val, 1)) as bit)
       ,td.IsSubprocess
       ,[MachineType_IsSubprocess] = isnull(md.IsSubprocess,0)
 from TimeStudy_Detail td WITH (NOLOCK) 
@@ -138,7 +138,7 @@ left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = o.MachineTypeID and md.FactoryID = '{Env.User.Factory}'
 left join Mold m WITH (NOLOCK) on m.ID=td.Mold
 outer apply (
-	 select [val] = IIF(isnull(mt.IsNotShownInP01,0) = 0, 0, 1)
+	 select [val] = IIF(isnull(mt.IsNotShownInP01, 1) = 0, 1, 0)
     from Operation o2
 	Inner Join MachineType_Detail mt on o2.MachineTypeID = mt.ID and mt.FactoryID = '{Env.User.Factory}'
 	where o.ID = o2.ID
@@ -1660,7 +1660,7 @@ select id.SEQ,
 	s.IETMSVersion,
 	(isnull(o.SeamLength,0) * isnull(id.Frequency,0))  as ttlSeamLength ,
 	o.MasterPlusGroup,
-    [IsShow] = cast(iif( id.OperationID like '--%' , 1, isnull(show.val, 0)) as bit)
+    [IsShow] = cast(iif( id.OperationID like '--%' , 1, isnull(show.val, 1)) as bit)
     ,IsSubprocess = isnull(md.IsSubprocess,0)
     ,[MachineType_IsSubprocess] = isnull(md.IsSubprocess,0)
 from Style s WITH (NOLOCK) 
@@ -1669,7 +1669,7 @@ inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
 left join Operation o WITH (NOLOCK) on id.OperationID = o.ID
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = o.MachineTypeID and md.FactoryID = '{0}'
 outer apply (
-	 select [val] = IIF(isnull(mt.IsNotShownInP01,0) = 0, 0, 1)
+	 select [val] = IIF(isnull(mt.IsNotShownInP01 , 1) = 0, 1, 0)
     from Operation o2
 	Inner Join MachineType_Detail mt on o2.MachineTypeID = mt.ID and mt.FactoryID = '{0}'
 	where o.ID = o2.ID
@@ -1933,14 +1933,14 @@ and s.BrandID = @brandid";
             }
 
             if (this.SelectedDetailGridDataRow
-                .Where(o => o["IsSubprocess"].ToString() == "True").Any())
+                .Where(o => o["MachineType_IsSubprocess"].ToString() == "True").Any())
             {
                 MyUtility.Msg.WarningBox("Subprocess checked! This operation cannot delete!");
                 return;
             }
 
             this.SelectedDetailGridDataRow
-                .Where(o => o["IsSubprocess"].ToString() == "False")
+                .Where(o => o["MachineType_IsSubprocess"].ToString() == "False")
                 .ToList()
                 .ForEach(row =>
                 {
@@ -2123,8 +2123,25 @@ and s.BrandID = @brandid";
             }
 
             this.detailgrid.ValidateControl();
+
+            //var chk_list = this.DetailDatas.AsEnumerable().Where(x => x["IsSubprocess"].EqualDecimal(1) && x["Selected"].EqualDecimal(1)).ToList();
+            //if (chk_list.Count > 0)
+            //{
+            //    MyUtility.Msg.WarningBox("Subprocess checked! This operation cannot delete!");
+            //    return;
+            //}
+
+            //foreach (DataRow dr in this.DetailDatas)
+            //{
+            //    if (MyUtility.Convert.GetBool(dr["IsSubprocess"]) == true)
+            //    {
+            //        MyUtility.Msg.WarningBox("Subprocess checked! This operation cannot delete!");
+            //        return;
+            //    }
+            //}
+
             DataRow drSelect = this.detailgrid.GetDataRow(this.detailgridbs.Position);
-            if (MyUtility.Check.Empty(drSelect["IsSubprocess"]) == false)
+            if (MyUtility.Check.Empty(drSelect["MachineType_IsSubprocess"]) == false)
             {
                 MyUtility.Msg.WarningBox("Subprocess checked! This operation cannot delete!");
                 return;
