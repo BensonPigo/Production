@@ -2101,6 +2101,51 @@ else
 	when not matched by source  AND T.ID IN (SELECT ID FROM #Torder) then 
 	delete;
 		
+---------------Order_Label_Detail-------------------
+	Merge Production.dbo.Order_Label_Detail as t
+	Using (select a.* from Trade_To_Pms.dbo.Order_Label_Detail as a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
+	on t.Ukey = s.Ukey
+	when matched then
+		update set
+            t.[Order_LabelUkey] = s.[Order_LabelUkey]
+           ,t.[ID]				= s.[ID]
+           ,t.[LabelType]		= s.[LabelType]
+           ,t.[Seq]				= s.[Seq]
+           ,t.[RefNo]			= s.[RefNo]
+           ,t.[Description]		= s.[Description]
+           ,t.[Position]		= s.[Position]
+           ,t.[Order_BOAUkey]	= s.[Order_BOAUkey]
+           ,t.[Junk]			= s.[Junk]
+           ,t.[ConsPC]			= s.[ConsPC]
+	when not matched by target then 
+		insert 
+        ([Order_LabelUkey]
+        ,[ID]
+        ,[LabelType]
+        ,[Seq]
+        ,[RefNo]
+        ,[Description]
+        ,[Position]
+        ,[Order_BOAUkey]
+        ,[Ukey]
+        ,[Junk]
+        ,[ConsPC])
+		values 
+        (s.[Order_LabelUkey]
+        ,s.[ID]
+        ,s.[LabelType]
+        ,s.[Seq]
+        ,s.[RefNo]
+        ,s.[Description]
+        ,s.[Position]
+        ,s.[Order_BOAUkey]
+        ,s.[Ukey]
+        ,s.[Junk]
+        ,s.[ConsPC]) 
+	when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
+	delete;
+
+
 ----------------OrderChangeApplication-----------------
 update t set	
 	[ReasonID] = s.ReasonID

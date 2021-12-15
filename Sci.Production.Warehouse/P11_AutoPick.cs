@@ -127,6 +127,7 @@ create Table #Tmp_Order_Qty
     , SizeSeq VarChar(2)
     , SizeCode VarChar(8)
     , Qty Numeric(6,0)
+    , OriQty Numeric(6,0)
 );
 
 Insert Into #Tmp_Order_Qty
@@ -142,12 +143,14 @@ Select  Orders.ID
         , Order_SizeCode.Seq
         , Order_SizeCode.SizeCode
 		, IsNull(#tmp2.Qty, 0) Qty
+		, oq.OriQty
 From dbo.Orders
 Left Join dbo.Order_SizeCode On Order_SizeCode.ID = Orders.POID
 Left Join dbo.Order_Article On Order_Article.ID = Orders.ID
 Left Join #tmp2 On #tmp2.OrderID = Orders.ID
 			       And #tmp2.SizeCode = Order_SizeCode.SizeCode
 			       And #tmp2.Article = Order_Article.Article
+left join Order_Qty oq on oq.id = Orders.ID and oq.Article = Order_Article.Article and oq.SizeCode = Order_SizeCode.SizeCode
 Left Join dbo.CustCD On CustCD.BrandID = Orders.BrandID
 			            And CustCD.ID = Orders.CustCDID
 Left Join dbo.Factory On Factory.ID = Orders.FactoryID
@@ -172,6 +175,7 @@ if @count = 0
             , Order_SizeCode.Seq
             , Order_SizeCode.SizeCode
 		    , IsNull(Order_Qty.Qty, 0) Qty
+			, Order_Qty.OriQty
 	From dbo.Orders 
 	Left Join dbo.Order_SizeCode On Order_SizeCode.ID = Orders.POID
 	Left Join dbo.Order_Article On Order_Article.ID = Orders.ID
@@ -203,6 +207,7 @@ if @count = 0
                 , Order_SizeCode.Seq
                 , Order_SizeCode.SizeCode
 				, IsNull(Order_Qty.Qty, 0) Qty
+			    , Order_Qty.OriQty
 		From dbo.Orders 
 		Left Join dbo.Order_SizeCode On Order_SizeCode.ID = Orders.POID
 		Left Join dbo.Order_Article On Order_Article.ID = Orders.ID
@@ -217,39 +222,19 @@ if @count = 0
 	end
 end
 
-Create Table #Tmp_BoaExpend (  
-    ExpendUkey BigInt Identity(1,1) Not Null
-    , ID Varchar(13)
-    , Order_BOAUkey BigInt
-    , RefNo VarChar(20)
-    , SCIRefNo VarChar(30)
-    , Article VarChar(8)
-    , ColorID VarChar(6)
-    , SuppColor NVarChar(Max)
-    , SizeCode VarChar(8)
-    , SizeSpec VarChar(15)
-    , SizeUnit VarChar(8)
-    , Remark NVarChar(Max)
-    , OrderQty Numeric(6,0)
-    , UsageQty Numeric(9,2)
-    , UsageUnit VarChar(8)
-    , SysUsageQty  Numeric(9,2)
-    , BomZipperInsert VarChar(5)
-    , BomCustPONo VarChar(30)
-    , OrderList VarChar(max)
-    , Primary Key (ExpendUkey)
-);
-	
-Create NonClustered 
-Index Idx_ID on #Tmp_BoaExpend (
-    ID
-    , Order_BOAUkey
-    , ColorID
-) -- table index
-
+Create Table #Tmp_BoaExpend
+(  ExpendUkey BigInt Identity(1,1) Not Null, ID Varchar(13), Order_BOAUkey BigInt
+	, RefNo VarChar(20), SCIRefNo VarChar(30), Article VarChar(8), ColorID VarChar(6), SuppColor NVarChar(Max)
+	, SizeCode VarChar(8), SizeSpec VarChar(15), SizeUnit VarChar(8), Remark NVarChar(Max)
+	, OrderQty Numeric(6,0)
+	--, Price Numeric(12,4)
+	, UsageQty Numeric(11,2), UsageUnit VarChar(8), SysUsageQty  Numeric(11,2)
+	, BomZipperInsert VarChar(5), BomCustPONo VarChar(30), Keyword VarChar(Max), OrderList nvarchar(max), ColorDesc nvarchar(150)
+	, Special nvarchar(max)
+	, Primary Key (ExpendUkey)
+	, Index Idx_ID NonClustered (ID, Order_BOAUkey, ColorID) -- table index
+)
 Exec dbo.BoaExpend '{3}', {4}, {5}, '{6}',0,1;
-
-Drop Table #Tmp_Order_Qty;
 
 --BoAExpend SizeSpec 與 Po_Supp_Detail SizeSpec 意義不同，因此比對時 Po_Supp_Detail 也需要展開
 select	distinct p.id as [poid]
