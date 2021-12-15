@@ -70,7 +70,7 @@ namespace Sci.Production.IE
             }
 
             string sqlcmd = $@"
-select top 100 o.FtyGroup
+select o.FtyGroup
 ,o.StyleID
 ,o.SeasonID
 ,o.BrandID
@@ -83,7 +83,7 @@ select top 100 o.FtyGroup
 ,lm.AddDate
 ,lm.EditDate
 ,lm.StyleUkey
-,MaxVersion = ROW_NUMBER() over(partition by lm.StyleID,lm.SeasonID,lm.BrandID,lm.StyleUKey order by lm.Version desc)
+,MaxVersion = ROW_NUMBER() over(partition by isnull(lm.StyleID,o.StyleID),isnull(lm.SeasonID,o.SeasonID),isnull(lm.BrandID,o.BrandID),isnull(lm.StyleUKey,o.StyleUKey) order by lm.Version desc)
 from Orders o
 left join LineMapping lm on lm.StyleUKey = o.StyleUkey
 
@@ -98,7 +98,7 @@ Outer Apply (
 where o.Category = 'B'
 {strWhere}
 group by o.FtyGroup,o.StyleID,o.SeasonID,o.BrandID,lm.Version,lm.Status,AddName.IdAndNameAndExt,EditName.IdAndNameAndExt,lm.AddDate
-,lm.TotalGSD,lm.TotalCycle,lm.EditDate,lm.StyleID,lm.SeasonID,lm.BrandID,lm.StyleUKey
+,lm.TotalGSD,lm.TotalCycle,lm.EditDate,lm.StyleID,lm.SeasonID,lm.BrandID,lm.StyleUKey,o.StyleUkey
 order by o.FtyGroup,o.StyleID,o.SeasonID,o.BrandID
 ";
             this.ShowWaitMessage("Data Loading....");
@@ -151,11 +151,11 @@ order by o.FtyGroup,o.StyleID,o.SeasonID,o.BrandID
 
                         if (this.chkLaster.Checked)
                         {
-                            filter = $@" StyleUkey is not null and MaxVersion = 1";
+                            filter = $@" StyleUkey is null and MaxVersion = 1";
                         }
                         else
                         {
-                            filter = $@" StyleUkey is not null";
+                            filter = $@" StyleUkey is null";
                         }
 
                         ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;

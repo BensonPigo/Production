@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.gridLineMappingStatus = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
             this.txtfty = new Sci.Production.Class.Txtfactory();
             this.label1 = new Sci.Win.UI.Label();
@@ -40,10 +41,9 @@
             this.txtCategory = new Sci.Win.UI.TextBox();
             this.labelCAtegory = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingStatus)).BeginInit();
-            this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // gridLineMappingStatus
@@ -210,9 +210,9 @@
             this.Controls.SetChildIndex(this.gridLineMappingStatus, 0);
             this.Controls.SetChildIndex(this.panel1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingStatus)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
