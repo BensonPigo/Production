@@ -640,7 +640,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
                 List<SqlParameter> paras = new List<SqlParameter> { new SqlParameter($"@Image", item.Img) };
                 string sqlcmd = $@"
 SET XACT_ABORT ON
-INSERT INTO [testing\SNP].PMSFile.dbo.AIR_DefectImage([AIRID],[ReceivingID],[Image])VALUES('{this.id}','{this.receivingID}',@Image)
+INSERT INTO [ExtendServer].PMSFile.dbo.AIR_DefectImage([AIRID],[ReceivingID],[Image])VALUES('{this.id}','{this.receivingID}',@Image)
 ";
                 DualResult result = DBProxy.Current.Execute("PMSFile", sqlcmd, paras);
                 if (!result)
@@ -656,7 +656,7 @@ INSERT INTO [testing\SNP].PMSFile.dbo.AIR_DefectImage([AIRID],[ReceivingID],[Ima
 
         private void LoadPicture()
         {
-            string sqlcmd = $@"select * from [testing\SNP].PMSFile.dbo.AIR_DefectImage where AIRID = '{this.id}' and ReceivingID = '{this.receivingID}' order by ukey";
+            string sqlcmd = $@"select * from [ExtendServer].PMSFile.dbo.AIR_DefectImage where AIRID = '{this.id}' and ReceivingID = '{this.receivingID}' order by ukey";
             DualResult result = DBProxy.Current.Select("PMSFile", sqlcmd, out DataTable dt);
             if (!result)
             {

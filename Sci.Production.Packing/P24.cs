@@ -98,7 +98,7 @@ SELECT pd.OrderID
     ,pd.SortCTNStartNo
 FROm ShippingMarkPic a
 INNER JOIN ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey
-INNER JOIN ShippingMarkPic_Detail PmsFile on  b.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
+INNER JOIN [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail PmsFile on  b.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
                                         AND b.SCICtnNo=PmsFile.SCICtnNo 
                                         AND b.ShippingMarkTypeUkey=PmsFile.ShippingMarkTypeUkey 
 INNER JOIN PackingListDetail pd ON pd.ID = a.PackingListID AND b.SCICtnNo = pd.SCICtnNo
@@ -441,7 +441,7 @@ ORDER BY pd.SortCTNStartNo
 
                 string updateCmd = $@"
 SET XACT_ABORT ON
-UPDATE [testing\SNP].PMSFile.dbo.ShippingMarkPic_Detail
+UPDATE [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
 SET Image = @Image{idx} , FileName = @FileName{idx}
 WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
 ";
@@ -454,7 +454,7 @@ WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTyp
             {
                 string deleteCmd = $@"
 SET XACT_ABORT ON
-UPDATE [testing\SNP].PMSFile.dbo.ShippingMarkPic_Detail
+UPDATE [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
 SET Image = NULL , FileName = ''
 WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
 ";
@@ -901,7 +901,7 @@ UPDATE PmsFile
 SET PmsFile.Image = @Image{idx} 
 FROM ShippingMarkPic a
 INNER JOIN ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey
-INNER JOIN [testing\SNP].PMSFile.dbo.ShippingMarkPic_Detail PmsFile on  b.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
+INNER JOIN [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail PmsFile on  b.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
                                                                     AND b.SCICtnNo=PmsFile.SCICtnNo 
                                                                     AND b.ShippingMarkTypeUkey=PmsFile.ShippingMarkTypeUkey 
 WHERE a.PackingListID='{item.PackingListID}'
