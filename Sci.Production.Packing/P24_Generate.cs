@@ -881,6 +881,7 @@ WHERE ID IN ('{templateFields.JoinToString("','")}')
                 if (callFrom == string.Empty)
                 {
                     headInsert += $@"
+SET XACT_ABORT ON
 ---刪除舊有資料
 DELETE FROM ShippingMarkPic_Detail
 WHERE ShippingMarkPicUkey IN (SELECT Ukey FROM ShippingMarkPic WHERE PackingListID = '{packingListID}')
@@ -916,6 +917,7 @@ END
             foreach (P24_Template p24_Template in p24_Templates)
             {
                 bodyInsert += $@"
+SET XACT_ABORT ON
 IF EXISTS(
     SELECT 1 FROM ShippingMarkPic_Detail 
     WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 

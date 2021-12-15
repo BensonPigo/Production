@@ -713,6 +713,7 @@ AND (pu.Status IS NULL OR pu.Status NOT IN ('Confirmed', 'Locked'))
             {
                 #region SQL
                 p24_Head_cmd += $@"
+SET XACT_ABORT ON
 --找出哪個箱子種類包含混尺碼
 SELECT [PackingListID]=pd.ID ,pd.Ukey
 INTO #MixCarton{ii}
@@ -843,6 +844,7 @@ DROP TABLE #tmp_Combination{ii} ,#tmp_Pic{ii}
                 string cmd = string.Empty;
 
                 cmd = $@"
+SET XACT_ABORT ON
 {tmpTable}
 
 ----開始寫入ShippingMarkPic_Detail
@@ -1148,6 +1150,8 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                 {
                     // 該Packing只要其中一張圖片出錯，則該Packing全部把先前的圖片刪除
                     string cmd = $@"
+SET XACT_ABORT ON
+
 UPDATE b
 SET Image = NULL
 from ShippingMarkPic a 
@@ -1549,6 +1553,8 @@ WHERE a.PackingListID IN ('{selecteds.AsEnumerable().Select(o => MyUtility.Conve
                                     this.ConfirmMsg.Add(r);
 
                                     string disposeSQL = $@"
+SET XACT_ABORT ON
+
 DELETE FROM ShippingMarkPic_Detail
 WHERE ShippingMarkTypeUkey IN (
     SELECT a.Ukey 
@@ -1998,6 +2004,8 @@ WHERE PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["I
 ";
 
             string cmd = $@"
+SET XACT_ABORT ON
+
 ----寫入圖片(Image欄位單獨寫進PMSFile)
 UPDATE PmsFile
 SET PmsFile.Image=@Image{this.imageIdx}
@@ -2045,6 +2053,8 @@ AND sd.Seq = (
             // 第一張圖片，對應Combnation的最小Seq，第二張圖片對應第二小Seq，以此類推
 
             string cmd = $@"
+SET XACT_ABORT ON
+
 ----找出P24表身的唯一值
 select a.PackingListID
 , b.SCICtnNo 
@@ -2087,6 +2097,7 @@ WHERE t.Rank = {rank}
         private void ClearP24Data(List<string> packingListIDs)
         {
             string cmd = $@"
+SET XACT_ABORT ON
 DELETE s
 FROM ShippingMarkPic_Detail s
 WHERE ShippingMarkPicUkey IN (

@@ -440,6 +440,7 @@ ORDER BY pd.SortCTNStartNo
                 paras.Add(new SqlParameter($"@FileName{idx}", body.FileName));
 
                 string updateCmd = $@"
+SET XACT_ABORT ON
 UPDATE [testing\SNP].PMSFile.dbo.ShippingMarkPic_Detail
 SET Image = @Image{idx} , FileName = @FileName{idx}
 WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
@@ -452,6 +453,7 @@ WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTyp
             foreach (ShippingMarkPic_Detail body in this.readToDelete)
             {
                 string deleteCmd = $@"
+SET XACT_ABORT ON
 UPDATE [testing\SNP].PMSFile.dbo.ShippingMarkPic_Detail
 SET Image = NULL , FileName = ''
 WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
@@ -886,6 +888,7 @@ AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'
 
                     string updateCmd = $@"
 
+SET XACT_ABORT ON
 UPDATE b
 SET FileName = @FileName{idx}
 FROM ShippingMarkPic a

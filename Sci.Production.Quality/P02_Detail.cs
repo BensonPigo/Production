@@ -638,7 +638,10 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
             foreach (var item in this.ListDefectImg.Where(w => w.Img != null && w.Insert))
             {
                 List<SqlParameter> paras = new List<SqlParameter> { new SqlParameter($"@Image", item.Img) };
-                string sqlcmd = $@"INSERT INTO [testing\SNP].PMSFile.dbo.AIR_DefectImage([AIRID],[ReceivingID],[Image])VALUES('{this.id}','{this.receivingID}',@Image)";
+                string sqlcmd = $@"
+SET XACT_ABORT ON
+INSERT INTO [testing\SNP].PMSFile.dbo.AIR_DefectImage([AIRID],[ReceivingID],[Image])VALUES('{this.id}','{this.receivingID}',@Image)
+";
                 DualResult result = DBProxy.Current.Execute("PMSFile", sqlcmd, paras);
                 if (!result)
                 {
