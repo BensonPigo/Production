@@ -49,6 +49,7 @@
     [NonDeclare] BIT NOT NULL DEFAULT (0), 
     [Foundry] BIT NULL DEFAULT ((0)), 
     [DischargePortID] VARCHAR(20) NULL, 
+    [PLFromRgCode] VARCHAR(7) CONSTRAINT [DF_GMTBooking_PLFromRgCode] DEFAULT ('') not NULL, 
     CONSTRAINT [PK_GMTBooking] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -69,6 +70,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Garment Boo
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GMTBooking', @level2type = N'COLUMN', @level2name = N'ID';
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'該GB表身資料從哪"些"DB來', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GMTBooking', @level2type = N'COLUMN', @level2name = N'PLFromRgCode';
 
 
 GO

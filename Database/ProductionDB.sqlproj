@@ -2655,6 +2655,10 @@
     <Build Include="dbo\Tables\Style_ThreadColorCombo_History_Version.sql" />
     <Build Include="dbo\Functions\getSPRatebyAPSNo.sql" />
     <Build Include="dbo\Tables\PMS_Orders_History.sql" />
+    <Build Include="dbo\Tables\GMTBooking_Detail.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
     <Build Include="dbo\Tables\Order_PatternPanel.sql" />
     <Build Include="dbo\Tables\Bundle_Detail_Allpart_History.sql" />
     <Build Include="dbo\Tables\Bundle_Detail_History.sql" />
@@ -2690,6 +2694,7 @@
     <Build Include="dbo\Tables\Issue_MIND.sql" />
     <Build Include="dbo\Tables\RFIDProcessLocation_Detail.sql" />
     <Build Include="dbo\Stored Procedures\GetCapacityForTrade.sql" />
+    <Build Include="dbo\Tables\Order_Label_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
