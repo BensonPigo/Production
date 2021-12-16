@@ -1,247 +1,321 @@
-﻿CREATE TABLE [dbo].[P_SewingDailyOutput] (
-    [Ukey]                    BIGINT          IDENTITY (1, 1) NOT NULL,
-    [MDivisionID]             VARCHAR (20)    NOT NULL,
-    [FactoryID]               VARCHAR (20)    CONSTRAINT [DF__P_SewingD__Facto__4DF47A4E] DEFAULT ('') NULL,
-    [ComboType]               VARCHAR (1)     DEFAULT ('') NOT NULL,
-    [Category]                VARCHAR (20)    CONSTRAINT [DF__P_SewingD__Categ__4EE89E87] DEFAULT ('') NULL,
-    [CountryID]               VARCHAR (20)    CONSTRAINT [DF__P_SewingD__Count__4FDCC2C0] DEFAULT ('') NULL,
-    [OutputDate]              DATE            NULL,
-    [SewingLineID]            VARCHAR (10)    CONSTRAINT [DF__P_SewingD__Sewin__50D0E6F9] DEFAULT ('') NULL,
-    [Shift]                   VARCHAR (30)    CONSTRAINT [DF__P_SewingD__Shift__51C50B32] DEFAULT ('') NULL,
-    [SubconOutFty]            VARCHAR (15)    CONSTRAINT [DF__P_SewingD__Subco__52B92F6B] DEFAULT ('') NULL,
-    [SubConOutContractNumber] VARCHAR (50)    CONSTRAINT [DF__P_SewingD__SubCo__53AD53A4] DEFAULT ('') NULL,
-    [Team]                    VARCHAR (10)    CONSTRAINT [DF__P_SewingDa__Team__54A177DD] DEFAULT ('') NULL,
-    [OrderID]                 VARCHAR (13)    CONSTRAINT [DF__P_SewingD__Order__55959C16] DEFAULT ('') NULL,
-    [CustPONo]                VARCHAR (30)    CONSTRAINT [DF__P_SewingD__CustP__5689C04F] DEFAULT ('') NULL,
-    [BuyerDelivery]           DATE            NULL,
-    [OrderQty]                INT             CONSTRAINT [DF__P_SewingD__Order__577DE488] DEFAULT ((0)) NULL,
-    [BrandID]                 VARCHAR (20)    CONSTRAINT [DF__P_SewingD__Brand__587208C1] DEFAULT ('') NULL,
-    [OrderCategory]           VARCHAR (20)    CONSTRAINT [DF__P_SewingD__Order__59662CFA] DEFAULT ('') NULL,
-    [ProgramID]               VARCHAR (20)    CONSTRAINT [DF__P_SewingD__Progr__5A5A5133] DEFAULT ('') NULL,
-    [OrderTypeID]             VARCHAR (20)    CONSTRAINT [DF__P_SewingD__Order__5B4E756C] DEFAULT ('') NULL,
-    [DevSample]               VARCHAR (5)     CONSTRAINT [DF__P_SewingD__DevSa__5C4299A5] DEFAULT ('') NULL,
-    [CPURate]                 NUMERIC (15, 1) CONSTRAINT [DF__P_SewingD__CPURa__5D36BDDE] DEFAULT ((0)) NULL,
-    [StyleID]                 VARCHAR (20)    CONSTRAINT [DF__P_SewingD__Style__5E2AE217] DEFAULT ('') NULL,
-    [Season]                  VARCHAR (10)    CONSTRAINT [DF__P_SewingD__Seaso__5F1F0650] DEFAULT ('') NULL,
-    [CdCodeID]                VARCHAR (15)    CONSTRAINT [DF__P_SewingD__CdCod__60132A89] DEFAULT ('') NULL,
-    [ActualManpower]          NUMERIC (12, 1) CONSTRAINT [DF__P_SewingD__Actua__61074EC2] DEFAULT ((0)) NULL,
-    [NoOfHours]               NUMERIC (12, 3) CONSTRAINT [DF__P_SewingD__NoOfH__61FB72FB] DEFAULT ((0)) NULL,
-    [TotalManhours]           NUMERIC (12, 3) CONSTRAINT [DF__P_SewingD__Total__62EF9734] DEFAULT ((0)) NULL,
-    [TargetCPU]               NUMERIC (10, 3) CONSTRAINT [DF__P_SewingD__Targe__63E3BB6D] DEFAULT ((0)) NULL,
-    [TMS]                     INT             CONSTRAINT [DF__P_SewingDai__TMS__64D7DFA6] DEFAULT ((0)) NULL,
-    [CPUPrice]                NUMERIC (10, 3) CONSTRAINT [DF__P_SewingD__CPUPr__65CC03DF] DEFAULT ((0)) NULL,
-    [TargetQty]               INT             CONSTRAINT [DF__P_SewingD__Targe__66C02818] DEFAULT ((0)) NULL,
-    [TotalOutputQty]          INT             CONSTRAINT [DF__P_SewingD__Total__67B44C51] DEFAULT ((0)) NULL,
-    [TotalCPU]                NUMERIC (10, 3) CONSTRAINT [DF__P_SewingD__Total__68A8708A] DEFAULT ((0)) NULL,
-    [CPUSewerHR]              NUMERIC (10, 3) CONSTRAINT [DF__P_SewingD__CPUSe__699C94C3] DEFAULT ((0)) NULL,
-    [EFF]                     NUMERIC (10, 2) CONSTRAINT [DF__P_SewingDai__EFF__6A90B8FC] DEFAULT ((0)) NULL,
-    [RFT]                     NUMERIC (10, 2) CONSTRAINT [DF__P_SewingDai__RFT__6B84DD35] DEFAULT ((0)) NULL,
-    [CumulateOfDays]          INT             CONSTRAINT [DF__P_SewingD__Cumul__6C79016E] DEFAULT ((0)) NULL,
-    [DateRange]               VARCHAR (15)    CONSTRAINT [DF__P_SewingD__DateR__6D6D25A7] DEFAULT ('') NULL,
-    [ProdOutput]              INT             CONSTRAINT [DF__P_SewingD__ProdO__6E6149E0] DEFAULT ((0)) NULL,
-    [Diff]                    INT             CONSTRAINT [DF__P_SewingDa__Diff__6F556E19] DEFAULT ((0)) NULL,
-    [Rate]                    NUMERIC (10, 2) CONSTRAINT [DF__P_SewingDa__Rate__70499252] DEFAULT ((0)) NULL,
-    [SewingReasonDesc]        NVARCHAR (1000) CONSTRAINT [DF__P_SewingD__Sewin__7231DAC4] DEFAULT ('') NULL,
-    [SciDelivery]             DATE            NULL,
-    [CDCodeNew] VARCHAR(5) NULL, 
-    [ProductType] NVARCHAR(500) NULL, 
-    [FabricType] NVARCHAR(500) NULL, 
-    [Lining] VARCHAR(20) NULL, 
-    [Gender] VARCHAR(10) NULL, 
-    [Construction] NVARCHAR(50) NULL,
-    CONSTRAINT [PK_P_SewingDailyOutput] PRIMARY KEY CLUSTERED ([Ukey] ASC, [MDivisionID] ASC)
-);
-
-
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'原因描述', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'SewingReasonDesc';
-
-
+﻿CREATE TABLE [dbo].[P_SewingDailyOutput](
+	[Ukey] [bigint] NOT NULL,
+	[MDivisionID] [varchar](20) NOT NULL,
+	[FactoryID] [varchar](20) NULL,
+	[ComboType] [varchar](1) NOT NULL,
+	[Category] [varchar](20) NULL,
+	[CountryID] [varchar](20) NULL,
+	[OutputDate] [date] NULL,
+	[SewingLineID] [varchar](10) NULL,
+	[Shift] [varchar](30) NULL,
+	[SubconOutFty] [varchar](15) NULL,
+	[SubConOutContractNumber] [varchar](50) NULL,
+	[Team] [varchar](10) NULL,
+	[OrderID] [varchar](13) NULL,
+	[Article] [varchar](8) NULL,
+	[SizeCode] [varchar](8) NULL,
+	[CustPONo] [varchar](30) NULL,
+	[BuyerDelivery] [date] NULL,
+	[OrderQty] [int] NULL,
+	[BrandID] [varchar](20) NULL,
+	[OrderCategory] [varchar](20) NULL,
+	[ProgramID] [varchar](20) NULL,
+	[OrderTypeID] [varchar](20) NULL,
+	[DevSample] [varchar](5) NULL,
+	[CPURate] [numeric](15, 1) NULL,
+	[StyleID] [varchar](20) NULL,
+	[Season] [varchar](10) NULL,
+	[CdCodeID] [varchar](15) NULL,
+	[ActualManpower] [numeric](12, 1) NULL,
+	[NoOfHours] [numeric](12, 3) NULL,
+	[TotalManhours] [numeric](12, 3) NULL,
+	[TargetCPU] [numeric](10, 3) NULL,
+	[TMS] [int] NULL,
+	[CPUPrice] [numeric](10, 3) NULL,
+	[TargetQty] [int] NULL,
+	[TotalOutputQty] [int] NULL,
+	[TotalCPU] [numeric](10, 3) NULL,
+	[CPUSewerHR] [numeric](10, 3) NULL,
+	[EFF] [numeric](10, 2) NULL,
+	[RFT] [numeric](10, 2) NULL,
+	[CumulateOfDays] [int] NULL,
+	[DateRange] [varchar](15) NULL,
+	[ProdOutput] [int] NULL,
+	[Diff] [int] NULL,
+	[Rate] [numeric](10, 2) NULL,
+	[SewingReasonDesc] [nvarchar](1000) NULL,
+	[SciDelivery] [date] NULL,
+	[CDCodeNew] [varchar](5) NULL,
+	[ProductType] [nvarchar](500) NULL,
+	[FabricType] [nvarchar](500) NULL,
+	[Lining] [varchar](20) NULL,
+	[Gender] [varchar](10) NULL,
+	[Construction] [nvarchar](50) NULL,
+ CONSTRAINT [PK_P_SewingDailyOutput] PRIMARY KEY CLUSTERED 
+(
+	[Ukey] ASC,
+	[MDivisionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
 GO
 
-
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_FactoryID]  DEFAULT ('') FOR [FactoryID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'比例', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'Rate';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_ComboType]  DEFAULT ('') FOR [ComboType]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'差異(QAQty-InlineQty)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'Diff';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_Category]  DEFAULT ('') FOR [Category]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'InlineQty', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'ProdOutput';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_CountryID]  DEFAULT ('') FOR [CountryID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'等同於CumulateOfDays，當大於10則顯示>=10', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'DateRange';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_SewingLineID]  DEFAULT ('') FOR [SewingLineID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'該Style在這條線上累積做多久', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'CumulateOfDays';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_Shift]  DEFAULT ('') FOR [Shift]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Right First Time(%)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'RFT';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_SubconOutFty]  DEFAULT ('') FOR [SubconOutFty]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'效率值EFF(%)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'EFF';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_SubConOutContractNumber]  DEFAULT ('') FOR [SubConOutContractNumber]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'直接人員每人每小時產出(PPH)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'CPUSewerHR';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_Team]  DEFAULT ('') FOR [Team]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'實際CPU', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'TotalCPU';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_OrderID]  DEFAULT ('') FOR [OrderID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'實際產出數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'TotalOutputQty';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_Article]  DEFAULT ('') FOR [Article]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'目標數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'TargetQty';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_SizeCode]  DEFAULT ('') FOR [SizeCode]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'每件需多少CPU', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'CPUPrice';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_CustPONo]  DEFAULT ('') FOR [CustPONo]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Costing TMS (sec)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'TMS';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_OrderQty]  DEFAULT ((0)) FOR [OrderQty]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'目標CPU', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'TargetCPU';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_BrandID]  DEFAULT ('') FOR [BrandID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'總人力工時', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'TotalManhours';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_OrderCategory]  DEFAULT ('') FOR [OrderCategory]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'平均一人工時', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'NoOfHours';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_ProgramID]  DEFAULT ('') FOR [ProgramID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'實際人力', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'ActualManpower';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_OrderTypeID]  DEFAULT ('') FOR [OrderTypeID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CD#', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'CdCodeID';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_DevSample]  DEFAULT ('') FOR [DevSample]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'季節', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'Season';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_CPURate]  DEFAULT ((0)) FOR [CPURate]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'款式', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'StyleID';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_StyleID]  DEFAULT ('') FOR [StyleID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單CPU Rate', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'CPURate';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_Season]  DEFAULT ('') FOR [Season]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'開發樣品 OrderType.IsDevSample轉入寫入 Y/N', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'DevSample';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_CdCodeID]  DEFAULT ('') FOR [CdCodeID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單類別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'OrderTypeID';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_ActualManpower]  DEFAULT ((0)) FOR [ActualManpower]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客戶品牌', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'ProgramID';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_NoOfHours]  DEFAULT ((0)) FOR [NoOfHours]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單分類', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'OrderCategory';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TotalManhours]  DEFAULT ((0)) FOR [TotalManhours]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'品牌別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'BrandID';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TargetCPU]  DEFAULT ((0)) FOR [TargetCPU]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'OrderQty';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TMS]  DEFAULT ((0)) FOR [TMS]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客戶交期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'BuyerDelivery';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_CPUPrice]  DEFAULT ((0)) FOR [CPUPrice]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客戶訂單單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'CustPONo';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TargetQty]  DEFAULT ((0)) FOR [TargetQty]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'OrderID';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TotalOutputQty]  DEFAULT ((0)) FOR [TotalOutputQty]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'Team';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TotalCPU]  DEFAULT ((0)) FOR [TotalCPU]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'發外條款', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'SubConOutContractNumber';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_CPUSewerHR]  DEFAULT ((0)) FOR [CPUSewerHR]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'發外工廠', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'SubconOutFty';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_EFF]  DEFAULT ((0)) FOR [EFF]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'班別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'Shift';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_RFT]  DEFAULT ((0)) FOR [RFT]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'產線代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'SewingLineID';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_CumulateOfDays]  DEFAULT ((0)) FOR [CumulateOfDays]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'產出日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'OutputDate';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_DateRange]  DEFAULT ('') FOR [DateRange]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'國家別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'CountryID';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_ProdOutput]  DEFAULT ((0)) FOR [ProdOutput]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Order or Mockup order', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'Category';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_Diff]  DEFAULT ((0)) FOR [Diff]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組合型態', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'ComboType';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_Rate]  DEFAULT ((0)) FOR [Rate]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'FactoryID';
 
-
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_SewingReasonDesc]  DEFAULT ('') FOR [SewingReasonDesc]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 
-
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SewingOutput_Detail_Ukey' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'Ukey'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SewingOutput_Detail_Ukey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutput', @level2type = N'COLUMN', @level2name = N'Ukey';
 
-
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Manufacturing Division ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'MDivisionID'
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'飛雁交期',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_SewingDailyOutput',
-    @level2type = N'COLUMN',
-    @level2name = N'SciDelivery'
-GO
-CREATE NONCLUSTERED INDEX [Index_of_P_ImportEfficiencyBI]
-    ON [dbo].[P_SewingDailyOutput]([OutputDate] ASC)
-    INCLUDE([MDivisionID], [FactoryID], [ComboType], [SewingLineID], [Shift], [Team], [OrderID]);
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'FactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'組合型態' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'ComboType'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Order or Mockup order' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'Category'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'國家別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'CountryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'產出日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'OutputDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'產線代號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'SewingLineID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'班別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'Shift'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'發外工廠' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'SubconOutFty'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'發外條款' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'SubConOutContractNumber'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'組別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'Team'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單編號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'OrderID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'顏色組' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'Article'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'尺寸' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'SizeCode'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'客戶訂單單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'CustPONo'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'客戶交期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'BuyerDelivery'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單數量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'OrderQty'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'品牌別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'BrandID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單分類' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'OrderCategory'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'客戶品牌' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'ProgramID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單類別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'OrderTypeID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'開發樣品 OrderType.IsDevSample轉入寫入 Y/N' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'DevSample'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單CPU Rate' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'CPURate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'款式' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'StyleID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'季節' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'Season'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'CD#' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'CdCodeID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'實際人力' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'ActualManpower'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'平均一人工時' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'NoOfHours'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'總人力工時' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'TotalManhours'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'目標CPU' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'TargetCPU'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Costing TMS (sec)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'TMS'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'每件需多少CPU' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'CPUPrice'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'目標數量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'TargetQty'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'實際產出數量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'TotalOutputQty'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'實際CPU' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'TotalCPU'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'直接人員每人每小時產出(PPH)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'CPUSewerHR'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'效率值EFF(%)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'EFF'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Right First Time(%)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'RFT'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'該Style在這條線上累積做多久' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'CumulateOfDays'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'等同於CumulateOfDays，當大於10則顯示>=10' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'DateRange'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'InlineQty' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'ProdOutput'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'差異(QAQty-InlineQty)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'Diff'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'比例' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'Rate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'原因描述' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'SewingReasonDesc'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'飛雁交期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'SciDelivery'
+GO
