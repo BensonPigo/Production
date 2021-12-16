@@ -863,6 +863,8 @@ WHERE o.ID='{dr.OrderID}'");
                 {
                     this.ShowErr(result_load);
                 }
+
+                e.Cancel = true;
             }
             else
             {
