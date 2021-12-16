@@ -40,14 +40,11 @@
     [QueryDate]         DATE            NULL,
     [RepackFrom]        VARCHAR (13)    NULL,
 	[CannotModify]      BIT             CONSTRAINT [DF_PackingList_CannotModify] DEFAULT ((0)) not NULL,
+	[PLToRgCode]        VARCHAR (3)    CONSTRAINT [DF_PackingList_PLToRgCode] DEFAULT ('') not NULL,
+	[PLCtnTrToRgCodeDate]         datetime            NULL,
+	[PLCtnRecvFMRgCodeDate]         datetime            NULL,
     CONSTRAINT [PK_PackingList] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
-
-
-
-
-
-
 
 
 
@@ -61,6 +58,18 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'任一箱�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Id', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList', @level2type = N'COLUMN', @level2name = N'ID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'該PL的資料傳哪個DB,用於遠程DB連線使用, 空白表示這筆資料用在自已的DB使用, 有值表示這筆資料後續轉去其他遠程DB', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList', @level2type = N'COLUMN', @level2name = N'PLToRgCode';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'該PL的全部箱子, 轉到姊妹廠的時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList', @level2type = N'COLUMN', @level2name = N'PLCtnTrToRgCodeDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'從姊妹廠接收到該PL的全部箱子時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList', @level2type = N'COLUMN', @level2name = N'PLCtnRecvFMRgCodeDate';
 
 
 GO
