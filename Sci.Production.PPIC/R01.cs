@@ -160,15 +160,15 @@ namespace Sci.Production.PPIC
         {
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.printData.Rows.Count);
-            bool result = false;
+            bool result;
             if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
-            Excel.Application objApp = null;
-            Excel.Worksheet worksheet = null;
+            Excel.Application objApp;
+            Excel.Worksheet worksheet;
 
             if (this.type == "StylePerEachSewingDate")
             {
@@ -258,22 +258,22 @@ namespace Sci.Production.PPIC
 
                     if (!MyUtility.Check.Empty(this.buyerDelivery1))
                     {
-                        whereList += $" and o.BuyerDelivery >= '{Convert.ToDateTime(this.buyerDelivery1).ToString("yyyy/MM/dd")}'";
+                        whereList += $" and o.BuyerDelivery >= '{Convert.ToDateTime(this.buyerDelivery1):yyyy/MM/dd}'";
                     }
 
                     if (!MyUtility.Check.Empty(this.buyerDelivery2))
                     {
-                        whereList += $" and o.BuyerDelivery <= '{Convert.ToDateTime(this.buyerDelivery2).ToString("yyyy/MM/dd")}'";
+                        whereList += $" and o.BuyerDelivery <= '{Convert.ToDateTime(this.buyerDelivery2):yyyy/MM/dd}'";
                     }
 
                     if (!MyUtility.Check.Empty(this.sciDelivery1))
                     {
-                        whereList += $" and o.SciDelivery >= '{Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")}'";
+                        whereList += $" and o.SciDelivery >= '{Convert.ToDateTime(this.sciDelivery1):yyyy/MM/dd}'";
                     }
 
                     if (!MyUtility.Check.Empty(this.sciDelivery2))
                     {
-                        whereList += $" and o.SciDelivery <= '{Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")}'";
+                        whereList += $" and o.SciDelivery <= '{Convert.ToDateTime(this.sciDelivery2):yyyy/MM/dd}'";
                     }
 
                     if (!MyUtility.Check.Empty(this.brand))
@@ -289,8 +289,8 @@ and exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and s
                     #endregion
 
                     string sqlcmd = $@"
-DECLARE @sewinginline DATETIME ='{Convert.ToDateTime(this.SewingDate1).ToString("yyyy/MM/dd")}'
-DECLARE @sewingoffline DATETIME ='{Convert.ToDateTime(this.SewingDate2).ToString("yyyy/MM/dd")}'
+DECLARE @sewinginline DATETIME ='{Convert.ToDateTime(this.SewingDate1):yyyy/MM/dd}'
+DECLARE @sewingoffline DATETIME ='{Convert.ToDateTime(this.SewingDate2):yyyy/MM/dd}'
 DECLARE @LINE1 VARCHAR(10) = '{this.line1}'
 DECLARE @LINE2 VARCHAR(10) = '{this.line2}'
 --整個月 table
@@ -620,7 +620,7 @@ select SewingLineID,SewingDay,FactoryID
 ,[CPU] = sum(CPU)
 into #tmpFinal_step1
 from #tmp
-where SewingDay between '{Convert.ToDateTime(this.SewingDate1).ToString("yyyy/MM/dd")}' and '{Convert.ToDateTime(this.SewingDate2).ToString("yyyy/MM/dd")}'
+where SewingDay between '{Convert.ToDateTime(this.SewingDate1):yyyy/MM/dd}' and '{Convert.ToDateTime(this.SewingDate2):yyyy/MM/dd}'
 group by SewingLineID,SewingDay,SewingCPU,Sewer,FactoryID
 
 select 
@@ -663,6 +663,14 @@ drop table #tmpFinal_step1
                         this.ShowErr(resultCmd);
                         return resultCmd;
                     }
+
+                    string sqlHours = $@"select FactoryID,Date,Hours,SewingLineID from WorkHour where date between '{Convert.ToDateTime(this.SewingDate1):yyyy/MM/dd}' and '{Convert.ToDateTime(this.SewingDate2):yyyy/MM/dd}'";
+                    resultCmd = DBProxy.Current.Select(null, sqlHours, out DataTable drHours);
+                    if (!resultCmd)
+                    {
+                        this.ShowErr(resultCmd);
+                        return resultCmd;
+                    }
                     #endregion
 
                     worksheet = objApp.Sheets[4];
@@ -674,66 +682,35 @@ drop table #tmpFinal_step1
                     int intRowsStart = 1;
                     string writeFty = string.Empty;
                     string line = string.Empty;
-                    int ftyCount = 4;
+                    int ftyCount = 5;
                     int colCount = 2;
                     int rowcnt = 0;
                     int monthDays = ((TimeSpan)(MyUtility.Convert.GetDate(this.SewingDate2) - MyUtility.Convert.GetDate(this.SewingDate1))).Days;
-                    int colcnts = monthDays + 1;
+                    string colRight = PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4);
 
                     foreach (DataRow dr in dtGantt.Rows)
                     {
                         // 當有換工廠別時，要換Sheet
                         if (writeFty != MyUtility.Convert.GetString(dr["FactoryID"]))
                         {
-                            if (ftyCount > 4)
+                            if (ftyCount > 5)
                             {
                                 // 將上一間工廠最後一條Line後面沒有Schedule的格子塗黑
                                 if (colCount - 1 != monthDays)
                                 {
                                     for (int i = colCount; i <= monthDays; i++)
                                     {
-                                        worksheet.Range[string.Format("{0}{1}:{0}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1), MyUtility.Convert.GetString(intRowsStart))].Cells.Interior.Color = Color.Black;
+                                        string colttl = PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1);
+                                        worksheet.Range[$"{colttl}{intRowsStart}:{colttl}{intRowsStart}"].Cells.Interior.Color = Color.Black;
                                     }
                                 }
 
                                 // 從dtGanttSumery  填入Total StdQty,PPH, CPU
-                                if (!line.Empty())
-                                {
-                                    // 對dtGanttSumery防錯誤用!
-                                    DataRow[] drCheck = dtGanttSumery[0].Select($"sewinglineid = '{line}' and FactoryID = '{writeFty}'");
-                                    if (drCheck.Length > 0)
-                                    {
-                                        string strMaxDate = ((DateTime)dtGanttSumery[0].Compute("max([SewingDay])", $"sewinglineid = '{line}' and FactoryID = '{writeFty}'")).ToString("yyyy/MM/dd");
-                                        this.drSummary = dtGanttSumery[0].Select($@" SewingDay = '{strMaxDate}' and SewingLineID = '{line}' and FactoryID = '{writeFty}'");
-                                        if (this.drSummary.Length > 0)
-                                        {
-                                            worksheet.Cells[intRowsStart + 1, monthDays + 4] = this.drSummary[0]["Total_StdOutput"];
-                                            ((Excel.Range)worksheet.Cells[intRowsStart + 1, monthDays + 4]).NumberFormat = "#,##0_);(#,##0)";
-                                            worksheet.Cells[intRowsStart + 2, monthDays + 4] = this.drSummary[0]["PPH"];
-                                            ((Excel.Range)worksheet.Cells[intRowsStart + 2, monthDays + 4]).NumberFormat = "0.00";
-                                            worksheet.Cells[intRowsStart + 3, monthDays + 4] = this.drSummary[0]["CPU"];
-                                            ((Excel.Range)worksheet.Cells[intRowsStart + 3, monthDays + 4]).NumberFormat = "#,##0_);(#,##0)";
-                                        }
-                                    }
-                                }
+                                // 對dtGanttSumery防錯誤用!
+                                this.SetGanntTotal(worksheet, dtGanttSumery, drHours, intRowsStart, writeFty, line, monthDays + 4);
 
-                                // 畫線
-                                worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-
-                                // 設定格式
-                                worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-                                worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].Font.Bold = true;
-                                worksheet.Range[$"A2:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].Font.Size = 10;
-                                worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].Font.Name = "Calibri";
-
-                                // 相同line資訊用粗線框起來
-                                for (int i = 2; i <= (rowcnt * 4); i++)
-                                {
-                                    if ((i - 2) % 4 == 0)
-                                    {
-                                        worksheet.Range[$"A{i}:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{i + 3}"].BorderAround2(LineStyle: 1, Weight: Excel.XlBorderWeight.xlMedium);
-                                    }
-                                }
+                                // 畫線 & 設定格式
+                                this.GanntCellStyle(worksheet, (rowcnt * 5) + 1, colRight);
 
                                 // 複製Sheet[Gantt Chart]表頭格式
                                 objApp.Sheets[mWorkBook.Sheets.Count].Copy(objApp.ActiveWorkbook.Worksheets[4]);
@@ -776,12 +753,6 @@ drop table #tmpFinal_step1
                             worksheet.Cells[1, monthDays + 4] = "Total";
 
                             #endregion
-
-                            // 調整欄寬
-                            for (int c = 1; c <= colcnts + 3; c++)
-                            {
-                                worksheet.Columns[c].ColumnWidth = 10;
-                            }
                         }
 
                         // 換Sewing Line時，要填入Line#
@@ -794,37 +765,21 @@ drop table #tmpFinal_step1
                                 {
                                     for (int i = colCount; i <= monthDays; i++)
                                     {
-                                        worksheet.Range[string.Format("{0}{1}:{0}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1), MyUtility.Convert.GetString(intRowsStart))].Cells.Interior.Color = Color.Black;
+                                        string colttl = PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1);
+                                        worksheet.Range[$"{colttl}{intRowsStart}:{colttl}{intRowsStart}"].Cells.Interior.Color = Color.Black;
                                     }
                                 }
                             }
 
                             colCount = 2;
-                            intRowsStart = (rowcnt * 4) + 2;
+                            intRowsStart = (rowcnt * 5) + 2;
 
                             // 從dtGanttSumery  填入Total StdQty,PPH, CPU
-                            if (!line.Empty())
-                            {
-                                DataRow[] drCheck = dtGanttSumery[0].Select($"sewinglineid = '{line}' and FactoryID = '{dr["FactoryID"]}'");
-                                if (drCheck.Length > 0)
-                                {
-                                    string strMaxDate = ((DateTime)dtGanttSumery[0].Compute("max([SewingDay])", $"sewinglineid = '{line}' and FactoryID = '{dr["FactoryID"]}'")).ToString("yyyy/MM/dd");
-                                    this.drSummary = dtGanttSumery[0].Select($@" SewingDay = '{strMaxDate}' and SewingLineID = '{line}' and FactoryID = '{dr["FactoryID"]}'");
-                                    if (this.drSummary.Length > 0)
-                                    {
-                                        worksheet.Cells[intRowsStart - 3, monthDays + 4] = this.drSummary[0]["Total_StdOutput"];
-                                        ((Excel.Range)worksheet.Cells[intRowsStart - 3, monthDays + 4]).NumberFormat = "#,##0_);(#,##0)";
-                                        worksheet.Cells[intRowsStart - 2, monthDays + 4] = this.drSummary[0]["PPH"];
-                                        ((Excel.Range)worksheet.Cells[intRowsStart - 2, monthDays + 4]).NumberFormat = "0.00";
-                                        worksheet.Cells[intRowsStart - 1, monthDays + 4] = this.drSummary[0]["CPU"];
-                                        ((Excel.Range)worksheet.Cells[intRowsStart - 1, monthDays + 4]).NumberFormat = "#,##0_);(#,##0)";
-                                    }
-                                }
-                            }
+                            this.SetGanntTotal(worksheet, dtGanttSumery, drHours, intRowsStart - 5, dr["FactoryID"].ToString(), line, monthDays + 4);
 
                             // 插入四行
                             Excel.Range rngToInsert;
-                            for (int i = 0; i < 4; i++)
+                            for (int i = 0; i < 5; i++)
                             {
                                 rngToInsert = worksheet.get_Range(string.Format("B{0}:B{0}", MyUtility.Convert.GetString(intRowsStart + i)), Type.Missing).EntireRow;
                                 rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
@@ -832,25 +787,16 @@ drop table #tmpFinal_step1
                             }
 
                             line = MyUtility.Convert.GetString(dr["SewingLineID"]);
-                            for (int r = 0; r < 4; r++)
+                            for (int r = 0; r < 5; r++)
                             {
                                 worksheet.Cells[intRowsStart + r, 1] = line;
-                                switch (r)
-                                {
-                                    case 0:
-                                        worksheet.Cells[intRowsStart + r, 2] = "Detail";
-                                        break;
-                                    case 1:
-                                        worksheet.Cells[intRowsStart + r, 2] = "Std Q";
-                                        break;
-                                    case 2:
-                                        worksheet.Cells[intRowsStart + r, 2] = "PPH";
-                                        break;
-                                    case 3:
-                                        worksheet.Cells[intRowsStart + r, 2] = "CPU";
-                                        break;
-                                }
                             }
+
+                            worksheet.Cells[intRowsStart, 2] = "Detail";
+                            worksheet.Cells[intRowsStart + 1, 2] = "Std Q";
+                            worksheet.Cells[intRowsStart + 2, 2] = "PPH";
+                            worksheet.Cells[intRowsStart + 3, 2] = "CPU";
+                            worksheet.Cells[intRowsStart + 4, 2] = "Working Hours";
 
                             rowcnt++;
                         }
@@ -867,21 +813,21 @@ drop table #tmpFinal_step1
                         {
                             for (int i = colCount + 1; i < startCol; i++)
                             {
-                                worksheet.Range[string.Format("{0}{1}:{2}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i), MyUtility.Convert.GetString(intRowsStart), PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1))].Cells.Interior.Color = Color.Black;
+                                worksheet.Range[$"{PublicPrg.Prgs.GetExcelEnglishColumnName(i)}{intRowsStart}:{PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1)}{intRowsStart}"].Cells.Interior.Color = Color.Black;
                             }
                         }
 
                         // 算出Excel的Column的英文位置
                         string excelStartColEng = PublicPrg.Prgs.GetExcelEnglishColumnName(startCol);
                         string excelEndColEng = PublicPrg.Prgs.GetExcelEnglishColumnName(endCol);
-                        Excel.Range selrng = worksheet.get_Range(string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng), Type.Missing).EntireRow;
+                        Excel.Range selrng = worksheet.get_Range($"{excelStartColEng}{intRowsStart}:{excelEndColEng}{intRowsStart}", Type.Missing).EntireRow;
 
                         // 設置儲存格的背景色
-                        Excel.Range rngColor = worksheet.Range[$"{excelStartColEng}{MyUtility.Convert.GetString(intRowsStart)}:{excelEndColEng}{MyUtility.Convert.GetString(intRowsStart + 3)}"];
+                        Excel.Range rngColor = worksheet.Range[$"{excelStartColEng}{intRowsStart}:{excelEndColEng}{intRowsStart + 4}"];
 
                         // 合併儲存格,文字置中 (僅限Style)
-                        worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Merge(Type.Missing);
-                        worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                        worksheet.Range[$"{excelStartColEng}{intRowsStart}:{excelEndColEng}{intRowsStart}"].Merge(Type.Missing);
+                        worksheet.Range[$"{excelStartColEng}{intRowsStart}:{excelEndColEng}{intRowsStart}"].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
 
                         // 顏色顯示優先權：Holiday紅色背景 > SCI Delivery為當月以前的紫色粗體 > SCI Delivery當月為以後的綠色粗體 > Bulk款式藍色粗體 > SMS款式紅色粗體 > 非以上四種情況的黑色字體
                         #region 填入內容值
@@ -920,18 +866,7 @@ drop table #tmpFinal_step1
                         int dateRange = ((TimeSpan)(MyUtility.Convert.GetDate(dr["OffLine"]) - MyUtility.Convert.GetDate(dr["InLine"]))).Days;
                         for (int d = 0; d <= dateRange; d++)
                         {
-                            string sewingDate = ((DateTime)dr["InLine"]).AddDays(d).ToString("yyyy-MM-dd");
-                            this.drSummary = dtGanttSumery[0].Select($@" SewingDay = '{sewingDate}' and SewingLineID = '{dr["SewingLineID"]}' and FactoryID = '{dr["FactoryID"]}'");
-                            if (this.drSummary.Length > 0)
-                            {
-                                worksheet.Cells[intRowsStart + 1, startCol + d] = this.drSummary[0]["Total_StdOutput"];
-                                ((Excel.Range)worksheet.Cells[intRowsStart + 1, startCol + d]).NumberFormat = "#,##0_);(#,##0)";
-                                worksheet.Cells[intRowsStart + 2, startCol + d] = this.drSummary[0]["PPH"];
-                                ((Excel.Range)worksheet.Cells[intRowsStart + 2, startCol + d]).NumberFormat = "0.00";
-                                worksheet.Cells[intRowsStart + 3, startCol + d] = this.drSummary[0]["CPU"];
-                                ((Excel.Range)worksheet.Cells[intRowsStart + 3, startCol + d]).NumberFormat = "#,##0_);(#,##0)";
-                                rngColor.Cells.Interior.Color = Color.White;
-                            }
+                            this.SetGannt(worksheet, dtGanttSumery, drHours, intRowsStart, dr, startCol, rngColor, d);
                         }
                         #endregion
                         colCount = colCount + (startCol - colCount - 1) + totalDays;
@@ -939,51 +874,22 @@ drop table #tmpFinal_step1
                     }
 
                     // 從dtGanttSumery  填入Total StdQty,PPH, CPU
-                    if (!line.Empty())
-                    {
-                        DataRow[] drCheck = dtGanttSumery[0].Select($"sewinglineid = '{line}' and FactoryID = '{worksheet.Name}'");
-                        if (drCheck.Length > 0)
-                        {
-                            string strMaxDate = ((DateTime)dtGanttSumery[0].Compute("max([SewingDay])", $"sewinglineid = '{line}' and FactoryID = '{worksheet.Name}'")).ToString("yyyy/MM/dd");
-                            this.drSummary = dtGanttSumery[0].Select($@" SewingDay = '{strMaxDate}' and SewingLineID = '{line}' and FactoryID = '{worksheet.Name}'");
-                            if (this.drSummary.Length > 0)
-                            {
-                                worksheet.Cells[(rowcnt * 4) + 2 - 3, monthDays + 4] = this.drSummary[0]["Total_StdOutput"];
-                                ((Excel.Range)worksheet.Cells[(rowcnt * 4) + 2 - 3, monthDays + 4]).NumberFormat = "#,##0_);(#,##0)";
-                                worksheet.Cells[(rowcnt * 4) + 2 - 2, monthDays + 4] = this.drSummary[0]["PPH"];
-                                ((Excel.Range)worksheet.Cells[(rowcnt * 4) + 2 - 2, monthDays + 4]).NumberFormat = "0.00";
-                                worksheet.Cells[(rowcnt * 4) + 2 - 1, monthDays + 4] = this.drSummary[0]["CPU"];
-                                ((Excel.Range)worksheet.Cells[(rowcnt * 4) + 2 - 1, monthDays + 4]).NumberFormat = "#,##0_);(#,##0)";
-                            }
-                        }
-                    }
+                    this.SetGanntTotal(worksheet, dtGanttSumery, drHours, (rowcnt * 5) + 2 - 5, worksheet.Name, line, monthDays + 4);
 
                     if (colCount - 1 != monthDays)
                     {
                         for (int i = colCount; i <= monthDays; i++)
                         {
-                            worksheet.Range[string.Format("{0}{1}:{0}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1), MyUtility.Convert.GetString(intRowsStart))].Cells.Interior.Color = Color.Black;
+                            string colttl = PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1);
+                            worksheet.Range[$"{colttl}{intRowsStart}:{colttl}{intRowsStart}"].Cells.Interior.Color = Color.Black;
                         }
                     }
 
-                    // 畫線
-                    worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-                    worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-                    worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].Font.Bold = true;
-                    worksheet.Range[$"A2:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].Font.Size = 10;
-                    worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].Font.Name = "Calibri";
-
-                    // 相同line資訊用粗線框起來
-                    for (int i = 2; i <= (rowcnt * 4); i++)
-                    {
-                        if ((i - 2) % 4 == 0)
-                        {
-                            worksheet.Range[$"A{i}:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{i + 3}"].BorderAround2(LineStyle: 1, Weight: Excel.XlBorderWeight.xlMedium);
-                        }
-                    }
+                    // 畫線 & 設定格式
+                    this.GanntCellStyle(worksheet, (rowcnt * 5) + 1, colRight);
 
                     // 調整欄寬
-                    for (int c = 1; c < colcnts + 3; c++)
+                    for (int c = 1; c < monthDays + 4; c++)
                     {
                         worksheet.Columns[c].ColumnWidth = 10;
                     }
@@ -1052,9 +958,6 @@ drop table #tmpFinal_step1
                         this.printData.Columns.Remove("SubCon");
                     }
 
-                    objApp = null;
-                    worksheet = null;
-
                     objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_R01_PrintOut.xltx"); // 預先開啟excel app
                     result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "PPIC_R01_PrintOut.xltx", headerRow: 4, showExcel: false, excelApp: objApp, wSheet: objApp.Sheets[2]);
                     if (!result)
@@ -1117,8 +1020,6 @@ where id = '{0}'", Env.User.Factory), null);
                 else
                 {
                     #region PPIC_R01_SewingLineScheduleReport
-                    objApp = null;
-                    worksheet = null;
                     objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_R01_SewingLineScheduleReport.xltx"); // 預先開啟excel app
                     result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "PPIC_R01_SewingLineScheduleReport.xltx", headerRow: 1, showExcel: false, excelApp: objApp, wSheet: objApp.Sheets[2]);
 
@@ -1160,6 +1061,64 @@ where id = '{0}'", Env.User.Factory), null);
             }
 
             return true;
+        }
+
+        private void GanntCellStyle(Excel.Worksheet worksheet, int row, string column)
+        {
+            worksheet.Range[$"A1:{column}{row}"].Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            worksheet.Range[$"A1:{column}{row}"].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            worksheet.Range[$"A1:{column}{row}"].Font.Bold = true;
+            worksheet.Range[$"A2:{column}{row}"].Font.Size = 10;
+            worksheet.Range[$"A1:{column}{row}"].Font.Name = "Calibri";
+
+            // 相同line資訊用粗線框起來
+            for (int i = 2; i <= row - 1; i++)
+            {
+                if ((i - 2) % 5 == 0)
+                {
+                    worksheet.Range[$"A{i}:{column}{i + 4}"].BorderAround2(LineStyle: 1, Weight: Excel.XlBorderWeight.xlMedium);
+                }
+            }
+        }
+
+        private void SetGannt(Excel.Worksheet worksheet, DataTable[] dtGanttSumery, DataTable drHours, int intRowsStart, DataRow dr, int startCol, Excel.Range rngColor, int d)
+        {
+            string sewingDate = ((DateTime)dr["InLine"]).AddDays(d).ToString("yyyy-MM-dd");
+            this.drSummary = dtGanttSumery[0].Select($@" SewingDay = '{sewingDate}' and SewingLineID = '{dr["SewingLineID"]}' and FactoryID = '{dr["FactoryID"]}'");
+            this.SetGanntValue(worksheet, drHours, intRowsStart, dr["FactoryID"].ToString(), dr["SewingLineID"].ToString(), startCol + d, sewingDate);
+            if (this.drSummary.Length > 0)
+            {
+                rngColor.Cells.Interior.Color = Color.White;
+            }
+        }
+
+        private void SetGanntTotal(Excel.Worksheet worksheet, DataTable[] dtGanttSumery, DataTable drHours, int intRowsStart, string factoryID, string line, int column)
+        {
+            if (!line.Empty())
+            {
+                DataRow[] drCheck = dtGanttSumery[0].Select($"sewinglineid = '{line}' and FactoryID = '{factoryID}'");
+                if (drCheck.Length > 0)
+                {
+                    string strMaxDate = ((DateTime)dtGanttSumery[0].Compute("max([SewingDay])", $"sewinglineid = '{line}' and FactoryID = '{factoryID}'")).ToString("yyyy/MM/dd");
+                    this.drSummary = dtGanttSumery[0].Select($@" SewingDay = '{strMaxDate}' and SewingLineID = '{line}' and FactoryID = '{factoryID}'");
+                    this.SetGanntValue(worksheet, drHours, intRowsStart, factoryID, line, column, string.Empty);
+                }
+            }
+        }
+
+        private void SetGanntValue(Excel.Worksheet worksheet, DataTable drHours, int intRowsStart, string factoryID, string line, int column, string sewingDay)
+        {
+            if (this.drSummary.Length > 0)
+            {
+                worksheet.Cells[intRowsStart + 1, column] = this.drSummary[0]["Total_StdOutput"];
+                ((Excel.Range)worksheet.Cells[intRowsStart + 1, column]).NumberFormat = "#,##0_);(#,##0)";
+                worksheet.Cells[intRowsStart + 2, column] = this.drSummary[0]["PPH"];
+                ((Excel.Range)worksheet.Cells[intRowsStart + 2, column]).NumberFormat = "0.00";
+                worksheet.Cells[intRowsStart + 3, column] = this.drSummary[0]["CPU"];
+                ((Excel.Range)worksheet.Cells[intRowsStart + 3, column]).NumberFormat = "#,##0_);(#,##0)";
+                worksheet.Cells[intRowsStart + 4, column] = this.FilterHour(drHours, sewingDay, line, factoryID);
+                ((Excel.Range)worksheet.Cells[intRowsStart + 4, column]).NumberFormat = "0.0";
+            }
         }
 
         private void ComboFactory_SelectedIndexChanged(object sender, EventArgs e)
@@ -1981,8 +1940,8 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
             #region where條件
 
             // 搜尋時判斷的是在 Inline - Offline 的期間有包含到 SewingDate1 這一段區間的 Schedule
-            sqlCmd.Append(!MyUtility.Check.Empty(this.SewingDate1) ? $" '{Convert.ToDateTime(this.SewingDate1).ToString("yyyy/MM/dd")}'," : " null,");
-            sqlCmd.Append(!MyUtility.Check.Empty(this.SewingDate2) ? $" '{Convert.ToDateTime(this.SewingDate2).ToString("yyyy/MM/dd")}'," : " null,");
+            sqlCmd.Append(!MyUtility.Check.Empty(this.SewingDate1) ? $" '{Convert.ToDateTime(this.SewingDate1):yyyy/MM/dd}'," : " null,");
+            sqlCmd.Append(!MyUtility.Check.Empty(this.SewingDate2) ? $" '{Convert.ToDateTime(this.SewingDate2):yyyy/MM/dd}'," : " null,");
 
             // SewingLineID
             sqlCmd.Append(!MyUtility.Check.Empty(this.line1) ? $" '{this.line1}'," : " '',");
@@ -1993,12 +1952,12 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
             sqlCmd.Append(!MyUtility.Check.Empty(this.factory) ? $" '{this.factory}'," : " '',");
 
             // BuyerDelivery
-            sqlCmd.Append(!MyUtility.Check.Empty(this.buyerDelivery1) ? $" '{Convert.ToDateTime(this.buyerDelivery1).ToString("yyyy/MM/dd")}'," : " null,");
-            sqlCmd.Append(!MyUtility.Check.Empty(this.buyerDelivery2) ? $" '{Convert.ToDateTime(this.buyerDelivery2).ToString("yyyy/MM/dd")}'," : " null,");
+            sqlCmd.Append(!MyUtility.Check.Empty(this.buyerDelivery1) ? $" '{Convert.ToDateTime(this.buyerDelivery1):yyyy/MM/dd}'," : " null,");
+            sqlCmd.Append(!MyUtility.Check.Empty(this.buyerDelivery2) ? $" '{Convert.ToDateTime(this.buyerDelivery2):yyyy/MM/dd}'," : " null,");
 
             // SCIDelivery
-            sqlCmd.Append(!MyUtility.Check.Empty(this.sciDelivery1) ? $" '{Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")}'," : " null,");
-            sqlCmd.Append(!MyUtility.Check.Empty(this.sciDelivery2) ? $" '{Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")}'," : " null,");
+            sqlCmd.Append(!MyUtility.Check.Empty(this.sciDelivery1) ? $" '{Convert.ToDateTime(this.sciDelivery1):yyyy/MM/dd}'," : " null,");
+            sqlCmd.Append(!MyUtility.Check.Empty(this.sciDelivery2) ? $" '{Convert.ToDateTime(this.sciDelivery2):yyyy/MM/dd}'," : " null,");
 
             // Brand
             sqlCmd.Append(!MyUtility.Check.Empty(this.brand) ? $" '{this.brand}'," : " '',");
@@ -2029,6 +1988,25 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
         private void BtnLastDownloadAPSDate_Click(object sender, EventArgs e)
         {
             new R01_LastAPSdownloadTime().ShowDialog();
+        }
+
+        private decimal FilterHour(DataTable drHours, string date, string sewingLineID, string factoryID)
+        {
+            if (date.Empty())
+            {
+                return MyUtility.Convert.GetDecimal(drHours.Compute("sum(Hours)", $@" SewingLineID = '{sewingLineID}' and FactoryID = '{factoryID}'"));
+            }
+            else
+            {
+                DataRow[] drHour = drHours.Select($@" Date = '{date}' and SewingLineID = '{sewingLineID}' and FactoryID = '{factoryID}'");
+                decimal hour = 0;
+                if (drHour.Length > 0)
+                {
+                    hour = MyUtility.Convert.GetDecimal(drHour[0]["Hours"]);
+                }
+
+                return hour;
+            }
         }
     }
 }
