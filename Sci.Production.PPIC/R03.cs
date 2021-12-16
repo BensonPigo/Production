@@ -2028,12 +2028,11 @@ drop table #tmp,#tmp2,#tmp3
                 objArray[intRowsStart, 142] = dr["CuttingSP"];
                 objArray[intRowsStart, 143] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
                 objArray[intRowsStart, 144] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
-                objArray[intRowsStart, 145] = dr["LastCTNTransDate"];
-                objArray[intRowsStart, 146] = dr["LastCTNRecdDate"];
-                objArray[intRowsStart, 147] = dr["DryRoomRecdDate"];
-                objArray[intRowsStart, 148] = dr["DryRoomTransDate"];
-                objArray[intRowsStart, 149] = dr["MdRoomScanDate"];
-
+                objArray[intRowsStart, 145] = dr["MdRoomScanDate"];
+                objArray[intRowsStart, 146] = dr["DryRoomRecdDate"];
+                objArray[intRowsStart, 147] = dr["DryRoomTransDate"];
+                objArray[intRowsStart, 148] = dr["LastCTNTransDate"];
+                objArray[intRowsStart, 149] = dr["LastCTNRecdDate"];
                 #endregion
 
                 if (this.artwork || this.pap)
