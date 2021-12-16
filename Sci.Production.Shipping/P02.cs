@@ -1475,7 +1475,7 @@ and ID = @id ";
             }
 
             string fromCountry = this.ConverToCountry(this.comboFrom.Text, this.txtFrom.Text);
-            string toCountry = this.ConverToCountry(this.comboTO.Text, this.txtTO.Text);
+            string toCountry = this.txtCountryDestination.TextBox1.Text;
             string sqlCmd = $@"
 select CarrierID=ca.id,SuppID=su.ID,su.AbbEN,Account
 from Carrier ca
