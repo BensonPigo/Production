@@ -102,6 +102,7 @@
             this.btnEdit = new Sci.Win.UI.Button();
             this.btnClrearCustCtn = new Sci.Win.UI.Button();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.displayPLToRgCode = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -120,8 +121,9 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.btnEdit);
+            this.masterpanel.Controls.Add(this.displayPLToRgCode);
             this.masterpanel.Controls.Add(this.panel1);
+            this.masterpanel.Controls.Add(this.btnEdit);
             this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.displayHC);
@@ -243,6 +245,7 @@
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnEdit, 0);
             this.masterpanel.Controls.SetChildIndex(this.panel1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayPLToRgCode, 0);
             // 
             // detailpanel
             // 
@@ -291,7 +294,7 @@
             // 
             this.browse.Controls.Add(this.cbDuring);
             this.browse.Controls.Add(this.lbDuring);
-            this.browse.Size = new System.Drawing.Size(1107, 729);
+            this.browse.Size = new System.Drawing.Size(1136, 729);
             this.browse.Controls.SetChildIndex(this.lbDuring, 0);
             this.browse.Controls.SetChildIndex(this.cbDuring, 0);
             // 
@@ -550,7 +553,7 @@
             this.displayInvoiceNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayInvoiceNo.Location = new System.Drawing.Point(755, 51);
             this.displayInvoiceNo.Name = "displayInvoiceNo";
-            this.displayInvoiceNo.Size = new System.Drawing.Size(160, 23);
+            this.displayInvoiceNo.Size = new System.Drawing.Size(120, 23);
             this.displayInvoiceNo.TabIndex = 16;
             // 
             // displayShipPlanNo
@@ -560,7 +563,7 @@
             this.displayShipPlanNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayShipPlanNo.Location = new System.Drawing.Point(755, 74);
             this.displayShipPlanNo.Name = "displayShipPlanNo";
-            this.displayShipPlanNo.Size = new System.Drawing.Size(120, 23);
+            this.displayShipPlanNo.Size = new System.Drawing.Size(160, 23);
             this.displayShipPlanNo.TabIndex = 17;
             // 
             // dateCartonEstBooking
@@ -1069,6 +1072,7 @@
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
             this.btnEdit.Click += new System.EventHandler(this.BtnEdit_Click);
+            // 
             // btnClrearCustCtn
             // 
             this.btnClrearCustCtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -1097,6 +1101,16 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(205, 254);
             this.panel1.TabIndex = 81;
+            // 
+            // displayPLToRgCode
+            // 
+            this.displayPLToRgCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayPLToRgCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PLToRgCode", true));
+            this.displayPLToRgCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayPLToRgCode.Location = new System.Drawing.Point(875, 51);
+            this.displayPLToRgCode.Name = "displayPLToRgCode";
+            this.displayPLToRgCode.Size = new System.Drawing.Size(40, 23);
+            this.displayPLToRgCode.TabIndex = 82;
             // 
             // P03
             // 
@@ -1221,5 +1235,6 @@
         private Win.UI.Button btnEdit;
         private Win.UI.Button btnClrearCustCtn;
         private Win.UI.Panel panel1;
+        private Win.UI.DisplayBox displayPLToRgCode;
     }
 }

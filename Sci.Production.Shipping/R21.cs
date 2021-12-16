@@ -1,5 +1,7 @@
 ﻿using Ict;
+using Newtonsoft.Json;
 using Sci.Data;
+using Sci.Production.CallPmsAPI;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
@@ -92,7 +94,7 @@ select	aipp.ID,
 		aipp.FtyMgrApvDate,
 		aipp.SMRApvDate,
 		aipp.TaskApvDate,
-		PulloutDate.val,
+		[PulloutDate] = PulloutDate.val,
 		aipp.ActETD,
 		aipp.APReceiveDoxDate,
 		aipp.APAmountEditDate,
@@ -131,7 +133,65 @@ where 1 = 1 {where}
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            return DBProxy.Current.Select(null, this.sqlCmd, this.paras, out this.PrintTable);
+            DualResult result = DBProxy.Current.Select(null, this.sqlCmd, this.paras, out this.PrintTable);
+            if (!result)
+            {
+                return result;
+            }
+
+            #region get A2B data
+            List<string> listPLFromRgCode = PackingA2BWebAPI.GetAllPLFromRgCode();
+
+            if (listPLFromRgCode.Count > 0 && this.PrintTable[0].Rows.Count > 0)
+            {
+                string sqlGetOrderForA2B = @"
+alter table #tmp alter column OrderID varchar(13)
+alter table #tmp alter column OrderShipmodeSeq varchar(2)
+
+select  pd.OrderID, pd.OrderShipmodeSeq, [PulloutDate] = max(p.PulloutDate)
+from    PackingList p with (nolock)
+inner join PackingList_Detail pd with (nolock) on p.id = pd.ID
+where   exists(select 1 from #tmp t where pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.OrderShipmodeSeq)
+group by pd.OrderID, pd.OrderShipmodeSeq
+";
+                var listOrderInfo = this.PrintTable[0].AsEnumerable()
+                    .Where(s => MyUtility.Check.Empty(s["PulloutDate"]))
+                    .Select(s => new
+                    {
+                        OrderID = s["OrderID"].ToString(),
+                        OrderShipmodeSeq = s["OrderShipmodeSeq"].ToString(),
+                    });
+
+                PackingA2BWebAPI_Model.DataBySql dataBySql = new PackingA2BWebAPI_Model.DataBySql()
+                {
+                    SqlString = sqlGetOrderForA2B,
+                    TmpTable = JsonConvert.SerializeObject(listOrderInfo),
+                };
+
+                foreach (string plFromRgCode in listPLFromRgCode)
+                {
+                    DataTable dtResultA2B;
+                    result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, dataBySql, out dtResultA2B);
+
+                    if (!result)
+                    {
+                        return result;
+                    }
+
+                    foreach (DataRow drA2B in dtResultA2B.Rows)
+                    {
+                        DataRow[] printDataRows = this.PrintTable[0].Select($"OrderID = '{drA2B["OrderID"]}' and OrderShipmodeSeq = '{drA2B["OrderShipmodeSeq"]}'");
+                        foreach (DataRow drPrintData in printDataRows)
+                        {
+                            drPrintData["PulloutDate"] = drA2B["PulloutDate"];
+                        }
+                    }
+                }
+            }
+
+            #endregion
+
+            return result;
         }
 
         /// <inheritdoc/>

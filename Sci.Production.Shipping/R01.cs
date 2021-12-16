@@ -6,6 +6,9 @@ using System.Windows.Forms;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
+using System.Linq;
+using Sci.Production.CallPmsAPI;
+using Newtonsoft.Json;
 
 namespace Sci.Production.Shipping
 {
@@ -88,6 +91,134 @@ namespace Sci.Production.Shipping
 
             return base.ValidateInput();
         }
+
+        private string sqlGetLocal = @"
+select DISTINCT
+    g.ID
+    ,g.Shipper
+    ,g.BrandID
+    ,g.InvDate
+    ,pl.MDivisionID
+    ,isnull(pl.ID,'') as PackID
+    ,[POno]=STUFF ((select CONCAT (',',a.CustPONo) 
+                                from (
+                                    select distinct o.CustPONo
+                                    from PackingList_Detail pd WITH (NOLOCK) 
+								    left join orders o WITH (NOLOCK) on o.id = pd.OrderID
+                                    where pd.ID = pl.id AND o.CustPONo<>'' AND o.CustPONo IS NOT NULL
+                                ) a 
+                                for xml path('')
+                              ), 1, 1, '') 
+    ,pl.PulloutDate
+    --
+    ,g.CutOffDate
+    ,[SoConfirmDate]=g.SOCFMDate
+    ,[Terminal/Whse#]= fd.WhseNo
+    ,g.ETD
+    ,g.ETA
+    ,PulloutReportConfirmDate.PulloutReportConfirmDate
+    ,[PulloutID]=pl.PulloutID
+    --
+    ,isnull(pl.ShipQty,0) as ShipQty,isnull(pl.CTNQty,0) as CTNQty
+    ,isnull(pl.GW,0) as GW
+    ,isnull(pl.CBM,0) as CBM
+    ,g.CustCDID
+    ,(g.Dest+' - '+isnull(c.Alias,'')) as Dest
+    ,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate
+    ,g.DocumentRefNo
+    ,[Forwarder] = (g.Forwarder+' - '+isnull(ls.Abb,''))
+    ,g.AddName+' '+isnull(p.Name,'') as AddName
+    ,g.AddDate
+    ,g.Remark
+    ,isnull((select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a for xml path('')),'') as OrderID
+    ,(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a
+    , Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery
+    ,(select oq.SDPDate from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as SDPDate
+    ,[OrderShipmodeSeq] = 
+    STUFF ((
+    select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar)) 
+        from (
+            select distinct pd.OrderShipmodeSeq 
+            from PackingList_Detail pd WITH (NOLOCK) 
+            left join AirPP ap With (NoLock) on pd.OrderID = ap.OrderID
+            and pd.OrderShipmodeSeq = ap.OrderShipmodeSeq
+            where pd.ID = pl.id
+            group by pd.OrderID, pd.OrderShipmodeSeq, ap.ID
+        ) a 
+        for xml path('')
+    ), 1, 1, '') 
+    , g.SONo
+    , g.ShipModeID
+    , g.CYCFS
+    , g.Vessel
+    , g.BLNo
+    , g.BL2No
+    ,[POD] = PulloutPortPOD.POD
+from GMTBooking g WITH (NOLOCK) 
+left join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
+left join Country c WITH (NOLOCK) on c.ID = g.Dest
+left join Pass1 p WITH (NOLOCK) on p.ID = g.AddName
+left join ForwarderWhse_Detail fd ON g.ForwarderWhse_DetailUKey=fd.UKey
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
+OUTER APPLY(
+SELECT [PulloutReportConfirmDate]=STUFF ((
+		SELECT CONCAT (',',a.AddDate) FROM (
+			SELECT [AddDate]=convert(varchar, t.AddDate , 111)
+			FROM #tmp2 t
+			WHERE t.GBID=g.ID
+			AND t.PackingListID=pl.ID
+			AND t.PulloutID=pl.PulloutID
+		)a WHERE a.AddDate <> '' for xml path('')
+	),1,1,'')
+)PulloutReportConfirmDate
+OUTER APPLY(
+    select [POD] = concat(p.ID, '-', p.Name)
+    from PulloutPort p
+    where g.DischargePortID = p.ID
+)PulloutPortPOD
+
+where pl.ID<>'' and 1=1 ";
+
+        private string sqlGetA2B = @"
+select DISTINCT
+    g.ID
+    ,[PackID] = gd.PackingListID
+    ,g.Shipper
+    ,g.BrandID
+    ,g.InvDate
+    ,g.CutOffDate
+    ,[SoConfirmDate]=g.SOCFMDate
+    ,[Terminal/Whse#]= fd.WhseNo
+    ,g.ETD
+    ,g.ETA
+    ,g.CustCDID
+    ,(g.Dest+' - '+isnull(c.Alias,'')) as Dest,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate
+    ,g.DocumentRefNo
+    ,[Forwarder] = (g.Forwarder+' - '+isnull(ls.Abb,''))
+    ,g.AddName+' '+isnull(p.Name,'') as AddName
+    ,g.AddDate
+    ,g.Remark
+    , g.SONo
+    , g.ShipModeID
+    , g.CYCFS
+    , g.Vessel
+    , g.BLNo
+    , g.BL2No
+    , [POD] = PulloutPortPOD.POD
+    , gd.PLFromRgCode
+from GMTBooking g WITH (NOLOCK) 
+inner join GMTBooking_Detail gd with (nolock) on g.ID = gd.ID
+left join Country c WITH (NOLOCK) on c.ID = g.Dest
+left join Pass1 p WITH (NOLOCK) on p.ID = g.AddName
+left join ForwarderWhse_Detail fd ON g.ForwarderWhse_DetailUKey=fd.UKey
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
+OUTER APPLY(
+    select [POD] = concat(p.ID, '-', p.Name)
+    from PulloutPort p
+    where g.DischargePortID = p.ID
+)PulloutPortPOD
+
+where 1=1 ";
 
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
@@ -289,91 +420,7 @@ OUTER APPLY(
 
                 #endregion
 
-                sqlCmd.Append(string.Format(@"
-select DISTINCT
-    g.ID
-    ,g.Shipper
-    ,g.BrandID
-    ,g.InvDate
-    ,pl.MDivisionID
-    ,isnull(pl.ID,'') as PackID
-    ,[POno]=STUFF ((select CONCAT (',',a.CustPONo) 
-                                from (
-                                    select distinct o.CustPONo
-                                    from PackingList_Detail pd WITH (NOLOCK) 
-								    left join orders o WITH (NOLOCK) on o.id = pd.OrderID
-                                    where pd.ID = pl.id AND o.CustPONo<>'' AND o.CustPONo IS NOT NULL
-                                ) a 
-                                for xml path('')
-                              ), 1, 1, '') 
-    ,pl.PulloutDate
-    --
-    ,g.CutOffDate
-    ,[SoConfirmDate]=g.SOCFMDate
-    ,[Terminal/Whse#]= fd.WhseNo
-    ,g.ETD
-    ,g.ETA
-    ,PulloutReportConfirmDate.PulloutReportConfirmDate
-    ,[PulloutID]=pl.PulloutID
-    --
-    ,isnull(pl.ShipQty,0) as ShipQty,isnull(pl.CTNQty,0) as CTNQty
-    ,isnull(pl.GW,0) as GW
-    ,isnull(pl.CBM,0) as CBM
-    ,g.CustCDID
-    ,(g.Dest+' - '+isnull(c.Alias,'')) as Dest,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate
-    ,g.DocumentRefNo
-    ,[Forwarder] = (g.Forwarder+' - '+isnull(ls.Abb,''))
-    ,g.AddName+' '+isnull(p.Name,'') as AddName
-    ,g.AddDate
-    ,g.Remark
-    ,isnull((select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a for xml path('')),'') as OrderID
-    ,(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a
-    , Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery
-    ,(select oq.SDPDate from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as SDPDate
-    ,[OrderShipmodeSeq] = 
-    STUFF ((
-    select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar)) 
-        from (
-            select distinct pd.OrderShipmodeSeq 
-            from PackingList_Detail pd WITH (NOLOCK) 
-            left join AirPP ap With (NoLock) on pd.OrderID = ap.OrderID
-            and pd.OrderShipmodeSeq = ap.OrderShipmodeSeq
-            where pd.ID = pl.id
-            group by pd.OrderID, pd.OrderShipmodeSeq, ap.ID
-        ) a 
-        for xml path('')
-    ), 1, 1, '') 
-    , g.SONo
-    , g.ShipModeID
-    , g.CYCFS
-    , g.Vessel
-    , g.BLNo
-    , g.BL2No
-    ,[POD] = PulloutPortPOD.POD
-from GMTBooking g WITH (NOLOCK) 
-left join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
-left join Country c WITH (NOLOCK) on c.ID = g.Dest
-left join Pass1 p WITH (NOLOCK) on p.ID = g.AddName
-left join ForwarderWhse_Detail fd ON g.ForwarderWhse_DetailUKey=fd.UKey
-left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
-OUTER APPLY(
-SELECT [PulloutReportConfirmDate]=STUFF ((
-		SELECT CONCAT (',',a.AddDate) FROM (
-			SELECT [AddDate]=convert(varchar, t.AddDate , 111)
-			FROM #tmp2 t
-			WHERE t.GBID=g.ID
-			AND t.PackingListID=pl.ID
-			AND t.PulloutID=pl.PulloutID
-		)a WHERE a.AddDate <> '' for xml path('')
-	),1,1,'')
-)PulloutReportConfirmDate
-OUTER APPLY(
-    select [POD] = concat(p.ID, '-', p.Name)
-    from PulloutPort p
-    where g.DischargePortID = p.ID
-)PulloutPortPOD
-
-where pl.ID<>'' and 1=1 "));
+                sqlCmd.Append("{0}");
             }
 
             #region Where 條件
@@ -393,31 +440,26 @@ where pl.ID<>'' and 1=1 "));
             if (!MyUtility.Check.Empty(this.shipper))
             {
                 sqlCmd.Append(string.Format(" and g.Shipper = '{0}'", this.shipper));
-                sqlCmd_where.Append(string.Format(" and g.Shipper = '{0}'", this.shipper));
             }
 
             if (!MyUtility.Check.Empty(this.brand))
             {
                 sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
-                sqlCmd_where.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
             }
 
             if (!MyUtility.Check.Empty(this.shipmode))
             {
                 sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}'", this.shipmode));
-                sqlCmd_where.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
             }
 
             if (!MyUtility.Check.Empty(this.shipterm))
             {
                 sqlCmd.Append(string.Format(" and g.ShipTermID = '{0}'", this.shipterm));
-                sqlCmd_where.Append(string.Format(" and g.ShipTermID = '{0}'", this.shipterm));
             }
 
             if (!MyUtility.Check.Empty(this.dest))
             {
                 sqlCmd.Append(string.Format(" and g.Dest = '{0}'", this.dest));
-                sqlCmd_where.Append(string.Format(" and g.Dest = '{0}'", this.dest));
             }
 
             if (!MyUtility.Check.Empty(this.etd1))
@@ -434,8 +476,10 @@ where pl.ID<>'' and 1=1 "));
 
             if (!MyUtility.Check.Empty(this.FCRDate1))
             {
+
                 sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}' ", Convert.ToDateTime(this.FCRDate1).ToString("yyyy/MM/dd")));
                 sqlCmd_where.Append(string.Format(" and g.FCRDate >= '{0}' ", Convert.ToDateTime(this.FCRDate1).ToString("yyyy/MM/dd")));
+
             }
 
             if (!MyUtility.Check.Empty(this.FCRDate2))
@@ -471,12 +515,10 @@ where pl.ID<>'' and 1=1 "));
             if (this.status == "Confirmed")
             {
                 sqlCmd.Append(" and g.Status = 'Confirmed'");
-                sqlCmd_where.Append(" and g.Status = 'Confirmed'");
             }
             else if (this.status == "UnConfirmed")
             {
                 sqlCmd.Append(" and g.Status <> 'Confirmed'");
-                sqlCmd_where.Append(" and g.Status <> 'Confirmed'");
             }
 
             if (!MyUtility.Check.Empty(this.Delivery1))
@@ -502,12 +544,204 @@ and exists (select 1
             #endregion
 
             sqlCmd.Append(" order by g.ID" + Environment.NewLine + " DROP TABLE #tmp1,#tmp2");
-
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
-            if (!result)
+            DualResult result;
+            if (this.reportType == "1")
             {
-                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
-                return failResult;
+                result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    return failResult;
+                }
+            }
+            else
+            {
+                result = DBProxy.Current.Select(null, string.Format(sqlCmd.ToString(), this.sqlGetLocal), out this.printData);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    return failResult;
+                }
+
+                #region GetA2B Data
+                DataTable dtMainA2B;
+
+                result = DBProxy.Current.Select(null, string.Format(sqlCmd.ToString(), this.sqlGetA2B), out dtMainA2B);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    return failResult;
+                }
+
+                if (dtMainA2B.Rows.Count > 0)
+                {
+                    string getPackFromA2B = @"
+select DISTINCT
+    g.ID
+    ,g.Shipper
+    ,g.BrandID
+    ,g.InvDate
+    ,pl.MDivisionID
+    ,g.PackID
+    ,[POno]=STUFF ((select CONCAT (',',a.CustPONo) 
+                                from (
+                                    select distinct o.CustPONo
+                                    from PackingList_Detail pd WITH (NOLOCK) 
+								    left join orders o WITH (NOLOCK) on o.id = pd.OrderID
+                                    where pd.ID = pl.id AND o.CustPONo<>'' AND o.CustPONo IS NOT NULL
+                                ) a 
+                                for xml path('')
+                              ), 1, 1, '') 
+    ,pl.PulloutDate
+    ,g.CutOffDate
+    ,g.[SoConfirmDate]
+    ,g.[Terminal/Whse#]
+    ,g.ETD
+    ,g.ETA
+    ,[PulloutID]=pl.PulloutID
+    ,isnull(pl.ShipQty,0) as ShipQty
+    ,isnull(pl.CTNQty,0) as CTNQty
+    ,isnull(pl.GW,0) as GW
+    ,isnull(pl.CBM,0) as CBM
+    ,g.CustCDID
+    ,g.Dest
+    ,g.ConfirmDate
+    ,g.DocumentRefNo
+    ,g.Forwarder
+    ,g.AddName
+    ,g.AddDate
+    ,g.Remark
+    ,isnull((select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a for xml path('')),'') as OrderID
+    ,(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq 
+                                    from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a, 
+                                    Order_QtyShip oq WITH (NOLOCK) 
+                                    where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery
+    ,(select oq.SDPDate from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as SDPDate
+    ,[OrderShipmodeSeq] = 
+    STUFF ((
+    select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar)) 
+        from (
+            select distinct pd.OrderShipmodeSeq 
+            from PackingList_Detail pd WITH (NOLOCK) 
+            left join AirPP ap With (NoLock) on pd.OrderID = ap.OrderID
+            and pd.OrderShipmodeSeq = ap.OrderShipmodeSeq
+            where pd.ID = pl.id
+            group by pd.OrderID, pd.OrderShipmodeSeq, ap.ID
+        ) a 
+        for xml path('')
+    ), 1, 1, '') 
+    , g.SONo
+    , g.ShipModeID
+    , g.CYCFS
+    , g.Vessel
+    , g.BLNo
+    , g.BL2No
+    , g.POD
+from #tmp g 
+inner join PackingList pl WITH (NOLOCK) on pl.ID = g.PackID
+";
+
+                    var listGroupMainA2B = dtMainA2B.AsEnumerable()
+                                            .GroupBy(s => s["PLFromRgCode"].ToString())
+                                            .Select(s => new
+                                            {
+                                                PLFromRgCode = s.Key,
+                                                GMTData = s.CopyToDataTable(),
+                                            });
+
+                    DataTable dtFinalMainA2B = new DataTable();
+
+                    foreach (var groupItem in listGroupMainA2B)
+                    {
+                        PackingA2BWebAPI_Model.DataBySql dataBySql = new PackingA2BWebAPI_Model.DataBySql()
+                        {
+                            SqlString = getPackFromA2B,
+                            TmpTable = JsonConvert.SerializeObject(groupItem.GMTData),
+                        };
+
+                        DataTable dtPackA2B;
+                        result = PackingA2BWebAPI.GetDataBySql(groupItem.PLFromRgCode, dataBySql, out dtPackA2B);
+
+                        if (!result)
+                        {
+                            return result;
+                        }
+
+                        dtPackA2B.MergeTo(ref dtFinalMainA2B);
+                    }
+
+                    if (dtFinalMainA2B.Rows.Count > 0)
+                    {
+                        string sqlGetPulloutReportConfirmDate = $@"
+alter table #tmp alter column PulloutID varchar(13)
+select g.ID
+    , g.Shipper
+    , g.BrandID
+    , g.InvDate
+    , g.MDivisionID
+    , g.PackID
+    , g.POno
+    , g.PulloutDate
+    , g.CutOffDate
+    , g.[SoConfirmDate]
+    , g.[Terminal/Whse#]
+    , g.ETD
+    , g.ETA
+    , [PulloutReportConfirmDate] = PulloutReportConfirmDate.val
+    , g.PulloutID
+    , g.ShipQty
+    , g.CTNQty
+    , g.GW
+    , g.CBM
+    , g.CustCDID
+    , g.Dest
+    , g.ConfirmDate
+    , g.DocumentRefNo
+    , g.Forwarder
+    , g.AddName
+    , g.AddDate
+    , g.Remark
+    , g.OrderID
+    , g.BuyerDelivery
+    , g.SDPDate
+    , g.OrderShipmodeSeq
+    , g.SONo
+    , g.ShipModeID
+    , g.CYCFS
+    , g.Vessel
+    , g.BLNo
+    , g.BL2No
+    , g.POD
+from #tmp g
+outer apply(
+        SELECT  [val] =  Stuff((select CONCAT (',',a.AddDate) 
+                                FROM    (
+                                            select  [AddDate] = CASE WHEN Pullout_ReviseAddDate.val IS NOT NULL THEN  Pullout_ReviseAddDate.val
+		                                            ELSE  (SELECT TOP 1 SendToTPE FROM Pullout with (nolock) WHERE ID = g.PulloutID) 
+		                                            END
+                                            from dbo.SplitString(g.OrderID, ',') packOrders
+					                        outer apply( SELECT TOP 1 [val] = pr.AddDate
+           			                        				FROM Pullout_Revise pr with (nolock)
+           			                        				WHERE  pr.ID = g.PulloutID 
+           			                        				AND pr.OrderID = packOrders.Data
+           			                        				ORDER BY AddDate DESC
+					                        			) Pullout_ReviseAddDate
+                                        ) a 
+                                WHERE a.AddDate <> '' for xml path(''))
+                               ,1,1,'')
+)   PulloutReportConfirmDate
+
+";
+                        result = MyUtility.Tool.ProcessWithDatatable(dtFinalMainA2B, null, sqlGetPulloutReportConfirmDate, out dtFinalMainA2B);
+                        if (!result)
+                        {
+                            return result;
+                        }
+
+                        dtFinalMainA2B.MergeTo(ref this.printData);
+                    }
+                }
+                #endregion
             }
 
             return Ict.Result.True;

@@ -3,7 +3,7 @@ CREATE function [dbo].[GetBOAExpend]
 (
 	  @ID				VarChar(13)				--採購母單
 	 ,@Order_BOAUkey	BigInt		= 0			--BOA Ukey
-	 ,@IsGetFabQuot		Bit			= 1         --PMS only use 1
+	 ,@IsGetFabQuot		Bit			= 1
 	 ,@IsExpendDetail	Bit			= 0			--是否一律展開至最詳細	 
 	 ,@Tmp_Order_Qty    dbo.QtyBreakdown readonly
 	 ,@IsExpendArticle	Bit			= 0			--add by Edward 是否展開至Article，For U.A轉單
@@ -12,8 +12,10 @@ CREATE function [dbo].[GetBOAExpend]
 RETURNS @Tmp_BoaExpend table (  ExpendUkey BigInt Identity(1,1) Not Null, ID Varchar(13), Order_BOAUkey BigInt
 	 , RefNo VarChar(20), SCIRefNo VarChar(30), Article VarChar(8), ColorID VarChar(6), SuppColor NVarChar(Max)
 	 , SizeSeq VarChar(2), SizeCode VarChar(8), SizeSpec VarChar(15), SizeUnit VarChar(8), Remark NVarChar(Max)
-	 , OrderQty Numeric(6,0), /*PMS no need Price Numeric(12,4),*/ UsageQty Numeric(11,2), UsageUnit VarChar(8), SysUsageQty  Numeric(11,2)
-	 , BomZipperInsert VarChar(5), BomCustPONo VarChar(30), Keyword VarChar(Max),/*PMS no need  OrderList varchar(max), ,*/ ColorDesc varchar(150)
+	 , OrderQty Numeric(6,0)
+	 --, Price Numeric(12,4)
+	 , UsageQty Numeric(11,2), UsageUnit VarChar(8), SysUsageQty  Numeric(11,2)
+	 , BomZipperInsert VarChar(5), BomCustPONo VarChar(30), Keyword VarChar(Max), OrderList varchar(max), ColorDesc varchar(150)
 	 , Special nvarchar(max)
 	 , Index Idx_ID NonClustered (ID, Order_BOAUkey, ColorID) -- table index
 	)
@@ -58,7 +60,7 @@ WHERE Orders.ID = @ID;
 --定義欄位
 DECLARE @SCIRefNo VARCHAR(30);
 DECLARE @RefNo VARCHAR(20);
-DECLARE @Price NUMERIC(12, 4);
+--DECLARE @Price NUMERIC(12, 4);
 DECLARE @OrderQty NUMERIC(6, 0);
 DECLARE @UsageQty NUMERIC(11, 2);
 DECLARE @UsageUnit VARCHAR(8);
@@ -82,7 +84,7 @@ DECLARE @BomCustPONo VARCHAR(30);
 DECLARE @BomArticle VARCHAR(8);
 DECLARE @Keyword VARCHAR(MAX);
 DECLARE @Keyword_Trans VARCHAR(MAX);
---PMS no need DECLARE @OrderList VARCHAR(MAX);
+DECLARE @OrderList VARCHAR(MAX);
 
 DECLARE @OrderID VARCHAR(13);
 
@@ -188,7 +190,7 @@ DECLARE @Sum_Qty TABLE (
    ,OrderQty NUMERIC(6, 0)
    ,UsageQty NUMERIC(11, 2)
    ,Keyword VARCHAR(MAX)
---PMS no need    ,OrderList VARCHAR(MAX)
+   ,OrderList VARCHAR(MAX)
    ,Special NVARCHAR(MAX)
 );
 DECLARE @tmpTbl TABLE (
@@ -340,12 +342,11 @@ set @CalSizeItem = IIF(@BomTypeCalculatePCS = 1, @BoaSizeItem_PCS, @SizeItem);
 
 --取得SizeUnit
 SELECT
-	@tmpSizeUnit = IIF(@NoSizeUnit = 0 , Order_SizeItem.SizeUnit, '')
+	@tmpSizeUnit = IIF(@NoSizeUnit = 0 , IIF(@BomTypeCalculatePCS = 1, @UsageUnit, Order_SizeItem.SizeUnit), '')
 FROM dbo.Order_SizeItem
 WHERE Order_SizeItem.ID = @ID
 AND Order_SizeItem.SizeItem = @CalSizeItem;
 
-SET @tmpSizeUnit = IIF(@BomTypeCalculatePCS = 1, 'PCS', @tmpSizeUnit);
 --判斷是否有 For Article
 SET @BoaIsForArticle = 0
 		If Exists (SELECT
@@ -375,7 +376,8 @@ INSERT INTO @tmpTbl
 	   ,IIF(@BoaBomTypeSize = 1 OR @IsExpendDetail = 1 or @BomTypeCalculatePCS = 1, @tmpSizeUnit, '') AS SizeUnit
 	   ,Qty AS OrderQty
 		--, (Qty * IIF(IsNull(@SizeItem, '') = '', 1, IsNull(IsNull(tmpOrder_SizeSpec_OrderCombo.SizeSpec_Cal, tmpOrder_SizeSpec.SizeSpec_Cal), IIF(@BomTypeCalculate = 1, 0, 1))) * @BoaConsPC) as UsageQty
-	   ,(Qty * IIF(ISNULL(@CalSizeItem, '') = '', 1, ISNULL(IIF(ISNULL(tmpExist_SizeSpec_OrderCombo.IsExist, 0) = 1, tmpOrder_SizeSpec_OrderCombo.SizeSpec_Cal, tmpOrder_SizeSpec.SizeSpec_Cal), IIF(@BomTypeCalculate = 1 OR @BomTypeCalculateWeight = 1 or @BomTypeCalculatePCS = 1, 0, 1)))) * @BoaConsPC AS UsageQty
+	   ,(Qty * IIF(ISNULL(@CalSizeItem, '') = '', 1, ISNULL(IIF(ISNULL(tmpExist_SizeSpec_OrderCombo.IsExist, 0) = 1, tmpOrder_SizeSpec_OrderCombo.SizeSpec_Cal, tmpOrder_SizeSpec.SizeSpec_Cal), IIF(@BomTypeCalculate = 1 OR @BomTypeCalculateWeight = 1 or @BomTypeCalculatePCS = 1, 0, 1)))) 
+			* iif(@BomTypeCalculatePCS = 1, 1, @BoaConsPC) AS UsageQty
 		--取得 Keyword
 	   ,ky.Keyword AS Keyword
 	   ,IIF(@IsExpendArticle = 1 and ExpendArticle = 1, dbo.GetKeyword(tmpQtyBreakDown.ID, @BoaUkey, '{Article}', tmpQtyBreakDown.Article, '', ''), '') AS Special
@@ -406,7 +408,7 @@ INSERT INTO @tmpTbl
 			IIF(@BomTypeCalculateWeight = 1 AND @UsageUnit = 'G',
 			Production.dbo.GetUnitQty(Order_SizeItem.SizeUnit, @UsageUnit, Production.dbo.GetDigitalValue(tmpSS.SizeSpec)),
 			IIF(@BomTypeCalculatePCS = 1,
-			Production.dbo.GetUnitQty(@tmpSizeUnit, @UsageUnit, Production.dbo.GetDigitalValue(tmpSS.SizeSpec)), 1))) AS SizeSpec_Cal
+			Production.dbo.GetUnitQty(@UsageUnit, @UsageUnit, Production.dbo.GetDigitalValue(tmpSS.SizeSpec)), 1))) AS SizeSpec_Cal
 			FROM dbo.Order_SizeSpec tmpSS			
 			INNER JOIN dbo.Order_SizeItem
 				ON tmpSS.ID = Order_SizeItem.ID
@@ -442,7 +444,7 @@ INSERT INTO @tmpTbl
 			IIF(@BomTypeCalculateWeight = 1 AND @UsageUnit = 'G',
 			Production.dbo.GetUnitQty(Order_SizeItem.SizeUnit, @UsageUnit, Production.dbo.GetDigitalValue(tmpSS.SizeSpec)),
 			IIF(@BomTypeCalculatePCS = 1,
-			Production.dbo.GetUnitQty(@tmpSizeUnit, @UsageUnit, Production.dbo.GetDigitalValue(tmpSS.SizeSpec)), 1))) AS SizeSpec_Cal
+			Production.dbo.GetUnitQty(@UsageUnit, @UsageUnit, Production.dbo.GetDigitalValue(tmpSS.SizeSpec)), 1))) AS SizeSpec_Cal
 			FROM dbo.Order_SizeSpec_OrderCombo tmpSS
 			INNER JOIN dbo.Order_SizeItem
 				ON tmpSS.ID = Order_SizeItem.ID
@@ -579,7 +581,7 @@ INSERT INTO @tmpTbl
 
 		UPDATE @tmpA SET UsageQty = 0 WHERE IDX != 1
 
-		UPDATE tmpTbl SET UsageQty = tmp.UsageQty
+		UPDATE tmpTbl SET UsageQty = isnull(tmp.UsageQty, 0)
 		FROM @tmpTbl tmpTbl
 		OUTER APPLY (SELECT * FROM @tmpA tmpA WHERE tmpTbl.RowID = tmpA.RowID) tmp
 	END
@@ -587,7 +589,7 @@ INSERT INTO @tmpTbl
 	UPDATE @tmpTbl SET SizeCode = IIF(@BoaBomTypeSize = 1 OR @IsExpendDetail = 1, SizeCode, '')
 
 INSERT INTO @Sum_Qty (ColorID, Article, BomZipperInsert, BomCustPONo
-, SizeSeq, SizeCode, SizeSpec, SizeUnit, Keyword, OrderQty, UsageQty--PMS no need , OrderList
+, SizeSeq, SizeCode, SizeSpec, SizeUnit, Keyword, OrderQty, UsageQty, OrderList
 , Special)
 	SELECT
 		ColorID
@@ -601,7 +603,7 @@ INSERT INTO @Sum_Qty (ColorID, Article, BomZipperInsert, BomCustPONo
 	   ,Keyword
 	   ,SUM(OrderQty) AS OrderQty
 	   ,SUM(UsageQty) AS UsageQty
---PMS no need 	   ,IIF(VasShas.OrderList IS NULL, tmp2.OrderList, VasShas.OrderList)
+	   ,IIF(VasShas.OrderList IS NULL, tmp2.OrderList, VasShas.OrderList)
 	   ,tmp1.Special
 	FROM @tmpTbl tmp1
 	CROSS APPLY (SELECT
@@ -617,24 +619,23 @@ INSERT INTO @Sum_Qty (ColorID, Article, BomZipperInsert, BomCustPONo
 				AND ISNULL(tmp3.SizeSpec, '') = ISNULL(tmp1.SizeSpec, '')
 				AND ISNULL(tmp3.SizeUnit, '') = ISNULL(tmp1.SizeUnit, '')
 				AND ISNULL(tmp3.Keyword, '') = ISNULL(tmp1.Keyword, '')
+				AND tmp3.OrderQty > 0
 				FOR XML PATH (''))) AS tmp2
---PMS no need 
-	--OUTER APPLY (SELECT
-	--		ID
-	--	FROM Order_Label_Detail
-	--	WHERE Order_BOAUkey = @BoaUkey) FromVasShas
-	--OUTER APPLY (SELECT
-	--		OrderList = (SELECT
-	--				ID + ','
-	--			FROM Order_Label_Detail
-	--			WHERE Order_BOAUkey = @BoaUkey
-	--			FOR XML PATH (''))) VasShas
+	OUTER APPLY (SELECT
+			distinct ID
+		FROM Order_Label_Detail
+		WHERE Order_BOAUkey = @BoaUkey) FromVasShas
+	OUTER APPLY (SELECT
+			OrderList = (SELECT Distinct
+					ID + ','
+				FROM Order_Label_Detail
+				WHERE Order_BOAUkey = @BoaUkey
+				FOR XML PATH (''))) VasShas
 	WHERE ((@IncludeQtyZero = 0
 	AND OrderQty > 0)
 	OR @IncludeQtyZero = 1)
-	--PMS no need 
-	--AND (FromVasShas.ID IS NULL
-	--OR (FromVasShas.ID = tmp1.ID))
+	AND (FromVasShas.ID IS NULL
+	OR (FromVasShas.ID = tmp1.ID))
 	GROUP BY ColorID
 			,Article
 			,BomZipperInsert
@@ -646,7 +647,7 @@ INSERT INTO @Sum_Qty (ColorID, Article, BomZipperInsert, BomCustPONo
 			,Keyword
 			,tmp2.OrderList
 			,Special
---PMS no need 			,VasShas.OrderList
+			,VasShas.OrderList
 	ORDER BY BomZipperInsert, BomCustPONo
 	, Article, ColorID, SizeSeq, SizeCode, SizeSpec;
 /*
@@ -864,9 +865,10 @@ Begin
 			End;
 			*/
 			INSERT INTO @Tmp_BoaExpend (ID, Order_BOAUkey, RefNo, SCIRefNo, Article, ColorID, SuppColor
-			, SizeSeq, SizeCode, SizeSpec, SizeUnit, Remark, OrderQty, /*Price,*/ UsageQty
-			, UsageUnit, SysUsageQty, BomZipperInsert, BomCustPONo, Keyword--PMS no need , OrderList
-			, ColorDesc
+			, SizeSeq, SizeCode, SizeSpec, SizeUnit, Remark, OrderQty
+			--, Price
+			, UsageQty
+			, UsageUnit, SysUsageQty, BomZipperInsert, BomCustPONo, Keyword, OrderList, ColorDesc
 			, Special)
 				SELECT
 					@ID
@@ -882,14 +884,14 @@ Begin
 				   ,Sum_Qty.SizeUnit
 				   ,@Remark
 				   ,Sum_Qty.OrderQty
-				   --PMS no need  ,IIF(@IsGetFabQuot = 1, tmpPrice.Price, 0) AS Price  
+				   --,IIF(@IsGetFabQuot = 1, tmpPrice.Price, 0) AS Price
 				   ,Sum_Qty.UsageQty
 				   ,@UsageUnit
 				   ,Sum_Qty.UsageQty
 				   ,Sum_Qty.BomZipperInsert
 				   ,Sum_Qty.BomCustPONo
 				   ,Sum_Qty.Keyword
-				   --PMS no need ,Sum_Qty.OrderList
+				   ,Sum_Qty.OrderList
 				   ,Color.Name
 				   ,Special
 				FROM @Sum_Qty AS Sum_Qty
@@ -899,17 +901,16 @@ Begin
 
 				OUTER APPLY (SELECT
 						ISNULL(Production.dbo.GetSuppColorList(@SCIRefNo, @BoaSuppID, Sum_Qty.ColorID, @BrandID, @SeasonID, @ProgramID, @StyleID), '') AS SuppColor) AS tmpSuppColor
-				--PMS no need
 				--OUTER APPLY (SELECT
 				--		ISNULL(Production.dbo.GetPriceFromMtl(@SCIRefNo, @BoaSuppID, @SeasonID, Sum_Qty.UsageQty, @Category, @CfmDate, '', @ColorID, @FactoryID), 0) AS Price) AS tmpPrice
 
 			SET @BoaRowID += 1
 	End;
-			--PMS no need 
+
 			--Update OrderList 包含整組的sp，改為空白
-			--UPDATE @Tmp_BoaExpend
-			--SET OrderList = ''
-			--WHERE OrderList = @OrderList_Full
+			UPDATE @Tmp_BoaExpend
+			SET OrderList = ''
+			WHERE OrderList = @OrderList_Full
 
 RETURN;
 END

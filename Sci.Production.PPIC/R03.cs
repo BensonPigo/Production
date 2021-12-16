@@ -339,6 +339,11 @@ with tmpOrders as (
             , o.Customize2
             , o.KpiMNotice
             , o.KpiEachConsCheck
+            , o.LastCTNTransDate
+            , o.LastCTNRecdDate
+            , o.DryRoomRecdDate
+            , o.DryRoomTransDate
+            , o.MdRoomScanDate
             {seperCmd}
      from Orders o WITH (NOLOCK) 
     left join style s WITH (NOLOCK) on o.styleukey = s.ukey
@@ -688,6 +693,11 @@ tmpFilterZone as (
             , o.Customize2
             , o.KpiMNotice
             , o.KpiEachConsCheck
+            , o.LastCTNTransDate
+            , o.LastCTNRecdDate
+            , o.DryRoomRecdDate
+            , o.DryRoomTransDate
+            , o.MdRoomScanDate
 "
             + seperCmd +
     @"from Orders o  WITH (NOLOCK) 
@@ -841,6 +851,11 @@ group by pd.OrderID, pd.OrderShipmodeSeq
             , t.Customize2
             , t.KpiMNotice
             , t.KpiEachConsCheck
+            , t.LastCTNTransDate
+            , t.LastCTNRecdDate
+            , t.DryRoomRecdDate
+            , t.DryRoomTransDate
+            , t.MdRoomScanDate
     into #tmpFilterSeperate
     from #tmpListPoCombo t
     inner join Order_QtyShip oq WITH(NOLOCK) on t.ID = oq.Id and t.Seq = oq.Seq
@@ -1014,6 +1029,11 @@ select  t.*
         , t.Customize2
         , t.KpiMNotice
         , t.KpiEachConsCheck
+        , t.LastCTNTransDate
+        , t.LastCTNRecdDate
+        , t.DryRoomRecdDate
+        , t.DryRoomTransDate
+        , t.MdRoomScanDate
 from #tmpFilterSeperate t
 left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
@@ -1228,6 +1248,11 @@ select distinct t.*
         , t.Customize2
         , t.KpiMNotice
         , t.KpiEachConsCheck
+        , t.LastCTNTransDate
+        , t.LastCTNRecdDate
+        , t.DryRoomRecdDate
+        , t.DryRoomTransDate
+        , t.MdRoomScanDate
 from #tmpListPoCombo t
 left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
@@ -1746,7 +1771,7 @@ drop table #tmp,#tmp2,#tmp3
 
         // 最後一欄 , 有新增欄位要改這
         // 注意!新增欄位也要新增到StandardReport_Detail(Customized)。
-        private int lastColA = 145;
+        private int lastColA = 150;
 
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -2003,6 +2028,11 @@ drop table #tmp,#tmp2,#tmp3
                 objArray[intRowsStart, 142] = dr["CuttingSP"];
                 objArray[intRowsStart, 143] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
                 objArray[intRowsStart, 144] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
+                objArray[intRowsStart, 145] = dr["MdRoomScanDate"];
+                objArray[intRowsStart, 146] = dr["DryRoomRecdDate"];
+                objArray[intRowsStart, 147] = dr["DryRoomTransDate"];
+                objArray[intRowsStart, 148] = dr["LastCTNTransDate"];
+                objArray[intRowsStart, 149] = dr["LastCTNRecdDate"];
                 #endregion
 
                 if (this.artwork || this.pap)
