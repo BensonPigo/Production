@@ -161,7 +161,7 @@ SELECT distinct
 into #CalendarData	
 FROM PackingList_Detail pd
 left join Order_QtyShip os on pd.OrderID=os.Id	 and pd.OrderShipmodeSeq=os.Seq
-left join Orders o on os.ID=o.ID
+left join Orders o on os.ID = o.ID and exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
 cross apply(
 	select Dates,[rows] = ROW_NUMBER() over(order by dates desc) from #Calendar			
 	where  DATEPART(WEEKDAY, Dates) <> 1 --排除星期日	
@@ -231,7 +231,7 @@ end
 ,[ShipMode] = os.ShipmodeID
 into #tmp
 FROM Order_QtyShip os
-inner join Orders o on os.ID=o.ID
+inner join Orders o on os.ID=o.ID and exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
 inner join #tmpPacking p on p.OrderID=os.Id and p.OrderShipmodeSeq=os.Seq
 inner join #CalendarData AllDate on AllDate.Dates = p.ReceiveDate
 and AllDate.FtyGroup=o.FtyGroup
@@ -286,7 +286,7 @@ outer apply(
 		from (
 			select distinct oo.SewLine
 			from orders oo
-			where os.Id=oo.ID
+			where os.Id=oo.ID and exists (select 1 from Factory f where o.FactoryId = id and f.IsProduceFty = 1)
 			) s
 		for xml path ('')
 		),1,1,'')

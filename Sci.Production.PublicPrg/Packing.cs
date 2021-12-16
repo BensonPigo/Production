@@ -18,6 +18,7 @@ using System.IO;
 using System.Net;
 using Sci.Win.Tools;
 using Sci.Utility.Excel;
+using Sci.Production.CallPmsAPI;
 
 namespace Sci.Production.PublicPrg
 {
@@ -652,8 +653,9 @@ order by a.Seq ASC,a.CTNQty DESC", packingListID);
         /// <param name="shipPlanID">shipPlanID</param>
         /// <param name="pulloutID">pulloutID</param>
         /// <param name="showmsg">showmsg</param>
+        /// <param name="plFromRgCode">plFromRgCode</param>
         /// <returns>DualResult</returns>
-        public static DualResult CheckExistsOrder_QtyShip_Detail(string packingListID = "", string iNVNo = "", string shipPlanID = "", string pulloutID = "", bool showmsg = true)
+        public static DualResult CheckExistsOrder_QtyShip_Detail(string packingListID = "", string iNVNo = "", string shipPlanID = "", string pulloutID = "", bool showmsg = true, string plFromRgCode = "")
         {
             string where = string.Empty;
             if (!MyUtility.Check.Empty(packingListID))
@@ -728,7 +730,17 @@ GROUP BY p.OrderID,p.OrderShipmodeSeq,p.Article,p.SizeCode
 
             DataTable dt;
 
-            DualResult result = DBProxy.Current.Select(null, sqlA, out dt);
+            DualResult result;
+
+            if (!MyUtility.Check.Empty(plFromRgCode))
+            {
+                result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, sqlA, out dt);
+            }
+            else
+            {
+                result = DBProxy.Current.Select(null, sqlA, out dt);
+            }
+
             if (!result)
             {
                 if (showmsg)
@@ -754,7 +766,15 @@ GROUP BY p.OrderID,p.OrderShipmodeSeq,p.Article,p.SizeCode
                 return Ict.Result.F(msg);
             }
 
-            result = DBProxy.Current.Select(null, sqlB, out dt);
+            if (!MyUtility.Check.Empty(plFromRgCode))
+            {
+                result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, sqlB, out dt);
+            }
+            else
+            {
+                result = DBProxy.Current.Select(null, sqlB, out dt);
+            }
+
             if (!result)
             {
                 if (showmsg)

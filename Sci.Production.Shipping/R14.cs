@@ -5,6 +5,8 @@ using Ict;
 using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using System.Linq;
+using Sci.Production.CallPmsAPI;
 
 namespace Sci.Production.Shipping
 {
@@ -92,11 +94,19 @@ namespace Sci.Production.Shipping
             if (!MyUtility.Check.Empty(this.PulloutDate1))
             {
                 where += $@" 
- and exists (
+ and (
+    exists (
 	select 1
 	from PackingList p with(nolock)
 	where p.ShipPlanID = s.ID and p.InvNo = g.ID
 	and p.PulloutDate between '{((DateTime)this.PulloutDate1).ToString("yyyy/MM/dd")}'and '{((DateTime)this.PulloutDate2).ToString("yyyy/MM/dd")}'
+)   or
+    exists (
+	select 1
+	from GMTBooking_Detail gd with(nolock)
+	where gd.ID = g.ID
+	and gd.PulloutDate between '{((DateTime)this.PulloutDate1).ToString("yyyy/MM/dd")}'and '{((DateTime)this.PulloutDate2).ToString("yyyy/MM/dd")}'
+)
 )
 ";
             }
@@ -122,10 +132,76 @@ namespace Sci.Production.Shipping
             }
             #endregion
             string sqlCmd = string.Empty;
+            DualResult result;
+            #region prepare get A2B
+            string sqlGetPackA2B = $@"
+select  gd.PLFromRgCode, gd.PackingListID
+from    ShipPlan s with(nolock)
+inner join GMTBooking g with(nolock) on g.ShipPlanID = s.ID
+inner join GMTBooking_Detail gd with (nolock) on g.ID = gd.ID
+where 1 = 1 {where}
+";
+            DataTable dtPackA2B;
+            result = DBProxy.Current.Select(null, sqlGetPackA2B, out dtPackA2B);
+            if (!result)
+            {
+                return result;
+            }
+
+            DataTable dtPackDetailA2B;
+            string sqlFakePAckDetalA2B = @"
+    select p.ShipPlanID, p.InvNo, pd.ctnQty, p.ShipQty, p.CTNQty, p.CBM
+	from PackingList p with(nolock)
+	inner join PackingList_Detail pd with(nolock) on pd.id = p.id
+	where 1 = 0";
+            result = DBProxy.Current.Select(null, sqlFakePAckDetalA2B, out dtPackDetailA2B);
+
+            if (!result)
+            {
+                return result;
+            }
+
+            if (dtPackA2B.Rows.Count > 0) {
+                var groupPackA2B = dtPackA2B.AsEnumerable()
+                    .GroupBy(s => s["PLFromRgCode"].ToString())
+                    .Select(s => new
+                    {
+                        PLFromRgCode = s.Key,
+                        WherePackID = s.Select(groupItem => $"'{groupItem["PackingListID"]}'").JoinToString(","),
+                    });
+
+                foreach (var groupItem in groupPackA2B)
+                {
+                    string sqlGetPAckDetalA2B = $@"
+    select  p.ShipPlanID, p.InvNo, ctnQty = sum(pd.ctnQty), p.ShipQty, p.CTNQty, p.CBM
+	from PackingList p with(nolock)
+	inner join PackingList_Detail pd with(nolock) on pd.id = p.id
+	where   p.ID in ({groupItem.WherePackID}) and
+            pd.ReceiveDate is not null and
+            ReturnDate is null
+    group by    p.ShipPlanID, p.InvNo, p.ShipQty, p.CTNQty, p.CBM
+";
+                    DataTable resultA2B;
+                    result = PackingA2BWebAPI.GetDataBySql(groupItem.PLFromRgCode, sqlGetPAckDetalA2B, out resultA2B);
+
+                    if (!result)
+                    {
+                        return result;
+                    }
+
+                    resultA2B.MergeTo(ref dtPackDetailA2B);
+                }
+            }
+
+            #endregion
+
             #region Detail
             if (this.Type == 1)
             {
                 sqlCmd = $@"
+alter table #PackingListA2B alter column ShipPlanID varchar(13)
+alter table #PackingListA2B alter column InvNo varchar(25)
+
 select s.ID,g.ID,g.BrandID,g.ShipModeID,g.Forwarder,g.CYCFS,g.CutOffDate,
 	gg.ct,s.Status,
 	pp.TTLShipQty,pp.TTLCTNQty,pp.TTLCBM,
@@ -133,18 +209,33 @@ select s.ID,g.ID,g.BrandID,g.ShipModeID,g.Forwarder,g.CYCFS,g.CutOffDate,
 from ShipPlan s with(nolock)
 left join GMTBooking g with(nolock) on g.ShipPlanID = s.ID
 outer apply(
-	select TTLShipQty=sum(p.ShipQty),TTLCTNQty=sum(p.CTNQty),TTLCBM=sum(p.CBM)
-	from PackingList p with(nolock)
-	where p.ShipPlanID = s.ID and p.InvNo = g.ID
+    select  TTLShipQty = sum(TTLShipQty), TTLCTNQty = sum(TTLCTNQty), TTLCBM = sum(TTLCBM)
+    from    (
+	            select TTLShipQty=sum(p.ShipQty),TTLCTNQty=sum(p.CTNQty),TTLCBM=sum(p.CBM)
+	            from PackingList p with (nolock)
+	            where p.ShipPlanID = s.ID and p.InvNo = g.ID
+                union all
+                select TTLShipQty = sum(pa.ShipQty), TTLCTNQty = sum(pa.CTNQty), TTLCBM = sum(pa.CBM)
+	            from #PackingListA2B pa with(nolock)
+	            where pa.ShipPlanID = s.ID and pa.InvNo = g.ID
+            )   mergePack1
 )pp
 outer apply(
-	select ct = sum(pd.ctnQty)
-	from PackingList p with(nolock)
-	inner join PackingList_Detail pd with(nolock) on pd.id = p.id
-	where p.ShipPlanID = s.ID 
-            and p.InvNo = g.ID 
-            and pd.ReceiveDate is not null 
-            and ReturnDate is null
+    select ct = sum(ct)
+    from    (
+	            select ct = sum(pd.ctnQty)
+	            from PackingList p with(nolock)
+	            inner join PackingList_Detail pd with(nolock) on pd.id = p.id
+	            where p.ShipPlanID = s.ID 
+                        and p.InvNo = g.ID 
+                        and pd.ReceiveDate is not null 
+                        and ReturnDate is null
+                union   all
+                select  ct = sum(pa.ctnQty)
+                from    #PackingListA2B pa
+                where   pa.ShipPlanID = s.ID and
+                        pa.InvNo = g.ID
+            )   mergePack2
 )pc
 outer apply(
 	select ct = count(1)
@@ -164,6 +255,9 @@ order by g.BrandID,s.ID,g.ID,g.ShipModeID,g.CYCFS
             if (this.Type == 2)
             {
                 sqlCmd = $@"
+alter table #PackingListA2B alter column ShipPlanID varchar(13)
+alter table #PackingListA2B alter column InvNo varchar(25)
+
 select g.BrandID,g.ID,gcc.Type,gcc.CTNRNo,gcc.ct,pp.TTLShipQty,pp.TTLCBM,g.TotalGW,g.CYCFS,g.ShipModeID
 into #tmp
 from ShipPlan s with(nolock)
@@ -175,9 +269,16 @@ outer apply(
 	group by gc.Type,gc.CTNRNo
 )gcc
 outer apply(
-	select TTLShipQty=sum(p.ShipQty),TTLCBM=sum(p.CBM)
-	from PackingList p with(nolock)
-	where p.ShipPlanID = s.ID and p.InvNo = g.ID 
+    select  TTLShipQty = sum(TTLShipQty), TTLCBM = sum(TTLCBM)
+    from    (
+	            select TTLShipQty=sum(p.ShipQty),TTLCBM=sum(p.CBM)
+	            from PackingList p with(nolock)
+	            where p.ShipPlanID = s.ID and p.InvNo = g.ID 
+                union all
+                select TTLShipQty = sum(pa.ShipQty), TTLCBM = sum(pa.CBM)
+	            from #PackingListA2B pa with(nolock)
+	            where pa.ShipPlanID = s.ID and pa.InvNo = g.ID 
+            )   mergePack
 )pp
 where 1=1
 {where}
@@ -299,7 +400,7 @@ order by s.ID,g.ID
 ";
             }
             #endregion
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printData);
+            result = MyUtility.Tool.ProcessWithDatatable(dtPackDetailA2B, null, sqlCmd, out this.printData, temptablename: "#PackingListA2B");
             return result;
         }
 

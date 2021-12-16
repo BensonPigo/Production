@@ -120,6 +120,12 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PmsWebApiUtility20">
+      <HintPath>..\_Dll\PmsWebApiUtility20.dll</HintPath>
+    </Reference>
+    <Reference Include="PmsWebApiUtility45">
+      <HintPath>..\_Dll\PmsWebApiUtility45.dll</HintPath>
+    </Reference>
     <Reference Include="PostJobLog">
       <HintPath>..\_Dll\PostJobLog.dll</HintPath>
     </Reference>
@@ -190,6 +196,10 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sci.Production.CallPmsAPI\Sci.Production.CallPmsAPI.csproj">
+      <Project>{FC94FCAF-9216-4A2D-9E89-15FE27AEF028}</Project>
+      <Name>Sci.Production.CallPmsAPI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
       <Project>{0e35fd31-4a86-4d4e-a393-b6c5e3d7c956}</Project>
       <Name>Sci.Production.Class</Name>
