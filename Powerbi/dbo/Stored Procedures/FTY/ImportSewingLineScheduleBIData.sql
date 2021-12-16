@@ -98,9 +98,18 @@ WHEN MATCHED THEN
 	t.Orig_WorkHourPerDay =  s.Orig_WorkHourPerDay,
 	t.New_SwitchTime =  s.New_SwitchTime,
 	t.FirststCuttingOutputDate =  s.FirststCuttingOutputDate,
+	t.CDCodeNew = s.CDCodeNew,
+	t.ProductType = s.ProductType,
+	t.FabricType = s.FabricType,
+	t.Lining = s.Lining,
+	t.Gender = s.Gender,
+	t.Construction = s.Construction,
 	t.[TTL_PRINTING (PCS)] = s.[TTL_PRINTING (PCS)],
 	t.[TTL_PRINTING PPU (PPU)] = s.[TTL_PRINTING PPU (PPU)],
-	t.SubCon = s.SubCon'
+	t.SubCon = s.SubCon,
+	t.[Subcon Qty] = s.[Subcon Qty],
+	t.[Std Qty for printing] = s.[Std Qty for printing],
+	t.StyleName = s.StyleName'
 
 set @SqlCmd2 = '
 WHEN NOT MATCHED BY TARGET THEN
@@ -156,9 +165,13 @@ WHEN NOT MATCHED BY TARGET THEN
       ,[Orig_WorkHourPerDay]
       ,[New_SwitchTime]
       ,[FirststCuttingOutputDate]
+	  ,[CDCodeNew] ,[ProductType] ,[FabricType] ,[Lining] ,[Gender] ,[Construction]
 	  ,[TTL_PRINTING (PCS)]
 	  ,[TTL_PRINTING PPU (PPU)]
 	  ,SubCon
+	  ,[Subcon Qty]
+	  ,[Std Qty for printing]
+	  ,StyleName
 	)
 	VALUES(
 	s.APSNo,
@@ -212,9 +225,13 @@ WHEN NOT MATCHED BY TARGET THEN
 	s.Orig_WorkHourPerDay,
 	s.New_SwitchTime,
 	s.FirststCuttingOutputDate,
+	s.CDCodeNew , s.ProductType, s.FabricType, s.Lining, s.Gender, s.Construction,
 	s.[TTL_PRINTING (PCS)],
 	s.[TTL_PRINTING PPU (PPU)],
-	s.SubCon
+	s.SubCon,
+	s.[Subcon Qty],
+	s.[Std Qty for printing],
+	s.StyleName
 	)
 WHEN NOT MATCHED BY SOURCE AND T.SewingDay between '''+@SDate+''' and '''+@EDate+''' THEN
 DELETE ;

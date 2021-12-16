@@ -119,7 +119,8 @@ declare  @StyleData TABLE(
 	[FabricType] [nvarchar](Max) NULL,
 	[Lining] [varchar](Max) NULL,
 	[Gender] [varchar](Max) NULL,
-	[Construction] [nvarchar](Max) NULL
+	[Construction] [nvarchar](Max) NULL,
+	[StyleName] [nvarchar](Max) NULL
 )
 insert into @StyleData
 select distinct a.APSNo,
@@ -128,7 +129,8 @@ select distinct a.APSNo,
 	sty.[FabricType],
 	sty.[Lining],
 	sty.[Gender],
-	sty.[Construction]
+	sty.[Construction],
+	sty.[StyleName]
 from @APSListWorkDay a
 Outer apply (
 	SELECT
@@ -138,6 +140,7 @@ Outer apply (
 		, Gender
 		, Construction = d1.Name
 		, s.CDCodeNew
+		, s.StyleName
 	FROM Style s WITH(NOLOCK)
 	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
 	left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
@@ -152,10 +155,11 @@ declare  @StyleDatabyAPSNo TABLE(
 	[FabricType] [nvarchar](Max) NULL,
 	[Lining] [varchar](Max) NULL,
 	[Gender] [varchar](Max) NULL,
-	[Construction] [nvarchar](Max) NULL
+	[Construction] [nvarchar](Max) NULL,
+	[StyleName] [nvarchar](Max) NULL
 )
 insert into @StyleDatabyAPSNo
-select a.APSNo,[CDCodeNew],[ProductType],[FabricType],[Lining],[Gender],[Construction]
+select a.APSNo,[CDCodeNew],[ProductType],[FabricType],[Lining],[Gender],[Construction],[StyleName]
 from(select distinct APSNo from @StyleData)a
 outer apply (SELECT [CDCodeNew] =  Stuff((select distinct concat( '/',[CDCodeNew]) from @StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s1
 outer apply (SELECT [ProductType] =  Stuff((select distinct concat( '/',[ProductType]) from @StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s2
@@ -163,6 +167,7 @@ outer apply (SELECT [FabricType] =  Stuff((select distinct concat( '/',[FabricTy
 outer apply (SELECT [Lining] =  Stuff((select distinct concat( '/',[Lining]) from @StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s4
 outer apply (SELECT [Gender] =  Stuff((select distinct concat( '/',[Gender]) from @StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s5
 outer apply (SELECT [Construction] =  Stuff((select distinct concat( '/',[Construction]) from @StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s6
+outer apply (SELECT [StyleName] =  Stuff((select distinct concat( '/',[StyleName]) from @StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s7
 
 declare @APSList TABLE(
 	[APSNo] [int] NULL,
@@ -527,6 +532,7 @@ declare @APSMain TABLE(
 	[Lining] [varchar](Max) NULL,
 	[Gender] [varchar](Max) NULL,
 	[Construction] [nvarchar](Max) NULL,
+	[StyleName] [nvarchar](Max) NULL,
 	SubCon nvarchar(max),
 	[Subcon Qty] int
 )
@@ -578,6 +584,7 @@ select
 	sty.Lining,
 	sty.Gender,
 	sty.Construction,
+	sty.StyleName,
 	PrintingData.SubCon,
 	PrintingData.[Subcon Qty]
 from @APSList al
@@ -1066,10 +1073,10 @@ select
     apf.[TTL_PRINTING PPU (PPU)],
     apm.SubCon,
 	apm.[Subcon Qty],
-	[Std Qty for printing]
+	[Std Qty for printing],
+	StyleName
 from @APSMain apm
 inner join @APSExtendWorkDateFin apf on apm.APSNo = apf.APSNo
 order by apm.APSNo,apf.SewingStart
 
 END
-GO
