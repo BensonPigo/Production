@@ -192,6 +192,11 @@ where 1=1 "));
                 sqlCmd.Append($@" and isnull(o.NonRevenue, 0) = 0" + Environment.NewLine);
             }
 
+            if (this.chkSubconOut.Checked)
+            {
+                sqlCmd.Append($@" and s.SubconOutFty <> '' " + Environment.NewLine);
+            }
+
             if (!MyUtility.Check.Empty(this.shift))
             {
                 switch (this.shift)
