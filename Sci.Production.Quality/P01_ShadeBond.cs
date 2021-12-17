@@ -1011,13 +1011,13 @@ select Roll,Dyelot,TicketYds,Scale,Result,Tone
                 this.gridbs.Filter = $" Dyelot = '{this.comboDyelot.Text}'";
             }
 
-            DataRow[] drs = ((DataTable)this.gridbs.DataSource).Select("Selected = 1");
-            if (drs.Length == 0)
+            DataTable dtGrid = (DataTable)this.gridbs.DataSource;
+            if (dtGrid.Rows.Count == 0)
             {
                 return;
             }
 
-            foreach (DataRow item in drs)
+            foreach (DataRow item in dtGrid.Rows)
             {
                 item["Selected"] = 0;
             }
