@@ -144,6 +144,15 @@ namespace Sci.Production.Quality
                 dr["SEQ2"] = this.maindr["SEQ2"];
             }
 
+            List<string> listDyelot = new List<string>() { "ALL" };
+
+            if (datas.Rows.Count > 0)
+            {
+                listDyelot.AddRange(datas.AsEnumerable().Select(s => s["Dyelot"].ToString()).Distinct().ToList());
+            }
+
+            this.comboDyelot.DataSource = listDyelot;
+
             this.CalRollandDyelot(datas);
         }
 
@@ -929,43 +938,6 @@ select Roll,Dyelot,TicketYds,Scale,Result,Tone
             p8.ShowDialog();
         }
 
-        private void BtnInspectedallpass_Click(object sender, EventArgs e)
-        {
-            this.grid.ValidateControl();
-            DataRow[] drs = ((DataTable)this.gridbs.DataSource).Select("Selected = 1");
-            if (drs.Length == 0)
-            {
-                return;
-            }
-
-            foreach (DataRow item in drs)
-            {
-                item["Scale"] = "4-5";
-                item["Result"] = "Pass";
-                item["Inspdate"] = DateTime.Now.ToShortDateString();
-                item["Inspector"] = this.loginID;
-                item["Name"] = MyUtility.GetValue.Lookup("Name", this.loginID, "Pass1", "ID");
-            }
-        }
-
-        private void Button1_Click(object sender, EventArgs e)
-        {
-            this.grid.ValidateControl();
-            DataRow[] drs = ((DataTable)this.gridbs.DataSource).Select("Selected = 1");
-            if (drs.Length == 0)
-            {
-                return;
-            }
-
-            foreach (DataRow item in drs)
-            {
-                item["Result"] = "Fail";
-                item["Inspdate"] = DateTime.Now.ToShortDateString();
-                item["Inspector"] = this.loginID;
-                item["Name"] = MyUtility.GetValue.Lookup("Name", this.loginID, "Pass1", "ID");
-            }
-        }
-
         private void CalRollandDyelot(DataTable dt)
         {
             if (dt != null)
@@ -995,6 +967,59 @@ select Roll,Dyelot,TicketYds,Scale,Result,Tone
             foreach (DataRow item in drs)
             {
                 item["Tone"] = tone;
+            }
+        }
+
+        private void BtnInspected_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.comboScale.Text) || MyUtility.Check.Empty(this.comboResult.Text))
+            {
+                MyUtility.Msg.WarningBox("Scale and Result can not be empty");
+                return;
+            }
+
+            this.grid.ValidateControl();
+            DataRow[] drs = ((DataTable)this.gridbs.DataSource).Select("Selected = 1");
+            if (drs.Length == 0)
+            {
+                return;
+            }
+
+            foreach (DataRow item in drs)
+            {
+                item["Scale"] = this.comboScale.Text;
+                item["Result"] = this.comboResult.Text;
+                item["Inspdate"] = DateTime.Now.ToShortDateString();
+                item["Inspector"] = this.loginID;
+                item["Name"] = MyUtility.GetValue.Lookup("Name", this.loginID, "Pass1", "ID");
+            }
+        }
+
+        private void ComboDyelot_TextChanged(object sender, EventArgs e)
+        {
+            if (this.gridbs.DataSource == null)
+            {
+                return;
+            }
+
+            if (this.comboDyelot.Text == "ALL")
+            {
+                this.gridbs.Filter = string.Empty;
+            }
+            else
+            {
+                this.gridbs.Filter = $" Dyelot = '{this.comboDyelot.Text}'";
+            }
+
+            DataRow[] drs = ((DataTable)this.gridbs.DataSource).Select("Selected = 1");
+            if (drs.Length == 0)
+            {
+                return;
+            }
+
+            foreach (DataRow item in drs)
+            {
+                item["Selected"] = 0;
             }
         }
     }
