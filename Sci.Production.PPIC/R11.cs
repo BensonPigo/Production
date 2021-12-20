@@ -169,6 +169,7 @@ and o.Category ='B'
 and CONVERT(date, o.SewOffLine) between @ReadyDate1 and @ReadyDate2 -- 將offline跟ReadyDate綁再一起,方便取得RedayDate
 and Calendar.rows = {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
 and Dates < CONVERT(date, o.SewOffLine)	
+and exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
 
 
 
@@ -276,6 +277,7 @@ SELECT
 		) Receive			
 		where 1=1
 		and o.Category ='B' and o.junk !=1 
+        and exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
 		and o.SewOffLine=AllDate.Dates
         {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 
@@ -382,6 +384,7 @@ SELECT
 		) Receive			
 		where 1=1
 		and o.Category ='B' and o.junk !=1 
+        and exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
 		and AllDate.Dates between @ReadyDate1 and @ReadyDate2		
         {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
         {this.boolHoliday}
@@ -553,6 +556,7 @@ outer apply(
 		and datepart(HH, c.AddDate) <= 17 -- 下午5點)
 	) Receive	
 where O.Category ='B' and o.junk !=1
+and exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
 and {(this.IsIDD ? "ISNULL(oq.IDD, oq.BuyerDelivery)" : "oq.BuyerDelivery")}  = AllDate.HolidayDates  
 and {(this.IsIDD ? "ISNULL(oq.IDD, oq.BuyerDelivery)" : "oq.BuyerDelivery")}  < AllDate.WorkDates 
 and not exists(select 1 from #tmp1 where  {(this.IsIDD ? "ISNULL(IDD, BuyerDelivery)" : "BuyerDelivery")}  >= ReadyDate and o.ID=SPNO)

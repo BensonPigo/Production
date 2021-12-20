@@ -47,6 +47,7 @@
             this.comboShift = new Sci.Win.UI.ComboBox();
             this.chkOnlyCancelOrder = new Sci.Win.UI.CheckBox();
             this.chkExcludeNonRevenue = new Sci.Win.UI.CheckBox();
+            this.chkSubconOut = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -265,9 +266,21 @@
             this.chkExcludeNonRevenue.Text = "Exclude Non Revenue";
             this.chkExcludeNonRevenue.UseVisualStyleBackColor = true;
             // 
+            // chkSubconOut
+            // 
+            this.chkSubconOut.AutoSize = true;
+            this.chkSubconOut.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkSubconOut.Location = new System.Drawing.Point(291, 252);
+            this.chkSubconOut.Name = "chkSubconOut";
+            this.chkSubconOut.Size = new System.Drawing.Size(135, 21);
+            this.chkSubconOut.TabIndex = 111;
+            this.chkSubconOut.Text = "Only Subcon Out";
+            this.chkSubconOut.UseVisualStyleBackColor = true;
+            // 
             // R04
             // 
-            this.ClientSize = new System.Drawing.Size(531, 298);
+            this.ClientSize = new System.Drawing.Size(531, 305);
+            this.Controls.Add(this.chkSubconOut);
             this.Controls.Add(this.chkExcludeNonRevenue);
             this.Controls.Add(this.chkOnlyCancelOrder);
             this.Controls.Add(this.comboShift);
@@ -318,6 +331,7 @@
             this.Controls.SetChildIndex(this.comboShift, 0);
             this.Controls.SetChildIndex(this.chkOnlyCancelOrder, 0);
             this.Controls.SetChildIndex(this.chkExcludeNonRevenue, 0);
+            this.Controls.SetChildIndex(this.chkSubconOut, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -344,5 +358,6 @@
         private Win.UI.ComboBox comboShift;
         private Win.UI.CheckBox chkOnlyCancelOrder;
         private Win.UI.CheckBox chkExcludeNonRevenue;
+        private Win.UI.CheckBox chkSubconOut;
     }
 }

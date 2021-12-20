@@ -41,6 +41,8 @@ Sci.Production.Shipping/bin
 Sci.Production.Shipping/obj
 Sci.Production.Subcon/bin
 Sci.Production.Subcon/obj
+Sci.Production.CallPmsAPI/bin
+Sci.Production.CallPmsAPI/obj
 Sci.Production.Thread/bin
 Sci.Production.Thread/obj
 Sci.Production.Tools/bin

@@ -406,10 +406,19 @@ where	pd.CTNStartNo != '' and
             foreach (var item in checkData)
             {
                 updSql = $@"
-update PackingList_Detail set DRYTransferDate = Getdate() where ID = '{item["ID"]}' 
+update PackingList_Detail 
+set DRYTransferDate = Getdate() 
+where ID = '{item["ID"]}' 
 and CTNStartNo = '{item["CTNStartNo"]}' and DisposeFromClog= 0;
+
 insert into DRYTransfer(TransferDate, MDivisionID, OrderID, PackingListID, CTNStartNo, TransferTo, AddName, AddDate, SCICtnNo)
-            values(GETDATE(),'{Env.User.Keyword}','{item["OrderID"]}','{item["ID"]}','{item["CTNStartNo"]}', '{item["TransferTo"]}','{Env.User.UserID}',GETDATE(),'{item["SCICtnNo"]}');
+values(GETDATE(),'{Env.User.Keyword}','{item["OrderID"]}','{item["ID"]}','{item["CTNStartNo"]}', '{item["TransferTo"]}','{Env.User.UserID}',GETDATE(),'{item["SCICtnNo"]}');
+
+update o
+set o.DryRoomTransDate = GETDATE()
+from Orders o
+inner join PackingList_Detail pd on pd.OrderID = o.ID
+where pd.ID = '{item["ID"]}' and pd.OrderID = '{item["OrderID"]}' 
 ";
                 result = DBProxy.Current.Execute(null, updSql);
                 if (result == false)

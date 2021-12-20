@@ -582,11 +582,24 @@ set ReceiveDate = GETDATE()
 where   ID = '{0}' 
         and OrderID = '{1}' 
         and CTNStartNo = '{2}'
-        and DisposeFromClog= 0 ; ",
+        and DisposeFromClog= 0 
+; ",
                     MyUtility.Convert.GetString(dr["PackingListID"]),
                     MyUtility.Convert.GetString(dr["OrderID"]),
                     MyUtility.Convert.GetString(dr["CTNStartNo"]),
                     MyUtility.Convert.GetString(dr["ClogLocationId"])));
+
+                // 也要順便更新Orders.LastCTNTransDate
+                updateCmds.Add(string.Format(
+                   @"
+update o
+set o.LastCTNRecdDate = GETDATE()
+from Orders o
+inner join PackingList_Detail pd on pd.OrderID = o.ID
+where pd.ID = '{0}' and pd.OrderID = '{1}' 
+;",
+                   MyUtility.Convert.GetString(dr["PackingListID"]),
+                   MyUtility.Convert.GetString(dr["OrderID"])));
             }
 
             // Update Orders的資料

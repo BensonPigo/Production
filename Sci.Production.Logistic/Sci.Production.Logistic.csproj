@@ -195,6 +195,30 @@
     <Compile Include="P01_CFAFinalinspResult.Designer.cs">
       <DependentUpon>P01_CFAFinalinspResult.cs</DependentUpon>
     </Compile>
+    <Compile Include="P19.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P19.Designer.cs">
+      <DependentUpon>P19.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P18.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P18.Designer.cs">
+      <DependentUpon>P18.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P15.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P15.Designer.cs">
+      <DependentUpon>P15.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P14.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P14.Designer.cs">
+      <DependentUpon>P14.cs</DependentUpon>
+    </Compile>
     <Compile Include="P02_BatchReceiving.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -371,6 +395,18 @@
     <EmbeddedResource Include="P01_CFAFinalinspResult.resx">
       <DependentUpon>P01_CFAFinalinspResult.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P19.resx">
+      <DependentUpon>P19.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P18.resx">
+      <DependentUpon>P18.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P15.resx">
+      <DependentUpon>P15.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P14.resx">
+      <DependentUpon>P14.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P02_BatchReceiving.resx">
       <DependentUpon>P02_BatchReceiving.cs</DependentUpon>
     </EmbeddedResource>
@@ -453,6 +489,10 @@
     <ProjectReference Include="..\Sci.Production.Automation\Sci.Production.Automation.csproj">
       <Project>{CB61A07F-7D72-490E-AEB6-BA5080F8D652}</Project>
       <Name>Sci.Production.Automation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.CallPmsAPI\Sci.Production.CallPmsAPI.csproj">
+      <Project>{FC94FCAF-9216-4A2D-9E89-15FE27AEF028}</Project>
+      <Name>Sci.Production.CallPmsAPI</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
       <Project>{0E35FD31-4A86-4D4E-A393-B6C5E3D7C956}</Project>
