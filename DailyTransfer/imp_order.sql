@@ -1133,8 +1133,61 @@ else
 		INNER JOIN Production.dbo.ArtworkType C WITH (NOLOCK) ON A.ArtworkTypeID=C.ID
 		LEFT JOIN Production.dbo.Order_TmsCost D WITH (NOLOCK) ON D.id = a.Id and D.ArtworkTypeID = A.ArtworkTypeID
 		where D.id is null
+
+		--更新Local Order的Order_TmsCost
+		select	[ID] = o.ID
+				, ot.ArtworkTypeID
+				, ot.Seq
+				, ot.Qty
+				, ot.ArtworkUnit
+				, ot.TMS
+				, ot.Price
+				, ot.InhouseOSP
+				, ot.LocalSuppID
+				, ot.AddName
+				, ot.AddDate
+				, ot.TPEEditName
+				, ot.TPEEditDate
+		into #tmpLocalOrder_TmsCost
+		from Production.dbo.Orders o
+		inner join #TOrder tmpo on o.CustPONo = tmpo.ID and o.MDivisionID = tmpo.MDivisionID
+		inner join Production.dbo.Order_TmsCost ot with (nolock) on ot.Id = tmpo.ID
+		where	o.LocalOrder = 1 and
+				not exists(select 1 from Production.dbo.sewingoutput_detail sd with (nolock) where sd.OrderID = o.ID)
+
+		delete Production.dbo.Order_TmsCost
+		where ID in (select id from #tmpLocalOrder_TmsCost)
 	
-	
+		insert into Production.dbo.Order_TmsCost(
+			ID
+			, ArtworkTypeID
+			, Seq
+			, Qty
+			, ArtworkUnit
+			, TMS
+			, Price
+			, InhouseOSP
+			, LocalSuppID
+			, AddName
+			, AddDate
+			, TPEEditName
+			, TPEEditDate
+		)
+		select ID
+			, ArtworkTypeID
+			, Seq
+			, Qty
+			, ArtworkUnit
+			, TMS
+			, Price
+			, InhouseOSP
+			, LocalSuppID
+			, AddName
+			, AddDate
+			, TPEEditName
+			, TPEEditDate
+		from #tmpLocalOrder_TmsCost
+
 		-----------------Order_SizeCode---------------------------尺寸表 Size Spec(存尺寸碼)
 		--20170110 willy 調整順序: 刪除>修改>新增
 		Merge Production.dbo.Order_SizeCode as t
@@ -2666,7 +2719,7 @@ where a.id in (
 
 drop table #tmpOrders
 drop table #TOrder
-
+drop table #tmpLocalOrder_TmsCost
 ---- 轉入 歷史資料 TradeHis_Order 必須與 Trade 資料相同----
 Merge Production.dbo.TradeHis_Order as t
 Using (
