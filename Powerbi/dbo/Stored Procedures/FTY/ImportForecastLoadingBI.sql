@@ -33,19 +33,7 @@ BEGIN
 	/*判斷當前Server後, 指定帶入正式機Server名稱*/
 	declare @current_ServerName varchar(50) = (SELECT [Server Name] = @@SERVERNAME)
 	--依不同Server來抓到對應的備機ServerName
-	declare @current_PMS_ServerName nvarchar(50) 
-	= (
-		select [value] = 
-			CASE WHEN @current_ServerName= 'PHL-NEWPMS-02' THEN 'PHL-NEWPMS' -- PH1
-				 WHEN @current_ServerName= 'VT1-PH2-PMS2b' THEN 'VT1-PH2-PMS2' -- PH2
-				 WHEN @current_ServerName= 'system2017BK' THEN 'SYSTEM2017' -- SNP
-				 WHEN @current_ServerName= 'SPS-SQL2' THEN 'SPS-SQL.spscd.com' -- SPS
-				 WHEN @current_ServerName= 'SQLBK' THEN 'PMS-SXR' -- SPR
-				 WHEN @current_ServerName= 'newerp-bak' THEN 'newerp' -- HZG		
-				 WHEN @current_ServerName= 'SQL' THEN 'NDATA' -- HXG
-				 when (select top 1 MDivisionID from Production.dbo.Factory) in ('VM2','VM1') then 'SYSTEM2016' -- ESP & SPT
-			ELSE '' END
-	)
+	declare @current_PMS_ServerName nvarchar(50) = 'MainServer'
 
 	/******************************************
 	   移除原本的 先Drop 在Create方式

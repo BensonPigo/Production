@@ -12,19 +12,7 @@ BEGIN
 /*�P�_��eServer��, ���w�a�J������Server�W��*/
 	declare @current_ServerName varchar(50) = (SELECT [Server Name] = @@SERVERNAME)
 	--�̤��PServer�ӧ��������ƾ�ServerName
-	declare @current_PMS_ServerName nvarchar(50) 
-	= (
-		select [value] = 
-			CASE WHEN @current_ServerName= 'PHL-NEWPMS-02' THEN 'PHL-NEWPMS' -- PH1
-				 WHEN @current_ServerName= 'VT1-PH2-PMS2b' THEN 'VT1-PH2-PMS2' -- PH2
-				 WHEN @current_ServerName= 'system2017BK' THEN 'SYSTEM2017' -- SNP
-				 WHEN @current_ServerName= 'SPS-SQL2' THEN 'SPS-SQL.spscd.com' -- SPS
-				 WHEN @current_ServerName= 'SQLBK' THEN 'PMS-SXR' -- SPR
-				 WHEN @current_ServerName= 'newerp-bak' THEN 'newerp' -- HZG		
-				 WHEN @current_ServerName= 'SQL' THEN 'NDATA' -- HXG
-				 when (select top 1 MDivisionID from Production.dbo.Factory) in ('VM2','VM1') then 'SYSTEM2016' -- ESP & SPT
-			ELSE '' END
-	)
+	declare @current_PMS_ServerName nvarchar(50) = 'MainServer'
 
 declare @SqlCmd_Combin nvarchar(max) =''
 declare @SqlCmd1 nvarchar(max) ='';
