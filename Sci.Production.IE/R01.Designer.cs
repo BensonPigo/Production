@@ -44,6 +44,8 @@
             this.radioDetail = new Sci.Win.UI.RadioButton();
             this.chkBalancing = new Sci.Win.UI.CheckBox();
             this.comboSewingTeam1 = new Sci.Production.Class.ComboSewingTeam(this.components);
+            this.dateSewingDate = new Sci.Win.UI.DateRange();
+            this.lbInlineDate = new Sci.Win.UI.Label();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -159,7 +161,7 @@
             // 
             // lbReportType
             // 
-            this.lbReportType.Location = new System.Drawing.Point(14, 185);
+            this.lbReportType.Location = new System.Drawing.Point(14, 220);
             this.lbReportType.Name = "lbReportType";
             this.lbReportType.Size = new System.Drawing.Size(85, 23);
             this.lbReportType.TabIndex = 233;
@@ -169,7 +171,7 @@
             // 
             this.radioPanel1.Controls.Add(this.radioSummary);
             this.radioPanel1.Controls.Add(this.radioDetail);
-            this.radioPanel1.Location = new System.Drawing.Point(102, 185);
+            this.radioPanel1.Location = new System.Drawing.Point(102, 220);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(192, 25);
             this.radioPanel1.TabIndex = 232;
@@ -202,7 +204,7 @@
             // 
             this.chkBalancing.AutoSize = true;
             this.chkBalancing.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkBalancing.Location = new System.Drawing.Point(102, 219);
+            this.chkBalancing.Location = new System.Drawing.Point(102, 254);
             this.chkBalancing.Name = "chkBalancing";
             this.chkBalancing.Size = new System.Drawing.Size(297, 21);
             this.chkBalancing.TabIndex = 234;
@@ -223,9 +225,47 @@
             this.comboSewingTeam1.Size = new System.Drawing.Size(88, 24);
             this.comboSewingTeam1.TabIndex = 235;
             // 
+            // dateSewingDate
+            // 
+            // 
+            // 
+            // 
+            this.dateSewingDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSewingDate.DateBox1.Name = "";
+            this.dateSewingDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSewingDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSewingDate.DateBox2.Name = "";
+            this.dateSewingDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingDate.DateBox2.TabIndex = 1;
+            this.dateSewingDate.IsRequired = false;
+            this.dateSewingDate.Location = new System.Drawing.Point(102, 182);
+            this.dateSewingDate.Name = "dateSewingDate";
+            this.dateSewingDate.Size = new System.Drawing.Size(280, 23);
+            this.dateSewingDate.TabIndex = 237;
+            // 
+            // lbInlineDate
+            // 
+            this.lbInlineDate.Location = new System.Drawing.Point(14, 182);
+            this.lbInlineDate.Name = "lbInlineDate";
+            this.lbInlineDate.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.lbInlineDate.RectStyle.BorderWidth = 1F;
+            this.lbInlineDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbInlineDate.RectStyle.ExtBorderWidth = 1F;
+            this.lbInlineDate.Size = new System.Drawing.Size(85, 23);
+            this.lbInlineDate.TabIndex = 238;
+            this.lbInlineDate.Text = "Sewing Date";
+            this.lbInlineDate.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.lbInlineDate.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // R01
             // 
             this.ClientSize = new System.Drawing.Size(531, 320);
+            this.Controls.Add(this.lbInlineDate);
+            this.Controls.Add(this.dateSewingDate);
             this.Controls.Add(this.comboSewingTeam1);
             this.Controls.Add(this.chkBalancing);
             this.Controls.Add(this.lbReportType);
@@ -264,6 +304,8 @@
             this.Controls.SetChildIndex(this.lbReportType, 0);
             this.Controls.SetChildIndex(this.chkBalancing, 0);
             this.Controls.SetChildIndex(this.comboSewingTeam1, 0);
+            this.Controls.SetChildIndex(this.dateSewingDate, 0);
+            this.Controls.SetChildIndex(this.lbInlineDate, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -288,5 +330,7 @@
         private Win.UI.RadioButton radioDetail;
         private Win.UI.CheckBox chkBalancing;
         private Class.ComboSewingTeam comboSewingTeam1;
+        private Win.UI.DateRange dateSewingDate;
+        private Win.UI.Label lbInlineDate;
     }
 }

@@ -19,6 +19,8 @@ namespace Sci.Production.IE
         private string team;
         private string inline1;
         private string inline2;
+        private string sewingline1;
+        private string sewingline2;
         private bool bolSummary;
         private bool bolBalancing;
         private DataTable printData;
@@ -97,8 +99,11 @@ namespace Sci.Production.IE
             this.team = this.comboSewingTeam1.Text;
             this.inline1 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value1);
             this.inline2 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value2);
+            this.sewingline1 = string.Format("{0:yyyy-MM-dd}", this.dateSewingDate.Value1);
+            this.sewingline2 = string.Format("{0:yyyy-MM-dd}", this.dateSewingDate.Value2);
             this.bolSummary = this.radioSummary.Checked;
             this.bolBalancing = this.chkBalancing.Checked;
+
             return base.ValidateInput();
         }
 
@@ -110,6 +115,7 @@ namespace Sci.Production.IE
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.sqlCmd.Clear();
+
             if (this.bolSummary)
             {
                 this.sqlCmd.Append(@"
@@ -131,7 +137,7 @@ select
 	IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalGSD)/lm.HighestCycle/lm.CurrentOperators) as Eff,
 	EffTarget = EffTarget.Target / 100.0,
 	IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.HighestCycle/lm.CurrentOperators) as LB,
-	LinebalancingTarget.Target / 100.0,
+	[LinebalancingTarget] = LinebalancingTarget.Target / 100.0,
 	[NotHitTargetType] =  iif(lm.Version = 1, (select TypeGroup
 from IEReasonLBRnotHit_1st
 where Ukey = lm.IEReasonLBRnotHit_1stUkey),(select STUFF ((
@@ -169,6 +175,7 @@ where Ukey = lm.IEReasonLBRnotHit_1stUkey),(select STUFF ((
     lm.AddDate,
 	isnull((select Name from Pass1 WITH (NOLOCK) where ID = lm.EditName),'') as EditBy,
     lm.EditDate
+into #tmp
 from LineMapping lm WITH (NOLOCK) 
 outer apply(
 	select top 1 c.Target
@@ -188,6 +195,7 @@ outer apply(
             }
             else
             {
+                // Detail
                 this.sqlCmd.Append(@"
 select distinct
 	lm.FactoryID,
@@ -201,6 +209,7 @@ select distinct
 	lmdavg.avgTotalCycle,
 	[diffCycle] = (lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle,
 	lbr.name
+into #tmp
 from LineMapping lm WITH (NOLOCK) 
 inner join LineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
 left join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on lmd.IEReasonLBRNotHit_DetailUkey = lbr.Ukey and lbr.junk = 0
@@ -226,32 +235,6 @@ outer apply(
 	order by EffectiveDate desc
 )LinebalancingTarget 
 ");
-            }
-
-            if (!MyUtility.Check.Empty(this.inline1) || !MyUtility.Check.Empty(this.inline2))
-            {
-                string dateQuery = string.Empty;
-                if (!MyUtility.Check.Empty(this.inline1))
-                {
-                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), Inline, 120) ", this.inline1);
-                }
-
-                if (!MyUtility.Check.Empty(this.inline2))
-                {
-                    dateQuery += string.Format("and convert(varchar(10), Inline, 120) <= '{0}' ", this.inline2);
-                }
-
-                this.sqlCmd.Append(string.Format(
-                    @"
-inner join(
-	select distinct Orders.StyleID
-			, Orders.SeasonID
-			, Orders.BrandID
-	from SewingSchedule
-	join Orders on SewingSchedule.OrderID = Orders.ID
-	where Orders.Finished = 1 {0}
-) s on lm.StyleID = s.StyleID and lm.SeasonID = s.SeasonID and lm.BrandID = s.BrandID
-", dateQuery));
             }
 
             this.sqlCmd.Append("where 1 = 1");
@@ -298,6 +281,61 @@ and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (
             {
                 this.sqlCmd.Append(string.Format(" and lm.Team = '{0}'", this.team));
             }
+
+            this.sqlCmd.Append(@"select * from #tmp t");
+
+            #region Inline & Sewing Date is not null
+
+            if (!MyUtility.Check.Empty(this.inline1) || !MyUtility.Check.Empty(this.inline2) || !MyUtility.Check.Empty(this.sewingline1) || !MyUtility.Check.Empty(this.sewingline2))
+            {
+                if (!MyUtility.Check.Empty(this.sewingline1) || !MyUtility.Check.Empty(this.sewingline2))
+                {
+                    this.sqlCmd.Append($@"
+ outer apply(
+	SELECT MaxOffLine = max(s.Offline), MinInLine = min(s.Inline)
+	FROM SewingSchedule s WITH(NOLOCK)
+	INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID
+	WHERE o.Finished = 1
+	AND ( 
+		(Cast(s.Inline as Date) >= convert(varchar(10), '{this.sewingline1}', 120) AND Cast( s.Inline as Date) <= '{this.sewingline2}' )
+		OR
+		(Cast(s.Offline as Date) >= '{this.sewingline1}' AND Cast( s.Offline as Date) <= '{this.sewingline2}' )
+	)
+	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
+ )SewingDate
+");
+                }
+
+                string dateQuery = string.Empty;
+                if (!MyUtility.Check.Empty(this.inline1))
+                {
+                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.inline1);
+                }
+
+                if (!MyUtility.Check.Empty(this.inline2))
+                {
+                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.inline2);
+                }
+
+                if (!MyUtility.Check.Empty(this.sewingline1) && !MyUtility.Check.Empty(this.sewingline2))
+                {
+                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) >= '{0}' ", this.sewingline1);
+                    dateQuery += string.Format("and convert(varchar(10), ss.Offline, 120) <= '{0}' ", this.sewingline2);
+                }
+
+                this.sqlCmd.Append($@"
+ where exists(
+	select *
+	from SewingSchedule ss
+	join Orders o on ss.OrderID = o.ID
+	where o.Finished = 1 
+	{dateQuery}
+	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
+ )
+"
+                    );
+            }
+            #endregion
 
             return Ict.Result.True;
         }

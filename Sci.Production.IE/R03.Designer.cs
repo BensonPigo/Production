@@ -40,6 +40,8 @@
             this.comboVersion = new Sci.Win.UI.ComboBox();
             this.lbVersion = new Sci.Win.UI.Label();
             this.lbInlineDate = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.dateSewingDate = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
             // print
@@ -68,33 +70,33 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(9, 48);
+            this.labelFactory.Location = new System.Drawing.Point(9, 87);
             this.labelFactory.Name = "labelFactory";
-            this.labelFactory.Size = new System.Drawing.Size(75, 23);
+            this.labelFactory.Size = new System.Drawing.Size(85, 23);
             this.labelFactory.TabIndex = 94;
             this.labelFactory.Text = "Factory";
             // 
             // labelStyle
             // 
-            this.labelStyle.Location = new System.Drawing.Point(9, 83);
+            this.labelStyle.Location = new System.Drawing.Point(9, 122);
             this.labelStyle.Name = "labelStyle";
-            this.labelStyle.Size = new System.Drawing.Size(75, 23);
+            this.labelStyle.Size = new System.Drawing.Size(85, 23);
             this.labelStyle.TabIndex = 95;
             this.labelStyle.Text = "Style#";
             // 
             // labelSeason
             // 
-            this.labelSeason.Location = new System.Drawing.Point(9, 119);
+            this.labelSeason.Location = new System.Drawing.Point(9, 158);
             this.labelSeason.Name = "labelSeason";
-            this.labelSeason.Size = new System.Drawing.Size(75, 23);
+            this.labelSeason.Size = new System.Drawing.Size(85, 23);
             this.labelSeason.TabIndex = 96;
             this.labelSeason.Text = "Season";
             // 
             // lbToolType
             // 
-            this.lbToolType.Location = new System.Drawing.Point(9, 155);
+            this.lbToolType.Location = new System.Drawing.Point(9, 194);
             this.lbToolType.Name = "lbToolType";
-            this.lbToolType.Size = new System.Drawing.Size(75, 23);
+            this.lbToolType.Size = new System.Drawing.Size(85, 23);
             this.lbToolType.TabIndex = 97;
             this.lbToolType.Text = "Tool Type";
             // 
@@ -104,7 +106,7 @@
             this.comboToolType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboToolType.FormattingEnabled = true;
             this.comboToolType.IsSupportUnselect = true;
-            this.comboToolType.Location = new System.Drawing.Point(87, 155);
+            this.comboToolType.Location = new System.Drawing.Point(97, 193);
             this.comboToolType.Name = "comboToolType";
             this.comboToolType.OldText = "";
             this.comboToolType.Size = new System.Drawing.Size(130, 24);
@@ -127,7 +129,7 @@
             this.dateInlineDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateInlineDate.DateBox2.TabIndex = 1;
             this.dateInlineDate.IsRequired = false;
-            this.dateInlineDate.Location = new System.Drawing.Point(87, 12);
+            this.dateInlineDate.Location = new System.Drawing.Point(97, 12);
             this.dateInlineDate.Name = "dateInlineDate";
             this.dateInlineDate.Size = new System.Drawing.Size(280, 23);
             this.dateInlineDate.TabIndex = 1;
@@ -140,7 +142,7 @@
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
-            this.txtfactory.Location = new System.Drawing.Point(87, 48);
+            this.txtfactory.Location = new System.Drawing.Point(97, 86);
             this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(80, 23);
@@ -151,7 +153,7 @@
             this.txtseason.BackColor = System.Drawing.Color.White;
             this.txtseason.BrandObjectName = null;
             this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtseason.Location = new System.Drawing.Point(87, 119);
+            this.txtseason.Location = new System.Drawing.Point(97, 157);
             this.txtseason.Name = "txtseason";
             this.txtseason.Size = new System.Drawing.Size(80, 23);
             this.txtseason.TabIndex = 4;
@@ -161,7 +163,7 @@
             this.txtstyle.BackColor = System.Drawing.Color.White;
             this.txtstyle.BrandObjectName = null;
             this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle.Location = new System.Drawing.Point(87, 83);
+            this.txtstyle.Location = new System.Drawing.Point(97, 121);
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 3;
@@ -174,7 +176,7 @@
             this.comboVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboVersion.FormattingEnabled = true;
             this.comboVersion.IsSupportUnselect = true;
-            this.comboVersion.Location = new System.Drawing.Point(87, 193);
+            this.comboVersion.Location = new System.Drawing.Point(97, 231);
             this.comboVersion.Name = "comboVersion";
             this.comboVersion.OldText = "";
             this.comboVersion.Size = new System.Drawing.Size(130, 24);
@@ -182,9 +184,9 @@
             // 
             // lbVersion
             // 
-            this.lbVersion.Location = new System.Drawing.Point(9, 193);
+            this.lbVersion.Location = new System.Drawing.Point(9, 232);
             this.lbVersion.Name = "lbVersion";
-            this.lbVersion.Size = new System.Drawing.Size(75, 23);
+            this.lbVersion.Size = new System.Drawing.Size(85, 23);
             this.lbVersion.TabIndex = 104;
             this.lbVersion.Text = "Version";
             // 
@@ -196,15 +198,53 @@
             this.lbInlineDate.RectStyle.BorderWidth = 1F;
             this.lbInlineDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.lbInlineDate.RectStyle.ExtBorderWidth = 1F;
-            this.lbInlineDate.Size = new System.Drawing.Size(75, 23);
+            this.lbInlineDate.Size = new System.Drawing.Size(85, 23);
             this.lbInlineDate.TabIndex = 105;
             this.lbInlineDate.Text = "Inline Date";
             this.lbInlineDate.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.lbInlineDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(9, 48);
+            this.label1.Name = "label1";
+            this.label1.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.RectStyle.BorderWidth = 1F;
+            this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label1.RectStyle.ExtBorderWidth = 1F;
+            this.label1.Size = new System.Drawing.Size(85, 23);
+            this.label1.TabIndex = 240;
+            this.label1.Text = "Sewing Date";
+            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // dateSewingDate
+            // 
+            // 
+            // 
+            // 
+            this.dateSewingDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSewingDate.DateBox1.Name = "";
+            this.dateSewingDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSewingDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSewingDate.DateBox2.Name = "";
+            this.dateSewingDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingDate.DateBox2.TabIndex = 1;
+            this.dateSewingDate.IsRequired = false;
+            this.dateSewingDate.Location = new System.Drawing.Point(97, 48);
+            this.dateSewingDate.Name = "dateSewingDate";
+            this.dateSewingDate.Size = new System.Drawing.Size(280, 23);
+            this.dateSewingDate.TabIndex = 239;
+            // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(541, 255);
+            this.ClientSize = new System.Drawing.Size(541, 301);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.dateSewingDate);
             this.Controls.Add(this.lbInlineDate);
             this.Controls.Add(this.comboVersion);
             this.Controls.Add(this.lbVersion);
@@ -223,12 +263,6 @@
             this.Name = "R03";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R03. Tool Usage Report";
-            this.Controls.SetChildIndex(this.buttonCustomized, 0);
-            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
-            this.Controls.SetChildIndex(this.txtVersion, 0);
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.labelStyle, 0);
             this.Controls.SetChildIndex(this.labelSeason, 0);
@@ -241,6 +275,14 @@
             this.Controls.SetChildIndex(this.lbVersion, 0);
             this.Controls.SetChildIndex(this.comboVersion, 0);
             this.Controls.SetChildIndex(this.lbInlineDate, 0);
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.dateSewingDate, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -260,5 +302,7 @@
         private Win.UI.ComboBox comboVersion;
         private Win.UI.Label lbVersion;
         private Win.UI.Label lbInlineDate;
+        private Win.UI.Label label1;
+        private Win.UI.DateRange dateSewingDate;
     }
 }

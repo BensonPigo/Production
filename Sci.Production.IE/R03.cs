@@ -22,6 +22,8 @@ namespace Sci.Production.IE
         private string version;
         private string inline1;
         private string inline2;
+        private string sewingline1;
+        private string sewingline2;
         private DataTable printData;
 
         /// <summary>
@@ -42,9 +44,9 @@ namespace Sci.Production.IE
         /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
-            if (!this.dateInlineDate.HasValue1 || !this.dateInlineDate.HasValue2)
+            if (!this.dateInlineDate.HasValue1 || !this.dateInlineDate.HasValue2 || !this.dateSewingDate.HasValue1 || !this.dateSewingDate.HasValue2)
             {
-                MyUtility.Msg.InfoBox("Please input <Inline Date > first!!");
+                MyUtility.Msg.InfoBox("Please input <Inline Date> or <Sewing Date> first!!");
                 return false;
             }
 
@@ -55,6 +57,8 @@ namespace Sci.Production.IE
             this.version = MyUtility.Convert.GetString(this.comboVersion.SelectedValue);
             this.inline1 = this.dateInlineDate.Value1.Value.ToString("yyyyMMdd");
             this.inline2 = this.dateInlineDate.Value2.Value.ToString("yyyyMMdd");
+            this.sewingline1 = string.Format("{0:yyyy-MM-dd}", this.dateSewingDate.Value1);
+            this.sewingline2 = string.Format("{0:yyyy-MM-dd}", this.dateSewingDate.Value2);
 
             return base.ValidateInput();
         }
@@ -71,7 +75,7 @@ namespace Sci.Production.IE
             paras.Add(new SqlParameter("@inline1", this.inline1));
             paras.Add(new SqlParameter("@inline2", this.inline2));
 
-            sqlCmd.Append(string.Format(
+            sqlCmd.Append(
                 @"
 select l.FactoryID
 	, l.StyleID
@@ -99,8 +103,10 @@ outer apply (
 	select [Version] = max(Version)
 	from LineMapping l2 WITH (NOLOCK) 
     where l.StyleID = l2.StyleID and l.SeasonID = l2.SeasonID and l.BrandID = l2.BrandID
-)lMax
-where EXISTS (
+)lMax");
+
+sqlCmd.Append(@"
+            where EXISTS (
 	select 1
 	from SewingSchedule s WITH (NOLOCK)
 	left join Orders o WITH (NOLOCK) on s.OrderID = o.ID
