@@ -97,14 +97,6 @@ BEGIN
 	-------------PulloutPort-------------------
 	RAISERROR('PulloutPort  - Starts',0,0)
 	select * into dbo.PulloutPort from (select * from ProductionTPE.dbo.PulloutPort ) as tmp
-	
-	-------------SubProDefectCode-------------------
-	RAISERROR('MachineTypeTPE  - Starts',0,0)
-	select * into dbo.MachineTypeTPE from (select * from ProductionTPE.dbo.MachineTypeTPE ) as tmp
-	
-	-------------SubProDefectCode-------------------
-	RAISERROR('ArtworkType_FTY  - Starts',0,0)
-	select * into dbo.ArtworkType_FTY from (select * from ProductionTPE.dbo.ArtworkType_FTY ) as tmp
 
 	-------------Mold-------------------
 	RAISERROR('MoldTPE  - Starts',0,0)
@@ -172,6 +164,10 @@ BEGIN
 	-------------AccessoryDefect-------------------
 	RAISERROR('AccessoryDefect  - Starts',0,0)
 	select * into dbo.AccessoryDefect from (select * from ProductionTPE.dbo.AccessoryDefect ) as tmp
+
+	-------------MachineType_Detail-------------------
+	RAISERROR('MachineType_Detail  - Starts',0,0)
+	select * into dbo.MachineType_Detail from (select * from ProductionTPE.dbo.MachineType_Detail ) as tmp
 
 	set transaction isolation level read committed
 END
