@@ -47,33 +47,39 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(449, 12);
+            this.print.TabIndex = 7;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(449, 48);
+            this.toexcel.TabIndex = 8;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(449, 84);
+            this.close.TabIndex = 9;
             // 
             // buttonCustomized
             // 
             this.buttonCustomized.Location = new System.Drawing.Point(403, 122);
+            this.buttonCustomized.TabIndex = 17;
             // 
             // checkUseCustomized
             // 
             this.checkUseCustomized.Location = new System.Drawing.Point(417, 128);
+            this.checkUseCustomized.TabIndex = 18;
             // 
             // txtVersion
             // 
             this.txtVersion.Location = new System.Drawing.Point(429, 131);
+            this.txtVersion.TabIndex = 19;
             // 
             // labelFactory
             // 
             this.labelFactory.Location = new System.Drawing.Point(9, 87);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(85, 23);
-            this.labelFactory.TabIndex = 94;
+            this.labelFactory.TabIndex = 12;
             this.labelFactory.Text = "Factory";
             // 
             // labelStyle
@@ -81,7 +87,7 @@
             this.labelStyle.Location = new System.Drawing.Point(9, 122);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(85, 23);
-            this.labelStyle.TabIndex = 95;
+            this.labelStyle.TabIndex = 13;
             this.labelStyle.Text = "Style#";
             // 
             // labelSeason
@@ -89,7 +95,7 @@
             this.labelSeason.Location = new System.Drawing.Point(9, 158);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(85, 23);
-            this.labelSeason.TabIndex = 96;
+            this.labelSeason.TabIndex = 14;
             this.labelSeason.Text = "Season";
             // 
             // lbToolType
@@ -97,7 +103,7 @@
             this.lbToolType.Location = new System.Drawing.Point(9, 194);
             this.lbToolType.Name = "lbToolType";
             this.lbToolType.Size = new System.Drawing.Size(85, 23);
-            this.lbToolType.TabIndex = 97;
+            this.lbToolType.TabIndex = 15;
             this.lbToolType.Text = "Tool Type";
             // 
             // comboToolType
@@ -132,7 +138,7 @@
             this.dateInlineDate.Location = new System.Drawing.Point(97, 12);
             this.dateInlineDate.Name = "dateInlineDate";
             this.dateInlineDate.Size = new System.Drawing.Size(280, 23);
-            this.dateInlineDate.TabIndex = 1;
+            this.dateInlineDate.TabIndex = 0;
             // 
             // txtfactory
             // 
@@ -187,7 +193,7 @@
             this.lbVersion.Location = new System.Drawing.Point(9, 232);
             this.lbVersion.Name = "lbVersion";
             this.lbVersion.Size = new System.Drawing.Size(85, 23);
-            this.lbVersion.TabIndex = 104;
+            this.lbVersion.TabIndex = 16;
             this.lbVersion.Text = "Version";
             // 
             // lbInlineDate
@@ -199,7 +205,7 @@
             this.lbInlineDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.lbInlineDate.RectStyle.ExtBorderWidth = 1F;
             this.lbInlineDate.Size = new System.Drawing.Size(85, 23);
-            this.lbInlineDate.TabIndex = 105;
+            this.lbInlineDate.TabIndex = 10;
             this.lbInlineDate.Text = "Inline Date";
             this.lbInlineDate.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.lbInlineDate.TextStyle.Color = System.Drawing.Color.Black;
@@ -213,7 +219,7 @@
             this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.label1.RectStyle.ExtBorderWidth = 1F;
             this.label1.Size = new System.Drawing.Size(85, 23);
-            this.label1.TabIndex = 240;
+            this.label1.TabIndex = 11;
             this.label1.Text = "Sewing Date";
             this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label1.TextStyle.Color = System.Drawing.Color.Black;
@@ -238,7 +244,7 @@
             this.dateSewingDate.Location = new System.Drawing.Point(97, 48);
             this.dateSewingDate.Name = "dateSewingDate";
             this.dateSewingDate.Size = new System.Drawing.Size(280, 23);
-            this.dateSewingDate.TabIndex = 239;
+            this.dateSewingDate.TabIndex = 1;
             // 
             // R03
             // 

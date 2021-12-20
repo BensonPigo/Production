@@ -46,7 +46,7 @@ namespace Sci.Production.IE
         {
             if (!this.dateInlineDate.HasValue1 || !this.dateInlineDate.HasValue2 || !this.dateSewingDate.HasValue1 || !this.dateSewingDate.HasValue2)
             {
-                MyUtility.Msg.InfoBox("Please input <Inline Date> or <Sewing Date> first!!");
+                MyUtility.Msg.InfoBox("Please input <Inline Date> and <Sewing Date> first!!");
                 return false;
             }
 
@@ -104,16 +104,41 @@ outer apply (
 	from LineMapping l2 WITH (NOLOCK) 
     where l.StyleID = l2.StyleID and l.SeasonID = l2.SeasonID and l.BrandID = l2.BrandID
 )lMax");
+            if (!MyUtility.Check.Empty(this.sewingline1) || !MyUtility.Check.Empty(this.sewingline2))
+            {
+                sqlCmd.Append($@"
+outer apply(
+	SELECT MaxOffLine = max(s.Offline), MinInLine = min(s.Inline)
+	FROM SewingSchedule s WITH(NOLOCK)
+	INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID
+	WHERE 1=1
+	AND ( 
+		(Cast(s.Inline as Date) >= convert(varchar(10), '{this.sewingline1}', 120) AND Cast( s.Inline as Date) <= '{this.sewingline2}' )
+		OR
+		(Cast(s.Offline as Date) >= '{this.sewingline1}' AND Cast( s.Offline as Date) <= '{this.sewingline2}' )
+	)
+	and o.StyleID = l.StyleID and o.SeasonID = l.SeasonID and o.BrandID = l.BrandID
+)SewingDate
+");
+            }
 
-sqlCmd.Append(@"
-            where EXISTS (
+            string dateSewing = string.Empty;
+            if (!MyUtility.Check.Empty(this.sewingline1) && !MyUtility.Check.Empty(this.sewingline2))
+            {
+                dateSewing += "and convert(varchar(10), s.Inline, 120) >= SewingDate.MinInLine ";
+                dateSewing += "and convert(varchar(10), s.Offline, 120) <= SewingDate.MaxOffLine ";
+            }
+
+            sqlCmd.Append($@"
+where EXISTS (
 	select 1
 	from SewingSchedule s WITH (NOLOCK)
 	left join Orders o WITH (NOLOCK) on s.OrderID = o.ID
 	where s.Inline >= @inline1 
     and s.Inline <= @inline2 
+    {dateSewing}
     and o.StyleID=l.StyleID and o.SeasonID=l.SeasonID and o.BrandID = l.BrandID
-)" + Environment.NewLine));
+)" + Environment.NewLine);
 
             if (!MyUtility.Check.Empty(this.factory))
             {

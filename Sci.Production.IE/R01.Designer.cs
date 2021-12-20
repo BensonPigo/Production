@@ -36,7 +36,6 @@
             this.txtFactory = new Sci.Win.UI.TextBox();
             this.txtStyle = new Sci.Win.UI.TextBox();
             this.txtSeason = new Sci.Win.UI.TextBox();
-            this.labelInlineDate = new Sci.Win.UI.Label();
             this.dateInlineDate = new Sci.Win.UI.DateRange();
             this.lbReportType = new Sci.Win.UI.Label();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
@@ -46,23 +45,24 @@
             this.comboSewingTeam1 = new Sci.Production.Class.ComboSewingTeam(this.components);
             this.dateSewingDate = new Sci.Win.UI.DateRange();
             this.lbInlineDate = new Sci.Win.UI.Label();
+            this.labelInlineDate = new Sci.Win.UI.Label();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
             this.print.Location = new System.Drawing.Point(446, 13);
-            this.print.TabIndex = 4;
+            this.print.TabIndex = 8;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(446, 49);
-            this.toexcel.TabIndex = 5;
+            this.toexcel.TabIndex = 9;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(446, 85);
-            this.close.TabIndex = 6;
+            this.close.TabIndex = 10;
             // 
             // labelFactory
             // 
@@ -129,14 +129,6 @@
             this.txtSeason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeason_PopUp);
             this.txtSeason.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSeason_Validating);
             // 
-            // labelInlineDate
-            // 
-            this.labelInlineDate.Location = new System.Drawing.Point(13, 152);
-            this.labelInlineDate.Name = "labelInlineDate";
-            this.labelInlineDate.Size = new System.Drawing.Size(86, 23);
-            this.labelInlineDate.TabIndex = 98;
-            this.labelInlineDate.Text = "Inline Date";
-            // 
             // dateInlineDate
             // 
             // 
@@ -157,7 +149,7 @@
             this.dateInlineDate.Location = new System.Drawing.Point(102, 150);
             this.dateInlineDate.Name = "dateInlineDate";
             this.dateInlineDate.Size = new System.Drawing.Size(280, 23);
-            this.dateInlineDate.TabIndex = 99;
+            this.dateInlineDate.TabIndex = 4;
             // 
             // lbReportType
             // 
@@ -174,7 +166,7 @@
             this.radioPanel1.Location = new System.Drawing.Point(102, 220);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(192, 25);
-            this.radioPanel1.TabIndex = 232;
+            this.radioPanel1.TabIndex = 6;
             // 
             // radioSummary
             // 
@@ -207,7 +199,7 @@
             this.chkBalancing.Location = new System.Drawing.Point(102, 254);
             this.chkBalancing.Name = "chkBalancing";
             this.chkBalancing.Size = new System.Drawing.Size(297, 21);
-            this.chkBalancing.TabIndex = 234;
+            this.chkBalancing.TabIndex = 7;
             this.chkBalancing.Text = "Only show not hit line balancing target item";
             this.chkBalancing.UseVisualStyleBackColor = true;
             // 
@@ -223,7 +215,7 @@
             this.comboSewingTeam1.Name = "comboSewingTeam1";
             this.comboSewingTeam1.OldText = "";
             this.comboSewingTeam1.Size = new System.Drawing.Size(88, 24);
-            this.comboSewingTeam1.TabIndex = 235;
+            this.comboSewingTeam1.TabIndex = 3;
             // 
             // dateSewingDate
             // 
@@ -245,7 +237,7 @@
             this.dateSewingDate.Location = new System.Drawing.Point(102, 182);
             this.dateSewingDate.Name = "dateSewingDate";
             this.dateSewingDate.Size = new System.Drawing.Size(280, 23);
-            this.dateSewingDate.TabIndex = 237;
+            this.dateSewingDate.TabIndex = 5;
             // 
             // lbInlineDate
             // 
@@ -261,9 +253,24 @@
             this.lbInlineDate.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.lbInlineDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // labelInlineDate
+            // 
+            this.labelInlineDate.Location = new System.Drawing.Point(13, 150);
+            this.labelInlineDate.Name = "labelInlineDate";
+            this.labelInlineDate.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelInlineDate.RectStyle.BorderWidth = 1F;
+            this.labelInlineDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelInlineDate.RectStyle.ExtBorderWidth = 1F;
+            this.labelInlineDate.Size = new System.Drawing.Size(86, 23);
+            this.labelInlineDate.TabIndex = 239;
+            this.labelInlineDate.Text = "Inline Date";
+            this.labelInlineDate.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelInlineDate.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // R01
             // 
             this.ClientSize = new System.Drawing.Size(531, 320);
+            this.Controls.Add(this.labelInlineDate);
             this.Controls.Add(this.lbInlineDate);
             this.Controls.Add(this.dateSewingDate);
             this.Controls.Add(this.comboSewingTeam1);
@@ -271,7 +278,6 @@
             this.Controls.Add(this.lbReportType);
             this.Controls.Add(this.radioPanel1);
             this.Controls.Add(this.dateInlineDate);
-            this.Controls.Add(this.labelInlineDate);
             this.Controls.Add(this.txtSeason);
             this.Controls.Add(this.txtStyle);
             this.Controls.Add(this.txtFactory);
@@ -298,7 +304,6 @@
             this.Controls.SetChildIndex(this.txtFactory, 0);
             this.Controls.SetChildIndex(this.txtStyle, 0);
             this.Controls.SetChildIndex(this.txtSeason, 0);
-            this.Controls.SetChildIndex(this.labelInlineDate, 0);
             this.Controls.SetChildIndex(this.dateInlineDate, 0);
             this.Controls.SetChildIndex(this.radioPanel1, 0);
             this.Controls.SetChildIndex(this.lbReportType, 0);
@@ -306,6 +311,7 @@
             this.Controls.SetChildIndex(this.comboSewingTeam1, 0);
             this.Controls.SetChildIndex(this.dateSewingDate, 0);
             this.Controls.SetChildIndex(this.lbInlineDate, 0);
+            this.Controls.SetChildIndex(this.labelInlineDate, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -322,7 +328,6 @@
         private Win.UI.TextBox txtFactory;
         private Win.UI.TextBox txtStyle;
         private Win.UI.TextBox txtSeason;
-        private Win.UI.Label labelInlineDate;
         private Win.UI.DateRange dateInlineDate;
         private Win.UI.Label lbReportType;
         private Win.UI.RadioPanel radioPanel1;
@@ -332,5 +337,6 @@
         private Class.ComboSewingTeam comboSewingTeam1;
         private Win.UI.DateRange dateSewingDate;
         private Win.UI.Label lbInlineDate;
+        private Win.UI.Label labelInlineDate;
     }
 }

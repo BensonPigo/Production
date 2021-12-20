@@ -93,6 +93,12 @@ namespace Sci.Production.IE
         /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
+            if (!this.dateInlineDate.HasValue1 || !this.dateInlineDate.HasValue2 || !this.dateSewingDate.HasValue1 || !this.dateSewingDate.HasValue2)
+            {
+                MyUtility.Msg.InfoBox("Please input <Inline Date> and <Sewing Date> first!!");
+                return false;
+            }
+
             this.factory = this.txtFactory.Text;
             this.style = this.txtStyle.Text;
             this.season = this.txtSeason.Text;
@@ -291,7 +297,7 @@ and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (
                 if (!MyUtility.Check.Empty(this.sewingline1) || !MyUtility.Check.Empty(this.sewingline2))
                 {
                     this.sqlCmd.Append($@"
- outer apply(
+outer apply(
 	SELECT MaxOffLine = max(s.Offline), MinInLine = min(s.Inline)
 	FROM SewingSchedule s WITH(NOLOCK)
 	INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID
@@ -302,7 +308,7 @@ and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (
 		(Cast(s.Offline as Date) >= '{this.sewingline1}' AND Cast( s.Offline as Date) <= '{this.sewingline2}' )
 	)
 	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
- )SewingDate
+)SewingDate
 ");
                 }
 
@@ -319,8 +325,8 @@ and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (
 
                 if (!MyUtility.Check.Empty(this.sewingline1) && !MyUtility.Check.Empty(this.sewingline2))
                 {
-                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) >= '{0}' ", this.sewingline1);
-                    dateQuery += string.Format("and convert(varchar(10), ss.Offline, 120) <= '{0}' ", this.sewingline2);
+                    dateQuery += "and convert(varchar(10), ss.Inline, 120) >= SewingDate.MinInLine ";
+                    dateQuery += "and convert(varchar(10), ss.Offline, 120) <= SewingDate.MaxOffLine ";
                 }
 
                 this.sqlCmd.Append($@"
