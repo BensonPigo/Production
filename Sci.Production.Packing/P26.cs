@@ -707,13 +707,12 @@ AND (pu.Status IS NULL OR pu.Status NOT IN ('Confirmed', 'Locked'))
 
             var idList = updateModelList.Select(o => new { o.PackingListID, o.RefNo }).Distinct().ToList();
 
-            string p24_Head_cmd = string.Empty;
+            string p24_Head_cmd = "SET XACT_ABORT ON";
             int ii = 0;
             foreach (var item in idList)
             {
                 #region SQL
                 p24_Head_cmd += $@"
-SET XACT_ABORT ON
 --找出哪個箱子種類包含混尺碼
 SELECT [PackingListID]=pd.ID ,pd.Ukey
 INTO #MixCarton{ii}
@@ -767,11 +766,12 @@ DELETE picd
 FROM ShippingMarkPic pic
 INNER JOIN ShippingMarkPic_Detail picd ON pic.Ukey = picd.ShippingMarkPicUkey
 INNER JOIN #tmp_Pic{ii} t ON pic.PackingListID = t.PackingListID 
-
+/*
 DELETE picd
 FROM ShippingMarkPic pic
 INNER JOIN [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail picd ON pic.Ukey = picd.ShippingMarkPicUkey
 INNER JOIN #tmp_Pic{ii} t ON pic.PackingListID = t.PackingListID 
+*/
 
 DELETE p
 FROM ShippingMarkPic p
@@ -945,7 +945,6 @@ INSERT [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
 SELECT 
 	 [ShippingMarkPicUkey]=pic.Ukey
 	,t.SCICtnNo
-	,t.ShippingMarkCombinationUkey
 	,t.ShippingMarkTypeUkey
 FROM #tmp_Pic_Detail{i} t
 INNER JOIN ShippingMarkPicture a ON a.BrandID = t.BrandID AND a.CTNRefno = t.RefNo AND a.ShippingMarkCombinationUkey = t.ShippingMarkCombinationUkey AND a.Category ='PIC' 
@@ -959,6 +958,9 @@ INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
                 i++;
             }
 
+            #region 註解
+
+            /*
             // P24表頭表身寫入
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
             {
@@ -999,6 +1001,66 @@ INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
                     this.ShowErr(ex);
                     return false;
                 }
+            }
+            */
+            #endregion
+
+            // P24表頭表身寫入
+            try
+            {
+                // 開始更新DB
+                foreach (var p24_Head in p24_HeadList)
+                {
+                    if (!(result = DBProxy.Current.Execute(null, p24_Head.ToString())))
+                    {
+                        this.ShowErr(result);
+                        return false;
+                    }
+                }
+
+                int idx = 0;
+                foreach (DataTable dt in dtList)
+                {
+                    string cmd = p24_BodyList[idx];
+
+                    if (!(result = DBProxy.Current.Execute(null, cmd)))
+                    {
+                        this.ShowErr(result);
+                        return false;
+                    }
+
+                    idx++;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // 該Packing只要其中一張圖片出錯，則該Packing全部把先前的圖片刪除
+                string cmd = $@"
+DELETE 
+FROM ShippingMarkPic_Detail
+WHERE ShippingMarkPicUkey In (
+    SELECT Ukey
+    FROM ShippingMarkPic
+    WHERE PackingListID IN ('{idList.ToList().Select(o => o.PackingListID).JoinToString("','")}')
+) 
+
+DELETE 
+FROM [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
+WHERE ShippingMarkPicUkey In (
+    SELECT Ukey
+    FROM ShippingMarkPic
+    WHERE PackingListID IN ('{idList.ToList().Select(o => o.PackingListID).JoinToString("','")}')
+) 
+
+DELETE 
+FROM ShippingMarkPic
+WHERE PackingListID IN ('{idList.ToList().Select(o => o.PackingListID).JoinToString("','")}'
+";
+                DBProxy.Current.Execute(null, cmd);
+
+                this.ShowErr(ex);
+                return false;
             }
 
             // P24圖片寫入，By Packing 逐一執行
@@ -1181,8 +1243,8 @@ where a.PackingListID IN ('{packingID}')
         private bool InsertImage(List<string> sQLs, List<string> filenames, List<byte[]> images)
         {
             DualResult result;
-            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
-            {
+            //using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
+            //{
                 DBProxy.Current.DefaultTimeout = 3600;
                 try
                 {
@@ -1216,7 +1278,7 @@ where a.PackingListID IN ('{packingID}')
                             result = DBProxy.Current.Execute(null, finalSQL, para);
                             if (!result)
                             {
-                                transactionscope.Dispose();
+                                //transactionscope.Dispose();
                                 throw result.GetException();
                             }
 
@@ -1228,15 +1290,15 @@ where a.PackingListID IN ('{packingID}')
                         total++;
                     }
 
-                    transactionscope.Complete();
-                    transactionscope.Dispose();
+                    //transactionscope.Complete();
+                    //transactionscope.Dispose();
                 }
                 catch (Exception ex)
                 {
-                    transactionscope.Dispose();
+                    //transactionscope.Dispose();
                     throw ex;
                 }
-            }
+            //}
 
             return true;
         }
