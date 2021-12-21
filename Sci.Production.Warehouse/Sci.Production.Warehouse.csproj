@@ -181,6 +181,12 @@
     <Compile Include="P10_AssignReleaser.Designer.cs">
       <DependentUpon>P10_AssignReleaser.cs</DependentUpon>
     </Compile>
+    <Compile Include="P07_QRCodeSticker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P07_QRCodeSticker.Designer.cs">
+      <DependentUpon>P07_QRCodeSticker.cs</DependentUpon>
+    </Compile>
     <Compile Include="P18_Print.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1493,6 +1499,9 @@
     <EmbeddedResource Include="P03_ReturnQty.resx">
       <DependentUpon>P03_ReturnQty.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P07_QRCodeSticker.resx">
+      <DependentUpon>P07_QRCodeSticker.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P33_QTThread_Detail.resx">
       <DependentUpon>P33_QTThread_Detail.cs</DependentUpon>
     </EmbeddedResource>
@@ -1504,7 +1513,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P33_ThreadColorCombination.resx">
       <DependentUpon>P33_ThreadColorCombination.cs</DependentUpon>
-	</EmbeddedResource>
+    </EmbeddedResource>
     <EmbeddedResource Include="P10_AssignReleaser.resx">
       <DependentUpon>P10_AssignReleaser.cs</DependentUpon>
     </EmbeddedResource>
