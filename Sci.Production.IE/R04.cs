@@ -72,8 +72,6 @@ namespace Sci.Production.IE
         {
             StringBuilder sqlCmd = new StringBuilder();
             List<SqlParameter> paras = new List<SqlParameter>();
-            //paras.Add(new SqlParameter("@inline1", this.inline1));
-            //paras.Add(new SqlParameter("@inline2", this.inline2));
 
             sqlCmd.Append(
                 $@"

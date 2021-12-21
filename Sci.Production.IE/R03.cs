@@ -20,10 +20,6 @@ namespace Sci.Production.IE
         private string season;
         private string toolType;
         private string version;
-        //private string inline1;
-        //private string inline2;
-        //private string sewingline1;
-        //private string sewingline2;
         private DataTable printData;
 
         /// <summary>
@@ -55,10 +51,6 @@ namespace Sci.Production.IE
             this.season = this.txtseason.Text;
             this.toolType = MyUtility.Convert.GetString(this.comboToolType.SelectedValue);
             this.version = MyUtility.Convert.GetString(this.comboVersion.SelectedValue);
-            //this.inline1 = this.dateInlineDate.Value1.Value.ToString("yyyyMMdd");
-            //this.inline2 = this.dateInlineDate.Value2.Value.ToString("yyyyMMdd");
-            //this.sewingline1 = string.Format("{0:yyyy-MM-dd}", this.dateSewingDate.Value1);
-            //this.sewingline2 = string.Format("{0:yyyy-MM-dd}", this.dateSewingDate.Value2);
 
             return base.ValidateInput();
         }
@@ -72,8 +64,6 @@ namespace Sci.Production.IE
         {
             StringBuilder sqlCmd = new StringBuilder();
             List<SqlParameter> paras = new List<SqlParameter>();
-            //paras.Add(new SqlParameter("@inline1", this.inline1));
-            //paras.Add(new SqlParameter("@inline2", this.inline2));
 
             sqlCmd.Append(
                 @"
