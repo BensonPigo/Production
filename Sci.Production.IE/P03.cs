@@ -147,8 +147,8 @@ from (
 		    , IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
 	    from Operation o2 WITH (NOLOCK)
 	    inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
-        left join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = '{1}'
-	    where o.ID = o2.ID
+        inner join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = '{1}'
+	    where o.ID = o2.ID and m.junk = 0
     )show
     where ld.ID = '{0}' 
 )ld
@@ -1700,8 +1700,8 @@ outer apply (
 		, IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
 	from Operation o2 WITH (NOLOCK)
 	inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
-    left join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = '{1}'	
-	where o.ID = o2.ID
+    inner join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = '{1}'	
+	where o.ID = o2.ID and m.junk = 0
 )show
 where ld.ID = {0} 
 order by case when ld.No = '' then 1
@@ -1841,10 +1841,10 @@ from [IETMS_Summary] i
 outer apply (
 	select IsShowinIEP03 = IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0)
 		, IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
-	from ArtworkType at2 WITH (NOLOCK) 
-	inner join MachineType m WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
-    left join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = '{2}'
-	where i.ArtworkTypeID = at2.ID
+	from MachineType_Detail md WITH (NOLOCK) 
+    inner join MachineType m WITH (NOLOCK)  on md.id = m.id
+	where i.MachineTypeID = md.ID and  md.FactoryID = '{2}'
+    and m.junk = 0
 )show
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Cutting'
 union all
@@ -1896,8 +1896,8 @@ outer apply (
 		, IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
 	from Operation o2 WITH (NOLOCK)
 	inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
-    left join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = '{2}'	
-	where o.ID = o2.ID
+    inner join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = '{2}'	
+	where o.ID = o2.ID and m.junk = 0
 )show
 where td.ID = '{1}'
 union all
@@ -1931,11 +1931,12 @@ from [IETMS_Summary] i
 outer apply (
 	select IsShowinIEP03 = IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0)
 		, IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
-	from ArtworkType at2 WITH (NOLOCK) 
-	inner join MachineType m WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
-    left join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = '{2}'
-	where i.ArtworkTypeID = at2.ID
+	from MachineType_Detail md WITH (NOLOCK) 
+    inner join MachineType m WITH (NOLOCK) on md.id = m.id
+	where i.MachineTypeID = md.ID and  md.FactoryID = '{2}'
+    and m.junk = 0
 )show
+
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Inspection'
 union all
 select distinct
@@ -1968,10 +1969,10 @@ from [IETMS_Summary] i
 outer apply (
 	select IsShowinIEP03 = IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0)
 		, IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
-	from ArtworkType at2 WITH (NOLOCK) 
-	inner join MachineType m WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
-    left join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = '{2}'
-	where i.ArtworkTypeID = at2.ID
+	from MachineType_Detail md WITH (NOLOCK) 
+    inner join MachineType m WITH (NOLOCK) on m.id = md.id
+	where i.MachineTypeID = md.ID and  md.FactoryID = '{2}'
+    and m.junk = 0
 )show
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Pressing'
 union all
@@ -2005,10 +2006,10 @@ from [IETMS_Summary] i
 outer apply (
 	select IsShowinIEP03 = IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0)
 		, IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
-	from ArtworkType at2 WITH (NOLOCK) 
-	inner join MachineType m WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
-    left join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = '{2}'
-	where i.ArtworkTypeID = at2.ID
+	from MachineType_Detail md WITH (NOLOCK) 
+    inner join MachineType m WITH (NOLOCK) on md.id = m.id
+	where i.MachineTypeID = md.ID and  md.FactoryID = '{2}'
+    and m.junk = 0
 )show
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing'
 )ld",
