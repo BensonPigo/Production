@@ -29,7 +29,7 @@ select s.id
 	,sd.ComboType
 	,[ActManPower] = s.Manpower
 	,sd.WorkHour
-	,sd.QAQty
+	,sdd.QAQty
 	,sd.InlineQty
 	,o.LocalOrder
 	,o.CustPONo
@@ -56,7 +56,7 @@ select s.id
 	,MockupSeason= isnull(mo.SeasonID,'')	
     ,Rate = isnull(Production.dbo.GetOrderLocation_Rate(o.id,sd.ComboType),100)/100
 	,System.StdTMS
-	, [ori_QAQty] = sd.QAQty
+	, [ori_QAQty] = sdd.QAQty
 	, [ori_InlineQty] = sd.InlineQty
     ,BuyerDelivery = format(o.BuyerDelivery,'yyyy/MM/dd')
     ,OrderQty = o.Qty

@@ -27,7 +27,7 @@
 	[Season] [varchar](10) NULL,
 	[CdCodeID] [varchar](15) NULL,
 	[ActualManpower] [numeric](12, 1) NULL,
-	[NoOfHours] [numeric](12, 3) NULL,
+	[NoOfHours] [numeric](10, 4) NULL,
 	[TotalManhours] [numeric](12, 3) NULL,
 	[TargetCPU] [numeric](10, 3) NULL,
 	[TMS] [int] NULL,
