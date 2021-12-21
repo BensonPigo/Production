@@ -766,12 +766,11 @@ DELETE picd
 FROM ShippingMarkPic pic
 INNER JOIN ShippingMarkPic_Detail picd ON pic.Ukey = picd.ShippingMarkPicUkey
 INNER JOIN #tmp_Pic{ii} t ON pic.PackingListID = t.PackingListID 
-/*
+
 DELETE picd
 FROM ShippingMarkPic pic
 INNER JOIN [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail picd ON pic.Ukey = picd.ShippingMarkPicUkey
 INNER JOIN #tmp_Pic{ii} t ON pic.PackingListID = t.PackingListID 
-*/
 
 DELETE p
 FROM ShippingMarkPic p
