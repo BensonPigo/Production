@@ -1084,6 +1084,10 @@
       <Project>{cb61a07f-7d72-490e-aeb6-ba5080f8d652}</Project>
       <Name>Sci.Production.Automation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.CallPmsAPI\Sci.Production.CallPmsAPI.csproj">
+      <Project>{FC94FCAF-9216-4A2D-9E89-15FE27AEF028}</Project>
+      <Name>Sci.Production.CallPmsAPI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
       <Project>{0E35FD31-4A86-4D4E-A393-B6C5E3D7C956}</Project>
       <Name>Sci.Production.Class</Name>

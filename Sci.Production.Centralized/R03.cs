@@ -147,8 +147,11 @@ namespace Sci.Production.Centralized
             List<string> connectionString = new List<string>();
             foreach (string ss in strSevers)
             {
-                var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-                connectionString.Add(connections);
+                if (!MyUtility.Check.Empty(ss))
+                {
+                    var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
+                    connectionString.Add(connections);
+                }
             }
 
             if (connectionString == null || connectionString.Count == 0)
@@ -185,12 +188,14 @@ Select o.ID, o.ProgramID, o.StyleID, o.SeasonID
 ,StyleDesc = s.Description
 ,s.ModularParent, s.CPUAdjusted
 ,OutputDate,Shift, Team
-,SCategory = so.Category, CPUFactor
+,SCategory = so.Category,o.CPUFactor
 , [FtyZone]=f.FtyZone
 ,orderid
 ,Rate = isnull([dbo].[GetOrderLocation_Rate]( o.id ,sod.ComboType)/100,1) 
 ,ActManPower= so.Manpower
 ,c.ProductionFamilyID
+, [MockupCPU] = isnull(mo.Cpu,0)
+, [MockupCPUFactor] = isnull(mo.CPUFactor,0)
 into #stmp
 from Orders o WITH (NOLOCK) 
     inner join SewingOutput_Detail sod WITH (NOLOCK) on sod.OrderId = o.ID
@@ -199,6 +204,7 @@ from Orders o WITH (NOLOCK)
     inner join CDCode c WITH (NOLOCK) on c.ID = o.CdCodeID
 	inner join Factory f WITH (NOLOCK) on o.FactoryID=f.id
     inner join Brand b WITH (NOLOCK) on o.BrandID=b.ID
+	left join MockupOrder mo WITH (NOLOCK) on mo.ID = sod.OrderId
 outer apply( select BrandID from orders o1 where o.CustPONo = o1.id) Order2
 outer apply( select top 1 BrandID from Style where id = o.StyleID 
     and SeasonID = o.SeasonID and BrandID != 'SUBCON-I') StyleBrand
@@ -293,30 +299,6 @@ and ((o.LocalOrder = 1 and o.SubconInType in ('1','2')) or (o.LocalOrder = 0 and
                 }
 
                 strSQL += @"
-select OutputDate
-,Category
-, Shift
-, SewingLineID
-, Team
-, OrderId 
-, ComboType
-, SCategory
-, FactoryID
-, ProgramID
-, CPU
-, CPUFactor
-, StyleID
-, Rate
-, FtyZone
-, ProductionFamilyID
-, QAQty = sum(QAQty)
-, ActManPower= ActManPower
-, WorkHour = sum(Round(WorkHour,3))
-into #stmp2		
-from #stmp
-group by OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID
-, ProgramID, CPU, CPUFactor, StyleID, Rate,FtyZone, ProductionFamilyID, ActManPower
-
 select a.ID
     , a.ProgramID
     , a.StyleID
@@ -340,26 +322,14 @@ select a.ID
     , WorkHour = sum(Round(a.WorkHour,2)) 
     , QARate = convert(numeric(12,2)
     , sum(a.QARate))
-    , TotalManHour =
-        (select sum(ROUND( ActManPower * WorkHour, 2)) 
-	    from #stmp2 f 
-	    where f.FtyZone = a.FtyZone and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID 
-	    and f.orderid = a.orderid
-	    and f.CPU = a.CPU and f.CPUFactor = a.CPUFactor and f.Rate = a.Rate
-	    and f.OutputDate=a.OutputDate and f.Category = a.Category and f.Shift = a.Shift and f.Team = a.Team and f.ComboType = a.ComboType and f.SCategory = a.SCategory)
+    , TotalManHour = sum(ROUND( ActManPower * WorkHour, 2))
+    , TotalCPUOut = Sum(ROUND(IIF(Category='M',MockupCPU*MockupCPUFactor, CPU*CPUFactor*Rate)*QAQty,3))
     , a.CDDesc
     , a.StyleDesc
     , a.ModularParent
     , a.ProductionFamilyID
     , CPUAdjusted = sum(a.CPUAdjusted)
-    ,QAQty = sum(a.QAQty) 
-    ,TotalCPUOut =
-	    (select sum(Round(CPU * CPUFactor * Rate * QAQty,2))  
-	    from #stmp2 f 
-	    where f.FtyZone = a.FtyZone and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID 
-	    and f.orderid = a.orderid
-	    and f.CPU = a.CPU and f.CPUFactor = a.CPUFactor and f.Rate = a.Rate
-	    and f.OutputDate=a.OutputDate and f.Category = a.Category and f.Shift = a.Shift and f.Team = a.Team and f.ComboType = a.ComboType and f.SCategory = a.SCategory)
+    , QAQty = sum(a.QAQty) 
     ,a.OutputDate
 into #tmpz
 from #stmp a

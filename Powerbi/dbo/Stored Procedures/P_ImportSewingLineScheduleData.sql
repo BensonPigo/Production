@@ -89,7 +89,10 @@ SET
 	t.Construction = s.Construction,
 	t.[TTL_PRINTING (PCS)] = s.[TTL_PRINTING (PCS)],
 	t.[TTL_PRINTING PPU (PPU)] = s.[TTL_PRINTING PPU (PPU)],
-	t.SubCon = s.SubCon
+	t.SubCon = s.SubCon,
+	t.[Subcon Qty] = s.[Subcon Qty],
+	t.[Std Qty for printing] = s.[Std Qty for printing],
+	t.StyleName = s.StyleName
 from P_SewingLineSchedule t
 inner join #Final s on t.APSNo=s.APSNo  
    AND t.SewingDay=s.SewingDay 
@@ -107,7 +110,7 @@ insert into P_SewingLineSchedule
       ,[MTLETA] ,[ArtworkType] ,[InspectionDate] ,[Remarks]  ,[CuttingOutput],[SewingOutput]
       ,[ScannedQty] ,[ClogQty] ,[Sewer] ,[SewingCPU],[BrandID],[Orig_WorkHourPerDay],[New_SwitchTime],[FirststCuttingOutputDate]
 	  ,[CDCodeNew] ,[ProductType] ,[FabricType] ,[Lining] ,[Gender] ,[Construction]
-	  ,[TTL_PRINTING (PCS)],[TTL_PRINTING PPU (PPU)],SubCon)
+	  ,[TTL_PRINTING (PCS)],[TTL_PRINTING PPU (PPU)],SubCon,[Subcon Qty],[Std Qty for printing],StyleName)
 select s.APSNo,	s.SewingLineID,	s.SewingDay,	s.SewingStartTime,	s.SewingEndTime,	s.MDivisionID,
 	s.FactoryID,	s.PO,	s.POCount,	s.SP,	s.SPCount,	s.EarliestSCIdelivery,	s.LatestSCIdelivery,	s.EarliestBuyerdelivery,
 	s.LatestBuyerdelivery,	s.Category,	s.Colorway,	s.ColorwayCount,	s.CDCode,	s.ProductionFamilyID,	s.Style,	s.StyleCount,
@@ -116,7 +119,7 @@ select s.APSNo,	s.SewingLineID,	s.SewingDay,	s.SewingStartTime,	s.SewingEndTime,
 	s.ArtworkType,	s.InspectionDate,	s.Remarks,	s.CuttingOutput,	s.SewingOutput,	s.ScannedQty,	s.ClogQty,
 	s.Sewer,	s.SewingCPU,	s.BrandID,	s.Orig_WorkHourPerDay,	s.New_SwitchTime,	s.FirststCuttingOutputDate,
 	s.CDCodeNew , s.ProductType, s.FabricType, s.Lining, s.Gender, s.Construction,
-	s.[TTL_PRINTING (PCS)],s.[TTL_PRINTING PPU (PPU)],s.SubCon
+	s.[TTL_PRINTING (PCS)],s.[TTL_PRINTING PPU (PPU)],s.SubCon,s.[Subcon Qty],s.[Std Qty for printing],s.StyleName
 from #Final s
 where not exists(
 	select 1 from P_SewingLineSchedule t 
@@ -158,4 +161,3 @@ SET @SqlCmd_Combin = @SqlCmd1
 EXEC sp_executesql @SqlCmd_Combin
 
 END
-

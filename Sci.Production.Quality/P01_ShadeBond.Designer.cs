@@ -64,8 +64,6 @@
             this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             this.txtShadeboneInspector = new Sci.Win.UI.TextBox();
             this.labinspector = new Sci.Win.UI.Label();
-            this.btnInspectedallpass = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
             this.btnPrintFormatReport8 = new System.Windows.Forms.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
@@ -75,6 +73,13 @@
             this.label3 = new Sci.Win.UI.Label();
             this.txtTone = new Sci.Win.UI.TextBox();
             this.btnUpdateTone = new Sci.Win.UI.Button();
+            this.label4 = new Sci.Win.UI.Label();
+            this.label5 = new Sci.Win.UI.Label();
+            this.comboScale = new Sci.Win.UI.ComboBox();
+            this.comboResult = new Sci.Win.UI.ComboBox();
+            this.btnInspected = new Sci.Win.UI.Button();
+            this.label6 = new Sci.Win.UI.Label();
+            this.comboDyelot = new Sci.Win.UI.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -82,13 +87,16 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.btnInspected);
+            this.btmcont.Controls.Add(this.comboResult);
+            this.btmcont.Controls.Add(this.comboScale);
+            this.btmcont.Controls.Add(this.label5);
+            this.btmcont.Controls.Add(this.label4);
             this.btmcont.Controls.Add(this.btnUpdateTone);
             this.btmcont.Controls.Add(this.txtTone);
             this.btmcont.Controls.Add(this.label3);
             this.btmcont.Controls.Add(this.btnPrintFormatReport4);
             this.btmcont.Controls.Add(this.btnPrintFormatReport8);
-            this.btmcont.Controls.Add(this.button1);
-            this.btmcont.Controls.Add(this.btnInspectedallpass);
             this.btmcont.Controls.Add(this.btnToExcel);
             this.btmcont.Location = new System.Drawing.Point(0, 663);
             this.btmcont.Size = new System.Drawing.Size(1008, 76);
@@ -98,18 +106,21 @@
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.btnToExcel, 0);
-            this.btmcont.Controls.SetChildIndex(this.btnInspectedallpass, 0);
-            this.btmcont.Controls.SetChildIndex(this.button1, 0);
             this.btmcont.Controls.SetChildIndex(this.btnPrintFormatReport8, 0);
             this.btmcont.Controls.SetChildIndex(this.btnPrintFormatReport4, 0);
             this.btmcont.Controls.SetChildIndex(this.label3, 0);
             this.btmcont.Controls.SetChildIndex(this.txtTone, 0);
             this.btmcont.Controls.SetChildIndex(this.btnUpdateTone, 0);
+            this.btmcont.Controls.SetChildIndex(this.label4, 0);
+            this.btmcont.Controls.SetChildIndex(this.label5, 0);
+            this.btmcont.Controls.SetChildIndex(this.comboScale, 0);
+            this.btmcont.Controls.SetChildIndex(this.comboResult, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnInspected, 0);
             // 
             // gridcont
             // 
-            this.gridcont.Location = new System.Drawing.Point(12, 172);
-            this.gridcont.Size = new System.Drawing.Size(984, 490);
+            this.gridcont.Location = new System.Drawing.Point(12, 206);
+            this.gridcont.Size = new System.Drawing.Size(984, 456);
             // 
             // append
             // 
@@ -136,14 +147,14 @@
             // 
             this.undo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.undo.Dock = System.Windows.Forms.DockStyle.None;
-            this.undo.Location = new System.Drawing.Point(1093, 41);
+            this.undo.Location = new System.Drawing.Point(1624, 41);
             this.undo.Size = new System.Drawing.Size(75, 30);
             // 
             // save
             // 
             this.save.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.save.Dock = System.Windows.Forms.DockStyle.None;
-            this.save.Location = new System.Drawing.Point(1093, 8);
+            this.save.Location = new System.Drawing.Point(1624, 8);
             this.save.Size = new System.Drawing.Size(75, 30);
             // 
             // displayBrand
@@ -489,28 +500,6 @@
             this.labinspector.TabIndex = 229;
             this.labinspector.Text = "Shadebone Inspector";
             // 
-            // btnInspectedallpass
-            // 
-            this.btnInspectedallpass.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnInspectedallpass.Location = new System.Drawing.Point(283, 8);
-            this.btnInspectedallpass.Name = "btnInspectedallpass";
-            this.btnInspectedallpass.Size = new System.Drawing.Size(161, 30);
-            this.btnInspectedallpass.TabIndex = 128;
-            this.btnInspectedallpass.Text = "Inspected all pass";
-            this.btnInspectedallpass.UseVisualStyleBackColor = true;
-            this.btnInspectedallpass.Click += new System.EventHandler(this.BtnInspectedallpass_Click);
-            // 
-            // button1
-            // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button1.Location = new System.Drawing.Point(283, 41);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(161, 30);
-            this.button1.TabIndex = 131;
-            this.button1.Text = "Inspected all Fail";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.Button1_Click);
-            // 
             // btnPrintFormatReport8
             // 
             this.btnPrintFormatReport8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -600,9 +589,95 @@
             this.btnUpdateTone.UseVisualStyleBackColor = true;
             this.btnUpdateTone.Click += new System.EventHandler(this.BtnUpdateTone_Click);
             // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(266, 12);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(75, 23);
+            this.label4.TabIndex = 236;
+            this.label4.Text = "Scale";
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(430, 12);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(75, 23);
+            this.label5.TabIndex = 237;
+            this.label5.Text = "Result";
+            // 
+            // comboScale
+            // 
+            this.comboScale.BackColor = System.Drawing.Color.White;
+            this.comboScale.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboScale.FormattingEnabled = true;
+            this.comboScale.IsSupportUnselect = true;
+            this.comboScale.Items.AddRange(new object[] {
+            "1",
+            "1-2",
+            "2",
+            "2-3",
+            "3",
+            "3-4",
+            "4",
+            "4-5"});
+            this.comboScale.Location = new System.Drawing.Point(344, 11);
+            this.comboScale.Name = "comboScale";
+            this.comboScale.OldText = "";
+            this.comboScale.Size = new System.Drawing.Size(83, 24);
+            this.comboScale.TabIndex = 238;
+            // 
+            // comboResult
+            // 
+            this.comboResult.BackColor = System.Drawing.Color.White;
+            this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboResult.FormattingEnabled = true;
+            this.comboResult.IsSupportUnselect = true;
+            this.comboResult.Items.AddRange(new object[] {
+            "PASS",
+            "FAIL"});
+            this.comboResult.Location = new System.Drawing.Point(508, 11);
+            this.comboResult.Name = "comboResult";
+            this.comboResult.OldText = "";
+            this.comboResult.Size = new System.Drawing.Size(75, 24);
+            this.comboResult.TabIndex = 239;
+            // 
+            // btnInspected
+            // 
+            this.btnInspected.Location = new System.Drawing.Point(589, 8);
+            this.btnInspected.Name = "btnInspected";
+            this.btnInspected.Size = new System.Drawing.Size(80, 30);
+            this.btnInspected.TabIndex = 240;
+            this.btnInspected.Text = "Inspected";
+            this.btnInspected.UseVisualStyleBackColor = true;
+            this.btnInspected.Click += new System.EventHandler(this.BtnInspected_Click);
+            // 
+            // label6
+            // 
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label6.Location = new System.Drawing.Point(15, 177);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(82, 23);
+            this.label6.TabIndex = 235;
+            this.label6.Text = "Dyelot Filter";
+            // 
+            // comboDyelot
+            // 
+            this.comboDyelot.BackColor = System.Drawing.Color.White;
+            this.comboDyelot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDyelot.FormattingEnabled = true;
+            this.comboDyelot.IsSupportUnselect = true;
+            this.comboDyelot.Location = new System.Drawing.Point(100, 176);
+            this.comboDyelot.Name = "comboDyelot";
+            this.comboDyelot.OldText = "";
+            this.comboDyelot.Size = new System.Drawing.Size(121, 24);
+            this.comboDyelot.TabIndex = 236;
+            this.comboDyelot.TextChanged += new System.EventHandler(this.ComboDyelot_TextChanged);
+            // 
             // P01_ShadeBond
             // 
             this.ClientSize = new System.Drawing.Size(1008, 739);
+            this.Controls.Add(this.comboDyelot);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.displNoofDyelot);
             this.Controls.Add(this.displNoofRoll);
             this.Controls.Add(this.label2);
@@ -691,6 +766,8 @@
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.displNoofRoll, 0);
             this.Controls.SetChildIndex(this.displNoofDyelot, 0);
+            this.Controls.SetChildIndex(this.label6, 0);
+            this.Controls.SetChildIndex(this.comboDyelot, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -738,8 +815,6 @@
         private Win.UI.DateBox dateArriveWHDate;
         private Win.UI.TextBox txtShadeboneInspector;
         private Win.UI.Label labinspector;
-        private Win.UI.Button btnInspectedallpass;
-        private Win.UI.Button button1;
         private System.Windows.Forms.Button btnPrintFormatReport8;
         private Win.UI.Label label1;
         private Win.UI.Label label2;
@@ -749,5 +824,12 @@
         private Win.UI.Button btnUpdateTone;
         private Win.UI.TextBox txtTone;
         private Win.UI.Label label3;
+        private Win.UI.Button btnInspected;
+        private Win.UI.ComboBox comboResult;
+        private Win.UI.ComboBox comboScale;
+        private Win.UI.Label label5;
+        private Win.UI.Label label4;
+        private Win.UI.Label label6;
+        private Win.UI.ComboBox comboDyelot;
     }
 }

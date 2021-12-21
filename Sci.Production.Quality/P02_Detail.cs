@@ -418,16 +418,16 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
 
                         this.EditMode = true; // 因為從上一層進來是false,導致popup功能無法使用,所以才改變EditMode
                         if (MyUtility.Check.Empty(this.dateInspectDate.Value))
-                       {
-                           this.dateInspectDate.Value = DateTime.Today;
-                           this.CurrentData["InspDate"] = string.Format("{0:yyyy-MM-dd}", this.dateInspectDate.Value);
-                       }
+                        {
+                            this.dateInspectDate.Value = DateTime.Today;
+                            this.CurrentData["InspDate"] = string.Format("{0:yyyy-MM-dd}", this.dateInspectDate.Value);
+                        }
 
                         if (MyUtility.Check.Empty(this.txtInspector.TextBox1.Text))
-                       {
-                           this.txtInspector.TextBox1.Text = Env.User.UserID;
-                           this.CurrentData["Inspector"] = Env.User.UserID;
-                       }
+                        {
+                            this.txtInspector.TextBox1.Text = Env.User.UserID;
+                            this.CurrentData["Inspector"] = Env.User.UserID;
+                        }
 
                         if (dt.Rows[0]["Status"].ToString().Trim() == "Confirmed")
                         {
@@ -588,11 +588,13 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
         private void Right_Click(object sender, EventArgs e)
         {
             this.ChangeData();
+            this.LoadPicture();
         }
 
         private void Left_Click(object sender, EventArgs e)
         {
             this.ChangeData();
+            this.LoadPicture();
         }
 
         /// <summary>
@@ -625,7 +627,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
                 foreach (string fileName in file.FileNames)
                 {
                     string virtualSeq = virtualSeqnum.ToString().PadLeft(3, '0');
-                    this.ListDefectImg.Add(new DefectImg { VirtualSeq = virtualSeq, Img = File.ReadAllBytes(fileName), Insert = true });
+                    this.ListDefectImg.Add(new DefectImg { VirtualSeq = virtualSeq, Img = File.ReadAllBytes(fileName), UpdType = DefectImgUpdType.Insert });
                     virtualSeqnum++;
                 }
             }
@@ -635,13 +637,35 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
 
         private void SavePricture(TransactionScope transactionscope)
         {
-            foreach (var item in this.ListDefectImg.Where(w => w.Img != null && w.Insert))
+            foreach (var item in this.ListDefectImg.Where(w => w.Img != null && w.UpdType != DefectImgUpdType.None))
             {
-                List<SqlParameter> paras = new List<SqlParameter> { new SqlParameter($"@Image", item.Img) };
-                string sqlcmd = $@"
+                List<SqlParameter> paras = new List<SqlParameter>();
+                string sqlcmd = string.Empty;
+
+                if (item.UpdType == DefectImgUpdType.Insert)
+                {
+                    paras = new List<SqlParameter> { new SqlParameter($"@Image", item.Img) };
+                    sqlcmd = $@"
 SET XACT_ABORT ON
+INSERT INTO [dbo].[AIR_DefectImage]([AIRID],[ReceivingID],[Image])VALUES('{this.id}','{this.receivingID}',@Image)
+
 INSERT INTO [ExtendServer].PMSFile.dbo.AIR_DefectImage([AIRID],[ReceivingID],[Image])VALUES('{this.id}','{this.receivingID}',@Image)
 ";
+                }
+                else if (item.UpdType == DefectImgUpdType.Remove && item.Ukey > 0)
+                {
+                    paras = new List<SqlParameter> { new SqlParameter($"@Ukey", item.Ukey) };
+                    sqlcmd = $@"
+SET XACT_ABORT ON
+delete [dbo].[AIR_DefectImage] where Ukey = @Ukey
+delete [ExtendServer].PMSFile.dbo.[AIR_DefectImage] where Ukey = @Ukey
+";
+                }
+                else
+                {
+                    continue;
+                }
+
                 DualResult result = DBProxy.Current.Execute("PMSFile", sqlcmd, paras);
                 if (!result)
                 {
@@ -651,7 +675,7 @@ INSERT INTO [ExtendServer].PMSFile.dbo.AIR_DefectImage([AIRID],[ReceivingID],[Im
                 }
             }
 
-            this.ListDefectImg.ForEach(f => f.Insert = false);
+            this.LoadPicture();
         }
 
         private void LoadPicture()
@@ -669,7 +693,7 @@ INSERT INTO [ExtendServer].PMSFile.dbo.AIR_DefectImage([AIRID],[ReceivingID],[Im
             foreach (DataRow dr in dt.Rows)
             {
                 string virtualSeq = virtualSeqnum.ToString().PadLeft(3, '0');
-                this.ListDefectImg.Add(new DefectImg { VirtualSeq = virtualSeq, Img = (byte[])dr["Image"], Insert = false });
+                this.ListDefectImg.Add(new DefectImg { VirtualSeq = virtualSeq, Img = (byte[])dr["Image"], UpdType = DefectImgUpdType.None, Ukey = MyUtility.Convert.GetLong(dr["Ukey"]) });
                 virtualSeqnum++;
             }
 
@@ -678,7 +702,7 @@ INSERT INTO [ExtendServer].PMSFile.dbo.AIR_DefectImage([AIRID],[ReceivingID],[Im
 
         private void SetPicCombox()
         {
-            MyUtility.Tool.SetupCombox(this.cmbDefectPicture, 1, 1, this.ListDefectImg.Select(s => s.VirtualSeq).JoinToString(","));
+            MyUtility.Tool.SetupCombox(this.cmbDefectPicture, 1, 1, this.ListDefectImg.Where(s => s.UpdType != DefectImgUpdType.Remove).Select(s => s.VirtualSeq).JoinToString(","));
             this.cmbDefectPicture.SelectedIndex = -1;
             this.cmbDefectPicture.SelectedIndex = 0;
         }
@@ -692,6 +716,10 @@ INSERT INTO [ExtendServer].PMSFile.dbo.AIR_DefectImage([AIRID],[ReceivingID],[Im
                 {
                     this.pictureBox1.Image = Image.FromStream(ms);
                 }
+            }
+            else
+            {
+                this.pictureBox1.Image = null;
             }
         }
 
@@ -753,13 +781,37 @@ INSERT INTO [ExtendServer].PMSFile.dbo.AIR_DefectImage([AIRID],[ReceivingID],[Im
 
         private List<DefectImg> ListDefectImg = new List<DefectImg>();
 
+        private enum DefectImgUpdType
+        {
+            None,
+            Insert,
+            Remove,
+        }
+
         private class DefectImg
         {
             public string VirtualSeq { get; set; }
 
             public byte[] Img { get; set; }
 
-            public bool Insert { get; set; }
+            public DefectImgUpdType UpdType { get; set; }
+
+            public long Ukey { get; set; } = -1;
+        }
+
+        private void BtnRemove_Click(object sender, EventArgs e)
+        {
+            var targetDefectImage = this.ListDefectImg.Where(s => s.VirtualSeq == this.cmbDefectPicture.Text);
+
+            if (targetDefectImage.Any())
+            {
+                foreach (var defectImg in targetDefectImage)
+                {
+                    defectImg.UpdType = DefectImgUpdType.Remove;
+                }
+
+                this.SetPicCombox();
+            }
         }
     }
 }

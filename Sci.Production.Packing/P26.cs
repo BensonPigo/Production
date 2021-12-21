@@ -1101,11 +1101,10 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                 int rank = 0;
                 string currentSCICtnNo = string.Empty;
                 int imageCount = 0;
-                int totalNeedInsertCount = dt_ShippingMarkPic_Detail.Rows.Count;
 
                 /*
                  圖片 <= 200張：圖片全部轉完、存下，一次性寫入
-                 圖片 >  200張：分批進行，轉完、存下200張後，存入一次，例如1080張，就會分三次
+                 圖片 >  200張：分批進行，轉完、存下200張後，存入一次，例如1080張，就會分6次
                  */
 
                 try
@@ -1207,6 +1206,13 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                             imageCount++;
                         }
                     }
+
+                    // 每200筆寫入DB一次，餘數在這裡寫入，例如總共674筆，前600筆再回圈裏面寫完了（if (imageCount == 199)這一段）
+                    // 剩下的74筆在這裡寫入
+                    if (imageCount > 0)
+                    {
+                        this.InsertImage(sQLs, filenames, images);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -1229,11 +1235,6 @@ where a.PackingListID IN ('{packingID}')
                     DBProxy.Current.Execute(null, cmd);
 
                     this.ShowErr(ex);
-                }
-
-                if (totalNeedInsertCount < 500)
-                {
-                    this.InsertImage(sQLs, filenames, images);
                 }
             }
 

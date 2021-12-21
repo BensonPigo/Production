@@ -58,10 +58,21 @@
     [Construction] NVARCHAR(MAX) NULL, 
     [TTL_PRINTING (PCS)] NUMERIC(38, 6) NULL, 
     [TTL_PRINTING PPU (PPU)] NUMERIC(38, 6) NULL, 
-    [SubCon] NVARCHAR(MAX) NULL
+    [SubCon] NVARCHAR(MAX) NULL, 
+    [StyleName] NVARCHAR(MAX) NULL 
 );
 
 
 
 
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'款式名稱',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_SewingLineSchedule',
+    @level2type = N'COLUMN',
+    @level2name = N'StyleName'

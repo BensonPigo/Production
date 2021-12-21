@@ -5,10 +5,13 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using Ict;
 using Ict.Win;
+using Newtonsoft.Json;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.CallPmsAPI;
 using Sci.Production.PublicPrg;
 using static Sci.Production.PublicPrg.Prgs;
 
@@ -37,36 +40,6 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            string sqlCmd = string.Format(
-                @"select 
-0 as Selected,
-p.INVNo as GMTBookingID,
-p.ID as PackingListID,
-iif(p.OrderID='',(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')),p.OrderID) as OrderID,
-iif(p.type = 'B',(select BuyerDelivery from Order_QtyShip WITH (NOLOCK) where ID = p.OrderID and Seq = p.OrderShipmodeSeq),(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq)) as BuyerDelivery,
-p.PulloutDate,
-p.Status,
-p.CTNQty,
-p.InspDate,
-p.InspStatus,
-(select isnull(sum(CTNQty),0) from PackingList_Detail pd where pd.ID = p.ID and pd.ReceiveDate is not null) as ClogQty,
-p.MDivisionID,
-[IDD] = STUFF ((select distinct CONCAT (',', Format(oqs.IDD, 'yyyy/MM/dd')) 
-                            from PackingList_Detail pd WITH (NOLOCK) 
-                            inner join Order_QtyShip oqs with (nolock) on oqs.ID = pd.OrderID and oqs.Seq = pd.OrderShipmodeSeq
-                            where pd.ID = p.id and oqs.IDD is not null
-                            for xml path('')
-                          ), 1, 1, '') 
-from PackingList p WITH (NOLOCK) 
-where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]));
-            DataTable gridData;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox("Loading error\r\n" + result.ToString());
-            }
-
-            this.listControlBindingSource1.DataSource = gridData;
 
             this.gridUpdatePulloutDate.IsEditingReadOnly = false;
             this.gridUpdatePulloutDate.DataSource = this.listControlBindingSource1;
@@ -114,6 +87,54 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]))
                     }
                 }
             };
+
+            string sqlCmd = @"select 
+0 as Selected,
+p.INVNo as GMTBookingID,
+p.ID as PackingListID,
+iif(p.OrderID='',(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')),p.OrderID) as OrderID,
+iif(p.type = 'B',(select BuyerDelivery from Order_QtyShip WITH (NOLOCK) where ID = p.OrderID and Seq = p.OrderShipmodeSeq),(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq)) as BuyerDelivery,
+p.PulloutDate,
+p.Status,
+p.CTNQty,
+p.InspDate,
+p.InspStatus,
+(select isnull(sum(CTNQty),0) from PackingList_Detail pd where pd.ID = p.ID and pd.ReceiveDate is not null) as ClogQty,
+p.MDivisionID,
+[IDD] = STUFF ((select distinct CONCAT (',', Format(oqs.IDD, 'yyyy/MM/dd')) 
+                            from PackingList_Detail pd WITH (NOLOCK) 
+                            inner join Order_QtyShip oqs with (nolock) on oqs.ID = pd.OrderID and oqs.Seq = pd.OrderShipmodeSeq
+                            where pd.ID = p.id and oqs.IDD is not null
+                            for xml path('')
+                          ), 1, 1, ''),
+[PLFromRgCode] = '{1}'
+from PackingList p WITH (NOLOCK) 
+where p.ShipPlanID = '{0}'";
+            DataTable gridData;
+            string shipPlanID = MyUtility.Convert.GetString(this.masterDate["ID"]);
+            DualResult result = DBProxy.Current.Select(null, string.Format(sqlCmd, shipPlanID, string.Empty), out gridData);
+
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Loading error\r\n" + result.ToString());
+                return;
+            }
+
+            List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByShipPlanID(this.masterDate["ID"].ToString());
+            foreach (string plFromRgCode in listPLFromRgCode)
+            {
+                DataTable dtGridDataA2B;
+                result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, string.Format(sqlCmd, shipPlanID, plFromRgCode), out dtGridDataA2B);
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox("Loading error\r\n" + result.ToString());
+                    return;
+                }
+
+                dtGridDataA2B.MergeTo(ref gridData);
+            }
+
+            this.listControlBindingSource1.DataSource = gridData;
         }
 
         // Pullout Date的Validating
@@ -203,18 +224,40 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]))
             this.gridUpdatePulloutDate.ValidateControl();
             this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            Dictionary<string, List<string>> dicUpdCmdA2B = new Dictionary<string, List<string>>();
 
             this.CheckPulloutputIDD(dt);
 
             foreach (DataRow dr in dt.Rows)
             {
+                string updatePackingListCmd = string.Empty;
+                string updateGMT_DetailCmd = string.Empty;
                 if (MyUtility.Check.Empty(dr["PulloutDate"]))
                 {
-                    updateCmds.Add(string.Format("update PackingList set PulloutDate = null where ID = '{0}';", MyUtility.Convert.GetString(dr["PackingListID"])));
+                    updatePackingListCmd = string.Format("update PackingList set PulloutDate = null where ID = '{0}';", MyUtility.Convert.GetString(dr["PackingListID"]));
+                    updateGMT_DetailCmd = string.Format("update GMTBooking_Detail set PulloutDate = null where PackingListID = '{0}';", MyUtility.Convert.GetString(dr["PackingListID"]));
                 }
                 else
                 {
-                    updateCmds.Add(string.Format("update PackingList set PulloutDate = '{0}' where ID = '{1}';", Convert.ToDateTime(dr["PulloutDate"]).ToString("yyyy/MM/dd"), MyUtility.Convert.GetString(dr["PackingListID"])));
+                    updatePackingListCmd = string.Format("update PackingList set PulloutDate = '{0}' where ID = '{1}';", Convert.ToDateTime(dr["PulloutDate"]).ToString("yyyyMMdd"), MyUtility.Convert.GetString(dr["PackingListID"]));
+                    updateGMT_DetailCmd = string.Format("update GMTBooking_Detail set PulloutDate = '{0}' where PackingListID = '{1}';", Convert.ToDateTime(dr["PulloutDate"]).ToString("yyyyMMdd"), MyUtility.Convert.GetString(dr["PackingListID"]));
+                }
+
+                string plFromRgCode = dr["PLFromRgCode"].ToString();
+
+                if (MyUtility.Check.Empty(plFromRgCode))
+                {
+                    updateCmds.Add(updatePackingListCmd);
+                }
+                else
+                {
+                    if (!dicUpdCmdA2B.ContainsKey(plFromRgCode))
+                    {
+                        dicUpdCmdA2B.Add(plFromRgCode, new List<string>());
+                    }
+
+                    dicUpdCmdA2B[plFromRgCode].Add(updatePackingListCmd);
+                    updateCmds.Add(updateGMT_DetailCmd);
                 }
             }
 
@@ -223,31 +266,47 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]))
             DualResult result;
             if (updateCmds.Count != 0)
             {
-                result = DBProxy.Current.Executes(null, updateCmds);
-                if (!result)
+                using (TransactionScope transactionScope = new TransactionScope())
                 {
-                    MyUtility.Msg.ErrorBox(result.ToString());
-                    return;
-                }
-                else
-                {
-                    string listID = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["PackingListID"])).JoinToString(",");
-                    Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(listID, string.Empty))
-                               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-
-                    // 因為會傳圖片，拆成單筆 PackingListNo 轉出，避免一次傳出的容量過大超過api大小限制
-                    foreach (DataRow dr in dt.Rows)
+                    result = DBProxy.Current.Executes(null, updateCmds);
+                    if (!result)
                     {
-                        #region ISP20201607 資料交換 - Gensong
-                        if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
-                        {
-                            // 不透過Call API的方式，自己組合，傳送API
-                            Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(MyUtility.Convert.GetString(dr["PackingListID"]), string.Empty))
-                                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-                        }
-                        #endregion
+                        transactionScope.Dispose();
+                        MyUtility.Msg.ErrorBox(result.ToString());
+                        return;
                     }
+
+                    foreach (KeyValuePair<string, List<string>> itemdicUpdCmdA2B in dicUpdCmdA2B)
+                    {
+                        result = PackingA2BWebAPI.ExecuteBySql(itemdicUpdCmdA2B.Key, itemdicUpdCmdA2B.Value.JoinToString(" "));
+                        if (!result)
+                        {
+                            transactionScope.Dispose();
+                            MyUtility.Msg.ErrorBox(result.ToString());
+                            return;
+                        }
+                    }
+
+                    transactionScope.Complete();
                 }
+
+                string listID = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["PackingListID"])).JoinToString(",");
+                Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(listID, string.Empty))
+                           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+
+                // 因為會傳圖片，拆成單筆 PackingListNo 轉出，避免一次傳出的容量過大超過api大小限制
+                foreach (DataRow dr in dt.Rows)
+                {
+                    #region ISP20201607 資料交換 - Gensong
+                    if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
+                    {
+                        // 不透過Call API的方式，自己組合，傳送API
+                        Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(MyUtility.Convert.GetString(dr["PackingListID"]), string.Empty))
+                            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                    }
+                    #endregion
+                }
+
             }
 
             this.DialogResult = System.Windows.Forms.DialogResult.OK;
@@ -273,6 +332,38 @@ inner join #tmp t on t.PackingListID = pd.ID
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.ToString());
+                return;
+            }
+
+            var listCheckA2B = dtCheck.AsEnumerable().Where(s => !MyUtility.Check.Empty(s["PLFromRgCode"]));
+
+            if (listCheckA2B.Any())
+            {
+                var listCheckA2BByPLFromRgCode = listCheckA2B.GroupBy(s => s["PLFromRgCode"].ToString())
+                            .Select(s => new
+                            {
+                                PLFromRgCode = s.Key,
+                                TmpTable = JsonConvert.SerializeObject(s.CopyToDataTable()),
+                            });
+                foreach (var plFromRgCodeItem in listCheckA2BByPLFromRgCode)
+                {
+                    PackingA2BWebAPI_Model.DataBySql dataBySql = new PackingA2BWebAPI_Model.DataBySql()
+                    {
+                        SqlString = sqlGetSPAndSeq,
+                        TmpTable = plFromRgCodeItem.TmpTable,
+                        TmpCols = "PackingListID,PulloutDate",
+                    };
+
+                    result = PackingA2BWebAPI.GetDataBySql(plFromRgCodeItem.PLFromRgCode, dataBySql, out DataTable dtResultA2B);
+
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox(result.ToString());
+                        return;
+                    }
+
+                    dtResultA2B.MergeTo(ref dtResult);
+                }
             }
 
             if (dtResult.Rows.Count > 0)
