@@ -17,10 +17,10 @@ namespace Sci.Production.IE
         private string style;
         private string season;
         private string team;
-        private string inline1;
-        private string inline2;
-        private string sewingline1;
-        private string sewingline2;
+        //private string inline1;
+        //private string inline2;
+        //private string sewingline1;
+        //private string sewingline2;
         private bool bolSummary;
         private bool bolBalancing;
         private DataTable printData;
@@ -93,9 +93,9 @@ namespace Sci.Production.IE
         /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
-            if (!this.dateInlineDate.HasValue1 || !this.dateInlineDate.HasValue2 || !this.dateSewingDate.HasValue1 || !this.dateSewingDate.HasValue2)
+            if (!this.dateInlineDate.HasValue1 && !this.dateInlineDate.HasValue2 && !this.dateSewingDate.HasValue1 && !this.dateSewingDate.HasValue2)
             {
-                MyUtility.Msg.InfoBox("Please input <Inline Date> and <Sewing Date> first!!");
+                MyUtility.Msg.InfoBox("Please input <Inline Date> or <Sewing Date> first!!");
                 return false;
             }
 
@@ -103,10 +103,10 @@ namespace Sci.Production.IE
             this.style = this.txtStyle.Text;
             this.season = this.txtSeason.Text;
             this.team = this.comboSewingTeam1.Text;
-            this.inline1 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value1);
-            this.inline2 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value2);
-            this.sewingline1 = string.Format("{0:yyyy-MM-dd}", this.dateSewingDate.Value1);
-            this.sewingline2 = string.Format("{0:yyyy-MM-dd}", this.dateSewingDate.Value2);
+            //this.inline1 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value1);
+            //this.inline2 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value2);
+            //this.sewingline1 = string.Format("{0:yyyy-MM-dd}", this.dateSewingDate.Value1);
+            //this.sewingline2 = string.Format("{0:yyyy-MM-dd}", this.dateSewingDate.Value2);
             this.bolSummary = this.radioSummary.Checked;
             this.bolBalancing = this.chkBalancing.Checked;
 
@@ -292,10 +292,8 @@ and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (
 
             #region Inline & Sewing Date is not null
 
-            if (!MyUtility.Check.Empty(this.inline1) || !MyUtility.Check.Empty(this.inline2) || !MyUtility.Check.Empty(this.sewingline1) || !MyUtility.Check.Empty(this.sewingline2))
+            if (!MyUtility.Check.Empty(this.dateSewingDate.Value1) || !MyUtility.Check.Empty(this.dateSewingDate.Value1))
             {
-                if (!MyUtility.Check.Empty(this.sewingline1) || !MyUtility.Check.Empty(this.sewingline2))
-                {
                     this.sqlCmd.Append($@"
 outer apply(
 	SELECT MaxOffLine = max(s.Offline), MinInLine = min(s.Inline)
@@ -303,27 +301,26 @@ outer apply(
 	INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID
 	WHERE o.Finished = 1
 	AND ( 
-		(Cast(s.Inline as Date) >= convert(varchar(10), '{this.sewingline1}', 120) AND Cast( s.Inline as Date) <= '{this.sewingline2}' )
+		(Cast(s.Inline as Date) >= convert(varchar(10), '{this.dateSewingDate.Value1.Value.ToString("yyyyMMdd")}', 120) AND Cast( s.Inline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyyMMdd")}' )
 		OR
-		(Cast(s.Offline as Date) >= '{this.sewingline1}' AND Cast( s.Offline as Date) <= '{this.sewingline2}' )
+		(Cast(s.Offline as Date) >= '{this.dateSewingDate.Value1.Value.ToString("yyyyMMdd")}' AND Cast( s.Offline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyyMMdd")}' )
 	)
 	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
 )SewingDate
 ");
-                }
-
+                
                 string dateQuery = string.Empty;
-                if (!MyUtility.Check.Empty(this.inline1))
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value1))
                 {
-                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.inline1);
+                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dateInlineDate.Value1.Value.ToString("yyyyMMdd"));
                 }
 
-                if (!MyUtility.Check.Empty(this.inline2))
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value2))
                 {
-                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.inline2);
+                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dateInlineDate.Value2.Value.ToString("yyyyMMdd"));
                 }
 
-                if (!MyUtility.Check.Empty(this.sewingline1) && !MyUtility.Check.Empty(this.sewingline2))
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value1) && !MyUtility.Check.Empty(this.dateSewingDate.Value2))
                 {
                     dateQuery += "and convert(varchar(10), ss.Inline, 120) >= SewingDate.MinInLine ";
                     dateQuery += "and convert(varchar(10), ss.Offline, 120) <= SewingDate.MaxOffLine ";

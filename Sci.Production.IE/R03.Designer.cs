@@ -240,7 +240,6 @@
             this.dateSewingDate.DateBox2.Name = "";
             this.dateSewingDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateSewingDate.DateBox2.TabIndex = 1;
-            this.dateSewingDate.IsRequired = false;
             this.dateSewingDate.Location = new System.Drawing.Point(97, 48);
             this.dateSewingDate.Name = "dateSewingDate";
             this.dateSewingDate.Size = new System.Drawing.Size(280, 23);

@@ -20,10 +20,10 @@ namespace Sci.Production.IE
         private string season;
         private string toolType;
         private string version;
-        private string inline1;
-        private string inline2;
-        private string sewingline1;
-        private string sewingline2;
+        //private string inline1;
+        //private string inline2;
+        //private string sewingline1;
+        //private string sewingline2;
         private DataTable printData;
 
         /// <summary>
@@ -44,9 +44,9 @@ namespace Sci.Production.IE
         /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
-            if (!this.dateInlineDate.HasValue1 || !this.dateInlineDate.HasValue2 || !this.dateSewingDate.HasValue1 || !this.dateSewingDate.HasValue2)
+            if (!this.dateInlineDate.HasValue1 && !this.dateInlineDate.HasValue2 && !this.dateSewingDate.HasValue1 && !this.dateSewingDate.HasValue2)
             {
-                MyUtility.Msg.InfoBox("Please input <Inline Date> and <Sewing Date> first!!");
+                MyUtility.Msg.InfoBox("Please input <Inline Date> or <Sewing Date> first!!");
                 return false;
             }
 
@@ -55,10 +55,10 @@ namespace Sci.Production.IE
             this.season = this.txtseason.Text;
             this.toolType = MyUtility.Convert.GetString(this.comboToolType.SelectedValue);
             this.version = MyUtility.Convert.GetString(this.comboVersion.SelectedValue);
-            this.inline1 = this.dateInlineDate.Value1.Value.ToString("yyyyMMdd");
-            this.inline2 = this.dateInlineDate.Value2.Value.ToString("yyyyMMdd");
-            this.sewingline1 = string.Format("{0:yyyy-MM-dd}", this.dateSewingDate.Value1);
-            this.sewingline2 = string.Format("{0:yyyy-MM-dd}", this.dateSewingDate.Value2);
+            //this.inline1 = this.dateInlineDate.Value1.Value.ToString("yyyyMMdd");
+            //this.inline2 = this.dateInlineDate.Value2.Value.ToString("yyyyMMdd");
+            //this.sewingline1 = string.Format("{0:yyyy-MM-dd}", this.dateSewingDate.Value1);
+            //this.sewingline2 = string.Format("{0:yyyy-MM-dd}", this.dateSewingDate.Value2);
 
             return base.ValidateInput();
         }
@@ -72,8 +72,8 @@ namespace Sci.Production.IE
         {
             StringBuilder sqlCmd = new StringBuilder();
             List<SqlParameter> paras = new List<SqlParameter>();
-            paras.Add(new SqlParameter("@inline1", this.inline1));
-            paras.Add(new SqlParameter("@inline2", this.inline2));
+            //paras.Add(new SqlParameter("@inline1", this.inline1));
+            //paras.Add(new SqlParameter("@inline2", this.inline2));
 
             sqlCmd.Append(
                 @"
@@ -104,7 +104,7 @@ outer apply (
 	from LineMapping l2 WITH (NOLOCK) 
     where l.StyleID = l2.StyleID and l.SeasonID = l2.SeasonID and l.BrandID = l2.BrandID
 )lMax");
-            if (!MyUtility.Check.Empty(this.sewingline1) || !MyUtility.Check.Empty(this.sewingline2))
+            if (!MyUtility.Check.Empty(this.dateSewingDate.Value1) || !MyUtility.Check.Empty(this.dateSewingDate.Value2))
             {
                 sqlCmd.Append($@"
 outer apply(
@@ -113,9 +113,9 @@ outer apply(
 	INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID
 	WHERE 1=1
 	AND ( 
-		(Cast(s.Inline as Date) >= convert(varchar(10), '{this.sewingline1}', 120) AND Cast( s.Inline as Date) <= '{this.sewingline2}' )
+		(Cast(s.Inline as Date) >= convert(varchar(10), '{this.dateSewingDate.Value1.Value.ToString("yyyyMMdd")}', 120) AND Cast( s.Inline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyyMMdd")}' )
 		OR
-		(Cast(s.Offline as Date) >= '{this.sewingline1}' AND Cast( s.Offline as Date) <= '{this.sewingline2}' )
+		(Cast(s.Offline as Date) >= '{this.dateSewingDate.Value1.Value.ToString("yyyyMMdd")}' AND Cast( s.Offline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyyMMdd")}' )
 	)
 	and o.StyleID = l.StyleID and o.SeasonID = l.SeasonID and o.BrandID = l.BrandID
 )SewingDate
@@ -123,7 +123,17 @@ outer apply(
             }
 
             string dateSewing = string.Empty;
-            if (!MyUtility.Check.Empty(this.sewingline1) && !MyUtility.Check.Empty(this.sewingline2))
+            if (!MyUtility.Check.Empty(this.dateInlineDate.Value1))
+            {
+                dateSewing += $@"and s.Inline >= '{this.dateInlineDate.Value1.Value.ToString("yyyyMMdd")}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.dateInlineDate.Value2))
+            {
+                dateSewing += $@"and s.Inline <= '{this.dateInlineDate.Value2.Value.ToString("yyyyMMdd")}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.dateSewingDate.Value1) && !MyUtility.Check.Empty(this.dateSewingDate.Value2))
             {
                 dateSewing += "and convert(varchar(10), s.Inline, 120) >= SewingDate.MinInLine ";
                 dateSewing += "and convert(varchar(10), s.Offline, 120) <= SewingDate.MaxOffLine ";
@@ -134,8 +144,7 @@ where EXISTS (
 	select 1
 	from SewingSchedule s WITH (NOLOCK)
 	left join Orders o WITH (NOLOCK) on s.OrderID = o.ID
-	where s.Inline >= @inline1 
-    and s.Inline <= @inline2 
+	where 1=1
     {dateSewing}
     and o.StyleID=l.StyleID and o.SeasonID=l.SeasonID and o.BrandID = l.BrandID
 )" + Environment.NewLine);
