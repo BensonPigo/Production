@@ -441,8 +441,12 @@ ORDER BY pd.SortCTNStartNo
 
                 string updateCmd = $@"
 SET XACT_ABORT ON
-UPDATE [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
+UPDATE ShippingMarkPic_Detail
 SET Image = @Image{idx} , FileName = @FileName{idx}
+WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
+
+UPDATE [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
+SET Image = @Image{idx}
 WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
 ";
                 updateCmds.Add(updateCmd);
@@ -454,8 +458,12 @@ WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTyp
             {
                 string deleteCmd = $@"
 SET XACT_ABORT ON
-UPDATE [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
+UPDATE ShippingMarkPic_Detail
 SET Image = NULL , FileName = ''
+WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
+
+UPDATE [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
+SET Image = NULL 
 WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
 ";
                 deleteCmds.Add(deleteCmd);
@@ -877,6 +885,9 @@ AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'
                 #region 開始寫入DB
                 int idx = 0;
                 List<string> updateCmds = new List<string>();
+
+                // PMSFile不能包Transactionsope，因此手動RollBack
+                List<string> rollBackCmds = new List<string>();
                 List<SqlParameter> paras = new List<SqlParameter>();
                 foreach (var item in excelist.Where(o => !MyUtility.Check.Empty(o.FileName)))
                 {
@@ -891,6 +902,7 @@ AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'
 SET XACT_ABORT ON
 UPDATE b
 SET FileName = @FileName{idx}
+, b.Image = @Image{idx} 
 FROM ShippingMarkPic a
 INNER JOIN ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey
 WHERE a.PackingListID='{item.PackingListID}'
@@ -909,7 +921,32 @@ AND b.SCICtnNo='{item.SCICtnNo}'
 AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'
 ";
 
+                    string rollBackCmd = $@"
+
+SET XACT_ABORT ON
+UPDATE b
+SET FileName = ''
+, b.Image = NULL
+FROM ShippingMarkPic a
+INNER JOIN ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey
+WHERE a.PackingListID='{item.PackingListID}'
+AND b.SCICtnNo='{item.SCICtnNo}'
+AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}
+
+UPDATE PmsFile
+SET PmsFile.Image = NULL
+FROM ShippingMarkPic a
+INNER JOIN ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey
+INNER JOIN [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail PmsFile on  b.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
+                                                                    AND b.SCICtnNo=PmsFile.SCICtnNo 
+                                                                    AND b.ShippingMarkTypeUkey=PmsFile.ShippingMarkTypeUkey 
+WHERE a.PackingListID='{item.PackingListID}'
+AND b.SCICtnNo='{item.SCICtnNo}'
+AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'
+";
+
                     updateCmds.Add(updateCmd);
+                    rollBackCmds.Add(rollBackCmd);
                     idx++;
                 }
 
@@ -931,6 +968,9 @@ AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'
                     catch (Exception ex)
                     {
                         transactionscope.Dispose();
+
+                        DBProxy.Current.Execute(null, rollBackCmds.JoinToString(Environment.NewLine), paras);
+
                         this.ShowErr("Commit transaction error.", ex);
                         return;
                     }

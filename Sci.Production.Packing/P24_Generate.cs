@@ -885,6 +885,7 @@ SET XACT_ABORT ON
 ---刪除舊有資料
 DELETE FROM ShippingMarkPic_Detail
 WHERE ShippingMarkPicUkey IN (SELECT Ukey FROM ShippingMarkPic WHERE PackingListID = '{packingListID}')
+
 ----PMSFile也刪掉
 DELETE FROM [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
 WHERE ShippingMarkPicUkey IN (SELECT Ukey FROM ShippingMarkPic WHERE PackingListID = '{packingListID}')
@@ -930,7 +931,7 @@ BEGIN
     SET FilePath = '{p24_Template.FilePath}'
         ,FileName = '{p24_Template.FileName}'
         ,DPI = {dPI}
-        --,Image = NULL
+        ,Image = NULL
         ,IsSSCC = (SELECT IsSSCC FROM ShippingMarkType WHERE Ukey = {p24_Template.ShippingMarkTypeUkey})
     WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
     AND SCICtnNo = '{p24_Template.SCICtnNo}'
@@ -991,12 +992,11 @@ END
 ";
             }
 
-            using (TransactionScope transactionScope = new TransactionScope())
+            try
             {
                 DualResult r;
                 if (MyUtility.Check.Empty(headInsert))
                 {
-                    transactionScope.Dispose();
                     return false;
                 }
 
@@ -1004,7 +1004,6 @@ END
                 if (!r)
                 {
                     this.ShowErr(r);
-                    transactionScope.Dispose();
                     return false;
                 }
 
@@ -1012,8 +1011,6 @@ END
 
                 if (!r)
                 {
-                    transactionScope.Dispose();
-
                     // 由於有包transaction，因此不是全部成功就是全部失敗
                     foreach (var item in this.P24_GenerateResults.Where(o => p24_Templates.Where(x => x.PackingListID == o.PackingListID).Any()))
                     {
@@ -1030,9 +1027,36 @@ END
                 {
                     item.IsSuccess = true;
                 }
+            }
+            catch (Exception ex)
+            {
+                // 由於有包transaction，因此不是全部成功就是全部失敗
+                foreach (var item in this.P24_GenerateResults.Where(o => p24_Templates.Where(x => x.PackingListID == o.PackingListID).Any()))
+                {
+                    item.IsSuccess = false;
+                }
 
-                transactionScope.Complete();
-                transactionScope.Dispose();
+                string rollBack = $@"
+SET XACT_ABORT ON
+---刪除舊有資料
+DELETE FROM ShippingMarkPic_Detail
+WHERE ShippingMarkPicUkey IN (
+    SELECT Ukey FROM ShippingMarkPic 
+    WHERE PackingListID IN ('{p24_Templates.Select(o => o.PackingListID).Distinct().JoinToString("','")}')
+)
+
+----PMSFile也刪掉
+DELETE FROM [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
+WHERE ShippingMarkPicUkey IN (
+    SELECT Ukey 
+    FROM ShippingMarkPic WHERE PackingListID IN ('{p24_Templates.Select(o => o.PackingListID).Distinct().JoinToString("','")}')
+)
+
+DELETE FROM ShippingMarkPic
+WHERE PackingListID IN ('{p24_Templates.Select(o => o.PackingListID).Distinct().JoinToString("','")}')
+";
+
+                this.ShowErr(ex);
             }
 
             return true;
