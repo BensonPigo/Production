@@ -280,6 +280,9 @@ WHERE   StockType='{0}'
             .Text("fromroll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
             .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true) // 4
+            .Text("Refno", header: "Ref#", width: Widths.AnsiChars(10), iseditingreadonly: true) // 3
+            .Text("ColorID", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
+            .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
             .Text("fabrictype", header: "Type", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 5
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true) // 6
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 7
@@ -728,8 +731,16 @@ select [Selected] = 0
     ,a.ukey
     ,a.tolocation
     ,Fromlocation2 = Fromlocation2.listValue
+	,p1.Refno
+	,p1.SizeSpec	
+    , ColorID = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
+                    ,IIF( p1.SuppColor = '' or p1.SuppColor is null,dbo.GetColorMultipleID(Orders.BrandID,p1.ColorID),p1.SuppColor)
+                    ,dbo.GetColorMultipleID(Orders.BrandID,p1.ColorID)
+                )
 from dbo.SubTransfer_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
+left join Orders orders WITH (NOLOCK) on p1.id = orders.ID
+left join Fabric WITH (NOLOCK) on Fabric.SCIRefno = p1.SCIRefno
 left join FtyInventory f WITH (NOLOCK) on a.FromPOID=f.POID and a.FromSeq1=f.Seq1 and a.FromSeq2=f.Seq2 and a.FromRoll=f.Roll and a.FromDyelot=f.Dyelot and a.FromStockType=f.StockType
 outer apply(
 	select listValue = Stuff((
