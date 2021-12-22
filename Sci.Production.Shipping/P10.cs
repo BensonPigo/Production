@@ -733,7 +733,16 @@ where not exists (select 1 from ShipPlan_DeleteGBHistory sdh where sdh.ID = t.ID
                             }
                             else
                             {
-                                updateCmds.Add(string.Format("update GMTBooking_Detail set PulloutDate = '{0}' where PackingListID = '{1}'; ", Convert.ToDateTime(pldatarow["PulloutDate"]).ToString("yyyyMMdd"), MyUtility.Convert.GetString(pldatarow["ID"])));
+                                string pulloutDateYYYYMMDD = MyUtility.Check.Empty(pldatarow["PulloutDate"]) ? string.Empty : Convert.ToDateTime(pldatarow["PulloutDate"]).ToString("yyyyMMdd");
+
+                                if (MyUtility.Check.Empty(pulloutDateYYYYMMDD))
+                                {
+                                    updateCmds.Add(string.Format("update GMTBooking_Detail set PulloutDate = null where PackingListID = '{0}'; ", MyUtility.Convert.GetString(pldatarow["ID"])));
+                                }
+                                else
+                                {
+                                    updateCmds.Add(string.Format("update GMTBooking_Detail set PulloutDate = '{0}' where PackingListID = '{1}'; ", pulloutDateYYYYMMDD, MyUtility.Convert.GetString(pldatarow["ID"])));
+                                }
 
                                 string plFromRgCode = pldatarow["PLFromRgCode"].ToString();
                                 if (!updateCmdsA2B.ContainsKey(plFromRgCode))
