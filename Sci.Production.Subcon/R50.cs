@@ -49,7 +49,7 @@ namespace Sci.Production.Subcon
             sql.Append(@"
 Select 
 	o.FtyGroup,o.FactoryID,BD.BundleNo,bd.BundleGroup,o.StyleID,o.SeasonID,o.brandid,bd.Patterncode,bd.PatternDesc,sub.sub,bd.SizeCode,bd.Qty,
-	b.poid,b.Colorid,b.Article,b.Cdate,b.Orderid,b.Item,
+	b.poid,b.Colorid,b.Article,b.Cdate,b.Orderid,b.Item,b.Sewinglineid,
     SPs = dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID for XML RAW)),
     Qtys =stuff((select concat('/',Qty) from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID for xml path('')),1,1,''),
     b.AddDate,B.AddName,B.EditDate,b.EditName
