@@ -292,8 +292,21 @@ and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (
 
             #region Inline & Sewing Date is not null
 
-            if (!MyUtility.Check.Empty(this.dateSewingDate.Value1) || !MyUtility.Check.Empty(this.dateSewingDate.Value1))
+            if (this.dateSewingDate.Value1.HasValue || this.dateSewingDate.Value2.HasValue || this.dateInlineDate.Value1.HasValue || this.dateInlineDate.Value2.HasValue)
             {
+                string dateQuery = string.Empty;
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value1))
+                {
+                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dateInlineDate.Value1.Value.ToString("yyyyMMdd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value2))
+                {
+                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dateInlineDate.Value2.Value.ToString("yyyyMMdd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value1) && !MyUtility.Check.Empty(this.dateSewingDate.Value2))
+                {
                     this.sqlCmd.Append($@"
 outer apply(
 	SELECT MaxOffLine = max(s.Offline), MinInLine = min(s.Inline)
@@ -308,20 +321,7 @@ outer apply(
 	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
 )SewingDate
 ");
-                
-                string dateQuery = string.Empty;
-                if (!MyUtility.Check.Empty(this.dateInlineDate.Value1))
-                {
-                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dateInlineDate.Value1.Value.ToString("yyyyMMdd"));
-                }
 
-                if (!MyUtility.Check.Empty(this.dateInlineDate.Value2))
-                {
-                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dateInlineDate.Value2.Value.ToString("yyyyMMdd"));
-                }
-
-                if (!MyUtility.Check.Empty(this.dateSewingDate.Value1) && !MyUtility.Check.Empty(this.dateSewingDate.Value2))
-                {
                     dateQuery += "and convert(varchar(10), ss.Inline, 120) >= SewingDate.MinInLine ";
                     dateQuery += "and convert(varchar(10), ss.Offline, 120) <= SewingDate.MaxOffLine ";
                 }
