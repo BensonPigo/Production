@@ -36,7 +36,7 @@ select s.id
 	,sdd.SizeCode
 	,sd.ComboType
 	,ActManPower = s.Manpower
-	,sd.WorkHour
+	,[WorkHour] = cast(sd.WorkHour * (sdd.QAQty * 1.0 / sd.QAQty) as numeric(6, 4))
 	,sdd.QAQty
 	,sd.InlineQty
 	,o.LocalOrder
