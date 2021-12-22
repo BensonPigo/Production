@@ -1149,7 +1149,7 @@ else
 				, ot.TPEEditName
 				, ot.TPEEditDate
 		into #tmpLocalOrder_TmsCost
-		from Production.dbo.Orders o
+		from Production.dbo.Orders o with (nolock)
 		inner join #TOrder tmpo on o.CustPONo = tmpo.ID and o.MDivisionID = tmpo.MDivisionID
 		inner join Production.dbo.Order_TmsCost ot with (nolock) on ot.Id = tmpo.ID
 		where	o.LocalOrder = 1 and
