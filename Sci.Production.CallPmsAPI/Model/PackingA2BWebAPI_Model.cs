@@ -253,12 +253,6 @@ namespace Sci.Production.CallPmsAPI
                 return;
             }
 
-            if (sourceDt.Rows.Count == 0)
-            {
-                sourceDt = targetDt;
-                return;
-            }
-
             foreach (DataRow dr in targetDt.Rows)
             {
                 sourceDt.ImportRow(dr);
