@@ -555,19 +555,19 @@
             this.InsertAS_MenuItem,
             this.DeleteAS_MenuItem});
             this.ArticleSizeMenuStrip.Name = "art_contextMenuStrip";
-            this.ArticleSizeMenuStrip.Size = new System.Drawing.Size(174, 48);
+            this.ArticleSizeMenuStrip.Size = new System.Drawing.Size(176, 48);
             // 
             // InsertAS_MenuItem
             // 
             this.InsertAS_MenuItem.Name = "InsertAS_MenuItem";
-            this.InsertAS_MenuItem.Size = new System.Drawing.Size(173, 22);
+            this.InsertAS_MenuItem.Size = new System.Drawing.Size(175, 22);
             this.InsertAS_MenuItem.Text = "Insert into Record";
             this.InsertAS_MenuItem.Click += new System.EventHandler(this.InsertAS_MenuItem_Click);
             // 
             // DeleteAS_MenuItem
             // 
             this.DeleteAS_MenuItem.Name = "DeleteAS_MenuItem";
-            this.DeleteAS_MenuItem.Size = new System.Drawing.Size(173, 22);
+            this.DeleteAS_MenuItem.Size = new System.Drawing.Size(175, 22);
             this.DeleteAS_MenuItem.Text = "Delete Record";
             this.DeleteAS_MenuItem.Click += new System.EventHandler(this.DeleteAS_MenuItem_Click);
             // 
@@ -692,19 +692,19 @@
             this.insertIntoRecordToolStripMenuItem,
             this.deleteRecordToolStripMenuItem});
             this.art_contextMenuStrip.Name = "art_contextMenuStrip";
-            this.art_contextMenuStrip.Size = new System.Drawing.Size(174, 48);
+            this.art_contextMenuStrip.Size = new System.Drawing.Size(176, 48);
             // 
             // insertIntoRecordToolStripMenuItem
             // 
             this.insertIntoRecordToolStripMenuItem.Name = "insertIntoRecordToolStripMenuItem";
-            this.insertIntoRecordToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.insertIntoRecordToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.insertIntoRecordToolStripMenuItem.Text = "Insert into Record";
             this.insertIntoRecordToolStripMenuItem.Click += new System.EventHandler(this.InsertIntoRecordToolStripMenuItem_Click);
             // 
             // deleteRecordToolStripMenuItem
             // 
             this.deleteRecordToolStripMenuItem.Name = "deleteRecordToolStripMenuItem";
-            this.deleteRecordToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.deleteRecordToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.deleteRecordToolStripMenuItem.Text = "Delete Record";
             this.deleteRecordToolStripMenuItem.Click += new System.EventHandler(this.DeleteRecordToolStripMenuItem_Click);
             // 
@@ -780,19 +780,19 @@
             this.allpart_insert,
             this.allpart_delete});
             this.allpart_contextMenuStrip.Name = "art_contextMenuStrip";
-            this.allpart_contextMenuStrip.Size = new System.Drawing.Size(174, 48);
+            this.allpart_contextMenuStrip.Size = new System.Drawing.Size(176, 48);
             // 
             // allpart_insert
             // 
             this.allpart_insert.Name = "allpart_insert";
-            this.allpart_insert.Size = new System.Drawing.Size(173, 22);
+            this.allpart_insert.Size = new System.Drawing.Size(175, 22);
             this.allpart_insert.Text = "Insert into Record";
             this.allpart_insert.Click += new System.EventHandler(this.Allpart_insert_Click);
             // 
             // allpart_delete
             // 
             this.allpart_delete.Name = "allpart_delete";
-            this.allpart_delete.Size = new System.Drawing.Size(173, 22);
+            this.allpart_delete.Size = new System.Drawing.Size(175, 22);
             this.allpart_delete.Text = "Delete Record";
             this.allpart_delete.Click += new System.EventHandler(this.Allpart_delete_Click);
             // 
