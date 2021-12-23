@@ -297,12 +297,12 @@ and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (
                 string dateQuery = string.Empty;
                 if (!MyUtility.Check.Empty(this.dateInlineDate.Value1))
                 {
-                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dateInlineDate.Value1.Value.ToString("yyyyMMdd"));
+                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dateInlineDate.Value1.Value.ToString("yyyy-MM-dd"));
                 }
 
                 if (!MyUtility.Check.Empty(this.dateInlineDate.Value2))
                 {
-                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dateInlineDate.Value2.Value.ToString("yyyyMMdd"));
+                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dateInlineDate.Value2.Value.ToString("yyyy-MM-dd"));
                 }
 
                 if (!MyUtility.Check.Empty(this.dateSewingDate.Value1) && !MyUtility.Check.Empty(this.dateSewingDate.Value2))
@@ -314,9 +314,9 @@ outer apply(
 	INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID
 	WHERE o.Finished = 1
 	AND ( 
-		(Cast(s.Inline as Date) >= convert(varchar(10), '{this.dateSewingDate.Value1.Value.ToString("yyyyMMdd")}', 120) AND Cast( s.Inline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyyMMdd")}' )
+		(Cast(s.Inline as Date) >= convert(varchar(10), '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}', 120) AND Cast( s.Inline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}' )
 		OR
-		(Cast(s.Offline as Date) >= '{this.dateSewingDate.Value1.Value.ToString("yyyyMMdd")}' AND Cast( s.Offline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyyMMdd")}' )
+		(Cast(s.Offline as Date) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}' AND Cast( s.Offline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}' )
 	)
 	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
 )SewingDate

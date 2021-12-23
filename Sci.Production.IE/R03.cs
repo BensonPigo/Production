@@ -94,42 +94,41 @@ outer apply (
 	from LineMapping l2 WITH (NOLOCK) 
     where l.StyleID = l2.StyleID and l.SeasonID = l2.SeasonID and l.BrandID = l2.BrandID
 )lMax");
-            if (!MyUtility.Check.Empty(this.dateSewingDate.Value1) || !MyUtility.Check.Empty(this.dateSewingDate.Value2))
+            if (this.dateSewingDate.Value1.HasValue || this.dateSewingDate.Value2.HasValue || this.dateInlineDate.Value1.HasValue || this.dateInlineDate.Value2.HasValue)
             {
-                sqlCmd.Append($@"
+                string dateSewing = string.Empty;
+
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value1))
+                {
+                    dateSewing += $@"and s.Inline >= '{this.dateInlineDate.Value1.Value.ToString("yyyy-MM-dd")}'";
+                }
+
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value2))
+                {
+                    dateSewing += $@"and s.Inline <= '{this.dateInlineDate.Value2.Value.ToString("yyyy-MM-dd")}'";
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value1) && !MyUtility.Check.Empty(this.dateSewingDate.Value2))
+                {
+                    sqlCmd.Append($@"
 outer apply(
 	SELECT MaxOffLine = max(s.Offline), MinInLine = min(s.Inline)
 	FROM SewingSchedule s WITH(NOLOCK)
 	INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID
 	WHERE 1=1
 	AND ( 
-		(Cast(s.Inline as Date) >= convert(varchar(10), '{this.dateSewingDate.Value1.Value.ToString("yyyyMMdd")}', 120) AND Cast( s.Inline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyyMMdd")}' )
+		(Cast(s.Inline as Date) >= convert(varchar(10), '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}', 120) AND Cast( s.Inline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}' )
 		OR
-		(Cast(s.Offline as Date) >= '{this.dateSewingDate.Value1.Value.ToString("yyyyMMdd")}' AND Cast( s.Offline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyyMMdd")}' )
+		(Cast(s.Offline as Date) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}' AND Cast( s.Offline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}' )
 	)
 	and o.StyleID = l.StyleID and o.SeasonID = l.SeasonID and o.BrandID = l.BrandID
 )SewingDate
 ");
-            }
+                    dateSewing += "and convert(varchar(10), s.Inline, 120) >= SewingDate.MinInLine ";
+                    dateSewing += "and convert(varchar(10), s.Offline, 120) <= SewingDate.MaxOffLine ";
+                }
 
-            string dateSewing = string.Empty;
-            if (!MyUtility.Check.Empty(this.dateInlineDate.Value1))
-            {
-                dateSewing += $@"and s.Inline >= '{this.dateInlineDate.Value1.Value.ToString("yyyyMMdd")}'";
-            }
-
-            if (!MyUtility.Check.Empty(this.dateInlineDate.Value2))
-            {
-                dateSewing += $@"and s.Inline <= '{this.dateInlineDate.Value2.Value.ToString("yyyyMMdd")}'";
-            }
-
-            if (!MyUtility.Check.Empty(this.dateSewingDate.Value1) && !MyUtility.Check.Empty(this.dateSewingDate.Value2))
-            {
-                dateSewing += "and convert(varchar(10), s.Inline, 120) >= SewingDate.MinInLine ";
-                dateSewing += "and convert(varchar(10), s.Offline, 120) <= SewingDate.MaxOffLine ";
-            }
-
-            sqlCmd.Append($@"
+                sqlCmd.Append($@"
 where EXISTS (
 	select 1
 	from SewingSchedule s WITH (NOLOCK)
@@ -138,6 +137,7 @@ where EXISTS (
     {dateSewing}
     and o.StyleID=l.StyleID and o.SeasonID=l.SeasonID and o.BrandID = l.BrandID
 )" + Environment.NewLine);
+            }
 
             if (!MyUtility.Check.Empty(this.factory))
             {
