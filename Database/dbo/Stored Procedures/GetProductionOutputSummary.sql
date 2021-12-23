@@ -30,8 +30,9 @@ declare @NoRestrictOrdersDelivery bit = (select NoRestrictOrdersDelivery from sy
 
 declare @StartYYYY varchar(4) = iif(isnull(@Year, '') = '', Year(getdate()), @Year)
 declare @StartDateForBI date = cast(@StartYYYY + '0108' as date)
+declare @StartBuyerDeliveryForBI date = cast(@StartYYYY + '0101' as date)
 declare @EndSCIDeliveryForBI date = dateadd(YEAR, 2, dateadd(day, -1, @StartDateForBI))
-declare @EndBuyerDeliveryForBI date = dateadd(YEAR, 2, dateadd(day, -8, @StartDateForBI))
+declare @EndBuyerDeliveryForBI date = dateadd(YEAR, 2, dateadd(day, -1, @StartBuyerDeliveryForBI))
 
 declare @tmpBaseOrderID TABLE(
 	[ID] [VARCHAR](13) NULL,  
@@ -55,7 +56,7 @@ from
 					(
 						o.SciDelivery between @StartDateForBI and @EndSCIDeliveryForBI
 						or
-						o.BuyerDelivery between @StartDateForBI and @EndBuyerDeliveryForBI
+						o.BuyerDelivery between @StartBuyerDeliveryForBI and @EndBuyerDeliveryForBI
 					)
 				)
 				or -- if not use in PowerBI then depend on @DateType
@@ -110,7 +111,7 @@ from
 					(
 						o.SciDelivery between @StartDateForBI and @EndSCIDeliveryForBI
 						or
-						o.BuyerDelivery between @StartDateForBI and @EndBuyerDeliveryForBI
+						o.BuyerDelivery between @StartBuyerDeliveryForBI and @EndBuyerDeliveryForBI
 					)
 				)
 				or -- if not use in PowerBI then depend on @DateType
@@ -154,7 +155,7 @@ from
 ) a
 
 
---?N?u???q??A?HProgramID??X??v?u?t?????A????n???bdetail?????summary?????
+--代工的訂單，以ProgramID抓出自己工廠的資料，後續要顯示在detail並扣除summary的資料
 declare @tmpBaseTransOrderID TABLE(
 	[ID] [VARCHAR](13) NULL,
 	[TransFtyZone] [VARCHAR](8) NULL
@@ -180,7 +181,7 @@ from (
 				(
 					o.SciDelivery between @StartDateForBI and @EndSCIDeliveryForBI
 					or
-					o.BuyerDelivery between @StartDateForBI and @EndBuyerDeliveryForBI
+					o.BuyerDelivery between @StartBuyerDeliveryForBI and @EndBuyerDeliveryForBI
 				)
 			)
 			or -- if not use in PowerBI then depend on @DateType
@@ -228,7 +229,7 @@ from (
 		 		(
 		 			o.SciDelivery between @StartDateForBI and @EndSCIDeliveryForBI
 					or
-					o.BuyerDelivery between @StartDateForBI and @EndBuyerDeliveryForBI
+					o.BuyerDelivery between @StartBuyerDeliveryForBI and @EndBuyerDeliveryForBI
 		 		)
 		 	)
 		 	or -- if not use in PowerBI then depend on @DateType
@@ -434,11 +435,11 @@ select  ID,
         SewingOutput,
         SewingOutputCPU,
         IsProduceFty,
-        --summary????????Junk?q???�TAForecast?S????O?]??Planning R10???t
+        --summary頁面不算Junk訂單使用，Forecast沒排掉是因為Planning R10有含
         [isNormalOrderCanceled] = iif(  Junk = 1 and 
-                                        --???`?q??
+                                        --正常訂單
                                         (( Category in ('B','S')  and (localorder = 0 or SubconInType=2)) or
-                                        --??a?q??
+                                        --當地訂單
                                         (LocalOrder = 1 )),1,0),
         FtyZone,
         ProgramID,
