@@ -247,7 +247,7 @@ select
     t.FactoryID,
 	RFT = iif(SUM(t.ArriveQty) = 0, 0, isnull(SUM(TotalDefectyds), 0) / SUM(t.ArriveQty)),
 	TotalDefectyds = Sum(TotalDefectyds),
-	Inspection = iif(SUM(TicketYds) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.ArriveQty)),
+	Inspection = iif(SUM(t.ArriveQty) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.ArriveQty)),
 	t.Physical
 from #tmp1 t
 Group by t.POID,t.SEQ,t.WK,t.ReceivingID,t.StyleID,t.Brandid,t.Supplier,t.Refno,t.ColorID,t.ArriveWHDate,t.WeaveTypeID,
@@ -277,7 +277,7 @@ select
     t.FactoryID,
 	RFT = iif(SUM(t.Qty) = 0, 0, isnull(SUM(TotalDefectyds), 0) / SUM(t.Qty)),
 	TotalDefectyds = Sum(TotalDefectyds),
-	Inspection  = iif(SUM(TicketYds) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.Qty)),
+	Inspection  = iif(SUM(t.Qty) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.Qty)),
 	t.Physical
 from #tmp2 t
 Group by t.POID,t.SEQ,t.WK,t.ReceivingID,t.StyleID,t.Brandid,t.Supplier,t.Refno,t.ColorID,t.ArriveWHDate,t.WeaveTypeID,
@@ -768,7 +768,7 @@ select
     t.FactoryID,
 	RFT = iif(SUM(t.StockQty) = 0, 0, isnull(SUM(TotalDefectyds), 0) / SUM(t.StockQty)),
 	TotalDefectyds = Sum(TotalDefectyds),
-	Inspection = iif(SUM(StockQty) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.StockQty)),
+	Inspection = iif(SUM(t.StockQty) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.StockQty)),
 	t.Physical
 from #tmp1 t
 Group by Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,Inventory_SEQ,WK,ReceivingID,StyleID,Brandid,Supplier,Refno,ColorID,IssueDate,
@@ -801,7 +801,7 @@ select
     t.FactoryID,
 	RFT = iif(SUM(t.Qty) = 0, 0, isnull(SUM(TotalDefectyds), 0) / SUM(t.Qty)),
 	TotalDefectyds = Sum(TotalDefectyds),
-	Inspection  = iif(SUM(Qty) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.Qty)),
+	Inspection  = iif(SUM(t.Qty) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.Qty)),
 	t.Physical
 from #tmp2 t
 Group by Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,Inventory_SEQ,WK,ReceivingID,StyleID,Brandid,Supplier,Refno,ColorID,IssueDate,
