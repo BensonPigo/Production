@@ -13,32 +13,22 @@ SET NOCOUNT ON;
 DECLARE @current_ServerName varchar(50) = (SELECT [Server Name] = @@SERVERNAME)
 --依不同Server來抓到對應的備機ServerName
 DECLARE @Region nvarchar(10) 
-= (
-	select [value] = 
-		CASE @current_ServerName WHEN 'PHL-NEWPMS-02' THEN 'PH1' -- PH1
-				WHEN 'VT1-PH2-PMS2B' THEN 'PH2' 				 -- PH2
-				WHEN 'SYSTEM2016BK' THEN 'ESP'					 -- ESP
-				WHEN 'SPT-176' THEN 'SPT' 						 -- SPT
-				WHEN 'SYSTEM2017BK' THEN 'SNP' 					 -- SNP
-				WHEN 'SPS-SQL2' THEN 'SPS' 						 -- SPS
-				WHEN 'SQLBK' THEN 'SPR' 						 -- SPR
-				WHEN 'NEWERP-BAK' THEN 'HZG' 					 -- HZG	
-				WHEN 'SQL' THEN 'HXG'							 -- HXG	
-		ELSE '' END
-)
+
+select @Region = REPLACE(RgCode, 'PHI', 'PH1')
+from Production.dbo.System
 
 DECLARE @M nvarchar(10) 
 = (
 	select [value] = 
-		CASE @current_ServerName WHEN 'PHL-NEWPMS-02' THEN 'PH1' -- PH1
-				WHEN 'VT1-PH2-PMS2B' THEN 'PH2'					 -- PH2
-				WHEN 'SYSTEM2016BK' THEN 'VM2'					 -- ESP
-				WHEN 'SPT-176' THEN 'VM1'						 -- SPT
-				WHEN 'SYSTEM2017BK' THEN 'VM3'					 -- SNP
-				WHEN 'SPS-SQL2' THEN 'KM2'						 -- SPS
-				WHEN 'SQLBK' THEN 'KM1'							 -- SPR
-				WHEN 'NEWERP-BAK' THEN 'CM2'					 -- HZG		
-				WHEN 'SQL' THEN 'CM1'							 -- HXG				
+		CASE @Region WHEN 'PH1' THEN 'PH1' -- PH1
+				WHEN 'PH2' THEN 'PH2'					 -- PH2
+				WHEN 'ESP' THEN 'VM2'					 -- ESP
+				WHEN 'SPT' THEN 'VM1'						 -- SPT
+				WHEN 'SNP' THEN 'VM3'					 -- SNP
+				WHEN 'SPS' THEN 'KM2'						 -- SPS
+				WHEN 'SPR' THEN 'KM1'							 -- SPR
+				WHEN 'HZG' THEN 'CM2'					 -- HZG		
+				WHEN 'HXG' THEN 'CM1'							 -- HXG				
 		ELSE '' END
 )
 
