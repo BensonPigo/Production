@@ -1424,7 +1424,7 @@ if  not exists (select  1
                 from Export with (nolock) where BLno = @BLno
                 union all
                 select  1
-                from FtyExport with (nolock) where BLno = @BLno and Type <> 3
+                from FtyExport with (nolock) where BLno = @BLno
 )
 begin
     select  [Code] = 'P05.',
