@@ -133,23 +133,6 @@ END
                 this.ShowErr(result);
             }
 
-            this.chkIsShowinIEP01.Checked = dt.AsEnumerable().Where(x => x.Field<bool>("IsShowinIEP01").Equals(true)).Any();
-            var showinIEP03 = dt.AsEnumerable().Where(x => x.Field<bool>("IsShowinIEP03").Equals(true));
-            this.chkIsShowinIEP03.Checked = showinIEP03.Any();
-            var sewingline = dt.AsEnumerable().Where(x => x.Field<bool>("IsSewingline").Equals(true));
-            this.chkIsSewingline.Checked = sewingline.Any();
-
-            this.txtCentralizedmulitFactoryIEP03.Text = string.Empty;
-            if (showinIEP03.Any())
-            {
-                this.txtCentralizedmulitFactoryIEP03.Text = string.Join(",", showinIEP03.Select(x => x.Field<string>("FactoryID")).ToArray());
-            }
-
-            this.txtCentralizedmulitFactorySewingline.Text = string.Empty;
-            if (sewingline.Any())
-            {
-                this.txtCentralizedmulitFactorySewingline.Text = string.Join(",", sewingline.Select(x => x.Field<string>("FactoryID")).ToArray());
-            }
             #endregion
         }
 
