@@ -64,6 +64,7 @@ select ed.*
 ,ed.ToSeq2
 ,[ToSEQ] = ed.ToSeq1  + ' '+ ed.ToSeq2
 ,[Old_Qty] = misc.Qty - f_export.Qty
+,ed.SCIRefNo
 from FtyExport_Detail ed WITH (NOLOCK) 
 left join FtyExport fe WITH (NOLOCK) on fe.ID = ed.ID
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
@@ -184,6 +185,7 @@ where ed.ID = '{0}'
                 .Text("ToSEQ", header: "To SEQ", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Supp", header: "Supplier", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("SCIRefNo", header: "SCI Ref#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Type", header: "Type", width: Widths.AnsiChars(11), iseditingreadonly: true)
                 .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(11), iseditingreadonly: true)
