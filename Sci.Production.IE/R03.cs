@@ -96,9 +96,10 @@ left join Pass1 pEdt WITH (NOLOCK) on l.EditName = pEdt.ID
 inner join LineMapping_Detail ld WITH (NOLOCK) on l.ID = ld.ID
 left join Operation op WITH (NOLOCK) on ld.OperationID = op.ID
 outer apply (
-	select [Version] = max(Version)
+	select [Version] = max(Version),FactoryID
 	from LineMapping l2 WITH (NOLOCK) 
-    where l.StyleID = l2.StyleID and l.SeasonID = l2.SeasonID and l.BrandID = l2.BrandID
+    where l.StyleUkey = l2.StyleUkey and l.FactoryID = l2.FactoryID
+    group by FactoryID
 )lMax
 where EXISTS (
 	select 1
@@ -106,7 +107,7 @@ where EXISTS (
 	left join Orders o WITH (NOLOCK) on s.OrderID = o.ID
 	where s.Inline >= @inline1 
     and s.Inline <= @inline2 
-    and o.StyleID=l.StyleID and o.SeasonID=l.SeasonID and o.BrandID = l.BrandID
+    and o.StyleID=l.StyleID and o.SeasonID=l.SeasonID and o.BrandID = l.BrandID and s.FactoryID = l.FactoryID
 )" + Environment.NewLine));
 
             if (!MyUtility.Check.Empty(this.factory))
@@ -142,7 +143,7 @@ where EXISTS (
 
             if (MyUtility.Convert.GetInt(this.version) > 0)
             {
-                sqlCmd.Append("And l.Version = lMax.Version" + Environment.NewLine);
+                sqlCmd.Append("And l.Version = lMax.Version and l.FactoryID = lMax.FactoryID" + Environment.NewLine);
             }
 
             sqlCmd.Append("Order by l.FactoryID, l.StyleID, l.BrandID, l.Version, ld.NO " + Environment.NewLine);

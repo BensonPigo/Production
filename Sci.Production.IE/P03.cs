@@ -1615,23 +1615,6 @@ order by EffectiveDate desc
             }
         }
 
-        /// <summary>
-        /// ClickUnconfirm
-        /// </summary>
-        protected override void ClickUnconfirm()
-        {
-            base.ClickUnconfirm();
-
-            DualResult result;
-            string updateCmd = string.Format("update LineMapping set Status = 'New', IEReasonID = '',EditName = '{0}', EditDate = GETDATE() where ID = {1}", Env.User.UserID, this.CurrentMaintain["ID"].ToString());
-            result = DBProxy.Current.Execute(null, updateCmd);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox("Unconfirm fail!\r\n" + result.ToString());
-                return;
-            }
-        }
-
         // Not hit target reason
         private void BtnNotHitTargetReason_Click(object sender, EventArgs e)
         {
