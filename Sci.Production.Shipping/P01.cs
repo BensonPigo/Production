@@ -1534,6 +1534,11 @@ and Forwarder = '{this.txtSubconForwarderN.TextBox1.Text}'";
 
         private void TxtSeq_TextChanged(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
             #region 判斷PackingList是否存在 by ISP20211541
             if (!MyUtility.Check.Empty(this.CurrentMaintain["OrderID"]) && !MyUtility.Check.Empty(this.CurrentMaintain["OrderShipmodeSeq"]))
             {
