@@ -3,7 +3,7 @@
     [Year]          VARCHAR (4)  CONSTRAINT [DF_Factory_TMS_Year] DEFAULT ('') NOT NULL,
     [ArtworkTypeID] VARCHAR (20) CONSTRAINT [DF_Factory_TMS_ArtworkTypeID] DEFAULT ('') NOT NULL,
     [Month]         VARCHAR (2)  CONSTRAINT [DF_Factory_TMS_Month] DEFAULT ('') NOT NULL,
-    [TMS]           INT          CONSTRAINT [DF_Factory_TMS_TMS] DEFAULT ((0)) NULL,
+    [TMS]           NUMERIC(8)          CONSTRAINT [DF_Factory_TMS_TMS] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_Factory_TMS] PRIMARY KEY CLUSTERED ([ID] ASC, [Year] ASC, [ArtworkTypeID] ASC, [Month] ASC)
 );
 
