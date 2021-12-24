@@ -431,7 +431,9 @@ Begin
 	exec tradedb.trade.dbo.GetPAMSHoliday @YM, @Factory
 
 	insert into #tmp_PAMSHoliday
-	select [FactoryID] = @Factory, Holiday from #tmp_Holiday
+	select [FactoryID] = @Factory, Holiday 
+	from #tmp_Holiday
+	where Holiday is not null
 
 	truncate table #tmp_Holiday
 	FETCH NEXT FROM CURSOR_ INTO @Factory
