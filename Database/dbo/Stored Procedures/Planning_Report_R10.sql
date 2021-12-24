@@ -81,10 +81,10 @@ BEGIN
 	outer apply (select DATEFROMPARTS(Factory_Tms.Year,Factory_Tms.Month,8) as OrderDate) od
 	left join ArtworkType on ArtworkType.Id = Factory_TMS.ArtworkTypeID
 	left join Factory_WorkHour fw on Factory.ID = fw.ID and fw.Year = Factory_TMS.Year and fw.Month = Factory_Tms.Month	
-	outer apply (select IIF(@ArtWorkType = 'Sewing', ROUND(convert(bigint,Factory_TMS.Tms) * 3600 / @mStandardTMS, 0),
+	outer apply (select IIF(@ArtWorkType = 'Sewing', ROUND(Factory_TMS.Tms * 3600 / @mStandardTMS, 0),
 						iif(ArtworkType.ArtworkUnit = 'STITCH', Factory_TMS.Tms,
 						iif(ArtworkType.ProductionUnit = 'Qty', Factory_TMS.Tms,
-						IIF(@CalculateCPU = 1, ROUND(convert(bigint,Factory_Tms.Tms) * 60 / @mStandardTMS, 0), Factory_TMS.TMS )))) as Loading) cc
+						IIF(@CalculateCPU = 1, ROUND(Factory_Tms.Tms * 60 / @mStandardTMS, 0), Factory_TMS.TMS )))) as Loading) cc
 	outer apply (select format(dateadd(day,-7,OrderDate),'yyyyMM') as Date1) odd1
 	outer apply (select cast(Factory_TMS.Year as varchar(4)) + cast(Factory_TMS.Month as varchar(2)) as Date2) odd2
 	Where ISsci = 1 /* And Factory.Junk = 0 */ And Artworktype.ReportDropdown = 1 
@@ -475,10 +475,10 @@ BEGIN
 				select Factory_Tms.ID, SUM(cc.Capacity) as Tms 
 				from Factory_Tms
 				left join ArtworkType on ArtworkType.Id = Factory_TMS.ArtworkTypeID
-				outer apply (select IIF(@ArtWorkType = 'Sewing', ROUND(convert(bigint,Factory_TMS.Tms) * 3600 / @mStandardTMS, 0),
+				outer apply (select IIF(@ArtWorkType = 'Sewing', ROUND(Factory_TMS.Tms * 3600 / @mStandardTMS, 0),
 							iif(ArtworkType.ArtworkUnit = 'STITCH', Factory_TMS.Tms / 1000,
 							iif(ArtworkType.ProductionUnit = 'Qty', Factory_TMS.Tms,
-							IIF(@CalculateCPU = 1, ROUND(convert(bigint,Factory_Tms.Tms) * 60 / @mStandardTMS, 0), Factory_TMS.TMS )))) as Capacity) cc
+							IIF(@CalculateCPU = 1, ROUND(Factory_Tms.Tms * 60 / @mStandardTMS, 0), Factory_TMS.TMS )))) as Capacity) cc
 				where YEAR = @Year and ArtworkTypeID = @ArtWorkType
 				GROUP BY Factory_Tms.ID
 			) d on tmpC.FactoryID = d.ID
