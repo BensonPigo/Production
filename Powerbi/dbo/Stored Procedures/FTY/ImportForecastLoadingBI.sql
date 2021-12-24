@@ -54,7 +54,7 @@ where id in ('BONDING (HAND)','BONDING (MACHINE)','LASER','HEAT TRANSFER','CUTTI
 	'ROLLER SUBLIMATION','VELCRO MACHINE','EMBROIDERY','PRINTING','EMBOSS/DEBOSS',
 	'GMT WASH','PAD PRINTING','GARMENT DYE', 'B-HOT PRESS(BONDING)', 'S-HOT PRESS(BONDING)', 'S-HOT PRESS(HT)', 'PRINTING PPU')
 
---�ǳ�ArtworkType�����W��
+--準備ArtworkType的欄位名稱
 Select *
 into #UseArtworkType
 From(
@@ -82,9 +82,9 @@ From(
 	Where tmpArtworkType.ID in (select id from #ArtworkTypeList)
 
 /******************************************************************************************************************************
-1. Orders.Category = '' ���� Trade.SewLastDate
-2. Orders.ForecastSampleGroup ���� Trade.SampleGroup
-3. Trade.Forecast.CheckStyle = 0 ���� Orders.Category = '' and Orders.ForecastSampleGroup in ('D','S') = 0 else = 1
+1. Orders.Category = '' 等於 Trade.SewLastDate
+2. Orders.ForecastSampleGroup 等於 Trade.SampleGroup
+3. Trade.Forecast.CheckStyle = 0 等於 Orders.Category = '' and Orders.ForecastSampleGroup in ('D','S') = 0 else = 1
 *******************************************************************************************************************************/
 select ID, Qty, BrandID, StyleID, SeasonID, OrderTypeID, ProgramID, Category, CPU
 	, BuyerDelivery, StyleUkey, FactoryID, MDivisionID
@@ -95,7 +95,7 @@ from Production.dbo.Orders
 where Category = ''
 
 /******************************************************************************************************************************
-1.  LocalOrder = '1' ���� Trade.FactoryOrder
+1.  LocalOrder = '1' 等於 Trade.FactoryOrder
 *******************************************************************************************************************************/
 select [FactoryID]
 	, [ID]
@@ -124,7 +124,7 @@ from Production.dbo.Orders
 where LocalOrder = '1'
 
 
---�p��ArtworkType
+--計算ArtworkType
 select *
 into #atSource
 From(
@@ -211,7 +211,7 @@ From(
 
 	UNION
 
-	--�t��FactoryOrder
+	--負的FactoryOrder
 	Select *
 	From (
 		Select FactoryOrder.ID
@@ -222,7 +222,7 @@ From(
 			When 'PCS' Then FactoryOrder.Qty * tmsCost.Qty * getCPURate.CpuRate
 			Else FactoryOrder.Qty * getCPURate.CpuRate
 			End * -1
-		, SubconInType = '-2' --�t�ƪ�Type��-2��ܥH�K�Ϥ�2�P-2
+		, SubconInType = '-2' --負數的Type用-2表示以便區分2與-2
 		From #tmp_FactoryOrder FactoryOrder
 		Left join Production.dbo.Style	on FactoryOrder.BrandID=Style.BrandID and FactoryOrder.StyleID =Style.ID and  FactoryOrder.SeasonID = Style.SeasonID
 		Left join Production.dbo.Style_TmsCost tmsCost on tmsCost.StyleUKey = Style.Ukey
@@ -240,7 +240,7 @@ From(
 ) source
 
 /******************************************************************************************************************************
-1. ����Amount (USD) �u�t�ݥΤ���
+1. 移除Amount (USD) 工廠端用不到
 *******************************************************************************************************************************/
 
 --Orders
@@ -359,9 +359,9 @@ LEFT JOIN Production.dbo.Reason FabricType with (nolock) ON FabricType.ReasonTyp
 LEFT JOIN Production.dbo.Dropdownlist Lining with (nolock) ON Lining.Type='StyleLining' and Lining.ID = style.Lining
 LEFT JOIN Production.dbo.Dropdownlist Construction with (nolock) ON Construction.Type='StyleConstruction' and Construction.ID = style.Construction
 LEFT JOIN Production.dbo.Dropdownlist Gender with (nolock) ON Gender.Type='Gender' and Gender.ID = style.Gender
-outer apply (select CpuRate from Production.dbo.GetCPURate(Orders.OrderTypeID,Orders.ProgramID,Orders.Category,Orders.BrandID,'O')) as CPURate --�[�J
+outer apply (select CpuRate from Production.dbo.GetCPURate(Orders.OrderTypeID,Orders.ProgramID,Orders.Category,Orders.BrandID,'O')) as CPURate --加入
 --outer apply (select * from Production.dbo.GetCurrencyRate('FX', Orders.CurrencyID, 'USD', Orders.cfmDate)) as GetCurrencyRate
-outer apply (select * from Production.dbo.GetOrderAmount(orders.ID)) goa--�[�J
+outer apply (select * from Production.dbo.GetOrderAmount(orders.ID)) goa--加入
 outer apply(
 	select Qty = sum(ShipQty) 
 	from Production.dbo.Pullout_Detail_Detail
@@ -632,7 +632,7 @@ Select *
 From #tmpOrderList
 
 ------------------------------T_Factory_Tms ->  ForecastLoadingBI_Summary  ------------------------------
--- �ǳƸ�ƨӷ�
+-- 準備資料來源
 	Select *
 	into #SourceA
 	From(
@@ -718,7 +718,7 @@ From #tmpOrderList
 		WHERE FactoryOrder.Junk = 0 and FactoryOrder.Qty > 0 and FactoryOrder.SubconInType in ('2', '3') 
 		and FactoryOrder.SCIDelivery between @Date_S and @Date_E
 	UNION
-		--�t��FactoryOrder
+		--負的FactoryOrder
 		Select FactoryOrder.ID
 		, FactoryID = FactoryOrder.ProgramID
 		, Factory.MDivisionID
@@ -757,7 +757,7 @@ From #tmpOrderList
 	Group by a.FactoryID, a.MDivisionID, a.ArtworkTypeID, a.[Key] , a.[Half key]
 
 ------------------------------T_LoadingvsCapacity_buyer ->  ForecastLoadingBI_Summary_Buyer------------------------------
--- �ǳƸ�ƨӷ�
+-- 準備資料來源
 	SELECT
 		* INTO #SourceC
 	FROM (
@@ -852,7 +852,7 @@ From #tmpOrderList
 		AND FactoryOrder.SubconInType IN ('2', '3')
 		AND FactoryOrder.BuyerDelivery between @YearMonth_S and @YearMonth_E
 	UNION
-		--�t��FactoryOrder
+		--負的FactoryOrder
 		SELECT FactoryOrder.ID
 		   ,FactoryID = FactoryOrder.ProgramID
 		   ,Factory.MDivisionID
@@ -899,7 +899,7 @@ From #tmpOrderList
 			,a.[Half key]
 
 ------------------------------------------------------------------------------------------------------------------------
--- �إߩҦ���Key
+-- 建立所有的Key
 Declare @KeyTable Table ([Half key] varchar(8) not null  primary key, [key] varchar(6) not null)
 Declare @tmpDate DATE = dateadd(m,-1, @YearMonth_S)
 While (@tmpDate <= @YearMonth_E)
@@ -909,7 +909,7 @@ Begin
 	Select @tmpDate = DATEADD(m, 1, @tmpDate )
 End
 
--- �إߩҦ���Key
+-- 建立所有的Key
 Declare @KeyTable2 Table ([Half key] varchar(8) not null , [key] varchar(6) not null)
 Declare @tmpDate2 DATE = dateadd(m,-1, @YearMonth_S)
 While (@tmpDate2 <= @YearMonth_E)
@@ -928,10 +928,10 @@ select * into #tmpKeyTable from @KeyTable
 select * into #tmpKeyTable2 from @KeyTable2
 
 --Insert T_LoadingvsCapacity
---1.��Ҧ�Factory_TMS��ArtworkType
---2.Factory�u���IsSCI = true
---3.�ư�Capacity(CPU)�PLoading (CPU)�Ҭ�0�����
---4.�ư�ArtworkType Junk = true
+--1.找所有Factory_TMS的ArtworkType
+--2.Factory只顯示IsSCI = true
+--3.排除Capacity(CPU)與Loading (CPU)皆為0的資料
+--4.排除ArtworkType Junk = true
 SET @SqlCmd1 = '
 INSERT ForecastLoadingBI_Summary
 Select * From
@@ -963,10 +963,10 @@ order by b.[Key],b.mDivisionID,b.ArtworkTypeID'
 EXEC sp_executesql @SqlCmd1
 
 --Insert T_LoadingvsCapacity_buyer
---1.��Ҧ�Factory_TMS��ArtworkType
---2.Factory�u���IsSCI = true
---3.�ư�Capacity(CPU)�PLoading (CPU)�Ҭ�0�����
---4.�ư�ArtworkType Junk = true
+--1.找所有Factory_TMS的ArtworkType
+--2.Factory只顯示IsSCI = true
+--3.排除Capacity(CPU)與Loading (CPU)皆為0的資料
+--4.排除ArtworkType Junk = true
 SET @SqlCmd1 = '
 INSERT ForecastLoadingBI_Summary_Buyer
 Select * From
