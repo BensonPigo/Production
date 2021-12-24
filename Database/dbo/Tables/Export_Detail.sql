@@ -48,7 +48,7 @@
     [BalanceQty]     NUMERIC (12, 2)  CONSTRAINT [DF_Export_Detail_BalanceQty] DEFAULT ((0)) NULL,
     [BalanceFOC]     NUMERIC (12, 2)  CONSTRAINT [DF_Export_Detail_BalanceFOC] DEFAULT ((0)) NULL,
     [CurrencyId]     VARCHAR (3)     CONSTRAINT [DF_Export_Detail_CurrencyId] DEFAULT ('') NULL,
-    [InvoiceNo] VARCHAR(200) NULL DEFAULT (''), 
+    [InvoiceNo] VARCHAR(500) NULL DEFAULT (''), 
     CONSTRAINT [PK_Export_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC, [ShipPlanHandle] ASC)
 );
 
