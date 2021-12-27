@@ -745,12 +745,30 @@ values ('{0}','Status','','New','{1}',GETDATE())",
                             // OrderID異動，其他相關欄位要跟著異動
                             this.ChangeOtherData(string.Empty);
                             this.txtSpNo.Text = string.Empty;
+                            this.CurrentMaintain["OrderID"] = string.Empty;
                             e.Cancel = true;
                             return;
                         }
                     }
                     #endregion
                 }
+
+                #region 判斷PackingList是否存在 by ISP20211541
+                if (!MyUtility.Check.Empty(this.txtSpNo.Text) && !MyUtility.Check.Empty(this.txtSeq.Text))
+                {
+                    string sqlcmd = $@"
+SELECT Distinct P.ID 
+FROM PackingList P 
+INNER JOIN PackingList_Detail PD ON P.ID=PD.ID
+WHERE P.Type='F' AND PD.OrderID = '{this.txtSpNo.Text}' and pd.OrderShipmodeSeq = '{this.txtSeq.Text}'
+";
+                    if (MyUtility.Check.Seek(sqlcmd, out DataRow drPackingList))
+                    {
+                        MyUtility.Msg.WarningBox($@"SP/SEQ# {this.txtSpNo.Text}/{this.txtSeq.Text} is under FOC Packing# {drPackingList["ID"]}, which is not applicable for Air prepaid shipment. Please junk FOC Packing then create garment booking instead.");
+                        e.Cancel = true;
+                    }
+                }
+                #endregion
             }
         }
 
@@ -768,6 +786,7 @@ values ('{0}','Status','','New','{1}',GETDATE())",
                 this.numOrderQty.Value = 0;
                 this.dateBuyerDelivery.Value = null;
                 this.txtCountryDestination.TextBox1.Text = string.Empty;
+                this.CurrentMaintain["OrderID"] = string.Empty;
                 this.CurrentMaintain["OrderShipmodeSeq"] = string.Empty;
                 this.CurrentMaintain["POHandle"] = string.Empty;
                 this.CurrentMaintain["POSMR"] = string.Empty;
@@ -869,6 +888,7 @@ where oq.Id = b.Id
                             this.txttpeuserTask.DisplayBox1.Text = string.Empty;
                             this.txttpeuserTask.DisplayBox2.Text = string.Empty;
                             this.txtSpNo.Text = string.Empty;
+                            this.CurrentMaintain["OrderID"] = string.Empty;
 
                             string strCheckOrderIDCanAirPP = $@"
 select Id
@@ -1510,6 +1530,33 @@ and Forwarder = '{this.txtSubconForwarderN.TextBox1.Text}'";
 
         private void Detailcont_Paint(object sender, PaintEventArgs e)
         {
+        }
+
+        private void TxtSeq_TextChanged(object sender, EventArgs e)
+        {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
+            #region 判斷PackingList是否存在 by ISP20211541
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["OrderID"]) && !MyUtility.Check.Empty(this.CurrentMaintain["OrderShipmodeSeq"]))
+            {
+                string sqlcmd = $@"
+SELECT Distinct P.ID 
+FROM PackingList P 
+INNER JOIN PackingList_Detail PD ON P.ID=PD.ID
+WHERE P.Type='F' AND PD.OrderID = '{this.txtSpNo.Text}' and pd.OrderShipmodeSeq = '{this.txtSeq.Text}'
+";
+                if (MyUtility.Check.Seek(sqlcmd, out DataRow drPackingList))
+                {
+                    MyUtility.Msg.WarningBox($@"SP/SEQ# {this.txtSpNo.Text}/{this.txtSeq.Text} is under FOC Packing# {drPackingList["ID"]}, which is not applicable for Air prepaid shipment. Please junk FOC Packing then create garment booking instead.");
+                    this.CurrentMaintain["OrderID"] = string.Empty;
+                    this.CurrentMaintain["OrderShipmodeSeq"] = string.Empty;
+                    return;
+                }
+            }
+            #endregion
         }
     }
 }

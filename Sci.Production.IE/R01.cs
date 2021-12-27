@@ -17,8 +17,10 @@ namespace Sci.Production.IE
         private string style;
         private string season;
         private string team;
-        private string inline1;
-        private string inline2;
+        //private string inline1;
+        //private string inline2;
+        //private string sewingline1;
+        //private string sewingline2;
         private bool bolSummary;
         private bool bolBalancing;
         private DataTable printData;
@@ -91,14 +93,23 @@ namespace Sci.Production.IE
         /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
+            if (!this.dateInlineDate.HasValue1 && !this.dateInlineDate.HasValue2 && !this.dateSewingDate.HasValue1 && !this.dateSewingDate.HasValue2)
+            {
+                MyUtility.Msg.InfoBox("Please input <Inline Date> or <Sewing Date> first!!");
+                return false;
+            }
+
             this.factory = this.txtFactory.Text;
             this.style = this.txtStyle.Text;
             this.season = this.txtSeason.Text;
             this.team = this.comboSewingTeam1.Text;
-            this.inline1 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value1);
-            this.inline2 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value2);
+            //this.inline1 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value1);
+            //this.inline2 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value2);
+            //this.sewingline1 = string.Format("{0:yyyy-MM-dd}", this.dateSewingDate.Value1);
+            //this.sewingline2 = string.Format("{0:yyyy-MM-dd}", this.dateSewingDate.Value2);
             this.bolSummary = this.radioSummary.Checked;
             this.bolBalancing = this.chkBalancing.Checked;
+
             return base.ValidateInput();
         }
 
@@ -110,6 +121,7 @@ namespace Sci.Production.IE
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.sqlCmd.Clear();
+
             if (this.bolSummary)
             {
                 this.sqlCmd.Append(@"
@@ -131,7 +143,7 @@ select
 	IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalGSD)/lm.HighestCycle/lm.CurrentOperators) as Eff,
 	EffTarget = EffTarget.Target / 100.0,
 	IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.HighestCycle/lm.CurrentOperators) as LB,
-	LinebalancingTarget.Target / 100.0,
+	[LinebalancingTarget] = LinebalancingTarget.Target / 100.0,
 	[NotHitTargetType] =  iif(lm.Version = 1, (select TypeGroup
 from IEReasonLBRnotHit_1st
 where Ukey = lm.IEReasonLBRnotHit_1stUkey),(select STUFF ((
@@ -169,6 +181,7 @@ where Ukey = lm.IEReasonLBRnotHit_1stUkey),(select STUFF ((
     lm.AddDate,
 	isnull((select Name from Pass1 WITH (NOLOCK) where ID = lm.EditName),'') as EditBy,
     lm.EditDate
+into #tmp
 from LineMapping lm WITH (NOLOCK) 
 outer apply(
 	select top 1 c.Target
@@ -188,6 +201,7 @@ outer apply(
             }
             else
             {
+                // Detail
                 this.sqlCmd.Append(@"
 select distinct
 	lm.FactoryID,
@@ -201,6 +215,7 @@ select distinct
 	lmdavg.avgTotalCycle,
 	[diffCycle] = (lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle,
 	lbr.name
+into #tmp
 from LineMapping lm WITH (NOLOCK) 
 inner join LineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
 left join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on lmd.IEReasonLBRNotHit_DetailUkey = lbr.Ukey and lbr.junk = 0
@@ -226,32 +241,6 @@ outer apply(
 	order by EffectiveDate desc
 )LinebalancingTarget 
 ");
-            }
-
-            if (!MyUtility.Check.Empty(this.inline1) || !MyUtility.Check.Empty(this.inline2))
-            {
-                string dateQuery = string.Empty;
-                if (!MyUtility.Check.Empty(this.inline1))
-                {
-                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), Inline, 120) ", this.inline1);
-                }
-
-                if (!MyUtility.Check.Empty(this.inline2))
-                {
-                    dateQuery += string.Format("and convert(varchar(10), Inline, 120) <= '{0}' ", this.inline2);
-                }
-
-                this.sqlCmd.Append(string.Format(
-                    @"
-inner join(
-	select distinct Orders.StyleID
-			, Orders.SeasonID
-			, Orders.BrandID
-	from SewingSchedule
-	join Orders on SewingSchedule.OrderID = Orders.ID
-	where Orders.Finished = 1 {0}
-) s on lm.StyleID = s.StyleID and lm.SeasonID = s.SeasonID and lm.BrandID = s.BrandID
-", dateQuery));
             }
 
             this.sqlCmd.Append("where 1 = 1");
@@ -298,6 +287,48 @@ and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (
             {
                 this.sqlCmd.Append(string.Format(" and lm.Team = '{0}'", this.team));
             }
+
+            this.sqlCmd.Append(@"select * from #tmp t");
+
+            #region Inline & Sewing Date is not null
+
+            if (this.dateSewingDate.Value1.HasValue || this.dateSewingDate.Value2.HasValue || this.dateInlineDate.Value1.HasValue || this.dateInlineDate.Value2.HasValue)
+            {
+                string dateQuery = string.Empty;
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value1))
+                {
+                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dateInlineDate.Value1.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value2))
+                {
+                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dateInlineDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value1) && !MyUtility.Check.Empty(this.dateSewingDate.Value2))
+                {
+                    dateQuery += $@"
+AND 
+( 
+	(Cast(ss.Inline as Date) >= convert(varchar(10), '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}', 120) AND Cast(ss.Inline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}' )
+    OR
+    (Cast(ss.Offline as Date) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}' AND Cast(ss.Offline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}')
+)";
+                }
+
+                this.sqlCmd.Append($@"
+ where exists(
+	select *
+	from SewingSchedule ss
+	join Orders o on ss.OrderID = o.ID
+	where o.Finished = 1 
+	{dateQuery}
+	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
+ )
+"
+                    );
+            }
+            #endregion
 
             return Ict.Result.True;
         }
