@@ -376,7 +376,7 @@ seq[1]), out this.dr))
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts2)
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)
             .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("usedqty", header: "@Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)
@@ -2077,6 +2077,7 @@ order by b.ID, b.seq1, b.seq2", Env.User.Keyword,
                 ndr["stocktype"] = dr["stocktype"];
                 ndr["ftyinventoryukey"] = dr["ukey"];
                 ndr["StockUnit"] = dr["StockUnit"];
+                ndr["MtlTypeID"] = dr["MtlTypeID"];
 
                 detailDt.Rows.Add(ndr);
 
