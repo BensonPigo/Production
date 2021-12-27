@@ -256,6 +256,7 @@ order by b.ID, b.seq1, b.seq2", this.CurrentDetailData["poid"]);
                     this.CurrentDetailData["SizeUnit"] = x[0]["SizeUnit"];
                     this.CurrentDetailData["location"] = x[0]["location"];
                     this.CurrentDetailData["description"] = x[0]["description"];
+                    this.CurrentDetailData["MtlTypeID"] = x[0]["MtlTypeID"];
                     this.CurrentDetailData["accu_issue"] = x[0]["accu_issue"];
                     this.CurrentDetailData["balanceqty"] = x[0]["balanceqty"];
                     this.CurrentDetailData["StockUnit"] = x[0]["StockUnit"];
@@ -360,6 +361,7 @@ seq[1]), out this.dr))
                             this.CurrentDetailData["SizeUnit"] = this.dr["SizeUnit"];
                             this.CurrentDetailData["location"] = this.dr["location"];
                             this.CurrentDetailData["description"] = this.dr["description"];
+                            this.CurrentDetailData["MtlTypeID"] = this.dr["MtlTypeID"];
                             this.CurrentDetailData["accu_issue"] = this.dr["accu_issue"];
                             this.CurrentDetailData["balanceqty"] = this.dr["balanceqty"];
                             this.CurrentDetailData["StockUnit"] = this.dr["StockUnit"];
@@ -374,6 +376,7 @@ seq[1]), out this.dr))
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts2)
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)
             .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("usedqty", header: "@Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)
@@ -442,10 +445,12 @@ select  a.Id
 				for xml path('')
 			),1,1,'')
 			)
+        , f.MtlTypeID
 from dbo.Issue_Detail a WITH (NOLOCK) 
 left join dbo.po_supp_detail p WITH (NOLOCK) on p.id  = a.poid 
                                                 and p.seq1= a.seq1 
                                                 and p.seq2 =a.seq2
+left join Fabric f on f.SciRefno = p.SciRefno
 left join dbo.FtyInventory FI on    a.Poid = Fi.Poid 
                                     and a.Seq1 = fi.seq1 
                                     and a.seq2 = fi.seq2 
@@ -1566,6 +1571,7 @@ select  a.Seq1 + '-' + a.Seq2 as SEQ
         ,a.Qty as TransferQTY
         ,dbo.Getlocation(fi.ukey) as Location
         ,s.*
+        ,f.MtlTypeID
 from(
     select * 
     from (
@@ -1586,6 +1592,7 @@ left join dbo.Issue_detail a WITH (NOLOCK) on ukey = s.Issue_DetailUkey
 left join dbo.po_supp_detail WITH (NOLOCK) on po_supp_detail.id = a.POID and po_supp_detail.seq1 = a.seq1 and po_supp_detail.seq2=a.seq2
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2 = fi.seq2 
     and a.roll = fi.roll and a.stocktype = fi.stocktype
+left join fabric f on f.SciRefno = po_supp_detail.SciRefno
 ", sizecodes);
             result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtseq);
 
@@ -2028,6 +2035,7 @@ select  poid = b.ID
         , dbo.Getlocation (a.ukey) [location]
         , [Production].[dbo].getmtldesc (b.id, b.seq1, b.seq2, 2, 0)[description]
         , isnull ((a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty ),0.00) as balanceqty
+        , f.MtlTypeID
 from [Production].[dbo].po_supp_detail b WITH (NOLOCK) 
 inner join [Production].[dbo].Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
 inner join [Production].[dbo].MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
@@ -2069,6 +2077,7 @@ order by b.ID, b.seq1, b.seq2", Env.User.Keyword,
                 ndr["stocktype"] = dr["stocktype"];
                 ndr["ftyinventoryukey"] = dr["ukey"];
                 ndr["StockUnit"] = dr["StockUnit"];
+                ndr["MtlTypeID"] = dr["MtlTypeID"];
 
                 detailDt.Rows.Add(ndr);
 

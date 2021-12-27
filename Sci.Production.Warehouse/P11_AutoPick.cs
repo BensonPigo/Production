@@ -632,6 +632,7 @@ order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSi
                 .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(23), iseditingreadonly: true)
+                .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("colorid", header: "Color ID", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("sizespec", header: "SizeSpec", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("GarmentSize", header: "Garment\r\nSize", width: Widths.AnsiChars(6), iseditingreadonly: true)
