@@ -1345,6 +1345,15 @@ Packing list is locked in the hanger system.";
 
             #region 一併移除 PackingListID 相對應貼標 / 噴碼的資料
             sqlCmd = $@"
+SET XACT_ABORT ON
+
+ DELETE pi
+ FROM ShippingMarkPic pic
+ INNER JOIN ShippingMarkPic_Detail picd ON pic.Ukey = picd.ShippingMarkPicUkey
+ INNER JOIN [testing\ESP].PMSFile.dbo.ShippingMarkPic_Detail pi ON  pi.ShippingMarkPicUkey = picd.ShippingMarkPicUkey 
+                                                                AND pi.SCICtnNo = picd.SCICtnNo
+                                                                AND pi.ShippingMarkTypeUkey = picd.ShippingMarkTypeUkey
+ WHERE pic.PackingListID='{this.CurrentMaintain["ID"]}'
 
  DELETE picd
  FROM ShippingMarkPic pic

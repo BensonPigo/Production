@@ -707,7 +707,7 @@ AND (pu.Status IS NULL OR pu.Status NOT IN ('Confirmed', 'Locked'))
 
             var idList = updateModelList.Select(o => new { o.PackingListID, o.RefNo }).Distinct().ToList();
 
-            string p24_Head_cmd = string.Empty;
+            string p24_Head_cmd = "SET XACT_ABORT ON";
             int ii = 0;
             foreach (var item in idList)
             {
@@ -765,6 +765,11 @@ FROM #tmp_Combination{ii} t
 DELETE picd
 FROM ShippingMarkPic pic
 INNER JOIN ShippingMarkPic_Detail picd ON pic.Ukey = picd.ShippingMarkPicUkey
+INNER JOIN #tmp_Pic{ii} t ON pic.PackingListID = t.PackingListID 
+
+DELETE picd
+FROM ShippingMarkPic pic
+INNER JOIN [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail picd ON pic.Ukey = picd.ShippingMarkPicUkey
 INNER JOIN #tmp_Pic{ii} t ON pic.PackingListID = t.PackingListID 
 
 DELETE p
@@ -838,6 +843,7 @@ DROP TABLE #tmp_Combination{ii} ,#tmp_Pic{ii}
                 string cmd = string.Empty;
 
                 cmd = $@"
+SET XACT_ABORT ON
 {tmpTable}
 
 ----開始寫入ShippingMarkPic_Detail
@@ -932,51 +938,81 @@ INNER JOIN StickerSize s ON s.ID = b.StickerSizeID
 --INNER JOIN #tmp{i} dt ON t.PackingListID = dt.PackingListID AND t.RefNo = dt.RefNo AND t.SCICtnNo = dt.SCICtnNo
 INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
 
+----圖片專用Table也寫入一筆
+INSERT [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail 
+		(ShippingMarkPicUkey,SCICtnNo,ShippingMarkTypeUkey)
+SELECT 
+	 [ShippingMarkPicUkey]=pic.Ukey
+	,t.SCICtnNo
+	,t.ShippingMarkTypeUkey
+FROM #tmp_Pic_Detail{i} t
+INNER JOIN ShippingMarkPicture a ON a.BrandID = t.BrandID AND a.CTNRefno = t.RefNo AND a.ShippingMarkCombinationUkey = t.ShippingMarkCombinationUkey AND a.Category ='PIC' 
+INNER JOIN ShippingMarkPicture_Detail b ON a.Ukey = b.ShippingMarkPictureUkey AND b.ShippingMarkTypeUkey = t.ShippingMarkTypeUkey
+INNER JOIN ShippingMarkCombination comb ON comb.Ukey = a.ShippingMarkCombinationUkey
+INNER JOIN StickerSize s ON s.ID = b.StickerSizeID
+--INNER JOIN #tmp{i} dt ON t.PackingListID = dt.PackingListID AND t.RefNo = dt.RefNo AND t.SCICtnNo = dt.SCICtnNo
+INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
 ";
                 p24_BodyList.Add(cmd);
                 i++;
             }
 
             // P24表頭表身寫入
-            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
+            try
             {
-                try
+                // 開始更新DB
+                foreach (var p24_Head in p24_HeadList)
                 {
-                    // 開始更新DB
-                    foreach (var p24_Head in p24_HeadList)
+                    if (!(result = DBProxy.Current.Execute(null, p24_Head.ToString())))
                     {
-                        if (!(result = DBProxy.Current.Execute(null, p24_Head.ToString())))
-                        {
-                            transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return false;
-                        }
+                        this.ShowErr(result);
+                        return false;
+                    }
+                }
+
+                int idx = 0;
+                foreach (DataTable dt in dtList)
+                {
+                    string cmd = p24_BodyList[idx];
+
+                    if (!(result = DBProxy.Current.Execute(null, cmd)))
+                    {
+                        this.ShowErr(result);
+                        return false;
                     }
 
-                    int idx = 0;
-                    foreach (DataTable dt in dtList)
-                    {
-                        string cmd = p24_BodyList[idx];
-
-                        if (!(result = DBProxy.Current.Execute(null, cmd)))
-                        {
-                            transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return false;
-                        }
-
-                        idx++;
-                    }
-
-                    transactionscope.Complete();
-                    transactionscope.Dispose();
+                    idx++;
                 }
-                catch (Exception ex)
-                {
-                    transactionscope.Dispose();
-                    this.ShowErr(ex);
-                    return false;
-                }
+
+            }
+            catch (Exception ex)
+            {
+                // 該Packing只要其中一張圖片出錯，則該Packing全部把先前的圖片刪除
+                string cmd = $@"
+DELETE 
+FROM ShippingMarkPic_Detail
+WHERE ShippingMarkPicUkey In (
+    SELECT Ukey
+    FROM ShippingMarkPic
+    WHERE PackingListID IN ('{idList.ToList().Select(o => o.PackingListID).JoinToString("','")}')
+) 
+
+DELETE 
+FROM [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
+WHERE ShippingMarkPicUkey In (
+    SELECT Ukey
+    FROM ShippingMarkPic
+    WHERE PackingListID IN ('{idList.ToList().Select(o => o.PackingListID).JoinToString("','")}')
+) 
+
+DELETE 
+FROM ShippingMarkPic
+WHERE PackingListID IN ('{idList.ToList().Select(o => o.PackingListID).JoinToString("','")}'
+";
+                DBProxy.Current.Execute(null, cmd);
+
+                this.ShowErr(ex);
+                return false;
             }
 
             // P24圖片寫入，By Packing 逐一執行
@@ -1132,12 +1168,20 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                 }
                 catch (Exception ex)
                 {
-                    // 該Packing只要其中一張圖片除錯，則該Packing全部把先前的圖片刪除
+                    // 該Packing只要其中一張圖片出錯，則該Packing全部把先前的圖片刪除
                     string cmd = $@"
+SET XACT_ABORT ON
+
 UPDATE b
 SET Image = NULL
 from ShippingMarkPic a 
 inner join ShippingMarkPic_Detail b on a.Ukey = b.ShippingMarkPicUkey
+where a.PackingListID IN ('{packingID}')
+
+UPDATE b
+SET Image = NULL
+from ShippingMarkPic a 
+inner join [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail b on a.Ukey = b.ShippingMarkPicUkey
 where a.PackingListID IN ('{packingID}')
 ";
                     DBProxy.Current.Execute(null, cmd);
@@ -1152,61 +1196,59 @@ where a.PackingListID IN ('{packingID}')
         private bool InsertImage(List<string> sQLs, List<string> filenames, List<byte[]> images)
         {
             DualResult result;
-            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
+            DBProxy.Current.DefaultTimeout = 3600;
+
+            try
             {
-                DBProxy.Current.DefaultTimeout = 3600;
-                try
+                int idxw = 0;
+                List<SqlParameter> para = new List<SqlParameter>();
+
+                // 組合寫入圖片的SQL
+                string finalSQL = string.Empty;
+
+                // SqlParameter上限是2100個，因此訂一個上限值，超過的話就分段
+                int sqlParameterLimit = 1000;
+                int limitCounter = 0;
+
+                List<Task<DualResult>> dualResults = new List<Task<DualResult>>();
+                int total = 1;
+
+                foreach (var sql in sQLs)
                 {
-                    int idxw = 0;
-                    List<SqlParameter> para = new List<SqlParameter>();
+                    finalSQL += sql + Environment.NewLine;
 
-                    // 組合寫入圖片的SQL
-                    string finalSQL = string.Empty;
+                    string name = filenames[idxw];
+                    byte[] image = images[idxw];
 
-                    // SqlParameter上限是2100個，因此訂一個上限值，超過的話就分段
-                    int sqlParameterLimit = 1000;
-                    int limitCounter = 0;
+                    para.Add(new SqlParameter($"@FileName{idxw}", name));
+                    para.Add(new SqlParameter($"@Image{idxw}", image));
+                    idxw++;
 
-                    List<Task<DualResult>> dualResults = new List<Task<DualResult>>();
-                    int total = 1;
-
-                    foreach (var sql in sQLs)
+                    limitCounter += 2;
+                    if (limitCounter >= sqlParameterLimit || total == sQLs.Count)
                     {
-                        finalSQL += sql + Environment.NewLine;
-
-                        string name = filenames[idxw];
-                        byte[] image = images[idxw];
-
-                        para.Add(new SqlParameter($"@FileName{idxw}", name));
-                        para.Add(new SqlParameter($"@Image{idxw}", image));
-                        idxw++;
-
-                        limitCounter += 2;
-                        if (limitCounter >= sqlParameterLimit || total == sQLs.Count)
+                        result = DBProxy.Current.Execute(null, finalSQL, para);
+                        if (!result)
                         {
-                            result = DBProxy.Current.Execute(null, finalSQL, para);
-                            if (!result)
-                            {
-                                transactionscope.Dispose();
-                                throw result.GetException();
-                            }
-
-                            finalSQL = string.Empty;
-                            para = new List<SqlParameter>();
-                            limitCounter = 0;
+                            //transactionscope.Dispose();
+                            throw result.GetException();
                         }
 
-                        total++;
+                        finalSQL = string.Empty;
+                        para = new List<SqlParameter>();
+                        limitCounter = 0;
                     }
 
-                    transactionscope.Complete();
-                    transactionscope.Dispose();
+                    total++;
                 }
-                catch (Exception ex)
-                {
-                    transactionscope.Dispose();
-                    throw ex;
-                }
+
+                //transactionscope.Complete();
+                //transactionscope.Dispose();
+            }
+            catch (Exception ex)
+            {
+                //transactionscope.Dispose();
+                throw ex;
             }
 
             return true;
@@ -1502,59 +1544,87 @@ WHERE a.PackingListID IN ('{selecteds.AsEnumerable().Select(o => MyUtility.Conve
 ";
 
                         #region Call P24 產生HTML檔
-
-                        using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
+                        try
                         {
-                            try
+                            DualResult result;
+
+                            result = DBProxy.Current.Execute(null, cmd);
+                            if (!result)
                             {
-                                DualResult result;
+                                throw result.GetException();
+                            }
 
-                                result = DBProxy.Current.Execute(null, cmd);
-                                if (!result)
+                            p24_Generate.Generate(selecteds, ref p24Result, false, "P26");
+
+                            // 由於API產生圖片耗時很久，因此前面通過的HTML驗證，過程中可能有變數，因此加上收集錯誤訊息，若有錯誤訓則把整個P24刪掉
+                            if (!MyUtility.Check.Empty(p24Result.ResultMsg))
+                            {
+                                string stampMsg = MyUtility.Check.Empty(p24Result.ResultMsg) ? string.Empty : p24Result.ResultMsg;
+
+                                Result r = new Result()
                                 {
-                                    throw result.GetException();
-                                }
+                                    FileSeq = match.FileSeq,
+                                    ResultMsg = stampMsg,
+                                };
+                                this.ConfirmMsg.Add(r);
 
-                                p24_Generate.Generate(selecteds, ref p24Result, false, "P26");
+                                string disposeSQL = $@"
+SET XACT_ABORT ON
 
-                                // 由於API產生圖片耗時很久，因此前面通過的HTML驗證，過程中可能有變數，因此加上收集錯誤訊息，若有錯誤訓則把整個P24刪掉
-                                if (!MyUtility.Check.Empty(p24Result.ResultMsg))
-                                {
-                                    string stampMsg = MyUtility.Check.Empty(p24Result.ResultMsg) ? string.Empty : p24Result.ResultMsg;
-
-                                    Result r = new Result()
-                                    {
-                                        FileSeq = match.FileSeq,
-                                        ResultMsg = stampMsg,
-                                    };
-                                    this.ConfirmMsg.Add(r);
-
-                                    string disposeSQL = $@"
 DELETE FROM ShippingMarkPic_Detail
 WHERE ShippingMarkTypeUkey IN (
-    SELECT a.Ukey 
-    FROM ShippingMarkPic a 
-    WHERE a.PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["ID"].ToString()))}') 
+SELECT a.Ukey 
+FROM ShippingMarkPic a 
+WHERE a.PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["ID"].ToString()))}') 
+)
+
+----圖片專用Table也刪除
+DELETE FROM [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
+WHERE ShippingMarkTypeUkey IN (
+SELECT a.Ukey 
+FROM ShippingMarkPic a 
+WHERE a.PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["ID"].ToString()))}') 
 )
 
 DELETE FROM ShippingMarkPic
 WHERE PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["ID"].ToString()))}') 
 ";
-                                    result = DBProxy.Current.Execute(null, disposeSQL);
+                                result = DBProxy.Current.Execute(null, disposeSQL);
 
-                                    if (!result)
-                                    {
-                                        throw result.GetException();
-                                    }
+                                if (!result)
+                                {
+                                    throw result.GetException();
                                 }
+                            }
 
-                                transactionscope.Complete();
-                            }
-                            catch (Exception ex)
-                            {
-                                transactionscope.Dispose();
-                                this.ShowErr(ex);
-                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            // 由於API產生圖片耗時很久，因此前面通過的HTML驗證，過程中可能有變數，因此加上收集錯誤訊息，若有錯誤訓則把整個P24刪掉
+                            string disposeSQL = $@"
+SET XACT_ABORT ON
+
+DELETE FROM ShippingMarkPic_Detail
+WHERE ShippingMarkTypeUkey IN (
+SELECT a.Ukey 
+FROM ShippingMarkPic a 
+WHERE a.PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["ID"].ToString()))}') 
+)
+
+----圖片專用Table也刪除
+DELETE FROM [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
+WHERE ShippingMarkTypeUkey IN (
+SELECT a.Ukey 
+FROM ShippingMarkPic a 
+WHERE a.PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["ID"].ToString()))}') 
+)
+
+DELETE FROM ShippingMarkPic
+WHERE PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["ID"].ToString()))}') 
+";
+                            DBProxy.Current.Execute(null, disposeSQL);
+
+                            this.ShowErr(ex);
                         }
                         #endregion
 
@@ -1971,10 +2041,27 @@ WHERE PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["I
 ";
 
             string cmd = $@"
+SET XACT_ABORT ON
+
 ----寫入圖片
 UPDATE sd
 SET sd.Image=@Image{this.imageIdx}
 FROM ShippingMarkPic_Detail sd 
+INNER JOIN ShippingMarkPic s ON s.Ukey = sd.ShippingMarkPicUkey
+INNER JOIN ShippingMarkType st ON st.Ukey = sd.ShippingMarkTypeUkey
+WHERE 1=1 
+AND sd.FileName=@FileName{this.imageIdx}
+AND sd.Seq = (
+    {seqCmd}
+)
+
+----寫入圖片(Image欄位單獨寫進PMSFile)
+UPDATE PmsFile
+SET PmsFile.Image=@Image{this.imageIdx}
+FROM ShippingMarkPic_Detail sd 
+INNER JOIN [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail PmsFile on  sd.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
+                                                                    AND sd.SCICtnNo=PmsFile.SCICtnNo 
+                                                                    AND sd.ShippingMarkTypeUkey=PmsFile.ShippingMarkTypeUkey 
 INNER JOIN ShippingMarkPic s ON s.Ukey = sd.ShippingMarkPicUkey
 INNER JOIN ShippingMarkType st ON st.Ukey = sd.ShippingMarkTypeUkey
 WHERE 1=1 
@@ -2015,6 +2102,8 @@ AND sd.Seq = (
             // 第一張圖片，對應Combnation的最小Seq，第二張圖片對應第二小Seq，以此類推
 
             string cmd = $@"
+SET XACT_ABORT ON
+
 ----找出P24表身的唯一值
 select a.PackingListID
 , b.SCICtnNo 
@@ -2027,10 +2116,13 @@ from ShippingMarkPic a with(nolock)
 inner join ShippingMarkPic_Detail b with(nolock) on a.Ukey = b.ShippingMarkPicUkey
 where a.PackingListID = '{packingListID}'  and b.SCICtnNo ='{sCICtnNo}'
 
-----寫入圖片
-UPDATE sd
-SET sd.Image=@Image{counter}
+----寫入圖片 (Image欄位單獨寫進PMSFile)
+UPDATE PmsFile
+SET PmsFile.Image=@Image{counter}
 FROM ShippingMarkPic_Detail sd 
+INNER JOIN [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail PmsFile on  sd.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
+                                                                    AND sd.SCICtnNo=PmsFile.SCICtnNo 
+                                                                    AND sd.ShippingMarkTypeUkey=PmsFile.ShippingMarkTypeUkey 
 INNER JOIN #tmp{counter} t on sd.ShippingMarkPicUkey = t.ShippingMarkPicUkey 
                     AND sd.SCICtnNo = t.SCICtnNo 
                     AND sd.ShippingMarkTypeUkey = t.ShippingMarkTypeUkey
@@ -2049,28 +2141,6 @@ INNER JOIN #tmp{counter} t on sd.ShippingMarkPicUkey = t.ShippingMarkPicUkey
 WHERE t.Rank = {rank}
 ";
             return cmd;
-        }
-
-        private void ClearP24Data(List<string> packingListIDs)
-        {
-            string cmd = $@"
-DELETE s
-FROM ShippingMarkPic_Detail s
-WHERE ShippingMarkPicUkey IN (
-    SELECT Ukey FROM ShippingMarkPic
-    where PackingListID IN ('{packingListIDs.JoinToString("','")}')
-)
-
-DELETE s
-FROM ShippingMarkPic s
-WHERE PackingListID IN ('{packingListIDs.JoinToString("','")}')
-
-";
-            DualResult result = DBProxy.Current.Execute(null, cmd);
-            if (!result)
-            {
-                this.ShowErr(result);
-            }
         }
 
         private enum UploadType

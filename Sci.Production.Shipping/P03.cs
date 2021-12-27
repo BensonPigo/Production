@@ -90,6 +90,7 @@ select
 ,c.COName
 ,c.ReceiveDate
 ,c.SendDate
+,psd.SCIRefno
 from Export_Detail ed WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 left join Supp s WITH (NOLOCK) on s.id = ed.SuppID 
@@ -215,6 +216,7 @@ where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
                 .Text("Category", header: "Category", width: Widths.AnsiChars(8))
                 .Date("InspDate", header: "Inspect Dead Line", width: Widths.AnsiChars(9))
                 .Text("Seq", header: "SEQ", width: Widths.AnsiChars(3))
+                .Text("SCIRefNo", header: "SCI Ref#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("Supp", header: "Supplier", width: Widths.AnsiChars(13))
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(6))
                 .Text("FabricType", header: "MMS Type", width: Widths.AnsiChars(3))

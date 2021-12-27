@@ -91,10 +91,17 @@ select  0 as selected
 		, [ToSeq]=''
 		, [ToSeq1]=''
 		, [ToSeq2]=''
+		, PSD.Refno
+		, Color = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
+												,IIF( PSD.SuppColor = '' or PSD.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,PSD.ColorID),PSD.SuppColor)
+												,dbo.GetColorMultipleID(o.BrandID,PSD.ColorID)
+											)
+		, PSD.SizeSpec
 FROM FtyInventory FI WITH (NOLOCK)
 LEFT JOIN View_WH_Orders O WITH (NOLOCK) ON O.ID = FI.POID
 LEFT JOIN Factory F WITH (NOLOCK) ON F.ID = O.FactoryID
 LEFT JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID=FI.POID AND PSD.SEQ1 = FI.SEQ1 AND PSD.SEQ2=FI.SEQ2
+left join Fabric on Fabric.SCIRefno = psd.SCIRefno
 Where FI.lock = 0 
 and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
         and FI.inqty - FI.outqty + FI.adjustqty - FI.ReturnQty > 0         
@@ -224,6 +231,9 @@ AND exists (select 1
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 3
                 .Text("FabricType", header: "Material Type", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 3
                 .EditText("Description", header: "Description", iseditingreadonly: true) // 4
+                .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true) // 5
                 .Numeric("stockqty", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) // 6
                 .Numeric("qty", header: "Out Qty", decimal_places: 2, integer_places: 10, settings: ns).Get(out nb_qty) // 7

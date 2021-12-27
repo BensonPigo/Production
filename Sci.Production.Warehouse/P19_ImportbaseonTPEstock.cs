@@ -108,6 +108,9 @@ namespace Sci.Production.Warehouse
                 .Text("roll", header: "Roll#", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(15))
+                .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true)
                 .Text("stocktype", header: "Stock Type", iseditingreadonly: true)
                 .Numeric("StockBalance", header: "Stock Balance", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
@@ -177,16 +180,24 @@ select  POID = rtrim(i.seq70poid)
         , TaipeiLastOutput = max(i.confirmdate) 
         , TaipeiOutput = sum(iif(i.type='2',i.qty,0-i.qty)) 
 		, psd.FabricType
+		, PSD.Refno
+		, Color
+		, PSD.SizeSpec
 into #tmp
 from dbo.Invtrans i WITH (NOLOCK) 
 inner join PO_Supp_Detail psd WITH (NOLOCK) on i.InventoryPOID = psd.ID
 												and i.InventorySeq1 = psd.SEQ1
 												and i.InventorySeq2 = psd.SEQ2
 inner join View_WH_Orders o WITH (NOLOCK) on psd.ID = o.ID
+left join Fabric on Fabric.SCIRefno = psd.SCIRefno
+outer apply (select Color = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
+												,IIF( PSD.SuppColor = '' or PSD.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,PSD.ColorID),PSD.SuppColor)
+												,dbo.GetColorMultipleID(o.BrandID,PSD.ColorID)
+											))c
 where (i.type='2' or i.type='6')
 		and i.seq70poid = @IssueSP
 		and o.MDivisionID = @MDivisionID
-group by rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.TransferFactory, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit, psd.FabricType
+group by i.seq70poid,rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.TransferFactory, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit, psd.FabricType,PSD.Refno, PSD.SizeSpec,c.Color
 
 
 select  selected = 0
@@ -222,6 +233,9 @@ select  selected = 0
         , #tmp.TaipeiLastOutput
         , #tmp.TaipeiOutput
 		, #tmp.FabricType
+        , Refno
+        , Color
+        , SizeSpec
 into    #tmpDetailResult
 from    #tmp  
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID 
@@ -265,6 +279,9 @@ select  selected = cast(0 as bit)
 							WHEN FabricType = 'O' THEN 'Other' 
 							ELSE '' 
 						END
+        , Refno
+        , Color
+        , SizeSpec
 into    #tmpDetail
 from    #tmpDetailResult
 where   StockBalance > 0

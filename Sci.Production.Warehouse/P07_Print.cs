@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using Sci.Production.Prg;
 using System.Windows.Forms;
+using Sci.Win.Tools;
 
 namespace Sci.Production.Warehouse
 {
@@ -165,7 +166,8 @@ namespace Sci.Production.Warehouse
 
             string sql = @"
 select  
-	R.Roll
+	[Sel] = 0
+    ,R.Roll
 	,R.Dyelot
 	,R.PoId
 	,R.Seq1+'-'+R.Seq2 AS SEQ
@@ -200,6 +202,12 @@ select
     ,R.MINDQRCode
     ,[SuppColor] = p.ColorID
     ,R.ActualQty
+    ,[FabricType] = case when p.FabricType = 'F' then 'Fabric'
+                         when p.FabricType = 'A' then 'Accessory'
+                         else 'Other' end
+    ,TtlQty = convert(varchar(20),
+			iif(r.CombineBarcode is null , r.ActualQty, 
+				iif(r.Unoriginal is  null , ttlQty.value, null))) +' '+ R.PoUnit
 from dbo.Receiving_Detail R WITH (NOLOCK) 
 LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
 left join View_WH_Orders o WITH (NOLOCK) on o.ID = r.PoId
@@ -211,6 +219,13 @@ OUTER APPLY(
 		 ELSE dbo.GetColorMultipleID(o.BrandID,p.ColorID)
 	 END
 )Color
+outer apply(
+	select value = sum(t.ActualQty)
+	from Receiving_Detail t WITH (NOLOCK) 
+	where t.ID=r.ID
+	and t.CombineBarcode=r.CombineBarcode
+	and t.CombineBarcode is not null
+)ttlQty
 where R.id = @ID";
 
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
@@ -357,94 +372,24 @@ where R.id = @ID";
             }
 
             this.ValidateInput();
+            this.ShowWaitMessage("Loading...");
             DualResult result = this.LoadData();
-
+            this.HideWaitMessage();
             if (!result)
             {
                 this.ShowErr(result);
                 return true;
             }
 
-            this.ShowWaitMessage("Data Loading ...");
-            Word._Application winword = new Word.Application();
-            Word._Document document;
-            Word.Table tables = null;
-
-            string fileName = this.comboType.Text == "5X5" ? "\\Warehouse_P07_Sticker5.dotx" : "\\Warehouse_P07_Sticker10.dotx";
-            object printFile = Sci.Env.Cfg.XltPathDir + fileName;
-            document = winword.Documents.Add(ref printFile);
-
             var barcodeDatas = this.dt.AsEnumerable().Where(s => !MyUtility.Check.Empty(s["MINDQRCode"]));
 
             if (barcodeDatas.Count() == 0)
             {
                 MyUtility.Msg.InfoBox("No Data can print");
-                this.HideWaitMessage();
                 return true;
             }
 
-            #region PrintBarCode
-            try
-            {
-                document.Activate();
-                Word.Tables table = document.Tables;
-
-                // 計算頁數
-                winword.Selection.Tables[1].Select();
-                winword.Selection.Copy();
-                for (int j = 1; j < barcodeDatas.Count(); j++)
-                {
-                    winword.Selection.MoveDown();
-                    if (barcodeDatas.Count() > 1)
-                    {
-                        winword.Selection.InsertNewPage();
-                    }
-
-                    winword.Selection.Paste();
-                }
-
-                int qrCodeWidth = this.comboType.Text == "10X10" ? 180 : 90;
-
-                // 填入資料
-                int i = 0;
-                foreach (var printItem in barcodeDatas)
-                {
-                    tables = table[i + 1];
-                    tables.Cell(1, 1).Range.Text = $"SP:{printItem["PoId"]}";
-                    tables.Cell(1, 2).Range.Text = $"SEQ:{printItem["SEQ"]}";
-                    tables.Cell(2, 1).Range.Text = $"Ref:{printItem["RefNo"]}";
-                    tables.Cell(2, 2).Range.Text = $"Lot:{printItem["Dyelot"]}";
-                    Bitmap oriBitmap = printItem["MINDQRCode"].ToString().ToBitmapQRcode(qrCodeWidth, qrCodeWidth);
-                    Clipboard.SetImage(oriBitmap);
-                    tables.Cell(3, 1).Range.Paste();
-                    tables.Cell(3, 2).Range.Paste();
-                    tables.Cell(4, 1).Range.Text = $"Color:{printItem["SuppColor"]}";
-                    tables.Cell(5, 1).Range.Text = $"Roll:{printItem["Roll"]}";
-                    tables.Cell(5, 2).Range.Text = $"Qty:{printItem["ActualQty"]}";
-                    i++;
-                }
-
-                // 產生的Word檔不可編輯
-                winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyReading);
-                winword.Visible = true;
-            }
-            catch (Exception ex)
-            {
-                if (winword != null)
-                {
-                    winword.Quit();
-                }
-
-                return new DualResult(false, "Export Word error.", ex);
-            }
-            finally
-            {
-                Marshal.ReleaseComObject(winword);
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-            }
-            #endregion
-            this.HideWaitMessage();
+            new P07_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboType.Text).ShowDialog();
 
             return true;
         }

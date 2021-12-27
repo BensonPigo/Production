@@ -709,8 +709,25 @@ from Style_Artwork where StyleUkey = '{2}'
                 {
                     insertCmd = string.Format(
                         @"
-insert into Order_TmsCost(ID,ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,AddName,AddDate)
-select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from Style_TmsCost where StyleUkey = {2}",
+if exists(  select 1 
+            from Orders o with (nolock)
+            where   o.ID = '{0}' and
+                    o.LocalOrder = 1 and 
+                    not exists(select 1 from sewingoutput_detail sd with (nolock) where sd.OrderID = o.ID) and
+                    exists (select 1 from Orders o2 with (nolock) where o2.ID = o.CustPONo and o2.MDivisionID = o.MDivisionID))
+begin
+    insert into Order_TmsCost(ID,ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,AddName,AddDate)
+        select  '{0}', ArtworkTypeID, Seq, Qty, ArtworkUnit, TMS, Price, '{1}', GETDATE()
+        from    Order_TmsCost ot with (nolock)
+        where   ID = (select CustPONo from orders with (nolock) where ID = '{0}')
+end
+else
+begin
+    insert into Order_TmsCost(ID,ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,AddName,AddDate)
+        select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from Style_TmsCost with (nolock) where StyleUkey = {2}
+end
+
+",
                         MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
                         Env.User.UserID,
                         MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));

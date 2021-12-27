@@ -23,9 +23,27 @@ declare @SqlCmd4 nvarchar(max) ='';
 SET @SqlCmd1 = '
 
 --根據條件撈基本資料
-select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,s.FactoryID
-	,sd.OrderId,sd.ComboType,ActManPower = s.Manpower,sd.WorkHour,sd.QAQty,sd.InlineQty
-	,o.LocalOrder,o.CustPONo,OrderCategory = isnull(o.Category,''''),OrderType = isnull(o.OrderTypeID,''''), CASE WHEN ot.IsDevSample =1 THEN ''Y'' ELSE ''N'' END AS IsDevSample
+select s.id
+	,s.OutputDate
+	,s.Category
+	,s.Shift
+	,s.SewingLineID
+	,s.Team
+	,s.MDivisionID
+	,s.FactoryID
+	,sd.OrderId
+	,sdd.Article
+	,sdd.SizeCode
+	,sd.ComboType
+	,ActManPower = s.Manpower
+	,[WorkHour] = cast(sd.WorkHour * (sdd.QAQty * 1.0 / sd.QAQty) as numeric(6, 4))
+	,sdd.QAQty
+	,sd.InlineQty
+	,o.LocalOrder
+	,o.CustPONo
+	,OrderCategory = isnull(o.Category,'''')
+	,OrderType = isnull(o.OrderTypeID,'''')
+	,IsDevSample = CASE WHEN ot.IsDevSample =1 THEN ''Y'' ELSE ''N'' END  
 	,OrderBrandID = case 
 		when o.BrandID != ''SUBCON-I'' then o.BrandID
 		when Order2.BrandID is not null then Order2.BrandID
@@ -35,8 +53,9 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
 	,OrderProgram = isnull(o.ProgramID,'''')  ,OrderCPU = isnull(o.CPU,0) ,OrderCPUFactor = isnull(o.CPUFactor,0) ,OrderStyle = isnull(o.StyleID,'''') ,OrderSeason = isnull(o.SeasonID,'''')
 	,MockupBrandID= isnull(mo.BrandID,'''')   ,MockupCDCodeID= isnull(mo.MockupID,'''')
 	,MockupProgram= isnull(mo.ProgramID,'''') ,MockupCPU= isnull(mo.Cpu,0),MockupCPUFactor= isnull(mo.CPUFactor,0),MockupStyle= isnull(mo.StyleID,''''),MockupSeason= isnull(mo.SeasonID,'''')	
-    ,Rate = isnull(dbo.[P_GetOrderLocation_Rate](o.id,sd.ComboType,''['+@LinkServerName+']''),100)/100,System.StdTMS
-	, [ori_QAQty] = sd.QAQty
+    ,Rate = isnull(dbo.[P_GetOrderLocation_Rate](o.id,sd.ComboType,''['+@LinkServerName+']''),100)/100
+	,System.StdTMS
+	, [ori_QAQty] = sdd.QAQty
 	, [ori_InlineQty] = sd.InlineQty
     ,BuyerDelivery = format(o.BuyerDelivery,''yyyy/MM/dd'')
     ,OrderQty = o.Qty
@@ -48,6 +67,7 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
 into #tmpSewingDetail
 from ['+@LinkServerName+'].Production.dbo.System WITH (NOLOCK),['+@LinkServerName+'].Production.dbo.SewingOutput s WITH (NOLOCK) 
 inner join  ['+@LinkServerName+'].Production.dbo.SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
+inner join  ['+@LinkServerName+'].Production.dbo.SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sd.UKey= sdd.SewingOutput_DetailUKey
 left join  ['+@LinkServerName+'].Production.dbo.Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join  ['+@LinkServerName+'].Production.dbo.Factory f WITH (NOLOCK) on o.FactoryID = f.id
 left join ['+@LinkServerName+'].Production.dbo.OrderType ot WITH (NOLOCK) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
@@ -84,17 +104,19 @@ select distinct ID
 	,FactoryID
 	,MDivisionID
 	,OrderId
+	,Article
+	,SizeCode
 	,ComboType
 	,[ActManPower] = s.Manpower
-	,WorkHour = sum(Round(WorkHour,3))over(partition by id,OrderId,ComboType)
-	,QAQty = sum(QAQty)over(partition by id,OrderId,ComboType)
-	,[InlineQty] = sum(InlineQty)over(partition by id,OrderId,ComboType)
+	,WorkHour = sum(Round(WorkHour,3))over(partition by id,OrderId,Article,SizeCode,ComboType)
+	,QAQty = sum(QAQty)over(partition by id,OrderId,Article,SizeCode,ComboType)
+	,[InlineQty] = sum(InlineQty)over(partition by id,OrderId,Article,SizeCode,ComboType)
 	,LocalOrder,CustPONo,OrderCategory,OrderType,IsDevSample
 	,OrderBrandID ,OrderCdCodeID ,OrderProgram ,OrderCPU ,OrderCPUFactor ,OrderStyle ,OrderSeason
 	,MockupBrandID,MockupCDCodeID,MockupProgram,MockupCPU,MockupCPUFactor,MockupStyle,MockupSeason
 	,Rate,StdTMS
-	,ori_QAQty = sum(ori_QAQty)over(partition by id,OrderId,ComboType)
-	,ori_InlineQty = sum(ori_InlineQty)over(partition by id,OrderId,ComboType)
+	,ori_QAQty = sum(ori_QAQty)over(partition by id,OrderId,Article,SizeCode,ComboType)
+	,ori_InlineQty = sum(ori_InlineQty)over(partition by id,OrderId,Article,SizeCode,ComboType)
     ,BuyerDelivery
     ,SciDelivery
     ,OrderQty
@@ -201,6 +223,8 @@ select * INTO #Final from(
         ,t.SubConOutContractNumber
         ,t.Team
         ,t.OrderId
+		,t.Article
+		,t.SizeCode
         ,CustPONo
         ,t.BuyerDelivery
         ,t.SciDelivery
@@ -238,7 +262,7 @@ select * INTO #Final from(
 		,t.Gender
 		,t.Construction
     from #tmp1stFilter t )a
-order by MDivisionID,FactoryID,OutputDate,SewingLineID,Shift,Team,OrderId
+order by MDivisionID,FactoryID,OutputDate,SewingLineID,Shift,Team,OrderId,Article,SizeCode
 
 drop table #tmpSewingDetail,#tmp1stFilter,#tmpSewingGroup,#tmp_s1
 
@@ -253,7 +277,9 @@ USING #Final s --被參考的表
    AND t.SewingLineID=s.SewingLineID 
    AND t.Team=s.Team 
    AND t.Shift=s.Shift 
-   AND t.orderid=s.orderid 
+   AND t.OrderId=s.OrderId 
+   AND t.Article=s.Article 
+   AND t.SizeCode=s.SizeCode 
    AND t.ComboType=s.ComboType 
    AND t.OutputDate = s.OutputDate
 
@@ -271,6 +297,8 @@ WHEN MATCHED THEN
 		,t.SubConOutContractNumber =s.SubConOutContractNumber
 		,t.Team =s.Team
 		,t.OrderID =s.OrderID
+		,t.Article =s.Article
+		,t.SizeCode =s.SizeCode
 		,t.CustPONo = s.CustPONo
 		,t.BuyerDelivery = s.BuyerDelivery
 		,t.OrderQty = s.OrderQty
@@ -322,6 +350,8 @@ WHEN NOT MATCHED THEN
            ,s.SubConOutContractNumber
            ,s.Team
            ,s.OrderID
+		   ,s.Article
+		   ,s.SizeCode
            ,s.CustPONo
            ,s.BuyerDelivery
            ,s.OrderQty
@@ -372,7 +402,9 @@ select OrderID from #Final s
 	AND t.SewingLineID=s.SewingLineID 
 	AND t.Team=s.Team 
 	AND t.Shift=s.Shift 
-	AND t.orderid=s.orderid 
+	AND t.OrderID=s.OrderID 
+	AND t.Article=s.Article 
+	AND t.SizeCode=s.SizeCode 
 	AND t.ComboType=s.ComboType 
 	AND t.OutputDate = s.OutputDate);
 

@@ -645,12 +645,21 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
                 if (item.UpdType == DefectImgUpdType.Insert)
                 {
                     paras = new List<SqlParameter> { new SqlParameter($"@Image", item.Img) };
-                    sqlcmd = $@"INSERT INTO [dbo].[AIR_DefectImage]([AIRID],[ReceivingID],[Image])VALUES('{this.id}','{this.receivingID}',@Image)";
+                    sqlcmd = $@"
+SET XACT_ABORT ON
+INSERT INTO [dbo].[AIR_DefectImage]([AIRID],[ReceivingID],[Image])VALUES('{this.id}','{this.receivingID}',@Image)
+
+INSERT INTO [ExtendServer].PMSFile.dbo.AIR_DefectImage([AIRID],[ReceivingID],[Image])VALUES('{this.id}','{this.receivingID}',@Image)
+";
                 }
                 else if (item.UpdType == DefectImgUpdType.Remove && item.Ukey > 0)
                 {
                     paras = new List<SqlParameter> { new SqlParameter($"@Ukey", item.Ukey) };
-                    sqlcmd = $@"delete [dbo].[AIR_DefectImage] where Ukey = @Ukey";
+                    sqlcmd = $@"
+SET XACT_ABORT ON
+delete [dbo].[AIR_DefectImage] where Ukey = @Ukey
+delete [ExtendServer].PMSFile.dbo.[AIR_DefectImage] where Ukey = @Ukey
+";
                 }
                 else
                 {
@@ -671,7 +680,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
 
         private void LoadPicture()
         {
-            string sqlcmd = $@"select * from AIR_DefectImage where AIRID = '{this.id}' and ReceivingID = '{this.receivingID}' order by ukey";
+            string sqlcmd = $@"select * from [ExtendServer].PMSFile.dbo.AIR_DefectImage where AIRID = '{this.id}' and ReceivingID = '{this.receivingID}' order by ukey";
             DualResult result = DBProxy.Current.Select("PMSFile", sqlcmd, out DataTable dt);
             if (!result)
             {
