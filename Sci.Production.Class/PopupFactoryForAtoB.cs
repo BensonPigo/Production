@@ -80,10 +80,16 @@ select [SystemName] = RgCode from System
                 if (this.localRgcode == this.comboFactory.Text)
                 {
                     string sqlGetFactoryData = $@"
-select [Selected] = 1, [Factory] = F.ID 
-from Factory F WITH (NOLOCK) 
-INNER JOIN System S ON S.RgCode=F.NegoRegion
-where F.Junk = 0 and F.IsProduceFty = 1 order by F.ID";
+select [Selected] = 1, [Factory] = F.ID
+from Production..Factory F WITH (NOLOCK) 
+where F.Junk = 0 and F.IsProduceFty = 1 
+AND NegoRegion IN
+(
+SELECT ID FROM Production..Factory where junk=0
+UNION
+SELECT RgCode AS ID FROM Production..[System]
+) 
+order by F.ID";
 
                     result = DBProxy.Current.Select(null, sqlGetFactoryData, out dtFactory);
                 }
