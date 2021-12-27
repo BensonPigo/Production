@@ -167,7 +167,7 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
                 return false;
             }
 
-            cmd = $"SELECT 1 FROM LocalSupp WHERE TaxNo='{this.CurrentMaintain["TaxNo"]}' AND TaxNo != '' AND Abb != '{this.CurrentMaintain["Abb"]}'";
+            cmd = $"SELECT 1 FROM LocalSupp WHERE TaxNo='{this.CurrentMaintain["TaxNo"]}' AND TaxNo != '' AND Abb != N'{this.CurrentMaintain["Abb"]}'";
             if (MyUtility.Check.Seek(cmd))
             {
                 MyUtility.Msg.InfoBox("Tax No can only be used on same Supplier Abbreviation.");
