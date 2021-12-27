@@ -103,7 +103,7 @@ select  s.OutputDate
         , o.SubconInType
         , [SubconOutFty] = iif(sf.id is null,'Other',s.SubconOutFty)
 		, f.CountryID
-		, f.Zone
+		, f.FtyZone
 		, [SewingOutputID] = S.ID 
 INTO #tmpSewingDetail
 from [PMS\pmsdb\PH1].[Production].dbo.System, [PMS\pmsdb\PH1].[Production].dbo.SewingOutput s WITH (NOLOCK) 
@@ -154,7 +154,7 @@ Begin
 				, o.SubconInType
 				, [SubconOutFty] = iif(sf.id is null,''Other'',s.SubconOutFty)
 				, f.CountryID
-				, f.Zone
+				, f.FtyZone
 				, [SewingOutputID] = S.ID 
 		--INTO #tmpSewingDetail
 		from [' + @_name + '].[Production].dbo.System, [' + @_name + '].[Production].dbo.SewingOutput s WITH (NOLOCK) 
@@ -188,19 +188,19 @@ DEALLOCATE CURSOR_
 --select * from #tmpSewingDetail
 
 --基本資料
-select CountryID, Zone 
+select CountryID, FtyZone 
 	,[ManPower] = Sum(ActManPower) 
 into #tmp_CMPAbsent
 from
 (
 	select CountryID
-		, Zone
+		, FtyZone
 		, ActManPower
 		, SewingOutputID
 	from #tmpSewingDetail
-	group by CountryID, Zone, SewingOutputID, ActManPower 
+	group by CountryID, FtyZone, SewingOutputID, ActManPower 
 )a
-group by CountryID, Zone
+group by CountryID, FtyZone
 
 select OutputDate,Category
 	   , Shift
@@ -229,14 +229,14 @@ select OutputDate,Category
        , SubconInType 
        , [SubconOutFty] = isnull(SubconOutFty,'')
 	   , CountryID
-	   , Zone
+	   , FtyZone
 INTO #tmpSewingGroup
 from #tmpSewingDetail
 group by OutputDate, Category, Shift, SewingLineID, Team, OrderId, ComboType
 		 , OrderCategory, LocalOrder, FactoryID, OrderProgram, MockupProgram
 		 , OrderCPU, OrderCPUFactor, MockupCPU, MockupCPUFactor, OrderStyle
 		 , MockupStyle, Rate, StdTMS,isnull(SubconOutFty,'')
-		 , CountryID, Zone, SubconInType, ActManPower
+		 , CountryID, FtyZone, SubconInType, ActManPower
 
 select t.*
 	   , isnull(w.Holiday, 0) as Holiday
@@ -273,7 +273,7 @@ select OutputDate
        , SubconInType
        , SubconOutFty
 	   , CountryID
-	   , Zone
+	   , FtyZone
 into #tmp
 from #tmp1stFilter
 
@@ -290,7 +290,7 @@ create table #tmp_SubprocessCPUper
 	id_num int IDENTITY(1,1), 
 	ArtworkTypeID nvarchar(50),
 	CountryID varchar(2),
-	Zone varchar(8),
+	FtyZone varchar(8),
 	rs varchar(20),
 	Price numeric(18,4)
 )
@@ -334,7 +334,7 @@ Begin
 				, a.ComboType
 				, Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate_ByLinked](a.OrderId ,a.ComboType, o.MDivisionID), 100) / 100)
 				, a.CountryID
-				, a.Zone
+				, a.FtyZone
 		into  #tmpAllSubprocess
 		from #tmp a
 		inner join [' + @_name + '].[Production].dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
@@ -345,7 +345,7 @@ Begin
 			  and ot.Price > 0 		    
 			  and ((ot.ArtworkTypeID = ''SP_THREAD'' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
 				  or ot.ArtworkTypeID <> ''SP_THREAD'')
-		group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price, a.CountryID, a.Zone, o.MDivisionID
+		group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price, a.CountryID, a.FtyZone, o.MDivisionID
 
 		--FMS傳票部分顯示AT不分Hand/Machine，是因為政策問題，但比對Sewing R02時，會有落差，請根據SP#落在Hand CPU:10 /Machine:5，則只撈出Hand CPU:10這筆，抓其大值，以便加總總和等同於FMS傳票AT
 		-- 當AT(Machine) = AT(Hand)時, 也要將Price歸0 (ISP20190520)
@@ -361,7 +361,7 @@ Begin
 
 		select ArtworkTypeID = t1.ID
 			   , t2.CountryID
-			   , t2.Zone
+			   , t2.FtyZone
 			   , t1.rs 
 			   , Price = cast(isnull(sum(Round(Price,t1.DecimalNumber)), 0) as numeric(18,4))
 		from #tmpArtwork t1
@@ -375,7 +375,7 @@ Begin
 		end  
 
 		set @sql = @sql + ' 
-		group by t1.ID, t2.CountryID, t2.Zone, t1.rs 
+		group by t1.ID, t2.CountryID, t2.FtyZone, t1.rs 
 		having isnull(sum(Price), 0) > 0 
 		'
 
@@ -387,10 +387,10 @@ End
 CLOSE CURSOR_
 DEALLOCATE CURSOR_ 
 
-select t.CountryID, t.Zone,[Price] = SUM(t.Price)
+select t.CountryID, t.FtyZone,[Price] = SUM(t.Price)
 into #tmp_SubprocessCPU
 from #tmp_SubprocessCPUper t
-group by t.CountryID, t.Zone
+group by t.CountryID, t.FtyZone
 
 End
 
@@ -411,11 +411,11 @@ create table #tmp_PAMSAttendance
 (
 	id_num int IDENTITY(1,1), 
 	CountryID varchar(2),
-	Zone varchar(8),
+	FtyZone varchar(8),
 	Manpower int,
 )
 
-declare @Factory as nvarchar(8), @Zone as varchar(8), @Country as varchar(2)
+declare @Factory as nvarchar(8), @FtyZone as varchar(8), @Country as varchar(2)
 declare @YM as varchar(6) = concat(@Year, right(concat('00', @Month),2))
 
 DECLARE CURSOR_ CURSOR FOR
@@ -428,10 +428,12 @@ While @@FETCH_STATUS = 0
 Begin
 
 	insert into #tmp_Holiday
-	exec tradedb.trade.dbo.GetPAMSHoliday @Factory, @YM
+	exec tradedb.trade.dbo.GetPAMSHoliday @YM, @Factory
 
 	insert into #tmp_PAMSHoliday
-	select [FactoryID] = @Factory, Holiday from #tmp_Holiday
+	select [FactoryID] = @Factory, Holiday 
+	from #tmp_Holiday
+	where Holiday is not null
 
 	truncate table #tmp_Holiday
 	FETCH NEXT FROM CURSOR_ INTO @Factory
@@ -440,22 +442,22 @@ CLOSE CURSOR_
 DEALLOCATE CURSOR_ 
 
 DECLARE CURSOR_ CURSOR FOR
-select distinct t.CountryID, t.Zone
+select distinct t.CountryID, t.FtyZone
 from #tmp t
 
 OPEN CURSOR_
-FETCH NEXT FROM CURSOR_ INTO @Country, @Zone
+FETCH NEXT FROM CURSOR_ INTO @Country, @FtyZone
 While @@FETCH_STATUS = 0
 Begin
 
 	insert into #tmp_Attendance
-	exec tradedb.trade.dbo.GetPAMSAttendance @Country, @Zone, @YM
+	exec tradedb.trade.dbo.GetPAMSAttendance @Country, @FtyZone, @YM, 'PulseCheck'
 
 	insert into #tmp_PAMSAttendance
-	select [CountryID] = @Country, [Zone] = @Zone, Manpower from #tmp_Attendance
+	select [CountryID] = @Country, [FtyZone] = @FtyZone, Manpower from #tmp_Attendance
 
 	truncate table #tmp_Attendance
-	FETCH NEXT FROM CURSOR_ INTO @Country, @Zone
+	FETCH NEXT FROM CURSOR_ INTO @Country, @FtyZone 
 END
 CLOSE CURSOR_
 DEALLOCATE CURSOR_ 
@@ -470,14 +472,14 @@ BEGIN
 --SQL By Date
 select [TotalManpower] = sum(ManPower)
 	   , CountryID
-	   , Zone 
+	   , FtyZone 
 into #tmp_TotalManpower
 from 
 (
 	select OutputDate
 		   , ManPower = Sum(a.Manpower) - sum(iif(LastShift = 'I', 0, isnull(d.ManPower, 0)))
 		   , CountryID
-		   , Zone
+		   , FtyZone
 	from ( 
 		select OutputDate
 			   , FactoryID
@@ -486,10 +488,10 @@ from
 			   , Team
 			   , ManPower = Max(ActManPower)
 			   , CountryID
-			   , Zone
+			   , FtyZone
 		from #tmp
 		where LastShift <> 'O'
-		group by OutputDate, FactoryID, SewingLineID, LastShift, Team, CountryID, Zone
+		group by OutputDate, FactoryID, SewingLineID, LastShift, Team, CountryID, FtyZone
 	) a
 	outer apply(
 		select ManPower
@@ -501,10 +503,10 @@ from
 				   , Team
 				   , ManPower = Max(ActManPower)
 				   , CountryID
-				   , Zone
+				   , FtyZone
 			from #tmp
 			where LastShift <> 'O'
-			group by OutputDate, FactoryID, SewingLineID, LastShift, Team, CountryID, Zone
+			group by OutputDate, FactoryID, SewingLineID, LastShift, Team, CountryID, FtyZone
 		) m2
 		where m2.LastShift = 'I' 
 			  and m2.Team = a.Team 
@@ -512,29 +514,29 @@ from
 			  and a.OutputDate = m2.OutputDate
 			  and m2.FactoryID = a.FactoryID	
 			  and m2.CountryID = a.CountryID	
-			  and m2.Zone = a.Zone
+			  and m2.FtyZone = a.FtyZone
 	) d
-	group by OutputDate, CountryID, Zone
+	group by OutputDate, CountryID, FtyZone
 )a
-group by CountryID, Zone 
+group by CountryID, FtyZone 
  
 select StdTMS
 	   , QAQty = Sum(QAQty)
 	   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
 	   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	   , CountryID
-	   , Zone
+	   , FtyZone
 into #tmpQty
 from #tmp
 where LastShift <> 'O' 
       --排除Subcon in non sister資料
       and LastShift <> 'I'
 	  or (LastShift = 'I' and SubconInType in ('1','2'))
-group by StdTMS, CountryID, Zone
+group by StdTMS, CountryID, FtyZone
 
 select ManPower = Sum(a.Manpower)  - sum(iif(LastShift = 'I', 0, isnull(d.ManPower, 0)))
 	, CountryID
-	, Zone
+	, FtyZone
 into #tmpTtlManPower
 from (
 	select OutputDate
@@ -544,12 +546,12 @@ from (
 			, Team
 			, ManPower = Max(ActManPower)
 			, CountryID
-			, Zone
+			, FtyZone
 	from #tmp
 	where LastShift <> 'O'
 	--排除 subcon in non sister的數值
     and ((LastShift <> 'I') or ( LastShift = 'I' and SubconInType not in ('0','3')))   
-	group by OutputDate, FactoryID, SewingLineID, LastShift, Team ,CountryID, Zone
+	group by OutputDate, FactoryID, SewingLineID, LastShift, Team ,CountryID, FtyZone
 ) a
 outer apply
 (
@@ -563,10 +565,10 @@ outer apply
 				, ManPower = Max(ActManPower)
 				, SubconInType
 				, CountryID
-				, Zone
+				, FtyZone
 		from #tmp
 		where LastShift <> 'O'
-		group by OutputDate, FactoryID, SewingLineID, LastShift, Team, SubconInType, CountryID, Zone
+		group by OutputDate, FactoryID, SewingLineID, LastShift, Team, SubconInType, CountryID, FtyZone
 	) m2
 	where  (m2.LastShift = 'I' and m2.SubconInType in ('1','2'))
 			and m2.Team = a.Team 
@@ -574,28 +576,28 @@ outer apply
 			and a.OutputDate = m2.OutputDate
 			and m2.FactoryID = a.FactoryID	
 			and m2.CountryID = a.CountryID
-			and m2.Zone = a.Zone
+			and m2.FtyZone = a.FtyZone
 ) d
-group by CountryID, Zone
+group by CountryID, FtyZone
 
 select  [PPH] = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 3))
 	   , [Efficiency] = (IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 3))/(3600*1.0/1400*1.0))
 	   , [Avg Working Hours] = IIF(isnull(mp.ManPower, 0) = 0, 0, Round(q.ManHour / mp.ManPower, 2)) 
 	   , q.CountryID
-	   , q.Zone
+	   , q.FtyZone
 into #tmp_excludeInOutTotal
 from #tmpQty q
-left join #tmpTtlManPower mp on q.CountryID = mp.CountryID and q.Zone = mp.Zone
+left join #tmpTtlManPower mp on q.CountryID = mp.CountryID and q.FtyZone = mp.FtyZone
  
 select  [Total CPU Included Subcon-In] = CPU
 	, CountryID
-	, Zone
+	, FtyZone
 into #tmp_cpuFactor
 from 
 (
 	select CPU = sum(CPU)
 		   , CountryID
-		   , Zone
+		   , FtyZone
    	from 
 	(
 		select CPUFactor = IIF(Category = 'M', MockupCPUFactor, OrderCPUFactor)
@@ -603,15 +605,15 @@ from
 			   , CPU = QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)
 			   , Style
 			   , CountryID
-			   , Zone
+			   , FtyZone
 		from #tmp
 	) a
-   	group by CountryID, Zone
+   	group by CountryID, FtyZone
 )a
 
 select [Subcon-Out Total CPU(sister)] =sum(TtlCPU)
 	, CountryID
-	, Zone
+	, FtyZone
 into #tmp_SubconCPU_sister
 from
 (
@@ -619,17 +621,17 @@ from
 		   , Company = t.SubconOutFty
 		   , TtlCPU = ROUND(Sum(t.QAQty*IIF(t.Category = 'M', t.MockupCPU * t.MockupCPUFactor, t.OrderCPU * t.OrderCPUFactor * t.Rate)),3)
 		   , CountryID
-		   , Zone
+		   , FtyZone
 	from #tmp t
 	where LastShift = 'O'
 	and t.SubconOutFty <> 'Other'
-	group by t.SubconOutFty, CountryID, Zone
+	group by t.SubconOutFty, CountryID, FtyZone
 )a 
-group by CountryID, Zone
+group by CountryID, FtyZone
 
 select [Subcon-Out Total CPU(sister)] =sum(TtlCPU)
 	, CountryID
-	, Zone
+	, FtyZone
 into #tmp_SubconCPU_sister_onlyPerformed
 from
 (
@@ -637,39 +639,39 @@ from
 		   , Company = t.SubconOutFty
 		   , TtlCPU = ROUND(Sum(t.QAQty*IIF(t.Category = 'M', t.MockupCPU * t.MockupCPUFactor, t.OrderCPU * t.OrderCPUFactor * t.Rate)),3)
 		   , CountryID
-		   , Zone
+		   , FtyZone
 	from #tmp t
 	where LastShift = 'O'
 	and t.Program != 'Uniform'
 	and (t.SubconOutFty <> 'Other' or exists (select ID from Tradedb.Trade.dbo.DropDownList ddl where type = 'CMPSpecialSCIFty' and ddl.ID = t.SubconOutFty))
-	group by t.SubconOutFty, CountryID, Zone
+	group by t.SubconOutFty, CountryID, FtyZone
 )a 
-group by CountryID, Zone
+group by CountryID, FtyZone
 
-select t.CountryID, t.Zone, [ManHour] = sum(t.ManHour)
+select t.CountryID, t.FtyZone, [ManHour] = sum(t.ManHour)
 into #tmp_ManHour
 from #tmpQty t
-group by t.CountryID, t.Zone
+group by t.CountryID, t.FtyZone
 
 SELECT [Working Days] = COUNT(*)
 	, CountryID
-	, Zone
+	, FtyZone
 into #tmp_WorkingDays
 from(
-	select OutputDate, CountryID, Zone
+	select OutputDate, CountryID, FtyZone
 	from #tmp 
 	where LastShift <> 'O'
-	group by OutputDate, CountryID, Zone
+	group by OutputDate, CountryID, FtyZone
 )a
-group by CountryID, Zone
+group by CountryID, FtyZone
 
 select [CountryID] = p.Region
-	,[Zone] = p.Zone
+	,[FtyZone] = p.FtyZone
 	,[Name] = d.Name
 	,[Value] = isnull(p.Value, 0)
 into #tmp_PulseCheck
 from tradedb.trade.dbo.PulseCheck p
-inner join #tmp_excludeInOutTotal t on p.Region = t.CountryID and p.Zone = t.Zone
+inner join #tmp_excludeInOutTotal t on p.Region = t.CountryID and p.FtyZone = t.FtyZone
 inner join #tmp_Dropdownlist d on p.ItemID = d.ID
 where p.Year = @Year
 and p.Month = @Month
@@ -680,7 +682,7 @@ END
 --寫入資料
 DECLARE CURSOR_ CURSOR FOR
 select a.CountryID
-	, a.Zone
+	, a.FtyZone
 	,[SewingCPU] = cast(c.[Total CPU Included Subcon-In] - isnull(op.[Subcon-Out Total CPU(sister)],0) as decimal(18,2))
 	,[Working Days] = cast(e.[Working Days] as decimal(18, 0))
 	,[Avg Working Hours] =cast(a.[Avg Working Hours] as decimal(18,2))
@@ -693,20 +695,20 @@ select a.CountryID
 	,[Subprocess CPU] = s.Price
 	,[TTL DL Working Hour] = f.ManHour
 from #tmp_excludeInOutTotal a
-left join #tmp_TotalManpower b on a.CountryID = b.CountryID and a.Zone = b.Zone
-left join #tmp_cpuFactor c on a.CountryID =c.CountryID and a.Zone = c.Zone
-left join #tmp_SubconCPU_sister d on a.CountryID = d.CountryID and a.Zone = d.Zone
-left join #tmp_SubconCPU_sister_onlyPerformed op on a.CountryID = op.CountryID and a.Zone = op.Zone
-left join #tmp_WorkingDays e on a.CountryID = e.CountryID and a.Zone = e.Zone
-left join #tmp_PulseCheck p1 on a.CountryID = p1.CountryID and a.Zone = p1.Zone and p1.Name = 'SCI Loading'
-left join #tmp_PulseCheck p2 on a.CountryID = p2.CountryID and a.Zone = p2.Zone and p2.Name = 'Capacity'
-left join #tmp_CMPAbsent cm on a.CountryID = cm.CountryID and a.Zone = cm.Zone
-left join #tmp_SubprocessCPU s on a.CountryID = s.CountryID and a.Zone = s.Zone
-left join #tmp_ManHour f on a.CountryID = f.CountryID and a.Zone = f.Zone
-left join #tmp_PAMSAttendance att on a.CountryID = att.CountryID and a.Zone = att.Zone
+left join #tmp_TotalManpower b on a.CountryID = b.CountryID and a.FtyZone = b.FtyZone
+left join #tmp_cpuFactor c on a.CountryID =c.CountryID and a.FtyZone = c.FtyZone
+left join #tmp_SubconCPU_sister d on a.CountryID = d.CountryID and a.FtyZone = d.FtyZone
+left join #tmp_SubconCPU_sister_onlyPerformed op on a.CountryID = op.CountryID and a.FtyZone = op.FtyZone
+left join #tmp_WorkingDays e on a.CountryID = e.CountryID and a.FtyZone = e.FtyZone
+left join #tmp_PulseCheck p1 on a.CountryID = p1.CountryID and a.FtyZone = p1.FtyZone and p1.Name = 'SCI Loading'
+left join #tmp_PulseCheck p2 on a.CountryID = p2.CountryID and a.FtyZone = p2.FtyZone and p2.Name = 'Capacity'
+left join #tmp_CMPAbsent cm on a.CountryID = cm.CountryID and a.FtyZone = cm.FtyZone
+left join #tmp_SubprocessCPU s on a.CountryID = s.CountryID and a.FtyZone = s.FtyZone
+left join #tmp_ManHour f on a.CountryID = f.CountryID and a.FtyZone = f.FtyZone
+left join #tmp_PAMSAttendance att on a.CountryID = att.CountryID and a.FtyZone = att.FtyZone
 
 declare @_CountryID as varchar(8)
-	, @_Zone as varchar(8)
+	, @_FtyZone as varchar(8)
 	, @SewingCPU as decimal(18,6)
 	, @WorkingDays as decimal(18,6)
 	, @AvgWorkingHours as decimal(18,6)
@@ -721,175 +723,175 @@ declare @_CountryID as varchar(8)
 	, @TTLDLWorkingHour as decimal(18,6)
 
 OPEN CURSOR_
-FETCH NEXT FROM CURSOR_ INTO @_CountryID, @_Zone, @SewingCPU, @WorkingDays, @AvgWorkingHours, @PPH, @Efficiency, @DirectManpower, @PerformedLoading, @PerformedCapacity, @CMPAbsent, @SubprocessCPU, @TTLDLWorkingHour
+FETCH NEXT FROM CURSOR_ INTO @_CountryID, @_FtyZone, @SewingCPU, @WorkingDays, @AvgWorkingHours, @PPH, @Efficiency, @DirectManpower, @PerformedLoading, @PerformedCapacity, @CMPAbsent, @SubprocessCPU, @TTLDLWorkingHour
 While @@FETCH_STATUS = 0
 Begin	
 	--Avg Working Hours
 	select @ItemID = ID from #tmp_Dropdownlist where [Name] = 'Avg Working Hours' and [Description] = 'Monthly CMP Report'
-	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone)
+	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone)
 	begin
 		update tradedb.trade.dbo.PulseCheck
 		set value = @AvgWorkingHours, EditName = @UserID, EditDate =GETDATE()
-		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone
+		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone
 	end
 	else
 	begin
 		insert into tradedb.trade.dbo.PulseCheck
-		([ItemID],[Year],[Month],[Region],[Zone],[Value],[AddName],[AddDate],[EditName],[EditDate])
-		select @ItemID, @Year, @Month, @_CountryID, @_Zone, @AvgWorkingHours, @UserID, GETDATE(), null, null
+		([ItemID],[Year],[Month],[Region],[FtyZone],[Value],[AddName],[AddDate],[EditName],[EditDate])
+		select @ItemID, @Year, @Month, @_CountryID, @_FtyZone, @AvgWorkingHours, @UserID, GETDATE(), null, null
 	end
 
 	--PPH
 	select @ItemID = ID from #tmp_Dropdownlist where [Name] = 'PPH' and [Description] = 'Monthly CMP Report'
-	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone)
+	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone)
 	begin
 		update tradedb.trade.dbo.PulseCheck
 		set value = @PPH, EditName = @UserID, EditDate =GETDATE()
-		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone
+		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone
 	end
 	else
 	begin
 		insert into tradedb.trade.dbo.PulseCheck
-		([ItemID],[Year],[Month],[Region],[Zone],[Value],[AddName],[AddDate],[EditName],[EditDate])
-		select @ItemID, @Year, @Month, @_CountryID, @_Zone, @PPH, @UserID, GETDATE(), null, null
+		([ItemID],[Year],[Month],[Region],[FtyZone],[Value],[AddName],[AddDate],[EditName],[EditDate])
+		select @ItemID, @Year, @Month, @_CountryID, @_FtyZone, @PPH, @UserID, GETDATE(), null, null
 	end 
 
 	--Efficiency
 	select @ItemID = ID from #tmp_Dropdownlist where [Name] = 'Efficiency' and [Description] = 'Monthly CMP Report'
-	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone)
+	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone)
 	begin
 		update tradedb.trade.dbo.PulseCheck
 		set value = @Efficiency, EditName = @UserID, EditDate =GETDATE()
-		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone
+		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone
 	end
 	else
 	begin
 		insert into tradedb.trade.dbo.PulseCheck
-		([ItemID],[Year],[Month],[Region],[Zone],[Value],[AddName],[AddDate],[EditName],[EditDate])
-		select @ItemID, @Year, @Month, @_CountryID, @_Zone, @Efficiency, @UserID, GETDATE(), null, null
+		([ItemID],[Year],[Month],[Region],[FtyZone],[Value],[AddName],[AddDate],[EditName],[EditDate])
+		select @ItemID, @Year, @Month, @_CountryID, @_FtyZone, @Efficiency, @UserID, GETDATE(), null, null
 	end  
 
 	--Direct Manpower
 	select @ItemID = ID from #tmp_Dropdownlist where [Name] = 'Direct Manpower' and [Description] = 'Monthly CMP Report'
-	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone)
+	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone)
 	begin
 		update tradedb.trade.dbo.PulseCheck
 		set value = @DirectManpower, EditName = @UserID, EditDate =GETDATE()
-		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone
+		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone
 	end
 	else
 	begin
 		insert into tradedb.trade.dbo.PulseCheck
-		([ItemID],[Year],[Month],[Region],[Zone],[Value],[AddName],[AddDate],[EditName],[EditDate])
-		select @ItemID, @Year, @Month, @_CountryID, @_Zone, @DirectManpower, @UserID, GETDATE(), null, null
+		([ItemID],[Year],[Month],[Region],[FtyZone],[Value],[AddName],[AddDate],[EditName],[EditDate])
+		select @ItemID, @Year, @Month, @_CountryID, @_FtyZone, @DirectManpower, @UserID, GETDATE(), null, null
 	end  
 
 
 	--Sewing CPU
 	select @ItemID = ID from #tmp_Dropdownlist where [Name] = 'Sewing CPU' and [Description] = 'Monthly CMP Report'
-	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone)
+	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone)
 	begin
 		update tradedb.trade.dbo.PulseCheck
 		set value = @SewingCPU, EditName = @UserID, EditDate =GETDATE()
-		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone
+		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone
 	end
 	else
 	begin
 		insert into tradedb.trade.dbo.PulseCheck
-		([ItemID],[Year],[Month],[Region],[Zone],[Value],[AddName],[AddDate],[EditName],[EditDate])
-		select @ItemID, @Year, @Month, @_CountryID, @_Zone, @SewingCPU, @UserID, GETDATE(), null, null
+		([ItemID],[Year],[Month],[Region],[FtyZone],[Value],[AddName],[AddDate],[EditName],[EditDate])
+		select @ItemID, @Year, @Month, @_CountryID, @_FtyZone, @SewingCPU, @UserID, GETDATE(), null, null
 	end  
 
 	--Working Days
 	select @ItemID = ID from #tmp_Dropdownlist where [Name] = 'Working Days' and [Description] = 'Monthly CMP Report'
-	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone)
+	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone)
 	begin
 		update tradedb.trade.dbo.PulseCheck 
 		set value = @WorkingDays, EditName = @UserID, EditDate =GETDATE()
-		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone
+		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone
 	end
 	else
 	begin
 		insert into tradedb.trade.dbo.PulseCheck
-		([ItemID],[Year],[Month],[Region],[Zone],[Value],[AddName],[AddDate],[EditName],[EditDate])
-		select @ItemID, @Year, @Month, @_CountryID, @_Zone, @WorkingDays, @UserID, GETDATE(), null, null
+		([ItemID],[Year],[Month],[Region],[FtyZone],[Value],[AddName],[AddDate],[EditName],[EditDate])
+		select @ItemID, @Year, @Month, @_CountryID, @_FtyZone, @WorkingDays, @UserID, GETDATE(), null, null
 	end
 
 	--Performed / Loading
 	select @ItemID = ID from #tmp_Dropdownlist where [Name] = 'Performed / Loading' and [Description] = 'Planning'
-	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone)
+	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone)
 	begin
 		update tradedb.trade.dbo.PulseCheck
 		set value = @PerformedLoading, EditName = @UserID, EditDate =GETDATE()
-		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone
+		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone
 	end
 	else
 	begin
 		insert into tradedb.trade.dbo.PulseCheck
-		([ItemID],[Year],[Month],[Region],[Zone],[Value],[AddName],[AddDate],[EditName],[EditDate])
-		select @ItemID, @Year, @Month, @_CountryID, @_Zone, @PerformedLoading, @UserID, GETDATE(), null, null
+		([ItemID],[Year],[Month],[Region],[FtyZone],[Value],[AddName],[AddDate],[EditName],[EditDate])
+		select @ItemID, @Year, @Month, @_CountryID, @_FtyZone, @PerformedLoading, @UserID, GETDATE(), null, null
 	end
 
 	--Performed / Capacity
 	select @ItemID = ID from #tmp_Dropdownlist where [Name] = 'Performed / Capacity' and [Description] = 'Planning'
-	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone)
+	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone)
 	begin
 		update tradedb.trade.dbo.PulseCheck
 		set value = @PerformedCapacity, EditName = @UserID, EditDate =GETDATE()
-		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone
+		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone
 	end
 	else
 	begin
 		insert into tradedb.trade.dbo.PulseCheck
-		([ItemID],[Year],[Month],[Region],[Zone],[Value],[AddName],[AddDate],[EditName],[EditDate])
-		select @ItemID, @Year, @Month, @_CountryID, @_Zone, @PerformedCapacity, @UserID, GETDATE(), null, null
+		([ItemID],[Year],[Month],[Region],[FtyZone],[Value],[AddName],[AddDate],[EditName],[EditDate])
+		select @ItemID, @Year, @Month, @_CountryID, @_FtyZone, @PerformedCapacity, @UserID, GETDATE(), null, null
 	end
 
 	--CMP Absent
 	select @ItemID = ID from #tmp_Dropdownlist where [Name] = 'CMP Absent' and [Description] = 'Absent'
-	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone)
+	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone)
 	begin
 		update tradedb.trade.dbo.PulseCheck
 		set value = @CMPAbsent, EditName = @UserID, EditDate =GETDATE()
-		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone
+		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone
 	end
 	else
 	begin
 		insert into tradedb.trade.dbo.PulseCheck
-		([ItemID],[Year],[Month],[Region],[Zone],[Value],[AddName],[AddDate],[EditName],[EditDate])
-		select @ItemID, @Year, @Month, @_CountryID, @_Zone, @CMPAbsent, @UserID, GETDATE(), null, null
+		([ItemID],[Year],[Month],[Region],[FtyZone],[Value],[AddName],[AddDate],[EditName],[EditDate])
+		select @ItemID, @Year, @Month, @_CountryID, @_FtyZone, @CMPAbsent, @UserID, GETDATE(), null, null
 	end
 
 	--Subprocess CPU
 	select @ItemID = ID from #tmp_Dropdownlist where [Name] = 'Subprocess CPU' and [Description] = 'Monthly CMP Report'
-	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone)
+	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone)
 	begin
 		update tradedb.trade.dbo.PulseCheck
 		set value = @SubprocessCPU, EditName = @UserID, EditDate =GETDATE()
-		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone
+		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone
 	end
 	else
 	begin
 		insert into tradedb.trade.dbo.PulseCheck
-		([ItemID],[Year],[Month],[Region],[Zone],[Value],[AddName],[AddDate],[EditName],[EditDate])
-		select @ItemID, @Year, @Month, @_CountryID, @_Zone, @SubprocessCPU, @UserID, GETDATE(), null, null
+		([ItemID],[Year],[Month],[Region],[FtyZone],[Value],[AddName],[AddDate],[EditName],[EditDate])
+		select @ItemID, @Year, @Month, @_CountryID, @_FtyZone, @SubprocessCPU, @UserID, GETDATE(), null, null
 	end
 
 	--TTL DL Working Hour
 	select @ItemID = ID from #tmp_Dropdownlist where [Name] = 'TTL DL Working Hour' and [Description] = 'Monthly CMP Report'
-	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone)
+	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone)
 	begin
 		update tradedb.trade.dbo.PulseCheck
 		set value = @TTLDLWorkingHour, EditName = @UserID, EditDate =GETDATE()
-		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone
+		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone
 	end
 	else
 	begin
 		insert into tradedb.trade.dbo.PulseCheck
-		([ItemID],[Year],[Month],[Region],[Zone],[Value],[AddName],[AddDate],[EditName],[EditDate])
-		select @ItemID, @Year, @Month, @_CountryID, @_Zone, @TTLDLWorkingHour, @UserID, GETDATE(), null, null
+		([ItemID],[Year],[Month],[Region],[FtyZone],[Value],[AddName],[AddDate],[EditName],[EditDate])
+		select @ItemID, @Year, @Month, @_CountryID, @_FtyZone, @TTLDLWorkingHour, @UserID, GETDATE(), null, null
 	end
-FETCH NEXT FROM CURSOR_ INTO @_CountryID, @_Zone, @SewingCPU, @WorkingDays, @AvgWorkingHours, @PPH, @Efficiency, @DirectManpower, @PerformedLoading, @PerformedCapacity, @CMPAbsent, @SubprocessCPU, @TTLDLWorkingHour
+FETCH NEXT FROM CURSOR_ INTO @_CountryID, @_FtyZone, @SewingCPU, @WorkingDays, @AvgWorkingHours, @PPH, @Efficiency, @DirectManpower, @PerformedLoading, @PerformedCapacity, @CMPAbsent, @SubprocessCPU, @TTLDLWorkingHour
 End
 CLOSE CURSOR_
 DEALLOCATE CURSOR_ 
