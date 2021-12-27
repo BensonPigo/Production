@@ -114,22 +114,13 @@ outer apply (
 
                 if (!MyUtility.Check.Empty(this.dateSewingDate.Value1) && !MyUtility.Check.Empty(this.dateSewingDate.Value2))
                 {
-                    sqlCmd.Append($@"
-outer apply(
-	SELECT MaxOffLine = max(s.Offline), MinInLine = min(s.Inline)
-	FROM SewingSchedule s WITH(NOLOCK)
-	INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID
-	WHERE 1=1
-	AND ( 
-		(Cast(s.Inline as Date) >= convert(varchar(10), '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}', 120) AND Cast( s.Inline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}' )
-		OR
-		(Cast(s.Offline as Date) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}' AND Cast( s.Offline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}' )
-	)
-	and o.StyleID = l.StyleID and o.SeasonID = l.SeasonID and o.BrandID = l.BrandID
-)SewingDate
-");
-                    dateSewing += "and convert(varchar(10), s.Inline, 120) >= SewingDate.MinInLine ";
-                    dateSewing += "and convert(varchar(10), s.Offline, 120) <= SewingDate.MaxOffLine ";
+                    dateSewing += $@"
+AND 
+( 
+	(Cast(s.Inline as Date) >= convert(varchar(10), '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}', 120) AND Cast(s.Inline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}' )
+    OR
+    (Cast(s.Offline as Date) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}' AND Cast(s.Offline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}')
+)";
                 }
 
                 sqlCmd.Append($@"

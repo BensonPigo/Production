@@ -307,23 +307,13 @@ and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (
 
                 if (!MyUtility.Check.Empty(this.dateSewingDate.Value1) && !MyUtility.Check.Empty(this.dateSewingDate.Value2))
                 {
-                    this.sqlCmd.Append($@"
-outer apply(
-	SELECT MaxOffLine = max(s.Offline), MinInLine = min(s.Inline)
-	FROM SewingSchedule s WITH(NOLOCK)
-	INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID
-	WHERE o.Finished = 1
-	AND ( 
-		(Cast(s.Inline as Date) >= convert(varchar(10), '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}', 120) AND Cast( s.Inline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}' )
-		OR
-		(Cast(s.Offline as Date) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}' AND Cast( s.Offline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}' )
-	)
-	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
-)SewingDate
-");
-
-                    dateQuery += "and convert(varchar(10), ss.Inline, 120) >= SewingDate.MinInLine ";
-                    dateQuery += "and convert(varchar(10), ss.Offline, 120) <= SewingDate.MaxOffLine ";
+                    dateQuery += $@"
+AND 
+( 
+	(Cast(ss.Inline as Date) >= convert(varchar(10), '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}', 120) AND Cast(ss.Inline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}' )
+    OR
+    (Cast(ss.Offline as Date) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}' AND Cast(ss.Offline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}')
+)";
                 }
 
                 this.sqlCmd.Append($@"
