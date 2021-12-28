@@ -817,6 +817,11 @@ where Junk = 0";
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             DataRow[] drArry = dt.Select("OperationID <> ''");
 
+            if (drArry.Length <= 0)
+            {
+                return;
+            }
+
             DataRow data = drArry.CopyToDataTable().Rows[e.RowIndex];
             if (data == null)
             {
