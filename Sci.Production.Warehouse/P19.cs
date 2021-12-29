@@ -846,7 +846,7 @@ select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as se
 
 from dbo.TransferOut_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
-left join View_WH_Orders o WITH (NOLOCK) on p1.ID = o.poid
+left join View_WH_Orders o WITH (NOLOCK) on p1.ID = o.ID
 left join Fabric on Fabric.SCIRefno = p1.SCIRefno
 left join FtyInventory FI on a.POID = FI.POID and a.Seq1 = FI.Seq1 and a.Seq2 = FI.Seq2 and a.Dyelot = FI.Dyelot
     and a.Roll = FI.Roll and a.StockType = FI.StockType
