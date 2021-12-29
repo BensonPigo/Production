@@ -33,7 +33,7 @@ namespace Sci.Production.Shipping
             }
 
             // S/O Cnfm不可早於FCR Date
-            if (DateTime.Compare(this.dateSOCfmDate.Value.Value, (DateTime)this.dr["FCRDate"]) < 0)
+            if (!MyUtility.Check.Empty(this.dr["FCRDate"]) && DateTime.Compare(this.dateSOCfmDate.Value.Value, (DateTime)this.dr["FCRDate"]) < 0)
             {
                 MyUtility.Msg.WarningBox("<S/O Cnfm> cannot be earlier than <FCR Date> !");
                 return;
