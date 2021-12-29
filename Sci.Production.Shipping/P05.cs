@@ -1694,7 +1694,14 @@ end");
             }
             else
             {
-                this.CurrentMaintain["SOCFMDate"] = this.newSOCFMDate;
+                if (this.newSOCFMDate.HasValue)
+                {
+                    this.CurrentMaintain["SOCFMDate"] = this.newSOCFMDate;
+                }
+                else
+                {
+                    this.CurrentMaintain["SOCFMDate"] = DBNull.Value;
+                }
             }
         }
 
