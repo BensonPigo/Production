@@ -316,20 +316,6 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
                     return false;
                 }
 
-                if (MyUtility.Check.Empty(this.CurrentMaintain["CdCodeID"]))
-                {
-                    MyUtility.Msg.WarningBox("CD can't empty");
-                    this.txtcdcode.Focus();
-                    return false;
-                }
-
-                if (MyUtility.Check.Empty(this.CurrentMaintain["CPU"]))
-                {
-                    MyUtility.Msg.WarningBox("CPU can't empty");
-                    this.numCPU.Focus();
-                    return false;
-                }
-
                 if (MyUtility.Check.Empty(this.CurrentMaintain["ApparelType"]))
                 {
                     MyUtility.Msg.WarningBox("Product Type can't empty");
@@ -519,22 +505,13 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
         // CD
         private void Txtcdcode_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && MyUtility.Convert.GetString(this.CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE" && this.txtcdcode.OldValue != this.txtcdcode.Text)
+            if (this.EditMode &&
+                MyUtility.Convert.GetString(this.CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE" &&
+                this.txtcdcode.OldValue != this.txtcdcode.Text &&
+                MyUtility.Check.Empty(this.txtcdcode.Text))
             {
-                if (MyUtility.Check.Empty(this.txtcdcode.Text))
-                {
-                    this.CurrentMaintain["CPU"] = 0;
-                    this.CurrentMaintain["StyleUnit"] = string.Empty;
-                }
-                else
-                {
-                    if (MyUtility.Check.Seek(string.Format("select Cpu,ComboPcs from CDCode WITH (NOLOCK) where ID = '{0}'", this.txtcdcode.Text), out DataRow cDCodeRow))
-                    {
-                        this.CurrentMaintain["CPU"] = cDCodeRow["Cpu"];
-                    }
-
-                    this.CurrentMaintain["StyleUnit"] = MyUtility.Convert.GetString(cDCodeRow["ComboPcs"]) == "1" ? "PCS" : "SETS";
-                }
+                this.CurrentMaintain["CPU"] = 0;
+                this.CurrentMaintain["StyleUnit"] = string.Empty;
             }
         }
 
@@ -950,6 +927,22 @@ where a.Article is null",
                     this.comboFolding2.Enabled = false;
                     break;
             }
+        }
+
+        private void ComboProductType1_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (!this.EditMode)
+            {
+                return;
+            }
+
+            string sqlGetStyleUnit = $@"
+select  [StyleUnit] = case  when ID in ('M', 'X', 'Z') then 'SETS'
+                            else 'PCS' end
+from NewCDCode where Classifty = 'ApparelType' and TypeName = '{this.comboProductType1.Text}'
+";
+            this.CurrentMaintain["ApparelType"] = this.comboProductType1.SelectedValue;
+            this.CurrentMaintain["StyleUnit"] = MyUtility.GetValue.Lookup(sqlGetStyleUnit);
         }
     }
 }

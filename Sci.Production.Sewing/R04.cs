@@ -22,6 +22,11 @@ namespace Sci.Production.Sewing
         private string brand;
         private string cdcode;
         private string shift;
+        private string productType;
+        private string fabricType;
+        private string lining;
+        private string gender;
+        private string construction;
         private bool show_Accumulate_output;
         private bool exclude_NonRevenue;
 
@@ -42,6 +47,11 @@ namespace Sci.Production.Sewing
             this.comboCategory.SelectedIndex = 0;
             this.comboM.Text = Env.User.Keyword;
             this.comboFactory.SelectedIndex = 0;
+            this.comboProductType1.SetDataSource();
+            this.comboFabricType1.SetDataSource();
+            this.comboLining1.SetDataSource();
+            this.comboGender1.SetDataSource();
+            this.comboConstruction1.SetDataSource();
         }
 
         /// <inheritdoc/>
@@ -57,6 +67,11 @@ namespace Sci.Production.Sewing
             this.shift = this.comboShift.Text;
             this.show_Accumulate_output = this.chk_Accumulate_output.Checked;
             this.exclude_NonRevenue = this.chkExcludeNonRevenue.Checked;
+            this.productType = this.comboProductType1.Text;
+            this.fabricType = this.comboFabricType1.Text;
+            this.lining = this.comboLining1.Text;
+            this.gender = this.comboGender1.Text;
+            this.construction = this.comboConstruction1.Text;
             return base.ValidateInput();
         }
 
@@ -65,6 +80,34 @@ namespace Sci.Production.Sewing
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
+
+            string sqlWhereForCDCodeNew = string.Empty;
+
+            if (!MyUtility.Check.Empty(this.productType))
+            {
+                sqlWhereForCDCodeNew += $" and sty.ProductType = ''{this.productType}''";
+            }
+
+            if (!MyUtility.Check.Empty(this.fabricType))
+            {
+                sqlWhereForCDCodeNew += $" and sty.FabricType = ''{this.fabricType}''";
+            }
+
+            if (!MyUtility.Check.Empty(this.lining))
+            {
+                sqlWhereForCDCodeNew += $" and sty.Lining = ''{this.lining}''";
+            }
+
+            if (!MyUtility.Check.Empty(this.gender))
+            {
+                sqlWhereForCDCodeNew += $" and sty.Gender = ''{this.gender}''";
+            }
+
+            if (!MyUtility.Check.Empty(this.construction))
+            {
+                sqlWhereForCDCodeNew += $" and sty.Construction = ''{this.construction}''";
+            }
+
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"--根據條件撈基本資料
 select s.id
@@ -505,7 +548,7 @@ select * from(
                            o.SubconOutFty = t.SubconOutFty");
             }
 
-            sqlCmd.Append($@" )a
+            sqlCmd.Append($@" where 1 = 1 {sqlWhereForCDCodeNew})a
 order by MDivisionID,FactoryID,OutputDate,SewingLineID,Shift,Team,OrderId
 
 drop table #tmpSewingDetail,#tmp1stFilter,#tmpSewingGroup

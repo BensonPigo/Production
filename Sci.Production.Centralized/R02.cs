@@ -126,7 +126,7 @@ SELECT  Orders.ID
                       * Orders.Cpu)  
         , Orders.Category 
         , LoadingMonth = Month (Dateadd (dd, -7, Orders.SCIDelivery)) 
-        , CDCode.ComboPcs 
+        , [ComboPcs] = isnull(ComboPcs.val, 0)
         , nm_Category = case 
                             when Orders.Category = 'S' then 'Sample' 
                             when Orders.Category = 'B' then 'Bulk' 
@@ -134,9 +134,9 @@ SELECT  Orders.ID
                             when Orders.Category = 'T' then 'SMTL' 
                             else Orders.Category 
                         end
-FROM ORDERS 
-left join Factory on  Factory.ID = Orders.FactoryID 
-left join CDCode on Orders.CDCodeID = CDCode.ID 
+FROM ORDERS with (nolock)
+left join Factory on  Factory.ID = Orders.FactoryID
+outer apply (select [val] = count(*) from Style_Location sl with (nolock) where sl.StyleUkey = Orders.StyleUkey) ComboPcs
 WHERE   1=1 
         and Orders.Category NOT IN ('G','A')
         and Orders.LocalOrder = 0

@@ -665,10 +665,10 @@
             this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.PcHandleText);
             this.tabPage1.Controls.Add(this.txttpeuser4);
-            this.tabPage1.Location = new System.Drawing.Point(4, 24);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1000, 691);
+            this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
             // 
@@ -1873,7 +1873,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(994, 685);
+            this.shapeContainer2.Size = new System.Drawing.Size(990, 649);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -3431,7 +3431,7 @@
             this.lbCDCodeNew.Name = "lbCDCodeNew";
             this.lbCDCodeNew.Size = new System.Drawing.Size(96, 21);
             this.lbCDCodeNew.TabIndex = 242;
-            this.lbCDCodeNew.Text = "CD Code (new)";
+            this.lbCDCodeNew.Text = "New CD Code";
             // 
             // displayCDCodeNew
             // 

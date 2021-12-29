@@ -1837,7 +1837,7 @@ and s.BrandID = @brandid";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out dt);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query CdCode data fail!\r\n" + result.ToString());
+                MyUtility.Msg.ErrorBox("Query New CDCode data fail!\r\n" + result.ToString());
                 return;
             }
 

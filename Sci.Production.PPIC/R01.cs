@@ -338,7 +338,7 @@ select
 	,o.SciDelivery
 	,o.BuyerDelivery
 	,Category = isnull(o.Category,'')
-	,o.CdCodeID
+	,[CdCodeID] = st.CDCodeNew
 	,s.APSNo
 	,[CPU] = cast(o.CPU * o.CPUFactor * isnull(dbo.GetOrderLocation_Rate(s.OrderID,s.ComboType),isnull(dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType),100)) / 100 as float)
 	,[HourOutput] = iif(isnull(s.TotalSewingTime,0) = 0,0,(s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime)
@@ -369,7 +369,7 @@ group by  s.FactoryID,s.SewingLineID,o.StyleID,s.Inline,s.Offline
 	,o.SciDelivery
 	,o.BuyerDelivery
 	,o.Category
-	,o.CdCodeID
+	,st.CDCodeNew
 	,s.APSNo
 	,o.CPU,o.CPUFactor
 	,s.Sewer
@@ -1217,7 +1217,7 @@ select  s.SewingLineID
                 ) a for xml path('')) as Article            
             , o.SeasonID
             , [SizeCode] = ''
-            , o.CdCodeID
+            , [CdCodeID] = st.CDCodeNew
             , o.StyleID
             , o.Qty
             , s.AlloQty
@@ -1275,6 +1275,7 @@ select  s.SewingLineID
 	into #tmp_main
     from SewingSchedule s WITH (NOLOCK) 
     inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
+    inner join Style st with (nolock) on st.Ukey = o.StyleUkey
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
     outer apply(select value = dbo.GetOrderLocation_Rate(o.id,s.ComboType) ) ol_rate
     outer apply(select value = dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType) ) sl_rate
@@ -1561,7 +1562,7 @@ select  s.SewingLineID
             , sd.Article
             , o.SeasonID
 			, sd.SizeCode
-            , o.CdCodeID
+            , [CdCodeID] = st.CDCodeNew
             , o.StyleID 
             , InspDate = InspctDate.Val
             , s.StandardOutput 
@@ -1600,6 +1601,7 @@ select  s.SewingLineID
 	into #tmp_main
     from SewingSchedule s WITH (NOLOCK) 
 	inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID
+    inner join Style st with (nolock) on st.Ukey = o.StyleUkey
 	inner join SewingSchedule_Detail sd WITH (NOLOCK) on s.ID=sd.ID 
     left join Country c WITH (NOLOCK) on o.Dest = c.ID 
 	OUTER APPLY(	
