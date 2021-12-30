@@ -96,10 +96,17 @@ select 	selected = 0
 			                ) s
 			                for xml path(''))
 		                , 1, 1, '')
+	    ,a.Refno
+	    ,a.SizeSpec	
+        , ColorID = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
+                        ,IIF( a.SuppColor = '' or a.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,a.ColorID),a.SuppColor)
+                        ,dbo.GetColorMultipleID(o.BrandID,a.ColorID)
+                    )
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
 inner join View_WH_Orders o WITH (NOLOCK) on c.Poid = o.id
 inner join Factory WITH (NOLOCK) on o.FactoryID = factory.id
+left join Fabric WITH (NOLOCK) on Fabric.SCIRefno = a.SCIRefno
 outer apply(
 	select listValue = Stuff((
 			select concat(',',MtlLocationID)
@@ -303,6 +310,9 @@ WHERE   StockType='{0}'
                 .Text("fromroll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 3
                 .Text("fromdyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 4
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) // 5
+                .Text("Refno", header: "Ref#", width: Widths.AnsiChars(10), iseditingreadonly: true) // 3
+                .Text("ColorID", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
+                .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
                 .Text("Deadline", header: "Dead Line", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("stockunit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 6
                 .Numeric("balance", header: "Inventory" + Environment.NewLine + "Qty", iseditable: false, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) // 7

@@ -260,6 +260,9 @@ and ID = '{Sci.Env.User.UserID}'"))
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
+            .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("stockunit", header: "Unit", iseditingreadonly: true) // 5
             .Numeric("qty", header: "Out Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10) // 6
             .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), iseditable: false).Get(out cbb_stocktype) // 7
@@ -834,8 +837,17 @@ select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as se
 ,a.ToSeq2
 ,[ToSeq] = a.ToSeq1 +' ' + a.ToSeq2
 ,wk.ExportId
+		, p1.Refno
+		, Color = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
+												,IIF( p1.SuppColor = '' or p1.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,p1.ColorID),p1.SuppColor)
+												,dbo.GetColorMultipleID(o.BrandID,p1.ColorID)
+											)
+		, p1.SizeSpec
+
 from dbo.TransferOut_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+left join View_WH_Orders o WITH (NOLOCK) on p1.ID = o.ID
+left join Fabric on Fabric.SCIRefno = p1.SCIRefno
 left join FtyInventory FI on a.POID = FI.POID and a.Seq1 = FI.Seq1 and a.Seq2 = FI.Seq2 and a.Dyelot = FI.Dyelot
     and a.Roll = FI.Roll and a.StockType = FI.StockType
 outer apply(

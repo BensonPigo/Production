@@ -42,19 +42,24 @@
             this.txtmulitOperation1 = new Sci.Production.Class.TxtmulitOperation();
             this.txtmulitMachineType1 = new Sci.Production.Class.TxtmulitMachineType();
             this.lbMC = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.dateSewingDate = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
             // print
             // 
             this.print.Location = new System.Drawing.Point(419, 12);
+            this.print.TabIndex = 8;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(419, 48);
+            this.toexcel.TabIndex = 9;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(419, 84);
+            this.close.TabIndex = 10;
             // 
             // buttonCustomized
             // 
@@ -70,26 +75,26 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(9, 120);
+            this.labelFactory.Location = new System.Drawing.Point(9, 155);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(104, 23);
-            this.labelFactory.TabIndex = 94;
+            this.labelFactory.TabIndex = 15;
             this.labelFactory.Text = "Factory";
             // 
             // lbBrand
             // 
-            this.lbBrand.Location = new System.Drawing.Point(9, 156);
+            this.lbBrand.Location = new System.Drawing.Point(9, 191);
             this.lbBrand.Name = "lbBrand";
             this.lbBrand.Size = new System.Drawing.Size(104, 23);
-            this.lbBrand.TabIndex = 95;
+            this.lbBrand.TabIndex = 16;
             this.lbBrand.Text = "Brand";
             // 
             // labelSeason
             // 
-            this.labelSeason.Location = new System.Drawing.Point(9, 192);
+            this.labelSeason.Location = new System.Drawing.Point(9, 227);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(104, 23);
-            this.labelSeason.TabIndex = 96;
+            this.labelSeason.TabIndex = 17;
             this.labelSeason.Text = "Season";
             // 
             // dateInlineDate
@@ -112,14 +117,14 @@
             this.dateInlineDate.Location = new System.Drawing.Point(116, 12);
             this.dateInlineDate.Name = "dateInlineDate";
             this.dateInlineDate.Size = new System.Drawing.Size(280, 23);
-            this.dateInlineDate.TabIndex = 1;
+            this.dateInlineDate.TabIndex = 0;
             // 
             // lbVersion
             // 
-            this.lbVersion.Location = new System.Drawing.Point(9, 228);
+            this.lbVersion.Location = new System.Drawing.Point(9, 263);
             this.lbVersion.Name = "lbVersion";
             this.lbVersion.Size = new System.Drawing.Size(104, 23);
-            this.lbVersion.TabIndex = 104;
+            this.lbVersion.TabIndex = 18;
             this.lbVersion.Text = "Version";
             // 
             // lbInlineDate
@@ -131,27 +136,27 @@
             this.lbInlineDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.lbInlineDate.RectStyle.ExtBorderWidth = 1F;
             this.lbInlineDate.Size = new System.Drawing.Size(104, 23);
-            this.lbInlineDate.TabIndex = 105;
+            this.lbInlineDate.TabIndex = 11;
             this.lbInlineDate.Text = "Inline Date";
             this.lbInlineDate.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.lbInlineDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // lbOperationCode
             // 
-            this.lbOperationCode.Location = new System.Drawing.Point(9, 84);
+            this.lbOperationCode.Location = new System.Drawing.Point(9, 119);
             this.lbOperationCode.Name = "lbOperationCode";
             this.lbOperationCode.Size = new System.Drawing.Size(104, 23);
-            this.lbOperationCode.TabIndex = 107;
+            this.lbOperationCode.TabIndex = 14;
             this.lbOperationCode.Text = "Operation code";
             // 
             // chkLatestVersion
             // 
             this.chkLatestVersion.AutoSize = true;
             this.chkLatestVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkLatestVersion.Location = new System.Drawing.Point(116, 230);
+            this.chkLatestVersion.Location = new System.Drawing.Point(116, 265);
             this.chkLatestVersion.Name = "chkLatestVersion";
             this.chkLatestVersion.Size = new System.Drawing.Size(118, 21);
-            this.chkLatestVersion.TabIndex = 165;
+            this.chkLatestVersion.TabIndex = 7;
             this.chkLatestVersion.Text = "Latest Version";
             this.chkLatestVersion.UseVisualStyleBackColor = true;
             // 
@@ -161,21 +166,21 @@
             this.txtmultiSeason1.BrandObjectName = this.txtbrand1;
             this.txtmultiSeason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtmultiSeason1.IsSupportEditMode = false;
-            this.txtmultiSeason1.Location = new System.Drawing.Point(116, 192);
+            this.txtmultiSeason1.Location = new System.Drawing.Point(116, 227);
             this.txtmultiSeason1.Name = "txtmultiSeason1";
             this.txtmultiSeason1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.txtmultiSeason1.ReadOnly = true;
             this.txtmultiSeason1.Size = new System.Drawing.Size(280, 23);
-            this.txtmultiSeason1.TabIndex = 112;
+            this.txtmultiSeason1.TabIndex = 6;
             // 
             // txtbrand1
             // 
             this.txtbrand1.BackColor = System.Drawing.Color.White;
             this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(116, 155);
+            this.txtbrand1.Location = new System.Drawing.Point(116, 190);
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(91, 23);
-            this.txtbrand1.TabIndex = 108;
+            this.txtbrand1.TabIndex = 5;
             // 
             // txtfactory1
             // 
@@ -185,11 +190,11 @@
             this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory1.IsProduceFty = false;
             this.txtfactory1.IssupportJunk = false;
-            this.txtfactory1.Location = new System.Drawing.Point(116, 119);
+            this.txtfactory1.Location = new System.Drawing.Point(116, 154);
             this.txtfactory1.MDivision = null;
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(91, 23);
-            this.txtfactory1.TabIndex = 111;
+            this.txtfactory1.TabIndex = 4;
             // 
             // txtmulitOperation1
             // 
@@ -197,12 +202,12 @@
             this.txtmulitOperation1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtmulitOperation1.IsJunk = false;
             this.txtmulitOperation1.IsSupportEditMode = false;
-            this.txtmulitOperation1.Location = new System.Drawing.Point(116, 84);
+            this.txtmulitOperation1.Location = new System.Drawing.Point(116, 119);
             this.txtmulitOperation1.Name = "txtmulitOperation1";
             this.txtmulitOperation1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.txtmulitOperation1.ReadOnly = true;
             this.txtmulitOperation1.Size = new System.Drawing.Size(280, 23);
-            this.txtmulitOperation1.TabIndex = 110;
+            this.txtmulitOperation1.TabIndex = 3;
             // 
             // txtmulitMachineType1
             // 
@@ -210,30 +215,67 @@
             this.txtmulitMachineType1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtmulitMachineType1.IsJunk = false;
             this.txtmulitMachineType1.IsSupportEditMode = false;
-            this.txtmulitMachineType1.Location = new System.Drawing.Point(116, 48);
+            this.txtmulitMachineType1.Location = new System.Drawing.Point(116, 83);
             this.txtmulitMachineType1.Name = "txtmulitMachineType1";
             this.txtmulitMachineType1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.txtmulitMachineType1.ReadOnly = true;
             this.txtmulitMachineType1.Size = new System.Drawing.Size(280, 23);
-            this.txtmulitMachineType1.TabIndex = 109;
+            this.txtmulitMachineType1.TabIndex = 2;
             // 
             // lbMC
             // 
-            this.lbMC.Location = new System.Drawing.Point(9, 48);
+            this.lbMC.Location = new System.Drawing.Point(9, 83);
             this.lbMC.Name = "lbMC";
             this.lbMC.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.lbMC.RectStyle.BorderWidth = 1F;
             this.lbMC.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.lbMC.RectStyle.ExtBorderWidth = 1F;
             this.lbMC.Size = new System.Drawing.Size(104, 23);
-            this.lbMC.TabIndex = 166;
+            this.lbMC.TabIndex = 13;
             this.lbMC.Text = "M/C";
             this.lbMC.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.lbMC.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(9, 48);
+            this.label1.Name = "label1";
+            this.label1.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.RectStyle.BorderWidth = 1F;
+            this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label1.RectStyle.ExtBorderWidth = 1F;
+            this.label1.Size = new System.Drawing.Size(104, 23);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "Sewing Date";
+            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // dateSewingDate
+            // 
+            // 
+            // 
+            // 
+            this.dateSewingDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSewingDate.DateBox1.Name = "";
+            this.dateSewingDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSewingDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSewingDate.DateBox2.Name = "";
+            this.dateSewingDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingDate.DateBox2.TabIndex = 1;
+            this.dateSewingDate.Location = new System.Drawing.Point(116, 48);
+            this.dateSewingDate.Name = "dateSewingDate";
+            this.dateSewingDate.Size = new System.Drawing.Size(280, 23);
+            this.dateSewingDate.TabIndex = 1;
+            // 
             // R04
             // 
-            this.ClientSize = new System.Drawing.Size(511, 293);
+            this.ClientSize = new System.Drawing.Size(511, 328);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.dateSewingDate);
             this.Controls.Add(this.lbMC);
             this.Controls.Add(this.chkLatestVersion);
             this.Controls.Add(this.txtmultiSeason1);
@@ -274,6 +316,8 @@
             this.Controls.SetChildIndex(this.txtmultiSeason1, 0);
             this.Controls.SetChildIndex(this.chkLatestVersion, 0);
             this.Controls.SetChildIndex(this.lbMC, 0);
+            this.Controls.SetChildIndex(this.dateSewingDate, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -295,5 +339,7 @@
         private Class.TxtmultiSeason txtmultiSeason1;
         private Win.UI.CheckBox chkLatestVersion;
         private Win.UI.Label lbMC;
+        private Win.UI.Label label1;
+        private Win.UI.DateRange dateSewingDate;
     }
 }

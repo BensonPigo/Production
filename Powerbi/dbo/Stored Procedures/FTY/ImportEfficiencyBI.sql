@@ -24,10 +24,12 @@ select s.id
 	,s.MDivisionID
 	,s.FactoryID
 	,sd.OrderId
+	,sdd.Article
+	,sdd.SizeCode
 	,sd.ComboType
 	,[ActManPower] = s.Manpower
-	,sd.WorkHour
-	,sd.QAQty
+	,[WorkHour] = cast(sd.WorkHour * (sdd.QAQty * 1.0 / sd.QAQty) as numeric(6, 4))
+	,sdd.QAQty
 	,sd.InlineQty
 	,o.LocalOrder
 	,o.CustPONo
@@ -54,7 +56,7 @@ select s.id
 	,MockupSeason= isnull(mo.SeasonID,'')	
     ,Rate = isnull(Production.dbo.GetOrderLocation_Rate(o.id,sd.ComboType),100)/100
 	,System.StdTMS
-	, [ori_QAQty] = sd.QAQty
+	, [ori_QAQty] = sdd.QAQty
 	, [ori_InlineQty] = sd.InlineQty
     ,BuyerDelivery = format(o.BuyerDelivery,'yyyy/MM/dd')
     ,OrderQty = o.Qty
@@ -66,6 +68,7 @@ select s.id
 into #tmpSewingDetail
 from Production.dbo.System WITH (NOLOCK),Production.dbo.SewingOutput s WITH (NOLOCK) 
 inner join Production.dbo.SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
+inner join Production.dbo.SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sd.UKey= sdd.SewingOutput_DetailUKey
 left join Production.dbo.Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join Production.dbo.Factory f WITH (NOLOCK) on o.FactoryID = f.id
 left join Production.dbo.OrderType ot WITH (NOLOCK) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
@@ -85,7 +88,7 @@ outer apply
 outer apply( select BrandID from Production.dbo.orders o1 where o.CustPONo = o1.id) Order2
 outer apply( select top 1 BrandID from Production.dbo.Style where id = o.StyleID and SeasonID = o.SeasonID and BrandID != 'SUBCON-I') StyleBrand
 where 1=1 
---???non sister?????o.LocalOrder = 1 and o.SubconInSisterFty = 0
+--排除non sister的資料o.LocalOrder = 1 and o.SubconInSisterFty = 0
 and((o.LocalOrder <> 1 and o.SubconInType not in (1, 2)) or (o.LocalOrder = 1 and o.SubconInType <> 0))
 and (s.OutputDate between @SDate and  @EDate
 	OR cast(s.EditDate as date) between @SDate and @EDate )
@@ -101,17 +104,19 @@ select distinct ID
 	,FactoryID
 	,MDivisionID
 	,OrderId
+	,Article
+	,SizeCode
 	,ComboType
 	,[ActManPower] = s.Manpower
-	,WorkHour = sum(Round(WorkHour,3))over(partition by id,OrderId,ComboType)
-	,QAQty = sum(QAQty)over(partition by id,OrderId,ComboType)
-	,[InlineQty] = sum(InlineQty)over(partition by id,OrderId,ComboType)
+	,WorkHour = sum(Round(WorkHour,3))over(partition by id,OrderId,Article,SizeCode,ComboType)
+	,QAQty = sum(QAQty)over(partition by id,OrderId,Article,SizeCode,ComboType)
+	,[InlineQty] = sum(InlineQty)over(partition by id,OrderId,Article,SizeCode,ComboType)
 	,LocalOrder,CustPONo,OrderCategory,OrderType,IsDevSample
 	,OrderBrandID ,OrderCdCodeID ,OrderProgram ,OrderCPU ,OrderCPUFactor ,OrderStyle ,OrderSeason
 	,MockupBrandID,MockupCDCodeID,MockupProgram,MockupCPU,MockupCPUFactor,MockupStyle,MockupSeason
 	,Rate,StdTMS
-	,ori_QAQty = sum(ori_QAQty)over(partition by id,OrderId,ComboType)
-	,ori_InlineQty = sum(ori_InlineQty)over(partition by id,OrderId,ComboType)
+	,ori_QAQty = sum(ori_QAQty)over(partition by id,OrderId,Article,SizeCode,ComboType)
+	,ori_InlineQty = sum(ori_InlineQty)over(partition by id,OrderId,Article,SizeCode,ComboType)
     ,BuyerDelivery
     ,SciDelivery
     ,OrderQty
@@ -148,15 +153,14 @@ Outer apply (
 	and s.BrandID = t.OrderBrandID
 )sty
 
-
  
-select distinct s.SewingLineID,s.FactoryID,[OrderStyle] = o.StyleID, [MockupStyle] = mo.StyleID,s.OutputDate
-into #tmp_s1
-from Production.dbo.SewingOutput s WITH (NOLOCK)
-inner join Production.dbo.SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
-left join Production.dbo.Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
-left join Production.dbo.MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId  
-inner join (select [maxOutputDate] = max(OutputDate),[minOutputDate] = dateadd(day,-90, min(OutputDate)) from #tmpSewingGroup) t on s.OutputDate between t.minOutputDate and t.maxOutputDate
+--select distinct s.SewingLineID,s.FactoryID,[OrderStyle] = o.StyleID, [MockupStyle] = mo.StyleID,s.OutputDate
+--into #tmp_s1
+--from Production.dbo.SewingOutput s WITH (NOLOCK)
+--inner join Production.dbo.SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
+--left join Production.dbo.Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
+--left join Production.dbo.MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId  
+--inner join (select [maxOutputDate] = max(OutputDate),[minOutputDate] = dateadd(day,-90, min(OutputDate)) from #tmpSewingGroup) t on s.OutputDate between t.minOutputDate and t.maxOutputDate
 
 select t.*
 	,[LastShift] = IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift)
@@ -187,6 +191,8 @@ select * INTO #Final from(
         ,t.SubConOutContractNumber
         ,t.Team
         ,t.OrderId
+		,t.Article
+		,t.SizeCode
 		--,t.Ukey
         ,CustPONo
         ,t.BuyerDelivery
@@ -225,10 +231,10 @@ select * INTO #Final from(
 		,t.Gender
 		,t.Construction
     from #tmp1stFilter t )a
-order by MDivisionID,FactoryID,OutputDate,SewingLineID,Shift,Team,OrderId
+order by MDivisionID,FactoryID,OutputDate,SewingLineID,Shift,Team,OrderId,Article,SizeCode
 
-drop table #tmpSewingDetail,#tmp1stFilter,#tmpSewingGroup,#tmp_s1
-
+drop table #tmpSewingDetail,#tmp1stFilter,#tmpSewingGroup--,#tmp_s1
+ 
 
 MERGE INTO P_SewingDailyOutput t --要被insert/update/delete的表
 USING #Final s --被參考的表
@@ -237,7 +243,9 @@ USING #Final s --被參考的表
    AND t.SewingLineID=s.SewingLineID 
    AND t.Team=s.Team 
    AND t.Shift=s.Shift 
-   AND t.orderid=s.orderid 
+   AND t.OrderId=s.OrderId 
+   AND t.Article=s.Article 
+   AND t.SizeCode=s.SizeCode 
    AND t.ComboType=s.ComboType  
    AND t.OutputDate = s.OutputDate
 
@@ -255,6 +263,8 @@ WHEN MATCHED THEN
 		,t.SubConOutContractNumber =s.SubConOutContractNumber
 		,t.Team =s.Team
 		,t.OrderID =s.OrderID
+		,t.Article =s.Article
+		,t.SizeCode =s.SizeCode
 		,t.CustPONo = s.CustPONo
 		,t.BuyerDelivery = s.BuyerDelivery
 		,t.OrderQty = s.OrderQty
@@ -306,6 +316,8 @@ WHEN NOT MATCHED THEN
            ,s.SubConOutContractNumber
            ,s.Team
            ,s.OrderID
+		   ,s.Article
+		   ,s.SizeCode
            ,s.CustPONo
            ,s.BuyerDelivery
            ,s.OrderQty
@@ -356,7 +368,9 @@ select OrderID from #Final s
 	AND t.SewingLineID=s.SewingLineID 
 	AND t.Team=s.Team 
 	AND t.Shift=s.Shift 
-	AND t.orderid=s.orderid 
+	AND t.OrderID=s.OrderID 
+	AND t.Article=s.Article 
+	AND t.SizeCode=s.SizeCode 
 	AND t.ComboType=s.ComboType 
 	AND t.OutputDate = s.OutputDate);
 

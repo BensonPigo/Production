@@ -111,7 +111,7 @@ from (
     select  ld.OriNO
 	    , ld.No
 	    , ld.IsPPA
-        , [IsHide] = cast(iif(ld.IsHide is not null, ld.IsHide ,iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)))) as bit)	    
+        , [IsHide] = cast(iif(ld.IsHide is not null, ld.IsHide ,iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, 0))) as bit)	    
 	    , ld.MachineTypeID
 	    , ld.MasterPlusGroup	
         , [Description]= IIF( o.DescEN = '' OR  o.DescEN IS NULL , ld.OperationID,o.DescEN)
@@ -125,8 +125,7 @@ from (
         , e.Skill as EmployeeSkill
 	    , iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
         , [IsGroupHeader] = cast(iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, 0) as bit)
-	    , [IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
-        , [IsShow] = cast(iif( ld.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 0)) as bit)
+        , [IsShow] = cast(iif( ld.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 1)) as bit)
 	    , ld.ID
 	    , ld.GroupKey
 	    , ld.Ukey
@@ -143,15 +142,12 @@ from (
     left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
     left join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on ld.IEReasonLBRNotHit_DetailUkey = lbr.Ukey
     outer apply (
-	    select IsShowinIEP03 = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsShowinIEP03)
-		    , IsSewingline = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsSewingline)
-		    , IsDesignatedArea = m.IsDesignatedArea
+	    select IsShowinIEP03 = IIF(isnull(md.IsNotShownInP03 ,0) = 0, 1, 0)
+		    , IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
 	    from Operation o2 WITH (NOLOCK)
 	    inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
-	    inner join ArtworkType at2 WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
-	    inner join ArtworkType_FTY atf WITH (NOLOCK) on at2.id= atf.ArtworkTypeID and atf.FactoryID = '{1}'
-        inner join Factory f WITH (NOLOCK) on f.ID = atf.FactoryID 
-	    where o.ID = o2.ID
+        inner join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = '{1}'
+	    where o.ID = o2.ID and m.junk = 0
     )show
     where ld.ID = '{0}' 
 )ld
@@ -1685,13 +1681,12 @@ select ID = null
        , ld.Threadcolor
        , ld.ActCycle
        , ld.MasterPlusGroup
-		,[IsHide] = iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)))
+		,[IsHide] = iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, 0))
 		,[IsGroupHeader] = iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, 0)
-		,[IsSewingOperation] = cast(iif(show.IsDesignatedArea = 1, 1, 0) as bit)
-        ,[IsShow] = cast(iif( ld.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 0)) as bit)
-	    , [sortNO] = case when iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0))) = 1 then 1 
-                          when ld.No = '' 
-                            and iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0))) = 0 
+        ,[IsShow] = cast(iif( ld.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 1)) as bit)
+	    , [sortNO] = case when SUBSTRING(ld.OperationID, 1, 2) = '--' then 1
+		when show.IsDesignatedArea = 1 then 1
+		when ld.No = '' and iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, 0)) = 0 
                             and ld.IsPPA = 0 
                           then 2
                           when left(ld.No, 1) = 'P' then 3
@@ -1700,15 +1695,12 @@ from LineMapping_Detail ld WITH (NOLOCK)
 left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
 outer apply (
-	select IsShowinIEP03 = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsShowinIEP03)
-		, IsSewingline = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsSewingline)
-		, IsDesignatedArea = m.IsDesignatedArea
+	select IsShowinIEP03 = IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0)
+		, IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
 	from Operation o2 WITH (NOLOCK)
 	inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
-	inner join ArtworkType at2 WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
-	inner join ArtworkType_FTY atf WITH (NOLOCK) on at2.id= atf.ArtworkTypeID and atf.FactoryID = '{1}'
-    inner join Factory f WITH (NOLOCK) on f.ID = atf.FactoryID
-	where o.ID = o2.ID
+    inner join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = '{1}'	
+	where o.ID = o2.ID and m.junk = 0
 )show
 where ld.ID = {0} 
 order by case when ld.No = '' then 1
@@ -1827,10 +1819,10 @@ select distinct
 	,TotalGSD = round(ProTMS, 4)
 	,Cycle = round(ProTMS, 4)
 	,TotalCycle = round(ProTMS, 4)
-	,MachineTypeID = ''
+	,MachineTypeID = op.MachineTypeID
     ,Attachment = null
     ,Template = null
-	,OperationID = 'PROCIPF00001'
+	,OperationID = op.ID
 	,MoldID = null
 	,GroupKey = 0
 	,New = 0
@@ -1841,23 +1833,13 @@ select distinct
 	,Efficiency = 100
 	,IsPPA = 0
     ,[MasterPlusGroup]=''
-	,[IsHide] = cast(iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)) as bit)
+	,[IsHide] = cast(iif(ISNULL(md.IsNonSewingLine,0) = 1, 1, 0) as bit)
 	,[IsGroupHeader] = 0
-	,[IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
-    ,[IsShow] = cast(isnull(show.IsShowinIEP03, 0) as bit)
-from [IETMS_Summary] i
-outer apply (
-	select IsShowinIEP03 = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsShowinIEP03)
-		, IsSewingline = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsSewingline)
-		, IsDesignatedArea = m.IsDesignatedArea
-	from ArtworkType_FTY atf WITH (NOLOCK)
-	inner join ArtworkType at2 WITH (NOLOCK) on at2.id= atf.ArtworkTypeID
-	inner join MachineType m WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
-    inner join Factory f WITH (NOLOCK) on f.ID = atf.FactoryID
-	where i.ArtworkTypeID = atf.ArtworkTypeID
-	and atf.FactoryID = '{2}'
-)show
-where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Cutting'
+    ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)
+from [IETMS_Summary] i, Operation op
+left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
+where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Cutting' and op.ID='PROCIPF00001'
+
 union all
 select ID = null
 	   , No = ''
@@ -1891,24 +1873,26 @@ select ID = null
 	   , Efficiency = 100
        , IsPPA = iif(CHARINDEX('--', td.OperationID) > 0, 0, iif(td.SMV > 0, 0, 1))
        ,o.MasterPlusGroup
-	   ,[IsHide] = cast(iif(SUBSTRING(td.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0))) as bit)
+	   ,[IsHide] = cast(
+			   case when SUBSTRING(td.OperationID, 1, 2) = '--' then 1
+			   when show.IsDesignatedArea = 1 then 1
+			   when isnull(td.IsSubprocess,0) = 1 then 1
+			   else 0 
+			   end			
+		as bit)
 	   ,[IsGroupHeader] = cast(iif(SUBSTRING(td.OperationID, 1, 2) = '--', 1, 0) as bit)
-	   ,[IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
-       ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 0)) as bit)
+       ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 1)) as bit)
 from TimeStudy_Detail td WITH (NOLOCK)
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 outer apply (
-	select IsShowinIEP03 = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsShowinIEP03)
-		, IsSewingline = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsSewingline)
-		, IsDesignatedArea = m.IsDesignatedArea
-	from Operation o2 WITH (NOLOCK)
-	inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
-	inner join ArtworkType at2 WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
-	inner join ArtworkType_FTY atf WITH (NOLOCK) on at2.id= atf.ArtworkTypeID and atf.FactoryID = '{2}'
-    inner join Factory f WITH (NOLOCK) on f.ID = atf.FactoryID
-	where o.ID = o2.ID
+	select IsShowinIEP03 = IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0)
+		, IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
+	from MachineType m WITH (NOLOCK)
+    inner join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = '{2}'	
+	where o.MachineTypeID = m.ID and m.junk = 0
 )show
 where td.ID = '{1}'
+
 union all
 select distinct
 	ID = null
@@ -1919,10 +1903,10 @@ select distinct
 	,TotalGSD = round(ProTMS, 4)
 	,Cycle = round(ProTMS, 4)
 	,TotalCycle = round(ProTMS, 4)
-	,MachineTypeID = 'M'
+	,MachineTypeID = op.MachineTypeID
     ,Attachment = null
     ,Template = null
-	,OperationID = 'PROCIPF00002'
+	,OperationID = op.ID -- PROCIPF00002
 	,MoldID = null
 	,GroupKey = 0
 	,New = 0
@@ -1933,23 +1917,13 @@ select distinct
 	,Efficiency = 100
 	,IsPPA = 0
     ,[MasterPlusGroup]=''
-	,[IsHide] = cast(iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)) as bit)
+	,[IsHide] = cast(iif(ISNULL(md.IsNonSewingLine,0) = 1, 1, 0) as bit)
 	,[IsGroupHeader] = 0
-	,[IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
-    ,[IsShow] = cast(isnull(show.IsShowinIEP03, 0) as bit)
-from [IETMS_Summary] i
-outer apply (
-	select IsShowinIEP03 = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsShowinIEP03)
-		, IsSewingline = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsSewingline)
-		, IsDesignatedArea = m.IsDesignatedArea
-	from ArtworkType_FTY atf WITH (NOLOCK)
-	inner join ArtworkType at2 WITH (NOLOCK) on at2.id= atf.ArtworkTypeID
-	inner join MachineType m WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
-    inner join Factory f WITH (NOLOCK) on f.ID = atf.FactoryID
-	where i.ArtworkTypeID = atf.ArtworkTypeID
-	and atf.FactoryID = '{2}'
-)show
-where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Inspection'
+    ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)
+from [IETMS_Summary] i, Operation op
+left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
+where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Inspection' and op.ID='PROCIPF00002'
+
 union all
 select distinct
 	ID = null
@@ -1960,10 +1934,10 @@ select distinct
 	,TotalGSD = round(ProTMS, 4)
 	,Cycle = round(ProTMS, 4)
 	,TotalCycle = round(ProTMS, 4)
-	,MachineTypeID = 'MM2'
+	,MachineTypeID = op.MachineTypeID
     ,Attachment = null
     ,Template = null
-	,OperationID = 'PROCIPF00004'
+	,OperationID = op.ID -- PROCIPF00004
 	,MoldID = null
 	,GroupKey = 0
 	,New = 0
@@ -1974,23 +1948,13 @@ select distinct
 	,Efficiency = 100
 	,IsPPA = 0
     ,[MasterPlusGroup]=''
-	,[IsHide] = cast(iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)) as bit)
+	,[IsHide] = cast(iif(ISNULL(md.IsNonSewingLine,0) = 1, 1, 0) as bit)
 	,[IsGroupHeader] = 0
-	,[IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
-    ,[IsShow] = cast(isnull(show.IsShowinIEP03, 0) as bit)
-from [IETMS_Summary] i
-outer apply (
-	select IsShowinIEP03 = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsShowinIEP03)
-		, IsSewingline = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsSewingline)
-		, IsDesignatedArea = m.IsDesignatedArea
-	from ArtworkType_FTY atf WITH (NOLOCK)
-	inner join ArtworkType at2 WITH (NOLOCK) on at2.id= atf.ArtworkTypeID
-	inner join MachineType m WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
-    inner join Factory f WITH (NOLOCK) on f.ID = atf.FactoryID
-	where i.ArtworkTypeID = atf.ArtworkTypeID
-	and atf.FactoryID = '{2}'
-)show
-where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Pressing'
+    ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)
+from [IETMS_Summary] i, Operation op
+left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
+where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Pressing' and op.ID='PROCIPF00004'
+
 union all
 select distinct
 	ID = null
@@ -2001,10 +1965,10 @@ select distinct
 	,TotalGSD = round(ProTMS, 4)
 	,Cycle = round(ProTMS, 4)
 	,TotalCycle = round(ProTMS, 4)
-	,MachineTypeID = 'MM2'
+	,MachineTypeID = op.MachineTypeID
     ,Attachment = null
     ,Template = null
-	,OperationID = 'PROCIPF00003'
+	,OperationID = op.ID--'PROCIPF00003'
 	,MoldID = null
 	,GroupKey = 0
 	,New = 0
@@ -2015,23 +1979,12 @@ select distinct
 	,Efficiency = 100
 	,IsPPA = 0
     ,[MasterPlusGroup]=''
-	,[IsHide] = cast(iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)) as bit)
+	,[IsHide] = cast(iif(ISNULL(md.IsNonSewingLine,0) = 1, 1, 0) as bit)
 	,[IsGroupHeader] = 0
-	,[IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
-    ,[IsShow] = cast(isnull(show.IsShowinIEP03, 0) as bit)
-from [IETMS_Summary] i
-outer apply (
-	select IsShowinIEP03 = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsShowinIEP03)
-		, IsSewingline = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsSewingline)
-		, IsDesignatedArea = m.IsDesignatedArea
-	from ArtworkType_FTY atf WITH (NOLOCK)
-	inner join ArtworkType at2 WITH (NOLOCK) on at2.id= atf.ArtworkTypeID
-	inner join MachineType m WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
-    inner join Factory f WITH (NOLOCK) on f.ID = atf.FactoryID
-	where i.ArtworkTypeID = atf.ArtworkTypeID
-	and atf.FactoryID = '{2}'
-)show
-where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing'
+    ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)
+from [IETMS_Summary] i, Operation op
+left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
+where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' and op.ID='PROCIPF00003'
 )ld",
                 ietmsUKEY,
                 timeStudy["ID"],

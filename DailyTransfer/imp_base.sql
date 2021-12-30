@@ -625,29 +625,6 @@ when not matched by target then
 when not matched by source then
 	delete;
 
---ArtworkType_FTY
----------------------------
-Begin
-	update a
-		set a.IsShowinIEP01 = b.IsShowinIEP01
-		  , a.IsShowinIEP03 = b.IsShowinIEP03
-		  , a.IsSewingline = b.IsSewingline
-	from Production.dbo.ArtworkType_FTY a WITH (NOLOCK)
-	inner join Trade_To_Pms.dbo.ArtworkType_FTY b WITH (NOLOCK) on a.ArtworkTypeID = b.ArtworkTypeID and a.FactoryID = b.FactoryID
-	where exists (select 1 from Production.dbo.Factory f WITH (NOLOCK) where a.FactoryID = f.ID)
-
-	insert into Production.dbo.ArtworkType_FTY ([ArtworkTypeID], [FactoryID], [IsShowinIEP01], [IsShowinIEP03], [IsSewingline])
-	select b.ArtworkTypeID, b.FactoryID, b.IsShowinIEP01, b.IsShowinIEP03, b.IsSewingline
-	from Trade_To_Pms.dbo.ArtworkType_FTY b WITH (NOLOCK)
-	inner join Production.dbo.Factory f WITH (NOLOCK) on b.FactoryID = f.ID
-	where not exists (select 1 from Production.dbo.ArtworkType_FTY a WITH (NOLOCK) where a.ArtworkTypeID = b.ArtworkTypeID and a.FactoryID = b.FactoryID)
-
-	delete a
-	from Production.dbo.ArtworkType_FTY a WITH (NOLOCK)
-	where not exists (select 1 from Trade_To_Pms.dbo.ArtworkType_FTY b WITH (NOLOCK) where a.ArtworkTypeID = b.ArtworkTypeID and a.FactoryID = b.FactoryID)
-END
----------------------------
-
 --Artworktype1 MachineType 無多的欄位
 --AArtworkType1
 ----------------------MachineType--
@@ -727,10 +704,36 @@ when not matched by target then
 when not matched by source then
 	delete;
 
-update a
-	set a.IsDesignatedArea = b.IsDesignatedArea
-from Production.dbo.MachineType a WITH (NOLOCK)
-inner join Trade_To_Pms.dbo.MachineTypeTPE b WITH (NOLOCK) on a.ID = b.ID
+------ Merge MachineType_Detail
+
+merge Production.dbo.MachineType_Detail as t
+Using Trade_TO_Pms.dbo.MachineType_Detail as s
+on t.id = s.id and t.FactoryID = s.FactoryID
+when matched then
+		update set 
+		t.IsSubprocess		=s.IsSubprocess	
+		,t.IsNonSewingLine	=s.IsNonSewingLine		    
+		,t.IsNotShownInP01	=s.IsNotShownInP01		    
+		,t.IsNotShownInP03	=s.IsNotShownInP03	
+when not matched by target then
+	insert(
+		[ID]
+		,[FactoryID]
+		,[IsSubprocess]
+		,[IsNonSewingLine]
+		,[IsNotShownInP01]
+		,[IsNotShownInP03]
+	)
+	values(
+	   s.[ID]
+      ,s.[FactoryID]
+      ,s.[IsSubprocess]
+      ,s.[IsNonSewingLine]
+      ,s.[IsNotShownInP01]
+      ,s.[IsNotShownInP03]
+	)
+when not matched by source then
+	delete;
 
 --CustCD CustCD
 --ACustCD

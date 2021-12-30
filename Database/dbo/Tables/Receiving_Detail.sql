@@ -31,10 +31,14 @@
     [MINDChecker]       VARCHAR (10)    CONSTRAINT [DF_Receiving_Detail_MINDChecker] DEFAULT ('') NOT NULL,
     [MINDCheckAddDate]  DATETIME        NULL,
     [MINDCheckEditDate] DATETIME        NULL,
-    [FullRoll] VARCHAR(50) CONSTRAINT [DF_Receiving_Detail_FullRoll] DEFAULT ('') NOT NULL, 
-    [FullDyelot] VARCHAR(50) CONSTRAINT [DF_Receiving_Detail_FullDyelot] DEFAULT ('') NOT NULL, 
+    [FullRoll]          VARCHAR (50)    CONSTRAINT [DF_Receiving_Detail_FullRoll] DEFAULT ('') NOT NULL,
+    [FullDyelot]        VARCHAR (50)    CONSTRAINT [DF_Receiving_Detail_FullDyelot] DEFAULT ('') NOT NULL,
+    [ForInspection]     BIT             CONSTRAINT [DF_Receiving_Detail_ForInspection] DEFAULT ((0)) NOT NULL,
+    [OneYardForWashing] BIT             CONSTRAINT [DF_Receiving_Detail_OneYardForWashing] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Receiving_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -164,13 +168,19 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'T2 QR Code'
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MIND收料人', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'MINDChecker';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MIND���ƤH', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'MINDChecker';
+
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MIND收料修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'MINDCheckEditDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MIND���ƭק�ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'MINDCheckEditDate';
+
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MIND第一次收料時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'MINDCheckAddDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MIND�Ĥ@�����Ʈɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'MINDCheckAddDate';
+
+
 

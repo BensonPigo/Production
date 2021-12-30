@@ -21,6 +21,7 @@ namespace Sci.Production.IE
     public partial class P01 : Win.Tems.Input6
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_IsSubprocess;
         private DataGridViewGeneratorTextColumnSettings operation = new DataGridViewGeneratorTextColumnSettings();
         private DataGridViewGeneratorTextColumnSettings machine = new DataGridViewGeneratorTextColumnSettings();
         private DataGridViewGeneratorTextColumnSettings mold = new DataGridViewGeneratorTextColumnSettings();
@@ -108,8 +109,8 @@ namespace Sci.Production.IE
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(
-                @"
+            this.DetailSelectCommand =
+                $@"
 select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,td.[ID]
       ,td.[SEQ]
@@ -129,23 +130,21 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,td.Template
       ,(isnull(td.Frequency,0) * isnull(o.SeamLength,0)) as ttlSeamLength
 	  ,o.MasterPlusGroup
-      ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.val, 0)) as bit)
+      ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.val, 1)) as bit)
+      ,td.IsSubprocess
+      ,[MachineType_IsSubprocess] = isnull(md.IsSubprocess,0)
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
+left join MachineType_Detail md WITH (NOLOCK) on md.ID = o.MachineTypeID and md.FactoryID = '{Env.User.Factory}'
 left join Mold m WITH (NOLOCK) on m.ID=td.Mold
 outer apply (
-	select [val] = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsShowinIEP01)
-	from Operation o2 WITH (NOLOCK)
-	inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
-	inner join ArtworkType at2 WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
-	inner join ArtworkType_FTY atf WITH (NOLOCK) on at2.id= atf.ArtworkTypeID and atf.FactoryID = '{1}'
-    inner join Factory f WITH (NOLOCK) on f.ID = atf.FactoryID 
+	 select [val] = IIF(isnull(mt.IsNotShownInP01, 1) = 0, 1, 0)
+    from Operation o2
+	Inner Join MachineType_Detail mt on o2.MachineTypeID = mt.ID and mt.FactoryID = '{Env.User.Factory}'
 	where o.ID = o2.ID
 )show
-where td.ID = '{0}'
-order by td.Seq",
-                masterID,
-                Env.User.Factory);
+where td.ID = '{masterID}'
+order by td.Seq";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -786,6 +785,7 @@ where Junk = 0";
                 .Numeric("Frequency", header: "Frequency", integer_places: 2, decimal_places: 2, maximum: 99.99M, minimum: 0, settings: this.frequency)
                 .Text("MtlFactorID", header: "Factor", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("SMV", header: "SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, settings: this.smvsec)
+                 .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(7), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_IsSubprocess)
                 .Text("MachineTypeID", header: "ST/MC Type", width: Widths.AnsiChars(8), settings: this.machine)
                 .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(8), settings: txtSubReason)
                 .Text("Mold", header: "Attachment", width: Widths.AnsiChars(8), settings: this.mold)
@@ -794,10 +794,49 @@ where Junk = 0";
                 .Numeric("Sewer", header: "Sewer", integer_places: 2, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("IETMSSMV", header: "Std. SMV", integer_places: 3, decimal_places: 4, iseditingreadonly: true);
 
+            // 設定detailGrid Rows 是否可以編輯
+            this.detailgrid.RowEnter += this.Detailgrid_RowEnter;
             this.detailgrid.Sorted += (s, e) =>
             {
                 this.HideRows();
             };
+        }
+
+        private void Detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || !this.EditMode)
+            {
+                return;
+            }
+
+            if (this.detailgridbs == null)
+            {
+                return;
+            }
+
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+            DataRow[] drArry = dt.Select("OperationID <> ''");
+
+            if (drArry.Length <= 0)
+            {
+                return;
+            }
+
+            DataRow data = drArry.CopyToDataTable().Rows[e.RowIndex];
+            if (data == null)
+            {
+                return;
+            }
+
+            // MachineType_IsSubprocess 是true,代表可以勾選SubProcess 反之亦然
+            if (data.RowState != DataRowState.Deleted && MyUtility.Check.Empty(data["MachineType_IsSubprocess"]))
+            {
+                this.col_IsSubprocess.IsEditable = false;
+            }
+            else
+            {
+                this.col_IsSubprocess.IsEditable = true;
+            }
         }
 
         private void ChangeToEmptyData(DataRow dr)
@@ -1626,18 +1665,18 @@ select id.SEQ,
 	s.IETMSVersion,
 	(isnull(o.SeamLength,0) * isnull(id.Frequency,0))  as ttlSeamLength ,
 	o.MasterPlusGroup,
-    [IsShow] = cast(iif( id.OperationID like '--%' , 1, isnull(show.val, 0)) as bit)
+    [IsShow] = cast(iif( id.OperationID like '--%' , 1, isnull(show.val, 1)) as bit)
+    ,IsSubprocess = isnull(md.IsSubprocess,0)
+    ,[MachineType_IsSubprocess] = isnull(md.IsSubprocess,0)
 from Style s WITH (NOLOCK) 
 inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
 inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
 left join Operation o WITH (NOLOCK) on id.OperationID = o.ID
+left join MachineType_Detail md WITH (NOLOCK) on md.ID = o.MachineTypeID and md.FactoryID = '{0}'
 outer apply (
-	select [val] = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsShowinIEP01)
-	from Operation o2 WITH (NOLOCK)
-	inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
-	inner join ArtworkType at2 WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
-	inner join ArtworkType_FTY atf WITH (NOLOCK) on at2.id= atf.ArtworkTypeID and atf.FactoryID = '{0}'
-    inner join Factory f WITH (NOLOCK) on f.ID = atf.FactoryID 
+	 select [val] = IIF(isnull(mt.IsNotShownInP01 , 1) = 0, 1, 0)
+    from Operation o2
+	Inner Join MachineType_Detail mt on o2.MachineTypeID = mt.ID and mt.FactoryID = '{0}'
 	where o.ID = o2.ID
 )show
 --left join MtlFactor m WITH (NOLOCK) on o.MtlFactorID = m.ID and m.Type = 'F'
@@ -1898,7 +1937,15 @@ and s.BrandID = @brandid";
                 return;
             }
 
+            if (this.SelectedDetailGridDataRow
+                .Where(o => o["MachineType_IsSubprocess"].ToString() == "True").Any())
+            {
+                MyUtility.Msg.WarningBox("Subprocess checked! This operation cannot delete!");
+                return;
+            }
+
             this.SelectedDetailGridDataRow
+                .Where(o => o["MachineType_IsSubprocess"].ToString() == "False")
                 .ToList()
                 .ForEach(row =>
                 {
@@ -2071,6 +2118,41 @@ and s.BrandID = @brandid";
                     });
                 }
             }
+        }
+
+        protected override void OnDetailGridRemoveClick()
+        {
+            if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
+            {
+                return;
+            }
+
+            this.detailgrid.ValidateControl();
+
+            //var chk_list = this.DetailDatas.AsEnumerable().Where(x => x["IsSubprocess"].EqualDecimal(1) && x["Selected"].EqualDecimal(1)).ToList();
+            //if (chk_list.Count > 0)
+            //{
+            //    MyUtility.Msg.WarningBox("Subprocess checked! This operation cannot delete!");
+            //    return;
+            //}
+
+            //foreach (DataRow dr in this.DetailDatas)
+            //{
+            //    if (MyUtility.Convert.GetBool(dr["IsSubprocess"]) == true)
+            //    {
+            //        MyUtility.Msg.WarningBox("Subprocess checked! This operation cannot delete!");
+            //        return;
+            //    }
+            //}
+
+            DataRow drSelect = this.detailgrid.GetDataRow(this.detailgridbs.Position);
+            if (MyUtility.Check.Empty(drSelect["MachineType_IsSubprocess"]) == false)
+            {
+                MyUtility.Msg.WarningBox("Subprocess checked! This operation cannot delete!");
+                return;
+            }
+
+            base.OnDetailGridRemoveClick();
         }
     }
 }

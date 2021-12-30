@@ -80,8 +80,6 @@
     <Build Include="dbo\Tables\OperationDesc.sql" />
     <Build Include="dbo\Tables\MeasurementTranslate.sql" />
     <Build Include="dbo\Tables\AccountNoSetting.sql" />
-    <Build Include="dbo\Tables\MachineTypeTPE.sql" />
-    <Build Include="dbo\Tables\ArtworkType_FTY.sql" />
     <Build Include="dbo\Stored Procedures\TransExport_ProductionTPE.sql" />
     <Build Include="dbo\Tables\MoldTPE.sql" />
     <Build Include="dbo\Tables\ChgOverTarget.sql" />
@@ -95,5 +93,6 @@
     <Build Include="dbo\Tables\QABrandSetting.sql" />
     <Build Include="dbo\Tables\Brand_PullingTestStandarList.sql" />
     <Build Include="dbo\Tables\Adidas_FGWT.sql" />
+    <Build Include="dbo\Tables\MachineType_Detail.sql" />
   </ItemGroup>
 </Project>

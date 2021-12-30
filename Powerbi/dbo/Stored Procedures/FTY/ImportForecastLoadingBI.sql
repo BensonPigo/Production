@@ -33,19 +33,7 @@ BEGIN
 	/*判斷當前Server後, 指定帶入正式機Server名稱*/
 	declare @current_ServerName varchar(50) = (SELECT [Server Name] = @@SERVERNAME)
 	--依不同Server來抓到對應的備機ServerName
-	declare @current_PMS_ServerName nvarchar(50) 
-	= (
-		select [value] = 
-			CASE WHEN @current_ServerName= 'PHL-NEWPMS-02' THEN 'PHL-NEWPMS' -- PH1
-				 WHEN @current_ServerName= 'VT1-PH2-PMS2b' THEN 'VT1-PH2-PMS2' -- PH2
-				 WHEN @current_ServerName= 'system2017BK' THEN 'SYSTEM2017' -- SNP
-				 WHEN @current_ServerName= 'SPS-SQL2' THEN 'SPS-SQL.spscd.com' -- SPS
-				 WHEN @current_ServerName= 'SQLBK' THEN 'PMS-SXR' -- SPR
-				 WHEN @current_ServerName= 'newerp-bak' THEN 'newerp' -- HZG		
-				 WHEN @current_ServerName= 'SQL' THEN 'NDATA' -- HXG
-				 when (select top 1 MDivisionID from Production.dbo.Factory) in ('VM2','VM1') then 'SYSTEM2016' -- ESP & SPT
-			ELSE '' END
-	)
+	declare @current_PMS_ServerName nvarchar(50) = 'MainServer'
 
 	/******************************************
 	   移除原本的 先Drop 在Create方式
@@ -156,14 +144,14 @@ From(
 		From Production.dbo.Orders
 		Left join Production.dbo.Order_TmsCost tmsCost on tmsCost.Id = orders.ID
 		Left join #UseArtworkType at on at.id = tmsCost.ArtworkTypeID
-		Outer Apply (select CpuRate From Production.dbo.GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'O')) getCPURate -- 加入
+		Outer Apply (select CpuRate From Production.dbo.GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'O')) getCPURate -- �[�J
 		WHERE Orders.Category IN ('B', 'S') 
 		and (Orders.SciDelivery between @Date_S and @Date_E or Orders.BuyerDelivery between @YearMonth_S and @YearMonth_E) 
 		and Orders.LocalOrder <> '1'
 	) as a
 	PIVOT
 	(
-		sum(value) for a.ArtworkTypeName in ([TTL_AT (CPU)],[TTL_AT (HAND) (CPU)],[TTL_AT (MACHINE) (CPU)],[TTL_AUTO-TEMPLATE (CPU)],[TTL_B-HOT PRESS(BONDING) (CPU)],[TTL_BIG HOT PRESS (CPU)],[TTL_BONDING (HAND) (CPU)],[TTL_BONDING (MACHINE) (CPU)],[TTL_CUTTING (CPU)],[TTL_DIE CUT (CPU)],[TTL_DIE-CUT (CPU)],[TTL_DOWN (CPU)],[TTL_DOWN FILLING (CPU)],[TTL_EMBOSS/DEBOSS (Price)],[TTL_EMBROIDERY (Price)],[TTL_EMBROIDERY (STITCH in thousands)],[TTL_EYEBUTTON (CPU)],[TTL_FEEDOFARM (CPU)],[TTL_Fusible (CPU)],[TTL_GARMENT DYE (Price)],[TTL_GMT WASH (Price)],[TTL_HEAT TRANSFER (CPU)],[TTL_INSPECTION (CPU)],[TTL_INTENSIVE MACHINE (CPU)],[TTL_LASER (CPU)],[TTL_LASER CUTTER (CPU)],[TTL_PAD PRINTING (Price)],[TTL_PRINTING (PCS)],[TTL_PRINTING (Price)],[TTL_REAL FLATSEAM (CPU)],[TTL_ROLLER SUBLIMATION (CPU)],[TTL_S-HOT PRESS(BONDING) (CPU)],[TTL_S-HOT PRESS(HT) (CPU)],[TTL_SEAM TAPING MACHINE (CPU)],[TTL_SMALL HOT PRESS (CPU)],[TTL_SUBLIMATION PRINT (CPU)],[TTL_SUBLIMATION ROLLER (CPU)],[TTL_ULTRASONIC MACHINE (CPU)],[TTL_VELCRO MACHINE (CPU)],[TTL_ZIG ZAG (CPU)],[TTL_PRINTING PPU (PPU)])
+		sum(value) for a.ArtworkTypeName in ([TTL_AT (CPU)],[TTL_AT (HAND) (CPU)],[TTL_AT (MACHINE) (CPU)],[TTL_AUTO-TEMPLATE (CPU)],[TTL_B-HOT PRESS(BONDING) (CPU)],[TTL_BIG HOT PRESS (CPU)],[TTL_BONDING (HAND) (CPU)],[TTL_BONDING (MACHINE) (CPU)],[TTL_CUTTING (CPU)],[TTL_DIE CUT (CPU)],[TTL_DIE-CUT (CPU)],[TTL_DOWN (CPU)],[TTL_DOWN FILLING (CPU)],[TTL_EMBOSS/DEBOSS (Price)],[TTL_EMBROIDERY (Price)],[TTL_EMBROIDERY (STITCH in thousands)],[TTL_EYEBUTTON (CPU)],[TTL_FEEDOFARM (CPU)],[TTL_Fusible (CPU)],[TTL_GARMENT DYE (Price)],[TTL_GMT WASH (Price)],[TTL_HEAT TRANSFER (CPU)],[TTL_INSPECTION (CPU)],[TTL_INTENSIVE MACHINE (CPU)],[TTL_LASER (CPU)],[TTL_LASER CUTTER (CPU)],[TTL_PAD PRINTING (Price)],[TTL_PRINTING (PCS)],[TTL_PRINTING (Price)],[TTL_REAL FLATSEAM (CPU)],[TTL_ROLLER SUBLIMATION (CPU)],[TTL_S-HOT PRESS(BONDING) (CPU)],[TTL_S-HOT PRESS(HT) (CPU)],[TTL_SEAM TAPING MACHINE (CPU)],[TTL_SMALL HOT PRESS (CPU)],[TTL_SUBLIMATION PRINT (CPU)],[TTL_SUBLIMATION ROLLER (CPU)],[TTL_ULTRASONIC MACHINE (CPU)],[TTL_VELCRO MACHINE (CPU)],[TTL_ZIG ZAG (CPU)],[TTL_PRINTING PPU (PPU)],[TTL_PAD PRINTING (PCS)])
 	) as P
 
 	UNION
@@ -191,7 +179,7 @@ From(
 	) as a
 	PIVOT
 	(
-		sum(value) for a.ArtworkTypeName in ([TTL_AT (CPU)],[TTL_AT (HAND) (CPU)],[TTL_AT (MACHINE) (CPU)],[TTL_AUTO-TEMPLATE (CPU)],[TTL_B-HOT PRESS(BONDING) (CPU)],[TTL_BIG HOT PRESS (CPU)],[TTL_BONDING (HAND) (CPU)],[TTL_BONDING (MACHINE) (CPU)],[TTL_CUTTING (CPU)],[TTL_DIE CUT (CPU)],[TTL_DIE-CUT (CPU)],[TTL_DOWN (CPU)],[TTL_DOWN FILLING (CPU)],[TTL_EMBOSS/DEBOSS (Price)],[TTL_EMBROIDERY (Price)],[TTL_EMBROIDERY (STITCH in thousands)],[TTL_EYEBUTTON (CPU)],[TTL_FEEDOFARM (CPU)],[TTL_Fusible (CPU)],[TTL_GARMENT DYE (Price)],[TTL_GMT WASH (Price)],[TTL_HEAT TRANSFER (CPU)],[TTL_INSPECTION (CPU)],[TTL_INTENSIVE MACHINE (CPU)],[TTL_LASER (CPU)],[TTL_LASER CUTTER (CPU)],[TTL_PAD PRINTING (Price)],[TTL_PRINTING (PCS)],[TTL_PRINTING (Price)],[TTL_REAL FLATSEAM (CPU)],[TTL_ROLLER SUBLIMATION (CPU)],[TTL_S-HOT PRESS(BONDING) (CPU)],[TTL_S-HOT PRESS(HT) (CPU)],[TTL_SEAM TAPING MACHINE (CPU)],[TTL_SMALL HOT PRESS (CPU)],[TTL_SUBLIMATION PRINT (CPU)],[TTL_SUBLIMATION ROLLER (CPU)],[TTL_ULTRASONIC MACHINE (CPU)],[TTL_VELCRO MACHINE (CPU)],[TTL_ZIG ZAG (CPU)],[TTL_PRINTING PPU (PPU)])
+		sum(value) for a.ArtworkTypeName in ([TTL_AT (CPU)],[TTL_AT (HAND) (CPU)],[TTL_AT (MACHINE) (CPU)],[TTL_AUTO-TEMPLATE (CPU)],[TTL_B-HOT PRESS(BONDING) (CPU)],[TTL_BIG HOT PRESS (CPU)],[TTL_BONDING (HAND) (CPU)],[TTL_BONDING (MACHINE) (CPU)],[TTL_CUTTING (CPU)],[TTL_DIE CUT (CPU)],[TTL_DIE-CUT (CPU)],[TTL_DOWN (CPU)],[TTL_DOWN FILLING (CPU)],[TTL_EMBOSS/DEBOSS (Price)],[TTL_EMBROIDERY (Price)],[TTL_EMBROIDERY (STITCH in thousands)],[TTL_EYEBUTTON (CPU)],[TTL_FEEDOFARM (CPU)],[TTL_Fusible (CPU)],[TTL_GARMENT DYE (Price)],[TTL_GMT WASH (Price)],[TTL_HEAT TRANSFER (CPU)],[TTL_INSPECTION (CPU)],[TTL_INTENSIVE MACHINE (CPU)],[TTL_LASER (CPU)],[TTL_LASER CUTTER (CPU)],[TTL_PAD PRINTING (Price)],[TTL_PRINTING (PCS)],[TTL_PRINTING (Price)],[TTL_REAL FLATSEAM (CPU)],[TTL_ROLLER SUBLIMATION (CPU)],[TTL_S-HOT PRESS(BONDING) (CPU)],[TTL_S-HOT PRESS(HT) (CPU)],[TTL_SEAM TAPING MACHINE (CPU)],[TTL_SMALL HOT PRESS (CPU)],[TTL_SUBLIMATION PRINT (CPU)],[TTL_SUBLIMATION ROLLER (CPU)],[TTL_ULTRASONIC MACHINE (CPU)],[TTL_VELCRO MACHINE (CPU)],[TTL_ZIG ZAG (CPU)],[TTL_PRINTING PPU (PPU)],[TTL_PAD PRINTING (PCS)])
 	) as P
 
 	UNION
@@ -218,7 +206,7 @@ From(
 	) as a
 	PIVOT
 	(
-		sum(value) for a.ArtworkTypeName in ([TTL_AT (CPU)],[TTL_AT (HAND) (CPU)],[TTL_AT (MACHINE) (CPU)],[TTL_AUTO-TEMPLATE (CPU)],[TTL_B-HOT PRESS(BONDING) (CPU)],[TTL_BIG HOT PRESS (CPU)],[TTL_BONDING (HAND) (CPU)],[TTL_BONDING (MACHINE) (CPU)],[TTL_CUTTING (CPU)],[TTL_DIE CUT (CPU)],[TTL_DIE-CUT (CPU)],[TTL_DOWN (CPU)],[TTL_DOWN FILLING (CPU)],[TTL_EMBOSS/DEBOSS (Price)],[TTL_EMBROIDERY (Price)],[TTL_EMBROIDERY (STITCH in thousands)],[TTL_EYEBUTTON (CPU)],[TTL_FEEDOFARM (CPU)],[TTL_Fusible (CPU)],[TTL_GARMENT DYE (Price)],[TTL_GMT WASH (Price)],[TTL_HEAT TRANSFER (CPU)],[TTL_INSPECTION (CPU)],[TTL_INTENSIVE MACHINE (CPU)],[TTL_LASER (CPU)],[TTL_LASER CUTTER (CPU)],[TTL_PAD PRINTING (Price)],[TTL_PRINTING (PCS)],[TTL_PRINTING (Price)],[TTL_REAL FLATSEAM (CPU)],[TTL_ROLLER SUBLIMATION (CPU)],[TTL_S-HOT PRESS(BONDING) (CPU)],[TTL_S-HOT PRESS(HT) (CPU)],[TTL_SEAM TAPING MACHINE (CPU)],[TTL_SMALL HOT PRESS (CPU)],[TTL_SUBLIMATION PRINT (CPU)],[TTL_SUBLIMATION ROLLER (CPU)],[TTL_ULTRASONIC MACHINE (CPU)],[TTL_VELCRO MACHINE (CPU)],[TTL_ZIG ZAG (CPU)],[TTL_PRINTING PPU (PPU)])
+		sum(value) for a.ArtworkTypeName in ([TTL_AT (CPU)],[TTL_AT (HAND) (CPU)],[TTL_AT (MACHINE) (CPU)],[TTL_AUTO-TEMPLATE (CPU)],[TTL_B-HOT PRESS(BONDING) (CPU)],[TTL_BIG HOT PRESS (CPU)],[TTL_BONDING (HAND) (CPU)],[TTL_BONDING (MACHINE) (CPU)],[TTL_CUTTING (CPU)],[TTL_DIE CUT (CPU)],[TTL_DIE-CUT (CPU)],[TTL_DOWN (CPU)],[TTL_DOWN FILLING (CPU)],[TTL_EMBOSS/DEBOSS (Price)],[TTL_EMBROIDERY (Price)],[TTL_EMBROIDERY (STITCH in thousands)],[TTL_EYEBUTTON (CPU)],[TTL_FEEDOFARM (CPU)],[TTL_Fusible (CPU)],[TTL_GARMENT DYE (Price)],[TTL_GMT WASH (Price)],[TTL_HEAT TRANSFER (CPU)],[TTL_INSPECTION (CPU)],[TTL_INTENSIVE MACHINE (CPU)],[TTL_LASER (CPU)],[TTL_LASER CUTTER (CPU)],[TTL_PAD PRINTING (Price)],[TTL_PRINTING (PCS)],[TTL_PRINTING (Price)],[TTL_REAL FLATSEAM (CPU)],[TTL_ROLLER SUBLIMATION (CPU)],[TTL_S-HOT PRESS(BONDING) (CPU)],[TTL_S-HOT PRESS(HT) (CPU)],[TTL_SEAM TAPING MACHINE (CPU)],[TTL_SMALL HOT PRESS (CPU)],[TTL_SUBLIMATION PRINT (CPU)],[TTL_SUBLIMATION ROLLER (CPU)],[TTL_ULTRASONIC MACHINE (CPU)],[TTL_VELCRO MACHINE (CPU)],[TTL_ZIG ZAG (CPU)],[TTL_PRINTING PPU (PPU)],[TTL_PAD PRINTING (PCS)])
 	) as P
 
 	UNION
@@ -246,7 +234,7 @@ From(
 	) as a
 	PIVOT
 	(
-		sum(value) for a.ArtworkTypeName in ([TTL_AT (CPU)],[TTL_AT (HAND) (CPU)],[TTL_AT (MACHINE) (CPU)],[TTL_AUTO-TEMPLATE (CPU)],[TTL_B-HOT PRESS(BONDING) (CPU)],[TTL_BIG HOT PRESS (CPU)],[TTL_BONDING (HAND) (CPU)],[TTL_BONDING (MACHINE) (CPU)],[TTL_CUTTING (CPU)],[TTL_DIE CUT (CPU)],[TTL_DIE-CUT (CPU)],[TTL_DOWN (CPU)],[TTL_DOWN FILLING (CPU)],[TTL_EMBOSS/DEBOSS (Price)],[TTL_EMBROIDERY (Price)],[TTL_EMBROIDERY (STITCH in thousands)],[TTL_EYEBUTTON (CPU)],[TTL_FEEDOFARM (CPU)],[TTL_Fusible (CPU)],[TTL_GARMENT DYE (Price)],[TTL_GMT WASH (Price)],[TTL_HEAT TRANSFER (CPU)],[TTL_INSPECTION (CPU)],[TTL_INTENSIVE MACHINE (CPU)],[TTL_LASER (CPU)],[TTL_LASER CUTTER (CPU)],[TTL_PAD PRINTING (Price)],[TTL_PRINTING (PCS)],[TTL_PRINTING (Price)],[TTL_REAL FLATSEAM (CPU)],[TTL_ROLLER SUBLIMATION (CPU)],[TTL_S-HOT PRESS(BONDING) (CPU)],[TTL_S-HOT PRESS(HT) (CPU)],[TTL_SEAM TAPING MACHINE (CPU)],[TTL_SMALL HOT PRESS (CPU)],[TTL_SUBLIMATION PRINT (CPU)],[TTL_SUBLIMATION ROLLER (CPU)],[TTL_ULTRASONIC MACHINE (CPU)],[TTL_VELCRO MACHINE (CPU)],[TTL_ZIG ZAG (CPU)],[TTL_PRINTING PPU (PPU)])
+		sum(value) for a.ArtworkTypeName in ([TTL_AT (CPU)],[TTL_AT (HAND) (CPU)],[TTL_AT (MACHINE) (CPU)],[TTL_AUTO-TEMPLATE (CPU)],[TTL_B-HOT PRESS(BONDING) (CPU)],[TTL_BIG HOT PRESS (CPU)],[TTL_BONDING (HAND) (CPU)],[TTL_BONDING (MACHINE) (CPU)],[TTL_CUTTING (CPU)],[TTL_DIE CUT (CPU)],[TTL_DIE-CUT (CPU)],[TTL_DOWN (CPU)],[TTL_DOWN FILLING (CPU)],[TTL_EMBOSS/DEBOSS (Price)],[TTL_EMBROIDERY (Price)],[TTL_EMBROIDERY (STITCH in thousands)],[TTL_EYEBUTTON (CPU)],[TTL_FEEDOFARM (CPU)],[TTL_Fusible (CPU)],[TTL_GARMENT DYE (Price)],[TTL_GMT WASH (Price)],[TTL_HEAT TRANSFER (CPU)],[TTL_INSPECTION (CPU)],[TTL_INTENSIVE MACHINE (CPU)],[TTL_LASER (CPU)],[TTL_LASER CUTTER (CPU)],[TTL_PAD PRINTING (Price)],[TTL_PRINTING (PCS)],[TTL_PRINTING (Price)],[TTL_REAL FLATSEAM (CPU)],[TTL_ROLLER SUBLIMATION (CPU)],[TTL_S-HOT PRESS(BONDING) (CPU)],[TTL_S-HOT PRESS(HT) (CPU)],[TTL_SEAM TAPING MACHINE (CPU)],[TTL_SMALL HOT PRESS (CPU)],[TTL_SUBLIMATION PRINT (CPU)],[TTL_SUBLIMATION ROLLER (CPU)],[TTL_ULTRASONIC MACHINE (CPU)],[TTL_VELCRO MACHINE (CPU)],[TTL_ZIG ZAG (CPU)],[TTL_PRINTING PPU (PPU)],[TTL_PAD PRINTING (PCS)])
 	) as P
 
 ) source
@@ -347,12 +335,30 @@ Select
 	[CustDate] = Orders.CRDDate,
 	[KPI L/ETA] = GetSci.MinLETA,
 	--[SCHD L/ETA(Master SP)] = Ship_Order.Max_ScheETA,
-	[LastProductionDate] = Orders.LastProductionDate
+	[LastProductionDate] = Orders.LastProductionDate,
+	[TTL_PAD PRINTING (PCS)] =isnull([TTL_PAD PRINTING (PCS)],0),
+	[Garment L/T] = Production.dbo.GetStyleGMTLT(Orders.BrandID,Orders.StyleID,Orders.SeasonID,Orders.FactoryID),
+	[Delay Reason Code Production ID] = orders.DelayCode,
+	[Delay Reason Code Production DESC] = orders.DelayDesc,
+	[CDate] = orders.CFMDate,
+	[PFETA] = Orders.PFETA,
+	[New CD Code] = isnull(Style.CDCodeNew, ''),
+	[Product Type] = isnull(ApparelType.Name, ''),
+	[Fabric Type] =isnull(FabricType.Name, ''),
+	[Lining] = isnull(Lining.Name,''),
+	[Construction] = isnull(Construction.Name,''),
+	[Gender] = isnull(Gender.Name,'')
 From Production.dbo.Orders 
+LEFT JOIN Production.dbo.Style	with (nolock)	ON Orders.StyleUkey = Style.Ukey
 LEFT JOIN Production.dbo.Factory ON Orders.FactoryID =Factory.ID 
 LEFT JOIN Production.dbo.Dropdownlist ON Orders.Category =Dropdownlist.ID and Dropdownlist.Type='Category'
 LEFT JOIN Production.dbo.OrderType ON OrderType.ID = Orders.OrderTypeID and OrderType.BrandID = Orders.BrandID
 LEFT JOIN Production.dbo.CDCode ON CDCode.ID = Orders.CdCodeID
+LEFT JOIN Production.dbo.Reason ApparelType with (nolock) ON ApparelType.ReasonTypeID = 'Style_Apparel_Type' and ApparelType.ID = Style.ApparelType
+LEFT JOIN Production.dbo.Reason FabricType with (nolock) ON FabricType.ReasonTypeID = 'Fabric_Kind' and FabricType.ID = Style.FabricType
+LEFT JOIN Production.dbo.Dropdownlist Lining with (nolock) ON Lining.Type='StyleLining' and Lining.ID = style.Lining
+LEFT JOIN Production.dbo.Dropdownlist Construction with (nolock) ON Construction.Type='StyleConstruction' and Construction.ID = style.Construction
+LEFT JOIN Production.dbo.Dropdownlist Gender with (nolock) ON Gender.Type='Gender' and Gender.ID = style.Gender
 outer apply (select CpuRate from Production.dbo.GetCPURate(Orders.OrderTypeID,Orders.ProgramID,Orders.Category,Orders.BrandID,'O')) as CPURate --加入
 --outer apply (select * from Production.dbo.GetCurrencyRate('FX', Orders.CurrencyID, 'USD', Orders.cfmDate)) as GetCurrencyRate
 outer apply (select * from Production.dbo.GetOrderAmount(orders.ID)) goa--加入
@@ -462,7 +468,19 @@ Select
 	[CustDate] = NULL,
 	[KPI L/ETA] = NULL,
 	--[SCHD L/ETA(Master SP)] = NULL,
-	[LastProductionDate] = NULL
+	[LastProductionDate] = NULL,
+	[TTL_PAD PRINTING (PCS)] =isnull([TTL_PAD PRINTING (PCS)],0),
+	[Garment L/T] = Production.dbo.GetStyleGMTLT(Forecast.BrandID,Forecast.StyleID,Forecast.SeasonID,Forecast.FactoryID),
+	[Delay Reason Code Production ID] = '',
+	[Delay Reason Code Production DESC] = '',
+	[CDate] = null,
+	[PFETA] = null,
+	[New CD Code] = isnull(Style.CDCodeNew, ''),
+	[Product Type] = isnull(ApparelType.Name, ''),
+	[Fabric Type] =isnull(FabricType.Name, ''),
+	[Lining] = isnull(Lining.Name,''),
+	[Construction] = isnull(Construction.Name,''),
+	[Gender] = isnull(Gender.Name,'')
 From #tmp_Forecast  as Forecast
 LEFT JOIN Production.dbo.Style ON Forecast.BrandID=Style.BrandID and Forecast.StyleID =Style.ID and  Forecast.SeasonID = Style.SeasonID
 LEFT JOIN Production.dbo.Factory ON Forecast.FactoryID =Factory.ID 
@@ -470,6 +488,11 @@ LEFT JOIN Production.dbo.Dropdownlist ddlSampleGroup ON Forecast.SampleGroup =dd
 LEFT JOIN Production.dbo.OrderType ON OrderType.ID = Forecast.OrderTypeID and OrderType.BrandID = Forecast.BrandID
 LEFT JOIN Production.dbo.CDCode AS StyleCDCode ON StyleCDCode.ID = Style.CdCodeID
 LEFT JOIN Production.dbo.CDCode AS ForecastCDCode ON ForecastCDCode.ID = Forecast.CdCodeID
+LEFT JOIN Production.dbo.Reason ApparelType with (nolock) ON ApparelType.ReasonTypeID = 'Style_Apparel_Type' and ApparelType.ID = Style.ApparelType
+LEFT JOIN Production.dbo.Reason FabricType with (nolock) ON FabricType.ReasonTypeID = 'Fabric_Kind' and FabricType.ID = Style.FabricType
+LEFT JOIN Production.dbo.Dropdownlist Lining with (nolock) ON Lining.Type='StyleLining' and Lining.ID = style.Lining
+LEFT JOIN Production.dbo.Dropdownlist Construction with (nolock) ON Construction.Type='StyleConstruction' and Construction.ID = style.Construction
+LEFT JOIN Production.dbo.Dropdownlist Gender with (nolock) ON Gender.Type='Gender' and Gender.ID = style.Gender
 inner JOIN #atSource atSource on atSource.ID = Forecast.ID
 outer apply (select CpuRate from Production.dbo.GetCPURate(Forecast.OrderTypeID, Forecast.ProgramID, Forecast.Category, Forecast.BrandID, null)) as CPURate
 outer apply (select cast(0 as numeric(16,4)) Price) as Price
@@ -569,12 +592,29 @@ Select
 	[CustDate] = NULL,
 	[KPI L/ETA] = NULL,
 	--[SCHD L/ETA(Master SP)] = NULL,
-	[LastProductionDate] = NULL
+	[LastProductionDate] = NULL,
+	[TTL_PAD PRINTING (PCS)] =isnull([TTL_PAD PRINTING (PCS)],0),
+	[Garment L/T] = Production.dbo.GetStyleGMTLT(FactoryOrder.BrandID,FactoryOrder.StyleID,FactoryOrder.SeasonID,iif(atSource.SubconInType = '-2', FactoryOrder.ProgramID, FactoryOrder.FactoryID)),
+	[Delay Reason Code Production ID] = '',
+	[Delay Reason Code Production DESC] = '',
+	[CDate] = null,
+	[PFETA] = null,
+	[New CD Code] = isnull(Style.CDCodeNew, ''),
+	[Product Type] = isnull(ApparelType.Name, ''),
+	[Fabric Type] =isnull(FabricType.Name, ''),
+	[Lining] = isnull(Lining.Name,''),
+	[Construction] = isnull(Construction.Name,''),
+	[Gender] = isnull(Gender.Name,'')
 From #tmp_FactoryOrder FactoryOrder
 LEFT JOIN Production.dbo.Style ON FactoryOrder.BrandID=Style.BrandID and FactoryOrder.StyleID =Style.ID and  FactoryOrder.SeasonID = Style.SeasonID
 LEFT JOIN Production.dbo.Factory ON FactoryOrder.FactoryID = Factory.ID
 LEFT JOIN Production.dbo.Factory programFty On FactoryOrder.ProgramID = programFty.ID 
 LEFT JOIN Production.dbo.CDCode AS CDCode ON CDCode.ID = FactoryOrder.CdCodeID
+LEFT JOIN Production.dbo.Reason ApparelType with (nolock) ON ApparelType.ReasonTypeID = 'Style_Apparel_Type' and ApparelType.ID = Style.ApparelType
+LEFT JOIN Production.dbo.Reason FabricType with (nolock) ON FabricType.ReasonTypeID = 'Fabric_Kind' and FabricType.ID = Style.FabricType
+LEFT JOIN Production.dbo.Dropdownlist Lining with (nolock) ON Lining.Type='StyleLining' and Lining.ID = style.Lining
+LEFT JOIN Production.dbo.Dropdownlist Construction with (nolock) ON Construction.Type='StyleConstruction' and Construction.ID = style.Construction
+LEFT JOIN Production.dbo.Dropdownlist Gender with (nolock) ON Gender.Type='Gender' and Gender.ID = style.Gender
 inner JOIN #atSource atSource on atSource.ID = FactoryOrder.ID
 outer apply (select 1 as CpuRate) as CPURate
 outer apply (select cast(0 as numeric(16,4)) Price) as Price

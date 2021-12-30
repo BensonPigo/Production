@@ -1,32 +1,43 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Win.Tools;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
+using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.IE
 {
-    /// <summary>
-    /// IE_B05
-    /// </summary>
-    public partial class B05 : Win.Tems.Input1
+    public partial class B05 : Sci.Win.Tems.Input1
     {
-        /// <summary>
-        /// B05
-        /// </summary>
-        /// <param name="menuitem">ToolStripMenuItem</param>
         public B05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
-        /// <summary>
-        /// OnDetailEntered()
-        /// </summary>
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+
+            if (EditMode == true)
+            {
+                this.gridDetail.IsEditingReadOnly = false;
+            }
+            else
+            {
+                this.gridDetail.IsEditingReadOnly = true;
+            }
+
             string sql = string.Format("select * from [MachineType_ThreadRatio] where ID='{0}'", this.CurrentMaintain["ID"].ToString());
-            if (MyUtility.Check.Seek(sql, null))
+            if (MyUtility.Check.Seek(sql, this.ConnectionName))
             {
                 this.btnThreadRatio.ForeColor = Color.Blue;
             }
@@ -35,7 +46,37 @@ namespace Sci.Production.IE
                 this.btnThreadRatio.ForeColor = DefaultForeColor;
             }
 
-            // this.displayGroupID.Text = this.grid.SelectedRows[0].Cells["MachineGroup"].Value.ToString();
+            string sqlQuery = $@"
+select * 
+from dbo.MachineType_Detail
+where ID = '{this.CurrentMaintain["ID"]}'
+";
+            DualResult result = DBProxy.Current.Select(null, sqlQuery, out DataTable dt);
+            if (result == false)
+            {
+                this.ShowErr(result);
+                this.listControlBindingSource1.DataSource = null;
+                return;
+            }
+            else
+            {
+                this.listControlBindingSource1.DataSource = dt;
+            }
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+
+            // Set Grid
+            this.gridDetail.IsEditingReadOnly = true;
+            this.Helper.Controls.Grid.Generator(this.gridDetail)
+             .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(13), iseditingreadonly: true)
+             .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(15), iseditable: false, trueValue: true, falseValue: false)
+             .CheckBox("IsNonSewingLine", header: "Non-Sewing Line", width: Widths.AnsiChars(17), iseditable: false, trueValue: true, falseValue: false)
+             .CheckBox("IsNotShownInP01", header: "Not shown in P01", width: Widths.AnsiChars(17), iseditable: false, trueValue: true, falseValue: false)
+             .CheckBox("IsNotShownInP03", header: "Not shown in P03", width: Widths.AnsiChars(17), iseditable: false, trueValue: true, falseValue: false)
+            ;
         }
 
         private void BtnThreadRatio_Click(object sender, EventArgs e)

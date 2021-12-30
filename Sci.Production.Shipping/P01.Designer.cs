@@ -523,6 +523,7 @@
             this.txtSeq.Size = new System.Drawing.Size(25, 21);
             this.txtSeq.TabIndex = 24;
             this.txtSeq.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeq_PopUp);
+            this.txtSeq.TextChanged += new System.EventHandler(this.TxtSeq_TextChanged);
             // 
             // labelCreatedate
             // 
@@ -1908,6 +1909,7 @@
             // 
             this.txtsubcon3.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder2", true));
             this.txtsubcon3.DisplayBox1Binding = "";
+            this.txtsubcon3.IsFreightForwarder = false;
             this.txtsubcon3.IsIncludeJunk = false;
             this.txtsubcon3.IsMisc = false;
             this.txtsubcon3.IsShipping = false;
@@ -1922,6 +1924,7 @@
             // 
             this.txtSubconForwarder1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder1", true));
             this.txtSubconForwarder1.DisplayBox1Binding = "";
+            this.txtSubconForwarder1.IsFreightForwarder = false;
             this.txtSubconForwarder1.IsIncludeJunk = false;
             this.txtSubconForwarder1.IsMisc = false;
             this.txtSubconForwarder1.IsShipping = false;
@@ -1936,6 +1939,7 @@
             // 
             this.txtSubconForwarderN.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder", true));
             this.txtSubconForwarderN.DisplayBox1Binding = "";
+            this.txtSubconForwarderN.IsFreightForwarder = false;
             this.txtSubconForwarderN.IsIncludeJunk = false;
             this.txtSubconForwarderN.IsMisc = false;
             this.txtSubconForwarderN.IsShipping = false;
