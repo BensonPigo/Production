@@ -2621,9 +2621,10 @@ where pd.ID in ({sqlWhere})
             if (MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["ForwarderWhse_DetailUKey"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]) ||
-                MyUtility.Check.Empty(this.CurrentMaintain["DocumentRefNo"]))
+                MyUtility.Check.Empty(this.CurrentMaintain["DocumentRefNo"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["FCRDate"]))
             {
-                MyUtility.Msg.WarningBox(@"< S/O # > , < Terminal/Whse# >, < Cut-off Date > and < Document Ref#> can't be
+                MyUtility.Msg.WarningBox(@"< S/O # > , < Terminal/Whse# >, < Cut-off Date > and < Document Ref#> and < FCR Date > can't be
 empty!!
 p.s. < Document Ref#> format as below
 -----------------------------------------
