@@ -9,6 +9,8 @@ using System.Data.SqlClient;
 using Sci.Production.PublicForm;
 using System.Threading.Tasks;
 using Sci.Production.Automation;
+using Sci.Production.PublicPrg;
+using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
@@ -563,6 +565,9 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                     MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
                     return;
                 }
+
+                PublicPrg.Prgs.SubTransBarcode(true, dr["poid"].ToString().Trim());
+
                 #region Sent W/H Fabric to Gensong
 
                 // WHClose
