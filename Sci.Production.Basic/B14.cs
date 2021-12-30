@@ -124,16 +124,6 @@ END
                 this.btnMachine.ForeColor = Color.Black;
             }
             #endregion
-
-            #region checkbox color
-            sqlCmd = string.Format("select * from ArtworkType_FTY where ArtworkTypeID = '{0}'", this.CurrentMaintain["ID"].ToString());
-            result = DBProxy.Current.Select(this.ConnectionName, sqlCmd, out dt);
-            if (!result)
-            {
-                this.ShowErr(result);
-            }
-
-            #endregion
         }
 
         /// <inheritdoc/>
