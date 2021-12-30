@@ -140,6 +140,70 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 				from dbo.SciTrade_To_Pms_Part s
 				where s.type='O'  and not exists(select 1 from dbo.Misc t where t.id = s.Refno)
 
+				
+    ---------- MiscOther, type='R'---------------------
+    update t set t.Model= s.Model,
+                 t.MiscBrandID= s.MachineBrandID,
+                 t.MtlTypeID=s.MtlTypeID,
+                 t.Description= s.Description,
+                 t.UnitID= s.PoUnitID,
+                 t.CurrencyID= s.CurrencyID,
+                 t.Price= s.Price,
+                 t.SuppID= s.SuppID,
+                 t.IsMachine= s.IsMachine,
+                 t.IsAsset= s.IsAsset,
+                 t.Remark= s.Remark,
+                 t.Junk= s.Junk,
+                 t.AddName= s.AddName,
+                 t.AddDate= s.AddDate,
+                 t.EditName= s.EditName,
+                 t.EditDate= s.EditDate,
+                 t.DescriptionDetail = s.DescriptionDetail
+    from dbo.MiscOther  t
+    inner join dbo.SciTrade_To_Pms_Part s on t.id=s.Refno and s.type='R' 
+
+    insert into dbo.MiscOther(ID
+                            ,Model
+                            ,MiscBrandID
+                            ,MtlTypeID
+                            ,Description
+                            ,UnitID
+                            ,CurrencyID
+                            ,Price
+                            ,SuppID
+                            ,PurchaseFrom
+                            ,IsMachine
+                            ,IsAsset
+                            ,Remark
+                            ,Junk
+                            ,AddName
+                            ,AddDate
+                            ,EditName
+                            ,EditDate
+                            ,DescriptionDetail)
+                select  s.refno,
+                        s.Model,
+                        s.MachineBrandID,
+                        s.MtlTypeID,
+                        s.Description,
+                        s.PoUnitID,
+                        s.CurrencyID,
+                        s.Price,
+                        s.SuppID,
+                        'T',
+                        s.IsMachine,
+                        s.IsAsset,
+                        s.Remark,
+                        s.Junk,
+                        s.AddName,
+                        s.AddDate,
+                        s.EditName,
+                        s.EditDate,
+                        s.DescriptionDetail
+                from dbo.SciTrade_To_Pms_Part s
+                where s.type='R'  and not exists(select 1 from dbo.Misc t where t.id = s.Refno)
+
+
 	-----------------PartQuot , type='P'-----------------------------
 	select distinct a.* 
 	into #tmpPartQuot

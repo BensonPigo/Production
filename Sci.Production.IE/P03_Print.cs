@@ -192,7 +192,7 @@ select   a.GroupKey
         ,a.No
         ,[IsHide] = isnull(a.IsHide, 0)
         ,[GroupHeader] = iif(left(a.OperationID, 2) = '--', '', ld.OperationID)
-        ,[IsShowinIEP03] = cast(iif( a.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 0)) as bit)
+        ,[IsShowinIEP03] = cast(iif( a.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 1)) as bit)
         ,[OtherBy] = concat(a.MachineTypeID,a.Attachment,a.Template,a.ThreadColor)
 from LineMapping_Detail a 
 left join Operation o WITH (NOLOCK) on o.ID = a.OperationID
@@ -213,15 +213,11 @@ outer apply
 	)
 )ld
 outer apply (
-    select IsShowinIEP03 = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsShowinIEP03)
-		, IsSewingline = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsSewingline)
-		, IsDesignatedArea = m.IsDesignatedArea
-	from Operation o2 WITH (NOLOCK)
-	inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
-	inner join ArtworkType at2 WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
-	inner join ArtworkType_FTY atf WITH (NOLOCK) on at2.id= atf.ArtworkTypeID and atf.FactoryID = '{2}'
-    inner join Factory f WITH (NOLOCK) on f.ID = atf.FactoryID
-	where o.ID = o2.ID
+	select IsShowinIEP03 = IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0)
+		, IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
+	from MachineType m WITH (NOLOCK)
+    inner join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = '{2}'	
+	where o.MachineTypeID = m.ID and m.junk = 0
 )show
 where a.ID = {0}
 ",
