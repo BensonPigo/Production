@@ -472,7 +472,7 @@ declare @BLNo varchar(30) = '{blNo}'
 	from Export e 
 	inner join Export_Detail ed on e.id=ed.ID  
 	where 1=1 
-	and ed.PoType = 'M' and ed.FabricType in ('M','P','O' )
+	and ed.PoType in ('M') and ed.FabricType in ('M','P','O','R')
 	and e.NonDeclare=0
 	and e.Blno = @BLNo
 	group by e.Consignee,e.FactoryID,e.Eta,ed.Refno,ed.UnitId,e.ID
