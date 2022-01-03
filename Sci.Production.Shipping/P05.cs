@@ -2624,8 +2624,7 @@ where pd.ID in ({sqlWhere})
                 MyUtility.Check.Empty(this.CurrentMaintain["DocumentRefNo"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["FCRDate"]))
             {
-                MyUtility.Msg.WarningBox(@"< S/O # > , < Terminal/Whse# >, < Cut-off Date > and < Document Ref#> and < FCR Date > can't be
-empty!!
+                MyUtility.Msg.WarningBox(@"< S/O # > , < Terminal/Whse# >, < Cut-off Date >, < Document Ref#> and < FCR Date > can't be empty!!
 p.s. < Document Ref#> format as below
 -----------------------------------------
 ADI, RBK, LLL: GTN ASN#
