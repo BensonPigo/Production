@@ -98,7 +98,7 @@ SELECT pd.OrderID
     ,pd.SortCTNStartNo
 FROm ShippingMarkPic a
 INNER JOIN ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey
-INNER JOIN [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail PmsFile on  b.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
+LEFT JOIN [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail PmsFile on  b.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
                                         AND b.SCICtnNo=PmsFile.SCICtnNo 
                                         AND b.ShippingMarkTypeUkey=PmsFile.ShippingMarkTypeUkey 
 INNER JOIN PackingListDetail pd ON pd.ID = a.PackingListID AND b.SCICtnNo = pd.SCICtnNo
