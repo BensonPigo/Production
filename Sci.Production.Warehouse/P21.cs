@@ -495,6 +495,7 @@ OUTER APPLY(
 	    WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey=t.FtyInventoryUkey 
         order by lt.EditDate desc
         )LastEditDate
+order by t.rid
 
 DROP TABLE #tmpStockType, #tmpFinal
 ";
