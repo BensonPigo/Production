@@ -492,7 +492,7 @@ OUTER APPLY(
 	    SELECT top 1 lt.EditDate, lt.Remark
 	    FROM LocationTrans lt
 	    INNER JOIN LocationTrans_detail ltd ON lt.ID=ltd.ID
-	    WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey=t.Ukey 
+	    WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey=t.FtyInventoryUkey 
         order by lt.EditDate desc
         )LastEditDate
 
