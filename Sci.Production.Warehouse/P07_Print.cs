@@ -162,7 +162,7 @@ namespace Sci.Production.Warehouse
         private DualResult LoadData()
         {
             List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", this.id));
+            pars.Add(new SqlParameter("@ID", SqlDbType.VarChar, size: this.id.Length) { Value = this.id });
 
             string sql = @"
 select  
