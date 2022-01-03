@@ -17,7 +17,7 @@ BEGIN
 	SET @cmd = '
 	DECLARE cursor_sewingline CURSOR FOR 
 	SELECT Facility.GroupName
-		   , SUBSTRING(Facility.NAME,1,2) as Name
+		   , SUBSTRING(Facility.NAME,1,5) as Name
 		   , Facility.Description
 		   , Facility.Workernumber 
 		   , Facility.STATE
@@ -115,7 +115,7 @@ BEGIN
 	CREATE TABLE #tmpSewingLine (ID Varchar(5));
 	SET @cmd = '
 		insert into #tmpSewingLine 
-		SELECT SUBSTRING(Facility.NAME,1,2) as ID 
+		SELECT SUBSTRING(Facility.NAME,1,5) as ID 
 		FROM ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory
 			 ,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility 
 		WHERE Factory.CODE = '''+ @factoryid + ''' 
