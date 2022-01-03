@@ -37,6 +37,8 @@ namespace Sci.Production.Shipping
         private string empmask;
         private string dtmask;
         private DateTime? FBDate_Ori;
+        public DateTime? newSOCFMDate;
+        public string newSOCFMDateCmd;
 
         /// <summary>
         /// ListGMTBooking_Detail
@@ -360,7 +362,8 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
             }
             else
             {
-                this.btnCFM.Enabled = false;
+                this.btnCFM.Enabled = true;
+                this.btnCFM.Text = "CFM";
             }
             #endregion
 
@@ -713,11 +716,13 @@ where   pl.INVNo = '{0}'
             }
 
             // 當此三欄([S/O#], [Terminal/Whse#], [Cut-Off Date])皆有值，但[S/O Cfm Date]為空，保存時會跳出請示"GB can't be saved due to missing S/O Cfm Date"
-            if (!MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) && !MyUtility.Check.Empty(this.txtTerminalWhse.Text) && !MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]) && MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
+            /* ISP20211571拔掉
+             * if (!MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) && !MyUtility.Check.Empty(this.txtTerminalWhse.Text) && !MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]) && MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
                 MyUtility.Msg.WarningBox("GB can't be saved due to missing S/O Cfm Date");
                 return false;
             }
+            */
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["InvSerial"]))
             {
@@ -786,8 +791,9 @@ where   pl.INVNo = '{0}'
             {
                 List<string> shipmodeIDs = new List<string> { "SEA", "S-A/C", "S-A/P" };
                 if (shipmodeIDs.Where(x => x.EqualString(this.CurrentMaintain["ShipModeID"])).ToList().Count > 0 &&
-                    MyUtility.Check.Empty(this.CurrentMaintain["DischargePortID"]) &&
-                    !MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
+                    MyUtility.Check.Empty(this.CurrentMaintain["DischargePortID"])
+                    // && !MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]) ISP20211571拔掉
+                    )
                 {
                     this.txtPulloutPort1.Focus();
                     MyUtility.Msg.WarningBox("Port of Discharge can't empty!!");
@@ -1172,6 +1178,20 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             if (!result)
             {
                 this.ShowErr(result);
+            }
+
+            // 若newSOCFMDateCmd != 空，代表Click New的時候有設定S/O CFM DATE
+            if (!MyUtility.Check.Empty(this.newSOCFMDateCmd))
+            {
+                string cmd = this.newSOCFMDateCmd == null ? string.Empty : this.newSOCFMDateCmd.Replace("@@GMTBookinID@@", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                result = DBProxy.Current.Execute(null, cmd);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                }
+
+                this.newSOCFMDateCmd = string.Empty;
+                this.newSOCFMDate = null;
             }
         }
 
@@ -1638,7 +1658,7 @@ end");
         // S/O Confirm/UnConfirm
         private void BtnCFM_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]) || MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
             {
                 this.CheckIDD();
                 if (this.IsKeyColumnEmpty())
@@ -1654,6 +1674,8 @@ end");
 
                 P05_SOCFMDate cfmBox = new P05_SOCFMDate(this.CurrentMaintain);
                 cfmBox.ShowDialog();
+                this.newSOCFMDate = cfmBox.SOCFMDate;
+                this.newSOCFMDateCmd = cfmBox.newSOCFMDateCmd;
             }
             else
             {
@@ -1663,10 +1685,24 @@ end");
                 }
             }
 
-            this.ReloadSOCFMDate();
-            this.RenewData();
-            this.OnDetailEntered();
-            this.MergeDetailA2B();
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
+            {
+                this.ReloadSOCFMDate();
+                this.RenewData();
+                this.OnDetailEntered();
+                this.MergeDetailA2B();
+            }
+            else
+            {
+                if (this.newSOCFMDate.HasValue)
+                {
+                    this.CurrentMaintain["SOCFMDate"] = this.newSOCFMDate;
+                }
+                else
+                {
+                    this.CurrentMaintain["SOCFMDate"] = DBNull.Value;
+                }
+            }
         }
 
         // 檢查表身的ShipMode與表頭的ShipMode要相同 & ShipModeID 不存在Order_QtyShip 就return
@@ -2585,10 +2621,10 @@ where pd.ID in ({sqlWhere})
             if (MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["ForwarderWhse_DetailUKey"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]) ||
-                MyUtility.Check.Empty(this.CurrentMaintain["DocumentRefNo"]))
+                MyUtility.Check.Empty(this.CurrentMaintain["DocumentRefNo"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["FCRDate"]))
             {
-                MyUtility.Msg.WarningBox(@"< S/O # > , < Terminal/Whse# >, < Cut-off Date > and < Document Ref#> can't be
-empty!!
+                MyUtility.Msg.WarningBox(@"< S/O # > , < Terminal/Whse# >, < Cut-off Date >, < Document Ref#> and < FCR Date > can't be empty!!
 p.s. < Document Ref#> format as below
 -----------------------------------------
 ADI, RBK, LLL: GTN ASN#
