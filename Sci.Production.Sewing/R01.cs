@@ -123,7 +123,7 @@ select  s.OutputDate
 		, sd.InlineQty
 		, [OrderCategory] = isnull(o.Category,'')
 		, o.LocalOrder
-		, [OrderCdCodeID] = isnull(st.CDCodeNew,'')
+		, [OrderCdCodeID] = isnull(o.CdCodeID,'')
         , sty.CDCodeNew
 	    , sty.ProductType
 	    , sty.FabricType

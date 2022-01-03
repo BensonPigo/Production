@@ -1217,7 +1217,7 @@ select  s.SewingLineID
                 ) a for xml path('')) as Article            
             , o.SeasonID
             , [SizeCode] = ''
-            , [CdCodeID] = st.CDCodeNew
+            , o.CdCodeID
             , o.StyleID
             , o.Qty
             , s.AlloQty
@@ -1562,7 +1562,7 @@ select  s.SewingLineID
             , sd.Article
             , o.SeasonID
 			, sd.SizeCode
-            , [CdCodeID] = st.CDCodeNew
+            , o.CdCodeID
             , o.StyleID 
             , InspDate = InspctDate.Val
             , s.StandardOutput 
