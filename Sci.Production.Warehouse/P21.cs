@@ -323,6 +323,7 @@ from DropDownList WITH (NOLOCK) where Type = 'Pms_StockType'
 
 select r.*
      , [rid] = cast(ROW_NUMBER() over(order by  OrderSeq, OrderSeq2) as int)
+into #tmpFinal
 from
 (
     select
@@ -333,10 +334,6 @@ from
         ,[Seq] = rd.Seq1 + ' ' + rd.Seq2
         ,rd.Roll
         ,rd.Dyelot
-        ,[Description] = dbo.getmtldesc(rd.POID, rd.Seq1, rd.Seq2, 2, 0)
-        ,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' 
-					, IIF(psd.SuppColor = '', dbo.GetColorMultipleID (o.BrandID, psd.ColorID) , psd.SuppColor)
-					, psd.ColorID)
         ,rd.StockQty
         ,[StockTypeDesc] = st.Name
         ,rd.StockType
@@ -354,8 +351,6 @@ from
         ,rd.Seq2
         ,psd.refno
         ,[Remark]=''
-        ,[LastRemark] = LastEditDate.Remark
-        ,[LastEditDate]=LastEditDate.EditDate
         ,[ReceivingSource]='Receiving'
         ,[CutShadebandTime]=cutTime.CutTime
         ,[OldCutShadebandTime]=cutTime.CutTime
@@ -370,7 +365,10 @@ from
         ,rd.Checker
         ,[OldChecker] = rd.Checker
 		,[OrderSeq] = 7
-		,[OrderSeq2] = cast(ROW_NUMBER() over(order by r.ExportID, rd.Id, rd.EncodeSeq, rd.PoId, rd.Seq1, rd.Seq2, rd.Roll, rd.Dyelot) as int)		
+		,[OrderSeq2] = cast(ROW_NUMBER() over(order by r.ExportID, rd.Id, rd.EncodeSeq, rd.PoId, rd.Seq1, rd.Seq2, rd.Roll, rd.Dyelot) as int)	
+        ,fb.MtlTypeID
+		,psd.SuppColor
+		,psd.ColorID
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
     inner join View_WH_Orders o with (nolock) on o.ID = rd.POID 
@@ -383,13 +381,6 @@ from
                                                     rd.Dyelot  = fi.Dyelot and
                                                     rd.StockType = fi.StockType
     left join #tmpStockType st with (nolock) on st.ID = rd.StockType
-    OUTER APPLY(
-	    SELECT top 1 lt.EditDate, lt.Remark
-	    FROM LocationTrans lt
-	    INNER JOIN LocationTrans_detail ltd ON lt.ID=ltd.ID
-	    WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey=fi.Ukey 
-        order by lt.EditDate desc
-    )LastEditDate
     OUTER APPLY(
 
 	    SELECT [MtlLocationID] = STUFF(
@@ -421,10 +412,6 @@ from
         ,[Seq] = td.Seq1 + ' ' + td.Seq2
         ,td.Roll
         ,td.Dyelot
-        ,[Description] = dbo.getmtldesc(td.POID, td.Seq1, td.Seq2, 2, 0)
-        ,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' 
-					, IIF(psd.SuppColor = '', dbo.GetColorMultipleID (o.BrandID, psd.ColorID) , psd.SuppColor)
-					, psd.ColorID)
         ,[StockQty]=td.Qty
         ,[StockTypeDesc] = st.Name
         ,td.StockType
@@ -440,8 +427,6 @@ from
         ,td.Seq2
         ,psd.refno
         ,[Remark]=''
-        ,[LastRemark] = LastEditDate.Remark
-        ,[LastEditDate]=LastEditDate.EditDate
         ,[ReceivingSource]='TransferIn'
         ,[CutShadebandTime]=cutTime.CutTime
         ,[OldCutShadebandTime]=cutTime.CutTime
@@ -457,6 +442,9 @@ from
         ,[OldChecker] = td.Checker
 		,[OrderSeq] = 18
 		,[OrderSeq2] = cast(ROW_NUMBER() over(order by t.ID, td.PoId, td.Seq1, td.Seq2, td.Roll, td.Dyelot) as int)
+        ,fb.MtlTypeID
+		,psd.SuppColor
+		,psd.ColorID
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
     INNER JOIN View_WH_Orders o with (nolock) ON o.ID = td.POID
@@ -480,13 +468,6 @@ from
 			    , 1, 1, '')
     )Location
     OUTER APPLY(
-	    SELECT top 1 lt.EditDate, lt.Remark
-	    FROM LocationTrans lt
-	    INNER JOIN LocationTrans_detail ltd ON lt.ID=ltd.ID
-	    WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey=fi.Ukey 
-        order by lt.EditDate desc
-    )LastEditDate
-    OUTER APPLY(
 	    SELECT  fs.CutTime,fs.CutBy
 	    FROM FIR f
 	    INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
@@ -498,7 +479,24 @@ from
     {sqlWhere2}
 )r
 
-DROP TABLE #tmpStockType
+--因為部分欄位抓取速度較慢，改先產生tmp table後再另外抓取
+select  t.*
+        ,[LastRemark] = LastEditDate.Remark
+        ,[LastEditDate]=LastEditDate.EditDate
+		,[Description] = dbo.getmtldesc(t.POID, t.Seq1, t.Seq2, 2, 0)
+        ,[Color] = case when t.MtlTypeID = 'EMB THREAD' OR t.MtlTypeID = 'SP THREAD' OR t.MtlTypeID = 'THREAD' and t.SuppColor = '' then dbo.GetColorMultipleID (t.BrandID, t.ColorID)
+						when t.MtlTypeID = 'EMB THREAD' OR t.MtlTypeID = 'SP THREAD' OR t.MtlTypeID = 'THREAD' and t.SuppColor <> '' then t.SuppColor
+						else t.ColorID end
+from #tmpFinal t
+OUTER APPLY(
+	    SELECT top 1 lt.EditDate, lt.Remark
+	    FROM LocationTrans lt
+	    INNER JOIN LocationTrans_detail ltd ON lt.ID=ltd.ID
+	    WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey=t.Ukey 
+        order by lt.EditDate desc
+        )LastEditDate
+
+DROP TABLE #tmpStockType, #tmpFinal
 ";
 
             DualResult result = DBProxy.Current.Select(null, sqlQuery, out this.dtReceiving);
