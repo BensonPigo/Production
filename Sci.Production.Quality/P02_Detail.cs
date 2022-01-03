@@ -474,6 +474,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
                     return;
                 }
 
+                this.CurrentData["Defect"] = item.GetSelectedString().Replace(",", "+");
                 this.editDefect.Text = item.GetSelectedString().Replace(",", "+");
             }
         }
@@ -646,9 +647,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
                 {
                     paras = new List<SqlParameter> { new SqlParameter($"@Image", item.Img) };
                     sqlcmd = $@"
-SET XACT_ABORT ON
-INSERT INTO [dbo].[AIR_DefectImage]([AIRID],[ReceivingID],[Image])VALUES('{this.id}','{this.receivingID}',@Image)
-
+set XACT_ABORT on
 INSERT INTO [ExtendServer].PMSFile.dbo.AIR_DefectImage([AIRID],[ReceivingID],[Image])VALUES('{this.id}','{this.receivingID}',@Image)
 ";
                 }
@@ -656,8 +655,7 @@ INSERT INTO [ExtendServer].PMSFile.dbo.AIR_DefectImage([AIRID],[ReceivingID],[Im
                 {
                     paras = new List<SqlParameter> { new SqlParameter($"@Ukey", item.Ukey) };
                     sqlcmd = $@"
-SET XACT_ABORT ON
-delete [dbo].[AIR_DefectImage] where Ukey = @Ukey
+set XACT_ABORT on
 delete [ExtendServer].PMSFile.dbo.[AIR_DefectImage] where Ukey = @Ukey
 ";
                 }
@@ -666,7 +664,7 @@ delete [ExtendServer].PMSFile.dbo.[AIR_DefectImage] where Ukey = @Ukey
                     continue;
                 }
 
-                DualResult result = DBProxy.Current.Execute("PMSFile", sqlcmd, paras);
+                DualResult result = DBProxy.Current.Execute(null, sqlcmd, paras);
                 if (!result)
                 {
                     transactionscope.Dispose();
@@ -681,7 +679,7 @@ delete [ExtendServer].PMSFile.dbo.[AIR_DefectImage] where Ukey = @Ukey
         private void LoadPicture()
         {
             string sqlcmd = $@"select * from [ExtendServer].PMSFile.dbo.AIR_DefectImage where AIRID = '{this.id}' and ReceivingID = '{this.receivingID}' order by ukey";
-            DualResult result = DBProxy.Current.Select("PMSFile", sqlcmd, out DataTable dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)
             {
                 this.ShowErr(result);
