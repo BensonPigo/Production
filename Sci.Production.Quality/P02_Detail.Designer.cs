@@ -54,6 +54,7 @@
             this.cmbDefectPicture = new Sci.Win.UI.ComboBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.groupDefectPicture = new Sci.Win.UI.GroupBox();
+            this.btnRemove = new Sci.Win.UI.Button();
             this.labelInspectedQty = new Sci.Win.UI.Label();
             this.txtInspectedQty = new Sci.Win.UI.TextBox();
             this.labelRejectedQty = new Sci.Win.UI.Label();
@@ -68,7 +69,6 @@
             this.labelDefect = new Sci.Win.UI.Label();
             this.labelRemark = new Sci.Win.UI.Label();
             this.txtRemark = new Sci.Win.UI.TextBox();
-            this.btnRemove = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -384,6 +384,17 @@
             this.groupDefectPicture.TabStop = false;
             this.groupDefectPicture.Text = "Defect Picture";
             // 
+            // btnRemove
+            // 
+            this.btnRemove.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnRemove.Location = new System.Drawing.Point(111, 23);
+            this.btnRemove.Name = "btnRemove";
+            this.btnRemove.Size = new System.Drawing.Size(99, 30);
+            this.btnRemove.TabIndex = 139;
+            this.btnRemove.Text = "Remove";
+            this.btnRemove.UseVisualStyleBackColor = true;
+            this.btnRemove.Click += new System.EventHandler(this.BtnRemove_Click);
+            // 
             // labelInspectedQty
             // 
             this.labelInspectedQty.Location = new System.Drawing.Point(15, 213);
@@ -487,6 +498,7 @@
             this.editDefect.ReadOnly = true;
             this.editDefect.Size = new System.Drawing.Size(288, 92);
             this.editDefect.TabIndex = 143;
+            this.editDefect.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EditDefect_MouseDown);
             // 
             // labelDefect
             // 
@@ -513,17 +525,6 @@
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.Size = new System.Drawing.Size(287, 23);
             this.txtRemark.TabIndex = 142;
-            // 
-            // btnRemove
-            // 
-            this.btnRemove.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnRemove.Location = new System.Drawing.Point(111, 23);
-            this.btnRemove.Name = "btnRemove";
-            this.btnRemove.Size = new System.Drawing.Size(99, 30);
-            this.btnRemove.TabIndex = 139;
-            this.btnRemove.Text = "Remove";
-            this.btnRemove.UseVisualStyleBackColor = true;
-            this.btnRemove.Click += new System.EventHandler(this.BtnRemove_Click);
             // 
             // P02_Detail
             // 
