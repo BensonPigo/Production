@@ -2116,7 +2116,18 @@ from ShippingMarkPic a with(nolock)
 inner join ShippingMarkPic_Detail b with(nolock) on a.Ukey = b.ShippingMarkPicUkey
 where a.PackingListID = '{packingListID}'  and b.SCICtnNo ='{sCICtnNo}'
 
-----寫入圖片 (Image欄位單獨寫進PMSFile)
+
+----寫入圖片
+UPDATE sd
+SET sd.Image=@Image{counter}
+FROM ShippingMarkPic_Detail sd 
+INNER JOIN #tmp{counter} t on sd.ShippingMarkPicUkey = t.ShippingMarkPicUkey 
+                    AND sd.SCICtnNo = t.SCICtnNo 
+                    AND sd.ShippingMarkTypeUkey = t.ShippingMarkTypeUkey
+                    AND sd.Seq = t.Seq
+WHERE t.Rank = {rank}
+
+----寫入圖片 (Image寫進PMSFile)
 UPDATE PmsFile
 SET PmsFile.Image=@Image{counter}
 FROM ShippingMarkPic_Detail sd 
