@@ -143,13 +143,11 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 				
     ---------- MiscOther, type='R'---------------------
     update t set t.Model= s.Model,
-                 t.MiscBrandID= s.MachineBrandID,
                  t.MtlTypeID=s.MtlTypeID,
                  t.Description= s.Description,
                  t.UnitID= s.PoUnitID,
                  t.CurrencyID= s.CurrencyID,
                  t.Price= s.Price,
-                 t.SuppID= s.SuppID,
                  t.IsMachine= s.IsMachine,
                  t.IsAsset= s.IsAsset,
                  t.Remark= s.Remark,
@@ -160,11 +158,11 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
                  t.EditDate= s.EditDate,
                  t.DescriptionDetail = s.DescriptionDetail
     from dbo.MiscOther  t
-    inner join dbo.SciTrade_To_Pms_Part s on t.id=s.Refno and s.type='R' 
+    inner join dbo.SciTrade_To_Pms_Part s on t.id=s.Refno and t.BrandID = s.BrandID and t.SuppID = s.SuppID and s.type='R' 
 
     insert into dbo.MiscOther(ID
                             ,Model
-                            ,MiscBrandID
+                            ,BrandID
                             ,MtlTypeID
                             ,Description
                             ,UnitID
@@ -183,7 +181,7 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
                             ,DescriptionDetail)
                 select  s.refno,
                         s.Model,
-                        s.MachineBrandID,
+                        s.BrandID,
                         s.MtlTypeID,
                         s.Description,
                         s.PoUnitID,
@@ -201,7 +199,7 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
                         s.EditDate,
                         s.DescriptionDetail
                 from dbo.SciTrade_To_Pms_Part s
-                where s.type='R'  and not exists(select 1 from dbo.Misc t where t.id = s.Refno)
+                where s.type='R' and not exists(select 1 from dbo.MiscOther t where t.id = s.Refno and t.BrandID = s.BrandID and t.SuppID = s.SuppID)
 
 
 	-----------------PartQuot , type='P'-----------------------------
