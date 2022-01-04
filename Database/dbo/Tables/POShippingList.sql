@@ -5,7 +5,7 @@
     [Seq1]            VARCHAR (3)    NOT NULL,
     [T1Name]          NVARCHAR (40)  NOT NULL,
     [T1MR]            NVARCHAR (50)  NOT NULL,
-    [T1FtyName]       VARCHAR (8)    NOT NULL,
+    [T1FtyName]       VARCHAR (10)    NOT NULL,
     [T1FtyBrandCode]  VARCHAR (10)   NOT NULL,
     [T2Name]          NVARCHAR (255) NOT NULL,
     [T2SuppName]      NVARCHAR (255) NOT NULL,
