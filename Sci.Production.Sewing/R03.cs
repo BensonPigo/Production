@@ -104,7 +104,6 @@ namespace Sci.Production.Sewing
             , o.CPUFactor
             , Rate = isnull([dbo].[GetOrderLocation_Rate]( o.id ,sod.ComboType)/100,1) 
             , StyleDesc = s.Description
-            , CDDesc = c.Description
             , s.ModularParent
             , s.CPUAdjusted
             , o.Category,OutputDate,Shift,Team,OrderId,sod.ComboType,LocalOrder
@@ -118,7 +117,6 @@ namespace Sci.Production.Sewing
     inner join SewingOutput_Detail sod WITH (NOLOCK) on sod.OrderId = o.ID
     inner join SewingOutput so WITH (NOLOCK) on so.ID = sod.ID
     inner join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
-    inner join CDCode c WITH (NOLOCK) on c.ID = o.CdCodeID
     left join Factory f WITH (NOLOCK) on o.FactoryID = f.id
 	left join MockupOrder mo WITH (NOLOCK) on mo.ID = sod.OrderId
     outer apply(
@@ -212,7 +210,6 @@ namespace Sci.Production.Sewing
 	        , sty.Gender
 	        , sty.Construction          
             , StyleDesc
-            , CDDesc
             , POID
             , CPUOutput = Round(CPU * CPUFactor * Rate * QAQty,2)
             , SewingLineID
@@ -262,7 +259,6 @@ namespace Sci.Production.Sewing
 	        , Gender
 	        , Construction 
             , StyleDesc
-            , CDDesc
             , POID
             , SewingLineID
             , ModularParent
@@ -274,7 +270,7 @@ namespace Sci.Production.Sewing
             , OutputDate = Max(OutputDate)
     from #tmp_2ndData a
     group by ProgramID, StyleID, SeasonID, BrandID, FtyZone, FactoryID
-             , CdCodeID, StyleDesc, CDDesc, POID, SewingLineID, ModularParent
+             , CdCodeID, StyleDesc, POID, SewingLineID, ModularParent
              , CPUAdjusted, CDCodeNew, ProductType, FabricType, Lining
 	         , Gender, Construction, Category
 ");
@@ -391,7 +387,6 @@ select  StyleID
 	    , Lining
 	    , Gender
 	    , Construction 
-        , CDDesc
         , StyleDesc
         , SeasonID
         , TtlQty = SUM(TtlQty)
@@ -436,18 +431,17 @@ from (
 	        , Lining
 	        , Gender
 	        , Construction 
-            , CDDesc
             , StyleDesc
             , SeasonID
             , FtyZone
             , sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
     from #tmp
     group by StyleID, ModularParent, CPUAdjusted, BrandID, CdCodeID
-             , CDDesc, StyleDesc, SeasonID, CDCodeNew, ProductType, FabricType
+             , StyleDesc, SeasonID, CDCodeNew, ProductType, FabricType
 	         , Lining, Gender, Construction, FtyZone
 ) t
 GROUP by StyleID, ModularParent, CPUAdjusted, BrandID, CdCodeID, CDCodeNew
-	    , ProductType, FabricType, Lining, Gender, Construction, CDDesc, StyleDesc, SeasonID
+	    , ProductType, FabricType, Lining, Gender, Construction, StyleDesc, SeasonID
 Order by StyleID, SeasonID";
 
             result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, querySql, out this.Style);
@@ -467,7 +461,7 @@ select  CdCodeID
 	    , Lining
 	    , Gender
 	    , Construction 
-        , CDDesc
+        , StyleDesc
         , TtlQty
         , TtlCPU
         , TtlManhour
@@ -481,10 +475,10 @@ from (
 	        , Lining
 	        , Gender
 	        , Construction 
-            , CDDesc
+            , StyleDesc
             , sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
     from #tmp
-    group by CdCodeID, CDDesc, CDCodeNew
+    group by CdCodeID, StyleDesc, CDCodeNew
 	        , ProductType, FabricType, Lining
             , Gender, Construction 
 )t
@@ -540,7 +534,7 @@ select  BrandID
 	    , Lining
 	    , Gender
 	    , Construction 
-        , CDDesc
+        , StyleDesc
         , TtlQty
         , TtlCPU
         , TtlManhour
@@ -557,11 +551,11 @@ from (
 	        , Lining
 	        , Gender
 	        , Construction 
-            , CDDesc
+            , StyleDesc
             , sum(Output) AS TtlQty
             , SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
     from #tmp
-    group by BrandID, FtyZone, FactoryID, CdCodeID, CDDesc
+    group by BrandID, FtyZone, FactoryID, CdCodeID, StyleDesc
            , CDCodeNew, ProductType , FabricType, Lining, Gender, Construction 
 )t
 Order by BrandID, FtyZone, FactoryID, CdCodeID",
@@ -592,7 +586,6 @@ select  POID
 	    , Lining
 	    , Gender
 	    , Construction 
-        , CDDesc
         , StyleDesc
         , SeasonID
         , ProgramID
@@ -643,7 +636,6 @@ from (
 	        , Lining
 	        , Gender
 	        , Construction 
-            , CDDesc
             , StyleDesc
             , SeasonID
             , ProgramID
@@ -651,7 +643,7 @@ from (
             , SUM(TotalCPU) AS TtlCPU
             , SUM(TtlManhour) AS TtlManhour
     from #tmp
-    group by POID, FtyZone, StyleID, BrandID, CdCodeID, CDDesc, StyleDesc, SeasonID
+    group by POID, FtyZone, StyleID, BrandID, CdCodeID, StyleDesc, SeasonID
              , ProgramID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
 )t
 Order by POID, StyleID, BrandID, CdCodeID, SeasonID";
@@ -681,7 +673,6 @@ select  ProgramID
 	    , Lining
 	    , Gender
 	    , Construction 
-        , CDDesc
         , StyleDesc
         , SeasonID
         , [TtlQty] = SUM(TtlQty)
@@ -726,7 +717,6 @@ from (
 	        , Lining
 	        , Gender
 	        , Construction 
-            , CDDesc
             , StyleDesc
             , SeasonID
             , FtyZone
@@ -734,11 +724,11 @@ from (
             , sum(Output) AS TtlQty
             , SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
     from #tmp, System
-    group by ProgramID, StyleID, BrandID, CdCodeID, CDDesc, StyleDesc, SeasonID, FtyZone
+    group by ProgramID, StyleID, BrandID, CdCodeID, StyleDesc, SeasonID, FtyZone
            , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction, StdTMS 
 )t
 group by  ProgramID, StyleID, BrandID, CdCodeID, CDCodeNew, ProductType, FabricType
-	    , Lining, Gender, Construction, CDDesc, StyleDesc, SeasonID, FtyZone
+	    , Lining, Gender, Construction, StyleDesc, SeasonID, FtyZone
 Order by ProgramID, StyleID, BrandID, CdCodeID, SeasonID";
 
             result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, querySql, out this.Program);
@@ -761,7 +751,7 @@ select  FtyZone
 	    , Lining
 	    , Gender
 	    , Construction 
-        , CDDesc
+        , StyleDesc
         , TtlQty
         , TtlCPU
         , TtlManhour
@@ -778,15 +768,15 @@ from (
 	        , Lining
 	        , Gender
 	        , Construction 
-            , CDDesc
+            , StyleDesc
             , sum(Output) AS TtlQty
             , SUM(TotalCPU) AS TtlCPU
             , SUM(TtlManhour) AS TtlManhour
     from #tmp
-    group by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc
+    group by FtyZone, FactoryID, SewingLineID, CdCodeID, StyleDesc
          , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
 )t
-Order by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc";
+Order by FtyZone, FactoryID, SewingLineID, CdCodeID, StyleDesc";
 
             result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, querySql, out this.FactoryLineCD);
             if (!result)
@@ -908,15 +898,14 @@ Order by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc";
                 objArray[0, 8] = dr["Lining"];
                 objArray[0, 9] = dr["Gender"];
                 objArray[0, 10] = dr["Construction"];
-                objArray[0, 11] = dr["CDDesc"];
-                objArray[0, 12] = dr["StyleDesc"];
-                objArray[0, 13] = dr["SeasonID"];
-                objArray[0, 14] = dr["TtlQty"];
-                objArray[0, 15] = dr["TtlCPU"];
-                objArray[0, 16] = dr["TtlManhour"];
-                objArray[0, 17] = dr["PPH"];
-                objArray[0, 18] = dr["EFF"];
-                objArray[0, 19] = dr["Remark"];
+                objArray[0, 11] = dr["StyleDesc"];
+                objArray[0, 12] = dr["SeasonID"];
+                objArray[0, 13] = dr["TtlQty"];
+                objArray[0, 14] = dr["TtlCPU"];
+                objArray[0, 15] = dr["TtlManhour"];
+                objArray[0, 16] = dr["PPH"];
+                objArray[0, 17] = dr["EFF"];
+                objArray[0, 18] = dr["Remark"];
                 worksheet.Range[string.Format("A{0}:T{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
@@ -939,7 +928,7 @@ Order by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc";
                 objArray[0, 4] = dr["Lining"];
                 objArray[0, 5] = dr["Gender"];
                 objArray[0, 6] = dr["Construction"];
-                objArray[0, 7] = dr["CDDesc"];
+                objArray[0, 7] = dr["StyleDesc"];
                 objArray[0, 8] = dr["TtlQty"];
                 objArray[0, 9] = dr["TtlCPU"];
                 objArray[0, 10] = dr["TtlManhour"];
@@ -993,7 +982,7 @@ Order by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc";
                 objArray[0, 7] = dr["Lining"];
                 objArray[0, 8] = dr["Gender"];
                 objArray[0, 9] = dr["Construction"];
-                objArray[0, 10] = dr["CDDesc"];
+                objArray[0, 10] = dr["StyleDesc"];
                 objArray[0, 11] = dr["TtlQty"];
                 objArray[0, 12] = dr["TtlCPU"];
                 objArray[0, 13] = dr["TtlManhour"];
@@ -1024,16 +1013,15 @@ Order by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc";
                 objArray[0, 7] = dr["Lining"];
                 objArray[0, 8] = dr["Gender"];
                 objArray[0, 9] = dr["Construction"];
-                objArray[0, 10] = dr["CDDesc"];
-                objArray[0, 11] = dr["StyleDesc"];
-                objArray[0, 12] = dr["SeasonID"];
-                objArray[0, 13] = dr["ProgramID"];
-                objArray[0, 14] = dr["TtlQty"];
-                objArray[0, 15] = dr["TtlCPU"];
-                objArray[0, 16] = dr["TtlManhour"];
-                objArray[0, 17] = dr["PPH"];
-                objArray[0, 18] = dr["EFF"];
-                objArray[0, 19] = dr["Remark"];
+                objArray[0, 10] = dr["StyleDesc"];
+                objArray[0, 11] = dr["SeasonID"];
+                objArray[0, 12] = dr["ProgramID"];
+                objArray[0, 13] = dr["TtlQty"];
+                objArray[0, 14] = dr["TtlCPU"];
+                objArray[0, 15] = dr["TtlManhour"];
+                objArray[0, 16] = dr["PPH"];
+                objArray[0, 17] = dr["EFF"];
+                objArray[0, 18] = dr["Remark"];
                 worksheet.Range[string.Format("A{0}:T{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
@@ -1059,15 +1047,14 @@ Order by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc";
                 objArray[0, 7] = dr["Lining"];
                 objArray[0, 8] = dr["Gender"];
                 objArray[0, 9] = dr["Construction"];
-                objArray[0, 10] = dr["CDDesc"];
-                objArray[0, 11] = dr["StyleDesc"];
-                objArray[0, 12] = dr["SeasonID"];
-                objArray[0, 13] = dr["TtlQty"];
-                objArray[0, 14] = dr["TtlCPU"];
-                objArray[0, 15] = dr["TtlManhour"];
-                objArray[0, 16] = dr["PPH"];
-                objArray[0, 17] = dr["EFF"];
-                objArray[0, 18] = dr["Remark"];
+                objArray[0, 10] = dr["StyleDesc"];
+                objArray[0, 11] = dr["SeasonID"];
+                objArray[0, 12] = dr["TtlQty"];
+                objArray[0, 13] = dr["TtlCPU"];
+                objArray[0, 14] = dr["TtlManhour"];
+                objArray[0, 15] = dr["PPH"];
+                objArray[0, 16] = dr["EFF"];
+                objArray[0, 17] = dr["Remark"];
                 worksheet.Range[string.Format("A{0}:S{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
@@ -1093,7 +1080,7 @@ Order by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc";
                 objArray[0, 7] = dr["Lining"];
                 objArray[0, 8] = dr["Gender"];
                 objArray[0, 9] = dr["Construction"];
-                objArray[0, 10] = dr["CDDesc"];
+                objArray[0, 10] = dr["StyleDesc"];
                 objArray[0, 11] = dr["TtlQty"];
                 objArray[0, 12] = dr["TtlCPU"];
                 objArray[0, 13] = dr["TtlManhour"];

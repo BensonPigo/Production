@@ -125,7 +125,7 @@ select
 	,o.SciDelivery
 	,o.BuyerDelivery
 	,Category = isnull(o.Category,'')
-	,o.CdCodeID
+	,[CdCodeID] = st.CDCodeNew
 into #Sewtmp
 from SewingSchedule s WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on s.OrderID = o.ID

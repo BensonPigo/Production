@@ -102,7 +102,8 @@ Select
 				  else ''N''
 				  end
 into #tmp
-From [Production].dbo.Orders o
+From [Production].dbo.Orders o with (nolock)
+inner join Style st with (nolock) on st.Ukey = o.StyleUkey
 inner join Factory on Factory.id = o.FactoryID and Factory.IsProduceFty = 1
 outer apply (select [dbo].getMTLExport(o.POID,o.MTLExport) as mtlOk )as mtlExport
 outer apply (select [dbo].GetHaveDelaySupp(o.POID)  as SuppDelay) as SDelay

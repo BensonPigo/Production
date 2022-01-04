@@ -382,7 +382,7 @@ APSNo,
 o.CustPONo,
 [SP] = s.OrderID+'(' + s.ComboType + ')',
 o.CdCodeID,
-cd.ProductionFamilyID,
+[ProductionFamilyID] = '',
 o.StyleID,
 o.PFOrder,
 o.MTLExport,
@@ -398,7 +398,6 @@ oq.MinBuyerDelivery,
 ,s.OrderID
 from SewingSchedule s with (nolock)
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
-inner join CDCode cd with (nolock) on o.CdCodeID = cd.ID
 outer apply(select MaxBuyerDelivery = max(oq.BuyerDelivery), MinBuyerDelivery = min(oq.BuyerDelivery) from Order_QtyShip oq where oq.id = o.id) oq
 left join @tmpOrderArtwork oa on oa.StyleID = o.StyleID
 left join Country c WITH (NOLOCK) on o.Dest = c.ID 
