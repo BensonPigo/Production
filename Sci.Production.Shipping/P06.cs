@@ -250,51 +250,38 @@ order by os.Seq", masterID);
                     return false;
                 }
 
-                if (this.CurrentDataRow != null)
-                {
-                    string newID = MyUtility.GetValue.GetID(Env.User.Keyword + "PO", "Pullout", callNextForm.PulloutDate, 2, "Id", null);
-                    string insertCmd = string.Format(
-                        @"insert into Pullout(ID,PulloutDate,MDivisionID,FactoryID,Status,AddName,AddDate)
+                string newID = MyUtility.GetValue.GetID(Env.User.Keyword + "PO", "Pullout", callNextForm.PulloutDate, 2, "Id", null);
+                string insertCmd = string.Format(
+                    @"insert into Pullout(ID,PulloutDate,MDivisionID,FactoryID,Status,AddName,AddDate)
 values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
-                        newID,
-                        Convert.ToDateTime(callNextForm.PulloutDate).ToString("yyyy/MM/dd"),
-                        Env.User.Keyword,
-                        Env.User.Factory,
-                        Env.User.UserID);
+                    newID,
+                    Convert.ToDateTime(callNextForm.PulloutDate).ToString("yyyy/MM/dd"),
+                    Env.User.Keyword,
+                    Env.User.Factory,
+                    Env.User.UserID);
 
-                    DualResult result = DBProxy.Current.Execute(null, insertCmd);
-                    if (!result)
-                    {
-                        MyUtility.Msg.WarningBox("Insert data fail, pls try again.\r\n" + result.ToString());
-                        return false;
-                    }
-
-                    this.id = newID;
-                    DataRow newrow = this.CurrentDataRow.Table.NewRow();
-                    newrow["ID"] = newID;
-                    newrow["PulloutDate"] = callNextForm.PulloutDate;
-
-                    // newrow["MDivisionID"] = Sci.Env.User.Keyword;
-                    newrow["Status"] = "New";
-                    newrow["AddName"] = Env.User.UserID;
-                    newrow["AddDate"] = DateTime.Now;
-
-                    this.CurrentDataRow.Table.Rows.Add(newrow);
-                    newrow.AcceptChanges();
-
-                    // 點了排序不一定會在最後一筆
-                    int position = this.gridbs.Find("ID", newrow["ID"].ToString());
-                    this.gridbs.Position = position;
-
-                    // 因為新增資料一定會在最後一筆，所以直接把指標移至最後一筆
-                    // gridbs.MoveLast();
-                    // 模擬按Edit行為，強制讓畫面進入Detai頁籤，所以要將EditName與EditDate值給清空
-                    this.toolbar.cmdEdit.PerformClick();
-                    this.CurrentMaintain["EditName"] = string.Empty;
-                    this.CurrentMaintain["EditDate"] = DBNull.Value;
-                    this.editby.Value = string.Empty;
-                    this.ReviseData();
+                DualResult result = DBProxy.Current.Execute(null, insertCmd);
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox("Insert data fail, pls try again.\r\n" + result.ToString());
+                    return false;
                 }
+
+                this.ReloadDatas();
+                this.id = newID;
+
+                // 點了排序不一定會在最後一筆
+                int position = this.gridbs.Find("ID", this.id);
+                this.gridbs.Position = position;
+
+                // 因為新增資料一定會在最後一筆，所以直接把指標移至最後一筆
+                // gridbs.MoveLast();
+                // 模擬按Edit行為，強制讓畫面進入Detai頁籤，所以要將EditName與EditDate值給清空
+                this.toolbar.cmdEdit.PerformClick();
+                this.CurrentMaintain["EditName"] = string.Empty;
+                this.CurrentMaintain["EditDate"] = DBNull.Value;
+                this.editby.Value = string.Empty;
+                this.ReviseData();
             }
 
             return false;
