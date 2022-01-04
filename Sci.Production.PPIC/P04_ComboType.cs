@@ -122,13 +122,6 @@ namespace Sci.Production.PPIC
                 sumRate = sumRate - (MyUtility.Check.Empty(dr["Rate"]) ? 0 : MyUtility.Convert.GetDecimal(dr["Rate"]));
             }
 
-            // 如果此Style為PCS，則輸入的資料只能為1筆
-            if (this.styleUnit == "PCS" && cnt != 1)
-            {
-                MyUtility.Msg.WarningBox("This style unit is 'PCS', so can't more than 1 record!!");
-                return false;
-            }
-
             // Rate加總要等於100
             if (sumRate != 0m)
             {

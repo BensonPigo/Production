@@ -6,7 +6,12 @@
 	@CDCode as varchar(6) = '',
 	@Shift as varchar(1) = '',
 	@BrandID as varchar(500) = '',
-	@IsSintexEffReportCompare as bit = 0
+	@IsSintexEffReportCompare as bit = 0,
+	@ProductType as nvarchar(500) = '',
+	@FabricType as nvarchar(500) = '',
+	@Lining as varchar(20) = '',
+	@Gender as varchar(10) = '',
+	@Construction as nvarchar(50)
 AS
 BEGIN
 	declare @sql as varchar(max) = ''
@@ -48,6 +53,7 @@ Begin
 		, [ManHour] = sum(sd.WorkHour)
 		, [TotalOutput] = sum(sd.QAQty)
 		, [CD] = concat(o.CdCodeID, ''-'', sd.ComboType)
+		, st.CDCodeNew
 		, o.SeasonID
 		, o.BrandID
 		, [Fabrication] = ''''
@@ -80,6 +86,7 @@ Begin
 	from [Production].[dbo].SewingOutput s with (nolock)
 	Inner join [Production].[dbo].SewingOutput_Detail sd with (nolock) on s.ID = sd.ID
 	Inner Join [Production].[dbo].Orders o with (nolock) on sd.OrderId = o.ID
+	inner join [Production].[dbo].Style st with (nolock) on st.Ukey = o.StyleUkey
 	Inner join [Production].[dbo].Factory f with (nolock) on o.FactoryID=f.ID
 	Outer apply (
 		select [RejectWIP] = Sum(i.RejectWIP)
@@ -143,8 +150,38 @@ Begin
 	and o.BrandID IN ( '+ @BrandIDs + ' )' 
 	End 
 
+	if @ProductType <> ''
+	Begin
+		set @sql = @sql + '
+	and exists (select 1 from Reason r1 with (nolock) where r1.ReasonTypeID= ''Style_Apparel_Type'' and r1.ID = st.ApparelType and r1.Name = ''' + @ProductType + ''')' 
+	End 
+
+	if @FabricType <> ''
+	Begin
+		set @sql = @sql + '
+	and exists (select 1 from Reason r2 with (nolock) where r2.ReasonTypeID= ''Fabric_Kind'' and r2.ID = st.FabricType and r2.Name = ''' + @FabricType + ''')' 
+	End 
+
+	if @Lining <> ''
+	Begin
+		set @sql = @sql + '
+	and st.Lining = ''' + @Lining + '''' 
+	End 
+
+	if @Gender <> ''
+	Begin
+		set @sql = @sql + '
+	and st.Gender = ''' + @Gender + '''' 
+	End 
+
+	if @Construction <> ''
+	Begin
+		set @sql = @sql + '
+	and exists (select 1 from DropDownList d1 WITH(NOLOCK) where d1.type= ''StyleConstruction'' and d1.ID = st.Construction and d1.Name = ''' + @Construction + ''')' 
+	End 
+
 	set @sql = @sql + '
-	Group by s.OutputDate, s.FactoryID, s.SewingLineID, s.Shift, o.StyleID, s.Manpower, o.CdCodeID, sd.ComboType, o.SeasonID, o.BrandID, o.Category, f.CountryID
+	Group by s.OutputDate, s.FactoryID, s.SewingLineID, s.Shift, o.StyleID, s.Manpower, o.CdCodeID, sd.ComboType, o.SeasonID, o.BrandID, o.Category, f.CountryID, st.CDCodeNew
 ' 
 
 End
@@ -161,6 +198,7 @@ select s.OutputDate
 	, s.ManHour
 	, s.TotalOutput
 	, s.CD
+	, s.CDCodeNew
 	, s.SeasonID
 	, s.BrandID
 	, [Fabrication] = ''''
@@ -209,9 +247,11 @@ from
 					   when ''KH'' then 2
 					   when ''CN'' then 4
 					else 5 end
+		, st.CDCodeNew
 	from [Production].[dbo].SewingOutput s with (nolock)
 	Inner join [Production].[dbo].SewingOutput_Detail sd with (nolock) on s.ID = sd.ID
 	Inner Join [Production].[dbo].Orders o with (nolock) on sd.OrderId = o.ID
+	inner join [Production].[dbo].Style st with (nolock) on st.Ukey = o.StyleUkey
 	Inner join [Production].[dbo].Factory f with (nolock) on o.FactoryID=f.ID
 
 	Where  s.Outputdate between ''' + FORMAT(@OutPutDateS, 'yyyyMMdd') + ''' and  ''' + FORMAT(@OutPutDateE, 'yyyyMMdd') + '''
@@ -252,8 +292,38 @@ from
 	and o.BrandID IN ( '+ @BrandIDs + ' )' 
 	End 
 	
+	if @ProductType <> ''
+	Begin
+		set @sql = @sql + '
+	and exists (select 1 from Reason r1 with (nolock) where r1.ReasonTypeID= ''Style_Apparel_Type'' and r1.ID = st.ApparelType and r1.Name = ''' + @ProductType + ''')' 
+	End 
+
+	if @FabricType <> ''
+	Begin
+		set @sql = @sql + '
+	and exists (select 1 from Reason r2 with (nolock) where r2.ReasonTypeID= ''Fabric_Kind'' and r2.ID = st.FabricType and r2.Name = ''' + @FabricType + ''')' 
+	End 
+
+	if @Lining <> ''
+	Begin
+		set @sql = @sql + '
+	and st.Lining = ''' + @Lining + '''' 
+	End 
+
+	if @Gender <> ''
+	Begin
+		set @sql = @sql + '
+	and st.Gender = ''' + @Gender + '''' 
+	End 
+
+	if @Construction <> ''
+	Begin
+		set @sql = @sql + '
+	and exists (select 1 from DropDownList d1 WITH(NOLOCK) where d1.type= ''StyleConstruction'' and d1.ID = st.Construction and d1.Name = ''' + @Construction + ''')' 
+	End 
+
 	set @sql = @sql + '
-	Group by s.OutputDate, s.FactoryID, s.SewingLineID, s.Shift, o.StyleID, s.Manpower, o.CdCodeID, sd.ComboType, o.SeasonID, o.BrandID, o.Category, f.CountryID
+	Group by s.OutputDate, s.FactoryID, s.SewingLineID, s.Shift, o.StyleID, s.Manpower, o.CdCodeID, sd.ComboType, o.SeasonID, o.BrandID, o.Category, f.CountryID, st.CDCodeNew
 )s '
 End
 

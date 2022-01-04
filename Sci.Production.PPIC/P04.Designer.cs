@@ -144,6 +144,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1000, 570);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtcdcodenew);
@@ -235,12 +239,15 @@
             this.detailcont.Controls.Add(this.txttpeuserHandle);
             this.detailcont.Controls.Add(this.txttpeuserSMR);
             this.detailcont.Controls.Add(this.txtcdcode);
+            this.detailcont.Size = new System.Drawing.Size(1000, 532);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.txtTPEEditBy);
             this.detailbtm.Controls.Add(this.label2);
+            this.detailbtm.Location = new System.Drawing.Point(0, 532);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             this.detailbtm.TabIndex = 1;
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
@@ -294,7 +301,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1000, 570);
+            this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Sketch";
             // 
@@ -1311,6 +1318,7 @@
             this.comboProductType1.Size = new System.Drawing.Size(80, 24);
             this.comboProductType1.StyleApparelType = "";
             this.comboProductType1.TabIndex = 90;
+            this.comboProductType1.SelectedValueChanged += new System.EventHandler(this.ComboProductType1_SelectedValueChanged);
             // 
             // comboConstruction1
             // 

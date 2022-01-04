@@ -20,7 +20,7 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
 		when Order2.BrandID is not null then Order2.BrandID
 		when StyleBrand.BrandID is not null then StyleBrand.BrandID
 		else o.BrandID end    
-    ,OrderCdCodeID = isnull(o.CdCodeID,'')
+    ,OrderCdCodeID = isnull(st.CDCodeNew,'')
 	,OrderProgram = isnull(o.ProgramID,'')  ,OrderCPU = isnull(o.CPU,0) ,OrderCPUFactor = isnull(o.CPUFactor,0) ,OrderStyle = isnull(o.StyleID,'') ,OrderSeason = isnull(o.SeasonID,'')
 	,MockupBrandID= isnull(mo.BrandID,'')   ,MockupCDCodeID= isnull(mo.MockupID,'')
 	,MockupProgram= isnull(mo.ProgramID,'') ,MockupCPU= isnull(mo.Cpu,0),MockupCPUFactor= isnull(mo.CPUFactor,0),MockupStyle= isnull(mo.StyleID,''),MockupSeason= isnull(mo.SeasonID,'')	
@@ -37,6 +37,7 @@ into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
+left join Style st with (nolock) on st.Ukey = o.StyleUkey
 left join OrderType ot WITH (NOLOCK) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 left join Factory f WITH (NOLOCK) on s.FactoryID = f.ID
