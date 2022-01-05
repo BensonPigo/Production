@@ -275,6 +275,23 @@ SELECT Region
 FROM P_TransRegion r
 left join P_TransImport i on r.ConnectionName = i.ImportConnectionName
 where i.Name {whereP} 'P_ImportEstShippingReport'
+AND  i.Name <> 'P_Import_Capacity'
+
+ /*P_Import_Capacity只有在台北，且直接在PMSDB\PowerBI . PBIReportData 執行一次*/
+UNION 
+SELECT  Region='TPE'
+	,[DirName] = ''
+	,[RarName] = ''
+	,[Is_Export] = 0
+	,[ConnectionName] = ImportConnectionName
+	,[DBName] = ''
+	,[DBFileName] = ''
+	,[GroupID] = 1
+	,[Seq] = i.Seq
+	,[Name] = i.Name
+	,[TSQL]
+FROM P_TransImport  i
+where i.Name = 'P_Import_Capacity'
 ";
 
             result = DBProxy.Current.Select("PBIReportData", sqlCmd, out transAll);
@@ -323,7 +340,23 @@ where(
     )
 )
 and i.Name {whereP} 'P_ImportEstShippingReport'
+AND i.Name <> 'P_Import_Capacity'
 
+/*P_Import_Capacity只有在台北，且直接在PMSDB\PowerBI . PBIReportData 執行一次*/
+UNION
+SELECT Region='TPE'
+	,[DirName] = ''
+	,[RarName] = ''
+	,[Is_Export] = 0
+	,[ConnectionName] = ImportConnectionName
+	,[DBName] = ''
+	,[DBFileName] = ''
+	,[GroupID] = 1
+	,[Seq] = i.Seq
+	,[Name] = i.Name
+	,[TSQL] 
+FROM P_TransImport i
+where i.Name = 'P_Import_Capacity'
 ";
 
             result = DBProxy.Current.Select("PBIReportData", sqlReExec, out dtReExec);
