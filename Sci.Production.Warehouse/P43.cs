@@ -597,6 +597,13 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ", this.CurrentMaintain["id"]);
 
                 #endregion 檢查負數庫存
 
+                #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+                if (!Prgs.ChkWMSCompleteTime(datacheck, "Adjust_Detail"))
+                {
+                    return;
+                }
+                #endregion
+
                 #region UnConfirmed 先檢查WMS是否傳送成功
 
                 DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
