@@ -643,13 +643,14 @@ alter table #TmpSource alter column Barcode varchar(16)
 
 select t.Ukey
     , s.Barcode
-    ,[Balance] = t.InQty - t.OutQty + t.AdjustQty - t.ReturnQty
+    ,[Balance] = sum(t.InQty - t.OutQty + t.AdjustQty - t.ReturnQty)
 into #tmpS1
 from FtyInventory t
 inner join #TmpSource s on t.POID = s.poid
 and t.Seq1 = s.seq1  and t.Seq2 = s.seq2
 and t.StockType = s.stocktype 
 and t.Roll = s.roll and t.Dyelot = s.Dyelot
+group by t.Ukey, s.Barcode
 ";
                     if (encoded)
                     {
@@ -694,7 +695,10 @@ alter table #TmpSource alter column roll varchar(15)
 alter table #TmpSource alter column Dyelot varchar(15)
 alter table #TmpSource alter column Barcode varchar(16)
 
-select t.Ukey
+--ISP20211236 因為轉廠可能會有兩筆一樣物料的情況(因為當初收料分兩筆)，所以先加distinct，後續會調整整段barcode流程
+select 
+distinct
+t.Ukey
 , s.TransactionID
 , s.Barcode
 into #tmpS1

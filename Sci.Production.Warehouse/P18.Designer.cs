@@ -100,7 +100,7 @@
             this.masterpanel.Controls.Add(this.ArriveWHDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(988, 229);
+            this.masterpanel.Size = new System.Drawing.Size(892, 229);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.ArriveWHDate, 0);
@@ -132,7 +132,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 229);
-            this.detailpanel.Size = new System.Drawing.Size(988, 250);
+            this.detailpanel.Size = new System.Drawing.Size(892, 120);
             // 
             // gridicon
             // 
@@ -147,7 +147,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(988, 250);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 120);
             // 
             // detail2
             // 
@@ -161,19 +161,9 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(988, 517);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(988, 479);
-            // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnCallP99);
-            this.detailbtm.Location = new System.Drawing.Point(0, 479);
-            this.detailbtm.Size = new System.Drawing.Size(988, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -252,7 +242,7 @@
             this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer1.Name = "shapeContainer1";
-            this.shapeContainer1.Size = new System.Drawing.Size(988, 229);
+            this.shapeContainer1.Size = new System.Drawing.Size(892, 229);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 

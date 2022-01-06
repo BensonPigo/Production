@@ -2071,7 +2071,7 @@ select  ted.POID,
         [Roll] = tdc.Carton,
         [Dyelot] = tdc.LotNo,
         [StockType] = 'B',
-        [Qty] = isnull(dbo.GetUnitQty(tdc.StockUnitID, psd.StockUnit, tdc.StockQty), 0),
+        [Qty] = isnull(dbo.GetUnitQty(tdc.StockUnitID, psd.StockUnit, sum(isnull(tdc.StockQty, 0))), 0),
         ted.FabricType,
         [Fabric] = case when ted.FabricType = 'F' then 'Fabric' 
                              when ted.FabricType = 'A' then 'Accessory'
@@ -2099,6 +2099,7 @@ where   te.ID = @ID and
 		              f.MDivisionID  = '{Env.User.Keyword}' ) and
 		not exists(select 1 from TransferIn tf with (nolock) where tf.TransferExportID = te.ID and tf.ID <> '{this.CurrentMaintain["ID"]}') and
         tdc.StockQty > 0
+group by ted.POID, ted.Seq1, ted.Seq2, tdc.Carton, tdc.LotNo, ted.FabricType, psd.StockUnit, psd.Refno, Color.Value, tdc.StockUnitID, psd.StockUnit
 ";
 
             DataTable dtTrasnferExport;
