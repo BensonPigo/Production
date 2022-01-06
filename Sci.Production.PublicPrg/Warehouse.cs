@@ -3708,41 +3708,45 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
         }
 
         /// <summary>
-        /// ISP20211385
+        /// ISP20211385 & ISP20211566
         /// </summary>
         /// <param name="dt">dt</param>
         /// <param name="type">type</param>
         /// <param name="columns">columns</param>
         public static void ChkLocationEmpty(DataTable dt, string type, string columns)
         {
-        /*
-            清單內容會根據不同的功能顯示不同的欄位資訊
-            1. P22, P28, P24, P30, P36
-                > SP#, Seq, Roll, Dyelot
-            2. P23, P29
-                > Inventory SP#, Inventory Seq, Roll, Dyelot, Bulk SP#, Bulk Seq
-            3. 借還料 : P31, P32
-                > From SP#, From Seq, From Roll, From Dyelot, From Stock Type, To SP#, To Seq, To Roll, To Dyelot
-        */
+            /*
+                清單內容會根據不同的功能顯示不同的欄位資訊
+                1. P22, P28, P24, P30, P36
+                    > SP#, Seq, Roll, Dyelot
+                2. P23, P29
+                    > Inventory SP#, Inventory Seq, Roll, Dyelot, Bulk SP#, Bulk Seq
+                3. 借還料 : P31, P32
+                    > From SP#, From Seq, From Roll, From Dyelot, From Stock Type, To SP#, To Seq, To Roll, To Dyelot
+            */
+
+            string msg = string.Empty;
             switch (type)
             {
                 case "From":
-                    var m = MyUtility.Msg.ShowMsgGrid(dt, msg: @"From location cannot be empty, please update material current location as below list in WH P26 first.", caption: "Result", shownColumns: columns);
-                    m.Width = 800;
-                    m.grid1.Columns[0].Width = 150;
-                    m.Visible = false;
-                    m.ShowDialog();
+                    msg = @"From location cannot be empty, please update material current location as below list in WH P26 first.";
                     break;
                 case "To":
-                    var m2 = MyUtility.Msg.ShowMsgGrid(dt, msg: @"To Location cannot be empty, please update to location.", caption: "Result", shownColumns: columns);
-                    m2.Width = 800;
-                    m2.grid1.Columns[0].Width = 150;
-                    m2.Visible = false;
-                    m2.ShowDialog();
+                    msg = @"To Location cannot be empty, please update to location.";
+                    break;
+                case "Other":
+                    msg = @"Location cannot be empty, please update location.";
                     break;
                 default:
+                    msg = @"Location cannot be empty, please update material current location as below list in WH P26 first.";
                     break;
             }
+
+            var from = MyUtility.Msg.ShowMsgGrid(dt, msg: msg, caption: "Result", shownColumns: columns);
+            from.Width = 800;
+            from.grid1.Columns[0].Width = 150;
+            from.Visible = false;
+            from.ShowDialog();
         }
 
         /// <inheritdoc/>
