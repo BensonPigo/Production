@@ -115,7 +115,7 @@ where	s.MDivisionID = isnull(@M, s.MDivisionID) and
 		s.OutputDate between @StartDate and @EndDate and (o.CateGory != 'G' or s.Category='M') and
 		((LastShift.Value = 'O' and o.LocalOrder <> 1) or (LastShift.Value <> 'O') ) 
           --排除 subcon in non sister的數值
-        and ((LastShift.Value <> 'I') or ( LastShift.Value = 'I' and o.SubconInSisterFty <> 0 ))   
+        and ((LastShift.Value <> 'I') or ( LastShift.Value = 'I'  and o.SubconInType in ('0','3')))
 		--將ArtworkType為'SP_THREAD'部分，排除掉是台北買線的部分。
 		AND (  (NOT EXISTS (SELECT 1 FROm @TPEtmp WHERE ID = o.POID )AND att.ID = 'SP_THREAD')   OR   isnull(att.ID,'') <> 'SP_THREAD' ) 
 		AND isnull(o.NonRevenue, 0) = 0
