@@ -183,6 +183,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            // 若有變更到  Total CPU Included Subcon In 的相關計算規則&篩選條件, 要一併變更 sql的table function GetCMPDetail (這是只有FMS要用的)
             StringBuilder sqlCmd = new StringBuilder();
             DualResult failResult;
             #region 組撈全部Sewing output data SQL
