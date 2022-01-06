@@ -17,6 +17,7 @@ namespace Sci.Production.Warehouse
         private DataTable dtScrapHistory;
         private DataTable dtBulk;
 
+        /// <inheritdoc/>
         public P01_ReTransferMtlToScrap(string poID)
         {
             this.InitializeComponent();
@@ -81,7 +82,7 @@ from dbo.SubTransfer_Detail a WITH (NOLOCK)
 inner join dbo.SubTransfer s with (nolock) on a.ID = s.ID and s.Type = 'D' and MDivisionID = '{Env.User.Keyword}'
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
 left join FtyInventory f WITH (NOLOCK) on a.FromPOID=f.POID and a.FromSeq1=f.Seq1 and a.FromSeq2=f.Seq2 and a.FromRoll=f.Roll and a.FromDyelot=f.Dyelot and a.FromStockType=f.StockType
-Where a.id = '{this.poID}'
+Where s.POID = '{this.poID}'
 ";
 
             result = DBProxy.Current.Select(null, sqlScrapHistory, out this.dtScrapHistory);
@@ -173,7 +174,14 @@ and o.MDivisionID='{Env.User.Keyword}' and f.POID = '{this.poID}'
 
             using (TransactionScope transactionScope = new TransactionScope())
             {
-                DualResult result = PublicPrg.Prgs.ReTransferMtlToScrapByPO(this.poID, selectedBulk);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "AC", "SubTransfer", DateTime.Now);
+                if (MyUtility.Check.Empty(tmpId))
+                {
+                    MyUtility.Msg.WarningBox("Get document ID fail!!");
+                    return;
+                }
+
+                DualResult result = PublicPrg.Prgs.ReTransferMtlToScrapByPO(tmpId, this.poID, selectedBulk);
                 if (!result)
                 {
                     transactionScope.Dispose();

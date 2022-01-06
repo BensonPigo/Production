@@ -31,13 +31,6 @@ namespace Sci.Production.Warehouse
             this.comboCategory.SelectedIndex = 0;
         }
 
-        public P01_BatchReTransferMtlToScrap(DataRow master, DataTable detail)
-            : this()
-        {
-            this.dr_master = master;
-            this.dt_detail = detail;
-        }
-
         // Find Now Button
         private void BtnFindNow_Click(object sender, EventArgs e)
         {
@@ -261,7 +254,14 @@ drop table #ReTransferToScrapList,#ReTransferToScrapSummary
                         continue;
                     }
 
-                    DualResult result = PublicPrg.Prgs.ReTransferMtlToScrapByPO(transToScrapPO["POID"].ToString(), listMtlItem);
+                    string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "AC", "SubTransfer", DateTime.Now);
+                    if (MyUtility.Check.Empty(tmpId))
+                    {
+                        MyUtility.Msg.WarningBox("Get document ID fail!!");
+                        return;
+                    }
+
+                    DualResult result = PublicPrg.Prgs.ReTransferMtlToScrapByPO(tmpId, transToScrapPO["POID"].ToString(), listMtlItem);
                     if (!result)
                     {
                         transactionScope.Dispose();

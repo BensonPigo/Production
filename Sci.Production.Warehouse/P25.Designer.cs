@@ -40,6 +40,8 @@
             this.labelRemark = new Sci.Win.UI.Label();
             this.editRemark = new Sci.Win.UI.EditBox();
             this.txtSeq = new Sci.Production.Class.TxtSeq();
+            this.displayPOID = new Sci.Win.UI.DisplayBox();
+            this.labPoid = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -56,6 +58,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayPOID);
+            this.masterpanel.Controls.Add(this.labPoid);
             this.masterpanel.Controls.Add(this.txtSeq);
             this.masterpanel.Controls.Add(this.editRemark);
             this.masterpanel.Controls.Add(this.labelRemark);
@@ -80,6 +84,8 @@
             this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSeq, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labPoid, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayPOID, 0);
             // 
             // detailpanel
             // 
@@ -157,7 +163,7 @@
             // 
             // label11
             // 
-            this.label11.Location = new System.Drawing.Point(291, 13);
+            this.label11.Location = new System.Drawing.Point(488, 13);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(108, 23);
             this.label11.TabIndex = 11;
@@ -188,7 +194,7 @@
             // 
             this.dateIssueDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IssueDate", true));
             this.dateIssueDate.IsSupportEditMode = false;
-            this.dateIssueDate.Location = new System.Drawing.Point(402, 13);
+            this.dateIssueDate.Location = new System.Drawing.Point(599, 13);
             this.dateIssueDate.Name = "dateIssueDate";
             this.dateIssueDate.ReadOnly = true;
             this.dateIssueDate.Size = new System.Drawing.Size(130, 23);
@@ -261,6 +267,24 @@
             this.txtSeq.Size = new System.Drawing.Size(61, 23);
             this.txtSeq.TabIndex = 64;
             // 
+            // displayPOID
+            // 
+            this.displayPOID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayPOID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "POID", true));
+            this.displayPOID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayPOID.Location = new System.Drawing.Point(365, 13);
+            this.displayPOID.Name = "displayPOID";
+            this.displayPOID.Size = new System.Drawing.Size(120, 23);
+            this.displayPOID.TabIndex = 65;
+            // 
+            // labPoid
+            // 
+            this.labPoid.Location = new System.Drawing.Point(252, 13);
+            this.labPoid.Name = "labPoid";
+            this.labPoid.Size = new System.Drawing.Size(108, 23);
+            this.labPoid.TabIndex = 66;
+            this.labPoid.Text = "SP#";
+            // 
             // P25
             // 
             this.ApvChkValue = "New";
@@ -319,5 +343,7 @@
         private Win.UI.EditBox editRemark;
         private Win.UI.Label labelRemark;
         private Class.TxtSeq txtSeq;
+        private Win.UI.DisplayBox displayPOID;
+        private Win.UI.Label labPoid;
     }
 }

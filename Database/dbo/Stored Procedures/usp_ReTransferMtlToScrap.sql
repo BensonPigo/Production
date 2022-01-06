@@ -1,5 +1,8 @@
-﻿CREATE PROCEDURE [dbo].[usp_ReTransferMtlToScrap]
-	@FtyInventoryUkey bigint
+﻿
+
+CREATE PROCEDURE [dbo].[usp_ReTransferMtlToScrap]
+	@FtyInventoryUkey bigint,
+	@SubTransfer_NewID varchar(13)
 AS
 begin
 	select	fi.POID,
@@ -13,7 +16,7 @@ begin
 			[SubTransfer_DetailUkey] = sd.Ukey
 	into #updSubTransfer_Detail
 	from dbo.FtyInventory fi WITH (NOLOCK)
-	left join SubTransfer_Detail sd with (nolock) on	fi.POID = sd.ID and 
+	left join SubTransfer_Detail sd with (nolock) on	fi.POID = sd.FromPOID and 
 														fi.Seq1 = sd.FromSeq1 and
 														fi.Seq2 = sd.FromSeq2 and
 														fi.Roll = sd.FromRoll and
@@ -37,7 +40,7 @@ begin
 		   ,[ToMDivisionID]    ,[ToFactoryID]						,[ToPOID]					,[ToSeq1]
            ,[ToSeq2]           ,[ToRoll]							,[ToStockType]				,[ToDyelot]
            ,[Qty]			   ,[ToLocation])
-		 SELECT [POID]
+		 SELECT @SubTransfer_NewID
 			,Ukey
 			,'' [FromMDivisionID] 
 			,Factory

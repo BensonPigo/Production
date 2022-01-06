@@ -875,6 +875,7 @@ Where a.id = '{0}'", masterID);
         {
             DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
+            string SPNO = row["POID"].ToString();
             string remark = row["Remark"].ToString();
             string cDate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             #region -- 撈表頭資料 --
@@ -901,6 +902,7 @@ Where a.id = '{0}'", masterID);
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remark));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CDate", cDate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SPNo", SPNO));
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             #endregion

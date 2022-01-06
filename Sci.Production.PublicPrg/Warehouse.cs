@@ -3649,12 +3649,12 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
         }
 
         /// <inheritdoc/>
-        public static DualResult ReTransferMtlToScrapByPO(string poID, List<DataRow> listMtlItem)
+        public static DualResult ReTransferMtlToScrapByPO(string newID, string poID, List<DataRow> listMtlItem)
         {
             string sqlRetransferToScrap = $@"
         -- 新增 報廢單主檔 & 明細檔
-		IF EXISTS(SELECT * FROM [dbo].[SubTransfer] S WITH (NOLOCK) WHERE S.ID = '{poID}' AND S.Status='Confirmed')
-			update [dbo].[SubTransfer] set [EditName]= '{Env.User.UserID}' , [EditDate] = GETDATE() WHERE ID = '{poID}' 
+		IF EXISTS(SELECT * FROM [dbo].[SubTransfer] S WITH (NOLOCK) WHERE S.ID = '{newID}' AND S.Status='Confirmed')
+			update [dbo].[SubTransfer] set [EditName]= '{Env.User.UserID}' , [EditDate] = GETDATE() WHERE ID = '{newID}' 
 		ELSE 
 		BEGIN
 			INSERT INTO [dbo].[SubTransfer]
@@ -3662,9 +3662,9 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
 				   ,[Type]
 				   ,[IssueDate]				   ,[Status]				   ,[Remark]
 				   ,[AddName]				   ,[AddDate]				   ,[EditName]
-				   ,[EditDate])
+				   ,[EditDate], [POID])
 			VALUES
-					('{poID}' 
+					('{newID}' 
 					,'{Env.User.Keyword}' 
 					,'{Env.User.Factory}'
 					,'D' -- A2C
@@ -3675,6 +3675,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
 					,GETDATE()
 					,'{Env.User.UserID}' 
 					,GETDATE()
+                    ,'{poID}'
 					);
 		END
 ";
@@ -3682,7 +3683,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             {
                 string mDivisionPoDetailUkey = MyUtility.Check.Empty(retransferToScrapItem["MDivisionPoDetailUkey"]) ? "NULL" : retransferToScrapItem["MDivisionPoDetailUkey"].ToString();
                 sqlRetransferToScrap += $@" 
-    exec dbo.usp_ReTransferMtlToScrap {retransferToScrapItem["Ukey"]}
+    exec dbo.usp_ReTransferMtlToScrap {retransferToScrapItem["Ukey"]},'{newID}'
     exec dbo.usp_SingleItemRecaculate {mDivisionPoDetailUkey}, '{poID}', '{retransferToScrapItem["Seq1"]}', '{retransferToScrapItem["Seq2"]}'
     ";
             }

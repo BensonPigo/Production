@@ -5,7 +5,7 @@ CREATE PROCEDURE [dbo].[usp_WarehouseClose]
 	,@MDivisionid varchar(8)
 	,@Factoryid varchar(8)
 	,@loginid varchar(10)
-	
+	,@NewID varchar(13)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -15,7 +15,6 @@ BEGIN
 	-- Declare variables used in error checking.
 	DECLARE @ErrorVar INT;
 	DECLARE @RowCountVar INT;
-	DECLARE	@newid varchar(13) -- A2C id
 	DECLARE @msg nvarchar(500) ='';
 	DECLARE @OrdersFactoryID varchar(8) ='';
 
@@ -26,6 +25,14 @@ BEGIN
 		IF @poid=''
 		BEGIN
 			RAISERROR (N'POID can not be empty!', -- Message text.
+               16, -- Severity.
+               1 -- State.
+               );
+		END
+
+		IF @NewID=''
+		BEGIN
+			RAISERROR (N'ID can not be empty!', -- Message text.
                16, -- Severity.
                1 -- State.
                );
@@ -49,15 +56,15 @@ BEGIN
                );
 		END
 
-		IF EXISTS(SELECT * FROM [dbo].[SubTransfer] S WITH (NOLOCK)WHERE S.ID = @poid AND S.Status!='Confirmed')
+		IF EXISTS(SELECT * FROM [dbo].[SubTransfer] S WITH (NOLOCK)WHERE S.ID = @NewID AND S.Status!='Confirmed')
 		BEGIN
-			Delete FROM dbo.SubTransfer WHERE ID = @poid  
-			Delete FROM dbo.SubTransfer_Detail WHERE ID = @poid  
+			Delete FROM dbo.SubTransfer WHERE ID = @NewID  
+			Delete FROM dbo.SubTransfer_Detail WHERE ID = @NewID  
 		END
 
 		-- 新增 報廢單主檔 & 明細檔
-		IF EXISTS(SELECT * FROM [dbo].[SubTransfer] S WITH (NOLOCK) WHERE S.ID = @poid AND S.Status='Confirmed')
-			update [dbo].[SubTransfer] set [EditName]= @loginid , [EditDate] = GETDATE() WHERE ID = @poid  
+		IF EXISTS(SELECT * FROM [dbo].[SubTransfer] S WITH (NOLOCK) WHERE S.ID = @NewID AND S.Status='Confirmed')
+			update [dbo].[SubTransfer] set [EditName]= @loginid , [EditDate] = GETDATE() WHERE ID = @NewID  
 		ELSE 
 		BEGIN
 			INSERT INTO [dbo].[SubTransfer]
@@ -65,9 +72,9 @@ BEGIN
 				   ,[Type]
 				   ,[IssueDate]				   ,[Status]				   ,[Remark]
 				   ,[AddName]				   ,[AddDate]				   ,[EditName]
-				   ,[EditDate])
+				   ,[EditDate], [POID])
 			VALUES
-					(@poid
+					(@NewID
 					,@MDivisionid
 					,@Factoryid
 					,'D' -- A2C
@@ -78,6 +85,7 @@ BEGIN
 					,GETDATE()
 					,@loginid
 					,GETDATE()
+					,@poid
 					);
 		END
 
@@ -85,7 +93,7 @@ BEGIN
 		
 		--寫入 [SubTransfer_Detail]
 		SELECT
-			[ID]=[POID]
+			[ID]=@NewID
 			,[FromFtyInventoryUkey]=Ukey
 			,[FromMDivisionID]=''
 			,[FromFactoryID]=@OrdersFactoryID  
@@ -171,7 +179,7 @@ BEGIN
 		select f.Ukey,ToLocation=isnull(sd.ToLocation,'')
 		from @TB f
 		inner join dbo.SubTransfer_Detail sd WITH (NOLOCK)
-		on sd.id = @poid  and  sd.FromFtyInventoryUkey = f.sourceUkey
+		on sd.id = @NewID  and  sd.FromFtyInventoryUkey = f.sourceUkey
 		where not exists(select 1 from FtyInventory_Detail fd WITH (NOLOCK) where f.Ukey = fd.Ukey and sd.ToLocation = fd.MtlLocationID)
 		and isnull(sd.ToLocation,'') <> ''
 		and exists(select 1 from MtlLocation m WITH (NOLOCK) where m.StockType = 'O' and m.id = sd.ToLocation and m.Junk = 0) -- Location需存在MtlLocation
@@ -217,7 +225,7 @@ BEGIN
 		set OutQty = OutQty + sd.Qty
 		FROM dbo.FtyInventory WITH (NOLOCK)
 		inner join dbo.SubTransfer_Detail sd 
-		on sd.id = @poid and  sd.FromFtyInventoryUkey = FtyInventory.Ukey;
+		on sd.id = @NewID and  sd.FromFtyInventoryUkey = FtyInventory.Ukey;
 
 		-- 更新Order
 		update dbo.Orders set WhseClose = getdate() where POID = @poid;

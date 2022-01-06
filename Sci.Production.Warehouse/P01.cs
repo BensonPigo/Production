@@ -120,7 +120,7 @@ namespace Sci.Production.Warehouse
             }
             else
             {
-                var frm = new P01_BatchCloseRowMaterial();
+                var frm = new P01_BatchCloseRowMaterial(this.dataType);
                 this.ShowWaitMessage("Data Loading....");
                 frm.QueryData(true);
                 this.HideWaitMessage();
@@ -521,6 +521,13 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 return;
             }
 
+            string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "AC", "SubTransfer", DateTime.Now);
+            if (MyUtility.Check.Empty(tmpId))
+            {
+                MyUtility.Msg.WarningBox("Get document ID fail!!");
+                return;
+            }
+
             if (this.dataType != "Y")
             {
                 #region 檢查B倉是否還有資料Lock
@@ -557,6 +564,12 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 sp_loginid.ParameterName = "@loginid";
                 sp_loginid.Value = Env.User.UserID;
                 cmds.Add(sp_loginid);
+
+                // by ISP20211572
+                SqlParameter sp_NewID = new SqlParameter();
+                sp_NewID.ParameterName = "@NewID";
+                sp_NewID.Value = tmpId;
+                cmds.Add(sp_NewID);
                 #endregion
                 if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_WarehouseClose", cmds)))
                 {
@@ -586,7 +599,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                     dtMain.Columns.Add("Type", typeof(string));
                     dtMain.Columns.Add("Status", typeof(string));
                     DataRow row = dtMain.NewRow();
-                    row["ID"] = this.CurrentMaintain["Poid"].ToString();
+                    row["ID"] = tmpId;
                     row["Type"] = "D";
                     row["Status"] = "Confirmed";
                     dtMain.Rows.Add(row);
@@ -613,7 +626,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                     dtMain.Columns.Add("Type", typeof(string));
                     dtMain.Columns.Add("Status", typeof(string));
                     DataRow row = dtMain.NewRow();
-                    row["ID"] = this.CurrentMaintain["Poid"].ToString();
+                    row["ID"] = tmpId;
                     row["Type"] = "D";
                     row["Status"] = "Confirmed";
                     dtMain.Rows.Add(row);
