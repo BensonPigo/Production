@@ -50,9 +50,13 @@ namespace Sci.Production.CallPmsAPI
         {
             string environment = string.Empty;
 
-            if (DBProxy.Current.DefaultModuleName.Contains("testing"))
+            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("TESTING") || DBProxy.Current.DefaultModuleName.ToUpper().Contains("PMSDB"))
             {
-                environment = "Testing";
+#if DEBUG
+                return "http://172.17.3.97:16888/";
+#endif
+
+                return "http://172.17.3.96:16888/";
             }
 
             if (DBProxy.Current.DefaultModuleName.Contains("Training"))
@@ -71,6 +75,22 @@ namespace Sci.Production.CallPmsAPI
             }
 
             return MyUtility.GetValue.Lookup($"select URL from SystemWebAPIURL with (nolock) where SystemName = '{systemName}' and Environment = '{environment}'");
+        }
+
+        public static string GetConnRegion(string systemName)
+        {
+            string finalDBName = systemName.ToUpper() == "PHI" ? "PH1" : systemName.ToUpper();
+            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("TESTING"))
+            {
+                return "TESTING_" + finalDBName;
+            }
+
+            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("PMSDB"))
+            {
+                return "PMSDB_" + finalDBName;
+            }
+
+            return string.Empty;
         }
 
         public static string GetWebApiBaseResultError(WebApiBaseResult webApiBaseResult)
@@ -245,8 +265,12 @@ where exists(select 1 from GMTBooking g with (nolock) where g.ShipPlanID = '{shi
             {
                 string apiUrl = GetWebAPIUrl(systemName);
                 WebApiBaseResult webApiBaseResult;
+
+                Dictionary<string, string> dicHeaders = new Dictionary<string, string>();
+                dicHeaders.Add("connectRegion", GetConnRegion(systemName));
+
                 dataBySql.SqlString = dataBySql.SqlString.Base64Encrypt();
-                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, "api/PackingA2B/GetDataBySql", dataBySql, 75);
+                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, "api/PackingA2B/GetDataBySql", dataBySql, 75, headers: dicHeaders);
 
                 if (!webApiBaseResult.isSuccess)
                 {
@@ -271,8 +295,12 @@ where exists(select 1 from GMTBooking g with (nolock) where g.ShipPlanID = '{shi
             {
                 string apiUrl = GetWebAPIUrl(systemName);
                 WebApiBaseResult webApiBaseResult;
+
+                Dictionary<string, string> dicHeaders = new Dictionary<string, string>();
+                dicHeaders.Add("connectRegion", GetConnRegion(systemName));
+
                 dataBySql.SqlString = dataBySql.SqlString.Base64Encrypt();
-                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, "api/PackingA2B/GetDataBySql", dataBySql, 75);
+                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, "api/PackingA2B/GetDataBySql", dataBySql, 75, headers: dicHeaders);
 
                 if (!webApiBaseResult.isSuccess)
                 {
@@ -297,8 +325,12 @@ where exists(select 1 from GMTBooking g with (nolock) where g.ShipPlanID = '{shi
             {
                 string apiUrl = GetWebAPIUrl(systemName);
                 WebApiBaseResult webApiBaseResult;
+
+                Dictionary<string, string> dicHeaders = new Dictionary<string, string>();
+                dicHeaders.Add("connectRegion", GetConnRegion(systemName));
+
                 dataBySql.SqlString = dataBySql.SqlString.Base64Encrypt();
-                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, "api/PackingA2B/GetDataBySql", dataBySql, 75);
+                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, "api/PackingA2B/GetDataBySql", dataBySql, 75, headers: dicHeaders);
 
                 if (!webApiBaseResult.isSuccess)
                 {
@@ -319,8 +351,12 @@ where exists(select 1 from GMTBooking g with (nolock) where g.ShipPlanID = '{shi
             {
                 string apiUrl = GetWebAPIUrl(systemName);
                 WebApiBaseResult webApiBaseResult;
+
+                Dictionary<string, string> dicHeaders = new Dictionary<string, string>();
+                dicHeaders.Add("connectRegion", GetConnRegion(systemName));
+
                 dataBySql.SqlString = dataBySql.SqlString.Base64Encrypt();
-                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, "api/PackingA2B/SeekBySql", dataBySql, 75);
+                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, "api/PackingA2B/SeekBySql", dataBySql, 75, headers: dicHeaders);
 
                 if (!webApiBaseResult.isSuccess)
                 {
