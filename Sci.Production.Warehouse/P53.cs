@@ -28,8 +28,32 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.EditMode = true;
             MyUtility.Tool.SetupCombox(this.comboStatus, 2, 1, @",All,Preparing,Preparing,Finished,Finished");
+            bool hasEditauthority = PublicPrg.Prgs.GetAuthority(Env.User.UserID, "P53. Issue Fabric Lacking & Replacement Tracking", "CanEdit");
+
+            this.btnSave.Enabled = hasEditauthority;
+        }
+
+        /// <inheritdoc/>
+        protected override void OnEditModeChanged()
+        {
+            base.OnEditModeChanged();
+
+            if (this.btnSave == null)
+            {
+                return;
+            }
+
+            if (this.EditMode)
+            {
+                this.btnSave.Text = "Save";
+                this.btnQuery.Text = "Undo";
+            }
+            else
+            {
+                this.btnSave.Text = "Edit";
+                this.btnQuery.Text = "Query";
+            }
         }
 
         /// <inheritdoc/>
@@ -38,8 +62,6 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
             this.displayFinished.BackColor = this.finishedColor;
             this.displayPreparing.BackColor = this.preparingColor;
-            this.gridDetail.IsEditable = true;
-            this.gridDetail.IsEditingReadOnly = false;
 
             #region Grid Settings
             /* ISP20210372 移除Location,Worker的開窗跟檢驗事件
@@ -334,14 +356,35 @@ namespace Sci.Production.Warehouse
         {
             this.Query();
             this.ChangeRowColor();
+            if (this.EditMode)
+            {
+                this.EditMode = false;
+            }
         }
 
         private void BtnSave_Click(object sender, EventArgs e)
+        {
+            if (this.gridDetail.Rows.Count == 0)
+            {
+                return;
+            }
+
+            if (!this.EditMode)
+            {
+                this.EditMode = true;
+                return;
+            }
+
+            this.SaveData();
+        }
+
+        private void SaveData()
         {
             var upd_list = ((DataTable)this.detailbs.DataSource).AsEnumerable().Where(x => x["Select"].EqualDecimal(1)).ToList();
             string upd_sql = string.Empty;
             if (upd_list.Count == 0)
             {
+                MyUtility.Msg.InfoBox("Please select row first");
                 return;
             }
 
@@ -378,6 +421,7 @@ where id = '{dr["LackID"]}'" + Environment.NewLine;
             MyUtility.Msg.InfoBox("Save successfully!");
             this.Query();
             this.ChangeRowColor();
+            this.EditMode = false;
         }
 
         private void BtnClose_Click(object sender, EventArgs e)

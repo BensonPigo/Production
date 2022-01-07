@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel3 = new Sci.Win.UI.Panel();
             this.btnSave = new Sci.Win.UI.Button();
             this.labFinished = new Sci.Win.UI.Label();
@@ -88,7 +87,7 @@
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
             this.btnSave.TabIndex = 6;
-            this.btnSave.Text = "Save";
+            this.btnSave.Text = "Edit";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
@@ -137,6 +136,7 @@
             // comboStatus
             // 
             this.comboStatus.BackColor = System.Drawing.Color.White;
+            this.comboStatus.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.comboStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboStatus.FormattingEnabled = true;
             this.comboStatus.IsSupportUnselect = true;
@@ -172,6 +172,7 @@
             this.txtfactory.FilteMDivision = true;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
+            this.txtfactory.IsSupportEditMode = false;
             this.txtfactory.IssupportJunk = true;
             this.txtfactory.Location = new System.Drawing.Point(475, 39);
             this.txtfactory.MDivision = null;
@@ -236,6 +237,7 @@
             // 
             this.txtSPNo.BackColor = System.Drawing.Color.White;
             this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo.IsSupportEditMode = false;
             this.txtSPNo.Location = new System.Drawing.Point(110, 39);
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(130, 23);
@@ -245,6 +247,7 @@
             // 
             this.txtRequestNo.BackColor = System.Drawing.Color.White;
             this.txtRequestNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRequestNo.IsSupportEditMode = false;
             this.txtRequestNo.Location = new System.Drawing.Point(475, 10);
             this.txtRequestNo.Name = "txtRequestNo";
             this.txtRequestNo.Size = new System.Drawing.Size(130, 23);
@@ -266,6 +269,7 @@
             this.dateRequestDate.DateBox2.Name = "";
             this.dateRequestDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateRequestDate.DateBox2.TabIndex = 1;
+            this.dateRequestDate.IsSupportEditMode = false;
             this.dateRequestDate.Location = new System.Drawing.Point(109, 10);
             this.dateRequestDate.Name = "dateRequestDate";
             this.dateRequestDate.Size = new System.Drawing.Size(280, 23);
@@ -307,20 +311,13 @@
             this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridDetail.Location = new System.Drawing.Point(0, 93);
             this.gridDetail.Name = "gridDetail";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDetail.ShowCellToolTips = false;
             this.gridDetail.Size = new System.Drawing.Size(984, 372);
+            this.gridDetail.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridDetail.TabIndex = 6;
             this.gridDetail.TabStop = false;
             this.gridDetail.Sorted += new System.EventHandler(this.GridDetail_Sorted);
