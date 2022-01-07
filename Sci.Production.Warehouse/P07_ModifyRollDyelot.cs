@@ -80,6 +80,7 @@ namespace Sci.Production.Warehouse
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false).Get(out this.col_roll) // 3
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: false).Get(out this.col_dyelot) // 4
+            .DateTime("CompleteTime", header: "Complete Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
             ;
 
             if (this.gridAlias.ToUpper().EqualString("RECEIVING_DETAIL"))
