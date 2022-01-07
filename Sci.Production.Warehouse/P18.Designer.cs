@@ -468,7 +468,7 @@
             this.DefaultOrder = "ISSUEDATE,ID";
             this.EditMode = true;
             this.Grid2New = 0;
-            this.GridAlias = "TransferIn_detail";
+            this.GridAlias = "TransferIn_Detail";
             this.GridNew = 0;
             this.GridUniqueKey = "poid,seq1,seq2,roll,Dyelot";
             this.IsSupportConfirm = true;

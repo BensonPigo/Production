@@ -2471,6 +2471,7 @@ select  a.id
         ,a.FullRoll
         ,a.FullDyelot
         ,a.CompleteTime
+        ,a.SentToWMS
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 INNER JOIN Receiving b WITH (NOLOCK) ON a.id= b.Id
 left join View_WH_Orders o WITH (NOLOCK) on o.id = a.PoId

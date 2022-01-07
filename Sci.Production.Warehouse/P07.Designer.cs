@@ -712,7 +712,7 @@
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
             this.DefaultOrder = "ID";
             this.Grid2New = 0;
-            this.GridAlias = "Receiving_detail";
+            this.GridAlias = "Receiving_Detail";
             this.GridNew = 0;
             this.GridUniqueKey = "poid,seq1,seq2,roll,Dyelot";
             this.IsSupportConfirm = true;

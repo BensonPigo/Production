@@ -9,6 +9,8 @@ using Ict;
 using System.Linq;
 using System.Transactions;
 using System.Data.SqlClient;
+using Sci.Production.PublicPrg;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Warehouse
 {
@@ -80,7 +82,6 @@ namespace Sci.Production.Warehouse
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false).Get(out this.col_roll) // 3
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: false).Get(out this.col_dyelot) // 4
-            .DateTime("CompleteTime", header: "Complete Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
             ;
 
             if (this.gridAlias.ToUpper().EqualString("RECEIVING_DETAIL"))
@@ -104,6 +105,13 @@ namespace Sci.Production.Warehouse
                 .Text("Location", header: "Location", iseditingreadonly: true)
                 .Text("remark", header: "Remark", iseditingreadonly: true)
                 ;
+            }
+
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220029
+            if (Automation.UtilityAutomation.IsAutomationEnable == true)
+            {
+                this.Helper.Controls.Grid.Generator(this.gridModifyRoll)
+                .DateTime("CompleteTime", header: "Complete Time", width: Widths.AnsiChars(18), iseditingreadonly: true);
             }
 
             cbb_stocktype.DataSource = new BindingSource(this.di_stocktype, null);
@@ -138,7 +146,8 @@ namespace Sci.Production.Warehouse
 
                 DataRow dr = this.gridModifyRoll.GetDataRow(e.RowIndex);
 
-                if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0)
+                if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0 ||
+                (MyUtility.Check.Empty(dr["CompleteTime"]) == false && Automation.UtilityAutomation.IsAutomationEnable == true))
                 {
                     ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
                 }
@@ -156,7 +165,8 @@ namespace Sci.Production.Warehouse
 
                 DataRow dr = this.gridModifyRoll.GetDataRow(e.RowIndex);
 
-                if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0)
+                if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0 ||
+                (MyUtility.Check.Empty(dr["CompleteTime"]) == false && Automation.UtilityAutomation.IsAutomationEnable == true))
                 {
                     e.CellStyle.BackColor = Color.White;
                 }
@@ -176,7 +186,8 @@ namespace Sci.Production.Warehouse
 
                 DataRow dr = this.gridModifyRoll.GetDataRow(e.RowIndex);
 
-                if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0)
+                if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0 ||
+                (MyUtility.Check.Empty(dr["CompleteTime"]) == false && Automation.UtilityAutomation.IsAutomationEnable == true))
                 {
                     ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
                 }
@@ -194,7 +205,8 @@ namespace Sci.Production.Warehouse
 
                 DataRow dr = this.gridModifyRoll.GetDataRow(e.RowIndex);
 
-                if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0)
+                if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0 ||
+                (MyUtility.Check.Empty(dr["CompleteTime"]) == false && Automation.UtilityAutomation.IsAutomationEnable == true))
                 {
                     e.CellStyle.BackColor = Color.White;
                 }
@@ -547,13 +559,45 @@ from (
                 return;
             }
 
+            // CompleteTime is not null 則不可commit
+            if (modifyDrList.Where(s => !MyUtility.Check.Empty(s["CompleteTime"])).Any())
+            {
+                List<string> warningMsgList = new List<string>();
+                foreach (DataRow dr in modifyDrList)
+                {
+                    if (!MyUtility.Check.Empty(dr["CompleteTime"]))
+                    {
+                        string original_Roll = dr["roll", DataRowVersion.Original].ToString();
+                        string current_Roll = dr["roll", DataRowVersion.Current].ToString();
+
+                        string original_Dyelot = dr["dyelot", DataRowVersion.Original].ToString();
+                        string current_Dyelot = dr["dyelot", DataRowVersion.Current].ToString();
+
+                        if (original_Roll != current_Roll || original_Dyelot != current_Dyelot)
+                        {
+                            warningMsgList.Add($"{dr["poid"]}, {dr["seq1"].ToString() + " " + dr["seq2"].ToString()}, {original_Roll}, {original_Dyelot}");
+                        }
+                    }
+                }
+
+                if (warningMsgList.Count > 0)
+                {
+                    MyUtility.Msg.WarningBox(@"WMS system have finished it already, you cannot revise it."
++ Environment.NewLine
++ "Finished list SP# - Seq - Roll# - Dyelot as below."
++ Environment.NewLine
++ warningMsgList.JoinToString(Environment.NewLine));
+                    return;
+                }
+            }
+
             var allDatas = modifyDrList = this.source.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted);
             if (allDatas.GroupBy(o => new
             {
-                                            POID = o["POID"].ToString(),
-                                            Seq = o["Seq"].ToString(),
-                                            Roll = o["Roll"].ToString(),
-                                            Dyelot = o["Dyelot"].ToString(),
+                POID = o["POID"].ToString(),
+                Seq = o["Seq"].ToString(),
+                Roll = o["Roll"].ToString(),
+                Dyelot = o["Dyelot"].ToString(),
             })
                     .Select(g => new { g.Key.POID, g.Key.Seq, g.Key.Roll, g.Key.Dyelot, ct = g.Count() })
                     .Any(r => r.ct > 1))
@@ -622,9 +666,9 @@ where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and d
 
                 if (original_Roll != current_Roll || original_Dyelot != current_Dyelot)
                 {
-                        // 只修改ActualQty時，判斷Roll# & Dyelot#是否重複,須排除自己
-                        sqlcmd = string.Format(
-                            @"
+                    // 只修改ActualQty時，判斷Roll# & Dyelot#是否重複,須排除自己
+                    sqlcmd = string.Format(
+                        @"
 SELECT   [FirID]= f.ID
 	    ,[Roll]= r.Roll
 	    ,[Dyelot]= r.Dyelot
@@ -636,19 +680,19 @@ INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f
 WHERE r.ID='{0}' AND p.FabricType='F' AND p.FabricType='F' AND  roll='{1}' AND dyelot='{2}'
 and r.seq1='{3}' and r.seq2='{4}' and r.poid='{5}' 
 ",
-                            this.docno,
-                            drModify["roll"],
-                            drModify["dyelot"],
-                            drModify["Seq1"],
-                            drModify["Seq2"],
-                            drModify["poid"],
-                            this.gridAlias,
-                            this.gridAlias.ToUpper().EqualString("RECEIVING_DETAIL") ? "StockQty" : "Qty");
+                        this.docno,
+                        drModify["roll"],
+                        drModify["dyelot"],
+                        drModify["Seq1"],
+                        drModify["Seq2"],
+                        drModify["poid"],
+                        this.gridAlias,
+                        this.gridAlias.ToUpper().EqualString("RECEIVING_DETAIL") ? "StockQty" : "Qty");
 
-                        if (MyUtility.Check.Seek(sqlcmd, null))
-                        {
-                            duplicateList.Add($"{drModify["poid"]} - {drModify["seq1"].ToString() + " " + drModify["seq2"].ToString()} - {drModify["roll"]} - {drModify["dyelot"]}");
-                        }
+                    if (MyUtility.Check.Seek(sqlcmd, null))
+                    {
+                        duplicateList.Add($"{drModify["poid"]} - {drModify["seq1"].ToString() + " " + drModify["seq2"].ToString()} - {drModify["roll"]} - {drModify["dyelot"]}");
+                    }
                 }
             }
 
@@ -804,24 +848,24 @@ end
             fir_Air_Proce.Add(new SqlParameter("@ID", this.docno));
             fir_Air_Proce.Add(new SqlParameter("@LoginID", Sci.Env.User.UserID));
             DualResult result;
-         if (this.gridAlias.ToUpper().EqualString("RECEIVING_DETAIL"))
-         {
-            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.insert_Air_Fir", fir_Air_Proce)))
+            if (this.gridAlias.ToUpper().EqualString("RECEIVING_DETAIL"))
             {
-               Exception ex = result.GetException();
-               MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
-               return;
+                if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.insert_Air_Fir", fir_Air_Proce)))
+                {
+                    Exception ex = result.GetException();
+                    MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
+                    return;
+                }
             }
-         }
-         else if (this.gridAlias.ToUpper().EqualString("TRANSFERIN_DETAIL"))
-         {
-            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.insert_Air_Fir_TnsfIn", fir_Air_Proce)))
+            else if (this.gridAlias.ToUpper().EqualString("TRANSFERIN_DETAIL"))
             {
-               Exception ex = result.GetException();
-               MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
-               return;
+                if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.insert_Air_Fir_TnsfIn", fir_Air_Proce)))
+                {
+                    Exception ex = result.GetException();
+                    MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
+                    return;
+                }
             }
-         }
             #endregion
 
             DataTable dt;
@@ -876,6 +920,21 @@ and SEQ1 = '{4}' and SEQ2 = '{5}'
                 this.btnCommit.Enabled = false;
                 this.Close();
             }
+
+            #region snet to WMS Gensong by ISP20220029
+
+            // 檢查資料有任一筆WMS已完成
+            string strFunction = (this.gridAlias == "Receiving_detail") ? "P07" : "P18";
+
+            // 傳給WMS Gensong
+            if (modifyDrList.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+            {
+                if (!Gensong_AutoWHFabric.SentReceive_Detail_Delete(modifyDrList.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), strFunction, "Revise", true))
+                {
+                    return;
+                }
+            }
+            #endregion
         }
     }
 }
