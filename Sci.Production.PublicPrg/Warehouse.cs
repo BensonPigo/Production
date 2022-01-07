@@ -3682,8 +3682,45 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             foreach (var retransferToScrapItem in listMtlItem)
             {
                 string mDivisionPoDetailUkey = MyUtility.Check.Empty(retransferToScrapItem["MDivisionPoDetailUkey"]) ? "NULL" : retransferToScrapItem["MDivisionPoDetailUkey"].ToString();
+                sqlRetransferToScrap += $@"
+ INSERT INTO [dbo].[SubTransfer_Detail]
+            ([ID]				,[FromFtyInventoryUkey]           ,[FromMDivisionID]           ,[FromFactoryID]
+		    ,[FromPOID]
+            ,[FromSeq1]           ,[FromSeq2]						,[FromRoll]					,[FromStockType]
+            ,[FromDyelot]           
+		    ,[ToMDivisionID]    ,[ToFactoryID]						,[ToPOID]					,[ToSeq1]
+            ,[ToSeq2]           ,[ToRoll]							,[ToStockType]				,[ToDyelot]
+            ,[Qty]			   ,[ToLocation])
+	SELECT '{newID}' 
+		    ,Ukey
+            ,'' [FromMDivisionID] 
+            ,Factory = (select FactoryID from Orders with (nolock) where ID=fi.POID)
+            ,[POID]
+            ,[Seq1]
+            ,[Seq2]
+            ,[Roll]
+            ,'B' [FromStock]
+            ,[Dyelot]
+            ,'' [ToMDivisionID]
+            ,Factory =  (select FactoryID from Orders with (nolock) where ID=fi.POID)
+            ,[POID]
+            ,[Seq1]
+            ,[Seq2]
+            ,[Roll]
+            ,'O'	[ToStock]
+            ,[Dyelot]
+            ,Qty =  fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty
+            ,[ToLocation]=isnull(
+            (
+	            SELECT TOP 1 ID 
+	            FROM MtlLocation WITH (NOLOCK)
+	            WHERE ID in (select data from [dbo].[SplitString](dbo.Getlocation(fi.Ukey),','))
+	            AND StockType='O' AND Junk=0
+            ),'')
+		    from dbo.FtyInventory fi WITH (NOLOCK)
+	        where fi.Ukey = '{retransferToScrapItem["Ukey"]}'
+";
                 sqlRetransferToScrap += $@" 
-    exec dbo.usp_ReTransferMtlToScrap {retransferToScrapItem["Ukey"]},'{newID}'
     exec dbo.usp_SingleItemRecaculate {mDivisionPoDetailUkey}, '{poID}', '{retransferToScrapItem["Seq1"]}', '{retransferToScrapItem["Seq2"]}'
     ";
             }

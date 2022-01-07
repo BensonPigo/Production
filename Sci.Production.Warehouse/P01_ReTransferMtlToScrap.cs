@@ -1,11 +1,13 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Automation;
 using Sci.Production.PublicPrg;
 using System;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -64,7 +66,7 @@ namespace Sci.Production.Warehouse
             DualResult result;
             string sqlScrapHistory = $@"
 select 
-    s.ID
+	a.FromPOID
     ,a.FromSeq1
     ,a.FromSeq2
     ,FabricType = case p1.FabricType    
@@ -77,12 +79,13 @@ select
     ,[description] = dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0)
     ,a.FromRoll
     ,a.FromDyelot
-    ,a.Qty
+    ,Qty = sum(a.Qty)
 from dbo.SubTransfer_Detail a WITH (NOLOCK) 
 inner join dbo.SubTransfer s with (nolock) on a.ID = s.ID and s.Type = 'D' and MDivisionID = '{Env.User.Keyword}'
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
 left join FtyInventory f WITH (NOLOCK) on a.FromPOID=f.POID and a.FromSeq1=f.Seq1 and a.FromSeq2=f.Seq2 and a.FromRoll=f.Roll and a.FromDyelot=f.Dyelot and a.FromStockType=f.StockType
 Where s.POID = '{this.poID}'
+group by a.FromPOID ,a.FromSeq1 ,a.FromSeq2,p1.FabricType ,p1.stockunit,a.FromRoll,a.FromDyelot
 ";
 
             result = DBProxy.Current.Select(null, sqlScrapHistory, out this.dtScrapHistory);
@@ -116,8 +119,11 @@ left join MDivisionPoDetail mdp on  mdp.POID=p1.ID and
                                     mdp.Seq1=p1.SEQ1 and 
                                     mdp.Seq2=p1.SEQ2
 inner join orders o on o.id = f.POID
-where (f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty) > 0 and f.StockType='B' and o.WhseClose is not null 
-and o.MDivisionID='{Env.User.Keyword}' and f.POID = '{this.poID}'
+where (f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty) > 0 
+and f.StockType='B' 
+and o.WhseClose is not null 
+and o.MDivisionID='{Env.User.Keyword}' 
+and f.POID = '{this.poID}'
 ";
 
             result = DBProxy.Current.Select(null, sqlBulk, out this.dtBulk);
@@ -188,6 +194,46 @@ and o.MDivisionID='{Env.User.Keyword}' and f.POID = '{this.poID}'
                     this.ShowErr(result);
                     return;
                 }
+
+                #region Sent W/H Fabric to Gensong
+
+                // SubTransfer_Detail
+                if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+                {
+                    DataTable dtMain = new DataTable();
+                    dtMain.Columns.Add("ID", typeof(string));
+                    dtMain.Columns.Add("Type", typeof(string));
+                    dtMain.Columns.Add("Status", typeof(string));
+                    DataRow row = dtMain.NewRow();
+                    row["ID"] = tmpId;
+                    row["Type"] = "D";
+                    row["Status"] = "Confirmed";
+                    dtMain.Rows.Add(row);
+                    Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_Detail_New(dtMain))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                }
+                #endregion
+
+                #region Sent W/H Accessory to Vstrong
+
+                // SubTransfer_Detail
+                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                {
+                    DataTable dtMain = new DataTable();
+                    dtMain.Columns.Add("ID", typeof(string));
+                    dtMain.Columns.Add("Type", typeof(string));
+                    dtMain.Columns.Add("Status", typeof(string));
+                    DataRow row = dtMain.NewRow();
+                    row["ID"] = tmpId;
+                    row["Type"] = "D";
+                    row["Status"] = "Confirmed";
+                    dtMain.Rows.Add(row);
+                    Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_Detail_New(dtMain, "New"))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
+
+                // this.QueryData();
+                #endregion
 
                 transactionScope.Complete();
             }

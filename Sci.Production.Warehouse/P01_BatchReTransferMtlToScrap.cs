@@ -8,6 +8,8 @@ using Ict.Win;
 using Sci.Data;
 using System.Transactions;
 using System.Linq;
+using Sci.Production.Automation;
+using System.Threading.Tasks;
 
 namespace Sci.Production.Warehouse
 {
@@ -268,6 +270,46 @@ drop table #ReTransferToScrapList,#ReTransferToScrapSummary
                         this.ShowErr(result);
                         return;
                     }
+
+                    #region Sent W/H Fabric to Gensong
+
+                    // SubTransfer_Detail
+                    if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+                    {
+                        DataTable dtMain = new DataTable();
+                        dtMain.Columns.Add("ID", typeof(string));
+                        dtMain.Columns.Add("Type", typeof(string));
+                        dtMain.Columns.Add("Status", typeof(string));
+                        DataRow row = dtMain.NewRow();
+                        row["ID"] = tmpId;
+                        row["Type"] = "D";
+                        row["Status"] = "Confirmed";
+                        dtMain.Rows.Add(row);
+                        Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_Detail_New(dtMain))
+                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                    }
+                    #endregion
+
+                    #region Sent W/H Accessory to Vstrong
+
+                    // SubTransfer_Detail
+                    if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                    {
+                        DataTable dtMain = new DataTable();
+                        dtMain.Columns.Add("ID", typeof(string));
+                        dtMain.Columns.Add("Type", typeof(string));
+                        dtMain.Columns.Add("Status", typeof(string));
+                        DataRow row = dtMain.NewRow();
+                        row["ID"] = tmpId;
+                        row["Type"] = "D";
+                        row["Status"] = "Confirmed";
+                        dtMain.Rows.Add(row);
+                        Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_Detail_New(dtMain, "New"))
+                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    }
+
+                    // this.QueryData();
+                    #endregion
                 }
 
                 transactionScope.Complete();

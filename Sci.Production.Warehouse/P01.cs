@@ -547,33 +547,16 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
 
                 DualResult result;
                 #region store procedure parameters
-                IList<SqlParameter> cmds = new List<SqlParameter>();
-                SqlParameter sp_StocktakingID = new SqlParameter();
-                sp_StocktakingID.ParameterName = "@poid";
-                sp_StocktakingID.Value = dr["poid"].ToString().Trim();
-                cmds.Add(sp_StocktakingID);
-                SqlParameter sp_mdivision = new SqlParameter();
-                sp_mdivision.ParameterName = "@MDivisionid";
-                sp_mdivision.Value = Env.User.Keyword;
-                cmds.Add(sp_mdivision);
-                SqlParameter sp_factory = new SqlParameter();
-                sp_factory.ParameterName = "@factoryid";
-                sp_factory.Value = Env.User.Factory;
-                cmds.Add(sp_factory);
-                SqlParameter sp_loginid = new SqlParameter();
-                sp_loginid.ParameterName = "@loginid";
-                sp_loginid.Value = Env.User.UserID;
-                cmds.Add(sp_loginid);
 
-                // by ISP20211572
-                SqlParameter sp_NewID = new SqlParameter();
-                sp_NewID.ParameterName = "@NewID";
-                sp_NewID.Value = tmpId;
-                cmds.Add(sp_NewID);
+                List<SqlParameter> sqlPar = new List<SqlParameter>();
+                sqlPar.Add(new SqlParameter("@poid", dr["POID"].ToString()));
+                sqlPar.Add(new SqlParameter("@MDivisionid", Env.User.Keyword));
+                sqlPar.Add(new SqlParameter("@factoryid", Env.User.UserID));
+                sqlPar.Add(new SqlParameter("@loginid", Env.User.UserID));
+                sqlPar.Add(new SqlParameter("@NewID", tmpId));
                 #endregion
-                if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_WarehouseClose", cmds)))
+                if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_WarehouseClose", sqlPar)))
                 {
-                    // MyUtility.Msg.WarningBox(result.Messages[1].ToString());
                     Exception ex = result.GetException();
                     MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
                     return;

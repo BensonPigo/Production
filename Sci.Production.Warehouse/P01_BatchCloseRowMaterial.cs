@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -290,35 +291,29 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
 
                 DualResult result;
                 #region store procedure parameters
-                IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                System.Data.SqlClient.SqlParameter sp_StocktakingID = new System.Data.SqlClient.SqlParameter();
-                sp_StocktakingID.ParameterName = "@poid";
-                sp_StocktakingID.Value = tmp["poid"].ToString();
-                cmds.Add(sp_StocktakingID);
-                System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
-                sp_mdivision.ParameterName = "@MDivisionid";
-                sp_mdivision.Value = Env.User.Keyword;
-                cmds.Add(sp_mdivision);
-                System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
-                sp_factory.ParameterName = "@factoryid";
-                sp_factory.Value = Env.User.Factory;
-                cmds.Add(sp_factory);
-                System.Data.SqlClient.SqlParameter sp_loginid = new System.Data.SqlClient.SqlParameter();
-                sp_loginid.ParameterName = "@loginid";
-                sp_loginid.Value = Env.User.UserID;
-                cmds.Add(sp_loginid);
 
-                // by ISP20211572
-                System.Data.SqlClient.SqlParameter sp_NewID = new System.Data.SqlClient.SqlParameter();
-                sp_NewID.ParameterName = "@NewID";
-                sp_NewID.Value = tmpId;
-                cmds.Add(sp_NewID);
+                List<SqlParameter> sqlPar = new List<SqlParameter>();
+                sqlPar.Add(new SqlParameter("@poid", tmp["POID"].ToString()));
+                sqlPar.Add(new SqlParameter("@MDivisionid", Env.User.Keyword));
+                sqlPar.Add(new SqlParameter("@factoryid", Env.User.UserID));
+                sqlPar.Add(new SqlParameter("@loginid", Env.User.UserID));
+                sqlPar.Add(new SqlParameter("@NewID", tmpId));
                 #endregion
-                if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_WarehouseClose", cmds)))
+                if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_WarehouseClose", sqlPar)))
                 {
-                    // MyUtility.Msg.WarningBox(result.Messages[1].ToString());
                     Exception ex = result.GetException();
                     MyUtility.Msg.WarningBox(ex.Message);
+                }
+
+                #region Sent W/H Fabric to Gensong
+
+                // WHClose
+                if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable && this.DataType != "Y")
+                {
+                    DataTable dtFilter = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).CopyToDataTable();
+                    DataTable dtMaster = dtFilter.DefaultView.ToTable(true, "POID", "WhseClose");
+                    Task.Run(() => new Gensong_AutoWHFabric().SentWHCloseToGensongAutoWHFabric(dtMaster))
+                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
                 }
 
                 // SubTransfer_Detail
@@ -335,8 +330,41 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                     dtMain.Rows.Add(row);
 
                     Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_Detail_New(dtMain))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
                 }
+
+                // this.QueryData();
+                #endregion
+
+                #region Sent W/H Accessory to Gensong
+
+                // WHClose
+                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                {
+                    DataTable dtFilter = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).CopyToDataTable();
+                    DataTable dtMaster = dtFilter.DefaultView.ToTable(true, "POID", "WhseClose");
+                    Task.Run(() => new Vstrong_AutoWHAccessory().SentWHCloseToVstrongAutoWHAccessory(dtMaster))
+                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                }
+
+                // SubTransfer_Detail
+                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                {
+                    DataTable dtMain = new DataTable();
+                    dtMain.Columns.Add("ID", typeof(string));
+                    dtMain.Columns.Add("Type", typeof(string));
+                    dtMain.Columns.Add("Status", typeof(string));
+                    DataRow row = dtMain.NewRow();
+                    row["ID"] = tmpId;
+                    row["Type"] = "D";
+                    row["Status"] = "Confirmed";
+                    dtMain.Rows.Add(row);
+
+                    Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_Detail_New(dtMain, "New"))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
+
+                #endregion
             }
 
             if (lockPOID.Count > 0)
@@ -347,53 +375,6 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                 return;
             }
 
-            #region Sent W/H Fabric to Gensong
-
-            // WHClose
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable && this.DataType != "Y")
-            {
-                DataTable dtFilter = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).CopyToDataTable();
-                DataTable dtMaster = dtFilter.DefaultView.ToTable(true, "POID", "WhseClose");
-                Task.Run(() => new Gensong_AutoWHFabric().SentWHCloseToGensongAutoWHFabric(dtMaster))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            }
-
-            // this.QueryData();
-            #endregion
-
-            #region Sent W/H Accessory to Gensong
-
-            // WHClose
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                DataTable dtFilter = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).CopyToDataTable();
-                DataTable dtMaster = dtFilter.DefaultView.ToTable(true, "POID", "WhseClose");
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentWHCloseToVstrongAutoWHAccessory(dtMaster))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            }
-
-            // SubTransfer_Detail
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                DataTable dtMain = new DataTable();
-                dtMain.Columns.Add("ID", typeof(string));
-                dtMain.Columns.Add("Type", typeof(string));
-                dtMain.Columns.Add("Status", typeof(string));
-                foreach (DataRow dr in dr2)
-                {
-                    DataRow row = dtMain.NewRow();
-                    row["ID"] = dr["Poid"].ToString();
-                    row["Type"] = "D";
-                    row["Status"] = "Confirmed";
-                    dtMain.Rows.Add(row);
-                }
-
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_Detail_New(dtMain, "New"))
-           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-            }
-
-            // this.QueryData();
-            #endregion
             MyUtility.Msg.InfoBox("Finish closing R/Mtl!!");
             this.HideWaitMessage();
 
