@@ -227,6 +227,8 @@ where   ted.ID = @ID and
                 this.toolbar.cmdSend.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "New";
                 this.toolbar.cmdRecall.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "Send";
             }
+
+            this.numCBM.Value = this.DetailDatas.Sum(s => MyUtility.Convert.GetDecimal(s["CBM"]));
         }
 
         /// <inheritdoc/>
