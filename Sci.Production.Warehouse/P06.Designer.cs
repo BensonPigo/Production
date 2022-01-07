@@ -387,7 +387,7 @@
             // 
             this.numCBM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numCBM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Cbm", true));
-            this.numCBM.DecimalPlaces = 3;
+            this.numCBM.DecimalPlaces = 5;
             this.numCBM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numCBM.IsSupportEditMode = false;
             this.numCBM.Location = new System.Drawing.Point(354, 173);

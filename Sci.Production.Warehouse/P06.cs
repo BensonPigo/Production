@@ -407,7 +407,7 @@ where ted.ID = '{0}'
                 .Text("ReasonDesc", header: "Reason Desc", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2, iseditingreadonly: true)
                 .Numeric("WeightKg", header: "G.W.(kg)", decimal_places: 2, iseditingreadonly: true)
-                .Numeric("CBM", header: "CBM", decimal_places: 2, iseditingreadonly: true)
+                .Numeric("CBM", header: "CBM", decimal_places: 5, iseditingreadonly: true)
                 .Text("ContainerType", header: "ContainerType & No", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
             this.detailgrid.Columns["TransferExportReason"].DefaultCellStyle.BackColor = Color.Pink;
