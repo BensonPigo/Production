@@ -2042,7 +2042,7 @@ WHERE PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["I
 
             string cmd = $@"
 SET XACT_ABORT ON
-
+/* 2022/01/10 PMSFile上線，因此去掉Image寫入Production DB的部分
 ----寫入圖片
 UPDATE sd
 SET sd.Image=@Image{this.imageIdx}
@@ -2054,7 +2054,7 @@ AND sd.FileName=@FileName{this.imageIdx}
 AND sd.Seq = (
     {seqCmd}
 )
-
+*/
 ----寫入圖片(Image欄位單獨寫進PMSFile)
 UPDATE PmsFile
 SET PmsFile.Image=@Image{this.imageIdx}
@@ -2118,6 +2118,7 @@ where a.PackingListID = '{packingListID}'  and b.SCICtnNo ='{sCICtnNo}'
 
 
 ----寫入圖片
+/* 2022/01/10 PMSFile上線，因此去掉Image寫入Production DB的部分
 UPDATE sd
 SET sd.Image=@Image{counter}
 FROM ShippingMarkPic_Detail sd 
@@ -2126,7 +2127,7 @@ INNER JOIN #tmp{counter} t on sd.ShippingMarkPicUkey = t.ShippingMarkPicUkey
                     AND sd.ShippingMarkTypeUkey = t.ShippingMarkTypeUkey
                     AND sd.Seq = t.Seq
 WHERE t.Rank = {rank}
-
+*/
 ----寫入圖片 (Image寫進PMSFile)
 UPDATE PmsFile
 SET PmsFile.Image=@Image{counter}
