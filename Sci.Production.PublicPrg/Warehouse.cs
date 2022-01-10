@@ -3715,7 +3715,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
         /// <param name="columns">columns</param>
         public static void ChkLocationEmpty(DataTable dt, string type, string columns)
         {
-            /*
+            /* ISP20211385
                 清單內容會根據不同的功能顯示不同的欄位資訊
                 1. P22, P28, P24, P30, P36
                     > SP#, Seq, Roll, Dyelot
@@ -3723,6 +3723,14 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                     > Inventory SP#, Inventory Seq, Roll, Dyelot, Bulk SP#, Bulk Seq
                 3. 借還料 : P31, P32
                     > From SP#, From Seq, From Roll, From Dyelot, From Stock Type, To SP#, To Seq, To Roll, To Dyelot
+                ISP20211566
+                1. 顯示不符合規定的物料清單 
+                    > SP#, Seq, Roll, Dyelot, Stock Type
+                【提示訊息】
+                08, 17, 26
+                > Location cannot be empty, please update location.
+                其餘功能
+                > Location cannot be empty, please update material current location as below list in WH P26 first.
             */
 
             string msg = string.Empty;

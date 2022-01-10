@@ -521,6 +521,48 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             }
             #endregion
 
+            #region 檢查Location是否為空值
+            DataTable dtLocationDetail = (DataTable)this.detailgridbs.DataSource;
+
+            if (MyUtility.Check.Seek(@"select * from System where WH_MtlTransChkLocation = 1"))
+            {
+                // Location
+                DataRow[] dtArry = dtLocationDetail.Select(@"Location = '' or Location is null");
+                if (dtArry != null && dtArry.Length > 0)
+                {
+                    DataTable dtLocation_Empty = dtArry.CopyToDataTable();
+
+                    // change column name
+                    dtLocation_Empty.Columns["PoId"].ColumnName = "SP#";
+                    dtLocation_Empty.Columns["seq"].ColumnName = "Seq";
+                    dtLocation_Empty.Columns["Roll"].ColumnName = "Roll";
+                    dtLocation_Empty.Columns["Dyelot"].ColumnName = "Dyelot";
+                    foreach (DataRow drLocation in dtLocation_Empty.Rows)
+                    {
+                        switch (drLocation["StockType"])
+                        {
+                            case "B":
+                                drLocation["StockType"] = "Bulk";
+                                break;
+                            case "I":
+                                drLocation["StockType"] = "Inventory";
+                                break;
+                            case "S":
+                                drLocation["StockType"] = "Scrap";
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+
+                    dtLocation_Empty.Columns["StockType"].ColumnName = "Stock Type";
+
+                    Prgs.ChkLocationEmpty(dtLocation_Empty, "Other", @"SP#,Seq,Roll,Dyelot,Stock Type");
+                    return;
+                }
+            }
+            #endregion
+
             #region 檢查負數庫存
 
             sqlcmd = string.Format(
@@ -924,6 +966,11 @@ select  a.id
         , a.StockQty
         , a.StockUnit
         , a.StockType
+        , StockTypeName = case a.StockType 
+                when 'B' then 'Bulk' 
+                when 'I' then 'Inventory' 
+                when 'S' then 'Scrap' 
+                else a.StockType end
         , a.Location
         , a.ukey 
         , a.Remark
