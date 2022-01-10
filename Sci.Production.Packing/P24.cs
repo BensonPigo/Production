@@ -442,7 +442,7 @@ ORDER BY pd.SortCTNStartNo
                 string updateCmd = $@"
 SET XACT_ABORT ON
 
-//// 2022/01/10 PMSFile上線，因此去掉Image寫入Production DB的部分
+---- 2022/01/10 PMSFile上線，因此去掉Image寫入Production DB的部分
 UPDATE ShippingMarkPic_Detail
 SET FileName = @FileName{idx}
 WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
@@ -904,7 +904,7 @@ AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'
 
 SET XACT_ABORT ON
 
-//// 2022/01/10 PMSFile上線，因此去掉Image寫入Production DB的部分
+---- 2022/01/10 PMSFile上線，因此去掉Image寫入Production DB的部分
 UPDATE b
 SET FileName = @FileName{idx}
 
