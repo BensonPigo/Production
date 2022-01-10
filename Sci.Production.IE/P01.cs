@@ -1277,24 +1277,6 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'";
             base.ClickConfirm();
         }
 
-        /// <inheritdoc/>
-        protected override void ClickUnconfirm()
-        {
-            string sqlcmd = $@"
-update t 
-    set t.Status = 'New', 
-        t.EditName = '{Env.User.UserID}', 
-        t.EditDate = Getdate()
-from TimeStudy t 
-where StyleID = '{this.CurrentMaintain["StyleID"]}' 
-and SeasonID = '{this.CurrentMaintain["SeasonID"]}' 
-and ComboType = '{this.CurrentMaintain["ComboType"]}' 
-and BrandID = '{this.CurrentMaintain["BrandID"]}'";
-
-            DBProxy.Current.Execute("Production", sqlcmd);
-            base.ClickUnconfirm();
-        }
-
         // Style PopUp
         private void TxtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
