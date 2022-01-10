@@ -562,7 +562,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                     return;
                 }
 
-                PublicPrg.Prgs.SubTransBarcode(true, dr["poid"].ToString().Trim());
+                PublicPrg.Prgs.SubTransBarcode(true, tmpId);
 
                 #region Sent W/H Fabric to Gensong
 

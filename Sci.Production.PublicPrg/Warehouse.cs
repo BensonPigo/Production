@@ -3725,12 +3725,12 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
     ";
             }
 
-            SubTransBarcode(true, poID);
+            SubTransBarcode(true, newID);
 
             return DBProxy.Current.Execute(null, sqlRetransferToScrap);
         }
 
-        public static bool SubTransBarcode(bool isConfirmed, string POID)
+        public static bool SubTransBarcode(bool isConfirmed, string ID)
         {
             DualResult result;
             DataTable dt = new DataTable();
@@ -3761,7 +3761,7 @@ outer apply(
 	select *
 	from FtyInventory_Barcode t
 	where t.Ukey = f.Ukey
-	and t.TransactionID = '{POID}'
+	and t.TransactionID = '{ID}'
 )fbOri
 where 1=1
 and exists(
@@ -3769,13 +3769,13 @@ and exists(
 	where id = i2.FromPoid and seq1=i2.FromSeq1 and seq2=i2.FromSeq2 
 	and FabricType='F'
 )
-and i2.id ='{POID}'
+and i2.id ='{ID}'
 ";
             DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
             var data_From_FtyBarcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
                                         select new
                                         {
-                                            TransactionID = POID,
+                                            TransactionID = ID,
                                             poid = m.Field<string>("poid"),
                                             seq1 = m.Field<string>("seq1"),
                                             seq2 = m.Field<string>("seq2"),
@@ -3855,7 +3855,7 @@ and exists(
 	where id = i2.ToPoid and seq1=i2.ToSeq1 and seq2=i2.ToSeq2 
 	and FabricType='F'
 )
-and i2.id ='{POID}'
+and i2.id ='{ID}'
 ";
             DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
 
@@ -3897,7 +3897,7 @@ and i2.id ='{POID}'
             var data_To_FtyBarcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
                                       select new
                                       {
-                                          TransactionID = POID,
+                                          TransactionID = ID,
                                           poid = m.Field<string>("poid"),
                                           seq1 = m.Field<string>("seq1"),
                                           seq2 = m.Field<string>("seq2"),

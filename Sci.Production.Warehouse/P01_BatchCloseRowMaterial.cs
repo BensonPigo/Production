@@ -304,67 +304,71 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                     Exception ex = result.GetException();
                     MyUtility.Msg.WarningBox(ex.Message);
                 }
-
-                #region Sent W/H Fabric to Gensong
-
-                // WHClose
-                if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable && this.DataType != "Y")
+                else
                 {
-                    DataTable dtFilter = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).CopyToDataTable();
-                    DataTable dtMaster = dtFilter.DefaultView.ToTable(true, "POID", "WhseClose");
-                    Task.Run(() => new Gensong_AutoWHFabric().SentWHCloseToGensongAutoWHFabric(dtMaster))
-                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                    PublicPrg.Prgs.SubTransBarcode(true, tmpId);
+
+                    #region Sent W/H Fabric to Gensong
+
+                    // WHClose
+                    if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable && this.DataType != "Y")
+                    {
+                        DataTable dtFilter = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).CopyToDataTable();
+                        DataTable dtMaster = dtFilter.DefaultView.ToTable(true, "POID", "WhseClose");
+                        Task.Run(() => new Gensong_AutoWHFabric().SentWHCloseToGensongAutoWHFabric(dtMaster))
+                       .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                    }
+
+                    // SubTransfer_Detail
+                    if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+                    {
+                        DataTable dtMain = new DataTable();
+                        dtMain.Columns.Add("ID", typeof(string));
+                        dtMain.Columns.Add("Type", typeof(string));
+                        dtMain.Columns.Add("Status", typeof(string));
+                        DataRow row = dtMain.NewRow();
+                        row["ID"] = tmpId;
+                        row["Type"] = "D";
+                        row["Status"] = "Confirmed";
+                        dtMain.Rows.Add(row);
+
+                        Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_Detail_New(dtMain))
+                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    }
+
+                    // this.QueryData();
+                    #endregion
+
+                    #region Sent W/H Accessory to Gensong
+
+                    // WHClose
+                    if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                    {
+                        DataTable dtFilter = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).CopyToDataTable();
+                        DataTable dtMaster = dtFilter.DefaultView.ToTable(true, "POID", "WhseClose");
+                        Task.Run(() => new Vstrong_AutoWHAccessory().SentWHCloseToVstrongAutoWHAccessory(dtMaster))
+                       .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                    }
+
+                    // SubTransfer_Detail
+                    if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                    {
+                        DataTable dtMain = new DataTable();
+                        dtMain.Columns.Add("ID", typeof(string));
+                        dtMain.Columns.Add("Type", typeof(string));
+                        dtMain.Columns.Add("Status", typeof(string));
+                        DataRow row = dtMain.NewRow();
+                        row["ID"] = tmpId;
+                        row["Type"] = "D";
+                        row["Status"] = "Confirmed";
+                        dtMain.Rows.Add(row);
+
+                        Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_Detail_New(dtMain, "New"))
+                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    }
+
+                    #endregion
                 }
-
-                // SubTransfer_Detail
-                if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
-                {
-                    DataTable dtMain = new DataTable();
-                    dtMain.Columns.Add("ID", typeof(string));
-                    dtMain.Columns.Add("Type", typeof(string));
-                    dtMain.Columns.Add("Status", typeof(string));
-                    DataRow row = dtMain.NewRow();
-                    row["ID"] = tmpId;
-                    row["Type"] = "D";
-                    row["Status"] = "Confirmed";
-                    dtMain.Rows.Add(row);
-
-                    Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_Detail_New(dtMain))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-                }
-
-                // this.QueryData();
-                #endregion
-
-                #region Sent W/H Accessory to Gensong
-
-                // WHClose
-                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-                {
-                    DataTable dtFilter = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).CopyToDataTable();
-                    DataTable dtMaster = dtFilter.DefaultView.ToTable(true, "POID", "WhseClose");
-                    Task.Run(() => new Vstrong_AutoWHAccessory().SentWHCloseToVstrongAutoWHAccessory(dtMaster))
-                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-                }
-
-                // SubTransfer_Detail
-                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-                {
-                    DataTable dtMain = new DataTable();
-                    dtMain.Columns.Add("ID", typeof(string));
-                    dtMain.Columns.Add("Type", typeof(string));
-                    dtMain.Columns.Add("Status", typeof(string));
-                    DataRow row = dtMain.NewRow();
-                    row["ID"] = tmpId;
-                    row["Type"] = "D";
-                    row["Status"] = "Confirmed";
-                    dtMain.Rows.Add(row);
-
-                    Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_Detail_New(dtMain, "New"))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-                }
-
-                #endregion
             }
 
             if (lockPOID.Count > 0)
