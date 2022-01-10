@@ -925,11 +925,15 @@ and SEQ1 = '{4}' and SEQ2 = '{5}'
 
             // 檢查資料有任一筆WMS已完成
             string strFunction = (this.gridAlias == "Receiving_detail") ? "P07" : "P18";
+            DataTable dtModify = modifyDrList.CopyToDataTable();
+
+            // 為了要同P99叫用相同function關係, ActualQty 要改為Qty
+            dtModify.Columns["ActualQty"].ColumnName = "Qty";
 
             // 傳給WMS Gensong
-            if (modifyDrList.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+            if (dtModify.AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
             {
-                if (!Gensong_AutoWHFabric.SentReceive_Detail_Delete(modifyDrList.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), strFunction, "Revise", true))
+                if (!Gensong_AutoWHFabric.SentReceive_Detail_Delete(dtModify.AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), strFunction, "Revise", true))
                 {
                     return;
                 }
