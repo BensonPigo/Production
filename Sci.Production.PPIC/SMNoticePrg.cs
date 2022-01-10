@@ -622,7 +622,7 @@ Exists (
                 var sql = @"
 select sm.ID, sm.BrandID, sm.PatternNo, sm.SizeCode, Convert(varchar(10), sm.AddDate, 111) AddDate
 , sm.StyleID, sm.SeasonID, phase.PhaseID, sm.OrderID, oa.RequireDate
-, ob.BasicPattern, s.CdCodeID, s.ProgramID
+, ob.BasicPattern, [CdCodeID] = s.CDCodeNew, s.ProgramID
 , s.Description, nc.PatternMaker
 , ne.Remark1, nd.MarkerMaker
 , nf.Remark2, sm.ProductionFactory
@@ -686,7 +686,7 @@ where sm.ID = @ID
                 var sql = @"
 select o.BrandID, o.OrderTypeID, o.ProgramID
 , o.StyleID, o.SeasonID, o.FactoryID, Convert(varchar(10), o.BuyerDelivery, 111) as BuyerDelivery
-, s.Description, o.CdCodeID, Convert(varchar(10), o.SciDelivery, 111) as SciDelivery
+, s.Description, [CdCodeID] = s.CDCodeNew, Convert(varchar(10), o.SciDelivery, 111) as SciDelivery
 , op.POComboList as spno
 , Convert(varchar(10), o.ChangeMemoDate ,111) as ChangeMemoDate
 From Orders o 

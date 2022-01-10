@@ -466,12 +466,13 @@ drop table #tmp
             worksheet.Columns[35].ColumnWidth = 22;
             worksheet.Columns[36].ColumnWidth = 16.38;
             worksheet.Columns[37].ColumnWidth = 6.5;
-            worksheet.Columns[38].ColumnWidth = 19.88;
-            worksheet.Columns[39].ColumnWidth = 16.38;
+            worksheet.Columns[38].ColumnWidth = 6.5;
+            worksheet.Columns[39].ColumnWidth = 19.88;
             worksheet.Columns[40].ColumnWidth = 16.38;
             worksheet.Columns[41].ColumnWidth = 16.38;
             worksheet.Columns[42].ColumnWidth = 16.38;
-            worksheet.Columns[43].ColumnWidth = 60;
+            worksheet.Columns[43].ColumnWidth = 16.38;
+            worksheet.Columns[44].ColumnWidth = 60;
             #endregion
 
             excelApp.Visible = true;

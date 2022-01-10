@@ -381,7 +381,13 @@ select [SP] =
                     return false;
                 }
 
-                result = DBProxy.Current.Select(string.Empty, string.Format(@"select id,StyleID,SeasonID,CdCodeID,FactoryID,BrandID,ProgramID from orders where id='{0}'", this._id), out DataTable dtOrder);
+                string sqlGetOrderInfo = $@"
+select o.id, o.StyleID, o.SeasonID, o.CdCodeID, o.FactoryID, o.BrandID, o.ProgramID, s.CDCodeNew
+from orders o with (nolock)
+inner join Style s with (nolock) on s.Ukey = o.StyleUkey
+where o.id='{this._id}'";
+
+                result = DBProxy.Current.Select(string.Empty, sqlGetOrderInfo, out DataTable dtOrder);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox(result.ToString(), "error");
@@ -449,7 +455,8 @@ select [SP] =
                 sxr.DicDatas.Add(sxr.VPrefix + "Title2", MyUtility.GetValue.Lookup("NameEN", cuttingfactory2, "Factory", "ID"));
                 sxr.DicDatas.Add(sxr.VPrefix + "QTYSP", "QTY_SP_NO:" + dtQtyList.Rows[0]["qtylist"].ToString() + "= " + dtQty.Rows[0]["totalQty"] + "PCS");
                 sxr.DicDatas.Add(sxr.VPrefix + "Style", "STYLE: " + dtOrder.Rows[0]["StyleID"].ToString() + " - " + dtOrder.Rows[0]["SeasonID"].ToString());
-                sxr.DicDatas.Add(sxr.VPrefix + "CDCode", "CD CCODE: " + dtOrder.Rows[0]["CdCodeID"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "CDCode", "CD Code: " + dtOrder.Rows[0]["CdCodeID"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "CDCodeNew", "New CD Code: " + dtOrder.Rows[0]["CDCodeNew"].ToString());
                 sxr.DicDatas.Add(sxr.VPrefix + "Factory", "FACTORY: " + dtOrder.Rows[0]["FactoryID"].ToString());
                 sxr.DicDatas.Add(sxr.VPrefix + "Customer", "CUSTOMER: " + dtOrder.Rows[0]["BrandID"].ToString());
                 sxr.DicDatas.Add(sxr.VPrefix + "Program", "PROGRAM: " + dtOrder.Rows[0]["ProgramID"].ToString());

@@ -30,6 +30,11 @@ namespace Sci.Production.Centralized
         private int bolSintexEffReportCompare = 0;
         private StringBuilder condition = new StringBuilder();
         private DateTime currentTime = DateTime.Now;
+        private string productType;
+        private string fabricType;
+        private string lining;
+        private string gender;
+        private string construction;
 
         /// <summary>
         /// R07
@@ -43,6 +48,11 @@ namespace Sci.Production.Centralized
             this.comboM.SetDefalutIndex();
             this.comboFactory.SetDefalutIndex(string.Empty);
             this.txtbrand1.MultiSelect = true;
+            this.comboProductType1.SetDataSource();
+            this.comboFabricType1.SetDataSource();
+            this.comboLining1.SetDataSource();
+            this.comboGender1.SetDataSource();
+            this.comboConstruction1.SetDataSource();
         }
 
         /// <inheritdoc/>
@@ -88,6 +98,11 @@ namespace Sci.Production.Centralized
             this.shift = this.comboShift.SelectedValue.ToString();
             this.brand = this.txtbrand1.Text;
             this.bolSintexEffReportCompare = this.radioSintexEffReportCompare.Checked ? 1 : 0;
+            this.productType = this.comboProductType1.Text;
+            this.fabricType = this.comboFabricType1.Text;
+            this.lining = this.comboLining1.Text;
+            this.gender = this.comboGender1.Text;
+            this.construction = this.comboConstruction1.Text;
             return base.ValidateInput();
         }
 
@@ -100,7 +115,7 @@ namespace Sci.Production.Centralized
         {
             this.printData = new DataTable[3];
             string sqlCmd = string.Format(
-                "exec dbo.GetAdidasEfficiencyReport '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', {7}",
+                "exec dbo.GetAdidasEfficiencyReport '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}'",
                 this.outputDate1.Value.ToString("yyyy/MM/dd"),
                 this.outputDate2.Value.ToString("yyyy/MM/dd"),
                 this.mdivision,
@@ -108,7 +123,12 @@ namespace Sci.Production.Centralized
                 this.cdCode,
                 this.shift,
                 this.brand,
-                this.bolSintexEffReportCompare);
+                this.bolSintexEffReportCompare,
+                this.productType,
+                this.fabricType,
+                this.lining,
+                this.gender,
+                this.construction);
 
             DBProxy.Current.DefaultTimeout = 2700;  // timeout時間改為45分鐘
 
@@ -172,6 +192,7 @@ select t.OutputDate
 	, t.ManHour
 	, t.TotalOutput
 	, t.CD
+    , t.CDCodeNew
 	, t.SeasonID
 	, t.BrandID
 	, t.Fabrication
@@ -309,22 +330,23 @@ outer apply (
                         ManHour = x.Field<decimal?>("ManHour"),
                         TotalOutput = x.Field<int>("TotalOutput"),
                         CD = x.Field<string>("CD"),
+                        CDCodeNew = x.Field<string>("CDCodeNew"),
                         SeasonID = x.Field<string>("SeasonID"),
                         BrandID = x.Field<string>("BrandID"),
                         Fabrication = string.Format("=IFERROR(VLOOKUP(LEFT(J{0}, 2),'Adidas data '!$A$2:$G$116, 4, FALSE), \"\")", index + 2),
                         ProductGroup = string.Format("=IFERROR(VLOOKUP(LEFT(J{0}, 2),'Adidas data '!$A$2:$G$116, 7, FALSE), \"\")", index + 2),
                         ProductFabrication = string.Format("=N{0}&M{0}", index + 2),
                         GSD = x.Field<decimal?>("GSD"),
-                        Earnedhours = string.Format("=IF(I{0}=\"\", \"\", IFERROR((I{0}*P{0})/60, \"\"))", index + 2),
+                        Earnedhours = string.Format("=IF(I{0}=\"\", \"\", IFERROR((I{0}*Q{0})/60, \"\"))", index + 2),
                         TotalWorkingHours = string.Format("=H{0}*G{0}", index + 2),
                         CumulateDaysofDaysinProduction = x.Field<int>("CumulateDaysofDaysinProduction"),
-                        EfficiencyLine = string.Format("=Q{0}/R{0}", index + 2),
+                        EfficiencyLine = string.Format("=R{0}/S{0}", index + 2),
                         GSDProsmv = x.Field<decimal?>("GSDProsmv"),
-                        Earnedhours2 = string.Format("=IF(I{0}=\"\", \"\", IFERROR(I{0}*U{0}/60, \"\"))", index + 2),
-                        EfficiencyLine2 = string.Format("=V{0}/R{0}", index + 2),
+                        Earnedhours2 = string.Format("=IF(I{0}=\"\", \"\", IFERROR(I{0}*V{0}/60, \"\"))", index + 2),
+                        EfficiencyLine2 = string.Format("=W{0}/S{0}", index + 2),
                         NoofInlineDefects = x.Field<int>("NoofInlineDefects"),
                         NoofEndlineDefectiveGarments = x.Field<int>("NoofEndlineDefectiveGarments"),
-                        WFT = string.Format("=IFERROR((X{0}+Y{0})/I{0}, \"\")", index + 2),
+                        WFT = string.Format("=IFERROR((Y{0}+Z{0})/I{0}, \"\")", index + 2),
                         Country = x.Field<string>("Country"),
                         Month = x.Field<string>("Month"),
                         IsGSDPro = x.Field<string>("IsGSDPro"),

@@ -149,6 +149,7 @@ into #tmpSewingDetail
 from System,SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId 
+left join Style st with (nolock) on st.Ukey = o.StyleUkey
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 Outer apply (
 	SELECT ProductType = r2.Name

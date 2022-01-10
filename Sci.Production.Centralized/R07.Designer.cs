@@ -45,6 +45,16 @@
             this.numYear = new System.Windows.Forms.NumericUpDown();
             this.txtbrand1 = new Sci.Production.Class.Txtbrand();
             this.lbBrand = new Sci.Win.UI.Label();
+            this.lbConstruction = new Sci.Win.UI.Label();
+            this.lbGender = new Sci.Win.UI.Label();
+            this.lbLining = new Sci.Win.UI.Label();
+            this.lbFabricType = new Sci.Win.UI.Label();
+            this.lbProductType = new Sci.Win.UI.Label();
+            this.comboGender1 = new Sci.Production.Class.ComboGender(this.components);
+            this.comboFabricType1 = new Sci.Production.Class.ComboFabricType(this.components);
+            this.comboLining1 = new Sci.Production.Class.ComboLining(this.components);
+            this.comboProductType1 = new Sci.Production.Class.ComboProductType(this.components);
+            this.comboConstruction1 = new Sci.Production.Class.ComboConstruction(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
             this.SuspendLayout();
             // 
@@ -129,7 +139,7 @@
             // 
             // lbShift
             // 
-            this.lbShift.Location = new System.Drawing.Point(13, 197);
+            this.lbShift.Location = new System.Drawing.Point(13, 368);
             this.lbShift.Name = "lbShift";
             this.lbShift.Size = new System.Drawing.Size(98, 23);
             this.lbShift.TabIndex = 137;
@@ -150,7 +160,7 @@
             this.comboShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboShift.FormattingEnabled = true;
             this.comboShift.IsSupportUnselect = true;
-            this.comboShift.Location = new System.Drawing.Point(115, 197);
+            this.comboShift.Location = new System.Drawing.Point(115, 368);
             this.comboShift.Name = "comboShift";
             this.comboShift.OldText = "";
             this.comboShift.Size = new System.Drawing.Size(66, 24);
@@ -184,7 +194,7 @@
             // 
             this.radioSintexEffReportCompare.AutoSize = true;
             this.radioSintexEffReportCompare.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioSintexEffReportCompare.Location = new System.Drawing.Point(115, 264);
+            this.radioSintexEffReportCompare.Location = new System.Drawing.Point(115, 435);
             this.radioSintexEffReportCompare.Name = "radioSintexEffReportCompare";
             this.radioSintexEffReportCompare.Size = new System.Drawing.Size(193, 21);
             this.radioSintexEffReportCompare.TabIndex = 145;
@@ -197,7 +207,7 @@
             this.radioDetail.AutoSize = true;
             this.radioDetail.Checked = true;
             this.radioDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioDetail.Location = new System.Drawing.Point(115, 236);
+            this.radioDetail.Location = new System.Drawing.Point(115, 407);
             this.radioDetail.Name = "radioDetail";
             this.radioDetail.Size = new System.Drawing.Size(82, 21);
             this.radioDetail.TabIndex = 144;
@@ -208,7 +218,7 @@
             // 
             // lbFormat
             // 
-            this.lbFormat.Location = new System.Drawing.Point(13, 236);
+            this.lbFormat.Location = new System.Drawing.Point(13, 407);
             this.lbFormat.Name = "lbFormat";
             this.lbFormat.Size = new System.Drawing.Size(98, 23);
             this.lbFormat.TabIndex = 143;
@@ -254,9 +264,126 @@
             this.lbBrand.TabIndex = 147;
             this.lbBrand.Text = "Brand";
             // 
+            // lbConstruction
+            // 
+            this.lbConstruction.Location = new System.Drawing.Point(13, 300);
+            this.lbConstruction.Name = "lbConstruction";
+            this.lbConstruction.Size = new System.Drawing.Size(98, 23);
+            this.lbConstruction.TabIndex = 257;
+            this.lbConstruction.Text = "Construction";
+            // 
+            // lbGender
+            // 
+            this.lbGender.Location = new System.Drawing.Point(13, 333);
+            this.lbGender.Name = "lbGender";
+            this.lbGender.Size = new System.Drawing.Size(98, 23);
+            this.lbGender.TabIndex = 256;
+            this.lbGender.Text = "Gender";
+            // 
+            // lbLining
+            // 
+            this.lbLining.Location = new System.Drawing.Point(13, 265);
+            this.lbLining.Name = "lbLining";
+            this.lbLining.Size = new System.Drawing.Size(98, 23);
+            this.lbLining.TabIndex = 255;
+            this.lbLining.Text = "Lining";
+            // 
+            // lbFabricType
+            // 
+            this.lbFabricType.Location = new System.Drawing.Point(13, 230);
+            this.lbFabricType.Name = "lbFabricType";
+            this.lbFabricType.Size = new System.Drawing.Size(98, 23);
+            this.lbFabricType.TabIndex = 254;
+            this.lbFabricType.Text = "Fabric Type";
+            // 
+            // lbProductType
+            // 
+            this.lbProductType.Location = new System.Drawing.Point(13, 196);
+            this.lbProductType.Name = "lbProductType";
+            this.lbProductType.Size = new System.Drawing.Size(98, 23);
+            this.lbProductType.TabIndex = 253;
+            this.lbProductType.Text = "Product Type";
+            // 
+            // comboGender1
+            // 
+            this.comboGender1.BackColor = System.Drawing.Color.White;
+            this.comboGender1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboGender1.FormattingEnabled = true;
+            this.comboGender1.IsSupportUnselect = true;
+            this.comboGender1.Location = new System.Drawing.Point(114, 332);
+            this.comboGender1.Name = "comboGender1";
+            this.comboGender1.OldText = "";
+            this.comboGender1.Size = new System.Drawing.Size(129, 24);
+            this.comboGender1.StyleGender = "";
+            this.comboGender1.TabIndex = 262;
+            // 
+            // comboFabricType1
+            // 
+            this.comboFabricType1.BackColor = System.Drawing.Color.White;
+            this.comboFabricType1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFabricType1.FormattingEnabled = true;
+            this.comboFabricType1.IsJunk = false;
+            this.comboFabricType1.IsSupportUnselect = true;
+            this.comboFabricType1.Location = new System.Drawing.Point(114, 229);
+            this.comboFabricType1.Name = "comboFabricType1";
+            this.comboFabricType1.OldText = "";
+            this.comboFabricType1.Size = new System.Drawing.Size(129, 24);
+            this.comboFabricType1.StyleFabricType = "";
+            this.comboFabricType1.TabIndex = 261;
+            // 
+            // comboLining1
+            // 
+            this.comboLining1.BackColor = System.Drawing.Color.White;
+            this.comboLining1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboLining1.FormattingEnabled = true;
+            this.comboLining1.IsSupportUnselect = true;
+            this.comboLining1.Location = new System.Drawing.Point(114, 264);
+            this.comboLining1.Name = "comboLining1";
+            this.comboLining1.OldText = "";
+            this.comboLining1.Size = new System.Drawing.Size(129, 24);
+            this.comboLining1.StyleLining = "";
+            this.comboLining1.TabIndex = 260;
+            // 
+            // comboProductType1
+            // 
+            this.comboProductType1.BackColor = System.Drawing.Color.White;
+            this.comboProductType1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboProductType1.FormattingEnabled = true;
+            this.comboProductType1.IsJunk = false;
+            this.comboProductType1.IsSupportUnselect = true;
+            this.comboProductType1.Location = new System.Drawing.Point(114, 195);
+            this.comboProductType1.Name = "comboProductType1";
+            this.comboProductType1.OldText = "";
+            this.comboProductType1.Size = new System.Drawing.Size(129, 24);
+            this.comboProductType1.StyleApparelType = "";
+            this.comboProductType1.TabIndex = 259;
+            // 
+            // comboConstruction1
+            // 
+            this.comboConstruction1.BackColor = System.Drawing.Color.White;
+            this.comboConstruction1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboConstruction1.FormattingEnabled = true;
+            this.comboConstruction1.IsSupportUnselect = true;
+            this.comboConstruction1.Location = new System.Drawing.Point(114, 299);
+            this.comboConstruction1.Name = "comboConstruction1";
+            this.comboConstruction1.OldText = "";
+            this.comboConstruction1.Size = new System.Drawing.Size(129, 24);
+            this.comboConstruction1.StyleGender = "";
+            this.comboConstruction1.TabIndex = 258;
+            // 
             // R07
             // 
-            this.ClientSize = new System.Drawing.Size(522, 321);
+            this.ClientSize = new System.Drawing.Size(522, 490);
+            this.Controls.Add(this.lbConstruction);
+            this.Controls.Add(this.lbGender);
+            this.Controls.Add(this.lbLining);
+            this.Controls.Add(this.lbFabricType);
+            this.Controls.Add(this.lbProductType);
+            this.Controls.Add(this.comboGender1);
+            this.Controls.Add(this.comboFabricType1);
+            this.Controls.Add(this.comboLining1);
+            this.Controls.Add(this.comboProductType1);
+            this.Controls.Add(this.comboConstruction1);
             this.Controls.Add(this.txtbrand1);
             this.Controls.Add(this.lbBrand);
             this.Controls.Add(this.numYear);
@@ -301,6 +428,16 @@
             this.Controls.SetChildIndex(this.numYear, 0);
             this.Controls.SetChildIndex(this.lbBrand, 0);
             this.Controls.SetChildIndex(this.txtbrand1, 0);
+            this.Controls.SetChildIndex(this.comboConstruction1, 0);
+            this.Controls.SetChildIndex(this.comboProductType1, 0);
+            this.Controls.SetChildIndex(this.comboLining1, 0);
+            this.Controls.SetChildIndex(this.comboFabricType1, 0);
+            this.Controls.SetChildIndex(this.comboGender1, 0);
+            this.Controls.SetChildIndex(this.lbProductType, 0);
+            this.Controls.SetChildIndex(this.lbFabricType, 0);
+            this.Controls.SetChildIndex(this.lbLining, 0);
+            this.Controls.SetChildIndex(this.lbGender, 0);
+            this.Controls.SetChildIndex(this.lbConstruction, 0);
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -325,5 +462,15 @@
         private System.Windows.Forms.NumericUpDown numYear;
         private Class.Txtbrand txtbrand1;
         private Win.UI.Label lbBrand;
+        private Win.UI.Label lbConstruction;
+        private Win.UI.Label lbGender;
+        private Win.UI.Label lbLining;
+        private Win.UI.Label lbFabricType;
+        private Win.UI.Label lbProductType;
+        private Class.ComboGender comboGender1;
+        private Class.ComboFabricType comboFabricType1;
+        private Class.ComboLining comboLining1;
+        private Class.ComboProductType comboProductType1;
+        private Class.ComboConstruction comboConstruction1;
     }
 }

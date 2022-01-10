@@ -184,7 +184,7 @@ Select o.ID, o.ProgramID, o.StyleID, o.SeasonID
 ,sod.QAQty 
 ,QARate = sod.QAQty * isnull([dbo].[GetOrderLocation_Rate](o.id ,sod.ComboType)/100,1)
 ,Round(sod.WorkHour * so.ManPower,2) as TotalManHour 
-,CDDesc = c.Description 
+,CDDesc = s.Description 
 ,StyleDesc = s.Description
 ,s.ModularParent, s.CPUAdjusted
 ,OutputDate,Shift, Team
@@ -193,7 +193,6 @@ Select o.ID, o.ProgramID, o.StyleID, o.SeasonID
 ,orderid
 ,Rate = isnull([dbo].[GetOrderLocation_Rate]( o.id ,sod.ComboType)/100,1) 
 ,ActManPower= so.Manpower
-,c.ProductionFamilyID
 , [MockupCPU] = isnull(mo.Cpu,0)
 , [MockupCPUFactor] = isnull(mo.CPUFactor,0)
 into #stmp
@@ -201,7 +200,6 @@ from Orders o WITH (NOLOCK)
     inner join SewingOutput_Detail sod WITH (NOLOCK) on sod.OrderId = o.ID
     inner join SewingOutput so WITH (NOLOCK) on so.ID = sod.ID and so.Shift <> 'O'  
     inner join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
-    inner join CDCode c WITH (NOLOCK) on c.ID = o.CdCodeID
 	inner join Factory f WITH (NOLOCK) on o.FactoryID=f.id
     inner join Brand b WITH (NOLOCK) on o.BrandID=b.ID
 	left join MockupOrder mo WITH (NOLOCK) on mo.ID = sod.OrderId
@@ -324,10 +322,8 @@ select a.ID
     , sum(a.QARate))
     , TotalManHour = sum(ROUND( ActManPower * WorkHour, 2))
     , TotalCPUOut = Sum(ROUND(IIF(Category='M',MockupCPU*MockupCPUFactor, CPU*CPUFactor*Rate)*QAQty,3))
-    , a.CDDesc
     , a.StyleDesc
     , a.ModularParent
-    , a.ProductionFamilyID
     , CPUAdjusted = sum(a.CPUAdjusted)
     , QAQty = sum(a.QAQty) 
     ,a.OutputDate
@@ -349,7 +345,7 @@ Outer apply (
 	and s.BrandID = a.BrandID
 )sty
 group by a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FactoryID, a.POID , a.Category, a.CdCodeID ,a.BuyerDelivery, a.SCIDelivery, a.SewingLineID 
-, a.CDDesc, a.StyleDesc,a.ComboType,a.ModularParent, a.ProductionFamilyID,a.OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,FtyZone
+, a.StyleDesc,a.ComboType,a.ModularParent, a.OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,FtyZone
 , sty.CDCodeNew, sty.ProductType, sty.FabricType, sty.Lining, sty.Gender, sty.Construction
 ";
                 #region 1.  By Factory
@@ -438,7 +434,7 @@ from #tmp Group BY A,B,C order by A,B,C";
                 string strStyle = string.Format(
                     @"
 {0} 
-Select StyleID, BrandID, CDCodeID, CDDesc, StyleDesc, SeasonID
+Select StyleID, BrandID, CDCodeID, StyleDesc, SeasonID
 , QARate, TotalCPUOut,TotalManHour, ModularParent, CPUAdjusted, Category, OutputDate, SewingLineID, FtyZone, FactoryID
 , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
 FROM #tmpz ",
@@ -476,7 +472,6 @@ select StyleID,BrandID,CDCodeID
 , Lining
 , Gender
 , Construction 
-, CDDesc
 , StyleDesc
 , SeasonID
 , G=sum(QARate)
@@ -510,14 +505,14 @@ select StyleID,BrandID,CDCodeID
                 group by a.FtyZone FOR XML PATH(''))
         ,1,1,'') 
 from #tmp 
-Group BY StyleID,BrandID,CDCodeID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction,CDDesc,StyleDesc,SeasonID,ModularParent,CPUAdjusted
+Group BY StyleID,BrandID,CDCodeID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction,StyleDesc,SeasonID,ModularParent,CPUAdjusted
 order by StyleID, BrandID, CDCodeID, StyleDesc";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData4o, string.Empty, sqlcmd, out this.gdtData4);
                 #endregion 4.   By Style
 
                 #region 5.  By CD
-                string strCdCodeID = string.Format(@"{0}  Select CdCodeID, CDDesc, QARate, TotalCPUOut,TotalManHour, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction FROM #tmpz ", strSQL);
+                string strCdCodeID = string.Format(@"{0}  Select StyleDesc, CdCodeID, QARate, TotalCPUOut,TotalManHour, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction FROM #tmpz ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -542,12 +537,12 @@ select CdCodeID
     , Lining
     , Gender
     , Construction
-    , CDDesc
+    , StyleDesc
     , C=sum(QARate),D=sum(TotalCPUOut),E=sum(TotalManHour)
     , F=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
     , G=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2)
 from #tmp 
-Group BY CdCodeID, CDDesc, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
+Group BY CdCodeID, StyleDesc, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
 order by CdCodeID";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData5o, string.Empty, sqlcmd, out this.gdtData5);
@@ -582,7 +577,7 @@ from #tmp Group BY A,B,C order by A,B,C";
                 #region 7.  By Factory, Brand , CDCode
                 string strFBCDCode = string.Format(
                     @"{0}
-Select BrandID, FtyZone, FactoryID, CdCodeID, CDDesc, QARate, TotalCPUOut,TotalManHour
+Select BrandID, FtyZone, FactoryID, CdCodeID, StyleDesc, QARate, TotalCPUOut,TotalManHour
     , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
 FROM #tmpz  ",
                     strSQL);
@@ -613,15 +608,15 @@ select BrandID
     , Lining
     , Gender
     , Construction
-    , CDDesc
+    , StyleDesc
     , F=sum(QARate)
     , G=sum(TotalCPUOut)
     , H=sum(TotalManHour)
     , I=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
     , J=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
 from #tmp 
-Group BY BrandID, FtyZone, FactoryID, CdCodeID, CDDesc, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
-order by BrandID, FtyZone, FactoryID, CdCodeID, CDDesc";
+Group BY BrandID, FtyZone, FactoryID, CdCodeID, StyleDesc, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
+order by BrandID, FtyZone, FactoryID, CdCodeID, StyleDesc";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData7o, string.Empty, sqlcmd, out this.gdtData7);
                 #endregion 7.   By Factory, Brand , CDCode
@@ -630,7 +625,7 @@ order by BrandID, FtyZone, FactoryID, CdCodeID, CDDesc";
                 string strPOCombo = string.Format(
                     @"
 {0} 
-Select FtyZone, POID, StyleID, BrandID, CdCodeID, CDDesc, ProductionFamilyID, StyleDesc, SeasonID, ProgramID
+Select FtyZone, POID, StyleID, BrandID, CdCodeID, StyleDesc, SeasonID, ProgramID
     , QARate, TotalCPUOut, TotalManHour, Category, OutputDate, SewingLineID
     , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
 FROM #tmpz  ",
@@ -670,8 +665,6 @@ select FtyZone
     , Lining
     , Gender
     , Construction
-    , CDDesc
-    , ProductionFamilyID
     , StyleDesc
     , SeasonID
     , ProgramID
@@ -700,9 +693,9 @@ select FtyZone
 							FOR XML PATH('')) ,1,1,'')),'(',format(Max(OutputDate), 'yyyy/MM/dd'),')')
             end
 from #tmp 
-Group BY FtyZone,POID,StyleID,BrandID,CdCodeID,CDDesc,ProductionFamilyID,StyleDesc,SeasonID,ProgramID
+Group BY FtyZone,POID,StyleID,BrandID,CdCodeID,StyleDesc,SeasonID,ProgramID
 	, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
-order by FtyZone,POID,StyleID,BrandID,ProductionFamilyID";
+order by FtyZone,POID,StyleID,BrandID";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData8o, string.Empty, sqlcmd, out this.gdtData8);
                 #endregion 8.   By PO Combo
@@ -711,7 +704,7 @@ order by FtyZone,POID,StyleID,BrandID,ProductionFamilyID";
                 string strProgram = string.Format(
                     @"
 {0}  
-Select ProgramID, StyleID, FtyZone, FactoryID, BrandID, CdCodeID, CDDesc, ProductionFamilyID
+Select ProgramID, StyleID, FtyZone, FactoryID, BrandID, CdCodeID
     , StyleDesc, SeasonID, QARate,TotalCPUOut, TotalManHour, Category, OutputDate, SewingLineID 
     , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
 FROM #tmpz ", strSQL);
@@ -749,8 +742,6 @@ select ProgramID
     , Lining
     , Gender
     , Construction
-    , CDDesc
-    , ProductionFamilyID
     , StyleDesc
     , SeasonID
     , K=sum(QARate),L=sum(TotalCPUOut)
@@ -776,8 +767,8 @@ select ProgramID
 							FOR XML PATH('')) ,1,1,'')),'(',format(Max(OutputDate), 'yyyy/MM/dd'),')')
             end
 from #tmp 
-Group BY ProgramID,StyleID,FtyZone,FactoryID,BrandID,CdCodeID,CDDesc,ProductionFamilyID,StyleDesc,SeasonID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
-order by ProgramID,StyleID,FtyZone,FactoryID,BrandID,CdCodeID,ProductionFamilyID";
+Group BY ProgramID,StyleID,FtyZone,FactoryID,BrandID,CdCodeID,StyleDesc,SeasonID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
+order by ProgramID,StyleID,FtyZone,FactoryID,BrandID,CdCodeID";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData9o, string.Empty, sqlcmd, out this.gdtData9);
                 #endregion 9.   By Program
