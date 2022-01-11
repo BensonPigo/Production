@@ -8,6 +8,9 @@ using Ict.Win;
 using Sci.Data;
 using System.Transactions;
 using System.Linq;
+using Sci.Production.Automation;
+using System.Threading.Tasks;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
@@ -29,13 +32,6 @@ namespace Sci.Production.Warehouse
             this.di_fabrictype.Add("A", "Accessory");
             MyUtility.Tool.SetupCombox(this.comboCategory, 2, 1, ",All,B,Bulk,S,Sample,M,Material");
             this.comboCategory.SelectedIndex = 0;
-        }
-
-        public P01_BatchReTransferMtlToScrap(DataRow master, DataTable detail)
-            : this()
-        {
-            this.dr_master = master;
-            this.dt_detail = detail;
         }
 
         // Find Now Button
@@ -261,13 +257,62 @@ drop table #ReTransferToScrapList,#ReTransferToScrapSummary
                         continue;
                     }
 
-                    DualResult result = PublicPrg.Prgs.ReTransferMtlToScrapByPO(transToScrapPO["POID"].ToString(), listMtlItem);
+                    string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "AC", "SubTransfer", DateTime.Now);
+                    if (MyUtility.Check.Empty(tmpId))
+                    {
+                        MyUtility.Msg.WarningBox("Get document ID fail!!");
+                        return;
+                    }
+
+                    DualResult result = PublicPrg.Prgs.ReTransferMtlToScrapByPO(tmpId, transToScrapPO["POID"].ToString(), listMtlItem);
                     if (!result)
                     {
                         transactionScope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
+
+                    Prgs.SubTransBarcode(true, tmpId);
+
+                    #region Sent W/H Fabric to Gensong
+
+                    // SubTransfer_Detail
+                    if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+                    {
+                        DataTable dtMain = new DataTable();
+                        dtMain.Columns.Add("ID", typeof(string));
+                        dtMain.Columns.Add("Type", typeof(string));
+                        dtMain.Columns.Add("Status", typeof(string));
+                        DataRow row = dtMain.NewRow();
+                        row["ID"] = tmpId;
+                        row["Type"] = "D";
+                        row["Status"] = "Confirmed";
+                        dtMain.Rows.Add(row);
+                        Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_Detail_New(dtMain))
+                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                    }
+                    #endregion
+
+                    #region Sent W/H Accessory to Vstrong
+
+                    // SubTransfer_Detail
+                    if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                    {
+                        DataTable dtMain = new DataTable();
+                        dtMain.Columns.Add("ID", typeof(string));
+                        dtMain.Columns.Add("Type", typeof(string));
+                        dtMain.Columns.Add("Status", typeof(string));
+                        DataRow row = dtMain.NewRow();
+                        row["ID"] = tmpId;
+                        row["Type"] = "D";
+                        row["Status"] = "Confirmed";
+                        dtMain.Rows.Add(row);
+                        Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_Detail_New(dtMain, "New"))
+                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    }
+
+                    // this.QueryData();
+                    #endregion
                 }
 
                 transactionScope.Complete();

@@ -3649,12 +3649,12 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
         }
 
         /// <inheritdoc/>
-        public static DualResult ReTransferMtlToScrapByPO(string poID, List<DataRow> listMtlItem)
+        public static DualResult ReTransferMtlToScrapByPO(string newID, string poID, List<DataRow> listMtlItem)
         {
             string sqlRetransferToScrap = $@"
         -- 新增 報廢單主檔 & 明細檔
-		IF EXISTS(SELECT * FROM [dbo].[SubTransfer] S WITH (NOLOCK) WHERE S.ID = '{poID}' AND S.Status='Confirmed')
-			update [dbo].[SubTransfer] set [EditName]= '{Env.User.UserID}' , [EditDate] = GETDATE() WHERE ID = '{poID}' 
+		IF EXISTS(SELECT * FROM [dbo].[SubTransfer] S WITH (NOLOCK) WHERE S.ID = '{newID}' AND S.Status='Confirmed')
+			update [dbo].[SubTransfer] set [EditName]= '{Env.User.UserID}' , [EditDate] = GETDATE() WHERE ID = '{newID}' 
 		ELSE 
 		BEGIN
 			INSERT INTO [dbo].[SubTransfer]
@@ -3662,9 +3662,9 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
 				   ,[Type]
 				   ,[IssueDate]				   ,[Status]				   ,[Remark]
 				   ,[AddName]				   ,[AddDate]				   ,[EditName]
-				   ,[EditDate])
+				   ,[EditDate], [POID])
 			VALUES
-					('{poID}' 
+					('{newID}' 
 					,'{Env.User.Keyword}' 
 					,'{Env.User.Factory}'
 					,'D' -- A2C
@@ -3675,19 +3675,258 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
 					,GETDATE()
 					,'{Env.User.UserID}' 
 					,GETDATE()
+                    ,'{poID}'
 					);
 		END
 ";
             foreach (var retransferToScrapItem in listMtlItem)
             {
                 string mDivisionPoDetailUkey = MyUtility.Check.Empty(retransferToScrapItem["MDivisionPoDetailUkey"]) ? "NULL" : retransferToScrapItem["MDivisionPoDetailUkey"].ToString();
+                sqlRetransferToScrap += $@"
+ INSERT INTO [dbo].[SubTransfer_Detail]
+            ([ID]				,[FromFtyInventoryUkey]           ,[FromMDivisionID]           ,[FromFactoryID]
+		    ,[FromPOID]
+            ,[FromSeq1]           ,[FromSeq2]						,[FromRoll]					,[FromStockType]
+            ,[FromDyelot]           
+		    ,[ToMDivisionID]    ,[ToFactoryID]						,[ToPOID]					,[ToSeq1]
+            ,[ToSeq2]           ,[ToRoll]							,[ToStockType]				,[ToDyelot]
+            ,[Qty]			   ,[ToLocation])
+	SELECT '{newID}' 
+		    ,Ukey
+            ,'' [FromMDivisionID] 
+            ,Factory = (select FactoryID from Orders with (nolock) where ID=fi.POID)
+            ,[POID]
+            ,[Seq1]
+            ,[Seq2]
+            ,[Roll]
+            ,'B' [FromStock]
+            ,[Dyelot]
+            ,'' [ToMDivisionID]
+            ,Factory =  (select FactoryID from Orders with (nolock) where ID=fi.POID)
+            ,[POID]
+            ,[Seq1]
+            ,[Seq2]
+            ,[Roll]
+            ,'O'	[ToStock]
+            ,[Dyelot]
+            ,Qty =  fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty
+            ,[ToLocation]=isnull(
+            (
+	            SELECT TOP 1 ID 
+	            FROM MtlLocation WITH (NOLOCK)
+	            WHERE ID in (select data from [dbo].[SplitString](dbo.Getlocation(fi.Ukey),','))
+	            AND StockType='O' AND Junk=0
+            ),'')
+		    from dbo.FtyInventory fi WITH (NOLOCK)
+	        where fi.Ukey = '{retransferToScrapItem["Ukey"]}'
+";
                 sqlRetransferToScrap += $@" 
-    exec dbo.usp_ReTransferMtlToScrap {retransferToScrapItem["Ukey"]}
     exec dbo.usp_SingleItemRecaculate {mDivisionPoDetailUkey}, '{poID}', '{retransferToScrapItem["Seq1"]}', '{retransferToScrapItem["Seq2"]}'
     ";
             }
 
             return DBProxy.Current.Execute(null, sqlRetransferToScrap);
+        }
+
+        public static bool SubTransBarcode(bool isConfirmed, string ID)
+        {
+            DualResult result;
+            DataTable dt = new DataTable();
+            string sqlcmd = string.Empty;
+            string upd_Fty_Barcode_V1 = string.Empty;
+            string upd_Fty_Barcode_V2 = string.Empty;
+
+            #region From
+            sqlcmd = $@"
+select i2.ID
+,[Barcode1] = f.Barcode
+,[OriBarcode] = fbOri.Barcode
+,[balanceQty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
+,[NewBarcode] = iif(f.Barcode ='',fbOri.Barcode,f.Barcode)
+,[Poid] = i2.FromPOID
+,[Seq1] = i2.FromSeq1
+,[Seq2] = i2.FromSeq2
+,[Roll] = i2.FromRoll
+,[Dyelot] = i2.FromDyelot
+,[StockType] = i2.FromStockType
+from Production.dbo.SubTransfer_Detail i2
+inner join Production.dbo.SubTransfer i on i2.Id=i.Id 
+inner join FtyInventory f on f.POID = i2.FromPOID
+    and f.Seq1 = i2.FromSeq1 and f.Seq2 = i2.FromSeq2
+    and f.Roll = i2.FromRoll and f.Dyelot = i2.FromDyelot
+    and f.StockType = i2.FromStockType
+outer apply(
+	select *
+	from FtyInventory_Barcode t
+	where t.Ukey = f.Ukey
+	and t.TransactionID = '{ID}'
+)fbOri
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = i2.FromPoid and seq1=i2.FromSeq1 and seq2=i2.FromSeq2 
+	and FabricType='F'
+)
+and i2.id ='{ID}'
+";
+            DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
+            var data_From_FtyBarcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
+                                        select new
+                                        {
+                                            TransactionID = ID,
+                                            poid = m.Field<string>("poid"),
+                                            seq1 = m.Field<string>("seq1"),
+                                            seq2 = m.Field<string>("seq2"),
+                                            stocktype = m.Field<string>("stocktype"),
+                                            roll = m.Field<string>("roll"),
+                                            dyelot = m.Field<string>("dyelot"),
+                                            Barcode = m.Field<string>("NewBarcode"),
+                                        }).ToList();
+
+            // confirmed 要刪除Barcode, 反之則從Ftyinventory_Barcode補回
+            upd_Fty_Barcode_V1 = isConfirmed ? Prgs.UpdateFtyInventory_IO(70, null, !isConfirmed) : Prgs.UpdateFtyInventory_IO(72, null, true);
+            upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, isConfirmed);
+            DataTable resultFrom;
+            if (data_From_FtyBarcode.Count >= 1)
+            {
+                // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
+                if (!(result = MyUtility.Tool.ProcessWithObject(data_From_FtyBarcode, string.Empty, upd_Fty_Barcode_V1, out resultFrom, "#TmpSource")))
+                {
+                    MyUtility.Msg.WarningBox(result.ToString());
+                    return false;
+                }
+
+                if (!(result = MyUtility.Tool.ProcessWithObject(data_From_FtyBarcode, string.Empty, upd_Fty_Barcode_V2, out resultFrom, "#TmpSource")))
+                {
+                    MyUtility.Msg.WarningBox(result.ToString());
+                    return false;
+                }
+            }
+            #endregion
+
+            #region To
+
+            sqlcmd = $@"
+select f.Ukey
+,[ToBarcode] = isnull(f.Barcode,'')
+,[ToBarcode2] = isnull(Tofb.Barcode,'')
+,[FromBarcode] = isnull(fromBarcode.Barcode,'')
+,[FromBarcode2] = isnull(Fromfb.Barcode,'')
+,[ToBalanceQty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
+,[FromBalanceQty] = fromBarcode.BalanceQty
+,[NewBarcode] = ''
+,[Poid] = i2.ToPOID
+,[Seq1] = i2.ToSeq1
+,[Seq2] = i2.ToSeq2
+,[Roll] = i2.ToRoll
+,[Dyelot] = i2.ToDyelot
+,[StockType] = i2.ToStockType
+from Production.dbo.SubTransfer_Detail i2
+inner join Production.dbo.SubTransfer i on i2.Id=i.Id 
+left join FtyInventory f on f.POID = i2.ToPOID
+    and f.Seq1 = i2.ToSeq1 and f.Seq2 = i2.ToSeq2
+    and f.Roll = i2.ToRoll and f.Dyelot = i2.ToDyelot
+    and f.StockType = i2.ToStockType
+outer apply(
+	select Barcode = MAX(Barcode)
+	from FtyInventory_Barcode t
+	where t.Ukey = f.Ukey
+)Tofb
+outer apply(
+	select f2.Barcode 
+	,BalanceQty = f2.InQty - f2.OutQty + f2.AdjustQty - f2.ReturnQty
+	,f2.Ukey
+	from FtyInventory f2	
+	where f2.POID = i2.FromPOID
+	and f2.Seq1 = i2.FromSeq1 and f2.Seq2 = i2.FromSeq2
+	and f2.Roll = i2.FromRoll and f2.Dyelot = i2.FromDyelot
+	and f2.StockType = i2.FromStockType
+)fromBarcode
+outer apply(
+	select Barcode = MAX(Barcode)
+	from FtyInventory_Barcode t
+	where t.Ukey = fromBarcode.Ukey
+)Fromfb
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = i2.ToPoid and seq1=i2.ToSeq1 and seq2=i2.ToSeq2 
+	and FabricType='F'
+)
+and i2.id ='{ID}'
+";
+            DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                string strBarcode = string.Empty;
+
+                // 目標有自己的Barcode, 則Ftyinventory跟記錄都是用自己的
+                if (!MyUtility.Check.Empty(dr["ToBarcode"]) || !MyUtility.Check.Empty(dr["ToBarcode2"]))
+                {
+                    strBarcode = MyUtility.Check.Empty(dr["ToBarcode2"]) ? dr["ToBarcode"].ToString() : dr["ToBarcode2"].ToString();
+                    dr["NewBarcode"] = strBarcode;
+                }
+                else
+                {
+                    // 目標沒Barcode, 則 來源有餘額(部分轉)就用來源Barocde_01++, 如果全轉就用來源Barocde
+                    strBarcode = MyUtility.Check.Empty(dr["FromBarcode2"]) ? dr["FromBarcode"].ToString() : dr["FromBarcode2"].ToString();
+
+                    // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
+                    if (!MyUtility.Check.Empty(dr["FromBalanceQty"]))
+                    {
+                        if (strBarcode.Contains("-"))
+                        {
+                            dr["NewBarcode"] = strBarcode.Substring(0, 13) + "-" + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
+                        }
+                        else
+                        {
+                            dr["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
+                        }
+                    }
+                    else
+                    {
+                        // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
+                        dr["NewBarcode"] = strBarcode;
+                    }
+                }
+            }
+
+            var data_To_FtyBarcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
+                                      select new
+                                      {
+                                          TransactionID = ID,
+                                          poid = m.Field<string>("poid"),
+                                          seq1 = m.Field<string>("seq1"),
+                                          seq2 = m.Field<string>("seq2"),
+                                          stocktype = m.Field<string>("stocktype"),
+                                          roll = m.Field<string>("roll"),
+                                          dyelot = m.Field<string>("dyelot"),
+                                          Barcode = m.Field<string>("NewBarcode"),
+                                      }).ToList();
+
+            // confirmed 要刪除Barcode, 反之則從Ftyinventory_Barcode補回
+            upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(70, null, isConfirmed);
+            upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, isConfirmed);
+            DataTable resultTo;
+            if (data_To_FtyBarcode.Count >= 1)
+            {
+                // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
+                if (!(result = MyUtility.Tool.ProcessWithObject(data_To_FtyBarcode, string.Empty, upd_Fty_Barcode_V1, out resultTo, "#TmpSource")))
+                {
+                    MyUtility.Msg.WarningBox(result.ToString());
+                    return false;
+                }
+
+                if (!(result = MyUtility.Tool.ProcessWithObject(data_To_FtyBarcode, string.Empty, upd_Fty_Barcode_V2, out resultTo, "#TmpSource")))
+                {
+                    MyUtility.Msg.WarningBox(result.ToString());
+                    return false;
+                }
+            }
+            #endregion
+
+            return true;
         }
 
         /// <inheritdoc/>

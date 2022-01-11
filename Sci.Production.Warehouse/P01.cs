@@ -9,6 +9,8 @@ using System.Data.SqlClient;
 using Sci.Production.PublicForm;
 using System.Threading.Tasks;
 using Sci.Production.Automation;
+using Sci.Production.PublicPrg;
+using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
@@ -118,7 +120,7 @@ namespace Sci.Production.Warehouse
             }
             else
             {
-                var frm = new P01_BatchCloseRowMaterial();
+                var frm = new P01_BatchCloseRowMaterial(this.dataType);
                 this.ShowWaitMessage("Data Loading....");
                 frm.QueryData(true);
                 this.HideWaitMessage();
@@ -519,6 +521,13 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 return;
             }
 
+            string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "AC", "SubTransfer", DateTime.Now);
+            if (MyUtility.Check.Empty(tmpId))
+            {
+                MyUtility.Msg.WarningBox("Get document ID fail!!");
+                return;
+            }
+
             if (this.dataType != "Y")
             {
                 #region 檢查B倉是否還有資料Lock
@@ -538,31 +547,23 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
 
                 DualResult result;
                 #region store procedure parameters
-                IList<SqlParameter> cmds = new List<SqlParameter>();
-                SqlParameter sp_StocktakingID = new SqlParameter();
-                sp_StocktakingID.ParameterName = "@poid";
-                sp_StocktakingID.Value = dr["poid"].ToString().Trim();
-                cmds.Add(sp_StocktakingID);
-                SqlParameter sp_mdivision = new SqlParameter();
-                sp_mdivision.ParameterName = "@MDivisionid";
-                sp_mdivision.Value = Env.User.Keyword;
-                cmds.Add(sp_mdivision);
-                SqlParameter sp_factory = new SqlParameter();
-                sp_factory.ParameterName = "@factoryid";
-                sp_factory.Value = Env.User.Factory;
-                cmds.Add(sp_factory);
-                SqlParameter sp_loginid = new SqlParameter();
-                sp_loginid.ParameterName = "@loginid";
-                sp_loginid.Value = Env.User.UserID;
-                cmds.Add(sp_loginid);
+
+                List<SqlParameter> sqlPar = new List<SqlParameter>();
+                sqlPar.Add(new SqlParameter("@poid", dr["POID"].ToString()));
+                sqlPar.Add(new SqlParameter("@MDivisionid", Env.User.Keyword));
+                sqlPar.Add(new SqlParameter("@factoryid", Env.User.UserID));
+                sqlPar.Add(new SqlParameter("@loginid", Env.User.UserID));
+                sqlPar.Add(new SqlParameter("@NewID", tmpId));
                 #endregion
-                if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_WarehouseClose", cmds)))
+                if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_WarehouseClose", sqlPar)))
                 {
-                    // MyUtility.Msg.WarningBox(result.Messages[1].ToString());
                     Exception ex = result.GetException();
                     MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
                     return;
                 }
+
+                PublicPrg.Prgs.SubTransBarcode(true, tmpId);
+
                 #region Sent W/H Fabric to Gensong
 
                 // WHClose
@@ -581,7 +582,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                     dtMain.Columns.Add("Type", typeof(string));
                     dtMain.Columns.Add("Status", typeof(string));
                     DataRow row = dtMain.NewRow();
-                    row["ID"] = this.CurrentMaintain["Poid"].ToString();
+                    row["ID"] = tmpId;
                     row["Type"] = "D";
                     row["Status"] = "Confirmed";
                     dtMain.Rows.Add(row);
@@ -608,7 +609,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                     dtMain.Columns.Add("Type", typeof(string));
                     dtMain.Columns.Add("Status", typeof(string));
                     DataRow row = dtMain.NewRow();
-                    row["ID"] = this.CurrentMaintain["Poid"].ToString();
+                    row["ID"] = tmpId;
                     row["Type"] = "D";
                     row["Status"] = "Confirmed";
                     dtMain.Rows.Add(row);
