@@ -195,6 +195,8 @@ and f.POID = '{this.poID}'
                     return;
                 }
 
+                Prgs.SubTransBarcode(true, tmpId);
+
                 #region Sent W/H Fabric to Gensong
 
                 // SubTransfer_Detail

@@ -10,6 +10,7 @@ using System.Transactions;
 using System.Linq;
 using Sci.Production.Automation;
 using System.Threading.Tasks;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
@@ -270,6 +271,8 @@ drop table #ReTransferToScrapList,#ReTransferToScrapSummary
                         this.ShowErr(result);
                         return;
                     }
+
+                    Prgs.SubTransBarcode(true, tmpId);
 
                     #region Sent W/H Fabric to Gensong
 

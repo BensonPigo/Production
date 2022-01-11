@@ -3725,8 +3725,6 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
     ";
             }
 
-            SubTransBarcode(true, newID);
-
             return DBProxy.Current.Execute(null, sqlRetransferToScrap);
         }
 
