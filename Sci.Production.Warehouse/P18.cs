@@ -162,6 +162,21 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["TransferExportID"]))
+            {
+                string sqlCheckTransferExport = @"
+select 1 from TransferExport with (nolock)
+where ID = @ID and Confirm != 1
+";
+                List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@ID", this.CurrentMaintain["TransferExportID"]) };
+                bool isTransferExportNotConfirmed = MyUtility.Check.Seek(sqlCheckTransferExport, listPar);
+                if (isTransferExportNotConfirmed)
+                {
+                    MyUtility.Msg.WarningBox("TPE status is not 'Confirm', cannot create transfer in record.");
+                    return false;
+                }
+            }
+
             foreach (DataRow row in this.DetailDatas)
             {
                 if (MyUtility.Check.Empty(row["seq1"]) || MyUtility.Check.Empty(row["seq2"]))
@@ -1292,6 +1307,25 @@ when matched then
                         return;
                     }
 
+                    if (!MyUtility.Check.Empty(this.CurrentMaintain["TransferExportID"]))
+                    {
+                        string sqlUpdateTransferExport = @" update TransferExport set WhseArrival = @WhseArrival, PackingArrival = @PackingArrival where ID = @TransferExportID";
+                        List<SqlParameter> listParTransferExport = new List<SqlParameter>()
+                        {
+                            new SqlParameter("@WhseArrival", this.CurrentMaintain["IssueDate"]),
+                            new SqlParameter("@PackingArrival", this.CurrentMaintain["PackingArrival"]),
+                            new SqlParameter("@TransferExportID", this.CurrentMaintain["TransferExportID"]),
+                        };
+
+                        result = DBProxy.Current.Execute(null, sqlUpdateTransferExport, listParTransferExport);
+                        if (!result)
+                        {
+                            transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
+                    }
+
                     transactionscope.Complete();
                     transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Confirmed successful");
@@ -1667,6 +1701,23 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                         return;
                     }
 
+                    if (!MyUtility.Check.Empty(this.CurrentMaintain["TransferExportID"]))
+                    {
+                        string sqlUpdateTransferExport = @" update TransferExport set WhseArrival = null, PackingArrival = null where ID = @TransferExportID";
+                        List<SqlParameter> listParTransferExport = new List<SqlParameter>()
+                        {
+                            new SqlParameter("@TransferExportID", this.CurrentMaintain["TransferExportID"]),
+                        };
+
+                        result = DBProxy.Current.Execute(null, sqlUpdateTransferExport, listParTransferExport);
+                        if (!result)
+                        {
+                            transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
+                    }
+
                     transactionscope.Complete();
                     transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
@@ -2011,6 +2062,104 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
         private void BtnCallP99_Click(object sender, EventArgs e)
         {
             P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P18", this);
+        }
+
+        private void TxtTransferExportID_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.txtTransferExportID.Text == this.CurrentMaintain["TransferExportID"].ToString())
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.txtTransferExportID.Text))
+            {
+                ((DataTable)this.detailgridbs.DataSource).Rows.Clear();
+                return;
+            }
+
+            List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@ID", this.txtTransferExportID.Text) };
+            string sqlGetTrasnferExport = $@"
+select  ted.POID,
+        [Seq] = concat(Ltrim(Rtrim(ted.Seq1)), ' ', ted.Seq2),
+        ted.Seq1,
+        ted.Seq2,
+        [Roll] = tdc.Carton,
+        [Dyelot] = tdc.LotNo,
+        [StockType] = 'B',
+        [Qty] = isnull(dbo.GetUnitQty(tdc.StockUnitID, psd.StockUnit, sum(isnull(tdc.StockQty, 0))), 0),
+        ted.FabricType,
+        [Fabric] = case when ted.FabricType = 'F' then 'Fabric' 
+                             when ted.FabricType = 'A' then 'Accessory'
+                        else '' end,
+        [Description] = dbo.getMtlDesc(ted.poid, ted.seq1, ted.seq2,2,0),
+        psd.StockUnit,
+        psd.Refno,
+        [ColorID] = Color.Value
+from    TransferExport te with (nolock)
+inner join TransferExport_Detail ted with (nolock) on ted.ID = te.ID 
+inner join TransferExport_Detail_Carton tdc with (nolock) on ted.Ukey = tdc.TransferExport_DetailUkey
+left join Po_Supp_Detail psd with (nolock) on psd.ID = ted.POID and psd.Seq1 = ted.Seq1 and psd.Seq2 = ted.Seq2
+LEFT JOIN Fabric f WITH (NOLOCK) ON psd.SCIRefNo = f.SCIRefNo
+OUTER APPLY(
+ SELECT [Value]=
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF( isnull(psd.SuppColor,'') = '',dbo.GetColorMultipleID(psd.BrandID,psd.ColorID),psd.SuppColor)
+		 ELSE dbo.GetColorMultipleID(psd.BrandID,psd.ColorID)
+	 END
+)Color
+where   te.ID = @ID and
+		te.Confirm  = 1 and
+		exists(select 1 from Factory f with (nolock) 
+		        where f.ID = te.FactoryID and 
+		              f.IsproduceFty = 1 and 
+		              f.MDivisionID  = '{Env.User.Keyword}' ) and
+		not exists(select 1 from TransferIn tf with (nolock) where tf.TransferExportID = te.ID and tf.ID <> '{this.CurrentMaintain["ID"]}') and
+        tdc.StockQty > 0
+group by ted.POID, ted.Seq1, ted.Seq2, tdc.Carton, tdc.LotNo, ted.FabricType, psd.StockUnit, psd.Refno, Color.Value, tdc.StockUnitID, psd.StockUnit
+";
+
+            DataTable dtTrasnferExport;
+
+            DualResult result = DBProxy.Current.Select(null, sqlGetTrasnferExport, listPar, out dtTrasnferExport);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            ((DataTable)this.detailgridbs.DataSource).Rows.Clear();
+
+            if (dtTrasnferExport.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Transfer WK# not found");
+                return;
+            }
+
+            DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
+
+            foreach (DataRow drImport in dtTrasnferExport.Rows)
+            {
+                DataRow drNew = dtDetail.NewRow();
+
+                drNew["POID"] = drImport["POID"];
+                drNew["Seq"] = drImport["Seq"];
+                drNew["Seq1"] = drImport["Seq1"];
+                drNew["Seq2"] = drImport["Seq2"];
+                drNew["Roll"] = drImport["Roll"];
+                drNew["Dyelot"] = drImport["Dyelot"];
+                drNew["StockType"] = drImport["StockType"];
+                drNew["Qty"] = drImport["Qty"];
+                drNew["FabricType"] = drImport["FabricType"];
+                drNew["Fabric"] = drImport["Fabric"];
+                drNew["Description"] = drImport["Description"];
+                drNew["StockUnit"] = drImport["StockUnit"];
+                drNew["Refno"] = drImport["Refno"];
+                drNew["ColorID"] = drImport["ColorID"];
+
+                dtDetail.Rows.Add(drNew);
+            }
+
+            this.Change_record();
         }
     }
 }
