@@ -1722,6 +1722,8 @@ select  a.id
         ,a.Unoriginal 
         ,[ActualWeight] = isnull(a.ActualWeight, 0)
         ,a.MDivisionID
+        ,a.CompleteTime
+        ,a.SentToWMS
 from dbo.TransferIn_Detail a WITH (NOLOCK) 
 left join Po_Supp_Detail p WITH (NOLOCK)  on a.poid = p.id
                               and a.seq1 = p.seq1
