@@ -109,7 +109,17 @@ namespace Sci.Production.Shipping
 select 0 as Selected,ID as WKNo,ShipModeID,WeightKg as GW, Cbm, '' as ShippingAPID, Blno,
 '' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
 from FtyExport WITH (NOLOCK) 
- where Type = 3  and blno='{0}'
+ where Type = 3  and blno = '{0}'
+union all
+select 0 as Selected,ID as WKNo,ShipModeID,t2.WeightKg as GW, t2.Cbm, '' as ShippingAPID, Blno,
+'' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,0 as FtyWK
+from TransferExport t1 WITH (NOLOCK) 
+outer apply(
+	select WeightKg = sum(s.WeightKg) , Cbm = sum(s.CBM)
+	from TransferExport_Detail s
+	where s.ID = t1.ID
+)t2
+where blno = '{0}'
  ", e.FormattedValue.ToString());
                         DataTable dtExp;
                         DBProxy.Current.Select(null, chkExp, out dtExp);
@@ -156,12 +166,24 @@ from FtyExport WITH (NOLOCK)
  ),
 Expt as
 (select 0 as Selected,ID as WKNo,ShipModeID,WeightKg as GW, Cbm, '' as ShippingAPID, Blno,
-'' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
+'' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,0 as FtyWK
 from Export WITH (NOLOCK) 
- where blno='{0}')
+ where blno='{0}'),
+TransferExpt as
+(select 0 as Selected,ID as WKNo,ShipModeID,t2.WeightKg as GW, t2.Cbm, '' as ShippingAPID, Blno,
+'' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,0 as FtyWK
+from TransferExport t WITH (NOLOCK) 
+outer apply(
+	select WeightKg = sum(s.WeightKg) , Cbm = sum(s.CBM)
+	from TransferExport_Detail s
+	where s.ID = t.ID
+)t2
+ where blno = '{0}')
 select * from FTY
 union all 
-select * from Expt", e.FormattedValue.ToString());
+select * from Expt
+union all
+select * from TransferExpt", e.FormattedValue.ToString());
                         DataTable dtImp;
                         DBProxy.Current.Select(null, chkImp, out dtImp);
                         if (MyUtility.Check.Empty(dtImp))
@@ -372,12 +394,26 @@ FTY AS
     '' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
     from FtyExport fe WITH (NOLOCK) 
     where fe.Type = 3  and fe.id='{0}'
+) ,
+TransExport AS
+(
+     select 0 as Selected,te.ID as WKNo,te.ShipModeID,t2.WeightKg as GW, t2.Cbm, '' as ShippingAPID, Blno, '' as Bl2No,
+    '' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
+    from TransferExport te WITH (NOLOCK) 
+    outer apply(
+	    select WeightKg = sum(s.WeightKg) , Cbm = sum(s.CBM)
+	    from TransferExport_Detail s
+	    where s.ID = te.ID
+    )t2
+    where  te.id='{0}'
 )
 select * from GB 
 union all 
 select * from PL
 union all
 SELECT * FROM FTY
+union all
+SELECT * FROM TransExport
  ", e.FormattedValue.ToString());
                         DataTable dtExp;
                         DBProxy.Current.Select(null, chkExp, out dtExp);
@@ -444,9 +480,22 @@ FtyExportData as
  '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
  from FtyExport WITH (NOLOCK) 
  where Type <> 3  and id='{0}') 
+ ,
+TransferExportData as 
+(select 0 as Selected,ID as WKNo,Blno,ShipModeID,t2.WeightKg as GW, t2.Cbm, '' as InvNo, '' as ShippingAPID, 
+ '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK
+from TransferExport t WITH (NOLOCK) 
+outer apply(
+	select WeightKg = sum(s.WeightKg) , Cbm = sum(s.CBM)
+	from TransferExport_Detail s
+	where s.ID = t.ID
+)t2
+ where 1 = 1 and id='{0}' )
 select * from ExportData 
 union all 
-select * from FtyExportData ", e.FormattedValue.ToString());
+select * from FtyExportData
+union all
+select * from TransferExportData ", e.FormattedValue.ToString());
                         DataTable dtImp;
                         DBProxy.Current.Select(null, chkImp, out dtImp);
                         if (MyUtility.Check.Empty(dtImp))
@@ -506,7 +555,7 @@ where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
             this.Helper.Controls.Grid.Generator(this.gridBLNo)
                 .Text("BLNo", header: "BL/MAWB No.", width: Widths.AnsiChars(13), settings: bLNo)
                 .Text("BL2No", header: "FCR/BL/HAWB", width: Widths.AnsiChars(13), settings: bL2No)
-                .Text(MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT" ? "WKNo" : "InvNo", header: MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT" ? "WK#/Fty WK#" : "GB#/Fty WK#/Packing#", width: Widths.AnsiChars(18), settings: wKNO)
+                .Text(MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT" ? "WKNo" : "InvNo", header: MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT" ? "WK#/Transfer WK#/Fty WK#" : "GB#/Transfer WK#/Fty WK#/Packing#", width: Widths.AnsiChars(25), settings: wKNO)
 
                 .Text("DropDownListName", header: "Fty WK# Type", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("ShipModeID", header: "Shipping Mode", width: Widths.AnsiChars(5), iseditingreadonly: true)

@@ -169,6 +169,18 @@
     <Compile Include="B08.designer.cs">
       <DependentUpon>B08.cs</DependentUpon>
     </Compile>
+    <Compile Include="B09.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B09.Designer.cs">
+      <DependentUpon>B09.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P06_ExportDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P06_ExportDetail.Designer.cs">
+      <DependentUpon>P06_ExportDetail.cs</DependentUpon>
+    </Compile>
     <Compile Include="P03_Seq.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -187,6 +199,12 @@
     <Compile Include="P07_QRCodeSticker.Designer.cs">
       <DependentUpon>P07_QRCodeSticker.cs</DependentUpon>
     </Compile>
+    <Compile Include="P06.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P06.Designer.cs">
+      <DependentUpon>P06.cs</DependentUpon>
+    </Compile>
     <Compile Include="P18_Print.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -204,6 +222,12 @@
     </Compile>
     <Compile Include="P03_ReturnQty.Designer.cs">
       <DependentUpon>P03_ReturnQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P19_TransferWKImport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P19_TransferWKImport.Designer.cs">
+      <DependentUpon>P19_TransferWKImport.cs</DependentUpon>
     </Compile>
     <Compile Include="P34_PrintData.cs" />
     <Compile Include="P63_CreateSeq.cs">
@@ -1471,6 +1495,9 @@
     <EmbeddedResource Include="B08.resx">
       <DependentUpon>B08.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B09.resx">
+      <DependentUpon>B09.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
     </EmbeddedResource>
@@ -1483,6 +1510,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_TrimCardPrint.resx">
       <DependentUpon>P01_TrimCardPrint.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P06_ExportDetail.resx">
+      <DependentUpon>P06_ExportDetail.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_Cartondetail.resx">
       <DependentUpon>P02_Cartondetail.cs</DependentUpon>
@@ -1501,6 +1531,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P07_QRCodeSticker.resx">
       <DependentUpon>P07_QRCodeSticker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P06.resx">
+      <DependentUpon>P06.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P19_TransferWKImport.resx">
+      <DependentUpon>P19_TransferWKImport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P33_QTThread_Detail.resx">
       <DependentUpon>P33_QTThread_Detail.cs</DependentUpon>

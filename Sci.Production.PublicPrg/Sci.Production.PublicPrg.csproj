@@ -155,6 +155,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="APITransfer.cs" />
     <Compile Include="DataTableToList.cs" />
     <Compile Include="DllInvoke.cs" />
     <Compile Include="ExcelExtension.cs" />

@@ -54,6 +54,10 @@
             this.btnModifyRollDyelot = new Sci.Win.UI.Button();
             this.shapeContainer3 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.btnCallP99 = new Sci.Win.UI.Button();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtTransferExportID = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.datePackingArrival = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -70,6 +74,9 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.label3);
+            this.masterpanel.Controls.Add(this.txtTransferExportID);
+            this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.btnUpdateWeight);
             this.masterpanel.Controls.Add(this.btnModifyRollDyelot);
             this.masterpanel.Controls.Add(this.numericPackages);
@@ -86,13 +93,14 @@
             this.masterpanel.Controls.Add(this.btnFind);
             this.masterpanel.Controls.Add(this.txtLocateForSP);
             this.masterpanel.Controls.Add(this.labelLocateForSP);
+            this.masterpanel.Controls.Add(this.datePackingArrival);
             this.masterpanel.Controls.Add(this.dateIssueDate);
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.label25);
             this.masterpanel.Controls.Add(this.ArriveWHDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(988, 183);
+            this.masterpanel.Size = new System.Drawing.Size(892, 229);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.ArriveWHDate, 0);
@@ -100,6 +108,7 @@
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.datePackingArrival, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelLocateForSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLocateForSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFind, 0);
@@ -116,16 +125,19 @@
             this.masterpanel.Controls.SetChildIndex(this.numericPackages, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnModifyRollDyelot, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnUpdateWeight, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtTransferExportID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 183);
-            this.detailpanel.Size = new System.Drawing.Size(988, 296);
+            this.detailpanel.Location = new System.Drawing.Point(0, 229);
+            this.detailpanel.Size = new System.Drawing.Size(892, 120);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(883, 147);
+            this.gridicon.Location = new System.Drawing.Point(883, 189);
             this.gridicon.TabIndex = 9;
             // 
             // refresh
@@ -135,7 +147,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(988, 296);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 120);
             // 
             // detail2
             // 
@@ -149,19 +161,9 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(988, 517);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(988, 479);
-            // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnCallP99);
-            this.detailbtm.Location = new System.Drawing.Point(0, 479);
-            this.detailbtm.Size = new System.Drawing.Size(988, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -192,7 +194,7 @@
             // 
             // labelID
             // 
-            this.labelID.Location = new System.Drawing.Point(16, 13);
+            this.labelID.Location = new System.Drawing.Point(18, 13);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(108, 23);
             this.labelID.TabIndex = 1;
@@ -222,9 +224,9 @@
             this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
             this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayID.Location = new System.Drawing.Point(129, 13);
+            this.displayID.Location = new System.Drawing.Point(127, 13);
             this.displayID.Name = "displayID";
-            this.displayID.Size = new System.Drawing.Size(120, 23);
+            this.displayID.Size = new System.Drawing.Size(140, 23);
             this.displayID.TabIndex = 0;
             // 
             // dateIssueDate
@@ -240,7 +242,7 @@
             this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer1.Name = "shapeContainer1";
-            this.shapeContainer1.Size = new System.Drawing.Size(988, 183);
+            this.shapeContainer1.Size = new System.Drawing.Size(892, 229);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -255,7 +257,7 @@
             // btnFind
             // 
             this.btnFind.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnFind.Location = new System.Drawing.Point(280, 149);
+            this.btnFind.Location = new System.Drawing.Point(280, 189);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(70, 30);
             this.btnFind.TabIndex = 7;
@@ -268,14 +270,14 @@
             this.txtLocateForSP.BackColor = System.Drawing.Color.White;
             this.txtLocateForSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLocateForSP.IsSupportEditMode = false;
-            this.txtLocateForSP.Location = new System.Drawing.Point(129, 153);
+            this.txtLocateForSP.Location = new System.Drawing.Point(127, 193);
             this.txtLocateForSP.Name = "txtLocateForSP";
             this.txtLocateForSP.Size = new System.Drawing.Size(145, 23);
             this.txtLocateForSP.TabIndex = 6;
             // 
             // labelLocateForSP
             // 
-            this.labelLocateForSP.Location = new System.Drawing.Point(17, 153);
+            this.labelLocateForSP.Location = new System.Drawing.Point(17, 193);
             this.labelLocateForSP.Name = "labelLocateForSP";
             this.labelLocateForSP.Size = new System.Drawing.Size(109, 23);
             this.labelLocateForSP.TabIndex = 58;
@@ -284,7 +286,7 @@
             // btnClearQtyIsEmpty
             // 
             this.btnClearQtyIsEmpty.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnClearQtyIsEmpty.Location = new System.Drawing.Point(356, 149);
+            this.btnClearQtyIsEmpty.Location = new System.Drawing.Point(356, 189);
             this.btnClearQtyIsEmpty.Name = "btnClearQtyIsEmpty";
             this.btnClearQtyIsEmpty.Size = new System.Drawing.Size(148, 30);
             this.btnClearQtyIsEmpty.TabIndex = 8;
@@ -294,7 +296,7 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Location = new System.Drawing.Point(16, 78);
+            this.labelRemark.Location = new System.Drawing.Point(18, 118);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(108, 23);
             this.labelRemark.TabIndex = 59;
@@ -305,7 +307,7 @@
             this.editRemark.BackColor = System.Drawing.Color.White;
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(129, 78);
+            this.editRemark.Location = new System.Drawing.Point(127, 118);
             this.editRemark.MaxLength = 100;
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
@@ -316,7 +318,7 @@
             // 
             this.btnAccumulatedQty.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnAccumulatedQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAccumulatedQty.Location = new System.Drawing.Point(626, 37);
+            this.btnAccumulatedQty.Location = new System.Drawing.Point(819, 41);
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
             this.btnAccumulatedQty.Size = new System.Drawing.Size(161, 31);
             this.btnAccumulatedQty.TabIndex = 5;
@@ -326,7 +328,7 @@
             // 
             // labelFromFactory
             // 
-            this.labelFromFactory.Location = new System.Drawing.Point(17, 45);
+            this.labelFromFactory.Location = new System.Drawing.Point(18, 85);
             this.labelFromFactory.Name = "labelFromFactory";
             this.labelFromFactory.Size = new System.Drawing.Size(108, 23);
             this.labelFromFactory.TabIndex = 67;
@@ -337,7 +339,7 @@
             this.txtFromFactory.BackColor = System.Drawing.Color.White;
             this.txtFromFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FromFtyId", true));
             this.txtFromFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFromFactory.Location = new System.Drawing.Point(129, 45);
+            this.txtFromFactory.Location = new System.Drawing.Point(127, 85);
             this.txtFromFactory.MaxLength = 8;
             this.txtFromFactory.Name = "txtFromFactory";
             this.txtFromFactory.Size = new System.Drawing.Size(67, 23);
@@ -349,7 +351,7 @@
             // 
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(810, 37);
+            this.btnImport.Location = new System.Drawing.Point(819, 77);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(161, 31);
             this.btnImport.TabIndex = 4;
@@ -362,7 +364,7 @@
             this.txtInvNo.BackColor = System.Drawing.Color.White;
             this.txtInvNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "InvNo", true));
             this.txtInvNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtInvNo.Location = new System.Drawing.Point(383, 45);
+            this.txtInvNo.Location = new System.Drawing.Point(638, 49);
             this.txtInvNo.MaxLength = 25;
             this.txtInvNo.Name = "txtInvNo";
             this.txtInvNo.Size = new System.Drawing.Size(130, 23);
@@ -370,7 +372,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(272, 45);
+            this.label1.Location = new System.Drawing.Point(527, 49);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(108, 23);
             this.label1.TabIndex = 69;
@@ -389,7 +391,7 @@
             // 
             this.lbPackages.Location = new System.Drawing.Point(527, 13);
             this.lbPackages.Name = "lbPackages";
-            this.lbPackages.Size = new System.Drawing.Size(79, 23);
+            this.lbPackages.Size = new System.Drawing.Size(108, 23);
             this.lbPackages.TabIndex = 70;
             this.lbPackages.Text = "Packages";
             // 
@@ -398,7 +400,7 @@
             this.numericPackages.BackColor = System.Drawing.Color.White;
             this.numericPackages.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Packages", true));
             this.numericPackages.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericPackages.Location = new System.Drawing.Point(609, 13);
+            this.numericPackages.Location = new System.Drawing.Point(638, 13);
             this.numericPackages.MaxLength = 5;
             this.numericPackages.Name = "numericPackages";
             this.numericPackages.NullValue = new decimal(new int[] {
@@ -417,7 +419,7 @@
             // btnUpdateWeight
             // 
             this.btnUpdateWeight.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnUpdateWeight.Location = new System.Drawing.Point(810, 111);
+            this.btnUpdateWeight.Location = new System.Drawing.Point(819, 151);
             this.btnUpdateWeight.Name = "btnUpdateWeight";
             this.btnUpdateWeight.Size = new System.Drawing.Size(161, 30);
             this.btnUpdateWeight.TabIndex = 73;
@@ -429,7 +431,7 @@
             // 
             this.btnModifyRollDyelot.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnModifyRollDyelot.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnModifyRollDyelot.Location = new System.Drawing.Point(810, 74);
+            this.btnModifyRollDyelot.Location = new System.Drawing.Point(819, 114);
             this.btnModifyRollDyelot.Name = "btnModifyRollDyelot";
             this.btnModifyRollDyelot.Size = new System.Drawing.Size(161, 31);
             this.btnModifyRollDyelot.TabIndex = 72;
@@ -458,6 +460,41 @@
             this.btnCallP99.Text = "Link To P99";
             this.btnCallP99.UseVisualStyleBackColor = true;
             this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(18, 49);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(108, 23);
+            this.label2.TabIndex = 74;
+            this.label2.Text = "Transfer WK#";
+            // 
+            // txtTransferExportID
+            // 
+            this.txtTransferExportID.BackColor = System.Drawing.Color.White;
+            this.txtTransferExportID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "TransferExportID", true));
+            this.txtTransferExportID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTransferExportID.Location = new System.Drawing.Point(127, 49);
+            this.txtTransferExportID.Name = "txtTransferExportID";
+            this.txtTransferExportID.Size = new System.Drawing.Size(140, 23);
+            this.txtTransferExportID.TabIndex = 75;
+            this.txtTransferExportID.Validating += new System.ComponentModel.CancelEventHandler(this.TxtTransferExportID_Validating);
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(272, 49);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(108, 23);
+            this.label3.TabIndex = 76;
+            this.label3.Text = "P/L Rcv Date";
+            // 
+            // datePackingArrival
+            // 
+            this.datePackingArrival.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PackingArrival", true));
+            this.datePackingArrival.Location = new System.Drawing.Point(383, 49);
+            this.datePackingArrival.Name = "datePackingArrival";
+            this.datePackingArrival.Size = new System.Drawing.Size(130, 23);
+            this.datePackingArrival.TabIndex = 3;
             // 
             // P18
             // 
@@ -529,5 +566,9 @@
         private Win.UI.Button btnModifyRollDyelot;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer3;
         private Win.UI.Button btnCallP99;
+        private Win.UI.DateBox datePackingArrival;
+        private Win.UI.Label label3;
+        private Win.UI.TextBox txtTransferExportID;
+        private Win.UI.Label label2;
     }
 }

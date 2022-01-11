@@ -155,8 +155,8 @@ BEGIN
 					from ShippingAP sp WITH (NOLOCK)
 					inner join  GMTBooking g WITH (NOLOCK) on sp.BLNo = g.BLNo or sp.BLNo = g.BL2No
 					where sp.ID = s.ShippingAPID 	
-					and sp.BLNo != g.BLNo
-					and sp.BLNo != g.BL2No)
+					and s.BLNo != g.BLNo
+					and s.BLNo != g.BL2No)
 			END
 
 			/*
@@ -174,6 +174,7 @@ BEGIN
 						and s.InvNo not in (select INVNo from PackingList where INVNo = s.InvNo and INVNo is not null) 
 						and s.InvNo not in (select ID from FtyExport  where ID = s.InvNo and ID is not null)
 						and s.invno not in (select id from Export where id=s.InvNo and id is not null)
+						and s.invno not in (select id from TransferExport where id=s.InvNo and id is not null)
 					)
 			
 			/*

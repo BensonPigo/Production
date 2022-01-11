@@ -249,7 +249,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1044, 521);
+            this.browse.Size = new System.Drawing.Size(994, 521);
             // 
             // tabs
             // 
@@ -834,7 +834,8 @@
             this.Name = "P15";
             this.OnLineHelpID = "Sci.Win.Tems.Input2";
             this.Text = "P15. BL Management";
-            this.WorkAlias = "Export";
+            this.WorkAlias = "export";
+            this.WorkView = "View_ShippingP15";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();

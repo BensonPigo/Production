@@ -138,10 +138,12 @@ where ed.ID = '{0}'", masterID);
                     break;
             }
 
+            // 如果MainWK有資料,就抓MainWK的PrepaidFtyImportFee by ISP20211235
+            string keyWK = (MyUtility.Check.Empty(this.CurrentMaintain["MainWK"]) == true) ? this.CurrentMaintain["MainExportID08"].ToString() : this.CurrentMaintain["MainWK"].ToString();
             string sqlmainPrepaidFtyImportFee = $@"
 select PrepaidFtyImportFee
 from Export
-where ID = '{this.CurrentMaintain["MainExportID08"]}'
+where ID = '{keyWK}'
 ";
 
             decimal intPrepaidFtyImportFee = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlmainPrepaidFtyImportFee));

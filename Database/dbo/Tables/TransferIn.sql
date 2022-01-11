@@ -12,6 +12,8 @@
     [EditDate]    DATETIME       NULL,
     [InvNo] VARCHAR(25) NULL DEFAULT (''), 
     [Packages] NUMERIC(5) NULL, 
+    [TransferExportID] VARCHAR(13) CONSTRAINT [DF_TransferIn_TransferExportID] DEFAULT ('') not NULL,
+	[PackingArrival] DATE NULL,
     CONSTRAINT [PK_TransferIn] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -30,7 +32,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'轉廠單�
 
 GO
 
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'轉廠 WK ID
+目的 : 用於匯入轉廠 WK 第三層的資料
+', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'TransferIn', @level2type = N'COLUMN', @level2name = N'TransferExportID';
 
+
+GO
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單據日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'TransferIn', @level2type = N'COLUMN', @level2name = N'IssueDate';
