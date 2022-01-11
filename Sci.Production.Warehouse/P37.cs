@@ -509,6 +509,54 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             }
             #endregion
 
+            #region 檢查Location是否為空值
+            string sqlLocation = $@"
+ select td.POID,seq = concat(Ltrim(Rtrim(td.seq1)), ' ', td.Seq2),td.Roll,td.Dyelot
+ , StockType = case td.StockType 
+		when 'B' then 'Bulk' 
+		when 'I' then 'Inventory' 
+		when 'S' then 'Scrap' 
+		else td.StockType 
+		end
+ , [Location] = dbo.Getlocation(f.ukey)
+ from ReturnReceipt_Detail td
+ left join Production.dbo.FtyInventory f on f.POID = td.POID 
+	and f.Seq1=td.Seq1 and f.Seq2=td.Seq2 
+	and f.Roll=td.Roll and f.Dyelot=td.Dyelot
+    and f.StockType = td.StockType
+where td.ID = '{this.CurrentMaintain["ID"]}'
+";
+
+            if (!(result = DBProxy.Current.Select(string.Empty, sqlLocation, out DataTable dtLocationDetail)))
+            {
+                this.ShowErr(result.ToString());
+                return;
+            }
+
+            if (MyUtility.Check.Seek(@"select * from System where WH_MtlTransChkLocation = 1"))
+            {
+                if (dtLocationDetail != null && dtLocationDetail.Rows.Count > 0)
+                {
+                    // Location
+                    DataRow[] dtArry = dtLocationDetail.Select(@"Location = '' or Location is null");
+                    if (dtArry != null && dtArry.Length > 0)
+                    {
+                        DataTable dtLocation_Empty = dtArry.CopyToDataTable();
+
+                        // change column name
+                        dtLocation_Empty.Columns["PoId"].ColumnName = "SP#";
+                        dtLocation_Empty.Columns["seq"].ColumnName = "Seq";
+                        dtLocation_Empty.Columns["Roll"].ColumnName = "Roll";
+                        dtLocation_Empty.Columns["Dyelot"].ColumnName = "Dyelot";
+                        dtLocation_Empty.Columns["StockType"].ColumnName = "Stock Type";
+
+                        Prgs.ChkLocationEmpty(dtLocation_Empty, string.Empty, @"SP#,Seq,Roll,Dyelot,Stock Type");
+                        return;
+                    }
+                }
+            }
+            #endregion
+
             #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             if (dt != null)
