@@ -1,12 +1,3 @@
-USE POWERBIReportData
-GO
-/****** Object:  StoredProcedure [dbo].[P_ImportSDPOrderDetail]    Script Date: 06/01/2021 上午 09:23:42 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
 Create PROCEDURE [dbo].[P_Import_QA_P09_Fty]	
 	@ETA_s Date,
 	@ETA_e Date
@@ -20,24 +11,9 @@ BEGIN
 	DECLARE @SqlCmd5 nvarchar(max) ='';
 	
 	DECLARE @ETA_s_varchar varchar(10) = cast( @ETA_s as varchar)
-	DECLARE @ETA_e_varchar varchar(10) = cast( @ETA_e as varchar)
+	DECLARE @ETA_e_varchar varchar(10) = cast( @ETA_e as varchar) 
 
-	/*判斷當前Server後, 指定帶入正式機Server名稱*/
-	declare @current_ServerName varchar(50) = (SELECT [Server Name] = @@SERVERNAME)
-	--依不同Server來抓到對應的備機ServerName
-	declare @current_PMS_ServerName nvarchar(50) 
-	= (
-		select [value] = 
-			CASE WHEN @current_ServerName= 'PHL-NEWPMS-02' THEN 'PHL-NEWPMS' -- PH1
-				 WHEN @current_ServerName= 'VT1-PH2-PMS2b' THEN 'VT1-PH2-PMS2' -- PH2
-				 WHEN @current_ServerName= 'system2017BK' THEN 'SYSTEM2017' -- SNP
-				 WHEN @current_ServerName= 'SPS-SQL2' THEN 'SPS-SQL.spscd.com' -- SPS
-				 WHEN @current_ServerName= 'SQLBK' THEN 'PMS-SXR' -- SPR
-				 WHEN @current_ServerName= 'newerp-bak' THEN 'newerp' -- HZG		
-				 WHEN @current_ServerName= 'SQL' THEN 'MainServer' -- HXG
-				 when (select top 1 MDivisionID from Production.dbo.Factory) in ('VM2','VM1') then 'SYSTEM2016' -- ESP & SPT
-			ELSE '' END
-	)
+	declare @current_PMS_ServerName nvarchar(50)  = 'MainServer'
 
 SET @SqlCmd1 = '
 	----準備基礎資料
