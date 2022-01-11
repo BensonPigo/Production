@@ -80,14 +80,14 @@ namespace Sci.Production.Warehouse
             this.Helper.Controls.Grid.Generator(this.gridModifyRoll)
             .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 1
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
-            .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false).Get(out this.col_roll) // 3
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: false).Get(out this.col_dyelot) // 4
+            .Text("Roll", header: "Roll#", width: Widths.AnsiChars(7), iseditingreadonly: false).Get(out this.col_roll) // 3
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(7), iseditingreadonly: false).Get(out this.col_dyelot) // 4
             ;
 
             if (this.gridAlias.ToUpper().EqualString("RECEIVING_DETAIL"))
             {
                 this.Helper.Controls.Grid.Generator(this.gridModifyRoll)
-                .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(11), iseditingreadonly: false, decimal_places: 2, integer_places: 10, maximum: 999999999.99M, minimum: 0, settings: actqty).Get(out this.col_ActQty) // 5
+                .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(8), iseditingreadonly: false, decimal_places: 2, integer_places: 10, maximum: 999999999.99M, minimum: 0, settings: actqty).Get(out this.col_ActQty) // 5
                 .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true) // 6
                 .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 7
                 .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5)) // 8
@@ -546,6 +546,7 @@ from (
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnCommit_Click(object sender, EventArgs e)
         {
+            DualResult result;
             var modifyDrList = this.source.AsEnumerable().Where(s => s.RowState == DataRowState.Modified);
             if (modifyDrList.Count() == 0)
             {
@@ -560,36 +561,56 @@ from (
             }
 
             // CompleteTime is not null 則不可commit
-            if (modifyDrList.Where(s => !MyUtility.Check.Empty(s["CompleteTime"])).Any())
+            #region 檢查資料有任一筆WMS已完成
+            string sqlcmdWMS = string.Empty;
+            string errmsg = string.Empty;
+
+            switch (this.gridAlias)
             {
-                List<string> warningMsgList = new List<string>();
-                foreach (DataRow dr in modifyDrList)
+                case "Receiving_Detail":
+                    sqlcmdWMS = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
+from dbo.Receiving_Detail d  WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
+                    break;
+
+                case "TransferIn_Detail":
+                    sqlcmdWMS = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
+from dbo.TransferIn_Detail d  WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
+                    break;
+            }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(modifyDrList.CopyToDataTable(), string.Empty, sqlcmdWMS, out DataTable dtWMS)))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                return;
+            }
+            else
+            {
+                if (dtWMS.Rows.Count > 0)
                 {
-                    if (!MyUtility.Check.Empty(dr["CompleteTime"]))
+                    foreach (DataRow tmp in dtWMS.Rows)
                     {
-                        string original_Roll = dr["roll", DataRowVersion.Original].ToString();
-                        string current_Roll = dr["roll", DataRowVersion.Current].ToString();
-
-                        string original_Dyelot = dr["dyelot", DataRowVersion.Original].ToString();
-                        string current_Dyelot = dr["dyelot", DataRowVersion.Current].ToString();
-
-                        if (original_Roll != current_Roll || original_Dyelot != current_Dyelot)
-                        {
-                            warningMsgList.Add($"{dr["poid"]}, {dr["seq1"].ToString() + " " + dr["seq2"].ToString()}, {original_Roll}, {original_Dyelot}");
-                        }
+                        errmsg += $@"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} Roll#: {tmp["roll"]} Dyelot: {tmp["Dyelot"]}." + Environment.NewLine;
                     }
-                }
 
-                if (warningMsgList.Count > 0)
-                {
-                    MyUtility.Msg.WarningBox(@"WMS system have finished it already, you cannot revise it."
-+ Environment.NewLine
-+ "Finished list SP# - Seq - Roll# - Dyelot as below."
-+ Environment.NewLine
-+ warningMsgList.JoinToString(Environment.NewLine));
+                    MyUtility.Msg.WarningBox("WMS system have finished it already, you cannot revise it." + Environment.NewLine + errmsg, "Warning");
                     return;
                 }
             }
+            #endregion
 
             var allDatas = modifyDrList = this.source.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted);
             if (allDatas.GroupBy(o => new
@@ -866,7 +887,6 @@ end
             List<SqlParameter> fir_Air_Proce = new List<SqlParameter>();
             fir_Air_Proce.Add(new SqlParameter("@ID", this.docno));
             fir_Air_Proce.Add(new SqlParameter("@LoginID", Sci.Env.User.UserID));
-            DualResult result;
             if (this.gridAlias.ToUpper().EqualString("RECEIVING_DETAIL"))
             {
                 if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.insert_Air_Fir", fir_Air_Proce)))
