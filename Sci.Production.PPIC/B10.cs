@@ -219,13 +219,19 @@ WHERE 1=1
         public static bool PPIC_B10_BatchUpdate(DataRow[] selecteds)
         {
             StringBuilder builder = new StringBuilder();
-            List<SqlParameter> parameters = new List<SqlParameter>();
             string tmpTable = string.Empty;
+            List<SqlParameter> parameters = new List<SqlParameter>();
 
             int count = 1;
             foreach (DataRow item in selecteds)
             {
-                string tmp = $"SELECT [ID]='{item["ID"]}',[CAB]='{item["CAB"]}',[FinalDest]='{item["FinalDest"]}',Customer_PO='{item["Customer_PO"]}',[AFS_STOCK_CATEGORY]='{item["AFS_STOCK_CATEGORY"]}'";
+                parameters.Add(new SqlParameter($"@ID{count}", MyUtility.Convert.GetString(item["ID"])));
+                parameters.Add(new SqlParameter($"@CAB{count}", MyUtility.Convert.GetString(item["CAB"])));
+                parameters.Add(new SqlParameter($"@FinalDest{count}", MyUtility.Convert.GetString(item["FinalDest"])));
+                parameters.Add(new SqlParameter($"@Customer_PO{count}", MyUtility.Convert.GetString(item["Customer_PO"])));
+                parameters.Add(new SqlParameter($"@AFS_STOCK_CATEGORY{count}", MyUtility.Convert.GetString(item["AFS_STOCK_CATEGORY"])));
+
+                string tmp = $"SELECT [ID]=@ID{count},[CAB]=@CAB{count} ,[FinalDest]=@FinalDest{count} ,Customer_PO=@Customer_PO{count} ,[AFS_STOCK_CATEGORY]=@AFS_STOCK_CATEGORY{count}";
 
                 tmpTable += tmp + Environment.NewLine;
 
@@ -256,7 +262,7 @@ INNER JOIN Orders o ON s.ID = o.ID
 DROP TABLE #source
 ");
 
-            DualResult r = DBProxy.Current.Execute(null, builder.ToString());
+            DualResult r = DBProxy.Current.Execute(null, builder.ToString(), parameters);
 
             if (!r)
             {
