@@ -3757,6 +3757,88 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             from.ShowDialog();
         }
 
+        public static bool ChkLocation(string transcationID, string GridAlias, string msgType = "")
+        {
+            // 檢查Location是否為空值
+            DualResult result;
+            string sqlLocation = string.Empty;
+            switch (GridAlias)
+            {
+                case "Receiving_Detail":
+                case "IssueReturn_Detail":
+                    sqlLocation = $@"
+ select td.POID,seq = concat(Ltrim(Rtrim(td.seq1)), ' ', td.Seq2),td.Roll,td.Dyelot
+ , StockType = case td.StockType 
+		when 'B' then 'Bulk' 
+		when 'I' then 'Inventory' 
+		when 'S' then 'Scrap' 
+		else td.StockType 
+		end
+ , [Location] = td.Location
+ from {GridAlias} td
+ left join Production.dbo.FtyInventory f on f.POID = td.POID 
+	and f.Seq1=td.Seq1 and f.Seq2=td.Seq2 
+	and f.Roll=td.Roll and f.Dyelot=td.Dyelot
+    and f.StockType = td.StockType
+where td.ID = '{transcationID}'
+";
+                    break;
+                case "Issue_Detail":
+                case "IssueLack_Detail":
+                case "ReturnReceipt_Detail":
+                    sqlLocation = $@"
+ select td.POID,seq = concat(Ltrim(Rtrim(td.seq1)), ' ', td.Seq2),td.Roll,td.Dyelot
+ , StockType = case td.StockType 
+		when 'B' then 'Bulk' 
+		when 'I' then 'Inventory' 
+		when 'S' then 'Scrap' 
+		else td.StockType 
+		end
+ , [Location] = dbo.Getlocation(f.ukey)
+ from {GridAlias} td
+ left join Production.dbo.FtyInventory f on f.POID = td.POID 
+	and f.Seq1=td.Seq1 and f.Seq2=td.Seq2 
+	and f.Roll=td.Roll and f.Dyelot=td.Dyelot
+    and f.StockType = td.StockType
+where td.ID = '{transcationID}'
+";
+                    break;
+                default:
+                    break;
+            }
+
+            if (!(result = DBProxy.Current.Select(string.Empty, sqlLocation, out DataTable dtLocationDetail)))
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+                return false;
+            }
+
+            if (MyUtility.Check.Seek(@"select 1 from System where WH_MtlTransChkLocation = 1"))
+            {
+                if (dtLocationDetail != null && dtLocationDetail.Rows.Count > 0)
+                {
+                    // Location
+                    DataRow[] dtArry = dtLocationDetail.Select(@"Location = '' or Location is null");
+                    if (dtArry != null && dtArry.Length > 0)
+                    {
+                        DataTable dtLocation_Empty = dtArry.CopyToDataTable();
+
+                        // change column name
+                        dtLocation_Empty.Columns["PoId"].ColumnName = "SP#";
+                        dtLocation_Empty.Columns["seq"].ColumnName = "Seq";
+                        dtLocation_Empty.Columns["Roll"].ColumnName = "Roll";
+                        dtLocation_Empty.Columns["Dyelot"].ColumnName = "Dyelot";
+                        dtLocation_Empty.Columns["StockType"].ColumnName = "Stock Type";
+
+                        ChkLocationEmpty(dtLocation_Empty, msgType, @"SP#,Seq,Roll,Dyelot,Stock Type");
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
         /// <inheritdoc/>
         public static List<string> GetBarcodeNo(string tableName, string keyWord, int batchNumber = 1, int dateType = 3, string checkColumn = "Barcode", string connectionName = null, int sequenceMode = 1, int sequenceLength = 0)
         {

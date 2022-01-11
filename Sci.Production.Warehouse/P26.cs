@@ -373,8 +373,6 @@ drop table #tmp
             #endregion
 
             #region 檢查From/To Location是否為空值
-
-
             string sqlWMSLocation = $@"
 select td.POID,seq = concat(Ltrim(Rtrim(td.seq1)), ' ', td.Seq2),td.Roll,td.Dyelot
  , StockType = case td.StockType 
@@ -390,7 +388,7 @@ left join MtlLocation m on td.FromLocation = m.ID
 left join MtlLocation m2 on td.ToLocation= m2.ID
 where (m.IsWMS =1 or m2.IsWMS= 1)
 and (td.FromLocation = '' or td.ToLocation = '')
-where td.id	 = '{this.CurrentMaintain["ID"]}'
+and td.id = '{this.CurrentMaintain["ID"]}'
 ";
             if (!(result1 = DBProxy.Current.Select(string.Empty, sqlWMSLocation, out DataTable dtLocationDetail)))
             {
