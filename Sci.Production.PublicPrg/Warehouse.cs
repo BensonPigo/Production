@@ -3786,6 +3786,9 @@ where td.ID = '{transcationID}'
                 case "Issue_Detail":
                 case "IssueLack_Detail":
                 case "ReturnReceipt_Detail":
+                case "TransferOut_Detail":
+                case "Adjust_Detail":
+                case "StockTaking_detail":
                     sqlLocation = $@"
  select td.POID,seq = concat(Ltrim(Rtrim(td.seq1)), ' ', td.Seq2),td.Roll,td.Dyelot
  , StockType = case td.StockType 

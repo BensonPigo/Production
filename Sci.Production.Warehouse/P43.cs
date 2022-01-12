@@ -431,6 +431,13 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             }
             #endregion
 
+            #region 檢查Location是否為空值
+            if (Prgs.ChkLocation(this.CurrentMaintain["ID"].ToString(), "Adjust_Detail") == false)
+            {
+                return;
+            }
+            #endregion
+
             #region 檢查負數庫存
 
             sqlcmd = string.Format(
@@ -545,7 +552,8 @@ SELECT AD2.poid, [Seq]= AD2.Seq1+' '+AD2.Seq2,
         AD2.Roll,AD2.Dyelot,
        [CheckQty] = (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty) - ( AD2.qtyafter - AD2.qtybefore ) , 
        [FTYLobQty] = (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty),
-       [AdjustQty]= (AD2.qtyafter - AD2.qtybefore )       
+       [AdjustQty]= (AD2.qtyafter - AD2.qtybefore )   ,
+       AD2.Ukey
 FROM    FtyInventory FTI
 inner join Adjust_detail AD2 on FTI.POID=AD2.POID 
 and FTI.Seq1=AD2.Seq1

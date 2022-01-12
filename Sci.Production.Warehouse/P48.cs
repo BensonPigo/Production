@@ -2,6 +2,7 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -91,6 +92,12 @@ select  0 as selected
         , a.FabricType
         , a.stockunit
         , c.stockType
+        , StockTypeName = case c.StockType 
+		        when 'B' then 'Bulk' 
+		        when 'I' then 'Inventory' 
+		        when 'S' then 'Scrap' 
+		        else c.StockType 
+		        end
         , c.ukey as ftyinventoryukey
         , [CreateStatus]='' 
         , [FabricTypeName] = (select name from DropDownList where Type='FabricType_Condition' and id=a.fabrictype)		
@@ -485,6 +492,8 @@ from #tmp";
             dtDetail.Columns.Add("QtyBefore");
             dtDetail.Columns.Add("QtyAfter");
             dtDetail.Columns.Add("ReasonID");
+            dtDetail.Columns.Add("Location");
+            dtDetail.Columns.Add("StockTypeName");
 
             for (int i = 0; i < listPoid.Count; i++)
             {
@@ -518,9 +527,47 @@ from #tmp";
                 drNewDetail["QtyBefore"] = item["QtyBefore"];
                 drNewDetail["QtyAfter"] = item["QtyAfter"];
                 drNewDetail["ReasonID"] = item["ReasonID"];
+                drNewDetail["Location"] = item["Location"];
+                drNewDetail["StockTypeName"] = item["StockTypeName"];
                 dtDetail.Rows.Add(drNewDetail);
             }
 
+            #endregion
+
+            #region 檢查Location是否為空值
+            DataTable dtLocationEmpty = new DataTable();
+            dtLocationEmpty.Columns.Add("POID");
+            dtLocationEmpty.Columns.Add("Seq");
+            dtLocationEmpty.Columns.Add("Roll");
+            dtLocationEmpty.Columns.Add("Dyelot");
+            dtLocationEmpty.Columns.Add("StockType");
+            foreach (DataRow dr in dtDetail.Rows)
+            {
+                if (MyUtility.Check.Empty(dr["Location"]))
+                {
+                    DataRow drEmpty = dtLocationEmpty.NewRow();
+                    drEmpty["POID"] = dr["POID"];
+                    drEmpty["Seq"] = dr["Seq1"] + " "+ dr["Seq2"];
+                    drEmpty["Roll"] = dr["Roll"];
+                    drEmpty["Dyelot"] = dr["Dyelot"];
+                    drEmpty["StockType"] = dr["StockTypeName"];
+                    dtLocationEmpty.Rows.Add(drEmpty);
+                }
+            }
+
+            if (dtLocationEmpty.Rows.Count > 0)
+            {
+                // change column name
+                dtLocationEmpty.Columns["PoId"].ColumnName = "SP#";
+                dtLocationEmpty.Columns["seq"].ColumnName = "Seq";
+                dtLocationEmpty.Columns["Roll"].ColumnName = "Roll";
+                dtLocationEmpty.Columns["Dyelot"].ColumnName = "Dyelot";
+                dtLocationEmpty.Columns["StockType"].ColumnName = "Stock Type";
+
+                Prgs.ChkLocationEmpty(dtLocationEmpty, string.Empty, @"SP#,Seq,Roll,Dyelot,Stock Type");
+                this.HideWaitMessage();
+                return;
+            }
             #endregion
 
             #region TransactionScope

@@ -374,7 +374,7 @@ drop table #tmp
 
             #region 檢查From/To Location是否為空值
             string sqlWMSLocation = $@"
-select td.POID,seq = concat(Ltrim(Rtrim(td.seq1)), ' ', td.Seq2),td.Roll,td.Dyelot
+select distinct td.POID,seq = concat(Ltrim(Rtrim(td.seq1)), ' ', td.Seq2),td.Roll,td.Dyelot
  , StockType = case td.StockType 
 		when 'B' then 'Bulk' 
 		when 'I' then 'Inventory' 
