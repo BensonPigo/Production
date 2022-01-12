@@ -399,7 +399,7 @@ and a.OrderID = b.OrderID", allPackID.ToString().Substring(0, allPackID.Length -
                         if (this.txtmultifactoryFactory.IsDataFromA2B)
                         {
                             DataBySql dataBySql = new DataBySql() { SqlString = sqlCmd };
-                            result = PackingA2BWebAPI.GetDataBySql<P05_ImportFromPackingList_CheckSpInDiffPacking>(this.txtmultifactoryFactory.SystemName, dataBySql, out this.selectData);
+                            result = PackingA2BWebAPI.GetDataBySql(this.txtmultifactoryFactory.SystemName, dataBySql, out this.selectData);
                         }
                         else
                         {
@@ -460,7 +460,7 @@ inner join AirPP with(nolock) on AirPP.OrderID = pd.OrderID and AirPP.OrderShipm
                                 TmpCols = "id",
                                 TmpTableName = "#tmp",
                             };
-                            dualResult = PackingA2BWebAPI.GetDataBySql<P05_ImportFromPackingList_CheckSpInDiffPacking>(this.txtmultifactoryFactory.SystemName, dataBySql, out dt);
+                            dualResult = PackingA2BWebAPI.GetDataBySql(this.txtmultifactoryFactory.SystemName, dataBySql, out dt);
                         }
                         else
                         {
