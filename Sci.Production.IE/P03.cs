@@ -1335,10 +1335,10 @@ WHERE Ukey={item["Ukey"]}
         // Compute Takt Time
         private void ComputeTaktTime()
         {
-            object sumGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", "(IsHide = 0 or  IsHide is null)");
-            object sumCycle = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", "(IsHide = 0 or  IsHide is null)");
-            object maxHighGSD = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalGSD)", "(IsHide = 0 or  IsHide is null)");
-            object maxHighCycle = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalCycle)", "(IsHide = 0 or  IsHide is null)");
+            object sumGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", "(IsHide = 0 or  IsHide is null) and No <> ''");
+            object sumCycle = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", "(IsHide = 0 or  IsHide is null) and No <> ''");
+            object maxHighGSD = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalGSD)", "(IsHide = 0 or  IsHide is null) and No <> ''");
+            object maxHighCycle = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalCycle)", "(IsHide = 0 or  IsHide is null) and No <> ''");
 
             // object countopts = ((DataTable)detailgridbs.DataSource).Compute("count(No)", "");
             int countopts = 0;
@@ -2007,8 +2007,8 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
                 ((DataTable)this.detailgridbs.DataSource).ImportRow(dr);
             }
 
-            object sumSMV = timeStudy_Detail.Compute("sum(GSD)", "(IsHide = 0 or  IsHide is null)");
-            object maxSMV = timeStudy_Detail.Compute("max(GSD)", "(IsHide = 0 or  IsHide is null)");
+            object sumSMV = timeStudy_Detail.Compute("sum(GSD)", "(IsHide = 0 or  IsHide is null) and No <> ''");
+            object maxSMV = timeStudy_Detail.Compute("max(GSD)", "(IsHide = 0 or  IsHide is null) and No <> ''");
 
             // 填入表頭資料
             this.CurrentMaintain["IdealOperators"] = timeStudy["NumberSewer"].ToString();
