@@ -1126,7 +1126,7 @@ where Junk = 0
             // Vision為空的話就要填值
             if (MyUtility.Check.Empty(this.CurrentMaintain["Version"]) || this.CurrentMaintain["Version"].ToString() == "0")
             {
-                string newVersion = MyUtility.GetValue.Lookup(string.Format("select isnull(max(Version),0)+1 as Newversion from LineMapping WITH (NOLOCK) where StyleUKey =  {0}", this.CurrentMaintain["StyleUkey"].ToString()));
+                string newVersion = MyUtility.GetValue.Lookup($"select isnull(max(Version),0)+1 as Newversion from LineMapping WITH (NOLOCK) where StyleUKey =  {this.CurrentMaintain["StyleUkey"]} and FactoryID = '{this.CurrentMaintain["FactoryID"]}'");
                 if (MyUtility.Check.Empty(newVersion))
                 {
                     MyUtility.Msg.WarningBox("Get Version fail!!");
@@ -1493,6 +1493,19 @@ order by EffectiveDate desc
             {
                 MyUtility.Msg.WarningBox("This record is not created by yourself, so can't confirm!");
                 return;
+            }
+
+            string sqlVersionCount = $@"select count(1) from LineMapping where StyleUKey = '{this.CurrentMaintain["StyleUKey"]}' and FactoryID = '{this.CurrentMaintain["FactoryID"]}'";
+            int versionCount = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlVersionCount));
+            if (versionCount > 1)
+            {
+                int version = MyUtility.Convert.GetInt(this.CurrentMaintain["Version"]) - 1;
+                string chkVersionStatus = $@"select 1 from LineMapping where Status = 'New' and StyleUKey = '{this.CurrentMaintain["StyleUKey"]}' and FactoryID = '{this.CurrentMaintain["FactoryID"]}' and version = '{version}'";
+                if (MyUtility.Check.Seek(chkVersionStatus))
+                {
+                    MyUtility.Msg.WarningBox($"Please check that the status of version {version} needs to be Confirmed");
+                    return;
+                }
             }
 
             #region 檢查表身不可為空
