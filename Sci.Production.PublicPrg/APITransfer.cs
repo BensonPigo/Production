@@ -72,10 +72,14 @@ where ID = '{id}'
 
             string tradeWebApiUri = PmsWebAPI.TradeWebApiUri;
             string jsonBody = JsonConvert.SerializeObject(obj);
-            string requestUri = "http://sintexeditest.sportscity.com.tw:8002/api/GetTradeData/ConfirmTK"; // 測試
+            string requestUri;
             if (DBProxy.Current.DefaultModuleName.Contains("Formal"))
             {
-                requestUri = "http://sintexedi.sportscity.com.tw:8001/api/GetTradeData/ConfirmTK"; // 正式
+                requestUri = MyUtility.GetValue.Lookup("select [URL] from WebApiURL where SuppID = 'Trade' and ModuleName = 'TransferWK' and ModuleType = 'Formal'");
+            }
+            else
+            {
+                requestUri = MyUtility.GetValue.Lookup("select [URL] from WebApiURL where SuppID = 'Trade' and ModuleName = 'TransferWK' and ModuleType = 'Dummy'");
             }
 
             WebApiBaseResult webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(tradeWebApiUri, requestUri, jsonBody, 600);
