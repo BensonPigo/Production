@@ -56,7 +56,7 @@ outer apply(
 declare @finalInsertSql varchar(4000) = '
 select *
 into #tmp
-from OPENQUERY (' + @LinkServerName + ', ''' + @openQuerySql + ''')
+from OPENQUERY ([' + @LinkServerName + '], ''' + @openQuerySql + ''')
 
 delete p
 from P_MachineMasterList p
