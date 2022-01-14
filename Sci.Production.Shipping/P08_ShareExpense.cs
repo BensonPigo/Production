@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
+﻿using Ict;
 using Ict.Win;
-using Ict;
 using Sci.Data;
-using System.Transactions;
-using Sci.Production.PublicPrg;
-using System.Linq;
-using System.Configuration;
-using System.Data.SqlClient;
 using Sci.Production.CallPmsAPI;
+using Sci.Production.PublicPrg;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
+using System.Transactions;
+using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
@@ -583,25 +583,67 @@ where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
             string strSqlCmd = $@"
 merge ShareExpense t
 using (
-select distinct
-    [ShippingAPID] = '{this.apData["ID"]}'
-    ,[BLNo] = iif(BLNo is null or BLNo='', BL2No,BLNo)
-    ,[WKNo] = ''
-    ,[InvNo] = id
-    ,[Type] = '{this.apData["SubType"]}'
-    ,[GW] = TotalGW
-    ,[CBM] = TotalCBM
-    ,[CurrencyID] = '{this.apData["CurrencyID"]}'
-    ,[ShipModeID] = ShipModeID
-    ,[FtyWK] = 0
-    ,[AccountID] = (
-	    select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
-        where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
-        and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
-		    or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1))
-    ,[Junk] = 0
-from GMTBooking g WITH (NOLOCK) 
-where BLNo='{this.apData["BLNO"]}' or BL2No='{this.apData["BLNO"]}' 
+    select distinct
+        [ShippingAPID] = '{this.apData["ID"]}'
+        ,[BLNo] = iif(BLNo is null or BLNo='', BL2No,BLNo)
+        ,[WKNo] = ''
+        ,[InvNo] = id
+        ,[Type] = '{this.apData["SubType"]}'
+        ,[GW] = TotalGW
+        ,[CBM] = TotalCBM
+        ,[CurrencyID] = '{this.apData["CurrencyID"]}'
+        ,[ShipModeID] = ShipModeID
+        ,[FtyWK] = 0
+        ,[AccountID] = (
+	        select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
+            where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
+            and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+		        or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1))
+        ,[Junk] = 0
+    from GMTBooking g WITH (NOLOCK) 
+    where BLNo='{this.apData["BLNO"]}' or BL2No='{this.apData["BLNO"]}' 
+
+    union all
+    select distinct
+        [ShippingAPID] = '{this.apData["ID"]}',
+	    Blno,
+        [WKNo] = '',
+        [InvNo] = f.id,
+	    [Type] = '{this.apData["SubType"]}',
+	    f.WeightKg,
+	    f.Cbm,
+	    [CurrencyID] = '{this.apData["CurrencyID"]}',
+	    f.ShipModeID,
+	    [FtyWK] = 0,
+        [AccountID] = (
+	        select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
+            where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
+            and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+		        or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)),
+	    [Junk] = 0
+    from FtyExport f
+    where Blno = '{this.apData["BLNO"]}'
+
+    union all
+    select distinct
+        [ShippingAPID] = '{this.apData["ID"]}',
+	    Blno,
+        [WKNo] = e.id,
+        [InvNo] = '',
+	    [Type] = '{this.apData["SubType"]}',
+	    e.WeightKg,
+	    e.Cbm,
+	    [CurrencyID] = '{this.apData["CurrencyID"]}',
+	    e.ShipModeID,
+	    [FtyWK] = 0,
+        [AccountID] = (
+	        select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
+            where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
+            and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+		        or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)),
+	    [Junk] = 0
+    from Export e
+    where Blno = '{this.apData["BLNO"]}'
 ) as s 
 on	t.ShippingAPID = s.ShippingAPID 
 	and t.WKNO = s.WKNO	and t.InvNo = s.InvNo
@@ -617,10 +659,11 @@ from ShareExpense se
 inner join ShippingAP sa on sa.id = se.ShippingAPID
 where se.ShippingAPID = '{this.apData["ID"]}'
 and not exists(select 1 from GMTBooking where id=se.InvNo and (BLNo = sa.BLNo or BL2No = sa.BLNo))
+and not exists(select 1 from FtyExport where id=se.InvNo and BLNo = sa.BLNo)
+and not exists(select 1 from Export where id=se.WKNo and BLNo = sa.BLNo)
 ";
 
             DualResult result;
-
             if (!(result = DBProxy.Current.Execute(string.Empty, strSqlCmd)))
             {
                 this.ShowErr(result);
