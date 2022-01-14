@@ -1162,24 +1162,24 @@ and not exists
             #region 表頭
 
             excel.Cells[1, 3] = this.displaySP.Text + "-" + this.displaySEQ.Text;
-            excel.Cells[1, 5] = this.displayColor.Text;
-            excel.Cells[1, 7] = this.displayStyle.Text;
-            excel.Cells[1, 9] = dt1.Rows[0]["SeasonID"];
-            excel.Cells[1, 11] = dt1.Rows[0]["Inspector"];
+            excel.Cells[1, 6] = this.displayColor.Text;
+            excel.Cells[1, 8] = this.displayStyle.Text;
+            excel.Cells[1, 10] = dt1.Rows[0]["SeasonID"];
+            excel.Cells[1, 12] = dt1.Rows[0]["Inspector"];
             excel.Cells[2, 3] = this.displaySCIRefno.Text;
-            excel.Cells[2, 5] = this.displayResult.Text;
-            excel.Cells[2, 7] = this.dateLastInspectionDate.Value;
-            excel.Cells[2, 9] = this.displayBrand.Text;
-            excel.Cells[2, 11] = dt1.Rows[0]["TotalInspYds"];
+            excel.Cells[2, 6] = this.displayResult.Text;
+            excel.Cells[2, 8] = this.dateLastInspectionDate.Value;
+            excel.Cells[2, 10] = this.displayBrand.Text;
+            excel.Cells[2, 12] = dt1.Rows[0]["TotalInspYds"];
             excel.Cells[3, 3] = this.displayBrandRefno.Text;
-            excel.Cells[3, 5] = this.txtsupplier.DisplayBox1.Text.ToString();
-            excel.Cells[3, 7] = this.displayWKNo.Text;
-            excel.Cells[3, 9] = dtSupvisor.Rows[0]["Supervisor"];
+            excel.Cells[3, 6] = this.txtsupplier.DisplayBox1.Text.ToString();
+            excel.Cells[3, 8] = this.displayWKNo.Text;
+            excel.Cells[3, 10] = dtSupvisor.Rows[0]["Supervisor"];
             excel.Cells[4, 3] = this.dateArriveWHDate.Value;
 
-            excel.Cells[4, 5] = this.displayArriveQty.Text;
-            excel.Cells[4, 7] = dtSumQty.Rows[0]["TotalTicketYds"]; // Inspected Qty
-            excel.Cells[4, 9] = dt1.Rows[0]["PhysicalEncode"].ToString() == "1" ? "Y" : "N";
+            excel.Cells[4, 6] = this.displayArriveQty.Text;
+            excel.Cells[4, 8] = dtSumQty.Rows[0]["TotalTicketYds"]; // Inspected Qty
+            excel.Cells[4, 10] = dt1.Rows[0]["PhysicalEncode"].ToString() == "1" ? "Y" : "N";
 
             #endregion
 
