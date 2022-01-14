@@ -210,6 +210,9 @@ and ID = '{Sci.Env.User.UserID}'"))
         protected override void OnDetailGridSetup()
         {
             Ict.Win.UI.DataGridViewTextBoxColumn col_tolocation;
+            Ict.Win.UI.DataGridViewTextBoxColumn From_ContainerCode;
+            Ict.Win.UI.DataGridViewTextBoxColumn To_ContainerCode;
+
             #region -- To Location 右鍵開窗 --
             DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
@@ -287,9 +290,15 @@ WHERE   StockType='{0}'
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true) // 6
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 7
             .Text("FromLocation", header: "From Location", iseditingreadonly: true, width: Widths.AnsiChars(15)) // 8
+            .Text("FromContainerCode", header: "From Container Code", iseditingreadonly: true).Get(out From_ContainerCode)
             .Text("ToLocation", header: "To Location", width: Widths.AnsiChars(15), settings: ts2).Get(out col_tolocation) // 8
+            .Text("ToContainerCode", header: "To Container Code", iseditingreadonly: true).Get(out To_ContainerCode)
             ;
             #endregion 欄位設定
+
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            From_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
+            To_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             col_tolocation.DefaultCellStyle.BackColor = Color.Pink;
         }
@@ -728,8 +737,10 @@ select [Selected] = 0
     ,a.ToRoll
     ,a.ToStockType
     ,dbo.Getlocation(f.Ukey)  as Fromlocation
+    ,[FromContainerCode] = f.ContainerCode
     ,a.ukey
     ,a.tolocation
+    ,a.ToContainerCode
     ,Fromlocation2 = Fromlocation2.listValue
 	,p1.Refno
 	,p1.SizeSpec	

@@ -220,6 +220,9 @@ and ID = '{Sci.Env.User.UserID}'"))
             ns.IsSupportNegative = true;
             Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
             Ict.Win.UI.DataGridViewTextBoxColumn col_tolocation;
+            Ict.Win.UI.DataGridViewTextBoxColumn From_ContainerCode;
+            Ict.Win.UI.DataGridViewTextBoxColumn To_ContainerCode;
+
             #region -- To Location 右鍵開窗 --
             DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
@@ -292,12 +295,18 @@ WHERE   StockType='{0}'
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5)) // 5
             .Text("Location", header: "From" + Environment.NewLine + "Location", iseditingreadonly: true) // 6
+            .Text("FromContainerCode", header: "From" + Environment.NewLine + "Container Code", iseditingreadonly: true).Get(out From_ContainerCode)
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: ns).Get(out col_Qty) // 7
             .Text("topoid", header: "Bulk" + Environment.NewLine + "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 8
             .Text("toseq", header: "Bulk" + Environment.NewLine + " Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 9
-            .Text("toLocation", header: "To Location", settings: ts2, iseditingreadonly: false, width: Widths.AnsiChars(18)).Get(out col_tolocation) // 10
+            .Text("toLocation", header: "To" + Environment.NewLine + "Location", settings: ts2, iseditingreadonly: false).Get(out col_tolocation) // 10
+            .Text("ToContainerCode", header: "To" + Environment.NewLine + "Container Code", iseditingreadonly: true).Get(out To_ContainerCode)
             ;
             #endregion 欄位設定
+
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            From_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
+            To_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
             col_Qty.DefaultCellStyle.BackColor = Color.Pink;
             col_tolocation.DefaultCellStyle.BackColor = Color.Pink;
         }
@@ -1062,7 +1071,9 @@ select  [Selected] = 0
         , a.ToDyelot
         , a.ToStocktype
         , a.ToLocation
+        , a.ToContainerCode
         , Fromlocation = Fromlocation.listValue
+        , [FromContainerCode] = fi.ContainerCode
         , a.fromftyinventoryukey
         , a.ukey
         , location = dbo.Getlocation (fi.ukey)
