@@ -3947,41 +3947,138 @@ and i2.id ='{ID}'
         }
 
         /// <summary>
-        /// ISP20211385
+        /// ISP20211385 & ISP20211566
         /// </summary>
         /// <param name="dt">dt</param>
         /// <param name="type">type</param>
         /// <param name="columns">columns</param>
         public static void ChkLocationEmpty(DataTable dt, string type, string columns)
         {
-        /*
-            清單內容會根據不同的功能顯示不同的欄位資訊
-            1. P22, P28, P24, P30, P36
-                > SP#, Seq, Roll, Dyelot
-            2. P23, P29
-                > Inventory SP#, Inventory Seq, Roll, Dyelot, Bulk SP#, Bulk Seq
-            3. 借還料 : P31, P32
-                > From SP#, From Seq, From Roll, From Dyelot, From Stock Type, To SP#, To Seq, To Roll, To Dyelot
-        */
+            /* ISP20211385
+                清單內容會根據不同的功能顯示不同的欄位資訊
+                1. P22, P28, P24, P30, P36
+                    > SP#, Seq, Roll, Dyelot
+                2. P23, P29
+                    > Inventory SP#, Inventory Seq, Roll, Dyelot, Bulk SP#, Bulk Seq
+                3. 借還料 : P31, P32
+                    > From SP#, From Seq, From Roll, From Dyelot, From Stock Type, To SP#, To Seq, To Roll, To Dyelot
+                ISP20211566
+                1. 顯示不符合規定的物料清單 
+                    > SP#, Seq, Roll, Dyelot, Stock Type
+                【提示訊息】
+                08, 17, 26
+                > Location cannot be empty, please update location.
+                其餘功能
+                > Location cannot be empty, please update material current location as below list in WH P26 first.
+            */
+
+            string msg = string.Empty;
             switch (type)
             {
                 case "From":
-                    var m = MyUtility.Msg.ShowMsgGrid(dt, msg: @"From location cannot be empty, please update material current location as below list in WH P26 first.", caption: "Result", shownColumns: columns);
-                    m.Width = 800;
-                    m.grid1.Columns[0].Width = 150;
-                    m.Visible = false;
-                    m.ShowDialog();
+                    msg = @"From location cannot be empty, please update material current location as below list in WH P26 first.";
                     break;
                 case "To":
-                    var m2 = MyUtility.Msg.ShowMsgGrid(dt, msg: @"To Location cannot be empty, please update to location.", caption: "Result", shownColumns: columns);
-                    m2.Width = 800;
-                    m2.grid1.Columns[0].Width = 150;
-                    m2.Visible = false;
-                    m2.ShowDialog();
+                    msg = @"To Location cannot be empty, please update to location.";
+                    break;
+                case "Other":
+                    msg = @"Location cannot be empty, please update location.";
+                    break;
+                default:
+                    msg = @"Location cannot be empty, please update material current location as below list in WH P26 first.";
+                    break;
+            }
+
+            var from = MyUtility.Msg.ShowMsgGrid(dt, msg: msg, caption: "Result", shownColumns: columns);
+            from.Width = 800;
+            from.grid1.Columns[0].Width = 150;
+            from.Visible = false;
+            from.ShowDialog();
+        }
+
+        public static bool ChkLocation(string transcationID, string GridAlias, string msgType = "")
+        {
+            // 檢查Location是否為空值
+            DualResult result;
+            string sqlLocation = string.Empty;
+            switch (GridAlias)
+            {
+                case "Receiving_Detail":
+                case "IssueReturn_Detail":
+                    sqlLocation = $@"
+ select td.POID,seq = concat(Ltrim(Rtrim(td.seq1)), ' ', td.Seq2),td.Roll,td.Dyelot
+ , StockType = case td.StockType 
+		when 'B' then 'Bulk' 
+		when 'I' then 'Inventory' 
+		when 'S' then 'Scrap' 
+		else td.StockType 
+		end
+ , [Location] = td.Location
+ from {GridAlias} td
+ left join Production.dbo.FtyInventory f on f.POID = td.POID 
+	and f.Seq1=td.Seq1 and f.Seq2=td.Seq2 
+	and f.Roll=td.Roll and f.Dyelot=td.Dyelot
+    and f.StockType = td.StockType
+where td.ID = '{transcationID}'
+";
+                    break;
+                case "Issue_Detail":
+                case "IssueLack_Detail":
+                case "ReturnReceipt_Detail":
+                case "TransferOut_Detail":
+                case "Adjust_Detail":
+                case "StockTaking_detail":
+                    sqlLocation = $@"
+ select td.POID,seq = concat(Ltrim(Rtrim(td.seq1)), ' ', td.Seq2),td.Roll,td.Dyelot
+ , StockType = case td.StockType 
+		when 'B' then 'Bulk' 
+		when 'I' then 'Inventory' 
+		when 'S' then 'Scrap' 
+		else td.StockType 
+		end
+ , [Location] = dbo.Getlocation(f.ukey)
+ from {GridAlias} td
+ left join Production.dbo.FtyInventory f on f.POID = td.POID 
+	and f.Seq1=td.Seq1 and f.Seq2=td.Seq2 
+	and f.Roll=td.Roll and f.Dyelot=td.Dyelot
+    and f.StockType = td.StockType
+where td.ID = '{transcationID}'
+";
                     break;
                 default:
                     break;
             }
+
+            if (!(result = DBProxy.Current.Select(string.Empty, sqlLocation, out DataTable dtLocationDetail)))
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+                return false;
+            }
+
+            if (MyUtility.Check.Seek(@"select 1 from System where WH_MtlTransChkLocation = 1"))
+            {
+                if (dtLocationDetail != null && dtLocationDetail.Rows.Count > 0)
+                {
+                    // Location
+                    DataRow[] dtArry = dtLocationDetail.Select(@"Location = '' or Location is null");
+                    if (dtArry != null && dtArry.Length > 0)
+                    {
+                        DataTable dtLocation_Empty = dtArry.CopyToDataTable();
+
+                        // change column name
+                        dtLocation_Empty.Columns["PoId"].ColumnName = "SP#";
+                        dtLocation_Empty.Columns["seq"].ColumnName = "Seq";
+                        dtLocation_Empty.Columns["Roll"].ColumnName = "Roll";
+                        dtLocation_Empty.Columns["Dyelot"].ColumnName = "Dyelot";
+                        dtLocation_Empty.Columns["StockType"].ColumnName = "Stock Type";
+
+                        ChkLocationEmpty(dtLocation_Empty, msgType, @"SP#,Seq,Roll,Dyelot,Stock Type");
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         /// <inheritdoc/>

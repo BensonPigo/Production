@@ -372,6 +372,46 @@ drop table #tmp
             }
             #endregion
 
+            #region 檢查From/To Location是否為空值
+            string sqlWMSLocation = $@"
+select distinct td.POID,seq = concat(Ltrim(Rtrim(td.seq1)), ' ', td.Seq2),td.Roll,td.Dyelot
+ , StockType = case td.StockType 
+		when 'B' then 'Bulk' 
+		when 'I' then 'Inventory' 
+		when 'S' then 'Scrap' 
+		else td.StockType 
+		end
+ , td.FromLocation
+ , td.ToLocation
+from LocationTrans_detail td
+left join MtlLocation m on td.FromLocation = m.ID
+left join MtlLocation m2 on td.ToLocation= m2.ID
+where (m.IsWMS =1 or m2.IsWMS= 1)
+and (td.FromLocation = '' or td.ToLocation = '')
+and td.id = '{this.CurrentMaintain["ID"]}'
+";
+            if (!(result1 = DBProxy.Current.Select(string.Empty, sqlWMSLocation, out DataTable dtLocationDetail)))
+            {
+                this.ShowErr(result1.ToString());
+                return;
+            }
+
+            if (MyUtility.Check.Seek(@"select * from System where WH_MtlTransChkLocation = 1"))
+            {
+                if (dtLocationDetail != null && dtLocationDetail.Rows.Count > 0)
+                {
+                    // change column name
+                    dtLocationDetail.Columns["PoId"].ColumnName = "SP#";
+                    dtLocationDetail.Columns["seq"].ColumnName = "Seq";
+                    dtLocationDetail.Columns["Roll"].ColumnName = "Roll";
+                    dtLocationDetail.Columns["Dyelot"].ColumnName = "Dyelot";
+                    dtLocationDetail.Columns["StockType"].ColumnName = "Stock Type";
+                    Prgs.ChkLocationEmpty(dtLocationDetail, "Other", "SP#,Seq,Roll,Dyelot");
+                    return;
+                }
+            }
+            #endregion
+
             string sqlComfirmUpdate = string.Empty;
             sqlComfirmUpdate = string.Format(
                 @"
