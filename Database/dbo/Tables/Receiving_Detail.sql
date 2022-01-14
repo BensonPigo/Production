@@ -35,6 +35,7 @@
     [FullDyelot]        VARCHAR (50)    CONSTRAINT [DF_Receiving_Detail_FullDyelot] DEFAULT ('') NOT NULL,
     [ForInspection]     BIT             CONSTRAINT [DF_Receiving_Detail_ForInspection] DEFAULT ((0)) NOT NULL,
     [OneYardForWashing] BIT             CONSTRAINT [DF_Receiving_Detail_OneYardForWashing] DEFAULT ((0)) NOT NULL,
+    [ContainerCode] NVARCHAR(100) NULL DEFAULT (''), 
     CONSTRAINT [PK_Receiving_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -184,3 +185,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MIND�Ĥ@�
 
 
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'鐵框號 ( 主要針對主料 )',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Receiving_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ContainerCode'

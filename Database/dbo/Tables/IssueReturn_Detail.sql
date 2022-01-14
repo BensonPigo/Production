@@ -13,6 +13,7 @@
     [CompleteTime] DATETIME NULL, 
     [Location ] VARCHAR(500) NULL DEFAULT (''), 
     [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
+    [ContainerCode] NVARCHAR(100) NULL DEFAULT (''), 
     CONSTRAINT [PK_IssueReturn_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -63,3 +64,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'IssueReturn_Detail',
     @level2type = N'COLUMN',
     @level2name = N'Location '
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'鐵框號 ( 主要針對主料 )',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'IssueReturn_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ContainerCode'
