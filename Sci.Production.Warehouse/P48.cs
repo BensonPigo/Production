@@ -464,7 +464,8 @@ from #tmp";
 insert into Adjust_Detail
 (ID, FtyInventoryUkey ,MDivisionID ,POID ,Seq1 ,Seq2 ,Roll    
 ,Dyelot ,StockType ,QtyBefore ,QtyAfter ,ReasonID )
-select *
+select ID, FtyInventoryUkey ,MDivisionID ,POID ,Seq1 ,Seq2 ,Roll    
+,Dyelot ,StockType ,QtyBefore ,QtyAfter ,ReasonID
 from #tmp";
 
             DataTable dtMaster = new DataTable();

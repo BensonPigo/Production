@@ -4010,7 +4010,7 @@ and i2.id ='{ID}'
  , StockType = case td.StockType 
 		when 'B' then 'Bulk' 
 		when 'I' then 'Inventory' 
-		when 'S' then 'Scrap' 
+		when 'O' then 'Scrap' 
 		else td.StockType 
 		end
  , [Location] = td.Location
@@ -4033,7 +4033,7 @@ where td.ID = '{transcationID}'
  , StockType = case td.StockType 
 		when 'B' then 'Bulk' 
 		when 'I' then 'Inventory' 
-		when 'S' then 'Scrap' 
+		when 'O' then 'Scrap' 
 		else td.StockType 
 		end
  , [Location] = dbo.Getlocation(f.ukey)

@@ -365,7 +365,7 @@ from TransferOut_Detail td
 	and f.Roll=td.Roll and f.Dyelot=td.Dyelot
     and f.StockType = td.StockType
 where dbo.Getlocation(f.ukey) is null
-and td.Qty = 0
+and td.Qty != 0
 and td.id = '{this.CurrentMaintain["ID"]}'
 ";
             if (!(result = DBProxy.Current.Select(string.Empty, sqlWMSLocation, out DataTable dtLocationDetail)))
@@ -384,7 +384,7 @@ and td.id = '{this.CurrentMaintain["ID"]}'
                     dtLocationDetail.Columns["Roll"].ColumnName = "Roll";
                     dtLocationDetail.Columns["Dyelot"].ColumnName = "Dyelot";
                     dtLocationDetail.Columns["StockType"].ColumnName = "Stock Type";
-                    Prgs.ChkLocationEmpty(dtLocationDetail, "Other", "SP#,Seq,Roll,Dyelot");
+                    Prgs.ChkLocationEmpty(dtLocationDetail, "Other", "SP#,Seq,Roll,Dyelot,Stock Type");
                     return;
                 }
             }
