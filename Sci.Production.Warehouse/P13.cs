@@ -438,6 +438,7 @@ and ID = '{Sci.Env.User.UserID}'"))
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode;
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("FtyGroup", header: "Factory", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -452,10 +453,13 @@ and ID = '{Sci.Env.User.UserID}'"))
                 .Numeric("LossQty", header: "Loss Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
                 .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 6
                 .Text("Location", header: "Bulk Location", iseditingreadonly: true) // 7
+                .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
             ;
             #endregion 欄位設定
 
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            cbb_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
         }
 
         /// <inheritdoc/>
@@ -1041,6 +1045,7 @@ select  o.FtyGroup
         , a.StockType
         , Isnull(c.inqty - c.outqty + c.adjustqty - c.ReturnQty,0.00) as balance
         , dbo.Getlocation(c.ukey) location
+        , [ContainerCode] = c.ContainerCode
         , a.ukey
 		, p1.NetQty
 		, p1.LossQty

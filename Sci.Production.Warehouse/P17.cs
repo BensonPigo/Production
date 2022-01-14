@@ -661,6 +661,7 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
             };
             #endregion
 
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode;
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), checkMDivisionID: true) // 0
@@ -671,8 +672,12 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
             .Text("stockunit", header: "Unit", iseditingreadonly: true) // 5
             .Numeric("qty", header: "Return Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 6
             .Text("Location", header: "Bulk Location", settings: location_Col) // 7
+            .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
             ;
             #endregion 欄位設定
+
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            cbb_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
         }
 
         /// <inheritdoc/>
@@ -1299,7 +1304,8 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(
-                @"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+                @"
+select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll
 ,a.Dyelot
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
@@ -1308,6 +1314,7 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
 ,a.StockType
 ,a.ftyinventoryukey
 ,a.Location
+, a.ContainerCode
 ,a.ukey
 ,Barcode = isnull(FI.barcode,'')
 ,fabrictype = isnull(p1.fabrictype,'')

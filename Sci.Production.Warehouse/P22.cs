@@ -280,6 +280,8 @@ WHERE   StockType='{0}'
             };
             #endregion
 
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode;
+
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
@@ -290,10 +292,15 @@ WHERE   StockType='{0}'
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true) // 5
             .Text("Location", header: "From" + Environment.NewLine + "Location", iseditingreadonly: true) // 6
+            .Text("FromContainerCode", header: "From" + Environment.NewLine + "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: ns) // 7
-            .Text("toLocation", header: "To Location", settings: ts2, iseditingreadonly: false, width: Widths.AnsiChars(18)) // 8
+            .Text("toLocation", header: "To" + Environment.NewLine + "Location", settings: ts2, iseditingreadonly: false) // 8
+            .Text("ToContainerCode", header: "To" + Environment.NewLine + "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
             ;
             #endregion 欄位設定
+
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            cbb_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["toLocation"].DefaultCellStyle.BackColor = Color.Pink;
         }
@@ -888,7 +895,9 @@ select [Selected] = 0
 ,a.ToDyelot
 ,a.ToStocktype
 ,a.ToLocation
+,a.ToContainerCode
 ,Fromlocation = Fromlocation.listValue
+,[FromContainerCode] = fi.ContainerCode
 ,a.fromftyinventoryukey
 ,a.ukey
 ,dbo.Getlocation(fi.ukey) location

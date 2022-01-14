@@ -65,6 +65,7 @@ select t.poid
        , FTY.ReturnQty
 	   , FTY.InQty - FTY.OutQty + FTY.AdjustQty - FTY.ReturnQty as balanceqty
 	   , [location] = dbo.Getlocation(FTY.Ukey)
+       , [ContainerCode] = FTY.ContainerCode
 	   , GroupQty = Sum(FTY.InQty - FTY.OutQty + FTY.AdjustQty - FTY.ReturnQty) over (partition by t.dyelot)
        , [DetailFIR] = concat(isnull(Physical.Result,' '),'/',isnull(Weight.Result,' '),'/',isnull(Shadebone.Result,' '),'/',isnull(Continuity.Result,' '),'/',isnull(Odor.Result,' '))
        , [Tone] = ShadeboneTone.Tone
@@ -159,11 +160,9 @@ order by GroupQty desc, t.dyelot, balanceqty desc";
                 {
                     this.Sum_checkedqty();
                 };
-            this.Helper.Controls.Grid.Generator(this.grid)
 
-                // .Text("id", header: "id", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
-                // .Numeric("Issue_SummaryUkey", header: "Issue_SummaryUkey", width: Widths.AnsiChars(8), integer_places: 10)    //6
-            // .Text("FtyInventoryUkey", header: "FtyInventory" + Environment.NewLine + "Ukey", width: Widths.AnsiChars(8), iseditingreadonly: true)    //0
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode;
+            this.Helper.Controls.Grid.Generator(this.grid)
             .CellPOIDWithSeqRollDyelot("poid", header: "poid", width: Widths.AnsiChars(14), iseditingreadonly: true) // 1
             .Text("seq1", header: "seq1", width: Widths.AnsiChars(4), iseditingreadonly: true) // 2
             .Text("seq2", header: "seq2", width: Widths.AnsiChars(3), iseditingreadonly: true) // 3
@@ -171,6 +170,7 @@ order by GroupQty desc, t.dyelot, balanceqty desc";
             .Text("dyelot", header: "dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 5
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: ns) // 6
             .Text("location", header: "Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(10), iseditingreadonly: true) // 7
+            .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
             .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true) // 8
             .Numeric("outqty", header: "Out Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true) // 9
             .Numeric("adjustqty", header: "Adjust" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true) // 10
@@ -180,6 +180,8 @@ order by GroupQty desc, t.dyelot, balanceqty desc";
             .Text("Tone", header: "Shade Band" + Environment.NewLine + "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
 
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            cbb_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
             this.grid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
 
             return true;

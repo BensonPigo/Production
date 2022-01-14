@@ -327,6 +327,8 @@ and ID = '{Sci.Env.User.UserID}'"))
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode;
+
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
@@ -337,8 +339,12 @@ and ID = '{Sci.Env.User.UserID}'"))
             .Text("stockunit", header: "Unit", iseditingreadonly: true) // 5
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 6
             .Text("Location", header: "Bulk Location", iseditingreadonly: true) // 7
+            .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true);
             #endregion 欄位設定
+
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            cbb_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
         }
 
         /// <inheritdoc/>
@@ -915,6 +921,7 @@ select a.id
 	   , a.Qty
 	   , a.StockType
 	   , location = dbo.Getlocation(f.Ukey) 
+       , [ContainerCode] = f.ContainerCode
 	   , a.ukey
 	   , a.FtyInventoryUkey
        , a.Remark

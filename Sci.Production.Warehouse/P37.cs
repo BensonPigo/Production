@@ -427,6 +427,8 @@ and ID = '{Sci.Env.User.UserID}'"))
                         break;
                 }
             };
+
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode;
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
@@ -438,9 +440,12 @@ and ID = '{Sci.Env.User.UserID}'"))
             .Text("StockType", header: "StockType", iseditingreadonly: true, settings: ns) // 5
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: supportNegative) // 6
             .Text("Location", header: "Location", iseditingreadonly: true) // 7
+            .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
             ;
             #endregion 欄位設定
 
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            cbb_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
@@ -1064,7 +1069,9 @@ and i2.id = '{this.CurrentMaintain["ID"]}'
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(
-                @"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+                @"
+select a.id,a.PoId,a.Seq1,a.Seq2
+,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll
 ,a.Dyelot
 ,p1.stockunit
@@ -1072,6 +1079,8 @@ and i2.id = '{this.CurrentMaintain["ID"]}'
 ,a.Qty
 ,a.StockType
 ,dbo.Getlocation(fi.ukey) location
+,[ContainerCode] = FI.ContainerCode
+, a.ContainerCode
 ,a.ukey
 ,a.FtyInventoryUkey
 from dbo.ReturnReceipt_Detail a WITH (NOLOCK) 
