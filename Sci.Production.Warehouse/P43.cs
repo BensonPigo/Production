@@ -545,7 +545,8 @@ SELECT AD2.poid, [Seq]= AD2.Seq1+' '+AD2.Seq2,
         AD2.Roll,AD2.Dyelot,
        [CheckQty] = (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty) - ( AD2.qtyafter - AD2.qtybefore ) , 
        [FTYLobQty] = (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty),
-       [AdjustQty]= (AD2.qtyafter - AD2.qtybefore )       
+       [AdjustQty]= (AD2.qtyafter - AD2.qtybefore ),
+       AD2.Ukey
 FROM    FtyInventory FTI
 inner join Adjust_detail AD2 on FTI.POID=AD2.POID 
 and FTI.Seq1=AD2.Seq1
