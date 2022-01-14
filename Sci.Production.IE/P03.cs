@@ -1136,6 +1136,17 @@ where Junk = 0
                 this.CurrentMaintain["Version"] = newVersion;
             }
 
+            int version = MyUtility.Convert.GetInt(this.CurrentMaintain["Version"]) - 1;
+            string chkVersionStatus = $@"select Status from LineMapping where StyleUKey = '{this.CurrentMaintain["StyleUKey"]}' and FactoryID = '{this.CurrentMaintain["FactoryID"]}' and version = '{version}'";
+            if (MyUtility.Check.Seek(chkVersionStatus, out DataRow drStatus))
+            {
+                if (MyUtility.Convert.GetString(drStatus["Status"]) != "Confirmed")
+                {
+                    MyUtility.Msg.WarningBox($"Please check that the status of version {version} needs to be Confirmed");
+                    return false;
+                }
+            }
+
             this.txtStyleComboType.BackColor = this.txtStyleID.BackColor;
 
             return true;
@@ -1493,19 +1504,6 @@ order by EffectiveDate desc
             {
                 MyUtility.Msg.WarningBox("This record is not created by yourself, so can't confirm!");
                 return;
-            }
-
-            string sqlVersionCount = $@"select count(1) from LineMapping where StyleUKey = '{this.CurrentMaintain["StyleUKey"]}' and FactoryID = '{this.CurrentMaintain["FactoryID"]}'";
-            int versionCount = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlVersionCount));
-            if (versionCount > 1)
-            {
-                int version = MyUtility.Convert.GetInt(this.CurrentMaintain["Version"]) - 1;
-                string chkVersionStatus = $@"select 1 from LineMapping where Status = 'New' and StyleUKey = '{this.CurrentMaintain["StyleUKey"]}' and FactoryID = '{this.CurrentMaintain["FactoryID"]}' and version = '{version}'";
-                if (MyUtility.Check.Seek(chkVersionStatus))
-                {
-                    MyUtility.Msg.WarningBox($"Please check that the status of version {version} needs to be Confirmed");
-                    return;
-                }
             }
 
             #region 檢查表身不可為空
