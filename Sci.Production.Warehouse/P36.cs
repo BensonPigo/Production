@@ -275,6 +275,9 @@ WHERE   StockType='{0}'
             };
             #endregion Location 右鍵開窗
 
+            Ict.Win.UI.DataGridViewTextBoxColumn From_ContainerCode;
+            Ict.Win.UI.DataGridViewTextBoxColumn To_ContainerCode;
+
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
@@ -286,9 +289,15 @@ WHERE   StockType='{0}'
                 .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true) // 5
                 .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 6
                 .Text("location", header: "From Scrap\r\nLocation", iseditingreadonly: true, width: Widths.AnsiChars(20))
+                .Text("FromContainerCode", header: "From" + Environment.NewLine + "Container Code", iseditingreadonly: true).Get(out From_ContainerCode)
                 .Text("ToLocation", header: "To Inventory\r\nLocation", settings: ts2, iseditingreadonly: false, width: Widths.AnsiChars(30))
+                .Text("ToContainerCode", header: "To" + Environment.NewLine + "Container Code", iseditingreadonly: true).Get(out To_ContainerCode)
             ;
             #endregion 欄位設定
+
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            From_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
+            To_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["ToLocation"].DefaultCellStyle.BackColor = Color.Pink;
         }
@@ -977,7 +986,9 @@ select [Selected] = 0
 ,a.ToRoll
 ,a.ToStockType
 ,a.ToLocation
+,a.ToContainerCode
 ,Fromlocation = Fromlocation.listValue
+,[FromContainerCode] = c.ContainerCode
 ,a.ukey
 ,location = dbo.Getlocation(c.ukey)
 from dbo.SubTransfer_Detail a WITH (NOLOCK) 
@@ -1104,6 +1115,7 @@ Where a.id = '{0}'", masterID);
                      ,a.FromDyelot
 		             ,a.Qty [QTY]
 			         ,a.ToLocation
+                     ,a.ToContainerCode
                      ,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.Fromseq2 )    
              from dbo.Subtransfer_detail a WITH (NOLOCK) 
              left join dbo.PO_Supp_Detail b WITH (NOLOCK) 
@@ -1133,7 +1145,7 @@ Where a.id = '{0}'", masterID);
                     FromRoll = row1["FromRoll"].ToString().Trim(),
                     FromDyelot = row1["FromDyelot"].ToString().Trim(),
                     QTY = row1["QTY"].ToString().Trim(),
-                    ToLocation = row1["ToLocation"].ToString().Trim(),
+                    ToLocation = row1["ToLocation"].ToString().Trim() + Environment.NewLine + row1["ToContainerCode"].ToString().Trim(),
                     Total = row1["Total"].ToString().Trim(),
                 }).ToList();
 

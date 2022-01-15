@@ -75,6 +75,7 @@ select Sel = 0
 	    , ToFactory = trs.ToMDivisionId      
 	    , StockUnit = psd.StockUnit
 	    , location = dbo.Getlocation(trsd.FtyInventoryUkey)
+        , fi.ContainerCode
 	    , Qty = trsd.Qty
         , [StockQty] = (isnull(fi.InQty, 0) - isnull(fi.OutQty, 0) + isnull(fi.AdjustQty, 0) - isnull(fi.ReturnQty, 0))
         , [StockType] = case    when trsd.StockType = 'I' then 'Inventory'
@@ -145,7 +146,7 @@ order by NewRowNo";
                     Roll = row["Roll"].ToString().Trim(),
                     Dyelot = row["Dyelot"].ToString().Trim(),
                     ToFactory = row["ToFactory"].ToString().Trim(),
-                    Location = row["location"].ToString().Trim(),
+                    Location = row["Location"].ToString().Trim() + Environment.NewLine + row["ContainerCode"].ToString().Trim(),
                     Color = row["Color"].ToString().Trim(),
                     StockUnit = row["StockUnit"].ToString().Trim(),
                     Qty = Convert.ToDouble(row["Qty"]),

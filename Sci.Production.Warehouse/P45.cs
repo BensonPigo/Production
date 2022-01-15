@@ -486,6 +486,7 @@ select  ad.POID
 	, [AdjustQty] = ad.QtyBefore - ad.QtyAfter
 	, psd.StockUnit
 	, [Location] = dbo.Getlocation(fi.ukey)
+    , fi.ContainerCode
     , [Total]=sum(ad.QtyBefore - ad.QtyAfter) OVER (PARTITION BY ad.POID ,ad.Seq1,ad.Seq2 )    
 from Adjust a
 inner join Adjust_Detail ad on a.ID = ad.ID
@@ -519,7 +520,7 @@ and a.Status = 'Confirmed'
                     Description = row1["Description"].ToString().Trim(),
                     AdjustQty = row1["AdjustQty"].ToString().Trim(),
                     StockUnit = row1["StockUnit"].ToString().Trim(),
-                    Location = row1["Location"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                     Total = row1["Total"].ToString().Trim(),
                 }).ToList();
 
@@ -589,6 +590,7 @@ select
 	,adjustqty= ad.QtyBefore-ad.QtyAfter
 	,psd.StockUnit
 	,Location = dbo.Getlocation(fi.ukey)
+    ,fi.ContainerCode
 	,ad.ReasonId
 	,reason_nm = (select Name FROM Reason WHERE id=ReasonId AND junk = 0 and ReasonTypeID='Stock_Remove')
     ,ColorID =dbo.GetColorMultipleID(psd.BrandId, psd.ColorID)
@@ -730,6 +732,9 @@ where ad.Id='{0}'
             };
 
             #endregion Seq 右鍵開窗
+
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode;
+
             #region -- 欄位設定 --
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("poid", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true) // 0
@@ -743,10 +748,13 @@ where ad.Id='{0}'
             .Numeric("AdjustQty", header: "Remove Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, minimum: 0, settings: adjustqty) // 6
             .Text("StockUnit", header: "Unit", iseditingreadonly: true) // 7
             .Text("Location", header: "Location", iseditingreadonly: true) // 7
+            .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
             .Text("reasonid", header: "Reason ID", settings: ts) // 8
             .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20)) // 9
             ;
             #endregion 欄位設定
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            cbb_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
             this.detailgrid.Columns["qtyafter"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["reasonid"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["adjustqty"].DefaultCellStyle.BackColor = Color.Pink;

@@ -206,6 +206,7 @@ select  ROW_NUMBER() OVER(ORDER BY R.POID,R.SEQ1,R.SEQ2) AS NoID
 			ELSE R.StockType
 		end StockType
 		,dbo.Getlocation(fi.ukey) [Location]
+        ,fi.ContainerCode
 		,[Total]=sum(R.Qty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
 from dbo.ReturnReceipt_Detail R WITH (NOLOCK) 
 LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
@@ -238,7 +239,7 @@ where R.id= @ID";
                     Dyelot = row1["dyelot"].ToString(),
                     Qty = row1["qty"].ToString(),
                     StockType = row1["StockType"].ToString(),
-                    Location = row1["Location"].ToString(),
+                    Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                     TotalQty = row1["Total"].ToString(),
                 }).ToList();
 
@@ -1080,7 +1081,7 @@ select a.id,a.PoId,a.Seq1,a.Seq2
 ,a.StockType
 ,dbo.Getlocation(fi.ukey) location
 ,[ContainerCode] = FI.ContainerCode
-, a.ContainerCode
+, FI.ContainerCode
 ,a.ukey
 ,a.FtyInventoryUkey
 from dbo.ReturnReceipt_Detail a WITH (NOLOCK) 

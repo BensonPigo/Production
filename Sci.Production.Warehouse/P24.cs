@@ -870,6 +870,7 @@ select a.FromPOID
 		,a.FromRoll
         ,a.FromDyelot
 		,[FromLocation]=dbo.Getlocation(fi.ukey)	 
+        ,FI.ContainerCode
 		,a.Qty			
 		,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.FromSeq2 )
 from dbo.SubTransfer_Detail a WITH (NOLOCK) 
@@ -900,7 +901,7 @@ where a.id= @ID";
                     Unit = row1["unit"].ToString().Trim(),
                     FromRoll = row1["FromRoll"].ToString().Trim(),
                     FromDyelot = row1["FromDyelot"].ToString().Trim(),
-                    FromLocation = row1["FromLocation"].ToString().Trim(),
+                    FromLocation = row1["FromLocation"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                     QTY = MyUtility.Convert.GetDecimal(row1["QTY"]),
                     Total = row1["Total"].ToString().Trim(),
                 }).ToList();

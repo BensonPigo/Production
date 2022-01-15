@@ -175,6 +175,7 @@ select a.poid [SP]
         ,b.StockUnit [UNIT]
         ,a.Qty [RETURN_QTY]
         ,a.Location
+        ,a.ContainerCode
         ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.seq2)
 from dbo.IssueReturn_Detail a WITH (NOLOCK) 
 inner join PO_Supp_Detail b WITH (NOLOCK) on a.poid=b.id and a.Seq1 = b.SEQ1 and a.Seq2 = b.SEQ2
@@ -205,7 +206,7 @@ where a.id= @ID";
                     DESCRIPTION = row1["DESCRIPTION"].ToString().Trim(),
                     UNIT = row1["UNIT"].ToString().Trim(),
                     RETURN_QTY = row1["RETURN_QTY"].ToString().Trim(),
-                    LOCATION = row1["LOCATION"].ToString().Trim(),
+                    LOCATION = row1["LOCATION"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                     Total = row1["Total"].ToString().Trim(),
                 }).ToList();
 
@@ -1314,7 +1315,7 @@ select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as se
 ,a.StockType
 ,a.ftyinventoryukey
 ,a.Location
-, a.ContainerCode
+,a.ContainerCode
 ,a.ukey
 ,Barcode = isnull(FI.barcode,'')
 ,fabrictype = isnull(p1.fabrictype,'')

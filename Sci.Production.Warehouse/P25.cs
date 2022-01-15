@@ -936,6 +936,7 @@ select  frompoid
           end MtlType
         ,a.Qty
         ,[Location] = dbo.Getlocation(fi.ukey)
+        ,fi.ContainerCode
 from dbo.Subtransfer_detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
 left join dbo.FtyInventory FI on a.fromPoid = fi.poid and a.fromSeq1 = fi.seq1 and a.fromSeq2 = fi.seq2 and a.fromDyelot = fi.Dyelot
@@ -965,7 +966,7 @@ where a.id= @ID";
                     Unit = row1["StockUnit"].ToString().Trim(),
                     Type = row1["MtlType"].ToString().Trim(),
                     ActQty = row1["QTY"].ToString().Trim(),
-                    OLocation = row1["Location"].ToString().Trim(),
+                    OLocation = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                 }).ToList();
 
             report.ReportDataSource = data;

@@ -69,6 +69,7 @@ select Sel = 0
 	, SPDetail = std.FromPOID+' '+std.FromSeq1+'-'+std.FromSeq2
 	, StockUnit = psd.StockUnit
 	, ToLocation = isnull(std.ToLocation,'')
+    , std.ToContainerCode
 from SubTransfer_Detail std WITH (NOLOCK)
 left join View_WH_Orders o WITH (NOLOCK) on std.FromPOID = o.ID
 left join Po_Supp_Detail psd WITH (NOLOCK) on std.FromPOID = psd.ID and std.FromSeq1 = psd.SEQ1 and std.FromSeq2 = psd.SEQ2
@@ -120,7 +121,7 @@ order by NewRowNo";
                     ToDyelot = row["ToDyelot"].ToString().Trim(),
                     ToFactory = row["ToFactory"].ToString().Trim(),
                     SPDetail = row["SPDetail"].ToString().Trim(),
-                    ToLocation = row["ToLocation"].ToString().Trim(),
+                    ToLocation = row["ToLocation"].ToString().Trim() + Environment.NewLine + row["ToContainerCode"].ToString().Trim(),
                     StockUnit = row["StockUnit"].ToString().Trim(),
                     Qty = Convert.ToDouble(row["Qty"]),
                 }).ToList();

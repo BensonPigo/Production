@@ -71,6 +71,7 @@ select
     , StockUnit = isnull (dbo.GetStockUnitBySPSeq (std.FromPOID, std.FromSeq1, std.FromSeq2), '')
     , Qty = std.Qty
     , [FromLocation]= dbo.Getlocation (fi.ukey)
+    , fi.ContainerCode
 from SubTransfer_Detail std WITH (NOLOCK)
 left join View_WH_Orders o WITH (NOLOCK) on std.FromPOID = o.ID
 left join Po_Supp_Detail psd WITH (NOLOCK) on std.FromPOID = psd.ID
@@ -134,7 +135,7 @@ order by NewRowNo";
                     Color = row["Color"].ToString().Trim(),
                     StockUnit = row["StockUnit"].ToString().Trim(),
                     Qty = Convert.ToDouble(row["Qty"]),
-                    FromLocation = row["FromLocation"].ToString().Trim(),
+                    FromLocation = row["FromLocation"].ToString().Trim() + Environment.NewLine + row["ContainerCode"].ToString().Trim(),
                 }).ToList();
 
                 ReportDefinition report = new ReportDefinition

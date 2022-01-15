@@ -121,6 +121,7 @@ select  a.POID
 	    , a.Qty
         , a.Weight
         , dbo.Getlocation(f.ukey)[Location] 
+        , f.ContainerCode
 from dbo.TransferIn_detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID 
                                                 and b.SEQ1 = a.Seq1 
@@ -169,6 +170,7 @@ select  a.Roll
                             ELSE a.StockType 
                         END
 		, a.Location
+        , a.ContainerCode
 		, a.Remark
 from dbo.TransferIn_detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID 
@@ -235,7 +237,7 @@ WHERE a.ID = '{id}'
                     Unit = row1["StockUnit"].ToString().Trim(),
                     QTY = row1["QTY"].ToString().Trim(),
                     GW = row1["Weight"].ToString().Trim(),
-                    Location = row1["Location"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                 }).ToList();
 
             report.ReportDataSource = data;

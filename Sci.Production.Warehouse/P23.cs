@@ -1211,7 +1211,9 @@ select  t.frompoid
         , t.fromdyelot
         , p.StockUnit
         , [BULKLOCATION] = dbo.Getlocation(fi.ukey) 
+        , fi.ContainerCode
         , t.Tolocation
+        , t.ToContainerCode
         , t.Qty
         , [Total] = sum(t.Qty) OVER (PARTITION BY t.frompoid ,t.FromSeq1,t.FromSeq2 )         
 from dbo.Subtransfer_detail t WITH (NOLOCK) 
@@ -1251,8 +1253,8 @@ order by t.frompoid,SEQ,BULKLOCATION,t.fromroll,t.FromDyelot
                     Roll = row1["fromroll"].ToString().Trim(),
                     DYELOT = row1["fromdyelot"].ToString().Trim(),
                     Unit = row1["StockUnit"].ToString().Trim(),
-                    BULKLOCATION = row1["BULKLOCATION"].ToString().Trim(),
-                    INVENTORYLOCATION = row1["Tolocation"].ToString().Trim(),
+                    BULKLOCATION = row1["BULKLOCATION"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
+                    INVENTORYLOCATION = row1["Tolocation"].ToString().Trim() + Environment.NewLine + row1["ToContainerCode"].ToString().Trim(),
                     QTY = Convert.ToDecimal(row1["Qty"].ToString()),
                     TotalQTY = row1["Total"].ToString().Trim(),
                 }).ToList();

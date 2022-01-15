@@ -90,7 +90,8 @@ from
 	,outqty=  case type when 'C' then (b.Qty) else 0 end
 	,adjustQty = 0
 	,Location  = ToLocation.location
-    ,a.EditDate , a.issuedate
+	,ContainerCode = ToContainerCode.ContainerCode
+    ,a.EditDate , a.issuedate 
 	from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
 outer apply(
     select  location = stuff(
@@ -102,7 +103,18 @@ outer apply(
             and sd.FromDyelot = b.FromDyelot and sd.FromRoll = b.FromRoll and sd.FromStockType = b.FromStockType
         )x			
     for xml path('')),1,1,'') 
-) ToLocation  
+) ToLocation
+outer apply(
+    select  ContainerCode = stuff(
+        (
+            select ',' + x.ContainerCode 								
+            from(select distinct ContainerCode  = sd.ToContainerCode 
+            from SubTransfer_Detail sd
+            where Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}' 
+            and sd.FromDyelot = b.FromDyelot and sd.FromRoll = b.FromRoll and sd.FromStockType = b.FromStockType
+        )x			
+    for xml path('')),1,1,'') 
+) ToContainerCode
 	where  Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'  
 	and a.id = b.id
     and a.Status='Confirmed'
@@ -117,9 +129,14 @@ outer apply(
 	,outqty = 0
 	,adjustQty = (QtyAfter - QtyBefore) 
 	,Location  = ''
+	,fi.ContainerCode
     ,a.EditDate , a.issuedate
 	from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK)         
-	where  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id
+	left join FtyInventory fi on fi.POID = b.POID
+		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
+		and fi.Roll = b.Roll and fi.Dyelot = b.Dyelot
+		and fi.StockType = b.StockType
+	where  b.poid='{0}' and b.seq1 = '{1}'and b.seq2 = '{2}'  and a.id = b.id
     and a.Status='Confirmed'
     and type in ('O','R')
 ) a order by issuedate,EditDate
@@ -144,6 +161,7 @@ outer apply(
 
             this.bindingSource1.DataSource = selectDataTable1;
             this.bindingSource2.DataSource = selectDataTable2;
+            Ict.Win.UI.DataGridViewTextBoxColumn col_ContainerCode;
 
             // 設定gridScrapList的顯示欄位
             this.gridScrapList.IsEditingReadOnly = true;
@@ -168,7 +186,11 @@ outer apply(
                  .Numeric("adjustQty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Text("Location", header: "To Location", width: Widths.AnsiChars(15))
+                 .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out col_ContainerCode)
                  ;
+
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            col_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
         }
 
         private void BtnClose_Click(object sender, EventArgs e)

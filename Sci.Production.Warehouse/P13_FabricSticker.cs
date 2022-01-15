@@ -78,6 +78,7 @@ select Sel = 0
 	    , Style = o.StyleID
         , StockUnit = psd.StockUnit
 	    , Location = isnull(dbo.Getlocation(isd.FtyInventoryUkey),'')
+        , fi.ContainerCode
         , [StockQty] = (isnull(fi.InQty, 0) - isnull(fi.OutQty, 0) + isnull(fi.AdjustQty, 0)) - isnull(fi.ReturnQty, 0)
         , [BulkLocation] = BulkLocation.val
 from {this.fromTable} isd with (nolock)
@@ -152,7 +153,7 @@ order by NewRowNo";
                     Roll = row["Roll"].ToString().Trim(),
                     Dyelot = row["Dyelot"].ToString().Trim(),
                     Style = row["Style"].ToString().Trim(),
-                    Location = row["Location"].ToString().Trim(),
+                    Location = row["Location"].ToString().Trim() + Environment.NewLine + row["ContainerCode"].ToString().Trim(),
                     StockUnit = row["StockUnit"].ToString().Trim(),
                     Qty = Convert.ToDouble(row["Qty"]),
                 }).ToList();
