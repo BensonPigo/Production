@@ -224,6 +224,8 @@ ORDER BY GB.ETD
             base.ClickNewAfter();
             this.CurrentMaintain["InvDate"] = DateTime.Now;
             this.CurrentMaintain["Status"] = "New";
+            this.gridCurrency.DataSource = null;
+            this.CurrentMaintain["Handle"] = Env.User.UserID;
             this.RefreshExchangeRate();
         }
 
@@ -533,7 +535,7 @@ select	[No] = 0,
 		tup.UnitPriceUSD,
 		[ShipQty] = sum(pd.ShipQty),
 		[AmountUSD] = sum(pd.ShipQty) * tup.UnitPriceUSD,
-		[AmountKHR] = sum(pd.ShipQty) * tup.UnitPriceUSD * @ExchangeRate
+		[AmountKHR] = Round(sum(pd.ShipQty) * tup.UnitPriceUSD * @ExchangeRate, 0)
 from PackingList p with (nolock)
 inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
 inner join Orders o with (nolock) on pd.OrderID = o.ID

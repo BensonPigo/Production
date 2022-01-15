@@ -88,7 +88,7 @@
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateInvDate);
-            this.masterpanel.Size = new System.Drawing.Size(1165, 182);
+            this.masterpanel.Size = new System.Drawing.Size(892, 182);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateInvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
@@ -114,7 +114,7 @@
             // 
             this.detailpanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.detailpanel.Location = new System.Drawing.Point(0, 182);
-            this.detailpanel.Size = new System.Drawing.Size(1165, 155);
+            this.detailpanel.Size = new System.Drawing.Size(892, 155);
             // 
             // gridicon
             // 
@@ -123,11 +123,11 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1165, 155);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 155);
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1165, 556);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
@@ -137,22 +137,12 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1165, 556);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.gridPOList);
-            this.detailcont.Size = new System.Drawing.Size(1165, 518);
             this.detailcont.Controls.SetChildIndex(this.masterpanel, 0);
             this.detailcont.Controls.SetChildIndex(this.detailpanel, 0);
             this.detailcont.Controls.SetChildIndex(this.gridPOList, 0);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 518);
-            this.detailbtm.Size = new System.Drawing.Size(1165, 38);
             // 
             // browse
             // 
@@ -185,7 +175,7 @@
             this.gridPOList.RowTemplate.Height = 24;
             this.gridPOList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridPOList.ShowCellToolTips = false;
-            this.gridPOList.Size = new System.Drawing.Size(1165, 174);
+            this.gridPOList.Size = new System.Drawing.Size(892, 5);
             this.gridPOList.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridPOList.TabIndex = 2;
             // 
@@ -343,7 +333,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImportGMTBooking.Location = new System.Drawing.Point(759, 144);
             this.btnImportGMTBooking.Name = "btnImportGMTBooking";
-            this.btnImportGMTBooking.Size = new System.Drawing.Size(290, 30);
+            this.btnImportGMTBooking.Size = new System.Drawing.Size(17, 30);
             this.btnImportGMTBooking.TabIndex = 18;
             this.btnImportGMTBooking.Text = "Import Garment Booking";
             this.btnImportGMTBooking.UseVisualStyleBackColor = true;
@@ -393,7 +383,7 @@
             this.gridCurrency.RowTemplate.Height = 24;
             this.gridCurrency.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCurrency.ShowCellToolTips = false;
-            this.gridCurrency.Size = new System.Drawing.Size(338, 93);
+            this.gridCurrency.Size = new System.Drawing.Size(65, 93);
             this.gridCurrency.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridCurrency.TabIndex = 20;
             // 
@@ -422,7 +412,7 @@
             this.KeyField1 = "ID";
             this.Name = "P63";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
-            this.Text = "P63. CMT Invoice";
+            this.Text = "P63. KH CMT Invoice";
             this.UnApvChkValue = "Confirmed";
             this.WorkAlias = "KHCMTInvoice";
             this.Controls.SetChildIndex(this.tabs, 0);
