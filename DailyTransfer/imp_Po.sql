@@ -951,6 +951,188 @@ where not exists(select POID from Production.dbo.CuttingTape_Detail as a WITH (N
 
 drop table #tmpCuttingTape
 
+-------------------------- PadPrintReq
+
+select
+	 b.[ID]
+	,b.[FactoryID]
+	,b.[BrandID]
+	,b.[Handle]
+	,b.[ReqDate]
+	,b.[Status]
+	,b.[ApproveName]
+	,b.[ApproveDate]
+	,b.[Remark]
+	,b.[AddName]
+	,b.[AddDate]
+	,b.[EditName]
+	,b.[EditDate]
+into #tmpPadPrintReq
+from Trade_To_Pms.dbo.PadPrintReq b 
+left join Production.dbo.PadPrintReq a on a.ID = b.ID
+where exists(select 1 from Production.dbo.Factory where ID = b.FactoryID)
+
+update a
+set
+	 [FactoryID]   = b.[FactoryID]
+	,[BrandID]	   = b.[BrandID]
+	,[Handle]	   = b.[Handle]
+	,[ReqDate]	   = b.[ReqDate]
+	,[Status]	   = b.[Status]
+	,[ApproveName] = b.[ApproveName]
+	,[ApproveDate] = b.[ApproveDate]
+	,[Remark]	   = b.[Remark]
+	,[AddName]	   = b.[AddName]
+	,[AddDate]	   = b.[AddDate]
+	,[EditName]	   = b.[EditName]
+	,[EditDate]	   = b.[EditDate]
+from Production.dbo.PadPrintReq a
+inner join Trade_To_Pms.dbo.PadPrintReq b on a.ID = b.ID
+
+INSERT INTO [dbo].[PadPrintReq]
+           ([ID]
+           ,[FactoryID]
+           ,[BrandID]
+           ,[Handle]
+           ,[ReqDate]
+           ,[Status]
+           ,[ApproveName]
+           ,[ApproveDate]
+           ,[Remark]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate])
+select
+	 [ID]
+	,[FactoryID]
+	,[BrandID]
+	,[Handle]
+	,[ReqDate]
+	,[Status]
+	,[ApproveName]
+	,[ApproveDate]
+	,[Remark]
+	,[AddName]
+	,[AddDate]
+	,[EditName]
+	,[EditDate]
+from #tmpPadPrintReq
+
+--------------------------PadPrintReq_Detail
+
+update a
+set
+	 [Refno]      = b.[Refno]
+	,[SourceID]	  = b.[SourceID]
+	,[Price]	  = b.[Price]
+	,[Qty]		  = b.[Qty]
+	,[Foc]		  = b.[Foc]
+	,[ShipModeID] = b.[ShipModeID]
+	,[SuppID]	  = b.[SuppID]
+	,[CurrencyID] = b.[CurrencyID]
+	,[Junk]		  = b.[Junk]
+	,[Remark]	  = b.[Remark]
+	,[POID]		  = b.[POID]
+	,[AddName]	  = b.[AddName]
+	,[AddDate]	  = b.[AddDate]
+	,[EditName]	  = b.[EditName]
+	,[EditDate]	  = b.[EditDate]
+from Production.dbo.PadPrintReq_Detail a
+inner join Trade_To_Pms.dbo.PadPrintReq_Detail b on a.ID = b.ID and a.Seq2 = b.Seq2 and a.PadPrint_Ukey = b.PadPrint_Ukey and a.MoldID = b.MoldID
+
+delete a
+from Production.dbo.PadPrintReq_Detail a
+left join Trade_To_Pms.dbo.PadPrintReq_Detail b on a.ID = b.ID and a.Seq2 = b.Seq2 and a.PadPrint_Ukey = b.PadPrint_Ukey and a.MoldID = b.MoldID
+where exists(select 1 from #tmpPadPrintReq where id = a.id)
+and b.id is null
+
+INSERT INTO [dbo].[PadPrintReq_Detail]
+           ([ID]
+           ,[Seq2]
+           ,[PadPrint_Ukey]
+           ,[Refno]
+           ,[MoldID]
+           ,[SourceID]
+           ,[Price]
+           ,[Qty]
+           ,[Foc]
+           ,[ShipModeID]
+           ,[SuppID]
+           ,[CurrencyID]
+           ,[Junk]
+           ,[Remark]
+           ,[POID]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate])
+select
+	 b.[ID]
+	,b.[Seq2]
+	,b.[PadPrint_Ukey]
+	,b.[Refno]
+	,b.[MoldID]
+	,b.[SourceID]
+	,b.[Price]
+	,b.[Qty]
+	,b.[Foc]
+	,b.[ShipModeID]
+	,b.[SuppID]
+	,b.[CurrencyID]
+	,b.[Junk]
+	,b.[Remark]
+	,b.[POID]
+	,b.[AddName]
+	,b.[AddDate]
+	,b.[EditName]
+	,b.[EditDate]
+from #tmpPadPrintReq a
+inner join Trade_To_Pms.dbo.PadPrintReq_Detail b on a.ID = b.ID
+
+
+--------------------------PadPrintReq_Detail_spec
+
+update a
+set
+	 [AddName]		 = b.[AddName]
+	,[AddDate]		 = b.[AddDate]
+	,[EditName]		 = b.[EditName]
+	,[EditDate]		 = b.[EditDate]
+from Production.dbo.PadPrintReq_Detail_spec a
+inner join Trade_To_Pms.dbo.PadPrintReq_Detail_spec b on a.ID = b.ID and a.Seq2 = b.Seq2 and a.PadPrint_Ukey = b.PadPrint_Ukey and a.MoldID = b.MoldID and a.Side = b.Side
+
+delete a
+from Production.dbo.PadPrintReq_Detail_spec a
+left join Trade_To_Pms.dbo.PadPrintReq_Detail_spec b on a.ID = b.ID and a.Seq2 = b.Seq2 and a.PadPrint_Ukey = b.PadPrint_Ukey and a.MoldID = b.MoldID and a.Side = b.Side
+where exists(select 1 from #tmpPadPrintReq where id = a.id)
+and b.id is null
+
+INSERT INTO [dbo].PadPrintReq_Detail_spec
+           ([ID]
+           ,[Seq2]
+           ,[PadPrint_Ukey]
+           ,[MoldID]
+           ,[Side]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate])
+select
+	b.[ID]
+	,b.[Seq2]
+	,b.[PadPrint_Ukey]
+	,b.[MoldID]
+	,b.[Side]
+	,b.[AddName]
+	,b.[AddDate]
+	,b.[EditName]
+	,b.[EditDate]
+from #tmpPadPrintReq a
+inner join Trade_To_Pms.dbo.PadPrintReq_Detail_spec b on a.ID = b.ID
+
+drop table #tmpPadPrintReq
+--------------------------
 
 END
 

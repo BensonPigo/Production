@@ -126,6 +126,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthPrg.cs" />
+    <Compile Include="B12.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B12.Designer.cs">
+      <DependentUpon>B12.cs</DependentUpon>
+    </Compile>
     <Compile Include="B01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -748,6 +754,12 @@
     <Compile Include="R18.Designer.cs">
       <DependentUpon>R18.cs</DependentUpon>
     </Compile>
+    <Compile Include="R19.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R19.Designer.cs">
+      <DependentUpon>R19.cs</DependentUpon>
+    </Compile>
     <Compile Include="SCIControl.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -763,6 +775,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="B12.resx">
+      <DependentUpon>B12.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="B01.resx">
       <DependentUpon>B01.cs</DependentUpon>
     </EmbeddedResource>
@@ -1077,6 +1092,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R18.resx">
       <DependentUpon>R18.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R19.resx">
+      <DependentUpon>R19.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

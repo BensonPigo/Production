@@ -627,6 +627,121 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	where exists(select 1 from #tmpTrade_To_PmsMachinePO t where ID = MachinePO_Detail.ID)
 	and not exists(select 1 from #tmpTrade_To_PmsMachinePO t inner join SciTrade_To_Pms_MachinePO_Detail d on t.id = d.id where t.ID = MachinePO_Detail.ID and d.seq1 = MachinePO_Detail.seq1 and d.seq2 = MachinePO_Detail.seq2)
 	drop table #tmpTrade_To_PmsMachinePO
+	
+------------------MachinePO_Detail Type='R'----------------------
+	update t set
+         [Cdate]        = sM.[Cdate]
+        ,[FactoryID]	= sM.[FactoryID]
+        ,[MDivisionID]	= b.MDivisionID
+        ,[CurrencyID]	= sM.[CurrencyID]
+        ,[Amount]		= sM.[Amount]
+        ,[Vatrate]		= sM.[Vatrate]
+        ,[Vat]			= sM.[Vat]
+        ,[Remark]		= sM.[Remark]
+        ,[ApvName]		= sM.[ApvName]
+        ,[ApvDate]		= sM.[ApvDate]
+		,[Junk]			= sM.[Junk]
+        ,[AddName]		= sM.[AddName]
+        ,[AddDate]		= sM.[AddDate]
+        ,[EditName]		= sM.[EditName]
+        ,[EditDate]		= sM.[EditDate]
+	from MiscOtherPO t
+	inner join dbo.SciTrade_To_Pms_MmsPO sM WITH (NOLOCK) on sM.id = t.ID
+	left join Production.dbo.scifty b on sM.FactoryID = b.ID
+	where sM.type = 'R'
+
+	update t set 
+         [MiscOtherID] = s.RefNo
+        ,[BrandID]	   = sM.[BrandID]
+        ,[SuppID]	   = sM.[SuppID]
+        ,[UnitID]	   = s.[UnitID]
+		,Qty		   = s.Qty
+        ,[TPEPrice]	   = s.Price
+        ,[TPEQty]	   = s.ShipQty
+        ,[TPEFoc]	   = s.Foc
+		,MachineReqID  = s.MmsReqID
+		,Junk		   = s.Junk
+	from dbo.MiscOtherPO_Detail t
+	inner join dbo.SciTrade_To_Pms_MmsPO_Detail s WITH (NOLOCK) on t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2
+	inner join dbo.SciTrade_To_Pms_MmsPO sM WITH (NOLOCK) on sM.id = s.ID
+	where sM.type = 'R'
+
+	insert into MiscOtherPO
+           ([ID]
+           ,[Cdate]
+           ,[FactoryID]
+           ,[MDivisionID]
+           ,[PurchaseFrom]
+           ,[CurrencyID]
+           ,[Amount]
+           ,[Vatrate]
+           ,[Vat]
+           ,[Remark]
+		   ,[ApvName]
+           ,[ApvDate]
+		   ,[Junk]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate])
+	select
+		 sM.[ID]
+        ,sM.[Cdate]
+        ,sM.[FactoryID]
+        ,b.[MDivisionID]
+        ,'T'
+        ,sM.[CurrencyID]
+        ,sM.[Amount]
+        ,sM.[Vatrate]
+        ,sM.[Vat]
+        ,sM.[Remark]
+		,sM.[ApvName]
+        ,sM.[ApvDate]
+		,sM.[Junk]
+        ,sM.[AddName]
+        ,sM.[AddDate]
+        ,sM.[EditName]
+        ,sM.[EditDate]
+	from dbo.SciTrade_To_Pms_MmsPO sM
+	left join MiscOtherPO t WITH (NOLOCK) on sM.id = t.ID
+	left join Production.dbo.scifty b on sM.FactoryID = b.ID
+	where sM.type = 'R'
+	and t.id is null
+	
+	INSERT INTO [dbo].[MiscOtherPO_Detail]
+			([ID]
+			,[Seq1]
+			,[Seq2]
+			,[MiscOtherID]
+			,[BrandID]
+			,[SuppID]
+			,[UnitID]
+			,[Qty]
+			,[TPEPrice]
+			,[TPEQty]
+			,[TPEFoc]
+			,MachineReqID
+			,Junk)
+	select
+		 s.[ID]
+		,s.[Seq1]
+		,s.[Seq2]
+		,s.RefNo
+		,sM.[BrandID]
+		,sM.[SuppID]
+		,s.[UnitID]
+		,s.[Qty]
+		,s.Price
+		,s.ShipQty
+		,s.Foc
+		,s.MmsReqID
+		,s.Junk
+	from dbo.SciTrade_To_Pms_MmsPO sM 
+	inner join dbo.SciTrade_To_Pms_MmsPO_Detail s WITH (NOLOCK) on sM.id = s.ID
+	left join dbo.MiscOtherPO_Detail t on t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2
+	where sM.type = 'R'
+	and t.ID is null
+
 ------------------MachinePO_Detail_TPEAP----------------------
 	select b.ID,a.Seq1,a.Seq2,[TPEPOID] = b.POID,b.APDATE,b.VoucherID,b.Price, [Qty] = sum(b.Qty), b.ExportID
 	into #tmpMachinePO_Detail_TPEAP
