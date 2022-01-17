@@ -10,7 +10,7 @@ GO
 -- =============================================
 -- Description:	轉入/更新資料
 -- =============================================
-CREATE PROCEDURE imp_finishingprocess
+CREATE PROCEDURE [dbo].[imp_finishingprocess]
 
 AS
 
@@ -246,7 +246,7 @@ Begin
 			output	INSERTED.SCICtnNo,
 					'FtyToClog' as [Type]
 				into #tmpSCIUpdateCanUpdate
-			select [TransferDate] = CONVERT(date, t.Time)
+			select distinct [TransferDate] = CONVERT(date, t.Time)
 				,MDvisionID = (select top 1 ID from Production.dbo.MDivision)
 				,[PackingListID] = pd.ID
 				,[OrderID] = pd.OrderID
@@ -263,7 +263,7 @@ Begin
 			-- Insert ClogReceive
 		Begin
 			insert into Production.dbo.ClogReceive(ReceiveDate, MDivisionID, PackingListID, OrderID, CTNStartNo, ClogLocationID, AddDate, OldID, AddName, SCICtnNo)
-			select [ReceiveDate] = CONVERT(date, t.Time)
+			select distinct [ReceiveDate] = CONVERT(date, t.Time)
 				,[MDvisionID] = (select top 1 ID from Production.dbo.MDivision)
 				,[PackingListID] = pd.ID
 				,[OrderID] = pd.OrderID
@@ -302,7 +302,7 @@ Begin
 			output	INSERTED.SCICtnNo,
 					'CFAToClog' as [Type]
 				into #tmpSCIUpdateCanUpdate
-			select [ReceiveDate] = CONVERT(date, t.Time)
+			select distinct [ReceiveDate] = CONVERT(date, t.Time)
 				,[MDvisionID] = (select top 1 ID from Production.dbo.MDivision)
 				,[OrderID] = pd.OrderID
 				,[PackingListID] = pd.ID
@@ -347,11 +347,11 @@ Begin
 		(
 			select tfl.ClogLocationId, tfl.Pallet, tfl.Time, tfl.SCICtnNo
 			from TransferLocation tfl with (nolock)
-			where tfl.SCIUpdate=0 or exists(select 1 from #tmpTransferLocation ttfl where ttfl.SCICtnNo = tfl.SCICtnNo)
+			where tfl.SCIUpdate=0 and exists(select 1 from #tmpTransferLocation ttfl where ttfl.SCICtnNo = tfl.SCICtnNo)
 				union all
 			select mtp.ClogLocationId, mtp.Pallet, mtp.Time, mtp.SCICtnNo
 			from MiniToPallet mtp with (nolock)
-			where mtp.SCIUpdate=0 or exists(select 1 from #tmpTransferLocation ttfl where ttfl.SCICtnNo = mtp.SCICtnNo)
+			where mtp.SCIUpdate=0 and exists(select 1 from #tmpTransferLocation ttfl where ttfl.SCICtnNo = mtp.SCICtnNo)
 		) a 
 
 		update pd
@@ -641,7 +641,7 @@ Begin
 			,pd.CTNStartNo 
 			,c.SCICtnNo
 			,[AddName] = 'SCIMIS' 
-			,[AddDate] = GETDATE()
+			,[AddDate] = c.Time
 			,[PackingList_Detail_Ukey] = pd.Ukey
 		INTO #tmpCompleteCFAReceive_WithUkey
 		FROM #tmpCompleteCFAReceive c
@@ -707,7 +707,7 @@ Begin
 			,[PackingListID] = pd.ID 
 			,pd.CTNStartNo 
 			,[AddName] = 'SCIMIS' 
-			,[AddDate] = GETDATE()
+			,[AddDate] = c.Time
 			,pd.SCICtnNo
 			,[PackingList_Detail_Ukey] = pd.Ukey
 		INTO #tmpCompleteCFAReturn_WithUkey
