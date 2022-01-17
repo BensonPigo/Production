@@ -384,7 +384,7 @@ and td.id = '{this.CurrentMaintain["ID"]}'
                     dtLocationDetail.Columns["Roll"].ColumnName = "Roll";
                     dtLocationDetail.Columns["Dyelot"].ColumnName = "Dyelot";
                     dtLocationDetail.Columns["StockType"].ColumnName = "Stock Type";
-                    Prgs.ChkLocationEmpty(dtLocationDetail, "Other", "SP#,Seq,Roll,Dyelot,Stock Type");
+                    Prgs.ChkLocationEmpty(dtLocationDetail, string.Empty, "SP#,Seq,Roll,Dyelot,Stock Type");
                     return;
                 }
             }
