@@ -95,7 +95,7 @@ select  0 as selected
         , StockTypeName = case c.StockType 
 		        when 'B' then 'Bulk' 
 		        when 'I' then 'Inventory' 
-		        when 'S' then 'Scrap' 
+		        when 'O' then 'Scrap' 
 		        else c.StockType 
 		        end
         , c.ukey as ftyinventoryukey

@@ -527,7 +527,7 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
  , StockType = case td.StockType 
 		when 'B' then 'Bulk' 
 		when 'I' then 'Inventory' 
-		when 'S' then 'Scrap' 
+		when 'O' then 'Scrap' 
 		else td.StockType 
 		end
  , [Location] = dbo.Getlocation(f.ukey)
