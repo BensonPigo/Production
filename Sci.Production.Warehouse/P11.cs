@@ -1092,6 +1092,13 @@ where   f.lock = 1
             }
             #endregion
 
+            #region 檢查Location是否為空值
+            if (Prgs.ChkLocation(this.CurrentMaintain["ID"].ToString(), "Issue_Detail") == false)
+            {
+                return;
+            }
+            #endregion
+
             #region 檢查負數庫存
 
             sqlcmd = string.Format(
