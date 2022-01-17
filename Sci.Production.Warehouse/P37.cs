@@ -509,6 +509,13 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             }
             #endregion
 
+            #region 檢查Location是否為空值
+            if (Prgs.ChkLocation(this.CurrentMaintain["ID"].ToString(), "ReturnReceipt_Detail") == false)
+            {
+                return;
+            }
+            #endregion
+
             #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             if (dt != null)
