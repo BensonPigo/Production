@@ -44,6 +44,8 @@
     [LabOvenPercent]                NUMERIC (5, 2) CONSTRAINT [DF_PO_LabOvenPercent] DEFAULT ((0)) NULL,
     [AIRLabInspPercent]             NUMERIC (5, 2) CONSTRAINT [DF_PO_AIRLabInspPercent] DEFAULT ((0)) NULL,
     [ThreadVersion] VARCHAR(5) NULL, 
+    WaterFastnessLaboratoryRemark varchar(60) NOT NULL CONSTRAINT [DF_PO_WaterFastnessLaboratoryRemark] DEFAULT '',
+    LabWaterFastnessPercent numeric(5,2) NOT NULL CONSTRAINT [DF_PO_LabWaterFastnessPercent] DEFAULT 0,
     CONSTRAINT [PK_PO] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

@@ -65,6 +65,18 @@ BEGIN
 			where P.ID=@POID
 		END
 
+		IF @Type='LabWaterFastness'
+		BEGIN
+			UPDATE p
+			SET 
+			LabWaterFastnessPercent= (   select 
+				cnt= isnull(convert(varchar,round(convert(float,sum(case when status='Confirmed' then 1 else 0 end))/convert(float,count(*)),4)*100),0)
+				from WaterFastness 
+				where POID=@POID )
+			FROM [PO] p
+			where P.ID=@POID
+		END
+
 		IF @Type='LabOven'
 		BEGIN
 			UPDATE p
