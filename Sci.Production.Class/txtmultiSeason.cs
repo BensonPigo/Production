@@ -32,7 +32,9 @@ namespace Sci.Production.Class
             string selectCommand = "select distinct ID from Production.dbo.Season WITH (NOLOCK) order by id desc";
             if (this.BrandObjectName != null && !string.IsNullOrWhiteSpace((string)this.BrandObjectName.Text))
             {
-                selectCommand = string.Format("select distinct ID from Production.dbo.Season WITH (NOLOCK) where BrandID = '{0}' order by id desc", this.BrandObjectName.Text);
+                var brandArray = this.BrandObjectName.Text.Split(',');
+                string brands = "'" + brandArray.JoinToString("','") + "'";
+                selectCommand = $"select distinct ID from Production.dbo.Season WITH (NOLOCK) where BrandID in({brands}) order by id desc";
             }
 
             item = new Win.Tools.SelectItem2(selectCommand, "Season ID", this.Text, null, null, null)

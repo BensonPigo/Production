@@ -4826,4 +4826,179 @@ from Trade_To_Pms.dbo.GarmentTestShrinkage a
 left join production.dbo.GarmentTestShrinkage b on  a.Ukey = b.Ukey 
 where b.BrandID is null
 
+--PadPrint
+delete a
+from production.dbo.PadPrint a
+left join Trade_To_Pms.dbo.PadPrint b on a.Ukey = b.Ukey 
+where b.Ukey is null
+
+update a set 
+	 [Refno]      = b.[Refno]
+	,[BrandID]	  = b.[BrandID]
+	,[Category]	  = b.[Category]
+	,[SuppID]	  = b.[SuppID]
+	,[CurrencyID] = b.[CurrencyID]
+	,[Junk]		  = b.[Junk]
+	,[Remark]	  = b.[Remark]
+	,[AddName]	  = b.[AddName]
+	,[AddDate]	  = b.[AddDate]
+	,[EditName]	  = b.[EditName]
+	,[EditDate]	  = b.[EditDate]
+from production.dbo.PadPrint a
+inner join Trade_To_Pms.dbo.PadPrint b on a.Ukey = b.Ukey 
+
+insert production.dbo.PadPrint 
+           (Ukey
+		   ,[Refno]
+           ,[BrandID]
+           ,[Category]
+           ,[SuppID]
+           ,[CurrencyID]
+           ,[Junk]
+           ,[Remark]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate])
+select
+	a.Ukey
+	,a.[Refno]
+    ,a.[BrandID]
+    ,a.[Category]
+    ,a.[SuppID]
+    ,a.[CurrencyID]
+    ,a.[Junk]
+    ,a.[Remark]
+    ,a.[AddName]
+    ,a.[AddDate]
+    ,a.[EditName]
+    ,a.[EditDate]
+from Trade_To_Pms.dbo.PadPrint a
+left join production.dbo.PadPrint b on  a.Ukey = b.Ukey 
+where b.Ukey is null
+
+--PadPrint_Mold
+delete a
+from production.dbo.PadPrint_Mold a
+left join Trade_To_Pms.dbo.PadPrint_Mold b on a.[PadPrint_ukey] = b.[PadPrint_ukey] and a.[MoldID] = b.[MoldID]
+where b.[PadPrint_ukey] is null
+
+update a set 
+	 [Refno]		 = b.[Refno]
+	,[BrandID]		 = b.[BrandID]
+	,[Season]		 = b.[Season]
+	,[LabelFor]		 = b.[LabelFor]
+	,[MainSize]		 = b.[MainSize]
+	,[Gender]		 = b.[Gender]
+	,[AgeGroup]		 = b.[AgeGroup]
+	,[SizeSpec]		 = b.[SizeSpec]
+	,[Part]			 = b.[Part]
+	,[MadeIn]		 = b.[MadeIn]
+	,[Region]		 = b.[Region]
+	,[AddName]		 = b.[AddName]
+	,[AddDate]		 = b.[AddDate]
+	,[EditName]		 = b.[EditName]
+	,[EditDate]		 = b.[EditDate]
+from production.dbo.PadPrint_Mold a
+inner join Trade_To_Pms.dbo.PadPrint_Mold b on a.[PadPrint_ukey] = b.[PadPrint_ukey] and a.[MoldID] = b.[MoldID]
+
+insert production.dbo.PadPrint_Mold 
+           ([PadPrint_ukey]
+           ,[MoldID]
+           ,[Refno]
+           ,[BrandID]
+           ,[Season]
+           ,[LabelFor]
+           ,[MainSize]
+           ,[Gender]
+           ,[AgeGroup]
+           ,[SizeSpec]
+           ,[Part]
+           ,[MadeIn]
+           ,[Region]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate])
+select
+	 a.[PadPrint_ukey]
+	,a.[MoldID]
+	,a.[Refno]
+	,a.[BrandID]
+	,a.[Season]
+	,a.[LabelFor]
+	,a.[MainSize]
+	,a.[Gender]
+	,a.[AgeGroup]
+	,a.[SizeSpec]
+	,a.[Part]
+	,a.[MadeIn]
+	,a.[Region]
+	,a.[AddName]
+	,a.[AddDate]
+	,a.[EditName]
+	,a.[EditDate]
+from Trade_To_Pms.dbo.PadPrint_Mold a
+left join production.dbo.PadPrint_Mold b on a.[PadPrint_ukey] = b.[PadPrint_ukey] and a.[MoldID] = b.[MoldID]
+where b.[PadPrint_ukey] is null
+
+--PadPrint_Mold_Spec
+delete a
+from production.dbo.PadPrint_Mold_Spec a
+left join Trade_To_Pms.dbo.PadPrint_Mold_Spec b on a.PadPrint_ukey = b.PadPrint_ukey and a.MoldID = b.MoldID and a.Side = b.Side
+where b.PadPrint_ukey is null
+
+update a set 
+	 [SizePage]		 = b.[SizePage]
+	,[SourceSize]	 = b.[SourceSize]
+	,[CustomerSize]	 = b.[CustomerSize]
+	,[MoldRef]		 = b.[MoldRef]
+	,[Version]		 = b.[Version]
+	,[ReversionMold] = b.[ReversionMold]
+	,[Junk]			 = b.[Junk]
+	,[Reason]		 = b.[Reason]
+	,[AddName]		 = b.[AddName]
+	,[AddDate]		 = b.[AddDate]
+	,[EditName]		 = b.[EditName]
+	,[EditDate]		 = b.[EditDate]
+from production.dbo.PadPrint_Mold_Spec a
+inner join Trade_To_Pms.dbo.PadPrint_Mold_Spec b on a.PadPrint_ukey = b.PadPrint_ukey and a.MoldID = b.MoldID and a.Side = b.Side
+
+insert production.dbo.PadPrint_Mold_Spec 
+           ([PadPrint_ukey]
+           ,[MoldID]
+           ,[Side]
+           ,[SizePage]
+           ,[SourceSize]
+           ,[CustomerSize]
+           ,[MoldRef]
+           ,[Version]
+           ,[ReversionMold]
+           ,[Junk]
+           ,[Reason]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate])
+select
+	 a.[PadPrint_ukey]
+	,a.[MoldID]
+	,a.[Side]
+	,a.[SizePage]
+	,a.[SourceSize]
+	,a.[CustomerSize]
+	,a.[MoldRef]
+	,a.[Version]
+	,a.[ReversionMold]
+	,a.[Junk]
+	,a.[Reason]
+	,a.[AddName]
+	,a.[AddDate]
+	,a.[EditName]
+	,a.[EditDate]
+from Trade_To_Pms.dbo.PadPrint_Mold_Spec a
+left join production.dbo.PadPrint_Mold_Spec b on a.PadPrint_ukey = b.PadPrint_ukey and a.MoldID = b.MoldID and a.Side = b.Side
+where b.PadPrint_ukey is null
+
+
 END

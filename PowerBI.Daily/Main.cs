@@ -271,11 +271,33 @@ SELECT Region
 	,[GroupID] = ROW_NUMBER() over(partition by seq order by region)--i.GroupID
 	,[Seq] = i.Seq
 	,[Name] = i.Name
-,[TSQL] = [TSQL] + ' '+''''+LinkServerName+''''
+    ,[TSQL] = [TSQL] + ' '+''''+LinkServerName+''''
 FROM P_TransRegion r
 left join P_TransImport i on r.ConnectionName = i.ImportConnectionName
-where i.Name {whereP} 'P_ImportEstShippingReport'
+where i.Name {whereP} 'P_ImportEstShippingReport' and i.Name <> 'P_Import_Capacity'
 ";
+
+            if (type == 0)
+            {
+//只跑一次的job
+                sqlCmd += $@"
+union all
+SELECT [Region] = 'TPE'
+	,[DirName] = ''
+	,[RarName] = ''
+	,[Is_Export] = 0
+	,[ConnectionName] = 'PBIReportData'
+	,[DBName] = ''
+	,[DBFileName] = ''
+	,[GroupID] = ROW_NUMBER() over(partition by i.seq order by i.seq)--i.GroupID
+	,[Seq] = i.Seq
+	,[Name] = i.Name
+    ,i.TSQL
+FROM P_TransImport i
+where i.Name in ('P_Import_Capacity')
+";
+
+            }
 
             result = DBProxy.Current.Select("PBIReportData", sqlCmd, out transAll);
             if (!result) { return result; }
@@ -322,9 +344,44 @@ where(
 	    and r.Region = t.RegionID
     )
 )
-and i.Name {whereP} 'P_ImportEstShippingReport'
-
+and i.Name {whereP} 'P_ImportEstShippingReport'  and i.Name <> 'P_Import_Capacity'
 ";
+
+            if (type == 0)
+            {
+                //只跑一次的job
+                sqlReExec += $@"
+union all
+SELECT [Region] = 'TPE'
+	,[DirName] = ''
+	,[RarName] = ''
+	,[Is_Export] = 0
+	,[ConnectionName] = 'PBIReportData'
+	,[DBName] = ''
+	,[DBFileName] = ''
+	,[GroupID] = ROW_NUMBER() over(partition by i.seq order by i.seq)--i.GroupID
+	,[Seq] = i.Seq
+	,[Name] = i.Name
+    ,i.TSQL
+FROM P_TransImport i
+where   i.Name in ('P_Import_Capacity') and 
+    (
+    not exists(
+	    select * from P_TransLog t
+	    where t.TransCode='{intHashCode}' and t.FunctionName not in ('Start Update_PoweBI_InThread','End Update_PowerBI_InThread')
+	    and i.Name = t.FunctionName
+	    and t.RegionID = 'TPE'
+    )
+    or exists(
+	    select * from P_TransLog t
+	    where t.TransCode = '{intHashCode}'
+	    and t.Description like '%deadlock%'
+	    and i.Name = t.FunctionName
+	    and t.RegionID = 'TPE'
+    ))
+";
+
+            }
 
             result = DBProxy.Current.Select("PBIReportData", sqlReExec, out dtReExec);
             if (!result) { return result; }
