@@ -23,8 +23,8 @@ namespace PMS_ProductionKitsConfirm
         private string mailServer = "172.17.2.8";
         private string eMailID = "foxpro";
         private string eMailPwd = "orpxof";
-        private string[] mailTO = ConfigurationManager.AppSettings["MailList"].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
-        private string[] mailTOCC = ConfigurationManager.AppSettings["MailListCC"].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+        private string[] mailTO;
+        private string[] mailTOCC;
         private string[] MailList_ForTest = ConfigurationManager.AppSettings["MailList_ForTest"].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
         private string[] settingFactoryList = ConfigurationManager.AppSettings["SettingFactoryList"].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
         private string isTest = ConfigurationManager.AppSettings["IsTest"].ToString();
@@ -53,7 +53,6 @@ namespace PMS_ProductionKitsConfirm
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-
             this.EditMode = true;
             Ict.Logs.APP.LogInfo("ProductionKitsConfirm Start IsAuto : " + isAuto.ToString());
 
@@ -111,6 +110,7 @@ namespace PMS_ProductionKitsConfirm
         {
             Ict.Logs.APP.LogInfo("Send Mail Start");
 
+
             #region Sned Mail
             string subject = "Outstanding Production Kits Confirm " + this.SendDateS.ToString("yyyyMMdd") + " ~ " + this.SendDateE.ToString("yyyyMMdd");
             string desc = $@"
@@ -121,6 +121,22 @@ We would like to remind factory, confirm received date means confirm MR send doc
 <br/><br/>
 <hr/>
 ";
+            try
+            {
+                if (!MyUtility.Check.Seek("select * from mailto where id = '101'", out DataRow dr))
+                {
+                    return;
+                }
+
+                this.mailTO = MyUtility.Convert.GetString(dr["ToAddress"]).Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+                this.mailTOCC = MyUtility.Convert.GetString(dr["CcAddress"]).Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+            }
+            catch (Exception ex)
+            {
+                Ict.Logs.APP.LogInfo(ex.ToString());
+                throw;
+            }
+
             this.MailToHtml(subject, files, desc);
             #endregion
 
