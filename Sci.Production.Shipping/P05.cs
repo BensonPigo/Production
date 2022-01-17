@@ -386,6 +386,8 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
             this.RefreshDisplayCategory();
 
             this.ControlColor();
+
+            this.displayCMTIvnNo.Text = MyUtility.GetValue.Lookup($"select ID from KHCMTInvoice_Detail with (nolock) where InvNo = '{this.CurrentMaintain["ID"]}'");
         }
 
         /// <inheritdoc/>
