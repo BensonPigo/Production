@@ -58,7 +58,6 @@ namespace PMS_ProductionKitsConfirm
 
             this.SetSendDate();
 
-
             Ict.Logs.APP.LogInfo("SendDateS : " + SendDateS.ToString("yyyy/MM/dd") + ", SendDateE : " + SendDateE.ToString("yyyy/MM/dd"));
 
             this.GetMailSetting();
@@ -123,13 +122,15 @@ We would like to remind factory, confirm received date means confirm MR send doc
 ";
             try
             {
-                if (!MyUtility.Check.Seek("select * from mailto where id = '101'", out DataRow dr))
+                if (!MyUtility.Check.Seek("select * from　ProductionTPE.dbo.mailto where id = '101'", out DataRow dr, "Trade"))
                 {
                     return;
                 }
 
                 this.mailTO = MyUtility.Convert.GetString(dr["ToAddress"]).Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
                 this.mailTOCC = MyUtility.Convert.GetString(dr["CcAddress"]).Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+                subject = MyUtility.Convert.GetString(dr["Subject"]) + " " + this.SendDateS.ToString("yyyyMMdd") + " ~ " + this.SendDateE.ToString("yyyyMMdd");
+                desc = MyUtility.Convert.GetString(dr["Content"]);
             }
             catch (Exception ex)
             {
