@@ -89,7 +89,9 @@ namespace Sci.Production.Warehouse
             string selectCommand1
                 = string.Format(
                     @"
-Select a.Roll,a.Dyelot, rd.FullRoll, rd.FullDyelot
+Select a.Roll,a.Dyelot
+, FullRoll = FullRoll.List
+, FullDyelot = FullDyelot.List
 ,[stocktype] = case when a.stocktype = 'B' then 'Bulk'
                 when a.stocktype = 'I' then 'Invertory'
 			    when a.stocktype = 'O' then 'Scrap' End
@@ -98,13 +100,39 @@ Select a.Roll,a.Dyelot, rd.FullRoll, rd.FullDyelot
             ,dbo.Getlocation(a.ukey)  MtlLocationID 
             ,a.ContainerCode
 from FtyInventory a WITH (NOLOCK) 
-left join Receiving_Detail rd WITH (NOLOCK) on a.POID = rd.PoId and a.Seq1 = rd.Seq1
-and a.Seq2 = rd.Seq2 and a.Dyelot = rd.Dyelot and a.Roll = rd.Roll and a.StockType = rd.StockType
+outer apply(
+	select List = Stuff((
+		select concat(',',FullRoll)
+		from (
+				select 	distinct
+					FullRoll
+				from dbo.Receiving_Detail rd WITH (NOLOCK)
+				where a.POID = rd.PoId 
+					and a.Seq1 = rd.Seq1 and a.Seq2 = rd.Seq2 
+					and a.Dyelot = rd.Dyelot and a.Roll = rd.Roll 
+					and a.StockType = rd.StockType
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+)FullRoll 
+outer apply(
+	select List = Stuff((
+		select concat(',',FullDyelot)
+		from (
+				select 	distinct
+					FullDyelot
+				from dbo.Receiving_Detail rd WITH (NOLOCK)
+				where a.POID = rd.PoId 
+					and a.Seq1 = rd.Seq1 and a.Seq2 = rd.Seq2 
+					and a.Dyelot = rd.Dyelot and a.Roll = rd.Roll 
+					and a.StockType = rd.StockType
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+)FullDyelot 
 where a.Poid = '{0}'
     and a.Seq1 = '{1}'
     and a.Seq2 = '{2}' 
-    --and MDivisionPoDetailUkey is not null  --避免下面Relations發生問題
-    --and MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
     and a.StockType <> 'O'  --C倉不用算
 order by a.dyelot,a.roll,a.stocktype
 ",
@@ -149,7 +177,7 @@ from (
         , [ReturnQty] = 0
 		, a.remark 
 		, [location] = '' 
-		, fi.ContainerCode
+		, ContainerCode = ''
 	from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -177,7 +205,7 @@ union all
         , [ReturnQty] = 0
 		, a.remark
 		, [location] = ''
-		, fi.ContainerCode
+		, ContainerCode = ''
 	from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.FromPOID
 		and fi.Seq1 = b.FromSeq1 and fi.Seq2 = b.FromSeq2
@@ -239,7 +267,7 @@ union all
         , [ReturnQty] = 0
 		, a.remark
 		, [location] = '' 
-		, fi.ContainerCode
+		, ContainerCode = ''
 	from Issue a WITH (NOLOCK) , Issue_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -268,7 +296,7 @@ union all
         , [ReturnQty] = 0
 		, a.remark
 		, [location] = '' 
-		, fi.ContainerCode
+		, ContainerCode = ''
 	from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -298,7 +326,7 @@ union all
         , [ReturnQty] = 0
 		, a.remark 
 		, [location] = '' 
-		,fi.ContainerCode
+		, ContainerCode = ''
 	from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -374,7 +402,7 @@ union all
         , [ReturnQty] = b.Qty
 		, a.remark
 		, [location] = ''
-		, fi.ContainerCode
+		, [ContainerCode] = ''
 	from ReturnReceipt a WITH (NOLOCK) , ReturnReceipt_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -406,7 +434,7 @@ union all
         , [ReturnQty] = 0
 		, [remark] = isnull(a.remark,'') 
 		, [location] = ''
-		, fi.ContainerCode
+		, [ContainerCode] = ''
 	from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.FromPOID
 		and fi.Seq1 = b.FromSeq1 and fi.Seq2 = b.FromSeq2
@@ -508,7 +536,7 @@ union all
         , [ReturnQty] = 0
 		, a.remark
 		, [location] = ''
-		,fi.ContainerCode
+		, ContainerCode =''
 	from TransferOut a WITH (NOLOCK) , TransferOut_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -537,7 +565,7 @@ union all
         , [ReturnQty] = 0
 		, a.remark
 		, [location] = ''
-		, fi.ContainerCode
+		, ContainerCode = ''
 	from RequestCrossM a WITH (NOLOCK) , RequestCrossM_Receive b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2

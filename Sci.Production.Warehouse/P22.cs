@@ -1028,7 +1028,9 @@ select a.FromPOID
         ,a.FromDyelot
 		,a.Qty
 		,[From_Location]=dbo.Getlocation(fi.ukey)
+        ,[From_ContainerCode] = fi.ContainerCode
 		,a.ToLocation 
+        ,a.ToContainerCode
         ,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.Fromseq2 )      
 from dbo.Subtransfer_detail a  WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
@@ -1058,8 +1060,8 @@ where a.id= @ID";
                     FromRoll = row1["FromRoll"].ToString().Trim(),
                     FromDyelot = row1["FromDyelot"].ToString().Trim(),
                     QTY = row1["QTY"].ToString().Trim(),
-                    From_Location = row1["From_Location"].ToString().Trim(),
-                    ToLocation = row1["ToLocation"].ToString().Trim(),
+                    From_Location = row1["From_Location"].ToString().Trim() + Environment.NewLine + row1["From_ContainerCode"].ToString().Trim(),
+                    ToLocation = row1["ToLocation"].ToString().Trim() + Environment.NewLine + row1["ToContainerCode"].ToString().Trim(),
                     Total = row1["Total"].ToString().Trim(),
                 }).ToList();
 

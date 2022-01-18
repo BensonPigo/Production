@@ -194,6 +194,7 @@ select id.POID,
 	    id.Qty,
 	    p.StockUnit,
         dbo.Getlocation(fi.ukey) [location],
+        fi.ContainerCode,
 	    [Total]=sum(id.Qty) OVER (PARTITION BY id.POID ,id.seq1, id.seq2)
 		,[RecvKG] = case when rd.ActualQty is not null 
 						then case when rd.ActualQty <> id.Qty
@@ -262,7 +263,7 @@ order by id.POID,SEQ, id.Dyelot,id.Roll
                     SEQ = row1["SEQ"].ToString().Trim(),
                     DESC = row1["desc"].ToString().Trim(),
                     MDESC = row1["Mdesc"].ToString().Trim(),
-                    Location = row1["Location"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                     StockUnit = row1["StockUnit"].ToString().Trim(),
                     Roll = row1["Roll"].ToString().Trim(),
                     DYELOT = row1["Dyelot"].ToString().Trim(),

@@ -121,7 +121,7 @@ select  a.POID
 	    , a.Qty
         , a.Weight
         , dbo.Getlocation(f.ukey)[Location] 
-        , f.ContainerCode
+        , a.ContainerCode
 from dbo.TransferIn_detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID 
                                                 and b.SEQ1 = a.Seq1 

@@ -943,6 +943,7 @@ select ad.POID
 			    ,''
                 ,dbo.getMtlDesc(ad.poid, ad.seq1, ad.seq2, 2, 0))
 	, [Location] = dbo.Getlocation(fi.ukey)
+    , fi.ContainerCode
 	, p.StockUnit
 	, ad.Roll
 	, ad.Dyelot
@@ -974,7 +975,7 @@ order by ad.POID, SEQ, ad.Dyelot, ad.Roll
                     POID = row1["POID"].ToString().Trim(),
                     SEQ = row1["SEQ"].ToString().Trim(),
                     DESC = row1["DESC"].ToString().Trim(),
-                    Location = row1["Location"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                     StockUnit = row1["StockUnit"].ToString().Trim(),
                     Roll = row1["Roll"].ToString().Trim(),
                     DYELOT = row1["Dyelot"].ToString().Trim(),

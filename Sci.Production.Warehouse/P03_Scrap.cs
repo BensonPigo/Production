@@ -89,8 +89,8 @@ from
 					   else 0 end 
 	,outqty=  case type when 'C' then (b.Qty) else 0 end
 	,adjustQty = 0
-	,Location  = ToLocation.location
-	,ContainerCode = ToContainerCode.ContainerCode
+	,Location  = case a.Type when 'C' then '' else ToLocation.location end
+	,ContainerCode = case a.Type when 'C' then '' else ToContainerCode.ContainerCode end
     ,a.EditDate , a.issuedate 
 	from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
 outer apply(
@@ -129,7 +129,7 @@ outer apply(
 	,outqty = 0
 	,adjustQty = (QtyAfter - QtyBefore) 
 	,Location  = ''
-	,fi.ContainerCode
+	,ContainerCode=''
     ,a.EditDate , a.issuedate
 	from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK)         
 	left join FtyInventory fi on fi.POID = b.POID
