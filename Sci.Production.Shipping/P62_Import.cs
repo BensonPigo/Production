@@ -1,10 +1,14 @@
 ﻿using Ict;
 using Ict.Win;
+using Newtonsoft.Json;
 using Sci.Data;
+using Sci.Production.CallPmsAPI;
 using Sci.Production.Prg;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using static Sci.Production.CallPmsAPI.PackingA2BWebAPI_Model;
 
 namespace Sci.Production.Shipping
 {
@@ -66,11 +70,76 @@ namespace Sci.Production.Shipping
                 return;
             }
 
+            #region Where
             string where = string.Empty;
+            string whereGMT = string.Empty;
+            if (!MyUtility.Check.Empty(this.dr_master["Buyer"]))
+            {
+                where += $@" and b2.id =  '{this.dr_master["Buyer"]}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.dr_master["Forwarder"]))
+            {
+                where += $@" and g.Forwarder =  '{this.dr_master["Forwarder"]}'";
+                whereGMT += $@" and g.Forwarder =  '{this.dr_master["Forwarder"]}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.dr_master["Dest"]))
+            {
+                where += $@" and g.Dest =  '{this.dr_master["Dest"]}'";
+                whereGMT += $@" and g.Dest =  '{this.dr_master["Dest"]}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.dateETD.Value1))
+            {
+                where += $@" and g.ETD >= '{((DateTime)this.dateETD.Value1).ToString("yyyy/MM/dd")}'";
+                whereGMT += $@" and g.ETD >= '{((DateTime)this.dateETD.Value1).ToString("yyyy/MM/dd")}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.dateETD.Value2))
+            {
+                where += $@" and g.ETD <= '{((DateTime)this.dateETD.Value2).ToString("yyyy/MM/dd")}'";
+                whereGMT += $@" and g.ETD <= '{((DateTime)this.dateETD.Value2).ToString("yyyy/MM/dd")}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtPo1.Text))
+            {
+                where += $@" and o.CustPONo >= '{this.txtPo1.Text}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtPo2.Text))
+            {
+                where += $@" and o.CustPONo <= '{this.txtPo2.Text}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtInvNo1.Text))
+            {
+                where += $@" and g.ID >= '{this.txtInvNo1.Text}'";
+                whereGMT += $@" and g.ID >= '{this.txtInvNo1.Text}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtInvNo2.Text))
+            {
+                where += $@" and g.ID <= '{this.txtInvNo2.Text}'";
+                whereGMT += $@" and g.ID <= '{this.txtInvNo2.Text}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtSP1.Text))
+            {
+                where += $@" and o.ID >= '{this.txtSP1.Text}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtSP2.Text))
+            {
+                where += $@" and o.ID <= '{this.txtSP2.Text}'";
+            }
+
             if (!MyUtility.Check.Empty(this.txtCustCD.Text))
             {
                 where += $@"and g.CustCDID = '{this.txtCustCD.Text}'";
+                whereGMT += $@"and g.CustCDID = '{this.txtCustCD.Text}'";
             }
+            #endregion
 
             string sqlcmd = $@"
 Declare @ID varchar(15) = '{this.dr_master["ID"]}'
@@ -124,14 +193,14 @@ select
         when Location = 'I' then 'INNER'   
         when Location = 'O' then 'OUTER'
         else '' end
-from GMTBooking g
-inner join PackingList p on g.ID = p.INVNo
-inner join PackingList_Detail pd on pd.id = p.id
-inner join Orders o on pd.OrderID = o.ID
-inner join Style s on s.Ukey = o.StyleUkey
-inner join Brand b on b.id=o.BrandID 
-inner join Buyer b2 on b.BuyerID =b2.id
-left join Order_Location OL on OL.OrderID = pd.OrderID
+from {"{0}"} g with (nolock)
+inner join PackingList p with (nolock) on g.ID = p.INVNo
+inner join PackingList_Detail pd with (nolock) on pd.id = p.id
+inner join Orders o with (nolock) on pd.OrderID = o.ID
+inner join Style s with (nolock) on s.Ukey = o.StyleUkey
+inner join Brand b with (nolock) on b.id=o.BrandID 
+inner join Buyer b2 with (nolock) on b.BuyerID =b2.id
+left join Order_Location OL with (nolock) on OL.OrderID = pd.OrderID
 outer apply (
 	select kd.status 
 		from KHExportDeclaration kd 
@@ -142,9 +211,9 @@ outer apply(
 	select OrderID,AvgPrice = sum(ShipQty*POPrice)/sum(ShipQty)
 	from (
 		select ShipQty = sum(pd2.ShipQty),pd2.OrderID,oup.SizeCode,oup.Article ,oup.POPrice
-		from PackingList_Detail pd2
-		inner join PackingList p1 on pd2.ID = p1.ID
-		inner join Order_UnitPrice oup on oup.Id= pd2.OrderID
+		from PackingList_Detail pd2 with (nolock)
+		inner join PackingList p1 with (nolock) on pd2.ID = p1.ID
+		inner join Order_UnitPrice oup with (nolock) on oup.Id= pd2.OrderID
 		and oup.Article = pd2.Article and oup.SizeCode = pd2.SizeCode
 		where INVNo = g.ID
 		group by pd2.OrderID,oup.SizeCode,oup.Article,oup.POPrice
@@ -159,76 +228,89 @@ and g.NonDeclare =0
 and (kd_status.status = 'New' or kd_status.Status is null)
 and not exists (select * from KHExportDeclaration_Detail kdd2 where (kdd2.Invno=g.id or kdd2.LocalInvno=g.id) and  kdd2.OrderID=o.ID) 
 {where}
+group by pd.OrderID,o.StyleID,s.Description,o.PoPrice,o.SeasonID,g.ID,s.Ukey,g.BrandID,g.ShipModeID,o.POPrice,g.Forwarder,g.InvDate,g.Shipper,g.Dest,g.SONo,g.Remark,PoPrice.AvgPrice,g.ETD,o.CustPONo,g.CustCDID, o.StyleUnit,r.FOB, isnull(OL.rate, 1),Location
+
 ";
-            #region Where
-            if (!MyUtility.Check.Empty(this.dr_master["Buyer"]))
+
+            DualResult result;
+            result = DBProxy.Current.Select(null, string.Format(sqlcmd, "GMTBooking"), out DataTable dt);
+
+            if (!result)
             {
-                sqlcmd += $@" and b2.id =  '{this.dr_master["Buyer"]}'";
+                this.ShowErr(sqlcmd, result);
+                return;
             }
 
-            if (!MyUtility.Check.Empty(this.dr_master["Forwarder"]))
+            #region check A2B
+
+            string sqlGetA2BGMT = $@"
+Declare @ID varchar(15) = '{this.dr_master["ID"]}'
+Declare @ShipMode varchar(60) = '{this.dr_master["ShipModeID"]}'
+
+select  g.id,
+        g.ETD,
+        g.BrandID,
+        g.ShipModeID,
+        g.Forwarder,
+        g.InvDate,
+        g.Shipper,
+        g.Dest,
+        g.SONo,
+        g.Remark,
+        g.CustCDID,
+        g.NonDeclare,
+        gd.PLFromRgCode
+from GMTBooking g with (nolock)
+inner join GMTBooking_Detail gd with (nolock) on gd.ID = g.ID
+outer apply (
+	select kd.status 
+		from KHExportDeclaration kd 
+		where 1=1
+		and kd.id=@ID
+) kd_status
+where   g.ShipModeID = @ShipMode and
+        g.NonDeclare = 0 and
+        (kd_status.status = 'New' or kd_status.Status is null) and
+        not exists (select 1 from KHExportDeclaration_Detail kdd2 where kdd2.Invno=g.id or kdd2.LocalInvno=g.id)
+        {whereGMT}
+";
+
+            DataTable dtA2BGMT;
+            result = DBProxy.Current.Select(null, sqlGetA2BGMT, out dtA2BGMT);
+            if (!result)
             {
-                sqlcmd += $@" and g.Forwarder =  '{this.dr_master["Forwarder"]}'";
+                this.ShowErr(result);
+                return;
             }
 
-            if (!MyUtility.Check.Empty(this.dr_master["Dest"]))
+            if (dtA2BGMT.Rows.Count > 0)
             {
-                sqlcmd += $@" and g.Dest =  '{this.dr_master["Dest"]}'";
-            }
+                List<string> listPLFromRgCode = new List<string>();
 
-            if (!MyUtility.Check.Empty(this.dateETD.Value1))
-            {
-                sqlcmd += $@" and g.ETD >= '{((DateTime)this.dateETD.Value1).ToString("yyyy/MM/dd")}'";
-            }
+                listPLFromRgCode = dtA2BGMT.AsEnumerable().Select(s => s["PLFromRgCode"].ToString()).Distinct().ToList();
 
-            if (!MyUtility.Check.Empty(this.dateETD.Value2))
-            {
-                sqlcmd += $@" and g.ETD <= '{((DateTime)this.dateETD.Value2).ToString("yyyy/MM/dd")}'";
-            }
+                foreach (string systemName in listPLFromRgCode)
+                {
+                    DataTable dtA2BResult;
+                    DataBySql dataBySql = new DataBySql()
+                    {
+                        SqlString = string.Format(sqlcmd, "#tmp"),
+                        TmpTable = JsonConvert.SerializeObject(dtA2BGMT),
+                    };
+                    result = PackingA2BWebAPI.GetDataBySql(systemName, dataBySql, out dtA2BResult);
 
-            if (!MyUtility.Check.Empty(this.txtPo1.Text))
-            {
-                sqlcmd += $@" and o.CustPONo >= '{this.txtPo1.Text}'";
-            }
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
 
-            if (!MyUtility.Check.Empty(this.txtPo2.Text))
-            {
-                sqlcmd += $@" and o.CustPONo <= '{this.txtPo2.Text}'";
-            }
-
-            if (!MyUtility.Check.Empty(this.txtInvNo1.Text))
-            {
-                sqlcmd += $@" and g.ID >= '{this.txtInvNo1.Text}'";
-            }
-
-            if (!MyUtility.Check.Empty(this.txtInvNo2.Text))
-            {
-                sqlcmd += $@" and g.ID <= '{this.txtInvNo2.Text}'";
-            }
-
-            if (!MyUtility.Check.Empty(this.txtSP1.Text))
-            {
-                sqlcmd += $@" and o.ID >= '{this.txtSP1.Text}'";
-            }
-
-            if (!MyUtility.Check.Empty(this.txtSP2.Text))
-            {
-                sqlcmd += $@" and o.ID <= '{this.txtSP2.Text}'";
+                    dtA2BResult.MergeTo(ref dt);
+                }
             }
             #endregion
 
-            sqlcmd += @" 
-group by pd.OrderID,o.StyleID,s.Description,o.PoPrice,o.SeasonID,g.ID,s.Ukey,g.BrandID,g.ShipModeID,o.POPrice,g.Forwarder,g.InvDate,g.Shipper,g.Dest,g.SONo,g.Remark,PoPrice.AvgPrice,g.ETD,o.CustPONo,g.CustCDID, o.StyleUnit,r.FOB, isnull(OL.rate, 1),Location";
-
-            DualResult result;
-            if (result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt))
-            {
-                this.listControlBindingSource1.DataSource = dt;
-            }
-            else
-            {
-                this.ShowErr(sqlcmd, result);
-            }
+            this.listControlBindingSource1.DataSource = dt;
         }
 
         private void BtnImport_Click(object sender, EventArgs e)
