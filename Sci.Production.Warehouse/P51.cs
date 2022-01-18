@@ -470,6 +470,11 @@ and stocktype='{this.CurrentDetailData["stocktype"]}' and roll='{e.FormattedValu
                 return;
             }
 
+            if (Prgs.ChkLocation(this.CurrentMaintain["ID"].ToString(), "StockTaking_detail") == false)
+            {
+                return;
+            }
+
             var dr = this.CurrentMaintain;
             if (dr == null)
             {

@@ -171,6 +171,13 @@ Reason can’t be empty!!",
             }
             #endregion
 
+            #region 檢查Location是否為空值
+            if (Prgs.ChkLocation(this.CurrentMaintain["ID"].ToString(), "Adjust_Detail") == false)
+            {
+                return;
+            }
+            #endregion
+
             List<SqlParameter> para = new List<SqlParameter>
             {
                 new SqlParameter("@ID", id),

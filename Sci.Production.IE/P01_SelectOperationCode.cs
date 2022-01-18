@@ -72,7 +72,12 @@ namespace Sci.Production.IE
                  .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Numeric("SeamLength", header: "Seam Length", decimal_places: 2, iseditingreadonly: true);
 
-            string sqlCmd = "select ID,DescEN,SMV,MachineTypeID,SeamLength,MoldID,MtlFactorID,Annotation,MasterPlusGroup from Operation WITH (NOLOCK) where CalibratedCode = 1";
+            string sqlCmd = $@"
+select o.ID,o.DescEN,o.SMV,o.MachineTypeID,o.SeamLength,o.MoldID,o.MtlFactorID,o.Annotation,o.MasterPlusGroup,[MachineType_IsSubprocess] = isnull(md.IsSubprocess,0) 
+from Operation o WITH (NOLOCK)
+left join MachineType_Detail md WITH (NOLOCK) on md.ID = o.MachineTypeID and md.FactoryID = '{Sci.Env.User.Factory}'
+where CalibratedCode = 1
+";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.gridData);
             if (!result)
             {

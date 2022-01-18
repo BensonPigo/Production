@@ -256,6 +256,13 @@ namespace Sci.Production.Warehouse
         {
             base.ClickCheck();
 
+            #region 檢查Location是否為空值
+            if (Prgs.ChkLocation(this.CurrentMaintain["ID"].ToString(), "StockTaking_detail") == false)
+            {
+                return;
+            }
+            #endregion
+
             string sqlcmd = $@"
 update StockTaking
 set Status = 'Checked'
@@ -416,6 +423,13 @@ where id = '{this.CurrentMaintain["ID"]}'
 
             #region 檢查物料Location 是否存在WMS
             if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P50"))
+            {
+                return;
+            }
+            #endregion
+
+            #region 檢查Location是否為空值
+            if (Prgs.ChkLocation(this.CurrentMaintain["ID"].ToString(), "StockTaking_detail") == false)
             {
                 return;
             }
