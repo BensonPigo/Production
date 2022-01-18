@@ -339,6 +339,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                                     dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
                                     dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
                                     dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
+                                    dr["MachineType_IsSubprocess"] = callNextForm.P01SelectOperationCode["MachineType_IsSubprocess"];
                                     dr.EndEdit();
                                 }
                             }
@@ -358,6 +359,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                                 dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
                                 dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
                                 dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
+                                dr["MachineType_IsSubprocess"] = callNextForm.P01SelectOperationCode["MachineType_IsSubprocess"];
                                 dr.EndEdit();
                             }
                             else
@@ -405,7 +407,13 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                                 sp1,
                             };
 
-                            string sqlCmd = "select DescEN,SMV,MachineTypeID,SeamLength,MoldID,MtlFactorID,Annotation from Operation WITH (NOLOCK) where CalibratedCode = 1 and ID = @id";
+                            string sqlCmd = $@"
+select o.ID,o.DescEN,o.SMV,o.MachineTypeID,o.SeamLength,o.MoldID,o.MtlFactorID,o.Annotation,o.MasterPlusGroup
+,[MachineType_IsSubprocess] = isnull(md.IsSubprocess,0) 
+from Operation o WITH (NOLOCK)
+left join MachineType_Detail md WITH (NOLOCK) on md.ID = o.MachineTypeID and md.FactoryID = '{Sci.Env.User.Factory}'
+where CalibratedCode = 1
+and o.ID = @id";
                             DataTable opData;
                             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out opData);
                             if (result)
@@ -428,6 +436,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                                     dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SMV"]);
                                     dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
                                     dr["Annotation"] = opData.Rows[0]["Annotation"].ToString();
+                                    dr["MachineType_IsSubprocess"] = opData.Rows[0]["MachineType_IsSubprocess"];
                                 }
                             }
                             else
@@ -814,28 +823,22 @@ where Junk = 0";
                 return;
             }
 
-            DataTable dt = (DataTable)this.detailgridbs.DataSource;
-            DataRow[] drArry = dt.Select("OperationID <> ''");
-
-            if (drArry.Length <= 0)
+            DataRow data = ((DataTable)this.detailgridbs.DataSource).Rows[e.RowIndex];
+            if (data.RowState != DataRowState.Deleted && !MyUtility.Check.Empty(data["OperationID"]))
             {
-                return;
-            }
-
-            DataRow data = drArry.CopyToDataTable().Rows[e.RowIndex];
-            if (data == null)
-            {
-                return;
-            }
-
-            // MachineType_IsSubprocess 是true,代表可以勾選SubProcess 反之亦然
-            if (data.RowState != DataRowState.Deleted && MyUtility.Check.Empty(data["MachineType_IsSubprocess"]))
-            {
-                this.col_IsSubprocess.IsEditable = false;
+                // MachineType_IsSubprocess 是true,代表可以勾選SubProcess 反之亦然
+                if (data.RowState != DataRowState.Deleted && MyUtility.Convert.GetBool(data["MachineType_IsSubprocess"]) == true)
+                {
+                    this.col_IsSubprocess.IsEditable = true;
+                }
+                else
+                {
+                    this.col_IsSubprocess.IsEditable = false;
+                }
             }
             else
             {
-                this.col_IsSubprocess.IsEditable = true;
+                this.col_IsSubprocess.IsEditable = false;
             }
         }
 
