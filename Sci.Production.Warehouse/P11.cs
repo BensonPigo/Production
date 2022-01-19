@@ -186,6 +186,7 @@ select  poid = b.ID
         , b.Seq1
         , b.Seq2
         , concat(Ltrim(Rtrim(b.seq1)), ' ', b.seq2) seq
+        , b.Refno
         , a.StockType
         , ColorID = isnull(dbo.GetColorMultipleID(b.BrandId, b.ColorID), '')
         , b.SizeSpec
@@ -230,10 +231,10 @@ order by b.ID, b.seq1, b.seq2", this.CurrentDetailData["poid"]);
 
                     Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(
                         bulkItems,
-                        "FabricType,SCIRefno,MtlTypeID,IssueType,Poid,Seq1,Seq2,inqty,outqty,adjustqty,ReturnQty",
-                        "4,14,10,10,13,4,3,6,6,6,6",
+                        "FabricType,SCIRefno,MtlTypeID,IssueType,Poid,Seq1,Seq2,Refno,inqty,outqty,adjustqty,ReturnQty",
+                        "4,14,10,10,13,4,3,10,6,6,6,6",
                         this.CurrentDetailData["seq"].ToString(),
-                        "FabricType,SCIRefno,MtlTypeID,IssueType,Poid,Seq1,Seq2,In Qty,Out Qty,Adjust Qty,Return Qty")
+                        "FabricType,SCIRefno,MtlTypeID,IssueType,Poid,Seq1,Seq2,Refno,In Qty,Out Qty,Adjust Qty,Return Qty")
                     {
                         Width = 1024,
                     };
@@ -248,6 +249,7 @@ order by b.ID, b.seq1, b.seq2", this.CurrentDetailData["poid"]);
                     this.CurrentDetailData["seq"] = x[0]["seq"];
                     this.CurrentDetailData["seq1"] = x[0]["seq1"];
                     this.CurrentDetailData["seq2"] = x[0]["seq2"];
+                    this.CurrentDetailData["Refno"] = x[0]["Refno"];
                     this.CurrentDetailData["stocktype"] = x[0]["stocktype"];
                     this.CurrentDetailData["ftyinventoryukey"] = x[0]["ukey"];
                     this.CurrentDetailData["Colorid"] = x[0]["Colorid"];
@@ -300,6 +302,7 @@ order by b.ID, b.seq1, b.seq2", this.CurrentDetailData["poid"]);
         , b.Seq1
         , b.Seq2
         , concat(Ltrim(Rtrim(b.seq1)), ' ', b.seq2) seq
+        , b.Refno
         , a.StockType
         , ColorID = isnull(dbo.GetColorMultipleID(b.BrandId, b.ColorID), '')
         , b.SizeSpec
@@ -351,6 +354,7 @@ seq[1]), out this.dr))
                             this.CurrentDetailData["seq"] = seq[0] + " " + seq[1];
                             this.CurrentDetailData["seq1"] = seq[0];
                             this.CurrentDetailData["seq2"] = seq[1];
+                            this.CurrentDetailData["Refno"] = this.dr["Refno"];
 
                             // CurrentDetailData["mdivisionid"] = dr["mdivisionid"];
                             this.CurrentDetailData["stocktype"] = this.dr["stocktype"];
@@ -375,6 +379,7 @@ seq[1]), out this.dr))
             #region -- 欄位設定 --
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts2)
+            .Text("Refno", header: "Refno", width: Widths.AnsiChars(13))
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)
@@ -411,6 +416,7 @@ select  a.Id
         , a.seq1
         , a.seq2
         , concat(Ltrim(Rtrim(a.seq1)), ' ', a.seq2) as seq
+        , p.Refno
         , a.StockType
         , a.Qty
         , Colorid = isnull(dbo.GetColorMultipleID(p.BrandId, p.ColorID), '')
