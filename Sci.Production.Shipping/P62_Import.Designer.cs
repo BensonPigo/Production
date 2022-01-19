@@ -174,11 +174,13 @@
             // 
             // labSP
             // 
+            this.labSP.BackColor = System.Drawing.Color.SkyBlue;
             this.labSP.Location = new System.Drawing.Point(25, 51);
             this.labSP.Name = "labSP";
             this.labSP.Size = new System.Drawing.Size(80, 23);
             this.labSP.TabIndex = 10;
             this.labSP.Text = "SP#";
+            this.labSP.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // txtInvNo2
             // 
@@ -215,11 +217,13 @@
             // 
             // labInvno
             // 
+            this.labInvno.BackColor = System.Drawing.Color.SkyBlue;
             this.labInvno.Location = new System.Drawing.Point(25, 22);
             this.labInvno.Name = "labInvno";
             this.labInvno.Size = new System.Drawing.Size(80, 23);
             this.labInvno.TabIndex = 9;
             this.labInvno.Text = "Invoice No.";
+            this.labInvno.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // dateETD
             // 
@@ -245,11 +249,13 @@
             // 
             // labETD
             // 
+            this.labETD.BackColor = System.Drawing.Color.SkyBlue;
             this.labETD.Location = new System.Drawing.Point(477, 22);
             this.labETD.Name = "labETD";
             this.labETD.Size = new System.Drawing.Size(51, 23);
             this.labETD.TabIndex = 13;
             this.labETD.Text = "ETD";
+            this.labETD.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // txtPo2
             // 
@@ -264,9 +270,9 @@
             // label9
             // 
             this.label9.BackColor = System.Drawing.Color.Transparent;
-            this.label9.Location = new System.Drawing.Point(661, 51);
+            this.label9.Location = new System.Drawing.Point(662, 51);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(21, 23);
+            this.label9.Size = new System.Drawing.Size(17, 23);
             this.label9.TabIndex = 0;
             this.label9.Text = "～";
             this.label9.TextStyle.BorderColor = System.Drawing.Color.Black;
@@ -286,11 +292,13 @@
             // 
             // labPo
             // 
+            this.labPo.BackColor = System.Drawing.Color.SkyBlue;
             this.labPo.Location = new System.Drawing.Point(477, 51);
             this.labPo.Name = "labPo";
             this.labPo.Size = new System.Drawing.Size(51, 23);
             this.labPo.TabIndex = 14;
             this.labPo.Text = "PO#";
+            this.labPo.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // btnQuery
             // 
