@@ -12,6 +12,7 @@ using Sci.Win.Tools;
 using System.Runtime.InteropServices;
 using Sci.Utility.Excel;
 using System.IO;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Quality
 {
@@ -126,6 +127,7 @@ namespace Sci.Production.Quality
             this.displayResult.Text = this.maindr["physical"].ToString();
             this.txtuserApprover.TextBox1.Text = this.maindr["Approve"].ToString();
             this.txtPhysicalInspector.Text = this.maindr["PhysicalInspector"].ToString();
+            this.txtCustInspNumber.Text = this.maindr["CustInspNumber"].ToString();
         }
 
         private DataTable datas2;
@@ -795,10 +797,23 @@ Where DetailUkey = {15};",
                 }
             }
 
+            update_cmd1 += " update FIR set CustInspNumber = @CustInspNumber where ID = @FIR_ID";
+            List<SqlParameter> listPar = new List<SqlParameter>()
+            {
+                new SqlParameter("@CustInspNumber", this.txtCustInspNumber.Text),
+                new SqlParameter("@FIR_ID", this.maindr["ID"]),
+            };
+
             if (update_cmd1 != string.Empty)
             {
-                upResult = DBProxy.Current.Execute(null, update_cmd1);
+                upResult = DBProxy.Current.Execute(null, update_cmd1, listPar);
             }
+
+            if (upResult)
+            {
+                this.maindr["CustInspNumber"] = this.txtCustInspNumber.Text;
+            }
+
             #endregion
             return upResult;
         }
