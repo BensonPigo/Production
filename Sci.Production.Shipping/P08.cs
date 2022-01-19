@@ -672,7 +672,7 @@ from FtyExport with (nolock) where BLno = '{0}' and Type <> 3 ",
                     else
                     {
                         strSQLcmd = string.Format(
-                            "select  1 from GMTBooking with (nolock) where BLno = '{0}' or BL2no = '{0}'",
+                            @"select  1 from GMTBooking with (nolock) where BLno = '{0}' or BL2no = '{0}' union select 1 from FtyExport f where Blno = '{0}' union select 1 from Export f where Blno = '{0}'",
                             this.CurrentMaintain["BLNo"]);
 
                         if (!MyUtility.Check.Seek(strSQLcmd))
