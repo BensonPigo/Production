@@ -270,8 +270,7 @@ outer apply (
 ) kd_status
 where   g.ShipModeID = @ShipMode and
         g.NonDeclare = 0 and
-        (kd_status.status = 'New' or kd_status.Status is null) and
-        not exists (select 1 from KHExportDeclaration_Detail kdd2 where kdd2.Invno=g.id or kdd2.LocalInvno=g.id)
+        (kd_status.status = 'New' or kd_status.Status is null)
         {whereGMT}
 ";
 
