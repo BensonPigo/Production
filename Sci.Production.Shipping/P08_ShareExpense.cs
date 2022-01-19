@@ -792,7 +792,7 @@ select  ShippingAPID
             from DropDownList dl
             inner join FtyExport f on f.Type = dl.ID
             where dl.Type='Pms_FtyExportType'
-            and f.ID = se.WKNo)
+            and f.ID = se.InvNo)
         , ShipModeID
         , FtyWK
         , isnull(sum(Amount),0) as Amount 
