@@ -971,6 +971,7 @@ into #tmpPadPrintReq
 from Trade_To_Pms.dbo.PadPrintReq b 
 left join Production.dbo.PadPrintReq a on a.ID = b.ID
 where exists(select 1 from Production.dbo.Factory where ID = b.FactoryID)
+and a.id is null
 
 update a
 set
@@ -1089,6 +1090,7 @@ select
 	,b.[EditDate]
 from #tmpPadPrintReq a
 inner join Trade_To_Pms.dbo.PadPrintReq_Detail b on a.ID = b.ID
+where not exists(select 1 from Production.dbo.PadPrintReq_Detail p where p.id = b.id and p.seq2 = b.seq2 and p.[PadPrint_Ukey] = b.[PadPrint_Ukey] and p.[MoldID] = b.[MoldID])
 
 
 --------------------------PadPrintReq_Detail_spec
@@ -1130,6 +1132,8 @@ select
 	,b.[EditDate]
 from #tmpPadPrintReq a
 inner join Trade_To_Pms.dbo.PadPrintReq_Detail_spec b on a.ID = b.ID
+where not exists(select 1 from  Production.dbo.PadPrintReq_Detail_spec p where p.id = b.id and p.seq2 = b.seq2 and p.[PadPrint_Ukey] = b.[PadPrint_Ukey] and p.[MoldID] = b.[MoldID] and p.[Side] = b.[Side])
+
 
 drop table #tmpPadPrintReq
 --------------------------
