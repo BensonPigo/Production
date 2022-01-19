@@ -19,7 +19,8 @@ namespace Sci.Production.Quality
         private string wkStrat;
         private string wkEnd;
         private List<SqlParameter> lis;
-        private DataTable dt; private string cmd;
+        private DataTable dt;
+        private string cmd;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="R01"/> class.
@@ -265,6 +266,7 @@ select
 	,fta.ActualYds
 	,[InspectionRate] = ROUND(iif(t.StockQty = 0,0,CAST (fta.ActualYds/t.StockQty AS FLOAT)) ,3)
 	,ftp.TotalPoint
+    ,F.CustInspNumber
 	,F.Weight
 	,[WeightInspector] = (select name from Pass1 where id = f.WeightInspector)
 	,F.WeightDate
@@ -457,6 +459,7 @@ select
 	,tf.ActualYds
     ,tf.InspectionRate
 	,tf.TotalPoint
+    ,tf.CustInspNumber
 	,tf.Weight
 	,tf.WeightInspector
 	,tf.WeightDate
