@@ -219,9 +219,9 @@ Begin
 		and t.r_ID = 1
 		and t.ID = s.ID
 		and (
-			exists (select 1 from  Production.dbo.PackingList_Detail where SCICtnNo= s.SCICtnNo and ReceiveDate is null)
+			(exists (select 1 from  Production.dbo.PackingList_Detail where SCICtnNo= s.SCICtnNo and ReceiveDate is null ) and s.Type = 'FtyToClog')
 			or
-			exists (select 1 from  Production.dbo.PackingList_Detail where SCICtnNo= s.SCICtnNo and CFAReturnClogDate is not null)
+			(exists (select 1 from  Production.dbo.PackingList_Detail where SCICtnNo= s.SCICtnNo and CFAReturnClogDate is not null )and s.Type = 'CFAToClog')
 		) 
 
 		-- 加入@tmpPacking
@@ -346,8 +346,7 @@ Begin
 		 from 
 		(
 			select tfl.ClogLocationId, tfl.Pallet, tfl.Time, tfl.SCICtnNo
-			from TransferLocation tfl with (nolock)
-			where tfl.SCIUpdate=0 and exists(select 1 from #tmpTransferLocation ttfl where ttfl.SCICtnNo = tfl.SCICtnNo)
+			from #tmpTransferLocation tfl with (nolock)
 				union all
 			select mtp.ClogLocationId, mtp.Pallet, mtp.Time, mtp.SCICtnNo
 			from MiniToPallet mtp with (nolock)
