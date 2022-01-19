@@ -92,31 +92,35 @@ from
 	,Location  = case a.Type when 'C' then '' else ToLocation.location end
 	,ContainerCode = case a.Type when 'C' then '' else ToContainerCode.ContainerCode end
     ,a.EditDate , a.issuedate 
-	from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
-outer apply(
-    select  location = stuff(
-        (
-            select ',' + x.location								
-            from(select distinct location = sd.ToLocation 
-            from SubTransfer_Detail sd
-            where Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}' 
-            and sd.FromDyelot = b.FromDyelot and sd.FromRoll = b.FromRoll and sd.FromStockType = b.FromStockType
-        )x			
-    for xml path('')),1,1,'') 
-) ToLocation
-outer apply(
-    select  ContainerCode = stuff(
-        (
-            select ',' + x.ContainerCode 								
-            from(select distinct ContainerCode  = sd.ToContainerCode 
-            from SubTransfer_Detail sd
-            where Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}' 
-            and sd.FromDyelot = b.FromDyelot and sd.FromRoll = b.FromRoll and sd.FromStockType = b.FromStockType
-        )x			
-    for xml path('')),1,1,'') 
-) ToContainerCode
-	where  Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'  
-	and a.id = b.id
+	from SubTransfer a WITH (NOLOCK) 
+	inner join SubTransfer_Detail b WITH (NOLOCK) on a.Id=b.ID
+	outer apply(
+		select  location = stuff(
+			(
+				select ',' + x.location								
+				from(select distinct location = sd.ToLocation 
+				from SubTransfer_Detail sd
+                inner join SubTransfer s on sd.ID = s.Id
+				where Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}' 
+				and sd.FromDyelot = b.FromDyelot and sd.FromRoll = b.FromRoll and sd.FromStockType = b.FromStockType
+				and s.Type in ('E','D')
+			)x			
+		for xml path('')),1,1,'') 
+	) ToLocation
+	outer apply(
+		select  ContainerCode = stuff(
+			(
+				select ',' + x.ContainerCode 								
+				from(select distinct ContainerCode  = sd.ToContainerCode 
+				from SubTransfer_Detail sd
+                inner join SubTransfer s on sd.ID = s.Id
+				where Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}' 
+				and sd.FromDyelot = b.FromDyelot and sd.FromRoll = b.FromRoll and sd.FromStockType = b.FromStockType
+				and s.Type in ('E','D')
+			)x			
+		for xml path('')),1,1,'') 
+	) ToContainerCode
+	where  Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'  	
     and a.Status='Confirmed'
     and type in ('C','D','E')
 
@@ -186,7 +190,7 @@ outer apply(
                  .Numeric("adjustQty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Text("Location", header: "To Location", width: Widths.AnsiChars(15))
-                 .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out col_ContainerCode)
+                 .Text("ContainerCode", header: "Container Code", width: Widths.AnsiChars(20), iseditingreadonly: true).Get(out col_ContainerCode)
                  ;
 
             // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035

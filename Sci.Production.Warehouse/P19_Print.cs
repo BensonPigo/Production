@@ -208,8 +208,11 @@ order by Dyelot, Len(Roll), Roll
             Excel.Application objApp = new Excel.Application();
             Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Warehouse_P18_ExcelImport.xltx", objApp);
             com.UseInnerFormating = false;
-            com.WriteTable(this.dtResult, 3);
 
+            // excel不須顯示ContainerCode
+            DataTable dtExcel = this.dtResult.Copy();
+            dtExcel.Columns.Remove("ContainerCode");
+            com.WriteTable(dtExcel, 3);
             com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
             objApp.Visible = true;
             Marshal.ReleaseComObject(objApp);
