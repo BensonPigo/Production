@@ -3509,7 +3509,14 @@ FOR AccountID IN ({account})) a
 ");
                 }
 
+                DBProxy.Current.DefaultTimeout = 1800;
                 result = DBProxy.Current.SelectByConn(sqlConnection, sqlCmd.ToString(), out this.printData);
+                DBProxy.Current.DefaultTimeout = 300;
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
 
                 List<ReportData> tmpDatas = new List<ReportData>();
                 List<ReportData> finalDatas = new List<ReportData>();
