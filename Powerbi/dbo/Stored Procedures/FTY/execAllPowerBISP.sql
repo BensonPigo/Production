@@ -165,49 +165,6 @@ SET @ErrorMessage = ''
 
 	SET @ErrDesc = ''
 
---04) P_ImportOustandingPO_Fty、P_ImportSDPOrderDetail
-BEGIN TRY
-	set @Stime = getdate()
-	set @StartDate = CAST(DATEADD(day,-150, GETDATE()) AS date)
-	set @EndDate   = CAST(DATEADD(day,30, GETDATE()) AS date)
-	execute [dbo].[P_ImportOustandingPO_Fty] @StartDate,@EndDate
-	DECLARE @BuyerDelivery_s as Date = '2020/01/01'
-	--DECLARE @BuyerDelivery_e as Date = '2020/07/31'
-	execute [dbo].[P_ImportSDPOrderDetail] @BuyerDelivery_s--,@BuyerDelivery_e
-	set @Etime = getdate()
-END TRY
-
-BEGIN CATCH
-SET @ErrorMessage = 
-'
-[4-Outstanding PO]' + CHAR(13) +
-',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
-',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
-',錯誤訊息: ' + ERROR_MESSAGE()
-
-SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
-',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
-',錯誤訊息: ' + ERROR_MESSAGE()
-
-SET @ErrorStatus = 0
-
-END CATCH;
-IF (@ErrorMessage IS NULL or @ErrorMessage='')
-BEGIN 
-	set @desc += CHAR(13) +'
-[4-Outstanding PO] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
-END
-BEGIN
-	set @desc +=  CHAR(13) +@ErrorMessage
-END
-SET @ErrorMessage = ''
-
--- Write in P_TransLog
-	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
-	values('P_ImportOustandingPO_Fty & P_ImportSDPOrderDetail',@ErrDesc,@Stime,@Etime,@TransCode)
-
-	SET @ErrDesc = ''
-
 --05) P_ImportLoadingProductionOutput_FTY
 BEGIN TRY
 	set @Stime = getdate()
