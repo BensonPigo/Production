@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -15,6 +16,8 @@ namespace Sci.Production.Quality
     public partial class P02_BatchEncode : Win.Tems.QueryForm
     {
         private readonly string masterID;
+        private string defect;
+        private bool bolFilter = true;
 
         /// <inheritdoc/>
         public P02_BatchEncode(string masterID)
@@ -30,6 +33,10 @@ namespace Sci.Production.Quality
             this.comboResult.DataSource = new BindingSource(comboBox1_RowSource, null);
             this.comboResult.ValueMember = "Key";
             this.comboResult.DisplayMember = "Value";
+
+            this.comboBoxResultTop.DataSource = new BindingSource(comboBox1_RowSource, null);
+            this.comboBoxResultTop.ValueMember = "Key";
+            this.comboBoxResultTop.DisplayMember = "Value";
 
             this.dateInspectDt.Value = DateTime.Now;
             this.txtInspector.TextBox1Binding = Env.User.UserID;
@@ -47,15 +54,19 @@ namespace Sci.Production.Quality
             this.Helper.Controls.Grid.Generator(this.grid)
                 .CheckBox("select", trueValue: 1, falseValue: 0)
                 .Text("SEQ", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: false)
-                .Text("ExportID", header: "WKNO", width: Widths.AnsiChars(13), iseditingreadonly: false)
+                .Text("ExportID", header: "WKNO", width: Widths.AnsiChars(15), iseditingreadonly: false)
                 .Date("whseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(10), iseditingreadonly: false)
                 .Text("SCIRefno", header: "SCI Refno", width: Widths.AnsiChars(26), iseditingreadonly: false)
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(20), iseditingreadonly: false)
                 .Text("SuppEn", header: "Supplier", width: Widths.AnsiChars(10), iseditingreadonly: false)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: false)
                 .Text("Size", header: "Size", width: Widths.AnsiChars(15), iseditingreadonly: false)
+                .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(15), iseditingreadonly: false)
                 .Numeric("ArriveQty", header: "Arrive Qty", width: Widths.AnsiChars(8), integer_places: 11, decimal_places: 2, iseditingreadonly: false)
                 .Numeric("InspQty", header: "Inspected Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
+                .Numeric("RejectQty", header: "Rejected Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
+                .Text("Defect", header: "Defect Type", width: Widths.AnsiChars(15), iseditingreadonly: false)
+                .Numeric("Rejected", header: "Rejected %", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
                 .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Inspdate", header: "Insp. Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Inspector2", header: "Inspector", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -72,32 +83,47 @@ namespace Sci.Production.Quality
         {
             string sqlCmd = $@"
 Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,a.ReceivingID,a.Refno,a.SCIRefno,Suppid,C.exportid,
-                ArriveQty,InspDeadline,a.ReplacementReportID,
-                a.Status,ReplacementReportID,(seq1+seq2) as seq,
-                f.WeaveTypeID,
-				f.MtlTypeID,
-                c.whseArrival,
-                (
-                    dbo.GetColorMultipleID((select top 1 o.BrandID from orders o where o.POID =a.poid) ,(Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2))
-                ) as Colorid,
-                (
-                    Select d.SizeSpec from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
-                ) as Size,
-                (
-                    Select d.StockUnit from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
-                ) as unit,
-                (
-                    Select AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id
-                ) as SuppEn,InspQty,Inspdate,(
-				    select Pass1.Name from Pass1 WITH (NOLOCK) where a.Inspector = pass1.id
-				) AS Inspector2,Inspector,Result
+ArriveQty,InspDeadline,a.ReplacementReportID,
+a.Status,(seq1+seq2) as seq,
+f.WeaveTypeID,
+c.whseArrival,
+(
+    dbo.GetColorMultipleID((select top 1 o.BrandID from orders o where o.POID =a.poid) ,(Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2))
+) as Colorid,
+(
+    Select d.SizeSpec from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
+) as Size,
+(
+    Select d.StockUnit from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
+) as unit,
+(
+    Select AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id
+) as SuppEn,InspQty,Inspdate,(
+	select Pass1.Name from Pass1 WITH (NOLOCK) where a.Inspector = pass1.id
+) AS Inspector2,Inspector,Result
+, f.MtlTypeID, a.RejectQty,a.Defect
+,[Rejected] = convert(float,IIF(a.InspQty = 0,0, Round(a.RejectQty / a.InspQty * 100,2)))
+into #tmp
 From AIR a WITH (NOLOCK) 
 Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
 left join fabric f on f.SCIRefno = a.SCIRefno
-Where a.poid='{this.masterID}' --and a.Status <> 'Confirmed' 
-order by a.seq1,a.seq2
+Where a.poid = '{this.masterID}' --and a.Status <> 'Confirmed' 
+
+
+select * from #tmp
+order by seq1,seq2
+
+select Refno ='All' 
+union all 
+select distinct Refno from #tmp
+
+select ExportID ='All' 
+union all 
+select distinct ExportID from #tmp
+
+drop table #tmp
 ";
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable encodeData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable[] encodeData_List);
             if (!result)
             {
                 this.ShowErr(result);
@@ -107,7 +133,7 @@ order by a.seq1,a.seq2
             if (this.grid.DataSource != null)
             {
                 var srcDt = ((DataTable)this.grid.DataSource).AsEnumerable().Where(s => (int)s["select"] == 1);
-                foreach (DataRow dr in encodeData.Rows)
+                foreach (DataRow dr in encodeData_List[0].Rows)
                 {
                     if (srcDt.Where(s => s["ID"].Equals(dr["ID"]) && s["ReceivingID"].Equals(dr["ReceivingID"])).Any())
                     {
@@ -116,7 +142,19 @@ order by a.seq1,a.seq2
                 }
             }
 
-            this.grid.DataSource = encodeData;
+            this.grid.DataSource = encodeData_List[0];
+
+            this.bolFilter = false;
+            this.comboBoxRefno.DataSource = encodeData_List[1];
+            this.comboBoxRefno.DisplayMember = "Refno";
+            this.comboBoxRefno.ValueMember = "Refno";
+
+            this.comboBoxWKNo.DataSource = encodeData_List[2];
+            this.comboBoxWKNo.DisplayMember = "ExportID";
+            this.comboBoxWKNo.ValueMember = "ExportID";
+
+            this.bolFilter = true;
+            this.Grid_Filter();
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
@@ -168,7 +206,17 @@ order by a.seq1,a.seq2
                 string inspector = this.txtInspector.TextBox1.Text;
                 string result = this.comboResult.Text;
                 string remark = this.txtRemark.Text;
-                updSQL += $" update AIR set InspQty= {inspQty},Inspdate = '{inspdate}',Inspector = '{inspector}',Result = '{result}',remark = '{remark}'  where ID = '{item["ID"]}'" + Environment.NewLine;
+                decimal rejectQty = Math.Ceiling(MyUtility.Convert.GetDecimal(inspQty) * MyUtility.Convert.GetDecimal(this.numRejectPercent.Value) / 100);
+                updSQL += $@" 
+update AIR 
+set InspQty= {inspQty}
+,Inspdate = '{inspdate}'
+,Inspector = '{inspector}'
+,Result = '{result}'
+,remark = '{remark}'  
+,Defect = '{this.defect}'
+,RejectQty = {rejectQty}
+where ID = '{item["ID"]}'" + Environment.NewLine;
             }
 
             DualResult upResult;
@@ -413,6 +461,87 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
             }
 
             this.QueryData();
+        }
+
+        private void EditDefect_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                string sqlcmd = "select id,description from AccessoryDefect WITH (NOLOCK) where Junk = 0 ";
+                SelectItem2 item = new SelectItem2(sqlcmd, "Code,Description", "10,30", null, null, null, null);
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                // 用來存進DB
+                this.defect = item.GetSelectedString().Replace(",", "+");
+                string strEditDefect = string.Empty;
+
+                for (int i = 0; i < item.GetSelectedList().Count; i++)
+                {
+                    strEditDefect += item.GetSelecteds()[i]["id"].ToString().TrimEnd() + "-" + item.GetSelecteds()[i]["description"].ToString().TrimEnd() + "+";
+                }
+
+                // 單純用來顯示
+                this.editDefect.Text = strEditDefect.Substring(0, strEditDefect.Length - 1);
+            }
+        }
+
+        private void ComboBoxRefno_SelectedValueChanged(object sender, EventArgs e)
+        {
+            this.Grid_Filter();
+        }
+
+        private void ComboBoxResultTop_SelectedValueChanged(object sender, EventArgs e)
+        {
+            this.Grid_Filter();
+        }
+
+        private void ComboBoxWKNo_SelectedValueChanged(object sender, EventArgs e)
+        {
+            this.Grid_Filter();
+        }
+
+        private void Grid_Filter()
+        {
+            string filter = string.Empty;
+            DataTable dt = (DataTable)this.grid.DataSource;
+            if (dt == null)
+            {
+                return;
+            }
+
+            if (dt.Rows.Count > 0 && this.bolFilter)
+            {
+                if (MyUtility.Check.Empty(this.grid))
+                {
+                    return;
+                }
+
+                if (this.comboBoxWKNo.SelectedValue.ToString() != "All")
+                {
+                    filter += $@" exportid='{this.comboBoxWKNo.SelectedValue.ToString()}' and";
+                }
+
+                if (!MyUtility.Check.Empty(this.comboBoxResultTop.SelectedValue.ToString()))
+                {
+                    filter += $@" Result='{this.comboBoxResultTop.SelectedValue.ToString()}' and";
+                }
+
+                if (!MyUtility.Check.Empty(this.comboBoxRefno.SelectedValue.ToString()) && this.comboBoxRefno.SelectedValue.ToString() != "All")
+                {
+                    filter += $@" Refno='{this.comboBoxRefno.SelectedValue.ToString()}' and";
+                }
+
+                if (filter.Length > 0)
+                {
+                    filter = filter.Substring(0, filter.Length - 3);
+                }
+
+                ((DataTable)this.grid.DataSource).DefaultView.RowFilter = filter;
+            }
         }
     }
 }
