@@ -344,7 +344,6 @@
             // 
             // comboBoxRefno
             // 
-            this.comboBoxRefno.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.comboBoxRefno.BackColor = System.Drawing.Color.White;
             this.comboBoxRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBoxRefno.FormattingEnabled = true;
@@ -358,7 +357,6 @@
             // 
             // labRefno
             // 
-            this.labRefno.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labRefno.Location = new System.Drawing.Point(13, 10);
             this.labRefno.Name = "labRefno";
             this.labRefno.Size = new System.Drawing.Size(85, 23);
@@ -367,7 +365,6 @@
             // 
             // comboBoxResultTop
             // 
-            this.comboBoxResultTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.comboBoxResultTop.BackColor = System.Drawing.Color.White;
             this.comboBoxResultTop.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBoxResultTop.FormattingEnabled = true;
@@ -381,7 +378,6 @@
             // 
             // labResultTop
             // 
-            this.labResultTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labResultTop.Location = new System.Drawing.Point(262, 10);
             this.labResultTop.Name = "labResultTop";
             this.labResultTop.Size = new System.Drawing.Size(85, 23);
@@ -390,7 +386,6 @@
             // 
             // comboBoxWKNo
             // 
-            this.comboBoxWKNo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.comboBoxWKNo.BackColor = System.Drawing.Color.White;
             this.comboBoxWKNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBoxWKNo.FormattingEnabled = true;
@@ -404,7 +399,6 @@
             // 
             // labWKno
             // 
-            this.labWKno.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labWKno.Location = new System.Drawing.Point(467, 10);
             this.labWKno.Name = "labWKno";
             this.labWKno.Size = new System.Drawing.Size(85, 23);
@@ -413,6 +407,7 @@
             // 
             // numRejectPercent
             // 
+            this.numRejectPercent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.numRejectPercent.Location = new System.Drawing.Point(489, 375);
             this.numRejectPercent.Name = "numRejectPercent";
             this.numRejectPercent.Size = new System.Drawing.Size(120, 23);

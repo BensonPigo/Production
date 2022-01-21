@@ -101,12 +101,26 @@ c.whseArrival,
 ) as SuppEn,InspQty,Inspdate,(
 	select Pass1.Name from Pass1 WITH (NOLOCK) where a.Inspector = pass1.id
 ) AS Inspector2,Inspector,Result
-, f.MtlTypeID, a.RejectQty,a.Defect
+, f.MtlTypeID, a.RejectQty
+,Defect = DefectDesc.ValList
 ,[Rejected] = convert(float,IIF(a.InspQty = 0,0, Round(a.RejectQty / a.InspQty * 100,2)))
 into #tmp
 From AIR a WITH (NOLOCK) 
 Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
 left join fabric f on f.SCIRefno = a.SCIRefno
+outer apply(
+	--select * from AccessoryDefect
+	select ValList = Stuff((
+		select concat('+',val)
+		from (
+				select 	distinct
+					val = d.ID+'-'+d.Description
+				from dbo.AccessoryDefect d
+				where exists(select * from SplitString(a.Defect,'+') s where s.Data = d.ID)
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+)DefectDesc
 Where a.poid = '{this.masterID}' --and a.Status <> 'Confirmed' 
 
 
