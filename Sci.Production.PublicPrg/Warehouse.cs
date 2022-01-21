@@ -332,6 +332,7 @@ alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
+alter table #TmpSource alter column dyelot varchar(8)
 
 select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, '')
 into #tmpS1
