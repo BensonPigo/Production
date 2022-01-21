@@ -941,7 +941,110 @@ CREATE NONCLUSTERED INDEX index_tmp_PulloutQty ON #tmp_PulloutQty(	OrderID ASC, 
 CREATE NONCLUSTERED INDEX index_tmp_ActPulloutTime ON #tmp_ActPulloutTime(	OrderID ASC);
 
 
-select  t.* 
+select  t.ID
+            , t.MDivisionID
+            , t.FtyGroup
+            , t.FactoryID
+            , t.BuyerDelivery
+            , t.SciDelivery
+            , t.POID
+            , t.CRDDate
+            , t.CFMDate
+            , t.Dest
+            , t.StyleID
+            , t.StyleName
+            , t.SeasonID
+            , t.BrandID
+            , t.ProjectID
+			, t.PackingMethod
+            , t.HangerPack
+            , t.Customize1
+            , t.BuyMonth
+            , t.CustPONo
+            , t.CustCDID
+			, t.Kit
+            , t.ProgramID
+			, t.NonRevenue
+            , t.CdCodeID
+	        , t.CDCodeNew
+	        , t.ProductType
+	        , t.FabricType
+	        , t.Lining
+	        , t.Gender
+	        , t.Construction
+            , t.CPU
+            , t.Qty as Qty
+            , t.FOCQty
+            , t.LocalOrder
+            , t.PoPrice
+            , t.CMPPrice
+            , t.KPILETA
+            , t.PFETA
+            , t.LETA
+            , t.MTLETA
+            , t.SewETA
+            , t.PackETA
+            , t.MTLComplete
+            , t.SewInLine
+            , t.SewOffLine
+            , t.CutInLine
+            , t.CutOffLine
+            , t.Category
+            , t.PulloutDate
+            , t.ActPulloutDate 
+            , t.SMR
+            , t.MRHandle
+            , t.MCHandle
+            , t.OrigBuyerDelivery
+            , t.DoxType
+            , t.VasShas
+            , t.TissuePaper
+            , t.MTLExport
+            , t.SewLine
+            , t.ShipModeList
+            , t.PlanDate
+            , t.FirstProduction
+            , t.LastProductionDate
+            , t.OrderTypeID
+            , t.SpecialMark
+            , t.SampleReason
+            , t.InspDate
+            , t.InspResult
+            , t.InspHandle
+            , t.MnorderApv2
+            , t.MnorderApv
+            , t.PulloutComplete
+            , t.FtyKPI
+            , t.KPIChangeReason
+            , t.EachConsApv
+            , t.Junk
+            , t.StyleUkey
+            , t.CuttingSP
+            , t.RainwearTestPassed
+            , t.BrandFTYCode
+            , t.CPUFactor
+            , t.Seq
+            , t.[IDD]
+            , t.ClogLastReceiveDate
+            , t.IsMixMarker
+            , t.GFR
+            , t.PackingQty
+			, t.PackingFOCQty 
+			, t.BookingQty
+			, t.PackingCTN
+			, t.TotalCTN1
+			, t.FtyCtn1
+			, t.ClogCTN1
+			, t.ClogRcvDate
+            , t.PackErrorCtn
+            , t.CFACTN
+			, t.isForecast
+			, t.AirFreightByBrand
+            , [BuyBack] = iif(exists (select 1 from Order_BuyBack where ID = t.ID), 'Y', '')
+            , t.Cancelled
+            , t.Customize2
+            , t.KpiMNotice
+            , t.KpiEachConsCheck
         , ModularParent = isnull (s.ModularParent, '')
         , CPUAdjusted = isnull (s.CPUAdjusted * 100, 0)
         , DestAlias = isnull (c.Alias, '')
@@ -1028,11 +1131,11 @@ select  t.*
         , t.Customize2
         , t.KpiMNotice
         , t.KpiEachConsCheck
-        , t.LastCTNTransDate
-        , t.LastCTNRecdDate
-        , t.DryRoomRecdDate
-        , t.DryRoomTransDate
-        , t.MdRoomScanDate
+        , LastCTNTransDate = IIF(isnull(t.FtyCtn1,0) =0 , t.LastCTNTransDate , null)
+		, LastCTNRecdDate = IIF(isnull(t.FtyCtn1,0) =0 , t.LastCTNRecdDate , null)
+		, DryRoomRecdDate = IIF(isnull(t.FtyCtn1,0) =0 , t.DryRoomRecdDate , null)
+		, DryRoomTransDate = IIF(isnull(t.FtyCtn1,0) =0 , t.DryRoomTransDate , null)
+		, MdRoomScanDate = IIF(isnull(t.FtyCtn1,0) =0 , t.MdRoomScanDate , null)
 from #tmpFilterSeperate t
 left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
@@ -1117,7 +1220,105 @@ CREATE NONCLUSTERED INDEX index_tmp_PackingQty ON #tmp_PackingQty(	OrderID ASC);
 CREATE NONCLUSTERED INDEX index_tmp_PackingFOCQty ON #tmp_PackingFOCQty(	OrderID ASC);
 CREATE NONCLUSTERED INDEX index_tmp_BookingQty ON #tmp_BookingQty(	OrderID ASC);
 
-select distinct t.*
+select distinct 
+              t.ID
+            , t.MDivisionID
+            , t.FtyGroup
+            , t.FactoryID
+            , t.BuyerDelivery
+            , t.SciDelivery
+            , t.POID
+            , t.CRDDate
+            , t.CFMDate
+            , t.Dest
+            , t.StyleID
+            , t.StyleName
+            , t.SeasonID
+            , t.BrandID
+            , t.ProjectID
+            , t.Kit
+			,[PackingMethod] 
+            , t.HangerPack
+            , t.Customize1
+            , t.BuyMonth
+            , t.CustPONo
+            , t.CustCDID
+            , t.ProgramID
+			, [NonRevenue]
+            , t.CdCodeID
+	        , t.CDCodeNew
+            , [ProductType]
+		    , t. [FabricType]
+		    , t.Lining
+		    , t.Gender
+		    , t.[Construction]
+            , t.CPU
+            , t.Qty
+            , t.FOCQty
+            , t.LocalOrder
+            , t.PoPrice
+            , t.CMPPrice
+            , t.KPILETA
+            , t.PFETA
+            , t.LETA
+            , t.MTLETA
+            , t.SewETA
+            , t.PackETA
+            , t.MTLComplete
+            , t.SewInLine
+            , t.SewOffLine
+            , t.CutInLine
+            , t.CutOffLine
+            , t.Category
+            , t.PulloutDate
+            , t.ActPulloutDate
+            , t.SMR
+            , t.MRHandle
+            , t.MCHandle
+            , t.OrigBuyerDelivery
+            , t.DoxType
+            , t.TotalCTN
+            , PackErrorCtn
+            , t.FtyCTN
+            , t.ClogCTN
+            , t.CFACTN
+            , t.VasShas
+            , t.TissuePaper
+            , [MTLExport]
+            , t.SewLine
+            , t.ShipModeList
+            , t.PlanDate
+            , t.FirstProduction
+			, t.LastProductionDate
+            , t.OrderTypeID
+            , t.SpecialMark
+            , t.SampleReason
+            , InspDate 
+            , InspResult 
+            , InspHandle 
+            , t.MnorderApv2
+            , t.MnorderApv
+            , t.PulloutComplete
+            , t.FtyKPI
+            , t.KPIChangeReason
+            , t.EachConsApv
+            , t.Junk
+            , t.StyleUkey
+            , t.CuttingSP
+            , t.RainwearTestPassed
+            , t.BrandFTYCode
+            , t.CPUFactor
+            , t.ClogLastReceiveDate
+			, [IsMixMarker]
+            , t.GFR 
+			, isForecast
+            , [AirFreightByBrand]
+            , [BuyBack]
+            , [Cancelled]
+            , t.Customize2
+            , t.KpiMNotice
+            , t.KpiEachConsCheck
+            , t.[IDD] 
         , ModularParent = isnull (s.ModularParent, '')  
         , CPUAdjusted = isnull(s.CPUAdjusted * 100, 0)  
         , DestAlias = isnull (c.Alias, '') 
@@ -1767,7 +1968,7 @@ drop table #tmp,#tmp2,#tmp3
 
         // 最後一欄 , 有新增欄位要改這
         // 注意!新增欄位也要新增到StandardReport_Detail(Customized)。
-        private int lastColA = 150;
+        private int lastColA = 149;
 
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -2024,11 +2225,11 @@ drop table #tmp,#tmp2,#tmp3
                 objArray[intRowsStart, 141] = dr["CuttingSP"];
                 objArray[intRowsStart, 142] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
                 objArray[intRowsStart, 143] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
-                objArray[intRowsStart, 144] = dr["MdRoomScanDate"];
-                objArray[intRowsStart, 145] = dr["DryRoomRecdDate"];
-                objArray[intRowsStart, 146] = dr["DryRoomTransDate"];
-                objArray[intRowsStart, 147] = dr["LastCTNTransDate"];
-                objArray[intRowsStart, 148] = dr["LastCTNRecdDate"];
+                objArray[intRowsStart, 144] = dr["LastCTNTransDate"];
+                objArray[intRowsStart, 145] = dr["LastCTNRecdDate"];
+                objArray[intRowsStart, 146] = dr["DryRoomRecdDate"];
+                objArray[intRowsStart, 147] = dr["DryRoomTransDate"];
+                objArray[intRowsStart, 148] = dr["MdRoomScanDate"];
                 #endregion
 
                 if (this.artwork || this.pap)
