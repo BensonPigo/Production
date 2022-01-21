@@ -788,7 +788,7 @@ WHERE l.ID='{this.CurrentMaintain["ID"]}'
 ");
                 string toAddress = dt.Rows[0]["ToAddress"].ToString();
                 string ccAddress = dt.Rows[0]["CCAddress"].ToString() + $";{applyName}";
-                string subject = dt.Rows[0]["Subject"].ToString();
+                string subject = dt.Rows[0]["Subject"].ToString() + " / Sewing line " + this.CurrentMaintain["SewingLineID"].ToString();
 
                 string type = string.Empty;
                 string sp = MyUtility.Convert.GetString(this.CurrentMaintain["POID"]);
