@@ -6,6 +6,8 @@
     [AddDate]   DATETIME       NULL,
     [EditName]  VARCHAR (10)   CONSTRAINT [DF_Style_Location_EditName] DEFAULT ('') NULL,
     [EditDate]  DATETIME       NULL,
+    [ApparelType] VARCHAR(5) NULL, 
+    [FabricType] VARCHAR(5) NULL, 
     CONSTRAINT [PK_Style_Location] PRIMARY KEY CLUSTERED ([StyleUkey] ASC, [Location] ASC)
 );
 
