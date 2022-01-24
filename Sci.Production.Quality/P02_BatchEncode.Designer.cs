@@ -49,9 +49,21 @@
             this.radioMaterialType = new Sci.Win.UI.RadioButton();
             this.radioPanelInspected = new Sci.Win.UI.RadioPanel();
             this.comboDropDownList1 = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.editDefect = new Sci.Win.UI.EditBox();
+            this.labelDefect = new Sci.Win.UI.Label();
+            this.labReject = new Sci.Win.UI.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.comboBoxRefno = new Sci.Win.UI.ComboBox();
+            this.labRefno = new Sci.Win.UI.Label();
+            this.comboBoxResultTop = new Sci.Win.UI.ComboBox();
+            this.labResultTop = new Sci.Win.UI.Label();
+            this.comboBoxWKNo = new Sci.Win.UI.ComboBox();
+            this.labWKno = new Sci.Win.UI.Label();
+            this.numRejectPercent = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numInspectRate)).BeginInit();
             this.radioPanelInspected.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numRejectPercent)).BeginInit();
             this.SuspendLayout();
             // 
             // grid
@@ -69,20 +81,20 @@
             this.grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid.Location = new System.Drawing.Point(12, 12);
+            this.grid.Location = new System.Drawing.Point(13, 39);
             this.grid.Name = "grid";
             this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid.ShowCellToolTips = false;
-            this.grid.Size = new System.Drawing.Size(622, 247);
+            this.grid.Size = new System.Drawing.Size(766, 213);
             this.grid.TabIndex = 1;
             // 
             // label1
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label1.Location = new System.Drawing.Point(12, 271);
+            this.label1.Location = new System.Drawing.Point(13, 264);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(85, 23);
             this.label1.TabIndex = 2;
@@ -91,7 +103,7 @@
             // label2
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label2.Location = new System.Drawing.Point(12, 381);
+            this.label2.Location = new System.Drawing.Point(13, 374);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(85, 23);
             this.label2.TabIndex = 3;
@@ -100,7 +112,7 @@
             // label3
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label3.Location = new System.Drawing.Point(12, 416);
+            this.label3.Location = new System.Drawing.Point(13, 409);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(85, 23);
             this.label3.TabIndex = 4;
@@ -109,7 +121,7 @@
             // label4
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label4.Location = new System.Drawing.Point(12, 352);
+            this.label4.Location = new System.Drawing.Point(13, 345);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(85, 23);
             this.label4.TabIndex = 5;
@@ -118,7 +130,7 @@
             // label5
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label5.Location = new System.Drawing.Point(223, 416);
+            this.label5.Location = new System.Drawing.Point(224, 409);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(85, 23);
             this.label5.TabIndex = 6;
@@ -127,7 +139,7 @@
             // dateInspectDt
             // 
             this.dateInspectDt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.dateInspectDt.Location = new System.Drawing.Point(100, 352);
+            this.dateInspectDt.Location = new System.Drawing.Point(101, 345);
             this.dateInspectDt.Name = "dateInspectDt";
             this.dateInspectDt.Size = new System.Drawing.Size(130, 23);
             this.dateInspectDt.TabIndex = 9;
@@ -139,7 +151,7 @@
             this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboResult.FormattingEnabled = true;
             this.comboResult.IsSupportUnselect = true;
-            this.comboResult.Location = new System.Drawing.Point(99, 415);
+            this.comboResult.Location = new System.Drawing.Point(100, 408);
             this.comboResult.Name = "comboResult";
             this.comboResult.OldText = "";
             this.comboResult.Size = new System.Drawing.Size(121, 24);
@@ -150,7 +162,7 @@
             this.txtRemark.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtRemark.BackColor = System.Drawing.Color.White;
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRemark.Location = new System.Drawing.Point(311, 416);
+            this.txtRemark.Location = new System.Drawing.Point(312, 409);
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.Size = new System.Drawing.Size(282, 23);
             this.txtRemark.TabIndex = 11;
@@ -158,7 +170,7 @@
             // btnEncode
             // 
             this.btnEncode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnEncode.Location = new System.Drawing.Point(382, 445);
+            this.btnEncode.Location = new System.Drawing.Point(527, 440);
             this.btnEncode.Name = "btnEncode";
             this.btnEncode.Size = new System.Drawing.Size(80, 30);
             this.btnEncode.TabIndex = 13;
@@ -169,7 +181,7 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnClose.Location = new System.Drawing.Point(554, 445);
+            this.btnClose.Location = new System.Drawing.Point(699, 440);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 14;
@@ -180,7 +192,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnSave.Location = new System.Drawing.Point(468, 445);
+            this.btnSave.Location = new System.Drawing.Point(613, 440);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
             this.btnSave.TabIndex = 15;
@@ -192,7 +204,7 @@
             // 
             this.txtInspector.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtInspector.DisplayBox1Binding = "";
-            this.txtInspector.Location = new System.Drawing.Point(100, 381);
+            this.txtInspector.Location = new System.Drawing.Point(101, 374);
             this.txtInspector.Name = "txtInspector";
             this.txtInspector.Size = new System.Drawing.Size(306, 23);
             this.txtInspector.TabIndex = 12;
@@ -268,7 +280,7 @@
             this.radioPanelInspected.Controls.Add(this.numInspectRate);
             this.radioPanelInspected.Controls.Add(this.radioAQL);
             this.radioPanelInspected.Controls.Add(this.radioMaterialType);
-            this.radioPanelInspected.Location = new System.Drawing.Point(100, 271);
+            this.radioPanelInspected.Location = new System.Drawing.Point(101, 264);
             this.radioPanelInspected.Name = "radioPanelInspected";
             this.radioPanelInspected.Size = new System.Drawing.Size(232, 75);
             this.radioPanelInspected.TabIndex = 22;
@@ -288,11 +300,136 @@
             this.comboDropDownList1.TabIndex = 23;
             this.comboDropDownList1.Type = "PMS_QA_AQL";
             // 
+            // editDefect
+            // 
+            this.editDefect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.editDefect.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editDefect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editDefect.IsSupportEditMode = false;
+            this.editDefect.Location = new System.Drawing.Point(489, 266);
+            this.editDefect.Multiline = true;
+            this.editDefect.Name = "editDefect";
+            this.editDefect.ReadOnly = true;
+            this.editDefect.Size = new System.Drawing.Size(288, 102);
+            this.editDefect.TabIndex = 145;
+            this.editDefect.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EditDefect_MouseDown);
+            // 
+            // labelDefect
+            // 
+            this.labelDefect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelDefect.Location = new System.Drawing.Point(410, 266);
+            this.labelDefect.Name = "labelDefect";
+            this.labelDefect.Size = new System.Drawing.Size(76, 23);
+            this.labelDefect.TabIndex = 144;
+            this.labelDefect.Text = "Defect";
+            // 
+            // labReject
+            // 
+            this.labReject.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labReject.Location = new System.Drawing.Point(410, 374);
+            this.labReject.Name = "labReject";
+            this.labReject.Size = new System.Drawing.Size(76, 23);
+            this.labReject.TabIndex = 156;
+            this.labReject.Text = "Rejected %";
+            // 
+            // label7
+            // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(607, 377);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(20, 17);
+            this.label7.TabIndex = 158;
+            this.label7.Text = "%";
+            // 
+            // comboBoxRefno
+            // 
+            this.comboBoxRefno.BackColor = System.Drawing.Color.White;
+            this.comboBoxRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBoxRefno.FormattingEnabled = true;
+            this.comboBoxRefno.IsSupportUnselect = true;
+            this.comboBoxRefno.Location = new System.Drawing.Point(100, 9);
+            this.comboBoxRefno.Name = "comboBoxRefno";
+            this.comboBoxRefno.OldText = "";
+            this.comboBoxRefno.Size = new System.Drawing.Size(142, 24);
+            this.comboBoxRefno.TabIndex = 160;
+            this.comboBoxRefno.SelectedValueChanged += new System.EventHandler(this.ComboBoxRefno_SelectedValueChanged);
+            // 
+            // labRefno
+            // 
+            this.labRefno.Location = new System.Drawing.Point(13, 10);
+            this.labRefno.Name = "labRefno";
+            this.labRefno.Size = new System.Drawing.Size(85, 23);
+            this.labRefno.TabIndex = 159;
+            this.labRefno.Text = "Refno";
+            // 
+            // comboBoxResultTop
+            // 
+            this.comboBoxResultTop.BackColor = System.Drawing.Color.White;
+            this.comboBoxResultTop.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBoxResultTop.FormattingEnabled = true;
+            this.comboBoxResultTop.IsSupportUnselect = true;
+            this.comboBoxResultTop.Location = new System.Drawing.Point(349, 9);
+            this.comboBoxResultTop.Name = "comboBoxResultTop";
+            this.comboBoxResultTop.OldText = "";
+            this.comboBoxResultTop.Size = new System.Drawing.Size(100, 24);
+            this.comboBoxResultTop.TabIndex = 162;
+            this.comboBoxResultTop.SelectedValueChanged += new System.EventHandler(this.ComboBoxResultTop_SelectedValueChanged);
+            // 
+            // labResultTop
+            // 
+            this.labResultTop.Location = new System.Drawing.Point(262, 10);
+            this.labResultTop.Name = "labResultTop";
+            this.labResultTop.Size = new System.Drawing.Size(85, 23);
+            this.labResultTop.TabIndex = 161;
+            this.labResultTop.Text = "Result";
+            // 
+            // comboBoxWKNo
+            // 
+            this.comboBoxWKNo.BackColor = System.Drawing.Color.White;
+            this.comboBoxWKNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBoxWKNo.FormattingEnabled = true;
+            this.comboBoxWKNo.IsSupportUnselect = true;
+            this.comboBoxWKNo.Location = new System.Drawing.Point(554, 9);
+            this.comboBoxWKNo.Name = "comboBoxWKNo";
+            this.comboBoxWKNo.OldText = "";
+            this.comboBoxWKNo.Size = new System.Drawing.Size(154, 24);
+            this.comboBoxWKNo.TabIndex = 164;
+            this.comboBoxWKNo.SelectedValueChanged += new System.EventHandler(this.ComboBoxWKNo_SelectedValueChanged);
+            // 
+            // labWKno
+            // 
+            this.labWKno.Location = new System.Drawing.Point(467, 10);
+            this.labWKno.Name = "labWKno";
+            this.labWKno.Size = new System.Drawing.Size(85, 23);
+            this.labWKno.TabIndex = 163;
+            this.labWKno.Text = "WK#";
+            // 
+            // numRejectPercent
+            // 
+            this.numRejectPercent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.numRejectPercent.Location = new System.Drawing.Point(489, 375);
+            this.numRejectPercent.Name = "numRejectPercent";
+            this.numRejectPercent.Size = new System.Drawing.Size(120, 23);
+            this.numRejectPercent.TabIndex = 165;
+            this.numRejectPercent.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
             // P02_BatchEncode
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(646, 482);
+            this.ClientSize = new System.Drawing.Size(790, 479);
+            this.Controls.Add(this.numRejectPercent);
+            this.Controls.Add(this.comboBoxWKNo);
+            this.Controls.Add(this.labWKno);
+            this.Controls.Add(this.comboBoxResultTop);
+            this.Controls.Add(this.labResultTop);
+            this.Controls.Add(this.comboBoxRefno);
+            this.Controls.Add(this.labRefno);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.labReject);
+            this.Controls.Add(this.editDefect);
+            this.Controls.Add(this.labelDefect);
             this.Controls.Add(this.radioPanelInspected);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnClose);
@@ -324,10 +461,22 @@
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.radioPanelInspected, 0);
+            this.Controls.SetChildIndex(this.labelDefect, 0);
+            this.Controls.SetChildIndex(this.editDefect, 0);
+            this.Controls.SetChildIndex(this.labReject, 0);
+            this.Controls.SetChildIndex(this.label7, 0);
+            this.Controls.SetChildIndex(this.labRefno, 0);
+            this.Controls.SetChildIndex(this.comboBoxRefno, 0);
+            this.Controls.SetChildIndex(this.labResultTop, 0);
+            this.Controls.SetChildIndex(this.comboBoxResultTop, 0);
+            this.Controls.SetChildIndex(this.labWKno, 0);
+            this.Controls.SetChildIndex(this.comboBoxWKNo, 0);
+            this.Controls.SetChildIndex(this.numRejectPercent, 0);
             ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numInspectRate)).EndInit();
             this.radioPanelInspected.ResumeLayout(false);
             this.radioPanelInspected.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numRejectPercent)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -355,5 +504,16 @@
         private Win.UI.RadioButton radioMaterialType;
         private Win.UI.RadioPanel radioPanelInspected;
         private Class.ComboDropDownList comboDropDownList1;
+        private Win.UI.EditBox editDefect;
+        private Win.UI.Label labelDefect;
+        private Win.UI.Label labReject;
+        private System.Windows.Forms.Label label7;
+        private Win.UI.ComboBox comboBoxRefno;
+        private Win.UI.Label labRefno;
+        private Win.UI.ComboBox comboBoxResultTop;
+        private Win.UI.Label labResultTop;
+        private Win.UI.ComboBox comboBoxWKNo;
+        private Win.UI.Label labWKno;
+        private System.Windows.Forms.NumericUpDown numRejectPercent;
     }
 }
