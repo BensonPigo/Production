@@ -13,15 +13,17 @@ namespace Sci.Production.Class
     public partial class Camera_ShowNew : Sci.Win.Forms.Base
     {
         private List<Endline_Camera_Schema> schemas;
+        private string strType;
 
         private double oldWidth;
         private double oldHeight;
 
-        public Camera_ShowNew(string formName, List<Endline_Camera_Schema> src)
+        public Camera_ShowNew(string formName, List<Endline_Camera_Schema> src, string Type)
         {
-            InitializeComponent();
-            oldWidth = this.Width;
-            oldHeight = this.Height;
+            this.InitializeComponent();
+            this.oldWidth = this.Width;
+            this.oldHeight = this.Height;
+            this.strType = Type;
 
             this.schemas = src;
             this.Text = formName;
@@ -35,16 +37,28 @@ namespace Sci.Production.Class
                 return;
             }
 
-            double x = (this.Width / oldWidth);
-            double y = (this.Height / oldHeight);
+            double x = (this.Width / this.oldWidth);
+            double y = (this.Height / this.oldHeight);
             this.panel1.Controls.Clear();
 
             foreach (var item in this.schemas)
             {
-                CameraDisplay picItem = new CameraDisplay();
-                picItem.SetPictureDisplay(item.desc, item.Pkey, item.image, item.imgPath, x, y, resize);
-                picItem.Dock = DockStyle.Top;
-                this.panel1.Controls.Add(picItem);
+                switch (this.strType)
+                {
+                    case "ShowOnly":
+                        CameraDisplay_ShowOnly picItemShow = new CameraDisplay_ShowOnly();
+                        picItemShow.SetPictureDisplay(item.desc, item.Pkey, item.image, item.imgPath, x, y, resize);
+                        picItemShow.Dock = DockStyle.Top;
+                        this.panel1.Controls.Add(picItemShow);
+                        break;
+                    default:
+                        CameraDisplay picItem = new CameraDisplay();
+                        picItem.SetPictureDisplay(item.desc, item.Pkey, item.image, item.imgPath, x, y, resize);
+                        picItem.Dock = DockStyle.Top;
+                        this.panel1.Controls.Add(picItem);
+                        break;
+                }
+
                 this.panel1.Refresh();
             }
         }

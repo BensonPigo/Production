@@ -167,6 +167,12 @@
     <Compile Include="Controls\CameraDisplay.designer.cs">
       <DependentUpon>CameraDisplay.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\CameraDisplay_ShowOnly.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\CameraDisplay_ShowOnly.designer.cs">
+      <DependentUpon>CameraDisplay_ShowOnly.cs</DependentUpon>
+    </Compile>
     <Compile Include="ExcelFileNameExtension.cs" />
     <Compile Include="InchTextBox.cs">
       <SubType>Component</SubType>
@@ -797,6 +803,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\CameraDisplay.resx">
       <DependentUpon>CameraDisplay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CameraDisplay_ShowOnly.resx">
+      <DependentUpon>CameraDisplay_ShowOnly.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Holiday.resx">
       <DependentUpon>Holiday.cs</DependentUpon>
