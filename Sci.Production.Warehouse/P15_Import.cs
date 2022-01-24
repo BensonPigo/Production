@@ -6,6 +6,7 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using System.Linq;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Warehouse
 {
@@ -69,8 +70,9 @@ select  selected = 0
         , stockunit = (select stockunit 
 	   				  from po_supp_detail WITH (NOLOCK) 
 	   				  where id = c.poid 
-	   				  		and seq1 = c.seq1 
+	   				  		and seq1 = c.seq1
 	   				  		and seq2 = c.seq2)
+        ,c.lock
 from dbo.lack a WITH (NOLOCK) 
 inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.POID 
@@ -80,7 +82,7 @@ inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.POID
 LEFT join Orders o ON o.ID=a.POID
 where a.id = '{0}' 
 and o.Category != 'A'
-and c.lock = 0 ", this.dr_master["requestid"]));
+", this.dr_master["requestid"]));
             strSQLCmd.Append(Environment.NewLine); // 換行
 
            // 判斷LACKING
@@ -114,12 +116,20 @@ and c.lock = 0 ", this.dr_master["requestid"]));
             }
 
             this.P15.HideWaitMessage();
-            this.dtlack = data;
 
-            if (this.dtlack.Rows.Count == 0)
+            if (data.Select("lock = 1").Any())
             {
-                MyUtility.Msg.WarningBox("Data not found!!");
+                MyUtility.Msg.WarningBox("Some material has been locked, please check material status in WH P38.");
             }
+            else
+            {
+                if (!data.Select("lock = 0").Any())
+                {
+                    MyUtility.Msg.WarningBox("Data not found!!");
+                }
+            }
+
+            this.dtlack = data.Select("lock = 0").TryCopyToDataTable(data);
 
             #region -- Grid1 Setting --
 

@@ -7,6 +7,7 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using System.Linq;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
@@ -101,6 +102,7 @@ select selected = 0
 	   				  		and seq2 = c.seq2)
 	   , [description] = dbo.getMtlDesc(c.poid,c.seq1,c.seq2,2,0) 
        , a.Remark
+       , c.lock
 from dbo.Lack_Detail a WITH (NOLOCK) 
 inner join dbo.Lack b WITH (NOLOCK) on b.ID = a.ID
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = b.POID 
@@ -109,11 +111,10 @@ inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = b.POID
 											   and c.stocktype = 'B'
 LEFT JOIN Orders o ON o.ID=c.PoId
 Where a.id = '{0}' 
-	  and c.lock = 0 
 	  AND o.Category!='A'
 ", this.dr_master["requestid"]));
 
-           // 判斷LACKING
+            // 判斷LACKING
             if (this.Type != "Lacking")
             {
                 strSQLCmd.Append(" and (c.inqty - c.outqty + c.adjustqty - c.ReturnQty) > 0");
@@ -143,14 +144,23 @@ Where a.id = '{0}'
                 DBProxy.Current.DefaultTimeout = 0;
             }
 
-            this.P16.HideWaitMessage();
-            this.dtlack = data.Tables[0];
-            this.dtftyinventory = data.Tables[1];
-
-            if (this.dtlack.Rows.Count == 0)
+            if (data.Tables[0].Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!!");
             }
+            else
+            {
+                if (data.Tables[1].Select("lock = 1").Any())
+                {
+                    MyUtility.Msg.WarningBox("Some material has been locked, please check material status in WH P38.");
+                }
+            }
+
+            data.Tables[1].Select($"lock = 1").Delete();
+
+            this.P16.HideWaitMessage();
+            this.dtlack = data.Tables[0];
+            this.dtftyinventory = data.Tables[1];
 
             this.dtlack.TableName = "dtlack";
             this.dtftyinventory.TableName = "dtftyinventory";

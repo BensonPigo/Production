@@ -8,6 +8,7 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using System.Linq;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
@@ -97,13 +98,13 @@ select  0 as selected
 												,dbo.GetColorMultipleID(o.BrandID,PSD.ColorID)
 											)
 		, PSD.SizeSpec
+        , FI.lock
 FROM FtyInventory FI WITH (NOLOCK)
 LEFT JOIN View_WH_Orders O WITH (NOLOCK) ON O.ID = FI.POID
 LEFT JOIN Factory F WITH (NOLOCK) ON F.ID = O.FactoryID
 LEFT JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID=FI.POID AND PSD.SEQ1 = FI.SEQ1 AND PSD.SEQ2=FI.SEQ2
 left join Fabric on Fabric.SCIRefno = psd.SCIRefno
-Where FI.lock = 0 
-and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
+Where ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
         and FI.inqty - FI.outqty + FI.adjustqty - FI.ReturnQty > 0         
         and FI.stocktype = '{1}'", Env.User.Keyword, stocktype));
 
@@ -149,16 +150,21 @@ AND exists (select 1
             this.ShowWaitMessage("Data Loading....");
             if (result = DBProxy.Current.Select(null, sbSQLCmd.ToString(), cmds, out this.dtImportData))
             {
-                if (this.dtImportData.Rows.Count == 0)
+                if (this.dtImportData.Select("lock = 1").Any())
                 {
-                    MyUtility.Msg.WarningBox("Data not found!!");
+                    MyUtility.Msg.WarningBox("Some material has been locked, please check material status in WH P38.");
                 }
                 else
                 {
-                    this.dtImportData.DefaultView.Sort = "poid,seq1,seq2,location,dyelot,roll";
+                    if (!this.dtImportData.Select("lock = 0").Any())
+                    {
+                        MyUtility.Msg.WarningBox("Data not found!!");
+                    }
                 }
 
+                this.dtImportData.Select("lock = 1").Delete();
                 this.listControlBindingSource1.DataSource = this.dtImportData;
+                this.dtImportData.DefaultView.Sort = "poid,seq1,seq2,location,dyelot,roll";
             }
             else
             {
