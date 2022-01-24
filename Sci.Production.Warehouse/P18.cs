@@ -1191,6 +1191,25 @@ when matched then
                 MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
                 return;
             }
+            else
+            {
+                // 寫入PMSFile
+                string cmd = $@"
+INSERT INTO ExtendServer.PMSFile.dbo.AIR_Laboratory
+           (ID,POID,SEQ1,SEQ2,OvenTestBeforePicture,OvenTestAfterPicture,WashTestBeforePicture,WashTestAfterPicture)
+
+select  ID,POID,SEQ1,SEQ2,OvenTestBeforePicture,OvenTestAfterPicture,WashTestBeforePicture,WashTestAfterPicture
+from AIR_Laboratory t
+where not exists (select 1 from AIR_Laboratory s where s.ID = t.ID AND s.POID = t.POID AND s.SEQ1 = t.SEQ1 AND s.SEQ2 = t.SEQ2 )
+";
+                result = DBProxy.Current.Execute(null, cmd);
+                if (!result)
+                {
+                    Exception ex = result.GetException();
+                    MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
+                    return;
+                }
+            }
             #endregion
 
             #region -- Transaction --
