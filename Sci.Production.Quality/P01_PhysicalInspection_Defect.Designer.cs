@@ -42,6 +42,7 @@
             this.labelSEQ2 = new Sci.Win.UI.Label();
             this.displaySEQ2 = new Sci.Win.UI.DisplayBox();
             this.displayActYdsInspected = new Sci.Win.UI.DisplayBox();
+            this.btnDefectPic = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridFabricInspection)).BeginInit();
@@ -94,13 +95,13 @@
             this.gridFabricInspection.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridFabricInspection.RowTemplate.Height = 24;
             this.gridFabricInspection.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridFabricInspection.ShowCellToolTips = false;
             this.gridFabricInspection.Size = new System.Drawing.Size(695, 323);
             this.gridFabricInspection.TabIndex = 95;
             this.gridFabricInspection.TabStop = false;
             // 
             // labelRoll
             // 
-            this.labelRoll.Lines = 0;
             this.labelRoll.Location = new System.Drawing.Point(9, 19);
             this.labelRoll.Name = "labelRoll";
             this.labelRoll.Size = new System.Drawing.Size(75, 23);
@@ -109,7 +110,6 @@
             // 
             // labelDyelot
             // 
-            this.labelDyelot.Lines = 0;
             this.labelDyelot.Location = new System.Drawing.Point(9, 55);
             this.labelDyelot.Name = "labelDyelot";
             this.labelDyelot.Size = new System.Drawing.Size(75, 23);
@@ -118,7 +118,6 @@
             // 
             // labelSP
             // 
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(205, 19);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(75, 23);
@@ -127,7 +126,6 @@
             // 
             // labelSEQ1
             // 
-            this.labelSEQ1.Lines = 0;
             this.labelSEQ1.Location = new System.Drawing.Point(205, 55);
             this.labelSEQ1.Name = "labelSEQ1";
             this.labelSEQ1.Size = new System.Drawing.Size(49, 23);
@@ -136,7 +134,6 @@
             // 
             // labelActYdsInspected
             // 
-            this.labelActYdsInspected.Lines = 0;
             this.labelActYdsInspected.Location = new System.Drawing.Point(431, 19);
             this.labelActYdsInspected.Name = "labelActYdsInspected";
             this.labelActYdsInspected.Size = new System.Drawing.Size(124, 23);
@@ -185,7 +182,6 @@
             // 
             // labelSEQ2
             // 
-            this.labelSEQ2.Lines = 0;
             this.labelSEQ2.Location = new System.Drawing.Point(319, 55);
             this.labelSEQ2.Name = "labelSEQ2";
             this.labelSEQ2.Size = new System.Drawing.Size(52, 23);
@@ -212,9 +208,20 @@
             this.displayActYdsInspected.Size = new System.Drawing.Size(97, 23);
             this.displayActYdsInspected.TabIndex = 107;
             // 
+            // btnDefectPic
+            // 
+            this.btnDefectPic.Location = new System.Drawing.Point(563, 51);
+            this.btnDefectPic.Name = "btnDefectPic";
+            this.btnDefectPic.Size = new System.Drawing.Size(140, 30);
+            this.btnDefectPic.TabIndex = 129;
+            this.btnDefectPic.Text = "Defect Picture";
+            this.btnDefectPic.UseVisualStyleBackColor = true;
+            this.btnDefectPic.Click += new System.EventHandler(this.BtnDefectPic_Click);
+            // 
             // P01_PhysicalInspection_Defect
             // 
             this.ClientSize = new System.Drawing.Size(715, 473);
+            this.Controls.Add(this.btnDefectPic);
             this.Controls.Add(this.displayActYdsInspected);
             this.Controls.Add(this.displaySEQ2);
             this.Controls.Add(this.labelSEQ2);
@@ -229,6 +236,7 @@
             this.Controls.Add(this.labelRoll);
             this.Controls.Add(this.gridFabricInspection);
             this.Name = "P01_PhysicalInspection_Defect";
+            this.OnLineHelpID = "Sci.Win.Subs.Input6A";
             this.Text = "Fabric Inspection - Point Record";
             this.WorkAlias = "Fir_Physical";
             this.Controls.SetChildIndex(this.btmcont, 0);
@@ -245,6 +253,7 @@
             this.Controls.SetChildIndex(this.labelSEQ2, 0);
             this.Controls.SetChildIndex(this.displaySEQ2, 0);
             this.Controls.SetChildIndex(this.displayActYdsInspected, 0);
+            this.Controls.SetChildIndex(this.btnDefectPic, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridFabricInspection)).EndInit();
@@ -268,5 +277,6 @@
         private Win.UI.Label labelSEQ2;
         private Win.UI.DisplayBox displaySEQ2;
         private Win.UI.DisplayBox displayActYdsInspected;
+        private Win.UI.Button btnDefectPic;
     }
 }
