@@ -115,7 +115,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(2582, 162);
+            this.gridicon.Location = new System.Drawing.Point(2690, 162);
             this.gridicon.Visible = false;
             // 
             // detailgridcont
@@ -325,6 +325,7 @@
             // 
             this.txtT1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "T1Subcon", true));
             this.txtT1.DisplayBox1Binding = "";
+            this.txtT1.IsFreightForwarder = false;
             this.txtT1.IsIncludeJunk = false;
             this.txtT1.IsMisc = false;
             this.txtT1.IsShipping = false;

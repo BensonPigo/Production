@@ -288,5 +288,25 @@ masterID);
 
             return base.ClickDeletePost();
         }
+
+        /// <inheritdoc/>
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+
+            string sqlcmd = $@"
+INSERT INTO ExtendServer.PMSFile.dbo.MockupOven
+           (ReportNo,TestBeforePicture,TestAfterPicture)
+select ReportNo,TestBeforePicture,TestAfterPicture
+from MockupOven t WITH(NOLOCK)
+where not exists (select 1 from ExtendServer.PMSFile.dbo.MockupOven s WITH(NOLOCK) where s.ReportNo = t.ReportNo )
+";
+
+            DualResult r = DBProxy.Current.Execute(null, sqlcmd);
+            if (!r)
+            {
+                this.ShowErr(r);
+            }
+        }
     }
 }

@@ -1033,8 +1033,8 @@ INSERT INTO GarmentTest_Detail_FGPT
 INSERT INTO ExtendServer.PMSFile.dbo.GarmentTest_Detail
            (ID,No,TestBeforePicture,TestAfterPicture)
 select ID,No,TestBeforePicture,TestAfterPicture
-from GarmentTest_Detail t
-where not exists (select 1 from GarmentTest_Detail s where s.ID = t.ID AND s.No = t.No )
+from GarmentTest_Detail t WITH(NOLOCK)
+where not exists (select 1 from ExtendServer.PMSFile.dbo.GarmentTest_Detail s WITH(NOLOCK) where s.ID = t.ID AND s.No = t.No )
 ";
 
             DualResult r = DBProxy.Current.Execute(null, sqlcmd);
