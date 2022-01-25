@@ -1066,6 +1066,20 @@ SET IDENTITY_INSERT oven off";
                 return Ict.Result.F(result.ToString());
             }
 
+            sqlcmd = $@"
+INSERT INTO ExtendServer.PMSFile.dbo.Oven
+           (ID,POID,TestNo,TestBeforePicture,TestAfterPicture)
+select ID,POID,TestNo,TestBeforePicture,TestAfterPicture
+from Oven t WITH(NOLOCK)
+where not exists (select 1 from ExtendServer.PMSFile.dbo.Oven s WITH(NOLOCK) where s.POID = t.POID AND s.TestNo = t.TestNo )
+";
+
+            DualResult r = DBProxy.Current.Execute(null, sqlcmd);
+            if (!r)
+            {
+                this.ShowErr(r);
+            }
+
             return base.OnSave();
         }
 

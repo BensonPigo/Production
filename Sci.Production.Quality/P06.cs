@@ -247,6 +247,26 @@ namespace Sci.Production.Quality
             return base.ClickSavePost();
         }
 
+        /// <inheritdoc/>
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+
+            string sqlcmd = $@"
+INSERT INTO ExtendServer.PMSFile.dbo.ColorFastness
+           (ID,TestBeforePicture,TestAfterPicture)
+select ID,TestBeforePicture,TestAfterPicture
+from ColorFastness t WITH(NOLOCK)
+where not exists (select 1 from ExtendServer.PMSFile.dbo.ColorFastness s WITH(NOLOCK) where s.ID = t.ID  )
+";
+
+            DualResult r = DBProxy.Current.Execute(null, sqlcmd);
+            if (!r)
+            {
+                this.ShowErr(r);
+            }
+        }
+
         // Context Menu選擇Create New test
         private void CreateNewTest()
         {
