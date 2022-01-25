@@ -474,12 +474,12 @@ WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTyp
                 idx++;
             }
 
+            DualResult r;
+
             using (TransactionScope transactionscope = new TransactionScope())
             {
                 try
                 {
-                    DualResult r;
-
                     if (updateCmds.Count > 0)
                     {
                         r = DBProxy.Current.Execute(null, updateCmds.JoinToString(Environment.NewLine), paras);
@@ -522,7 +522,7 @@ from ShippingMarkPic_Detail t WITH(NOLOCK)
 where not exists (select 1 from ExtendServer.PMSFile.dbo.ShippingMarkPic_Detail s WITH(NOLOCK) where s.ShippingMarkPicUkey = t.ShippingMarkPicUkey AND s.SCICtnNo = t.SCICtnNo AND s.ShippingMarkTypeUkey = t.ShippingMarkTypeUkey )
 ";
 
-            DualResult r = DBProxy.Current.Execute(null, sqlcmd);
+            r = DBProxy.Current.Execute(null, sqlcmd);
             if (!r)
             {
                 this.ShowErr(r);
