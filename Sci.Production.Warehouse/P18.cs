@@ -1191,6 +1191,32 @@ when matched then
                 MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
                 return;
             }
+            else
+            {
+                // 寫入PMSFile
+                string cmd = $@"
+INSERT INTO ExtendServer.PMSFile.dbo.AIR_Laboratory
+           (ID,POID,SEQ1,SEQ2,OvenTestBeforePicture,OvenTestAfterPicture,WashTestBeforePicture,WashTestAfterPicture)
+
+select  ID,POID,SEQ1,SEQ2,OvenTestBeforePicture,OvenTestAfterPicture,WashTestBeforePicture,WashTestAfterPicture
+from AIR_Laboratory t WITH(NOLOCK)
+where not exists (select 1 from ExtendServer.PMSFile.dbo.AIR_Laboratory s WITH(NOLOCK) where s.ID = t.ID AND s.POID = t.POID AND s.SEQ1 = t.SEQ1 AND s.SEQ2 = t.SEQ2 )
+;
+
+INSERT INTO ExtendServer.PMSFile.dbo.FIR_Laboratory
+           (ID,CrockingTestBeforePicture,CrockingTestAfterPicture,HeatTestBeforePicture,HeatTestAfterPicture,WashTestBeforePicture,WashTestAfterPicture)
+select ID,CrockingTestBeforePicture,CrockingTestAfterPicture,HeatTestBeforePicture,HeatTestAfterPicture,WashTestBeforePicture,WashTestAfterPicture
+from FIR_Laboratory t (NOLOCK)
+where not exists (select 1 from ExtendServer.PMSFile.dbo.FIR_Laboratory s (NOLOCK) where s.ID = t.ID )
+";
+                result = DBProxy.Current.Execute(null, cmd);
+                if (!result)
+                {
+                    Exception ex = result.GetException();
+                    MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
+                    return;
+                }
+            }
             #endregion
 
             #region -- Transaction --
