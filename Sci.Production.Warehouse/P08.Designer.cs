@@ -47,6 +47,8 @@
             this.btnImport = new Sci.Win.UI.Button();
             this.btnPrintFabricSticker = new Sci.Win.UI.Button();
             this.btnCallP99 = new Sci.Win.UI.Button();
+            this.btnImportFromExcel = new Sci.Win.UI.Button();
+            this.btnDownloadSample = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -63,6 +65,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnImportFromExcel);
+            this.masterpanel.Controls.Add(this.btnDownloadSample);
             this.masterpanel.Controls.Add(this.btnPrintFabricSticker);
             this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.editRemark);
@@ -99,6 +103,8 @@
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnPrintFabricSticker, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnDownloadSample, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImportFromExcel, 0);
             // 
             // detailpanel
             // 
@@ -155,7 +161,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(932, 553);
+            this.browse.Size = new System.Drawing.Size(973, 553);
             // 
             // tabs
             // 
@@ -364,6 +370,30 @@
             this.btnCallP99.UseVisualStyleBackColor = true;
             this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
             // 
+            // btnImportFromExcel
+            // 
+            this.btnImportFromExcel.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnImportFromExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImportFromExcel.Location = new System.Drawing.Point(665, 162);
+            this.btnImportFromExcel.Name = "btnImportFromExcel";
+            this.btnImportFromExcel.Size = new System.Drawing.Size(155, 30);
+            this.btnImportFromExcel.TabIndex = 63;
+            this.btnImportFromExcel.Text = "Import From Excel";
+            this.btnImportFromExcel.UseVisualStyleBackColor = true;
+            this.btnImportFromExcel.Click += new System.EventHandler(this.BtnImportFromExcel_Click);
+            // 
+            // btnDownloadSample
+            // 
+            this.btnDownloadSample.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnDownloadSample.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnDownloadSample.Location = new System.Drawing.Point(481, 162);
+            this.btnDownloadSample.Name = "btnDownloadSample";
+            this.btnDownloadSample.Size = new System.Drawing.Size(178, 30);
+            this.btnDownloadSample.TabIndex = 62;
+            this.btnDownloadSample.Text = "Download Sample File";
+            this.btnDownloadSample.UseVisualStyleBackColor = true;
+            this.btnDownloadSample.Click += new System.EventHandler(this.BtnDownloadSample_Click);
+            // 
             // P08
             // 
             this.ApvChkValue = "New";
@@ -427,5 +457,7 @@
         private Win.UI.Button btnImport;
         private Win.UI.Button btnPrintFabricSticker;
         private Win.UI.Button btnCallP99;
+        private Win.UI.Button btnImportFromExcel;
+        private Win.UI.Button btnDownloadSample;
     }
 }
