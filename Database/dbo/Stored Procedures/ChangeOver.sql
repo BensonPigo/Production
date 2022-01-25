@@ -151,7 +151,7 @@ BEGIN
 			from (
 				select co.ID,co.FactoryID,co.SewingLineID,co.StyleID,co.ComboType,co.Inline,
 				ProductionType = case when s.StyleUnit = 'PCS'
-									  then (select r.Name from Style_Location sl inner join Reason r on r.ID = sl.ApparelType where ReasonTypeID = 'Style_Apparel_Type' and sl.StyleUkey = s.Ukey)
+									  then (select r.Name from Reason r where ReasonTypeID = 'Style_Apparel_Type' and r.ID = s.ApparelType)
 									  else (select r.Name from Style_Location sl inner join Reason r on r.ID = sl.ApparelType where ReasonTypeID = 'Style_Apparel_Type' and sl.StyleUkey = s.Ukey and sl.Location =co.ComboType)
 									  end,
 				FabricType = case when s.StyleUnit = 'PCS' then s.FabricType
