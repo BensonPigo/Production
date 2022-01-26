@@ -110,6 +110,11 @@ namespace Sci.Production.Quality
 
         private void LoadPicture()
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
             string sqlcmd = $@"select * from [ExtendServer].PMSFile.dbo.Basic_FabricDefectImage where FabricDefectID = '{this.CurrentMaintain["ID"]}' order by ukey";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)

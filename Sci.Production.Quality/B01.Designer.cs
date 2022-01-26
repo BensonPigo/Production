@@ -77,7 +77,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(829, 395);
+            this.browse.Size = new System.Drawing.Size(804, 532);
             // 
             // tabs
             // 
