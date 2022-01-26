@@ -68,6 +68,7 @@ CREATE TABLE [dbo].[System] (
     [StyleRRLRPath] VARCHAR(80) NOT NULL DEFAULT (''), 
     [WH_MtlTransChkLocation] BIT NOT NULL DEFAULT ((0)), 
     [CartonTransferToSisterFty] BIT NOT NULL CONSTRAINT [DF_System_CartonTransferToSisterFty]  DEFAULT((0)), 
+    [MailServerPort] smallint NOT NULL CONSTRAINT [DF_System_MailServerPort]  DEFAULT((0)), 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
@@ -330,3 +331,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level2type = N'COLUMN',
     @level2name = N'WH_MtlTransChkLocation'
 GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'SMTP Port',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'MailServerPort'

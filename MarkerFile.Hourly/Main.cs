@@ -129,8 +129,9 @@ Please do not reply this mail.
             String mailServer = this.CurrentData["MailServer"].ToString();
             String eMailID = this.CurrentData["EMailID"].ToString();
             String eMailPwd = this.CurrentData["EMailPwd"].ToString();
-            transferPMS.SetSMTP(mailServer, 25, eMailID, eMailPwd);
-            
+            ushort mailServerPort = MyUtility.Check.Empty(this.CurrentData["MailServerPort"]) ? Convert.ToUInt16(25) : Convert.ToUInt16(this.CurrentData["MailServerPort"]);
+            transferPMS.SetSMTP(mailServer, mailServerPort, eMailID, eMailPwd);
+
             String sendFrom = this.CurrentData["SendFrom"].ToString();
             String toAddress = "";
             String ccAddress = "";
