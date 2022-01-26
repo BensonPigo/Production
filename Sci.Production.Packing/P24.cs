@@ -514,6 +514,8 @@ WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTyp
             }
 
             string sqlcmd = $@"
+SET XACT_ABORT ON
+
 INSERT INTO ExtendServer.PMSFile.dbo.ShippingMarkPic_Detail
            (ShippingMarkPicUkey,SCICtnNo,ShippingMarkTypeUkey,Image)
 
