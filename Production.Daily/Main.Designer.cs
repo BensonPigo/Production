@@ -42,6 +42,7 @@
             this.labelFtpID = new Sci.Win.UI.Label();
             this.labelFtpIP = new Sci.Win.UI.Label();
             this.panelMail = new Sci.Win.UI.Panel();
+            this.label1 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.checkSendBack = new Sci.Win.UI.CheckBox();
             this.checkDailyUpdateSendMail = new Sci.Win.UI.CheckBox();
@@ -77,6 +78,7 @@
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.labelProgress = new System.Windows.Forms.ToolStripStatusLabel();
             this.btnTestWebApi = new Sci.Win.UI.Button();
+            this.txtMailServerPort = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridBS)).BeginInit();
             this.panelFTP.SuspendLayout();
@@ -201,6 +203,8 @@
             // 
             this.panelMail.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelMail.Controls.Add(this.txtMailServerPort);
+            this.panelMail.Controls.Add(this.label1);
             this.panelMail.Controls.Add(this.label4);
             this.panelMail.Controls.Add(this.checkSendBack);
             this.panelMail.Controls.Add(this.checkDailyUpdateSendMail);
@@ -224,6 +228,14 @@
             this.panelMail.Name = "panelMail";
             this.panelMail.Size = new System.Drawing.Size(825, 191);
             this.panelMail.TabIndex = 3;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(289, 10);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(30, 21);
+            this.label1.TabIndex = 18;
+            this.label1.Text = "Port";
             // 
             // label4
             // 
@@ -555,13 +567,13 @@
             // StatusLabel
             // 
             this.StatusLabel.Name = "StatusLabel";
-            this.StatusLabel.Size = new System.Drawing.Size(59, 17);
+            this.StatusLabel.Size = new System.Drawing.Size(58, 17);
             this.StatusLabel.Text = "Progress:";
             // 
             // labelProgress
             // 
             this.labelProgress.Name = "labelProgress";
-            this.labelProgress.Size = new System.Drawing.Size(65, 17);
+            this.labelProgress.Size = new System.Drawing.Size(64, 17);
             this.labelProgress.Text = "                   ";
             // 
             // btnTestWebApi
@@ -574,6 +586,17 @@
             this.btnTestWebApi.Text = "Testing Web API";
             this.btnTestWebApi.UseVisualStyleBackColor = true;
             this.btnTestWebApi.Click += new System.EventHandler(this.btnTestWebApi_Click);
+            // 
+            // txtMailServerPort
+            // 
+            this.txtMailServerPort.BackColor = System.Drawing.Color.White;
+            this.txtMailServerPort.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtMailServerPort.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MailServerPort", true));
+            this.txtMailServerPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMailServerPort.Location = new System.Drawing.Point(321, 10);
+            this.txtMailServerPort.Name = "txtMailServerPort";
+            this.txtMailServerPort.Size = new System.Drawing.Size(44, 21);
+            this.txtMailServerPort.TabIndex = 19;
             // 
             // Main
             // 
@@ -596,6 +619,7 @@
             this.IsSupportLocate = false;
             this.IsSupportPrint = false;
             this.Name = "Main";
+            this.OnLineHelpID = "Sci.Win.Tems.Input7";
             this.Text = "   ";
             this.WorkAlias = "System";
             this.Controls.SetChildIndex(this.panelFTP, 0);
@@ -672,5 +696,7 @@
         private System.Windows.Forms.CheckBox chk_import;
         private System.Windows.Forms.CheckBox chk_export;
         private Sci.Win.UI.Button btnTestWebApi;
+        private Sci.Win.UI.Label label1;
+        private Sci.Win.UI.TextBox txtMailServerPort;
     }
 }
