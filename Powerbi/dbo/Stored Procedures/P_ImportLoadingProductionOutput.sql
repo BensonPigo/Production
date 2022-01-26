@@ -86,6 +86,9 @@ from (
 		,[Lining] = sty.Lining
 		,[Gender] = sty.Gender
 		,[Construction] = sty.Construction
+		,t.FMSister
+		,t.SampleGroup
+		,t.OrderReason
 	from #tmp t
 	Outer apply (
 		SELECT s.CDCodeNew
@@ -102,7 +105,8 @@ from (
 		left join ['+@LinkServerName+'].Production.dbo.Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= ''Style_Apparel_Type'' and r2.ID = s.ApparelType
 		where o.ID = t.ID
 	)sty
-
+'
+SET @SqlCmd2 = '
 	union all
 
 	-- 外代工
@@ -154,6 +158,9 @@ from (
 		,[Lining] = sty.Lining
 		,[Gender] = sty.Gender
 		,[Construction] = sty.Construction
+		,t.FMSister
+		,t.SampleGroup
+		,t.OrderReason
 	from #tmp T
 	LEFT JOIN ['+@LinkServerName+'].Production.dbo.Factory f WITH(NOLOCK) ON f.ID= T.TransFtyZone
 	Outer apply (
@@ -179,7 +186,7 @@ from (
 drop table #tmp
 '
 
-SET @SqlCmd2 = '
+SET @SqlCmd3 = '
 
 BEGIN TRY
 Begin tran
@@ -231,7 +238,10 @@ set	    t.MDivisionID =  s.MDivisionID,
 		t.FabricType =  s.FabricType,
 		t.Lining =  s.Lining,
 		t.Gender =  s.Gender,
-		t.Construction =  s.Construction
+		t.Construction =  s.Construction,
+		t.[FM Sister] = s.FMSister,
+		t.[Sample Group] = s.SampleGroup,
+		t.[Order Reason] = s.OrderReason
 from P_LoadingProductionOutput as t
 inner join #Final s 
 on t.FactoryID=s.FactoryID  
@@ -285,7 +295,10 @@ insert into P_LoadingProductionOutput
 	s.FabricType,
 	s.Lining,
 	s.Gender,
-	s.Construction
+	s.Construction,
+	s.FMSister,
+	s.SampleGroup,
+	s.OrderReason
 from #Final s
 where not exists(
 	select 1 from P_LoadingProductionOutput t 
@@ -297,9 +310,9 @@ delete t
 from P_LoadingProductionOutput t WITH (NOLOCK)
 where 
 (
-	YEAR(BuyerDelivery) >= '''+@S_Year+'''
+	YEAR(BuyerDelivery) = '''+@S_Year+'''
 	or
-	Year(cast(dateadd(day,-7,SciDelivery) as date)) >= '''+@S_Year+'''	
+	Year(cast(dateadd(day,-7,SciDelivery) as date)) = '''+@S_Year+'''	
 )
 and exists	   (select 1 from #Final f where t.FactoryID=f.FactoryID AND t.MDivisionID=f.MDivisionID  ) 
 and not exists (select 1 from #Final s where t.FactoryID=s.FactoryID AND t.SPNO=s.ID );
