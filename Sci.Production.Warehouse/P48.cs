@@ -536,38 +536,41 @@ from #tmp";
             #endregion
 
             #region 檢查Location是否為空值
-            DataTable dtLocationEmpty = new DataTable();
-            dtLocationEmpty.Columns.Add("POID");
-            dtLocationEmpty.Columns.Add("Seq");
-            dtLocationEmpty.Columns.Add("Roll");
-            dtLocationEmpty.Columns.Add("Dyelot");
-            dtLocationEmpty.Columns.Add("StockType");
-            foreach (DataRow dr in dtDetail.Rows)
+            if (MyUtility.Check.Seek(@"select 1 from System where WH_MtlTransChkLocation = 1"))
             {
-                if (MyUtility.Check.Empty(dr["Location"]))
+                DataTable dtLocationEmpty = new DataTable();
+                dtLocationEmpty.Columns.Add("POID");
+                dtLocationEmpty.Columns.Add("Seq");
+                dtLocationEmpty.Columns.Add("Roll");
+                dtLocationEmpty.Columns.Add("Dyelot");
+                dtLocationEmpty.Columns.Add("StockType");
+                foreach (DataRow dr in dtDetail.Rows)
                 {
-                    DataRow drEmpty = dtLocationEmpty.NewRow();
-                    drEmpty["POID"] = dr["POID"];
-                    drEmpty["Seq"] = dr["Seq1"] + " "+ dr["Seq2"];
-                    drEmpty["Roll"] = dr["Roll"];
-                    drEmpty["Dyelot"] = dr["Dyelot"];
-                    drEmpty["StockType"] = dr["StockTypeName"];
-                    dtLocationEmpty.Rows.Add(drEmpty);
+                    if (MyUtility.Check.Empty(dr["Location"]))
+                    {
+                        DataRow drEmpty = dtLocationEmpty.NewRow();
+                        drEmpty["POID"] = dr["POID"];
+                        drEmpty["Seq"] = dr["Seq1"] + " " + dr["Seq2"];
+                        drEmpty["Roll"] = dr["Roll"];
+                        drEmpty["Dyelot"] = dr["Dyelot"];
+                        drEmpty["StockType"] = dr["StockTypeName"];
+                        dtLocationEmpty.Rows.Add(drEmpty);
+                    }
                 }
-            }
 
-            if (dtLocationEmpty.Rows.Count > 0)
-            {
-                // change column name
-                dtLocationEmpty.Columns["PoId"].ColumnName = "SP#";
-                dtLocationEmpty.Columns["seq"].ColumnName = "Seq";
-                dtLocationEmpty.Columns["Roll"].ColumnName = "Roll";
-                dtLocationEmpty.Columns["Dyelot"].ColumnName = "Dyelot";
-                dtLocationEmpty.Columns["StockType"].ColumnName = "Stock Type";
+                if (dtLocationEmpty.Rows.Count > 0)
+                {
+                    // change column name
+                    dtLocationEmpty.Columns["PoId"].ColumnName = "SP#";
+                    dtLocationEmpty.Columns["seq"].ColumnName = "Seq";
+                    dtLocationEmpty.Columns["Roll"].ColumnName = "Roll";
+                    dtLocationEmpty.Columns["Dyelot"].ColumnName = "Dyelot";
+                    dtLocationEmpty.Columns["StockType"].ColumnName = "Stock Type";
 
-                Prgs.ChkLocationEmpty(dtLocationEmpty, string.Empty, @"SP#,Seq,Roll,Dyelot,Stock Type");
-                this.HideWaitMessage();
-                return;
+                    Prgs.ChkLocationEmpty(dtLocationEmpty, string.Empty, @"SP#,Seq,Roll,Dyelot,Stock Type");
+                    this.HideWaitMessage();
+                    return;
+                }
             }
             #endregion
 
