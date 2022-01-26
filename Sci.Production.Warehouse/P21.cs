@@ -177,7 +177,7 @@ namespace Sci.Production.Warehouse
 
         private void PrintBarcode(object sender, EventArgs e)
         {
-            if (this.dtReceiving != null && this.dtReceiving.Rows.Count > 1 && this.gridReceiving.CurrentDataRow != null)
+            if (this.dtReceiving != null && this.dtReceiving.Rows.Count > 0 && this.gridReceiving.CurrentDataRow != null)
             {
                 DataRow dr = this.gridReceiving.CurrentDataRow;
 
