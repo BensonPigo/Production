@@ -1,14 +1,20 @@
 ﻿using Ict;
+using Ict.Resources;
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
+using Sci.Win;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
@@ -30,6 +36,13 @@ namespace Sci.Production.Warehouse
             comboBox1_RowSource.Add(string.Empty, "All");
             comboBox1_RowSource.Add("F", "Fabric");
             comboBox1_RowSource.Add("A", "Accessory");
+
+            this.cmbBarcoedType.SelectedIndex = 0;
+            string country = MyUtility.GetValue.Lookup($"select CountryID from Factory where ID = '{Env.User.Factory}'");
+            if (country != "PH")
+            {
+                this.cmbBarcoedType.SelectedIndex = 1;
+            }
         }
 
         /// <inheritdoc/>
@@ -133,6 +146,7 @@ namespace Sci.Production.Warehouse
                  .Text("WeaveTypeID", header: "Weave Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Button(propertyname: "Barcode", header: "Print Barcode", width: Widths.AnsiChars(16), onclick: this.PrintBarcode)
                  .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Numeric("StockQty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
@@ -159,6 +173,75 @@ namespace Sci.Production.Warehouse
             this.gridReceiving.Columns["CutShadebandTime"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["Fabric2LabTime"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["rid"].Visible = false;
+        }
+
+        private void PrintBarcode(object sender, EventArgs e)
+        {
+            if (this.dtReceiving != null && this.dtReceiving.Rows.Count > 1 && this.gridReceiving.CurrentDataRow != null)
+            {
+                DataRow dr = this.gridReceiving.CurrentDataRow;
+
+                if (MyUtility.Check.Empty(dr["Barcode"]))
+                {
+                    return;
+                }
+
+                string sp = "SP:" + MyUtility.Convert.GetString(dr["poid"]);
+                string seq = "SEQ:" + MyUtility.Convert.GetString(dr["Seq"]);
+                string refno = "Ref:" + MyUtility.Convert.GetString(dr["refno"]);
+                string dyelot = "Lot:" + MyUtility.Convert.GetString(dr["dyelot"]);
+                string color = "Color:" + MyUtility.Convert.GetString(dr["color"]);
+                string roll = "Roll:" + MyUtility.Convert.GetString(dr["Roll"]);
+                string qty = "Qty:" + MyUtility.Convert.GetString(dr["StockQty"]);
+
+                ReportDefinition report = new ReportDefinition();
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SP", sp));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("seq", seq));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("refno", refno));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("dyelot", dyelot));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("color", color));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("roll", roll));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("qty", qty));
+
+                #region QRCode 參數
+                int qrCodeWidth = 90;
+                string rdlcName = "P21_PrintBarcode5.rdlc";
+                if (this.cmbBarcoedType.Text == "10X10")
+                {
+                    qrCodeWidth = 180;
+                    rdlcName = "P21_PrintBarcode10.rdlc";
+                }
+
+                Bitmap oriBitmap = MyUtility.Convert.GetString(dr["Barcode"]).ToBitmapQRcode(qrCodeWidth, qrCodeWidth);
+                string paramValue;
+                using (var b = new Bitmap(oriBitmap))
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        b.Save(ms, ImageFormat.Png);
+                        paramValue = Convert.ToBase64String(ms.ToArray());
+                    }
+                }
+
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Image", paramValue));
+                #endregion
+
+                #region  指定是哪個 RDLC
+                DualResult result = ReportResources.ByEmbeddedResource(typeof(P21_PrintBarcode_Data), rdlcName, out IReportResource reportresource);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                report.ReportDataSource = new List<P21_PrintBarcode_Data>(); // 其實不用, 但寫法需要, 給個空的即可
+                report.ReportResource = reportresource;
+                #endregion
+
+                // 開啟 report view
+                var frm = new Win.Subs.ReportView(report) { MdiParent = this.MdiParent };
+                frm.Show();
+            }
         }
 
         private void DifferentialColorChange(int rowIndex)
@@ -334,6 +417,7 @@ from
         ,[Seq] = rd.Seq1 + ' ' + rd.Seq2
         ,rd.Roll
         ,rd.Dyelot
+        ,fi.Barcode
         ,rd.StockQty
         ,[StockTypeDesc] = st.Name
         ,rd.StockType
@@ -412,6 +496,7 @@ from
         ,[Seq] = td.Seq1 + ' ' + td.Seq2
         ,td.Roll
         ,td.Dyelot
+        ,fi.Barcode
         ,[StockQty]=td.Qty
         ,[StockTypeDesc] = st.Name
         ,td.StockType
