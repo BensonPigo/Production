@@ -973,7 +973,7 @@ Select
 	, w.FabricPanelCode
 	, Ratio = ''
 	, w.cutno
-	, Sewingline = o.SewLine
+	, Sewingline = case when o.SewLine like '%/%' then substring(o.Sewline,1,charindex('/',o.Sewline,1) - 1) else o.SewLine end
 	, SewingCell= w.CutCellid
 	, item.item
 	, Qty = 1
@@ -2473,7 +2473,6 @@ where b.POID = '{poid}'
                         .Where(w => MyUtility.Convert.GetLong(w["ukey"]) == first.Ukey && MyUtility.Convert.GetString(w["SizeCode"]) == first.SizeCode)
                         .Select(s => MyUtility.Convert.GetInt(s["Qty"])).FirstOrDefault();
                     var firstAS = selASList.Where(w => w.Iden == first.Iden).OrderBy(o => o.OrderID).First();
-                    string sewingLine = firstAS.Sewingline.Empty() ? string.Empty : firstAS.Sewingline.Length > 2 ? firstAS.Sewingline.Substring(0, 2) : firstAS.Sewingline;
                     bool isEXCESS = selASList.Where(w => seldupList.Select(s => s.Iden).Contains(w.Iden) && w.IsEXCESS == "Y").Any();
                     bool byToneGenerate = selList.Where(w => w.Dup == dup && w.Tone == first.Tone).Count() > 1;
                     int bundleQty = selList.Where(w => w.Dup == dup).Count(); // 合併建單筆數, 寫入 P10 表頭 No of Bundle
@@ -2491,7 +2490,7 @@ where b.POID = '{poid}'
                         new SqlParameter("@PatternPanel", MyUtility.Convert.GetString(drCut["Fabriccombo"])),
                         new SqlParameter("@Cutno", MyUtility.Convert.GetString(drCut["Cutno"])),
                         new SqlParameter("@OrderID", firstAS.OrderID),
-                        new SqlParameter("@SewingLineid", sewingLine),
+                        new SqlParameter("@SewingLineid", firstAS.Sewingline),
                         new SqlParameter("@Item",  MyUtility.Convert.GetString(drCut["Item"])),
                         new SqlParameter("@SewingCell", firstAS.SewingCell),
                         new SqlParameter("@Ratio", sizeRatio),
