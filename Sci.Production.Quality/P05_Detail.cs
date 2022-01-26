@@ -1067,6 +1067,8 @@ SET IDENTITY_INSERT oven off";
             }
 
             sqlcmd = $@"
+SET XACT_ABORT ON
+
 INSERT INTO ExtendServer.PMSFile.dbo.Oven
            (ID,POID,TestNo,TestBeforePicture,TestAfterPicture)
 select ID,POID,TestNo,TestBeforePicture,TestAfterPicture

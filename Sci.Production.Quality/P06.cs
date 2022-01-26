@@ -253,6 +253,8 @@ namespace Sci.Production.Quality
             base.ClickSaveAfter();
 
             string sqlcmd = $@"
+SET XACT_ABORT ON
+
 INSERT INTO ExtendServer.PMSFile.dbo.ColorFastness
            (ID,TestBeforePicture,TestAfterPicture)
 select ID,TestBeforePicture,TestAfterPicture

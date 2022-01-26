@@ -406,20 +406,6 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
         {
             DualResult upResult;
 
-            string sqlcmd = $@"
-INSERT INTO ExtendServer.PMSFile.dbo.Oven
-           (ID,POID,TestNo,TestBeforePicture,TestAfterPicture)
-select ID,POID,TestNo,TestBeforePicture,TestAfterPicture
-from Oven t WITH(NOLOCK)
-where not exists (select 1 from ExtendServer.PMSFile.dbo.Oven s WITH(NOLOCK) where s.POID = t.POID AND s.TestNo = t.TestNo )
-";
-
-            upResult = DBProxy.Current.Execute(null, sqlcmd);
-            if (!upResult)
-            {
-                this.ShowErr(upResult);
-            }
-
             TransactionScope transactionscope = new TransactionScope();
             using (transactionscope)
             {
@@ -447,6 +433,22 @@ where not exists (select 1 from ExtendServer.PMSFile.dbo.Oven s WITH(NOLOCK) whe
             transactionscope = null;
             this.RenewData();
             base.ClickSaveAfter();
+
+            string sqlcmd = $@"
+SET XACT_ABORT ON
+
+INSERT INTO ExtendServer.PMSFile.dbo.Oven
+           (ID,POID,TestNo,TestBeforePicture,TestAfterPicture)
+select ID,POID,TestNo,TestBeforePicture,TestAfterPicture
+from Oven t WITH(NOLOCK)
+where not exists (select 1 from ExtendServer.PMSFile.dbo.Oven s WITH(NOLOCK) where s.POID = t.POID AND s.TestNo = t.TestNo )
+";
+
+            upResult = DBProxy.Current.Execute(null, sqlcmd);
+            if (!upResult)
+            {
+                this.ShowErr(upResult);
+            }
         }
     }
 }
