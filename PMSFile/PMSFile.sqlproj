@@ -61,5 +61,6 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\AIR_DefectImage.sql" />
+    <Build Include="dbo\Tables\Basic_FabricDefectImage.sql" />
   </ItemGroup>
 </Project>
