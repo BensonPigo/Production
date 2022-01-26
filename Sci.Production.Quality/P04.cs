@@ -1030,6 +1030,8 @@ INSERT INTO GarmentTest_Detail_FGPT
             base.ClickSaveAfter();
 
             string sqlcmd = $@"
+SET XACT_ABORT ON
+
 INSERT INTO ExtendServer.PMSFile.dbo.GarmentTest_Detail
            (ID,No,TestBeforePicture,TestAfterPicture)
 select ID,No,TestBeforePicture,TestAfterPicture

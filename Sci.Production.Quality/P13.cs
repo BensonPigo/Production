@@ -300,6 +300,8 @@ masterID);
             base.ClickSaveAfter();
 
             string sqlcmd = $@"
+SET XACT_ABORT ON
+
 INSERT INTO ExtendServer.PMSFile.dbo.MockupWash
            (ReportNo,TestBeforePicture,TestAfterPicture)
 select ReportNo,TestBeforePicture,TestAfterPicture

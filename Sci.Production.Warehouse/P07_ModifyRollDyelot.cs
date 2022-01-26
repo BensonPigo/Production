@@ -899,6 +899,8 @@ end
                 {
                     // 寫入PMSFile
                     string cmd = $@"
+SET XACT_ABORT ON
+
 INSERT INTO ExtendServer.PMSFile.dbo.AIR_Laboratory
            (ID,POID,SEQ1,SEQ2,OvenTestBeforePicture,OvenTestAfterPicture,WashTestBeforePicture,WashTestAfterPicture)
 
@@ -933,6 +935,8 @@ where not exists (select 1 from ExtendServer.PMSFile.dbo.FIR_Laboratory s (NOLOC
                 {
                     // 寫入PMSFile
                     string cmd = $@"
+SET XACT_ABORT ON
+
 INSERT INTO ExtendServer.PMSFile.dbo.AIR_Laboratory
            (ID,POID,SEQ1,SEQ2,OvenTestBeforePicture,OvenTestAfterPicture,WashTestBeforePicture,WashTestAfterPicture)
 

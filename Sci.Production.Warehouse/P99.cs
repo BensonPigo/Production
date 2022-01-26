@@ -2871,6 +2871,8 @@ inner join #tmp s on t2.Ukey = s.Ukey
                                             {
                                                 // 寫入PMSFile
                                                 string cmd = $@"
+SET XACT_ABORT ON
+
 INSERT INTO ExtendServer.PMSFile.dbo.AIR_Laboratory
            (ID,POID,SEQ1,SEQ2,OvenTestBeforePicture,OvenTestAfterPicture,WashTestBeforePicture,WashTestAfterPicture)
 
