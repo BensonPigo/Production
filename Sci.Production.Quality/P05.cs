@@ -303,7 +303,23 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
                 {
                     List<SqlParameter> spam = new List<SqlParameter>();
                     spam.Add(new SqlParameter("@id", this.CurrentDetailData["ID"].ToString()));
-                    if (!DBProxy.Current.Execute(null, @"delete from Oven_Detail where id=@id  delete from Oven where id=@id", spam))
+                    string cmd = $@"
+delete from Oven_Detail where id=@id ; 
+delete from Oven where id=@id;
+
+DELETE t
+from ExtendServer.PMSFile.dbo.Oven t
+where not exists (select 1 from Oven s WITH(NOLOCK) where s.ID = t.ID  )
+
+delete
+from Oven_Detail 
+where id IN (
+	select ID
+	from oven 
+)
+";
+                    DualResult r = DBProxy.Current.Execute(null, cmd, spam);
+                    if (!r)
                     {
                         MyUtility.Msg.WarningBox("Delete data fail");
                     }
@@ -442,6 +458,15 @@ INSERT INTO ExtendServer.PMSFile.dbo.Oven
 select ID,POID,TestNo,TestBeforePicture,TestAfterPicture
 from Oven t WITH(NOLOCK)
 where not exists (select 1 from ExtendServer.PMSFile.dbo.Oven s WITH(NOLOCK) where s.POID = t.POID AND s.TestNo = t.TestNo )
+
+delete
+from ExtendServer.PMSFile.dbo.Oven a
+where not exists(
+	select 1
+	from Oven b
+	where a.ID=b.ID and a.POID=b.POID
+)
+
 ";
 
             upResult = DBProxy.Current.Execute(null, sqlcmd);

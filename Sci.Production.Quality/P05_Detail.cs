@@ -1010,9 +1010,20 @@ and a.seq1=@seq1";
 
                         string insCmd = @"
 SET IDENTITY_INSERT oven ON
+SET XACT_ABORT ON
 insert into Oven(ID,POID,TestNo,InspDate,Article,Result,Status,Inspector,Remark,addName,addDate)
 values(@id ,@poid,@testNO,GETDATE(),@Article,'','New',@logid,@remark,@logid,GETDATE())
-SET IDENTITY_INSERT oven off";
+
+
+SET IDENTITY_INSERT oven off
+
+
+INSERT INTO ExtendServer.PMSFile.dbo.Oven
+           (ID,POID,TestNo,TestBeforePicture,TestAfterPicture)
+select ID,POID,TestNo,TestBeforePicture,TestAfterPicture
+from Oven t WITH(NOLOCK)
+where not exists (select 1 from ExtendServer.PMSFile.dbo.Oven s WITH(NOLOCK) where s.POID = t.POID AND s.TestNo = t.TestNo )
+";
                         List<SqlParameter> spamAddNew = new List<SqlParameter>
                         {
                             new SqlParameter("@id", this.ID), // New ID
@@ -1064,22 +1075,6 @@ SET IDENTITY_INSERT oven off";
             if (!result)
             {
                 return Ict.Result.F(result.ToString());
-            }
-
-            sqlcmd = $@"
-SET XACT_ABORT ON
-
-INSERT INTO ExtendServer.PMSFile.dbo.Oven
-           (ID,POID,TestNo,TestBeforePicture,TestAfterPicture)
-select ID,POID,TestNo,TestBeforePicture,TestAfterPicture
-from Oven t WITH(NOLOCK)
-where not exists (select 1 from ExtendServer.PMSFile.dbo.Oven s WITH(NOLOCK) where s.POID = t.POID AND s.TestNo = t.TestNo )
-";
-
-            DualResult r = DBProxy.Current.Execute(null, sqlcmd);
-            if (!r)
-            {
-                this.ShowErr(r);
             }
 
             return base.OnSave();
