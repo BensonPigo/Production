@@ -1077,7 +1077,13 @@ where not exists (select 1 from ExtendServer.PMSFile.dbo.Oven s WITH(NOLOCK) whe
                 return Ict.Result.F(result.ToString());
             }
 
-            return base.OnSave();
+            result = base.OnSave();
+            if (!result && MyUtility.Check.Empty(this.maindr))
+            {
+                this.newOven = true;
+            }
+
+            return result;
         }
 
         /// <inheritdoc/>
