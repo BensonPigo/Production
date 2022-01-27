@@ -1083,14 +1083,34 @@ where not exists (select 1 from ExtendServer.PMSFile.dbo.Oven s WITH(NOLOCK) whe
         /// <inheritdoc/>
         protected override void OnInsert()
         {
-            DataTable dtGrid = (DataTable)this.gridbs.DataSource;
+            DataTable oriTable = (DataTable)this.gridbs.DataSource;
+            DataTable dtGrid = oriTable.Clone();
+
+            int grid_rows = 0;
+            int deleted_rows = 0;
+            if (oriTable.Rows != null)
+            {
+                grid_rows = oriTable.Rows.Count;
+                foreach (DataRow item in oriTable.Rows)
+                {
+                    if (item.RowState != DataRowState.Deleted)
+                    {
+                        dtGrid.ImportRow(item);
+                    }
+                    else
+                    {
+                        deleted_rows++;
+                    }
+                }
+            }
+
             DBProxy.Current.Select(null, string.Format("select * from oven_detail WITH (NOLOCK) where id='{0}'", this.ID), out DataTable dt);
 
-            DataTable dtGrid_Max = (DataTable)this.gridbs.DataSource;
+            DataTable dtGrid_Max;
             DBProxy.Current.Select(null, string.Format("select  max(OvenGroup) as max from oven_detail WITH (NOLOCK) where id='{0}'", this.ID), out dtGrid_Max);
             int max = MyUtility.Convert.GetInt(dtGrid_Max.Rows[0]["max"]);
             int data_rows = dt.Rows.Count;
-            int grid_rows = dtGrid.Rows.Count;
+            //int grid_rows = dtGrid.Rows.Count;
             int intTen; // 判斷十位數
             base.OnInsert();
 
@@ -1098,15 +1118,16 @@ where not exists (select 1 from ExtendServer.PMSFile.dbo.Oven s WITH(NOLOCK) whe
             // if (Data_rows <= 0)
             // {
             // 第一筆0
-            if (grid_rows == 0)
+            if (grid_rows - deleted_rows == 0)
             {
-                dtGrid.Rows[grid_rows]["OvenGroup"] = "01";
+                // 因為是Index，如果前面有兩列被刪除的，要從第三列(index=2)開始Insert，因此不需要+1
+                oriTable.Rows[grid_rows]["OvenGroup"] = "01";
                 intTen = 0;
                 return;
             }
 
-            int group = MyUtility.Convert.GetInt(dtGrid.Rows[grid_rows - 1]["ovengroup"].ToString().Substring(1, 1));
-            int groupAll = MyUtility.Convert.GetInt(dtGrid.Rows[grid_rows - 1]["ovengroup"]);
+            int group = MyUtility.Convert.GetInt(oriTable.Rows[grid_rows - 1]["ovengroup"].ToString().Substring(1, 1));
+            int groupAll = MyUtility.Convert.GetInt(oriTable.Rows[grid_rows - 1]["ovengroup"]);
 
             if (group == 9 && groupAll < 10)
             {
@@ -1119,12 +1140,12 @@ where not exists (select 1 from ExtendServer.PMSFile.dbo.Oven s WITH(NOLOCK) whe
                 if (groupAll == 99)
                 {
                     intTen = 0;
-                    dtGrid.Rows[grid_rows]["ovengroup"] = intTen.ToString() + "1";
+                    oriTable.Rows[grid_rows]["ovengroup"] = intTen.ToString() + "1";
                     return;
                 }
 
                 intTen = MyUtility.Convert.GetInt(groupAll.ToString().Substring(0, 1)) + 1;
-                dtGrid.Rows[grid_rows]["ovengroup"] = intTen.ToString() + "0";
+                oriTable.Rows[grid_rows]["ovengroup"] = intTen.ToString() + "0";
                 return;
             }
 
@@ -1132,13 +1153,13 @@ where not exists (select 1 from ExtendServer.PMSFile.dbo.Oven s WITH(NOLOCK) whe
             {
                 intTen = 0;
                 group++;
-                dtGrid.Rows[grid_rows]["ovengroup"] = intTen.ToString() + group.ToString();
+                oriTable.Rows[grid_rows]["ovengroup"] = intTen.ToString() + group.ToString();
             }
             else
             {
                 intTen = MyUtility.Convert.GetInt(groupAll.ToString().Substring(0, 1));
                 group++;
-                dtGrid.Rows[grid_rows]["ovengroup"] = intTen.ToString() + group.ToString();
+                oriTable.Rows[grid_rows]["ovengroup"] = intTen.ToString() + group.ToString();
             }
         }
 

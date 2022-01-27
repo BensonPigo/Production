@@ -313,7 +313,7 @@ where not exists (select 1 from Oven s WITH(NOLOCK) where s.ID = t.ID  )
 
 delete
 from Oven_Detail 
-where id IN (
+where id not IN (
 	select ID
 	from oven 
 )
