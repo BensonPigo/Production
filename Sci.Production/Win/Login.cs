@@ -257,6 +257,7 @@ namespace Sci.Production.Win
                 Env.Cfg.FtpServerAccount = drSystem["FtpID"].ToString().Trim();
                 Env.Cfg.FtpServerPassword = drSystem["FtpPwd"].ToString().Trim();
                 Env.Cfg.ClipDir = drSystem["ClipPath"].ToString().Trim();
+                Env.Cfg.MailServerPort = MyUtility.Check.Empty(drSystem["MailServerPort"]) ? Convert.ToUInt16(25) : Convert.ToUInt16(drSystem["MailServerPort"]);
             }
             #endregion
             #region 寫入登入時間
