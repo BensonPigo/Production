@@ -242,7 +242,7 @@ namespace Sci.Production.Cutting
                 }
 
                 string scalecmd = $@"
-select wd.Orderid,Article,w.Colorid,SizeCode,o.SewLine,w.CutCellid
+select wd.Orderid,Article,w.Colorid,SizeCode,SewLine = case when o.SewLine like '%/%' then substring(o.Sewline,1,charindex('/',o.Sewline,1) - 1) else o.SewLine end,w.CutCellid
 from workorder_Distribute wd WITH (NOLOCK) 
 inner join WorkOrder w WITH (NOLOCK) on wd.WorkOrderUkey = w.Ukey
 inner join orders o WITH (NOLOCK) on w.id = o.cuttingsp and wd.OrderID = o.id
@@ -966,7 +966,7 @@ Select
 	, w.FabricPanelCode
 	, Ratio = ''
 	, w.cutno
-	, Sewingline = o.SewLine
+	, Sewingline = case when o.SewLine like '%/%' then substring(o.Sewline,1,charindex('/',o.Sewline,1) - 1) else o.SewLine end
 	, SewingCell= w.CutCellid
 	, item.item
 	, Qty = 1
