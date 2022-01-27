@@ -310,9 +310,9 @@ delete t
 from P_LoadingProductionOutput t WITH (NOLOCK)
 where 
 (
-	YEAR(BuyerDelivery) = '''+@S_Year+'''
+	YEAR(BuyerDelivery) >= '''+@S_Year+'''
 	or
-	Year(cast(dateadd(day,-7,SciDelivery) as date)) = '''+@S_Year+'''	
+	Year(cast(dateadd(day,-7,SciDelivery) as date)) >= '''+@S_Year+'''	
 )
 and exists	   (select 1 from #Final f where t.FactoryID=f.FactoryID AND t.MDivisionID=f.MDivisionID  ) 
 and not exists (select 1 from #Final s where t.FactoryID=s.FactoryID AND t.SPNO=s.ID );
