@@ -1448,7 +1448,8 @@ set Version = (select iif(isnull(max(Version),0)+1 < 10,'0'+cast(isnull(max(Vers
     AddName = '{1}',
 	AddDate = GETDATE(),
 	EditName = '',
-	EditDate = null
+	EditDate = null,
+    Status = 'New'
 where ID = {0}",
                     this.CurrentMaintain["ID"].ToString(),
                     Env.User.UserID);
@@ -1460,7 +1461,6 @@ where ID = {0}",
                         if (result)
                         {
                             transactionScope.Complete();
-                            this.CurrentMaintain["Status"] = "New";
                         }
                         else
                         {
@@ -1512,7 +1512,8 @@ update TimeStudy
 set Phase = iif(@phase = 'Estimate','Initial',iif(@phase = 'Initial','Prelim',iif(@phase = 'Prelim','Final','Estimate'))),
 	Version = '01',
 	EditName = '{1}',
-	EditDate = GETDATE()
+	EditDate = GETDATE(),
+    Status = 'New'
 where ID = {0}",
                     this.CurrentMaintain["ID"].ToString(),
                     Env.User.UserID);
@@ -1524,7 +1525,6 @@ where ID = {0}",
                         if (result)
                         {
                             transactionScope.Complete();
-                            this.CurrentMaintain["Status"] = "New";
                         }
                         else
                         {
