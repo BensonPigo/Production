@@ -384,7 +384,6 @@
             // 
             // btnDownloadSample
             // 
-            this.btnDownloadSample.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnDownloadSample.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnDownloadSample.Location = new System.Drawing.Point(481, 162);
             this.btnDownloadSample.Name = "btnDownloadSample";

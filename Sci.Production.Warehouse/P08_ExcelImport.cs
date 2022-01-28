@@ -351,11 +351,11 @@ group by ID, SEQ1,SEQ2,POUnit,StockUnit,fabrictype
                                     newRow["Description"] = dr2["Description"].ToString();
                                     newRow["fabrictype"] = dr2["fabrictype"].ToString();
                                     newRow["stocktype"] = "B"; // WH P08 收料是收進 Bulk 倉
-
                                     // 檢查location是否正確
                                     if (!MyUtility.Check.Empty(newRow["location"]))
                                     {
                                         string[] strA = Regex.Split(newRow["location"].ToString(), ",");
+                                        string correctLocation = string.Empty;
                                         foreach (string i in strA.Distinct())
                                         {
                                             if (!MyUtility.Check.Seek($@"
@@ -367,6 +367,19 @@ where   stocktype = 'B'
                                             {
                                                 listNewRowErrMsg.Add($"Location ({i}) of SP#:{newRow["poid"]}-Seq1:{newRow["seq1"]}-Seq2:{newRow["seq2"]} in stock ({newRow["stocktype"]}) is not found!!");
                                             }
+                                            else
+                                            {
+                                                correctLocation += i.Replace("'", "''") + ",";
+                                            }
+                                        }
+
+                                        if (!MyUtility.Check.Empty(correctLocation))
+                                        {
+                                            newRow["location"] = correctLocation.Substring(0, correctLocation.Length - 1);
+                                        }
+                                        else
+                                        {
+                                            newRow["location"] = string.Empty;
                                         }
                                     }
                                 }
@@ -478,9 +491,9 @@ where   stocktype = 'B'
             // }
 
             // 如果資料中有錯誤不能WriteIn
-            if (tmpPacking.AsEnumerable().Any(s => s["ErrMsg"].ToString().Contains("length can't be more than")))
+            if (tmpPacking.AsEnumerable().Any(s => s["ErrMsg"].ToString().Empty() == false))
             {
-                MyUtility.Msg.WarningBox("Excel column value over length limit,please check column [Error Message] information to fix Excel.");
+                MyUtility.Msg.WarningBox("Please check column [Error Message] information to fix Excel.");
                 return;
             }
 
