@@ -107,6 +107,11 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
             this.comboFactory.Text = Env.User.Factory;
             this.comboSubProcess.SelectedIndex = 0;
             this.checkBulk.Checked = true;
+
+            if (type != "1")
+            {
+                this.checkIncludeArtworkdata.Checked = true;
+            }
         }
 
         /// <inheritdoc/>

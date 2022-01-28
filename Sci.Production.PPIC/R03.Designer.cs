@@ -425,8 +425,6 @@
             // checkIncludeArtworkdata
             // 
             this.checkIncludeArtworkdata.AutoSize = true;
-            this.checkIncludeArtworkdata.Checked = true;
-            this.checkIncludeArtworkdata.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkIncludeArtworkdata.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkIncludeArtworkdata.Location = new System.Drawing.Point(13, 516);
             this.checkIncludeArtworkdata.Name = "checkIncludeArtworkdata";
