@@ -144,7 +144,7 @@ Where a.id = '{0}'
                 DBProxy.Current.DefaultTimeout = 0;
             }
 
-            if (data.Tables[0].Rows.Count == 0)
+            if (data.Tables[1].Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!!");
             }

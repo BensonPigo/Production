@@ -75,7 +75,7 @@ select  selected = 0
         ,c.lock
 from dbo.lack a WITH (NOLOCK) 
 inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
-inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.POID 
+LEFT join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.POID 
 											   and c.seq1 = b.seq1 
 											   and c.seq2  = b.seq2 
 											   and c.stocktype = 'B'
@@ -84,12 +84,6 @@ where a.id = '{0}'
 and o.Category != 'A'
 ", this.dr_master["requestid"]));
             strSQLCmd.Append(Environment.NewLine); // 換行
-
-           // 判斷LACKING
-            if (this.Type != "Lacking")
-            {
-                strSQLCmd.Append(" and (c.inqty - c.outqty + c.adjustqty - c.ReturnQty) > 0");
-            }
 
            // string AA = strSQLCmd.ToString();
             #endregion
