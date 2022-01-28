@@ -705,7 +705,17 @@ where s.ID = '{this.CurrentMaintain["StyleID"]}'
                     }
 
                     List<SqlParameter> spamDet = new List<SqlParameter>();
-                    update_cmd = "Delete From GarmentTest_Detail WITH (NOLOCK) Where id =@id and no=@no";
+                    update_cmd = $@"
+Delete From GarmentTest_Detail WITH (NOLOCK) Where id =@id and no=@no
+
+DELETE a
+from ExtendServer.PMSFile.dbo.GarmentTest_Detail a
+WHERE NOT EXISTS(
+    select 1 from GarmentTest_Detail b
+    where a.ID = b.ID AND a.No=b.No
+    
+)
+";
                     spamDet.Add(new SqlParameter("@id", dr["ID", DataRowVersion.Original]));
                     spamDet.Add(new SqlParameter("@no", dr["NO", DataRowVersion.Original]));
                     upResult = DBProxy.Current.Execute(null, update_cmd, spamDet);
@@ -1031,6 +1041,14 @@ INSERT INTO GarmentTest_Detail_FGPT
 
             string sqlcmd = $@"
 SET XACT_ABORT ON
+
+DELETE a
+from ExtendServer.PMSFile.dbo.GarmentTest_Detail a
+WHERE NOT EXISTS(
+    select 1 from GarmentTest_Detail b
+    where a.ID = b.ID AND a.No=b.No
+    
+)
 
 INSERT INTO ExtendServer.PMSFile.dbo.GarmentTest_Detail
            (ID,No,TestBeforePicture,TestAfterPicture)

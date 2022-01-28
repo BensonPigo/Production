@@ -332,7 +332,20 @@ where not exists (select 1 from ExtendServer.PMSFile.dbo.ColorFastness s WITH(NO
                 DualResult dResult;
                 List<SqlParameter> spam = new List<SqlParameter>();
                 spam.Add(new SqlParameter("@id", this.CurrentDetailData["ID"].ToString()));
-                if (dResult = DBProxy.Current.Execute(null, @"delete from ColorFastness_Detail where id=@id  delete from ColorFastness where id=@id", spam))
+                string cmd = $@"
+delete from ColorFastness_Detail where id=@id  
+delete from ColorFastness where id=@id
+
+DELETE A 
+from ExtendServer.PMSFile.dbo.ColorFastness a
+WHERE NOT EXISTS(
+    select 1 from ColorFastness b
+    where a.ID = b.ID
+    
+)
+
+";
+                if (dResult = DBProxy.Current.Execute(null, cmd, spam))
                 {
                     MyUtility.Msg.InfoBox("Data has been Delete! ");
                 }
