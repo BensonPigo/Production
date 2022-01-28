@@ -558,7 +558,7 @@ select
 	o.OrderTypeID,
 	o.ProgramID,
 	o.CdCodeID,
-	s.CDCodeNew,
+	[CDCodeNew] = isnull(s.CDCodeNew, ''),
     o.FtyGroup,
     [PulloutComplete] = iif(o.PulloutComplete = 1, 'OK', ''),
     o.SewInLine,
@@ -567,7 +567,7 @@ select
 	[OrderReason] = OrderReason.ResName
 from @tmpBaseByOrderID tb 
 inner join Orders o with(nolock) on o.id = tb.ID
-inner join Style s with (nolock) on s.Ukey = o.StyleUkey
+left join Style s with (nolock) on s.Ukey = o.StyleUkey
 left join @tmpOrder_QtyShip toq on toq.ID = tb.ID
 left join @tmpPullout_Detail tpd on tpd.OrderID = tb.ID
 outer apply (select [val] = iif(tb.IsCancelNeedProduction = 'N' and o.Junk = 1, 0, isnull(tb.OrderCPU, 0))) TotalCPU
