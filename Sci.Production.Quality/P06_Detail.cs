@@ -57,7 +57,19 @@ namespace Sci.Production.Quality
 
             if (this.ID.Equals("New") && dt.Rows.Count > 0)
             {
-                this.result = DBProxy.Current.Execute(null, "delete ColorFastness where id = 'New';delete ColorFastness_Detail where id = 'New';");
+                string cmd = $@"
+delete from ColorFastness_Detail where id='New' 
+delete from ColorFastness where id='New'
+
+DELETE A 
+from ExtendServer.PMSFile.dbo.ColorFastness a
+WHERE NOT EXISTS(
+    select 1 from ColorFastness b
+    where a.ID = b.ID
+    
+)
+";
+                this.result = DBProxy.Current.Execute(null, cmd);
                 if (!this.result)
                 {
                     this.ShowErr(this.result);
