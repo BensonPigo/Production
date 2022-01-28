@@ -553,6 +553,15 @@ where not exists (select 1 from ExtendServer.PMSFile.dbo.ShippingMarkPic_Detail 
             string sqldelete = $@"
 delete ShippingMarkPic where ukey = {this.CurrentMaintain["Ukey"]}
 delete ShippingMarkPic_Detail where ShippingMarkPicUkey = {this.CurrentMaintain["Ukey"]}
+
+DELETE a
+from ExtendServer.PMSFile.dbo.ShippingMarkPic_Detail a
+WHERE NOT EXISTS(
+    select 1 from ShippingMarkPic_Detail b
+    where a.ShippingMarkPicUkey = b.ShippingMarkPicUkey AND a.SCICtnNo=b.SCICtnNo AND a.ShippingMarkTypeUkey=b.ShippingMarkTypeUkey
+    
+)
+
 ";
 
             foreach (DataRow dr in this.DetailDatas)
