@@ -1059,7 +1059,7 @@ and o.id = '{this.CurrentMaintain["POID"]}'
             else
             {
                 string selectCommand = $@"
-select id,POID,Seasonid,Styleid,sewline,styleukey,Factoryid
+select id,POID,Seasonid,Styleid,styleukey,Factoryid
     ,Sewline = case when SewLine like '%/%' then substring(Sewline,1,charindex('/',Sewline,1) - 1) else SewLine end
 from orders a WITH (NOLOCK)
 where id = '{newvalue}' and mDivisionid='{this.keyword}' ";
