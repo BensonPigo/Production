@@ -129,6 +129,7 @@ where 1 = 1
 create table #tmpPackingA2B
 (
     OrderID varchar(13),  
+    INVNo varchar(25),
     ShipQty int,
     CTNQty  int,
     NW  int,
@@ -189,7 +190,7 @@ left join (
 	        	group by pl.INVNo, pd2.OrderID,oup.SizeCode,oup.Article,oup.POPrice
 	        ) a
 	        group by a.INVNo, OrderID
-)   POPrice on  POPrice.ORderID = pack.OrderID
+) POPrice on POPrice.ORderID = pack.OrderID and POPrice.INVNo = pack.INVNo
 ";
                     this.result = PackingA2BWebAPI.GetDataBySql(groupItem.PLFromRgCode, sqlGetPackingA2B, out DataTable dtResultA2B);
 
@@ -205,7 +206,7 @@ left join (
             #endregion
 
             string sqlcmd = $@"
-select
+select 
     [Shipper] = g.Shipper 
     , [Buyer] = b.BuyerID 
     , [FTY] = o.ftygroup 
@@ -274,12 +275,13 @@ outer apply(
 	            group by pld.OrderID
                 union all
                 select  OrderID,
-	            	    ShipQty,
-	            	    CTNQty,
-	            	    NW,
-	            	    GW
-                from    #tmpPackingA2B
-                where   INVNo = g.ID and iif(kdd.orderid is not null, kdd.orderid,'') = iif(kdd.orderid is not null, OrderID,'')
+	                    ShipQty = sum(a2b.ShipQty),
+	                    CTNQty = sum(a2b.CTNQty),
+	                    NW = sum(a2b.NW),
+	                    GW = sum(a2b.GW)
+                from    #tmpPackingA2B a2b
+                where   a2b.INVNo = g.ID and iif(kdd.orderid is not null, kdd.orderid,'') = iif(kdd.orderid is not null, a2b.OrderID,'')
+				group by a2b.OrderID
             ) mergeA2B group by OrderID
 ) pld
 left join Orders o on o.ID = pld.OrderID
@@ -304,8 +306,8 @@ outer apply(
 	        group by OrderID
             union all
             select  OrderID,AvgPrice
-            from    #tmpPackingA2B
-            where INVNo = g.ID
+            from    #tmpPackingA2B A2B
+            where A2B.INVNo = g.ID and A2B.OrderID = o.ID
     )   mergeA2B
     group by OrderID
 ) POPrice
@@ -333,11 +335,67 @@ order by kd.CDate, kd.DeclareNo, g.id
                 return false;
             }
 
-            this.SetCount(this.printData.Rows.Count);
-            this.ShowWaitMessage("Starting EXCEL...");
             string reportName = "Shipping_R62.xltx";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{reportName}");
-            MyUtility.Excel.CopyToXls(this.printData, string.Empty, reportName, 1, false, null, excelApp, wSheet: excelApp.Sheets[1]);
+            decimal excelMaxrow = 1000000; // 最多一百萬
+            excelApp.DisplayAlerts = false;
+            Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Microsoft.Office.Interop.Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[1];
+            Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[2];
+            worksheet1.Copy(worksheetn);
+            int sheet = 1;
+            this.ShowLoadingText($"Data Loading , please wait …");
+            int loadCounts = 0;
+            int loadCounts2 = 0;
+            int eachCopy = 100000;
+            DataTable tmpDatas = new DataTable();
+
+            tmpDatas = this.printData.Clone();
+
+            foreach (DataRow dr in this.printData.Rows)
+            {
+                DataRow newRow = tmpDatas.NewRow();
+                newRow = dr;
+                tmpDatas.ImportRow(newRow);
+                loadCounts++;
+                loadCounts2++;
+                if (loadCounts % eachCopy == 0)
+                {
+                    this.ShowLoadingText($"Data Loading - {loadCounts}, please wait...");
+                    MyUtility.Excel.CopyToXls(tmpDatas, string.Empty, reportName, loadCounts2 - (eachCopy - 1), false, null, excelApp, wSheet: excelApp.Sheets[sheet]);
+
+                    // 清空DataTable
+                    this.DataTableClearAll(tmpDatas);
+                    tmpDatas = this.printData.Clone();
+
+                    // 超過100萬筆資料 換Sheet
+                    if (loadCounts % excelMaxrow == 0)
+                    {
+                        Microsoft.Office.Interop.Excel.Worksheet worksheetA = (Microsoft.Office.Interop.Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[sheet + 1];
+                        Microsoft.Office.Interop.Excel.Worksheet worksheetB = (Microsoft.Office.Interop.Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[sheet + 2];
+                        worksheetA.Copy(worksheetB);
+                        sheet++;
+                        loadCounts2 = 0;
+                    }
+                }
+            }
+
+            // 沒有超過1萬筆就直接寫入Excel
+            if (loadCounts > 0)
+            {
+                MyUtility.Excel.CopyToXls(tmpDatas, string.Empty, reportName, loadCounts2 - (loadCounts2 % eachCopy) + 1, false, null, excelApp, wSheet: excelApp.Sheets[sheet]);
+            }
+            else
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                this.HideLoadingText();
+                return false;
+            }
+
+            this.SetCount((long)loadCounts);
+            ((Microsoft.Office.Interop.Excel.Worksheet)excelApp.Sheets[sheet + 1]).Delete();
+            ((Microsoft.Office.Interop.Excel.Worksheet)excelApp.Sheets[1]).Select();
+            this.HideLoadingText();
+
             string strExcelName = Class.MicrosoftFile.GetName("Shipping_R62");
             Excel.Workbook workbook = excelApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
@@ -352,6 +410,16 @@ order by kd.CDate, kd.DeclareNo, g.id
             this.HideWaitMessage();
             strExcelName.OpenFile();
             return true;
+        }
+
+        private void DataTableClearAll(DataTable target)
+        {
+            target.Rows.Clear();
+            target.Constraints.Clear();
+            target.Columns.Clear();
+            target.ExtendedProperties.Clear();
+            target.ChildRelations.Clear();
+            target.ParentRelations.Clear();
         }
     }
 }
