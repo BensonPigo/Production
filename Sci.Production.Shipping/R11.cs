@@ -323,6 +323,7 @@ where pd.ID in ({groupItem.WherePackID})
 
                 StringBuilder sqlCmd = new StringBuilder();
                 sqlCmd.Append(@"
+
 alter table #tmpPackingA2B alter column Type varchar(1)
 alter table #tmpPackingA2B alter column INVNo varchar(25)
 alter table #tmpPackingA2B alter column ID varchar(13)
@@ -333,6 +334,56 @@ alter table #tmpPackingA2B alter column ShipModeID varchar(10)
 alter table #tmpPackingDetailA2B alter column ID varchar(13)
 alter table #tmpPackingDetailA2B alter column OrderID varchar(13)
 alter table #tmpPackingDetailA2B alter column OrderShipmodeSeq varchar(2);
+
+select * 
+into #tmpPackingA2B_final
+from (
+select  Type,
+        PulloutDate,
+        INVNo,
+        ID,
+        MDivisionID,
+        BrandID,
+        CustCDID,
+        ShipModeID,
+        ShipQty,
+        CTNQty,
+        GW,
+        CBM 
+from PackingList with (nolock)
+union all
+select  p.Type,
+        p.PulloutDate,
+        p.INVNo,
+        p.ID,
+        p.MDivisionID,
+        p.BrandID,
+        p.CustCDID,
+        p.ShipModeID,
+        p.ShipQty,
+        p.CTNQty,
+        p.GW,
+        p.CBM
+from #tmpPackingA2B p 
+) a
+
+
+select * 
+into #tmpPackingDetailA2B_final
+from (
+select  distinct
+        pd.ID,
+        pd.OrderID,
+        pd.OrderShipmodeSeq
+from PackingList_Detail pd with (nolock)
+union all
+select  distinct
+        pd.ID,
+        pd.OrderID,
+        pd.OrderShipmodeSeq
+from #tmpPackingDetailA2B pd 
+) a
+;
 ");
 
                 if (this.reportType == 1)
@@ -355,10 +406,7 @@ as (
 				select distinct concat(',', IIF(pack.Type = 'B','Bulk',IIF(pack.Type = 'S','Sample','')) )
                 from (
                         select  p.Type
-				        from PackingList p WITH (NOLOCK) where p.INVNo = g.ID
-                        union all
-                        select  p.Type
-				        from #tmpPackingA2B p WITH (NOLOCK) where p.INVNo = g.ID
+				        from #tmpPackingA2B_final p WITH (NOLOCK) where p.INVNo = g.ID
                     ) pack
 				for xml path('')
 		    ),1,1,'')
@@ -367,9 +415,7 @@ as (
 		   , g.ShipModeID
 		   , PulloutDate = (select MAX(pack.PulloutDate) 
                             from (
-                                select PulloutDate from PackingList WITH (NOLOCK) where INVNo = g.ID
-                                union all
-                                select PulloutDate from #tmpPackingA2B WITH (NOLOCK) where INVNo = g.ID
+                                select PulloutDate from #tmpPackingA2B_final WITH (NOLOCK) where INVNo = g.ID
                                 ) pack
                             )
 		   , g.TotalShipQty
@@ -391,9 +437,7 @@ as (
                             sqlCmd.Append(string.Format(
                                 @"
 and (
-        exists(select 1 from PackingList p WITH (NOLOCK) where p.INVNo = g.ID and p.PulloutDate >= '{0}' and p.PulloutDate <= '{1}')
-        or
-        exists(select 1 from #tmpPackingA2B p WITH (NOLOCK) where p.INVNo = g.ID and p.PulloutDate >= '{0}' and p.PulloutDate <= '{1}')
+        exists(select 1 from #tmpPackingA2B_final p WITH (NOLOCK) where p.INVNo = g.ID and p.PulloutDate >= '{0}' and p.PulloutDate <= '{1}')
     )
 ",
                                 Convert.ToDateTime(this.date1).ToString("yyyyMMdd"),
@@ -438,10 +482,8 @@ and (
                         if (this.excludePackingFoc)
                         {
                             sqlCmd.Append(string.Format(@" 
-and (
-        exists(select 1 from PackingList p WITH (NOLOCK) where p.INVNo = g.ID and p.Type != 'F' )
-        or
-        exists(select 1 from #tmpPackingA2B p WITH (NOLOCK) where p.INVNo = g.ID and p.Type != 'F' )
+and (  
+        exists(select 1 from  #tmpPackingA2B_final p WITH (NOLOCK) where p.INVNo = g.ID and p.Type != 'F' )
     )
 "));
                         }
@@ -450,9 +492,7 @@ and (
                         {
                             sqlCmd.Append(string.Format(@" 
 and (
-        exists(select 1 from PackingList p WITH (NOLOCK) where p.INVNo = g.ID and p.Type != 'L' ) 
-        or
-        exists(select 1 from #tmpPackingA2B p WITH (NOLOCK) where p.INVNo = g.ID and p.Type != 'L' ) 
+        exists(select 1 from  #tmpPackingA2B_final p WITH (NOLOCK) where p.INVNo = g.ID and p.Type != 'L' ) 
     )
 "));
                         }
@@ -495,38 +535,6 @@ and (
 
                         sqlCmd.Append($@"
 ),PLData as (
-	select  IE = 'Export'
-			, Type = 'GARMENT'
-			, p.ID
-			, OnBoardDate = null 
-			, p.MDivisionID
-            , [Foundry] = ''
-			, p.BrandID
-			, Category = IIF((select top 1 o.Category 
-							  from Orders o WITH (NOLOCK) 
-							  	   , PackingList_Detail pd WITH (NOLOCK) 
-							  where pd.ID = p.ID 
-							  		and o.ID = pd.OrderID
-							  ) ='B','Bulk','Sample') 
-			, p.CustCDID
-			, Dest = ''  
-			, p.ShipModeID
-			, p.PulloutDate
-			, p.ShipQty
-			, p.CTNQty
-			, p.GW
-			, p.CBM
-			, Forwarder = ''
-			, BLNo = ''
-			, [NoExportCharges] = ''
-	from PackingList p WITH (NOLOCK) 
-	where (p.Type = 'F' or p.Type = 'L')
-    and not exists (
-		  		select 1 
-		  		from ShareExpense WITH (NOLOCK) 
-		  		where InvNo = p.ID) 
-    {whereForPLData}
-    union all
     select  IE = 'Export'
 			, Type = 'GARMENT'
 			, p.ID
@@ -551,7 +559,7 @@ and (
 			, Forwarder = ''
 			, BLNo = ''
 			, [NoExportCharges] = ''
-	from #tmpPackingA2B p WITH (NOLOCK) 
+	from  #tmpPackingA2B_final p WITH (NOLOCK) 
 	where (p.Type = 'F' or p.Type = 'L')
     and not exists (
 		  		select 1 
@@ -623,82 +631,9 @@ select * from PLData");
                             whereForReportType2.Append(string.Format(" and p.Type != 'L' "));
                         }
                         #region 組SQL Command
-                        sqlCmd.Append($@"
-with GBData
-as (
-    select 
-    	   IE = 'Export'
-           , Type = 'GARMENT'
-           , g.ID
-           , OnBoardDate = g.ETD
-           , g.Shipper
-		   , [Factory]=Factory.Value
-           , [Foundry] = iif(ISNULL(g.Foundry,'0') = '0', '' , 'Y')
-           , g.BrandID
-           , Category = IIF(p.Type = 'B','Bulk',IIF(p.Type = 'S','Sample','')) 
-           , OrderQty = isnull((select sum(a.Qty) 
-           						from (
-									select distinct oq.Id
-										   , oq.Seq
-										   , oq.Qty
-									from PackingList_Detail pd WITH (NOLOCK) 
-										 , Order_QtyShip oq WITH (NOLOCK) 
-									where pd.ID = p.ID 
-										  and pd.OrderID = oq.Id 
-										  and pd.OrderShipmodeSeq = oq.Seq) a
-								),0)
-		   , g.CustCDID
-		   , g.Dest
-		   , g.ShipModeID
-		   , PulloutDate = (select MAX(pack.PulloutDate) 
-                            from (
-                                select PulloutDate from PackingList WITH (NOLOCK) where INVNo = g.ID
-                                union all
-                                select PulloutDate from #tmpPackingA2B WITH (NOLOCK) where INVNo = g.ID
-                                ) pack
-                            )
-		   , g.TotalShipQty
-		   , g.TotalCTNQty
-		   , g.TotalGW
-		   , g.TotalCBM
-		   , Forwarder = g.Forwarder+'-'+isnull(l.Abb,'')
-		   , BLNo = ''
-		   , [NoExportCharges] = iif(isnull(g.NoExportCharges,0)=1,'V','')
-		   , [PackingListID]=p.id
-           , SP=SP.Value
-    from GMTBooking g WITH (NOLOCK) 
-    inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
-    left join LocalSupp l WITH (NOLOCK) on l.ID = g.Forwarder
-	OUTER APPLY (
-					SELECT  [Value]= STUFF(
-											(
-												SELECT Distinct ','+o.FactoryID
-												FROM PackingList_Detail pd WITH (NOLOCK) 
-												left join Orders o WITH (NOLOCK) on o.ID = pd.orderID
-												WHERE pd.ID = p.ID
-												FOR XML PATH('')
-											)
-	
-										, 1, 1, '')	
-	)Factory
-	OUTER APPLY (
-        SELECT  [Value]= STUFF(
-            (
-                SELECT Distinct ','+pd.OrderID
-                FROM PackingList_Detail pd WITH (NOLOCK) 
-                WHERE pd.ID = p.ID
-                FOR XML PATH('')
-            )
-            , 1, 1, '')	
-	)SP
-    where not exists (
-			    select 1 
-			    from ShareExpense WITH (NOLOCK) 
-			    where InvNo = g.ID) 
-            {whereForReportType2}");
 
-                        sqlCmd.Append($@"),
-GBDataA2B
+                        sqlCmd.Append($@"
+with GBDataA2B
 as (
     select 
     	   IE = 'Export'
@@ -715,7 +650,7 @@ as (
 									select distinct oq.Id
 										   , oq.Seq
 										   , oq.Qty
-									from #tmpPackingDetailA2B pd WITH (NOLOCK) 
+									from #tmpPackingDetailA2B_final pd WITH (NOLOCK) 
 										 , Order_QtyShip oq WITH (NOLOCK) 
 									where pd.ID = p.ID 
 										  and pd.OrderID = oq.Id 
@@ -726,9 +661,7 @@ as (
 		   , g.ShipModeID
 		   , PulloutDate = (select MAX(pack.PulloutDate) 
                             from (
-                                select PulloutDate from PackingList WITH (NOLOCK) where INVNo = g.ID
-                                union all
-                                select PulloutDate from #tmpPackingA2B WITH (NOLOCK) where INVNo = g.ID
+                                select PulloutDate from  #tmpPackingA2B_final WITH (NOLOCK) where INVNo = g.ID
                                 ) pack
                             )
 		   , g.TotalShipQty
@@ -741,13 +674,13 @@ as (
 		   , [PackingListID]=p.id
            , SP=SP.Value
     from GMTBooking g WITH (NOLOCK) 
-    inner join #tmpPackingA2B p WITH (NOLOCK) on p.INVNo = g.ID
+    inner join #tmpPackingA2B_final p WITH (NOLOCK) on p.INVNo = g.ID
     left join LocalSupp l WITH (NOLOCK) on l.ID = g.Forwarder
 	OUTER APPLY (
 					SELECT  [Value]= STUFF(
 											(
 												SELECT Distinct ','+o.FactoryID
-												FROM #tmpPackingDetailA2B pd WITH (NOLOCK) 
+												FROM #tmpPackingDetailA2B_final pd WITH (NOLOCK) 
 												left join Orders o WITH (NOLOCK) on o.ID = pd.orderID
 												WHERE pd.ID = p.ID
 												FOR XML PATH('')
@@ -759,7 +692,7 @@ as (
         SELECT  [Value]= STUFF(
             (
                 SELECT Distinct ','+pd.OrderID
-                FROM #tmpPackingDetailA2B pd WITH (NOLOCK) 
+                FROM #tmpPackingDetailA2B_final pd WITH (NOLOCK) 
                 WHERE pd.ID = p.ID
                 FOR XML PATH('')
             )
@@ -808,75 +741,7 @@ as (
                         }
 
                         sqlCmd.Append($@"),
-PLData as (
-	select  IE = 'Export'
-			, Type = 'GARMENT'
-			, p.ID
-			, OnBoardDate = null 
-			, p.MDivisionID
-		    , [Factory]=Factory.Value
-            , [Foundry] = ''
-			, p.BrandID
-			, Category = IIF((select top 1 o.Category 
-							  from Orders o WITH (NOLOCK) 
-							  	   , PackingList_Detail pd WITH (NOLOCK) 
-							  where pd.ID = p.ID 
-							  		and o.ID = pd.OrderID
-							  ) ='B','Bulk','Sample') 
-			, OrderQty = isnull((select sum(a.Qty) 
-								 from (
-								 	select distinct oq.Id
-								 		   , oq.Seq
-								 		   , oq.Qty 
-								 	from PackingList_Detail pd WITH (NOLOCK) 
-								 		 , Order_QtyShip oq WITH (NOLOCK) 
-								 	where pd.ID = p.ID 
-								 		  and pd.OrderID = oq.Id 
-								 		  and pd.OrderShipmodeSeq = oq.Seq
-								) a),0)
-			, p.CustCDID
-			, Dest = ''  
-			, p.ShipModeID
-			, p.PulloutDate
-			, p.ShipQty
-			, p.CTNQty
-			, p.GW
-			, p.CBM
-			, Forwarder = ''
-			, BLNo = ''
-			, [NoExportCharges] = ''
-			, [PackingListID]=p.id
-            , SP=SP.Value            
-	from PackingList p WITH (NOLOCK) 
-	OUTER APPLY (
-					SELECT  [Value]= STUFF(
-											(
-												SELECT Distinct ','+o.FactoryID
-												FROM PackingList_Detail pd WITH (NOLOCK) 
-												left join Orders o WITH (NOLOCK) on o.ID = pd.orderID
-												WHERE pd.ID = p.ID
-												FOR XML PATH('')
-											)
-	
-										, 1, 1, '')	
-	)Factory
-	OUTER APPLY (
-        SELECT  [Value]= STUFF(
-            (
-                SELECT Distinct ','+pd.OrderID
-                FROM PackingList_Detail pd WITH (NOLOCK) 
-                WHERE pd.ID = p.ID
-                FOR XML PATH('')
-            )
-            , 1, 1, '')	
-	)SP
-	where (p.Type = 'F' or p.Type = 'L')
-    and not exists (
-		  		select 1 
-		  		from ShareExpense WITH (NOLOCK) 
-		  		where InvNo = p.ID)
-    {whereForPLData}
-union all
+GBDataAll as (
     select  IE = 'Export'
 			, Type = 'GARMENT'
 			, p.ID
@@ -887,7 +752,7 @@ union all
 			, p.BrandID
 			, Category = IIF((select top 1 o.Category 
 							  from Orders o WITH (NOLOCK) 
-							  	   , #tmpPackingDetailA2B pd WITH (NOLOCK) 
+							  	   , #tmpPackingDetailA2B_final pd WITH (NOLOCK) 
 							  where pd.ID = p.ID 
 							  		and o.ID = pd.OrderID
 							  ) ='B','Bulk','Sample') 
@@ -896,7 +761,7 @@ union all
 								 	select distinct oq.Id
 								 		   , oq.Seq
 								 		   , oq.Qty 
-								 	from #tmpPackingDetailA2B pd WITH (NOLOCK) 
+								 	from #tmpPackingDetailA2B_final pd WITH (NOLOCK) 
 								 		 , Order_QtyShip oq WITH (NOLOCK) 
 								 	where pd.ID = p.ID 
 								 		  and pd.OrderID = oq.Id 
@@ -915,12 +780,12 @@ union all
 			, [NoExportCharges] = ''
 			, [PackingListID]=p.id
             , SP=SP.Value            
-	from #tmpPackingA2B p WITH (NOLOCK) 
+	from #tmpPackingA2B_final p WITH (NOLOCK) 
 	OUTER APPLY (
 					SELECT  [Value]= STUFF(
 											(
 												SELECT Distinct ','+o.FactoryID
-												FROM #tmpPackingDetailA2B pd WITH (NOLOCK) 
+												FROM #tmpPackingDetailA2B_final pd WITH (NOLOCK) 
 												left join Orders o WITH (NOLOCK) on o.ID = pd.orderID
 												WHERE pd.ID = p.ID
 												FOR XML PATH('')
@@ -932,7 +797,7 @@ union all
         SELECT  [Value]= STUFF(
             (
                 SELECT Distinct ','+pd.OrderID
-                FROM #tmpPackingDetailA2B pd WITH (NOLOCK) 
+                FROM #tmpPackingDetailA2B_final pd WITH (NOLOCK) 
                 WHERE pd.ID = p.ID
                 FOR XML PATH('')
             )
@@ -947,12 +812,10 @@ union all
 ");
 
                         sqlCmd.Append(@")
-
-select * from GBData
-union all
 select * from GBDataA2B
 union all
-select * from PLData");
+select * from GBDataAll
+");
                         #endregion
                     }
                     else
@@ -972,14 +835,7 @@ as (
 				select distinct CONCAT(',', pack.Name) 
                 from    (
                                 select d.Name
-				                from    PackingList p WITH (NOLOCK),
-				                        DropDownList d WITH (NOLOCK) 
-				                where   p.INVNo = g.ID and
-				                        p.Type = REPLACE(d.ID,'''','') and
-				                        d.Type='Pms_ReportCategory'
-                                union all
-                                select d.Name
-				                from    #tmpPackingA2B p WITH (NOLOCK),
+				                from    #tmpPackingA2B_final p WITH (NOLOCK),
 				                        DropDownList d WITH (NOLOCK) 
 				                where   p.INVNo = g.ID and
 				                        p.Type = REPLACE(d.ID,'''','') and
@@ -992,9 +848,7 @@ as (
 		   , g.ShipModeID
 		   , PulloutDate = (select MAX(pack.PulloutDate) 
                             from (
-                                select PulloutDate from PackingList WITH (NOLOCK) where INVNo = g.ID
-                                union all
-                                select PulloutDate from #tmpPackingA2B WITH (NOLOCK) where INVNo = g.ID
+                                select PulloutDate from  #tmpPackingA2B_final WITH (NOLOCK) where INVNo = g.ID
                                 ) pack
                             )
 		   , g.TotalShipQty
@@ -1052,9 +906,7 @@ as (
                             sqlCmd.Append(string.Format(
                                 @"
 and (
-        exists(select 1 from PackingList p WITH (NOLOCK) where INVNo = g.ID and p.PulloutDate >= '{0}' and p.PulloutDate <= '{1}')
-        or
-        exists(select 1 from #tmpPackingA2B p WITH (NOLOCK) where INVNo = g.ID and p.PulloutDate >= '{0}' and p.PulloutDate <= '{1}')
+        exists(select 1 from #tmpPackingA2B_final p WITH (NOLOCK) where INVNo = g.ID and p.PulloutDate >= '{0}' and p.PulloutDate <= '{1}')
     )
 ",
                                 Convert.ToDateTime(this.date1).ToString("yyyyMMdd"),
@@ -1100,9 +952,7 @@ and (
                         {
                             sqlCmd.Append(string.Format(@" 
 and (
-        exists(select 1 from PackingList p WITH (NOLOCK) where p.INVNo = g.ID and p.Type != 'F' ) 
-        or
-        exists(select 1 from #tmpPackingA2B p WITH (NOLOCK) where p.INVNo = g.ID and p.Type != 'F' ) 
+        exists(select 1 from  #tmpPackingA2B_final p WITH (NOLOCK) where p.INVNo = g.ID and p.Type != 'F' ) 
     )
 "));
                         }
@@ -1111,9 +961,7 @@ and (
                         {
                             sqlCmd.Append(string.Format(@" 
 and (
-        exists(select 1 from PackingList p WITH (NOLOCK) where p.INVNo = g.ID and p.Type != 'L' ) 
-        or
-        exists(select 1 from #tmpPackingA2B p WITH (NOLOCK) where p.INVNo = g.ID and p.Type != 'L' ) 
+        exists(select 1 from  #tmpPackingA2B_final p WITH (NOLOCK) where p.INVNo = g.ID and p.Type != 'L' ) 
     )
 "));
                         }
@@ -1155,44 +1003,7 @@ and (
                         }
 
                         sqlCmd.Append($@"
-),PLData as (
-	select  IE = 'Export'
-			, Type = 'GARMENT'
-			, p.ID
-			, OnBoardDate = null 
-			, p.MDivisionID
-            , [Foundry] = ''
-			, p.BrandID
-			, Category = (
-				select top 1 d.name 
-				from Orders o WITH (NOLOCK) 
-					, PackingList_Detail pd WITH (NOLOCK) 
-					, DropDownList d WITH (NOLOCK) 
-				where pd.ID = p.ID 
-					and o.ID = pd.OrderID
-					and o.Category = REPLACE(d.ID,'''','') 
-					and d.Type='Pms_ReportCategory'
-				) 
-			, p.CustCDID
-			, Dest = ''  
-			, p.ShipModeID
-			, p.PulloutDate
-			, p.ShipQty
-			, p.CTNQty
-			, p.GW
-			, p.CBM
-			, Forwarder = ''
-			, BLNo = ''
-            , BL2No = ''
-			, [NoExportCharges] = ''
-	from PackingList p WITH (NOLOCK) 
-	where (p.Type = 'F' or p.Type = 'L')
-    and not exists (
-		  		select 1 
-		  		from ShareExpense WITH (NOLOCK) 
-		  		where InvNo = p.ID) 
-        {whereForPLData}
-union all
+),GBDataAll as (
 select  IE = 'Export'
 			, Type = 'GARMENT'
 			, p.ID
@@ -1203,7 +1014,7 @@ select  IE = 'Export'
 			, Category = (
 				select top 1 d.name 
 				from Orders o WITH (NOLOCK) 
-					, #tmpPackingDetailA2B pd WITH (NOLOCK) 
+					, #tmpPackingDetailA2B_final pd WITH (NOLOCK) 
 					, DropDownList d WITH (NOLOCK) 
 				where pd.ID = p.ID 
 					and o.ID = pd.OrderID
@@ -1222,7 +1033,7 @@ select  IE = 'Export'
 			, BLNo = ''
             , BL2No = ''
 			, [NoExportCharges] = ''
-	from #tmpPackingA2B p WITH (NOLOCK) 
+	from #tmpPackingA2B_final p WITH (NOLOCK) 
 	where (p.Type = 'F' or p.Type = 'L')
     and not exists (
 		  		select 1 
@@ -1233,9 +1044,7 @@ select  IE = 'Export'
 
                         sqlCmd.Append(@")
 
-select * from GBData
-union all
-select * from PLData");
+select * from GBDataAll");
                     }
                 }
                 else

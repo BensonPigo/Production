@@ -888,8 +888,7 @@ delete Bundle_Detail_Order where id = '{0}';
 
             string cmd = $@"
 Select a.*
---,substring(b.Sewline,1,charindex(',',b.Sewline,1)) as Sewline 
-,b.Sewline
+,Sewline = case when SewLine like '%/%' then substring(Sewline,1,charindex('/',Sewline,1) - 1) else SewLine end
 ,b.poid,b.seasonid,b.styleid,b.styleukey,b.factoryid,
 (
     Select Top(1) OrderID
@@ -931,7 +930,7 @@ Where a.cutref='{this.txtCutRef.Text}' and a.mDivisionid = '{this.keyword}' and 
             else
             {
                 this.CurrentMaintain["Cutno"] = Convert.ToInt32(cutdr["Cutno"].ToString());
-                this.CurrentMaintain["sewinglineid"] = cutdr["Sewline"].Empty() ? string.Empty : cutdr["Sewline"].ToString().Substring(0, 2);
+                this.CurrentMaintain["sewinglineid"] = cutdr["Sewline"].ToString();
                 this.CurrentMaintain["OrderID"] = cutdr["Workorder_Distribute_OrderID"].ToString();    // cutdr["OrderID"].ToString()
                 this.CurrentMaintain["POID"] = cutdr["POID"].ToString();
                 this.CurrentMaintain["PatternPanel"] = cutdr["Fabriccombo"].ToString();
@@ -1059,18 +1058,14 @@ and o.id = '{this.CurrentMaintain["POID"]}'
             }
             else
             {
-                string selectCommand = $"select a.* from orders a WITH (NOLOCK) where a.id = '{newvalue}' and mDivisionid='{this.keyword}' ";
+                string selectCommand = $@"
+select id,POID,Seasonid,Styleid,sewline,styleukey,Factoryid
+    ,Sewline = case when SewLine like '%/%' then substring(Sewline,1,charindex('/',Sewline,1) - 1) else SewLine end
+from orders a WITH (NOLOCK)
+where id = '{newvalue}' and mDivisionid='{this.keyword}' ";
                 if (MyUtility.Check.Seek(selectCommand, out DataRow cutdr, null))
                 {
-                    if (cutdr["Sewline"].ToString().Length > 2)
-                    {
-                        this.CurrentMaintain["sewinglineid"] = cutdr["Sewline"].ToString().Substring(0, 2);
-                    }
-                    else
-                    {
-                        this.CurrentMaintain["sewinglineid"] = cutdr["Sewline"].ToString();
-                    }
-
+                    this.CurrentMaintain["sewinglineid"] = cutdr["Sewline"].ToString();
                     this.CurrentMaintain["OrderID"] = cutdr["id"].ToString();
                     this.CurrentMaintain["POID"] = cutdr["POID"].ToString();
                     this.displaySeason.Text = cutdr["Seasonid"].ToString();

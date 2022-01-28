@@ -81,8 +81,33 @@ from (
 		T.SewInLine,
 		T.SewOffLine,
 		T.TransFtyZone 
+		,[CDCodeNew] = sty.CDCodeNew
+		,[ProductType] = sty.ProductType
+		,[FabricType] = sty.FabricType
+		,[Lining] = sty.Lining
+		,[Gender] = sty.Gender
+		,[Construction] = sty.Construction
+		,t.FMSister
+		,t.SampleGroup
+		,t.OrderReason
 	from #tmp t
-
+	Outer apply (
+		SELECT s.CDCodeNew
+			, s.[ID]
+			, ProductType = r2.Name
+			, FabricType = r1.Name
+			, Lining
+			, Gender
+			, Construction = d1.Name
+		FROM ['+@current_PMS_ServerName+'].Production.dbo.Orders o WITH(NOLOCK)
+		left join ['+@current_PMS_ServerName+'].Production.dbo.Style s WITH(NOLOCK) on s.Ukey = o.StyleUkey
+		left join ['+@current_PMS_ServerName+'].Production.dbo.DropDownList d1 WITH(NOLOCK) on d1.type= ''StyleConstruction'' and d1.ID = s.Construction
+		left join ['+@current_PMS_ServerName+'].Production.dbo.Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= ''Fabric_Kind'' and r1.ID = s.FabricType
+		left join ['+@current_PMS_ServerName+'].Production.dbo.Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= ''Style_Apparel_Type'' and r2.ID = s.ApparelType
+		where o.ID = t.ID
+	)sty
+	'
+SET @SqlCmd2 = '
 	union all
 
 	-- ¥~¥N¤u
@@ -128,8 +153,32 @@ from (
 		T.SewInLine,
 		T.SewOffLine,
 		T.TransFtyZone 
+		,[CDCodeNew] = sty.CDCodeNew
+		,[ProductType] = sty.ProductType
+		,[FabricType] = sty.FabricType
+		,[Lining] = sty.Lining
+		,[Gender] = sty.Gender
+		,[Construction] = sty.Construction
+		,t.FMSister
+		,t.SampleGroup
+		,t.OrderReason
 	from #tmp T
 	LEFT JOIN ['+@current_PMS_ServerName+'].Production.dbo.Factory f WITH(NOLOCK) ON f.ID= T.TransFtyZone
+	Outer apply (
+		SELECT s.CDCodeNew
+			, s.[ID]
+			, ProductType = r2.Name
+			, FabricType = r1.Name
+			, Lining
+			, Gender
+			, Construction = d1.Name
+		FROM ['+@current_PMS_ServerName+'].Production.dbo.Orders o WITH(NOLOCK)
+		left join ['+@current_PMS_ServerName+'].Production.dbo.Style s WITH(NOLOCK) on s.Ukey = o.StyleUkey
+		left join ['+@current_PMS_ServerName+'].Production.dbo.DropDownList d1 WITH(NOLOCK) on d1.type= ''StyleConstruction'' and d1.ID = s.Construction
+		left join ['+@current_PMS_ServerName+'].Production.dbo.Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= ''Fabric_Kind'' and r1.ID = s.FabricType
+		left join ['+@current_PMS_ServerName+'].Production.dbo.Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= ''Style_Apparel_Type'' and r2.ID = s.ApparelType
+		where o.ID = T.ID
+	)sty
 	where TransFtyZone != ''''
 
 ) a
@@ -138,7 +187,7 @@ from (
 drop table #tmp
 '
 
-SET @SqlCmd2 = '
+SET @SqlCmd3 = '
 
 update t
 set	    t.MDivisionID =  s.MDivisionID,
@@ -181,7 +230,16 @@ set	    t.MDivisionID =  s.MDivisionID,
 		t.PulloutComplete =  s.PulloutComplete,
 		t.SewInLine =  s.SewInLine,
 		t.SewOffLine =  s.SewOffLine,
-		t.TransFtyZone =  s.TransFtyZone
+		t.TransFtyZone =  s.TransFtyZone,
+		t.CDCodeNew =  s.CDCodeNew,
+		t.ProductType =  s.ProductType,
+		t.FabricType =  s.FabricType,
+		t.Lining =  s.Lining,
+		t.Gender =  s.Gender,
+		t.Construction =  s.Construction,
+		t.[FM Sister] = s.FMSister,
+		t.[Sample Group] = s.SampleGroup,
+		t.[Order Reason] = s.OrderReason
 from P_LoadingProductionOutput as t
 inner join #Final s 
 on t.FactoryID=s.FactoryID  
@@ -229,7 +287,16 @@ insert into P_LoadingProductionOutput
 	s.PulloutComplete,
 	s.SewInLine,
 	s.SewOffLine,
-	s.TransFtyZone
+	s.TransFtyZone,
+	s.CDCodeNew,
+	s.ProductType,
+	s.FabricType,
+	s.Lining,
+	s.Gender,
+	s.Construction,
+	s.FMSister,
+	s.SampleGroup,
+	s.OrderReason
 from #Final s
 where not exists(
 	select 1 from P_LoadingProductionOutput t 
