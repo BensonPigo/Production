@@ -2697,6 +2697,8 @@
     <Build Include="dbo\Tables\MachineType_Detail.sql" />
     <Build Include="dbo\Tables\WaterFastness_Detail.sql" />
     <Build Include="dbo\Tables\WaterFastness.sql" />
+    <Build Include="dbo\Tables\PerspirationFastness.sql" />
+    <Build Include="dbo\Tables\PerspirationFastness_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

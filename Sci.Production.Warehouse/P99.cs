@@ -2886,6 +2886,22 @@ INSERT INTO ExtendServer.PMSFile.dbo.FIR_Laboratory
 select ID,CrockingTestBeforePicture,CrockingTestAfterPicture,HeatTestBeforePicture,HeatTestAfterPicture,WashTestBeforePicture,WashTestAfterPicture
 from FIR_Laboratory t (NOLOCK)
 where not exists (select 1 from ExtendServer.PMSFile.dbo.FIR_Laboratory s (NOLOCK) where s.ID = t.ID )
+
+Delete a 
+from ExtendServer.PMSFile.dbo.AIR_Laboratory a
+WHERE NOT EXISTS(
+    select 1 from AIR_Laboratory b
+    where a.ID = b.ID AND a.POID=b.POID AND a.Seq1=b.Seq1 AND a.Seq2=b.Seq2
+    
+)
+
+Delete
+from ExtendServer.PMSFile.dbo.FIR_Laboratory
+WHERE ID NOT IN(
+	select ID
+	from FIR_Laboratory
+)
+
 ";
                                                 result = DBProxy.Current.Execute(null, cmd);
                                                 if (!result)
