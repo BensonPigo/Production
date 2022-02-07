@@ -1354,10 +1354,9 @@ where p.INVNo = '{InvNoList}'
             };
 
             DualResult result = PackingA2BWebAPI.GetDataBySql(SystemName, dataBySql, out dt);
-
-            if (dt.Rows.Count == 0)
+            if (!result)
             {
-                MyUtility.Msg.WarningBox("No data found");
+                return dt;
             }
 
             return dt;

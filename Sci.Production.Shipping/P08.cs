@@ -12,6 +12,7 @@ using Sci.Win;
 using System.Reflection;
 using System.Linq;
 using System.Data.SqlClient;
+using Sci.Production.CallPmsAPI;
 
 namespace Sci.Production.Shipping
 {
@@ -994,6 +995,38 @@ string.Format("exec CalculateShareExpense '{0}','{1}',{2}", MyUtility.Convert.Ge
             if (!result)
             {
                 return new DualResult(false, "Re-calcute share expense failed!");
+            }
+
+            string sqlInvNo = $@"select distinct InvNo from ShareExpense where  ShippingAPID = '{this.CurrentMaintain["ID"]}'";
+            if (!(result = DBProxy.Current.Select(string.Empty, sqlInvNo, out DataTable dtInvNo)))
+            {
+                return new DualResult(false, result.ToString());
+            }
+
+            if (dtInvNo != null && dtInvNo.Rows.Count > 0)
+            {
+                // 執行A2B跨廠區資料 & 寫入跨廠區資料到ShareExpense_APP
+                foreach (DataRow item in dtInvNo.Rows)
+                {
+                    string invNos = item["InvNo"].ToString();
+                    List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(invNos);
+                    foreach (string plFromRgCode in listPLFromRgCode)
+                    {
+                        // 跨Server取得ShareExpense_APP所需PackingList資料
+                        DataTable dt = Prgs.DataTable_Packing(plFromRgCode, invNos);
+
+                        if (dt != null && dt.Rows.Count > 0)
+                        {
+                            // 將跨Serve資料更新ShareExpense_APP
+                            DualResult result2 = Prgs.CalculateShareExpense_APP(this.CurrentMaintain["ID"].ToString(), Env.User.UserID, dt);
+
+                            if (!result2)
+                            {
+                                return new DualResult(false, "Re-calcute share expense failed!");
+                            }
+                        }
+                    }
+                }
             }
 
             return base.ClickSavePost();
