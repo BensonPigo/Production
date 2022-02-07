@@ -123,7 +123,7 @@ and o.Category != 'A'
                 }
             }
 
-            this.dtlack = data.Select("lock = 0").TryCopyToDataTable(data);
+            this.dtlack = data;
 
             #region -- Grid1 Setting --
 
