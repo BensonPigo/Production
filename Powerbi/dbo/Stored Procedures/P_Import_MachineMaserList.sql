@@ -40,6 +40,7 @@ select [YYYYMM] = ''''' + @CreateYYYYMM + '''''
        , Mc.LastestReturnDate
        , Mc.Remark 
        , Mc.FAID
+	   , Junk = iif(Mc.junk = 1, ''''Y'''', ''''N'''')
 from Machine.dbo.Machine Mc
 left join Machine.dbo.SciProduction_LocalSupp LS on LS.ID = Mc.LendTo
 left join Machine.dbo.MachineGroup on mc.MachineGroupID = MachineGroup.ID AND mc.MasterGroupID=MachineGroup.MasterGroupID
@@ -83,6 +84,7 @@ insert into P_MachineMasterList(Month
 								,LastEstReturnDate
 								,Remark
 								,FAID
+								,Junk
 )
 select *
 from #tmp

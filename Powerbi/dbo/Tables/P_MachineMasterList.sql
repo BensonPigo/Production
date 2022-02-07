@@ -22,6 +22,7 @@
     [LastEstReturnDate] DATE NULL, 
     [Remark] NVARCHAR(100) NULL CONSTRAINT [DF_P_MachineMasterList_Remark] DEFAULT (''),  
     [FAID] VARCHAR(21) NULL CONSTRAINT [DF_P_MachineMasterList_FAID] DEFAULT (''),  
+    [Junk] VARCHAR NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_P_MachineMasterList] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 )
 
