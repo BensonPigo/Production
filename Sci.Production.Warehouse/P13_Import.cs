@@ -6,6 +6,8 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using System.Linq;
+using Sci.Production.Prg;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
@@ -83,13 +85,14 @@ select  selected = 0
 			                                                         		tcd.ColorID	   = a.ColorID
 			                                                         FOR XML PATH('')),1,1,'') 
                             else '' end
+        ,c.lock
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.PO_Supp p with (nolock) on a.ID = p.ID and a.Seq1 = p.Seq1
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 inner join dbo.Orders on c.poid = orders.id
 inner join dbo.Factory on orders.FactoryID = factory.ID
 INNER JOIN Fabric f on a.SCIRefNo=f.SCIRefNo
-Where a.id = '{0}' and c.lock = 0 and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND Orders.category!='A'
+Where a.id = '{0}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND Orders.category!='A'
     and factory.MDivisionID = '{1}'
 ", sp, Env.User.Keyword));
                 if (!this.txtSeq1.CheckSeq1Empty() && this.txtSeq1.CheckSeq2Empty())
@@ -123,11 +126,19 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty - c.outqty + c.adjustqty - c.Retur
                 DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out this.dtArtwork))
                 {
-                    if (this.dtArtwork.Rows.Count == 0)
+                    if (this.dtArtwork.Select("lock = 1").Any())
                     {
-                        MyUtility.Msg.WarningBox("Data not found!!");
+                        MyUtility.Msg.WarningBox("Some material has been locked, please check material status in WH P38.");
+                    }
+                    else
+                    {
+                        if (!this.dtArtwork.Select("lock = 0").Any())
+                        {
+                            MyUtility.Msg.WarningBox("Data not found!!");
+                        }
                     }
 
+                    this.dtArtwork.Select("lock = 1").Delete();
                     this.listControlBindingSource1.DataSource = this.dtArtwork;
                     this.dtArtwork.DefaultView.Sort = "seq1,seq2,location,dyelot,balance desc";
                 }
