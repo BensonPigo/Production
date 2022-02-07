@@ -532,19 +532,6 @@ where   stocktype = 'B'
                     return;
                 }
 
-                //if (tmpPacking.AsEnumerable().Where(w => w["ErrMsg"].ToString().Contains("This QR Code aleady exist")).Any() ||
-                //    tmpPacking.AsEnumerable().GroupBy(g => MyUtility.Convert.GetString(g["MINDQRCode"].ToString()))
-                //    .Any(a => !MyUtility.Check.Empty(a.Key) && a.Count() > 1))
-                //{
-                //    MyUtility.Msg.WarningBox("QR Code are duplicated!!");
-                //    return;
-                //}
-
-                ////刪除表身重新匯入
-                // foreach (DataRow del in detailData.ToList())
-                // {
-                //    detailData.Rows.Remove(del);
-                // }
                 foreach (DataRow dr2 in tmpPacking.Rows)
                 {
                     // 刪除 Import 重複的資料 by SP# Seq Carton#
@@ -578,6 +565,15 @@ where   stocktype = 'B'
                     {
                         dr2["id"] = this.master["id"];
                         this.detailData.ImportRow(dr2);
+                    }
+                    else
+                    {
+                        foreach (var item in checkRow)
+                        {
+                            item["stockqty"] = dr2["stockqty"];
+                            item["Location"] = dr2["Location"];
+                            item["Remark"] = dr2["Remark"];
+                        }
                     }
                 }
             }
