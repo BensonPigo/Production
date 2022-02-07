@@ -81,7 +81,7 @@ order by fd.ID ";
                     var tempShow = this.picList.Where(t => t.FabricdefectID == dr["ID"].ToString());
                     if (tempShow.Count() != 0)
                     {
-                        var frm = new Camera_ShowNew(dr["ID"].ToString(), tempShow.ToList());
+                        var frm = new Camera_ShowNew(dr["ID"].ToString(), tempShow.ToList(), Type: string.Empty);
                         frm.ShowDialog();
                     }
 

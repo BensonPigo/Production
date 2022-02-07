@@ -58,6 +58,7 @@
     [MoistureStandard1_Comparison] TINYINT         CONSTRAINT [DF_FIR_MoistureStandard1_Comparison] DEFAULT ((0)) NOT NULL,
     [MoistureStandard2]            NUMERIC (4, 1)  CONSTRAINT [DF_FIR_MoistureStandard2] DEFAULT ((0)) NOT NULL,
     [MoistureStandard2_Comparison] TINYINT         CONSTRAINT [DF_FIR_MoistureStandard2_Comparison] DEFAULT ((0)) NOT NULL,
+    [CustInspNumber] VARCHAR(20) CONSTRAINT [DF_FIR_CustInspNumber] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_FIR] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -326,3 +327,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'該布料�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'該布料的成分說明 - 群組', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'MaterialCompositionGrp';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'客人檢驗系統中的檢驗報告單號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'FIR',
+    @level2type = N'COLUMN',
+    @level2name = N'CustInspNumber'

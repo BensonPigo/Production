@@ -57,8 +57,6 @@
             this.labelApprover = new Sci.Win.UI.Label();
             this.displayApprover = new Sci.Win.UI.DisplayBox();
             this.btnToExcel = new Sci.Win.UI.Button();
-            this.txtuserApprover = new Sci.Production.Class.Txtuser();
-            this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             this.displayResult = new Sci.Win.UI.DisplayBox();
             this.textID = new Sci.Win.UI.TextBox();
             this.dateLastInspectionDate = new Sci.Win.UI.DateBox();
@@ -68,6 +66,10 @@
             this.btnSendMail = new Sci.Win.UI.Button();
             this.txtPhysicalInspector = new Sci.Win.UI.TextBox();
             this.labinspector = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtCustInspNumber = new Sci.Win.UI.TextBox();
+            this.txtuserApprover = new Sci.Production.Class.Txtuser();
+            this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -89,8 +91,8 @@
             // 
             // gridcont
             // 
-            this.gridcont.Location = new System.Drawing.Point(12, 195);
-            this.gridcont.Size = new System.Drawing.Size(984, 488);
+            this.gridcont.Location = new System.Drawing.Point(12, 229);
+            this.gridcont.Size = new System.Drawing.Size(984, 454);
             // 
             // undo
             // 
@@ -322,7 +324,7 @@
             this.checkNonInspection.AutoSize = true;
             this.checkNonInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkNonInspection.IsSupportEditMode = false;
-            this.checkNonInspection.Location = new System.Drawing.Point(602, 162);
+            this.checkNonInspection.Location = new System.Drawing.Point(593, 198);
             this.checkNonInspection.Name = "checkNonInspection";
             this.checkNonInspection.ReadOnly = true;
             this.checkNonInspection.Size = new System.Drawing.Size(121, 21);
@@ -332,7 +334,7 @@
             // 
             // btnApprove
             // 
-            this.btnApprove.Location = new System.Drawing.Point(918, 158);
+            this.btnApprove.Location = new System.Drawing.Point(906, 192);
             this.btnApprove.Name = "btnApprove";
             this.btnApprove.Size = new System.Drawing.Size(75, 30);
             this.btnApprove.TabIndex = 127;
@@ -342,7 +344,7 @@
             // 
             // btnEncode
             // 
-            this.btnEncode.Location = new System.Drawing.Point(827, 158);
+            this.btnEncode.Location = new System.Drawing.Point(815, 192);
             this.btnEncode.Name = "btnEncode";
             this.btnEncode.Size = new System.Drawing.Size(80, 30);
             this.btnEncode.TabIndex = 128;
@@ -379,24 +381,6 @@
             this.btnToExcel.UseVisualStyleBackColor = true;
             this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
-            // txtuserApprover
-            // 
-            this.txtuserApprover.DisplayBox1Binding = "";
-            this.txtuserApprover.Location = new System.Drawing.Point(94, 162);
-            this.txtuserApprover.Name = "txtuserApprover";
-            this.txtuserApprover.Size = new System.Drawing.Size(305, 23);
-            this.txtuserApprover.TabIndex = 131;
-            this.txtuserApprover.TextBox1Binding = "";
-            // 
-            // txtsupplier
-            // 
-            this.txtsupplier.DisplayBox1Binding = "";
-            this.txtsupplier.Location = new System.Drawing.Point(325, 40);
-            this.txtsupplier.Name = "txtsupplier";
-            this.txtsupplier.Size = new System.Drawing.Size(147, 23);
-            this.txtsupplier.TabIndex = 109;
-            this.txtsupplier.TextBox1Binding = "";
-            // 
             // displayResult
             // 
             this.displayResult.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -420,6 +404,7 @@
             // 
             // dateLastInspectionDate
             // 
+            this.dateLastInspectionDate.IsSupportEditMode = false;
             this.dateLastInspectionDate.Location = new System.Drawing.Point(826, 41);
             this.dateLastInspectionDate.Name = "dateLastInspectionDate";
             this.dateLastInspectionDate.ReadOnly = true;
@@ -428,6 +413,7 @@
             // 
             // dateArriveWHDate
             // 
+            this.dateArriveWHDate.IsSupportEditMode = false;
             this.dateArriveWHDate.Location = new System.Drawing.Point(826, 12);
             this.dateArriveWHDate.Name = "dateArriveWHDate";
             this.dateArriveWHDate.ReadOnly = true;
@@ -441,7 +427,7 @@
             this.displaydescDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displaydescDetail.Location = new System.Drawing.Point(247, 102);
             this.displaydescDetail.Name = "displaydescDetail";
-            this.displaydescDetail.Size = new System.Drawing.Size(730, 21);
+            this.displaydescDetail.Size = new System.Drawing.Size(729, 21);
             this.displaydescDetail.TabIndex = 140;
             // 
             // btnToExcel_defect
@@ -456,7 +442,7 @@
             // 
             // btnSendMail
             // 
-            this.btnSendMail.Location = new System.Drawing.Point(732, 159);
+            this.btnSendMail.Location = new System.Drawing.Point(720, 193);
             this.btnSendMail.Name = "btnSendMail";
             this.btnSendMail.Size = new System.Drawing.Size(85, 30);
             this.btnSendMail.TabIndex = 141;
@@ -483,9 +469,47 @@
             this.labinspector.TabIndex = 233;
             this.labinspector.Text = "Physical Inspector";
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(700, 163);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(123, 23);
+            this.label1.TabIndex = 235;
+            this.label1.Text = "Cust Insp. Number";
+            // 
+            // txtCustInspNumber
+            // 
+            this.txtCustInspNumber.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtCustInspNumber.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtCustInspNumber.Location = new System.Drawing.Point(826, 164);
+            this.txtCustInspNumber.Name = "txtCustInspNumber";
+            this.txtCustInspNumber.ReadOnly = true;
+            this.txtCustInspNumber.Size = new System.Drawing.Size(150, 23);
+            this.txtCustInspNumber.TabIndex = 236;
+            // 
+            // txtuserApprover
+            // 
+            this.txtuserApprover.DisplayBox1Binding = "";
+            this.txtuserApprover.Location = new System.Drawing.Point(94, 162);
+            this.txtuserApprover.Name = "txtuserApprover";
+            this.txtuserApprover.Size = new System.Drawing.Size(305, 23);
+            this.txtuserApprover.TabIndex = 131;
+            this.txtuserApprover.TextBox1Binding = "";
+            // 
+            // txtsupplier
+            // 
+            this.txtsupplier.DisplayBox1Binding = "";
+            this.txtsupplier.Location = new System.Drawing.Point(325, 40);
+            this.txtsupplier.Name = "txtsupplier";
+            this.txtsupplier.Size = new System.Drawing.Size(147, 23);
+            this.txtsupplier.TabIndex = 109;
+            this.txtsupplier.TextBox1Binding = "";
+            // 
             // P01_PhysicalInspection
             // 
             this.ClientSize = new System.Drawing.Size(1008, 733);
+            this.Controls.Add(this.txtCustInspNumber);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.txtPhysicalInspector);
             this.Controls.Add(this.labinspector);
             this.Controls.Add(this.btnSendMail);
@@ -530,6 +554,7 @@
             this.GridUniqueKey = "Roll,Dyelot";
             this.KeyField1 = "ID";
             this.Name = "P01_PhysicalInspection";
+            this.OnLineHelpID = "Sci.Win.Subs.Input4";
             this.Text = "Physical Inspection";
             this.WorkAlias = "Fir_Physical";
             this.Controls.SetChildIndex(this.labelSP, 0);
@@ -572,6 +597,8 @@
             this.Controls.SetChildIndex(this.btnSendMail, 0);
             this.Controls.SetChildIndex(this.labinspector, 0);
             this.Controls.SetChildIndex(this.txtPhysicalInspector, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.txtCustInspNumber, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -622,5 +649,7 @@
         private Win.UI.Button btnSendMail;
         private Win.UI.TextBox txtPhysicalInspector;
         private Win.UI.Label labinspector;
+        private Win.UI.Label label1;
+        private Win.UI.TextBox txtCustInspNumber;
     }
 }

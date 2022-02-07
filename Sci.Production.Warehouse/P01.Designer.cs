@@ -179,6 +179,8 @@
             this.txttpeuserPOHandle = new Sci.Production.Class.Txttpeuser();
             this.txttpeuserSMR = new Sci.Production.Class.Txttpeuser();
             this.txttpeuserPOSMR = new Sci.Production.Class.Txttpeuser();
+            this.dispSewingLine = new Sci.Win.UI.DisplayBox();
+            this.labSewingLine = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -194,6 +196,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.dispSewingLine);
+            this.detailcont.Controls.Add(this.labSewingLine);
             this.detailcont.Controls.Add(this.displayAllowancePO);
             this.detailcont.Controls.Add(this.comboSubconInType);
             this.detailcont.Controls.Add(this.txtdropdownlistCategory);
@@ -290,10 +294,9 @@
             this.detailcont.Controls.Add(this.labelOrderQty);
             this.detailcont.Controls.Add(this.txtuserMCHandle);
             this.detailcont.Controls.Add(this.txtuserLocalMR);
+            this.detailcont.Controls.Add(this.txttpeuserPOSMR);
             this.detailcont.Controls.Add(this.txttpeuserHandle);
             this.detailcont.Controls.Add(this.txttpeuserPOHandle);
-            this.detailcont.Controls.Add(this.txttpeuserSMR);
-            this.detailcont.Controls.Add(this.txttpeuserPOSMR);
             this.detailcont.Controls.Add(this.labelBuyMonth);
             this.detailcont.Controls.Add(this.labelUnit);
             this.detailcont.Controls.Add(this.labelLocalMR);
@@ -306,6 +309,7 @@
             this.detailcont.Controls.Add(this.dateMNtoiceApv);
             this.detailcont.Controls.Add(this.dateEachConsApv);
             this.detailcont.Controls.Add(this.dateActPullout);
+            this.detailcont.Controls.Add(this.txttpeuserSMR);
             this.detailcont.Controls.Add(this.dateEstPullout);
             this.detailcont.Controls.Add(this.dateSewingOffline);
             this.detailcont.Controls.Add(this.dateSewingInline);
@@ -1482,7 +1486,7 @@
             // 
             this.dateEstPullout.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PulloutDate", true));
             this.dateEstPullout.IsSupportEditMode = false;
-            this.dateEstPullout.Location = new System.Drawing.Point(593, 355);
+            this.dateEstPullout.Location = new System.Drawing.Point(593, 359);
             this.dateEstPullout.Name = "dateEstPullout";
             this.dateEstPullout.ReadOnly = true;
             this.dateEstPullout.Size = new System.Drawing.Size(100, 21);
@@ -1490,7 +1494,7 @@
             // 
             // labelEstPullout
             // 
-            this.labelEstPullout.Location = new System.Drawing.Point(492, 356);
+            this.labelEstPullout.Location = new System.Drawing.Point(492, 360);
             this.labelEstPullout.Name = "labelEstPullout";
             this.labelEstPullout.Size = new System.Drawing.Size(98, 21);
             this.labelEstPullout.TabIndex = 160;
@@ -1855,6 +1859,24 @@
             this.txttpeuserPOSMR.Size = new System.Drawing.Size(302, 23);
             this.txttpeuserPOSMR.TabIndex = 173;
             // 
+            // dispSewingLine
+            // 
+            this.dispSewingLine.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.dispSewingLine.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewLine", true));
+            this.dispSewingLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.dispSewingLine.Location = new System.Drawing.Point(593, 333);
+            this.dispSewingLine.Name = "dispSewingLine";
+            this.dispSewingLine.Size = new System.Drawing.Size(101, 21);
+            this.dispSewingLine.TabIndex = 229;
+            // 
+            // labSewingLine
+            // 
+            this.labSewingLine.Location = new System.Drawing.Point(492, 333);
+            this.labSewingLine.Name = "labSewingLine";
+            this.labSewingLine.Size = new System.Drawing.Size(98, 21);
+            this.labSewingLine.TabIndex = 228;
+            this.labSewingLine.Text = "Sewing Line";
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 721);
@@ -2036,5 +2058,7 @@
         private Win.UI.DisplayBox displayIsMixMarker;
         private Ict.Win.UI.ComboBox comboSubconInType;
         private Win.UI.DisplayBox displayAllowancePO;
+        private Win.UI.DisplayBox dispSewingLine;
+        private Win.UI.Label labSewingLine;
     }
 }

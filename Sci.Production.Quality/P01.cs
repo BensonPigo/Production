@@ -157,7 +157,8 @@ namespace Sci.Production.Quality
 	MoistureStandard1,
 	MoistureStandard2,
 	MoistureStandard1_Comparison,
-	MoistureStandard2_Comparison
+	MoistureStandard2_Comparison,
+    a.CustInspNumber
 From FIR a WITH (NOLOCK) 
 Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
 Left join TransferIn ti WITH (NOLOCK) on ti.id = a.receivingid
@@ -496,6 +497,7 @@ and ActualYds > 0
                 .Text("Physical", header: "Physical\n Inspection", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: phy)
                 .Numeric("TotalInspYds", header: "Act. Ttl Ysd\nInspection", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true, settings: phyYds)
                 .Date("PhysicalDate", header: "Last Phy.\nInsp. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: phyD)
+                .Text("CustInspNumber", header: "Cust Insp. Number", width: Widths.AnsiChars(12))
                 .CheckBox("NonWeight", header: "Weight N/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonWei)
                 .Text("Weight", header: "Weight\n Test", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: wei)
                 .Date("WeightDate", header: "Last Wei.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: weiD)
@@ -531,6 +533,7 @@ and ActualYds > 0
             this.detailgrid.Columns["Physical"].DefaultCellStyle.BackColor = Color.LemonChiffon;
             this.detailgrid.Columns["TotalInspYds"].DefaultCellStyle.BackColor = Color.LemonChiffon;
             this.detailgrid.Columns["PhysicalDate"].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            this.detailgrid.Columns["CustInspNumber"].DefaultCellStyle.BackColor = Color.LemonChiffon;
 
             // 青藍組
             this.detailgrid.Columns["Weight"].DefaultCellStyle.BackColor = Color.LightCyan;

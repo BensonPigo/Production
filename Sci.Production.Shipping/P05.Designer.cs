@@ -122,6 +122,8 @@
             this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.displayCategory = new Sci.Win.UI.DisplayBox();
             this.labCategory = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.displayCMTIvnNo = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -138,6 +140,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayCMTIvnNo);
+            this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.displayCategory);
             this.masterpanel.Controls.Add(this.labCategory);
             this.masterpanel.Controls.Add(this.txtPulloutPort1);
@@ -327,6 +331,8 @@
             this.masterpanel.Controls.SetChildIndex(this.txtPulloutPort1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labCategory, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayCategory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayCMTIvnNo, 0);
             // 
             // detailpanel
             // 
@@ -1442,6 +1448,24 @@
             this.labCategory.TabIndex = 94;
             this.labCategory.Text = "Category";
             // 
+            // label2
+            // 
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label2.Location = new System.Drawing.Point(304, 326);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(140, 23);
+            this.label2.TabIndex = 95;
+            this.label2.Text = "CMT Invoice No.";
+            // 
+            // displayCMTIvnNo
+            // 
+            this.displayCMTIvnNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCMTIvnNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCMTIvnNo.Location = new System.Drawing.Point(447, 326);
+            this.displayCMTIvnNo.Name = "displayCMTIvnNo";
+            this.displayCMTIvnNo.Size = new System.Drawing.Size(100, 23);
+            this.displayCMTIvnNo.TabIndex = 96;
+            // 
             // P05
             // 
             this.ApvChkValue = "New";
@@ -1580,5 +1604,7 @@
         private Win.UI.Label label1;
         private Win.UI.DisplayBox displayCategory;
         private Win.UI.Label labCategory;
+        private Win.UI.DisplayBox displayCMTIvnNo;
+        private Win.UI.Label label2;
     }
 }

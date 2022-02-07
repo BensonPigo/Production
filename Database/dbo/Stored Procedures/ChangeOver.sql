@@ -134,20 +134,35 @@ BEGIN
 
 	--填Category欄位值
 	update ChgOver set Category = c.Category
-	from (select ID,iif(b.LastProdType <> '' and b.ProductionType <> '', (case when b.ProductionType <> b.LastProdType and b.FabricType <> b.LastFabType then 'A'
-						   when b.ProductionType <> b.LastProdType and b.FabricType = b.LastFabType then 'B'
-						   when b.ProductionType = b.LastProdType and b.FabricType <> b.LastFabType then 'C'
-						   when b.ProductionType = b.LastProdType and b.FabricType = b.LastFabType then 'D'
-						   else ''
-					  end),'') as Category
-		  from (select ID,ProductionType,FabricType,LAG(ProductionType,1,'') OVER (Partition by a.FactoryID,a.SewingLineID order by a.FactoryID,a.SewingLineID,a.Inline,a.ID) as LastProdType,
-					LAG(FabricType,1,'') OVER (Partition by a.FactoryID,a.SewingLineID order by a.FactoryID,a.SewingLineID,a.Inline,a.ID) as LastFabType
-				from (select co.ID,co.FactoryID,co.SewingLineID,co.StyleID,co.ComboType,co.Inline,
-						  isnull(case when co.ComboType = 'T' then cc.TopProductionType when co.ComboType = 'B' then cc.BottomProductionType when co.ComboType = 'I' then cc.InnerProductionType when co.ComboType = 'O' then cc.OuterProductionType else '' end,'') as ProductionType,
-						  isnull(case when co.ComboType = 'T' then cc.TopFabricType when co.ComboType = 'B' then cc.BottomFabricType when co.ComboType = 'I' then cc.InnerFabricType when co.ComboType = 'O' then cc.OuterFabricType else '' end,'') as FabricType
-					  from ChgOver co WITH (NOLOCK)
-					  left join CDCode_Content cc WITH (NOLOCK) on co.CDCodeID = cc.ID) a) b
-		  ) c
+	from (
+		select
+			ID,
+			Category = iif(b.LastProdType <> '' and b.ProductionType <> '', 
+				(
+				case when b.ProductionType <> b.LastProdType and b.FabricType <> b.LastFabType then 'A'
+					when b.ProductionType <> b.LastProdType and b.FabricType = b.LastFabType then 'B'
+					when b.ProductionType = b.LastProdType and b.FabricType <> b.LastFabType then 'C'
+					when b.ProductionType = b.LastProdType and b.FabricType = b.LastFabType then 'D'
+					else ''
+					end),'') 
+		from (
+			select ID,ProductionType,FabricType,LAG(ProductionType,1,'') OVER (Partition by a.FactoryID,a.SewingLineID order by a.FactoryID,a.SewingLineID,a.Inline,a.ID) as LastProdType,
+			LAG(FabricType,1,'') OVER (Partition by a.FactoryID,a.SewingLineID order by a.FactoryID,a.SewingLineID,a.Inline,a.ID) as LastFabType
+			from (
+				select co.ID,co.FactoryID,co.SewingLineID,co.StyleID,co.ComboType,co.Inline,
+				ProductionType = case when s.StyleUnit = 'PCS'
+									  then (select r.Name from Reason r where ReasonTypeID = 'Style_Apparel_Type' and r.ID = s.ApparelType)
+									  else (select r.Name from Style_Location sl inner join Reason r on r.ID = sl.ApparelType where ReasonTypeID = 'Style_Apparel_Type' and sl.StyleUkey = s.Ukey and sl.Location =co.ComboType)
+									  end,
+				FabricType = case when s.StyleUnit = 'PCS' then s.FabricType
+									  else (select sl.FabricType from Style_Location sl where sl.StyleUkey = s.Ukey and sl.Location =co.ComboType)
+									  end
+			from ChgOver co
+			inner join orders o on o.id = co.OrderID
+			inner join Style s on s.Ukey = o.StyleUkey
+			) a
+		) b
+	) c
 	where c.ID = ChgOver.ID
 
 

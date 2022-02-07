@@ -6,6 +6,7 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using System.Linq;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Warehouse
 {
@@ -60,7 +61,7 @@ select  selected = 0
 	    , seq = concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2)
 	    , [description] = dbo.getMtlDesc(a.poid,b.seq1,b.seq2,2,0)
 	    , b.RequestQty
-        , Stock = c.inqty - c.outqty + c.adjustqty - c.ReturnQty
+        , Stock = iif(c.lock = 1, 0, c.inqty - c.outqty + c.adjustqty - c.ReturnQty)
         , location = dbo.Getlocation(c.ukey)
         , Qty = 0.00
         , issueqty = 0
@@ -69,25 +70,20 @@ select  selected = 0
         , stockunit = (select stockunit 
 	   				  from po_supp_detail WITH (NOLOCK) 
 	   				  where id = c.poid 
-	   				  		and seq1 = c.seq1 
+	   				  		and seq1 = c.seq1
 	   				  		and seq2 = c.seq2)
+        ,c.lock
 from dbo.lack a WITH (NOLOCK) 
 inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
-inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.POID 
+LEFT join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.POID 
 											   and c.seq1 = b.seq1 
 											   and c.seq2  = b.seq2 
 											   and c.stocktype = 'B'
 LEFT join Orders o ON o.ID=a.POID
 where a.id = '{0}' 
 and o.Category != 'A'
-and c.lock = 0 ", this.dr_master["requestid"]));
+", this.dr_master["requestid"]));
             strSQLCmd.Append(Environment.NewLine); // 換行
-
-           // 判斷LACKING
-            if (this.Type != "Lacking")
-            {
-                strSQLCmd.Append(" and (c.inqty - c.outqty + c.adjustqty - c.ReturnQty) > 0");
-            }
 
            // string AA = strSQLCmd.ToString();
             #endregion
@@ -114,12 +110,20 @@ and c.lock = 0 ", this.dr_master["requestid"]));
             }
 
             this.P15.HideWaitMessage();
-            this.dtlack = data;
 
-            if (this.dtlack.Rows.Count == 0)
+            if (data.Select("lock = 1").Any())
             {
-                MyUtility.Msg.WarningBox("Data not found!!");
+                MyUtility.Msg.WarningBox("Some material has been locked, please check material status in WH P38.");
             }
+            else
+            {
+                if (!data.Select("lock = 0").Any())
+                {
+                    MyUtility.Msg.WarningBox("Data not found!!");
+                }
+            }
+
+            this.dtlack = data;
 
             #region -- Grid1 Setting --
 

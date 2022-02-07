@@ -31,6 +31,7 @@ namespace Sci.Production.Quality
         private string poid;
         private string seq1;
         private string seq2;
+        private string defect;
 
         /// <inheritdoc/>
         public P02_Detail(bool canEdit, string airID, string spNo)
@@ -41,7 +42,28 @@ namespace Sci.Production.Quality
             this.Btn_status(this.id);
             this.Button_enable(this.canedit);
 
-            string air_cmd = string.Format("select * from air WITH (NOLOCK) where id='{0}'", this.id);
+            string air_cmd = $@"
+
+select MtlTypeID = isnull(f.MtlTypeID,'')
+,[DefectDesc] = DefectDesc.ValList
+,a.* 
+from air a WITH (NOLOCK) 
+left join Fabric f on a.SCIRefno = f.SCIRefno
+outer apply(
+	--select * from AccessoryDefect
+	select ValList = Stuff((
+		select concat('+',val)
+		from (
+				select 	distinct
+					val = d.ID+'-'+d.Description
+				from dbo.AccessoryDefect d
+				where exists(select * from SplitString(a.Defect,'+') s where s.Data = d.ID)
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+)DefectDesc
+where a.id='{this.id}'
+";
             DataRow dr;
             if (MyUtility.Check.Seek(air_cmd, out dr))
             {
@@ -50,6 +72,9 @@ namespace Sci.Production.Quality
                 this.seq2 = dr["SEQ2"].ToString();
                 this.receivingID = dr["ReceivingID"].ToString();
                 this.poid = dr["Poid"].ToString();
+                this.txtMaterialType.Text = dr["MtlTypeID"].ToString();
+                this.defect = dr["Defect"].ToString();
+                this.editDefect.Text = dr["DefectDesc"].ToString();
             }
             else
             {
@@ -58,8 +83,12 @@ namespace Sci.Production.Quality
                 this.seq1 = string.Empty;
                 this.seq2 = string.Empty;
                 this.poid = string.Empty;
+                this.txtMaterialType.Text = string.Empty;
+                this.defect = string.Empty;
+                this.editDefect.Text = string.Empty;
             }
 
+            this.CalculateReject();
             Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
             comboBox1_RowSource.Add("Approval", "Approval");
             comboBox1_RowSource.Add("N/A", "N/A");
@@ -75,6 +104,7 @@ namespace Sci.Production.Quality
         {
             base.OnFormLoaded();
             this.Button_enable(this.canedit);
+            this.CalculateReject();
             this.LoadPicture();
         }
 
@@ -355,8 +385,8 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
                         string inspDate = MyUtility.Check.Empty(this.dateInspectDate.Value) ? "Null" : "'" + string.Format("{0:yyyy-MM-dd}", this.dateInspectDate.Value) + "'";
                         updatesql = string.Format(
                         "Update Air set InspQty= '{0}',RejectQty='{1}',Inspdate = {2},Inspector = '{3}',Result= '{4}',Defect='{5}',Remark='{6}' where id ='{7}'",
-                        this.txtInspectedQty.Text, this.txtRejectedQty.Text,
-                        inspDate, this.txtInspector.TextBox1.Text, this.comboResult.Text, this.editDefect.Text, this.txtRemark.Text, this.id);
+                        this.txtInspectedQty.Value, this.txtRejectedQty.Value,
+                        inspDate, this.txtInspector.TextBox1.Text, this.comboResult.Text, this.defect, this.txtRemark.Text, this.id);
 
                         DualResult upResult;
                         TransactionScope transactionscope = new TransactionScope();
@@ -382,6 +412,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
                             }
                         }
 
+                        this.LoadPicture();
                         MyUtility.Msg.InfoBox("Successfully");
                         this.btnAmend.Text = "Encode";
                         this.btnEdit.Text = "Edit";
@@ -475,7 +506,15 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
                 }
 
                 this.CurrentData["Defect"] = item.GetSelectedString().Replace(",", "+");
-                this.editDefect.Text = item.GetSelectedString().Replace(",", "+");
+                this.defect = item.GetSelectedString().Replace(",", "+");
+                string strEditDefect = string.Empty;
+
+                for (int i = 0; i < item.GetSelectedList().Count; i++)
+                {
+                    strEditDefect += item.GetSelecteds()[i]["id"].ToString().TrimEnd() + "-" + item.GetSelecteds()[i]["description"].ToString().TrimEnd() + "+";
+                }
+
+                this.editDefect.Text = strEditDefect.Substring(0, strEditDefect.Length - 1);
             }
         }
 
@@ -556,7 +595,28 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
         private void ChangeData()
         {
             this.id = this.CurrentData["Id"].ToString();
-            string air_cmd = string.Format("select * from air WITH (NOLOCK) where id='{0}'", this.id);
+            string air_cmd = $@"
+
+select MtlTypeID = isnull(f.MtlTypeID,'')
+,[DefectDesc] = DefectDesc.ValList
+,a.* 
+from air a WITH (NOLOCK) 
+left join Fabric f on a.SCIRefno = f.SCIRefno
+outer apply(
+	--select * from AccessoryDefect
+	select ValList = Stuff((
+		select concat('+',val)
+		from (
+				select 	distinct
+					val = d.ID+'-'+d.Description
+				from dbo.AccessoryDefect d
+				where exists(select * from SplitString(a.Defect,'+') s where s.Data = d.ID)
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+)DefectDesc
+where a.id='{this.id}'
+";
 
             DataTable dt;
             DBProxy.Current.Select(null, air_cmd, out dt);
@@ -566,6 +626,9 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
                 this.receivingID = dt.Rows[0]["ReceivingID"].ToString();
                 this.seq1 = dt.Rows[0]["SEQ1"].ToString();
                 this.seq2 = dt.Rows[0]["SEQ2"].ToString();
+                this.txtMaterialType.Text = dt.Rows[0]["MtlTypeID"].ToString();
+                this.defect = dt.Rows[0]["Defect"].ToString();
+                this.editDefect.Text = dt.Rows[0]["DefectDesc"].ToString();
                 if (dt.Rows[0]["Status"].ToString().Trim() == "Confirmed")
                 {
                     this.btnAmend.Text = "Amend";
@@ -581,21 +644,40 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
                 this.receivingID = string.Empty;
                 this.seq1 = string.Empty;
                 this.seq2 = string.Empty;
+                this.txtMaterialType.Text = string.Empty;
+                this.defect = string.Empty;
+                this.editDefect.Text = string.Empty;
             }
 
             this.Button_enable(this.canedit);
+        }
+
+        private void CalculateReject()
+        {
+            decimal InspQty = MyUtility.Convert.GetDecimal(this.txtInspectedQty.Value);
+            decimal RejectQty = MyUtility.Convert.GetDecimal(this.txtRejectedQty.Value);
+            if (MyUtility.Check.Empty(InspQty) || MyUtility.Check.Empty(RejectQty))
+            {
+                this.txtRejectPercent.Value = 0;
+            }
+            else
+            {
+                this.txtRejectPercent.Value = Math.Round(((decimal)RejectQty / InspQty) * 100, 2);
+            }
         }
 
         private void Right_Click(object sender, EventArgs e)
         {
             this.ChangeData();
             this.LoadPicture();
+            this.CalculateReject();
         }
 
         private void Left_Click(object sender, EventArgs e)
         {
             this.ChangeData();
             this.LoadPicture();
+            this.CalculateReject();
         }
 
         /// <summary>
@@ -604,8 +686,8 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
         /// </summary>
         private void ReBindingData()
         {
-            this.txtInspectedQty.Text = this.CurrentData["InspQty"].ToString();
-            this.txtRejectedQty.Text = this.CurrentData["RejectQty"].ToString();
+            this.txtInspectedQty.Value = MyUtility.Convert.GetDecimal(this.CurrentData["InspQty"]);
+            this.txtRejectedQty.Value = MyUtility.Convert.GetDecimal(this.CurrentData["RejectQty"]);
             this.dateInspectDate.Value = MyUtility.Convert.GetDate(this.CurrentData["InspDate"]);
             this.txtInspector.TextBox1.Text = this.CurrentData["Inspector"].ToString();
             this.comboResult.SelectedValue = this.CurrentData["Result1"].ToString();
@@ -672,8 +754,6 @@ delete [ExtendServer].PMSFile.dbo.[AIR_DefectImage] where Ukey = @Ukey
                     return;
                 }
             }
-
-            this.LoadPicture();
         }
 
         private void LoadPicture()
@@ -809,6 +889,22 @@ delete [ExtendServer].PMSFile.dbo.[AIR_DefectImage] where Ukey = @Ukey
                 }
 
                 this.SetPicCombox();
+            }
+        }
+
+        private void TxtInspectedQty_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!MyUtility.Check.Empty(this.txtInspectedQty.Value))
+            {
+                this.CalculateReject();
+            }
+        }
+
+        private void TxtRejectedQty_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!MyUtility.Check.Empty(this.txtRejectedQty.Value))
+            {
+                this.CalculateReject();
             }
         }
     }

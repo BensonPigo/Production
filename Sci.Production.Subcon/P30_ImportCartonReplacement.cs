@@ -157,7 +157,7 @@ select
     l.UnitID,
     l.Price,
     Amount = isnull(rld.RequestQty * l.Price, 0),
-    Remark = '',
+    rld.Remark,
     ReplacementLocalItemID = rl.id,
     b.BuyerID,
     ReasonID = rld.ReplacementLocalItemReasonID,
@@ -280,10 +280,10 @@ AND (O.Qty-pd.ShipQty-inv.DiffQty = 0)";
                 return;
             }
 
-            DataRow[] dr2 = dtImport.Select("Selected = 1 and remark = ''");
+            DataRow[] dr2 = dtImport.Select("Selected = 1");
             if (dr2.Length == 0)
             {
-                MyUtility.Msg.WarningBox("Please select rows with empty remark first!");
+                MyUtility.Msg.WarningBox("Please select rows first!");
                 return;
             }
 
