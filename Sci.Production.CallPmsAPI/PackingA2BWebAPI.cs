@@ -208,6 +208,31 @@ where ID in (select InvNo from Pullout_Detail with (nolock) where ID = '{pullout
             }
         }
 
+        public static List<string> GetPLFromRgCodeByMutiInvNo(List<string> listInvNo)
+        {
+            if (listInvNo == null || listInvNo.Count == 0)
+            {
+                return new List<string>();
+            }
+
+            string sqlGetPLFromRgCode = $"select distinct PLFromRgCode from GMTBooking_Detail with (nolock) where ID in ({listInvNo.Select(s => $"'{s}'").JoinToString(",")})";
+            DataTable dtResult;
+            DualResult result = DBProxy.Current.Select(null, sqlGetPLFromRgCode, out dtResult);
+            if (!result)
+            {
+                throw result.GetException();
+            }
+
+            if (dtResult.Rows.Count == 0)
+            {
+                return new List<string>();
+            }
+            else
+            {
+                return dtResult.AsEnumerable().Select(s => s["PLFromRgCode"].ToString()).ToList(); ;
+            }
+        }
+
         public static List<string> GetPLFromRgCodeByInvNo(string InvNo)
         {
             string sqlGetPLFromRgCode = $"select distinct PLFromRgCode from GMTBooking_Detail with (nolock) where ID = '{InvNo}'";
