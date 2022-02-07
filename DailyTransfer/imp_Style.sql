@@ -31,6 +31,8 @@ SET
       ,a.AddDate	      =b.AddDate
       ,a.EditName	      =b.EditName
       ,a.EditDate	      =b.EditDate
+      ,a.ApparelType	  =isnull(b.ApparelType, '')
+      ,a.FabricType	      =isnull(b.FabricType, '')
 from Production.dbo.Style_Location as a 
 inner join Trade_To_Pms.dbo.Style_Location as b ON a.StyleUkey=b.StyleUkey AND a.Location	= b.Location
 -------------------------- INSERT INTO ��
@@ -43,6 +45,8 @@ StyleUkey
       ,AddDate
       ,EditName
       ,EditDate
+	  ,ApparelType
+	  ,FabricType
 )
 select 
 	   b.StyleUkey
@@ -52,6 +56,8 @@ select
       ,b.AddDate
       ,b.EditName
       ,b.EditDate
+	  ,isnull(b.ApparelType, '')
+	  ,isnull(b.FabricType, '')
 from Trade_To_Pms.dbo.Style_Location as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_Location as a WITH (NOLOCK) where a.StyleUkey=b.StyleUkey AND a.Location	= b.Location)
 
