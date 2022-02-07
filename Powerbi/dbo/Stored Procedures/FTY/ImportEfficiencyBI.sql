@@ -248,6 +248,7 @@ USING #Final s --被參考的表
    AND t.SizeCode=s.SizeCode 
    AND t.ComboType=s.ComboType  
    AND t.OutputDate = s.OutputDate
+   AND t.SubConOutContractNumber = s.SubConOutContractNumber
 
 WHEN MATCHED THEN   
     UPDATE SET 
