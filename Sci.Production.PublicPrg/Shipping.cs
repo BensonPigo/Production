@@ -1322,6 +1322,171 @@ and exists (select 1 from orders where id = pd.OrderID and Junk = 1)
         }
         #endregion
 
+        #region 跨Server取得ShareExpense_APP所需資料
+        public static DataTable DataTable_Packing(string SystemName, string InvNoList)
+        {
+            DataTable dt;
+            string sqlcmd = $@"
+select p.ID,p.INVNo, [MasterGW] = p.GW
+, [DetailGW] = pd.GW,pd.OrderID,pd.OrderShipmodeSeq
+, pd.NWPerPcs,pd.ShipQty
+, [AirPPID] = app.ID
+, app.RatioFty
+, QtyPerCTN
+, [TtlNW] = TtlNW.Value
+from Production.dbo.PackingList p with (nolock)
+inner join Production.dbo.PackingList_Detail pd  with (nolock) on p.ID = pd.ID
+inner join Production.dbo.AirPP app with (nolock) on pd.OrderID = app.OrderID 
+												  and pd.OrderShipmodeSeq = app.OrderShipmodeSeq
+												  and app.Status <> 'Junked'
+outer apply (
+				select [Value] = isnull(sum(NWPerPcs * ShipQty),0) 
+				from PackingList_Detail 
+				where ID = p.ID
+			) TtlNW
+where p.INVNo = '{InvNoList}'
+";
+            List<PackingA2BWebAPI_Model.SqlPar> listPar = new List<PackingA2BWebAPI_Model.SqlPar>();
+            PackingA2BWebAPI_Model.DataBySql dataBySql = new PackingA2BWebAPI_Model.DataBySql()
+            {
+                SqlString = sqlcmd,
+                SqlParameter = listPar,
+            };
+
+            DualResult result = PackingA2BWebAPI.GetDataBySql(SystemName, dataBySql, out dt);
+
+            if (dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("No data found");
+            }
+
+            return dt;
+        }
+        #endregion
+
+        #region 跨Server更新ShareExpense_APP
+        public static DualResult CalculateShareExpense_APP(string ShippingAPID, string UserID, DataTable dtServer)
+        {
+            DualResult result;
+            string sqlcmd = $@"
+declare @ShippingAPID varchar(20) ='{ShippingAPID}'
+DECLARE @CurrencyID VARCHAR(3) = (select CurrencyID from ShippingAP where id = @ShippingAPID)
+declare @login varchar(20) = '{UserID}'
+declare @adddate DATETIME = Getdate()
+
+select se.InvNo,se.AccountID,[Amount] = sum(se.Amount)
+into #InvNoSharedAmt
+from ShareExpense se with (nolock)
+where	se.ShippingAPID = @ShippingAPID 
+		and se.Junk = 0 
+		and	exists(
+			select 1 from GMTBooking gmt with (nolock)
+			inner join ShipMode sm with (nolock) on gmt.ShipModeID = sm.ID
+			where gmt.ID = se.InvNo and sm.NeedCreateAPP = 1
+		)
+		and not (
+			dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 
+			or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1
+		)
+		AND dbo.GetAccountNoExpressType(se.AccountID,'IsApp') = 1 
+group by se.InvNo,se.AccountID
+
+-- Get PackingList Master Table
+select distinct ID,INVNo,MasterGW 
+into #tmpPackingListMaster 
+from #tmpPackingList
+
+select	t.InvNo,[PackID] = pl.ID,t.AccountID,t.Amount,[PLSharedAmt] = Round(t.Amount / SUM(pl.MasterGW) over(PARTITION BY t.InvNo,t.AccountID) * pl.MasterGW,2)
+into #PLSharedAmtStep1
+from #InvNoSharedAmt t
+inner join #tmpPackingListMaster pl with (nolock) on pl.INVNo = t.InvNo
+
+
+select * ,[AccuPLSharedAmt] = SUM(PLSharedAmt) over(PARTITION BY InvNo,AccountID order BY InvNo,PackID,AccountID )
+into #PLSharedAmtStep2
+from #PLSharedAmtStep1
+
+select distinct *,
+[PLSharedAmtFin] = case	
+	when count(1) over(partition by invno,AccountID ) = 1 then Amount
+	when ROW_NUMBER() over(partition by invno,AccountID order BY InvNo,PackID,AccountID) < count(1) over(partition by invno,AccountID ) then PLSharedAmt
+	else Amount -  LAG(AccuPLSharedAmt) over(partition by invno,AccountID order by invno,PackID,AccountID) 
+end
+into #PLSharedAmt
+from #PLSharedAmtStep2
+
+select  t.InvNo,pld.ID,AirPPID = pld.AirPPID,t.AccountID,pld.OrderID,pld.OrderShipmodeSeq, t.PLSharedAmtFin
+	, [TtlNW] = ROUND(sum(pld.NWPerPcs * pld.ShipQty),3)
+	, [TtlGW] = ROUND(sum(pld.DetailGW),3)
+	, [OrderSharedAmt] =iif(pld.TtlNW = 0,0,ROUND(t.PLSharedAmtFin / pld.TtlNW * sum(pld.NWPerPcs * pld.ShipQty),2))  
+	, [QtyPerCTN] = sum(pld.QtyPerCTN), [RatioFty] = isnull(pld.RatioFty,0)		
+into #OrderSharedAmtStep1
+from #PLSharedAmt t
+inner join #tmpPackingList pld with (nolock) on t.PackID = pld.ID
+group by t.InvNo,pld.ID,pld.AirPPID,t.AccountID, pld.OrderID, pld.OrderShipmodeSeq, pld.TtlNW, t.PLSharedAmtFin, pld.RatioFty
+
+select * ,[AccuOrderSharedAmt] = SUM(OrderSharedAmt) over(PARTITION BY ID,AccountID order BY AccountID,OrderID,OrderShipmodeSeq )
+into #OrderSharedAmtStep2
+from #OrderSharedAmtStep1
+
+select	*,
+[OrderSharedAmtFin] =  case	
+	when OrderSharedAmt = 0 then 0
+	when count(1) over(partition by ID,AccountID ) = 1 then PLSharedAmtFin
+	when ROW_NUMBER() over(partition by ID,AccountID order BY AccountID,OrderID,OrderShipmodeSeq) < count(1) over(partition by ID,AccountID ) then OrderSharedAmt
+	else PLSharedAmtFin -  LAG(AccuOrderSharedAmt) over(partition by ID,AccountID order by AccountID,OrderID,OrderShipmodeSeq) 
+end
+into #OrderSharedAmt
+from #OrderSharedAmtStep2
+
+declare @SharedAmtFactory numeric (12, 2) 
+declare @SharedAmtOther numeric (12, 2) 
+
+select *,RatioOther=100-RatioFty,
+	SharedAmtFactory = CONVERT(numeric(12,2), ROUND(OrderSharedAmtFin / 100 * RatioFty,2)),
+	SharedAmtOther=OrderSharedAmtFin - ROUND(OrderSharedAmtFin / 100 * RatioFty,2)
+into #source
+from #OrderSharedAmt
+
+
+select	@SharedAmtFactory = CONVERT(numeric(12,2),isnull(sum(ROUND(OrderSharedAmtFin / 100 * RatioFty,2)),0)),
+		@SharedAmtOther = CONVERT(numeric(12,2),isnull(sum(OrderSharedAmtFin - ROUND(OrderSharedAmtFin / 100 * RatioFty,2)),0))
+from #OrderSharedAmt
+
+merge ShareExpense_APP t
+using #source s
+on @ShippingAPID = t.ShippingAPID and s.InvNo=t.InvNo and s.ID = t.PackingListID and s.AirPPID = t.AirPPID and s.AccountID = t.AccountID
+when matched then update set 
+	t.[CurrencyID]	  =@CurrencyID
+	,t.[NW]			  =s.ttlNw
+	,t.[GW]			  =s.TtlGW
+	,t.[RatioFty]	  =s.[RatioFty]
+	,t.[AmtFty]		  =s.SharedAmtFactory
+	,t.[RatioOther]	  =s.[RatioOther]
+	,t.[AmtOther]	  =s.SharedAmtOther
+	,t.[Junk]		  =0
+	,t.[EditName]	  =@login
+	,t.[EditDate]	  =@adddate
+when not matched by target then
+insert([ShippingAPID],[InvNo],[PackingListID],[AirPPID],[AccountID],[CurrencyID],[NW],[RatioFty],[AmtFty],[RatioOther],[AmtOther],[Junk], [EditName], [EditDate])
+VALUES(@ShippingAPID,s.[InvNo],s.id,s.[AirPPID],s.[AccountID],@CurrencyID,s.ttlNw,s.[RatioFty],s.SharedAmtFactory,s.[RatioOther],s.SharedAmtOther,0, @login, @adddate)
+;
+
+
+update ShippingAP 
+set SharedAmtFactory = @SharedAmtFactory
+	, SharedAmtOther = @SharedAmtOther
+	, EditName = @login
+	, EditDate = @adddate
+where ID = @ShippingAPID
+
+drop table #InvNoSharedAmt,#PLSharedAmtStep1,#PLSharedAmt,#PLSharedAmtStep2,#tmpPackingList,#OrderSharedAmt,#OrderSharedAmtStep1,#OrderSharedAmtStep2,#source,#tmpPackingListMaster
+";
+            result = MyUtility.Tool.ProcessWithDatatable(dtServer, null, sqlcmd, out DataTable data, temptablename: "#tmpPackingList");
+            return result;
+        }
+        #endregion
+
         /// <summary>
         /// Order_QtyShip
         /// </summary>

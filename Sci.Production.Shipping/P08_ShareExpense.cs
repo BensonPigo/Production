@@ -1214,6 +1214,28 @@ where   ShippingAPID = '{3}'
                             lastResult = false;
                         }
 
+                        // 執行A2B跨廠區資料 & 寫入跨廠區資料到ShareExpense_APP
+                        List<string> ilist = this.SEData.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["InvNo"])).Distinct().ToList();
+                        foreach (var item in ilist)
+                        {
+                            string invNos = item.ToString();
+                            List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(invNos);
+                            foreach (string plFromRgCode in listPLFromRgCode)
+                            {
+                                // 跨Server取得ShareExpense_APP所需PackingList資料
+                                DataTable dt = Prgs.DataTable_Packing(plFromRgCode, invNos);
+
+                                // 將跨Serve資料更新ShareExpense_APP
+                                DualResult result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dt);
+
+                                if (!result2)
+                                {
+                                    errmsg = errmsg + "Calcute share expense failed." + "\r\n" + result2.ToString();
+                                    lastResult = false;
+                                }
+                            }
+                        }
+
                         if (lastResult)
                         {
                             transactionScope.Complete();
