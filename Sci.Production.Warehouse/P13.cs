@@ -1267,10 +1267,6 @@ AND ID = @ID
                 MyUtility.Msg.WarningBox("Cutting Plan ID not found, or W/H Reason is not 00007.");
                 return;
             }
-            else
-            {
-
-            }
         }
     }
 }
