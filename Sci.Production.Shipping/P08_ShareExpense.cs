@@ -738,15 +738,21 @@ order by sh.AccountID", MyUtility.Convert.GetString(this.apData["ID"]));
             this.listControlBindingSource2.DataSource = this.SEData;
 
             List<string> ilist = this.SEData.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["InvNo"])).Distinct().ToList();
-            string invNos = "'" + string.Join("','", ilist) + "'";
-            #region Shared Amt by APP
-            sqlCmd = $@"
+            foreach (var item in ilist)
+            {
+                string invNos = item.ToString();
+                List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(invNos);
+                foreach (string plFromRgCode in listPLFromRgCode)
+                {
+                    // 跨Server取得ShareExpense_APP所需PackingList資料
+                    DataTable dt = Prgs.DataTable_Packing(plFromRgCode, invNos);
+                    sqlCmd = $@"
 select
     sa.ShippingAPID,
     sa.InvNo,
 	sa.PackingListID,
-	AirPP.OrderID,
-	AirPP.OrderShipmodeSeq,
+	tmp.OrderID,
+	tmp.OrderShipmodeSeq,
 	sa.AirPPID,
 	sa.NW,
     sa.GW,
@@ -759,18 +765,45 @@ select
     sap.APPExchageRate,
     APPAmt=iif(APPExchageRate=0,0, round((sa.AmtFty+sa.AmtOther)/sap.APPExchageRate,2))
 from ShareExpense_APP sa with(nolock)
-inner join AirPP with(nolock) on AirPP.id = sa.AirPPID and AirPP.Status <> 'Junked'
+inner join (select distinct OrderID,OrderShipmodeSeq,AirPPID from #tmpPackingList  with(nolock)) tmp on tmp.AirPPID = sa.AirPPID 
 inner  join ShippingAP sap on sap.ID = sa.ShippingAPID
 where sa.Junk = 0
 and sa.ShippingAPID = '{this.apData["ID"]}' 
-and sa.InvNo in ({invNos})
+and sa.InvNo = '{invNos}'
 ";
-            result = DBProxy.Current.Select(null, sqlCmd, out this.SAPP);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return;
+                    //MyUtility.Tool.ProcessWithDatatable(dtServer, null, sqlcmd, out DataTable data, temptablename: "#tmpPackingList");
+                    result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlCmd, out DataTable dtSapp, temptablename: "#tmpPackingList");
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    if (dtSapp.Rows.Count > 0)
+                    {
+                        if (this.SAPP == null)
+                        {
+                            this.SAPP = dtSapp;
+                        }
+                        else
+                        {
+                            this.SAPP.MergeBySyncColType(dtSapp);
+                        }
+                    }
+
+                    //// 將跨Serve資料更新ShareExpense_APP
+                    //DualResult result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dt);
+
+                    //if (!result2)
+                    //{
+                    //    errmsg = errmsg + "Calcute share expense failed." + "\r\n" + result2.ToString();
+                    //    lastResult = false;
+                    //}
+                }
             }
+
+            #region Shared Amt by APP
+            
 
             this.listControlBindingSource3.DataSource = this.SAPP;
             #endregion

@@ -1409,8 +1409,8 @@ from #PLSharedAmtStep1
 select distinct *,
 [PLSharedAmtFin] = case	
 	when count(1) over(partition by invno,AccountID ) = 1 then Amount
-	when ROW_NUMBER() over(partition by invno,AccountID order BY InvNo,PackID,AccountID) < count(1) over(partition by invno,AccountID ) then PLSharedAmt
-	else Amount -  LAG(AccuPLSharedAmt) over(partition by invno,AccountID order by invno,PackID,AccountID) 
+	when ROW_NUMBER() over(partition by invno,AccountID order BY InvNo,AccountID) < count(1) over(partition by invno,AccountID ) then PLSharedAmt
+	else Amount -  LAG(AccuPLSharedAmt) over(partition by invno,AccountID order by invno,AccountID) 
 end
 into #PLSharedAmt
 from #PLSharedAmtStep2
@@ -1425,7 +1425,7 @@ from #PLSharedAmt t
 inner join #tmpPackingList pld with (nolock) on t.PackID = pld.ID
 group by t.InvNo,pld.ID,pld.AirPPID,t.AccountID, pld.OrderID, pld.OrderShipmodeSeq, pld.TtlNW, t.PLSharedAmtFin, pld.RatioFty
 
-select * ,[AccuOrderSharedAmt] = SUM(OrderSharedAmt) over(PARTITION BY ID,AccountID order BY AccountID,OrderID,OrderShipmodeSeq )
+select * ,[AccuOrderSharedAmt] = SUM(OrderSharedAmt) over(PARTITION BY ID,AccountID)
 into #OrderSharedAmtStep2
 from #OrderSharedAmtStep1
 
