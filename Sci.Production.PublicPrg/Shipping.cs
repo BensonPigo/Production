@@ -1396,13 +1396,13 @@ select distinct ID,INVNo,MasterGW
 into #tmpPackingListMaster 
 from #tmpPackingList
 
-select	t.InvNo,[PackID] = pl.ID,t.AccountID,t.Amount,[PLSharedAmt] = Round(t.Amount / SUM(pl.MasterGW) over(PARTITION BY t.InvNo,t.AccountID) * pl.MasterGW,2)
+select	t.InvNo,[PackID] = pl.ID,t.AccountID,t.Amount,[PLSharedAmt] = CONVERT(numeric(12,2), Round(t.Amount / SUM(pl.MasterGW) over(PARTITION BY t.InvNo,t.AccountID) * pl.MasterGW,2))
 into #PLSharedAmtStep1
 from #InvNoSharedAmt t
 inner join #tmpPackingListMaster pl with (nolock) on pl.INVNo = t.InvNo
 
 
-select * ,[AccuPLSharedAmt] = SUM(PLSharedAmt) over(PARTITION BY InvNo,AccountID order BY InvNo,PackID,AccountID )
+select * ,[AccuPLSharedAmt] =  SUM(PLSharedAmt) over(PARTITION BY InvNo,AccountID order BY InvNo,AccountID)
 into #PLSharedAmtStep2
 from #PLSharedAmtStep1
 
@@ -1480,7 +1480,7 @@ set SharedAmtFactory = @SharedAmtFactory
 	, EditDate = @adddate
 where ID = @ShippingAPID
 
-drop table #InvNoSharedAmt,#PLSharedAmtStep1,#PLSharedAmt,#PLSharedAmtStep2,#tmpPackingList,#OrderSharedAmt,#OrderSharedAmtStep1,#OrderSharedAmtStep2,#source,#tmpPackingListMaster
+--drop table #InvNoSharedAmt,#PLSharedAmtStep1,#PLSharedAmt,#PLSharedAmtStep2,#tmpPackingList,#OrderSharedAmt,#OrderSharedAmtStep1,#OrderSharedAmtStep2,#source,#tmpPackingListMaster
 ";
             result = MyUtility.Tool.ProcessWithDatatable(dtServer, null, sqlcmd, out DataTable data, temptablename: "#tmpPackingList");
             return result;
