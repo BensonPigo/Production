@@ -679,6 +679,39 @@ and not exists(select 1 from Export where id=se.WKNo and BLNo = sa.BLNo)
                 MyUtility.Msg.ErrorBox("Calcute share expense failed.\r\n" + result.ToString());
                 return;
             }
+
+            string sqlInvNo = $@"select distinct InvNo from ShareExpense where  ShippingAPID = '{this.apData["ID"]}'";
+            if (!(result = DBProxy.Current.Select(string.Empty, sqlInvNo, out DataTable dtInvNo)))
+            {
+                this.ShowErr(result.ToString());
+                return;
+            }
+
+            if (dtInvNo != null && dtInvNo.Rows.Count > 0)
+            {
+                // 執行A2B跨廠區資料 & 寫入跨廠區資料到ShareExpense_APP
+                foreach (DataRow item in dtInvNo.Rows)
+                {
+                    string invNos = item["InvNo"].ToString();
+                    List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(invNos);
+                    foreach (string plFromRgCode in listPLFromRgCode)
+                    {
+                        // 跨Server取得ShareExpense_APP所需PackingList資料
+                        DataTable dt = Prgs.DataTable_Packing(plFromRgCode, invNos);
+                        if (dt != null && dt.Rows.Count > 0)
+                        {
+                            // 將跨Serve資料更新ShareExpense_APP
+                            DualResult result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dt);
+
+                            if (!result2)
+                            {
+                                this.ShowErr(result.ToString());
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void QueryData()
@@ -738,8 +771,8 @@ order by sh.AccountID", MyUtility.Convert.GetString(this.apData["ID"]));
             this.listControlBindingSource2.DataSource = this.SEData;
 
             List<string> ilist = this.SEData.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["InvNo"])).Distinct().ToList();
+            #region [非]跨Server A2B資料
             string invNos = "'" + string.Join("','", ilist) + "'";
-            #region Shared Amt by APP
             sqlCmd = $@"
 select
     sa.ShippingAPID,
@@ -771,9 +804,70 @@ and sa.InvNo in ({invNos})
                 this.ShowErr(result);
                 return;
             }
+            #endregion
+
+            #region Shared Amt by APP 跨Server A2b資料
+            foreach (var item in ilist)
+            {
+                string invNo = item.ToString();
+                List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(invNo);
+                foreach (string plFromRgCode in listPLFromRgCode)
+                {
+                    // 跨Server取得ShareExpense_APP所需PackingList資料
+                    DataTable dt = Prgs.DataTable_Packing(plFromRgCode, invNo);
+                    if (dt == null || dt.Rows.Count <= 0)
+                    {
+                        continue;
+                    }
+
+                    sqlCmd = $@"
+select
+    sa.ShippingAPID,
+    sa.InvNo,
+	sa.PackingListID,
+	tmp.OrderID,
+	tmp.OrderShipmodeSeq,
+	sa.AirPPID,
+	sa.NW,
+    sa.GW,
+	sa.AccountID,
+	Name = (select Name from FinanceEN.dbo.AccountNo a with(Nolock) where a.ID = sa.AccountID),
+	sa.RatioFty,
+	sa.AmtFty,
+	sa.RatioOther,
+	sa.AmtOther,
+    sap.APPExchageRate,
+    APPAmt=iif(APPExchageRate=0,0, round((sa.AmtFty+sa.AmtOther)/sap.APPExchageRate,2))
+from ShareExpense_APP sa with(nolock)
+inner join (select distinct OrderID,OrderShipmodeSeq,AirPPID from #tmpPackingList  with(nolock)) tmp on tmp.AirPPID = sa.AirPPID 
+inner  join ShippingAP sap on sap.ID = sa.ShippingAPID
+where sa.Junk = 0
+and sa.ShippingAPID = '{this.apData["ID"]}' 
+and sa.InvNo = '{invNo}'
+";
+                    result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlCmd, out DataTable dtSapp, temptablename: "#tmpPackingList");
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    if (dtSapp.Rows.Count > 0)
+                    {
+                        if (this.SAPP == null)
+                        {
+                            this.SAPP = dtSapp;
+                        }
+                        else
+                        {
+                            this.SAPP.MergeBySyncColType(dtSapp);
+                        }
+                    }
+                }
+            }
+            #endregion
 
             this.listControlBindingSource3.DataSource = this.SAPP;
-            #endregion
 
             sqlCmd = string.Format(
                 @"
@@ -1214,6 +1308,30 @@ where   ShippingAPID = '{3}'
                             lastResult = false;
                         }
 
+                        // 執行A2B跨廠區資料 & 寫入跨廠區資料到ShareExpense_APP
+                        List<string> ilist = this.SEData.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["InvNo"])).Distinct().ToList();
+                        foreach (var item in ilist)
+                        {
+                            string invNos = item.ToString();
+                            List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(invNos);
+                            foreach (string plFromRgCode in listPLFromRgCode)
+                            {
+                                // 跨Server取得ShareExpense_APP所需PackingList資料
+                                DataTable dt = Prgs.DataTable_Packing(plFromRgCode, invNos);
+                                if (dt != null && dt.Rows.Count > 0)
+                                {
+                                    // 將跨Serve資料更新ShareExpense_APP
+                                    DualResult result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dt);
+
+                                    if (!result2)
+                                    {
+                                        errmsg = errmsg + "Calcute share expense failed." + "\r\n" + result2.ToString();
+                                        lastResult = false;
+                                    }
+                                }
+                            }
+                        }
+
                         if (lastResult)
                         {
                             transactionScope.Complete();
@@ -1463,6 +1581,39 @@ select [resultType] = 'OK',
             {
                 MyUtility.Msg.ErrorBox("Re-Calculate Delete faile\r\n" + result.ToString());
                 return;
+            }
+
+            string sqlInvNo = $@"select distinct InvNo from ShareExpense where  ShippingAPID = '{this.apData["ID"]}'";
+            if (!(result = DBProxy.Current.Select(string.Empty, sqlInvNo, out DataTable dtInvNo)))
+            {
+                this.ShowErr(result.ToString());
+                return;
+            }
+
+            if (dtInvNo != null && dtInvNo.Rows.Count > 0)
+            {
+                // 執行A2B跨廠區資料 & 寫入跨廠區資料到ShareExpense_APP
+                foreach (DataRow item in dtInvNo.Rows)
+                {
+                    string invNos = item["InvNo"].ToString();
+                    List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(invNos);
+                    foreach (string plFromRgCode in listPLFromRgCode)
+                    {
+                        // 跨Server取得ShareExpense_APP所需PackingList資料
+                        DataTable dt = Prgs.DataTable_Packing(plFromRgCode, invNos);
+                        if (dt != null && dt.Rows.Count > 0)
+                        {
+                            // 將跨Serve資料更新ShareExpense_APP
+                            DualResult result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dt);
+
+                            if (!result2)
+                            {
+                                this.ShowErr(result.ToString());
+                                return;
+                            }
+                        }
+                    }
+                }
             }
 
             this.QueryData();
