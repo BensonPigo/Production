@@ -24,6 +24,8 @@ namespace Sci.Production.Warehouse
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
         private Ict.Win.UI.DataGridViewTextBoxColumn col_roll;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_dyelot;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_fullroll;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_fulldyelot;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_ActQty;
 
         /// <inheritdoc/>
@@ -94,8 +96,8 @@ namespace Sci.Production.Warehouse
                 .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype) // 9
                 .Text("Location", header: "Location", iseditingreadonly: true) // 10
                 .Text("remark", header: "Remark", iseditingreadonly: true) // 11
-                .Text("FullRoll", header: "Full Roll", width: Widths.AnsiChars(9), iseditingreadonly: false).Get(out this.col_roll) // 3
-                .Text("FullDyelot", header: "Full Dyelot", width: Widths.AnsiChars(10), iseditingreadonly: false).Get(out this.col_dyelot) // 4
+                .Text("FullRoll", header: "Full Roll", width: Widths.AnsiChars(9), iseditingreadonly: false).Get(out this.col_fullroll) // 3
+                .Text("FullDyelot", header: "Full Dyelot", width: Widths.AnsiChars(10), iseditingreadonly: false).Get(out this.col_fulldyelot) // 4
                 ;
             }
             else if (this.gridAlias.ToUpper().EqualString("TRANSFERIN_DETAIL"))
@@ -106,8 +108,8 @@ namespace Sci.Production.Warehouse
                 .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype)
                 .Text("Location", header: "Location", iseditingreadonly: true)
                 .Text("remark", header: "Remark", iseditingreadonly: true)
-                .Text("FullRoll", header: "Full Roll", width: Widths.AnsiChars(9), iseditingreadonly: false).Get(out this.col_roll) // 3
-                .Text("FullDyelot", header: "Full Dyelot", width: Widths.AnsiChars(10), iseditingreadonly: false).Get(out this.col_dyelot) // 4
+                .Text("FullRoll", header: "Full Roll", width: Widths.AnsiChars(9), iseditingreadonly: false).Get(out this.col_fullroll) // 3
+                .Text("FullDyelot", header: "Full Dyelot", width: Widths.AnsiChars(10), iseditingreadonly: false).Get(out this.col_fulldyelot) // 4
                 ;
             }
 
@@ -143,81 +145,41 @@ namespace Sci.Production.Warehouse
             #region roll
             this.col_roll.EditingControlShowing += (s, e) =>
             {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
-
-                DataRow dr = this.gridModifyRoll.GetDataRow(e.RowIndex);
-
-                if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0 ||
-                (MyUtility.Check.Empty(dr["CompleteTime"]) == false && Automation.UtilityAutomation.IsAutomationEnable == true))
-                {
-                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
-                }
-                else
-                {
-                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
-                }
+                this.RollDyelot_EditSetting(e);
             };
             this.col_roll.CellFormatting += (s, e) =>
             {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
-
-                DataRow dr = this.gridModifyRoll.GetDataRow(e.RowIndex);
-
-                if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0 ||
-                (MyUtility.Check.Empty(dr["CompleteTime"]) == false && Automation.UtilityAutomation.IsAutomationEnable == true))
-                {
-                    e.CellStyle.BackColor = Color.White;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                }
+                this.RollDyelot_ChangeColor(e);
             };
             #endregion
             #region dyelot
             this.col_dyelot.EditingControlShowing += (s, e) =>
             {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
-
-                DataRow dr = this.gridModifyRoll.GetDataRow(e.RowIndex);
-
-                if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0 ||
-                (MyUtility.Check.Empty(dr["CompleteTime"]) == false && Automation.UtilityAutomation.IsAutomationEnable == true))
-                {
-                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
-                }
-                else
-                {
-                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
-                }
+                this.RollDyelot_EditSetting(e);
             };
             this.col_dyelot.CellFormatting += (s, e) =>
             {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
-
-                DataRow dr = this.gridModifyRoll.GetDataRow(e.RowIndex);
-
-                if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0 ||
-                (MyUtility.Check.Empty(dr["CompleteTime"]) == false && Automation.UtilityAutomation.IsAutomationEnable == true))
-                {
-                    e.CellStyle.BackColor = Color.White;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                }
+                this.RollDyelot_ChangeColor(e);
+            };
+            #endregion
+            #region fullRoll
+            this.col_fullroll.EditingControlShowing += (s, e) =>
+            {
+                this.RollDyelot_EditSetting(e);
+            };
+            this.col_fullroll.CellFormatting += (s, e) =>
+            {
+                this.RollDyelot_ChangeColor(e);
+            };
+            #endregion
+            #region fullDyelot
+            this.col_fulldyelot.EditingControlShowing += (s, e) =>
+            {
+                this.RollDyelot_EditSetting(e);
+            };
+            this.col_fulldyelot.CellFormatting += (s, e) =>
+            {
+                this.RollDyelot_ChangeColor(e);
             };
             #endregion
 
@@ -259,6 +221,46 @@ namespace Sci.Production.Warehouse
                 }
             };
             #endregion
+        }
+
+        private void RollDyelot_ChangeColor(DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex == -1)
+            {
+                return;
+            }
+
+            DataRow dr = this.gridModifyRoll.GetDataRow(e.RowIndex);
+
+            if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0 ||
+            (MyUtility.Check.Empty(dr["CompleteTime"]) == false && Automation.UtilityAutomation.IsAutomationEnable == true))
+            {
+                e.CellStyle.BackColor = Color.White;
+            }
+            else
+            {
+                e.CellStyle.BackColor = Color.Pink;
+            }
+        }
+
+        private void RollDyelot_EditSetting(Ict.Win.UI.DataGridViewEditingControlShowingEventArgs e)
+        {
+            if (e.RowIndex == -1)
+            {
+                return;
+            }
+
+            DataRow dr = this.gridModifyRoll.GetDataRow(e.RowIndex);
+
+            if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0 ||
+            (MyUtility.Check.Empty(dr["CompleteTime"]) == false && Automation.UtilityAutomation.IsAutomationEnable == true))
+            {
+                ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
+            }
+            else
+            {
+                ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
+            }
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
