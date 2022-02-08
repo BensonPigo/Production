@@ -759,6 +759,8 @@ WHERE r.ID='{this.docno}' AND p.FabricType='F' AND ROLL='{drModify["roll"]}' AND
 update dbo.receiving_detail 
 set roll = '{drModify["roll"]}' 
 ,dyelot = '{drModify["dyelot"]}' 
+,FullRoll = '{drModify["FullRoll"]}' 
+,FullDyelot = '{drModify["FullDyelot"]}' 
 ,ActualQty = '{drModify["ActualQty"]}'
 ,StockQty  = '{drModify["stockqty"]}'
 ,ShipQty = '{drModify["ActualQty"]}'
