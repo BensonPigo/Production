@@ -15,14 +15,14 @@ using Sci.Data;
 namespace Sci.Production.Warehouse
 {
     /// <inheritdoc/>
-    public partial class P07_ExcelImport : Win.Subs.Base
+    public partial class P08_ExcelImport : Win.Subs.Base
     {
         private DataTable grid2Data = new DataTable();
         private DataTable detailData;
         private DataRow master;
 
         /// <inheritdoc/>
-        public P07_ExcelImport(DataRow master, DataTable detailData)
+        public P08_ExcelImport(DataRow master, DataTable detailData)
         {
             this.InitializeComponent();
             this.detailData = detailData;
@@ -51,90 +51,42 @@ namespace Sci.Production.Warehouse
             // 取Grid結構
             // string sqlCmd = "select SPACE(13) as OrderID, null as BuyerDelivery,SPACE(10) as ShipmodeID,SPACE(8) as Article,SPACE(6) as ColorID,SPACE(8) as SizeCode,0.0 as Qty,SPACE(100) as ErrMsg";
             // DualResult result = DBProxy.Current.Select(null, sqlCmd, out grid2Data);
-            this.grid2Data.Columns.Add("wkno", typeof(string));
+            this.grid2Data.Columns.Add("ID", typeof(string));
             this.grid2Data.Columns.Add("poid", typeof(string));
             this.grid2Data.Columns.Add("seq1", typeof(string));
             this.grid2Data.Columns.Add("seq2", typeof(string));
             this.grid2Data.Columns.Add("seq", typeof(string));
-            this.grid2Data.Columns.Add("PoIdSeq1", typeof(string));
-            this.grid2Data.Columns.Add("PoIdSeq", typeof(string));
             this.grid2Data.Columns.Add("roll", typeof(string));
-            this.grid2Data.Columns.Add("FullRoll", typeof(string));
             this.grid2Data.Columns.Add("dyelot", typeof(string));
-            this.grid2Data.Columns.Add("FullDyelot", typeof(string));
-            this.grid2Data.Columns.Add("qty", typeof(decimal));
-            this.grid2Data.Columns.Add("foc", typeof(decimal));
-            this.grid2Data.Columns.Add("shipqty", typeof(decimal));
-            this.grid2Data.Columns.Add("actualqty", typeof(decimal));
-            this.grid2Data.Columns.Add("stockqty", typeof(decimal));
-            this.grid2Data.Columns.Add("weight", typeof(decimal));
-            this.grid2Data.Columns.Add("actualWeight", typeof(decimal));
-            this.grid2Data.Columns.Add("pounit", typeof(string));
-            this.grid2Data.Columns.Add("stockunit", typeof(string));
-            this.grid2Data.Columns.Add("stocktype", typeof(string));
-            this.grid2Data.Columns.Add("id", typeof(string));
+            this.grid2Data.Columns.Add("Description", typeof(string));
+            this.grid2Data.Columns.Add("StockUnit", typeof(string));
+            this.grid2Data.Columns.Add("StockType", typeof(string));
+            this.grid2Data.Columns.Add("fabrictype", typeof(string));
+            this.grid2Data.Columns.Add("UseQty", typeof(decimal));
+            this.grid2Data.Columns.Add("StockQty", typeof(decimal));
             this.grid2Data.Columns.Add("location", typeof(string));
-            this.grid2Data.Columns.Add("MINDQRCode", typeof(string));
             this.grid2Data.Columns.Add("Remark", typeof(string));
             this.grid2Data.Columns.Add("ErrMsg", typeof(string));
             this.grid2Data.Columns.Add("ErrMsgType", typeof(string));
-            this.grid2Data.Columns.Add("fabrictype", typeof(string));
-            this.grid2Data.Columns.Add("Refno", typeof(string));
-            this.grid2Data.Columns.Add("ColorID", typeof(string));
 
             this.listControlBindingSource2.DataSource = this.grid2Data;
             this.gridPoid.DataSource = this.listControlBindingSource2;
-            #region Ship Qty Valid
-
-            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
-            ns.CellValidating += (s, e) =>
-            {
-                if (this.EditMode && e.FormattedValue != null)
-                {
-                    this.grid2Data.Rows[e.RowIndex]["shipqty"] = Convert.ToDecimal(e.FormattedValue) + Convert.ToDecimal(this.grid2Data.Rows[e.RowIndex]["foc"].ToString());
-                    this.grid2Data.Rows[e.RowIndex]["actualqty"] = Convert.ToDecimal(e.FormattedValue) + Convert.ToDecimal(this.grid2Data.Rows[e.RowIndex]["foc"].ToString());
-                    this.grid2Data.Rows[e.RowIndex]["stockqty"] = Convert.ToDecimal(e.FormattedValue) + Convert.ToDecimal(this.grid2Data.Rows[e.RowIndex]["foc"].ToString());
-                    this.grid2Data.Rows[e.RowIndex]["qty"] = e.FormattedValue;
-
-                    // grid2Data.Rows[e.RowIndex]["foc"] = e.FormattedValue;
-                }
-            };
-
-            DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
-            ns2.CellValidating += (s, e) =>
-            {
-                if (this.EditMode && e.FormattedValue != null)
-                {
-                    this.grid2Data.Rows[e.RowIndex]["shipqty"] = Convert.ToDecimal(e.FormattedValue) + Convert.ToDecimal(this.grid2Data.Rows[e.RowIndex]["qty"].ToString());
-                    this.grid2Data.Rows[e.RowIndex]["actualqty"] = Convert.ToDecimal(e.FormattedValue) + Convert.ToDecimal(this.grid2Data.Rows[e.RowIndex]["qty"].ToString());
-                    this.grid2Data.Rows[e.RowIndex]["stockqty"] = Convert.ToDecimal(e.FormattedValue) + Convert.ToDecimal(this.grid2Data.Rows[e.RowIndex]["qty"].ToString());
-
-                    // grid2Data.Rows[e.RowIndex]["qty"] = e.FormattedValue;
-                    this.grid2Data.Rows[e.RowIndex]["foc"] = e.FormattedValue;
-                }
-            };
-
-            #endregion Ship Qty Valid
 
             this.gridPoid.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.gridPoid)
-                .Text("poid", header: "SP#", width: Widths.AnsiChars(13))
-                .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4))
-                .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))
-                .Text("roll", header: "Carton#", width: Widths.AnsiChars(8))
-                .Text("FullRoll", header: "Full Carton#", width: Widths.AnsiChars(16))
-                .Text("dyelot", header: "Lot No", width: Widths.AnsiChars(4))
-                .Text("FullDyelot", header: "Full Lot No", width: Widths.AnsiChars(8))
-                .Text("pounit", header: "Po Unit", width: Widths.AnsiChars(4))
-                .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(4))
-                .Numeric("Qty", header: "Qty", decimal_places: 2, settings: ns)
-                .Numeric("foc", header: "F.O.C", decimal_places: 2, settings: ns2)
-                .Numeric("weight", header: "WeiKg", decimal_places: 2)
-                .Numeric("actualWeight", header: "NetKg", decimal_places: 2)
-                .Text("location", header: "Location", width: Widths.AnsiChars(8))
-                .Text("MINDQRCode", header: "MIND QR Code", width: Widths.AnsiChars(30))
+                .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4), iseditingreadonly: true)
+                .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(4), iseditingreadonly: true)
+                .Numeric("UseQty", header: "Use Qty", decimal_places: 2, iseditingreadonly: true)
+                .Numeric("StockQty", header: " Receiving Qty", decimal_places: 2)
+                .Text("location", header: "Bulk Location", width: Widths.AnsiChars(8))
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(8))
-                .EditText("ErrMsg", header: "Error Message", width: Widths.AnsiChars(100), iseditingreadonly: true);
+                .EditText("ErrMsg", header: "Error Message", width: Widths.AnsiChars(100), iseditingreadonly: true)
+                ;
 
             for (int i = 0; i < this.gridPoid.ColumnCount; i++)
             {
@@ -235,10 +187,10 @@ namespace Sci.Production.Warehouse
                         }
 
                         // 檢查Excel格式
-                        Microsoft.Office.Interop.Excel.Range range = worksheet.Range[string.Format("A{0}:AF{0}", 1)];
+                        Microsoft.Office.Interop.Excel.Range range = worksheet.Range[string.Format("A{0}:H{0}", 1)];
                         object[,] objCellArray = range.Value;
-                        int[] itemPosition = new int[16];
-                        string[] itemCheck = { string.Empty, "WK#", "SP#", "SEQ1", "SEQ2", "C/NO", "FULL C/NO", "LOT NO.", "FULL LOT NO.", "QTY", "F.O.C", "NETKG", "WEIKG", "LOCATION", "MIND QR CODE", "REMARK" };
+                        int[] itemPosition = new int[9];
+                        string[] itemCheck = { string.Empty, "SP#", "SEQ1", "SEQ2", "ROLL", "DYELOT", "RECEIVING QTY", "LOCATION", "REMARK" };
                         string[] excelItem = new string[intColumnsCount + 1];
 
                         for (int y = 1; y <= intColumnsCount; y++)
@@ -249,7 +201,7 @@ namespace Sci.Production.Warehouse
                         StringBuilder columnName = new StringBuilder();
 
                         // 確認Excel各Item是否存在，並儲存所在位置
-                        for (int x = 1; x <= 15; x++)
+                        for (int x = 1; x <= 8; x++)
                         {
                             for (int y = 1; y <= intColumnsCount; y++)
                             {
@@ -279,32 +231,23 @@ namespace Sci.Production.Warehouse
                             while (intRowsRead < intRowsCount)
                             {
                                 intRowsRead++;
-                                range = worksheet.Range[string.Format("A{0}:AE{0}", intRowsRead)];
+                                range = worksheet.Range[string.Format("A{0}:H{0}", intRowsRead)];
                                 objCellArray = range.Value;
                                 List<string> listNewRowErrMsg = new List<string>();
                                 List<string> listNewRowHintMsg = new List<string>();
 
                                 DataRow newRow = this.grid2Data.NewRow();
-                                newRow["wkno"] = (objCellArray[1, itemPosition[1]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[1]].ToString().Trim(), "C");
-                                newRow["poid"] = (objCellArray[1, itemPosition[2]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[2]].ToString().ToUpper().Trim(), "C");
-                                newRow["seq1"] = (objCellArray[1, itemPosition[3]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[3]].ToString().Trim(), "C");
-                                newRow["seq2"] = (objCellArray[1, itemPosition[4]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[4]].ToString().Trim(), "C");
-                                newRow["seq"] = ((objCellArray[1, itemPosition[3]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[3]].ToString().Trim(), "C").ToString()) + " " + ((objCellArray[1, itemPosition[4]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[4]].ToString().Trim(), "C").ToString());
-                                newRow["PoIdSeq1"] = ((objCellArray[1, itemPosition[2]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[2]].ToString().Trim(), "C")) + ((objCellArray[1, itemPosition[3]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[3]].ToString().Trim(), "C").ToString());
-                                newRow["PoIdSeq"] = ((objCellArray[1, itemPosition[2]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[2]].ToString().Trim(), "C")) + ((objCellArray[1, itemPosition[3]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[3]].ToString().Trim(), "C").ToString().PadRight(3)) + ((objCellArray[1, itemPosition[4]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[4]].ToString().Trim(), "C").ToString());
-                                newRow["roll"] = (objCellArray[1, itemPosition[5]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[5]].ToString().Replace("'", string.Empty).Trim(), "C");
-                                newRow["FullRoll"] = (objCellArray[1, itemPosition[6]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[6]].ToString().Replace("'", string.Empty).Trim(), "C");
-                                newRow["dyelot"] = (objCellArray[1, itemPosition[7]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[7]].ToString().Replace("'", string.Empty).Trim(), "C");
-                                newRow["FullDyelot"] = (objCellArray[1, itemPosition[8]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[8]].ToString().Replace("'", string.Empty).Trim(), "C");
-                                newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[9]], "N");
-                                newRow["foc"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[10]], "N");
-                                newRow["shipqty"] = decimal.Parse(newRow["qty"].ToString()) + decimal.Parse(newRow["foc"].ToString().Trim());
-                                newRow["actualqty"] = decimal.Parse(newRow["qty"].ToString()) + decimal.Parse(newRow["foc"].ToString().Trim());
-                                newRow["actualWeight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[11]], "N");
-                                newRow["Weight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[12]], "N");
-                                newRow["location"] = (objCellArray[1, itemPosition[13]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[13]].ToString().Trim(), "C");
-                                newRow["MINDQRCode"] = (objCellArray[1, itemPosition[14]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[14]].ToString().Trim(), "C");
-                                newRow["Remark"] = (objCellArray[1, itemPosition[15]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[15]].ToString().Trim(), "C");
+                              //  newRow["wkno"] = (objCellArray[1, itemPosition[1]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[1]].ToString().Trim(), "C");
+                                newRow["poid"] = (objCellArray[1, itemPosition[1]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[1]].ToString().ToUpper().Trim(), "C");
+                                newRow["seq1"] = (objCellArray[1, itemPosition[2]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[2]].ToString().Trim(), "C");
+                                newRow["seq2"] = (objCellArray[1, itemPosition[3]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[3]].ToString().Trim(), "C");
+                                newRow["seq"] = ((objCellArray[1, itemPosition[2]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[2]].ToString().Trim(), "C").ToString()) + " " + ((objCellArray[1, itemPosition[3]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[3]].ToString().Trim(), "C").ToString());
+
+                                newRow["roll"] = (objCellArray[1, itemPosition[4]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[4]].ToString().Replace("'", string.Empty).Trim(), "C");
+                                newRow["dyelot"] = (objCellArray[1, itemPosition[5]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[5]].ToString().Replace("'", string.Empty).Trim(), "C");
+                                newRow["stockqty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[6]], "N");
+                                newRow["location"] = (objCellArray[1, itemPosition[7]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[7]].ToString().Trim(), "C");
+                                newRow["Remark"] = (objCellArray[1, itemPosition[8]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[8]].ToString().Trim(), "C");
 
                                 #region check Columns length
                                 List<string> listColumnLengthErrMsg = new List<string>();
@@ -333,52 +276,22 @@ namespace Sci.Production.Warehouse
                                     listColumnLengthErrMsg.Add("<C/No> length can't be more than 8 Characters.");
                                 }
 
-                                // FullRoll varchar(50)
-                                if (Encoding.Default.GetBytes(newRow["FullRoll"].ToString()).Length > 50)
-                                {
-                                    listColumnLengthErrMsg.Add("<Full C/No> length can't be more than 50 characters.");
-                                }
-
                                 // Dyelot varchar(8)
                                 if (Encoding.Default.GetBytes(newRow["Dyelot"].ToString()).Length > 8)
                                 {
                                     listColumnLengthErrMsg.Add("<LOT NO.> length can't be more than 8 Characters.");
                                 }
 
-                                // FullDyelot varchar(50)
-                                if (Encoding.Default.GetBytes(newRow["FullDyelot"].ToString()).Length > 50)
-                                {
-                                    listColumnLengthErrMsg.Add("<Full LOT NO.> length can't be more than 50 characters.");
-                                }
-
                                 // qty + foc  numeric (11, 2)
-                                if (decimal.Parse(newRow["qty"].ToString()) + decimal.Parse(newRow["foc"].ToString()) > 999999999)
+                                if (decimal.Parse(newRow["StockQty"].ToString()) > 999999999)
                                 {
-                                    listColumnLengthErrMsg.Add("<Qty + F.O.C> value can't be more than 999,999,999");
-                                }
-
-                                // actualWeight numeric (7, 2)
-                                if (decimal.Parse(newRow["actualWeight"].ToString()) > 99999)
-                                {
-                                    listColumnLengthErrMsg.Add("<NetKg> value can't be more than 99,999");
-                                }
-
-                                // Weight numeric (7, 2)
-                                if (decimal.Parse(newRow["Weight"].ToString()) > 99999)
-                                {
-                                    listColumnLengthErrMsg.Add("<WeiKg> value can't be more than 99,999");
+                                    listColumnLengthErrMsg.Add("<Receiving Qty> value can't be more than 999,999,999");
                                 }
 
                                 // Location varchar(60)
                                 if (Encoding.Default.GetBytes(newRow["Location"].ToString()).Length > 60)
                                 {
                                     listColumnLengthErrMsg.Add("<Location> length can't be more than 60 Characters.");
-                                }
-
-                                // MINDQRCode varchar(80)
-                                if (Encoding.Default.GetBytes(newRow["MINDQRCode"].ToString()).Length > 80)
-                                {
-                                    listColumnLengthErrMsg.Add("<MINDQRCode> length can't be more than 80 Characters.");
                                 }
 
                                 // Remark nvarchar(100)
@@ -393,21 +306,9 @@ namespace Sci.Production.Warehouse
                                 }
                                 #endregion
 
-                                if (!MyUtility.Check.Empty(newRow["wkno"]) && newRow["wkno"].ToString() != this.master["InvNo"].ToString())
-                                {
-                                    listNewRowErrMsg.Add(string.Format("WK# is not match {0}", this.master["InvNo"]));
-                                }
-
                                 if (MyUtility.Check.Empty(newRow["poid"]) || MyUtility.Check.Empty(newRow["seq1"]) || MyUtility.Check.Empty(newRow["seq2"]))
                                 {
                                     continue;
-                                }
-
-                                if (newRow["seq1"].ToString().Substring(0, 1) == "7")
-                                {
-                                    listNewRowErrMsg.Add(string.Format("Can't not import 7X item (SP#:{0}-Seq1:{1}-Seq2:{2})!!", newRow["poid"],
-                                                                                                                             newRow["seq1"],
-                                                                                                                             newRow["seq2"]));
                                 }
 
                                 List<SqlParameter> sqlpar = new List<SqlParameter>();
@@ -416,64 +317,17 @@ namespace Sci.Production.Warehouse
                                 sqlpar.Add(new SqlParameter("@seq2", newRow["seq2"].ToString().Trim()));
                                 sqlpar.Add(new SqlParameter("@roll", newRow["roll"].ToString().Trim()));
                                 sqlpar.Add(new SqlParameter("@dyelot", newRow["dyelot"].ToString().Trim()));
-                                sqlpar.Add(new SqlParameter("@shipqty", newRow["shipqty"].ToString().Trim()));
-
-                                if (!MyUtility.Check.Empty(newRow["MINDQRCode"]))
-                                {
-                                    string sqlCheckQRCode = @"
-select PL.QRCode
-from POShippingList P
-INNER JOIN POShippingList_Line PL ON P.Ukey = PL.POShippingList_Ukey
-WHERE P.POID= @poid AND P.Seq1 = @seq1  AND PL.Line = @seq2 and PL.PackageNo = @roll and PL.BatchNo = @dyelot
-GROUP BY PL.QRCode
-";
-                                    DataTable dtCheckQRCode;
-
-                                    DualResult result = DBProxy.Current.Select(null, sqlCheckQRCode, sqlpar, out dtCheckQRCode);
-
-                                    if (!result)
-                                    {
-                                        listNewRowErrMsg.Add(result.GetException().ToString());
-                                    }
-                                    else
-                                    {
-                                        if (dtCheckQRCode.Rows.Count > 1)
-                                        {
-                                            listNewRowErrMsg.Add("There are more than two QR Code, please right-click on [MIND QR Code] to select one of the QR Code.");
-                                        }
-
-                                        if (dtCheckQRCode.Rows.Count == 1)
-                                        {
-                                            if (dtCheckQRCode.Rows[0]["QRCode"].ToString() != newRow["MINDQRCode"].ToString())
-                                            {
-                                                listNewRowHintMsg.Add("The keyin [MIND QR Code] is different from supplier, and has been updated to the QR Code of supplier.");
-                                            }
-
-                                            newRow["MINDQRCode"] = dtCheckQRCode.Rows[0]["QRCode"];
-                                        }
-                                    }
-                                }
 
                                 DataRow dr2;
                                 string sql = @"
-select  pd.fabrictype
-        , pd.POUnit
-        , StockUnit = pd.StockUnit
-        , Round(dbo.GetUnitQty(pd.POUnit, pd.StockUnit, @shipqty), 2) as stockqty 
-        , (select o.Category from View_WH_Orders o WITH (NOLOCK) where o.id= pd.id) as category
-        , pd.Refno
-        , [ColorID] = isnull(Color.Value,'')
-from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
-inner join [dbo].[Fabric] ff WITH (NOLOCK) on pd.SCIRefno= ff.SCIRefno
-inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
-inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID
-OUTER APPLY(
- SELECT [Value]=
-	 CASE WHEN ff.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(pd.SuppColor = '' or pd.SuppColor is null, dbo.GetColorMultipleID(pd.BrandID,pd.ColorID),pd.SuppColor)
-		 ELSE dbo.GetColorMultipleID(pd.BrandID,pd.ColorID)
-	 END
-)Color
-where pd.id=@poid and pd.seq1 =@seq1 and pd.seq2 = @seq2";
+select [Description] = dbo.getMtlDesc(ID,SEQ1,SEQ2,2,0) 
+,StockUnit
+,[UseQty] =Round(sum(dbo.GetUnitQty(POUnit, StockUnit, Qty)), 2)
+,fabrictype
+from PO_Supp_Detail 
+where id = @poid and seq1 = @seq1 and seq2 = @seq2
+group by ID, SEQ1,SEQ2,POUnit,StockUnit,fabrictype
+";
 
                                 if (MyUtility.Check.Seek(sql, sqlpar, out dr2))
                                 {
@@ -484,14 +338,6 @@ where pd.id=@poid and pd.seq1 =@seq1 and pd.seq2 = @seq2";
                                         newRow["dyelot"] = string.Empty;
                                     }
 
-                                    // po unit 空白不匯入
-                                    if (MyUtility.Check.Empty(dr2["pounit"]))
-                                    {
-                                        listNewRowErrMsg.Add(string.Format("PO Unit of SP#:{0}-Seq1:{1}-Seq2:{2} is empty!!", newRow["poid"],
-                                                                                                                          newRow["seq1"],
-                                                                                                                          newRow["seq2"]));
-                                    }
-
                                     // stock unit空白不匯入
                                     if (MyUtility.Check.Empty(dr2["stockunit"]))
                                     {
@@ -500,67 +346,54 @@ where pd.id=@poid and pd.seq1 =@seq1 and pd.seq2 = @seq2";
                                                                                                                              newRow["seq2"]));
                                     }
 
-                                    newRow["fabrictype"] = dr2["fabrictype"].ToString();
-                                    newRow["Pounit"] = dr2["pounit"].ToString();
                                     newRow["StockUnit"] = dr2["StockUnit"].ToString();
-                                    newRow["stockqty"] = decimal.Parse(dr2["stockqty"].ToString());
-                                    newRow["Refno"] = dr2["Refno"].ToString();
-                                    newRow["ColorID"] = dr2["ColorID"].ToString();
-
-                                    // 決定倉別
-                                    if (dr2["category"].ToString() == "M")
-                                    {
-                                        newRow["stocktype"] = "I";
-                                    }
-                                    else
-                                    {
-                                        newRow["stocktype"] = "B";
-                                    }
-
+                                    newRow["UseQty"] = decimal.Parse(dr2["UseQty"].ToString());
+                                    newRow["Description"] = dr2["Description"].ToString();
+                                    newRow["fabrictype"] = dr2["fabrictype"].ToString();
+                                    newRow["stocktype"] = "B"; // WH P08 收料是收進 Bulk 倉
                                     // 檢查location是否正確
                                     if (!MyUtility.Check.Empty(newRow["location"]))
                                     {
                                         string[] strA = Regex.Split(newRow["location"].ToString(), ",");
+                                        string correctLocation = string.Empty;
                                         foreach (string i in strA.Distinct())
                                         {
-                                            if (!MyUtility.Check.Seek(string.Format(
-                                                @"
+                                            if (!MyUtility.Check.Seek($@"
 select * 
 from    dbo.mtllocation WITH (NOLOCK) 
-where   stocktype='{0}' 
+where   stocktype = 'B' 
         and junk != '1'
-        and id='{1}'", newRow["stocktype"], i.Replace("'", "''"))))
+        and id='{i.Replace("'", "''")}'"))
                                             {
-                                                listNewRowErrMsg.Add(string.Format("Location ({3}) of SP#:{0}-Seq1:{1}-Seq2:{2} in stock ({4}) is not found!!", newRow["poid"],
-                                                                                                                                                            newRow["seq1"],
-                                                                                                                                                            newRow["seq2"],
-                                                                                                                                                            i,
-                                                                                                                                                            newRow["stocktype"]));
+                                                listNewRowErrMsg.Add($"Location ({i}) of SP#:{newRow["poid"]}-Seq1:{newRow["seq1"]}-Seq2:{newRow["seq2"]} in stock ({newRow["stocktype"]}) is not found!!");
                                             }
+                                            else
+                                            {
+                                                correctLocation += i.Replace("'", "''") + ",";
+                                            }
+                                        }
+
+                                        if (!MyUtility.Check.Empty(correctLocation))
+                                        {
+                                            newRow["location"] = correctLocation.Substring(0, correctLocation.Length - 1);
+                                        }
+                                        else
+                                        {
+                                            newRow["location"] = string.Empty;
                                         }
                                     }
                                 }
                                 else
                                 {
-                                    listNewRowErrMsg.Add(string.Format("SP#:{0}-Seq1:{1}-Seq2:{2} is not found!!", newRow["poid"], newRow["seq1"], newRow["seq2"]));
+                                    listNewRowErrMsg.Add($"SP#:{newRow["poid"]}-Seq1:{newRow["seq1"]}-Seq2:{newRow["seq2"]} is not found!!");
+                                }
+
+                                if (!MyUtility.Check.Seek($@"select 1 from orders with(nolock) where id = '{newRow["poid"].ToString().Trim()}' and MDivisionID = '{Sci.Env.User.Keyword}'"))
+                                {
+                                    listNewRowErrMsg.Add(" Could not found SP#.");
                                 }
 
                                 sqlpar.Clear();
-                                if (!MyUtility.Check.Empty(newRow["MINDQRCode"].ToString().Trim()))
-                                {
-                                    sqlpar.Add(new SqlParameter("@MINDQRCode", newRow["MINDQRCode"].ToString().Trim()));
-                                    sql = $@"select r.InvNo from Receiving_Detail rd inner join Receiving r on r.id = rd.id where rd.MINDQRCode = @MINDQRCode and rd.id <> '{this.master["id"]}'";
-                                    if (MyUtility.Check.Seek(sql, sqlpar, out dr2))
-                                    {
-                                        listNewRowErrMsg.Add($"This QR Code already exist WK#{dr2["InvNo"]}, cannot import.");
-                                    }
-
-                                    if (this.detailData.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted)
-                                        .Any(a => MyUtility.Convert.GetString(a["MINDQRCode"]) == MyUtility.Convert.GetString(newRow["MINDQRCode"])))
-                                    {
-                                        listNewRowErrMsg.Add($"This QR Code already exist, cannot import.");
-                                    }
-                                }
 
                                 if (listNewRowHintMsg.Count > 0 && listNewRowErrMsg.Count == 0)
                                 {
@@ -589,23 +422,23 @@ where   stocktype='{0}'
                                 this.grid2Data.Rows.Add(newRow);
                             }
 
-                            var dupMINDQRCode = this.grid2Data.AsEnumerable()
-                                .Where(w => !MyUtility.Check.Empty(w["MINDQRCode"]))
-                                .GroupBy(g => MyUtility.Convert.GetString(g["MINDQRCode"]))
-                                .Select(s => new { MINDQRCode = s.Key, ct = s.Count() })
-                                .Where(w => w.ct > 1).ToList();
-                            foreach (var item in dupMINDQRCode)
-                            {
-                                foreach (var dupqr in this.grid2Data.Select($"MINDQRCode = '{item.MINDQRCode}'"))
-                                {
-                                    if (MyUtility.Check.Empty(dupqr["ErrMsg"]))
-                                    {
-                                        count--;
-                                    }
+                            //var dupMINDQRCode = this.grid2Data.AsEnumerable()
+                            //    .Where(w => !MyUtility.Check.Empty(w["MINDQRCode"]))
+                            //    .GroupBy(g => MyUtility.Convert.GetString(g["MINDQRCode"]))
+                            //    .Select(s => new { MINDQRCode = s.Key, ct = s.Count() })
+                            //    .Where(w => w.ct > 1).ToList();
+                            //foreach (var item in dupMINDQRCode)
+                            //{
+                            //    foreach (var dupqr in this.grid2Data.Select($"MINDQRCode = '{item.MINDQRCode}'"))
+                            //    {
+                            //        if (MyUtility.Check.Empty(dupqr["ErrMsg"]))
+                            //        {
+                            //            count--;
+                            //        }
 
-                                    dupqr["ErrMsg"] += "\r\n" + $"This QR Code already exist WK#{this.master["InvNo"]}, cannot import.";
-                                }
-                            }
+                            //        dupqr["ErrMsg"] += "\r\n" + $"This QR Code already exist WK#{this.master["InvNo"]}, cannot import.";
+                            //    }
+                            //}
 
                             dr["Status"] = (intRowsCount - 1 == count) ? "Check & Import Completed." : "Some Data Faild. Please check Error Message.";
                             dr["Count"] = count;
@@ -658,9 +491,9 @@ where   stocktype='{0}'
             // }
 
             // 如果資料中有錯誤不能WriteIn
-            if (tmpPacking.AsEnumerable().Any(s => s["ErrMsg"].ToString().Contains("length can't be more than")))
+            if (tmpPacking.AsEnumerable().Any(s => s["ErrMsg"].ToString().Empty() == false))
             {
-                MyUtility.Msg.WarningBox("Excel column value over length limit,please check column [Error Message] information to fix Excel.");
+                MyUtility.Msg.WarningBox("Please check column [Error Message] information to fix Excel.");
                 return;
             }
 
@@ -699,19 +532,6 @@ where   stocktype='{0}'
                     return;
                 }
 
-                if (tmpPacking.AsEnumerable().Where(w => w["ErrMsg"].ToString().Contains("This QR Code aleady exist")).Any() ||
-                    tmpPacking.AsEnumerable().GroupBy(g => MyUtility.Convert.GetString(g["MINDQRCode"].ToString()))
-                    .Any(a => !MyUtility.Check.Empty(a.Key) && a.Count() > 1))
-                {
-                    MyUtility.Msg.WarningBox("QR Code are duplicated!!");
-                    return;
-                }
-
-                ////刪除表身重新匯入
-                // foreach (DataRow del in detailData.ToList())
-                // {
-                //    detailData.Rows.Remove(del);
-                // }
                 foreach (DataRow dr2 in tmpPacking.Rows)
                 {
                     // 刪除 Import 重複的資料 by SP# Seq Carton#
@@ -745,6 +565,15 @@ where   stocktype='{0}'
                     {
                         dr2["id"] = this.master["id"];
                         this.detailData.ImportRow(dr2);
+                    }
+                    else
+                    {
+                        foreach (var item in checkRow)
+                        {
+                            item["stockqty"] = dr2["stockqty"];
+                            item["Location"] = dr2["Location"];
+                            item["Remark"] = dr2["Remark"];
+                        }
                     }
                 }
             }
