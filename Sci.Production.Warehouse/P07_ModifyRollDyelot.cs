@@ -94,6 +94,8 @@ namespace Sci.Production.Warehouse
                 .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype) // 9
                 .Text("Location", header: "Location", iseditingreadonly: true) // 10
                 .Text("remark", header: "Remark", iseditingreadonly: true) // 11
+                .Text("FullRoll", header: "Full Roll", width: Widths.AnsiChars(9), iseditingreadonly: false).Get(out this.col_roll) // 3
+                .Text("FullDyelot", header: "Full Dyelot", width: Widths.AnsiChars(10), iseditingreadonly: false).Get(out this.col_dyelot) // 4
                 ;
             }
             else if (this.gridAlias.ToUpper().EqualString("TRANSFERIN_DETAIL"))
@@ -104,6 +106,8 @@ namespace Sci.Production.Warehouse
                 .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype)
                 .Text("Location", header: "Location", iseditingreadonly: true)
                 .Text("remark", header: "Remark", iseditingreadonly: true)
+                .Text("FullRoll", header: "Full Roll", width: Widths.AnsiChars(9), iseditingreadonly: false).Get(out this.col_roll) // 3
+                .Text("FullDyelot", header: "Full Dyelot", width: Widths.AnsiChars(10), iseditingreadonly: false).Get(out this.col_dyelot) // 4
                 ;
             }
 
