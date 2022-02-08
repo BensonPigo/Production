@@ -180,7 +180,7 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
             {
                 seperCmd = " ,oq.Seq,[IDD] = Format(oq.IDD, 'yyyy/MM/dd')";
             }
-            else if (this.seperate == false)
+            else
             {
                 seperCmd = @" ,[IDD] = (SELECT  Stuff((select distinct concat( ',',Format(oqs.IDD, 'yyyy/MM/dd'))   from Order_QtyShip oqs with (nolock) where oqs.ID = o.ID FOR XML PATH('')),1,1,'') )";
             }
@@ -573,7 +573,7 @@ tmpFilterZone as (
                 {
                     seperCmd = " , '' seq, '' IDD ";
                 }
-                else if (this.seperate == false)
+                else
                 {
                     seperCmd = @" ,[IDD] = (SELECT  Stuff((select distinct concat( ',',Format(oqs.IDD, 'yyyy/MM/dd'))   from Order_QtyShip oqs with (nolock) where oqs.ID = o.ID FOR XML PATH('')),1,1,'') )";
                 }
