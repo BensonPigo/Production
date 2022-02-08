@@ -2701,6 +2701,7 @@
     <Build Include="dbo\Tables\PerspirationFastness_Detail.sql" />
     <Build Include="dbo\Tables\KHCMTInvoice.sql" />
     <Build Include="dbo\Tables\KHCMTInvoice_Detail.sql" />
+    <Build Include="dbo\Functions\GetVASSHAS_bit.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
