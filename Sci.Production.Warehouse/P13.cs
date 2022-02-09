@@ -1215,8 +1215,11 @@ Where a.id = '{0}'", masterID);
             }
             else
             {
-                this.CurrentMaintain["CutplanID"] = string.Empty;
-                this.txtCuttingPlanID.ReadOnly = true;
+                if (this.EditMode)
+                {
+                    this.CurrentMaintain["CutplanID"] = string.Empty;
+                    this.txtCuttingPlanID.ReadOnly = true;
+                }
             }
         }
 
