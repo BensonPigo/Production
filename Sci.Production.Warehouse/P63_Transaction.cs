@@ -189,11 +189,14 @@ select IssueDate, ID, Name,
     AdjustQty = sum(AdjustQty),
     Location,
     Remark,
-    POID,
-	Balance = sum(InQty) - sum(OutQty) + sum(AdjustQty)
+    POID
+into #tmpDetailSum
 from #tmpDetail
 group by IssueDate, ID, Name, Location, Remark, POID
 
+select *,
+        [Balance] = SUM(InQty - OutQty + AdjustQty) OVER (ORDER BY IssueDate,ID)
+from #tmpDetailSum
 
 select IssueDate='', ID='', Name='Total',InQty = sum(InQty),OutQty = sum(OutQty), AdjustQty = sum(AdjustQty), Balance = sum(InQty) - sum(OutQty) + sum(AdjustQty)
 from #tmpDetail
@@ -218,6 +221,10 @@ drop table #tmpDetail
                 this.dispTotalReleasedQty.Text = MyUtility.Convert.GetDecimal(dtResults[3].Rows[0]["OutQty"]).ToString();
                 this.dispTotalAdjustQty.Text = MyUtility.Convert.GetDecimal(dtResults[3].Rows[0]["AdjustQty"]).ToString();
                 this.dispTotalBalance.Text = MyUtility.Convert.GetDecimal(dtResults[3].Rows[0]["Balance"]).ToString();
+
+                this.displayInQty.Text = this.dispTotalArrivedQty.Text;
+                this.displayOutQty.Text = this.dispTotalReleasedQty.Text;
+                this.displayBalQty.Text = this.dispTotalBalance.Text;
             }
         }
 
