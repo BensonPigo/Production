@@ -1882,9 +1882,10 @@
             // btnMaterialStatusSemifinished
             // 
             this.btnMaterialStatusSemifinished.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnMaterialStatusSemifinished.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.btnMaterialStatusSemifinished.Location = new System.Drawing.Point(606, 600);
             this.btnMaterialStatusSemifinished.Name = "btnMaterialStatusSemifinished";
-            this.btnMaterialStatusSemifinished.Size = new System.Drawing.Size(183, 27);
+            this.btnMaterialStatusSemifinished.Size = new System.Drawing.Size(181, 27);
             this.btnMaterialStatusSemifinished.TabIndex = 230;
             this.btnMaterialStatusSemifinished.Text = "Material Status (Semi-finished)";
             this.btnMaterialStatusSemifinished.UseVisualStyleBackColor = true;

@@ -261,6 +261,7 @@
             // 
             // dispTotalBalance
             // 
+            this.dispTotalBalance.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.dispTotalBalance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.dispTotalBalance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.dispTotalBalance.Location = new System.Drawing.Point(761, 439);
@@ -270,6 +271,7 @@
             // 
             // dispTotalAdjustQty
             // 
+            this.dispTotalAdjustQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.dispTotalAdjustQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.dispTotalAdjustQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.dispTotalAdjustQty.Location = new System.Drawing.Point(670, 439);
@@ -279,6 +281,7 @@
             // 
             // dispTotalReleasedQty
             // 
+            this.dispTotalReleasedQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.dispTotalReleasedQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.dispTotalReleasedQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.dispTotalReleasedQty.Location = new System.Drawing.Point(577, 439);
@@ -288,6 +291,7 @@
             // 
             // dispTotalArrivedQty
             // 
+            this.dispTotalArrivedQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.dispTotalArrivedQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.dispTotalArrivedQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.dispTotalArrivedQty.Location = new System.Drawing.Point(485, 439);
@@ -297,6 +301,7 @@
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.Location = new System.Drawing.Point(392, 439);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(89, 23);
@@ -341,7 +346,7 @@
             // 
             // btnReCalculate
             // 
-            this.btnReCalculate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnReCalculate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnReCalculate.Location = new System.Drawing.Point(13, 600);
             this.btnReCalculate.Name = "btnReCalculate";
             this.btnReCalculate.Size = new System.Drawing.Size(156, 30);

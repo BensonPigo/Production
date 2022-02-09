@@ -194,17 +194,50 @@ WHERE   StockType='{0}'
             }
 
             string sqlUpdate = $@"
+delete SemiFinishedInventory_Location
+from SemiFinishedInventory_Location sl
+inner join SemiFinishedLocationTrans_Detail sfd on sfd.POID         = sl.POID        and
+												   sfd.Seq          = sl.Seq         and
+												   sfd.Roll         = sl.Roll        and
+												   sfd.Dyelot       = sl.Dyelot      and
+												   sfd.Tone         = sl.Tone        and
+												   sfd.StockType    = sl.StockType
+
+INSERT INTO [dbo].[SemiFinishedInventory_Location]
+           ([POID]
+           ,[Roll]
+           ,[Dyelot]
+           ,[StockType]
+           ,[MtlLocationID]
+           ,[Seq]
+           ,[Tone])
+select
+	sfd.POID
+	,sfd.Roll
+	,sfd.Dyelot
+	,sfd.StockType
+	,s.data
+	,sfd.Seq
+	,sfd.Tone
+from SemiFinishedLocationTrans_Detail sfd
+outer apply(select * from SplitString(sfd.ToLocation,','))s
+
 update  SemiFinishedLocationTrans 
 set Status = 'Confirmed'
     , editdate = getdate()
     , editname = '{Env.User.UserID}' 
 where ID = '{this.CurrentMaintain["ID"]}'
 ";
-            DualResult result = DBProxy.Current.Execute(null, sqlUpdate);
-            if (!result)
+            using (TransactionScope scope = new TransactionScope())
             {
-                this.ShowErr(result);
-                return;
+                DualResult result = DBProxy.Current.Execute(null, sqlUpdate);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                scope.Complete();
             }
 
             MyUtility.Msg.InfoBox("Confirmed successful");
