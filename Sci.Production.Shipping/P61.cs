@@ -241,7 +241,7 @@ where id2.id = '{masterID}'
                 string sqlcmd = $@"
 Select Refno,Description,Unit 
 from view_KHImportItem 
-where RefNo='{e.FormattedValue}' and junk=0
+where SciRefNo='{e.FormattedValue}' and junk=0
 ";
 
                 if (!MyUtility.Check.Seek(sqlcmd, out drSeek))
@@ -276,7 +276,7 @@ from view_KHImportItem vk
 inner join KHCustomsItem ki on vk.Refno=Ki.Refno
 inner join KHCustomsDescription kd on  kd.CDCName=ki.KHCustomsDescriptionCDCName and vk.CustomsType = kd.CustomsType
 inner join KHCustomsDescription_Detail kdd on  kd.CDCName=kdd.CDCName and kdd.PurchaseUnit = vk.Unit
-where vk.Refno = '{e.FormattedValue}'
+where vk.SciRefno = '{e.FormattedValue}'
 ";
                 if (MyUtility.Check.Seek(sqlcmd, out drSeek))
                 {
