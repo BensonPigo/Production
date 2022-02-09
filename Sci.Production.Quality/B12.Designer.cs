@@ -37,6 +37,7 @@
             this.labelDescription = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.editBoxLocalDesc = new Sci.Win.UI.EditBox();
+            this.checkIsHidden = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -47,11 +48,11 @@
             // 
             // detail
             // 
-            this.detail.Location = new System.Drawing.Point(4, 27);
-            this.detail.Size = new System.Drawing.Size(829, 393);
+            this.detail.Size = new System.Drawing.Size(829, 395);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkIsHidden);
             this.detailcont.Controls.Add(this.editBoxLocalDesc);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.txtDefectCode);
@@ -61,17 +62,15 @@
             this.detailcont.Controls.Add(this.txtSubProcessID);
             this.detailcont.Controls.Add(this.lbSubProcessID);
             this.detailcont.Controls.Add(this.labelDescription);
-            this.detailcont.Size = new System.Drawing.Size(829, 355);
+            this.detailcont.Size = new System.Drawing.Size(829, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 355);
             this.detailbtm.Size = new System.Drawing.Size(829, 38);
             // 
             // browse
             // 
-            this.browse.Location = new System.Drawing.Point(4, 27);
-            this.browse.Size = new System.Drawing.Size(829, 393);
+            this.browse.Size = new System.Drawing.Size(829, 395);
             // 
             // tabs
             // 
@@ -79,12 +78,12 @@
             // 
             // createby
             // 
-            this.createby.Size = new System.Drawing.Size(350, 24);
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
             this.editby.Location = new System.Drawing.Point(471, 7);
-            this.editby.Size = new System.Drawing.Size(350, 24);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             // 
             // lbleditby
             // 
@@ -100,7 +99,7 @@
             this.txtDefectCode.MaxLength = 50;
             this.txtDefectCode.Name = "txtDefectCode";
             this.txtDefectCode.ReadOnly = true;
-            this.txtDefectCode.Size = new System.Drawing.Size(665, 24);
+            this.txtDefectCode.Size = new System.Drawing.Size(665, 23);
             this.txtDefectCode.TabIndex = 14;
             // 
             // lbDefectCode
@@ -133,7 +132,7 @@
             this.checkJunk.Location = new System.Drawing.Point(434, 36);
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.ReadOnly = true;
-            this.checkJunk.Size = new System.Drawing.Size(59, 22);
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
             this.checkJunk.TabIndex = 9;
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
@@ -148,7 +147,7 @@
             this.txtSubProcessID.MaxLength = 15;
             this.txtSubProcessID.Name = "txtSubProcessID";
             this.txtSubProcessID.ReadOnly = true;
-            this.txtSubProcessID.Size = new System.Drawing.Size(292, 24);
+            this.txtSubProcessID.Size = new System.Drawing.Size(292, 23);
             this.txtSubProcessID.TabIndex = 8;
             // 
             // lbSubProcessID
@@ -185,6 +184,18 @@
             this.editBoxLocalDesc.Name = "editBoxLocalDesc";
             this.editBoxLocalDesc.Size = new System.Drawing.Size(665, 50);
             this.editBoxLocalDesc.TabIndex = 16;
+            // 
+            // checkIsHidden
+            // 
+            this.checkIsHidden.AutoSize = true;
+            this.checkIsHidden.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsHidden", true));
+            this.checkIsHidden.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkIsHidden.Location = new System.Drawing.Point(497, 36);
+            this.checkIsHidden.Name = "checkIsHidden";
+            this.checkIsHidden.Size = new System.Drawing.Size(154, 21);
+            this.checkIsHidden.TabIndex = 17;
+            this.checkIsHidden.Text = "Hidden While Select";
+            this.checkIsHidden.UseVisualStyleBackColor = true;
             // 
             // B12
             // 
@@ -224,5 +235,6 @@
         private Win.UI.Label labelDescription;
         private Win.UI.Label label1;
         private Win.UI.EditBox editBoxLocalDesc;
+        private Win.UI.CheckBox checkIsHidden;
     }
 }
