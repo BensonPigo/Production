@@ -247,7 +247,7 @@ group by pd.OrderID,o.StyleID,s.Description,o.PoPrice,o.SeasonID,g.ID,s.Ukey,g.B
 Declare @ID varchar(15) = '{this.dr_master["ID"]}'
 Declare @ShipMode varchar(60) = '{this.dr_master["ShipModeID"]}'
 
-select  g.id,
+select distinct g.id,
         g.ETD,
         g.BrandID,
         g.ShipModeID,
