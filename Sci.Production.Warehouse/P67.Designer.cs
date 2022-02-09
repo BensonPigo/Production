@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    partial class P66
+    partial class P67
     {
         /// <summary>
         /// Required designer variable.
@@ -60,7 +60,7 @@
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 116);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 116);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
@@ -74,16 +74,16 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 116);
-            this.detailpanel.Size = new System.Drawing.Size(892, 233);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 359);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(726, 78);
+            this.gridicon.Location = new System.Drawing.Point(834, 78);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 233);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 359);
             // 
             // detail2
             // 
@@ -97,13 +97,26 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1000, 513);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(1000, 475);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 475);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
+            // 
             // browse
             // 
             this.browse.Size = new System.Drawing.Size(842, 513);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(850, 542);
+            this.tabs.Size = new System.Drawing.Size(1008, 542);
             // 
             // label1
             // 
@@ -164,7 +177,7 @@
             this.labelStatus.BackColor = System.Drawing.Color.Transparent;
             this.labelStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
             this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.labelStatus.Location = new System.Drawing.Point(742, 11);
+            this.labelStatus.Location = new System.Drawing.Point(850, 11);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(134, 23);
             this.labelStatus.TabIndex = 44;
@@ -175,7 +188,7 @@
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnImport.Location = new System.Drawing.Point(784, 42);
+            this.btnImport.Location = new System.Drawing.Point(892, 42);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(100, 30);
             this.btnImport.TabIndex = 45;
@@ -183,24 +196,23 @@
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
-            // P66
+            // P67
             // 
             this.ApvChkValue = "New";
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(850, 575);
-            this.GridAlias = "SemiFinishedAdjust_Detail";
+            this.ClientSize = new System.Drawing.Size(1008, 575);
+            this.GridAlias = "SemiFinishedLocationTrans_Detail";
             this.GridNew = 0;
             this.IsSupportClip = false;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
-            this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
-            this.Name = "P66";
+            this.Name = "P67";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
-            this.Text = "P66. Adjust Bulk Qty (Semi-finished)";
+            this.Text = "P67. Update Location (Semi-finished)";
             this.UnApvChkValue = "Confirmed";
-            this.WorkAlias = "SemiFinishedAdjust";
+            this.WorkAlias = "SemiFinishedLocationTrans";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();

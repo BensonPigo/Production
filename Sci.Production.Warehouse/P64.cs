@@ -1,7 +1,9 @@
 ﻿using Ict;
 using Ict.Win;
+using Microsoft.Reporting.WinForms;
 using Sci.Data;
 using Sci.Production.PublicPrg;
+using Sci.Win;
 using Sci.Win.Tems;
 using Sci.Win.Tools;
 using System;
@@ -12,6 +14,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -24,6 +27,8 @@ namespace Sci.Production.Warehouse
     /// </summary>
     public partial class P64 : Win.Tems.Input6
     {
+        private DualResult result;
+
         /// <summary>
         /// P64
         /// </summary>
@@ -34,6 +39,18 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
             this.DefaultFilter = $" MDivisionID = '{Env.User.Keyword}'";
             this.detailgrid.RowsAdded += this.Detailgrid_RowsAdded;
+        }
+
+        /// <inheritdoc/>
+        public P64(ToolStripMenuItem menuitem, string transID)
+        {
+            this.InitializeComponent();
+            this.DefaultFilter = $" id='{transID}' AND MDivisionID  = '{Sci.Env.User.Keyword}'";
+            this.IsSupportNew = false;
+            this.IsSupportEdit = false;
+            this.IsSupportDelete = false;
+            this.IsSupportConfirm = false;
+            this.IsSupportUnconfirm = false;
         }
 
         private void Detailgrid_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
@@ -504,6 +521,84 @@ end
         {
             P64_ExcelImport callNextForm = new P64_ExcelImport((DataTable)this.detailgridbs.DataSource);
             callNextForm.ShowDialog(this);
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickPrint()
+        {
+            if (this.CurrentMaintain == null || !this.DetailDatas.Any())
+            {
+                return false;
+            }
+
+            if (this.CurrentMaintain["status"].ToString().ToUpper() != "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
+                return false;
+            }
+
+            ReportDefinition rd = new ReportDefinition();
+            if (!(this.result = ReportResources.ByEmbeddedResource(Assembly.GetAssembly(this.GetType()), this.GetType(), "P64_Print.rdlc", out IReportResource reportresource)))
+            {
+                MyUtility.Msg.ErrorBox(this.result.ToString());
+            }
+            else
+            {
+                #region -- 整理表頭資料 --
+                // 抓M的EN NAME
+                string rptTitle = MyUtility.GetValue.Lookup($@"select NameEN from MDivision where ID='{Env.User.Keyword}'");
+                DataRow row = this.CurrentMaintain;
+                rd.ReportParameters.Add(new ReportParameter("RptTitle", rptTitle));
+                rd.ReportParameters.Add(new ReportParameter("ID", row["ID"].ToString()));
+                rd.ReportParameters.Add(new ReportParameter("Remark", row["Remark"].ToString()));
+                rd.ReportParameters.Add(new ReportParameter("IssueDate", ((DateTime)MyUtility.Convert.GetDate(row["IssueDate"])).ToString("yyyy/MM/dd")));
+                #endregion
+
+                string sqlcmd = $@"
+select  sfd.*,
+	    [Desc] = IIF((sfd.ID =   lag(sfd.ID,1,'') over (order by sfd.ID,sfd.seq) 
+			                   AND (sfd.seq = lag(sfd.seq,1,'')over (order by sfd.ID,sfd.seq))) 
+			                  , ''
+                              , concat(sf.[Desc],char(10),'Color : ', sf.Color)),
+        sf.Unit,
+        sf.Color
+from    SemiFinishedReceiving_Detail sfd
+left join   SemiFinished sf with (nolock) on sf.PoID = sfd.Poid
+and sf.Seq = sfd.Seq
+where   sfd.ID = '{row["ID"]}'
+";
+                DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dataTable);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
+
+                List<P64_PrintData> data = dataTable.AsEnumerable()
+                    .Select(row1 => new P64_PrintData()
+                    {
+                        POID = row1["POID"].ToString().Trim(),
+                        SEQ = row1["Seq"].ToString().Trim(),
+                        Roll = row1["Roll"].ToString().Trim(),
+                        DYELOT = row1["Dyelot"].ToString().Trim(),
+                        DESC = row1["Desc"].ToString().Trim(),
+                        Unit = row1["Unit"].ToString().Trim(),
+                        QTY = row1["QTY"].ToString().Trim(),
+                        ToneGrp = row1["Tone"].ToString().Trim(),
+                        Location = row1["Location"].ToString().Trim(),
+                    }).ToList();
+
+                rd.ReportDataSource = data;
+                rd.ReportResource = reportresource;
+                var frm1 = new Win.Subs.ReportView(rd)
+                {
+                    MdiParent = this.MdiParent,
+                    TopMost = true,
+                };
+                frm1.Show();
+            }
+
+            return base.ClickPrint();
         }
     }
 }

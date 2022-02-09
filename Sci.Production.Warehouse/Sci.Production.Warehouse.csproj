@@ -187,6 +187,7 @@
     <Compile Include="P07_QRCodeSticker.Designer.cs">
       <DependentUpon>P07_QRCodeSticker.cs</DependentUpon>
     </Compile>
+    <Compile Include="P65_PrintData.cs" />
     <Compile Include="P18_Print.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -205,6 +206,7 @@
     <Compile Include="P03_ReturnQty.Designer.cs">
       <DependentUpon>P03_ReturnQty.cs</DependentUpon>
     </Compile>
+    <Compile Include="P64_PrintData.cs" />
     <Compile Include="P34_PrintData.cs" />
     <Compile Include="P63_CreateSeq.cs">
       <SubType>Form</SubType>
@@ -265,6 +267,18 @@
     </Compile>
     <Compile Include="P64_ExcelImport.designer.cs">
       <DependentUpon>P64_ExcelImport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P67_Import .cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P67_Import .Designer.cs">
+      <DependentUpon>P67_Import .cs</DependentUpon>
+    </Compile>
+    <Compile Include="P67.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P67.Designer.cs">
+      <DependentUpon>P67.cs</DependentUpon>
     </Compile>
     <Compile Include="P66.cs">
       <SubType>Form</SubType>
@@ -1502,6 +1516,19 @@
     <EmbeddedResource Include="P07_QRCodeSticker.resx">
       <DependentUpon>P07_QRCodeSticker.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P67_Import .resx">
+      <DependentUpon>P67_Import .cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P67.resx">
+      <DependentUpon>P67.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P66_Print.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P65_Print.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P64_Print.rdlc" />
     <EmbeddedResource Include="P33_QTThread_Detail.resx">
       <DependentUpon>P33_QTThread_Detail.cs</DependentUpon>
     </EmbeddedResource>
@@ -2301,6 +2328,9 @@
     <None Include="Properties\DataSources\P37_PrintData.datasource" />
     <None Include="Properties\DataSources\P45_PrintData.datasource" />
     <None Include="Properties\DataSources\P61_PrintData.datasource" />
+    <None Include="Properties\DataSources\P64_PrintData.datasource" />
+    <None Include="Properties\DataSources\P65_PrintData.datasource" />
+    <None Include="Properties\DataSources\P66_PrintData.datasource" />
     <None Include="Sci.Production.Warehouse.ruleset" />
   </ItemGroup>
   <ItemGroup>

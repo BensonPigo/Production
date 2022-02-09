@@ -1,7 +1,9 @@
 ﻿using Ict;
 using Ict.Win;
+using Microsoft.Reporting.WinForms;
 using Sci.Data;
 using Sci.Production.PublicPrg;
+using Sci.Win;
 using Sci.Win.Tems;
 using Sci.Win.Tools;
 using System;
@@ -11,6 +13,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -34,6 +37,18 @@ namespace Sci.Production.Warehouse
             this.gridicon.Append.Visible = false;
             this.gridicon.Insert.Visible = false;
             this.DefaultFilter = $" MDivisionID = '{Env.User.Keyword}'";
+        }
+
+        /// <inheritdoc/>
+        public P66(ToolStripMenuItem menuitem, string transID)
+        {
+            this.InitializeComponent();
+            this.DefaultFilter = $" id='{transID}' AND MDivisionID  = '{Sci.Env.User.Keyword}'";
+            this.IsSupportNew = false;
+            this.IsSupportEdit = false;
+            this.IsSupportDelete = false;
+            this.IsSupportConfirm = false;
+            this.IsSupportUnconfirm = false;
         }
 
         /// <inheritdoc/>
@@ -78,7 +93,7 @@ where   sfd.ID = '{masterID}'
                 this.detailgrid.RefreshEdit();
             };
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("POID", header: "SP#", width: Widths.AnsiChars(11), iseditingreadonly: true)
+            .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .EditText("Desc", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
             .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -285,6 +300,99 @@ end
         {
             this.detailgrid.EndEdit();
             new P66_Import((DataTable)this.detailgridbs.DataSource).ShowDialog();
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickPrint()
+        {
+            if (this.CurrentMaintain == null || !this.DetailDatas.Any())
+            {
+                return false;
+            }
+
+            if (this.CurrentMaintain["status"].ToString().ToUpper() != "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
+                return false;
+            }
+
+            string preparedBy = this.editby.Text;
+            #region -- 撈表頭資料 --
+            string rptTitle = MyUtility.GetValue.Lookup($@"select NameEN from MDivision where ID='{Env.User.Keyword}'");
+            ReportDefinition report = new ReportDefinition();
+            DataRow row = this.CurrentMaintain;
+            report.ReportParameters.Add(new ReportParameter("RptTitle", rptTitle));
+            report.ReportParameters.Add(new ReportParameter("ID", row["ID"].ToString()));
+            report.ReportParameters.Add(new ReportParameter("Remark", row["Remark"].ToString()));
+            report.ReportParameters.Add(new ReportParameter("IssueDate", ((DateTime)MyUtility.Convert.GetDate(row["IssueDate"])).ToString("yyyy/MM/dd")));
+            #endregion
+            #region -- 撈表身資料 --
+            string sqlcmd = $@"
+select  sfd.*,
+        [AdjustQty] = sfd.QtyAfter - sfd.QtyBefore,
+	    [Desc] = IIF((sfd.ID =   lag(sfd.ID,1,'') over (order by sfd.ID,sfd.seq) 
+			                   AND (sfd.seq = lag(sfd.seq,1,'')over (order by sfd.ID,sfd.seq))) 
+			                  , ''
+                              , concat(sf.[Desc],char(10),'Color : ', sf.Color)),
+        sf.Unit,
+        sf.Color,
+        [Location] = Location.val,
+	    [Total]=sum(sfd.QtyAfter - sfd.QtyBefore) OVER (PARTITION BY sfd.POID ,sfd.seq)
+from    SemiFinishedAdjust_Detail sfd
+left join   SemiFinished sf with (nolock) on sf.Poid = sfd.Poid and sf.Seq = sfd.Seq
+outer apply (SELECT val =  Stuff((select distinct concat( ',',MtlLocationID)   
+                                from SemiFinishedInventory_Location sfl with (nolock)
+                                where sfl.POID         = sfd.POID        and
+                                      sfl.Seq          = sfd.Seq         and
+                                      sfl.Roll         = sfd.Roll        and
+                                      sfl.Dyelot       = sfd.Dyelot      and
+                                      sfl.Tone         = sfd.Tone        and
+                                      sfl.StockType    = sfd.StockType
+                                FOR XML PATH('')),1,1,'')  ) Location
+where   sfd.ID = '{row["ID"]}'
+";
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dtDetail);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            // 傳 list 資料
+            List<P65_PrintData> data = dtDetail.AsEnumerable()
+                .Select(row1 => new P65_PrintData()
+                {
+                    POID = row1["POID"].ToString().Trim(),
+                    SEQ = row1["SEQ"].ToString().Trim(),
+                    DESC = row1["desc"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim(),
+                    Unit = row1["Unit"].ToString().Trim(),
+                    Roll = row1["Roll"].ToString().Trim(),
+                    DYELOT = row1["Dyelot"].ToString().Trim(),
+                    ToneGrp = row1["Tone"].ToString().Trim(),
+                    QTY = row1["AdjustQty"].ToString().Trim(),
+                    TotalQTY = row1["Total"].ToString().Trim(),
+                }).ToList();
+
+            report.ReportDataSource = data;
+            #endregion
+
+            // 指定是哪個 RDLC
+            Type reportResourceNamespace = typeof(P65_PrintData);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P66_Print.rdlc";
+            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)))
+            {
+                return false;
+            }
+
+            report.ReportResource = reportresource;
+
+            // 開啟 report view
+            var frm = new Win.Subs.ReportView(report) { MdiParent = this.MdiParent };
+            frm.Show();
+
+            return base.ClickPrint();
         }
     }
 }

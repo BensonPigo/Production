@@ -181,6 +181,7 @@
             this.txttpeuserPOSMR = new Sci.Production.Class.Txttpeuser();
             this.dispSewingLine = new Sci.Win.UI.DisplayBox();
             this.labSewingLine = new Sci.Win.UI.Label();
+            this.btnMaterialStatusSemifinished = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -196,6 +197,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.btnMaterialStatusSemifinished);
             this.detailcont.Controls.Add(this.dispSewingLine);
             this.detailcont.Controls.Add(this.labSewingLine);
             this.detailcont.Controls.Add(this.displayAllowancePO);
@@ -1565,7 +1567,7 @@
             // 
             // labelPOHandle
             // 
-            this.labelPOHandle.Location = new System.Drawing.Point(620, 600);
+            this.labelPOHandle.Location = new System.Drawing.Point(606, 568);
             this.labelPOHandle.Name = "labelPOHandle";
             this.labelPOHandle.Size = new System.Drawing.Size(65, 21);
             this.labelPOHandle.TabIndex = 172;
@@ -1573,7 +1575,7 @@
             // 
             // labelPOSMR
             // 
-            this.labelPOSMR.Location = new System.Drawing.Point(620, 573);
+            this.labelPOSMR.Location = new System.Drawing.Point(606, 541);
             this.labelPOSMR.Name = "labelPOSMR";
             this.labelPOSMR.Size = new System.Drawing.Size(65, 21);
             this.labelPOSMR.TabIndex = 171;
@@ -1835,7 +1837,7 @@
             // 
             this.txttpeuserPOHandle.DisplayBox1Binding = "";
             this.txttpeuserPOHandle.DisplayBox2Binding = "";
-            this.txttpeuserPOHandle.Location = new System.Drawing.Point(689, 600);
+            this.txttpeuserPOHandle.Location = new System.Drawing.Point(675, 568);
             this.txttpeuserPOHandle.Name = "txttpeuserPOHandle";
             this.txttpeuserPOHandle.Size = new System.Drawing.Size(302, 23);
             this.txttpeuserPOHandle.TabIndex = 174;
@@ -1854,7 +1856,7 @@
             // 
             this.txttpeuserPOSMR.DisplayBox1Binding = "";
             this.txttpeuserPOSMR.DisplayBox2Binding = "";
-            this.txttpeuserPOSMR.Location = new System.Drawing.Point(689, 573);
+            this.txttpeuserPOSMR.Location = new System.Drawing.Point(675, 541);
             this.txttpeuserPOSMR.Name = "txttpeuserPOSMR";
             this.txttpeuserPOSMR.Size = new System.Drawing.Size(302, 23);
             this.txttpeuserPOSMR.TabIndex = 173;
@@ -1876,6 +1878,17 @@
             this.labSewingLine.Size = new System.Drawing.Size(98, 21);
             this.labSewingLine.TabIndex = 228;
             this.labSewingLine.Text = "Sewing Line";
+            // 
+            // btnMaterialStatusSemifinished
+            // 
+            this.btnMaterialStatusSemifinished.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnMaterialStatusSemifinished.Location = new System.Drawing.Point(606, 600);
+            this.btnMaterialStatusSemifinished.Name = "btnMaterialStatusSemifinished";
+            this.btnMaterialStatusSemifinished.Size = new System.Drawing.Size(183, 27);
+            this.btnMaterialStatusSemifinished.TabIndex = 230;
+            this.btnMaterialStatusSemifinished.Text = "Material Status (Semi-finished)";
+            this.btnMaterialStatusSemifinished.UseVisualStyleBackColor = true;
+            this.btnMaterialStatusSemifinished.Click += new System.EventHandler(this.BtnMaterialStatusSemifinished_Click);
             // 
             // P01
             // 
@@ -2060,5 +2073,6 @@
         private Win.UI.DisplayBox displayAllowancePO;
         private Win.UI.DisplayBox dispSewingLine;
         private Win.UI.Label labSewingLine;
+        private Win.UI.Button btnMaterialStatusSemifinished;
     }
 }
