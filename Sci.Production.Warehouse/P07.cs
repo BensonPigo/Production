@@ -121,6 +121,7 @@ namespace Sci.Production.Warehouse
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
             {
                 MyUtility.Msg.WarningBox("Data is confirmed, can't modify.", "Warning");
+                this.Change_record();
                 return false;
             }
 
@@ -2897,6 +2898,7 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
             var frm = new P07_ModifyRollDyelot(dt, this.CurrentMaintain["id"].ToString(), this.GridAlias);
             frm.ShowDialog(this);
             this.RenewData();
+            this.Change_record();
         }
 
         private void BtFind_Click(object sender, EventArgs e)
@@ -3176,6 +3178,7 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
             var frm = new P07_UpdateWeight(this.detailgridbs.DataSource, this.CurrentMaintain["id"].ToString(), this.GridAlias);
             frm.ShowDialog(this);
             this.RenewData();
+            this.Change_record();
         }
 
         /// <summary>
