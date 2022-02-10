@@ -18,15 +18,41 @@ namespace Sci.Production.Warehouse
     /// </summary>
     public partial class P63 : Win.Tems.QueryForm
     {
-        /// <summary>
-        /// P63
-        /// </summary>
-        /// <param name="menuitem">menuitem</param>
+        private string SPNo;
+
+        /// <inheritdoc/>
         public P63(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             this.EditMode = true;
+        }
+
+        /// <summary>
+        /// Form to Form W/H.P01
+        /// </summary>
+        /// <inheritdoc/>
+        public P63(string p01SPNo, ToolStripMenuItem menuitem)
+            : base(menuitem)
+        {
+            this.InitializeComponent();
+            this.EditMode = true;
+            this.SPNo = p01SPNo;
+            this.txtSP.Text = this.SPNo.Trim();
+            this.Event_Query();
+        }
+
+        /// <inheritdoc/>
+        public void P63Data(string p01SPNo)
+        {
+            this.EditMode = true;
+            this.SPNo = p01SPNo;
+        }
+
+        /// <inheritdoc/>
+        public void SetTxtSPNo(string spNo)
+        {
+            this.txtSP.Text = spNo;
         }
 
         /// <inheritdoc/>
@@ -61,7 +87,8 @@ namespace Sci.Production.Warehouse
             ;
         }
 
-        private void Query()
+        /// <inheritdoc/>
+        public void Event_Query()
         {
             string sqlWhere = string.Empty;
 
@@ -123,7 +150,7 @@ group by    sf.POID,
                 switch (keyData)
                 {
                     case Keys.Enter:
-                        this.Query();
+                        this.Event_Query();
                         break;
                 }
             }
@@ -144,7 +171,7 @@ group by    sf.POID,
 
         private void BtnQuery_Click(object sender, EventArgs e)
         {
-            this.Query();
+            this.Event_Query();
         }
 
         private void BtnCreateSeq_Click(object sender, EventArgs e)
@@ -155,7 +182,7 @@ group by    sf.POID,
             {
                 DataTable dt = frm.GetResultImportDatas();
                 this.txtSP.Text = dt.Rows[0]["POID"].ToString();
-                this.Query();
+                this.Event_Query();
             }
         }
 
@@ -178,7 +205,7 @@ group by    sf.POID,
             if (frm.GetBoolImport())
             {
                 DataTable dt = frm.GetResultImportDatas();
-                this.Query();
+                this.Event_Query();
             }
         }
     }
