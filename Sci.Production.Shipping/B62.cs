@@ -256,6 +256,7 @@ where 1=1
             if (MyUtility.Check.Empty(this.CurrentMaintain["CustomsType"]))
             {
                 MyUtility.Msg.InfoBox("Please select [Customs Type] first!");
+                this.txtSCIRefno.Text = string.Empty;
                 this.comboCustomsType.Select();
                 return;
             }
