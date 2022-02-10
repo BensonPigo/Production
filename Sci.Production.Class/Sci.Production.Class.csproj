@@ -229,6 +229,12 @@
     <Compile Include="Txtartworktype_fty.Designer.cs">
       <DependentUpon>Txtartworktype_fty.cs</DependentUpon>
     </Compile>
+    <Compile Include="TxtSewingTeam.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TxtSewingTeam.Designer.cs">
+      <DependentUpon>TxtSewingTeam.cs</DependentUpon>
+    </Compile>
     <Compile Include="TxtmulitFSRCpuCost.cs">
       <SubType>Component</SubType>
     </Compile>
