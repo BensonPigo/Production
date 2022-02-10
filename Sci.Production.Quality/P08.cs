@@ -284,8 +284,37 @@ namespace Sci.Production.Quality
         /// </summary>
         private void Query()
         {
-            string sqlWhere = "where fb.WeaveTypeID in ('KNIT','WOVEN') and o.category in ('B','M') " + Environment.NewLine;
-            string sqlWhere2 = "where fb.WeaveTypeID in ('KNIT','WOVEN') and o.category in ('B','M') " + Environment.NewLine;
+            string sqlWhere = "where fb.WeaveTypeID in ('KNIT','WOVEN') " + Environment.NewLine;
+            string sqlWhere2 = "where fb.WeaveTypeID in ('KNIT','WOVEN') " + Environment.NewLine;
+
+            List<string> categoryList = new List<string>();
+            if (this.chkBulk.Checked)
+            {
+                categoryList.Add("'B'");
+            }
+
+            if (this.chkMaterial.Checked)
+            {
+                categoryList.Add("'M'");
+            }
+
+            if (this.chkSample.Checked)
+            {
+                categoryList.Add("'S'");
+            }
+
+            if (this.chkSMTL.Checked)
+            {
+                categoryList.Add("'T'");
+            }
+
+            string sqlWhereCategory = string.Empty;
+            if (categoryList.Count > 0)
+            {
+                sqlWhereCategory = $" and o.category in ({categoryList.JoinToString(",")})";
+                sqlWhere += sqlWhereCategory + Environment.NewLine;
+                sqlWhere2 += sqlWhereCategory + Environment.NewLine;
+            }
 
             if (!MyUtility.Check.Empty(this.txtRecivingID.Text))
             {

@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dateBoxArriveWH = new Sci.Win.UI.DateRange();
             this.txtRecivingID = new Sci.Win.UI.TextBox();
             this.lblArriveWHDate = new Sci.Win.UI.Label();
@@ -65,6 +64,11 @@
             this.lbLocationSearch = new Sci.Win.UI.Label();
             this.lbTotalPage = new Sci.Win.UI.Label();
             this.numericTotalPage = new Sci.Win.UI.NumericBox();
+            this.chkBulk = new Sci.Win.UI.CheckBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.chkMaterial = new Sci.Win.UI.CheckBox();
+            this.chkSample = new Sci.Win.UI.CheckBox();
+            this.chkSMTL = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
@@ -259,22 +263,14 @@
             this.gridReceiving.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridReceiving.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridReceiving.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridReceiving.Location = new System.Drawing.Point(9, 94);
+            this.gridReceiving.Location = new System.Drawing.Point(9, 121);
             this.gridReceiving.Name = "gridReceiving";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReceiving.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridReceiving.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridReceiving.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReceiving.RowTemplate.Height = 24;
             this.gridReceiving.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridReceiving.ShowCellToolTips = false;
-            this.gridReceiving.Size = new System.Drawing.Size(987, 306);
+            this.gridReceiving.Size = new System.Drawing.Size(987, 279);
             this.gridReceiving.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridReceiving.TabIndex = 36;
             // 
@@ -448,11 +444,72 @@
             0,
             0});
             // 
+            // chkBulk
+            // 
+            this.chkBulk.AutoSize = true;
+            this.chkBulk.Checked = true;
+            this.chkBulk.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkBulk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkBulk.Location = new System.Drawing.Point(102, 94);
+            this.chkBulk.Name = "chkBulk";
+            this.chkBulk.Size = new System.Drawing.Size(54, 21);
+            this.chkBulk.TabIndex = 55;
+            this.chkBulk.Text = "Bulk";
+            this.chkBulk.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(9, 92);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(90, 23);
+            this.label2.TabIndex = 56;
+            this.label2.Text = "Category";
+            // 
+            // chkMaterial
+            // 
+            this.chkMaterial.AutoSize = true;
+            this.chkMaterial.Checked = true;
+            this.chkMaterial.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkMaterial.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkMaterial.Location = new System.Drawing.Point(162, 94);
+            this.chkMaterial.Name = "chkMaterial";
+            this.chkMaterial.Size = new System.Drawing.Size(77, 21);
+            this.chkMaterial.TabIndex = 57;
+            this.chkMaterial.Text = "Material";
+            this.chkMaterial.UseVisualStyleBackColor = true;
+            // 
+            // chkSample
+            // 
+            this.chkSample.AutoSize = true;
+            this.chkSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkSample.Location = new System.Drawing.Point(245, 94);
+            this.chkSample.Name = "chkSample";
+            this.chkSample.Size = new System.Drawing.Size(74, 21);
+            this.chkSample.TabIndex = 58;
+            this.chkSample.Text = "Sample";
+            this.chkSample.UseVisualStyleBackColor = true;
+            // 
+            // chkSMTL
+            // 
+            this.chkSMTL.AutoSize = true;
+            this.chkSMTL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkSMTL.Location = new System.Drawing.Point(325, 94);
+            this.chkSMTL.Name = "chkSMTL";
+            this.chkSMTL.Size = new System.Drawing.Size(64, 21);
+            this.chkSMTL.TabIndex = 59;
+            this.chkSMTL.Text = "SMTL";
+            this.chkSMTL.UseVisualStyleBackColor = true;
+            // 
             // P08
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 448);
+            this.Controls.Add(this.chkSMTL);
+            this.Controls.Add(this.chkSample);
+            this.Controls.Add(this.chkMaterial);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.chkBulk);
             this.Controls.Add(this.numericTotalPage);
             this.Controls.Add(this.lbTotalPage);
             this.Controls.Add(this.lbLocationSearch);
@@ -524,6 +581,11 @@
             this.Controls.SetChildIndex(this.lbLocationSearch, 0);
             this.Controls.SetChildIndex(this.lbTotalPage, 0);
             this.Controls.SetChildIndex(this.numericTotalPage, 0);
+            this.Controls.SetChildIndex(this.chkBulk, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.chkMaterial, 0);
+            this.Controls.SetChildIndex(this.chkSample, 0);
+            this.Controls.SetChildIndex(this.chkSMTL, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
@@ -568,5 +630,10 @@
         private Win.UI.Label lbLocationSearch;
         private Win.UI.Label lbTotalPage;
         private Win.UI.NumericBox numericTotalPage;
+        private Win.UI.CheckBox chkBulk;
+        private Win.UI.Label label2;
+        private Win.UI.CheckBox chkMaterial;
+        private Win.UI.CheckBox chkSample;
+        private Win.UI.CheckBox chkSMTL;
     }
 }

@@ -524,7 +524,7 @@ FROM PackingList p
 INNER JOIN PackingList_Detail pd ON p.ID = pd.ID
 LEFT JOIN Pullout pu ON pu.ID = p.PulloutID
 INNER JOIN #tmp t ON pd.OrderID =t.OrderID
-	AND p.ShipQty=t.TotalCartons
+	AND p.CtnQty=t.TotalCartons
 	AND pd.Article=t.Article
 	AND pd.SizeCode=t.SizeCode
 	AND pd.ShipQty=t.ShipQty
