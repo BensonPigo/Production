@@ -1211,16 +1211,17 @@ Where a.id = '{0}'", masterID);
             if (this.CurrentMaintain["whseReasonID"].ToString() == "00007" && MyUtility.Convert.GetString(this.CurrentMaintain["status"]) == "New")
             {
                 //this.txtCuttingPlanID.Enabled = this.EditMode;
-                this.txtCuttingPlanID.ReadOnly = !this.EditMode;
+                //this.txtCuttingPlanID.ReadOnly = !this.EditMode;
             }
             else
             {
                 if (this.EditMode)
                 {
                     this.CurrentMaintain["CutplanID"] = string.Empty;
-                    this.txtCuttingPlanID.ReadOnly = true;
                 }
+                //this.txtCuttingPlanID.ReadOnly = !this.EditMode;
             }
+            this.txtCuttingPlanID.ReadOnly = !this.EditMode;
         }
 
         private void BtnCallP99_Click(object sender, EventArgs e)
