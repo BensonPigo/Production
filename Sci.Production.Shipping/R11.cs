@@ -1043,7 +1043,8 @@ select  IE = 'Export'
 ");
 
                         sqlCmd.Append(@")
-
+select * from GBData
+union all
 select * from GBDataAll");
                     }
                 }
