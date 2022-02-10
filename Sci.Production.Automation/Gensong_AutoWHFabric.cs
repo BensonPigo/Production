@@ -750,6 +750,7 @@ select distinct
     ,[PoID] = wo.ID
     ,[Seq1] = wo.SEQ1
     ,[Seq2] = wo.SEQ2
+    ,[WeaveTypeID] = isnull(Fabric.WeaveTypeID,'')
     ,[Refno] = wo.Refno
     ,[Article] = Article.value
     ,[Color] = LTRIM(RTRIM(Color.value))
@@ -818,6 +819,7 @@ select distinct
                     POID = s["POID"].ToString(),
                     Seq1 = s["Seq1"].ToString(),
                     Seq2 = s["Seq2"].ToString(),
+                    WeaveType = s["WeaveTypeID"].ToString(),
                     Refno = s["Refno"].ToString(),
                     Article = s["Article"].ToString(),
                     Color = s["Color"].ToString(),
@@ -1161,6 +1163,7 @@ select lt2.Id
 ,[Qty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
 ,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,[CmdTime] = GETDATE()
+,[WeaveTypeID] = isnull(Fabric.WeaveTypeID,'')
 from LocationTrans_detail lt2
 inner join #tmp lt on lt.Id=lt2.Id
 left join FtyInventory f on lt2.FtyInventoryUkey = f.ukey
@@ -1652,6 +1655,7 @@ and exists(
                         PoId = dr["PoId"].ToString(),
                         Seq1 = dr["Seq1"].ToString(),
                         Seq2 = dr["Seq2"].ToString(),
+                        WeaveType = dr["WeaveTypeID"].ToString(),
                         Refno = dr["Refno"].ToString(),
                         Color = dr["Color"].ToString(),
                         Roll = dr["Roll"].ToString(),
@@ -1683,6 +1687,7 @@ and exists(
                        PoId = dr["PoId"].ToString(),
                        Seq1 = dr["Seq1"].ToString(),
                        Seq2 = dr["Seq2"].ToString(),
+                       WeaveType = dr["WeaveTypeID"].ToString(),
                        Roll = dr["Roll"].ToString(),
                        Dyelot = dr["Dyelot"].ToString(),
                        Barcode = dr["Barcode"].ToString(),
@@ -1703,6 +1708,7 @@ and exists(
                             PoId = dr["PoId"].ToString(),
                             Seq1 = dr["Seq1"].ToString(),
                             Seq2 = dr["Seq2"].ToString(),
+                            WeaveType = dr["WeaveTypeID"].ToString(),
                             Roll = dr["Roll"].ToString(),
                             Dyelot = dr["Dyelot"].ToString(),
                             StockType = dr["StockType"].ToString(),
@@ -1723,6 +1729,7 @@ and exists(
                         FromPOID = dr["FromPOID"].ToString(),
                         FromSeq1 = dr["FromSeq1"].ToString(),
                         FromSeq2 = dr["FromSeq2"].ToString(),
+                        WeaveType = dr["WeaveTypeID"].ToString(),
                         FromRoll = dr["FromRoll"].ToString(),
                         FromDyelot = dr["FromDyelot"].ToString(),
                         FromStockType = dr["FromStockType"].ToString(),
@@ -1753,6 +1760,7 @@ and exists(
                        POID = dr["POID"].ToString(),
                        Seq1 = dr["Seq1"].ToString(),
                        Seq2 = dr["Seq2"].ToString(),
+                       WeaveType = dr["WeaveTypeID"].ToString(),
                        Roll = dr["Roll"].ToString(),
                        Dyelot = dr["Dyelot"].ToString(),
                        Description = dr["Description"].ToString(),
@@ -1772,6 +1780,7 @@ and exists(
                        FromPOID = dr["FromPOID"].ToString(),
                        FromSeq1 = dr["FromSeq1"].ToString(),
                        FromSeq2 = dr["FromSeq2"].ToString(),
+                       WeaveType = dr["WeaveTypeID"].ToString(),
                        FromRoll = dr["FromRoll"].ToString(),
                        FromDyelot = dr["FromDyelot"].ToString(),
                        Refno = dr["Refno"].ToString(),
@@ -1802,6 +1811,7 @@ and exists(
                        POID = s["POID"].ToString(),
                        Seq1 = s["Seq1"].ToString(),
                        Seq2 = s["Seq2"].ToString(),
+                       WeaveType = s["WeaveTypeID"].ToString(),
                        Roll = s["Roll"].ToString(),
                        Dyelot = s["Dyelot"].ToString(),
                        Refno = s["Refno"].ToString(),
@@ -1826,6 +1836,7 @@ and exists(
                        POID = s["POID"].ToString(),
                        Seq1 = s["Seq1"].ToString(),
                        Seq2 = s["Seq2"].ToString(),
+                       WeaveType = s["WeaveTypeID"].ToString(),
                        StockType = s["StockType"].ToString(),
                        Ukey = (long)s["Ukey"],
                        Refno = s["Refno"].ToString(),
@@ -1849,6 +1860,7 @@ and exists(
                        POID = s["POID"].ToString(),
                        Seq1 = s["Seq1"].ToString(),
                        Seq2 = s["Seq2"].ToString(),
+                       WeaveType = s["WeaveTypeID"].ToString(),
                        Roll = s["Roll"].ToString(),
                        Dyelot = s["Dyelot"].ToString(),
                        StockType = s["StockType"].ToString(),
@@ -1900,6 +1912,7 @@ SELECT [ID] = rd.id
 ,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,[Barcode] = Barcode.value
 ,rd.SentToWMS,rd.CompleteTime
+,[WeaveTypeID] = isnull(Fabric.WeaveTypeID,'')
 FROM Production.dbo.Receiving_Detail rd
 inner join Production.dbo.Receiving r on rd.id = r.id
 {Environment.NewLine + strBody}
@@ -1956,6 +1969,7 @@ SELECT [ID] = rd.id
 ,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,[Barcode] = Barcode.value
 ,rd.SentToWMS,rd.CompleteTime
+,[WeaveTypeID] = isnull(Fabric.WeaveTypeID,'')
 FROM Production.dbo.TransferIn_Detail rd
 inner join Production.dbo.TransferIn r on rd.id = r.id
 {Environment.NewLine + strBody}
@@ -2037,6 +2051,7 @@ SELECT [ID] = rd.id
 ,[Status] = 'Delete'
 ,[Barcode] = Barcode.value
 ,rd.SentToWMS,rd.CompleteTime
+,[WeaveTypeID] = isnull(Fabric.WeaveTypeID,'')
 FROM Production.dbo.Receiving_Detail rd
 inner join Production.dbo.Receiving r on rd.id = r.id
 inner join #tmp s on s.POID = rd.PoId
@@ -2094,6 +2109,7 @@ SELECT [ID] = rd.id
 ,[Status] = 'Delete'
 ,[Barcode] = Barcode.value
 ,rd.SentToWMS,rd.CompleteTime
+,[WeaveTypeID] = isnull(Fabric.WeaveTypeID,'')
 FROM Production.dbo.TransferIn_Detail rd
 inner join Production.dbo.TransferIn r on rd.id = r.id
 inner join #tmp s on s.POID = rd.PoId
@@ -2177,6 +2193,7 @@ select distinct
 ,[Qty] = {strQty}
 ,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,i2.SentToWMS,i2.CompleteTime
+,[WeaveTypeID] = isnull(Fabric.WeaveTypeID,'')
 from Production.dbo.Issue_Detail i2
 inner join Production.dbo.Issue i on i2.Id=i.Id
 {strBody}
@@ -2184,6 +2201,9 @@ left join Production.dbo.Cutplan c on c.ID = i.CutplanID
 left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
 	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
     and f.StockType = i2.StockType
+left join Production.dbo.PO_Supp_Detail po3 on po3.ID= i2.PoId 
+	and po3.SEQ1=i2.Seq1 and po3.SEQ2=i2.Seq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
 outer apply(
 	select value = min(fb.Barcode)
 	from Production.dbo.FtyInventory_Barcode fb
@@ -2230,12 +2250,16 @@ select distinct
 ,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,CmdTime = GetDate()
 ,i2.SentToWMS,i2.CompleteTime
+,[WeaveTypeID] = isnull(Fabric.WeaveTypeID,'')
 from Production.dbo.IssueLack_Detail i2
 inner join Production.dbo.IssueLack i on i2.id = i.id
 {strBody}
 left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1 = i2.Seq1
 	and f.Seq2 = i2.Seq2 and f.Roll = i2.Roll and f.Dyelot = i2.Dyelot
     and f.StockType = i2.StockType
+left join Production.dbo.PO_Supp_Detail po3 on po3.ID= i2.PoId 
+	and po3.SEQ1=i2.Seq1 and po3.SEQ2=i2.Seq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
 outer apply(
 	select value = min(fb.Barcode)
 	from Production.dbo.FtyInventory_Barcode fb
@@ -2282,12 +2306,16 @@ select distinct
 ,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,CmdTime = GetDate()
 ,i2.SentToWMS,i2.CompleteTime
+,[WeaveTypeID] = isnull(Fabric.WeaveTypeID,'')
 from Production.dbo.TransferOut_Detail i2
 inner join Production.dbo.TransferOut i on i2.id = i.id
 {strBody}
 left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
 	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
     and f.StockType = i2.StockType
+left join Production.dbo.PO_Supp_Detail po3 on po3.ID= i2.PoId 
+	and po3.SEQ1=i2.Seq1 and po3.SEQ2=i2.Seq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
 outer apply(
 	select value = min(fb.Barcode)
 	from Production.dbo.FtyInventory_Barcode fb
@@ -2375,6 +2403,7 @@ select distinct
 ,CmdTime = GetDate()
 ,sd.SentToWMS,sd.CompleteTime
 ,sd.ukey
+,[WeaveTypeID] = isnull(Fabric.WeaveTypeID,'')
 from Production.dbo.SubTransfer_Detail sd
 inner join Production.dbo.SubTransfer s on s.id = sd.id
 {strBody}
@@ -2476,10 +2505,17 @@ select rrd.Id
 ,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,[CmdTime] = GETDATE()
 ,rrd.SentToWMS,rrd.CompleteTime
+,[WeaveTypeID] = isnull(Fabric.WeaveTypeID,'')
 from ReturnReceipt_Detail rrd
 inner join Production.dbo.ReturnReceipt rr on rr.id = rrd.id
 {strBody}
-left join FtyInventory f on rrd.FtyInventoryUkey = f.ukey
+left join FtyInventory f on rrd.POID = f.POID 
+        and rrd.Seq1= f.Seq1 and f.Seq2 = rrd.Seq2
+	    and f.Roll = rrd.Roll and f.Dyelot = rrd.Dyelot 
+        and f.StockType = rrd.StockType
+left join PO_Supp_Detail po3 on po3.ID = rrd.POID and po3.SEQ1 = rrd.Seq1
+and po3.SEQ2 = rrd.Seq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
 outer apply(
 	select value = fb.Barcode
 	from Production.dbo.FtyInventory_Barcode fb
@@ -2549,6 +2585,7 @@ select distinct
 ,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,CmdTime = GetDate()
 ,bb2.SentToWMS,bb2.CompleteTime
+,[WeaveTypeID] = isnull(Fabric.WeaveTypeID,'')
 from Production.dbo.BorrowBack_Detail bb2
 inner join Production.dbo.BorrowBack bb on bb.id = bb2.id
 {strBody}
@@ -2654,6 +2691,7 @@ select distinct
 ,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,CmdTime = GetDate()
 ,i2.SentToWMS,i2.CompleteTime
+,[WeaveTypeID] = isnull(Fabric.WeaveTypeID,'')
 from Production.dbo.Adjust_Detail i2
 inner join Production.dbo.Adjust i on i.id = i2.id
 {strBody}
@@ -2662,6 +2700,7 @@ left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
     and f.StockType = i2.StockType
 left join PO_Supp_Detail po3 on po3.ID = i2.POID
 	and po3.SEQ1 = i2.Seq1 and po3.SEQ2 = i2.Seq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
 outer apply(
 	select value = fb.Barcode
 	from Production.dbo.FtyInventory_Barcode fb
@@ -2731,10 +2770,14 @@ select distinct ir2.Id
 ,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,[Qty] = {strQty}
 ,[CmdTime] = GETDATE()
+,[WeaveTypeID] = isnull(Fabric.WeaveTypeID,'')
 from IssueReturn_Detail ir2
 inner join Production.dbo.IssueReturn i on ir2.id = i.id
 {strBody}
-left join FtyInventory f on ir2.FtyInventoryUkey = f.ukey
+left join FtyInventory f on ir2.POID = f.POID 
+        and ir2.Seq1= f.Seq1 and f.Seq2 = ir2.Seq2
+	    and f.Roll = ir2.Roll and f.Dyelot = ir2.Dyelot 
+        and f.StockType = ir2.StockType
 left join PO_Supp_Detail po3 on po3.ID = ir2.POID and po3.SEQ1 = ir2.Seq1
 and po3.SEQ2 = ir2.Seq2
 LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
@@ -2794,10 +2837,17 @@ select
 ,[QtyBefore] = ir2.QtyBefore
 ,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,[CmdTime] = GETDATE()
+,[WeaveTypeID] = isnull(Fabric.WeaveTypeID,'')
 from Stocktaking_Detail ir2
 inner join Production.dbo.Stocktaking i on ir2.id = i.id
 inner join #tmp s on ir2.ID = s.Id
-left join FtyInventory f on ir2.FtyInventoryUkey = f.ukey
+left join FtyInventory f on ir2.POID = f.POID 
+        and ir2.Seq1= f.Seq1 and f.Seq2 = ir2.Seq2
+	    and f.Roll = ir2.Roll and f.Dyelot = ir2.Dyelot 
+        and f.StockType = ir2.StockType
+left join PO_Supp_Detail po3 on po3.ID = ir2.POID and po3.SEQ1 = ir2.Seq1
+and po3.SEQ2 = ir2.Seq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
 where 1=1
 and exists(
     select 1

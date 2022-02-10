@@ -14,6 +14,7 @@
     [StockType]        VARCHAR (1)     CONSTRAINT [DF_LocationTrans_detail_StockType] DEFAULT ('') NOT NULL,
     [CompleteTime]     DATETIME        NULL,
     [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
+    [ToContainerCode] NVARCHAR(100) NULL DEFAULT (''), 
     CONSTRAINT [PK_LocationTrans_detail_1] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -75,3 +76,13 @@ CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
     ON [dbo].[LocationTrans_detail]([ID] ASC, [MDivisionID] ASC, [Poid] ASC, [Seq1] ASC, [Seq2] ASC)
     INCLUDE([FromLocation], [ToLocation]);
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'鐵框號 ( 主要針對主料 )',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LocationTrans_detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ToContainerCode'

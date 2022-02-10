@@ -23,6 +23,7 @@
     [Ukey]                 BIGINT          IDENTITY (1, 1) NOT NULL,
     [CompleteTime] DATETIME NULL, 
     [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
+    [ToContainerCode] NVARCHAR(100) NULL DEFAULT (''), 
     CONSTRAINT [PK_SubTransfer_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -124,3 +125,13 @@ CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
 GO
 
 CREATE INDEX [ID_TOSEQ1_TOSEQ2] ON [dbo].[SubTransfer_Detail] ([ID],[ToSeq1],[ToSeq2])
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'鐵框號 ( 主要針對主料 )',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'SubTransfer_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ToContainerCode'
