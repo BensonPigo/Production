@@ -779,6 +779,58 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
             this.callP04.Show();
         }
 
+        private void BtnMaterialStatusSemifinished_Click(object sender, EventArgs e)
+        {
+            if (this.callP63 != null && this.callP63.Visible == true)
+            {
+                this.callP63.P63Data(this.CurrentMaintain["POID"].ToString());
+            }
+            else
+            {
+                this.P63FormOpen();
+            }
+        }
+
+        private P63 callP63 = null;
+
+        private void P63FormOpen()
+        {
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form is P63)
+                {
+                    form.Activate();
+                    P63 activateForm = (P63)form;
+                    activateForm.SetTxtSPNo(this.CurrentMaintain["POID"].ToString());
+                    activateForm.Event_Query();
+                    return;
+                }
+            }
+
+            ToolStripMenuItem p63MenuItem = null;
+            foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
+            {
+                if (toolMenuItem.Text.EqualString("Warehouse"))
+                {
+                    foreach (var subMenuItem in toolMenuItem.DropDown.Items)
+                    {
+                        if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
+                        {
+                            if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P63. Material Status (Local)"))
+                            {
+                                p63MenuItem = (ToolStripMenuItem)subMenuItem;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            this.callP63 = new P63(this.CurrentMaintain["ID"].ToString(), p63MenuItem);
+            this.callP63.MdiParent = this.MdiParent;
+            this.callP63.Show();
+        }
+
         private void BtnReCalculate_Click(object sender, EventArgs e)
         {
             // 母單批次Re-Cal

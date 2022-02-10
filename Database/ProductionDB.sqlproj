@@ -2702,6 +2702,8 @@
     <Build Include="dbo\Tables\KHCMTInvoice.sql" />
     <Build Include="dbo\Tables\KHCMTInvoice_Detail.sql" />
     <Build Include="dbo\Functions\GetVASSHAS_bit.sql" />
+    <Build Include="dbo\Tables\SemiFinishedLocationTrans_Detail.sql" />
+    <Build Include="dbo\Tables\SemiFinishedLocationTrans.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
