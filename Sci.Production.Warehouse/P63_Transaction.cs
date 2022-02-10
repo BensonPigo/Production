@@ -83,9 +83,36 @@ namespace Sci.Production.Warehouse
             .Numeric("AdjustQty", header: "Adjust Qty", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4))
             .Numeric("Balance", header: "Balance", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4));
 
+            #region 開窗
+            DataGridViewGeneratorTextColumnSettings openOtherWH2 = new DataGridViewGeneratorTextColumnSettings();
+            openOtherWH2.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.gridRight.CurrentDataRow;
+                if (dr == null)
+                {
+                    return;
+                }
+
+                switch (dr["name"].ToString().Substring(0, 3))
+                {
+                    case "P64":
+                        var p64 = new P64(null, dr["id"].ToString());
+                        p64.ShowDialog(this);
+                        break;
+                    case "P65":
+                        var p65 = new P65(null, dr["id"].ToString());
+                        p65.ShowDialog(this);
+                        break;
+                    case "P66":
+                        var p66 = new P66(null, dr["id"].ToString());
+                        p66.ShowDialog(this);
+                        break;
+                }
+            };
+            #endregion
             this.Helper.Controls.Grid.Generator(this.gridRight)
             .Text("IssueDate", header: "Date", iseditingreadonly: true, width: Widths.AnsiChars(9))
-            .Text("ID", header: "Transaction ID", iseditingreadonly: true, width: Widths.AnsiChars(14), settings: openOtherWH)
+            .Text("ID", header: "Transaction ID", iseditingreadonly: true, width: Widths.AnsiChars(14), settings: openOtherWH2)
             .Text("Name", header: "Name", iseditingreadonly: true, width: Widths.AnsiChars(30))
             .Numeric("InQty", header: "In Qty", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4))
             .Numeric("OutQty", header: "Out Qty", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4))
