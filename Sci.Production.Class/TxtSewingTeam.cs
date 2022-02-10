@@ -160,6 +160,11 @@ namespace Sci.Production.Class
                         return;
                     }
 
+                    if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        return;
+                    }
+
                     // 右鍵彈出功能
                     DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
                     string oldValue = row[columnName].ToString();
