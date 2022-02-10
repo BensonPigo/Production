@@ -123,6 +123,11 @@ namespace Sci.Production.Class
                             return;
                         }
 
+                        if (MyUtility.Check.Empty(e.FormattedValue))
+                        {
+                            return;
+                        }
+
                         DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
                         string where = string.Empty;
                         if (!issupportJunk)
