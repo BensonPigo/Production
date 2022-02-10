@@ -333,6 +333,13 @@ order by id.POID,SEQ, id.Dyelot,id.Roll
                 }
             }
 
+            string cmd = $@"select 1 from Cutplan where MDivisionid='{Sci.Env.User.Keyword}' AND ID = '{this.CurrentMaintain["CutplanID"]}' ";
+            if (!MyUtility.Check.Seek(cmd))
+            {
+                MyUtility.Msg.WarningBox("There is no this <Cutting Plan ID>");
+                return false;
+            }
+
             #endregion 必輸檢查
 
             foreach (DataRow row in this.DetailDatas)
@@ -1200,11 +1207,70 @@ Where a.id = '{0}'", masterID);
                 this.detailgrid.Columns["LossQty"].Visible = false;
                 this.detailgrid.Columns["Article"].Visible = false;
             }
+
+            if (this.CurrentMaintain["whseReasonID"].ToString() == "00007" && MyUtility.Convert.GetString(this.CurrentMaintain["status"]) == "New")
+            {
+                //this.txtCuttingPlanID.Enabled = this.EditMode;
+                //this.txtCuttingPlanID.ReadOnly = !this.EditMode;
+            }
+            else
+            {
+                if (this.EditMode)
+                {
+                    this.CurrentMaintain["CutplanID"] = string.Empty;
+                }
+                //this.txtCuttingPlanID.ReadOnly = !this.EditMode;
+            }
+            this.txtCuttingPlanID.ReadOnly = !this.EditMode;
         }
 
         private void BtnCallP99_Click(object sender, EventArgs e)
         {
             P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P13", this);
+        }
+
+        private void TxtCuttingPlanID_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string selectCommand = $@"
+select ID
+from Cutplan
+where MDivisionid = '{Sci.Env.User.Keyword}'
+";
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(selectCommand, "20", MyUtility.Convert.GetString(this.CurrentMaintain["CutplanID"]));
+
+            DialogResult returnResult = item.ShowDialog();
+
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.CurrentMaintain["CutplanID"] = item.GetSelectedString();
+        }
+
+        private void TxtCuttingPlanID_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string cuttingPlanID = this.txtCuttingPlanID.Text;
+            if (MyUtility.Check.Empty(cuttingPlanID))
+            {
+                return;
+            }
+
+            string cmd = $@"
+select ID
+from Cutplan
+where MDivisionid = '{Sci.Env.User.Keyword}'
+AND ID = @ID
+";
+            bool exists = MyUtility.Check.Seek(cmd, new List<SqlParameter>() { new SqlParameter("@ID", cuttingPlanID) });
+
+            if (!exists || MyUtility.Convert.GetString(this.CurrentMaintain["Whsereasonid"]) != "00007")
+            {
+                this.txtCuttingPlanID.Text = string.Empty;
+                e.Cancel = true;
+                MyUtility.Msg.WarningBox("Cutting Plan ID not found, or W/H Reason is not 00007.");
+                return;
+            }
         }
     }
 }
