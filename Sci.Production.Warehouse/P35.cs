@@ -333,6 +333,8 @@ and ID = '{Sci.Env.User.UserID}'"))
             };
 
             #endregion Seq 右鍵開窗
+
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode;
             #region -- 欄位設定 --
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
@@ -346,11 +348,14 @@ and ID = '{Sci.Env.User.UserID}'"))
             .Numeric("adjustqty", header: "Adjust Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 7
             .Text("stockunit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(4)) // 8
             .Text("Location", header: "Location", iseditingreadonly: true) // 9
+            .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
             .Text("reasonid", header: "Reason ID", settings: ts).Get(out this.col_reason) // 10
             .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(15)) // 11
             ;
             #endregion 欄位設定
 
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            cbb_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
             this.detailgrid.Columns["qtyafter"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["reasonid"].DefaultCellStyle.BackColor = Color.Pink;
         }
@@ -850,6 +855,7 @@ select a.id,a.PoId,a.Seq1,a.Seq2
     ,a.ukey
     ,a.ftyinventoryukey
     ,[location] = Getlocation.Value 
+    ,fi.ContainerCode
     ,[ColorID] = ColorID.Value
     ,[Description] = dbo.getmtldesc(p1.id,p1.seq1,p1.seq2,2,0)
 from dbo.Adjust_Detail a WITH (NOLOCK) 
@@ -968,6 +974,7 @@ select ad.POID
 			    ,''
                 ,dbo.getMtlDesc(ad.poid, ad.seq1, ad.seq2, 2, 0))
 	, [Location] = dbo.Getlocation(fi.ukey)
+    , fi.ContainerCode
 	, p.StockUnit
 	, ad.Roll
 	, ad.Dyelot
@@ -999,7 +1006,7 @@ order by ad.POID, SEQ, ad.Dyelot, ad.Roll
                     POID = row1["POID"].ToString().Trim(),
                     SEQ = row1["SEQ"].ToString().Trim(),
                     DESC = row1["DESC"].ToString().Trim(),
-                    Location = row1["Location"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                     StockUnit = row1["StockUnit"].ToString().Trim(),
                     Roll = row1["Roll"].ToString().Trim(),
                     DYELOT = row1["Dyelot"].ToString().Trim(),

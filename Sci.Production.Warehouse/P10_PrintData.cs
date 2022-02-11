@@ -16,6 +16,8 @@
 
         public string Location { get; set; }
 
+        public string ContainerCode { get; set; }
+
         public string Unit { get; set; }
 
         public string Roll { get; set; }

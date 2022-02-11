@@ -194,6 +194,7 @@ select id.POID,
 	    id.Qty,
 	    p.StockUnit,
         dbo.Getlocation(fi.ukey) [location],
+        fi.ContainerCode,
 	    [Total]=sum(id.Qty) OVER (PARTITION BY id.POID ,id.seq1, id.seq2)
 		,[RecvKG] = case when rd.ActualQty is not null 
 						then case when rd.ActualQty <> id.Qty
@@ -262,7 +263,7 @@ order by id.POID,SEQ, id.Dyelot,id.Roll
                     SEQ = row1["SEQ"].ToString().Trim(),
                     DESC = row1["desc"].ToString().Trim(),
                     MDESC = row1["Mdesc"].ToString().Trim(),
-                    Location = row1["Location"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                     StockUnit = row1["StockUnit"].ToString().Trim(),
                     Roll = row1["Roll"].ToString().Trim(),
                     DYELOT = row1["Dyelot"].ToString().Trim(),
@@ -445,6 +446,7 @@ and ID = '{Sci.Env.User.UserID}'"))
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode;
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("FtyGroup", header: "Factory", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -459,10 +461,13 @@ and ID = '{Sci.Env.User.UserID}'"))
                 .Numeric("LossQty", header: "Loss Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
                 .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 6
                 .Text("Location", header: "Bulk Location", iseditingreadonly: true) // 7
+                .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
             ;
             #endregion 欄位設定
 
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            cbb_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
         }
 
         /// <inheritdoc/>
@@ -1097,6 +1102,7 @@ select  o.FtyGroup
         , a.StockType
         , Isnull(c.inqty - c.outqty + c.adjustqty - c.ReturnQty,0.00) as balance
         , dbo.Getlocation(c.ukey) location
+        , [ContainerCode] = c.ContainerCode
         , a.ukey
 		, p1.NetQty
 		, p1.LossQty

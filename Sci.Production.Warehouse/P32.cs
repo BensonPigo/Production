@@ -176,6 +176,7 @@ select  StockSEQ = t.frompoid+' '+(t.fromseq1 + '-' +t.fromseq2)
                         WHEN 'I'THEN 'Inventory'
                         ELSE t.FromStockType end 
         ,[Location] = dbo.Getlocation(fi.ukey) 
+        ,FI.ContainerCode
         ,p.StockUnit
         ,t.fromroll
         ,t.fromdyelot
@@ -207,7 +208,7 @@ where t.id= @ID";
                     DESC = row1["desc"].ToString().Trim(),
                     FromStock = row1["FromStock"].ToString().Trim(),
                     ToStock = row1["ToStock"].ToString().Trim(),
-                    Location = row1["Location"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                     Unit = row1["StockUnit"].ToString().Trim(),
                     Roll = row1["fromroll"].ToString().Trim(),
                     DYELOT = row1["fromdyelot"].ToString().Trim(),
@@ -420,6 +421,9 @@ and ID = '{Sci.Env.User.UserID}'"))
                 }
             };
 
+            Ict.Win.UI.DataGridViewTextBoxColumn From_ContainerCode;
+            Ict.Win.UI.DataGridViewTextBoxColumn To_ContainerCode;
+
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
@@ -430,16 +434,22 @@ and ID = '{Sci.Env.User.UserID}'"))
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
             .ComboBox("fromstocktype", header: "From" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype) // 5
             .Text("Location", header: "From" + Environment.NewLine + "Location", iseditingreadonly: true) // 6
+            .Text("FromContainerCode", header: "From" + Environment.NewLine + "Container Code", iseditingreadonly: true).Get(out From_ContainerCode)
             .Text("topoid", header: "To" + Environment.NewLine + "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 7
             .Text("toseq", header: "To" + Environment.NewLine + "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 8
             .Text("toroll", header: "To" + Environment.NewLine + "Roll", width: Widths.AnsiChars(6)) // 9
             .Text("todyelot", header: "To" + Environment.NewLine + "Dyelot", width: Widths.AnsiChars(6)) // 10
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 11
             .Text("ToLocation", header: "To Location", width: Widths.AnsiChars(10), settings: toLocation)
+            .Text("ToContainerCode", header: "To" + Environment.NewLine + "Container Code", iseditingreadonly: true).Get(out To_ContainerCode)
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5)) // 12
             .ComboBox("tostocktype", header: "To" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype2) // 13
             ;
             #endregion 欄位設定
+
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            From_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
+            To_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
             this.detailgrid.Columns["toroll"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["todyelot"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
@@ -1578,7 +1588,9 @@ select  [Selected] = 0
         ,a.ToStocktype
         ,a.ukey
         ,location = dbo.Getlocation(fi.ukey)
+        ,[FromContainerCode] = fi.ContainerCode
         ,a.ToLocation
+        ,a.ToContainerCode
         ,Fromlocation = Fromlocation.listValue
 from dbo.BorrowBack_detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2

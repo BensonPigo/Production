@@ -251,6 +251,7 @@ and ID = '{Sci.Env.User.UserID}'"))
         protected override void OnDetailGridSetup()
         {
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode;
 
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
@@ -267,6 +268,7 @@ and ID = '{Sci.Env.User.UserID}'"))
             .Numeric("qty", header: "Out Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10) // 6
             .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), iseditable: false).Get(out cbb_stocktype) // 7
             .Text("Location", header: "Location", iseditingreadonly: true) // 8
+            .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
             .Text("ToPOID", header: "To POID", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("ToSeq", header: "To Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
             ;
@@ -275,6 +277,8 @@ and ID = '{Sci.Env.User.UserID}'"))
             cbb_stocktype.ValueMember = "Key";
             cbb_stocktype.DisplayMember = "Value";
 
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            cbb_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
@@ -872,6 +876,7 @@ select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as se
 ,a.StockType
 ,a.ukey
 ,dbo.Getlocation(fi.ukey) location
+,[ContainerCode] = FI.ContainerCode
 ,a.ftyinventoryukey
 ,a.ToPOID
 ,a.ToSeq1

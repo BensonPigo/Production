@@ -318,6 +318,9 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
 
             #endregion Seq 右鍵開窗
             #region -- 欄位設定 --
+
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode;
+
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -330,11 +333,14 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             .Numeric("adjustqty", header: "Adjust Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
             .Text("stockunit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(4))
             .Text("Location", header: "Location", iseditingreadonly: true)
+            .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
             .Text("reasonid", header: "Reason ID", settings: ts).Get(out this.col_reason)
             .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20))
             ;
             #endregion 欄位設定
 
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            cbb_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
             this.detailgrid.Columns["qtyafter"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["reasonid"].DefaultCellStyle.BackColor = Color.Pink;
         }
@@ -846,6 +852,7 @@ select a.id,a.PoId,a.Seq1,a.Seq2
 ,(select Name from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Adjust' AND ID= A.ReasonId) reason_nm
 ,a.StockType
 ,dbo.Getlocation(fi.ukey) location
+,fi.ContainerCode
 ,a.ukey
 ,a.ftyinventoryukey
 ,ColorID =dbo.GetColorMultipleID(p1.BrandId, p1.ColorID)
@@ -943,6 +950,7 @@ select ad.POID
 			    ,''
                 ,dbo.getMtlDesc(ad.poid, ad.seq1, ad.seq2, 2, 0))
 	, [Location] = dbo.Getlocation(fi.ukey)
+    , fi.ContainerCode
 	, p.StockUnit
 	, ad.Roll
 	, ad.Dyelot
@@ -974,7 +982,7 @@ order by ad.POID, SEQ, ad.Dyelot, ad.Roll
                     POID = row1["POID"].ToString().Trim(),
                     SEQ = row1["SEQ"].ToString().Trim(),
                     DESC = row1["DESC"].ToString().Trim(),
-                    Location = row1["Location"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                     StockUnit = row1["StockUnit"].ToString().Trim(),
                     Roll = row1["Roll"].ToString().Trim(),
                     DYELOT = row1["Dyelot"].ToString().Trim(),
