@@ -66,14 +66,17 @@ and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
 ;
 
 insert into @CMPDetail
-select   [OutputDate] = s.OutputDate
+select   * from
+(		
+select
+		[OutputDate] = s.OutputDate
 		,[SPNo] = sd.OrderId
 		,[Factory] = s.FactoryID
 		,[FactoryType] = iif(f.Type='B','Bulk',iif(f.Type='S','Sample',f.Type))
 		,[IsDevSample] = CASE WHEN otype.IsDevSample =1 THEN 'Y' ELSE 'N' END
 		,[MDivision] = s.MDivisionID
 		,[SCISeason] = sea.SeasonSCIID
-		,[ArtworkType] = iif(s.Category = 'M','SEWING',att.ID)
+		,[ArtworkType] = att.ID
 		,[SubconType] = case	when s.Shift = 'O' then 'O'
 								when o.SubconInSisterFty = 1 then 'I'
 								else 'N' end
@@ -83,9 +86,7 @@ select   [OutputDate] = s.OutputDate
 		,[ContractNumber] = s.SubConOutContractNumber
 		,[UnitPrice] = sod.UnitPrice
 		,[Vat] = sod.Vat
-		,[CPUPrice] = case when s.Category = 'M'  then Sum(sd.QAQty * mo.CPUFactor * mo.CPU)
-							when att.ID = 'SEWING' then Sum(sd.QAQty * o.CPUFactor * O.CPU  * a.Rate)
-							when att.ProductionUnit = 'QTY'  then ROUND(Sum(sd.QAQty * ot.Price * a.Rate) , 4)
+		,[CPUPrice] = case when att.ProductionUnit = 'QTY'  then ROUND(Sum(sd.QAQty * ot.Price * a.Rate) , 4)
 							when att.ProductionUnit = 'TMS'  then ROUND(Sum(sd.QAQty * ot.Price * a.Rate) , 3)
 							else 0 end
 		,[Qty] = Sum(sd.QAQty)
@@ -100,26 +101,24 @@ left join SubconOutContract_Detail sod WITH (NOLOCK) on sod.SubConOutFty = s.Sub
 														sod.OrderId = sd.OrderId and
 														sod.ComboType = sd.ComboType and 
 														sod.Article = sd.Article
-left join Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID
+left join Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID and ot.ArtworkTypeID <> 'SEWING'
 left join ArtworkType att WITH (NOLOCK) on	att.ID =	ot.ArtworkTypeID and 
 											att.Classify in ('I','A','P') and 
 											-- Sewing need include data
 											(att.IsTtlTMS = 0 or att.Seq = 1010 ) and 
 											att.Junk = 0 and 
 											att.IsPrintToCMP= 1
-left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 outer apply (select [Rate] = isnull([dbo].[GetOrderLocation_Rate](o.id ,sd.ComboType),100)/100) a
 outer apply (select [Value] = IIF(s.Shift <> 'O' and o.Category <> 'M' and o.LocalOrder = 1, 'I',s.Shift)) as LastShift
 where	s.MDivisionID = isnull(@M, s.MDivisionID) and 
 		(exists(select 1 from SplitString(@Factory,',') where s.FactoryID = Data )  or @Factory is null) and
-		s.OutputDate between @StartDate and @EndDate and (o.CateGory != 'G' or s.Category='M') and
+		s.OutputDate between @StartDate and @EndDate and 
+		o.CateGory != 'G' and
+		s.Category <> 'M' and
 		((LastShift.Value = 'O' and o.LocalOrder <> 1) or (LastShift.Value <> 'O') ) 
           --排除 subcon in non sister的數值
-        and ((LastShift.Value <> 'I') or ( LastShift.Value = 'I'  and o.SubconInType in ('0','3')))
-		--將ArtworkType為'SP_THREAD'部分，排除掉是台北買線的部分。
-		AND (  (NOT EXISTS (SELECT 1 FROm @TPEtmp WHERE ID = o.POID )AND att.ID = 'SP_THREAD')   OR   isnull(att.ID,'') <> 'SP_THREAD' ) 
+        --and ((LastShift.Value <> 'I') or ( LastShift.Value = 'I'  and o.SubconInType in ('0','3')))
 		AND isnull(o.NonRevenue, 0) = 0
-
 group by  s.OutputDate
 		, sd.OrderId
 		, s.FactoryID
@@ -140,15 +139,86 @@ group by  s.OutputDate
 		, att.ProductionUnit
 		, s.Category
 		, att.ID
-order by 
-		s.OutputDate
+union all
+select   [OutputDate] = s.OutputDate
+		,[SPNo] = sd.OrderId
+		,[Factory] = s.FactoryID
+		,[FactoryType] = iif(f.Type='B','Bulk',iif(f.Type='S','Sample',f.Type))
+		,[IsDevSample] = CASE WHEN otype.IsDevSample =1 THEN 'Y' ELSE 'N' END
+		,[MDivision] = s.MDivisionID
+		,[SCISeason] = sea.SeasonSCIID
+		,[ArtworkType] = 'SEWING'
+		,[SubconType] = case	when s.Shift = 'O' then 'O'
+								when o.SubconInSisterFty = 1 then 'I'
+								else 'N' end
+		,[SubconInOut] = case	when s.Shift = 'O' then isnull(s.SubconOutFty,'')
+							when o.SubconInSisterFty = 1 then isnull(o.ProgramID,'')
+							else '' end
+		,[ContractNumber] = s.SubConOutContractNumber
+		,[UnitPrice] = sod.UnitPrice
+		,[Vat] = sod.Vat
+		,[CPUPrice] = case when s.Category = 'M'  then Sum(sd.QAQty * mo.CPUFactor * mo.CPU)
+							else Sum(sd.QAQty * o.CPUFactor * O.CPU  * a.Rate) end
+		,[Qty] = Sum(sd.QAQty)
+from SewingOutput s WITH (NOLOCK) 
+inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
+left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId 
+left join OrderType otype WITH (NOLOCK) on o.OrderTypeID = otype.ID and o.BrandID = otype.BrandID
+left join Factory f on s.FactoryID = f.ID
+left join Season sea WITH (NOLOCK) on sea.ID = o.SeasonID and sea.BrandID = o.BrandID
+left join SubconOutContract_Detail sod WITH (NOLOCK) on sod.SubConOutFty = s.SubconOutFty and 
+														sod.ContractNumber = s.SubConOutContractNumber and
+														sod.OrderId = sd.OrderId and
+														sod.ComboType = sd.ComboType and 
+														sod.Article = sd.Article
+left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
+outer apply (select [Rate] = isnull([dbo].[GetOrderLocation_Rate](o.id ,sd.ComboType),100)/100) a
+outer apply (select [Value] = IIF(s.Shift <> 'O' and o.Category <> 'M' and o.LocalOrder = 1, 'I',s.Shift)) as LastShift
+where	s.MDivisionID = isnull(@M, s.MDivisionID) and 
+		(exists(select 1 from SplitString(@Factory,',') where s.FactoryID = Data )  or @Factory is null) and
+		s.OutputDate between @StartDate and @EndDate and 
+		(o.CateGory != 'G' or s.Category='M') and
+		((LastShift.Value = 'O' and o.LocalOrder <> 1) or (LastShift.Value <> 'O') ) 
+		AND isnull(o.NonRevenue, 0) = 0
+group by  s.OutputDate
 		, sd.OrderId
 		, s.FactoryID
+		, iif(f.Type='B','Bulk',iif(f.Type='S','Sample',f.Type))
+		, CASE WHEN otype.IsDevSample =1 THEN 'Y' ELSE 'N' END
 		, s.MDivisionID
 		, sea.SeasonSCIID
-		, iif(s.Category = 'M','SEWING',att.ID)
+		, case	when s.Shift = 'O' then 'O'
+								when o.SubconInSisterFty = 1 then 'I'
+								else 'N' end
+		,case	when s.Shift = 'O' then isnull(s.SubconOutFty,'')
+							when o.SubconInSisterFty = 1 then isnull(o.ProgramID,'')
+							else '' end
+		, s.SubConOutContractNumber
+		, sod.UnitPrice
+		, sod.Vat
+		, s.Category
+) a
+order by 
+		OutputDate
+		, SPNo
+		, Factory
+		, MDivision
+		, SCISeason
+		, ArtworkType
 
 	delete @CMPDetail where ArtworkType is null
+
+	--FMS傳票部分顯示AT不分Hand/Machine，是因為政策問題，但比對Sewing R02時，會有落差，請根據SP#落在Hand CPU:10 /Machine:5，則只撈出Hand CPU:10這筆，抓其大值，以便加總總和等同於FMS傳票AT
+    -- 當AT(Machine) = AT(Hand)時, 也要將Price歸0 (ISP20190520)
+	update s set s.CPUPrice = 0
+        from @CMPDetail s
+        inner join (select * from @CMPDetail where ArtworkType = 'AT (HAND)') a on s.SPNo = a.SPNo and s.OutputDate = a.OutputDate
+        where s.ArtworkType = 'AT (MACHINE)'  and s.CPUPrice <= a.CPUPrice
+
+    update s set s.CPUPrice = 0
+        from @CMPDetail s
+        inner join (select * from @CMPDetail where ArtworkType = 'AT (MACHINE)') a on s.SPNo = a.SPNo and s.OutputDate = a.OutputDate
+        where s.ArtworkType = 'AT (HAND)'  and s.CPUPrice <= a.CPUPrice
 
 	return
 end
