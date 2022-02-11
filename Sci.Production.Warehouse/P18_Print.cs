@@ -121,6 +121,7 @@ select  a.POID
 	    , a.Qty
         , a.Weight
         , dbo.Getlocation(f.ukey)[Location] 
+        , a.ContainerCode
 from dbo.TransferIn_detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID 
                                                 and b.SEQ1 = a.Seq1 
@@ -169,6 +170,7 @@ select  a.Roll
                             ELSE a.StockType 
                         END
 		, a.Location
+        , a.ContainerCode
 		, a.Remark
 from dbo.TransferIn_detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID 
@@ -235,7 +237,7 @@ WHERE a.ID = '{id}'
                     Unit = row1["StockUnit"].ToString().Trim(),
                     QTY = row1["QTY"].ToString().Trim(),
                     GW = row1["Weight"].ToString().Trim(),
-                    Location = row1["Location"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                 }).ToList();
 
             report.ReportDataSource = data;
@@ -282,7 +284,11 @@ WHERE a.ID = '{id}'
             Excel.Application objApp = new Excel.Application();
             Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Warehouse_P18_Print.xltx", objApp);
             com.UseInnerFormating = false;
-            com.WriteTable(this.dtResult, 2);
+
+            // excel不須顯示ContainerCode
+            DataTable dtExcel = this.dtResult.Copy();
+            dtExcel.Columns.Remove("ContainerCode");
+            com.WriteTable(dtExcel, 2);
 
             com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
             objApp.Visible = true;

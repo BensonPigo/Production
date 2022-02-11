@@ -1299,6 +1299,7 @@ WHERE   StockType='{this.CurrentDetailData["stocktype"].ToString()}'
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
             Ict.Win.UI.DataGridViewTextBoxColumn cbb_Seq;
             Ict.Win.UI.DataGridViewTextBoxColumn cbb_poid;
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode;
 
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
@@ -1318,6 +1319,7 @@ WHERE   StockType='{this.CurrentDetailData["stocktype"].ToString()}'
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true) // 13
             .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", width: Widths.AnsiChars(8), iseditable: false).Get(out cbb_stocktype) // 14
             .Text("Location", header: "Location", settings: ts2, iseditingreadonly: false)
+            .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
             .Text("remark", header: "Remark", iseditingreadonly: false)
             .Text("RefNo", header: "Ref#", iseditingreadonly: true) // 17
             .Text("ColorID", header: "Color", iseditingreadonly: true) // 18
@@ -1331,6 +1333,9 @@ WHERE   StockType='{this.CurrentDetailData["stocktype"].ToString()}'
             .Text("FullDyelot", header: "Full Dyelot", width: Widths.AnsiChars(25))
             ;
             this.detailgrid.Columns["MINDQRCode"].DefaultCellStyle.BackColor = Color.Pink;
+
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            cbb_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
 
             this.col_Roll.MaxLength = 8;
             this.col_Dyelot.MaxLength = 8;
@@ -2494,6 +2499,7 @@ select  a.id
         , a.StockUnit
         , a.StockType
         , a.Location
+        , a.ContainerCode
         , a.remark
         , a.ukey
         ,o.FactoryID
@@ -2517,7 +2523,7 @@ select  a.id
         ,a.FullRoll
         ,a.FullDyelot
         ,a.CompleteTime
-        ,a.SentToWMS
+        ,a.SentToWMS        
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 INNER JOIN Receiving b WITH (NOLOCK) ON a.id= b.Id
 left join View_WH_Orders o WITH (NOLOCK) on o.id = a.PoId

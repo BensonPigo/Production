@@ -173,6 +173,7 @@ select  FromSP = a.FromPOID + '(' + a.FromSeq1 + '-' + a.Fromseq2 + ')'
                         when 'I' then 'Inventory'
                         else a.FromStockType end 
         ,[Location] = dbo.Getlocation(fi.ukey)
+        ,FI.ContainerCode
         ,unit = b.StockUnit
         ,a.FromRoll
         ,a.FromDyelot
@@ -204,7 +205,7 @@ where a.id= @ID";
                     TOSP = row1["TOSP"].ToString().Trim(),
                     DESC = row1["DESC"].ToString().Trim(),
                     StockType = row1["StockType"].ToString().Trim(),
-                    Location = row1["Location"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                     Unit = row1["unit"].ToString().Trim(),
                     FromRoll = row1["FromRoll"].ToString().Trim(),
                     FromDyelot = row1["FromDyelot"].ToString().Trim(),
@@ -445,6 +446,9 @@ and ID = '{Sci.Env.User.UserID}'"))
                 }
             };
 
+            Ict.Win.UI.DataGridViewTextBoxColumn From_ContainerCode;
+            Ict.Win.UI.DataGridViewTextBoxColumn To_ContainerCode;
+
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
@@ -455,15 +459,21 @@ and ID = '{Sci.Env.User.UserID}'"))
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
             .ComboBox("fromstocktype", header: "From" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype) // 5
             .Text("Location", header: "From" + Environment.NewLine + "Location", iseditingreadonly: true) // 6
+            .Text("FromContainerCode", header: "From" + Environment.NewLine + "Container Code", iseditingreadonly: true).Get(out From_ContainerCode)
             .Text("topoid", header: "To" + Environment.NewLine + "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 7
             .Text("toseq", header: "To" + Environment.NewLine + "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 8
             .Text("toroll", header: "To" + Environment.NewLine + "Roll", width: Widths.AnsiChars(6)) // 9
             .Text("todyelot", header: "To" + Environment.NewLine + "Dyelot", width: Widths.AnsiChars(6)) // 10
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 11
             .Text("ToLocation", header: "To Location", width: Widths.AnsiChars(10), settings: toLocation)
+            .Text("ToContainerCode", header: "To Container Code", iseditingreadonly: true).Get(out To_ContainerCode)
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)
             ;
             #endregion 欄位設定
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            From_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
+            To_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
+
             this.detailgrid.Columns["toroll"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["todyelot"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
@@ -1479,7 +1489,9 @@ select  [Selected] = 0
                            for xml path(''))
                           , 1, 1, '') 
         ,a.ToLocation
+        ,a.ToContainerCode
         ,Fromlocation = Fromlocation.listValue
+        ,[FromContainerCode] = fi.ContainerCode
 from dbo.BorrowBack_detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
 left join FtyInventory FI on a.FromPoid = Fi.Poid and a.FromSeq1 = Fi.Seq1 and a.FromSeq2 = Fi.Seq2 

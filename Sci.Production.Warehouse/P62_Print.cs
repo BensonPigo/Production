@@ -124,7 +124,8 @@ select[Poid] = IIF((t.poid = lag(t.poid, 1, '') over(order by t.poid, t.seq1, t.
         , t.Dyelot
         , t.Qty
         , p.StockUnit
-        , [location]=dbo.Getlocation(b.ukey)      
+        , [location]=dbo.Getlocation(b.ukey)  
+        , b.ContainerCode
         , [Total]=sum(t.Qty) OVER(PARTITION BY t.POID , t.Seq1, t.Seq2 )
 from dbo.Issue_Detail t WITH (NOLOCK)
 inner join Issue_Summary iss WITH (NOLOCK) on t.Issue_SummaryUkey = iss.Ukey
@@ -170,7 +171,7 @@ where t.id= @ID";
                         Seq = row1["SEQ"].ToString().Trim(),
                         Desc = row1["desc"].ToString().Trim(),
                         MDesc = row1["Mdesc"].ToString().Trim(),
-                        Location = row1["Location"].ToString().Trim(),
+                        Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                         Unit = row1["StockUnit"].ToString().Trim(),
                         Roll = row1["Roll"].ToString().Trim(),
                         Dyelot = row1["Dyelot"].ToString().Trim(),

@@ -206,6 +206,7 @@ select  ROW_NUMBER() OVER(ORDER BY R.POID,R.SEQ1,R.SEQ2) AS NoID
 			ELSE R.StockType
 		end StockType
 		,dbo.Getlocation(fi.ukey) [Location]
+        ,fi.ContainerCode
 		,[Total]=sum(R.Qty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
 from dbo.ReturnReceipt_Detail R WITH (NOLOCK) 
 LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
@@ -238,7 +239,7 @@ where R.id= @ID";
                     Dyelot = row1["dyelot"].ToString(),
                     Qty = row1["qty"].ToString(),
                     StockType = row1["StockType"].ToString(),
-                    Location = row1["Location"].ToString(),
+                    Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                     TotalQty = row1["Total"].ToString(),
                 }).ToList();
 
@@ -427,6 +428,8 @@ and ID = '{Sci.Env.User.UserID}'"))
                         break;
                 }
             };
+
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode;
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
@@ -438,9 +441,12 @@ and ID = '{Sci.Env.User.UserID}'"))
             .Text("StockType", header: "StockType", iseditingreadonly: true, settings: ns) // 5
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: supportNegative) // 6
             .Text("Location", header: "Location", iseditingreadonly: true) // 7
+            .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
             ;
             #endregion 欄位設定
 
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            cbb_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
@@ -1071,7 +1077,9 @@ and i2.id = '{this.CurrentMaintain["ID"]}'
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(
-                @"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+                @"
+select a.id,a.PoId,a.Seq1,a.Seq2
+,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll
 ,a.Dyelot
 ,p1.stockunit
@@ -1079,6 +1087,8 @@ and i2.id = '{this.CurrentMaintain["ID"]}'
 ,a.Qty
 ,a.StockType
 ,dbo.Getlocation(fi.ukey) location
+,[ContainerCode] = FI.ContainerCode
+, FI.ContainerCode
 ,a.ukey
 ,a.FtyInventoryUkey
 from dbo.ReturnReceipt_Detail a WITH (NOLOCK) 

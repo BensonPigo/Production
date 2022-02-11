@@ -245,6 +245,9 @@ WHERE   StockType='{0}'
                     // 去除錯誤的Location將正確的Location填回
                 }
             };
+
+            Ict.Win.UI.DataGridViewTextBoxColumn From_ContainerCode;
+            Ict.Win.UI.DataGridViewTextBoxColumn To_ContainerCode;
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("frompoid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -257,9 +260,15 @@ WHERE   StockType='{0}'
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)
             .Text("ToCtnNo", header: "Ctn#", width: Widths.AnsiChars(8))
             .Text("fromlocation", header: "From Bulk Location", iseditingreadonly: true, width: Widths.AnsiChars(30))
+            .Text("FromContainerCode", header: "From Container Code", iseditingreadonly: true).Get(out From_ContainerCode)
             .Text("toLocation", header: "To Scrap Location", iseditingreadonly: false, width: Widths.AnsiChars(30), settings: locationSet)
+            .Text("ToContainerCode", header: "To Container Code", iseditingreadonly: true).Get(out To_ContainerCode)
             ;
             #endregion 欄位設定
+
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            From_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
+            To_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["ToCtnNo"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["toLocation"].DefaultCellStyle.BackColor = Color.Pink;
@@ -823,6 +832,7 @@ select
     ,a.FromDyelot
     ,a.FromStockType
     ,dbo.Getlocation(f.Ukey)  as Fromlocation
+    ,[FromContainerCode] = f.ContainerCode
     ,a.ToCtnNo
     ,a.Qty
     ,a.ToPoId
@@ -832,6 +842,7 @@ select
     ,a.ToRoll
     ,a.ToStockType
     ,a.ToLocation
+    ,a.ToContainerCode
     ,a.ukey
 from dbo.SubTransfer_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
@@ -925,6 +936,7 @@ select  frompoid
           end MtlType
         ,a.Qty
         ,[Location] = dbo.Getlocation(fi.ukey)
+        ,fi.ContainerCode
 from dbo.Subtransfer_detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
 left join dbo.FtyInventory FI on a.fromPoid = fi.poid and a.fromSeq1 = fi.seq1 and a.fromSeq2 = fi.seq2 and a.fromDyelot = fi.Dyelot
@@ -954,7 +966,7 @@ where a.id= @ID";
                     Unit = row1["StockUnit"].ToString().Trim(),
                     Type = row1["MtlType"].ToString().Trim(),
                     ActQty = row1["QTY"].ToString().Trim(),
-                    OLocation = row1["Location"].ToString().Trim(),
+                    OLocation = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                 }).ToList();
 
             report.ReportDataSource = data;

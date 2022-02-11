@@ -89,21 +89,50 @@ namespace Sci.Production.Warehouse
             string selectCommand1
                 = string.Format(
                     @"
-Select a.Roll,a.Dyelot, rd.FullRoll, rd.FullDyelot
+Select a.Roll,a.Dyelot
+, FullRoll = FullRoll.List
+, FullDyelot = FullDyelot.List
 ,[stocktype] = case when a.stocktype = 'B' then 'Bulk'
                 when a.stocktype = 'I' then 'Invertory'
 			    when a.stocktype = 'O' then 'Scrap' End
             ,a.InQty,a.OutQty,a.AdjustQty,a.ReturnQty
             ,a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty as balance
             ,dbo.Getlocation(a.ukey)  MtlLocationID 
+            ,a.ContainerCode
 from FtyInventory a WITH (NOLOCK) 
-left join Receiving_Detail rd WITH (NOLOCK) on a.POID = rd.PoId and a.Seq1 = rd.Seq1
-and a.Seq2 = rd.Seq2 and a.Dyelot = rd.Dyelot and a.Roll = rd.Roll and a.StockType = rd.StockType
+outer apply(
+	select List = Stuff((
+		select concat(',',FullRoll)
+		from (
+				select 	distinct
+					FullRoll
+				from dbo.Receiving_Detail rd WITH (NOLOCK)
+				where a.POID = rd.PoId 
+					and a.Seq1 = rd.Seq1 and a.Seq2 = rd.Seq2 
+					and a.Dyelot = rd.Dyelot and a.Roll = rd.Roll 
+					and a.StockType = rd.StockType
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+)FullRoll 
+outer apply(
+	select List = Stuff((
+		select concat(',',FullDyelot)
+		from (
+				select 	distinct
+					FullDyelot
+				from dbo.Receiving_Detail rd WITH (NOLOCK)
+				where a.POID = rd.PoId 
+					and a.Seq1 = rd.Seq1 and a.Seq2 = rd.Seq2 
+					and a.Dyelot = rd.Dyelot and a.Roll = rd.Roll 
+					and a.StockType = rd.StockType
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+)FullDyelot 
 where a.Poid = '{0}'
     and a.Seq1 = '{1}'
     and a.Seq2 = '{2}' 
-    --and MDivisionPoDetailUkey is not null  --避免下面Relations發生問題
-    --and MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
     and a.StockType <> 'O'  --C倉不用算
 order by a.dyelot,a.roll,a.stocktype
 ",
@@ -132,6 +161,7 @@ select tmp.Roll
     , ReturnQty
 	, Remark
 	, location
+	, ContainerCode
 	, [balance] = sum(TMP.inqty - TMP.outqty + tmp.adjust - tmp.ReturnQty) over (partition by tmp.stocktype,tmp.roll,tmp.dyelot order by tmp.IssueDate,tmp.stocktype,tmp.inqty desc,tmp.iD )
 from (
 	select b.roll
@@ -147,13 +177,18 @@ from (
         , [ReturnQty] = 0
 		, a.remark 
 		, [location] = '' 
+		, ContainerCode = ''
 	from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK) 
+	left join FtyInventory fi on fi.POID = b.POID
+		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
+		and fi.Roll = b.Roll and fi.Dyelot = b.Dyelot
+		and fi.StockType = b.StockType
 	where Status = 'Confirmed'
-	and poid = '{0}'
-	and seq1 = '{1}'
-	and seq2 = '{2}' 
+	and b.poid = '{0}'
+	and b.seq1 = '{1}'
+	and b.seq2 = '{2}' 
 	and a.id = b.id 
-	group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,type,b.roll,b.stocktype,b.dyelot
+	group by a.id, b.poid, b.seq1, b.Seq2, a.remark,a.IssueDate,type,b.roll,b.stocktype,b.dyelot,fi.ContainerCode
 
 union all
 
@@ -170,13 +205,18 @@ union all
         , [ReturnQty] = 0
 		, a.remark
 		, [location] = ''
+		, ContainerCode = ''
 	from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
+	left join FtyInventory fi on fi.POID = b.FromPOID
+		and fi.Seq1 = b.FromSeq1 and fi.Seq2 = b.FromSeq2
+		and fi.Roll = b.FromRoll and fi.Dyelot = b.FromDyelot
+		and fi.StockType = b.FromStockType
 	where Status = 'Confirmed'
 	and FromPoId = '{0}'
 	and FromSeq1 = '{1}'
 	and FromSeq2 = '{2}'
 	and a.id = b.id 
-	group by a.id, FromPoId, FromSeq1,FromSeq2, a.remark,a.IssueDate,b.FromRoll,b.FromStockType,b.FromDyelot,a.type
+	group by a.id, FromPoId, FromSeq1,FromSeq2, a.remark,a.IssueDate,b.FromRoll,b.FromStockType,b.FromDyelot,a.type,fi.ContainerCode
 
 union all
 
@@ -193,13 +233,18 @@ union all
         , [ReturnQty] = 0
 		, a.remark 
 		, [location] = b.ToLocation
+		, [ContainerCode] = b.ToContainerCode
 	from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
+	left join FtyInventory fi on fi.POID = b.ToPOID
+		and fi.Seq1 = b.ToSeq1 and fi.Seq2 = b.ToSeq2
+		and fi.Roll = b.ToRoll and fi.Dyelot = b.ToDyelot
+		and fi.StockType = b.ToStockType
 	where Status = 'Confirmed'
 	and ToPoid = '{0}'
 	and ToSeq1 = '{1}'
 	and ToSeq2 = '{2}'
 	and a.id = b.id 
-	group by a.id, ToPoid, ToSeq1,ToSeq2, a.remark,a.IssueDate,b.ToRoll,b.ToStockType,b.ToDyelot,a.type,b.ToLocation
+	group by a.id, ToPoid, ToSeq1,ToSeq2, a.remark,a.IssueDate,b.ToRoll,b.ToStockType,b.ToDyelot,a.type,b.ToLocation,b.ToContainerCode
 
 union all
 
@@ -222,13 +267,18 @@ union all
         , [ReturnQty] = 0
 		, a.remark
 		, [location] = '' 
+		, ContainerCode = ''
 	from Issue a WITH (NOLOCK) , Issue_Detail b WITH (NOLOCK) 
+	left join FtyInventory fi on fi.POID = b.POID
+		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
+		and fi.Roll = b.Roll and fi.Dyelot = b.Dyelot
+		and fi.StockType = b.StockType
 	where Status = 'Confirmed'
-	and poid = '{0}'
-	and seq1 = '{1}'
-	and seq2 = '{2}'
+	and b.poid = '{0}'
+	and b.seq1 = '{1}'
+	and b.seq2 = '{2}'
 	and a.id = b.id 
-	group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,a.type,b.roll,b.stocktype,b.dyelot,a.type      
+	group by a.id, b.poid, b.seq1, b.Seq2, a.remark,a.IssueDate,a.type,b.roll,b.stocktype,b.dyelot,a.type, fi.ContainerCode      
 	
 union all
 
@@ -246,14 +296,19 @@ union all
         , [ReturnQty] = 0
 		, a.remark
 		, [location] = '' 
+		, ContainerCode = ''
 	from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
+	left join FtyInventory fi on fi.POID = b.POID
+		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
+		and fi.Roll = b.Roll and fi.Dyelot = b.Dyelot
+		and fi.StockType = b.StockType
 	where Status in ('Confirmed','Closed')
-	and poid = '{0}' 
-	and seq1 = '{1}'
-	and seq2 = '{2}'
+	and b.poid = '{0}' 
+	and b.seq1 = '{1}'
+	and b.seq2 = '{2}'
 	and a.id = b.id 
 	and a.type != 'L' 
-	group by a.id, poid, seq1,Seq2, a.remark ,a.IssueDate,a.FabricType,b.roll,b.stocktype,b.dyelot
+	group by a.id, b.poid, b.seq1, b.Seq2, a.remark ,a.IssueDate,a.FabricType,b.roll,b.stocktype,b.dyelot,fi.ContainerCode
 
 union all
 
@@ -271,14 +326,19 @@ union all
         , [ReturnQty] = 0
 		, a.remark 
 		, [location] = '' 
+		, ContainerCode = ''
 	from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
+	left join FtyInventory fi on fi.POID = b.POID
+		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
+		and fi.Roll = b.Roll and fi.Dyelot = b.Dyelot
+		and fi.StockType = b.StockType
 	where Status in ('Confirmed','Closed')
-	and poid = '{0}'
-	and seq1 = '{1}'
-	and seq2 = '{2}'
+	and b.poid = '{0}'
+	and b.seq1 = '{1}'
+	and b.seq2 = '{2}'
 	and a.id = b.id 
 	and a.type = 'L'
-	group by a.id, poid, seq1,Seq2, a.remark  ,a.IssueDate,a.FabricType,b.roll,b.stocktype,b.dyelot   
+	group by a.id, b.poid, b.seq1, b.Seq2, a.remark  ,a.IssueDate,a.FabricType,b.roll,b.stocktype,b.dyelot ,fi.ContainerCode
                                        
 union all
 
@@ -292,15 +352,16 @@ union all
 		, [released] = sum(0.00 - b.Qty)
 		, [adjust] = 0
         , [ReturnQty] = 0
-		, remark
+		, a.remark
 		, [location] = b.Location
+		,b.ContainerCode
 	from IssueReturn a WITH (NOLOCK) , IssueReturn_Detail b WITH (NOLOCK) 
 	where status = 'Confirmed'
-	and poid = '{0}'
-	and seq1 = '{1}'
-	and seq2 = '{2}'
+	and b.poid = '{0}'
+	and b.seq1 = '{1}'
+	and b.seq2 = '{2}'
 	and a.id = b.id 	
-	group by a.Id, poid, seq1,Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot,b.Location
+	group by a.Id, b.poid, b.seq1, b.Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot,b.Location,b.ContainerCode
 
 union all
 
@@ -318,13 +379,14 @@ union all
         , [ReturnQty] = 0
 		, [remark] = '' 
 		, [location] = b.Location
+		,b.ContainerCode
     from Receiving a WITH (NOLOCK) , Receiving_Detail b WITH (NOLOCK) 
     where Status = 'Confirmed' 
 	and poid = '{0}' 
 	and seq1 = '{1}'
 	and seq2 = '{2}'
 	and a.id = b.id     
-    group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type,b.roll,b.stocktype,b.dyelot,a.eta,b.Location
+    group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type,b.roll,b.stocktype,b.dyelot,a.eta,b.Location,b.ContainerCode
 
 union all
 
@@ -340,13 +402,18 @@ union all
         , [ReturnQty] = b.Qty
 		, a.remark
 		, [location] = ''
+		, [ContainerCode] = ''
 	from ReturnReceipt a WITH (NOLOCK) , ReturnReceipt_Detail b WITH (NOLOCK) 
+	left join FtyInventory fi on fi.POID = b.POID
+		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
+		and fi.Roll = b.Roll and fi.Dyelot = b.Dyelot
+		and fi.StockType = b.StockType
 	where Status = 'Confirmed'
-	and poid = '{0}'
-	and seq1 = '{1}'
-	and seq2 = '{2}' 
+	and b.poid = '{0}'
+	and b.seq1 = '{1}'
+	and b.seq2 = '{2}' 
 	and a.id = b.id    
-	group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot,b.Qty
+	group by a.id, b.poid, b.seq1, b.Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot,b.Qty, fi.ContainerCode
 
 union all
 
@@ -367,14 +434,19 @@ union all
         , [ReturnQty] = 0
 		, [remark] = isnull(a.remark,'') 
 		, [location] = ''
+		, [ContainerCode] = ''
 	from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
+	left join FtyInventory fi on fi.POID = b.FromPOID
+		and fi.Seq1 = b.FromSeq1 and fi.Seq2 = b.FromSeq2
+		and fi.Roll = b.FromRoll and fi.Dyelot = b.FromDyelot
+		and fi.StockType = b.FromStockType
 	where Status = 'Confirmed'
 	and Frompoid = '{0}'
 	and Fromseq1 = '{1}'
 	and FromSeq2 = '{2}'
 	and a.id = b.id    
     and a.type <> 'C'  --排除C to B 的轉出紀錄，因目前不需要C倉交易紀錄，避免下面DataRelation出錯
-	group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,b.FromRoll,b.FromStockType,b.FromDyelot,a.Type,a.remark
+	group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,b.FromRoll,b.FromStockType,b.FromDyelot,a.Type,a.remark, fi.ContainerCode
                                                                              
 union all
 	
@@ -405,6 +477,7 @@ union all
                                               and ISNULL(b1.ToLocation, '') <> ''
 											  group by b1.ToLocation) tmp 
 									for XML PATH('')) ,1,1,'') ,'') 
+		,[ContainerCode] = b.ToContainerCode
 	from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
 	where Status = 'Confirmed'
 	and ToPoid = '{0}'
@@ -412,7 +485,7 @@ union all
 	and ToSeq2 = '{2}'
 	and a.id = b.id
 	AND TYPE not in ('D','E')
-	group by a.id, ToPoid, ToSeq1,ToSeq2, a.remark ,a.IssueDate,b.ToRoll,b.ToStockType,b.ToDyelot,a.type	    
+	group by a.id, ToPoid, ToSeq1,ToSeq2, a.remark ,a.IssueDate,b.ToRoll,b.ToStockType,b.ToDyelot,a.type ,b.ToContainerCode	    
 
 union all
 
@@ -440,13 +513,14 @@ union all
                                         and ISNULL(b1.Location, '') <> ''
 										group by b1.Location) tmp 
                         for XML PATH('')) ,1,1,''), '')
+		, b.ContainerCode
 	from TransferIn a WITH (NOLOCK) , TransferIn_Detail b WITH (NOLOCK) 
 	where Status = 'Confirmed'
 	and poid = '{0}'
 	and seq1 = '{1}'
 	and seq2 = '{2}'
 	and a.id = b.id 	
-	group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot
+	group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot, b.ContainerCode
 
 union all
 
@@ -462,13 +536,18 @@ union all
         , [ReturnQty] = 0
 		, a.remark
 		, [location] = ''
+		, ContainerCode =''
 	from TransferOut a WITH (NOLOCK) , TransferOut_Detail b WITH (NOLOCK) 
+	left join FtyInventory fi on fi.POID = b.POID
+		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
+		and fi.Roll = b.Roll and fi.Dyelot = b.Dyelot
+		and fi.StockType = b.StockType
 	where Status = 'Confirmed'
-	and poid = '{0}'
-	and seq1 = '{1}'
-	and seq2 = '{2}'
+	and b.poid = '{0}'
+	and b.seq1 = '{1}'
+	and b.seq2 = '{2}'
 	and a.id = b.id 		
-	group by a.id, poid, Seq1,Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot
+	group by a.id, b.poid, b.Seq1, b.Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot, fi.ContainerCode
 
 union all
 	
@@ -486,17 +565,22 @@ union all
         , [ReturnQty] = 0
 		, a.remark
 		, [location] = ''
+		, ContainerCode = ''
 	from RequestCrossM a WITH (NOLOCK) , RequestCrossM_Receive b WITH (NOLOCK) 
+	left join FtyInventory fi on fi.POID = b.POID
+		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
+		and fi.Roll = b.Roll and fi.Dyelot = b.Dyelot
+		and fi.StockType = b.StockType
 	where Status = 'Confirmed'
-	and poid = '{0}'
-	and seq1 = '{1}'
-	and seq2 = '{2}'
+	and b.poid = '{0}'
+	and b.seq1 = '{1}'
+	and b.seq2 = '{2}'
 	and a.id = b.id 		
-	group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,a.type,b.roll,b.stocktype,b.dyelot,a.type 
+	group by a.id, b.poid, b.seq1, b.Seq2, a.remark,a.IssueDate,a.type,b.roll,b.stocktype,b.dyelot,a.type , fi.ContainerCode
 
 ) tmp
 where stocktype <> 'O'
-group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp.roll,tmp.stocktype,tmp.dyelot
+group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp.roll,tmp.stocktype,tmp.dyelot,tmp.ContainerCode
 
 ",
                     this.dr["id"].ToString(),
@@ -553,6 +637,8 @@ group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp
                 this.bindingSource2.DataSource = this.bindingSource1;
                 this.bindingSource2.DataMember = "Rol1";
 
+                Ict.Win.UI.DataGridViewTextBoxColumn col_ContainerCode;
+
                 // 設定Grid1的顯示欄位
                 this.gridFtyinventory.IsEditingReadOnly = true;
                 this.gridFtyinventory.DataSource = this.bindingSource1;
@@ -568,9 +654,15 @@ group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp
                      .Numeric("ReturnQty", header: "Return Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 6, decimal_places: 2)
                      .Text("MtlLocationID", header: "Location", width: Widths.AnsiChars(10))
+                     .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out col_ContainerCode)
                      ;
 
+                // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+                col_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
+
                 // 設定Grid2的顯示欄位
+
+                Ict.Win.UI.DataGridViewTextBoxColumn col_ContainerCode2;
                 this.gridTrans.IsEditingReadOnly = true;
                 this.gridTrans.DataSource = this.bindingSource2;
                 this.Helper.Controls.Grid.Generator(this.gridTrans)
@@ -582,7 +674,12 @@ group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp
                      .Numeric("Adjust", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("ReturnQty", header: "Return Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
-                     .Text("Location", header: "Location", width: Widths.AnsiChars(5));
+                     .Text("Location", header: "Location", width: Widths.AnsiChars(5))
+                     .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out col_ContainerCode2)
+                     ;
+
+                // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+                col_ContainerCode2.Visible = Automation.UtilityAutomation.IsAutomationEnable;
 
                 // 設定Grid3的顯示欄位
                 this.gridSummary.IsEditingReadOnly = true;

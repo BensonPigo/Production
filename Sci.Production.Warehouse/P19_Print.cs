@@ -102,6 +102,7 @@ select a.POID
 	,unit = b.StockUnit
 	,a.Qty
 	,[Location]=dbo.Getlocation(fi.ukey)
+    ,fi.ContainerCode
     ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 ) 	        
     ,[RecvKG] = case when rd.ActualQty is not null 
 						then case when rd.ActualQty <> a.Qty
@@ -172,6 +173,7 @@ select
 	Qty,	
     [StockType]='',
     [Location]='',
+    [ContainerCode] = '',
     [Remark]='',
 	POID,
 	Seq1,
@@ -206,8 +208,11 @@ order by Dyelot, Len(Roll), Roll
             Excel.Application objApp = new Excel.Application();
             Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Warehouse_P18_ExcelImport.xltx", objApp);
             com.UseInnerFormating = false;
-            com.WriteTable(this.dtResult, 3);
 
+            // excel不須顯示ContainerCode
+            DataTable dtExcel = this.dtResult.Copy();
+            dtExcel.Columns.Remove("ContainerCode");
+            com.WriteTable(dtExcel, 3);
             com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
             objApp.Visible = true;
             Marshal.ReleaseComObject(objApp);
@@ -250,7 +255,7 @@ order by Dyelot, Len(Roll), Roll
                     Stocktype = row1["stocktype"].ToString().Trim(),
                     Unit = row1["unit"].ToString().Trim(),
                     QTY = row1["QTY"].ToString().Trim(),
-                    Location = row1["Location"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                     Total = row1["Total"].ToString().Trim(),
                 }).ToList();
 

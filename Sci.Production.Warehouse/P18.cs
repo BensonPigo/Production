@@ -719,6 +719,8 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
             #endregion
 
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode;
+
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("poid", header: "SP#", width: Widths.AnsiChars(13), settings: ts3) // 0
@@ -734,11 +736,15 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
             .Text("TtlQty", header: "Total Qty", width: Widths.AnsiChars(13), iseditingreadonly: true).Get(out this.col_ttlqty) // 6
             .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), settings: sk).Get(out cbb_stocktype) // 8
             .Text("Location", header: "Location", iseditingreadonly: false, settings: ts2) // 9
+            .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
             .Text("Remark", header: "Remark", iseditingreadonly: false) // 10
             .Text("RefNo", header: "Ref#", iseditingreadonly: true)
             .Text("ColorID", header: "Color", iseditingreadonly: true)
             ;
             #endregion 欄位設定
+
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            cbb_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
             cbb_stocktype.DataSource = new BindingSource(this.di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
             cbb_stocktype.DisplayMember = "Value";
@@ -1750,6 +1756,7 @@ select  a.id
 				iif(a.Unoriginal is null , ttlQty.value, null))) +' '+ p.StockUnit
         , a.StockType
         , a.location
+        , a.ContainerCode
         , a.ukey
         , FabricType = isnull(p.FabricType,I.FabricType)
         , DataFrom = iif(p.FabricType is null,'Invtrans','Po_Supp_Detail')

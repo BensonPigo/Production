@@ -427,6 +427,7 @@ WHERE   StockType='{0}'
 
             Ict.Win.UI.DataGridViewTextBoxColumn cbb_Roll;
             Ict.Win.UI.DataGridViewTextBoxColumn cbb_Dyelot;
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode;
 
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
@@ -439,9 +440,12 @@ WHERE   StockType='{0}'
             .Numeric("useqty", header: "Use Qty", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 6
             .Numeric("stockqty", header: "Receiving Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 7
             .Text("Location", header: "Bulk Location", settings: ts2, iseditingreadonly: false) // 8
+            .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
             .EditText("Remark", header: "Remark", width: Widths.AnsiChars(10))
             ;
 
+            // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
+            cbb_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
             cbb_Roll.MaxLength = 8;
             cbb_Dyelot.MaxLength = 8;
             #endregion 欄位設定
@@ -932,6 +936,7 @@ select  a.id
         , a.StockUnit
         , a.StockType
         , a.Location
+        , a.ContainerCode
         , a.ukey 
         , a.Remark
 from dbo.Receiving_Detail a WITH (NOLOCK) 
