@@ -86,8 +86,8 @@ select
 		,[ContractNumber] = s.SubConOutContractNumber
 		,[UnitPrice] = sod.UnitPrice
 		,[Vat] = sod.Vat
-		,[CPUPrice] = case when att.ProductionUnit = 'QTY'  then ROUND(Sum(sd.QAQty * ot.Price * a.Rate) , 4)
-							when att.ProductionUnit = 'TMS'  then ROUND(Sum(sd.QAQty * ot.Price * a.Rate) , 3)
+		,[CPUPrice] = case when att.ProductionUnit = 'QTY'  then Sum(sd.QAQty * ot.Price * a.Rate)
+							when att.ProductionUnit = 'TMS'  then Sum(sd.QAQty * ot.Price * a.Rate)
 							else 0 end
 		,[Qty] = Sum(sd.QAQty)
 from SewingOutput s WITH (NOLOCK) 
@@ -117,7 +117,14 @@ where	s.MDivisionID = isnull(@M, s.MDivisionID) and
 		s.Category <> 'M' and
 		((LastShift.Value = 'O' and o.LocalOrder <> 1) or (LastShift.Value <> 'O') ) 
           --排除 subcon in non sister的數值
-        --and ((LastShift.Value <> 'I') or ( LastShift.Value = 'I'  and o.SubconInType in ('0','3')))
+		  -- SubconInType desc
+		  --{ "0", string.Empty },
+          --{ "1", "Subcon-in from sister factory (same M division)" },
+          --{ "2", "Subcon-in from sister factory (different M division)" },
+          --{ "3", "Subcon-in from non-sister factory" },
+        and ((LastShift.Value <> 'I') or ( LastShift.Value = 'I'  and o.SubconInType not in ('0','3')))
+		--將ArtworkType為'SP_THREAD'部分，排除掉是台北買線的部分。
+		AND (  (NOT EXISTS (SELECT 1 FROm @TPEtmp WHERE ID = o.POID )AND att.ID = 'SP_THREAD')   OR   isnull(att.ID,'') <> 'SP_THREAD' ) 
 		AND isnull(o.NonRevenue, 0) = 0
 group by  s.OutputDate
 		, sd.OrderId
