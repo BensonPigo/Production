@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    partial class P66
+    partial class P67
     {
         /// <summary>
         /// Required designer variable.
@@ -79,7 +79,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(726, 78);
+            this.gridicon.Location = new System.Drawing.Point(834, 78);
             // 
             // detailgridcont
             // 
@@ -99,11 +99,11 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(842, 513);
+            this.browse.Size = new System.Drawing.Size(1000, 513);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(850, 542);
+            this.tabs.Size = new System.Drawing.Size(1008, 542);
             // 
             // label1
             // 
@@ -183,24 +183,24 @@
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
-            // P66
+            // P67
             // 
             this.ApvChkValue = "New";
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(850, 575);
-            this.GridAlias = "SemiFinishedAdjust_Detail";
+            this.ClientSize = new System.Drawing.Size(1008, 575);
+            this.GridAlias = "SemiFinishedLocationTrans_Detail";
             this.GridNew = 0;
             this.IsSupportClip = false;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
-            this.IsSupportUnconfirm = true;
+            this.IsSupportPrint = false;
             this.KeyField1 = "ID";
-            this.Name = "P66";
+            this.Name = "P67";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
-            this.Text = "P66. Adjust Bulk Qty (Semi-finished)";
+            this.Text = "P67. Update Location (Semi-finished)";
             this.UnApvChkValue = "Confirmed";
-            this.WorkAlias = "SemiFinishedAdjust";
+            this.WorkAlias = "SemiFinishedLocationTrans";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();

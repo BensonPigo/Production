@@ -68,7 +68,7 @@
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(858, 151);
+            this.masterpanel.Size = new System.Drawing.Size(892, 151);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
@@ -86,7 +86,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 151);
-            this.detailpanel.Size = new System.Drawing.Size(858, 259);
+            this.detailpanel.Size = new System.Drawing.Size(892, 198);
             // 
             // gridicon
             // 
@@ -95,7 +95,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(858, 259);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 198);
             // 
             // detail2
             // 
@@ -108,19 +108,6 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(858, 448);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(858, 410);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 410);
-            this.detailbtm.Size = new System.Drawing.Size(858, 38);
             // 
             // browse
             // 
@@ -207,7 +194,7 @@
             // 
             this.btnAccumulatedQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAccumulatedQty.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnAccumulatedQty.Location = new System.Drawing.Point(682, 39);
+            this.btnAccumulatedQty.Location = new System.Drawing.Point(716, 39);
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
             this.btnAccumulatedQty.Size = new System.Drawing.Size(158, 30);
             this.btnAccumulatedQty.TabIndex = 47;
@@ -218,7 +205,7 @@
             // btnDownloadSampleFile
             // 
             this.btnDownloadSampleFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDownloadSampleFile.Location = new System.Drawing.Point(682, 75);
+            this.btnDownloadSampleFile.Location = new System.Drawing.Point(716, 75);
             this.btnDownloadSampleFile.Name = "btnDownloadSampleFile";
             this.btnDownloadSampleFile.Size = new System.Drawing.Size(158, 30);
             this.btnDownloadSampleFile.TabIndex = 48;
@@ -230,7 +217,7 @@
             // 
             this.btnImportFromExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImportFromExcel.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnImportFromExcel.Location = new System.Drawing.Point(682, 111);
+            this.btnImportFromExcel.Location = new System.Drawing.Point(716, 111);
             this.btnImportFromExcel.Name = "btnImportFromExcel";
             this.btnImportFromExcel.Size = new System.Drawing.Size(158, 30);
             this.btnImportFromExcel.TabIndex = 49;
@@ -268,7 +255,6 @@
             this.IsSupportClip = false;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
-            this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P64";

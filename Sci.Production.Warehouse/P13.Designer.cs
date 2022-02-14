@@ -49,6 +49,8 @@
             this.btnCallP99 = new Sci.Win.UI.Button();
             this.lblToPlace = new Sci.Win.UI.Label();
             this.txtToPlace = new Sci.Production.Class.TxtToPlace();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtCuttingPlanID = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -65,6 +67,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtCuttingPlanID);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.lblToPlace);
             this.masterpanel.Controls.Add(this.txtToPlace);
             this.masterpanel.Controls.Add(this.btnPrintFabricSticker);
@@ -90,7 +94,6 @@
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelNotApprove, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelLocateForSP, 0);
@@ -105,6 +108,9 @@
             this.masterpanel.Controls.SetChildIndex(this.btnPrintFabricSticker, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtToPlace, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblToPlace, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtCuttingPlanID, 0);
             // 
             // detailpanel
             // 
@@ -389,6 +395,27 @@
             this.txtToPlace.Size = new System.Drawing.Size(150, 23);
             this.txtToPlace.TabIndex = 65;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(495, 45);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(103, 23);
+            this.label1.TabIndex = 67;
+            this.label1.Text = "Cutting Plan ID";
+            // 
+            // txtCuttingPlanID
+            // 
+            this.txtCuttingPlanID.BackColor = System.Drawing.Color.White;
+            this.txtCuttingPlanID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CutplanID", true));
+            this.txtCuttingPlanID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCuttingPlanID.IsSupportEditMode = false;
+            this.txtCuttingPlanID.Location = new System.Drawing.Point(601, 45);
+            this.txtCuttingPlanID.Name = "txtCuttingPlanID";
+            this.txtCuttingPlanID.Size = new System.Drawing.Size(145, 23);
+            this.txtCuttingPlanID.TabIndex = 68;
+            this.txtCuttingPlanID.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtCuttingPlanID_PopUp);
+            this.txtCuttingPlanID.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCuttingPlanID_Validating);
+            // 
             // P13
             // 
             this.ApvChkValue = "New";
@@ -454,5 +481,7 @@
         private Win.UI.Button btnCallP99;
         private Win.UI.Label lblToPlace;
         private Class.TxtToPlace txtToPlace;
+        private Win.UI.Label label1;
+        private Win.UI.TextBox txtCuttingPlanID;
     }
 }

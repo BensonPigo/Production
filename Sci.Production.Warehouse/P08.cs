@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -933,13 +934,14 @@ select  a.id
             from po_supp_detail b WITH (NOLOCK) 
             where b.id= a.poid and b.seq1 = a.seq1 and b.seq2 = a.seq2) useqty
         , a.StockQty
-        , a.StockUnit
+        , po3.StockUnit
         , a.StockType
         , a.Location
         , a.ContainerCode
         , a.ukey 
         , a.Remark
 from dbo.Receiving_Detail a WITH (NOLOCK) 
+left join PO_Supp_Detail po3 WITH (NOLOCK) on a.PoId = po3.ID  and a.Seq1 = po3.SEQ1 and a.Seq2 = po3.SEQ2
 Where a.id = '{0}' ", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
@@ -1005,7 +1007,7 @@ select
 	r.Roll,
 	r.Dyelot,
 	Description = dbo.getmtldesc(r.poid,r.seq1,r.seq2,2,0),	
-	r.StockUnit,
+	po3.StockUnit,
 	useqty = (
 		select Round(sum(dbo.GetUnitQty(b.POUnit, StockUnit, b.Qty)), 2)
 		from po_supp_detail b WITH (NOLOCK) 
@@ -1014,6 +1016,7 @@ select
     o.FactoryID
 from Receiving_Detail r WITH (NOLOCK) 
 left join Orders o with (nolock) on r.POID = o.ID
+left join PO_Supp_Detail po3 WITH (NOLOCK) on r.PoId = po3.ID  and r.Seq1 = po3.SEQ1 and r.Seq2 = po3.SEQ2
 Where r.id = '{this.CurrentMaintain["ID"]}'
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
@@ -1062,6 +1065,28 @@ Where r.id = '{this.CurrentMaintain["ID"]}'
             Marshal.ReleaseComObject(excelApp);
 
             return base.ClickPrint();
+        }
+
+        private void BtnDownloadSample_Click(object sender, EventArgs e)
+        {
+            // 呼叫執行檔絕對路徑
+            DirectoryInfo dir = new DirectoryInfo(Application.StartupPath);
+
+            // 執行檔上一層絕對路徑
+            string strXltName = Env.Cfg.XltPathDir + "\\Warehouse_P08_ImportExcelFormat.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null)
+            {
+                return;
+            }
+
+            excel.Visible = true;
+        }
+
+        private void BtnImportFromExcel_Click(object sender, EventArgs e)
+        {
+            P08_ExcelImport callNextForm = new P08_ExcelImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            callNextForm.ShowDialog(this);
         }
     }
 }

@@ -530,6 +530,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             .Text("Preshrink", header: "Preshrink", iseditingreadonly: true) // 34
             .EditText("Remark", header: "Remark", iseditingreadonly: true) // 35
             .EditText("TPERemark", header: "TPE Remark", iseditingreadonly: true) // 36
+            .CheckBox("VAS_Shas", header: "VAS/SHAS", width: Widths.AnsiChars(5), iseditable: false, trueValue: 1, falseValue: 0)
             ;
             #endregion
 
@@ -780,6 +781,7 @@ from(
 			, SustainableMaterial
 			, TPERemark
 			, TestReport
+            , [VAS_Shas] 
     from (
         select  *
                 , -len(description) as len_D 
@@ -906,6 +908,7 @@ from(
 					, [SustainableMaterial] = IIF(fabric.IsRecycled = 1 and fabric.MtlTypeID='HANGTAG',1,0)
 					, [TPERemark]=a.Remark
 					, [TestReport] = TestReport.value
+                    , [VAS_Shas] = dbo.GetVASSHAS_bit(a.ID,a.SEQ1,a.SEQ2)
             from #tmpOrder as orders WITH (NOLOCK) 
             inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
 	        left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
@@ -1062,6 +1065,7 @@ from(
 					, [SustainableMaterial] = IIF(fabric.IsRecycled = 1 and fabric.MtlTypeID='HANGTAG',1,0)
 					, [TPERemark]=a.Remark
 					, [TestReport] = TestReport.value
+                    , [VAS_Shas] = dbo.GetVASSHAS_bit(a.ID,a.SEQ1,a.SEQ2)
         from dbo.MDivisionPoDetail m WITH (NOLOCK) 
         inner join #tmpOrder as o on o.poid = m.poid
         left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 
@@ -1164,6 +1168,7 @@ select ROW_NUMBER_D = 1
        , [SustainableMateria] = ''
 	   , [TPERemark]=''
 	   , [TestReport] = null
+       , [VAS_Shas] = 0
 from #tmpLocalPO_Detail a
 left join LocalInventory l on a.OrderId = l.OrderID and a.Refno = l.Refno and a.ThreadColorID = l.ThreadColorID
 left join LocalItem b on a.Refno=b.RefNo
