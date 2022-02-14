@@ -406,6 +406,13 @@ namespace Sci.Production.Packing
                     .GroupBy(o => new { o.PONumber, o.POItem, o.PLPOItemTotalCartons })
                     .Select(o => o.First()).Distinct().ToList();
 
+                DataTable dtNotFnd = new DataTable();
+                dtNotFnd.Columns.Add("PONumber", typeof(string));
+                dtNotFnd.Columns.Add("POItem", typeof(string));
+                dtNotFnd.Columns.Add("PLPOItem TotalCartons", typeof(string));
+                dtNotFnd.Columns.Add("Warning Message", typeof(string));
+                string finalErrMsg = string.Empty;
+
                 // 取得SP#(相同PONumber + POItem = 相同 SP#)
                 foreach (var obj in groupDatas)
                 {
@@ -433,6 +440,36 @@ namespace Sci.Production.Packing
                         }
                     }
 
+                    DataRow drError;
+                    string strErrormsg = string.Empty;
+
+                    if (MyUtility.Check.Empty(sp))
+                    {
+                        drError = dtNotFnd.NewRow();
+                        drError["PONumber"] = obj.PONumber.ToString();
+                        drError["POItem"] = obj.POItem.ToString();
+                        drError["PLPOItem TotalCartons"] = obj.PLPOItemTotalCartons.ToString();
+                        drError["Warning Message"] = "PONumber + POItem cannot found SP# in PMS, please check PONo and Trading PO in PMS.";
+                        dtNotFnd.Rows.Add(drError);
+                    }
+                    else
+                    {
+                        string sqlcmd2 = string.Empty;
+                        sqlcmd2 = $@"
+select * from PackingList_Detail pd 
+inner join PackingList p on pd.ID = p.ID 
+where pd.OrderID = '{sp}' and pd.Article = '{obj.Material}' and pd.SizeCode = '{obj.SizeDescription}' and pd.ShipQty = '{obj.ItemQuantity}' and p.ShipQty = '{obj.PLPOItemTotalCartons;;}'";
+                        if (!MyUtility.Check.Seek(sqlcmd2))
+                        {
+                            drError = dtNotFnd.NewRow();
+                            drError["PONumber"] = obj.PONumber.ToString();
+                            drError["POItem"] = obj.POItem.ToString();
+                            drError["PLPOItem TotalCartons"] = obj.PLPOItemTotalCartons.ToString();
+                            drError["Warning Message"] = $" PONumber + POItem + PLPOItemTotalCartons (SP# : {sp}) cannot found packing list in PMS, please check as below list.";
+                            dtNotFnd.Rows.Add(drError);
+                        }
+                    }
+
                     this.ExcelDatas.Where(o => o.PONumber == obj.PONumber && o.POItem == obj.POItem).ToList().ForEach(i => i.OrderID = sp);
                 }
 
@@ -455,6 +492,15 @@ namespace Sci.Production.Packing
                 DataTable matchGridDatasDT = ListToDataTable.ToDataTable(matchGridDatas);
 
                 this.BindingSourceMatch.DataSource = matchGridDatasDT;
+
+                if (dtNotFnd != null && dtNotFnd.Rows.Count > 0)
+                {
+                    var form = MyUtility.Msg.ShowMsgGrid(dtNotFnd, msg: "Cannot found SP# / Packing List.", caption: "Warning Message.");
+                    form.Width = 900;
+                    form.grid1.Columns[3].Width = 550;
+                    form.Visible = false;
+                    form.ShowDialog();
+                }
             }
             catch (Exception ex)
             {
