@@ -806,7 +806,6 @@
             this.GridNew = 0;
             this.GridUniqueKey = "Seq";
             this.IsSupportConfirm = true;
-            this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.KeyField2 = "ID";
             this.Name = "P01";
