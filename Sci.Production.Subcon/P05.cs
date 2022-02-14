@@ -106,9 +106,12 @@ ap.OrderID
 ,ap.ArtworkPOID
 ,ap.id
 ,ap.ukey
-from dbo.ArtworkReq_Detail ap
-left join dbo.Orders o on ap.OrderID = o.id
-left join dbo.ArtworkPO_Detail apo on apo.ID = ap.ArtworkPOID
+,o.FactoryID
+,f.IsProduceFty
+from dbo.ArtworkReq_Detail ap with (nolock)
+left join dbo.Orders o with (nolock) on ap.OrderID = o.id
+left join Factory f with (nolock) on f.ID = o.FactoryID
+left join dbo.ArtworkPO_Detail apo with (nolock) on apo.ID = ap.ArtworkPOID
 	AND apo.OrderID = ap.OrderID 
     AND apo.Article = ap.Article 
     AND apo.SizeCode = ap.SizeCode    
@@ -347,6 +350,7 @@ group by ReqQty.value,PoQty.value";
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Date("sewinline", header: "Sewing Inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("scidelivery", header: "SCI Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -531,6 +535,16 @@ group by ReqQty.value,PoQty.value";
             string sqlcmd;
             string strStatus;
 
+            #region 檢查生產工廠
+            var notProduceFtyDetail = this.DetailDatas.Where(s => !MyUtility.Convert.GetBool(s["IsProduceFty"]));
+            if (notProduceFtyDetail.Any())
+            {
+                MyUtility.Msg.WarningBox("The following SP# not Produce Factory" + Environment.NewLine + notProduceFtyDetail.Select(s => s["orderid"].ToString()).JoinToString(Environment.NewLine));
+                return;
+            }
+
+            #endregion
+
             #region 檢查LocalSupp_Bank
             DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["localsuppid"].ToString(), Prgs.CallFormAction.Confirm);
             if (!resultCheckLocalSupp_BankStatus)
@@ -616,6 +630,16 @@ where id = '{this.CurrentMaintain["id"]}'";
             {
                 return;
             }
+            #endregion
+
+            #region 檢查生產工廠
+            var notProduceFtyDetail = this.DetailDatas.Where(s => !MyUtility.Convert.GetBool(s["IsProduceFty"]));
+            if (notProduceFtyDetail.Any())
+            {
+                MyUtility.Msg.WarningBox("The following SP# not Produce Factory" + Environment.NewLine + notProduceFtyDetail.Select(s => s["orderid"].ToString()).JoinToString(Environment.NewLine));
+                return;
+            }
+
             #endregion
 
             DualResult result;
