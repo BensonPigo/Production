@@ -455,10 +455,14 @@ namespace Sci.Production.Packing
                     else
                     {
                         string sqlcmd2 = string.Empty;
+                        string article = obj.Material.ToString().Split('-').Length > 1 ? obj.Material.ToString().Split('-')[1] : obj.Material.ToString();
                         sqlcmd2 = $@"
 select * from PackingList_Detail pd 
 inner join PackingList p on pd.ID = p.ID 
-where pd.OrderID = '{sp}' and pd.Article = '{obj.Material}' and pd.SizeCode = '{obj.SizeDescription}' and pd.ShipQty = '{obj.ItemQuantity}' and p.CTNQty = '{obj.PLPOItemTotalCartons}'";
+LEFT JOIN Pullout pu ON pu.ID = p.PulloutID
+where pd.OrderID = '{sp}' and pd.Article = '{article}' and pd.SizeCode = '{obj.SizeDescription}' and pd.ShipQty = '{obj.ItemQuantity}' and p.CTNQty = '{obj.PLPOItemTotalCartons}'
+AND (pu.Status NOT IN ('Confirmed', 'Locked') OR pu.Status IS NULL)
+";
                         if (!MyUtility.Check.Seek(sqlcmd2))
                         {
                             drError = dtNotFnd.NewRow();
