@@ -509,12 +509,19 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
                 this.defect = item.GetSelectedString().Replace(",", "+");
                 string strEditDefect = string.Empty;
 
-                for (int i = 0; i < item.GetSelectedList().Count; i++)
+                if (item.GetSelectedList().Count > 0)
                 {
-                    strEditDefect += item.GetSelecteds()[i]["id"].ToString().TrimEnd() + "-" + item.GetSelecteds()[i]["description"].ToString().TrimEnd() + "+";
-                }
+                    for (int i = 0; i < item.GetSelectedList().Count; i++)
+                    {
+                        strEditDefect += item.GetSelecteds()[i]["id"].ToString().TrimEnd() + "-" + item.GetSelecteds()[i]["description"].ToString().TrimEnd() + "+";
+                    }
 
-                this.editDefect.Text = strEditDefect.Substring(0, strEditDefect.Length - 1);
+                    this.editDefect.Text = strEditDefect.Substring(0, strEditDefect.Length - 1);
+                }
+                else
+                {
+                    this.editDefect.Text = string.Empty;
+                }
             }
         }
 
