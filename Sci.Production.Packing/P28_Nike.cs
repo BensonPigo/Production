@@ -458,14 +458,16 @@ namespace Sci.Production.Packing
                         sqlcmd2 = $@"
 select * from PackingList_Detail pd 
 inner join PackingList p on pd.ID = p.ID 
-where pd.OrderID = '{sp}' and pd.Article = '{obj.Material}' and pd.SizeCode = '{obj.SizeDescription}' and pd.ShipQty = '{obj.ItemQuantity}' and p.ShipQty = '{obj.PLPOItemTotalCartons;;}'";
+where pd.OrderID = '{sp}' and pd.Article = '{obj.Material}' and pd.SizeCode = '{obj.SizeDescription}' and pd.ShipQty = '{obj.ItemQuantity}' and p.CTNQty = '{obj.PLPOItemTotalCartons}'";
                         if (!MyUtility.Check.Seek(sqlcmd2))
                         {
                             drError = dtNotFnd.NewRow();
                             drError["PONumber"] = obj.PONumber.ToString();
                             drError["POItem"] = obj.POItem.ToString();
                             drError["PLPOItem TotalCartons"] = obj.PLPOItemTotalCartons.ToString();
-                            drError["Warning Message"] = $" PONumber + POItem + PLPOItemTotalCartons (SP# : {sp}) cannot found packing list in PMS, please check as below list.";
+                            drError["Warning Message"] = $@"PONumber + POItem + PLPOItemTotalCartons (SP# : {sp}) cannot found packing list in PMS, please check as below list.
+1. Total Cartons : Excel (PLPOItemTotalCartons) = Packing List ( Ttl Ctns )
+2. each carton pack detail (Material = Article, SizeDescription = Size, ItemQuantity = ShipQty) between Excel and PMS.";
                             dtNotFnd.Rows.Add(drError);
                         }
                     }
