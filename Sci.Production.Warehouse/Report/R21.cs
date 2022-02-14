@@ -160,7 +160,10 @@ namespace Sci.Production.Warehouse
 	,[Program] = o.ProgramID
 	,[Seq1] = psd.SEQ1
 	,[Seq2] = psd.SEQ2
-	,[Material Type] = psd.FabricType
+	,[Material Type] = case when psd.FabricType = 'F' then 'Fabric'
+                            when psd.FabricType = 'A' then 'Accessory'
+                            when psd.FabricType = 'O' then 'Orher'
+                            else psd.FabricType end + '-' + Fabric.MtlTypeID
     ,[stock sp]=psd.StockPOID
     ,[StockSeq1]=psd.StockSeq1
     ,[StockSeq2]=psd.StockSeq2
@@ -303,7 +306,10 @@ namespace Sci.Production.Warehouse
 	,[Program] = o.ProgramID
 	,[Seq1] = psd.SEQ1
 	,[Seq2] = psd.SEQ2
-	,[Material Type] = psd.FabricType
+	,[Material Type] = case when psd.FabricType = 'F' then 'Fabric'
+                            when psd.FabricType = 'A' then 'Accessory'
+                            when psd.FabricType = 'O' then 'Orher'
+                            else psd.FabricType end + '-' + Fabric.MtlTypeID
     ,[stock sp]=psd.StockPOID
     ,[StockSeq1]=psd.StockSeq1
     ,[StockSeq2]=psd.StockSeq2
