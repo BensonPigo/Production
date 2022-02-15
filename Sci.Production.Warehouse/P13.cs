@@ -334,13 +334,16 @@ order by id.POID,SEQ, id.Dyelot,id.Roll
                 }
             }
 
-            string cmd = $@"select 1 from Cutplan where MDivisionid='{Sci.Env.User.Keyword}' AND ID = '{this.CurrentMaintain["CutplanID"]}' ";
-            if (!MyUtility.Check.Seek(cmd))
+            if (this.CurrentMaintain["Whsereasonid"].ToString() == "00007")
             {
-                MyUtility.Msg.WarningBox("There is no this <Cutting Plan ID>");
-                return false;
+                string cmd = $@"select 1 from Cutplan where MDivisionid='{Sci.Env.User.Keyword}' AND ID = '{this.CurrentMaintain["CutplanID"]}' ";
+                if (!MyUtility.Check.Seek(cmd))
+                {
+                    MyUtility.Msg.WarningBox("There is no this <Cutting Plan ID>");
+                    return false;
+                }
             }
-
+            
             #endregion 必輸檢查
 
             foreach (DataRow row in this.DetailDatas)
