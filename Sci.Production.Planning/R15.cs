@@ -127,6 +127,7 @@ namespace Sci.Production.Planning
             this.isArtwork = this.checkIncludeArtowkData.Checked;
             this.sbyindex = this.comboBox1.SelectedIndex;
             this.subprocessID = this.txtsubprocess1.Text;
+
             this.RFIDProcessLocation = this.formParameter == "2" ? this.comboRFIDProcessLocation1.Text : string.Empty;
             if (this.isArtwork)
             {
@@ -230,10 +231,13 @@ namespace Sci.Production.Planning
                 {
                     if (this.subprocessInoutColumnCount > 1)
                     {
-                        Microsoft.Office.Interop.Excel.Range range = objSheets.get_Range("AW1").EntireColumn;
-                        range.EntireColumn.Insert(
-                            Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight,
-                            Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromLeftOrAbove);
+                        for (int i = 1; i < this.subprocessInoutColumnCount; i++)
+                        {
+                            Microsoft.Office.Interop.Excel.Range range = objSheets.get_Range("AW1").EntireColumn;
+                            range.EntireColumn.Insert(
+                                Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight,
+                                Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromLeftOrAbove);
+                        }
                     }
 
                     for (int i = 0; i < this.subprocessInoutColumnCount; i++)
@@ -287,10 +291,13 @@ namespace Sci.Production.Planning
                 {
                     if (this.subprocessInoutColumnCount > 1)
                     {
-                        Microsoft.Office.Interop.Excel.Range range = objSheets.get_Range("AX1").EntireColumn;
-                        range.EntireColumn.Insert(
-                            Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight,
-                            Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromLeftOrAbove);
+                        for (int i = 1; i < this.subprocessInoutColumnCount; i++)
+                        {
+                            Microsoft.Office.Interop.Excel.Range range = objSheets.get_Range("AX1").EntireColumn;
+                            range.EntireColumn.Insert(
+                                Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight,
+                                Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromLeftOrAbove);
+                        }
                     }
 
                     for (int i = 0; i < this.subprocessInoutColumnCount; i++)
@@ -340,12 +347,15 @@ namespace Sci.Production.Planning
 
                 if (this.FormParameter == "2")
                 {
-                    if (this.subprocessInoutColumnCount > 1)
+                    for (int i = 1; i < this.subprocessInoutColumnCount; i++)
                     {
-                        Microsoft.Office.Interop.Excel.Range range = objSheets.get_Range("AX1").EntireColumn;
-                        range.EntireColumn.Insert(
-                            Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight,
-                            Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromLeftOrAbove);
+                        if (this.subprocessInoutColumnCount > 1)
+                        {
+                            Microsoft.Office.Interop.Excel.Range range = objSheets.get_Range("AX1").EntireColumn;
+                            range.EntireColumn.Insert(
+                                Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight,
+                                Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromLeftOrAbove);
+                        }
                     }
 
                     for (int i = 0; i < this.subprocessInoutColumnCount; i++)
@@ -706,10 +716,21 @@ outer apply(select v = case when #HT.OutQtyBySet is null or #HT.OutQtyBySet >= t
             string[] subprocessIDs = new string[] { "Sorting", "Loading", "Emb", "BO", "PRT", "AT", "PAD-PRT", "SubCONEMB", "HT", "SewingLine" };
             if (this.formParameter == "2")
             {
-                subprocessIDs = new string[] { this.subprocessID };
-                subprocessQtyColumns = this.SingleSubprocessColumn();
-                string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(this.subprocessID);
-                subprocessQtyColumnsSource = $@"left join #{subprocessIDtmp} on #{subprocessIDtmp}.OrderID = t.OrderID";
+                subprocessIDs = this.subprocessID.Split(',');
+                subprocessQtyColumns = subprocessIDs.Length > 1 ? this.MultiSuboricessColumns() : this.SingleSubprocessColumn();
+                subprocessQtyColumnsSource = string.Empty;
+                if (subprocessIDs.Length > 1)
+                {
+                    foreach (var item in subprocessIDs)
+                    {
+                        subprocessQtyColumnsSource += $@"left join #{item} on #{item}.OrderID = t.OrderID" + Environment.NewLine;
+                    }
+                }
+                else
+                {
+                    string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(this.subprocessID);
+                    subprocessQtyColumnsSource = $@"left join #{subprocessIDtmp} on #{subprocessIDtmp}.OrderID = t.OrderID";
+                }
             }
 
             string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#cte", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "0", rfidProcessLocationID: this.RFIDProcessLocation);
@@ -1412,11 +1433,23 @@ outer apply(select v = case when HT.OutQtyBySet is null or HT.OutQtyBySet >= t.Q
             string[] subprocessIDs = new string[] { "Sorting", "Loading", "Emb", "BO", "PRT", "AT", "PAD-PRT", "SubCONEMB", "HT", "SewingLine" };
             if (this.formParameter == "2")
             {
-                subprocessIDs = new string[] { this.subprocessID };
-                subprocessQtyColumns = this.SingleSubprocessColumn(1);
-                string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(this.subprocessID);
-                subprocessIDtmp = "QtyBySetPerSubprocess" + subprocessIDtmp;
-                subprocessQtyColumnsSource = $@"left join #{subprocessIDtmp} on #{subprocessIDtmp}.OrderID = t.OrderID and #{subprocessIDtmp}.Article = t.Article and #{subprocessIDtmp}.SizeCode = t.SizeCode ";
+                subprocessIDs = this.subprocessID.Split(',');
+                subprocessQtyColumns = subprocessIDs.Length > 1 ? this.MultiSuboricessColumns(1) : this.SingleSubprocessColumn(1);
+                string subprocessIDtmp = string.Empty;
+                subprocessQtyColumnsSource = string.Empty;
+                if (subprocessIDs.Length > 1)
+                {
+                    foreach (var item in subprocessIDs)
+                    {
+                        subprocessQtyColumnsSource += $@"left join #QtyBySetPerSubprocess{item} on #QtyBySetPerSubprocess{item}.OrderID = t.OrderID and #QtyBySetPerSubprocess{item}.Article = t.Article and #QtyBySetPerSubprocess{item}.SizeCode = t.SizeCode " + Environment.NewLine;
+                    }
+                }
+                else
+                {
+                    subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(this.subprocessID);
+                    subprocessIDtmp = "QtyBySetPerSubprocess" + subprocessIDtmp;
+                    subprocessQtyColumnsSource = $@"left join #{subprocessIDtmp} on #{subprocessIDtmp}.OrderID = t.OrderID and #{subprocessIDtmp}.Article = t.Article and #{subprocessIDtmp}.SizeCode = t.SizeCode ";
+                }
             }
 
             string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#cte", bySP: false, isNeedCombinBundleGroup: true, isMorethenOrderQty: "0", rfidProcessLocationID: this.RFIDProcessLocation);
@@ -1874,7 +1907,7 @@ outer apply(
             string subprocessQtyColumnGroup = ", ss.SubProcessStatus";
             if (this.formParameter == "2")
             {
-                subprocessQtyColumns = this.SingleSubprocessColumn(2);
+                subprocessQtyColumns = this.subprocessID.Split(',').Length > 1 ? this.MultiSuboricessColumns(2) : this.SingleSubprocessColumn(2);
                 subprocessQtyColumnsSource = string.Empty;
                 subprocessQtyColumnGroup = string.Empty;
             }
@@ -2106,19 +2139,48 @@ t.MDivisionID
             {
                 case "1":
                     this.subprocessInoutColumnCount = 1;
-                    return this.FarmInColmun(subprocessColumnName, type);
+                    return this.FarmInColmun(subprocessColumnName, this.subprocessID, type);
                 case "2":
                     this.subprocessInoutColumnCount = 1;
-                    return this.FarmOutColumn(subprocessColumnName, type);
+                    return this.FarmOutColumn(subprocessColumnName, this.subprocessID, type);
                 default:
                     this.subprocessInoutColumnCount = 2;
-                    return this.FarmInColmun(subprocessColumnName, type) + this.FarmOutColumn(subprocessColumnName, type);
+                    return this.FarmInColmun(subprocessColumnName, this.subprocessID, type) + this.FarmOutColumn(subprocessColumnName, this.subprocessID, type);
             }
         }
 
-        private string FarmInColmun(string subprocessColumnName, int type = 0)
+        private string MultiSuboricessColumns(int type = 0)
         {
-            string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(this.subprocessID);
+            string strReturn = string.Empty;
+            string[] strSubprocess = this.subprocessID.Split(',');
+            this.subprocessInoutColumnCount = 0;
+            foreach (var item in strSubprocess)
+            {
+                string subprocessInoutRule = MyUtility.GetValue.Lookup($"select inoutRule from subprocess where id = '{item}'");
+                string subprocessColumnName = MyUtility.GetValue.Lookup($"select iif(ArtworkTypeID = '', ID, ArtworkTypeID) from subprocess where id = '{item}'");
+                switch (subprocessInoutRule)
+                {
+                    case "1":
+                        this.subprocessInoutColumnCount += 1;
+                        strReturn += this.FarmInColmun(subprocessColumnName, item.ToString(), type) + Environment.NewLine;
+                        break;
+                    case "2":
+                        this.subprocessInoutColumnCount += 1;
+                        strReturn += this.FarmOutColumn(subprocessColumnName, item.ToString(), type) + Environment.NewLine;
+                        break;
+                    default:
+                        this.subprocessInoutColumnCount += 2;
+                        strReturn += this.FarmInColmun(subprocessColumnName, item.ToString(), type) + this.FarmOutColumn(subprocessColumnName, item.ToString(), type) + Environment.NewLine;
+                        break;
+                }
+            }
+
+            return strReturn;
+        }
+
+        private string FarmInColmun(string subprocessColumnName, string strSubprocessID, int type = 0)
+        {
+            string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(strSubprocessID);
             if (this.sbyindex == 1 || this.sbyindex == 2)
             {
                 subprocessIDtmp = "QtyBySetPerSubprocess" + subprocessIDtmp;
@@ -2131,7 +2193,7 @@ t.MDivisionID
             }
             else
             {
-                if (this.notExistsBundle_Detail_Art.Contains(this.subprocessID))
+                if (this.notExistsBundle_Detail_Art.Contains(strSubprocessID))
                 {
                     return $@"
     , [RFID {subprocessColumnName} Farm In Qty] = #{subprocessIDtmp}.InQtyBySet";
@@ -2153,9 +2215,9 @@ t.MDivisionID
             }
         }
 
-        private string FarmOutColumn(string subprocessColumnName, int type = 0)
+        private string FarmOutColumn(string subprocessColumnName, string strSubprocessID, int type = 0)
         {
-            string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(this.subprocessID);
+            string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(strSubprocessID);
             if (this.sbyindex == 1 || this.sbyindex == 2)
             {
                 subprocessIDtmp = "QtyBySetPerSubprocess" + subprocessIDtmp;
@@ -2168,7 +2230,7 @@ t.MDivisionID
             }
             else
             {
-                if (this.notExistsBundle_Detail_Art.Contains(this.subprocessID))
+                if (this.notExistsBundle_Detail_Art.Contains(strSubprocessID))
                 {
                     return $@"
     , [RFID {subprocessColumnName} Farm Out Qty] = #{subprocessIDtmp}.OutQtyBySet";
