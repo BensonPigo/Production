@@ -20,7 +20,7 @@ RETURNS @CMPDetail TABLE
 	MDivision varchar(8),
 	SCISeason varchar(10),
 	ArtworkType varchar(20),
-	SubconType varchar(1),
+	SubconType varchar(6),
 	SubconInOut varchar(12),
 	ContractNumber varchar(50),
 	UnitPrice	numeric(16,4),
@@ -79,6 +79,7 @@ select
 		,[ArtworkType] = att.ID
 		,[SubconType] = case	when s.Shift = 'O' then 'O'
 								when o.SubconInSisterFty = 1 then 'I'
+								when o.LocalOrder = 1 then 'In-3rd'
 								else 'N' end
 		,[SubconInOut] = case	when s.Shift = 'O' then isnull(s.SubconOutFty,'')
 							when o.SubconInSisterFty = 1 then isnull(o.ProgramID,'')
@@ -136,6 +137,7 @@ group by  s.OutputDate
 		, iif(s.Category = 'M','SEWING',att.ID)
 		, case	when s.Shift = 'O' then 'O'
 								when o.SubconInSisterFty = 1 then 'I'
+								when o.LocalOrder = 1 then 'In-3rd'
 								else 'N' end
 		,case	when s.Shift = 'O' then isnull(s.SubconOutFty,'')
 							when o.SubconInSisterFty = 1 then isnull(o.ProgramID,'')
@@ -155,8 +157,9 @@ select   [OutputDate] = s.OutputDate
 		,[MDivision] = s.MDivisionID
 		,[SCISeason] = sea.SeasonSCIID
 		,[ArtworkType] = 'SEWING'
-		,[SubconType] = case	when s.Shift = 'O' then 'O'
+		,[SubconType] =  case	when s.Shift = 'O' then 'O'
 								when o.SubconInSisterFty = 1 then 'I'
+								when o.LocalOrder = 1 then 'In-3rd'
 								else 'N' end
 		,[SubconInOut] = case	when s.Shift = 'O' then isnull(s.SubconOutFty,'')
 							when o.SubconInSisterFty = 1 then isnull(o.ProgramID,'')
@@ -196,6 +199,7 @@ group by  s.OutputDate
 		, sea.SeasonSCIID
 		, case	when s.Shift = 'O' then 'O'
 								when o.SubconInSisterFty = 1 then 'I'
+								when o.LocalOrder = 1 then 'In-3rd'
 								else 'N' end
 		,case	when s.Shift = 'O' then isnull(s.SubconOutFty,'')
 							when o.SubconInSisterFty = 1 then isnull(o.ProgramID,'')
