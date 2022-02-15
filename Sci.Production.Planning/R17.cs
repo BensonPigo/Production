@@ -311,12 +311,16 @@ SELECT
 		,DeliveryByShipmode = t.ShipmodeID
 		,t.OrderQty 
         ,OnTimeQty = CASE WHEN t.OnsiteSample = 1 THEN IIF(GetOnsiteSampleFail.isFail = 1 or sew.SewLastDate is null, 0, Cast(t.OrderQty as int))
-                          WHEN t.GMTComplete = 'S' and p.PulloutDate is null THEN Cast(0 as int) --[IST20190675] 若為短交且PullOutDate是空的,不算OnTime也不算Fail,直接給0
-                          Else iif(isnull(t.isDevSample,0) = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, 0, Cast(t.OrderQty as int)), Cast(isnull(pd.Qty,0) as int)) 
+                          WHEN t.GMTComplete = 'S' and isnull(p.PulloutDate, t.ActPulloutDate) is null THEN Cast(0 as int) --[IST20190675] 若為短交且PullOutDate是空的,不算OnTime也不算Fail,直接給0
+                          WHEN isnull(t.isDevSample,0) = 1 then iif(pd2.isFail = 1 or isnull(pd2.PulloutDate, t.ActPulloutDate) is null, 0, Cast(t.OrderQty as int))
+                          Else Cast(isnull(pd.Qty, isnull(packOnTimeQty.val, 0)) as int)
                      End
         ,FailQty =  CASE WHEN t.OnsiteSample = 1 THEN IIF(GetOnsiteSampleFail.isFail = 1 or sew.SewLastDate is null, Cast(t.OrderQty as int), 0)
                          WHEN t.GMTComplete = 'S' and p.PulloutDate is null THEN Cast(0 as int)
-                         Else iif(isnull(t.isDevSample,0) = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, Cast(t.OrderQty as int), 0), Cast(isnull(pd.FailQty,t.OrderQty) as int)) 
+                         WHEN isnull(t.isDevSample,0) = 1 then iif(pd2.isFail = 1 or pd2.PulloutDate is null, Cast(t.OrderQty as int), 0)
+                         --當pullout與packing都沒又抓到fail qty時，就當作全部fail
+                         WHEN pd.FailQty is null and packFailQty.val is null and packOnTimeQty.val is null then Cast(t.OrderQty as int)
+                         Else Cast(isnull(pd.FailQty, isnull(packFailQty.val, 0)) as int)
              End
         ,pullOutDate = isnull(iif(isnull(t.isDevSample,0) = 1, CONVERT(char(10), pd2.PulloutDate, 20), CONVERT(char(10), p.PulloutDate, 111)), t.ActPulloutDate)
 		,Shipmode = t.ShipmodeID
@@ -372,6 +376,27 @@ outer apply (
     and pd.OrderShipmodeSeq = t.Seq
     order by pd.PulloutDate ASC
 ) pd2
+----------A2B from packing-------------
+outer apply (
+    select  [val] = sum(pld.shipqty)
+    from PackingList pl with (nolock)
+    inner join PackingList_Detail pld with (nolock) on pl.id = pld.id
+    where   pd.OrderID is null
+            and pld.OrderID = t.OrderID
+            and pld.OrderShipmodeSeq = t.Seq
+            and pl.PulloutID is not null
+            and pl.pulloutdate <= iif(t.ShipmodeID in ('E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate}))
+) packOnTimeQty
+outer apply (
+    select  [val] = sum(pld.shipqty)
+    from PackingList pl with (nolock)
+    inner join PackingList_Detail pld with (nolock) on pl.id = pld.id
+    where   pd.OrderID is null
+            and pld.OrderID = t.OrderID
+            and pld.OrderShipmodeSeq = t.Seq
+            and pl.PulloutID is not null
+            and pl.pulloutdate > iif(t.ShipmodeID in ('E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate}))
+) packFailQty
 ----------------End----------------
 -----------OnsiteSample=1-----------
 outer apply (
