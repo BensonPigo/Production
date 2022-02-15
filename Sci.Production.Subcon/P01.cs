@@ -708,7 +708,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             var notProduceFtyDetail = this.DetailDatas.Where(s => !MyUtility.Convert.GetBool(s["IsProduceFty"]));
             if (notProduceFtyDetail.Any())
             {
-                MyUtility.Msg.WarningBox("The following SP# not Produce Factory" + Environment.NewLine + notProduceFtyDetail.Select(s => s["orderid"].ToString()).JoinToString(Environment.NewLine));
+                MyUtility.Msg.WarningBox("Below SP# which <Factory> is not production factory" + Environment.NewLine + notProduceFtyDetail.Select(s => s["orderid"].ToString()).JoinToString(Environment.NewLine));
                 return;
             }
 
@@ -760,7 +760,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             var notProduceFtyDetail = this.DetailDatas.Where(s => !MyUtility.Convert.GetBool(s["IsProduceFty"]));
             if (notProduceFtyDetail.Any())
             {
-                MyUtility.Msg.WarningBox("The following SP# not Produce Factory" + Environment.NewLine + notProduceFtyDetail.Select(s => s["orderid"].ToString()).JoinToString(Environment.NewLine));
+                MyUtility.Msg.WarningBox("Below SP# which <Factory> is not production factory" + Environment.NewLine + notProduceFtyDetail.Select(s => s["orderid"].ToString()).JoinToString(Environment.NewLine));
                 return;
             }
 
