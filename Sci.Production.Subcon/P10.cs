@@ -298,8 +298,12 @@ select a.*
 ,[LocalSuppCtn]=LocalSuppCtn.Val
 ,b.Article
 ,b.SizeCode
+,o.FactoryID
+,f.IsProduceFty 
 from ArtworkAP_detail a
 left join artworkpo_detail b on a.ArtworkPo_DetailUkey=b.Ukey
+left join dbo.Orders o with (nolock) on a.OrderID = o.id
+left join Factory f with (nolock) on f.ID = o.FactoryID
 OUTER APPLY(
 	SELECT [Val]= COUNT(LocalSuppID)
 	FROM (
@@ -423,6 +427,7 @@ where a.id='{0}'
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("Artworkpoid", header: "Artwork PO", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
             .Text("orderid", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true) // 1
+            .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("ArtworkId", header: "Artwork", width: Widths.AnsiChars(8), iseditingreadonly: true) // 2
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -451,6 +456,16 @@ where a.id='{0}'
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
+            #region 檢查生產工廠
+            var notProduceFtyDetail = this.DetailDatas.Where(s => !MyUtility.Convert.GetBool(s["IsProduceFty"]));
+            if (notProduceFtyDetail.Any())
+            {
+                MyUtility.Msg.WarningBox("Below SP# which <Factory> is not production factory" + Environment.NewLine + notProduceFtyDetail.Select(s => s["orderid"].ToString()).Distinct().JoinToString(Environment.NewLine));
+                return;
+            }
+
+            #endregion
+
             var zerolist = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => MyUtility.Convert.GetDecimal(w["apqty"]) == 0)
                 .Select(s => new
                 {

@@ -485,8 +485,10 @@ select
 		, Style = o.styleid
 		, sewinline = o.sewinline
 		, scidelivery = o.scidelivery
+        , f.IsProduceFty
 from dbo.ArtworkPO_Detail a
 left join dbo.Orders o on a.OrderID = o.id
+left join Factory f with (nolock) on f.ID = o.FactoryID
 where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
@@ -669,6 +671,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
+            .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("Style", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true) // 1
             .Numeric("PoQty", header: "PO Qty", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
             .Date("sewinline", header: "SewInLine", width: Widths.AnsiChars(10), iseditingreadonly: true) // 3
@@ -700,6 +703,17 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
         protected override void ClickCheck()
         {
             base.ClickCheck();
+
+            #region 檢查生產工廠
+            var notProduceFtyDetail = this.DetailDatas.Where(s => !MyUtility.Convert.GetBool(s["IsProduceFty"]));
+            if (notProduceFtyDetail.Any())
+            {
+                MyUtility.Msg.WarningBox("Below SP# which <Factory> is not production factory" + Environment.NewLine + notProduceFtyDetail.Select(s => s["orderid"].ToString()).Distinct().JoinToString(Environment.NewLine));
+                return;
+            }
+
+            #endregion
+
             DualResult result;
             string sqlcmd;
 
@@ -742,6 +756,16 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
+            #region 檢查生產工廠
+            var notProduceFtyDetail = this.DetailDatas.Where(s => !MyUtility.Convert.GetBool(s["IsProduceFty"]));
+            if (notProduceFtyDetail.Any())
+            {
+                MyUtility.Msg.WarningBox("Below SP# which <Factory> is not production factory" + Environment.NewLine + notProduceFtyDetail.Select(s => s["orderid"].ToString()).Distinct().JoinToString(Environment.NewLine));
+                return;
+            }
+
+            #endregion
+
             DualResult result;
 
             string sqlcmd;
