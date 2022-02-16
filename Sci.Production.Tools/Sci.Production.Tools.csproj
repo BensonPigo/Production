@@ -172,6 +172,18 @@
     <Compile Include="P02.Designer.cs">
       <DependentUpon>P02.cs</DependentUpon>
     </Compile>
+    <Compile Include="P03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P03.designer.cs">
+      <DependentUpon>P03.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P04.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P04.designer.cs">
+      <DependentUpon>P04.cs</DependentUpon>
+    </Compile>
     <Compile Include="PasswordByUser.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -216,6 +228,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P02.resx">
       <DependentUpon>P02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P03.resx">
+      <DependentUpon>P03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P04.resx">
+      <DependentUpon>P04.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PasswordByUser.resx">
       <DependentUpon>PasswordByUser.cs</DependentUpon>

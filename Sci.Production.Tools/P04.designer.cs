@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Tools
 {
-    partial class P02
+    partial class P04
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -33,11 +33,10 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.btnClose = new Sci.Win.UI.Button();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.checkNotResentYet = new Sci.Win.UI.CheckBox();
             this.btnResentByManual = new Sci.Win.UI.Button();
             this.txtJSONContains = new Sci.Win.UI.TextBox();
             this.labJsonContains = new Sci.Win.UI.Label();
-            this.txtCallFrom = new Sci.Win.UI.TextBox();
-            this.labCallFrom = new Sci.Win.UI.Label();
             this.dateCreateTime = new Sci.Win.UI.DateRange();
             this.labCreateTime = new Sci.Win.UI.Label();
             this.txtsupplier = new Sci.Production.Class.Txtsupplier();
@@ -73,11 +72,10 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.checkNotResentYet);
             this.panel1.Controls.Add(this.btnResentByManual);
             this.panel1.Controls.Add(this.txtJSONContains);
             this.panel1.Controls.Add(this.labJsonContains);
-            this.panel1.Controls.Add(this.txtCallFrom);
-            this.panel1.Controls.Add(this.labCallFrom);
             this.panel1.Controls.Add(this.dateCreateTime);
             this.panel1.Controls.Add(this.labCreateTime);
             this.panel1.Controls.Add(this.txtsupplier);
@@ -88,6 +86,18 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1026, 80);
             this.panel1.TabIndex = 7;
+            // 
+            // checkNotResentYet
+            // 
+            this.checkNotResentYet.AutoSize = true;
+            this.checkNotResentYet.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkNotResentYet.IsSupportEditMode = false;
+            this.checkNotResentYet.Location = new System.Drawing.Point(415, 47);
+            this.checkNotResentYet.Name = "checkNotResentYet";
+            this.checkNotResentYet.Size = new System.Drawing.Size(116, 21);
+            this.checkNotResentYet.TabIndex = 63;
+            this.checkNotResentYet.Text = "Not resent yet";
+            this.checkNotResentYet.UseVisualStyleBackColor = true;
             // 
             // btnResentByManual
             // 
@@ -116,23 +126,6 @@
             this.labJsonContains.Size = new System.Drawing.Size(117, 23);
             this.labJsonContains.TabIndex = 8;
             this.labJsonContains.Text = "JSON Contains";
-            // 
-            // txtCallFrom
-            // 
-            this.txtCallFrom.BackColor = System.Drawing.Color.White;
-            this.txtCallFrom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCallFrom.Location = new System.Drawing.Point(535, 48);
-            this.txtCallFrom.Name = "txtCallFrom";
-            this.txtCallFrom.Size = new System.Drawing.Size(230, 23);
-            this.txtCallFrom.TabIndex = 3;
-            // 
-            // labCallFrom
-            // 
-            this.labCallFrom.Location = new System.Drawing.Point(415, 48);
-            this.labCallFrom.Name = "labCallFrom";
-            this.labCallFrom.Size = new System.Drawing.Size(117, 23);
-            this.labCallFrom.TabIndex = 9;
-            this.labCallFrom.Text = "CallFrom";
             // 
             // dateCreateTime
             // 
@@ -224,16 +217,16 @@
             this.grid.Size = new System.Drawing.Size(1026, 533);
             this.grid.TabIndex = 9;
             // 
-            // P02
+            // P04
             // 
             this.ClientSize = new System.Drawing.Size(1026, 657);
             this.Controls.Add(this.grid);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel1);
             this.IsToolbarVisible = false;
-            this.Name = "P02";
+            this.Name = "P04";
             this.OnLineHelpID = "Sci.Win.Forms.Base";
-            this.Text = "P02 Transfer to supplier (Trans Log)";
+            this.Text = "P04 Transfer to supplier (Check Log)";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel5, 0);
             this.Controls.SetChildIndex(this.grid, 0);
@@ -254,8 +247,6 @@
         private Win.UI.Button btnResentByManual;
         private Win.UI.TextBox txtJSONContains;
         private Win.UI.Label labJsonContains;
-        private Win.UI.TextBox txtCallFrom;
-        private Win.UI.Label labCallFrom;
         private Win.UI.DateRange dateCreateTime;
         private Win.UI.Label labCreateTime;
         private Class.Txtsupplier txtsupplier;
@@ -263,5 +254,6 @@
         private Win.UI.Label label1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Grid grid;
+        private Win.UI.CheckBox checkNotResentYet;
     }
 }
