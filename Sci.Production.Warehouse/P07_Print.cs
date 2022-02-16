@@ -27,6 +27,7 @@ namespace Sci.Production.Warehouse
         private string Invoice;
         private string Wk;
         private string FTYID;
+        private string rptTitle;
 
         /// <inheritdoc/>
         public P07_Print(List<string> polist)
@@ -94,8 +95,8 @@ namespace Sci.Production.Warehouse
                 this.ShowErr(titleResult);
             }
 
-            string rptTitle = dtTitle.Rows[0]["nameEN"].ToString();
-            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", rptTitle));
+            this.rptTitle = dtTitle.Rows[0]["nameEN"].ToString();
+            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", this.rptTitle));
 
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ETA", this.ETA));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Invoice", this.Invoice));
@@ -282,6 +283,7 @@ where R.id = @ID";
 
                 int nRow = 7;
 
+                objSheets.Cells[1, 1] = this.rptTitle;
                 objSheets.Cells[3, 1] = this.Date2;
                 objSheets.Cells[4, 1] = "ETA:" + this.ETA;
                 objSheets.Cells[5, 1] = "Invoice#:" + this.Invoice + "   From FTY ID:" + this.FTYID;
@@ -326,6 +328,7 @@ where R.id = @ID";
 
                 int nRow = 7;
 
+                objSheets.Cells[1, 1] = this.rptTitle;
                 objSheets.Cells[3, 1] = this.Date1;
                 objSheets.Cells[4, 1] = "ETA:" + this.ETA;
                 objSheets.Cells[5, 1] = "Invoice#:" + this.Invoice + "   From FTY ID:" + this.FTYID;
