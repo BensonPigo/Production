@@ -128,7 +128,6 @@ SELECT
 	,[CFA3rdInspectDate]=format(Order_QS.CFA3rdInspectDate, 'yyyy/MM/dd')
 	,Order_QS.CFA3rdInspectResult
     ,[IDDReason] = cr.Description
-    ,o.ActPulloutDate
 into #tmp_main
 FROM Orders o WITH (NOLOCK)
 LEFT JOIN OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
@@ -311,18 +310,18 @@ SELECT
 		,DeliveryByShipmode = t.ShipmodeID
 		,t.OrderQty 
         ,OnTimeQty = CASE WHEN t.OnsiteSample = 1 THEN IIF(GetOnsiteSampleFail.isFail = 1 or sew.SewLastDate is null, 0, Cast(t.OrderQty as int))
-                          WHEN t.GMTComplete = 'S' and isnull(p.PulloutDate, t.ActPulloutDate) is null THEN Cast(0 as int) --[IST20190675] 若為短交且PullOutDate是空的,不算OnTime也不算Fail,直接給0
-                          WHEN isnull(t.isDevSample,0) = 1 then iif(pd2.isFail = 1 or isnull(pd2.PulloutDate, t.ActPulloutDate) is null, 0, Cast(t.OrderQty as int))
+                          WHEN t.GMTComplete = 'S' and isnull(p.PulloutDate, packPulloutDate.val) is null THEN Cast(0 as int) --[IST20190675] 若為短交且PullOutDate是空的,不算OnTime也不算Fail,直接給0
+                          WHEN isnull(t.isDevSample,0) = 1 then iif(pd2.isFail = 1 or isnull(pd2.PulloutDate, packPulloutDate.val) is null, 0, Cast(t.OrderQty as int))
                           Else Cast(isnull(pd.Qty, isnull(packOnTimeQty.val, 0)) as int)
                      End
         ,FailQty =  CASE WHEN t.OnsiteSample = 1 THEN IIF(GetOnsiteSampleFail.isFail = 1 or sew.SewLastDate is null, Cast(t.OrderQty as int), 0)
-                         WHEN t.GMTComplete = 'S' and p.PulloutDate is null THEN Cast(0 as int)
-                         WHEN isnull(t.isDevSample,0) = 1 then iif(pd2.isFail = 1 or pd2.PulloutDate is null, Cast(t.OrderQty as int), 0)
+                         WHEN t.GMTComplete = 'S' and isnull(p.PulloutDate, packPulloutDate.val) is null THEN Cast(0 as int)
+                         WHEN isnull(t.isDevSample,0) = 1 then iif(pd2.isFail = 1 or isnull(pd2.PulloutDate, packPulloutDate.val) is null, Cast(t.OrderQty as int), 0)
                          --當pullout與packing都沒又抓到fail qty時，就當作全部fail
                          WHEN pd.FailQty is null and packFailQty.val is null and packOnTimeQty.val is null then Cast(t.OrderQty as int)
                          Else Cast(isnull(pd.FailQty, isnull(packFailQty.val, 0)) as int)
              End
-        ,pullOutDate = isnull(iif(isnull(t.isDevSample,0) = 1, CONVERT(char(10), pd2.PulloutDate, 20), CONVERT(char(10), p.PulloutDate, 111)), t.ActPulloutDate)
+        ,pullOutDate = isnull(iif(isnull(t.isDevSample,0) = 1, CONVERT(char(10), pd2.PulloutDate, 20), CONVERT(char(10), p.PulloutDate, 111)), packPulloutDate.val)
 		,Shipmode = t.ShipmodeID
 		,P = (select count(1)from(select distinct ID,OrderID,OrderShipmodeSeq from Pullout_Detail p2 where p2.OrderID = t.OrderID and p2.ShipQty > 0)x )  --未出貨,出貨次數=0 --不論這OrderID的OrderShipmodeSeq有沒有被撈出來, 都要計算
 		,t.GMTComplete 
@@ -397,6 +396,15 @@ outer apply (
             and pl.PulloutID is not null
             and pl.pulloutdate > iif(t.ShipmodeID in ('E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate}))
 ) packFailQty
+outer apply (
+    select  [val] = min(pl.PulloutDate)
+    from PackingList pl with (nolock)
+    inner join PackingList_Detail pld with (nolock) on pl.id = pld.id
+    where   pd.OrderID is null
+            and pld.OrderID = t.OrderID
+            and pld.OrderShipmodeSeq = t.Seq
+            and pl.PulloutID is not null
+) packPulloutDate
 ----------------End----------------
 -----------OnsiteSample=1-----------
 outer apply (
