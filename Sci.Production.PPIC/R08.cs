@@ -217,7 +217,7 @@ outer apply(
 	select ttlestamt = SUM(EstReplacementAMT)
 	from (
 		select EstReplacementAMT = case when rrd.Junk =1 then 0
-						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',rr.CDate),1)
+						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP', po_stock.v, 'USD', rr.CDate),1)
 						end
 		from ReplacementReport_Detail rrd with(nolock)
 		left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = rr.POID and psd.SEQ1 = rrd.Seq1 and psd.SEQ2 = rrd.Seq2
@@ -241,6 +241,19 @@ outer apply(
                                     where UnitFrom = rrd.ReplacementUnit 
                                           and UnitTo = psd.POUnit),1)
         )x
+        outer apply (
+            select v = case 
+					        when psd.seq1 like '7%' then isnull((select v = sstock.Currencyid
+	                                                            from PO_Supp_Detail stock WITH (NOLOCK)
+														        left join PO_Supp pstock WITH (NOLOCK) on pstock.ID = stock.ID and pstock.SEQ1 = stock.SEQ1
+														        left join Supp sstock WITH (NOLOCK) on sstock.ID = pstock.SuppID
+	                                                            where	psd.SEQ1 like '7%'
+			                                                        and psd.StockPOID = stock.ID
+			                                                        and psd.StockSeq1 = stock.SEQ1
+			                                                        and psd.StockSeq2 = stock.SEQ2), 0)
+					        else Supp.Currencyid
+				        end
+        ) po_stock
 		where  rrd.ID = rr.ID
 	)x
 )x
@@ -284,7 +297,7 @@ select
 	rrd.TotalRequest,
 	rrd.AfterCuttingRequest,
     EstReplacementAMT = case when rrd.Junk =1 then 0
-						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',rr.CDate),1)
+						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP', po_stock.v, 'USD', rr.CDate),1)
                         end,
     psd.POAmt,
     psd.ShipAmt,
@@ -318,6 +331,19 @@ outer apply (
                             where UnitFrom = rrd.ReplacementUnit 
                                     and UnitTo = psd.POUnit),1)
 )x
+outer apply (
+    select v = case 
+			        when psd.seq1 like '7%' then isnull((select v = sstock.Currencyid
+                                                        from PO_Supp_Detail stock WITH (NOLOCK)
+												        left join PO_Supp pstock WITH (NOLOCK) on pstock.ID = stock.ID and pstock.SEQ1 = stock.SEQ1
+												        left join Supp sstock WITH (NOLOCK) on sstock.ID = pstock.SuppID
+                                                        where	psd.SEQ1 like '7%'
+	                                                        and psd.StockPOID = stock.ID
+	                                                        and psd.StockSeq1 = stock.SEQ1
+	                                                        and psd.StockSeq2 = stock.SEQ2), 0)
+			        else Supp.Currencyid
+		        end
+) po_stock
 where 1=1
 {where}
 {whereDetail}
@@ -367,7 +393,7 @@ outer apply(
 	select ttlestamt = SUM(EstReplacementAMT)
 	from (
 		select EstReplacementAMT = case when rrd.Junk =1 then 0
-						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',rr.CDate),1)
+						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP', po_stock.v, 'USD', rr.CDate),1)
 						end
 		from ReplacementReport_Detail rrd with(nolock)
 		left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = rr.POID and psd.SEQ1 = rrd.Seq1 and psd.SEQ2 = rrd.Seq2
@@ -391,6 +417,19 @@ outer apply(
                                     where UnitFrom = rrd.ReplacementUnit 
                                           and UnitTo = psd.POUnit),1)
         )x
+        outer apply (
+            select v = case 
+					        when psd.seq1 like '7%' then isnull((select v = sstock.Currencyid
+	                                                            from PO_Supp_Detail stock WITH (NOLOCK)
+														        left join PO_Supp pstock WITH (NOLOCK) on pstock.ID = stock.ID and pstock.SEQ1 = stock.SEQ1
+														        left join Supp sstock WITH (NOLOCK) on sstock.ID = pstock.SuppID
+	                                                            where	psd.SEQ1 like '7%'
+			                                                        and psd.StockPOID = stock.ID
+			                                                        and psd.StockSeq1 = stock.SEQ1
+			                                                        and psd.StockSeq2 = stock.SEQ2), 0)
+					        else Supp.Currencyid
+				        end
+        ) po_stock
 		where  rrd.ID = rr.ID
 	)x
 )x
