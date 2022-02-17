@@ -86,7 +86,7 @@ namespace Sci.Production.PPIC
 select rd.*,(rd.Seq1+' '+rd.Seq2) as Seq, f.Description, [dbo].[getMtlDesc](r.POID,rd.Seq1,rd.Seq2,2,0) as Description,
     isnull((select top(1) ExportId from Receiving WITH (NOLOCK) where InvNo = rd.INVNo),'') as ExportID,
     EstReplacementAMT = case when rd.Junk =1 then 0
-						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',r.CDate),1)
+						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP', po_stock.v, 'USD', r.CDate),1)
 						end
 from ReplacementReport r WITH (NOLOCK) 
 inner join ReplacementReport_Detail rd WITH (NOLOCK) on rd.ID = r.ID
@@ -112,6 +112,19 @@ outer apply(
                            where UnitFrom = rd.ReplacementUnit 
                                  and UnitTo = psd.POUnit),1)
 )x
+outer apply (
+    select v = case 
+					when psd.seq1 like '7%' then isnull((select v = sstock.Currencyid
+	                                                    from PO_Supp_Detail stock WITH (NOLOCK)
+														left join PO_Supp pstock WITH (NOLOCK) on pstock.ID = stock.ID and pstock.SEQ1 = stock.SEQ1
+														left join Supp sstock WITH (NOLOCK) on sstock.ID = pstock.SuppID
+	                                                    where	psd.SEQ1 like '7%'
+			                                                and psd.StockPOID = stock.ID
+			                                                and psd.StockSeq1 = stock.SEQ1
+			                                                and psd.StockSeq2 = stock.SEQ2), 0)
+					else Supp.Currencyid
+				end
+) po_stock
 where r.ID = '{0}'
 order by rd.Seq1,rd.Seq2", masterID);
 
