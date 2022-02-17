@@ -97,9 +97,10 @@ from LineMapping l WITH (NOLOCK)
 inner join LineMapping_Detail ld WITH (NOLOCK) on l.ID =ld.ID and Left(ld.OperationID, 2) <> '--'
 left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
 outer apply (
-	select [Version] = max(Version)
+	select [Version] = max(Version),FactoryID
 	from LineMapping l2 WITH (NOLOCK) 
-    where l.StyleID = l2.StyleID and l.SeasonID = l2.SeasonID and l.BrandID = l2.BrandID
+    where l.StyleUkey = l2.StyleUkey and l.FactoryID = l2.FactoryID
+    group by FactoryID
 )lMax
 where IsNull(l.EditDate, l.AddDate) between @date1 and @date2" + Environment.NewLine));
 
@@ -122,7 +123,7 @@ where IsNull(l.EditDate, l.AddDate) between @date1 and @date2" + Environment.New
 
             if (this.version)
             {
-                sqlCmd.Append("And l.Version = lMax.Version" + Environment.NewLine);
+                sqlCmd.Append("And l.Version = lMax.Version and l.FactoryID = lMax.FactoryID" + Environment.NewLine);
             }
 
             if (this.bolPPA)

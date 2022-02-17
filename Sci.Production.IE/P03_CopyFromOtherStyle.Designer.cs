@@ -38,11 +38,12 @@
             this.btnCopy = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.txtLineMappingVersion = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
             this.SuspendLayout();
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(13, 13);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(75, 23);
@@ -51,7 +52,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(13, 40);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(75, 23);
@@ -60,7 +60,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(13, 67);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(75, 23);
@@ -69,8 +68,7 @@
             // 
             // labelLineMappingVersion
             // 
-            this.labelLineMappingVersion.Lines = 0;
-            this.labelLineMappingVersion.Location = new System.Drawing.Point(13, 94);
+            this.labelLineMappingVersion.Location = new System.Drawing.Point(14, 123);
             this.labelLineMappingVersion.Name = "labelLineMappingVersion";
             this.labelLineMappingVersion.Size = new System.Drawing.Size(136, 23);
             this.labelLineMappingVersion.TabIndex = 3;
@@ -85,6 +83,8 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 0;
+            this.txtstyle.TarBrand = null;
+            this.txtstyle.TarSeason = null;
             // 
             // txtseason
             // 
@@ -129,16 +129,40 @@
             // 
             this.txtLineMappingVersion.BackColor = System.Drawing.Color.White;
             this.txtLineMappingVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLineMappingVersion.Location = new System.Drawing.Point(154, 94);
+            this.txtLineMappingVersion.Location = new System.Drawing.Point(155, 123);
             this.txtLineMappingVersion.Name = "txtLineMappingVersion";
             this.txtLineMappingVersion.Size = new System.Drawing.Size(39, 23);
             this.txtLineMappingVersion.TabIndex = 3;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(13, 96);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Factory";
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.BoolFtyGroupList = true;
+            this.txtfactory1.FilteMDivision = false;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IsProduceFty = false;
+            this.txtfactory1.IssupportJunk = true;
+            this.txtfactory1.Location = new System.Drawing.Point(92, 96);
+            this.txtfactory1.MDivision = null;
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 7;
             // 
             // P03_CopyFromOtherStyle
             // 
             this.AcceptButton = this.btnCopy;
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(352, 125);
+            this.ClientSize = new System.Drawing.Size(352, 158);
+            this.Controls.Add(this.txtfactory1);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.txtLineMappingVersion);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnCopy);
@@ -150,8 +174,8 @@
             this.Controls.Add(this.labelSeason);
             this.Controls.Add(this.labelStyle);
             this.DefaultControl = "txtstyle";
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Name = "P03_CopyFromOtherStyle";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Copy From Other Style Line Mapping";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -170,5 +194,7 @@
         private Win.UI.Button btnCopy;
         private Win.UI.Button btnClose;
         private Win.UI.TextBox txtLineMappingVersion;
+        private Win.UI.Label label1;
+        private Class.Txtfactory txtfactory1;
     }
 }
