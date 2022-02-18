@@ -12,10 +12,10 @@ using System.Windows.Forms;
 namespace Sci.Production.Tools
 {
     /// <inheritdoc/>
-    public partial class P04 : Sci.Win.Tems.Base
+    public partial class P05 : Sci.Win.Tems.Base
     {
         /// <inheritdoc/>
-        public P04(ToolStripMenuItem menuitem)
+        public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
@@ -42,14 +42,15 @@ namespace Sci.Production.Tools
 
             #region 表身欄位設定
             this.Helper.Controls.Grid.Generator(this.grid)
-                .Text("Ukey", header: "ID", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Text("SuppID", header: "Supp", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Text("ModuleName", header: "Module Name", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("APIThread", header: "APIThread", width: Widths.AnsiChars(25), iseditingreadonly: true)
-                .Text("SuppAPIThread", header: "Supp API Thread", width: Widths.AnsiChars(25), iseditingreadonly: true)
-                .EditText("ErrorMsg", header: "Error Msg", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("Ukey", header: "ID", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("SuppID", header: "Supp", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("ModuleName", header: "Module Name", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                .Text("APIThread", header: "APIThread", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                .Text("SuppAPIThread", header: "Supp API Thread", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                .EditText("ErrorMsg", header: "Error Msg", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .EditText("Json", header: "JSON", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .DateTime("AddDate", header: "Create Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                .CheckBox("Success", header: "Success", width: Widths.AnsiChars(5), iseditable: false, trueValue: 1, falseValue: 0)
                 ;
             #endregion
 
@@ -93,7 +94,8 @@ namespace Sci.Production.Tools
 
             string sqlcmd = $@"
 select 
-Ukey
+[select] = 0
+,Ukey
 ,SuppID
 ,ModuleName
 ,APIThread
@@ -101,7 +103,8 @@ Ukey
 ,ErrorMsg
 ,JSON
 ,AddDate
-from AutomationCheckMsg
+,Success
+from AutomationReceivedMsg
 where 1=1
  {strWhere}
 

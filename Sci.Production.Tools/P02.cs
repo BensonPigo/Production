@@ -44,7 +44,7 @@ namespace Sci.Production.Tools
             this.Helper.Controls.Grid.Generator(this.grid)
                 .CheckBox("select", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_Select)
                 .Text("Ukey", header: "ID", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Text("CallFrom", header: "CallFrom", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("CallFrom", header: "Call From", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("SuppID", header: "Supp ID", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("ModuleName", header: "Module Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SuppAPIThread", header: "Supp API Thread", width: Widths.AnsiChars(15), iseditingreadonly: true)

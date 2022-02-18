@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
@@ -73,35 +74,40 @@ namespace Sci.Production.Automation
         /// <param name="automationErrMsg">Automation Err Msg</param>
         public static void SaveAutomationErrMsg(AutomationErrMsg automationErrMsg)
         {
-            automationErrMsg.addName = Env.User.UserID;
-            SqlConnection sqlConnection = new SqlConnection();
-            DBProxy._OpenConnection("Production", out sqlConnection);
-            using (sqlConnection)
-            {
-                PmsWebApiUtility20.Automation.SaveAutomationErrMsg(automationErrMsg, sqlConnection);
-            }
-        }
 
-        /// <summary>
-        /// Save Automation Check Msg
-        /// </summary>
-        /// <param name="automationErrMsg">Automation Err Msg</param>
-        public static void SaveAutomationCheckMsg(AutomationErrMsg automationErrMsg)
-        {
+            #region 取得原始Json
+            string strJson = automationErrMsg.json;
+            int startIndex = strJson.LastIndexOf("[");
+            int endIndex = strJson.LastIndexOf("]");
+            int jsonLength = endIndex - startIndex;
+            string oriJson = strJson.Substring(startIndex, jsonLength + 1);
+            #endregion
+
+            // 取得Json的Status
+            DataTable dtJson = (DataTable)JsonConvert.DeserializeObject(oriJson, (typeof(DataTable)));
+            string status = dtJson.Rows[0]["status"].ToString();
+
+            #region 先將資料新增至FPS AutomationTransRecord
+            long automationTransRecordUkey = SaveAutomationTransRecord(automationErrMsg, status);
+            #endregion
+
             string saveSql = $@"
-      insert into AutomationCheckMsg( SuppID,  ModuleName,  APIThread,  SuppAPIThread,  ErrorCode,  ErrorMsg,  JSON,  AddName, AddDate)
-                        values(@SuppID, @ModuleName, @APIThread, @SuppAPIThread, @ErrorCode, @ErrorMsg, @JSON, @AddName, GETDATE())
-";
+            insert into AutomationErrMsg(SuppID, ModuleName, APIThread, SuppAPIThread, ErrorCode, ErrorMsg, JSON, ReSented, AddName, AddDate, AutomationTransRecordUkey)
+                        values(@SuppID, @ModuleName, @APIThread, @SuppAPIThread, @ErrorCode, @ErrorMsg, @JSON, 0, @AddName, GETDATE(), @AutomationTransRecordUkey)
+                
+            ";
+
             List<SqlParameter> listPar = new List<SqlParameter>()
             {
-               new SqlParameter("@SuppID", automationErrMsg.suppID),
-               new SqlParameter("@ModuleName", automationErrMsg.moduleName),
-               new SqlParameter("@APIThread", automationErrMsg.apiThread),
-               new SqlParameter("@SuppAPIThread", automationErrMsg.suppAPIThread),
-               new SqlParameter("@ErrorCode", automationErrMsg.errorCode),
-               new SqlParameter("@ErrorMsg", automationErrMsg.errorMsg),
-               new SqlParameter("@JSON", automationErrMsg.json),
-               new SqlParameter("@AddName", Env.User.UserID),
+                new SqlParameter("@SuppID", automationErrMsg.suppID),
+                new SqlParameter("@ModuleName", automationErrMsg.moduleName),
+                new SqlParameter("@APIThread", automationErrMsg.apiThread),
+                new SqlParameter("@SuppAPIThread", automationErrMsg.suppAPIThread),
+                new SqlParameter("@ErrorCode", automationErrMsg.errorCode),
+                new SqlParameter("@ErrorMsg", automationErrMsg.errorMsg),
+                new SqlParameter("@JSON", automationErrMsg.json),
+                new SqlParameter("@AddName", Env.User.UserID),
+                new SqlParameter("@AutomationTransRecordUkey", automationTransRecordUkey),
             };
 
             DualResult result = DBProxy.Current.Execute("Production", saveSql, listPar);
@@ -116,7 +122,55 @@ namespace Sci.Production.Automation
         /// Save Automation Check Msg
         /// </summary>
         /// <param name="automationErrMsg">Automation Err Msg</param>
-        public static void SaveAutomationTransRecord(AutomationErrMsg automationErrMsg)
+        public static void SaveAutomationCheckMsg(AutomationErrMsg automationErrMsg)
+        {
+            #region 取得原始Json
+            string strJson = automationErrMsg.json;
+            int startIndex = strJson.LastIndexOf("[");
+            int endIndex = strJson.LastIndexOf("]");
+            int jsonLength = endIndex - startIndex;
+            string oriJson = strJson.Substring(startIndex, jsonLength + 1);
+            #endregion
+
+            // 取得Json的Status
+            DataTable dtJson = (DataTable)JsonConvert.DeserializeObject(oriJson, (typeof(DataTable)));
+            string status = dtJson.Rows[0]["status"].ToString();
+
+            #region 先將資料新增至FPS AutomationTransRecord
+            long automationTransRecordUkey = SaveAutomationTransRecord(automationErrMsg, status);
+            #endregion
+
+            string saveSql = $@"
+      insert into AutomationCheckMsg( SuppID,  ModuleName,  APIThread,  SuppAPIThread,  ErrorCode,  ErrorMsg,  JSON,  AddName, AddDate,AutomationTransRecordUkey)
+                        values(@SuppID, @ModuleName, @APIThread, @SuppAPIThread, @ErrorCode, @ErrorMsg, @JSON, @AddName, GETDATE(),@AutomationTransRecordUkey)
+";
+            List<SqlParameter> listPar = new List<SqlParameter>()
+            {
+               new SqlParameter("@SuppID", automationErrMsg.suppID),
+               new SqlParameter("@ModuleName", automationErrMsg.moduleName),
+               new SqlParameter("@APIThread", automationErrMsg.apiThread),
+               new SqlParameter("@SuppAPIThread", automationErrMsg.suppAPIThread),
+               new SqlParameter("@ErrorCode", automationErrMsg.errorCode),
+               new SqlParameter("@ErrorMsg", automationErrMsg.errorMsg),
+               new SqlParameter("@JSON", automationErrMsg.json),
+               new SqlParameter("@AddName", Env.User.UserID),
+               new SqlParameter("@AutomationTransRecordUkey", automationTransRecordUkey),
+            };
+
+            DualResult result = DBProxy.Current.Execute("Production", saveSql, listPar);
+
+            if (!result)
+            {
+                throw result.GetException();
+            }
+        }
+
+        /// <summary>
+        /// Save Automation Check Msg
+        /// </summary>
+        /// <param name="automationErrMsg">Automation Err Msg</param>
+        /// <param name="status">status</param>
+        public static long SaveAutomationTransRecord(AutomationErrMsg automationErrMsg, string status = "")
         {
             string saveSql = $@"
 insert into AutomationTransRecord(
@@ -142,13 +196,16 @@ values
 @AddName        ,
 getdate()
 )
+
+declare @ID bigint = (select @@IDENTITY)
+select ID = @ID
 ";
             Dictionary<string, string> requestHeaders = GetCustomHeaders();
 
             List<SqlParameter> listPar = new List<SqlParameter>()
             {
                new SqlParameter("@CallFrom", requestHeaders["CallFrom"]),
-               new SqlParameter("@Activity", requestHeaders["Activity"]),
+               new SqlParameter("@Activity", MyUtility.Check.Empty(status) ? requestHeaders["Activity"] : status),
                new SqlParameter("@SuppID", automationErrMsg.suppID),
                new SqlParameter("@ModuleName", automationErrMsg.moduleName),
                new SqlParameter("@SuppAPIThread", automationErrMsg.suppAPIThread),
@@ -157,12 +214,14 @@ getdate()
                new SqlParameter("@AddName", Env.User.UserID),
             };
 
-            DualResult result = DBProxy.Current.Execute("FPS", saveSql, listPar);
+            DualResult result = DBProxy.Current.Select("FPS", saveSql, listPar, out DataTable dt);
 
             if (!result)
             {
                 throw result.GetException();
             }
+
+            return MyUtility.Convert.GetLong(dt.Rows[0]["ID"]);
         }
 
         /// <summary>

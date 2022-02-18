@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Tools
 {
-    partial class P04
+    partial class P05
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -190,16 +190,16 @@
             this.grid.Size = new System.Drawing.Size(1026, 533);
             this.grid.TabIndex = 9;
             // 
-            // P04
+            // P05
             // 
             this.ClientSize = new System.Drawing.Size(1026, 657);
             this.Controls.Add(this.grid);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel1);
             this.IsToolbarVisible = false;
-            this.Name = "P04";
+            this.Name = "P05";
             this.OnLineHelpID = "Sci.Win.Forms.Base";
-            this.Text = "P04 Transfer to supplier (Check Log)";
+            this.Text = "P05 Receive from supplier";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel5, 0);
             this.Controls.SetChildIndex(this.grid, 0);

@@ -42,15 +42,15 @@ namespace Sci.Production.Tools
             this.Helper.Controls.Grid.Generator(this.grid)
                 .CheckBox("select", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("Ukey", header: "ID", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Text("SuppID", header: "Supp ID", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("SuppID", header: "Supp", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("ModuleName", header: "Module Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("APIThread", header: "APIThread", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("APIThread", header: "API Thread", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SuppAPIThread", header: "Supp API Thread", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .EditText("ErrorMsg", header: "Msg", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .EditText("ErrorMsg", header: "Error Msg", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .EditText("Json", header: "JSON", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .DateTime("AddDate", header: "Create Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
-                .CheckBox("ReSented", header: "Resent", width: Widths.AnsiChars(5), iseditable: false, trueValue: 1, falseValue: 0)
-                .DateTime("EditDate", header: "Resent Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                .CheckBox("ReSented", header: "ReSent", width: Widths.AnsiChars(5), iseditable: false, trueValue: 1, falseValue: 0)
+                .DateTime("EditDate", header: "ReSent Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 ;
             #endregion
 
