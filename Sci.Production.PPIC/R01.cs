@@ -443,6 +443,33 @@ group by FactoryID, SewingLineID,date,StyleID,IsLastMonth,IsNextMonth,IsBulk
 ,IsSMS,BuyerDelivery,CdCodeID,APSNo,StartHour,EndHour,CPU,OriWorkHour,HourOutput,TotalSewingTime
 ,LearnCurveID,LNCSERIALNumber,OrderID,ComboType,Inline,Offline,InlineHour,OfflineHour
 
+--抓出各style連續作業天數，不含假日
+select distinct FactoryID, SewingLineID, date, StyleID into #tmpLongDayCheck1 from #Stmp where FactoryID is not null
+
+select *,
+	   isBegin = iif(lag(date) over (order by factoryid, sewinglineid, styleID, date) = dateadd(day, -1, date), 0, 1),
+	   isEnd =  iif(lead(date) over (order by factoryid, sewinglineid, styleID, date) = dateadd(day, 1, date), 0, 1)
+into #tmpLongDayCheck2
+from #tmpLongDayCheck1
+order by factoryid, sewinglineid, styleID, date
+
+select rownum, factoryid, sewinglineid, styleID, BeginDate = min(date), EndDate = max(date)
+into #tmpLongDayCheck3
+from (
+select *, rownum = ROW_NUMBER() over (order by factoryid, sewinglineid, styleID, date) from #tmpLongDayCheck2 where isBegin = 1 
+union all
+select *, rownum = ROW_NUMBER() over (order by factoryid, sewinglineid, styleID, date) from #tmpLongDayCheck2 where isEnd = 1
+) a 
+group by rownum, factoryid, sewinglineid, styleID
+
+
+select *, [WorkDays] = DATEDIFF(day, BeginDate, EndDate) + 1 - holiday.val
+into #tmpLongDayCheck
+from #tmpLongDayCheck3 t
+outer apply(select val = count(*) from #Holiday where Holiday = 1 and FactoryID = t.FactoryID and SewingLineID = t.SewingLineID and date between BeginDate and EndDate) holiday
+
+--
+
 
 --刪除每個計畫inline,offline當天超過時間的班表                                                
 delete #tmpStmp_step1 where [date] = Inline and EndHour <= InlineHour
@@ -600,9 +627,19 @@ END
 CLOSE cursor_sewingschedule
 DEALLOCATE cursor_sewingschedule
 
-select * from @tempPintData where StyleID<>''
+select  t.*,
+        [WorkDays] = isnull(workDays.val, 0)
+from @tempPintData t
+outer apply (   select val = max(WorkDays) 
+                from #tmpLongDayCheck tdc
+                where   tdc.FactoryID = t.FactoryID and
+                        tdc.SewingLineID = t.SewingLineID and
+                        t.StyleID like '%' + tdc.StyleID + '%'  and
+                        t.InLine between tdc.BeginDate and tdc.EndDate
+            ) workDays
+where t.StyleID<>''
 
-drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle,#tmpStmp_step1,#tmpStmp_step2,#tmpTotalWT
+drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle,#tmpStmp_step1,#tmpStmp_step2,#tmpTotalWT,#tmpLongDayCheck1,#tmpLongDayCheck2,#tmpLongDayCheck3,#tmpLongDayCheck
 ";
                     DualResult resultCmd = DBProxy.Current.Select(null, sqlcmd, out DataTable dtGantt);
                     if (!resultCmd)
@@ -867,6 +904,11 @@ drop table #tmpFinal_step1
                         for (int d = 0; d <= dateRange; d++)
                         {
                             this.SetGannt(worksheet, dtGanttSumery, drHours, intRowsStart, dr, startCol, rngColor, d);
+                        }
+
+                        if (MyUtility.Convert.GetInt(dr["WorkDays"]) > 10)
+                        {
+                            worksheet.Range[$"{excelStartColEng}{intRowsStart}:{excelEndColEng}{intRowsStart}"].Cells.Interior.Color = Color.FromArgb(255, 219, 183);
                         }
                         #endregion
                         colCount = colCount + (startCol - colCount - 1) + totalDays;
