@@ -4,7 +4,7 @@
     [BrandID]                   VARCHAR (8)    CONSTRAINT [DF_LineMapping_BrandID] DEFAULT ('') NOT NULL,
     [StyleUKey]                 BIGINT         CONSTRAINT [DF_LineMapping_StyleUKey] DEFAULT ((0)) NOT NULL,
     [Version]                   TINYINT        CONSTRAINT [DF_LineMapping_Version] DEFAULT ((0)) NOT NULL,
-    [FactoryID]                 VARCHAR (8)    CONSTRAINT [DF_LineMapping_FactoryID] DEFAULT ('') NULL,
+    [FactoryID]                 VARCHAR (8)    CONSTRAINT [DF_LineMapping_FactoryID] DEFAULT ('') NOT NULL,
     [ComboType]                 VARCHAR (1)    CONSTRAINT [DF_LineMapping_ComboType] DEFAULT ('') NULL,
     [SewingLineID]              VARCHAR (5)    CONSTRAINT [DF_LineMapping_SewingLineID] DEFAULT ('') NULL,
     [Team]                      VARCHAR (5)    CONSTRAINT [DF_LineMapping_Team] DEFAULT ('') NULL,
@@ -29,7 +29,7 @@
     [TimeStudyPhase]            VARCHAR (10)   CONSTRAINT [DF_LineMapping_TimeStudyPhase] DEFAULT ('') NOT NULL,
     [TimeStudyVersion]          VARCHAR (2)    CONSTRAINT [DF_LineMapping_TimeStudyVersion] DEFAULT ('') NOT NULL,
     [IEReasonLBRNotHit_1stUkey] BIGINT         NULL,
-    CONSTRAINT [PK_LineMapping] PRIMARY KEY CLUSTERED ([StyleID] ASC, [SeasonID] ASC, [BrandID] ASC, [StyleUKey] ASC, [Version] ASC)
+    CONSTRAINT [PK_LineMapping] PRIMARY KEY CLUSTERED ([StyleUKey], [FactoryID], [Version])
 );
 
 

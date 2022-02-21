@@ -134,8 +134,12 @@ Select 1 as Selected
         ,[LocalSuppCtn]=LocalSuppCtn.Val
         ,b.Article
         ,b.SizeCode
+        ,o.FactoryID
+        ,f.IsProduceFty
 from ArtworkPO a WITH (NOLOCK) 
 INNER JOIN ArtworkPO_Detail b WITH (NOLOCK)  ON  a.id = b.id 
+inner join dbo.Orders o with (nolock) on b.OrderID = o.id
+left join Factory f with (nolock) on f.ID = o.FactoryID
 OUTER APPLY(
 	SELECT  [Value]= SUM( bd.QTY)
 	FROM #Bundle bd

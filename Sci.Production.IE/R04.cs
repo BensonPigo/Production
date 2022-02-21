@@ -95,9 +95,10 @@ from LineMapping l WITH (NOLOCK)
 inner join LineMapping_Detail ld WITH (NOLOCK) on l.ID = ld.ID
 left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
 outer apply (
-	select [Version] = max(Version)
+	select [Version] = max(Version),FactoryID
 	from LineMapping l2 WITH (NOLOCK) 
-    where l.StyleID = l2.StyleID and l.SeasonID = l2.SeasonID and l.BrandID = l2.BrandID
+    where l.StyleUkey = l2.StyleUkey and l.FactoryID = l2.FactoryID
+    group by FactoryID
 )lMax");
             if (this.dateSewingDate.Value1.HasValue || this.dateSewingDate.Value2.HasValue || this.dateInlineDate.Value1.HasValue || this.dateInlineDate.Value2.HasValue)
             {
@@ -130,7 +131,7 @@ where EXISTS (
     left join Orders o WITH (NOLOCK) on s.OrderID = o.ID
     where 1=1
     {dateSewing}
-    and o.StyleID=l.StyleID and o.SeasonID=l.SeasonID and o.BrandID = l.BrandID
+    and o.StyleID=l.StyleID and o.SeasonID=l.SeasonID and o.BrandID = l.BrandID and s.FactoryID = l.FactoryID
 )
 and ld.MachineTypeID in ('{string.Join("','", this.mcs)}')" + Environment.NewLine);
             }
@@ -159,7 +160,7 @@ and ld.MachineTypeID in ('{string.Join("','", this.mcs)}')" + Environment.NewLin
 
             if (this.version)
             {
-                sqlCmd.Append("And l.Version = lMax.Version" + Environment.NewLine);
+                sqlCmd.Append("And l.Version = lMax.Version and l.FactoryID = lMax.FactoryID" + Environment.NewLine);
             }
 
             sqlCmd.Append("Order by l.FactoryID, l.StyleID, l.BrandID, l.Version, ld.NO " + Environment.NewLine);
