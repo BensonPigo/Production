@@ -52,7 +52,7 @@ namespace Sci.Production.Tools
                 .EditText("oriJson", header: "JSON", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .EditText("oriTransJSON", header: "Trans JSON", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Text("TransferResult", header: "Transfer Result", width: Widths.AnsiChars(7), iseditingreadonly: true)
-                .EditText("Msg", header: "Msg", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .EditText("Msg", header: "Msg", width: Widths.AnsiChars(35), iseditingreadonly: true)
                 .Text("ErrorType", header: "Error Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .CheckBox("Resent", header: "Resent", width: Widths.AnsiChars(5), iseditable: true, trueValue: 1, falseValue: 0)
                 .DateTime("ResentTime", header: "Resent Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
@@ -146,6 +146,7 @@ select
 ,[ErrorType_Chk] = IIF(em.Ukey != '', 'Error Msg' , ' Check Msg')
 ,[Resent] = em.ReSented
 ,[ResentTime] = em.EditDate
+,[ErrMsgUkey] = em.Ukey
 from fps.dbo.AutomationTransRecord t
 inner join Production.dbo.AutomationErrMsg em on convert(varchar(80), em.Ukey) = t.Activity
 left join Production.dbo.AutomationCheckMsg cm on cm.AutomationTransRecordUkey = t.Ukey
@@ -169,6 +170,7 @@ select
 ,[ErrorType_Chk] = IIF(em.Ukey != '', 'Error Msg' , ' Check Msg')
 ,[Resent] =  em.ReSented
 ,[ResentTime] = em.EditDate
+,[ErrMsgUkey] = em.Ukey
 from fps.dbo.AutomationTransRecord t
 inner join Production.dbo.AutomationErrMsg em on em.AutomationTransRecordUkey = t.Ukey
 left join Production.dbo.AutomationCheckMsg cm on cm.AutomationTransRecordUkey = t.Ukey
@@ -212,8 +214,32 @@ order by Ukey
             {
                 string cmdText = $@"
 declare @result nvarchar(max)
-exec dbo.SentJsonFromAutomationErrMsg {(long)dr["Ukey"]},'{Sci.Env.User.UserID}', @result OUTPUT, 1200
+exec dbo.SentJsonFromAutomationErrMsg {(long)dr["ErrMsgUkey"]},'{Sci.Env.User.UserID}', @result OUTPUT, 1200
 SELECT [Result]= @result
+
+insert into FPS.dbo.AutomationTransRecord(
+    [CallFrom]     
+    ,Activity       
+    ,SuppID         
+    ,ModuleName     
+    ,SuppAPIThread  
+    ,JSON           
+    ,TransJson      
+    ,AddName        
+    ,AddDate
+)
+select
+	'Resent'
+	,Ukey  
+	,SuppID
+	,ModuleName
+	,SuppAPIThread
+	,JSON
+	,JSON
+	,AddName
+	,AddDate
+from dbo.AutomationErrMsg with (nolock)
+where ukey = '{(long)dr["ErrMsgUkey"]}'
 ";
                 result = DBProxy.Current.Select(null, cmdText, out DataTable resultDt);
                 if (!result)
