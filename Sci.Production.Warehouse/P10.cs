@@ -878,6 +878,14 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                         return;
                     }
 
+                    result = this.SentSpreadingSchedule();
+                    if (!result)
+                    {
+                        transactionscope.Dispose();
+                        this.ShowErr(result);
+                        return;
+                    }
+
                     transactionscope.Complete();
                     transactionscope.Dispose();
 
@@ -904,6 +912,40 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
 
             transactionscope.Dispose();
             transactionscope = null;
+        }
+
+        private DualResult SentSpreadingSchedule()
+        {
+            string sqlGetSpreadingSchedule = $@"
+declare @today date = getdate()
+
+select distinct ss.FactoryID, ss.EstCutDate, ss.CutCellID
+from Issue i with (nolock)
+inner join WorkOrder w with (nolock) on i.CutplanID = w.CutplanID
+inner join SpreadingSchedule_Detail ssd with (nolock) on w.CutRef = ssd.CutRef
+inner join SpreadingSchedule ss with (nolock) on ssd.SpreadingScheduleUkey = ss.Ukey
+where	i.Id = '{this.CurrentMaintain["ID"]}' and
+		ss.EstCutDate > @today
+";
+            DualResult result = new DualResult(true);
+            DataTable dtSpreadingSchedule;
+            result = DBProxy.Current.Select(null, sqlGetSpreadingSchedule, out dtSpreadingSchedule);
+
+            if (!result)
+            {
+                return result;
+            }
+
+            foreach (DataRow dr in dtSpreadingSchedule.Rows)
+            {
+                result = new Gensong_SpreadingSchedule().SendSpreadingSchedule(dr["FactoryID"].ToString(), (DateTime)dr["EstCutDate"], dr["CutCellID"].ToString());
+                if (!result)
+                {
+                    return result;
+                }
+            }
+
+            return result;
         }
 
         /// <inheritdoc/>
@@ -1125,6 +1167,14 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                     {
                         transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
+                        return;
+                    }
+
+                    result = this.SentSpreadingSchedule();
+                    if (!result)
+                    {
+                        transactionscope.Dispose();
+                        this.ShowErr(result);
                         return;
                     }
 
