@@ -479,9 +479,9 @@ declare @BLNo varchar(30) = '{blNo}'
 	outer apply(
 		select SCIRefno =
 			case ed.FabricType
-			when 'M' then (select mpd.MasterGroupID from SciMachine_MachinePO_Detail mpd where mpd.id=ed.PoID and mpd.seq1=ed.seq1 and mpd.seq2=ed.seq2)
-			when 'P' then (select ppd.PartID from SciMachine_PartPO_Detail ppd where ppd.id=ed.PoID and ppd.seq1=ed.seq1 and ppd.seq2=ed.seq2)
-			when 'O' then (select mspd.MiscID from SciMachine_MiscPO_Detail mspd where mspd.id=ed.PoID and mspd.seq1=ed.seq1 and mspd.seq2=ed.seq2)
+			when 'M' then (select mpd.MasterGroupID from SciMachine_MachinePO_Detail mpd where (mpd.id=ed.PoID or mpd.TPEPOID=ed.poid) and mpd.seq1=ed.seq1 and mpd.seq2=ed.seq2)
+			when 'P' then (select ppd.PartID from SciMachine_PartPO_Detail ppd where (ppd.id=ed.PoID or ppd.TPEPOID=ed.poid) and ppd.seq1=ed.seq1 and ppd.seq2=ed.seq2)
+			when 'O' then (select mspd.MiscID from SciMachine_MiscPO_Detail mspd where (mspd.id=ed.PoID or mspd.TPEPOID=ed.poid) and mspd.seq1=ed.seq1 and mspd.seq2=ed.seq2)
 			when 'R' then (select mopd.MiscOtherID from SciMachine_MiscOtherPO_Detail mopd where mopd.id=ed.PoID and mopd.seq1=ed.seq1 and mopd.seq2=ed.seq2)
 			else ed.refno
 			end
