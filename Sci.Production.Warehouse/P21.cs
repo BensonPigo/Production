@@ -1131,7 +1131,7 @@ where m.IsWMS = 0";
 
             if (!this.txtLocateDyelot.Text.Empty() && drs.Any())
             {
-                drs = drs.Where(x => x.Field<string>("Dyelot").EqualString(this.txtLocateDyelot.Text.ToString())).ToList();
+                drs = drs.Where(x => x.Field<string>("Dyelot").Contains(this.txtLocateDyelot.Text.ToString())).ToList();
             }
 
             if (drs.Count == 0)
