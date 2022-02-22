@@ -93,26 +93,80 @@ namespace Sci.Production.Shipping
             else if (this.radioRollDyelot.Checked)
             {
                 string sqlCmd = @"
-select 
-ed.id as [WK#],
-ED.PoID AS [SP#],
-ED.Seq1 as [SEQ1],
-ED.Seq2 AS [SEQ2],
-right(pl.PackageNo,8) as [C/No],
-pl.PackageNo as [Full C/No],
-right(pl.BatchNo,8) as [LOT NO.],
-pl.BatchNo as [Full LOT NO.],
-ed.Qty as [Qty],
-ed.Foc as [F.O.C],
-ed.NetKg as [NetKg],
-ed.WeightKg as [WeiKg],
-'' as [Location],
-pl.QRCode as [MIND QR Code] ,
-ed.Remark as [Remark]
-from Export_Detail ed
-left join POShippingList p with (nolock) on p.POID = ed.POID and p.Seq1 = ed.Seq1
-left join POShippingList_Line pl with (nolock) on pl.POShippingList_Ukey = p.Ukey and pl.Line = ed.Seq2
-WHERE ed.id = @ExportID
+select *
+from (
+	select ed.Ukey
+		, [WK#]  = ed.id
+		, [SP#] = ed.poid
+		, [Seq1] = ed.seq1
+		, [Seq2] = ed.seq2
+		, [C/No] = convert(varchar(8), isnull(pll.PackageNo, isnull(edc.Carton, '')))
+		, [Full C/No] = convert(varchar(50), isnull(pll.PackageNo, isnull(edc.Carton, '')))
+		, [LOT No] = convert(varchar(8), isnull(pll.BatchNo, isnull(edc.LotNo, '')))
+		, [Full LOT No] = convert(varchar(50), isnull(pll.BatchNo, isnull(edc.LotNo, '')))
+		, [Qty] = x.Qty
+		, [FOC] = x.FOC
+		, [NetKg] = isnull(pll.NW, isnull(edc.NetKg, ed.NetKg))
+		, [WeiKg] = isnull(pll.GW, isnull(edc.WeightKg, ed.WeightKg))
+		, [Location] = ''
+		, [MIND QR Code] = pll.QRCode
+		, [Remark] = ''
+	from dbo.Export_Detail ed WITH (NOLOCK) 
+	inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on ed.PoID= psd.id   
+													 and ed.Seq1 = psd.SEQ1    
+													 and ed.Seq2 = psd.SEQ2
+	left join Export_Detail_Carton edc with (nolock) on ed.Ukey = edc.Export_DetailUkey
+	left join Poshippinglist pl with (nolock) on pl.POID = ed.POID and pl.Seq1 = ed.Seq1
+	left join POShippingList_Line pll WITH (NOLOCK) ON  pll.POShippingList_Ukey = pl.Ukey 
+														and pll.Line = ed.Seq2 
+														and pll.PackageNo = isnull(edc.Carton, pll.PackageNo) 
+														and pll.BatchNo = isnull(edc.LotNo, pll.BatchNo)
+	outer apply(
+		select Qty = isnull(pll.ShipQty, isnull(edc.Qty, ed.Qty)) 
+				, FOC = isnull(pll.FOC, isnull(edc.Foc, ed.Foc)) 
+	)x
+	where psd.FabricType = 'F'
+	and ed.id = @ExportID
+	union 
+
+	select ed.Ukey
+		, [WK#] = ed.id
+		, [SP#] = ed.poid
+		, [Seq1] = ed.seq1
+		, [Seq2] = ed.seq2
+		, [C/No] = ''
+		, [Full C/No] = ''
+		, [LOT No] = ''
+		, [Full LOT No] = ''
+		, [Qty] = x.Qty
+		, [FOC] = x.FOC
+		, [NetKg] = isnull(edc.NetKg, ed.NetKg)
+		, [WeiKg] = isnull(edc.WeightKg, ed.WeightKg)
+		, [Location] = ''
+		, [MIND QR Code] = ''
+		, [Remark] = ''
+	from dbo.Export_Detail ed WITH (NOLOCK) 
+	inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on ed.PoID= psd.id   
+													 and ed.Seq1 = psd.SEQ1    
+													 and ed.Seq2 = psd.SEQ2
+	outer apply (
+		select edc.Export_DetailUkey, edc.Id, edc.PoID, edc.Seq1, edc.Seq2
+			, Qty = SUM(edc.Qty)
+			, Foc = SUM(edc.Foc)
+			, NetKg = SUM(edc.NetKg)
+			, WeightKg = SUM(edc.WeightKg)
+		from Export_Detail_Carton edc
+		where Export_DetailUkey = ed.Ukey
+		group by edc.Export_DetailUkey, edc.Id, edc.PoID, edc.Seq1, edc.Seq2
+	) edc
+	outer apply(	
+		select Qty = isnull(edc.Qty, ed.Qty)
+				, FOC = isnull(edc.Foc, ed.Foc) 
+	)x
+	where psd.FabricType = 'A'
+	and ed.id = @ExportID
+) tm
+order by tm.Ukey
 ";
                 List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@ExportID", this.masterData["ID"]) };
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, listPar, out this.printData);
