@@ -107,7 +107,7 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-         // DataTable result = null;
+            // DataTable result = null;
             StringBuilder warningmsg = new StringBuilder();
 
             // Check ToLocation is not empty
@@ -419,7 +419,9 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
 ",
                 Env.User.UserID, this.CurrentMaintain["id"]);
 
-            TransactionScope transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope(
+                TransactionScopeOption.Required,
+                new System.TimeSpan(0, 10, 0));
             using (transactionscope)
             {
                 try
