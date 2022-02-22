@@ -49,7 +49,7 @@ from
 	from Orders o with(nolock)
 	inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
 	left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
-	where   IsProduceFty = 1 and o.Category !='' and (o.IsBuyBack != 1 or o.BuyBackReason != 'Garment')
+	where    (@IsPowerBI = 1 or IsProduceFty = 1) and o.Category !='' and (o.IsBuyBack != 1 or o.BuyBackReason != 'Garment')
 			 and 
 			 (	-- if use in PowerBI then filter SciDelivery or BuyerDelivery
 				(@IsPowerBI = 1 and 
@@ -104,7 +104,7 @@ from
 	from Orders o with(nolock)
 	inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
 	left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
-	where   IsProduceFty = 1 and o.Category ='' and (o.IsBuyBack != 1 or o.BuyBackReason != 'Garment')
+	where   (@IsPowerBI = 1 or IsProduceFty = 1) and o.Category ='' and (o.IsBuyBack != 1 or o.BuyBackReason != 'Garment')
 			 and 
 			 (	-- if use in PowerBI then filter SciDelivery or BuyerDelivery
 				(@IsPowerBI = 1 and 
