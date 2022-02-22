@@ -93,7 +93,21 @@ namespace Sci.Production.Shipping
             else if (this.radioRollDyelot.Checked)
             {
                 string sqlCmd = @"
-select *
+select  [WK#]
+        ,[SP#]
+        ,[Seq1]
+        ,[Seq2]
+        ,[C/No]
+        ,[Full C/No]
+        ,[LOT No]
+        ,[Full LOT No]
+        ,[Qty]
+        ,[FOC]
+        ,[NetKg]
+        ,[WeiKg]
+        ,[Location]
+        ,[MIND QR Code]
+        ,[Remark]
 from (
 	select ed.Ukey
 		, [WK#]  = ed.id
