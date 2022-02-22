@@ -15,6 +15,8 @@ namespace Sci.Production.Tools
     public partial class P02 : Sci.Win.Tems.Base
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_Select;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_ErrType;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_Resent;
 
         /// <inheritdoc/>
         public P02(ToolStripMenuItem menuitem)
@@ -53,17 +55,18 @@ namespace Sci.Production.Tools
                 .EditText("oriTransJSON", header: "Trans JSON", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Text("TransferResult", header: "Transfer Result", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .EditText("Msg", header: "Msg", width: Widths.AnsiChars(35), iseditingreadonly: true)
-                .Text("ErrorType", header: "Error Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .CheckBox("Resent", header: "Resent", width: Widths.AnsiChars(5), iseditable: true, trueValue: 1, falseValue: 0)
+                .Text("ErrorType", header: "Error Type", width: Widths.AnsiChars(8), iseditingreadonly: true).Get(out this.col_ErrType)
+                .CheckBox("Resent", header: "Resent", trueValue: 1, falseValue: 0, iseditable: true).Get(out this.col_Resent)
                 .DateTime("ResentTime", header: "Resent Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 ;
             #endregion
 
             // 設定自動換行
-            this.grid.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            this.col_ErrType.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
 
             // 設定自動調整高度
-            this.grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            this.col_ErrType.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.grid.RowTemplate.Height = 43;
 
             this.Search();
             this.ChangeEditable();
@@ -88,6 +91,16 @@ namespace Sci.Production.Tools
                     e.IsEditable = false;
                 }
             };
+
+            this.col_Resent.CellEditable += (s, e) =>
+             {
+                 if (e.RowIndex == -1)
+                 {
+                     return;
+                 }
+
+                 e.IsEditable = false;
+             };
         }
 
         private void Search()
