@@ -163,7 +163,7 @@ SET @SqlCmd2 = '
 		,t.SampleGroup
 		,t.OrderReason
 	from #tmp T
-	LEFT JOIN ['+@current_PMS_ServerName+'].Production.dbo.Factory f WITH(NOLOCK) ON f.ID= T.TransFtyZone
+	LEFT JOIN ['+@current_PMS_ServerName+'].Production.dbo.SCIFty f WITH(NOLOCK) ON f.ID= T.TransFtyZone
 	Outer apply (
 		SELECT s.CDCodeNew
 			, s.[ID]
