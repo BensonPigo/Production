@@ -52,8 +52,8 @@ BEGIN
 		)ThreadColor
 		WHERE p.ID=@poid and seq1 = @seq1 and seq2=@seq2;
 	
-	if isnull(@po_desc, '') <> ''
-		set @string = @po_desc + char(13) + char(10) + '-----------------' + char(13) + char(10)
+	if isnull(@POSpec, '') <> ''
+		set @string = @POSpec + char(13) + char(10) + '-----------------' + char(13) + char(10)
 
 	IF  @type = 1
 	BEGIN
