@@ -14,6 +14,7 @@ BEGIN
 	Declare @Spec VarChar(max);
 	Declare @BomZipperInsert VarChar(5);
 	Declare @ZipperName NVarChar(500);
+	Declare @POSpec nvarchar(max);
 
     SET @string = ''
 	SET @po_desc=''
@@ -31,7 +32,7 @@ BEGIN
 		, @po_desc=@po_desc + iif(ISNULL(p.sizespec,'') = '', '', p.sizespec + ' ')
 		, @po_desc=@po_desc + iif(ISNULL(p.SizeUnit,'') = '', '', p.SizeUnit) + iif(p.sizespec = '', '', CHAR(10))
 		, @po_desc=@po_desc + iif(ISNULL(p.Special,'') = '', '', p.Special + CHAR(10))
-		, @po_desc=@po_desc + iif(ISNULL(p.Spec,'') = '', '', p.Spec + CHAR(10))
+		, @POSpec=iif(ISNULL(p.Spec,'') = '', '', p.Spec + CHAR(10))
 		, @po_desc=@po_desc + ISNULL(p.Remark,'')
 		, @Spec = stockPO3.Spec
 		, @BomZipperInsert= stockPO3.BomZipperInsert 
@@ -50,16 +51,19 @@ BEGIN
 			WHERE pp.ID=p.StockPOID AND pp.Seq1 = p.StockSeq1 AND pp.Seq2 = p.StockSeq2
 		)ThreadColor
 		WHERE p.ID=@poid and seq1 = @seq1 and seq2=@seq2;
+	
+	if isnull(@POSpec, '') <> ''
+		set @string = @POSpec + char(13) + char(10) + '-----------------' + char(13) + char(10)
 
 	IF  @type = 1
 	BEGIN
 		if @repeat = 0
 		BEGIN
 			select @fabric_detaildesc= ISNULL(DescDetail,'') from fabric WITH (NOLOCK) where SCIRefno = @scirefno;
-			set @string = rtrim(iif(isnull(@fabric_detaildesc, '') = '','',@fabric_detaildesc + CHAR(13)+ CHAR(10)));
+			set @string += rtrim(iif(isnull(@fabric_detaildesc, '') = '','',@fabric_detaildesc + char(13) + char(10) + '-----------------' + CHAR(13)+ CHAR(10)));
 		END
 		ELSE
-			set @string = rtrim(iif(isnull(@suppcolor, '') = '','',@suppcolor + CHAR(13)+ CHAR(10)))+rtrim(iif(isnull(@po_desc, '') = '','',@po_desc+CHAR(13)+ CHAR(10)));
+			set @string += rtrim(iif(isnull(@suppcolor, '') = '','',@suppcolor + CHAR(13)+ CHAR(10) + '-----------------' + CHAR(13)+ CHAR(10)))+rtrim(iif(isnull(@po_desc, '') = '','',@po_desc+CHAR(13)+ CHAR(10) + '-----------------' + CHAR(13)+ CHAR(10)));
 	END
 
 	IF @type =2
@@ -67,12 +71,12 @@ BEGIN
 		if @repeat = 0
 		BEGIN	
 			select @fabric_detaildesc= ISNULL(DescDetail,'') from fabric WITH (NOLOCK) where SCIRefno = @scirefno;
-			set @string = concat(rtrim(iif(isnull(@fabric_detaildesc, '') = '','',iif(@suppcolor='',@fabric_detaildesc,@fabric_detaildesc + CHAR(10))))
-								, rtrim(iif(isnull(@suppcolor, '') = '','',iif(@po_desc='',@suppcolor,@suppcolor + CHAR(10))))
+			set @string += concat(rtrim(iif(isnull(@fabric_detaildesc, '') = '','',iif(@suppcolor='',@fabric_detaildesc,@fabric_detaildesc + CHAR(10) + '-----------------' + + CHAR(10))))
+								, rtrim(iif(isnull(@suppcolor, '') = '','',iif(@po_desc='',@suppcolor,@suppcolor+ CHAR(10) + '-----------------' + + CHAR(10))))
 								, rtrim(iif(isnull(@po_desc, '') = '','',replace(@po_desc,char(10),'') )));
 		END
 		ELSE
-		set @string = rtrim(iif(isnull(@suppcolor, '') = '','',@suppcolor ))+rtrim(iif(isnull(@po_desc, '') = '','',@po_desc ));
+		set @string += rtrim(iif(isnull(@suppcolor, '') = '','',@suppcolor ))+rtrim(iif(isnull(@po_desc, '') = '','',@po_desc ));
 	END
 
 	IF @type =4
@@ -81,16 +85,16 @@ BEGIN
 		if @repeat = 0
 		BEGIN
 			select @fabric_detaildesc= ISNULL([Description],'') from fabric WITH (NOLOCK) where SCIRefno = @scirefno;
-			set @string = 'Ref#'+ @refno + ', ' + rtrim(iif(isnull(@fabric_detaildesc, '') = '','',@fabric_detaildesc + CHAR(13)+ CHAR(10))) + rtrim(iif(isnull(@suppcolor, '') = '','',@suppcolor + CHAR(13)+ CHAR(10)))+rtrim(iif(isnull(@po_desc, '') = '','',@po_desc+CHAR(13)+ CHAR(10)));
+			set @string += 'Ref#'+ @refno + ', ' + rtrim(iif(isnull(@fabric_detaildesc, '') = '','',@fabric_detaildesc + CHAR(13)+ CHAR(10) + '-----------------' + CHAR(13)+ CHAR(10))) + rtrim(iif(isnull(@suppcolor, '') = '','',@suppcolor + CHAR(13)+ CHAR(10) + '-----------------' + CHAR(13)+ CHAR(10)))+rtrim(iif(isnull(@po_desc, '') = '','',@po_desc+CHAR(13)+ CHAR(10) + '-----------------' + CHAR(13)+ CHAR(10)));
 		End
 		ELSE
-			set @string = rtrim(iif(isnull(@suppcolor, '') = '','',@suppcolor + CHAR(13) + CHAR(10)))+rtrim(iif(isnull(@po_desc, '') = '','',@po_desc+CHAR(13) + CHAR(10)));
+			set @string += rtrim(iif(isnull(@suppcolor, '') = '','',@suppcolor + CHAR(13) + CHAR(10)))+rtrim(iif(isnull(@po_desc, '') = '','',@po_desc+CHAR(13) + CHAR(10)));
 	END
 
 	IF left(@SEQ1,1) = '7'
 	BEGIN
 		SET @string = concat('**PLS USE STOCK FROM SP#:' + iif(isnull(@StockSP, '') = '','',@StockSP) + '**' 
-							, CHAR(13) , CHAR(10)
+							, char(13) + char(10) + '-----------------' + char(13) + char(10)
 							, isnull(@string, ''));
 	END 
 
@@ -114,6 +118,10 @@ BEGIN
 		set @string = replace(@string, char(13) + char(13), char(13));
 	end
 	set @string = replace(@string, char(13), char(13) + char(10));
+
+	--去掉最後的-----------------
+	if CHARINDEX('-----------------', @string , len(@string) - 19) > 0
+		set @string = SUBSTRING(@string , 0, CHARINDEX('-----------------', @string , len(@string) - 19))
 	-- end
     RETURN ltrim(rtrim(@string))
 END
