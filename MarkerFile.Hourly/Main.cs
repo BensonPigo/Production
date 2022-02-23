@@ -121,7 +121,7 @@ Please do not reply this mail.
 
             if (!issucess) SendMail(subject, desc, !issucess); // 錯誤才發信
 
-            this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, issucess);
+            this.CallJobLogApi("Auto-generate Marker File named by Cutref", desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, issucess);
         }
 
         private void SendMail(String subject = "", String desc = "", bool isFail = true)

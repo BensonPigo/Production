@@ -219,7 +219,7 @@ namespace PMSUploadDataToAPS.Daily
                 subject += " Error!";
             }
             SendMail(subject, desc, !issucess);
-            this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, issucess);
+            this.CallJobLogApi(mailTo["Subject"].ToString().TrimEnd(), desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, issucess);
             #endregion
         }
         #endregion
@@ -268,7 +268,7 @@ namespace PMSUploadDataToAPS.Daily
 
         private void btnTestWebAPI_Click(object sender, EventArgs e)
         {
-            this.CallJobLogApi("APS upload Test", "APS upload Test", DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), true, true);
+            this.CallJobLogApi("Upload data to APS", "test joblog connection", DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), true, true);
         }
 
         private void btnTestMail_Click(object sender, EventArgs e)

@@ -331,7 +331,7 @@ and sp.SendDate BETWEEN '{sendDateS}' AND '{sendDateE}'
                 result = DBProxy.Current.Select(conn, sqlCmd.ToString(), null, out DataTable dtTmp);
                 if (!result)
                 {
-                    this.CallJobLogApi("PMS_ProductionKitsConfirm - DB ereor", result.ToString(), DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), false, false);
+                    this.CallJobLogApi("Outstanding Production Kits Confirm", "DB Error, " + result.ToString(), DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), false, false);
                     return null;
                 }
 
@@ -411,7 +411,7 @@ and sp.SendDate BETWEEN '{sendDateS}' AND '{sendDateE}'
             catch (Exception ex)
             {
                 Ict.Logs.APP.LogInfo("Create Excel Error : " + ex.ToString());
-                this.CallJobLogApi("PMS_ProductionKitsConfirm -Create excel ereor", ex.ToString(), DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), false, false);
+                this.CallJobLogApi("Outstanding Production Kits Confirm", "Create excel error, " + ex.ToString(), DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), false, false);
                 return new List<string>();
             }
         }
@@ -501,7 +501,7 @@ and sp.SendDate BETWEEN '{sendDateS}' AND '{sendDateE}'
             catch (Exception ex)
             {
                 Ict.Logs.APP.LogInfo("Create Excel Error : " + ex.ToString());
-                this.CallJobLogApi("PMS_ProductionKitsConfirm -Create excel ereor", ex.ToString(), DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), false, false);
+                this.CallJobLogApi("Outstanding Production Kits Confirm", "Create excel error, " + ex.ToString(), DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), false, false);
                 return new List<string>();
             }
         }
