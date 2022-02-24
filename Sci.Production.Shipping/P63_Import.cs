@@ -89,8 +89,9 @@ SELECT  0 as [selected],
         GB.ETA,
         GB.TotalShipQty 
 FROM GMTBooking GB with (nolock)
-INNER JOIN PackingList P with (nolock) ON P.INVNo=GB.ID
 WHERE GB.ETD IS NOT NULL
+AND (EXISTS (SELECT 1 from PackingList P with (nolock) WHERE P.INVNo=GB.ID) OR
+     EXISTS (SELECT 1 from GMTBooking_Detail GD with (nolock) WHERE GD.ID = GB.ID))
 AND GB.[Status]='Confirmed'
 AND NOT Exists (SELECT 1 FROM KHCMTInvoice_Detail kd with (nolock) where GB.ID = kd.InvNo)
 AND GB.ETD >= '{this.minETD}'
