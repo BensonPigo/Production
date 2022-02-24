@@ -49,7 +49,6 @@
             this.btnImportGMTBooking = new Sci.Win.UI.Button();
             this.numDetailTotalQty = new Sci.Win.UI.NumericBox();
             this.gridCurrency = new Sci.Win.UI.Grid();
-            this.txtHandle = new Sci.Production.Class.Txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -75,7 +74,6 @@
             this.masterpanel.Controls.Add(this.editRemark);
             this.masterpanel.Controls.Add(this.btnExchangeRate);
             this.masterpanel.Controls.Add(this.numExchangeRate);
-            this.masterpanel.Controls.Add(this.txtHandle);
             this.masterpanel.Controls.Add(this.displayApproveDate);
             this.masterpanel.Controls.Add(this.displayApproveName);
             this.masterpanel.Controls.Add(this.displayID);
@@ -88,7 +86,7 @@
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateInvDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 182);
+            this.masterpanel.Size = new System.Drawing.Size(1165, 182);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateInvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
@@ -102,7 +100,6 @@
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayApproveName, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayApproveDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtHandle, 0);
             this.masterpanel.Controls.SetChildIndex(this.numExchangeRate, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnExchangeRate, 0);
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
@@ -114,16 +111,16 @@
             // 
             this.detailpanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.detailpanel.Location = new System.Drawing.Point(0, 182);
-            this.detailpanel.Size = new System.Drawing.Size(892, 155);
+            this.detailpanel.Size = new System.Drawing.Size(1165, 155);
             // 
             // gridicon
             // 
-            this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(1608, 142);
+            this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridicon.Location = new System.Drawing.Point(1062, 142);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 155);
+            this.detailgridcont.Size = new System.Drawing.Size(1165, 155);
             // 
             // detail2
             // 
@@ -137,12 +134,22 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1165, 556);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.gridPOList);
+            this.detailcont.Size = new System.Drawing.Size(1165, 518);
             this.detailcont.Controls.SetChildIndex(this.masterpanel, 0);
             this.detailcont.Controls.SetChildIndex(this.detailpanel, 0);
             this.detailcont.Controls.SetChildIndex(this.gridPOList, 0);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 518);
+            this.detailbtm.Size = new System.Drawing.Size(1165, 38);
             // 
             // browse
             // 
@@ -175,7 +182,7 @@
             this.gridPOList.RowTemplate.Height = 24;
             this.gridPOList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridPOList.ShowCellToolTips = false;
-            this.gridPOList.Size = new System.Drawing.Size(892, 5);
+            this.gridPOList.Size = new System.Drawing.Size(1165, 174);
             this.gridPOList.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridPOList.TabIndex = 2;
             // 
@@ -333,7 +340,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImportGMTBooking.Location = new System.Drawing.Point(759, 144);
             this.btnImportGMTBooking.Name = "btnImportGMTBooking";
-            this.btnImportGMTBooking.Size = new System.Drawing.Size(17, 30);
+            this.btnImportGMTBooking.Size = new System.Drawing.Size(290, 30);
             this.btnImportGMTBooking.TabIndex = 18;
             this.btnImportGMTBooking.Text = "Import Garment Booking";
             this.btnImportGMTBooking.UseVisualStyleBackColor = true;
@@ -383,19 +390,9 @@
             this.gridCurrency.RowTemplate.Height = 24;
             this.gridCurrency.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCurrency.ShowCellToolTips = false;
-            this.gridCurrency.Size = new System.Drawing.Size(65, 93);
+            this.gridCurrency.Size = new System.Drawing.Size(338, 93);
             this.gridCurrency.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridCurrency.TabIndex = 20;
-            // 
-            // txtHandle
-            // 
-            this.txtHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Handle", true));
-            this.txtHandle.DisplayBox1Binding = "";
-            this.txtHandle.Location = new System.Drawing.Point(410, 44);
-            this.txtHandle.Name = "txtHandle";
-            this.txtHandle.Size = new System.Drawing.Size(300, 23);
-            this.txtHandle.TabIndex = 13;
-            this.txtHandle.TextBox1Binding = "";
             // 
             // P63
             // 
