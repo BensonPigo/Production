@@ -175,12 +175,10 @@ left join fabric f WITH (NOLOCK) on f.SCIRefno = wo.SCIRefno
 left join PO_Supp_Detail psd with(nolock) on psd.id = wo.id and psd.seq1 = wo.seq1 and psd.seq2 = wo.seq2
 outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa where aa.WorkOrderUkey = wo.Ukey)acc
 outer apply(
-	select MincoDate=(
-		select min(co.cDate)
-		from CuttingOutput co WITH (NOLOCK) 
-		inner join CuttingOutput_Detail cod WITH (NOLOCK) on co.ID = cod.ID
-		where cod.WorkOrderUkey = wo.Ukey and co.Status != 'New' 
-	)
+    Select MincoDate = iif(sum(cod.Layer) = wo.Layer, Max(co.cdate),null)
+	From cuttingoutput co WITH (NOLOCK) 
+	inner join cuttingoutput_detail cod WITH (NOLOCK) on co.id = cod.id
+	Where cod.workorderukey = wo.Ukey and co.Status != 'New' 
 ) as MincDate
 outer apply(
 	select SewInLine=(
