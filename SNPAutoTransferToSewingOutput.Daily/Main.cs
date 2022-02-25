@@ -217,7 +217,7 @@ Please do not reply this mail.
             {
                 SendMail(subject, desc, !issucess);
             }
-            this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, issucess);
+            this.CallJobLogApi("SNP Auto Trans Sewing Output", desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, issucess);
         }
         #endregion
         bool issucess = true;

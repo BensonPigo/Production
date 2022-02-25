@@ -438,7 +438,7 @@ insert into P_TransLog( functionName, Description, StartTime, EndTime, RegionID,
 
         private void btnTestWebAPI_Click(object sender, EventArgs e)
         {
-          this.CallJobLogApi("Import PowerBI Report Data", "PowerBI Update DB ", DateTime.Now.ToString("yyyyMMdd HH:mm:ss"), DateTime.Now.ToString("yyyyMMdd HH:mm:ss"), true, true);
+          this.CallJobLogApi("Import BI Data", "PowerBI Update DB ", DateTime.Now.ToString("yyyyMMdd HH:mm:ss"), DateTime.Now.ToString("yyyyMMdd HH:mm:ss"), true, true);
         }
 
         private void btnTestMail_Click(object sender, EventArgs e)
@@ -733,7 +733,7 @@ M: TPE" + Environment.NewLine;
                 desc += $"[{dr["MailName"]}] " + status + Environment.NewLine;
             }
 
-            this.CallJobLogApi("Import PowerBI Report Data", desc, ((DateTime)StartTime).ToString("yyyyMMdd HH:mm:ss"), ((DateTime)EndTime).ToString("yyyyMMdd HH:mm:ss"), isTestJobLog, isSucceed);
+            this.CallJobLogApi("Import BI Data", desc, ((DateTime)StartTime).ToString("yyyyMMdd HH:mm:ss"), ((DateTime)EndTime).ToString("yyyyMMdd HH:mm:ss"), isTestJobLog, isSucceed);
         }
 
         /// <summary>
@@ -772,7 +772,7 @@ M: TPE" + Environment.NewLine;
                 subject += " Error!";
             }
             SendMail(subject, desc, !issucess);
-            this.CallJobLogApi(subject, desc, ((DateTime)StartTime).ToString("yyyyMMdd HH:mm:ss"), ((DateTime)EndTime).ToString("yyyyMMdd HH:mm:ss"), isTestJobLog, issucess);
+            this.CallJobLogApi("Import BI Data", desc, ((DateTime)StartTime).ToString("yyyyMMdd HH:mm:ss"), ((DateTime)EndTime).ToString("yyyyMMdd HH:mm:ss"), isTestJobLog, issucess);
             #endregion
         }
     }

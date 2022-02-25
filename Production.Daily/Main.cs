@@ -402,7 +402,7 @@ namespace Production.Daily
             subject = "Logon to  Mail Server from " + this.CurrentData["RgCode"].ToString();
             desc = "Logon to  Mail Server from " + this.CurrentData["RgCode"].ToString();
             SendMail(subject, desc, false);
-            this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, true);
+            this.CallJobLogApi("Daily transfer-test", desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, true);
             #endregion
             #region CHECK THE FIRST NEED MAPPING A DISK,CAN'T USING \\ UNC
             if (importDataPath.Substring(0, 2) == "////" || exportDataPath.Substring(0, 2) == "////")
@@ -424,7 +424,7 @@ namespace Production.Daily
 
             if (!result)
             {
-                this.CallJobLogApi("PMS transfer data (FTP) ERROR", result.GetException().ToString(), DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, true);
+                this.CallJobLogApi("Daily transfer-test", "FTP, " + result.GetException().ToString(), DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, result);
                 return result;
             }
 
@@ -465,7 +465,7 @@ namespace Production.Daily
                 subject = "PMS transfer data (New) ERROR";
                 desc = "not found Winrar in your PC ,pls check and re-download.";
                 SendMail(subject, desc);
-                this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
+                this.CallJobLogApi("Daily transfer-download data", desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
                 return new DualResult(false, "Win_RAR File does not exist !");
             }
 
@@ -486,7 +486,7 @@ namespace Production.Daily
                 subject = "PMS transfer data (New) ERROR";
                 desc = $"Not found the ZIP(rar) file,pls advice Taipei's Programer: {exportRegion.DirName + exportRegion.RarName}";
                 SendMail(subject, desc);
-                this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
+                this.CallJobLogApi("Daily transfer-download data", desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
             }
             #endregion
 
@@ -569,10 +569,9 @@ namespace Production.Daily
                     Environment.NewLine + mailTo["Content"].ToString();
             #endregion
             subject = mailTo["Subject"].ToString().TrimEnd() + " " + this.CurrentData["RgCode"].ToString();
-
             // 改call system job log api 將資料回傳至台北紀錄
             SendMail(subject, desc, false);
-            this.CallJobLogApi(subject, desc, startDate.ToString("yyyyMMdd HH:mm"), endDate.ToString("yyyyMMdd HH:mm"), isTestJobLog, true);
+            this.CallJobLogApi("Daily transfer", desc, startDate.ToString("yyyyMMdd HH:mm"), endDate.ToString("yyyyMMdd HH:mm"), isTestJobLog, true);
             #endregion
 
             return Ict.Result.True;
@@ -610,10 +609,11 @@ Region      Succeeded       Message
             formatStr = string.Format(formatStr, Type, totalMsg);
 
             string title = string.Format("Trans{0}_{1} {2}", Type, RegionStr, DateTime.Now.ToShortDateString());
+            string title_joblog = string.Format("Daily transfer-{0}", Type.ToLower());
             if (!isAuto) title = "<<手動執行>> " + title;
 
             SendMail(title, formatStr);
-            this.CallJobLogApi(title, formatStr, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
+            this.CallJobLogApi(title_joblog, formatStr, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
             #endregion
         }
 
@@ -667,7 +667,7 @@ Region      Succeeded       Message
                     String subject = "PMS transfer data (New) ERROR";
                     String desc = "Wrong the downloaded file date, FileName:(" + importRegion.RarName + ")!!,Pls contact with Taipei.";
                     SendMail(subject, desc);
-                    this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
+                    this.CallJobLogApi("Daily transfer-download data", desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
                     //return Ict.Result.F("Wrong the downloaded file date, FileName(" + importRegion.RarName + ")!!,Pls contact with Taipei.");
                 }
             }
@@ -851,7 +851,7 @@ Where TransRegion.Is_Export = 0";
                     String subject = "PMS transfer data (New) ERROR";
                     String desc = "Wrong the downloaded file date!!,Pls Check File(" + region.RarName + ") is New";
                     SendMail(subject, desc);
-                    this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
+                    this.CallJobLogApi("Daily transfer-download data", desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
                     return Ict.Result.F("Wrong the downloaded file date!!,Pls Check File(" + region.RarName + ") is New");
                 }
             }
@@ -1284,7 +1284,7 @@ where p.PulloutDate <= @PullOutLock
 
         private void btnTestWebApi_Click(object sender, EventArgs e)
         {
-            this.CallJobLogApi("transfer data", "transfer data", DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), true, true);
+            this.CallJobLogApi("Daily transfer-API test", "test joblog connection", DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), true, true);
         }
     }
 }
