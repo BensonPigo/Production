@@ -189,7 +189,6 @@ Where o.LocalOrder = 0
                             select *
                             ,FtyCMPCostUnit=ROUND(cte.CPU * cte.CPUCost + cte.SubPSCost + cte.LocalPSCost, 2)
                             ,[Total CMP Declared to Customer] = ''
-                            ,TotalCMPDeclaredtoCustomer=ROUND(cte.Qty*ROUND(cte.CPU * cte.CPUCost + cte.SubPSCost + cte.LocalPSCost, 2),5)
                             from cte");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
