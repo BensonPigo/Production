@@ -239,7 +239,12 @@ namespace Sci.Production.Warehouse
                 #endregion
 
                 // 開啟 report view
-                var frm = new Win.Subs.ReportView(report) { MdiParent = this.MdiParent };
+                var frm = new Win.Subs.ReportView(report)
+                {
+                    MdiParent = this.MdiParent,
+                    DirectPrint = true,
+                };
+
                 frm.Show();
             }
         }
