@@ -321,7 +321,7 @@ and FP.ActualYds < FP.TicketYds --僅限短碼資料
             catch (Exception ex)
             {
                 Ict.Logs.APP.LogInfo("Create Excel Error : " + ex.ToString());
-                this.CallJobLogApi("QMS_Fabric_inspection_record -Create excel ereor", ex.ToString(), DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), false, false);
+                this.CallJobLogApi("QMS Fabric inspection record(Lacking only)", "Create excel error, " + ex.ToString(), DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), false, false);
                 return new List<string>();
             }
         }
@@ -364,7 +364,7 @@ and FP.ActualYds < FP.TicketYds --僅限短碼資料
 
         private void btnTestWebAPI_Click(object sender, EventArgs e)
         {
-            this.CallJobLogApi("MailQMS_Fabric_Inspection_record Test", "MailQMS_Fabric_Inspection_record Test", DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), true, true);
+            this.CallJobLogApi("QMS Fabric inspection record(Lacking only)", "test joblog connection", DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), true, true);
         }
 
         private void btnTestMail_Click(object sender, EventArgs e)
