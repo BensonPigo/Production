@@ -106,6 +106,7 @@ from (
 		left join ['+@current_PMS_ServerName+'].Production.dbo.Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= ''Style_Apparel_Type'' and r2.ID = s.ApparelType
 		where o.ID = t.ID
 	)sty
+	where exists(select 1 from ['+@current_PMS_ServerName+'].Production.dbo.Factory f WITH(NOLOCK) where f.ID = t.FactoryID and f.IsProduceFty = 1)
 	'
 SET @SqlCmd2 = '
 	union all
