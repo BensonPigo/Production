@@ -944,7 +944,7 @@ Where a.id = '{0}' ", masterID);
             string sqlcmd = @"
 select ad.POID
 	, [SEQ] = ad.Seq1 + '-' + ad.Seq2
-	, [DESC] =IIF((ad.ID = lag(ad.ID,1,'')over (order by ad.POID, ad.seq1, ad.seq2, ad.Dyelot, ad.Roll) 
+	, [DESC] =IIF((ad.POID = lag(ad.POID,1,'')over (order by ad.POID, ad.seq1, ad.seq2, ad.Dyelot, ad.Roll) 
 			    AND(ad.seq1 = lag(ad.seq1,1,'')over (order by ad.POID, ad.seq1, ad.seq2, ad.Dyelot, ad.Roll))
 			    AND(ad.seq2 = lag(ad.seq2,1,'')over (order by ad.POID, ad.seq1, ad.seq2, ad.Dyelot, ad.Roll))) 
 			    ,''
