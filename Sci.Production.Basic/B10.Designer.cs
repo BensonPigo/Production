@@ -64,6 +64,8 @@
             this.displayFax = new Sci.Win.UI.DisplayBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.txtCountry = new Sci.Production.Class.Txtcountry();
+            this.label1 = new Sci.Win.UI.Label();
+            this.displaySerial = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -78,6 +80,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.displaySerial);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.displayFax);
             this.detailcont.Controls.Add(this.displayBox15);
@@ -144,7 +148,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(24, 14);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(95, 23);
@@ -153,7 +156,6 @@
             // 
             // labelBuyer
             // 
-            this.labelBuyer.Lines = 0;
             this.labelBuyer.Location = new System.Drawing.Point(24, 44);
             this.labelBuyer.Name = "labelBuyer";
             this.labelBuyer.Size = new System.Drawing.Size(95, 23);
@@ -162,7 +164,6 @@
             // 
             // labelTeam
             // 
-            this.labelTeam.Lines = 0;
             this.labelTeam.Location = new System.Drawing.Point(24, 74);
             this.labelTeam.Name = "labelTeam";
             this.labelTeam.Size = new System.Drawing.Size(95, 23);
@@ -171,7 +172,6 @@
             // 
             // labelCountry
             // 
-            this.labelCountry.Lines = 0;
             this.labelCountry.Location = new System.Drawing.Point(24, 104);
             this.labelCountry.Name = "labelCountry";
             this.labelCountry.Size = new System.Drawing.Size(95, 23);
@@ -180,7 +180,6 @@
             // 
             // labelName
             // 
-            this.labelName.Lines = 0;
             this.labelName.Location = new System.Drawing.Point(24, 134);
             this.labelName.Name = "labelName";
             this.labelName.Size = new System.Drawing.Size(95, 23);
@@ -189,7 +188,6 @@
             // 
             // labelEngName
             // 
-            this.labelEngName.Lines = 0;
             this.labelEngName.Location = new System.Drawing.Point(24, 164);
             this.labelEngName.Name = "labelEngName";
             this.labelEngName.Size = new System.Drawing.Size(95, 23);
@@ -198,7 +196,6 @@
             // 
             // labelTel
             // 
-            this.labelTel.Lines = 0;
             this.labelTel.Location = new System.Drawing.Point(24, 194);
             this.labelTel.Name = "labelTel";
             this.labelTel.Size = new System.Drawing.Size(95, 23);
@@ -207,7 +204,6 @@
             // 
             // labelEmail
             // 
-            this.labelEmail.Lines = 0;
             this.labelEmail.Location = new System.Drawing.Point(24, 224);
             this.labelEmail.Name = "labelEmail";
             this.labelEmail.Size = new System.Drawing.Size(95, 23);
@@ -216,7 +212,6 @@
             // 
             // labelContact
             // 
-            this.labelContact.Lines = 0;
             this.labelContact.Location = new System.Drawing.Point(24, 254);
             this.labelContact.Name = "labelContact";
             this.labelContact.Size = new System.Drawing.Size(95, 23);
@@ -235,7 +230,6 @@
             // 
             // labelCommossion
             // 
-            this.labelCommossion.Lines = 0;
             this.labelCommossion.Location = new System.Drawing.Point(24, 284);
             this.labelCommossion.Name = "labelCommossion";
             this.labelCommossion.Size = new System.Drawing.Size(95, 23);
@@ -244,7 +238,6 @@
             // 
             // labelEngAddress
             // 
-            this.labelEngAddress.Lines = 0;
             this.labelEngAddress.Location = new System.Drawing.Point(24, 314);
             this.labelEngAddress.Name = "labelEngAddress";
             this.labelEngAddress.Size = new System.Drawing.Size(95, 23);
@@ -344,7 +337,6 @@
             // 
             // labelSpecialfield1
             // 
-            this.labelSpecialfield1.Lines = 0;
             this.labelSpecialfield1.Location = new System.Drawing.Point(24, 389);
             this.labelSpecialfield1.Name = "labelSpecialfield1";
             this.labelSpecialfield1.Size = new System.Drawing.Size(95, 23);
@@ -353,7 +345,6 @@
             // 
             // labelSpecialfield2
             // 
-            this.labelSpecialfield2.Lines = 0;
             this.labelSpecialfield2.Location = new System.Drawing.Point(24, 419);
             this.labelSpecialfield2.Name = "labelSpecialfield2";
             this.labelSpecialfield2.Size = new System.Drawing.Size(95, 23);
@@ -362,7 +353,6 @@
             // 
             // labelSpecialfield3
             // 
-            this.labelSpecialfield3.Lines = 0;
             this.labelSpecialfield3.Location = new System.Drawing.Point(24, 449);
             this.labelSpecialfield3.Name = "labelSpecialfield3";
             this.labelSpecialfield3.Size = new System.Drawing.Size(95, 23);
@@ -411,7 +401,6 @@
             // 
             // labelCurrency
             // 
-            this.labelCurrency.Lines = 0;
             this.labelCurrency.Location = new System.Drawing.Point(404, 44);
             this.labelCurrency.Name = "labelCurrency";
             this.labelCurrency.Size = new System.Drawing.Size(61, 23);
@@ -420,7 +409,6 @@
             // 
             // labelZipCode
             // 
-            this.labelZipCode.Lines = 0;
             this.labelZipCode.Location = new System.Drawing.Point(404, 74);
             this.labelZipCode.Name = "labelZipCode";
             this.labelZipCode.Size = new System.Drawing.Size(61, 23);
@@ -429,7 +417,6 @@
             // 
             // labelFax
             // 
-            this.labelFax.Lines = 0;
             this.labelFax.Location = new System.Drawing.Point(404, 194);
             this.labelFax.Name = "labelFax";
             this.labelFax.Size = new System.Drawing.Size(61, 23);
@@ -488,6 +475,24 @@
             this.txtCountry.TabIndex = 14;
             this.txtCountry.TextBox1Binding = "";
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(220, 389);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(95, 23);
+            this.label1.TabIndex = 36;
+            this.label1.Text = "Serial";
+            // 
+            // displaySerial
+            // 
+            this.displaySerial.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySerial.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Serial", true));
+            this.displaySerial.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySerial.Location = new System.Drawing.Point(318, 389);
+            this.displaySerial.Name = "displaySerial";
+            this.displaySerial.Size = new System.Drawing.Size(90, 23);
+            this.displaySerial.TabIndex = 37;
+            // 
             // B10
             // 
             this.ClientSize = new System.Drawing.Size(835, 583);
@@ -497,6 +502,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B10";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B10. Brand";
             this.UniqueExpress = "ID";
             this.WorkAlias = "Brand";
@@ -551,5 +557,7 @@
         private Win.UI.Label labelTeam;
         private Win.UI.Label labelBuyer;
         private Win.UI.Label labelBrand;
+        private Win.UI.DisplayBox displaySerial;
+        private Win.UI.Label label1;
     }
 }

@@ -952,6 +952,17 @@ left join orders o WITH (NOLOCK) on o.id = pd.OrderID  where pd.id = '{this.Deta
                     fac = drResult["Factoryid"].ToString();
                 }
 
+                int serial = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($"select Serial from Brand with (nolock) where ID = '{this.CurrentMaintain["BrandID"]}'"));
+
+                if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]) && serial > 0)
+                {
+                    if (MyUtility.Convert.GetString(this.CurrentMaintain["InvSerial"]).Trim().Length > serial)
+                    {
+                        MyUtility.Msg.WarningBox($"<Inv. Serial> length cannot exceed {serial} characters");
+                        return false;
+                    }
+                }
+
                 string newID = MyUtility.GetValue.Lookup("NegoRegion", fac, "Factory", "ID").Trim() + Convert.ToDateTime(this.CurrentMaintain["InvDate"]).ToString("yyMM") + "-" + MyUtility.Convert.GetString(this.CurrentMaintain["InvSerial"]).Trim() + "-" + MyUtility.GetValue.Lookup("ShipCode", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]), "Brand", "ID").Trim();
                 if (MyUtility.Check.Seek(newID, "GMTBooking", "ID"))
                 {
