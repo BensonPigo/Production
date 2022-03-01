@@ -9,6 +9,7 @@
     [SendDate]    DATETIME       NULL,
     [Receiver]    VARCHAR (10)   CONSTRAINT [DF_GarmentTest_Detail_Receiver] DEFAULT ('') NULL,
     [ReceiveDate] DATETIME       NULL,
+    [Composition] VARCHAR(200) NULL, 
     [AddName]     VARCHAR (10)   CONSTRAINT [DF_GarmentTest_Detail_AddName] DEFAULT ('') NULL,
     [AddDate]     DATETIME       NULL,
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_GarmentTest_Detail_EditName] DEFAULT ('') NULL,
