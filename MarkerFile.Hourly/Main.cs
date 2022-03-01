@@ -54,7 +54,7 @@ namespace MarkerFile.Hourly
         {
             base.OnFormLoaded();
 
-            transferPMS.fromSystem = "Production";
+            transferPMS.FromSystem = "Production";
 
             if (isAuto)
             {
