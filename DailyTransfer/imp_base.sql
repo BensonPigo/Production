@@ -58,7 +58,7 @@ SET
 	  ,a. OTDExtension = b.OTDExtension
 	  ,a. UseRatioRule = b.UseRatioRule
 	  ,a. UseRatioRule_Thick = b.UseRatioRule_Thick
-	  ,a. Serial = b.Serial
+	  ,a. Serial = isnull(b.Serial, 0)
 from Production.dbo.Brand as a inner join Trade_To_Pms.dbo.Brand as b ON a.id=b.id
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.Brand
@@ -141,7 +141,7 @@ SELECT ID
 	  ,OTDExtension
 	  ,UseRatioRule
 	  ,UseRatioRule_Thick
-	  ,Serial
+	  ,isnull(Serial, 0)
 from Trade_To_Pms.dbo.Brand as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Brand as a WITH (NOLOCK) where a.id = b.id)
 
