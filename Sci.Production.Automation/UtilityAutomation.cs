@@ -74,21 +74,8 @@ namespace Sci.Production.Automation
         /// <param name="automationErrMsg">Automation Err Msg</param>
         public static void SaveAutomationErrMsg(AutomationErrMsg automationErrMsg)
         {
-
-            #region 取得原始Json
-            string strJson = automationErrMsg.json;
-            int startIndex = strJson.LastIndexOf("[");
-            int endIndex = strJson.LastIndexOf("]");
-            int jsonLength = endIndex - startIndex;
-            string oriJson = strJson.Substring(startIndex, jsonLength + 1);
-            #endregion
-
-            // 取得Json的Status
-            DataTable dtJson = (DataTable)JsonConvert.DeserializeObject(oriJson, (typeof(DataTable)));
-            string status = dtJson.Rows[0]["status"].ToString();
-
             #region 先將資料新增至FPS AutomationTransRecord
-            long automationTransRecordUkey = SaveAutomationTransRecord(automationErrMsg, status);
+            long automationTransRecordUkey = SaveAutomationTransRecord(automationErrMsg);
             #endregion
 
             string saveSql = $@"
@@ -124,20 +111,8 @@ namespace Sci.Production.Automation
         /// <param name="automationErrMsg">Automation Err Msg</param>
         public static void SaveAutomationCheckMsg(AutomationErrMsg automationErrMsg)
         {
-            #region 取得原始Json
-            string strJson = automationErrMsg.json;
-            int startIndex = strJson.LastIndexOf("[");
-            int endIndex = strJson.LastIndexOf("]");
-            int jsonLength = endIndex - startIndex;
-            string oriJson = strJson.Substring(startIndex, jsonLength + 1);
-            #endregion
-
-            // 取得Json的Status
-            DataTable dtJson = (DataTable)JsonConvert.DeserializeObject(oriJson, (typeof(DataTable)));
-            string status = dtJson.Rows[0]["status"].ToString();
-
             #region 先將資料新增至FPS AutomationTransRecord
-            long automationTransRecordUkey = SaveAutomationTransRecord(automationErrMsg, status);
+            long automationTransRecordUkey = SaveAutomationTransRecord(automationErrMsg);
             #endregion
 
             string saveSql = $@"
@@ -170,7 +145,7 @@ namespace Sci.Production.Automation
         /// </summary>
         /// <param name="automationErrMsg">Automation Err Msg</param>
         /// <param name="status">status</param>
-        public static long SaveAutomationTransRecord(AutomationErrMsg automationErrMsg, string status = "")
+        public static long SaveAutomationTransRecord(AutomationErrMsg automationErrMsg)
         {
             string saveSql = $@"
 insert into AutomationTransRecord(
@@ -205,7 +180,7 @@ select ID = @ID
             List<SqlParameter> listPar = new List<SqlParameter>()
             {
                new SqlParameter("@CallFrom", requestHeaders["CallFrom"]),
-               new SqlParameter("@Activity", MyUtility.Check.Empty(status) ? requestHeaders["Activity"] : status),
+               new SqlParameter("@Activity", requestHeaders["Activity"]),
                new SqlParameter("@SuppID", automationErrMsg.suppID),
                new SqlParameter("@ModuleName", automationErrMsg.moduleName),
                new SqlParameter("@SuppAPIThread", automationErrMsg.suppAPIThread),
