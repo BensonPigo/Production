@@ -34,7 +34,6 @@
             this.btnImport = new Sci.Win.UI.Button();
             this.gridGMTbs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.txtBrand = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.txtGBTo = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
@@ -44,6 +43,7 @@
             this.labETD = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
             this.gridGMTBooking = new Sci.Win.UI.Grid();
+            this.txtBrand = new Sci.Production.Class.Txtbrand();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridGMTbs)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -102,16 +102,6 @@
             this.groupBox1.Size = new System.Drawing.Size(1007, 110);
             this.groupBox1.TabIndex = 20;
             this.groupBox1.TabStop = false;
-            // 
-            // txtBrand
-            // 
-            this.txtBrand.BackColor = System.Drawing.Color.White;
-            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand.Location = new System.Drawing.Point(129, 80);
-            this.txtBrand.MaxLength = 13;
-            this.txtBrand.Name = "txtBrand";
-            this.txtBrand.Size = new System.Drawing.Size(160, 23);
-            this.txtBrand.TabIndex = 16;
             // 
             // label2
             // 
@@ -233,6 +223,15 @@
             this.gridGMTBooking.TabIndex = 0;
             this.gridGMTBooking.TabStop = false;
             // 
+            // txtBrand
+            // 
+            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.Location = new System.Drawing.Point(129, 80);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.Size = new System.Drawing.Size(182, 23);
+            this.txtBrand.TabIndex = 101;
+            // 
             // P63_Import
             // 
             this.ClientSize = new System.Drawing.Size(1007, 530);
@@ -267,7 +266,7 @@
         private Win.UI.Label label1;
         private Win.UI.TextBox txGBFrom;
         private Win.UI.Label labInvno;
-        private Win.UI.TextBox txtBrand;
         private Win.UI.Label label2;
+        private Class.Txtbrand txtBrand;
     }
 }
