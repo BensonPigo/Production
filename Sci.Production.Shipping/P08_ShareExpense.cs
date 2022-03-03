@@ -1310,6 +1310,11 @@ where   ShippingAPID = '{3}'
 
                         // 執行A2B跨廠區資料 & 寫入跨廠區資料到ShareExpense_APP
                         List<string> ilist = this.SEData.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["InvNo"])).Distinct().ToList();
+                        if (ilist.Count == 0 && this.SEGroupData.Rows.Count > 0)
+                        {
+                            ilist = this.SEGroupData.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["InvNo"])).Distinct().ToList();
+                        }
+
                         foreach (var item in ilist)
                         {
                             string invNos = item.ToString();
