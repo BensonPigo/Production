@@ -1509,8 +1509,8 @@ DECLARE @id VARCHAR(13),
 		@ordershipmodeseq VARCHAR(2),
 		@shipmodeid VARCHAR(10),
 		@ctnstartno INT,
-		@cbm NUMERIC(8,4),
-		@remark NVARCHAR(125)
+		@cbm NUMERIC(10,3),
+		@remark NVARCHAR(150)
 --設定變數值
 SET @id = '{0}'
 SELECT @mdivisionid = MDivisionID, @factoryid = FactoryID, @orderid = OrderID, @ordershipmodeseq = OrderShipmodeSeq, @shipmodeid = ShipModeID, @ctnstartno = CTNStartNo, @cbm = CBM, @remark = Remark  FROM PackingGuide WHERE Id = @id
@@ -1886,8 +1886,8 @@ DECLARE @id VARCHAR(13),
 		@ordershipmodeseq VARCHAR(2),
 		@shipmodeid VARCHAR(10),
 		@ctnstartno INT,
-		@cbm NUMERIC(8,4),
-		@remark NVARCHAR(125)
+		@cbm NUMERIC(10,3),
+		@remark NVARCHAR(150)
 --設定變數值
 SET @id = '{0}'
 SELECT @mdivisionid = MDivisionID, @factoryid = FactoryID, @orderid = OrderID, @ordershipmodeseq = OrderShipmodeSeq, @shipmodeid = ShipModeID, @ctnstartno = CTNStartNo, @cbm = CBM, @remark = Remark  FROM PackingGuide WITH (NOLOCK) WHERE Id = @id
