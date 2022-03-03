@@ -153,6 +153,34 @@ into #Stmp
 from #Sewtmp s 
 left join #tmpd d on d.FactoryID = s.FactoryID and d.SewingLineID = s.SewingLineID and d.date between s.Inline and s.Offline
 --order by h.FactoryID,h.SewingLineID,h.date,s.StyleID
+
+--抓出各style連續作業天數，不含假日
+select distinct FactoryID, SewingLineID, date, StyleID into #tmpLongDayCheck1 from #Stmp where FactoryID is not null
+
+select *,
+	   isBegin = iif(lag(date) over (order by factoryid, sewinglineid, styleID, date) = dateadd(day, -1, date), 0, 1),
+	   isEnd =  iif(lead(date) over (order by factoryid, sewinglineid, styleID, date) = dateadd(day, 1, date), 0, 1)
+into #tmpLongDayCheck2
+from #tmpLongDayCheck1
+order by factoryid, sewinglineid, styleID, date
+
+select rownum, factoryid, sewinglineid, styleID, BeginDate = min(date), EndDate = max(date)
+into #tmpLongDayCheck3
+from (
+select *, rownum = ROW_NUMBER() over (order by factoryid, sewinglineid, styleID, date) from #tmpLongDayCheck2 where isBegin = 1 
+union all
+select *, rownum = ROW_NUMBER() over (order by factoryid, sewinglineid, styleID, date) from #tmpLongDayCheck2 where isEnd = 1
+) a 
+group by rownum, factoryid, sewinglineid, styleID
+
+
+select *, [WorkDays] = DATEDIFF(day, BeginDate, EndDate) + 1 - holiday.val
+into #tmpLongDayCheck
+from #tmpLongDayCheck3 t
+outer apply(select val = count(*) from #Holiday where Holiday = 1 and FactoryID = t.FactoryID and SewingLineID = t.SewingLineID and date between BeginDate and EndDate) holiday
+
+--
+
 select distinct FactoryID,SewingLineID,date,StyleID = a.s
 into #ConcatStyle
 from #Stmp s
@@ -164,6 +192,8 @@ outer apply(
 		for xml path('')
 	)
 )a
+
+
 --
 select h.FactoryID,h.SewingLineID,h.date,h.Holiday,IsLastMonth,IsNextMonth,IsBulk,IsSMS,BuyerDelivery
 into #c
@@ -248,9 +278,19 @@ END
 CLOSE cursor_sewingschedule
 DEALLOCATE cursor_sewingschedule
 
-select * from @tempPintData where StyleID<>''
+select  t.*,
+        [WorkDays] = isnull(workDays.val, 0)
+from @tempPintData t
+outer apply (   select val = max(WorkDays) 
+                from #tmpLongDayCheck tdc
+                where   tdc.FactoryID = t.FactoryID and
+                        tdc.SewingLineID = t.SewingLineID and
+                        t.StyleID like '%' + tdc.StyleID + '%'  and
+                        t.InLine between tdc.BeginDate and tdc.EndDate
+            ) workDays
+where t.StyleID<>''
 
-drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle",
+drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle,#tmpLongDayCheck1,#tmpLongDayCheck2,#tmpLongDayCheck3,#tmpLongDayCheck",
                 this._startDate.ToString("yyyy/MM/dd"),
                 this._startDate.AddMonths(1).ToString("yyyy/MM/dd"),
                 this._mDivision,
@@ -430,6 +470,12 @@ drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle"
                     worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Font.Bold = false;
                     worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Font.Color = Color.Black;
                     worksheet.Cells[intRowsStart, startCol] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["StyleID"]), MyUtility.Check.Empty(dr["MinBuyerDelivery"]) ? string.Empty : " " + Convert.ToDateTime(dr["MinBuyerDelivery"]).ToString("yyyy/MM/dd"));
+                }
+
+                if (MyUtility.Convert.GetInt(dr["WorkDays"]) > 10)
+                {
+                    // 設置儲存格的背景色
+                    worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Cells.Interior.Color = Color.FromArgb(255, 219, 183);
                 }
                 #endregion
                 colCount = colCount + (startCol - colCount - 1) + totalDays;
