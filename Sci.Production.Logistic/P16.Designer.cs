@@ -65,7 +65,7 @@
             this.btnQuery.Location = new System.Drawing.Point(963, 4);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 5;
+            this.btnQuery.TabIndex = 7;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
@@ -94,7 +94,7 @@
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
             this.grid1.Size = new System.Drawing.Size(1034, 354);
-            this.grid1.TabIndex = 7;
+            this.grid1.TabIndex = 9;
             // 
             // labelSPNo
             // 
@@ -125,7 +125,7 @@
             this.dateBuyerDelivery.Location = new System.Drawing.Point(535, 9);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
             this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateBuyerDelivery.TabIndex = 3;
+            this.dateBuyerDelivery.TabIndex = 2;
             // 
             // labelBuyerDelivery
             // 
@@ -156,7 +156,7 @@
             this.dateSCIDelivery.Location = new System.Drawing.Point(535, 38);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
             this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateSCIDelivery.TabIndex = 4;
+            this.dateSCIDelivery.TabIndex = 5;
             // 
             // label1
             // 
@@ -175,7 +175,7 @@
             this.txtbrand.Location = new System.Drawing.Point(343, 38);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(86, 23);
-            this.txtbrand.TabIndex = 1;
+            this.txtbrand.TabIndex = 4;
             // 
             // labelBrand
             // 
@@ -198,7 +198,7 @@
             this.btnSave.Location = new System.Drawing.Point(963, 34);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
-            this.btnSave.TabIndex = 6;
+            this.btnSave.TabIndex = 8;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
@@ -214,7 +214,7 @@
             this.comboDropDownList1.Name = "comboDropDownList1";
             this.comboDropDownList1.OldText = "";
             this.comboDropDownList1.Size = new System.Drawing.Size(205, 24);
-            this.comboDropDownList1.TabIndex = 2;
+            this.comboDropDownList1.TabIndex = 3;
             this.comboDropDownList1.Type = "Pms_ReportForProduct";
             // 
             // labPO
@@ -235,16 +235,17 @@
             this.txtPONo.Location = new System.Drawing.Point(288, 9);
             this.txtPONo.Name = "txtPONo";
             this.txtPONo.Size = new System.Drawing.Size(141, 23);
-            this.txtPONo.TabIndex = 129;
+            this.txtPONo.TabIndex = 1;
             // 
             // btnToExcel
             // 
             this.btnToExcel.Location = new System.Drawing.Point(827, 5);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(130, 30);
-            this.btnToExcel.TabIndex = 131;
+            this.btnToExcel.TabIndex = 6;
             this.btnToExcel.Text = "To Excel(Detail)";
             this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // P16
             // 

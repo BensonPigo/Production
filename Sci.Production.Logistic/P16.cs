@@ -10,6 +10,8 @@ namespace Sci.Production.Logistic
     /// <inheritdoc/>
     public partial class P16 : Win.Tems.QueryForm
     {
+        private DataTable dtExcel;
+
         /// <inheritdoc/>
         public P16(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -28,20 +30,19 @@ namespace Sci.Production.Logistic
                 .CheckBox("selected", header: string.Empty, width: Widths.AnsiChars(3), trueValue: 1, falseValue: 0, iseditable: true)
                 .Text("ID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(14), iseditingreadonly: true)
-                .Text("StyleID", header: "Style", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("StyleID", header: "Style", width: Widths.AnsiChars(16), iseditingreadonly: true)
+                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Buyer Dlv.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("SCIDelivery", header: "SCI Dlv.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .CheckBox("BrokenNeedles", header: "Broken needles", width: Widths.AnsiChars(3), trueValue: 1, falseValue: 0, iseditable: true)
-                .Button("Detail", null, header: "Detail", width: Widths.AnsiChars(6), onclick: this.BtnDetail_Click)
+                .Button("Detail", null, header: "Detail", width: Widths.AnsiChars(8), onclick: this.BtnDetail_Click)
             ;
         }
 
         private void BtnDetail_Click(object sender, EventArgs e)
         {
             DataRow dr = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
-
-            P16_BrokenNeedlesRecord callForm = new P16_BrokenNeedlesRecord(this.IsSupportEdit, dr);
+            P16_BrokenNeedlesRecord callForm = new P16_BrokenNeedlesRecord(this.IsSupportEdit, dr["ID"].ToString(), null, null, dr);
             callForm.ShowDialog(this);
         }
 
@@ -101,6 +102,7 @@ and o.MDivisionID = '{Sci.Env.User.Keyword}'
                 return;
             }
 
+            this.dtExcel = dt;
             this.listControlBindingSource1.DataSource = dt;
             if (dt.Rows.Count == 0)
             {
@@ -136,6 +138,35 @@ inner join #tmp t on t.id = o.id
             }
 
             MyUtility.Msg.InfoBox("Success");
+        }
+
+        private void BtnToExcel_Click(object sender, EventArgs e)
+        {
+            string sqlcmd = @"
+select s.Line
+,s.Shift
+,t.ID,t.CustPONo,t.StyleID,t.BrandID,t.BuyerDelivery,t.SciDelivery
+,[BrokenNeedles] = IIF(isnull(t.BrokenNeedles,0) = 0 ,'False','True')
+,[NeedleComplete] = IIF(isnull(s.NeedleComplete,0) = 0 ,'False','True')
+,s.Operation
+from #tmp t
+left join BrokenNeedlesRecord s on t.ID = s.SP
+
+";
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.dtExcel, null, sqlcmd, out DataTable dt, "#tmp");
+            if (!result)
+            {
+                return;
+            }
+
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.ErrorBox("Data not found");
+                return;
+            }
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Clog_P16.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(dt, string.Empty, "Clog_P16.xltx", 2, true, null, objApp);
         }
     }
 }

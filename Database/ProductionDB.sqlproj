@@ -2704,6 +2704,7 @@
     <Build Include="dbo\Functions\GetVASSHAS_bit.sql" />
     <Build Include="dbo\Tables\SemiFinishedLocationTrans_Detail.sql" />
     <Build Include="dbo\Tables\SemiFinishedLocationTrans.sql" />
+    <Build Include="dbo\Tables\BrokenNeedlesRecord.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
