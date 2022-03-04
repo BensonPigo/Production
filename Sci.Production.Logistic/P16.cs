@@ -27,21 +27,32 @@ namespace Sci.Production.Logistic
             this.Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("selected", header: string.Empty, width: Widths.AnsiChars(3), trueValue: 1, falseValue: 0, iseditable: true)
                 .Text("ID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(14), iseditingreadonly: true)
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Buyer Dlv.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("SCIDelivery", header: "SCI Dlv.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .CheckBox("BrokenNeedles", header: "Broken needles", width: Widths.AnsiChars(3), trueValue: 1, falseValue: 0, iseditable: true)
+                .Button("Detail", null, header: "Detail", width: Widths.AnsiChars(6), onclick: this.BtnDetail_Click)
             ;
+        }
+
+        private void BtnDetail_Click(object sender, EventArgs e)
+        {
+            DataRow dr = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
+
+            P16_BrokenNeedlesRecord callForm = new P16_BrokenNeedlesRecord(this.IsSupportEdit, dr);
+            callForm.ShowDialog(this);
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtSP.Text) &&
+                MyUtility.Check.Empty(this.txtPONo.Text) &&
                 MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) &&
                 MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
             {
-                MyUtility.Msg.WarningBox("Msg : SP#, Buyer Delivery and SCI Delivery cannot all be empty.");
+                MyUtility.Msg.WarningBox("Msg : SP#, PO#, Buyer Delivery and SCI Delivery cannot all be empty.");
                 return;
             }
 
@@ -49,6 +60,11 @@ namespace Sci.Production.Logistic
             if (!MyUtility.Check.Empty(this.txtSP.Text))
             {
                 where += $"\r\nand o.id = '{this.txtSP.Text}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtPONo.Text))
+            {
+                where += $"\r\nand o.CustPONo = '{this.txtPONo.Text}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtbrand.Text))
@@ -72,7 +88,7 @@ namespace Sci.Production.Logistic
             }
 
             string sqlcmd = $@"
-select selected = cast(0 as bit), o.ID, o.StyleID, o.BrandID, o.BuyerDelivery, o.SciDelivery, o.BrokenNeedles
+select selected = cast(0 as bit), o.ID, o.CustPONo, o.StyleID, o.BrandID, o.BuyerDelivery, o.SciDelivery, o.BrokenNeedles
 from Orders o
 where 1=1
 and o.MDivisionID = '{Sci.Env.User.Keyword}'
