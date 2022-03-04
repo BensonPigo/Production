@@ -238,7 +238,7 @@ Where o.LocalOrder = 0
             {
                 // 欄位[I] Balance Qty
                 objSheets.Cells[4 + i, 9] = $"=G{4 + i}-H{4 + i}";
-                objSheets.Cells[4 + i, 30] = $"=G{4 + i}*AC{4 + i}";
+                objSheets.Cells[4 + i, 30] = $"=I{4 + i}*AC{4 + i}";
             }
 
             #region Save & Show Excel
