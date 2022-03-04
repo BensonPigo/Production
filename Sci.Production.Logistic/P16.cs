@@ -10,6 +10,8 @@ namespace Sci.Production.Logistic
     /// <inheritdoc/>
     public partial class P16 : Win.Tems.QueryForm
     {
+        private DataTable dtExcel;
+
         /// <inheritdoc/>
         public P16(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -27,21 +29,31 @@ namespace Sci.Production.Logistic
             this.Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("selected", header: string.Empty, width: Widths.AnsiChars(3), trueValue: 1, falseValue: 0, iseditable: true)
                 .Text("ID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("StyleID", header: "Style", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(14), iseditingreadonly: true)
+                .Text("StyleID", header: "Style", width: Widths.AnsiChars(16), iseditingreadonly: true)
+                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Buyer Dlv.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("SCIDelivery", header: "SCI Dlv.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .CheckBox("BrokenNeedles", header: "Broken needles", width: Widths.AnsiChars(3), trueValue: 1, falseValue: 0, iseditable: true)
+                .Button("Detail", null, header: "Detail", width: Widths.AnsiChars(8), onclick: this.BtnDetail_Click)
             ;
+        }
+
+        private void BtnDetail_Click(object sender, EventArgs e)
+        {
+            DataRow dr = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
+            P16_BrokenNeedlesRecord callForm = new P16_BrokenNeedlesRecord(this.IsSupportEdit, dr["ID"].ToString(), null, null, dr);
+            callForm.ShowDialog(this);
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtSP.Text) &&
+                MyUtility.Check.Empty(this.txtPONo.Text) &&
                 MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) &&
                 MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
             {
-                MyUtility.Msg.WarningBox("Msg : SP#, Buyer Delivery and SCI Delivery cannot all be empty.");
+                MyUtility.Msg.WarningBox("Msg : SP#, PO#, Buyer Delivery and SCI Delivery cannot all be empty.");
                 return;
             }
 
@@ -49,6 +61,11 @@ namespace Sci.Production.Logistic
             if (!MyUtility.Check.Empty(this.txtSP.Text))
             {
                 where += $"\r\nand o.id = '{this.txtSP.Text}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtPONo.Text))
+            {
+                where += $"\r\nand o.CustPONo = '{this.txtPONo.Text}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtbrand.Text))
@@ -72,7 +89,7 @@ namespace Sci.Production.Logistic
             }
 
             string sqlcmd = $@"
-select selected = cast(0 as bit), o.ID, o.StyleID, o.BrandID, o.BuyerDelivery, o.SciDelivery, o.BrokenNeedles
+select selected = cast(0 as bit), o.ID, o.CustPONo, o.StyleID, o.BrandID, o.BuyerDelivery, o.SciDelivery, o.BrokenNeedles
 from Orders o
 where 1=1
 and o.MDivisionID = '{Sci.Env.User.Keyword}'
@@ -85,6 +102,7 @@ and o.MDivisionID = '{Sci.Env.User.Keyword}'
                 return;
             }
 
+            this.dtExcel = dt;
             this.listControlBindingSource1.DataSource = dt;
             if (dt.Rows.Count == 0)
             {
@@ -120,6 +138,35 @@ inner join #tmp t on t.id = o.id
             }
 
             MyUtility.Msg.InfoBox("Success");
+        }
+
+        private void BtnToExcel_Click(object sender, EventArgs e)
+        {
+            string sqlcmd = @"
+select s.Line
+,s.Shift
+,t.ID,t.CustPONo,t.StyleID,t.BrandID,t.BuyerDelivery,t.SciDelivery
+,[BrokenNeedles] = IIF(isnull(t.BrokenNeedles,0) = 0 ,'False','True')
+,[NeedleComplete] = IIF(isnull(s.NeedleComplete,0) = 0 ,'False','True')
+,s.Operation
+from #tmp t
+left join BrokenNeedlesRecord s on t.ID = s.SP
+
+";
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.dtExcel, null, sqlcmd, out DataTable dt, "#tmp");
+            if (!result)
+            {
+                return;
+            }
+
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.ErrorBox("Data not found");
+                return;
+            }
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Clog_P16.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(dt, string.Empty, "Clog_P16.xltx", 2, true, null, objApp);
         }
     }
 }
