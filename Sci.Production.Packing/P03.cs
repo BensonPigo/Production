@@ -2192,14 +2192,17 @@ update PackingList set  EditName = '{Env.User.UserID}', EditDate = GETDATE() whe
                     bool isNUll = false;
                     for (int j = 1; j <= lngColumnCount; j++)
                     {
-                        if (!MyUtility.Check.Empty(objValue[i, j]))
-                        {
-                            drRow[j - 1] = MyUtility.Check.Empty(objValue[i, j]) ? string.Empty : objValue[i, j].ToString();
-                        }
-                        else
+                        // Pack ID, CTN#, Cust CTN#其中一個空白，這筆就不update
+                        bool needCheckEmptyCol = objValue[1, j].ToString() == "Pack ID" ||
+                            objValue[1, j].ToString() == "CTN#" ||
+                            objValue[1, j].ToString() == "Cust CTN#";
+                        if (needCheckEmptyCol && MyUtility.Check.Empty(objValue[i, j]))
                         {
                             isNUll = true;
+                            break;
                         }
+
+                        drRow[j - 1] = MyUtility.Check.Empty(objValue[i, j]) ? string.Empty : objValue[i, j].ToString();
                     }
 
                     if (!isNUll)
