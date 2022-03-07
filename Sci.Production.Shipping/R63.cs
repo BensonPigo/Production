@@ -5,12 +5,9 @@ using Sci.Production.CallPmsAPI;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 using static Sci.Production.CallPmsAPI.PackingA2BWebAPI_Model;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -96,7 +93,9 @@ select  k.InvDate,
         [CMTInv] = k.ID,
         [Client] = 'Sintex International Ltd.',
         [GBID] = gb.ID,
-        [ExchangeRate] = isnull(k.ExchangeRate, 0)
+        [ExchangeRate] = isnull(k.ExchangeRate, 0),
+        gb.BrandID,
+        gb.Shipper
 from    GMTBooking gb with (nolock)
 left join KHCMTInvoice_Detail kd with (nolock) on kd.InvNo = gb.ID
 left join KHCMTInvoice k with (nolock) on k.ID = kd.ID
@@ -137,7 +136,10 @@ where exists (select 1
 			  ) {sqlWhereForOrder}
 
 
-select  t.InvDate,
+select  t.BrandID,
+        t.Shipper,
+        o.FactoryID,
+        t.InvDate,
         t.CMTInv,
         t.Client,
         [CMTPO] = o.ID,
@@ -158,7 +160,10 @@ inner join Orders o with (nolock) on o.ID = pd.OrderID
 inner join Style s with (nolock) on s.Ukey = o.StyleUkey
 left join #tmpUnitPriceUSD tup on tup.ID = o.ID
 where 1 =1 {sqlWhereForOrder}
-group by    t.InvDate,
+group by    t.BrandID,
+            t.Shipper,
+            o.FactoryID,
+            t.InvDate,
             t.CMTInv,
             t.Client,
             o.ID,

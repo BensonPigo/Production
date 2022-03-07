@@ -22,6 +22,7 @@ namespace Sci.Production.Shipping
             this.masterID = masterID;
             this.dt_detail = detail;
             this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.txtBrand.MultiSelect = true;
         }
 
         /// <inheritdoc/>
@@ -76,7 +77,7 @@ namespace Sci.Production.Shipping
 
             if (!MyUtility.Check.Empty(this.txtBrand.Text))
             {
-                where += $@"and GB.BrandID = '{this.txtBrand.Text}'";
+                where += $@"and GB.BrandID in ({this.txtBrand.Text.Split(',').Select(s => $"'{s}'").JoinToString(",")})";
             }
 
             #endregion
