@@ -60,7 +60,7 @@ select s.id
     ,BuyerDelivery = format(o.BuyerDelivery,''yyyy/MM/dd'')
     ,OrderQty = o.Qty
     ,s.SubconOutFty
-    ,s.SubConOutContractNumber
+    ,[SubConOutContractNumber] = isnull(s.SubConOutContractNumber, '''')
     ,o.SubconInSisterFty
     ,[SewingReasonDesc]=isnull(sr.SewingReasonDesc,'''')
     ,o.SciDelivery
@@ -406,7 +406,8 @@ select OrderID from #Final s
 	AND t.Article=s.Article 
 	AND t.SizeCode=s.SizeCode 
 	AND t.ComboType=s.ComboType 
-	AND t.OutputDate = s.OutputDate);
+	AND t.OutputDate = s.OutputDate
+	AND t.SubConOutContractNumber = s.SubConOutContractNumber);
 
 '
 

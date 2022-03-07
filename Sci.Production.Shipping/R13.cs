@@ -72,6 +72,17 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 ,o.OrderTypeID
 ,o.CustPONo
 ,o.Qty
+,[ShipQty] = ShipQty.value
+,[Balance Qty] = ''
+,[GMTCompleteCheck] = case isnull(o.GMTComplete,'') 
+	when 'C'  then 'Y'
+	when 'S' then 'Y'
+	when 'P' then ''
+	when '' then ''
+	end
+--when 
+,[GMT Complete] = o.GMTComplete
+,[Cancel] = case o.Junk when 1 then 'Y' else '' end
 ,o.CustCDID
 ,o.StyleID
 ,o.SeasonID
@@ -90,8 +101,19 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 ,LocalPSCost= ROUND(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1,dbo.GetLocalPurchaseStdCost(o.ID),0),3)
 From Orders o
 left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and isnull(ot.IsGMTMaster,0) != 1
-outer apply(select * from FtyShipper_Detail fd where o.BrandID = fd.BrandID and fd.FactoryID = o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and fd.seasonID = o.seasonID)fd1
-outer apply(select * from FtyShipper_Detail fd where o.BrandID = fd.BrandID and fd.FactoryID = o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and fd.seasonID = '')fd2
+outer apply(
+	select * 
+	from FtyShipper_Detail fd 
+	where o.BrandID = fd.BrandID and fd.FactoryID = o.FactoryID 
+	and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate 
+	and fd.seasonID = o.seasonID
+)fd1
+outer apply(
+	select * 
+	from FtyShipper_Detail fd 
+	where o.BrandID = fd.BrandID and fd.FactoryID = o.FactoryID 
+	and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and fd.seasonID = ''
+)fd2
 outer apply
 (
     select top 1 ROUND(fcd.CpuCost,3) AS CpuCost
@@ -106,6 +128,11 @@ outer apply
 ) cpucost
 outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'AMT')   ) sub_Process_AMT
 outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'CPU')   ) sub_Process_CPU
+outer apply(
+	select value = sum(ShipQty) 
+	from Pullout_Detail 
+	where OrderID = o.ID
+) ShipQty
 Where o.LocalOrder = 0 
 ");
 
@@ -161,10 +188,8 @@ Where o.LocalOrder = 0
             sqlCmd.Append(@" ) 
                             select *
                             ,FtyCMPCostUnit=ROUND(cte.CPU * cte.CPUCost + cte.SubPSCost + cte.LocalPSCost, 2)
-                            ,TotalCMPDeclaredtoCustomer=ROUND(cte.Qty*ROUND(cte.CPU * cte.CPUCost + cte.SubPSCost + cte.LocalPSCost, 2),5)
+                            ,[Total CMP Declared to Customer] = ''
                             from cte");
-
-
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
@@ -208,6 +233,13 @@ Where o.LocalOrder = 0
             objSheets.Cells[2, 7] = MyUtility.Convert.GetString(this.Shipper);
             objSheets.Cells[2, 9] = MyUtility.Convert.GetString(this.factory);
             objSheets.Cells[2, 11] = MyUtility.Convert.GetString(this.comboCategory.Text.Replace(this.category + "-", string.Empty));
+
+            for (int i = 0; i < this.printData.Rows.Count; i++)
+            {
+                // 欄位[I] Balance Qty
+                objSheets.Cells[4 + i, 9] = $"=G{4 + i}-H{4 + i}";
+                objSheets.Cells[4 + i, 30] = $"=I{4 + i}*AC{4 + i}";
+            }
 
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("Shipping_R13_FactoryCMTForecast");

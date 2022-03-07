@@ -942,6 +942,10 @@ from #tmp";
             #region confirm save成功的P23單子
             List<string> success_list = new List<string>();
             List<string> fail_list = new List<string>();
+            DataTable dtP23confirmResult = new DataTable();
+            dtP23confirmResult.Columns.Add("ID", typeof(string));
+            dtP23confirmResult.Columns.Add("Message", typeof(string));
+
             foreach (DataRow dr in dtMaster.Rows)
             {
                 #region 檢查物料Location 是否存在WMS
@@ -952,20 +956,26 @@ from #tmp";
                 #endregion
 
                 DataTable dtd = dtDetail.Select($" id ='{dr["id"]}'").CopyToDataTable();
-                if (Prgs.P23confirm(dr["ID"].ToString(), dtd))
+                DataRow drP23confirmResult = dtP23confirmResult.NewRow();
+                result = Prgs.P23confirm(dr["ID"].ToString(), dtd);
+
+                drP23confirmResult["ID"] = dr["ID"].ToString();
+
+                if (result)
                 {
-                    success_list.Add(dr["ID"].ToString());
+                    drP23confirmResult["Message"] = "Be created!! and Confirm Success!!";
                 }
                 else
                 {
-                    fail_list.Add(dr["ID"].ToString());
+                    drP23confirmResult["Message"] = $@"Be created!!, Confirm fail, please go to P23 manual Confirm
+{result.Description}
+{result.GetException()}";
                 }
+
+                dtP23confirmResult.Rows.Add(drP23confirmResult);
             }
 
-            string msg = string.Empty;
-            msg += success_list.Count > 0 ? "Trans. ID" + Environment.NewLine + success_list.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!! and Confirm Success!!" + Environment.NewLine : string.Empty;
-            msg += fail_list.Count > 0 ? "Trans. ID" + Environment.NewLine + fail_list.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!, Confirm fail, please go to P23 manual Confirm" : string.Empty;
-            this.p29_msg.Show(msg);
+            MyUtility.Msg.ShowMsgGrid_LockScreen(dtP23confirmResult, "P29.Create & Confirm result", "Information");
             #endregion
 
             if (!this.master.Columns.Contains("TransID"))
