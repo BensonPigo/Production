@@ -166,6 +166,7 @@ namespace PowerBI.Daily
             {
                 ShowErr(result);
             }
+            else
             {
                 writeJobLog(true, 0);
             }
