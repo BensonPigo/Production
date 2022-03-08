@@ -374,6 +374,37 @@ from PackData pd");
                         }
                     }
 
+                    // A2B檢查是否有Packing中存在不是此工廠出貨的Order
+                    if (this.txtmultifactoryFactory.IsDataFromA2B)
+                    {
+                        var resultCheckOrderExists = dr.Select(s =>
+                        {
+                            string sqlCheckOrder = $@"
+select  [PackingID] = '{s["ID"]}',
+        [OrderID] = isnull(Stuff((select concat( ',', a.Data)  
+                            from dbo.SplitString('{s["OrderID"]}', ',') a 
+                            where not exists(select 1 from orders where ID = a.Data) FOR XML PATH('')),1,1,''), '')
+";
+                            DataRow drResult;
+                            MyUtility.Check.Seek(sqlCheckOrder, out drResult);
+
+                            return drResult;
+                        }).ToList();
+
+                        if (resultCheckOrderExists.Any(s => !MyUtility.Check.Empty(s["OrderID"])))
+                        {
+                            string msgCheckOrder = @"PL# includes non-sister factory orders that can NOT be stored. 
+Please notify the sister factory to split Order into different PL.
+" +
+                                                    resultCheckOrderExists.Where(s => !MyUtility.Check.Empty(s["OrderID"]))
+                                                    .Select(s => $"<PL#>{s["PackingID"]}, <Order> {s["OrderID"]}")
+                                                    .JoinToString(Environment.NewLine);
+
+                            MyUtility.Msg.WarningBox(msgCheckOrder);
+                            return;
+                        }
+                    }
+
                     if (allPackID.Length > 0)
                     {
                         string sqlCmd = string.Format(
