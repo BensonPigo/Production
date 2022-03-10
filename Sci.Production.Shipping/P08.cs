@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Linq;
 using System.Data.SqlClient;
 using Sci.Production.CallPmsAPI;
+using Newtonsoft.Json;
 
 namespace Sci.Production.Shipping
 {
@@ -1013,12 +1014,18 @@ string.Format("exec CalculateShareExpense '{0}','{1}',{2}", MyUtility.Convert.Ge
                     foreach (string plFromRgCode in listPLFromRgCode)
                     {
                         // 跨Server取得ShareExpense_APP所需PackingList資料
-                        DataTable dt = Prgs.DataTable_Packing(plFromRgCode, invNos);
+                        DataTable dtA2BPacking;
+                        result = Prgs.DataTable_Packing(plFromRgCode, invNos, out dtA2BPacking);
 
-                        if (dt != null && dt.Rows.Count > 0)
+                        if (!result)
+                        {
+                            return result;
+                        }
+
+                        if (dtA2BPacking.Rows.Count > 0)
                         {
                             // 將跨Serve資料更新ShareExpense_APP
-                            DualResult result2 = Prgs.CalculateShareExpense_APP(this.CurrentMaintain["ID"].ToString(), Env.User.UserID, dt);
+                            DualResult result2 = Prgs.CalculateShareExpense_APP(this.CurrentMaintain["ID"].ToString(), Env.User.UserID, dtA2BPacking, plFromRgCode);
 
                             if (!result2)
                             {
@@ -1068,6 +1075,57 @@ where ShippingAPID = '{MyUtility.Convert.GetString(this.CurrentMaintain["ID"])}'
                 DualResult failResult = new DualResult(false, "Delete ShareExpense_APP false.\r\n" + result.ToString());
                 return failResult;
             }
+
+            #region ISP20220298 更新AirPP資料
+
+            // local Airpp
+            string updateAirPP = $@"
+update a set a.ActAmt = airAmt.ActAmt, a.ExchangeRate = airAmt.ExchangeRate
+	from AirPP a
+	inner join dbo.GetAirPPAmt('{this.CurrentMaintain["ID"]}', '') airAmt on airAmt.AirPPID = a.ID
+
+select AirPPID, ActAmt, ExchangeRate
+from dbo.GetAirPPAmt('{this.CurrentMaintain["ID"]}', '')
+";
+            result = DBProxy.Current.Select(null, updateAirPP, out DataTable dtAirPPAmt);
+
+            if (!result)
+            {
+                return result;
+            }
+
+            string sqlInvNo = $@"select distinct InvNo from ShareExpense with (nolock) where  ShippingAPID = '{this.CurrentMaintain["ID"]}'";
+            if (!(result = DBProxy.Current.Select(string.Empty, sqlInvNo, out DataTable dtInvNo)))
+            {
+                return new DualResult(false, result.ToString());
+            }
+
+            if (dtInvNo != null && dtInvNo.Rows.Count > 0)
+            {
+                List<string> listInv = dtInvNo.AsEnumerable().Select(s => s["InvNo"].ToString()).ToList();
+                List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByMutiInvNo(listInv);
+                foreach (string plFromRgCode in listPLFromRgCode)
+                {
+                    PackingA2BWebAPI_Model.DataBySql dataBySql = new PackingA2BWebAPI_Model.DataBySql()
+                    {
+                        SqlString = @"
+alter table #tmp alter column AirPPID varchar(13)
+update a set a.ActAmt = airAmt.ActAmt, a.ExchangeRate = airAmt.ExchangeRate
+from AirPP a
+inner join #tmp airAmt on airAmt.AirPPID = a.ID
+",
+                        TmpTable = JsonConvert.SerializeObject(dtAirPPAmt),
+                    };
+                    result = PackingA2BWebAPI.ExecuteBySql(plFromRgCode, dataBySql);
+
+                    if (!result)
+                    {
+                        return result;
+                    }
+                }
+
+            }
+            #endregion
 
             return Ict.Result.True;
         }

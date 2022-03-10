@@ -767,6 +767,7 @@
             // numExchangeRate
             // 
             this.numExchangeRate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numExchangeRate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ExchangeRate", true));
             this.numExchangeRate.DecimalPlaces = 3;
             this.numExchangeRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numExchangeRate.IsSupportEditMode = false;
@@ -989,6 +990,7 @@
             // numActAmt
             // 
             this.numActAmt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numActAmt.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ActAmt", true));
             this.numActAmt.DecimalPlaces = 2;
             this.numActAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numActAmt.IsSupportEditMode = false;
