@@ -1198,8 +1198,6 @@ else
 			, EditName
 			, EditDate
 		from #tmpLocalOrder_TmsCost
-
-		drop table #tmpLocalOrder_TmsCost
 		-----------------Order_SizeCode---------------------------尺寸表 Size Spec(存尺寸碼)
 		--20170110 willy 調整順序: 刪除>修改>新增
 		Merge Production.dbo.Order_SizeCode as t
