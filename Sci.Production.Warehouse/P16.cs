@@ -1127,10 +1127,19 @@ select  a.POID
         ,dbo.Getlocation(fi.ukey)[Location] 
         ,FI.ContainerCode
         ,a.Remark
+        ,[Tone] = Tone.val
 from dbo.IssueLack_detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
     and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
+outer apply(select [val] = isnull(max(Tone), '')
+            from FIR f with (nolock)
+            inner join FIR_Shadebone  fs with (nolock) on fs.ID = f.ID
+            where   f.POID = fi.POID and
+                    f.Seq1 = fi.Seq1 and
+                    f.Seq2 = fi.Seq2 and
+                    fs.Roll = fi.Roll and
+                    fs.Dyelot = fi.Dyelot) Tone
 where a.id= @ID";
             result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtDetail);
 
@@ -1154,6 +1163,7 @@ where a.id= @ID";
                     Roll = row1["Roll"].ToString().Trim(),
                     DYELOT = row1["DYELOT"].ToString().Trim(),
                     DESC = row1["Description"].ToString().Trim(),
+                    Tone = row1["Tone"].ToString().Trim(),
                     MDESC = row1["MDesc"].ToString().Trim(),
                     StockUnit = row1["StockUnit"].ToString().Trim(),
                     QTY = Convert.ToDecimal(row1["QTY"]),

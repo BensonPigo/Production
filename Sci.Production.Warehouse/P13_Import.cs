@@ -86,12 +86,21 @@ select  selected = 0
 			                                                         FOR XML PATH('')),1,1,'') 
                             else '' end
         ,c.lock
+        ,[Tone] = Tone.val
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.PO_Supp p with (nolock) on a.ID = p.ID and a.Seq1 = p.Seq1
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 inner join dbo.Orders on c.poid = orders.id
 inner join dbo.Factory on orders.FactoryID = factory.ID
 INNER JOIN Fabric f on a.SCIRefNo=f.SCIRefNo
+outer apply(select [val] = isnull(max(Tone), '')
+            from FIR f with (nolock)
+            inner join FIR_Shadebone  fs with (nolock) on fs.ID = f.ID
+            where   f.POID = c.POID and
+                    f.Seq1 = c.Seq1 and
+                    f.Seq2 = c.Seq2 and
+                    fs.Roll = c.Roll and
+                    fs.Dyelot = c.Dyelot) Tone
 Where a.id = '{0}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND Orders.category!='A'
     and factory.MDivisionID = '{1}'
 ", sp, Env.User.Keyword));
@@ -231,7 +240,8 @@ Where a.id = '{0}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND Or
                 .Numeric("LossQty", header: "Loss Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) // 6
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns) // 7
-               .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)); // 8
+               .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25))
+               .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(8)); // 8
 
             this.grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
 

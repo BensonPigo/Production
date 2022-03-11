@@ -2333,6 +2333,7 @@
     <None Include="Properties\DataSources\P14_PrintData.datasource" />
     <None Include="Properties\DataSources\P16_PrintData.datasource" />
     <None Include="Properties\DataSources\P19_FabricSticker_PrintData.datasource" />
+    <None Include="Properties\DataSources\P19_PrintData.datasource" />
     <None Include="Properties\DataSources\P21_PrintBarcode_Data.datasource" />
     <None Include="Properties\DataSources\P22_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P23_FabricSticker_PrintData.datasource" />

@@ -103,12 +103,21 @@ select selected = 0
 	   , [description] = dbo.getMtlDesc(c.poid,c.seq1,c.seq2,2,0) 
        , a.Remark
        , c.lock
+       , [Tone] = Tone.val
 from dbo.Lack_Detail a WITH (NOLOCK) 
 inner join dbo.Lack b WITH (NOLOCK) on b.ID = a.ID
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = b.POID 
 											   and c.seq1 = a.seq1 
 											   and c.seq2  = a.seq2 
 											   and c.stocktype = 'B'
+outer apply(select [val] = isnull(max(Tone), '')
+            from FIR f with (nolock)
+            inner join FIR_Shadebone  fs with (nolock) on fs.ID = f.ID
+            where   f.POID = c.POID and
+                    f.Seq1 = c.Seq1 and
+                    f.Seq2 = c.Seq2 and
+                    fs.Roll = c.Roll and
+                    fs.Dyelot = c.Dyelot) Tone
 LEFT JOIN Orders o ON o.ID=c.PoId
 Where a.id = '{0}' 
 	  AND o.Category!='A'
@@ -243,6 +252,7 @@ Where a.id = '{0}'
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) // 3
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns) // 4
                 .Text("location", header: "Bulk Location", iseditingreadonly: true) // 5
+                .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 ;
             this.gridLack_Detail.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
