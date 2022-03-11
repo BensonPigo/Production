@@ -79,7 +79,7 @@ namespace Sci.Production.Automation
 
             #endregion
 
-            this.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong", "SCI");
+            this.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "Receiving_Detail");
@@ -120,7 +120,7 @@ namespace Sci.Production.Automation
 
             // DataTable轉化為JSON
             string jsonBody = callMethod.GetJsonBody(dtMaster, "Receiving_Detail");
-            callMethod.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong", string.Empty);
+            callMethod.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong");
 
             // 主副料都有情況, Call API傳送給WMS
             if (isComplexMaterial)
@@ -225,7 +225,7 @@ namespace Sci.Production.Automation
 
             // DataTable轉化為JSON
             string jsonBody = callMethod.GetJsonBody(dtMaster, "Receiving_Detail");
-            callMethod.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong", "SCI");
+            callMethod.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong");
 
             // 使用可以Resent的AutomationErrMsg
             SendWebAPI(GetSciUrl(), this.automationErrMsg.suppAPIThread, jsonBody, this.automationErrMsg);
@@ -308,7 +308,7 @@ where exists(
             #endregion
 
             string apiThread = "SentIssue_DetailToVstrong";
-            this.SetAutoAutomationErrMsg(apiThread, "SCI");
+            this.SetAutoAutomationErrMsg(apiThread);
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "Issue_Detail");
@@ -467,7 +467,7 @@ where exists(
             #endregion
 
             string apiThread = "SentRemoveC_DetailToVstrong";
-            this.SetAutoAutomationErrMsg(apiThread, "SCI");
+            this.SetAutoAutomationErrMsg(apiThread);
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "RemoveC_Detail");
@@ -602,7 +602,7 @@ where exists(
             #endregion
 
             string apiThread = "SentSubTransfer_DetailToVstrong";
-            this.SetAutoAutomationErrMsg(apiThread, "SCI");
+            this.SetAutoAutomationErrMsg(apiThread);
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "SubTransfer_Detail");
@@ -738,7 +738,7 @@ where exists(
             #endregion
 
             string apiThread = "SentReturnReceiptToVstrong";
-            this.SetAutoAutomationErrMsg(apiThread, "SCI");
+            this.SetAutoAutomationErrMsg(apiThread);
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "ReturnReceipt_Detail");
@@ -900,7 +900,7 @@ where exists(
             #endregion
 
             string apiThread = "SentBorrowBackToVstrong";
-            this.SetAutoAutomationErrMsg(apiThread, "SCI");
+            this.SetAutoAutomationErrMsg(apiThread);
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "BorrowBack_Detail");
@@ -1036,7 +1036,7 @@ where exists(
             #endregion
 
             string apiThread = "SentAdjust_DetailToVstrong";
-            this.SetAutoAutomationErrMsg(apiThread, "SCI");
+            this.SetAutoAutomationErrMsg(apiThread);
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "Adjust_Detail");
@@ -1171,7 +1171,7 @@ where exists(
             #endregion
 
             string apiThread = "SentIssueReturn_DetailToVstrong";
-            this.SetAutoAutomationErrMsg(apiThread, "SCI");
+            this.SetAutoAutomationErrMsg(apiThread);
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "IssueReturn_Detail");
@@ -1305,7 +1305,7 @@ where exists(
             #endregion
 
             string apiThread = "SentStocktaking_DetailToVstrong";
-            this.SetAutoAutomationErrMsg(apiThread, "SCI");
+            this.SetAutoAutomationErrMsg(apiThread);
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "Stocktaking_Detail");
@@ -1490,7 +1490,7 @@ and exists(
             #endregion
 
             string apiThread = "SentLocationTrans_DetailToVstrong";
-            this.SetAutoAutomationErrMsg(apiThread, "SCI");
+            this.SetAutoAutomationErrMsg(apiThread);
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dt, "LocationTrans_Detail");
@@ -2712,12 +2712,12 @@ and exists(
             return resultObj;
         }
 
-        private void SetAutoAutomationErrMsg(string apiThread, string type = "")
+        private void SetAutoAutomationErrMsg(string apiThread)
         {
             this.automationErrMsg.apiThread = apiThread;
-            this.automationErrMsg.suppAPIThread = (type == "SCI") ? SCIAPIThread : suppAPIThread;
-            this.automationErrMsg.moduleName = (type == "SCI") ? "SCI" : moduleName;
-            this.automationErrMsg.suppID = (type == "SCI") ? "SCI" : VstrongSuppID;
+            this.automationErrMsg.suppAPIThread = SCIAPIThread;
+            this.automationErrMsg.moduleName = moduleName;
+            this.automationErrMsg.suppID = VstrongSuppID;
         }
     }
 }

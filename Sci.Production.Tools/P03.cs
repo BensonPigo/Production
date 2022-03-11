@@ -54,6 +54,9 @@ namespace Sci.Production.Tools
                 ;
             #endregion
 
+            // 取消大寫 (整個Grid)
+            Ict.WinEnv.DefaultDataGridViewTextBoxCharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+
             this.Search();
         }
 

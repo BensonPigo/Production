@@ -76,7 +76,7 @@ namespace Sci.Production.Automation
             }
             #endregion
 
-            this.SetAutoAutomationErrMsg("SentReceiving_DetailToGensong", "SCI");
+            this.SetAutoAutomationErrMsg("SentReceiving_DetailToGensong");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "Receiving_Detail");
@@ -129,7 +129,7 @@ namespace Sci.Production.Automation
 
             // DataTable轉化為JSON
             string jsonBody = callMethod.GetJsonBody(dtMaster, "Receiving_Detail");
-            callMethod.SetAutoAutomationErrMsg("SentReceiving_DetailToGensong", string.Empty);
+            callMethod.SetAutoAutomationErrMsg("SentReceiving_DetailToGensong");
 
             // 主副料都有情況, Call API傳送給WMS
             if (isComplexMaterial)
@@ -242,7 +242,7 @@ namespace Sci.Production.Automation
 
             // DataTable轉化為JSON
             string jsonBody = callMethod.GetJsonBody(dtMaster, "Receiving_Detail");
-            this.SetAutoAutomationErrMsg("SentReceiving_DetailToGensong", "SCI");
+            this.SetAutoAutomationErrMsg("SentReceiving_DetailToGensong");
 
             // 使用可以Resent的AutomationErrMsg
             SendWebAPI(GetSciUrl(), this.automationErrMsg.suppAPIThread, jsonBody, this.automationErrMsg);
@@ -334,7 +334,7 @@ where exists(
 
             #endregion
 
-            this.SetAutoAutomationErrMsg("SentIssue_DetailToGensong", "SCI");
+            this.SetAutoAutomationErrMsg("SentIssue_DetailToGensong");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "Issue_Detail");
@@ -389,7 +389,7 @@ where exists(
 
             // DataTable轉化為JSON
             string jsonBody = callMethod.GetJsonBody(dtMaster, "Issue_Detail");
-            callMethod.SetAutoAutomationErrMsg("SentIssue_DetailToGensong", string.Empty);
+            callMethod.SetAutoAutomationErrMsg("SentIssue_DetailToGensong");
 
             // 主副料都有情況, Call API傳送給WMS
             if (isComplexMaterial)
@@ -535,7 +535,7 @@ where exists(
 
             #endregion
 
-            this.SetAutoAutomationErrMsg("SentSubTransfer_DetailToGensong", "SCI");
+            this.SetAutoAutomationErrMsg("SentSubTransfer_DetailToGensong");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "SubTransfer_Detail");
@@ -589,7 +589,7 @@ where exists(
 
             // DataTable轉化為JSON
             string jsonBody = callMethod.GetJsonBody(dtMaster, "SubTransfer_Detail");
-            callMethod.SetAutoAutomationErrMsg("SentSubTransfer_DetailToGensong", string.Empty);
+            callMethod.SetAutoAutomationErrMsg("SentSubTransfer_DetailToGensong");
 
             // 主副料都有情況, Call API傳送給WMS
             if (isComplexMaterial)
@@ -864,7 +864,7 @@ select distinct
 
             #endregion
 
-            this.SetAutoAutomationErrMsg("SentBorrowBack_DetailToGensong", "SCI");
+            this.SetAutoAutomationErrMsg("SentBorrowBack_DetailToGensong");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "BorrowBack_Detail");
@@ -915,7 +915,7 @@ select distinct
 
             // DataTable轉化為JSON
             string jsonBody = callMethod.GetJsonBody(dtMaster, "BorrowBack_Detail");
-            callMethod.SetAutoAutomationErrMsg("SentBorrowBack_DetailToGensong", string.Empty);
+            callMethod.SetAutoAutomationErrMsg("SentBorrowBack_DetailToGensong");
 
             DualResult result;
 
@@ -1012,7 +1012,7 @@ select distinct
             }
             #endregion
 
-            this.SetAutoAutomationErrMsg("SentReturnReceipt_DetailToGensong", "SCI");
+            this.SetAutoAutomationErrMsg("SentReturnReceipt_DetailToGensong");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "ReturnReceipt_Detail");
@@ -1063,7 +1063,7 @@ select distinct
 
             // DataTable轉化為JSON
             string jsonBody = callMethod.GetJsonBody(dtMaster, "ReturnReceipt_Detail");
-            callMethod.SetAutoAutomationErrMsg("SentReturnReceipt_DetailToGensong", string.Empty);
+            callMethod.SetAutoAutomationErrMsg("SentReturnReceipt_DetailToGensong");
 
             DualResult result;
 
@@ -1211,7 +1211,7 @@ and exists(
 
             #endregion
 
-            this.SetAutoAutomationErrMsg("SentLocationTrans_DetailToGensong", "SCI");
+            this.SetAutoAutomationErrMsg("SentLocationTrans_DetailToGensong");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dt, "LocationTrans_Detail");
@@ -1250,7 +1250,7 @@ and exists(
 
             #endregion
 
-            this.SetAutoAutomationErrMsg("SentAdjust_DetailToGensong", "SCI");
+            this.SetAutoAutomationErrMsg("SentAdjust_DetailToGensong");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "Adjust_Detail");
@@ -1301,7 +1301,7 @@ and exists(
 
             // DataTable轉化為JSON
             string jsonBody = callMethod.GetJsonBody(dtMaster, "Adjust_Detail");
-            callMethod.SetAutoAutomationErrMsg("SentAdjust_DetailToGensong", string.Empty);
+            callMethod.SetAutoAutomationErrMsg("SentAdjust_DetailToGensong");
 
             DualResult result;
 
@@ -1397,7 +1397,7 @@ and exists(
             #endregion
 
             string apiThread = "SentIssueReturn_DetailToGensong";
-            this.SetAutoAutomationErrMsg(apiThread, "SCI");
+            this.SetAutoAutomationErrMsg(apiThread);
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "IssueReturn_Detail");
@@ -1531,7 +1531,7 @@ and exists(
             #endregion
 
             string apiThread = "SentStocktaking_DetailToGensong";
-            this.SetAutoAutomationErrMsg(apiThread, "SCI");
+            this.SetAutoAutomationErrMsg(apiThread);
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "Stocktaking_Detail");
@@ -2889,12 +2889,12 @@ and exists(
 
         #endregion
 
-        private void SetAutoAutomationErrMsg(string apiThread, string type = "")
+        private void SetAutoAutomationErrMsg(string apiThread)
         {
             this.automationErrMsg.apiThread = apiThread;
-            this.automationErrMsg.suppAPIThread = (type == "SCI") ? SCIAPIThread : suppAPIThread;
-            this.automationErrMsg.moduleName = (type == "SCI") ? "SCI" : moduleName;
-            this.automationErrMsg.suppID = (type == "SCI") ? "SCI" : GensongSuppID;
+            this.automationErrMsg.suppAPIThread = SCIAPIThread;
+            this.automationErrMsg.moduleName = moduleName;
+            this.automationErrMsg.suppID = GensongSuppID;
         }
 
         private object CreateGensongStructure(string tableName, object structureID)

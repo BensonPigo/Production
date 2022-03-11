@@ -17,6 +17,7 @@ namespace Sci.Production.Tools
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_Select;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ErrType;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_Resent;
+        
 
         /// <inheritdoc/>
         public P02(ToolStripMenuItem menuitem)
@@ -47,6 +48,7 @@ namespace Sci.Production.Tools
                 .CheckBox("select", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_Select)
                 .Text("Ukey", header: "ID", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("CallFrom", header: "Call From", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("Activity", header: "Activity", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SuppID", header: "Supp ID", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("ModuleName", header: "Module Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SuppAPIThread", header: "Supp API Thread", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -67,6 +69,9 @@ namespace Sci.Production.Tools
             // 設定自動調整高度
             this.col_ErrType.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.grid.RowTemplate.Height = 43;
+
+            // 取消大寫 (整個Grid)
+            Ict.WinEnv.DefaultDataGridViewTextBoxCharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
 
             this.Search();
             this.ChangeEditable();
@@ -109,12 +114,12 @@ namespace Sci.Production.Tools
             string strWhere = string.Empty;
             if (!MyUtility.Check.Empty(this.txtsupplier.TextBox1.Text))
             {
-                strWhere += $" and em.SuppID = '{this.txtsupplier.TextBox1.Text}' " + Environment.NewLine;
+                strWhere += $" and t.SuppID = '{this.txtsupplier.TextBox1.Text}' " + Environment.NewLine;
             }
 
             if (!MyUtility.Check.Empty(this.txtJSONContains.Text))
             {
-                strWhere += $" and em.JSON like '%{this.txtJSONContains.Text}%'" + Environment.NewLine;
+                strWhere += $" and t.JSON like '%{this.txtJSONContains.Text}%'" + Environment.NewLine;
             }
 
             if (!MyUtility.Check.Empty(this.txtCallFrom.Text))
@@ -124,16 +129,16 @@ namespace Sci.Production.Tools
 
             if (!MyUtility.Check.Empty(this.dateCreateTime.Value1) && !MyUtility.Check.Empty(this.dateCreateTime.Value2))
             {
-                strWhere += $@" and CONVERT(date,em.AddDate) between '{((DateTime)this.dateCreateTime.Value1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateCreateTime.Value2).ToString("yyyy/MM/dd")}' 
+                strWhere += $@" and CONVERT(date,t.AddDate) between '{((DateTime)this.dateCreateTime.Value1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateCreateTime.Value2).ToString("yyyy/MM/dd")}' 
     " + Environment.NewLine;
             }
             else if (!MyUtility.Check.Empty(this.dateCreateTime.Value1))
             {
-                strWhere += $@"and CONVERT(date,em.AddDate) = '{((DateTime)this.dateCreateTime.Value1).ToString("yyyy/MM/dd")}' " + Environment.NewLine;
+                strWhere += $@"and CONVERT(date,t.AddDate) = '{((DateTime)this.dateCreateTime.Value1).ToString("yyyy/MM/dd")}' " + Environment.NewLine;
             }
             else if (!MyUtility.Check.Empty(this.dateCreateTime.Value2))
             {
-                strWhere += $@"and CONVERT(date,em.AddDate) = '{((DateTime)this.dateCreateTime.Value2).ToString("yyyy/MM/dd")}' " + Environment.NewLine;
+                strWhere += $@"and CONVERT(date,t.AddDate) = '{((DateTime)this.dateCreateTime.Value2).ToString("yyyy/MM/dd")}' " + Environment.NewLine;
             }
             #endregion
 
@@ -148,7 +153,7 @@ select * from (
 -- Resent
 select 
 [select] = 0
-,t.Ukey,t.CallFrom,t.SuppID,t.ModuleName,t.SuppAPIThread,t.AddDate
+,t.Ukey,t.CallFrom,t.Activity,t.SuppID,t.ModuleName,t.SuppAPIThread,t.AddDate
 ,[JSON] = LEFT(t.JSON,100) + '...'
 ,[oriJson] = t.JSON
 ,[TransJSON] = LEFT(t.TransJSON,100) + '...'
@@ -161,7 +166,7 @@ select
 ,[ResentTime] = em.EditDate
 ,[ErrMsgUkey] = em.Ukey
 from fps.dbo.AutomationTransRecord t
-inner join Production.dbo.AutomationErrMsg em on convert(varchar(80), em.Ukey) = t.Activity
+left join Production.dbo.AutomationErrMsg em on convert(varchar(80), em.Ukey) = t.Activity
 left join Production.dbo.AutomationCheckMsg cm on cm.AutomationTransRecordUkey = t.Ukey
 where 1=1
 and t.CallFrom = 'Resent'
@@ -172,7 +177,7 @@ and t.CallFrom = 'Resent'
 -- !Resent 
 select 
 [select] = 0
-,t.Ukey,t.CallFrom,t.SuppID,t.ModuleName,t.SuppAPIThread,t.AddDate
+,t.Ukey,t.CallFrom,t.Activity,t.SuppID,t.ModuleName,t.SuppAPIThread,t.AddDate
 ,[JSON] = LEFT(t.JSON,100) + '...'
 ,[oriJson] = t.JSON
 ,[TransJSON] = LEFT(t.TransJSON,100) + '...'
@@ -185,7 +190,7 @@ select
 ,[ResentTime] = em.EditDate
 ,[ErrMsgUkey] = em.Ukey
 from fps.dbo.AutomationTransRecord t
-inner join Production.dbo.AutomationErrMsg em on em.AutomationTransRecordUkey = t.Ukey
+left join Production.dbo.AutomationErrMsg em on em.AutomationTransRecordUkey = t.Ukey
 left join Production.dbo.AutomationCheckMsg cm on cm.AutomationTransRecordUkey = t.Ukey
 where 1=1
 and t.CallFrom != 'Resent'
@@ -253,6 +258,7 @@ select
 	,AddDate
 from dbo.AutomationErrMsg with (nolock)
 where ukey = '{(long)dr["ErrMsgUkey"]}'
+and not exists(select 1 from FPS.dbo.AutomationTransRecord where Activity = '{(long)dr["ErrMsgUkey"]}' and CallFrom = 'Resent')
 ";
                 result = DBProxy.Current.Select(null, cmdText, out DataTable resultDt);
                 if (!result)
