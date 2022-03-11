@@ -150,6 +150,7 @@ SELECT [Inspected Date] = FP.InspDate
        ,[Remark]=FP.Remark
        ,[MCHandle]= dbo.getPass1_ExtNo(o.MCHandle)
        ,Fabric.WeaveTypeID
+	   ,[InspectorName] = Pass1.Name
 into #tmp
 FROM System,FIR_Physical AS FP
 LEFT JOIN FIR AS F ON FP.ID=F.ID
@@ -159,6 +160,7 @@ LEFT join PO_Supp_Detail p on p.ID = f.poid and p.seq1 = f.seq1 and p.seq2 = f.s
 LEFT join orders o on o.id=f.POID
 LEFT JOIN Fabric on Fabric.SCIRefno  = f.SCIRefno
 LEFT JOIN Issue_Detail isd on FP.Issue_DetailUkey = isd.ukey and isd.IsQMS = 1
+LEFT JOIN Pass1 on Pass1.ID = FP.Inspector
 outer apply(select width from Fabric with(nolock) where SCIRefno = f.SCIRefno)ww
 WHERE 1=1
 {0}
@@ -167,21 +169,79 @@ ORDER BY [Inspected Date],[Inspector],[SP#],[SEQ#],[Roll#],[Dyelot#]
                 sqlCmdW.ToString()));
             if (this.radioDetail.Checked)
             {
-                sqlCmd.Append($@"select * from #tmp ORDER BY [Inspected Date],[Inspector],[SP#],[SEQ#],[Roll#],[Dyelot#]");
+                sqlCmd.Append($@"
+select 
+        [Inspected Date] ,[Inspector] ,brandID
+       ,FtyGroup ,StyleID ,[SP#] 
+       ,[SEQ#] 
+       ,[StockType]
+       ,[WK#] 
+	   ,[Supplier]
+	   ,[Supplier Name]
+	   ,[ATA]
+       ,[Roll#]
+       ,[Dyelot#] 
+	   ,[Ref#]
+	   ,[Color]
+       ,[Arrived YDS] 
+       ,[Actual YDS] 
+       ,[LthOfDiff] 
+	   ,[TransactionID] 
+	   ,[Shortage YDS] 
+	   ,[QCIssueTransactionID] 
+       ,[Full Width] 
+       ,[Actual Width] 
+       ,[Speed] 
+	   ,[Total Defect Points]
+       ,[Grade]
+	   ,[inspectionTimeStart] 
+	   ,[inspectionTimeFinish]
+       ,[Remark]
+       ,[MCHandle]
+       ,WeaveTypeID
+from #tmp ORDER BY [Inspected Date],[Inspector],[SP#],[SEQ#],[Roll#],[Dyelot#]");
             }
             else
             {
                 sqlCmd.Append($@"
-select inspector,[QCName] = (select name from pass1 where id=inspector),[inspected date]
-,count([Roll#])Roll,ROUND(sum([Actual YDS]),1)[Actual YDS] 
-from #tmp
-group by inspector,[inspected date]
+select * from (
+	select inspector
+	,[QCName] = (select name from pass1 where id=inspector)
+	,[inspected date]
+	,[Roll] = count([Roll#])
+	,[Actual YDS] = ROUND(sum([Actual YDS]),1)
+	from #tmp
+	where InspectorName is not null
+	group by inspector,[inspected date]
+
+	union all
+
+	select inspector
+	,[QCName] = (select Name from [ExtendServer].ManufacturingExecution.dbo.Pass1 where id = inspector)
+	,[inspected date]
+	,[Roll] = count([Roll#])
+	,[Actual YDS] = ROUND(sum([Actual YDS]),1)
+	from #tmp
+	where InspectorName is null
+	group by inspector,[inspected date]
+) a
 order by inspector,[inspected date]
 
 -- 取得所有QC人員
-select distinct Inspector
-,[QCName] = (select name from pass1 where id=inspector) 
-from #tmp order by Inspector
+select * from (
+	select distinct Inspector
+	,[QCName] = (select name from pass1 where id=inspector) 
+	from #tmp 
+	where InspectorName is not null
+
+	union all
+
+	select distinct Inspector
+	,[QCName] = (select Name from [ExtendServer].ManufacturingExecution.dbo.Pass1 where id = inspector) 
+	from #tmp 
+	where InspectorName is null
+) a
+order by Inspector
 
 -- 依日期 加總Roll and Yard
 select [inspected date],count([Roll#])Roll,sum([Actual YDS])[Actual YDS]  
