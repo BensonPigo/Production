@@ -108,6 +108,7 @@ namespace Sci.Production.Warehouse
                 .Text("roll", header: "Roll#", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(15))
+                .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -236,12 +237,21 @@ select  selected = 0
         , Refno
         , Color
         , SizeSpec
+        , [Tone] = Tone.val
 into    #tmpDetailResult
 from    #tmp  
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID 
                                                 and fi.seq1 = Inventoryseq1 
                                                 and fi.seq2 = InventorySEQ2 
                                                 and fi.StockType = 'I'
+outer apply(select [val] = isnull(max(Tone), '')
+            from FIR f with (nolock)
+            inner join FIR_Shadebone  fs with (nolock) on fs.ID = f.ID
+            where   f.POID = fi.POID and
+                    f.Seq1 = fi.Seq1 and
+                    f.Seq2 = fi.Seq2 and
+                    fs.Roll = fi.Roll and
+                    fs.Dyelot = fi.Dyelot) Tone
 where fi.Lock = 0
 Order by GroupQty desc, Dyelot, StockBalance desc
 
@@ -282,6 +292,7 @@ select  selected = cast(0 as bit)
         , Refno
         , Color
         , SizeSpec
+        , Tone
 into    #tmpDetail
 from    #tmpDetailResult
 where   StockBalance > 0
@@ -299,9 +310,10 @@ select  selected
         , TaipeiLastOutput
         , TaipeiOutput
         , [TotalTransfer] = 0.00
+        , Tone
 from    #tmpDetail
 group by selected, ToPOID, ToSeq1, ToSeq2, ToFactory, InventoryPOID, Inventoryseq1, InventorySEQ2
-        , FabricType, StockUnit, TaipeiLastOutput, TaipeiOutput               
+        , FabricType, StockUnit, TaipeiLastOutput, TaipeiOutput, Tone           
 order by ToPOID, ToSeq1, ToSeq2;
 
 select  *
