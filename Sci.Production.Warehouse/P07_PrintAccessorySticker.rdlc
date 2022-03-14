@@ -9,7 +9,7 @@
               <Width>2.53552cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>7.36448cm</Width>
+              <Width>6.32948cm</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -38,7 +38,6 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox16</rd:DefaultName>
-                          <Left>0cm</Left>
                           <Height>1.1cm</Height>
                           <Width>2.53552cm</Width>
                           <Style>
@@ -73,7 +72,7 @@
                               <Value>=Fields!POID.Value</Value>
                               <Style>
                                 <FontFamily>微軟正黑體</FontFamily>
-                                <FontSize>18pt</FontSize>
+                                <FontSize>16pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -97,7 +96,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>1.1cm</Height>
+              <Height>0.87cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -147,7 +146,7 @@
                               <Value>=Fields!SEQ.Value</Value>
                               <Style>
                                 <FontFamily>微軟正黑體</FontFamily>
-                                <FontSize>14pt</FontSize>
+                                <FontSize>12pt</FontSize>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -170,7 +169,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>1.1cm</Height>
+              <Height>0.985cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -220,7 +219,7 @@
                               <Value>=Fields!Refno.Value</Value>
                               <Style>
                                 <FontFamily>微軟正黑體</FontFamily>
-                                <FontSize>18pt</FontSize>
+                                <FontSize>16pt</FontSize>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -243,7 +242,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>1.1cm</Height>
+              <Height>0.985cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -293,7 +292,7 @@
                               <Value>=Fields!Color.Value</Value>
                               <Style>
                                 <FontFamily>微軟正黑體</FontFamily>
-                                <FontSize>14pt</FontSize>
+                                <FontSize>12pt</FontSize>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -316,7 +315,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>1.1cm</Height>
+              <Height>0.985cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -366,7 +365,7 @@
                               <Value>=Fields!SizeSpec.Value</Value>
                               <Style>
                                 <FontFamily>微軟正黑體</FontFamily>
-                                <FontSize>14pt</FontSize>
+                                <FontSize>12pt</FontSize>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -389,7 +388,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>1.1cm</Height>
+              <Height>0.985cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -439,7 +438,7 @@
                               <Value>=Fields!Packages.Value</Value>
                               <Style>
                                 <FontFamily>微軟正黑體</FontFamily>
-                                <FontSize>14pt</FontSize>
+                                <FontSize>12pt</FontSize>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -462,7 +461,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>1.1cm</Height>
+              <Height>0.985cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -535,7 +534,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>1.1cm</Height>
+              <Height>0.985cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -608,7 +607,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>1.1cm</Height>
+              <Height>0.985cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -658,7 +657,7 @@
                               <Value>=Fields!Remark.Value</Value>
                               <Style>
                                 <FontFamily>微軟正黑體</FontFamily>
-                                <FontSize>14pt</FontSize>
+                                <FontSize>12pt</FontSize>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -707,8 +706,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>DataSet1</DataSetName>
-        <Height>9.9cm</Height>
-        <Width>9.9cm</Width>
+        <Top>0.72562cm</Top>
+        <Left>0.68792cm</Left>
+        <Height>8.865cm</Height>
+        <Width>8.865cm</Width>
         <Style>
           <Border>
             <Style>Solid</Style>
