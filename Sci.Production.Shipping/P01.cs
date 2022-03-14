@@ -139,15 +139,11 @@ where o.Id = '{0}'",
 
                 this.displayVoucher.Value = string.Empty;
                 this.dateVoucherDate.Text = string.Empty;
-                this.numActAmt.Text = "0";
-                this.numExchangeRate.Text = "0";
             }
             else
             {
                 this.displayVoucher.Value = MyUtility.Convert.GetString(dt.Rows[0]["VoucherID"]);
                 this.dateVoucherDate.Text = MyUtility.Convert.GetDate(dt.Rows[0]["VoucherDate"]).HasValue ? MyUtility.Convert.GetDate(dt.Rows[0]["VoucherDate"]).Value.ToString("yyyy/MM/dd") : string.Empty;
-                this.numActAmt.Text = MyUtility.Convert.GetString(dt.Rows[0]["ActAmtUSD"]);
-                this.numExchangeRate.Text = MyUtility.Convert.GetString(dt.Rows[0]["APPExchageRate"]);
             }
 
             this.displayResponsibilityJustifcation.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Air_Prepaid_Reason' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ReasonID"])));

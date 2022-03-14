@@ -111,8 +111,8 @@ SELECT [ID] = a.ID
 	  ,iif((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder2) is null,'',LEFT((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder2),12) ) AS ForWard2N
 	  , [VoucherDate] = va.VoucherDate
 	  , [VoucherID] = va.VoucherID
-	  ,[APPExchageRate] = va.APPExchageRate
-	  ,[APPAmtUSD] = va.ActAmtUSD
+	  ,[APPExchageRate] = A.ExchangeRate
+	  ,[APPAmtUSD] = A.ActAmt
 INTO AirPP
 FROM Production.dbo.AirPP AS A
 left join Production.dbo.View_AirPP va on va.ID = A.id
