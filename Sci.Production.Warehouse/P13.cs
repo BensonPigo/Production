@@ -187,7 +187,7 @@ select id.POID,
 			    AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
 			    AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))) 
 			    ,''
-                ,dbo.getMtlDesc(id.poid,id.seq1,id.seq2,2,0)),
+                ,dbo.getMtlDesc(id.poid,id.seq1,id.seq2,2,0)) + char(10) + char(13) + 'Shade Band Tone/Grp : ' + Tone.val,
         MDesc = iif(p.FabricType='F', 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno), ''),
 	    id.Roll,
 	    id.Dyelot,
@@ -227,6 +227,14 @@ Outer apply (
 	and fi.StockType = rd.StockType
 	and p.FabricType = 'F'
 )rd
+outer apply(select [val] = isnull(max(Tone), '')
+            from FIR f with (nolock)
+            inner join FIR_Shadebone  fs with (nolock) on fs.ID = f.ID
+            where   f.POID = fi.POID and
+                    f.Seq1 = fi.Seq1 and
+                    f.Seq2 = fi.Seq2 and
+                    fs.Roll = fi.Roll and
+                    fs.Dyelot = fi.Dyelot) Tone
 Outer apply (
 	select [Weight] = SUM(td.Weight)
 		, [ActualWeight] = SUM(td.ActualWeight)

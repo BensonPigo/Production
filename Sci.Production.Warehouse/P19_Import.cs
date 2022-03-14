@@ -99,11 +99,20 @@ select  0 as selected
 											)
 		, PSD.SizeSpec
         , FI.lock
+        , [Tone] = Tone.val
 FROM FtyInventory FI WITH (NOLOCK)
 LEFT JOIN View_WH_Orders O WITH (NOLOCK) ON O.ID = FI.POID
 LEFT JOIN Factory F WITH (NOLOCK) ON F.ID = O.FactoryID
 LEFT JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID=FI.POID AND PSD.SEQ1 = FI.SEQ1 AND PSD.SEQ2=FI.SEQ2
 left join Fabric on Fabric.SCIRefno = psd.SCIRefno
+outer apply(select [val] = isnull(max(Tone), '')
+            from FIR f with (nolock)
+            inner join FIR_Shadebone  fs with (nolock) on fs.ID = f.ID
+            where   f.POID = fi.POID and
+                    f.Seq1 = fi.Seq1 and
+                    f.Seq2 = fi.Seq2 and
+                    fs.Roll = fi.Roll and
+                    fs.Dyelot = fi.Dyelot) Tone
 Where ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
         and FI.inqty - FI.outqty + FI.adjustqty - FI.ReturnQty > 0         
         and FI.stocktype = '{1}'", Env.User.Keyword, stocktype));
@@ -237,6 +246,7 @@ AND exists (select 1
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 3
                 .Text("FabricType", header: "Material Type", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 3
                 .EditText("Description", header: "Description", iseditingreadonly: true) // 4
+                .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)

@@ -114,6 +114,7 @@ select a.POID
 								else cast(iif(ISNULL(td.ActualWeight,0) > 0, td.ActualWeight, td.Weight) as varchar(20))
 							 end							
 					end
+    ,[Tone] = Tone.val
 from dbo.TransferOut_Detail a WITH (NOLOCK) 
 LEFT join dbo.PO_Supp_Detail b WITH (NOLOCK) on  b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2 and a.Dyelot = fi.Dyelot
@@ -131,6 +132,14 @@ Outer apply (
 	and fi.StockType = rd.StockType
 	and b.FabricType = 'F'
 )rd
+outer apply(select [val] = isnull(max(Tone), '')
+            from FIR f with (nolock)
+            inner join FIR_Shadebone  fs with (nolock) on fs.ID = f.ID
+            where   f.POID = fi.POID and
+                    f.Seq1 = fi.Seq1 and
+                    f.Seq2 = fi.Seq2 and
+                    fs.Roll = fi.Roll and
+                    fs.Dyelot = fi.Dyelot) Tone
 Outer apply (
 	select [Weight] = SUM(td.Weight)
 		, [ActualWeight] = SUM(td.ActualWeight)
@@ -252,6 +261,7 @@ order by Dyelot, Len(Roll), Roll
                     Roll = row1["Roll"].ToString().Trim(),
                     Dyelot = row1["Dyelot"].ToString().Trim(),
                     DESC = (MyUtility.Check.Empty(row1["DESC"]) == false) ? row1["DESC"].ToString().Trim() + Environment.NewLine + row1["ToPoid"].ToString().Trim() + Environment.NewLine + "Recv(Kg) : " + row1["RecvKG"].ToString().Trim() : "Recv(Kg) :" + row1["RecvKG"].ToString().Trim(),
+                    Tone = row1["Tone"].ToString().Trim(),
                     Stocktype = row1["stocktype"].ToString().Trim(),
                     Unit = row1["unit"].ToString().Trim(),
                     QTY = row1["QTY"].ToString().Trim(),
