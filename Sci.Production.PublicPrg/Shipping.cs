@@ -8,6 +8,7 @@ using Ict;
 using System.Data.SqlClient;
 using Sci.Win.UI;
 using Sci.Production.CallPmsAPI;
+using Newtonsoft.Json;
 
 namespace Sci.Production.PublicPrg
 {
@@ -1322,10 +1323,15 @@ and exists (select 1 from orders where id = pd.OrderID and Junk = 1)
         }
         #endregion
 
-        #region 跨Server取得ShareExpense_APP所需資料
-        public static DataTable DataTable_Packing(string SystemName, string InvNoList)
+        /// <summary>
+        /// DataTable_Packing 跨Server取得ShareExpense_APP所需資料
+        /// </summary>
+        /// <param name="systemName">systemName</param>
+        /// <param name="invNoList">invNoList</param>
+        /// <param name="dtResult">dtResult</param>
+        /// <returns>DualResult</returns>
+        public static DualResult DataTable_Packing(string systemName, string invNoList, out DataTable dtResult)
         {
-            DataTable dt;
             string sqlcmd = $@"
 select p.ID,p.INVNo, [MasterGW] = p.GW
 , [DetailGW] = pd.GW,pd.OrderID,pd.OrderShipmodeSeq
@@ -1344,7 +1350,7 @@ outer apply (
 				from PackingList_Detail 
 				where ID = p.ID
 			) TtlNW
-where p.INVNo = '{InvNoList}'
+where p.INVNo = '{invNoList}'
 ";
             List<PackingA2BWebAPI_Model.SqlPar> listPar = new List<PackingA2BWebAPI_Model.SqlPar>();
             PackingA2BWebAPI_Model.DataBySql dataBySql = new PackingA2BWebAPI_Model.DataBySql()
@@ -1353,24 +1359,25 @@ where p.INVNo = '{InvNoList}'
                 SqlParameter = listPar,
             };
 
-            DualResult result = PackingA2BWebAPI.GetDataBySql(SystemName, dataBySql, out dt);
-            if (!result)
-            {
-                return dt;
-            }
+            DualResult result = PackingA2BWebAPI.GetDataBySql(systemName, dataBySql, out dtResult);
 
-            return dt;
+            return result;
         }
-        #endregion
 
-        #region 跨Server更新ShareExpense_APP
-        public static DualResult CalculateShareExpense_APP(string ShippingAPID, string UserID, DataTable dtServer)
+        /// <summary>
+        /// CalculateShareExpense_APP 跨Server更新ShareExpense_APP
+        /// </summary>
+        /// <param name="shippingAPID">ShippingAPID</param>
+        /// <param name="userID">UserID</param>
+        /// <param name="dtServer">dtServer</param>
+        /// <returns>DualResult</returns>
+        public static DualResult CalculateShareExpense_APP(string shippingAPID, string userID, DataTable dtServer, string plFromRgCode)
         {
             DualResult result;
             string sqlcmd = $@"
-declare @ShippingAPID varchar(20) ='{ShippingAPID}'
+declare @ShippingAPID varchar(20) ='{shippingAPID}'
 DECLARE @CurrencyID VARCHAR(3) = (select CurrencyID from ShippingAP where id = @ShippingAPID)
-declare @login varchar(20) = '{UserID}'
+declare @login varchar(20) = '{userID}'
 declare @adddate DATETIME = Getdate()
 
 select se.InvNo,se.AccountID,[Amount] = sum(se.Amount)
@@ -1480,11 +1487,34 @@ set SharedAmtFactory = @SharedAmtFactory
 where ID = @ShippingAPID
 
 --drop table #InvNoSharedAmt,#PLSharedAmtStep1,#PLSharedAmt,#PLSharedAmtStep2,#tmpPackingList,#OrderSharedAmt,#OrderSharedAmtStep1,#OrderSharedAmtStep2,#source,#tmpPackingListMaster
+select AirPPID, ActAmt, ExchangeRate
+from dbo.GetAirPPAmt(@ShippingAPID, '')
 ";
-            result = MyUtility.Tool.ProcessWithDatatable(dtServer, null, sqlcmd, out DataTable data, temptablename: "#tmpPackingList");
+            result = MyUtility.Tool.ProcessWithDatatable(dtServer, null, sqlcmd, out DataTable dtAirPPAmt, temptablename: "#tmpPackingList");
+
+            if (!result)
+            {
+                return result;
+            }
+
+            // ISP20220298 更新AirPP
+            if (dtAirPPAmt.Rows.Count > 0)
+            {
+                PackingA2BWebAPI_Model.DataBySql dataBySql = new PackingA2BWebAPI_Model.DataBySql()
+                {
+                    SqlString = @"
+alter table #tmp alter column AirPPID varchar(13)
+update a set a.ActAmt = airAmt.ActAmt, a.ExchangeRate = airAmt.ExchangeRate
+from AirPP a
+inner join #tmp airAmt on airAmt.AirPPID = a.ID
+",
+                    TmpTable = JsonConvert.SerializeObject(dtAirPPAmt),
+                };
+                result = PackingA2BWebAPI.ExecuteBySql(plFromRgCode, dataBySql);
+            }
+
             return result;
         }
-        #endregion
 
         /// <summary>
         /// Order_QtyShip

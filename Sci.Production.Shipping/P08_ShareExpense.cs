@@ -548,8 +548,7 @@ where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
 
             if (this.Apflag &&
                 !this.IsReason &&
-                ConfigurationManager.AppSettings["TaipeiServer"] != string.Empty
-                        && DBProxy.Current.DefaultModuleName.Contains("PMSDB") == false)
+                DBProxy.Current.DefaultModuleName.Contains("PMSDB") == false)
             {
                 this.AppendData();
             }
@@ -697,11 +696,19 @@ and not exists(select 1 from Export where id=se.WKNo and BLNo = sa.BLNo)
                     foreach (string plFromRgCode in listPLFromRgCode)
                     {
                         // 跨Server取得ShareExpense_APP所需PackingList資料
-                        DataTable dt = Prgs.DataTable_Packing(plFromRgCode, invNos);
-                        if (dt != null && dt.Rows.Count > 0)
+                        DataTable dtA2BPacking;
+                        result = Prgs.DataTable_Packing(plFromRgCode, invNos, out dtA2BPacking);
+
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        if (dtA2BPacking.Rows.Count > 0)
                         {
                             // 將跨Serve資料更新ShareExpense_APP
-                            DualResult result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dt);
+                            DualResult result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dtA2BPacking, plFromRgCode);
 
                             if (!result2)
                             {
@@ -814,8 +821,16 @@ and sa.InvNo in ({invNos})
                 foreach (string plFromRgCode in listPLFromRgCode)
                 {
                     // 跨Server取得ShareExpense_APP所需PackingList資料
-                    DataTable dt = Prgs.DataTable_Packing(plFromRgCode, invNo);
-                    if (dt == null || dt.Rows.Count <= 0)
+                    DataTable dt;
+                    result = Prgs.DataTable_Packing(plFromRgCode, invNo, out dt);
+
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    if (dt.Rows.Count == 0)
                     {
                         continue;
                     }
@@ -1322,11 +1337,20 @@ where   ShippingAPID = '{3}'
                             foreach (string plFromRgCode in listPLFromRgCode)
                             {
                                 // 跨Server取得ShareExpense_APP所需PackingList資料
-                                DataTable dt = Prgs.DataTable_Packing(plFromRgCode, invNos);
+                                DataTable dt;
+
+                                result = Prgs.DataTable_Packing(plFromRgCode, invNos, out dt);
+
+                                if (!result)
+                                {
+                                    this.ShowErr(result);
+                                    return;
+                                }
+
                                 if (dt != null && dt.Rows.Count > 0)
                                 {
                                     // 將跨Serve資料更新ShareExpense_APP
-                                    DualResult result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dt);
+                                    DualResult result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dt, plFromRgCode);
 
                                     if (!result2)
                                     {
@@ -1605,11 +1629,19 @@ select [resultType] = 'OK',
                     foreach (string plFromRgCode in listPLFromRgCode)
                     {
                         // 跨Server取得ShareExpense_APP所需PackingList資料
-                        DataTable dt = Prgs.DataTable_Packing(plFromRgCode, invNos);
+                        DataTable dt;
+                        result = Prgs.DataTable_Packing(plFromRgCode, invNos, out dt);
+
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
                         if (dt != null && dt.Rows.Count > 0)
                         {
                             // 將跨Serve資料更新ShareExpense_APP
-                            DualResult result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dt);
+                            DualResult result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dt, plFromRgCode);
 
                             if (!result2)
                             {
