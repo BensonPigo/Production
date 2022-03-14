@@ -12,6 +12,8 @@
 
         public string DESC { get; set; }
 
+        public string Tone { get; set; }
+
         public string Stocktype { get; set; }
 
         public string Unit { get; set; }
