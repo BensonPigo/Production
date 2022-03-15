@@ -6,15 +6,15 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>2.53552cm</Width>
+              <Width>2.66781cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>6.32948cm</Width>
+              <Width>6.03219cm</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>1.1cm</Height>
+              <Height>1.13528cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -38,8 +38,8 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox16</rd:DefaultName>
-                          <Height>1.1cm</Height>
-                          <Width>2.53552cm</Width>
+                          <Height>1.13528cm</Height>
+                          <Width>2.66781cm</Width>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -96,7 +96,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.87cm</Height>
+              <Height>0.79806cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -169,7 +169,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.985cm</Height>
+              <Height>0.96667cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -242,7 +242,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.985cm</Height>
+              <Height>0.96667cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -315,7 +315,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.985cm</Height>
+              <Height>0.96667cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -388,7 +388,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.985cm</Height>
+              <Height>0.96667cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -461,7 +461,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.985cm</Height>
+              <Height>0.96667cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -534,7 +534,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.985cm</Height>
+              <Height>0.96667cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -607,7 +607,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.985cm</Height>
+              <Height>0.96667cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -706,10 +706,8 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>DataSet1</DataSetName>
-        <Top>0.72562cm</Top>
-        <Left>0.68792cm</Left>
-        <Height>8.865cm</Height>
-        <Width>8.865cm</Width>
+        <Height>8.7cm</Height>
+        <Width>8.7cm</Width>
         <Style>
           <Border>
             <Style>Solid</Style>
@@ -717,18 +715,18 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>9.9cm</Height>
+    <Height>9cm</Height>
     <Style />
   </Body>
-  <Width>9.9cm</Width>
+  <Width>9cm</Width>
   <Page>
     <PageHeight>10cm</PageHeight>
     <PageWidth>10cm</PageWidth>
     <InteractiveHeight>10cm</InteractiveHeight>
     <InteractiveWidth>10cm</InteractiveWidth>
-    <LeftMargin>0cm</LeftMargin>
+    <LeftMargin>0.8cm</LeftMargin>
     <RightMargin>0cm</RightMargin>
-    <TopMargin>0cm</TopMargin>
+    <TopMargin>0.8cm</TopMargin>
     <BottomMargin>0cm</BottomMargin>
     <ColumnSpacing>0.13cm</ColumnSpacing>
     <Style />
