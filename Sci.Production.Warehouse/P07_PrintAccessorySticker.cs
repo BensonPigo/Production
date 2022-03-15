@@ -111,6 +111,7 @@ select  r.POID,
                             Color = drPrintSticker["Color"].ToString(),
                             SizeSpec = drPrintSticker["SizeSpec"].ToString(),
                             Packages = drPrintSticker["Packages"].ToString(),
+                            Remark = drPrintSticker["Remark"].ToString(),
                         });
                 }
             }
