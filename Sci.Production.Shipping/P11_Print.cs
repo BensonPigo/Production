@@ -1,5 +1,7 @@
 ﻿using Ict;
+using Newtonsoft.Json;
 using Sci.Data;
+using Sci.Production.CallPmsAPI;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -92,6 +94,99 @@ namespace Sci.Production.Shipping
                 sqlShipperWhere += $" and bi.InvSerial <= '{this.txtInvSerTo.Text}'";
             }
 
+            #region Get A2B
+
+            string sqlGetA2BGMT = $@"
+select	bi.ID,
+		bi.InvSerial,
+		bi.BrandID,
+		[GMTBooking] = gb.ID,
+		[GMTFCRDate] = gb.FCRDate,
+		[ShipTo] = FIRST_VALUE(ccd.BIRShipTo) OVER (Partition by bi.ID ORDER BY gb.AddDate desc),
+		[DestCountry] = FIRST_VALUE(c.NameEN) OVER (Partition by bi.ID ORDER BY gb.AddDate desc),
+        gbd.PLFromRgCode,
+        [PackID] = '',
+        [GRS_WEIGHT] = 0,
+        [Qty] = 0,
+        [OrderID] = '',
+        [ShipQty] = 0
+from BIRInvoice bi with (nolock)
+inner join GMTBooking gb on bi.ID = gb.BIRID and bi.BrandID = gb.BrandID
+inner join GMTBooking_Detail gbd with (nolock) on gbd.ID = gb.ID
+inner join CustCD ccd with (nolock) on ccd.ID = gb.CustCDID and ccd.BrandID = gb.BrandID
+inner join Country c with (nolock) on c.ID = ccd.CountryID
+where	exists(select 1 from GMTBooking gbi with (nolock) where gbi.BIRID = bi.ID and gbi.BrandID = bi.BrandID {sqlInvDateWhere}) 
+		{sqlShipperWhere}
+";
+            DataTable dtA2BGMT;
+            DualResult result = DBProxy.Current.Select(null, sqlGetA2BGMT, listPar, out dtA2BGMT);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            DataTable dtA2BResult = new DataTable();
+
+            if (dtA2BGMT.Rows.Count > 0)
+            {
+                string sqlGetPackingA2B = @"
+alter table #tmp alter column [GMTBooking] varchar(25)
+
+select  t.ID,
+		t.InvSerial,
+		t.BrandID,
+		t.GMTBooking,
+		t.GMTFCRDate,
+		t.ShipTo,
+		t.DestCountry,
+        [PackID] = pl.ID,
+		[GRS_WEIGHT] = pl.GW,
+		[Qty] = pl.ShipQty,
+        pld.OrderID,
+        [ShipQty] = SUM(pld.ShipQty)
+from #tmp t
+inner join PackingList pl with (nolock) on pl.INVNo = t.GMTBooking
+inner join PackingList_Detail pld with (nolock) on pl.ID = pld.ID
+group by    t.ID,
+		    t.InvSerial,
+		    t.BrandID,
+		    t.GMTBooking,
+		    t.GMTFCRDate,
+		    t.ShipTo,
+		    t.DestCountry,
+            pl.ID,
+		    pl.GW,
+		    pl.ShipQty,
+            pld.OrderID
+";
+                foreach (var groupA2BGMT in dtA2BGMT.AsEnumerable().GroupBy(s => s["PLFromRgCode"].ToString()))
+                {
+                    PackingA2BWebAPI_Model.DataBySql dataBySql = new PackingA2BWebAPI_Model.DataBySql()
+                    {
+                        SqlString = sqlGetPackingA2B,
+                        TmpTable = JsonConvert.SerializeObject(dtA2BGMT),
+                    };
+
+                    DataTable dtA2BPAcking;
+                    result = PackingA2BWebAPI.GetDataBySql(groupA2BGMT.Key, dataBySql, out dtA2BPAcking);
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        return false;
+                    }
+
+                    dtA2BPAcking.MergeTo(ref dtA2BResult);
+                }
+            }
+            else
+            {
+                dtA2BResult = dtA2BGMT.Clone();
+            }
+
+            #endregion
+
             sqlGetData = $@"
 select	bi.ID,
 		bi.InvSerial,
@@ -111,7 +206,19 @@ inner join CustCD ccd with (nolock) on ccd.ID = gb.CustCDID and ccd.BrandID = gb
 inner join Country c with (nolock) on c.ID = ccd.CountryID
 where	exists(select 1 from GMTBooking gbi with (nolock) where gbi.BIRID = bi.ID and gbi.BrandID = bi.BrandID {sqlInvDateWhere}) 
 		{sqlShipperWhere}
-
+union
+select  distinct
+        ID,
+		InvSerial,
+		BrandID,
+		GMTBooking,
+		GMTFCRDate,
+		PackID,
+		GRS_WEIGHT,
+		Qty,
+		ShipTo,
+		DestCountry
+from #tmp
 
 --取得Std. Fty CMP
 select [PackID] = pld.ID,
@@ -121,6 +228,11 @@ into #tmpPackOrder
 from PackingList_Detail pld with (nolock)
 where exists( select 1 from #tmpBIRInvoice tbi where tbi.PackID = pld.ID)
 group by pld.ID,pld.OrderID
+union
+select  PackID,
+        OrderID,
+        ShipQty
+from #tmp
 
 select
 o.ID,
@@ -201,7 +313,7 @@ drop table #tmpBIRInvoice,#tmpPackOrder,#tmpOrderStdFtyCMP,#PackCMP
 
             DataTable dtResult;
             this.ShowWaitMessage("Excel Processing...");
-            DualResult result = DBProxy.Current.Select(null, sqlGetData, listPar, out dtResult);
+            result = MyUtility.Tool.ProcessWithDatatable(dtA2BResult, null, sqlGetData, out dtResult, paramters: listPar);
             if (!result)
             {
                 this.ShowErr(result);
@@ -267,6 +379,8 @@ drop table #tmpBIRInvoice,#tmpPackOrder,#tmpOrderStdFtyCMP,#PackCMP
                 ids.Add("'" + dr["id"] + "'");
             }
 
+            List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByMutiInvNo(ids);
+
             DataTable dt;
             string sqlcmd = $@"
 select 
@@ -317,12 +431,27 @@ where p.INVNo in({string.Join(",", ids)})
 group by o.CustPONo,o.StyleID,s.Description,o.PoPrice,o.id,o.CPU,o.CurrencyID,std.FtyCMP
 ";
             this.ShowWaitMessage("Excel Processing...");
+
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (!result)
             {
                 this.ShowErr(result);
                 this.HideWaitMessage();
                 return false;
+            }
+
+            foreach (string plFromRgCode in listPLFromRgCode)
+            {
+                DataTable dtA2B;
+                result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, sqlcmd, out dtA2B);
+
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
+
+                dtA2B.MergeTo(ref dt);
             }
             #endregion
 
@@ -384,18 +513,41 @@ where a.id = '{top1id}'
             // worksheet.Cells[48, 3] = MyUtility.Convert.USDMoney(sumI).Replace("AND CENTS", Environment.NewLine + "AND CENTS");
             worksheet.Cells[57, 3] = MyUtility.Convert.USDMoney(sumJ);
 
-            string sumGW = $@"
-select sumGW = Sum (p.GW),sumNW=sum(p.NW),sumCBM=sum(p.CBM)
+            string sqlSumGW = $@"
+select sumGW = isnull(Sum(p.GW), 0), sumNW = isnull(sum(p.NW), 0), sumCBM = isnull(sum(p.CBM), 0)
 from PackingList p with(nolock)
 where p.INVNo in ({string.Join(",", ids)})
 ";
-            DataRow drsum;
-            if (MyUtility.Check.Seek(sumGW, out drsum))
+            decimal sumGW = 0;
+            decimal sumNW = 0;
+            decimal sumCBM = 0;
+
+            foreach (string plFromRgCode in listPLFromRgCode)
             {
-                worksheet.Cells[66, 3] = drsum["sumGW"];
-                worksheet.Cells[67, 3] = drsum["sumNW"];
-                worksheet.Cells[68, 3] = drsum["sumCBM"];
+                DataRow drResult;
+                result = PackingA2BWebAPI.SeekBySql(plFromRgCode, sqlSumGW, out drResult);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
+
+                sumGW += MyUtility.Convert.GetDecimal(drResult["sumGW"]);
+                sumNW += MyUtility.Convert.GetDecimal(drResult["sumNW"]);
+                sumCBM += MyUtility.Convert.GetDecimal(drResult["sumCBM"]);
             }
+
+            DataRow drsum;
+            if (MyUtility.Check.Seek(sqlSumGW, out drsum))
+            {
+                sumGW += MyUtility.Convert.GetDecimal(drsum["sumGW"]);
+                sumNW += MyUtility.Convert.GetDecimal(drsum["sumNW"]);
+                sumCBM += MyUtility.Convert.GetDecimal(drsum["sumCBM"]);
+            }
+
+            worksheet.Cells[66, 3] = sumGW;
+            worksheet.Cells[67, 3] = sumNW;
+            worksheet.Cells[68, 3] = sumCBM;
 
             worksheet.Cells[63, 10] = sumJ;
             worksheet.Cells[65, 10] = 0;
