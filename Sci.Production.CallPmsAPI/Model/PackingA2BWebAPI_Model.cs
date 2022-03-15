@@ -247,7 +247,7 @@ namespace Sci.Production.CallPmsAPI
                 return;
             }
 
-            if (sourceDt == null)
+            if (sourceDt == null || (sourceDt.Rows.Count == 0 && sourceDt.Columns.Count == 0))
             {
                 sourceDt = targetDt;
                 return;
