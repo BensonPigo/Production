@@ -545,6 +545,12 @@ Begin
 			,pd.SCICtnNo
 		from #tmpCompletePullout s
 		inner join Production.dbo.PackingList_Detail pd on s.SCICtnNo=pd.SCICtnNo
+		inner join Production.dbo.PackingList p on p.ID = pd.ID
+		where	pd.ReceiveDate is not null and
+				pd.TransferCFADate is null and
+				pd.CFAReturnClogDate is null and
+				pd.DisposeFromClog = 0 and
+				p.PLCtnTrToRgCodeDate is null
 
 		-- Clog P12
 		update pd
@@ -554,14 +560,26 @@ Begin
 				,pd.PulloutTransportNo = t.TruckNo
 		from #tmpCompletePullout t
 		inner join Production.dbo.PackingList_Detail pd on t.SCICtnNo = pd.SCICtnNo 
+		inner join Production.dbo.PackingList p on p.ID = pd.ID
+		where	pd.ReceiveDate is not null and
+				pd.TransferCFADate is null and
+				pd.CFAReturnClogDate is null and
+				pd.DisposeFromClog = 0 and
+				p.PLCtnTrToRgCodeDate is null
 
 		update t
 			set t.SCIUpdate=1
 		from CompletePullout t
 		inner join #tmpCompletePullout s on t.ID=s.ID
 		inner join Production.dbo.PackingList_Detail pd on s.SCICtnNo=pd.SCICtnNo
+		inner join Production.dbo.PackingList p on p.ID = pd.ID
 		inner join Production.dbo.TransferToTruck tt on tt.OrderID = pd.OrderID 
 		and tt.PackingListID = pd.ID and tt.CTNStartNo = pd.CTNStartNo
+		where	pd.ReceiveDate is not null and
+				pd.TransferCFADate is null and
+				pd.CFAReturnClogDate is null and
+				pd.DisposeFromClog = 0 and
+				p.PLCtnTrToRgCodeDate is null
 	End
 
 	-- 08 PackingList_Detail/CompleteSacnPack
