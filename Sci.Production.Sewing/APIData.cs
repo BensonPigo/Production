@@ -36,20 +36,29 @@ namespace Sci.Production.Sewing
                     string connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.EqualString(nowConnection)).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("PamsAPIuri")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
 
                     Uri uri = new Uri(connections + apiParemeter);
-                    var json = client.DownloadString(uri);
+                    MyWebClient mwc = new MyWebClient();
+                    var json = mwc.DownloadString(uri);
 
                     dataMode = JsonConvert.DeserializeObject<List<APIData>>(json);
-
-                    // dataMode = JsonConvert.DeserializeObject<APIData>(json);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 dataMode = null;
                 return false;
             }
 
             return true;
+        }
+    }
+
+    public class MyWebClient : WebClient
+    {
+        protected override WebRequest GetWebRequest(Uri uri)
+        {
+            WebRequest wr = base.GetWebRequest(uri);
+            wr.Timeout = 5 * 60 * 1000; // 5分鐘
+            return wr;
         }
     }
 
