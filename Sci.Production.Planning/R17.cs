@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Sci.Data;
 using Sci.Production.Class;
+using Sci.Utility.Excel;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
@@ -321,6 +322,15 @@ SELECT
                          WHEN pd.FailQty is null and packFailQty.val is null and packOnTimeQty.val is null then Cast(t.OrderQty as int)
                          Else Cast(isnull(pd.FailQty, isnull(packFailQty.val, 0)) as int)
              End
+        , CTNOnTimeQty = Case When t.GMTComplete = 'S' and ctnr.CTNLastReceiveDate is null then Cast(0 as int)
+                              When GetCTNFail.isFail = 0 Then Cast(t.OrderQty as int)
+                              Else Cast(0 as int)
+                         End
+
+        , CTNFailQty = Case When t.GMTComplete = 'S' and ctnr.CTNLastReceiveDate is null then Cast(0 as int)
+                              When GetCTNFail.isFail = 1 Then Cast(t.OrderQty as int)
+                              Else Cast(0 as int)
+                         End
         ,pullOutDate = isnull(iif(isnull(t.isDevSample,0) = 1, CONVERT(char(10), pd2.PulloutDate, 20), CONVERT(char(10), p.PulloutDate, 111)), packPulloutDate.val)
 		,Shipmode = t.ShipmodeID
 		,P = (select count(1)from(select distinct ID,OrderID,OrderShipmodeSeq from Pullout_Detail p2 where p2.OrderID = t.OrderID and p2.ShipQty > 0)x )  --未出貨,出貨次數=0 --不論這OrderID的OrderShipmodeSeq有沒有被撈出來, 都要計算
@@ -410,6 +420,10 @@ outer apply (
 outer apply (
     Select isFail = iif(sew.SewLastDate > t.{kpiDate}, 1, 0)
 ) GetOnsiteSampleFail
+-----------------------------------
+outer apply(
+    Select isFail = iif(ctnr.CTNLastReceiveDate > t.{kpiDate}, 1, 0)
+) as GetCTNFail
 ----------------End----------------
 where t.OrderQty > 0 
 -----End-------
@@ -433,6 +447,8 @@ SELECT
     , OrderQty = 0
     , OnTimeQty =  0
     , FailQty = Cast(isnull(t.OrderQty - (pd.Qty + pd.FailQty),0) as int) --未出貨Qty
+    , CTNOnTimeQty = 0
+    , CTNFailQty = 0
     , pullOutDate = null
     , Shipmode = t.ShipModeID
     ,P =0 --未出貨,出貨次數=0
@@ -512,8 +528,34 @@ drop table #tmp_Pullout_Detail_p,#tmp_Pullout_Detail_pd,#tmp_Pullout_Detail,#tmp
                 #endregion Order Detail
 
                 #region SDP
-                strSQL = @" SELECT  '' AS Country ,  '' AS Factory, 0 AS OrderQty, 0 AS OnTimeQty, 0 AS FailQty, 0.00 AS SDP, '' AS MDivisionID FROM Orders WHERE 1 = 0 ";
-                result = DBProxy.Current.Select(null, strSQL, null, out this.gdtSDP);
+                strSQL = @" 
+Select 
+ [Country] = cc.CountryID
+, [MDivisionID] = cc.MDivisionID
+, [Factory] = cc.FactoryID
+, [OrderQty] = cc.OrderQty
+, cc.OnTimeQty
+, cc.FailQty
+, [SDP] = cast(OnTimeQty as float) / (cast(OnTimeQty as float) + cast(FailQty as float)) --[IST20190675] 調整SDP計算,OnTimeQty / (OnTimeQty + FailQty)
+, isPass = iif(cast(OnTimeQty as float) / (cast(OnTimeQty as float) + cast(FailQty as float)) > 0.970, 'PASS', 'FAIL') 
+, [SDP% (Clog Rec)] = cast(CTNOnTimeQty as float) / (cast(CTNOnTimeQty as float) + cast(CTNFailQty as float))
+, isPassClogRec = iif(cast(CTNOnTimeQty as float) / (cast(CTNOnTimeQty as float) + cast(CTNFailQty as float)) > 0.970, 'PASS', 'FAIL') 
+From (
+    Select tmpSDP.CountryID
+    , tmpSDP.MDivisionID
+    , tmpSDP.FactoryID
+    , OrderQty = sum(tmpSDP.OrderQty) 
+    , OnTimeQty = sum(tmpSDP.OnTimeQty)
+    , FailQty = sum(tmpSDP.FailQty)
+    , CTNOnTimeQty = sum(tmpSDP.CTNOnTimeQty)
+    , CTNFailQty = sum(tmpSDP.CTNFailQty)
+    From #tmp tmpSDP
+    Group by Rollup(tmpSDP.CountryID,tmpSDP.MDivisionID, tmpSDP.FactoryID)
+) cc
+where (cc.MDivisionID is not null) 
+or (cc.CountryID is null and cc.FactoryID is null and cc.MDivisionID is null)
+";
+                result = MyUtility.Tool.ProcessWithDatatable(this.gdtOrderDetail, string.Empty, strSQL, out this.gdtSDP);
                 if (!result)
                 {
                     return result;
@@ -537,6 +579,8 @@ SELECT  '' AS CountryID
 ,  0 AS OrderQty
 ,  0 AS OnTimeQty
 ,  0 AS FailQty
+,  CTNOnTimeQty = 0
+,  CTNFailQty = 0
 , '' AS pullOutDate
 , '' AS Shipmode
 , '' AS P
@@ -693,35 +737,6 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 for (int intIndex = 0; intIndex < this.gdtOrderDetail.Rows.Count; intIndex++)
                 {
                     DataRow drData = this.gdtOrderDetail.Rows[intIndex];
-
-                    #region Calc SDP Data
-                    int intIndex_SDP = lstSDP.IndexOf(drData["KPICode"].ToString() + "___" + drData["Alias"].ToString()); // A
-                    DataRow drSDP;
-                    if (intIndex_SDP < 0)
-                    {
-                        drSDP = this.gdtSDP.NewRow();
-                        drSDP["Country"] = drData["KPICode"].ToString();
-                        drSDP["Factory"] = drData["Alias"].ToString(); // A
-                        drSDP["MDivisionID"] = drData["MDivisionID"].ToString(); // A
-                        this.gdtSDP.Rows.Add(drSDP);
-                        lstSDP.Add(drData["KPICode"].ToString() + "___" + drData["Alias"].ToString()); // A
-                    }
-                    else
-                    {
-                        drSDP = this.gdtSDP.Rows[intIndex_SDP];
-                    }
-
-                    drSDP["OrderQty"] = (drSDP["OrderQty"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["OrderQty"].ToString()) : 0) + (drData["OrderQty"].ToString() != string.Empty ? Convert.ToDecimal(drData["OrderQty"].ToString()) : 0);
-                    drSDP["OnTimeQty"] = (drSDP["OnTimeQty"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["OnTimeQty"].ToString()) : 0) + (drData["OnTimeQty"].ToString() != string.Empty ? Convert.ToDecimal(drData["OnTimeQty"].ToString()) : 0);
-                    drSDP["FailQty"] = (drSDP["FailQty"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["FailQty"].ToString()) : 0) + (drData["FailQty"].ToString() != string.Empty ? Convert.ToDecimal(drData["FailQty"].ToString()) : 0);
-
-                    // SDP(%)
-                    // drSDP["SDP"] = drSDP["OrderQty"].ToString() == "0" ? 0 : Convert.ToDecimal(drSDP["OnTimeQty"].ToString()) / Convert.ToDecimal(drSDP["OrderQty"].ToString()) * 100;
-                    drSDP["SDP"] = (Convert.ToDecimal(drSDP["OnTimeQty"].ToString()) + Convert.ToDecimal(drSDP["FailQty"].ToString())) == 0 ?
-                        0 : Convert.ToDecimal(drSDP["OnTimeQty"].ToString()) / (Convert.ToDecimal(drSDP["OnTimeQty"].ToString()) + Convert.ToDecimal(drSDP["FailQty"].ToString()));
-
-                    #endregion Calc SDP Data
-
                     #region Calc Fail Order List by SP Data
 
                     // By SP# 明細, group by SPNO 顯示
@@ -850,18 +865,15 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
             try
             {
                 Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-
-                // order by M
-                this.gdtSDP = this.gdtSDP.AsEnumerable().OrderBy(s => s["MDivisionID"]).CopyToDataTable();
+                excel.DisplayAlerts = false; // 關閉Excel的警告視窗是否彈出
 
                 int intRowsCount = this.gdtSDP.Rows.Count;
                 int intRowsStart = 2; // 匯入起始位置
                 int mdivisionRowsStart = intRowsStart;
                 int preRowsStart = intRowsStart;
                 int rownum = intRowsStart; // 每筆資料匯入之位置
-                int intColumns = 7; // 匯入欄位數
                 string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM" };
-                object[,] objArray = new object[1, intColumns]; // 每列匯入欄位區間
+
                 #region 將資料放入陣列並寫入Excel範例檔
 
                 Dictionary<string, string> db_ExcelColumn = new Dictionary<string, string>();
@@ -882,28 +894,30 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 db_ExcelColumn.Add("L", "OrderQty");
                 db_ExcelColumn.Add("M", "OnTimeQty");
                 db_ExcelColumn.Add("N", "FailQty");
-                db_ExcelColumn.Add("O", "pullOutDate");
-                db_ExcelColumn.Add("P", "Shipmode");
-                db_ExcelColumn.Add("Q", "P");
-                db_ExcelColumn.Add("R", "GMTComplete");
-                db_ExcelColumn.Add("S", "ReasonID");
-                db_ExcelColumn.Add("T", "ReasonName");
-                db_ExcelColumn.Add("U", "SewLastDate");
-                db_ExcelColumn.Add("V", "CTNLastReceiveDate");
-                db_ExcelColumn.Add("W", "IDDReason");
-                db_ExcelColumn.Add("X", "OutsdReason");
-                db_ExcelColumn.Add("Y", "ReasonRemark");
-                db_ExcelColumn.Add("Z", "MR");
-                db_ExcelColumn.Add("AA", "SMR");
-                db_ExcelColumn.Add("AB", "POHandle");
-                db_ExcelColumn.Add("AC", "POSMR");
-                db_ExcelColumn.Add("AD", "OrderTypeID");
-                db_ExcelColumn.Add("AE", "isDevSample");
-                db_ExcelColumn.Add("AF", "FOC");
-                db_ExcelColumn.Add("AG", "CFAFinalInspectDate");
-                db_ExcelColumn.Add("AH", "CFAFinalInspectResult");
-                db_ExcelColumn.Add("AI", "CFA3rdInspectDate");
-                db_ExcelColumn.Add("AJ", "CFA3rdInspectResult");
+                db_ExcelColumn.Add("O", "CTNOnTimeQty");
+                db_ExcelColumn.Add("P", "CTNFailQty");
+                db_ExcelColumn.Add("Q", "pullOutDate");
+                db_ExcelColumn.Add("R", "Shipmode");
+                db_ExcelColumn.Add("S", "P");
+                db_ExcelColumn.Add("T", "GMTComplete");
+                db_ExcelColumn.Add("U", "ReasonID");
+                db_ExcelColumn.Add("V", "ReasonName");
+                db_ExcelColumn.Add("W", "SewLastDate");
+                db_ExcelColumn.Add("X", "CTNLastReceiveDate");
+                db_ExcelColumn.Add("Y", "IDDReason");
+                db_ExcelColumn.Add("Z", "OutsdReason");
+                db_ExcelColumn.Add("AA", "ReasonRemark");
+                db_ExcelColumn.Add("AB", "MR");
+                db_ExcelColumn.Add("AC", "SMR");
+                db_ExcelColumn.Add("AD", "POHandle");
+                db_ExcelColumn.Add("AE", "POSMR");
+                db_ExcelColumn.Add("AF", "OrderTypeID");
+                db_ExcelColumn.Add("AG", "isDevSample");
+                db_ExcelColumn.Add("AH", "FOC");
+                db_ExcelColumn.Add("AI", "CFAFinalInspectDate");
+                db_ExcelColumn.Add("AJ", "CFAFinalInspectResult");
+                db_ExcelColumn.Add("AK", "CFA3rdInspectDate");
+                db_ExcelColumn.Add("AL", "CFA3rdInspectResult");
 
                 orderDetail_ExcelColumn.Add("A", "CountryID");
                 orderDetail_ExcelColumn.Add("B", "KPICode");
@@ -972,81 +986,61 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 for (int i = 0; i < intRowsCount; i += 1)
                 {
                     DataRow dr = this.gdtSDP.Rows[i];
-                    for (int k = 0; k < intColumns; k++)
+                    worksheet.Range[$"A{i + 2}:A{i + 2}"].Value = dr["Country"];
+                    worksheet.Range[$"B{i + 2}:B{i + 2}"].Value = dr["Factory"];
+                    worksheet.Range[$"C{i + 2}:C{i + 2}"].Value = dr["OrderQty"];
+                    worksheet.Range[$"D{i + 2}:D{i + 2}"].Value = dr["OnTimeQty"];
+                    worksheet.Range[$"E{i + 2}:E{i + 2}"].Value = dr["FailQty"];
+                    worksheet.Range[$"F{i + 2}:F{i + 2}"].Value = dr["SDP"];
+                    worksheet.Range[$"G{i + 2}:G{i + 2}"].Value = dr["isPass"];
+                    worksheet.Range[$"H{i + 2}:H{i + 2}"].Value = dr["SDP% (Clog Rec)"];
+                    worksheet.Range[$"I{i + 2}:I{i + 2}"].Value = dr["isPassClogRec"];
+
+                    if (worksheet.Cells[i + 2, 6].Value < 0.97)
                     {
-                        objArray[0, k] = string.Empty;
+                        worksheet.Cells[i + 2, 7].Font.Color = Color.Red;
                     }
 
-                    objArray[0, 0] = dr["Factory"];
-                    objArray[0, 1] = dr["Country"];
-                    objArray[0, 2] = dr["OrderQty"];
-                    objArray[0, 3] = dr["OnTimeQty"];
-                    objArray[0, 4] = dr["FailQty"];
-                    objArray[0, 5] = dr["SDP"];
-                    objArray[0, 6] = MyUtility.Convert.GetDouble(dr["SDP"]) >= 0.97 ? "PASS" : "FAIL";
-
-                    worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Value2 = objArray;
-
-                    // insert by Mdivision Summary data
-                    string nextMdisvision = string.Empty;
-                    if ((i + 1) < intRowsCount)
+                    if (worksheet.Cells[i + 2, 8].Value < 0.97)
                     {
-                        nextMdisvision = (string)this.gdtSDP.Rows[i + 1]["MdivisionID"];
-                    }
-
-                    // 一個M的資料寫完，開始加總綠色那一列
-                    if ((string)dr["MdivisionID"] != nextMdisvision)
-                    {
-                        objArray[0, 0] = string.Empty;
-                        objArray[0, 1] = string.Empty;
-                        objArray[0, 2] = $"=SUM(C{mdivisionRowsStart}:C{rownum + i})";
-                        objArray[0, 3] = $"=SUM(D{mdivisionRowsStart}:D{rownum + i})";
-                        objArray[0, 4] = $"=SUM(E{mdivisionRowsStart}:E{rownum + i})";
-
-                        // 綠色列的位置記下來，最後在黃色列的公式寫入
-                        mSummaryRow.Add((rownum + i + 1).ToString());
-
-                        rownum++;
-
-                        // objArray[0, 5] = "=" + string.Format("D{0}/IF(C{0}=0, 1,C{0})*100", rownum + i);
-                        objArray[0, 5] = "=" + string.Format("D{0}/IF(D{0}+E{0}=0, 1,D{0}+E{0})", rownum + i);
-
-                        objArray[0, 6] = MyUtility.Convert.GetDouble(dr["SDP"]) >= 0.97 ? "PASS" : "FAIL";
-                        worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Value2 = objArray;
-                        worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Interior.Color = Color.FromArgb(204, 255, 204);
-                        worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Font.Bold = true;
-                        worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = 1;
-                        mdivisionRowsStart = rownum + i + 1;
+                        worksheet.Cells[i + 2, 9].Font.Color = Color.Red;
                     }
                 }
 
-                // 黃色那一列的大總結
-                if (intRowsCount > 0)
+                int cntColumn = this.gdtSDP.Columns.Count;
+                int cntRow = this.gdtSDP.Rows.Count;
+                string colName = string.Empty;
+
+                worksheet.Range[$"G1:G{cntRow}"].Interior.Color = Color.FromArgb(254, 255, 146); // 底色
+                worksheet.Range[$"G1:G{cntRow + 1}"].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlContinuous;
+                worksheet.Range[$"I1:I{cntRow}"].Interior.Color = Color.FromArgb(254, 255, 146); // 底色
+                worksheet.Range[$"I1:I{cntRow + 1}"].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlContinuous;
+                worksheet.Range["F:F"].ColumnWidth = 9;
+                worksheet.Range["H:H"].ColumnWidth = 9;
+                for (int index = 2; index <= cntRow + 1; index++)
                 {
-                    worksheet.Range[string.Format("A{0}:A{0}", rownum + intRowsCount)].Value2 = "G. TTL.";
-                    worksheet.Range[string.Format("A{0}:A{0}", rownum + intRowsCount + 2)].Value2 = "* SDP=On time Qty / (On time Qty+Delay Qty)";
-                    worksheet.Range[string.Format("A{0}:G{0}", rownum + intRowsCount + 2)].Merge(false);
-                    worksheet.Range[string.Format("C{0}:C{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("C{0}:C{1}", 2, rownum + intRowsCount - 1) + ")";
-                    worksheet.Range[string.Format("D{0}:D{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("D{0}:D{1}", 2, rownum + intRowsCount - 1) + ")";
-                    worksheet.Range[string.Format("E{0}:E{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("E{0}:E{1}", 2, rownum + intRowsCount - 1) + ")";
-
-                    worksheet.Range[string.Format("C{0}:C{0}", rownum + intRowsCount)].Formula = "=C" + mSummaryRow.JoinToString("+C");
-                    worksheet.Range[string.Format("D{0}:D{0}", rownum + intRowsCount)].Formula = "=D" + mSummaryRow.JoinToString("+D");
-                    worksheet.Range[string.Format("E{0}:E{0}", rownum + intRowsCount)].Formula = "=E" + mSummaryRow.JoinToString("+E");
-
-                    // worksheet.Range[string.Format("F{0}:F{0}", rownum + intRowsCount)].Formula = "=" + string.Format("D{0}/IF(C{0}=0, 1,C{0})*100", rownum + intRowsCount);
-                    worksheet.Range[string.Format("F{0}:F{0}", rownum + intRowsCount)].Formula = "=" + string.Format("D{0}/IF(D{0}+E{0}=0, 1,D{0}+E{0})", rownum + intRowsCount);
-
-                    worksheet.Cells[rownum + intRowsCount, 7] = $"=IF(F{rownum + intRowsCount}>=0.97,\"PASS\",\"FAIL\")";
-                    worksheet.Range[string.Format("A{0}:G{0}", rownum + intRowsCount)].Borders[Excel.XlBordersIndex.xlEdgeTop].LineStyle = 1;
-                    worksheet.Range[string.Format("A{0}:G{0}", rownum + intRowsCount)].Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = 1;
-                    worksheet.Range[string.Format("A{0}:G{0}", rownum + intRowsCount)].Interior.Color = Color.FromArgb(255, 255, 1);
-                    worksheet.Range[string.Format("A{0}:G{0}", rownum + intRowsCount)].Font.Bold = true;
+                    if (MyUtility.Check.Empty((string)worksheet.Cells[index, 2].Value))
+                    {
+                        worksheet.Cells[index, 1].Value = string.Empty;
+                        colName = MyExcelPrg.GetExcelColumnName(index);
+                        worksheet.Range[$"A{index}:F{index}"].Interior.Color = Color.FromArgb(204, 255, 204); // 底色
+                        worksheet.Range[$"H{index}:H{index}"].Interior.Color = Color.FromArgb(204, 255, 204); // 底色
+                        worksheet.Range[$"A{index}:I{index}"].Font.Bold = true;
+                        worksheet.Range[$"A{index}:I{index}"].Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlContinuous;
+                    }
                 }
 
-                worksheet.Range[string.Format("G1:G{0}", rownum + intRowsCount)].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = 1;
-                worksheet.Range[string.Format("G1:G{0}", rownum + intRowsCount)].Borders[Excel.XlBordersIndex.xlEdgeRight].LineStyle = 1;
-                worksheet.Range[string.Format("G1:G{0}", rownum + intRowsCount - 1)].Interior.Color = Color.FromArgb(254, 255, 146);
+                worksheet.Cells[cntRow + 1, 1].Value = "G. TTL.";
+                worksheet.Range[$"A{cntRow + 1}:I{cntRow + 1}"].Interior.Color = Color.FromArgb(255, 255, 1); // 黃色底色
+                worksheet.Range[$"A1:I{cntRow + 1}"].Borders[Excel.XlBordersIndex.xlEdgeTop].LineStyle = Excel.XlLineStyle.xlContinuous;
+                worksheet.Range[$"A1:I{cntRow + 1}"].Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlContinuous;
+                worksheet.Range[$"A1:I{cntRow + 1}"].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlContinuous;
+                worksheet.Range[$"A1:I{cntRow + 1}"].Borders[Excel.XlBordersIndex.xlEdgeRight].LineStyle = Excel.XlLineStyle.xlContinuous;
+
+                // 調整後Qty與OnTimeQty + FailQty會有差異,差異的部分即是短交數
+                worksheet.Cells[cntRow + 3, 1].Value = "* SDP=On time Qty / (On time Qty+Delay Qty)";
+                worksheet.Range[$"A{cntRow + 3}:G{cntRow + 3}"].Merge();
+
                 worksheet.Columns.AutoFit();
                 #endregion
 
@@ -1055,7 +1049,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 {
                     worksheet = excel.ActiveWorkbook.Worksheets[2];
                     worksheet.Name = "Fail Order List by SP";
-                    string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode ", "Order Qty", "On Time Qty", "Fail Qty", "Fail PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Last Sewing Output Date", "Last Carton Received Date", "IDD Reason", "Outstanding Reason", "Reason Remark", "Handle", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample", "FOC Qty", "CFA Inspection Date", "CFA final inspection result", "3rd party Inspection date", "3rd party insp. Result" };
+                    string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode ", "Order Qty", "On Time Qty", "Fail Qty", "On Time Qty(Clog rec)", "Fail Qty(Clog rec)", "Fail PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Last Sewing Output Date", "Last Carton Received Date", "IDD Reason", "Outstanding Reason", "Reason Remark", "Handle", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample", "FOC Qty", "CFA Inspection Date", "CFA final inspection result", "3rd party Inspection date", "3rd party insp. Result" };
                     object[,] objArray_1 = new object[1, aryTitles.Length];
                     for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                     {
