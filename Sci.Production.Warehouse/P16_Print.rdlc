@@ -30,7 +30,7 @@
               <Width>1.52381cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.82026cm</Width>
+              <Width>2.50276cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>2.35834cm</Width>
@@ -993,8 +993,9 @@
         <RepeatRowHeaders>true</RepeatRowHeaders>
         <KeepTogether>true</KeepTogether>
         <DataSetName>DataSet1</DataSetName>
+        <Left>0.3175cm</Left>
         <Height>2.14396cm</Height>
-        <Width>20.74488cm</Width>
+        <Width>20.42738cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
