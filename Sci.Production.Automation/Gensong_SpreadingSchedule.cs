@@ -138,7 +138,7 @@ namespace Sci.Production.Automation
             automationErrMsg.suppAPIThread = suppAPIThread;
             automationErrMsg.json = JsonConvert.SerializeObject(apiQueryString);
 
-            SaveAutomationTransRecord(automationErrMsg);
+            SaveAutomationTransRecord(automationErrMsg, false);
 
             WebApiBaseResult webApiBaseResult;
             webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(UtilityAutomation.GetSupplierUrl(GensongSuppID, moduleName), suppAPIThread, string.Empty, 600, queryStrings: apiQueryString);

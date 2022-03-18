@@ -4,10 +4,12 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Sci.Data;
 using Sci.Production.Prg;
 using static AutomationErrMsg;
@@ -144,8 +146,8 @@ namespace Sci.Production.Automation
         /// Save Automation Check Msg
         /// </summary>
         /// <param name="automationErrMsg">Automation Err Msg</param>
-        /// <param name="status">status</param>
-        public static long SaveAutomationTransRecord(AutomationErrMsg automationErrMsg)
+        /// <param name="isAutoWH">isAutoWH</param>
+        public static long SaveAutomationTransRecord(AutomationErrMsg automationErrMsg, bool isAutoWH = true)
         {
             string saveSql = $@"
 insert into AutomationTransRecord(
@@ -176,6 +178,36 @@ declare @ID bigint = (select @@IDENTITY)
 select ID = @ID
 ";
             Dictionary<string, string> requestHeaders = GetCustomHeaders();
+            string strSimpleJson = automationErrMsg.json;
+
+            if (isAutoWH)
+            {
+                #region Get simple Json Data
+
+                Dictionary<string, object> resultDictionary = new Dictionary<string, object>();
+                #region 取得原始Json
+                string strJson = automationErrMsg.json;
+                int startIndex = strJson.LastIndexOf("[");
+                int endIndex = strJson.LastIndexOf("]");
+                int jsonLength = endIndex - startIndex;
+                string oriJson = strJson.Substring(startIndex, jsonLength + 1);
+
+                string strTableName = strJson.Substring(strJson.IndexOf("[") + 2, strJson.IndexOf("]") - strJson.IndexOf("[") - 3);
+                #endregion
+
+                // 取得Json的Status
+                DataTable dtJson = (DataTable)JsonConvert.DeserializeObject(oriJson, typeof(DataTable));
+                dynamic bodyObject = new ExpandoObject();
+                bodyObject = dtJson.AsEnumerable()
+                    .Select(dr => new
+                    {
+                        ID = dr["ID"].ToString(),
+                    });
+
+                strSimpleJson = JsonConvert.SerializeObject(CreateGensongStructure(strTableName, bodyObject));
+
+                #endregion
+            }
 
             List<SqlParameter> listPar = new List<SqlParameter>()
             {
@@ -184,7 +216,7 @@ select ID = @ID
                new SqlParameter("@SuppID", automationErrMsg.suppID),
                new SqlParameter("@ModuleName", automationErrMsg.moduleName),
                new SqlParameter("@SuppAPIThread", automationErrMsg.suppAPIThread),
-               new SqlParameter("@JSON", automationErrMsg.json),
+               new SqlParameter("@JSON", strSimpleJson),
                new SqlParameter("@TransJson", automationErrMsg.json),
                new SqlParameter("@AddName", Env.User.UserID),
             };
@@ -197,6 +229,22 @@ select ID = @ID
             }
 
             return MyUtility.Convert.GetLong(dt.Rows[0]["ID"]);
+        }
+
+        public static object CreateGensongStructure(string tableName, object structureID)
+        {
+            Dictionary<string, object> resultObj = new Dictionary<string, object>
+            {
+                { "TableArray", new string[] { tableName } },
+            };
+
+            Dictionary<string, object> dataStructure = new Dictionary<string, object>
+            {
+                { tableName, structureID },
+            };
+            resultObj.Add("DataTable", dataStructure);
+
+            return resultObj;
         }
 
         /// <summary>
