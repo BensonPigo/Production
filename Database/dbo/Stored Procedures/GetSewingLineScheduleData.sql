@@ -1,5 +1,5 @@
 ﻿
-CREATE PROCEDURE  [dbo].[GetSewingLineScheduleData]
+Create PROCEDURE  [dbo].[GetSewingLineScheduleData]
 	@Inline DATE = null,
 	@Offline DATE = null,
 	@Line1 varchar(10) = '',
@@ -394,10 +394,10 @@ o.Category,
 o.SCIDelivery,
 oq.MaxBuyerDelivery,
 oq.MinBuyerDelivery,
-[BrandID] = o.BrandID
-,s.OrderID
+[BrandID] = o.BrandID,
+s.OrderID
 from SewingSchedule s with (nolock)
-inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
+inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID 
 outer apply(select MaxBuyerDelivery = max(oq.BuyerDelivery), MinBuyerDelivery = min(oq.BuyerDelivery) from Order_QtyShip oq where oq.id = o.id) oq
 left join @tmpOrderArtwork oa on oa.StyleID = o.StyleID
 left join Country c WITH (NOLOCK) on o.Dest = c.ID 
@@ -405,6 +405,45 @@ where exists( select 1 from @APSList where APSNo = s.APSNo)
 and (@subprocess = '' or
 	(@subprocess<> '' 
 	and exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and st.ArtworkTypeID = @subprocess AND (st.Qty>0 or st.TMS>0 and st.Price>0) ) ))
+
+
+declare @StyleArtwork TABLE(
+	[APSNo] [int] NULL,
+	[StyleID] [varchar](15) NULL,
+	[AlloRatio] numeric(5,2) NULL,
+	[EMBROIDERY] int NULL,
+	[PRINTING] int NULL
+)
+insert into @StyleArtwork
+select	APSNo,
+		StyleID,
+		[AlloRatio] = AlloQty * 1.0 / sum(AlloQty) over (partition by APSNO),
+		EMBROIDERY,
+		PRINTING
+from (
+select  ss.APSNo,
+		o.StyleID,
+		[AlloQty] = sum(ss.AlloQty),
+		[EMBROIDERY] = MAX(isnull(ArtworkQty.EMBROIDERY, -1)),
+		[PRINTING] = MAX(isnull(ArtworkQty.PRINTING, -1))
+from SewingSchedule ss with (nolock)
+inner join orders o with (nolock) on o.ID = ss.OrderID
+outer apply(select EMBROIDERY, PRINTING from 
+				(select  oa.ArtworkTypeID, oa.Qty 
+				from Order_Artwork oa with (nolock)
+				where oa.id = o.ID and oa.ArtworkTypeID in ('EMBROIDERY', 'PRINTING') and
+					  exists(select 1 from Pattern_GL pg with (nolock) 
+							 where	pg.PatternUKEY = (select top 1 PatternUkey from dbo.GetPatternUkey(o.POID, '', '', o.StyleUkey, '')) and
+									iif(pg.SEQ = '0001', substring(pg.PatternCode, 11, 10), pg.PatternCode) = oa.PatternCode and
+									pg.Location = ss.ComboType
+							 )) t
+				PIVOT (
+					MAX(Qty)
+					FOR ArtworkTypeID IN ([EMBROIDERY], [PRINTING])
+				) p 
+			) ArtworkQty
+where ss.APSNo in (select APSNo from @APSList)
+group by ss.APSNo,o.StyleID) a
 	
 declare @tmp2 TABLE(
 	id varchar(13) NULL,
@@ -533,7 +572,10 @@ declare @APSMain TABLE(
 	[Construction] [nvarchar](Max) NULL,
 	[StyleName] [nvarchar](Max) NULL,
 	SubCon nvarchar(max),
-	[Subcon Qty] int
+	[Subcon Qty] int,
+	[EMBStitch] varchar(20),
+	[EMBStitchCnt] int,
+	[PrintPcs] int
 )
 insert into @APSMain
 select
@@ -585,7 +627,10 @@ select
 	sty.Construction,
 	sty.StyleName,
 	PrintingData.SubCon,
-	PrintingData.[Subcon Qty]
+	PrintingData.[Subcon Qty],
+	[EMBStitch] = EMBStitch.val,
+	[EMBStitchCnt] = LEN(EMBStitch.val) - LEN(REPLACE(EMBStitch.val, ',', '')) + 1,
+	[PrintPcs] = (select sum(PRINTING) from @StyleArtwork where APSNo = al.APSNo and PRINTING <> -1)
 from @APSList al
 left join @APSCuttingOutput aco on al.APSNo = aco.APSNo
 left join @APSOrderQty aoo on al.APSNo = aoo.APSNo
@@ -615,6 +660,7 @@ outer apply (SELECT MaxSCIDelivery = Max(SCIDelivery),MinSCIDelivery = Min(SCIDe
                     from @APSColumnGroup where APSNo = al.APSNo) as OrderDateInfo
 outer apply (SELECT val =  Stuff((select distinct concat( ',',BrandID)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as BrandID
 outer apply (select * from @tmpPrintDataSum where  APSNo = al.APSNo) as PrintingData
+outer apply(select [val] = Stuff((select concat( ',',EMBROIDERY) from @StyleArtwork sa where sa.APSNo = al.APSNo and sa.EMBROIDERY <> -1 order by EMBROIDERY FOR XML PATH('')),1,1,'') ) EMBStitch
 --組出所有計畫最大Inline,最小Offline之間所有的日期，後面展開個計畫每日資料使用
 Declare @StartDate date
 Declare @EndDate date
@@ -957,7 +1003,9 @@ Declare @APSExtendWorkDateFin table(
 	[CPU] [float] NULL,
 	[Efficienycy] [float] NULL,
 	[TTL_PRINTING (PCS)] numeric(38,6),
-	[TTL_PRINTING PPU (PPU)] numeric(38,6)
+	[TTL_PRINTING PPU (PPU)] numeric(38,6),
+	[StdQtyEMB] varchar(50),
+	[TtlQtyEMB] int
 )
 insert into @APSExtendWorkDateFin
 select  awd.APSNo
@@ -974,12 +1022,47 @@ select  awd.APSNo
         , [Efficienycy] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0 or (awd.TotalSewingTime = 0) or (awd.New_WorkingTime = 0), 0, awd.New_WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.TotalSewingTime)) * iif(isnull(awd.New_WorkingTime,0) = 0 or isnull(awd.Sewer,0) = 0 ,0 , ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0 / (awd.New_WorkingTime * awd.Sewer * 3600.0))
 		, [TTL_PRINTING (PCS)] = round([PRINTING (PCS)] * s.StdQPrint, 6)
 		, [TTL_PRINTING PPU (PPU)] = round([PRINTING PPU (PPU)] * s.StdQPrint, 6)
+		, [StdQtyEMB] = StdQtyEMB.val
+		, [TtlQtyEMB] = TtlQtyEMB.val
 from @APSExtendWorkDate awd
 inner join @OriTotalWorkHour otw on otw.APSNo = awd.APSNo and otw.WorkDate = awd.WorkDate
 left join LearnCurve_Detail lcd with (nolock) on awd.LearnCurveID = lcd.ID and awd.WorkDateSer = lcd.Day
 left join @APSSewingOutput apo on awd.APSNo = apo.APSNo and awd.WorkDate = apo.OutputDate
 outer apply(select top 1 [val] = Efficiency from LearnCurve_Detail where ID = awd.LearnCurveID order by Day desc ) LastEff
 outer apply(select * from dbo.[getDailystdq](awd.APSNo)x where x.APSNo=awd.APSNo and x.Date = cast(awd.SewingStart as date))s
+outer apply(
+			select [val] = Stuff((select concat( ',',StdQty)
+								  from (
+											select [StdQty] =	case when IsLast = 0 then  s.StdQ - LAG(GrandStdQty,1,0) OVER (ORDER BY AlloRatio desc)
+															else StdQty end,
+												   EMBROIDERY
+											from (	select  sa.StyleID,
+															[GrandStdQty] = sum(FLOOR(sa.AlloRatio * s.StdQ)) over(order by sa.AlloRatio desc),
+															[StdQty] = FLOOR(sa.AlloRatio * s.StdQ),
+															[IsLast] = LEAD(sa.AlloRatio,1,0) over (order by sa.AlloRatio desc),
+															sa.AlloRatio,
+															sa.EMBROIDERY
+													from @StyleArtwork sa
+													where sa.APSNo = awd.APSNo) StdQtyEMBStep1
+										) StdQtyEMBStep2 where EMBROIDERY <> -1 order by EMBROIDERY
+							FOR XML PATH('')),1,1,'') 
+			) StdQtyEMB
+outer apply(
+			select val = sum(StdQty * EMBROIDERY)
+			from (
+					select [StdQty] =	case when IsLast = 0 then  s.StdQ - LAG(GrandStdQty,1,0) OVER (ORDER BY AlloRatio desc)
+									else StdQty end,
+						   EMBROIDERY
+					from (	select  sa.StyleID,
+									[GrandStdQty] = sum(FLOOR(sa.AlloRatio * s.StdQ)) over(order by sa.AlloRatio desc),
+									[StdQty] = FLOOR(sa.AlloRatio * s.StdQ),
+									[IsLast] = LEAD(sa.AlloRatio,1,0) over (order by sa.AlloRatio desc),
+									sa.AlloRatio,
+									sa.EMBROIDERY
+							from @StyleArtwork sa
+							where sa.APSNo = awd.APSNo) StdQtyEMBStep1
+				) StdQtyEMBStep2 where EMBROIDERY <> -1 
+			) TtlQtyEMB
 outer apply(
 	select [PRINTING (PCS)] = sum([PRINTING (PCS)]), [PRINTING PPU (PPU)]=sum([PRINTING PPU (PPU)])
 	from(
@@ -1004,7 +1087,10 @@ group by awd.APSNo,
 		 s.StdQ,
 		 s.StdQPrint,
 		 x2.[PRINTING (PCS)],
-		 x2.[PRINTING PPU (PPU)]
+		 x2.[PRINTING PPU (PPU)],
+		 StdQtyEMB.val,
+		 TtlQtyEMB.val
+
 --計算這一天的標準產量
 --= (工作時數 / 車縫一件成衣需要花費的秒數) * 工人數 * 效率
 --= (WorkingTime / SewingTime) * ManPower * Eff
@@ -1073,7 +1159,12 @@ select
     apm.SubCon,
 	apm.[Subcon Qty],
 	[Std Qty for printing],
-	StyleName
+	StyleName,
+	apf.StdQtyEMB,
+	apm.EMBStitch,
+	apm.EMBStitchCnt,
+	apf.TtlQtyEMB,
+	apm.PrintPcs
 from @APSMain apm
 inner join @APSExtendWorkDateFin apf on apm.APSNo = apf.APSNo
 order by apm.APSNo,apf.SewingStart

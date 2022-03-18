@@ -59,7 +59,14 @@
     [TTL_PRINTING (PCS)] NUMERIC(38, 6) NULL, 
     [TTL_PRINTING PPU (PPU)] NUMERIC(38, 6) NULL, 
     [SubCon] NVARCHAR(MAX) NULL, 
-    [StyleName] NVARCHAR(MAX) NULL 
+    [StyleName] NVARCHAR(MAX) NULL, 
+    [StdQtyEMB] VARCHAR(50) NULL, 
+    [EMBStitch] VARCHAR(20) NULL, 
+    [EMBStitchCnt] INT NULL, 
+    [TtlQtyEMB] INT NULL, 
+    [PrintPcs] INT NULL, 
+    [Subcon Qty] INT NULL, 
+    [Std Qty for printing] INT NULL 
 );
 
 
