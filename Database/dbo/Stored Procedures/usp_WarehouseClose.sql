@@ -144,8 +144,6 @@ BEGIN
 		FROM dbo.FtyInventory sd WITH (NOLOCK)
 		WHERE sd.POID = @poid and stocktype='B' and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) - ISNULL(ReturnQty,0.0) > 0 and lock=0 
 
-		declare @TB table(Ukey bigint, sourceUkey bigint)
-		
 		MERGE INTO dbo.FtyInventory AS t
 		USING #tmpFtyInventory s
 		ON  t.poid = s.poid 
@@ -171,16 +169,20 @@ BEGIN
 		WHEN NOT MATCHED THEN
 		INSERT
 		(poid,seq1,seq2,roll,stocktype,dyelot,inqty,outqty,adjustqty,lock )
-		VALUES (s.poid,s.seq1,s.seq2,s.roll,s.stocktype,s.dyelot,s.qty,0,0,0)		
-		output inserted.Ukey,s.Ukey into @TB ;
+		VALUES (s.poid,s.seq1,s.seq2,s.roll,s.stocktype,s.dyelot,s.qty,0,0,0);
 
 		--寫入Scrap的FtyInventory時一併寫入Location資訊進FtyInventory_Detail
 		Insert into FtyInventory_Detail(Ukey, MtlLocationID)
 		select f.Ukey,ToLocation=isnull(sd.ToLocation,'')
-		from @TB f
-		inner join dbo.SubTransfer_Detail sd WITH (NOLOCK)
-		on sd.id = @NewID  and  sd.FromFtyInventoryUkey = f.sourceUkey
-		where not exists(select 1 from FtyInventory_Detail fd WITH (NOLOCK) where f.Ukey = fd.Ukey and sd.ToLocation = fd.MtlLocationID)
+		from FtyInventory f
+		inner join dbo.SubTransfer_Detail sd WITH (NOLOCK) on sd.id = @NewID  and  
+															  sd.ToPOID = f.POID and 
+															  sd.ToSeq1 = f.Seq1 and 
+															  sd.ToSeq2 = f.Seq2 and 
+															  sd.ToRoll = f.Roll and 
+															  sd.ToDyelot = f.Dyelot
+		where f.StockType = 'O' 
+		and not exists(select 1 from FtyInventory_Detail fd WITH (NOLOCK) where f.Ukey = fd.Ukey and sd.ToLocation = fd.MtlLocationID)
 		and isnull(sd.ToLocation,'') <> ''
 		and exists(select 1 from MtlLocation m WITH (NOLOCK) where m.StockType = 'O' and m.id = sd.ToLocation and m.Junk = 0) -- Location需存在MtlLocation
 
