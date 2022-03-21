@@ -412,24 +412,27 @@ declare @StyleArtwork TABLE(
 	[StyleID] [varchar](15) NULL,
 	[AlloRatio] numeric(5,2) NULL,
 	[EMBROIDERY] int NULL,
-	[PRINTING] int NULL
+	[PRINTING] int NULL,
+	[EMBStitchCnt] int NULL
 )
 insert into @StyleArtwork
 select	APSNo,
 		StyleID,
 		[AlloRatio] = AlloQty * 1.0 / sum(AlloQty) over (partition by APSNO),
 		EMBROIDERY,
-		PRINTING
+		PRINTING,
+		EMBROIDERYCnt
 from (
 select  ss.APSNo,
 		o.StyleID,
 		[AlloQty] = sum(ss.AlloQty),
 		[EMBROIDERY] = MAX(isnull(ArtworkQty.EMBROIDERY, -1)),
-		[PRINTING] = MAX(isnull(ArtworkQty.PRINTING, -1))
+		[PRINTING] = MAX(isnull(ArtworkQty.PRINTING, -1)),
+		[EMBROIDERYCnt] = MAX(EMBROIDERYCnt.Val)
 from SewingSchedule ss with (nolock)
 inner join orders o with (nolock) on o.ID = ss.OrderID
 outer apply(select EMBROIDERY, PRINTING from 
-				(select  oa.ArtworkTypeID, oa.Qty 
+				(select  oa.ArtworkTypeID, [Qty] = sum (oa.Qty) over (partition by oa.Article) 
 				from Order_Artwork oa with (nolock)
 				where oa.id = o.ID and oa.ArtworkTypeID in ('EMBROIDERY', 'PRINTING') and
 					  exists(select 1 from Pattern_GL pg with (nolock) 
@@ -442,6 +445,21 @@ outer apply(select EMBROIDERY, PRINTING from
 					FOR ArtworkTypeID IN ([EMBROIDERY], [PRINTING])
 				) p 
 			) ArtworkQty
+outer apply(	select [Val] = count(1)
+				from (
+					select distinct Qty
+					from (
+					select  [Qty] = sum(Qty)
+					from Order_Artwork oa with (nolock)
+					where oa.id = o.ID and oa.ArtworkTypeID = 'EMBROIDERY' and
+						  exists(select 1 from Pattern_GL pg with (nolock) 
+								 where	pg.PatternUKEY = (select top 1 PatternUkey from dbo.GetPatternUkey(o.POID, '', '', o.StyleUkey, '')) and
+										iif(pg.SEQ = '0001', substring(pg.PatternCode, 11, 10), pg.PatternCode) = oa.PatternCode and
+										pg.Location = ss.ComboType
+								 )
+					group by Article) a
+				) b
+			) EMBROIDERYCnt
 where ss.APSNo in (select APSNo from @APSList)
 group by ss.APSNo,o.StyleID) a
 	
@@ -629,7 +647,7 @@ select
 	PrintingData.SubCon,
 	PrintingData.[Subcon Qty],
 	[EMBStitch] = EMBStitch.val,
-	[EMBStitchCnt] = LEN(EMBStitch.val) - LEN(REPLACE(EMBStitch.val, ',', '')) + 1,
+	[EMBStitchCnt] = EMBStitchCnt.val,
 	[PrintPcs] = (select sum(PRINTING) from @StyleArtwork where APSNo = al.APSNo and PRINTING <> -1)
 from @APSList al
 left join @APSCuttingOutput aco on al.APSNo = aco.APSNo
@@ -661,6 +679,7 @@ outer apply (SELECT MaxSCIDelivery = Max(SCIDelivery),MinSCIDelivery = Min(SCIDe
 outer apply (SELECT val =  Stuff((select distinct concat( ',',BrandID)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as BrandID
 outer apply (select * from @tmpPrintDataSum where  APSNo = al.APSNo) as PrintingData
 outer apply(select [val] = Stuff((select concat( ',',EMBROIDERY) from @StyleArtwork sa where sa.APSNo = al.APSNo and sa.EMBROIDERY <> -1 order by EMBROIDERY FOR XML PATH('')),1,1,'') ) EMBStitch
+outer apply(select [val] = isnull(sum(isnull(EMBStitchCnt, 0)), 0) from @StyleArtwork sa where sa.APSNo = al.APSNo) EMBStitchCnt
 --組出所有計畫最大Inline,最小Offline之間所有的日期，後面展開個計畫每日資料使用
 Declare @StartDate date
 Declare @EndDate date
