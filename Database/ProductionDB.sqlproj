@@ -2711,6 +2711,7 @@
     </Build>
     <Build Include="dbo\Tables\InspectionType.sql" />
     <Build Include="dbo\Tables\InspectionType_Detail.sql" />
+    <Build Include="dbo\Tables\PackingErrorRecord.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

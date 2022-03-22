@@ -28,7 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(P19));
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
@@ -48,10 +49,13 @@
             this.picUpdate = new Sci.Win.UI.PictureBox();
             this.labErrorType = new Sci.Win.UI.Label();
             this.comboErrorType = new Sci.Win.UI.ComboBox();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.btnToExcel = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridPackErrTransfer)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picUpdate)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -168,23 +172,27 @@
             this.gridPackErrTransfer.AllowUserToAddRows = false;
             this.gridPackErrTransfer.AllowUserToDeleteRows = false;
             this.gridPackErrTransfer.AllowUserToResizeRows = false;
+            this.gridPackErrTransfer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gridPackErrTransfer.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridPackErrTransfer.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridPackErrTransfer.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridPackErrTransfer.DataSource = this.listControlBindingSource1;
             this.gridPackErrTransfer.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridPackErrTransfer.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridPackErrTransfer.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridPackErrTransfer.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridPackErrTransfer.Location = new System.Drawing.Point(12, 132);
             this.gridPackErrTransfer.Name = "gridPackErrTransfer";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridPackErrTransfer.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridPackErrTransfer.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridPackErrTransfer.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridPackErrTransfer.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridPackErrTransfer.RowTemplate.Height = 24;
@@ -255,11 +263,22 @@
             this.comboErrorType.Size = new System.Drawing.Size(221, 24);
             this.comboErrorType.TabIndex = 19;
             // 
+            // btnToExcel
+            // 
+            this.btnToExcel.Location = new System.Drawing.Point(623, 98);
+            this.btnToExcel.Name = "btnToExcel";
+            this.btnToExcel.Size = new System.Drawing.Size(156, 30);
+            this.btnToExcel.TabIndex = 20;
+            this.btnToExcel.Text = "To Excel(Detail)";
+            this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
+            // 
             // P19
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(890, 474);
+            this.Controls.Add(this.btnToExcel);
             this.Controls.Add(this.comboErrorType);
             this.Controls.Add(this.picUpdate);
             this.Controls.Add(this.labErrorType);
@@ -279,12 +298,14 @@
             this.Controls.SetChildIndex(this.labErrorType, 0);
             this.Controls.SetChildIndex(this.picUpdate, 0);
             this.Controls.SetChildIndex(this.comboErrorType, 0);
+            this.Controls.SetChildIndex(this.btnToExcel, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridPackErrTransfer)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picUpdate)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -309,5 +330,7 @@
         private Win.UI.PictureBox picUpdate;
         private Win.UI.Label labErrorType;
         private Win.UI.ComboBox comboErrorType;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.Button btnToExcel;
     }
 }
