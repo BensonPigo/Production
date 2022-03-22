@@ -1053,6 +1053,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                 return;
             }
 
+            this.RateDt = this.GetRatebyCustomsTypeDescription();
             var frm = new P61_ShareByCDCItem(this.GetSumbyCustomsTypeDescription(), this.RateDt);
             frm.ShowDialog();
             if (ShareDt != null)
