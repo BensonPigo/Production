@@ -659,10 +659,13 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-      select distinct oq.SizeCode
+      select distinct oq.SizeCode,osc.Seq
       FROM Order_Qty oq WITH (NOLOCK) 
+      inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = oq.ID and osc.SizeCode = oq.SizeCode
       where oq.ID = @ID
 )a
+order by Seq
+
 print @cols
 
 DECLARE @sql NVARCHAR(MAX)
@@ -718,11 +721,13 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-      select distinct oq.SizeCode
+      select distinct oq.SizeCode,osc.Seq
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+      inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = oq.ID and osc.SizeCode = oq.SizeCode
       where o.POID = @ID
 )s
+order by Seq
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
@@ -738,14 +743,19 @@ tmpData as (
       select o.ID
              , oq.Article
              , Order_ColorCombo.ColorID
+			 , c.Alias
+			 , o.CustCDID
+			 , CustCD.Kit
              , iif(o.junk = 1 , '''' ,oq.SizeCode) as SizeCode
              , iif(o.junk = 1 , 0 ,oq.Qty) as Qty
              , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
              , sb.RowNo
-             , BuyerDelivery = '''''''' + Convert (varchar(10), o.BuyerDelivery)
+             , BuyerDelivery = '''''''' + Convert (varchar(10), o.BuyerDelivery)			
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
       inner join SortBy sb on oq.Article = sb.Article
+	  left join Country c WITH (NOLOCK) on c.ID = o.Dest
+	  left join CustCD WITH (NOLOCK) on CustCD.BrandID  = o.BrandID  and CustCD.ID = o.CustCDID 
       outer apply (
 			select top 1 ColorID
 			from Order_ColorCombo occ WITH (NOLOCK)
@@ -757,6 +767,9 @@ SubTotal as (
       select '''' as ID
              , ''TTL'' as Article
              , '''' as ColorID
+			 , Alias = ''''
+			 , CustCDID = ''''
+			 , Kit = ''''
              , SizeCode
              , SUM(Qty) as Qty             
              , 99999 as rnk
@@ -781,6 +794,9 @@ select TotalQty = (select sum(Qty) from UnionData where ID = p.ID and Article = 
        , [Sp#] = ID
        , [Colorway] = p.Article
        , Color = p.ColorID
+       , Destination = Alias
+	   , CustCD = CustCDID
+	   , Kit# = Kit
        , '+@cols+'
        , [Buyer Delivery] = p.BuyerDelivery
 from pivotData p
@@ -795,11 +811,14 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-      select distinct oq.SizeCode
+      select distinct oq.SizeCode,osc.Seq
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+      inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = oq.ID and osc.SizeCode = oq.SizeCode
       where o.POID = @ID
 )s
+order by Seq
+  
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
@@ -856,12 +875,14 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-  select distinct oqd.SizeCode
+   select distinct oqd.SizeCode,osc.Seq
    from Orders o WITH (NOLOCK) 
     inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
     inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
+    inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = oq.ID and osc.SizeCode = oqd.SizeCode
   where o.POID = @ID
 )s
+order by Seq
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
@@ -931,10 +952,12 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-  select distinct oq.SizeCode
+  select distinct oq.SizeCode,osc.Seq
   FROM Order_Qty oq WITH (NOLOCK) 
+  inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = oq.ID and osc.SizeCode = oq.SizeCode
   where oq.ID = @ID
 )a
+order by Seq
 print @cols
 
 DECLARE @sql NVARCHAR(MAX)
@@ -989,11 +1012,13 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-  select distinct oq.SizeCode
+  select distinct oq.SizeCode,osc.Seq
   from Orders o WITH (NOLOCK) 
   inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+  inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = oq.ID and osc.SizeCode = oq.SizeCode
   where o.POID = @ID
 )s
+order by Seq
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
@@ -1009,6 +1034,9 @@ tmpData as (
     select o.ID
            , oq.Article
            , Order_ColorCombo.ColorID
+           , c.Alias
+		   , o.CustCDID
+		   , CustCD.Kit
            , iif(o.junk = 1 , '''' ,oq.SizeCode) as SizeCode
            , iif(o.junk = 1 , 0 ,oq.OriQty) as OriQty 
            , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
@@ -1017,6 +1045,8 @@ tmpData as (
     from Orders o WITH (NOLOCK) 
     inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
     inner join SortBy sb on oq.Article = sb.Article
+    left join Country c WITH (NOLOCK) on c.ID = o.Dest
+	left join CustCD WITH (NOLOCK) on CustCD.BrandID  = o.BrandID  and CustCD.ID = o.CustCDID 
     outer apply (
 			select top 1 ColorID
 			from Order_ColorCombo occ WITH (NOLOCK)
@@ -1028,6 +1058,9 @@ SubTotal as (
     select '''' as ID
            , ''TTL'' as Article
            , '''' as ColorID
+           , Alias = ''''
+		   , CustCDID = ''''
+		   , Kit = ''''
            , SizeCode
            , SUM(OriQty) as Qty
            , 99999 as rnk
@@ -1050,6 +1083,9 @@ select (select sum(OriQty) from UnionData where ID = p.ID and Article = p.Articl
        , [Sp#] = ID
        , [Colorway] = p.Article
        , Color = p.ColorID
+       , Destination = Alias
+	   , CustCD = CustCDID
+	   , Kit# = Kit
        , '+@cols+'
        , [Buyer Delivery] = p.BuyerDelivery
 from pivotData p
@@ -1064,11 +1100,13 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-  select distinct oq.SizeCode
+  select distinct oq.SizeCode,osc.Seq
   from Orders o WITH (NOLOCK) 
   inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+  inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = oq.ID and osc.SizeCode = oq.SizeCode
   where o.POID = @ID
 )s
+order by Seq
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
@@ -1123,12 +1161,14 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-  select distinct oqd.SizeCode
-   from Orders o WITH (NOLOCK) 
+    select distinct oqd.SizeCode,osc.Seq
+    from Orders o WITH (NOLOCK) 
     inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
     inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
+    inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = oq.ID and osc.SizeCode = oqd.SizeCode
   where o.POID = @ID
 )s
+order by Seq
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
