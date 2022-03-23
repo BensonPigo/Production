@@ -72,9 +72,13 @@ namespace Sci.Production.IE
             {
                 this.display = "U_Right";
             }
+            else if (this.radioZ_Left.Checked)
+            {
+                this.display = "Z_Left";
+            }
             else
             {
-                this.display = "Z";
+                this.display = "Z_Right";
             }
 
             this.contentType = this.radioDescription.Checked ? "D" : "A";
@@ -301,6 +305,7 @@ OUTER APPLY(
 where ld.ID = {0} 
 and (ld.IsPPa = 0 or ld.IsPPa is null) 
 and (ld.IsHide = 0 or ld.IsHide is null)
+and no <> ''
 GROUP BY NO ,ActCycle.Value
 order by no",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
@@ -359,9 +364,9 @@ OUTER APPLY(
 where  (ld.IsPPa = 0 or ld.IsPPa is null) 
 and (ld.IsHide = 0 or ld.IsHide is null) 
 and no between t.minno and t.maxno
+and no <> ''
 GROUP BY NO ,ActCycle.Value
 order by no
-
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
                     this.changp,
@@ -414,6 +419,7 @@ OUTER APPLY(
 where  (ld.IsPPa = 0 or ld.IsPPa is null) 
 and (ld.IsHide = 0 or ld.IsHide is null) 
 and no between t.minno and t.maxno
+and not <> ''
 GROUP BY NO ,ActCycle.Value
 order by no
 
@@ -1249,8 +1255,9 @@ order by NO
                 }
             }
             #endregion
-            #region Z字型列印
-            if (this.display == "Z")
+
+            #region Z_Left字型列印
+            if (this.display == "Z_Left")
             {
                 int maxct = 3;
                 int ct = 0;
@@ -1306,7 +1313,7 @@ order by NO
                 norow = MyUtility.Convert.GetInt(endRow) + 1;
                 foreach (DataRow nodr in nodist.Rows)
                 {
-                    if (leftright_count == 2)
+                    if (nodist.Rows.IndexOf(nodr) % 2 == 0)
                     {
                         norow = norow - (listMax_ct[indx] + 2);
                         indx++;
@@ -1337,7 +1344,6 @@ order by NO
                         int ridx = 2;
                         string machinetype = string.Empty;
                         string machinetypeL = string.Empty;
-                        int row = norow + ridx;
                         foreach (DataRow item in nodrs)
                         {
                             worksheet.Cells[norow + ridx, nocolumn - 6] = item["rn"].ToString();
@@ -1362,7 +1368,136 @@ order by NO
                         int ridx = 2;
                         string machinetype = string.Empty;
                         string machinetypeL = string.Empty;
-                        int row = norow + ridx;
+                        foreach (DataRow item in nodrs)
+                        {
+                            worksheet.Cells[norow + ridx, nocolumn + 2] = item["rn"].ToString();
+
+                            ridx++;
+                        }
+
+                        leftright_count++;
+                        if (leftright_count > 2)
+                        {
+                            leftright_count = 1;
+                            leftDirection = true;
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            #region Z_Right字型列印
+            if (this.display == "Z_Right")
+            {
+                int maxct = 3;
+                int ct = 0;
+                int addct = 0;
+                int indx = 1;
+                List<int> listMax_ct = new List<int>();
+                for (int l = 0; l < nodist.Rows.Count + 1; l++)
+                {
+                    if (l < nodist.Rows.Count)
+                    {
+                        maxct = MyUtility.Convert.GetInt(nodist.Rows[l]["ct"]) > maxct ? MyUtility.Convert.GetInt(nodist.Rows[l]["ct"]) : maxct;
+                    }
+
+                    ct++;
+                    if (ct == 2)
+                    {
+                        listMax_ct.Add(maxct);
+                        Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(norow + 3)), Type.Missing).EntireRow;
+                        for (int i = 3; i < maxct; i++)
+                        {
+                            rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                            worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
+                            // worksheet.get_Range(string.Format("T{0}:U{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
+
+                            addct++;
+                        }
+
+                        // 將公式填入對應的格子中
+                        for (int q = 1; q <= maxct; q++)
+                        {
+                            this.AddLineMappingFormula(worksheet, norow + q + 1);
+                        }
+
+                        norow = norow - 5;
+                        ct = 0;
+                        maxct = 3;
+                    }
+                }
+
+                // excel 範圍別名宣告 公式使用 for MACHINE INVENTORY計算用
+                string endRow = (16 + (ttlLineRowCnt * 5) + addct).ToString();
+                worksheet.Names.Add("MachineINV1", worksheet.Range["AA17", "AA" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV2", worksheet.Range["AB17", "AB" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["AC19", "AE" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["U19", "V" + endRow], Type.Missing);
+                worksheet.Names.Add("TtlTMS", $"=ROUND((SUM('{worksheet.Name}'!$B$17:$B${endRow})+SUM('{worksheet.Name}'!$X$17:$X${endRow}))/2,0)", Type.Missing);
+                worksheet.Names.Add("TtlGSD", $"=ROUND((SUM('{worksheet.Name}'!$C$17:$C${endRow})+SUM('{worksheet.Name}'!$W$17:$W${endRow}))/2,0)", Type.Missing);
+                worksheet.Names.Add("MaxTMS", $"=Max('{worksheet.Name}'!$B$17:$B${endRow},'{worksheet.Name}'!$X$17:$X${endRow})", Type.Missing);
+
+                int leftright_count = 2;
+                bool leftDirection = false;
+                indx = 0;
+                norow = MyUtility.Convert.GetInt(endRow) + 1;
+                foreach (DataRow nodr in nodist.Rows)
+                {
+                    if (nodist.Rows.IndexOf(nodr) % 2 == 0)
+                    {
+                        norow = norow - (listMax_ct[indx] + 2);
+                        indx++;
+                    }
+
+                    list_GCTimeChartData.Add(new GCTimeChartData()
+                    {
+                        OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
+                        TotalGSDFormula = $"='{worksheet.Name}'!{(leftDirection ? "C" : "W")}{norow}",
+                        TotalCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "B" : "X")}{norow}",
+                    });
+
+                    list_CycleTimeChart.Add(new CycleTimeChart()
+                    {
+                        OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
+                        ActCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "K" : "R")}{norow}",
+                        ActCycleTime = MyUtility.Convert.GetString(nodr["ActCycleTime(average)"]),
+                        TaktFormula = $"=E1",
+                    });
+
+                    if (leftDirection)
+                    {
+                        nocolumn = 10;
+                        worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
+                        worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
+                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
+                                    .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
+                        int ridx = 2;
+                        string machinetype = string.Empty;
+                        string machinetypeL = string.Empty;
+                        foreach (DataRow item in nodrs)
+                        {
+                            worksheet.Cells[norow + ridx, nocolumn - 6] = item["rn"].ToString();
+
+                            ridx++;
+                        }
+
+                        leftright_count++;
+                        if (leftright_count > 2)
+                        {
+                            leftright_count = 1;
+                            leftDirection = false;
+                        }
+                    }
+                    else
+                    {
+                        nocolumn = 17;
+                        worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
+                        worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
+                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
+                                    .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
+                        int ridx = 2;
+                        string machinetype = string.Empty;
+                        string machinetypeL = string.Empty;
                         foreach (DataRow item in nodrs)
                         {
                             worksheet.Cells[norow + ridx, nocolumn + 2] = item["rn"].ToString();
