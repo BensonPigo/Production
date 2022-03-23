@@ -36,8 +36,24 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
 
+            DataGridViewGeneratorCheckBoxColumnSettings col_sel = new DataGridViewGeneratorCheckBoxColumnSettings();
+            col_sel.CellValidating += (s, e) =>
+            {
+                this.gridImport.EndEdit();
+
+                var upd_list = ((DataTable)this.gridImport.DataSource).AsEnumerable().Where(x => x["selected"].EqualDecimal(1)).ToList();
+                if (upd_list.Count == 0)
+                {
+                    this.numTTLQty.Value = 0;
+                    return;
+                }
+
+                decimal ttlQty = upd_list.Sum(r => Convert.ToInt32(r["Qty"]));
+                this.numTTLQty.Value = ttlQty;
+            };
+
             this.Helper.Controls.Grid.Generator(this.gridImport)
-            .CheckBox("selected", trueValue: 1, falseValue: 0, iseditable: true)
+            .CheckBox("selected", trueValue: 1, falseValue: 0, iseditable: true, settings: col_sel)
             .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .EditText("Desc", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
@@ -103,6 +119,7 @@ where   (sfi.InQty - sfi.OutQty + sfi.AdjustQty) > 0 and sfi.StockType = 'B' and
         private void BtnFind_Click(object sender, EventArgs e)
         {
             this.Query();
+            this.numTTLQty.Value = 0;
         }
 
         private void BtnCancel_Click(object sender, EventArgs e)

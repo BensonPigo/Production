@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label1 = new Sci.Win.UI.Label();
             this.txtSP = new Sci.Win.UI.TextBox();
             this.labSeq = new Sci.Win.UI.Label();
@@ -39,6 +39,8 @@
             this.gridImport = new Sci.Win.UI.Grid();
             this.btnImport = new Sci.Win.UI.Button();
             this.btnCancel = new Sci.Win.UI.Button();
+            this.numTTLQty = new Sci.Win.UI.NumericBox();
+            this.labTtlQty = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             this.SuspendLayout();
             // 
@@ -121,14 +123,14 @@
             this.gridImport.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridImport.Location = new System.Drawing.Point(9, 38);
             this.gridImport.Name = "gridImport";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridImport.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridImport.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 25;
@@ -160,11 +162,44 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
+            // numTTLQty
+            // 
+            this.numTTLQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.numTTLQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTTLQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTTLQty.IsSupportEditMode = false;
+            this.numTTLQty.Location = new System.Drawing.Point(369, 418);
+            this.numTTLQty.Name = "numTTLQty";
+            this.numTTLQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTTLQty.ReadOnly = true;
+            this.numTTLQty.Size = new System.Drawing.Size(103, 23);
+            this.numTTLQty.TabIndex = 12;
+            this.numTTLQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // labTtlQty
+            // 
+            this.labTtlQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.labTtlQty.Location = new System.Drawing.Point(291, 418);
+            this.labTtlQty.Name = "labTtlQty";
+            this.labTtlQty.Size = new System.Drawing.Size(75, 23);
+            this.labTtlQty.TabIndex = 13;
+            this.labTtlQty.Text = "Total Qty";
+            // 
             // P65_Import
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(865, 450);
+            this.Controls.Add(this.labTtlQty);
+            this.Controls.Add(this.numTTLQty);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.gridImport);
@@ -188,6 +223,8 @@
             this.Controls.SetChildIndex(this.gridImport, 0);
             this.Controls.SetChildIndex(this.btnImport, 0);
             this.Controls.SetChildIndex(this.btnCancel, 0);
+            this.Controls.SetChildIndex(this.numTTLQty, 0);
+            this.Controls.SetChildIndex(this.labTtlQty, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -206,5 +243,7 @@
         private Win.UI.Grid gridImport;
         private Win.UI.Button btnImport;
         private Win.UI.Button btnCancel;
+        private Win.UI.NumericBox numTTLQty;
+        private Win.UI.Label labTtlQty;
     }
 }
