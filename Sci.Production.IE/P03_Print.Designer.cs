@@ -31,7 +31,7 @@
             this.labelLineMappingDisplay = new Sci.Win.UI.Label();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.radioU_Right = new Sci.Win.UI.RadioButton();
-            this.radioZ = new Sci.Win.UI.RadioButton();
+            this.radioZ_Left = new Sci.Win.UI.RadioButton();
             this.radioU_Left = new Sci.Win.UI.RadioButton();
             this.labelOperationContentType = new Sci.Win.UI.Label();
             this.radioPanel2 = new Sci.Win.UI.RadioPanel();
@@ -43,6 +43,7 @@
             this.labLanguage = new Sci.Win.UI.Label();
             this.chkpagePPA = new System.Windows.Forms.CheckBox();
             this.txtPagePPA = new Sci.Win.UI.TextBox();
+            this.radioZ_Right = new Sci.Win.UI.RadioButton();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -80,12 +81,13 @@
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.radioZ_Right);
             this.radioPanel1.Controls.Add(this.radioU_Right);
-            this.radioPanel1.Controls.Add(this.radioZ);
+            this.radioPanel1.Controls.Add(this.radioZ_Left);
             this.radioPanel1.Controls.Add(this.radioU_Left);
             this.radioPanel1.Location = new System.Drawing.Point(181, 12);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(111, 87);
+            this.radioPanel1.Size = new System.Drawing.Size(111, 113);
             this.radioPanel1.TabIndex = 0;
             // 
             // radioU_Right
@@ -100,17 +102,17 @@
             this.radioU_Right.Text = "U - Right";
             this.radioU_Right.UseVisualStyleBackColor = true;
             // 
-            // radioZ
+            // radioZ_Left
             // 
-            this.radioZ.AutoSize = true;
-            this.radioZ.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioZ.Location = new System.Drawing.Point(3, 58);
-            this.radioZ.Name = "radioZ";
-            this.radioZ.Size = new System.Drawing.Size(35, 21);
-            this.radioZ.TabIndex = 3;
-            this.radioZ.TabStop = true;
-            this.radioZ.Text = "Z";
-            this.radioZ.UseVisualStyleBackColor = true;
+            this.radioZ_Left.AutoSize = true;
+            this.radioZ_Left.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioZ_Left.Location = new System.Drawing.Point(3, 58);
+            this.radioZ_Left.Name = "radioZ_Left";
+            this.radioZ_Left.Size = new System.Drawing.Size(72, 21);
+            this.radioZ_Left.TabIndex = 3;
+            this.radioZ_Left.TabStop = true;
+            this.radioZ_Left.Text = "Z - Left";
+            this.radioZ_Left.UseVisualStyleBackColor = true;
             // 
             // radioU_Left
             // 
@@ -126,7 +128,7 @@
             // 
             // labelOperationContentType
             // 
-            this.labelOperationContentType.Location = new System.Drawing.Point(13, 102);
+            this.labelOperationContentType.Location = new System.Drawing.Point(13, 131);
             this.labelOperationContentType.Name = "labelOperationContentType";
             this.labelOperationContentType.Size = new System.Drawing.Size(162, 23);
             this.labelOperationContentType.TabIndex = 96;
@@ -136,7 +138,7 @@
             // 
             this.radioPanel2.Controls.Add(this.radioAnnotation);
             this.radioPanel2.Controls.Add(this.radioDescription);
-            this.radioPanel2.Location = new System.Drawing.Point(181, 102);
+            this.radioPanel2.Location = new System.Drawing.Point(181, 131);
             this.radioPanel2.Name = "radioPanel2";
             this.radioPanel2.Size = new System.Drawing.Size(111, 58);
             this.radioPanel2.TabIndex = 4;
@@ -168,7 +170,7 @@
             // chkpage
             // 
             this.chkpage.AutoSize = true;
-            this.chkpage.Location = new System.Drawing.Point(16, 173);
+            this.chkpage.Location = new System.Drawing.Point(16, 202);
             this.chkpage.Name = "chkpage";
             this.chkpage.Size = new System.Drawing.Size(162, 21);
             this.chkpage.TabIndex = 7;
@@ -179,7 +181,7 @@
             // 
             this.numpage.BackColor = System.Drawing.Color.White;
             this.numpage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numpage.Location = new System.Drawing.Point(239, 173);
+            this.numpage.Location = new System.Drawing.Point(239, 202);
             this.numpage.Minimum = new decimal(new int[] {
             1,
             0,
@@ -205,7 +207,7 @@
             this.comboLanguage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboLanguage.FormattingEnabled = true;
             this.comboLanguage.IsSupportUnselect = true;
-            this.comboLanguage.Location = new System.Drawing.Point(181, 243);
+            this.comboLanguage.Location = new System.Drawing.Point(181, 272);
             this.comboLanguage.Name = "comboLanguage";
             this.comboLanguage.OldText = "";
             this.comboLanguage.Size = new System.Drawing.Size(121, 24);
@@ -213,7 +215,7 @@
             // 
             // labLanguage
             // 
-            this.labLanguage.Location = new System.Drawing.Point(13, 244);
+            this.labLanguage.Location = new System.Drawing.Point(13, 273);
             this.labLanguage.Name = "labLanguage";
             this.labLanguage.Size = new System.Drawing.Size(162, 23);
             this.labLanguage.TabIndex = 102;
@@ -222,7 +224,7 @@
             // chkpagePPA
             // 
             this.chkpagePPA.AutoSize = true;
-            this.chkpagePPA.Location = new System.Drawing.Point(16, 207);
+            this.chkpagePPA.Location = new System.Drawing.Point(16, 236);
             this.chkpagePPA.Name = "chkpagePPA";
             this.chkpagePPA.Size = new System.Drawing.Size(224, 21);
             this.chkpagePPA.TabIndex = 103;
@@ -233,14 +235,26 @@
             // 
             this.txtPagePPA.BackColor = System.Drawing.Color.White;
             this.txtPagePPA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPagePPA.Location = new System.Drawing.Point(239, 205);
+            this.txtPagePPA.Location = new System.Drawing.Point(239, 234);
             this.txtPagePPA.Name = "txtPagePPA";
             this.txtPagePPA.Size = new System.Drawing.Size(55, 23);
             this.txtPagePPA.TabIndex = 104;
             // 
+            // radioZ_Right
+            // 
+            this.radioZ_Right.AutoSize = true;
+            this.radioZ_Right.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioZ_Right.Location = new System.Drawing.Point(3, 85);
+            this.radioZ_Right.Name = "radioZ_Right";
+            this.radioZ_Right.Size = new System.Drawing.Size(81, 21);
+            this.radioZ_Right.TabIndex = 4;
+            this.radioZ_Right.TabStop = true;
+            this.radioZ_Right.Text = "Z - Right";
+            this.radioZ_Right.UseVisualStyleBackColor = true;
+            // 
             // P03_Print
             // 
-            this.ClientSize = new System.Drawing.Size(527, 308);
+            this.ClientSize = new System.Drawing.Size(527, 337);
             this.Controls.Add(this.txtPagePPA);
             this.Controls.Add(this.chkpagePPA);
             this.Controls.Add(this.labLanguage);
@@ -284,7 +298,7 @@
 
         private Win.UI.Label labelLineMappingDisplay;
         private Win.UI.RadioPanel radioPanel1;
-        private Win.UI.RadioButton radioZ;
+        private Win.UI.RadioButton radioZ_Left;
         private Win.UI.RadioButton radioU_Left;
         private Win.UI.Label labelOperationContentType;
         private Win.UI.RadioPanel radioPanel2;
@@ -297,5 +311,6 @@
         private Win.UI.RadioButton radioU_Right;
         private System.Windows.Forms.CheckBox chkpagePPA;
         private Win.UI.TextBox txtPagePPA;
+        private Win.UI.RadioButton radioZ_Right;
     }
 }
