@@ -123,7 +123,7 @@ namespace Sci.Production.Warehouse
                         Thread.Sleep(100);
                         tables.Cell(3, 1).Range.Paste();
                         tables.Cell(3, 2).Range.Paste();
-                        tables.Cell(4, 1).Range.Text = $"Color:{printItem["SuppColor"]}";
+                        tables.Cell(4, 1).Range.Text = $"Color:{printItem["ColorID"]}";
                         tables.Cell(5, 1).Range.Text = $"Roll:{printItem["Roll"]}";
                         tables.Cell(5, 2).Range.Text = $"Qty:{printItem["ActualQty"]}";
                         i++;

@@ -875,7 +875,7 @@ where Junk = 0";
         {
             if (!this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed"))
             {
-                MyUtility.Msg.WarningBox("please confirm data before copy.");
+                MyUtility.Msg.WarningBox("This record already confirmed, so can't modify this record!!");
                 return false;
             }
 
@@ -915,7 +915,7 @@ where Junk = 0";
             base.ClickEditBefore();
             if (this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed"))
             {
-                MyUtility.Msg.WarningBox("please unconfirm to edit it.");
+                MyUtility.Msg.WarningBox("This record already confirmed, so can't modify this record!!");
                 this.HideRows();
                 return false;
             }
@@ -931,7 +931,7 @@ where Junk = 0";
         {
             if (this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed"))
             {
-                MyUtility.Msg.WarningBox("please unconfirm to delete it.");
+                MyUtility.Msg.WarningBox("This record already confirmed, so can't modify this record!!");
                 return false;
             }
 
