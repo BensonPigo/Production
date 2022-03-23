@@ -83,6 +83,7 @@ namespace Sci.Production.PPIC
                 if (seqSplit.Length != 2)
                 {
                     MyUtility.Msg.WarningBox("SEQ input format is wrong!!");
+                    e.Cancel = true;
                     return;
                 }
 
