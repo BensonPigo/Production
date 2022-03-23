@@ -1053,6 +1053,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                 return;
             }
 
+            this.RateDt = this.GetRatebyCustomsTypeDescription();
             var frm = new P61_ShareByCDCItem(this.GetSumbyCustomsTypeDescription(), this.RateDt);
             frm.ShowDialog();
             if (ShareDt != null)
@@ -1161,8 +1162,8 @@ where id = '{this.CurrentMaintain["ID"]}'
                     rn = MyUtility.Convert.GetLong(s["rn"]),
                     CustomsType = MyUtility.Convert.GetString(s["CustomsType"]),
                     CustomsDescription = MyUtility.Convert.GetString(s["CustomsDescription"]),
-                    NetKg = MyUtility.Convert.GetDecimal(s["ActNetKg"]),
-                    WeightKg = MyUtility.Convert.GetDecimal(s["ActWeightKg"]),
+                    NetKg = MyUtility.Convert.GetDecimal(s["NetKg"]),
+                    WeightKg = MyUtility.Convert.GetDecimal(s["WeightKg"]),
                     CDCAmount = MyUtility.Convert.GetDecimal(s["CDCAmount"]),
                     Qty = MyUtility.Convert.GetDecimal(s["Qty"]),
                 })
