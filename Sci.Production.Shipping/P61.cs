@@ -16,6 +16,7 @@ namespace Sci.Production.Shipping
     {
         private readonly List<string> customsTypelist = new List<string>() { "Fabric", "Accessory", "Machine" };
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Fty;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_Consignee;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ShipMode;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Vessel;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Port;
@@ -398,7 +399,7 @@ where vk.Refno = '{dr["Refno"]}'
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
            .Text("ExportID", header: "WK#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-           .Text("Consignee", header: "Consignee", width: Widths.AnsiChars(8), iseditingreadonly: false)
+           .Text("Consignee", header: "Consignee", width: Widths.AnsiChars(8), iseditingreadonly: false).Get(out this.col_Consignee)
            .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(8), settings: fty_setting, iseditingreadonly: true).Get(out this.col_Fty)
            .Date("ETA", header: "ETA", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_ETA) // Edit on AddRow by hand
            .Date("PortArrival", header: "Arrived Port Date", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_PortDate) // Edit on AddRow by hand
@@ -440,6 +441,10 @@ where vk.Refno = '{dr["Refno"]}'
             this.detailgrid.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["NetKg"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["WeightKg"].DefaultCellStyle.BackColor = Color.Pink;
+
+            this.col_Consignee.MaxLength = 8;
+            this.col_Vessel.MaxLength = 60;
+            this.col_ActHSCode.MaxLength = 14;
 
             // 設定是否可以編輯
             this.detailgrid.RowEnter += this.Detailgrid_RowEnter;
@@ -706,6 +711,24 @@ left  join KHCustomsDescription_Detail kdd on kd.CDCName=kdd.CDCName and kdd.Pur
                 if (MyUtility.Convert.GetDecimal(dr["ActAmount"]) >= 1000000)
                 {
                     MyUtility.Msg.WarningBox("<Act. Amount> can't over than 1,000,000");
+                    return false;
+                }
+
+                if (MyUtility.Convert.GetDecimal(dr["WeightKg"]) >= 10000000)
+                {
+                    MyUtility.Msg.WarningBox("<G.W.> can't over than 10,000,000");
+                    return false;
+                }
+
+                if (MyUtility.Convert.GetDecimal(dr["NetKg"]) >= 10000000)
+                {
+                    MyUtility.Msg.WarningBox("<N.W.> can't over than 10,000,000");
+                    return false;
+                }
+
+                if (MyUtility.Convert.GetDecimal(dr["Qty"]) >= 10000000)
+                {
+                    MyUtility.Msg.WarningBox("<Q'ty> can't over than 10,000,000");
                     return false;
                 }
             }
