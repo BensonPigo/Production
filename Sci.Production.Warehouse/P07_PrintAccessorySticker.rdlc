@@ -64,7 +64,6 @@
                 <TablixCell>
                   <CellContents>
                     <Textbox Name="POID">
-                      <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
@@ -140,7 +139,6 @@
                 <TablixCell>
                   <CellContents>
                     <Textbox Name="SEQ">
-                      <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
@@ -149,7 +147,7 @@
                               <Value>=Fields!SEQ.Value</Value>
                               <Style>
                                 <FontFamily>微軟正黑體</FontFamily>
-                                <FontSize>12pt</FontSize>
+                                <FontSize>16pt</FontSize>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -215,7 +213,6 @@
                 <TablixCell>
                   <CellContents>
                     <Textbox Name="Refno">
-                      <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
@@ -291,7 +288,6 @@
                 <TablixCell>
                   <CellContents>
                     <Textbox Name="Color">
-                      <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
@@ -366,7 +362,6 @@
                 <TablixCell>
                   <CellContents>
                     <Textbox Name="SizeSpec">
-                      <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
@@ -375,7 +370,7 @@
                               <Value>=Fields!SizeSpec.Value</Value>
                               <Style>
                                 <FontFamily>微軟正黑體</FontFamily>
-                                <FontSize>12pt</FontSize>
+                                <FontSize>16pt</FontSize>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -441,7 +436,6 @@
                 <TablixCell>
                   <CellContents>
                     <Textbox Name="Packages">
-                      <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
@@ -450,7 +444,7 @@
                               <Value>=Fields!Packages.Value</Value>
                               <Style>
                                 <FontFamily>微軟正黑體</FontFamily>
-                                <FontSize>12pt</FontSize>
+                                <FontSize>16pt</FontSize>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -516,7 +510,6 @@
                 <TablixCell>
                   <CellContents>
                     <Textbox Name="Textbox33">
-                      <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
@@ -590,7 +583,6 @@
                 <TablixCell>
                   <CellContents>
                     <Textbox Name="Textbox34">
-                      <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
