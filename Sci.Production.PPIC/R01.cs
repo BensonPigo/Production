@@ -183,6 +183,7 @@ namespace Sci.Production.PPIC
                 Excel._Workbook mWorkBook = objApp.Workbooks[1];
                 worksheet = objApp.Sheets[3];
                 worksheet.Select();
+                this.printData.Columns.Remove("StyleName");
                 result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, "PPIC_R01_Style_PerEachSewingDate.xltx", 1, false, string.Empty, objApp, false, worksheet, false);
 
                 if (!result)
