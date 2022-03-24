@@ -115,7 +115,7 @@ select
     [Brand]=o.BrandID,
 	[Style#] = o.StyleID,
     [FabRef#] = wo.Refno,
-    [Switch to Workorder]=Iif(c.WorkType='1','Combination’',Iif(c.WorkType='2','By SP#’','')),
+    [Switch to Workorder]=Iif(c.WorkType='1','Combination',Iif(c.WorkType='2','By SP#','')),
 	[Ref#] = wo.CutRef,
 	[Seq]=Concat (wo.Seq1, ' ', wo.Seq2),
 	[Cut#] = wo.Cutno,

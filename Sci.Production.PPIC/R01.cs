@@ -1014,7 +1014,7 @@ drop table #tmpFinal_step1
                     // Summary By = SP# 則刪除欄位Size
                     if (this.type == "SP#")
                     {
-                        worksheet.get_Range("G:G").EntireColumn.Delete();
+                        worksheet.get_Range("H:H").EntireColumn.Delete();
                     }
                     #region Set Excel Title
                     string factoryName = MyUtility.GetValue.Lookup(
@@ -1036,12 +1036,12 @@ where id = '{0}'", Env.User.Factory), null);
                         if (!frontRow["StyleID"].EqualString(row["StyleID"]))
                         {
                             // [2] = header 所佔的行數 + Excel 從 1 開始編號 = 1 + 1
-                            Excel.Range excelRange = worksheet.get_Range("A" + (i + 5) + ":AA" + (i + 5));
+                            Excel.Range excelRange = worksheet.get_Range("A" + (i + 5) + ":AB" + (i + 5));
                             excelRange.Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = Excel.XlLineStyle.xlDash;
                         }
                     }
 
-                    worksheet.Columns[27].ColumnWidth = 30;
+                    worksheet.Columns[28].ColumnWidth = 30;
                     worksheet.Activate();
 
                     #region Save & Show Excel
@@ -1077,11 +1077,11 @@ where id = '{0}'", Env.User.Factory), null);
                     // Summary By = SP# 則刪除欄位Size
                     if (this.type == "SP#")
                     {
-                        worksheet.get_Range("I:I").EntireColumn.Delete();
+                        worksheet.get_Range("J:J").EntireColumn.Delete();
                     }
                     else
                     {
-                        worksheet.get_Range("AT:AU").EntireColumn.Delete();
+                        worksheet.get_Range("AU:AV").EntireColumn.Delete();
                     }
 
                     #region Save & Show Excel
@@ -1252,6 +1252,7 @@ select  s.SewingLineID
             , s.OrderID
             , o.CustPONo
             , s.ComboType
+            ,[Switch to Workorder] = Iif(cutting.WorkType='1','Combination',Iif(cutting.WorkType='2','By SP#',''))
             , ( select CONCAT(Article,',') 
                 from (  select distinct Article 
                         from SewingSchedule_Detail sd WITH (NOLOCK) 
@@ -1319,6 +1320,7 @@ select  s.SewingLineID
     inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
     inner join Style st with (nolock) on st.Ukey = o.StyleUkey
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
+    left join cutting on cutting.ID =o.CuttingSP 
     outer apply(select value = dbo.GetOrderLocation_Rate(o.id,s.ComboType) ) ol_rate
     outer apply(select value = dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType) ) sl_rate
 	OUTER APPLY(	
@@ -1518,6 +1520,7 @@ select  SewingLineID
         , OrderID
 		, CustPONo
         , ComboType
+        , [Switch to Workorder]
         , IIF(Article = '', '', SUBSTRING(Article, 1, LEN(Article) - 1)) as Article
         , SeasonID
         , SizeCode
@@ -1601,6 +1604,7 @@ select  s.SewingLineID
             , s.OrderID
 			, o.CustPONo
             , s.ComboType 
+            , [Switch to Workorder] = Iif(cutting.WorkType='1','Combination',Iif(cutting.WorkType='2','By SP#',''))
             , sd.Article
             , o.SeasonID
 			, sd.SizeCode
@@ -1646,6 +1650,7 @@ select  s.SewingLineID
     inner join Style st with (nolock) on st.Ukey = o.StyleUkey
 	inner join SewingSchedule_Detail sd WITH (NOLOCK) on s.ID=sd.ID 
     left join Country c WITH (NOLOCK) on o.Dest = c.ID 
+    left join cutting on cutting.ID =o.CuttingSP 
 	OUTER APPLY(	
 		SELECT [Date]=MIN(co2.cDate)
 		FROM  WorkOrder_Distribute wd2 WITH (NOLOCK)
@@ -1894,6 +1899,7 @@ select  SewingLineID
         , OrderID
 		, CustPONo
         , ComboType
+        , [Switch to Workorder]
         , Article 
         , SeasonID
         , SizeCode
