@@ -128,9 +128,11 @@ select
 	,[Unit] = dbo.GetStockUnitBySPSeq (td.poid, td.seq1, td.seq2)
 	,t.Remark
 	,Description = dbo.getMtlDesc(td.POID,td.seq1,td.seq2,2,0)
+    ,f.MtlTypeID
 from TransferIn t with(nolock)
 inner join TransferIn_Detail td with(nolock) on td.id = t.id
 left join Po_Supp_Detail p WITH (NOLOCK) on td.poid = p.id and td.seq1 = p.seq1 and td.seq2 = p.seq2
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
 left join Orders o with(nolock) on o.id = td.poid
 where 1=1
 ");
@@ -179,10 +181,12 @@ select
 	,[Unit] = dbo.GetStockUnitBySPSeq (td.poid, td.seq1, td.seq2)
 	,t.Remark
 	,Description = dbo.getMtlDesc(td.POID, td.seq1, td.seq2, 2, 0)
+	,f.MtlTypeID
 	,td.ToPOID,td.ToSeq1,td.ToSeq2
 from TransferOut t with(nolock)
 inner join TransferOut_Detail td with(nolock) on td.id = t.id
 left join Po_Supp_Detail p WITH (NOLOCK) on td.poid = p.id and td.seq1 = p.seq1 and td.seq2 = p.seq2
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
 left join Orders o with(nolock) on o.id = td.poid
 outer apply(
 	select ExportId = Stuff((
@@ -262,9 +266,11 @@ select distinct
 	,[Unit] = dbo.GetStockUnitBySPSeq (td.poid, td.seq1, td.seq2)
 	,t.Remark
 	,Description = dbo.getMtlDesc(td.POID, td.seq1,td.seq2,2,0)
+    ,f.MtlTypeID
 from TransferIn t with(nolock)
 inner join TransferIn_Detail td with(nolock) on td.id = t.id
 left join Po_Supp_Detail p WITH (NOLOCK) on td.poid = p.id and td.seq1 = p.seq1 and td.seq2 = p.seq2
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
 left join Orders o with(nolock) on o.id = td.poid 
 outer apply (
 	select [Qty] = sum(Qty)
@@ -361,10 +367,12 @@ select distinct
 	,[Unit] = dbo.GetStockUnitBySPSeq (td.poid, td.seq1, td.seq2)
 	,t.Remark
 	,Description = dbo.getMtlDesc(td.POID,td.seq1,td.seq2,2,0)
+    ,f.MtlTypeID
 	{toColumn}
 from TransferOut t with(nolock)
 inner join TransferOut_Detail td with(nolock) on td.id = t.id
 left join Po_Supp_Detail p WITH (NOLOCK) on td.poid = p.id and td.seq1 = p.seq1 and td.seq2 = p.seq2
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
 left join Orders o with(nolock) on o.id = td.poid 
 {summaryby}
 where 1=1
@@ -432,7 +440,7 @@ where 1=1
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
             if (this.radioTransferOut.Checked && this.radioSummary.Checked && this.cmbSummaryby.SelectedIndex == 0)
             {
-                objSheets.Columns["S:U"].Delete();
+                objSheets.Columns["T:V"].Delete();
             }
 
             objSheets.Cells[1, 5] = this.type == 0 ? "Arrive W/H Date" : "Issue Date";
