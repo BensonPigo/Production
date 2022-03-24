@@ -167,5 +167,28 @@ where   (sfi.InQty - sfi.OutQty + sfi.AdjustQty) > 0 and sfi.StockType = 'B' and
 
             MyUtility.Msg.InfoBox("Import complete!!");
         }
+
+        private void GridImport_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            CountSelectQty();
+        }
+
+        private void CountSelectQty()
+        {
+            this.gridImport.ValidateControl();
+            DataGridViewColumn column = this.gridImport.Columns["selected"];
+            if (!MyUtility.Check.Empty(column) && !MyUtility.Check.Empty(this.gridImport.DataSource))
+            {
+                var upd_list = ((DataTable)this.gridImport.DataSource).AsEnumerable().Where(x => x["selected"].EqualDecimal(1)).ToList();
+                if (upd_list.Count == 0)
+                {
+                    this.numTTLQty.Value = 0;
+                    return;
+                }
+
+                decimal ttlQty = upd_list.Sum(r => Convert.ToInt32(r["Qty"]));
+                this.numTTLQty.Value = ttlQty;
+            }
+        }
     }
 }
