@@ -659,12 +659,13 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-      select distinct oq.SizeCode,osc.Seq
-      FROM Order_Qty oq WITH (NOLOCK) 
-      inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = oq.ID and osc.SizeCode = oq.SizeCode
+      select distinct oq.SizeCode,osc.Seq,SizeGroup = iif(osc.SizeGroup = 'N', '', osc.SizeGroup)
+       from Orders o WITH (NOLOCK) 
+      inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+      inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = o.POID and osc.SizeCode = oq.SizeCode
       where oq.ID = @ID
 )a
-order by Seq
+order by SizeGroup,seq
 
 print @cols
 
@@ -721,13 +722,13 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-      select distinct oq.SizeCode,osc.Seq
+      select distinct oq.SizeCode,osc.Seq,SizeGroup = iif(osc.SizeGroup = 'N', '', osc.SizeGroup)
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
       inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = oq.ID and osc.SizeCode = oq.SizeCode
       where o.POID = @ID
 )s
-order by Seq
+order by SizeGroup,seq
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
@@ -811,13 +812,13 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-      select distinct oq.SizeCode,osc.Seq
+      select distinct oq.SizeCode,osc.Seq,SizeGroup = iif(osc.SizeGroup = 'N', '', osc.SizeGroup)
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
       inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = oq.ID and osc.SizeCode = oq.SizeCode
       where o.POID = @ID
 )s
-order by Seq
+order by SizeGroup,seq
   
 
 DECLARE @sql NVARCHAR(MAX)
@@ -875,14 +876,14 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-   select distinct oqd.SizeCode,osc.Seq
+   select distinct oqd.SizeCode,osc.Seq,SizeGroup = iif(osc.SizeGroup = 'N', '', osc.SizeGroup)
    from Orders o WITH (NOLOCK) 
     inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
     inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
     inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = oq.ID and osc.SizeCode = oqd.SizeCode
   where o.POID = @ID
 )s
-order by Seq
+order by SizeGroup,seq
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
@@ -952,12 +953,14 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-  select distinct oq.SizeCode,osc.Seq
-  FROM Order_Qty oq WITH (NOLOCK) 
-  inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = oq.ID and osc.SizeCode = oq.SizeCode
-  where oq.ID = @ID
+      select distinct oq.SizeCode,osc.Seq,SizeGroup = iif(osc.SizeGroup = 'N', '', osc.SizeGroup)
+      from Orders o WITH (NOLOCK) 
+      inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+      inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = o.POID and osc.SizeCode = oq.SizeCode
+      where oq.ID = @ID
 )a
-order by Seq
+order by SizeGroup,seq
+
 print @cols
 
 DECLARE @sql NVARCHAR(MAX)
@@ -1012,13 +1015,13 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-  select distinct oq.SizeCode,osc.Seq
+  select distinct oq.SizeCode,osc.Seq,SizeGroup = iif(osc.SizeGroup = 'N', '', osc.SizeGroup)
   from Orders o WITH (NOLOCK) 
   inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
   inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = oq.ID and osc.SizeCode = oq.SizeCode
   where o.POID = @ID
 )s
-order by Seq
+order by SizeGroup,seq
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
@@ -1100,13 +1103,13 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-  select distinct oq.SizeCode,osc.Seq
+  select distinct oq.SizeCode,osc.Seq,SizeGroup = iif(osc.SizeGroup = 'N', '', osc.SizeGroup)
   from Orders o WITH (NOLOCK) 
   inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
   inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = oq.ID and osc.SizeCode = oq.SizeCode
   where o.POID = @ID
 )s
-order by Seq
+order by SizeGroup,seq
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
@@ -1161,14 +1164,14 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-    select distinct oqd.SizeCode,osc.Seq
+    select distinct oqd.SizeCode,osc.Seq,SizeGroup = iif(osc.SizeGroup = 'N', '', osc.SizeGroup)
     from Orders o WITH (NOLOCK) 
     inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
     inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
     inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = oq.ID and osc.SizeCode = oqd.SizeCode
   where o.POID = @ID
 )s
-order by Seq
+order by SizeGroup,seq
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
