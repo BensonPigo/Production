@@ -185,7 +185,7 @@ where   (sfi.InQty - sfi.OutQty + sfi.AdjustQty) > 0 and sfi.StockType = 'B' and
                 return;
             }
 
-            decimal ttlQty = upd_list.Sum(r => Convert.ToInt32(r["Qty"]));
+            decimal ttlQty = upd_list.Sum(r => Convert.ToDecimal(r["Qty"]));
             this.numTTLQty.Value = ttlQty;
         }
     }
