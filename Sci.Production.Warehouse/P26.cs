@@ -2,6 +2,7 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
@@ -18,19 +19,6 @@ namespace Sci.Production.Warehouse
     /// <inheritdoc/>
     public partial class P26 : Win.Tems.Input6
     {
-        private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
-
-        private class NowDetail
-        {
-            public string POID { get; set; }
-
-            public string Seq1 { get; set; }
-
-            public string Seq2 { get; set; }
-
-            public List<string> DB_CLocations { get; set; }
-        }
-
         /// <inheritdoc/>
         public P26(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -61,8 +49,6 @@ namespace Sci.Production.Warehouse
             this.gridicon.Insert.Visible = false;
         }
 
-        // 新增時預設資料
-
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
@@ -70,10 +56,8 @@ namespace Sci.Production.Warehouse
             this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
-            this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["Status"] = EnumStatus.New;
         }
-
-        // delete前檢查
 
         /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
@@ -86,8 +70,6 @@ namespace Sci.Production.Warehouse
 
             return base.ClickDeleteBefore();
         }
-
-        // edit前檢查
 
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
@@ -102,12 +84,9 @@ namespace Sci.Production.Warehouse
             return base.ClickEditBefore();
         }
 
-        // save前檢查 & 取id
-
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            // DataTable result = null;
             StringBuilder warningmsg = new StringBuilder();
 
             // Check ToLocation is not empty
@@ -141,15 +120,11 @@ namespace Sci.Production.Warehouse
             return base.ClickSaveBefore();
         }
 
-        // grid 加工填值
-
         /// <inheritdoc/>
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             return base.OnRenewDataDetailPost(e);
         }
-
-        // refresh
 
         /// <inheritdoc/>
         protected override void OnDetailEntered()
@@ -162,15 +137,11 @@ namespace Sci.Production.Warehouse
             #endregion Status Label
         }
 
-        // detail 新增時設定預設值
-
         /// <inheritdoc/>
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
         }
-
-        // Detail Grid 設定
 
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
@@ -312,23 +283,26 @@ WHERE   StockType='{0}'
             this.detailgrid.Columns["stocktype"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        // Confirm
-
         /// <inheritdoc/>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickConfirm()
         {
+            this.RenewData(); // 先重載資料, 避免雙開程式狀況
             base.ClickConfirm();
-            var dr = this.CurrentMaintain;
-            if (dr == null)
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
+            // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
+            DualResult result = Prgs.GetFtyInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtOriFtyInventory);
+
+            // 檢查 是自動倉 的 Barcode不可為空
+            if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, this.Name))
             {
                 return;
             }
 
             #region 排除Location 包含WMS & 非WMS資料
-
-            DataTable dtToWMSChk = (DataTable)this.detailgridbs.DataSource;
-
             string sqlcmd = @"
 select * from
 (
@@ -348,19 +322,16 @@ where rowCnt = 2
 
 drop table #tmp
 ";
-            DualResult result1;
-            DataTable dtCheck;
-            string errmsg = string.Empty;
-
-            if (!(result1 = MyUtility.Tool.ProcessWithDatatable(dtToWMSChk, string.Empty, sqlcmd, out dtCheck)))
+            if (!(result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, string.Empty, sqlcmd, out DataTable dtCheck)))
             {
-                MyUtility.Msg.WarningBox(result1.Messages.ToString());
+                this.ShowErr(result);
                 return;
             }
             else
             {
                 if (dtCheck != null && dtCheck.Rows.Count > 0)
                 {
+                    string errmsg = string.Empty;
                     foreach (DataRow tmp in dtCheck.Rows)
                     {
                         errmsg += $@"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} Roll#: {tmp["roll"]} Dyelot: {tmp["Dyelot"]} ToLocation: {tmp["ToLocation"]}" + Environment.NewLine;
@@ -390,9 +361,9 @@ where (m.IsWMS =1 or m2.IsWMS= 1)
 and (td.FromLocation = '' or td.ToLocation = '')
 and td.id = '{this.CurrentMaintain["ID"]}'
 ";
-            if (!(result1 = DBProxy.Current.Select(string.Empty, sqlWMSLocation, out DataTable dtLocationDetail)))
+            if (!(result = DBProxy.Current.Select(string.Empty, sqlWMSLocation, out DataTable dtLocationDetail)))
             {
-                this.ShowErr(result1.ToString());
+                this.ShowErr(result);
                 return;
             }
 
@@ -411,69 +382,41 @@ and td.id = '{this.CurrentMaintain["ID"]}'
                 }
             }
             #endregion
-
-            string sqlComfirmUpdate = string.Empty;
-            sqlComfirmUpdate = string.Format(
-                @"
-update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = GETDATE() where id = '{1}'
-",
-                Env.User.UserID, this.CurrentMaintain["id"]);
-
-            TransactionScope transactionscope = new TransactionScope(
-                TransactionScopeOption.Required,
-                new System.TimeSpan(0, 10, 0));
-            using (transactionscope)
+            Exception errMsg = null;
+            using (TransactionScope transactionscope = new TransactionScope())
             {
                 try
                 {
-                    DualResult result = DBProxy.Current.Execute(null, sqlComfirmUpdate);
-                    if (!result)
+                    if (!(result = DBProxy.Current.Execute(null, $"update LocationTrans set status = 'Confirmed', editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
                     {
-                        transactionscope.Dispose();
-                        this.ShowErr(result);
-                        return;
+                        throw result.GetException();
                     }
 
-                    result = Prgs.UpdateFtyInventoryMDivisionPoDetail(this.DetailDatas);
-                    if (!result)
+                    if (!(result = Prgs.UpdateFtyInventoryMDivisionPoDetail(this.DetailDatas)))
                     {
-                        transactionscope.Dispose();
-                        this.ShowErr(result);
-                        return;
+                        throw result.GetException();
                     }
 
                     transactionscope.Complete();
                 }
                 catch (Exception ex)
                 {
-                    transactionscope.Dispose();
-                    this.ShowErr(ex);
-                    return;
+                    errMsg = ex;
                 }
             }
 
-            DataTable dt = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-
-            // AutoWHFabric WebAPI for Gensong
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            if (!MyUtility.Check.Empty(errMsg))
             {
-                Task.Run(() => new Gensong_AutoWHFabric().SentLocationTrans_Detail_New(dt, "New"))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                this.ShowErr(errMsg);
+                return;
             }
 
-            // AutoWHACC WebAPI for Vstrong
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentLocationTrans_detail_New(dt, "New"))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-            }
-
-            // 若location 不是自動倉,且Location 有變更, 要發給WMS做撤回(Delete)
+            #region 調整後 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Delete) P07/P18
             DataTable dtToWMS = ((DataTable)this.detailgridbs.DataSource).Clone();
             foreach (DataRow dr2 in this.DetailDatas)
             {
                 string sqlchk = $@"
-select * from MtlLocation m
+select 1 from MtlLocation m
 inner join SplitString('{dr2["ToLocation"]}',',') sp on m.ID = sp.Data
 where m.IsWMS = 0";
                 if (MyUtility.Check.Seek(sqlchk))
@@ -482,23 +425,14 @@ where m.IsWMS = 0";
                 }
             }
 
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
-            {
-                Task.Run(() => new Gensong_AutoWHFabric().SentReceive_Location_Update(dtToWMS))
-           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            }
+            Prgs_WMS.DeleteNotWMS(dtToWMS);
+            #endregion
 
-            // AutoWH ACC WebAPI for VStrong
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentReceive_Location_Update(dtToWMS))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-            }
-
+            // AutoWHFabric WebAPI
+            // 傳 Location_Detail 給廠商, P21 不用, 因 P21 是收料單資訊, 收料confrim已經傳過
+            Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
-
-        // 寫明細撈出的sql command
 
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)

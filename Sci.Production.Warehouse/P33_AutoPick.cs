@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg.Entity;
 using System;
 using System.Collections.Generic;
 using System.Data;

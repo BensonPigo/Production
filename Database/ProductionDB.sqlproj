@@ -2711,6 +2711,10 @@
     </Build>
     <Build Include="dbo\Tables\InspectionType.sql" />
     <Build Include="dbo\Tables\InspectionType_Detail.sql" />
+    <Build Include="dbo\Tables\WHBarcodeTransaction.sql" />
+    <Build Include="dbo\Functions\GetWHBarcodeToGensong.sql" />
+    <Build Include="dbo\Functions\GetWH_NextBarcodeSeq.sql" />
+    <Build Include="dbo\Functions\GetColorMultipleID_MtlType.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

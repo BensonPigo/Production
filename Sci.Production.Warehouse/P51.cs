@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Microsoft.Reporting.WinForms;
 using Sci.Data;
 using Sci.Production.PublicPrg;
 using System;
@@ -8,7 +9,6 @@ using System.ComponentModel;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-using Microsoft.Reporting.WinForms;
 
 namespace Sci.Production.Warehouse
 {
@@ -16,7 +16,6 @@ namespace Sci.Production.Warehouse
     public partial class P51 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
-        private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
 
         /// <inheritdoc/>
         public P51(ToolStripMenuItem menuitem)

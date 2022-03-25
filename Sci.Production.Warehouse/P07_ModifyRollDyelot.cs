@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Drawing;
-using System.Windows.Forms;
+﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Ict;
+using Sci.Production.Automation;
+using Sci.Production.Prg.Entity;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
 using System.Linq;
 using System.Transactions;
-using System.Data.SqlClient;
-using Sci.Production.PublicPrg;
-using Sci.Production.Automation;
+using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
@@ -835,60 +835,51 @@ end
 ";
             }
 
-            #region snet to WMS Gensong by ISP20220029
+            DualResult result1, result2;
 
             // 檢查資料有任一筆WMS已完成
             string strFunction = (this.gridAlias.ToUpper() == "RECEIVING_DETAIL") ? "P07" : "P18";
-            DataTable dtModify = modifyDrList.CopyToDataTable();
+            DataTable detailTable = modifyDrList.AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable();
 
-            // 為了要同P99叫用相同function關係, ActualQty 要改為Qty
-            dtModify.Columns["ActualQty"].ColumnName = "Qty";
-
-            // 傳給WMS Gensong
-            if (dtModify.AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+            // 先確認 WMS 能否上鎖, 不能直接 return
+            if (!Prgs_WMS.WMSLock(detailTable, detailTable, strFunction, EnumStatus.Unconfirm))
             {
-                if (!Gensong_AutoWHFabric.SentReceive_Detail_Delete(dtModify.AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), strFunction, "Revise", true))
-                {
-                    return;
-                }
+                return;
             }
-            #endregion
 
-            DualResult result1, result2;
-
-            TransactionScope transactionscope = new TransactionScope();
-            using (transactionscope)
+            // PMS 的資料更新
+            Exception errMsg = null;
+            using (TransactionScope transactionscope = new TransactionScope())
             {
                 try
                 {
                     if (!(result1 = DBProxy.Current.Execute(null, sqlupd1)))
                     {
-                        transactionscope.Dispose();
-                        this.ShowErr(sqlupd1, result1);
-                        return;
+                        throw result.GetException();
                     }
 
                     if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
                     {
-                        transactionscope.Dispose();
-                        this.ShowErr(sqlupd2, result2);
-                        return;
+                        throw result.GetException();
                     }
 
                     transactionscope.Complete();
-                    transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Commit successful");
                 }
                 catch (Exception ex)
                 {
-                    transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
-                    return;
+                    errMsg = ex;
                 }
             }
 
-            transactionscope.Dispose();
-            transactionscope = null;
+            if (!MyUtility.Check.Empty(errMsg))
+            {
+                Gensong_AutoWHFabric.Sent(true, detailTable, strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm);
+                this.ShowErr(errMsg);
+                return;
+            }
+
+            // PMS 更新之後,才執行WMS
+            Gensong_AutoWHFabric.Sent(true, detailTable, strFunction, EnumStatus.Revise, EnumStatus.Confirm);
 
             #region 更新FIR,AIR資料
 
@@ -1052,6 +1043,8 @@ and SEQ1 = '{4}' and SEQ2 = '{5}'
                 this.btnCommit.Enabled = false;
                 this.Close();
             }
+
+            MyUtility.Msg.InfoBox("Commit successful");
         }
     }
 }
