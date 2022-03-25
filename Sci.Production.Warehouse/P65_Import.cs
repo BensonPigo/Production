@@ -36,8 +36,22 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
 
+            DataGridViewGeneratorCheckBoxColumnSettings col_sel = new DataGridViewGeneratorCheckBoxColumnSettings();
+            col_sel.CellValidating += (s, e) =>
+            {
+                this.gridImport.EndEdit();
+                this.CountSelectQty();
+            };
+
+            DataGridViewGeneratorNumericColumnSettings col_issueQty = new DataGridViewGeneratorNumericColumnSettings();
+            col_issueQty.CellValidating += (s, e) =>
+            {
+                this.gridImport.EndEdit();
+                this.CountSelectQty();
+            };
+
             this.Helper.Controls.Grid.Generator(this.gridImport)
-            .CheckBox("selected", trueValue: 1, falseValue: 0, iseditable: true)
+            .CheckBox("selected", trueValue: 1, falseValue: 0, iseditable: true, settings: col_sel)
             .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .EditText("Desc", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
@@ -45,7 +59,7 @@ namespace Sci.Production.Warehouse
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Numeric("Qty", header: "Issue Qty", decimal_places: 2, width: Widths.AnsiChars(8))
+            .Numeric("Qty", header: "Issue Qty", decimal_places: 2, width: Widths.AnsiChars(8), settings: col_issueQty)
             .Text("Unit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Location", header: "Location", width: Widths.AnsiChars(15), iseditingreadonly: true)
             ;
@@ -103,6 +117,7 @@ where   (sfi.InQty - sfi.OutQty + sfi.AdjustQty) > 0 and sfi.StockType = 'B' and
         private void BtnFind_Click(object sender, EventArgs e)
         {
             this.Query();
+            this.numTTLQty.Value = 0;
         }
 
         private void BtnCancel_Click(object sender, EventArgs e)
@@ -149,6 +164,29 @@ where   (sfi.InQty - sfi.OutQty + sfi.AdjustQty) > 0 and sfi.StockType = 'B' and
             }
 
             MyUtility.Msg.InfoBox("Import complete!!");
+        }
+
+        private void GridImport_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            this.gridImport.ValidateControl();
+            DataGridViewColumn column = this.gridImport.Columns["selected"];
+            if (!MyUtility.Check.Empty(column) && !MyUtility.Check.Empty(this.gridImport.DataSource))
+            {
+                this.CountSelectQty();
+            }
+        }
+
+        private void CountSelectQty()
+        {
+            var upd_list = ((DataTable)this.gridImport.DataSource).AsEnumerable().Where(x => x["selected"].EqualDecimal(1)).ToList();
+            if (upd_list.Count == 0)
+            {
+                this.numTTLQty.Value = 0;
+                return;
+            }
+
+            decimal ttlQty = upd_list.Sum(r => Convert.ToDecimal(r["Qty"]));
+            this.numTTLQty.Value = ttlQty;
         }
     }
 }
