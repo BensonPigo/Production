@@ -1,14 +1,10 @@
 ﻿using Ict;
-using Sci.Data;
 using Sci.Production.Automation;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sci.Production.Warehouse
 {
