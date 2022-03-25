@@ -3519,6 +3519,18 @@ inner join #tmp s on s.POID = sd.PoId
         {
             WHTableName detailTableName = GetWHDetailTableName(function);
             string psd_FtyDt = GetWHjoinPSD_Fty(detailTableName);
+
+            // Issue 部分程式第 2 層是 Issue_Summary,第3層才是 Issue_Detail
+            string ukeys;
+            if (dtDetail.Columns.Contains("Issue_DetailUkey"))
+            {
+                ukeys = dtDetail.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["Issue_DetailUkey"])).ToList().JoinToString(",");
+            }
+            else
+            {
+                ukeys = dtDetail.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["Ukey"])).ToList().JoinToString(",");
+            }
+
             string columnIsWMS;
             if (detailTableName == WHTableName.SubTransfer_Detail || detailTableName == WHTableName.BorrowBack_Detail)
             {
@@ -3568,10 +3580,11 @@ select f.*
     ,balanceQty = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
     ,psd.FabricType
 {columnIsWMS}
-FROM #tmp sd
+FROM {detailTableName} sd
 {psd_FtyDt}
+where sd.Ukey in ({ukeys})
 ";
-            return MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, sqlcmd, out dt);
+            return DBProxy.Current.Select(null, sqlcmd, out dt);
         }
 
         /// <inheritdoc/>

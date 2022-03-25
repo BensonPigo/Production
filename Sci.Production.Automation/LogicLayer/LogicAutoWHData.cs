@@ -22,58 +22,29 @@ namespace Sci.Production.Automation.LogicLayer
         /// <inheritdoc/>
         public static DataTable GetWHData(DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, string fabricType, bool fromNewBarcode = false, bool isP99 = false)
         {
-            string sqlcmd = GetWHDataSqlcmd(dtDetail, formName, statusAPI, action, fabricType, fromNewBarcode, isP99);
-            DataTable dtMaster;
-            DualResult result;
-            if (isP99)
+            string sqlcmd = GetWHDataSqlcmd(dtDetail, formName, statusAPI, action, fabricType, fromNewBarcode);
+            DualResult result = DBProxy.Current.Select("Production", sqlcmd, out DataTable dtMaster);
+            if (!result)
             {
-                WHTableName detailTableName = Prgs.GetWHDetailTableName(formName);
-                DataTable copyDetail = dtDetail.Copy();
-
-                // Issue 部分程式第 2 層是 Issue_Summary,第3層才是 Issue_Detail
-                if (copyDetail.Columns.Contains("Issue_DetailUkey"))
-                {
-                    if (copyDetail.Columns.Contains("Ukey"))
-                    {
-                        copyDetail.Columns.Remove("Ukey");
-                    }
-
-                    copyDetail.Columns["Issue_DetailUkey"].ColumnName = "Ukey";
-                }
-
-                // P99 欄位別名 Qty
-                if (detailTableName == WHTableName.Adjust_Detail)
-                {
-                    if (copyDetail.Columns.Contains("qtyAfter"))
-                    {
-                        copyDetail.Columns.Remove("qtyAfter");
-                    }
-
-                    copyDetail.Columns["qty"].ColumnName = "qtyAfter";
-                }
-
-                result = MyUtility.Tool.ProcessWithDatatable(copyDetail, string.Empty, sqlcmd, out dtMaster);
-                if (!result)
-                {
-                    MyUtility.Msg.WarningBox(result.ToString());
-                }
-            }
-            else
-            {
-                result = DBProxy.Current.Select("Production", sqlcmd, out dtMaster);
-                if (!result)
-                {
-                    MyUtility.Msg.WarningBox(result.ToString());
-                }
+                MyUtility.Msg.WarningBox(result.ToString());
             }
 
             return dtMaster;
         }
 
         /// <inheritdoc/>
-        public static string GetWHDataSqlcmd(DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, string fabricType, bool fromNewBarcode = false, bool isP99 = false)
+        public static string GetWHDataSqlcmd(DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, string fabricType, bool fromNewBarcode = false)
         {
-            string ukeys = dtDetail.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["Ukey"])).ToList().JoinToString(",");
+            string ukeys;
+            if (dtDetail.Columns.Contains("Issue_DetailUkey"))
+            {
+                ukeys = dtDetail.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["Issue_DetailUkey"])).ToList().JoinToString(",");
+            }
+            else
+            {
+                ukeys = dtDetail.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["Ukey"])).ToList().JoinToString(",");
+            }
+
             string mainTable = Prgs.GetWHMainTableName(formName);
             WHTableName detailTableName = Prgs.GetWHDetailTableName(formName);
             string columns = string.Empty;
@@ -81,7 +52,6 @@ namespace Sci.Production.Automation.LogicLayer
             string psd_FtyDt = Prgs.GetWHjoinPSD_Fty(detailTableName);
             string whereWMS = string.Empty;
             int fromNewBarcodeBit = fromNewBarcode ? 1 : 0;
-            string headerAlias = isP99 ? "sd." : "s.";
             if (statusAPI == EnumStatus.New)
             {
                 string whereIsWMSTo = string.Empty;
@@ -138,7 +108,7 @@ and exists(
             }
             else
             {
-                whereWMS = Environment.NewLine + $" and sd.SentToWMS = '{(isP99 ? "V" : "1")}' and sd.CompleteTime is null";
+                whereWMS = Environment.NewLine + $" and sd.SentToWMS = 1 and sd.CompleteTime is null";
             }
 
             columns = $@"
@@ -160,9 +130,9 @@ and exists(
                     // 收料
                     case WHTableName.Receiving_Detail:
                         columns += $@"
-    ,[InvNo] = {headerAlias}InvNo
-    ,[ETA] = {headerAlias}ETA
-    ,[WhseArrival] = {headerAlias}WhseArrival
+    ,[InvNo] = s.InvNo
+    ,[ETA] = s.ETA
+    ,[WhseArrival] = s.WhseArrival
     ,sd.StockQty
     ,sd.StockUnit
     ,sd.PoUnit
@@ -175,9 +145,9 @@ and exists(
                         break;
                     case WHTableName.TransferIn_Detail:
                         columns += $@"
-    ,[InvNo] = {headerAlias}InvNo
+    ,[InvNo] = s.InvNo
     ,[ETA] = null
-    ,[WhseArrival] = {headerAlias}IssueDate
+    ,[WhseArrival] = s.IssueDate
     ,StockQty = sd.Qty
     ,StockUnit = dbo.GetStockUnitBySPSeq(sd.POID, sd.Seq1, sd.Seq2)
     ,psd.PoUnit
@@ -219,7 +189,7 @@ and exists(
                         if (detailTableName == WHTableName.SubTransfer_Detail)
                         {
                             columns += $@"
-    , {headerAlias}Type";
+    , s.Type";
                         }
 
                         break;
@@ -251,10 +221,10 @@ and exists(
                         if (detailTableName == WHTableName.Issue_Detail)
                         {
                             otherTables = $@"
-left join Production.dbo.Cutplan c on c.ID = {headerAlias}CutplanID
+left join Production.dbo.Cutplan c on c.ID = s.CutplanID
 ";
                             columns += $@"
-    ,[CutPlanID] = isnull({headerAlias}CutplanID, '')
+    ,[CutPlanID] = isnull(s.CutplanID, '')
     ,[EstCutdate] = c.EstCutdate
     ,[SpreadingNoID] = isnull(c.SpreadingNoID,'')
 ";
@@ -327,9 +297,9 @@ outer apply (
                     // 收料
                     case WHTableName.Receiving_Detail:
                         columns += $@"
-    ,[InvNo] = iif('{formName}' = 'P07', {headerAlias}InvNo, '')
-    ,[ETA] = iif('{formName}' = 'P07', {headerAlias}ETA, null)
-    ,[WhseArrival] = iif('{formName}' = 'P07', {headerAlias}WhseArrival, null)
+    ,[InvNo] = iif('{formName}' = 'P07', s.InvNo, '')
+    ,[ETA] = iif('{formName}' = 'P07', s.ETA, null)
+    ,[WhseArrival] = iif('{formName}' = 'P07', s.WhseArrival, null)
     ,sd.StockQty
     ,[StockUnit] = iif('{formName}' = 'P07', sd.StockUnit,dbo.GetStockUnitBySPSeq(sd.PoId, sd.Seq1 ,sd.Seq2))
     ,[PoUnit] = iif('{formName}' = 'P07', sd.PoUnit, '')
@@ -340,9 +310,9 @@ outer apply (
                         break;
                     case WHTableName.TransferIn_Detail:
                         columns += $@"
-    ,[InvNo] = {headerAlias}InvNo
+    ,[InvNo] = s.InvNo
     ,[ETA] = null
-    ,[WhseArrival] = {headerAlias}IssueDate
+    ,[WhseArrival] = s.IssueDate
     ,StockQty = sd.Qty
     ,StockUnit = dbo.GetStockUnitBySPSeq(sd.POID, sd.Seq1, sd.Seq2)
     ,[PoUnit] = ''
@@ -394,7 +364,7 @@ outer apply (
                         if (detailTableName == WHTableName.SubTransfer_Detail)
                         {
                             columns += $@"
-    , {headerAlias}Type";
+    , s.Type";
                         }
 
                         break;
@@ -444,26 +414,7 @@ outer apply (
                 }
             }
 
-            string sqlcmd;
-            if (isP99)
-            {
-                sqlcmd = $@"
-select
-    [ID] = sd.ID
-    ,[Ukey] = sd.Ukey
-{columns}
-
-FROM #tmp sd
-{psd_FtyDt}
-left join Fabric WITH (NOLOCK) ON Fabric.SCIRefNo = psd.SCIRefNo
-{otherTables}
-where psd.FabricType = '{fabricType}'
-{whereWMS}
-";
-            }
-            else
-            {
-                sqlcmd = $@"
+            string sqlcmd = $@"
 select
     [ID] = sd.ID
     ,[Ukey] = sd.Ukey
@@ -478,8 +429,6 @@ where sd.Ukey in ({ukeys})
 and psd.FabricType = '{fabricType}'
 {whereWMS}
 ";
-            }
-
             return sqlcmd;
         }
 
