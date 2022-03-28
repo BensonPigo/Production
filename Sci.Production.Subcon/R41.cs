@@ -278,7 +278,9 @@ Select
     [EXCESS] = iif(b.IsEXCESS = 0, '','Y'),
     [Cut Ref#] = isnull(b.CutRef,''),
     [SP#] = b.Orderid,
-	sps = dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID for XML RAW)),
+	sps =iif((select count(1) from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo) = 1
+		, (select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo)
+		, dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo order by OrderID for XML RAW))),
     [Master SP#] = b.POID,
     [M] = b.MDivisionid,
     [Factory] = o.FtyGroup,

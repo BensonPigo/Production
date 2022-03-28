@@ -106,7 +106,7 @@ Select
 	[FabricKind] = FabricKind.val,
     [Cut Ref#] = b.CutRef,
 	[SP#] =iif((select count(1) from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo) = 1
-		, b.OrderID
+		, (select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo)
 		, dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo order by OrderID for XML RAW))),
     [Master SP#] = b.POID,
     [M] = b.MDivisionid,
@@ -245,7 +245,7 @@ Select
     [FabricKind] = FabricKind.val,
     [Cut Ref#] = b.CutRef,
 	[SP#] =iif((select count(1) from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo) = 1
-		, b.OrderID
+		, (select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo)
 		, dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo order by OrderID for XML RAW))),
     [Master SP#] = b.POID,
     [M] = b.MDivisionid,
