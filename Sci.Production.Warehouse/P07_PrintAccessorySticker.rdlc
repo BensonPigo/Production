@@ -148,6 +148,7 @@
                               <Style>
                                 <FontFamily>微軟正黑體</FontFamily>
                                 <FontSize>16pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -297,6 +298,7 @@
                               <Style>
                                 <FontFamily>微軟正黑體</FontFamily>
                                 <FontSize>12pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -371,6 +373,7 @@
                               <Style>
                                 <FontFamily>微軟正黑體</FontFamily>
                                 <FontSize>16pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -445,6 +448,7 @@
                               <Style>
                                 <FontFamily>微軟正黑體</FontFamily>
                                 <FontSize>16pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
