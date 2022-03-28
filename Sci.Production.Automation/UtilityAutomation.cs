@@ -76,8 +76,9 @@ namespace Sci.Production.Automation
         /// <param name="automationErrMsg">Automation Err Msg</param>
         public static void SaveAutomationErrMsg(AutomationErrMsg automationErrMsg)
         {
+            bool isAutoWH = (automationErrMsg.apiThread.Contains("GensongAutoWHFabric") || automationErrMsg.apiThread.Contains("VstrongAutoWHAccessory")) ? true : false;
             #region 先將資料新增至FPS AutomationTransRecord
-            long automationTransRecordUkey = SaveAutomationTransRecord(automationErrMsg);
+            long automationTransRecordUkey = MyUtility.Check.Empty(automationErrMsg.AutomationTransRecordUkey) ? SaveAutomationTransRecord(automationErrMsg, isAutoWH) : automationErrMsg.AutomationTransRecordUkey;
             #endregion
 
             string saveSql = $@"
@@ -113,8 +114,9 @@ namespace Sci.Production.Automation
         /// <param name="automationErrMsg">Automation Err Msg</param>
         public static void SaveAutomationCheckMsg(AutomationErrMsg automationErrMsg)
         {
+            bool isAutoWH = (automationErrMsg.apiThread.Contains("GensongAutoWHFabric") || automationErrMsg.apiThread.Contains("VstrongAutoWHAccessory")) ? true : false;
             #region 先將資料新增至FPS AutomationTransRecord
-            long automationTransRecordUkey = SaveAutomationTransRecord(automationErrMsg);
+            long automationTransRecordUkey = automationTransRecordUkey = MyUtility.Check.Empty(automationErrMsg.AutomationTransRecordUkey) ? SaveAutomationTransRecord(automationErrMsg, isAutoWH) : automationErrMsg.AutomationTransRecordUkey;
             #endregion
 
             string saveSql = $@"
@@ -147,6 +149,7 @@ namespace Sci.Production.Automation
         /// </summary>
         /// <param name="automationErrMsg">Automation Err Msg</param>
         /// <param name="isAutoWH">isAutoWH</param>
+        /// <returns>AutomationTransRecord Ukey</returns>
         public static long SaveAutomationTransRecord(AutomationErrMsg automationErrMsg, bool isAutoWH = true)
         {
             string saveSql = $@"
@@ -177,7 +180,6 @@ getdate()
 declare @ID bigint = (select @@IDENTITY)
 select ID = @ID
 ";
-            Dictionary<string, string> requestHeaders = GetCustomHeaders();
             string strSimpleJson = automationErrMsg.json;
 
             if (isAutoWH)
@@ -211,8 +213,8 @@ select ID = @ID
 
             List<SqlParameter> listPar = new List<SqlParameter>()
             {
-               new SqlParameter("@CallFrom", requestHeaders["CallFrom"]),
-               new SqlParameter("@Activity", requestHeaders["Activity"]),
+               new SqlParameter("@CallFrom", automationErrMsg.CallFrom),
+               new SqlParameter("@Activity", automationErrMsg.Activity),
                new SqlParameter("@SuppID", automationErrMsg.suppID),
                new SqlParameter("@ModuleName", automationErrMsg.moduleName),
                new SqlParameter("@SuppAPIThread", automationErrMsg.suppAPIThread),
@@ -231,6 +233,7 @@ select ID = @ID
             return MyUtility.Convert.GetLong(dt.Rows[0]["ID"]);
         }
 
+        /// <inheritdoc/>
         public static object CreateGensongStructure(string tableName, object structureID)
         {
             Dictionary<string, object> resultObj = new Dictionary<string, object>
@@ -294,7 +297,10 @@ select ID = @ID
             DualResult result = new DualResult(true);
             WebApiBaseResult webApiBaseResult;
             Dictionary<string, string> requestHeaders = GetCustomHeaders();
+            automationErrMsg.CallFrom = requestHeaders["CallFrom"];
+            automationErrMsg.Activity = requestHeaders["Activity"];
             webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 600, requestHeaders);
+            automationErrMsg.AutomationTransRecordUkey = webApiBaseResult.TransRecordUkey;
             automationErrMsg.json = jsonBody;
             if (!webApiBaseResult.isSuccess)
             {
@@ -319,7 +325,10 @@ select ID = @ID
             DualResult result = new DualResult(true);
             WebApiBaseResult webApiBaseResult;
             Dictionary<string, string> requestHeaders = GetCustomHeaders();
+            automationErrMsg.CallFrom = requestHeaders["CallFrom"];
+            automationErrMsg.Activity = requestHeaders["Activity"];
             webApiBaseResult = await PmsWebApiUtility45.WebApiTool.WebApiPostAsync(baseUrl, requestUri, jsonBody, 600, requestHeaders);
+            automationErrMsg.AutomationTransRecordUkey = webApiBaseResult.TransRecordUkey;
             automationErrMsg.json = jsonBody;
             if (!webApiBaseResult.isSuccess)
             {
@@ -378,6 +387,8 @@ select ID = @ID
             if (reSented)
             {
                 Dictionary<string, string> requestHeaders = GetCustomHeaders();
+                automationErrMsg.CallFrom = requestHeaders["CallFrom"];
+                automationErrMsg.Activity = requestHeaders["Activity"];
                 webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 600, requestHeaders);
                 automationErrMsg.json = jsonBody;
 
@@ -393,6 +404,7 @@ select ID = @ID
             else
             {
                 webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 20);
+                automationErrMsg.AutomationTransRecordUkey = webApiBaseResult.TransRecordUkey;
                 bool saveAllmsg = MyUtility.Convert.GetBool(ConfigurationManager.AppSettings["OpenAll_AutomationCheckMsg"]);
 
                 if (!webApiBaseResult.isSuccess)
@@ -401,11 +413,17 @@ select ID = @ID
                     automationErrMsg.errorMsg = webApiBaseResult.responseContent.ToString();
                     automationErrMsg.json = jsonBody;
                     result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
+                    Dictionary<string, string> requestHeaders = GetCustomHeaders();
+                    automationErrMsg.CallFrom = requestHeaders["CallFrom"];
+                    automationErrMsg.Activity = requestHeaders["Activity"];
                     SaveAutomationCheckMsg(automationErrMsg);
                 }
                 else if (saveAllmsg)
                 {
                     automationErrMsg.json = jsonBody;
+                    Dictionary<string, string> requestHeaders = GetCustomHeaders();
+                    automationErrMsg.CallFrom = requestHeaders["CallFrom"];
+                    automationErrMsg.Activity = requestHeaders["Activity"];
                     SaveAutomationCheckMsg(automationErrMsg);
                 }
             }

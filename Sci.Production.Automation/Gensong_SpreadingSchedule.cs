@@ -138,10 +138,14 @@ namespace Sci.Production.Automation
             automationErrMsg.suppAPIThread = suppAPIThread;
             automationErrMsg.json = JsonConvert.SerializeObject(apiQueryString);
 
-            SaveAutomationTransRecord(automationErrMsg, false);
+            Dictionary<string, string> requestHeaders = GetCustomHeaders();
+            automationErrMsg.CallFrom = requestHeaders["CallFrom"];
+            automationErrMsg.Activity = requestHeaders["Activity"];
 
             WebApiBaseResult webApiBaseResult;
             webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(UtilityAutomation.GetSupplierUrl(GensongSuppID, moduleName), suppAPIThread, string.Empty, 600, queryStrings: apiQueryString);
+            automationErrMsg.AutomationTransRecordUkey = webApiBaseResult.TransRecordUkey;
+            SaveAutomationTransRecord(automationErrMsg, false);
 
             if (!webApiBaseResult.isSuccess)
             {
