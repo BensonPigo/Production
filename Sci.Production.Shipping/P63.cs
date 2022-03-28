@@ -2,7 +2,6 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
-using Sci.Win.Tems;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
@@ -13,8 +12,6 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -321,6 +318,32 @@ select ID from KHCMTInvoice where ID like @IDkeyWord + '%'
             }
 
             MyUtility.Msg.InfoBox("Finance manager approve success!!");
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickUnconfirm()
+        {
+            base.ClickUnconfirm();
+
+            string sqlComfirm = $"update KHCMTInvoice set EditName = '{Env.User.UserID}', EditDate = getdate(), Status = 'New' where ID = '{this.CurrentMaintain["ID"]}'";
+            DualResult result = DBProxy.Current.Execute(null, sqlComfirm);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickDeleteBefore()
+        {
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "New")
+            {
+                MyUtility.Msg.WarningBox("This record was approved, can't delete.");
+                return false;
+            }
+
+            return base.ClickDeleteBefore();
         }
 
         /// <inheritdoc/>
