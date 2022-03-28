@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using Sci.Win.UI;
 using Sci.Production.CallPmsAPI;
 using Newtonsoft.Json;
+using static Sci.Production.CallPmsAPI.PackingA2BWebAPI_Model;
 
 namespace Sci.Production.PublicPrg
 {
@@ -1362,6 +1363,190 @@ where p.INVNo = '{invNoList}'
             DualResult result = PackingA2BWebAPI.GetDataBySql(systemName, dataBySql, out dtResult);
 
             return result;
+        }
+
+        /// <summary>
+        /// CalculateShareExpense
+        /// </summary>
+        /// <param name="shippingAPID">shippingAPID</param>
+        /// <param name="isFreightForwarder">isFreightForwarder</param>
+        /// <returns>DualResult</returns>
+        public static DualResult CalculateShareExpense(string shippingAPID, int isFreightForwarder)
+        {
+            DualResult result;
+
+            #region get A2B PackingInfo
+            string sqlGetA2BGMT = $@"
+select  distinct
+        gd.PLFromRgCode,
+        gd.PackingListID,
+        [InvNo] = g.ID,
+        g.ShipModeID,
+        s.CurrencyID,
+        s.SubType, 
+        iif(g.BLNo is null or g.BLNo='', isnull (g.BL2No, ''), g.BLNo) as BLNo
+from    ShippingAP s WITH (NOLOCK)
+inner join ShareExpense se WITH (NOLOCK)  on s.id = se.ShippingAPID
+inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
+inner join GMTBooking_Detail gd with (nolock) on g.ID = gd.ID
+where   se.FtyWK = 0 and
+		s.id = '{shippingAPID}'
+";
+            DataTable dtA2BResult = new DataTable();
+            DataTable dtA2BGMT;
+
+            result = DBProxy.Current.Select(null, sqlGetA2BGMT, out dtA2BGMT);
+            if (!result)
+            {
+                return result;
+            }
+
+            // 先產生有欄位的Datatable，避免a2b沒有datatable是空的
+            string sqlCreateFakeDatatable = @"
+DECLARE @TmpTable TABLE (
+InvNo varchar(25),
+ShipModeID varchar(10),
+GW numeric(10, 3),
+CBM numeric(10, 3),
+CurrencyID varchar(3),
+SubType varchar(25), 
+BLNo varchar(20),
+FactoryID varchar(8)
+)
+select * from @TmpTable
+";
+            result = DBProxy.Current.Select(null, sqlCreateFakeDatatable, out dtA2BResult);
+            if (!result)
+            {
+                return result;
+            }
+
+            string sqlGetA2BPack = @"
+alter table #tmp alter column InvNo varchar(25)
+alter table #tmp alter column PackingListID varchar(13)
+
+select  g.InvNo,
+        g.ShipModeID,
+        [GW] = sum(pd.GW),
+        [CBM] = sum(l.CBM),
+        g.CurrencyID,
+        g.SubType, 
+        g.BLNo,
+        o.FactoryID
+from #tmp g
+inner join PackingList p with (nolock) on p.INVNo = g.InvNo and p.ID = g.PackingListID
+inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty = 1
+inner join Orders o with (nolock) on o.ID = pd.OrderID
+inner join LocalItem l with (nolock) on l.Refno = pd.Refno
+group by    g.InvNo,
+            g.ShipModeID,
+            g.CurrencyID,
+            g.SubType, 
+            g.BLNo,
+            o.FactoryID
+";
+
+            foreach (var groupItem in dtA2BGMT.AsEnumerable().GroupBy(s => s["PLFromRgCode"].ToString()))
+            {
+                DataBySql dataBySql = new DataBySql()
+                {
+                    SqlString = sqlGetA2BPack,
+                    TmpTable = JsonConvert.SerializeObject(groupItem.CopyToDataTable()),
+                };
+
+                DataTable dtA2BPack;
+                result = PackingA2BWebAPI.GetDataBySql(groupItem.Key, dataBySql, out dtA2BPack);
+
+                if (!result)
+                {
+                    return result;
+                }
+
+                dtA2BPack.MergeTo(ref dtA2BResult);
+            }
+
+            if (dtA2BResult.Rows.Count > 0)
+            {
+                string sqlUpdateGBShareExpense = $@"
+select  InvNo,
+        ShipModeID,
+        [GW] = sum(GW),
+        [CBM] = sum(CBM),
+        CurrencyID,
+        SubType, 
+        BLNo,
+        FactoryID
+into #tmpShareExpense
+from (
+select  InvNo,
+        ShipModeID,
+        GW,
+        CBM,
+        CurrencyID,
+        SubType, 
+        BLNo,
+        FactoryID
+from #tmp
+union all
+select  [InvNo] = g.ID,
+        g.ShipModeID,
+        [GW] = sum(pd.GW),
+        [CBM] = sum(l.CBM),
+        s.CurrencyID,
+        s.SubType, 
+        iif(g.BLNo is null or g.BLNo='', isnull (g.BL2No, ''), g.BLNo) as BLNo,
+        o.FactoryID
+from    ShippingAP s WITH (NOLOCK)
+inner join ShareExpense se WITH (NOLOCK)  on s.id = se.ShippingAPID
+inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
+inner join PackingList p with (nolock) on p.INVNo = g.ID
+inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty = 1
+inner join Orders o with (nolock) on o.ID = pd.OrderID
+inner join LocalItem l with (nolock) on l.Refno = pd.Refno
+where   se.FtyWK = 0 and
+		s.id = '{shippingAPID}'
+group by    g.ID,
+            g.ShipModeID,
+            s.CurrencyID,
+            s.SubType, 
+            iif(g.BLNo is null or g.BLNo='', isnull (g.BL2No, ''), g.BLNo),
+            o.FactoryID
+) a
+group by    InvNo,
+            ShipModeID,
+            CurrencyID,
+            SubType, 
+            BLNo,
+            FactoryID
+
+update se set   se.ShipModeID = ts.ShipModeID
+		        , se.BLNo = ts.BLNo
+		        , se.GW = ts.GW
+		        , se.CBM = ts.CBM
+		        , se.CurrencyID = ts.CurrencyID
+		        , se.Type = ts.SubType
+from ShareExpense se
+inner join #tmpShareExpense ts on se.InvNo = ts.InvNo and se.FactoryID = ts.FactoryID
+where se.ShippingAPID = shippingAPID
+";
+
+                result = MyUtility.Tool.ProcessWithDatatable(dtA2BResult, null, sqlUpdateGBShareExpense, out DataTable dtEmpty);
+                if (!result)
+                {
+                    return result;
+                }
+            }
+            #endregion
+
+            result = DBProxy.Current.Execute(
+    "Production",
+    string.Format("exec CalculateShareExpense '{0}','{1}',{2}", shippingAPID, Env.User.UserID, isFreightForwarder));
+            if (!result)
+            {
+                return new DualResult(false, "Re-calcute share expense failed!");
+            }
+
+            return new DualResult(true);
         }
 
         /// <summary>

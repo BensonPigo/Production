@@ -28,6 +28,7 @@ namespace Sci.Production.Shipping
         private bool IsReason;
         private string LocalSuppID;
         private int isFreightForwarder;
+        private Func<DualResult> InitialShareExpense;
 
         /// <summary>
         /// P08_ShareExpense
@@ -35,12 +36,14 @@ namespace Sci.Production.Shipping
         /// <param name="aPData">aPData</param>
         /// <param name="apflag">apflag</param>
         /// <param name="isReasonAP007">Reason = AP007</param>
-        public P08_ShareExpense(DataRow aPData, bool apflag, bool isReasonAP007)
+        /// <param name="initialShareExpense">InitialShareExpense</param>
+        public P08_ShareExpense(DataRow aPData, bool apflag, bool isReasonAP007, Func<DualResult> initialShareExpense)
         {
             this.InitializeComponent();
             this.apData = aPData;
             this.Apflag = apflag;
             this.IsReason = isReasonAP007;
+            this.InitialShareExpense = initialShareExpense;
             this.isFreightForwarder = apflag ? 1 : 0;
             this.displayCurrency.Value = MyUtility.Convert.GetString(this.apData["CurrencyID"]);
             this.numTtlAmt.DecimalPlaces = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup("Exact", MyUtility.Convert.GetString(this.apData["CurrencyID"]), "Currency", "ID"));
@@ -541,6 +544,7 @@ where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
             this.gridAccountID.IsEditingReadOnly = true;
             this.gridAccountID.DataSource = this.listControlBindingSource2;
             this.Helper.Controls.Grid.Generator(this.gridAccountID)
+                .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(6))
                 .Text("AccountID", header: "Account No", width: Widths.AnsiChars(8))
                 .Text("AccountName", header: "Account Name", width: Widths.AnsiChars(30))
                 .Numeric("Amount", header: "Amount", decimal_places: 2)
@@ -579,100 +583,18 @@ where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
 
         private void AppendData()
         {
-            string strSqlCmd = $@"
-merge ShareExpense t
-using (
-    select distinct
-        [ShippingAPID] = '{this.apData["ID"]}'
-        ,[BLNo] = iif(BLNo is null or BLNo='', BL2No,BLNo)
-        ,[WKNo] = ''
-        ,[InvNo] = id
-        ,[Type] = '{this.apData["SubType"]}'
-        ,[GW] = TotalGW
-        ,[CBM] = TotalCBM
-        ,[CurrencyID] = '{this.apData["CurrencyID"]}'
-        ,[ShipModeID] = ShipModeID
-        ,[FtyWK] = 0
-        ,[AccountID] = (
-	        select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
-            where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
-            and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
-		        or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1))
-        ,[Junk] = 0
-    from GMTBooking g WITH (NOLOCK) 
-    where BLNo='{this.apData["BLNO"]}' or BL2No='{this.apData["BLNO"]}' 
-
-    union all
-    select distinct
-        [ShippingAPID] = '{this.apData["ID"]}',
-	    Blno,
-        [WKNo] = '',
-        [InvNo] = f.id,
-	    [Type] = '{this.apData["SubType"]}',
-	    f.WeightKg,
-	    f.Cbm,
-	    [CurrencyID] = '{this.apData["CurrencyID"]}',
-	    f.ShipModeID,
-	    [FtyWK] = 0,
-        [AccountID] = (
-	        select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
-            where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
-            and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
-		        or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)),
-	    [Junk] = 0
-    from FtyExport f
-    where Blno = '{this.apData["BLNO"]}'
-
-    union all
-    select distinct
-        [ShippingAPID] = '{this.apData["ID"]}',
-	    Blno,
-        [WKNo] = e.id,
-        [InvNo] = '',
-	    [Type] = '{this.apData["SubType"]}',
-	    e.WeightKg,
-	    e.Cbm,
-	    [CurrencyID] = '{this.apData["CurrencyID"]}',
-	    e.ShipModeID,
-	    [FtyWK] = 0,
-        [AccountID] = (
-	        select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
-            where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
-            and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
-		        or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)),
-	    [Junk] = 0
-    from Export e
-    where Blno = '{this.apData["BLNO"]}'
-) as s 
-on	t.ShippingAPID = s.ShippingAPID 
-	and t.WKNO = s.WKNO	and t.InvNo = s.InvNo
-when matched AND t.junk=1 then
-	update set
-	t.junk=0
-when not matched by target then 
-	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk)
-	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk);
-
-update se set Junk = 1
-from ShareExpense se
-inner join ShippingAP sa on sa.id = se.ShippingAPID
-where se.ShippingAPID = '{this.apData["ID"]}'
-and not exists(select 1 from GMTBooking where id=se.InvNo and (BLNo = sa.BLNo or BL2No = sa.BLNo))
-and not exists(select 1 from FtyExport where id=se.InvNo and BLNo = sa.BLNo)
-and not exists(select 1 from Export where id=se.WKNo and BLNo = sa.BLNo)
-";
 
             DualResult result;
-            if (!(result = DBProxy.Current.Execute(string.Empty, strSqlCmd)))
+            result = this.InitialShareExpense();
+            if (!result)
             {
                 this.ShowErr(result);
                 return;
             }
 
             // 重新計算
-            result = DBProxy.Current.Execute(
-                "Production",
-                string.Format("exec CalculateShareExpense '{0}','{1}', {2}", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID, this.isFreightForwarder));
+            result = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(this.apData["ID"]), this.isFreightForwarder);
+
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Calcute share expense failed.\r\n" + result.ToString());
@@ -762,12 +684,13 @@ select  sh.Junk,sh.ShippingAPID,sh.WKNo,sh.InvNo,sh.Type,sh.GW,sh.CBM,sh.Amount,
             when sh.ShareBase = 'G' then 'G.W.' 
             when sh.ShareBase = 'C' then 'CBM' 
             else ' Number of Deliver Sheets' 
-          end as ShareRule 
+          end as ShareRule
+        , sh.FactoryID
 from ShareExpense sh WITH (NOLOCK) 
 left join SciFMS_AccountNo an on an.ID = sh.AccountID
 where   sh.ShippingAPID = '{0}' 
         and (sh.Junk = 0 or sh.Junk is null)
-order by sh.AccountID", MyUtility.Convert.GetString(this.apData["ID"]));
+order by sh.AccountID, sh.FactoryID", MyUtility.Convert.GetString(this.apData["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.SEData);
             if (!result)
             {
@@ -893,8 +816,8 @@ select  ShippingAPID
         , InvNo
         , se.Type
         , ShipModeID
-        , GW
-        , CBM
+        , [GW] = sum(GW)
+        , [CBM] = sum(CBM)
         , CurrencyID
         , DropDownListName = (
             select Name
@@ -910,7 +833,7 @@ select  ShippingAPID
 from ShareExpense se WITH (NOLOCK) 
 where   ShippingAPID = '{0}' 
         and (Junk = 0 or Junk is null)
-group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK
+group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,CurrencyID,ShipModeID,FtyWK
 ", MyUtility.Convert.GetString(this.apData["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out this.SEGroupData);
             if (!result)
@@ -1314,9 +1237,7 @@ where   ShippingAPID = '{3}'
                             }
                         }
 
-                        result = DBProxy.Current.ExecuteByConn(
-                            sqlConn,
-                            string.Format("exec CalculateShareExpense '{0}','{1}', {2}", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID, this.isFreightForwarder));
+                        result = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(this.apData["ID"]), this.isFreightForwarder);
                         if (!result)
                         {
                             errmsg = errmsg + "Calcute share expense failed." + "\r\n" + result.ToString();
@@ -1603,9 +1524,7 @@ select [resultType] = 'OK',
         // Re-Calculate
         private void BtnReCalculate_Click(object sender, EventArgs e)
         {
-            DualResult result = DBProxy.Current.Execute(
-                "Production",
-                string.Format("exec CalculateShareExpense '{0}','{1}', {2}", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID, this.isFreightForwarder));
+            DualResult result = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(this.apData["ID"]), this.isFreightForwarder);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Re-Calculate Delete faile\r\n" + result.ToString());
