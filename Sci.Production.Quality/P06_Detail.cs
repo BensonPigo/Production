@@ -66,8 +66,10 @@ from ExtendServer.PMSFile.dbo.ColorFastness a
 WHERE NOT EXISTS(
     select 1 from ColorFastness b
     where a.ID = b.ID
-    
+    and a.POID = b.POID 
+    and a.TestNo = b.TestNo
 )
+
 ";
                 this.result = DBProxy.Current.Execute(null, cmd);
                 if (!this.result)
