@@ -105,6 +105,7 @@ from (
 		left join ['+@LinkServerName+'].Production.dbo.Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= ''Style_Apparel_Type'' and r2.ID = s.ApparelType
 		where o.ID = t.ID
 	)sty
+	where exists(select 1 from ['+@LinkServerName+'].Production.dbo.Factory f WITH(NOLOCK) where f.ID = t.FactoryID and f.IsProduceFty = 1)
 '
 SET @SqlCmd2 = '
 	union all
@@ -162,7 +163,7 @@ SET @SqlCmd2 = '
 		,t.SampleGroup
 		,t.OrderReason
 	from #tmp T
-	LEFT JOIN ['+@LinkServerName+'].Production.dbo.Factory f WITH(NOLOCK) ON f.ID= T.TransFtyZone
+	LEFT JOIN ['+@LinkServerName+'].Production.dbo.SCIFty f WITH(NOLOCK) ON f.ID= T.TransFtyZone
 	Outer apply (
 		SELECT s.CDCodeNew
 			, s.[ID]
@@ -242,13 +243,13 @@ set	    t.MDivisionID =  s.MDivisionID,
 		t.[FM Sister] = s.FMSister,
 		t.[Sample Group] = s.SampleGroup,
 		t.[Order Reason] = s.OrderReason
-from P_LoadingProductionOutput as t
+from P_LoadingProductionOutput_Original as t
 inner join #Final s 
 on t.FactoryID=s.FactoryID  
    AND t.SPNO=s.ID 
 
 
-insert into P_LoadingProductionOutput
+insert into P_LoadingProductionOutput_Original
 	select  s.MDivisionID,
 	s.FtyZone,
 	s.FactoryID,
@@ -301,13 +302,13 @@ insert into P_LoadingProductionOutput
 	s.OrderReason
 from #Final s
 where not exists(
-	select 1 from P_LoadingProductionOutput t 
+	select 1 from P_LoadingProductionOutput_Original t 
 	where t.FactoryID=s.FactoryID  
 	AND t.SPNO = s.ID
 )
 
 delete t
-from P_LoadingProductionOutput t WITH (NOLOCK)
+from P_LoadingProductionOutput_Original t WITH (NOLOCK)
 where 
 (
 	YEAR(BuyerDelivery) >= '''+@S_Year+'''

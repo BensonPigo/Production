@@ -60,7 +60,7 @@ select s.id
     ,BuyerDelivery = format(o.BuyerDelivery,''yyyy/MM/dd'')
     ,OrderQty = o.Qty
     ,s.SubconOutFty
-    ,s.SubConOutContractNumber
+    ,[SubConOutContractNumber] = isnull(s.SubConOutContractNumber, '''')
     ,o.SubconInSisterFty
     ,[SewingReasonDesc]=isnull(sr.SewingReasonDesc,'''')
     ,o.SciDelivery
@@ -270,7 +270,7 @@ drop table #tmpSewingDetail,#tmp1stFilter,#tmpSewingGroup,#tmp_s1
 
 SET @SqlCmd4= '
 
-MERGE INTO P_SewingDailyOutput t --要被insert/update/delete的表
+MERGE INTO P_SewingDailyOutput_Original t --要被insert/update/delete的表
 USING #Final s --被參考的表
    ON t.FactoryID=s.FactoryID  
    AND t.MDivisionID=s.MDivisionID 
@@ -392,7 +392,7 @@ WHEN NOT MATCHED THEN
 		  );
 
 delete t
-from P_SewingDailyOutput t WITH (NOLOCK)
+from P_SewingDailyOutput_Original t WITH (NOLOCK)
 where t.OutputDate between '''+@SDate+''' and  '''+@EDate+'''
 and exists (select OrderID from #Final f where t.FactoryID=f.FactoryID  AND t.MDivisionID=f.MDivisionID ) 
 and not exists (
@@ -406,7 +406,8 @@ select OrderID from #Final s
 	AND t.Article=s.Article 
 	AND t.SizeCode=s.SizeCode 
 	AND t.ComboType=s.ComboType 
-	AND t.OutputDate = s.OutputDate);
+	AND t.OutputDate = s.OutputDate
+	AND t.SubConOutContractNumber = s.SubConOutContractNumber);
 
 '
 

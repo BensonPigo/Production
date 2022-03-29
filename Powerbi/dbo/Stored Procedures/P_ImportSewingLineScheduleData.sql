@@ -92,14 +92,19 @@ SET
 	t.SubCon = s.SubCon,
 	t.[Subcon Qty] = s.[Subcon Qty],
 	t.[Std Qty for printing] = s.[Std Qty for printing],
-	t.StyleName = s.StyleName
-from P_SewingLineSchedule t
+	t.StyleName = s.StyleName,
+	t.StdQtyEMB = s.StdQtyEMB,
+	t.EMBStitch = s.EMBStitch,
+	t.EMBStitchCnt = s.EMBStitchCnt,
+	t.TtlQtyEMB = s.TtlQtyEMB,
+	t.PrintPcs = s.PrintPcs
+from P_SewingLineSchedule_Original t
 inner join #Final s on t.APSNo=s.APSNo  
    AND t.SewingDay=s.SewingDay 
    AND t.MDivisionID = s.MDivisionID 
    AND t.FactoryID = s.FactoryID
 
-insert into P_SewingLineSchedule
+insert into P_SewingLineSchedule_Original
    ([APSNo]
       ,[SewingLineID] ,[SewingDay] ,[SewingStartTime] ,[SewingEndTime] ,[MDivisionID] ,[FactoryID]
       ,[PO] ,[POCount] ,[SP] ,[SPCount] ,[EarliestSCIdelivery] ,[LatestSCIdelivery]
@@ -110,7 +115,12 @@ insert into P_SewingLineSchedule
       ,[MTLETA] ,[ArtworkType] ,[InspectionDate] ,[Remarks]  ,[CuttingOutput],[SewingOutput]
       ,[ScannedQty] ,[ClogQty] ,[Sewer] ,[SewingCPU],[BrandID],[Orig_WorkHourPerDay],[New_SwitchTime],[FirststCuttingOutputDate]
 	  ,[CDCodeNew] ,[ProductType] ,[FabricType] ,[Lining] ,[Gender] ,[Construction]
-	  ,[TTL_PRINTING (PCS)],[TTL_PRINTING PPU (PPU)],SubCon,[Subcon Qty],[Std Qty for printing],StyleName)
+	  ,[TTL_PRINTING (PCS)],[TTL_PRINTING PPU (PPU)],SubCon,[Subcon Qty],[Std Qty for printing],StyleName
+	  ,StdQtyEMB
+	  ,EMBStitch
+	  ,EMBStitchCnt
+	  ,TtlQtyEMB
+	  ,PrintPcs)
 select s.APSNo,	s.SewingLineID,	s.SewingDay,	s.SewingStartTime,	s.SewingEndTime,	s.MDivisionID,
 	s.FactoryID,	s.PO,	s.POCount,	s.SP,	s.SPCount,	s.EarliestSCIdelivery,	s.LatestSCIdelivery,	s.EarliestBuyerdelivery,
 	s.LatestBuyerdelivery,	s.Category,	s.Colorway,	s.ColorwayCount,	s.CDCode,	s.ProductionFamilyID,	s.Style,	s.StyleCount,
@@ -120,9 +130,14 @@ select s.APSNo,	s.SewingLineID,	s.SewingDay,	s.SewingStartTime,	s.SewingEndTime,
 	s.Sewer,	s.SewingCPU,	s.BrandID,	s.Orig_WorkHourPerDay,	s.New_SwitchTime,	s.FirststCuttingOutputDate,
 	s.CDCodeNew , s.ProductType, s.FabricType, s.Lining, s.Gender, s.Construction,
 	s.[TTL_PRINTING (PCS)],s.[TTL_PRINTING PPU (PPU)],s.SubCon,s.[Subcon Qty],s.[Std Qty for printing],s.StyleName
+	,s.StdQtyEMB
+	,s.EMBStitch
+	,s.EMBStitchCnt
+	,s.TtlQtyEMB
+	,s.PrintPcs
 from #Final s
 where not exists(
-	select 1 from P_SewingLineSchedule t 
+	select 1 from P_SewingLineSchedule_Original t 
 	where t.APSNo=s.APSNo  
 	AND t.SewingDay=s.SewingDay AND t.MDivisionID = s.MDivisionID 
 	AND t.FactoryID = s.FactoryID
@@ -130,7 +145,7 @@ where not exists(
 
 
 delete t
-from P_SewingLineSchedule t
+from P_SewingLineSchedule_Original t
 left join #Final s on t.APSNo=s.APSNo  
 	AND t.SewingDay=s.SewingDay AND t.MDivisionID = s.MDivisionID AND t.FactoryID = s.FactoryID
 where s.apsno is null

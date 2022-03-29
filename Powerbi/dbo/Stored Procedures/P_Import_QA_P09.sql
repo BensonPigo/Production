@@ -1,11 +1,3 @@
-USE [PBIReportData]
-GO
-/****** Object:  StoredProcedure [dbo].[P_ImportSDPOrderDetail]    Script Date: 06/01/2021 ¤W¤È 09:23:42 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
 
 Create PROCEDURE [dbo].[P_Import_QA_P09]	
 	@ETA_s Date,
@@ -130,7 +122,7 @@ SET @SqlCmd3 = '
 	drop table #probablySeasonList
 
 	-----¶}©lMerge 
-	MERGE INTO PBIReportData.dbo.P_QA_P09 t
+	MERGE INTO PBIReportData.dbo.P_QA_P09_Original t
 	USING #tmpFinal s 
 	ON t.WK#=s.WK# AND t.SP#=s.SP# AND t.Seq# = s.Seq#
 	WHEN MATCHED THEN   
@@ -180,7 +172,7 @@ SET @SqlCmd3 = '
 
 
 delete t 
-from PBIReportData.dbo.P_QA_P09 t
+from PBIReportData.dbo.P_QA_P09_Original t
 left join #tmpFinal s on t.WK#=s.WK#  AND t.SP#=s.SP# AND t.Seq# = s.Seq#
 where s.WK# is null
 and T.ETA between '''+@ETA_s_varchar+''' and '''+@ETA_e_varchar+'''
