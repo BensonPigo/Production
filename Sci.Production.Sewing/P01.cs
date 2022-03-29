@@ -1897,7 +1897,7 @@ select
 	[Buyback Sew. Qty] = 0,
 	[Variablese] = OtherSewingOutputQty + QAQty - OrderQty
 from #checkResultA 
-where OrderQty < (QAQty + OtherSewingOutputQty + TransOutQty)
+where OrderQty < (QAQty + OtherSewingOutputQty)
 
 union all
 select
