@@ -78,7 +78,11 @@ namespace Sci.Production.Automation
             }
 
             // 記錄 Confirmed/UnConfirmed 後有傳給WMS的資料
-            PublicPrg.Prgs.SentToWMS(dtMaster, action == EnumStatus.Confirm, formName);
+            if (statusAPI != EnumStatus.Lock && statusAPI != EnumStatus.UnLock)
+            {
+                PublicPrg.Prgs.SentToWMS(dtMaster, action == EnumStatus.Confirm, formName);
+            }
+
             return true;
         }
 
