@@ -2015,7 +2015,7 @@ select id,GarmentDefectCodeID,GarmentDefectTypeID,qty from #tmp";
                  FETCH NEXT FROM CUR_SewingOutput_Detail INTO @orderid 
                  WHILE @@FETCH_STATUS = 0 
                  BEGIN
-                   exec dbo.Ins_OrderLocation @orderid
+                   exec dbo.Ins_OrderLocation @orderid, 'SewingP01'
                  FETCH NEXT FROM CUR_SewingOutput_Detail INTO @orderid
                  END
                  CLOSE CUR_SewingOutput_Detail
