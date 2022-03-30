@@ -54,7 +54,7 @@ namespace Sci.Production.Warehouse
                     this.detailgrid.CurrentCell = this.detailgrid.Rows[this.detailgrid.RowCount - 1].Cells[0];
                 }
             };
-            MyUtility.Tool.SetupCombox(this.comboTypeFilter, 2, 1, "ALL,ALL,Fabric,Fabric,Accessory,Accessory,No QR Code,No QR Code");
+            MyUtility.Tool.SetupCombox(this.comboTypeFilter, 2, 1, "ALL,ALL,Fabric,Fabric,Accessory,Accessory,No QR Code,No QR Code,Threads,Threads");
             this.comboTypeFilter.SelectedIndex = 0;
             this.comboStockType.DataSource = new BindingSource(this.di_stocktype, null);
             this.comboStockType.ValueMember = "Key";
@@ -2523,7 +2523,8 @@ select  a.id
         ,a.FullRoll
         ,a.FullDyelot
         ,a.CompleteTime
-        ,a.SentToWMS        
+        ,a.SentToWMS 
+        ,f.MtlTypeID
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 INNER JOIN Receiving b WITH (NOLOCK) ON a.id= b.Id
 left join View_WH_Orders o WITH (NOLOCK) on o.id = a.PoId
@@ -2842,6 +2843,9 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
                 case "No QR Code":
                     listCanDeleteDetail = this.DetailDatas.Where(s => MyUtility.Check.Empty(s["MINDQRCode"])).ToList();
                     break;
+                case "Threads":
+                    listCanDeleteDetail = this.DetailDatas.Where(s => s["MtlTypeID"].ToString() == "EMB THREAD" || s["MtlTypeID"].ToString() == "SP THREAD" || s["MtlTypeID"].ToString() == "THREAD").ToList();
+                    break;
                 default:
                     listCanDeleteDetail = this.DetailDatas.ToList();
                     break;
@@ -2881,6 +2885,10 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
                 case 3:
                     this.detailgridbs.Filter = "MINDQRCode = '' or MINDQRCode is null";
                     this.btnDeleteAll.Text = "Delete All No QR Code";
+                    break;
+                case 4:
+                    this.detailgridbs.Filter = "MtlTypeID  in ('EMB THREAD', 'SP THREAD', 'THREAD')";
+                    this.btnDeleteAll.Text = "Delete All Threads";
                     break;
             }
 
