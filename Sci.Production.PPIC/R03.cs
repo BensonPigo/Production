@@ -917,18 +917,22 @@ into #tmp_MTLDelay
 from #tmpFilterSeperate 
 group by POID 
 
-select pod.OrderID,pod.OrderShipmodeSeq,Sum (pod.ShipQty) PulloutQty
+select pd.OrderID, pd.OrderShipmodeSeq, sum(pd.ShipQty) PulloutQty
 into #tmp_PulloutQty
-from Pullout_Detail pod WITH (NOLOCK) 
-inner join #tmpFilterSeperate t on pod.OrderID = t.ID and pod.OrderShipmodeSeq = t.Seq 
-group by pod.OrderID,pod.OrderShipmodeSeq
-                                     
-select pod.OrderID,Count (Distinct pod.ID) ActPulloutTime
+from PackingList_Detail pd
+inner join #tmpFilterSeperate t on pd.OrderID = t.ID and pd.OrderShipmodeSeq = t.Seq
+inner join PackingList p on p.ID = pd.ID
+where p.PulloutID <> ''
+group by pd.OrderID, pd.OrderShipmodeSeq
+
+select pd.OrderID, count(distinct p.PulloutID) ActPulloutTime
 into #tmp_ActPulloutTime
-from Pullout_Detail pod WITH (NOLOCK) 
-inner join #tmpFilterSeperate t on pod.OrderID = t.ID 
-where pod.ShipQty > 0
-group by pod.OrderID
+from PackingList p
+inner join PackingList_Detail pd on p.ID = pd.ID
+inner join #tmpFilterSeperate t on t.ID = pd.OrderID
+where p.PulloutID <> ''
+and pd.ShipQty > 0
+group by pd.OrderID
 
 select od.ID,od.Seq,od.Article 
 into #tmp_Article
@@ -1425,14 +1429,18 @@ select distinct
                          from SewingOutput so WITH (NOLOCK) 
                          inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
                          where sod.OrderID = t.ID)
-        , PulloutQty = isnull ((select Sum(pod.ShipQty) 
-                                from Pullout_Detail pod WITH (NOLOCK) 
-                                where pod.OrderID = t.ID)
+        , PulloutQty = isnull ((select sum(pd.ShipQty)
+                                from PackingList_Detail pd
+                                inner join PackingList p on p.ID = pd.ID
+                                where p.PulloutID <> ''
+                                and pd.OrderID = t.ID)
                               , 0)
-        , ActPulloutTime = (select Count(Distinct ID) 
-                            from Pullout_Detail WITH (NOLOCK) 
-                            where   OrderID=t.ID 
-                                    and ShipQty > 0)
+        , ActPulloutTime = (select count(distinct p.PulloutID)
+                            from PackingList_Detail pd
+                            inner join PackingList p on p.ID = pd.ID
+                            where p.PulloutID <> ''
+                            and pd.OrderID = t.ID
+                            and pd.ShipQty > 0)
         , PackingCTN = isnull ((select Sum(CTNQty) 
                                 from PackingList_Detail WITH (NOLOCK) 
                                 where OrderID = t.ID)
