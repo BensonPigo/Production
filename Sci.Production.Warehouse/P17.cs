@@ -890,7 +890,7 @@ where f.lock=0 and f.WMSLock=0 AND d.Id = '{this.CurrentMaintain["id"]}'";
                     }
 
                     // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
-                    if (!(result = Prgs.UpdateWH_Barcode(true, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode)))
+                    if (!(result = Prgs.UpdateWH_Barcode(true, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
                     {
                         throw result.GetException();
                     }
@@ -1062,7 +1062,7 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
                     }
 
                     // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
-                    if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode)))
+                    if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
                     {
                         throw result.GetException();
                     }
