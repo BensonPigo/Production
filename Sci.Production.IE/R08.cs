@@ -51,7 +51,7 @@ namespace Sci.Production.IE
         /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
-            if (!this.dateBuyerDelivery.HasValue1 || !this.dateBuyerDelivery.HasValue2)
+            if (!this.dateBuyerDelivery.HasValue1 && !this.dateBuyerDelivery.HasValue2)
             {
                 MyUtility.Msg.InfoBox("Please input <Buyer Delivery>.");
                 return false;
@@ -70,8 +70,8 @@ namespace Sci.Production.IE
                 return false;
             }
 
-            this.buyerDelivery_s = ((DateTime)this.dateBuyerDelivery.Value1).ToString("yyyy/MM/dd");
-            this.buyerDelivery_e = ((DateTime)this.dateBuyerDelivery.Value2).ToString("yyyy/MM/dd");
+            this.buyerDelivery_s = this.dateBuyerDelivery.HasValue1 ? ((DateTime)this.dateBuyerDelivery.Value1).ToString("yyyy/MM/dd") : string.Empty;
+            this.buyerDelivery_e = this.dateBuyerDelivery.HasValue2 ? ((DateTime)this.dateBuyerDelivery.Value2).ToString("yyyy/MM/dd") : string.Empty;
             this.operations = this.txtmulitOperation1.Text.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries).ToList();
             this.season = this.txtseason.Text;
             this.brand = this.txtbrand.Text;
@@ -109,10 +109,18 @@ inner join IETMS i on s.IETMSID = i.ID and s.IETMSVersion = i.Version
 inner join IETMS_Detail id on i.Ukey = id.IETMSUkey
 inner join Operation op on id.OperationID = op.ID
 left join Reason r on s.ApparelType = r.ID and r.ReasonTypeID = 'Style_Apparel_Type'
-where o.BuyerDelivery >= '{this.buyerDelivery_s}'
-and o.BuyerDelivery <= '{this.buyerDelivery_e}'
-and op.ID in ('{string.Join("','", this.operations)}')
+where op.ID in ('{string.Join("','", this.operations)}')
 ";
+
+            if (!string.IsNullOrEmpty(this.buyerDelivery_s))
+            {
+                this.sql += $"and o.BuyerDelivery >= '{this.buyerDelivery_s}' " + Environment.NewLine;
+            }
+
+            if (!string.IsNullOrEmpty(this.buyerDelivery_e))
+            {
+                this.sql += $"and o.BuyerDelivery <= '{this.buyerDelivery_e}' " + Environment.NewLine;
+            }
 
             if (!string.IsNullOrEmpty(this.season))
             {
