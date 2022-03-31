@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg;
 using Sci.Win.Tools;
 using Sci.Win.UI;
 using System;
@@ -1915,29 +1916,33 @@ from #checkResultB
 where OrderQty < (QAQty + OtherSewingOutputQty + BuybackSewingOutputQty)
 drop table #checkResultA,#checkResultB,#tmp
 ";
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtSubDetail, string.Empty, checkOrderNeedProduction, out DataTable dtNeedProductionOver);
-            if (!result)
+            DataTable checkhasQtySubDetail = dtSubDetail.Select("QAQty > 0").TryCopyToDataTable(dtSubDetail);
+            if (checkhasQtySubDetail.Rows.Count > 0)
             {
-                this.ShowErr(result);
-                return false;
-            }
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(checkhasQtySubDetail, string.Empty, checkOrderNeedProduction, out DataTable dtNeedProductionOver);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
 
-            if (dtNeedProductionOver.Rows.Count > 0)
-            {
-                string msg = @"Type A= Cancel order still need to continue production, formula: this output qty = [Cancel Qrder Qty]-[Cancel Order Accu. Sew. Qty]
+                if (dtNeedProductionOver.Rows.Count > 0)
+                {
+                    string msg = @"Type A= Cancel order still need to continue production, formula: this output qty = [Cancel Qrder Qty]-[Cancel Order Accu. Sew. Qty]
 Type B= Cancel order selected as Buyback, formula: this output qty = [Cancel Order Qty] - ([Buyback Sew. Qty] + [Cancel Order Accu. Sew. Qty])";
 
-                MsgGridForm m = new MsgGridForm(dtNeedProductionOver, msg, "The following accumulated output cannot exceed orderqty.") { Width = 1024 };
-                m.grid1.Columns[6].HeaderText = "Cancel Order\r\nAccu. Sew. Qty";
-                m.grid1.AutoResizeColumns();
-                m.grid1.Columns[1].Width = 120;
-                m.grid1.Columns[3].Width = 88;
-                m.grid1.Columns[4].Width = 88;
-                m.text_Find.Width = 140;
-                m.btn_Find.Location = new Point(150, 6);
-                m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-                m.ShowDialog(this);
-                return false;
+                    MsgGridForm m = new MsgGridForm(dtNeedProductionOver, msg, "The following accumulated output cannot exceed orderqty.") { Width = 1024 };
+                    m.grid1.Columns[6].HeaderText = "Cancel Order\r\nAccu. Sew. Qty";
+                    m.grid1.AutoResizeColumns();
+                    m.grid1.Columns[1].Width = 120;
+                    m.grid1.Columns[3].Width = 88;
+                    m.grid1.Columns[4].Width = 88;
+                    m.text_Find.Width = 140;
+                    m.btn_Find.Location = new Point(150, 6);
+                    m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+                    m.ShowDialog(this);
+                    return false;
+                }
             }
             #endregion
 
