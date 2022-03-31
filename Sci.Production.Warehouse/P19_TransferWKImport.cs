@@ -134,7 +134,7 @@ select  ted.InventoryPOID,
         [Description] = dbo.getMtlDesc(ted.InventoryPOID, ted.InventorySeq1, ted.InventorySeq2, 2, 0)
 into #tmpTransferExport
 from    TransferExport te with (nolock)
-inner   join TransferExport_Detail ted with (nolock) on ted.ID = ted.ID
+inner   join TransferExport_Detail ted with (nolock) on te.ID = ted.ID
 left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID and 
 													ted.InventorySeq1 = psdInv.SEQ1 and
 													ted.InventorySeq2 = psdinv.SEQ2
