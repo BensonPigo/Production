@@ -1437,7 +1437,38 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'";
             if (confirmResult == DialogResult.Yes)
             {
                 string executeCmd = string.Format(
-                    @"insert into TimeStudyHistory (StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion)
+                    @"
+if exists(
+	select 1 from TimeStudyHistory h
+	inner join TimeStudy t on t.StyleID	   = h.StyleID
+						  and t.SeasonID   = h.SeasonID
+						  and t.ComboType  = h.ComboType
+						  and t.BrandID	   = h.BrandID
+						  and t.Version	   = h.Version
+						  and t.Phase	   = h.Phase
+	where t.ID = '{0}'
+)
+begin
+	update TimeStudy 
+	set Version =
+		(
+			select iif(isnull(max(ver.Version),0)+1 < 10,'0'+cast(isnull(max(ver.Version),0)+1 as varchar),cast(max(ver.Version)+1as varchar))
+			from(
+				select Version
+				from TimeStudy where ID = {0}
+				union
+				select h.Version from TimeStudyHistory h
+				inner join TimeStudy t on t.StyleID	   = h.StyleID
+										and t.SeasonID   = h.SeasonID
+										and t.ComboType  = h.ComboType
+										and t.BrandID	   = h.BrandID
+										and t.Phase	   = h.Phase
+				where t.ID = {0}
+			)ver
+		)
+end
+
+insert into TimeStudyHistory (StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion)
 select StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion from TimeStudy where ID = {0}
 
 declare @id bigint
@@ -1499,7 +1530,38 @@ where ID = {0}",
             if (confirmResult == DialogResult.Yes)
             {
                 string executeCmd = string.Format(
-                    @"insert into TimeStudyHistory (StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion)
+                    @"
+if exists(
+	select 1 from TimeStudyHistory h
+	inner join TimeStudy t on t.StyleID	   = h.StyleID
+						  and t.SeasonID   = h.SeasonID
+						  and t.ComboType  = h.ComboType
+						  and t.BrandID	   = h.BrandID
+						  and t.Version	   = h.Version
+						  and t.Phase	   = h.Phase
+	where t.ID = '{0}'
+)
+begin
+	update TimeStudy 
+	set Version =
+		(
+			select iif(isnull(max(ver.Version),0)+1 < 10,'0'+cast(isnull(max(ver.Version),0)+1 as varchar),cast(max(ver.Version)+1as varchar))
+			from(
+				select Version
+				from TimeStudy where ID = {0}
+				union
+				select h.Version from TimeStudyHistory h
+				inner join TimeStudy t on t.StyleID	   = h.StyleID
+										and t.SeasonID   = h.SeasonID
+										and t.ComboType  = h.ComboType
+										and t.BrandID	   = h.BrandID
+										and t.Phase	   = h.Phase
+				where t.ID = {0}
+			)ver
+		)
+end
+
+insert into TimeStudyHistory (StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion)
 select StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion from TimeStudy where ID = {0}
 
 declare @id bigint

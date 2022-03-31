@@ -61,7 +61,7 @@ from OPENQUERY ([' + @LinkServerName + '], ''' + @openQuerySql + ''')
 
 delete p
 from P_MachineMasterList p
-where exists(select 1 from #tmp t where p.Month = t.YYYYMM and p.MachineID = t.MachineID)
+where exists(select 1 from #tmp t where p.Month = t.YYYYMM and p.MachineID = t.MachineID and p.M = t.LocationM)
 
 insert into P_MachineMasterList(Month
 								,M

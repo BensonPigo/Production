@@ -148,11 +148,12 @@ OUTER APPLY(
 	SELECT [Count] = COUNT(ID) FROM Order_QtyShip oqq WITH(NOLOCK) WHERE oqq.Id=o.ID
 )PartialShipment
 outer apply(
-	select ShipQty = sum(podd.ShipQty) 
-	from Pullout_Detail_Detail podd WITH (NOLOCK) 
-	inner join Order_Qty oq WITH (NOLOCK) on oq.id=podd.OrderID 
-	and podd.Article= oq.Article and podd.SizeCode=oq.SizeCode
-	where podd.OrderID = o.ID
+    select ShipQty = sum(pd.ShipQty)
+    from PackingList_Detail pd
+    inner join Order_Qty oq on oq.ID = pd.OrderID and oq.Article = pd.Article and oq.SizeCode = pd.SizeCode
+    inner join PackingList p on p.ID = pd.ID
+    where p.PulloutID <> ''
+    and pd.OrderID = o.ID
 )s
 where o.Category IN ('B','G') 
       and isnull(ot.IsGMTMaster,0) = 0

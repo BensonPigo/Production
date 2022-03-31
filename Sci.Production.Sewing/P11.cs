@@ -946,7 +946,7 @@ OPEN CUR_SewingOutput_Detail
 FETCH NEXT FROM CUR_SewingOutput_Detail INTO @orderid 
 WHILE @@FETCH_STATUS = 0 
 BEGIN
-    exec dbo.Ins_OrderLocation @orderid, 'SewingP11'
+    exec dbo.Ins_OrderLocation @orderid
 FETCH NEXT FROM CUR_SewingOutput_Detail INTO @orderid
 END
 CLOSE CUR_SewingOutput_Detail
