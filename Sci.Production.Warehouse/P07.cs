@@ -3376,5 +3376,11 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
         {
             P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P07", this);
         }
+
+        private void BtnPrintAccessorySticker_Click(object sender, EventArgs e)
+        {
+            P07_PrintAccessorySticker s = new P07_PrintAccessorySticker(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["ExportId"].ToString());
+            s.ShowDialog();
+        }
     }
 }
