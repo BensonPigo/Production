@@ -1896,7 +1896,7 @@ select
 	[Cancel Order Accu. Sew. Qty] = OtherSewingOutputQty,
 	[This Output Qty] = QAQty,
 	[Buyback Sew. Qty] = 0,
-	[Variablese] = OtherSewingOutputQty + QAQty - OrderQty
+	[Variablese] = OrderQty - OtherSewingOutputQty
 from #checkResultA 
 where OrderQty < (QAQty + OtherSewingOutputQty)
 
@@ -1911,7 +1911,7 @@ select
 	OtherSewingOutputQty,
 	QAQty,
 	BuybackSewingOutputQty,
-	Variablese = OtherSewingOutputQty + QAQty + BuybackSewingOutputQty - OrderQty
+	Variablese = OrderQty - BuybackSewingOutputQty - OtherSewingOutputQty
 from #checkResultB 
 where OrderQty < (QAQty + OtherSewingOutputQty + BuybackSewingOutputQty)
 drop table #checkResultA,#checkResultB,#tmp
