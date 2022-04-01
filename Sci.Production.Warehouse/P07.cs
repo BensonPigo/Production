@@ -54,7 +54,7 @@ namespace Sci.Production.Warehouse
                     this.detailgrid.CurrentCell = this.detailgrid.Rows[this.detailgrid.RowCount - 1].Cells[0];
                 }
             };
-            MyUtility.Tool.SetupCombox(this.comboTypeFilter, 2, 1, "ALL,ALL,Fabric,Fabric,Accessory,Accessory,No QR Code,No QR Code");
+            MyUtility.Tool.SetupCombox(this.comboTypeFilter, 2, 1, "ALL,ALL,Fabric,Fabric,Accessory,Accessory,No QR Code,No QR Code,Threads,Threads");
             this.comboTypeFilter.SelectedIndex = 0;
             this.comboStockType.DataSource = new BindingSource(this.di_stocktype, null);
             this.comboStockType.ValueMember = "Key";
@@ -797,6 +797,7 @@ select  e.poid
         , p.fabrictype
         , e.seq1
         , e.seq2
+        , f.MtlTypeID
 from dbo.Export_Detail e WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail p WITH (NOLOCK) on e.PoID = p.ID 
                                                 and e.Seq1 = p.SEQ1 
@@ -844,6 +845,7 @@ Order By e.Seq1, e.Seq2, e.Refno";
                     this.CurrentDetailData["PoidSeq"] = this.CurrentDetailData["Poid"].ToString() + x[0]["seq"];
                     this.CurrentDetailData["Refno"] = x[0]["Refno"];
                     this.CurrentDetailData["ColorID"] = x[0]["ColorID"];
+                    this.CurrentDetailData["MtlTypeID"] = x[0]["MtlTypeID"];
 
                     if ((decimal)this.CurrentDetailData["shipqty"] > 0)
                     {
@@ -923,6 +925,7 @@ Order By e.Seq1, e.Seq2, e.Refno";
                             this.CurrentDetailData["PoidSeq"] = this.CurrentDetailData["Poid"].ToString() + e.FormattedValue;
                             this.CurrentDetailData["Refno"] = dr["Refno"];
                             this.CurrentDetailData["ColorID"] = dr["WH_P07_Color"];
+                            this.CurrentDetailData["MtlTypeID"] = dr["MtlTypeID"];
 
                             // 開始檢查FtyInventory
                             string poid = MyUtility.Convert.GetString(this.CurrentDetailData["poid"]);
@@ -2523,7 +2526,8 @@ select  a.id
         ,a.FullRoll
         ,a.FullDyelot
         ,a.CompleteTime
-        ,a.SentToWMS        
+        ,a.SentToWMS 
+        ,f.MtlTypeID
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 INNER JOIN Receiving b WITH (NOLOCK) ON a.id= b.Id
 left join View_WH_Orders o WITH (NOLOCK) on o.id = a.PoId
@@ -2658,6 +2662,7 @@ from (
 		, [MINDQRCode] = pll.QRCode
 		, clickInsert = 1
 		, DRQ = IIF(isnull(pll.QRCode, '') = '', Null, DENSE_RANK() over(order by pll.QRCode))
+        , Fabric.MtlTypeID
 	from dbo.Export_Detail a WITH (NOLOCK) 
 	inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id   
 													 and a.Seq1 = b.SEQ1    
@@ -2722,6 +2727,7 @@ from (
 		, [MINDQRCode] = ''
 		, clickInsert = 1
 		, DRQ = ''
+        , Fabric.MtlTypeID
 	from dbo.Export_Detail a WITH (NOLOCK) 
 	inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id   
 													 and a.Seq1 = b.SEQ1    
@@ -2842,6 +2848,9 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
                 case "No QR Code":
                     listCanDeleteDetail = this.DetailDatas.Where(s => MyUtility.Check.Empty(s["MINDQRCode"])).ToList();
                     break;
+                case "Threads":
+                    listCanDeleteDetail = this.DetailDatas.Where(s => s["MtlTypeID"].ToString() == "EMB THREAD" || s["MtlTypeID"].ToString() == "SP THREAD" || s["MtlTypeID"].ToString() == "THREAD").ToList();
+                    break;
                 default:
                     listCanDeleteDetail = this.DetailDatas.ToList();
                     break;
@@ -2881,6 +2890,10 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
                 case 3:
                     this.detailgridbs.Filter = "MINDQRCode = '' or MINDQRCode is null";
                     this.btnDeleteAll.Text = "Delete All No QR Code";
+                    break;
+                case 4:
+                    this.detailgridbs.Filter = "MtlTypeID  in ('EMB THREAD', 'SP THREAD', 'THREAD')";
+                    this.btnDeleteAll.Text = "Delete All Threads";
                     break;
             }
 
@@ -3221,6 +3234,7 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
             newrow["stockunit"] = lastRow["stockunit"];
             newrow["Stocktype"] = lastRow["Stocktype"];
             newrow["Location"] = lastRow["Location"];
+            newrow["MtlTypeID"] = lastRow["MtlTypeID"];
 
             // GridView button顯示+
             DataGridViewButtonCell next_dgbtn = (DataGridViewButtonCell)this.detailgrid.CurrentRow.Cells["btnAdd2"];
