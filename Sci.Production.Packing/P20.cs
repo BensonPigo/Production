@@ -42,7 +42,8 @@ pu.Status,
 [MainSP] = pd.OrderID,
 [ErrorType] = x.PackingErrorID+'-'+ pe.Description,
 pd.SCICtnNo ,
-ShipQty=(select sum(ShipQty) from PackingList_Detail pd2 with(nolock) where pd2.id=pd.id and pd2.ctnstartno=pd.ctnstartno)
+ShipQty=(select sum(ShipQty) from PackingList_Detail pd2 with(nolock) where pd2.id=pd.id and pd2.ctnstartno=pd.ctnstartno),
+pd.Seq
 from PackingList_Detail pd with (nolock)
 inner join PackingList p with (nolock) on pd.ID = p.ID
 left join Orders o with (nolock) on o.ID = pd.OrderID
@@ -81,11 +82,28 @@ left join PackingError pe with (nolock) on x.PackingErrorID=pe.ID and pe.Type='T
            .Text("ErrorType", header: "ErrorType", width: Widths.AnsiChars(20), iseditingreadonly: true)
            .Text("Alias", header: "Destination", width: Widths.AnsiChars(20), iseditingreadonly: true)
            .Date("BuyerDelivery", header: "Buyer Delivery")
-           .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true);
+           .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)
+           .Button("Detail", null, header: "Detail", width: Widths.AnsiChars(8), onclick: this.BtnDetail_Click)
+           ;
 
             string emptySql = this.mainPackQuerySql + " where 1 = 0";
             DualResult result = DBProxy.Current.Select(null, emptySql, out this.dtPackErrTransfer);
-            this.gridPackErrTransfer.DataSource = this.dtPackErrTransfer;
+            this.listControlBindingSource1.DataSource = this.dtPackErrTransfer;
+        }
+
+        private void BtnDetail_Click(object sender, EventArgs e)
+        {
+            this.gridPackErrTransfer.EndEdit();
+            this.gridPackErrTransfer.ValidateControl();
+            DataRow drSelect = this.gridPackErrTransfer.GetDataRow(this.listControlBindingSource1.Position);
+            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Copy();
+
+            // 更新欄位名稱
+            dt.Columns["ID"].ColumnName = "PackID";
+            dt.Columns["CTNStartNo"].ColumnName = "CTN";
+            DataRow[] dr = dt.Select($@"PackID = '{drSelect["ID"]}' and CTN = '{drSelect["CTNStartNo"]}'");
+            P20_PackingErrorRecord callForm = new P20_PackingErrorRecord(false, drSelect["ID"].ToString(), drSelect["CTNStartNo"].ToString(), null, dr[0]);
+            callForm.ShowDialog(this);
         }
 
         private void BtnFind_Click(object sender, EventArgs e)
@@ -340,7 +358,7 @@ order by pd.ID,pd.Seq
 ";
 
             DualResult result = DBProxy.Current.Select(null, querySQL, listPar, out this.dtPackErrTransfer);
-            this.gridPackErrTransfer.DataSource = this.dtPackErrTransfer;
+            this.listControlBindingSource1.DataSource = this.dtPackErrTransfer;
             if (!result)
             {
                 this.ShowErr(result);
@@ -456,6 +474,55 @@ where	pd.CTNStartNo <> ''
                     this.errMsg = value;
                 }
             }
+        }
+
+        private void BtnToExcel_Click(object sender, EventArgs e)
+        {
+            DataTable dtExcel = (DataTable)this.listControlBindingSource1.DataSource;
+            if (dtExcel == null || dtExcel.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            string sqlcmd = @"
+select 
+t.ID
+,per.Line
+,per.Shift
+,t.CTNStartNo
+,t.ShipQty
+,t.OrderID
+,t.CustPONo
+,t.StyleID
+,t.SeasonID
+,t.BrandID
+,t.ErrorType
+,t.Alias
+,t.BuyerDelivery
+,per.ReasonforGarmentSound
+,per.AreaOperation
+,per.ActionTaken
+,t.Remark
+from #tmp t
+left join PackingErrorRecord Per with (nolock) on per.PackID = t.ID and Per.CTN = t.CTNStartNo
+order by t.ID,t.Seq
+
+drop table #tmp
+";
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtExcel, null, sqlcmd, out DataTable dt, "#tmp");
+            if (!result)
+            {
+                return;
+            }
+
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.ErrorBox("Data not found");
+                return;
+            }
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Packing_P20.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(dt, string.Empty, "Packing_P20.xltx", 2, true, null, objApp);
         }
     }
 }
