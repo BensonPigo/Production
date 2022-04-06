@@ -88,7 +88,9 @@ BEGIN
 				from ShareExpense s
 				where s.ShippingAPID = @ShippingAPID
 				and s.WKNo != '' 
-				and exists (select 1 from ShippingAP sp WITH (NOLOCK) where sp.ID = s.ShippingAPID and sp.BLNo != s.BLNo)
+				and ( exists (select 1 from ShippingAP sp WITH (NOLOCK) where sp.ID = s.ShippingAPID and sp.BLNo != s.BLNo) or
+					  s.FactoryID = ''
+					)
 			END
 
 
@@ -101,9 +103,11 @@ BEGIN
 				, s.EditDate = @adddate
 			from ShareExpense s 
 			where s.ShippingAPID = @ShippingAPID and s.WKNo != '' 
-				  and s.WKNo not in (select ID from Export where ID = s.WKNo and ID is not null)
-				  and s.WKNo not in (select ID from FtyExport where ID = s.WKNo and ID is not null)
-		 
+				  and	(
+							(s.WKNo not in (select ID from Export where ID = s.WKNo and ID is not null) and s.WKNo not in (select ID from FtyExport where ID = s.WKNo and ID is not null))
+							or 
+							s.FactoryID = ''
+						)
 			/*
 			 * 更新 WK 基本資料
 			 */ 
@@ -114,7 +118,7 @@ BEGIN
 						, e.WeightKg
 						, e.Cbm
 						, s.CurrencyID
-						, s.SubType
+						, s.Type
 						, e.FactoryID
  				from Export e WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) 
 				where e.ID = se.WKNo
@@ -154,13 +158,14 @@ BEGIN
 				from ShareExpense s
 				where s.ShippingAPID = @ShippingAPID
 				and s.InvNo != '' 
-				and exists (
+				and (exists (
 					select 1 
 					from ShippingAP sp WITH (NOLOCK)
 					inner join  GMTBooking g WITH (NOLOCK) on sp.BLNo = g.BLNo or sp.BLNo = g.BL2No
 					where sp.ID = s.ShippingAPID 	
 					and sp.BLNo != g.BLNo
-					and sp.BLNo != g.BL2No)
+					and sp.BLNo != g.BL2No) or
+					s.FactoryID = '')
 			END
 
 			/*
@@ -173,19 +178,19 @@ BEGIN
 			from ShareExpense s
 			where s.ShippingAPID = @ShippingAPID 
 					and s.InvNo != '' 
-					and (
+					and ((
 						s.InvNo not in (select ID from GMTBooking where ID = s.InvNo and ID is not null) 
 						and s.InvNo not in (select INVNo from PackingList where INVNo = s.InvNo and INVNo is not null) 
 						and s.InvNo not in (select ID from FtyExport  where ID = s.InvNo and ID is not null)
 						and s.invno not in (select id from Export where id=s.InvNo and id is not null)
-					)
+					) or s.FactoryID = '')
 			
 			/*
 			 * 更新 Inv 基本資料
 			 */ 
 
 			DECLARE cursor_FtyWK CURSOR FOR
-				select f.ID,f.ShipModeID,f.WeightKg,f.Cbm,s.CurrencyID,s.SubType, f.Blno, [FactoryID] = ''
+				select f.ID,f.ShipModeID,f.WeightKg,f.Cbm,s.CurrencyID,s.Type, f.Blno, [FactoryID] = ''
 				from FtyExport f WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) 
 				where f.ID = se.InvNo
 						and s.id = se.ShippingAPID
@@ -193,7 +198,7 @@ BEGIN
 						and s.id = @ShippingAPID
 
 			DECLARE cursor_PackingList CURSOR FOR
-				select p.ID,p.ShipModeID,p.GW,p.CBM,s.CurrencyID,s.SubType, '' as BLNo, p.FactoryID
+				select p.ID,p.ShipModeID,p.GW,p.CBM,s.CurrencyID,s.Type, '' as BLNo, p.FactoryID
 				from PackingList p WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) 
 				where p.ID = se.InvNo
 						and (p.Type = 'F' or p.Type = 'L')
@@ -327,14 +332,14 @@ BEGIN
 							, b.BLNo
 							, b.WKNo
 							, b.InvNo
-							, b.Type
+							, [Type] = a.SubType
 							, b.GW
 							, b.CBM
 							, b.ShipModeID
 							, b.FtyWK
 							, b.FactoryID
 					from (
-						select isnull(sd.AccountID,'') as AccountID, sum(sd.Amount) as Amount, s.CurrencyID
+						select isnull(sd.AccountID,'') as AccountID, sum(sd.Amount) as Amount, s.CurrencyID, s.SubType
 						from ShippingAP_Detail sd WITH (NOLOCK) 
 						left join SciFMS_AccountNo a on a.ID = sd.AccountID
 						left join ShippingAP s WITH (NOLOCK) on s.ID = sd.ID
@@ -343,7 +348,7 @@ BEGIN
 									dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
 									or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1
 								)
-						group by sd.AccountID, a.Name, s.CurrencyID
+						group by sd.AccountID, a.Name, s.CurrencyID, s.SubType
 					) a
 					, ( 
 						select BLNo,WKNo,InvNo,Type,GW,CBM,ShipModeID,FtyWK,FactoryID

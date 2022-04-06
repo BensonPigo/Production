@@ -101,7 +101,7 @@ namespace Sci.Production.Shipping
 		[Remark_ShippingAP] = s.[Remark],
 		s.[InvNo],
 		ExportINV =  Stuff((select distinct iif(WKNo = '','',concat( '/',WKNo)) + iif(InvNo = '','',concat( '/',InvNo) )   
-                            from ShareExpense she WITH (NOLOCK) 
+                            from View_ShareExpense she WITH (NOLOCK) 
                             where she.ShippingAPID = s.ID 
                                   and she.Junk != 1
                             FOR XML PATH('')),1,1,'') ,
@@ -164,7 +164,7 @@ where s.Status = 'Approved'");
 		,[AccountName]= ISNULL(an.Name, ShippingAP_Deatai.AccountName)
 into #tmp
 from ShippingAP s WITH (NOLOCK)
-left join ShareExpense sh WITH (NOLOCK) ON s.ID = sh.ShippingAPID
+left join View_ShareExpense sh WITH (NOLOCK) ON s.ID = sh.ShippingAPID
                                            and sh.Junk != 1
 left join SciFMS_AccountNo an WITH (NOLOCK) on an.ID = sh.AccountID 
 left join LocalSupp ls WITH (NOLOCK) on s.LocalSuppID = ls.ID
@@ -176,7 +176,7 @@ OUTER APPLY(
 	left join SciFMS_AccountNO a WITH (NOLOCK) on a.ID = se.AccountID
 	WHERE sd.ID=s.ID
 	----若ShareExpense有資料，就不必取表身加總的值
-	AND NOT EXISTS (SELECT 1 FROM ShareExpense WHERE ShippingAPID=sd.ID and Junk != 1)
+	AND NOT EXISTS (SELECT 1 FROM View_ShareExpense with (nolock) WHERE ShippingAPID=sd.ID and Junk != 1)
 	GROUP BY sd.AccountID,a.Name,sd.CurrencyID
 )ShippingAP_Deatai
 outer apply (
@@ -235,7 +235,7 @@ OUTER APPLY (
 	left join SciFMS_AccountNO a on a.ID = se.AccountID
 	WHERE sd.ID=s.ID
 	----若ShareExpense有資料，就不必取表身加總的值
-	AND NOT EXISTS (SELECT 1 FROM ShareExpense WHERE ShippingAPID=sd.ID and Junk != 1)
+	AND NOT EXISTS (SELECT 1 FROM View_ShareExpense with (nolock) WHERE ShippingAPID=sd.ID and Junk != 1)
 	GROUP BY sd.AccountID,a.Name,sd.CurrencyID
 )ShippingAP_Deatai
 OUTER APPLY (
@@ -279,7 +279,7 @@ outer apply(
 	select InvNo= stuff((select CONCAT('/',InvNo) 
                  from (
                         select distinct InvNo 
-                        from ShareExpense WITH (NOLOCK) 
+                        from View_ShareExpense WITH (NOLOCK) 
                         where ShippingAPID = s.ID
                               and junk != 1
                  ) a 
@@ -289,7 +289,7 @@ outer apply(
 	select WKNo= stuff((select CONCAT('/',WKNo) 
                  from (
                         select distinct WKNo 
-                        from ShareExpense WITH (NOLOCK) 
+                        from View_ShareExpense WITH (NOLOCK) 
                         where ShippingAPID = s.ID
                               and junk != 1
                  ) a 

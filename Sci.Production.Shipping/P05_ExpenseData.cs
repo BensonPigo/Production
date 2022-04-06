@@ -58,14 +58,14 @@ namespace Sci.Production.Shipping
                 case "InvNo":
                     this.sqlCmd = string.Format(
                         @"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.DebitID,se.ShippingAPID,se.BLNo,se.WKNo,se.InvNo,se.AccountID
-from ShareExpense se WITH (NOLOCK) 
+from View_ShareExpense se WITH (NOLOCK) 
 LEFT JOIN dbo.SciFMS_AccountNo a on se.AccountID = a.ID
 where se.InvNo = '{0}' and se.junk=0", this.id);
                     break;
                 case "WKNo":
                     this.sqlCmd = string.Format(
                         @"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.DebitID,se.ShippingAPID,se.BLNo,se.WKNo,se.InvNo,se.AccountID
-from ShareExpense se WITH (NOLOCK) 
+from View_ShareExpense se WITH (NOLOCK) 
 LEFT JOIN dbo.SciFMS_AccountNo a on se.AccountID = a.ID
 where se.WKNo = '{0}' and se.junk=0", this.id);
                     break;
@@ -75,14 +75,14 @@ select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount
 , DebitID = IIF(se.DebitID = '' or se.DebitID is null
 			,(select FtyDisburseSD  from Export where id = se.WKNo) , se.DebitID)
 ,se.ShippingAPID,se.BLNo,se.WKNo,se.InvNo,se.AccountID
-from ShareExpense se WITH (NOLOCK) 
+from View_ShareExpense se WITH (NOLOCK) 
 LEFT JOIN dbo.SciFMS_AccountNo a on se.AccountID = a.ID
 where se.WKNo = '{this.id}' 
 and se.junk=0
 ";
                     break;
                 default:
-                    this.sqlCmd = "select Type,CurrencyID,Amount,ShippingAPID from ShareExpense WITH (NOLOCK) where 1=2";
+                    this.sqlCmd = "select Type,CurrencyID,Amount,ShippingAPID from View_ShareExpense WITH (NOLOCK) where 1=2";
                     break;
             }
 
@@ -134,14 +134,12 @@ and se.junk=0
                 }
 
                 string sqlMerge = $@"
-merge ShareExpense t
-using(select * from #tmp)s
-on s.ShippingAPID = t.ShippingAPID and s.BLNo =t.BLNo and s.WKNo =t.WKNo and s.InvNo = t.InvNo and s.AccountID = t.AccountID
-when matched then update set
-	t.DebitID = s.DebitID,
-    t.EditName='{Env.User.UserID}',
-    t.EditDate=GETDATE()
-;
+update t set    t.DebitID = s.DebitID,
+                t.EditName='{Env.User.UserID}',
+                t.EditDate=GETDATE()
+from ShareExpense t
+inner join #tmp s on s.ShippingAPID = t.ShippingAPID and s.BLNo =t.BLNo and s.WKNo =t.WKNo and s.InvNo = t.InvNo and s.AccountID = t.AccountID
+
 ";
                 DataTable dt;
                 DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource1.DataSource, string.Empty, sqlMerge, out dt);

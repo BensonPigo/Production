@@ -893,16 +893,16 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
                     strSqlCmd = $@"
 merge ShareExpense t
 using (
-    select top 1 *
+    select *
     from (
 	    select 
 		    [ShippingAPID] = '{this.CurrentMaintain["ID"]}'
 		    ,[BLNo] = e.BLNo
 		    ,[WKNo] = e.id
 		    ,[InvNo] = ''
-		    ,[Type] = '{this.CurrentMaintain["SubType"]}'
-		    ,[GW] = sum(edetail.WeightKg)
-		    ,[CBM] = e.CBM--sum(edetail.CBM)
+		    ,[Type] = '{this.CurrentMaintain["Type"]}'
+		    ,[GW] = e.WeightKg * edetail.AllocationRate
+		    ,[CBM] = e.CBM * edetail.AllocationRate
 		    ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
 		    ,[ShipModeID] = e.ShipModeID
 		    ,[FtyWK] = 0
@@ -915,38 +915,46 @@ using (
 			            where sd.ID = '{this.CurrentMaintain["ID"]}' and sd.AccountID != ''
 			            and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
 				            or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
-        --outer apply( select [val] = sum(dbo.GetUnitQty(ed.UnitId, 'YDS', ed.Qty)) from Export_Detail ed with (nolock) where ed.ID = e.ID) detailQty
-        outer apply( select  o.FactoryID, ed.WeightKg, [CBM] = case when  sum(dbo.GetUnitQty(ed.UnitId, 'YDS', ed.Qty)) over (partition by ed.ID) = 0 then 0
-                                                               else e.CBM * dbo.GetUnitQty(ed.UnitId, 'YDS', ed.Qty) / sum(dbo.GetUnitQty(ed.UnitId, 'YDS', ed.Qty)) over (partition by ed.ID) end
-                     from Export_Detail ed with (nolock)
-                     inner join Orders o  with (nolock) on o.ID = ed.POID
-                     where ed.ID = e.ID                           
+        outer apply( select FactoryID, [AllocationRate] = iif(sum(Qty) = 0, 0, sum(Qty) * 1.0 / TtlQty)
+                        from (
+                                select  o.FactoryID, ed.Qty, [TtlQty] = sum(ed.Qty) over (partition by ed.ID)
+                                from Export_Detail ed with (nolock)
+                                inner join Orders o  with (nolock) on o.ID = ed.POID
+                                where ed.ID = e.ID
+                            ) a group by FactoryID, TtlQty
                     ) edetail
 	    where e.BLNo = '{this.CurrentMaintain["BLNO"]}'
-        group by e.BLNo, e.id, e.ShipModeID, AccountID.val, edetail.FactoryID, e.CBM
 	    union 
 	    select [ShippingAPID] = '{this.CurrentMaintain["ID"]}'
 		        ,[BLNo] = f.BLNo
 		        ,[WKNo] = f.id
 		        ,[InvNo] = ''
-		        ,[Type] = '{this.CurrentMaintain["SubType"]}'
-		        ,[GW] = f.WeightKg
-		        ,[CBM] = f.CBM
+		        ,[Type] = '{this.CurrentMaintain["Type"]}'
+		        ,[GW] = f.WeightKg * edetail.AllocationRate
+		        ,[CBM] = f.CBM * edetail.AllocationRate
 		        ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
 		        ,[ShipModeID] = f.ShipModeID
 		        ,[FtyWK] = 0
 		        ,[AccountID] = AccountID.val
 		        ,[Junk] = 0
-                ,[FactoryID] = ''
+                ,edetail.FactoryID
 	    from FtyExport f WITH (NOLOCK) 
         outer apply (select top 1 [val] = sd.AccountID
                      from ShippingAP_Detail sd WITH(NOLOCK)
 			         where sd.ID = '{this.CurrentMaintain["ID"]}' and sd.AccountID != ''
 			         and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
 				         or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
+        outer apply( select FactoryID, [AllocationRate] = iif(sum(Qty) = 0, 0, sum(Qty) * 1.0 / TtlQty)
+                        from (
+                                select  o.FactoryID, ed.Qty, [TtlQty] = sum(ed.Qty) over (partition by ed.ID)
+                                from FtyExport_Detail ed with (nolock)
+                                inner join Orders o  with (nolock) on o.ID = ed.POID
+                                where ed.ID = f.ID
+                            ) a group by FactoryID, TtlQty
+                    ) edetail
 	    where   BLNo = '{this.CurrentMaintain["BLNO"]}'
 	            and Type <> 3
-    )a
+    )a where FactoryID is not null
 ) as s 
 on	t.ShippingAPID = s.ShippingAPID 
 	and t.WKNO = s.WKNO	and t.InvNo = s.InvNo and t.FactoryID = s.FactoryID
@@ -968,7 +976,7 @@ select  gd.PLFromRgCode
         ,[BLNo] = iif(g.BLNo is null or g.BLNo = '', g.BL2No, g.BLNo)
         ,[WKNo] = ''
         ,[InvNo] = g.id
-        ,[Type] = '{this.CurrentMaintain["SubType"]}'
+        ,[Type] = '{this.CurrentMaintain["Type"]}'
         ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
         ,[ShipModeID] = g.ShipModeID
         ,[FtyWK] = 0
@@ -1092,7 +1100,7 @@ select
     ,[BLNo] = iif(g.BLNo is null or g.BLNo = '', g.BL2No, g.BLNo)
     ,[WKNo] = ''
     ,[InvNo] = g.id
-    ,[Type] = '{this.CurrentMaintain["SubType"]}'
+    ,[Type] = '{this.CurrentMaintain["Type"]}'
     ,[GW] = sum(pd.GW)
     ,[CBM] = sum(l.CBM)
     ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
