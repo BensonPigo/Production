@@ -51,7 +51,8 @@ select
     ErrQty=0,
     o.FtyGroup,
     pd.SizeCode,
-    o.SewLine
+    o.SewLine,
+    pd.Seq
 from PackingList_Detail pd with (nolock)
 inner join PackingList p with (nolock) on pd.ID = p.ID
 left join Orders o with (nolock) on o.ID = pd.OrderID
@@ -111,11 +112,28 @@ where Type='TP' and Junk=0";
            .Text("ErrorType", header: "ErrorType", width: Widths.AnsiChars(20), iseditingreadonly: true)
            .Text("Alias", header: "Destination", width: Widths.AnsiChars(20), iseditingreadonly: true)
            .Date("BuyerDelivery", header: "Buyer Delivery")
-           .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true);
+           .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)
+           .Button("Detail", null, header: "Detail", width: Widths.AnsiChars(8), onclick: this.BtnDetail_Click)
+           ;
 
             string emptySql = this.mainPackQuerySql + " where 1 = 0";
             DualResult result = DBProxy.Current.Select(null, emptySql, out this.dtPackErrTransfer);
-            this.gridPackErrTransfer.DataSource = this.dtPackErrTransfer;
+            this.listControlBindingSource1.DataSource = this.dtPackErrTransfer;
+        }
+
+        private void BtnDetail_Click(object sender, EventArgs e)
+        {
+            this.gridPackErrTransfer.EndEdit();
+            this.gridPackErrTransfer.ValidateControl();
+            DataRow drSelect = this.gridPackErrTransfer.GetDataRow(this.listControlBindingSource1.Position);
+            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Copy();
+
+            // 更新欄位名稱
+            dt.Columns["ID"].ColumnName = "PackID";
+            dt.Columns["CTNStartNo"].ColumnName = "CTN";
+            DataRow[] dr = dt.Select($@"PackID = '{drSelect["ID"]}' and CTN = '{drSelect["CTNStartNo"]}'");
+            P19_PackingErrorRecord callForm = new P19_PackingErrorRecord(this.IsSupportEdit, drSelect["ID"].ToString(), drSelect["CTNStartNo"].ToString(), null, dr[0]);
+            callForm.ShowDialog(this);
         }
 
         private void BtnFind_Click(object sender, EventArgs e)
@@ -348,10 +366,30 @@ values(GETDATE(),'{Env.User.Keyword}','{dr["MainSP"]}','{dr["ID"]}','{dr["CTNSta
             var mdFaillist = drSelected.Where(w => MyUtility.Convert.GetString(w["ErrorID"]) == "00006").ToList();
             if (mdFaillist.Any())
             {
-                var ftyGroupList = mdFaillist.Select(s => MyUtility.Convert.GetString(s["ftyGroup"])).Distinct().ToList();
+                DataTable dtFaillist = drSelected.Where(w => MyUtility.Convert.GetString(w["ErrorID"]) == "00006").CopyToDataTable();
+                string sqlcmdfail = @"
+select t.*,  per.Line,
+	per.Shift,
+	per.ReasonforGarmentSound,
+	per.AreaOperation,
+	per.ActionTaken 
+from #tmp t
+left join PackingErrorRecord Per with (nolock) on per.PackID = t.ID and Per.CTN = t.CTNStartNo
+order by t.ID,t.Seq
+
+drop table #tmp
+";
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(dtFaillist, null, sqlcmdfail, out DataTable dtFail, "#tmp");
+                if (!result)
+                {
+                    return;
+                }
+
+                var ftyGroupList = dtFail.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["ftyGroup"])).Distinct().ToList();
                 foreach (var ftyGroup in ftyGroupList)
                 {
-                    var byFtyGroup = mdFaillist.Where(w => MyUtility.Convert.GetString(w["ftyGroup"]) == ftyGroup).ToList();
+                    var byFtyGroup = dtFail.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["ftyGroup"]) == ftyGroup).ToList();
+
                     string sqlcmd = $"select * from MailGroup where Code  = '103' and FactoryID = '{ftyGroup}'";
                     if (MyUtility.Check.Seek(sqlcmd, out DataRow drm) && !MyUtility.Check.Empty(drm["ToAddress"]))
                     {
@@ -408,6 +446,8 @@ values(GETDATE(),'{Env.User.Keyword}','{dr["MainSP"]}','{dr["ID"]}','{dr["CTNSta
     <thead>
         <tr>
           <th class='tg-2cz9'>Pack ID</th>
+          <th class='tg-2cz9'>Line#</th>
+          <th class='tg-2cz9'>Shift</th>
           <th class='tg-2cz9'>CTN#</th>
           <th class='tg-2cz9'>Size</th>
           <th class='tg-2cz9'>SP#</th>
@@ -417,6 +457,9 @@ values(GETDATE(),'{Env.User.Keyword}','{dr["MainSP"]}','{dr["ID"]}','{dr["CTNSta
           <th class='tg-2cz9'>Brand</th>
           <th class='tg-2cz9'>Sewing Line</th>
           <th class='tg-2cz9'>MD Fail Qty </th>
+          <th class='tg-2cz9'>Reason for Garment Sound</th>
+          <th class='tg-2cz9'>Area/Operation</th>
+          <th class='tg-2cz9'>Action Taken</th>
         </tr>
     </thead>
     <tbody>";
@@ -425,6 +468,8 @@ values(GETDATE(),'{Env.User.Keyword}','{dr["MainSP"]}','{dr["ID"]}','{dr["CTNSta
                             content += $@"
         <tr>
             <td>{item["ID"]}</td>
+            <td>{item["Line"]}</td>
+            <td>{item["Shift"]}</td>
             <td>{item["ctnStartNo"]}</td>
             <td>{item["SizeCode"]}</td>
             <td>{item["MainSP"]}</td>
@@ -434,6 +479,9 @@ values(GETDATE(),'{Env.User.Keyword}','{dr["MainSP"]}','{dr["ID"]}','{dr["CTNSta
             <td>{item["BrandID"]}</td>
             <td>{item["SewLine"]}</td>
             <td>{item["ErrQty"]}</td>
+            <td>{item["ReasonforGarmentSound"]}</td>
+            <td>{item["AreaOperation"]}</td>
+            <td>{item["ActionTaken"]}</td>
         </tr>";
                         }
 
@@ -546,7 +594,7 @@ order by pd.ID,pd.Seq
 ";
 
             DualResult result = DBProxy.Current.Select(null, querySQL, listPar, out this.dtPackErrTransfer);
-            this.gridPackErrTransfer.DataSource = this.dtPackErrTransfer;
+            this.listControlBindingSource1.DataSource = this.dtPackErrTransfer;
             if (!result)
             {
                 this.ShowErr(result);
@@ -675,7 +723,7 @@ where	pd.CTNStartNo <> ''
         {
             this.gridPackErrTransfer.EndEdit();
             this.gridPackErrTransfer.ValidateControl();
-            DataTable dt = (DataTable)this.gridPackErrTransfer.DataSource;
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             if (dt == null || dt.Rows.Count == 0)
             {
                 return;
@@ -690,6 +738,56 @@ where	pd.CTNStartNo <> ''
 
             MyUtility.Msg.InfoBox("Successful!");
             this.gridPackErrTransfer.AutoResizeColumns();
+        }
+
+        private void BtnToExcel_Click(object sender, EventArgs e)
+        {
+            DataTable dtExcel = (DataTable)this.listControlBindingSource1.DataSource;
+            if (dtExcel == null || dtExcel.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            string sqlcmd = @"
+select 
+t.ID
+,per.Line
+,per.Shift
+,t.CTNStartNo
+,t.ShipQty
+,t.ErrQty
+,t.OrderID
+,t.CustPONo
+,t.StyleID
+,t.SeasonID
+,t.BrandID
+,t.ErrorType
+,t.Alias
+,t.BuyerDelivery
+,per.ReasonforGarmentSound
+,per.AreaOperation
+,per.ActionTaken
+,t.Remark
+from #tmp t
+left join PackingErrorRecord Per with (nolock) on per.PackID = t.ID and Per.CTN = t.CTNStartNo
+order by t.ID,t.Seq
+
+drop table #tmp
+";
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtExcel, null, sqlcmd, out DataTable dt, "#tmp");
+            if (!result)
+            {
+                return;
+            }
+
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.ErrorBox("Data not found");
+                return;
+            }
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Packing_P19.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(dt, string.Empty, "Packing_P19.xltx", 2, true, null, objApp);
         }
     }
 }

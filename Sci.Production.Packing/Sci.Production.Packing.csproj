@@ -325,6 +325,18 @@
     <Compile Include="P18_PackingError.Designer.cs">
       <DependentUpon>P18_PackingError.cs</DependentUpon>
     </Compile>
+    <Compile Include="P19_PackingErrorRecord.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P19_PackingErrorRecord.designer.cs">
+      <DependentUpon>P19_PackingErrorRecord.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P20_PackingErrorRecord.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P20_PackingErrorRecord.designer.cs">
+      <DependentUpon>P20_PackingErrorRecord.cs</DependentUpon>
+    </Compile>
     <Compile Include="P22.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -696,6 +708,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P18_PackingError.resx">
       <DependentUpon>P18_PackingError.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P19_PackingErrorRecord.resx">
+      <DependentUpon>P19_PackingErrorRecord.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P20_PackingErrorRecord.resx">
+      <DependentUpon>P20_PackingErrorRecord.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P22.resx">
       <DependentUpon>P22.cs</DependentUpon>

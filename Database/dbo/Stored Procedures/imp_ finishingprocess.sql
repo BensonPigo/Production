@@ -340,17 +340,51 @@ Begin
 
 	--04. PackingList_Detail.ClogLocationId
 	Begin
+		select s.*
+		into #tmpTransferLocation_for04
+		from TransferLocation s
+		outer apply(
+			select SCICtnNo, ID
+				, ROW_NUMBER() over(PARTITION BY SCICtnNo,Type order by ID desc) r_ID
+			from TransferLocation t
+			where SCICtnNo = s.SCICtnNo
+			and SCIUpdate = s.SCIUpdate
+		)t
+		where s.SCIUpdate = 0
+		and t.r_ID = 1
+		and t.ID = s.ID
+		and (
+			(exists (select 1
+					from  Production.dbo.PackingList_Detail  pd
+					inner join Production.dbo.PackingList p on p.id = pd.ID
+					where SCICtnNo= s.SCICtnNo
+					and ReceiveDate is not null
+					and TransferCFADate is null
+					and CFAReturnClogDate is null
+					and DisposeFromClog = 0
+					and p.PLCtnTrToRgCodeDate is null ) and s.Type = 'FtyToClog')
+			or
+			(exists (select 1
+					from  Production.dbo.PackingList_Detail pd
+					inner join Production.dbo.PackingList p on p.id = pd.ID
+					where SCICtnNo= s.SCICtnNo
+					and ReceiveDate is not null
+					and TransferCFADate is null
+					and CFAReturnClogDate is null
+					and DisposeFromClog = 0
+					and p.PLCtnTrToRgCodeDate is null ) )and s.Type = 'CFAToClog')	
+
 		select * 
 		 ,[row] = ROW_NUMBER() over(partition by SCICtnNo order by time desc)
 		 into #tmp_LastLocation
 		 from 
 		(
 			select tfl.ClogLocationId, tfl.Pallet, tfl.Time, tfl.SCICtnNo
-			from #tmpTransferLocation tfl with (nolock)
+			from #tmpTransferLocation_for04 tfl with (nolock)
 				union all
 			select mtp.ClogLocationId, mtp.Pallet, mtp.Time, mtp.SCICtnNo
 			from MiniToPallet mtp with (nolock)
-			where mtp.SCIUpdate=0 and exists(select 1 from #tmpTransferLocation ttfl where ttfl.SCICtnNo = mtp.SCICtnNo)
+			where mtp.SCIUpdate=0 and exists(select 1 from #tmpTransferLocation_for04 ttfl where ttfl.SCICtnNo = mtp.SCICtnNo)
 		) a 
 
 		update pd

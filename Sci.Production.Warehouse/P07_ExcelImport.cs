@@ -83,6 +83,7 @@ namespace Sci.Production.Warehouse
             this.grid2Data.Columns.Add("fabrictype", typeof(string));
             this.grid2Data.Columns.Add("Refno", typeof(string));
             this.grid2Data.Columns.Add("ColorID", typeof(string));
+            this.grid2Data.Columns.Add("MtlTypeID", typeof(string));
 
             this.listControlBindingSource2.DataSource = this.grid2Data;
             this.gridPoid.DataSource = this.listControlBindingSource2;
@@ -660,6 +661,7 @@ select  pd.fabrictype
         , (select o.Category from View_WH_Orders o WITH (NOLOCK) where o.id= pd.id) as category
         , pd.Refno
         , [ColorID] = isnull(Color.Value,'')
+        , ff.MtlTypeID
 from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
 inner join [dbo].[Fabric] ff WITH (NOLOCK) on pd.SCIRefno= ff.SCIRefno
 inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
@@ -699,6 +701,7 @@ where pd.id=@poid and pd.seq1 =@seq1 and pd.seq2 = @seq2";
                 this.newRow["stockqty"] = decimal.Parse(dr2["stockqty"].ToString());
                 this.newRow["Refno"] = dr2["Refno"].ToString();
                 this.newRow["ColorID"] = dr2["ColorID"].ToString();
+                this.newRow["MtlTypeID"] = dr2["MtlTypeID"];
 
                 // 決定倉別
                 if (dr2["category"].ToString() == "M")

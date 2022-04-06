@@ -74,6 +74,7 @@
             this.btnUpdateLocation = new Sci.Win.UI.Button();
             this.comboStockType = new Sci.Win.UI.ComboBox();
             this.btnCallP99 = new Sci.Win.UI.Button();
+            this.btnPrintAccessorySticker = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -91,6 +92,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnPrintAccessorySticker);
             this.masterpanel.Controls.Add(this.comboStockType);
             this.masterpanel.Controls.Add(this.btnUpdateLocation);
             this.masterpanel.Controls.Add(this.txtMtlLocation1);
@@ -175,6 +177,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtMtlLocation1, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnUpdateLocation, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboStockType, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnPrintAccessorySticker, 0);
             // 
             // detailpanel
             // 
@@ -435,9 +438,9 @@
             // 
             this.btnDownloadSample.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnDownloadSample.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnDownloadSample.Location = new System.Drawing.Point(820, 100);
+            this.btnDownloadSample.Location = new System.Drawing.Point(689, 128);
             this.btnDownloadSample.Name = "btnDownloadSample";
-            this.btnDownloadSample.Size = new System.Drawing.Size(178, 30);
+            this.btnDownloadSample.Size = new System.Drawing.Size(309, 30);
             this.btnDownloadSample.TabIndex = 12;
             this.btnDownloadSample.Text = "Download Sample File";
             this.btnDownloadSample.UseVisualStyleBackColor = true;
@@ -482,7 +485,7 @@
             // btnUpdateWeight
             // 
             this.btnUpdateWeight.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnUpdateWeight.Location = new System.Drawing.Point(689, 100);
+            this.btnUpdateWeight.Location = new System.Drawing.Point(689, 95);
             this.btnUpdateWeight.Name = "btnUpdateWeight";
             this.btnUpdateWeight.Size = new System.Drawing.Size(122, 30);
             this.btnUpdateWeight.TabIndex = 11;
@@ -703,6 +706,18 @@
             this.btnCallP99.UseVisualStyleBackColor = true;
             this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
             // 
+            // btnPrintAccessorySticker
+            // 
+            this.btnPrintAccessorySticker.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnPrintAccessorySticker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnPrintAccessorySticker.Location = new System.Drawing.Point(820, 95);
+            this.btnPrintAccessorySticker.Name = "btnPrintAccessorySticker";
+            this.btnPrintAccessorySticker.Size = new System.Drawing.Size(178, 30);
+            this.btnPrintAccessorySticker.TabIndex = 70;
+            this.btnPrintAccessorySticker.Text = "Print Accessory Sticker";
+            this.btnPrintAccessorySticker.UseVisualStyleBackColor = true;
+            this.btnPrintAccessorySticker.Click += new System.EventHandler(this.BtnPrintAccessorySticker_Click);
+            // 
             // P07
             // 
             this.ApvChkValue = "New";
@@ -794,5 +809,6 @@
         private Win.UI.Label lbLocation;
         private Win.UI.ComboBox comboStockType;
         private Win.UI.Button btnCallP99;
+        private Win.UI.Button btnPrintAccessorySticker;
     }
 }

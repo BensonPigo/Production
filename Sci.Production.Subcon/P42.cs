@@ -1082,6 +1082,9 @@ select
 	,b.Qty
 	,EXCESS=iif(IsEXCESS=1,'Y','')
 	,t.FabricKind
+	,QAOutputPerBundle = iif(exists(select 1 from SubProInsRecord with(nolock) where BundleNo = t.BundleNo and SubProcessID = '{subProcess}')
+		,isnull(b.Qty, 0) - isnull((select top 1 RejectQty from SubProInsRecord with(nolock) where BundleNo = t.BundleNo and RepairedDatetime is null and SubProcessID = '{subProcess}' order by addDate Desc), 0)
+		,0)
     ,PatternDesc
 	,SubProcess
     ,Article
@@ -1315,6 +1318,9 @@ select
 	,b.Qty
 	,EXCESS=iif(IsEXCESS=1,'Y','')
 	,t.FabricKind
+	,QAOutputPerBundle = iif(exists(select 1 from SubProInsRecord with(nolock) where BundleNo = t.BundleNo and SubProcessID = '{subProcess}')
+		,isnull(b.Qty, 0) - isnull((select top 1 RejectQty from SubProInsRecord with(nolock) where BundleNo = t.BundleNo and RepairedDatetime is null and SubProcessID = '{subProcess}' order by addDate Desc), 0)
+		,0)
     ,PatternDesc
     ,SubProcess
     ,Article
@@ -1382,6 +1388,7 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("EXCESS", header: "EXCESS", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("FabricKind", header: "Fabric Kind", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Numeric("QAOutputPerBundle", header: "QA Output Per Bundle", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("OutGoing", header: "Farm Out", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("InComing", header: "Farm In", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true)
