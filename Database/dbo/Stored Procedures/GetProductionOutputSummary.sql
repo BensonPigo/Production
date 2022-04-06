@@ -558,7 +558,7 @@ select
 	o.OrderTypeID,
 	o.ProgramID,
 	o.CdCodeID,
-	[CDCodeNew] = isnull(s.CDCodeNew, ''),
+	s.CDCodeNew,
     o.FtyGroup,
     [PulloutComplete] = iif(o.PulloutComplete = 1, 'OK', ''),
     o.SewInLine,
@@ -567,6 +567,7 @@ select
 	[OrderReason] = OrderReason.ResName
 from @tmpBaseByOrderID tb 
 inner join Orders o with(nolock) on o.id = tb.ID
+inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
 left join Style s with (nolock) on s.Ukey = o.StyleUkey
 left join @tmpOrder_QtyShip toq on toq.ID = tb.ID
 left join @tmpPullout_Detail tpd on tpd.OrderID = tb.ID
@@ -588,11 +589,11 @@ begin
 			[Date] = iif(@ChkMonthly = 1,  SUBSTRING(Date,1,4)+SUBSTRING(Date,5,6),DateByHalfMonth),
 			ID,
 			[OutputDate] = isnull(OutputDate, iif(SewingOutputCPU !=0 ,iif(@ChkMonthly = 1,  SUBSTRING(Date,1,4)+SUBSTRING(Date,5,6),DateByHalfMonth),'')),
-			[OrderCPU] = iif(IsCancelNeedProduction = 'N' and isNormalOrderCanceled = 1,0 ,OrderCPU - OrderShortageCPU),
-			[CanceledCPU] = iif(IsCancelNeedProduction = 'Y',OrderCPU, 0),
-			OrderShortageCPU,
-			SewingOutput,
-			SewingOutputCPU,
+			[OrderCPU] = iif(IsCancelNeedProduction = 'N' and isNormalOrderCanceled = 1,0 , ISNULL(OrderCPU, 0) - ISNULL(OrderShortageCPU, 0)),
+			[CanceledCPU] = iif(IsCancelNeedProduction = 'Y', ISNULL(OrderCPU, 0), 0),
+			[OrderShortageCPU] = ISNULL(OrderShortageCPU, 0),
+			[SewingOutput] = ISNULL(SewingOutput, 0),
+			[SewingOutputCPU] = ISNULL(SewingOutputCPU, 0),
 			FtyZone,
 			TransFtyZone 
 	from @tmpBaseBySource 
