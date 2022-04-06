@@ -1795,6 +1795,7 @@ and wd.orderid = 'EXCESS'
             ndr["Parts"] = selectartDr["Parts"];
             ndr["isPair"] = selectartDr["isPair"];
             ndr["Ukey"] = selectartDr["Ukey"];
+            ndr["CombineSubprocessGroup"] = 0; // 給個 0 不然會變成 Null 篩選找不到
 
             // Annotation
             DataRow[] adr = this.GarmentTb.Select($"PatternCode='{selectartDr["PatternCode"]}'");
@@ -1855,6 +1856,7 @@ and wd.orderid = 'EXCESS'
                 ndr2["Cutref"] = this.gridCutRef.CurrentDataRow["cutref"];
                 ndr2["isPair"] = 0;
                 ndr2["ukey"] = this.gridCutRef.CurrentDataRow["ukey"];
+                ndr2["CombineSubprocessGroup"] = 0; // 給個 0 不然會變成 Null 篩選找不到
                 this.patternTb.Rows.Add(ndr2);
             }
 
