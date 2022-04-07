@@ -624,13 +624,19 @@ drop table #tmp2
                          * 因為要在同一 SqlConnection 之下執行
                          */
                         DataTable resulttb;
-                        #region FtyInventory
+
+                        // FtyInventory 庫存
                         string upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true);
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
                             throw result.GetException();
                         }
-                        #endregion
+
+                        // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                        if (!(result = Prgs.UpdateWH_Barcode(true, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
+                        {
+                            throw result.GetException();
+                        }
 
                         #region MDivisionPoDetail
                         string upd_MD_2T = Prgs.UpdateMPoDetail(2, data_MD_2T, true, sqlConn: sqlConn);
@@ -815,12 +821,18 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                          * 因為要在同一 SqlConnection 之下執行
                          */
                         DataTable resulttb;
-                        #region FtyInventory
+
+                        // FtyInventory 庫存
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2F, string.Empty, upd_Fty_2F, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
                             throw result.GetException();
                         }
-                        #endregion
+
+                        // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                        if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
+                        {
+                            throw result.GetException();
+                        }
 
                         #region MDivisionPoDetal
                         string upd_MD_2F = Prgs.UpdateMPoDetail(2, data_MD_2F, false, sqlConn: sqlConn);

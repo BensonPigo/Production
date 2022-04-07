@@ -540,7 +540,11 @@ where dbo.Lack_Detail.id = '{this.CurrentMaintain["requestid"]}'
             }
 
             // AutoWHFabric WebAPI
-            Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+            if (this.CurrentMaintain["type"].ToString() == "R")
+            {
+                Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+            }
+
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 

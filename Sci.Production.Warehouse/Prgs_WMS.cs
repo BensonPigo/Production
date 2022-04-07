@@ -97,7 +97,6 @@ namespace Sci.Production.Warehouse
         {
             switch (formName)
             {
-                case "P08":
                 case "P11":
                 case "P12":
                 case "P33":

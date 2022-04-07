@@ -3810,6 +3810,8 @@ select
     ,[balanceQty] = isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
     ,f.Barcode
     ,f.BarcodeSeq
+    ,RankFtyInventory = RANK() over(order by f.Ukey)
+    ,countFtyInventory = count(1) over(order by f.Ukey)
 {columns}
 from #tmp sd
 {ftytable}
@@ -3836,6 +3838,8 @@ select
     ,[balanceQty] = isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
     ,f.Barcode
     ,f.BarcodeSeq
+    ,RankFtyInventory = RANK() over(order by f.Ukey)
+    ,countFtyInventory = count(1) over(order by f.Ukey)
 {columns}
 from {detailTableName} sd
 {ftytable}
@@ -3881,6 +3885,8 @@ and sd.Ukey in ({ukeys})
                     To_NewBarcodeSeq = string.Empty,
                     UpdatethisItem = true,
                 }).ToList();
+
+            Dictionary<string, string> newBarcodeSeq = new Dictionary<string, string>();
 
             if (!isRevise)
             {
@@ -3946,11 +3952,19 @@ and sd.Ukey in ({ukeys})
                                 {
                                     item.From_NewBarcode = barcode;
                                     item.From_NewBarcodeSeq = barcodeSeq;
-                                    item.To_NewBarcodeSeq = GetNextBarcodeSeq(barcode);
+                                    item.To_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(barcode, wHBarcodeTransaction);
                                 }
                                 else
                                 {
-                                    item.To_NewBarcodeSeq = barcodeSeq;
+                                    // 同物料有多筆:此物料庫存 = 0 & 同物料最後一筆 Rn (剩下全轉,移動Barcode) 同物料只有一筆, 一定是最後一筆 Rn
+                                    if (dt.Select($"RankFtyInventory = {dr["RankFtyInventory"]}").AsEnumerable().Max(m => MyUtility.Convert.GetInt(m["rn"])) == MyUtility.Convert.GetInt(dr["rn"]))
+                                    {
+                                        item.To_NewBarcodeSeq = barcodeSeq;
+                                    }
+                                    else
+                                    {
+                                        item.To_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(barcode, wHBarcodeTransaction);
+                                    }
                                 }
                             }
                             else
@@ -4005,11 +4019,19 @@ and sd.Ukey in ({ukeys})
                                     {
                                         item.From_NewBarcode = barcode;
                                         item.From_NewBarcodeSeq = barcodeSeq;
-                                        item.To_NewBarcodeSeq = GetNextBarcodeSeq(barcode);
+                                        item.To_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(barcode, wHBarcodeTransaction);
                                     }
                                     else
                                     {
-                                        item.To_NewBarcodeSeq = barcodeSeq;
+                                        // 同物料有多筆:此物料庫存 = 0 & 同物料最後一筆 Rn (剩下全轉,移動Barcode) 同物料只有一筆, 一定是最後一筆 Rn
+                                        if (dt.Select($"RankFtyInventory = {dr["RankFtyInventory"]}").AsEnumerable().Max(m => MyUtility.Convert.GetInt(m["rn"])) == MyUtility.Convert.GetInt(dr["rn"]))
+                                        {
+                                            item.To_NewBarcodeSeq = barcodeSeq;
+                                        }
+                                        else
+                                        {
+                                            item.To_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(barcode, wHBarcodeTransaction);
+                                        }
                                     }
                                 }
                             }
@@ -4239,8 +4261,9 @@ and w.Action = '{item.Action}'";
                     foreach (var item in data_FtyBarcode)
                     {
                         var rnWHBarcodeTransaction = wHBarcodeTransaction.Where(w => w.Rn == item.Rn).FirstOrDefault();
+                        var minBarcodeSeq = wHBarcodeTransaction.Where(w => w.From_NewBarcode == rnWHBarcodeTransaction.From_NewBarcode).Select(s => s.From_NewBarcodeSeq).Min();
                         item.Barcode = rnWHBarcodeTransaction.From_NewBarcode;
-                        item.BarcodeSeq = rnWHBarcodeTransaction.From_NewBarcodeSeq;
+                        item.BarcodeSeq = minBarcodeSeq; // 轉出/轉料,同物料有多筆. Unconfrim (空白barcode) 要寫 lastbarcode, 有多筆時取最小 Seq. 其它狀況不影響 confrim:部分轉不變/全轉清空,
                     }
 
                     break;
@@ -5673,6 +5696,26 @@ and ml.IsWMS = 1
         {
             string sqlcmd = $@"select dbo.GetWH_NextBarcodeSeq('{barcode}')";
             return MyUtility.GetValue.Lookup(sqlcmd);
+        }
+
+        /// <summary>
+        /// 狀況 :有同一物料多筆在 (obj) WHBarcodeTransaction 內
+        /// 同一物料有 2 筆以上, 每筆 BarcodeSeq 要不一樣
+        /// 帶入 barcode 從 物件 WHBarcodeTransaction 取得新的 BarcodeSeq (2碼)
+        /// </summary>
+        /// <param name="barcode">barcode</param>
+        /// <param name="wHBarcodeTransaction">wHBarcodeTransaction</param>
+        /// <returns>Next BarcodeSeq</returns>
+        public static string GetNextBarcodeSeqInObjWHBarcodeTransaction(string barcode, List<WHBarcodeTransaction> wHBarcodeTransaction)
+        {
+            string seq = wHBarcodeTransaction.Where(w => w.To_NewBarcode == barcode).Select(s => s.To_NewBarcodeSeq).Max();
+            if (MyUtility.Check.Empty(seq))
+            {
+                return GetNextBarcodeSeq(barcode);
+            }
+
+            int intSeq = MyUtility.Convert.GetInt(seq) + 1;
+            return intSeq.ToString().PadLeft(2, '0');
         }
     }
 }
