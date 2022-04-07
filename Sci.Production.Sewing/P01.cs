@@ -924,7 +924,7 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
         {
             base.OnDetailGridInsert(index);
 
-            DataTable dt = (DataTable)this.detailgrid.DataSource;
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
             string gridSort = dt.DefaultView.Sort;
             dt.DefaultView.Sort = string.Empty;
 
