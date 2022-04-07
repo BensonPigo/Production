@@ -10,7 +10,7 @@
     [ReceiveHandle]       VARCHAR (10)    DEFAULT ('') NOT NULL,
     [ReceiveDate]         DATETIME        NULL,
     [CFMDate]             DATE            NULL,
-    [CFMHandle]           VARCHAR (10)    DEFAULT ('') NOT NULL,
+    [CFMHandle]           VARCHAR (10)    DEFAULT ('') NULL,
     [DutyHandle]          VARCHAR (10)    DEFAULT ('') NOT NULL,
     [DutySMR]             VARCHAR (10)    DEFAULT ('') NOT NULL,
     [DutyManager]         VARCHAR (10)    DEFAULT ('') NOT NULL,
