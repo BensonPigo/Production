@@ -2290,7 +2290,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                         {
                             if (max_st.Rows.Count != 0)
                             {
-                                new_spdr["startno"] = Convert.ToInt16(max_st.Rows[0]["Start"]);
+                                new_spdr["startno"] = MyUtility.Convert.GetInt(max_st.Rows[0]["Start"]);
                             }
                             else
                             {
@@ -2330,7 +2330,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                 DataRow[] startnoAry = spStartnoTb.Select(string.Format("POID='{0}'", artar["POID"]));
                 if (autono == 0)
                 {
-                    startno = Convert.ToInt16(startnoAry[0]["Startno"]);
+                    startno = MyUtility.Convert.GetInt(startnoAry[0]["Startno"]);
                     startno_bytone = startno;
                 }
 
@@ -2524,7 +2524,7 @@ values
                     printGroup++;
                     if (autono == 0)
                     {
-                        startnoAry[0]["Startno"] = Convert.ToInt16(startnoAry[0]["Startno"]) + 1; // 續編Startno才需要
+                        startnoAry[0]["Startno"] = MyUtility.Convert.GetInt(startnoAry[0]["Startno"]) + 1; // 續編Startno才需要
                     }
                 }
 
