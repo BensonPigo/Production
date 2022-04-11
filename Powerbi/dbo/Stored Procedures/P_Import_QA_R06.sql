@@ -132,8 +132,9 @@ select distinct a.PoId,a.Seq1,a.Seq2,ps.SuppID,psd.Refno ,psd.ColorID,f.Clima,a.
 into #tmp1
 from
 (
-	select r.PoId,r.Seq1,r.Seq2,r.WhseArrival, r.FactoryID
+	select r.PoId,r.Seq1,r.Seq2,r.WhseArrival, [FactoryID] = ISNULL(v.FactoryID, r.FactoryID)
 	from #View_AllReceivingDetail r with (nolock)
+	left join ['+@LinkServerName+'].Production.dbo.View_WH_Orders v with (nolock) on r.PoId = v.ID
 	where 1=1
      and r.WhseArrival >= '''+@WhseArrival_s_cast +''' and r.WhseArrival <= '''+@WhseArrival_e_cast +'''
 	and r.Status = ''Confirmed''
