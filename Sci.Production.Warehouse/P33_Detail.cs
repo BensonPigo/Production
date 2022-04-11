@@ -253,6 +253,7 @@ AND Seq1 = '{seq1}' AND Seq2 = '{seq2}'
 
         private void Save_Click(object sender, EventArgs e)
         {
+            this.Sum_checkedqty();
         }
 
         private void Delete_Click(object sender, EventArgs e)
