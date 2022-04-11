@@ -2245,6 +2245,30 @@ GROUP BY Article
                 return false;
             }
 
+            // 將Issue_Detail的數量更新Issue_Summary
+            DataTable subDetail;
+            DataTable detail = (DataTable)this.detailgridbs.DataSource;
+            foreach (DataRow detailRow in detail.Rows)
+            {
+                if (detailRow.RowState == DataRowState.Deleted)
+                {
+                    continue;
+                }
+
+                this.GetSubDetailDatas(detailRow, out subDetail);
+                if (subDetail.Rows.Count == 0)
+                {
+                    detailRow["Qty"] = 0;
+                    detailRow["IssueQty"] = 0;
+                }
+                else
+                {
+                    decimal detailQty = subDetail.AsEnumerable().Sum(s => s.RowState != DataRowState.Deleted ? (decimal)s["Qty"] : 0);
+                    detailRow["IssueQty"] = detailQty;
+                    detailRow["Qty"] = detailQty;
+                }
+            }
+
             foreach (DataRow dr in this.DetailDatas)
             {
                 if (MyUtility.Check.Empty(dr["IssueQty"]) || MyUtility.Check.Empty(dr["SCIRefNo"]) || MyUtility.Check.Empty(dr["ColorID"]))
@@ -2297,7 +2321,8 @@ GROUP BY Article
 
                 string sqlcmd;
                 sqlcmd = string.Format(
-                    @";delete from dbo.issue_breakdown where id='{0}'
+                    @";
+delete from dbo.issue_breakdown where id='{0}'
 ;WITH UNPIVOT_1
 AS
 (
@@ -2324,30 +2349,6 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
 
                 ProcessWithDatatable2(this.dtIssueBreakDown, "OrderID,Article," + aaa,
                     sqlcmd, out result, "#tmp");
-            }
-
-            // 將Issue_Detail的數量更新Issue_Summary
-            DataTable subDetail;
-            DataTable detail = (DataTable)this.detailgridbs.DataSource;
-            foreach (DataRow detailRow in detail.Rows)
-            {
-                if (detailRow.RowState == DataRowState.Deleted)
-                {
-                    continue;
-                }
-
-                this.GetSubDetailDatas(detailRow, out subDetail);
-                if (subDetail.Rows.Count == 0)
-                {
-                    detailRow["Qty"] = 0;
-                    detailRow["IssueQty"] = 0;
-                }
-                else
-                {
-                    decimal detailQty = subDetail.AsEnumerable().Sum(s => s.RowState != DataRowState.Deleted ? (decimal)s["Qty"] : 0);
-                    detailRow["IssueQty"] = detailQty;
-                    detailRow["Qty"] = detailQty;
-                }
             }
 
             return base.ClickSaveBefore();
