@@ -2528,6 +2528,7 @@ select  a.id
         ,a.CompleteTime
         ,a.SentToWMS 
         ,f.MtlTypeID
+        ,a.ExportDetailUkey
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 INNER JOIN Receiving b WITH (NOLOCK) ON a.id= b.Id
 left join View_WH_Orders o WITH (NOLOCK) on o.id = a.PoId
@@ -2553,11 +2554,7 @@ OUTER APPLY(
 	SELECT [Val] = STUFF((
 		SELECT DISTINCT ','+esc.ContainerType + '-' +esc.ContainerNo
 		FROM Export_ShipAdvice_Container esc
-		WHERE esc.Export_Detail_Ukey IN (
-			SELECT Ukey
-			FROM Export_Detail ed
-			WHERE ed.ID = b.ExportId
-		)
+        WHERE esc.Export_Detail_Ukey = a.ExportDetailUkey
 		AND esc.ContainerType <> '' AND esc.ContainerNo <> ''
 		FOR XML PATH('')
 	),1,1,'')
@@ -2663,6 +2660,7 @@ from (
 		, clickInsert = 1
 		, DRQ = IIF(isnull(pll.QRCode, '') = '', Null, DENSE_RANK() over(order by pll.QRCode))
         , Fabric.MtlTypeID
+        , ExportDetailUkey = a.Ukey
 	from dbo.Export_Detail a WITH (NOLOCK) 
 	inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id   
 													 and a.Seq1 = b.SEQ1    
@@ -2728,6 +2726,7 @@ from (
 		, clickInsert = 1
 		, DRQ = ''
         , Fabric.MtlTypeID
+        , ExportDetailUkey = a.Ukey
 	from dbo.Export_Detail a WITH (NOLOCK) 
 	inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id   
 													 and a.Seq1 = b.SEQ1    
