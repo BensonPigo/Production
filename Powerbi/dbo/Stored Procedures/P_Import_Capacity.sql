@@ -98,6 +98,7 @@ BEGIN
 		FtyCPU varchar(50) NULL,
 		SubconCPU varchar(50) NULL,
 		TtlCPU varchar(50) NULL,
+		AverageEfficiency varchar(50) NULL,
 		RemarkDayOffDate varchar(50) NULL,
 		MachineAvailable varchar(50) NULL,
 		TtlPrinter varchar(50) NULL,
@@ -150,6 +151,8 @@ BEGIN
 			('CS16'),cd.Value,'0')
 		,TtlCPU = IIF(cd.CapaItem IN  
 			('CS17'),cd.Value,'0')
+		,AverageEfficiency = IIF(cd.CapaItem IN  
+			('CE5'),cd.Value,'0')
 	
 		,RemarkDayOffDate = IIF(cd.CapaItem IN  
 			('CS19'),cd.Value,'')
@@ -214,7 +217,7 @@ BEGIN
 			   ,NoofSewers			   ,AbsentRate			   ,TotalAvailableSewers			   ,AverageProductivity			   ,FTYCPU			   ,SubconCPU
 			   ,TTLCPU			   ,RemarkDayOffDate			   ,MachineAvailableUnits			   ,TTLPrinter			   ,AverageAttendance			   ,AverageOutputPerHour
 			   ,OvalMachineOutputPerDayPPU			   ,AverageStitchesPerHour1000Stiches			   ,SubconOut1000StichesMins			   ,SubconOutPcs			   ,ShiftDayandNight
-			   ,MachineCapacity			   ,Unit			   ,ApprovedDate)
+			   ,MachineCapacity			   ,Unit			   ,ApprovedDate	,AverageEfficiency)
 
 	select ID
 		--,Status
@@ -249,6 +252,7 @@ BEGIN
 		,MachineCapacity= CONVERT(float, w.val )
 		,Unit = (select TOP 1 Unit from @tmp t where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month AND t.Unit <> '')
 		,ApprovedDate
+		,AverageEfficiency = CONVERT(float, x.val )
 	from @keyTable k
 	outer apply(
 		select val =  Sum(cast(t.WorkDays as float ))
@@ -369,6 +373,11 @@ BEGIN
 		from @tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)w
+	outer apply(
+		select val =  Sum(cast(t.AverageEfficiency as float ))
+		from @tmp t
+		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
+	)x
 	where NOT EXISTS( select 1 from P_Capacity p WHERE p.ID=k.ID)
 
 
