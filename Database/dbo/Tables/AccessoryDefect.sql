@@ -1,13 +1,16 @@
 ﻿CREATE TABLE [dbo].[AccessoryDefect] (
-    [ID]          VARCHAR (10)   CONSTRAINT [DF_AccessoryDefect_ID] DEFAULT ('') NOT NULL,
+    [ID]          VARCHAR (10)  CONSTRAINT [DF_AccessoryDefect_ID] DEFAULT ('') NOT NULL,
     [Description] NVARCHAR (60) CONSTRAINT [DF_AccessoryDefect_Description] DEFAULT ('') NULL,
     [Junk]        BIT           CONSTRAINT [DF_AccessoryDefect_Junk] DEFAULT ((0)) NULL,
     [AddName]     VARCHAR (10)  CONSTRAINT [DF_AccessoryDefect_AddName] DEFAULT ('') NULL,
     [AddDate]     DATETIME      NULL,
     [EditName]    VARCHAR (10)  CONSTRAINT [DF_AccessoryDefect_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME      NULL,
+    [LocalDesc]   NVARCHAR (60) DEFAULT ('') NULL,
     CONSTRAINT [PK_AccessoryDefect] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -40,4 +43,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AccessoryDefect', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'當地語言', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AccessoryDefect', @level2type = N'COLUMN', @level2name = N'LocalDesc';
 

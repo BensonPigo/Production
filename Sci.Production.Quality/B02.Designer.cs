@@ -33,38 +33,51 @@
             this.txtCode = new Sci.Win.UI.TextBox();
             this.labelCode = new Sci.Win.UI.Label();
             this.labelDescription = new Sci.Win.UI.Label();
+            this.groupDefectPicture = new Sci.Win.UI.GroupBox();
+            this.btnRemove = new Sci.Win.UI.Button();
+            this.btnUploadDefectPicture = new Sci.Win.UI.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.cmbDefectPicture = new Sci.Win.UI.ComboBox();
+            this.editBox_LocalDesc = new Sci.Win.UI.EditBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
+            this.groupDefectPicture.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(833, 395);
+            this.detail.Size = new System.Drawing.Size(796, 538);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.editBox_LocalDesc);
+            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.groupDefectPicture);
             this.detailcont.Controls.Add(this.editDescription);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.txtCode);
             this.detailcont.Controls.Add(this.labelCode);
             this.detailcont.Controls.Add(this.labelDescription);
-            this.detailcont.Size = new System.Drawing.Size(833, 357);
+            this.detailcont.Size = new System.Drawing.Size(796, 500);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(833, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 500);
+            this.detailbtm.Size = new System.Drawing.Size(796, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(833, 395);
+            this.browse.Size = new System.Drawing.Size(892, 395);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(841, 424);
+            this.tabs.Size = new System.Drawing.Size(804, 567);
             // 
             // createby
             // 
@@ -84,7 +97,7 @@
             this.editDescription.BackColor = System.Drawing.Color.White;
             this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editDescription.Location = new System.Drawing.Point(151, 82);
+            this.editDescription.Location = new System.Drawing.Point(115, 71);
             this.editDescription.Multiline = true;
             this.editDescription.Name = "editDescription";
             this.editDescription.Size = new System.Drawing.Size(321, 76);
@@ -95,7 +108,7 @@
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkJunk.Location = new System.Drawing.Point(415, 50);
+            this.checkJunk.Location = new System.Drawing.Point(379, 39);
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
             this.checkJunk.TabIndex = 2;
@@ -107,14 +120,14 @@
             this.txtCode.BackColor = System.Drawing.Color.White;
             this.txtCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
             this.txtCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCode.Location = new System.Drawing.Point(151, 48);
+            this.txtCode.Location = new System.Drawing.Point(115, 37);
             this.txtCode.Name = "txtCode";
             this.txtCode.Size = new System.Drawing.Size(117, 23);
             this.txtCode.TabIndex = 0;
             // 
             // labelCode
             // 
-            this.labelCode.Location = new System.Drawing.Point(70, 48);
+            this.labelCode.Location = new System.Drawing.Point(34, 37);
             this.labelCode.Name = "labelCode";
             this.labelCode.Size = new System.Drawing.Size(78, 23);
             this.labelCode.TabIndex = 12;
@@ -122,25 +135,101 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Location = new System.Drawing.Point(70, 82);
+            this.labelDescription.Location = new System.Drawing.Point(34, 71);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(78, 23);
             this.labelDescription.TabIndex = 13;
             this.labelDescription.Text = "Description";
             // 
+            // groupDefectPicture
+            // 
+            this.groupDefectPicture.Controls.Add(this.btnRemove);
+            this.groupDefectPicture.Controls.Add(this.btnUploadDefectPicture);
+            this.groupDefectPicture.Controls.Add(this.pictureBox1);
+            this.groupDefectPicture.Controls.Add(this.cmbDefectPicture);
+            this.groupDefectPicture.Location = new System.Drawing.Point(460, 3);
+            this.groupDefectPicture.Name = "groupDefectPicture";
+            this.groupDefectPicture.Size = new System.Drawing.Size(324, 472);
+            this.groupDefectPicture.TabIndex = 141;
+            this.groupDefectPicture.TabStop = false;
+            this.groupDefectPicture.Text = "Defect Picture";
+            // 
+            // btnRemove
+            // 
+            this.btnRemove.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnRemove.Location = new System.Drawing.Point(111, 23);
+            this.btnRemove.Name = "btnRemove";
+            this.btnRemove.Size = new System.Drawing.Size(99, 30);
+            this.btnRemove.TabIndex = 139;
+            this.btnRemove.Text = "Remove";
+            this.btnRemove.UseVisualStyleBackColor = true;
+            this.btnRemove.Click += new System.EventHandler(this.BtnRemove_Click);
+            // 
+            // btnUploadDefectPicture
+            // 
+            this.btnUploadDefectPicture.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnUploadDefectPicture.Location = new System.Drawing.Point(6, 23);
+            this.btnUploadDefectPicture.Name = "btnUploadDefectPicture";
+            this.btnUploadDefectPicture.Size = new System.Drawing.Size(99, 30);
+            this.btnUploadDefectPicture.TabIndex = 136;
+            this.btnUploadDefectPicture.Text = "Upload";
+            this.btnUploadDefectPicture.UseVisualStyleBackColor = true;
+            this.btnUploadDefectPicture.Click += new System.EventHandler(this.BtnUploadDefectPicture_Click);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(6, 95);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(311, 371);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 138;
+            this.pictureBox1.TabStop = false;
+            // 
+            // cmbDefectPicture
+            // 
+            this.cmbDefectPicture.BackColor = System.Drawing.Color.White;
+            this.cmbDefectPicture.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.cmbDefectPicture.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cmbDefectPicture.FormattingEnabled = true;
+            this.cmbDefectPicture.IsSupportUnselect = true;
+            this.cmbDefectPicture.Location = new System.Drawing.Point(6, 63);
+            this.cmbDefectPicture.Name = "cmbDefectPicture";
+            this.cmbDefectPicture.OldText = "";
+            this.cmbDefectPicture.Size = new System.Drawing.Size(309, 24);
+            this.cmbDefectPicture.TabIndex = 136;
+            this.cmbDefectPicture.SelectedIndexChanged += new System.EventHandler(this.CmbDefectPicture_SelectedIndexChanged);
+            // 
+            // editBox_LocalDesc
+            // 
+            this.editBox_LocalDesc.BackColor = System.Drawing.Color.White;
+            this.editBox_LocalDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LocalDesc", true));
+            this.editBox_LocalDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editBox_LocalDesc.Location = new System.Drawing.Point(115, 157);
+            this.editBox_LocalDesc.Multiline = true;
+            this.editBox_LocalDesc.Name = "editBox_LocalDesc";
+            this.editBox_LocalDesc.Size = new System.Drawing.Size(321, 66);
+            this.editBox_LocalDesc.TabIndex = 143;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(34, 157);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(78, 23);
+            this.label1.TabIndex = 142;
+            this.label1.Text = "Local Desc.";
+            // 
             // B02
             // 
-            this.ClientSize = new System.Drawing.Size(900, 457);
+            this.ClientSize = new System.Drawing.Size(804, 600);
             this.DefaultControl = "txtCode";
             this.DefaultControlForEdit = "editDescription";
+            this.ExpressQuery = true;
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportEdit = false;
             this.IsSupportLocate = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
-            this.ExpressQuery = true;
             this.Name = "B02";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B02. Defect Code For Accessory Inspection";
@@ -153,6 +242,8 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
+            this.groupDefectPicture.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -165,5 +256,12 @@
         private Win.UI.TextBox txtCode;
         private Win.UI.Label labelCode;
         private Win.UI.Label labelDescription;
+        private Win.UI.GroupBox groupDefectPicture;
+        private Win.UI.Button btnRemove;
+        private Win.UI.Button btnUploadDefectPicture;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private Win.UI.ComboBox cmbDefectPicture;
+        private Win.UI.EditBox editBox_LocalDesc;
+        private Win.UI.Label label1;
     }
 }
