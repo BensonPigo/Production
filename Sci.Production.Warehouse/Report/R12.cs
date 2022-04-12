@@ -124,28 +124,6 @@ order by il.IssueDate,il.Id,ild.POID,ild.Seq1,ild.Seq2,ild.Roll,ild.Dyelot
         /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
-            //this.SetCount(this.dtResult.Rows.Count);
-            //if (this.dtResult.Rows.Count == 0)
-            //{
-            //    MyUtility.Msg.InfoBox("Data not found!!");
-            //    return true;
-            //}
-
-            //this.ShowWaitMessage("Excel Processing...");
-            //Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R12.xltx"); // 預先開啟excel app
-            //Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Warehouse_R12.xltx", objApp);
-            //com.WriteTable(this.dtResult, 2);
-
-            //string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R12");
-            //objApp.ActiveWorkbook.SaveAs(strExcelName);
-            //objApp.Quit();
-            //Marshal.ReleaseComObject(objApp);
-
-            //strExcelName.OpenFile();
-
-            //this.HideWaitMessage();
-            //return true;
-
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.dtResult.Rows.Count);
 
