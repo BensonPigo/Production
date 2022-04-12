@@ -1,6 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[GetSewingDailyOutputList]
      @M				VarChar(8)				
-	 ,@Factory		varchar(80) 
+	 ,@FactoryList		varchar(80) 
 	 ,@StartDate    date
 	 ,@EndDate      date
 	 ,@Category		varchar(80) = '' 
@@ -39,7 +39,13 @@ if(@Category like '%Garment%')
 
 if(@Category like '%Local Order%')
 	insert #CategoryCondition(Category) values('L')
-	
+
+create table #FactoryList(
+	FactoryID varchar(5)
+)
+insert #FactoryList(FactoryID) 
+select FactoryID = Data
+from dbo.SplitString(@FactoryList,',')	
 
 --根據條件撈基本資料
 select s.id
@@ -127,7 +133,7 @@ outer apply( select BrandID from orders o1 WITH (NOLOCK) where o.CustPONo=o1.id 
 outer apply( select top 1 BrandID from Style WITH (NOLOCK) where id=o.StyleID and SeasonID=o.SeasonID and BrandID!='SUBCON-I' )StyleBrand
 where	(@StartDate is null or s.OutputDate >= @StartDate) and (@EndDate is null or s.OutputDate <= @EndDate) and
 		(@M = '' or s.MDivisionID = @M) and
-		(@Factory = '' or s.FactoryID = @Factory) and
+		( NOT EXISTS( select 1 from #FactoryList) or s.FactoryID IN ( select FactoryID from #FactoryList) ) and
 		(@Category <> 'MOCKUP' or s.Category = 'M') and
 		(@ExcludeSampleFty = 0 or f.Type != 'S') and
 		(@OnlyCancelOrder = 0 or o.Junk = 1) and
