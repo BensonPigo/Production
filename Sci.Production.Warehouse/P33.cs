@@ -5,6 +5,7 @@ using Sci.Data;
 using Sci.Production.Automation;
 using Sci.Production.PublicPrg;
 using Sci.Win;
+using Sci.Win.Tems;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -2351,21 +2352,7 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
                     sqlcmd, out result, "#tmp");
             }
 
-            #region Check第三層跟第二層是否一致
-            this.GetSubDetailDatas(this.CurrentDetailData, out DataTable finalSubDt);
-
-            #endregion
-
             return base.ClickSaveBefore();
-        }
-
-        protected override DualResult ClickSavePost()
-        {
-            #region Check第三層跟第二層是否一致
-            this.GetSubDetailDatas(this.CurrentDetailData, out DataTable finalSubDt);
-
-            #endregion
-            return base.ClickSavePost();
         }
 
         /// <inheritdoc/>
@@ -3233,6 +3220,11 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
                 this.detailgrid.SelectRowToNext();
                 this.detailgrid.SelectRowToPrev();
             }
+        }
+
+        protected override DualResult ClickSaveSubDetial(SubDetailSaveEventArgs e)
+        {
+            return base.ClickSaveSubDetial(e);
         }
 
         #endregion
