@@ -1,6 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[GetSewingDailyOutputList]
      @M				VarChar(8)				
-	 ,@FactoryList		varchar(80) 
+	 ,@FactoryID		varchar(80) 
 	 ,@StartDate    date
 	 ,@EndDate      date
 	 ,@Category		varchar(80) = '' 
@@ -45,7 +45,7 @@ create table #FactoryList(
 )
 insert #FactoryList(FactoryID) 
 select FactoryID = Data
-from dbo.SplitString(@FactoryList,',')	
+from dbo.SplitString(@FactoryID,',')	
 
 --根據條件撈基本資料
 select s.id
