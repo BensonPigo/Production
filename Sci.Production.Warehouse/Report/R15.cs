@@ -74,33 +74,42 @@ namespace Sci.Production.Warehouse
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(
                 @"
-select  a.MDivisionID 
-        ,orders.FactoryID
-        , a.Id
-        ,a.IssueDate
-        ,b.POID
-        ,b.seq1
-        ,b.seq2
-        ,b.roll
-        ,b.dyelot
+select  
+        IssueID=a.Id
+        ,M=a.MDivisionID 
+        ,Factory=orders.FactoryID
+        ,CuttingID=a.CutplanID
+        ,IssueDate=a.IssueDate
+        ,RequestReason = a.WhseReasonID+'-'+ISNULL((select d.Description 
+											        from whsereason d WITH (NOLOCK) 
+											        WHERE d.id = a.whsereasonid and d.Type = 'IR')
+										           ,'')
+        ,Encoder = dbo.getPass1(a.EditName) 
+        ,ToPlace = IIF( EXISTS(select 1 from System where Automation = 1) , a.ToPlace  , '')
+        ,Remark=a.Remark
+        ,ApvDate=a.EditDate
+        ,a.Status
+        ,Createby = dbo.getPass1_ExtNo(a.AddName)
+        ,SP=b.POID
+        ,b.SEQ1
+        ,b.SEQ2
+        ,b.Roll
+        ,b.Dyelot
+        ,Description = dbo.getMtlDesc(b.POID, b.Seq1, b.Seq2, 2, 0)
+        ,c.StockUnit
         ,c.Refno
         ,c.ColorID
         ,c.SizeSpec
-        ,fabrictype = iif(c.FabricType='F', 'Fabric'
-                                          , iif(c.FabricType='A','Accessory'
-                                                                ,c.fabrictype)) 
-        ,b.Qty
-        ,c.StockUnit
-        ,editname = dbo.getPass1(a.EditName) 
-        ,a.Remark
-        ,a.WhseReasonID+'-'+ISNULL((select d.Description 
-                                    from whsereason d WITH (NOLOCK) 
-                                    WHERE d.id = a.whsereasonid and d.Type = 'IR')
-                                   ,'')
+        ,MaterialType= iif(c.FabricType='F', 'Fabric'
+                                                  , iif(c.FabricType='A','Accessory'
+                                                                        ,c.fabrictype)) 
+        ,IssueQty = b.Qty
+        ,BulkLocation = dbo.Getlocation(f.Ukey)
 from issue as a WITH (NOLOCK) 
 inner join issue_detail b WITH (NOLOCK) on a.id = b.id
 inner join Orders orders on b.POID = orders.id
 left join po_supp_detail c WITH (NOLOCK) on c.id = b.poid and c.seq1 = b.seq1 and c.seq2 =b.seq2
+left join FtyInventory f with (nolock) on f.POID = b.POID and f.SEQ1 = b.Seq1 and f.SEQ2 = b.Seq2  and f.Roll = b.Roll and f.Dyelot = b.Dyelot
 where a.type = 'D' AND a.Status = 'Confirmed' 
 ", this.stocktype));
 

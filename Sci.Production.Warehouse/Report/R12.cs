@@ -73,30 +73,34 @@ namespace Sci.Production.Warehouse
 
             this.sqlCmd = $@"
 select 
-il.Id,
-o.MDivisionID,
-o.FactoryID,
-il.RequestID,
-il.IssueDate,
-[FabricType] = IIF(il.FabricType = 'F', 'Fabric', 'Accessory'),
-[RequestType] = IIF(il.Type = 'L', 'Lacking', 'Replacement'),
-[Shift] = case	when l.Shift = 'D' then 'Day'
-				when l.Shift = 'N' then 'Night'
-				when l.Shift = 'O' then 'Subcon-Out'
-				else '' end,
-l.SubconName,
-il.ApvDate,
-il.Status,
-il.Remark,
-ild.POID,
-[Seq] = CONCAT(LTRIM(RTRIM(ild.Seq1)),' ',LTRIM(RTRIM(ild.Seq2))),
-ild.Roll,
-ild.Dyelot,
-[Description] = dbo.getMtlDesc(ild.poid, ild.seq1, ild.seq2, 2, 0),
-psd.StockUnit,
-ild.Qty,
-[BulkLocation] = dbo.Getlocation(f.Ukey),
-[CreateBy] = dbo.getPass1_ExtNo(il.AddName)
+	 IssueID = il.Id
+	,o.MDivisionID
+	,o.FactoryID
+	,il.RequestID
+	,il.IssueDate
+	,RequestType= IIF(il.Type = 'L', 'Lacking', 'Replacement')
+	,Shift = case	when l.Shift = 'D' then 'Day'
+					when l.Shift = 'N' then 'Night'
+					when l.Shift = 'O' then 'Subcon-Out'
+					else '' end
+	,l.SubconName
+	,il.Remark
+	,il.ApvDate
+	,il.Status
+	,Createby = dbo.getPass1_ExtNo(il.AddName)
+	,SP = ild.POID
+	,ild.Seq1
+	,ild.Seq2
+	,ild.Roll
+	,ild.Dyelot
+	,Description = dbo.getMtlDesc(ild.poid, ild.seq1, ild.seq2, 2, 0)
+	,Unit = psd.StockUnit
+	, psd.RefNo
+	, psd.ColorID
+	, psd.SizeSpec
+	,MaterialType = IIF(il.FabricType = 'F', 'Fabric', 'Accessory')
+	,IssueQty = ild.Qty
+	,BulkLocation = dbo.Getlocation(f.Ukey)
 from IssueLack il with (nolock)
 inner join IssueLack_Detail ild with (nolock) on il.ID = ild.ID
 inner join Orders o with (nolock) on o.ID = ild.poid
@@ -120,26 +124,38 @@ order by il.IssueDate,il.Id,ild.POID,ild.Seq1,ild.Seq2,ild.Roll,ild.Dyelot
         /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
+            //this.SetCount(this.dtResult.Rows.Count);
+            //if (this.dtResult.Rows.Count == 0)
+            //{
+            //    MyUtility.Msg.InfoBox("Data not found!!");
+            //    return true;
+            //}
+
+            //this.ShowWaitMessage("Excel Processing...");
+            //Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R12.xltx"); // 預先開啟excel app
+            //Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Warehouse_R12.xltx", objApp);
+            //com.WriteTable(this.dtResult, 2);
+
+            //string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R12");
+            //objApp.ActiveWorkbook.SaveAs(strExcelName);
+            //objApp.Quit();
+            //Marshal.ReleaseComObject(objApp);
+
+            //strExcelName.OpenFile();
+
+            //this.HideWaitMessage();
+            //return true;
+
+            // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.dtResult.Rows.Count);
-            if (this.dtResult.Rows.Count == 0)
+
+            if (this.dtResult.Rows.Count <= 0)
             {
-                MyUtility.Msg.InfoBox("Data not found!!");
-                return true;
+                MyUtility.Msg.WarningBox("Data not found!");
+                return false;
             }
 
-            this.ShowWaitMessage("Excel Processing...");
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R12.xltx"); // 預先開啟excel app
-            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Warehouse_R12.xltx", objApp);
-            com.WriteTable(this.dtResult, 2);
-
-            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R12");
-            objApp.ActiveWorkbook.SaveAs(strExcelName);
-            objApp.Quit();
-            Marshal.ReleaseComObject(objApp);
-
-            strExcelName.OpenFile();
-
-            this.HideWaitMessage();
+            bool s = MyUtility.Excel.CopyToXls(this.dtResult, string.Empty, "Warehouse_R12.xltx", 1, true, null, null);
             return true;
         }
     }
