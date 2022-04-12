@@ -240,7 +240,7 @@ AND Seq1 = '{seq1}' AND Seq2 = '{seq2}'
                 }
 
                 // 若還沒有Issue.ID，表示是全新的第三層，因此除了Deleted的都是Add
-                if (item.RowState != DataRowState.Added && MyUtility.Check.Empty(this.CurrentDetailData["ID"]))
+                if (item.RowState != DataRowState.Added)
                 {
                     item.SetAdded();
                 }

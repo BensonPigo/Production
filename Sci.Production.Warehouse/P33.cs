@@ -2368,100 +2368,6 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
             return base.ClickSavePost();
         }
 
-        private ITableSchema sub_Schema;
-
-        protected override DualResult ClickSaveSubDetial(SubDetailSaveEventArgs e)
-        {
-            DualResult result = base.ClickSaveSubDetial(e);
-            if (!result)
-            {
-                return result;
-            }
-
-            #region override 新增、刪除第三層資料
-            List<DataRow> inserted = new List<DataRow>();
-            List<DataRow> deleteList = new List<DataRow>();
-            var ok = DBProxy.Current.GetTableSchema(null, this.SubGridAlias, out this.sub_Schema);
-            if (!ok)
-            {
-                return ok;
-            }
-
-            foreach (KeyValuePair<DataRow, DataTable> it in e.SubDetails)
-            {
-                foreach (DataRow dr in it.Value.Rows)
-                {
-                    if (dr.RowState == DataRowState.Deleted)
-                    {
-                        continue;
-                    }
-
-                    if (MyUtility.Convert.GetDecimal(dr["Qty"]) <= 0)
-                    {
-                        deleteList.Add(dr);
-                    }
-                    else
-                    {
-                        if (dr.RowState != DataRowState.Modified  && MyUtility.Convert.GetDecimal(dr["Qty"]) > 0)
-                        {
-                            dr.AcceptChanges();
-                            dr.SetAdded();
-                            inserted.Add(dr);
-                        }
-                    }
-                }
-            }
-
-            List<DataRow> newDelete = new List<DataRow>();
-            if (deleteList.Count > 0)
-            {
-                var newT = deleteList[0].Table.Clone();
-                for (int i = 0; i < deleteList.Count; i++)
-                {
-                    var newOne = newT.NewRow();
-                    newOne.ItemArray = deleteList[i].ItemArray;
-                    try
-                    {
-                        if (deleteList[i].RowState != DataRowState.Added)
-                        {
-                            newOne["Qty"] = deleteList[i]["Qty", DataRowVersion.Original];
-                        }
-                        else
-                        {
-                            newOne["Qty"] = deleteList[i]["Qty", DataRowVersion.Current];
-                        }
-                    }
-                    catch (Exception ec)
-                    {
-                        this.ShowErr("Error:", ec);
-                    }
-
-                    newDelete.Add(newOne);
-                    newT.Rows.Add(newOne);
-                }
-
-                newT.AcceptChanges();
-                for (int i = 0; i < deleteList.Count; i++)
-                {
-                    newDelete[i]["Qty"] = 0;
-                }
-            }
-
-            ok = DBProxy.Current.Deletes(null, this.sub_Schema, newDelete);
-            if (!ok)
-            {
-                return ok;
-            }
-
-            ok = DBProxy.Current.Inserts(null, this.sub_Schema, inserted);
-            if (!ok)
-            {
-                return ok;
-            }
-            #endregion
-            return ok;
-        }
-
         /// <inheritdoc/>
         protected override void ClickDeleteAfter()
         {
@@ -3308,7 +3214,6 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
                                 issued.AcceptChanges();
                                 issued.SetAdded();
                                 subDetail.ImportRow(issued);
-                                subDetail.Rows[0]["ID"] = this.CurrentMaintain["ID"];
                             }
                         }
 
