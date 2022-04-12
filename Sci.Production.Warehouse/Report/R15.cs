@@ -19,6 +19,7 @@ namespace Sci.Production.Warehouse
         private DateTime? issueDate1;
         private DateTime? issueDate2;
         private DataTable printData;
+        private bool isAutomation;
 
         public R15(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -54,6 +55,19 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            string chkAutomation = $@"select 1 from System where Automation = 1";
+            DataTable chkDT;
+            DualResult result = DBProxy.Current.Select(null, chkAutomation, out chkDT);
+
+            if (chkDT.Rows != null && chkDT.Rows.Count > 0)
+            {
+                this.isAutomation = true;
+            }
+            else
+            {
+                this.isAutomation = false;
+            }
+
             #region -- sql parameters declare --
 
             System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
@@ -72,8 +86,7 @@ namespace Sci.Production.Warehouse
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(
-                @"
+            sqlCmd.Append($@"
 select  
         IssueID=a.Id
         ,M=a.MDivisionID 
@@ -86,6 +99,7 @@ select
 										           ,'')
         ,Encoder = dbo.getPass1(a.EditName) 
         ,ToPlace = IIF( EXISTS(select 1 from System where Automation = 1) , a.ToPlace  , '')
+        {(this.isAutomation ? ", a.ToPlace " : string.Empty)}
         ,Remark=a.Remark
         ,ApvDate=a.EditDate
         ,a.Status
@@ -111,7 +125,7 @@ inner join Orders orders on b.POID = orders.id
 left join po_supp_detail c WITH (NOLOCK) on c.id = b.poid and c.seq1 = b.seq1 and c.seq2 =b.seq2
 left join FtyInventory f with (nolock) on f.POID = b.POID and f.SEQ1 = b.Seq1 and f.SEQ2 = b.Seq2  and f.Roll = b.Roll and f.Dyelot = b.Dyelot
 where a.type = 'D' AND a.Status = 'Confirmed' 
-", this.stocktype));
+");
 
             if (!MyUtility.Check.Empty(this.issueDate1))
             {
@@ -168,7 +182,7 @@ where a.type = 'D' AND a.Status = 'Confirmed'
 
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
+            result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -192,7 +206,16 @@ where a.type = 'D' AND a.Status = 'Confirmed'
                 return false;
             }
 
-            bool s = MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Warehouse_R15.xltx", 2, true, null, null);
+            bool s = false;
+            if (this.isAutomation)
+            {
+                s = MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Warehouse_R15_Automation.xltx", 2, true, null, null);
+            }
+            else
+            {
+                s = MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Warehouse_R15.xltx", 2, true, null, null);
+            }
+
             return true;
         }
     }
