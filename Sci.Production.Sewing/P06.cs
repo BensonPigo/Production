@@ -308,43 +308,50 @@ where	pd.CTNStartNo != '' and
                     string line;
                     try
                     {
-                        string[] splitResult;
-
-                        // 檢查第1碼是否都為2
-                        while ((line = reader.ReadLine()) != null)
-                        {
-                            splitResult = line.Split('\t');
-                            if (!splitResult[0].Trim().Equals("2"))
-                            {
-                                MyUtility.Msg.WarningBox("Format is not correct!");
-                                return;
-                            }
-                        }
-
                         // 讀取資料
                         DataTable tmpDetail = this.dtReceive.Clone();
                         PackDataResult packDataResult = new PackDataResult();
                         string packNo = string.Empty;
                         reader.DiscardBufferedData();
                         reader.BaseStream.Seek(0, SeekOrigin.Begin);
+
+                        // 檢查第1碼是否都為2
                         while ((line = reader.ReadLine()) != null)
                         {
-                            packNo = line.Split('\t')[1].Trim();
+                            System.Diagnostics.Debug.WriteLine(line);
+                            IList<string> sl = line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
 
-                            // 檢查PackingList_Detail.ID + PackingList_Detail.CustCTN
-                            packDataResult = this.GetPackData(packNo, false);
-                            if (packDataResult.result == true)
+                            if (sl.Count == 0)
                             {
-                                tmpDetail.Rows.Add(packDataResult.Dr.ItemArray);
+                                this.HideWaitMessage();
                                 continue;
                             }
 
-                            // 檢查PackingList_Detail.CustCTN
-                            packDataResult = this.GetPackData(packNo, true);
-                            if (packDataResult.result == true)
+                            if (sl[0] != "2")
                             {
-                                tmpDetail.Rows.Add(packDataResult.Dr.ItemArray);
-                                continue;
+                                MyUtility.Msg.WarningBox("Format is not correct!");
+                                this.HideWaitMessage();
+                                return;
+                            }
+                            else
+                            {
+                                packNo = sl[1].Trim();
+
+                                // 檢查PackingList_Detail.ID + PackingList_Detail.CustCTN
+                                packDataResult = this.GetPackData(packNo, false);
+                                if (packDataResult.result == true)
+                                {
+                                    tmpDetail.Rows.Add(packDataResult.Dr.ItemArray);
+                                    continue;
+                                }
+
+                                // 檢查PackingList_Detail.CustCTN
+                                packDataResult = this.GetPackData(packNo, true);
+                                if (packDataResult.result == true)
+                                {
+                                    tmpDetail.Rows.Add(packDataResult.Dr.ItemArray);
+                                    continue;
+                                }
                             }
                         }
 
