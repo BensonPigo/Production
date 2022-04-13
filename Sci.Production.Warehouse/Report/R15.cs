@@ -98,7 +98,6 @@ select
 											        WHERE d.id = a.whsereasonid and d.Type = 'IR')
 										           ,'')
         ,Encoder = dbo.getPass1(a.EditName) 
-        ,ToPlace = IIF( EXISTS(select 1 from System where Automation = 1) , a.ToPlace  , '')
         {(this.isAutomation ? ", a.ToPlace " : string.Empty)}
         ,Remark=a.Remark
         ,ApvDate=a.EditDate
