@@ -4,6 +4,8 @@
 #pragma warning disable SA1516
     public class FtyInventory
     {
+        public string Ukey { get; set; }
+        public string ToUkey { get; set; }
         public string Poid { get; set; }
         public string Seq1 { get; set; }
         public string Seq2 { get; set; }

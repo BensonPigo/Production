@@ -2035,7 +2035,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                         }
 
                         // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
-                        if (!(result = Prgs.UpdateWH_Barcode(true, dtDetail, "P22", out bool fromNewBarcode)))
+                        if (!(result = Prgs.UpdateWH_Barcode(true, dtDetail, "P22", out bool fromNewBarcode, dtOriFtyInventory)))
                         {
                             throw result.GetException();
                         }
@@ -2507,7 +2507,7 @@ inner join #tmpD as src on   target.ID = src.ToPoid
                         }
 
                         // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
-                        if (!(result = Prgs.UpdateWH_Barcode(true, dtDetail, "P23", out bool fromNewBarcode)))
+                        if (!(result = Prgs.UpdateWH_Barcode(true, dtDetail, "P23", out bool fromNewBarcode, dtOriFtyInventory)))
                         {
                             throw result.GetException();
                         }
@@ -2959,7 +2959,7 @@ WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
                         }
 
                         // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
-                        if (!(result = Prgs.UpdateWH_Barcode(true, dtDetail, "P24", out bool fromNewBarcode)))
+                        if (!(result = Prgs.UpdateWH_Barcode(true, dtDetail, "P24", out bool fromNewBarcode, dtOriFtyInventory)))
                         {
                             throw result.GetException();
                         }
@@ -3546,6 +3546,8 @@ inner join #tmp s on s.POID = sd.PoId
 				select 1 from MtlLocation ml 
 				inner join dbo.SplitString(sd.ToLocation,',') sp on sp.Data = ml.ID and ml.StockType = sd.ToStockType
 				where ml.IsWMS = 1), 1, 0)
+    ,ToUkey = fto.Ukey
+    ,[ToBalanceQty] = isnull(fto.InQty,0) -isnull(fto.OutQty,0) + isnull(fto.AdjustQty,0) - isnull(fto.ReturnQty,0)
 ";
             }
             else if (detailTableName == WHTableName.LocationTrans_Detail)
@@ -3634,7 +3636,7 @@ left join Production.dbo.FtyInventory f on f.POID = isnull(sd.PoId, '')
         /// <param name="isRevise">P99 的 Revise 功能</param>
         /// <param name="isDelete">P99 的 Delete 功能</param>
         /// <inheritdoc/>
-        public static DualResult UpdateWH_Barcode(bool isConfirmed, DataTable dtDetail, string function, out bool fromNewBarcode, DataTable oriFtyInventory = null, bool isRevise = false, bool isDelete = false)
+        public static DualResult UpdateWH_Barcode(bool isConfirmed, DataTable dtDetailSource, string function, out bool fromNewBarcode, DataTable oriFtyInventory = null, bool isRevise = false, bool isDelete = false)
         {
             // 庫存0 = 沒or清空 Barcode
             // ↓在不覆蓋移動目標 Barcode 原則下↓
@@ -3642,12 +3644,13 @@ left join Production.dbo.FtyInventory f on f.POID = isnull(sd.PoId, '')
             // 庫存 < 部分 > 移動 = 新的 BarcodeSeq
             // 更新 WHBarcodeTransaction / FtyInventory 沒有先後, 先處理 WHBarcodeTransaction Barcode, FtyInventory 直接使用 WHBarcodeTransaction 物件的 Barcode
             fromNewBarcode = false;
-            if (dtDetail.Rows.Count == 0)
+            if (dtDetailSource.Rows.Count == 0)
             {
                 return Result.True;
             }
 
             // Issue 部分程式第 2 層是 Issue_Summary,第3層才是 Issue_Detail
+            DataTable dtDetail = dtDetailSource.Copy();
             if (dtDetail.Columns.Contains("Issue_DetailUkey"))
             {
                 if (dtDetail.Columns.Contains("Ukey"))
@@ -3656,6 +3659,16 @@ left join Production.dbo.FtyInventory f on f.POID = isnull(sd.PoId, '')
                 }
 
                 dtDetail.Columns["Issue_DetailUkey"].ColumnName = "Ukey";
+            }
+
+            if (dtDetail.Columns.Contains("StockQty"))
+            {
+                if (dtDetail.Columns.Contains("Qty"))
+                {
+                    dtDetail.Columns.Remove("Qty");
+                }
+
+                dtDetail.Columns["StockQty"].ColumnName = "Qty";
             }
 
             DualResult result;
@@ -3672,12 +3685,6 @@ left join Production.dbo.FtyInventory f on f.POID = isnull(sd.PoId, '')
             }
 
             string ukeys = dtDetail.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["Ukey"])).ToList().JoinToString(",");
-
-            // 盤點 confrim 是變更 調整單Adjust的Barcode
-            if (function == "P50" || function == "P51")
-            {
-                detailTableName = WHTableName.Adjust_Detail;
-            }
 
             #region 取得新 BarCode
             List<string> newBarcodeList = new List<string>();
@@ -3866,6 +3873,70 @@ and sd.Ukey in ({ukeys})
             }
             #endregion
 
+            dt.Columns.Add("oriBalanceQty", typeof(decimal));
+
+            #region 一次更新同物料有兩筆以上, balanceQty 庫存要改成逐筆計算 2022/04/11
+            if (oriFtyInventory != null)
+            {
+                string qty = (isRevise || isDelete) ? "DiffQty" : "Qty";
+                foreach (DataRow dr in dt.Rows)
+                {
+                    if (oriFtyInventory.Select($"Ukey = '{dr["Fabric_FtyInventoryUkey"]}'").Length == 0)
+                    {
+                        continue;
+                    }
+
+                    DataRow ftydr = oriFtyInventory.Select($"Ukey = '{dr["Fabric_FtyInventoryUkey"]}'")[0];
+                    DataRow deraildr = dtDetail.Select($"Ukey = '{dr["Ukey"]}'")[0];
+                    decimal oriBalanceQty = MyUtility.Convert.GetDecimal(ftydr["balanceQty"]);
+                    dr["oriBalanceQty"] = oriBalanceQty;
+
+                    // 原庫存 +- Qty (+InQty - OutQty + AdjustQty - ReturnQty)
+                    switch (detailTableName)
+                    {
+                        // InQty
+                        case WHTableName.Receiving_Detail:
+                        case WHTableName.TransferIn_Detail:
+                            dr["balanceQty"] = ftydr["balanceQty"] = oriBalanceQty + (isConfirmed ? MyUtility.Convert.GetDecimal(deraildr[qty]) : -MyUtility.Convert.GetDecimal(deraildr[qty]));
+                            break;
+
+                        // ReturnQty
+                        case WHTableName.ReturnReceipt_Detail:
+                            dr["balanceQty"] = ftydr["balanceQty"] = oriBalanceQty + (isConfirmed ? -MyUtility.Convert.GetDecimal(deraildr[qty]) : MyUtility.Convert.GetDecimal(deraildr[qty]));
+                            break;
+
+                        // OutQty
+                        case WHTableName.IssueReturn_Detail:
+                        case WHTableName.Issue_Detail:
+                        case WHTableName.IssueLack_Detail:
+                        case WHTableName.TransferOut_Detail:
+                            dr["balanceQty"] = ftydr["balanceQty"] = oriBalanceQty + (isConfirmed ? -MyUtility.Convert.GetDecimal(deraildr[qty]) : MyUtility.Convert.GetDecimal(deraildr[qty]));
+                            break;
+
+                        // OutQty : from
+                        // InQty : to
+                        case WHTableName.SubTransfer_Detail:
+                        case WHTableName.BorrowBack_Detail:
+                            dr["balanceQty"] = ftydr["balanceQty"] = oriBalanceQty + (isConfirmed ? -MyUtility.Convert.GetDecimal(deraildr[qty]) : MyUtility.Convert.GetDecimal(deraildr[qty]));
+                            if (oriFtyInventory.Select($"ToUkey = '{dr["ToFabric_FtyInventoryUkey"]}'").Length > 0)
+                            {
+                                DataRow toFtydr = oriFtyInventory.Select($"ToUkey = '{dr["ToFabric_FtyInventoryUkey"]}'")[0];
+                                decimal toOriBalanceQty = MyUtility.Convert.GetDecimal(toFtydr["tobalanceQty"]);
+                                dr["tobalanceQty"] = toFtydr["tobalanceQty"] = toOriBalanceQty + (isConfirmed ? MyUtility.Convert.GetDecimal(deraildr[qty]) : -MyUtility.Convert.GetDecimal(deraildr[qty]));
+                            }
+
+                            break;
+
+                        // AdjustQty
+                        case WHTableName.Adjust_Detail:
+                            string qtyAd = (isRevise || isDelete) ? "DiffQty" : "AdjustQty";
+                            dr["balanceQty"] = ftydr["balanceQty"] = oriBalanceQty + (isConfirmed ? MyUtility.Convert.GetDecimal(deraildr[qtyAd]) : -MyUtility.Convert.GetDecimal(deraildr[qtyAd]));
+                            break;
+                    }
+                }
+            }
+            #endregion
+
             #region 更新 WHBarcodeTransaction
             var wHBarcodeTransaction = dt.AsEnumerable().
                 Select(s => new WHBarcodeTransaction
@@ -3915,6 +3986,8 @@ and sd.Ukey in ({ukeys})
                                 {
                                     item.To_NewBarcode = newBarcodeList[indexNewBarcode];
                                     indexNewBarcode++;
+
+                                    UpdateSameFtyBarcode(dt, item, "Receiving", "Barcode");
                                 }
                             }
                             else
@@ -3952,19 +4025,11 @@ and sd.Ukey in ({ukeys})
                                 {
                                     item.From_NewBarcode = barcode;
                                     item.From_NewBarcodeSeq = barcodeSeq;
-                                    item.To_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(barcode, wHBarcodeTransaction);
+                                    item.To_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(barcode, wHBarcodeTransaction, "To");
                                 }
                                 else
                                 {
-                                    // 同物料有多筆:此物料庫存 = 0 & 同物料最後一筆 Rn (剩下全轉,移動Barcode) 同物料只有一筆, 一定是最後一筆 Rn
-                                    if (dt.Select($"RankFtyInventory = {dr["RankFtyInventory"]}").AsEnumerable().Max(m => MyUtility.Convert.GetInt(m["rn"])) == MyUtility.Convert.GetInt(dr["rn"]))
-                                    {
-                                        item.To_NewBarcodeSeq = barcodeSeq;
-                                    }
-                                    else
-                                    {
-                                        item.To_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(barcode, wHBarcodeTransaction);
-                                    }
+                                    item.To_NewBarcodeSeq = barcodeSeq;
                                 }
                             }
                             else
@@ -3980,6 +4045,8 @@ and sd.Ukey in ({ukeys})
                                 {
                                     item.From_NewBarcode = lastBarcode;
                                     item.From_NewBarcodeSeq = lastBarcodeSeq;
+
+                                    UpdateSameFtyBarcode(dt, item, "From", "Barcode");
                                 }
                             }
                         }
@@ -4019,20 +4086,14 @@ and sd.Ukey in ({ukeys})
                                     {
                                         item.From_NewBarcode = barcode;
                                         item.From_NewBarcodeSeq = barcodeSeq;
-                                        item.To_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(barcode, wHBarcodeTransaction);
+                                        item.To_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(barcode, wHBarcodeTransaction, "To");
                                     }
                                     else
                                     {
-                                        // 同物料有多筆:此物料庫存 = 0 & 同物料最後一筆 Rn (剩下全轉,移動Barcode) 同物料只有一筆, 一定是最後一筆 Rn
-                                        if (dt.Select($"RankFtyInventory = {dr["RankFtyInventory"]}").AsEnumerable().Max(m => MyUtility.Convert.GetInt(m["rn"])) == MyUtility.Convert.GetInt(dr["rn"]))
-                                        {
-                                            item.To_NewBarcodeSeq = barcodeSeq;
-                                        }
-                                        else
-                                        {
-                                            item.To_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(barcode, wHBarcodeTransaction);
-                                        }
+                                        item.To_NewBarcodeSeq = barcodeSeq;
                                     }
+
+                                    UpdateSameFtyBarcode(dt, item, "To", "ToBarcode");
                                 }
                             }
                             else
@@ -4054,7 +4115,7 @@ and sd.Ukey in ({ukeys})
                                     item.From_NewBarcode = tobarcode;
                                     if (!MyUtility.Check.Empty(dr["TobalanceQty"]))
                                     {
-                                        item.From_NewBarcodeSeq = GetNextBarcodeSeq(tobarcode);
+                                        item.From_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(tobarcode, wHBarcodeTransaction, "From");
                                         item.To_NewBarcode = tobarcode;
                                         item.To_NewBarcodeSeq = tobarcodeSeq;
                                     }
@@ -4062,6 +4123,8 @@ and sd.Ukey in ({ukeys})
                                     {
                                         item.From_NewBarcodeSeq = tobarcodeSeq;
                                     }
+
+                                    UpdateSameFtyBarcode(dt, item, "From", "Barcode");
                                 }
                             }
                         }
@@ -4071,13 +4134,12 @@ and sd.Ukey in ({ukeys})
                         foreach (var item in wHBarcodeTransaction)
                         {
                             DataRow dr = dt.Select($"rn = {item.Rn}")[0];
-                            DataRow oriFtyData = oriFtyInventory.Select($"POID = '{dr["POID"]}' and Seq1 = '{dr["Seq1"]}' and Seq2 = '{dr["Seq2"]}' and Roll = '{dr["Roll"]}' and Dyelot = '{dr["Dyelot"]}' and StockType = '{dr["StockType"]}'")[0];
                             item.FromFabric_FtyInventoryUkey = MyUtility.Convert.GetString(dr["Fabric_FtyInventoryUkey"]);
                             string barcode = MyUtility.Convert.GetString(dr["Barcode"]);
                             string barcodeSeq = MyUtility.Convert.GetString(dr["barcodeSeq"]);
 
                             // confrim / unconfrim 流程,更新值一樣
-                            if (!MyUtility.Check.Empty(oriFtyData["balanceQty"]))
+                            if (!MyUtility.Check.Empty(dr["oriBalanceQty"]))
                             {
                                 item.From_OldBarcode = barcode;
                                 item.From_OldBarcodeSeq = barcodeSeq;
@@ -4166,6 +4228,13 @@ and w.Action = '{item.Action}'";
                             {
                                 item.To_NewBarcode = newBarcodeList[indexNewBarcode];
                                 indexNewBarcode++;
+
+                                UpdateSameFtyBarcode(dt, item, "Receiving", "Barcode");
+                            }
+                            else
+                            {
+                                item.To_NewBarcode = MyUtility.Convert.GetString(dr["Barcode"]);
+                                item.To_NewBarcodeSeq = MyUtility.Convert.GetString(dr["BarcodeSeq"]);
                             }
                         }
                     }
@@ -4189,18 +4258,18 @@ and w.Action = '{item.Action}'";
                                             if (!MyUtility.Check.Empty(drwHBarcodeTransaction["From_OldBarcode"]))
                                             {
                                                 item.From_NewBarcode = MyUtility.Convert.GetString(drwHBarcodeTransaction["From_OldBarcode"]);
-                                                item.From_NewBarcodeSeq = GetNextBarcodeSeq(MyUtility.Convert.GetString(drwHBarcodeTransaction["From_OldBarcode"]));
+                                                item.From_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(MyUtility.Convert.GetString(drwHBarcodeTransaction["From_OldBarcode"]), wHBarcodeTransaction, "From");
                                             }
                                             else
                                             {
                                                 item.From_NewBarcode = MyUtility.Convert.GetString(drwHBarcodeTransaction["From_NewBarcode"]);
-                                                item.From_NewBarcodeSeq = GetNextBarcodeSeq(MyUtility.Convert.GetString(drwHBarcodeTransaction["From_NewBarcode"]));
+                                                item.From_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(MyUtility.Convert.GetString(drwHBarcodeTransaction["From_NewBarcode"]), wHBarcodeTransaction, "From");
                                             }
 
                                             break;
                                         default:
                                             item.From_NewBarcode = MyUtility.Convert.GetString(drwHBarcodeTransaction["To_NewBarcode"]);
-                                            item.From_NewBarcodeSeq = GetNextBarcodeSeq(MyUtility.Convert.GetString(drwHBarcodeTransaction["To_NewBarcode"]));
+                                            item.From_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(MyUtility.Convert.GetString(drwHBarcodeTransaction["To_NewBarcode"]), wHBarcodeTransaction, "From");
                                             break;
                                     }
                                 }
@@ -4208,8 +4277,10 @@ and w.Action = '{item.Action}'";
                                 {
                                     // 用舊資料 FtyInventory_BarCode (下方仍要更新 FtyInventory BarCode 使用)
                                     item.From_NewBarcode = MyUtility.Convert.GetString(dr["OldData_BarCode"]);
-                                    item.From_NewBarcodeSeq = GetNextBarcodeSeq(MyUtility.Convert.GetString(dr["OldData_BarCode"]));
+                                    item.From_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(MyUtility.Convert.GetString(dr["OldData_BarCode"]), wHBarcodeTransaction, "From");
                                 }
+
+                                UpdateSameFtyBarcode(dt, item, "From", "Barcode");
                             }
                             else
                             {
@@ -4235,6 +4306,8 @@ and w.Action = '{item.Action}'";
             var data_FtyBarcode = dt.AsEnumerable().
                 Select(s => new FtyInventory
                 {
+                    Ukey = wHBarcodeTransaction.Where(w => w.Rn == MyUtility.Convert.GetLong(s["rn"])).Select(s1 => s1.FromFabric_FtyInventoryUkey).First(),
+                    ToUkey = wHBarcodeTransaction.Where(w => w.Rn == MyUtility.Convert.GetLong(s["rn"])).Select(s1 => s1.ToFabric_FtyInventoryUkey).First(),
                     Rn = MyUtility.Convert.GetLong(s["rn"]),
                     Poid = s.Field<string>("poid"),
                     Seq1 = s.Field<string>("seq1"),
@@ -4250,9 +4323,9 @@ and w.Action = '{item.Action}'";
                 case WHTableName.IssueReturn_Detail:
                     foreach (var item in data_FtyBarcode)
                     {
-                        var rnWHBarcodeTransaction = wHBarcodeTransaction.Where(w => w.Rn == item.Rn).FirstOrDefault();
-                        item.Barcode = rnWHBarcodeTransaction.To_NewBarcode;
-                        item.BarcodeSeq = rnWHBarcodeTransaction.To_NewBarcodeSeq;
+                        var toBarcode = wHBarcodeTransaction.Where(w => w.ToFabric_FtyInventoryUkey == item.ToUkey).OrderByDescending(o => o.TransactionUkey).First();
+                        item.Barcode = toBarcode.To_NewBarcode;
+                        item.BarcodeSeq = toBarcode.To_NewBarcodeSeq;
                     }
 
                     break;
@@ -4260,10 +4333,9 @@ and w.Action = '{item.Action}'";
                 default:
                     foreach (var item in data_FtyBarcode)
                     {
-                        var rnWHBarcodeTransaction = wHBarcodeTransaction.Where(w => w.Rn == item.Rn).FirstOrDefault();
-                        var minBarcodeSeq = wHBarcodeTransaction.Where(w => w.From_NewBarcode == rnWHBarcodeTransaction.From_NewBarcode).Select(s => s.From_NewBarcodeSeq).Min();
-                        item.Barcode = rnWHBarcodeTransaction.From_NewBarcode;
-                        item.BarcodeSeq = minBarcodeSeq; // 轉出/轉料,同物料有多筆. Unconfrim (空白barcode) 要寫 lastbarcode, 有多筆時取最小 Seq. 其它狀況不影響 confrim:部分轉不變/全轉清空,
+                        var fromBarcode = wHBarcodeTransaction.Where(w => w.FromFabric_FtyInventoryUkey == item.Ukey).OrderByDescending(o => o.TransactionUkey).First();
+                        item.Barcode = fromBarcode.From_NewBarcode;
+                        item.BarcodeSeq = fromBarcode.From_NewBarcodeSeq;
                     }
 
                     break;
@@ -4282,15 +4354,23 @@ and w.Action = '{item.Action}'";
                     var data_To_FtyBarcode = dt.AsEnumerable().
                         Select(s => new FtyInventory
                         {
+                            Ukey = wHBarcodeTransaction.Where(w => w.Rn == MyUtility.Convert.GetLong(s["rn"])).Select(s1 => s1.ToFabric_FtyInventoryUkey).First(),
                             Poid = s.Field<string>("Topoid"),
                             Seq1 = s.Field<string>("Toseq1"),
                             Seq2 = s.Field<string>("Toseq2"),
                             Stocktype = s.Field<string>("Tostocktype"),
                             Roll = s.Field<string>("Toroll"),
                             Dyelot = s.Field<string>("Todyelot"),
-                            Barcode = wHBarcodeTransaction.Where(w => w.Rn == MyUtility.Convert.GetLong(s["rn"])).Select(s1 => s1.To_NewBarcode).First(),
-                            BarcodeSeq = wHBarcodeTransaction.Where(w => w.Rn == MyUtility.Convert.GetLong(s["rn"])).Select(s1 => s1.To_NewBarcodeSeq).First(),
                         }).ToList();
+
+                    // 同一批更新可能多筆轉入相同物料,若原本Barcode為空白, 取 TransactionUkey 最大那筆 Barcode, Seq
+                    foreach (var item in data_To_FtyBarcode)
+                    {
+                        var toBarcode = wHBarcodeTransaction.Where(w => w.ToFabric_FtyInventoryUkey == item.Ukey).OrderByDescending(o => o.TransactionUkey).First();
+                        item.Barcode = toBarcode.To_NewBarcode;
+                        item.BarcodeSeq = toBarcode.To_NewBarcodeSeq;
+                    }
+
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_To_FtyBarcode, string.Empty, UpdateFtyInventoryBarCode(), out odt)))
                     {
                         return result;
@@ -4299,6 +4379,41 @@ and w.Action = '{item.Action}'";
             }
             #endregion
             return Result.True;
+        }
+
+        /// <summary>
+        /// 同物料狀況:需先更新Barcode用於下筆同物料判斷
+        /// </summary>
+        /// <inheritdoc/>
+        public static void UpdateSameFtyBarcode(DataTable dt, WHBarcodeTransaction item, string ft, string barcode)
+        {
+            switch (ft)
+            {
+                case "From":
+                    foreach (DataRow dupFtydr in dt.Select($"Fabric_FtyInventoryUkey = '{item.FromFabric_FtyInventoryUkey}'"))
+                    {
+                        dupFtydr[barcode] = item.From_NewBarcode;
+                        dupFtydr[barcode + "Seq"] = item.From_NewBarcodeSeq;
+                    }
+
+                    break;
+                case "To":
+                    foreach (DataRow dupFtydr in dt.Select($"ToFabric_FtyInventoryUkey = '{item.ToFabric_FtyInventoryUkey}'"))
+                    {
+                        dupFtydr[barcode] = item.To_NewBarcode;
+                        dupFtydr[barcode + "Seq"] = item.To_NewBarcodeSeq;
+                    }
+
+                    break;
+                case "Receiving":
+                    foreach (DataRow dupFtydr in dt.Select($"Fabric_FtyInventoryUkey = '{item.ToFabric_FtyInventoryUkey}'"))
+                    {
+                        dupFtydr["Barcode"] = item.To_NewBarcode;
+                        dupFtydr["BarcodeSeq"] = item.To_NewBarcodeSeq;
+                    }
+
+                    break;
+            }
         }
 
         /// <inheritdoc/>
@@ -5705,10 +5820,20 @@ and ml.IsWMS = 1
         /// </summary>
         /// <param name="barcode">barcode</param>
         /// <param name="wHBarcodeTransaction">wHBarcodeTransaction</param>
+        /// <param name="column">From or To</param>
         /// <returns>Next BarcodeSeq</returns>
-        public static string GetNextBarcodeSeqInObjWHBarcodeTransaction(string barcode, List<WHBarcodeTransaction> wHBarcodeTransaction)
+        public static string GetNextBarcodeSeqInObjWHBarcodeTransaction(string barcode, List<WHBarcodeTransaction> wHBarcodeTransaction, string column)
         {
-            string seq = wHBarcodeTransaction.Where(w => w.To_NewBarcode == barcode).Select(s => s.To_NewBarcodeSeq).Max();
+            string seq;
+            if (column == "To")
+            {
+                seq = wHBarcodeTransaction.Where(w => w.To_NewBarcode == barcode).Select(s => s.To_NewBarcodeSeq).Max();
+            }
+            else
+            {
+                seq = wHBarcodeTransaction.Where(w => w.From_NewBarcode == barcode).Select(s => s.From_NewBarcodeSeq).Max();
+            }
+
             if (MyUtility.Check.Empty(seq))
             {
                 return GetNextBarcodeSeq(barcode);

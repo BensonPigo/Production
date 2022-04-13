@@ -481,7 +481,7 @@ having f.balanceQty - sum(d.Qty) < 0
                     }
 
                     // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
-                    if (!(result = Prgs.UpdateWH_Barcode(true, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode)))
+                    if (!(result = Prgs.UpdateWH_Barcode(true, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
                     {
                         throw result.GetException();
                     }
@@ -501,7 +501,7 @@ having f.balanceQty - sum(d.Qty) < 0
             }
 
             // AutoWHFabric WebAPI
-            Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+            Prgs_WMS.WMSprocess(true, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
@@ -656,7 +656,7 @@ having f.balanceQty + sum(d.Qty) < 0
             #region UnConfirmed 廠商能上鎖→PMS更新→廠商更新
 
             // 先確認 WMS 能否上鎖, 不能直接 return
-            if (!Prgs_WMS.WMSLock((DataTable)this.detailgridbs.DataSource, dtOriFtyInventory, this.Name, EnumStatus.Unconfirm))
+            if (!Prgs_WMS.WMSLock(((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), dtOriFtyInventory, this.Name, EnumStatus.Unconfirm))
             {
                 return;
             }
@@ -697,7 +697,7 @@ having f.balanceQty + sum(d.Qty) < 0
                     }
 
                     // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
-                    if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode)))
+                    if (!(result = Prgs.UpdateWH_Barcode(false, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
                     {
                         throw result.GetException();
                     }
@@ -712,13 +712,13 @@ having f.balanceQty + sum(d.Qty) < 0
 
             if (!MyUtility.Check.Empty(errMsg))
             {
-                Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
+                Prgs_WMS.WMSprocess(true, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
                 this.ShowErr(errMsg);
                 return;
             }
 
             // PMS 更新之後,才執行WMS
-            Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory);
+            Prgs_WMS.WMSprocess(true, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory);
             MyUtility.Msg.InfoBox("UnConfirmed successful");
             #endregion
         }

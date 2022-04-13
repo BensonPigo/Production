@@ -835,7 +835,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                     }
 
                     // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
-                    if (!(result = Prgs.UpdateWH_Barcode(true, dtIssue_Detail, this.Name, out bool fromNewBarcode)))
+                    if (!(result = Prgs.UpdateWH_Barcode(true, dtIssue_Detail, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
                     {
                         throw result.GetException();
                     }
@@ -1075,7 +1075,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                     }
 
                     // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
-                    if (!(result = Prgs.UpdateWH_Barcode(false, dtIssue_Detail, this.Name, out bool fromNewBarcode)))
+                    if (!(result = Prgs.UpdateWH_Barcode(false, dtIssue_Detail, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
                     {
                         throw result.GetException();
                     }
