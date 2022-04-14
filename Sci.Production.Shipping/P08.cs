@@ -27,6 +27,7 @@ namespace Sci.Production.Shipping
         private DataTable subType_1 = new DataTable();
         private DataTable subType_2 = new DataTable();
         private BindingSource comboxbs1;
+        private bool IsA2B;
 
         // , comboxbs2_1, comboxbs2_2;
         private DataGridViewGeneratorTextColumnSettings code = new DataGridViewGeneratorTextColumnSettings();
@@ -990,14 +991,6 @@ when not matched by target then
                 }
             }
 
-            result = DBProxy.Current.Execute(
-"Production",
-string.Format("exec CalculateShareExpense '{0}','{1}',{2}", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Env.User.UserID, isFreightForwarder));
-            if (!result)
-            {
-                return new DualResult(false, "Re-calcute share expense failed!");
-            }
-
             string sqlInvNo = $@"select distinct InvNo from ShareExpense where  ShippingAPID = '{this.CurrentMaintain["ID"]}'";
             if (!(result = DBProxy.Current.Select(string.Empty, sqlInvNo, out DataTable dtInvNo)))
             {
@@ -1013,6 +1006,8 @@ string.Format("exec CalculateShareExpense '{0}','{1}',{2}", MyUtility.Convert.Ge
                     List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(invNos);
                     foreach (string plFromRgCode in listPLFromRgCode)
                     {
+                        this.IsA2B = true;
+
                         // 跨Server取得ShareExpense_APP所需PackingList資料
                         DataTable dtA2BPacking;
                         result = Prgs.DataTable_Packing(plFromRgCode, invNos, out dtA2BPacking);
@@ -1025,7 +1020,14 @@ string.Format("exec CalculateShareExpense '{0}','{1}',{2}", MyUtility.Convert.Ge
                         if (dtA2BPacking.Rows.Count > 0)
                         {
                             // 將跨Serve資料更新ShareExpense_APP
-                            DualResult result2 = Prgs.CalculateShareExpense_APP(this.CurrentMaintain["ID"].ToString(), Env.User.UserID, dtA2BPacking, plFromRgCode);
+                            DualResult result2;
+                            result2 = Prgs.CalculateShareExpense_ForA2B(this.CurrentMaintain["ID"].ToString(), Env.User.UserID, isFreightForwarder);
+                            if (!result2)
+                            {
+                                return new DualResult(false, "Re-calcute share expense failed!");
+                            }
+
+                            result2 = Prgs.CalculateShareExpense_APP(this.CurrentMaintain["ID"].ToString(), Env.User.UserID, dtA2BPacking, plFromRgCode);
 
                             if (!result2)
                             {
@@ -1033,6 +1035,17 @@ string.Format("exec CalculateShareExpense '{0}','{1}',{2}", MyUtility.Convert.Ge
                             }
                         }
                     }
+                }
+            }
+
+            if (this.IsA2B == false)
+            {
+                result = DBProxy.Current.Execute(
+"Production",
+string.Format("exec CalculateShareExpense '{0}','{1}',{2}", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Env.User.UserID, isFreightForwarder));
+                if (!result)
+                {
+                    return new DualResult(false, "Re-calcute share expense failed!");
                 }
             }
 
@@ -1123,7 +1136,6 @@ inner join #tmp airAmt on airAmt.AirPPID = a.ID
                         return result;
                     }
                 }
-
             }
             #endregion
 
