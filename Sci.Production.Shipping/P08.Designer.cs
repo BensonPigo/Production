@@ -725,6 +725,7 @@
             // 
             this.txtSubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalSuppID", true));
             this.txtSubconSupplier.DisplayBox1Binding = "";
+            this.txtSubconSupplier.IsFreightForwarder = false;
             this.txtSubconSupplier.IsIncludeJunk = false;
             this.txtSubconSupplier.IsMisc = false;
             this.txtSubconSupplier.IsShipping = true;

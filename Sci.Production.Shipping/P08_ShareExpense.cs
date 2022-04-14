@@ -28,6 +28,7 @@ namespace Sci.Production.Shipping
         private bool IsReason;
         private string LocalSuppID;
         private int isFreightForwarder;
+        private bool IsA2B;
 
         /// <summary>
         /// P08_ShareExpense
@@ -47,6 +48,7 @@ namespace Sci.Production.Shipping
             this.numTtlAmt.Value = MyUtility.Convert.GetDecimal(this.apData["Amount"]);
             this.LocalSuppID = MyUtility.Convert.GetString(this.apData["LocalSuppID"]);
             this.ControlButton();
+            this.IsA2B = false;
         }
 
         /// <inheritdoc/>
@@ -669,16 +671,6 @@ and not exists(select 1 from Export where id=se.WKNo and BLNo = sa.BLNo)
                 return;
             }
 
-            // 重新計算
-            result = DBProxy.Current.Execute(
-                "Production",
-                string.Format("exec CalculateShareExpense '{0}','{1}', {2}", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID, this.isFreightForwarder));
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox("Calcute share expense failed.\r\n" + result.ToString());
-                return;
-            }
-
             string sqlInvNo = $@"select distinct InvNo from ShareExpense where  ShippingAPID = '{this.apData["ID"]}'";
             if (!(result = DBProxy.Current.Select(string.Empty, sqlInvNo, out DataTable dtInvNo)))
             {
@@ -695,6 +687,8 @@ and not exists(select 1 from Export where id=se.WKNo and BLNo = sa.BLNo)
                     List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(invNos);
                     foreach (string plFromRgCode in listPLFromRgCode)
                     {
+                        this.IsA2B = true;
+
                         // 跨Server取得ShareExpense_APP所需PackingList資料
                         DataTable dtA2BPacking;
                         result = Prgs.DataTable_Packing(plFromRgCode, invNos, out dtA2BPacking);
@@ -708,7 +702,15 @@ and not exists(select 1 from Export where id=se.WKNo and BLNo = sa.BLNo)
                         if (dtA2BPacking.Rows.Count > 0)
                         {
                             // 將跨Serve資料更新ShareExpense_APP
-                            DualResult result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dtA2BPacking, plFromRgCode);
+                            DualResult result2;
+                            result2 = Prgs.CalculateShareExpense_ForA2B(this.apData["ID"].ToString(), Env.User.UserID, this.isFreightForwarder);
+                            if (!result2)
+                            {
+                                this.ShowErr(result.ToString());
+                                return;
+                            }
+
+                            result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dtA2BPacking, plFromRgCode);
 
                             if (!result2)
                             {
@@ -717,6 +719,19 @@ and not exists(select 1 from Export where id=se.WKNo and BLNo = sa.BLNo)
                             }
                         }
                     }
+                }
+            }
+
+            if (this.IsA2B == false)
+            {
+                // 重新計算
+                result = DBProxy.Current.Execute(
+                    "Production",
+                    string.Format("exec CalculateShareExpense '{0}','{1}', {2}", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID, this.isFreightForwarder));
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox("Calcute share expense failed.\r\n" + result.ToString());
+                    return;
                 }
             }
         }
@@ -1314,15 +1329,6 @@ where   ShippingAPID = '{3}'
                             }
                         }
 
-                        result = DBProxy.Current.ExecuteByConn(
-                            sqlConn,
-                            string.Format("exec CalculateShareExpense '{0}','{1}', {2}", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID, this.isFreightForwarder));
-                        if (!result)
-                        {
-                            errmsg = errmsg + "Calcute share expense failed." + "\r\n" + result.ToString();
-                            lastResult = false;
-                        }
-
                         // 執行A2B跨廠區資料 & 寫入跨廠區資料到ShareExpense_APP
                         List<string> ilist = this.SEData.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["InvNo"])).Distinct().ToList();
                         if (ilist.Count == 0 && this.SEGroupData.Rows.Count > 0)
@@ -1338,7 +1344,7 @@ where   ShippingAPID = '{3}'
                             {
                                 // 跨Server取得ShareExpense_APP所需PackingList資料
                                 DataTable dt;
-
+                                this.IsA2B = true;
                                 result = Prgs.DataTable_Packing(plFromRgCode, invNos, out dt);
 
                                 if (!result)
@@ -1350,14 +1356,34 @@ where   ShippingAPID = '{3}'
                                 if (dt != null && dt.Rows.Count > 0)
                                 {
                                     // 將跨Serve資料更新ShareExpense_APP
-                                    DualResult result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dt, plFromRgCode);
+                                    DualResult result2;
+                                    result2 = Prgs.CalculateShareExpense_ForA2B(this.apData["ID"].ToString(), Env.User.UserID, this.isFreightForwarder);
+                                    if (!result2)
+                                    {
+                                        this.ShowErr(result.ToString());
+                                        return;
+                                    }
+
+                                    result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dt, plFromRgCode);
 
                                     if (!result2)
                                     {
-                                        errmsg = errmsg + "Calcute share expense failed." + "\r\n" + result2.ToString();
-                                        lastResult = false;
+                                        this.ShowErr(result.ToString());
+                                        return;
                                     }
                                 }
+                            }
+                        }
+
+                        if (this.IsA2B == false)
+                        {
+                            result = DBProxy.Current.ExecuteByConn(
+                          sqlConn,
+                          string.Format("exec CalculateShareExpense '{0}','{1}', {2}", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID, this.isFreightForwarder));
+                            if (!result)
+                            {
+                                errmsg = errmsg + "Calcute share expense failed." + "\r\n" + result.ToString();
+                                lastResult = false;
                             }
                         }
 
@@ -1603,14 +1629,7 @@ select [resultType] = 'OK',
         // Re-Calculate
         private void BtnReCalculate_Click(object sender, EventArgs e)
         {
-            DualResult result = DBProxy.Current.Execute(
-                "Production",
-                string.Format("exec CalculateShareExpense '{0}','{1}', {2}", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID, this.isFreightForwarder));
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox("Re-Calculate Delete faile\r\n" + result.ToString());
-                return;
-            }
+            DualResult result;
 
             string sqlInvNo = $@"select distinct InvNo from ShareExpense where  ShippingAPID = '{this.apData["ID"]}'";
             if (!(result = DBProxy.Current.Select(string.Empty, sqlInvNo, out DataTable dtInvNo)))
@@ -1628,6 +1647,8 @@ select [resultType] = 'OK',
                     List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(invNos);
                     foreach (string plFromRgCode in listPLFromRgCode)
                     {
+                        this.IsA2B = true;
+
                         // 跨Server取得ShareExpense_APP所需PackingList資料
                         DataTable dt;
                         result = Prgs.DataTable_Packing(plFromRgCode, invNos, out dt);
@@ -1641,7 +1662,15 @@ select [resultType] = 'OK',
                         if (dt != null && dt.Rows.Count > 0)
                         {
                             // 將跨Serve資料更新ShareExpense_APP
-                            DualResult result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dt, plFromRgCode);
+                            DualResult result2;
+                            result2 = Prgs.CalculateShareExpense_ForA2B(this.apData["ID"].ToString(), Env.User.UserID, this.isFreightForwarder);
+                            if (!result2)
+                            {
+                                this.ShowErr(result.ToString());
+                                return;
+                            }
+
+                            result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dt, plFromRgCode);
 
                             if (!result2)
                             {
@@ -1650,6 +1679,18 @@ select [resultType] = 'OK',
                             }
                         }
                     }
+                }
+            }
+
+            if (this.IsA2B == false)
+            {
+                result = DBProxy.Current.Execute(
+               "Production",
+               string.Format("exec CalculateShareExpense '{0}','{1}', {2}", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID, this.isFreightForwarder));
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox("Re-Calculate Delete faile\r\n" + result.ToString());
+                    return;
                 }
             }
 
