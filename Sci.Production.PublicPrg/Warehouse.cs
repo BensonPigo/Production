@@ -2241,11 +2241,20 @@ target.poid = s.poid and target.seq1 = s.seq1 and target.seq2 = s.seq2  and targ
 
 
 --ISP20220426，A to B倉的時候要根據mtlAutoLock判斷是否要沿用A倉的Lock狀態
+-- 因為在 upd_Fty_2T 目前沒有傳遞參數 mtlAutoLock，因此並不會異動到 B 倉的狀態， upd_Fty_2T 執行完後只需專注在 B 倉 Unlock + A 倉 Lock 的狀況即可
 UPDATE target
-SET target.Lock = IIF( EXISTS(select 1 from System where mtlAutoLock =1 ), IIF (target.Lock = 1  , 1 ,s.Lock), target.Lock)
+SET target.Lock = 1
+    , target.LockName = '{Env.User.UserID}'
+    , target.LockDate = getdate()
 from FtyInventory target
-inner join #tmpA s on target.poid = s.poid and target.seq1 = s.seq1 
-	and target.seq2 = s.seq2 and target.roll = s.roll and target.dyelot = s.dyelot AND target.StockType='I'
+inner join #tmpA s on target.poid = s.poid 
+                        and target.seq1 = s.seq1 
+                        and target.seq2 = s.seq2 
+                        and target.roll = s.roll 
+                        and target.dyelot = s.dyelot 
+                        and target.StockType='I'
+where EXISTS(select 1 from System where mtlAutoLock =1 )
+      and (target.Lock = 0 and s.Lock = 1)
 
 DROP TABLE #TmpSource
 ";
@@ -2270,21 +2279,21 @@ DROP TABLE #TmpSource
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_4T, string.Empty, upd_Fty_4T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         transactionscope.Dispose();
-                        MyUtility.Msg.ErrorBox(sqlcmd + result2.ToString());
+                        MyUtility.Msg.ErrorBox(upd_Fty_4T + result.ToString());
                         return false;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         transactionscope.Dispose();
-                        MyUtility.Msg.ErrorBox(sqlcmd + result2.ToString());
+                        MyUtility.Msg.ErrorBox(upd_Fty_2T + result.ToString());
                         return false;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_AA4T, string.Empty, updateLocak, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         transactionscope.Dispose();
-                        MyUtility.Msg.ErrorBox(sqlcmd + result2.ToString());
+                        MyUtility.Msg.ErrorBox(updateLocak + result.ToString());
                         return false;
                     }
 
@@ -2312,7 +2321,7 @@ DROP TABLE #TmpSource
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         transactionscope.Dispose();
-                        MyUtility.Msg.ErrorBox(sqlcmd + result2.ToString());
+                        MyUtility.Msg.ErrorBox(sqlupd3 + result.ToString());
                         return false;
                     }
 
