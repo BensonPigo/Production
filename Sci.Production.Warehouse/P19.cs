@@ -339,6 +339,7 @@ and ID = '{Sci.Env.User.UserID}'"))
             .Text("Location", header: "Location", iseditingreadonly: true) // 8
             .Text("ToPOID", header: "To POID", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("ToSeq", header: "To Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("TransferExportID", header:"Transfer WK#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             ;
             #endregion 欄位設定
             cbb_stocktype.DataSource = new BindingSource(this.di_stocktype, null);
