@@ -49,9 +49,9 @@ namespace Sci.Production.PPIC
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (!this.dateApvDate.HasValue1 || !this.dateApvDate.HasValue2 || !this.SewingDate.HasValue1 || !this.SewingDate.HasValue2
-                || !this.BuyerDelivery.HasValue1 || !this.BuyerDelivery.HasValue2
-                || !this.SCIDelivery.HasValue1 || !this.SCIDelivery.HasValue2)
+            if (!this.dateApvDate.HasValue1 & !this.dateApvDate.HasValue2 & !this.SewingDate.HasValue1 & !this.SewingDate.HasValue2
+                & !this.BuyerDelivery.HasValue1 & !this.BuyerDelivery.HasValue2
+                & !this.SCIDelivery.HasValue1 & !this.SCIDelivery.HasValue2)
             {
                 MyUtility.Msg.WarningBox("<Apv. Date>, <Sewing Date>, <Buyer Delivery> or <SCI Delivery> cannot be empty.");
                 return false;
