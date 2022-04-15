@@ -16,6 +16,12 @@ namespace Sci.Production.PPIC
         private DataTable _printData;
         private DateTime? _apvDate1;
         private DateTime? _apvDate2;
+        private DateTime? _sewingDate1;
+        private DateTime? _sewingDate2;
+        private DateTime? _buyerDate1;
+        private DateTime? _buyerDate2;
+        private DateTime? _sciDate1;
+        private DateTime? _sciDate2;
         private string _reportType;
         private string _mDivision;
         private string _factory;
@@ -43,14 +49,22 @@ namespace Sci.Production.PPIC
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(this.dateApvDate.Value1))
+            if (!this.dateApvDate.HasValue1 & !this.dateApvDate.HasValue2 & !this.SewingDate.HasValue1 & !this.SewingDate.HasValue2
+                & !this.BuyerDelivery.HasValue1 & !this.BuyerDelivery.HasValue2
+                & !this.SCIDelivery.HasValue1 & !this.SCIDelivery.HasValue2)
             {
-                MyUtility.Msg.WarningBox("SCI Delivery can't empty!!");
+                MyUtility.Msg.WarningBox("<Apv. Date>, <Sewing Date>, <Buyer Delivery> or <SCI Delivery> cannot be empty.");
                 return false;
             }
 
             this._apvDate1 = this.dateApvDate.Value1;
             this._apvDate2 = this.dateApvDate.Value2;
+            this._sewingDate1 = this.SewingDate.Value1;
+            this._sewingDate2 = this.SewingDate.Value2;
+            this._buyerDate1 = this.BuyerDelivery.Value1;
+            this._buyerDate2 = this.BuyerDelivery.Value2;
+            this._sciDate1 = this.SCIDelivery.Value1;
+            this._sciDate2 = this.SCIDelivery.Value2;
             this._reportType = this.comboReportType.Text == "Fabric" ? "F" : this.comboReportType.Text == "Accessory" ? "A" : string.Empty;
             this._mDivision = this.comboM.Text;
             this._factory = this.comboFactory.Text;
@@ -82,6 +96,7 @@ select distinct
 into #tmpData
 from Lack l WITH (NOLOCK) 
 inner join Lack_Detail ld WITH (NOLOCK) on ld.ID = l.ID	
+inner join Orders od ON l.OrderID = od.ID
 outer apply (
 	select Refno,NETQty,POUnit,StockUnit,OutputSeq1,OutputSeq2,SCIRefno
 	from PO_Supp_Detail WITH (NOLOCK) 
@@ -128,6 +143,36 @@ where l.Type = 'R'"));
                 sqlCmd.Append(string.Format(@" and convert(date,l.ApvDate) <= '{0}'", Convert.ToDateTime(this._apvDate2).ToString("yyyy/MM/dd")));
             }
 
+            if (!MyUtility.Check.Empty(this._sewingDate1))
+            {
+                sqlCmd.Append(string.Format(@" and convert(date,od.SewInLine) >= '{0}'", Convert.ToDateTime(this._sewingDate1).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this._sewingDate2))
+            {
+                sqlCmd.Append(string.Format(@" and convert(date,od.SewInLine) <= '{0}'", Convert.ToDateTime(this._sewingDate2).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this._buyerDate1))
+            {
+                sqlCmd.Append(string.Format(@" and convert(date,od.BuyerDelivery) >= '{0}'", Convert.ToDateTime(this._buyerDate1).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this._buyerDate2))
+            {
+                sqlCmd.Append(string.Format(@" and convert(date,od.BuyerDelivery) <= '{0}'", Convert.ToDateTime(this._buyerDate2).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this._sciDate1))
+            {
+                sqlCmd.Append(string.Format(@" and convert(date,od.SciDelivery) >= '{0}'", Convert.ToDateTime(this._sciDate1).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this._sciDate2))
+            {
+                sqlCmd.Append(string.Format(@" and convert(date,od.SciDelivery) <= '{0}'", Convert.ToDateTime(this._sciDate2).ToString("yyyy/MM/dd")));
+            }
+
             if (!MyUtility.Check.Empty(this._reportType))
             {
                 sqlCmd.Append(string.Format(" and l.FabricType = '{0}'", this._reportType));
@@ -144,6 +189,7 @@ where l.Type = 'R'"));
             }
 
             sqlCmd.Append(@" 
+
 ;with s1 as(
 select T.MDivisionID,T.FactoryID,T.POID,T.Seq1,T.Seq2,StockQty1 = isnull(sum(i.qty) over(partition by MDivisionID,FactoryID,FabricType,POID,Seq1,Seq2,i.type),0)
 	from #tmpData T	outer apply(select Qty,Type from Invtrans  WITH (NOLOCK) where PoID = T.POID and Seq1 = T.Seq1 and Seq2 = T.Seq2 and Type = '1') i
