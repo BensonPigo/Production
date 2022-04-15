@@ -124,6 +124,7 @@ select
 	[Sewing Line] = stuff(SewingLineID.SewingLineID,1,1,''),
 	[Sewing Cell] = stuff(SewingCell.SewingCell,1,1,''),
 	[Combination] = wo.FabricCombo,
+	[Exclude In WIP] = IIF(wop.ID IS NULL , 'N','Y'),
 	[Color Way] = stuff(Article.Article,1,1,''),
 	[Color]= wo.ColorID, 
 	[Layers] = wo.Layer,
@@ -173,6 +174,7 @@ inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
 inner join Cutting c WITH (NOLOCK) on c.ID = o.CuttingSP
 left join fabric f WITH (NOLOCK) on f.SCIRefno = wo.SCIRefno
 left join PO_Supp_Detail psd with(nolock) on psd.id = wo.id and psd.seq1 = wo.seq1 and psd.seq2 = wo.seq2
+left join Cutting_WIPExcludePatternPanel wop  with(nolock) on wo.id=wop.id and wo.FabricCombo=wop.PatternPanel
 outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa where aa.WorkOrderUkey = wo.Ukey)acc
 outer apply(
     Select MincoDate = iif(sum(cod.Layer) = wo.Layer, Max(co.cdate),null)
@@ -383,7 +385,7 @@ where 1=1
             sqlCmd.Append(@"
 select 
 [M],[Factory],[Fabrication],[FinalETA],[PPIC Close],WKETA,[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
-,[Style#],[FabRef#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination]
+,[Style#],[FabRef#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination],[Exclude In WIP]
 ,[Color Way],[Color],Artwork.Artwork,[Layers],[LackingLayers],[Qty],[Ratio],[OrderQty],[ExcessQty],[Consumption],[ActConsOutput]
 ,[Spreading Time (mins)],[Cutting Time (mins)]
 ,t.Markername,t.MarkerNo,w.Width
