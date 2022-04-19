@@ -444,72 +444,87 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ", this.CurrentMaintain["id"]);
                 this.ShowErr(sqlcmd, result2);
                 return;
             }
-            else
+
+            foreach (DataRow tmp in datacheck.Rows)
             {
-                if (datacheck.Rows.Count > 0)
+                if (MyUtility.Convert.GetDecimal(tmp["CheckQty"]) < 0)
                 {
-                    foreach (DataRow tmp in datacheck.Rows)
-                    {
-                        if (MyUtility.Convert.GetDecimal(tmp["CheckQty"]) >= 0)
-                        {
-                            #region 更新表頭狀態資料 and 數量
-                            // 更新FtyInventory
-                            // 20171006 mantis 7895 增加roll dyelot條件
-                            string sqlupdHeader = string.Format(
-                                @"
-                            update FtyInventory  
-                            set  AdjustQty = AdjustQty + ({0}) 
-                            where POID = '{1}' AND SEQ1='{2}' AND SEQ2='{3}' and StockType='O' and Roll = '{4}' and Dyelot = '{5}'
-                            ", MyUtility.Convert.GetDecimal(tmp["AdjustQty"]),
-                                tmp["Poid"],
-                                tmp["seq1"].ToString(),
-                                tmp["seq2"],
-                                tmp["Roll"],
-                                tmp["Dyelot"]);
-
-                            // 更新Adjust
-                            sqlupdHeader = sqlupdHeader + string.Format(
-                                @"
-                            update Adjust
-                            set Status='Confirmed',
-                            editname = '{0}' , editdate = GETDATE() where id = '{1}'",
-                                Env.User.UserID,
-                                this.CurrentMaintain["id"]);
-                            if (!(result = DBProxy.Current.Execute(null, sqlupdHeader)))
-                            {
-                                this.ShowErr(sqlupdHeader, result);
-                                return;
-                            }
-                            #endregion
-                        }
-                        else
-                        {
-                            ids += string.Format(
-                                "SP#: {0} SEQ#:{1} Roll#:{2} Dyelot:{3}'s balance: {4} is less than Adjust qty: {5}" + Environment.NewLine + "Balacne Qty is not enough!!",
-                                tmp["poid"],
-                                tmp["Seq"],
-                                tmp["Roll"],
-                                tmp["Dyelot"],
-                                tmp["FTYLobQty"],
-                                tmp["AdjustQty"]) + Environment.NewLine;
-                        }
-                    }
-
-                    if (!MyUtility.Check.Empty(ids))
-                    {
-                        MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
-                        return;
-                    }
-
-                    // 更新MDivisionPoDetail
-                    this.UpdMDivisionPoDetail();
-
-                    // AutoWHFabric WebAPI
-                    Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
-                    MyUtility.Msg.InfoBox("Confirmed successful");
+                    ids += string.Format(
+                        "SP#: {0} SEQ#:{1} Roll#:{2} Dyelot:{3}'s balance: {4} is less than Adjust qty: {5}" + Environment.NewLine + "Balacne Qty is not enough!!",
+                        tmp["poid"],
+                        tmp["Seq"],
+                        tmp["Roll"],
+                        tmp["Dyelot"],
+                        tmp["FTYLobQty"],
+                        tmp["AdjustQty"]) + Environment.NewLine;
                 }
             }
+
+            if (!MyUtility.Check.Empty(ids))
+            {
+                MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
+                return;
+            }
+
             #endregion 檢查負數庫存
+
+            string sqlupdHeader = string.Empty;
+            foreach (DataRow tmp in datacheck.Rows)
+            {
+                sqlupdHeader += string.Format(
+                    @"
+update FtyInventory  
+set  AdjustQty = AdjustQty + ({0}) 
+where POID = '{1}' AND SEQ1='{2}' AND SEQ2='{3}' and StockType='O' and Roll = '{4}' and Dyelot = '{5}'
+",
+                    MyUtility.Convert.GetDecimal(tmp["AdjustQty"]),
+                    tmp["Poid"],
+                    tmp["seq1"].ToString(),
+                    tmp["seq2"],
+                    tmp["Roll"],
+                    tmp["Dyelot"]);
+            }
+
+            Exception errMsg = null;
+            using (TransactionScope transactionscope = new TransactionScope())
+            {
+                try
+                {
+                    if (!(result = DBProxy.Current.Execute(null, sqlupdHeader)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    this.UpdMDivisionPoDetail();
+
+                    if (!(result = DBProxy.Current.Execute(null, $"update Adjust set status='Confirmed', editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
+                    {
+                        throw result.GetException();
+                    }
+
+                    // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                    if (!(result = Prgs.UpdateWH_Barcode(true, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    transactionscope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    errMsg = ex;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(errMsg))
+            {
+                this.ShowErr(errMsg);
+                return;
+            }
+
+            // AutoWHFabric WebAPI
+            Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+            MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
         /// <inheritdoc/>
@@ -618,6 +633,12 @@ Balacne Qty is not enough!!" + Environment.NewLine;
 
                         // 更新MDivisionPoDetail
                         this.UpdMDivisionPoDetail();
+
+                        // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                        if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
+                        {
+                            throw result.GetException();
+                        }
 
                         transactionscope.Complete();
                     }

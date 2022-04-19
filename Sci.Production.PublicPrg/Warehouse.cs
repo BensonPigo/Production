@@ -3929,8 +3929,17 @@ and sd.Ukey in ({ukeys})
 
                         // AdjustQty
                         case WHTableName.Adjust_Detail:
-                            string qtyAd = (isRevise || isDelete) ? "DiffQty" : "AdjustQty";
-                            dr["balanceQty"] = ftydr["balanceQty"] = oriBalanceQty + (isConfirmed ? MyUtility.Convert.GetDecimal(deraildr[qtyAd]) : -MyUtility.Convert.GetDecimal(deraildr[qtyAd]));
+                            decimal adjustQty;
+                            if (isRevise || isDelete)
+                            {
+                                adjustQty= MyUtility.Convert.GetDecimal(deraildr["DiffQty"]);
+                            }
+                            else
+                            {
+                                adjustQty = MyUtility.Convert.GetDecimal(deraildr["QtyAfter"]) - MyUtility.Convert.GetDecimal(deraildr["QtyBefore"]);
+                            }
+
+                            dr["balanceQty"] = ftydr["balanceQty"] = oriBalanceQty + (isConfirmed ? adjustQty : -adjustQty);
                             break;
                     }
                 }

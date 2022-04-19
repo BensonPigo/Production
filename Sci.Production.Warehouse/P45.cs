@@ -177,27 +177,55 @@ Reason can’t be empty!!",
             }
             #endregion
 
-            List<SqlParameter> para = new List<SqlParameter>
+            Exception errMsg = null;
+            using (TransactionScope transactionscope = new TransactionScope())
             {
-                new SqlParameter("@ID", this.CurrentMaintain["ID"].ToString()),
-                new SqlParameter("@UserID", Env.User.UserID),
-            };
-            DualResult res = DBProxy.Current.SelectSP(string.Empty, "dbo.usp_RemoveScrapById", para, out DataTable[] dts);
-            if (!res)
+                try
+                {
+                    List<SqlParameter> para = new List<SqlParameter>
+                    {
+                        new SqlParameter("@ID", this.CurrentMaintain["ID"].ToString()),
+                        new SqlParameter("@UserID", Env.User.UserID),
+                    };
+
+                    if (!(result = DBProxy.Current.SelectSP(string.Empty, "dbo.usp_RemoveScrapById", para, out DataTable[] dts)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    if (!(result = ReturnMsg(result, dts)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                    if (!(result = Prgs.UpdateWH_Barcode(true, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    transactionscope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    errMsg = ex;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(errMsg))
             {
-                MyUtility.Msg.ErrorBox(res.ToString(), "error");
+                this.ShowErr(errMsg);
                 return;
             }
 
-            if (dts.Length < 1)
-            {
-                // AutoWHFabric WebAPI
-                Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
-                MyUtility.Msg.InfoBox("Confirmed successful");
+            // AutoWHFabric WebAPI
+            Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+            MyUtility.Msg.InfoBox("Confirmed successful");
+        }
 
-                return;
-            }
-            else
+        private static DualResult ReturnMsg(DualResult result, DataTable[] dts)
+        {
+            if (dts.Length > 0)
             {
                 StringBuilder warningmsg = new StringBuilder();
                 foreach (DataRow drs in dts[0].Rows)
@@ -219,10 +247,11 @@ Balacne Qty is not enough!!
 
                 if (!MyUtility.Check.Empty(warningmsg.ToString()))
                 {
-                    MyUtility.Msg.WarningBox(warningmsg.ToString());
-                    return;
+                    result = Result.F(new Exception(warningmsg.ToString()));
                 }
             }
+
+            return result;
         }
 
         /// <inheritdoc/>
@@ -352,6 +381,12 @@ update Adjust set Status ='New', EditName = '{1}', EditDate = Getdate() where id
                 this.CurrentMaintain["id"],
                 Env.User.UserID);
                     if (!(result = DBProxy.Current.Execute(null, upcmd)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                    if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
                     {
                         throw result.GetException();
                     }

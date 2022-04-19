@@ -484,5 +484,39 @@ select distinct
             string jsonBody = JsonConvert.SerializeObject(LogicAutoWHData.CreateStructure("Cutplan_Detail", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, automationErrMsg);
         }
+
+        /// <summary>
+        /// 用在 MES FOS B02
+        /// </summary>
+        /// <param name="dtDetail">Detail DataSource</param>
+        public void SentRefnoRelaxtimeToGensongAutoWHFabric(DataTable dtDetail)
+        {
+            /*
+             *記得更新Function 也要一併更新到MES Automation.Dll檔
+             */
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS
+            {
+                apiThread = "SentRefnoRelaxtimeToGensong",
+                suppAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag",
+            };
+
+            dynamic bodyObject = new ExpandoObject();
+            bodyObject = dtDetail.AsEnumerable()
+                .Select(s => new
+                {
+                    Refno = s["Refno"].ToString(),
+                    FabricRelaxationID = s["FabricRelaxationID"].ToString(),
+                    RelaxTime = (decimal)s["RelaxTime"],
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                });
+
+            string jsonBody = JsonConvert.SerializeObject(LogicAutoWHData.CreateStructure("RefnoRelaxtime", bodyObject));
+            SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, automationErrMsg);
+        }
     }
 }
