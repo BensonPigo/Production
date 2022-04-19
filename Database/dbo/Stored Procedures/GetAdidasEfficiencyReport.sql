@@ -11,7 +11,7 @@
 	@FabricType as nvarchar(500) = '',
 	@Lining as varchar(20) = '',
 	@Gender as varchar(10) = '',
-	@Construction as nvarchar(50)
+	@Construction as nvarchar(50) = ''
 AS
 BEGIN
 	declare @sql as varchar(max) = ''

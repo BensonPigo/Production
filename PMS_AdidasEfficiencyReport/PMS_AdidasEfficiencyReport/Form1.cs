@@ -256,7 +256,7 @@ having count(*) = 2", sqlwhere);
             foreach (string conn in this.factorys)
             {
                 sqlCmd = string.Format(
-                    "exec dbo.GetAdidasEfficiencyReport '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', {7} ,'' ,'' ,'' ,'' ,''",
+                    "exec dbo.GetAdidasEfficiencyReport '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', {7}",
                         outPutDateS,
                         outPutDateE,
                         string.Empty,
