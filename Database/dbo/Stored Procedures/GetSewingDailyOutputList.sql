@@ -346,16 +346,16 @@ select	MDivisionID
 	    ,Construction
 		,ActManPower
 		,WorkHour
-		,[ManHour] = round(ManHour, 0)
-		,[TargetCPU] = round(TargetCPU, 2)
-		,[TMS] = round(TMS, 0)
-		,[CPUPrice] = round(CPUPrice, 3)
-		,[TargetQty] = round(TargetQty, 2)
+		,[ManHour] = ManHour
+		,[TargetCPU] = TargetCPU
+		,[TMS] = TMS
+		,[CPUPrice] = CPUPrice
+		,[TargetQty] = TargetQty
 		,QAQty
-		,[TotalCPU] = round(TotalCPU, 0)
-		,[CPUSewer] = round(CPUSewer, 2)
-		,[EFF] = round(EFF, 2)
-		,[RFT] = round(RFT, 0)
+		,[TotalCPU] = TotalCPU
+		,[CPUSewer] = CPUSewer
+		,[EFF] = EFF
+		,[RFT] = RFT
 		,CumulateDate
 		,DateRange
 		,InlineQty'

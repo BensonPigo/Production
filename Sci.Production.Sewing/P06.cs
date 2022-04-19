@@ -335,7 +335,8 @@ where	pd.CTNStartNo != '' and
                             }
                             else
                             {
-                                packNo = sl[1].Trim();
+                                // 抓.txt檔陣列三為PackListNo  by ISP20220423
+                                packNo = sl[2].Trim().ToString();
 
                                 // 檢查PackingList_Detail.ID + PackingList_Detail.CustCTN
                                 packDataResult = this.GetPackData(packNo, false);
