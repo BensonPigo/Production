@@ -24,11 +24,9 @@ namespace Sci.Production.Automation
         /// <param name="formName">P10...P99</param>
         /// <param name="statusAPI">給廠商的動作指令 New/Delete/Revise/Lock/Unlock</param>
         /// <param name="action">PMS 的操作 Confrim, Unconfrim, (P99) Delete, Update</param>
-        /// <param name="fabricType">F/A</param>
         /// <param name="updateLocation">P21/P26更新後,若location不是自動倉要發給WMS做撤回(Delete), 整合後為了保持原寫法而加的參數, 日後若確認無用請刪掉此看似無用的參數</param>
-        /// <param name="oriDatas">P99 Delete 前撈出的資料</param>
         /// <inheritdoc/>
-        public static bool Sent(bool doTask, DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, bool updateLocation = false, bool isP99 = false, bool fromNewBarcode = false)
+        public static bool Sent(bool doTask, DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, bool updateLocation = false, bool fromNewBarcode = false)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count == 0)
             {
@@ -37,20 +35,20 @@ namespace Sci.Production.Automation
 
             if (doTask)
             {
-                Task.Run(() => Sent_Task(dtDetail, formName, statusAPI, action, updateLocation, isP99, fromNewBarcode))
+                Task.Run(() => Sent_Task(dtDetail, formName, statusAPI, action, updateLocation, fromNewBarcode))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
                 return true;
             }
             else
             {
-                return Sent_Task(dtDetail, formName, statusAPI, action, updateLocation, isP99, fromNewBarcode);
+                return Sent_Task(dtDetail, formName, statusAPI, action, updateLocation, fromNewBarcode);
             }
         }
 
-        private static bool Sent_Task(DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, bool updateLocation = false, bool isP99 = false, bool fromNewBarcode = false)
+        private static bool Sent_Task(DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, bool updateLocation = false, bool fromNewBarcode = false)
         {
             // 取得資料
-            DataTable dtMaster = LogicAutoWHData.GetWHData(dtDetail, formName, statusAPI, action, "F", fromNewBarcode, isP99);
+            DataTable dtMaster = LogicAutoWHData.GetWHData(dtDetail, formName, statusAPI, action, "F", fromNewBarcode);
             if (dtMaster == null)
             {
                 return false;
@@ -484,6 +482,9 @@ select distinct
             string jsonBody = JsonConvert.SerializeObject(LogicAutoWHData.CreateStructure("Cutplan_Detail", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, automationErrMsg);
         }
+
+        /// <inheritdoc/>
+        public static bool IsGensong_AutoWHFabricEnable => IsModuleAutomationEnable(GensongSuppID, moduleName);
 
         /// <summary>
         /// 用在 MES FOS B02

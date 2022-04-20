@@ -3678,7 +3678,7 @@ left join Production.dbo.FtyInventory f on f.POID = isnull(sd.PoId, '')
             // Batch Create 並 confirm 的程式沒有 Ukey
             if (!dtDetail.Columns.Contains("Ukey"))
             {
-                if (!(result = DBProxy.Current.Select(null, $"select * from {detailTableName} with(nolock) where id = '{dtDetail.Rows[0]["ID"]}'", out dtDetail)))
+                if (!(result = DBProxy.Current.Select("Production", $"select * from {detailTableName} with(nolock) where id = '{dtDetail.Rows[0]["ID"]}'", out dtDetail)))
                 {
                     return result;
                 }
@@ -3859,7 +3859,7 @@ and exists(
 )
 and sd.Ukey in ({ukeys})
 ";
-                result = DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
+                result = DBProxy.Current.Select("Production", sqlcmd, out dt);
                 if (!result)
                 {
                     return result;
@@ -4621,7 +4621,7 @@ FROM MDivisionPoDetail
 WHERE POID='{pOID}'
 AND Seq1='{seq11}' AND Seq2='{seq21}'
 ";
-                DBProxy.Current.Select(null, c, out dT_MDivisionPoDetail);
+                DBProxy.Current.Select("Production", c, out dT_MDivisionPoDetail);
 
                 List<string> dB_CLocations = dT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != string.Empty).ToList();
 

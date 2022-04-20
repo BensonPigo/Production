@@ -20,7 +20,7 @@ namespace Sci.Production.Automation.LogicLayer
         /// <param name="action">PMS 的操作 Confrim, Unconfrim (P99) Delete, Update</param>
         /// <param name="fabricType">F/A</param>
         /// <inheritdoc/>
-        public static DataTable GetWHData(DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, string fabricType, bool fromNewBarcode = false, bool isP99 = false)
+        public static DataTable GetWHData(DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, string fabricType, bool fromNewBarcode = false)
         {
             string sqlcmd = GetWHDataSqlcmd(dtDetail, formName, statusAPI, action, fabricType, fromNewBarcode);
             DualResult result = DBProxy.Current.Select("Production", sqlcmd, out DataTable dtMaster);
