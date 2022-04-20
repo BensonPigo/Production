@@ -429,7 +429,7 @@ as (
     left join LocalSupp l WITH (NOLOCK) on l.ID = g.Forwarder
     where not exists (
 			    select 1 
-			    from ShareExpense WITH (NOLOCK) 
+			    from View_ShareExpense WITH (NOLOCK) 
 			    where InvNo = g.ID) ");
 
                         if (!MyUtility.Check.Empty(this.date1))
@@ -563,7 +563,7 @@ and (
 	where (p.Type = 'F' or p.Type = 'L')
     and not exists (
 		  		select 1 
-		  		from ShareExpense WITH (NOLOCK) 
+		  		from View_ShareExpense WITH (NOLOCK) 
 		  		where InvNo = p.ID) 
     {whereForPLData}
 )");
@@ -700,7 +700,7 @@ as (
 	)SP
     where not exists (
 			    select 1 
-			    from ShareExpense WITH (NOLOCK) 
+			    from View_ShareExpense WITH (NOLOCK) 
 			    where InvNo = g.ID) 
             {whereForReportType2}");
 
@@ -806,7 +806,7 @@ GBDataAll as (
 	where (p.Type = 'F' or p.Type = 'L')
     and not exists (
 		  		select 1 
-		  		from ShareExpense WITH (NOLOCK) 
+		  		from View_ShareExpense WITH (NOLOCK) 
 		  		where InvNo = p.ID)
     {whereForPLData}
 ");
@@ -864,7 +864,7 @@ as (
    outer apply(
 	-- 只要cnt = 0, 沒資料 = 就存在
 		select cnt = count(1) from (
-			select distinct sap.AccountID from ShareExpense se
+			select distinct sap.AccountID from View_ShareExpense se with (nolock)
 			inner join ShippingAP_Detail sap WITH (NOLOCK) on sap.ID = se.ShippingAPID
 			where 1=1
 			and se.InvNo = g.id
@@ -874,7 +874,7 @@ as (
 	outer apply(	
 	-- 只要cnt != 2, 代表任何一筆都沒有 = 就存在
 		select cnt = count(1) from (
-			select distinct sap.AccountID from ShareExpense se
+			select distinct sap.AccountID from View_ShareExpense se with (nolock)
 			inner join ShippingAP_Detail sap WITH (NOLOCK) on sap.ID = se.ShippingAPID
 			where 1=1
 			and se.InvNo = g.id
@@ -884,7 +884,7 @@ as (
 	outer apply(	
 	-- 只要 cnt = 0,代表這三筆都沒有 = 就存在
 		select cnt = count(1) from (
-			select distinct sap.AccountID from ShareExpense se
+			select distinct sap.AccountID from View_ShareExpense se with (nolock)
 			inner join ShippingAP_Detail sap WITH (NOLOCK) on sap.ID = se.ShippingAPID
 			where 1=1
 			and se.InvNo = g.id
@@ -1037,7 +1037,7 @@ select  IE = 'Export'
 	where (p.Type = 'F' or p.Type = 'L')
     and not exists (
 		  		select 1 
-		  		from ShareExpense WITH (NOLOCK) 
+		  		from View_ShareExpense WITH (NOLOCK) 
 		  		where InvNo = p.ID) 
         {whereForPLData}
 ");
@@ -1064,10 +1064,10 @@ with ExportData as (
 		   , Forwarder = e.Forwarder+'-'+isnull(s.AbbEN,'')
 		   , e.Blno
 		   , APId1 = (select top 1 ShippingAPID 
-		   			  from ShareExpense WITH (NOLOCK) 
+		   			  from View_ShareExpense WITH (NOLOCK) 
 		   			  where Blno = e.Blno)
 		   , APId2 = (select top 1 ShippingAPID 
-		   			  from ShareExpense WITH (NOLOCK) 
+		   			  from View_ShareExpense WITH (NOLOCK) 
 		   			  where WKNo = e.ID)
 		   , [NoImportChg] = iif(isnull(e.NoImportCharges,0) = 0,'','V')
 		   , LoadingOrigin = Concat (e.ExportPort, '-', e.ExportCountry)
@@ -1143,7 +1143,7 @@ FtyExportData as (
 	left join LocalSupp l WITH (NOLOCK) on l.ID = f.Forwarder
 	where not exists (
 				select 1 
-				from ShareExpense WITH (NOLOCK) 
+				from View_ShareExpense WITH (NOLOCK) 
 				where WKNo = f.ID)");
 
                     if (!MyUtility.Check.Empty(this.date1))

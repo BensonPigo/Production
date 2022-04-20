@@ -360,7 +360,7 @@ and INVNo = '{this.CurrentMaintain["INVNo"]}'
                 // 檢查已存在ShareExpense資料是否[Shipping Mode]是否不同
                 sqlCmd = string.Format(
                       @"select distinct ShipModeID
-                            from ShareExpense WITH (NOLOCK) 
+                            from View_ShareExpense WITH (NOLOCK) 
                             where (InvNo = '{0}' or WKNO = '{0}')
                             and len(ShipModeID) > 0
                             and Junk = 0 ",
@@ -416,7 +416,7 @@ and INVNo = '{this.CurrentMaintain["INVNo"]}'
             }
 
             // 已經有做出口費用分攤，不能勾選[No Import/Export Charge]
-            if (MyUtility.Check.Seek(string.Format(@"select WKNO from ShareExpense WITH (NOLOCK) where InvNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
+            if (MyUtility.Check.Seek(string.Format(@"select WKNO from View_ShareExpense WITH (NOLOCK) where InvNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
                 && this.chkNoCharge.Checked)
             {
                 MyUtility.Msg.WarningBox("This WK# has share expense, please unselect [No Import/Export Charge].");
@@ -460,7 +460,7 @@ and INVNo = '{this.CurrentMaintain["INVNo"]}'
         protected override bool ClickDeleteBefore()
         {
             // 已經有做出口費用分攤就不可以被刪除
-            if (MyUtility.Check.Seek(string.Format(@"select ShippingAPID from ShareExpense WITH (NOLOCK) where InvNo = '{0}' or WKNO = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
+            if (MyUtility.Check.Seek(string.Format(@"select ShippingAPID from View_ShareExpense WITH (NOLOCK) where InvNo = '{0}' or WKNO = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
             {
                 MyUtility.Msg.WarningBox("This record have expense data, can't be deleted!");
                 return false;
@@ -664,19 +664,19 @@ and INVNo = '{this.CurrentMaintain["INVNo"]}'
                 case "InvNo":
                     sqlCmd = string.Format(
                         @"select 1
-from ShareExpense se WITH (NOLOCK) 
+from View_ShareExpense se WITH (NOLOCK) 
 LEFT JOIN SciFMS_AccountNo a on se.AccountID = a.ID
 where se.InvNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                     break;
                 case "WKNo":
                     sqlCmd = string.Format(
                         @"select 1
-from ShareExpense se WITH (NOLOCK) 
+from View_ShareExpense se WITH (NOLOCK) 
 LEFT JOIN SciFMS_AccountNo a on se.AccountID = a.ID
 where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                     break;
                 default:
-                    sqlCmd = "select 1 from ShareExpense WITH (NOLOCK) where 1=2";
+                    sqlCmd = "select 1 from View_ShareExpense WITH (NOLOCK) where 1=2";
                     break;
             }
 

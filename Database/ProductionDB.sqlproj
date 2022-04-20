@@ -2709,6 +2709,7 @@
     <Build Include="dbo\Tables\InspectionType_Detail.sql" />
     <Build Include="dbo\Tables\PackingErrorRecord.sql" />
     <Build Include="dbo\Stored Procedures\GetSewingDailyOutputList.sql" />
+    <Build Include="dbo\Views\View_ShareExpense.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

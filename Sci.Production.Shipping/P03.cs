@@ -246,7 +246,7 @@ where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
 
             sqlCmd = string.Format(
                         @"select 1
-from ShareExpense se WITH (NOLOCK) 
+from View_ShareExpense se WITH (NOLOCK) 
 LEFT JOIN SciFMS_AccountNo a on se.AccountID = a.ID
 where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
@@ -392,7 +392,7 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
 
             sqlCmd = string.Format(
                         @"select 1
-from ShareExpense se WITH (NOLOCK) 
+from View_ShareExpense se WITH (NOLOCK) 
 LEFT JOIN SciFMS_AccountNo a on se.AccountID = a.ID
 where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
