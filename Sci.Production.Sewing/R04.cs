@@ -87,8 +87,6 @@ namespace Sci.Production.Sewing
             {
                 new SqlParameter("@M", this.mDivision),
                 new SqlParameter("@Factory", this.factory),
-                new SqlParameter("@StartDate", this.date1),
-                new SqlParameter("@EndDate", this.date2),
                 new SqlParameter("@Category", this.category),
                 new SqlParameter("@Brand", this.brand),
                 new SqlParameter("@CDCode", this.cdcode),
@@ -105,6 +103,24 @@ namespace Sci.Production.Sewing
                 new SqlParameter("@ExcludeNonRevenue", this.exclude_NonRevenue),
                 new SqlParameter("@SubconOut", this.chkSubconOut.Checked),
             };
+
+            if (this.date1 == null)
+            {
+                listPar.Add(new SqlParameter("@StartDate", DBNull.Value));
+            }
+            else
+            {
+                listPar.Add(new SqlParameter("@StartDate", this.date1));
+            }
+
+            if (this.date2 == null)
+            {
+                listPar.Add(new SqlParameter("@EndDate", DBNull.Value));
+            }
+            else
+            {
+                listPar.Add(new SqlParameter("@EndDate", this.date2));
+            }
 
             string sqlGetSewingDailyOutputList = @"
 exec GetSewingDailyOutputList   @M						
