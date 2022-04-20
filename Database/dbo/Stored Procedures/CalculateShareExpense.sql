@@ -88,9 +88,7 @@ BEGIN
 				from ShareExpense s
 				where s.ShippingAPID = @ShippingAPID
 				and s.WKNo != '' 
-				and ( exists (select 1 from ShippingAP sp WITH (NOLOCK) where sp.ID = s.ShippingAPID and sp.BLNo != s.BLNo) or
-					  s.FactoryID = ''
-					)
+				and exists (select 1 from ShippingAP sp WITH (NOLOCK) where sp.ID = s.ShippingAPID and sp.BLNo != s.BLNo) 
 			END
 
 
@@ -103,11 +101,9 @@ BEGIN
 				, s.EditDate = @adddate
 			from ShareExpense s 
 			where s.ShippingAPID = @ShippingAPID and s.WKNo != '' 
-				  and	(
-							(s.WKNo not in (select ID from Export where ID = s.WKNo and ID is not null) and s.WKNo not in (select ID from FtyExport where ID = s.WKNo and ID is not null))
-							or 
-							s.FactoryID = ''
-						)
+				  and	s.WKNo not in (select ID from Export where ID = s.WKNo and ID is not null) 
+				  and	s.WKNo not in (select ID from FtyExport where ID = s.WKNo and ID is not null)
+						
 			/*
 			 * 更新 WK 基本資料
 			 */ 
@@ -165,7 +161,8 @@ BEGIN
 					where sp.ID = s.ShippingAPID 	
 					and sp.BLNo != g.BLNo
 					and sp.BLNo != g.BL2No) or
-					s.FactoryID = '')
+					(s.FactoryID = '' and exists(select 1 from ShippingAP sp WITH (NOLOCK) where sp.id = s.ShippingAPID and sp.SubType = 'GARMENT'))
+					)
 			END
 
 			/*
@@ -183,7 +180,9 @@ BEGIN
 						and s.InvNo not in (select INVNo from PackingList where INVNo = s.InvNo and INVNo is not null) 
 						and s.InvNo not in (select ID from FtyExport  where ID = s.InvNo and ID is not null)
 						and s.invno not in (select id from Export where id=s.InvNo and id is not null)
-					) or s.FactoryID = '')
+					) or 
+						(s.FactoryID = '' and exists(select 1 from ShippingAP sp WITH (NOLOCK) where sp.id = s.ShippingAPID and sp.SubType = 'GARMENT'))
+						)
 			
 			/*
 			 * 更新 Inv 基本資料
@@ -332,14 +331,14 @@ BEGIN
 							, b.BLNo
 							, b.WKNo
 							, b.InvNo
-							, [Type] = a.SubType
+							, a.Type
 							, b.GW
 							, b.CBM
 							, b.ShipModeID
 							, b.FtyWK
 							, b.FactoryID
 					from (
-						select isnull(sd.AccountID,'') as AccountID, sum(sd.Amount) as Amount, s.CurrencyID, s.SubType
+						select isnull(sd.AccountID,'') as AccountID, sum(sd.Amount) as Amount, s.CurrencyID, s.Type
 						from ShippingAP_Detail sd WITH (NOLOCK) 
 						left join SciFMS_AccountNo a on a.ID = sd.AccountID
 						left join ShippingAP s WITH (NOLOCK) on s.ID = sd.ID
@@ -348,7 +347,7 @@ BEGIN
 									dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
 									or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1
 								)
-						group by sd.AccountID, a.Name, s.CurrencyID, s.SubType
+						group by sd.AccountID, a.Name, s.CurrencyID, s.Type
 					) a
 					, ( 
 						select BLNo,WKNo,InvNo,Type,GW,CBM,ShipModeID,FtyWK,FactoryID

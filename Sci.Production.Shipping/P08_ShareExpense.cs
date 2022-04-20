@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Newtonsoft.Json;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
 using Sci.Production.PublicPrg;
@@ -12,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
+using static Sci.Production.CallPmsAPI.PackingA2BWebAPI_Model;
 
 namespace Sci.Production.Shipping
 {
@@ -583,7 +585,6 @@ where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
 
         private void AppendData()
         {
-
             DualResult result;
             result = this.InitialShareExpense();
             if (!result)
@@ -1100,7 +1101,43 @@ Orders (Seq) :";
                 #region 將資料寫入Table
                 IList<string> deleteCmds = new List<string>();
                 IList<string> addCmds = new List<string>();
-                IList<string> updateCmds = new List<string>();
+                DataTable dtExportGMT = new DataTable();
+                string sqlInsertFromExportGMT = @"
+merge ShareExpense t
+using (
+select  ShippingAPID
+        ,BLNo
+        ,WKNo
+        ,InvNo
+        ,Type
+        ,[GW] = sum(GW)
+        ,[CBM] = sum(CBM)
+        ,CurrencyID
+        ,ShipModeID
+        ,FtyWK
+        ,AccountID
+        ,Junk
+        ,FactoryID
+from #tmp
+group by ShippingAPID
+            , BLNo
+            , WKNo
+            , InvNo
+            , Type
+            , CurrencyID
+            , ShipModeID
+            , FtyWK
+            , AccountID
+            , Junk
+            , FactoryID
+) as s
+on t.ShippingAPID = s.ShippingAPID and t.WKNO = s.WKNO and t.InvNo = s.InvNo and t.FactoryID = s.FactoryID
+when matched AND t.junk = 1 then
+      update set t.junk = 0
+when not matched by target then
+        insert(ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk, FactoryID)
+            values(s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk, s.FactoryID);
+                ";
 
                 // Junk實體資料
                 foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
@@ -1130,54 +1167,173 @@ where   s.ShippingAPID = '{0}'
                      */
                     if (dr.RowState == DataRowState.Added)
                     {
-                        addCmds.Add(string.Format(
-                            @"
+                        if (this.apData["Type"].ToString() == "EXPORT" &&
+                            this.apData["SubType"].ToString() == "GARMENT" &&
+                            MyUtility.Check.Seek($"select 1 from GMTBooking with (nolock) where ID = '{dr["InvNo"]}'"))
+                        {
+                            #region A2B garment and by Factory 分攤
+
+                            #region get A2B PackingInfo
+                            string sqlGetA2BGMT = $@"
+select  gd.PLFromRgCode
+        ,gd.PackingListID
+        ,[BLNo] = '{dr["BLNo"]}'
+        ,[WKNo] = ''
+        ,[InvNo] = g.id
+        ,[Type] = '{this.apData["Type"]}'
+        ,[CurrencyID] = '{this.apData["CurrencyID"]}'
+        ,[ShipModeID] = g.ShipModeID
+        ,[FtyWK] = 0
+        ,[AccountID] = AccountID.val
+        ,[Junk] = 0
+        ,[ShippingAPID] = '{this.apData["ID"]}'
+from GMTBooking g WITH (NOLOCK)
+outer apply(select top 1 [val] = sd.AccountID 
+            from ShippingAP_Detail sd WITH(NOLOCK)
+                where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
+                and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+		            or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
+inner join GMTBooking_Detail gd with (nolock) on g.ID = gd.ID
+where g.ID = '{dr["InvNo"]}'
+";
+                            DataTable dtA2BGMT;
+
+                            DualResult result = DBProxy.Current.Select(null, sqlGetA2BGMT, out dtA2BGMT);
+                            if (!result)
+                            {
+                                this.ShowErr(result);
+                                return;
+                            }
+
+                            string sqlGetA2BPack = @"
+alter table #tmp alter column InvNo varchar(25)
+alter table #tmp alter column PackingListID varchar(13)
+
+select  g.ShippingAPID
+        ,g.BLNo
+        ,g.WKNo
+        ,g.InvNo
+        ,g.Type
+        ,[GW] = sum(pd.GW)
+        ,[CBM] = sum(l.CBM)
+        ,g.CurrencyID
+        ,g.ShipModeID
+        ,g.FtyWK
+        ,g.AccountID
+        ,g.Junk
+        ,o.FactoryID
+from #tmp g
+inner join PackingList p with (nolock) on p.INVNo = g.InvNo and p.ID = g.PackingListID
+inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty = 1
+inner join Orders o with (nolock) on o.ID = pd.OrderID
+inner join LocalItem l with (nolock) on l.Refno = pd.Refno
+group by g.ShippingAPID
+        ,g.BLNo
+        ,g.WKNo
+        ,g.InvNo
+        ,g.Type
+        ,g.CurrencyID
+        ,g.ShipModeID
+        ,g.FtyWK
+        ,g.AccountID
+        ,g.Junk
+        ,o.FactoryID
+";
+
+                            foreach (var groupItem in dtA2BGMT.AsEnumerable().GroupBy(s => s["PLFromRgCode"].ToString()))
+                            {
+                                DataBySql dataBySql = new DataBySql()
+                                {
+                                    SqlString = sqlGetA2BPack,
+                                    TmpTable = JsonConvert.SerializeObject(groupItem.CopyToDataTable()),
+                                };
+
+                                DataTable dtA2BPack;
+                                result = PackingA2BWebAPI.GetDataBySql(groupItem.Key, dataBySql, out dtA2BPack);
+
+                                if (!result)
+                                {
+                                    this.ShowErr(result);
+                                    return;
+                                }
+
+                                dtA2BPack.MergeTo(ref dtExportGMT);
+                            }
+                            #endregion
+
+                            string sqlGetExportGMT = $@"
+
+select 
+    [ShippingAPID] = '{this.apData["ID"]}'
+    ,[BLNo] = '{dr["BLNo"]}'
+    ,[WKNo] = ''
+    ,[InvNo] = g.id
+    ,[Type] = '{this.apData["Type"]}'
+    ,[GW] = sum(pd.GW)
+    ,[CBM] = sum(l.CBM)
+    ,[CurrencyID] = '{this.apData["CurrencyID"]}'
+    ,[ShipModeID] = g.ShipModeID
+    ,[FtyWK] = 0
+    ,[AccountID] = AccountID.val
+    ,[Junk] = 0
+    ,o.FactoryID
+from GMTBooking g WITH (NOLOCK)
+outer apply(select top 1 [val] = sd.AccountID 
+            from ShippingAP_Detail sd WITH(NOLOCK)
+                where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
+                and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+		            or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
+inner join PackingList p with (nolock) on p.INVNo = g.ID
+inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty = 1
+inner join Orders o with (nolock) on o.ID = pd.OrderID
+inner join LocalItem l with (nolock) on l.Refno = pd.Refno
+where g.ID = '{dr["InvNo"]}'
+group by g.BLNo, g.BL2No, g.id, g.ShipModeID, AccountID.val, o.FactoryID
+";
+                            DataTable dtLocalGMT;
+                            result = DBProxy.Current.Select(null, sqlGetExportGMT, out dtLocalGMT);
+
+                            if (!result)
+                            {
+                                this.ShowErr(result);
+                                return;
+                            }
+
+                            dtLocalGMT.MergeTo(ref dtExportGMT);
+                            #endregion
+                        }
+                        else
+                        {
+                            addCmds.Add(string.Format(
+                                @"
 merge ShareExpense t
 using (select [ShippingAPID] = '{0}', [WKNO] = '{2}', [InvNo] = '{3}', AccountID from #tmp) as s
 on	t.ShippingAPID = s.ShippingAPID 	
 	and t.WKNO = s.WKNO
 	and t.InvNo = s.InvNo
 	and t.AccountID = s.AccountID
+    and t.FactoryID = ''
 when matched then
 	update set t.Junk = 0
     , ShipModeID = '{8}'
     , GW = {5}
     , CBM = {6} 
 when not matched then 
-	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk)
-	values (s.ShippingAPID, '{1}', s.WKNO, s.InvNo, '{4}', {5}, {6}, '{7}', '{8}', {9}, s.AccountID, 0);
+	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk, FactoryID)
+	values (s.ShippingAPID, '{1}', s.WKNO, s.InvNo, '{4}', {5}, {6}, '{7}', '{8}', {9}, s.AccountID, 0, '');
 
 drop table #tmp;",
-                            MyUtility.Convert.GetString(this.apData["ID"]),
-                            MyUtility.Convert.GetString(dr["BLNo"]),
-                            MyUtility.Convert.GetString(dr["WKNo"]),
-                            MyUtility.Convert.GetString(dr["InvNo"]),
-                            MyUtility.Convert.GetString(this.apData["SubType"]),
-                            MyUtility.Convert.GetString(dr["GW"]),
-                            MyUtility.Convert.GetString(dr["CBM"]),
-                            MyUtility.Convert.GetString(this.apData["CurrencyID"]),
-                            MyUtility.Convert.GetString(dr["ShipModeID"]),
-                            MyUtility.Convert.GetString(dr["FtyWK"]) == "True" ? "1" : "0"));
-                    }
-
-                    if (dr.RowState == DataRowState.Modified)
-                    {
-                        updateCmds.Add(string.Format(
-                            @"
-update ShareExpense 
-set ShipModeID = '{0}'
-    , GW = {1}
-    , CBM = {2} 
-where   ShippingAPID = '{3}'
-        and WKNo = '{5}' 
-        and InvNo = '{6}';",
-                            MyUtility.Convert.GetString(dr["ShipModeID"]),
-                            MyUtility.Convert.GetString(dr["GW"]),
-                            MyUtility.Convert.GetString(dr["CBM"]),
-                            MyUtility.Convert.GetString(this.apData["ID"]),
-                            MyUtility.Convert.GetString(dr["BLNo"]),
-                            MyUtility.Convert.GetString(dr["WKNo"]),
-                            MyUtility.Convert.GetString(dr["InvNo"])));
+                                MyUtility.Convert.GetString(this.apData["ID"]),
+                                MyUtility.Convert.GetString(dr["BLNo"]),
+                                MyUtility.Convert.GetString(dr["WKNo"]),
+                                MyUtility.Convert.GetString(dr["InvNo"]),
+                                MyUtility.Convert.GetString(this.apData["Type"]),
+                                MyUtility.Convert.GetString(dr["GW"]),
+                                MyUtility.Convert.GetString(dr["CBM"]),
+                                MyUtility.Convert.GetString(this.apData["CurrencyID"]),
+                                MyUtility.Convert.GetString(dr["ShipModeID"]),
+                                MyUtility.Convert.GetString(dr["FtyWK"]) == "True" ? "1" : "0"));
+                        }
                     }
                 }
 
@@ -1223,17 +1379,13 @@ where   ShippingAPID = '{3}'
                             }
                         }
 
-                        if (updateCmds.Count != 0)
+                        if (dtExportGMT.Rows.Count > 0)
                         {
-                            result1 = DBProxy.Current.ExecutesByConn(sqlConn, updateCmds);
-                            if (result1)
+                            result = MyUtility.Tool.ProcessWithDatatable(dtExportGMT, null, sqlInsertFromExportGMT, out DataTable dtEmpty, conn: sqlConn);
+                            if (!result)
                             {
-                                lastResult = lastResult && true;
-                            }
-                            else
-                            {
+                                errmsg = errmsg + "Insert Garment Export failed." + "\r\n" + result.ToString();
                                 lastResult = false;
-                                errmsg = errmsg + result1.ToString() + "\r\n";
                             }
                         }
 

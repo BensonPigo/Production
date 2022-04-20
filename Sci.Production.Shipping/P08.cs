@@ -888,86 +888,7 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
             if (this.checkIsFreightForwarder.Checked && !this.CurrentMaintain["Reason"].EqualString("AP007"))
             {
                 string strSqlCmd;
-                if (this.CurrentMaintain["Type"].EqualString("IMPORT"))
-                {
-                    strSqlCmd = $@"
-merge ShareExpense t
-using (
-    select *
-    from (
-	    select 
-		    [ShippingAPID] = '{this.CurrentMaintain["ID"]}'
-		    ,[BLNo] = e.BLNo
-		    ,[WKNo] = e.id
-		    ,[InvNo] = ''
-		    ,[Type] = '{this.CurrentMaintain["Type"]}'
-		    ,[GW] = e.WeightKg * edetail.AllocationRate
-		    ,[CBM] = e.CBM * edetail.AllocationRate
-		    ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
-		    ,[ShipModeID] = e.ShipModeID
-		    ,[FtyWK] = 0
-		    ,[AccountID] = AccountID.val
-		    ,[Junk] = 0
-            ,edetail.FactoryID
-	    from Export e WITH (NOLOCK)
-        outer apply (select top 1 [val] = sd.AccountID 
-                        from ShippingAP_Detail sd WITH(NOLOCK)
-			            where sd.ID = '{this.CurrentMaintain["ID"]}' and sd.AccountID != ''
-			            and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
-				            or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
-        outer apply( select FactoryID, [AllocationRate] = iif(sum(Qty) = 0, 0, sum(Qty) * 1.0 / TtlQty)
-                        from (
-                                select  o.FactoryID, ed.Qty, [TtlQty] = sum(ed.Qty) over (partition by ed.ID)
-                                from Export_Detail ed with (nolock)
-                                inner join Orders o  with (nolock) on o.ID = ed.POID
-                                where ed.ID = e.ID
-                            ) a group by FactoryID, TtlQty
-                    ) edetail
-	    where e.BLNo = '{this.CurrentMaintain["BLNO"]}'
-	    union 
-	    select [ShippingAPID] = '{this.CurrentMaintain["ID"]}'
-		        ,[BLNo] = f.BLNo
-		        ,[WKNo] = f.id
-		        ,[InvNo] = ''
-		        ,[Type] = '{this.CurrentMaintain["Type"]}'
-		        ,[GW] = f.WeightKg * edetail.AllocationRate
-		        ,[CBM] = f.CBM * edetail.AllocationRate
-		        ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
-		        ,[ShipModeID] = f.ShipModeID
-		        ,[FtyWK] = 0
-		        ,[AccountID] = AccountID.val
-		        ,[Junk] = 0
-                ,edetail.FactoryID
-	    from FtyExport f WITH (NOLOCK) 
-        outer apply (select top 1 [val] = sd.AccountID
-                     from ShippingAP_Detail sd WITH(NOLOCK)
-			         where sd.ID = '{this.CurrentMaintain["ID"]}' and sd.AccountID != ''
-			         and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
-				         or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
-        outer apply( select FactoryID, [AllocationRate] = iif(sum(Qty) = 0, 0, sum(Qty) * 1.0 / TtlQty)
-                        from (
-                                select  o.FactoryID, ed.Qty, [TtlQty] = sum(ed.Qty) over (partition by ed.ID)
-                                from FtyExport_Detail ed with (nolock)
-                                inner join Orders o  with (nolock) on o.ID = ed.POID
-                                where ed.ID = f.ID
-                            ) a group by FactoryID, TtlQty
-                    ) edetail
-	    where   BLNo = '{this.CurrentMaintain["BLNO"]}'
-	            and Type <> 3
-    )a where FactoryID is not null
-) as s 
-on	t.ShippingAPID = s.ShippingAPID 
-	and t.WKNO = s.WKNO	and t.InvNo = s.InvNo and t.FactoryID = s.FactoryID
-when matched AND t.junk=1 then
-	update set
-	t.junk=0
-when not matched by target then 
-	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk, FactoryID)
-	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk, s.FactoryID);";
-
-                    result = DBProxy.Current.Execute(string.Empty, strSqlCmd);
-                }
-                else
+                if (this.CurrentMaintain["Type"].EqualString("EXPORT") && this.CurrentMaintain["SubType"].EqualString("GARMENT"))
                 {
                     #region get A2B PackingInfo
                     string sqlGetA2BGMT = $@"
@@ -1151,6 +1072,89 @@ when not matched by target then
                     {
                         result = MyUtility.Tool.ProcessWithDatatable(dtA2BResult, string.Empty, strSqlCmd, out DataTable dtEmpty);
                     }
+                }
+                else
+                {
+                    strSqlCmd = $@"
+merge ShareExpense t
+using (
+    select *
+    from (
+	    select 
+		    [ShippingAPID] = '{this.CurrentMaintain["ID"]}'
+		    ,[BLNo] = e.BLNo
+		    ,[WKNo] = e.id
+		    ,[InvNo] = ''
+		    ,[Type] = '{this.CurrentMaintain["Type"]}'
+		    ,[GW] = e.WeightKg 
+		    ,[CBM] = e.CBM 
+		    ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
+		    ,[ShipModeID] = e.ShipModeID
+		    ,[FtyWK] = 0
+		    ,[AccountID] = AccountID.val
+		    ,[Junk] = 0
+            ,[FactoryID] = ''
+	    from Export e WITH (NOLOCK)
+        outer apply (select top 1 [val] = sd.AccountID 
+                        from ShippingAP_Detail sd WITH(NOLOCK)
+			            where sd.ID = '{this.CurrentMaintain["ID"]}' and sd.AccountID != ''
+			            and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+				            or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
+	    where e.BLNo = '{this.CurrentMaintain["BLNO"]}'
+	    union 
+	    select [ShippingAPID] = '{this.CurrentMaintain["ID"]}'
+		        ,[BLNo] = f.BLNo
+		        ,[WKNo] = f.id
+		        ,[InvNo] = ''
+		        ,[Type] = '{this.CurrentMaintain["Type"]}'
+		        ,[GW] = f.WeightKg 
+		        ,[CBM] = f.CBM 
+		        ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
+		        ,[ShipModeID] = f.ShipModeID
+		        ,[FtyWK] = 0
+		        ,[AccountID] = AccountID.val
+		        ,[Junk] = 0
+                ,[FactoryID] = ''
+	    from FtyExport f WITH (NOLOCK) 
+        outer apply (select top 1 [val] = sd.AccountID
+                     from ShippingAP_Detail sd WITH(NOLOCK)
+			         where sd.ID = '{this.CurrentMaintain["ID"]}' and sd.AccountID != ''
+			         and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+				         or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
+	    where   BLNo = '{this.CurrentMaintain["BLNO"]}'
+	            and Type <> 3
+        union
+        select  [ShippingAPID] = '{this.CurrentMaintain["ID"]}'
+                ,[BLNo] = iif(BLNo is null or BLNo='', BL2No,BLNo)
+                ,[WKNo] = ''
+                ,[InvNo] = id
+                ,[Type] = '{this.CurrentMaintain["Type"]}'
+                ,[GW] = TotalGW
+                ,[CBM] = TotalCBM
+                ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
+                ,[ShipModeID] = ShipModeID
+                ,[FtyWK] = 0
+                ,[AccountID] = (
+        	        select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
+                    where sd.ID = '{this.CurrentMaintain["ID"]}' and sd.AccountID != ''
+                    and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+        	    	    or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1))
+                ,[Junk] = 0
+                ,[FactoryID] = ''
+        from GMTBooking g WITH (NOLOCK) 
+        where BLNo='{this.CurrentMaintain["BLNO"]}' or BL2No='{this.CurrentMaintain["BLNO"]}'
+    ) a
+) as s 
+on	t.ShippingAPID = s.ShippingAPID 
+	and t.WKNO = s.WKNO	and t.InvNo = s.InvNo and t.FactoryID = s.FactoryID
+when matched AND t.junk=1 then
+	update set
+	t.junk=0
+when not matched by target then 
+	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk, FactoryID)
+	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk, s.FactoryID);";
+
+                    result = DBProxy.Current.Execute(string.Empty, strSqlCmd);
                 }
 
                 if (!result)
