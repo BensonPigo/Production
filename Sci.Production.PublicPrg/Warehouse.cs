@@ -5273,7 +5273,7 @@ update {detailTableName}
 set SentToWMS = {(isConfirmed ? 1 : 0)}
 where Ukey in ({ukeys})";
 
-            DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+            DualResult result = DBProxy.Current.Execute("Production", sqlcmd);
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.ToString());
