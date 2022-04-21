@@ -18,6 +18,10 @@ namespace Sci.Production.Sewing
         private DateTime? Delivery1;
         private DateTime? Delivery2;
 
+        private string MDivisionID;
+        private string FactoryID;
+        private bool IsExcludeSister;
+
         /// <inheritdoc/>
         public R12(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -42,6 +46,9 @@ namespace Sci.Production.Sewing
             this.SCIDelivery2 = this.dateRangeSCIDelivery.Value2;
             this.Delivery1 = this.dateRangeBuyerDelivery.Value1;
             this.Delivery2 = this.dateRangeBuyerDelivery.Value2;
+            this.MDivisionID = this.txtMdivision.Text;
+            this.FactoryID = this.txtfactory.Text;
+            this.IsExcludeSister = this.chkExcludeSis.Checked;
             return base.ValidateInput();
         }
 
@@ -50,6 +57,8 @@ namespace Sci.Production.Sewing
         {
             string sqlCmd = string.Empty;
             string sqlWhere = string.Empty;
+
+            #region Where 條件
             if (this.InspectionDate1.HasValue && this.InspectionDate2.HasValue)
             {
                 sqlCmd = string.Format(
@@ -82,6 +91,22 @@ and i.Status in ('Pass', 'Fixed');
                     this.Delivery2.Value.ToString("yyyyMMdd")) + Environment.NewLine;
             }
 
+            if (!MyUtility.Check.Empty(this.MDivisionID))
+            {
+                sqlWhere += $"AND o.MDivisionID = '{this.MDivisionID}'" + Environment.NewLine;
+            }
+
+            if (!MyUtility.Check.Empty(this.FactoryID))
+            {
+                sqlWhere += $"AND o.FtyGroup = '{this.FactoryID}'" + Environment.NewLine;
+            }
+
+            if (this.IsExcludeSister)
+            {
+                sqlWhere += $"AND f.IsProduceFty=1" + Environment.NewLine;
+            }
+            #endregion
+
             sqlCmd += string.Format(
                 @"
 select o.ID
@@ -91,21 +116,23 @@ select o.ID
         , o.BuyerDelivery
         , o.Qty
         , QCQty = i.tCnt
-        , LocationQty = iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
+        --, LocationQty = iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
 into #Orders
 from Orders o
-outer apply
-(
-	select [LocationQty] = count(distinct Location)
-	from Order_Location with(nolock)
-	where OrderId = o.ID
-)ol
-outer apply
-(
-	select [LocationQty] = count(distinct Location)
-	from Style_Location with(nolock)
-	where StyleUkey = o.StyleUkey
-)sl
+left JOIN Factory f WITH(NOLOCK) ON f.ID = o.FactoryID
+-- ISP20220443 要用 Complete set 為單位, 所以不需要乘上下部位數量
+--outer apply
+--(
+--	select [LocationQty] = count(distinct Location)
+--	from Order_Location with(nolock)
+--	where OrderId = o.ID
+--)ol
+--outer apply
+--(
+--	select [LocationQty] = count(distinct Location)
+--	from Style_Location with(nolock)
+--	where StyleUkey = o.StyleUkey
+--)sl
 outer apply(
 	select [tCnt] = count(1)
 	from [ExtendServer].ManufacturingExecution.dbo.Inspection i with(nolock)
@@ -119,46 +146,73 @@ select pd.ID
         , pd.CtnStartNo
         , pd.OrderID
         , [ShipBuyerDelivery] = max (oq.BuyerDelivery)
-        , MDFailQty = Max (pd.MDFailQty)
-        , MDScanDate = Max (pd.MDScanDate)
-        , DRYReceiveDate = Max (pd.DRYReceiveDate)
-        , ScanEditDate = Max (pd.ScanEditDate)
+        , MDFailQty = Max (pd.MDFailQty)                
+		, f.KPICode
+		, o1.FactoryID
+		, o1.StyleID
+		, oq.Seq
+		, DryRoomRecdDate = Max(o1.DryRoomRecdDate)
+		, MDScanDate = Max (pd.MDScanDate)
+		, DRYReceiveDate = Max (pd.DRYReceiveDate)
+		, DRYTransferDate = Max (pd.DRYTransferDate)
+		, ScanEditDate = Max (pd.ScanEditDate)
+		, [LastCMPOutputDate] = LastCMPOutputDate.Value
 into #PD_Detail
 from #Orders o with(nolock)
+inner join Orders o1 on o1.ID = o.ID
 inner join PackingList_Detail pd with(nolock) on o.ID = pd.OrderID
 left join Order_QtyShip oq with(nolock) on pd.OrderID = oq.ID
                                             and pd.OrderShipmodeSeq = oq.Seq
-group by pd.ID, pd.CtnStartNo, pd.OrderID
+left JOIN Factory f WITH(NOLOCK) ON f.ID = o1.FactoryID
+OUTER APPLY(
+	SELECT [Value]=MAX(s.OutputDate)
+	FROM SewingOutput s WITH(NOLOCK)
+	INNER JOIN SewingOutput_Detail sd WITH(NOLOCK) ON s.ID=sd.ID
+	WHERE sd.OrderId = o1.ID AND sd.QAQty > 0
+)LastCMPOutputDate
+group by pd.ID, pd.CtnStartNo, pd.OrderID, f.KPICode
+		, o1.FactoryID
+		, o1.StyleID
+		, oq.Seq
+		,LastCMPOutputDate.Value
 
 ----------------------------------------------------------------
 --- Detail
 ----------------------------------------------------------------
-select o.ID
-	    ,o.CustPONo
-	    ,o.BrandID
-	    ,[PackID] = pd.ID
-	    ,pd.CTNStartNo 
-	    ,[CartonQty] = pl_Qty.CtnQty
-	    ,[TTLQcOutput] = o.QCQty
-	    ,MDPassQty = iif (pd.MDScanDate is null, 0, pl_Qty.CtnQty - isnull(pd.MDFailQty,0))
-	    ,pd.DRYReceiveDate
-	    ,pd.MDScanDate
-	    ,[ScanQty] = pl_Qty.ScanQty
-	    ,pd.ScanEditDate
-	    ,pd.ShipBuyerDelivery
-	    ,o.SciDelivery
+select  
+        pd.KPICode
+        ,pd.FactoryID
+        ,o.ID
+        ,o.CustPONo
+        ,pd.StyleID
+        ,pd.Seq
+        ,pd.ShipBuyerDelivery
+        ,o.SciDelivery
+        ,o.BrandID
+        ,pd.CTNStartNo 
+        ,[CartonQty] = pl_Qty.CtnQty
+        ,[TTLQcOutput] = o.QCQty
+        ,MDPassQty = iif (pd.MDScanDate is null, 0, pl_Qty.CtnQty - isnull(pd.MDFailQty,0))
+        ,[ScanQty] = pl_Qty.ScanQty
+        ,pd.DryRoomRecdDate
+        ,pd.MDScanDate
+        ,pd.DRYTransferDate
+        ,pd.ScanEditDate
+        ,pd.LastCMPOutputDate
+        ,[PackID] = pd.ID
 into #Detail
 from #Orders o with(nolock)
 left join #PD_Detail pd on o.id = pd.OrderID
 outer apply(
-	select [CtnQty] = SUM(pdd.ShipQty) * o.LocationQty
-            , [ScanQty] = sum (pdd.ScanQty) * o.LocationQty
+	select [CtnQty] = SUM(pdd.ShipQty) --* o.LocationQty
+            , [ScanQty] = sum (pdd.ScanQty) --* o.LocationQty
 	from PackingList_Detail pdd  with(nolock)
 	inner join PackingList p with(nolock) on pdd.ID = p.ID
 	where o.ID = pdd.OrderID
 	        and pd.ID = pdd.ID
 	        and pd.CTNStartNo = pdd.CTNStartNo
 )pl_Qty
+
 
 ----------------------------------------------------------------
 --- Summary
@@ -168,7 +222,7 @@ select o.ID
 	,o.BrandID
 	,o.BuyerDelivery
 	,o.SciDelivery
-	,[OrderQty] = o.Qty * o.LocationQty
+	,[OrderQty] = o.Qty --* o.LocationQty
 	,[TTLQcOutput] = o.QCQty
 	,[MDpassQty] = d.MDPassQty
 	,[MDpassBalance] = d.MDPassQty - o.QCQty

@@ -35,6 +35,12 @@
             this.dateRangeSCIDelivery = new Sci.Win.UI.DateRange();
             this.dateRangeBuyerDelivery = new Sci.Win.UI.DateRange();
             this.lbMsg = new System.Windows.Forms.Label();
+            this.chkExcludeSis = new Sci.Win.UI.CheckBox();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
+            this.lbFactory = new Sci.Win.UI.Label();
+            this.lbMdivision = new Sci.Win.UI.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // print
@@ -141,17 +147,83 @@
             // 
             this.lbMsg.AutoSize = true;
             this.lbMsg.ForeColor = System.Drawing.Color.Red;
-            this.lbMsg.Location = new System.Drawing.Point(12, 125);
+            this.lbMsg.Location = new System.Drawing.Point(12, 249);
             this.lbMsg.Name = "lbMsg";
-            this.lbMsg.Size = new System.Drawing.Size(438, 17);
+            this.lbMsg.Size = new System.Drawing.Size(314, 17);
             this.lbMsg.TabIndex = 100;
-            this.lbMsg.Text = "The Qty here is by pieces instead of complete set on below function.";
+            this.lbMsg.Text = "This Qty here is Complete Set on below function.";
+            // 
+            // chkExcludeSis
+            // 
+            this.chkExcludeSis.AutoSize = true;
+            this.chkExcludeSis.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkExcludeSis.Location = new System.Drawing.Point(9, 199);
+            this.chkExcludeSis.Name = "chkExcludeSis";
+            this.chkExcludeSis.Size = new System.Drawing.Size(191, 21);
+            this.chkExcludeSis.TabIndex = 566;
+            this.chkExcludeSis.Text = "Exclude sister transfer out";
+            this.chkExcludeSis.UseVisualStyleBackColor = true;
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.BoolFtyGroupList = true;
+            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsProduceFty = false;
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(168, 162);
+            this.txtfactory.MDivision = null;
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 563;
+            // 
+            // txtMdivision
+            // 
+            this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision.Location = new System.Drawing.Point(168, 126);
+            this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision.TabIndex = 562;
+            // 
+            // lbFactory
+            // 
+            this.lbFactory.Location = new System.Drawing.Point(9, 162);
+            this.lbFactory.Name = "lbFactory";
+            this.lbFactory.Size = new System.Drawing.Size(156, 23);
+            this.lbFactory.TabIndex = 565;
+            this.lbFactory.Text = "Factory";
+            // 
+            // lbMdivision
+            // 
+            this.lbMdivision.Location = new System.Drawing.Point(9, 126);
+            this.lbMdivision.Name = "lbMdivision";
+            this.lbMdivision.Size = new System.Drawing.Size(156, 23);
+            this.lbMdivision.TabIndex = 564;
+            this.lbMdivision.Text = "M";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.Color.Red;
+            this.label1.Location = new System.Drawing.Point(12, 229);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(316, 17);
+            this.label1.TabIndex = 567;
+            this.label1.Text = "This report include Bulk and Garment order only.";
             // 
             // R12
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(566, 171);
+            this.ClientSize = new System.Drawing.Size(566, 306);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.chkExcludeSis);
+            this.Controls.Add(this.txtfactory);
+            this.Controls.Add(this.txtMdivision);
+            this.Controls.Add(this.lbFactory);
+            this.Controls.Add(this.lbMdivision);
             this.Controls.Add(this.lbMsg);
             this.Controls.Add(this.dateRangeBuyerDelivery);
             this.Controls.Add(this.dateRangeSCIDelivery);
@@ -175,6 +247,12 @@
             this.Controls.SetChildIndex(this.dateRangeSCIDelivery, 0);
             this.Controls.SetChildIndex(this.dateRangeBuyerDelivery, 0);
             this.Controls.SetChildIndex(this.lbMsg, 0);
+            this.Controls.SetChildIndex(this.lbMdivision, 0);
+            this.Controls.SetChildIndex(this.lbFactory, 0);
+            this.Controls.SetChildIndex(this.txtMdivision, 0);
+            this.Controls.SetChildIndex(this.txtfactory, 0);
+            this.Controls.SetChildIndex(this.chkExcludeSis, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -189,5 +267,11 @@
         private Win.UI.DateRange dateRangeSCIDelivery;
         private Win.UI.DateRange dateRangeBuyerDelivery;
         private System.Windows.Forms.Label lbMsg;
+        private Win.UI.CheckBox chkExcludeSis;
+        private Class.Txtfactory txtfactory;
+        private Class.TxtMdivision txtMdivision;
+        private Win.UI.Label lbFactory;
+        private Win.UI.Label lbMdivision;
+        private System.Windows.Forms.Label label1;
     }
 }
