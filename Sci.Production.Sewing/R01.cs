@@ -642,7 +642,7 @@ order by ArtworkTypeID"),
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 #if DEBUG
-            excel.Visible = true;
+            excel.Visible = false;
 #endif
             worksheet.Cells[1, 1] = this._factoryName;
             worksheet.Cells[2, 1] = string.Format("{0} Daily CMP Report, DD.{1} {2}", this._factory, Convert.ToDateTime(this._date).ToString("MM/dd"), "(Included Subcon-IN)");
@@ -885,8 +885,7 @@ order by ArtworkTypeID"),
             }
             #region Direct Manpower(From PAMS)
             if (Env.User.Keyword.EqualString("CM1") ||
-                Env.User.Keyword.EqualString("CM2") ||
-                Env.User.Keyword.EqualString("CM3"))
+                Env.User.Keyword.EqualString("CM2"))
             {
                 worksheet.Cells[insertRow, 11] = 0;
                 worksheet.Cells[insertRow, 13] = 0;
