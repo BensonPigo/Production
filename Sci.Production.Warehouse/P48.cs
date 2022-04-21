@@ -622,10 +622,10 @@ from #tmp";
                 }
 
                 // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
-                result = Prgs.GetFtyInventoryData(dtDetail_Ukeys, this.Name, out DataTable dtOriFtyInventory);
+                result = Prgs.GetFtyInventoryData(dtDetail_Ukeys, "P45", out DataTable dtOriFtyInventory);
 
                 // 檢查 是自動倉 的 Barcode不可為空
-                if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, this.Name))
+                if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, "P45"))
                 {
                     return;
                 }
@@ -666,7 +666,14 @@ from #tmp";
                 }
                 else
                 {
-                    Vstrong_AutoWHAccessory.Sent(true, dtDetail_Ukeys, this.Name, EnumStatus.New, EnumStatus.Confirm);
+                    // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                    if (!(result = Prgs.UpdateWH_Barcode(true, dtDetail_Ukeys, "P45", out bool fromNewBarcode, dtOriFtyInventory)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    // AutoWHFabric WebAPI
+                    Prgs_WMS.WMSprocess(true, dtDetail_Ukeys, "P45", EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
                     DataRow[] drfound = this.dtInventory.Select(string.Format("poid='{0}' and selected=1", listPoid[i].ToString()));
                     foreach (var item in drfound)
                     {
