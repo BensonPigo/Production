@@ -138,6 +138,7 @@
     <Build Include="dbo\Tables\P_Capacity.sql" />
     <Build Include="dbo\Tables\P_MachineMasterList.sql" />
     <Build Include="dbo\Stored Procedures\P_Import_MachineMaserList.sql" />
+    <Build Include="dbo\Stored Procedures\P_ImportEstShippingReport.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
