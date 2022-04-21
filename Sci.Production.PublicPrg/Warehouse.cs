@@ -3581,12 +3581,13 @@ inner join #tmp s on s.POID = sd.PoId
 select f.*
     ,balanceQty = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
     ,psd.FabricType
+    ,DetailUkey = sd.Ukey
 {columnIsWMS}
-FROM {detailTableName} sd
+FROM {detailTableName} sd with(nolock)
 {psd_FtyDt}
 where sd.Ukey in ({ukeys})
 ";
-            return DBProxy.Current.Select(null, sqlcmd, out dt);
+            return DBProxy.Current.Select("Production", sqlcmd, out dt);
         }
 
         /// <inheritdoc/>
@@ -3598,8 +3599,8 @@ where sd.Ukey in ({ukeys})
             if (detailTable == WHTableName.SubTransfer_Detail || detailTable == WHTableName.BorrowBack_Detail)
             {
                 psd_FtyDt = $@"
-left join Production.dbo.PO_Supp_Detail psd on psd.ID = sd.FromPoId and psd.SEQ1 = sd.FromSeq1 and psd.SEQ2 = sd.FromSeq2
-left join Production.dbo.FtyInventory f on f.POID = isnull(sd.FromPoId, '')
+left join Production.dbo.PO_Supp_Detail psd with(nolock) on psd.ID = sd.FromPoId and psd.SEQ1 = sd.FromSeq1 and psd.SEQ2 = sd.FromSeq2
+left join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.FromPoId, '')
     and f.Seq1 = isnull(sd.FromSeq1, '')
     and f.Seq2 = isnull(sd.FromSeq2, '')
     and f.Roll = isnull(sd.FromRoll, '')
@@ -3616,8 +3617,8 @@ left join FtyInventory fto with(nolock) on fto.POID = isnull(sd.ToPOID, '')
             else
             {
                 psd_FtyDt = $@"
-left join Production.dbo.PO_Supp_Detail psd on psd.ID = sd.PoId and psd.SEQ1 = sd.Seq1 and psd.SEQ2 = sd.Seq2
-left join Production.dbo.FtyInventory f on f.POID = isnull(sd.PoId, '')
+left join Production.dbo.PO_Supp_Detail psd with(nolock) on psd.ID = sd.PoId and psd.SEQ1 = sd.Seq1 and psd.SEQ2 = sd.Seq2
+left join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.PoId, '')
     and f.Seq1 = isnull(sd.Seq1, '')
     and f.Seq2 = isnull(sd.Seq2, '')
     and f.Roll = isnull(sd.Roll, '')
@@ -3636,13 +3637,15 @@ left join Production.dbo.FtyInventory f on f.POID = isnull(sd.PoId, '')
         /// <param name="isRevise">P99 的 Revise 功能</param>
         /// <param name="isDelete">P99 的 Delete 功能</param>
         /// <inheritdoc/>
-        public static DualResult UpdateWH_Barcode(bool isConfirmed, DataTable dtDetailSource, string function, out bool fromNewBarcode, DataTable oriFtyInventory = null, bool isRevise = false, bool isDelete = false)
+        public static DualResult UpdateWH_Barcode(bool isConfirmed, DataTable dtDetailSource, string function, out bool fromNewBarcode, DataTable oriFtyInventory = null, bool isRevise = false, bool isDelete = false, bool getOriFtyInventory = false)
         {
             // 庫存0 = 沒or清空 Barcode
             // ↓在不覆蓋移動目標 Barcode 原則下↓
             // 庫存 < 全部 > 移動 = 搬移 Barcode
             // 庫存 < 部分 > 移動 = 新的 BarcodeSeq
             // 更新 WHBarcodeTransaction / FtyInventory 沒有先後, 先處理 WHBarcodeTransaction Barcode, FtyInventory 直接使用 WHBarcodeTransaction 物件的 Barcode
+            DualResult result;
+            SqlConnection sqlConnection;
             fromNewBarcode = false;
             if (dtDetailSource.Rows.Count == 0)
             {
@@ -3671,7 +3674,6 @@ left join Production.dbo.FtyInventory f on f.POID = isnull(sd.PoId, '')
                 dtDetail.Columns["StockQty"].ColumnName = "Qty";
             }
 
-            DualResult result;
             DataTable odt;
             WHTableName detailTableName = GetWHDetailTableName(function);
 
@@ -3685,6 +3687,68 @@ left join Production.dbo.FtyInventory f on f.POID = isnull(sd.PoId, '')
             }
 
             string ukeys = dtDetail.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["Ukey"])).ToList().JoinToString(",");
+
+            #region (QMS)有建立直接 Confirm,需要回推原本庫存
+            if (getOriFtyInventory && oriFtyInventory == null && isConfirmed)
+            {
+                if (!(result = GetFtyInventoryData(dtDetailSource, function, out oriFtyInventory)))
+                {
+                    return result;
+                }
+
+                string qty = (isRevise || isDelete) ? "DiffQty" : "Qty";
+                foreach (DataRow ftydr in oriFtyInventory.Rows)
+                {
+                    DataRow deraildr = dtDetailSource.Select($"Ukey = {ftydr["DetailUkey"]}")[0];
+                    decimal balanceQty = MyUtility.Convert.GetDecimal(ftydr["balanceQty"]);
+                    switch (detailTableName)
+                    {
+                        // InQty
+                        case WHTableName.Receiving_Detail:
+                        case WHTableName.TransferIn_Detail:
+                            ftydr["balanceQty"] = balanceQty - (isConfirmed ? MyUtility.Convert.GetDecimal(deraildr[qty]) : -MyUtility.Convert.GetDecimal(deraildr[qty]));
+                            break;
+
+                        // ReturnQty
+                        case WHTableName.ReturnReceipt_Detail:
+                            ftydr["balanceQty"] = balanceQty - (isConfirmed ? -MyUtility.Convert.GetDecimal(deraildr[qty]) : MyUtility.Convert.GetDecimal(deraildr[qty]));
+                            break;
+
+                        // OutQty
+                        case WHTableName.IssueReturn_Detail:
+                        case WHTableName.Issue_Detail:
+                        case WHTableName.IssueLack_Detail:
+                        case WHTableName.TransferOut_Detail:
+                            ftydr["balanceQty"] = balanceQty - (isConfirmed ? -MyUtility.Convert.GetDecimal(deraildr[qty]) : MyUtility.Convert.GetDecimal(deraildr[qty]));
+                            break;
+
+                        // OutQty : from
+                        // InQty : to
+                        case WHTableName.SubTransfer_Detail:
+                        case WHTableName.BorrowBack_Detail:
+                            ftydr["balanceQty"] = balanceQty - (isConfirmed ? -MyUtility.Convert.GetDecimal(deraildr[qty]) : MyUtility.Convert.GetDecimal(deraildr[qty]));
+                            ftydr["tobalanceQty"] = MyUtility.Convert.GetDecimal(ftydr["tobalanceQty"]) - (isConfirmed ? MyUtility.Convert.GetDecimal(deraildr[qty]) : -MyUtility.Convert.GetDecimal(deraildr[qty]));
+
+                            break;
+
+                        // AdjustQty
+                        case WHTableName.Adjust_Detail:
+                            decimal adjustQty;
+                            if (isRevise || isDelete)
+                            {
+                                adjustQty = MyUtility.Convert.GetDecimal(deraildr["DiffQty"]);
+                            }
+                            else
+                            {
+                                adjustQty = MyUtility.Convert.GetDecimal(deraildr["QtyAfter"]) - MyUtility.Convert.GetDecimal(deraildr["QtyBefore"]);
+                            }
+
+                            ftydr["balanceQty"] = balanceQty - (isConfirmed ? adjustQty : -adjustQty);
+                            break;
+                    }
+                }
+            }
+            #endregion
 
             #region 取得新 BarCode
             List<string> newBarcodeList = new List<string>();
@@ -3827,7 +3891,8 @@ where 1=1
 and sd.FabricType = 'F'
 
 ";
-                result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, sqlcmd, out dt);
+                DBProxy._OpenConnection("Production", out sqlConnection);
+                result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, sqlcmd, out dt, conn: sqlConnection);
                 if (!result)
                 {
                     return result;
@@ -3932,7 +3997,7 @@ and sd.Ukey in ({ukeys})
                             decimal adjustQty;
                             if (isRevise || isDelete)
                             {
-                                adjustQty= MyUtility.Convert.GetDecimal(deraildr["DiffQty"]);
+                                adjustQty = MyUtility.Convert.GetDecimal(deraildr["DiffQty"]);
                             }
                             else
                             {
@@ -4304,7 +4369,8 @@ and w.Action = '{item.Action}'";
 
             if (wHBarcodeTransaction.Where(w => w.UpdatethisItem).Any())
             {
-                if (!(result = MyUtility.Tool.ProcessWithObject(wHBarcodeTransaction.Where(w => w.UpdatethisItem), string.Empty, UpdateWHBarcodeTransaction(), out odt)))
+                DBProxy._OpenConnection("Production", out sqlConnection);
+                if (!(result = MyUtility.Tool.ProcessWithObject(wHBarcodeTransaction.Where(w => w.UpdatethisItem), string.Empty, UpdateWHBarcodeTransaction(), out odt, conn: sqlConnection)))
                 {
                     return result;
                 }
@@ -4350,7 +4416,8 @@ and w.Action = '{item.Action}'";
                     break;
             }
 
-            if (!(result = MyUtility.Tool.ProcessWithObject(data_FtyBarcode, string.Empty, UpdateFtyInventoryBarCode(), out odt)))
+            DBProxy._OpenConnection("Production", out sqlConnection);
+            if (!(result = MyUtility.Tool.ProcessWithObject(data_FtyBarcode, string.Empty, UpdateFtyInventoryBarCode(), out odt, conn: sqlConnection)))
             {
                 return result;
             }
@@ -4380,7 +4447,8 @@ and w.Action = '{item.Action}'";
                         item.BarcodeSeq = toBarcode.To_NewBarcodeSeq;
                     }
 
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_To_FtyBarcode, string.Empty, UpdateFtyInventoryBarCode(), out odt)))
+                    DBProxy._OpenConnection("Production", out sqlConnection);
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_To_FtyBarcode, string.Empty, UpdateFtyInventoryBarCode(), out odt, conn: sqlConnection)))
                     {
                         return result;
                     }
@@ -5819,7 +5887,7 @@ and ml.IsWMS = 1
         public static string GetNextBarcodeSeq(string barcode)
         {
             string sqlcmd = $@"select dbo.GetWH_NextBarcodeSeq('{barcode}')";
-            return MyUtility.GetValue.Lookup(sqlcmd);
+            return MyUtility.GetValue.Lookup(sqlcmd, "Production");
         }
 
         /// <summary>
