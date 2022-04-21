@@ -2,12 +2,14 @@
 using Ict.Win;
 using Microsoft.Reporting.WinForms;
 using Sci.Data;
+using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Text;
+using System.Transactions;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
@@ -507,13 +509,65 @@ and stocktype='{this.CurrentDetailData["stocktype"]}' and roll='{e.FormattedValu
             sp_loginid.Value = Env.User.UserID;
             cmds.Add(sp_loginid);
             #endregion
-            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_StocktakingEncode", cmds)))
+
+            // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
+            if (!(result = Prgs.GetFtyInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtOriFtyInventory)))
             {
-                // MyUtility.Msg.WarningBox(result.Messages[1].ToString());
-                Exception ex = result.GetException();
-                MyUtility.Msg.WarningBox(ex.Message);
+                this.ShowErr(result);
                 return;
             }
+
+            DataTable dtAdjust_Detail = new DataTable();
+            string formName = string.Empty;
+            Exception errMsg = null;
+            using (TransactionScope transactionscope = new TransactionScope())
+            {
+                try
+                {
+                    if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_StocktakingEncode", cmds)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    string sqlcmd = $@"select sd.* from Adjust s inner join Adjust_Detail sd on sd.ID = s.ID where StocktakingID = '{this.CurrentMaintain["ID"]}'";
+                    if (!(result = DBProxy.Current.Select(null, sqlcmd, out dtAdjust_Detail)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    if (dtAdjust_Detail.Rows.Count > 0)
+                    {
+                        string adjustID = MyUtility.Convert.GetString(dtAdjust_Detail.Rows[0]["ID"]);
+                        formName = adjustID.Contains("AI") ? "P34" : "P35";
+
+                        // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                        if (!(result = Prgs.UpdateWH_Barcode(true, dtAdjust_Detail, formName, out bool fromNewBarcode, dtOriFtyInventory)))
+                        {
+                            throw result.GetException();
+                        }
+                    }
+
+                    transactionscope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    errMsg = ex;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(errMsg))
+            {
+                this.ShowErr(errMsg);
+                return;
+            }
+
+            // AutoWHFabric WebAPI
+            if (dtAdjust_Detail.Rows.Count > 0)
+            {
+                Prgs_WMS.WMSprocess(true, dtAdjust_Detail, formName, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+            }
+
+            MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
         // 寫明細撈出的sql command
