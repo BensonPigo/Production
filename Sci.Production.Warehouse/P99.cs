@@ -2818,6 +2818,8 @@ and t1.Type='I'
                 Exception errMsg = null;
                 bool fromNewBarcode = false;
                 DataTable dtDistID = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1) && !MyUtility.Check.Empty(x["Qty"])).CopyToDataTable().DefaultView.ToTable(true, "ID");
+                DataTable tmpDetailTableF = LogicAutoWHData.GetWHData(detailTable, this.strFunction, EnumStatus.Delete, EnumStatus.Unconfirm, "F");
+                DataTable tmpDetailTableA = LogicAutoWHData.GetWHData(detailTable, this.strFunction, EnumStatus.Delete, EnumStatus.Unconfirm, "A");
                 Prgs.GetFtyInventoryData(detailTable, this.strFunction, out DataTable dtOriFtyInventory);
 
                 switch (this.strFunction)
@@ -3573,13 +3575,15 @@ inner join #tmp s on t.Ukey = s.Ukey
 
                 if (!MyUtility.Check.Empty(errMsg))
                 {
-                    Prgs_WMS.WMSprocess(true, detailTableToWMS, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, isP99: true);
+                    Gensong_AutoWHFabric.Sent(true, tmpDetailTableF, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, fromNewBarcode: fromNewBarcode, isP99: true);
+                    Vstrong_AutoWHAccessory.Sent(true, tmpDetailTableA, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, isP99: true);
                     this.ShowErr(errMsg);
                     return;
                 }
 
                 // PMS 更新之後,才執行WMS
-                Prgs_WMS.WMSprocess(true, detailTableToWMS, this.strFunction, EnumStatus.Revise, EnumStatus.Confirm, fromNewBarcode: fromNewBarcode, isP99: true);
+                Gensong_AutoWHFabric.Sent(true, tmpDetailTableF, this.strFunction, EnumStatus.Revise, EnumStatus.Unconfirm, fromNewBarcode: fromNewBarcode, isP99: true);
+                Vstrong_AutoWHAccessory.Sent(true, tmpDetailTableA, this.strFunction, EnumStatus.Revise, EnumStatus.Unconfirm, isP99: true);
 
                 // 將修改的資料存入Log
                 this.WriteInLog("Revise");
