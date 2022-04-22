@@ -1,6 +1,8 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Automation;
+using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
@@ -3618,6 +3620,9 @@ inner join #tmp s on t.Ukey = s.Ukey
                 DataTable result_upd_qty;
                 TransactionScope transactionscope;
                 Exception errMsg = null;
+                DataTable tmpDetailTableF = LogicAutoWHData.GetWHData(detailTable, this.strFunction, EnumStatus.Delete, EnumStatus.Unconfirm, "F");
+                DataTable tmpDetailTableA = LogicAutoWHData.GetWHData(detailTable, this.strFunction, EnumStatus.Delete, EnumStatus.Unconfirm, "A");
+
                 Prgs.GetFtyInventoryData(detailTable, this.strFunction, out DataTable dtOriFtyInventory);
 
                 switch (this.strFunction)
@@ -5213,13 +5218,15 @@ and exists(
 
                 if (!MyUtility.Check.Empty(errMsg))
                 {
-                    Prgs_WMS.WMSprocess(true, detailTableToWMS, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, isP99: true);
+                    Gensong_AutoWHFabric.Sent(true, tmpDetailTableF, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, isP99: true);
+                    Vstrong_AutoWHAccessory.Sent(true, tmpDetailTableA, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, isP99: true);
                     this.ShowErr(errMsg);
                     return;
                 }
 
                 // PMS 更新之後,才執行WMS
-                Prgs_WMS.WMSprocess(true, detailTableToWMS, this.strFunction, EnumStatus.Delete, EnumStatus.Unconfirm, isP99: true);
+                Gensong_AutoWHFabric.Sent(true, tmpDetailTableF, this.strFunction, EnumStatus.Delete, EnumStatus.Unconfirm, isP99: true);
+                Vstrong_AutoWHAccessory.Sent(true, tmpDetailTableA, this.strFunction, EnumStatus.Delete, EnumStatus.Unconfirm, isP99: true);
 
                 // 將刪除的資料存入Log
                 this.WriteInLog("Delete");

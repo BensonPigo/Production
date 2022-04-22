@@ -148,7 +148,7 @@ and exists(
             }
             else
             {
-                whereWMS = Environment.NewLine + $" and sd.SentToWMS = '{(isP99 ? "V" : "1")}' and sd.CompleteTime is null";
+                whereWMS = Environment.NewLine + $" and sd.SentToWMS = 1 and sd.CompleteTime is null";
             }
 
             columns = $@"
@@ -158,10 +158,14 @@ and exists(
     ,sd.Roll
     ,sd.Dyelot
     ,sd.StockType
+    ,sd.SentToWMS
+    ,sd.CompleteTime
+
     ,Fabric.WeaveTypeID
     ,[MtlType] = Fabric.MtlTypeID
     ,psd.Refno
-    ,[SizeCode] = psd.SizeSpec";
+    ,[SizeCode] = psd.SizeSpec
+";
 
             if (fabricType == "F")
             {
@@ -220,6 +224,8 @@ and exists(
     ,sd.ToLocation
     ,[ToBarcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'T', fto.Ukey, 0, {fromNewBarcodeBit})
     ,sd.Qty
+    ,sd.SentToWMS
+    ,sd.CompleteTime
 
     ,psd.Refno
     ,[Description] = dbo.getMtlDesc(psd.ID, psd.Seq1, psd.Seq2, 2, 0)
@@ -394,6 +400,8 @@ outer apply (
     ,sd.ToStockType
     ,sd.ToLocation
     ,sd.Qty
+    ,sd.SentToWMS
+    ,sd.CompleteTime
 
     ,psd.Refno
     ,[SizeCode] = psd.SizeSpec
