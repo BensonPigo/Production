@@ -30,7 +30,7 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
-        public static bool WMSprocess(bool doTask, DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, DataTable dthasFabricType = null, bool fromNewBarcode = false)
+        public static bool WMSprocess(bool doTask, DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, DataTable dthasFabricType = null, bool isP99 = false, bool fromNewBarcode = false)
         {
             dthasFabricType = dthasFabricType ?? dtDetail;
             List<string> fabricList = dthasFabricType.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["FabricType"])).ToList();
@@ -38,12 +38,12 @@ namespace Sci.Production.Warehouse
             {
                 if (NoGensong(formName) && fabricList.Contains("F"))
                 {
-                    Gensong_AutoWHFabric.Sent(doTask, dtDetail, formName, statusAPI, action, fromNewBarcode: fromNewBarcode);
+                    Gensong_AutoWHFabric.Sent(doTask, dtDetail, formName, statusAPI, action, isP99: isP99, fromNewBarcode: fromNewBarcode);
                 }
 
                 if (NoVstrong(formName) && fabricList.Contains("A"))
                 {
-                    Vstrong_AutoWHAccessory.Sent(doTask, dtDetail, formName, statusAPI, action);
+                    Vstrong_AutoWHAccessory.Sent(doTask, dtDetail, formName, statusAPI, action, isP99: isP99);
                 }
             }
 
@@ -51,7 +51,7 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
-        public static bool WMSLock(DataTable dtDetail, DataTable dthasFabricType, string formName, EnumStatus action)
+        public static bool WMSLock(DataTable dtDetail, DataTable dthasFabricType, string formName, EnumStatus action, bool isP99 = false)
         {
             List<string> fabricList = dthasFabricType.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["FabricType"])).ToList();
             if (Prgs.IsAutomation())
@@ -64,7 +64,7 @@ namespace Sci.Production.Warehouse
                 if (NoGensong(formName) && fabricList.Contains("F"))
                 {
                     fprocess = true;
-                    fsuccess = Gensong_AutoWHFabric.Sent(false, dtDetail, formName, EnumStatus.Lock, action);
+                    fsuccess = Gensong_AutoWHFabric.Sent(false, dtDetail, formName, EnumStatus.Lock, action, isP99: isP99);
                 }
 
                 if (!fsuccess)
@@ -75,14 +75,14 @@ namespace Sci.Production.Warehouse
                 if (NoVstrong(formName) && fabricList.Contains("A"))
                 {
                     aprocess = true;
-                    asuccess = Vstrong_AutoWHAccessory.Sent(false, dtDetail, formName, EnumStatus.Lock, action);
+                    asuccess = Vstrong_AutoWHAccessory.Sent(false, dtDetail, formName, EnumStatus.Lock, action, isP99: isP99);
                 }
 
                 if (aprocess && !asuccess)
                 {
                     if (fprocess && fsuccess)
                     {
-                        Gensong_AutoWHFabric.Sent(true, dtDetail, formName, EnumStatus.UnLock, action);
+                        Gensong_AutoWHFabric.Sent(true, dtDetail, formName, EnumStatus.UnLock, action, isP99: isP99);
                     }
 
                     return false;

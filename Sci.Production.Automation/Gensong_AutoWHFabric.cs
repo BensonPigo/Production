@@ -26,7 +26,7 @@ namespace Sci.Production.Automation
         /// <param name="action">PMS 的操作 Confrim, Unconfrim, (P99) Delete, Update</param>
         /// <param name="updateLocation">P21/P26更新後,若location不是自動倉要發給WMS做撤回(Delete), 整合後為了保持原寫法而加的參數, 日後若確認無用請刪掉此看似無用的參數</param>
         /// <inheritdoc/>
-        public static bool Sent(bool doTask, DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, bool updateLocation = false, bool fromNewBarcode = false)
+        public static bool Sent(bool doTask, DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, bool updateLocation = false, bool isP99 = false, bool fromNewBarcode = false)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count == 0)
             {
@@ -35,20 +35,20 @@ namespace Sci.Production.Automation
 
             if (doTask)
             {
-                Task.Run(() => Sent_Task(dtDetail, formName, statusAPI, action, updateLocation, fromNewBarcode))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                Task.Run(() => Sent_Task(dtDetail, formName, statusAPI, action, updateLocation, isP99, fromNewBarcode))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
                 return true;
             }
             else
             {
-                return Sent_Task(dtDetail, formName, statusAPI, action, updateLocation, fromNewBarcode);
+                return Sent_Task(dtDetail, formName, statusAPI, action, updateLocation, isP99, fromNewBarcode);
             }
         }
 
-        private static bool Sent_Task(DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, bool updateLocation = false, bool fromNewBarcode = false)
+        private static bool Sent_Task(DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, bool updateLocation = false, bool isP99 = false, bool fromNewBarcode = false)
         {
             // 取得資料
-            DataTable dtMaster = LogicAutoWHData.GetWHData(dtDetail, formName, statusAPI, action, "F", fromNewBarcode);
+            DataTable dtMaster = LogicAutoWHData.GetWHData(dtDetail, formName, statusAPI, action, "F", fromNewBarcode, isP99);
             if (dtMaster == null)
             {
                 return false;

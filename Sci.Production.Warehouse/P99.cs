@@ -2843,7 +2843,7 @@ and t1.Type='I'
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm))
+                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
                         {
                             return;
                         }
@@ -3057,7 +3057,7 @@ WHERE ID NOT IN(
                         }
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm))
+                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
                         {
                             return;
                         }
@@ -3241,7 +3241,7 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm))
+                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
                         {
                             return;
                         }
@@ -3311,7 +3311,7 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm))
+                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
                         {
                             return;
                         }
@@ -3374,7 +3374,7 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm))
+                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
                         {
                             return;
                         }
@@ -3444,7 +3444,7 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm))
+                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
                         {
                             return;
                         }
@@ -3516,7 +3516,7 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm))
+                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
                         {
                             return;
                         }
@@ -3571,13 +3571,13 @@ inner join #tmp s on t.Ukey = s.Ukey
 
                 if (!MyUtility.Check.Empty(errMsg))
                 {
-                    Prgs_WMS.WMSprocess(true, detailTableToWMS, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm);
+                    Prgs_WMS.WMSprocess(true, detailTableToWMS, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, isP99: true);
                     this.ShowErr(errMsg);
                     return;
                 }
 
                 // PMS 更新之後,才執行WMS
-                Prgs_WMS.WMSprocess(true, detailTableToWMS, this.strFunction, EnumStatus.Revise, EnumStatus.Confirm, fromNewBarcode: fromNewBarcode);
+                Prgs_WMS.WMSprocess(true, detailTableToWMS, this.strFunction, EnumStatus.Revise, EnumStatus.Confirm, fromNewBarcode: fromNewBarcode, isP99: true);
 
                 // 將修改的資料存入Log
                 this.WriteInLog("Revise");
@@ -3607,7 +3607,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                 }
 
                 DataTable detailTableToWMS = upd_list.Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).TryCopyToDataTable((DataTable)this.listControlBindingSource1.DataSource);
-                DataTable detailTable = upd_list.Where(w => !MyUtility.Check.Empty(w["diffQty"])).TryCopyToDataTable((DataTable)this.listControlBindingSource1.DataSource);
+                DataTable detailTable = upd_list.TryCopyToDataTable((DataTable)this.listControlBindingSource1.DataSource);
                 string sqlError = string.Empty;
                 string upd_sql = string.Empty;
                 string chk_sql = string.Empty;
@@ -3697,7 +3697,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm))
+                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
                         {
                             return;
                         }
@@ -3762,14 +3762,12 @@ and exists(
                                     throw result.GetException();
                                 }
 
-                                if (this.strFunction != "P08")
+                                // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                                if (!(result = Prgs.UpdateWH_Barcode(false, detailTable, this.strFunction, out bool fromNewBarcode, dtOriFtyInventory, isDelete: true)))
                                 {
-                                    // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
-                                    if (!(result = Prgs.UpdateWH_Barcode(false, detailTable, this.strFunction, out bool fromNewBarcode, dtOriFtyInventory, isDelete: true)))
-                                    {
-                                        throw result.GetException();
-                                    }
+                                    throw result.GetException();
                                 }
+
                                 #endregion
 
                                 transactionscope.Complete();
@@ -3884,7 +3882,7 @@ and exists(
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm))
+                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
                         {
                             return;
                         }
@@ -4203,7 +4201,7 @@ and exists(
                         #endregion 更新庫存數量  ftyinventory
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm))
+                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
                         {
                             return;
                         }
@@ -4281,7 +4279,7 @@ and exists(
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm))
+                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
                         {
                             return;
                         }
@@ -4409,7 +4407,7 @@ and exists(
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm))
+                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
                         {
                             return;
                         }
@@ -4543,7 +4541,7 @@ and exists(
                         string upd_MD_8T = string.Empty;
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm))
+                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
                         {
                             return;
                         }
@@ -4742,7 +4740,7 @@ and exists(
                         string upd_MD_8F_BorrowBack = Prgs.UpdateMPoDetail_P99(8, false);
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm))
+                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
                         {
                             return;
                         }
@@ -5040,7 +5038,7 @@ and exists(
                         string upd_MD_16F_SubTransfer = Prgs.UpdateMPoDetail_P99(16, false);
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm))
+                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
                         {
                             return;
                         }
@@ -5215,13 +5213,13 @@ and exists(
 
                 if (!MyUtility.Check.Empty(errMsg))
                 {
-                    Prgs_WMS.WMSprocess(true, detailTableToWMS, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm);
+                    Prgs_WMS.WMSprocess(true, detailTableToWMS, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, isP99: true);
                     this.ShowErr(errMsg);
                     return;
                 }
 
                 // PMS 更新之後,才執行WMS
-                Prgs_WMS.WMSprocess(true, detailTableToWMS, this.strFunction, EnumStatus.Delete, EnumStatus.Unconfirm);
+                Prgs_WMS.WMSprocess(true, detailTableToWMS, this.strFunction, EnumStatus.Delete, EnumStatus.Unconfirm, isP99: true);
 
                 // 將刪除的資料存入Log
                 this.WriteInLog("Delete");
