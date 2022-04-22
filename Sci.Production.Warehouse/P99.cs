@@ -2847,7 +2847,7 @@ and t1.Type='I'
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
+                        if (!Prgs_WMS.WMSLock(tmpDetailTableF, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true, dtDetailA: tmpDetailTableA))
                         {
                             return;
                         }
@@ -3061,7 +3061,7 @@ WHERE ID NOT IN(
                         }
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
+                        if (!Prgs_WMS.WMSLock(tmpDetailTableF, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true, dtDetailA: tmpDetailTableA))
                         {
                             return;
                         }
@@ -3245,7 +3245,7 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
+                        if (!Prgs_WMS.WMSLock(tmpDetailTableF, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true, dtDetailA: tmpDetailTableA))
                         {
                             return;
                         }
@@ -3315,7 +3315,7 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
+                        if (!Prgs_WMS.WMSLock(tmpDetailTableF, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true, dtDetailA: tmpDetailTableA))
                         {
                             return;
                         }
@@ -3378,7 +3378,7 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
+                        if (!Prgs_WMS.WMSLock(tmpDetailTableF, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true, dtDetailA: tmpDetailTableA))
                         {
                             return;
                         }
@@ -3448,7 +3448,7 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
+                        if (!Prgs_WMS.WMSLock(tmpDetailTableF, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true, dtDetailA: tmpDetailTableA))
                         {
                             return;
                         }
@@ -3520,7 +3520,7 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
+                        if (!Prgs_WMS.WMSLock(tmpDetailTableF, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true, dtDetailA: tmpDetailTableA))
                         {
                             return;
                         }
@@ -3706,7 +3706,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
+                        if (!Prgs_WMS.WMSLock(tmpDetailTableF, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true, dtDetailA: tmpDetailTableA))
                         {
                             return;
                         }
@@ -3891,7 +3891,7 @@ and exists(
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
+                        if (!Prgs_WMS.WMSLock(tmpDetailTableF, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true, dtDetailA: tmpDetailTableA))
                         {
                             return;
                         }
@@ -4210,7 +4210,7 @@ and exists(
                         #endregion 更新庫存數量  ftyinventory
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
+                        if (!Prgs_WMS.WMSLock(tmpDetailTableF, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true, dtDetailA: tmpDetailTableA))
                         {
                             return;
                         }
@@ -4288,7 +4288,7 @@ and exists(
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
+                        if (!Prgs_WMS.WMSLock(tmpDetailTableF, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true, dtDetailA: tmpDetailTableA))
                         {
                             return;
                         }
@@ -4416,7 +4416,7 @@ and exists(
                         #endregion
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
+                        if (!Prgs_WMS.WMSLock(tmpDetailTableF, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true, dtDetailA: tmpDetailTableA))
                         {
                             return;
                         }
@@ -4550,7 +4550,7 @@ and exists(
                         string upd_MD_8T = string.Empty;
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
+                        if (!Prgs_WMS.WMSLock(tmpDetailTableF, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true, dtDetailA: tmpDetailTableA))
                         {
                             return;
                         }
@@ -4749,7 +4749,7 @@ and exists(
                         string upd_MD_8F_BorrowBack = Prgs.UpdateMPoDetail_P99(8, false);
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
+                        if (!Prgs_WMS.WMSLock(tmpDetailTableF, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true, dtDetailA: tmpDetailTableA))
                         {
                             return;
                         }
@@ -5047,7 +5047,7 @@ and exists(
                         string upd_MD_16F_SubTransfer = Prgs.UpdateMPoDetail_P99(16, false);
 
                         // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(detailTableToWMS, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true))
+                        if (!Prgs_WMS.WMSLock(tmpDetailTableF, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true, dtDetailA: tmpDetailTableA))
                         {
                             return;
                         }

@@ -51,7 +51,7 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
-        public static bool WMSLock(DataTable dtDetail, DataTable dthasFabricType, string formName, EnumStatus action, bool isP99 = false)
+        public static bool WMSLock(DataTable dtDetail, DataTable dthasFabricType, string formName, EnumStatus action, bool isP99 = false, DataTable dtDetailA = null)
         {
             List<string> fabricList = dthasFabricType.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["FabricType"])).ToList();
             if (Prgs.IsAutomation())
@@ -75,7 +75,14 @@ namespace Sci.Production.Warehouse
                 if (NoVstrong(formName) && fabricList.Contains("A"))
                 {
                     aprocess = true;
-                    asuccess = Vstrong_AutoWHAccessory.Sent(false, dtDetail, formName, EnumStatus.Lock, action, isP99: isP99);
+                    if (dtDetailA != null)
+                    {
+                        asuccess = Vstrong_AutoWHAccessory.Sent(false, dtDetailA, formName, EnumStatus.Lock, action, isP99: isP99);
+                    }
+                    else
+                    {
+                        asuccess = Vstrong_AutoWHAccessory.Sent(false, dtDetail, formName, EnumStatus.Lock, action, isP99: isP99);
+                    }
                 }
 
                 if (aprocess && !asuccess)
