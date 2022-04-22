@@ -3943,7 +3943,7 @@ and sd.Ukey in ({ukeys})
             #region 一次更新同物料有兩筆以上, balanceQty 庫存要改成逐筆計算 2022/04/11
             if (oriFtyInventory != null)
             {
-                string qty = (isRevise || isDelete) ? "DiffQty" : "Qty";
+                string qty = isRevise ? "DiffQty" : (isDelete ? "Old_Qty" : "Qty");
                 foreach (DataRow dr in dt.Rows)
                 {
                     if (oriFtyInventory.Select($"Ukey = '{dr["Fabric_FtyInventoryUkey"]}'").Length == 0)
