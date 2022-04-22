@@ -3583,8 +3583,8 @@ inner join #tmp s on t.Ukey = s.Ukey
 
                 // PMS 更新之後,才執行WMS. Gensong 那邊必須先 Unlock 才能 Revise
                 Gensong_AutoWHFabric.Sent(false, tmpDetailTableF, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, fromNewBarcode: fromNewBarcode, isP99: true);
-                Gensong_AutoWHFabric.Sent(true, tmpDetailTableF, this.strFunction, EnumStatus.Revise, EnumStatus.Unconfirm, fromNewBarcode: fromNewBarcode, isP99: true);
-                Vstrong_AutoWHAccessory.Sent(true, tmpDetailTableA, this.strFunction, EnumStatus.Revise, EnumStatus.Unconfirm, isP99: true);
+                Gensong_AutoWHFabric.Sent(true, tmpDetailTableF, this.strFunction, EnumStatus.Revise, EnumStatus.Confirm, fromNewBarcode: fromNewBarcode, isP99: true);
+                Vstrong_AutoWHAccessory.Sent(true, tmpDetailTableA, this.strFunction, EnumStatus.Revise, EnumStatus.Confirm, isP99: true);
 
                 // 將修改的資料存入Log
                 this.WriteInLog("Revise");
