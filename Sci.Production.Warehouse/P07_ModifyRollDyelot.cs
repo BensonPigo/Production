@@ -879,6 +879,7 @@ end
             }
 
             // PMS 更新之後,才執行WMS
+            Gensong_AutoWHFabric.Sent(false, detailTable, strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm);
             Gensong_AutoWHFabric.Sent(true, detailTable, strFunction, EnumStatus.Revise, EnumStatus.Confirm);
 
             #region 更新FIR,AIR資料
