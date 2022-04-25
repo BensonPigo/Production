@@ -89,7 +89,7 @@ namespace Sci.Production.Automation.LogicLayer
             string otherTables = string.Empty;
             string psd_FtyDt = Prgs.GetWHjoinPSD_Fty(detailTableName);
             string whereWMS = string.Empty;
-            int fromNewBarcodeBit = fromNewBarcode ? 1 : 0;
+            int fromNewBarcodeBit = 0; // 影響傳給廠商 Barcode. 欄位 先註解起來 // fromNewBarcode ? 1 : 0;
             string headerAlias = isP99 ? "sd." : "s.";
 
             if (statusAPI == EnumStatus.New)
@@ -192,7 +192,9 @@ and exists(
     ,[InvNo] = {headerAlias}InvNo
     ,[ETA] = null
     ,[WhseArrival] = {headerAlias}IssueDate
+    ,{headerAlias}IssueDate
     ,StockQty = sd.Qty
+    ,sd.Qty
     ,StockUnit = dbo.GetStockUnitBySPSeq(sd.POID, sd.Seq1, sd.Seq2)
     ,psd.PoUnit
     ,ShipQty = sd.Qty
@@ -359,7 +361,9 @@ outer apply (
     ,[InvNo] = {headerAlias}InvNo
     ,[ETA] = null
     ,[WhseArrival] = {headerAlias}IssueDate
+    ,{headerAlias}IssueDate
     ,StockQty = sd.Qty
+    ,sd.Qty
     ,StockUnit = dbo.GetStockUnitBySPSeq(sd.POID, sd.Seq1, sd.Seq2)
     ,[PoUnit] = ''
     ,ShipQty = 0.0
