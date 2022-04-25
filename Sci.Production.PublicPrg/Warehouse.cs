@@ -4251,7 +4251,7 @@ where w.[Function] = '{item.Function}'
 and w.TransactionID = '{item.TransactionID}'
 and w.TransactionUkey = '{item.TransactionUkey}'
 and w.Action = '{item.Action}'";
-                    item.UpdatethisItem = MyUtility.Check.Seek(sqlcmd, out DataRow drwHBarcodeTransaction);
+                    item.UpdatethisItem = MyUtility.Check.Seek(sqlcmd, out DataRow drwHBarcodeTransaction, "Production");
                     if (item.UpdatethisItem)
                     {
                         item.From_OldBarcode = MyUtility.Convert.GetString(drwHBarcodeTransaction["From_OldBarcode"]);
