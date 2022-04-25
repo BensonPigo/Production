@@ -738,6 +738,7 @@ WITH BreakdownByArticle as (
 		, Ukey
 		, Seq1,Seq2,Roll,Dyelot,StockType,Type
         , t.FabricType
+        , t.Issue_DetailUkey
 	FROM BreakdownByArticle t
 	GROUP BY SCIRefno
 		, Refno
@@ -761,6 +762,7 @@ WITH BreakdownByArticle as (
 		, Seq1,Seq2,Roll,Dyelot,StockType,Type
 		, Ttl_Qty
         , t.FabricType
+        , t.Issue_DetailUkey
 
 )
 
@@ -794,6 +796,7 @@ SELECt [Selected] = 0 --0
         , t.FabricType
         ,[WHCommandReason] = ''
 		,[WHCommandRemark] = ''
+        ,t.Issue_DetailUkey
 FROM final t
 OUTER APPLY(
 	SELECT [Qty]=ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty )) ,0)
