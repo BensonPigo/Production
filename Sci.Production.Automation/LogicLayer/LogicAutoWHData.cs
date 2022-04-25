@@ -41,17 +41,6 @@ namespace Sci.Production.Automation.LogicLayer
                     copyDetail.Columns["Issue_DetailUkey"].ColumnName = "Ukey";
                 }
 
-                // P99 欄位別名 Qty
-                if (detailTableName == WHTableName.Adjust_Detail)
-                {
-                    if (copyDetail.Columns.Contains("qtyAfter"))
-                    {
-                        copyDetail.Columns.Remove("qtyAfter");
-                    }
-
-                    copyDetail.Columns["qty"].ColumnName = "qtyAfter";
-                }
-
                 result = MyUtility.Tool.ProcessWithDatatable(copyDetail, string.Empty, sqlcmd, out dtMaster);
                 if (!result)
                 {
