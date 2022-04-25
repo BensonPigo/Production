@@ -88,6 +88,7 @@
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridDetail.ShowCellToolTips = false;
             this.gridDetail.Size = new System.Drawing.Size(692, 345);
             this.gridDetail.TabIndex = 10;
             this.gridDetail.TabStop = false;
@@ -300,6 +301,7 @@
             this.Controls.Add(this.panel3);
             this.EditMode = true;
             this.Name = "P10";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P10. Carton Transfer To Clog Input";
             this.Controls.SetChildIndex(this.panel3, 0);
             this.Controls.SetChildIndex(this.panel4, 0);
