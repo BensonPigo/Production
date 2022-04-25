@@ -3582,8 +3582,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                 }
 
                 // PMS 更新之後,才執行WMS. Gensong 那邊必須先 Unlock 才能 Revise. Revise 不用 isP99 參數 = true, 用 Ukey 重新撈數量. Delete 才要因為刪除後會找不到
-                // Vstrong Revise 之前必須先 UnLock
-                Vstrong_AutoWHAccessory.Sent(false, tmpDetailTableA, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm);
+                Gensong_AutoWHFabric.Sent(false, tmpDetailTableF, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, fromNewBarcode: fromNewBarcode);
                 Gensong_AutoWHFabric.Sent(true, tmpDetailTableF, this.strFunction, EnumStatus.Revise, EnumStatus.Confirm, fromNewBarcode: fromNewBarcode);
                 Vstrong_AutoWHAccessory.Sent(true, tmpDetailTableA, this.strFunction, EnumStatus.Revise, EnumStatus.Confirm);
 
