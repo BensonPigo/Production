@@ -2807,6 +2807,12 @@ and t1.Type='I'
 
                 DataTable detailTableToWMS = upd_list.Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).TryCopyToDataTable((DataTable)this.listControlBindingSource1.DataSource);
                 DataTable detailTable = upd_list.Where(w => !MyUtility.Check.Empty(w["diffQty"])).TryCopyToDataTable((DataTable)this.listControlBindingSource1.DataSource);
+                if (detailTable.Rows.Count == 0)
+                {
+                    MyUtility.Msg.WarningBox("Please revise new qty first.");
+                    return;
+                }
+
                 string upd_sql = string.Empty;
                 string chk_sql = string.Empty;
                 string upd_Fty_2T = string.Empty;
