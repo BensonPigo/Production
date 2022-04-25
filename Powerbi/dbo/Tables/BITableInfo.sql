@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[BITableInfo]
 (
 	[Id] VARCHAR(50) NOT NULL  DEFAULT (''), 
-    [TrasferDate] DATETIME NULL, 
+    [TransferDate] DATETIME NULL, 
     CONSTRAINT [PK_BITableInfo] PRIMARY KEY ([Id])
 )
 
@@ -22,4 +22,4 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1type = N'TABLE',
     @level1name = N'BITableInfo',
     @level2type = N'COLUMN',
-    @level2name = N'TrasferDate'
+    @level2name = N'TransferDate'
