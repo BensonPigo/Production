@@ -521,9 +521,14 @@ BEGIN
 					AND dbo.GetAccountNoExpressType(se.AccountID,'IsApp') = 1 
 			group by se.InvNo,se.AccountID
 
-			select	t.InvNo,[PackID] = pl.ID,t.AccountID,t.Amount,[PLSharedAmt] = Round(t.Amount / SUM(pl.GW) over(PARTITION BY t.InvNo,t.AccountID) * pl.GW,2)
+			select	t.InvNo,[PackID] = pl.ID,t.AccountID,t.Amount
+					,[PLSharedAmt] =  
+					case when s.ShareBase = 'G' then Round(t.Amount / SUM(pl.GW) over(PARTITION BY t.InvNo,t.AccountID) * pl.GW,2)
+						 when s.ShareBase = 'C' then Round(t.Amount / SUM(pl.NW) over(PARTITION BY t.InvNo,t.AccountID) * pl.NW,2)
+						 else Round(t.Amount / count(*) over(PARTITION BY t.InvNo,t.AccountID),2) end
 			into #PLSharedAmtStep1
 			from #InvNoSharedAmt t
+			inner join ShareExpense s on t.AccountID = s.AccountID and t.InvNo = s.InvNo and s.ShippingAPID = @APID
 			inner join PackingList pl with (nolock) on pl.INVNo = t.InvNo
 
 			select * ,[AccuPLSharedAmt] = SUM(PLSharedAmt) over(PARTITION BY InvNo,AccountID order BY InvNo,PackID,AccountID )

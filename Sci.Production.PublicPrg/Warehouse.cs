@@ -2215,6 +2215,51 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             upd_Fty_2T = UpdateFtyInventory_IO(2, null, true);
             #endregion 更新庫存數量 ftyinventory
 
+            var data_Fty_AA4T = (from m in dt.AsEnumerable()
+                               select new
+                               {
+                                   poid = m.Field<string>("frompoid"),
+                                   seq1 = m.Field<string>("fromseq1"),
+                                   seq2 = m.Field<string>("fromseq2"),
+                                   roll = m.Field<string>("fromroll"),
+                                   dyelot = m.Field<string>("fromdyelot"),
+                               }).ToList();
+
+            #region 判斷是否要沿用A倉的Lock狀態
+            string updateLocak = $@"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column roll varchar(15)
+alter table #TmpSource alter column dyelot varchar(8)
+
+select DISTINCT target.*
+into #tmpA
+from #TmpSource s
+inner join FtyInventory target on 
+target.poid = s.poid and target.seq1 = s.seq1 and target.seq2 = s.seq2  and target.roll = s.roll and target.dyelot = s.dyelot and target.stocktype = 'B'
+
+
+--ISP20220426，A to B倉的時候要根據mtlAutoLock判斷是否要沿用A倉的Lock狀態
+-- 因為在 upd_Fty_2T 目前沒有傳遞參數 mtlAutoLock，因此並不會異動到 B 倉的狀態， upd_Fty_2T 執行完後只需專注在 B 倉 Unlock + A 倉 Lock 的狀況即可
+UPDATE target
+SET target.Lock = 1
+    , target.LockName = '{Env.User.UserID}'
+    , target.LockDate = getdate()
+from FtyInventory target
+inner join #tmpA s on target.poid = s.poid 
+                        and target.seq1 = s.seq1 
+                        and target.seq2 = s.seq2 
+                        and target.roll = s.roll 
+                        and target.dyelot = s.dyelot 
+                        and target.StockType='I'
+where EXISTS(select 1 from System where mtlAutoLock =1 )
+      and (target.Lock = 0 and s.Lock = 1)
+
+DROP TABLE #TmpSource
+";
+            #endregion 更新庫存數量 ftyinventory
+
             TransactionScope transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
             DBProxy.Current.OpenConnection(null, out sqlConn);
@@ -2234,16 +2279,24 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_4T, string.Empty, upd_Fty_4T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         transactionscope.Dispose();
-                        MyUtility.Msg.ErrorBox(sqlcmd + result2.ToString());
+                        MyUtility.Msg.ErrorBox(upd_Fty_4T + result.ToString());
                         return false;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         transactionscope.Dispose();
-                        MyUtility.Msg.ErrorBox(sqlcmd + result2.ToString());
+                        MyUtility.Msg.ErrorBox(upd_Fty_2T + result.ToString());
                         return false;
                     }
+
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_AA4T, string.Empty, updateLocak, out resulttb, "#TmpSource", conn: sqlConn)))
+                    {
+                        transactionscope.Dispose();
+                        MyUtility.Msg.ErrorBox(updateLocak + result.ToString());
+                        return false;
+                    }
+
                     #endregion
 
                     #region MDivisionPoDetail
@@ -2268,7 +2321,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         transactionscope.Dispose();
-                        MyUtility.Msg.ErrorBox(sqlcmd + result2.ToString());
+                        MyUtility.Msg.ErrorBox(sqlupd3 + result.ToString());
                         return false;
                     }
 

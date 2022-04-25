@@ -158,7 +158,8 @@ namespace Sci.Production.Quality
 	MoistureStandard2,
 	MoistureStandard1_Comparison,
 	MoistureStandard2_Comparison,
-    a.CustInspNumber
+    a.CustInspNumber,
+    Complete = IIF(d.Complete=1,'Y','N')
 From FIR a WITH (NOLOCK) 
 Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
 Left join TransferIn ti WITH (NOLOCK) on ti.id = a.receivingid
@@ -490,6 +491,7 @@ and ActualYds > 0
                 .Text("name", header: "Color Name", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SuppEn", header: "Supplier", width: Widths.AnsiChars(21), iseditingreadonly: true)
                 .Numeric("ArriveQty", header: "Arrive Qty", width: Widths.AnsiChars(10), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
+                .Text("Complete", header: "Complete", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("weavetypeid", header: "Weave Type", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Date("InspDeadline", header: "Insp. Deadline", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Result", header: "Over all\n Result", width: Widths.AnsiChars(4), iseditingreadonly: true)

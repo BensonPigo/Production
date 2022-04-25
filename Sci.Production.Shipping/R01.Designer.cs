@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelShipper = new Sci.Win.UI.Label();
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelInvoiceDate = new Sci.Win.UI.Label();
@@ -56,6 +57,8 @@
             this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.label4 = new Sci.Win.UI.Label();
             this.dateDelivery = new Sci.Win.UI.DateRange();
+            this.label5 = new Sci.Win.UI.Label();
+            this.comboDropDownList1 = new Sci.Production.Class.ComboDropDownList(this.components);
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -122,7 +125,7 @@
             // 
             // labelShippingMode
             // 
-            this.labelShippingMode.Location = new System.Drawing.Point(13, 284);
+            this.labelShippingMode.Location = new System.Drawing.Point(13, 310);
             this.labelShippingMode.Name = "labelShippingMode";
             this.labelShippingMode.Size = new System.Drawing.Size(115, 23);
             this.labelShippingMode.TabIndex = 98;
@@ -130,7 +133,7 @@
             // 
             // labelShipmentTerm
             // 
-            this.labelShipmentTerm.Location = new System.Drawing.Point(13, 318);
+            this.labelShipmentTerm.Location = new System.Drawing.Point(13, 344);
             this.labelShipmentTerm.Name = "labelShipmentTerm";
             this.labelShipmentTerm.Size = new System.Drawing.Size(115, 23);
             this.labelShipmentTerm.TabIndex = 99;
@@ -138,7 +141,7 @@
             // 
             // labelDestination
             // 
-            this.labelDestination.Location = new System.Drawing.Point(13, 352);
+            this.labelDestination.Location = new System.Drawing.Point(13, 378);
             this.labelDestination.Name = "labelDestination";
             this.labelDestination.Size = new System.Drawing.Size(115, 23);
             this.labelDestination.TabIndex = 100;
@@ -146,7 +149,7 @@
             // 
             // labelStatus
             // 
-            this.labelStatus.Location = new System.Drawing.Point(13, 386);
+            this.labelStatus.Location = new System.Drawing.Point(13, 412);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(115, 23);
             this.labelStatus.TabIndex = 101;
@@ -154,7 +157,7 @@
             // 
             // labelReportType
             // 
-            this.labelReportType.Location = new System.Drawing.Point(13, 420);
+            this.labelReportType.Location = new System.Drawing.Point(13, 446);
             this.labelReportType.Name = "labelReportType";
             this.labelReportType.Size = new System.Drawing.Size(115, 23);
             this.labelReportType.TabIndex = 102;
@@ -222,7 +225,7 @@
             this.comboStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboStatus.FormattingEnabled = true;
             this.comboStatus.IsSupportUnselect = true;
-            this.comboStatus.Location = new System.Drawing.Point(135, 385);
+            this.comboStatus.Location = new System.Drawing.Point(135, 411);
             this.comboStatus.Name = "comboStatus";
             this.comboStatus.OldText = "";
             this.comboStatus.Size = new System.Drawing.Size(121, 24);
@@ -232,7 +235,7 @@
             // 
             this.radioPanel1.Controls.Add(this.radioDetailList);
             this.radioPanel1.Controls.Add(this.radioMainList);
-            this.radioPanel1.Location = new System.Drawing.Point(134, 422);
+            this.radioPanel1.Location = new System.Drawing.Point(134, 448);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(248, 31);
             this.radioPanel1.TabIndex = 13;
@@ -356,7 +359,7 @@
             // txtcountryDestination
             // 
             this.txtcountryDestination.DisplayBox1Binding = "";
-            this.txtcountryDestination.Location = new System.Drawing.Point(135, 352);
+            this.txtcountryDestination.Location = new System.Drawing.Point(135, 378);
             this.txtcountryDestination.Name = "txtcountryDestination";
             this.txtcountryDestination.Size = new System.Drawing.Size(232, 22);
             this.txtcountryDestination.TabIndex = 11;
@@ -366,7 +369,7 @@
             // 
             this.txtshiptermShipmentTerm.BackColor = System.Drawing.Color.White;
             this.txtshiptermShipmentTerm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtshiptermShipmentTerm.Location = new System.Drawing.Point(134, 318);
+            this.txtshiptermShipmentTerm.Location = new System.Drawing.Point(134, 344);
             this.txtshiptermShipmentTerm.Name = "txtshiptermShipmentTerm";
             this.txtshiptermShipmentTerm.Size = new System.Drawing.Size(50, 23);
             this.txtshiptermShipmentTerm.TabIndex = 10;
@@ -377,7 +380,7 @@
             this.txtshipmodeShippingMode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtshipmodeShippingMode.FormattingEnabled = true;
             this.txtshipmodeShippingMode.IsSupportUnselect = true;
-            this.txtshipmodeShippingMode.Location = new System.Drawing.Point(134, 283);
+            this.txtshipmodeShippingMode.Location = new System.Drawing.Point(134, 309);
             this.txtshipmodeShippingMode.Name = "txtshipmodeShippingMode";
             this.txtshipmodeShippingMode.OldText = "";
             this.txtshipmodeShippingMode.Size = new System.Drawing.Size(80, 24);
@@ -408,6 +411,7 @@
             // 
             this.dateDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
             this.dateDelivery.DateBox1.Name = "";
+            this.dateDelivery.DateBox1.ReadOnly = true;
             this.dateDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
             this.dateDelivery.DateBox1.TabIndex = 0;
             // 
@@ -415,6 +419,7 @@
             // 
             this.dateDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
             this.dateDelivery.DateBox2.Name = "";
+            this.dateDelivery.DateBox2.ReadOnly = true;
             this.dateDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateDelivery.DateBox2.TabIndex = 1;
             this.dateDelivery.IsRequired = false;
@@ -425,9 +430,33 @@
             this.dateDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateDelivery.TabIndex = 4;
             // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(13, 280);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(115, 23);
+            this.label5.TabIndex = 119;
+            this.label5.Text = "Category";
+            // 
+            // comboDropDownList1
+            // 
+            this.comboDropDownList1.AddAllItem = false;
+            this.comboDropDownList1.BackColor = System.Drawing.Color.White;
+            this.comboDropDownList1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDropDownList1.FormattingEnabled = true;
+            this.comboDropDownList1.IsSupportUnselect = true;
+            this.comboDropDownList1.Location = new System.Drawing.Point(134, 279);
+            this.comboDropDownList1.Name = "comboDropDownList1";
+            this.comboDropDownList1.OldText = "";
+            this.comboDropDownList1.Size = new System.Drawing.Size(153, 24);
+            this.comboDropDownList1.TabIndex = 120;
+            this.comboDropDownList1.Type = "Pms_GMT_Simple";
+            // 
             // R01
             // 
-            this.ClientSize = new System.Drawing.Size(584, 506);
+            this.ClientSize = new System.Drawing.Size(584, 545);
+            this.Controls.Add(this.comboDropDownList1);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.dateDelivery);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.dateConfirm);
@@ -491,6 +520,8 @@
             this.Controls.SetChildIndex(this.dateConfirm, 0);
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.dateDelivery, 0);
+            this.Controls.SetChildIndex(this.label5, 0);
+            this.Controls.SetChildIndex(this.comboDropDownList1, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -528,5 +559,7 @@
         private Win.UI.DateRange dateConfirm;
         private Win.UI.Label label4;
         private Win.UI.DateRange dateDelivery;
+        private Win.UI.Label label5;
+        private Class.ComboDropDownList comboDropDownList1;
     }
 }

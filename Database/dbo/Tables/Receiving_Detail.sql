@@ -36,6 +36,7 @@
     [ForInspection]     BIT             CONSTRAINT [DF_Receiving_Detail_ForInspection] DEFAULT ((0)) NOT NULL,
     [OneYardForWashing] BIT             CONSTRAINT [DF_Receiving_Detail_OneYardForWashing] DEFAULT ((0)) NOT NULL,
     [ContainerCode] NVARCHAR(100) NULL DEFAULT (''), 
+    [ExportDetailUkey] BIGINT NULL, 
     CONSTRAINT [PK_Receiving_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
