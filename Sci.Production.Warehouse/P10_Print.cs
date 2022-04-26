@@ -32,6 +32,21 @@ namespace Sci.Production.Warehouse
             this.DataRow = dataRow;
 
             this.ButtonEnable();
+
+            DataTable dtPMS_FabricQRCode_LabelSize;
+            DualResult result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_Fab_LabSize' order by Seq", out dtPMS_FabricQRCode_LabelSize);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.comboType.DisplayMember = "Name";
+            this.comboType.ValueMember = "ID";
+            this.comboType.DataSource = dtPMS_FabricQRCode_LabelSize;
+
+            this.comboType.SelectedValue = MyUtility.GetValue.Lookup("select PMS_FabricQRCode_LabelSize from system");
         }
 
         /// <inheritdoc/>
@@ -138,6 +153,92 @@ order by psd.Refno,isd.POID,isd.Roll
             return true;
         }
 
+        private DualResult LoadData(out DataTable dtBarcode)
+        {
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", SqlDbType.VarChar, size: this.drPrint["ID"].ToString().Length) { Value = this.drPrint["ID"] });
+
+            string sql = @"
+select  [Sel] = 0
+        ,isd.Roll
+	    ,isd.Dyelot
+	    ,isd.PoId
+	    ,isd.Seq1+'-'+isd.Seq2 AS SEQ
+	    ,[RefNo]=p.RefNo
+	    ,[Location] = Location.MtlLocationID
+	    ,[Weight] = isnull(rd.Weight, isnull(td.Weight, 0))
+	    ,[ActualWeight] = isnull(rd.ActualWeight, isnull(td.ActualWeight, 0))
+        ,fp.Inspector
+        ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd hh:mmtt')
+	    ,[MINDQRCode] = (select top 1 case  when    wbt.To_NewBarcodeSeq = '' then wbt.To_NewBarcode
+                                                when    wbt.To_NewBarcode = ''  then ''
+                                                else    Concat(wbt.To_NewBarcode, '-', wbt.To_NewBarcodeSeq)    end
+                             from   WHBarcodeTransaction wbt with (nolock)
+                             where  wbt.TransactionUkey = isd.Ukey and
+                                    wbt.Action = 'Confirm'
+                             order by CommitTime desc)
+	    ,[StockQty] = isd.Qty
+        ,o.FactoryID
+        ,fp.Remark
+	    ,[ColorID]=Color.Value 
+	    ,[FabricType] = case when p.FabricType = 'F' then 'Fabric'
+                             when p.FabricType = 'A' then 'Accessory'
+                             else 'Other' end
+from dbo.Issue_Detail isd WITH (NOLOCK) 
+LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = isd.POID and  p.SEQ1 = isd.Seq1 and P.seq2 = isd.Seq2 
+left join Ftyinventory  fi with (nolock) on    isd.POID = fi.POID and
+                                               isd.Seq1 = fi.Seq1 and
+                                               isd.Seq2 = fi.Seq2 and
+                                               isd.Roll = fi.Roll and
+                                               isd.Dyelot  = fi.Dyelot and
+                                               isd.StockType = fi.StockType
+left join Receiving_Detail rd with (nolock) on isd.POID = rd.POID and
+                                               isd.Seq1 = rd.Seq1 and
+                                               isd.Seq2 = rd.Seq2 and
+                                               isd.Roll = rd.Roll and
+                                               isd.Dyelot  = rd.Dyelot and
+                                               isd.StockType = rd.StockType
+left join TransferIn_Detail td with (nolock) on isd.POID = td.POID and
+                                               isd.Seq1 = td.Seq1 and
+                                               isd.Seq2 = td.Seq2 and
+                                               isd.Roll = td.Roll and
+                                               isd.Dyelot  = td.Dyelot and
+                                               isd.StockType = td.StockType
+left join View_WH_Orders o WITH (NOLOCK) on o.ID = isd.PoId
+LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
+LEFT JOIN color c on c.id = p.colorid and c.BrandId = p.BrandId 
+left join FIR with (nolock) on  FIR.POID = isd.POID and 
+                                FIR.Seq1 = isd.Seq1 and 
+                                FIR.Seq2 = isd.Seq2
+left join FIR_Physical fp with (nolock) on  fp.ID = FIR.ID and
+                                            fp.Roll = isd.Roll and
+                                            fp.Dyelot = isd.Dyelot
+OUTER APPLY(
+ SELECT [Value]=
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(p.SuppColor = '' or p.SuppColor is null, dbo.GetColorMultipleID(o.BrandID,p.ColorID),p.SuppColor)
+		 ELSE dbo.GetColorMultipleID(o.BrandID,p.ColorID)
+	 END
+)Color
+OUTER APPLY(
+	    SELECT [MtlLocationID] = STUFF(
+			    (
+			    SELECT DISTINCT IIF(fid.MtlLocationID IS NULL OR fid.MtlLocationID = '' ,'' , ','+fid.MtlLocationID)
+			    FROM FtyInventory_Detail fid
+			    WHERE fid.Ukey = fi.Ukey
+			    FOR XML PATH('') )
+			    , 1, 1, '')
+    )Location
+where isd.id = @ID";
+
+            DualResult result = DBProxy.Current.Select(
+                string.Empty,
+                sql,
+                pars,
+                out dtBarcode);
+
+            return result;
+        }
+
         /// <inheritdoc/>
         protected override bool ToPrint()
         {
@@ -146,7 +247,7 @@ order by psd.Refno,isd.POID,isd.Roll
                 return false;
             }
 
-            if (this.radioFabricSticker.Checked || this.radioTransferSlip.Checked)
+            if (this.radioFabricSticker.Checked || this.radioTransferSlip.Checked || this.radioQRCodeSticker.Checked)
             {
                 if (string.Compare(this.drPrint["Status"].ToString(), "Confirmed", true) != 0)
                 {
@@ -385,6 +486,22 @@ where t.id= @ID";
             if (this.radioRelaxationSticker.Checked)
             {
                 new P10_RelaxationSticker(this.drPrint["ID"].ToString()).ShowDialog();
+            }
+
+            if (this.radioQRCodeSticker.Checked)
+            {
+                DataTable dtBarcode;
+                DualResult result = this.LoadData(out dtBarcode);
+
+                var barcodeDatas = dtBarcode.AsEnumerable().Where(s => !MyUtility.Check.Empty(s["MINDQRCode"]));
+
+                if (barcodeDatas.Count() == 0)
+                {
+                    MyUtility.Msg.InfoBox("No Data can print");
+                    return true;
+                }
+
+                new P07_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboType.Text, "P10").ShowDialog();
             }
 
             return true;

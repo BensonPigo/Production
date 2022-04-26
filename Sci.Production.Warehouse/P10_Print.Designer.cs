@@ -33,6 +33,9 @@
             this.radioRelaxationSticker = new Sci.Win.UI.RadioButton();
             this.radioFabricsRelaxationLogsheet = new Sci.Win.UI.RadioButton();
             this.radioGroup1 = new Ict.Win.UI.RadioGroup();
+            this.radioQRCodeSticker = new Sci.Win.UI.RadioButton();
+            this.comboType = new Sci.Win.UI.ComboBox();
+            this.label2 = new Sci.Win.UI.Label();
             this.radioGroup1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -119,24 +122,63 @@
             // 
             // radioGroup1
             // 
+            this.radioGroup1.Controls.Add(this.comboType);
+            this.radioGroup1.Controls.Add(this.label2);
+            this.radioGroup1.Controls.Add(this.radioQRCodeSticker);
             this.radioGroup1.Controls.Add(this.radioFabricSticker);
             this.radioGroup1.Controls.Add(this.radioRelaxationSticker);
             this.radioGroup1.Controls.Add(this.radioTransferSlip);
             this.radioGroup1.Controls.Add(this.radioFabricsRelaxationLogsheet);
             this.radioGroup1.Location = new System.Drawing.Point(22, 5);
             this.radioGroup1.Name = "radioGroup1";
-            this.radioGroup1.Size = new System.Drawing.Size(266, 182);
+            this.radioGroup1.Size = new System.Drawing.Size(266, 219);
             this.radioGroup1.TabIndex = 95;
             this.radioGroup1.TabStop = false;
             this.radioGroup1.Value = "1";
             this.radioGroup1.ValueChanged += new System.EventHandler(this.RadioGroup1_ValueChanged);
             // 
+            // radioQRCodeSticker
+            // 
+            this.radioQRCodeSticker.AutoSize = true;
+            this.radioQRCodeSticker.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.radioQRCodeSticker.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioQRCodeSticker.Location = new System.Drawing.Point(17, 152);
+            this.radioQRCodeSticker.Name = "radioQRCodeSticker";
+            this.radioQRCodeSticker.Size = new System.Drawing.Size(189, 24);
+            this.radioQRCodeSticker.TabIndex = 9;
+            this.radioQRCodeSticker.Text = "Issue QR Code Sticker";
+            this.radioQRCodeSticker.UseVisualStyleBackColor = true;
+            this.radioQRCodeSticker.Value = "5";
+            // 
+            // comboType
+            // 
+            this.comboType.BackColor = System.Drawing.Color.White;
+            this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboType.FormattingEnabled = true;
+            this.comboType.IsSupportUnselect = true;
+            this.comboType.Location = new System.Drawing.Point(85, 182);
+            this.comboType.Name = "comboType";
+            this.comboType.OldText = "";
+            this.comboType.Size = new System.Drawing.Size(121, 24);
+            this.comboType.TabIndex = 11;
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.Location = new System.Drawing.Point(43, 183);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(39, 23);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "Type:";
+            this.label2.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // P10_Print
             // 
-            this.ClientSize = new System.Drawing.Size(448, 224);
+            this.ClientSize = new System.Drawing.Size(448, 249);
             this.Controls.Add(this.radioGroup1);
             this.Name = "P10_Print";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
+            this.Text = "() () ";
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.txtVersion, 0);
@@ -157,5 +199,8 @@
         private Win.UI.RadioButton radioRelaxationSticker;
         private Win.UI.RadioButton radioFabricsRelaxationLogsheet;
         private Ict.Win.UI.RadioGroup radioGroup1;
+        private Win.UI.RadioButton radioQRCodeSticker;
+        private Win.UI.ComboBox comboType;
+        private Win.UI.Label label2;
     }
 }
