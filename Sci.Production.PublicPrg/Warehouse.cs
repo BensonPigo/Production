@@ -3837,8 +3837,8 @@ left join FtyInventory fto with(nolock) on fto.POID = sd.ToPOID
                 case WHTableName.IssueLack_Detail:
                 case WHTableName.TransferOut_Detail:
                     columns += @"
-    ,lastBarcode = isnull(lastBarcode.To_NewBarcode, '')
-    ,lastBarcodeSeq = isnull(lastBarcode.To_NewBarcodeSeq, '')
+    ,lastBarcode = iif (isnull(lastBarcode.To_NewBarcode, '') = '', fbOri.Barcode, lastBarcode.To_NewBarcode)
+    ,lastBarcodeSeq = iif (isnull(lastBarcode.To_NewBarcodeSeq, '') = '', fbOri.BarcodeSeq, lastBarcode.To_NewBarcodeSeq)
 ";
                     othertables = @"
 outer apply(
@@ -3847,24 +3847,16 @@ outer apply(
 	where w.TransactionID = sd.id
 	and w.Action = 'Confirm'
 	and w.TransactionUkey = sd.ukey
-)lastBarcode";
-                    break;
-            }
-
-            if (isRevise)
-            {
-                columns += @"
-    ,fbOri.OldData_BarCode";
-                othertables += @"
+)lastBarcode
 outer apply(
-	select OldData_BarCode = iif(barcode like '%-%', SUBSTRING(barcode, 0, CHARINDEX('-', barcode, 0)), barcode)
-    from(
-        select barcode = MAX(barcode)
-	    from FtyInventory_Barcode fb
-	    where fb.Ukey = f.Ukey
-	    and fb.TransactionID = sd.Id
-    )x
+	select
+		Barcode = SUBSTRING(Barcode,0,CHARINDEX('-',Barcode,0)),
+		BarcodeSeq = SUBSTRING(Barcode,CHARINDEX('-',Barcode,0)+1,3)
+	from FtyInventory_Barcode t
+	where t.Ukey = f.Ukey
+	and t.TransactionID = sd.Id
 )fbOri";
+                    break;
             }
 
             DataTable dt;
@@ -4350,8 +4342,8 @@ and w.Action = '{item.Action}'";
                                 else
                                 {
                                     // 用舊資料 FtyInventory_BarCode (下方仍要更新 FtyInventory BarCode 使用)
-                                    item.From_NewBarcode = MyUtility.Convert.GetString(dr["OldData_BarCode"]);
-                                    item.From_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(MyUtility.Convert.GetString(dr["OldData_BarCode"]), wHBarcodeTransaction, "From");
+                                    item.From_NewBarcode = MyUtility.Convert.GetString(dr["lastBarcode"]);
+                                    item.From_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(MyUtility.Convert.GetString(dr["lastBarcode"]), wHBarcodeTransaction, "From");
                                 }
 
                                 UpdateSameFtyBarcode(dt, item, "From", "Barcode");
