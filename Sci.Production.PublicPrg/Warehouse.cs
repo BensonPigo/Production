@@ -3850,8 +3850,8 @@ outer apply(
 )lastBarcode
 outer apply(
 	select
-		Barcode = SUBSTRING(Barcode,0,CHARINDEX('-',Barcode,0)),
-		BarcodeSeq = SUBSTRING(Barcode,CHARINDEX('-',Barcode,0)+1,3)
+		Barcode = iif(Barcode like '%-%', SUBSTRING(Barcode,0,CHARINDEX('-',Barcode,0)), Barcode),
+		BarcodeSeq = iif(Barcode like '%-%', SUBSTRING(Barcode,CHARINDEX('-',Barcode,0)+1,3), '')
 	from FtyInventory_Barcode t
 	where t.Ukey = f.Ukey
 	and t.TransactionID = sd.Id
