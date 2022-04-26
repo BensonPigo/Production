@@ -3954,6 +3954,7 @@ and sd.Ukey in ({ukeys})
                         // InQty
                         case WHTableName.Receiving_Detail:
                         case WHTableName.TransferIn_Detail:
+                        case WHTableName.IssueReturn_Detail: // OutQty 的減項計算同 InQty
                             dr["balanceQty"] = ftydr["balanceQty"] = oriBalanceQty + (isConfirmed ? MyUtility.Convert.GetDecimal(deraildr[qty]) : -MyUtility.Convert.GetDecimal(deraildr[qty]));
                             break;
 
@@ -3963,7 +3964,6 @@ and sd.Ukey in ({ukeys})
                             break;
 
                         // OutQty
-                        case WHTableName.IssueReturn_Detail:
                         case WHTableName.Issue_Detail:
                         case WHTableName.IssueLack_Detail:
                         case WHTableName.TransferOut_Detail:
