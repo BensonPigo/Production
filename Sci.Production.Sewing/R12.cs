@@ -151,12 +151,12 @@ select pd.ID
 		, o1.FactoryID
 		, o1.StyleID
 		, oq.Seq
-		, DryRoomRecdDate = Max(o1.DryRoomRecdDate)
-		, MDScanDate = Max (pd.MDScanDate)
+		, DryRoomRecdDate = Max(dryR.AddDate)
+		, MDScanDate = Max (md.AddDate)
 		, DRYReceiveDate = Max (pd.DRYReceiveDate)
-		, DRYTransferDate = Max (pd.DRYTransferDate)
+		, DRYTransferDate = Max (dryT.AddDate)
 		, ScanEditDate = Max (pd.ScanEditDate)
-		, [LastCMPOutputDate] = LastCMPOutputDate.Value
+		, ClogReceive = MAX(cr.AddDate)
 into #PD_Detail
 from #Orders o with(nolock)
 inner join Orders o1 on o1.ID = o.ID
@@ -164,17 +164,14 @@ inner join PackingList_Detail pd with(nolock) on o.ID = pd.OrderID
 left join Order_QtyShip oq with(nolock) on pd.OrderID = oq.ID
                                             and pd.OrderShipmodeSeq = oq.Seq
 left JOIN Factory f WITH(NOLOCK) ON f.ID = o1.FactoryID
-OUTER APPLY(
-	SELECT [Value]=MAX(s.OutputDate)
-	FROM SewingOutput s WITH(NOLOCK)
-	INNER JOIN SewingOutput_Detail sd WITH(NOLOCK) ON s.ID=sd.ID
-	WHERE sd.OrderId = o1.ID AND sd.QAQty > 0
-)LastCMPOutputDate
+left join DRYReceive dryR WITH(NOLOCK) on dryR.OrderID = pd.OrderID and dryR.PackingListID = pd.ID and dryR.CTNStartNo = pd.CTNStartNo
+left join MDScan md WITH(NOLOCK) on md.OrderID = pd.OrderID and md.PackingListID = pd.ID and md.CTNStartNo = pd.CTNStartNo
+left join DRYTransfer dryT WITH(NOLOCK) on dryT.OrderID = pd.OrderID and dryT.PackingListID = pd.ID and dryT.CTNStartNo = pd.CTNStartNo
+left join ClogReceive cr WITH(NOLOCK) on cr.OrderID = pd.OrderID and cr.PackingListID = pd.ID and cr.CTNStartNo = pd.CTNStartNo
 group by pd.ID, pd.CtnStartNo, pd.OrderID, f.KPICode
 		, o1.FactoryID
 		, o1.StyleID
 		, oq.Seq
-		,LastCMPOutputDate.Value
 
 ----------------------------------------------------------------
 --- Detail
@@ -198,7 +195,7 @@ select
         ,pd.MDScanDate
         ,pd.DRYTransferDate
         ,pd.ScanEditDate
-        ,pd.LastCMPOutputDate
+        ,pd.ClogReceive
         ,[PackID] = pd.ID
 into #Detail
 from #Orders o with(nolock)
