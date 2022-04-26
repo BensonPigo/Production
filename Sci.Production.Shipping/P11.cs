@@ -401,21 +401,21 @@ drop table #tmpUnitPriceUSD
             if (dtPOList.Rows.Count > 0)
             {
                 List<CurrencyAMT> listCurrencyAMT = new List<CurrencyAMT>();
-                listCurrencyAMT.Add(new CurrencyAMT { Currency = "KHR", Amount = 0 });
+                listCurrencyAMT.Add(new CurrencyAMT { Currency = "PHP", Amount = 0 });
                 listCurrencyAMT.Add(new CurrencyAMT { Currency = "USD", Amount = 0 });
                 var currencyResult = dtPOList.AsEnumerable()
                     .GroupBy(s => string.Empty)
                     .Select(s => new
                     {
                         AmtUSD = s.Sum(groupItem => MyUtility.Convert.GetDecimal(groupItem["AmountUSD"])),
-                        AmtKHR = s.Sum(groupItem => MyUtility.Convert.GetDecimal(groupItem["AmountKHR"])),
+                        AmtKHR = s.Sum(groupItem => MyUtility.Convert.GetDecimal(groupItem["AmountPHP"])),
                     }).First();
 
                 foreach (CurrencyAMT itemCurrencyAMT in listCurrencyAMT)
                 {
                     switch (itemCurrencyAMT.Currency)
                     {
-                        case "KHR":
+                        case "PHP":
                             itemCurrencyAMT.Amount = currencyResult.AmtKHR;
                             break;
                         case "USD":

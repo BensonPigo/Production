@@ -50,6 +50,7 @@
             this.label8 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
             this.dateInvDate = new Sci.Win.UI.DateBox();
+            this.txtExVoucherID = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -68,6 +69,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtExVoucherID);
             this.masterpanel.Controls.Add(this.gridCurrency);
             this.masterpanel.Controls.Add(this.numDetailTotalQty);
             this.masterpanel.Controls.Add(this.btnImportGMTBooking);
@@ -86,7 +88,7 @@
             this.masterpanel.Controls.Add(this.label8);
             this.masterpanel.Controls.Add(this.label9);
             this.masterpanel.Controls.Add(this.dateInvDate);
-            this.masterpanel.Size = new System.Drawing.Size(1131, 202);
+            this.masterpanel.Size = new System.Drawing.Size(1177, 202);
             this.masterpanel.Controls.SetChildIndex(this.dateInvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label9, 0);
             this.masterpanel.Controls.SetChildIndex(this.label8, 0);
@@ -106,12 +108,13 @@
             this.masterpanel.Controls.SetChildIndex(this.numDetailTotalQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridCurrency, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtExVoucherID, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Controls.Add(this.panel4);
             this.detailpanel.Location = new System.Drawing.Point(0, 202);
-            this.detailpanel.Size = new System.Drawing.Size(1131, 428);
+            this.detailpanel.Size = new System.Drawing.Size(1177, 428);
             this.detailpanel.Controls.SetChildIndex(this.panel4, 0);
             this.detailpanel.Controls.SetChildIndex(this.detailgridcont, 0);
             // 
@@ -127,7 +130,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1131, 428);
+            this.detailgridcont.Size = new System.Drawing.Size(1177, 428);
             // 
             // detail2
             // 
@@ -143,24 +146,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1131, 668);
+            this.detail.Size = new System.Drawing.Size(1177, 668);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1131, 630);
+            this.detailcont.Size = new System.Drawing.Size(1177, 630);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 630);
-            this.detailbtm.Size = new System.Drawing.Size(1131, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1177, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(779, 524);
+            this.browse.Size = new System.Drawing.Size(1131, 668);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1139, 697);
+            this.tabs.Size = new System.Drawing.Size(1185, 697);
             // 
             // createby
             // 
@@ -180,7 +183,7 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel4.Location = new System.Drawing.Point(0, 0);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(1131, 428);
+            this.panel4.Size = new System.Drawing.Size(1177, 428);
             this.panel4.TabIndex = 5;
             // 
             // btnBatchApprove
@@ -206,7 +209,7 @@
             this.gridCurrency.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridCurrency.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridCurrency.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridCurrency.Location = new System.Drawing.Point(762, 52);
+            this.gridCurrency.Location = new System.Drawing.Point(796, 50);
             this.gridCurrency.Name = "gridCurrency";
             this.gridCurrency.ReadOnly = true;
             this.gridCurrency.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
@@ -223,7 +226,7 @@
             this.numDetailTotalQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numDetailTotalQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numDetailTotalQty.IsSupportEditMode = false;
-            this.numDetailTotalQty.Location = new System.Drawing.Point(413, 20);
+            this.numDetailTotalQty.Location = new System.Drawing.Point(445, 20);
             this.numDetailTotalQty.Name = "numDetailTotalQty";
             this.numDetailTotalQty.NullValue = new decimal(new int[] {
             0,
@@ -241,7 +244,7 @@
             // 
             // btnImportGMTBooking
             // 
-            this.btnImportGMTBooking.Location = new System.Drawing.Point(762, 151);
+            this.btnImportGMTBooking.Location = new System.Drawing.Point(796, 149);
             this.btnImportGMTBooking.Name = "btnImportGMTBooking";
             this.btnImportGMTBooking.Size = new System.Drawing.Size(290, 32);
             this.btnImportGMTBooking.TabIndex = 36;
@@ -256,7 +259,7 @@
             this.editRemark.Location = new System.Drawing.Point(150, 110);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(597, 73);
+            this.editRemark.Size = new System.Drawing.Size(629, 73);
             this.editRemark.TabIndex = 35;
             // 
             // btnExchangeRate
@@ -294,7 +297,7 @@
             this.displayApproveDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayApproveDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FINMgrApvDate", true));
             this.displayApproveDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayApproveDate.Location = new System.Drawing.Point(583, 80);
+            this.displayApproveDate.Location = new System.Drawing.Point(615, 80);
             this.displayApproveDate.Name = "displayApproveDate";
             this.displayApproveDate.Size = new System.Drawing.Size(164, 23);
             this.displayApproveDate.TabIndex = 31;
@@ -304,7 +307,7 @@
             this.displayApproveName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayApproveName.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FINMgrApvName", true));
             this.displayApproveName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayApproveName.Location = new System.Drawing.Point(413, 80);
+            this.displayApproveName.Location = new System.Drawing.Point(445, 80);
             this.displayApproveName.Name = "displayApproveName";
             this.displayApproveName.Size = new System.Drawing.Size(164, 23);
             this.displayApproveName.TabIndex = 30;
@@ -323,7 +326,7 @@
             // 
             this.lblStatus.BackColor = System.Drawing.Color.Transparent;
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold);
-            this.lblStatus.Location = new System.Drawing.Point(755, 13);
+            this.lblStatus.Location = new System.Drawing.Point(789, 11);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(345, 36);
             this.lblStatus.TabIndex = 28;
@@ -341,7 +344,7 @@
             // 
             this.label6.Location = new System.Drawing.Point(335, 80);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
+            this.label6.Size = new System.Drawing.Size(107, 23);
             this.label6.TabIndex = 26;
             this.label6.Text = "Approve";
             // 
@@ -349,15 +352,15 @@
             // 
             this.label5.Location = new System.Drawing.Point(335, 50);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
+            this.label5.Size = new System.Drawing.Size(107, 23);
             this.label5.TabIndex = 25;
-            this.label5.Text = "Handle";
+            this.label5.Text = "Ex Voucher No.";
             // 
             // label4
             // 
             this.label4.Location = new System.Drawing.Point(335, 20);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
+            this.label4.Size = new System.Drawing.Size(107, 23);
             this.label4.TabIndex = 24;
             this.label4.Text = "TTL Q\'ty";
             // 
@@ -394,10 +397,20 @@
             this.dateInvDate.TabIndex = 32;
             this.dateInvDate.Validating += new System.ComponentModel.CancelEventHandler(this.DateInvDate_Validating);
             // 
+            // txtExVoucherID
+            // 
+            this.txtExVoucherID.BackColor = System.Drawing.Color.White;
+            this.txtExVoucherID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ExVoucherID", true));
+            this.txtExVoucherID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtExVoucherID.Location = new System.Drawing.Point(445, 49);
+            this.txtExVoucherID.Name = "txtExVoucherID";
+            this.txtExVoucherID.Size = new System.Drawing.Size(130, 23);
+            this.txtExVoucherID.TabIndex = 39;
+            // 
             // P11
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1139, 730);
+            this.ClientSize = new System.Drawing.Size(1185, 730);
             this.Controls.Add(this.btnBatchApprove);
             this.GridAlias = "BIRInvoice_Detail";
             this.GridNew = 0;
@@ -456,5 +469,6 @@
         private Win.UI.Label label8;
         private Win.UI.Label label9;
         private Win.UI.DateBox dateInvDate;
+        private Win.UI.TextBox txtExVoucherID;
     }
 }
