@@ -39,24 +39,6 @@
             this.disExVoucherID = new Sci.Win.UI.DisplayBox();
             this.btnBatchApprove = new Sci.Win.UI.Button();
             this.txtbrand = new Sci.Production.Class.Txtbrand();
-            this.gridCurrency = new Sci.Win.UI.Grid();
-            this.numDetailTotalQty = new Sci.Win.UI.NumericBox();
-            this.btnImportGMTBooking = new Sci.Win.UI.Button();
-            this.editRemark = new Sci.Win.UI.EditBox();
-            this.btnExchangeRate = new Sci.Win.UI.Button();
-            this.numExchangeRate = new Sci.Win.UI.NumericBox();
-            this.displayApproveDate = new Sci.Win.UI.DisplayBox();
-            this.displayApproveName = new Sci.Win.UI.DisplayBox();
-            this.displayID = new Sci.Win.UI.DisplayBox();
-            this.lblStatus = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.dateInvDate = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -70,29 +52,10 @@
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridCurrency)).BeginInit();
             this.SuspendLayout();
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.gridCurrency);
-            this.masterpanel.Controls.Add(this.numDetailTotalQty);
-            this.masterpanel.Controls.Add(this.btnImportGMTBooking);
-            this.masterpanel.Controls.Add(this.editRemark);
-            this.masterpanel.Controls.Add(this.btnExchangeRate);
-            this.masterpanel.Controls.Add(this.numExchangeRate);
-            this.masterpanel.Controls.Add(this.displayApproveDate);
-            this.masterpanel.Controls.Add(this.displayApproveName);
-            this.masterpanel.Controls.Add(this.displayID);
-            this.masterpanel.Controls.Add(this.lblStatus);
-            this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.label8);
-            this.masterpanel.Controls.Add(this.label9);
-            this.masterpanel.Controls.Add(this.dateInvDate);
             this.masterpanel.Controls.Add(this.disExVoucherID);
             this.masterpanel.Controls.Add(this.lbExVoucherID);
             this.masterpanel.Controls.Add(this.txtbrand);
@@ -100,7 +63,7 @@
             this.masterpanel.Controls.Add(this.txtInvSerial);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(1202, 432);
+            this.masterpanel.Size = new System.Drawing.Size(779, 99);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -109,36 +72,18 @@
             this.masterpanel.Controls.SetChildIndex(this.txtbrand, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbExVoucherID, 0);
             this.masterpanel.Controls.SetChildIndex(this.disExVoucherID, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateInvDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.lblStatus, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayApproveName, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayApproveDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numExchangeRate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnExchangeRate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnImportGMTBooking, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numDetailTotalQty, 0);
-            this.masterpanel.Controls.SetChildIndex(this.gridCurrency, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Controls.Add(this.panel4);
-            this.detailpanel.Location = new System.Drawing.Point(0, 432);
-            this.detailpanel.Size = new System.Drawing.Size(1202, 147);
+            this.detailpanel.Location = new System.Drawing.Point(0, 99);
+            this.detailpanel.Size = new System.Drawing.Size(779, 387);
             this.detailpanel.Controls.SetChildIndex(this.panel4, 0);
             this.detailpanel.Controls.SetChildIndex(this.detailgridcont, 0);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(1094, 394);
+            this.gridicon.Location = new System.Drawing.Point(430, 63);
             this.gridicon.TabIndex = 1;
             // 
             // refresh
@@ -147,7 +92,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1202, 147);
+            this.detailgridcont.Size = new System.Drawing.Size(779, 387);
             // 
             // detail2
             // 
@@ -163,16 +108,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1202, 617);
+            this.detail.Size = new System.Drawing.Size(779, 524);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1202, 579);
+            this.detailcont.Size = new System.Drawing.Size(779, 486);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 579);
-            this.detailbtm.Size = new System.Drawing.Size(1202, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 486);
+            this.detailbtm.Size = new System.Drawing.Size(779, 38);
             // 
             // browse
             // 
@@ -180,7 +125,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1210, 646);
+            this.tabs.Size = new System.Drawing.Size(787, 553);
             // 
             // createby
             // 
@@ -200,12 +145,12 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel4.Location = new System.Drawing.Point(0, 0);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(1202, 147);
+            this.panel4.Size = new System.Drawing.Size(779, 387);
             this.panel4.TabIndex = 5;
             // 
             // btnimport
             // 
-            this.btnimport.Location = new System.Drawing.Point(583, 387);
+            this.btnimport.Location = new System.Drawing.Point(284, 63);
             this.btnimport.Name = "btnimport";
             this.btnimport.Size = new System.Drawing.Size(80, 30);
             this.btnimport.TabIndex = 9;
@@ -218,14 +163,14 @@
             this.txtInvSerial.BackColor = System.Drawing.Color.White;
             this.txtInvSerial.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "InvSerial", true));
             this.txtInvSerial.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtInvSerial.Location = new System.Drawing.Point(423, 333);
+            this.txtInvSerial.Location = new System.Drawing.Point(124, 9);
             this.txtInvSerial.Name = "txtInvSerial";
             this.txtInvSerial.Size = new System.Drawing.Size(100, 23);
             this.txtInvSerial.TabIndex = 8;
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(313, 364);
+            this.label2.Location = new System.Drawing.Point(14, 40);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(107, 23);
             this.label2.TabIndex = 7;
@@ -233,7 +178,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(313, 333);
+            this.label1.Location = new System.Drawing.Point(14, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(107, 23);
             this.label1.TabIndex = 6;
@@ -241,7 +186,7 @@
             // 
             // lbExVoucherID
             // 
-            this.lbExVoucherID.Location = new System.Drawing.Point(313, 394);
+            this.lbExVoucherID.Location = new System.Drawing.Point(14, 70);
             this.lbExVoucherID.Name = "lbExVoucherID";
             this.lbExVoucherID.Size = new System.Drawing.Size(107, 23);
             this.lbExVoucherID.TabIndex = 12;
@@ -251,7 +196,7 @@
             // 
             this.disExVoucherID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disExVoucherID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disExVoucherID.Location = new System.Drawing.Point(423, 394);
+            this.disExVoucherID.Location = new System.Drawing.Point(124, 70);
             this.disExVoucherID.Name = "disExVoucherID";
             this.disExVoucherID.Size = new System.Drawing.Size(153, 23);
             this.disExVoucherID.TabIndex = 13;
@@ -272,226 +217,20 @@
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(423, 364);
+            this.txtbrand.Location = new System.Drawing.Point(124, 40);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
             this.txtbrand.TabIndex = 11;
             // 
-            // gridCurrency
-            // 
-            this.gridCurrency.AllowUserToAddRows = false;
-            this.gridCurrency.AllowUserToDeleteRows = false;
-            this.gridCurrency.AllowUserToResizeRows = false;
-            this.gridCurrency.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridCurrency.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridCurrency.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridCurrency.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridCurrency.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridCurrency.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridCurrency.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridCurrency.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridCurrency.Location = new System.Drawing.Point(764, 43);
-            this.gridCurrency.Name = "gridCurrency";
-            this.gridCurrency.ReadOnly = true;
-            this.gridCurrency.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridCurrency.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridCurrency.RowTemplate.Height = 24;
-            this.gridCurrency.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridCurrency.ShowCellToolTips = false;
-            this.gridCurrency.Size = new System.Drawing.Size(338, 93);
-            this.gridCurrency.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
-            this.gridCurrency.TabIndex = 38;
-            // 
-            // numDetailTotalQty
-            // 
-            this.numDetailTotalQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numDetailTotalQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numDetailTotalQty.IsSupportEditMode = false;
-            this.numDetailTotalQty.Location = new System.Drawing.Point(415, 11);
-            this.numDetailTotalQty.Name = "numDetailTotalQty";
-            this.numDetailTotalQty.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numDetailTotalQty.ReadOnly = true;
-            this.numDetailTotalQty.Size = new System.Drawing.Size(130, 23);
-            this.numDetailTotalQty.TabIndex = 37;
-            this.numDetailTotalQty.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // btnImportGMTBooking
-            // 
-            this.btnImportGMTBooking.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnImportGMTBooking.Location = new System.Drawing.Point(764, 142);
-            this.btnImportGMTBooking.Name = "btnImportGMTBooking";
-            this.btnImportGMTBooking.Size = new System.Drawing.Size(290, 30);
-            this.btnImportGMTBooking.TabIndex = 36;
-            this.btnImportGMTBooking.Text = "Import Garment Booking";
-            this.btnImportGMTBooking.UseVisualStyleBackColor = true;
-            // 
-            // editRemark
-            // 
-            this.editRemark.BackColor = System.Drawing.Color.White;
-            this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
-            this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(152, 101);
-            this.editRemark.Multiline = true;
-            this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(597, 73);
-            this.editRemark.TabIndex = 35;
-            // 
-            // btnExchangeRate
-            // 
-            this.btnExchangeRate.Location = new System.Drawing.Point(284, 67);
-            this.btnExchangeRate.Name = "btnExchangeRate";
-            this.btnExchangeRate.Size = new System.Drawing.Size(32, 30);
-            this.btnExchangeRate.TabIndex = 34;
-            this.btnExchangeRate.Text = "...";
-            this.btnExchangeRate.UseVisualStyleBackColor = true;
-            // 
-            // numExchangeRate
-            // 
-            this.numExchangeRate.BackColor = System.Drawing.Color.White;
-            this.numExchangeRate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ExchangeRate", true));
-            this.numExchangeRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numExchangeRate.Location = new System.Drawing.Point(152, 71);
-            this.numExchangeRate.Name = "numExchangeRate";
-            this.numExchangeRate.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numExchangeRate.Size = new System.Drawing.Size(130, 23);
-            this.numExchangeRate.TabIndex = 33;
-            this.numExchangeRate.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // displayApproveDate
-            // 
-            this.displayApproveDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayApproveDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FINMgrApvDate", true));
-            this.displayApproveDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayApproveDate.Location = new System.Drawing.Point(585, 71);
-            this.displayApproveDate.Name = "displayApproveDate";
-            this.displayApproveDate.Size = new System.Drawing.Size(164, 23);
-            this.displayApproveDate.TabIndex = 31;
-            // 
-            // displayApproveName
-            // 
-            this.displayApproveName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayApproveName.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FINMgrApvName", true));
-            this.displayApproveName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayApproveName.Location = new System.Drawing.Point(415, 71);
-            this.displayApproveName.Name = "displayApproveName";
-            this.displayApproveName.Size = new System.Drawing.Size(164, 23);
-            this.displayApproveName.TabIndex = 30;
-            // 
-            // displayID
-            // 
-            this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayID.Location = new System.Drawing.Point(152, 11);
-            this.displayID.Name = "displayID";
-            this.displayID.Size = new System.Drawing.Size(164, 23);
-            this.displayID.TabIndex = 29;
-            // 
-            // lblStatus
-            // 
-            this.lblStatus.BackColor = System.Drawing.Color.Transparent;
-            this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold);
-            this.lblStatus.Location = new System.Drawing.Point(757, 4);
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(345, 36);
-            this.lblStatus.TabIndex = 28;
-            this.lblStatus.TextStyle.Color = System.Drawing.Color.Red;
-            // 
-            // label7
-            // 
-            this.label7.Location = new System.Drawing.Point(32, 101);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(117, 23);
-            this.label7.TabIndex = 27;
-            this.label7.Text = "Remark";
-            // 
-            // label6
-            // 
-            this.label6.Location = new System.Drawing.Point(337, 71);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
-            this.label6.TabIndex = 26;
-            this.label6.Text = "Approve";
-            // 
-            // label5
-            // 
-            this.label5.Location = new System.Drawing.Point(337, 41);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 25;
-            this.label5.Text = "Handle";
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(337, 11);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 24;
-            this.label4.Text = "TTL Q\'ty";
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(32, 71);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(117, 23);
-            this.label3.TabIndex = 23;
-            this.label3.Text = "Exchange Rate";
-            // 
-            // label8
-            // 
-            this.label8.Location = new System.Drawing.Point(32, 41);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(117, 23);
-            this.label8.TabIndex = 22;
-            this.label8.Text = "BIR Invoice Date";
-            // 
-            // label9
-            // 
-            this.label9.Location = new System.Drawing.Point(32, 11);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(117, 23);
-            this.label9.TabIndex = 21;
-            this.label9.Text = "BIR Invoice No.";
-            // 
-            // dateInvDate
-            // 
-            this.dateInvDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "InvDate", true));
-            this.dateInvDate.Location = new System.Drawing.Point(152, 41);
-            this.dateInvDate.Name = "dateInvDate";
-            this.dateInvDate.Size = new System.Drawing.Size(130, 23);
-            this.dateInvDate.TabIndex = 32;
-            // 
             // P11
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1210, 679);
+            this.ClientSize = new System.Drawing.Size(787, 586);
             this.Controls.Add(this.btnBatchApprove);
             this.GridAlias = "GMTBooking";
             this.GridNew = 0;
             this.IsSupportClip = false;
-            this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
-            this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.KeyField2 = "BIRID";
             this.Name = "P11";
@@ -517,7 +256,6 @@
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridCurrency)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -534,23 +272,5 @@
         private Win.UI.DisplayBox disExVoucherID;
         private Win.UI.Label lbExVoucherID;
         private Win.UI.Button btnBatchApprove;
-        private Win.UI.Grid gridCurrency;
-        private Win.UI.NumericBox numDetailTotalQty;
-        private Win.UI.Button btnImportGMTBooking;
-        private Win.UI.EditBox editRemark;
-        private Win.UI.Button btnExchangeRate;
-        private Win.UI.NumericBox numExchangeRate;
-        private Win.UI.DisplayBox displayApproveDate;
-        private Win.UI.DisplayBox displayApproveName;
-        private Win.UI.DisplayBox displayID;
-        private Win.UI.Label lblStatus;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label8;
-        private Win.UI.Label label9;
-        private Win.UI.DateBox dateInvDate;
     }
 }
