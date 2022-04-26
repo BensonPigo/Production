@@ -140,6 +140,7 @@ outer apply(
 			and i.Status in ('Pass', 'Fixed') 
 ) i
 where 1 = 1
+and o.Category in ('B','G')
         {0}
 
 select pd.ID
