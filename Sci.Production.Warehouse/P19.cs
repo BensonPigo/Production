@@ -543,9 +543,9 @@ StockQty
 )
 select  t.TransferExport_DetailUkey,
         t.TransferExportID,
-        t.POID,
-        t.Seq1,
-        t.Seq2,
+        ted.POID,
+        ted.Seq1,
+        ted.Seq2,
         t.Roll,
         t.Dyelot,
         isnull(dbo.GetUnitQty(psdInv.StockUnit, ted.UnitID, t.Qty), 0),
