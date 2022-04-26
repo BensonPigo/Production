@@ -3875,7 +3875,7 @@ and exists(
                                             Stocktype = m.First().Field<string>("stocktype"),
                                             Roll = m.First().Field<string>("roll"),
                                             Dyelot = m.First().Field<string>("Dyelot"),
-                                            Qty = -m.Sum(w => w.Field<decimal>("Old_Qty")),
+                                            Qty = this.strFunction == "P17" ? m.Sum(w => w.Field<decimal>("Old_Qty")) : -m.Sum(w => w.Field<decimal>("Old_Qty")),
                                         }).ToList();
 
                         var bs1_v2 = (from b in upd_list.CopyToDataTable().AsEnumerable()
@@ -3893,7 +3893,7 @@ and exists(
                                           Seq1 = m.First().Field<string>("seq1"),
                                           Seq2 = m.First().Field<string>("seq2"),
                                           Stocktype = m.First().Field<string>("stocktype"),
-                                          Qty = -m.Sum(w => w.Field<decimal>("Old_Qty")),
+                                          Qty = this.strFunction == "P17" ? m.Sum(w => w.Field<decimal>("Old_Qty")) : -m.Sum(w => w.Field<decimal>("Old_Qty")),
                                       }).ToList();
                         StringBuilder sqlupd2_B_v2 = new StringBuilder();
                         sqlupd2_B_v2.Append(Prgs.UpdateMPoDetail_P99(4, false));
