@@ -179,7 +179,7 @@ select  [Sel] = 0
                              order by CommitTime desc)
 	    ,[StockQty] = isd.Qty
         ,o.FactoryID
-        ,fp.Remark
+        ,[FirRemark] = fp.Remark
 	    ,[ColorID]=Color.Value 
 	    ,[FabricType] = case when p.FabricType = 'F' then 'Fabric'
                              when p.FabricType = 'A' then 'Accessory'

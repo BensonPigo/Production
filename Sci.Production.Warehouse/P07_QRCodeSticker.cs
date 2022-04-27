@@ -166,7 +166,7 @@ namespace Sci.Production.Warehouse
                         tables.Cell(5, 5).Range.Text = printItem["Dyelot"].ToString();
                         tables.Cell(6, 3).Range.Text = printItem["StockQty"].ToString();
                         tables.Cell(6, 5).Range.Text = printItem["ColorID"].ToString();
-                        tables.Cell(7, 2).Range.Text = printItem["Remark"].ToString();
+                        tables.Cell(7, 2).Range.Text = printItem["FirRemark"].ToString();
                         i++;
                     }
 

@@ -59,12 +59,6 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (this.radioQRCodeSticker.Checked && this.curMain["Status"].ToString() != "Confirmed")
-            {
-                MyUtility.Msg.WarningBox("Data is not confirmed, cannot print.");
-                return false;
-            }
-
             if (this.ReportResourceName == "P07_Report2.rdlc")
             {
                 if (!MyUtility.Check.Empty(this.txtSPNo.Text) && !this.poidList.Contains(this.txtSPNo.Text.TrimEnd(), StringComparer.OrdinalIgnoreCase))
@@ -75,6 +69,7 @@ namespace Sci.Production.Warehouse
             }
 
             this.id = this.CurrentDataRow["ID"].ToString();
+
             return base.ValidateInput();
         }
 
@@ -235,7 +230,7 @@ select
     ,fp.Inspector
     ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd hh:mmtt')
     ,o.FactoryID
-    ,fp.Remark
+    ,[FirRemark] = fp.Remark
 from dbo.Receiving_Detail R WITH (NOLOCK) 
 LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
 left join Ftyinventory  fi with (nolock) on    R.POID = fi.POID and
@@ -421,6 +416,12 @@ where R.id = @ID";
             if (!this.radioQRCodeSticker.Checked)
             {
                 return base.ToPrint();
+            }
+
+            if (this.radioQRCodeSticker.Checked && this.curMain["Status"].ToString() != "Confirmed")
+            {
+                MyUtility.Msg.WarningBox("Data is not confirmed, cannot print.");
+                return false;
             }
 
             this.ValidateInput();
