@@ -63,6 +63,7 @@ o.BuyerDelivery,
 pd.Remark,
 pd.TransferDate,
 pd.DRYReceiveDate,
+pd.PackErrTransferDate,
 pu.Status,
 pd.SCICtnNo
 from  Orders o with (nolock)
@@ -126,6 +127,7 @@ o.BuyerDelivery,
 pd.Remark,
 pd.TransferDate,
 pd.DRYReceiveDate,
+pd.PackErrTransferDate,
 pu.Status,
 pd.SCICtnNo
 from  Orders o with (nolock)
@@ -245,6 +247,7 @@ o.BuyerDelivery,
 pd.Remark,
 pd.TransferDate,
 pd.DRYReceiveDate,
+pd.PackErrTransferDate,
 pu.Status,
 pd.SCICtnNo
 from  (select * from PackingList_Detail with (nolock) where {keyWhere} and CTNQty = 1 and DisposeFromClog = 0) pd
@@ -260,25 +263,32 @@ where	pd.CTNStartNo != '' and
             packDataResult.result = false;
             if (checkBarcode == false)
             {
-                packDataResult.errMsg = $"<CNT#:{packNo}> does not exist!";
+                packDataResult.errMsg = $"<CTN#:{packNo}> does not exist!";
+                packDataResult.result = true;
                 return packDataResult;
             }
 
             if (!MyUtility.Check.Empty(packDataResult.Dr["TransferDate"]))
             {
-                packDataResult.errMsg = $"<CNT#:{packNo}> has been transferred to Clog!";
+                packDataResult.errMsg = $"<CTN#:{packNo}> has been transferred to Clog!";
+                return packDataResult;
+            }
+
+            if (!MyUtility.Check.Empty(packDataResult.Dr["PackErrTransferDate"]))
+            {
+                packDataResult.errMsg = $"<CTN#:{packNo}> has Packing Error Transfer Date!";
                 return packDataResult;
             }
 
             if (!MyUtility.Check.Empty(packDataResult.Dr["DRYReceiveDate"]))
             {
-                packDataResult.errMsg = $"<CNT#:{packNo}> This CTN# Dehumidifying Room has been received.";
+                packDataResult.errMsg = $"<CTN#:{packNo}> This CTN# Dehumidifying Room has been received.";
                 return packDataResult;
             }
 
             if (packDataResult.Dr["Status"].Equals("Confirmed") || packDataResult.Dr["Status"].Equals("Locked"))
             {
-                packDataResult.errMsg = $"<CNT#:{packNo}> Already pullout!";
+                packDataResult.errMsg = $"<CTN#:{packNo}> Already pullout!";
                 return packDataResult;
             }
 
@@ -312,6 +322,7 @@ where	pd.CTNStartNo != '' and
                         DataTable tmpDetail = this.dtReceive.Clone();
                         PackDataResult packDataResult = new PackDataResult();
                         string packNo = string.Empty;
+                        string strErrorList = string.Empty;
                         reader.DiscardBufferedData();
                         reader.BaseStream.Seek(0, SeekOrigin.Begin);
 
@@ -340,18 +351,27 @@ where	pd.CTNStartNo != '' and
 
                                 // 檢查PackingList_Detail.ID + PackingList_Detail.CustCTN
                                 packDataResult = this.GetPackData(packNo, false);
-                                if (packDataResult.result == true)
+                                if (packDataResult.result == true && MyUtility.Check.Empty(packDataResult.errMsg))
                                 {
                                     tmpDetail.Rows.Add(packDataResult.Dr.ItemArray);
+                                    continue;
+                                }
+                                else if (packDataResult.result == false)
+                                {
+                                    strErrorList += packDataResult.errMsg + Environment.NewLine;
                                     continue;
                                 }
 
                                 // 檢查PackingList_Detail.CustCTN
                                 packDataResult = this.GetPackData(packNo, true);
-                                if (packDataResult.result == true)
+                                if (packDataResult.result == true && MyUtility.Check.Empty(packDataResult.errMsg))
                                 {
                                     tmpDetail.Rows.Add(packDataResult.Dr.ItemArray);
                                     continue;
+                                }
+                                else
+                                {
+                                    strErrorList += packDataResult.errMsg + Environment.NewLine;
                                 }
                             }
                         }
@@ -360,6 +380,11 @@ where	pd.CTNStartNo != '' and
                         tmpDetail.Merge(this.dtReceive);
                         this.dtReceive = tmpDetail;
                         this.gridReceive.DataSource = this.dtReceive;
+
+                        if (!MyUtility.Check.Empty(strErrorList))
+                        {
+                            MyUtility.Msg.WarningBox("Below CTN# has been transferred to Clog!" + Environment.NewLine + strErrorList);
+                        }
                     }
                     catch (Exception err)
                     {

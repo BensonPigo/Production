@@ -416,6 +416,11 @@ and pd.DisposeFromClog= 0",
                                         dr["Remark"] = dr["Remark"] + "This carton does not exist Clog!";
                                     }
 
+                                    if (!MyUtility.Check.Empty(seekData["CFAReturnClogDate"]))
+                                    {
+                                        dr["Remark"] = dr["Remark"] + "This carton has CFA Return Clog Date!";
+                                    }
+
                                     if (seekData["MDivisionID"].ToString().ToUpper() != Env.User.Keyword)
                                     {
                                         dr["Remark"] = dr["Remark"] + "The order's M is not equal to login M.";
@@ -506,6 +511,11 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                         if (!(MyUtility.Check.Empty(seekData["TransferCFADate"]) && !MyUtility.Check.Empty(seekData["ReceiveDate"]) && MyUtility.Check.Empty(seekData["CFAReturnClogDate"])))
                                         {
                                             dr["Remark"] = dr["Remark"] + "This carton does not exist Clog!";
+                                        }
+
+                                        if (!MyUtility.Check.Empty(seekData["CFAReturnClogDate"]))
+                                        {
+                                            dr["Remark"] = dr["Remark"] + "This carton has CFA Return Clog Date!";
                                         }
 
                                         if (seekData["MDivisionID"].ToString().ToUpper() != Env.User.Keyword)
@@ -617,6 +627,11 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                         dr["Remark"] = dr["Remark"] + "This carton does not exist Clog!";
                                     }
 
+                                    if (!MyUtility.Check.Empty(seekData["CFAReturnClogDate"]))
+                                    {
+                                        dr["Remark"] = dr["Remark"] + "This carton has CFA Return Clog Date!";
+                                    }
+
                                     if (seekData["MDivisionID"].ToString().ToUpper() != Env.User.Keyword)
                                     {
                                         dr["Remark"] = dr["Remark"] + "The order's M is not equal to login M.";
@@ -712,7 +727,13 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
 
                 if (!(MyUtility.Check.Empty(dr["TransferCFADate"]) && !MyUtility.Check.Empty(dr["ReceiveDate"]) && MyUtility.Check.Empty(dr["CFAReturnClogDate"])))
                 {
-                    MyUtility.Msg.WarningBox($@"<CNT#:{dr["PackingListID"]}{dr["CTNStartNo"]}> does not exist Clog!");
+                    MyUtility.Msg.WarningBox($@"<CTN#:{dr["PackingListID"]}{dr["CTNStartNo"]}> does not exist Clog!");
+                    return;
+                }
+
+                if (!MyUtility.Check.Empty(dr["CFAReturnClogDate"]))
+                {
+                    MyUtility.Msg.WarningBox($@"<CTN#:{dr["PackingListID"]}> has CFA Return Clog Date!");
                     return;
                 }
             }
@@ -761,6 +782,8 @@ set TransferDate = null
 , ScanName = ''
 , Lacking = 0
 , ActCTNWeight = null
+, DRYReceiveDate  = null
+, DRYTransferDate = null
 from PackingList_Detail pd
 inner join #tmp t on pd.ID = t.PackingListID and pd.CTNStartNo = t.CTNStartNo 
 where pd.DisposeFromClog= 0 ;

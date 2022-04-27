@@ -584,11 +584,20 @@ drop table #tmp
 where	pd.CTNStartNo <> '' 
 		and p.MDivisionID = '{Env.User.Keyword}' 
 		and p.Type in ('B','L') 
-		and pd.TransferDate is null
-        and pd.DisposeFromClog= 0
-		and pd.PackErrTransferDate is null 
+        and pd.DisposeFromClog= 0		
 		and (pu.Status = 'New' or pu.Status is null) 
         and pd.CTNQty = 1
+        and (
+		        [PackErrTransferDate] is null and 
+		        [TransferDate] is null and 
+		        (	
+			        [DRYReceiveDate] is null or 
+			        (
+                        [DRYReceiveDate] is not null and 
+			            [DRYTransferDate] is not null
+                    )
+		        )
+	        )
         {sqlWhere}
 order by pd.ID,pd.Seq
 ";
