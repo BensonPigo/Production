@@ -159,7 +159,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1131, 668);
+            this.browse.Size = new System.Drawing.Size(1177, 668);
             // 
             // tabs
             // 
@@ -295,7 +295,7 @@
             // displayApproveDate
             // 
             this.displayApproveDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayApproveDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FINMgrApvDate", true));
+            this.displayApproveDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ApproveDate", true));
             this.displayApproveDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayApproveDate.Location = new System.Drawing.Point(615, 80);
             this.displayApproveDate.Name = "displayApproveDate";
@@ -305,7 +305,7 @@
             // displayApproveName
             // 
             this.displayApproveName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayApproveName.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FINMgrApvName", true));
+            this.displayApproveName.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Approve", true));
             this.displayApproveName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayApproveName.Location = new System.Drawing.Point(445, 80);
             this.displayApproveName.Name = "displayApproveName";

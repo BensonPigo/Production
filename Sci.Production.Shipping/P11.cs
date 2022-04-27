@@ -27,13 +27,42 @@ namespace Sci.Production.Shipping
             this.InitializeComponent();
         }
 
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        {
+            string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
+            this.DetailSelectCommand = $@"
+select  kd.*,
+        GB.ETD,
+        GB.ETA,
+        GB.TotalShipQty
+from BIRInvoice_Detail kd
+left join GMTBooking GB with (nolock) on kd.InvNo = GB.ID
+where kd.id = '{masterID}'
+";
+            return base.OnDetailSelectCommandPrepare(e);
+        }
+
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
 
+            this.Helper.Controls.Grid.Generator(this.gridCurrency)
+                .Text("Currency", header: "Currency", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(15), iseditingreadonly: true);
+
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("ID", header: "Garment Booking", width: Widths.AnsiChars(30))
+            .Numeric("No", header: "No.", width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("InvNo", header: "PO#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("StyleID", header: "Style No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Numeric("ShipQty", header: "Q'ty", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Numeric("UnitPriceUSD", header: "Unit Price (USD)", width: Widths.AnsiChars(10), integer_places: 9, decimal_places: 3, iseditingreadonly: true)
+            .Numeric("AmountUSD", header: "Amount(USD)", width: Widths.AnsiChars(15), integer_places: 12, decimal_places: 3, iseditingreadonly: true)
+            .Numeric("UnitPricePHP", header: "Unit Price (PHP)", width: Widths.AnsiChars(10), integer_places: 9, decimal_places: 3, iseditingreadonly: true)
+            .Numeric("AmountPHP", header: "Amount(PHP)", width: Widths.AnsiChars(15), integer_places: 12, decimal_places: 3, iseditingreadonly: true)
             ;
         }
 
@@ -50,23 +79,34 @@ namespace Sci.Production.Shipping
         {
             if (this.DetailDatas.Count == 0)
             {
-                MyUtility.Msg.WarningBox("Garment Booking cannot be empty !");
+                MyUtility.Msg.WarningBox("Detail no data");
                 return false;
             }
 
-            List<string> ls = new List<string>();
-            foreach (DataRow dr in this.DetailDatas)
+            string whereInvNo = this.DetailDatas.Select(s => $"'{s["InvNo"]}'").JoinToString(",");
+
+            string sqlCheckInvoice = $@"
+select  bd.ID as [CMT Invoice No.],
+        bd.InvNo as [GB#],
+        gb.ETD as [On Board Date],
+        gb.ETA as [ETA]
+from BIRInvoice_Detail bd with (nolock)
+left join GMTBooking gb with (nolock) on gb.ID = bd.InvNo
+where   bd.ID <> '{this.CurrentMaintain["ID"]}' and
+        bd.InvNo in ({whereInvNo})
+        
+";
+            DataTable dtCheckInvoice;
+            DualResult result = DBProxy.Current.Select(null, sqlCheckInvoice, out dtCheckInvoice);
+            if (!result)
             {
-                if (!MyUtility.Check.Seek($@"select 1 from GMTBooking where id = '{dr["id"]}'"))
-                {
-                    ls.Add(MyUtility.Convert.GetString(dr["id"]));
-                }
+                this.ShowErr(result);
+                return false;
             }
 
-            if (ls.Count > 0)
+            if (dtCheckInvoice.Rows.Count > 0)
             {
-                MyUtility.Msg.WarningBox($@"Garment Booking does not exist, please check again!
-{string.Join(", ", ls)}");
+                MyUtility.Msg.ShowMsgGrid_LockScreen(dtCheckInvoice, "The following GB# already exist in CMT Invoice#.", "P11. Save");
                 return false;
             }
 
@@ -79,6 +119,8 @@ namespace Sci.Production.Shipping
             base.ClickNewAfter();
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["InvDate"] = DateTime.Now;
+            this.gridCurrency.DataSource = null;
+            this.RefreshExchangeRate();
         }
 
         /// <inheritdoc/>
@@ -140,8 +182,9 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
+            base.ClickConfirm();
             string sqlupdate = $@"
-update BIRInvoice set Status='Approved', Approve='{Env.User.UserID}', ApproveDate=getdate(), EditName='{Env.User.UserID}', EditDate=getdate()
+update BIRInvoice set Status='Confirmed', Approve='{Env.User.UserID}', ApproveDate=getdate(), EditName='{Env.User.UserID}', EditDate=getdate()
 where id = '{this.CurrentMaintain["ID"]}'
 ";
             DualResult result = DBProxy.Current.Execute(null, sqlupdate);
@@ -151,19 +194,12 @@ where id = '{this.CurrentMaintain["ID"]}'
                 return;
             }
 
-            base.ClickConfirm();
+            MyUtility.Msg.InfoBox("Finance manager approve success!!");
         }
 
         /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
-            string sqlchk = $@"select 1 from BIRInvoice  where ExVoucherID !='' and id = '{this.CurrentMaintain["ID"]}'";
-            if (MyUtility.Check.Seek(sqlchk))
-            {
-                MyUtility.Msg.WarningBox("Cannot unconfirm because already created voucher no");
-                return;
-            }
-
             string sqlupdate = $@"
 update BIRInvoice set Status='New', Approve='{Env.User.UserID}', ApproveDate=getdate(), EditName='{Env.User.UserID}', EditDate=getdate()
 where id = '{this.CurrentMaintain["ID"]}'
@@ -341,6 +377,7 @@ select	[No] = 0,
 		tup.UnitPriceUSD,
 		[ShipQty] = sum(pd.ShipQty),
 		[AmountUSD] = sum(pd.ShipQty) * tup.UnitPriceUSD,
+        [UnitPricePHP] = tup.UnitPriceUSD * @ExchangeRate,
 		[AmountPHP] = Round(sum(pd.ShipQty) * tup.UnitPriceUSD * @ExchangeRate, 0)
 from PackingList p with (nolock)
 inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
@@ -408,7 +445,7 @@ drop table #tmpUnitPriceUSD
                     .Select(s => new
                     {
                         AmtUSD = s.Sum(groupItem => MyUtility.Convert.GetDecimal(groupItem["AmountUSD"])),
-                        AmtKHR = s.Sum(groupItem => MyUtility.Convert.GetDecimal(groupItem["AmountPHP"])),
+                        AmtPHP = s.Sum(groupItem => MyUtility.Convert.GetDecimal(groupItem["AmountPHP"])),
                     }).First();
 
                 foreach (CurrencyAMT itemCurrencyAMT in listCurrencyAMT)
@@ -416,7 +453,7 @@ drop table #tmpUnitPriceUSD
                     switch (itemCurrencyAMT.Currency)
                     {
                         case "PHP":
-                            itemCurrencyAMT.Amount = currencyResult.AmtKHR;
+                            itemCurrencyAMT.Amount = currencyResult.AmtPHP;
                             break;
                         case "USD":
                             itemCurrencyAMT.Amount = currencyResult.AmtUSD;
