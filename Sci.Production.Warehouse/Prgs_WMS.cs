@@ -36,12 +36,12 @@ namespace Sci.Production.Warehouse
             List<string> fabricList = dthasFabricType.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["FabricType"])).ToList();
             if (Prgs.IsAutomation())
             {
-                if (NoGensong(formName) && fabricList.Contains("F"))
+                if (Prgs.NoGensong(formName) && fabricList.Contains("F"))
                 {
                     Gensong_AutoWHFabric.Sent(doTask, dtDetail, formName, statusAPI, action, isP99: isP99, fromNewBarcode: fromNewBarcode);
                 }
 
-                if (NoVstrong(formName) && fabricList.Contains("A"))
+                if (Prgs.NoVstrong(formName) && fabricList.Contains("A"))
                 {
                     Vstrong_AutoWHAccessory.Sent(doTask, dtDetail, formName, statusAPI, action, isP99: isP99);
                 }
@@ -61,7 +61,7 @@ namespace Sci.Production.Warehouse
                 bool aprocess = false;
                 bool fsuccess = true;
                 bool asuccess = true;
-                if (NoGensong(formName) && fabricList.Contains("F"))
+                if (Prgs.NoGensong(formName) && fabricList.Contains("F"))
                 {
                     fprocess = true;
                     fsuccess = Gensong_AutoWHFabric.Sent(false, dtDetail, formName, EnumStatus.Lock, action, isP99: isP99);
@@ -72,7 +72,7 @@ namespace Sci.Production.Warehouse
                     return false;
                 }
 
-                if (NoVstrong(formName) && fabricList.Contains("A"))
+                if (Prgs.NoVstrong(formName) && fabricList.Contains("A"))
                 {
                     aprocess = true;
                     if (dtDetailA != null)
@@ -94,39 +94,6 @@ namespace Sci.Production.Warehouse
 
                     return false;
                 }
-            }
-
-            return true;
-        }
-
-        /// <inheritdoc/>
-        public static bool NoGensong(string formName)
-        {
-            switch (formName)
-            {
-                case "P11":
-                case "P12":
-                case "P33":
-                case "P15":
-                case "P43":
-                case "P45":
-                case "P48":
-                    return false;
-            }
-
-            return true;
-        }
-
-        /// <inheritdoc/>
-        public static bool NoVstrong(string formName)
-        {
-            switch (formName)
-            {
-                case "P07_ModifyRollDyelot":
-                case "P10":
-                case "P62":
-                case "P16":
-                    return false;
             }
 
             return true;

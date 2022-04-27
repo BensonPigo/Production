@@ -5911,5 +5911,38 @@ and ml.IsWMS = 1
             int intSeq = MyUtility.Convert.GetInt(seq) + 1;
             return intSeq.ToString().PadLeft(2, '0');
         }
+
+        /// <inheritdoc/>
+        public static bool NoGensong(string formName)
+        {
+            switch (formName)
+            {
+                case "P11":
+                case "P12":
+                case "P33":
+                case "P15":
+                case "P43":
+                case "P45":
+                case "P48":
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public static bool NoVstrong(string formName)
+        {
+            switch (formName)
+            {
+                case "P07_ModifyRollDyelot":
+                case "P10":
+                case "P62":
+                case "P16":
+                    return false;
+            }
+
+            return true;
+        }
     }
 }

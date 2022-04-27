@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg.Entity;
+using Sci.Production.PublicPrg;
 using System;
 using System.Data;
 using System.Dynamic;
@@ -28,6 +29,11 @@ namespace Sci.Production.Automation
         /// <inheritdoc/>
         public static bool Sent(bool doTask, DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, bool updateLocation = false, bool isP99 = false, bool fromNewBarcode = false)
         {
+            if (!Prgs.NoGensong(formName))
+            {
+                return true;
+            }
+
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count == 0)
             {
                 return false;
