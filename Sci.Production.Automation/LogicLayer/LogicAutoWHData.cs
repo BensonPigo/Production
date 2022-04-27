@@ -385,11 +385,15 @@ outer apply (
     ,sd.FromPOID
     ,sd.FromSeq1
     ,sd.FromSeq2
+    ,sd.FromRoll
+    ,sd.FromDyelot
     ,sd.FromStockType
     ,[FromLocation] = dbo.Getlocation(f.Ukey)
     ,sd.ToPOID
     ,sd.ToSeq1
     ,sd.ToSeq2
+    ,sd.ToRoll
+    ,sd.ToDyelot
     ,sd.ToStockType
     ,sd.ToLocation
     ,sd.Qty
