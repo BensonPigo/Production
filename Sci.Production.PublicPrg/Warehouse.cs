@@ -4003,9 +4003,13 @@ and sd.Ukey in ({ukeys})
                         // AdjustQty
                         case WHTableName.Adjust_Detail:
                             decimal adjustQty;
-                            if (isRevise || isDelete)
+                            if (isRevise)
                             {
                                 adjustQty = MyUtility.Convert.GetDecimal(deraildr["DiffQty"]);
+                            }
+                            else if (isDelete)
+                            {
+                                adjustQty = MyUtility.Convert.GetDecimal(deraildr["Old_Qty"]) - MyUtility.Convert.GetDecimal(deraildr["QtyBefore"]);
                             }
                             else
                             {

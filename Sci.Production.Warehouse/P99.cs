@@ -3360,6 +3360,12 @@ inner join #tmp s on t.id = s.id
                                     throw result.GetException();
                                 }
 
+                                // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後 Revise 複寫 Confrim 紀錄 (isConfirmed: true)
+                                if (!(result = Prgs.UpdateWH_Barcode(true, detailTable, this.strFunction, out fromNewBarcode, dtOriFtyInventory, isRevise: true)))
+                                {
+                                    throw result.GetException();
+                                }
+
                                 transactionscope.Complete();
                             }
                             catch (Exception ex)
@@ -4377,63 +4383,11 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ";
                         }
                         #endregion 檢查負數庫存
 
-                        #region delete
-                        sqlcmd = $@" 
-delete t
-from Adjust_detail t
-inner join #tmp s on t.Ukey = s.Ukey 
-
-update t
-set t.editname = '{Env.User.UserID}'
-,t.editdate = GETDATE()
-from Adjust t
-inner join #tmp s on t.ID = s.ID
-
-delete r 
-from Adjust r
-left join Adjust_detail rd on r.Id = rd.Id
-where rd.Id is null
-and exists(
-	select * from #tmp s
-	where s.Id = r.Id
-)
-";
-
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
+                        using (transactionscope = new TransactionScope())
                         {
-                            this.ShowErr(result);
-                            return;
-                        }
-
-                        #endregion
-                        #endregion
-                        break;
-                    case "P45":
-                        #region RemoveC
-
-                        #region 檢查資料有任一筆WMS已完成
-                        if (!Prgs.ChkWMSCompleteTime(upd_list.CopyToDataTable(), "Adjust_Detail"))
-                        {
-                            return;
-                        }
-                        #endregion
-
-                        #region 檢查庫存
-                        if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), false))
-                        {
-                            return;
-                        }
-                        #endregion
-
-                        // 先確認 WMS 能否上鎖, 不能直接 return
-                        if (!Prgs_WMS.WMSLock(tmpDetailTableF, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true, dtDetailA: tmpDetailTableA))
-                        {
-                            return;
-                        }
-
-                        #region delete Data
-                        string upcmd =
-                        $@"
+                            try
+                            {
+                                sqlcmd = $@" 
 declare @POID varchar(13)
 		, @seq1 varchar(3)
 		, @seq2 varchar(3)
@@ -4493,13 +4447,136 @@ and exists(
 	where s.Id = r.Id
 )
 ";
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, upcmd, out result_upd_qty)))
+
+                                if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
+                                {
+                                    this.ShowErr(result);
+                                    return;
+                                }
+
+                                // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                                if (!(result = Prgs.UpdateWH_Barcode(false, detailTable, this.strFunction, out bool fromNewBarcode, dtOriFtyInventory, isDelete: true)))
+                                {
+                                    throw result.GetException();
+                                }
+
+                                transactionscope.Complete();
+                            }
+                            catch (Exception ex)
+                            {
+                                errMsg = ex;
+                            }
+                        }
+                        #endregion
+                        break;
+                    case "P45":
+                        #region RemoveC
+
+                        #region 檢查資料有任一筆WMS已完成
+                        if (!Prgs.ChkWMSCompleteTime(upd_list.CopyToDataTable(), "Adjust_Detail"))
                         {
-                            this.ShowErr(result);
-                            MyUtility.Msg.WarningBox("Delete datas error!!");
                             return;
                         }
                         #endregion
+
+                        #region 檢查庫存
+                        if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), false))
+                        {
+                            return;
+                        }
+                        #endregion
+
+                        // 先確認 WMS 能否上鎖, 不能直接 return
+                        if (!Prgs_WMS.WMSLock(tmpDetailTableF, detailTableToWMS, this.strFunction, EnumStatus.Unconfirm, isP99: true, dtDetailA: tmpDetailTableA))
+                        {
+                            return;
+                        }
+
+                        using (transactionscope = new TransactionScope())
+                        {
+                            try
+                            {
+                                string upcmd =
+                                $@"
+declare @POID varchar(13)
+		, @seq1 varchar(3)
+		, @seq2 varchar(3)
+		, @Roll varchar(8)
+		, @Dyelot varchar(8)
+		, @StockType varchar(1)
+		, @AdjustQty numeric(11, 2)
+
+
+DECLARE _cursor CURSOR FOR
+select ad.POID, ad.Seq1, ad.Seq2, ad.Roll, ad.Dyelot, ad.StockType, [AdjustQty] = (ad.old_qty - ad.QtyBefore) 
+from #tmp ad
+
+
+OPEN _cursor
+FETCH NEXT FROM _cursor INTO @POID, @seq1, @seq2, @Roll, @Dyelot, @StockType, @AdjustQty
+WHILE @@FETCH_STATUS = 0
+BEGIN	
+	update f
+		set [AdjustQty] = f.AdjustQty - @AdjustQty
+	from FtyInventory f
+	where f.POID = @POID
+	and f.Seq1 = @seq1
+	and f.Seq2 = @seq2
+	and f.Roll = @Roll
+	and f.Dyelot = @Dyelot
+	and f.StockType = 'O'
+
+	update m
+		set [LObQty] = m.LObQty - @AdjustQty  
+	from MDivisionPoDetail m
+	where m.POID = @POID
+	and m.Seq1 = @seq1
+	and m.Seq2 = @seq2
+
+	FETCH NEXT FROM _cursor INTO @POID, @seq1, @seq2, @Roll, @Dyelot, @StockType, @AdjustQty
+END
+CLOSE _cursor
+DEALLOCATE _cursor
+
+delete t
+from Adjust_detail t
+inner join #tmp s on t.Ukey = s.Ukey 
+
+update t
+set t.editname = '{Env.User.UserID}'
+,t.editdate = GETDATE()
+from Adjust t
+inner join #tmp s on t.ID = s.ID
+
+delete r 
+from Adjust r
+left join Adjust_detail rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
+";
+                                if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, upcmd, out result_upd_qty)))
+                                {
+                                    this.ShowErr(result);
+                                    MyUtility.Msg.WarningBox("Delete datas error!!");
+                                    return;
+                                }
+
+                                // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                                if (!(result = Prgs.UpdateWH_Barcode(false, detailTable, this.strFunction, out bool fromNewBarcode, dtOriFtyInventory, isDelete: true)))
+                                {
+                                    throw result.GetException();
+                                }
+
+                                transactionscope.Complete();
+                            }
+                            catch (Exception ex)
+                            {
+                                errMsg = ex;
+                            }
+                        }
                         #endregion
                         break;
                     case "P37":
