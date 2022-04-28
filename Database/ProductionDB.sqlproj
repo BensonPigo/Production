@@ -2710,6 +2710,7 @@
     <Build Include="dbo\Tables\PackingErrorRecord.sql" />
     <Build Include="dbo\Stored Procedures\GetSewingDailyOutputList.sql" />
     <Build Include="dbo\Stored Procedures\ImportEstShippingReport.sql" />
+    <Build Include="dbo\Tables\BIRInvoice_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

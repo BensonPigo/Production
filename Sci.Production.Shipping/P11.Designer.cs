@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel4 = new Sci.Win.UI.Panel();
-            this.btnBatchApprove = new Sci.Win.UI.Button();
             this.gridCurrency = new Sci.Win.UI.Grid();
             this.numDetailTotalQty = new Sci.Win.UI.NumericBox();
             this.btnImportGMTBooking = new Sci.Win.UI.Button();
@@ -51,10 +50,13 @@
             this.label9 = new Sci.Win.UI.Label();
             this.dateInvDate = new Sci.Win.UI.DateBox();
             this.txtExVoucherID = new Sci.Win.UI.TextBox();
+            this.gridPOList = new Sci.Win.UI.Grid();
+            this.gridPOListbs = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
             this.detailpanel.SuspendLayout();
+            this.detailgridcont.SuspendLayout();
             this.detail2.SuspendLayout();
             this.detailpanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
@@ -65,6 +67,8 @@
             this.tabs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCurrency)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPOList)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPOListbs)).BeginInit();
             this.SuspendLayout();
             // 
             // masterpanel
@@ -130,7 +134,9 @@
             // 
             // detailgridcont
             // 
+            this.detailgridcont.Controls.Add(this.gridPOList);
             this.detailgridcont.Size = new System.Drawing.Size(1177, 428);
+            this.detailgridcont.Controls.SetChildIndex(this.gridPOList, 0);
             // 
             // detail2
             // 
@@ -186,17 +192,6 @@
             this.panel4.Size = new System.Drawing.Size(1177, 428);
             this.panel4.TabIndex = 5;
             // 
-            // btnBatchApprove
-            // 
-            this.btnBatchApprove.Location = new System.Drawing.Point(631, 3);
-            this.btnBatchApprove.Name = "btnBatchApprove";
-            this.btnBatchApprove.Size = new System.Drawing.Size(144, 30);
-            this.btnBatchApprove.TabIndex = 3;
-            this.btnBatchApprove.Text = "Batch Approve";
-            this.btnBatchApprove.UseVisualStyleBackColor = true;
-            this.btnBatchApprove.Visible = false;
-            this.btnBatchApprove.Click += new System.EventHandler(this.BtnBatchApprove);
-            // 
             // gridCurrency
             // 
             this.gridCurrency.AllowUserToAddRows = false;
@@ -244,12 +239,14 @@
             // 
             // btnImportGMTBooking
             // 
+            this.btnImportGMTBooking.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportGMTBooking.Location = new System.Drawing.Point(796, 149);
             this.btnImportGMTBooking.Name = "btnImportGMTBooking";
             this.btnImportGMTBooking.Size = new System.Drawing.Size(290, 32);
             this.btnImportGMTBooking.TabIndex = 36;
             this.btnImportGMTBooking.Text = "Import Garment Booking";
             this.btnImportGMTBooking.UseVisualStyleBackColor = true;
+            this.btnImportGMTBooking.Click += new System.EventHandler(this.BtnImportGMTBooking_Click);
             // 
             // editRemark
             // 
@@ -291,15 +288,16 @@
             0,
             0,
             0});
+            this.numExchangeRate.Validating += new System.ComponentModel.CancelEventHandler(this.NumExchangeRate_Validating);
             // 
             // displayApproveDate
             // 
             this.displayApproveDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayApproveDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ApproveDate", true));
             this.displayApproveDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayApproveDate.Location = new System.Drawing.Point(615, 80);
+            this.displayApproveDate.Location = new System.Drawing.Point(592, 80);
             this.displayApproveDate.Name = "displayApproveDate";
-            this.displayApproveDate.Size = new System.Drawing.Size(164, 23);
+            this.displayApproveDate.Size = new System.Drawing.Size(183, 23);
             this.displayApproveDate.TabIndex = 31;
             // 
             // displayApproveName
@@ -309,13 +307,13 @@
             this.displayApproveName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayApproveName.Location = new System.Drawing.Point(445, 80);
             this.displayApproveName.Name = "displayApproveName";
-            this.displayApproveName.Size = new System.Drawing.Size(164, 23);
+            this.displayApproveName.Size = new System.Drawing.Size(145, 23);
             this.displayApproveName.TabIndex = 30;
             // 
             // displayID
             // 
             this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "InvSerial", true));
+            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
             this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayID.Location = new System.Drawing.Point(150, 20);
             this.displayID.Name = "displayID";
@@ -407,30 +405,55 @@
             this.txtExVoucherID.Size = new System.Drawing.Size(130, 23);
             this.txtExVoucherID.TabIndex = 39;
             // 
+            // gridPOList
+            // 
+            this.gridPOList.AllowUserToAddRows = false;
+            this.gridPOList.AllowUserToDeleteRows = false;
+            this.gridPOList.AllowUserToResizeRows = false;
+            this.gridPOList.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridPOList.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridPOList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridPOList.DataSource = this.gridPOListbs;
+            this.gridPOList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridPOList.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridPOList.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridPOList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridPOList.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridPOList.Location = new System.Drawing.Point(0, 0);
+            this.gridPOList.Name = "gridPOList";
+            this.gridPOList.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridPOList.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridPOList.RowTemplate.Height = 24;
+            this.gridPOList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridPOList.ShowCellToolTips = false;
+            this.gridPOList.Size = new System.Drawing.Size(1177, 428);
+            this.gridPOList.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
+            this.gridPOList.TabIndex = 3;
+            // 
             // P11
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1185, 730);
-            this.Controls.Add(this.btnBatchApprove);
             this.GridAlias = "BIRInvoice_Detail";
             this.GridNew = 0;
             this.IsSupportClip = false;
+            this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
+            this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
-            this.KeyField2 = "BIRID";
             this.Name = "P11";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P11 .BIR Invoice (PH)";
-            this.UnApvChkValue = "Approved";
+            this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";
             this.WorkAlias = "BIRInvoice";
             this.Controls.SetChildIndex(this.tabs, 0);
-            this.Controls.SetChildIndex(this.btnBatchApprove, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
             this.masterpanel.PerformLayout();
             this.detailpanel.ResumeLayout(false);
+            this.detailgridcont.ResumeLayout(false);
             this.detail2.ResumeLayout(false);
             this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -442,6 +465,8 @@
             this.tabs.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCurrency)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPOList)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPOListbs)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -450,7 +475,6 @@
         #endregion
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Panel panel4;
-        private Win.UI.Button btnBatchApprove;
         private Win.UI.Grid gridCurrency;
         private Win.UI.NumericBox numDetailTotalQty;
         private Win.UI.Button btnImportGMTBooking;
@@ -470,5 +494,7 @@
         private Win.UI.Label label9;
         private Win.UI.DateBox dateInvDate;
         private Win.UI.TextBox txtExVoucherID;
+        private Win.UI.Grid gridPOList;
+        private Win.UI.ListControlBindingSource gridPOListbs;
     }
 }

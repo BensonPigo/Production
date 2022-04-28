@@ -25,19 +25,21 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.gridPOListbs.DataSource = new DataTable();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = $@"
-select  kd.*,
+select  bd.*,
         GB.ETD,
         GB.ETA,
         GB.TotalShipQty
-from BIRInvoice_Detail kd
-left join GMTBooking GB with (nolock) on kd.InvNo = GB.ID
-where kd.id = '{masterID}'
+from BIRInvoice_Detail bd
+left join GMTBooking GB with (nolock) on bd.InvNo = GB.ID
+where bd.id = '{masterID}'
 ";
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -51,18 +53,26 @@ where kd.id = '{masterID}'
                 .Text("Currency", header: "Currency", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
+            // 此Detail 被隱藏起來
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-            .Numeric("No", header: "No.", width: Widths.AnsiChars(5), iseditingreadonly: true)
-            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("InvNo", header: "PO#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("StyleID", header: "Style No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Numeric("ShipQty", header: "Q'ty", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Numeric("UnitPriceUSD", header: "Unit Price (USD)", width: Widths.AnsiChars(10), integer_places: 9, decimal_places: 3, iseditingreadonly: true)
-            .Numeric("AmountUSD", header: "Amount(USD)", width: Widths.AnsiChars(15), integer_places: 12, decimal_places: 3, iseditingreadonly: true)
-            .Numeric("UnitPricePHP", header: "Unit Price (PHP)", width: Widths.AnsiChars(10), integer_places: 9, decimal_places: 3, iseditingreadonly: true)
-            .Numeric("AmountPHP", header: "Amount(PHP)", width: Widths.AnsiChars(15), integer_places: 12, decimal_places: 3, iseditingreadonly: true)
+                .Text("InvNo", header: "GB#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Date("ETD", header: "On Board Date", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Date("ETA", header: "ETA", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Numeric("TotalShipQty", header: "Q'ty (Pcs)", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                ;
+
+            this.Helper.Controls.Grid.Generator(this.gridPOList)
+                .Numeric("No", header: "No.", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("InvNo", header: "GB#", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("StyleID", header: "Style#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .EditText("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                .Numeric("ShipQty", header: "Q'ty", width: Widths.AnsiChars(12), iseditingreadonly: true)
+                .Numeric("UnitPriceUSD", header: "Unit Price (USD)", width: Widths.AnsiChars(10), integer_places: 9, decimal_places: 3, iseditingreadonly: true)
+                .Numeric("AmountUSD", header: "Amount(USD)", width: Widths.AnsiChars(15), integer_places: 12, decimal_places: 3, iseditingreadonly: true)
+                .Numeric("UnitPricePHP", header: "Unit Price (PHP)", width: Widths.AnsiChars(10), integer_places: 9, decimal_places: 3, iseditingreadonly: true)
+                .Numeric("AmountPHP", header: "Amount(PHP)", width: Widths.AnsiChars(15), integer_places: 12, decimal_places: 3, iseditingreadonly: true)
             ;
         }
 
@@ -70,8 +80,28 @@ where kd.id = '{masterID}'
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            if (this.CurrentMaintain["Status"].ToString() == "Confirmed")
+            {
+                this.lblStatus.Text = "FIN Manager Approve";
+            }
+            else
+            {
+                this.lblStatus.Text = this.CurrentMaintain["Status"].ToString();
+            }
 
-            this.disExVoucherID.Text = this.CurrentMaintain["ExVoucherID"].ToString();
+            this.GetGridPOListData();
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickEditBefore()
+        {
+            if (this.CurrentMaintain["Status"].ToString() == "Confirmed")
+            {
+                MyUtility.Msg.InfoBox("This record already confirmed, can not edit");
+                return false;
+            }
+
+            return base.ClickEditBefore();
         }
 
         /// <inheritdoc/>
@@ -110,6 +140,42 @@ where   bd.ID <> '{this.CurrentMaintain["ID"]}' and
                 return false;
             }
 
+            #region 產生ID 序號by 年(YY)重置
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
+            {
+                List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@CMTInvDate", this.CurrentMaintain["InvDate"]) };
+
+                string idHeader = MyUtility.GetValue.Lookup("select RgCode + Format(@CMTInvDate, 'yyMM') + '-' from dbo.system", listPar);
+                string sqlGetID = @"
+Declare @IDkeyWord varchar(5)
+select @IDkeyWord = RgCode + Format(@CMTInvDate, 'yy') from dbo.system
+
+select ID from BIRInvoice where ID like @IDkeyWord + '%'
+";
+                result = DBProxy.Current.Select(null, sqlGetID, listPar, out DataTable dtBIRInvoiceID);
+
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
+
+                string seq = "00001";
+
+                if (dtBIRInvoiceID.Rows.Count > 0)
+                {
+                    seq = (dtBIRInvoiceID.AsEnumerable()
+                            .Select(s => MyUtility.Convert.GetInt(s["ID"].ToString().Split('-')[1]))
+                            .Max() + 1
+                          ).ToString().PadLeft(5, '0');
+                }
+
+                this.CurrentMaintain["ID"] = idHeader + seq;
+            }
+
+            #endregion
+
             return base.ClickSaveBefore();
         }
 
@@ -119,64 +185,9 @@ where   bd.ID <> '{this.CurrentMaintain["ID"]}' and
             base.ClickNewAfter();
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["InvDate"] = DateTime.Now;
+            this.numDetailTotalQty.Value = 0;
             this.gridCurrency.DataSource = null;
             this.RefreshExchangeRate();
-        }
-
-        /// <inheritdoc/>
-        protected override DualResult OnSaveDetail(IList<DataRow> details, ITableSchema detailtableschema)
-        {
-            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
-            {
-                return new DualResult(false, $"ID({this.CurrentMaintain["ID"].ToString()}) is empty,Please inform MIS to handle this issue");
-            }
-
-            string updatesql = $@"update GMTBooking set BIRID = null  where BIRID = '{this.CurrentMaintain["ID"]}'  ";
-            DualResult result = DBProxy.Current.Execute(null, updatesql);
-            if (!result)
-            {
-                return result;
-            }
-
-            IList<string> updateCmds = new List<string>();
-
-            foreach (DataRow dr in details)
-            {
-                if (dr.RowState == DataRowState.Added || dr.RowState == DataRowState.Modified)
-                {
-                    updateCmds.Add($@"update GMTBooking set BIRID = '{this.CurrentMaintain["ID"]}' where ID = '{dr["id"]}';");
-                }
-
-                if (dr.RowState == DataRowState.Deleted)
-                {
-                    updateCmds.Add($@"update GMTBooking set BIRID = null where ID = '{dr["id", DataRowVersion.Original]}';");
-                }
-            }
-
-            if (updateCmds.Count != 0)
-            {
-                result = DBProxy.Current.Executes(null, updateCmds);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, result.ToString());
-                    return failResult;
-                }
-            }
-
-            return Ict.Result.True;
-        }
-
-        /// <inheritdoc/>
-        protected override DualResult ClickDelete()
-        {
-            string updatesql = $@"update GMTBooking set BIRID = null  where BIRID = '{this.CurrentMaintain["ID"]}'";
-            DualResult result = DBProxy.Current.Execute(null, updatesql);
-            if (!result)
-            {
-                return result;
-            }
-
-            return base.ClickDelete();
         }
 
         /// <inheritdoc/>
@@ -215,72 +226,28 @@ where id = '{this.CurrentMaintain["ID"]}'
         }
 
         /// <inheritdoc/>
+        protected override DualResult ClickDelete()
+        {
+            string updatesql = $@"update GMTBooking set BIRID = null  where BIRID = '{this.CurrentMaintain["ID"]}'";
+            DualResult result = DBProxy.Current.Execute(null, updatesql);
+            if (!result)
+            {
+                return result;
+            }
+
+            return base.ClickDelete();
+        }
+
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
-            string sqlchk = $@"select 1 from BIRInvoice  where ExVoucherID is not null and id = '{this.CurrentMaintain["ID"]}' and status = 'Approved' ";
-            if (MyUtility.Check.Seek(sqlchk))
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "New")
             {
-                MyUtility.Msg.WarningBox("Already approved, cannot delete!");
+                MyUtility.Msg.WarningBox("This record was approved, can't delete.");
                 return false;
             }
 
             return base.ClickDeleteBefore();
-        }
-
-        /// <inheritdoc/>
-        private void Btnimport_Click(object sender, EventArgs e)
-        {
-            if (!this.EditMode)
-            {
-                return;
-            }
-
-            if (MyUtility.Check.Empty(this.CurrentMaintain["InvSerial"]))
-            {
-                MyUtility.Msg.WarningBox("Invoice Serial cannot be empty!");
-                return;
-            }
-
-            if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
-            {
-                MyUtility.Msg.WarningBox("Brand cannot be empty!");
-                return;
-            }
-
-            string sqlchk = $@"select 1 from BIRInvoice b where b.InvSerial = '{this.CurrentMaintain["InvSerial"]}' and b.BrandID = '{this.CurrentMaintain["BrandID"]}'";
-            if (MyUtility.Check.Seek(sqlchk))
-            {
-                MyUtility.Msg.WarningBox("Already has this reocrd!");
-                return;
-            }
-
-            string sqlcmd = $@"
-select *
-from GMTBooking with(nolock)
-where isnull(BIRID,0) = 0
-and BrandID = '{this.CurrentMaintain["BrandID"]}'
-and InvSerial like '{this.CurrentMaintain["InvSerial"]}%'
-        ";
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return;
-            }
-
-            if (dt.Rows.Count == 0)
-            {
-                this.ShowErr("Import error!");
-                return;
-            }
-
-            foreach (DataRow dr in dt.Rows)
-            {
-                dr.AcceptChanges();
-                dr.SetAdded();
-                ((DataTable)this.detailgridbs.DataSource).ImportRow(dr);
-            }
         }
 
         /// <inheritdoc/>
@@ -289,18 +256,6 @@ and InvSerial like '{this.CurrentMaintain["InvSerial"]}%'
             P11_Print p11_Print = new P11_Print(this.CurrentMaintain, this.DetailDatas);
             p11_Print.ShowDialog();
             return base.ClickPrint();
-        }
-
-        private void BtnBatchApprove(object sender, EventArgs e)
-        {
-            P11_BatchApprove callNextForm = new P11_BatchApprove(this.Reload);
-            callNextForm.ShowDialog(this);
-        }
-
-        public void Reload()
-        {
-            this.ReloadDatas();
-            this.RenewData();
         }
 
         private void DateInvDate_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -337,7 +292,7 @@ WHERE   RateTypeID='KP'           and
         {
             if (!this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["InvNo"])))
             {
-                this.detailgridbs.DataSource = null;
+                this.gridPOListbs.DataSource = null;
                 return;
             }
 
@@ -371,25 +326,31 @@ where exists (select 1
 select	[No] = 0,
 		[OrderID] = o.ID,
         o.CustPONo,		
-		p.INVNo,
+		P.INVNo,
 		o.StyleID,
 		s.Description,
 		tup.UnitPriceUSD,
 		[ShipQty] = sum(pd.ShipQty),
 		[AmountUSD] = sum(pd.ShipQty) * tup.UnitPriceUSD,
         [UnitPricePHP] = tup.UnitPriceUSD * @ExchangeRate,
-		[AmountPHP] = Round(sum(pd.ShipQty) * tup.UnitPriceUSD * @ExchangeRate, 0)
+		[AmountPHP] = Round(sum(pd.ShipQty) * tup.UnitPriceUSD * @ExchangeRate, 0),
+		bd.ID,bd.InvNo
 from PackingList p with (nolock)
+left join BIRInvoice_Detail bd with (nolock) on p.INVNo = bd.InvNo
 inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
+inner join GMTBooking g with (nolock) on g.ID = P.invno
 inner join Orders o with (nolock) on pd.OrderID = o.ID
 inner join Style s with (nolock) on s.Ukey = o.StyleUkey
 left join #tmpUnitPriceUSD tup on tup.ID = o.ID
 where p.INVNo in ({whereInvNo})
-group by    o.CustPONo,
+group by      o.CustPONo,
 		    o.ID,
 		    o.StyleID,
+            P.INVNo,
 		    s.Description,
-		    tup.UnitPriceUSD
+		    tup.UnitPriceUSD,
+			bd.id,
+			bd.invno
 
 drop table #tmpUnitPriceUSD
 ";
@@ -432,7 +393,7 @@ drop table #tmpUnitPriceUSD
                 }
             }
 
-            this.detailgridbs.DataSource = dtPOList;
+            this.gridPOListbs.DataSource = dtPOList;
             this.numDetailTotalQty.Value = dtPOList.AsEnumerable().Sum(s => MyUtility.Convert.GetInt(s["ShipQty"]));
 
             if (dtPOList.Rows.Count > 0)
@@ -490,12 +451,35 @@ order by r.BeginDate
 
             DialogResult dialogResult = selectItem.ShowDialog();
 
-            if (!this.EditMode)
+            if (!this.EditMode || dialogResult == DialogResult.Cancel)
             {
                 return;
             }
 
             this.CurrentMaintain["ExchangeRate"] = selectItem.GetSelecteds()[0]["Exchange Rate"];
+            this.GetGridPOListData();
+        }
+
+        private void BtnImportGMTBooking_Click(object sender, EventArgs e)
+        {
+            DialogResult dialogResult = new P11_Import(this.CurrentMaintain["ID"].ToString(), (DataTable)this.detailgridbs.DataSource).ShowDialog();
+
+            if (dialogResult == DialogResult.OK)
+            {
+                this.GetGridPOListData();
+            }
+        }
+
+        private void NumExchangeRate_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (MyUtility.Convert.GetDecimal(this.CurrentMaintain["ExchangeRate"]) == this.numExchangeRate.Value)
+            {
+                return;
+            }
+
+            this.CurrentMaintain["ExchangeRate"] = this.numExchangeRate.Value;
+
+            this.GetGridPOListData();
         }
     }
 }

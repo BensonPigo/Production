@@ -36,9 +36,9 @@ namespace Sci.Production.Shipping
         {
             base.OnFormLoaded();
             this.dateInvoice.ReadOnly = true;
-            this.txtInvSerFrom.ReadOnly = true;
-            this.txtInvSerTo.ReadOnly = true;
             this.txtShipper.ReadOnly = true;
+            this.txtGBNo.ReadOnly = true;
+            this.txtbrand.ReadOnly = true;
         }
 
         /// <inheritdoc/>
@@ -62,60 +62,87 @@ namespace Sci.Production.Shipping
             string sqlShipperWhere = string.Empty;
             List<SqlParameter> listPar = new List<SqlParameter>();
 
-            if ((!this.dateInvoice.HasValue1 && !this.dateInvoice.HasValue2) ||
-                 MyUtility.Check.Empty(this.txtShipper.Text))
+            if ((!this.dateInvoice.HasValue1 && !this.dateInvoice.HasValue2) &&
+                 MyUtility.Check.Empty(this.txtGBNo.Text))
             {
-                MyUtility.Msg.WarningBox("Invoice Date & Shipper cannot be empty.");
+                if (this.chkOutStanding.Checked)
+                {
+                    MyUtility.Msg.WarningBox("On Board Date or GB# cannot be empty.");
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox("Invoice Date or GB# cannot be empty.");
+                }
+
                 return false;
             }
 
             if (this.dateInvoice.HasValue1)
             {
-                sqlInvDateWhere += " and gbi.FCRDate >= @InvDateFrom";
+                if (this.chkOutStanding.Checked)
+                {
+                    sqlInvDateWhere += " and gb.ETD >= @InvDateFrom";
+                }
+                else
+                {
+                    sqlInvDateWhere += " and bi.InvDate >= @InvDateFrom";
+                }
+
                 listPar.Add(new SqlParameter("@InvDateFrom", this.dateInvoice.DateBox1.Value));
             }
 
             if (this.dateInvoice.HasValue2)
             {
-                sqlInvDateWhere += " and gbi.FCRDate <= @InvDateTo";
+                if (this.chkOutStanding.Checked)
+                {
+                    sqlInvDateWhere += " and gb.ETD <= @InvDateTo";
+                }
+                else
+                {
+                    sqlInvDateWhere += " and bi.InvDate <= @InvDateTo";
+                }
+
                 listPar.Add(new SqlParameter("@InvDateTo", this.dateInvoice.DateBox2.Value));
             }
 
-            sqlShipperWhere += $" and gb.Shipper = '{this.txtShipper.Text}'";
-            sqlInvDateWhere += $" and gbi.Shipper = '{this.txtShipper.Text}'";
-
-            if (this.txtInvSerFrom.Text.Length > 0)
+            if (!MyUtility.Check.Empty(this.txtbrand.Text))
             {
-                sqlShipperWhere += $" and bi.InvSerial >= '{this.txtInvSerFrom.Text}'";
+                sqlInvDateWhere += " and bi.BrandID <= @BrandID";
+                listPar.Add(new SqlParameter("@BrandID", this.txtbrand.Text));
             }
 
-            if (this.txtInvSerTo.Text.Length > 0)
+            if (!MyUtility.Check.Empty(this.txtGBNo.Text))
             {
-                sqlShipperWhere += $" and bi.InvSerial <= '{this.txtInvSerTo.Text}'";
+                sqlInvDateWhere += " and gb.ID = @InvNo";
+                listPar.Add(new SqlParameter("@InvNo", this.txtGBNo.Text));
+            }
+
+            if (this.txtShipper.Text.Length > 0)
+            {
+                sqlShipperWhere += $" and gb.Shipper = '{this.txtShipper.Text}'";
             }
 
             #region Get A2B
 
             string sqlGetA2BGMT = $@"
 select	bi.ID,
-		bi.InvSerial,
-		bi.BrandID,
 		[GMTBooking] = gb.ID,
-		[GMTFCRDate] = gb.FCRDate,
-		[ShipTo] = FIRST_VALUE(ccd.BIRShipTo) OVER (Partition by bi.ID ORDER BY gb.AddDate desc),
-		[DestCountry] = FIRST_VALUE(c.NameEN) OVER (Partition by bi.ID ORDER BY gb.AddDate desc),
+		[InvDate] = bi.InvDate,
         gbd.PLFromRgCode,
         [PackID] = '',
         [GRS_WEIGHT] = 0,
         [Qty] = 0,
         [OrderID] = '',
+        CustPONo = '',
+        StyleID = '',
+		Description = '',	
         [ShipQty] = 0
 from BIRInvoice bi with (nolock)
+inner join BIRInvoice_Detail bd with (nolock) on bi.ID = bd.ID
 inner join GMTBooking gb on bi.ID = gb.BIRID and bi.BrandID = gb.BrandID
 inner join GMTBooking_Detail gbd with (nolock) on gbd.ID = gb.ID
-inner join CustCD ccd with (nolock) on ccd.ID = gb.CustCDID and ccd.BrandID = gb.BrandID
-inner join Country c with (nolock) on c.ID = ccd.CountryID
-where	exists(select 1 from GMTBooking gbi with (nolock) where gbi.BIRID = bi.ID and gbi.BrandID = bi.BrandID {sqlInvDateWhere}) 
+where	1=1
+        {sqlInvDateWhere}
 		{sqlShipperWhere}
 ";
             DataTable dtA2BGMT;
@@ -134,32 +161,32 @@ where	exists(select 1 from GMTBooking gbi with (nolock) where gbi.BIRID = bi.ID 
                 string sqlGetPackingA2B = @"
 alter table #tmp alter column [GMTBooking] varchar(25)
 
-select  t.ID,
-		t.InvSerial,
-		t.BrandID,
+select  t.InvDate,
+		t.ID,		
+		pld.OrderID,
+		o.CustPONo,
 		t.GMTBooking,
-		t.GMTFCRDate,
-		t.ShipTo,
-		t.DestCountry,
+		o.StyleID,
+		s.Description,		
+		[ShipQty] = SUM(pld.ShipQty),
         [PackID] = pl.ID,
 		[GRS_WEIGHT] = pl.GW,
-		[Qty] = pl.ShipQty,
-        pld.OrderID,
-        [ShipQty] = SUM(pld.ShipQty)
+		[Qty] = pl.ShipQty
 from #tmp t
 inner join PackingList pl with (nolock) on pl.INVNo = t.GMTBooking
 inner join PackingList_Detail pld with (nolock) on pl.ID = pld.ID
+inner join Orders o with (nolock) on pld.OrderID = o.ID
+inner join Style s with (nolock) on s.Ukey = o.StyleUkey
 group by    t.ID,
-		    t.InvSerial,
-		    t.BrandID,
 		    t.GMTBooking,
-		    t.GMTFCRDate,
-		    t.ShipTo,
-		    t.DestCountry,
+		    t.InvDate,
             pl.ID,
 		    pl.GW,
 		    pl.ShipQty,
-            pld.OrderID
+            pld.OrderID,
+			o.CustPONo,
+			o.StyleID,
+			s.Description
 ";
                 foreach (var groupA2BGMT in dtA2BGMT.AsEnumerable().GroupBy(s => s["PLFromRgCode"].ToString()))
                 {
@@ -188,127 +215,96 @@ group by    t.ID,
             #endregion
 
             sqlGetData = $@"
-select	bi.ID,
-		bi.InvSerial,
-		bi.BrandID,
+select	bi.InvDate,
+		bi.ID,
+		pd.OrderID,
+		o.CustPONo,
 		[GMTBooking] = gb.ID,
-		[GMTFCRDate] = gb.FCRDate,
+		o.StyleID,
+		s.Description,		
+		[ShipQty] = sum(pd.ShipQty),
 		[PackID] = pl.ID,
-		[GRS_WEIGHT] = pl.GW,
-		[Qty] = pl.ShipQty,
-		[ShipTo] = FIRST_VALUE(ccd.BIRShipTo) OVER (Partition by bi.ID ORDER BY gb.AddDate desc),
-		[DestCountry] = FIRST_VALUE(c.NameEN) OVER (Partition by bi.ID ORDER BY gb.AddDate desc)
+		[GRS_WEIGHT] = pl.GW
 into #tmpBIRInvoice
 from BIRInvoice bi with (nolock)
-inner join GMTBooking gb on bi.ID = gb.BIRID and bi.BrandID = gb.BrandID
+inner join BIRInvoice_Detail bd with (nolock) on bd.id = bi.id
+inner join GMTBooking gb on gb.id = bd.invno
 inner join PackingList pl with (nolock) on pl.INVNo = gb.ID
-inner join CustCD ccd with (nolock) on ccd.ID = gb.CustCDID and ccd.BrandID = gb.BrandID
-inner join Country c with (nolock) on c.ID = ccd.CountryID
-where	exists(select 1 from GMTBooking gbi with (nolock) where gbi.BIRID = bi.ID and gbi.BrandID = bi.BrandID {sqlInvDateWhere}) 
+inner join PackingList_Detail pd with (nolock) on pd.ID = pl.ID
+inner join Orders o with (nolock) on o.ID = pd.OrderID
+inner join Style s with (nolock) on s.Ukey = o.StyleUkey
+where	1=1
+        {sqlInvDateWhere}
 		{sqlShipperWhere}
+group by bi.InvDate,
+		bi.ID,
+		pd.OrderID,
+		o.CustPONo,
+		gb.ID,
+		o.StyleID,
+		s.Description,		
+		pl.ID,
+		pl.GW
 union
 select  distinct
-        ID,
-		InvSerial,
-		BrandID,
+        InvDate,
+		ID,		
+		OrderID,
+		CustPONo,
 		GMTBooking,
-		GMTFCRDate,
-		PackID,
-		GRS_WEIGHT,
-		Qty,
-		ShipTo,
-		DestCountry
+		StyleID,
+		Description,		
+		[ShipQty],
+        [PackID],
+		[GRS_WEIGHT]
 from #tmp
 
---取得Std. Fty CMP
-select [PackID] = pld.ID,
-	   pld.OrderID,
-	   [ShipQty] = SUM(pld.ShipQty)
-into #tmpPackOrder
-from PackingList_Detail pld with (nolock)
-where exists( select 1 from #tmpBIRInvoice tbi where tbi.PackID = pld.ID)
-group by pld.ID,pld.OrderID
-union
-select  PackID,
-        OrderID,
-        ShipQty
-from #tmp
+select	o.ID,
+		[UnitPriceUSD] = ((isnull(o.CPU, 0) + isnull(SubProcessCPU.val, 0)) * isnull(CpuCost.val, 0)) + isnull(SubProcessAMT.val, 0) + isnull(LocalPurchase.val, 0)
+into #tmpUnitPriceUSD
+from Orders o with (nolock)
+left join Factory f with (nolock) on f.ID = o.FactoryID
+outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'CPU')) SubProcessCPU
+outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'AMT')) SubProcessAMT
+outer apply (select top 1 [val] = fd.CpuCost
+             from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
+             where fsd.BrandID = o.BrandID
+             and fsd.FactoryID = o.FactoryID
+             and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
+             and fsd.ShipperID = fd.ShipperID
+             and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+			 and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
+			 order by SeasonID desc) CpuCost
+outer apply (select [val] = iif(f.LocalCMT = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
+where exists (select 1 
+			  from PackingList p with (nolock)
+			  inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
+			  where p.INVNo in (select GMTBooking from #tmpBIRInvoice ) 
+              and pd.OrderID = o.ID
+			  )
 
 select
-o.ID,
-o.CPU,
-[SubProcessCPU] = SubProcessCPU.Value,
-[SubProcessAMT] = SubProcessAMT.Value,
-[CPUCost] = isnull(round(isnull(fsr_s.CpuCost,fsr_ns.CpuCost),3,1), 0),
-[LocalPurchase] = LocalPurchase.Value,
-[StdFtyCMP] = ROUND(std.FtyCMP,2)
-into #tmpOrderStdFtyCMP
-from orders o with (nolock)
-inner join Factory f with (nolock) on o.FactoryID = f.ID
-outer apply (select [Value] = isnull(sum(Isnull(Price,0)),0) from GetSubProcessDetailByOrderID(o.ID,'CPU')) SubProcessCPU
-outer apply (select [Value] = isnull(sum(Isnull(Price,0)),0) from GetSubProcessDetailByOrderID(o.ID,'AMT')) SubProcessAMT
-outer apply(
-	select fd.CpuCost
-	from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
-	where fsd.BrandID = o.BrandID
-	        and fsd.FactoryID = o.FactoryID
-	        and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
-	        and fsd.ShipperID = fd.ShipperID
-	        and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
-	        and o.OrigBuyerDelivery is not null
-            and fsd.seasonID = o.seasonID
-)fsr_s
-outer apply(
-	select fd.CpuCost
-	from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
-	where fsd.BrandID = o.BrandID
-	        and fsd.FactoryID = o.FactoryID
-	        and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
-	        and fsd.ShipperID = fd.ShipperID
-	        and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
-	        and o.OrigBuyerDelivery is not null
-            and fsd.seasonID = ''
-)fsr_ns
-outer apply (
-    select [Value] = iif(f.LocalCMT = 1,dbo.GetLocalPurchaseStdCost(o.id),0)
-) LocalPurchase
-outer apply(
-	select FtyCMP = Round((isnull(round(o.CPU,3,1),0) + isnull(round(SubProcessCPU.Value,3,1),0)) * isnull(round(isnull(fsr_s.CpuCost,fsr_ns.CpuCost),3,1),0) 
-                            + isnull(round(subProcessAMT.Value,3,1),0) 
-                            + isnull(round(LocalPurchase.Value,3,1),0)
-                          , 3)
-)std
-where exists( select 1 from #tmpPackOrder tpack where tpack.OrderID = o.ID)
-
-select
-PackID,
-[FOB_Value] = SUM(tpo.ShipQty * tos.StdFtyCMP),
-[CMP_Value] = SUM(tpo.ShipQty * tos.StdFtyCMP)
-into #PackCMP
-from #tmpPackOrder tpo
-inner join #tmpOrderStdFtyCMP tos on tpo.OrderID = tos.ID
-group by tpo.PackID
-
-select
-[InvDate] = max(tbi.GMTFCRDate),
+[InvDate] = tbi.InvDate,
+[ID] = tbi.ID,
 [PARTICULAR_DESCRIPTION] = 'SINTEX INTERNATIONAL LTD',
-tbi.ShipTo,
-tbi.InvSerial,
-[GRS_WEIGHT] = sum(tbi.GRS_WEIGHT),
-[Qty] = sum(tbi.Qty),
-[FOB_Value] = sum(pc.FOB_Value),
-[COST_OF_MATERIALS] = 0,
-[CMP_Value] = sum(pc.CMP_Value),
-[COUNTRY_SOLD_TO] = 'TAIWAN',
-tbi.DestCountry,
-[ExRate] = 51,
-[CMP_ValuePH] = ''
+OrderID,
+CustPONo,
+GMTBooking,
+StyleID,
+Description,		
+[Qty] = sum(tbi.ShipQty),
+tup.UnitPriceUSD,
+[AmountUSD] = sum(tbi.ShipQty) * tup.UnitPriceUSD,
+bi.ExchangeRate,
+[UnitPricePHP] = tup.UnitPriceUSD * bi.ExchangeRate,
+[AmountPHP] = Round(sum(tbi.ShipQty) * tup.UnitPriceUSD * bi.ExchangeRate, 0)
 from #tmpBIRInvoice tbi
-inner join #PackCMP pc on pc.PackID = tbi.PackID
-group by	tbi.ShipTo,tbi.ID,tbi.InvSerial,tbi.DestCountry
+inner join BIRInvoice bi on tbi.ID = bi.ID
+left join #tmpUnitPriceUSD tup on tbi.OrderID = tup.ID
+group by	 tup.UnitPriceUSD,Description,StyleID,GMTBooking,CustPONo,OrderID,tbi.ID,tbi.InvDate,bi.ExchangeRate
 
 
-drop table #tmpBIRInvoice,#tmpPackOrder,#tmpOrderStdFtyCMP,#PackCMP
+drop table #tmpBIRInvoice
 ";
 
             DataTable dtResult;
@@ -328,17 +324,6 @@ drop table #tmpBIRInvoice,#tmpPackOrder,#tmpOrderStdFtyCMP,#PackCMP
                 MyUtility.Msg.InfoBox("No data found");
                 this.HideWaitMessage();
                 return false;
-            }
-
-            int rowNum = 2;
-            foreach (DataRow dr in dtResult.Rows)
-            {
-                dr["ShipTo"] = dr["ShipTo"].ToString().Split(Convert.ToChar(10))[0];
-
-                // 只保留前段的數值 後面其他的文字全數去除
-                dr["InvSerial"] = dr["InvSerial"].ToString().TakeWhile(s => Regex.IsMatch(s.ToString(), "[0-9]")).Select(s => s.ToString()).JoinToString(string.Empty);
-                dr["CMP_ValuePH"] = $"=I{rowNum}*L{rowNum}";
-                rowNum++;
             }
 
             string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P11_BIRSalesReport.xltx";
@@ -376,7 +361,7 @@ drop table #tmpBIRInvoice,#tmpPackOrder,#tmpOrderStdFtyCMP,#PackCMP
             List<string> ids = new List<string>();
             foreach (DataRow dr in this.DetailDatas)
             {
-                ids.Add("'" + dr["id"] + "'");
+                ids.Add("'" + dr["INVno"] + "'");
             }
 
             List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByMutiInvNo(ids);
@@ -553,7 +538,6 @@ where p.INVNo in ({string.Join(",", ids)})
             worksheet.Cells[65, 10] = 0;
             worksheet.Cells[66, 10] = sumM;
             worksheet.Cells[60, 2] = sumE;
-            worksheet.Cells[1, 10] = $@"InvSerial: {this.CurrentMaintain["InvSerial"]}";
             #endregion
 
             #region 內容
@@ -622,16 +606,28 @@ where p.INVNo in ({string.Join(",", ids)})
             if (this.radioBIRSalesInv.Checked)
             {
                 this.dateInvoice.ReadOnly = true;
-                this.txtInvSerFrom.ReadOnly = true;
-                this.txtInvSerTo.ReadOnly = true;
                 this.txtShipper.ReadOnly = true;
+                this.txtGBNo.ReadOnly = true;
+                this.txtbrand.ReadOnly = true;
             }
             else
             {
                 this.dateInvoice.ReadOnly = false;
-                this.txtInvSerFrom.ReadOnly = false;
-                this.txtInvSerTo.ReadOnly = false;
                 this.txtShipper.ReadOnly = false;
+                this.txtGBNo.ReadOnly = false;
+                this.txtbrand.ReadOnly = false;
+            }
+        }
+
+        private void ChkOutStanding_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.chkOutStanding.Checked)
+            {
+                this.lblInvDate.Text = "On Board Date";
+            }
+            else
+            {
+                this.lblInvDate.Text = "Invoice Date";
             }
         }
     }
