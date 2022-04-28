@@ -29,7 +29,7 @@ RETURN
 	select cumulate = IIF(Count(1)=0, 1, Count(1))
 	from stmp s
 	where s.OutputDate >(
-							select date = max(Date)
+							select isnull(max(w.Date), (select min(OutputDate) from stmp))
 							from wtmp w 
 							left join stmp s on s.OutputDate = w.Date
 							where s.OutputDate is null
