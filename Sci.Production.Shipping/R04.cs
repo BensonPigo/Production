@@ -239,6 +239,7 @@ $@"select 	oq.BuyerDelivery
 		,o.Customize1
 		,o.Customize2
 		,plds.GW
+        ,plds.VM
 		,cbm.CTNQty
 		,oq.ShipmodeID
         ,[Loading Type] = gbCYCFS.CYCFS
@@ -344,7 +345,7 @@ outer apply(
 	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq {this.whereExcludePulloutOuterApply}
 )CustCDID
 outer apply(
-	select CTNQty=sum(pd.CTNQty),GW=sum(pd.GW),ShipQty=sum(pd.ShipQty)
+	select CTNQty=sum(pd.CTNQty),GW=sum(pd.GW),ShipQty=sum(pd.ShipQty),VM = sum(APPEstAmtVW)
 	from packinglist_detail pd
 	inner join PackingList p on p.id = pd.id
 	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq {this.whereExcludePulloutOuterApply}
@@ -576,6 +577,7 @@ $@"select oq.BuyerDelivery
 		,o.Customize1
 		,o.Customize2
 		,plds.GW
+        ,plds.VM
 		,cbm.CTNQty
 		,oq.ShipmodeID
         ,[Loading Type] = gb.CYCFS
@@ -613,7 +615,7 @@ outer apply(
 	where pd.OrderID = o.ID and pd.OrderShipmodeSeq = oq.Seq {this.whereExcludePulloutOuterApply}
 )p
 outer apply(
-	select CTNQty=sum(pd.CTNQty),GW=sum(pd.GW),ShipQty=sum(pd.ShipQty)
+	select CTNQty=sum(pd.CTNQty),GW=sum(pd.GW),ShipQty=sum(pd.ShipQty),VM=sum(APPEstAmtVW)
 	from packinglist_detail pd
 	inner join PackingList p on p.id = pd.id
 	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq {this.whereExcludePulloutOuterApply}
@@ -699,6 +701,7 @@ select oq.BuyerDelivery
 		,o.Customize2
 		,NULL
 		,NULL
+		,NULL
 		,oq.ShipmodeID
 		,NULL
         ,OSReason = o.OutstandingReason + ' - ' + isnull((select Name
@@ -730,7 +733,7 @@ left join Country c WITH (NOLOCK) on o.Dest = c.ID
 left join Brand b WITH (NOLOCK) on o.BrandID= b.id
 outer apply(select ShipQty = isnull(sum(ShipQty), 0) from Pullout_Detail WITH (NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) ShipQty
 outer apply(
-	select CTNQty=sum(pd.CTNQty),GW=sum(pd.GW),ShipQty=sum(pd.ShipQty)
+	select CTNQty=sum(pd.CTNQty),GW=sum(pd.GW),ShipQty=sum(pd.ShipQty),VM=sum(APPEstAmtVW)
 	from packinglist_detail pd
 	inner join PackingList p on p.id = pd.id
 	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq {this.whereExcludePulloutOuterApply}

@@ -180,6 +180,7 @@ select pl.MDivisionID
 	, TtlNw = PackingListDetail_Sum.TtlNw
 	, TtlGW = PackingListDetail_Sum.TtlGW
 	, TtlCBM = (pl.CBM * PackingListDetail_Sum.TtlCTNS)
+    , VM = PackingListDetail_Sum.VM
 	, PurchaseCTN = iif(exists(select 1 from LocalPO_Detail ld with(nolock) inner join LocalPO l with(nolock) on l.id = ld.Id where ld.RequestID=pl.ID and l.status = 'Approved') ,'Y','N')
 	, ClogCFMStatus = iif(PackingListDetail_Sum.CtnID = PackingListDetail_Sum.CtnRecDate, 'Y','N')
 	, pl.EstCTNBooking
@@ -191,6 +192,7 @@ outer apply(
 	    ,[TtlQty]=SUM(pd.ShipQty) 
 	    ,[TtlNw]=sum(pd.NW)
 	    ,[TtlGW]=sum(pd.GW)
+        ,[VM]=sum(pd.APPEstAmtVW)
 	    ,[CtnID]=count(pd.ID)
 	    ,[CtnRecDate]=count(pd.ReceiveDate)
 	    ,o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID
@@ -243,6 +245,7 @@ select pl.MDivisionID
 	, TtlNw = PackingListDetail_Sum.TtlNw
 	, TtlGW = PackingListDetail_Sum.TtlGW
 	, TtlCBM = (pl.CBM * PackingListDetail_Sum.TtlCTNS)
+    , VM = PackingListDetail_Sum.VM
 	, PurchaseCTN = iif(exists(select 1 from LocalPO_Detail ld with(nolock) inner join LocalPO l with(nolock) on l.id = ld.Id where ld.RequestID=pl.ID and l.status = 'Approved') ,'Y','N')
 	, ClogCFMStatus = iif(PackingListDetail_Sum.CtnID = PackingListDetail_Sum.CtnRecDate, 'Y','N')
 	, pl.EstCTNBooking
@@ -255,6 +258,7 @@ outer apply(
 	    ,[TtlQty]=SUM(pd.ShipQty) 
 	    ,[TtlNw]=sum(pd.NW)
 	    ,[TtlGW]=sum(pd.GW)
+        ,[VM]=sum(pd.APPEstAmtVW)
 	    ,[CtnID]=count(pd.ID)
 	    ,[CtnRecDate]=count(pd.ReceiveDate)
 	    ,o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID

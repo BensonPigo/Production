@@ -85,6 +85,7 @@ select
     ,oq.Qty
 	,pkQty.CTNQty
 	,pkQty.gw
+    ,pkQty.VM
 	,l.CBM
 	,sew.QAQty
 	,atCLog.ct
@@ -126,7 +127,7 @@ outer apply(
 	and SeasonID = ''
 )fs
 outer apply(
-	select sum(CTNQty) CTNQty , sum(GW) gw
+	select sum(CTNQty) CTNQty , sum(GW) gw, VM = sum(APPEstAmtVW)
 	from PackingList_Detail
 	where OrderID=oq.Id and OrderShipmodeSeq = oq.Seq
 )pkQty
