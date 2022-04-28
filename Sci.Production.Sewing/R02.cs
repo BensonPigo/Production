@@ -1424,8 +1424,7 @@ select FactoryID from #tmpResult where IsSampleRoom = 1
 
             #region  中國工廠自抓/其它場Pams [Total Work Day]
             if (Env.User.Keyword.EqualString("CM1") ||
-                Env.User.Keyword.EqualString("CM2") ||
-                Env.User.Keyword.EqualString("CM3"))
+                Env.User.Keyword.EqualString("CM2"))
             {
                 int ttlWorkDay = 0;
                 string strWorkDay = @"select Distinct OutputDate from #tmp where LastShift <> 'O'";

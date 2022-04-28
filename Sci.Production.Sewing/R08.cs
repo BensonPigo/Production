@@ -723,8 +723,7 @@ where f.Junk = 0",
             #region Direct Manpower(From PAMS)
             List<APIData> pams = new List<APIData>();
             if (!(Env.User.Keyword.EqualString("CM1") ||
-                Env.User.Keyword.EqualString("CM2") ||
-                Env.User.Keyword.EqualString("CM3")))
+                Env.User.Keyword.EqualString("CM2")))
             {
                 this.dataMode = new List<APIData>();
                 GetApiData.GetAPIData(this.mDivision, this.factory, (DateTime)this.date1.Value, (DateTime)this.date2.Value, out this.dataMode);

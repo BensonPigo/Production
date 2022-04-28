@@ -3942,8 +3942,7 @@ order by ArtworkTypeID"),
                 }
                 #region Direct Manpower(From PAMS)
                 if (Env.User.Keyword.EqualString("CM1") ||
-                    Env.User.Keyword.EqualString("CM2") ||
-                    Env.User.Keyword.EqualString("CM3"))
+                    Env.User.Keyword.EqualString("CM2"))
                 {
                     worksheet.Cells[insertRow, 11] = 0;
                     worksheet.Cells[insertRow, 13] = 0;
