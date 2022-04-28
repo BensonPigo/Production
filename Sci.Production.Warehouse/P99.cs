@@ -4559,9 +4559,7 @@ and exists(
 ";
                                 if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, upcmd, out result_upd_qty)))
                                 {
-                                    this.ShowErr(result);
-                                    MyUtility.Msg.WarningBox("Delete datas error!!");
-                                    return;
+                                    throw result.GetException();
                                 }
 
                                 // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
