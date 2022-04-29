@@ -425,7 +425,10 @@ where m.IsWMS = 0";
                 }
             }
 
-            Prgs_WMS.DeleteNotWMS(dtToWMS);
+            if (!Prgs_WMS.DeleteNotWMS(dtToWMS))
+            {
+                return;
+            }
             #endregion
 
             // AutoWHFabric WebAPI

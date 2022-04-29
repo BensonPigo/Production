@@ -15,7 +15,7 @@ namespace Sci.Production.Warehouse
         /// P21/P26 調整後 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Delete)
         /// </summary>
         /// <inheritdoc/>
-        public static void DeleteNotWMS(DataTable dtnotWMS)
+        public static bool DeleteNotWMS(DataTable dtnotWMS)
         {
             // 找出要撤回的 P07 Ukey
             DataTable dt07 = Prgs.GetWHDetailUkey(dtnotWMS, "P07");
@@ -23,22 +23,29 @@ namespace Sci.Production.Warehouse
             // 找出要撤回的 P18 Ukey
             DataTable dt18 = Prgs.GetWHDetailUkey(dtnotWMS, "P18");
 
-            Prgs.GetFtyInventoryData(dt07, "P07", out DataTable dtOriFtyInventoryP07);
-            if (!Prgs_WMS.WMSLock(dt07, dtOriFtyInventoryP07, "P07", EnumStatus.Unconfirm))
+            if (dt07.Rows.Count > 0)
             {
-                return;
+                Prgs.GetFtyInventoryData(dt07, "P07", out DataTable dtOriFtyInventoryP07);
+                if (!Prgs_WMS.WMSLock(dt07, dtOriFtyInventoryP07, "P07", EnumStatus.Unconfirm))
+                {
+                    return false;
+                }
             }
 
-            Prgs.GetFtyInventoryData(dt18, "P18", out DataTable dtOriFtyInventoryP18);
-            if (!Prgs_WMS.WMSLock(dt18, dtOriFtyInventoryP18, "P18", EnumStatus.Unconfirm))
+            if (dt18.Rows.Count > 0)
             {
-                return;
+                Prgs.GetFtyInventoryData(dt18, "P18", out DataTable dtOriFtyInventoryP18);
+                if (!Prgs_WMS.WMSLock(dt18, dtOriFtyInventoryP18, "P18", EnumStatus.Unconfirm))
+                {
+                    return false;
+                }
             }
 
             Gensong_AutoWHFabric.Sent(true, dt07, "P07", EnumStatus.Delete, EnumStatus.Unconfirm, true);
             Gensong_AutoWHFabric.Sent(true, dt18, "P18", EnumStatus.Delete, EnumStatus.Unconfirm, true);
             Vstrong_AutoWHAccessory.Sent(true, dt07, "P07", EnumStatus.Delete, EnumStatus.Unconfirm, true);
             Vstrong_AutoWHAccessory.Sent(true, dt18, "P18", EnumStatus.Delete, EnumStatus.Unconfirm, true);
+            return true;
         }
 
         /// <inheritdoc/>

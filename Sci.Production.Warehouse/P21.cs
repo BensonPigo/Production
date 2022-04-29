@@ -964,7 +964,10 @@ where m.IsWMS = 0";
                 }
             }
 
-            Prgs_WMS.DeleteNotWMS(dtToWMS);
+            if (!Prgs_WMS.DeleteNotWMS(dtToWMS))
+            {
+                return;
+            }
             #endregion
 
             // 將當前所選位置記錄起來後, 待資料重整後定位回去!
