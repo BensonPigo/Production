@@ -6,6 +6,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+
 	declare @tmp TABLE(
 		[Article] [VARCHAR](8) NULL,  
 		[Type] [VARCHAR](100) NULL,
@@ -65,6 +66,7 @@ BEGIN
 		and o.StyleID = @StyleID
 		and o.SeasonID = @SeasonID
 		and o.BrandID = @BrandID
+		and f_TestDate.TestDate <> ''
 
 		Union all
 
@@ -78,7 +80,8 @@ BEGIN
 		where g.StyleID = @StyleID
 		and g.SeasonID = @SeasonID
 		and g.BrandID = @BrandID
-
+		and gd.InspDate <> ''
+		
 		Union all
 
 		select Article
@@ -90,6 +93,7 @@ BEGIN
 		where m.StyleID = @StyleID
 		and m.SeasonID = @SeasonID
 		and m.BrandID = @BrandID
+		and TestDate <> ''
 
 		Union all
 
@@ -103,6 +107,7 @@ BEGIN
 		and m.StyleID = @StyleID
 		and m.SeasonID = @SeasonID
 		and m.BrandID = @BrandID
+		and m.TestDate <> ''
 
 		Union all
 
@@ -116,6 +121,7 @@ BEGIN
 		and m.StyleID = @StyleID
 		and m.SeasonID = @SeasonID
 		and m.BrandID = @BrandID
+		and m.TestDate <> ''
 
 		Union all
 
@@ -132,6 +138,7 @@ BEGIN
 			and o.SeasonID = @SeasonID 
 			and o.BrandID = @BrandID
 		)
+		and f.InspDate <> ''
 
 		Union all
 
@@ -148,6 +155,7 @@ BEGIN
 			and o.SeasonID = @SeasonID 
 			and o.BrandID = @BrandID
 		)
+		and f.InspDate <> ''
 
 		Union all
 
@@ -188,6 +196,7 @@ BEGIN
 		and o.StyleID = @StyleID
 		and o.SeasonID = @SeasonID
 		and o.BrandID = @BrandID
+		and f_TestDate.TestDate <> ''
 
 		Union all
 
@@ -200,6 +209,7 @@ BEGIN
 		where m.StyleID = @StyleID
 		and m.SeasonID = @SeasonID
 		and m.BrandID = @BrandID
+		and m.TestDate <> ''
 
 		Union all
 
@@ -216,6 +226,7 @@ BEGIN
 			and o.SeasonID = @SeasonID 
 			and o.BrandID = @BrandID
 		)
+		and w.InspDate <> ''
 
 		Union all
 
@@ -232,6 +243,7 @@ BEGIN
 			and o.SeasonID = @SeasonID 
 			and o.BrandID = @BrandID
 		)
+		and w.InspDate <> ''
 	end
 	
 	select *
