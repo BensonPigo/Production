@@ -2754,7 +2754,15 @@ where ID = '{this.CurrentMaintain["ID"]}'
         private void BtnNoExportHistory_Click(object sender, EventArgs e)
         {
             Win.UI.ShowHistory callNextForm = new Win.UI.ShowHistory("GMTBooking_History", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "NoExportCharges", reasonType: string.Empty, caption: "NoExportCharges Revised History");
-            callNextForm.ShowDialog(this);
+            callNextForm.Visible = false;
+            callNextForm.Show(this);
+            callNextForm.grid1.Columns.Clear();
+            this.Helper.Controls.Grid.Generator(callNextForm.grid1)
+                .CheckBox("NewValue", header: "Action", trueValue: "TRUE", falseValue: "FALSE", iseditable: false)
+                .Text("AddBy", header: "Modify By", iseditable: false);
+
+            callNextForm.grid1.AutoResizeColumns();
+            callNextForm.Visible = true;
         }
     }
 }
