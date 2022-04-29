@@ -160,7 +160,7 @@ namespace Sci.Production.Warehouse
                         tables.Cell(4, 2).Range.Paste();
                         tables.Cell(4, 4).Range.Paste();
 
-                        tables.Cell(4, 3).Range.Text = printItem["FactoryID"].ToString().ToCharArray().Select(s => s.ToString()).JoinToString(Environment.NewLine);
+                        tables.Cell(4, 3).Range.Text = printItem["FactoryID"].ToString();
 
                         tables.Cell(5, 3).Range.Text = printItem["Roll"].ToString();
                         tables.Cell(5, 5).Range.Text = printItem["Dyelot"].ToString();

@@ -190,7 +190,10 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!factory.Value</Value>
-                <Style />
+                <Style>
+                  <FontSize>9pt</FontSize>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
@@ -213,6 +216,7 @@
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
           <PaddingBottom>2pt</PaddingBottom>
+          <WritingMode>Vertical</WritingMode>
         </Style>
       </Textbox>
       <Textbox Name="Textbox9">
