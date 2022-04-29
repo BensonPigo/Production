@@ -382,6 +382,25 @@ and td.id = '{this.CurrentMaintain["ID"]}'
                 }
             }
             #endregion
+
+            DataTable dtToWMS = ((DataTable)this.detailgridbs.DataSource).Clone();
+            foreach (DataRow dr2 in this.DetailDatas)
+            {
+                string sqlchk = $@"
+select 1 from MtlLocation m
+inner join SplitString('{dr2["ToLocation"]}',',') sp on m.ID = sp.Data
+where m.IsWMS = 0";
+                if (MyUtility.Check.Seek(sqlchk))
+                {
+                    dtToWMS.ImportRow(dr2);
+                }
+            }
+
+            if (!Prgs_WMS.LockNotWMS(dtToWMS))
+            {
+                return;
+            }
+
             Exception errMsg = null;
             using (TransactionScope transactionscope = new TransactionScope())
             {
@@ -411,25 +430,8 @@ and td.id = '{this.CurrentMaintain["ID"]}'
                 return;
             }
 
-            #region 調整後 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Delete) P07/P18
-            DataTable dtToWMS = ((DataTable)this.detailgridbs.DataSource).Clone();
-            foreach (DataRow dr2 in this.DetailDatas)
-            {
-                string sqlchk = $@"
-select 1 from MtlLocation m
-inner join SplitString('{dr2["ToLocation"]}',',') sp on m.ID = sp.Data
-where m.IsWMS = 0";
-                if (MyUtility.Check.Seek(sqlchk))
-                {
-                    dtToWMS.ImportRow(dr2);
-                }
-            }
-
-            if (!Prgs_WMS.DeleteNotWMS(dtToWMS))
-            {
-                return;
-            }
-            #endregion
+            // 調整後 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Delete) P07/P18
+            Prgs_WMS.DeleteNotWMS(dtToWMS);
 
             // AutoWHFabric WebAPI
             // 傳 Location_Detail 給廠商, P21 不用, 因 P21 是收料單資訊, 收料confrim已經傳過

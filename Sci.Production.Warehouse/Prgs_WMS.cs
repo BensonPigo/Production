@@ -11,11 +11,12 @@ namespace Sci.Production.Warehouse
     /// <inheritdoc/>
     internal class Prgs_WMS
     {
+
         /// <summary>
-        /// P21/P26 調整後 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Delete)
+        /// P21/P26 調整前 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Lock)
         /// </summary>
         /// <inheritdoc/>
-        public static bool DeleteNotWMS(DataTable dtnotWMS)
+        public static bool LockNotWMS(DataTable dtnotWMS)
         {
             // 找出要撤回的 P07 Ukey
             DataTable dt07 = Prgs.GetWHDetailUkey(dtnotWMS, "P07");
@@ -41,11 +42,25 @@ namespace Sci.Production.Warehouse
                 }
             }
 
+            return true;
+        }
+
+        /// <summary>
+        /// P21/P26 調整後 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Delete)
+        /// </summary>
+        /// <inheritdoc/>
+        public static void DeleteNotWMS(DataTable dtnotWMS)
+        {
+            // 找出要撤回的 P07 Ukey
+            DataTable dt07 = Prgs.GetWHDetailUkey(dtnotWMS, "P07");
+
+            // 找出要撤回的 P18 Ukey
+            DataTable dt18 = Prgs.GetWHDetailUkey(dtnotWMS, "P18");
+
             Gensong_AutoWHFabric.Sent(true, dt07, "P07", EnumStatus.Delete, EnumStatus.Unconfirm, true);
             Gensong_AutoWHFabric.Sent(true, dt18, "P18", EnumStatus.Delete, EnumStatus.Unconfirm, true);
             Vstrong_AutoWHAccessory.Sent(true, dt07, "P07", EnumStatus.Delete, EnumStatus.Unconfirm, true);
             Vstrong_AutoWHAccessory.Sent(true, dt18, "P18", EnumStatus.Delete, EnumStatus.Unconfirm, true);
-            return true;
         }
 
         /// <inheritdoc/>

@@ -900,6 +900,25 @@ AND fs.Dyelot = '{updateItem["Dyelot"]}'
 ";
             }
 
+            DataTable dtToWMS = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1).CopyToDataTable().Clone();
+            DataTable dtcopy = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1).CopyToDataTable();
+            foreach (DataRow dr in dtcopy.Rows)
+            {
+                string sqlchk = $@"
+select 1 from MtlLocation m
+inner join SplitString('{dr["Location"]}',',') sp on m.ID = sp.Data
+where m.IsWMS = 0";
+                if (MyUtility.Check.Seek(sqlchk) && string.Compare(dr["Location"].ToString(), dr["OldLocation"].ToString()) != 0)
+                {
+                    dtToWMS.ImportRow(dr);
+                }
+            }
+
+            if (!Prgs_WMS.LockNotWMS(dtToWMS))
+            {
+                return;
+            }
+
             DualResult result;
             Exception errMsg = null;
             using (TransactionScope transactionscope = new TransactionScope())
@@ -949,26 +968,8 @@ AND fs.Dyelot = '{updateItem["Dyelot"]}'
                 return;
             }
 
-            #region 調整後 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Delete) P07/P18
-            DataTable dtToWMS = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1).CopyToDataTable().Clone();
-            DataTable dtcopy = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1).CopyToDataTable();
-            foreach (DataRow dr in dtcopy.Rows)
-            {
-                string sqlchk = $@"
-select 1 from MtlLocation m
-inner join SplitString('{dr["Location"]}',',') sp on m.ID = sp.Data
-where m.IsWMS = 0";
-                if (MyUtility.Check.Seek(sqlchk) && string.Compare(dr["Location"].ToString(), dr["OldLocation"].ToString()) != 0)
-                {
-                    dtToWMS.ImportRow(dr);
-                }
-            }
-
-            if (!Prgs_WMS.DeleteNotWMS(dtToWMS))
-            {
-                return;
-            }
-            #endregion
+            // 調整後 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Delete) P07/P18
+            Prgs_WMS.DeleteNotWMS(dtToWMS);
 
             // 將當前所選位置記錄起來後, 待資料重整後定位回去!
             int currentRowIndexInt = this.gridReceiving.CurrentRow.Index;
