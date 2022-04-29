@@ -157,6 +157,11 @@
   <ItemGroup>
     <Compile Include="DataTableToList.cs" />
     <Compile Include="DllInvoke.cs" />
+    <Compile Include="Entity\FtyInventory.cs" />
+    <Compile Include="Entity\IssueQtyBreakdown.cs" />
+    <Compile Include="Entity\WHBarcodeTransaction.cs" />
+    <Compile Include="Entity\EnumStatus.cs" />
+    <Compile Include="Entity\WHTableName.cs" />
     <Compile Include="ExcelExtension.cs" />
     <Compile Include="ExcelPrg.cs" />
     <Compile Include="BundleRFCard.cs" />
@@ -169,6 +174,7 @@
     <Compile Include="MessageBoxEX.cs" />
     <Compile Include="Packing.cs" />
     <Compile Include="PmsWebAPI.cs" />
+    <Compile Include="Entity\Prgs_POSuppDetailData.cs" />
     <Compile Include="StaticEntity.cs" />
     <Compile Include="Thread.cs" />
     <Compile Include="Planning.cs" />

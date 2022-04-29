@@ -1,8 +1,6 @@
 ﻿using Ict;
-using Ict.Resources;
 using Ict.Win;
 using Sci.Data;
-using Sci.Production.Automation;
 using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
 using Sci.Win;
@@ -14,8 +12,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -712,8 +708,6 @@ drop table #tmp
                                                                                 });
 
             DataRow[] drArryCutShadebandTime = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
-
-                                                                             // && !MyUtility.Check.Empty(x["CutShadebandTime"])
                                                                              && !MyUtility.Convert.GetDate(x["CutShadebandTime"]).EqualString(MyUtility.Convert.GetDate(x["OldCutShadebandTime"]))).ToArray();
 
             // Remark沒資料則統一合併後寫入P26 同ID，排除Location沒有修改的資料
@@ -906,24 +900,20 @@ AND fs.Dyelot = '{updateItem["Dyelot"]}'
 ";
             }
 
+            DualResult result;
             Exception errMsg = null;
-            TransactionScope transactionscope = new TransactionScope();
-            using (transactionscope)
+            using (TransactionScope transactionscope = new TransactionScope())
             {
                 try
                 {
-                    DualResult result;
                     if (!MyUtility.Check.Empty(sqlInsertLocationTrans))
                     {
-                        DataTable dtLocationTransDetail;
-                        result = DBProxy.Current.Select(null, sqlInsertLocationTrans, out dtLocationTransDetail);
-                        if (!result)
+                        if (!(result = DBProxy.Current.Select(null, sqlInsertLocationTrans, out DataTable dtLocationTransDetail)))
                         {
                             throw result.GetException();
                         }
 
-                        result = Prgs.UpdateFtyInventoryMDivisionPoDetail(dtLocationTransDetail.AsEnumerable().ToList());
-                        if (!result)
+                        if (!(result = Prgs.UpdateFtyInventoryMDivisionPoDetail(dtLocationTransDetail.AsEnumerable().ToList())))
                         {
                             throw result.GetException();
                         }
@@ -931,8 +921,7 @@ AND fs.Dyelot = '{updateItem["Dyelot"]}'
 
                     if (!MyUtility.Check.Empty(sqlUpdateReceiving_Detail))
                     {
-                        result = DBProxy.Current.Execute(null, sqlUpdateReceiving_Detail);
-                        if (!result)
+                        if (!(result = DBProxy.Current.Execute(null, sqlUpdateReceiving_Detail)))
                         {
                             throw result.GetException();
                         }
@@ -940,8 +929,7 @@ AND fs.Dyelot = '{updateItem["Dyelot"]}'
 
                     if (!MyUtility.Check.Empty(sqlUpdateFIR_Shadebone))
                     {
-                        result = DBProxy.Current.Execute(null, sqlUpdateFIR_Shadebone);
-                        if (!result)
+                        if (!(result = DBProxy.Current.Execute(null, sqlUpdateFIR_Shadebone)))
                         {
                             throw result.GetException();
                         }
@@ -961,13 +949,13 @@ AND fs.Dyelot = '{updateItem["Dyelot"]}'
                 return;
             }
 
-            // 若location 不是自動倉,且Location 有變更, 要發給WMS做撤回(Delete)
+            #region 調整後 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Delete) P07/P18
             DataTable dtToWMS = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1).CopyToDataTable().Clone();
             DataTable dtcopy = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1).CopyToDataTable();
             foreach (DataRow dr in dtcopy.Rows)
             {
                 string sqlchk = $@"
-select * from MtlLocation m
+select 1 from MtlLocation m
 inner join SplitString('{dr["Location"]}',',') sp on m.ID = sp.Data
 where m.IsWMS = 0";
                 if (MyUtility.Check.Seek(sqlchk) && string.Compare(dr["Location"].ToString(), dr["OldLocation"].ToString()) != 0)
@@ -976,26 +964,17 @@ where m.IsWMS = 0";
                 }
             }
 
+            Prgs_WMS.DeleteNotWMS(dtToWMS);
+            #endregion
+
             // 將當前所選位置記錄起來後, 待資料重整後定位回去!
             int currentRowIndexInt = this.gridReceiving.CurrentRow.Index;
             int currentColumnIndexInt = this.gridReceiving.CurrentCell.ColumnIndex;
             this.Query();
             this.gridReceiving.CurrentCell = this.gridReceiving[currentColumnIndexInt, currentRowIndexInt];
             this.gridReceiving.FirstDisplayedScrollingRowIndex = currentRowIndexInt;
+
             MyUtility.Msg.InfoBox("Complete");
-
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
-            {
-                Task.Run(() => new Gensong_AutoWHFabric().SentReceive_Location_Update(dtToWMS))
-           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            }
-
-            // AutoWH ACC WebAPI for VStrong
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentReceive_Location_Update(dtToWMS))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-            }
         }
 
         /// <summary>

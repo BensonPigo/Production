@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Sci.Data;
 using Sci.Production.Prg;
+using Sci.Production.PublicPrg;
 using static AutomationErrMsg;
 using static PmsWebApiUtility20.WebApiTool;
 using DualResult = Ict.DualResult;
@@ -24,7 +25,7 @@ namespace Sci.Production.Automation
         public static string Sci => "SCI";
 
         /// <inheritdoc/>
-        public static bool IsAutomationEnable => MyUtility.Check.Seek("select 1 from dbo.System where Automation = 1", "Production");
+        public static bool IsAutomationEnable => Prgs.IsAutomation();
 
         /// <inheritdoc/>
         public static string ModuleType

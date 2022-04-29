@@ -2710,6 +2710,10 @@
     <Build Include="dbo\Tables\PackingErrorRecord.sql" />
     <Build Include="dbo\Stored Procedures\GetSewingDailyOutputList.sql" />
     <Build Include="dbo\Stored Procedures\ImportEstShippingReport.sql" />
+    <Build Include="dbo\Tables\WHBarcodeTransaction.sql" />
+    <Build Include="dbo\Functions\GetWHBarcodeToGensong.sql" />
+    <Build Include="dbo\Functions\GetWH_NextBarcodeSeq.sql" />
+    <Build Include="dbo\Functions\GetColorMultipleID_MtlType.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
