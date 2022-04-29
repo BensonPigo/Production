@@ -426,6 +426,14 @@ where m.IsWMS = 0";
 
             if (!MyUtility.Check.Empty(errMsg))
             {
+                // 找出要撤回的 P07 Ukey
+                DataTable dt07 = Prgs.GetWHDetailUkey(dtToWMS, "P07");
+
+                // 找出要撤回的 P18 Ukey
+                DataTable dt18 = Prgs.GetWHDetailUkey(dtToWMS, "P18");
+
+                Prgs_WMS.WMSprocess(true, dt07, "P07", EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
+                Prgs_WMS.WMSprocess(true, dt18, "P18", EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
                 this.ShowErr(errMsg);
                 return;
             }

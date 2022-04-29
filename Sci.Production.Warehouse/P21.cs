@@ -1,7 +1,9 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Automation;
 using Sci.Production.Prg;
+using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using Sci.Win;
 using Sci.Win.Tools;
@@ -964,6 +966,14 @@ where m.IsWMS = 0";
 
             if (!MyUtility.Check.Empty(errMsg))
             {
+                // 找出要撤回的 P07 Ukey
+                DataTable dt07 = Prgs.GetWHDetailUkey(dtToWMS, "P07");
+
+                // 找出要撤回的 P18 Ukey
+                DataTable dt18 = Prgs.GetWHDetailUkey(dtToWMS, "P18");
+
+                Gensong_AutoWHFabric.Sent(true, dt07, "P07", EnumStatus.UnLock, EnumStatus.Unconfirm);
+                Gensong_AutoWHFabric.Sent(true, dt18, "P18", EnumStatus.UnLock, EnumStatus.Unconfirm);
                 this.ShowErr(errMsg);
                 return;
             }
