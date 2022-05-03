@@ -1112,7 +1112,13 @@ left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
             // 檢查此筆記錄的Pullout Data是否還有值，若是則出訊息告知且無法刪除
             if (this.DetailDatas.Count > 0)
             {
+                if (MyUtility.Msg.QuestionBox("Are you sure to delete GB# <GB#>？") == DialogResult.No)
+                {
+                    return;
+                }
+
                 this.gridDetailPackingList.ValidateControl();
+
                 foreach (DataRow pldr in this.plData.Select(string.Format("InvNo = '{0}'", MyUtility.Convert.GetString(this.CurrentDetailData["ID"]))))
                 {
                     if (!MyUtility.Check.Empty(pldr["PulloutDate"]))
@@ -1145,6 +1151,9 @@ left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
                     string filter = "InvNo = ''";
                     this.plData.DefaultView.RowFilter = filter;
                 }
+
+                var frm = new P10_DeleteGarmentBookingHistory(this.dtDeleteGBHistory, true);
+                frm.ShowDialog(this);
             }
 
             base.OnDetailGridDelete();
@@ -1842,7 +1851,6 @@ inner join #tmp t on t.ID = pd.ID
 
         }
 
-
         private void BtnDeleteGBHistory_Click(object sender, EventArgs e)
         {
             if (this.dtDeleteGBHistory == null || this.dtDeleteGBHistory.Rows.Count == 0)
@@ -1853,6 +1861,7 @@ inner join #tmp t on t.ID = pd.ID
             var frm = new P10_DeleteGarmentBookingHistory(this.dtDeleteGBHistory);
             frm.ShowDialog(this);
         }
+
         private bool GMTCompleteCheck()
         {
             #region 表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
