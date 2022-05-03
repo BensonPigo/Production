@@ -124,6 +124,8 @@
             this.labCategory = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.displayCMTIvnNo = new Sci.Win.UI.DisplayBox();
+            this.btnNoExportEdit = new Sci.Win.UI.Button();
+            this.btnNoExportHistory = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -140,6 +142,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnNoExportHistory);
+            this.masterpanel.Controls.Add(this.btnNoExportEdit);
             this.masterpanel.Controls.Add(this.displayCMTIvnNo);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.displayCategory);
@@ -333,6 +337,8 @@
             this.masterpanel.Controls.SetChildIndex(this.displayCategory, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayCMTIvnNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnNoExportEdit, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnNoExportHistory, 0);
             // 
             // detailpanel
             // 
@@ -1045,7 +1051,7 @@
             this.chkNoExportCharge.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkNoExportCharge.Location = new System.Drawing.Point(813, 277);
             this.chkNoExportCharge.Name = "chkNoExportCharge";
-            this.chkNoExportCharge.Size = new System.Drawing.Size(133, 20);
+            this.chkNoExportCharge.Size = new System.Drawing.Size(132, 20);
             this.chkNoExportCharge.TabIndex = 25;
             this.chkNoExportCharge.Text = "No Export Charge";
             this.chkNoExportCharge.UseVisualStyleBackColor = true;
@@ -1218,7 +1224,7 @@
             this.chkNonDeclare.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkNonDeclare.Location = new System.Drawing.Point(813, 304);
             this.chkNonDeclare.Name = "chkNonDeclare";
-            this.chkNonDeclare.Size = new System.Drawing.Size(103, 20);
+            this.chkNonDeclare.Size = new System.Drawing.Size(102, 20);
             this.chkNonDeclare.TabIndex = 26;
             this.chkNonDeclare.Text = "Non Declare";
             this.chkNonDeclare.UseVisualStyleBackColor = true;
@@ -1269,7 +1275,7 @@
             this.chkFoundry.Location = new System.Drawing.Point(813, 329);
             this.chkFoundry.Name = "chkFoundry";
             this.chkFoundry.ReadOnly = true;
-            this.chkFoundry.Size = new System.Drawing.Size(122, 20);
+            this.chkFoundry.Size = new System.Drawing.Size(121, 20);
             this.chkFoundry.TabIndex = 87;
             this.chkFoundry.Text = "Include Foundry";
             this.chkFoundry.UseVisualStyleBackColor = true;
@@ -1466,6 +1472,29 @@
             this.displayCMTIvnNo.Size = new System.Drawing.Size(100, 23);
             this.displayCMTIvnNo.TabIndex = 96;
             // 
+            // btnNoExportEdit
+            // 
+            this.btnNoExportEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnNoExportEdit.Location = new System.Drawing.Point(942, 275);
+            this.btnNoExportEdit.Name = "btnNoExportEdit";
+            this.btnNoExportEdit.Size = new System.Drawing.Size(39, 24);
+            this.btnNoExportEdit.TabIndex = 97;
+            this.btnNoExportEdit.Text = "Edit";
+            this.btnNoExportEdit.UseVisualStyleBackColor = true;
+            this.btnNoExportEdit.Click += new System.EventHandler(this.BtnNoExportEdit_Click);
+            // 
+            // btnNoExportHistory
+            // 
+            this.btnNoExportHistory.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnNoExportHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
+            this.btnNoExportHistory.Location = new System.Drawing.Point(987, 275);
+            this.btnNoExportHistory.Name = "btnNoExportHistory";
+            this.btnNoExportHistory.Size = new System.Drawing.Size(20, 25);
+            this.btnNoExportHistory.TabIndex = 98;
+            this.btnNoExportHistory.Text = "H";
+            this.btnNoExportHistory.UseVisualStyleBackColor = true;
+            this.btnNoExportHistory.Click += new System.EventHandler(this.BtnNoExportHistory_Click);
+            // 
             // P05
             // 
             this.ApvChkValue = "New";
@@ -1606,5 +1635,7 @@
         private Win.UI.Label labCategory;
         private Win.UI.DisplayBox displayCMTIvnNo;
         private Win.UI.Label label2;
+        private Win.UI.Button btnNoExportHistory;
+        private Win.UI.Button btnNoExportEdit;
     }
 }

@@ -140,6 +140,12 @@ select
     ,g.TotalShipQty
     ,g.TotalCTNQty
     ,g.TotalGW
+    ,VM=(
+			select sum(pld.APPEstAmtVW)
+			from PackingList pl WITH (NOLOCK)
+			inner join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
+			where pl.INVNo =g.ID
+		)
     ,g.TotalCBM
 	,[Ttl. Prod. Out Qty] = (
 		select sum(QAQty)
@@ -256,6 +262,12 @@ select DISTINCT
     ,ShipQty = isnull(pl.ShipQty,0)
     ,CTNQty = isnull(pl.CTNQty,0)
     ,GW = isnull(pl.GW,0)
+    ,VM=(
+			select sum(pld.APPEstAmtVW)
+			from PackingList pl WITH (NOLOCK)
+			inner join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
+			where pl.INVNo =g.ID
+		)
     ,CBM = isnull(pl.CBM,0)
 	,[Ttl. Prod. Out Qty] = (
 		select sum(QAQty)
@@ -357,6 +369,12 @@ select DISTINCT
     ,g.TotalShipQty
     ,g.TotalCTNQty
     ,g.TotalGW
+    ,VM=(
+			select sum(pld.APPEstAmtVW)
+			from PackingList pl WITH (NOLOCK)
+			inner join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
+			where pl.INVNo =g.ID
+		)
     ,g.TotalCBM
     ,[Handle] = dbo.getPass1(g.Handle)
 from GMTBooking g WITH (NOLOCK) 
