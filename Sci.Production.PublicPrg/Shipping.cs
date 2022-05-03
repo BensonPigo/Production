@@ -1373,7 +1373,7 @@ where p.INVNo = '{invNoList}'
         /// <param name="shippingAPID">shippingAPID</param>
         /// <param name="isFreightForwarder">isFreightForwarder</param>
         /// <returns>DualResult</returns>
-        public static DualResult CalculateShareExpense(string shippingAPID, int isFreightForwarder)
+        public static DualResult CalculateShareExpense(string shippingAPID, int isFreightForwarder, SqlConnection sqlconn = null)
         {
             DualResult result;
 
@@ -1488,7 +1488,7 @@ select  InvNo,
         SubType, 
         BLNo,
         FactoryID
-from #tmp
+from #tmpA2B
 union all
 select  [InvNo] = g.ID,
         g.ShipModeID,
@@ -1530,9 +1530,11 @@ update se set   se.ShipModeID = ts.ShipModeID
 from ShareExpense se
 inner join #tmpShareExpense ts on se.InvNo = ts.InvNo and se.FactoryID = ts.FactoryID
 where se.ShippingAPID = shippingAPID
+
+drop table #tmpShareExpense,  #tmpA2B
 ";
 
-                result = MyUtility.Tool.ProcessWithDatatable(dtA2BResult, null, sqlUpdateGBShareExpense, out DataTable dtEmpty);
+                result = MyUtility.Tool.ProcessWithDatatable(dtA2BResult, null, sqlUpdateGBShareExpense, out DataTable dtEmpty, conn: sqlconn, temptablename: "#tmpA2B");
                 if (!result)
                 {
                     return result;
@@ -1540,9 +1542,19 @@ where se.ShippingAPID = shippingAPID
             }
             #endregion
 
-            result = DBProxy.Current.Execute(
-    "Production",
-    string.Format("exec CalculateShareExpense '{0}','{1}',{2}", shippingAPID, Env.User.UserID, isFreightForwarder));
+            if (sqlconn == null)
+            {
+                result = DBProxy.Current.Execute(
+   "Production",
+   string.Format("exec CalculateShareExpense '{0}','{1}',{2}", shippingAPID, Env.User.UserID, isFreightForwarder));
+            }
+            else
+            {
+                result = DBProxy.Current.ExecuteByConn(
+       sqlconn,
+       string.Format("exec CalculateShareExpense '{0}','{1}',{2}", shippingAPID, Env.User.UserID, isFreightForwarder));
+            }
+
             if (!result)
             {
                 return new DualResult(false, "Re-calcute share expense failed!");

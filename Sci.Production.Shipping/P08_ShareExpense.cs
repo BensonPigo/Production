@@ -1364,7 +1364,7 @@ drop table #tmp;",
 
                 SqlConnection sqlConn = null;
                 DBProxy.Current.OpenConnection(null, out sqlConn);
-                using (TransactionScope transactionScope = new TransactionScope())
+                using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.FromSeconds(100)))
                 using (sqlConn)
                 {
                     try
