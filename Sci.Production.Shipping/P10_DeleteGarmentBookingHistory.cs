@@ -36,10 +36,6 @@ namespace Sci.Production.Shipping
             this.masterDataTable = masterData;
             this.EditMode = false;
             this.edit = edit;
-            if (edit)
-            {
-                MyUtility.Msg.InfoBox("Please fill in [Reason] to delete GB# <GB#>!");
-            }
         }
 
         /// <inheritdoc/>
@@ -116,6 +112,7 @@ namespace Sci.Production.Shipping
             if (this.edit)
             {
                 this.BtnSave_Click(null, null);
+                MyUtility.Msg.InfoBox("Please fill in [Reason]、[Remark] to delete GB# <GB#>!");
             }
         }
 
