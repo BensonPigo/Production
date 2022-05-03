@@ -367,6 +367,8 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
             }
             #endregion
 
+            this.btnNoExportEdit.Enabled = !this.EditMode;
+
             #region Include Foundry : Enable = Foundry.Checked
             this.btnFoundryList.Enabled = this.chkFoundry.Checked;
             #endregion
@@ -2711,6 +2713,56 @@ WHERE o.ID in ({whereDetailOrderIDs})
 GROUP BY D.NAME) s
 FOR xml path ('')), 1, 1, '') ,'')
 ");
+        }
+
+        private void BtnNoExportEdit_Click(object sender, EventArgs e)
+        {
+            if (this.EditMode)
+            {
+                MyUtility.Msg.InfoBox("EditMode can not edit No Export Charge");
+                return;
+            }
+
+            string sqlUpdate = $@"
+
+update GMTBooking set NoExportCharges = iif(NoExportCharges = 1, 0, 1) where ID = '{this.CurrentMaintain["ID"]}'
+
+insert into GMTBooking_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
+select  ID,
+        'NoExportCharges',
+        iif(NoExportCharges = 1, 'FALSE', 'TRUE'),
+        iif(NoExportCharges = 1, 'TRUE', 'FALSE'),
+        '',
+        '',
+        '{Env.User.UserID}',
+        getdate()
+from GMTBooking with (nolock)
+where ID = '{this.CurrentMaintain["ID"]}'
+";
+
+            DualResult result = DBProxy.Current.Execute(null, sqlUpdate);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.RenewData();
+        }
+
+        private void BtnNoExportHistory_Click(object sender, EventArgs e)
+        {
+            Win.UI.ShowHistory callNextForm = new Win.UI.ShowHistory("GMTBooking_History", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "NoExportCharges", reasonType: string.Empty, caption: "NoExportCharges Revised History");
+            callNextForm.Visible = false;
+            callNextForm.Show(this);
+            callNextForm.grid1.Columns.Clear();
+            this.Helper.Controls.Grid.Generator(callNextForm.grid1)
+                .CheckBox("NewValue", header: "Action", trueValue: "TRUE", falseValue: "FALSE", iseditable: false)
+                .Text("AddBy", header: "Modify By", iseditable: false);
+
+            callNextForm.grid1.AutoResizeColumns();
+            callNextForm.Visible = true;
         }
     }
 }

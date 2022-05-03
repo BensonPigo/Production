@@ -552,6 +552,11 @@ and Junk = 0",
                 }
             }
 
+            if (!this.CheckNoExportChargesGMT(this.CurrentMaintain["BLNo"].ToString()))
+            { 
+                return false;
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["PayTermID"]))
             {
                 this.txtpayterm_ftyTerms.TextBox1.Focus();
@@ -1445,6 +1450,8 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 return;
             }
 
+            this.CheckNoExportChargesGMT(this.CurrentMaintain["BLNo"].ToString());
+
             string strsqlcmd = $@"select ID,Description from ShippingReason where type='AP' and junk=0 and id ='{this.txtReason.Text}'";
 
             if (!MyUtility.Check.Seek(strsqlcmd))
@@ -1504,6 +1511,11 @@ Non SP# Sample/Mock-up
         // B/L NO. Change
         private void TxtBLNo_Validating(object sender, CancelEventArgs e)
         {
+            if (!this.CheckNoExportChargesGMT(this.txtBLNo.Text))
+            {
+                return;
+            }
+
             this.IncludeFoundryRefresh(this.txtBLNo.Text);
 
             if (this.txtBLNo.Text.Empty() || this.comboType2.SelectedValue.EqualString("OTHER"))
@@ -1647,6 +1659,7 @@ You can complete Account Payment only after the corresponding Number is updated,
             if (isExists)
             {
                 this.checkIsFreightForwarder.Checked = MyUtility.Convert.GetBool(drResult["IsFreightForwarder"]);
+                this.CheckNoExportChargesGMT(this.CurrentMaintain["BLNo"].ToString());
             }
             else
             {
@@ -1709,6 +1722,38 @@ and AccountID != ''",
                     detailDT.Rows.Add(newRow);
                 }
             }
+        }
+
+        private bool CheckNoExportChargesGMT(string blNo)
+        {
+            if (this.checkIsFreightForwarder.Checked &&
+                !this.txtReason.Text.EqualString("AP007") &&
+                !MyUtility.Check.Empty(blNo))
+            {
+                string sqlCheckNoExportCharges = $@"
+select  ID
+from GMTBooking with (nolock)
+where   (BL2no = '{blNo}' or BLno = '{blNo}') and
+        NoExportCharges = 1
+";
+                DataTable dtCheckResult;
+                DualResult result = DBProxy.Current.Select(null, sqlCheckNoExportCharges, out dtCheckResult);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
+
+                if (dtCheckResult.Rows.Count > 0)
+                {
+                    this.txtBLNo.Text = string.Empty;
+                    this.txtBLNo.ValidateControl();
+                    MyUtility.Msg.WarningBox($"<{dtCheckResult.AsEnumerable().Select(s => s["ID"].ToString()).JoinToString(",")}> is ticked \"No export charge\". If shipping expense incurred, please untick \"no export charge\" on garment booking.");
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

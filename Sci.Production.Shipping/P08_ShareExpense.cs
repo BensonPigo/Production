@@ -344,6 +344,20 @@ from GMTBooking g where g.BL2No ='{e.FormattedValue.ToString()}'";
                     return;
                 }
 
+                string sqlCheckNoExportCharges = $@"
+select  1
+from GMTBooking with (nolock)
+where   ID = '{e.FormattedValue}' and
+        NoExportCharges = 1
+";
+                if (MyUtility.Check.Seek(sqlCheckNoExportCharges))
+                {
+                    MyUtility.Msg.WarningBox($"<{e.FormattedValue}> is ticked \"No export charge\". If shipping expense incurred, please untick \"no export charge\" on garment booking.");
+                    e.FormattedValue = string.Empty;
+                    e.Cancel = true;
+                    return;
+                }
+
                 if (MyUtility.Check.Seek(cmd_type, out dr))
                 {
                     // TYPE= Export : GB,Packing(type=F,L),FTYExport(type=3)
