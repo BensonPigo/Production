@@ -3,7 +3,6 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
 using Sci.Production.PublicPrg;
-using Sci.Win.Tems;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
@@ -367,6 +366,8 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
             }
             #endregion
 
+            this.btnNoExportEdit.Enabled = !this.EditMode;
+
             #region Include Foundry : Enable = Foundry.Checked
             this.btnFoundryList.Enabled = this.chkFoundry.Checked;
             #endregion
@@ -541,9 +542,6 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
                 this.txtSubconForwarder.TextBox1.ReadOnly = true;
                 this.comboContainerType.ReadOnly = true;
                 this.txtSONo.ReadOnly = true;
-
-                // textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndNonReadOnly;
-                // textBox6.ReadOnly = true;
                 this.col_lock.IsEditingReadOnly = true;
                 this.col_crd.IsEditingReadOnly = true;
                 this.detailgrid.Columns[0].DefaultCellStyle.ForeColor = Color.Black;
@@ -561,10 +559,10 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
                 this.col_crd.IsEditingReadOnly = false;
                 this.detailgrid.Columns[0].DefaultCellStyle.ForeColor = Color.Red;
                 this.detailgrid.Columns[4].DefaultCellStyle.ForeColor = Color.Red;
-                this.txtCutoffDate.ReadOnly = false;
                 this.txtTerminalWhse.ReadOnly = false;
 
-                // textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+                // 已被[P10. Ship Plan] import data 的 GB#，無法再被修改Cut-off Date // 若要修改Cut-off Date的正確流程，應該是去[P10. Ship Plan] delete掉該筆GB#
+                this.txtCutoffDate.ReadOnly = !MyUtility.Check.Empty(this.CurrentMaintain["ShipPlanID"]);
             }
 
             switch (this.CurrentMaintain["Status"].ToString().ToUpper())
@@ -2711,6 +2709,56 @@ WHERE o.ID in ({whereDetailOrderIDs})
 GROUP BY D.NAME) s
 FOR xml path ('')), 1, 1, '') ,'')
 ");
+        }
+
+        private void BtnNoExportEdit_Click(object sender, EventArgs e)
+        {
+            if (this.EditMode)
+            {
+                MyUtility.Msg.InfoBox("EditMode can not edit No Export Charge");
+                return;
+            }
+
+            string sqlUpdate = $@"
+
+update GMTBooking set NoExportCharges = iif(NoExportCharges = 1, 0, 1) where ID = '{this.CurrentMaintain["ID"]}'
+
+insert into GMTBooking_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
+select  ID,
+        'NoExportCharges',
+        iif(NoExportCharges = 1, 'FALSE', 'TRUE'),
+        iif(NoExportCharges = 1, 'TRUE', 'FALSE'),
+        '',
+        '',
+        '{Env.User.UserID}',
+        getdate()
+from GMTBooking with (nolock)
+where ID = '{this.CurrentMaintain["ID"]}'
+";
+
+            DualResult result = DBProxy.Current.Execute(null, sqlUpdate);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.RenewData();
+        }
+
+        private void BtnNoExportHistory_Click(object sender, EventArgs e)
+        {
+            Win.UI.ShowHistory callNextForm = new Win.UI.ShowHistory("GMTBooking_History", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "NoExportCharges", reasonType: string.Empty, caption: "NoExportCharges Revised History");
+            callNextForm.Visible = false;
+            callNextForm.Show(this);
+            callNextForm.grid1.Columns.Clear();
+            this.Helper.Controls.Grid.Generator(callNextForm.grid1)
+                .CheckBox("NewValue", header: "Action", trueValue: "TRUE", falseValue: "FALSE", iseditable: false)
+                .Text("AddBy", header: "Modify By", iseditable: false);
+
+            callNextForm.grid1.AutoResizeColumns();
+            callNextForm.Visible = true;
         }
     }
 }

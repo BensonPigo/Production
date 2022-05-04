@@ -14,10 +14,11 @@
     [LockDate]              DATETIME        NULL,
     [Lock]                  BIT             CONSTRAINT [DF_FtyInventory_Lock] DEFAULT ((0)) NULL,
     [Remark]                NVARCHAR (500)  CONSTRAINT [DF_FtyInventory_Remark] DEFAULT ('') NULL,
-    [Barcode] VARCHAR(16) NULL DEFAULT (''), 
+    [Barcode] VARCHAR(255) NULL DEFAULT (''), 
     [ReturnQty] NUMERIC(11, 2) CONSTRAINT [DF_FtyInventory_ReturnQty] NOT NULL DEFAULT ((0)), 
     [WMSLock] BIT NOT NULL DEFAULT ((0)), 
     [ContainerCode] NVARCHAR(100) NULL DEFAULT (''), 
+    [BarcodeSeq] VARCHAR(2) NULL DEFAULT (''), 
     CONSTRAINT [PK_FtyInventory] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -145,3 +146,23 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'FtyInventory',
     @level2type = N'COLUMN',
     @level2name = N'ContainerCode'
+GO
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'布捲條碼',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'FtyInventory',
+    @level2type = N'COLUMN',
+    @level2name = N'Barcode'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'布捲條碼流水號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'FtyInventory',
+    @level2type = N'COLUMN',
+    @level2name = N'BarcodeSeq'

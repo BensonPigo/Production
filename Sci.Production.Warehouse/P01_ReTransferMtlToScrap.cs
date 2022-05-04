@@ -2,17 +2,18 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using System;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P01_ReTransferMtlToScrap : Win.Tems.QueryForm
     {
         private string poID;
@@ -180,14 +181,14 @@ and f.POID = '{this.poID}'
 
             using (TransactionScope transactionScope = new TransactionScope())
             {
-                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "AC", "SubTransfer", DateTime.Now);
-                if (MyUtility.Check.Empty(tmpId))
+                string subTransferId = MyUtility.GetValue.GetID(Env.User.Keyword + "AC", "SubTransfer", DateTime.Now);
+                if (MyUtility.Check.Empty(subTransferId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
                     return;
                 }
 
-                DualResult result = PublicPrg.Prgs.ReTransferMtlToScrapByPO(tmpId, this.poID, selectedBulk);
+                DualResult result = PublicPrg.Prgs.ReTransferMtlToScrapByPO(subTransferId, this.poID, selectedBulk);
                 if (!result)
                 {
                     transactionScope.Dispose();
@@ -195,47 +196,22 @@ and f.POID = '{this.poID}'
                     return;
                 }
 
-                Prgs.SubTransBarcode(true, tmpId);
-
-                #region Sent W/H Fabric to Gensong
-
-                // SubTransfer_Detail
-                if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+                if (!(result = DBProxy.Current.Select(null, $"select * from SubTransfer_Detail where id = '{subTransferId}'", out DataTable dtSubTransfer_Detail)))
                 {
-                    DataTable dtMain = new DataTable();
-                    dtMain.Columns.Add("ID", typeof(string));
-                    dtMain.Columns.Add("Type", typeof(string));
-                    dtMain.Columns.Add("Status", typeof(string));
-                    DataRow row = dtMain.NewRow();
-                    row["ID"] = tmpId;
-                    row["Type"] = "D";
-                    row["Status"] = "Confirmed";
-                    dtMain.Rows.Add(row);
-                    Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_Detail_New(dtMain))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-                }
-                #endregion
-
-                #region Sent W/H Accessory to Vstrong
-
-                // SubTransfer_Detail
-                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-                {
-                    DataTable dtMain = new DataTable();
-                    dtMain.Columns.Add("ID", typeof(string));
-                    dtMain.Columns.Add("Type", typeof(string));
-                    dtMain.Columns.Add("Status", typeof(string));
-                    DataRow row = dtMain.NewRow();
-                    row["ID"] = tmpId;
-                    row["Type"] = "D";
-                    row["Status"] = "Confirmed";
-                    dtMain.Rows.Add(row);
-                    Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_Detail_New(dtMain, "New"))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    MyUtility.Msg.ErrorBox(result.ToString());
+                    return;
                 }
 
-                // this.QueryData();
-                #endregion
+                // 上方 Auto Create P25 Confrim 後, 寫入新的 BarCode
+                if (!(result = Prgs.UpdateWH_Barcode(true, dtSubTransfer_Detail, "P25", out bool fromNewBarcode)))
+                {
+                    MyUtility.Msg.ErrorBox(result.ToString());
+                    return;
+                }
+
+                // SubTransfer_Detail
+                Gensong_AutoWHFabric.Sent(true, dtSubTransfer_Detail, "P25", EnumStatus.New, EnumStatus.Confirm);
+                Vstrong_AutoWHAccessory.Sent(true, dtSubTransfer_Detail, "P25", EnumStatus.New, EnumStatus.Confirm);
 
                 transactionScope.Complete();
             }
