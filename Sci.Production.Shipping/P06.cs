@@ -2648,10 +2648,12 @@ ORDER BY ph.AddName DESC
 
             string sqlChk = $@"
 select p.ID,P.AddDate,P.EditDate,PD.AddDate,PD.EditDate--,
-from Pullout_Detail pd 
-INNER JOIN Pullout P ON P.ID=PD.ID
+from Pullout_Detail pd with (nolock)
+INNER JOIN Pullout P with (nolock) ON P.ID=PD.ID
+inner join Orders o with (nolock) on pd.OrderID = o.ID
 where pd.id ='{this.CurrentMaintain["ID"]}'
 and (PD.EditDate>IIF(P.EditDate IS NULL,P.AddDate,P.EditDate))
+and o.GMTComplete = 'S'
 ";
 
             if (isGMTComplete.Rows.Count > 0 && MyUtility.Check.Seek(sqlChk))
