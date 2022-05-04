@@ -3,6 +3,7 @@ using Ict.Win;
 using Microsoft.Reporting.WinForms;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using Sci.Win;
 using System;
@@ -12,7 +13,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -21,8 +21,6 @@ namespace Sci.Production.Warehouse
     /// <inheritdoc/>
     public partial class P13 : Win.Tems.Input6
     {
-        private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
-        private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
         private ReportViewer viewer;
 
         /// <inheritdoc/>
@@ -351,7 +349,7 @@ order by id.POID,SEQ, id.Dyelot,id.Roll
                     return false;
                 }
             }
-            
+
             #endregion 必輸檢查
 
             foreach (DataRow row in this.DetailDatas)
@@ -396,18 +394,6 @@ order by id.POID,SEQ, id.Dyelot,id.Roll
         }
 
         /// <inheritdoc/>
-        protected override DualResult ClickSavePre()
-        {
-            return base.ClickSavePre();
-        }
-
-        /// <inheritdoc/>
-        protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
-        {
-            return base.OnRenewDataDetailPost(e);
-        }
-
-        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -449,12 +435,6 @@ and ID = '{Sci.Env.User.UserID}'"))
         }
 
         /// <inheritdoc/>
-        protected override void OnDetailGridInsert(int index = -1)
-        {
-            base.OnDetailGridInsert(index);
-        }
-
-        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode;
@@ -484,28 +464,32 @@ and ID = '{Sci.Env.User.UserID}'"))
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
+            this.RenewData(); // 先重載資料, 避免雙開程式狀況
             base.ClickConfirm();
-            var dr = this.CurrentMaintain;
-            if (dr == null)
+            if (this.CurrentMaintain == null)
             {
                 return;
             }
 
-            StringBuilder sqlupd2 = new StringBuilder();
-            string sqlcmd = string.Empty, sqlupd3 = string.Empty, ids = string.Empty;
-            DualResult result, result2;
-            StringBuilder sqlupd2_B = new StringBuilder();
-            string sqlupd2_FIO = string.Empty;
+            // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
+            DualResult result = Prgs.GetFtyInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtOriFtyInventory);
+            string ids = string.Empty;
+
+            // 檢查 是自動倉 的 Barcode不可為空
+            if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, this.Name))
+            {
+                return;
+            }
 
             #region 檢查物料Location 是否存在WMS
-            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P13"))
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), this.Name))
             {
                 return;
             }
             #endregion
 
             #region 檢查庫存項lock
-            sqlcmd = string.Format(
+            string sqlcmd = string.Format(
                 @"
 Select  d.poid
         ,d.seq1
@@ -517,9 +501,9 @@ from dbo.Issue_Detail d WITH (NOLOCK)
 inner join FtyInventory f WITH (NOLOCK) on d.poid = f.poid and d.seq1 = f.seq1 and d.seq2 = f.seq2 and d.Dyelot = f.Dyelot
     and d.roll = f.roll and d.stocktype = f.stocktype
 where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
-            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out DataTable datacheck)))
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out DataTable datacheck)))
             {
-                this.ShowErr(sqlcmd, result2);
+                this.ShowErr(sqlcmd, result);
                 return;
             }
             else
@@ -607,9 +591,9 @@ from dbo.Issue_Detail d WITH (NOLOCK)
 left join FtyInventory f WITH (NOLOCK) on d.poid = f.poid and d.seq1 = f.seq1 and d.seq2 = f.seq2 and d.Dyelot = f.Dyelot
     and d.roll = f.roll and d.stocktype = f.stocktype
 where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) - d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
-            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
-                this.ShowErr(sqlcmd, result2);
+                this.ShowErr(sqlcmd, result);
                 return;
             }
             else
@@ -627,12 +611,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             }
 
             #endregion 檢查負數庫存
-
-            #region 更新表頭狀態資料
-
-            sqlupd3 = $@"update Issue set status='Confirmed', editname = '{Env.User.UserID}' , editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'";
-
-            #endregion 更新表頭狀態資料
 
             #region 更新庫存數量  ftyinventory
             var bs1 = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
@@ -652,6 +630,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                            Stocktype = m.First().Field<string>("stocktype"),
                            Qty = m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
+            StringBuilder sqlupd2_B = new StringBuilder();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, true));
             var bsfio = (from m in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                          select new
@@ -665,98 +644,72 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                              roll = m.Field<string>("roll"),
                              dyelot = m.Field<string>("dyelot"),
                          }).ToList();
-            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
+            string sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
             #endregion
 
-            TransactionScope transactionscope = new TransactionScope();
-            using (transactionscope)
+            Exception errMsg = null;
+            using (TransactionScope transactionscope = new TransactionScope())
             {
                 try
                 {
                     DataTable resulttb;
                     if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B.ToString(), out resulttb, "#TmpSource")))
                     {
-                        transactionscope.Dispose();
-                        this.ShowErr(result);
-                        return;
+                        throw result.GetException();
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
-                        transactionscope.Dispose();
-                        this.ShowErr(result);
-                        return;
+                        throw result.GetException();
                     }
 
-                    if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
+                    // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                    if (!(result = Prgs.UpdateWH_Barcode(true, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
                     {
-                        transactionscope.Dispose();
-                        this.ShowErr(sqlupd3, result);
-                        return;
+                        throw result.GetException();
+                    }
+
+                    if (!(result = DBProxy.Current.Execute(null, $"update Issue set status = 'Confirmed', editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
+                    {
+                        throw result.GetException();
                     }
 
                     transactionscope.Complete();
-                    transactionscope.Dispose();
-
-                    // 更新Ftyinventory barcode
-                    this.FtyBarcodeData(true);
-                    MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
-                    return;
+                    errMsg = ex;
                 }
             }
 
-            transactionscope.Dispose();
-            transactionscope = null;
-
-            DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-
-            // AutoWHACC WebAPI for Vstrong
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            if (!MyUtility.Check.Empty(errMsg))
             {
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentIssue_Detail_New(dtDetail, "P13", "New"))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                this.ShowErr(errMsg);
+                return;
             }
 
-            // AutoWH Fabric WebAPI for Gensong
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
-            {
-                Task.Run(() => new Gensong_AutoWHFabric().SentIssue_Detail_New(dtDetail, "P13"))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-            }
+            // AutoWHFabric WebAPI
+            Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+            MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
         /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
+            this.RenewData(); // 先重載資料, 避免雙開程式狀況
             base.ClickUnconfirm();
-            DataTable dt = (DataTable)this.detailgridbs.DataSource;
-
-            DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unconfirme it?");
-            if (dResult == DialogResult.No)
+            if (this.CurrentMaintain == null ||
+                MyUtility.Msg.QuestionBox("Do you want to unconfirme it?") == DialogResult.No)
             {
                 return;
             }
 
-            var dr = this.CurrentMaintain;
-            if (dr == null)
-            {
-                return;
-            }
-
-            StringBuilder sqlupd2 = new StringBuilder();
-            string sqlcmd = string.Empty, sqlupd3 = string.Empty, ids = string.Empty;
-            DualResult result, result2;
-
-            StringBuilder sqlupd2_B = new StringBuilder();
-            string sqlupd2_FIO = string.Empty;
+            // 取得 FtyInventory 資料
+            DualResult result = Prgs.GetFtyInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtOriFtyInventory);
+            string ids = string.Empty;
 
             #region 檢查物料Location 是否存在WMS
-            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P13"))
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), this.Name))
             {
                 MyUtility.Msg.WarningBox("Material Location is from WMS system cannot confirmed or unconfirmed. ", "Warning");
                 return;
@@ -764,7 +717,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             #endregion
 
             #region 檢查庫存項lock
-            sqlcmd = string.Format(
+            string sqlcmd = string.Format(
                 @"
 Select  d.poid
         ,d.seq1
@@ -776,9 +729,9 @@ from dbo.Issue_Detail d WITH (NOLOCK)
 inner join FtyInventory f WITH (NOLOCK) on d.poid = f.poid and d.seq1 = f.seq1 and d.seq2 = f.seq2 and d.Dyelot = f.Dyelot
     and d.roll = f.roll and d.stocktype = f.stocktype
 where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
-            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out DataTable datacheck)))
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out DataTable datacheck)))
             {
-                this.ShowErr(sqlcmd, result2);
+                this.ShowErr(sqlcmd, result);
                 return;
             }
             else
@@ -817,9 +770,9 @@ from dbo.Issue_Detail d WITH (NOLOCK)
 left join FtyInventory f WITH (NOLOCK) on d.poid = f.poid and d.seq1 = f.seq1 and d.seq2 = f.seq2 and d.Dyelot = f.Dyelot
     and d.roll = f.roll and d.stocktype = f.stocktype
 where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) + d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
-            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
-                this.ShowErr(sqlcmd, result2);
+                this.ShowErr(sqlcmd, result);
                 return;
             }
             else
@@ -839,72 +792,11 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             #endregion 檢查負數庫存
 
             #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-            if (!Prgs.ChkWMSCompleteTime(dt, "Issue_Detail"))
+            if (!Prgs.ChkWMSCompleteTime((DataTable)this.detailgridbs.DataSource, "Issue_Detail"))
             {
                 return;
             }
             #endregion
-
-            #region UnConfirmed 先檢查WMS是否傳送成功
-
-            DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-
-            bool accLock = true;
-            bool fabricLock = true;
-
-            // 主副料都有情況
-            if (Prgs.Chk_Complex_Material(this.CurrentMaintain["ID"].ToString(), "Issue_Detail"))
-            {
-                if (!Vstrong_AutoWHAccessory.SentIssue_Detail_Delete(dtDetail, "P13", "Lock", isComplexMaterial: true))
-                {
-                    accLock = false;
-                }
-
-                if (!Gensong_AutoWHFabric.SentIssue_Detail_Delete(dtDetail, "P13", "Lock", isComplexMaterial: true))
-                {
-                    fabricLock = false;
-                }
-
-                // 如果WMS連線都成功,則直接unconfirmed刪除
-                if (accLock && fabricLock)
-                {
-                    Vstrong_AutoWHAccessory.SentIssue_Detail_Delete(dtDetail, "P13", "UnConfirmed", isComplexMaterial: true);
-                    Gensong_AutoWHFabric.SentIssue_Detail_Delete(dtDetail, "P13", "UnConfirmed", isComplexMaterial: true);
-                }
-                else
-                {
-                    // 個別成功的,傳WMS UnLock狀態並且都不能刪除
-                    if (accLock)
-                    {
-                        Vstrong_AutoWHAccessory.SentIssue_Detail_Delete(dtDetail, "P13", "UnLock", isComplexMaterial: true);
-                    }
-
-                    if (fabricLock)
-                    {
-                        Gensong_AutoWHFabric.SentIssue_Detail_Delete(dtDetail, "P13", "UnLock", isComplexMaterial: true);
-                    }
-
-                    return;
-                }
-            }
-            else
-            {
-                if (!Vstrong_AutoWHAccessory.SentIssue_Detail_Delete(dtDetail, "P13", "UnConfirmed"))
-                {
-                    return;
-                }
-
-                if (!Gensong_AutoWHFabric.SentIssue_Detail_Delete(dtDetail, "P13", "UnConfirmed"))
-                {
-                    return;
-                }
-            }
-            #endregion
-
-            #region 更新表頭狀態資料
-            sqlupd3 = $@"update Issue set status='New', editname = '{Env.User.UserID}' , editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'";
-
-            #endregion 更新表頭狀態資料
 
             #region 更新庫存數量  ftyinventory
             var bs1 = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
@@ -924,6 +816,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                            Stocktype = m.First().Field<string>("stocktype"),
                            Qty = -m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
+            StringBuilder sqlupd2_B = new StringBuilder();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, false));
 
             var bsfio = (from m in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
@@ -938,157 +831,63 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                              roll = m.Field<string>("roll"),
                              dyelot = m.Field<string>("dyelot"),
                          }).ToList();
-            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
+            string sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
             #endregion
 
-            TransactionScope transactionscope = new TransactionScope();
-            using (transactionscope)
+            #region UnConfirmed 廠商能上鎖→PMS更新→廠商更新
+
+            // 先確認 WMS 能否上鎖, 不能直接 return
+            if (!Prgs_WMS.WMSLock((DataTable)this.detailgridbs.DataSource, dtOriFtyInventory, this.Name, EnumStatus.Unconfirm))
+            {
+                return;
+            }
+
+            // PMS 的資料更新
+            Exception errMsg = null;
+            using (TransactionScope transactionscope = new TransactionScope())
             {
                 try
                 {
                     DataTable resulttb;
                     if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B.ToString(), out resulttb, "#TmpSource")))
                     {
-                        transactionscope.Dispose();
-                        this.ShowErr(result);
-                        return;
+                        throw result.GetException();
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
-                        transactionscope.Dispose();
-                        this.ShowErr(result);
-                        return;
+                        throw result.GetException();
                     }
 
-                    if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
+                    if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
                     {
-                        transactionscope.Dispose();
-                        this.ShowErr(sqlupd3, result);
-                        return;
+                        throw result.GetException();
+                    }
+
+                    if (!(result = DBProxy.Current.Execute(null, $@"update Issue set status = 'New', editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
+                    {
+                        throw result.GetException();
                     }
 
                     transactionscope.Complete();
-                    transactionscope.Dispose();
-
-                    // 刪除Ftyinventory barcode
-                    this.FtyBarcodeData(false);
-                    MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
-                    return;
+                    errMsg = ex;
                 }
             }
 
-            transactionscope.Dispose();
-            transactionscope = null;
-        }
-
-        private void FtyBarcodeData(bool isConfirmed)
-        {
-            DualResult result;
-            DataTable dt = new DataTable();
-            string sqlcmd = $@"
-select
-[Barcode1] = f.Barcode
-,[Barcode2] = fb.Barcode
-,[OriBarcode] = fbOri.Barcode
-,[balanceQty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
-,[NewBarcode] = ''
-,i2.Id,i2.POID,i2.Seq1,i2.Seq2,i2.StockType,i2.Roll,i2.Dyelot
-from Production.dbo.Issue_Detail i2
-inner join Production.dbo.Issue i on i2.Id=i.Id 
-inner join FtyInventory f on f.POID = i2.POID
-and f.Seq1 = i2.Seq1 and f.Seq2 = i2.Seq2
-and f.Roll = i2.Roll and f.Dyelot = i2.Dyelot
-and f.StockType = i2.StockType
-outer apply(
-	select Barcode = MAX(Barcode)
-	from FtyInventory_Barcode t
-	where t.Ukey = f.Ukey
-)fb
-outer apply(
-	select *
-	from FtyInventory_Barcode t
-	where t.Ukey = f.Ukey
-	and t.TransactionID = '{this.CurrentMaintain["ID"]}'
-)fbOri
-where 1=1
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail 
-	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
-	and FabricType='F'
-)
-and i2.id = '{this.CurrentMaintain["ID"]}'
-
-";
-            DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
-
-            foreach (DataRow dr in dt.Rows)
+            if (!MyUtility.Check.Empty(errMsg))
             {
-                string strBarcode = MyUtility.Check.Empty(dr["Barcode2"]) ? dr["Barcode1"].ToString() : dr["Barcode2"].ToString();
-                if (isConfirmed)
-                {
-                    // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
-                    if (!MyUtility.Check.Empty(dr["balanceQty"]) && !MyUtility.Check.Empty(strBarcode))
-                    {
-                        if (strBarcode.Contains("-"))
-                        {
-                            dr["NewBarcode"] = strBarcode.Substring(0, 13) + "-" + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
-                        }
-                        else
-                        {
-                            dr["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
-                        }
-                    }
-                    else
-                    {
-                        // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
-                        dr["NewBarcode"] = dr["Barcode1"];
-                    }
-                }
-                else
-                {
-                    // unConfirmed 要用自己的紀錄給補回
-                    dr["NewBarcode"] = dr["OriBarcode"];
-                }
+                Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
+                this.ShowErr(errMsg);
+                return;
             }
 
-            var data_Fty_Barcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
-                                    select new
-                                    {
-                                        TransactionID = m.Field<string>("ID"),
-                                        poid = m.Field<string>("poid"),
-                                        seq1 = m.Field<string>("seq1"),
-                                        seq2 = m.Field<string>("seq2"),
-                                        stocktype = m.Field<string>("stocktype"),
-                                        roll = m.Field<string>("roll"),
-                                        dyelot = m.Field<string>("dyelot"),
-                                        Barcode = m.Field<string>("NewBarcode"),
-                                    }).ToList();
-
-            // confirmed 要刪除Barcode, 反之則從Ftyinventory_Barcode補回
-            string upd_Fty_Barcode_V1 = isConfirmed ? Prgs.UpdateFtyInventory_IO(70, null, !isConfirmed) : Prgs.UpdateFtyInventory_IO(72, null, true);
-            string upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, isConfirmed);
-            DataTable resulttb;
-            if (data_Fty_Barcode.Count >= 1)
-            {
-                // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
-                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource")))
-                {
-                    this.ShowErr(result);
-                    return;
-                }
-
-                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode_V2, out resulttb, "#TmpSource")))
-                {
-                    this.ShowErr(result);
-                    return;
-                }
-            }
+            // PMS 更新之後,才執行WMS
+            Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory);
+            MyUtility.Msg.InfoBox("UnConfirmed successful");
+            #endregion
         }
 
         /// <inheritdoc/>
@@ -1227,8 +1026,6 @@ Where a.id = '{0}'", masterID);
 
             if (this.CurrentMaintain["whseReasonID"].ToString() == "00007" && MyUtility.Convert.GetString(this.CurrentMaintain["status"]) == "New")
             {
-                //this.txtCuttingPlanID.Enabled = this.EditMode;
-                //this.txtCuttingPlanID.ReadOnly = !this.EditMode;
             }
             else
             {
@@ -1236,14 +1033,14 @@ Where a.id = '{0}'", masterID);
                 {
                     this.CurrentMaintain["CutplanID"] = string.Empty;
                 }
-                //this.txtCuttingPlanID.ReadOnly = !this.EditMode;
             }
+
             this.txtCuttingPlanID.ReadOnly = !this.EditMode;
         }
 
         private void BtnCallP99_Click(object sender, EventArgs e)
         {
-            P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P13", this);
+            P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), this.Name, this);
         }
 
         private void TxtCuttingPlanID_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
