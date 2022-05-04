@@ -730,6 +730,7 @@
     <Compile Include="P99.Designer.cs">
       <DependentUpon>P99.cs</DependentUpon>
     </Compile>
+    <Compile Include="Prgs_WMS.cs" />
     <Compile Include="Report\R02.cs">
       <SubType>Form</SubType>
     </Compile>
