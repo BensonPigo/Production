@@ -185,6 +185,7 @@ namespace Sci.Production.Warehouse
                 }
                 finally
                 {
+                    Marshal.ReleaseComObject(document);
                     Marshal.ReleaseComObject(winword);
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
