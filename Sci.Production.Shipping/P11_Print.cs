@@ -107,7 +107,7 @@ namespace Sci.Production.Shipping
 
             if (!MyUtility.Check.Empty(this.txtbrand.Text))
             {
-                sqlInvDateWhere += " and bi.BrandID <= @BrandID";
+                sqlInvDateWhere += " and gb.BrandID <= @BrandID";
                 listPar.Add(new SqlParameter("@BrandID", this.txtbrand.Text));
             }
 
@@ -139,7 +139,7 @@ select	bi.ID,
         [ShipQty] = 0
 from BIRInvoice bi with (nolock)
 inner join BIRInvoice_Detail bd with (nolock) on bi.ID = bd.ID
-inner join GMTBooking gb on bi.ID = gb.BIRID and bi.BrandID = gb.BrandID
+inner join GMTBooking gb on bi.ID = gb.BIRID
 inner join GMTBooking_Detail gbd with (nolock) on gbd.ID = gb.ID
 where	1=1
         {sqlInvDateWhere}

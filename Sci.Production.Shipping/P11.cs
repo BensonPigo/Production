@@ -212,7 +212,7 @@ where id = '{this.CurrentMaintain["ID"]}'
         protected override void ClickUnconfirm()
         {
             string sqlupdate = $@"
-update BIRInvoice set Status='New', Approve='{Env.User.UserID}', ApproveDate=getdate(), EditName='{Env.User.UserID}', EditDate=getdate()
+update BIRInvoice set Status='New', Approve='', ApproveDate = null, EditName='{Env.User.UserID}', EditDate=getdate()
 where id = '{this.CurrentMaintain["ID"]}'
 ";
             DualResult result = DBProxy.Current.Execute(null, sqlupdate);
