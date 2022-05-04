@@ -169,7 +169,7 @@ select  [Sel] = 0
 	    ,[Weight] = isnull(rd.Weight, isnull(td.Weight, 0))
 	    ,[ActualWeight] = isnull(rd.ActualWeight, isnull(td.ActualWeight, 0))
         ,fp.Inspector
-        ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd hh:mmtt')
+        ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd')
 	    ,[MINDQRCode] = (select top 1 case  when    wbt.To_NewBarcodeSeq = '' then wbt.To_NewBarcode
                                                 when    wbt.To_NewBarcode = ''  then ''
                                                 else    Concat(wbt.To_NewBarcode, '-', wbt.To_NewBarcodeSeq)    end

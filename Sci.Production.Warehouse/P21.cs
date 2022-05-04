@@ -498,7 +498,7 @@ from
 		,psd.SuppColor
 		,psd.ColorID
         ,fp.Inspector
-        ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd hh:mmtt')
+        ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd')
         ,[FirRemark] = fp.Remark
         ,o.FactoryID
     from  Receiving r with (nolock)

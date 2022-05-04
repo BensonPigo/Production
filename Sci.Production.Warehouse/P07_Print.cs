@@ -228,7 +228,7 @@ select
 				iif(r.Unoriginal is  null , ttlQty.value, null))) +' '+ R.PoUnit
     ,[Location] = Location.MtlLocationID
     ,fp.Inspector
-    ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd hh:mmtt')
+    ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd')
     ,o.FactoryID
     ,[FirRemark] = fp.Remark
 from dbo.Receiving_Detail R WITH (NOLOCK) 
