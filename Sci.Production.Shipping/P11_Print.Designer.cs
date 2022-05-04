@@ -31,13 +31,14 @@
             this.radioBIRSalesReport = new Sci.Win.UI.RadioButton();
             this.radioBIRSalesInv = new Sci.Win.UI.RadioButton();
             this.lblInvDate = new Sci.Win.UI.Label();
-            this.lblInvoiceSer = new Sci.Win.UI.Label();
-            this.lblShipper = new Sci.Win.UI.Label();
             this.dateInvoice = new Sci.Win.UI.DateRange();
-            this.txtInvSerFrom = new Sci.Win.UI.TextBox();
-            this.txtInvSerTo = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
             this.txtShipper = new Sci.Win.UI.TextBox();
+            this.txtGBNo = new Sci.Win.UI.TextBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
+            this.chkOutStanding = new Sci.Win.UI.CheckBox();
+            this.labBrand = new Sci.Win.UI.Label();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.SuspendLayout();
             // 
             // print
@@ -93,24 +94,6 @@
             this.lblInvDate.Text = "Invoice Date";
             this.lblInvDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // lblInvoiceSer
-            // 
-            this.lblInvoiceSer.Location = new System.Drawing.Point(24, 101);
-            this.lblInvoiceSer.Name = "lblInvoiceSer";
-            this.lblInvoiceSer.Size = new System.Drawing.Size(100, 23);
-            this.lblInvoiceSer.TabIndex = 104;
-            this.lblInvoiceSer.Text = "Invoice Serial";
-            // 
-            // lblShipper
-            // 
-            this.lblShipper.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.lblShipper.Location = new System.Drawing.Point(24, 131);
-            this.lblShipper.Name = "lblShipper";
-            this.lblShipper.Size = new System.Drawing.Size(100, 23);
-            this.lblShipper.TabIndex = 105;
-            this.lblShipper.Text = "Shipper";
-            this.lblShipper.TextStyle.Color = System.Drawing.Color.Black;
-            // 
             // dateInvoice
             // 
             // 
@@ -135,58 +118,88 @@
             this.dateInvoice.Size = new System.Drawing.Size(280, 23);
             this.dateInvoice.TabIndex = 106;
             // 
-            // txtInvSerFrom
-            // 
-            this.txtInvSerFrom.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtInvSerFrom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtInvSerFrom.Location = new System.Drawing.Point(127, 101);
-            this.txtInvSerFrom.Name = "txtInvSerFrom";
-            this.txtInvSerFrom.ReadOnly = true;
-            this.txtInvSerFrom.Size = new System.Drawing.Size(129, 23);
-            this.txtInvSerFrom.TabIndex = 107;
-            // 
-            // txtInvSerTo
-            // 
-            this.txtInvSerTo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtInvSerTo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtInvSerTo.Location = new System.Drawing.Point(278, 101);
-            this.txtInvSerTo.Name = "txtInvSerTo";
-            this.txtInvSerTo.ReadOnly = true;
-            this.txtInvSerTo.Size = new System.Drawing.Size(129, 23);
-            this.txtInvSerTo.TabIndex = 108;
-            // 
-            // label1
-            // 
-            this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Location = new System.Drawing.Point(256, 101);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(21, 23);
-            this.label1.TabIndex = 109;
-            this.label1.Text = "～";
-            this.label1.TextStyle.Color = System.Drawing.Color.Black;
-            // 
             // txtShipper
             // 
             this.txtShipper.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtShipper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtShipper.Location = new System.Drawing.Point(127, 131);
+            this.txtShipper.Location = new System.Drawing.Point(127, 102);
             this.txtShipper.Name = "txtShipper";
             this.txtShipper.ReadOnly = true;
             this.txtShipper.Size = new System.Drawing.Size(129, 23);
             this.txtShipper.TabIndex = 110;
             // 
+            // txtGBNo
+            // 
+            this.txtGBNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtGBNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtGBNo.Location = new System.Drawing.Point(127, 168);
+            this.txtGBNo.Name = "txtGBNo";
+            this.txtGBNo.ReadOnly = true;
+            this.txtGBNo.Size = new System.Drawing.Size(129, 23);
+            this.txtGBNo.TabIndex = 112;
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.label2.Location = new System.Drawing.Point(24, 168);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(100, 23);
+            this.label2.TabIndex = 111;
+            this.label2.Text = "GB#";
+            this.label2.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(24, 102);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(100, 23);
+            this.label3.TabIndex = 113;
+            this.label3.Text = "Shipper";
+            // 
+            // chkOutStanding
+            // 
+            this.chkOutStanding.AutoSize = true;
+            this.chkOutStanding.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkOutStanding.Location = new System.Drawing.Point(436, 101);
+            this.chkOutStanding.Name = "chkOutStanding";
+            this.chkOutStanding.Size = new System.Drawing.Size(106, 21);
+            this.chkOutStanding.TabIndex = 114;
+            this.chkOutStanding.Text = "OutStanding";
+            this.chkOutStanding.UseVisualStyleBackColor = true;
+            this.chkOutStanding.CheckedChanged += new System.EventHandler(this.ChkOutStanding_CheckedChanged);
+            // 
+            // labBrand
+            // 
+            this.labBrand.Location = new System.Drawing.Point(24, 135);
+            this.labBrand.Name = "labBrand";
+            this.labBrand.Size = new System.Drawing.Size(100, 23);
+            this.labBrand.TabIndex = 116;
+            this.labBrand.Text = "Brand";
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtbrand.IsSupportEditMode = false;
+            this.txtbrand.Location = new System.Drawing.Point(127, 135);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.ReadOnly = true;
+            this.txtbrand.Size = new System.Drawing.Size(129, 23);
+            this.txtbrand.TabIndex = 117;
+            // 
             // P11_Print
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(554, 201);
+            this.ClientSize = new System.Drawing.Size(554, 238);
+            this.Controls.Add(this.txtbrand);
+            this.Controls.Add(this.labBrand);
+            this.Controls.Add(this.chkOutStanding);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.txtGBNo);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.txtShipper);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtInvSerTo);
-            this.Controls.Add(this.txtInvSerFrom);
             this.Controls.Add(this.dateInvoice);
-            this.Controls.Add(this.lblShipper);
-            this.Controls.Add(this.lblInvoiceSer);
             this.Controls.Add(this.lblInvDate);
             this.Controls.Add(this.radioBIRSalesReport);
             this.Controls.Add(this.radioBIRSalesInv);
@@ -201,14 +214,15 @@
             this.Controls.SetChildIndex(this.radioBIRSalesInv, 0);
             this.Controls.SetChildIndex(this.radioBIRSalesReport, 0);
             this.Controls.SetChildIndex(this.lblInvDate, 0);
-            this.Controls.SetChildIndex(this.lblInvoiceSer, 0);
-            this.Controls.SetChildIndex(this.lblShipper, 0);
             this.Controls.SetChildIndex(this.dateInvoice, 0);
-            this.Controls.SetChildIndex(this.txtInvSerFrom, 0);
-            this.Controls.SetChildIndex(this.txtInvSerTo, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.txtShipper, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.txtGBNo, 0);
+            this.Controls.SetChildIndex(this.label3, 0);
+            this.Controls.SetChildIndex(this.chkOutStanding, 0);
+            this.Controls.SetChildIndex(this.labBrand, 0);
+            this.Controls.SetChildIndex(this.txtbrand, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -219,12 +233,13 @@
         private Win.UI.RadioButton radioBIRSalesReport;
         private Win.UI.RadioButton radioBIRSalesInv;
         private Win.UI.Label lblInvDate;
-        private Win.UI.Label lblInvoiceSer;
-        private Win.UI.Label lblShipper;
         private Win.UI.DateRange dateInvoice;
-        private Win.UI.TextBox txtInvSerFrom;
-        private Win.UI.TextBox txtInvSerTo;
-        private Win.UI.Label label1;
         private Win.UI.TextBox txtShipper;
+        private Win.UI.TextBox txtGBNo;
+        private Win.UI.Label label2;
+        private Win.UI.Label label3;
+        private Win.UI.CheckBox chkOutStanding;
+        private Win.UI.Label labBrand;
+        private Class.Txtbrand txtbrand;
     }
 }
