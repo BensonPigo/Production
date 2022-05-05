@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
+using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -17,6 +20,33 @@ namespace Sci.Production.Basic
             : base(menuitem)
         {
             this.InitializeComponent();
+
+            DataTable dtPMS_FabricQRCode_LabelSize;
+            DataTable dtPDA_FabricQRCode_LabelSize;
+
+            DualResult result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_Fab_LabSize' order by Seq", out dtPMS_FabricQRCode_LabelSize);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_PDA_Fab_LabSize' order by Seq", out dtPDA_FabricQRCode_LabelSize);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.comboPDA_FabricQRCode_LabelSize.DisplayMember = "Name";
+            this.comboPDA_FabricQRCode_LabelSize.ValueMember = "ID";
+            this.comboPDA_FabricQRCode_LabelSize.DataSource = dtPDA_FabricQRCode_LabelSize;
+
+            this.comboPMS_FabricQRCode_LabelSize.DisplayMember = "Name";
+            this.comboPMS_FabricQRCode_LabelSize.ValueMember = "ID";
+            this.comboPMS_FabricQRCode_LabelSize.DataSource = dtPMS_FabricQRCode_LabelSize;
         }
 
         /// <summary>

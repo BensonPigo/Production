@@ -1535,7 +1535,12 @@
     <EmbeddedResource Include="P07_PrintAccessorySticker.resx">
       <DependentUpon>P07_PrintAccessorySticker.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P21_PrintBarcode10.rdlc" />
+    <EmbeddedResource Include="P21_PrintBarcode10.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P21_PrintBarcode7.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="P21_PrintBarcode5.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
