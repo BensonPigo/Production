@@ -33,9 +33,9 @@
             this.radioRelaxationSticker = new Sci.Win.UI.RadioButton();
             this.radioFabricsRelaxationLogsheet = new Sci.Win.UI.RadioButton();
             this.radioGroup1 = new Ict.Win.UI.RadioGroup();
-            this.radioQRCodeSticker = new Sci.Win.UI.RadioButton();
             this.comboType = new Sci.Win.UI.ComboBox();
             this.label2 = new Sci.Win.UI.Label();
+            this.radioQRCodeSticker = new Sci.Win.UI.RadioButton();
             this.radioGroup1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -137,6 +137,30 @@
             this.radioGroup1.Value = "1";
             this.radioGroup1.ValueChanged += new System.EventHandler(this.RadioGroup1_ValueChanged);
             // 
+            // comboType
+            // 
+            this.comboType.BackColor = System.Drawing.Color.White;
+            this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboType.FormattingEnabled = true;
+            this.comboType.IsSupportUnselect = true;
+            this.comboType.Location = new System.Drawing.Point(85, 182);
+            this.comboType.Name = "comboType";
+            this.comboType.OldText = "";
+            this.comboType.Size = new System.Drawing.Size(121, 24);
+            this.comboType.TabIndex = 11;
+            this.comboType.Visible = false;
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.Location = new System.Drawing.Point(43, 183);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(39, 23);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "Type:";
+            this.label2.TextStyle.Color = System.Drawing.Color.Black;
+            this.label2.Visible = false;
+            // 
             // radioQRCodeSticker
             // 
             this.radioQRCodeSticker.AutoSize = true;
@@ -149,28 +173,7 @@
             this.radioQRCodeSticker.Text = "Issue QR Code Sticker";
             this.radioQRCodeSticker.UseVisualStyleBackColor = true;
             this.radioQRCodeSticker.Value = "5";
-            // 
-            // comboType
-            // 
-            this.comboType.BackColor = System.Drawing.Color.White;
-            this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboType.FormattingEnabled = true;
-            this.comboType.IsSupportUnselect = true;
-            this.comboType.Location = new System.Drawing.Point(85, 182);
-            this.comboType.Name = "comboType";
-            this.comboType.OldText = "";
-            this.comboType.Size = new System.Drawing.Size(121, 24);
-            this.comboType.TabIndex = 11;
-            // 
-            // label2
-            // 
-            this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Location = new System.Drawing.Point(43, 183);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(39, 23);
-            this.label2.TabIndex = 10;
-            this.label2.Text = "Type:";
-            this.label2.TextStyle.Color = System.Drawing.Color.Black;
+            this.radioQRCodeSticker.Visible = false;
             // 
             // P10_Print
             // 
