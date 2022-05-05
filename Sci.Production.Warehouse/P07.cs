@@ -2781,7 +2781,7 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
                 .Distinct()
                 .ToList();
 
-            P07_Print p = new P07_Print(poidList)
+            P07_Print p = new P07_Print(poidList, this.CurrentMaintain)
             {
                 CurrentDataRow = this.CurrentMaintain,
             };

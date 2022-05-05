@@ -69,6 +69,8 @@ CREATE TABLE [dbo].[System] (
     [WH_MtlTransChkLocation] BIT NOT NULL DEFAULT ((0)), 
     [CartonTransferToSisterFty] BIT NOT NULL CONSTRAINT [DF_System_CartonTransferToSisterFty]  DEFAULT((0)), 
     [MailServerPort] smallint NOT NULL CONSTRAINT [DF_System_MailServerPort]  DEFAULT((0)), 
+    [PMS_FabricQRCode_LabelSize] VARCHAR(5) NOT NULL CONSTRAINT [DF_System_PMS_FabricQRCode_LabelSize]  DEFAULT('5X5'), 
+    [PDA_FabricQRCode_LabelSize] VARCHAR(5) NOT NULL CONSTRAINT [DF_System_PDA_FabricQRCode_LabelSize]  DEFAULT('5X5'), 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
@@ -340,3 +342,21 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'System',
     @level2type = N'COLUMN',
     @level2name = N'MailServerPort'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'PMS 列印布捲 QR Code 的標籤大小',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'PMS_FabricQRCode_LabelSize'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'PDA 列印布捲 QR Code 的標籤大小',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'PDA_FabricQRCode_LabelSize'
