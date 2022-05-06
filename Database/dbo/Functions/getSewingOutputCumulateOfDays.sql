@@ -15,14 +15,14 @@ RETURN
 		left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 		where (o.StyleID = @style or mo.StyleID = @style)
 		and s.SewingLineID = @sewingline
-		and s.OutputDate between dateadd(day,-90,@outputdate) and  @outputdate
+		and s.OutputDate between dateadd(day,-180,@outputdate) and  @outputdate
 		and s.FactoryID = @factory
 	), wtmp as(
 		select top 360 w.Hours, w.Date
 		from WorkHour w WITH (NOLOCK)
 		where w.FactoryID = @factory
 		and w.SewingLineID = @sewingline
-		and w.Date between dateadd(day,-90,@outputdate) and  @outputdate
+		and w.Date between dateadd(day,-180,@outputdate) and  @outputdate
 		and w.Holiday=0
 		and isnull(w.Hours,0) != 0
 	)
