@@ -855,24 +855,44 @@ from #tmp";
                 }
                 #endregion
 
-                DataTable dtDetail_byid = dtDetail.Select($" id ='{item["id"]}'").CopyToDataTable();
-                if (!Prgs.P22confirm(item, dtDetail_byid))
-                {
-                    MyUtility.Msg.InfoBox("Trans. ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!" + " , Confirm fail, please go to P22 manual Confirm ", "Complete!");
-                    return;
-                }
-
-                string detailbyIDCmd = $"select * from SubTransfer_Detail with(nolock) where id = '{item["ID"]}'";
-                result = DBProxy.Current.Select(null, detailbyIDCmd, out DataTable dtDetail_Ukeys);
+                string detailbyIDCmd = $@"
+select *
+    ,Fromlocation = Fromlocation.listValue
+from SubTransfer_Detail sd with(nolock)
+left join FtyInventory FI on sd.fromPoid = fi.poid and sd.fromSeq1 = fi.seq1 and sd.fromSeq2 = fi.seq2 and sd.fromDyelot = fi.Dyelot
+    and sd.fromRoll = fi.roll and sd.fromStocktype = fi.stocktype
+outer apply(
+	select listValue = Stuff((
+			select concat(',',MtlLocationID)
+			from (
+					select 	distinct
+						fd.MtlLocationID
+					from FtyInventory_Detail fd
+					left join MtlLocation ml on ml.ID = fd.MtlLocationID
+					where fd.Ukey = fi.Ukey
+					and ml.Junk = 0 
+					and ml.StockType = sd.ToStockType
+				) s
+			for xml path ('')
+		) , 1, 1, '')
+)Fromlocation
+where id = '{item["ID"]}'";
+                result = DBProxy.Current.Select(null, detailbyIDCmd, out DataTable dtDetail_byid);
                 if (!result)
                 {
                     this.ShowErr(result);
                     return;
                 }
 
+                if (!Prgs.P22confirm(item, dtDetail_byid))
+                {
+                    MyUtility.Msg.InfoBox("Trans. ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!" + " , Confirm fail, please go to P22 manual Confirm ", "Complete!");
+                    return;
+                }
+
                 // AutoWHFabric WebAPI
-                Gensong_AutoWHFabric.Sent(true, dtDetail_Ukeys, "P22", EnumStatus.New, EnumStatus.Confirm);
-                Vstrong_AutoWHAccessory.Sent(true, dtDetail_Ukeys, "P22", EnumStatus.New, EnumStatus.Confirm);
+                Gensong_AutoWHFabric.Sent(true, dtDetail_byid, "P22", EnumStatus.New, EnumStatus.Confirm);
+                Vstrong_AutoWHAccessory.Sent(true, dtDetail_byid, "P22", EnumStatus.New, EnumStatus.Confirm);
             }
 
             this.p13_msg.Show("Trans. ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!" + " and Confirm Success!! ");
