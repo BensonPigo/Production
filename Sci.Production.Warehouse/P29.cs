@@ -949,7 +949,34 @@ from #tmp";
                 }
                 #endregion
 
-                DataTable dtDetail_byid = dtDetail.Select($" id ='{dr["id"]}'").CopyToDataTable();
+                string detailbyIDCmd = $@"
+select *
+    ,Fromlocation = Fromlocation.listValue
+from SubTransfer_Detail sd with(nolock)
+left join FtyInventory FI on sd.fromPoid = fi.poid and sd.fromSeq1 = fi.seq1 and sd.fromSeq2 = fi.seq2 and sd.fromDyelot = fi.Dyelot
+    and sd.fromRoll = fi.roll and sd.fromStocktype = fi.stocktype
+outer apply(
+	select listValue = Stuff((
+			select concat(',',MtlLocationID)
+			from (
+					select 	distinct
+						fd.MtlLocationID
+					from FtyInventory_Detail fd
+					left join MtlLocation ml on ml.ID = fd.MtlLocationID
+					where fd.Ukey = fi.Ukey
+					and ml.Junk = 0 
+					and ml.StockType = sd.ToStockType
+				) s
+			for xml path ('')
+		) , 1, 1, '')
+)Fromlocation
+where id = '{dr["ID"]}'";
+                result = DBProxy.Current.Select(null, detailbyIDCmd, out DataTable dtDetail_byid);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                }
+
                 DataRow drP23confirmResult = dtP23confirmResult.NewRow();
                 result = Prgs.P23confirm(dr["ID"].ToString(), dtDetail_byid);
 
@@ -958,16 +985,10 @@ from #tmp";
                 if (result)
                 {
                     drP23confirmResult["Message"] = "Be created!! and Confirm Success!!";
-                    string detailbyIDCmd = $"select * from SubTransfer_Detail with(nolock) where id = '{dr["ID"]}'";
-                    result = DBProxy.Current.Select(null, detailbyIDCmd, out DataTable dtDetail_Ukeys);
-                    if (!result)
-                    {
-                        this.ShowErr(result);
-                    }
 
                     // AutoWHFabric WebAPI
-                    Gensong_AutoWHFabric.Sent(true, dtDetail_Ukeys, "P23", EnumStatus.New, EnumStatus.Confirm);
-                    Vstrong_AutoWHAccessory.Sent(true, dtDetail_Ukeys, "P23", EnumStatus.New, EnumStatus.Confirm);
+                    Gensong_AutoWHFabric.Sent(true, dtDetail_byid, "P23", EnumStatus.New, EnumStatus.Confirm);
+                    Vstrong_AutoWHAccessory.Sent(true, dtDetail_byid, "P23", EnumStatus.New, EnumStatus.Confirm);
                 }
                 else
                 {
