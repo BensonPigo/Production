@@ -102,7 +102,7 @@ as (
 		,[Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
 		,se.AccountID		
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
     inner join Export e WITH (NOLOCK) on se.WKNo = e.ID
     left join Supp WITH (NOLOCK) on supp.ID = e.Forwarder
     outer apply(select value = cycfs from Export as a1 WITH (NOLOCK) where a1.ID =  e.MainExportID) as CYCFS
@@ -184,7 +184,7 @@ FtyExportData as (
 		,[Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
 		,se.AccountID 
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
     left join FtyExport fe WITH (NOLOCK) on se.WKNo = fe.ID
     left join LocalSupp ls WITH (NOLOCK) on ls.ID = fe.Forwarder
     where fe.Type <> 3
@@ -286,6 +286,12 @@ as (
 select * from tmpAllData
 PIVOT (SUM(Amount)
 FOR AccountID IN ({0})) a", allAccno.ToString()));
+
+                if (allAccno.ToString() == "[]")
+                {
+                    return new DualResult(false, "Data not found!");
+                }
+
                 result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
                 if (!result)
                 {
@@ -329,7 +335,7 @@ with ExportData as
 		,s.VoucherDate
 		,s.SubType 
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
     inner join Export e WITH (NOLOCK) on se.WKNo = e.ID
     left join Supp WITH (NOLOCK) on supp.ID = e.Forwarder
     left join SciFMS_AccountNo a on a.ID = se.AccountID
@@ -422,7 +428,7 @@ FtyExportData as
 		,s.VoucherDate
 		,s.SubType 
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
     left join FtyExport fe WITH (NOLOCK) on se.WKNo = fe.ID
     left join LocalSupp ls WITH (NOLOCK) on ls.ID = fe.Forwarder
     left join SciFMS_AccountNo a on a.ID = se.AccountID

@@ -2714,6 +2714,7 @@
     <Build Include="dbo\Functions\GetWHBarcodeToGensong.sql" />
     <Build Include="dbo\Functions\GetWH_NextBarcodeSeq.sql" />
     <Build Include="dbo\Functions\GetColorMultipleID_MtlType.sql" />
+    <Build Include="dbo\Views\View_ShareExpense.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

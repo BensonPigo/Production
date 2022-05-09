@@ -221,7 +221,7 @@ select  ShareExpense.WKNo
         , AccountID
         , ApvDate = ShippingAP.ApvDate 
 into #temp
-from ShareExpense 
+from View_ShareExpense ShareExpense with (nolock)
 inner join ShippingAP on ShareExpense.ShippingAPID = ShippingAP.ID 
 left join Export as e on e.ID = ShareExpense.WKNo 
 where   e.Junk <> 1 
