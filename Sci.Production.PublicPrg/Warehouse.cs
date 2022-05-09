@@ -3960,7 +3960,36 @@ and sd.FabricType = 'F'
             }
             else
             {
-                sqlcmd = $@"
+                if (detailTableName == WHTableName.Receiving_Detail)
+                {
+                    sqlcmd = $@"
+select
+	sd.ID
+    ,sd.Ukey
+	,rn = ROW_NUMBER()over(order by sd.Ukey)
+
+    ,Fabric_FtyInventoryUkey = f.Ukey
+    ,[balanceQty] = isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
+    ,[Barcode] = iif(isnull(sd.MINDQRCode, '') = '', f.Barcode, sd.MINDQRCode)
+    ,f.BarcodeSeq
+    ,RankFtyInventory = RANK() over(order by f.Ukey)
+    ,countFtyInventory = count(1) over(order by f.Ukey)
+{columns}
+from Receiving_Detail sd with (nolock)
+{ftytable}
+{othertables}
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail psd
+	where psd.id = f.Poid and psd.seq1 = f.seq1 and psd.seq2 = f.seq2 
+	and psd.FabricType = 'F'
+)
+and sd.Ukey in ({ukeys})
+";
+                }
+                else
+                {
+                    sqlcmd = $@"
 select
 	sd.ID
     ,sd.Ukey
@@ -3984,6 +4013,8 @@ and exists(
 )
 and sd.Ukey in ({ukeys})
 ";
+                }
+
                 result = DBProxy.Current.Select("Production", sqlcmd, out dt);
                 if (!result)
                 {
@@ -4450,6 +4481,21 @@ and w.Action = '{item.Action}'";
                 if (!(result = MyUtility.Tool.ProcessWithObject(wHBarcodeTransaction.Where(w => w.UpdatethisItem), string.Empty, UpdateWHBarcodeTransaction(), out odt, conn: sqlConnection)))
                 {
                     return result;
+                }
+
+                if (detailTableName == WHTableName.Receiving_Detail)
+                {
+                    string sqlUpdateReceiving_Detail = @"
+    update rd set rd.MINDQRCode = t.To_NewBarcode
+    from Receiving_Detail rd 
+    inner join #tmp t on rd.Ukey = t.TransactionUkey
+    where rd.MINDQRCode = ''
+";
+                    result = DBProxy.Current.ExecuteByConn(sqlConnection, sqlUpdateReceiving_Detail);
+                    if (!result)
+                    {
+                        return result;
+                    }
                 }
             }
             #endregion

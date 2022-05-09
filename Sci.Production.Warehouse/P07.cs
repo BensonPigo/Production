@@ -573,6 +573,56 @@ where   #tmp.poid = dbo.po_supp.id
                 return false;
             }
 
+            #region 根據 WK 資料找出 MINDQRCode
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["InvNo"]))
+            {
+                string sqlGetQRCode = $@"
+select	a.PoID,
+		a.Seq1,
+		a.Seq2,
+		Roll = convert(varchar(8), isnull(pll.PackageNo, isnull(edc.Carton, ''))),
+		Dyelot = convert(varchar(8), isnull(pll.BatchNo, isnull(edc.LotNo, ''))),
+		pll.QRCode
+from dbo.Export_Detail a WITH (NOLOCK) 
+inner join Export_Detail_Carton edc with (nolock) on a.Ukey = edc.Export_DetailUkey
+inner join Poshippinglist pl with (nolock) on pl.POID = a.POID and pl.Seq1 = a.Seq1
+inner join POShippingList_Line pll WITH (NOLOCK) ON  pll.POShippingList_Ukey = pl.Ukey and 
+													pll.Line = a.Seq2 and
+													pll.PackageNo = isnull(edc.Carton, pll.PackageNo) and
+													pll.BatchNo = isnull(edc.LotNo, pll.BatchNo)
+where a.ID = '{this.CurrentMaintain["InvNo"]}' and pll.QRCode <> ''
+";
+
+                DataTable dtQRCode;
+                dualResult = DBProxy.Current.Select(null, sqlGetQRCode, out dtQRCode);
+                if (!dualResult)
+                {
+                    this.ShowErr(dualResult);
+                    return false;
+                }
+
+                var emptyQRcode = this.DetailDatas.Where(s => MyUtility.Check.Empty(s["MINDQRCode"]));
+
+                if (emptyQRcode.Any() && dtQRCode.Rows.Count > 0)
+                {
+                    foreach (DataRow drEmptyQRcode in emptyQRcode)
+                    {
+                        var checkResult = dtQRCode.AsEnumerable()
+                             .Where(s => s["POID"].ToString() == drEmptyQRcode["POID"].ToString() &&
+                                         s["Seq1"].ToString() == drEmptyQRcode["Seq1"].ToString() &&
+                                         s["Seq2"].ToString() == drEmptyQRcode["Seq2"].ToString() &&
+                                         s["Roll"].ToString() == drEmptyQRcode["Roll"].ToString() &&
+                                         s["Dyelot"].ToString() == drEmptyQRcode["Dyelot"].ToString());
+
+                        if (checkResult.Any())
+                        {
+                            drEmptyQRcode["MINDQRCode"] = checkResult.First()["QRCode"];
+                        }
+                    }
+                }
+            }
+            #endregion
+
             // 取單號
             if (this.IsDetailInserting)
             {
@@ -1841,6 +1891,16 @@ WHERE ID NOT IN(
             }
             #endregion
 
+            #region 檢查MINDQRCode是否有在其他單子重複，有重複就update成空白
+            string sqlCheckMINDQRCode = $@"
+update rd set rd.MINDQRCode = ''
+from Receiving_Detail rd
+where   ID = '{this.CurrentMaintain["ID"]}' and
+        (exists(select 1 from Receiving_Detail rd2 with (nolock) where rd2.ID <> rd.ID and rd2.MINDQRCode = rd.MINDQRCode) or
+         exists(select 1 from WHBarcodeTransaction wht with (nolock) where wht.Action = 'Confirm' and [Function] = 'P07' and wht.TransactionID <> rd.ID and wht.To_NewBarcode = rd.MINDQRCode))
+";
+            #endregion
+
             Exception errMsg = null;
             using (TransactionScope transactionscope = new TransactionScope())
             {
@@ -1857,6 +1917,13 @@ WHERE ID NOT IN(
                         // FtyInventory 庫存
                         string upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true, mtlAutoLock);
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out DataTable resulttb, "#TmpSource", conn: sqlConn)))
+                        {
+                            throw result.GetException();
+                        }
+
+                        // 檢查MINDQRCode是否有在其他單子重複，有的畫清空，UpdateWH_Barcode會重編新的
+                        result = DBProxy.Current.ExecuteByConn(sqlConn, sqlCheckMINDQRCode);
+                        if (!result)
                         {
                             throw result.GetException();
                         }
@@ -2298,7 +2365,15 @@ select  a.id
 		,[SortCmbDyelot] = ISNULL(cmb.Dyelot,a.Dyelot)
         ,clickInsert = 1 -- 用來處理按+插入列狀況
         ,[IsSelect] = cast(0 as bit)
-        ,a.MINDQRCode
+        ,[MINDQRCode] = case when b.Status = 'New' then a.MINDQRCode
+                             when b.Status = 'Confirmed' and a.MINDQRCode <> '' then a.MINDQRCode
+                             else ( select top 1 case  when    wbt.To_NewBarcodeSeq = '' then wbt.To_NewBarcode
+                                                       when    wbt.To_NewBarcode = ''  then ''
+                                                       else    Concat(wbt.To_NewBarcode, '-', wbt.To_NewBarcodeSeq)    end
+                                    from   WHBarcodeTransaction wbt with (nolock)
+                                    where  wbt.TransactionUkey = a.Ukey and
+                                           wbt.Action = 'Confirm'
+                                    order by wbt.CommitTime desc) end
         ,MINDChecker = a.MINDChecker+'-'+(select name from [ExtendServer].ManufacturingExecution.dbo.Pass1 where id = a.MINDChecker)
         ,CheckDate= IIF(a.MINDCheckEditDate IS NULL, a.MINDCheckAddDate,a.MINDCheckEditDate)
         ,a.FullRoll
