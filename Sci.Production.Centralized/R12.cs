@@ -172,7 +172,7 @@ select  WkNo = s.Invno
         , AccountID
         , ShippingAP.ApvDate
 into #temp
-from ShareExpense as s 
+from View_ShareExpense s with (nolock) 
 left join ShippingAP on ShippingAP.id = s.ShippingAPID  
 left join FtyExport as fe on s.InvNo = fe.ID 
 where   ShippingAP.Type = 'EXPORT' 

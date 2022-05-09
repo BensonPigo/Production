@@ -210,7 +210,7 @@ select GMTBooking.ID,
 	   GMTBooking.TotalGW,GMTBooking.TotalCBM,Pullout_Detail.OrderID,PackingList.CTNQty,PackingList.GW,PackingList.CBM,Pullout_Detail.ShipQty
 into #temp1
 from Pullout_Detail 
-inner join ShareExpense ON Pullout_Detail.INVNo = ShareExpense.InvNo 
+inner join View_ShareExpense ShareExpense ON Pullout_Detail.INVNo = ShareExpense.InvNo 
 inner join ShippingAP ON ShareExpense.ShippingAPID = ShippingAP.ID 
 inner join GMTBooking ON gmtbooking.ID = pullout_detail.INVNo
 inner join PackingList on PackingList.ID = Pullout_Detail.PackingListID
