@@ -339,6 +339,7 @@ Select
 	,[SpreadingNo] = wk.SpreadingNo
 	,[FabricKind] = FabricKind.val
     ,[BundleLocation] = w.Location
+    ,[InspectionDate] = sp.InspectionDate
 into #result
 from #tmp_Workorder w 
 inner join Bundle_Detail bd WITH (NOLOCK, Index(PK_Bundle_Detail)) on bd.BundleNo = w.BundleNo 
@@ -426,6 +427,12 @@ outer apply(
 		AND DD.[type] = 'FabricKind' 
 		AND DD.id = LIST.kind 
 )FabricKind
+outer apply(
+    select [InspectionDate] = MAX(InspectionDate)
+    from SubProInsRecord sp
+    where sp.Bundleno = bd.Bundleno
+    and sp.SubProcessID = s.ID
+)sp
 ";
 
             sqlCmd += $@" where 1=1 {sqlWhere} ";
@@ -482,6 +489,7 @@ select
     r.Cdate,
     r.[BuyerDelivery],
     r.[SewInLine],
+    r.[InspectionDate],
     r.[InComing],
     r.[Out (Time)],
     r.[POSupplier],
