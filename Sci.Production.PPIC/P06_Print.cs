@@ -99,7 +99,7 @@ namespace Sci.Production.PPIC
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             int intRowsStart = 2;
             int rownum = 0, counter = 0;
-            object[,] objArray = new object[1, 39];
+            object[,] objArray = new object[1, 40];
             foreach (DataRow dr in this.printData)
             {
                 rownum = intRowsStart + counter;
@@ -126,23 +126,24 @@ namespace Sci.Production.PPIC
                 objArray[0, 20] = dr["Seq"];
                 objArray[0, 21] = dr["ShipmodeID"];
                 objArray[0, 22] = dr["BuyerDelivery"];
-                objArray[0, 23] = dr["SciDelivery"];
-                objArray[0, 24] = dr["CRDDate"];
-                objArray[0, 25] = dr["BuyMonth"];
-                objArray[0, 26] = dr["Customize1"];
-                objArray[0, 27] = dr["ScanAndPack"];
-                objArray[0, 28] = dr["RainwearTestPassed"];
-                objArray[0, 29] = dr["PackingMethod"];
-                objArray[0, 30] = dr["CTNQty"];
-                objArray[0, 31] = dr["CLOGQty"];
-                objArray[0, 32] = dr["Dimension"];
-                objArray[0, 33] = dr["ProdRemark"];
-                objArray[0, 34] = dr["ShipRemark"];
-                objArray[0, 35] = dr["MtlFormA"];
-                objArray[0, 36] = dr["InClogCTN"];
-                objArray[0, 37] = dr["CBM"];
-                objArray[0, 38] = dr["ClogLocationId"];
-                worksheet.Range[string.Format("A{0}:AF{0}", rownum)].Value2 = objArray;
+                objArray[0, 23] = dr["OrigBuyerDelivery"];
+                objArray[0, 24] = dr["SciDelivery"];
+                objArray[0, 25] = dr["CRDDate"];
+                objArray[0, 26] = dr["BuyMonth"];
+                objArray[0, 27] = dr["Customize1"];
+                objArray[0, 28] = dr["ScanAndPack"];
+                objArray[0, 29] = dr["RainwearTestPassed"];
+                objArray[0, 30] = dr["PackingMethod"];
+                objArray[0, 31] = dr["CTNQty"];
+                objArray[0, 32] = dr["CLOGQty"];
+                objArray[0, 33] = dr["Dimension"];
+                objArray[0, 34] = dr["ProdRemark"];
+                objArray[0, 35] = dr["ShipRemark"];
+                objArray[0, 36] = dr["MtlFormA"];
+                objArray[0, 37] = dr["InClogCTN"];
+                objArray[0, 38] = dr["CBM"];
+                objArray[0, 39] = dr["ClogLocationId"];
+                worksheet.Range[string.Format("A{0}:AN{0}", rownum)].Value2 = objArray;
                 counter++;
             }
 
