@@ -61,7 +61,9 @@ namespace Sci.Production.PPIC
                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("BuyerID", header: "Buyer", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("POCombo", header: "PO Combo", width: Widths.AnsiChars(50), iseditingreadonly: true);
+                .Text("POCombo", header: "PO Combo", width: Widths.AnsiChars(50), iseditingreadonly: true)
+                .Text("MCHandle", header: "MCHandle", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("MaterialLockStatus", header: "Material Lock Status", width: Widths.AnsiChars(5), iseditingreadonly: true);
         }
 
         // Style#
@@ -427,6 +429,7 @@ select Selected = 1
 	   , POCombo = [dbo].getPOComboList(a.POID, a.POID)
 	   , MCHandle = (o.MCHandle + ' - ' + isnull(p.Name, ''))
 	   , o.Category
+	   , [MaterialLockStatus] = ISNULL(f.MaterialLockStatus, '')
 from (
 	select * 
 	from #wantToClose
@@ -437,7 +440,15 @@ from (
 ) a
 left join Orders o WITH (NOLOCK) on a.POID = o.ID
 left join Brand b WITH (NOLOCK) on o.BrandID = b.ID
-left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle",
+left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle
+outer apply (
+    select [MaterialLockStatus] = Max(iif(f.Lock = 1, 'V', ''))
+    from ftyinventory f
+    where f.POID = a.POID
+    and f.StockType='B'
+    and f.Lock=1
+) f
+",
                 Env.User.Keyword);
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
