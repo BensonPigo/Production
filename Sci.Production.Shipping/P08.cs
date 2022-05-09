@@ -28,7 +28,6 @@ namespace Sci.Production.Shipping
         private DataTable subType_1 = new DataTable();
         private DataTable subType_2 = new DataTable();
         private BindingSource comboxbs1;
-        private bool IsA2B;
 
         // , comboxbs2_1, comboxbs2_2;
         private DataGridViewGeneratorTextColumnSettings code = new DataGridViewGeneratorTextColumnSettings();
@@ -554,7 +553,7 @@ and Junk = 0",
             }
 
             if (!this.CheckNoExportChargesGMT(this.CurrentMaintain["BLNo"].ToString()))
-            { 
+            {
                 return false;
             }
 
@@ -1198,55 +1197,31 @@ when not matched by target then
                 return new DualResult(false, result.ToString());
             }
 
-            if (dtInvNo != null && dtInvNo.Rows.Count > 0)
+            // 執行A2B跨廠區資料 & 寫入跨廠區資料到ShareExpense_APP
+            foreach (DataRow item in dtInvNo.Rows)
             {
-                // 執行A2B跨廠區資料 & 寫入跨廠區資料到ShareExpense_APP
-                foreach (DataRow item in dtInvNo.Rows)
+                string invNos = item["InvNo"].ToString();
+                List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(invNos);
+                foreach (string plFromRgCode in listPLFromRgCode)
                 {
-                    string invNos = item["InvNo"].ToString();
-                    List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(invNos);
-                    foreach (string plFromRgCode in listPLFromRgCode)
-                    {
-                        this.IsA2B = true;
+                    // 跨Server取得ShareExpense_APP所需PackingList資料
+                    DataTable dtA2BPacking;
+                    result = Prgs.DataTable_Packing(plFromRgCode, invNos, out dtA2BPacking);
 
-                        // 跨Server取得ShareExpense_APP所需PackingList資料
-                        DataTable dtA2BPacking;
-                        result = Prgs.DataTable_Packing(plFromRgCode, invNos, out dtA2BPacking);
+                    if (!result)
+                    {
+                        return result;
+                    }
+
+                    if (dtA2BPacking.Rows.Count > 0)
+                    {
+                        result = Prgs.CalculateShareExpense_APP(this.CurrentMaintain["ID"].ToString(), Env.User.UserID, dtA2BPacking, plFromRgCode);
 
                         if (!result)
                         {
                             return result;
                         }
-
-                        if (dtA2BPacking.Rows.Count > 0)
-                        {
-                            // 將跨Serve資料更新ShareExpense_APP
-                            DualResult result2;
-                            result2 = Prgs.CalculateShareExpense_ForA2B(this.CurrentMaintain["ID"].ToString(), Env.User.UserID, isFreightForwarder);
-                            if (!result2)
-                            {
-                                return new DualResult(false, "Re-calcute share expense failed!");
-                            }
-
-                            result2 = Prgs.CalculateShareExpense_APP(this.CurrentMaintain["ID"].ToString(), Env.User.UserID, dtA2BPacking, plFromRgCode);
-
-                            if (!result2)
-                            {
-                                return new DualResult(false, "Re-calcute share expense failed!");
-                            }
-                        }
                     }
-                }
-            }
-
-            if (this.IsA2B == false)
-            {
-                result = DBProxy.Current.Execute(
-"Production",
-string.Format("exec CalculateShareExpense '{0}','{1}',{2}", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Env.User.UserID, isFreightForwarder));
-                if (!result)
-                {
-                    return new DualResult(false, "Re-calcute share expense failed!");
                 }
             }
 
