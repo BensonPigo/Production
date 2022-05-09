@@ -618,7 +618,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
             }
 
             // 已經有做出口費用分攤就不可以被刪除
-            if (MyUtility.Check.Seek(string.Format(@"select ShippingAPID from ShareExpense WITH (NOLOCK) where InvNo = '{0}' and (Junk = 0 or Junk is null)", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
+            if (MyUtility.Check.Seek(string.Format(@"select ShippingAPID from View_ShareExpense WITH (NOLOCK) where InvNo = '{0}' and (Junk = 0 or Junk is null)", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
             {
                 MyUtility.Msg.WarningBox("This record have expense data, can't be deleted!");
                 return false;
@@ -2529,7 +2529,7 @@ order by min(o.BuyerDelivery)
         {
             string sqlCmd = $@"
 select 1
-from ShareExpense se WITH (NOLOCK) 
+from View_ShareExpense se WITH (NOLOCK) 
 LEFT JOIN SciFMS_AccountNo a on se.AccountID = a.ID
 where se.InvNo = '{this.CurrentMaintain["ID"]}'
 and se.junk=0";

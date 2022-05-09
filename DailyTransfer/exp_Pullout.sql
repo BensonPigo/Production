@@ -106,7 +106,7 @@ FROM Pullout_Detail  a, Production.dbo.GMTBooking b
 left join Production.dbo.LocalSupp c on b.Forwarder = c.id
 outer apply(
 	select top 1 [Value]  = 1
-	from Production.dbo.ShareExpense se
+	from Production.dbo.View_ShareExpense se
 	inner join Production.dbo.ShippingAP sa on sa.ID = se.ShippingAPID
 	where se.InvNo = b.ID
 	and sa.Status = 'Approved'

@@ -70,7 +70,7 @@ select  Supplier = s.LocalSuppID + ' - ' + isnull(l.Abb,'')
                                   from (
                                       select distinct BrandID
                                       from GMTBooking gb
-                                      inner join ShareExpense se on gb.id = se.InvNo
+                                      inner join View_ShareExpense se on gb.id = se.InvNo
                                       where se.ShippingAPID = s.ID
                                   ) a for xml path(''))
                                  , 1, 1, '')
@@ -83,7 +83,7 @@ select  Supplier = s.LocalSuppID + ' - ' + isnull(l.Abb,'')
         , ExportInv = isnull (stuff ((select CONCAT ('/', InvNo) 
                                      from (
                                           select distinct InvNo 
-                                          from ShareExpense WITH (NOLOCK) 
+                                          from View_ShareExpense WITH (NOLOCK) 
                                           where ShippingAPID = s.ID
                                      ) a for xml path(''))
                                     , 1, 1, '')
