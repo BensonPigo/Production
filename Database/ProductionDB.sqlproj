@@ -2717,6 +2717,9 @@
     <Build Include="dbo\Functions\GetColorMultipleID_MtlType.sql" />
     <Build Include="dbo\Tables\BIRInvoice_Detail.sql" />
     <Build Include="dbo\Views\View_ShareExpense.sql" />
+    <Build Include="dbo\Tables\RFID_Combine.sql" />
+    <Build Include="dbo\Stored Procedures\複製imp_BundleInOut.sql" />
+    <Build Include="dbo\Stored Procedures\imp_BundleInfo.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
