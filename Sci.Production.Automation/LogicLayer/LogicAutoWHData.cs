@@ -81,7 +81,29 @@ namespace Sci.Production.Automation.LogicLayer
             int fromNewBarcodeBit = 0; // 影響傳給廠商 Barcode. 欄位 先註解起來 // fromNewBarcode ? 1 : 0;
             string headerAlias = isP99 ? "sd." : "s.";
 
-            if (statusAPI != EnumStatus.New)
+            if (statusAPI == EnumStatus.New)
+            {
+                string whereIsWMSTo = string.Empty;
+
+                switch (detailTableName)
+                {
+                    case WHTableName.LocationTrans_Detail:
+                        whereWMS = $@"
+and exists(
+    select 1
+	from MtlLocation ml
+    inner join dbo.SplitString(sd.ToLocation, ',') sp on sp.Data = ml.ID
+	where ml.IsWMS =1 
+	union all
+    select 1
+	from MtlLocation ml
+    inner join dbo.SplitString(sd.FromLocation, ',') sp on sp.Data = ml.ID
+	where ml.IsWMS =1 
+)";
+                        break;
+                }
+            }
+            else
             {
                 whereWMS = Environment.NewLine + $" and sd.SentToWMS = 1 and sd.CompleteTime is null";
             }
