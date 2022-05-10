@@ -81,61 +81,7 @@ namespace Sci.Production.Automation.LogicLayer
             int fromNewBarcodeBit = 0; // 影響傳給廠商 Barcode. 欄位 先註解起來 // fromNewBarcode ? 1 : 0;
             string headerAlias = isP99 ? "sd." : "s.";
 
-            if (statusAPI == EnumStatus.New)
-            {
-                string whereIsWMSTo = string.Empty;
-                if (detailTableName == WHTableName.SubTransfer_Detail || detailTableName == WHTableName.BorrowBack_Detail)
-                {
-                    whereIsWMSTo = $@"
-    and ml.StockType = sd.FromStockType
-	union all
-	select 1 from MtlLocation ml 
-	inner join dbo.SplitString(sd.ToLocation,',') sp on sp.Data = ml.ID and ml.StockType = sd.ToStockType
-	where ml.IsWMS = 1";
-                }
-
-                switch (detailTableName)
-                {
-                    case WHTableName.Receiving_Detail:
-                    case WHTableName.TransferIn_Detail:
-                    case WHTableName.IssueReturn_Detail:
-                        break;
-                    case WHTableName.ReturnReceipt_Detail:
-                    case WHTableName.Issue_Detail:
-                    case WHTableName.IssueLack_Detail:
-                    case WHTableName.TransferOut_Detail:
-                    case WHTableName.SubTransfer_Detail:
-                    case WHTableName.BorrowBack_Detail:
-                    case WHTableName.Adjust_Detail:
-                    case WHTableName.RemoveC_Detail:
-                    case WHTableName.Stocktaking_Detail:
-                        whereWMS = $@"
-and exists(
-	select 1
-	from FtyInventory_Detail fd 
-	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
-	where fd.Ukey = f.Ukey
-	and ml.IsWMS = 1
-{whereIsWMSTo}
-)";
-                        break;
-                    case WHTableName.LocationTrans_Detail:
-                        whereWMS = $@"
-and exists(
-    select 1
-	from MtlLocation ml
-    inner join dbo.SplitString(sd.ToLocation, ',') sp on sp.Data = ml.ID
-	where ml.IsWMS =1 
-	union all
-    select 1
-	from MtlLocation ml
-    inner join dbo.SplitString(sd.FromLocation, ',') sp on sp.Data = ml.ID
-	where ml.IsWMS =1 
-)";
-                        break;
-                }
-            }
-            else
+            if (statusAPI != EnumStatus.New)
             {
                 whereWMS = Environment.NewLine + $" and sd.SentToWMS = 1 and sd.CompleteTime is null";
             }
