@@ -33,6 +33,7 @@ namespace Sci.Production.Packing
                .Text("OrderID", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14))
                .Text("BrandID", header: "Brand", iseditingreadonly: true, width: Widths.AnsiChars(8))
                .Text("CustCDID", header: "CustCD", iseditingreadonly: true, width: Widths.AnsiChars(6))
+               .Text("CustPONo", header: "PO", iseditingreadonly: true, width: Widths.AnsiChars(10))
                .Text("Dest", header: "Dest", iseditingreadonly: true, width: Widths.AnsiChars(5))
                .Text("ShipModeID", header: "Ship Mode", iseditingreadonly: true, width: Widths.AnsiChars(6))
                .Text("INVNo", header: "Invoive No.", iseditingreadonly: true, width: Widths.AnsiChars(10))
@@ -90,8 +91,20 @@ namespace Sci.Production.Packing
 
             string sqlcmd = $@"
 select distinct [Selected]=0
-,p1.ID,p1.FactoryID,Pack2.OrderID,p1.BrandID,p1.CustCDID,p1.Dest,p1.ShipModeID,p1.INVNo,p1.Status
-,IIF(isnull(o.TotalCTN,0) = 0,'0',CONVERT(varchar,Round(CONVERT(float,isnull(o.ClogCTN,0)) / o.TotalCTN * 100,2)) ) + '%' as CartonFinishRate,QtyShip.BuyerDelivery,p1.PulloutDate,[ErrorMsg]=''
+    ,p1.ID
+    ,p1.FactoryID
+    ,Pack2.OrderID
+    ,p1.BrandID
+    ,p1.CustCDID
+    ,p1.Dest
+    ,p1.ShipModeID
+    ,p1.INVNo
+    ,p1.Status
+    ,IIF(isnull(o.TotalCTN,0) = 0,'0',CONVERT(varchar,Round(CONVERT(float,isnull(o.ClogCTN,0)) / o.TotalCTN * 100,2)) ) + '%' as CartonFinishRate
+    ,QtyShip.BuyerDelivery
+    ,p1.PulloutDate
+    ,[ErrorMsg]=''
+    ,o.CustPONo
 from PackingList p1
 inner join PackingList_Detail p2 on p1.ID=p2.ID
 left join Orders o on o.ID=p2.OrderID
@@ -111,7 +124,10 @@ outer apply(
 	from Order_QtyShip os where os.Id=o.ID 
 	and os.Seq=p2.OrderShipmodeSeq
 )QtyShip
-where 1=1 and p1.Status='New' and p1.MDivisionID='{Env.User.Keyword}' and p1.Type='B'
+where p1.Status = 'New' 
+and p1.MDivisionID = '{Env.User.Keyword}' 
+and p1.Type='B'
+and o.Junk = 0
 ";
             if (!MyUtility.Check.Empty(pulloutdate1))
             {
