@@ -152,7 +152,7 @@ BEGIN
 		,TtlCPU = IIF(cd.CapaItem IN  
 			('CS17'),cd.Value,'0')
 		,AverageEfficiency = IIF(cd.CapaItem IN  
-			('CE5'),cd.Value,'0')
+			('CE5', 'BS5', 'GMDYE5', 'GW5', 'HSP5', 'CM4', 'PADP5', 'CPc5', 'CPu5'),cd.Value,'0')
 	
 		,RemarkDayOffDate = IIF(cd.CapaItem IN  
 			('CS19'),cd.Value,'')
