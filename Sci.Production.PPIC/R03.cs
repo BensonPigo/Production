@@ -711,6 +711,7 @@ tmpFilterZone as (
             , o.DryRoomRecdDate
             , o.DryRoomTransDate
             , o.MdRoomScanDate
+            , [VasShasCutOffDate] = Format(DATEADD(DAY, -30, iif(GetMinDate.value	is null, coalesce(o.BuyerDelivery, o.CRDDate, o.PlanDate, o.OrigBuyerDelivery), GetMinDate.value)), 'yyyy/MM/dd')
 "
             + seperCmd +
     @"from Orders o  WITH (NOLOCK) 
@@ -725,6 +726,13 @@ tmpFilterZone as (
         FROM Pass1 WITH (NOLOCK) 
         WHERE Pass1.ID=O.InspHandle
     )I
+	outer apply (
+		select value = (
+			select Min(Date)
+			From (Values (o.BuyerDelivery), (o.CRDDate), (o.PlanDate), (o.OrigBuyerDelivery)) as tmp (Date)
+			where tmp.Date is not null
+		)
+	) GetMinDate
 {order_QtyShip_OuterApply}  
     where o.POID IN (select distinct POID from tmpFilterSubProcess) 
 {wherenoRestrictOrdersDelivery}
