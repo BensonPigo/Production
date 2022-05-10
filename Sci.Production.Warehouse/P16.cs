@@ -329,6 +329,7 @@ and ID = '{Sci.Env.User.UserID}'"))
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
+            .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
             .Text("stockunit", header: "Unit", iseditingreadonly: true) // 5
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 6
@@ -802,12 +803,13 @@ select a.id
 	   , seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
 	   , a.Roll
 	   , a.Dyelot
+	   , ShadeboneTone.Tone
 	   , p1.stockunit
 	   , [Description] = dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) 
 	   , a.Qty
 	   , a.StockType
-	   , location = dbo.Getlocation(f.Ukey) 
-       , [ContainerCode] = f.ContainerCode
+	   , location = dbo.Getlocation(fi.Ukey) 
+       , [ContainerCode] = fi.ContainerCode
 	   , a.ukey
 	   , a.FtyInventoryUkey
        , a.Remark
@@ -815,12 +817,19 @@ from dbo.IssueLack_Detail a WITH (NOLOCK)
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId 
 											 and p1.seq1 = a.SEQ1 
 											 and p1.SEQ2 = a.seq2
-left join FtyInventory f WITH (NOLOCK) on a.POID = f.POID 
-										  and a.Seq1 = f.Seq1 
-										  and a.Seq2 = f.Seq2 
-										  and a.Roll = f.Roll 
-										  and a.Dyelot = f.Dyelot 
-										  and a.StockType = f.StockType
+left join FtyInventory fi WITH (NOLOCK) on a.POID = fi.POID 
+										  and a.Seq1 = fi.Seq1 
+										  and a.Seq2 = fi.Seq2 
+										  and a.Roll = fi.Roll 
+										  and a.Dyelot = fi.Dyelot 
+										  and a.StockType = fi.StockType
+outer apply (
+	select [Tone] = MAX(fs.Tone)
+    from FtyInventory fi2 with (nolock) 
+    Left join FIR f with (nolock) on f.poid = fi2.poid and f.seq1 = fi2.seq1 and f.seq2 = fi2.seq2
+	Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi2.Roll and fs.Dyelot = fi2.Dyelot
+	where fi2.Ukey = fi.Ukey
+) ShadeboneTone
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
