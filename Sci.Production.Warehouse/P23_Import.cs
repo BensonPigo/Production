@@ -174,6 +174,7 @@ select  0 AS selected
         , dbo.Getlocation(fi.ukey) as [ToLocation]
         , Fromlocation = Fromlocation.listValue
         , GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty) over (partition by #tmp.ToFactoryID, #tmp.poid, #tmp.seq1, #tmp.seq2, fi.dyelot)
+        , ShadeboneTone.Tone
 from #tmp  
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID 
                                                 and fi.seq1 = Inventoryseq1 
@@ -195,6 +196,13 @@ outer apply(
 			for xml path ('')
 		) , 1, 1, '')
 )Fromlocation
+outer apply (
+	select [Tone] = MAX(fs.Tone)
+    from FtyInventory fi2 with (nolock) 
+    Left join FIR f with (nolock) on f.poid = fi2.poid and f.seq1 = fi2.seq1 and f.seq2 = fi2.seq2
+	Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi2.Roll and fs.Dyelot = fi2.Dyelot
+	where fi2.Ukey = fi.Ukey
+) ShadeboneTone
 where fi.Lock = 0
 Order by GroupQty desc, fromdyelot, balanceQty desc
 drop table #tmp", Env.User.Keyword, this.dr_master["id"]));
@@ -423,6 +431,7 @@ WHERE   StockType='{dr["toStocktype"]}'
                 .Numeric("qty", header: "Transfer" + Environment.NewLine + "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, maximum: 99999999, minimum: -99999999).Get(out this.col_Qty) // 10
                 .Text("location", header: "From Location", iseditingreadonly: true) // 11
                 .Text("tolocation", header: "To Location", iseditingreadonly: false, settings: ts2).Get(out col_tolocation) // 12
+                .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true)
                ;
             this.col_Qty.DefaultCellStyle.BackColor = Color.Pink;
             col_tolocation.DefaultCellStyle.BackColor = Color.Pink;
