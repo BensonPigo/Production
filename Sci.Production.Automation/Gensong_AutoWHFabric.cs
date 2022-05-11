@@ -341,10 +341,12 @@ namespace Sci.Production.Automation
                 return;
             }
 
+            string apiThread = "SentWHCloseToGensong";
+            string suppAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag";
             AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS
             {
-                apiThread = "SentWHCloseToGensong",
-                suppAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag",
+                apiThread = apiThread,
+                suppAPIThread = suppAPIThread,
             };
 
             dynamic bodyObject = new ExpandoObject();
@@ -508,10 +510,12 @@ select distinct
                 return;
             }
 
+            string apiThread = "SentRefnoRelaxtimeToGensong";
+            string suppAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag";
             AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS
             {
-                apiThread = "SentRefnoRelaxtimeToGensong",
-                suppAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag",
+                apiThread = apiThread,
+                suppAPIThread = suppAPIThread,
             };
 
             dynamic bodyObject = new ExpandoObject();
