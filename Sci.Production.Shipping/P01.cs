@@ -10,6 +10,7 @@ using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System.Transactions;
 using System.Runtime.InteropServices;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -139,15 +140,11 @@ where o.Id = '{0}'",
 
                 this.displayVoucher.Value = string.Empty;
                 this.dateVoucherDate.Text = string.Empty;
-                this.numActAmt.Text = "0";
-                this.numExchangeRate.Text = "0";
             }
             else
             {
                 this.displayVoucher.Value = MyUtility.Convert.GetString(dt.Rows[0]["VoucherID"]);
                 this.dateVoucherDate.Text = MyUtility.Convert.GetDate(dt.Rows[0]["VoucherDate"]).HasValue ? MyUtility.Convert.GetDate(dt.Rows[0]["VoucherDate"]).Value.ToString("yyyy/MM/dd") : string.Empty;
-                this.numActAmt.Text = MyUtility.Convert.GetString(dt.Rows[0]["ActAmtUSD"]);
-                this.numExchangeRate.Text = MyUtility.Convert.GetString(dt.Rows[0]["APPExchageRate"]);
             }
 
             this.displayResponsibilityJustifcation.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Air_Prepaid_Reason' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ReasonID"])));
@@ -1355,7 +1352,9 @@ isnull((select Name from TPEPass1 WITH (NOLOCK) where ID = p.POHandle),'') as PO
 isnull((select ExtNo from TPEPass1 WITH (NOLOCK) where ID = p.POHandle),'') as POHandleExtNo,
 isnull((select EMail from TPEPass1 WITH (NOLOCK) where ID = p.POSMR),'') as POSMRMail,
 isnull((select Name from TPEPass1 WITH (NOLOCK) where ID = p.POSMR),'') as POSMRName,
-isnull((select ExtNo from TPEPass1 WITH (NOLOCK) where ID = p.POSMR),'') as POSMRExtNo
+isnull((select ExtNo from TPEPass1 WITH (NOLOCK) where ID = p.POSMR),'') as POSMRExtNo,
+isnull((select EMail from TPEPass1 WITH (NOLOCK) where ID = p.PCHandle),'') as PCHandleMail,
+isnull((select EMail from TPEPass1 WITH (NOLOCK) where ID = p.PCSMR),'') as PCSMRMail
 from AirPP a WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = a.OrderID
 left join PO p WITH (NOLOCK) on p.ID = o.POID
@@ -1367,7 +1366,15 @@ where a.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                     return;
                 }
 
-                string mailto = MyUtility.Convert.GetString(allMail.Rows[0]["POSMRMail"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["POHandleMail"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["MRHandleMail"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["SMRMail"]) + ";";
+                string mailto = (MyUtility.Convert.GetString(allMail.Rows[0]["PCSMRMail"]) + ";" +
+                                MyUtility.Convert.GetString(allMail.Rows[0]["PCHandleMail"]) + ";" +
+                                MyUtility.Convert.GetString(allMail.Rows[0]["POSMRMail"]) + ";" +
+                                MyUtility.Convert.GetString(allMail.Rows[0]["POHandleMail"]) + ";" +
+                                MyUtility.Convert.GetString(allMail.Rows[0]["MRHandleMail"]) + ";" +
+                                MyUtility.Convert.GetString(allMail.Rows[0]["SMRMail"])).Split(';')
+                                .Where(s => !MyUtility.Check.Empty(s))
+                                .Distinct()
+                                .JoinToString(";");
                 string cc = MyUtility.Convert.GetString(allMail.Rows[0]["PPICMgrMail"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["FtyMgrMail"]) + ";" + MyUtility.Convert.GetString(dr["ToAddress"]);
                 string subject = string.Format(
                     @"<{0}> {1} for SP#{2}, DD{3} - {4}",

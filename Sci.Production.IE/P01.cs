@@ -875,7 +875,7 @@ where Junk = 0";
         {
             if (!this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed"))
             {
-                MyUtility.Msg.WarningBox("please confirm data before copy.");
+                MyUtility.Msg.WarningBox("This record already confirmed, so can't modify this record!!");
                 return false;
             }
 
@@ -915,7 +915,7 @@ where Junk = 0";
             base.ClickEditBefore();
             if (this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed"))
             {
-                MyUtility.Msg.WarningBox("please unconfirm to edit it.");
+                MyUtility.Msg.WarningBox("This record already confirmed, so can't modify this record!!");
                 this.HideRows();
                 return false;
             }
@@ -931,7 +931,7 @@ where Junk = 0";
         {
             if (this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed"))
             {
-                MyUtility.Msg.WarningBox("please unconfirm to delete it.");
+                MyUtility.Msg.WarningBox("This record already confirmed, so can't modify this record!!");
                 return false;
             }
 
@@ -1280,24 +1280,6 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'";
             base.ClickConfirm();
         }
 
-        /// <inheritdoc/>
-        protected override void ClickUnconfirm()
-        {
-            string sqlcmd = $@"
-update t 
-    set t.Status = 'New', 
-        t.EditName = '{Env.User.UserID}', 
-        t.EditDate = Getdate()
-from TimeStudy t 
-where StyleID = '{this.CurrentMaintain["StyleID"]}' 
-and SeasonID = '{this.CurrentMaintain["SeasonID"]}' 
-and ComboType = '{this.CurrentMaintain["ComboType"]}' 
-and BrandID = '{this.CurrentMaintain["BrandID"]}'";
-
-            DBProxy.Current.Execute("Production", sqlcmd);
-            base.ClickUnconfirm();
-        }
-
         // Style PopUp
         private void TxtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
@@ -1455,7 +1437,38 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'";
             if (confirmResult == DialogResult.Yes)
             {
                 string executeCmd = string.Format(
-                    @"insert into TimeStudyHistory (StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion)
+                    @"
+if exists(
+	select 1 from TimeStudyHistory h
+	inner join TimeStudy t on t.StyleID	   = h.StyleID
+						  and t.SeasonID   = h.SeasonID
+						  and t.ComboType  = h.ComboType
+						  and t.BrandID	   = h.BrandID
+						  and t.Version	   = h.Version
+						  and t.Phase	   = h.Phase
+	where t.ID = '{0}'
+)
+begin
+	update TimeStudy 
+	set Version =
+		(
+			select iif(isnull(max(ver.Version),0)+1 < 10,'0'+cast(isnull(max(ver.Version),0)+1 as varchar),cast(max(ver.Version)+1as varchar))
+			from(
+				select Version
+				from TimeStudy where ID = {0}
+				union
+				select h.Version from TimeStudyHistory h
+				inner join TimeStudy t on t.StyleID	   = h.StyleID
+										and t.SeasonID   = h.SeasonID
+										and t.ComboType  = h.ComboType
+										and t.BrandID	   = h.BrandID
+										and t.Phase	   = h.Phase
+				where t.ID = {0}
+			)ver
+		)
+end
+
+insert into TimeStudyHistory (StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion)
 select StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion from TimeStudy where ID = {0}
 
 declare @id bigint
@@ -1469,7 +1482,8 @@ set Version = (select iif(isnull(max(Version),0)+1 < 10,'0'+cast(isnull(max(Vers
     AddName = '{1}',
 	AddDate = GETDATE(),
 	EditName = '',
-	EditDate = null
+	EditDate = null,
+    Status = 'New'
 where ID = {0}",
                     this.CurrentMaintain["ID"].ToString(),
                     Env.User.UserID);
@@ -1481,7 +1495,6 @@ where ID = {0}",
                         if (result)
                         {
                             transactionScope.Complete();
-                            this.CurrentMaintain["Status"] = "New";
                         }
                         else
                         {
@@ -1517,7 +1530,38 @@ where ID = {0}",
             if (confirmResult == DialogResult.Yes)
             {
                 string executeCmd = string.Format(
-                    @"insert into TimeStudyHistory (StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion)
+                    @"
+if exists(
+	select 1 from TimeStudyHistory h
+	inner join TimeStudy t on t.StyleID	   = h.StyleID
+						  and t.SeasonID   = h.SeasonID
+						  and t.ComboType  = h.ComboType
+						  and t.BrandID	   = h.BrandID
+						  and t.Version	   = h.Version
+						  and t.Phase	   = h.Phase
+	where t.ID = '{0}'
+)
+begin
+	update TimeStudy 
+	set Version =
+		(
+			select iif(isnull(max(ver.Version),0)+1 < 10,'0'+cast(isnull(max(ver.Version),0)+1 as varchar),cast(max(ver.Version)+1as varchar))
+			from(
+				select Version
+				from TimeStudy where ID = {0}
+				union
+				select h.Version from TimeStudyHistory h
+				inner join TimeStudy t on t.StyleID	   = h.StyleID
+										and t.SeasonID   = h.SeasonID
+										and t.ComboType  = h.ComboType
+										and t.BrandID	   = h.BrandID
+										and t.Phase	   = h.Phase
+				where t.ID = {0}
+			)ver
+		)
+end
+
+insert into TimeStudyHistory (StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion)
 select StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion from TimeStudy where ID = {0}
 
 declare @id bigint
@@ -1533,7 +1577,8 @@ update TimeStudy
 set Phase = iif(@phase = 'Estimate','Initial',iif(@phase = 'Initial','Prelim',iif(@phase = 'Prelim','Final','Estimate'))),
 	Version = '01',
 	EditName = '{1}',
-	EditDate = GETDATE()
+	EditDate = GETDATE(),
+    Status = 'New'
 where ID = {0}",
                     this.CurrentMaintain["ID"].ToString(),
                     Env.User.UserID);
@@ -1545,7 +1590,6 @@ where ID = {0}",
                         if (result)
                         {
                             transactionScope.Complete();
-                            this.CurrentMaintain["Status"] = "New";
                         }
                         else
                         {

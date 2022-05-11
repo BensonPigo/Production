@@ -1126,7 +1126,7 @@ where Junk = 0
             // Vision為空的話就要填值
             if (MyUtility.Check.Empty(this.CurrentMaintain["Version"]) || this.CurrentMaintain["Version"].ToString() == "0")
             {
-                string newVersion = MyUtility.GetValue.Lookup(string.Format("select isnull(max(Version),0)+1 as Newversion from LineMapping WITH (NOLOCK) where StyleUKey =  {0}", this.CurrentMaintain["StyleUkey"].ToString()));
+                string newVersion = MyUtility.GetValue.Lookup($"select isnull(max(Version),0)+1 as Newversion from LineMapping WITH (NOLOCK) where StyleUKey =  {this.CurrentMaintain["StyleUkey"]} and FactoryID = '{this.CurrentMaintain["FactoryID"]}'");
                 if (MyUtility.Check.Empty(newVersion))
                 {
                     MyUtility.Msg.WarningBox("Get Version fail!!");
@@ -1134,6 +1134,17 @@ where Junk = 0
                 }
 
                 this.CurrentMaintain["Version"] = newVersion;
+            }
+
+            int version = MyUtility.Convert.GetInt(this.CurrentMaintain["Version"]) - 1;
+            string chkVersionStatus = $@"select Status from LineMapping where StyleUKey = '{this.CurrentMaintain["StyleUKey"]}' and FactoryID = '{this.CurrentMaintain["FactoryID"]}' and version = '{version}'";
+            if (MyUtility.Check.Seek(chkVersionStatus, out DataRow drStatus))
+            {
+                if (MyUtility.Convert.GetString(drStatus["Status"]) != "Confirmed")
+                {
+                    MyUtility.Msg.WarningBox($"Please check that the status of version {version} needs to be Confirmed");
+                    return false;
+                }
             }
 
             this.txtStyleComboType.BackColor = this.txtStyleID.BackColor;
@@ -1612,23 +1623,6 @@ order by EffectiveDate desc
             else
             {
                 this.ConfirmColor = false;
-            }
-        }
-
-        /// <summary>
-        /// ClickUnconfirm
-        /// </summary>
-        protected override void ClickUnconfirm()
-        {
-            base.ClickUnconfirm();
-
-            DualResult result;
-            string updateCmd = string.Format("update LineMapping set Status = 'New', IEReasonID = '',EditName = '{0}', EditDate = GETDATE() where ID = {1}", Env.User.UserID, this.CurrentMaintain["ID"].ToString());
-            result = DBProxy.Current.Execute(null, updateCmd);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox("Unconfirm fail!\r\n" + result.ToString());
-                return;
             }
         }
 

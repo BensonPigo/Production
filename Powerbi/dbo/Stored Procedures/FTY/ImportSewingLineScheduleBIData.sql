@@ -97,7 +97,12 @@ WHEN MATCHED THEN
 	t.SubCon = s.SubCon,
 	t.[Subcon Qty] = s.[Subcon Qty],
 	t.[Std Qty for printing] = s.[Std Qty for printing],
-	t.StyleName = s.StyleName'
+	t.StyleName = s.StyleName,
+	t.StdQtyEMB = s.StdQtyEMB,
+	t.EMBStitch = s.EMBStitch,
+	t.EMBStitchCnt = s.EMBStitchCnt,
+	t.TtlQtyEMB = s.TtlQtyEMB,
+	t.PrintPcs = s.PrintPcs'
 
 set @SqlCmd2 = '
 WHEN NOT MATCHED BY TARGET THEN
@@ -160,6 +165,11 @@ WHEN NOT MATCHED BY TARGET THEN
 	  ,[Subcon Qty]
 	  ,[Std Qty for printing]
 	  ,StyleName
+	  ,StdQtyEMB
+	  ,EMBStitch
+	  ,EMBStitchCnt
+	  ,TtlQtyEMB
+	  ,PrintPcs
 	)
 	VALUES(
 	s.APSNo,
@@ -219,7 +229,12 @@ WHEN NOT MATCHED BY TARGET THEN
 	s.SubCon,
 	s.[Subcon Qty],
 	s.[Std Qty for printing],
-	s.StyleName
+	s.StyleName,
+	s.StdQtyEMB,
+	s.EMBStitch,
+	s.EMBStitchCnt,
+	s.TtlQtyEMB,
+	s.PrintPcs
 	)
 WHEN NOT MATCHED BY SOURCE AND T.SewingDay between '''+@SDate+''' and '''+@EDate+''' THEN
 DELETE ;

@@ -100,7 +100,12 @@ from (
     where b.CTNStartNo != ''  
     and b.PackErrTransferDate is null
     and b.DisposeFromClog= 0 
-    and ((b.ReturnDate is null and b.TransferDate is null and b.PackErrTransferDate is null) or b.ReturnDate is not null) 
+    and ((
+			[ReturnDate] is null and 
+			[TransferDate] is null and 
+			[PackErrTransferDate] is null and
+			([DRYReceiveDate] is null or([DRYReceiveDate] is not null and [DRYTransferDate] is not null))
+		) or [ReturnDate] is not null)
     and a.MDivisionID = '{0}' 
     and (a.Type = 'B' or a.Type = 'L')
 	and b.CTNQty=1

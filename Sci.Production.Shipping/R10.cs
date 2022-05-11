@@ -294,7 +294,7 @@ as (
         , se.AccountID
         , [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
     inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
     inner join (
@@ -338,7 +338,7 @@ as (
         , se.AccountID
         , [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
     inner join #tmpPackingListA2B p WITH (NOLOCK) on p.INVNo = g.ID
     inner join #tmpPackingListDetailA2B	pd on pd.id = p.id
@@ -433,7 +433,7 @@ tmpPL as
         , se.AccountID
         , [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
     inner join (
 		select distinct id,OrderID,OrderShipmodeSeq 
@@ -476,7 +476,7 @@ tmpPL_A2B as
         , se.AccountID
         , [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join #tmpPackingListA2B p WITH (NOLOCK) on p.ID = se.InvNo
     inner join #tmpPackingListDetailA2B pd on pd.id = p.id
     inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -597,7 +597,7 @@ as (
 		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
 		, s.SisFtyAPID
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
     inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
     inner join (
@@ -649,7 +649,7 @@ as (
 		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
 		, s.SisFtyAPID
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
     inner join #tmpPackingListA2B p WITH (NOLOCK) on p.INVNo = g.ID
     inner join #tmpPackingListDetailA2B pd on pd.id = p.id
@@ -753,7 +753,7 @@ tmpPL as
 		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
 		, s.SisFtyAPID
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
     inner join (
 		select distinct id,OrderID,OrderShipmodeSeq 
@@ -804,7 +804,7 @@ tmpPL_A2B as
 		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
 		, s.SisFtyAPID
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join #tmpPackingListA2B p WITH (NOLOCK) on p.ID = se.InvNo
     inner join #tmpPackingListDetailA2B pd on pd.id = p.id
     inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -1342,7 +1342,7 @@ with tmpGB as (
 					      else iif(pTotal.CBM = 0, 0, pDetail.CBM  / pTotal.CBM)
 					      end as decimal(18,4))
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
     inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
     inner join (
@@ -1425,7 +1425,7 @@ tmpGB_A2B as (
 					      else iif(pTotal.CBM = 0, 0, pDetail.CBM  / pTotal.CBM)
 					      end as decimal(18,4))
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
     inner join  #tmpPackingListA2B p WITH (NOLOCK) on p.INVNo = g.ID
     inner join  #tmpPackingListDetailA2B pd on pd.id = p.id
@@ -1560,7 +1560,7 @@ tmpPL as
 					      else iif(pTotal.CBM = 0, 0, pDetail.CBM  / pTotal.CBM)
 					      end as decimal(18,4))
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
     inner join (
 		select distinct id,OrderID,OrderShipmodeSeq 
@@ -1642,7 +1642,7 @@ tmpPL_A2B as
 					      else iif(pTotal.CBM = 0, 0, pDetail.CBM  / pTotal.CBM)
 					      end as decimal(18,4))
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join #tmpPackingListA2B p WITH (NOLOCK) on p.ID = se.InvNo
     inner join #tmpPackingListDetailA2B pd on pd.id = p.id
     left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -1971,7 +1971,7 @@ as (
 		, [AccountID]= iif(se.AccountID='','Empty',se.AccountID)
 		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
     left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
     where s.Type = 'EXPORT'
@@ -2008,7 +2008,7 @@ as (
 		, [AccountID]= iif(se.AccountID='','Empty',se.AccountID)
 		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
 	from ShippingAP s WITH (NOLOCK) 
-	inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+	inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
 	inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
 	left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
 	where s.Type = 'EXPORT'
@@ -2145,7 +2145,7 @@ select [Type] = 'MATERIAL'
 	, s.VoucherDate
 	, s.SubType
 from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
 inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
 left join SciFMS_AccountNo a on a.ID = se.AccountID
@@ -2791,7 +2791,7 @@ select  distinct
         gd.PLFromRgCode,
         gd.PackingListID
 from ShippingAP s WITH (NOLOCK) 
-inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
 inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
 inner join GMTBooking_Detail gd WITH (NOLOCK) on gd.ID = g.ID
 where 1 = 1 {where}
@@ -2977,7 +2977,7 @@ as (
         , se.AccountID
         , [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
     inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
     inner join (
@@ -3023,7 +3023,7 @@ as (
         , se.AccountID
         , [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
     inner join #tmpPackingListA2B p WITH (NOLOCK) on p.INVNo = g.ID
     inner join #tmpPackingListDetailA2B pd on pd.id = p.id
@@ -3120,7 +3120,7 @@ tmpPL as
         , se.AccountID
         , [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
     inner join (
 		select distinct id,OrderID,OrderShipmodeSeq 
@@ -3165,7 +3165,7 @@ tmpPL_A2B as
         , se.AccountID
         , [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join #tmpPackingListA2B p WITH (NOLOCK) on p.ID = se.InvNo
     inner join #tmpPackingListDetailA2B pd on pd.id = p.id
     inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -3435,7 +3435,7 @@ as (
         , se.AccountID
         , [Amount] = se.Amount * iif('FX' = '', 1, dbo.getRate('FX', s.CurrencyID,'USD', s.CDate))
     from ShippingAP s WITH (NOLOCK) 
-    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
     left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
 	outer apply (

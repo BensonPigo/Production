@@ -339,18 +339,52 @@ Begin
 	End
 
 	--04. PackingList_Detail.ClogLocationId
-	Begin
+	Begin		
+		select s.*
+		into #tmpTransferLocation_for04
+		from TransferLocation s
+		outer apply(
+			select SCICtnNo, ID
+				, ROW_NUMBER() over(PARTITION BY SCICtnNo,Type order by ID desc) r_ID
+			from TransferLocation t
+			where SCICtnNo = s.SCICtnNo
+			and SCIUpdate = s.SCIUpdate
+		)t
+		where s.SCIUpdate = 0
+		and t.r_ID = 1
+		and t.ID = s.ID
+		and (
+			(exists (select 1
+					from  Production.dbo.PackingList_Detail  pd
+					inner join Production.dbo.PackingList p on p.id = pd.ID
+					LEFT JOIN Production.dbo.Pullout po WITH (NOLOCK) on po.ID=p.PulloutID
+					where SCICtnNo= s.SCICtnNo
+					and ReceiveDate is not null
+					and TransferCFADate is null
+					and CFAReturnClogDate is null
+					and DisposeFromClog = 0
+					and p.PLCtnTrToRgCodeDate is null
+					and (po.Status = 'New' or po.Status is null) ) and s.Type = 'FtyToClog')
+			or
+			(exists (select 1
+					from  Production.dbo.PackingList_Detail pd
+					inner join Production.dbo.PackingList p on p.id = pd.ID
+					LEFT JOIN Production.dbo.Pullout po WITH (NOLOCK) on po.ID=p.PulloutID
+					where SCICtnNo= s.SCICtnNo
+					and ReceiveDate is not null
+					and TransferCFADate is null
+					and CFAReturnClogDate is null
+					and DisposeFromClog = 0
+					and p.PLCtnTrToRgCodeDate is null
+					and (po.Status = 'New' or po.Status is null) ) )and s.Type = 'CFAToClog')		
+
 		select * 
 		 ,[row] = ROW_NUMBER() over(partition by SCICtnNo order by time desc)
 		 into #tmp_LastLocation
 		 from 
 		(
 			select tfl.ClogLocationId, tfl.Pallet, tfl.Time, tfl.SCICtnNo
-			from #tmpTransferLocation tfl with (nolock)
-				union all
-			select mtp.ClogLocationId, mtp.Pallet, mtp.Time, mtp.SCICtnNo
-			from MiniToPallet mtp with (nolock)
-			where mtp.SCIUpdate=0 and exists(select 1 from #tmpTransferLocation ttfl where ttfl.SCICtnNo = mtp.SCICtnNo)
+			from #tmpTransferLocation_for04 tfl with (nolock)
 		) a 
 
 		update pd
@@ -387,13 +421,53 @@ Begin
 			where scup.SCICtnNo = t.SCICtnNo and scup.Type = t.Type
 		)
 
-		-- MiniToPallet
+	--04-2-- MiniToPallet 與 TransferLocation 拆開, 因為資料寫入 MiniToPallet 的時間比較晚的話就不會更新, 下次跑也會因TransferLocation.SCIUpdate = 1 被篩選掉
+	
+		select s.*
+		 ,[row] = ROW_NUMBER() over(partition by s.SCICtnNo order by time desc)
+		into #tmpMiniToPallet_for04
+		from TransferLocation s
+		outer apply(
+			select SCICtnNo, ID
+				, ROW_NUMBER() over(PARTITION BY SCICtnNo,Type order by ID desc) r_ID
+			from TransferLocation t
+			where SCICtnNo = s.SCICtnNo
+			and SCIUpdate = s.SCIUpdate
+		)t
+		where t.r_ID = 1
+		and t.ID = s.ID
+		and (
+			(exists (select 1
+					from  Production.dbo.PackingList_Detail  pd
+					inner join Production.dbo.PackingList p on p.id = pd.ID
+					LEFT JOIN Production.dbo.Pullout po WITH (NOLOCK) on po.ID=p.PulloutID
+					where SCICtnNo= s.SCICtnNo
+					and ReceiveDate is not null
+					and TransferCFADate is null
+					and CFAReturnClogDate is null
+					and DisposeFromClog = 0
+					and p.PLCtnTrToRgCodeDate is null
+					and (po.Status = 'New' or po.Status is null) ) and s.Type = 'FtyToClog')
+			or
+			(exists (select 1
+					from  Production.dbo.PackingList_Detail pd
+					inner join Production.dbo.PackingList p on p.id = pd.ID
+					LEFT JOIN Production.dbo.Pullout po WITH (NOLOCK) on po.ID=p.PulloutID
+					where SCICtnNo= s.SCICtnNo
+					and ReceiveDate is not null
+					and TransferCFADate is null
+					and CFAReturnClogDate is null
+					and DisposeFromClog = 0
+					and p.PLCtnTrToRgCodeDate is null
+					and (po.Status = 'New' or po.Status is null)))and s.Type = 'CFAToClog')
+		and exists(select 1 from MiniToPallet m where m.SCIUpdate = 0 and m.SCICtnNo = s.SCICtnNo)
+
 		update t
 		set t.SCIUpdate=1
 		from MiniToPallet t
 		where exists(
 			select * 
-			from #tmp_LastLocation tmp
+			from #tmpMiniToPallet_for04 tmp
 			inner join Production.dbo.PackingList_Detail pd 
 				on tmp.SCICtnNo = pd.SCICtnNo
 			where tmp.SCICtnNo= t.SCICtnNo and row=1
@@ -545,6 +619,14 @@ Begin
 			,pd.SCICtnNo
 		from #tmpCompletePullout s
 		inner join Production.dbo.PackingList_Detail pd on s.SCICtnNo=pd.SCICtnNo
+		inner join Production.dbo.PackingList p on p.ID = pd.ID
+		LEFT JOIN Production.dbo.Pullout po WITH (NOLOCK) on po.ID=p.PulloutID
+		where	pd.ReceiveDate is not null and
+				pd.TransferCFADate is null and
+				pd.CFAReturnClogDate is null and
+				pd.DisposeFromClog = 0 and
+				p.PLCtnTrToRgCodeDate is null
+				and (po.Status = 'New' or po.Status is null)
 
 		-- Clog P12
 		update pd
@@ -554,14 +636,29 @@ Begin
 				,pd.PulloutTransportNo = t.TruckNo
 		from #tmpCompletePullout t
 		inner join Production.dbo.PackingList_Detail pd on t.SCICtnNo = pd.SCICtnNo 
+		inner join Production.dbo.PackingList p on p.ID = pd.ID
+		LEFT JOIN Production.dbo.Pullout po WITH (NOLOCK) on po.ID=p.PulloutID
+		where	pd.ReceiveDate is not null and
+				pd.TransferCFADate is null and
+				pd.CFAReturnClogDate is null and
+				pd.DisposeFromClog = 0 and
+				p.PLCtnTrToRgCodeDate is null
+				and (po.Status = 'New' or po.Status is null)
 
 		update t
 			set t.SCIUpdate=1
 		from CompletePullout t
 		inner join #tmpCompletePullout s on t.ID=s.ID
 		inner join Production.dbo.PackingList_Detail pd on s.SCICtnNo=pd.SCICtnNo
-		inner join Production.dbo.TransferToTruck tt on tt.OrderID = pd.OrderID 
-		and tt.PackingListID = pd.ID and tt.CTNStartNo = pd.CTNStartNo
+		inner join Production.dbo.PackingList p on p.ID = pd.ID
+		inner join Production.dbo.TransferToTruck tt on tt.OrderID = pd.OrderID and tt.PackingListID = pd.ID and tt.CTNStartNo = pd.CTNStartNo
+		LEFT JOIN Production.dbo.Pullout po WITH (NOLOCK) on po.ID=p.PulloutID
+		where	pd.ReceiveDate is not null and
+				pd.TransferCFADate is null and
+				pd.CFAReturnClogDate is null and
+				pd.DisposeFromClog = 0 and
+				p.PLCtnTrToRgCodeDate is null
+				and (po.Status = 'New' or po.Status is null)
 	End
 
 	-- 08 PackingList_Detail/CompleteSacnPack

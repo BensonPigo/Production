@@ -1,13 +1,12 @@
-﻿using System;
-using System.Data;
-using System.Text;
+﻿using Ict;
 using Ict.Win;
-using Ict;
 using Sci.Data;
-using System.Collections.Generic;
-using System.Data.SqlClient;
 using Sci.Production.CallPmsAPI;
+using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Text;
 
 namespace Sci.Production.Shipping
 {
@@ -419,6 +418,27 @@ where p.INVNo in ({0})
             }
 
             DataRow[] dra = this.gbData.Select("Selected = 1");
+
+            // 檢查 CutOffDate
+            if (MyUtility.Check.Empty(this.masterData["CutOffDate"]))
+            {
+                if (dra.AsEnumerable().GroupBy(g => new { CutOffDate = MyUtility.Convert.GetDate(g["CutOffDate"]) }).Count() > 1)
+                {
+                    MyUtility.Msg.WarningBox("All GB# Cut-off Date in the same Ship Plan have to be the same date!");
+                    return;
+                }
+            }
+            else
+            {
+                foreach (DataRow dr in dra)
+                {
+                    if (((DateTime)MyUtility.Convert.GetDate(dr["CutOffDate"])).Date != ((DateTime)MyUtility.Convert.GetDate(this.masterData["CutOffDate"])).Date)
+                    {
+                        MyUtility.Msg.WarningBox("All GB# Cut-off Date in the same Ship Plan have to be the same date!");
+                        return;
+                    }
+                }
+            }
 
             if (dra.Length > 0)
             {

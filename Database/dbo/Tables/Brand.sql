@@ -37,6 +37,7 @@
     [OTDExtension] INT NULL DEFAULT ((0)), 
     [UseRatioRule] VARCHAR CONSTRAINT [DF_Brand_UseRatioRule] DEFAULT ('') NULL, 
     [UseRatioRule_Thick] VARCHAR CONSTRAINT [DF_Brand_UseRatioRule_Thick] DEFAULT ('') NULL, 
+    [Serial] TINYINT not NULL CONSTRAINT [DF_Brand_Serial] DEFAULT ((0)), 
     CONSTRAINT [PK_Brand] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

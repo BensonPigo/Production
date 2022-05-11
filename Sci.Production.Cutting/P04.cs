@@ -1,17 +1,14 @@
 ﻿using Ict;
 using Ict.Win;
-
+using Sci.Data;
+using Sci.Production.Automation;
+using Sci.Win.Tools;
 using System;
 using System.Data;
 using System.Drawing;
-using System.Windows.Forms;
-using Sci.Data;
-using System.Transactions;
-using Sci.Win.Tools;
 using System.Runtime.InteropServices;
-using System.IO;
-using System.Threading.Tasks;
-using Sci.Production.Automation;
+using System.Transactions;
+using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
@@ -347,13 +344,8 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
 
         private void SentToGensong_AutoWHFabric(bool isConfirmed)
         {
-            // AutoWHFabric WebAPI for Gensong
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
-            {
-                DataTable dtDetail = ((DataTable)this.detailgridbs.DataSource).DefaultView.ToTable(true, "ID", "WorkorderUkey");
-                Task.Run(() => new Gensong_AutoWHFabric().SentCutplan_DetailToGensongAutoWHFabric(dtDetail, isConfirmed))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            }
+            DataTable dtDetail = ((DataTable)this.detailgridbs.DataSource).DefaultView.ToTable(true, "ID", "WorkorderUkey");
+            Gensong_AutoWHFabric.SentCutplan_Detail(true, dtDetail, isConfirmed);
         }
 
         /// <inheritdoc/>

@@ -1,21 +1,21 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci;
+using Sci.Data;
+using Sci.Production.Automation;
+using Sci.Production.Prg.Entity;
+using Sci.Production.PublicForm;
+using Sci.Production.PublicPrg;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci;
-using Sci.Data;
 using System.Linq;
-using Sci.Production.PublicPrg;
-using System.Transactions;
-using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
-using Sci.Production.PublicForm;
-using System.Threading.Tasks;
-using Sci.Production.Automation;
+using System.Text;
+using System.Transactions;
+using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
@@ -28,10 +28,7 @@ namespace Sci.Production.Warehouse
         private DataTable master;
         private DataTable detail;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="P28"/> class.
-        /// </summary>
-        /// <param name="menuitem">ToolStripMenuItem</param>
+        /// <inheritdoc/>
         public P28(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -187,8 +184,8 @@ WHERE   StockType='{0}'
 
                     if (!selectId)
                     {
-                       e.Cancel = true;
-                       MyUtility.Msg.WarningBox("Location : " + string.Join(",", errLocation.ToArray()) + "  Data not found !!", "Data not found");
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", errLocation.ToArray()) + "  Data not found !!", "Data not found");
                     }
 
                     trueLocation.Sort();
@@ -676,8 +673,7 @@ drop table #tmp");
                 return;
             }
 
-            DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to create data?");
-            if (dResult == DialogResult.No)
+            if (MyUtility.Msg.QuestionBox("Do you want to create data?") == DialogResult.No)
             {
                 return;
             }
@@ -763,7 +759,7 @@ from #tmp";
                 drNewMaster["issuedate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
                 drNewMaster["mdivisionid"] = Env.User.Keyword;
                 drNewMaster["FactoryID"] = Env.User.Factory;
-                drNewMaster["status"] = "New";
+                drNewMaster["status"] = EnumStatus.New;
                 drNewMaster["addname"] = Env.User.UserID;
                 drNewMaster["adddate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
                 drNewMaster["remark"] = "Batch create by P28";
@@ -799,14 +795,14 @@ from #tmp";
             }
             #endregion
 
-            TransactionScope transactionscope = new TransactionScope();
             DualResult result;
-            using (transactionscope)
+            Exception errMsg = null;
+            using (TransactionScope transactionscope = new TransactionScope())
             {
                 try
                 {
                     DataTable dtResult;
-                    if ((result = MyUtility.Tool.ProcessWithDatatable(dtMaster, null, insertMaster, out dtResult)) == false)
+                    if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, null, insertMaster, out dtResult)))
                     {
                         throw result.GetException();
                     }
@@ -816,31 +812,25 @@ from #tmp";
                     dtcopy.Columns.Remove("FromSeq");
                     dtcopy.Columns.Remove("toSeq");
 
-                    if ((result = MyUtility.Tool.ProcessWithDatatable(dtcopy, null, insertDetail, out dtResult)) == false)
+                    if (!(result = MyUtility.Tool.ProcessWithDatatable(dtcopy, null, insertDetail, out dtResult)))
                     {
                         throw result.GetException();
                     }
 
                     transactionscope.Complete();
-                    transactionscope.Dispose();
-
-                    // MyUtility.Msg.InfoBox("Trans. ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!", "Complete!");
                 }
                 catch (Exception ex)
                 {
-                    transactionscope.Dispose();
-                    result = new DualResult(false, "Commit transaction error.", ex);
-                    return;
+                    errMsg = ex;
                 }
             }
 
-            if (!result)
+            if (!MyUtility.Check.Empty(errMsg))
             {
-                this.ShowErr(result);
+                this.ShowErr(errMsg);
                 return;
             }
 
-            transactionscope = null;
             if (!this.master.Columns.Contains("TransID"))
             {
                 this.master.Columns.Add("TransID", typeof(string));
@@ -856,7 +846,6 @@ from #tmp";
                 }
             }
 
-            // Create後Btn失效，需重新Qurey才能再使用。
             foreach (DataRow item in dtMaster.Rows)
             {
                 #region 檢查物料Location 是否存在WMS
@@ -866,231 +855,49 @@ from #tmp";
                 }
                 #endregion
 
-                DataTable dtd = dtDetail.Select($" id ='{item["id"]}'").CopyToDataTable();
-                if (!Prgs.P22confirm(item, dtd))
+                string detailbyIDCmd = $@"
+select *
+    ,Fromlocation = Fromlocation.listValue
+from SubTransfer_Detail sd with(nolock)
+left join FtyInventory FI on sd.fromPoid = fi.poid and sd.fromSeq1 = fi.seq1 and sd.fromSeq2 = fi.seq2 and sd.fromDyelot = fi.Dyelot
+    and sd.fromRoll = fi.roll and sd.fromStocktype = fi.stocktype
+outer apply(
+	select listValue = Stuff((
+			select concat(',',MtlLocationID)
+			from (
+					select 	distinct
+						fd.MtlLocationID
+					from FtyInventory_Detail fd
+					left join MtlLocation ml on ml.ID = fd.MtlLocationID
+					where fd.Ukey = fi.Ukey
+					and ml.Junk = 0 
+					and ml.StockType = sd.ToStockType
+				) s
+			for xml path ('')
+		) , 1, 1, '')
+)Fromlocation
+where id = '{item["ID"]}'";
+                result = DBProxy.Current.Select(null, detailbyIDCmd, out DataTable dtDetail_byid);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                if (!Prgs.P22confirm(item, dtDetail_byid))
                 {
                     MyUtility.Msg.InfoBox("Trans. ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!" + " , Confirm fail, please go to P22 manual Confirm ", "Complete!");
                     return;
                 }
-            }
 
-            #region New Barcode
-
-            DataTable dt = new DataTable();
-            string sqlcmd = string.Empty;
-            string upd_Fty_Barcode_V1 = string.Empty;
-            string upd_Fty_Barcode_V2 = string.Empty;
-
-            foreach (DataRow dr in dtMaster.Rows)
-            {
-                #region From
-                sqlcmd = $@"
-select i2.ID
-,[Barcode1] = f.Barcode
-,[OriBarcode] = fbOri.Barcode
-,[balanceQty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
-,[NewBarcode] = iif(f.Barcode ='',fbOri.Barcode,f.Barcode)
-,[Poid] = i2.FromPOID
-,[Seq1] = i2.FromSeq1
-,[Seq2] = i2.FromSeq2
-,[Roll] = i2.FromRoll
-,[Dyelot] = i2.FromDyelot
-,[StockType] = i2.FromStockType
-from Production.dbo.SubTransfer_Detail i2
-inner join Production.dbo.SubTransfer i on i2.Id=i.Id 
-inner join FtyInventory f on f.POID = i2.FromPOID
-    and f.Seq1 = i2.FromSeq1 and f.Seq2 = i2.FromSeq2
-    and f.Roll = i2.FromRoll and f.Dyelot = i2.FromDyelot
-    and f.StockType = i2.FromStockType
-outer apply(
-	select *
-	from FtyInventory_Barcode t
-	where t.Ukey = f.Ukey
-	and t.TransactionID = '{dr["ID"]}'
-)fbOri
-where 1=1
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail 
-	where id = i2.FromPoid and seq1=i2.FromSeq1 and seq2=i2.FromSeq2 
-	and FabricType='F'
-)
-and i2.id = '{dr["ID"]}'
-";
-                DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
-                var data_From_FtyBarcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
-                                        select new
-                                        {
-                                            TransactionID = dr["ID"].ToString(),
-                                            poid = m.Field<string>("poid"),
-                                            seq1 = m.Field<string>("seq1"),
-                                            seq2 = m.Field<string>("seq2"),
-                                            stocktype = m.Field<string>("stocktype"),
-                                            roll = m.Field<string>("roll"),
-                                            dyelot = m.Field<string>("dyelot"),
-                                            Barcode = m.Field<string>("NewBarcode"),
-                                        }).ToList();
-
-                // confirmed 要刪除Barcode, 反之則從Ftyinventory_Barcode補回
-                upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(70, null, false);
-                upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, true);
-                DataTable resultFrom;
-                if (data_From_FtyBarcode.Count >= 1)
-                {
-                    // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_From_FtyBarcode, string.Empty, upd_Fty_Barcode_V1, out resultFrom, "#TmpSource")))
-                    {
-                        this.ShowErr(result);
-                        return;
-                    }
-
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_From_FtyBarcode, string.Empty, upd_Fty_Barcode_V2, out resultFrom, "#TmpSource")))
-                    {
-                        this.ShowErr(result);
-                        return;
-                    }
-                }
-                #endregion
-
-                #region To
-                sqlcmd = $@"
-select f.Ukey
-,[ToBarcode] = isnull(f.Barcode,'')
-,[ToBarcode2] = isnull(Tofb.Barcode,'')
-,[FromBarcode] = isnull(fromBarcode.Barcode,'')
-,[FromBarcode2] = isnull(Fromfb.Barcode,'')
-,[ToBalanceQty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
-,[FromBalanceQty] = fromBarcode.BalanceQty
-,[NewBarcode] = ''
-,[Poid] = i2.ToPOID
-,[Seq1] = i2.ToSeq1
-,[Seq2] = i2.ToSeq2
-,[Roll] = i2.ToRoll
-,[Dyelot] = i2.ToDyelot
-,[StockType] = i2.ToStockType
-from Production.dbo.SubTransfer_Detail i2
-inner join Production.dbo.SubTransfer i on i2.Id=i.Id 
-left join FtyInventory f on f.POID = i2.ToPOID
-    and f.Seq1 = i2.ToSeq1 and f.Seq2 = i2.ToSeq2
-    and f.Roll = i2.ToRoll and f.Dyelot = i2.ToDyelot
-    and f.StockType = i2.ToStockType
-
-outer apply(
-	select Barcode = MAX(Barcode)
-	from FtyInventory_Barcode t
-	where t.Ukey = f.Ukey
-)Tofb
-outer apply(
-	select f2.Barcode 
-	    ,BalanceQty = f2.InQty - f2.OutQty + f2.AdjustQty - f2.ReturnQty
-	    ,f2.Ukey
-	from FtyInventory f2	
-	where f2.POID = i2.FromPOID
-	and f2.Seq1 = i2.FromSeq1 and f2.Seq2 = i2.FromSeq2
-	and f2.Roll = i2.FromRoll and f2.Dyelot = i2.FromDyelot
-	and f2.StockType = i2.FromStockType
-)fromBarcode
-outer apply(
-	select Barcode = MAX(Barcode)
-	from FtyInventory_Barcode t
-	where t.Ukey = fromBarcode.Ukey
-)Fromfb
-where 1=1
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail 
-	where id = i2.ToPoid and seq1=i2.ToSeq1 and seq2=i2.ToSeq2 
-	and FabricType='F'
-)
-and i2.id = '{dr["ID"]}'
-";
-                DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
-
-                foreach (DataRow dr2 in dt.Rows)
-                {
-                    string strBarcode = string.Empty;
-
-                    // 目標有自己的Barcode, 則Ftyinventory跟記錄都是用自己的
-                    if (!MyUtility.Check.Empty(dr2["ToBarcode"]) || !MyUtility.Check.Empty(dr2["ToBarcode2"]))
-                    {
-                        strBarcode = MyUtility.Check.Empty(dr2["ToBarcode2"]) ? dr2["ToBarcode"].ToString() : dr2["ToBarcode2"].ToString();
-                        dr2["NewBarcode"] = strBarcode;
-                    }
-                    else
-                    {
-                        // 目標沒Barcode, 則 來源有餘額(部分轉)就用來源Barocde_01++, 如果全轉就用來源Barocde
-                        strBarcode = MyUtility.Check.Empty(dr2["FromBarcode2"]) ? dr2["FromBarcode"].ToString() : dr2["FromBarcode2"].ToString();
-
-                        // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
-                        if (!MyUtility.Check.Empty(dr2["FromBalanceQty"]))
-                        {
-                            if (strBarcode.Contains("-"))
-                            {
-                                dr2["NewBarcode"] = strBarcode.Substring(0, 13) + "-" + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
-                            }
-                            else
-                            {
-                                dr2["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
-                            }
-                        }
-                        else
-                        {
-                            // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
-                            dr2["NewBarcode"] = strBarcode;
-                        }
-                    }
-                }
-
-                var data_To_FtyBarcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
-                                            select new
-                                            {
-                                                TransactionID = dr["ID"].ToString(),
-                                                poid = m.Field<string>("poid"),
-                                                seq1 = m.Field<string>("seq1"),
-                                                seq2 = m.Field<string>("seq2"),
-                                                stocktype = m.Field<string>("stocktype"),
-                                                roll = m.Field<string>("roll"),
-                                                dyelot = m.Field<string>("dyelot"),
-                                                Barcode = m.Field<string>("NewBarcode"),
-                                            }).ToList();
-
-                // confirmed 要刪除Barcode, 反之則從Ftyinventory_Barcode補回
-                upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(70, null, true);
-                upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, true);
-                DataTable resultTo;
-                if (data_To_FtyBarcode.Count >= 1)
-                {
-                    // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_To_FtyBarcode, string.Empty, upd_Fty_Barcode_V1, out resultTo, "#TmpSource")))
-                    {
-                        this.ShowErr(result);
-                        return;
-                    }
-
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_To_FtyBarcode, string.Empty, upd_Fty_Barcode_V2, out resultTo, "#TmpSource")))
-                    {
-                        this.ShowErr(result);
-                        return;
-                    }
-                }
-                #endregion
-            }
-            #endregion
-
-            // AutoWHFabric WebAPI for Gensong
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
-            {
-                Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_Detail_New(dtMaster))
-           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            }
-
-            // AutoWHAccessory WebAPI for Vstrong
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_Detail_New(dtMaster, "New"))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                // AutoWHFabric WebAPI
+                Gensong_AutoWHFabric.Sent(true, dtDetail_byid, "P22", EnumStatus.New, EnumStatus.Confirm);
+                Vstrong_AutoWHAccessory.Sent(true, dtDetail_byid, "P22", EnumStatus.New, EnumStatus.Confirm);
             }
 
             this.p13_msg.Show("Trans. ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!" + " and Confirm Success!! ");
 
+            // Create後Btn失效，需重新Qurey才能再使用。
             this.btnCreate.Enabled = false;
             this.gridRel.ValidateControl();
             this.gridComplete.ValidateControl();

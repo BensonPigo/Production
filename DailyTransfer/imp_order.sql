@@ -1142,16 +1142,27 @@ else
 				, ot.ArtworkUnit
 				, ot.TMS
 				, ot.Price
-				, ot.InhouseOSP
-				, ot.LocalSuppID
+				, C.InhouseOSP
+				, [LocalSuppID] = IIF(C.InhouseOSP='O', (
+											SELECT top 1 LocalSuppId
+											from Style_Artwork_Quot saq with(nolock)
+											inner join Style_artwork sa with(nolock) on saq.ukey = sa.ukey
+											inner join Trade_To_Pms.DBO.Order_TmsCost otin WITH (NOLOCK) on sa.ArtworkTypeID = otin.ArtworkTypeID
+											where sa.styleukey = tmpo.styleukey and otin.id = ot.id and otin.ArtworkTypeID = ot.ArtworkTypeID
+											Order by sa.ukey
+										)
+									  , (SELECT top 1 LocalSuppID 
+										 FROM Production.dbo.Order_TmsCost WITH (NOLOCK) WHERE ID = ot.ID)
+					 )
 				, ot.AddName
 				, ot.AddDate
-				, ot.TPEEditName
-				, ot.TPEEditDate
+				, ot.EditName
+				, ot.EditDate
 		into #tmpLocalOrder_TmsCost
 		from Production.dbo.Orders o with (nolock)
-		inner join #TOrder tmpo on o.CustPONo = tmpo.ID and o.MDivisionID = tmpo.MDivisionID
-		inner join Production.dbo.Order_TmsCost ot with (nolock) on ot.Id = tmpo.ID
+		inner join Trade_to_PMS.dbo.Orders tmpo on o.CustPONo = tmpo.ID
+		inner join Trade_to_PMS.dbo.Order_TmsCost ot with (nolock) on ot.Id = tmpo.ID
+		INNER JOIN Production.dbo.ArtworkType C WITH (NOLOCK) ON ot.ArtworkTypeID = C.ID
 		where	o.LocalOrder = 1 and
 				not exists(select 1 from Production.dbo.sewingoutput_detail sd with (nolock) where sd.OrderID = o.ID)
 
@@ -1184,10 +1195,9 @@ else
 			, LocalSuppID
 			, AddName
 			, AddDate
-			, TPEEditName
-			, TPEEditDate
+			, EditName
+			, EditDate
 		from #tmpLocalOrder_TmsCost
-
 		-----------------Order_SizeCode---------------------------尺寸表 Size Spec(存尺寸碼)
 		--20170110 willy 調整順序: 刪除>修改>新增
 		Merge Production.dbo.Order_SizeCode as t

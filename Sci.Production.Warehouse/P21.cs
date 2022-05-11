@@ -1,9 +1,9 @@
 ﻿using Ict;
-using Ict.Resources;
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.Automation;
 using Sci.Production.Prg;
+using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using Sci.Win;
 using Sci.Win.Tools;
@@ -14,8 +14,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -37,12 +35,20 @@ namespace Sci.Production.Warehouse
             comboBox1_RowSource.Add("F", "Fabric");
             comboBox1_RowSource.Add("A", "Accessory");
 
-            this.cmbBarcoedType.SelectedIndex = 0;
-            string country = MyUtility.GetValue.Lookup($"select CountryID from Factory where ID = '{Env.User.Factory}'");
-            if (country != "PH")
+            DataTable dtPMS_FabricQRCode_LabelSize;
+            DualResult result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_Fab_LabSize' order by Seq", out dtPMS_FabricQRCode_LabelSize);
+
+            if (!result)
             {
-                this.cmbBarcoedType.SelectedIndex = 1;
+                this.ShowErr(result);
+                return;
             }
+
+            this.cmbBarcoedType.DisplayMember = "Name";
+            this.cmbBarcoedType.ValueMember = "ID";
+            this.cmbBarcoedType.DataSource = dtPMS_FabricQRCode_LabelSize;
+
+            this.cmbBarcoedType.SelectedValue = MyUtility.GetValue.Lookup("select PMS_FabricQRCode_LabelSize from system");
         }
 
         /// <inheritdoc/>
@@ -186,13 +192,20 @@ namespace Sci.Production.Warehouse
                     return;
                 }
 
-                string sp = "SP:" + MyUtility.Convert.GetString(dr["poid"]);
-                string seq = "SEQ:" + MyUtility.Convert.GetString(dr["Seq"]);
-                string refno = "Ref:" + MyUtility.Convert.GetString(dr["refno"]);
-                string dyelot = "Lot:" + MyUtility.Convert.GetString(dr["dyelot"]);
-                string color = "Color:" + MyUtility.Convert.GetString(dr["color"]);
-                string roll = "Roll:" + MyUtility.Convert.GetString(dr["Roll"]);
-                string qty = "Qty:" + MyUtility.Convert.GetString(dr["StockQty"]);
+                string sp = MyUtility.Convert.GetString(dr["poid"]);
+                string seq = MyUtility.Convert.GetString(dr["Seq"]);
+                string refno = MyUtility.Convert.GetString(dr["refno"]);
+                string dyelot = MyUtility.Convert.GetString(dr["dyelot"]);
+                string color = MyUtility.Convert.GetString(dr["color"]);
+                string roll = MyUtility.Convert.GetString(dr["Roll"]);
+                string qty = MyUtility.Convert.GetString(dr["StockQty"]);
+                string location = MyUtility.Convert.GetString(dr["location"]);
+                string gw = MyUtility.Convert.GetString(dr["Weight"]) + "KG";
+                string aw = MyUtility.Convert.GetString(dr["ActualWeight"]) + "KG";
+                string remark = MyUtility.Convert.GetString(dr["FirRemark"]);
+                string factory = MyUtility.Convert.GetString(dr["FactoryID"]);
+                string inspector = "QCID:" + MyUtility.Convert.GetString(dr["Inspector"]);
+                string inspectdate = "Insp Date:" + MyUtility.Convert.GetString(dr["InspDate"]);
 
                 ReportDefinition report = new ReportDefinition();
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SP", sp));
@@ -202,6 +215,13 @@ namespace Sci.Production.Warehouse
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("color", color));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("roll", roll));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("qty", qty));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("location", location));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("gw", gw));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("aw", aw));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", remark));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("factory", factory));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("inspector", inspector));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("inspectdate", inspectdate));
 
                 #region QRCode 參數
                 int qrCodeWidth = 90;
@@ -210,6 +230,14 @@ namespace Sci.Production.Warehouse
                 {
                     qrCodeWidth = 180;
                     rdlcName = "P21_PrintBarcode10.rdlc";
+                }
+                else if (this.cmbBarcoedType.Text == "7X7")
+                {
+                    rdlcName = "P21_PrintBarcode7.rdlc";
+                }
+                else
+                {
+                    rdlcName = "P21_PrintBarcode5.rdlc";
                 }
 
                 Bitmap oriBitmap = MyUtility.Convert.GetString(dr["Barcode"]).ToBitmapQRcode(qrCodeWidth, qrCodeWidth);
@@ -239,7 +267,12 @@ namespace Sci.Production.Warehouse
                 #endregion
 
                 // 開啟 report view
-                var frm = new Win.Subs.ReportView(report) { MdiParent = this.MdiParent };
+                var frm = new Win.Subs.ReportView(report)
+                {
+                    MdiParent = this.MdiParent,
+                    DirectPrint = true,
+                };
+
                 frm.Show();
             }
         }
@@ -417,7 +450,16 @@ from
         ,[Seq] = rd.Seq1 + ' ' + rd.Seq2
         ,rd.Roll
         ,rd.Dyelot
-        ,fi.Barcode
+        ,[Barcode] =    iif(rd.MINDQRCode <> '', 
+                            rd.MINDQRCode,
+                            (select top 1 case  when    wbt.To_NewBarcodeSeq = '' then wbt.To_NewBarcode
+                                                when    wbt.To_NewBarcode = ''  then ''
+                                                else    Concat(wbt.To_NewBarcode, '-', wbt.To_NewBarcodeSeq)    end
+                             from   WHBarcodeTransaction wbt with (nolock)
+                             where  wbt.TransactionUkey = rd.Ukey and
+                                    wbt.Action = 'Confirm'
+                             order by CommitTime desc)
+                        )
         ,rd.StockQty
         ,[StockTypeDesc] = st.Name
         ,rd.StockType
@@ -453,6 +495,10 @@ from
         ,fb.MtlTypeID
 		,psd.SuppColor
 		,psd.ColorID
+        ,fp.Inspector
+        ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd')
+        ,[FirRemark] = fp.Remark
+        ,o.FactoryID
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
     inner join View_WH_Orders o with (nolock) on o.ID = rd.POID 
@@ -465,6 +511,13 @@ from
                                                     rd.Dyelot  = fi.Dyelot and
                                                     rd.StockType = fi.StockType
     left join #tmpStockType st with (nolock) on st.ID = rd.StockType
+    left join FIR with (nolock) on  FIR.ReceivingID = rd.ID and 
+                                    FIR.POID = rd.POID and 
+                                    FIR.Seq1 = rd.Seq1 and 
+                                    FIR.Seq2 = rd.Seq2
+    left join FIR_Physical fp with (nolock) on  fp.ID = FIR.ID and
+                                                fp.Roll = rd.Roll and
+                                                fp.Dyelot = rd.Dyelot
     OUTER APPLY(
 
 	    SELECT [MtlLocationID] = STUFF(
@@ -481,7 +534,13 @@ from
 	    INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
 	    WHERE  r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
     )cutTime
-
+    OUTER APPLY (select top 1 [val] = case  when    wbt.To_NewBarcodeSeq = '' then wbt.To_NewBarcode
+                                            when    wbt.To_NewBarcode = ''  then ''
+                                            else    Concat(wbt.To_NewBarcode, '-', wbt.To_NewBarcodeSeq)    end
+                         from   WHBarcodeTransaction wbt with (nolock)
+                         where  wbt.TransactionUkey = rd.Ukey and
+                                wbt.Action = 'Confirm'
+                         order by CommitTime desc) Barcode
     where r.MDivisionID  = '{Env.User.Keyword}'
     AND psd.FabricType ='F'
     {sqlWhere}
@@ -496,7 +555,7 @@ from
         ,[Seq] = td.Seq1 + ' ' + td.Seq2
         ,td.Roll
         ,td.Dyelot
-        ,fi.Barcode
+        ,[Barcode] = Barcode.val
         ,[StockQty]=td.Qty
         ,[StockTypeDesc] = st.Name
         ,td.StockType
@@ -530,6 +589,10 @@ from
         ,fb.MtlTypeID
 		,psd.SuppColor
 		,psd.ColorID
+        ,fp.Inspector
+        ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd hh:mmtt')
+        ,[FirRemark] = fp.Remark
+        ,o.FactoryID
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
     INNER JOIN View_WH_Orders o with (nolock) ON o.ID = td.POID
@@ -542,6 +605,13 @@ from
                                                     td.Dyelot  = fi.Dyelot and
                                                     td.StockType = fi.StockType
     INNER JOIN #tmpStockType st with (nolock) on st.ID = td.StockType
+    left join FIR with (nolock) on  FIR.ReceivingID = td.ID and 
+                                    FIR.POID = td.POID and 
+                                    FIR.Seq1 = td.Seq1 and 
+                                    FIR.Seq2 = td.Seq2
+    left join FIR_Physical fp with (nolock) on  fp.ID = FIR.ID and
+                                                fp.Roll = td.Roll and
+                                                fp.Dyelot = td.Dyelot
     OUTER APPLY(
 
 	    SELECT [MtlLocationID] = STUFF(
@@ -558,6 +628,13 @@ from
 	    INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
 	    WHERE  t.id = f.ReceivingID and td.PoId = F.POID and td.Seq1 = F.SEQ1 and td.Seq2 = F.SEQ2 AND td.Roll = fs.Roll and td.Dyelot = fs.Dyelot
     )cutTime
+    OUTER APPLY (select top 1 [val] = case  when    wbt.To_NewBarcodeSeq = '' then wbt.To_NewBarcode
+                                            when    wbt.To_NewBarcode = ''  then ''
+                                            else    Concat(wbt.To_NewBarcode, '-', wbt.To_NewBarcodeSeq)    end
+                         from   WHBarcodeTransaction wbt with (nolock)
+                         where  wbt.TransactionUkey = td.Ukey and
+                                wbt.Action = 'Confirm'
+                         order by CommitTime desc) Barcode
     WHERE t.Status='Confirmed' 
     AND t.MDivisionID  = '{Env.User.Keyword}'
     AND psd.FabricType ='F'
@@ -707,8 +784,6 @@ drop table #tmp
                                                                                 });
 
             DataRow[] drArryCutShadebandTime = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
-
-                                                                             // && !MyUtility.Check.Empty(x["CutShadebandTime"])
                                                                              && !MyUtility.Convert.GetDate(x["CutShadebandTime"]).EqualString(MyUtility.Convert.GetDate(x["OldCutShadebandTime"]))).ToArray();
 
             // Remark沒資料則統一合併後寫入P26 同ID，排除Location沒有修改的資料
@@ -901,24 +976,39 @@ AND fs.Dyelot = '{updateItem["Dyelot"]}'
 ";
             }
 
+            DataTable dtToWMS = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1).CopyToDataTable().Clone();
+            DataTable dtcopy = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1).CopyToDataTable();
+            foreach (DataRow dr in dtcopy.Rows)
+            {
+                string sqlchk = $@"
+select 1 from MtlLocation m
+inner join SplitString('{dr["Location"]}',',') sp on m.ID = sp.Data
+where m.IsWMS = 0";
+                if (MyUtility.Check.Seek(sqlchk) && string.Compare(dr["Location"].ToString(), dr["OldLocation"].ToString()) != 0)
+                {
+                    dtToWMS.ImportRow(dr);
+                }
+            }
+
+            if (!Prgs_WMS.LockNotWMS(dtToWMS))
+            {
+                return;
+            }
+
+            DualResult result;
             Exception errMsg = null;
-            TransactionScope transactionscope = new TransactionScope();
-            using (transactionscope)
+            using (TransactionScope transactionscope = new TransactionScope())
             {
                 try
                 {
-                    DualResult result;
                     if (!MyUtility.Check.Empty(sqlInsertLocationTrans))
                     {
-                        DataTable dtLocationTransDetail;
-                        result = DBProxy.Current.Select(null, sqlInsertLocationTrans, out dtLocationTransDetail);
-                        if (!result)
+                        if (!(result = DBProxy.Current.Select(null, sqlInsertLocationTrans, out DataTable dtLocationTransDetail)))
                         {
                             throw result.GetException();
                         }
 
-                        result = Prgs.UpdateFtyInventoryMDivisionPoDetail(dtLocationTransDetail.AsEnumerable().ToList());
-                        if (!result)
+                        if (!(result = Prgs.UpdateFtyInventoryMDivisionPoDetail(dtLocationTransDetail.AsEnumerable().ToList())))
                         {
                             throw result.GetException();
                         }
@@ -926,8 +1016,7 @@ AND fs.Dyelot = '{updateItem["Dyelot"]}'
 
                     if (!MyUtility.Check.Empty(sqlUpdateReceiving_Detail))
                     {
-                        result = DBProxy.Current.Execute(null, sqlUpdateReceiving_Detail);
-                        if (!result)
+                        if (!(result = DBProxy.Current.Execute(null, sqlUpdateReceiving_Detail)))
                         {
                             throw result.GetException();
                         }
@@ -935,8 +1024,7 @@ AND fs.Dyelot = '{updateItem["Dyelot"]}'
 
                     if (!MyUtility.Check.Empty(sqlUpdateFIR_Shadebone))
                     {
-                        result = DBProxy.Current.Execute(null, sqlUpdateFIR_Shadebone);
-                        if (!result)
+                        if (!(result = DBProxy.Current.Execute(null, sqlUpdateFIR_Shadebone)))
                         {
                             throw result.GetException();
                         }
@@ -952,24 +1040,20 @@ AND fs.Dyelot = '{updateItem["Dyelot"]}'
 
             if (!MyUtility.Check.Empty(errMsg))
             {
+                // 找出要撤回的 P07 Ukey
+                DataTable dt07 = Prgs.GetWHDetailUkey(dtToWMS, "P07");
+
+                // 找出要撤回的 P18 Ukey
+                DataTable dt18 = Prgs.GetWHDetailUkey(dtToWMS, "P18");
+
+                Gensong_AutoWHFabric.Sent(true, dt07, "P07", EnumStatus.UnLock, EnumStatus.Unconfirm);
+                Gensong_AutoWHFabric.Sent(true, dt18, "P18", EnumStatus.UnLock, EnumStatus.Unconfirm);
                 this.ShowErr(errMsg);
                 return;
             }
 
-            // 若location 不是自動倉,且Location 有變更, 要發給WMS做撤回(Delete)
-            DataTable dtToWMS = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1).CopyToDataTable().Clone();
-            DataTable dtcopy = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1).CopyToDataTable();
-            foreach (DataRow dr in dtcopy.Rows)
-            {
-                string sqlchk = $@"
-select * from MtlLocation m
-inner join SplitString('{dr["Location"]}',',') sp on m.ID = sp.Data
-where m.IsWMS = 0";
-                if (MyUtility.Check.Seek(sqlchk) && string.Compare(dr["Location"].ToString(), dr["OldLocation"].ToString()) != 0)
-                {
-                    dtToWMS.ImportRow(dr);
-                }
-            }
+            // 調整後 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Delete) P07/P18
+            Prgs_WMS.DeleteNotWMS(dtToWMS);
 
             // 將當前所選位置記錄起來後, 待資料重整後定位回去!
             int currentRowIndexInt = this.gridReceiving.CurrentRow.Index;
@@ -977,20 +1061,8 @@ where m.IsWMS = 0";
             this.Query();
             this.gridReceiving.CurrentCell = this.gridReceiving[currentColumnIndexInt, currentRowIndexInt];
             this.gridReceiving.FirstDisplayedScrollingRowIndex = currentRowIndexInt;
+
             MyUtility.Msg.InfoBox("Complete");
-
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
-            {
-                Task.Run(() => new Gensong_AutoWHFabric().SentReceive_Location_Update(dtToWMS))
-           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            }
-
-            // AutoWH ACC WebAPI for VStrong
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentReceive_Location_Update(dtToWMS))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-            }
         }
 
         /// <summary>
@@ -1131,7 +1203,7 @@ where m.IsWMS = 0";
 
             if (!this.txtLocateDyelot.Text.Empty() && drs.Any())
             {
-                drs = drs.Where(x => x.Field<string>("Dyelot").EqualString(this.txtLocateDyelot.Text.ToString())).ToList();
+                drs = drs.Where(x => x.Field<string>("Dyelot").Contains(this.txtLocateDyelot.Text.ToString())).ToList();
             }
 
             if (drs.Count == 0)

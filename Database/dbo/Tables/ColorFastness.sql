@@ -20,8 +20,14 @@
     TestBeforePicture varbinary(max) NULL ,
     TestAfterPicture varbinary(max) NULL ,
     CycleTime int NULL,
-    CONSTRAINT [PK_ColorFastness] PRIMARY KEY CLUSTERED ([ID] ASC)
-);
+	 CONSTRAINT [PK_ColorFastness] PRIMARY KEY CLUSTERED 
+	(
+		[ID] DESC,
+		[POID] DESC,
+		[TestNo] DESC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
 
 
 

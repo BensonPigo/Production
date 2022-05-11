@@ -243,7 +243,7 @@ namespace Sci.Production.Win
 
             #region 登入時將SYSTEM資料表相關設定載入Sci.Env.Cfg中
             DataRow drSystem;
-            if (!MyUtility.Check.Seek("select * from system", out drSystem, null))
+            if (!MyUtility.Check.Seek("select * from system", out drSystem, "Production"))
             {
                 return new DualResult(false, "Get system data fail !!");
             }

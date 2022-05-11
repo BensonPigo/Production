@@ -81,6 +81,7 @@ namespace Sci.Production.PPIC
                 .Text("Seq", header: "Ship Seq", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("ShipmodeID", header: "Mode", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Buyer Del", iseditingreadonly: true)
+                .Date("OrigBuyerDelivery", header: "Ori. Buyer Del", iseditingreadonly: true)
                 .Date("SciDelivery", header: "SCI Del", iseditingreadonly: true)
                 .Date("CRDDate", header: "CRD", iseditingreadonly: true)
                 .Text("BuyMonth", header: "Month Buy", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -193,7 +194,11 @@ select distinct
 	,InspDate = isnull(o.InspDate,iif(oq.EstPulloutDate is null,dateadd(day,2,o.SewOffLine),dateadd(day,-2,oq.EstPulloutDate)))
 	,oq.SDPDate
     ,EstPulloutDate = iif(oq.EstPulloutDate is null , o.BuyerDelivery , oq.EstPulloutDate)
-    ,oq.Seq,oq.ShipmodeID,oq.BuyerDelivery,o.SciDelivery
+    ,oq.Seq
+    ,oq.ShipmodeID
+    ,oq.BuyerDelivery
+    ,o.OrigBuyerDelivery
+    ,o.SciDelivery
 	,CRDDate = iif(oq.BuyerDelivery > o.CRDDate, o.CRDDate, null)
 	,o.BuyMonth,o.Customize1
 	,ScanAndPack = iif(o.ScanAndPack = 1,'Y','')
@@ -248,7 +253,7 @@ outer apply(
 )MtlFormA
 
 select FactoryID,BrandID,SewLine,a.Id,StyleID,CustPONo,CustCDID,Customize2,DoxType,Qty,Alias,SewOffLine,InspDate
-	,SDPDate,EstPulloutDate,a.Seq,ShipmodeID,BuyerDelivery,SciDelivery,CRDDate,BuyMonth,Customize1,ScanAndPack
+	,SDPDate,EstPulloutDate,a.Seq,ShipmodeID,BuyerDelivery,OrigBuyerDelivery,SciDelivery,CRDDate,BuyMonth,Customize1,ScanAndPack
 	,RainwearTestPassed,Dimension,ProdRemark,ShipRemark, MtlFormA,PackingMethod,CTNQty,InClogCTN,CBM,ClogLocationId
     ,ColorWay,OrderType,Season,Program ,SewInLine,CLOGQty
 from #tmp1 a inner join #tmp2 b on a.Id = b.ID and a.Seq = b.Seq

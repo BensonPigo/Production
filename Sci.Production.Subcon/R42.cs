@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Runtime.InteropServices;
@@ -80,6 +81,17 @@ namespace Sci.Production.Subcon
         {
             this.sqlCmd = new StringBuilder();
 
+            if (!MyUtility.Check.Empty(this.dateBundleTransDate1))
+            {
+                this.sqlCmd.Append($" Declare @TransferDateFrom datetime = '{Convert.ToDateTime(this.dateBundleTransDate1).ToString("yyyy/MM/dd")}'");
+            }
+
+            if (!MyUtility.Check.Empty(this.dateBundleTransDate2))
+            {
+                // TransferDate 是 datetime, 直接用日期做判斷的話要加一天才不會漏掉最後一天的資料
+                this.sqlCmd.Append($"Declare @TransferDateTo datetime = '{Convert.ToDateTime(((DateTime)this.dateBundleTransDate2).AddDays(1)).ToString("yyyy/MM/dd")}'");
+            }
+
             // 效能: 看起來多餘的寫法, SP#分兩個欄位撈, 存入#tmp再組起來, 直接組起來要花4倍時間
             // 因為BundleTransfer 的table太肥，如果有用到這個條件則修改寫法
             if (this.dateBundleTransDate1 == null && this.dateBundleTransDate2 == null)
@@ -94,7 +106,7 @@ Select
 	[FabricKind] = FabricKind.val,
     [Cut Ref#] = b.CutRef,
 	[SP#] =iif((select count(1) from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo) = 1
-		, b.OrderID
+		, (select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo)
 		, dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo order by OrderID for XML RAW))),
     [Master SP#] = b.POID,
     [M] = b.MDivisionid,
@@ -191,13 +203,13 @@ where 1=1
 
                 if (!MyUtility.Check.Empty(this.dateBundleTransDate1))
                 {
-                    this.sqlCmd.Append(string.Format(@" and bt.TransferDate >= '{0}'", Convert.ToDateTime(this.dateBundleTransDate1).ToString("yyyy/MM/dd")));
+                    this.sqlCmd.Append(" and bt.TransferDate >= @TransferDateFrom");
                 }
 
                 if (!MyUtility.Check.Empty(this.dateBundleTransDate2))
                 {
                     // TransferDate 是 datetime, 直接用日期做判斷的話要加一天才不會漏掉最後一天的資料
-                    this.sqlCmd.Append(string.Format(@" and bt.TransferDate <= '{0}'", Convert.ToDateTime(((DateTime)this.dateBundleTransDate2).AddDays(1)).ToString("yyyy/MM/dd")));
+                    this.sqlCmd.Append(" and bt.TransferDate <= @TransferDateTo");
                 }
 
                 if (!MyUtility.Check.Empty(this.M))
@@ -233,7 +245,7 @@ Select
     [FabricKind] = FabricKind.val,
     [Cut Ref#] = b.CutRef,
 	[SP#] =iif((select count(1) from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo) = 1
-		, b.OrderID
+		, (select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo)
 		, dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo order by OrderID for XML RAW))),
     [Master SP#] = b.POID,
     [M] = b.MDivisionid,
@@ -313,13 +325,13 @@ where 1=1
 
                 if (!MyUtility.Check.Empty(this.dateBundleTransDate1))
                 {
-                    this.sqlCmd.Append($@" and bt.TransferDate >= '{Convert.ToDateTime(this.dateBundleTransDate1).ToString("yyyy/MM/dd")}'" + Environment.NewLine);
+                    this.sqlCmd.Append(" and bt.TransferDate >= @TransferDateFrom");
                 }
 
                 if (!MyUtility.Check.Empty(this.dateBundleTransDate2))
                 {
                     // TransferDate 是 datetime, 直接用日期做判斷的話要加一天才不會漏掉最後一天的資料
-                    this.sqlCmd.Append($@" and bt.TransferDate <= '{Convert.ToDateTime(((DateTime)this.dateBundleTransDate2).AddDays(1)).ToString("yyyy/MM/dd")}'" + Environment.NewLine + Environment.NewLine);
+                    this.sqlCmd.Append(" and bt.TransferDate <= @TransferDateTo");
                 }
 
                 if (!MyUtility.Check.Empty(this.CutRef1) && (!MyUtility.Check.Empty(this.CutRef1)))
@@ -388,6 +400,7 @@ drop table #tmp
             {
                 CommandTimeout = 3000,
             };
+
             var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             int loadCounts = 0;
             int loadCounts2 = 0;

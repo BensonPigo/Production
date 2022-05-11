@@ -1436,9 +1436,9 @@
             this.labVersionWarning.ForeColor = System.Drawing.Color.Red;
             this.labVersionWarning.Location = new System.Drawing.Point(836, 141);
             this.labVersionWarning.Name = "labVersionWarning";
-            this.labVersionWarning.Size = new System.Drawing.Size(273, 16);
+            this.labVersionWarning.Size = new System.Drawing.Size(275, 16);
             this.labVersionWarning.TabIndex = 82;
-            this.labVersionWarning.Text = "GSD version or FSD Statusis not latest";
+            this.labVersionWarning.Text = "GSD version or GSD Statusis not latest";
             // 
             // comboSewingTeam1
             // 
@@ -1468,7 +1468,6 @@
             this.GridNew = 0;
             this.GridUniqueKey = "ID,No,GroupKey";
             this.IsSupportConfirm = true;
-            this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P03";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";

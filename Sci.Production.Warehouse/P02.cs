@@ -160,6 +160,7 @@ select FactoryID = iif(ed.PoType='M'
         , (SUBSTRING(ed.Seq1,1,3)+' '+ed.Seq2) as Seq
         , f.RefNo
         , f.MtlTypeID
+		, f.WeaveTypeID
         , (ed.SuppID+'-'+s.AbbEN) as Supp
         , Description = iif(ed.Description = '', isnull(f.DescDetail,'')
                                                , ed.Description)
@@ -306,6 +307,7 @@ drop table #tmp, #tmp_MachinePO, #tmp_MiscPO, #tmp_PartPO", masterID);
                 .Text("Seq", header: "SEQ", width: Widths.AnsiChars(3))
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("WeaveTypeID", header: "Weave Type", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("Preshrink", header: "Preshrink", iseditingreadonly: true)
                 .Text("Supp", header: "Supplier", width: Widths.AnsiChars(13))
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(6))

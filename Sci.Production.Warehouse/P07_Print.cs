@@ -27,23 +27,31 @@ namespace Sci.Production.Warehouse
         private string Invoice;
         private string Wk;
         private string FTYID;
+        private string rptTitle;
+        private DataRow curMain;
 
         /// <inheritdoc/>
-        public P07_Print(List<string> polist)
+        public P07_Print(List<string> polist, DataRow currentMain)
         {
             this.InitializeComponent();
             this.CheckControlEnable();
             this.poidList = polist;
-            this.comboType.Add("10X10", "10X10");
-            this.comboType.Add("5X5", "5X5");
-            this.comboType.SelectedIndex = 0;
+            this.curMain = currentMain;
 
-            string country = MyUtility.GetValue.Lookup($"select CountryID from Factory where ID = '{Env.User.Factory}'");
+            DataTable dtPMS_FabricQRCode_LabelSize;
+            DualResult result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_Fab_LabSize' order by Seq", out dtPMS_FabricQRCode_LabelSize);
 
-            if (country != "PH")
+            if (!result)
             {
-                this.comboType.SelectedIndex = 1;
+                this.ShowErr(result);
+                return;
             }
+
+            this.comboType.DisplayMember = "Name";
+            this.comboType.ValueMember = "ID";
+            this.comboType.DataSource = dtPMS_FabricQRCode_LabelSize;
+
+            this.comboType.SelectedValue = MyUtility.GetValue.Lookup("select PMS_FabricQRCode_LabelSize from system");
         }
 
         private List<string> poidList;
@@ -61,6 +69,7 @@ namespace Sci.Production.Warehouse
             }
 
             this.id = this.CurrentDataRow["ID"].ToString();
+
             return base.ValidateInput();
         }
 
@@ -94,8 +103,8 @@ namespace Sci.Production.Warehouse
                 this.ShowErr(titleResult);
             }
 
-            string rptTitle = dtTitle.Rows[0]["nameEN"].ToString();
-            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", rptTitle));
+            this.rptTitle = dtTitle.Rows[0]["nameEN"].ToString();
+            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", this.rptTitle));
 
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ETA", this.ETA));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Invoice", this.Invoice));
@@ -199,7 +208,16 @@ select
 	,[SubVaniance]=R.ShipQty - R.ActualQty
 	,R.Remark		
     ,ColorName = c.Name
-    ,R.MINDQRCode
+    ,[MINDQRCode] = iif(R.MINDQRCode <> '', 
+                        R.MINDQRCode,
+                        (select top 1 case  when    wbt.To_NewBarcodeSeq = '' then wbt.To_NewBarcode
+                                            when    wbt.To_NewBarcode = ''  then ''
+                                            else    Concat(wbt.To_NewBarcode, '-', wbt.To_NewBarcodeSeq)    end
+                         from   WHBarcodeTransaction wbt with (nolock)
+                         where  wbt.TransactionUkey = R.Ukey and
+                                wbt.Action = 'Confirm'
+                         order by CommitTime desc)
+                    )
     ,[SuppColor] = p.ColorID
     ,R.ActualQty
     ,[FabricType] = case when p.FabricType = 'F' then 'Fabric'
@@ -208,11 +226,29 @@ select
     ,TtlQty = convert(varchar(20),
 			iif(r.CombineBarcode is null , r.ActualQty, 
 				iif(r.Unoriginal is  null , ttlQty.value, null))) +' '+ R.PoUnit
+    ,[Location] = Location.MtlLocationID
+    ,fp.Inspector
+    ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd')
+    ,o.FactoryID
+    ,[FirRemark] = fp.Remark
 from dbo.Receiving_Detail R WITH (NOLOCK) 
 LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
+left join Ftyinventory  fi with (nolock) on    R.POID = fi.POID and
+                                               R.Seq1 = fi.Seq1 and
+                                               R.Seq2 = fi.Seq2 and
+                                               R.Roll = fi.Roll and
+                                               R.Dyelot  = fi.Dyelot and
+                                               R.StockType = fi.StockType
 left join View_WH_Orders o WITH (NOLOCK) on o.ID = r.PoId
 LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
 LEFT JOIN color c on c.id = p.colorid and c.BrandId = p.BrandId 
+left join FIR with (nolock) on  FIR.ReceivingID = r.ID and 
+                                FIR.POID = r.POID and 
+                                FIR.Seq1 = r.Seq1 and 
+                                FIR.Seq2 = r.Seq2
+left join FIR_Physical fp with (nolock) on  fp.ID = FIR.ID and
+                                            fp.Roll = r.Roll and
+                                            fp.Dyelot = r.Dyelot
 OUTER APPLY(
  SELECT [Value]=
 	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(p.SuppColor = '' or p.SuppColor is null, dbo.GetColorMultipleID(o.BrandID,p.ColorID),p.SuppColor)
@@ -226,6 +262,15 @@ outer apply(
 	and t.CombineBarcode=r.CombineBarcode
 	and t.CombineBarcode is not null
 )ttlQty
+OUTER APPLY(
+	    SELECT [MtlLocationID] = STUFF(
+			    (
+			    SELECT DISTINCT IIF(fid.MtlLocationID IS NULL OR fid.MtlLocationID = '' ,'' , ','+fid.MtlLocationID)
+			    FROM FtyInventory_Detail fid
+			    WHERE fid.Ukey = fi.Ukey
+			    FOR XML PATH('') )
+			    , 1, 1, '')
+    )Location
 where R.id = @ID";
 
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
@@ -282,6 +327,7 @@ where R.id = @ID";
 
                 int nRow = 7;
 
+                objSheets.Cells[1, 1] = this.rptTitle;
                 objSheets.Cells[3, 1] = this.Date2;
                 objSheets.Cells[4, 1] = "ETA:" + this.ETA;
                 objSheets.Cells[5, 1] = "Invoice#:" + this.Invoice + "   From FTY ID:" + this.FTYID;
@@ -326,6 +372,7 @@ where R.id = @ID";
 
                 int nRow = 7;
 
+                objSheets.Cells[1, 1] = this.rptTitle;
                 objSheets.Cells[3, 1] = this.Date1;
                 objSheets.Cells[4, 1] = "ETA:" + this.ETA;
                 objSheets.Cells[5, 1] = "Invoice#:" + this.Invoice + "   From FTY ID:" + this.FTYID;
@@ -369,6 +416,12 @@ where R.id = @ID";
             if (!this.radioQRCodeSticker.Checked)
             {
                 return base.ToPrint();
+            }
+
+            if (this.radioQRCodeSticker.Checked && this.curMain["Status"].ToString() != "Confirmed")
+            {
+                MyUtility.Msg.WarningBox("Data is not confirmed, cannot print.");
+                return false;
             }
 
             this.ValidateInput();

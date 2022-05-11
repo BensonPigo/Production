@@ -1,7 +1,9 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -81,482 +83,68 @@ namespace Sci.Production.Sewing
         {
             DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
 
-            string sqlWhereForCDCodeNew = string.Empty;
-
-            if (!MyUtility.Check.Empty(this.productType))
+            List<SqlParameter> listPar = new List<SqlParameter>()
             {
-                sqlWhereForCDCodeNew += $" and sty.ProductType = ''{this.productType}''";
+                new SqlParameter("@M", this.mDivision),
+                new SqlParameter("@Factory", this.factory),
+                new SqlParameter("@Category", this.category),
+                new SqlParameter("@Brand", this.brand),
+                new SqlParameter("@CDCode", this.cdcode),
+                new SqlParameter("@ProductType", this.productType),
+                new SqlParameter("@FabricType", this.fabricType),
+                new SqlParameter("@Lining", this.lining),
+                new SqlParameter("@Construction", this.construction),
+                new SqlParameter("@Gender", this.gender),
+                new SqlParameter("@Shift", this.shift),
+                new SqlParameter("@Include_Artwork", this.chk_Include_Artwork.Checked),
+                new SqlParameter("@ShowAccumulate_output", this.show_Accumulate_output),
+                new SqlParameter("@ExcludeSampleFty", this.chkExcludeSampleFty.Checked),
+                new SqlParameter("@OnlyCancelOrder", this.chkOnlyCancelOrder.Checked),
+                new SqlParameter("@ExcludeNonRevenue", this.exclude_NonRevenue),
+                new SqlParameter("@SubconOut", this.chkSubconOut.Checked),
+            };
+
+            if (this.date1 == null)
+            {
+                listPar.Add(new SqlParameter("@StartDate", DBNull.Value));
+            }
+            else
+            {
+                listPar.Add(new SqlParameter("@StartDate", this.date1));
             }
 
-            if (!MyUtility.Check.Empty(this.fabricType))
+            if (this.date2 == null)
             {
-                sqlWhereForCDCodeNew += $" and sty.FabricType = ''{this.fabricType}''";
+                listPar.Add(new SqlParameter("@EndDate", DBNull.Value));
+            }
+            else
+            {
+                listPar.Add(new SqlParameter("@EndDate", this.date2));
             }
 
-            if (!MyUtility.Check.Empty(this.lining))
-            {
-                sqlWhereForCDCodeNew += $" and sty.Lining = ''{this.lining}''";
-            }
+            string sqlGetSewingDailyOutputList = @"
+exec GetSewingDailyOutputList   @M						
+	                            ,@Factory	
+	                            ,@StartDate    
+	                            ,@EndDate      
+	                            ,@Category	
+	                            ,@Brand		   
+	                            ,@CDCode	
+	                            ,@ProductType
+	                            ,@FabricType
+	                            ,@Lining	
+	                            ,@Construction
+	                            ,@Gender	
+	                            ,@Shift		
+	                            ,@Include_Artwork			
+	                            ,@ShowAccumulate_output	
+	                            ,@ExcludeSampleFty		
+	                            ,@OnlyCancelOrder		
+	                            ,@ExcludeNonRevenue		
+	                            ,@SubconOut				
+";
 
-            if (!MyUtility.Check.Empty(this.gender))
-            {
-                sqlWhereForCDCodeNew += $" and sty.Gender = ''{this.gender}''";
-            }
-
-            if (!MyUtility.Check.Empty(this.construction))
-            {
-                sqlWhereForCDCodeNew += $" and sty.Construction = ''{this.construction}''";
-            }
-
-            StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"--根據條件撈基本資料
-select s.id
-	,s.OutputDate
-	,s.Category
-	,s.Shift
-	,s.SewingLineID
-	,s.Team
-	,s.MDivisionID
-	,s.FactoryID
-	,sd.OrderId
-	,sd.ComboType
-	,[ActManPower] = s.Manpower
-	,sd.WorkHour
-	,sd.QAQty
-	,sd.InlineQty
-	,o.LocalOrder
-	,o.CustPONo
-	,[OrderCategory] = isnull(o.Category,'')
-	,[OrderType] = isnull(o.OrderTypeID,'')
-	,[IsDevSample] = CASE WHEN ot.IsDevSample =1 THEN 'Y' ELSE 'N' END
-	,[OrderBrandID] = case 
-		when o.BrandID != 'SUBCON-I' then o.BrandID
-		when Order2.BrandID is not null then Order2.BrandID
-		when StyleBrand.BrandID is not null then StyleBrand.BrandID
-		else o.BrandID end    
-    ,[OrderCdCodeID] = isnull(o.CdCodeID,'')
-	,[OrderProgram] = isnull(o.ProgramID,'')  
-	,[OrderCPU] = isnull(o.CPU,0) 
-	,[OrderCPUFactor] = isnull(o.CPUFactor,0) 
-	,[OrderStyle] = isnull(o.StyleID,'') 
-	,[OrderSeason] = isnull(o.SeasonID,'')
-	,[MockupBrandID] = isnull(mo.BrandID,'')   
-	,[MockupCDCodeID] = isnull(mo.MockupID,'')
-	,[MockupProgram] = isnull(mo.ProgramID,'') 
-	,[MockupCPU] = isnull(mo.Cpu,0)
-	,[MockupCPUFactor] = isnull(mo.CPUFactor,0)
-	,[MockupStyle] = isnull(mo.StyleID,'')
-	,[MockupSeason] = isnull(mo.SeasonID,'')	
-    ,[Rate] = isnull([dbo].[GetOrderLocation_Rate](o.id,sd.ComboType),100)/100
-	,System.StdTMS
-	, [ori_QAQty] = sd.QAQty
-	, [ori_InlineQty] = sd.InlineQty
-    ,[BuyerDelivery] = format(o.BuyerDelivery,'yyyy/MM/dd')
-    ,[OrderQty] = o.Qty
-    ,s.SubconOutFty
-    ,s.SubConOutContractNumber
-    ,o.SubconInType
-    ,[SewingReasonDesc] = isnull(sr.SewingReasonDesc,'')
-	,[Remark] = isnull(ssd.SewingOutputRemark,'')
-    ,o.SciDelivery 
-    ,[NonRevenue]=IIF(o.NonRevenue=1,'Y','N')
-    ,Cancel=iif(o.Junk=1,'Y','' )
-into #tmpSewingDetail
-from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
-inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
-left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
-left join OrderType ot WITH (NOLOCK) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
-left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
-left join Factory f WITH (NOLOCK) on s.FactoryID = f.ID
-outer apply
-(
-	select [SewingReasonDesc]=stuff((
-		select concat(',',sr.ID+'-'+sr.Description)
-		from SewingReason sr WITH (NOLOCK)
-		inner join SewingOutput_Detail sd2 WITH (NOLOCK) on sd2.SewingReasonID=sr.ID
-		where sr.Type='SO' 
-		and sd2.id = sd.id 
-		and sd2.OrderId = sd.OrderId
-		for xml path('')
-	),1,1,'')
-)sr
-outer apply
-(
-	select [SewingOutputRemark]=stuff((
-		select concat(',',ssd.Remark)
-		from SewingOutput_Detail ssd WITH (NOLOCK) 
-		where ssd.ID = sd.ID
-		and ssd.OrderId = sd.OrderId
-		and isnull(ssd.Remark ,'') <> ''
-		for xml path('')
-	),1,1,'')
-)ssd
-outer apply( select BrandID from orders o1 WITH (NOLOCK) where o.CustPONo=o1.id )Order2
-outer apply( select top 1 BrandID from Style WITH (NOLOCK) where id=o.StyleID and SeasonID=o.SeasonID and BrandID!='SUBCON-I' )StyleBrand
-where 1=1 "));
-
-            if (!MyUtility.Check.Empty(this.date1))
-            {
-                sqlCmd.Append(string.Format(" and s.OutputDate >= '{0}' " + Environment.NewLine, Convert.ToDateTime(this.date1).ToString("yyyyMMdd")));
-            }
-
-            if (!MyUtility.Check.Empty(this.date2))
-            {
-                sqlCmd.Append(string.Format(" and s.OutputDate <= '{0}' " + Environment.NewLine, Convert.ToDateTime(this.date2).ToString("yyyyMMdd")));
-            }
-
-            if (!MyUtility.Check.Empty(this.mDivision))
-            {
-                sqlCmd.Append(string.Format(" and s.MDivisionID = '{0}'" + Environment.NewLine, this.mDivision));
-            }
-
-            if (!MyUtility.Check.Empty(this.factory))
-            {
-                sqlCmd.Append(string.Format(" and s.FactoryID = '{0}'" + Environment.NewLine, this.factory));
-            }
-
-            if (!MyUtility.Check.Empty(this.category) && this.category.ToUpper() == "MOCKUP")
-            {
-                sqlCmd.Append(" and s.Category = 'M'" + Environment.NewLine);
-            }
-
-            if (this.chkExcludeSampleFty.Checked)
-            {
-                sqlCmd.Append($@" and f.Type != 'S'" + Environment.NewLine);
-            }
-
-            if (this.chkOnlyCancelOrder.Checked)
-            {
-                sqlCmd.Append($@" and o.Junk = 1 " + Environment.NewLine);
-            }
-
-            if (this.exclude_NonRevenue)
-            {
-                sqlCmd.Append($@" and isnull(o.NonRevenue, 0) = 0" + Environment.NewLine);
-            }
-
-            if (this.chkSubconOut.Checked)
-            {
-                sqlCmd.Append($@" and s.SubconOutFty <> '' " + Environment.NewLine);
-            }
-
-            if (!MyUtility.Check.Empty(this.shift))
-            {
-                switch (this.shift)
-                {
-                    case "Day+Night":
-                        sqlCmd.Append(" and s.Shift <> 'O' and o.LocalOrder <> 1 and o.SubconInType not in (1, 2)" + Environment.NewLine);
-                        break;
-                    case "Subcon-In":
-                        sqlCmd.Append(" and s.Shift <> 'O' and (o.LocalOrder = 1 and o.SubconInType <> 0)" + Environment.NewLine);
-                        break;
-                    case "Subcon-Out":
-                        sqlCmd.Append(" and s.Shift = 'O'" + Environment.NewLine);
-                        break;
-                }
-            }
-
-            sqlCmd.Append(@"--By Sewing單號 & SewingDetail的Orderid,ComboType 作加總 WorkHour,QAQty,InlineQty
-select distinct OutputDate
-	,Category
-	,Shift
-	,SewingLineID
-	,Team
-	,FactoryID
-	,MDivisionID
-	,OrderId
-	,ComboType
-	,[ActManPower] = s.Manpower
-	,[WorkHour] = sum(Round(WorkHour,3))over(partition by id,OrderId,ComboType)
-	,[QAQty] = sum(QAQty)over(partition by id,OrderId,ComboType)
-	,[InlineQty] = sum(InlineQty)over(partition by id,OrderId,ComboType)
-	,LocalOrder
-	,CustPONo
-	,OrderCategory
-	,OrderType
-	,IsDevSample
-	,OrderBrandID 
-	,OrderCdCodeID
-	,OrderProgram
-	,OrderCPU
-	,OrderCPUFactor
-	,OrderStyle
-	,OrderSeason
-	,MockupBrandID
-	,MockupCDCodeID
-	,MockupProgram
-	,MockupCPU
-	,MockupCPUFactor
-	,MockupStyle
-	,MockupSeason
-	,Rate
-	,StdTMS
-	, ori_QAQty = sum(ori_QAQty)over(partition by id,OrderId,ComboType)
-	, ori_InlineQty = sum(ori_InlineQty)over(partition by id,OrderId,ComboType)
-    ,BuyerDelivery
-    ,SciDelivery
-    ,OrderQty
-    ,SubconOutFty
-    ,SubConOutContractNumber
-    ,SubconInType
-    ,SewingReasonDesc
-    ,NonRevenue
-    ,Remark
-    ,Cancel
-into #tmpSewingGroup
-from #tmpSewingDetail t
-outer apply(
-	select s.Manpower from SewingOutput s
-	where s.ID = t.ID
-)s
-
-
-select t.*
-    ,[LastShift] = IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) 
-    ,[FtyType] = f.Type
-    ,[FtyCountry] = f.CountryID
-    ,[CumulateDate] = (select cumulate from dbo.getSewingOutputCumulateOfDays(IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.OutputDate,t.FactoryID))
-    ,[SPFactory] = o.FactoryID
-into #tmp1stFilter
-from #tmpSewingGroup t
-left join Factory f on t.FactoryID = f.ID
-left join Orders o on t.OrderId = o.ID
-where 1=1");
-            if (!MyUtility.Check.Empty(this.category) && this.category != "Mockup")
-            {
-                if (this.category == "Bulk")
-                {
-                    sqlCmd.Append(" and t.OrderCategory = 'B'");
-                }
-                else if (this.category == "Sample")
-                {
-                    sqlCmd.Append(" and t.OrderCategory = 'S'");
-                }
-                else if (this.category == "Garment")
-                {
-                    sqlCmd.Append(" and t.OrderCategory in ('G')");
-                }
-                else if (this.category == "Bulk+Sample")
-                {
-                    sqlCmd.Append(" and (t.OrderCategory = 'B' or t.OrderCategory = 'S')");
-                }
-                else if (this.category == "Bulk+Sample+Garment")
-                {
-                    sqlCmd.Append(" and t.OrderCategory in ('B', 'S', 'G')");
-                }
-                else
-                {
-                    sqlCmd.Append(" and t.LocalOrder = 1");
-                }
-            }
-
-            if (!MyUtility.Check.Empty(this.brand))
-            {
-                sqlCmd.Append(string.Format(" and (t.OrderBrandID = '{0}' or t.MockupBrandID = '{0}')", this.brand));
-            }
-
-            if (!MyUtility.Check.Empty(this.cdcode))
-            {
-                sqlCmd.Append(string.Format(" and (t.OrderCdCodeID = '{0}' or t.MockupCDCodeID = '{0}')", this.cdcode));
-            }
-
-            sqlCmd.Append($@"-----Artwork
-{(this.chk_Include_Artwork.Checked ? @"select ID,Seq,ArtworkUnit,ProductionUnit
-into #AT
-from ArtworkType WITH (NOLOCK)
-where Classify in ('I','A','P') and IsTtlTMS = 0 and Junk = 0
-
-select ID,Seq
-	,ArtworkType_Unit = concat(ID,iif(Unit='QTY','(Price)',iif(Unit = '','','('+Unit+')'))),Unit
-	,ArtworkType_CPU = iif(Unit = 'TMS',concat(ID,'(CPU)'),'')
-into #atall
-from(
-	Select ID,Seq,Unit = ArtworkUnit from #AT where ArtworkUnit !='' AND ProductionUnit !=''
-	UNION
-	Select ID,Seq,ProductionUnit from #AT where ArtworkUnit !='' AND ProductionUnit !=''
-	UNION
-	Select ID,Seq,ArtworkUnit from #AT where ArtworkUnit !='' AND ProductionUnit =''
-	UNION
-	Select ID,Seq,ProductionUnit from #AT where ArtworkUnit ='' AND ProductionUnit !=''
-	UNION
-	Select ID,Seq,'' from #AT where ArtworkUnit ='' AND ProductionUnit =''
-)a
-
-select *
-into #atall2
-from(
-	select a.ID,a.Seq,c=1,a.ArtworkType_Unit,a.Unit from #atall a
-	UNION
-	select a.ID,a.Seq,2,a.ArtworkType_CPU,iif(a.ArtworkType_CPU='','','CPU')from #atall a
-	where a.ArtworkType_CPU !=''
-)b
-
---準備台北資料(須排除這些)
-select ps.ID
-into #TPEtmp
-from PO_Supp ps WITH (NOLOCK)
-inner join PO_Supp_Detail psd WITH (NOLOCK) on ps.ID=psd.id and ps.SEQ1=psd.Seq1
-inner join Fabric fb WITH (NOLOCK) on psd.SCIRefno = fb.SCIRefno 
-inner join MtlType ml WITH (NOLOCK) on ml.id = fb.MtlTypeID
-where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
-and ml.isThread=1 
-and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
-
------orderid & ArtworkTypeID & Seq
-select distinct ot.ID,ot.ArtworkTypeID,ot.Seq,ot.Qty,ot.Price,ot.TMS,t.QAQty,t.FactoryID,t.Team,t.OutputDate,t.SewingLineID,
-                IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) as LastShift,t.Category,t.ComboType,t.SubconOutFty
-into #idat
-from #tmpSewingGroup t
-inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = t.OrderId
-inner join orders o with(nolock) on o.ID = t.OrderId
-inner join #AT A on A.ID = ot.ArtworkTypeID
-where  ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
-			  or ot.ArtworkTypeID <> 'SP_THREAD')
-declare @columnsName nvarchar(max) = stuff((select concat(',[',ArtworkType_Unit,']') from #atall2 for xml path('')),1,1,'')
-declare @NameZ nvarchar(max) = (select concat(',[',ArtworkType_Unit,']=isnull([',ArtworkType_Unit,'],0)')from #atall2 for xml path(''))
-
-declare @TTLZ nvarchar(max) = 
-(select concat(',[',ArtworkType_Unit,']=sum(isnull(Rate*[',ArtworkType_Unit,'],0)) over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty)'
-,iif(ArtworkType_CPU = '', '', concat(',[',ArtworkType_CPU,']=sum(isnull(Rate*[',ArtworkType_CPU,'],0)) over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty)'))
-,',[TTL_',ArtworkType_Unit,']=Round(sum(o.QAQty*Rate*[',ArtworkType_Unit,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty),',iif(Unit='QTY','4','3'),')'
-,iif(ArtworkType_CPU = '', '', concat(',[TTL_',ArtworkType_CPU,']=Round(sum(o.QAQty*Rate*[',ArtworkType_CPU,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty),',iif(Unit='QTY','4','3'),')'))
-)from #atall for xml path(''))" : " ")}
-
-
-
------by orderid & all ArtworkTypeID
-declare @lastSql nvarchar(max) =N'
-{(this.chk_Include_Artwork.Checked ?
-   @"select orderid,SubconOutFty,FactoryID,Team,OutputDate,SewingLineID,LastShift,Category,ComboType,qaqty '+@NameZ+N'
-into #oid_at
-from
-(
-	select orderid = i.ID,a.ArtworkType_Unit,i.qaqty,ptq=iif(a.Unit=''QTY'',i.Price,iif(a.Unit=''TMS'',i.TMS,iif(a.Unit=''CPU'',i.Price,i.Qty))),
-           i.FactoryID,i.Team,i.OutputDate,i.SewingLineID,i.LastShift,i.Category,i.ComboType,i.SubconOutFty
-	from #atall2 a left join #idat i on i.ArtworkTypeID = a.ID and i.Seq = a.Seq
-)a
-PIVOT(min(ptq) for ArtworkType_Unit in('+@columnsName+N'))as pt
-where orderid is not null
---group by orderid" : " ")}
-
-
-'
-+N'
-select * from(
-	select distinct
-		 MDivisionID,t.FactoryID
-		,FtyType = iif(FtyType=''B'',''Bulk'',iif(FtyType=''S'',''Sample'',FtyType))
-		,FtyCountry
-        ,t.OutputDate
-        ,t.SewingLineID
-		,Shift =    CASE    WHEN t.LastShift=''D'' then ''Day''
-                            WHEN t.LastShift=''N'' then ''Night''
-                            WHEN t.LastShift=''O'' then ''Subcon-Out''
-                            WHEN t.LastShift=''I'' and SubconInType in (''1'',''2'') then ''Subcon-In(Sister)''
-                            else ''Subcon-In(Non Sister)'' end
-		,t.SubconOutFty
-        ,t.SubConOutContractNumber
-        ,t.Team
-        ,t.OrderId
-        ,CustPONo
-        ,t.BuyerDelivery
-		,t.SciDelivery
-        ,t.Cancel
-        ,t.OrderQty
-		,Brand = IIF(t.Category=''M'',MockupBrandID,OrderBrandID)
-		,Category = IIF(t.OrderCategory=''M'',''Mockup'',IIF(LocalOrder = 1,''Local Order'',IIF(t.OrderCategory=''B'',''Bulk'',IIF(t.OrderCategory=''S'',''Sample'',IIF(t.OrderCategory=''G'',''Garment'','''')))))
-		,Program = IIF(t.Category=''M'',MockupProgram,OrderProgram)
-		,OrderType
-        ,IsDevSample
-		,CPURate = IIF(t.Category=''M'',MockupCPUFactor,OrderCPUFactor)
-		,Style = IIF(t.Category=''M'',MockupStyle,OrderStyle)
-		,Season = IIF(t.Category=''M'',MockupSeason,OrderSeason)
-		,CDNo = IIF(t.Category=''M'',MockupCDCodeID,OrderCdCodeID)+''-''+t.ComboType
-        ,sty.CDCodeNew
-	    ,sty.ProductType
-	    ,sty.FabricType
-	    ,sty.Lining
-	    ,sty.Gender
-	    ,sty.Construction
-		,ActManPower = ActManPower
-		,WorkHour
-		,ManHour = ROUND(ActManPower*WorkHour,2)
-		,TargetCPU = ROUND(ROUND(ActManPower*WorkHour,2)*3600/StdTMS,2)
-		,TMS = IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*StdTMS
-		,CPUPrice = IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)
-		,TargetQty = IIF(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)>0,ROUND(ROUND(ActManPower*WorkHour,2)*3600/StdTMS,2)/IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate),0)
-		,t.QAQty
-		,TotalCPU = ROUND(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty,3)
-		,CPUSewer = IIF(ROUND(ActManPower*WorkHour,2)>0,(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/ROUND(ActManPower*WorkHour,2),0)
-		,EFF = ROUND(IIF(ROUND(ActManPower*WorkHour,2)>0,((IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/(ROUND(ActManPower*WorkHour,2)*3600/StdTMS))*100,0),1)
-		,RFT = IIF(ori_InlineQty = 0, 0, ROUND(ori_QAQty* 1.0 / ori_InlineQty * 1.0 * 100 ,2))
-		,CumulateDate
-		,DateRange = IIF(CumulateDate>=10,''>=10'',CONVERT(VARCHAR,CumulateDate))
-		,InlineQty");
-            if (this.show_Accumulate_output == true)
-            {
-                sqlCmd.Append(@",acc_output.value
-                                ,Balance =  t.OrderQty -  acc_output.value 
-                            ");
-            }
-
-            sqlCmd.Append($@",Diff = t.QAQty-InlineQty
-		,rate
-        ,t.Remark        
-        ,t.SewingReasonDesc
-        ,t.SPFactory
-        ,t.NonRevenue
-		{(this.chk_Include_Artwork.Checked ? "'+@TTLZ+N'" : " ")}
-    from #tmp1stFilter t
-    Outer apply (
-	    SELECT s.CDCodeNew
-            , ProductType = r2.Name
-		    , FabricType = r1.Name
-		    , s.Lining
-		    , s.Gender
-		    , Construction = d1.Name
-	    FROM Style s WITH(NOLOCK)
-	    left join DropDownList d1 WITH(NOLOCK) on d1.type= ''StyleConstruction'' and d1.ID = s.Construction
-	    left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= ''Fabric_Kind'' and r1.ID = s.FabricType
-	    left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= ''Style_Apparel_Type'' and r2.ID = s.ApparelType
-	    where s.ID = IIF(t.Category=''M'', t.MockupStyle, t.OrderStyle)
-	    and s.SeasonID = IIF(t.Category=''M'', t.MockupSeason, t.OrderSeason)
-	    and s.BrandID = IIF(t.Category=''M'', t.MockupBrandID, t.OrderBrandID)
-    )sty
-    ");
-            if (this.show_Accumulate_output == true)
-            {
-                sqlCmd.Append(@"
-                                    outer  apply(select value = Sum(SD.QAQty)
-                                             from SewingOutput_Detail SD WITH (NOLOCK)
-                                             inner join SewingOutput S WITH (NOLOCK) on SD.ID=S.ID
-                                             where SD.ComboType=t.ComboType
-                                               and SD.orderid=t.OrderId
-                                               and S.OutputDate <= t.OutputDate) acc_output");
-            }
-
-            if (this.chk_Include_Artwork.Checked)
-            {
-                sqlCmd.Append(@" left join #oid_at o on o.orderid = t.OrderId and 
-                           o.FactoryID = t.FactoryID and
-                           o.Team = t.Team and
-                           o.OutputDate = t.OutputDate and
-                           o.SewingLineID = t.SewingLineID and
-                           o.LastShift = t.LastShift and
-                           o.Category = t.Category and
-                           o.ComboType = t.ComboType and
-                           o.SubconOutFty = t.SubconOutFty");
-            }
-
-            sqlCmd.Append($@" where 1 = 1 {sqlWhereForCDCodeNew})a
-order by MDivisionID,FactoryID,OutputDate,SewingLineID,Shift,Team,OrderId
-
-drop table #tmpSewingDetail,#tmp1stFilter,#tmpSewingGroup
-{(this.chk_Include_Artwork.Checked ? "drop table #atall2,#AT,#atall,#idat,#oid_at,#TPEtmp" : " ")}
-'
-EXEC sp_executesql @lastSql
-");
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
+            DualResult result = DBProxy.Current.Select(null, sqlGetSewingDailyOutputList, listPar, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -590,7 +178,7 @@ EXEC sp_executesql @lastSql
             else
             {
                 start_column = 47;
-                objSheets.get_Range("AS:AT").EntireColumn.Delete();
+                objSheets.get_Range("AU:AV").EntireColumn.Delete();
             }
 
             for (int i = start_column; i < this.printData.Columns.Count; i++)

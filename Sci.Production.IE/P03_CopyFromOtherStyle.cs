@@ -39,10 +39,11 @@ namespace Sci.Production.IE
 
         private void BtnCopy_Click(object sender, EventArgs e)
         {
-            string style, season, brand, version;
+            string style, season, brand, factory, version;
             style = this.txtstyle.Text;
             season = this.txtseason.Text;
             brand = this.txtbrand.Text;
+            factory = this.txtfactory1.Text;
             version = this.txtLineMappingVersion.Text;
 
             if (MyUtility.Check.Empty(style))
@@ -66,6 +67,13 @@ namespace Sci.Production.IE
                 return;
             }
 
+            if (MyUtility.Check.Empty(factory))
+            {
+                MyUtility.Msg.WarningBox("Factory can't empty!!");
+                this.txtfactory1.Focus();
+                return;
+            }
+
             if (MyUtility.Check.Empty(version))
             {
                 MyUtility.Msg.WarningBox("Line mapping versioncan't empty!!");
@@ -78,6 +86,7 @@ namespace Sci.Production.IE
             System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
             System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
             sp1.ParameterName = "@styleid";
             sp1.Value = style;
             sp2.ParameterName = "@seasonid";
@@ -86,13 +95,16 @@ namespace Sci.Production.IE
             sp3.Value = brand;
             sp4.ParameterName = "@version";
             sp4.Value = version;
+            sp5.ParameterName = "@factory";
+            sp5.Value = factory;
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
             cmds.Add(sp2);
             cmds.Add(sp3);
             cmds.Add(sp4);
-            string sqlCmd = "select * from LineMapping WITH (NOLOCK) where StyleID = @styleid and SeasonID = @seasonid and BrandID = @brandid and Version = @version";
+            cmds.Add(sp5);
+            string sqlCmd = "select * from LineMapping WITH (NOLOCK) where StyleID = @styleid and SeasonID = @seasonid and BrandID = @brandid and Version = @version and FactoryID = @factory";
             DataTable linemap;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out linemap);
             if (!result)

@@ -5,7 +5,7 @@
 	[SewingStartTime] [datetime] NULL,
 	[SewingEndTime] [datetime] NULL,
 	[MDivisionID] [varchar](8) NULL,
-	[FactoryID] [varchar](8) NOT NULL,
+	[FactoryID] [varchar](8) NULL,
 	[PO] [nvarchar](max) NULL,
 	[POCount] [bigint] NULL,
 	[SP] [nvarchar](max) NULL,
@@ -59,13 +59,19 @@
 	[TTL_PRINTING (PCS)] [numeric](38, 6) NULL,
 	[TTL_PRINTING PPU (PPU)] [numeric](38, 6) NULL,
 	[SubCon] [nvarchar](max) NULL,
+	[Subcon Qty] [int] NULL,
+	[Std Qty for printing] [int] NULL,
 	[StyleName] [nvarchar](max) NULL,
 	[StdQtyEMB] [varchar](50) NULL,
 	[EMBStitch] [varchar](20) NULL,
 	[EMBStitchCnt] [int] NULL,
 	[TtlQtyEMB] [int] NULL,
-	[PrintPcs] [int] NULL,
-	[Subcon Qty] [int] NULL,
-	[Std Qty for printing] [int] NULL,
-	[Ukey] [bigint] NOT NULL
+	[PrintPcs] [int] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[P_SewingLineSchedule_Original] ADD  CONSTRAINT [DF_P_SewingLineSchedule_Original_StyleName]  DEFAULT ('') FOR [StyleName]
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'款式名稱' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingLineSchedule_Original', @level2type=N'COLUMN',@level2name=N'StyleName'
+GO

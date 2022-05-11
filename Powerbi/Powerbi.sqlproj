@@ -151,6 +151,8 @@
     <Build Include="dbo\Tables\P_QA_R31_Original.sql" />
     <Build Include="dbo\Tables\P_SewingDailyOutput_Original.sql" />
     <Build Include="dbo\Tables\P_SewingLineSchedule_Original.sql" />
+    <Build Include="dbo\Stored Procedures\P_ImportEstShippingReport.sql" />
+    <Build Include="dbo\Tables\BITableInfo.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

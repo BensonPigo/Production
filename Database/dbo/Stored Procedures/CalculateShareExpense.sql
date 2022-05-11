@@ -27,7 +27,8 @@ BEGIN
 			@gw NUMERIC(10, 3),
 			@cbm NUMERIC(11,4),
 			@currency VARCHAR(3),
-			@subtype VARCHAR(25)
+			@subtype VARCHAR(25),
+			@FactoryID varchar(8)
 
 	DECLARE @ttlgw NUMERIC(10,3),
 					@ttlcbm NUMERIC(10,3),
@@ -87,7 +88,7 @@ BEGIN
 				from ShareExpense s
 				where s.ShippingAPID = @ShippingAPID
 				and s.WKNo != '' 
-				and exists (select 1 from ShippingAP sp WITH (NOLOCK) where sp.ID = s.ShippingAPID and sp.BLNo != s.BLNo)
+				and exists (select 1 from ShippingAP sp WITH (NOLOCK) where sp.ID = s.ShippingAPID and sp.BLNo != s.BLNo) 
 			END
 
 
@@ -100,9 +101,9 @@ BEGIN
 				, s.EditDate = @adddate
 			from ShareExpense s 
 			where s.ShippingAPID = @ShippingAPID and s.WKNo != '' 
-				  and s.WKNo not in (select ID from Export where ID = s.WKNo and ID is not null)
-				  and s.WKNo not in (select ID from FtyExport where ID = s.WKNo and ID is not null)
-		 
+				  and	s.WKNo not in (select ID from Export where ID = s.WKNo and ID is not null) 
+				  and	s.WKNo not in (select ID from FtyExport where ID = s.WKNo and ID is not null)
+						
 			/*
 			 * 更新 WK 基本資料
 			 */ 
@@ -113,13 +114,15 @@ BEGIN
 						, e.WeightKg
 						, e.Cbm
 						, s.CurrencyID
-						, s.SubType
+						, s.Type
+						, e.FactoryID
  				from Export e WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) 
 				where e.ID = se.WKNo
 				and s.ID = se.ShippingAPID
 				and s.ID = @ShippingAPID
+
 			OPEN cursor_allExport
-			FETCH NEXT FROM cursor_allExport INTO @id,@shipmode,@blno,@gw,@cbm,@currency,@subtype
+			FETCH NEXT FROM cursor_allExport INTO @id,@shipmode,@blno,@gw,@cbm,@currency,@subtype,@FactoryID
 			WHILE @@FETCH_STATUS = 0
 			BEGIN
 				update ShareExpense 
@@ -129,9 +132,10 @@ BEGIN
 					, CBM = @cbm
 					, CurrencyID = @currency
 					, Type = @subtype
-				where ShippingAPID = @ShippingAPID and WKNo = @id
+					, FactoryID = @FactoryID
+				where ShippingAPID = @ShippingAPID and WKNo = @id and FactoryID = @FactoryID
 
-				FETCH NEXT FROM cursor_allExport INTO @id,@shipmode,@blno,@gw,@cbm,@currency,@subtype
+				FETCH NEXT FROM cursor_allExport INTO @id,@shipmode,@blno,@gw,@cbm,@currency,@subtype,@FactoryID
 			END
 			CLOSE cursor_allExport
 			DEALLOCATE cursor_allExport
@@ -150,13 +154,15 @@ BEGIN
 				from ShareExpense s
 				where s.ShippingAPID = @ShippingAPID
 				and s.InvNo != '' 
-				and exists (
+				and (exists (
 					select 1 
 					from ShippingAP sp WITH (NOLOCK)
 					inner join  GMTBooking g WITH (NOLOCK) on sp.BLNo = g.BLNo or sp.BLNo = g.BL2No
 					where sp.ID = s.ShippingAPID 	
 					and sp.BLNo != g.BLNo
-					and sp.BLNo != g.BL2No)
+					and sp.BLNo != g.BL2No) or
+					(s.FactoryID = '' and exists(select 1 from ShippingAP sp WITH (NOLOCK) where sp.id = s.ShippingAPID and sp.SubType = 'GARMENT'))
+					)
 			END
 
 			/*
@@ -169,26 +175,21 @@ BEGIN
 			from ShareExpense s
 			where s.ShippingAPID = @ShippingAPID 
 					and s.InvNo != '' 
-					and (
+					and ((
 						s.InvNo not in (select ID from GMTBooking where ID = s.InvNo and ID is not null) 
 						and s.InvNo not in (select INVNo from PackingList where INVNo = s.InvNo and INVNo is not null) 
 						and s.InvNo not in (select ID from FtyExport  where ID = s.InvNo and ID is not null)
 						and s.invno not in (select id from Export where id=s.InvNo and id is not null)
-					)
+					) or 
+						(s.FactoryID = '' and exists(select 1 from ShippingAP sp WITH (NOLOCK) where sp.id = s.ShippingAPID and sp.SubType = 'GARMENT'))
+						)
 			
 			/*
 			 * 更新 Inv 基本資料
 			 */ 
-			DECLARE cursor_GB CURSOR FOR
-				select g.ID,g.ShipModeID,g.TotalGW,g.TotalCBM,s.CurrencyID,s.SubType, iif(g.BLNo is null or g.BLNo='', isnull (g.BL2No, ''), g.BLNo) as BLNo
-				from GMTBooking g WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) 
-				where g.ID = se.InvNo
-						and s.id = se.ShippingAPID
-						and se.FtyWK = 0
-						and s.id = @ShippingAPID
 
 			DECLARE cursor_FtyWK CURSOR FOR
-				select f.ID,f.ShipModeID,f.WeightKg,f.Cbm,s.CurrencyID,s.SubType, f.Blno
+				select f.ID,f.ShipModeID,f.WeightKg,f.Cbm,s.CurrencyID,s.Type, f.Blno, [FactoryID] = ''
 				from FtyExport f WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) 
 				where f.ID = se.InvNo
 						and s.id = se.ShippingAPID
@@ -196,7 +197,7 @@ BEGIN
 						and s.id = @ShippingAPID
 
 			DECLARE cursor_PackingList CURSOR FOR
-				select p.ID,p.ShipModeID,p.GW,p.CBM,s.CurrencyID,s.SubType, '' as BLNo
+				select p.ID,p.ShipModeID,p.GW,p.CBM,s.CurrencyID,s.Type, '' as BLNo, p.FactoryID
 				from PackingList p WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) 
 				where p.ID = se.InvNo
 						and (p.Type = 'F' or p.Type = 'L')
@@ -204,25 +205,8 @@ BEGIN
 						and se.FtyWK = 0
 						and s.id = @ShippingAPID
 
-			OPEN cursor_GB
-			FETCH NEXT FROM cursor_GB INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno
-			WHILE @@FETCH_STATUS = 0
-			BEGIN
-				update ShareExpense 
-				set ShipModeID = @shipmode
-					, BLNo = @blno
-					, GW = @gw
-					, CBM = @cbm
-					, CurrencyID = @currency
-					, Type = @subtype
-				where ShippingAPID = @ShippingAPID and InvNo = @id
-				FETCH NEXT FROM cursor_GB INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno
-			END
-			CLOSE cursor_GB
-			DEALLOCATE cursor_GB
-
 			OPEN cursor_FtyWK
-			FETCH NEXT FROM cursor_FtyWK INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno
+			FETCH NEXT FROM cursor_FtyWK INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno,@FactoryID
 			WHILE @@FETCH_STATUS = 0
 			BEGIN
 				update ShareExpense 
@@ -232,14 +216,14 @@ BEGIN
 					, CBM = @cbm
 					, CurrencyID = @currency
 					, Type = @subtype
-				where ShippingAPID = @ShippingAPID and InvNo = @id
-				FETCH NEXT FROM cursor_FtyWK INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno
+				where ShippingAPID = @ShippingAPID and InvNo = @id and FactoryID = @FactoryID
+				FETCH NEXT FROM cursor_FtyWK INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno,@FactoryID
 			END
 			CLOSE cursor_FtyWK
 			DEALLOCATE cursor_FtyWK
 
 			OPEN cursor_PackingList
-			FETCH NEXT FROM cursor_PackingList INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno
+			FETCH NEXT FROM cursor_PackingList INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno,@FactoryID
 			WHILE @@FETCH_STATUS = 0
 			BEGIN
 				update ShareExpense 
@@ -249,9 +233,9 @@ BEGIN
 					, CBM = @cbm
 					, CurrencyID = @currency
 					, Type = @subtype
-				where ShippingAPID = @ShippingAPID and InvNo = @id
+				where ShippingAPID = @ShippingAPID and InvNo = @id and FactoryID = @FactoryID
 
-				FETCH NEXT FROM cursor_PackingList INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno
+				FETCH NEXT FROM cursor_PackingList INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno,@FactoryID
 			END
 			CLOSE cursor_PackingList
 			DEALLOCATE cursor_PackingList
@@ -279,14 +263,14 @@ BEGIN
 		
 			SET @adddate = GETDATE()
 			SELECT @ttlgw = isnull(sum(GW),0), @ttlcbm = isnull(sum(CBM),0), @ttlcount = isnull(count(ShippingAPID),0) 
-			FROM (SELECT distinct ShippingAPID,BLNo,WKNo,InvNo,GW,CBM FROM ShareExpense WITH (NOLOCK) WHERE ShippingAPID = @ShippingAPID and junk = 0) a
+			FROM (SELECT distinct ShippingAPID,BLNo,WKNo,InvNo,GW,CBM,FactoryID FROM ShareExpense WITH (NOLOCK) WHERE ShippingAPID = @ShippingAPID and junk = 0) a
 
 			SELECT @exact = isnull(c.Exact,0) FROM ShippingAP s WITH (NOLOCK) , Currency c WITH (NOLOCK) WHERE s.ID = @ShippingAPID and c.ID = s.CurrencyID
 
 			/*
 			 * 找出欲分攤的對象
 			 */
-			select distinct BLNo,WKNo,InvNo,Type,GW,CBM,ShipModeID,FtyWK
+			select distinct BLNo,WKNo,InvNo,Type,GW,CBM,ShipModeID,FtyWK,FactoryID
 			into #ShareInvWK
 			from ShareExpense WITH (NOLOCK) 
 			where ShippingAPID = @ShippingAPID and junk = 0
@@ -347,13 +331,14 @@ BEGIN
 							, b.BLNo
 							, b.WKNo
 							, b.InvNo
-							, b.Type
+							, a.Type
 							, b.GW
 							, b.CBM
 							, b.ShipModeID
 							, b.FtyWK
+							, b.FactoryID
 					from (
-						select isnull(sd.AccountID,'') as AccountID, sum(sd.Amount) as Amount, s.CurrencyID
+						select isnull(sd.AccountID,'') as AccountID, sum(sd.Amount) as Amount, s.CurrencyID, s.Type
 						from ShippingAP_Detail sd WITH (NOLOCK) 
 						left join SciFMS_AccountNo a on a.ID = sd.AccountID
 						left join ShippingAP s WITH (NOLOCK) on s.ID = sd.ID
@@ -362,10 +347,10 @@ BEGIN
 									dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
 									or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1
 								)
-						group by sd.AccountID, a.Name, s.CurrencyID
+						group by sd.AccountID, a.Name, s.CurrencyID, s.Type
 					) a
 					, ( 
-						select BLNo,WKNo,InvNo,Type,GW,CBM,ShipModeID,FtyWK
+						select BLNo,WKNo,InvNo,Type,GW,CBM,ShipModeID,FtyWK,FactoryID
 						from #ShareInvWK
 					) b
 				) a
@@ -381,12 +366,12 @@ BEGIN
 															sr1.ShipModeID = '' 
 															or sr1.ShipModeID like '%'+a.ShipModeID+'%'
 														 )
-				order by a.AccountID,GW,CBM
+				order by a.AccountID,FactoryID,GW,CBM
 
 			SET @count = 1
 			SET @maxdata = 0
 			OPEN cursor_ttlAmount
-			FETCH NEXT FROM cursor_ttlAmount INTO @accno,@amount,@currency,@blno,@wkno,@invno,@type,@gw,@cbm,@shipmodeid,@ftywk,@sharebase
+			FETCH NEXT FROM cursor_ttlAmount INTO @accno,@amount,@currency,@blno,@wkno,@invno,@type,@gw,@cbm,@shipmodeid,@ftywk,@FactoryID,@sharebase
 			WHILE @@FETCH_STATUS = 0
 			BEGIN
 				IF @count = 1
@@ -442,7 +427,7 @@ BEGIN
 							SET @inputamount = ROUND(@minusamount,@exact)
 						END
 
-				select @recno = isnull(count(ShippingAPID),0) from ShareExpense WITH (NOLOCK) where ShippingAPID = @ShippingAPID and WKNo = @wkno and InvNo = @invno and AccountID = @accno
+				select @recno = isnull(count(ShippingAPID),0) from ShareExpense WITH (NOLOCK) where ShippingAPID = @ShippingAPID and WKNo = @wkno and InvNo = @invno and AccountID = @accno and FactoryID = @FactoryID
 				IF @recno = 0
 					BEGIN
 						/*
@@ -451,9 +436,9 @@ BEGIN
 						if @IsFreightFwd = 1 and @ShippingReasonID <> 'AP007'
 						BEGIN
 							INSERT INTO ShareExpense
-							(ShippingAPID,BLNo,WKNo,InvNo,Type,GW,CBM,CurrencyID,Amount,ShipModeID,ShareBase,FtyWK,AccountID,EditName,EditDate)
+							(ShippingAPID,BLNo,WKNo,InvNo,Type,GW,CBM,CurrencyID,Amount,ShipModeID,ShareBase,FtyWK,AccountID,EditName,EditDate,FactoryID)
 							VALUES 
-							(@ShippingAPID, @blno, @wkno, @invno, @type, @gw, @cbm, @currency, @inputamount, @shipmodeid, @1stsharebase, @ftywk, @accno, @login, @adddate)
+							(@ShippingAPID, @blno, @wkno, @invno, @type, @gw, @cbm, @currency, @inputamount, @shipmodeid, @1stsharebase, @ftywk, @accno, @login, @adddate, @FactoryID)
 						END
 					END
 				ELSE
@@ -469,6 +454,7 @@ BEGIN
 							  and WKNo = @wkno 
 							  and InvNo = @invno 
 							  and AccountID = @accno
+							  and FactoryID = @FactoryID
 					END
 
 	
@@ -488,13 +474,14 @@ BEGIN
 									  and WKNo = @maxwkno 
 									  and InvNo = @maxinvno 
 									  and AccountID = @accno
+									  and FactoryID = @FactoryID
 							END
 					END
 				ELSE
 					BEGIN
 						SET @count = @count + 1
 					END
-				FETCH NEXT FROM cursor_ttlAmount INTO @accno,@amount,@currency,@blno,@wkno,@invno,@type,@gw,@cbm,@shipmodeid,@ftywk,@sharebase
+				FETCH NEXT FROM cursor_ttlAmount INTO @accno,@amount,@currency,@blno,@wkno,@invno,@type,@gw,@cbm,@shipmodeid,@ftywk,@FactoryID,@sharebase
 			END
 			CLOSE cursor_ttlAmount
 			DEALLOCATE cursor_ttlAmount
@@ -521,9 +508,14 @@ BEGIN
 					AND dbo.GetAccountNoExpressType(se.AccountID,'IsApp') = 1 
 			group by se.InvNo,se.AccountID
 
-			select	t.InvNo,[PackID] = pl.ID,t.AccountID,t.Amount,[PLSharedAmt] = Round(t.Amount / SUM(pl.GW) over(PARTITION BY t.InvNo,t.AccountID) * pl.GW,2)
+			select	t.InvNo,[PackID] = pl.ID,t.AccountID,t.Amount
+					,[PLSharedAmt] =  
+					case when s.ShareBase = 'G' then Round(t.Amount / SUM(pl.GW) over(PARTITION BY t.InvNo,t.AccountID) * pl.GW,2)
+						 when s.ShareBase = 'C' then Round(t.Amount / SUM(pl.NW) over(PARTITION BY t.InvNo,t.AccountID) * pl.NW,2)
+						 else Round(t.Amount / count(*) over(PARTITION BY t.InvNo,t.AccountID),2) end
 			into #PLSharedAmtStep1
 			from #InvNoSharedAmt t
+			inner join ShareExpense s on t.AccountID = s.AccountID and t.InvNo = s.InvNo and s.ShippingAPID = @APID
 			inner join PackingList pl with (nolock) on pl.INVNo = t.InvNo
 
 			select * ,[AccuPLSharedAmt] = SUM(PLSharedAmt) over(PARTITION BY InvNo,AccountID order BY InvNo,PackID,AccountID )
@@ -621,4 +613,9 @@ BEGIN
 	END
 	CLOSE cursor_ShareExpense
 	DEALLOCATE cursor_ShareExpense
+
+	-- ISP20220298 更新AirPP
+	update a set a.ActAmt = airAmt.ActAmt, a.ExchangeRate = airAmt.ExchangeRate
+	from AirPP a
+	inner join dbo.GetAirPPAmt(@APID, '') airAmt on airAmt.AirPPID = a.ID
 END

@@ -554,6 +554,7 @@ where 1 = 1
 
             strSQLCmd += $@"
 select  Selected = 0
+        , [LocalSuppID] = ''
         , id = ''
         , bar.OrderID
         , bar.OrderQty
@@ -633,7 +634,8 @@ where  ((o.Category = 'B' and  oa.price > 0) or (o.category !='B'))
             }
 
             string sqlGetSpecialRecordData = $@"
-select	ar.LocalSuppId
+select	Selected = 0
+        , ar.LocalSuppId
         , id = ''
         , ard.orderid
         , OrderQty = o.qty
@@ -658,11 +660,14 @@ select	ar.LocalSuppId
         , ard.Article
         , ard.SizeCode
         , o.Category
+        , o.FactoryID
+        , f.IsProduceFty 
 from ArtworkReq ar  with (nolock)
 inner join ArtworkReq_Detail ard with (nolock) on ar.ID = ard.ID 
 left join ArtworkReq_IrregularQty ai with (nolock) on ai.OrderID = ard.OrderID and ai.ArtworkTypeID = ar.ArtworkTypeID and ard.ExceedQty > 0
 left join SubconReason sr with (nolock) on sr.Type = 'SQ' and sr.ID = ai.SubconReasonID
 inner join orders o WITH (NOLOCK) on ard.OrderId = o.ID  
+left join Factory f with (nolock) on f.ID = o.FactoryID
 inner join ArtworkType at with (nolock) on ar.ArtworkTypeID = at.ID
 outer apply (
         select IssueQty = ISNULL(sum(PoQty),0)
@@ -677,18 +682,44 @@ where  ar.ArtworkTypeID = '{this.dr_artworkpo["artworktypeid"]}' and ar.Status =
 	) and
     not exists( select 1 from #tmpArtwork t where t.OrderID = ard.orderid)
     {sqlWhere}
+union all
+select  Selected = 0
+        , t.LocalSuppId
+        , t.id
+        , t.orderid
+        , t.OrderQty
+        , t.IssueQty 
+        , t.PoQty
+        , t.ArtworkTypeID
+        , t.ArtworkID
+        , t.PatternCode
+        , t.SewInLIne
+        , t.SciDelivery
+        , t.coststitch
+        , t.Stitch 
+        , t.PatternDesc
+        , t.QtyGarment
+        , t.Cost
+        , t.unitprice
+        , t.price
+        , t.amount
+        , t.Style
+		, o.POID
+        , t.ArtworkReqID
+        , t.Article
+        , t.SizeCode
+        , t.Category
+        , o.FactoryID
+        , f.IsProduceFty 
+from #tmpArtwork t
+inner join dbo.Orders o with (nolock) on t.OrderID = o.id
+left join Factory f with (nolock) on f.ID = o.FactoryID
 ";
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.dtArtwork, "OrderID", sqlGetSpecialRecordData, out DataTable dtResult, temptablename: "#tmpArtwork");
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.dtArtwork, null, sqlGetSpecialRecordData, out this.dtArtwork, temptablename: "#tmpArtwork");
 
             if (!result)
             {
                 return result;
-            }
-
-            // 若有special資料舊merge回主table中
-            if (dtResult.Rows.Count > 0)
-            {
-                this.dtArtwork.Merge(dtResult);
             }
 
             return new DualResult(true);

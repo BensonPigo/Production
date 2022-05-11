@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[P_SewingLineSchedule](
+CREATE TABLE [dbo].[P_SewingLineSchedule](
 	[APSNo] [int] NULL,
 	[SewingLineID] [varchar](5) NULL,
 	[SewingDay] [date] NULL,
@@ -46,33 +46,37 @@
 	[ClogQty] [int] NULL,
 	[Sewer] [int] NULL,
 	[SewingCPU] [numeric](10, 2) NULL,
-	[BrandID] [nvarchar](500) NULL,
+	[BrandID] [nvarchar](max) NULL,
 	[Orig_WorkHourPerDay] [float] NULL,
 	[New_SwitchTime] [float] NULL,
 	[FirststCuttingOutputDate] [date] NULL,
-	[TTL_PRINTING (PCS)] [numeric](38, 6) NULL,
-	[TTL_PRINTING PPU (PPU)] [numeric](38, 6) NULL,
-	[SubCon] [nvarchar](max) NULL,
 	[CDCodeNew] [varchar](max) NULL,
 	[ProductType] [nvarchar](max) NULL,
 	[FabricType] [nvarchar](max) NULL,
 	[Lining] [varchar](max) NULL,
 	[Gender] [varchar](max) NULL,
 	[Construction] [nvarchar](max) NULL,
+	[TTL_PRINTING (PCS)] [numeric](38, 6) NULL,
+	[TTL_PRINTING PPU (PPU)] [numeric](38, 6) NULL,
+	[SubCon] [nvarchar](max) NULL,
 	[Subcon Qty] [int] NULL,
 	[Std Qty for printing] [int] NULL,
-	[StyleName] [nvarchar](max) NULL CONSTRAINT [DF_P_SewingLineSchedule_StyleName]  DEFAULT (''),
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
+	[StyleName] [nvarchar](max) NULL,
+	[StdQtyEMB] [varchar](50) NULL,
+	[EMBStitch] [varchar](20) NULL,
+	[EMBStitchCnt] [int] NULL,
+	[TtlQtyEMB] [int] NULL,
+	[PrintPcs] [int] NULL,
+	[Ukey] [bigint] NOT NULL,
  CONSTRAINT [PK_P_SewingLineSchedule] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC,
 	[FactoryID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
 GO
 
-SET ANSI_PADDING OFF
+ALTER TABLE [dbo].[P_SewingLineSchedule] ADD  CONSTRAINT [DF_P_SewingLineSchedule_StyleName]  DEFAULT ('') FOR [StyleName]
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'款式名稱' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingLineSchedule', @level2type=N'COLUMN',@level2name=N'StyleName'

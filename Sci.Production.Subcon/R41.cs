@@ -278,7 +278,9 @@ Select
     [EXCESS] = iif(b.IsEXCESS = 0, '','Y'),
     [Cut Ref#] = isnull(b.CutRef,''),
     [SP#] = b.Orderid,
-	sps = dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID for XML RAW)),
+	sps =iif((select count(1) from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo) = 1
+		, (select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo)
+		, dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo order by OrderID for XML RAW))),
     [Master SP#] = b.POID,
     [M] = b.MDivisionid,
     [Factory] = o.FtyGroup,
@@ -337,6 +339,7 @@ Select
 	,[SpreadingNo] = wk.SpreadingNo
 	,[FabricKind] = FabricKind.val
     ,[BundleLocation] = w.Location
+    ,[InspectionDate] = sp.InspectionDate
 into #result
 from #tmp_Workorder w 
 inner join Bundle_Detail bd WITH (NOLOCK, Index(PK_Bundle_Detail)) on bd.BundleNo = w.BundleNo 
@@ -424,6 +427,12 @@ outer apply(
 		AND DD.[type] = 'FabricKind' 
 		AND DD.id = LIST.kind 
 )FabricKind
+outer apply(
+    select [InspectionDate] = MAX(InspectionDate)
+    from SubProInsRecord sp
+    where sp.Bundleno = bd.Bundleno
+    and sp.SubProcessID = s.ID
+)sp
 ";
 
             sqlCmd += $@" where 1=1 {sqlWhere} ";
@@ -480,6 +489,7 @@ select
     r.Cdate,
     r.[BuyerDelivery],
     r.[SewInLine],
+    r.[InspectionDate],
     r.[InComing],
     r.[Out (Time)],
     r.[POSupplier],

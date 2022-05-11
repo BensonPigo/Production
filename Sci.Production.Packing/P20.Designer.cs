@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
@@ -46,9 +47,12 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.dateRangeTransfer = new Sci.Win.UI.DateRange();
             this.label5 = new Sci.Win.UI.Label();
+            this.btnToExcel = new Sci.Win.UI.Button();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gridPackErrTransfer)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -165,9 +169,13 @@
             this.gridPackErrTransfer.AllowUserToAddRows = false;
             this.gridPackErrTransfer.AllowUserToDeleteRows = false;
             this.gridPackErrTransfer.AllowUserToResizeRows = false;
+            this.gridPackErrTransfer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gridPackErrTransfer.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridPackErrTransfer.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridPackErrTransfer.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridPackErrTransfer.DataSource = this.listControlBindingSource1;
             this.gridPackErrTransfer.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridPackErrTransfer.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridPackErrTransfer.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -249,28 +257,42 @@
             this.label5.TabIndex = 10;
             this.label5.Text = "Transfer Date";
             // 
+            // btnToExcel
+            // 
+            this.btnToExcel.Location = new System.Drawing.Point(623, 137);
+            this.btnToExcel.Name = "btnToExcel";
+            this.btnToExcel.Size = new System.Drawing.Size(153, 30);
+            this.btnToExcel.TabIndex = 21;
+            this.btnToExcel.Text = "To Excel(Detail)";
+            this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
+            // 
             // P20
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(890, 474);
+            this.Controls.Add(this.btnToExcel);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.gridPackErrTransfer);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnSave);
             this.Name = "P20";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P20. Confirm Packing Error Revise";
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.gridPackErrTransfer, 0);
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel2, 0);
+            this.Controls.SetChildIndex(this.btnToExcel, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridPackErrTransfer)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -294,5 +316,7 @@
         private System.Windows.Forms.Panel panel2;
         private Win.UI.DateRange dateRangeTransfer;
         private Win.UI.Label label5;
+        private Win.UI.Button btnToExcel;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
     }
 }

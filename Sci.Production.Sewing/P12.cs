@@ -233,8 +233,6 @@ where	pd.CTNStartNo != '' and
             }
             else
             {
-                //keyWhere = $"(ID+CTNStartNo) = '{PackNo}'";
-
                 if (PackNo.Length > 13)
                 {
                     keyWhere = $" ID = '{PackingListID}' AND CTNStartNo ='{CTNStarNo}' ";
@@ -280,20 +278,27 @@ where	pd.CTNStartNo != '' and
             packDataResult.Result = false;
             if (checkBarcode == false)
             {
-                packDataResult.ErrMsg = $"<CNT#:{PackNo}> does not exist!";
+                packDataResult.ErrMsg = $"<CTN#:{PackNo}> does not exist!";
                 return packDataResult;
             }
 
             if (MyUtility.Check.Empty(packDataResult.Dr["DRYReceiveDate"]))
             {
-                packDataResult.ErrMsg = $"<CNT#:{PackNo}> This CTN# Dehumidifying Room not yet received.";
+                packDataResult.ErrMsg = $"<CTN#:{PackNo}> This CTN# Dehumidifying Room not yet received.";
                 this.txtScanBarcode.Focus();
+                return packDataResult;
+            }
+
+            // by ISP20220423
+            if (!MyUtility.Check.Empty(packDataResult.Dr["TransferDate"]))
+            {
+                packDataResult.ErrMsg = $"<CTN#:{PackNo}> has been transferred to Clog!";
                 return packDataResult;
             }
 
             if (packDataResult.Dr["Status"].Equals("Confirmed") || packDataResult.Dr["Status"].Equals("Locked"))
             {
-                packDataResult.ErrMsg = $"<CNT#:{PackNo}> Already pullout!";
+                packDataResult.ErrMsg = $"<CTN#:{PackNo}> Already pullout!";
                 return packDataResult;
             }
 

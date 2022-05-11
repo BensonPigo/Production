@@ -84,6 +84,13 @@
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.comboPDA_FabricQRCode_LabelSize = new Sci.Win.UI.ComboBox();
+            this.label12 = new Sci.Win.UI.Label();
+            this.label11 = new Sci.Win.UI.Label();
+            this.comboPMS_FabricQRCode_LabelSize = new Sci.Win.UI.ComboBox();
+            this.label10 = new Sci.Win.UI.Label();
+            this.checknsncap = new Sci.Win.UI.CheckBox();
+            this.checkbcs = new Sci.Win.UI.CheckBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.label9 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
@@ -111,8 +118,6 @@
             this.txtuserMiscPOApproveName = new Sci.Production.Class.Txtuser();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.checkbcs = new Sci.Win.UI.CheckBox();
-            this.checknsncap = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutoApprovedWhileDateBefore)).BeginInit();
             this.panel1.SuspendLayout();
@@ -436,7 +441,7 @@
             // 
             // labelSMTPIP
             // 
-            this.labelSMTPIP.Location = new System.Drawing.Point(15, 344);
+            this.labelSMTPIP.Location = new System.Drawing.Point(15, 366);
             this.labelSMTPIP.Name = "labelSMTPIP";
             this.labelSMTPIP.Size = new System.Drawing.Size(75, 23);
             this.labelSMTPIP.TabIndex = 28;
@@ -448,14 +453,14 @@
             this.txtSMTPIP.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtSMTPIP.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Mailserver", true));
             this.txtSMTPIP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSMTPIP.Location = new System.Drawing.Point(95, 344);
+            this.txtSMTPIP.Location = new System.Drawing.Point(95, 366);
             this.txtSMTPIP.Name = "txtSMTPIP";
             this.txtSMTPIP.Size = new System.Drawing.Size(471, 23);
             this.txtSMTPIP.TabIndex = 14;
             // 
             // labelSendFrom
             // 
-            this.labelSendFrom.Location = new System.Drawing.Point(15, 373);
+            this.labelSendFrom.Location = new System.Drawing.Point(15, 395);
             this.labelSendFrom.Name = "labelSendFrom";
             this.labelSendFrom.Size = new System.Drawing.Size(75, 23);
             this.labelSendFrom.TabIndex = 30;
@@ -467,14 +472,14 @@
             this.txtSendFrom.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtSendFrom.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Sendfrom", true));
             this.txtSendFrom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSendFrom.Location = new System.Drawing.Point(95, 373);
+            this.txtSendFrom.Location = new System.Drawing.Point(95, 395);
             this.txtSendFrom.Name = "txtSendFrom";
             this.txtSendFrom.Size = new System.Drawing.Size(246, 23);
             this.txtSendFrom.TabIndex = 15;
             // 
             // labelEmailID
             // 
-            this.labelEmailID.Location = new System.Drawing.Point(15, 401);
+            this.labelEmailID.Location = new System.Drawing.Point(15, 423);
             this.labelEmailID.Name = "labelEmailID";
             this.labelEmailID.Size = new System.Drawing.Size(75, 23);
             this.labelEmailID.TabIndex = 32;
@@ -486,14 +491,14 @@
             this.txtEmailID.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtEmailID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "EmailID", true));
             this.txtEmailID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtEmailID.Location = new System.Drawing.Point(95, 401);
+            this.txtEmailID.Location = new System.Drawing.Point(95, 423);
             this.txtEmailID.Name = "txtEmailID";
             this.txtEmailID.Size = new System.Drawing.Size(246, 23);
             this.txtEmailID.TabIndex = 16;
             // 
             // labelEmailPassword
             // 
-            this.labelEmailPassword.Location = new System.Drawing.Point(367, 401);
+            this.labelEmailPassword.Location = new System.Drawing.Point(367, 423);
             this.labelEmailPassword.Name = "labelEmailPassword";
             this.labelEmailPassword.Size = new System.Drawing.Size(67, 23);
             this.labelEmailPassword.TabIndex = 34;
@@ -505,14 +510,14 @@
             this.txtEmailPassword.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtEmailPassword.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "EmailPwd", true));
             this.txtEmailPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtEmailPassword.Location = new System.Drawing.Point(438, 401);
+            this.txtEmailPassword.Location = new System.Drawing.Point(438, 423);
             this.txtEmailPassword.Name = "txtEmailPassword";
             this.txtEmailPassword.Size = new System.Drawing.Size(100, 23);
             this.txtEmailPassword.TabIndex = 17;
             // 
             // labelFTPIP
             // 
-            this.labelFTPIP.Location = new System.Drawing.Point(15, 430);
+            this.labelFTPIP.Location = new System.Drawing.Point(15, 452);
             this.labelFTPIP.Name = "labelFTPIP";
             this.labelFTPIP.Size = new System.Drawing.Size(75, 23);
             this.labelFTPIP.TabIndex = 36;
@@ -524,14 +529,14 @@
             this.txtFTPIP.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtFTPIP.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpIP", true));
             this.txtFTPIP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFTPIP.Location = new System.Drawing.Point(95, 430);
+            this.txtFTPIP.Location = new System.Drawing.Point(95, 452);
             this.txtFTPIP.Name = "txtFTPIP";
             this.txtFTPIP.Size = new System.Drawing.Size(274, 23);
             this.txtFTPIP.TabIndex = 18;
             // 
             // labelFTPID
             // 
-            this.labelFTPID.Location = new System.Drawing.Point(15, 459);
+            this.labelFTPID.Location = new System.Drawing.Point(15, 481);
             this.labelFTPID.Name = "labelFTPID";
             this.labelFTPID.Size = new System.Drawing.Size(75, 23);
             this.labelFTPID.TabIndex = 38;
@@ -543,14 +548,14 @@
             this.txtFTPID.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtFTPID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpID", true));
             this.txtFTPID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFTPID.Location = new System.Drawing.Point(95, 459);
+            this.txtFTPID.Location = new System.Drawing.Point(95, 481);
             this.txtFTPID.Name = "txtFTPID";
             this.txtFTPID.Size = new System.Drawing.Size(100, 23);
             this.txtFTPID.TabIndex = 19;
             // 
             // labelFTPPassword
             // 
-            this.labelFTPPassword.Location = new System.Drawing.Point(367, 459);
+            this.labelFTPPassword.Location = new System.Drawing.Point(367, 481);
             this.labelFTPPassword.Name = "labelFTPPassword";
             this.labelFTPPassword.Size = new System.Drawing.Size(67, 23);
             this.labelFTPPassword.TabIndex = 40;
@@ -562,14 +567,14 @@
             this.txtFTPPassword.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtFTPPassword.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpPwd", true));
             this.txtFTPPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFTPPassword.Location = new System.Drawing.Point(438, 459);
+            this.txtFTPPassword.Location = new System.Drawing.Point(438, 481);
             this.txtFTPPassword.Name = "txtFTPPassword";
             this.txtFTPPassword.Size = new System.Drawing.Size(100, 23);
             this.txtFTPPassword.TabIndex = 20;
             // 
             // labelSketchFilesPath
             // 
-            this.labelSketchFilesPath.Location = new System.Drawing.Point(15, 501);
+            this.labelSketchFilesPath.Location = new System.Drawing.Point(15, 523);
             this.labelSketchFilesPath.Name = "labelSketchFilesPath";
             this.labelSketchFilesPath.Size = new System.Drawing.Size(112, 23);
             this.labelSketchFilesPath.TabIndex = 42;
@@ -581,7 +586,7 @@
             this.txtSketchFilesPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtSketchFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "StyleSketch", true));
             this.txtSketchFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSketchFilesPath.Location = new System.Drawing.Point(131, 501);
+            this.txtSketchFilesPath.Location = new System.Drawing.Point(131, 523);
             this.txtSketchFilesPath.Name = "txtSketchFilesPath";
             this.txtSketchFilesPath.Size = new System.Drawing.Size(506, 23);
             this.txtSketchFilesPath.TabIndex = 22;
@@ -592,7 +597,7 @@
             this.txtCilpFilesPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtCilpFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ClipPath", true));
             this.txtCilpFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCilpFilesPath.Location = new System.Drawing.Point(131, 555);
+            this.txtCilpFilesPath.Location = new System.Drawing.Point(131, 577);
             this.txtCilpFilesPath.Name = "txtCilpFilesPath";
             this.txtCilpFilesPath.Size = new System.Drawing.Size(506, 23);
             this.txtCilpFilesPath.TabIndex = 24;
@@ -600,7 +605,7 @@
             // btnMailTo
             // 
             this.btnMailTo.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnMailTo.Location = new System.Drawing.Point(556, 456);
+            this.btnMailTo.Location = new System.Drawing.Point(556, 478);
             this.btnMailTo.Name = "btnMailTo";
             this.btnMailTo.Size = new System.Drawing.Size(80, 30);
             this.btnMailTo.TabIndex = 21;
@@ -611,7 +616,7 @@
             // btnSketchFilesPath
             // 
             this.btnSketchFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnSketchFilesPath.Location = new System.Drawing.Point(641, 501);
+            this.btnSketchFilesPath.Location = new System.Drawing.Point(641, 523);
             this.btnSketchFilesPath.Name = "btnSketchFilesPath";
             this.btnSketchFilesPath.Size = new System.Drawing.Size(30, 25);
             this.btnSketchFilesPath.TabIndex = 23;
@@ -622,7 +627,7 @@
             // btnCilpFilesPath
             // 
             this.btnCilpFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnCilpFilesPath.Location = new System.Drawing.Point(641, 555);
+            this.btnCilpFilesPath.Location = new System.Drawing.Point(641, 577);
             this.btnCilpFilesPath.Name = "btnCilpFilesPath";
             this.btnCilpFilesPath.Size = new System.Drawing.Size(30, 25);
             this.btnCilpFilesPath.TabIndex = 25;
@@ -637,9 +642,9 @@
             this.lineShape9.BorderColor = System.Drawing.Color.DarkGray;
             this.lineShape9.Name = "lineShape9";
             this.lineShape9.X1 = 726;
-            this.lineShape9.X2 = 726;
+            this.lineShape9.X2 = 728;
             this.lineShape9.Y1 = 8;
-            this.lineShape9.Y2 = 673;
+            this.lineShape9.Y2 = 691;
             // 
             // lineShape8
             // 
@@ -650,16 +655,16 @@
             this.lineShape8.X1 = 8;
             this.lineShape8.X2 = 8;
             this.lineShape8.Y1 = 8;
-            this.lineShape8.Y2 = 673;
+            this.lineShape8.Y2 = 691;
             // 
             // lineShape7
             // 
             this.lineShape7.BorderColor = System.Drawing.Color.DarkGray;
             this.lineShape7.Name = "lineShape7";
-            this.lineShape7.X1 = 8;
-            this.lineShape7.X2 = 726;
-            this.lineShape7.Y1 = 674;
-            this.lineShape7.Y2 = 674;
+            this.lineShape7.X1 = 9;
+            this.lineShape7.X2 = 727;
+            this.lineShape7.Y1 = 692;
+            this.lineShape7.Y2 = 692;
             // 
             // lineShape6
             // 
@@ -667,8 +672,8 @@
             this.lineShape6.Name = "lineShape6";
             this.lineShape6.X1 = 8;
             this.lineShape6.X2 = 726;
-            this.lineShape6.Y1 = 492;
-            this.lineShape6.Y2 = 492;
+            this.lineShape6.Y1 = 510;
+            this.lineShape6.Y2 = 510;
             // 
             // lineShape5
             // 
@@ -718,6 +723,11 @@
             // panel1
             // 
             this.panel1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.panel1.Controls.Add(this.comboPDA_FabricQRCode_LabelSize);
+            this.panel1.Controls.Add(this.label12);
+            this.panel1.Controls.Add(this.label11);
+            this.panel1.Controls.Add(this.comboPMS_FabricQRCode_LabelSize);
+            this.panel1.Controls.Add(this.label10);
             this.panel1.Controls.Add(this.checknsncap);
             this.panel1.Controls.Add(this.checkbcs);
             this.panel1.Controls.Add(this.checkBox1);
@@ -792,10 +802,94 @@
             this.panel1.Controls.Add(this.labelDailyOutputLockDate);
             this.panel1.Controls.Add(this.dateDailyOutputLockDate);
             this.panel1.Controls.Add(this.shapeContainer2);
-            this.panel1.Location = new System.Drawing.Point(10, 38);
+            this.panel1.Location = new System.Drawing.Point(10, 54);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(737, 684);
+            this.panel1.Size = new System.Drawing.Size(737, 697);
             this.panel1.TabIndex = 50;
+            // 
+            // comboPDA_FabricQRCode_LabelSize
+            // 
+            this.comboPDA_FabricQRCode_LabelSize.BackColor = System.Drawing.Color.White;
+            this.comboPDA_FabricQRCode_LabelSize.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "PDA_FabricQRCode_LabelSize", true));
+            this.comboPDA_FabricQRCode_LabelSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboPDA_FabricQRCode_LabelSize.FormattingEnabled = true;
+            this.comboPDA_FabricQRCode_LabelSize.IsSupportUnselect = true;
+            this.comboPDA_FabricQRCode_LabelSize.Location = new System.Drawing.Point(517, 334);
+            this.comboPDA_FabricQRCode_LabelSize.Name = "comboPDA_FabricQRCode_LabelSize";
+            this.comboPDA_FabricQRCode_LabelSize.OldText = "";
+            this.comboPDA_FabricQRCode_LabelSize.Size = new System.Drawing.Size(121, 24);
+            this.comboPDA_FabricQRCode_LabelSize.TabIndex = 72;
+            // 
+            // label12
+            // 
+            this.label12.BackColor = System.Drawing.Color.Transparent;
+            this.label12.Location = new System.Drawing.Point(475, 335);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(39, 23);
+            this.label12.TabIndex = 71;
+            this.label12.Text = "M360";
+            this.label12.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label12.TextStyle.Color = System.Drawing.Color.Black;
+            this.label12.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.label12.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // label11
+            // 
+            this.label11.BackColor = System.Drawing.Color.Transparent;
+            this.label11.Location = new System.Drawing.Point(259, 335);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(69, 23);
+            this.label11.TabIndex = 70;
+            this.label11.Text = "Production";
+            this.label11.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label11.TextStyle.Color = System.Drawing.Color.Black;
+            this.label11.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.label11.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // comboPMS_FabricQRCode_LabelSize
+            // 
+            this.comboPMS_FabricQRCode_LabelSize.BackColor = System.Drawing.Color.White;
+            this.comboPMS_FabricQRCode_LabelSize.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "PMS_FabricQRCode_LabelSize", true));
+            this.comboPMS_FabricQRCode_LabelSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboPMS_FabricQRCode_LabelSize.FormattingEnabled = true;
+            this.comboPMS_FabricQRCode_LabelSize.IsSupportUnselect = true;
+            this.comboPMS_FabricQRCode_LabelSize.Location = new System.Drawing.Point(331, 334);
+            this.comboPMS_FabricQRCode_LabelSize.Name = "comboPMS_FabricQRCode_LabelSize";
+            this.comboPMS_FabricQRCode_LabelSize.OldText = "";
+            this.comboPMS_FabricQRCode_LabelSize.Size = new System.Drawing.Size(121, 24);
+            this.comboPMS_FabricQRCode_LabelSize.TabIndex = 69;
+            // 
+            // label10
+            // 
+            this.label10.Location = new System.Drawing.Point(15, 335);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(236, 23);
+            this.label10.TabIndex = 68;
+            this.label10.Text = "Fabric QRCode Sticker Label Size";
+            // 
+            // checknsncap
+            // 
+            this.checknsncap.AutoSize = true;
+            this.checknsncap.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsNoneShellNoCreateAllParts", true));
+            this.checknsncap.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checknsncap.Location = new System.Drawing.Point(496, 232);
+            this.checknsncap.Name = "checknsncap";
+            this.checknsncap.Size = new System.Drawing.Size(226, 21);
+            this.checknsncap.TabIndex = 67;
+            this.checknsncap.Text = "None \"Shell\" no create All Parts";
+            this.checknsncap.UseVisualStyleBackColor = true;
+            // 
+            // checkbcs
+            // 
+            this.checkbcs.AutoSize = true;
+            this.checkbcs.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsCombineSubProcess", true));
+            this.checkbcs.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkbcs.Location = new System.Drawing.Point(246, 231);
+            this.checkbcs.Name = "checkbcs";
+            this.checkbcs.Size = new System.Drawing.Size(209, 21);
+            this.checkbcs.TabIndex = 66;
+            this.checkbcs.Text = "Bundle Combine Subprocess";
+            this.checkbcs.UseVisualStyleBackColor = true;
             // 
             // checkBox1
             // 
@@ -868,7 +962,7 @@
             // btnReplacementReport
             // 
             this.btnReplacementReport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnReplacementReport.Location = new System.Drawing.Point(643, 641);
+            this.btnReplacementReport.Location = new System.Drawing.Point(643, 663);
             this.btnReplacementReport.Name = "btnReplacementReport";
             this.btnReplacementReport.Size = new System.Drawing.Size(30, 25);
             this.btnReplacementReport.TabIndex = 58;
@@ -882,14 +976,14 @@
             this.txtReplacementReport.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtReplacementReport.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ReplacementReport", true));
             this.txtReplacementReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtReplacementReport.Location = new System.Drawing.Point(178, 642);
+            this.txtReplacementReport.Location = new System.Drawing.Point(178, 664);
             this.txtReplacementReport.Name = "txtReplacementReport";
             this.txtReplacementReport.Size = new System.Drawing.Size(460, 23);
             this.txtReplacementReport.TabIndex = 56;
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(16, 642);
+            this.label4.Location = new System.Drawing.Point(16, 664);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(159, 23);
             this.label4.TabIndex = 57;
@@ -900,7 +994,7 @@
             this.chkMtlAutoLock.AutoSize = true;
             this.chkMtlAutoLock.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MtlAutoLock", true));
             this.chkMtlAutoLock.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkMtlAutoLock.Location = new System.Drawing.Point(340, 308);
+            this.chkMtlAutoLock.Location = new System.Drawing.Point(340, 306);
             this.chkMtlAutoLock.Name = "chkMtlAutoLock";
             this.chkMtlAutoLock.Size = new System.Drawing.Size(219, 21);
             this.chkMtlAutoLock.TabIndex = 50;
@@ -910,7 +1004,7 @@
             // btnMarkerOutputPath
             // 
             this.btnMarkerOutputPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnMarkerOutputPath.Location = new System.Drawing.Point(642, 612);
+            this.btnMarkerOutputPath.Location = new System.Drawing.Point(642, 634);
             this.btnMarkerOutputPath.Name = "btnMarkerOutputPath";
             this.btnMarkerOutputPath.Size = new System.Drawing.Size(30, 25);
             this.btnMarkerOutputPath.TabIndex = 55;
@@ -921,7 +1015,7 @@
             // btnMarkerInputPath
             // 
             this.btnMarkerInputPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnMarkerInputPath.Location = new System.Drawing.Point(642, 584);
+            this.btnMarkerInputPath.Location = new System.Drawing.Point(642, 606);
             this.btnMarkerInputPath.Name = "btnMarkerInputPath";
             this.btnMarkerInputPath.Size = new System.Drawing.Size(30, 25);
             this.btnMarkerInputPath.TabIndex = 54;
@@ -935,14 +1029,14 @@
             this.txtMarkerOutputPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtMarkerOutputPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkerOutputPath", true));
             this.txtMarkerOutputPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerOutputPath.Location = new System.Drawing.Point(177, 613);
+            this.txtMarkerOutputPath.Location = new System.Drawing.Point(177, 635);
             this.txtMarkerOutputPath.Name = "txtMarkerOutputPath";
             this.txtMarkerOutputPath.Size = new System.Drawing.Size(460, 23);
             this.txtMarkerOutputPath.TabIndex = 52;
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(15, 613);
+            this.label3.Location = new System.Drawing.Point(15, 635);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(159, 23);
             this.label3.TabIndex = 53;
@@ -954,14 +1048,14 @@
             this.txtMarkerInputPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtMarkerInputPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkerInputPath", true));
             this.txtMarkerInputPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerInputPath.Location = new System.Drawing.Point(177, 584);
+            this.txtMarkerInputPath.Location = new System.Drawing.Point(177, 606);
             this.txtMarkerInputPath.Name = "txtMarkerInputPath";
             this.txtMarkerInputPath.Size = new System.Drawing.Size(460, 23);
             this.txtMarkerInputPath.TabIndex = 50;
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(15, 584);
+            this.label1.Location = new System.Drawing.Point(15, 606);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(159, 23);
             this.label1.TabIndex = 51;
@@ -970,7 +1064,7 @@
             // btnPicFilesPath
             // 
             this.btnPicFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnPicFilesPath.Location = new System.Drawing.Point(641, 528);
+            this.btnPicFilesPath.Location = new System.Drawing.Point(641, 550);
             this.btnPicFilesPath.Name = "btnPicFilesPath";
             this.btnPicFilesPath.Size = new System.Drawing.Size(30, 25);
             this.btnPicFilesPath.TabIndex = 48;
@@ -984,14 +1078,14 @@
             this.txtPicFilesPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtPicFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "PicPath", true));
             this.txtPicFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPicFilesPath.Location = new System.Drawing.Point(131, 528);
+            this.txtPicFilesPath.Location = new System.Drawing.Point(131, 550);
             this.txtPicFilesPath.Name = "txtPicFilesPath";
             this.txtPicFilesPath.Size = new System.Drawing.Size(506, 23);
             this.txtPicFilesPath.TabIndex = 47;
             // 
             // labPicFilesPath
             // 
-            this.labPicFilesPath.Location = new System.Drawing.Point(15, 528);
+            this.labPicFilesPath.Location = new System.Drawing.Point(15, 550);
             this.labPicFilesPath.Name = "labPicFilesPath";
             this.labPicFilesPath.Size = new System.Drawing.Size(112, 23);
             this.labPicFilesPath.TabIndex = 49;
@@ -1000,7 +1094,7 @@
             // label2
             // 
             this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Location = new System.Drawing.Point(228, 308);
+            this.label2.Location = new System.Drawing.Point(228, 306);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(23, 23);
             this.label2.TabIndex = 46;
@@ -1021,7 +1115,7 @@
             0,
             0,
             65536});
-            this.numQCMachineDelayTime.Location = new System.Drawing.Point(176, 308);
+            this.numQCMachineDelayTime.Location = new System.Drawing.Point(176, 306);
             this.numQCMachineDelayTime.Maximum = new decimal(new int[] {
             10,
             0,
@@ -1038,7 +1132,7 @@
             // 
             // lbQCMachineDelayTime
             // 
-            this.lbQCMachineDelayTime.Location = new System.Drawing.Point(15, 308);
+            this.lbQCMachineDelayTime.Location = new System.Drawing.Point(15, 306);
             this.lbQCMachineDelayTime.Name = "lbQCMachineDelayTime";
             this.lbQCMachineDelayTime.Size = new System.Drawing.Size(158, 23);
             this.lbQCMachineDelayTime.TabIndex = 44;
@@ -1046,7 +1140,7 @@
             // 
             // labelClipFilesPath
             // 
-            this.labelClipFilesPath.Location = new System.Drawing.Point(15, 555);
+            this.labelClipFilesPath.Location = new System.Drawing.Point(15, 577);
             this.labelClipFilesPath.Name = "labelClipFilesPath";
             this.labelClipFilesPath.Size = new System.Drawing.Size(112, 23);
             this.labelClipFilesPath.TabIndex = 43;
@@ -1088,7 +1182,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer2.Size = new System.Drawing.Size(737, 684);
+            this.shapeContainer2.Size = new System.Drawing.Size(737, 697);
             this.shapeContainer2.TabIndex = 0;
             this.shapeContainer2.TabStop = false;
             // 
@@ -1098,36 +1192,12 @@
             this.lineShape10.Name = "lineShape10";
             this.lineShape10.X1 = 9;
             this.lineShape10.X2 = 727;
-            this.lineShape10.Y1 = 338;
-            this.lineShape10.Y2 = 338;
-            // 
-            // checkbcs
-            // 
-            this.checkbcs.AutoSize = true;
-            this.checkbcs.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsCombineSubProcess", true));
-            this.checkbcs.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkbcs.Location = new System.Drawing.Point(246, 231);
-            this.checkbcs.Name = "checkbcs";
-            this.checkbcs.Size = new System.Drawing.Size(209, 21);
-            this.checkbcs.TabIndex = 66;
-            this.checkbcs.Text = "Bundle Combine Subprocess";
-            this.checkbcs.UseVisualStyleBackColor = true;
-            // 
-            // checknsncap
-            // 
-            this.checknsncap.AutoSize = true;
-            this.checknsncap.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsNoneShellNoCreateAllParts", true));
-            this.checknsncap.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checknsncap.Location = new System.Drawing.Point(496, 232);
-            this.checknsncap.Name = "checknsncap";
-            this.checknsncap.Size = new System.Drawing.Size(226, 21);
-            this.checknsncap.TabIndex = 67;
-            this.checknsncap.Text = "None \"Shell\" no create All Parts";
-            this.checknsncap.UseVisualStyleBackColor = true;
+            this.lineShape10.Y1 = 362;
+            this.lineShape10.Y2 = 362;
             // 
             // B02
             // 
-            this.ClientSize = new System.Drawing.Size(759, 747);
+            this.ClientSize = new System.Drawing.Size(759, 763);
             this.Controls.Add(this.panel1);
             this.DefaultControl = "numSample";
             this.DefaultControlForEdit = "numSample";
@@ -1235,5 +1305,10 @@
         private Win.UI.Label label9;
         private Win.UI.CheckBox checknsncap;
         private Win.UI.CheckBox checkbcs;
+        private Win.UI.ComboBox comboPDA_FabricQRCode_LabelSize;
+        private Win.UI.Label label12;
+        private Win.UI.Label label11;
+        private Win.UI.ComboBox comboPMS_FabricQRCode_LabelSize;
+        private Win.UI.Label label10;
     }
 }

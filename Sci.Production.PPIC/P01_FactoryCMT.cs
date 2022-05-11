@@ -118,7 +118,7 @@ select  [SubProcessCPU] = @subProcessCPU,
                                     and fsd.ShipperID = fd.ShipperID
                                     and '{2}' between fd.BeginDate and fd.EndDate",
                     this.orderData["BrandID"].ToString(),
-                    this.orderData["FactoryID"].ToString(),
+                    this.orderData["FtyGroup"].ToString(),
                     Convert.ToDateTime(this.orderData["OrigBuyerDelivery"]).ToString("yyyy/MM/dd"));
                 this.numCPUCost.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sql + whereSeasonID));
                 if (MyUtility.Check.Empty(this.numCPUCost.Value))

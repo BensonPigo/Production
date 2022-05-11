@@ -74,6 +74,8 @@
     [APReceiveDoxDate] DATE NULL, 
     [APAmountEditDate] DATE NULL, 
 	[ActualAmountWVAT] numeric(13, 2) NOT NULL DEFAULT 0,
+    [ActAmt] NUMERIC(18, 2) CONSTRAINT [DF_AirPP_ActAmt] DEFAULT ((0)) NOT NULL,
+    [ExchangeRate] NUMERIC(11, 6) CONSTRAINT [DF_AirPP_ExchangeRate] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_AirPP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -379,3 +381,21 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'AirPP',
     @level2type = N'COLUMN',
     @level2name = N'APReceiveDoxDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'實際金額(USD)',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'AirPP',
+    @level2type = N'COLUMN',
+    @level2name = N'ActAmt'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'匯率',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'AirPP',
+    @level2type = N'COLUMN',
+    @level2name = N'ExchangeRate'

@@ -215,7 +215,7 @@ where ID in (select InvNo from Pullout_Detail with (nolock) where ID = '{pullout
                 return new List<string>();
             }
 
-            string sqlGetPLFromRgCode = $"select distinct PLFromRgCode from GMTBooking_Detail with (nolock) where ID in ({listInvNo.Select(s => $"'{s}'").JoinToString(",")})";
+            string sqlGetPLFromRgCode = $"select distinct PLFromRgCode from GMTBooking_Detail with (nolock) where ID in ({listInvNo.Select(s => $"'{s.Replace("'", "")}'").JoinToString(",")})";
             DataTable dtResult;
             DualResult result = DBProxy.Current.Select(null, sqlGetPLFromRgCode, out dtResult);
             if (!result)

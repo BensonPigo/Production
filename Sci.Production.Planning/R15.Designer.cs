@@ -536,7 +536,7 @@
             this.txtsubprocess1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtsubprocess1.IsSupportEditMode = false;
             this.txtsubprocess1.Location = new System.Drawing.Point(112, 0);
-            this.txtsubprocess1.MultiSelect = false;
+            this.txtsubprocess1.MultiSelect = true;
             this.txtsubprocess1.Name = "txtsubprocess1";
             this.txtsubprocess1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
             this.txtsubprocess1.ReadOnly = true;

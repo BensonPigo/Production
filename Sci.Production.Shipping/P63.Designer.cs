@@ -49,7 +49,6 @@
             this.btnImportGMTBooking = new Sci.Win.UI.Button();
             this.numDetailTotalQty = new Sci.Win.UI.NumericBox();
             this.gridCurrency = new Sci.Win.UI.Grid();
-            this.txtHandle = new Sci.Production.Class.Txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -75,7 +74,6 @@
             this.masterpanel.Controls.Add(this.editRemark);
             this.masterpanel.Controls.Add(this.btnExchangeRate);
             this.masterpanel.Controls.Add(this.numExchangeRate);
-            this.masterpanel.Controls.Add(this.txtHandle);
             this.masterpanel.Controls.Add(this.displayApproveDate);
             this.masterpanel.Controls.Add(this.displayApproveName);
             this.masterpanel.Controls.Add(this.displayID);
@@ -102,7 +100,6 @@
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayApproveName, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayApproveDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtHandle, 0);
             this.masterpanel.Controls.SetChildIndex(this.numExchangeRate, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnExchangeRate, 0);
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
@@ -118,8 +115,8 @@
             // 
             // gridicon
             // 
-            this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(1608, 142);
+            this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridicon.Location = new System.Drawing.Point(1062, 142);
             // 
             // detailgridcont
             // 
@@ -387,16 +384,6 @@
             this.gridCurrency.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridCurrency.TabIndex = 20;
             // 
-            // txtHandle
-            // 
-            this.txtHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Handle", true));
-            this.txtHandle.DisplayBox1Binding = "";
-            this.txtHandle.Location = new System.Drawing.Point(410, 44);
-            this.txtHandle.Name = "txtHandle";
-            this.txtHandle.Size = new System.Drawing.Size(300, 23);
-            this.txtHandle.TabIndex = 13;
-            this.txtHandle.TextBox1Binding = "";
-            // 
             // P63
             // 
             this.ApvChkValue = "New";
@@ -409,6 +396,7 @@
             this.IsSupportClip = false;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
+            this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P63";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";

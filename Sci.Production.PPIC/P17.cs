@@ -37,7 +37,9 @@ namespace Sci.Production.PPIC
                 new SqlParameter("@endDate", this.dateRangeImport.DateBox2.Value),
             };
             this.ShowWaitMessage("Update processing....");
+            DBProxy.Current.DefaultTimeout = 1200;
             DualResult result = DBProxy.Current.Execute(null, "exec exp_SUNRISE @startDate,@endDate", listPar);
+            DBProxy.Current.DefaultTimeout = 300;
             this.HideWaitMessage();
             if (!result)
             {

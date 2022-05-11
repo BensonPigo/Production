@@ -256,10 +256,10 @@ namespace Sci.Production.Quality
 SET XACT_ABORT ON
 
 INSERT INTO ExtendServer.PMSFile.dbo.ColorFastness
-           (ID,TestBeforePicture,TestAfterPicture)
-select ID,TestBeforePicture,TestAfterPicture
+           (ID,POID,TestNO,TestBeforePicture,TestAfterPicture)
+select ID,POID,TestNO,TestBeforePicture,TestAfterPicture
 from ColorFastness t WITH(NOLOCK)
-where not exists (select 1 from ExtendServer.PMSFile.dbo.ColorFastness s WITH(NOLOCK) where s.ID = t.ID  )
+where not exists (select 1 from ExtendServer.PMSFile.dbo.ColorFastness s WITH(NOLOCK) where s.ID = t.ID and s.POID = t.POID and s.TestNo = t.TestNo )
 ";
 
             DualResult r = DBProxy.Current.Execute(null, sqlcmd);

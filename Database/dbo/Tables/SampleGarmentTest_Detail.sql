@@ -22,7 +22,7 @@
     [TumbleDry] BIT NOT NULL DEFAULT (0), 
     [Machine] VARCHAR(10) NULL, 
     [HandWash] BIT NOT NULL, 
-    [Composition] VARCHAR(50) NULL, 
+    [Composition] VARCHAR(200) NULL, 
     [Neck] BIT NOT NULL DEFAULT (1), 
     [Status] VARCHAR(15) NULL, 
     [ReportNo] VARCHAR(13) NOT NULL DEFAULT '', 

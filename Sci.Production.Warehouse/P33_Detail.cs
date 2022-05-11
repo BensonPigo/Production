@@ -244,6 +244,10 @@ AND Seq1 = '{seq1}' AND Seq2 = '{seq2}'
                 {
                     item.SetAdded();
                 }
+                else if (item.RowState == DataRowState.Unchanged && MyUtility.Check.Empty(item["ID"]))
+                {
+                    item.SetAdded();
+                }
             }
 
             this.CurrentDetailData["SuppColor"] = allSuppColor.JoinToString(",");
@@ -253,6 +257,7 @@ AND Seq1 = '{seq1}' AND Seq2 = '{seq2}'
 
         private void Save_Click(object sender, EventArgs e)
         {
+            this.Sum_checkedqty();
         }
 
         private void Delete_Click(object sender, EventArgs e)

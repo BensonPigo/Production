@@ -13,6 +13,8 @@ using System.Reflection;
 using System.Linq;
 using System.Data.SqlClient;
 using Sci.Production.CallPmsAPI;
+using Newtonsoft.Json;
+using static Sci.Production.CallPmsAPI.PackingA2BWebAPI_Model;
 
 namespace Sci.Production.Shipping
 {
@@ -550,6 +552,11 @@ and Junk = 0",
                 }
             }
 
+            if (!this.CheckNoExportChargesGMT(this.CurrentMaintain["BLNo"].ToString()))
+            {
+                return false;
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["PayTermID"]))
             {
                 this.txtpayterm_ftyTerms.TextBox1.Focus();
@@ -880,108 +887,280 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
             return base.ClickSavePre();
         }
 
-        /// <inheritdoc/>
-        protected override DualResult ClickSavePost()
+        private DualResult InitialShareExpense()
         {
-            int isFreightForwarder = this.checkIsFreightForwarder.Checked ? 1 : 0;
             DualResult result;
-
             if (this.checkIsFreightForwarder.Checked && !this.CurrentMaintain["Reason"].EqualString("AP007"))
             {
                 string strSqlCmd;
-                if (this.CurrentMaintain["Type"].EqualString("IMPORT"))
+                if (this.CurrentMaintain["Type"].EqualString("EXPORT") && this.CurrentMaintain["SubType"].EqualString("GARMENT"))
                 {
+                    #region get A2B PackingInfo
+                    string sqlGetA2BGMT = $@"
+select  gd.PLFromRgCode
+        ,gd.PackingListID
+        ,[BLNo] = iif(g.BLNo is null or g.BLNo = '', g.BL2No, g.BLNo)
+        ,[WKNo] = ''
+        ,[InvNo] = g.id
+        ,[Type] = '{this.CurrentMaintain["Type"]}'
+        ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
+        ,[ShipModeID] = g.ShipModeID
+        ,[FtyWK] = 0
+        ,[AccountID] = AccountID.val
+        ,[Junk] = 0
+        ,[ShippingAPID] = '{this.CurrentMaintain["ID"]}'
+from GMTBooking g WITH (NOLOCK)
+outer apply(select top 1 [val] = sd.AccountID 
+            from ShippingAP_Detail sd WITH(NOLOCK)
+                where sd.ID = '{this.CurrentMaintain["ID"]}' and sd.AccountID != ''
+                and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+		            or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
+inner join GMTBooking_Detail gd with (nolock) on g.ID = gd.ID
+where g.BLNo='{this.CurrentMaintain["BLNO"]}' or g.BL2No='{this.CurrentMaintain["BLNO"]}' 
+";
+                    DataTable dtA2BResult = new DataTable();
+                    DataTable dtA2BGMT;
+
+                    result = DBProxy.Current.Select(null, sqlGetA2BGMT, out dtA2BGMT);
+                    if (!result)
+                    {
+                        return result;
+                    }
+
+                    string sqlGetA2BPack = @"
+alter table #tmp alter column InvNo varchar(25)
+alter table #tmp alter column PackingListID varchar(13)
+
+select  g.ShippingAPID
+        ,g.BLNo
+        ,g.WKNo
+        ,g.InvNo
+        ,g.Type
+        ,[GW] = sum(pd.GW)
+        ,[CBM] = sum(l.CBM)
+        ,g.CurrencyID
+        ,g.ShipModeID
+        ,g.FtyWK
+        ,g.AccountID
+        ,g.Junk
+        ,o.FactoryID
+from #tmp g
+inner join PackingList p with (nolock) on p.INVNo = g.InvNo and p.ID = g.PackingListID
+inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty = 1
+inner join Orders o with (nolock) on o.ID = pd.OrderID
+inner join LocalItem l with (nolock) on l.Refno = pd.Refno
+group by g.ShippingAPID
+        ,g.BLNo
+        ,g.WKNo
+        ,g.InvNo
+        ,g.Type
+        ,g.CurrencyID
+        ,g.ShipModeID
+        ,g.FtyWK
+        ,g.AccountID
+        ,g.Junk
+        ,o.FactoryID
+";
+
+                    foreach (var groupItem in dtA2BGMT.AsEnumerable().GroupBy(s => s["PLFromRgCode"].ToString()))
+                    {
+                        DataBySql dataBySql = new DataBySql()
+                        {
+                            SqlString = sqlGetA2BPack,
+                            TmpTable = JsonConvert.SerializeObject(groupItem.CopyToDataTable()),
+                        };
+
+                        DataTable dtA2BPack;
+                        result = PackingA2BWebAPI.GetDataBySql(groupItem.Key, dataBySql, out dtA2BPack);
+
+                        if (!result)
+                        {
+                            return result;
+                        }
+
+                        dtA2BPack.MergeTo(ref dtA2BResult);
+                    }
+                    #endregion
+
+                    string sqlUnionA2B = string.Empty;
+                    if (dtA2BResult.Rows.Count > 0)
+                    {
+                        sqlUnionA2B = @"
+union all
+select  ShippingAPID
+        ,BLNo
+        ,WKNo
+        ,InvNo
+        ,Type
+        ,GW
+        ,CBM
+        ,CurrencyID
+        ,ShipModeID
+        ,FtyWK
+        ,AccountID
+        ,Junk
+        ,FactoryID
+from #tmp
+";
+                    }
+
                     strSqlCmd = $@"
 merge ShareExpense t
 using (
-    select top 1 *
-    from (
-	    select distinct
-		    [ShippingAPID] = '{this.CurrentMaintain["ID"]}'
-		    ,[BLNo] = BLNo
-		    ,[WKNo] = id
-		    ,[InvNo] = ''
-		    ,[Type] = '{this.CurrentMaintain["SubType"]}'
-		    ,[GW] = WeightKg
-		    ,[CBM] = CBM
-		    ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
-		    ,[ShipModeID] = ShipModeID
-		    ,[FtyWK] = 0
-		    ,[AccountID] = (
-			    select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
-			    where sd.ID = '{this.CurrentMaintain["ID"]}' and sd.AccountID != ''
-			    and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
-				    or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1))
-		    ,[Junk] = 0
-	    from Export e WITH (NOLOCK) 
-	    where BLNo = '{this.CurrentMaintain["BLNO"]}'
-	    union 
-	    select distinct
-		    [ShippingAPID] = '{this.CurrentMaintain["ID"]}'
-		    ,[BLNo] = BLNo
-		    ,[WKNo] = id
-		    ,[InvNo] = ''
-		    ,[Type] = '{this.CurrentMaintain["SubType"]}'
-		    ,[GW] = WeightKg
-		    ,[CBM] = CBM
-		    ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
-		    ,[ShipModeID] = ShipModeID
-		    ,[FtyWK] = 0
-		    ,[AccountID] = (
-			    select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
-			    where sd.ID = '{this.CurrentMaintain["ID"]}' and sd.AccountID != ''
-			    and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
-				    or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1))
-		    ,[Junk] = 0
-	    from FtyExport f WITH (NOLOCK) 
-	    where BLNo = '{this.CurrentMaintain["BLNO"]}'
-	    and Type <> 3
-    )a
+select  ShippingAPID
+        ,BLNo
+        ,WKNo
+        ,InvNo
+        ,Type
+        ,[GW] = sum(GW)
+        ,[CBM] = sum(CBM)
+        ,CurrencyID
+        ,ShipModeID
+        ,FtyWK
+        ,AccountID
+        ,Junk
+        ,FactoryID
+from (
+select 
+    [ShippingAPID] = '{this.CurrentMaintain["ID"]}'
+    ,[BLNo] = iif(g.BLNo is null or g.BLNo = '', g.BL2No, g.BLNo)
+    ,[WKNo] = ''
+    ,[InvNo] = g.id
+    ,[Type] = '{this.CurrentMaintain["Type"]}'
+    ,[GW] = sum(pd.GW)
+    ,[CBM] = sum(l.CBM)
+    ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
+    ,[ShipModeID] = g.ShipModeID
+    ,[FtyWK] = 0
+    ,[AccountID] = AccountID.val
+    ,[Junk] = 0
+    ,o.FactoryID
+from GMTBooking g WITH (NOLOCK)
+outer apply(select top 1 [val] = sd.AccountID 
+            from ShippingAP_Detail sd WITH(NOLOCK)
+                where sd.ID = '{this.CurrentMaintain["ID"]}' and sd.AccountID != ''
+                and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+		            or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
+inner join PackingList p with (nolock) on p.INVNo = g.ID
+inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty = 1
+inner join Orders o with (nolock) on o.ID = pd.OrderID
+inner join LocalItem l with (nolock) on l.Refno = pd.Refno
+where g.BLNo='{this.CurrentMaintain["BLNO"]}' or g.BL2No='{this.CurrentMaintain["BLNO"]}' 
+group by g.BLNo, g.BL2No, g.id, g.ShipModeID, AccountID.val, o.FactoryID
+{sqlUnionA2B}
+) a group by ShippingAPID
+            ,BLNo
+            ,WKNo
+            ,InvNo
+            ,Type
+            ,CurrencyID
+            ,ShipModeID
+            ,FtyWK
+            ,AccountID
+            ,Junk
+            ,FactoryID
 ) as s 
 on	t.ShippingAPID = s.ShippingAPID 
-	and t.WKNO = s.WKNO	and t.InvNo = s.InvNo
+	and t.WKNO = s.WKNO	and t.InvNo = s.InvNo and t.FactoryID = s.FactoryID
 when matched AND t.junk=1 then
 	update set
 	t.junk=0
 when not matched by target then 
-	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk)
-	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk);";
+	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk, FactoryID)
+	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk, s.FactoryID);";
+
+                    if (MyUtility.Check.Empty(sqlUnionA2B))
+                    {
+                        result = DBProxy.Current.Execute(string.Empty, strSqlCmd);
+                    }
+                    else
+                    {
+                        result = MyUtility.Tool.ProcessWithDatatable(dtA2BResult, string.Empty, strSqlCmd, out DataTable dtEmpty);
+                    }
                 }
                 else
                 {
                     strSqlCmd = $@"
 merge ShareExpense t
 using (
-select distinct
-    [ShippingAPID] = '{this.CurrentMaintain["ID"]}'
-    ,[BLNo] = iif(BLNo is null or BLNo='', BL2No,BLNo)
-    ,[WKNo] = ''
-    ,[InvNo] = id
-    ,[Type] = '{this.CurrentMaintain["SubType"]}'
-    ,[GW] = TotalGW
-    ,[CBM] = TotalCBM
-    ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
-    ,[ShipModeID] = ShipModeID
-    ,[FtyWK] = 0
-    ,[AccountID] = (
-	    select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
-        where sd.ID = '{this.CurrentMaintain["ID"]}' and sd.AccountID != ''
-        and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
-		    or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1))
-    ,[Junk] = 0
-from GMTBooking g WITH (NOLOCK) 
-where BLNo='{this.CurrentMaintain["BLNO"]}' or BL2No='{this.CurrentMaintain["BLNO"]}' ) as s 
+    select *
+    from (
+	    select 
+		    [ShippingAPID] = '{this.CurrentMaintain["ID"]}'
+		    ,[BLNo] = e.BLNo
+		    ,[WKNo] = e.id
+		    ,[InvNo] = ''
+		    ,[Type] = '{this.CurrentMaintain["Type"]}'
+		    ,[GW] = e.WeightKg 
+		    ,[CBM] = e.CBM 
+		    ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
+		    ,[ShipModeID] = e.ShipModeID
+		    ,[FtyWK] = 0
+		    ,[AccountID] = AccountID.val
+		    ,[Junk] = 0
+            ,[FactoryID] = ''
+	    from Export e WITH (NOLOCK)
+        outer apply (select top 1 [val] = sd.AccountID 
+                        from ShippingAP_Detail sd WITH(NOLOCK)
+			            where sd.ID = '{this.CurrentMaintain["ID"]}' and sd.AccountID != ''
+			            and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+				            or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
+	    where e.BLNo = '{this.CurrentMaintain["BLNO"]}'
+	    union 
+	    select [ShippingAPID] = '{this.CurrentMaintain["ID"]}'
+		        ,[BLNo] = f.BLNo
+		        ,[WKNo] = f.id
+		        ,[InvNo] = ''
+		        ,[Type] = '{this.CurrentMaintain["Type"]}'
+		        ,[GW] = f.WeightKg 
+		        ,[CBM] = f.CBM 
+		        ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
+		        ,[ShipModeID] = f.ShipModeID
+		        ,[FtyWK] = 0
+		        ,[AccountID] = AccountID.val
+		        ,[Junk] = 0
+                ,[FactoryID] = ''
+	    from FtyExport f WITH (NOLOCK) 
+        outer apply (select top 1 [val] = sd.AccountID
+                     from ShippingAP_Detail sd WITH(NOLOCK)
+			         where sd.ID = '{this.CurrentMaintain["ID"]}' and sd.AccountID != ''
+			         and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+				         or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
+	    where   BLNo = '{this.CurrentMaintain["BLNO"]}'
+	            and Type <> 3
+        union
+        select  [ShippingAPID] = '{this.CurrentMaintain["ID"]}'
+                ,[BLNo] = iif(BLNo is null or BLNo='', BL2No,BLNo)
+                ,[WKNo] = ''
+                ,[InvNo] = id
+                ,[Type] = '{this.CurrentMaintain["Type"]}'
+                ,[GW] = TotalGW
+                ,[CBM] = TotalCBM
+                ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
+                ,[ShipModeID] = ShipModeID
+                ,[FtyWK] = 0
+                ,[AccountID] = (
+        	        select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
+                    where sd.ID = '{this.CurrentMaintain["ID"]}' and sd.AccountID != ''
+                    and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+        	    	    or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1))
+                ,[Junk] = 0
+                ,[FactoryID] = ''
+        from GMTBooking g WITH (NOLOCK) 
+        where BLNo='{this.CurrentMaintain["BLNO"]}' or BL2No='{this.CurrentMaintain["BLNO"]}'
+    ) a
+) as s 
 on	t.ShippingAPID = s.ShippingAPID 
-	and t.WKNO = s.WKNO	and t.InvNo = s.InvNo
+	and t.WKNO = s.WKNO	and t.InvNo = s.InvNo and t.FactoryID = s.FactoryID
 when matched AND t.junk=1 then
 	update set
 	t.junk=0
 when not matched by target then 
-	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk)
-	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk);";
-                }
+	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk, FactoryID)
+	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk, s.FactoryID);";
 
-                result = DBProxy.Current.Execute(string.Empty, strSqlCmd);
+                    result = DBProxy.Current.Execute(string.Empty, strSqlCmd);
+                }
 
                 if (!result)
                 {
@@ -989,9 +1168,24 @@ when not matched by target then
                 }
             }
 
-            result = DBProxy.Current.Execute(
-"Production",
-string.Format("exec CalculateShareExpense '{0}','{1}',{2}", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Env.User.UserID, isFreightForwarder));
+            return new DualResult(true);
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            int isFreightForwarder = this.checkIsFreightForwarder.Checked ? 1 : 0;
+            DualResult result;
+
+            result = this.InitialShareExpense();
+
+            if (!result)
+            {
+                return result;
+            }
+
+            result = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), isFreightForwarder);
+
             if (!result)
             {
                 return new DualResult(false, "Re-calcute share expense failed!");
@@ -1003,27 +1197,29 @@ string.Format("exec CalculateShareExpense '{0}','{1}',{2}", MyUtility.Convert.Ge
                 return new DualResult(false, result.ToString());
             }
 
-            if (dtInvNo != null && dtInvNo.Rows.Count > 0)
+            // 執行A2B跨廠區資料 & 寫入跨廠區資料到ShareExpense_APP
+            foreach (DataRow item in dtInvNo.Rows)
             {
-                // 執行A2B跨廠區資料 & 寫入跨廠區資料到ShareExpense_APP
-                foreach (DataRow item in dtInvNo.Rows)
+                string invNos = item["InvNo"].ToString();
+                List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(invNos);
+                foreach (string plFromRgCode in listPLFromRgCode)
                 {
-                    string invNos = item["InvNo"].ToString();
-                    List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(invNos);
-                    foreach (string plFromRgCode in listPLFromRgCode)
+                    // 跨Server取得ShareExpense_APP所需PackingList資料
+                    DataTable dtA2BPacking;
+                    result = Prgs.DataTable_Packing(plFromRgCode, invNos, out dtA2BPacking);
+
+                    if (!result)
                     {
-                        // 跨Server取得ShareExpense_APP所需PackingList資料
-                        DataTable dt = Prgs.DataTable_Packing(plFromRgCode, invNos);
+                        return result;
+                    }
 
-                        if (dt != null && dt.Rows.Count > 0)
+                    if (dtA2BPacking.Rows.Count > 0)
+                    {
+                        result = Prgs.CalculateShareExpense_APP(this.CurrentMaintain["ID"].ToString(), Env.User.UserID, dtA2BPacking, plFromRgCode);
+
+                        if (!result)
                         {
-                            // 將跨Serve資料更新ShareExpense_APP
-                            DualResult result2 = Prgs.CalculateShareExpense_APP(this.CurrentMaintain["ID"].ToString(), Env.User.UserID, dt);
-
-                            if (!result2)
-                            {
-                                return new DualResult(false, "Re-calcute share expense failed!");
-                            }
+                            return result;
                         }
                     }
                 }
@@ -1068,6 +1264,56 @@ where ShippingAPID = '{MyUtility.Convert.GetString(this.CurrentMaintain["ID"])}'
                 DualResult failResult = new DualResult(false, "Delete ShareExpense_APP false.\r\n" + result.ToString());
                 return failResult;
             }
+
+            #region ISP20220298 更新AirPP資料
+
+            // local Airpp
+            string updateAirPP = $@"
+update a set a.ActAmt = airAmt.ActAmt, a.ExchangeRate = airAmt.ExchangeRate
+	from AirPP a
+	inner join dbo.GetAirPPAmt('{this.CurrentMaintain["ID"]}', '') airAmt on airAmt.AirPPID = a.ID
+
+select AirPPID, ActAmt, ExchangeRate
+from dbo.GetAirPPAmt('{this.CurrentMaintain["ID"]}', '')
+";
+            result = DBProxy.Current.Select(null, updateAirPP, out DataTable dtAirPPAmt);
+
+            if (!result)
+            {
+                return result;
+            }
+
+            string sqlInvNo = $@"select distinct InvNo from ShareExpense with (nolock) where  ShippingAPID = '{this.CurrentMaintain["ID"]}'";
+            if (!(result = DBProxy.Current.Select(string.Empty, sqlInvNo, out DataTable dtInvNo)))
+            {
+                return new DualResult(false, result.ToString());
+            }
+
+            if (dtInvNo != null && dtInvNo.Rows.Count > 0)
+            {
+                List<string> listInv = dtInvNo.AsEnumerable().Select(s => s["InvNo"].ToString()).ToList();
+                List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByMutiInvNo(listInv);
+                foreach (string plFromRgCode in listPLFromRgCode)
+                {
+                    PackingA2BWebAPI_Model.DataBySql dataBySql = new PackingA2BWebAPI_Model.DataBySql()
+                    {
+                        SqlString = @"
+alter table #tmp alter column AirPPID varchar(13)
+update a set a.ActAmt = airAmt.ActAmt, a.ExchangeRate = airAmt.ExchangeRate
+from AirPP a
+inner join #tmp airAmt on airAmt.AirPPID = a.ID
+",
+                        TmpTable = JsonConvert.SerializeObject(dtAirPPAmt),
+                    };
+                    result = PackingA2BWebAPI.ExecuteBySql(plFromRgCode, dataBySql);
+
+                    if (!result)
+                    {
+                        return result;
+                    }
+                }
+            }
+            #endregion
 
             return Ict.Result.True;
         }
@@ -1238,7 +1484,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
         private void BtnShareExpense_Click(object sender, EventArgs e)
         {
             bool isReasonAP007 = this.CurrentMaintain["Reason"].EqualString("AP007");
-            P08_ShareExpense callNextForm = new P08_ShareExpense(this.CurrentMaintain, this.checkIsFreightForwarder.Checked, isReasonAP007);
+            P08_ShareExpense callNextForm = new P08_ShareExpense(this.CurrentMaintain, this.checkIsFreightForwarder.Checked, isReasonAP007, this.InitialShareExpense);
             callNextForm.ShowDialog(this);
         }
 
@@ -1375,6 +1621,8 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 return;
             }
 
+            this.CheckNoExportChargesGMT(this.CurrentMaintain["BLNo"].ToString());
+
             string strsqlcmd = $@"select ID,Description from ShippingReason where type='AP' and junk=0 and id ='{this.txtReason.Text}'";
 
             if (!MyUtility.Check.Seek(strsqlcmd))
@@ -1434,6 +1682,11 @@ Non SP# Sample/Mock-up
         // B/L NO. Change
         private void TxtBLNo_Validating(object sender, CancelEventArgs e)
         {
+            if (!this.CheckNoExportChargesGMT(this.txtBLNo.Text))
+            {
+                return;
+            }
+
             this.IncludeFoundryRefresh(this.txtBLNo.Text);
 
             if (this.txtBLNo.Text.Empty() || this.comboType2.SelectedValue.EqualString("OTHER"))
@@ -1577,6 +1830,7 @@ You can complete Account Payment only after the corresponding Number is updated,
             if (isExists)
             {
                 this.checkIsFreightForwarder.Checked = MyUtility.Convert.GetBool(drResult["IsFreightForwarder"]);
+                this.CheckNoExportChargesGMT(this.CurrentMaintain["BLNo"].ToString());
             }
             else
             {
@@ -1639,6 +1893,38 @@ and AccountID != ''",
                     detailDT.Rows.Add(newRow);
                 }
             }
+        }
+
+        private bool CheckNoExportChargesGMT(string blNo)
+        {
+            if (this.checkIsFreightForwarder.Checked &&
+                !this.txtReason.Text.EqualString("AP007") &&
+                !MyUtility.Check.Empty(blNo))
+            {
+                string sqlCheckNoExportCharges = $@"
+select  ID
+from GMTBooking with (nolock)
+where   (BL2no = '{blNo}' or BLno = '{blNo}') and
+        NoExportCharges = 1
+";
+                DataTable dtCheckResult;
+                DualResult result = DBProxy.Current.Select(null, sqlCheckNoExportCharges, out dtCheckResult);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
+
+                if (dtCheckResult.Rows.Count > 0)
+                {
+                    this.txtBLNo.Text = string.Empty;
+                    this.txtBLNo.ValidateControl();
+                    MyUtility.Msg.WarningBox($"<{dtCheckResult.AsEnumerable().Select(s => s["ID"].ToString()).JoinToString(",")}> is ticked \"No export charge\". If shipping expense incurred, please untick \"no export charge\" on garment booking.");
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

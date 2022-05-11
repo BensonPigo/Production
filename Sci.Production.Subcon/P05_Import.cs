@@ -688,7 +688,11 @@ select  [Selected] = 0
         ,fr.id
         ,fr.ExceedQty
         ,[BuyBackArtworkReq] = isnull(tbbd.BuyBackArtworkReq, 0)
+        ,o.FactoryID
+        ,f.IsProduceFty
 from #FinalArtworkReq fr
+inner join Orders o with (nolock) on o.ID = fr.orderID
+left join Factory f with (nolock) on f.ID = o.FactoryID
 left join #tmpBuyBackDeduction tbbd on  tbbd.OrderID = fr.OrderID       and
                                         tbbd.Article = fr.Article       and
                                         tbbd.SizeCode = fr.SizeCode     and

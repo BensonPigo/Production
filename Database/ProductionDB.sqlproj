@@ -362,10 +362,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Tables\OperationDesc.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Tables\Construction.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -2704,6 +2700,23 @@
     <Build Include="dbo\Functions\GetVASSHAS_bit.sql" />
     <Build Include="dbo\Tables\SemiFinishedLocationTrans_Detail.sql" />
     <Build Include="dbo\Tables\SemiFinishedLocationTrans.sql" />
+    <Build Include="dbo\Tables\BrokenNeedlesRecord.sql" />
+    <Build Include="dbo\Functions\GetAirPPAmt.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\InspectionType.sql" />
+    <Build Include="dbo\Tables\InspectionType_Detail.sql" />
+    <Build Include="dbo\Tables\PackingErrorRecord.sql" />
+    <Build Include="dbo\Stored Procedures\GetSewingDailyOutputList.sql" />
+    <Build Include="dbo\Stored Procedures\ImportEstShippingReport.sql" />
+    <Build Include="dbo\Stored Procedures\Quaility_SearchList.sql" />
+    <Build Include="dbo\Tables\WHBarcodeTransaction.sql" />
+    <Build Include="dbo\Functions\GetWHBarcodeToGensong.sql" />
+    <Build Include="dbo\Functions\GetWH_NextBarcodeSeq.sql" />
+    <Build Include="dbo\Functions\GetColorMultipleID_MtlType.sql" />
+    <Build Include="dbo\Tables\BIRInvoice_Detail.sql" />
+    <Build Include="dbo\Views\View_ShareExpense.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

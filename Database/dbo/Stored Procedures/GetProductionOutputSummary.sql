@@ -49,7 +49,7 @@ from
 	from Orders o with(nolock)
 	inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
 	left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
-	where   IsProduceFty = 1 and o.Category !='' and (o.IsBuyBack != 1 or o.BuyBackReason != 'Garment')
+	where    (@IsPowerBI = 1 or IsProduceFty = 1) and o.Category !='' and (o.IsBuyBack != 1 or o.BuyBackReason != 'Garment')
 			 and 
 			 (	-- if use in PowerBI then filter SciDelivery or BuyerDelivery
 				(@IsPowerBI = 1 and 
@@ -104,7 +104,7 @@ from
 	from Orders o with(nolock)
 	inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
 	left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
-	where   IsProduceFty = 1 and o.Category ='' and (o.IsBuyBack != 1 or o.BuyBackReason != 'Garment')
+	where   (@IsPowerBI = 1 or IsProduceFty = 1) and o.Category ='' and (o.IsBuyBack != 1 or o.BuyBackReason != 'Garment')
 			 and 
 			 (	-- if use in PowerBI then filter SciDelivery or BuyerDelivery
 				(@IsPowerBI = 1 and 
@@ -567,7 +567,8 @@ select
 	[OrderReason] = OrderReason.ResName
 from @tmpBaseByOrderID tb 
 inner join Orders o with(nolock) on o.id = tb.ID
-inner join Style s with (nolock) on s.Ukey = o.StyleUkey
+inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
+left join Style s with (nolock) on s.Ukey = o.StyleUkey
 left join @tmpOrder_QtyShip toq on toq.ID = tb.ID
 left join @tmpPullout_Detail tpd on tpd.OrderID = tb.ID
 outer apply (select [val] = iif(tb.IsCancelNeedProduction = 'N' and o.Junk = 1, 0, isnull(tb.OrderCPU, 0))) TotalCPU
@@ -588,11 +589,11 @@ begin
 			[Date] = iif(@ChkMonthly = 1,  SUBSTRING(Date,1,4)+SUBSTRING(Date,5,6),DateByHalfMonth),
 			ID,
 			[OutputDate] = isnull(OutputDate, iif(SewingOutputCPU !=0 ,iif(@ChkMonthly = 1,  SUBSTRING(Date,1,4)+SUBSTRING(Date,5,6),DateByHalfMonth),'')),
-			[OrderCPU] = iif(IsCancelNeedProduction = 'N' and isNormalOrderCanceled = 1,0 ,OrderCPU - OrderShortageCPU),
-			[CanceledCPU] = iif(IsCancelNeedProduction = 'Y',OrderCPU, 0),
-			OrderShortageCPU,
-			SewingOutput,
-			SewingOutputCPU,
+			[OrderCPU] = iif(IsCancelNeedProduction = 'N' and isNormalOrderCanceled = 1,0 , ISNULL(OrderCPU, 0) - ISNULL(OrderShortageCPU, 0)),
+			[CanceledCPU] = iif(IsCancelNeedProduction = 'Y', ISNULL(OrderCPU, 0), 0),
+			[OrderShortageCPU] = ISNULL(OrderShortageCPU, 0),
+			[SewingOutput] = ISNULL(SewingOutput, 0),
+			[SewingOutputCPU] = ISNULL(SewingOutputCPU, 0),
 			FtyZone,
 			TransFtyZone 
 	from @tmpBaseBySource 

@@ -74,27 +74,25 @@ namespace Sci.Production.Shipping
 select 
 	oq.BuyerDelivery
 	,o.BrandID
+    ,Category.Value
 	,oq.Id
 	,oq.Seq
 	,oq.ShipmodeID
-	,[CancelOrder]=IIF(o.Junk=1,'Y','')
 	,fs.ShipperID
 	,o.MDivisionID
 	,o.FactoryID
 	,[PackingID] = p.ID
-	,oq.SDPDate,oq.Qty
+    ,oq.Qty
 	,pkQty.CTNQty
 	,pkQty.gw
+    ,pkQty.VM
 	,l.CBM
-	,foc.FOC
 	,sew.QAQty
 	,atCLog.ct
-	,o.OrderTypeID
+    ,o.SewInLine
+    ,o.SewOffLine
 	,o.CustCDID
 	,[Destination] = (select id+'-'+Alias from Country where Id=o.Dest)
-	,o.GMTComplete
-	,ShortageQty=iif(o.GMTComplete='S', isnull(o.Qty,0)-isnull(o.FOCQty,0)-isnull(PulloutQty.OrderQty,0)+isnull(inv.DiffQty,0),null)
-	,[Category]=Category.Value--**
     ,[OutstandingReason]=OutstandingRemark.Value
 	,[EstPODD]=o.EstPODD
 	,[ReasonRemark]=o.OutstandingRemark
@@ -129,7 +127,7 @@ outer apply(
 	and SeasonID = ''
 )fs
 outer apply(
-	select sum(CTNQty) CTNQty , sum(GW) gw
+	select sum(CTNQty) CTNQty , sum(GW) gw, VM = sum(APPEstAmtVW)
 	from PackingList_Detail
 	where OrderID=oq.Id and OrderShipmodeSeq = oq.Seq
 )pkQty

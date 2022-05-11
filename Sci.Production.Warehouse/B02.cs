@@ -11,6 +11,7 @@ using Sci.Production.Automation;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class B02 : Win.Tems.Input1
     {
         /// <inheritdoc/>
@@ -37,10 +38,11 @@ namespace Sci.Production.Warehouse
             this.btnBatchCreate.Enabled = canNew;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            if (MyUtility.Check.Seek(@"select * from System where Automation = 1"))
+            if (Prgs.IsAutomation())
             {
                 this.chkIsWMS.Visible = true;
             }
@@ -80,6 +82,7 @@ namespace Sci.Production.Warehouse
             this.btnBatchCreate.Enabled = !this.EditMode;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickCopy()
         {
             if (!(this.CurrentMaintain == null))

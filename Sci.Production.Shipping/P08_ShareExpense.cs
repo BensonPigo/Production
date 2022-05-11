@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Newtonsoft.Json;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
 using Sci.Production.PublicPrg;
@@ -12,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
+using static Sci.Production.CallPmsAPI.PackingA2BWebAPI_Model;
 
 namespace Sci.Production.Shipping
 {
@@ -28,19 +30,57 @@ namespace Sci.Production.Shipping
         private bool IsReason;
         private string LocalSuppID;
         private int isFreightForwarder;
-
+        private Func<DualResult> InitialShareExpense;
+        private string sqlInsertFromExportGMT = @"
+merge ShareExpense t
+using (
+select  ShippingAPID
+        ,BLNo
+        ,WKNo
+        ,InvNo
+        ,Type
+        ,[GW] = sum(GW)
+        ,[CBM] = sum(CBM)
+        ,CurrencyID
+        ,ShipModeID
+        ,FtyWK
+        ,AccountID
+        ,Junk
+        ,FactoryID
+from #tmp
+group by ShippingAPID
+            , BLNo
+            , WKNo
+            , InvNo
+            , Type
+            , CurrencyID
+            , ShipModeID
+            , FtyWK
+            , AccountID
+            , Junk
+            , FactoryID
+) as s
+on t.ShippingAPID = s.ShippingAPID and t.WKNO = s.WKNO and t.InvNo = s.InvNo and t.FactoryID = s.FactoryID and t.AccountID = s.AccountID
+when matched AND t.junk = 1 then
+      update set t.junk = 0
+when not matched by target then
+        insert(ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk, FactoryID)
+            values(s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk, s.FactoryID);
+                ";
         /// <summary>
         /// P08_ShareExpense
         /// </summary>
         /// <param name="aPData">aPData</param>
         /// <param name="apflag">apflag</param>
         /// <param name="isReasonAP007">Reason = AP007</param>
-        public P08_ShareExpense(DataRow aPData, bool apflag, bool isReasonAP007)
+        /// <param name="initialShareExpense">InitialShareExpense</param>
+        public P08_ShareExpense(DataRow aPData, bool apflag, bool isReasonAP007, Func<DualResult> initialShareExpense)
         {
             this.InitializeComponent();
             this.apData = aPData;
             this.Apflag = apflag;
             this.IsReason = isReasonAP007;
+            this.InitialShareExpense = initialShareExpense;
             this.isFreightForwarder = apflag ? 1 : 0;
             this.displayCurrency.Value = MyUtility.Convert.GetString(this.apData["CurrencyID"]);
             this.numTtlAmt.DecimalPlaces = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup("Exact", MyUtility.Convert.GetString(this.apData["CurrencyID"]), "Currency", "ID"));
@@ -342,6 +382,20 @@ from GMTBooking g where g.BL2No ='{e.FormattedValue.ToString()}'";
                     return;
                 }
 
+                string sqlCheckNoExportCharges = $@"
+select  1
+from GMTBooking with (nolock)
+where   ID = '{e.FormattedValue}' and
+        NoExportCharges = 1
+";
+                if (MyUtility.Check.Seek(sqlCheckNoExportCharges))
+                {
+                    MyUtility.Msg.WarningBox($"<{e.FormattedValue}> is ticked \"No export charge\". If shipping expense incurred, please untick \"no export charge\" on garment booking.");
+                    e.FormattedValue = string.Empty;
+                    e.Cancel = true;
+                    return;
+                }
+
                 if (MyUtility.Check.Seek(cmd_type, out dr))
                 {
                     // TYPE= Export : GB,Packing(type=F,L),FTYExport(type=3)
@@ -541,6 +595,7 @@ where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
             this.gridAccountID.IsEditingReadOnly = true;
             this.gridAccountID.DataSource = this.listControlBindingSource2;
             this.Helper.Controls.Grid.Generator(this.gridAccountID)
+                .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(6))
                 .Text("AccountID", header: "Account No", width: Widths.AnsiChars(8))
                 .Text("AccountName", header: "Account Name", width: Widths.AnsiChars(30))
                 .Numeric("Amount", header: "Amount", decimal_places: 2)
@@ -548,8 +603,7 @@ where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
 
             if (this.Apflag &&
                 !this.IsReason &&
-                ConfigurationManager.AppSettings["TaipeiServer"] != string.Empty
-                        && DBProxy.Current.DefaultModuleName.Contains("PMSDB") == false)
+                DBProxy.Current.DefaultModuleName.Contains("PMSDB") == false)
             {
                 this.AppendData();
             }
@@ -580,100 +634,17 @@ where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
 
         private void AppendData()
         {
-            string strSqlCmd = $@"
-merge ShareExpense t
-using (
-    select distinct
-        [ShippingAPID] = '{this.apData["ID"]}'
-        ,[BLNo] = iif(BLNo is null or BLNo='', BL2No,BLNo)
-        ,[WKNo] = ''
-        ,[InvNo] = id
-        ,[Type] = '{this.apData["SubType"]}'
-        ,[GW] = TotalGW
-        ,[CBM] = TotalCBM
-        ,[CurrencyID] = '{this.apData["CurrencyID"]}'
-        ,[ShipModeID] = ShipModeID
-        ,[FtyWK] = 0
-        ,[AccountID] = (
-	        select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
-            where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
-            and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
-		        or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1))
-        ,[Junk] = 0
-    from GMTBooking g WITH (NOLOCK) 
-    where BLNo='{this.apData["BLNO"]}' or BL2No='{this.apData["BLNO"]}' 
-
-    union all
-    select distinct
-        [ShippingAPID] = '{this.apData["ID"]}',
-	    Blno,
-        [WKNo] = '',
-        [InvNo] = f.id,
-	    [Type] = '{this.apData["SubType"]}',
-	    f.WeightKg,
-	    f.Cbm,
-	    [CurrencyID] = '{this.apData["CurrencyID"]}',
-	    f.ShipModeID,
-	    [FtyWK] = 0,
-        [AccountID] = (
-	        select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
-            where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
-            and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
-		        or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)),
-	    [Junk] = 0
-    from FtyExport f
-    where Blno = '{this.apData["BLNO"]}'
-
-    union all
-    select distinct
-        [ShippingAPID] = '{this.apData["ID"]}',
-	    Blno,
-        [WKNo] = e.id,
-        [InvNo] = '',
-	    [Type] = '{this.apData["SubType"]}',
-	    e.WeightKg,
-	    e.Cbm,
-	    [CurrencyID] = '{this.apData["CurrencyID"]}',
-	    e.ShipModeID,
-	    [FtyWK] = 0,
-        [AccountID] = (
-	        select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
-            where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
-            and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
-		        or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)),
-	    [Junk] = 0
-    from Export e
-    where Blno = '{this.apData["BLNO"]}'
-) as s 
-on	t.ShippingAPID = s.ShippingAPID 
-	and t.WKNO = s.WKNO	and t.InvNo = s.InvNo
-when matched AND t.junk=1 then
-	update set
-	t.junk=0
-when not matched by target then 
-	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk)
-	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk);
-
-update se set Junk = 1
-from ShareExpense se
-inner join ShippingAP sa on sa.id = se.ShippingAPID
-where se.ShippingAPID = '{this.apData["ID"]}'
-and not exists(select 1 from GMTBooking where id=se.InvNo and (BLNo = sa.BLNo or BL2No = sa.BLNo))
-and not exists(select 1 from FtyExport where id=se.InvNo and BLNo = sa.BLNo)
-and not exists(select 1 from Export where id=se.WKNo and BLNo = sa.BLNo)
-";
-
             DualResult result;
-            if (!(result = DBProxy.Current.Execute(string.Empty, strSqlCmd)))
+            result = this.InitialShareExpense();
+            if (!result)
             {
                 this.ShowErr(result);
                 return;
             }
 
             // 重新計算
-            result = DBProxy.Current.Execute(
-                "Production",
-                string.Format("exec CalculateShareExpense '{0}','{1}', {2}", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID, this.isFreightForwarder));
+            result = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(this.apData["ID"]), this.isFreightForwarder);
+
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Calcute share expense failed.\r\n" + result.ToString());
@@ -697,15 +668,23 @@ and not exists(select 1 from Export where id=se.WKNo and BLNo = sa.BLNo)
                     foreach (string plFromRgCode in listPLFromRgCode)
                     {
                         // 跨Server取得ShareExpense_APP所需PackingList資料
-                        DataTable dt = Prgs.DataTable_Packing(plFromRgCode, invNos);
-                        if (dt != null && dt.Rows.Count > 0)
-                        {
-                            // 將跨Serve資料更新ShareExpense_APP
-                            DualResult result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dt);
+                        DataTable dtA2BPacking;
+                        result = Prgs.DataTable_Packing(plFromRgCode, invNos, out dtA2BPacking);
 
-                            if (!result2)
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        if (dtA2BPacking.Rows.Count > 0)
+                        {
+
+                            result = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dtA2BPacking, plFromRgCode);
+
+                            if (!result)
                             {
-                                this.ShowErr(result.ToString());
+                                this.ShowErr(result);
                                 return;
                             }
                         }
@@ -755,12 +734,13 @@ select  sh.Junk,sh.ShippingAPID,sh.WKNo,sh.InvNo,sh.Type,sh.GW,sh.CBM,sh.Amount,
             when sh.ShareBase = 'G' then 'G.W.' 
             when sh.ShareBase = 'C' then 'CBM' 
             else ' Number of Deliver Sheets' 
-          end as ShareRule 
+          end as ShareRule
+        , sh.FactoryID
 from ShareExpense sh WITH (NOLOCK) 
 left join SciFMS_AccountNo an on an.ID = sh.AccountID
 where   sh.ShippingAPID = '{0}' 
         and (sh.Junk = 0 or sh.Junk is null)
-order by sh.AccountID", MyUtility.Convert.GetString(this.apData["ID"]));
+order by sh.AccountID, sh.FactoryID", MyUtility.Convert.GetString(this.apData["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.SEData);
             if (!result)
             {
@@ -814,8 +794,16 @@ and sa.InvNo in ({invNos})
                 foreach (string plFromRgCode in listPLFromRgCode)
                 {
                     // 跨Server取得ShareExpense_APP所需PackingList資料
-                    DataTable dt = Prgs.DataTable_Packing(plFromRgCode, invNo);
-                    if (dt == null || dt.Rows.Count <= 0)
+                    DataTable dt;
+                    result = Prgs.DataTable_Packing(plFromRgCode, invNo, out dt);
+
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    if (dt.Rows.Count == 0)
                     {
                         continue;
                     }
@@ -878,8 +866,8 @@ select  ShippingAPID
         , InvNo
         , se.Type
         , ShipModeID
-        , GW
-        , CBM
+        , [GW] = sum(GW)
+        , [CBM] = sum(CBM)
         , CurrencyID
         , DropDownListName = (
             select Name
@@ -895,7 +883,7 @@ select  ShippingAPID
 from ShareExpense se WITH (NOLOCK) 
 where   ShippingAPID = '{0}' 
         and (Junk = 0 or Junk is null)
-group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK
+group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,CurrencyID,ShipModeID,FtyWK
 ", MyUtility.Convert.GetString(this.apData["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out this.SEGroupData);
             if (!result)
@@ -996,6 +984,7 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
         // Edit / Save
         private void BtnSave_Click(object sender, EventArgs e)
         {
+            DualResult result;
             if (this.btnSave.Text == "Edit")
             {
                 if (this.Apflag && !this.IsReason)
@@ -1162,7 +1151,7 @@ Orders (Seq) :";
                 #region 將資料寫入Table
                 IList<string> deleteCmds = new List<string>();
                 IList<string> addCmds = new List<string>();
-                IList<string> updateCmds = new List<string>();
+                DataTable dtExportGMT = new DataTable();
 
                 // Junk實體資料
                 foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
@@ -1192,65 +1181,60 @@ where   s.ShippingAPID = '{0}'
                      */
                     if (dr.RowState == DataRowState.Added)
                     {
-                        addCmds.Add(string.Format(
-                            @"
+                        if (this.apData["Type"].ToString() == "EXPORT" &&
+                            this.apData["SubType"].ToString() == "GARMENT" &&
+                            MyUtility.Check.Seek($"select 1 from GMTBooking with (nolock) where ID = '{dr["InvNo"]}'"))
+                        {
+                            result = this.GetShareExpenseByUserInput(dr, ref dtExportGMT);
+                            if (!result)
+                            {
+                                this.ShowErr(result);
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            addCmds.Add(string.Format(
+                                @"
 merge ShareExpense t
 using (select [ShippingAPID] = '{0}', [WKNO] = '{2}', [InvNo] = '{3}', AccountID from #tmp) as s
 on	t.ShippingAPID = s.ShippingAPID 	
 	and t.WKNO = s.WKNO
 	and t.InvNo = s.InvNo
 	and t.AccountID = s.AccountID
+    and t.FactoryID = ''
 when matched then
 	update set t.Junk = 0
     , ShipModeID = '{8}'
     , GW = {5}
     , CBM = {6} 
 when not matched then 
-	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk)
-	values (s.ShippingAPID, '{1}', s.WKNO, s.InvNo, '{4}', {5}, {6}, '{7}', '{8}', {9}, s.AccountID, 0);
+	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk, FactoryID)
+	values (s.ShippingAPID, '{1}', s.WKNO, s.InvNo, '{4}', {5}, {6}, '{7}', '{8}', {9}, s.AccountID, 0, '');
 
 drop table #tmp;",
-                            MyUtility.Convert.GetString(this.apData["ID"]),
-                            MyUtility.Convert.GetString(dr["BLNo"]),
-                            MyUtility.Convert.GetString(dr["WKNo"]),
-                            MyUtility.Convert.GetString(dr["InvNo"]),
-                            MyUtility.Convert.GetString(this.apData["SubType"]),
-                            MyUtility.Convert.GetString(dr["GW"]),
-                            MyUtility.Convert.GetString(dr["CBM"]),
-                            MyUtility.Convert.GetString(this.apData["CurrencyID"]),
-                            MyUtility.Convert.GetString(dr["ShipModeID"]),
-                            MyUtility.Convert.GetString(dr["FtyWK"]) == "True" ? "1" : "0"));
-                    }
-
-                    if (dr.RowState == DataRowState.Modified)
-                    {
-                        updateCmds.Add(string.Format(
-                            @"
-update ShareExpense 
-set ShipModeID = '{0}'
-    , GW = {1}
-    , CBM = {2} 
-where   ShippingAPID = '{3}'
-        and WKNo = '{5}' 
-        and InvNo = '{6}';",
-                            MyUtility.Convert.GetString(dr["ShipModeID"]),
-                            MyUtility.Convert.GetString(dr["GW"]),
-                            MyUtility.Convert.GetString(dr["CBM"]),
-                            MyUtility.Convert.GetString(this.apData["ID"]),
-                            MyUtility.Convert.GetString(dr["BLNo"]),
-                            MyUtility.Convert.GetString(dr["WKNo"]),
-                            MyUtility.Convert.GetString(dr["InvNo"])));
+                                MyUtility.Convert.GetString(this.apData["ID"]),
+                                MyUtility.Convert.GetString(dr["BLNo"]),
+                                MyUtility.Convert.GetString(dr["WKNo"]),
+                                MyUtility.Convert.GetString(dr["InvNo"]),
+                                MyUtility.Convert.GetString(this.apData["Type"]),
+                                MyUtility.Convert.GetString(dr["GW"]),
+                                MyUtility.Convert.GetString(dr["CBM"]),
+                                MyUtility.Convert.GetString(this.apData["CurrencyID"]),
+                                MyUtility.Convert.GetString(dr["ShipModeID"]),
+                                MyUtility.Convert.GetString(dr["FtyWK"]) == "True" ? "1" : "0"));
+                        }
                     }
                 }
 
                 SqlConnection sqlConn = null;
                 DBProxy.Current.OpenConnection(null, out sqlConn);
-                using (TransactionScope transactionScope = new TransactionScope())
+                using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.FromSeconds(100)))
                 using (sqlConn)
                 {
                     try
                     {
-                        DualResult result, result1;
+                        DualResult result1;
                         bool lastResult = true;
                         string errmsg = string.Empty;
 
@@ -1285,23 +1269,17 @@ where   ShippingAPID = '{3}'
                             }
                         }
 
-                        if (updateCmds.Count != 0)
+                        if (dtExportGMT.Rows.Count > 0)
                         {
-                            result1 = DBProxy.Current.ExecutesByConn(sqlConn, updateCmds);
-                            if (result1)
+                            result = MyUtility.Tool.ProcessWithDatatable(dtExportGMT, null, this.sqlInsertFromExportGMT, out DataTable dtEmpty, conn: sqlConn);
+                            if (!result)
                             {
-                                lastResult = lastResult && true;
-                            }
-                            else
-                            {
+                                errmsg = errmsg + "Insert Garment Export failed." + "\r\n" + result.ToString();
                                 lastResult = false;
-                                errmsg = errmsg + result1.ToString() + "\r\n";
                             }
                         }
 
-                        result = DBProxy.Current.ExecuteByConn(
-                            sqlConn,
-                            string.Format("exec CalculateShareExpense '{0}','{1}', {2}", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID, this.isFreightForwarder));
+                        result = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(this.apData["ID"]), this.isFreightForwarder);
                         if (!result)
                         {
                             errmsg = errmsg + "Calcute share expense failed." + "\r\n" + result.ToString();
@@ -1310,6 +1288,11 @@ where   ShippingAPID = '{3}'
 
                         // 執行A2B跨廠區資料 & 寫入跨廠區資料到ShareExpense_APP
                         List<string> ilist = this.SEData.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["InvNo"])).Distinct().ToList();
+                        if (ilist.Count == 0 && this.SEGroupData.Rows.Count > 0)
+                        {
+                            ilist = this.SEGroupData.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["InvNo"])).Distinct().ToList();
+                        }
+
                         foreach (var item in ilist)
                         {
                             string invNos = item.ToString();
@@ -1317,16 +1300,25 @@ where   ShippingAPID = '{3}'
                             foreach (string plFromRgCode in listPLFromRgCode)
                             {
                                 // 跨Server取得ShareExpense_APP所需PackingList資料
-                                DataTable dt = Prgs.DataTable_Packing(plFromRgCode, invNos);
+                                DataTable dt;
+                                result = Prgs.DataTable_Packing(plFromRgCode, invNos, out dt);
+
+                                if (!result)
+                                {
+                                    transactionScope.Dispose();
+                                    this.ShowErr(result);
+                                    return;
+                                }
+
                                 if (dt != null && dt.Rows.Count > 0)
                                 {
-                                    // 將跨Serve資料更新ShareExpense_APP
-                                    DualResult result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dt);
+                                    result = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dt, plFromRgCode);
 
-                                    if (!result2)
+                                    if (!result)
                                     {
-                                        errmsg = errmsg + "Calcute share expense failed." + "\r\n" + result2.ToString();
-                                        lastResult = false;
+                                        transactionScope.Dispose();
+                                        this.ShowErr(result);
+                                        return;
                                     }
                                 }
                             }
@@ -1574,9 +1566,48 @@ select [resultType] = 'OK',
         // Re-Calculate
         private void BtnReCalculate_Click(object sender, EventArgs e)
         {
-            DualResult result = DBProxy.Current.Execute(
-                "Production",
-                string.Format("exec CalculateShareExpense '{0}','{1}', {2}", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID, this.isFreightForwarder));
+            DualResult result;
+
+            if (this.Apflag && !this.IsReason)
+            {
+                result = this.InitialShareExpense();
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+            }
+            else
+            {
+                foreach (DataRow dr in this.SEGroupData.Rows)
+                {
+                    if (this.apData["Type"].ToString() == "EXPORT" &&
+                        this.apData["SubType"].ToString() == "GARMENT" &&
+                        MyUtility.Check.Seek($"select 1 from GMTBooking with (nolock) where ID = '{dr["InvNo"]}'"))
+                    {
+                        DataTable dtExportGMT = new DataTable();
+
+                        result = this.GetShareExpenseByUserInput(dr, ref dtExportGMT);
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        if (dtExportGMT.Rows.Count > 0)
+                        {
+                            result = MyUtility.Tool.ProcessWithDatatable(dtExportGMT, null, this.sqlInsertFromExportGMT, out DataTable dtEmpty);
+                            if (!result)
+                            {
+                                this.ShowErr(result);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
+            result = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(this.apData["ID"]), this.isFreightForwarder);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Re-Calculate Delete faile\r\n" + result.ToString());
@@ -1590,27 +1621,31 @@ select [resultType] = 'OK',
                 return;
             }
 
-            if (dtInvNo != null && dtInvNo.Rows.Count > 0)
+            // 執行A2B跨廠區資料 & 寫入跨廠區資料到ShareExpense_APP
+            foreach (DataRow item in dtInvNo.Rows)
             {
-                // 執行A2B跨廠區資料 & 寫入跨廠區資料到ShareExpense_APP
-                foreach (DataRow item in dtInvNo.Rows)
+                string invNos = item["InvNo"].ToString();
+                List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(invNos);
+                foreach (string plFromRgCode in listPLFromRgCode)
                 {
-                    string invNos = item["InvNo"].ToString();
-                    List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByInvNo(invNos);
-                    foreach (string plFromRgCode in listPLFromRgCode)
-                    {
-                        // 跨Server取得ShareExpense_APP所需PackingList資料
-                        DataTable dt = Prgs.DataTable_Packing(plFromRgCode, invNos);
-                        if (dt != null && dt.Rows.Count > 0)
-                        {
-                            // 將跨Serve資料更新ShareExpense_APP
-                            DualResult result2 = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dt);
+                    // 跨Server取得ShareExpense_APP所需PackingList資料
+                    DataTable dt;
+                    result = Prgs.DataTable_Packing(plFromRgCode, invNos, out dt);
 
-                            if (!result2)
-                            {
-                                this.ShowErr(result.ToString());
-                                return;
-                            }
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    if (dt != null && dt.Rows.Count > 0)
+                    {
+                        result = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dt, plFromRgCode);
+
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            return;
                         }
                     }
                 }
@@ -1654,6 +1689,144 @@ select [resultType] = 'OK',
             {
                 grid1DT.Rows[i].Delete();
             }
+        }
+
+        private DualResult GetShareExpenseByUserInput(DataRow dr, ref DataTable dtExportGMT)
+        {
+            if (this.apData["Type"].ToString() == "EXPORT" &&
+                    this.apData["SubType"].ToString() == "GARMENT" &&
+                    MyUtility.Check.Seek($"select 1 from GMTBooking with (nolock) where ID = '{dr["InvNo"]}'"))
+            {
+                #region A2B garment and by Factory 分攤
+
+                #region get A2B PackingInfo
+                string sqlGetA2BGMT = $@"
+select  gd.PLFromRgCode
+        ,gd.PackingListID
+        ,[BLNo] = '{dr["BLNo"]}'
+        ,[WKNo] = ''
+        ,[InvNo] = g.id
+        ,[Type] = '{this.apData["Type"]}'
+        ,[CurrencyID] = '{this.apData["CurrencyID"]}'
+        ,[ShipModeID] = g.ShipModeID
+        ,[FtyWK] = 0
+        ,[AccountID] = AccountID.val
+        ,[Junk] = 0
+        ,[ShippingAPID] = '{this.apData["ID"]}'
+from GMTBooking g WITH (NOLOCK)
+outer apply(select distinct [val] = sd.AccountID 
+            from ShippingAP_Detail sd WITH(NOLOCK)
+                where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
+                and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+		            or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
+inner join GMTBooking_Detail gd with (nolock) on g.ID = gd.ID
+where g.ID = '{dr["InvNo"]}'
+";
+                DataTable dtA2BGMT;
+
+                DualResult result = DBProxy.Current.Select(null, sqlGetA2BGMT, out dtA2BGMT);
+                if (!result)
+                {
+                    return result;
+                }
+
+                string sqlGetA2BPack = @"
+alter table #tmp alter column InvNo varchar(25)
+alter table #tmp alter column PackingListID varchar(13)
+
+select  g.ShippingAPID
+        ,g.BLNo
+        ,g.WKNo
+        ,g.InvNo
+        ,g.Type
+        ,[GW] = sum(pd.GW)
+        ,[CBM] = sum(l.CBM)
+        ,g.CurrencyID
+        ,g.ShipModeID
+        ,g.FtyWK
+        ,g.AccountID
+        ,g.Junk
+        ,o.FactoryID
+from #tmp g
+inner join PackingList p with (nolock) on p.INVNo = g.InvNo and p.ID = g.PackingListID
+inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty = 1
+inner join Orders o with (nolock) on o.ID = pd.OrderID
+inner join LocalItem l with (nolock) on l.Refno = pd.Refno
+group by g.ShippingAPID
+        ,g.BLNo
+        ,g.WKNo
+        ,g.InvNo
+        ,g.Type
+        ,g.CurrencyID
+        ,g.ShipModeID
+        ,g.FtyWK
+        ,g.AccountID
+        ,g.Junk
+        ,o.FactoryID
+";
+
+                foreach (var groupItem in dtA2BGMT.AsEnumerable().GroupBy(s => s["PLFromRgCode"].ToString()))
+                {
+                    DataBySql dataBySql = new DataBySql()
+                    {
+                        SqlString = sqlGetA2BPack,
+                        TmpTable = JsonConvert.SerializeObject(groupItem.CopyToDataTable()),
+                    };
+
+                    DataTable dtA2BPack;
+                    result = PackingA2BWebAPI.GetDataBySql(groupItem.Key, dataBySql, out dtA2BPack);
+
+                    if (!result)
+                    {
+                        return result;
+                    }
+
+                    dtA2BPack.MergeTo(ref dtExportGMT);
+                }
+                #endregion
+
+                string sqlGetExportGMT = $@"
+
+select 
+    [ShippingAPID] = '{this.apData["ID"]}'
+    ,[BLNo] = '{dr["BLNo"]}'
+    ,[WKNo] = ''
+    ,[InvNo] = g.id
+    ,[Type] = '{this.apData["Type"]}'
+    ,[GW] = sum(pd.GW)
+    ,[CBM] = sum(l.CBM)
+    ,[CurrencyID] = '{this.apData["CurrencyID"]}'
+    ,[ShipModeID] = g.ShipModeID
+    ,[FtyWK] = 0
+    ,[AccountID] = AccountID.val
+    ,[Junk] = 0
+    ,o.FactoryID
+from GMTBooking g WITH (NOLOCK)
+outer apply(select distinct [val] = sd.AccountID 
+            from ShippingAP_Detail sd WITH(NOLOCK)
+                where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
+                and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+		            or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
+inner join PackingList p with (nolock) on p.INVNo = g.ID
+inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty = 1
+inner join Orders o with (nolock) on o.ID = pd.OrderID
+inner join LocalItem l with (nolock) on l.Refno = pd.Refno
+where g.ID = '{dr["InvNo"]}'
+group by g.BLNo, g.BL2No, g.id, g.ShipModeID, AccountID.val, o.FactoryID
+";
+                DataTable dtLocalGMT;
+                result = DBProxy.Current.Select(null, sqlGetExportGMT, out dtLocalGMT);
+
+                if (!result)
+                {
+                    return result;
+                }
+
+                dtLocalGMT.MergeTo(ref dtExportGMT);
+                #endregion
+            }
+
+            return new DualResult(true);
         }
     }
 }

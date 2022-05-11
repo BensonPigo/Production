@@ -163,6 +163,8 @@ select tmp.Roll
 	, location
 	, ContainerCode
 	, [balance] = sum(TMP.inqty - TMP.outqty + tmp.adjust - tmp.ReturnQty) over (partition by tmp.stocktype,tmp.roll,tmp.dyelot order by tmp.IssueDate,tmp.stocktype,tmp.inqty desc,tmp.iD )
+    , GW
+    , ActW
 from (
 	select b.roll
 		, b.stocktype
@@ -178,6 +180,8 @@ from (
 		, a.remark 
 		, [location] = '' 
 		, ContainerCode = ''
+        , GW = ''
+        , ActW = ''
 	from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -206,6 +210,8 @@ union all
 		, a.remark
 		, [location] = ''
 		, ContainerCode = ''
+        , GW = ''
+        , ActW = ''
 	from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.FromPOID
 		and fi.Seq1 = b.FromSeq1 and fi.Seq2 = b.FromSeq2
@@ -233,6 +239,8 @@ union all
         , [ReturnQty] = 0
 		, a.remark 
 		, [location] = b.ToLocation
+        , GW = ''
+        , ActW = ''
 		, [ContainerCode] = b.ToContainerCode
 	from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.ToPOID
@@ -268,6 +276,8 @@ union all
 		, a.remark
 		, [location] = '' 
 		, ContainerCode = ''
+        , GW = ''
+        , ActW = ''
 	from Issue a WITH (NOLOCK) , Issue_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -297,6 +307,8 @@ union all
 		, a.remark
 		, [location] = '' 
 		, ContainerCode = ''
+        , GW = ''
+        , ActW = ''
 	from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -327,6 +339,8 @@ union all
 		, a.remark 
 		, [location] = '' 
 		, ContainerCode = ''
+        , GW = ''
+        , ActW = ''
 	from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -354,7 +368,9 @@ union all
         , [ReturnQty] = 0
 		, a.remark
 		, [location] = b.Location
-		,b.ContainerCode
+		, b.ContainerCode
+        , GW = ''
+        , ActW = ''
 	from IssueReturn a WITH (NOLOCK) , IssueReturn_Detail b WITH (NOLOCK) 
 	where status = 'Confirmed'
 	and b.poid = '{0}'
@@ -379,14 +395,16 @@ union all
         , [ReturnQty] = 0
 		, [remark] = '' 
 		, [location] = b.Location
-		,b.ContainerCode
+		, b.ContainerCode
+        , GW = CONVERT(varchar, b.Weight)
+        , ActW = CONVERT(varchar, b.ActualWeight)
     from Receiving a WITH (NOLOCK) , Receiving_Detail b WITH (NOLOCK) 
     where Status = 'Confirmed' 
 	and poid = '{0}' 
 	and seq1 = '{1}'
 	and seq2 = '{2}'
 	and a.id = b.id     
-    group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type,b.roll,b.stocktype,b.dyelot,a.eta,b.Location,b.ContainerCode
+    group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type,b.roll,b.stocktype,b.dyelot,a.eta,b.Location,b.ContainerCode,b.Weight,b.ActualWeight
 
 union all
 
@@ -403,6 +421,8 @@ union all
 		, a.remark
 		, [location] = ''
 		, [ContainerCode] = ''
+        , GW = ''
+        , ActW = ''
 	from ReturnReceipt a WITH (NOLOCK) , ReturnReceipt_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -435,6 +455,8 @@ union all
 		, [remark] = isnull(a.remark,'') 
 		, [location] = ''
 		, [ContainerCode] = ''
+        , GW = ''
+        , ActW = ''
 	from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.FromPOID
 		and fi.Seq1 = b.FromSeq1 and fi.Seq2 = b.FromSeq2
@@ -478,6 +500,8 @@ union all
 											  group by b1.ToLocation) tmp 
 									for XML PATH('')) ,1,1,'') ,'') 
 		,[ContainerCode] = b.ToContainerCode
+        , GW = ''
+        , ActW = ''
 	from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
 	where Status = 'Confirmed'
 	and ToPoid = '{0}'
@@ -514,13 +538,15 @@ union all
 										group by b1.Location) tmp 
                         for XML PATH('')) ,1,1,''), '')
 		, b.ContainerCode
+        , GW = CONVERT(varchar, b.Weight)
+        , ActW = CONVERT(varchar, b.ActualWeight)
 	from TransferIn a WITH (NOLOCK) , TransferIn_Detail b WITH (NOLOCK) 
 	where Status = 'Confirmed'
 	and poid = '{0}'
 	and seq1 = '{1}'
 	and seq2 = '{2}'
 	and a.id = b.id 	
-	group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot, b.ContainerCode
+	group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot, b.ContainerCode,b.ActualWeight,b.Weight
 
 union all
 
@@ -537,6 +563,8 @@ union all
 		, a.remark
 		, [location] = ''
 		, ContainerCode =''
+        , GW = ''
+        , ActW = ''
 	from TransferOut a WITH (NOLOCK) , TransferOut_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -566,6 +594,8 @@ union all
 		, a.remark
 		, [location] = ''
 		, ContainerCode = ''
+        , GW = ''
+        , ActW = ''
 	from RequestCrossM a WITH (NOLOCK) , RequestCrossM_Receive b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -580,7 +610,7 @@ union all
 
 ) tmp
 where stocktype <> 'O'
-group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp.roll,tmp.stocktype,tmp.dyelot,tmp.ContainerCode
+group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp.roll,tmp.stocktype,tmp.dyelot,tmp.ContainerCode, tmp.GW, tmp.ActW
 
 ",
                     this.dr["id"].ToString(),
@@ -661,7 +691,6 @@ group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp
                 col_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
 
                 // 設定Grid2的顯示欄位
-
                 Ict.Win.UI.DataGridViewTextBoxColumn col_ContainerCode2;
                 this.gridTrans.IsEditingReadOnly = true;
                 this.gridTrans.DataSource = this.bindingSource2;
@@ -674,6 +703,8 @@ group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp
                      .Numeric("Adjust", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("ReturnQty", header: "Return Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                     .Text("GW", header: "G.W(kg)", width: Widths.AnsiChars(7))
+                     .Text("ActW", header: "Act.(kg)", width: Widths.AnsiChars(7))
                      .Text("Location", header: "Location", width: Widths.AnsiChars(5))
                      .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out col_ContainerCode2)
                      ;

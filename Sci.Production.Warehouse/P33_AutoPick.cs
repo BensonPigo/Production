@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg.Entity;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -414,9 +415,9 @@ OUTER APPLY(
 		 [Val]=SUM(((SeamLength  * Frequency * UseRatio ) +  (Allowance * Segment) )) 
 		,[Qty] = b.QTY
 	FROM DBO.GetThreadUsedQtyByBOT(psd.ID,{sqmMachineTypeIDs}) g
-    INNER JOIN #step1 s1 on s1.SCIRefNo = g.SCIRefNo AND s1.SuppColor = g.SuppColor AND s1.Article = g.Article
+    INNER JOIN #step1 s1 on s1.SCIRefNo = g.SCIRefNo AND s1.SuppColor = g.SuppColor and s1.ColorID = g.ColorID AND s1.Article = g.Article
 	INNER JOIN #tmp_sumQty b ON s1.Article = b.Article
-	WHERE g.SCIRefNo= psd.SCIRefNo AND g.SuppColor = psd.SuppColor  
+	WHERE g.SCIRefNo= psd.SCIRefNo AND g.SuppColor = psd.SuppColor and g.ColorID = psd.ColorID
 	GROUP BY g.SCIRefNo, g.ColorID, g.Article, b.QTY
 )ThreadUsedQtyByBOT1
 OUTER APPLY(
@@ -424,7 +425,7 @@ OUTER APPLY(
 		 [Val]=SUM(((SeamLength  * Frequency * UseRatio ) +  (Allowance * Segment) )) 
 		,[Qty] = b.QTY
 	FROM DBO.GetThreadUsedQtyByBOT(psd.ID,{sqmMachineTypeIDs}) g
-    INNER JOIN #step1 s1 on s1.SCIRefNo = g.SCIRefNo AND s1.SuppColor = g.SuppColor AND s1.Article = g.Article
+    INNER JOIN #step1 s1 on s1.SCIRefNo = g.SCIRefNo AND s1.SuppColor = g.SuppColor and s1.ColorID = g.ColorID and s1.Article = g.Article
 	INNER JOIN #tmp_sumQty b ON s1.Article = b.Article
 	WHERE g.SCIRefNo= TR.FromSCIRefno AND g.SuppColor = TR.FromSuppColor  
 	GROUP BY g.SCIRefNo, g.ColorID, g.Article, b.QTY

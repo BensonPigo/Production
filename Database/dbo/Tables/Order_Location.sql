@@ -6,6 +6,8 @@
     [AddDate]   DATETIME       NULL,
     [EditName]  VARCHAR (10)   CONSTRAINT [DF_Order_Location_EditName] DEFAULT ('') NULL,
     [EditDate]  DATETIME       NULL,
+    [SourceFrom] VARCHAR(15) NULL, 
+    [LastUpdateDate] DATETIME NULL, 
     CONSTRAINT [PK_Order_Location] PRIMARY KEY CLUSTERED ([OrderId] ASC, [Location] ASC)
 );
 
@@ -41,3 +43,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_Location', @level2type = N'COLUMN', @level2name = N'EditDate';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'從哪一隻程式更新',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Order_Location',
+    @level2type = N'COLUMN',
+    @level2name = N'SourceFrom'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'最後更新時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Order_Location',
+    @level2type = N'COLUMN',
+    @level2name = N'LastUpdateDate'

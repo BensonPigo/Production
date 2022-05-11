@@ -23,17 +23,19 @@ namespace Sci.Production.Shipping
     {
         private DataTable masterDataTable_init = new DataTable();
         private DataTable masterDataTable;
-
+        private bool edit;
         /// <summary>
         /// Initializes a new instance of the <see cref="P10_DeleteGarmentBookingHistory"/> class.
         /// </summary>
         /// <param name="masterData">DataTable</param>
-        public P10_DeleteGarmentBookingHistory(DataTable masterData)
+        /// <param name="edit">edit</param>
+        public P10_DeleteGarmentBookingHistory(DataTable masterData, bool edit = false)
         {
             this.InitializeComponent();
             this.masterDataTable_init = masterData.Copy();
             this.masterDataTable = masterData;
             this.EditMode = false;
+            this.edit = edit;
         }
 
         /// <inheritdoc/>
@@ -105,6 +107,12 @@ namespace Sci.Production.Shipping
             if (!dataRows.Any())
             {
                 this.btnSave.Visible = false;
+            }
+
+            if (this.edit)
+            {
+                this.BtnSave_Click(null, null);
+                MyUtility.Msg.InfoBox("Please fill in [Reason]、[Remark] to delete GB# <GB#>!");
             }
         }
 
@@ -185,7 +193,7 @@ namespace Sci.Production.Shipping
                         msg += string.Format("{0} New Destination cannot be empty!", dataRow["GMTBookingID"]) + Environment.NewLine;
                     }
 
-                    if (dataRow["ReasonID"].EqualString("DG007") && dataRow["Remark"].Empty())
+                    if (dataRow["Remark"].Empty())
                     {
                         msg += string.Format("{0} Remark cannot be empty!!", dataRow["GMTBookingID"]) + Environment.NewLine;
                     }

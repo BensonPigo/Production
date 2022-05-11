@@ -12,7 +12,7 @@ select @ToAddress = ToAddress ,@CcAddress = CcAddress from MailTo where id = '01
 select @RgCode = RgCode from system;
 set @StartDate1 = cast(convert(nvarchar(10),@StartDate,112) + ' 00:00:00'  as datetime)
 set @EndDate1 = cast(convert(nvarchar(10),dateadd(dd,1,@EndDate),112) + ' 00:00:00'  as datetime)
-begin try
+
 --抓出時間區間內SewingSchedule的orderID
 select distinct ss.OrderID,o.StyleID,o.SeasonID,o.BrandID,o.StyleUKey,o.Qty,o.AddName,o.SCIDelivery ,o.CustPONo
 into #SrcOrderID
@@ -390,32 +390,5 @@ not exists(select 1 from #tStAssign where SeqAssign_guid = s.SeqAssign_guid and 
 
 drop table #SrcOrderID,#tMODCS,#tMOSeqD,#tMOSeqM,#tMOM,#tSeqBase,#tMachineInfo,#tRoute,#tRouteLine,#tSeqAssign,#tStAssign,#tSeqAssignSunRise
 
--- mail 通知信
-declare @subject nvarchar(255) = concat('SUNRISE Daily transfer-',Format(getdate(),'yyyy/MM/dd'),'-',@RgCode)
-EXEC msdb.dbo.sp_send_dbmail  
-    @profile_name = 'SUNRISEmailnotice',  
-    @recipients = @ToAddress,
-	@copy_recipients= @CcAddress,  
-    @body = 'SUNRISE Daily transfer successfully',  
-    @subject = @subject; 
-	
-end try
-begin catch
-	DECLARE @ErrorMessage NVARCHAR(4000);
-	DECLARE @ErrorLine int;
-	DECLARE @ErrorBody NVARCHAR(4000);
-    SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorLine = Error_Line();
-
-	set @ErrorBody = N'Error Line: ' + CAST(@ErrorLine AS nvarchar(100)) + CHAR(13)+CHAR(10) + N'Error Message: ' + @ErrorMessage;
-
-	declare @err_subject nvarchar(255) = concat('SUNRISE Daily transfer failure-',Format(getdate(),'yyyy/MM/dd'),'-',@RgCode)
-	EXEC msdb.dbo.sp_send_dbmail  
-    @profile_name = 'SUNRISEmailnotice',  
-    @recipients = @ToAddress,
-	@copy_recipients= @CcAddress,  
-    @body = @ErrorBody,  
-    @subject = @err_subject; 
-
-end catch
 
 end

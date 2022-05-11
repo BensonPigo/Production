@@ -2,16 +2,15 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
@@ -21,7 +20,6 @@ namespace Sci.Production.Warehouse
     /// <inheritdoc/>
     public partial class P48 : Win.Tems.QueryForm
     {
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataTable dtInventory;
 
         /// <inheritdoc/>
@@ -31,7 +29,6 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
         }
 
-        // Query
         private void BtnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
@@ -58,7 +55,6 @@ namespace Sci.Production.Warehouse
             }
             else
             {
-
                 List<SqlParameter> parameters = new List<SqlParameter>
                 {
                     new SqlParameter("@sp1", sp1),
@@ -216,10 +212,7 @@ Where   c.lock = 0
             this.HideWaitMessage();
         }
 
-        // Form Load
-
         /// <inheritdoc/>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -312,7 +305,7 @@ Where   c.lock = 0
                         if (!MyUtility.Check.Seek(
                             string.Format(
                             @"select id, Name from Reason WITH (NOLOCK) where id = '{0}' 
-and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
+and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr))
                         {
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found!", "Reason ID");
@@ -331,7 +324,7 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
             this.gridImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.gridImport.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridImport)
-                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14))
                 .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Text("OrderTypeID", header: "Order Type", iseditingreadonly: true, width: Widths.AnsiChars(13))
@@ -383,7 +376,6 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
         }
 
         // Create Batch
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
@@ -621,6 +613,23 @@ from #tmp";
 
             for (int i = 0; i < listPoid.Count; i++)
             {
+                string detailbyIDCmd = $"select * from Adjust_Detail with(nolock) where id = '{tmpId[i]}'";
+                result = DBProxy.Current.Select(null, detailbyIDCmd, out DataTable dtDetail_Ukeys);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
+                result = Prgs.GetFtyInventoryData(dtDetail_Ukeys, "P45", out DataTable dtOriFtyInventory);
+
+                // 檢查 是自動倉 的 Barcode不可為空
+                if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, "P45"))
+                {
+                    return;
+                }
+
                 DataTable[] dts;
                 List<SqlParameter> para = new List<SqlParameter>
                 {
@@ -648,13 +657,23 @@ from #tmp";
                             {
                                 item["CreateStatus"] = string.Format(
                                     @"{2}'s balance: {0} is less than Adjust qty: {1}
-                                    Balacne Qty is not enough!!", drs["balance"].ToString(), drs["Adjustqty"].ToString(), tmpId[i].ToString());
+                                    Balacne Qty is not enough!!", drs["balance"].ToString(),
+                                    drs["Adjustqty"].ToString(),
+                                    tmpId[i].ToString());
                             }
                         }
                     }
                 }
                 else
                 {
+                    // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                    if (!(result = Prgs.UpdateWH_Barcode(true, dtDetail_Ukeys, "P45", out bool fromNewBarcode, dtOriFtyInventory)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    // AutoWHFabric WebAPI
+                    Prgs_WMS.WMSprocess(true, dtDetail_Ukeys, "P45", EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
                     DataRow[] drfound = this.dtInventory.Select(string.Format("poid='{0}' and selected=1", listPoid[i].ToString()));
                     foreach (var item in drfound)
                     {
@@ -664,32 +683,8 @@ from #tmp";
             }
             #endregion
 
-            // AutoWHFabric WebAPI for Vstrong
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentRemoveC_Detail_New(dtDetail, "P48", "New"))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-            }
-
             MyUtility.Msg.InfoBox("Create Successful.");
 
-            // DataTable dtCreate = new DataTable();
-            // dtCreate.Columns.Add("ID");
-            // for (int i = 0; i < listPoid.Count; i++)
-            // {
-            //    DataRow drCreate = dtCreate.NewRow();
-            //    drCreate["ID"] = tmpId[i].ToString();
-            //    dtCreate.Rows.Add(drCreate);
-            // }
-            // if (dtCreate.Rows.Count > 0)
-            // {
-            //    var m = MyUtility.Msg.ShowMsgGrid(dtCreate, "These Adjust ID have been created.", "Create Successful.");
-            //    m.Width = 400;
-            //    m.grid1.Columns[0].Width = 150;
-            //    m.text_Find.Width = 150;
-            //    m.btn_Find.Location = new Point(170, 6);
-            //    m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
-            // }
             #endregion
             this.HideWaitMessage();
         }

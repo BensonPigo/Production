@@ -16,7 +16,8 @@
     [EditDate]     DATETIME        NULL,
     [AccountID]    VARCHAR (8)     CONSTRAINT [DF_ShareExpense_AccountID] DEFAULT ('') NOT NULL,
     [DebitID]      VARCHAR (13)    NULL,
-    CONSTRAINT [PK_ShareExpense_1] PRIMARY KEY CLUSTERED ([ShippingAPID] ASC, [BLNo] ASC, [WKNo] ASC, [InvNo] ASC, [AccountID] ASC)
+    [FactoryID] VARCHAR(8) CONSTRAINT [DF_ShareExpense_FactoryID] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_ShareExpense_1] PRIMARY KEY CLUSTERED ([ShippingAPID] ASC, [BLNo] ASC, [WKNo] ASC, [InvNo] ASC, [AccountID] ASC, [FactoryID] ASC)
 );
 
 

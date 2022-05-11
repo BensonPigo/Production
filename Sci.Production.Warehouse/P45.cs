@@ -3,6 +3,7 @@ using Ict.Win;
 using Microsoft.Reporting.WinForms;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using Sci.Win;
 using System;
@@ -12,8 +13,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Transactions;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
@@ -21,10 +21,7 @@ namespace Sci.Production.Warehouse
     /// <inheritdoc/>
     public partial class P45 : Win.Tems.Input6
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="P45"/> class.
-        /// </summary>
-        /// <param name="menuitem">ToolStripMenuItem</param>
+        /// <inheritdoc/>
         public P45(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -156,13 +153,15 @@ Reason can’t be empty!!",
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
+            this.RenewData(); // 先重載資料, 避免雙開程式狀況
             base.ClickConfirm();
             if (this.CurrentMaintain == null)
             {
                 return;
             }
 
-            string id = this.CurrentMaintain["ID"].ToString();
+            // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
+            DualResult result = Prgs.GetFtyInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtOriFtyInventory);
 
             #region 檢查物料Location 是否存在WMS
             if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P45"))
@@ -178,33 +177,55 @@ Reason can’t be empty!!",
             }
             #endregion
 
-            List<SqlParameter> para = new List<SqlParameter>
+            Exception errMsg = null;
+            using (TransactionScope transactionscope = new TransactionScope())
             {
-                new SqlParameter("@ID", id),
-                new SqlParameter("@UserID", Env.User.UserID),
-            };
-            DualResult res = DBProxy.Current.SelectSP(string.Empty, "dbo.usp_RemoveScrapById", para, out DataTable[] dts);
-            if (!res)
-            {
-                MyUtility.Msg.ErrorBox(res.ToString(), "error");
-                return;
-            }
-
-            if (dts.Length < 1)
-            {
-                MyUtility.Msg.InfoBox("Confirmed Successful.");
-
-                // AutoWHACC WebAPI for Vstrong
-                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                try
                 {
-                    DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                    Task.Run(() => new Vstrong_AutoWHAccessory().SentRemoveC_Detail_New(dtDetail, "P45", "New"))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-                }
+                    List<SqlParameter> para = new List<SqlParameter>
+                    {
+                        new SqlParameter("@ID", this.CurrentMaintain["ID"].ToString()),
+                        new SqlParameter("@UserID", Env.User.UserID),
+                    };
 
+                    if (!(result = DBProxy.Current.SelectSP(string.Empty, "dbo.usp_RemoveScrapById", para, out DataTable[] dts)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    if (!(result = ReturnMsg(result, dts)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                    if (!(result = Prgs.UpdateWH_Barcode(true, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    transactionscope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    errMsg = ex;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(errMsg))
+            {
+                this.ShowErr(errMsg);
                 return;
             }
-            else
+
+            // AutoWHFabric WebAPI
+            Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+            MyUtility.Msg.InfoBox("Confirmed successful");
+        }
+
+        private static DualResult ReturnMsg(DualResult result, DataTable[] dts)
+        {
+            if (dts.Length > 0)
             {
                 StringBuilder warningmsg = new StringBuilder();
                 foreach (DataRow drs in dts[0].Rows)
@@ -226,91 +247,28 @@ Balacne Qty is not enough!!
 
                 if (!MyUtility.Check.Empty(warningmsg.ToString()))
                 {
-                    MyUtility.Msg.WarningBox(warningmsg.ToString());
-                    return;
+                    result = Result.F(new Exception(warningmsg.ToString()));
                 }
             }
 
-            // #region     依SP#+SEQ#+Roll#+ StockType = 'O' 檢查庫存是否足夠
-            //            string sql = string.Format(@"
-            // from dbo.Adjust_Detail d WITH (NOLOCK)
-            // inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
-            // where d.Id = '{0}'
-            // and f.StockType = 'O'", CurrentMaintain["id"]);
-
-            // DataTable dt;
-            //            DualResult dr;
-            //            string chksql = string.Format(@"
-            // Select d.POID,seq = concat(d.Seq1,'-',d.Seq2),d.Roll,d.Dyelot
-            // ,balance = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
-            // ,Adjustqty  = isnull(d.QtyBefore,0) - isnull(d.QtyAfter,0)
-            // ,q = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) +(isnull(d.QtyAfter,0)-isnull(d.QtyBefore,0))
-            // {0}", sql);
-            //            if (!(dr = DBProxy.Current.Select(null, chksql, out dt)))
-            //            {
-            //                MyUtility.Msg.WarningBox("Update datas error!!");
-            //                return;
-            //            }
-            //            StringBuilder warningmsg = new StringBuilder();
-            //            foreach (DataRow drs in dt.Rows)
-            //            {
-            //                if (MyUtility.Convert.GetInt(drs["q"])<0)
-            //                {
-            //                    warningmsg.Append(string.Format(@"SP#: {0} SEQ#: {1} Roll#: {2} Dyelot: {3}'s balance: {4} is less than Adjust qty: {5}
-            // Balacne Qty is not enough!!
-            // ", drs["POID"].ToString(), drs["seq"].ToString(), drs["Roll"].ToString(), drs["Dyelot"].ToString(), drs["balance"].ToString(), drs["Adjustqty"].ToString()));
-            //                }
-            //            }
-            //            if (!MyUtility.Check.Empty(warningmsg.ToString()))
-            //            {
-            //                MyUtility.Msg.WarningBox(warningmsg.ToString());
-            //                return;
-            //            }
-            //            string upcmd = string.Format(@"
-            // Update f set f.AdjustQty = f.AdjustQty +(d.QtyAfter- d.QtyBefore)
-            // {0}
-
-            // update m2 set
-            // LObQty = b.l
-            // from(
-            // select l=sum(a.InQty-a.OutQty+a.AdjustQty),POID,Seq1,Seq2
-            // from
-            // (
-            // select f.InQty,f.OutQty,f.AdjustQty,d.POID,d.Seq1,d.Seq2
-            // from dbo.Adjust_Detail d WITH (NOLOCK)
-            // inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.StockType = f.StockType
-            // inner join MDivisionPoDetail m WITH (NOLOCK) on m.POID = d.POID and m.Seq1 = d.Seq1 and m.Seq2 = d.Seq2
-            // where d.Id = '{1}'
-            // and f.StockType = 'O'
-            // group by d.POID,d.Seq1,d.Seq2,f.InQty,f.OutQty,f.AdjustQty
-            // )a
-            // group by POID,Seq1,Seq2
-            // )b
-            // ,MDivisionPoDetail m2
-            // where m2.POID = b.POID and m2.Seq1 = b.Seq1 and m2.Seq2 = b.Seq2
-
-            // update Adjust set Status ='Confirmed' where id = '{1}'
-            // ", sql, CurrentMaintain["id"]);
-            //            if (!(dr = DBProxy.Current.Execute(null, upcmd)))
-            //            {
-            //                MyUtility.Msg.WarningBox("Update datas error!!");
-            //                return;
-            //            }
-            //            #endregion
+            return result;
         }
 
         /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
+            this.RenewData(); // 先重載資料, 避免雙開程式狀況
             base.ClickUnconfirm();
-            DataTable dt = (DataTable)this.detailgridbs.DataSource;
             if (this.CurrentMaintain == null)
             {
                 return;
             }
 
+            // 取得 FtyInventory 資料
+            DualResult result = Prgs.GetFtyInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtOriFtyInventory);
+
             #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-            if (!Prgs.ChkWMSCompleteTime(dt, "Adjust_Detail"))
+            if (!Prgs.ChkWMSCompleteTime((DataTable)this.detailgridbs.DataSource, "Adjust_Detail"))
             {
                 return;
             }
@@ -324,7 +282,6 @@ inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Roll = f.Roll a
 where d.Id = '{0}'
 and f.StockType = 'O'", this.CurrentMaintain["id"]);
 
-            DualResult dr;
             string chksql = string.Format(
                 @"
 Select d.POID,seq = concat(d.Seq1,'-',d.Seq2),d.Roll,d.Dyelot
@@ -332,7 +289,7 @@ Select d.POID,seq = concat(d.Seq1,'-',d.Seq2),d.Roll,d.Dyelot
 	,Adjustqty  = isnull(d.QtyBefore,0) - isnull(d.QtyAfter,0)
 	,q = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) - (isnull(d.QtyAfter,0)-isnull(d.QtyBefore,0))
 {0}", sql);
-            if (!(dr = DBProxy.Current.Select(null, chksql, out DataTable dtCheck)))
+            if (!(result = DBProxy.Current.Select(null, chksql, out DataTable dtCheck)))
             {
                 MyUtility.Msg.WarningBox("Update datas error!!");
                 return;
@@ -362,47 +319,22 @@ Balacne Qty is not enough!!
                 return;
             }
 
-            #region UnConfirmed 先檢查WMS是否傳送成功
-
-            DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-
-            bool accLock = true;
-            bool fabricLock = true;
-
-            // 主副料都有情況
-            if (Prgs.Chk_Complex_Material(this.CurrentMaintain["ID"].ToString(), "Adjust_Detail"))
-            {
-                if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_Delete(dtDetail, "Lock", isComplexMaterial: true))
-                {
-                    accLock = false;
-                }
-
-                // 如果WMS連線都成功,則直接unconfirmed刪除
-                if (accLock && fabricLock)
-                {
-                    Vstrong_AutoWHAccessory.SentRemoveC_Detail_Delete(dtDetail, "UnConfirmed", isComplexMaterial: true);
-                }
-                else
-                {
-                    // 個別成功的,傳WMS UnLock狀態並且都不能刪除
-                    if (accLock)
-                    {
-                        Vstrong_AutoWHAccessory.SentRemoveC_Detail_Delete(dtDetail, "UnLock", isComplexMaterial: true);
-                    }
-
-                    return;
-                }
-            }
-            else
-            {
-                if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_Delete(dtDetail, "UnConfirmed"))
-                {
-                    return;
-                }
-            }
             #endregion
+            #region UnConfirmed 廠商能上鎖→PMS更新→廠商更新
 
-            string upcmd = string.Format(
+            // 先確認 WMS 能否上鎖, 不能直接 return
+            if (!Prgs_WMS.WMSLock((DataTable)this.detailgridbs.DataSource, dtOriFtyInventory, this.Name, EnumStatus.Unconfirm))
+            {
+                return;
+            }
+
+            // PMS 的資料更新
+            Exception errMsg = null;
+            using (TransactionScope transactionscope = new TransactionScope())
+            {
+                try
+                {
+                    string upcmd = string.Format(
                 @"
 declare @POID varchar(13)
 		, @seq1 varchar(3)
@@ -448,11 +380,35 @@ update Adjust set Status ='New', EditName = '{1}', EditDate = Getdate() where id
 ",
                 this.CurrentMaintain["id"],
                 Env.User.UserID);
-            if (!(dr = DBProxy.Current.Execute(null, upcmd)))
+                    if (!(result = DBProxy.Current.Execute(null, upcmd)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                    if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    transactionscope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    errMsg = ex;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(errMsg))
             {
-                MyUtility.Msg.WarningBox("Update datas error!!");
+                Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
+                this.ShowErr(errMsg);
                 return;
             }
+
+            // PMS 更新之後,才執行WMS
+            Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory);
+            MyUtility.Msg.InfoBox("UnConfirmed successful");
             #endregion
         }
 
@@ -586,22 +542,16 @@ and ID = '{Sci.Env.User.UserID}'"))
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(
                 @"
-select 
-	ad.POID
+select
+    ad.*
 	,seq = concat(ad.Seq1,'-',ad.Seq2)
-	,ad.Roll
-	,ad.Dyelot
 	,Description = dbo.getmtldesc(ad.POID, ad.Seq1, ad.Seq2, 2, 0)
-	,ad.QtyBefore
-	,ad.QtyAfter
 	,adjustqty= ad.QtyBefore-ad.QtyAfter
 	,psd.StockUnit
 	,Location = dbo.Getlocation(fi.ukey)
     ,fi.ContainerCode
-	,ad.ReasonId
 	,reason_nm = (select Name FROM Reason WHERE id=ReasonId AND junk = 0 and ReasonTypeID='Stock_Remove')
     ,ColorID =dbo.GetColorMultipleID(psd.BrandId, psd.ColorID)
-    ,ad.ukey
 from Adjust_detail ad WITH (NOLOCK) 
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.id = ad.POID and psd.SEQ1 = ad.Seq1 and psd.SEQ2 = ad.Seq2
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
@@ -760,6 +710,7 @@ where ad.Id='{0}'
             .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20)) // 9
             ;
             #endregion 欄位設定
+
             // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
             cbb_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
             this.detailgrid.Columns["qtyafter"].DefaultCellStyle.BackColor = Color.Pink;

@@ -1,19 +1,21 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.Prg;
+using Sci.Win.Tools;
+using Sci.Win.UI;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
-using System.Linq;
-using System.Transactions;
 using System.Data.SqlClient;
-using Sci.Win.Tools;
-using System.Runtime.InteropServices;
+using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Transactions;
+using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
 {
@@ -32,8 +34,6 @@ namespace Sci.Production.Sewing
         private Ict.Win.UI.DataGridViewTextBoxColumn textOrderIDSetting;
         private decimal? oldttlqaqty;
         private decimal? oldManHour;
-        private string loginFactory;
-        private DateTime? dateYesterday;
         private DataTable rftDT;
 
         /// <summary>
@@ -57,8 +57,6 @@ namespace Sci.Production.Sewing
                 }
             };
 
-            this.loginFactory = Env.User.Factory;
-            this.dateYesterday = DateTime.Now.AddDays(-1);
             this.detailgrid.CellPainting += this.Detailgrid_CellPainting;
         }
 
@@ -926,7 +924,7 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
         {
             base.OnDetailGridInsert(index);
 
-            DataTable dt = (DataTable)((BindingSource)this.detailgrid.DataSource).DataSource;
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
             string gridSort = dt.DefaultView.Sort;
             dt.DefaultView.Sort = string.Empty;
 
@@ -1844,7 +1842,7 @@ select
 		    sodd.Article = t.Article and
 		    sodd.SizeCode = t.SizeCode and
 		    sodd.Combotype = t.Combotype and
-		    sodd.ID <> isnull(t.ID, '')), 0)  ,
+		    sodd.ID <> isnull(t.ID, '')), 0),
     [TransOutQty] = 
 	    isnull((
 		    select sum(sotd.TransferQty)
@@ -1853,41 +1851,98 @@ select
 		    sotd.Article = t.Article and
 		    sotd.SizeCode = t.SizeCode and
 		    sotd.FromComboType = t.Combotype), 0)
-into #checkResult
+into #checkResultA
 from #tmp t
 inner join Order_Qty oq with (nolock) on oq.ID = t.OrderID and oq.Article = t.Article and oq.SizeCode = t.SizeCode
-where exists( select 1 from Orders o with (nolock) 
-                        where o.ID = t.OrderID and 
-                              o.junk = 1 and o.NeedProduction = 1 AND o.Category='B')
+where exists( select 1 from Orders o with (nolock) where o.ID = t.OrderID and o.junk = 1 and o.NeedProduction = 1 AND o.Category='B')
 
-select  OrderID,
-        Article,
-        SizeCode,
-        Combotype,
-        [SewQty] = QAQty + OtherSewingOutputQty,
-        OrderQty,
-        TransOutQty
-from #checkResult 
-where   OrderQty < (QAQty + OtherSewingOutputQty + TransOutQty)
+select
+    t.OrderID,
+    t.Article,
+    t.SizeCode,
+    t.Combotype,
+    t.QAQty,
+    [OrderQty] = oq.Qty,
+    [OtherSewingOutputQty] = 
+	    isnull((
+		    select sum(sodd.QAQty)
+		    from SewingOutput_detail_detail sodd with (nolock)
+		    where sodd.OrderID = t.OrderID and
+		    sodd.Article = t.Article and
+		    sodd.SizeCode = t.SizeCode and
+		    sodd.Combotype = t.Combotype and
+		    sodd.ID <> isnull(t.ID, '')), 0)  ,
+    [BuybackSewingOutputQty] = bk.BuybackSewingOutputQty
+into #checkResultB
+from #tmp t
+inner join Order_Qty oq with (nolock) on oq.ID = t.OrderID and oq.Article = t.Article and oq.SizeCode = t.SizeCode
+outer apply(
+	select BuybackSewingOutputQty  = sum(sodd.QAQty)
+	from Order_BuyBack_Qty bk
+	inner join SewingOutput_detail_detail sodd on sodd.OrderId = bk.ID and sodd.Article = bk.Article and sodd.SizeCode = bk.SizeCode
+	where  bk.OrderIDFrom = t.OrderId and bk.ArticleFrom = t.Article and bk.SizeCodeFrom = t.SizeCode
+	and sodd.ComboType = t.ComboType
+)bk
+where exists (select 1 from Orders o with (nolock) where o.ID = t.OrderID and o.junk = 1 and o.NeedProduction = 1 AND o.Category='B')
+and exists (select 1 from Order_BuyBack_Qty bk where bk.OrderIDFrom = t.OrderId and bk.ArticleFrom = t.Article and bk.SizeCodeFrom = t.SizeCode)
 
+select
+	[Type] = 'A',
+	[SP#] = OrderID,
+	[Combo Type] = Combotype,
+	[Article] = Article,
+	[Size] = SizeCode,
+	[Cancel Order Qty] = OrderQty,
+	[Cancel Order Accu. Sew. Qty] = OtherSewingOutputQty,
+	[This Output Qty] = QAQty,
+	[Buyback Sew. Qty] = 0,
+	[Variablese] = OrderQty - OtherSewingOutputQty
+from #checkResultA 
+where OrderQty < (QAQty + OtherSewingOutputQty)
+
+union all
+select
+	Type = 'B',
+	OrderID,
+	Combotype,
+	Article,
+	SizeCode,
+	OrderQty,
+	OtherSewingOutputQty,
+	QAQty,
+	BuybackSewingOutputQty,
+	Variablese = OrderQty - BuybackSewingOutputQty - OtherSewingOutputQty
+from #checkResultB 
+where OrderQty < (QAQty + OtherSewingOutputQty + BuybackSewingOutputQty)
+drop table #checkResultA,#checkResultB,#tmp
 ";
-            DataTable dtNeedProductionOver;
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtSubDetail, string.Empty, checkOrderNeedProduction, out dtNeedProductionOver);
-            if (!result)
+            DataTable checkhasQtySubDetail = dtSubDetail.Select("QAQty > 0").TryCopyToDataTable(dtSubDetail);
+            if (checkhasQtySubDetail.Rows.Count > 0)
             {
-                this.ShowErr(result);
-                return false;
-            }
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(checkhasQtySubDetail, string.Empty, checkOrderNeedProduction, out DataTable dtNeedProductionOver);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
 
-            if (dtNeedProductionOver.Rows.Count > 0)
-            {
-                string overDataMsg = "SewingOutput Qty + transfered qty can't more than order qty：" + Environment.NewLine +
-                    dtNeedProductionOver.AsEnumerable()
-                    .Select(s => $@"[SP#：{s["OrderID"].ToString()},ComboType：{s["Combotype"].ToString()}, Article：{s["Article"].ToString()},Size：{s["SizeCode"].ToString()} ]Order Qty {s["OrderQty"].ToString()} , Sew. Qty= {s["SewQty"].ToString()} ,Transfered Qty ={s["TransOutQty"].ToString()}].")
-                    .JoinToString(Environment.NewLine);
+                if (dtNeedProductionOver.Rows.Count > 0)
+                {
+                    string msg = @"Type A= Cancel order still need to continue production, formula: this output qty = [Cancel Qrder Qty]-[Cancel Order Accu. Sew. Qty]
+Type B= Cancel order selected as Buyback, formula: this output qty = [Cancel Order Qty] - ([Buyback Sew. Qty] + [Cancel Order Accu. Sew. Qty])";
 
-                MyUtility.Msg.WarningBox(overDataMsg);
-                return false;
+                    MsgGridForm m = new MsgGridForm(dtNeedProductionOver, msg, "The following accumulated output cannot exceed orderqty.") { Width = 1024 };
+                    m.grid1.Columns[6].HeaderText = "Cancel Order\r\nAccu. Sew. Qty";
+                    m.grid1.AutoResizeColumns();
+                    m.grid1.Columns[1].Width = 120;
+                    m.grid1.Columns[3].Width = 88;
+                    m.grid1.Columns[4].Width = 88;
+                    m.text_Find.Width = 140;
+                    m.btn_Find.Location = new Point(150, 6);
+                    m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+                    m.ShowDialog(this);
+                    return false;
+                }
             }
             #endregion
 
@@ -3887,8 +3942,7 @@ order by ArtworkTypeID"),
                 }
                 #region Direct Manpower(From PAMS)
                 if (Env.User.Keyword.EqualString("CM1") ||
-                    Env.User.Keyword.EqualString("CM2") ||
-                    Env.User.Keyword.EqualString("CM3"))
+                    Env.User.Keyword.EqualString("CM2"))
                 {
                     worksheet.Cells[insertRow, 11] = 0;
                     worksheet.Cells[insertRow, 13] = 0;

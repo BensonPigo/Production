@@ -8,6 +8,8 @@ using Ict;
 using System.Data.SqlClient;
 using Sci.Win.UI;
 using Sci.Production.CallPmsAPI;
+using Newtonsoft.Json;
+using static Sci.Production.CallPmsAPI.PackingA2BWebAPI_Model;
 
 namespace Sci.Production.PublicPrg
 {
@@ -1322,12 +1324,19 @@ and exists (select 1 from orders where id = pd.OrderID and Junk = 1)
         }
         #endregion
 
-        #region 跨Server取得ShareExpense_APP所需資料
-        public static DataTable DataTable_Packing(string SystemName, string InvNoList)
+        /// <summary>
+        /// DataTable_Packing 跨Server取得ShareExpense_APP所需資料
+        /// </summary>
+        /// <param name="systemName">systemName</param>
+        /// <param name="invNoList">invNoList</param>
+        /// <param name="dtResult">dtResult</param>
+        /// <returns>DualResult</returns>
+        public static DualResult DataTable_Packing(string systemName, string invNoList, out DataTable dtResult)
         {
-            DataTable dt;
             string sqlcmd = $@"
-select p.ID,p.INVNo, [MasterGW] = p.GW
+select p.ID,p.INVNo
+, [MasterGW] = p.GW
+, [MasterNW] = p.NW
 , [DetailGW] = pd.GW,pd.OrderID,pd.OrderShipmodeSeq
 , pd.NWPerPcs,pd.ShipQty
 , [AirPPID] = app.ID
@@ -1344,7 +1353,7 @@ outer apply (
 				from PackingList_Detail 
 				where ID = p.ID
 			) TtlNW
-where p.INVNo = '{InvNoList}'
+where p.INVNo = '{invNoList}'
 ";
             List<PackingA2BWebAPI_Model.SqlPar> listPar = new List<PackingA2BWebAPI_Model.SqlPar>();
             PackingA2BWebAPI_Model.DataBySql dataBySql = new PackingA2BWebAPI_Model.DataBySql()
@@ -1353,24 +1362,221 @@ where p.INVNo = '{InvNoList}'
                 SqlParameter = listPar,
             };
 
-            DualResult result = PackingA2BWebAPI.GetDataBySql(SystemName, dataBySql, out dt);
+            DualResult result = PackingA2BWebAPI.GetDataBySql(systemName, dataBySql, out dtResult);
+
+            return result;
+        }
+
+        /// <summary>
+        /// CalculateShareExpense
+        /// </summary>
+        /// <param name="shippingAPID">shippingAPID</param>
+        /// <param name="isFreightForwarder">isFreightForwarder</param>
+        /// <returns>DualResult</returns>
+        public static DualResult CalculateShareExpense(string shippingAPID, int isFreightForwarder, SqlConnection sqlconn = null)
+        {
+            DualResult result;
+
+            #region get A2B PackingInfo
+            string sqlGetA2BGMT = $@"
+select  distinct
+        gd.PLFromRgCode,
+        gd.PackingListID,
+        [InvNo] = g.ID,
+        g.ShipModeID,
+        s.CurrencyID,
+        s.SubType, 
+        iif(g.BLNo is null or g.BLNo='', isnull (g.BL2No, ''), g.BLNo) as BLNo
+from    ShippingAP s WITH (NOLOCK)
+inner join ShareExpense se WITH (NOLOCK)  on s.id = se.ShippingAPID
+inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
+inner join GMTBooking_Detail gd with (nolock) on g.ID = gd.ID
+where   se.FtyWK = 0 and
+		s.id = '{shippingAPID}'
+";
+            DataTable dtA2BResult = new DataTable();
+            DataTable dtA2BGMT;
+
+            result = DBProxy.Current.Select(null, sqlGetA2BGMT, out dtA2BGMT);
             if (!result)
             {
-                return dt;
+                return result;
             }
 
-            return dt;
-        }
-        #endregion
+            // 先產生有欄位的Datatable，避免a2b沒有datatable是空的
+            string sqlCreateFakeDatatable = @"
+DECLARE @TmpTable TABLE (
+InvNo varchar(25),
+ShipModeID varchar(10),
+GW numeric(10, 3),
+CBM numeric(10, 3),
+CurrencyID varchar(3),
+SubType varchar(25), 
+BLNo varchar(20),
+FactoryID varchar(8)
+)
+select * from @TmpTable
+";
+            result = DBProxy.Current.Select(null, sqlCreateFakeDatatable, out dtA2BResult);
+            if (!result)
+            {
+                return result;
+            }
 
-        #region 跨Server更新ShareExpense_APP
-        public static DualResult CalculateShareExpense_APP(string ShippingAPID, string UserID, DataTable dtServer)
+            string sqlGetA2BPack = @"
+alter table #tmp alter column InvNo varchar(25)
+alter table #tmp alter column PackingListID varchar(13)
+
+select  g.InvNo,
+        g.ShipModeID,
+        [GW] = sum(pd.GW),
+        [CBM] = sum(l.CBM),
+        g.CurrencyID,
+        g.SubType, 
+        g.BLNo,
+        o.FactoryID
+from #tmp g
+inner join PackingList p with (nolock) on p.INVNo = g.InvNo and p.ID = g.PackingListID
+inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty = 1
+inner join Orders o with (nolock) on o.ID = pd.OrderID
+inner join LocalItem l with (nolock) on l.Refno = pd.Refno
+group by    g.InvNo,
+            g.ShipModeID,
+            g.CurrencyID,
+            g.SubType, 
+            g.BLNo,
+            o.FactoryID
+";
+
+            foreach (var groupItem in dtA2BGMT.AsEnumerable().GroupBy(s => s["PLFromRgCode"].ToString()))
+            {
+                DataBySql dataBySql = new DataBySql()
+                {
+                    SqlString = sqlGetA2BPack,
+                    TmpTable = JsonConvert.SerializeObject(groupItem.CopyToDataTable()),
+                };
+
+                DataTable dtA2BPack;
+                result = PackingA2BWebAPI.GetDataBySql(groupItem.Key, dataBySql, out dtA2BPack);
+
+                if (!result)
+                {
+                    return result;
+                }
+
+                dtA2BPack.MergeTo(ref dtA2BResult);
+            }
+
+            if (dtA2BResult.Rows.Count > 0)
+            {
+                string sqlUpdateGBShareExpense = $@"
+select  InvNo,
+        ShipModeID,
+        [GW] = sum(GW),
+        [CBM] = sum(CBM),
+        CurrencyID,
+        SubType, 
+        BLNo,
+        FactoryID
+into #tmpShareExpense
+from (
+select  InvNo,
+        ShipModeID,
+        GW,
+        CBM,
+        CurrencyID,
+        SubType, 
+        BLNo,
+        FactoryID
+from #tmpA2B
+union all
+select  [InvNo] = g.ID,
+        g.ShipModeID,
+        [GW] = sum(pd.GW),
+        [CBM] = sum(l.CBM),
+        s.CurrencyID,
+        s.SubType, 
+        iif(g.BLNo is null or g.BLNo='', isnull (g.BL2No, ''), g.BLNo) as BLNo,
+        o.FactoryID
+from    ShippingAP s WITH (NOLOCK)
+inner join ShareExpense se WITH (NOLOCK)  on s.id = se.ShippingAPID
+inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
+inner join PackingList p with (nolock) on p.INVNo = g.ID
+inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty = 1
+inner join Orders o with (nolock) on o.ID = pd.OrderID
+inner join LocalItem l with (nolock) on l.Refno = pd.Refno
+where   se.FtyWK = 0 and
+		s.id = '{shippingAPID}'
+group by    g.ID,
+            g.ShipModeID,
+            s.CurrencyID,
+            s.SubType, 
+            iif(g.BLNo is null or g.BLNo='', isnull (g.BL2No, ''), g.BLNo),
+            o.FactoryID
+) a
+group by    InvNo,
+            ShipModeID,
+            CurrencyID,
+            SubType, 
+            BLNo,
+            FactoryID
+
+update se set   se.ShipModeID = ts.ShipModeID
+		        , se.BLNo = ts.BLNo
+		        , se.GW = ts.GW
+		        , se.CBM = ts.CBM
+		        , se.CurrencyID = ts.CurrencyID
+		        , se.Type = ts.SubType
+from ShareExpense se
+inner join #tmpShareExpense ts on se.InvNo = ts.InvNo and se.FactoryID = ts.FactoryID
+where se.ShippingAPID = shippingAPID
+
+drop table #tmpShareExpense,  #tmpA2B
+";
+
+                result = MyUtility.Tool.ProcessWithDatatable(dtA2BResult, null, sqlUpdateGBShareExpense, out DataTable dtEmpty, conn: sqlconn, temptablename: "#tmpA2B");
+                if (!result)
+                {
+                    return result;
+                }
+            }
+            #endregion
+
+            if (sqlconn == null)
+            {
+                result = DBProxy.Current.Execute(
+   "Production",
+   string.Format("exec CalculateShareExpense '{0}','{1}',{2}", shippingAPID, Env.User.UserID, isFreightForwarder));
+            }
+            else
+            {
+                result = DBProxy.Current.ExecuteByConn(
+       sqlconn,
+       string.Format("exec CalculateShareExpense '{0}','{1}',{2}", shippingAPID, Env.User.UserID, isFreightForwarder));
+            }
+
+            if (!result)
+            {
+                return new DualResult(false, "Re-calcute share expense failed!");
+            }
+
+            return new DualResult(true);
+        }
+
+        /// <summary>
+        /// CalculateShareExpense_APP 跨Server更新ShareExpense_APP
+        /// </summary>
+        /// <param name="shippingAPID">ShippingAPID</param>
+        /// <param name="userID">UserID</param>
+        /// <param name="dtServer">dtServer</param>
+        /// <returns>DualResult</returns>
+        public static DualResult CalculateShareExpense_APP(string shippingAPID, string userID, DataTable dtServer, string plFromRgCode)
         {
             DualResult result;
             string sqlcmd = $@"
-declare @ShippingAPID varchar(20) ='{ShippingAPID}'
+declare @ShippingAPID varchar(20) ='{shippingAPID}'
 DECLARE @CurrencyID VARCHAR(3) = (select CurrencyID from ShippingAP where id = @ShippingAPID)
-declare @login varchar(20) = '{UserID}'
+declare @login varchar(20) = '{userID}'
 declare @adddate DATETIME = Getdate()
 
 select se.InvNo,se.AccountID,[Amount] = sum(se.Amount)
@@ -1390,14 +1596,25 @@ where	se.ShippingAPID = @ShippingAPID
 		AND dbo.GetAccountNoExpressType(se.AccountID,'IsApp') = 1 
 group by se.InvNo,se.AccountID
 
--- Get PackingList Master Table
-select distinct ID,INVNo,MasterGW 
-into #tmpPackingListMaster 
-from #tmpPackingList
 
-select	t.InvNo,[PackID] = pl.ID,t.AccountID,t.Amount,[PLSharedAmt] = CONVERT(numeric(12,2), Round(t.Amount / SUM(pl.MasterGW) over(PARTITION BY t.InvNo,t.AccountID) * pl.MasterGW,2))
+-- Get PackingList Master Table
+
+select * 
+into #tmpPackingListMaster 
+from(
+    select distinct INVNo,ID,GW = MasterGW,NW = MasterNW from  #tmpPackingList
+    union all
+    select INVNo,ID,GW,NW from PackingList t where exists ( select 1 from #tmpPackingList s where s.INVNo = t.INVNo)
+) a
+
+select	t.InvNo,[PackID] = pl.ID,t.AccountID,t.Amount
+,[PLSharedAmt] =  
+	case when s.ShareBase = 'G' then Round(t.Amount / SUM(pl.GW) over(PARTITION BY t.InvNo,t.AccountID) * pl.GW,2)
+		 when s.ShareBase = 'C' then Round(t.Amount / SUM(pl.NW) over(PARTITION BY t.InvNo,t.AccountID) * pl.NW,2)
+		 else Round(t.Amount / count(*) over(PARTITION BY t.InvNo,t.AccountID),2) end
 into #PLSharedAmtStep1
 from #InvNoSharedAmt t
+inner join ShareExpense s with (nolock) on t.AccountID = s.AccountID and t.InvNo = s.InvNo and s.ShippingAPID = @ShippingAPID and s.Junk = 0
 inner join #tmpPackingListMaster pl with (nolock) on pl.INVNo = t.InvNo
 
 
@@ -1408,11 +1625,30 @@ from #PLSharedAmtStep1
 select distinct *,
 [PLSharedAmtFin] = case	
 	when count(1) over(partition by invno,AccountID ) = 1 then Amount
-	when ROW_NUMBER() over(partition by invno,AccountID order BY InvNo,AccountID) < count(1) over(partition by invno,AccountID ) then PLSharedAmt
+	when ROW_NUMBER() over(partition by invno,AccountID,PackID order BY InvNo,AccountID) < count(1) over(partition by invno,AccountID ) then PLSharedAmt
 	else Amount -  LAG(AccuPLSharedAmt) over(partition by invno,AccountID order by invno,AccountID) 
 end
 into #PLSharedAmt
 from #PLSharedAmtStep2
+
+-- ori Packinglist
+select pld.id,AirPPID = app.ID,pld.OrderID,pld.OrderShipmodeSeq,pld.NWPerPcs,pld.ShipQty,DetailGW = pld.GW,TtlNW = TtlNW.Value,QtyPerCTN,RatioFty
+into #tmpOriPackingList
+	from PackingList_Detail pld
+	inner join  AirPP app with (nolock) on pld.OrderID = app.OrderID 
+												  and pld.OrderShipmodeSeq = app.OrderShipmodeSeq
+												  and app.Status <> 'Junked'
+	outer apply (
+				select [Value] = isnull(sum(NWPerPcs * ShipQty),0) 
+				from PackingList_Detail 
+				where ID = pld.ID
+			) TtlNW
+where exists(
+	select 1 from #PLSharedAmt 
+	where PackID = pld.ID
+)
+
+
 
 select  t.InvNo,pld.ID,AirPPID = pld.AirPPID,t.AccountID,pld.OrderID,pld.OrderShipmodeSeq, t.PLSharedAmtFin
 	, [TtlNW] = ROUND(sum(pld.NWPerPcs * pld.ShipQty),3)
@@ -1421,7 +1657,25 @@ select  t.InvNo,pld.ID,AirPPID = pld.AirPPID,t.AccountID,pld.OrderID,pld.OrderSh
 	, [QtyPerCTN] = sum(pld.QtyPerCTN), [RatioFty] = isnull(pld.RatioFty,0)		
 into #OrderSharedAmtStep1
 from #PLSharedAmt t
-inner join #tmpPackingList pld with (nolock) on t.PackID = pld.ID
+inner join (
+	select ID
+	, [DetailGW] ,OrderID,OrderShipmodeSeq
+	, NWPerPcs,ShipQty
+	, [AirPPID]
+	, RatioFty
+	, QtyPerCTN
+	, [TtlNW]
+from #tmpPackingList
+	union all
+	select ID
+	, [DetailGW] ,OrderID,OrderShipmodeSeq
+	, NWPerPcs,ShipQty
+	, [AirPPID]
+	, RatioFty
+	, QtyPerCTN
+	, [TtlNW] 
+	from #tmpOriPackingList
+) pld on t.PackID = pld.ID
 group by t.InvNo,pld.ID,pld.AirPPID,t.AccountID, pld.OrderID, pld.OrderShipmodeSeq, pld.TtlNW, t.PLSharedAmtFin, pld.RatioFty
 
 select * ,[AccuOrderSharedAmt] = SUM(OrderSharedAmt) over(PARTITION BY ID,AccountID)
@@ -1432,7 +1686,7 @@ select	*,
 [OrderSharedAmtFin] =  case	
 	when OrderSharedAmt = 0 then 0
 	when count(1) over(partition by ID,AccountID ) = 1 then PLSharedAmtFin
-	when ROW_NUMBER() over(partition by ID,AccountID order BY AccountID,OrderID,OrderShipmodeSeq) < count(1) over(partition by ID,AccountID ) then OrderSharedAmt
+	when ROW_NUMBER() over(partition by ID,AccountID,ID order BY AccountID,OrderID,OrderShipmodeSeq) < count(1) over(partition by ID,AccountID ) then OrderSharedAmt
 	else PLSharedAmtFin -  LAG(AccuOrderSharedAmt) over(partition by ID,AccountID order by AccountID,OrderID,OrderShipmodeSeq) 
 end
 into #OrderSharedAmt
@@ -1480,11 +1734,34 @@ set SharedAmtFactory = @SharedAmtFactory
 where ID = @ShippingAPID
 
 --drop table #InvNoSharedAmt,#PLSharedAmtStep1,#PLSharedAmt,#PLSharedAmtStep2,#tmpPackingList,#OrderSharedAmt,#OrderSharedAmtStep1,#OrderSharedAmtStep2,#source,#tmpPackingListMaster
+select AirPPID, ActAmt, ExchangeRate
+from dbo.GetAirPPAmt(@ShippingAPID, '')
 ";
-            result = MyUtility.Tool.ProcessWithDatatable(dtServer, null, sqlcmd, out DataTable data, temptablename: "#tmpPackingList");
+            result = MyUtility.Tool.ProcessWithDatatable(dtServer, null, sqlcmd, out DataTable dtAirPPAmt, temptablename: "#tmpPackingList");
+
+            if (!result)
+            {
+                return result;
+            }
+
+            // ISP20220298 更新AirPP
+            if (dtAirPPAmt.Rows.Count > 0)
+            {
+                PackingA2BWebAPI_Model.DataBySql dataBySql = new PackingA2BWebAPI_Model.DataBySql()
+                {
+                    SqlString = @"
+alter table #tmp alter column AirPPID varchar(13)
+update a set a.ActAmt = airAmt.ActAmt, a.ExchangeRate = airAmt.ExchangeRate
+from AirPP a
+inner join #tmp airAmt on airAmt.AirPPID = a.ID
+",
+                    TmpTable = JsonConvert.SerializeObject(dtAirPPAmt),
+                };
+                result = PackingA2BWebAPI.ExecuteBySql(plFromRgCode, dataBySql);
+            }
+
             return result;
         }
-        #endregion
 
         /// <summary>
         /// Order_QtyShip

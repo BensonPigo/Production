@@ -156,21 +156,6 @@ where not exists(select id from Production.dbo.Operation as a WITH (NOLOCK) wher
 --MACHTYPE
 --MachineType
 
----  20161104 新轉 OperationDesc  from Trade_to_pms
-
-merge Production.dbo.OperationDesc as t
-using Trade_to_Pms.dbo.OperationDesc as s 
-	on t.id=s.id
-	when matched then 
-	update set 
-	t.DescKH= s.DescKH,
-	t.DescVi=s.DescVi,
-	t.DescCHS=s.DescCHS
-when not matched by target then
-	insert(ID,DescKH,DescVi,DescCHS)
-	values(s.ID,s.DescKH,s.DescVi,s.DescCHS)
-when not matched by source then
-	delete ;
 
 --ATTACH
 --MOLD

@@ -175,6 +175,13 @@
     <Compile Include="P03_Seq.Designer.cs">
       <DependentUpon>P03_Seq.cs</DependentUpon>
     </Compile>
+    <Compile Include="P07_PrintAccessorySticker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P07_PrintAccessorySticker.Designer.cs">
+      <DependentUpon>P07_PrintAccessorySticker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P07_PrintAccessorySticker_Data.cs" />
     <Compile Include="P21_PrintBarcode_Data.cs" />
     <Compile Include="P08_ExcelImport.cs">
       <SubType>Form</SubType>
@@ -723,6 +730,7 @@
     <Compile Include="P99.Designer.cs">
       <DependentUpon>P99.cs</DependentUpon>
     </Compile>
+    <Compile Include="Prgs_WMS.cs" />
     <Compile Include="Report\R02.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1520,10 +1528,19 @@
     <EmbeddedResource Include="P03_ReturnQty.resx">
       <DependentUpon>P03_ReturnQty.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P07_PrintAccessorySticker.rdlc" />
     <EmbeddedResource Include="P07_QRCodeSticker.resx">
       <DependentUpon>P07_QRCodeSticker.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P21_PrintBarcode10.rdlc" />
+    <EmbeddedResource Include="P07_PrintAccessorySticker.resx">
+      <DependentUpon>P07_PrintAccessorySticker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P21_PrintBarcode10.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P21_PrintBarcode7.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="P21_PrintBarcode5.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2323,6 +2340,7 @@
     <EmbeddedResource Include="P34_Print.rdlc" />
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Properties\DataSources\P07_PrintAccessorySticker_Data.datasource" />
     <None Include="Properties\DataSources\P08_PrintFabircSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P10_PrintBarcodeData.datasource" />
     <None Include="Properties\DataSources\P10_RelaxationSticker_Data.datasource" />
@@ -2333,6 +2351,7 @@
     <None Include="Properties\DataSources\P14_PrintData.datasource" />
     <None Include="Properties\DataSources\P16_PrintData.datasource" />
     <None Include="Properties\DataSources\P19_FabricSticker_PrintData.datasource" />
+    <None Include="Properties\DataSources\P19_PrintData.datasource" />
     <None Include="Properties\DataSources\P21_PrintBarcode_Data.datasource" />
     <None Include="Properties\DataSources\P22_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P23_FabricSticker_PrintData.datasource" />
