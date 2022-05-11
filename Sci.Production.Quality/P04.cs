@@ -1051,8 +1051,8 @@ WHERE NOT EXISTS(
 )
 
 INSERT INTO ExtendServer.PMSFile.dbo.GarmentTest_Detail
-           (ID,No,TestBeforePicture,TestAfterPicture)
-select ID,No,TestBeforePicture,TestAfterPicture
+           (ID,No)
+select ID,No
 from GarmentTest_Detail t WITH(NOLOCK)
 where not exists (select 1 from ExtendServer.PMSFile.dbo.GarmentTest_Detail s WITH(NOLOCK) where s.ID = t.ID AND s.No = t.No )
 ";
