@@ -1803,16 +1803,16 @@ where id = '{1}'", Env.User.UserID,
 SET XACT_ABORT ON
 
 INSERT INTO ExtendServer.PMSFile.dbo.AIR_Laboratory
-           (ID,POID,SEQ1,SEQ2,OvenTestBeforePicture,OvenTestAfterPicture,WashTestBeforePicture,WashTestAfterPicture)
+           (ID,POID,SEQ1,SEQ2)
 
-select  ID,POID,SEQ1,SEQ2,OvenTestBeforePicture,OvenTestAfterPicture,WashTestBeforePicture,WashTestAfterPicture
+select  ID,POID,SEQ1,SEQ2
 from AIR_Laboratory t WITH(NOLOCK)
 where not exists (select 1 from ExtendServer.PMSFile.dbo.AIR_Laboratory s WITH(NOLOCK) where s.ID = t.ID AND s.POID = t.POID AND s.SEQ1 = t.SEQ1 AND s.SEQ2 = t.SEQ2 )
 ;
 
 INSERT INTO ExtendServer.PMSFile.dbo.FIR_Laboratory
-           (ID,CrockingTestBeforePicture,CrockingTestAfterPicture,HeatTestBeforePicture,HeatTestAfterPicture,WashTestBeforePicture,WashTestAfterPicture)
-select ID,CrockingTestBeforePicture,CrockingTestAfterPicture,HeatTestBeforePicture,HeatTestAfterPicture,WashTestBeforePicture,WashTestAfterPicture
+           (ID)
+select ID
 from FIR_Laboratory t (NOLOCK)
 where not exists (select 1 from ExtendServer.PMSFile.dbo.FIR_Laboratory s (NOLOCK) where s.ID = t.ID )
 

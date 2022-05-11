@@ -462,7 +462,7 @@ WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTyp
                 string deleteCmd = $@"
 SET XACT_ABORT ON
 UPDATE ShippingMarkPic_Detail
-SET Image = NULL , FileName = ''
+SET FileName = ''
 WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
 
 UPDATE [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
@@ -517,9 +517,9 @@ WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTyp
 SET XACT_ABORT ON
 
 INSERT INTO ExtendServer.PMSFile.dbo.ShippingMarkPic_Detail
-           (ShippingMarkPicUkey,SCICtnNo,ShippingMarkTypeUkey,Image)
+           (ShippingMarkPicUkey,SCICtnNo,ShippingMarkTypeUkey)
 
-select ShippingMarkPicUkey,SCICtnNo,ShippingMarkTypeUkey,Image
+select ShippingMarkPicUkey,SCICtnNo,ShippingMarkTypeUkey
 from ShippingMarkPic_Detail t WITH(NOLOCK)
 where not exists (select 1 from ExtendServer.PMSFile.dbo.ShippingMarkPic_Detail s WITH(NOLOCK) where s.ShippingMarkPicUkey = t.ShippingMarkPicUkey AND s.SCICtnNo = t.SCICtnNo AND s.ShippingMarkTypeUkey = t.ShippingMarkTypeUkey )
 ";
@@ -959,7 +959,6 @@ SET XACT_ABORT ON
 
 UPDATE b
 SET FileName = ''
-, b.Image = NULL
 FROM ShippingMarkPic a
 INNER JOIN ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey
 WHERE a.PackingListID='{item.PackingListID}'
