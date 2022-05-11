@@ -1897,7 +1897,9 @@ update rd set rd.MINDQRCode = ''
 from Receiving_Detail rd
 where   ID = '{this.CurrentMaintain["ID"]}' and
         (exists(select 1 from Receiving_Detail rd2 with (nolock) where rd2.ID <> rd.ID and rd2.MINDQRCode = rd.MINDQRCode) or
-         exists(select 1 from WHBarcodeTransaction wht with (nolock) where wht.Action = 'Confirm' and [Function] = 'P07' and wht.TransactionID <> rd.ID and wht.To_NewBarcode = rd.MINDQRCode))
+         exists(select 1 from WHBarcodeTransaction wht with (nolock) where wht.Action = 'Confirm' and [Function] = 'P07' and wht.TransactionID <> rd.ID and wht.To_NewBarcode = rd.MINDQRCode) or
+         exists(select 1 from WHBarcodeTransaction wht with (nolock) where [Function] != 'P07' and (wht.From_OldBarcode = rd.MINDQRCode or wht.From_NewBarcode = rd.MINDQRCode or wht.To_OldBarcode = rd.MINDQRCode or wht.To_NewBarcode = rd.MINDQRCode))
+        )
 ";
             #endregion
 
