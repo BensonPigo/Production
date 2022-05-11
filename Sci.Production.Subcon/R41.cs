@@ -429,7 +429,7 @@ outer apply(
 )FabricKind
 outer apply(
     select [InspectionDate] = MAX(InspectionDate)
-    from SubProInsRecord sp
+    from SubProInsRecord sp with(nolock)
     where sp.Bundleno = bd.Bundleno
     and sp.SubProcessID = s.ID
 )sp
