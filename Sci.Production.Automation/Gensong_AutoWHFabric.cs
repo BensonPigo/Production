@@ -392,10 +392,12 @@ namespace Sci.Production.Automation
 
         private static void ProcessCutplan_Detail(DataTable dtDetail, bool isConfirmed)
         {
+            string apiThread = "SentCutplan_DetailToGensong";
+            string suppAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag";
             AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS
             {
-                apiThread = "SentCutplan_DetailToGensong",
-                suppAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag",
+                apiThread = apiThread,
+                suppAPIThread = suppAPIThread,
             };
 
             string sqlcmd = $@"
