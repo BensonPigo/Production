@@ -138,6 +138,19 @@
     <Build Include="dbo\Tables\P_Capacity.sql" />
     <Build Include="dbo\Tables\P_MachineMasterList.sql" />
     <Build Include="dbo\Stored Procedures\P_Import_MachineMaserList.sql" />
+    <Build Include="dbo\Tables\P_AnnualSalesReport.sql" />
+    <Build Include="dbo\Tables\P_Credit.sql" />
+    <Build Include="dbo\Tables\P_CFAInline_Detail_Original.sql" />
+    <Build Include="dbo\Tables\P_CFAInspectionRecord_Detail_Original.sql" />
+    <Build Include="dbo\Tables\P_DQSDefect_Detail_Original.sql" />
+    <Build Include="dbo\Tables\P_DQSDefect_Summary_Original.sql" />
+    <Build Include="dbo\Tables\P_LoadingProductionOutput_Original.sql" />
+    <Build Include="dbo\Tables\P_OustandingPO_Original.sql" />
+    <Build Include="dbo\Tables\P_QA_P09_Original.sql" />
+    <Build Include="dbo\Tables\P_QA_R06_Original.sql" />
+    <Build Include="dbo\Tables\P_QA_R31_Original.sql" />
+    <Build Include="dbo\Tables\P_SewingDailyOutput_Original.sql" />
+    <Build Include="dbo\Tables\P_SewingLineSchedule_Original.sql" />
     <Build Include="dbo\Stored Procedures\P_ImportEstShippingReport.sql" />
     <Build Include="dbo\Tables\BITableInfo.sql" />
   </ItemGroup>

@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[P_QA_R31](
+﻿CREATE TABLE [dbo].[P_QA_R31_Original](
 	[Stage] [varchar](20) NULL,
 	[InspResult] [varchar](10) NULL,
 	[NotYetInspCtn#] [varchar](max) NULL,
@@ -33,12 +33,5 @@
 	[CFAFinalInspectDate] [date] NULL,
 	[CFA3rdInspectDate] [date] NULL,
 	[CFARemark] [nvarchar](500) NULL,
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
- CONSTRAINT [PK_P_QA_R31] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	[Ukey] [bigint] NOT NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-GO

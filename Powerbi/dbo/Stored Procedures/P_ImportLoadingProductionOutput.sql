@@ -243,13 +243,13 @@ set	    t.MDivisionID =  s.MDivisionID,
 		t.[FM Sister] = s.FMSister,
 		t.[Sample Group] = s.SampleGroup,
 		t.[Order Reason] = s.OrderReason
-from P_LoadingProductionOutput as t
+from P_LoadingProductionOutput_Original as t
 inner join #Final s 
 on t.FactoryID=s.FactoryID  
    AND t.SPNO=s.ID 
 
 
-insert into P_LoadingProductionOutput
+insert into P_LoadingProductionOutput_Original
 	select  s.MDivisionID,
 	s.FtyZone,
 	s.FactoryID,
@@ -302,13 +302,13 @@ insert into P_LoadingProductionOutput
 	s.OrderReason
 from #Final s
 where not exists(
-	select 1 from P_LoadingProductionOutput t 
+	select 1 from P_LoadingProductionOutput_Original t 
 	where t.FactoryID=s.FactoryID  
 	AND t.SPNO = s.ID
 )
 
 delete t
-from P_LoadingProductionOutput t WITH (NOLOCK)
+from P_LoadingProductionOutput_Original t WITH (NOLOCK)
 where 
 (
 	YEAR(BuyerDelivery) >= '''+@S_Year+'''

@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[P_DQSDefect_Detail](
+﻿CREATE TABLE [dbo].[P_DQSDefect_Detail_Original](
 	[FtyZon] [varchar](8) NULL,
 	[BrandID] [varchar](8) NULL,
 	[BuyerDelivery] [date] NULL,
@@ -25,12 +25,5 @@
 	[ReworkCardNo] [varchar](2) NULL,
 	[GarmentDefectTypeID] [varchar](1) NULL,
 	[GarmentDefectCodeID] [varchar](3) NULL,
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
- CONSTRAINT [PK_P_DQSDefect_Detail] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	[Ukey] [bigint] NOT NULL
 ) ON [PRIMARY]
-
-GO

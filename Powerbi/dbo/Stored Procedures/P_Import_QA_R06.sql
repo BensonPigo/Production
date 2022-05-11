@@ -861,7 +861,7 @@ from(
 where s.type=''F'' and s.Junk=0 and [AVG] * 100 between s.range1 and s.range2 
 ORDER BY  SUPPID,refno ,WhseArrival,FactoryID	
 
-MERGE INTO PBIReportData.dbo.P_QA_R06 t
+MERGE INTO PBIReportData.dbo.P_QA_R06_Original t
 USING #Final s 
 ON t.SuppID=s.SuppID  AND t.Refno=s.Refno AND t.WhseArrival = s.WhseArrival AND t.FactoryID = s.FactoryID AND t.POID = s.POID
 WHEN MATCHED THEN   

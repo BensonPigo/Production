@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[P_CFAInspectionRecord_Detail](
+﻿CREATE TABLE [dbo].[P_CFAInspectionRecord_Detail_Original](
 	[Action] [nvarchar](300) NULL,
 	[AreaCodeDesc] [varchar](60) NULL,
 	[AuditDate] [date] NULL,
@@ -32,12 +32,5 @@
 	[TtlCTN] [int] NULL,
 	[VasShas] [varchar](1) NULL,
 	[1st_Inspection] [varchar](1) NULL,
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
- CONSTRAINT [PK_P_CFAInspectionRecord_Detail] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	[Ukey] [bigint] NOT NULL
 ) ON [PRIMARY]
-
-GO
