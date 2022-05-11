@@ -393,20 +393,20 @@ set @SqlFinal1 = '
 BEGIN TRY
 Begin tran
 
-If Exists(Select * From PBIReportData.sys.tables Where Name = ''P_DQSDefect_Summary'')
-DELETE T FROM P_DQSDefect_Summary T WHERE EXISTS(SELECT * FROM ['+@LinkServerName+'].Production.dbo.factory S WHERE T.FactoryID = S.ID)
+If Exists(Select * From PBIReportData.sys.tables Where Name = ''P_DQSDefect_Summary_Original'')
+DELETE T FROM P_DQSDefect_Summary_Original T WHERE EXISTS(SELECT * FROM ['+@LinkServerName+'].Production.dbo.factory S WHERE T.FactoryID = S.ID)
 ;
-If Exists(Select * From PBIReportData.sys.tables Where Name = ''P_DQSDefect_Detail'') 
-DELETE T FROM P_DQSDefect_Detail T WHERE EXISTS(SELECT * FROM ['+@LinkServerName+'].Production.dbo.factory S WHERE T.FactoryID = S.ID)
+If Exists(Select * From PBIReportData.sys.tables Where Name = ''P_DQSDefect_Detail_Original'') 
+DELETE T FROM P_DQSDefect_Detail_Original T WHERE EXISTS(SELECT * FROM ['+@LinkServerName+'].Production.dbo.factory S WHERE T.FactoryID = S.ID)
 ;
-If Exists(Select * From PBIReportData.sys.tables Where Name = ''P_CFAInline_Detail'') 
-DELETE T FROM P_CFAInline_Detail T WHERE EXISTS(SELECT * FROM ['+@LinkServerName+'].Production.dbo.factory S WHERE T.FactoryID = S.ID)
+If Exists(Select * From PBIReportData.sys.tables Where Name = ''P_CFAInline_Detail_Original'') 
+DELETE T FROM P_CFAInline_Detail_Original T WHERE EXISTS(SELECT * FROM ['+@LinkServerName+'].Production.dbo.factory S WHERE T.FactoryID = S.ID)
 ;
-If Exists(Select * From PBIReportData.sys.tables Where Name = ''P_CFAInspectionRecord_Detail'')
-DELETE T FROM P_CFAInspectionRecord_Detail T WHERE EXISTS(SELECT * FROM ['+@LinkServerName+'].Production.dbo.factory S WHERE T.FactoryID = S.ID)
+If Exists(Select * From PBIReportData.sys.tables Where Name = ''P_CFAInspectionRecord_Detail_Original'')
+DELETE T FROM P_CFAInspectionRecord_Detail_Original T WHERE EXISTS(SELECT * FROM ['+@LinkServerName+'].Production.dbo.factory S WHERE T.FactoryID = S.ID)
 ;
 
-INSERT INTO [dbo].[P_DQSDefect_Summary]
+INSERT INTO [dbo].[P_DQSDefect_Summary_Original]
            ([FirstInspectDate]
            ,[FactoryID]
            ,[BrandID]
@@ -435,7 +435,7 @@ INSERT INTO [dbo].[P_DQSDefect_Summary]
 		   ,[Construction])
  select * from #Final_DQSDefect_Summary
 
- INSERT INTO [dbo].[P_DQSDefect_Detail]
+ INSERT INTO [dbo].[P_DQSDefect_Detail_Original]
            ([FtyZon]
            ,[BrandID]
            ,[BuyerDelivery]
@@ -466,7 +466,7 @@ INSERT INTO [dbo].[P_DQSDefect_Summary]
 '
 
 set @SqlFinal2 ='
-INSERT INTO [dbo].[P_CFAInline_Detail]
+INSERT INTO [dbo].[P_CFAInline_Detail_Original]
            ([Action]
            ,[Area]
            ,[AuditDate]
@@ -494,7 +494,7 @@ INSERT INTO [dbo].[P_CFAInline_Detail]
            ,[VASSHAS])
 select * from #Final_P_CFAInline_Detail
 
-INSERT INTO [dbo].[P_CFAInspectionRecord_Detail]
+INSERT INTO [dbo].[P_CFAInspectionRecord_Detail_Original]
            ([Action]
            ,[AreaCodeDesc]
            ,[AuditDate]

@@ -98,13 +98,13 @@ SET
 	t.EMBStitchCnt = s.EMBStitchCnt,
 	t.TtlQtyEMB = s.TtlQtyEMB,
 	t.PrintPcs = s.PrintPcs
-from P_SewingLineSchedule t
+from P_SewingLineSchedule_Original t
 inner join #Final s on t.APSNo=s.APSNo  
    AND t.SewingDay=s.SewingDay 
    AND t.MDivisionID = s.MDivisionID 
    AND t.FactoryID = s.FactoryID
 
-insert into P_SewingLineSchedule
+insert into P_SewingLineSchedule_Original
    ([APSNo]
       ,[SewingLineID] ,[SewingDay] ,[SewingStartTime] ,[SewingEndTime] ,[MDivisionID] ,[FactoryID]
       ,[PO] ,[POCount] ,[SP] ,[SPCount] ,[EarliestSCIdelivery] ,[LatestSCIdelivery]
@@ -137,7 +137,7 @@ select s.APSNo,	s.SewingLineID,	s.SewingDay,	s.SewingStartTime,	s.SewingEndTime,
 	,s.PrintPcs
 from #Final s
 where not exists(
-	select 1 from P_SewingLineSchedule t 
+	select 1 from P_SewingLineSchedule_Original t 
 	where t.APSNo=s.APSNo  
 	AND t.SewingDay=s.SewingDay AND t.MDivisionID = s.MDivisionID 
 	AND t.FactoryID = s.FactoryID
@@ -145,7 +145,7 @@ where not exists(
 
 
 delete t
-from P_SewingLineSchedule t
+from P_SewingLineSchedule_Original t
 left join #Final s on t.APSNo=s.APSNo  
 	AND t.SewingDay=s.SewingDay AND t.MDivisionID = s.MDivisionID AND t.FactoryID = s.FactoryID
 where s.apsno is null

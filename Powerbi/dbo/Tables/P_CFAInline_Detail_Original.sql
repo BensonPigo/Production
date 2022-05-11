@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[P_CFAInline_Detail](
+﻿CREATE TABLE [dbo].[P_CFAInline_Detail_Original](
 	[Action] [varchar](254) NULL,
 	[Area] [varchar](60) NULL,
 	[AuditDate] [date] NULL,
@@ -24,12 +24,5 @@
 	[StyleID] [varchar](15) NULL,
 	[Team] [varchar](10) NULL,
 	[VASSHAS] [varchar](1) NULL,
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
- CONSTRAINT [PK_P_CFAInline_Detail] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	[Ukey] [bigint] NOT NULL
 ) ON [PRIMARY]
-
-GO

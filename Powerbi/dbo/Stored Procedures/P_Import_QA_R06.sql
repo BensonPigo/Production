@@ -182,7 +182,7 @@ select distinct t.SuppID,t.Refno,t.PoId,t.Seq1,t.Seq2 ,t.WhseArrival,t.FactoryID
 into #tmpsuppEncode
 from #GroupBySupp t
 inner join #FIR f on t.PoId = f.POID and t.Seq1 = f.SEQ1 and t.Seq2 = f.SEQ2 AND t.Refno=f.Refno AND t.SuppID=f.Suppid
-
+where f.PhysicalEncode = 1
 
 ------------Count Total #Orders# Group by PoID ---- 
 select DISTINCT t.SuppID,t.Refno,t.WhseArrival,t.FactoryID,t.PoId,count(distinct o.ID)cnt 
@@ -414,15 +414,18 @@ where FL.WashEncode=1 and W.Result = ''Fail''
 select distinct SHRINKAGEyards = stockqty,SuppID,Refno,WhseArrival,FactoryID,PoId
 into #SHtmp
 from(
-	select Sum(rd1.stockqty) stockqty, SuppID,rd.Refno,rd.WhseArrival,rd.FactoryID,rd.PoId
-	from  #tmp2groupbyDyelot rd WITH (NOLOCK) 
-    inner join #View_AllReceivingDetail rd1 with (nolock) on rd.PoId = rd1.PoId and rd.Seq1 = rd1.Seq1 and rd.Seq2 = rd1.Seq2
-	AND rd.WhseArrival = LEFT(convert(varchar, rd1.WhseArrival , 111),7)
-	AND rd.FactoryID=rd1.FactoryID 
-	Where (exists(select * from #SH1 where POID = rd.PoId and SEQ1 = RD.seq1 and seq2 = seq2 and Dyelot = RD.dyelot AND Refno=rd.Refno)
-	or exists(select * from #SH2 where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2 and Dyelot = RD.dyelot AND Refno=rd.Refno))
-	AND  rd1.WhseArrival >= '''+@WhseArrival_s_cast +''' and rd1.WhseArrival <= '''+@WhseArrival_e_cast +'''
-	group by SuppID,rd.Refno,rd.WhseArrival,rd.FactoryID,rd.PoId
+	select Sum(rd1.stockqty) stockqty, rd.SuppID, rd.Refno, rd.WhseArrival, rd.FactoryID, rd.PoId
+	from (
+		select distinct rd.poid,rd.seq1,rd.seq2 ,rd.SuppID,rd.Refno,rd.WhseArrival,rd.FactoryID
+		from #tmp2groupbyDyelot rd WITH (NOLOCK) 	
+		Where (exists(select * from #SH1 where POID = rd.PoId and SEQ1 = RD.seq1 and seq2 = seq2 and Dyelot = RD.dyelot AND Refno=rd.Refno)
+		or exists(select * from #SH2 where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2 and Dyelot = RD.dyelot AND Refno=rd.Refno))
+	) rd 
+	inner join #View_AllReceivingDetail rd1 with (nolock) on rd.PoId = rd1.PoId and rd.Seq1 = rd1.Seq1 and rd.Seq2 = rd1.Seq2
+	inner join #PO_Supp_Detail psd ON rd.PoId=psd.ID AND rd.Seq1=psd.seq1 AND rd.Seq2=psd.seq2 AND rd.Refno=psd.Refno
+	inner join #PO_Supp ps on ps.id=psd.Id and ps.seq1=psd.seq1 and ps.SuppID=rd.SuppID
+	where rd1.WhseArrival >= '''+@WhseArrival_s_cast +''' and rd1.WhseArrival <= '''+@WhseArrival_e_cast +'''
+	group by rd.SuppID,rd.Refno,rd.WhseArrival,rd.FactoryID,rd.PoId
 ) a
 
 -----#mtmp 
@@ -858,7 +861,7 @@ from(
 where s.type=''F'' and s.Junk=0 and [AVG] * 100 between s.range1 and s.range2 
 ORDER BY  SUPPID,refno ,WhseArrival,FactoryID	
 
-MERGE INTO PBIReportData.dbo.P_QA_R06 t
+MERGE INTO PBIReportData.dbo.P_QA_R06_Original t
 USING #Final s 
 ON t.SuppID=s.SuppID  AND t.Refno=s.Refno AND t.WhseArrival = s.WhseArrival AND t.FactoryID = s.FactoryID AND t.POID = s.POID
 WHEN MATCHED THEN   

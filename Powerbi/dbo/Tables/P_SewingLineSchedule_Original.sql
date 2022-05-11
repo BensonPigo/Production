@@ -1,11 +1,11 @@
-CREATE TABLE [dbo].[P_SewingLineSchedule](
+﻿CREATE TABLE [dbo].[P_SewingLineSchedule_Original](
 	[APSNo] [int] NULL,
 	[SewingLineID] [varchar](5) NULL,
 	[SewingDay] [date] NULL,
 	[SewingStartTime] [datetime] NULL,
 	[SewingEndTime] [datetime] NULL,
 	[MDivisionID] [varchar](8) NULL,
-	[FactoryID] [varchar](8) NOT NULL,
+	[FactoryID] [varchar](8) NULL,
 	[PO] [nvarchar](max) NULL,
 	[POCount] [bigint] NULL,
 	[SP] [nvarchar](max) NULL,
@@ -66,18 +66,12 @@ CREATE TABLE [dbo].[P_SewingLineSchedule](
 	[EMBStitch] [varchar](20) NULL,
 	[EMBStitchCnt] [int] NULL,
 	[TtlQtyEMB] [int] NULL,
-	[PrintPcs] [int] NULL,
-	[Ukey] [bigint] NOT NULL,
- CONSTRAINT [PK_P_SewingLineSchedule] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	[PrintPcs] [int] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[P_SewingLineSchedule] ADD  CONSTRAINT [DF_P_SewingLineSchedule_StyleName]  DEFAULT ('') FOR [StyleName]
+ALTER TABLE [dbo].[P_SewingLineSchedule_Original] ADD  CONSTRAINT [DF_P_SewingLineSchedule_Original_StyleName]  DEFAULT ('') FOR [StyleName]
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'款式名稱' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingLineSchedule', @level2type=N'COLUMN',@level2name=N'StyleName'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'款式名稱' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingLineSchedule_Original', @level2type=N'COLUMN',@level2name=N'StyleName'
 GO

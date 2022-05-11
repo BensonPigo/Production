@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[P_LoadingProductionOutput](
+﻿CREATE TABLE [dbo].[P_LoadingProductionOutput_Original](
 	[MDivisionID] [varchar](8) NULL,
 	[FtyZone] [varchar](8) NULL,
 	[FactoryID] [varchar](8) NOT NULL,
@@ -49,12 +49,5 @@
 	[FM Sister] [varchar](1) NULL,
 	[Sample Group] [nvarchar](50) NULL,
 	[Order Reason] [nvarchar](500) NULL,
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
- CONSTRAINT [PK_P_LoadingProductionOutput] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	[Ukey] [bigint] NOT NULL
 ) ON [PRIMARY]
-
-GO

@@ -1,17 +1,4 @@
-﻿USE [PBIReportData]
-GO
-/****** Object:  StoredProcedure [dbo].[P_ImportOustandingPO]    Script Date: 02/18/2020 上午 11:55:23 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-if exists(select * from sys.procedures where name ='P_ImportOustandingPO')
-begin
-	drop procedure P_ImportOustandingPO;
-end
-go
-CREATE PROCEDURE [dbo].[P_ImportOustandingPO]
+﻿CREATE PROCEDURE [dbo].[P_ImportOustandingPO]
 
 @StartDate Date,
 @EndDate Date,
@@ -199,14 +186,14 @@ SET
 	t.OSTClogCtn =  s.OSTClogCtn,
 	t.PulloutComplete = s.PulloutComplete,
 	t.dest = s.dest
-from P_OustandingPO t
+from P_OustandingPO_Original t
 inner join #Final s  
 		ON t.FactoryID=s.FactoryID  
 		AND t.orderid=s.id 
 		AND t.seq = s.seq 
 
 
-insert into P_OustandingPO
+insert into P_OustandingPO_Original
 select  s.FactoryID,
 		s.id,
 		s.CustPONo,
@@ -236,7 +223,7 @@ select  s.FactoryID,
 		s.dest
 from #Final s
 where not exists(
-	select 1 from P_OustandingPO t 
+	select 1 from P_OustandingPO_Original t 
 	where t.FactoryID = s.FactoryID  
 	AND t.orderid = s.id 
 	AND t.seq = s.seq 
@@ -244,7 +231,7 @@ where not exists(
 and ((OrderQty > PackingQty) OR (PackingCarton - ClogReceivedCarton <> 0 ))
 
 delete t
-from P_OustandingPO t
+from P_OustandingPO_Original t
 left join #Final s on t.FactoryID = s.FactoryID  
 	AND t.orderid = s.id 
 	AND t.seq = s.seq 
@@ -279,7 +266,6 @@ SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd2 + @SqlCmd3
 	EXEC sp_executesql @SqlCmd_Combin
 
 End
-
 
 
 

@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[P_DQSDefect_Summary](
+﻿CREATE TABLE [dbo].[P_DQSDefect_Summary_Original](
 	[FirstInspectDate] [date] NULL,
 	[FactoryID] [varchar](8) NOT NULL,
 	[BrandID] [varchar](8) NULL,
@@ -25,12 +25,5 @@
 	[Lining] [varchar](20) NULL,
 	[Gender] [varchar](10) NULL,
 	[Construction] [nvarchar](50) NULL,
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
- CONSTRAINT [PK_P_DQSDefect_Summary] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	[Ukey] [bigint] NOT NULL
 ) ON [PRIMARY]
-
-GO

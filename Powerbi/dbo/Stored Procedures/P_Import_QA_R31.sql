@@ -411,7 +411,7 @@ DROP TABLE #tmp,#NeedCkeck,#PackingList_Detail,#CFAInspectionRecord,#CFAInspecti
 
 	set @SqlCmd6 = '
 	-----開始Merge 
-	MERGE INTO PBIReportData.dbo.P_QA_R31 t
+	MERGE INTO PBIReportData.dbo.P_QA_R31_Original t
 	USING #tmpFinal s 
 	ON t.OrderID = s.ID AND t.Stage = s.Stage AND t.StyleName = s.StyleName and t.Seq = s.Seq
 	WHEN MATCHED THEN   
@@ -462,7 +462,7 @@ s.LastCartonReceivedDate,s.CFAFinalInspectDate,s.CFA3rdInspectDate,s.CFARemark);
 
 
 delete t 
-from PBIReportData.dbo.P_QA_R31 t
+from PBIReportData.dbo.P_QA_R31_Original t
 left join #tmpFinal s on t.OrderID = s.ID AND t.Stage = s.Stage AND t.StyleName = s.StyleName and t.Seq = s.Seq
 where s.ID is null
 and T.BuyerDelivery BETWEEN '''+@SDate_varchar+''' and '''+@EDate_varchar+'''
