@@ -445,6 +445,7 @@ and ID = '{Sci.Env.User.UserID}'"))
                 .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
                 .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
                 .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
+                .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
                 .Text("stockunit", header: "Unit", iseditingreadonly: true) // 5
                 .EditText("Article", header: "Article", iseditingreadonly: true, width: Widths.AnsiChars(15)) // 8
@@ -908,6 +909,7 @@ select  o.FtyGroup
         , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
         , a.Roll
         , a.Dyelot
+        , ShadeboneTone.Tone
         , a.Qty
         , a.StockType
         , Isnull(c.inqty - c.outqty + c.adjustqty - c.ReturnQty,0.00) as balance
@@ -933,6 +935,13 @@ left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1
 left join PO_Supp p WITH (NOLOCK) on p.ID = p1.ID and p1.seq1 = p.SEQ1
 left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.poid and c.seq1 = a.seq1 and c.seq2  = a.seq2 
     and c.stocktype = 'B' and c.roll=a.roll and a.Dyelot = c.Dyelot
+outer apply (
+	select [Tone] = MAX(fs.Tone)
+    from FtyInventory fi with (nolock) 
+    Left join FIR f with (nolock) on f.poid = fi.poid and f.seq1 = fi.seq1 and f.seq2 = fi.seq2
+	Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
+	where fi.Ukey = ｃ.Ukey
+) ShadeboneTone
 Where a.id = '{0}'", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
