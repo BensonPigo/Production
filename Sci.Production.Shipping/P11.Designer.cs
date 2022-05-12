@@ -35,7 +35,6 @@
             this.numDetailTotalQty = new Sci.Win.UI.NumericBox();
             this.btnImportGMTBooking = new Sci.Win.UI.Button();
             this.editRemark = new Sci.Win.UI.EditBox();
-            this.btnExchangeRate = new Sci.Win.UI.Button();
             this.numExchangeRate = new Sci.Win.UI.NumericBox();
             this.displayApproveDate = new Sci.Win.UI.DisplayBox();
             this.displayApproveName = new Sci.Win.UI.DisplayBox();
@@ -78,7 +77,6 @@
             this.masterpanel.Controls.Add(this.numDetailTotalQty);
             this.masterpanel.Controls.Add(this.btnImportGMTBooking);
             this.masterpanel.Controls.Add(this.editRemark);
-            this.masterpanel.Controls.Add(this.btnExchangeRate);
             this.masterpanel.Controls.Add(this.numExchangeRate);
             this.masterpanel.Controls.Add(this.displayApproveDate);
             this.masterpanel.Controls.Add(this.displayApproveName);
@@ -92,7 +90,7 @@
             this.masterpanel.Controls.Add(this.label8);
             this.masterpanel.Controls.Add(this.label9);
             this.masterpanel.Controls.Add(this.dateInvDate);
-            this.masterpanel.Size = new System.Drawing.Size(1177, 202);
+            this.masterpanel.Size = new System.Drawing.Size(1195, 202);
             this.masterpanel.Controls.SetChildIndex(this.dateInvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label9, 0);
             this.masterpanel.Controls.SetChildIndex(this.label8, 0);
@@ -106,7 +104,6 @@
             this.masterpanel.Controls.SetChildIndex(this.displayApproveName, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayApproveDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.numExchangeRate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnExchangeRate, 0);
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportGMTBooking, 0);
             this.masterpanel.Controls.SetChildIndex(this.numDetailTotalQty, 0);
@@ -118,15 +115,14 @@
             // 
             this.detailpanel.Controls.Add(this.panel4);
             this.detailpanel.Location = new System.Drawing.Point(0, 202);
-            this.detailpanel.Size = new System.Drawing.Size(1177, 428);
+            this.detailpanel.Size = new System.Drawing.Size(1195, 428);
             this.detailpanel.Controls.SetChildIndex(this.panel4, 0);
             this.detailpanel.Controls.SetChildIndex(this.detailgridcont, 0);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(30, 164);
+            this.gridicon.Location = new System.Drawing.Point(1081, 164);
             this.gridicon.TabIndex = 1;
-            this.gridicon.Visible = false;
             // 
             // refresh
             // 
@@ -135,7 +131,7 @@
             // detailgridcont
             // 
             this.detailgridcont.Controls.Add(this.gridPOList);
-            this.detailgridcont.Size = new System.Drawing.Size(1177, 428);
+            this.detailgridcont.Size = new System.Drawing.Size(1195, 428);
             this.detailgridcont.Controls.SetChildIndex(this.gridPOList, 0);
             // 
             // detail2
@@ -152,16 +148,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1177, 668);
+            this.detail.Size = new System.Drawing.Size(1195, 668);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1177, 630);
+            this.detailcont.Size = new System.Drawing.Size(1195, 630);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 630);
-            this.detailbtm.Size = new System.Drawing.Size(1177, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1195, 38);
             // 
             // browse
             // 
@@ -169,7 +165,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1185, 697);
+            this.tabs.Size = new System.Drawing.Size(1203, 697);
             // 
             // createby
             // 
@@ -189,7 +185,7 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel4.Location = new System.Drawing.Point(0, 0);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(1177, 428);
+            this.panel4.Size = new System.Drawing.Size(1195, 428);
             this.panel4.TabIndex = 5;
             // 
             // gridCurrency
@@ -204,7 +200,7 @@
             this.gridCurrency.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridCurrency.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridCurrency.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridCurrency.Location = new System.Drawing.Point(796, 50);
+            this.gridCurrency.Location = new System.Drawing.Point(783, 50);
             this.gridCurrency.Name = "gridCurrency";
             this.gridCurrency.ReadOnly = true;
             this.gridCurrency.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
@@ -221,7 +217,7 @@
             this.numDetailTotalQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numDetailTotalQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numDetailTotalQty.IsSupportEditMode = false;
-            this.numDetailTotalQty.Location = new System.Drawing.Point(445, 20);
+            this.numDetailTotalQty.Location = new System.Drawing.Point(432, 20);
             this.numDetailTotalQty.Name = "numDetailTotalQty";
             this.numDetailTotalQty.NullValue = new decimal(new int[] {
             0,
@@ -240,7 +236,7 @@
             // btnImportGMTBooking
             // 
             this.btnImportGMTBooking.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnImportGMTBooking.Location = new System.Drawing.Point(796, 149);
+            this.btnImportGMTBooking.Location = new System.Drawing.Point(783, 149);
             this.btnImportGMTBooking.Name = "btnImportGMTBooking";
             this.btnImportGMTBooking.Size = new System.Drawing.Size(290, 32);
             this.btnImportGMTBooking.TabIndex = 36;
@@ -253,34 +249,27 @@
             this.editRemark.BackColor = System.Drawing.Color.White;
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(150, 110);
+            this.editRemark.Location = new System.Drawing.Point(137, 110);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.Size = new System.Drawing.Size(629, 73);
             this.editRemark.TabIndex = 35;
             // 
-            // btnExchangeRate
-            // 
-            this.btnExchangeRate.Location = new System.Drawing.Point(282, 76);
-            this.btnExchangeRate.Name = "btnExchangeRate";
-            this.btnExchangeRate.Size = new System.Drawing.Size(32, 30);
-            this.btnExchangeRate.TabIndex = 34;
-            this.btnExchangeRate.Text = "...";
-            this.btnExchangeRate.UseVisualStyleBackColor = true;
-            this.btnExchangeRate.Click += new System.EventHandler(this.BtnExchangeRate_Click);
-            // 
             // numExchangeRate
             // 
-            this.numExchangeRate.BackColor = System.Drawing.Color.White;
+            this.numExchangeRate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numExchangeRate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ExchangeRate", true));
-            this.numExchangeRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numExchangeRate.Location = new System.Drawing.Point(150, 80);
+            this.numExchangeRate.DecimalPlaces = 8;
+            this.numExchangeRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numExchangeRate.IsSupportEditMode = false;
+            this.numExchangeRate.Location = new System.Drawing.Point(137, 80);
             this.numExchangeRate.Name = "numExchangeRate";
             this.numExchangeRate.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
+            this.numExchangeRate.ReadOnly = true;
             this.numExchangeRate.Size = new System.Drawing.Size(130, 23);
             this.numExchangeRate.TabIndex = 33;
             this.numExchangeRate.Value = new decimal(new int[] {
@@ -295,7 +284,7 @@
             this.displayApproveDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayApproveDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ApproveDate", true));
             this.displayApproveDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayApproveDate.Location = new System.Drawing.Point(592, 80);
+            this.displayApproveDate.Location = new System.Drawing.Point(579, 80);
             this.displayApproveDate.Name = "displayApproveDate";
             this.displayApproveDate.Size = new System.Drawing.Size(183, 23);
             this.displayApproveDate.TabIndex = 31;
@@ -305,7 +294,7 @@
             this.displayApproveName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayApproveName.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Approve", true));
             this.displayApproveName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayApproveName.Location = new System.Drawing.Point(445, 80);
+            this.displayApproveName.Location = new System.Drawing.Point(432, 80);
             this.displayApproveName.Name = "displayApproveName";
             this.displayApproveName.Size = new System.Drawing.Size(145, 23);
             this.displayApproveName.TabIndex = 30;
@@ -315,7 +304,7 @@
             this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
             this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayID.Location = new System.Drawing.Point(150, 20);
+            this.displayID.Location = new System.Drawing.Point(137, 20);
             this.displayID.Name = "displayID";
             this.displayID.Size = new System.Drawing.Size(164, 23);
             this.displayID.TabIndex = 29;
@@ -324,7 +313,7 @@
             // 
             this.lblStatus.BackColor = System.Drawing.Color.Transparent;
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold);
-            this.lblStatus.Location = new System.Drawing.Point(789, 11);
+            this.lblStatus.Location = new System.Drawing.Point(776, 11);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(345, 36);
             this.lblStatus.TabIndex = 28;
@@ -332,7 +321,7 @@
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(30, 110);
+            this.label7.Location = new System.Drawing.Point(17, 110);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(117, 23);
             this.label7.TabIndex = 27;
@@ -340,7 +329,7 @@
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(335, 80);
+            this.label6.Location = new System.Drawing.Point(322, 80);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(107, 23);
             this.label6.TabIndex = 26;
@@ -348,7 +337,7 @@
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(335, 50);
+            this.label5.Location = new System.Drawing.Point(322, 50);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(107, 23);
             this.label5.TabIndex = 25;
@@ -356,7 +345,7 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(335, 20);
+            this.label4.Location = new System.Drawing.Point(322, 20);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(107, 23);
             this.label4.TabIndex = 24;
@@ -364,7 +353,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(30, 80);
+            this.label3.Location = new System.Drawing.Point(17, 80);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(117, 23);
             this.label3.TabIndex = 23;
@@ -372,7 +361,7 @@
             // 
             // label8
             // 
-            this.label8.Location = new System.Drawing.Point(30, 50);
+            this.label8.Location = new System.Drawing.Point(17, 50);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(117, 23);
             this.label8.TabIndex = 22;
@@ -380,7 +369,7 @@
             // 
             // label9
             // 
-            this.label9.Location = new System.Drawing.Point(30, 20);
+            this.label9.Location = new System.Drawing.Point(17, 20);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(117, 23);
             this.label9.TabIndex = 21;
@@ -389,7 +378,7 @@
             // dateInvDate
             // 
             this.dateInvDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "InvDate", true));
-            this.dateInvDate.Location = new System.Drawing.Point(150, 50);
+            this.dateInvDate.Location = new System.Drawing.Point(137, 50);
             this.dateInvDate.Name = "dateInvDate";
             this.dateInvDate.Size = new System.Drawing.Size(130, 23);
             this.dateInvDate.TabIndex = 32;
@@ -400,7 +389,7 @@
             this.txtExVoucherID.BackColor = System.Drawing.Color.White;
             this.txtExVoucherID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ExVoucherID", true));
             this.txtExVoucherID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtExVoucherID.Location = new System.Drawing.Point(445, 49);
+            this.txtExVoucherID.Location = new System.Drawing.Point(432, 49);
             this.txtExVoucherID.Name = "txtExVoucherID";
             this.txtExVoucherID.Size = new System.Drawing.Size(130, 23);
             this.txtExVoucherID.TabIndex = 39;
@@ -426,14 +415,14 @@
             this.gridPOList.RowTemplate.Height = 24;
             this.gridPOList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridPOList.ShowCellToolTips = false;
-            this.gridPOList.Size = new System.Drawing.Size(1177, 428);
+            this.gridPOList.Size = new System.Drawing.Size(1195, 428);
             this.gridPOList.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridPOList.TabIndex = 3;
             // 
             // P11
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1185, 730);
+            this.ClientSize = new System.Drawing.Size(1203, 730);
             this.GridAlias = "BIRInvoice_Detail";
             this.GridNew = 0;
             this.IsSupportClip = false;
@@ -479,7 +468,6 @@
         private Win.UI.NumericBox numDetailTotalQty;
         private Win.UI.Button btnImportGMTBooking;
         private Win.UI.EditBox editRemark;
-        private Win.UI.Button btnExchangeRate;
         private Win.UI.NumericBox numExchangeRate;
         private Win.UI.DisplayBox displayApproveDate;
         private Win.UI.DisplayBox displayApproveName;

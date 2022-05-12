@@ -9,7 +9,7 @@
     [Approve]      VARCHAR (10)   NULL,
     [ApproveDate]  DATETIME       NULL,
     [InvDate]      DATE           NULL,
-    [ExchangeRate] SMALLINT       NULL,
+    [ExchangeRate] DECIMAL(18, 8)       NULL,
     [Remark]       NVARCHAR (500) NULL,
     CONSTRAINT [PK_BIRInvoice] PRIMARY KEY CLUSTERED ([ID] ASC)
 );

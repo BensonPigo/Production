@@ -25,6 +25,8 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.gridicon.Append.Visible = false;
+            this.gridicon.Insert.Visible = false;
             this.gridPOListbs.DataSource = new DataTable();
         }
 
@@ -251,6 +253,40 @@ where id = '{this.CurrentMaintain["ID"]}'
         }
 
         /// <inheritdoc/>
+        protected override void OnDetailGridDelete()
+        {
+            if (this.gridPOListbs.DataSource == null || ((DataTable)this.gridPOListbs.DataSource).Rows.Count <= 0)
+            {
+                return;
+            }
+
+            string invNo = this.gridPOList.Rows[this.gridPOListbs.Position].Cells["InvNo"].Value.ToString();
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    if (string.Compare(dr["InvNo"].ToString(), invNo, true) == 0)
+                    {
+                        dr.Delete();
+                    }
+                }
+            }
+
+            foreach (DataRow dr in ((DataTable)this.gridPOListbs.DataSource).Rows)
+            {
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    if (string.Compare(dr["InvNo"].ToString(), invNo, true) == 0)
+                    {
+                        dr.Delete();
+                    }
+                }
+            }
+
+            // base.OnDetailGridDelete();
+        }
+
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             P11_Print p11_Print = new P11_Print(this.CurrentMaintain, this.DetailDatas);
@@ -264,17 +300,16 @@ where id = '{this.CurrentMaintain["ID"]}'
             this.RefreshExchangeRate();
         }
 
+        /// <inheritdoc/>
         private void RefreshExchangeRate()
         {
             List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@InvDate", this.CurrentMaintain["InvDate"]) };
 
             string sqlGetExchangeRate = @"
-SELECT top 1 Rate 
-FROM FinanceEN..Rate 
-WHERE   RateTypeID='KP'           and
-        OriginalCurrency='USD'    and
-        ExchangeCurrency='PHP'    and
-        @InvDate between BeginDate and EndDate
+SELECT TOP 1 Rate 
+FROM FixedAssets.dbo.Rate
+WHERE RateTypeID = 'TP' and OriginalCurrency = 'USD' 
+and ExchangeCurrency = 'PHP' order by BeginDate desc
 ";
             DataRow drResult;
 
