@@ -576,21 +576,17 @@ where   #tmp.poid = dbo.po_supp.id
             #region 根據 WK 資料找出 MINDQRCode
             if (!MyUtility.Check.Empty(this.CurrentMaintain["InvNo"]))
             {
+                string poIDs = this.DetailDatas.Select(s => $"'{s["POID"]}'").Distinct().JoinToString(",");
                 string sqlGetQRCode = $@"
-select	a.PoID,
-		a.Seq1,
-		a.Seq2,
-		Roll = convert(varchar(8), isnull(pll.PackageNo, isnull(edc.Carton, ''))),
-		Dyelot = convert(varchar(8), isnull(pll.BatchNo, isnull(edc.LotNo, ''))),
+select	[POID] = pl.POID,
+		[Seq1] = pl.Seq1,
+		[Seq2] = pll.Line,
+		Roll = convert(varchar(8), pll.PackageNo),
+		Dyelot = convert(varchar(8), pll.BatchNo),
 		pll.QRCode
-from dbo.Export_Detail a WITH (NOLOCK) 
-inner join Export_Detail_Carton edc with (nolock) on a.Ukey = edc.Export_DetailUkey
-inner join Poshippinglist pl with (nolock) on pl.POID = a.POID and pl.Seq1 = a.Seq1
-inner join POShippingList_Line pll WITH (NOLOCK) ON  pll.POShippingList_Ukey = pl.Ukey and 
-													pll.Line = a.Seq2 and
-													pll.PackageNo = isnull(edc.Carton, pll.PackageNo) and
-													pll.BatchNo = isnull(edc.LotNo, pll.BatchNo)
-where a.ID = '{this.CurrentMaintain["InvNo"]}' and pll.QRCode <> ''
+from  Poshippinglist pl with (nolock) 
+inner join POShippingList_Line pll WITH (NOLOCK) ON  pll.POShippingList_Ukey = pl.Ukey
+where pl.POID in ({poIDs}) and pll.QRCode <> ''
 ";
 
                 DataTable dtQRCode;
@@ -608,11 +604,11 @@ where a.ID = '{this.CurrentMaintain["InvNo"]}' and pll.QRCode <> ''
                     foreach (DataRow drEmptyQRcode in emptyQRcode)
                     {
                         var checkResult = dtQRCode.AsEnumerable()
-                             .Where(s => s["POID"].ToString() == drEmptyQRcode["POID"].ToString() &&
-                                         s["Seq1"].ToString() == drEmptyQRcode["Seq1"].ToString() &&
-                                         s["Seq2"].ToString() == drEmptyQRcode["Seq2"].ToString() &&
-                                         s["Roll"].ToString() == drEmptyQRcode["Roll"].ToString() &&
-                                         s["Dyelot"].ToString() == drEmptyQRcode["Dyelot"].ToString());
+                             .Where(s => s["POID"].ToString().Trim() == drEmptyQRcode["POID"].ToString() &&
+                                         s["Seq1"].ToString().Trim() == drEmptyQRcode["Seq1"].ToString() &&
+                                         s["Seq2"].ToString().Trim() == drEmptyQRcode["Seq2"].ToString() &&
+                                         s["Roll"].ToString().Trim() == drEmptyQRcode["Roll"].ToString() &&
+                                         s["Dyelot"].ToString().Trim() == drEmptyQRcode["Dyelot"].ToString());
 
                         if (checkResult.Any())
                         {
