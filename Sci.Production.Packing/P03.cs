@@ -1345,35 +1345,31 @@ Packing list is locked in the hanger system.";
 
             #region 先判斷Instance是否相同
             DataTable dtServers;
-            sqlCmd = $@"
-IF (
-	select data_source
-	from sys.servers
-	WHERE Name='MainServer'
-)=(
+            string mainServerName = string.Empty;
+            string extendServerName = string.Empty;
 
-	select data_source
-	from sys.servers
-	WHERE Name='ExtendServer'
-)
-BEGIN
-     select SameInstance = 'true'
-END
-ELSE
-BEGIN
-     select SameInstance = 'false'
-END
-";
-
+            sqlCmd = $@"SELECT ServerName = @@SERVERNAME";
             result = DBProxy.Current.Select(null, sqlCmd, out dtServers);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Delete <Shipping Mark Picture> 、<Shipping Mark Stamp> fail! \r\n" + result.ToString());
                 return failResult;
             }
-#endregion
 
-            bool sameInstance = MyUtility.Convert.GetString(dtServers.Rows[0]["SameInstance"]) == "true" ? true : false;
+            mainServerName = MyUtility.Convert.GetString(dtServers.Rows[0]["ServerName"]);
+
+            result = DBProxy.Current.Select("ManufacturingExecution", sqlCmd, out dtServers);
+            if (!result)
+            {
+                DualResult failResult = new DualResult(false, "Delete <Shipping Mark Picture> 、<Shipping Mark Stamp> fail! \r\n" + result.ToString());
+                return failResult;
+            }
+
+            extendServerName = MyUtility.Convert.GetString(dtServers.Rows[0]["ServerName"]);
+
+            #endregion
+
+            bool sameInstance = mainServerName == extendServerName ? true : false;
 
             #region 一併移除 PackingListID 相對應貼標 / 噴碼的資料
             sqlCmd = $@"
