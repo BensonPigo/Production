@@ -1343,17 +1343,50 @@ Packing list is locked in the hanger system.";
                 return failResult;
             }
 
+            #region 先判斷Instance是否相同
+            DataTable dtServers;
+            sqlCmd = $@"
+IF (
+	select data_source
+	from sys.servers
+	WHERE Name='MainServer'
+)=(
+
+	select data_source
+	from sys.servers
+	WHERE Name='ExtendServer'
+)
+BEGIN
+     select SameInstance = 'true'
+END
+ELSE
+BEGIN
+     select SameInstance = 'false'
+END
+";
+
+            result = DBProxy.Current.Select(null, sqlCmd, out dtServers);
+            if (!result)
+            {
+                DualResult failResult = new DualResult(false, "Delete <Shipping Mark Picture> 、<Shipping Mark Stamp> fail! \r\n" + result.ToString());
+                return failResult;
+            }
+#endregion
+
+            bool sameInstance = MyUtility.Convert.GetString(dtServers.Rows[0]["SameInstance"]) == "true" ? true : false;
+
             #region 一併移除 PackingListID 相對應貼標 / 噴碼的資料
             sqlCmd = $@"
 SET XACT_ABORT ON
 
- DELETE pi
- FROM ShippingMarkPic pic
- INNER JOIN ShippingMarkPic_Detail picd ON pic.Ukey = picd.ShippingMarkPicUkey
- INNER JOIN [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail pi ON  pi.ShippingMarkPicUkey = picd.ShippingMarkPicUkey 
+    DELETE pi
+    FROM ShippingMarkPic pic
+    INNER JOIN ShippingMarkPic_Detail picd ON pic.Ukey = picd.ShippingMarkPicUkey
+    INNER JOIN {(sameInstance ? string.Empty : "[ExtendServer].")}PMSFile.dbo.ShippingMarkPic_Detail pi ON  pi.ShippingMarkPicUkey = picd.ShippingMarkPicUkey 
                                                                 AND pi.SCICtnNo = picd.SCICtnNo
                                                                 AND pi.ShippingMarkTypeUkey = picd.ShippingMarkTypeUkey
- WHERE pic.PackingListID='{this.CurrentMaintain["ID"]}'
+    WHERE pic.PackingListID='{this.CurrentMaintain["ID"]}'
+
 
  DELETE picd
  FROM ShippingMarkPic pic
