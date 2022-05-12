@@ -153,6 +153,7 @@
     <Build Include="dbo\Tables\P_SewingLineSchedule_Original.sql" />
     <Build Include="dbo\Stored Procedures\P_ImportEstShippingReport.sql" />
     <Build Include="dbo\Tables\BITableInfo.sql" />
+    <Build Include="dbo\Stored Procedures\P_Import_StyleInfo.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
