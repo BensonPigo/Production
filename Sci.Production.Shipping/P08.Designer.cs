@@ -91,6 +91,8 @@
             this.btnIncludeFoundryRatio = new Sci.Win.UI.Button();
             this.checkIsFreightForwarder = new Sci.Win.UI.CheckBox();
             this.btnImport = new Sci.Win.UI.Button();
+            this.label6 = new Sci.Win.UI.Label();
+            this.numCW = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -107,6 +109,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numCW);
+            this.masterpanel.Controls.Add(this.label6);
             this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.checkIsFreightForwarder);
             this.masterpanel.Controls.Add(this.btnIncludeFoundryRatio);
@@ -234,6 +238,8 @@
             this.masterpanel.Controls.SetChildIndex(this.btnIncludeFoundryRatio, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkIsFreightForwarder, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numCW, 0);
             // 
             // detailpanel
             // 
@@ -997,6 +1003,46 @@
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(642, 206);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(101, 23);
+            this.label6.TabIndex = 109;
+            this.label6.Text = "C. Weight(Kgs)";
+            // 
+            // numCW
+            // 
+            this.numCW.BackColor = System.Drawing.Color.White;
+            this.numCW.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CW", true));
+            this.numCW.DecimalPlaces = 2;
+            this.numCW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numCW.Location = new System.Drawing.Point(746, 206);
+            this.numCW.Maximum = new decimal(new int[] {
+            99999999,
+            0,
+            0,
+            131072});
+            this.numCW.MaxLength = 9;
+            this.numCW.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            65536});
+            this.numCW.Name = "numCW";
+            this.numCW.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numCW.Size = new System.Drawing.Size(83, 23);
+            this.numCW.TabIndex = 110;
+            this.numCW.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // P08
             // 
             this.ClientSize = new System.Drawing.Size(1008, 628);
@@ -1098,5 +1144,7 @@
         private Win.UI.Button btnIncludeFoundryRatio;
         private Win.UI.CheckBox checkIsFreightForwarder;
         private Win.UI.Button btnImport;
+        private Win.UI.NumericBox numCW;
+        private Win.UI.Label label6;
     }
 }
