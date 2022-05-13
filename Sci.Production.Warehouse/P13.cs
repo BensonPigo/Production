@@ -194,9 +194,9 @@ select id.POID,
 					AND(Tone.val = lag(Tone.val,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))) 
 					,''
 					,'Shade Band Tone/Grp : ' + Tone.val
-				)
 				------ + MDesc------
-				 + char(10) + char(13) +isnull(iif(p.FabricType='F', 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno), ''),''),
+                    + char(10) + char(13) +isnull(iif(p.FabricType='F', 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno), ''),'')
+				),
 	    id.Roll,
 	    id.Dyelot,
 	    id.Qty,
