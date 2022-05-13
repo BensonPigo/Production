@@ -44,6 +44,8 @@ namespace Sci.Production.Quality
                     this.txtStartTime.Enabled = true;
                     this.txtEndTime.Enabled = true;
                 }
+
+                this.CurrentMaintain["Frequency"] = this.comboFrequency.SelectedValue.ToString();
             }
         }
 
