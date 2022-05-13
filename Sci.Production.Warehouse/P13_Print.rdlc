@@ -73,17 +73,6 @@
                                                 </TextRuns>
                                                 <Style />
                                               </Paragraph>
-                                              <Paragraph>
-                                                <TextRuns>
-                                                  <TextRun>
-                                                    <Value>=iif(Fields!DESC.Value="","",Fields!MDESC.Value)</Value>
-                                                    <Style>
-                                                      <FontWeight>Bold</FontWeight>
-                                                    </Style>
-                                                  </TextRun>
-                                                </TextRuns>
-                                                <Style />
-                                              </Paragraph>
                                             </Paragraphs>
                                             <rd:DefaultName>Textbox19</rd:DefaultName>
                                             <Left>4.16278cm</Left>
