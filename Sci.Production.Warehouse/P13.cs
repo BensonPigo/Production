@@ -182,17 +182,33 @@ select id.POID,
 	    p.seq1,
 	    p.seq2,
 	    [desc] =IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll) 
-			    AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
-			    AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))) 
-			    ,''
-                ,dbo.getMtlDesc(id.poid,id.seq1,id.seq2,2,0)) + char(10) + char(13) + 'Shade Band Tone/Grp : ' + Tone.val,
-        MDesc = iif(p.FabricType='F', 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno), ''),
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))) 
+					,''
+					,dbo.getMtlDesc(id.poid,id.seq1,id.seq2,2,0)
+				)
+				------ + Tone------
+				 + char(10) + char(13) + IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
+					AND(Tone.val = lag(Tone.val,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))) 
+					,''
+					,'Shade Band Tone/Grp : ' + Tone.val
+				------ + MDesc------
+                    + char(10) + char(13) +isnull(iif(p.FabricType='F', 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno), ''),'')
+				),
 	    id.Roll,
 	    id.Dyelot,
 	    id.Qty,
 	    p.StockUnit,
         dbo.Getlocation(fi.ukey) [location],
-        fi.ContainerCode,
+        ContainerCode = IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
+					AND(fi.ContainerCode = lag(fi.ContainerCode,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
+					) 
+					,''
+					,fi.ContainerCode),
 	    [Total]=sum(id.Qty) OVER (PARTITION BY id.POID ,id.seq1, id.seq2)
 		,[RecvKG] = case when rd.ActualQty is not null 
 						then case when rd.ActualQty <> id.Qty
@@ -268,7 +284,6 @@ order by id.POID,SEQ, id.Dyelot,id.Roll
                     POID = row1["POID"].ToString().Trim(),
                     SEQ = row1["SEQ"].ToString().Trim(),
                     DESC = row1["desc"].ToString().Trim(),
-                    MDESC = row1["Mdesc"].ToString().Trim(),
                     Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                     StockUnit = row1["StockUnit"].ToString().Trim(),
                     Roll = row1["Roll"].ToString().Trim(),
