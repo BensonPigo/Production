@@ -32,6 +32,18 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnUpdate = new Sci.Win.UI.Button();
+            this.editBoxRemark = new Sci.Win.UI.EditBox();
+            this.dateCuttingReadyDate = new Sci.Win.UI.DateBox();
+            this.dateOffline = new Sci.Win.UI.DateBox();
+            this.dateInLine = new Sci.Win.UI.DateBox();
+            this.txtsewingline1 = new Sci.Production.Class.Txtsewingline();
+            this.label7 = new Sci.Win.UI.Label();
+            this.label6 = new Sci.Win.UI.Label();
+            this.label5 = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.label1 = new Sci.Win.UI.Label();
             this.displayFactory = new Sci.Win.UI.DisplayBox();
@@ -60,8 +72,8 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel3.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
@@ -79,7 +91,7 @@
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(1281, 0);
+            this.panel2.Location = new System.Drawing.Point(1422, 0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(5, 627);
             this.panel2.TabIndex = 2;
@@ -112,8 +124,120 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1276, 114);
+            this.panel3.Size = new System.Drawing.Size(1417, 114);
             this.panel3.TabIndex = 0;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.btnUpdate);
+            this.groupBox1.Controls.Add(this.editBoxRemark);
+            this.groupBox1.Controls.Add(this.dateCuttingReadyDate);
+            this.groupBox1.Controls.Add(this.dateOffline);
+            this.groupBox1.Controls.Add(this.dateInLine);
+            this.groupBox1.Controls.Add(this.txtsewingline1);
+            this.groupBox1.Controls.Add(this.label7);
+            this.groupBox1.Controls.Add(this.label6);
+            this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Location = new System.Drawing.Point(696, 4);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(616, 107);
+            this.groupBox1.TabIndex = 21;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Batch Update";
+            // 
+            // btnUpdate
+            // 
+            this.btnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUpdate.Location = new System.Drawing.Point(518, 74);
+            this.btnUpdate.Name = "btnUpdate";
+            this.btnUpdate.Size = new System.Drawing.Size(92, 30);
+            this.btnUpdate.TabIndex = 22;
+            this.btnUpdate.Text = "Update";
+            this.btnUpdate.UseVisualStyleBackColor = true;
+            this.btnUpdate.Click += new System.EventHandler(this.BtnUpdate_Click);
+            // 
+            // editBoxRemark
+            // 
+            this.editBoxRemark.BackColor = System.Drawing.Color.White;
+            this.editBoxRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editBoxRemark.Location = new System.Drawing.Point(481, 20);
+            this.editBoxRemark.Multiline = true;
+            this.editBoxRemark.Name = "editBoxRemark";
+            this.editBoxRemark.Size = new System.Drawing.Size(129, 50);
+            this.editBoxRemark.TabIndex = 10;
+            // 
+            // dateCuttingReadyDate
+            // 
+            this.dateCuttingReadyDate.Location = new System.Drawing.Point(282, 20);
+            this.dateCuttingReadyDate.Name = "dateCuttingReadyDate";
+            this.dateCuttingReadyDate.Size = new System.Drawing.Size(130, 23);
+            this.dateCuttingReadyDate.TabIndex = 9;
+            // 
+            // dateOffline
+            // 
+            this.dateOffline.Location = new System.Drawing.Point(306, 46);
+            this.dateOffline.Name = "dateOffline";
+            this.dateOffline.Size = new System.Drawing.Size(130, 23);
+            this.dateOffline.TabIndex = 8;
+            // 
+            // dateInLine
+            // 
+            this.dateInLine.Location = new System.Drawing.Point(88, 47);
+            this.dateInLine.Name = "dateInLine";
+            this.dateInLine.Size = new System.Drawing.Size(130, 23);
+            this.dateInLine.TabIndex = 7;
+            // 
+            // txtsewingline1
+            // 
+            this.txtsewingline1.BackColor = System.Drawing.Color.White;
+            this.txtsewingline1.FactoryobjectName = null;
+            this.txtsewingline1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtsewingline1.Location = new System.Drawing.Point(88, 20);
+            this.txtsewingline1.Name = "txtsewingline1";
+            this.txtsewingline1.Size = new System.Drawing.Size(60, 23);
+            this.txtsewingline1.TabIndex = 6;
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(415, 20);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(63, 23);
+            this.label7.TabIndex = 5;
+            this.label7.Text = "Remark";
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(221, 46);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(82, 23);
+            this.label6.TabIndex = 4;
+            this.label6.Text = "Offline Date";
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(151, 20);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(128, 23);
+            this.label5.TabIndex = 3;
+            this.label5.Text = "Cutting Ready Date";
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(13, 47);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(72, 23);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Inline Date";
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(13, 20);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(72, 23);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Line";
             // 
             // dateBuyerDelivery
             // 
@@ -165,7 +289,7 @@
             // btnToExcel
             // 
             this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnToExcel.Location = new System.Drawing.Point(1177, 46);
+            this.btnToExcel.Location = new System.Drawing.Point(1318, 46);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(92, 30);
             this.btnToExcel.TabIndex = 11;
@@ -176,7 +300,7 @@
             // btnQuery
             // 
             this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuery.Location = new System.Drawing.Point(1177, 10);
+            this.btnQuery.Location = new System.Drawing.Point(1318, 10);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(92, 30);
             this.btnQuery.TabIndex = 10;
@@ -353,13 +477,13 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(5, 583);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(1276, 44);
+            this.panel4.Size = new System.Drawing.Size(1417, 44);
             this.panel4.TabIndex = 1;
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(1180, 7);
+            this.btnClose.Location = new System.Drawing.Point(1321, 7);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 1;
@@ -370,7 +494,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(1094, 7);
+            this.btnSave.Location = new System.Drawing.Point(1235, 7);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
             this.btnSave.TabIndex = 0;
@@ -384,7 +508,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(5, 114);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(1276, 469);
+            this.panel5.Size = new System.Drawing.Size(1417, 469);
             this.panel5.TabIndex = 5;
             // 
             // grid1
@@ -408,22 +532,13 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(1276, 469);
+            this.grid1.Size = new System.Drawing.Size(1417, 469);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Location = new System.Drawing.Point(696, 4);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(475, 100);
-            this.groupBox1.TabIndex = 21;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Batch Update";
-            // 
             // P13
             // 
-            this.ClientSize = new System.Drawing.Size(1286, 627);
+            this.ClientSize = new System.Drawing.Size(1427, 627);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
@@ -442,6 +557,8 @@
             this.Controls.SetChildIndex(this.panel5, 0);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
@@ -484,5 +601,16 @@
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.Label label1;
         private System.Windows.Forms.GroupBox groupBox1;
+        private Win.UI.Button btnUpdate;
+        private Win.UI.EditBox editBoxRemark;
+        private Win.UI.DateBox dateCuttingReadyDate;
+        private Win.UI.DateBox dateOffline;
+        private Win.UI.DateBox dateInLine;
+        private Class.Txtsewingline txtsewingline1;
+        private Win.UI.Label label7;
+        private Win.UI.Label label6;
+        private Win.UI.Label label5;
+        private Win.UI.Label label3;
+        private Win.UI.Label label2;
     }
 }
