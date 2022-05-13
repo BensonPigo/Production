@@ -203,8 +203,8 @@ into #tmp_Pullout_Detail_pd
 From Pullout_Detail pd  with (nolock)
 inner join #tmp_main t on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.Seq
 inner join Pullout_Detail_Detail pdd with (nolock) on pd.Ukey = pdd.Pullout_DetailUKey
-Outer apply (Select Qty = IIF(pd.pulloutdate <= iif(t.ShipmodeID in ('E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), pdd.shipqty, 0)) rA --On Time
-Outer apply (Select Qty = IIF(pd.pulloutdate >  iif(t.ShipmodeID in ('E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), pdd.shipqty, 0)) rB --Fail
+Outer apply (Select Qty = IIF(pd.pulloutdate <= DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate}), pdd.shipqty, 0)) rA --On Time
+Outer apply (Select Qty = IIF(pd.pulloutdate >  DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate}), pdd.shipqty, 0)) rB --Fail
 group by pd.OrderID, pd.OrderShipmodeSeq
 
 select max(p.PulloutDate)PulloutDate ,pd.OrderID,pd.OrderShipmodeSeq
@@ -307,7 +307,7 @@ SELECT
 		,t.BrandID
 		,BuyerDelivery = convert(varchar(10),t.BuyerDelivery,111)--G
 		,FtyKPI= convert(varchar(10),t.FtyKPI,111)
-		,Extension = convert(varchar(10),iif(t.ShipmodeID in ('E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), 111)--I
+        ,Extension = convert(varchar(10), DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate}), 111)
 		,DeliveryByShipmode = t.ShipmodeID
 		,t.OrderQty 
         ,OnTimeQty = CASE WHEN t.OnsiteSample = 1 THEN IIF(GetOnsiteSampleFail.isFail = 1 or sew.SewLastDate is null, 0, Cast(t.OrderQty as int))
@@ -378,7 +378,7 @@ outer apply(
 )ps
 -----------isDevSample=1-----------
 outer apply (
-    Select top 1 iif(pd.PulloutDate > iif(t.ShipmodeID in ('E/C', 'E/P'), t.FtyKPI, DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI)), 1, 0) isFail, pd.PulloutDate
+	Select top 1 iif(pd.PulloutDate > DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate}), 1, 0) isFail, pd.PulloutDate
     From pullout p
 	inner join Pullout_Detail pd with (nolock) on p.ID  = pd.id
     where pd.OrderID = t.OrderID
@@ -442,7 +442,7 @@ SELECT
     ,t.BrandID  
     , BuyerDelivery = convert(varchar(10),t.BuyerDelivery,111)
     , FtyKPI = convert(varchar(10),t.FtyKPI,111)
-    , Extension = convert(varchar(10),iif(t.ShipmodeID in ('E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), 111)
+    , Extension = convert(varchar(10), DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate}), 111)
     , DeliveryByShipmode = t.ShipmodeID
     , OrderQty = 0
     , OnTimeQty =  0
