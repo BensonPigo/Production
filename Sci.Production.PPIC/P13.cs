@@ -279,9 +279,9 @@ namespace Sci.Production.PPIC
         // Query
         private void BtnQuery_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.txtSPStart.Text) && MyUtility.Check.Empty(this.txtSPStart.Text) && MyUtility.Check.Empty(this.dateSCIDelivery.Value1) && MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
+            if (MyUtility.Check.Empty(this.txtSPStart.Text) && MyUtility.Check.Empty(this.txtSPStart.Text) && MyUtility.Check.Empty(this.dateSCIDelivery.Value1) && MyUtility.Check.Empty(this.dateSCIDelivery.Value2) && MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) && MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
             {
-                MyUtility.Msg.WarningBox("SP#  and SCI Delivery can't empty!!");
+                MyUtility.Msg.WarningBox("<SP#>, <SCI Delivery> and <Buyer Delivery> can't be empty!!");
                 return;
             }
 
@@ -344,6 +344,16 @@ as
             if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
             {
                 sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
+            {
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
+            {
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.txtstyle.Text))
