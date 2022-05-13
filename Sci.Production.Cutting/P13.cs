@@ -493,13 +493,19 @@ order by x.[Bundle]";
                 sqlcmd = $@"select dbo.GetSinglelineSP((select distinct OrderID from Bundle_Detail_Order where id = '{printDr["ID"]}' order by OrderID for XML RAW))";
                 worksheet.Cells[5, 1] = "SP#: " + MyUtility.GetValue.Lookup(sqlcmd);
 
-                MyUtility.Excel.CopyToXls(resultDt, string.Empty, "Cutting_P10.xltx", 6, false, null, excelApp, wSheet: worksheet);
+                Excel.Range rngToInsert = worksheet.get_Range("A6", Type.Missing).EntireRow; // 選擇要被貼上的位置
+                rngToInsert.Insert(Excel.XlInsertShiftDirection.xlShiftDown, Type.Missing); // 貼上
+
+                worksheet.get_Range("A6", "B6").Merge(false); // 合併欄位
+                worksheet.Cells[6, 1] = "Total Bundle#:" + resultDt.Rows.Count;
+
+                MyUtility.Excel.CopyToXls(resultDt, string.Empty, "Cutting_P10.xltx", 7, false, null, excelApp, wSheet: worksheet);
                 worksheet.get_Range("D1:D1").ColumnWidth = 11;
                 worksheet.get_Range("E1:E1").Columns.AutoFit();
                 worksheet.get_Range("G1:H1").ColumnWidth = 9;
                 worksheet.get_Range("I1:L1").ColumnWidth = 15;
 
-                worksheet.Range[string.Format("A6:L{0}", resultDt.Rows.Count + 6)].Borders.Weight = 2; // 設定全框線
+                worksheet.Range[string.Format("A7:L{0}", resultDt.Rows.Count + 7)].Borders.Weight = 2; // 設定全框線
                 #endregion
 
                 Marshal.ReleaseComObject(worksheet);
