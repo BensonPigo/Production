@@ -44,6 +44,7 @@
             this.txtStartTime = new Sci.Win.UI.TextBox();
             this.txtEndTime = new Sci.Win.UI.TextBox();
             this.comboFrequency = new Sci.Win.UI.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -58,6 +59,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.comboFrequency);
             this.detailcont.Controls.Add(this.txtEndTime);
             this.detailcont.Controls.Add(this.txtStartTime);
@@ -123,9 +125,17 @@
             // numRFTStandard
             // 
             this.numRFTStandard.BackColor = System.Drawing.Color.White;
+            this.numRFTStandard.Cursor = System.Windows.Forms.Cursors.Default;
             this.numRFTStandard.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RFTStandard", true));
+            this.numRFTStandard.DecimalPlaces = 2;
             this.numRFTStandard.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numRFTStandard.IsSupportNegative = true;
             this.numRFTStandard.Location = new System.Drawing.Point(125, 47);
+            this.numRFTStandard.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
             this.numRFTStandard.Name = "numRFTStandard";
             this.numRFTStandard.NullValue = new decimal(new int[] {
             0,
@@ -257,6 +267,15 @@
             this.comboFrequency.TabIndex = 7;
             this.comboFrequency.SelectedValueChanged += new System.EventHandler(this.ComboFrequency_SelectedValueChanged);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(228, 50);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(20, 17);
+            this.label1.TabIndex = 16;
+            this.label1.Text = "%";
+            // 
             // B26
             // 
             this.ClientSize = new System.Drawing.Size(862, 436);
@@ -300,5 +319,6 @@
         private Win.UI.TextBox txtStartTime;
         private Win.UI.TextBox txtEndTime;
         private Win.UI.ComboBox comboFrequency;
+        private System.Windows.Forms.Label label1;
     }
 }
