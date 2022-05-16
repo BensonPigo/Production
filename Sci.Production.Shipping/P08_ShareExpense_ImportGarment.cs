@@ -11,6 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P08_ShareExpense_ImportGarment
     /// </summary>
+    /// ISP20220497: 1.移除Date From. 2. Export 增加On Board Date 篩選. 3. 排除Packing Local Order資料 
     public partial class P08_ShareExpense_ImportGarment : Win.Subs.Base
     {
         private DataTable detailData;
@@ -28,6 +29,8 @@ namespace Sci.Production.Shipping
         {
             this.InitializeComponent();
             this.detailData = detailData;
+
+            // Type = 0 then Export else 1
             this.Type = t;
         }
 
@@ -35,15 +38,15 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            if (this.Type == 0)
+            if (this.Type == 1)
             {
-                MyUtility.Tool.SetupCombox(this.comboDatafrom, 1, 1, "Garment Booking,Packing Local Order");
-                this.comboDatafrom.SelectedIndex = -1;
+                this.dateOnBoard.Visible = false;
+                this.labOnBoardDate.Visible = false;
             }
             else
             {
-                MyUtility.Tool.SetupCombox(this.comboDatafrom, 1, 1, "Garment Booking,Packing FOC,Packing Local Order");
-                this.comboDatafrom.SelectedIndex = -1;
+                this.dateOnBoard.Visible = true;
+                this.labOnBoardDate.Visible = true;
             }
 
             // Grid設定
@@ -60,9 +63,17 @@ namespace Sci.Production.Shipping
         // Query
         private void BtnQuery_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.comboDatafrom.SelectedValue) && MyUtility.Check.Empty(this.dateFCRDate.Value1) && MyUtility.Check.Empty(this.dateFCRDate.Value2) &&
-                MyUtility.Check.Empty(this.txtCountryDestination.TextBox1.Text) && MyUtility.Check.Empty(this.txtShipmode.SelectedValue) && MyUtility.Check.Empty(this.txtbrand.Text) &&
-                MyUtility.Check.Empty(this.txtSubconForwarder.TextBox1.Text) && MyUtility.Check.Empty(this.txtTruck.Text) && MyUtility.Check.Empty(this.datePulloutDate.Value1) && MyUtility.Check.Empty(this.datePulloutDate.Value2))
+            if (MyUtility.Check.Empty(this.dateFCRDate.Value1) &&
+                MyUtility.Check.Empty(this.dateFCRDate.Value2) &&
+                MyUtility.Check.Empty(this.txtCountryDestination.TextBox1.Text) &&
+                MyUtility.Check.Empty(this.txtShipmode.SelectedValue) &&
+                MyUtility.Check.Empty(this.txtbrand.Text) &&
+                MyUtility.Check.Empty(this.txtSubconForwarder.TextBox1.Text) &&
+                MyUtility.Check.Empty(this.txtTruck.Text) &&
+                MyUtility.Check.Empty(this.datePulloutDate.Value1) &&
+                MyUtility.Check.Empty(this.datePulloutDate.Value2) &&
+                MyUtility.Check.Empty(this.dateOnBoard.Value1) &&
+                MyUtility.Check.Empty(this.dateOnBoard.Value2))
             {
                 this.dateFCRDate.TextBox1.Focus();
                 return;
@@ -70,10 +81,8 @@ namespace Sci.Production.Shipping
 
             StringBuilder sqlCmd = new StringBuilder();
             #region 組SQL
-            #region Garment Booking
-            if (MyUtility.Check.Empty(this.comboDatafrom.SelectedValue) || MyUtility.Convert.GetString(this.comboDatafrom.SelectedValue) == "Garment Booking")
-            {
-                sqlCmd.Append(@"
+
+            sqlCmd.Append(@"
 with GB as 
 (
     select distinct 0 as Selected,g.ID as InvNo,g.ShipModeID,g.TotalGW as GW, g.TotalCBM as CBM,
@@ -82,141 +91,73 @@ with GB as
     from GMTBooking g  WITH (NOLOCK) 
     left join GMTBooking_CTNR gc WITH (NOLOCK) on gc.ID = g.ID 
     left Join PackingList p WITH (NOLOCK) on p.INVNo = g.ID 
-    where 1=1 ");
+    where 1=1 
+    AND p.Type != 'L' -- 排除Packing Local Order by ISP20220497
+");
 
-                if (!MyUtility.Check.Empty(this.dateFCRDate.Value1))
-                {
-                    sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}' ", Convert.ToDateTime(this.dateFCRDate.Value1).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.dateFCRDate.Value2))
-                {
-                    sqlCmd.Append(string.Format(" and g.FCRDate <= '{0}' ", Convert.ToDateTime(this.dateFCRDate.Value2).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.txtCountryDestination.TextBox1.Text))
-                {
-                    sqlCmd.Append(string.Format(" and g.Dest = '{0}' ", this.txtCountryDestination.TextBox1.Text));
-                }
-
-                if (!MyUtility.Check.Empty(this.txtShipmode.SelectedValue))
-                {
-                    sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}' ", MyUtility.Convert.GetString(this.txtShipmode.SelectedValue)));
-                }
-
-                if (!MyUtility.Check.Empty(this.txtbrand.Text))
-                {
-                    sqlCmd.Append(string.Format(" and g.BrandID = '{0}' ", this.txtbrand.Text));
-                }
-
-                if (!MyUtility.Check.Empty(this.txtSubconForwarder.TextBox1.Text))
-                {
-                    sqlCmd.Append(string.Format(" and g.Forwarder = '{0}' ", this.txtSubconForwarder.TextBox1.Text));
-                }
-
-                if (!MyUtility.Check.Empty(this.txtTruck.Text))
-                {
-                    sqlCmd.Append(string.Format(" and gc.TruckNo = '{0}' ", this.txtTruck.Text));
-                }
-
-                if (!MyUtility.Check.Empty(this.datePulloutDate.Value1))
-                {
-                    sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}' ", Convert.ToDateTime(this.datePulloutDate.Value1).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.datePulloutDate.Value2))
-                {
-                    sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}' ", Convert.ToDateTime(this.datePulloutDate.Value2).ToString("yyyy/MM/dd")));
-                }
-
-                sqlCmd.Append("), ");
-            }
-            else
+            if (!MyUtility.Check.Empty(this.dateFCRDate.Value1))
             {
-                sqlCmd.Append(@"
-with GB as 
-(
-    select 0 as Selected,'' as InvNo,'' as ShipModeID,0 as GW, 0 as CBM, 
-    '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount, 
-    '' as ShareBase, 0 as FtyWK 
-    from GMTBooking WITH (NOLOCK) where 1=0 
-), ");
+                sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}' ", Convert.ToDateTime(this.dateFCRDate.Value1).ToString("yyyy/MM/dd")));
             }
-            #endregion
 
-            #region PackingList
-            if (!MyUtility.Check.Empty(this.comboDatafrom.SelectedValue) && MyUtility.Convert.GetString(this.comboDatafrom.SelectedValue) == "Garment Booking")
+            if (this.Type == 0)
             {
-                sqlCmd.Append(@"
-PL as 
-(
-    select 0 as Selected,'' as InvNo,'' as ShipModeID,0 as GW, 0 as CBM, 
-    '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount, 
-    '' as ShareBase, 0 as FtyWK 
-    from PackingList WITH (NOLOCK) where 1=0 
-) ");
+                if (!MyUtility.Check.Empty(this.dateOnBoard.Value1))
+                {
+                    sqlCmd.Append(string.Format(" and g.ETD >= '{0}' ", Convert.ToDateTime(this.dateOnBoard.Value1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateOnBoard.Value2))
+                {
+                    sqlCmd.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.dateOnBoard.Value2).ToString("yyyy/MM/dd")));
+                }
             }
-            else
+
+            if (!MyUtility.Check.Empty(this.dateFCRDate.Value2))
             {
-                sqlCmd.Append(@"
-PL as 
-(
-    select distinct 0 as Selected,ID as InvNo,ShipModeID,GW,CBM, 
-    '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount, 
-    '' as ShareBase, 0 as FtyWK 
-    from PackingList WITH (NOLOCK) 
-where ");
-                if (MyUtility.Check.Empty(this.comboDatafrom.SelectedValue))
-                {
-                    if (this.Type == 0)
-                    {
-                        sqlCmd.Append(" Type = 'L' ");
-                    }
-                    else
-                    {
-                        sqlCmd.Append(" (Type = 'F' or Type = 'L') ");
-                    }
-                }
-                else
-                {
-                    if (MyUtility.Convert.GetString(this.comboDatafrom.SelectedValue) == "Packing FOC")
-                    {
-                        sqlCmd.Append(" Type = 'F' ");
-                    }
-                    else
-                    {
-                        sqlCmd.Append(" Type = 'L' ");
-                    }
-                }
-
-                if (!MyUtility.Check.Empty(this.datePulloutDate.Value1))
-                {
-                    sqlCmd.Append(string.Format(" and PulloutDate >= '{0}' ", Convert.ToDateTime(this.datePulloutDate.Value1).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.datePulloutDate.Value2))
-                {
-                    sqlCmd.Append(string.Format(" and PulloutDate <= '{0}' ", Convert.ToDateTime(this.datePulloutDate.Value2).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.txtShipmode.SelectedValue))
-                {
-                    sqlCmd.Append(string.Format(" and ShipModeID = '{0}' ", MyUtility.Convert.GetString(this.txtShipmode.SelectedValue)));
-                }
-
-                if (!MyUtility.Check.Empty(this.txtbrand.Text))
-                {
-                    sqlCmd.Append(string.Format(" and BrandID = '{0}' ", this.txtbrand.Text));
-                }
-
-                sqlCmd.Append(") ");
+                sqlCmd.Append(string.Format(" and g.FCRDate <= '{0}' ", Convert.ToDateTime(this.dateFCRDate.Value2).ToString("yyyy/MM/dd")));
             }
 
-            #endregion
+            if (!MyUtility.Check.Empty(this.txtCountryDestination.TextBox1.Text))
+            {
+                sqlCmd.Append(string.Format(" and g.Dest = '{0}' ", this.txtCountryDestination.TextBox1.Text));
+            }
 
-            sqlCmd.Append(@"select * from GB 
-union all 
-select * from PL");
+            if (!MyUtility.Check.Empty(this.txtShipmode.SelectedValue))
+            {
+                sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}' ", MyUtility.Convert.GetString(this.txtShipmode.SelectedValue)));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtbrand.Text))
+            {
+                sqlCmd.Append(string.Format(" and g.BrandID = '{0}' ", this.txtbrand.Text));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtSubconForwarder.TextBox1.Text))
+            {
+                sqlCmd.Append(string.Format(" and g.Forwarder = '{0}' ", this.txtSubconForwarder.TextBox1.Text));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtTruck.Text))
+            {
+                sqlCmd.Append(string.Format(" and gc.TruckNo = '{0}' ", this.txtTruck.Text));
+            }
+
+            if (!MyUtility.Check.Empty(this.datePulloutDate.Value1))
+            {
+                sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}' ", Convert.ToDateTime(this.datePulloutDate.Value1).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this.datePulloutDate.Value2))
+            {
+                sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}' ", Convert.ToDateTime(this.datePulloutDate.Value2).ToString("yyyy/MM/dd")));
+            }
+
+            sqlCmd.Append(") ");
+
+            sqlCmd.Append(@"
+select * from GB 
+");
             #endregion
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData);
