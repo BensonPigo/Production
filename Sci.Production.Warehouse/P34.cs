@@ -361,7 +361,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             DualResult result2;
             DataTable datacheck;
 
-            // 檢查 是自動倉 的 Barcode不可為空
+            // 檢查 Barcode不可為空
             if (!Prgs.CheckBarCode(dtOriFtyInventory, this.Name))
             {
                 return;

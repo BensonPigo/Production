@@ -1766,7 +1766,7 @@ where    psd.ID = '{material["poid"]}'
             // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
             DualResult result = Prgs.GetFtyInventoryData(dtDetail, "P22", out DataTable dtOriFtyInventory);
 
-            // 檢查 是自動倉 的 Barcode不可為空
+            // 檢查 Barcode不可為空
             if (!Prgs.CheckBarCode(dtOriFtyInventory, "P22"))
             {
                 return false;
@@ -2128,7 +2128,7 @@ DROP TABLE #TmpSource
             // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
             result = Prgs.GetFtyInventoryData(dtDetail, "P23", out DataTable dtOriFtyInventory);
 
-            // 檢查 是自動倉 的 Barcode不可為空
+            // 檢查 Barcode不可為空
             if (!Prgs.CheckBarCode(dtOriFtyInventory, "P23"))
             {
                 return new DualResult(false);
@@ -2600,7 +2600,7 @@ inner join #tmpD as src on   target.ID = src.ToPoid
             // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
             result = Prgs.GetFtyInventoryData(dtDetail, "P24", out DataTable dtOriFtyInventory);
 
-            // 檢查 是自動倉 的 Barcode不可為空
+            // 檢查 Barcode不可為空
             if (!Prgs.CheckBarCode(dtOriFtyInventory, "P24"))
             {
                 return new DualResult(false);

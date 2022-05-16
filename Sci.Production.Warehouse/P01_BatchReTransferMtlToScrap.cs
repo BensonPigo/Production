@@ -242,52 +242,71 @@ drop table #ReTransferToScrapList,#ReTransferToScrapSummary
             }
 
             this.ShowWaitMessage("Processing...");
-            using (TransactionScope transactionScope = new TransactionScope())
+            var listReTransferToScrap = this.dtReTransferToScrapList.AsEnumerable();
+            foreach (DataRow transToScrapPO in drSelects)
             {
-                var listReTransferToScrap = this.dtReTransferToScrapList.AsEnumerable();
-                foreach (DataRow transToScrapPO in drSelects)
+                var listMtlItem = listReTransferToScrap.Where(s => s["POID"].ToString() == transToScrapPO["POID"].ToString()).ToList();
+
+                if (!listMtlItem.Any())
                 {
-                    var listMtlItem = listReTransferToScrap.Where(s => s["POID"].ToString() == transToScrapPO["POID"].ToString()).ToList();
+                    continue;
+                }
 
-                    if (!listMtlItem.Any())
+                string subTransferId = MyUtility.GetValue.GetID(Env.User.Keyword + "AC", "SubTransfer", DateTime.Now);
+                if (MyUtility.Check.Empty(subTransferId))
+                {
+                    MyUtility.Msg.WarningBox("Get document ID fail!!");
+                    return;
+                }
+
+                DataTable dtSubTransfer_Detail = new DataTable();
+                Exception errMsg = null;
+                using (TransactionScope transactionscope = new TransactionScope())
+                {
+                    try
                     {
-                        continue;
-                    }
+                        DualResult result = PublicPrg.Prgs.ReTransferMtlToScrapByPO(subTransferId, transToScrapPO["POID"].ToString(), listMtlItem);
+                        if (!result)
+                        {
+                            throw result.GetException();
+                        }
 
-                    string subTransferId = MyUtility.GetValue.GetID(Env.User.Keyword + "AC", "SubTransfer", DateTime.Now);
-                    if (MyUtility.Check.Empty(subTransferId))
+                        if (!(result = DBProxy.Current.Select(null, $"select * from SubTransfer_Detail where id = '{subTransferId}'", out dtSubTransfer_Detail)))
+                        {
+                            throw result.GetException();
+                        }
+
+                        // 檢查 Barcode不可為空
+                        if (dtSubTransfer_Detail.Rows.Count > 0)
+                        {
+                            Prgs.GetFtyInventoryData(dtSubTransfer_Detail, "P25", out DataTable dtOriFtyInventory);
+                            if (!Prgs.CheckBarCode(dtOriFtyInventory, "P25"))
+                            {
+                                transactionscope.Dispose();
+                                return;
+                            }
+                        }
+
+                        // 上方 Auto Create P25 Confrim 後, 寫入新的 BarCode
+                        if (!(result = Prgs.UpdateWH_Barcode(true, dtSubTransfer_Detail, "P25", out bool fromNewBarcode)))
+                        {
+                            throw result.GetException();
+                        }
+
+                        transactionscope.Complete();
+                    }
+                    catch (Exception ex)
                     {
-                        MyUtility.Msg.WarningBox("Get document ID fail!!");
-                        return;
+                        errMsg = ex;
                     }
+                }
 
-                    DualResult result = PublicPrg.Prgs.ReTransferMtlToScrapByPO(subTransferId, transToScrapPO["POID"].ToString(), listMtlItem);
-                    if (!result)
-                    {
-                        transactionScope.Dispose();
-                        this.ShowErr(result);
-                        return;
-                    }
-
-                    if (!(result = DBProxy.Current.Select(null, $"select * from SubTransfer_Detail where id = '{subTransferId}'", out DataTable dtSubTransfer_Detail)))
-                    {
-                        MyUtility.Msg.ErrorBox(result.ToString());
-                        return;
-                    }
-
-                    // 上方 Auto Create P25 Confrim 後, 寫入新的 BarCode
-                    if (!(result = Prgs.UpdateWH_Barcode(true, dtSubTransfer_Detail, "P25", out bool fromNewBarcode)))
-                    {
-                        MyUtility.Msg.ErrorBox(result.ToString());
-                        return;
-                    }
-
-                    // SubTransfer_Detail
+                // SubTransfer_Detail
+                if (dtSubTransfer_Detail.Rows.Count > 0)
+                {
                     Gensong_AutoWHFabric.Sent(true, dtSubTransfer_Detail, "P25", EnumStatus.New, EnumStatus.Confirm);
                     Vstrong_AutoWHAccessory.Sent(true, dtSubTransfer_Detail, "P25", EnumStatus.New, EnumStatus.Confirm);
                 }
-
-                transactionScope.Complete();
             }
 
             MyUtility.Msg.InfoBox("Finish Re-Transfer Mtl. to Scrap!!");

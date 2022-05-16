@@ -2382,7 +2382,7 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
             result = Prgs.GetFtyInventoryData(dtIssue_Detail, this.Name, out DataTable dtOriFtyInventory);
             DataTable datacheck;
 
-            // 檢查 是自動倉 的 Barcode不可為空
+            // 檢查 Barcode不可為空
             if (!Prgs.CheckBarCode(dtOriFtyInventory, this.Name))
             {
                 return;
