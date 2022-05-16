@@ -32,12 +32,12 @@ select s.id
 	,s.MDivisionID
 	,s.FactoryID
 	,sd.OrderId
-	,sdd.Article
-	,sdd.SizeCode
+	,[Article] = isnull(sdd.Article, sd.Article)
+	,[SizeCode] = isnull(sdd.SizeCode, '''')
 	,sd.ComboType
-	,ActManPower = s.Manpower
-	,[WorkHour] = cast(sd.WorkHour * (sdd.QAQty * 1.0 / sd.QAQty) as numeric(6, 4))
-	,sdd.QAQty
+	,[ActManPower] = s.Manpower
+	,[WorkHour] = iif(sdd.QAQty is null, 0, cast(sd.WorkHour * (sdd.QAQty * 1.0 / sd.QAQty) as numeric(6, 4)))
+	,[QAQty] = isnull(sdd.QAQty, 0)
 	,sd.InlineQty
 	,o.LocalOrder
 	,o.CustPONo
@@ -55,7 +55,7 @@ select s.id
 	,MockupProgram= isnull(mo.ProgramID,'''') ,MockupCPU= isnull(mo.Cpu,0),MockupCPUFactor= isnull(mo.CPUFactor,0),MockupStyle= isnull(mo.StyleID,''''),MockupSeason= isnull(mo.SeasonID,'''')	
     ,Rate = isnull(dbo.[P_GetOrderLocation_Rate](o.id,sd.ComboType,''['+@LinkServerName+']''),100)/100
 	,System.StdTMS
-	, [ori_QAQty] = sdd.QAQty
+	, [ori_QAQty] = isnull(sdd.QAQty, 0)
 	, [ori_InlineQty] = sd.InlineQty
     ,BuyerDelivery = format(o.BuyerDelivery,''yyyy/MM/dd'')
     ,OrderQty = o.Qty
@@ -67,7 +67,7 @@ select s.id
 into #tmpSewingDetail
 from ['+@LinkServerName+'].Production.dbo.System WITH (NOLOCK),['+@LinkServerName+'].Production.dbo.SewingOutput s WITH (NOLOCK) 
 inner join  ['+@LinkServerName+'].Production.dbo.SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
-inner join  ['+@LinkServerName+'].Production.dbo.SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sd.UKey= sdd.SewingOutput_DetailUKey
+left join  ['+@LinkServerName+'].Production.dbo.SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sd.UKey= sdd.SewingOutput_DetailUKey
 left join  ['+@LinkServerName+'].Production.dbo.Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join  ['+@LinkServerName+'].Production.dbo.Factory f WITH (NOLOCK) on o.FactoryID = f.id
 left join ['+@LinkServerName+'].Production.dbo.OrderType ot WITH (NOLOCK) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
