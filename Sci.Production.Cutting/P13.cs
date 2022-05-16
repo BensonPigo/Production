@@ -177,6 +177,11 @@ where 1=1
         /// <returns>workBook List</returns>
         private List<string> ExcelProcess(string processName)
         {
+            if ((BindingSource)this.grid.DataSource == null || (DataTable)((BindingSource)this.grid.DataSource).DataSource == null)
+            {
+                return null;
+            }
+
             DataTable printDt = (DataTable)((BindingSource)this.grid.DataSource).DataSource;
             if (printDt.AsEnumerable().Any(row => row["Sel"].EqualDecimal(1)) == false)
             {
