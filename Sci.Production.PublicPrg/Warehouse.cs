@@ -3409,13 +3409,14 @@ where td.ID = '{transcationID}'
                     return iDList;
             }
 
-            string sqlCmd = @"
-select Barcode = max(Barcode)
+            string sqlCmd = $@"
+select top 1 Barcode
 from(
 	select Barcode
 	from FtyInventory_Barcode
 	where Barcode like 'F%'
 	and Barcode not like '%-%'
+	and Barcode like '{keyWord}%'
 	and len(Barcode) = 13
 
 	union all
@@ -3423,6 +3424,7 @@ from(
 	from WHBarcodeTransaction 
 	where From_OldBarcode<>''
 	and From_OldBarcode not like '%-%'
+	and From_OldBarcode like '{keyWord}%'
 	and len(From_OldBarcode) = 13
 
 	union all
@@ -3430,6 +3432,7 @@ from(
 	from WHBarcodeTransaction 
 	where To_OldBarcode<>''
 	and To_OldBarcode not like '%-%'
+	and To_OldBarcode like '{keyWord}%'
 	and len(To_OldBarcode) = 13
 
 	union all
@@ -3437,6 +3440,7 @@ from(
 	from WHBarcodeTransaction 
 	where From_NewBarcode<>''
 	and From_NewBarcode not like '%-%'
+	and From_NewBarcode like '{keyWord}%'
 	and len(From_NewBarcode) = 13
 
 	union all
@@ -3444,8 +3448,10 @@ from(
 	from WHBarcodeTransaction 
 	where To_NewBarcode<>''
 	and To_NewBarcode not like '%-%'
+	and To_NewBarcode like '{keyWord}%'
 	and len(To_NewBarcode) = 13
 )x
+order by Barcode desc
 ";
 
             // 固定最大長度13, 雖然結構是開16, 但長度要留3
