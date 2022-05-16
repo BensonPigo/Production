@@ -297,7 +297,7 @@ WHERE   StockType='{0}'
             DualResult result = Prgs.GetFtyInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtOriFtyInventory);
 
             // 檢查 是自動倉 的 Barcode不可為空
-            if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, this.Name))
+            if (!Prgs.CheckBarCode(dtOriFtyInventory, this.Name))
             {
                 return;
             }

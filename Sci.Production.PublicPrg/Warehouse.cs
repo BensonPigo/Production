@@ -1767,7 +1767,7 @@ where    psd.ID = '{material["poid"]}'
             DualResult result = Prgs.GetFtyInventoryData(dtDetail, "P22", out DataTable dtOriFtyInventory);
 
             // 檢查 是自動倉 的 Barcode不可為空
-            if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, "P22"))
+            if (!Prgs.CheckBarCode(dtOriFtyInventory, "P22"))
             {
                 return false;
             }
@@ -2129,7 +2129,7 @@ DROP TABLE #TmpSource
             result = Prgs.GetFtyInventoryData(dtDetail, "P23", out DataTable dtOriFtyInventory);
 
             // 檢查 是自動倉 的 Barcode不可為空
-            if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, "P23"))
+            if (!Prgs.CheckBarCode(dtOriFtyInventory, "P23"))
             {
                 return new DualResult(false);
             }
@@ -2601,7 +2601,7 @@ inner join #tmpD as src on   target.ID = src.ToPoid
             result = Prgs.GetFtyInventoryData(dtDetail, "P24", out DataTable dtOriFtyInventory);
 
             // 檢查 是自動倉 的 Barcode不可為空
-            if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, "P24"))
+            if (!Prgs.CheckBarCode(dtOriFtyInventory, "P24"))
             {
                 return new DualResult(false);
             }
@@ -3504,7 +3504,7 @@ from(
         /// Confirm 時檢查
         /// </summary>
         /// <inheritdoc/>
-        public static bool CheckIsWMSBarCode(DataTable dtDetail, string function)
+        public static bool CheckBarCode(DataTable dtDetail, string function)
         {
             if (dtDetail == null)
             {
@@ -3517,7 +3517,7 @@ from(
             }
 
             WHTableName detailTableName = GetWHDetailTableName(function);
-            string checkFilter = "FabricType = 'F' and IsWMS = 1 and isnull(Barcode, '') = ''";
+            string checkFilter = "FabricType = 'F' and isnull(Barcode, '') = ''";
             if (detailTableName == WHTableName.Adjust_Detail || detailTableName == WHTableName.Stocktaking_Detail)
             {
                 checkFilter += " and balanceQty > 0";
@@ -3531,7 +3531,7 @@ from(
 
             if (detailTableName == WHTableName.SubTransfer_Detail || detailTableName == WHTableName.BorrowBack_Detail || detailTableName == WHTableName.LocationTrans_Detail)
             {
-                if (dtDetail.Select("FabricType = 'F' and ToIsWMS = 1 and isnull(Barcode, '') = ''").Length > 0)
+                if (dtDetail.Select("FabricType = 'F' and isnull(Barcode, '') = ''").Length > 0)
                 {
                     MyUtility.Msg.WarningBox("FtyInventory barcode can't empty!");
                     return false;

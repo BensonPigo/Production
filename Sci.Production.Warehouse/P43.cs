@@ -401,12 +401,6 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr))
             DualResult result2;
             DataTable datacheck;
 
-            // 檢查 是自動倉 的 Barcode不可為空
-            if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, this.Name))
-            {
-                return;
-            }
-
             #region 檢查物料不能有WMS Location && IsFromWMS = 0
             if (!PublicPrg.Prgs.Chk_WMS_Location_Adj((DataTable)this.detailgridbs.DataSource) && MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
             {

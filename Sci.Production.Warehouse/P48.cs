@@ -624,12 +624,6 @@ from #tmp";
                 // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
                 result = Prgs.GetFtyInventoryData(dtDetail_Ukeys, "P45", out DataTable dtOriFtyInventory);
 
-                // 檢查 是自動倉 的 Barcode不可為空
-                if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, "P45"))
-                {
-                    return;
-                }
-
                 DataTable[] dts;
                 List<SqlParameter> para = new List<SqlParameter>
                 {

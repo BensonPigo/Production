@@ -374,7 +374,7 @@ and ID = '{Sci.Env.User.UserID}'"))
             string ids = string.Empty;
 
             // 檢查 是自動倉 的 Barcode不可為空
-            if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, this.Name))
+            if (!Prgs.CheckBarCode(dtOriFtyInventory, this.Name))
             {
                 return;
             }
@@ -577,12 +577,6 @@ where (isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.
             StringBuilder sqlupd2_FIO = new StringBuilder();
             string sqlcmd = string.Empty;
             string ids = string.Empty;
-
-            // 檢查 是自動倉 的 Barcode不可為空
-            if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, this.Name))
-            {
-                return;
-            }
 
             #region 檢查庫存項lock
             sqlcmd = string.Format(

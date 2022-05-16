@@ -576,7 +576,7 @@ and ID = '{Sci.Env.User.UserID}'"))
             DataTable datacheck;
 
             // 檢查 是自動倉 的 Barcode不可為空
-            if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, this.Name))
+            if (!Prgs.CheckBarCode(dtOriFtyInventory, this.Name))
             {
                 return;
             }

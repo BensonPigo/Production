@@ -684,6 +684,12 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
             string ids = string.Empty;
             DataTable datacheck;
 
+            // 檢查 是自動倉 的 Barcode不可為空
+            if (!Prgs.CheckBarCode(dtOriFtyInventory, this.Name))
+            {
+                return;
+            }
+
             #region 檢查物料Location 是否存在WMS
             if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), this.Name))
             {
