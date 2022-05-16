@@ -151,6 +151,7 @@ namespace Sci.Production.PPIC
             this.grid1.DataSource = this.listControlBindingSource1;
 
             this.Helper.Controls.Grid.Generator(this.grid1)
+                .CheckBox("selected", header: string.Empty, width: Widths.AnsiChars(3), trueValue: 1, falseValue: 0)
                 .Date("SCIDelivery", header: "SCI Delivery", iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true)
                 .Text("ID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -279,9 +280,9 @@ namespace Sci.Production.PPIC
         // Query
         private void BtnQuery_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.txtSPStart.Text) && MyUtility.Check.Empty(this.txtSPStart.Text) && MyUtility.Check.Empty(this.dateSCIDelivery.Value1) && MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
+            if (MyUtility.Check.Empty(this.txtSPStart.Text) && MyUtility.Check.Empty(this.txtSPStart.Text) && MyUtility.Check.Empty(this.dateSCIDelivery.Value1) && MyUtility.Check.Empty(this.dateSCIDelivery.Value2) && MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) && MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
             {
-                MyUtility.Msg.WarningBox("SP#  and SCI Delivery can't empty!!");
+                MyUtility.Msg.WarningBox("<SP#>, <SCI Delivery> and <Buyer Delivery> can't be empty!!");
                 return;
             }
 
@@ -346,6 +347,16 @@ as
                 sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("yyyy/MM/dd")));
             }
 
+            if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
+            {
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
+            {
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString("yyyy/MM/dd")));
+            }
+
             if (!MyUtility.Check.Empty(this.txtstyle.Text))
             {
                 sqlCmd.Append(string.Format(" and o.StyleID = '{0}'", this.txtstyle.Text));
@@ -367,7 +378,7 @@ as
             }
 
             sqlCmd.Append(@")
-select *,iif(isnull(SewOutQty,0) >= Qty, tmpActSewOffLine, null) as ActSewOffLine,SUBSTRING(tmpArtworkType,1, LEN(tmpArtworkType)-1) as ArtworkType from tmpData order by SCIDelivery");
+select selected = cast(1 as bit), *,iif(isnull(SewOutQty,0) >= Qty, tmpActSewOffLine, null) as ActSewOffLine,SUBSTRING(tmpArtworkType,1, LEN(tmpArtworkType)-1) as ArtworkType from tmpData order by SCIDelivery");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData);
             if (!result)
@@ -398,9 +409,15 @@ select *,iif(isnull(SewOutQty,0) >= Qty, tmpActSewOffLine, null) as ActSewOffLin
             {
                 IList<string> updateCmds = new List<string>();
                 this.grid1.ValidateControl();
+                DataRow[] drs = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1");
+                if (drs.Length == 0)
+                {
+                    return;
+                }
+
                 this.listControlBindingSource1.EndEdit();
                 StringBuilder allSP = new StringBuilder();
-                foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
+                foreach (DataRow dr in drs)
                 {
                     if (dr.RowState == DataRowState.Modified)
                     {
@@ -753,6 +770,55 @@ DROP TABLE #updatetemp  ",
             {
                 this.txtMR.Text = string.Empty;
                 this.displayMR.Value = string.Empty;
+            }
+        }
+
+        private void BtnUpdate_Click(object sender, EventArgs e)
+        {
+            if (this.listControlBindingSource1.DataSource == null)
+            {
+                return;
+            }
+
+            this.grid1.ValidateControl();
+            DataRow[] drs = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1");
+            if (drs.Length == 0)
+            {
+                return;
+            }
+
+            foreach (DataRow dr in drs)
+            {
+                dr["SewLine"] = this.txtsewingline1.Text;
+                if (MyUtility.Check.Empty(this.dateInLine.Value))
+                {
+                    dr["SewInLine"] = DBNull.Value;
+                }
+                else
+                {
+                    dr["SewInLine"] = ((DateTime)this.dateInLine.Value).ToString("yyyy/MM/dd");
+                }
+
+                if (MyUtility.Check.Empty(this.dateOffline.Value))
+                {
+                    dr["SewOffLine"] = DBNull.Value;
+                }
+                else
+                {
+                    dr["SewOffLine"] = ((DateTime)this.dateOffline.Value).ToString("yyyy/MM/dd");
+                }
+
+                if (MyUtility.Check.Empty(this.dateCuttingReadyDate.Value))
+                {
+                    dr["CutReadyDate"] = DBNull.Value;
+                }
+                else
+                {
+                    dr["CutReadyDate"] = ((DateTime)this.dateCuttingReadyDate.Value).ToString("yyyy/MM/dd");
+                }
+
+                dr["SewRemark"] = this.editBoxRemark.Text;
+                dr.EndEdit();
             }
         }
     }

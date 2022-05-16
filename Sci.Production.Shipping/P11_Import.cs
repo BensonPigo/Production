@@ -143,6 +143,10 @@ WHERE GB.ETD IS NOT NULL
 AND GB.[Status]='Confirmed'
 AND NOT Exists (SELECT 1 FROM BIRInvoice_Detail bd with (nolock) where GB.ID = bd.InvNo)
 {where}
+and not exists(
+    select 1 from #tmp t
+    where GB.ID = t.InvNo
+)
 ORDER BY GB.ETD
 
 
@@ -150,7 +154,8 @@ drop table #tmpUnitPriceUSD
 ";
 
             DualResult result;
-            if (result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt))
+
+            if (result = MyUtility.Tool.ProcessWithDatatable(this.dt_detail, string.Empty, sqlcmd,  out DataTable dt))
             {
                 if (dt != null && dt.Rows.Count <= 0)
                 {

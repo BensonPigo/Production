@@ -182,17 +182,33 @@ select id.POID,
 	    p.seq1,
 	    p.seq2,
 	    [desc] =IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll) 
-			    AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
-			    AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))) 
-			    ,''
-                ,dbo.getMtlDesc(id.poid,id.seq1,id.seq2,2,0)) + char(10) + char(13) + 'Shade Band Tone/Grp : ' + Tone.val,
-        MDesc = iif(p.FabricType='F', 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno), ''),
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))) 
+					,''
+					,dbo.getMtlDesc(id.poid,id.seq1,id.seq2,2,0)
+				)
+				------ + Tone------
+				 + char(10) + char(13) + IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
+					AND(Tone.val = lag(Tone.val,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))) 
+					,''
+					,'Shade Band Tone/Grp : ' + Tone.val
+				------ + MDesc------
+                    + char(10) + char(13) +isnull(iif(p.FabricType='F', 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno), ''),'')
+				),
 	    id.Roll,
 	    id.Dyelot,
 	    id.Qty,
 	    p.StockUnit,
         dbo.Getlocation(fi.ukey) [location],
-        fi.ContainerCode,
+        ContainerCode = IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
+					AND(fi.ContainerCode = lag(fi.ContainerCode,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
+					) 
+					,''
+					,fi.ContainerCode),
 	    [Total]=sum(id.Qty) OVER (PARTITION BY id.POID ,id.seq1, id.seq2)
 		,[RecvKG] = case when rd.ActualQty is not null 
 						then case when rd.ActualQty <> id.Qty
@@ -268,7 +284,6 @@ order by id.POID,SEQ, id.Dyelot,id.Roll
                     POID = row1["POID"].ToString().Trim(),
                     SEQ = row1["SEQ"].ToString().Trim(),
                     DESC = row1["desc"].ToString().Trim(),
-                    MDESC = row1["Mdesc"].ToString().Trim(),
                     Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
                     StockUnit = row1["StockUnit"].ToString().Trim(),
                     Roll = row1["Roll"].ToString().Trim(),
@@ -445,6 +460,7 @@ and ID = '{Sci.Env.User.UserID}'"))
                 .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
                 .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
                 .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
+                .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
                 .Text("stockunit", header: "Unit", iseditingreadonly: true) // 5
                 .EditText("Article", header: "Article", iseditingreadonly: true, width: Widths.AnsiChars(15)) // 8
@@ -908,6 +924,7 @@ select  o.FtyGroup
         , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
         , a.Roll
         , a.Dyelot
+        , ShadeboneTone.Tone
         , a.Qty
         , a.StockType
         , Isnull(c.inqty - c.outqty + c.adjustqty - c.ReturnQty,0.00) as balance
@@ -933,6 +950,13 @@ left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1
 left join PO_Supp p WITH (NOLOCK) on p.ID = p1.ID and p1.seq1 = p.SEQ1
 left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.poid and c.seq1 = a.seq1 and c.seq2  = a.seq2 
     and c.stocktype = 'B' and c.roll=a.roll and a.Dyelot = c.Dyelot
+outer apply (
+	select [Tone] = MAX(fs.Tone)
+    from FtyInventory fi with (nolock) 
+    Left join FIR f with (nolock) on f.poid = fi.poid and f.seq1 = fi.seq1 and f.seq2 = fi.seq2
+	Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
+	where fi.Ukey = ｃ.Ukey
+) ShadeboneTone
 Where a.id = '{0}'", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);

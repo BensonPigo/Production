@@ -31,6 +31,7 @@
     [APPExchageRate]   NUMERIC (11, 6) DEFAULT ((0)) NOT NULL,
     [VoucherEditDate] DATE NULL, 
     [SisFtyAPID] VARCHAR(13) NOT NULL DEFAULT (''), 
+    [CW] NUMERIC(8, 2) NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_ShippingAP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

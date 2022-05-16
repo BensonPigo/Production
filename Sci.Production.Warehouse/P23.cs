@@ -264,6 +264,7 @@ WHERE   StockType='{0}'
             .Text("fromseq", header: "Inventory" + Environment.NewLine + "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
             .Text("fromroll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
             .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
+            .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5)) // 5
             .Text("Location", header: "From" + Environment.NewLine + "Location", iseditingreadonly: true) // 6
@@ -725,6 +726,7 @@ select  [Selected] = 0
         , [description] = dbo.getmtldesc (a.FromPoId, a.FromSeq1, a.FromSeq2, 2, 0)
         , a.FromRoll
         , a.FromDyelot
+        , ShadeboneTone.Tone
         , a.FromStocktype
         , a.Qty
         , a.ToPoid
@@ -745,7 +747,7 @@ from dbo.SubTransfer_detail a WITH (NOLOCK)
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId 
                                              and p1.seq1 = a.FromSeq1 
                                              and p1.SEQ2 = a.FromSeq2
-left join FtyInventory FI on a.FromPoid = fi.poid 
+left join FtyInventory fi on a.FromPoid = fi.poid 
                              and a.fromSeq1 = fi.seq1 
                              and a.fromSeq2 = fi.seq2
                              and a.fromRoll = fi.roll 
@@ -766,6 +768,13 @@ outer apply(
 			for xml path ('')
 		) , 1, 1, '')
 )Fromlocation
+outer apply (
+	select [Tone] = MAX(fs.Tone)
+    from FtyInventory fi2 with (nolock) 
+    Left join FIR f with (nolock) on f.poid = fi2.poid and f.seq1 = fi2.seq1 and f.seq2 = fi2.seq2
+	Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi2.Roll and fs.Dyelot = fi2.Dyelot
+	where fi2.Ukey = fi.Ukey
+) ShadeboneTone
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
