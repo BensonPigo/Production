@@ -565,7 +565,7 @@ drop table #PackingList_Detail,#Transferclog,#CReceive,#CReturn,#TransferCFA,#Re
             this.listControlBindingSource1.DataSource = transferDetail;
 
             sqlCmd = string.Format(
-                @"
+				@"
 select [PackingListID] =  p.ID 
 ,pd.CTNStartNo
 ,[Scanned] = iif(Scanned.QtyPerCTN=Scanned.ScanQty,'Y','')
@@ -590,6 +590,7 @@ select [PackingListID] =  p.ID
 ,pd.MDScanDate
 ,pd.MDFailQty
 ,pd.DRYTransferDate
+,pd.HaulingDate
 from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
 outer apply(
 	select sum(QtyPerCTN) QtyPerCTN ,sum(ScanQty) ScanQty 
@@ -629,7 +630,8 @@ order by p.ID,pd.Seq", this.orderID);
                 .Date("TransferDate", header: "Trans. Date", width: Widths.AnsiChars(10))
                 .Date("ReceiveDate", header: "Rec. Date", width: Widths.AnsiChars(10))
                 .Date("ReturnDate", header: "Return Date", width: Widths.AnsiChars(10))
-                .Date("DryReceiveDate", header: "Dry Room Receive Date", width: Widths.AnsiChars(10))
+				.Date("HaulingDate", header: "Hauling Date", width: Widths.AnsiChars(10))
+				.Date("DryReceiveDate", header: "Dry Room Receive Date", width: Widths.AnsiChars(10))
                 .Date("DRYTransferDate", header: "Dry Room Transfer Date", width: Widths.AnsiChars(10))
                 .Date("MDScanDate", header: "MD Room Scan Date", width: Widths.AnsiChars(10))
                 .Text("MDFailQty", header: "MD Discrepancy", width: Widths.AnsiChars(6))
