@@ -8,6 +8,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Transactions;
 
 namespace Sci.Production.PublicPrg
@@ -3372,7 +3373,7 @@ where td.ID = '{transcationID}'
         }
 
         /// <inheritdoc/>
-        public static List<string> GetBarcodeNo_WH(string keyWord, int batchNumber = 1, int dateType = 3, string connectionName = null, int sequenceMode = 1, int sequenceLength = 0)
+        public static List<string> GetBarcodeNo_WH(string keyWord, int batchNumber = 1, int dateType = 3, string connectionName = null, int sequenceMode = 1, int sequenceLength = 0, DataTable dtBarcodeSource = null)
         {
             List<string> iDList = new List<string>();
             DateTime today = DateTime.Today;
@@ -3417,7 +3418,7 @@ from(
 	where Barcode like 'F%'
 	and Barcode not like '%-%'
 	and len(Barcode) = 13
-
+    
 	union all
 	select From_OldBarcode
 	from WHBarcodeTransaction 
@@ -3450,16 +3451,29 @@ from(
 
             // 固定最大長度13, 雖然結構是開16, 但長度要留3
             int columnTypeLength = 13;
+            List<string> userInputBarcodes = new List<string>();
+
+            if (dtBarcodeSource != null && dtBarcodeSource.Columns.Contains("Barcode") && dtBarcodeSource.Rows.Count > 0)
+            {
+                userInputBarcodes = dtBarcodeSource.AsEnumerable().Select(s => s["Barcode"].ToString()).ToList();
+            }
 
             DualResult result = null;
             if (result = DBProxy.Current.Select(connectionName, sqlCmd, out DataTable dtID))
             {
-                if (dtID.Rows.Count > 0)
+                if (dtID.Rows.Count > 0 && !MyUtility.Check.Empty(dtID.Rows[0]["Barcode"]))
                 {
                     string lastID = dtID.Rows[0]["Barcode"].ToString();
                     while (batchNumber > 0)
                     {
                         lastID = keyWord + GetNextValue(lastID.Substring(keyWord.Length), sequenceMode);
+
+                        // 如果產生Barcode與user輸入的重複，就跳號繼續產生
+                        if (userInputBarcodes.Any(s => s == lastID))
+                        {
+                            continue;
+                        }
+
                         iDList.Add(lastID);
                         batchNumber = batchNumber - 1;
                     }
@@ -3471,22 +3485,42 @@ from(
                         if ((columnTypeLength - keyWord.Length) >= sequenceLength)
                         {
                             string nextValue = GetNextValue("0".PadLeft(sequenceLength, '0'), sequenceMode);
+                            string lastID = keyWord + nextValue;
                             while (batchNumber > 0)
                             {
-                                iDList.Add(keyWord + nextValue);
-                                nextValue = GetNextValue(nextValue.PadLeft(sequenceLength, '0'), sequenceMode);
+                                // 如果產生Barcode與user輸入的重複，就跳號繼續產生
+                                if (userInputBarcodes.Any(s => s == lastID))
+                                {
+                                    nextValue = GetNextValue(nextValue.PadLeft(sequenceLength, '0'), sequenceMode);
+                                    lastID = keyWord + nextValue;
+                                    continue;
+                                }
+
+                                iDList.Add(lastID);
                                 batchNumber = batchNumber - 1;
+                                nextValue = GetNextValue(nextValue.PadLeft(sequenceLength, '0'), sequenceMode);
+                                lastID = keyWord + nextValue;
                             }
                         }
                     }
                     else
                     {
                         string nextValue = GetNextValue("0".PadLeft(columnTypeLength - keyWord.Length, '0'), sequenceMode);
+                        string lastID = keyWord + nextValue;
                         while (batchNumber > 0)
                         {
-                            iDList.Add(keyWord + nextValue);
-                            nextValue = GetNextValue(nextValue.PadLeft(columnTypeLength - keyWord.Length, '0'), sequenceMode);
+                            // 如果產生Barcode與user輸入的重複，就跳號繼續產生
+                            if (userInputBarcodes.Any(s => s == lastID))
+                            {
+                                nextValue = GetNextValue(nextValue.PadLeft(columnTypeLength - keyWord.Length, '0'), sequenceMode);
+                                lastID = keyWord + nextValue;
+                                continue;
+                            }
+
+                            iDList.Add(lastID);
                             batchNumber = batchNumber - 1;
+                            nextValue = GetNextValue(nextValue.PadLeft(columnTypeLength - keyWord.Length, '0'), sequenceMode);
+                            lastID = keyWord + nextValue;
                         }
                     }
                 }
@@ -3802,34 +3836,6 @@ left join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.PoId,
             }
             #endregion
 
-            #region 取得新 BarCode
-            List<string> newBarcodeList = new List<string>();
-            if (oriFtyInventory != null)
-            {
-                string filter = string.Empty;
-                switch (detailTableName)
-                {
-                    case WHTableName.Receiving_Detail:
-                    case WHTableName.TransferIn_Detail:
-                    case WHTableName.IssueReturn_Detail:
-                        filter = "FabricType = 'F' and isnull(Barcode, '') = ''";
-                        break;
-                    case WHTableName.Adjust_Detail:
-                        filter = "FabricType = 'F' and balanceQty = 0"; // 舊資料有坑,所以判斷要用<未更新>庫存判斷
-                        break;
-                }
-
-                if (!filter.Empty())
-                {
-                    int count = oriFtyInventory.Select(filter).Length;
-                    if (count > 0)
-                    {
-                        newBarcodeList = Prgs.GetBarcodeNo_WH("F", count);
-                    }
-                }
-            }
-            #endregion
-
             #region 取得已經更新庫存(Qty) FtyInventory 資料, TransactionScope 內要 with(nolock)
             string columns = @"
 	,sd.POID
@@ -3960,7 +3966,36 @@ and sd.FabricType = 'F'
             }
             else
             {
-                sqlcmd = $@"
+                if (detailTableName == WHTableName.Receiving_Detail)
+                {
+                    sqlcmd = $@"
+select
+	sd.ID
+    ,sd.Ukey
+	,rn = ROW_NUMBER()over(order by sd.Ukey)
+
+    ,Fabric_FtyInventoryUkey = f.Ukey
+    ,[balanceQty] = isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
+    ,[Barcode] = iif(isnull(sd.MINDQRCode, '') = '', f.Barcode, sd.MINDQRCode)
+    ,f.BarcodeSeq
+    ,RankFtyInventory = RANK() over(order by f.Ukey)
+    ,countFtyInventory = count(1) over(order by f.Ukey)
+{columns}
+from Receiving_Detail sd with (nolock)
+{ftytable}
+{othertables}
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail psd
+	where psd.id = f.Poid and psd.seq1 = f.seq1 and psd.seq2 = f.seq2 
+	and psd.FabricType = 'F'
+)
+and sd.Ukey in ({ukeys})
+";
+                }
+                else
+                {
+                    sqlcmd = $@"
 select
 	sd.ID
     ,sd.Ukey
@@ -3984,6 +4019,8 @@ and exists(
 )
 and sd.Ukey in ({ukeys})
 ";
+                }
+
                 result = DBProxy.Current.Select("Production", sqlcmd, out dt);
                 if (!result)
                 {
@@ -3995,6 +4032,34 @@ and sd.Ukey in ({ukeys})
             if (dt.Rows.Count == 0)
             {
                 return Result.True;
+            }
+            #endregion
+
+            #region 取得新 BarCode
+            List<string> newBarcodeList = new List<string>();
+            if (oriFtyInventory != null)
+            {
+                string filter = string.Empty;
+                switch (detailTableName)
+                {
+                    case WHTableName.Receiving_Detail:
+                    case WHTableName.TransferIn_Detail:
+                    case WHTableName.IssueReturn_Detail:
+                        filter = "FabricType = 'F' and isnull(Barcode, '') = ''";
+                        break;
+                    case WHTableName.Adjust_Detail:
+                        filter = "FabricType = 'F' and balanceQty = 0"; // 舊資料有坑,所以判斷要用<未更新>庫存判斷
+                        break;
+                }
+
+                if (!filter.Empty())
+                {
+                    int count = oriFtyInventory.Select(filter).Length;
+                    if (count > 0)
+                    {
+                        newBarcodeList = Prgs.GetBarcodeNo_WH("F", count, dtBarcodeSource: dt);
+                    }
+                }
             }
             #endregion
 
@@ -4450,6 +4515,21 @@ and w.Action = '{item.Action}'";
                 if (!(result = MyUtility.Tool.ProcessWithObject(wHBarcodeTransaction.Where(w => w.UpdatethisItem), string.Empty, UpdateWHBarcodeTransaction(), out odt, conn: sqlConnection)))
                 {
                     return result;
+                }
+
+                if (detailTableName == WHTableName.Receiving_Detail)
+                {
+                    string sqlUpdateReceiving_Detail = @"
+    update rd set rd.MINDQRCode = t.To_NewBarcode
+    from Receiving_Detail rd 
+    inner join #tmp t on rd.Ukey = t.TransactionUkey
+    where rd.MINDQRCode = ''
+";
+                    result = DBProxy.Current.ExecuteByConn(sqlConnection, sqlUpdateReceiving_Detail);
+                    if (!result)
+                    {
+                        return result;
+                    }
                 }
             }
             #endregion
@@ -6028,6 +6108,23 @@ and ml.IsWMS = 1
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// 檢查QRCode是否為PMS自動建立
+        /// </summary>
+        /// <param name="checkQRCode">checkQRCode</param>
+        /// <returns>bool</returns>
+        public static bool IsQRCodeCreatedByPMS(this string checkQRCode)
+        {
+            if (Regex.IsMatch(checkQRCode, "^F[0-9]{12}"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
