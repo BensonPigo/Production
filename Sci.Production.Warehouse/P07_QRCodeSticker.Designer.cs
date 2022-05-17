@@ -32,6 +32,8 @@
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.btnPrint = new Sci.Win.UI.Button();
+            this.label1 = new Sci.Win.UI.Label();
+            this.comboFilterQRCode = new Sci.Win.UI.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -52,14 +54,14 @@
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(1, 3);
+            this.grid1.Location = new System.Drawing.Point(1, 36);
             this.grid1.Name = "grid1";
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(851, 366);
+            this.grid1.Size = new System.Drawing.Size(851, 333);
             this.grid1.TabIndex = 1;
             // 
             // btnPrint
@@ -73,9 +75,32 @@
             this.btnPrint.UseVisualStyleBackColor = true;
             this.btnPrint.Click += new System.EventHandler(this.BtnPrint_Click);
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(9, 8);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "QR Code";
+            // 
+            // comboFilterQRCode
+            // 
+            this.comboFilterQRCode.BackColor = System.Drawing.Color.White;
+            this.comboFilterQRCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFilterQRCode.FormattingEnabled = true;
+            this.comboFilterQRCode.IsSupportUnselect = true;
+            this.comboFilterQRCode.Location = new System.Drawing.Point(87, 8);
+            this.comboFilterQRCode.Name = "comboFilterQRCode";
+            this.comboFilterQRCode.OldText = "";
+            this.comboFilterQRCode.Size = new System.Drawing.Size(140, 24);
+            this.comboFilterQRCode.TabIndex = 4;
+            this.comboFilterQRCode.SelectedIndexChanged += new System.EventHandler(this.ComboFilterQRCode_SelectedIndexChanged);
+            // 
             // P07_QRCodeSticker
             // 
             this.ClientSize = new System.Drawing.Size(854, 410);
+            this.Controls.Add(this.comboFilterQRCode);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.btnPrint);
             this.Controls.Add(this.grid1);
             this.Name = "P07_QRCodeSticker";
@@ -92,5 +117,7 @@
         private Win.UI.Grid grid1;
         private Win.UI.Button btnPrint;
         private Win.UI.ListControlBindingSource listControlBindingSource;
+        private Win.UI.Label label1;
+        private Win.UI.ComboBox comboFilterQRCode;
     }
 }
