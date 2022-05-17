@@ -26,6 +26,7 @@
     WashResult varchar(1)  CONSTRAINT [DF_GarmentTest_Detail_WashResult] default('') NOT NULL,
     TestBeforePicture varbinary(max) NULL,
     TestAfterPicture varbinary(max) NULL,
+	ReportNo varchar(14) not null CONSTRAINT [DF_GarmentTest_Detail_ReportNo] default '',
     CONSTRAINT [PK_GarmentTest_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [No] ASC)
 );
 

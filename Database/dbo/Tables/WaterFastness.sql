@@ -17,6 +17,7 @@
 		AddDate datetime NULL ,
 		EditName varchar(10) NULL CONSTRAINT [DF_WaterFastness_EditName] DEFAULT '',
 		EditDate datetime NULL ,
+		ReportNo varchar(14) not null CONSTRAINT [DF_WaterFastness_ReportNo] default '',
 		 CONSTRAINT [PK_WaterFastness] PRIMARY KEY CLUSTERED 
 		(
 			ID ASC

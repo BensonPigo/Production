@@ -14,6 +14,7 @@
     [EditDate]    DATETIME       NULL,
     [Temperature] INT            DEFAULT ((0)) NOT NULL,
     [Time]        INT            DEFAULT ((0)) NOT NULL,
+	ReportNo varchar(14) not null CONSTRAINT [DF_Oven_ReportNo] default '',
     TestBeforePicture varbinary(max) NULL,
     TestAfterPicture varbinary(max) NULL,
     CONSTRAINT [PK_Oven] PRIMARY KEY CLUSTERED ([ID] ASC)

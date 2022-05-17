@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[ColorFastness_Detail] (
-    [ID]                 VARCHAR (13) CONSTRAINT [DF_ColorFastness_Detail_ID] DEFAULT ('') NOT NULL,
+    [ID]                 VARCHAR (14) CONSTRAINT [DF_ColorFastness_Detail_ID] DEFAULT ('') NOT NULL,
     [ColorFastnessGroup] VARCHAR (2)  CONSTRAINT [DF_ColorFastness_Detail_ColorFastnessGroup] DEFAULT ('') NOT NULL,
     [SEQ1]               VARCHAR (3)  CONSTRAINT [DF_ColorFastness_Detail_SEQ] DEFAULT ('') NOT NULL,
     [SEQ2]               VARCHAR (2)  CONSTRAINT [DF_ColorFastness_Detail_SEQ2] DEFAULT ('') NOT NULL,

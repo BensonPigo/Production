@@ -25,6 +25,7 @@ CREATE TABLE [dbo].[FIR_Laboratory] (
     [CrockingInspector] VARCHAR (10)  CONSTRAINT [DF_FIR_Laboratory_CrockingInspector] DEFAULT ('') NOT NULL,
     [HeatInspector]     VARCHAR (10)  CONSTRAINT [DF_FIR_Laboratory_HeatInspector] DEFAULT ('') NOT NULL,
     [WashInspector]     VARCHAR (10)  CONSTRAINT [DF_FIR_Laboratory_WashInspector] DEFAULT ('') NOT NULL,
+	ReportNo varchar(14) not null CONSTRAINT [DF_FIR_Laboratory_ReportNo] default '',
     CrockingTestBeforePicture varbinary(max) NULL,
     CrockingTestAfterPicture varbinary(max) NULL,
     HeatTestBeforePicture varbinary(max) NULL,
