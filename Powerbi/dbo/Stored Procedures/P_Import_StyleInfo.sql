@@ -43,7 +43,7 @@ BEGIN
 		select [StyleID] = t.ID
 			, t.BrandID
 			, t.SeasonID
-			, [GSD_CostingSMV] = CEILING(sum(sq.TMS * 1.0 / 60))
+			, [GSD_CostingSMV] = Cast(sum(sq.TMS * 1.0 / 60) as numeric(16,3))
 		from #tmp_Style t
 		inner join [TRADEDB].[Trade].dbo.Style_Quotation sq with(nolock) on sq.StyleUkey = t.Ukey
 		where t.BrandID = 'ADIDAS'
@@ -55,7 +55,7 @@ BEGIN
 		select i.StyleID
 			, i.BrandID
 			, i.SeasonID
-			, [GSD_CostingSMV]  =  CEILING(sum(iif(i.GSDType = 'C', iSummary.ProSMV, 0)))
+			, [GSD_CostingSMV] = Cast(sum(iif(i.GSDType = 'C', iSummary.ProSMV, 0)) as numeric(16,3))
 		from [TRADEDB].[Trade].dbo.IETMS_Summary iSummary with(nolock)
 		inner join #tmp_Last_IETMS i with(nolock) on iSummary.IETMSUkey = i.IETMSUkey
 		inner Join [TRADEDB].[Trade].dbo.ArtworkType art with(nolock) on art.ID = iSummary.ArtworkTypeID
