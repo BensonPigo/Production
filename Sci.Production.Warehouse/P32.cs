@@ -486,8 +486,8 @@ and ID = '{Sci.Env.User.UserID}'"))
                 return;
             }
 
-            // 檢查 是自動倉 的 Barcode不可為空
-            if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, this.Name))
+            // 檢查 Barcode不可為空
+            if (!Prgs.CheckBarCode(dtOriFtyInventory, this.Name))
             {
                 return;
             }

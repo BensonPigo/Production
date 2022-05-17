@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
+using System.Transactions;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
@@ -285,40 +286,69 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                 DualResult result;
                 #region store procedure parameters
 
-                List<SqlParameter> sqlPar = new List<SqlParameter>();
-                sqlPar.Add(new SqlParameter("@poid", tmp["POID"].ToString()));
-                sqlPar.Add(new SqlParameter("@MDivisionid", Env.User.Keyword));
-                sqlPar.Add(new SqlParameter("@factoryid", Env.User.UserID));
-                sqlPar.Add(new SqlParameter("@loginid", Env.User.UserID));
-                sqlPar.Add(new SqlParameter("@NewID", subTransferId));
-                #endregion
-                if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_WarehouseClose", sqlPar)))
+                DataTable dtSubTransfer_Detail = new DataTable();
+                Exception errMsg = null;
+                using (TransactionScope transactionscope = new TransactionScope())
                 {
-                    Exception ex = result.GetException();
-                    MyUtility.Msg.WarningBox(ex.Message);
+                    try
+                    {
+                        List<SqlParameter> sqlPar = new List<SqlParameter>();
+                        sqlPar.Add(new SqlParameter("@poid", tmp["POID"].ToString()));
+                        sqlPar.Add(new SqlParameter("@MDivisionid", Env.User.Keyword));
+                        sqlPar.Add(new SqlParameter("@factoryid", Env.User.UserID));
+                        sqlPar.Add(new SqlParameter("@loginid", Env.User.UserID));
+                        sqlPar.Add(new SqlParameter("@NewID", subTransferId));
+                        #endregion
+                        if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_WarehouseClose", sqlPar)))
+                        {
+                            throw result.GetException();
+                        }
+
+                        if (!(result = DBProxy.Current.Select(null, $"select * from SubTransfer_Detail where id = '{subTransferId}'", out dtSubTransfer_Detail)))
+                        {
+                            throw result.GetException();
+                        }
+
+                        // 檢查 Barcode不可為空
+                        if (dtSubTransfer_Detail.Rows.Count > 0)
+                        {
+                            Prgs.GetFtyInventoryData(dtSubTransfer_Detail, "P25", out DataTable dtOriFtyInventory);
+                            if (!Prgs.CheckBarCode(dtOriFtyInventory, "P25"))
+                            {
+                                transactionscope.Dispose();
+                                return;
+                            }
+                        }
+
+                        // 上方 Auto Create P25 Confrim 後, 寫入新的 BarCode
+                        if (!(result = Prgs.UpdateWH_Barcode(true, dtSubTransfer_Detail, "P25", out bool fromNewBarcode)))
+                        {
+                            throw result.GetException();
+                        }
+
+                        transactionscope.Complete();
+                    }
+                    catch (Exception ex)
+                    {
+                        errMsg = ex;
+                    }
                 }
-                else
+
+                if (!MyUtility.Check.Empty(errMsg))
                 {
-                    DataTable dtFilter = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).CopyToDataTable();
-                    DataTable dtMain = dtFilter.DefaultView.ToTable(true, "POID", "WhseClose");
-                    if (!(result = DBProxy.Current.Select(null, $"select * from SubTransfer_Detail where id = '{subTransferId}'", out DataTable dtSubTransfer_Detail)))
-                    {
-                        MyUtility.Msg.ErrorBox(result.ToString());
-                        return;
-                    }
+                    this.ShowErr(errMsg);
+                    return;
+                }
 
-                    // 上方 Auto Create P25 Confrim 後, 寫入新的 BarCode
-                    if (!(result = Prgs.UpdateWH_Barcode(true, dtSubTransfer_Detail, "P25", out bool fromNewBarcode)))
-                    {
-                        MyUtility.Msg.ErrorBox(result.ToString());
-                        return;
-                    }
+                // WHClose
+                DataTable dtFilter = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).CopyToDataTable();
+                DataTable dtMain = dtFilter.DefaultView.ToTable(true, "POID", "WhseClose");
+                Gensong_AutoWHFabric.SentWHClose(true, dtMain);
+                Vstrong_AutoWHAccessory.SentWHClose(true, dtMain);
 
-                    // WHClose
-                    Gensong_AutoWHFabric.SentWHClose(true, dtMain);
-                    Vstrong_AutoWHAccessory.SentWHClose(true, dtMain);
-
-                    // SubTransfer_Detail
+                // SubTransfer_Detail
+                if (dtSubTransfer_Detail.Rows.Count > 0)
+                {
                     Gensong_AutoWHFabric.Sent(true, dtSubTransfer_Detail, "P25", EnumStatus.New, EnumStatus.Confirm);
                     Vstrong_AutoWHAccessory.Sent(true, dtSubTransfer_Detail, "P25", EnumStatus.New, EnumStatus.Confirm);
                 }

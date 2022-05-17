@@ -1766,8 +1766,8 @@ where    psd.ID = '{material["poid"]}'
             // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
             DualResult result = Prgs.GetFtyInventoryData(dtDetail, "P22", out DataTable dtOriFtyInventory);
 
-            // 檢查 是自動倉 的 Barcode不可為空
-            if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, "P22"))
+            // 檢查 Barcode不可為空
+            if (!Prgs.CheckBarCode(dtOriFtyInventory, "P22"))
             {
                 return false;
             }
@@ -2128,8 +2128,8 @@ DROP TABLE #TmpSource
             // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
             result = Prgs.GetFtyInventoryData(dtDetail, "P23", out DataTable dtOriFtyInventory);
 
-            // 檢查 是自動倉 的 Barcode不可為空
-            if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, "P23"))
+            // 檢查 Barcode不可為空
+            if (!Prgs.CheckBarCode(dtOriFtyInventory, "P23"))
             {
                 return new DualResult(false);
             }
@@ -2600,8 +2600,8 @@ inner join #tmpD as src on   target.ID = src.ToPoid
             // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
             result = Prgs.GetFtyInventoryData(dtDetail, "P24", out DataTable dtOriFtyInventory);
 
-            // 檢查 是自動倉 的 Barcode不可為空
-            if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, "P24"))
+            // 檢查 Barcode不可為空
+            if (!Prgs.CheckBarCode(dtOriFtyInventory, "P24"))
             {
                 return new DualResult(false);
             }
@@ -3409,13 +3409,14 @@ where td.ID = '{transcationID}'
                     return iDList;
             }
 
-            string sqlCmd = @"
-select Barcode = max(Barcode)
+            string sqlCmd = $@"
+select top 1 Barcode
 from(
 	select Barcode
 	from FtyInventory_Barcode
 	where Barcode like 'F%'
 	and Barcode not like '%-%'
+	and Barcode like '{keyWord}%'
 	and len(Barcode) = 13
 
 	union all
@@ -3423,6 +3424,7 @@ from(
 	from WHBarcodeTransaction 
 	where From_OldBarcode<>''
 	and From_OldBarcode not like '%-%'
+	and From_OldBarcode like '{keyWord}%'
 	and len(From_OldBarcode) = 13
 
 	union all
@@ -3430,6 +3432,7 @@ from(
 	from WHBarcodeTransaction 
 	where To_OldBarcode<>''
 	and To_OldBarcode not like '%-%'
+	and To_OldBarcode like '{keyWord}%'
 	and len(To_OldBarcode) = 13
 
 	union all
@@ -3437,6 +3440,7 @@ from(
 	from WHBarcodeTransaction 
 	where From_NewBarcode<>''
 	and From_NewBarcode not like '%-%'
+	and From_NewBarcode like '{keyWord}%'
 	and len(From_NewBarcode) = 13
 
 	union all
@@ -3444,8 +3448,10 @@ from(
 	from WHBarcodeTransaction 
 	where To_NewBarcode<>''
 	and To_NewBarcode not like '%-%'
+	and To_NewBarcode like '{keyWord}%'
 	and len(To_NewBarcode) = 13
 )x
+order by Barcode desc
 ";
 
             // 固定最大長度13, 雖然結構是開16, 但長度要留3
@@ -3504,7 +3510,7 @@ from(
         /// Confirm 時檢查
         /// </summary>
         /// <inheritdoc/>
-        public static bool CheckIsWMSBarCode(DataTable dtDetail, string function)
+        public static bool CheckBarCode(DataTable dtDetail, string function)
         {
             if (dtDetail == null)
             {
@@ -3517,7 +3523,7 @@ from(
             }
 
             WHTableName detailTableName = GetWHDetailTableName(function);
-            string checkFilter = "FabricType = 'F' and IsWMS = 1 and isnull(Barcode, '') = ''";
+            string checkFilter = "FabricType = 'F' and isnull(Barcode, '') = ''";
             if (detailTableName == WHTableName.Adjust_Detail || detailTableName == WHTableName.Stocktaking_Detail)
             {
                 checkFilter += " and balanceQty > 0";
@@ -3531,7 +3537,7 @@ from(
 
             if (detailTableName == WHTableName.SubTransfer_Detail || detailTableName == WHTableName.BorrowBack_Detail || detailTableName == WHTableName.LocationTrans_Detail)
             {
-                if (dtDetail.Select("FabricType = 'F' and ToIsWMS = 1 and isnull(Barcode, '') = ''").Length > 0)
+                if (dtDetail.Select("FabricType = 'F' and isnull(Barcode, '') = ''").Length > 0)
                 {
                     MyUtility.Msg.WarningBox("FtyInventory barcode can't empty!");
                     return false;
