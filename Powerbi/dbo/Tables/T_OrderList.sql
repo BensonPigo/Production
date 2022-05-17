@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[ForecastLoadingBI](
+﻿CREATE TABLE [dbo].[T_OrderList](
 	[StyleUkey] [bigint] NULL,
 	[Factory] [varchar](12) NULL,
 	[FtyCountryID] [varchar](2) NULL,
@@ -160,5 +160,3 @@
 	[TmpSewing] [numeric](26, 3) NULL,
 	[CPURate] [numeric](3, 1) NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-GO
