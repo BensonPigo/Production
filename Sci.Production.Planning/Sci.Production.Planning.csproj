@@ -288,6 +288,12 @@
     <Compile Include="R15.Designer.cs">
       <DependentUpon>R15.cs</DependentUpon>
     </Compile>
+    <Compile Include="R20.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R20.designer.cs">
+      <DependentUpon>R20.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.CallPmsAPI\Sci.Production.CallPmsAPI.csproj">
@@ -386,6 +392,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R15.resx">
       <DependentUpon>R15.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R20.resx">
+      <DependentUpon>R20.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
