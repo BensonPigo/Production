@@ -491,8 +491,8 @@ and ID = '{Sci.Env.User.UserID}'"))
             DualResult result = Prgs.GetFtyInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtOriFtyInventory);
             string ids = string.Empty;
 
-            // 檢查 是自動倉 的 Barcode不可為空
-            if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, this.Name))
+            // 檢查 Barcode不可為空
+            if (!Prgs.CheckBarCode(dtOriFtyInventory, this.Name))
             {
                 return;
             }

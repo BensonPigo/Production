@@ -362,12 +362,6 @@ and ID = '{Sci.Env.User.UserID}'"))
 
             if (this.CurrentMaintain["type"].ToString() == "R")
             {
-                // 檢查 是自動倉 的 Barcode不可為空
-                if (!Prgs.CheckIsWMSBarCode(dtOriFtyInventory, this.Name))
-                {
-                    return;
-                }
-
                 #region 檢查物料Location 是否存在WMS
                 if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P15"))
                 {

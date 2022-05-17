@@ -179,41 +179,66 @@ and f.POID = '{this.poID}'
                 return;
             }
 
-            using (TransactionScope transactionScope = new TransactionScope())
+            DataTable dtSubTransfer_Detail = new DataTable();
+            Exception errMsg = null;
+            using (TransactionScope transactionscope = new TransactionScope())
             {
-                string subTransferId = MyUtility.GetValue.GetID(Env.User.Keyword + "AC", "SubTransfer", DateTime.Now);
-                if (MyUtility.Check.Empty(subTransferId))
+                try
                 {
-                    MyUtility.Msg.WarningBox("Get document ID fail!!");
-                    return;
-                }
+                    string subTransferId = MyUtility.GetValue.GetID(Env.User.Keyword + "AC", "SubTransfer", DateTime.Now);
+                    if (MyUtility.Check.Empty(subTransferId))
+                    {
+                        MyUtility.Msg.WarningBox("Get document ID fail!!");
+                        return;
+                    }
 
-                DualResult result = PublicPrg.Prgs.ReTransferMtlToScrapByPO(subTransferId, this.poID, selectedBulk);
-                if (!result)
+                    DualResult result = PublicPrg.Prgs.ReTransferMtlToScrapByPO(subTransferId, this.poID, selectedBulk);
+                    if (!result)
+                    {
+                        throw result.GetException();
+                    }
+
+                    if (!(result = DBProxy.Current.Select(null, $"select * from SubTransfer_Detail where id = '{subTransferId}'", out dtSubTransfer_Detail)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    // 檢查 Barcode不可為空
+                    if (dtSubTransfer_Detail.Rows.Count > 0)
+                    {
+                        Prgs.GetFtyInventoryData(dtSubTransfer_Detail, "P25", out DataTable dtOriFtyInventory);
+                        if (!Prgs.CheckBarCode(dtOriFtyInventory, "P25"))
+                        {
+                            transactionscope.Dispose();
+                            return;
+                        }
+                    }
+
+                    // 上方 Auto Create P25 Confrim 後, 寫入新的 BarCode
+                    if (!(result = Prgs.UpdateWH_Barcode(true, dtSubTransfer_Detail, "P25", out bool fromNewBarcode)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    transactionscope.Complete();
+                }
+                catch (Exception ex)
                 {
-                    transactionScope.Dispose();
-                    this.ShowErr(result);
-                    return;
+                    errMsg = ex;
                 }
+            }
 
-                if (!(result = DBProxy.Current.Select(null, $"select * from SubTransfer_Detail where id = '{subTransferId}'", out DataTable dtSubTransfer_Detail)))
-                {
-                    MyUtility.Msg.ErrorBox(result.ToString());
-                    return;
-                }
+            if (!MyUtility.Check.Empty(errMsg))
+            {
+                this.ShowErr(errMsg);
+                return;
+            }
 
-                // 上方 Auto Create P25 Confrim 後, 寫入新的 BarCode
-                if (!(result = Prgs.UpdateWH_Barcode(true, dtSubTransfer_Detail, "P25", out bool fromNewBarcode)))
-                {
-                    MyUtility.Msg.ErrorBox(result.ToString());
-                    return;
-                }
-
-                // SubTransfer_Detail
+            // SubTransfer_Detail
+            if (dtSubTransfer_Detail.Rows.Count > 0)
+            {
                 Gensong_AutoWHFabric.Sent(true, dtSubTransfer_Detail, "P25", EnumStatus.New, EnumStatus.Confirm);
                 Vstrong_AutoWHAccessory.Sent(true, dtSubTransfer_Detail, "P25", EnumStatus.New, EnumStatus.Confirm);
-
-                transactionScope.Complete();
             }
 
             MyUtility.Msg.InfoBox("Complete!");
