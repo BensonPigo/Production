@@ -76,6 +76,7 @@
 	[ActualAmountWVAT] numeric(13, 2) NOT NULL DEFAULT 0,
     [ActAmt] NUMERIC(18, 2) CONSTRAINT [DF_AirPP_ActAmt] DEFAULT ((0)) NOT NULL,
     [ExchangeRate] NUMERIC(11, 6) CONSTRAINT [DF_AirPP_ExchangeRate] DEFAULT ((0)) NOT NULL,
+    [ShareExpenseEditDate] DATETIME NULL,
     CONSTRAINT [PK_AirPP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -399,3 +400,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'AirPP',
     @level2type = N'COLUMN',
     @level2name = N'ExchangeRate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'在A2B share expance回寫妹妹廠AirPP時一併將當下時間回寫至此欄位',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'AirPP',
+    @level2type = N'COLUMN',
+    @level2name = N'ShareExpenseEditDate'

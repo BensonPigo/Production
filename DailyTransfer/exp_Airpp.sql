@@ -119,6 +119,8 @@ left join Production.dbo.View_AirPP va on va.ID = A.id
 WHERE	-- 30 天內新增異動的資料
 		CONVERT(datetime,isnull(EditDate,AddDate)) >= @DateStart
 		OR
+		A.ShareExpenseEditDate >= @DateStart
+		OR
 		EXISTS(
 			----包含空運會計科目的ShareExpense_APP，30天內有異動過
 			SELECT 1
