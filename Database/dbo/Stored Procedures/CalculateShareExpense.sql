@@ -323,7 +323,18 @@ BEGIN
 			 * 撈出依會科加總的金額與要分攤的WK or GB
 			 */
 			DECLARE cursor_ttlAmount CURSOR FOR
-				select a.*,isnull(isnull(sr.ShareBase,sr1.ShareBase),'') as ShareBase
+				select a.AccountID
+					   , a.Amount
+					   , a.CurrencyID
+					   , a.BLNo
+					   , a.WKNo
+					   , a.InvNo
+					   , a.Type
+					   , a.GW
+					   , a.CBM
+					   , a.ShipModeID
+					   , a.FtyWK
+					   , a.FactoryID,isnull(isnull(sr.ShareBase,sr1.ShareBase),'') as ShareBase
 				from (
 					select a.AccountID
 							, a.Amount
@@ -337,8 +348,9 @@ BEGIN
 							, b.ShipModeID
 							, b.FtyWK
 							, b.FactoryID
+							, a.SubType
 					from (
-						select isnull(sd.AccountID,'') as AccountID, sum(sd.Amount) as Amount, s.CurrencyID, s.Type
+						select isnull(sd.AccountID,'') as AccountID, sum(sd.Amount) as Amount, s.CurrencyID, s.Type, s.SubType
 						from ShippingAP_Detail sd WITH (NOLOCK) 
 						left join SciFMS_AccountNo a on a.ID = sd.AccountID
 						left join ShippingAP s WITH (NOLOCK) on s.ID = sd.ID
@@ -347,7 +359,7 @@ BEGIN
 									dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
 									or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1
 								)
-						group by sd.AccountID, a.Name, s.CurrencyID, s.Type
+						group by sd.AccountID, a.Name, s.CurrencyID, s.Type, s.SubType
 					) a
 					, ( 
 						select BLNo,WKNo,InvNo,Type,GW,CBM,ShipModeID,FtyWK,FactoryID
@@ -355,13 +367,13 @@ BEGIN
 					) b
 				) a
 				left join ShareRule sr WITH (NOLOCK) on sr.AccountID = a.AccountID 
-														and sr.ExpenseReason = a.Type 
+														and sr.ExpenseReason = a.SubType 
 														and (
 															sr.ShipModeID = '' 
 															or sr.ShipModeID like '%'+a.ShipModeID+'%'
 														)
 				left join ShareRule sr1 WITH (NOLOCK) on sr1.AccountID = left(a.AccountID,4) 
-														 and sr1.ExpenseReason = a.Type 
+														 and sr1.ExpenseReason = a.SubType 
 														 and (
 															sr1.ShipModeID = '' 
 															or sr1.ShipModeID like '%'+a.ShipModeID+'%'
