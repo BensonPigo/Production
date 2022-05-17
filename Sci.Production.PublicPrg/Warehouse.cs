@@ -8,6 +8,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Transactions;
 
 namespace Sci.Production.PublicPrg
@@ -6107,6 +6108,23 @@ and ml.IsWMS = 1
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// 檢查QRCode是否為PMS自動建立
+        /// </summary>
+        /// <param name="checkQRCode">checkQRCode</param>
+        /// <returns>bool</returns>
+        public static bool IsQRCodeCreatedByPMS(this string checkQRCode)
+        {
+            if (Regex.IsMatch(checkQRCode, "^F[0-9]{12}"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

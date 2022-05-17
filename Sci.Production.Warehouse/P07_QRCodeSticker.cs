@@ -2,6 +2,7 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.Prg;
+using Sci.Production.PublicPrg;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,16 @@ namespace Sci.Production.Warehouse
             this.dtP07_QRCodeSticker = dtSource;
             this.printType = printType;
             this.listControlBindingSource.DataSource = dtSource;
+
+            this.dtP07_QRCodeSticker.Columns.Add("IsQRCodeCreatedByPMS", typeof(bool));
+
+            foreach (DataRow dr in this.dtP07_QRCodeSticker.Rows)
+            {
+                dr["IsQRCodeCreatedByPMS"] = dr["MINDQRCode"].ToString().IsQRCodeCreatedByPMS();
+            }
+
+            MyUtility.Tool.SetupCombox(this.comboFilterQRCode, 1, 1, "All,Create by PMS,Not create by PMS");
+            this.comboFilterQRCode.Text = "Create by PMS";
         }
 
         /// <inheritdoc/>
@@ -59,6 +70,7 @@ namespace Sci.Production.Warehouse
                 .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true)
                 .Text("TtlQty", header: "Total Qty", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("MINDQRCode", header: "QR Code", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 ;
 
             for (int i = 0; i < this.grid1.Columns.Count; i++)
@@ -85,8 +97,6 @@ namespace Sci.Production.Warehouse
                 string fileName = this.printType == "5X5" ? "\\Warehouse_P07_Sticker5.dotx" : "\\Warehouse_P07_Sticker10.dotx";
                 object printFile = Sci.Env.Cfg.XltPathDir + fileName;
                 document = winword.Documents.Add(ref printFile);
-
-
                 #region PrintBarCode
                 try
                 {
@@ -156,6 +166,27 @@ namespace Sci.Production.Warehouse
             else
             {
                 MyUtility.Msg.InfoBox("Select data first.");
+            }
+        }
+
+        private void ComboFilterQRCode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.comboFilterQRCode.SelectedIndex < 0)
+            {
+                return;
+            }
+
+            switch (this.comboFilterQRCode.Text)
+            {
+                case "Create by PMS":
+                    this.listControlBindingSource.Filter = "IsQRCodeCreatedByPMS = true";
+                    break;
+                case "Not create by PMS":
+                    this.listControlBindingSource.Filter = "IsQRCodeCreatedByPMS = false";
+                    break;
+                default:
+                    this.listControlBindingSource.Filter = "";
+                    break;
             }
         }
     }
