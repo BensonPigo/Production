@@ -796,8 +796,29 @@ from #tmp
             foreach (DataRow dr in dtMaster.Rows)
             {
                 string detailbyIDCmd = $@"
-select *
+select
+    sd.Ukey
+	,sd.ID
+	,sd.FromFtyInventoryUkey
+	,sd.FromFactoryID
+	,sd.FromPOID
+	,sd.FromSeq1
+	,sd.FromSeq2
+	,sd.FromRoll
+	,sd.FromStockType
+	,sd.FromDyelot
+	,sd.ToFactoryID
+	,sd.ToPOID
+	,sd.ToSeq1
+	,sd.ToSeq2
+	,sd.ToRoll
+	,sd.ToStockType
+	,sd.ToDyelot
+	,sd.Qty
+	,sd.ToLocation
+    ,concat(Ltrim(Rtrim(fi.Seq1)), ' ', fi.Seq2) as Fromseq
     ,Fromlocation = Fromlocation.listValue
+    ,concat(Ltrim(Rtrim(sd.ToSeq1)), ' ', sd.ToSeq2) as toseq
 from SubTransfer_Detail sd with(nolock)
 left join FtyInventory FI on sd.fromPoid = fi.poid and sd.fromSeq1 = fi.seq1 and sd.fromSeq2 = fi.seq2 and sd.fromDyelot = fi.Dyelot
     and sd.fromRoll = fi.roll and sd.fromStocktype = fi.stocktype
