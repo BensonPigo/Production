@@ -24,17 +24,18 @@ BEGIN
 	or (s.EditDate >= format(@SDate, 'yyyy/MM/dd 00:00:00')
 		and s.EditDate <= format(@EDate, 'yyyy/MM/dd 23:59:59'))
 
-
 	select i.StyleUKey
+		, i.StyleID
 		, i.BrandID
 		, i.SeasonID
+		, i.GSDType
 		, IETMSUkey = MAX(i.Ukey)
 	into #tmp_Last_IETMS
 	from [TRADEDB].[Trade].dbo.IETMS i
 	where exists (select 1 from #tmp_Style t where i.StyleUKey = t.Ukey and i.BrandID = t.BrandID and i.SeasonID = t.SeasonID)
 	and i.Status in ('Completed', 'History') 
-	group by i.StyleUKey, i.BrandID, i.SeasonID
-
+	group by i.StyleUKey, i.StyleID, i.BrandID, i.SeasonID, i.GSDType
+	
 	select *
 	into #tmp_final
 	from 
@@ -54,15 +55,14 @@ BEGIN
 		select i.StyleID
 			, i.BrandID
 			, i.SeasonID
-			, [GSD_CostingSMV]  =  CEILING(sum(iif(i.GSDType = 'C', iSummary.SMV, 0)))
+			, [GSD_CostingSMV]  =  CEILING(sum(iif(i.GSDType = 'C', iSummary.ProSMV, 0)))
 		from [TRADEDB].[Trade].dbo.IETMS_Summary iSummary with(nolock)
-		inner join [TRADEDB].[Trade].dbo.IETMS i with(nolock) on iSummary.IETMSUkey = i.Ukey
+		inner join #tmp_Last_IETMS i with(nolock) on iSummary.IETMSUkey = i.IETMSUkey
 		inner Join [TRADEDB].[Trade].dbo.ArtworkType art with(nolock) on art.ID = iSummary.ArtworkTypeID
 		where exists (select 1 from #tmp_Style t where i.StyleUKey = t.Ukey and i.BrandID = t.BrandID and i.SeasonID = t.SeasonID)
-		and exists (select 1 from #tmp_Last_IETMS ti where i.Ukey = ti.IETMSUkey)
 		and i.BrandID <> 'ADIDAS'
 		and art.isTtlTMS = 1
-		group by i.StyleID, i.BrandID, i.SeasonID
+		group by i.StyleID, i.BrandID, i.SeasonID 
 	)a
 	where a.GSD_CostingSMV <> 0
 
