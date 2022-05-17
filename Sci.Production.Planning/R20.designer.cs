@@ -32,18 +32,15 @@
             this.lable1 = new Sci.Win.UI.Label();
             this.Style = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.label35 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.editProgram = new Sci.Win.UI.EditBox();
             this.editArtworkType = new Sci.Win.UI.EditBox();
             this.txtMuiltSeason = new Sci.Win.UI.TextBox();
             this.txtStyle = new Sci.Win.UI.TextBox();
-            this.CkbPictures = new Sci.Win.UI.CheckBox();
             this.UI_ckbExcludeLocalStyle = new Sci.Win.UI.CheckBox();
             this.UI_ckbExcludeDevOptionStyle = new Sci.Win.UI.CheckBox();
             this.txtbrand = new Sci.Production.Class.Txtbrand();
-            this.txtcountry1 = new Sci.Production.Class.Txtcountry();
             this.SuspendLayout();
             // 
             // print
@@ -61,11 +58,11 @@
             // 
             // buttonCustomized
             // 
-            this.buttonCustomized.Location = new System.Drawing.Point(371, 188);
+            this.buttonCustomized.Location = new System.Drawing.Point(371, 170);
             // 
             // checkUseCustomized
             // 
-            this.checkUseCustomized.Location = new System.Drawing.Point(371, 161);
+            this.checkUseCustomized.Location = new System.Drawing.Point(371, 143);
             // 
             // txtVersion
             // 
@@ -102,14 +99,6 @@
             this.label2.Size = new System.Drawing.Size(94, 23);
             this.label2.TabIndex = 118;
             this.label2.Text = "Program";
-            // 
-            // label35
-            // 
-            this.label35.Location = new System.Drawing.Point(4, 159);
-            this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(94, 23);
-            this.label35.TabIndex = 121;
-            this.label35.Text = "COO";
             // 
             // label5
             // 
@@ -184,24 +173,11 @@
             this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStyle_PopUp);
             this.txtStyle.Validating += new System.ComponentModel.CancelEventHandler(this.TxtStyle_Validating);
             // 
-            // CkbPictures
-            // 
-            this.CkbPictures.AutoSize = true;
-            this.CkbPictures.Checked = true;
-            this.CkbPictures.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CkbPictures.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.CkbPictures.Location = new System.Drawing.Point(4, 188);
-            this.CkbPictures.Name = "CkbPictures";
-            this.CkbPictures.Size = new System.Drawing.Size(78, 21);
-            this.CkbPictures.TabIndex = 138;
-            this.CkbPictures.Text = "Pictures";
-            this.CkbPictures.UseVisualStyleBackColor = true;
-            // 
             // UI_ckbExcludeLocalStyle
             // 
             this.UI_ckbExcludeLocalStyle.AutoSize = true;
             this.UI_ckbExcludeLocalStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.UI_ckbExcludeLocalStyle.Location = new System.Drawing.Point(189, 211);
+            this.UI_ckbExcludeLocalStyle.Location = new System.Drawing.Point(188, 179);
             this.UI_ckbExcludeLocalStyle.Name = "UI_ckbExcludeLocalStyle";
             this.UI_ckbExcludeLocalStyle.Size = new System.Drawing.Size(142, 21);
             this.UI_ckbExcludeLocalStyle.TabIndex = 266;
@@ -212,7 +188,7 @@
             // 
             this.UI_ckbExcludeDevOptionStyle.AutoSize = true;
             this.UI_ckbExcludeDevOptionStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.UI_ckbExcludeDevOptionStyle.Location = new System.Drawing.Point(4, 211);
+            this.UI_ckbExcludeDevOptionStyle.Location = new System.Drawing.Point(3, 179);
             this.UI_ckbExcludeDevOptionStyle.Name = "UI_ckbExcludeDevOptionStyle";
             this.UI_ckbExcludeDevOptionStyle.Size = new System.Drawing.Size(179, 21);
             this.UI_ckbExcludeDevOptionStyle.TabIndex = 265;
@@ -229,51 +205,37 @@
             this.txtbrand.Size = new System.Drawing.Size(229, 23);
             this.txtbrand.TabIndex = 269;
             // 
-            // txtcountry1
-            // 
-            this.txtcountry1.DisplayBox1Binding = "";
-            this.txtcountry1.Location = new System.Drawing.Point(101, 159);
-            this.txtcountry1.Name = "txtcountry1";
-            this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 270;
-            this.txtcountry1.TextBox1Binding = "";
-            // 
             // R20
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(501, 266);
-            this.Controls.Add(this.txtcountry1);
+            this.ClientSize = new System.Drawing.Size(501, 235);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.UI_ckbExcludeLocalStyle);
             this.Controls.Add(this.UI_ckbExcludeDevOptionStyle);
-            this.Controls.Add(this.CkbPictures);
             this.Controls.Add(this.txtStyle);
             this.Controls.Add(this.txtMuiltSeason);
             this.Controls.Add(this.editArtworkType);
             this.Controls.Add(this.editProgram);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.label35);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.Style);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lable1);
             this.Name = "R20";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
-            this.Text = "R15. Style Artwork Report";
+            this.Text = "R20. Style Artwork List";
             this.Controls.SetChildIndex(this.lable1, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.Style, 0);
             this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label35, 0);
             this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.editProgram, 0);
             this.Controls.SetChildIndex(this.editArtworkType, 0);
             this.Controls.SetChildIndex(this.txtMuiltSeason, 0);
             this.Controls.SetChildIndex(this.txtStyle, 0);
-            this.Controls.SetChildIndex(this.CkbPictures, 0);
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.txtVersion, 0);
@@ -283,7 +245,6 @@
             this.Controls.SetChildIndex(this.UI_ckbExcludeDevOptionStyle, 0);
             this.Controls.SetChildIndex(this.UI_ckbExcludeLocalStyle, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
-            this.Controls.SetChildIndex(this.txtcountry1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -295,7 +256,6 @@
         private Win.UI.Label lable1;
         private Win.UI.Label Style;
         private Win.UI.Label label2;
-        private Win.UI.Label label35;
         //private Class.SCIControls.CustomizeControls.Brand.MultiPickIdBoxBrand txtBrand;
         private Win.UI.Label label5;
         private Win.UI.Label label3;
@@ -304,10 +264,8 @@
         private Win.UI.EditBox editArtworkType;
         private Win.UI.TextBox txtMuiltSeason;
         private Win.UI.TextBox txtStyle;
-        private Win.UI.CheckBox CkbPictures;
         private Win.UI.CheckBox UI_ckbExcludeLocalStyle;
         private Win.UI.CheckBox UI_ckbExcludeDevOptionStyle;
         private Class.Txtbrand txtbrand;
-        private Class.Txtcountry txtcountry1;
     }
 }

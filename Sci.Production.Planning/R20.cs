@@ -1,10 +1,6 @@
 ﻿using Ict;
-using Microsoft.Office.Core;
 using Sci.Data;
-//using Sci.Production.Class;
-//using Sci.Trade.Class.Commons;
 using Sci.Utility.Excel;
-using Sci.Utility.Report;
 using Sci.Win;
 using Sci.Win.Tools;
 using System;
@@ -14,14 +10,12 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static Sci.MyUtility;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Planning
 {
+    /// <inheritdoc/>
     public partial class R20 : Sci.Win.Tems.PrintForm
     {
         private DataTable dtPrint;
@@ -29,10 +23,12 @@ namespace Sci.Production.Planning
         private string program = string.Empty;
         private string artworkType = string.Empty;
 
+        /// <inheritdoc/>
         public R20(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.txtbrand.MultiSelect = true;
         }
 
         private void Form_Load(object sender, EventArgs e)
@@ -44,6 +40,7 @@ namespace Sci.Production.Planning
             GC.Collect();
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (this.txtbrand.Text == string.Empty)
@@ -55,6 +52,7 @@ namespace Sci.Production.Planning
             return true;
         }
 
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             DualResult result = Result.True;
@@ -89,14 +87,9 @@ namespace Sci.Production.Planning
                     where += $@" and s.ProgramID In ({"'" + string.Join("','", this.editProgram.Text.Split(',')) + "'"})";
                 }
 
-                if (!this.txtCOO.Text.Empty())
-                {
-                    where += $" and s.COO in ({"'" + string.Join("','", this.txtCOO.Text.Split(',')) + "'"})";
-                }
-
                 if (this.UI_ckbExcludeDevOptionStyle.Checked)
                 {
-                    where += " and s.DevOption = 0";
+                    where += " and isnull(s.DevOption,0) = 0";
                 }
 
                 if (this.UI_ckbExcludeLocalStyle.Checked)
@@ -109,7 +102,6 @@ Select [Brand]         = s.BrandID
     , [Season]         = s.SeasonID
     , [Style#]         = s.ID
     , [Program]        = s.ProgramID
-    , [COO]            = s.COO
     , [Region]         = s.DevRegion
     , [Artwork]        = sa.ArtworkID
     , [Artwork Description] = sa.ArtworkName
@@ -138,9 +130,6 @@ Select [Brand]         = s.BrandID
     , [Create Date]    = sa.AddDate
     , [Edit by]        = EditName.IdAndNameAndExt
     , [Edit Date]      = sa.EditDate
-    , s.Picture1
-    , s.Picture2
-    , ArtworkPicture = sa.Picture
 From Style_Artwork as sa with(nolock)
 Left join Style s with(nolock) on sa.StyleUkey = s.Ukey
 Outer apply (Select IdAndNameAndExt From dbo.GetName Where ID = sa.AddName) as AddName
@@ -176,7 +165,7 @@ Order by s.BrandID, s.SeasonID
         {
             try
             {
-                string xltPath = Path.Combine(Env.Cfg.XltPathDir, "Style-R15.Style Artwork.xltx");
+                string xltPath = Path.Combine(Env.Cfg.XltPathDir, "Planning_R20_Style_Artwork.xltx");
                 this.sxc = new SaveXltReportCls(xltPath, keepApp: true);
                 SaveXltReportCls.XltRptTable xrt = new SaveXltReportCls.XltRptTable(this.dtPrint);
 
@@ -188,70 +177,6 @@ Order by s.BrandID, s.SeasonID
                 this.sxc.Save();
 
                 wks.UsedRange.VerticalAlignment = Excel.Constants.xlCenter;
-
-                if (this.CkbPictures.Checked)
-                {
-                    for (int i = 0; i < this.dtPrint.Rows.Count; i++)
-                    {
-                        DataRow row = this.dtPrint.Rows[i];
-
-                        #region picture1
-                        if (!row["Picture1"].Empty())
-                        {
-                            var imgPath = Path.Combine(TradeSystem.Get(TradeSystem.Columns.PicturePath), row["Picture1"].ToString());
-                            if (System.IO.File.Exists(imgPath))
-                            {
-                                using (var img = Image.FromFile(imgPath))
-                                {
-                                    var colName = MyExcelPrg.GetExcelColumnName(this.dtPrint.Columns["Picture1"].Ordinal + 1);
-                                    var colIndex = MyExcelPrg.GetExcelColumnIndex(colName);
-                                    this.SetImageCell(img, imgPath, i, colIndex, wks);
-                                }
-                            }
-                        }
-                        #endregion
-
-                        #region picture2
-                        if (!row["Picture2"].Empty())
-                        {
-                            var imgPath = Path.Combine(TradeSystem.Get(TradeSystem.Columns.PicturePath), row["Picture2"].ToString());
-                            if (System.IO.File.Exists(imgPath))
-                            {
-                                using (var img = Image.FromFile(imgPath))
-                                {
-                                    var colName = MyExcelPrg.GetExcelColumnName(this.dtPrint.Columns["Picture2"].Ordinal + 1);
-                                    var colIndex = MyExcelPrg.GetExcelColumnIndex(colName);
-                                    this.SetImageCell(img, imgPath, i, colIndex, wks);
-                                }
-                            }
-                        }
-                        #endregion
-
-                        #region ArtworkPicture
-                        if (!row["ArtworkPicture"].Empty())
-                        {
-                            var imgPath = Path.Combine(TradeSystem.Get(TradeSystem.Columns.ArtworkPicturePath), row["ArtworkPicture"].ToString());
-                            if (System.IO.File.Exists(imgPath))
-                            {
-                                using (var img = Image.FromFile(imgPath))
-                                {
-                                    var colName = MyExcelPrg.GetExcelColumnName(this.dtPrint.Columns["ArtworkPicture"].Ordinal + 1);
-                                    var colIndex = MyExcelPrg.GetExcelColumnIndex(colName);
-                                    this.SetImageCell(img, imgPath, i, colIndex, wks);
-                                }
-                            }
-                        }
-                        #endregion
-                    }
-                }
-                else
-                {
-                    // 移除末三欄，圖片欄位
-                    int colCnt = wks.UsedRange.Columns.Count;
-                    wks.GetRange(MyExcelPrg.GetExcelColumnName(colCnt - 0) + "1").EntireColumn.Delete(); // Artwork Picture
-                    wks.GetRange(MyExcelPrg.GetExcelColumnName(colCnt - 1) + "1").EntireColumn.Delete(); // Style Picture 2
-                    wks.GetRange(MyExcelPrg.GetExcelColumnName(colCnt - 2) + "1").EntireColumn.Delete(); // Style Picture 1
-                }
 
                 this.sxc.FinishSave(); // 存檔再打開
 
@@ -269,6 +194,7 @@ Order by s.BrandID, s.SeasonID
             }
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             return true;
@@ -383,7 +309,6 @@ Order by s.BrandID, s.SeasonID
             wks.Rows[rowIndex + 2].RowHeight = 100;
             wks.Columns[colIndex].ColumnWidth = 25;
 
-            wks.Shapes.AddPicture(imgPath, MsoTriState.msoFalse, MsoTriState.msoTrue, cell.Left + leftDiff, cell.Top + topDiff, imgWidth, imgHeight);
             cell.Value = string.Empty;
         }
 
@@ -406,7 +331,7 @@ Order by s.BrandID, s.SeasonID
             {
                 this.txtMuiltSeason.Text = string.Join(
                     ",",
-                        selectedData.Select(row => row["ID"].ToString())
+                    selectedData.Select(row => row["ID"].ToString())
                               .OrderBy(id => id));
             }
         }
@@ -435,41 +360,37 @@ Order by s.BrandID, s.SeasonID
             }
 
             var sqlCmd = this.GetSqlCommand(strStyle);
-
-            using (var dr = DBProxy.Current.SelectEx(sqlCmd, "id", strStyle))
+            DualResult result;
+            if (!(result = DBProxy.Current.Select(null, sqlCmd, out DataTable dtStyle)))
             {
-                if (dr == false)
-                {
-                    e.Cancel = true;
-                    MyUtility.Msg.ErrorBox(dr.ToSimpleString());
-                    return;
-                }
+                e.Cancel = true;
+                this.ShowErr(result);
+                return;
+            }
 
-                var dt = dr.ExtendedData;
-                if (dt.Rows.Count == 0)
-                {
-                    e.Cancel = true;
-                    MyUtility.Msg.ErrorBox(string.Format("< Style : {0} > not found!!!", strStyle), "Error");
-                    return;
-                }
+            if (dtStyle.Rows.Count == 0)
+            {
+                e.Cancel = true;
+                MyUtility.Msg.ErrorBox(string.Format("< Style : {0} > not found!!!", strStyle), "Error");
+                return;
+            }
 
-                DataRow selectedRow;
-                if (dt.Rows.Count == 1)
+            DataRow selectedRow;
+            if (dtStyle.Rows.Count == 1)
+            {
+                selectedRow = dtStyle.Rows[0];
+            }
+            else
+            {
+                using (var dlg = new SelectItem(sqlCmd, "20,10,10,50,5", this.Text, "Style#,Season,Brand,Description,CD#"))
                 {
-                    selectedRow = dt.Rows[0];
-                }
-                else
-                {
-                    using (var dlg = new SelectItem(sqlCmd, "20,10,10,50,5", this.Text, "Style#,Season,Brand,Description,CD#"))
+                    if (dlg.ShowDialog() != DialogResult.OK)
                     {
-                        if (dlg.ShowDialog() != DialogResult.OK)
-                        {
-                            e.Cancel = true;
-                            return;
-                        }
-
-                        selectedRow = dlg.GetSelecteds().First();
+                        e.Cancel = true;
+                        return;
                     }
+
+                    selectedRow = dlg.GetSelecteds().First();
                 }
             }
         }
@@ -480,15 +401,6 @@ Order by s.BrandID, s.SeasonID
             string sqlCmd = string.Empty;
             string brand = string.Join("','", this.txtbrand.Text.Split(','));
             string seasons = string.Join("','", this.txtMuiltSeason.Text.Split(','));
-
-            // 帶出登入者的特殊權限: AllCustomer
-            bool isAllCustomer = AuthPrg.hasSpecialAuth("CUST");
-
-            // 若非Admin或All Customer就僅帶出該登入者能使用的Brand
-            if (!Env.User.IsAdmin && !isAllCustomer)
-            {
-                sqlWhere += " And BrandID In (Select BrandID From PASS_AuthBrand Where ID = '" + Env.User.UserID + "')";
-            }
 
             if (!MyUtility.Check.Empty(this.txtbrand) && !MyUtility.Check.Empty(this.txtbrand.Text.Trim()))
             {
@@ -502,10 +414,10 @@ Order by s.BrandID, s.SeasonID
 
             if (!MyUtility.Check.Empty(iID))
             {
-                sqlWhere += " And ID = @id";
+                sqlWhere += $" And ID = '{iID}'";
             }
 
-            sqlCmd = "Select ID, SeasonID, BrandID, Description, CdCodeID From Style " + sqlWhere + " Order by Planning, BrandID, ID, SeasonID";
+            sqlCmd = "Select ID, SeasonID, BrandID, Description, CdCodeID From Style " + sqlWhere + " Order by BrandID, ID, SeasonID";
 
             return sqlCmd;
         }
