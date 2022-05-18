@@ -111,6 +111,63 @@ with GB as
                 {
                     sqlCmd.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.dateOnBoard.Value2).ToString("yyyy/MM/dd")));
                 }
+                // A2B Data
+                sqlCmd.Append(@"
+union
+    select distinct 0 as Selected,g.ID as InvNo,g.ShipModeID,g.TotalGW as GW, g.TotalCBM as CBM,
+    '' as ShippingAPID, g.BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount,
+    '' as ShareBase, 0 as FtyWK 
+    from GMTBooking g  WITH (NOLOCK) 
+    left join GMTBooking_CTNR gc WITH (NOLOCK) on gc.ID = g.ID 
+    inner join GMTBooking_Detail p WITH (NOLOCK) on p.ID = g.ID 
+    where 1=1 ");
+
+                if (!MyUtility.Check.Empty(this.dateFCRDate.Value1))
+                {
+                    sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}' ", Convert.ToDateTime(this.dateFCRDate.Value1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateFCRDate.Value2))
+                {
+                    sqlCmd.Append(string.Format(" and g.FCRDate <= '{0}' ", Convert.ToDateTime(this.dateFCRDate.Value2).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.txtCountryDestination.TextBox1.Text))
+                {
+                    sqlCmd.Append(string.Format(" and g.Dest = '{0}' ", this.txtCountryDestination.TextBox1.Text));
+                }
+
+                if (!MyUtility.Check.Empty(this.txtShipmode.SelectedValue))
+                {
+                    sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}' ", MyUtility.Convert.GetString(this.txtShipmode.SelectedValue)));
+                }
+
+                if (!MyUtility.Check.Empty(this.txtbrand.Text))
+                {
+                    sqlCmd.Append(string.Format(" and g.BrandID = '{0}' ", this.txtbrand.Text));
+                }
+
+                if (!MyUtility.Check.Empty(this.txtSubconForwarder.TextBox1.Text))
+                {
+                    sqlCmd.Append(string.Format(" and g.Forwarder = '{0}' ", this.txtSubconForwarder.TextBox1.Text));
+                }
+
+                if (!MyUtility.Check.Empty(this.txtTruck.Text))
+                {
+                    sqlCmd.Append(string.Format(" and gc.TruckNo = '{0}' ", this.txtTruck.Text));
+                }
+
+                if (!MyUtility.Check.Empty(this.datePulloutDate.Value1))
+                {
+                    sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}' ", Convert.ToDateTime(this.datePulloutDate.Value1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.datePulloutDate.Value2))
+                {
+                    sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}' ", Convert.ToDateTime(this.datePulloutDate.Value2).ToString("yyyy/MM/dd")));
+                }
+
+                sqlCmd.Append("), ");
             }
 
             if (!MyUtility.Check.Empty(this.dateFCRDate.Value2))
