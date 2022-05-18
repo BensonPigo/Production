@@ -66,17 +66,16 @@ AND Status <> 'New'
 ORDER BY Id
 
 SELECT B.* 
-	,PackingList.ExpressID
-	, PackingList.CTNQTY
-	, PackingList.GW
-	, PackingList.NW
-	, PackingList.NNW
-	,PackingList.CBM
 INTO Pullout_Detail
 FROM #CUR_PULLOUT1  A
 inner join Production.dbo.Pullout_Detail  B on A.ID = B.ID 
-left join Production.dbo.PackingList on PackingList.id = b.PackingListID
+left join Production.dbo.PackingList p on p.id = b.PackingListID
+where ( 
+	 CONVERT(date, p.PulloutDate) >= CONVERT(date, DATEADD(day,-60, GETDATE())) or 
+	(CONVERT(date, p.EditDate) >=  CONVERT(date, DATEADD(day,-10, GETDATE())) and p.PulloutID != '')
+)
 ORDER BY B.ID 
+
 
 SELECT B.* 
 INTO Pullout_Detail_Detail
