@@ -1557,7 +1557,7 @@ drop table #tmpShareExpense,  #tmpA2B
 
             if (!result)
             {
-                return new DualResult(false, "Re-calcute share expense failed!");
+                return result;
             }
 
             return new DualResult(true);
