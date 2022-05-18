@@ -189,6 +189,7 @@ from openquery([ExtendServer],'select   ins.OrderId,
                                                 where o.ID = ins.OrderID 
                                                       {sqlWhere.ToString().Replace("'", "''")}
                                                 )
+                                and ins.Status !=''Dispose''
                                 group by ins.OrderId,ins.Location
                                 ')
 
