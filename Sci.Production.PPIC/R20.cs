@@ -13,7 +13,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
-namespace Sci.Production.Planning
+namespace Sci.Production.PPIC
 {
     /// <inheritdoc/>
     public partial class R20 : Sci.Win.Tems.PrintForm
@@ -165,7 +165,7 @@ Order by s.BrandID, s.SeasonID
         {
             try
             {
-                string xltPath = Path.Combine(Env.Cfg.XltPathDir, "Planning_R20_Style_Artwork.xltx");
+                string xltPath = Path.Combine(Env.Cfg.XltPathDir, "PPIC_R20_Style_Artwork.xltx");
                 this.sxc = new SaveXltReportCls(xltPath, keepApp: true);
                 SaveXltReportCls.XltRptTable xrt = new SaveXltReportCls.XltRptTable(this.dtPrint);
 

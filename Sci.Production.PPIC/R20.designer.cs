@@ -1,4 +1,4 @@
-﻿namespace Sci.Production.Planning
+﻿namespace Sci.Production.PPIC
 {
     partial class R20
     {
