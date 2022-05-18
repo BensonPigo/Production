@@ -96,9 +96,9 @@ BEGIN
 	select @CheckBasicSetting = iif (count(*) > 0, @PictureUploadNotYet, @PictureUploadAlready)
 	from @ShippingMarkTypeList smtl
 	where not exists (
-				select *
+				select 1
 				from [Production].[dbo].ShippingMarkPic smp
-				inner join [Production].[dbo].ShippingMarkPic_Detail smpd on smp.Ukey = smpd.ShippingMarkPicUkey
+				inner join [ExtendServer].[PMSFile].[dbo].ShippingMarkPic_Detail smpd on smp.Ukey = smpd.ShippingMarkPicUkey
 				where smp.PackingListID = @PackingListID
 						and smpd.SCICtnNo = @SCICtnNo
 						and smpd.ShippingMarkTypeUkey = smtl.ShippingMarkTypeUkey
