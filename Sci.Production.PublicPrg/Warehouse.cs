@@ -3556,6 +3556,11 @@ order by Barcode desc
                 return true;
             }
 
+            if (!IsAutomation())
+            {
+                return true;
+            }
+
             WHTableName detailTableName = GetWHDetailTableName(function);
             string checkFilter = "FabricType = 'F' and isnull(Barcode, '') = ''";
             if (detailTableName == WHTableName.Adjust_Detail || detailTableName == WHTableName.Stocktaking_Detail)
