@@ -4,7 +4,7 @@
     [SuppID]         VARCHAR (6)   NOT NULL,
     [ColorID]        VARCHAR (6)   NOT NULL,
     [SeasonSCIID]    VARCHAR (8)  NOT NULL,
-    [Period]         INT          CONSTRAINT [DF_FirstDyelot_Period] DEFAULT ((0)) NOT NULL,
+    [Period]         INT          CONSTRAINT [DF_FirstDyelot_Period] DEFAULT ((0)) NULL,
     [FirstDyelot]    DATE          NULL,
     [TPEFirstDyelot] DATE         NULL,
     [EditName]       VARCHAR (10) NOT NULL DEFAULT (''),
