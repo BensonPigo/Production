@@ -2717,6 +2717,7 @@
     <Build Include="dbo\Functions\GetColorMultipleID_MtlType.sql" />
     <Build Include="dbo\Tables\BIRInvoice_Detail.sql" />
     <Build Include="dbo\Views\View_ShareExpense.sql" />
+    <Build Include="dbo\Tables\SampleRFTNotification.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
