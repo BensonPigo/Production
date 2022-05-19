@@ -136,6 +136,8 @@ a.Ukey	= b.Ukey
 ,a.FitType	= b.FitType
 ,a.GearLine	= b.GearLine
 ,a.ThreadVersion = b.ThreadVersion
+,a.DevRegion = b.DevRegion
+,a.DevOption = b.DevOption
 from Production.dbo.Style as a 
 inner join Trade_To_Pms.dbo.Style as b ON a.ID	= b.ID AND a.BrandID	= b.BrandID AND a.SeasonID	= b.SeasonID
 
@@ -220,6 +222,8 @@ ID
 ,FitType
 ,GearLine
 ,ThreadVersion
+,DevRegion
+,DevOption
 )
 output	inserted.ID,
 		inserted.SeasonID,
@@ -292,6 +296,8 @@ select
 ,b.FitType
 ,b.GearLine
 ,b.ThreadVersion
+,b.DevRegion
+,b.DevOption
 from Trade_To_Pms.dbo.Style as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.ID=b.ID and a.BrandID=b.BrandID and a.SeasonID=b.SeasonID and a.LocalStyle=1)
 AND not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.Ukey=b.Ukey )
@@ -397,6 +403,9 @@ SET
 ,a.Width = b.Width
 ,a.AntiMigration = isnull(b.AntiMigration,0)
 ,a.PrintType = b.PrintType
+,a.PatternAnnotation = b.PatternAnnotation
+,a.InkTypePPU = b.InkTypePPU
+,a.PatternCodeSize = b.PatternCodeSize
 from Production.dbo.Style_Artwork as a 
 inner join Trade_To_Pms.dbo.Style_Artwork as b ON a.TradeUkey=b.Ukey
 -------------------------- INSERT INTO 抓
@@ -429,6 +438,9 @@ INSERT INTO Production.dbo.Style_Artwork(
 ,Width
 ,AntiMigration
 ,PrintType
+,PatternAnnotation
+,InkTypePPU
+,PatternCodeSize
 )
 select 
  b.StyleUkey
@@ -458,6 +470,9 @@ select
 ,b.Width
 ,isnull(b.AntiMigration,0)
 ,b.PrintType
+,b.PatternAnnotation
+,b.InkTypePPU
+,b.PatternCodeSize
 from Trade_To_Pms.dbo.Style_Artwork as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_Artwork as a WITH (NOLOCK) where a.TradeUkey = b.Ukey)
 
