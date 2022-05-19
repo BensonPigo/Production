@@ -31,14 +31,14 @@
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
             this.buttonFindNow = new Sci.Win.UI.Button();
-            this.dateRangeScanDate = new Sci.Win.UI.DateRange();
-            this.textBoxSP = new Sci.Win.UI.TextBox();
-            this.textBoxPackID = new Sci.Win.UI.TextBox();
-            this.labelScanDate = new Sci.Win.UI.Label();
-            this.labelSP = new Sci.Win.UI.Label();
-            this.labelPackID = new Sci.Win.UI.Label();
+            this.dateScanDate = new Sci.Win.UI.DateRange();
+            this.txtSP = new Sci.Win.UI.TextBox();
+            this.txtPackID = new Sci.Win.UI.TextBox();
             this.grid = new Sci.Win.UI.Grid();
             this.bindingSource = new Sci.Win.UI.BindingSource(this.components);
+            this.lbSP = new Sci.Win.UI.Label();
+            this.lbPackID = new Sci.Win.UI.Label();
+            this.lbScanDate = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).BeginInit();
@@ -48,13 +48,13 @@
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.lbSP);
+            this.panel1.Controls.Add(this.lbPackID);
+            this.panel1.Controls.Add(this.lbScanDate);
             this.panel1.Controls.Add(this.buttonFindNow);
-            this.panel1.Controls.Add(this.dateRangeScanDate);
-            this.panel1.Controls.Add(this.textBoxSP);
-            this.panel1.Controls.Add(this.textBoxPackID);
-            this.panel1.Controls.Add(this.labelScanDate);
-            this.panel1.Controls.Add(this.labelSP);
-            this.panel1.Controls.Add(this.labelPackID);
+            this.panel1.Controls.Add(this.dateScanDate);
+            this.panel1.Controls.Add(this.txtSP);
+            this.panel1.Controls.Add(this.txtPackID);
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(946, 64);
@@ -71,69 +71,45 @@
             this.buttonFindNow.UseVisualStyleBackColor = true;
             this.buttonFindNow.Click += new System.EventHandler(this.ButtonFindNow_Click);
             // 
-            // dateRangeScanDate
+            // dateScanDate
             // 
             // 
             // 
             // 
-            this.dateRangeScanDate.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateRangeScanDate.DateBox1.Name = "";
-            this.dateRangeScanDate.DateBox1.Size = new System.Drawing.Size(129, 23);
-            this.dateRangeScanDate.DateBox1.TabIndex = 0;
+            this.dateScanDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateScanDate.DateBox1.Name = "";
+            this.dateScanDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateScanDate.DateBox1.TabIndex = 0;
             // 
             // 
             // 
-            this.dateRangeScanDate.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.dateRangeScanDate.DateBox2.Name = "";
-            this.dateRangeScanDate.DateBox2.Size = new System.Drawing.Size(129, 23);
-            this.dateRangeScanDate.DateBox2.TabIndex = 1;
-            this.dateRangeScanDate.IsRequired = false;
-            this.dateRangeScanDate.Location = new System.Drawing.Point(99, 6);
-            this.dateRangeScanDate.Name = "dateRangeScanDate";
-            this.dateRangeScanDate.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeScanDate.TabIndex = 2;
+            this.dateScanDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateScanDate.DateBox2.Name = "";
+            this.dateScanDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateScanDate.DateBox2.TabIndex = 1;
+            this.dateScanDate.IsRequired = false;
+            this.dateScanDate.Location = new System.Drawing.Point(99, 6);
+            this.dateScanDate.Name = "dateScanDate";
+            this.dateScanDate.Size = new System.Drawing.Size(280, 23);
+            this.dateScanDate.TabIndex = 2;
             // 
-            // textBoxSP
+            // txtSP
             // 
-            this.textBoxSP.BackColor = System.Drawing.Color.White;
-            this.textBoxSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBoxSP.Location = new System.Drawing.Point(322, 41);
-            this.textBoxSP.Name = "textBoxSP";
-            this.textBoxSP.Size = new System.Drawing.Size(121, 23);
-            this.textBoxSP.TabIndex = 1;
+            this.txtSP.BackColor = System.Drawing.Color.White;
+            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP.Location = new System.Drawing.Point(322, 41);
+            this.txtSP.Name = "txtSP";
+            this.txtSP.Size = new System.Drawing.Size(121, 23);
+            this.txtSP.TabIndex = 1;
             // 
-            // textBoxPackID
+            // txtPackID
             // 
-            this.textBoxPackID.BackColor = System.Drawing.Color.White;
-            this.textBoxPackID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBoxPackID.Location = new System.Drawing.Point(99, 41);
-            this.textBoxPackID.Name = "textBoxPackID";
-            this.textBoxPackID.Size = new System.Drawing.Size(121, 23);
-            this.textBoxPackID.TabIndex = 1;
-            // 
-            // labelScanDate
-            // 
-            this.labelScanDate.Location = new System.Drawing.Point(0, 6);
-            this.labelScanDate.Name = "labelScanDate";
-            this.labelScanDate.Size = new System.Drawing.Size(96, 23);
-            this.labelScanDate.TabIndex = 0;
-            this.labelScanDate.Text = "Scan Date";
-            // 
-            // labelSP
-            // 
-            this.labelSP.Location = new System.Drawing.Point(223, 41);
-            this.labelSP.Name = "labelSP";
-            this.labelSP.Size = new System.Drawing.Size(96, 23);
-            this.labelSP.TabIndex = 0;
-            this.labelSP.Text = "SP#";
-            // 
-            // labelPackID
-            // 
-            this.labelPackID.Location = new System.Drawing.Point(0, 41);
-            this.labelPackID.Name = "labelPackID";
-            this.labelPackID.Size = new System.Drawing.Size(96, 23);
-            this.labelPackID.TabIndex = 0;
-            this.labelPackID.Text = "Pack ID";
+            this.txtPackID.BackColor = System.Drawing.Color.White;
+            this.txtPackID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPackID.Location = new System.Drawing.Point(99, 41);
+            this.txtPackID.Name = "txtPackID";
+            this.txtPackID.Size = new System.Drawing.Size(121, 23);
+            this.txtPackID.TabIndex = 1;
             // 
             // grid
             // 
@@ -161,6 +137,36 @@
             this.grid.Size = new System.Drawing.Size(946, 481);
             this.grid.TabIndex = 2;
             // 
+            // lbSP
+            // 
+            this.lbSP.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.lbSP.Location = new System.Drawing.Point(244, 41);
+            this.lbSP.Name = "lbSP";
+            this.lbSP.Size = new System.Drawing.Size(75, 23);
+            this.lbSP.TabIndex = 6;
+            this.lbSP.Text = "SP#";
+            this.lbSP.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbPackID
+            // 
+            this.lbPackID.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.lbPackID.Location = new System.Drawing.Point(3, 41);
+            this.lbPackID.Name = "lbPackID";
+            this.lbPackID.Size = new System.Drawing.Size(93, 23);
+            this.lbPackID.TabIndex = 5;
+            this.lbPackID.Text = "Pack ID";
+            this.lbPackID.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbScanDate
+            // 
+            this.lbScanDate.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.lbScanDate.Location = new System.Drawing.Point(3, 6);
+            this.lbScanDate.Name = "lbScanDate";
+            this.lbScanDate.Size = new System.Drawing.Size(93, 23);
+            this.lbScanDate.TabIndex = 4;
+            this.lbScanDate.Text = "Scan Date";
+            this.lbScanDate.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // P14
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -185,14 +191,14 @@
         #endregion
 
         private Win.UI.Panel panel1;
-        private Win.UI.DateRange dateRangeScanDate;
-        private Win.UI.TextBox textBoxSP;
-        private Win.UI.TextBox textBoxPackID;
-        private Win.UI.Label labelScanDate;
-        private Win.UI.Label labelSP;
-        private Win.UI.Label labelPackID;
+        private Win.UI.DateRange dateScanDate;
+        private Win.UI.TextBox txtSP;
+        private Win.UI.TextBox txtPackID;
         private Win.UI.Grid grid;
         private Win.UI.Button buttonFindNow;
         private Win.UI.BindingSource bindingSource;
+        private Win.UI.Label lbSP;
+        private Win.UI.Label lbPackID;
+        private Win.UI.Label lbScanDate;
     }
 }

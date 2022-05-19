@@ -24,7 +24,6 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.grid.IsEditingReadOnly = false;
         }
 
         /// <inheritdoc/>
@@ -33,25 +32,36 @@ namespace Sci.Production.Sewing
             base.OnFormLoaded();
             #region Grid Setting
             this.Helper.Controls.Grid.Generator(this.grid)
-                .Date("ScanDate", header: "Scan Date", iseditable: false)
-                .Text("PackID", header: "Pack ID", iseditable: false)
-                .Text("CTN", header: "CTN#", iseditable: false)
-                .Numeric("Qty", header: "Qty", iseditable: false)
-                .Text("SP", header: "SP#", iseditable: false)
-                .Text("PO", header: "PO#", iseditable: false)
-                .Text("Style", header: "Style#", iseditable: false)
-                .Text("Brand", header: "Brand", iseditable: false)
-                .Text("Destination", header: "Destination", iseditable: false)
-                .Date("BuyerDelivery", header: "Buyer Delivery", iseditable: false)
-                .Date("SCIDelivery", header: "SCI Delivery", iseditable: false)
-                .Text("Barcode", header: "Barcode", iseditable: false)
-                .Text("ScanBy", header: "Scan By", iseditable: false)
-                .Text("ScanTime", header: "Scan Time", iseditable: false);
+                .Date("ScanDate", header: "Scan Date", iseditingreadonly: false)
+                .Text("PackID", header: "Pack ID", iseditingreadonly: false)
+                .Text("CTN", header: "CTN#", iseditingreadonly: false)
+                .Numeric("Qty", header: "Qty", iseditingreadonly: false)
+                .Text("SP", header: "SP#", iseditingreadonly: false)
+                .Text("PO", header: "PO#", iseditingreadonly: false)
+                .Text("Style", header: "Style#", iseditingreadonly: false)
+                .Text("Brand", header: "Brand", iseditingreadonly: false)
+                .Text("Destination", header: "Destination", iseditingreadonly: false)
+                .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: false)
+                .Date("SCIDelivery", header: "SCI Delivery", iseditingreadonly: false)
+                .Text("Barcode", header: "Barcode", iseditingreadonly: false)
+                .Text("ScanBy", header: "Scan By", iseditingreadonly: false)
+                .Text("ScanTime", header: "Scan Time", iseditingreadonly: false);
             #endregion
         }
 
         private void ButtonFindNow_Click(object sender, EventArgs e)
         {
+            this.bindingSource.DataSource = null;
+
+            if (MyUtility.Check.Empty(this.dateScanDate.TextBox1.Value) &&
+                MyUtility.Check.Empty(this.dateScanDate.TextBox2.Value) &&
+                MyUtility.Check.Empty(this.txtPackID.Text) &&
+                MyUtility.Check.Empty(this.txtSP.Text))
+            {
+                MyUtility.Msg.WarningBox("Conditions cannot be all empty!!");
+                return;
+            }
+
             this.FindNow();
         }
 
@@ -59,33 +69,33 @@ namespace Sci.Production.Sewing
         {
             #region SQL Parameter
             List<SqlParameter> listSqlParameter = new List<SqlParameter>();
-            listSqlParameter.Add(new SqlParameter("@PackID", this.textBoxPackID.Text));
-            listSqlParameter.Add(new SqlParameter("@SP", this.textBoxSP.Text));
-            listSqlParameter.Add(new SqlParameter("@ScanDate_S", this.dateRangeScanDate.Value1.Empty() ? string.Empty : ((DateTime)this.dateRangeScanDate.Value1).ToString("yyyy/MM/dd")));
-            listSqlParameter.Add(new SqlParameter("@ScanDate_E", this.dateRangeScanDate.Value2.Empty() ? string.Empty : ((DateTime)this.dateRangeScanDate.Value2).ToString("yyyy/MM/dd")));
+            listSqlParameter.Add(new SqlParameter("@PackID", this.txtPackID.Text));
+            listSqlParameter.Add(new SqlParameter("@SP", this.txtSP.Text));
+            listSqlParameter.Add(new SqlParameter("@ScanDate_S", this.dateScanDate.Value1.Empty() ? string.Empty : ((DateTime)this.dateScanDate.Value1).ToString("yyyy/MM/dd 00:00:00")));
+            listSqlParameter.Add(new SqlParameter("@ScanDate_E", this.dateScanDate.Value2.Empty() ? string.Empty : ((DateTime)this.dateScanDate.Value2).ToString("yyyy/MM/dd 23:59:59")));
             #endregion
 
             #region BuyerDelivery Filte
             string strWhere = string.Empty;
-            if (!this.dateRangeScanDate.Value1.Empty() && !this.dateRangeScanDate.Value2.Empty())
+            if (!this.dateScanDate.Value1.Empty() && !this.dateScanDate.Value2.Empty())
             {
                 strWhere = " and c.HaulingDate between @ScanDate_S and @ScanDate_E";
             }
-            else if (!this.dateRangeScanDate.Value1.Empty() && this.dateRangeScanDate.Value2.Empty())
+            else if (!this.dateScanDate.Value1.Empty() && this.dateScanDate.Value2.Empty())
             {
                 strWhere = " and @ScanDate_S <= c.HaulingDate";
             }
-            else if (this.dateRangeScanDate.Value1.Empty() && !this.dateRangeScanDate.Value2.Empty())
+            else if (this.dateScanDate.Value1.Empty() && !this.dateScanDate.Value2.Empty())
             {
                 strWhere = " and c.HaulingDate <= @ScanDate_E";
             }
 
-            if (!string.IsNullOrEmpty(this.textBoxPackID.Text))
+            if (!string.IsNullOrEmpty(this.txtPackID.Text))
             {
                 strWhere += " and c.PackingListID = @PackID";
             }
 
-            if (!string.IsNullOrEmpty(this.textBoxSP.Text))
+            if (!string.IsNullOrEmpty(this.txtSP.Text))
             {
                 strWhere += " and c.OrderID = @SP";
             }
