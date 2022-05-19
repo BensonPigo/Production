@@ -154,8 +154,8 @@ and c.Inline < dateadd(day,1,'{1}')
 select t.FactoryID
 	,[SewingLineID] = right('00' + t.SewingLineID, 2)
 	,[dayInline] = t.dday	
-	,[dayCount] = count(c.Inline)
-into #tmp_ChgOver
+	,[dayCount] =  IIF(New.StyleID != Old.StyleID, count(c.Inline), 0 )
+into #tmp_ChgOver_cnt
 from #tmp t
 left join (
 	select FactoryID, SewingLineID, Inline
@@ -164,7 +164,34 @@ left join (
 	and Inline < dateadd(day,1,'{1}') 
 	group by FactoryID, SewingLineID, Inline
 )c on t.FactoryID = c.FactoryID and t.SewingLineID = c.SewingLineID and t.dday = convert(nvarchar(8),c.Inline,112)
-group by t.FactoryID, t.SewingLineID, t.dday
+outer apply 
+(
+	select top 1 OrderID, StyleID, ComboType
+	from ChgOver
+	where Inline = (select max(Inline) from ChgOver where FactoryID = t.FactoryID and SewingLineID = t.SewingLineID and Inline < C.Inline)
+	and FactoryID = t.FactoryID
+	and SewingLineID = t.SewingLineID
+	and Inline >= '{0}' 
+	and Inline < dateadd(day,1,'{1}') 
+)New
+outer apply 
+(
+	select top 1 OrderID, StyleID, ComboType
+	from ChgOver
+	where Inline = (select max(Inline) from ChgOver where FactoryID = t.FactoryID and SewingLineID = t.SewingLineID and Inline = c.Inline)
+	and FactoryID = t.FactoryID
+	and SewingLineID = t.SewingLineID
+	and Inline >= '{0}' 
+	and Inline < dateadd(day,1,'{1}') 
+)Old
+group by t.FactoryID, t.SewingLineID, t.dday,New.StyleID,Old.StyleID
+
+select FactoryID,SewingLineID,dayInline,[dayCount] = sum(dayCount) 
+into #tmp_ChgOver
+from #tmp_ChgOver_cnt 
+group by FactoryID,SewingLineID,dayInline
+order by dayInline
+
 
 select FactoryID, SewingLineID, [totalDayCount] = sum(dayCount)
 into #tmp_ChgOver_sumDayCount
@@ -208,7 +235,7 @@ set @sql = '
 --select @sql
 exec (@sql)  
 
-drop table #tmp, #tmp_ChgOver ,#tmp_ChgOver_sumDayCount,#tmp_ChgOver_GroupbyDayInline",
+drop table #tmp, #tmp_ChgOver_cnt, #tmp_ChgOver ,#tmp_ChgOver_sumDayCount,#tmp_ChgOver_GroupbyDayInline",
                 this.monthS,
                 this.monthE));
 
