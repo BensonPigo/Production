@@ -45,48 +45,6 @@ DECLARE @ErrDesc NVARCHAR(4000) = '';
 
 DECLARE @Stime datetime, @Etime datetime
 
---01) ImportForecastLoadingBI
-BEGIN TRY
-	set @Stime = getdate()
-	set @StartDate = '2019-01-08'
-	set @EndDate = DATEADD(m, DATEDIFF(m,0,DATEADD(MM,5,GETDATE())),6)
-	EXEC ImportForecastLoadingBI @StartDate,@EndDate
-	set @Etime = getdate()
-END TRY
-
-BEGIN CATCH
-
-SET @ErrorMessage = 
-'
-[1-Forecast Loading]' + CHAR(13) +
-',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
-',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
-',錯誤訊息: ' + ERROR_MESSAGE()
-
-SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
-',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
-',錯誤訊息: ' + ERROR_MESSAGE()
-
-SET @ErrorStatus = 0
-
-END CATCH;
-IF (@ErrorMessage IS NULL or @ErrorMessage='')
-BEGIN 
-	set @desc += CHAR(13) + '
-[1-Forecast Loading] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
-END
-ELSE
-BEGIN
-	set @desc += CHAR(13) + @ErrorMessage
-END
-SET @ErrorMessage = ''
-
--- Write in P_TransLog
-	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
-	values('ImportForecastLoadingBI',@ErrDesc,@Stime,@Etime,@TransCode)
-
-	SET @ErrDesc = ''
-
 --02) ImportEfficiencyBI 
 BEGIN TRY
 	set @Stime = getdate()
