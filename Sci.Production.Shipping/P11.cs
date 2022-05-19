@@ -261,7 +261,7 @@ where id = '{this.CurrentMaintain["ID"]}'
             }
 
             string invNo = this.gridPOList.Rows[this.gridPOListbs.Position].Cells["InvNo"].Value.ToString();
-            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            foreach (DataRow dr in this.DetailDatas)
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
