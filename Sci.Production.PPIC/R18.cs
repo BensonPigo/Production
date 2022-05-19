@@ -77,6 +77,18 @@ namespace Sci.Production.PPIC
                 this.listPar.Add(new SqlParameter("@RespDeptConfirmDateTo", this.dateRangeConfirmDept.DateBox2.Value));
             }
 
+            if (this.dateVoucher.HasValue1)
+            {
+                sqlWhere += " and ICR.VoucherDate >= @VoucherDateFrom ";
+                this.listPar.Add(new SqlParameter("@VoucherDateFrom", this.dateVoucher.DateBox1.Value));
+            }
+
+            if (this.dateVoucher.HasValue2)
+            {
+                sqlWhere += " and ICR.VoucherDate < DateAdd(Day,1,@VoucherDateTo) ";
+                this.listPar.Add(new SqlParameter("@VoucherDateTo", this.dateVoucher.DateBox2.Value));
+            }
+
             if (!MyUtility.Check.Empty(this.comboMDivision.Text))
             {
                 sqlWhere += $" and f.MDivisionID = '{this.comboMDivision.Text}' ";
@@ -113,6 +125,7 @@ select
     [MR] = [dbo].[getTPEPass1_ExtNo](o.MRHandle),
     [SMR] = [dbo].[getTPEPass1_ExtNo](o.SMR),
     [IssueSubject] = (select CONCAT(ID,' - ', Name) from Reason where ID = ICR.IrregularPOCostID And Reason.ReasonTypeID = 'PO_IrregularCost'),
+    ICR.Description,
     ICR.RMtlAmtUSD,
     ICR.OtherAmtUSD,
     ICR.ActFreightUSD,
@@ -151,6 +164,7 @@ begin
         ICR.MR,
         ICR.SMR,
         ICR.IssueSubject,
+        ICR.Description,
         ICR.RMtlAmtUSD,
         ICR.OtherAmtUSD,
         ICR.ActFreightUSD,
@@ -192,6 +206,7 @@ begin
         ICR.BrandID,
         ICR.TotalQty,
         ICR.IssueSubject,
+        ICR.Description,
         ICR.RMtlAmtUSD,
         ICR.OtherAmtUSD,
         ICR.ActFreightUSD,
