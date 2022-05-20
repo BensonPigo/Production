@@ -79,6 +79,7 @@ select	aipp.ID,
 		o.FactoryID,
 		o.BrandID,
 		aipp.OrderID,
+        [Style] = o.StyleID,
 		aipp.OrderShipmodeSeq,
 		oqs.ShipmodeID,
 		aipp.ShipQty,
@@ -88,6 +89,8 @@ select	aipp.ID,
 		ls.Abb,
 		[Responsibility] = ResponsibilityInfo.Responsibility,
 		[Ratio] = ResponsibilityInfo.Ratio,
+        [Responsibility Justifcation] = aipp.ReasonID + '-' + r.Name,
+		[Explanation (For Factory)] = aipp.FtyDesc,
 		oqs.BuyerDelivery,
 		aipp.CDate,
 		aipp.PPICMgrApvDate,
@@ -106,6 +109,7 @@ left join Order_QtyShip oqs with (nolock) on oqs.Id = aipp.OrderID and oqs.Seq =
 left join View_AirPP vaipp with (nolock) on vaipp.ID = aipp.ID
 left join Country c with (nolock) on c.ID = o.Dest
 left join LocalSupp ls with (nolock) on ls.id = aipp.Forwarder
+left join Reason r with(nolock) on r.ID = aipp.ReasonID and r.ReasonTypeID = 'Air_Prepaid_Reason'
 outer apply (	select top 1 [val] = PulloutDate
 				from PackingList p with (nolock)
 				inner join PackingList_Detail pd with (nolock) on p.id = pd.ID
