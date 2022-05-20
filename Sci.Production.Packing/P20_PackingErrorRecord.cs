@@ -40,7 +40,14 @@ namespace Sci.Production.Packing
             this.txtBrand.Text = this.drDetail["BrandID"].ToString();
             this.txtErrorType.Text = this.drDetail["ErrorType"].ToString();
             this.txtDestination.Text = this.drDetail["Alias"].ToString();
-            this.dateBuyerDel.Value = (DateTime)this.drDetail["BuyerDelivery"];
+            if (MyUtility.Check.Empty(this.drDetail["BuyerDelivery"]))
+            {
+                this.dateBuyerDel.Value = null;
+            }
+            else
+            {
+                this.dateBuyerDel.Value = (DateTime)this.drDetail["BuyerDelivery"];
+            }
             this.txtRemark.Text = this.drDetail["Remark"].ToString();
 
             string selectCommand = $@"
