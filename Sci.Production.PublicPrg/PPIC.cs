@@ -194,6 +194,29 @@ where OrderID = '{orderid}' and od.Seq = '{seq}' and status != 'Confirmed' and s
 ";
             return !MyUtility.Check.Seek(sqlcmd);
         }
+
+        public static bool CheckSPNoCompleted(string POID)
+        {
+            string sqlcmd = $@"
+Select  1
+From Orders
+Where Orders.PoID = '{POID}'
+and 
+(Orders.Category != 'M' and Orders.GMTComplete in ('C','S')     
+or   
+(Orders.Category = 'M' and 
+  (DateAdd(Day, -60, Convert(Date, GetDate())) >= Orders.BuyerDelivery or DateAdd(Day, -60, Convert(Date, GetDate())) >= Orders.SCIDelivery))     
+)
+";
+
+            if (MyUtility.Check.Seek(sqlcmd))
+            {
+                MyUtility.Msg.WarningBox($"Save failed, <SP#> already completed.");
+                return false;
+            }
+
+            return true;
+        }
     }
 
     /// <summary>
