@@ -3563,7 +3563,7 @@ order by Barcode desc
 
             WHTableName detailTableName = GetWHDetailTableName(function);
             string checkFilter = "FabricType = 'F' and isnull(Barcode, '') = ''";
-            if (detailTableName == WHTableName.Adjust_Detail || detailTableName == WHTableName.Stocktaking_Detail)
+            if (detailTableName == WHTableName.Adjust_Detail || detailTableName == WHTableName.Stocktaking_Detail || detailTableName == WHTableName.IssueReturn_Detail)
             {
                 checkFilter += " and balanceQty > 0";
             }
