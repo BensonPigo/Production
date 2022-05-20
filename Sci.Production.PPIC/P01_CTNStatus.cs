@@ -74,7 +74,7 @@ order by Seq", this.orderID);
             DataTable transferDetail, ctnLastStatus;
             #region 組撈Transaction Detail的Sql
             string sqlCmd = string.Format(
-                @"
+				@"
 	select
 	ID,
 	CTNStartNo,
@@ -532,6 +532,24 @@ order by Seq", this.orderID);
 		      and m.CTNStartNo != ''
 	) t
 
+	-- Hauling
+	select	ch.PackingListID
+			, ch.CTNStartNo
+			, Type = 'Hauling'  
+			, ch.ID
+			, TypeDate = ch.HaulingDate 
+			, Location = '' 
+			, UpdateDate = ch.AddDate 
+			, Seq = isnull(pd.Seq, 0) 
+    		, pd.OrigID
+    		, pd.OrigOrderID
+    		, pd.OrigCTNStartNo
+	into #Hauling
+	from CTNHauling ch with (nolock)
+	inner join  #PackingList_Detail pd on	pd.ID = ch.PackingListID and
+											pd.CTNStartNo = ch.CTNStartNo and
+											pd.OrderID = ch.OrderID
+
 select * from #Transferclog
 union all
 select * from #CReceive
@@ -551,9 +569,11 @@ union all
 select * from #DryRoomTransfer 
 union all
 select * from #MDScan
+union all
+select * from #Hauling
 order by PackingListID,Seq,UpdateDate
 
-drop table #PackingList_Detail,#Transferclog,#CReceive,#CReturn,#TransferCFA,#ReceiveCFA,#ReturnCFA,#CReceiveCFA ,#DryRoomReceive ,#DryRoomTransfer ,#MDScan
+drop table #PackingList_Detail,#Transferclog,#CReceive,#CReturn,#TransferCFA,#ReceiveCFA,#ReturnCFA,#CReceiveCFA ,#DryRoomReceive ,#DryRoomTransfer ,#MDScan, #Hauling
 ", this.orderID);
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out transferDetail);
