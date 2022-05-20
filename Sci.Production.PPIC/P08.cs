@@ -358,6 +358,12 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
 
             #endregion
 
+            // by ISP20220600 匯入採購單,是否卡SP#
+            if (Prgs.CheckSPNoCompleted(this.CurrentMaintain["POID"].ToString()) == false)
+            {
+                return false;
+            }
+
             if (!this.CheckRequestQty())
             {
                 return false;

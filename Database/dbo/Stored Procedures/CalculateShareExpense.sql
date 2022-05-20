@@ -49,10 +49,6 @@ BEGIN
 					@recno INT,
 					@ftywk BIT,
 					@inputamount NUMERIC(15,2),
-					@maxblno VARCHAR(20),
-					@maxwkno VARCHAR(13),
-					@maxinvno VARCHAR(25),
-					@maxdata NUMERIC(9,2),
 					@1stsharebase VARCHAR(1)
 
 	
@@ -65,7 +61,7 @@ BEGIN
 	DECLARE cursor_ShareExpense CURSOR FOR
 	select distinct ShippingAPID, Type
 	from ShareExpense
-	where ShippingAPID = @APID
+	where ShippingAPID = @APID and Junk = 0
 
 	/*
 	 * 計算前先更新 ShareExpense 資料
@@ -120,6 +116,7 @@ BEGIN
 				where e.ID = se.WKNo
 				and s.ID = se.ShippingAPID
 				and s.ID = @ShippingAPID
+				and se.Junk = 0
 
 			OPEN cursor_allExport
 			FETCH NEXT FROM cursor_allExport INTO @id,@shipmode,@blno,@gw,@cbm,@currency,@subtype,@FactoryID
@@ -195,6 +192,7 @@ BEGIN
 						and s.id = se.ShippingAPID
 						and se.FtyWK = 1
 						and s.id = @ShippingAPID
+						and se.Junk = 0
 
 			DECLARE cursor_PackingList CURSOR FOR
 				select p.ID,p.ShipModeID,p.GW,p.CBM,s.CurrencyID,s.Type, '' as BLNo, p.FactoryID
@@ -204,6 +202,7 @@ BEGIN
 						and s.id = se.ShippingAPID
 						and se.FtyWK = 0
 						and s.id = @ShippingAPID
+						and se.Junk = 0
 
 			OPEN cursor_FtyWK
 			FETCH NEXT FROM cursor_FtyWK INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno,@FactoryID
@@ -291,6 +290,7 @@ BEGIN
 							from ShippingAP_Detail sd WITH (NOLOCK) 
 							where sd.ID = @ShippingAPID and sd.AccountID = se.AccountID								  
 					  )
+					  and se.Junk = 0
 			)
 			union
 			(
@@ -381,7 +381,6 @@ BEGIN
 				order by a.AccountID,FactoryID,GW,CBM
 
 			SET @count = 1
-			SET @maxdata = 0
 			OPEN cursor_ttlAmount
 			FETCH NEXT FROM cursor_ttlAmount INTO @accno,@amount,@currency,@blno,@wkno,@invno,@type,@gw,@cbm,@shipmodeid,@ftywk,@FactoryID,@sharebase
 			WHILE @@FETCH_STATUS = 0
@@ -389,10 +388,6 @@ BEGIN
 				IF @count = 1
 					BEGIN
 						SET @remainamount = @amount
-						SET @maxdata = 0
-						SET @maxblno = @blno
-						SET @maxwkno = @wkno
-						SET @maxinvno = @invno
 						SET @1stsharebase = @sharebase
 						IF @1stsharebase = 'C'
 							BEGIN
@@ -416,30 +411,18 @@ BEGIN
 				IF @1stsharebase = 'C'
 					BEGIN
 						SET @inputamount = ROUND((@minusamount * @cbm),@exact)
-						IF @maxdata < @cbm
-							BEGIN
-								SET @maxblno = @blno
-								SET @maxwkno = @wkno
-								SET @maxinvno = @invno
-							END
 					END
 				ELSE
 					IF @1stsharebase = 'G'
 						BEGIN
 							SET @inputamount = ROUND((@minusamount * @gw),@exact)
-							IF @maxdata < @gw
-							BEGIN
-								SET @maxblno = @blno
-								SET @maxwkno = @wkno
-								SET @maxinvno = @invno
-							END
 						END
 					ELSE
 						BEGIN
 							SET @inputamount = ROUND(@minusamount,@exact)
 						END
 
-				select @recno = isnull(count(ShippingAPID),0) from ShareExpense WITH (NOLOCK) where ShippingAPID = @ShippingAPID and WKNo = @wkno and InvNo = @invno and AccountID = @accno and FactoryID = @FactoryID
+				select @recno = isnull(count(ShippingAPID),0) from ShareExpense WITH (NOLOCK) where ShippingAPID = @ShippingAPID and WKNo = @wkno and InvNo = @invno and AccountID = @accno and FactoryID = @FactoryID and Junk = 0
 				IF @recno = 0
 					BEGIN
 						/*
@@ -483,8 +466,8 @@ BEGIN
 									, EditDate = @adddate
 									, Junk = 0
 								where ShippingAPID = @ShippingAPID 
-									  and WKNo = @maxwkno 
-									  and InvNo = @maxinvno 
+									  and WKNo = @wkno 
+									  and InvNo = @invno 
 									  and AccountID = @accno
 									  and FactoryID = @FactoryID
 							END
@@ -527,7 +510,7 @@ BEGIN
 						 else Round(t.Amount / count(*) over(PARTITION BY t.InvNo,t.AccountID),2) end
 			into #PLSharedAmtStep1
 			from #InvNoSharedAmt t
-			inner join ShareExpense s on t.AccountID = s.AccountID and t.InvNo = s.InvNo and s.ShippingAPID = @APID
+			inner join ShareExpense s on t.AccountID = s.AccountID and t.InvNo = s.InvNo and s.ShippingAPID = @APID and s.Junk = 0
 			inner join PackingList pl with (nolock) on pl.INVNo = t.InvNo
 
 			select * ,[AccuPLSharedAmt] = SUM(PLSharedAmt) over(PARTITION BY InvNo,AccountID order BY InvNo,PackID,AccountID )
