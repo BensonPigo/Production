@@ -2586,25 +2586,7 @@ where p.id='{dr["PackingListID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Cate
         private bool GMTCompleteCheck()
         {
             string cmd = string.Empty;
-            DateTime? lastDate;
             DataTable dt;
-            cmd = $@"
-SELECT TOP 1 ph.AddDate 
-FROM Pullout_History ph 
-WHERE ph.ID ='{this.CurrentMaintain["ID"]}' 
-AND ph.HisType = 'Status' 
-AND ph.NewValue='Unconfirmed' 
-ORDER BY ph.AddName DESC
-";
-            string tmp = MyUtility.GetValue.Lookup(cmd);
-            if (MyUtility.Check.Empty(tmp))
-            {
-                lastDate = null;
-            }
-            else
-            {
-                lastDate = Convert.ToDateTime(tmp);
-            }
 
             #region 表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
             DataTable isGMTComplete = new DataTable();
@@ -2612,35 +2594,18 @@ ORDER BY ph.AddName DESC
             isGMTComplete.ColumnsDateTimeAdd("Complete Date");
             foreach (DataRow dr in this.DetailDatas)
             {
-                if (MyUtility.Check.Empty(dr["AddDate"]) && MyUtility.Check.Empty(dr["EditDate"]))
+                // 拆解Order ID
+                List<string> orders = MyUtility.Convert.GetString(dr["OrderID"]).Split(',').ToList();
+                foreach (var order in orders)
                 {
-                    continue;
-                }
-
-                if (lastDate.HasValue)
-                {
-                    DateTime detailTime = MyUtility.Check.Empty(dr["EditDate"]) ? Convert.ToDateTime(dr["AddDate"]) : Convert.ToDateTime(dr["EditDate"]);
-
-                    // detailTime > lastDate才需要檢查GMTCompleteCheck()
-                    int result = DateTime.Compare(detailTime, lastDate.Value);
-                    if (result <= 0)
+                    cmd = $@"SELECT [SP#]=ID ,[Complete Date]=CMPLTDATE FROM Orders WITH(NOLOCK) WHERE GMTComplete='S' AND ID = '{order}'";
+                    DBProxy.Current.Select(null, cmd, out dt);
+                    bool find = dt.Rows.Count > 0;
+                    if (find)
                     {
-                        continue;
-                    }
-
-                    // 拆解Order ID
-                    List<string> orders = MyUtility.Convert.GetString(dr["OrderID"]).Split(',').ToList();
-                    foreach (var order in orders)
-                    {
-                        cmd = $@"SELECT [SP#]=ID ,[Complete Date]=CMPLTDATE FROM Orders WITH(NOLOCK) WHERE GMTComplete='S' AND ID = '{order}'";
-                        DBProxy.Current.Select(null, cmd, out dt);
-                        bool find = dt.Rows.Count > 0;
-                        if (find)
+                        foreach (DataRow r in dt.Rows)
                         {
-                            foreach (DataRow r in dt.Rows)
-                            {
-                                isGMTComplete.ImportRow(r);
-                            }
+                            isGMTComplete.ImportRow(r);
                         }
                     }
                 }
@@ -2652,7 +2617,6 @@ from Pullout_Detail pd with (nolock)
 INNER JOIN Pullout P with (nolock) ON P.ID=PD.ID
 inner join Orders o with (nolock) on pd.OrderID = o.ID
 where pd.id ='{this.CurrentMaintain["ID"]}'
-and (PD.EditDate>IIF(P.EditDate IS NULL,P.AddDate,P.EditDate))
 and o.GMTComplete = 'S'
 ";
 

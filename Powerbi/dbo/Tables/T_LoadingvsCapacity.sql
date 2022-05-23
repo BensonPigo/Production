@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[ForecastLoadingBI_Summary_Buyer](
+﻿CREATE TABLE [dbo].[T_LoadingvsCapacity](
 	[MDivisionID] [varchar](8) NULL,
 	[KpiCode] [varchar](8) NULL,
 	[Key] [varchar](6) NULL,
@@ -8,5 +8,3 @@
 	[Loading (CPU)] [numeric](38, 6) NULL,
 	[TransferBIDate] [datetime] NULL
 ) ON [PRIMARY]
-
-GO

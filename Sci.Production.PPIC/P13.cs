@@ -498,7 +498,7 @@ as
 )
 
 select isnull(s.ID,0) as ID, o.ID as OrderID, ComboType = ''
-    , SUBSTRING(o.SewLine,1,2) as SewingLineID,o.Qty as AlloQty,
+    ,[SewingLineID] = o.SewLine,o.Qty as AlloQty,
     o.SewInLine as Inline, o.SewOffLine as Offline,
     o.MDivisionID,
     o.FtyGroup as FactoryID,sl.Sewer,st.ttlSewTime as TotalSewingTime,

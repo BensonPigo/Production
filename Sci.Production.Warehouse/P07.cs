@@ -1838,8 +1838,7 @@ where id = '{1}'", Env.User.UserID,
 
             if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.insert_Air_Fir", fir_Air_Proce)))
             {
-                Exception ex = result.GetException();
-                MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
+                this.ShowErr(result);
                 return;
             }
             else
@@ -1880,8 +1879,7 @@ WHERE ID NOT IN(
                 result = DBProxy.Current.Execute(null, cmd);
                 if (!result)
                 {
-                    Exception ex = result.GetException();
-                    MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
+                    this.ShowErr(result);
                     return;
                 }
             }

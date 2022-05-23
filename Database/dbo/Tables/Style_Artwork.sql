@@ -22,6 +22,9 @@
     [ActStitch] INT NOT NULL CONSTRAINT [DF_Style_Artwork_ActStitch] DEFAULT ((0)), 
     [PPU]          NUMERIC (8, 3)  NOT NULL DEFAULT (0) ,
 	[PrintType] VARCHAR(1) NULL CONSTRAINT [DF_Style_Artwork_PrintType] DEFAULT (''), 
+    [PatternAnnotation] NVARCHAR(50) NULL DEFAULT (''), 
+    [InkTypePPU] VARCHAR(50) NULL DEFAULT (''), 
+    [PatternCodeSize] VARCHAR(10) NULL DEFAULT (''), 
     CONSTRAINT [PK_Style_Artwork] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

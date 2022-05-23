@@ -632,6 +632,169 @@ drop table #tmp_L_K
                                 drop table #TmpSource;";
                     #endregion
                     break;
+                case 70:
+                    #region 更新Ftyinventor.Barcode 第一層
+                    sqlcmd = @"
+alter table #TmpSource alter column TransactionID varchar(15)
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+alter table #TmpSource alter column Dyelot varchar(15)
+alter table #TmpSource alter column Barcode varchar(16)
+
+select t.Ukey
+    , s.Barcode
+    ,[Balance] = sum(t.InQty - t.OutQty + t.AdjustQty - t.ReturnQty)
+into #tmpS1
+from FtyInventory t
+inner join #TmpSource s on t.POID = s.poid
+and t.Seq1 = s.seq1  and t.Seq2 = s.seq2
+and t.StockType = s.stocktype 
+and t.Roll = s.roll and t.Dyelot = s.Dyelot
+group by t.Ukey, s.Barcode
+";
+                    if (encoded)
+                    {
+                        sqlcmd += @"
+merge dbo.FtyInventory as t
+using #tmpS1 as s 
+	on t.ukey = s.ukey
+when matched then
+    update
+    set t.Barcode = isnull(s.Barcode,'');
+
+drop table #tmpS1; 
+drop table #TmpSource;
+";
+                    }
+                    else
+                    {
+                        sqlcmd += @"
+merge dbo.FtyInventory as t
+using #tmpS1 as s 
+	on t.ukey = s.ukey
+when matched and s.Balance = 0 then
+    update
+    set t.Barcode = '';
+
+drop table #tmpS1; 
+drop table #TmpSource;
+";
+                    }
+
+                    #endregion
+                    break;
+                case 71:
+                    #region 更新Ftyinventory_Barcode 第二層
+                    sqlcmd = @"
+alter table #TmpSource alter column TransactionID varchar(15)
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+alter table #TmpSource alter column Dyelot varchar(15)
+alter table #TmpSource alter column Barcode varchar(16)
+
+--ISP20211236 因為轉廠可能會有兩筆一樣物料的情況(因為當初收料分兩筆)，所以先加distinct，後續會調整整段barcode流程
+select 
+distinct
+t.Ukey
+, s.TransactionID
+, s.Barcode
+into #tmpS1
+from FtyInventory t
+inner join #TmpSource s on t.POID = s.poid
+and t.Seq1 = s.seq1  and t.Seq2 = s.seq2
+and t.StockType = s.stocktype 
+and t.Roll = s.roll and t.Dyelot = s.Dyelot
+";
+                    if (encoded)
+                    {
+                        sqlcmd += @"
+merge dbo.FtyInventory_Barcode as t
+using #tmpS1 as s 
+	on t.ukey = s.ukey  and s.TransactionID = t.TransactionID
+when matched then
+    update
+    set t.Barcode = isnull(s.Barcode,'')
+when not matched and s.Ukey is not null then
+	insert(ukey,TransactionID,Barcode)
+	values(s.ukey,s.TransactionID,s.Barcode);
+
+drop table #tmpS1; 
+drop table #TmpSource;
+";
+                    }
+                    else
+                    {
+                        sqlcmd += @"
+delete t
+from FtyInventory_Barcode t
+where exists(
+	select 1 from #tmpS1 s where t.ukey = s.ukey
+	and s.TransactionID = t.TransactionID
+)
+
+drop table #tmpS1; 
+drop table #TmpSource;
+";
+                    }
+
+                    #endregion
+                    break;
+                case 72:
+                    #region 更新Ftyinventory_Barcode 第二層補回到第一層
+                    sqlcmd = @"
+alter table #TmpSource alter column TransactionID varchar(15)
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+alter table #TmpSource alter column Dyelot varchar(15)
+alter table #TmpSource alter column Barcode varchar(16)
+
+update t
+set t.Barcode = s.Barcode
+from FtyInventory t
+inner join #TmpSource s on t.POID = s.poid
+    and t.Seq1 = s.seq1  and t.Seq2 = s.seq2
+    and t.StockType = s.stocktype 
+    and t.Roll = s.roll 
+    and t.Dyelot = s.Dyelot
+and t.Barcode = ''
+
+";
+
+                    #endregion
+                    break;
+                case 99:
+                    #region 物料解鎖/上鎖
+                    int lockStatus = encoded ? 1 : 0;
+                    sqlcmd = $@"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+alter table #TmpSource alter column Dyelot varchar(15)
+
+update t
+set WMSLock = {lockStatus}
+from FtyInventory t
+where exists(
+    select * from #TmpSource s
+    where t.POID = s.POID
+    and t.Seq1 = s.Seq1 and t.Seq2 = s.Seq2
+    and t.Roll = s.Roll and t.Dyelot = s.Dyelot
+    and t.StockType = s.StockType
+)
+";
+                    #endregion
+                    break;
             }
 
             return sqlcmd;
@@ -3563,7 +3726,7 @@ order by Barcode desc
 
             WHTableName detailTableName = GetWHDetailTableName(function);
             string checkFilter = "FabricType = 'F' and isnull(Barcode, '') = ''";
-            if (detailTableName == WHTableName.Adjust_Detail || detailTableName == WHTableName.Stocktaking_Detail)
+            if (detailTableName == WHTableName.Adjust_Detail || detailTableName == WHTableName.Stocktaking_Detail || detailTableName == WHTableName.IssueReturn_Detail)
             {
                 checkFilter += " and balanceQty > 0";
             }

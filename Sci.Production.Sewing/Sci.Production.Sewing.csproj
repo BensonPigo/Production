@@ -187,6 +187,12 @@
     <Compile Include="P02.Designer.cs">
       <DependentUpon>P02.cs</DependentUpon>
     </Compile>
+    <Compile Include="P14.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P14.Designer.cs">
+      <DependentUpon>P14.cs</DependentUpon>
+    </Compile>
     <Compile Include="P04_SaveComplete.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -384,6 +390,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P02.resx">
       <DependentUpon>P02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P14.resx">
+      <DependentUpon>P14.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P04_SaveComplete.resx">
       <DependentUpon>P04_SaveComplete.cs</DependentUpon>

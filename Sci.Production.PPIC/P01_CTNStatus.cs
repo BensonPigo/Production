@@ -74,7 +74,7 @@ order by Seq", this.orderID);
             DataTable transferDetail, ctnLastStatus;
             #region 組撈Transaction Detail的Sql
             string sqlCmd = string.Format(
-                @"
+				@"
 	select
 	ID,
 	CTNStartNo,
@@ -532,6 +532,24 @@ order by Seq", this.orderID);
 		      and m.CTNStartNo != ''
 	) t
 
+	-- Hauling
+	select	ch.PackingListID
+			, ch.CTNStartNo
+			, Type = 'Hauling'  
+			, ch.ID
+			, TypeDate = ch.HaulingDate 
+			, Location = '' 
+			, UpdateDate = ch.AddDate 
+			, Seq = isnull(pd.Seq, 0) 
+    		, pd.OrigID
+    		, pd.OrigOrderID
+    		, pd.OrigCTNStartNo
+	into #Hauling
+	from CTNHauling ch with (nolock)
+	inner join  #PackingList_Detail pd on	pd.ID = ch.PackingListID and
+											pd.CTNStartNo = ch.CTNStartNo and
+											pd.OrderID = ch.OrderID
+
 select * from #Transferclog
 union all
 select * from #CReceive
@@ -551,9 +569,11 @@ union all
 select * from #DryRoomTransfer 
 union all
 select * from #MDScan
+union all
+select * from #Hauling
 order by PackingListID,Seq,UpdateDate
 
-drop table #PackingList_Detail,#Transferclog,#CReceive,#CReturn,#TransferCFA,#ReceiveCFA,#ReturnCFA,#CReceiveCFA ,#DryRoomReceive ,#DryRoomTransfer ,#MDScan
+drop table #PackingList_Detail,#Transferclog,#CReceive,#CReturn,#TransferCFA,#ReceiveCFA,#ReturnCFA,#CReceiveCFA ,#DryRoomReceive ,#DryRoomTransfer ,#MDScan, #Hauling
 ", this.orderID);
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out transferDetail);
@@ -565,7 +585,7 @@ drop table #PackingList_Detail,#Transferclog,#CReceive,#CReturn,#TransferCFA,#Re
             this.listControlBindingSource1.DataSource = transferDetail;
 
             sqlCmd = string.Format(
-                @"
+				@"
 select [PackingListID] =  p.ID 
 ,pd.CTNStartNo
 ,[Scanned] = iif(Scanned.QtyPerCTN=Scanned.ScanQty,'Y','')
@@ -590,6 +610,7 @@ select [PackingListID] =  p.ID
 ,pd.MDScanDate
 ,pd.MDFailQty
 ,pd.DRYTransferDate
+,pd.HaulingDate
 from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
 outer apply(
 	select sum(QtyPerCTN) QtyPerCTN ,sum(ScanQty) ScanQty 
@@ -629,7 +650,8 @@ order by p.ID,pd.Seq", this.orderID);
                 .Date("TransferDate", header: "Trans. Date", width: Widths.AnsiChars(10))
                 .Date("ReceiveDate", header: "Rec. Date", width: Widths.AnsiChars(10))
                 .Date("ReturnDate", header: "Return Date", width: Widths.AnsiChars(10))
-                .Date("DryReceiveDate", header: "Dry Room Receive Date", width: Widths.AnsiChars(10))
+				.Date("HaulingDate", header: "Hauling Date", width: Widths.AnsiChars(10))
+				.Date("DryReceiveDate", header: "Dry Room Receive Date", width: Widths.AnsiChars(10))
                 .Date("DRYTransferDate", header: "Dry Room Transfer Date", width: Widths.AnsiChars(10))
                 .Date("MDScanDate", header: "MD Room Scan Date", width: Widths.AnsiChars(10))
                 .Text("MDFailQty", header: "MD Discrepancy", width: Widths.AnsiChars(6))

@@ -75,6 +75,8 @@
     [Style] VARCHAR(50) NULL, 
     [CustCD] VARCHAR(50) NULL, 
     [ThreadVersion] VARCHAR(5) NULL, 
+    [DevRegion] VARCHAR(2) NULL DEFAULT (''), 
+    [DevOption] BIT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC, [SeasonID] ASC)
 );
 GO
