@@ -55,194 +55,194 @@ namespace Sci.Production.Sewing
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            string sqlCmd = string.Empty;
-            string sqlWhere = string.Empty;
-
             #region Where 條件
+            string where = string.Empty;
+            string wheredetail = string.Empty;
             if (this.InspectionDate1.HasValue && this.InspectionDate2.HasValue)
             {
-                sqlCmd = string.Format(
-                    @"
-select distinct OrderId
-into #tmp_InspectionOrderId
-from [ExtendServer].ManufacturingExecution.dbo.Inspection i with(nolock)
-where i.InspectionDate between '{0}' and '{1}'
-and i.Status in ('Pass', 'Fixed');
-",
-                    this.InspectionDate1.Value.ToString("yyyyMMdd"),
-                    this.InspectionDate2.Value.ToString("yyyyMMdd"));
-
-                sqlWhere = "and exists (select 1 from #tmp_InspectionOrderId where OrderId = o.ID)";
+                where += $@"
+and exists(
+	select 1
+	from [ExtendServer].ManufacturingExecution.dbo.Inspection i with(nolock)
+	where i.InspectionDate between '{this.InspectionDate1.Value.ToString("yyyyMMdd")}' and '{this.InspectionDate2.Value.ToString("yyyyMMdd")}'
+    and i.Status in ('Pass', 'Fixed')
+	and orderid = o.id
+)
+";
             }
 
             if (this.SCIDelivery1.HasValue && this.SCIDelivery2.HasValue)
             {
-                sqlWhere += string.Format(
-                    "and o.SCIDelivery between '{0}' and '{1}'",
-                    this.SCIDelivery1.Value.ToString("yyyyMMdd"),
-                    this.SCIDelivery2.Value.ToString("yyyyMMdd")) + Environment.NewLine;
+                where += $"and o.SCIDelivery between '{this.SCIDelivery1.Value.ToString("yyyyMMdd")}' and '{this.SCIDelivery2.Value.ToString("yyyyMMdd")}'" + Environment.NewLine;
             }
 
             if (this.Delivery1.HasValue && this.Delivery2.HasValue)
             {
-                sqlWhere += string.Format(
-                    "and o.BuyerDelivery between '{0}' and '{1}'",
-                    this.Delivery1.Value.ToString("yyyyMMdd"),
-                    this.Delivery2.Value.ToString("yyyyMMdd")) + Environment.NewLine;
+                where += $"and exists(select 1 from Order_QtyShip oq with(nolock) where oq.id = o.id and oq.BuyerDelivery between '{this.Delivery1.Value.ToString("yyyyMMdd")}' and '{this.Delivery2.Value.ToString("yyyyMMdd")}')" + Environment.NewLine;
+                wheredetail += $"and oq.BuyerDelivery between '{this.Delivery1.Value.ToString("yyyyMMdd")}' and '{this.Delivery2.Value.ToString("yyyyMMdd")}'" + Environment.NewLine;
             }
 
             if (!MyUtility.Check.Empty(this.MDivisionID))
             {
-                sqlWhere += $"AND o.MDivisionID = '{this.MDivisionID}'" + Environment.NewLine;
+                where += $"AND o.MDivisionID = '{this.MDivisionID}'" + Environment.NewLine;
             }
 
             if (!MyUtility.Check.Empty(this.FactoryID))
             {
-                sqlWhere += $"AND o.FtyGroup = '{this.FactoryID}'" + Environment.NewLine;
+                where += $"AND o.FtyGroup = '{this.FactoryID}'" + Environment.NewLine;
             }
 
             if (this.IsExcludeSister)
             {
-                sqlWhere += $"AND f.IsProduceFty=1" + Environment.NewLine;
+                where += $"AND f.IsProduceFty=1" + Environment.NewLine;
             }
             #endregion
 
-            sqlCmd += string.Format(
-                @"
-select o.ID
-        , o.CustPONo
-        , o.BrandID
-        , o.SciDelivery
-        , o.BuyerDelivery
-        , o.Qty
-        , QCQty = i.tCnt
-        --, LocationQty = iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
-into #Orders
-from Orders o
+            string sqlCmd = $@"
+select
+	o.ID
+	,o.CustPONo
+	,o.BrandID
+	,o.BuyerDelivery -- Summary 分頁 顯示 Orders.BuyerDelivery
+	,o.SciDelivery
+	,o.Qty
+	,o.FactoryID
+	,o.StyleID
+	,QCQty = isnull(i.tCnt, 0)
+	, f.KPICode
+into #base
+from Orders o with(nolock)
 left JOIN Factory f WITH(NOLOCK) ON f.ID = o.FactoryID
--- ISP20220443 要用 Complete set 為單位, 所以不需要乘上下部位數量
---outer apply
---(
---	select [LocationQty] = count(distinct Location)
---	from Order_Location with(nolock)
---	where OrderId = o.ID
---)ol
---outer apply
---(
---	select [LocationQty] = count(distinct Location)
---	from Style_Location with(nolock)
---	where StyleUkey = o.StyleUkey
---)sl
 outer apply(
 	select [tCnt] = count(1)
 	from [ExtendServer].ManufacturingExecution.dbo.Inspection i with(nolock)
 	where i.OrderId = o.ID
-			and i.Status in ('Pass', 'Fixed') 
+	and i.Status in ('Pass', 'Fixed') 
 ) i
 where 1 = 1
 and o.Category in ('B','G')
-        {0}
+{where}
 
-select pd.ID
+--- Detail ---
+select
+	o.ID
+	,o.CustPONo
+	,o.BrandID
+	,oq.Seq
+	,oq.BuyerDelivery -- Detail 顯示 Order_QtyShip.BuyerDelivery
+	,o.SciDelivery
+	,o.FactoryID
+	,o.StyleID
+	,o.QCQty
+	,o.KPICode
+into #base_Detail
+from #base o
+left join Order_QtyShip oq with(nolock) on o.ID = oq.ID
+where 1=1
+{wheredetail}
+
+select
+		o.*
+		, pd.PackingListID
         , pd.CtnStartNo
-        , pd.OrderID
-        , [ShipBuyerDelivery] = max (oq.BuyerDelivery)
-        , MDFailQty = Max (pd.MDFailQty)                
-		, f.KPICode
-		, o1.FactoryID
-		, o1.StyleID
-		, oq.Seq
-		, DryRoomRecdDate = Max(dryR.AddDate)
-		, MDScanDate = Max (md.AddDate)
-		, DRYReceiveDate = Max (pd.DRYReceiveDate)
-		, DRYTransferDate = Max (dryT.AddDate)
-		, ScanEditDate = Max (pd.ScanEditDate)
-		, ClogReceive = MAX(cr.AddDate)
-into #PD_Detail
-from #Orders o with(nolock)
-inner join Orders o1 on o1.ID = o.ID
-inner join PackingList_Detail pd with(nolock) on o.ID = pd.OrderID
-left join Order_QtyShip oq with(nolock) on pd.OrderID = oq.ID
-                                            and pd.OrderShipmodeSeq = oq.Seq
-left JOIN Factory f WITH(NOLOCK) ON f.ID = o1.FactoryID
-left join DRYReceive dryR WITH(NOLOCK) on dryR.OrderID = pd.OrderID and dryR.PackingListID = pd.ID and dryR.CTNStartNo = pd.CTNStartNo
-left join MDScan md WITH(NOLOCK) on md.OrderID = pd.OrderID and md.PackingListID = pd.ID and md.CTNStartNo = pd.CTNStartNo
-left join DRYTransfer dryT WITH(NOLOCK) on dryT.OrderID = pd.OrderID and dryT.PackingListID = pd.ID and dryT.CTNStartNo = pd.CTNStartNo
-left join ClogReceive cr WITH(NOLOCK) on cr.OrderID = pd.OrderID and cr.PackingListID = pd.ID and cr.CTNStartNo = pd.CTNStartNo
-group by pd.ID, pd.CtnStartNo, pd.OrderID, f.KPICode
-		, o1.FactoryID
-		, o1.StyleID
-		, oq.Seq
+        , MDFailQty = isnull(pd.MDFailQty, 0)
+		, pd.ScanEditDate
+		, pd.DRYReceiveDate
+into #tmp_Detail_P
+from #base_Detail o with(nolock)
+outer apply(
+	select
+		PackingListID = pd.ID
+        ,pd.CtnStartNo
+		--這邊取 max 是因為 OrderID,OrderShipmodeSeq,PackingListID,CtnStartNo 有多筆(混Size)時, 數量會double
+        ,MDFailQty = Max (pd.MDFailQty)      
+		,ScanEditDate = Max (pd.ScanEditDate)   
+		,DRYReceiveDate = Max (pd.DRYReceiveDate)
+	from PackingList_Detail pd with(nolock)
+	where pd.OrderID = o.id and pd.OrderShipmodeSeq = o.Seq
+	group by pd.ID, pd.CtnStartNo
+)pd
 
-----------------------------------------------------------------
---- Detail
-----------------------------------------------------------------
+select
+	o.*	
+	-- OrderID,PackingListID,CTNStartNo 並非這些資料表的 Pkey, 以防萬一分別用子查詢
+	, DryRoomRecdDate = (select Max(dryR.AddDate) from DRYReceive dryR WITH(NOLOCK) where dryR.OrderID = o.ID and dryR.PackingListID = o.PackingListID and dryR.CTNStartNo = o.CTNStartNo)
+	, DRYTransferDate = (select Max (dryT.AddDate) from DRYTransfer dryT WITH(NOLOCK) where dryT.OrderID = o.ID and dryT.PackingListID = o.PackingListID and dryT.CTNStartNo = o.CTNStartNo)
+	, MDScanDate = (select Max (md.AddDate) from MDScan md WITH(NOLOCK) where md.OrderID = o.ID and md.PackingListID = o.PackingListID and md.CTNStartNo = o.CTNStartNo)
+	, ClogReceive = (select MAX(cr.AddDate) from ClogReceive cr WITH(NOLOCK) where cr.OrderID = o.ID and cr.PackingListID = o.PackingListID and cr.CTNStartNo = o.CTNStartNo)
+into #tmp_Detail_Date
+from #tmp_Detail_P o
+
 select  
-        pd.KPICode
-        ,pd.FactoryID
+        o.KPICode
+        ,o.FactoryID
         ,o.ID
         ,o.CustPONo
-        ,pd.StyleID
-        ,pd.Seq
-        ,pd.ShipBuyerDelivery
+        ,o.StyleID
+        ,o.Seq
+        ,o.BuyerDelivery
         ,o.SciDelivery
         ,o.BrandID
-        ,pd.CTNStartNo 
-        ,[CartonQty] = pl_Qty.CtnQty
+        ,o.CTNStartNo
+        ,[CartonQty] = pl_Qty.ShipQty
         ,[TTLQcOutput] = o.QCQty
-        ,MDPassQty = iif (pd.MDScanDate is null, 0, pl_Qty.CtnQty - isnull(pd.MDFailQty,0))
+        ,MDPassQty = iif (o.MDScanDate is null, 0, isnull(pl_Qty.ShipQty, 0) - isnull(o.MDFailQty,0))
         ,[ScanQty] = pl_Qty.ScanQty
-        ,pd.DryRoomRecdDate
-        ,pd.MDScanDate
-        ,pd.DRYTransferDate
-        ,pd.ScanEditDate
-        ,pd.ClogReceive
-        ,[PackID] = pd.ID
+        ,o.DryRoomRecdDate
+        ,o.MDScanDate
+        ,o.DRYTransferDate
+        ,o.ScanEditDate
+        ,o.ClogReceive
+        ,o.PackingListID
 into #Detail
-from #Orders o with(nolock)
-left join #PD_Detail pd on o.id = pd.OrderID
+from #tmp_Detail_Date o with(nolock)
 outer apply(
-	select [CtnQty] = SUM(pdd.ShipQty) --* o.LocationQty
-            , [ScanQty] = sum (pdd.ScanQty) --* o.LocationQty
-	from PackingList_Detail pdd  with(nolock)
-	inner join PackingList p with(nolock) on pdd.ID = p.ID
-	where o.ID = pdd.OrderID
-	        and pd.ID = pdd.ID
-	        and pd.CTNStartNo = pdd.CTNStartNo
+	select
+		ShipQty = SUM(pd.ShipQty)
+		, ScanQty = sum (pd.ScanQty)
+	from PackingList_Detail pd  with(nolock)
+	inner join PackingList p with(nolock) on pd.ID = p.ID
+	where pd.OrderID = o.ID
+	and pd.id =o.PackingListID
+	and pd.CTNStartNo = o.CTNStartNo
 )pl_Qty
 
+--- Summary ---
+select
+	o.*
+	,MDPassQty
+	,ScanQty
+into #Summary
+from #base o
+outer apply(
+	--此處要用Detail計算完加總 -- 因 MDPassQty 計算用到 MDFailQty, 此欄位遇到混Size時是取Max
+	--若直接串PackingList_Detail分別計算後才加總, MDFailQty 會被重複減去
+	select MDPassQty = sum(d.MDPassQty), ScanQty = sum(d.ScanQty)
+	from #Detail d
+	where d.ID = o.ID
+)d
 
-----------------------------------------------------------------
---- Summary
-----------------------------------------------------------------
-select o.ID
+select
+	o.ID
 	,o.CustPONo
 	,o.BrandID
 	,o.BuyerDelivery
 	,o.SciDelivery
-	,[OrderQty] = o.Qty --* o.LocationQty
+	,[OrderQty] = o.Qty
 	,[TTLQcOutput] = o.QCQty
-	,[MDpassQty] = d.MDPassQty
-	,[MDpassBalance] = d.MDPassQty - o.QCQty
-	,[Scan and Pack Qty] = d.ScanQty
-	,[Scan and Pack Balance] = d.ScanQty - d.MDPassQty
-from #Orders o with(nolock)
-outer apply (
-    select CartonQty = sum(CartonQty)
-            , MDPassQty = sum(MDPassQty)
-            , ScanQty = sum(ScanQty)
-    from #Detail d
-    where o.ID = d.ID
-) d
+	,[MDpassQty] = o.MDPassQty
+	,[MDpassBalance] = o.MDPassQty - o.QCQty
+	,[Scan and Pack Qty] = o.ScanQty
+	,[Scan and Pack Balance] = o.ScanQty - o.MDPassQty
+from #Summary o
+order by o.ID
 
-select *
-from #Detail
+--- Detail ---
+select * from #Detail order by ID, Seq
 
-drop table #Orders, #PD_Detail, #Detail
-
-IF object_id('tempdb..#tmp_InspectionOrderId') IS NOT NULL drop table #tmp_InspectionOrderId
-",
-                sqlWhere);
+drop table #base,#Summary
+drop table #base_Detail,#tmp_Detail_P,#tmp_Detail_Date,#Detail
+";
 
             DBProxy.Current.DefaultTimeout = 900;  // timeout時間改為15分鐘
             DualResult result = DBProxy.Current.Select(string.Empty, sqlCmd, out this.printData);
