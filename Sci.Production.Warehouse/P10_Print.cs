@@ -238,13 +238,7 @@ OUTER APPLY(
     )Location
 where isd.id = @ID";
 
-            DualResult result = DBProxy.Current.Select(
-                string.Empty,
-                sql,
-                pars,
-                out dtBarcode);
-
-            return result;
+            return DBProxy.Current.Select(string.Empty, sql, pars, out dtBarcode);
         }
 
         /// <inheritdoc/>
