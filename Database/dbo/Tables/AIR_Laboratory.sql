@@ -24,6 +24,7 @@
     [AddDate]       DATETIME        NULL,
     [EditName]      VARCHAR (10)    CONSTRAINT [DF_AIR_Laboratory_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME        NULL,
+	ReportNo varchar(14) not null CONSTRAINT [DF_AIR_Laboratory_ReportNo] default '',
     OvenTestBeforePicture  varbinary(max) NULL ,
     OvenTestAfterPicture  varbinary(max) NULL,
     WashTestBeforePicture  varbinary(max) NULL ,
