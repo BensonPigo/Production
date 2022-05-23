@@ -535,6 +535,7 @@ set TransferCFADate = null
 , ScanName = ''
 , DRYReceiveDate = NULL
 , DRYTransferDate = NULL
+, HaulingDate = null
 where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'
 and DisposeFromClog= 0
 ");

@@ -1,6 +1,6 @@
 ﻿
 CREATE TABLE [dbo].[MockupWash_Detail](
-	[ReportNo] [varchar](13) NOT NULL,
+	[ReportNo] [varchar](14) NOT NULL,
 	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
 	[TypeofPrint] [varchar](30) NOT NULL,
 	[Design] [varchar](100) NOT NULL,

@@ -43,24 +43,28 @@
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.lbstatus = new Sci.Win.UI.Label();
             this.comboStatus = new Sci.Win.UI.ComboBox();
+            this.dateVoucher = new Sci.Win.UI.DateRange();
+            this.labVoucherDate = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(361, 134);
+            this.print.Location = new System.Drawing.Point(426, 160);
             this.print.Visible = false;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(426, 12);
+            this.toexcel.TabIndex = 8;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(426, 48);
+            this.close.TabIndex = 9;
             // 
             // txtVersion
             // 
-            this.txtVersion.Location = new System.Drawing.Point(335, 105);
+            this.txtVersion.Location = new System.Drawing.Point(400, 131);
             // 
             // label1
             // 
@@ -80,7 +84,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(9, 74);
+            this.label3.Location = new System.Drawing.Point(9, 109);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(103, 23);
             this.label3.TabIndex = 99;
@@ -88,7 +92,7 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(9, 105);
+            this.label4.Location = new System.Drawing.Point(9, 140);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(103, 23);
             this.label4.TabIndex = 100;
@@ -96,7 +100,7 @@
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(9, 136);
+            this.label5.Location = new System.Drawing.Point(9, 171);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(103, 23);
             this.label5.TabIndex = 101;
@@ -104,7 +108,7 @@
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(9, 198);
+            this.label6.Location = new System.Drawing.Point(9, 233);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(103, 23);
             this.label6.TabIndex = 102;
@@ -130,7 +134,7 @@
             this.dateRangeConfirm.Location = new System.Drawing.Point(115, 12);
             this.dateRangeConfirm.Name = "dateRangeConfirm";
             this.dateRangeConfirm.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeConfirm.TabIndex = 103;
+            this.dateRangeConfirm.TabIndex = 0;
             // 
             // dateRangeConfirmDept
             // 
@@ -152,7 +156,7 @@
             this.dateRangeConfirmDept.Location = new System.Drawing.Point(115, 41);
             this.dateRangeConfirmDept.Name = "dateRangeConfirmDept";
             this.dateRangeConfirmDept.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeConfirmDept.TabIndex = 104;
+            this.dateRangeConfirmDept.TabIndex = 1;
             // 
             // comboMDivision
             // 
@@ -160,20 +164,20 @@
             this.comboMDivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboMDivision.FormattingEnabled = true;
             this.comboMDivision.IsSupportUnselect = true;
-            this.comboMDivision.Location = new System.Drawing.Point(115, 74);
+            this.comboMDivision.Location = new System.Drawing.Point(115, 109);
             this.comboMDivision.Name = "comboMDivision";
             this.comboMDivision.OldText = "";
             this.comboMDivision.Size = new System.Drawing.Size(80, 24);
-            this.comboMDivision.TabIndex = 105;
+            this.comboMDivision.TabIndex = 3;
             // 
             // txtShareDept
             // 
             this.txtShareDept.BackColor = System.Drawing.Color.White;
             this.txtShareDept.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtShareDept.Location = new System.Drawing.Point(115, 136);
+            this.txtShareDept.Location = new System.Drawing.Point(115, 171);
             this.txtShareDept.Name = "txtShareDept";
             this.txtShareDept.Size = new System.Drawing.Size(150, 23);
-            this.txtShareDept.TabIndex = 107;
+            this.txtShareDept.TabIndex = 5;
             this.txtShareDept.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtShareDept_PopUp);
             // 
             // comboReportType
@@ -185,11 +189,11 @@
             this.comboReportType.Items.AddRange(new object[] {
             "Detail List",
             "Resp. Dept. List"});
-            this.comboReportType.Location = new System.Drawing.Point(115, 197);
+            this.comboReportType.Location = new System.Drawing.Point(115, 232);
             this.comboReportType.Name = "comboReportType";
             this.comboReportType.OldText = "";
             this.comboReportType.Size = new System.Drawing.Size(141, 24);
-            this.comboReportType.TabIndex = 108;
+            this.comboReportType.TabIndex = 7;
             // 
             // comboFactory
             // 
@@ -197,15 +201,15 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(115, 104);
+            this.comboFactory.Location = new System.Drawing.Point(115, 139);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(80, 24);
-            this.comboFactory.TabIndex = 109;
+            this.comboFactory.TabIndex = 4;
             // 
             // lbstatus
             // 
-            this.lbstatus.Location = new System.Drawing.Point(9, 167);
+            this.lbstatus.Location = new System.Drawing.Point(9, 202);
             this.lbstatus.Name = "lbstatus";
             this.lbstatus.Size = new System.Drawing.Size(103, 23);
             this.lbstatus.TabIndex = 110;
@@ -225,17 +229,49 @@
             "New",
             "Send",
             "All"});
-            this.comboStatus.Location = new System.Drawing.Point(115, 166);
+            this.comboStatus.Location = new System.Drawing.Point(115, 201);
             this.comboStatus.Name = "comboStatus";
             this.comboStatus.OldText = "";
             this.comboStatus.Size = new System.Drawing.Size(141, 24);
-            this.comboStatus.TabIndex = 111;
+            this.comboStatus.TabIndex = 6;
+            // 
+            // dateVoucher
+            // 
+            // 
+            // 
+            // 
+            this.dateVoucher.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateVoucher.DateBox1.Name = "";
+            this.dateVoucher.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateVoucher.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateVoucher.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateVoucher.DateBox2.Name = "";
+            this.dateVoucher.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateVoucher.DateBox2.TabIndex = 1;
+            this.dateVoucher.IsRequired = false;
+            this.dateVoucher.Location = new System.Drawing.Point(115, 74);
+            this.dateVoucher.Name = "dateVoucher";
+            this.dateVoucher.Size = new System.Drawing.Size(280, 23);
+            this.dateVoucher.TabIndex = 2;
+            // 
+            // labVoucherDate
+            // 
+            this.labVoucherDate.Location = new System.Drawing.Point(9, 76);
+            this.labVoucherDate.Name = "labVoucherDate";
+            this.labVoucherDate.Size = new System.Drawing.Size(103, 23);
+            this.labVoucherDate.TabIndex = 112;
+            this.labVoucherDate.Text = "Voucher Date";
             // 
             // R18
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(518, 261);
+            this.ClientSize = new System.Drawing.Size(518, 299);
+            this.Controls.Add(this.dateVoucher);
+            this.Controls.Add(this.labVoucherDate);
             this.Controls.Add(this.comboStatus);
             this.Controls.Add(this.lbstatus);
             this.Controls.Add(this.comboFactory);
@@ -273,6 +309,8 @@
             this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.lbstatus, 0);
             this.Controls.SetChildIndex(this.comboStatus, 0);
+            this.Controls.SetChildIndex(this.labVoucherDate, 0);
+            this.Controls.SetChildIndex(this.dateVoucher, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -294,5 +332,7 @@
         private Win.UI.ComboBox comboFactory;
         private Win.UI.Label lbstatus;
         private Win.UI.ComboBox comboStatus;
+        private Win.UI.DateRange dateVoucher;
+        private Win.UI.Label labVoucherDate;
     }
 }

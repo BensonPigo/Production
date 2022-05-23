@@ -72,6 +72,7 @@
     [MDScanName]                          VARCHAR (10)    CONSTRAINT [DF_PackingList_Detail_MDScanName] DEFAULT ('') NOT NULL,
     [PackingErrQty]                       SMALLINT        CONSTRAINT [DF_PackingList_Detail_PackingErrQty] DEFAULT ((0)) NOT NULL,
     [PackingErrorID]                      VARCHAR (8)     CONSTRAINT [DF_PackingList_Detail_PackingErrorID] DEFAULT ('') NOT NULL,
+    [HaulingDate] DATE NULL, 
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

@@ -1,6 +1,6 @@
 ﻿
 CREATE TABLE [dbo].[MockupCrocking](
-	[ReportNo] [varchar](13) NOT NULL,
+	[ReportNo] [varchar](14) NOT NULL,
 	[POID] [varchar](13) NOT NULL,
 	[StyleID] [varchar](15) NOT NULL,
 	[SeasonID] [varchar](8) NOT NULL,

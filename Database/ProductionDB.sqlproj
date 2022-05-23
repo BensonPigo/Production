@@ -2241,13 +2241,10 @@
     <Build Include="dbo\Stored Procedures\usp_switchWorkorder_BySP.sql" />
     <Build Include="dbo\Tables\MockupCrocking.sql" />
     <Build Include="dbo\Tables\MockupCrocking_Detail.sql" />
-    <Build Include="dbo\Tables\MockupCrocking_Detail_Detail.sql" />
     <Build Include="dbo\Tables\MockupOven.sql" />
     <Build Include="dbo\Tables\MockupOven_Detail.sql" />
-    <Build Include="dbo\Tables\MockupOven_Detail_Detail.sql" />
     <Build Include="dbo\Tables\MockupWash.sql" />
     <Build Include="dbo\Tables\MockupWash_Detail.sql" />
-    <Build Include="dbo\Tables\MockupWash_Detail_Detail.sql" />
     <Build Include="dbo\Tables\SMNotice_Detail.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -2717,6 +2714,7 @@
     <Build Include="dbo\Functions\GetColorMultipleID_MtlType.sql" />
     <Build Include="dbo\Tables\BIRInvoice_Detail.sql" />
     <Build Include="dbo\Views\View_ShareExpense.sql" />
+    <Build Include="dbo\Tables\SampleRFTNotification.sql" />
     <Build Include="dbo\Tables\TransferExport.sql" />
     <Build Include="dbo\Tables\TransferExport_Detail.sql" />
     <Build Include="dbo\Tables\TransferExport_Detail_Carton.sql" />

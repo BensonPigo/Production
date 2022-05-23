@@ -18,6 +18,7 @@ CREATE TABLE PerspirationFastness(
 	AddDate datetime NULL ,
 	EditName varchar(10) NULL CONSTRAINT [DF_PerspirationFastness_EditName] DEFAULT '',
 	EditDate datetime NULL ,
+	ReportNo varchar(14) not null CONSTRAINT [DF_PerspirationFastness_ReportNo] default '',
 		CONSTRAINT [PK_PerspirationFastness] PRIMARY KEY CLUSTERED 
 	(
 		ID ASC

@@ -33,8 +33,6 @@
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.btnQuery = new Sci.Win.UI.Button();
-            this.comboDatafrom = new Sci.Win.UI.ComboBox();
-            this.labelDatafrom = new Sci.Win.UI.Label();
             this.datePulloutDate = new Sci.Win.UI.DateRange();
             this.labelPulloutDate = new Sci.Win.UI.Label();
             this.txtShipmode = new Sci.Production.Class.Txtshipmode();
@@ -55,6 +53,8 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.dateOnBoard = new Sci.Win.UI.DateRange();
+            this.labOnBoardDate = new Sci.Win.UI.Label();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -67,7 +67,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(5, 515);
+            this.panel1.Size = new System.Drawing.Size(5, 605);
             this.panel1.TabIndex = 0;
             // 
             // panel2
@@ -75,14 +75,14 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel2.Location = new System.Drawing.Point(778, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(5, 515);
+            this.panel2.Size = new System.Drawing.Size(5, 605);
             this.panel2.TabIndex = 1;
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.dateOnBoard);
+            this.panel3.Controls.Add(this.labOnBoardDate);
             this.panel3.Controls.Add(this.btnQuery);
-            this.panel3.Controls.Add(this.comboDatafrom);
-            this.panel3.Controls.Add(this.labelDatafrom);
             this.panel3.Controls.Add(this.datePulloutDate);
             this.panel3.Controls.Add(this.labelPulloutDate);
             this.panel3.Controls.Add(this.txtShipmode);
@@ -100,12 +100,12 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(773, 102);
+            this.panel3.Size = new System.Drawing.Size(773, 126);
             this.panel3.TabIndex = 2;
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(675, 67);
+            this.btnQuery.Location = new System.Drawing.Point(675, 85);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 16;
@@ -113,29 +113,22 @@
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
-            // comboDatafrom
-            // 
-            this.comboDatafrom.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.comboDatafrom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.comboDatafrom.FormattingEnabled = true;
-            this.comboDatafrom.IsSupportUnselect = true;
-            this.comboDatafrom.Location = new System.Drawing.Point(604, 38);
-            this.comboDatafrom.Name = "comboDatafrom";
-            this.comboDatafrom.ReadOnly = true;
-            this.comboDatafrom.Size = new System.Drawing.Size(151, 24);
-            this.comboDatafrom.TabIndex = 15;
-            // 
-            // labelDatafrom
-            // 
-            this.labelDatafrom.Lines = 0;
-            this.labelDatafrom.Location = new System.Drawing.Point(528, 39);
-            this.labelDatafrom.Name = "labelDatafrom";
-            this.labelDatafrom.Size = new System.Drawing.Size(71, 23);
-            this.labelDatafrom.TabIndex = 14;
-            this.labelDatafrom.Text = "Data from";
-            // 
             // datePulloutDate
             // 
+            // 
+            // 
+            // 
+            this.datePulloutDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.datePulloutDate.DateBox1.Name = "";
+            this.datePulloutDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.datePulloutDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.datePulloutDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.datePulloutDate.DateBox2.Name = "";
+            this.datePulloutDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.datePulloutDate.DateBox2.TabIndex = 1;
             this.datePulloutDate.IsRequired = false;
             this.datePulloutDate.Location = new System.Drawing.Point(475, 7);
             this.datePulloutDate.Name = "datePulloutDate";
@@ -144,7 +137,6 @@
             // 
             // labelPulloutDate
             // 
-            this.labelPulloutDate.Lines = 0;
             this.labelPulloutDate.Location = new System.Drawing.Point(392, 7);
             this.labelPulloutDate.Name = "labelPulloutDate";
             this.labelPulloutDate.Size = new System.Drawing.Size(79, 23);
@@ -157,16 +149,16 @@
             this.txtShipmode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtShipmode.FormattingEnabled = true;
             this.txtShipmode.IsSupportUnselect = true;
-            this.txtShipmode.Location = new System.Drawing.Point(416, 38);
+            this.txtShipmode.Location = new System.Drawing.Point(429, 65);
             this.txtShipmode.Name = "txtShipmode";
+            this.txtShipmode.OldText = "";
             this.txtShipmode.Size = new System.Drawing.Size(80, 24);
             this.txtShipmode.TabIndex = 11;
             this.txtShipmode.UseFunction = null;
             // 
             // labelShipMode
             // 
-            this.labelShipMode.Lines = 0;
-            this.labelShipMode.Location = new System.Drawing.Point(337, 39);
+            this.labelShipMode.Location = new System.Drawing.Point(350, 66);
             this.labelShipMode.Name = "labelShipMode";
             this.labelShipMode.Size = new System.Drawing.Size(75, 23);
             this.labelShipMode.TabIndex = 10;
@@ -175,7 +167,7 @@
             // txtCountryDestination
             // 
             this.txtCountryDestination.DisplayBox1Binding = "";
-            this.txtCountryDestination.Location = new System.Drawing.Point(83, 39);
+            this.txtCountryDestination.Location = new System.Drawing.Point(106, 66);
             this.txtCountryDestination.Name = "txtCountryDestination";
             this.txtCountryDestination.Size = new System.Drawing.Size(232, 22);
             this.txtCountryDestination.TabIndex = 9;
@@ -183,10 +175,9 @@
             // 
             // labelDestination
             // 
-            this.labelDestination.Lines = 0;
-            this.labelDestination.Location = new System.Drawing.Point(4, 39);
+            this.labelDestination.Location = new System.Drawing.Point(3, 65);
             this.labelDestination.Name = "labelDestination";
-            this.labelDestination.Size = new System.Drawing.Size(75, 23);
+            this.labelDestination.Size = new System.Drawing.Size(101, 23);
             this.labelDestination.TabIndex = 8;
             this.labelDestination.Text = "Destination";
             // 
@@ -194,15 +185,14 @@
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(51, 71);
+            this.txtbrand.Location = new System.Drawing.Point(572, 64);
             this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand.Size = new System.Drawing.Size(84, 23);
             this.txtbrand.TabIndex = 7;
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
-            this.labelBrand.Location = new System.Drawing.Point(4, 72);
+            this.labelBrand.Location = new System.Drawing.Point(525, 65);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(44, 23);
             this.labelBrand.TabIndex = 6;
@@ -212,15 +202,14 @@
             // 
             this.txtTruck.BackColor = System.Drawing.Color.White;
             this.txtTruck.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtTruck.Location = new System.Drawing.Point(466, 71);
+            this.txtTruck.Location = new System.Drawing.Point(353, 95);
             this.txtTruck.Name = "txtTruck";
             this.txtTruck.Size = new System.Drawing.Size(159, 23);
             this.txtTruck.TabIndex = 5;
             // 
             // labelTruckNo
             // 
-            this.labelTruckNo.Lines = 0;
-            this.labelTruckNo.Location = new System.Drawing.Point(411, 71);
+            this.labelTruckNo.Location = new System.Drawing.Point(298, 95);
             this.labelTruckNo.Name = "labelTruckNo";
             this.labelTruckNo.Size = new System.Drawing.Size(51, 23);
             this.labelTruckNo.TabIndex = 4;
@@ -229,8 +218,12 @@
             // txtSubconForwarder
             // 
             this.txtSubconForwarder.DisplayBox1Binding = "";
+            this.txtSubconForwarder.IsFreightForwarder = false;
             this.txtSubconForwarder.IsIncludeJunk = false;
-            this.txtSubconForwarder.Location = new System.Drawing.Point(217, 71);
+            this.txtSubconForwarder.IsMisc = false;
+            this.txtSubconForwarder.IsShipping = false;
+            this.txtSubconForwarder.IsSubcon = false;
+            this.txtSubconForwarder.Location = new System.Drawing.Point(106, 95);
             this.txtSubconForwarder.Name = "txtSubconForwarder";
             this.txtSubconForwarder.Size = new System.Drawing.Size(170, 23);
             this.txtSubconForwarder.TabIndex = 3;
@@ -238,27 +231,39 @@
             // 
             // labelForwarder
             // 
-            this.labelForwarder.Lines = 0;
-            this.labelForwarder.Location = new System.Drawing.Point(142, 71);
+            this.labelForwarder.Location = new System.Drawing.Point(3, 94);
             this.labelForwarder.Name = "labelForwarder";
-            this.labelForwarder.Size = new System.Drawing.Size(71, 23);
+            this.labelForwarder.Size = new System.Drawing.Size(101, 23);
             this.labelForwarder.TabIndex = 2;
             this.labelForwarder.Text = "Forwarder";
             // 
             // dateFCRDate
             // 
+            // 
+            // 
+            // 
+            this.dateFCRDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateFCRDate.DateBox1.Name = "";
+            this.dateFCRDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateFCRDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateFCRDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateFCRDate.DateBox2.Name = "";
+            this.dateFCRDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateFCRDate.DateBox2.TabIndex = 1;
             this.dateFCRDate.IsRequired = false;
-            this.dateFCRDate.Location = new System.Drawing.Point(76, 7);
+            this.dateFCRDate.Location = new System.Drawing.Point(106, 7);
             this.dateFCRDate.Name = "dateFCRDate";
             this.dateFCRDate.Size = new System.Drawing.Size(280, 23);
             this.dateFCRDate.TabIndex = 1;
             // 
             // labelFCRDate
             // 
-            this.labelFCRDate.Lines = 0;
             this.labelFCRDate.Location = new System.Drawing.Point(4, 7);
             this.labelFCRDate.Name = "labelFCRDate";
-            this.labelFCRDate.Size = new System.Drawing.Size(68, 23);
+            this.labelFCRDate.Size = new System.Drawing.Size(100, 23);
             this.labelFCRDate.TabIndex = 0;
             this.labelFCRDate.Text = "FCR Date";
             // 
@@ -267,7 +272,7 @@
             this.panel4.Controls.Add(this.btnClose);
             this.panel4.Controls.Add(this.btnImport);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(5, 476);
+            this.panel4.Location = new System.Drawing.Point(5, 566);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(773, 39);
             this.panel4.TabIndex = 3;
@@ -296,9 +301,9 @@
             // 
             this.panel5.Controls.Add(this.gridImport);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(5, 102);
+            this.panel5.Location = new System.Drawing.Point(5, 126);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(773, 374);
+            this.panel5.Size = new System.Drawing.Size(773, 440);
             this.panel5.TabIndex = 4;
             // 
             // gridImport
@@ -322,22 +327,53 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridImport.Size = new System.Drawing.Size(773, 374);
+            this.gridImport.ShowCellToolTips = false;
+            this.gridImport.Size = new System.Drawing.Size(773, 440);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
+            // 
+            // dateOnBoard
+            // 
+            // 
+            // 
+            // 
+            this.dateOnBoard.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateOnBoard.DateBox1.Name = "";
+            this.dateOnBoard.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateOnBoard.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateOnBoard.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateOnBoard.DateBox2.Name = "";
+            this.dateOnBoard.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateOnBoard.DateBox2.TabIndex = 1;
+            this.dateOnBoard.IsRequired = false;
+            this.dateOnBoard.Location = new System.Drawing.Point(106, 36);
+            this.dateOnBoard.Name = "dateOnBoard";
+            this.dateOnBoard.Size = new System.Drawing.Size(280, 23);
+            this.dateOnBoard.TabIndex = 18;
+            // 
+            // labOnBoardDate
+            // 
+            this.labOnBoardDate.Location = new System.Drawing.Point(4, 36);
+            this.labOnBoardDate.Name = "labOnBoardDate";
+            this.labOnBoardDate.Size = new System.Drawing.Size(100, 23);
+            this.labOnBoardDate.TabIndex = 17;
+            this.labOnBoardDate.Text = "On Board Date";
             // 
             // P08_ShareExpense_ImportGarment
             // 
             this.AcceptButton = this.btnImport;
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(783, 515);
+            this.ClientSize = new System.Drawing.Size(783, 605);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Name = "P08_ShareExpense_ImportGarment";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Import - Garment";
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
@@ -355,8 +391,6 @@
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
         private Win.UI.Button btnQuery;
-        private Win.UI.ComboBox comboDatafrom;
-        private Win.UI.Label labelDatafrom;
         private Win.UI.DateRange datePulloutDate;
         private Win.UI.Label labelPulloutDate;
         private Class.Txtshipmode txtShipmode;
@@ -377,5 +411,7 @@
         private Win.UI.Panel panel5;
         private Win.UI.Grid gridImport;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.DateRange dateOnBoard;
+        private Win.UI.Label labOnBoardDate;
     }
 }
