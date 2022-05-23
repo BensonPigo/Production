@@ -57,6 +57,7 @@ namespace Sci.Production.Sewing
         {
             #region Where 條件
             string where = string.Empty;
+            string wheredetail = string.Empty;
             if (this.InspectionDate1.HasValue && this.InspectionDate2.HasValue)
             {
                 where += $@"
@@ -78,6 +79,7 @@ and exists(
             if (this.Delivery1.HasValue && this.Delivery2.HasValue)
             {
                 where += $"and exists(select 1 from Order_QtyShip oq with(nolock) where oq.id = o.id and oq.BuyerDelivery between '{this.Delivery1.Value.ToString("yyyyMMdd")}' and '{this.Delivery2.Value.ToString("yyyyMMdd")}')" + Environment.NewLine;
+                wheredetail += $"and oq.BuyerDelivery between '{this.Delivery1.Value.ToString("yyyyMMdd")}' and '{this.Delivery2.Value.ToString("yyyyMMdd")}'" + Environment.NewLine;
             }
 
             if (!MyUtility.Check.Empty(this.MDivisionID))
@@ -136,6 +138,8 @@ select
 into #base_Detail
 from #base o
 left join Order_QtyShip oq with(nolock) on o.ID = oq.ID
+where 1=1
+{wheredetail}
 
 select
 		o.*
