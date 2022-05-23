@@ -127,12 +127,61 @@ namespace Sci.Production.Warehouse
                 MyUtility.Msg.WarningBox("This record already Confirmed, can not save");
                 return false;
             }
-
             #endregion 必輸檢查
             this.detailgrid.ValidateControl();
             this.detailgridbs.EndEdit();
+
+            #region 檢查TransferExport 來源資料
+            var detailFromTransferExport = this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["TransferExportID"]));
+            if (detailFromTransferExport.Any())
+            {
+                string whereTransferExportID = detailFromTransferExport.Select(s => $"'{s["TransferExportID"]}'").Distinct().JoinToString(",");
+                string sqlCheckTransferExportStatus = $@"
+select 1 from TransferExport with (nolock) where ID in ({whereTransferExportID}) and Sent <> 1
+";
+                if (MyUtility.Check.Seek(sqlCheckTransferExportStatus))
+                {
+                    MyUtility.Msg.WarningBox("TPE status is not 'Sent', cannot create transfer out record.");
+                    return false;
+                }
+
+                string whereTransferExport_DetailUkey = detailFromTransferExport.Select(s => $"'{s["TransferExport_DetailUkey"]}'").JoinToString(",");
+                string sqlCheckAlreadyCreated = $@"
+select  [From SP#] = POID,
+        [From Seq] = Concat(Seq1, ' ', Seq2), 
+        [To SP#] = ToPOID, 
+        [To Seq] = Concat(ToSeq1, ' ', ToSeq2),  
+        [PO Qty] = Qty, 
+        [Transer Out ID] = ID
+from TransferOut_Detail with (nolock)
+where   TransferExport_DetailUkey in ({whereTransferExport_DetailUkey}) and
+        ID <> '{this.CurrentMaintain["ID"]}'
+";
+                DataTable dtAlreadyCreated;
+                DualResult resultCheckAlreadyCreated = DBProxy.Current.Select(null, sqlCheckAlreadyCreated, out dtAlreadyCreated);
+                if (!resultCheckAlreadyCreated)
+                {
+                    this.ShowErr(resultCheckAlreadyCreated);
+                    return false;
+                }
+
+                if (dtAlreadyCreated.Rows.Count > 0)
+                {
+                    MyUtility.Msg.ShowMsgGrid(dtAlreadyCreated, "Cannot be save, please check below transfer export material exist another transfer out record.Confirm");
+                    return false;
+                }
+            }
+
+            #endregion
+
             foreach (DataRow row in this.DetailDatas)
             {
+                // TransferExportID 不為空 允許 StockType, Roll, Dyelot 為空
+                if (!MyUtility.Check.Empty(row["TransferExportID"]))
+                {
+                    continue;
+                }
+
                 if (MyUtility.Check.Empty(row["seq1"]) || MyUtility.Check.Empty(row["seq2"]))
                 {
                     warningmsg.Append(string.Format("SP#: {0} Seq#: {1}-{2} can't be empty", row["poid"], row["seq1"], row["seq2"]) + Environment.NewLine);
@@ -228,6 +277,27 @@ and ID = '{Sci.Env.User.UserID}'"))
         {
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
             Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode;
+            DataGridViewGeneratorNumericColumnSettings qtySetting = new DataGridViewGeneratorNumericColumnSettings();
+            qtySetting.CellValidating += (s, e) =>
+            {
+                if (e.RowIndex < 0)
+                {
+                    return;
+                }
+
+                decimal outQty = MyUtility.Convert.GetDecimal(e.FormattedValue);
+                DataRow curRow = this.detailgrid.GetDataRow(e.RowIndex);
+
+                if (outQty > 0 &&
+                    !MyUtility.Check.Empty(curRow["TransferExportID"]) &&
+                    MyUtility.Convert.GetLong(curRow["FtyInventoryUkey"]) < 0)
+                {
+                    e.Cancel = true;
+                    curRow["qty"] = 0;
+                    MyUtility.Msg.WarningBox("<Out Qty> No Stock can not modify");
+                    return;
+                }
+            };
 
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
@@ -241,12 +311,13 @@ and ID = '{Sci.Env.User.UserID}'"))
             .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("stockunit", header: "Unit", iseditingreadonly: true) // 5
-            .Numeric("qty", header: "Out Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10) // 6
+            .Numeric("qty", header: "Out Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, settings: qtySetting) // 6
             .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), iseditable: false).Get(out cbb_stocktype) // 7
             .Text("Location", header: "Location", iseditingreadonly: true) // 8
             .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
             .Text("ToPOID", header: "To POID", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("ToSeq", header: "To Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("TransferExportID", header:"Transfer WK#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             ;
             #endregion 欄位設定
             cbb_stocktype.DataSource = new BindingSource(this.di_stocktype, null);
@@ -406,6 +477,7 @@ having f.balanceQty - sum(d.Qty) < 0
 
             #region -- 更新庫存數量 MDivisionPoDetail --
             var bs1 = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+                       .Where(s => !MyUtility.Check.Empty(s["qty"]))
                        group b by new
                        {
                            poid = b.Field<string>("poid").Trim(),
@@ -422,14 +494,15 @@ having f.balanceQty - sum(d.Qty) < 0
                            Stocktype = m.First().Field<string>("stocktype"),
                            Qty = m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
-            var bs1I = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
-                        group b by new
-                        {
-                            poid = b.Field<string>("poid").Trim(),
-                            seq1 = b.Field<string>("seq1").Trim(),
-                            seq2 = b.Field<string>("seq2").Trim(),
-                            stocktype = b.Field<string>("stocktype").Trim(),
-                        }
+            var bs1I = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+                        .Where(w => w.Field<string>("stocktype").Trim() == "I" && !MyUtility.Check.Empty(w["qty"]))
+                       group b by new
+                       {
+                           poid = b.Field<string>("poid").Trim(),
+                           seq1 = b.Field<string>("seq1").Trim(),
+                           seq2 = b.Field<string>("seq2").Trim(),
+                           stocktype = b.Field<string>("stocktype").Trim(),
+                       }
                         into m
                         select new Prgs_POSuppDetailData
                         {
@@ -445,8 +518,58 @@ having f.balanceQty - sum(d.Qty) < 0
             string sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
             #endregion 更新庫存數量  ftyinventory
 
+            DataTable dtDetailExcludeQtyZero = new DataTable();
+            if (this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["qty"])))
+            {
+                dtDetailExcludeQtyZero = this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["qty"])).CopyToDataTable();
+            }
+
+            DataTable dtTransferExportDetail = new DataTable();
+            string sqlInsertTransferExport_Detail_Carton = $@"
+
+Insert into TransferExport_Detail_Carton(
+TransferExport_DetailUkey  ,
+ID                         ,
+POID                       ,
+Seq1                       ,
+Seq2                       ,
+Carton                     ,
+LotNo                      ,
+Qty                        ,
+FOC                        ,
+EditName                   ,
+EditDate                   ,
+StockUnitID                ,
+StockQty
+)
+select  t.TransferExport_DetailUkey,
+        t.TransferExportID,
+        ted.POID,
+        ted.Seq1,
+        ted.Seq2,
+        t.Roll,
+        t.Dyelot,
+        isnull(dbo.GetUnitQty(psdInv.StockUnit, ted.UnitID, t.Qty), 0),
+        0,
+        '{Env.User.UserID}',
+        getdate(),
+        isnull(psdInv.StockUnit, ''),
+        t.Qty
+from #tmp t
+inner join TransferExport_Detail ted with (nolock) on ted.Ukey = t.TransferExport_DetailUkey
+left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID and 
+													ted.InventorySeq1 = psdInv.SEQ1 and
+													ted.InventorySeq2 = psdinv.SEQ2
+
+";
+            if (this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["TransferExportID"])))
+            {
+                dtTransferExportDetail = this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["TransferExportID"])).CopyToDataTable();
+            }
+
             Exception errMsg = null;
-            using (TransactionScope transactionscope = new TransactionScope())
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -469,10 +592,28 @@ having f.balanceQty - sum(d.Qty) < 0
                         }
                     }
 
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable(
-                        (DataTable)this.detailgridbs.DataSource, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
+                    if (dtDetailExcludeQtyZero.Rows.Count > 0)
                     {
-                        throw result.GetException();
+
+                        if (!(result = MyUtility.Tool.ProcessWithDatatable(
+                            dtDetailExcludeQtyZero, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
+                        {
+                            transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
+                    }
+
+                    if (dtTransferExportDetail.Rows.Count > 0)
+                    {
+                        if (!(result = MyUtility.Tool.ProcessWithDatatable(
+                            dtTransferExportDetail, string.Empty, sqlInsertTransferExport_Detail_Carton, out resulttb)))
+                        {
+                            transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
+
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, $"update TransferOut set status = 'Confirmed', editname = '{Env.User.UserID}' , editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
@@ -602,6 +743,7 @@ having f.balanceQty + sum(d.Qty) < 0
 
             #region -- 更新庫存數量 MDivisionPoDetail --
             var bs1 = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+                       .Where(s => !MyUtility.Check.Empty(s["qty"]))
                        group b by new
                        {
                            poid = b.Field<string>("poid").Trim(),
@@ -618,7 +760,8 @@ having f.balanceQty + sum(d.Qty) < 0
                            Stocktype = m.First().Field<string>("stocktype"),
                            Qty = -m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
-            var bs1I = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
+            var bs1I = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+                        .Where(w => w.Field<string>("stocktype").Trim() == "I" && !MyUtility.Check.Empty(w["qty"]))
                         group b by new
                         {
                             poid = b.Field<string>("poid").Trim(),
@@ -640,6 +783,7 @@ having f.balanceQty + sum(d.Qty) < 0
             #region 更新庫存數量  ftyinventory
 
             var bsfio = (from m in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+                         .Where(s => !MyUtility.Check.Empty(s["qty"]))
                          select new
                          {
                              poid = m.Field<string>("poid"),
@@ -662,8 +806,27 @@ having f.balanceQty + sum(d.Qty) < 0
             }
 
             // PMS 的資料更新
+            DataTable dtTransferExportDetail = new DataTable();
+            string sqlDeleteTransferExport_Detail_Carton = $@"
+alter table #tmp alter column Roll varchar(8)
+alter table #tmp alter column Dyelot varchar(8)
+
+delete  tedc
+from    TransferExport_Detail_Carton tedc
+where   exists(select 1 from #tmp t where 
+                t.TransferExport_DetailUkey = tedc.TransferExport_DetailUkey and
+                t.Roll = tedc.Carton and
+                t.Dyelot = tedc.LotNo
+                )         
+";
+            if (this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["TransferExportID"])))
+            {
+                dtTransferExportDetail = this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["TransferExportID"])).CopyToDataTable();
+            }
+
             Exception errMsg = null;
-            using (TransactionScope transactionscope = new TransactionScope())
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -686,9 +849,14 @@ having f.balanceQty + sum(d.Qty) < 0
                         }
                     }
 
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
+                    if (bsfio.Count > 0)
                     {
-                        throw result.GetException();
+                        if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
+                        {
+                            transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, $"update TransferOut set status = 'New', editname = '{Env.User.UserID}' , editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
@@ -700,6 +868,17 @@ having f.balanceQty + sum(d.Qty) < 0
                     if (!(result = Prgs.UpdateWH_Barcode(false, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
                     {
                         throw result.GetException();
+                    }
+
+                    if (dtTransferExportDetail.Rows.Count > 0)
+                    {
+                        if (!(result = MyUtility.Tool.ProcessWithDatatable(
+                            dtTransferExportDetail, string.Empty, sqlDeleteTransferExport_Detail_Carton, out resulttb)))
+                        {
+                            transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
                     }
 
                     transactionscope.Complete();
@@ -745,13 +924,14 @@ select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as se
 ,a.ToSeq2
 ,[ToSeq] = a.ToSeq1 +' ' + a.ToSeq2
 ,wk.ExportId
-		, p1.Refno
-		, Color = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
-												,IIF( p1.SuppColor = '' or p1.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,p1.ColorID),p1.SuppColor)
-												,dbo.GetColorMultipleID(o.BrandID,p1.ColorID)
-											)
-		, p1.SizeSpec
-
+, p1.Refno
+, Color = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
+										,IIF( p1.SuppColor = '' or p1.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,p1.ColorID),p1.SuppColor)
+										,dbo.GetColorMultipleID(o.BrandID,p1.ColorID)
+									)
+, p1.SizeSpec
+,a.TransferExportID
+,a.TransferExport_DetailUkey
 from dbo.TransferOut_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 left join View_WH_Orders o WITH (NOLOCK) on p1.ID = o.ID
@@ -879,6 +1059,11 @@ Where a.id = '{0}'", masterID);
         private void BtnCallP99_Click(object sender, EventArgs e)
         {
             P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), this.Name, this);
+        }
+
+        private void BtnTransferWK_Click(object sender, EventArgs e)
+        {
+            new P19_TransferWKImport(this.CurrentMaintain["ID"].ToString(), (DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["MDivisionID"].ToString()).ShowDialog();
         }
     }
 }
