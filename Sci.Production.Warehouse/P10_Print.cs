@@ -177,6 +177,13 @@ select  [Sel] = 0
                              where  wbt.TransactionUkey = isd.Ukey and
                                     wbt.Action = 'Confirm'
                              order by CommitTime desc)
+	    ,From_OldBarcode = (select top 1 case  when    wbt.From_OldBarcodeSeq = '' then wbt.From_OldBarcode
+                                                when    wbt.From_OldBarcode = ''  then ''
+                                                else    Concat(wbt.From_OldBarcode, '-', wbt.From_OldBarcodeSeq)    end
+                             from   WHBarcodeTransaction wbt with (nolock)
+                             where  wbt.TransactionUkey = isd.Ukey and
+                                    wbt.Action = 'Confirm'
+                             order by CommitTime desc)
 	    ,[StockQty] = isd.Qty
         ,o.FactoryID
         ,[FirRemark] = fp.Remark
@@ -210,6 +217,7 @@ LEFT JOIN color c on c.id = p.colorid and c.BrandId = p.BrandId
 left join FIR with (nolock) on  FIR.POID = isd.POID and 
                                 FIR.Seq1 = isd.Seq1 and 
                                 FIR.Seq2 = isd.Seq2
+								and	(FIR.ReceivingID = rd.id or FIR.ReceivingID = td.id)
 left join FIR_Physical fp with (nolock) on  fp.ID = FIR.ID and
                                             fp.Roll = isd.Roll and
                                             fp.Dyelot = isd.Dyelot
