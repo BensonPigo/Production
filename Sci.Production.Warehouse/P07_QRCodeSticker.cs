@@ -97,7 +97,7 @@ namespace Sci.Production.Warehouse
                     .Text("Roll", header: "Roll#", width: Widths.AnsiChars(7), iseditingreadonly: true)
                     .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                     .Numeric("StockQty", header: "Issue Qty", width: Widths.AnsiChars(9), iseditingreadonly: true)
-                    .Text("MINDQRCode", header: "QR Code", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                    .Text("MINDQRCode", header: "Issue QR Code", width: Widths.AnsiChars(20), iseditingreadonly: true)
                     ;
             }
 
