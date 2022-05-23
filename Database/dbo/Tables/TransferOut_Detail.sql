@@ -15,16 +15,10 @@
     [ToSeq12] VARCHAR(2) NOT NULL CONSTRAINT [DF_TransferOut_Detail_ToSeq2] DEFAULT ('') NULL,
     [CompleteTime] DATETIME NULL, 
     [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
+    [TransferExportID] VARCHAR(13)  CONSTRAINT [DF_TransferOut_Detail_TransferExportID] DEFAULT ('') NOT NULL, 
+    [TransferExport_DetailUkey] BIGINT  CONSTRAINT [DF_TransferOut_Detail_TransferExport_DetailUkey] DEFAULT ((0)) NULL, 
     CONSTRAINT [PK_TransferOut_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
-
-
-
-
-
-
-
-
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'轉廠出明細', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'TransferOut_Detail';
 
@@ -32,29 +26,15 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'轉廠出�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'轉廠出單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'TransferOut_Detail', @level2type = N'COLUMN', @level2name = N'ID';
 
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'轉廠 WK ID
+目的 : 用於確認該列資料是否屬於轉廠 WK
+', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'TransferOut_Detail', @level2type = N'COLUMN', @level2name = N'TransferExportID';
 
 GO
-
-
-
-GO
-
-
-
-GO
-
-
-
-GO
-
-
-
-GO
-
-
-
-GO
-
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'轉廠 WK 表身 Ukey
+目的 : 確認轉廠 WK 每筆資料都有建立在 Transfer Out
+', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'TransferOut_Detail', @level2type = N'COLUMN', @level2name = N'TransferExport_DetailUkey';
 
 
 GO
