@@ -10,7 +10,7 @@
 	[DefectQty] [int] NULL,
 	[Destination] [varchar](2) NULL,
 	[FactoryID] [varchar](8) NOT NULL,
-	[Carton] [varchar](500) NULL,
+	[Carton] [varchar](MAX) NULL,
 	[InspectedCtn] [int] NULL,
 	[InspectedPoQty] [int] NULL,
 	[InspectionStage] [varchar](30) NULL,
