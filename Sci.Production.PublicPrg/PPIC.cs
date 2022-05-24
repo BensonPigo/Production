@@ -197,19 +197,21 @@ where OrderID = '{orderid}' and od.Seq = '{seq}' and status != 'Confirmed' and s
 
         public static bool CheckSPNoCompleted(string POID)
         {
+            // 同一個POID底下, 只要有任一筆沒Completed 就可以Save by ISP20220649 
             string sqlcmd = $@"
-Select  1
-From Orders
-Where Orders.PoID = '{POID}'
-and 
-(Orders.Category != 'M' and Orders.GMTComplete in ('C','S')     
-or   
-(Orders.Category = 'M' and 
-  (DateAdd(Day, -60, Convert(Date, GetDate())) >= Orders.BuyerDelivery or DateAdd(Day, -60, Convert(Date, GetDate())) >= Orders.SCIDelivery))     
-)
-";
+select 
+[Status1] = IIF(Orders.Category != 'M' and Orders.GMTComplete in ('C','S') ,'completed','')
+,[Status2] = IIF( Orders.Category = 'M' and (DateAdd(Day, -60, Convert(Date, GetDate())) >= Orders.BuyerDelivery or DateAdd(Day, -60, Convert(Date, GetDate())) >= Orders.SCIDelivery),'completed','')
+into #tmp
+from Orders
+Where PoID = '{POID}'
 
-            if (MyUtility.Check.Seek(sqlcmd))
+select * from #tmp
+where status1 = '' and Status2 =''
+
+drop table #tmp
+";
+            if (!MyUtility.Check.Seek(sqlcmd))
             {
                 MyUtility.Msg.WarningBox($"Save failed, <SP#> already completed.");
                 return false;
