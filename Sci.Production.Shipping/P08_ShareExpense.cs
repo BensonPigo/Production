@@ -470,7 +470,13 @@ union all
 SELECT * FROM TransExport
  ", e.FormattedValue.ToString());
                         DataTable dtExp;
-                        DBProxy.Current.Select(null, chkExp, out dtExp);
+                        DualResult result = DBProxy.Current.Select(null, chkExp, out dtExp);
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
                         if (dtExp == null || dtExp.Rows.Count == 0)
                         {
                             drGrid.Delete();
@@ -913,7 +919,6 @@ select  ShippingAPID
         , [Bl2no] = (select BL2No from GMTBooking where id=se.InvNo)
         , WKNo
         , InvNo
-        , se.Type
         , ShipModeID
         , [GW] = sum(GW)
         , [CBM] = sum(CBM)
@@ -932,7 +937,7 @@ select  ShippingAPID
 from ShareExpense se WITH (NOLOCK) 
 where   ShippingAPID = '{0}' 
         and (Junk = 0 or Junk is null)
-group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,CurrencyID,ShipModeID,FtyWK
+group by ShippingAPID,se.BLNo,WKNo,InvNo,ShipModeID,CurrencyID,ShipModeID,FtyWK
 ", MyUtility.Convert.GetString(this.apData["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out this.SEGroupData);
             if (!result)

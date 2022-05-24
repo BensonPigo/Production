@@ -1385,7 +1385,7 @@ select  distinct
         [InvNo] = g.ID,
         g.ShipModeID,
         s.CurrencyID,
-        s.SubType, 
+        s.Type, 
         iif(g.BLNo is null or g.BLNo='', isnull (g.BL2No, ''), g.BLNo) as BLNo
 from    ShippingAP s WITH (NOLOCK)
 inner join ShareExpense se WITH (NOLOCK)  on s.id = se.ShippingAPID
@@ -1411,7 +1411,7 @@ ShipModeID varchar(10),
 GW numeric(10, 3),
 CBM numeric(10, 3),
 CurrencyID varchar(3),
-SubType varchar(25), 
+Type varchar(25), 
 BLNo varchar(20),
 FactoryID varchar(8)
 )
@@ -1432,7 +1432,7 @@ select  g.InvNo,
         [GW] = sum(pd.GW),
         [CBM] = sum(l.CBM),
         g.CurrencyID,
-        g.SubType, 
+        g.Type, 
         g.BLNo,
         o.FactoryID
 from #tmp g
@@ -1443,7 +1443,7 @@ inner join LocalItem l with (nolock) on l.Refno = pd.Refno
 group by    g.InvNo,
             g.ShipModeID,
             g.CurrencyID,
-            g.SubType, 
+            g.Type, 
             g.BLNo,
             o.FactoryID
 ";
@@ -1475,7 +1475,7 @@ select  InvNo,
         [GW] = sum(GW),
         [CBM] = sum(CBM),
         CurrencyID,
-        SubType, 
+        Type, 
         BLNo,
         FactoryID
 into #tmpShareExpense
@@ -1485,7 +1485,7 @@ select  InvNo,
         GW,
         CBM,
         CurrencyID,
-        SubType, 
+        Type, 
         BLNo,
         FactoryID
 from #tmpA2B
@@ -1495,7 +1495,7 @@ select  [InvNo] = g.ID,
         [GW] = sum(pd.GW),
         [CBM] = sum(l.CBM),
         s.CurrencyID,
-        s.SubType, 
+        s.Type, 
         iif(g.BLNo is null or g.BLNo='', isnull (g.BL2No, ''), g.BLNo) as BLNo,
         o.FactoryID
 from    ShippingAP s WITH (NOLOCK)
@@ -1510,14 +1510,14 @@ where   se.FtyWK = 0 and
 group by    g.ID,
             g.ShipModeID,
             s.CurrencyID,
-            s.SubType, 
+            s.Type, 
             iif(g.BLNo is null or g.BLNo='', isnull (g.BL2No, ''), g.BLNo),
             o.FactoryID
 ) a
 group by    InvNo,
             ShipModeID,
             CurrencyID,
-            SubType, 
+            Type, 
             BLNo,
             FactoryID
 
@@ -1526,7 +1526,7 @@ update se set   se.ShipModeID = ts.ShipModeID
 		        , se.GW = ts.GW
 		        , se.CBM = ts.CBM
 		        , se.CurrencyID = ts.CurrencyID
-		        , se.Type = ts.SubType
+		        , se.Type = ts.Type
 from ShareExpense se
 inner join #tmpShareExpense ts on se.InvNo = ts.InvNo and se.FactoryID = ts.FactoryID
 where se.ShippingAPID = shippingAPID

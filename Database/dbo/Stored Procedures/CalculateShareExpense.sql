@@ -149,15 +149,15 @@ BEGIN
 					, s.EditName = @login
 					, s.EditDate = @adddate
 				from ShareExpense s
+				inner join ShippingAP sap with (nolock) on sap.ID = s.ShippingAPID
 				where s.ShippingAPID = @ShippingAPID
 				and s.InvNo != '' 
-				and exists (
+				and not exists (
 					select 1 
-					from ShippingAP sp WITH (NOLOCK)
-					inner join  GMTBooking g WITH (NOLOCK) on sp.BLNo = g.BLNo or sp.BLNo = g.BL2No
-					where sp.ID = s.ShippingAPID 	
-					and s.BLNo != g.BLNo
-					and s.BLNo != g.BL2No)
+					from GMTBooking g WITH (NOLOCK)
+					where	g.ID = s.InvNo and
+							(sap.BLNo = g.BLNo or sap.BLNo = g.BL2No)
+						  )
 			END
 
 			/*
