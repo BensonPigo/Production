@@ -90,11 +90,11 @@ namespace Sci.Production.Warehouse
             StringBuilder warningmsg = new StringBuilder();
 
             // Check ToLocation is not empty
-            for (int i = ((DataTable)this.detailgridbs.DataSource).Rows.Count - 1; i >= 0; i--)
+            foreach (DataRow dr in this.DetailDatas)
             {
-                if (((DataTable)this.detailgridbs.DataSource).Rows[i]["ToLocation"].Empty())
+                if (MyUtility.Check.Empty(dr["ToLocation"]))
                 {
-                    ((DataTable)this.detailgridbs.DataSource).Rows[i].Delete();
+                    dr.Delete();
                 }
             }
 
