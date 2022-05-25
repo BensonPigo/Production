@@ -157,7 +157,9 @@ BEGIN
 					from GMTBooking g WITH (NOLOCK)
 					where	g.ID = s.InvNo and
 							(sap.BLNo = g.BLNo or sap.BLNo = g.BL2No)
-						  )
+						  ) or
+					(s.FactoryID = '' and sap.SubType = 'GARMENT')
+					
 			END
 
 			/*
@@ -170,13 +172,15 @@ BEGIN
 			from ShareExpense s
 			where s.ShippingAPID = @ShippingAPID 
 					and s.InvNo != '' 
-					and (
+					and ((
 						s.InvNo not in (select ID from GMTBooking where ID = s.InvNo and ID is not null) 
 						and s.InvNo not in (select INVNo from PackingList where INVNo = s.InvNo and INVNo is not null) 
 						and s.InvNo not in (select ID from FtyExport  where ID = s.InvNo and ID is not null)
 						and s.invno not in (select id from Export where id=s.InvNo and id is not null)
 						and s.invno not in (select id from TransferExport where id=s.InvNo and id is not null)
-					)
+					)	or 
+						(s.FactoryID = '' and exists(select 1 from ShippingAP sp WITH (NOLOCK) where sp.id = s.ShippingAPID and sp.SubType = 'GARMENT'))
+						)
 			
 			/*
 			 * 更新 Inv 基本資料
