@@ -5,7 +5,7 @@
     [PatternCode]   VARCHAR (20)    CONSTRAINT [DF_Order_Artwork_PatternCode] DEFAULT ('') NULL,
     [PatternDesc]   NVARCHAR (100)  CONSTRAINT [DF_Order_Artwork_PatternDesc] DEFAULT ('') NULL,
     [ArtworkID]     VARCHAR (20)    CONSTRAINT [DF_Order_Artwork_ArtworkID] DEFAULT ('') NOT NULL,
-    [ArtworkName]   NVARCHAR (40)   CONSTRAINT [DF_Order_Artwork_ArtworkName] DEFAULT ('') NULL,
+    [ArtworkName]   NVARCHAR (80)   CONSTRAINT [DF_Order_Artwork_ArtworkName] DEFAULT ('') NULL,
     [Qty]           INT             CONSTRAINT [DF_Order_Artwork_Qty] DEFAULT ((0)) NULL,
     [TMS]           INT             CONSTRAINT [DF_Order_Artwork_TMS] DEFAULT ((0)) NULL,
     [Price]         NUMERIC (16, 4) CONSTRAINT [DF_Order_Artwork_Price] DEFAULT ((0)) NULL,
