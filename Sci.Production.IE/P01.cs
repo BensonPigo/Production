@@ -809,6 +809,50 @@ where Junk = 0";
             {
                 this.HideRows();
             };
+            this.detailgrid.ColumnHeaderMouseClick += this.Detailgrid_ColumnHeaderMouseClick;
+            this.detailgrid.RowHeadersVisible = false;
+        }
+
+        private void Detailgrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (this.detailgridbs == null)
+            {
+                return;
+            }
+
+            if (this.detailgrid.CurrentCell == null)
+            {
+                return;
+            }
+
+            // Subprocess 取消全選
+            string columnName = this.detailgrid.CurrentCell.OwningColumn.Name;
+            if (columnName == "IsSubprocess")
+            {
+                this.detailgrid.RowHeadersVisible = false;
+            }
+            else
+            {
+                this.detailgrid.RowHeadersVisible = true;
+            }
+
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    if (MyUtility.Convert.GetBool(dr["MachineType_IsSubprocess"]) == false)
+                    {
+                        dr["IsSubprocess"] = 0;
+                    }
+                    else
+                    {
+                        if (MyUtility.Convert.GetBool(dr["IsSubprocess"]) == false)
+                        {
+                            dr["IsSubprocess"] = 0;
+                        }
+                    }
+                }
+            }
         }
 
         private void Detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
@@ -823,7 +867,7 @@ where Junk = 0";
                 return;
             }
 
-            DataRow data = ((DataTable)this.detailgridbs.DataSource).Rows[e.RowIndex];
+            var data = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
             if (data.RowState != DataRowState.Deleted && !MyUtility.Check.Empty(data["OperationID"]))
             {
                 // MachineType_IsSubprocess 是true,代表可以勾選SubProcess 反之亦然
