@@ -1,26 +1,27 @@
-﻿	CREATE TABLE dbo.CFAInspectionRecord_OrderSEQ (
-		Ukey Bigint NOT NULL IDENTITY(1,1),
-		ID varchar(13) NOT NULL CONSTRAINT [DF_CFAInspectionRecord_OrderSEQ_ID] DEFAULT (''),
-		OrderID varchar(13) NOT NULL CONSTRAINT [DF_CFAInspectionRecord_OrderSEQ_OrderID] DEFAULT (''),
-		SEQ varchar(2) NOT NULL CONSTRAINT [DF_CFAInspectionRecord_OrderSEQ_Seq] DEFAULT (''),
-		Carton Varchar(500) NOT NULL CONSTRAINT [DF_CFAInspectionRecord_OrderSEQ_Carton] DEFAULT '',
-		CONSTRAINT [PK_CFAInspectionRecord_OrderSEQ] PRIMARY KEY CLUSTERED 
-		(
-			Ukey ASC
-		)
-	)
-	GO
-	;
-
-
-CREATE NONCLUSTERED INDEX [IDX_CFAInspectionRecord_OrderSEQ_ID] ON [dbo].[CFAInspectionRecord_OrderSEQ]
+﻿CREATE TABLE [dbo].[CFAInspectionRecord_OrderSEQ](
+	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
+	[ID] [varchar](13) NOT NULL,
+	[OrderID] [varchar](13) NOT NULL,
+	[SEQ] [varchar](2) NOT NULL,
+	[Carton] [varchar](max) NULL,
+ CONSTRAINT [PK_CFAInspectionRecord_OrderSEQ] PRIMARY KEY CLUSTERED 
 (
-	[ID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	[Ukey] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
+ALTER TABLE [dbo].[CFAInspectionRecord_OrderSEQ] ADD  CONSTRAINT [DF_CFAInspectionRecord_OrderSEQ_ID]  DEFAULT ('') FOR [ID]
+GO
 
+ALTER TABLE [dbo].[CFAInspectionRecord_OrderSEQ] ADD  CONSTRAINT [DF_CFAInspectionRecord_OrderSEQ_OrderID]  DEFAULT ('') FOR [OrderID]
+GO
 
+ALTER TABLE [dbo].[CFAInspectionRecord_OrderSEQ] ADD  CONSTRAINT [DF_CFAInspectionRecord_OrderSEQ_Seq]  DEFAULT ('') FOR [SEQ]
+GO
 
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'此次檢驗的紙箱箱號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAInspectionRecord_OrderSEQ', @level2type = N'COLUMN', @level2name = N'Carton';
-	GO
+ALTER TABLE [dbo].[CFAInspectionRecord_OrderSEQ] ADD  CONSTRAINT [DF_CFAInspectionRecord_OrderSEQ_Carton]  DEFAULT ('') FOR [Carton]
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'此次檢驗的紙箱箱號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'CFAInspectionRecord_OrderSEQ', @level2type=N'COLUMN',@level2name=N'Carton'
+GO
