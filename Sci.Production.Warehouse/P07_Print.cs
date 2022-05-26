@@ -37,7 +37,6 @@ namespace Sci.Production.Warehouse
             this.CheckControlEnable();
             this.poidList = polist;
             this.curMain = currentMain;
-
             DataTable dtPMS_FabricQRCode_LabelSize;
             DualResult result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_Fab_LabSize' order by Seq", out dtPMS_FabricQRCode_LabelSize);
 
@@ -231,6 +230,12 @@ select
     ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd')
     ,o.FactoryID
     ,[FirRemark] = fp.Remark
+    ,[SortCmbPOID] = ISNULL(cmb.PoId,R.PoId)
+	,[SortCmbSeq1] = ISNULL(cmb.Seq1,R.Seq1)
+	,[SortCmbSeq2] = ISNULL(cmb.Seq2,R.Seq2)
+	,[SortCmbRoll] = ISNULL(cmb.Roll,R.Roll)
+	,[SortCmbDyelot] = ISNULL(cmb.Dyelot,R.Dyelot)
+    ,R.Unoriginal 
 from dbo.Receiving_Detail R WITH (NOLOCK) 
 LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
 left join Ftyinventory  fi with (nolock) on    R.POID = fi.POID and
@@ -249,6 +254,10 @@ left join FIR with (nolock) on  FIR.ReceivingID = r.ID and
 left join FIR_Physical fp with (nolock) on  fp.ID = FIR.ID and
                                             fp.Roll = r.Roll and
                                             fp.Dyelot = r.Dyelot
+left join Receiving_Detail cmb on  R.Id = cmb.Id
+									and R.CombineBarcode = cmb.CombineBarcode
+									and cmb.CombineBarcode is not null
+									and ISNULL(cmb.Unoriginal,0) = 0
 OUTER APPLY(
  SELECT [Value]=
 	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(p.SuppColor = '' or p.SuppColor is null, dbo.GetColorMultipleID(o.BrandID,p.ColorID),p.SuppColor)
@@ -271,7 +280,9 @@ OUTER APPLY(
 			    FOR XML PATH('') )
 			    , 1, 1, '')
     )Location
-where R.id = @ID";
+where R.id = @ID
+order by R.EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, R.Unoriginal, R.POID, R.Seq1, R.Seq2, R.Roll, R.Dyelot
+";
 
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
