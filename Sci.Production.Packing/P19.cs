@@ -132,7 +132,7 @@ where Type='TP' and Junk=0";
             dt.Columns["ID"].ColumnName = "PackID";
             dt.Columns["CTNStartNo"].ColumnName = "CTN";
             DataRow[] dr = dt.Select($@"PackID = '{drSelect["ID"]}' and CTN = '{drSelect["CTNStartNo"]}'");
-            P19_PackingErrorRecord callForm = new P19_PackingErrorRecord(this.IsSupportEdit, drSelect["ID"].ToString(), drSelect["CTNStartNo"].ToString(), null, dr[0]);
+            P19_PackingErrorRecord callForm = new P19_PackingErrorRecord(true, drSelect["ID"].ToString(), drSelect["CTNStartNo"].ToString(), null, dr[0]);
             callForm.ShowDialog(this);
         }
 
