@@ -1062,9 +1062,10 @@ group by g.BLNo, g.BL2No, g.id, g.ShipModeID, AccountID.val, o.FactoryID
 ) as s 
 on	t.ShippingAPID = s.ShippingAPID 
 	and t.WKNO = s.WKNO	and t.InvNo = s.InvNo and t.FactoryID = s.FactoryID
-when matched AND t.junk=1 then
-	update set
-	t.junk=0
+when matched then
+	update set  t.junk = 0,
+                t.GW = s.GW,
+                t.CBM = s.CBM
 when not matched by target then 
 	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk, FactoryID)
 	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk, s.FactoryID);";
@@ -1152,9 +1153,10 @@ using (
 ) as s 
 on	t.ShippingAPID = s.ShippingAPID 
 	and t.WKNO = s.WKNO	and t.InvNo = s.InvNo and t.FactoryID = s.FactoryID
-when matched AND t.junk=1 then
-	update set
-	t.junk=0
+when matched then
+	update set  t.junk = 0,
+                t.GW = s.GW,
+                t.CBM = s.CBM
 when not matched by target then 
 	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk, FactoryID)
 	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk, s.FactoryID);";

@@ -1499,14 +1499,12 @@ select  [InvNo] = g.ID,
         iif(g.BLNo is null or g.BLNo='', isnull (g.BL2No, ''), g.BLNo) as BLNo,
         o.FactoryID
 from    ShippingAP s WITH (NOLOCK)
-inner join ShareExpense se WITH (NOLOCK)  on s.id = se.ShippingAPID
-inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
+inner join GMTBooking g WITH (NOLOCK) on  exists (select 1 from ShareExpense se WITH (NOLOCK)  where s.id = se.ShippingAPID and g.ID = se.InvNo and se.FtyWK = 0 and se.Junk = 0)
 inner join PackingList p with (nolock) on p.INVNo = g.ID
 inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty = 1
 inner join Orders o with (nolock) on o.ID = pd.OrderID
 inner join LocalItem l with (nolock) on l.Refno = pd.Refno
-where   se.FtyWK = 0 and
-		s.id = '{shippingAPID}'
+where   s.id = '{shippingAPID}' 
 group by    g.ID,
             g.ShipModeID,
             s.CurrencyID,
