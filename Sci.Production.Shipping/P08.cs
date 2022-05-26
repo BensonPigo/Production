@@ -1899,7 +1899,7 @@ where   (BL2no = '{blNo}' or BLno = '{blNo}') and
 
             // local Airpp
             string updateAirPP = $@"
-update a set a.ActAmt = airAmt.ActAmt, a.ExchangeRate = airAmt.ExchangeRate
+update a set a.ActAmt = airAmt.ActAmt, a.ExchangeRate = airAmt.ExchangeRate, a.ShareExpenseEditDate = getdate()
 	from AirPP a
 	inner join dbo.GetAirPPAmt('{this.CurrentMaintain["ID"]}', '') airAmt on airAmt.AirPPID = a.ID
 
@@ -1929,7 +1929,7 @@ from dbo.GetAirPPAmt('{this.CurrentMaintain["ID"]}', '')
                     {
                         SqlString = @"
 alter table #tmp alter column AirPPID varchar(13)
-update a set a.ActAmt = airAmt.ActAmt, a.ExchangeRate = airAmt.ExchangeRate
+update a set a.ActAmt = airAmt.ActAmt, a.ExchangeRate = airAmt.ExchangeRate, a.ShareExpenseEditDate = getdate()
 from AirPP a
 inner join #tmp airAmt on airAmt.AirPPID = a.ID
 ",
