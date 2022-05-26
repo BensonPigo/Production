@@ -28,6 +28,7 @@ BEGIN
 	where ((co.cdate <= @Cdate and @type=0) or (co.cdate < @Cdate and @type=1) or @type = 2)
 	and exists (select 1 from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = @ID and CuttingID = o.poid)
 	group by wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,o.MDivisionid,wd.Qty,wd.WorkOrderUkey
+	OPTION(RECOMPILE)
 	------------------
 	select * ,AccuCutQty=sum(cutqty) over(partition by WorkOrderUkey,patternpanel,sizecode order by WorkOrderUkey,orderid)
 		,Rowid=ROW_NUMBER() over(partition by WorkOrderUkey,patternpanel,sizecode order by WorkOrderUkey,orderid)
