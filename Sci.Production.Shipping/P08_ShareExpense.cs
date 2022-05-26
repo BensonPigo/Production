@@ -920,8 +920,8 @@ select  ShippingAPID
         , WKNo
         , InvNo
         , ShipModeID
-        , [GW] = sum(GW)
-        , [CBM] = sum(CBM)
+        , [GW] = GW
+        , [CBM] = CBM
         , CurrencyID
         , DropDownListName = (
             select Name
@@ -937,7 +937,7 @@ select  ShippingAPID
 from ShareExpense se WITH (NOLOCK) 
 where   ShippingAPID = '{0}' 
         and (Junk = 0 or Junk is null)
-group by ShippingAPID,se.BLNo,WKNo,InvNo,ShipModeID,CurrencyID,ShipModeID,FtyWK
+group by ShippingAPID,se.BLNo,WKNo,InvNo,ShipModeID,CurrencyID,ShipModeID,FtyWK,GW,CBM
 ", MyUtility.Convert.GetString(this.apData["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out this.SEGroupData);
             if (!result)
