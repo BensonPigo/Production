@@ -44,9 +44,9 @@ SET
       --,a.StatusUpdateDate	      =b.StatusUpdateDate
       --,a.SendDate	      =b.SendDate
        a.PayDate	      =b.PayDate
-      ,a.CurrencyID	      =b.CurrencyID
-      ,a.Amount	      =b.Amount
-      ,a.InvNo	      =b.InvNo
+      ,a.CurrencyID	      =isnull(b.CurrencyID, '')
+      ,a.Amount	      =isnull(b.Amount, 0)
+      ,a.InvNo	      =isnull(b.InvNo, '')
       --,a.AddName	      =b.AddName
       --,a.AddDate	      =b.AddDate
       --,a.EditName	      =b.EditName
