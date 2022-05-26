@@ -37,6 +37,9 @@
     [OneYardForWashing] BIT             CONSTRAINT [DF_Receiving_Detail_OneYardForWashing] DEFAULT ((0)) NOT NULL,
     [ContainerCode] NVARCHAR(100) NULL DEFAULT (''), 
     [ExportDetailUkey] BIGINT NULL, 
+    [UpdateActualWeightTime] DATETIME NULL, 
+    [UpdateLocationTime] DATETIME NULL, 
+    [ForInspectionTime] DATETIME NULL, 
     CONSTRAINT [PK_Receiving_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -196,3 +199,30 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Receiving_Detail',
     @level2type = N'COLUMN',
     @level2name = N'ContainerCode'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'最後更新 Actual Weight 的時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Receiving_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'UpdateActualWeightTime'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'最後更新 Location 的時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Receiving_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'UpdateLocationTime'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'送檢驗的時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Receiving_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ForInspectionTime'
