@@ -144,22 +144,18 @@ BEGIN
 			 */
 			if @IsFreightFwd = 1 and @ShippingReasonID <> 'AP007'
 			BEGIN
-				update s
-				set s.Junk = 1				
-					, s.EditName = @login
-					, s.EditDate = @adddate
+				update s	set s.Junk = 1				
 				from ShareExpense s
 				inner join ShippingAP sap with (nolock) on sap.ID = s.ShippingAPID
 				where s.ShippingAPID = @ShippingAPID
 				and s.InvNo != '' 
-				and not exists (
-					select 1 
-					from GMTBooking g WITH (NOLOCK)
-					where	g.ID = s.InvNo and
-							(sap.BLNo = g.BLNo or sap.BLNo = g.BL2No)
-						  ) or
-					(s.FactoryID = '' and sap.SubType = 'GARMENT')
-					
+				and (not exists (select 1 
+								 from GMTBooking g WITH (NOLOCK)
+								 where	g.ID = s.InvNo and
+								 		(sap.BLNo = g.BLNo or sap.BLNo = g.BL2No)
+								 	  ) or
+					(s.FactoryID = '' and sap.SubType = 'GARMENT')) 
+				and junk = 0
 			END
 
 			/*
