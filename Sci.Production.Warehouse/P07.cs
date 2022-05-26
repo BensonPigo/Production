@@ -197,7 +197,7 @@ namespace Sci.Production.Warehouse
                 // listRowErrMsg.Add("<Dyelot> length can't be more than 4 Characters.");
 
                 // ShipQty  numeric(11, 2)
-                if (decimal.Parse(row["ShipQty"].ToString()) > 999999999)
+                if (MyUtility.Convert.GetDecimal(row["ShipQty"]) > 999999999)
                 {
                     if (!errormsgDir[errorkey].Contains("<Ship Qty> value can't be more than 999,999,999"))
                     {
@@ -208,7 +208,7 @@ namespace Sci.Production.Warehouse
                 // listRowErrMsg.Add("<Ship Qty> value can't be more than 999,999,999");
 
                 // ActualQty  numeric (11, 2)
-                if (decimal.Parse(row["ActualQty"].ToString()) > 999999999)
+                if (MyUtility.Convert.GetDecimal(row["ActualQty"]) > 999999999)
                 {
                     if (!errormsgDir[errorkey].Contains("<Actual Qty> value can't be more than 999,999,999"))
                     {
@@ -219,7 +219,7 @@ namespace Sci.Production.Warehouse
                 // listRowErrMsg.Add("<Actual Qty> value can't be more than 999,999,999");
 
                 // actualWeight numeric (7, 2)
-                if (decimal.Parse(row["actualWeight"].ToString()) > 99999)
+                if (MyUtility.Convert.GetDecimal(row["actualWeight"]) > 99999)
                 {
                     if (!errormsgDir[errorkey].Contains("<Act.(kg)> value can't be more than 99,999"))
                     {
@@ -230,7 +230,7 @@ namespace Sci.Production.Warehouse
                 // listRowErrMsg.Add("<Act.(kg)> value can't be more than 99,999");
 
                 // Weight numeric (7, 2)
-                if (decimal.Parse(row["Weight"].ToString()) > 99999)
+                if (MyUtility.Convert.GetDecimal(row["Weight"]) > 99999)
                 {
                     if (!errormsgDir[errorkey].Contains("<G.W(kg)> value can't be more than 99,999"))
                     {
@@ -1161,7 +1161,7 @@ WHERE   StockType='{this.CurrentDetailData["stocktype"].ToString()}'
                     if (!MyUtility.Check.Empty(this.CurrentDetailData["pounit"]) && !MyUtility.Check.Empty(this.CurrentDetailData["stockunit"]))
                     {
                         string rate = MyUtility.GetValue.Lookup($@"select RateValue from dbo.View_Unitrate v where v.FROM_U ='{this.CurrentDetailData["pounit"]}' and v.TO_U='{this.CurrentDetailData["stockunit"]}'");
-                        this.CurrentDetailData["stockqty"] = MyUtility.Math.Round(decimal.Parse(e.FormattedValue.ToString()) * decimal.Parse(rate), 2);
+                        this.CurrentDetailData["stockqty"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(e.FormattedValue) * MyUtility.Convert.GetDecimal(rate), 2);
                     }
                 }
 
@@ -1649,7 +1649,7 @@ WHERE   StockType='{this.CurrentDetailData["stocktype"].ToString()}'
                     this.CurrentDetailData["Actualqty"] = ship_qty;
                     string rate = MyUtility.GetValue.Lookup($@"
 select RateValue from dbo.View_Unitrate v where v.FROM_U ='{this.CurrentDetailData["pounit"]}' and v.TO_U='{this.CurrentDetailData["stockunit"]}'");
-                    this.CurrentDetailData["stockqty"] = MyUtility.Math.Round(decimal.Parse(ship_qty.ToString()) * decimal.Parse(rate), 2);
+                    this.CurrentDetailData["stockqty"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(ship_qty) * MyUtility.Convert.GetDecimal(rate), 2);
                     this.CurrentDetailData["shipqty"] = ship_qty;
                     this.CurrentDetailData.EndEdit();
                 }
@@ -1836,46 +1836,53 @@ where id = '{1}'", Env.User.UserID,
                 new SqlParameter("@LoginID", Env.User.UserID),
             };
 
-            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.insert_Air_Fir", fir_Air_Proce)))
+            if (!(result = DBProxy.Current.Select(string.Empty, " exec dbo.insert_Air_Fir @ID,@LoginID", fir_Air_Proce, out DataTable[] airfirids)))
             {
                 this.ShowErr(result);
                 return;
             }
-            else
+
+            if (airfirids[0].Rows.Count > 0 || airfirids[1].Rows.Count > 0)
             {
                 // 寫入PMSFile
-                string cmd = $@"
-SET XACT_ABORT ON
-
-INSERT INTO ExtendServer.PMSFile.dbo.AIR_Laboratory
-           (ID,POID,SEQ1,SEQ2)
-
-select  ID,POID,SEQ1,SEQ2
-from AIR_Laboratory t WITH(NOLOCK)
-where not exists (select 1 from ExtendServer.PMSFile.dbo.AIR_Laboratory s WITH(NOLOCK) where s.ID = t.ID AND s.POID = t.POID AND s.SEQ1 = t.SEQ1 AND s.SEQ2 = t.SEQ2 )
-;
-
-INSERT INTO ExtendServer.PMSFile.dbo.FIR_Laboratory
-           (ID)
-select ID
-from FIR_Laboratory t (NOLOCK)
-where not exists (select 1 from ExtendServer.PMSFile.dbo.FIR_Laboratory s (NOLOCK) where s.ID = t.ID )
-
-Delete a 
-from ExtendServer.PMSFile.dbo.AIR_Laboratory a
-WHERE NOT EXISTS(
-    select 1 from AIR_Laboratory b
-    where a.ID = b.ID AND a.POID=b.POID AND a.Seq1=b.Seq1 AND a.Seq2=b.Seq2
-    
-)
-
-Delete
-from ExtendServer.PMSFile.dbo.FIR_Laboratory
-WHERE ID NOT IN(
-	select ID
-	from FIR_Laboratory
-)
+                string cmd = @"SET XACT_ABORT ON
 ";
+                var firinsertlist = airfirids[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["id"]));
+                if (firinsertlist.Any())
+                {
+                    string firInsertIDs = firinsertlist.Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().JoinToString(",");
+                    cmd += $@"
+INSERT INTO ExtendServer.PMSFile.dbo.FIR_Laboratory (ID)
+select ID from FIR_Laboratory t WITH(NOLOCK) where id in ({firInsertIDs})
+";
+                }
+
+                var firDeletelist = airfirids[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["deID"]));
+                if (firDeletelist.Any())
+                {
+                    string firDeleteIDs = firDeletelist.Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().JoinToString(",");
+                    cmd += $@"
+Delete ExtendServer.PMSFile.dbo.FIR_Laboratory where id in ({firDeleteIDs})";
+                }
+
+                var airinsertlist = airfirids[1].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["id"]));
+                if (airinsertlist.Any())
+                {
+                    string airInsertIDs = airinsertlist.Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().JoinToString(",");
+                    cmd += $@"
+INSERT INTO ExtendServer.PMSFile.dbo.AIR_Laboratory (ID,POID,SEQ1,SEQ2)
+select  ID,POID,SEQ1,SEQ2 from AIR_Laboratory t WITH(NOLOCK) where id in ({airInsertIDs})
+";
+                }
+
+                var airDeletelist = airfirids[1].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["deID"]));
+                if (airDeletelist.Any())
+                {
+                    string airDeleteIDs = airDeletelist.Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().JoinToString(",");
+                    cmd += $@"
+Delete ExtendServer.PMSFile.dbo.AIR_Laboratory where id in ({airDeleteIDs})";
+                }
+
                 result = DBProxy.Current.Execute(null, cmd);
                 if (!result)
                 {
