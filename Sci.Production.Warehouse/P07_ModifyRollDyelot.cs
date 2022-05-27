@@ -839,7 +839,11 @@ end
 
             // 檢查資料有任一筆WMS已完成
             string strFunction = (this.gridAlias.ToUpper() == "RECEIVING_DETAIL") ? "P07" : "P18";
-            DataTable detailTable = modifyDrList.AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable();
+            DataTable detailTable = new DataTable();
+            if (modifyDrList.AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).Any())
+            {
+                detailTable = modifyDrList.AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable();
+            }
 
             // 先確認 WMS 能否上鎖, 不能直接 return
             if (!Prgs_WMS.WMSLock(detailTable, detailTable, strFunction, EnumStatus.Unconfirm))
