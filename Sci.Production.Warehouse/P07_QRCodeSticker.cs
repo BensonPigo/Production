@@ -48,8 +48,16 @@ namespace Sci.Production.Warehouse
                 dr["IsQRCodeCreatedByPMS"] = dr["MINDQRCode"].ToString().IsQRCodeCreatedByPMS();
             }
 
-            MyUtility.Tool.SetupCombox(this.comboFilterQRCode, 1, 1, "All,Create by PMS,Not create by PMS");
-            this.comboFilterQRCode.Text = "Create by PMS";
+            if (callFrom == "P07")
+            {
+                MyUtility.Tool.SetupCombox(this.comboFilterQRCode, 1, 1, "All,Create by PMS,Not create by PMS");
+                this.comboFilterQRCode.Text = "Create by PMS";
+            }
+            else
+            {
+                MyUtility.Tool.SetupCombox(this.comboFilterQRCode, 1, 1, "All,Partial Release");
+                this.comboFilterQRCode.Text = "Partial Release";
+            }
         }
 
         /// <inheritdoc/>
@@ -89,6 +97,7 @@ namespace Sci.Production.Warehouse
                     .Text("Roll", header: "Roll#", width: Widths.AnsiChars(7), iseditingreadonly: true)
                     .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                     .Numeric("StockQty", header: "Issue Qty", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                    .Text("MINDQRCode", header: "Issue QR Code", width: Widths.AnsiChars(20), iseditingreadonly: true)
                     ;
             }
 
@@ -228,8 +237,11 @@ namespace Sci.Production.Warehouse
                 case "Not create by PMS":
                     this.listControlBindingSource.Filter = "IsQRCodeCreatedByPMS = false";
                     break;
+                case "Partial Release":
+                    this.listControlBindingSource.Filter = "MINDQRCode <> From_OldBarcode";
+                    break;
                 default:
-                    this.listControlBindingSource.Filter = "";
+                    this.listControlBindingSource.Filter = string.Empty;
                     break;
             }
         }
