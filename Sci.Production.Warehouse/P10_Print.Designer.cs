@@ -148,7 +148,6 @@
             this.comboType.OldText = "";
             this.comboType.Size = new System.Drawing.Size(121, 24);
             this.comboType.TabIndex = 11;
-            this.comboType.Visible = false;
             // 
             // label2
             // 
@@ -159,7 +158,6 @@
             this.label2.TabIndex = 10;
             this.label2.Text = "Type:";
             this.label2.TextStyle.Color = System.Drawing.Color.Black;
-            this.label2.Visible = false;
             // 
             // radioQRCodeSticker
             // 
@@ -173,7 +171,6 @@
             this.radioQRCodeSticker.Text = "Issue QR Code Sticker";
             this.radioQRCodeSticker.UseVisualStyleBackColor = true;
             this.radioQRCodeSticker.Value = "5";
-            this.radioQRCodeSticker.Visible = false;
             // 
             // P10_Print
             // 
