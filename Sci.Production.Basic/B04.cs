@@ -3,7 +3,9 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Production.PublicPrg;
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -167,8 +169,10 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
                 return false;
             }
 
-            cmd = $"SELECT 1 FROM LocalSupp WHERE TaxNo='{this.CurrentMaintain["TaxNo"]}' AND TaxNo != '' AND Abb != N'{this.CurrentMaintain["Abb"]}'";
-            if (MyUtility.Check.Seek(cmd))
+            cmd = $"SELECT 1 FROM LocalSupp WHERE TaxNo='{this.CurrentMaintain["TaxNo"]}' AND TaxNo != '' AND Abb != @Abb";
+
+            List<SqlParameter> sqlParameters = new List<SqlParameter> { new SqlParameter("@Abb", MyUtility.Convert.GetString(this.CurrentMaintain["Abb"])) };
+            if (MyUtility.Check.Seek(cmd, sqlParameters))
             {
                 MyUtility.Msg.InfoBox("Tax No can only be used on same Supplier Abbreviation.");
                 return false;
