@@ -607,7 +607,7 @@ BEGIN
 	DEALLOCATE cursor_ShareExpense
 
 	-- ISP20220298 更新AirPP
-	update a set a.ActAmt = airAmt.ActAmt, a.ExchangeRate = airAmt.ExchangeRate
+	update a set a.ActAmt = airAmt.ActAmt, a.ExchangeRate = airAmt.ExchangeRate, a.ShareExpenseEditDate = getdate()
 	from AirPP a
 	inner join dbo.GetAirPPAmt(@APID, '') airAmt on airAmt.AirPPID = a.ID
 END
