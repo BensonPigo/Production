@@ -7,8 +7,8 @@
     <ProjectGuid>{5678068E-5490-4414-A4F0-4B8E8916D5AE}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MailQMS_Fabric_Inspection_record</RootNamespace>
-    <AssemblyName>MailQMS_Fabric_Inspection_record</AssemblyName>
+    <RootNamespace>PMS_WeeklyPurchasingMonitoring</RootNamespace>
+    <AssemblyName>PMS_WeeklyPurchasingMonitoring</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

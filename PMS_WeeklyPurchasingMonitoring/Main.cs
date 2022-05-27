@@ -43,10 +43,11 @@ namespace PMS_WeeklyPurchasingMonitoring
             if (String.IsNullOrEmpty(_isAuto))
             {
                 isAuto = true;
+                this.dateExcute.Value = DateTime.Now;
+                this.dateExcute.ReadOnly = false;
                 this.OnFormLoaded();
             }
             this.EditMode = true;
-            this.dateExcute.ReadOnly = false;
         }
 
         protected override void OnFormLoaded()
