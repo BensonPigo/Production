@@ -5004,4 +5004,80 @@ left join production.dbo.PadPrint_Mold_Spec b on a.PadPrint_ukey = b.PadPrint_uk
 where b.PadPrint_ukey is null
 
 
+-- MailGroup
+Merge Production.dbo.MailGroup as t
+using Trade_To_Pms.dbo.MailGroup as s
+on t.code=s.code and t.FactoryID = s.FactoryID
+	when matched then
+		update set 
+		t.ToAddress= s.ToAddress,
+		t.CCAddress= s.CCAddress,
+		t.AddName= s.AddName,
+		t.AddDate= s.AddDate,
+		t.EditName= s.EditName,
+		t.EditDate= s.EditDate
+	when not matched by target then
+		insert(
+		Code
+		,FactoryID
+		,ToAddress
+		,CCAddress
+		,AddName
+		,AddDate
+		,EditName
+		,EditDate
+		)
+		values(
+		s.Code
+		,s.FactoryID
+		,s.ToAddress
+		,s.CCAddress
+		,s.AddName
+		,s.AddDate
+		,s.EditName
+		,s.EditDate
+		);
+
+-- Mailto
+Merge Production.dbo.Mailto as t
+using Trade_To_Pms.dbo.Mailto as s
+on t.ID=s.ID
+	when matched then
+		update set 
+		t.Description = s.Description,
+		t.ToAddress= s.ToAddress,
+		t.CCAddress= s.CCAddress,
+		t.Subject = s.Subject,
+		t.Content = s.Content,
+		t.AddName= s.AddName,
+		t.AddDate= s.AddDate,
+		t.EditName= s.EditName,
+		t.EditDate= s.EditDate
+	when not matched by target then
+		insert(
+		ID
+		,Description
+		,ToAddress
+		,CCAddress
+		,Subject
+		,Content
+		,AddName
+		,AddDate
+		,EditName
+		,EditDate
+		)
+		values(
+		 s.ID
+		,s.Description
+		,s.ToAddress
+		,s.CCAddress
+		,s.Subject
+		,s.Content
+		,s.AddName
+		,s.AddDate
+		,s.EditName
+		,s.EditDate
+		);
+
+
 END
