@@ -1124,15 +1124,17 @@ when matched then
                     cmd += $@"
 INSERT INTO ExtendServer.PMSFile.dbo.FIR_Laboratory (ID)
 select ID from FIR_Laboratory t WITH(NOLOCK) where id in ({firInsertIDs})
+and not exists (select 1 from ExtendServer.PMSFile.dbo.FIR_Laboratory s (NOLOCK) where s.ID = t.ID )
 ";
                 }
 
                 var firDeletelist = airfirids[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["deID"]));
                 if (firDeletelist.Any())
                 {
-                    string firDeleteIDs = firDeletelist.Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().JoinToString(",");
+                    string firDeleteIDs = firDeletelist.Select(s => MyUtility.Convert.GetString(s["deID"])).Distinct().JoinToString(",");
                     cmd += $@"
-Delete ExtendServer.PMSFile.dbo.FIR_Laboratory where id in ({firDeleteIDs})";
+Delete ExtendServer.PMSFile.dbo.FIR_Laboratory where id in ({firDeleteIDs})
+and ID NOT IN(select ID from FIR_Laboratory)";
                 }
 
                 var airinsertlist = airfirids[1].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["id"]));
@@ -1142,15 +1144,20 @@ Delete ExtendServer.PMSFile.dbo.FIR_Laboratory where id in ({firDeleteIDs})";
                     cmd += $@"
 INSERT INTO ExtendServer.PMSFile.dbo.AIR_Laboratory (ID,POID,SEQ1,SEQ2)
 select  ID,POID,SEQ1,SEQ2 from AIR_Laboratory t WITH(NOLOCK) where id in ({airInsertIDs})
+and not exists (select 1 from ExtendServer.PMSFile.dbo.AIR_Laboratory s WITH(NOLOCK) where s.ID = t.ID AND s.POID = t.POID AND s.SEQ1 = t.SEQ1 AND s.SEQ2 = t.SEQ2 )
 ";
                 }
 
                 var airDeletelist = airfirids[1].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["deID"]));
                 if (airDeletelist.Any())
                 {
-                    string airDeleteIDs = airDeletelist.Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().JoinToString(",");
+                    string airDeleteIDs = airDeletelist.Select(s => MyUtility.Convert.GetString(s["deID"])).Distinct().JoinToString(",");
                     cmd += $@"
-Delete ExtendServer.PMSFile.dbo.AIR_Laboratory where id in ({airDeleteIDs})";
+Delete a 
+from ExtendServer.PMSFile.dbo.AIR_Laboratory a
+where id in ({airDeleteIDs})
+and NOT EXISTS(select 1 from AIR_Laboratory b    where a.ID = b.ID AND a.POID=b.POID AND a.Seq1=b.Seq1 AND a.Seq2=b.Seq2)
+";
                 }
 
                 result = DBProxy.Current.Execute(null, cmd);
