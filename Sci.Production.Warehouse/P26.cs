@@ -432,8 +432,8 @@ where m.IsWMS = 0";
                 // 找出要撤回的 P18 Ukey
                 DataTable dt18 = Prgs.GetWHDetailUkey(dtToWMS, "P18");
 
-                Prgs_WMS.WMSprocess(true, dt07, "P07", EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
-                Prgs_WMS.WMSprocess(true, dt18, "P18", EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
+                Prgs_WMS.WMSprocess(false, dt07, "P07", EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
+                Prgs_WMS.WMSprocess(false, dt18, "P18", EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
                 this.ShowErr(errMsg);
                 return;
             }
@@ -443,7 +443,7 @@ where m.IsWMS = 0";
 
             // AutoWHFabric WebAPI
             // 傳 Location_Detail 給廠商, P21 不用, 因 P21 是收料單資訊, 收料confrim已經傳過
-            Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 

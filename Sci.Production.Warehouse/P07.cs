@@ -1979,7 +1979,7 @@ where   ID = '{this.CurrentMaintain["ID"]}' and
             }
 
             // AutoWHFabric WebAPI
-            Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
 
             #region FD, RR, LR 寄信 (QKPI - Exception)
 
@@ -2244,9 +2244,9 @@ END", Env.User.UserID,
 
             // PMS 的資料更新
             Exception errMsg = null;
-            using (TransactionScope transactionscope = new TransactionScope())
+            try
             {
-                try
+                using (TransactionScope transactionscope = new TransactionScope())
                 {
                     DataTable resulttb;
                     #region MdivisionPoDetail
@@ -2292,23 +2292,27 @@ END", Env.User.UserID,
                         }
                     }
 
+                    // transactionscope 內, 準備 WMS 資料 & 將資料寫入 AutomationCreateRecord (Delete, Unconfirm)
+
                     transactionscope.Complete();
                 }
-                catch (Exception ex)
-                {
-                    errMsg = ex;
-                }
+            }
+            catch (Exception ex)
+            {
+                // transactionscope 內, 準備 WMS 資料 & 將資料寫入 AutomationCreateRecord (Unlock, Unconfirm)
+
+                errMsg = ex;
             }
 
             if (!MyUtility.Check.Empty(errMsg))
             {
-                Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
+                Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
                 this.ShowErr(errMsg);
                 return;
             }
 
             // PMS 更新之後,才執行WMS
-            Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory);
+            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory);
             MyUtility.Msg.InfoBox("UnConfirmed successful");
             #endregion
         }

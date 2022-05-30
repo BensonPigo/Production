@@ -849,8 +849,8 @@ where id = '{dr["ID"]}'";
                     success_list.Add(dr["ID"].ToString());
 
                     // AutoWHFabric WebAPI
-                    Gensong_AutoWHFabric.Sent(true, dtDetail_byid, "P24", EnumStatus.New, EnumStatus.Confirm);
-                    Vstrong_AutoWHAccessory.Sent(true, dtDetail_byid, "P24", EnumStatus.New, EnumStatus.Confirm);
+                    Gensong_AutoWHFabric.Sent(false, dtDetail_byid, "P24", EnumStatus.New, EnumStatus.Confirm);
+                    Vstrong_AutoWHAccessory.Sent(false, dtDetail_byid, "P24", EnumStatus.New, EnumStatus.Confirm);
                 }
                 else
                 {

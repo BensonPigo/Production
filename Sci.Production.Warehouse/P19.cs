@@ -642,7 +642,7 @@ left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID a
             }
 
             // AutoWHFabric WebAPI
-            Prgs_WMS.WMSprocess(true, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+            Prgs_WMS.WMSprocess(false, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
@@ -891,13 +891,13 @@ where   exists(select 1 from #tmp t where
 
             if (!MyUtility.Check.Empty(errMsg))
             {
-                Prgs_WMS.WMSprocess(true, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
+                Prgs_WMS.WMSprocess(false, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
                 this.ShowErr(errMsg);
                 return;
             }
 
             // PMS 更新之後,才執行WMS
-            Prgs_WMS.WMSprocess(true, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory);
+            Prgs_WMS.WMSprocess(false, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory);
             MyUtility.Msg.InfoBox("UnConfirmed successful");
             #endregion
         }

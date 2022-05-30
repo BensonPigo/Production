@@ -1046,8 +1046,8 @@ where m.IsWMS = 0";
                 // 找出要撤回的 P18 Ukey
                 DataTable dt18 = Prgs.GetWHDetailUkey(dtToWMS, "P18");
 
-                Gensong_AutoWHFabric.Sent(true, dt07, "P07", EnumStatus.UnLock, EnumStatus.Unconfirm);
-                Gensong_AutoWHFabric.Sent(true, dt18, "P18", EnumStatus.UnLock, EnumStatus.Unconfirm);
+                Gensong_AutoWHFabric.Sent(false, dt07, "P07", EnumStatus.UnLock, EnumStatus.Unconfirm);
+                Gensong_AutoWHFabric.Sent(false, dt18, "P18", EnumStatus.UnLock, EnumStatus.Unconfirm);
                 this.ShowErr(errMsg);
                 return;
             }

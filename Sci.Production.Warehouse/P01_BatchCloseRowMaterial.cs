@@ -349,8 +349,8 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                 // SubTransfer_Detail
                 if (dtSubTransfer_Detail.Rows.Count > 0)
                 {
-                    Gensong_AutoWHFabric.Sent(true, dtSubTransfer_Detail, "P25", EnumStatus.New, EnumStatus.Confirm);
-                    Vstrong_AutoWHAccessory.Sent(true, dtSubTransfer_Detail, "P25", EnumStatus.New, EnumStatus.Confirm);
+                    Gensong_AutoWHFabric.Sent(false, dtSubTransfer_Detail, "P25", EnumStatus.New, EnumStatus.Confirm);
+                    Vstrong_AutoWHAccessory.Sent(false, dtSubTransfer_Detail, "P25", EnumStatus.New, EnumStatus.Confirm);
                 }
             }
 

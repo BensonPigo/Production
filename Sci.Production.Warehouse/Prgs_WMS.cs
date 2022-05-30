@@ -57,10 +57,10 @@ namespace Sci.Production.Warehouse
             // 找出要撤回的 P18 Ukey
             DataTable dt18 = Prgs.GetWHDetailUkey(dtnotWMS, "P18");
 
-            Gensong_AutoWHFabric.Sent(true, dt07, "P07", EnumStatus.Delete, EnumStatus.Unconfirm, true);
-            Gensong_AutoWHFabric.Sent(true, dt18, "P18", EnumStatus.Delete, EnumStatus.Unconfirm, true);
-            Vstrong_AutoWHAccessory.Sent(true, dt07, "P07", EnumStatus.Delete, EnumStatus.Unconfirm, true);
-            Vstrong_AutoWHAccessory.Sent(true, dt18, "P18", EnumStatus.Delete, EnumStatus.Unconfirm, true);
+            Gensong_AutoWHFabric.Sent(false, dt07, "P07", EnumStatus.Delete, EnumStatus.Unconfirm, true);
+            Gensong_AutoWHFabric.Sent(false, dt18, "P18", EnumStatus.Delete, EnumStatus.Unconfirm, true);
+            Vstrong_AutoWHAccessory.Sent(false, dt07, "P07", EnumStatus.Delete, EnumStatus.Unconfirm, true);
+            Vstrong_AutoWHAccessory.Sent(false, dt18, "P18", EnumStatus.Delete, EnumStatus.Unconfirm, true);
         }
 
         /// <inheritdoc/>
@@ -123,7 +123,7 @@ namespace Sci.Production.Warehouse
                 {
                     if (fprocess && fsuccess)
                     {
-                        Gensong_AutoWHFabric.Sent(true, dtDetail, formName, EnumStatus.UnLock, action, isP99: isP99);
+                        Gensong_AutoWHFabric.Sent(false, dtDetail, formName, EnumStatus.UnLock, action, isP99: isP99);
                     }
 
                     return false;
