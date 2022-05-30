@@ -1861,7 +1861,7 @@ and not exists (select 1 from ExtendServer.PMSFile.dbo.FIR_Laboratory s (NOLOCK)
                 var firDeletelist = airfirids[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["deID"]));
                 if (firDeletelist.Any())
                 {
-                    string firDeleteIDs = firDeletelist.Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().JoinToString(",");
+                    string firDeleteIDs = firDeletelist.Select(s => MyUtility.Convert.GetString(s["deID"])).Distinct().JoinToString(",");
                     cmd += $@"
 Delete ExtendServer.PMSFile.dbo.FIR_Laboratory where id in ({firDeleteIDs})
 and ID NOT IN(select ID from FIR_Laboratory)
@@ -1882,7 +1882,7 @@ and not exists (select 1 from ExtendServer.PMSFile.dbo.AIR_Laboratory s WITH(NOL
                 var airDeletelist = airfirids[1].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["deID"]));
                 if (airDeletelist.Any())
                 {
-                    string airDeleteIDs = airDeletelist.Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().JoinToString(",");
+                    string airDeleteIDs = airDeletelist.Select(s => MyUtility.Convert.GetString(s["deID"])).Distinct().JoinToString(",");
                     cmd += $@"
 Delete a 
 from ExtendServer.PMSFile.dbo.AIR_Laboratory a
