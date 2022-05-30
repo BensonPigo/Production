@@ -1921,7 +1921,7 @@ from dbo.GetAirPPAmt('{this.CurrentMaintain["ID"]}', '')
                 return result;
             }
 
-            if (dtInvNo != null && dtInvNo.Rows.Count > 0)
+            if (dtInvNo != null && dtInvNo.Rows.Count > 0 && dtAirPPAmt.Rows.Count > 0)
             {
                 List<string> listInv = dtInvNo.AsEnumerable().Select(s => s["InvNo"].ToString()).ToList();
                 List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByMutiInvNo(listInv);
