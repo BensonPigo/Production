@@ -2544,7 +2544,7 @@ AND f.StockType = 'B'
             }
 
             // AutoWHFabric WebAPI
-            Prgs_WMS.WMSprocess(true, dtIssue_Detail, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+            Prgs_WMS.WMSprocess(false, dtIssue_Detail, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
@@ -2651,13 +2651,13 @@ AND f.StockType = 'B'
 
             if (!MyUtility.Check.Empty(errMsg))
             {
-                Prgs_WMS.WMSprocess(true, dtIssue_Detail, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
+                Prgs_WMS.WMSprocess(false, dtIssue_Detail, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
                 this.ShowErr(errMsg);
                 return;
             }
 
             // PMS 更新之後,才執行WMS
-            Prgs_WMS.WMSprocess(true, dtIssue_Detail, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory);
+            Prgs_WMS.WMSprocess(false, dtIssue_Detail, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory);
             MyUtility.Msg.InfoBox("UnConfirmed successful");
             #endregion
         }

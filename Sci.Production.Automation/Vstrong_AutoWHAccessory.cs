@@ -65,9 +65,39 @@ namespace Sci.Production.Automation
                 return true;
             }
 
+            // 一次傳太大量會 Timeout 拆100傳出去
+            DataTable[] splittedtables = dtMaster.AsEnumerable()
+                .Select((row, index) => new { row, index })
+                .GroupBy(x => x.index / 100)
+                .Select(g => g.Select(x => x.row).CopyToDataTable())
+                .ToArray();
+
+            for (int i = 0; i < splittedtables.Length; i++)
+            {
+                DataTable dt = splittedtables[i];
+                if (!SentandUpdate(dt, formName, statusAPI, action, updateLocation))
+                {
+                    // 若 Lock 失敗 要把此次之前的 UnLock
+                    if (statusAPI == EnumStatus.Lock)
+                    {
+                        for (int j = 0; j < i; j++)
+                        {
+                            SentandUpdate(splittedtables[j], formName, EnumStatus.UnLock, action, updateLocation);
+                        }
+
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        private static bool SentandUpdate(DataTable dt, string formName, EnumStatus statusAPI, EnumStatus action, bool updateLocation = false)
+        {
             // DataTable轉化為JSON
             WHTableName dtNameforAPI = LogicAutoWHData.GetDetailNameforAPI(formName);
-            string jsonBody = GetJsonBody(dtMaster, dtNameforAPI, statusAPI);
+            string jsonBody = GetJsonBody(dt, dtNameforAPI, statusAPI);
             AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS
             {
                 apiThread = $"Sent{dtNameforAPI}ToVstrong",
@@ -84,7 +114,7 @@ namespace Sci.Production.Automation
             // 記錄 Confirmed/UnConfirmed 後有傳給WMS的資料
             if (statusAPI != EnumStatus.Lock && statusAPI != EnumStatus.UnLock)
             {
-                PublicPrg.Prgs.SentToWMS(dtMaster, action == EnumStatus.Confirm, formName);
+                PublicPrg.Prgs.SentToWMS(dt, action == EnumStatus.Confirm, formName);
             }
 
             return true;

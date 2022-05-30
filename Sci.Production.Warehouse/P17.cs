@@ -921,7 +921,7 @@ where f.lock=0 and f.WMSLock=0 AND d.Id = '{this.CurrentMaintain["id"]}'";
             }
 
             // AutoWHFabric WebAPI
-            Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
@@ -1088,13 +1088,13 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
 
             if (!MyUtility.Check.Empty(errMsg))
             {
-                Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
+                Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
                 this.ShowErr(errMsg);
                 return;
             }
 
             // PMS 更新之後,才執行WMS
-            Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory);
+            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory);
             MyUtility.Msg.InfoBox("UnConfirmed successful");
             #endregion
         }
