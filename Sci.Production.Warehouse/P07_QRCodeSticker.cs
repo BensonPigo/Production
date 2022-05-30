@@ -121,7 +121,11 @@ namespace Sci.Production.Warehouse
             if (dtPrint != null
                 && dtPrint.AsEnumerable().Any(row => Convert.ToBoolean(row["Sel"])))
             {
-                var barcodeDatas = dtPrint.AsEnumerable().Where(s => (int)s["Sel"] == 1);
+                DataView dv = dtPrint.DefaultView;
+                dv.Sort = ((DataTable)this.listControlBindingSource.DataSource).DefaultView.Sort;
+                DataTable sortedtable1 = dv.ToTable();
+
+                var barcodeDatas = sortedtable1.AsEnumerable().Where(s => (int)s["Sel"] == 1);
 
                 #region Print
                 this.ShowWaitMessage("Data Loading ...");
@@ -220,7 +224,6 @@ namespace Sci.Production.Warehouse
                 }
                 #endregion
                 this.HideWaitMessage();
-                this.Close();
                 #endregion
             }
             else
