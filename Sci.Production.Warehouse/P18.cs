@@ -1099,59 +1099,71 @@ when matched then
 ";
             #endregion
 
-            #region 更新FIR,AIR資料
+            #region 更新FIR,AIR資料 & 寫入PMSFile 在 insert_Air_Fir 內
 
             List<SqlParameter> fir_Air_Proce = new List<SqlParameter>
             {
                 new SqlParameter("@ID", this.CurrentMaintain["ID"]),
                 new SqlParameter("@LoginID", Env.User.UserID),
             };
-            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.insert_Air_Fir_TnsfIn", fir_Air_Proce)))
+            if (!(result = DBProxy.Current.Select(string.Empty, " exec dbo.insert_Air_Fir_TnsfIn @ID,@LoginID", fir_Air_Proce, out DataTable[] airfirids)))
             {
-                Exception ex = result.GetException();
-                MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
+                this.ShowErr(result);
                 return;
             }
-            else
+
+            if (airfirids[0].Rows.Count > 0 || airfirids[1].Rows.Count > 0)
             {
                 // 寫入PMSFile
-                string cmd = $@"
-SET XACT_ABORT ON
+                string cmd = @"SET XACT_ABORT ON
+";
+                var firinsertlist = airfirids[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["id"]));
+                if (firinsertlist.Any())
+                {
+                    string firInsertIDs = firinsertlist.Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().JoinToString(",");
+                    cmd += $@"
+INSERT INTO ExtendServer.PMSFile.dbo.FIR_Laboratory (ID)
+select ID from FIR_Laboratory t WITH(NOLOCK) where id in ({firInsertIDs})
+and not exists (select 1 from ExtendServer.PMSFile.dbo.FIR_Laboratory s (NOLOCK) where s.ID = t.ID )
+";
+                }
 
-INSERT INTO ExtendServer.PMSFile.dbo.AIR_Laboratory
-           (ID,POID,SEQ1,SEQ2)
+                var firDeletelist = airfirids[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["deID"]));
+                if (firDeletelist.Any())
+                {
+                    string firDeleteIDs = firDeletelist.Select(s => MyUtility.Convert.GetString(s["deID"])).Distinct().JoinToString(",");
+                    cmd += $@"
+Delete ExtendServer.PMSFile.dbo.FIR_Laboratory where id in ({firDeleteIDs})
+and ID NOT IN(select ID from FIR_Laboratory)";
+                }
 
-select  ID,POID,SEQ1,SEQ2
-from AIR_Laboratory t WITH(NOLOCK)
-where not exists (select 1 from ExtendServer.PMSFile.dbo.AIR_Laboratory s WITH(NOLOCK) where s.ID = t.ID AND s.POID = t.POID AND s.SEQ1 = t.SEQ1 AND s.SEQ2 = t.SEQ2 )
-;
+                var airinsertlist = airfirids[1].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["id"]));
+                if (airinsertlist.Any())
+                {
+                    string airInsertIDs = airinsertlist.Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().JoinToString(",");
+                    cmd += $@"
+INSERT INTO ExtendServer.PMSFile.dbo.AIR_Laboratory (ID,POID,SEQ1,SEQ2)
+select  ID,POID,SEQ1,SEQ2 from AIR_Laboratory t WITH(NOLOCK) where id in ({airInsertIDs})
+and not exists (select 1 from ExtendServer.PMSFile.dbo.AIR_Laboratory s WITH(NOLOCK) where s.ID = t.ID AND s.POID = t.POID AND s.SEQ1 = t.SEQ1 AND s.SEQ2 = t.SEQ2 )
+";
+                }
 
-INSERT INTO ExtendServer.PMSFile.dbo.FIR_Laboratory
-           (ID)
-select ID
-from FIR_Laboratory t (NOLOCK)
-where not exists (select 1 from ExtendServer.PMSFile.dbo.FIR_Laboratory s (NOLOCK) where s.ID = t.ID )
-
+                var airDeletelist = airfirids[1].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["deID"]));
+                if (airDeletelist.Any())
+                {
+                    string airDeleteIDs = airDeletelist.Select(s => MyUtility.Convert.GetString(s["deID"])).Distinct().JoinToString(",");
+                    cmd += $@"
 Delete a 
 from ExtendServer.PMSFile.dbo.AIR_Laboratory a
-WHERE NOT EXISTS(
-    select 1 from AIR_Laboratory b
-    where a.ID = b.ID AND a.POID=b.POID AND a.Seq1=b.Seq1 AND a.Seq2=b.Seq2
-    
-)
-
-Delete
-from ExtendServer.PMSFile.dbo.FIR_Laboratory
-WHERE ID NOT IN(
-	select ID
-	from FIR_Laboratory
-)
+where id in ({airDeleteIDs})
+and NOT EXISTS(select 1 from AIR_Laboratory b    where a.ID = b.ID AND a.POID=b.POID AND a.Seq1=b.Seq1 AND a.Seq2=b.Seq2)
 ";
+                }
+
                 result = DBProxy.Current.Execute(null, cmd);
                 if (!result)
                 {
-                    Exception ex = result.GetException();
-                    MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
+                    this.ShowErr(result);
                     return;
                 }
             }
