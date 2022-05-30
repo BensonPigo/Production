@@ -191,6 +191,7 @@ WHEN NOT matched BY target THEN
 
 delete dbo.fir_laboratory where id in  (SELECT deID FROM @tempFir WHERE id IS NULL)
 
+select ID,deID from @tempFir 
 ---- Air
 
 declare @tempAir table(id bigint,deID bigint )	
@@ -234,6 +235,7 @@ values(s.id,s.poid,s.seq1,s.seq2,s.InspDeadline);
 
 delete dbo.AIR_Laboratory where id in  (select deID from @tempAir where id is null)
 
+select ID,deID from @tempAir 
 --------------FIR_Shadebone 
 RAISERROR('insert_Air_Fir - Starts',0,0)
 
