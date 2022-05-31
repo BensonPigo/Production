@@ -28,7 +28,7 @@ select s.id
 	,[SizeCode] = isnull(sdd.SizeCode, '')
 	,sd.ComboType
 	,[ActManPower] = s.Manpower
-	,[WorkHour] = iif(sdd.QAQty is null, 0, cast(sd.WorkHour * (sdd.QAQty * 1.0 / sd.QAQty) as numeric(6, 4)))
+	,[WorkHour] = iif(sdd.QAQty is null, sd.WorkHour, cast(sd.WorkHour * (sdd.QAQty * 1.0 / sd.QAQty) as numeric(6, 4)))
 	,[QAQty] = isnull(sdd.QAQty, 0)
 	,sd.InlineQty
 	,o.LocalOrder
