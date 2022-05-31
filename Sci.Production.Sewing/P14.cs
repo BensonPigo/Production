@@ -104,6 +104,12 @@ namespace Sci.Production.Sewing
 
             #region SQL Command
             string strSqlCmd = $@"
+select  [IdAndName] = (RTrim(ID) + '-' + RTrim(Name)),
+        ID
+into #tmpMESPass1
+from [ExtendServer].ManufacturingExecution.dbo.pass1
+
+
 select [ScanDate] = c.HaulingDate
 	,[PackID] = c.PackingListID
 	,[CTN] = c.CTNStartNo
@@ -116,15 +122,12 @@ select [ScanDate] = c.HaulingDate
 	,[BuyerDelivery] = o.BuyerDelivery
 	,[SCIDelivery] = o.SciDelivery
 	,[Barcode] = pd_Barcode.Barcode
-	,[ScanBy] = g.IdAndName
+	,[ScanBy] = isnull(mesp1.IdAndName, c.AddName)
 	,[ScanTime] = Format(c.AddDate, 'yyyy/MM/dd HH:mm:ss')
 from CTNHauling c WITH(NOLOCK)
 inner join Orders o WITH(NOLOCK) on c.OrderID = o.ID
 left join Country co WITH(NOLOCK) on o.Dest = co.ID
-outer apply (
-	select IdAndName
-	from dbo.GetPassName(c.AddName)
-)g
+left join #tmpMESPass1 mesp1 on mesp1.ID = c.AddName
 outer apply (
 	select Qty = SUM(QtyPerCTN)
 	from PackingList_Detail pd WITH(NOLOCK)
@@ -140,7 +143,10 @@ outer apply (
 )pd_Barcode
 where 1 = 1
 {strWhere}
-order by c.PackingListID, c.CTNStartNo, c.HaulingDate";
+order by c.PackingListID, c.CTNStartNo, c.HaulingDate
+
+drop table #tmpMESPass1
+";
             #endregion
 
             this.ShowWaitMessage("Data Loading...");
