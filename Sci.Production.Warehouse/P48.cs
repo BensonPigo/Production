@@ -667,7 +667,7 @@ from #tmp";
                     }
 
                     // AutoWHFabric WebAPI
-                    Prgs_WMS.WMSprocess(true, dtDetail_Ukeys, "P45", EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+                    Prgs_WMS.WMSprocess(false, dtDetail_Ukeys, "P45", EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
                     DataRow[] drfound = this.dtInventory.Select(string.Format("poid='{0}' and selected=1", listPoid[i].ToString()));
                     foreach (var item in drfound)
                     {

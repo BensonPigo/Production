@@ -1008,8 +1008,8 @@ where id = '{dr["ID"]}'";
                     drP23confirmResult["Message"] = "Be created!! and Confirm Success!!";
 
                     // AutoWHFabric WebAPI
-                    Gensong_AutoWHFabric.Sent(true, dtDetail_byid, "P23", EnumStatus.New, EnumStatus.Confirm);
-                    Vstrong_AutoWHAccessory.Sent(true, dtDetail_byid, "P23", EnumStatus.New, EnumStatus.Confirm);
+                    Gensong_AutoWHFabric.Sent(false, dtDetail_byid, "P23", EnumStatus.New, EnumStatus.Confirm);
+                    Vstrong_AutoWHAccessory.Sent(false, dtDetail_byid, "P23", EnumStatus.New, EnumStatus.Confirm);
                 }
                 else
                 {

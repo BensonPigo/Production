@@ -3,6 +3,7 @@ using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Dynamic;
 using System.Linq;
@@ -25,9 +26,8 @@ namespace Sci.Production.Automation
         /// <param name="formName">P10...P99</param>
         /// <param name="statusAPI">給廠商的動作指令 New/Delete/Revise/Lock/Unlock</param>
         /// <param name="action">PMS 的操作 Confrim, Unconfrim, (P99) Delete, Update</param>
-        /// <param name="updateLocation">P21/P26更新後,若location不是自動倉要發給WMS做撤回(Delete), 整合後為了保持原寫法而加的參數, 日後若確認無用請刪掉此看似無用的參數</param>
         /// <inheritdoc/>
-        public static bool Sent(bool doTask, DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, bool isP99 = false, bool fromNewBarcode = false)
+        public static bool Sent(bool doTask, DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, bool isP99 = false, bool fromNewBarcode = false, int typeCreateRecord = 0, AutoRecord autoRecord = null)
         {
             if (!Prgs.NoGensong(formName))
             {
@@ -41,33 +41,70 @@ namespace Sci.Production.Automation
 
             if (doTask)
             {
-                Task.Run(() => Sent_Task(dtDetail, formName, statusAPI, action, isP99, fromNewBarcode))
+                Task.Run(() => Sent_Task(dtDetail, formName, statusAPI, action, isP99, fromNewBarcode, typeCreateRecord, autoRecord: autoRecord))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
                 return true;
             }
             else
             {
-                return Sent_Task(dtDetail, formName, statusAPI, action, isP99, fromNewBarcode);
+                return Sent_Task(dtDetail, formName, statusAPI, action, isP99, fromNewBarcode, typeCreateRecord, autoRecord: autoRecord);
             }
         }
 
-        private static bool Sent_Task(DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, bool isP99 = false, bool fromNewBarcode = false)
+        private static bool Sent_Task(DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, bool isP99, bool fromNewBarcode, int typeCreateRecord, AutoRecord autoRecord = null)
         {
-            // 取得資料
-            DataTable dtMaster = LogicAutoWHData.GetWHData(dtDetail, formName, statusAPI, action, "F", fromNewBarcode, isP99);
-            if (dtMaster == null)
+            if (typeCreateRecord == 2)
             {
-                return false;
+                LogicAutoWHData.SentandUpdatebyAutomationCreateRecord(formName, statusAPI, action, autoRecord, URL);
+            }
+            else
+            {
+                // 取得資料
+                DataTable dtMaster = LogicAutoWHData.GetWHData(dtDetail, formName, statusAPI, action, "F", fromNewBarcode, isP99);
+                if (dtMaster == null)
+                {
+                    return false;
+                }
+
+                if (dtMaster.Rows.Count == 0)
+                {
+                    return true;
+                }
+
+                // 一次傳太大量會 Timeout 拆100傳出去
+                DataTable[] splittedtables = dtMaster.AsEnumerable()
+                    .Select((row, index) => new { row, index })
+                    .GroupBy(x => x.index / 100)
+                    .Select(g => g.Select(x => x.row).CopyToDataTable())
+                    .ToArray();
+
+                for (int i = 0; i < splittedtables.Length; i++)
+                {
+                    DataTable dt = splittedtables[i];
+                    if (!SentandUpdate(dt, formName, statusAPI, action, typeCreateRecord, autoRecord: autoRecord))
+                    {
+                        // 若 Lock 失敗 要把此次之前的 UnLock
+                        if (statusAPI == EnumStatus.Lock)
+                        {
+                            for (int j = 0; j < i; j++)
+                            {
+                                SentandUpdate(splittedtables[j], formName, EnumStatus.UnLock, action, typeCreateRecord);
+                            }
+
+                            return false;
+                        }
+                    }
+                }
             }
 
-            if (dtMaster.Rows.Count == 0)
-            {
-                return true;
-            }
+            return true;
+        }
 
+        private static bool SentandUpdate(DataTable dt, string formName, EnumStatus statusAPI, EnumStatus action, int typeCreateRecord, AutoRecord autoRecord = null)
+        {
             // DataTable轉化為JSON
             WHTableName dtNameforAPI = LogicAutoWHData.GetDetailNameforAPI(formName);
-            string jsonBody = GetJsonBody(dtMaster, dtNameforAPI, statusAPI);
+            string jsonBody = GetJsonBody(dt, dtNameforAPI, statusAPI);
             AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS
             {
                 apiThread = $"Sent{dtNameforAPI}ToGensong",
@@ -76,15 +113,34 @@ namespace Sci.Production.Automation
                 suppID = GensongSuppID,
             };
 
-            if (!LogicAutoWHData.SendWebAPI_Status(statusAPI, URL, automationErrMsg, jsonBody))
+            switch (typeCreateRecord)
             {
-                return false;
-            }
+                case 0:
+                    if (!LogicAutoWHData.SendWebAPI_Status(statusAPI, URL, automationErrMsg, jsonBody))
+                    {
+                        return false;
+                    }
 
-            // 記錄 Confirmed/UnConfirmed 後有傳給WMS的資料
-            if (statusAPI != EnumStatus.Lock && statusAPI != EnumStatus.UnLock)
-            {
-                PublicPrg.Prgs.SentToWMS(dtMaster, action == EnumStatus.Confirm, formName);
+                    // 記錄 Confirmed/UnConfirmed 後有傳給WMS的資料
+                    if (statusAPI != EnumStatus.Lock && statusAPI != EnumStatus.UnLock)
+                    {
+                        PublicPrg.Prgs.SentToWMS(dt, action == EnumStatus.Confirm, formName);
+                    }
+
+                    break;
+
+                case 1:
+                    if (!LogicAutoWHData.SaveAutomationCreateRecord(automationErrMsg, jsonBody, autoRecord: autoRecord))
+                    {
+                        return false;
+                    }
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        autoRecord.wh_Detail_Ukey.Add(MyUtility.Convert.GetString(dr["Ukey"]));
+                    }
+
+                    break;
             }
 
             return true;

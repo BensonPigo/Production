@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Production.Automation;
+using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using System.Collections.Generic;
@@ -11,7 +12,6 @@ namespace Sci.Production.Warehouse
     /// <inheritdoc/>
     internal class Prgs_WMS
     {
-
         /// <summary>
         /// P21/P26 調整前 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Lock)
         /// </summary>
@@ -57,14 +57,14 @@ namespace Sci.Production.Warehouse
             // 找出要撤回的 P18 Ukey
             DataTable dt18 = Prgs.GetWHDetailUkey(dtnotWMS, "P18");
 
-            Gensong_AutoWHFabric.Sent(true, dt07, "P07", EnumStatus.Delete, EnumStatus.Unconfirm);
-            Gensong_AutoWHFabric.Sent(true, dt18, "P18", EnumStatus.Delete, EnumStatus.Unconfirm);
-            Vstrong_AutoWHAccessory.Sent(true, dt07, "P07", EnumStatus.Delete, EnumStatus.Unconfirm);
-            Vstrong_AutoWHAccessory.Sent(true, dt18, "P18", EnumStatus.Delete, EnumStatus.Unconfirm);
+            Gensong_AutoWHFabric.Sent(false, dt07, "P07", EnumStatus.Delete, EnumStatus.Unconfirm, true);
+            Gensong_AutoWHFabric.Sent(false, dt18, "P18", EnumStatus.Delete, EnumStatus.Unconfirm, true);
+            Vstrong_AutoWHAccessory.Sent(false, dt07, "P07", EnumStatus.Delete, EnumStatus.Unconfirm, true);
+            Vstrong_AutoWHAccessory.Sent(false, dt18, "P18", EnumStatus.Delete, EnumStatus.Unconfirm, true);
         }
 
         /// <inheritdoc/>
-        public static bool WMSprocess(bool doTask, DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, DataTable dthasFabricType = null, bool isP99 = false, bool fromNewBarcode = false)
+        public static bool WMSprocess(bool doTask, DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, DataTable dthasFabricType = null, bool isP99 = false, bool fromNewBarcode = false, int typeCreateRecord = 0, AutoRecord autoRecord = null)
         {
             dthasFabricType = dthasFabricType ?? dtDetail;
             List<string> fabricList = dthasFabricType.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["FabricType"])).ToList();
@@ -72,7 +72,7 @@ namespace Sci.Production.Warehouse
             {
                 if (Prgs.NoGensong(formName) && fabricList.Contains("F"))
                 {
-                    Gensong_AutoWHFabric.Sent(doTask, dtDetail, formName, statusAPI, action, isP99: isP99, fromNewBarcode: fromNewBarcode);
+                    Gensong_AutoWHFabric.Sent(doTask, dtDetail, formName, statusAPI, action, isP99: isP99, fromNewBarcode: fromNewBarcode, typeCreateRecord: typeCreateRecord, autoRecord: autoRecord);
                 }
 
                 if (Prgs.NoVstrong(formName) && fabricList.Contains("A"))
@@ -123,7 +123,7 @@ namespace Sci.Production.Warehouse
                 {
                     if (fprocess && fsuccess)
                     {
-                        Gensong_AutoWHFabric.Sent(true, dtDetail, formName, EnumStatus.UnLock, action, isP99: isP99);
+                        Gensong_AutoWHFabric.Sent(false, dtDetail, formName, EnumStatus.UnLock, action, isP99: isP99);
                     }
 
                     return false;
