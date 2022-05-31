@@ -2,6 +2,7 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
@@ -2244,9 +2245,10 @@ END", Env.User.UserID,
 
             // PMS 的資料更新
             Exception errMsg = null;
-            try
+            AutoRecord autoRecord = new AutoRecord();
+            using (TransactionScope transactionscope = new TransactionScope())
             {
-                using (TransactionScope transactionscope = new TransactionScope())
+                try
                 {
                     DataTable resulttb;
                     #region MdivisionPoDetail
@@ -2293,15 +2295,13 @@ END", Env.User.UserID,
                     }
 
                     // transactionscope 內, 準備 WMS 資料 & 將資料寫入 AutomationCreateRecord (Delete, Unconfirm)
-
+                    Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory, typeCreateRecord: 1, autoRecord: autoRecord);
                     transactionscope.Complete();
                 }
-            }
-            catch (Exception ex)
-            {
-                // transactionscope 內, 準備 WMS 資料 & 將資料寫入 AutomationCreateRecord (Unlock, Unconfirm)
-
-                errMsg = ex;
+                catch (Exception ex)
+                {
+                    errMsg = ex;
+                }
             }
 
             if (!MyUtility.Check.Empty(errMsg))
@@ -2312,7 +2312,7 @@ END", Env.User.UserID,
             }
 
             // PMS 更新之後,才執行WMS
-            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory);
+            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory, typeCreateRecord: 2, autoRecord: autoRecord);
             MyUtility.Msg.InfoBox("UnConfirmed successful");
             #endregion
         }

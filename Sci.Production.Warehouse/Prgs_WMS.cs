@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Production.Automation;
+using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using System.Collections.Generic;
@@ -11,7 +12,6 @@ namespace Sci.Production.Warehouse
     /// <inheritdoc/>
     internal class Prgs_WMS
     {
-
         /// <summary>
         /// P21/P26 調整前 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Lock)
         /// </summary>
@@ -64,7 +64,7 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
-        public static bool WMSprocess(bool doTask, DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, DataTable dthasFabricType = null, bool isP99 = false, bool fromNewBarcode = false)
+        public static bool WMSprocess(bool doTask, DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, DataTable dthasFabricType = null, bool isP99 = false, bool fromNewBarcode = false, int typeCreateRecord = 0, AutoRecord autoRecord = null)
         {
             dthasFabricType = dthasFabricType ?? dtDetail;
             List<string> fabricList = dthasFabricType.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["FabricType"])).ToList();
@@ -72,7 +72,7 @@ namespace Sci.Production.Warehouse
             {
                 if (Prgs.NoGensong(formName) && fabricList.Contains("F"))
                 {
-                    Gensong_AutoWHFabric.Sent(doTask, dtDetail, formName, statusAPI, action, isP99: isP99, fromNewBarcode: fromNewBarcode);
+                    Gensong_AutoWHFabric.Sent(doTask, dtDetail, formName, statusAPI, action, isP99: isP99, fromNewBarcode: fromNewBarcode, typeCreateRecord: typeCreateRecord, autoRecord: autoRecord);
                 }
 
                 if (Prgs.NoVstrong(formName) && fabricList.Contains("A"))

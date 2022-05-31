@@ -213,7 +213,7 @@ getdate()
             DualResult result = new DualResult(true);
             WebApiBaseResult webApiBaseResult;
             Dictionary<string, string> requestHeaders = GetCustomHeaders();
-            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 600, requestHeaders);
+            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 1, requestHeaders);
             automationErrMsg.json = jsonBody;
             if (!webApiBaseResult.isSuccess)
             {
@@ -238,7 +238,7 @@ getdate()
             DualResult result = new DualResult(true);
             WebApiBaseResult webApiBaseResult;
             Dictionary<string, string> requestHeaders = GetCustomHeaders();
-            webApiBaseResult = await PmsWebApiUtility45.WebApiTool.WebApiPostAsync(baseUrl, requestUri, jsonBody, 600, requestHeaders);
+            webApiBaseResult = await PmsWebApiUtility45.WebApiTool.WebApiPostAsync(baseUrl, requestUri, jsonBody, 1, requestHeaders);
             automationErrMsg.json = jsonBody;
             if (!webApiBaseResult.isSuccess)
             {
@@ -297,7 +297,7 @@ getdate()
             if (reSented)
             {
                 Dictionary<string, string> requestHeaders = GetCustomHeaders();
-                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 600, requestHeaders);
+                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 1, requestHeaders);
                 automationErrMsg.json = jsonBody;
                 automationErrMsg.suppID = "SCI";
                 automationErrMsg.moduleName = "SCI";
@@ -313,7 +313,7 @@ getdate()
             }
             else
             {
-                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 20);
+                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 1);
                 bool saveAllmsg = MyUtility.Convert.GetBool(ConfigurationManager.AppSettings["OpenAll_AutomationCheckMsg"]);
 
                 if (!webApiBaseResult.isSuccess)

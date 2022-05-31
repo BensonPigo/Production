@@ -5,6 +5,7 @@ using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using static Sci.Production.Automation.UtilityAutomation;
 
@@ -547,6 +548,60 @@ and psd.FabricType = '{fabricType}'
                 case EnumStatus.UnLock:
                     WH_Auto_SendWebAPI(url, automationErrMsg.suppAPIThread, jsonBody, automationErrMsg, reSented: true);
                     break;
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public static bool SaveAutomationCreateRecord(AutomationErrMsgPMS automationErrMsg, string jsonBody, AutoRecord autoRecord)
+        {
+            AutomationCreateRecord automationCreateRecord = new AutomationCreateRecord(automationErrMsg, jsonBody);
+            try
+            {
+                DBProxy._OpenConnection("Production", out SqlConnection sqlConnection);
+                automationCreateRecord.SaveAutomationCreateRecord(sqlConnection);
+                autoRecord.automationCreateRecordUkey = new List<string>();
+                autoRecord.automationCreateRecordUkey.Add(automationCreateRecord.ukey);
+            }
+            catch (Exception ex)
+            {
+                MyUtility.Msg.ErrorBox(ex.ToString());
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public static bool DeleteAutomationCreateRecord(AutomationErrMsgPMS automationErrMsg, string ukey)
+        {
+            AutomationCreateRecord automationCreateRecord = new AutomationCreateRecord(automationErrMsg);
+            automationCreateRecord.ukey = ukey;
+            try
+            {
+                DBProxy._OpenConnection("Production", out SqlConnection sqlConnection);
+                automationCreateRecord.DeleteAutomationCreateRecord(sqlConnection);
+            }
+            catch (Exception ex)
+            {
+                MyUtility.Msg.ErrorBox(ex.ToString());
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public static bool GetDataByAutomationCreateRecord(string ukey, out DataRow dr)
+        {
+            string sqlcmd = @"select * from AutomationCreateRecord where ukey = @ukey";
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@Ukey", ukey) };
+            if (!MyUtility.Check.Seek(sqlcmd, parameters, out dr, "Production"))
+            {
+                // 正常流程一定存在不應該走這
+                MyUtility.Msg.WarningBox("AutomationCreateRecord not found");
+                return false;
             }
 
             return true;
