@@ -2,6 +2,7 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg.Entity;
 using System;
 using System.Collections.Generic;
@@ -853,6 +854,8 @@ end
 
             // PMS 的資料更新
             Exception errMsg = null;
+            List<AutoRecord> autoRecordListUnLock = new List<AutoRecord>();
+            List<AutoRecord> autoRecordListRevise = new List<AutoRecord>();
             using (TransactionScope transactionscope = new TransactionScope())
             {
                 try
@@ -867,6 +870,9 @@ end
                         throw result.GetException();
                     }
 
+                    // transactionscope 內, 準備 WMS 資料 & 將資料寫入 AutomationCreateRecord (Delete, Unconfirm)
+                    Gensong_AutoWHFabric.Sent(false, detailTable, strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, typeCreateRecord: 1, autoRecord: autoRecordListUnLock);
+                    Gensong_AutoWHFabric.Sent(false, detailTable, strFunction, EnumStatus.Revise, EnumStatus.Confirm, typeCreateRecord: 1, autoRecord: autoRecordListRevise);
                     transactionscope.Complete();
                 }
                 catch (Exception ex)
@@ -877,14 +883,16 @@ end
 
             if (!MyUtility.Check.Empty(errMsg))
             {
-                Gensong_AutoWHFabric.Sent(false, detailTable, strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm);
+                List<AutoRecord> autoRecordList = new List<AutoRecord>();
+                Gensong_AutoWHFabric.Sent(false, detailTable, strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, typeCreateRecord: 1, autoRecord: autoRecordList);
+                Gensong_AutoWHFabric.Sent(false, detailTable, strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, typeCreateRecord: 2, autoRecord: autoRecordList);
                 this.ShowErr(errMsg);
                 return;
             }
 
             // PMS 更新之後,才執行WMS
-            Gensong_AutoWHFabric.Sent(false, detailTable, strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm);
-            Gensong_AutoWHFabric.Sent(false, detailTable, strFunction, EnumStatus.Revise, EnumStatus.Confirm);
+            Gensong_AutoWHFabric.Sent(false, detailTable, strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, typeCreateRecord: 2, autoRecord: autoRecordListUnLock);
+            Gensong_AutoWHFabric.Sent(false, detailTable, strFunction, EnumStatus.Revise, EnumStatus.Confirm, typeCreateRecord: 2, autoRecord: autoRecordListRevise);
 
             #region 更新FIR,AIR資料
 

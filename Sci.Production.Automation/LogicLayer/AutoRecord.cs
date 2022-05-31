@@ -7,6 +7,9 @@ namespace Sci.Production.Automation.LogicLayer
     {
 #pragma warning disable SA1401 // Fields should be private
         /// <inheritdoc/>
+        public string fabricType;
+
+        /// <inheritdoc/>
         public List<string> automationCreateRecordUkey;
 
         /// <inheritdoc/>

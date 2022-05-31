@@ -3,6 +3,7 @@ using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Dynamic;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace Sci.Production.Automation
         /// <param name="statusAPI">給廠商的動作指令 New/Delete/Revise/Lock/Unlock</param>
         /// <param name="action">PMS 的操作 Confrim, Unconfrim, (P99) Delete, Update</param>
         /// <inheritdoc/>
-        public static bool Sent(bool doTask, DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, bool isP99 = false, int typeCreateRecord = 0, AutoRecord autoRecord = null)
+        public static bool Sent(bool doTask, DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, bool isP99 = false, int typeCreateRecord = 0, List<AutoRecord> autoRecord = null)
         {
             if (!Prgs.NoVstrong(formName))
             {
@@ -50,11 +51,16 @@ namespace Sci.Production.Automation
             }
         }
 
-        private static bool Sent_Task(DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, bool isP99, int typeCreateRecord = 0, AutoRecord autoRecord = null)
+        private static bool Sent_Task(DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, bool isP99, int typeCreateRecord = 0, List<AutoRecord> autoRecord = null)
         {
+            AutoRecord autoRecordbyType = null;
             if (typeCreateRecord == 2)
             {
-                LogicAutoWHData.SentandUpdatebyAutomationCreateRecord(formName, statusAPI, action, autoRecord, URL);
+                autoRecordbyType = autoRecord.Where(w => w.fabricType == "A").FirstOrDefault();
+                if (autoRecordbyType != null)
+                {
+                    LogicAutoWHData.SentandUpdatebyAutomationCreateRecord(formName, statusAPI, action, autoRecordbyType, URL);
+                }
             }
             else
             {
@@ -77,17 +83,23 @@ namespace Sci.Production.Automation
                     .Select(g => g.Select(x => x.row).CopyToDataTable())
                     .ToArray();
 
+                if (autoRecord != null)
+                {
+                    autoRecord.Add(new AutoRecord { fabricType = "A", automationCreateRecordUkey = new List<string>(), wh_Detail_Ukey = new List<string>() });
+                    autoRecordbyType = autoRecord.Where(w => w.fabricType == "A").FirstOrDefault();
+                }
+
                 for (int i = 0; i < splittedtables.Length; i++)
                 {
                     DataTable dt = splittedtables[i];
-                    if (!SentandUpdate(dt, formName, statusAPI, action, typeCreateRecord, autoRecord: autoRecord))
+                    if (!SentandUpdate(dt, formName, statusAPI, action, typeCreateRecord, autoRecord: autoRecordbyType))
                     {
                         // 若 Lock 失敗 要把此次之前的 UnLock
                         if (statusAPI == EnumStatus.Lock)
                         {
                             for (int j = 0; j < i; j++)
                             {
-                                SentandUpdate(splittedtables[j], formName, EnumStatus.UnLock, action, typeCreateRecord, autoRecord: autoRecord);
+                                SentandUpdate(splittedtables[j], formName, EnumStatus.UnLock, action, typeCreateRecord);
                             }
 
                             return false;

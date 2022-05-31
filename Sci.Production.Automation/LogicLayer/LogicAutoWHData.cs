@@ -581,13 +581,13 @@ and psd.FabricType = '{fabricType}'
                 {
                     return false;
                 }
+            }
 
-                // 記錄 Confirmed/UnConfirmed 後有傳給WMS的資料
-                string ukeys = autoRecord.wh_Detail_Ukey.JoinToString(",");
-                if (statusAPI != EnumStatus.Lock && statusAPI != EnumStatus.UnLock)
-                {
-                    PublicPrg.Prgs.SentToWMS(null, action == EnumStatus.Confirm, formName, ukeys);
-                }
+            // 記錄 Confirmed/UnConfirmed 後有傳給WMS的資料
+            string ukeys = autoRecord.wh_Detail_Ukey.JoinToString(",");
+            if (statusAPI != EnumStatus.Lock && statusAPI != EnumStatus.UnLock)
+            {
+                PublicPrg.Prgs.SentToWMS(null, action == EnumStatus.Confirm, formName, ukeys);
             }
 
             return true;
@@ -601,7 +601,6 @@ and psd.FabricType = '{fabricType}'
             {
                 DBProxy._OpenConnection("Production", out SqlConnection sqlConnection);
                 automationCreateRecord.SaveAutomationCreateRecord(sqlConnection);
-                autoRecord.automationCreateRecordUkey = new List<string>();
                 autoRecord.automationCreateRecordUkey.Add(automationCreateRecord.ukey);
             }
             catch (Exception ex)
@@ -616,6 +615,11 @@ and psd.FabricType = '{fabricType}'
         /// <inheritdoc/>
         public static bool DeleteAutomationCreateRecord(AutomationErrMsgPMS automationErrMsg, string ukey)
         {
+            if (automationErrMsg == null)
+            {
+                automationErrMsg = new AutomationErrMsgPMS();
+            }
+
             AutomationCreateRecord automationCreateRecord = new AutomationCreateRecord(automationErrMsg);
             automationCreateRecord.ukey = ukey;
             try
@@ -630,6 +634,18 @@ and psd.FabricType = '{fabricType}'
             }
 
             return true;
+        }
+
+        /// <inheritdoc/>
+        public static void DeleteAutomationCreateRecordAll(AutomationErrMsgPMS automationErrMsg, List<AutoRecord> autoRecordList)
+        {
+            foreach (var item in autoRecordList)
+            {
+                foreach (var ukey in item.automationCreateRecordUkey)
+                {
+                    LogicAutoWHData.DeleteAutomationCreateRecord(automationErrMsg, ukey);
+                }
+            }
         }
 
         /// <inheritdoc/>
