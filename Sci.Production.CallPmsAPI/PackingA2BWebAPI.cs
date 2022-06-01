@@ -325,7 +325,7 @@ where exists(select 1 from GMTBooking g with (nolock) where g.ShipPlanID = '{shi
                 dicHeaders.Add("connectRegion", GetConnRegion(systemName));
 
                 dataBySql.SqlString = dataBySql.SqlString.Base64Encrypt();
-                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, "api/PackingA2B/GetDataBySql", dataBySql, 75, headers: dicHeaders);
+                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, "api/PackingA2B/GetDataBySql", dataBySql, 300, headers: dicHeaders);
 
                 if (!webApiBaseResult.isSuccess)
                 {
