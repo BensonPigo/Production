@@ -139,6 +139,12 @@ and CTN = '{this.drDetail["CTN"].ToString()}'
             this.gridbs.EndEdit();
             foreach (DataRow dr in this.Datas)
             {
+                if (MyUtility.Convert.GetString(dr["ActionTaken"]).Length > 100)
+                {
+                    MyUtility.Msg.InfoBox("Please input maximum of 100 characters in <Action Taken>.");
+                    return false;
+                }
+
                 if (MyUtility.Check.Empty(dr["Line"]) &&
                     MyUtility.Check.Empty(dr["Shift"]))
                 {
