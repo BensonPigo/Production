@@ -61,8 +61,10 @@ group by ShippingAPID
             , FactoryID
 ) as s
 on t.ShippingAPID = s.ShippingAPID and t.WKNO = s.WKNO and t.InvNo = s.InvNo and t.FactoryID = s.FactoryID and t.AccountID = s.AccountID
-when matched AND t.junk = 1 then
-      update set t.junk = 0
+when matched then
+      update set    t.junk = 0,
+                    t.GW = s.GW,
+                    t.CBM = s.CBM
 when not matched by target then
         insert(ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk, FactoryID)
             values(s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk, s.FactoryID);
@@ -920,8 +922,8 @@ select  ShippingAPID
         , WKNo
         , InvNo
         , ShipModeID
-        , [GW] = GW
-        , [CBM] = CBM
+        , [GW] = sum(GW)
+        , [CBM] = sum(CBM)
         , CurrencyID
         , DropDownListName = (
             select Name
@@ -937,7 +939,7 @@ select  ShippingAPID
 from ShareExpense se WITH (NOLOCK) 
 where   ShippingAPID = '{0}' 
         and (Junk = 0 or Junk is null)
-group by ShippingAPID,se.BLNo,WKNo,InvNo,ShipModeID,CurrencyID,ShipModeID,FtyWK,GW,CBM
+group by ShippingAPID,se.BLNo,WKNo,InvNo,ShipModeID,CurrencyID,ShipModeID,FtyWK
 ", MyUtility.Convert.GetString(this.apData["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out this.SEGroupData);
             if (!result)
