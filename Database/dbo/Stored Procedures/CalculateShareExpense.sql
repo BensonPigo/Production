@@ -33,6 +33,7 @@ BEGIN
 	DECLARE @ttlgw NUMERIC(10,3),
 					@ttlcbm NUMERIC(10,3),
 					@ttlcount INT,
+					@ttlcountForShare INT,
 					@accno VARCHAR(8), 
 					@adddate DATETIME,
 					@exact TINYINT,
@@ -49,7 +50,8 @@ BEGIN
 					@recno INT,
 					@ftywk BIT,
 					@inputamount NUMERIC(15,2),
-					@1stsharebase VARCHAR(1)
+					@1stsharebase VARCHAR(1),
+					@CountRatioByInvNo numeric(5,4)
 
 	
 		
@@ -258,8 +260,11 @@ BEGIN
 			set @CurrencyID=(select CurrencyID from ShippingAP where id = @ShippingAPID)
 		
 			SET @adddate = GETDATE()
-			SELECT @ttlgw = isnull(sum(GW),0), @ttlcbm = isnull(sum(CBM),0), @ttlcount = isnull(count(ShippingAPID),0) 
+			SELECT @ttlgw = isnull(sum(GW),0), @ttlcbm = isnull(sum(CBM),0),@ttlcount = isnull(count(ShippingAPID),0) 
 			FROM (SELECT distinct ShippingAPID,BLNo,WKNo,InvNo,GW,CBM,FactoryID FROM ShareExpense WITH (NOLOCK) WHERE ShippingAPID = @ShippingAPID and junk = 0) a
+
+			SELECT  @ttlcountForShare = isnull(count(ShippingAPID),0) 
+			FROM (SELECT distinct ShippingAPID,BLNo,WKNo,InvNo FROM ShareExpense WITH (NOLOCK) WHERE ShippingAPID = @ShippingAPID and junk = 0) a
 
 			SELECT @exact = isnull(c.Exact,0) FROM ShippingAP s WITH (NOLOCK) , Currency c WITH (NOLOCK) WHERE s.ID = @ShippingAPID and c.ID = s.CurrencyID
 
@@ -332,6 +337,7 @@ BEGIN
 					   , a.ShipModeID
 					   , a.FtyWK
 					   , a.FactoryID,isnull(isnull(sr.ShareBase,sr1.ShareBase),'') as ShareBase
+					   , a.CountRatioByInvNo
 				from (
 					select a.AccountID
 							, a.Amount
@@ -346,6 +352,7 @@ BEGIN
 							, b.FtyWK
 							, b.FactoryID
 							, a.SubType
+							, b.CountRatioByInvNo
 					from (
 						select isnull(sd.AccountID,'') as AccountID, sum(sd.Amount) as Amount, s.CurrencyID, s.Type, s.SubType
 						from ShippingAP_Detail sd WITH (NOLOCK) 
@@ -359,7 +366,8 @@ BEGIN
 						group by sd.AccountID, a.Name, s.CurrencyID, s.Type, s.SubType
 					) a
 					, ( 
-						select BLNo,WKNo,InvNo,Type,GW,CBM,ShipModeID,FtyWK,FactoryID
+						select	BLNo,WKNo,InvNo,Type,GW,CBM,ShipModeID,FtyWK,FactoryID,
+								[CountRatioByInvNo] = 1.0 / count(1) over (partition by BLNo,WKNo,InvNo,Type,ShipModeID,FtyWK)
 						from #ShareInvWK
 					) b
 				) a
@@ -379,7 +387,7 @@ BEGIN
 
 			SET @count = 1
 			OPEN cursor_ttlAmount
-			FETCH NEXT FROM cursor_ttlAmount INTO @accno,@amount,@currency,@blno,@wkno,@invno,@type,@gw,@cbm,@shipmodeid,@ftywk,@FactoryID,@sharebase
+			FETCH NEXT FROM cursor_ttlAmount INTO @accno,@amount,@currency,@blno,@wkno,@invno,@type,@gw,@cbm,@shipmodeid,@ftywk,@FactoryID,@sharebase,@CountRatioByInvNo
 			WHILE @@FETCH_STATUS = 0
 			BEGIN
 				IF @count = 1
@@ -397,7 +405,7 @@ BEGIN
 								END
 							ELSE
 								BEGIN
-									SET @minusamount = iif (@ttlcount = 0, 0, ROUND(@amount/@ttlcount,4))
+									SET @minusamount = iif (@ttlcountForShare = 0, 0, ROUND(@amount/@ttlcountForShare,4))
 								END
 					END
 				ELSE
@@ -416,7 +424,7 @@ BEGIN
 						END
 					ELSE
 						BEGIN
-							SET @inputamount = ROUND(@minusamount,@exact)
+							SET @inputamount = ROUND(@minusamount * @CountRatioByInvNo,@exact)
 						END
 
 				select @recno = isnull(count(ShippingAPID),0) from ShareExpense WITH (NOLOCK) where ShippingAPID = @ShippingAPID and WKNo = @wkno and InvNo = @invno and AccountID = @accno and FactoryID = @FactoryID and Junk = 0
@@ -473,7 +481,7 @@ BEGIN
 					BEGIN
 						SET @count = @count + 1
 					END
-				FETCH NEXT FROM cursor_ttlAmount INTO @accno,@amount,@currency,@blno,@wkno,@invno,@type,@gw,@cbm,@shipmodeid,@ftywk,@FactoryID,@sharebase
+				FETCH NEXT FROM cursor_ttlAmount INTO @accno,@amount,@currency,@blno,@wkno,@invno,@type,@gw,@cbm,@shipmodeid,@ftywk,@FactoryID,@sharebase,@CountRatioByInvNo
 			END
 			CLOSE cursor_ttlAmount
 			DEALLOCATE cursor_ttlAmount
