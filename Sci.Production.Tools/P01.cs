@@ -110,6 +110,30 @@ SET AutomationAutoRunTime = {automationAutoRunTime}
 declare @result nvarchar(max)
 exec dbo.SentJsonFromAutomationErrMsg {(long)selecteData["Ukey"]},'{Sci.Env.User.UserID}', @result OUTPUT, 1200
 SELECT [Result]= @result
+
+insert into FPS.dbo.AutomationTransRecord(
+    [CallFrom]     
+    ,Activity       
+    ,SuppID         
+    ,ModuleName     
+    ,SuppAPIThread  
+    ,JSON           
+    ,TransJson      
+    ,AddName        
+    ,AddDate
+)
+select
+	'Resent'
+	,Ukey  
+	,SuppID
+	,ModuleName
+	,SuppAPIThread
+	,JSON
+	,JSON
+	,AddName
+	,AddDate
+from dbo.AutomationErrMsg with (nolock)
+where ukey = '{(long)selecteData["Ukey"]}'
 ";
                 result = DBProxy.Current.Select(null, cmdText, out DataTable resultDt);
 

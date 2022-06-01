@@ -17,8 +17,6 @@ namespace Sci.Production.Automation
         private static readonly string VstrongSuppID = "3A0196";
         private static readonly string moduleName = "AutoWHAccessory";
         private static readonly string SCIAPIThread = "api/VstrongAutoWHAccessory/SentDataByApiTag";
-        private static readonly string suppAPIThread = "snpvsinterface/services/pmstowms";
-        private static readonly string URL = GetSupplierUrl(VstrongSuppID, moduleName);
 
         /// PMS的action對應廠商statusAPI: Confrim(New),Unconfrim(Delete),Delete(Delete),Update(Revise)
         /// <param name="dtDetail">表身資訊,需要有ukey</param>
@@ -71,12 +69,12 @@ namespace Sci.Production.Automation
             AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS
             {
                 apiThread = $"Sent{dtNameforAPI}ToVstrong",
-                suppAPIThread = statusAPI == EnumStatus.New ? SCIAPIThread : suppAPIThread,
+                suppAPIThread = SCIAPIThread,
                 moduleName = moduleName,
                 suppID = VstrongSuppID,
             };
 
-            if (!LogicAutoWHData.SendWebAPI_Status(statusAPI, URL, automationErrMsg, jsonBody))
+            if (!LogicAutoWHData.SendWebAPI_Status(statusAPI, automationErrMsg, jsonBody))
             {
                 return false;
             }
@@ -323,7 +321,7 @@ namespace Sci.Production.Automation
             AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS
             {
                 apiThread = "SentWHCloseToVstrong",
-                suppAPIThread = suppAPIThread,
+                suppAPIThread = SCIAPIThread,
                 moduleName = moduleName,
                 suppID = VstrongSuppID,
             };

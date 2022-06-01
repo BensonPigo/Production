@@ -34,7 +34,9 @@ namespace Sci.Production.Automation
             string suppAPIThread = "api/GuoziAGV/SentDataByApiTag";
             string sqlGetData;
             this.automationErrMsg.apiThread = apiThread;
-            this.automationErrMsg.suppAPIThread = suppAPIThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread; Dictionary<string, string> requestHeaders = GetCustomHeaders();
+            this.automationErrMsg.CallFrom = requestHeaders["CallFrom"];
+            this.automationErrMsg.Activity = requestHeaders["Activity"];
 
             foreach (DataRow dr in dtWorkOrder.Rows)
             {
@@ -84,6 +86,9 @@ namespace Sci.Production.Automation
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
             List<BundleToAGV_PostBody> impListBundle;
+            Dictionary<string, string> requestHeaders = GetCustomHeaders();
+            this.automationErrMsg.CallFrom = requestHeaders["CallFrom"];
+            this.automationErrMsg.Activity = requestHeaders["Activity"];
             try
             {
                 impListBundle = funListBundle();

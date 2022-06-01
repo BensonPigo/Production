@@ -125,6 +125,7 @@
       <HintPath>..\_Dll\Microsoft.SqlServer.SqlEnum.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic.PowerPacks, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
@@ -164,6 +165,30 @@
     </Compile>
     <Compile Include="P01.Designer.cs">
       <DependentUpon>P01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02.Designer.cs">
+      <DependentUpon>P02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P03.designer.cs">
+      <DependentUpon>P03.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P04.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P04.designer.cs">
+      <DependentUpon>P04.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05.designer.cs">
+      <DependentUpon>P05.cs</DependentUpon>
     </Compile>
     <Compile Include="PasswordByUser.cs">
       <SubType>Form</SubType>
@@ -206,6 +231,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02.resx">
+      <DependentUpon>P02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P03.resx">
+      <DependentUpon>P03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P04.resx">
+      <DependentUpon>P04.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05.resx">
+      <DependentUpon>P05.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PasswordByUser.resx">
       <DependentUpon>PasswordByUser.cs</DependentUpon>

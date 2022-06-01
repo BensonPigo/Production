@@ -16,9 +16,7 @@ namespace Sci.Production.Automation
     {
         private static readonly string GensongSuppID = "3A0174";
         private static readonly string moduleName = "AutoWHFabric";
-        private static readonly string suppAPIThread = "pms/GS_WebServices";
         private static readonly string SCIAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag";
-        private static readonly string URL = GetSupplierUrl(GensongSuppID, moduleName);
 
         /// PMS的action對應廠商statusAPI: Confrim(New),Unconfrim(Delete),Delete(Delete),Update(Revise)
         /// <param name="dtDetail">表身資訊,需要有ukey</param>
@@ -71,12 +69,12 @@ namespace Sci.Production.Automation
             AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS
             {
                 apiThread = $"Sent{dtNameforAPI}ToGensong",
-                suppAPIThread = statusAPI == EnumStatus.New ? SCIAPIThread : suppAPIThread,
+                suppAPIThread = SCIAPIThread,
                 moduleName = moduleName,
                 suppID = GensongSuppID,
             };
 
-            if (!LogicAutoWHData.SendWebAPI_Status(statusAPI, URL, automationErrMsg, jsonBody))
+            if (!LogicAutoWHData.SendWebAPI_Status(statusAPI, automationErrMsg, jsonBody))
             {
                 return false;
             }
@@ -342,11 +340,10 @@ namespace Sci.Production.Automation
             }
 
             string apiThread = "SentWHCloseToGensong";
-            string suppAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag";
             AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS
             {
                 apiThread = apiThread,
-                suppAPIThread = suppAPIThread,
+                suppAPIThread = SCIAPIThread,
             };
 
             dynamic bodyObject = new ExpandoObject();
@@ -361,12 +358,12 @@ namespace Sci.Production.Automation
             string jsonBody = JsonConvert.SerializeObject(LogicAutoWHData.CreateStructure("WHClose", bodyObject));
             if (doTask)
             {
-                Task.Run(() => SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, automationErrMsg))
+                Task.Run(() => SendWebAPI(GetSciUrl(), SCIAPIThread, jsonBody, automationErrMsg))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             else
             {
-                SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, automationErrMsg);
+                SendWebAPI(GetSciUrl(), SCIAPIThread, jsonBody, automationErrMsg);
             }
         }
 
@@ -395,11 +392,10 @@ namespace Sci.Production.Automation
         private static void ProcessCutplan_Detail(DataTable dtDetail, bool isConfirmed)
         {
             string apiThread = "SentCutplan_DetailToGensong";
-            string suppAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag";
             AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS
             {
                 apiThread = apiThread,
-                suppAPIThread = suppAPIThread,
+                suppAPIThread = SCIAPIThread,
             };
 
             string sqlcmd = $@"
@@ -490,7 +486,7 @@ select distinct
                 });
 
             string jsonBody = JsonConvert.SerializeObject(LogicAutoWHData.CreateStructure("Cutplan_Detail", bodyObject));
-            SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, automationErrMsg);
+            SendWebAPI(GetSciUrl(), SCIAPIThread, jsonBody, automationErrMsg);
         }
 
         /// <inheritdoc/>
@@ -511,11 +507,10 @@ select distinct
             }
 
             string apiThread = "SentRefnoRelaxtimeToGensong";
-            string suppAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag";
             AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS
             {
                 apiThread = apiThread,
-                suppAPIThread = suppAPIThread,
+                suppAPIThread = SCIAPIThread,
             };
 
             dynamic bodyObject = new ExpandoObject();
@@ -529,7 +524,7 @@ select distinct
                 });
 
             string jsonBody = JsonConvert.SerializeObject(LogicAutoWHData.CreateStructure("RefnoRelaxtime", bodyObject));
-            SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, automationErrMsg);
+            SendWebAPI(GetSciUrl(), SCIAPIThread, jsonBody, automationErrMsg);
         }
     }
 }
