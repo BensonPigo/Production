@@ -97,30 +97,8 @@ namespace Sci.Production.Shipping
         private string sqlGetLocalMain = @"
 select 
     g.ID
-	,Category = stuff((
-			select distinct concat(',', dl.Name)
-			from PackingList pl WITH (NOLOCK)
-			inner join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
-			inner join orders o WITH (NOLOCK) on o.id = pld.OrderID
-			inner join DropDownList dl on dl.id = o.Category and dl.type = 'category'
-			where pl.INVNo =g.ID
-			for xml path('')
-		),1,1,'')
     ,g.Shipper
-	,MDivisionID = stuff((
-			select distinct concat(',', o.MDivisionID)
-			from PackingList pl WITH (NOLOCK)
-			inner join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
-			inner join orders o WITH (NOLOCK) on o.id = pld.OrderID
-			where pl.INVNo =g.ID
-			for xml path('')
-		),1,1,'')
     ,g.BrandID
-	,BuyerDelivery = (select min(oq.BuyerDelivery)
-		from PackingList pl WITH (NOLOCK)
-		inner join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
-		inner join Order_QtyShip oq WITH (NOLOCK) on pld.OrderID = oq.Id and pld.OrderShipmodeSeq = oq.Seq
-		where pl.INVNo =g.ID)
     ,g.FCRDate
     ,g.CustCDID
     ,Dest = (g.Dest+' - '+isnull(c.Alias,''))
@@ -147,15 +125,6 @@ select
 			where pl.INVNo =g.ID
 		)
     ,g.TotalCBM
-	,[Ttl. Prod. Out Qty] = (
-		select sum(QAQty)
-		from SewingOutput_Detail_Detail sodd
-		where exists (
-			select 1
-			from PackingList pl WITH (NOLOCK)
-			inner join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
-			where pl.INVNo =g.ID
-			and pld.OrderID = sodd.OrderId))
 	,[Carton Qty at C-Log] = (
 		select sum(pld.CTNQty)
 		from PackingList pl WITH (NOLOCK)
@@ -183,6 +152,7 @@ select
     ,g.Remark
     ,[Handle] = dbo.getPass1(g.Handle)
     ,g.AddDate
+into #tmpGMT
 from GMTBooking g WITH (NOLOCK) 
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
@@ -213,7 +183,86 @@ OUTER APPLY(
     from PulloutPort p
     where g.DischargePortID = p.ID
 )PulloutPortPOD
-where 1=1";
+where 1=1 {0}
+
+select  g2.ID, [QAQty] = sum(sodd.QAQty)
+into    #SewingOutput
+from    (
+        select  distinct g.ID, pld.OrderID
+        from    #tmpGMT g
+        inner join PackingList pl with (nolock) on pl.INVNo = g.ID
+        inner join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
+        ) g2
+inner join SewingOutput_Detail_Detail sodd with (nolock) on sodd.OrderID = g2.OrderId
+group by g2.ID
+
+select  [ID] = pl.INVNo, [Category] = dl.Name, o.MDivisionID, [BuyerDelivery] = min(oq.BuyerDelivery)
+into    #Packing
+from PackingList pl WITH (NOLOCK)
+inner join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
+inner join orders o WITH (NOLOCK) on o.id = pld.OrderID
+inner join DropDownList dl on dl.id = o.Category and dl.type = 'category'
+inner join Order_QtyShip oq WITH (NOLOCK) on pld.OrderID = oq.Id and pld.OrderShipmodeSeq = oq.Seq
+where pl.INVNo in (select ID from #tmpGMT)
+group by pl.INVNo, dl.Name, o.MDivisionID
+
+select  g.ID
+	,Category = stuff((
+			select distinct concat(',', p.Category)
+			from #Packing p
+			where p.ID = g.ID
+			for xml path('')
+		),1,1,'')
+    ,g.Shipper
+	,MDivisionID = stuff((
+			select distinct concat(',', p.MDivisionID)
+			from #Packing p
+			where p.ID = g.ID
+			for xml path('')
+		),1,1,'')
+    ,g.BrandID
+	,BuyerDelivery = (select top 1 p.BuyerDelivery
+		                from #Packing p
+			            where p.ID = g.ID)
+    ,g.FCRDate
+    ,g.CustCDID
+    ,g.Dest
+    ,g.POD
+    ,g.ShipModeID
+    ,g.ShipTermID
+    ,g.DocumentRefNo
+    ,g.Forwarder
+    ,g.SONo
+    ,g.[SoConfirmDate]
+    ,g.CutOffDate
+	,g.[Terminal/Whse#]
+    ,g.ShipPlanID
+    ,g.[ShipPlan Status]
+    ,g.CYCFS	
+    ,g.CTNTruck
+    ,g.TotalShipQty
+    ,g.TotalCTNQty
+    ,g.TotalGW
+    ,g.VM
+    ,g.TotalCBM
+	,[Ttl. Prod. Out Qty] = s.QAQty
+	,g.[Carton Qty at C-Log]
+	,g.[Sewing Inline]
+	,g.[Sewing Offline]
+    ,g.ConfirmDate
+    ,g.[PulloutComplete]
+	,g.[Pull Out Date]
+	,g.PulloutID
+    ,g.ETD
+    ,g.ETA
+    ,g.Vessel
+    ,g.Remark
+    ,g.Handle
+    ,g.AddDate
+from #tmpGMT g
+left join #SewingOutput s on s.ID = g.ID
+order by g.ID
+";
 
         private string sqlGetLocal = @"
 select DISTINCT
@@ -331,7 +380,8 @@ OUTER APPLY(
     where g.DischargePortID = p.ID
 )PulloutPortPOD
 
-where pl.ID<>'' and 1=1
+where pl.ID<>'' and 1=1 {0}
+order by g.ID
 ";
 
         private string sqlGetA2B = @"
@@ -390,7 +440,7 @@ OUTER APPLY(
     where g.DischargePortID = p.ID
 )PulloutPortPOD
 
-where 1=1 ";
+where 1=1 {0}";
 
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
@@ -398,307 +448,94 @@ where 1=1 ";
             StringBuilder sqlCmd = new StringBuilder();
             StringBuilder sqlCmd_where = new StringBuilder();
 
-            if (this.reportType == "1")
-            {
-                #region 準備Tmp
-
-                sqlCmd.Append(@"
-
-SELECT DISTINCT [GBID]=g.ID,[PackingListID]=pl.ID,[PulloutID]=pl.PulloutID,[OrderID]=pld.OrderID
-INTO #tmp1
-from GMTBooking g WITH (NOLOCK) 
-INNER join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
-INNER join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
-where pl.ID<>'' and 1=1 
-");
-
-                #region Where 條件
-
-                if (!MyUtility.Check.Empty(this.invdate1))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.InvDate >= '{0}' ", Convert.ToDateTime(this.invdate1).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.invdate2))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.InvDate <= '{0}' ", Convert.ToDateTime(this.invdate2).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.shipper))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.Shipper = '{0}'", this.shipper));
-                }
-
-                if (!MyUtility.Check.Empty(this.brand))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
-                }
-
-                if (!MyUtility.Check.Empty(this.shipmode))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
-                }
-
-                if (!MyUtility.Check.Empty(this.shipterm))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.ShipTermID = '{0}'", this.shipterm));
-                }
-
-                if (!MyUtility.Check.Empty(this.dest))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.Dest = '{0}'", this.dest));
-                }
-
-                if (!MyUtility.Check.Empty(this.etd1))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.ETD >= '{0}' ", Convert.ToDateTime(this.etd1).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.etd2))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.etd2).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.FCRDate1))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.FCRDate >= '{0}' ", Convert.ToDateTime(this.FCRDate1).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.FCRDate2))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.FCRDate <= '{0}' ", Convert.ToDateTime(this.FCRDate2).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.CutOffDate1))
-                {
-                    sqlCmd_where.Append(string.Format(" and CAST( g.CutOffDate AS DATE) >= '{0}' ", Convert.ToDateTime(this.CutOffDate1).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.CutOffDate2))
-                {
-                    sqlCmd_where.Append(string.Format(" and CAST( g.CutOffDate AS DATE) <= '{0}' ", Convert.ToDateTime(this.CutOffDate2).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.SOCFMDate1))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.SOCFMDate >= '{0}' ", Convert.ToDateTime(this.SOCFMDate1).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.SOCFMDate2))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.SOCFMDate <= '{0}' ", Convert.ToDateTime(this.SOCFMDate2).ToString("yyyy/MM/dd")));
-                }
-
-                if (this.status == "Confirmed")
-                {
-                    sqlCmd_where.Append(" and g.Status = 'Confirmed'");
-                }
-                else if (this.status == "UnConfirmed")
-                {
-                    sqlCmd_where.Append(" and g.Status <> 'Confirmed'");
-                }
-
-                if (!MyUtility.Check.Empty(this.category))
-                {
-                    sqlCmd_where.Append(string.Format(
-                        @"
-and exists(
-    select 1
-    from PackingList pl WITH (NOLOCK)
-    inner join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
-    inner join orders o WITH (NOLOCK) on o.id = pld.OrderID
-    where pl.INVNo =g.ID
-    and o.Category in ({0})
-)", this.category));
-                }
-                #endregion
-
-                sqlCmd.Append(Environment.NewLine + sqlCmd_where.ToString());
-
-                sqlCmd.Append(@"
-
-SELECT 
-t.GBID
-,t.PackingListID
-,t.PulloutID
-,t.OrderID
-,[AddDate]=CASE WHEN Pullout_Revise.AddDate IS NOT NULL THEN Pullout_Revise.AddDate
-		 ELSE  (SELECT TOP 1 SendToTPE FROM Pullout WHERE ID=t.PulloutID) 
-		 END
-INTO #tmp2
-FROm #tmp1  t
-OUTER APPLY(
-	SELECT TOP 1 AddDate
-	FROM Pullout_Revise 
-	WHERE  ID=t.PulloutID 
-	AND OrderID=t.OrderID
-	ORDER BY AddDate DESC
-)Pullout_Revise
-
-");
-
-                #endregion
-
-                sqlCmd.Append("{0}");
-            }
-            else
-            {
-                #region 準備Tmp
-
-                sqlCmd.Append(@"
-
-SELECT DISTINCT [GBID]=g.ID,[PackingListID]=pl.ID,[PulloutID]=pl.PulloutID,[OrderID]=pld.OrderID
-INTO #tmp1
-from GMTBooking g WITH (NOLOCK) 
-INNER join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
-INNER join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
-where pl.ID<>'' and 1=1 
-");
-
-                #region Where 條件
-
-                if (!MyUtility.Check.Empty(this.invdate1))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.InvDate >= '{0}' ", Convert.ToDateTime(this.invdate1).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.invdate2))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.InvDate <= '{0}' ", Convert.ToDateTime(this.invdate2).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.shipper))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.Shipper = '{0}'", this.shipper));
-                }
-
-                if (!MyUtility.Check.Empty(this.brand))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
-                }
-
-                if (!MyUtility.Check.Empty(this.shipmode))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
-                }
-
-                if (!MyUtility.Check.Empty(this.shipterm))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.ShipTermID = '{0}'", this.shipterm));
-                }
-
-                if (!MyUtility.Check.Empty(this.dest))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.Dest = '{0}'", this.dest));
-                }
-
-                if (!MyUtility.Check.Empty(this.etd1))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.ETD >= '{0}' ", Convert.ToDateTime(this.etd1).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.etd2))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.etd2).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.FCRDate1))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.FCRDate >= '{0}' ", Convert.ToDateTime(this.FCRDate1).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.FCRDate2))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.FCRDate <= '{0}' ", Convert.ToDateTime(this.FCRDate2).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.CutOffDate1))
-                {
-                    sqlCmd_where.Append(string.Format(" and CAST( g.CutOffDate AS DATE) >= '{0}' ", Convert.ToDateTime(this.CutOffDate1).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.CutOffDate2))
-                {
-                    sqlCmd_where.Append(string.Format(" and CAST( g.CutOffDate AS DATE) <= '{0}' ", Convert.ToDateTime(this.CutOffDate2).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.SOCFMDate1))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.SOCFMDate >= '{0}' ", Convert.ToDateTime(this.SOCFMDate1).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.SOCFMDate2))
-                {
-                    sqlCmd_where.Append(string.Format(" and g.SOCFMDate <= '{0}' ", Convert.ToDateTime(this.SOCFMDate2).ToString("yyyy/MM/dd")));
-                }
-
-                if (this.status == "Confirmed")
-                {
-                    sqlCmd_where.Append(" and g.Status = 'Confirmed'");
-                }
-                else if (this.status == "UnConfirmed")
-                {
-                    sqlCmd_where.Append(" and g.Status <> 'Confirmed'");
-                }
-
-                if (!MyUtility.Check.Empty(this.category))
-                {
-                    sqlCmd_where.Append(string.Format(
-                        @"
-and exists(
-    select 1
-    from PackingList pl WITH (NOLOCK)
-    inner join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
-    inner join orders o WITH (NOLOCK) on o.id = pld.OrderID
-    where pl.INVNo =g.ID
-    and o.Category in ({0})
-)", this.category));
-                }
-                #endregion
-
-                sqlCmd.Append(Environment.NewLine + sqlCmd_where.ToString());
-
-                sqlCmd.Append(@"
-
-SELECT 
-t.GBID
-,t.PackingListID
-,t.PulloutID
-,t.OrderID
-,[AddDate]=CASE WHEN Pullout_Revise.AddDate IS NOT NULL THEN Pullout_Revise.AddDate
-		 ELSE  (SELECT TOP 1 SendToTPE FROM Pullout WHERE ID=t.PulloutID) 
-		 END
-INTO #tmp2
-FROm #tmp1  t
-OUTER APPLY(
-	SELECT TOP 1 AddDate
-	FROM Pullout_Revise 
-	WHERE  ID=t.PulloutID 
-	AND OrderID=t.OrderID
-	ORDER BY AddDate DESC
-)Pullout_Revise
-
-");
-
-                #endregion
-
-                sqlCmd.Append("{0}");
-            }
-
             #region Where 條件
+
+            if (!MyUtility.Check.Empty(this.invdate1))
+            {
+                sqlCmd_where.Append(string.Format(" and g.InvDate >= '{0}' ", Convert.ToDateTime(this.invdate1).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this.invdate2))
+            {
+                sqlCmd_where.Append(string.Format(" and g.InvDate <= '{0}' ", Convert.ToDateTime(this.invdate2).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this.shipper))
+            {
+                sqlCmd_where.Append(string.Format(" and g.Shipper = '{0}'", this.shipper));
+            }
+
+            if (!MyUtility.Check.Empty(this.brand))
+            {
+                sqlCmd_where.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
+            }
+
+            if (!MyUtility.Check.Empty(this.shipmode))
+            {
+                sqlCmd_where.Append(string.Format(" and g.ShipModeID = '{0}'", this.brand));
+            }
+
+            if (!MyUtility.Check.Empty(this.shipterm))
+            {
+                sqlCmd_where.Append(string.Format(" and g.ShipTermID = '{0}'", this.shipterm));
+            }
+
+            if (!MyUtility.Check.Empty(this.dest))
+            {
+                sqlCmd_where.Append(string.Format(" and g.Dest = '{0}'", this.dest));
+            }
+
+            if (!MyUtility.Check.Empty(this.etd1))
+            {
+                sqlCmd_where.Append(string.Format(" and g.ETD >= '{0}' ", Convert.ToDateTime(this.etd1).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this.etd2))
+            {
+                sqlCmd_where.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.etd2).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this.FCRDate1))
+            {
+                sqlCmd_where.Append(string.Format(" and g.FCRDate >= '{0}' ", Convert.ToDateTime(this.FCRDate1).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this.FCRDate2))
+            {
+                sqlCmd_where.Append(string.Format(" and g.FCRDate <= '{0}' ", Convert.ToDateTime(this.FCRDate2).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this.CutOffDate1))
+            {
+                sqlCmd_where.Append(string.Format(" and CAST( g.CutOffDate AS DATE) >= '{0}' ", Convert.ToDateTime(this.CutOffDate1).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this.CutOffDate2))
+            {
+                sqlCmd_where.Append(string.Format(" and CAST( g.CutOffDate AS DATE) <= '{0}' ", Convert.ToDateTime(this.CutOffDate2).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this.SOCFMDate1))
+            {
+                sqlCmd_where.Append(string.Format(" and g.SOCFMDate >= '{0}' ", Convert.ToDateTime(this.SOCFMDate1).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this.SOCFMDate2))
+            {
+                sqlCmd_where.Append(string.Format(" and g.SOCFMDate <= '{0}' ", Convert.ToDateTime(this.SOCFMDate2).ToString("yyyy/MM/dd")));
+            }
+
+            if (this.status == "Confirmed")
+            {
+                sqlCmd_where.Append(" and g.Status = 'Confirmed'");
+            }
+            else if (this.status == "UnConfirmed")
+            {
+                sqlCmd_where.Append(" and g.Status <> 'Confirmed'");
+            }
 
             if (!MyUtility.Check.Empty(this.category))
             {
-                sqlCmd.Append(string.Format(
-                    @"
-and exists(
-    select 1
-    from PackingList pl WITH (NOLOCK)
-    inner join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
-    inner join orders o WITH (NOLOCK) on o.id = pld.OrderID
-    where pl.INVNo =g.ID
-    and o.Category in ({0})
-)", this.category));
                 sqlCmd_where.Append(string.Format(
                     @"
 and exists(
@@ -711,105 +548,11 @@ and exists(
 )", this.category));
             }
 
-            if (!MyUtility.Check.Empty(this.invdate1))
-            {
-                sqlCmd.Append(string.Format(" and g.InvDate >= '{0}' ", Convert.ToDateTime(this.invdate1).ToString("yyyy/MM/dd")));
-                sqlCmd_where.Append(string.Format(" and g.InvDate >= '{0}' ", Convert.ToDateTime(this.invdate1).ToString("yyyy/MM/dd")));
-            }
-
-            if (!MyUtility.Check.Empty(this.invdate2))
-            {
-                sqlCmd.Append(string.Format(" and g.InvDate <= '{0}' ", Convert.ToDateTime(this.invdate2).ToString("yyyy/MM/dd")));
-                sqlCmd_where.Append(string.Format(" and g.InvDate <= '{0}' ", Convert.ToDateTime(this.invdate2).ToString("yyyy/MM/dd")));
-            }
-
-            if (!MyUtility.Check.Empty(this.shipper))
-            {
-                sqlCmd.Append(string.Format(" and g.Shipper = '{0}'", this.shipper));
-            }
-
-            if (!MyUtility.Check.Empty(this.brand))
-            {
-                sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
-            }
-
-            if (!MyUtility.Check.Empty(this.shipmode))
-            {
-                sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}'", this.shipmode));
-            }
-
-            if (!MyUtility.Check.Empty(this.shipterm))
-            {
-                sqlCmd.Append(string.Format(" and g.ShipTermID = '{0}'", this.shipterm));
-            }
-
-            if (!MyUtility.Check.Empty(this.dest))
-            {
-                sqlCmd.Append(string.Format(" and g.Dest = '{0}'", this.dest));
-            }
-
-            if (!MyUtility.Check.Empty(this.etd1))
-            {
-                sqlCmd.Append(string.Format(" and g.ETD >= '{0}' ", Convert.ToDateTime(this.etd1).ToString("yyyy/MM/dd")));
-                sqlCmd_where.Append(string.Format(" and g.Dest = '{0}'", this.dest));
-            }
-
-            if (!MyUtility.Check.Empty(this.etd2))
-            {
-                sqlCmd.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.etd2).ToString("yyyy/MM/dd")));
-                sqlCmd_where.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.etd2).ToString("yyyy/MM/dd")));
-            }
-
-            if (!MyUtility.Check.Empty(this.FCRDate1))
-            {
-                sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}' ", Convert.ToDateTime(this.FCRDate1).ToString("yyyy/MM/dd")));
-                sqlCmd_where.Append(string.Format(" and g.FCRDate >= '{0}' ", Convert.ToDateTime(this.FCRDate1).ToString("yyyy/MM/dd")));
-            }
-
-            if (!MyUtility.Check.Empty(this.FCRDate2))
-            {
-                sqlCmd.Append(string.Format(" and g.FCRDate <= '{0}' ", Convert.ToDateTime(this.FCRDate2).ToString("yyyy/MM/dd")));
-                sqlCmd_where.Append(string.Format(" and g.FCRDate <= '{0}' ", Convert.ToDateTime(this.FCRDate2).ToString("yyyy/MM/dd")));
-            }
-
-            if (!MyUtility.Check.Empty(this.CutOffDate1))
-            {
-                sqlCmd.Append(string.Format(" and CAST( g.CutOffDate AS DATE) >= '{0}' ", Convert.ToDateTime(this.CutOffDate1).ToString("yyyy/MM/dd")));
-                sqlCmd_where.Append(string.Format(" and CAST( g.CutOffDate AS DATE) >= '{0}' ", Convert.ToDateTime(this.CutOffDate1).ToString("yyyy/MM/dd")));
-            }
-
-            if (!MyUtility.Check.Empty(this.CutOffDate2))
-            {
-                sqlCmd.Append(string.Format(" and CAST( g.CutOffDate AS DATE) <= '{0}' ", Convert.ToDateTime(this.CutOffDate2).ToString("yyyy/MM/dd")));
-                sqlCmd_where.Append(string.Format(" and CAST( g.CutOffDate AS DATE) <= '{0}' ", Convert.ToDateTime(this.CutOffDate2).ToString("yyyy/MM/dd")));
-            }
-
-            if (!MyUtility.Check.Empty(this.SOCFMDate1))
-            {
-                sqlCmd.Append(string.Format(" and g.SOCFMDate >= '{0}' ", Convert.ToDateTime(this.SOCFMDate1).ToString("yyyy/MM/dd")));
-                sqlCmd_where.Append(string.Format(" and g.SOCFMDate >= '{0}' ", Convert.ToDateTime(this.SOCFMDate1).ToString("yyyy/MM/dd")));
-            }
-
-            if (!MyUtility.Check.Empty(this.SOCFMDate2))
-            {
-                sqlCmd.Append(string.Format(" and g.SOCFMDate <= '{0}' ", Convert.ToDateTime(this.SOCFMDate2).ToString("yyyy/MM/dd")));
-                sqlCmd_where.Append(string.Format(" and g.SOCFMDate <= '{0}' ", Convert.ToDateTime(this.SOCFMDate2).ToString("yyyy/MM/dd")));
-            }
-
-            if (this.status == "Confirmed")
-            {
-                sqlCmd.Append(" and g.Status = 'Confirmed'");
-            }
-            else if (this.status == "UnConfirmed")
-            {
-                sqlCmd.Append(" and g.Status <> 'Confirmed'");
-            }
-
             if (!MyUtility.Check.Empty(this.Delivery1))
             {
                 this.hasDelivery = true;
 
-                sqlCmd.Append(string.Format(
+                sqlCmd_where.Append(string.Format(
                     @"
 and exists (select 1
             from (
@@ -824,14 +567,65 @@ and exists (select 1
                     Convert.ToDateTime(this.Delivery1).ToString("yyyy/MM/dd"),
                     Convert.ToDateTime(this.Delivery2).ToString("yyyy/MM/dd")));
             }
-
             #endregion
 
-            sqlCmd.Append(" order by g.ID" + Environment.NewLine + " DROP TABLE #tmp1,#tmp2");
+            string sqlGetLocalMainFin = string.Format(this.sqlGetLocalMain, sqlCmd_where);
+            string sqlGetLocalFin = string.Format(this.sqlGetLocal, sqlCmd_where);
+            string sqlGetA2BFin = string.Format(this.sqlGetA2B, sqlCmd_where);
+
+            if (this.reportType != "1")
+            {
+                #region 準備Tmp
+
+                sqlCmd.Append(@"
+
+SELECT DISTINCT [GBID]=g.ID,[PackingListID]=pl.ID,[PulloutID]=pl.PulloutID,[OrderID]=pld.OrderID
+INTO #tmp1
+from GMTBooking g WITH (NOLOCK) 
+INNER join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
+INNER join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
+where pl.ID<>'' and 1=1 
+");
+
+                sqlCmd.Append(Environment.NewLine + sqlCmd_where.ToString());
+
+                sqlCmd.Append(@"
+
+SELECT 
+t.GBID
+,t.PackingListID
+,t.PulloutID
+,t.OrderID
+,[AddDate]=CASE WHEN Pullout_Revise.AddDate IS NOT NULL THEN Pullout_Revise.AddDate
+		 ELSE  (SELECT TOP 1 SendToTPE FROM Pullout WHERE ID=t.PulloutID) 
+		 END
+INTO #tmp2
+FROm #tmp1  t
+OUTER APPLY(
+	SELECT TOP 1 AddDate
+	FROM Pullout_Revise 
+	WHERE  ID=t.PulloutID 
+	AND OrderID=t.OrderID
+	ORDER BY AddDate DESC
+)Pullout_Revise
+
+");
+
+                #endregion
+
+            }
+
+            sqlCmd.Append("{0}");
+
+            if (this.reportType != "1")
+            {
+                sqlCmd.Append(Environment.NewLine + " DROP TABLE #tmp1,#tmp2");
+            }
+
             DualResult result;
             if (this.reportType == "1")
             {
-                result = DBProxy.Current.Select(null, string.Format(sqlCmd.ToString(), this.sqlGetLocalMain), out this.printData);
+                result = DBProxy.Current.Select(null, string.Format(sqlCmd.ToString(), sqlGetLocalMainFin), out this.printData);
                 if (!result)
                 {
                     DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -841,7 +635,7 @@ and exists (select 1
                 #region GetA2B Data
                 DataTable dtMainA2B;
 
-                result = DBProxy.Current.Select(null, string.Format(sqlCmd.ToString(), this.sqlGetA2B), out dtMainA2B);
+                result = DBProxy.Current.Select(null, string.Format(sqlCmd.ToString(), sqlGetA2BFin), out dtMainA2B);
                 if (!result)
                 {
                     DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -851,32 +645,46 @@ and exists (select 1
                 if (dtMainA2B.Rows.Count > 0)
                 {
                     string getPackFromA2B = @"
+select  g2.ID, [QAQty] = sum(sodd.QAQty)
+into    #SewingOutput
+from    (
+        select  distinct g.ID, pld.OrderID
+        from    #tmp g
+        inner join PackingList pl with (nolock) on pl.INVNo = g.ID
+        inner join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
+        ) g2
+inner join SewingOutput_Detail_Detail sodd with (nolock) on sodd.OrderID = g2.OrderId
+group by g2.ID
+
+select  [ID] = pl.INVNo, [Category] = dl.Name, o.MDivisionID, [BuyerDelivery] = min(oq.BuyerDelivery)
+into    #Packing
+from PackingList pl WITH (NOLOCK)
+inner join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
+inner join orders o WITH (NOLOCK) on o.id = pld.OrderID
+inner join DropDownList dl on dl.id = o.Category and dl.type = 'category'
+inner join Order_QtyShip oq WITH (NOLOCK) on pld.OrderID = oq.Id and pld.OrderShipmodeSeq = oq.Seq
+where pl.INVNo in (select ID from #tmp)
+group by pl.INVNo, dl.Name, o.MDivisionID
+
 select DISTINCT
     g.ID
 	,Category = stuff((
-			select distinct concat(',', dl.Name)
-			from PackingList pl WITH (NOLOCK)
-			inner join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
-			inner join orders o WITH (NOLOCK) on o.id = pld.OrderID
-			inner join DropDownList dl on dl.id = o.Category and dl.type = 'category'
-			where pl.INVNo =g.ID
+			select distinct concat(',', p.Category)
+			from #Packing p
+			where p.ID = g.ID
 			for xml path('')
 		),1,1,'')
     ,g.Shipper
 	,MDivisionID = stuff((
-			select distinct concat(',', o.MDivisionID)
-			from PackingList pl WITH (NOLOCK)
-			inner join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
-			inner join orders o WITH (NOLOCK) on o.id = pld.OrderID
-			where pl.INVNo =g.ID
+			select distinct concat(',', p.MDivisionID)
+			from #Packing p
+			where p.ID = g.ID
 			for xml path('')
 		),1,1,'')
     ,g.BrandID
-	,BuyerDelivery = (select min(oq.BuyerDelivery)
-		from PackingList pl WITH (NOLOCK)
-		inner join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
-		inner join Order_QtyShip oq WITH (NOLOCK) on pld.OrderID = oq.Id and pld.OrderShipmodeSeq = oq.Seq
-		where pl.INVNo =g.ID)
+	,BuyerDelivery = (select top 1 p.BuyerDelivery
+		                from #Packing p
+			            where p.ID = g.ID)
 	,g.FCRDate
     ,g.CustCDID
     ,g.Dest
@@ -897,15 +705,7 @@ select DISTINCT
     ,g.TotalCTNQty
     ,g.TotalGW
     ,g.TotalCBM
-	,[Ttl. Prod. Out Qty] = (
-		select sum(QAQty)
-		from SewingOutput_Detail_Detail sodd
-		where exists (
-			select 1
-			from PackingList pl WITH (NOLOCK)
-			inner join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
-			where pl.INVNo =g.ID
-			and pld.OrderID = sodd.OrderId))
+	,[Ttl. Prod. Out Qty] = s.QAQty
 	,[Carton Qty at C-Log] = (
 		select sum(pld.CTNQty)
 		from PackingList pl WITH (NOLOCK)
@@ -941,6 +741,7 @@ select DISTINCT
 			for xml path('')
 		),1,1,'')
 from #tmp g 
+left join #SewingOutput s on s.ID = g.ID
 OUTER APPLY(
 	SELECT [Value]=Count(ID)
 	 FROM
@@ -1069,7 +870,7 @@ outer apply(
             }
             else
             {
-                result = DBProxy.Current.Select(null, string.Format(sqlCmd.ToString(), this.sqlGetLocal), out this.printData);
+                result = DBProxy.Current.Select(null, string.Format(sqlCmd.ToString(), sqlGetLocalFin), out this.printData);
                 if (!result)
                 {
                     DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -1079,7 +880,7 @@ outer apply(
                 #region GetA2B Data
                 DataTable dtMainA2B;
 
-                result = DBProxy.Current.Select(null, string.Format(sqlCmd.ToString(), this.sqlGetA2B), out dtMainA2B);
+                result = DBProxy.Current.Select(null, string.Format(sqlCmd.ToString(), sqlGetA2BFin), out dtMainA2B);
                 if (!result)
                 {
                     DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
