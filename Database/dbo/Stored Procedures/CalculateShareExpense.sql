@@ -515,7 +515,7 @@ BEGIN
 						 else Round(t.Amount / count(*) over(PARTITION BY t.InvNo,t.AccountID),2) end
 			into #PLSharedAmtStep1
 			from #InvNoSharedAmt t
-			inner join ShareExpense s on t.AccountID = s.AccountID and t.InvNo = s.InvNo and s.ShippingAPID = @APID and s.Junk = 0
+			inner join (select distinct AccountID, InvNo,ShareBase from ShareExpense where ShippingAPID = @APID and Junk = 0) s on t.AccountID = s.AccountID and t.InvNo = s.InvNo 
 			inner join PackingList pl with (nolock) on pl.INVNo = t.InvNo
 
 			select * ,[AccuPLSharedAmt] = SUM(PLSharedAmt) over(PARTITION BY InvNo,AccountID order BY InvNo,PackID,AccountID )

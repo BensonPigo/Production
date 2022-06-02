@@ -1198,7 +1198,7 @@ when not matched by target then
 
             if (!result)
             {
-                return new DualResult(false, "Re-calcute share expense failed!");
+                return result;
             }
 
             string sqlInvNo = $@"select distinct InvNo from ShareExpense where  ShippingAPID = '{this.CurrentMaintain["ID"]}'";
