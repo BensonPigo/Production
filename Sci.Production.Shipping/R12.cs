@@ -102,18 +102,27 @@ left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.Ord
 Left join Brand b on b.ID = o.BrandID
 outer apply
 (	
-    select top 1 ROUND(fcd.CpuCost,3) as CpuCost
-	from dbo.FtyShipper_Detail fd  
-	inner join FSRCpuCost_Detail fcd on fd.ShipperID = fcd.ShipperID 
-	where fd.BrandID=g.BrandID and fd.FactoryID=o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate and fd.seasonID=o.seasonID
+    select top 1 CpuCost = ROUND(fcd.CpuCost, 3)
+    from dbo.FtyShipper_Detail fd  
+    inner join FSRCpuCost_Detail fcd on fd.ShipperID = fcd.ShipperID 
+    where fd.BrandID=g.BrandID
+    and fd.FactoryID=o.FactoryID
+    and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+    and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate
+    and fd.seasonID=o.seasonID
 ) cpucost1
 outer apply
 (	
-    select top 1 isnull(cpucost1.CpuCost, ROUND(fcd.CpuCost,3)) as CpuCost
-	from dbo.FtyShipper_Detail fd  
-	inner join FSRCpuCost_Detail fcd on fd.ShipperID = fcd.ShipperID 
-	where fd.BrandID=g.BrandID and fd.FactoryID=o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate  and fd.seasonID=''
-) cpucost
+    select top 1 CpuCost = ROUND(fcd.CpuCost, 3)
+    from dbo.FtyShipper_Detail fd  
+    inner join FSRCpuCost_Detail fcd on fd.ShipperID = fcd.ShipperID 
+    where fd.BrandID=g.BrandID
+    and fd.FactoryID=o.FactoryID
+    and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+    and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate
+    and fd.seasonID=''
+) cpucost2
+outer apply (select CpuCost = isnull(cpucost1.CpuCost, cpucost2.CpuCost)) CpuCost
 outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(pd.OrderID,'AMT')   ) sub_Process_AMT
 outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(pd.OrderID,'CPU')   ) sub_Process_CPU
 Where 1=1 ");
