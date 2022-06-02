@@ -65,26 +65,26 @@ namespace Sci.Production.Tools
             string strWhere = string.Empty;
             if (!MyUtility.Check.Empty(this.txtsupplier.TextBox1.Text))
             {
-                strWhere += $" and SuppID = '{this.txtsupplier.TextBox1.Text}' " + Environment.NewLine;
+                strWhere += $" and IIF( isnull(b.SuppID,'') = '', a.SuppID, b.SuppID) = '{this.txtsupplier.TextBox1.Text}' " + Environment.NewLine;
             }
 
             if (!MyUtility.Check.Empty(this.txtJSONContains.Text))
             {
-                strWhere += $" and JSON like '%{this.txtJSONContains.Text}%'" + Environment.NewLine;
+                strWhere += $" and a.JSON like '%{this.txtJSONContains.Text}%'" + Environment.NewLine;
             }
 
             if (!MyUtility.Check.Empty(this.dateCreateTime.Value1) && !MyUtility.Check.Empty(this.dateCreateTime.Value2))
             {
-                strWhere += $@" and CONVERT(date,AddDate) between '{((DateTime)this.dateCreateTime.Value1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateCreateTime.Value2).ToString("yyyy/MM/dd")}' 
+                strWhere += $@" and CONVERT(date,a.AddDate) between '{((DateTime)this.dateCreateTime.Value1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateCreateTime.Value2).ToString("yyyy/MM/dd")}' 
     " + Environment.NewLine;
             }
             else if (!MyUtility.Check.Empty(this.dateCreateTime.Value1))
             {
-                strWhere += $@"and CONVERT(date,AddDate) = '{((DateTime)this.dateCreateTime.Value1).ToString("yyyy/MM/dd")}' " + Environment.NewLine;
+                strWhere += $@"and CONVERT(date,a.AddDate) = '{((DateTime)this.dateCreateTime.Value1).ToString("yyyy/MM/dd")}' " + Environment.NewLine;
             }
             else if (!MyUtility.Check.Empty(this.dateCreateTime.Value2))
             {
-                strWhere += $@"and CONVERT(date,AddDate) = '{((DateTime)this.dateCreateTime.Value2).ToString("yyyy/MM/dd")}' " + Environment.NewLine;
+                strWhere += $@"and CONVERT(date,a.AddDate) = '{((DateTime)this.dateCreateTime.Value2).ToString("yyyy/MM/dd")}' " + Environment.NewLine;
             }
 
             #endregion
@@ -97,16 +97,17 @@ namespace Sci.Production.Tools
             string sqlcmd = $@"
 select 
 [select] = 0
-,Ukey
-,SuppID
-,ModuleName
+,a.Ukey  
+,SuppID = IIF( isnull(b.SuppID,'') = '', a.SuppID, b.SuppID)
+,ModuleName = IIF( isnull(b.ModuleName,'') = '', a.ModuleName, b.ModuleName)
 ,APIThread
-,SuppAPIThread
+,a.SuppAPIThread
 ,ErrorMsg
 ,JSON
 ,AddDate
 ,Success
-from AutomationReceivedMsg
+from AutomationReceivedMsg a with (nolock)
+left join AutomationDisplay b with (nolock) on a.SuppAPIThread = b.SuppAPIThread
 where 1=1
  {strWhere}
 

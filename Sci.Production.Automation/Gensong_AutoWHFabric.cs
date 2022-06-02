@@ -14,8 +14,15 @@ namespace Sci.Production.Automation
     /// <inheritdoc/>
     public class Gensong_AutoWHFabric
     {
+        // 廠商的資訊基本上都沒使用到, 也不需要使用
         private static readonly string GensongSuppID = "3A0174";
         private static readonly string moduleName = "AutoWHFabric";
+        private static readonly string URL = GetSupplierUrl(GensongSuppID, moduleName);
+        private static readonly string suppAPIThread = "pms/GS_WebServices";
+
+        // 一律呼叫SCI 中繼API, SuppID & ModuleName 會影響到ReSent, 所以必須用SCI
+        private static readonly string SCISuppID = "SCI";
+        private static readonly string SCIModuleName = "SCI";
         private static readonly string SCIAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag";
 
         /// PMS的action對應廠商statusAPI: Confrim(New),Unconfrim(Delete),Delete(Delete),Update(Revise)
@@ -70,11 +77,11 @@ namespace Sci.Production.Automation
             {
                 apiThread = $"Sent{dtNameforAPI}ToGensong",
                 suppAPIThread = SCIAPIThread,
-                moduleName = moduleName,
-                suppID = GensongSuppID,
+                moduleName = SCIModuleName,
+                suppID = SCISuppID,
             };
 
-            if (!LogicAutoWHData.SendWebAPI_Status(statusAPI, automationErrMsg, jsonBody))
+            if (!LogicAutoWHData.SendWebAPI_Status(statusAPI, GetSciUrl(), automationErrMsg, jsonBody))
             {
                 return false;
             }
@@ -490,7 +497,7 @@ select distinct
         }
 
         /// <inheritdoc/>
-        public static bool IsGensong_AutoWHFabricEnable => IsModuleAutomationEnable(GensongSuppID, moduleName);
+        public static bool IsGensong_AutoWHFabricEnable => IsModuleAutomationEnable(SCISuppID, SCIModuleName);
 
         /// <summary>
         /// 用在 MES FOS B02

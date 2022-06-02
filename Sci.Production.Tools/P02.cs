@@ -17,8 +17,6 @@ namespace Sci.Production.Tools
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_Select;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ErrType;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_Resent;
-        
-
         /// <inheritdoc/>
         public P02(ToolStripMenuItem menuitem)
             : base(menuitem)

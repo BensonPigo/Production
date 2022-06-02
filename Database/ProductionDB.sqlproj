@@ -2719,6 +2719,7 @@
     <Build Include="dbo\Tables\TransferExport_Detail.sql" />
     <Build Include="dbo\Tables\TransferExport_Detail_Carton.sql" />
     <Build Include="dbo\Tables\TransferExport_ShipAdvice_Container.sql" />
+    <Build Include="dbo\Tables\AutomationDisplay.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

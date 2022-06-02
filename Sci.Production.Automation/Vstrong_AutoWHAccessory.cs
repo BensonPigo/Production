@@ -14,8 +14,15 @@ namespace Sci.Production.Automation
     /// <inheritdoc/>
     public class Vstrong_AutoWHAccessory
     {
+        // 廠商的資訊基本上都沒使用到, 也不需要使用
         private static readonly string VstrongSuppID = "3A0196";
         private static readonly string moduleName = "AutoWHAccessory";
+        private static readonly string URL = GetSupplierUrl(VstrongSuppID, moduleName);
+        private static readonly string suppAPIThread = "snpvsinterface/services/pmstowms";
+
+        // 一律呼叫SCI 中繼API, SuppID & ModuleName 會影響到ReSent, 所以必須用SCI
+        private static readonly string SCISuppID = "SCI";
+        private static readonly string SCIModuleName = "SCI";
         private static readonly string SCIAPIThread = "api/VstrongAutoWHAccessory/SentDataByApiTag";
 
         /// PMS的action對應廠商statusAPI: Confrim(New),Unconfrim(Delete),Delete(Delete),Update(Revise)
@@ -70,11 +77,11 @@ namespace Sci.Production.Automation
             {
                 apiThread = $"Sent{dtNameforAPI}ToVstrong",
                 suppAPIThread = SCIAPIThread,
-                moduleName = moduleName,
-                suppID = VstrongSuppID,
+                moduleName = SCIModuleName,
+                suppID = SCISuppID,
             };
 
-            if (!LogicAutoWHData.SendWebAPI_Status(statusAPI, automationErrMsg, jsonBody))
+            if (!LogicAutoWHData.SendWebAPI_Status(statusAPI, GetSciUrl(), automationErrMsg, jsonBody))
             {
                 return false;
             }
@@ -322,8 +329,8 @@ namespace Sci.Production.Automation
             {
                 apiThread = "SentWHCloseToVstrong",
                 suppAPIThread = SCIAPIThread,
-                moduleName = moduleName,
-                suppID = VstrongSuppID,
+                moduleName = SCIModuleName,
+                suppID = SCISuppID,
             };
 
             dynamic bodyObject = new ExpandoObject();
