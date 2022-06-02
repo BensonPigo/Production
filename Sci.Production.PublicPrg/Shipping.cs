@@ -1612,7 +1612,7 @@ select	t.InvNo,[PackID] = pl.ID,t.AccountID,t.Amount
 		 else Round(t.Amount / count(*) over(PARTITION BY t.InvNo,t.AccountID),2) end
 into #PLSharedAmtStep1
 from #InvNoSharedAmt t
-inner join ShareExpense s with (nolock) on t.AccountID = s.AccountID and t.InvNo = s.InvNo and s.ShippingAPID = @ShippingAPID and s.Junk = 0
+inner join (select distinct AccountID, InvNo,ShareBase from ShareExpense where ShippingAPID = @ShippingAPID and Junk = 0) s on t.AccountID = s.AccountID and t.InvNo = s.InvNo 
 inner join #tmpPackingListMaster pl with (nolock) on pl.INVNo = t.InvNo
 
 
