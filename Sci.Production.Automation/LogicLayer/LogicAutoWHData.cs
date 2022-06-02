@@ -539,9 +539,6 @@ and psd.FabricType = '{fabricType}'
                     return true;
 
                 case EnumStatus.New:
-                    SendWebAPI(GetSciUrl(), automationErrMsg.suppAPIThread, jsonBody, automationErrMsg);
-                    break;
-
                 case EnumStatus.Delete:
                 case EnumStatus.Revise:
                 case EnumStatus.UnLock:
