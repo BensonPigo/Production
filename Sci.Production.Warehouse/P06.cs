@@ -258,7 +258,7 @@ select	ted.InventoryPOID,
 		[ContainerType] =	(SELECT [Val] = STUFF((
 							    SELECT DISTINCT ','+esc.ContainerType + '-' +esc.ContainerNo
 							    FROM TransferExport_ShipAdvice_Container esc
-							    WHERE esc.TransferExport_DetailUkey = ted.Ukey and
+							    WHERE esc.TransferExport_Detail_Ukey = ted.Ukey and
 							          esc.ContainerType <> '' AND 
 									  esc.ContainerNo <> ''
 							    FOR XML PATH('')
