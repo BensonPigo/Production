@@ -105,6 +105,14 @@ select distinct s.APSNo,s.FactoryID,s.SewingLineID
 								values (@orderid,@combotype,@factoryid,@apsno,@styleid,@seasonid,@sewinglineid,@cdcodeid,@inline,@ttlsewingtime,@alloqty,@stdoutput,@type,'NEW',GETDATE(),@MDivisionID)
 							END
 					END
+				ELSE
+					BEGIN
+						IF EXISTS(select 1 from ChgOver WITH (NOLOCK) where APSNo = @apsno and FactoryID = @factoryid and SewingLineID = @sewinglineid and OrderID = @orderid and ComboType = @combotype)
+							BEGIN
+								delete ChgOver
+								where APSNo = @apsno and FactoryID = @factoryid and SewingLineID = @sewinglineid and OrderID = @orderid and ComboType = @combotype
+							END
+					END
 			END
 		FETCH NEXT FROM cursor_tmpSewing INTO @factoryid,@sewinglineid,@inline,@apsno,@combotype,@alloqty,@ttlsewingtime,@stdoutput,@styleid,@seasonid,@cdcodeid,@orderid,@compare,@MDivisionID
 	END

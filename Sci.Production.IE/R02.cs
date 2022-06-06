@@ -152,7 +152,7 @@ and c.Inline < dateadd(day,1,'{1}')
                 @"
 
 select t.FactoryID
-	,[SewingLineID] = right('00' + t.SewingLineID, 2)
+	,[SewingLineID] = t.SewingLineID
 	,[dayInline] = t.dday	
 	,[dayCount] =  IIF(New.StyleID != Old.StyleID, count(c.Inline), 0 )
 into #tmp_ChgOver_cnt
@@ -255,7 +255,7 @@ drop table #tmp, #tmp_ChgOver_cnt, #tmp_ChgOver ,#tmp_ChgOver_sumDayCount,#tmp_C
             sqlCmd.Append(string.Format(
                 @"
 select distinct a.FactoryID
-	, [SewingLineID] = right('00' + a.SewingLineID, 2)
+	, [SewingLineID] = a.SewingLineID
 	, a.Inline
 	, [OldSP] = b.OrderID
 	, [OldStyle] = b.StyleID
@@ -295,7 +295,7 @@ and a.Inline < dateadd(day, 1, '{1}')",
                 sqlCmd.Append(string.Format(" and a.SewingLineID = '{0}'", this.sewingLine));
             }
 
-            sqlCmd.Append(string.Format(" order by a.FactoryID, right('00' + a.SewingLineID, 2), a.Inline"));
+            sqlCmd.Append(string.Format(" order by a.FactoryID, a.SewingLineID, a.Inline"));
 
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printDataDetail);
             if (!result)

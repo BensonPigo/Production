@@ -128,6 +128,7 @@ where p1.Status = 'New'
 and p1.MDivisionID = '{Env.User.Keyword}' 
 and p1.Type='B'
 and o.Junk = 0
+and exists (select 1 from Factory f where f.ID = o.FactoryID and f.IsProduceFty = 1)
 ";
             if (!MyUtility.Check.Empty(pulloutdate1))
             {
