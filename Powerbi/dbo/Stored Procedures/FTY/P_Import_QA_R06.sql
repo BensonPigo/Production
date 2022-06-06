@@ -904,7 +904,10 @@ where s.type='F' and s.Junk=0 and [AVG] * 100 between s.range1 and s.range2
 	,#tmp_DyelotMain,#tmp_DyelotMcnt,#tmp_newSeasonSCI,#tmp_DyelotMonth,#tmp_DyelotDcnt
 	,#PassCountByDyelot ,#FirData ,#All_Fir_shadebone,#Final
 
-
+update b
+    set b.TransferDate = getdate()
+from BITableInfo b
+where b.id = 'P_QA_R06'
 
 END
 
