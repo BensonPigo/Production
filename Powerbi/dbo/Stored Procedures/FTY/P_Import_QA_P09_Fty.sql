@@ -174,6 +174,11 @@ where s.WK# is null
 and T.ETA between '''+@ETA_s_varchar+''' and '''+@ETA_e_varchar+'''
 
 	DROP TABLE #tmpFinal
+
+update b
+    set b.TransferDate = getdate()
+from BITableInfo b
+where b.id = ''P_QA_P09''
 ';
 /*
 print @SqlCmd1

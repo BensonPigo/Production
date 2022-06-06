@@ -378,7 +378,11 @@ select OrderID from #Final s
 End
 
 
-
+update b
+    set b.TransferDate = getdate()
+from BITableInfo b
+where b.id = 'P_SewingDailyOutput'
+GO
 GO
 
 

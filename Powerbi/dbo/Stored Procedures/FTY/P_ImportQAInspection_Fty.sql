@@ -532,6 +532,26 @@ drop table #Final_DQSDefect_Summary
 drop table #Final_DQSDefect_Detail
 drop table #Final_P_CFAInline_Detail
 drop table #Final_P_CFAInspectionRecord_Detail
+
+update b
+    set b.TransferDate = getdate()
+from BITableInfo b
+where b.id = ''P_DQSDefect_Summary''
+
+update b
+    set b.TransferDate = getdate()
+from BITableInfo b
+where b.id = ''P_DQSDefect_Detail'' 
+
+update b
+    set b.TransferDate = getdate()
+from BITableInfo b
+where b.id = ''P_CFAInline_Detail'' 
+
+update b
+    set b.TransferDate = getdate()
+from BITableInfo b
+where b.id = ''P_CFAInspectionRecord_Detail'' 
 '
 
 SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd2 + @SqlCmd3 + @SqlCmd4 + @SqlCmd5 + @SqlFinal1 + @SqlFinal2 + @SqlFinal

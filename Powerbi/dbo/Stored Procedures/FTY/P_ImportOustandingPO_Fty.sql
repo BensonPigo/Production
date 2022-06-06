@@ -10,6 +10,7 @@ CREATE PROCEDURE [dbo].[P_ImportOustandingPO_Fty]
 AS
 
 BEGIN
+	SET NOCOUNT ON;
 
 declare @SDate varchar(20)  = cast(@StartDate as varchar)--DATEADD(DAY,-150,getdate())
 declare @EDate varchar(20) = cast(@EndDate as varchar)--DATEADD(DAY,30,getdate())
@@ -223,10 +224,15 @@ left join #Final s on t.FactoryID = s.FactoryID
 	AND t.orderid = s.id 
 	AND t.seq = s.seq 
 where T.BuyerDelivery between @SDate and @EDate
-	and s.id IS NULL
-	and ((s.OrderQty > s.PackingQty) OR (s.PackingCarton - s.ClogReceivedCarton <> 0 ))
+	and s.ID IS NULL
 
 	drop table #final
+
+update b
+    set b.TransferDate = getdate()
+from BITableInfo b
+where b.id = 'P_OustandingPO'
+
 End
 GO
 
