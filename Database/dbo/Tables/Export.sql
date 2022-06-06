@@ -76,7 +76,7 @@
     [OTFee] NUMERIC(10, 2) NOT NULL DEFAULT ((0)), 
     [CIFTerms] BIT    CONSTRAINT [DF_Export_CIFTerms] DEFAULT ((0)) NOT NULL,
     [FtyDisburseSD] VARCHAR(13) NULL DEFAULT (''), 
-	[MainWK] varchar(13) CONSTRAINT [DF_Export_MainWK] DEFAULT ('') NOT NULL,
+	[MainWKID] varchar(13) CONSTRAINT [DF_Export_MainWKID] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Export] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
