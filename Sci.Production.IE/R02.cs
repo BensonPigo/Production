@@ -157,32 +157,30 @@ select t.FactoryID
 	,[dayCount] =  IIF(New.StyleID != Old.StyleID, count(c.Inline), 0 )
 into #tmp_ChgOver_cnt
 from #tmp t
-left join (
+outer apply(
 	select FactoryID, SewingLineID, Inline
 	from ChgOver
 	where Inline >= '{0}' 
 	and Inline < dateadd(day,1,'{1}') 
-	group by FactoryID, SewingLineID, Inline
-)c on t.FactoryID = c.FactoryID and t.SewingLineID = c.SewingLineID and t.dday = convert(nvarchar(8),c.Inline,112)
+	and FactoryID = t.FactoryID
+	and SewingLineID = t.SewingLineID
+	and t.dday = convert(date,Inline)
+)c
 outer apply 
 (
 	select top 1 OrderID, StyleID, ComboType
 	from ChgOver
-	where Inline = (select max(Inline) from ChgOver where FactoryID = t.FactoryID and SewingLineID = t.SewingLineID and Inline < C.Inline)
+	where Inline = (select max(Inline) from ChgOver where FactoryID = t.FactoryID and SewingLineID = t.SewingLineID and Inline = C.Inline)
 	and FactoryID = t.FactoryID
 	and SewingLineID = t.SewingLineID
-	and Inline >= '{0}' 
-	and Inline < dateadd(day,1,'{1}') 
 )New
 outer apply 
 (
 	select top 1 OrderID, StyleID, ComboType
 	from ChgOver
-	where Inline = (select max(Inline) from ChgOver where FactoryID = t.FactoryID and SewingLineID = t.SewingLineID and Inline = c.Inline)
+	where Inline = (select max(Inline) from ChgOver where FactoryID = t.FactoryID and SewingLineID = t.SewingLineID and Inline < c.Inline)
 	and FactoryID = t.FactoryID
 	and SewingLineID = t.SewingLineID
-	and Inline >= '{0}' 
-	and Inline < dateadd(day,1,'{1}') 
 )Old
 group by t.FactoryID, t.SewingLineID, t.dday,New.StyleID,Old.StyleID
 
