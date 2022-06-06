@@ -769,22 +769,21 @@ insert into Production.dbo.FormType(	ID		,
 
 -----------------------TransferExport-----------------------------
 update a set	
-	a.TruckFree = b.TruckFree
-	,a.OTFee = b.OTFee
+	a.OTFee = b.OTFee
 	,a.CloseDate = b.CloseDate
 	,a.LoadDate = b.LoadDate
 from Production.dbo.TransferExport a
 inner join Trade_To_Pms.dbo.TransferExport b on b.ID = a.ID
 
 INSERT INTO Production.dbo.TransferExport_ShipAdvice_Container
-	(Ukey,TransferExport_DetailUkey,ContainerType,ContainerNo,AddName,AddDate,EditName,EditDate)
-SELECT Ukey,TransferExport_DetailUkey,ContainerType,ContainerNo,AddName,AddDate,EditName,EditDate
+	(Ukey,TransferExport_Detail_Ukey,ContainerType,ContainerNo,AddName,AddDate,EditName,EditDate)
+SELECT Ukey,TransferExport_Detail_Ukey,ContainerType,ContainerNo,AddName,AddDate,EditName,EditDate
 FROM Trade_To_Pms.dbo.TransferExport_ShipAdvice_Container s
 WHERE NOT EXISTS (SELECT 1 FROM Production.dbo.TransferExport_ShipAdvice_Container WHERE Ukey = s.Ukey)
 
 UPDATE t
 SET
-	 t.TransferExport_DetailUkey = s.TransferExport_DetailUkey
+	 t.TransferExport_Detail_Ukey = s.TransferExport_Detail_Ukey
 	,t.ContainerType			 = s.ContainerType
 	,t.ContainerNo				 = s.ContainerNo
 	,t.AddName				     = s.AddName
@@ -802,7 +801,7 @@ AND exists (
 	SELECT 1
 	FROM Trade_To_Pms.dbo.TransferExport a
 	inner join Trade_To_Pms.dbo.TransferExport_Detail b on a.ID = b.ID
-	WHERE b.Ukey = t.TransferExport_DetailUkey	
+	WHERE b.Ukey = t.TransferExport_Detail_Ukey	
 )
 END
 
