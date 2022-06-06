@@ -158,7 +158,7 @@ select t.FactoryID
 into #tmp_ChgOver_cnt
 from #tmp t
 outer apply(
-	select FactoryID, SewingLineID, Inline
+	select distinct FactoryID, SewingLineID, Inline
 	from ChgOver
 	where Inline >= '{0}' 
 	and Inline < dateadd(day,1,'{1}') 
