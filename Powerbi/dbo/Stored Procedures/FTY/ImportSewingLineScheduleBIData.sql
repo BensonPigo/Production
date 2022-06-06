@@ -8,10 +8,7 @@ AS
 BEGIN
 
 	SET NOCOUNT ON;
-
-/*�P�_��eServer��, ���w�a�J������Server�W��*/
 	declare @current_ServerName varchar(50) = (SELECT [Server Name] = @@SERVERNAME)
-	--�̤��PServer�ӧ��������ƾ�ServerName
 	declare @current_PMS_ServerName nvarchar(50) = 'MainServer'
 
 declare @SqlCmd_Combin nvarchar(max) =''
@@ -239,7 +236,13 @@ WHEN NOT MATCHED BY TARGET THEN
 WHEN NOT MATCHED BY SOURCE AND T.SewingDay between '''+@SDate+''' and '''+@EDate+''' THEN
 DELETE ;
 
-drop table #Final'
+drop table #Final
+
+update b
+    set b.TransferDate = getdate()
+from BITableInfo b
+where b.id = ''P_SewingLineSchedule''
+'
 
 
 SET @SqlCmd_Combin = @SqlCmd1+@SqlCmd2
