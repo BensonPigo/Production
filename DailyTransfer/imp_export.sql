@@ -196,13 +196,13 @@ Te2.InvoiceNo)
 
 
 INSERT INTO Production.dbo.Export_ShipAdvice_Container
-        (Ukey,Export_Detail_Ukey,ContainerType,ContainerNo,AddName,AddDate,EditName,EditDate)
-SELECT Ukey,Export_Detail_Ukey,ContainerType,ContainerNo,AddName,AddDate,EditName,EditDate
+        (Ukey,Export_DetailUkey,ContainerType,ContainerNo,AddName,AddDate,EditName,EditDate)
+SELECT Ukey,Export_DetailUkey,ContainerType,ContainerNo,AddName,AddDate,EditName,EditDate
 FROM Trade_To_Pms.dbo.Export_ShipAdvice_Container s
 WHERE NOT EXISTS (SELECT 1 FROM Production.dbo.Export_ShipAdvice_Container WHERE Ukey = s.Ukey)
 
 UPDATE t
-SET  t.Export_Detail_Ukey = s.Export_Detail_Ukey
+SET  t.Export_DetailUkey = s.Export_DetailUkey
     ,t.ContainerType = s.ContainerType
     ,t.ContainerNo = s.ContainerNo
     ,t.AddName = s.AddName
@@ -216,8 +216,8 @@ INNER JOIN Trade_To_Pms.dbo.Export_ShipAdvice_Container s ON t.Ukey = s.Ukey
 DELETE t 
 FROM Production.dbo.Export_ShipAdvice_Container t 
 WHERE NOT EXISTS(SELECT 1 FROM Trade_To_Pms.dbo.Export_ShipAdvice_Container s where t.Ukey = s.Ukey)
-----只刪除轉出區間內，有少的Export_Detail_Ukey
-AND t.Export_Detail_Ukey IN (		
+----只刪除轉出區間內，有少的Export_DetailUkey
+AND t.Export_DetailUkey IN (		
 			SELECT a.Ukey
 			FROM Trade_To_Pms.dbo.Export_Detail a WITH (NOLOCK) 
 			WHERE a.ID in (SELECT ID FROM @T)		

@@ -147,7 +147,7 @@ namespace Sci.Production.Warehouse
         from(
             select distinct ContainerNo = esc.ContainerType + '-' + esc.ContainerNo
 	        from Export_Detail ed with (nolock)
-            inner join Export_ShipAdvice_Container esc with (nolock) on esc.Export_Detail_Ukey = ed.Ukey
+            inner join Export_ShipAdvice_Container esc with (nolock) on esc.Export_DetailUkey = ed.Ukey
 	        where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
             and esc.ContainerType <> '' and esc.ContainerNo  <> ''
         )x
@@ -293,7 +293,7 @@ namespace Sci.Production.Warehouse
         from(
             select distinct ContainerNo = esc.ContainerType + '-' + esc.ContainerNo
 	        from Export_Detail ed with (nolock)
-            inner join Export_ShipAdvice_Container esc with (nolock) on esc.Export_Detail_Ukey = ed.Ukey
+            inner join Export_ShipAdvice_Container esc with (nolock) on esc.Export_DetailUkey = ed.Ukey
 	        where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
             and esc.ContainerType <> '' and esc.ContainerNo  <> ''
         )x
