@@ -14,35 +14,35 @@ BEGIN
 	SET NOCOUNT ON;
 
    --刪除不存在Sewing Schedule的資料
-select distinct s.APSNo,s.FactoryID,s.SewingLineID
+	select distinct s.APSNo,s.FactoryID,s.SewingLineID,s.OrderID
 	into #checker
 	from SewingSchedule s WITH (NOLOCK)
 
-	create index chkExists on #checker(APSNo,FactoryID,SewingLineID)
+	create index chkExists on #checker(APSNo,FactoryID,SewingLineID,OrderID)
 
 	delete from ChgOver 
 	where not exists (select 1 
 						from #checker s, Factory f 
-						where s.APSNo = ChgOver.APSNo and s.SewingLineID = ChgOver.SewingLineID and s.FactoryID = f.ID and f.IsSampleRoom = 0);
+						where s.APSNo = ChgOver.APSNo and s.SewingLineID = ChgOver.SewingLineID and s.OrderID = ChgOver.OrderID and s.FactoryID = f.ID and f.IsSampleRoom = 0);
 
 	--更新現有資料
 	update ChgOver set Inline = s.Inline,AlloQty = s.AlloQty,StandardOutput = s.StandardOutput,TotalSewingTime = s.TotalSewingTime
-	from SewingSchedule s where s.APSNo = ChgOver.APSNo;
+	from SewingSchedule s where s.APSNo = ChgOver.APSNo and s.OrderID = ChgOver.OrderID;
 	update ChgOver set StyleID = o.StyleID,CDCodeID = o.CdCodeID, SeasonID = o.SeasonID
 	from Orders o where o.ID = ChgOver.OrderID;
 
 	--產生ChgOver資料
 	Declare cursor_tmpSewing Cursor for
-	select s.FactoryID,s.SewingLineID,s.Inline,s.APSNo,s.ComboType,s.AlloQty,s.TotalSewingTime,s.StandardOutput,
-	isnull(o.StyleID,'') as StyleID,isnull(o.SeasonID,'') as SeasonID,o.CdCodeID,s.OrderID,
-	LAG(isnull(o.StyleID,'')+s.ComboType,1,'') OVER (Partition by s.FactoryID,s.SewingLineID Order by s.FactoryID,s.SewingLineID,s.Inline) as Compare,f.MDivisionID 
+	select s.FactoryID,s.SewingLineID,s.Inline,s.OrderID,s.APSNo,s.ComboType,s.AlloQty,s.TotalSewingTime,s.StandardOutput,
+	isnull(o.StyleID,'') as StyleID,isnull(o.SeasonID,'') as SeasonID,o.CdCodeID,
+	LAG(isnull(o.StyleID,'')+s.ComboType,1,'') OVER (Partition by s.FactoryID,s.SewingLineID Order by s.FactoryID,s.SewingLineID,s.Inline,s.OrderID) as Compare,f.MDivisionID 
 	from SewingSchedule s WITH (NOLOCK)
 	left join Orders o WITH (NOLOCK) on s.OrderID = o.ID
 	left join Factory f WITH (NOLOCK) on s.FactoryID = f.ID
 	where s.Inline is not null 
 	and s.Offline > DATEADD(MONTH,-1,GETDATE()) 
 	and f.IsSampleRoom = 0
-	order by s.FactoryID,s.SewingLineID,s.Inline;
+	order by s.FactoryID,s.SewingLineID,s.Inline,s.OrderID;
 
 
 	--宣告變數: 記錄程式中的資料
@@ -67,7 +67,7 @@ select distinct s.APSNo,s.FactoryID,s.SewingLineID
 	--開始run cursor
 	OPEN cursor_tmpSewing
 	--將第一筆資料填入變數
-	FETCH NEXT FROM cursor_tmpSewing INTO @factoryid,@sewinglineid,@inline,@apsno,@combotype,@alloqty,@ttlsewingtime,@stdoutput,@styleid,@seasonid,@cdcodeid,@orderid,@compare,@MDivisionID
+	FETCH NEXT FROM cursor_tmpSewing INTO @factoryid,@sewinglineid,@inline,@orderid,@apsno,@combotype,@alloqty,@ttlsewingtime,@stdoutput,@styleid,@seasonid,@cdcodeid,@compare,@MDivisionID
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		IF @compare <> ''
@@ -114,7 +114,7 @@ select distinct s.APSNo,s.FactoryID,s.SewingLineID
 							END
 					END
 			END
-		FETCH NEXT FROM cursor_tmpSewing INTO @factoryid,@sewinglineid,@inline,@apsno,@combotype,@alloqty,@ttlsewingtime,@stdoutput,@styleid,@seasonid,@cdcodeid,@orderid,@compare,@MDivisionID
+		FETCH NEXT FROM cursor_tmpSewing INTO @factoryid,@sewinglineid,@inline,@orderid,@apsno,@combotype,@alloqty,@ttlsewingtime,@stdoutput,@styleid,@seasonid,@cdcodeid,@compare,@MDivisionID
 	END
 	CLOSE cursor_tmpSewing
 	DEALLOCATE cursor_tmpSewing
@@ -172,7 +172,4 @@ select distinct s.APSNo,s.FactoryID,s.SewingLineID
 		) b
 	) c
 	where c.ID = ChgOver.ID
-
-
-
 END
