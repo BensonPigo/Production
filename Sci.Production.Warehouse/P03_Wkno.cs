@@ -46,7 +46,7 @@ OUTER APPLY(
 
 		SELECT DISTINCT ','+ContainerType+ '-' +ContainerNo 
 		FROM Export_ShipAdvice_Container c  WITH (NOLOCK)
-		WHERE c.Export_Detail_Ukey = b.Ukey
+		WHERE c.Export_DetailUkey = b.Ukey
 		FOR XML PATH('')
 
 	),1,1,'')

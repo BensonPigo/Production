@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Export_ShipAdvice_Container](
 	[Ukey] [bigint] NOT NULL,
-	[Export_Detail_Ukey] [bigint] NULL,
+	[Export_DetailUkey] [bigint] NULL,
 	[ContainerType] [varchar](2) NOT NULL,
 	[ContainerNo] [varchar](20) NOT NULL,
 	[AddName] [varchar](10) NOT NULL,
@@ -25,3 +25,8 @@ GO
 	
 	ALTER TABLE [dbo].[Export_ShipAdvice_Container] ADD  CONSTRAINT [DF_Export_ShipAdvice_Container_EditName]  DEFAULT ('') FOR [EditName]
 GO
+CREATE NONCLUSTERED INDEX [IDX_Export_ShipAdvice_Container_Export_DetailUkey] ON [dbo].[Export_ShipAdvice_Container]
+(
+	[Export_DetailUkey] ASC
+)
+go
