@@ -220,7 +220,7 @@ OUTER APPLY(
 		SELECT [Val] = STUFF((
 		SELECT DISTINCT ','+esc.ContainerType
 		FROM Export_ShipAdvice_Container esc
-		WHERE esc.Export_Detail_Ukey=ed.Ukey
+		WHERE esc.Export_DetailUkey=ed.Ukey
 		AND esc.ContainerType <> '' AND esc.ContainerNo <> ''
 		FOR XML PATH('')
 	),1,1,'')
@@ -229,7 +229,7 @@ OUTER APPLY(
 		SELECT [Val] = STUFF((
 		SELECT DISTINCT ','+esc.ContainerNo
 		FROM Export_ShipAdvice_Container esc
-		WHERE esc.Export_Detail_Ukey=ed.Ukey
+		WHERE esc.Export_DetailUkey=ed.Ukey
 		AND esc.ContainerType <> '' AND esc.ContainerNo <> ''
 		FOR XML PATH('')
 	),1,1,'')

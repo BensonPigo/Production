@@ -124,7 +124,7 @@ OUTER APPLY(
 	SELECT [Val] = STUFF((
 		SELECT DISTINCT ','+esc.ContainerType + '-' +esc.ContainerNo
 		FROM Export_ShipAdvice_Container esc
-		WHERE esc.Export_Detail_Ukey IN (
+		WHERE esc.Export_DetailUkey IN (
 			SELECT Ukey
 			FROM Export_Detail ed
 			WHERE ed.ID = t1.ExportId
