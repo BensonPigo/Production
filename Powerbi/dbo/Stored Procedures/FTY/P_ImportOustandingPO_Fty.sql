@@ -216,7 +216,6 @@ where not exists(
 	AND t.orderid = s.id 
 	AND t.seq = s.seq 
 )
-and ((OrderQty > PackingQty) OR (PackingCarton - ClogReceivedCarton <> 0 ))
 
 delete t
 from P_OustandingPO t
