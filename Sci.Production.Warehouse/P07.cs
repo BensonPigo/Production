@@ -1903,18 +1903,36 @@ and NOT EXISTS(
             }
             #endregion
 
-            #region 檢查MINDQRCode是否有在其他單子重複，有重複就update成空白
+            #region 檢查MINDQRCode是否有在其他單子重複，有重複就update成空白, where 拆開來是因為效能(有index但有時候無效)
             string sqlCheckMINDQRCode = $@"
 update rd set rd.MINDQRCode = ''
 from Receiving_Detail rd
-where   ID = '{this.CurrentMaintain["ID"]}' and
-        (exists(select 1 from Receiving_Detail rd2 with (nolock) where rd2.ID <> rd.ID and rd2.MINDQRCode = rd.MINDQRCode) or
-         exists(select 1 from WHBarcodeTransaction wht with (nolock) where wht.Action = 'Confirm' and [Function] = 'P07' and wht.TransactionID <> rd.ID and wht.To_NewBarcode = rd.MINDQRCode) or
-         exists(select 1 from WHBarcodeTransaction wht with (nolock) where [Function] != 'P07' and (wht.From_OldBarcode = rd.MINDQRCode or wht.From_NewBarcode = rd.MINDQRCode or wht.To_OldBarcode = rd.MINDQRCode or wht.To_NewBarcode = rd.MINDQRCode))
-        )
+where ID = '{this.CurrentMaintain["ID"]}'
+and exists(select 1 from Receiving_Detail rd2 with (nolock) where rd2.ID <> rd.ID and rd2.MINDQRCode = rd.MINDQRCode)
+
+update rd set rd.MINDQRCode = ''
+from Receiving_Detail rd
+where ID = '{this.CurrentMaintain["ID"]}'
+and exists(select 1 from WHBarcodeTransaction wht with (nolock) where wht.Action = 'Confirm' and [Function] = 'P07' and wht.TransactionID <> rd.ID and wht.To_NewBarcode = rd.MINDQRCode)
+update rd set rd.MINDQRCode = ''
+from Receiving_Detail rd
+where ID = '{this.CurrentMaintain["ID"]}'
+and exists(select 1 from WHBarcodeTransaction wht with (nolock) where [Function] != 'P07' and wht.From_OldBarcode = rd.MINDQRCode)
+update rd set rd.MINDQRCode = ''
+from Receiving_Detail rd
+where ID = '{this.CurrentMaintain["ID"]}'
+and exists(select 1 from WHBarcodeTransaction wht with (nolock) where [Function] != 'P07' and wht.From_NewBarcode = rd.MINDQRCode)
+update rd set rd.MINDQRCode = ''
+from Receiving_Detail rd
+where ID = '{this.CurrentMaintain["ID"]}'
+and exists(select 1 from WHBarcodeTransaction wht with (nolock) where [Function] != 'P07' and wht.To_OldBarcode = rd.MINDQRCode)
+update rd set rd.MINDQRCode = ''
+from Receiving_Detail rd
+where ID = '{this.CurrentMaintain["ID"]}'
+and exists(select 1 from WHBarcodeTransaction wht with (nolock) where [Function] != 'P07' and wht.To_NewBarcode = rd.MINDQRCode)
 ";
             #endregion
-
+            DBProxy.Current.DefaultTimeout = 900;  // 加長時間為15分鐘，避免timeout
             Exception errMsg = null;
             using (TransactionScope transactionscope = new TransactionScope())
             {
@@ -1990,6 +2008,7 @@ where   ID = '{this.CurrentMaintain["ID"]}' and
                 }
             }
 
+            DBProxy.Current.DefaultTimeout = 300;  // 恢復時間為5分鐘
             if (!MyUtility.Check.Empty(errMsg))
             {
                 this.ShowErr(errMsg);
