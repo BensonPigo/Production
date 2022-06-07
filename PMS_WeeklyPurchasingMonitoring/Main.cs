@@ -298,6 +298,7 @@ On-Time rate from {((DateTime)this.dateExcute.Value).AddDays(-8).ToString("yyyy/
 
         private DualResult Query()
         {
+            this.ds = new DataSet();
             DualResult result;
             string sqlcmd = string.Empty;
 
@@ -1155,15 +1156,31 @@ drop table #tmp
             MailMessage message = new MailMessage();
             message.Subject = subject;
             message.From = new MailAddress(mailFrom);
-            message.To.Add(mailTO);
-            if (!MyUtility.Check.Empty(mailTOCC))
+            if (!MyUtility.Check.Empty(mailTO))
             {
-                message.Bcc.Add(mailTOCC);
+                foreach (var item in mailTO.Split(';'))
+                {
+                    if (!MyUtility.Check.Empty(item))
+                    {
+                        message.To.Add(item);
+                    }
+                }
             }
 
             if (message.To.Count == 0)
             {
                 return;
+            }
+
+            if (!MyUtility.Check.Empty(mailTOCC))
+            {
+                foreach (var item in mailTOCC.Split(';'))
+                {
+                    if (!MyUtility.Check.Empty(item))
+                    {
+                        message.Bcc.Add(item);
+                    }
+                }
             }
 
             message.Body = desc;
