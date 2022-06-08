@@ -90,6 +90,11 @@ select *
 from #tmp
 
 drop table #tmp
+
+	update b
+		set b.TransferDate = getdate()
+	from BITableInfo b
+	where b.Id = ''P_MachineMasterList''
 '
 exec (@finalInsertSql)
 

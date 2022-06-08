@@ -135,6 +135,11 @@ and s.SPNO is null
 
 drop table #tmp
 
+update b
+	set b.TransferDate = getdate()
+from BITableInfo b
+where b.Id = ''P_EstShippingReport''
+
 Commit tran
 
 END TRY

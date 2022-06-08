@@ -938,7 +938,10 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
 ,#tmp_DyelotMain,#tmp_DyelotMcnt,#tmp_newSeasonSCI,#tmp_DyelotMonth,#tmp_DyelotDcnt
 ,#PassCountByDyelot ,#FirData ,#All_Fir_shadebone,#Final
 	
-	
+	update b
+		set b.TransferDate = getdate()
+	from BITableInfo b
+	where b.Id = ''P_QA_R06_Original''
 ';
 
 

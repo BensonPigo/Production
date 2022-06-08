@@ -318,6 +318,11 @@ where
 and exists	   (select 1 from #Final f where t.FactoryID=f.FactoryID AND t.MDivisionID=f.MDivisionID  ) 
 and not exists (select 1 from #Final s where t.FactoryID=s.FactoryID AND t.SPNO=s.ID );
 
+update b
+	set b.TransferDate = getdate()
+from BITableInfo b
+where b.Id = ''P_LoadingProductionOutput_Original''
+
 	Commit tran
 
 END TRY

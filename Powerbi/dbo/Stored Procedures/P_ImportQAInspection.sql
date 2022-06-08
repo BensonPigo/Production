@@ -537,6 +537,27 @@ drop table #Final_DQSDefect_Summary
 drop table #Final_DQSDefect_Detail
 drop table #Final_P_CFAInline_Detail
 drop table #Final_P_CFAInspectionRecord_Detail
+
+update b
+	set b.TransferDate = getdate()
+from BITableInfo b
+where b.Id = ''P_DQSDefect_Summary_Original''
+
+update b
+	set b.TransferDate = getdate()
+from BITableInfo b
+where b.Id = ''P_DQSDefect_Detail_Original''
+
+update b
+	set b.TransferDate = getdate()
+from BITableInfo b
+where b.Id = ''P_CFAInline_Detail_Original''
+
+update b
+	set b.TransferDate = getdate()
+from BITableInfo b
+where b.Id = ''P_CFAInspectionRecord_Detail_Original''
+
 Commit tran
 
 END TRY
