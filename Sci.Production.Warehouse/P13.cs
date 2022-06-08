@@ -181,31 +181,37 @@ select id.POID,
         p.Scirefno,
 	    p.seq1,
 	    p.seq2,
-	    [desc] =IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll) 
-					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
-					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))) 
+	    [desc] =IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))) 
 					,''
 					,dbo.getMtlDesc(id.poid,id.seq1,id.seq2,2,0)
 				)
 				------ + Tone------
-				 + char(10) + char(13) + IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll) 
-					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
-					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
-					AND(Tone.val = lag(Tone.val,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))) 
+				 + char(10) + char(13) + IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(Tone.val = lag(Tone.val,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))) 
 					,''
-					,'Shade Band Tone/Grp : ' + Tone.val
+					,'Tone/Grp : '
+                    ) + Tone.val
 				------ + MDesc------
-                    + char(10) + char(13) +isnull(iif(p.FabricType='F', 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno), ''),'')
-				),
+                    + char(10) + char(13) + IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(Tone.val = lag(Tone.val,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))) 
+					,''
+					,isnull(iif(p.FabricType='F', 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno), ''),'')
+                    ),
 	    id.Roll,
 	    id.Dyelot,
 	    id.Qty,
 	    p.StockUnit,
         dbo.Getlocation(fi.ukey) [location],
-        ContainerCode = IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll) 
-					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
-					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
-					AND(fi.ContainerCode = lag(fi.ContainerCode,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
+        ContainerCode = IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(fi.ContainerCode = lag(fi.ContainerCode,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
 					) 
 					,''
 					,fi.ContainerCode),
@@ -263,7 +269,7 @@ Outer apply (
 	and p.FabricType = 'F'
 )td
 where id.id= @ID
-order by id.POID,SEQ, id.Dyelot,id.Roll
+order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll
 ";
             result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtDetail);
             if (!result)
