@@ -613,8 +613,8 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 // SubTransfer_Detail
                 if (dtSubTransfer_Detail.Rows.Count > 0)
                 {
-                    Gensong_AutoWHFabric.Sent(true, dtSubTransfer_Detail, "P25", EnumStatus.New, EnumStatus.Confirm);
-                    Vstrong_AutoWHAccessory.Sent(true, dtSubTransfer_Detail, "P25", EnumStatus.New, EnumStatus.Confirm);
+                    Gensong_AutoWHFabric.Sent(false, dtSubTransfer_Detail, "P25", EnumStatus.New, EnumStatus.Confirm);
+                    Vstrong_AutoWHAccessory.Sent(false, dtSubTransfer_Detail, "P25", EnumStatus.New, EnumStatus.Confirm);
                 }
 
                 MyUtility.Msg.WarningBox("Finished!");

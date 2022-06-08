@@ -5,6 +5,7 @@ using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using static Sci.Production.Automation.UtilityAutomation;
 
@@ -547,6 +548,116 @@ and psd.FabricType = '{fabricType}'
                 case EnumStatus.UnLock:
                     WH_Auto_SendWebAPI(url, automationErrMsg.suppAPIThread, jsonBody, automationErrMsg, reSented: true);
                     break;
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public static bool SentandUpdatebyAutomationCreateRecord(string formName, EnumStatus statusAPI, EnumStatus action, AutoRecord autoRecord, string url)
+        {
+            foreach (string ukey in autoRecord.automationCreateRecordUkey)
+            {
+                if (!LogicAutoWHData.GetDataByAutomationCreateRecord(ukey, out DataRow dr))
+                {
+                    return false;
+                }
+
+                string jsonBody = MyUtility.Convert.GetString(dr["Json"]);
+                AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS
+                {
+                    apiThread = MyUtility.Convert.GetString(dr["apiThread"]),
+                    suppAPIThread = MyUtility.Convert.GetString(dr["suppAPIThread"]),
+                    moduleName = MyUtility.Convert.GetString(dr["moduleName"]),
+                    suppID = MyUtility.Convert.GetString(dr["suppID"]),
+                };
+
+                if (!LogicAutoWHData.SendWebAPI_Status(statusAPI, url, automationErrMsg, jsonBody))
+                {
+                    return false;
+                }
+
+                if (!LogicAutoWHData.DeleteAutomationCreateRecord(automationErrMsg, ukey))
+                {
+                    return false;
+                }
+            }
+
+            // 記錄 Confirmed/UnConfirmed 後有傳給WMS的資料
+            string ukeys = autoRecord.wh_Detail_Ukey.JoinToString(",");
+            if (statusAPI != EnumStatus.Lock && statusAPI != EnumStatus.UnLock)
+            {
+                PublicPrg.Prgs.SentToWMS(null, action == EnumStatus.Confirm, formName, ukeys);
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public static bool SaveAutomationCreateRecord(AutomationErrMsgPMS automationErrMsg, string jsonBody, AutoRecord autoRecord)
+        {
+            AutomationCreateRecord automationCreateRecord = new AutomationCreateRecord(automationErrMsg, jsonBody);
+            try
+            {
+                DBProxy._OpenConnection("Production", out SqlConnection sqlConnection);
+                automationCreateRecord.SaveAutomationCreateRecord(sqlConnection);
+                autoRecord.automationCreateRecordUkey.Add(automationCreateRecord.ukey);
+            }
+            catch (Exception ex)
+            {
+                MyUtility.Msg.ErrorBox(ex.ToString());
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public static bool DeleteAutomationCreateRecord(AutomationErrMsgPMS automationErrMsg, string ukey)
+        {
+            if (automationErrMsg == null)
+            {
+                automationErrMsg = new AutomationErrMsgPMS();
+            }
+
+            AutomationCreateRecord automationCreateRecord = new AutomationCreateRecord(automationErrMsg);
+            automationCreateRecord.ukey = ukey;
+            try
+            {
+                DBProxy._OpenConnection("Production", out SqlConnection sqlConnection);
+                automationCreateRecord.DeleteAutomationCreateRecord(sqlConnection);
+            }
+            catch (Exception ex)
+            {
+                MyUtility.Msg.ErrorBox(ex.ToString());
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public static void DeleteAutomationCreateRecordAll(AutomationErrMsgPMS automationErrMsg, List<AutoRecord> autoRecordList)
+        {
+            foreach (var item in autoRecordList)
+            {
+                foreach (var ukey in item.automationCreateRecordUkey)
+                {
+                    LogicAutoWHData.DeleteAutomationCreateRecord(automationErrMsg, ukey);
+                }
+            }
+        }
+
+        /// <inheritdoc/>
+        public static bool GetDataByAutomationCreateRecord(string ukey, out DataRow dr)
+        {
+            string sqlcmd = @"select * from AutomationCreateRecord where ukey = @ukey";
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@Ukey", ukey) };
+            if (!MyUtility.Check.Seek(sqlcmd, parameters, out dr, "Production"))
+            {
+                // 正常流程一定存在不應該走這
+                MyUtility.Msg.WarningBox("AutomationCreateRecord not found");
+                return false;
             }
 
             return true;

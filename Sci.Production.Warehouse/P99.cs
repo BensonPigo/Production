@@ -2825,6 +2825,8 @@ and t1.Type='I'
                 TransactionScope transactionscope;
                 SqlConnection sqlConn;
                 Exception errMsg = null;
+                List<AutoRecord> autoRecordListUnLock = new List<AutoRecord>();
+                List<AutoRecord> autoRecordListRevise = new List<AutoRecord>();
                 bool fromNewBarcode = false;
                 DataTable dtDistID = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1) && !MyUtility.Check.Empty(x["Qty"])).CopyToDataTable().DefaultView.ToTable(true, "ID");
                 DataTable tmpDetailTableF = LogicAutoWHData.GetWHData(detailTable, this.strFunction, EnumStatus.Delete, EnumStatus.Unconfirm, "F");
@@ -3008,6 +3010,7 @@ WHERE ID NOT IN(
                                         throw result.GetException();
                                     }
 
+                                    this.RevisetoWMS(autoRecordListUnLock, autoRecordListRevise, fromNewBarcode, tmpDetailTableF, tmpDetailTableA);
                                     transactionscope.Complete();
                                 }
                                 catch (Exception ex)
@@ -3226,6 +3229,7 @@ inner join #tmp s on t.id = s.id
                                         break;
                                 }
 
+                                this.RevisetoWMS(autoRecordListUnLock, autoRecordListRevise, fromNewBarcode, tmpDetailTableF, tmpDetailTableA);
                                 transactionscope.Complete();
                             }
                             catch (Exception ex)
@@ -3296,6 +3300,7 @@ inner join #tmp s on t.id = s.id
                                     throw result.GetException();
                                 }
 
+                                this.RevisetoWMS(autoRecordListUnLock, autoRecordListRevise, fromNewBarcode, tmpDetailTableF, tmpDetailTableA);
                                 transactionscope.Complete();
                             }
                             catch (Exception ex)
@@ -3366,6 +3371,7 @@ inner join #tmp s on t.id = s.id
                                     throw result.GetException();
                                 }
 
+                                this.RevisetoWMS(autoRecordListUnLock, autoRecordListRevise, fromNewBarcode, tmpDetailTableF, tmpDetailTableA);
                                 transactionscope.Complete();
                             }
                             catch (Exception ex)
@@ -3435,6 +3441,7 @@ inner join #tmp s on t.id = s.id
                                     throw result.GetException();
                                 }
 
+                                this.RevisetoWMS(autoRecordListUnLock, autoRecordListRevise, fromNewBarcode, tmpDetailTableF, tmpDetailTableA);
                                 transactionscope.Complete();
                             }
                             catch (Exception ex)
@@ -3505,6 +3512,7 @@ inner join #tmp s on t.id = s.id
                                     throw result.GetException();
                                 }
 
+                                this.RevisetoWMS(autoRecordListUnLock, autoRecordListRevise, fromNewBarcode, tmpDetailTableF, tmpDetailTableA);
                                 transactionscope.Complete();
                             }
                             catch (Exception ex)
@@ -3577,6 +3585,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                                     throw result.GetException();
                                 }
 
+                                this.RevisetoWMS(autoRecordListUnLock, autoRecordListRevise, fromNewBarcode, tmpDetailTableF, tmpDetailTableA);
                                 transactionscope.Complete();
                             }
                             catch (Exception ex)
@@ -3590,16 +3599,20 @@ inner join #tmp s on t.Ukey = s.Ukey
 
                 if (!MyUtility.Check.Empty(errMsg))
                 {
-                    Gensong_AutoWHFabric.Sent(true, tmpDetailTableF, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, fromNewBarcode: fromNewBarcode);
-                    Vstrong_AutoWHAccessory.Sent(true, tmpDetailTableA, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm);
+                    List<AutoRecord> autoRecordList = new List<AutoRecord>();
+                    Gensong_AutoWHFabric.Sent(false, tmpDetailTableF, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, fromNewBarcode: fromNewBarcode, typeCreateRecord: 1, autoRecord: autoRecordList);
+                    Vstrong_AutoWHAccessory.Sent(false, tmpDetailTableA, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, typeCreateRecord: 1, autoRecord: autoRecordList);
+
+                    Gensong_AutoWHFabric.Sent(false, tmpDetailTableF, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, fromNewBarcode: fromNewBarcode, typeCreateRecord: 2, autoRecord: autoRecordList);
+                    Vstrong_AutoWHAccessory.Sent(false, tmpDetailTableA, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, typeCreateRecord: 2, autoRecord: autoRecordList);
                     this.ShowErr(errMsg);
                     return;
                 }
 
                 // PMS 更新之後,才執行WMS. Gensong 那邊必須先 Unlock 才能 Revise. Revise 不用 isP99 參數 = true, 用 Ukey 重新撈數量. Delete 才要因為刪除後會找不到
-                Gensong_AutoWHFabric.Sent(false, tmpDetailTableF, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, fromNewBarcode: fromNewBarcode);
-                Gensong_AutoWHFabric.Sent(true, tmpDetailTableF, this.strFunction, EnumStatus.Revise, EnumStatus.Confirm, fromNewBarcode: fromNewBarcode);
-                Vstrong_AutoWHAccessory.Sent(true, tmpDetailTableA, this.strFunction, EnumStatus.Revise, EnumStatus.Confirm);
+                Gensong_AutoWHFabric.Sent(false, tmpDetailTableF, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, fromNewBarcode: fromNewBarcode, typeCreateRecord: 2, autoRecord: autoRecordListUnLock);
+                Gensong_AutoWHFabric.Sent(false, tmpDetailTableF, this.strFunction, EnumStatus.Revise, EnumStatus.Confirm, fromNewBarcode: fromNewBarcode, typeCreateRecord: 2, autoRecord: autoRecordListRevise);
+                Vstrong_AutoWHAccessory.Sent(false, tmpDetailTableA, this.strFunction, EnumStatus.Revise, EnumStatus.Confirm, typeCreateRecord: 2, autoRecord: autoRecordListRevise);
 
                 // 將修改的資料存入Log
                 this.WriteInLog("Revise");
@@ -3608,6 +3621,13 @@ inner join #tmp s on t.Ukey = s.Ukey
                 this.Query();
                 this.listControlBindingSource1.Position = pos;
             }
+        }
+
+        private void RevisetoWMS(List<AutoRecord> autoRecordListUnLock, List<AutoRecord> autoRecordListRevise, bool fromNewBarcode, DataTable tmpDetailTableF, DataTable tmpDetailTableA)
+        {
+            Gensong_AutoWHFabric.Sent(false, tmpDetailTableF, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, fromNewBarcode: fromNewBarcode, typeCreateRecord: 1, autoRecord: autoRecordListUnLock);
+            Gensong_AutoWHFabric.Sent(false, tmpDetailTableF, this.strFunction, EnumStatus.Revise, EnumStatus.Confirm, fromNewBarcode: fromNewBarcode, typeCreateRecord: 1, autoRecord: autoRecordListRevise);
+            Vstrong_AutoWHAccessory.Sent(false, tmpDetailTableA, this.strFunction, EnumStatus.Revise, EnumStatus.Confirm, typeCreateRecord: 1, autoRecord: autoRecordListRevise);
         }
 
         private void BtnDelete_Click(object sender, EventArgs e)
@@ -3640,6 +3660,8 @@ inner join #tmp s on t.Ukey = s.Ukey
                 DataTable result_upd_qty;
                 TransactionScope transactionscope;
                 Exception errMsg = null;
+                List<AutoRecord> autoRecordListUnLock = new List<AutoRecord>();
+                List<AutoRecord> autoRecordListRevise = new List<AutoRecord>();
                 DataTable tmpDetailTableF = LogicAutoWHData.GetWHData(detailTable, this.strFunction, EnumStatus.Delete, EnumStatus.Unconfirm, "F");
                 DataTable tmpDetailTableA = LogicAutoWHData.GetWHData(detailTable, this.strFunction, EnumStatus.Delete, EnumStatus.Unconfirm, "A");
 
@@ -3795,6 +3817,7 @@ and exists(
 
                                 #endregion
 
+                                this.DeletetoWMS(autoRecordListUnLock, autoRecordListRevise, tmpDetailTableF, tmpDetailTableA);
                                 transactionscope.Complete();
                             }
                             catch (Exception ex)
@@ -4145,6 +4168,7 @@ and exists(
                                     throw result.GetException();
                                 }
 
+                                this.DeletetoWMS(autoRecordListUnLock, autoRecordListRevise, tmpDetailTableF, tmpDetailTableA);
                                 transactionscope.Complete();
                             }
                             catch (Exception ex)
@@ -4284,6 +4308,7 @@ and exists(
                                     throw result.GetException();
                                 }
 
+                                this.DeletetoWMS(autoRecordListUnLock, autoRecordListRevise, tmpDetailTableF, tmpDetailTableA);
                                 transactionscope.Complete();
                             }
                             catch (Exception ex)
@@ -4459,6 +4484,7 @@ and exists(
                                     throw result.GetException();
                                 }
 
+                                this.DeletetoWMS(autoRecordListUnLock, autoRecordListRevise, tmpDetailTableF, tmpDetailTableA);
                                 transactionscope.Complete();
                             }
                             catch (Exception ex)
@@ -4567,6 +4593,7 @@ and exists(
                                     throw result.GetException();
                                 }
 
+                                this.DeletetoWMS(autoRecordListUnLock, autoRecordListRevise, tmpDetailTableF, tmpDetailTableA);
                                 transactionscope.Complete();
                             }
                             catch (Exception ex)
@@ -4696,6 +4723,7 @@ and exists(
                                     throw result.GetException();
                                 }
 
+                                this.DeletetoWMS(autoRecordListUnLock, autoRecordListRevise, tmpDetailTableF, tmpDetailTableA);
                                 transactionscope.Complete();
                             }
                             catch (Exception ex)
@@ -4957,6 +4985,7 @@ and exists(
                                     throw result.GetException();
                                 }
 
+                                this.DeletetoWMS(autoRecordListUnLock, autoRecordListRevise, tmpDetailTableF, tmpDetailTableA);
                                 transactionscope.Complete();
                             }
                             catch (Exception ex)
@@ -5293,6 +5322,7 @@ and exists(
                                     throw result.GetException();
                                 }
 
+                                this.DeletetoWMS(autoRecordListUnLock, autoRecordListRevise, tmpDetailTableF, tmpDetailTableA);
                                 transactionscope.Complete();
                             }
                             catch (Exception ex)
@@ -5306,15 +5336,19 @@ and exists(
 
                 if (!MyUtility.Check.Empty(errMsg))
                 {
-                    Gensong_AutoWHFabric.Sent(true, tmpDetailTableF, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, isP99: true);
-                    Vstrong_AutoWHAccessory.Sent(true, tmpDetailTableA, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, isP99: true);
+                    List<AutoRecord> autoRecordList = new List<AutoRecord>();
+                    Gensong_AutoWHFabric.Sent(false, tmpDetailTableF, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, isP99: true, typeCreateRecord: 1, autoRecord: autoRecordList);
+                    Vstrong_AutoWHAccessory.Sent(false, tmpDetailTableA, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, isP99: true, typeCreateRecord: 1, autoRecord: autoRecordList);
+
+                    Gensong_AutoWHFabric.Sent(false, tmpDetailTableF, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, isP99: true, typeCreateRecord: 2, autoRecord: autoRecordList);
+                    Vstrong_AutoWHAccessory.Sent(false, tmpDetailTableA, this.strFunction, EnumStatus.UnLock, EnumStatus.Unconfirm, isP99: true, typeCreateRecord: 2, autoRecord: autoRecordList);
                     this.ShowErr(errMsg);
                     return;
                 }
 
                 // PMS 更新之後,才執行WMS
-                Gensong_AutoWHFabric.Sent(true, tmpDetailTableF, this.strFunction, EnumStatus.Delete, EnumStatus.Unconfirm, isP99: true);
-                Vstrong_AutoWHAccessory.Sent(true, tmpDetailTableA, this.strFunction, EnumStatus.Delete, EnumStatus.Unconfirm, isP99: true);
+                Gensong_AutoWHFabric.Sent(false, tmpDetailTableF, this.strFunction, EnumStatus.Delete, EnumStatus.Unconfirm, isP99: true, typeCreateRecord: 2, autoRecord: autoRecordListUnLock);
+                Vstrong_AutoWHAccessory.Sent(false, tmpDetailTableA, this.strFunction, EnumStatus.Delete, EnumStatus.Unconfirm, isP99: true, typeCreateRecord: 2, autoRecord: autoRecordListRevise);
 
                 // 將刪除的資料存入Log
                 this.WriteInLog("Delete");
@@ -5322,6 +5356,12 @@ and exists(
 
                 this.Query();
             }
+        }
+
+        private void DeletetoWMS(List<AutoRecord> autoRecordListUnLock, List<AutoRecord> autoRecordListRevise, DataTable tmpDetailTableF, DataTable tmpDetailTableA)
+        {
+            Gensong_AutoWHFabric.Sent(false, tmpDetailTableF, this.strFunction, EnumStatus.Delete, EnumStatus.Unconfirm, isP99: true, typeCreateRecord: 1, autoRecord: autoRecordListUnLock);
+            Vstrong_AutoWHAccessory.Sent(false, tmpDetailTableA, this.strFunction, EnumStatus.Delete, EnumStatus.Unconfirm, isP99: true, typeCreateRecord: 1, autoRecord: autoRecordListRevise);
         }
 
         private void BtnClose_Click(object sender, EventArgs e)

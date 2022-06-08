@@ -3,6 +3,7 @@ using Ict.Win;
 using Microsoft.Reporting.WinForms;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using System;
@@ -642,7 +643,7 @@ left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID a
             }
 
             // AutoWHFabric WebAPI
-            Prgs_WMS.WMSprocess(true, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+            Prgs_WMS.WMSprocess(false, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
@@ -825,8 +826,8 @@ where   exists(select 1 from #tmp t where
             }
 
             Exception errMsg = null;
-            TransactionScope transactionscope = new TransactionScope();
-            using (transactionscope)
+            List<AutoRecord> autoRecordList = new List<AutoRecord>();
+            using (TransactionScope transactionscope = new TransactionScope())
             {
                 try
                 {
@@ -853,9 +854,7 @@ where   exists(select 1 from #tmp t where
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                         {
-                            transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return;
+                            throw result.GetException();
                         }
                     }
 
@@ -872,15 +871,14 @@ where   exists(select 1 from #tmp t where
 
                     if (dtTransferExportDetail.Rows.Count > 0)
                     {
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(
-                            dtTransferExportDetail, string.Empty, sqlDeleteTransferExport_Detail_Carton, out resulttb)))
+                        if (!(result = MyUtility.Tool.ProcessWithDatatable(dtTransferExportDetail, string.Empty, sqlDeleteTransferExport_Detail_Carton, out resulttb)))
                         {
-                            transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return;
+                            throw result.GetException();
                         }
                     }
 
+                    // transactionscope 內, 準備 WMS 資料 & 將資料寫入 AutomationCreateRecord (Delete, Unconfirm)
+                    Prgs_WMS.WMSprocess(false, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory, typeCreateRecord: 1, autoRecord: autoRecordList);
                     transactionscope.Complete();
                 }
                 catch (Exception ex)
@@ -891,13 +889,13 @@ where   exists(select 1 from #tmp t where
 
             if (!MyUtility.Check.Empty(errMsg))
             {
-                Prgs_WMS.WMSprocess(true, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
+                Prgs_WMS.WMSUnLock(false, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
                 this.ShowErr(errMsg);
                 return;
             }
 
             // PMS 更新之後,才執行WMS
-            Prgs_WMS.WMSprocess(true, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory);
+            Prgs_WMS.WMSprocess(false, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory, typeCreateRecord: 2, autoRecord: autoRecordList);
             MyUtility.Msg.InfoBox("UnConfirmed successful");
             #endregion
         }
