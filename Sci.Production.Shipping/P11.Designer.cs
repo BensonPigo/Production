@@ -418,6 +418,7 @@
             this.txtID.Name = "txtID";
             this.txtID.Size = new System.Drawing.Size(173, 23);
             this.txtID.TabIndex = 40;
+            this.txtID.Validating += new System.ComponentModel.CancelEventHandler(this.TxtID_Validating);
             // 
             // P11
             // 

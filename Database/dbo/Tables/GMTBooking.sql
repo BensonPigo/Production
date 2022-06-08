@@ -50,6 +50,7 @@
     [Foundry] BIT NULL DEFAULT ((0)), 
     [DischargePortID] VARCHAR(20) NULL, 
     [PLFromRgCode] VARCHAR(7) CONSTRAINT [DF_GMTBooking_PLFromRgCode] DEFAULT ('') not NULL, 
+    [CMTInvoiceNo] VARCHAR(13) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_GMTBooking] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

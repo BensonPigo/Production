@@ -73,6 +73,8 @@ where bd.id = '{masterID}'
                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Numeric("ShipQty", header: "Q'ty", width: Widths.AnsiChars(12), iseditingreadonly: true)
+                .Text("Dest", header: "Destination", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Numeric("GW", header: "Gross Weight", width: Widths.AnsiChars(10), integer_places: 9, decimal_places: 3, iseditingreadonly: true)
                 .Numeric("UnitPriceUSD", header: "Unit Price (USD)", width: Widths.AnsiChars(10), integer_places: 9, decimal_places: 3, iseditingreadonly: true)
                 .Numeric("AmountUSD", header: "Amount(USD)", width: Widths.AnsiChars(15), integer_places: 12, decimal_places: 3, iseditingreadonly: true)
                 .Numeric("UnitPricePHP", header: "Unit Price (PHP)", width: Widths.AnsiChars(10), integer_places: 9, decimal_places: 3, iseditingreadonly: true)
@@ -138,7 +140,7 @@ where   bd.ID <> '{this.CurrentMaintain["ID"]}' and
                 return false;
             }
 
-            if (dtCheckInvoice.Rows.Count > 0)
+            if (dtCheckInvoice.Rows.Count > 0 && !this.IsChangeID)
             {
                 MyUtility.Msg.ShowMsgGrid_LockScreen(dtCheckInvoice, "The following GB# already exist in CMT Invoice#.", "P11. Save");
                 return false;
@@ -397,7 +399,8 @@ select	[No] = 0,
 		[AmountUSD] = sum(pd.ShipQty) * tup.UnitPriceUSD,
         [UnitPricePHP] = tup.UnitPriceUSD * @ExchangeRate,
 		[AmountPHP] = Round(sum(pd.ShipQty) * tup.UnitPriceUSD * @ExchangeRate, 0),
-		bd.ID,bd.InvNo
+		bd.ID,bd.InvNo,
+        g.Dest,p.GW
 from PackingList p with (nolock)
 left join BIRInvoice_Detail bd with (nolock) on p.INVNo = bd.InvNo
 inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
@@ -413,7 +416,8 @@ group by      o.CustPONo,
 		    s.Description,
 		    tup.UnitPriceUSD,
 			bd.id,
-			bd.invno
+			bd.invno,
+            g.Dest,p.GW
 
 drop table #tmpUnitPriceUSD
 ";
@@ -543,6 +547,23 @@ order by r.BeginDate
             this.CurrentMaintain["ExchangeRate"] = this.numExchangeRate.Value;
 
             this.GetGridPOListData();
+        }
+
+        private void TxtID_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!MyUtility.Check.Empty(this.txtID.Text) && (this.txtID.Text != this.txtID.OldValue))
+            {
+                if (MyUtility.Check.Seek($"select 1 from BIRInvoice where ID ='{this.txtID.Text}'"))
+                {
+                    MyUtility.Msg.WarningBox($"BIR Invoice No.= {this.txtID.Text} exists!");
+                    this.IsChangeID = false;
+                    e.Cancel = true;
+                }
+                else
+                {
+                    this.IsChangeID = true;
+                }
+            }
         }
     }
 }

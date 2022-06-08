@@ -82,6 +82,7 @@ namespace Sci.Production.Shipping
                 if (this.chkOutStanding.Checked)
                 {
                     sqlInvDateWhere += " and gb.ETD >= @InvDateFrom";
+                    sqlInvDateWhere += " and isnull(gb.CMTInvoiceNo,'') = ''";
                 }
                 else
                 {
@@ -136,7 +137,8 @@ select	bi.ID,
         CustPONo = '',
         StyleID = '',
 		Description = '',	
-        [ShipQty] = 0
+        [ShipQty] = 0,
+        [Dest] = ''
 from BIRInvoice bi with (nolock)
 inner join BIRInvoice_Detail bd with (nolock) on bi.ID = bd.ID
 inner join GMTBooking gb on bi.ID = gb.BIRID
@@ -171,7 +173,8 @@ select  t.InvDate,
 		[ShipQty] = SUM(pld.ShipQty),
         [PackID] = pl.ID,
 		[GRS_WEIGHT] = pl.GW,
-		[Qty] = pl.ShipQty
+		[Qty] = pl.ShipQty,
+        [Dest] = ''
 from #tmp t
 inner join PackingList pl with (nolock) on pl.INVNo = t.GMTBooking
 inner join PackingList_Detail pld with (nolock) on pl.ID = pld.ID
@@ -224,7 +227,8 @@ select	bi.InvDate,
 		s.Description,		
 		[ShipQty] = sum(pd.ShipQty),
 		[PackID] = pl.ID,
-		[GRS_WEIGHT] = pl.GW
+		[GRS_WEIGHT] = pl.GW,
+        gb.Dest
 into #tmpBIRInvoice
 from BIRInvoice bi with (nolock)
 inner join BIRInvoice_Detail bd with (nolock) on bd.id = bi.id
@@ -241,6 +245,7 @@ group by bi.InvDate,
 		pd.OrderID,
 		o.CustPONo,
 		gb.ID,
+        gb.Dest,
 		o.StyleID,
 		s.Description,		
 		pl.ID,
@@ -256,7 +261,8 @@ select  distinct
 		Description,		
 		[ShipQty],
         [PackID],
-		[GRS_WEIGHT]
+		[GRS_WEIGHT],
+        Dest
 from #tmp
 
 select	o.ID,
@@ -293,6 +299,8 @@ GMTBooking,
 StyleID,
 Description,		
 [Qty] = sum(tbi.ShipQty),
+[Dest] = tbi.Dest,
+[GW] = tbi.GRS_WEIGHT,
 tup.UnitPriceUSD,
 [AmountUSD] = sum(tbi.ShipQty) * tup.UnitPriceUSD,
 bi.ExchangeRate,
@@ -301,7 +309,7 @@ bi.ExchangeRate,
 from #tmpBIRInvoice tbi
 inner join BIRInvoice bi on tbi.ID = bi.ID
 left join #tmpUnitPriceUSD tup on tbi.OrderID = tup.ID
-group by	 tup.UnitPriceUSD,Description,StyleID,GMTBooking,CustPONo,OrderID,tbi.ID,tbi.InvDate,bi.ExchangeRate
+group by	 tup.UnitPriceUSD,Description,StyleID,GMTBooking,CustPONo,OrderID,tbi.ID,tbi.InvDate,bi.ExchangeRate,tbi.Dest,tbi.GRS_WEIGHT
 
 
 drop table #tmpBIRInvoice
