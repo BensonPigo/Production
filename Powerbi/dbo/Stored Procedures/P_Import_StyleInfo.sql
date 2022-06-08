@@ -78,4 +78,9 @@ BEGIN
 
 
 	drop table #tmp_Style, #tmp_Last_IETMS, #tmp_final
+
+	update b
+		set b.TransferDate = getdate()
+	from BITableInfo b
+	where b.Id = 'P_StyleInfo'
 End

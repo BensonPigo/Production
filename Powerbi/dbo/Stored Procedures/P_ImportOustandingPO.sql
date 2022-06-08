@@ -244,6 +244,11 @@ where T.BuyerDelivery between '''+@SDate+'''  and '''+@EDate+'''
 
 	drop table #final
 
+update b
+	set b.TransferDate = getdate()
+from BITableInfo b
+where b.Id = ''P_OustandingPO_Original''
+
 Commit tran
 
 END TRY
