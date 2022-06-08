@@ -4,6 +4,7 @@ using Microsoft.Reporting.WinForms;
 using Sci.Data;
 using Sci.Production.Automation;
 using Sci.Production.Automation.LogicLayer;
+using Sci.Production.Prg;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using System;
@@ -318,7 +319,7 @@ and ID = '{Sci.Env.User.UserID}'"))
             .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
             .Text("ToPOID", header: "To POID", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("ToSeq", header: "To Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Text("TransferExportID", header:"Transfer WK#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("TransferExportID", header: "Transfer WK#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             ;
             #endregion 欄位設定
             cbb_stocktype.DataSource = new BindingSource(this.di_stocktype, null);
@@ -568,6 +569,8 @@ left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID a
                 dtTransferExportDetail = this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["TransferExportID"])).CopyToDataTable();
             }
 
+            DataTable detailDt = (DataTable)this.detailgridbs.DataSource;
+            DataTable dtQty = detailDt.Select("Qty > 0").TryCopyToDataTable(detailDt);
             Exception errMsg = null;
             TransactionScope transactionscope = new TransactionScope();
             using (transactionscope)
@@ -595,7 +598,6 @@ left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID a
 
                     if (dtDetailExcludeQtyZero.Rows.Count > 0)
                     {
-
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(
                             dtDetailExcludeQtyZero, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                         {
@@ -614,7 +616,6 @@ left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID a
                             this.ShowErr(result);
                             return;
                         }
-
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, $"update TransferOut set status = 'Confirmed', editname = '{Env.User.UserID}' , editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
@@ -623,7 +624,7 @@ left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID a
                     }
 
                     // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
-                    if (!(result = Prgs.UpdateWH_Barcode(true, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
+                    if (!(result = Prgs.UpdateWH_Barcode(true, dtQty, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
                     {
                         throw result.GetException();
                     }
@@ -643,7 +644,7 @@ left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID a
             }
 
             // AutoWHFabric WebAPI
-            Prgs_WMS.WMSprocess(false, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+            Prgs_WMS.WMSprocess(true, dtQty, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
@@ -800,8 +801,11 @@ having f.balanceQty + sum(d.Qty) < 0
 
             #region UnConfirmed 廠商能上鎖→PMS更新→廠商更新
 
+            DataTable detailDt = (DataTable)this.detailgridbs.DataSource;
+            DataTable dtQty = detailDt.Select("Qty > 0").TryCopyToDataTable(detailDt);
+
             // 先確認 WMS 能否上鎖, 不能直接 return
-            if (!Prgs_WMS.WMSLock(((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), dtOriFtyInventory, this.Name, EnumStatus.Unconfirm))
+            if (!Prgs_WMS.WMSLock(dtQty, dtOriFtyInventory, this.Name, EnumStatus.Unconfirm))
             {
                 return;
             }
@@ -864,7 +868,7 @@ where   exists(select 1 from #tmp t where
                     }
 
                     // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
-                    if (!(result = Prgs.UpdateWH_Barcode(false, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
+                    if (!(result = Prgs.UpdateWH_Barcode(false, dtQty, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
                     {
                         throw result.GetException();
                     }
@@ -878,7 +882,7 @@ where   exists(select 1 from #tmp t where
                     }
 
                     // transactionscope 內, 準備 WMS 資料 & 將資料寫入 AutomationCreateRecord (Delete, Unconfirm)
-                    Prgs_WMS.WMSprocess(false, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory, typeCreateRecord: 1, autoRecord: autoRecordList);
+                    Prgs_WMS.WMSprocess(false, dtQty, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory, typeCreateRecord: 1, autoRecord: autoRecordList);
                     transactionscope.Complete();
                 }
                 catch (Exception ex)
@@ -889,13 +893,14 @@ where   exists(select 1 from #tmp t where
 
             if (!MyUtility.Check.Empty(errMsg))
             {
-                Prgs_WMS.WMSUnLock(false, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
+                Prgs_WMS.WMSprocess(true, dtQty, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
                 this.ShowErr(errMsg);
                 return;
             }
 
             // PMS 更新之後,才執行WMS
-            Prgs_WMS.WMSprocess(false, ((DataTable)this.detailgridbs.DataSource).Select("Qty > 0").CopyToDataTable(), this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory, typeCreateRecord: 2, autoRecord: autoRecordList);
+            Prgs_WMS.WMSprocess(true, dtQty, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory);
+
             MyUtility.Msg.InfoBox("UnConfirmed successful");
             #endregion
         }
