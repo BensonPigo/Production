@@ -564,7 +564,7 @@ and stocktype='{this.CurrentDetailData["stocktype"]}' and roll='{e.FormattedValu
             // AutoWHFabric WebAPI
             if (dtAdjust_Detail.Rows.Count > 0)
             {
-                Prgs_WMS.WMSprocess(true, dtAdjust_Detail, formName, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+                Prgs_WMS.WMSprocess(false, dtAdjust_Detail, formName, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
             }
 
             MyUtility.Msg.InfoBox("Confirmed successful");

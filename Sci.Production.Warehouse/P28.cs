@@ -912,8 +912,8 @@ where id = '{item["ID"]}'";
                 }
 
                 // AutoWHFabric WebAPI
-                Gensong_AutoWHFabric.Sent(true, dtDetail_byid, "P22", EnumStatus.New, EnumStatus.Confirm);
-                Vstrong_AutoWHAccessory.Sent(true, dtDetail_byid, "P22", EnumStatus.New, EnumStatus.Confirm);
+                Gensong_AutoWHFabric.Sent(false, dtDetail_byid, "P22", EnumStatus.New, EnumStatus.Confirm);
+                Vstrong_AutoWHAccessory.Sent(false, dtDetail_byid, "P22", EnumStatus.New, EnumStatus.Confirm);
             }
 
             this.p13_msg.Show("Trans. ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!" + " and Confirm Success!! ");

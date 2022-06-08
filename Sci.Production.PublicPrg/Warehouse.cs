@@ -5595,10 +5595,14 @@ and d.Id = '{id}'";
         }
 
         /// <inheritdoc/>
-        public static bool SentToWMS(DataTable dtDetail, bool isConfirmed, string formName)
+        public static bool SentToWMS(DataTable dtDetail, bool isConfirmed, string formName, string ukeys = "")
         {
             WHTableName detailTableName = GetWHDetailTableName(formName);
-            string ukeys = dtDetail.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["Ukey"])).ToList().JoinToString(",");
+            if (ukeys == string.Empty)
+            {
+                ukeys = dtDetail.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["Ukey"])).ToList().JoinToString(",");
+            }
+
             string sqlcmd = $@"
 update {detailTableName}
 set SentToWMS = {(isConfirmed ? 1 : 0)}
