@@ -29,12 +29,12 @@ namespace Sci.Production.Automation
         /// <inheritdoc/>
         public static bool Sent(bool doTask, DataTable dtDetail, string formName, EnumStatus statusAPI, EnumStatus action, bool isP99 = false, bool fromNewBarcode = false, int typeCreateRecord = 0, List<AutoRecord> autoRecord = null)
         {
-            if (!Prgs.NoGensong(formName))
+            if (!Prgs.NoGensong(formName) || dtDetail.Rows.Count == 0)
             {
                 return true;
             }
 
-            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count == 0)
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
             {
                 return false;
             }
