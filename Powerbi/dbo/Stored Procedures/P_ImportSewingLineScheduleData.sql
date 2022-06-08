@@ -154,6 +154,11 @@ and t.MDivisionID in (select distinct MDivisionID from #Final )
 
 drop table #Final
 
+update b
+	set b.TransferDate = getdate()
+from BITableInfo b
+where b.Id = ''P_SewingLineSchedule_Original''
+
 Commit tran
 
 END TRY
