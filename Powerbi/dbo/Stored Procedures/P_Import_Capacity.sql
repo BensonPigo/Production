@@ -381,4 +381,8 @@ BEGIN
 	where NOT EXISTS( select 1 from P_Capacity p WHERE p.ID=k.ID)
 
 
+	update b
+		set b.TransferDate = getdate()
+	from BITableInfo b
+	where b.Id = 'P_Capacity'
 End
