@@ -28,7 +28,7 @@
     [FormStatus]          VARCHAR (2)     CONSTRAINT [DF_Export_FormStatus] DEFAULT ('') NULL,
     [Carrier]             VARCHAR (6)     CONSTRAINT [DF_Export_Carrier] DEFAULT ('') NOT NULL,
     [Forwarder]           VARCHAR (6)     CONSTRAINT [DF_Export_Forwarder] DEFAULT ('') NOT NULL,
-    [Vessel]              NVARCHAR (30)   CONSTRAINT [DF_Export_Vessel] DEFAULT ('') NULL,
+    [Vessel]              NVARCHAR (60)   CONSTRAINT [DF_Export_Vessel] DEFAULT ('') NULL,
     [ShipTo]              VARCHAR (30)    CONSTRAINT [DF_Export_ShipTo] DEFAULT ('') NULL,
     [Sono]                VARCHAR (12)    CONSTRAINT [DF_Export_Sono] DEFAULT ('') NULL,
     [Blno]                VARCHAR (20)    CONSTRAINT [DF_Export_Blno] DEFAULT ('') NULL,
