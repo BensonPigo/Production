@@ -3,6 +3,7 @@ using Ict.Win;
 using Microsoft.Reporting.WinForms;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using System;
@@ -1274,7 +1275,7 @@ and NOT EXISTS(select 1 from AIR_Laboratory b    where a.ID = b.ID AND a.POID=b.
             }
 
             // AutoWHFabric WebAPI
-            Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
@@ -1444,6 +1445,7 @@ where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - isn
             }
 
             Exception errMsg = null;
+            List<AutoRecord> autoRecordList = new List<AutoRecord>();
             using (TransactionScope transactionscope = new TransactionScope())
             {
                 DBProxy.Current.OpenConnection(null, out SqlConnection sqlConn);
@@ -1503,44 +1505,35 @@ where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - isn
                         if (!MyUtility.Check.Empty(this.CurrentMaintain["TransferExportID"]))
                         {
                             string sqlUpdateTransferExport = @" update TransferExport set WhseArrival = null, PackingArrival = null where ID = @TransferExportID";
-                            List<SqlParameter> listParTransferExport = new List<SqlParameter>()
-                        {
-                            new SqlParameter("@TransferExportID", this.CurrentMaintain["TransferExportID"]),
-                        };
-
-                            result = DBProxy.Current.Execute(null, sqlUpdateTransferExport, listParTransferExport);
-                            if (!result)
+                            List<SqlParameter> listParTransferExport = new List<SqlParameter>() { new SqlParameter("@TransferExportID", this.CurrentMaintain["TransferExportID"]) };
+                            if (!(result = DBProxy.Current.Execute(null, sqlUpdateTransferExport, listParTransferExport)))
                             {
-                                transactionscope.Dispose();
-                                this.ShowErr(result);
-                                return;
+                                throw result.GetException();
                             }
                         }
 
+                        // transactionscope 內, 準備 WMS 資料 & 將資料寫入 AutomationCreateRecord (Delete, Unconfirm)
+                        Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory, typeCreateRecord: 1, autoRecord: autoRecordList);
                         transactionscope.Complete();
-                        transactionscope.Dispose();
-                        MyUtility.Msg.InfoBox("UnConfirmed successful");
                     }
                     catch (Exception ex)
                     {
-                        transactionscope.Dispose();
-                        this.ShowErr("Commit transaction error.", ex);
-                        return;
+                        errMsg = ex;
                     }
-
-                    if (!MyUtility.Check.Empty(errMsg))
-                    {
-                        Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
-                        this.ShowErr(errMsg);
-                        return;
-                    }
-
-                    // PMS 更新之後,才執行WMS
-                    Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory);
-                    MyUtility.Msg.InfoBox("UnConfirmed successful");
-                    #endregion
                 }
             }
+
+            if (!MyUtility.Check.Empty(errMsg))
+            {
+                Prgs_WMS.WMSUnLock(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
+                this.ShowErr(errMsg);
+                return;
+            }
+
+            // PMS 更新之後,才執行WMS
+            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory, typeCreateRecord: 2, autoRecord: autoRecordList);
+            MyUtility.Msg.InfoBox("UnConfirmed successful");
+            #endregion
         }
 
         /// <inheritdoc/>

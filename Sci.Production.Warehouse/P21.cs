@@ -2,6 +2,7 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
@@ -997,6 +998,8 @@ where m.IsWMS = 0";
 
             DualResult result;
             Exception errMsg = null;
+            List<AutoRecord> autoRecordListP07 = new List<AutoRecord>();
+            List<AutoRecord> autoRecordListP18 = new List<AutoRecord>();
             using (TransactionScope transactionscope = new TransactionScope())
             {
                 try
@@ -1030,6 +1033,7 @@ where m.IsWMS = 0";
                         }
                     }
 
+                    Prgs_WMS.UnLockorDeleteNotWMS(dtToWMS, EnumStatus.Delete, autoRecordListP07, autoRecordListP18, 1);
                     transactionscope.Complete();
                 }
                 catch (Exception ex)
@@ -1040,20 +1044,17 @@ where m.IsWMS = 0";
 
             if (!MyUtility.Check.Empty(errMsg))
             {
-                // 找出要撤回的 P07 Ukey
-                DataTable dt07 = Prgs.GetWHDetailUkey(dtToWMS, "P07");
-
-                // 找出要撤回的 P18 Ukey
-                DataTable dt18 = Prgs.GetWHDetailUkey(dtToWMS, "P18");
-
-                Gensong_AutoWHFabric.Sent(true, dt07, "P07", EnumStatus.UnLock, EnumStatus.Unconfirm);
-                Gensong_AutoWHFabric.Sent(true, dt18, "P18", EnumStatus.UnLock, EnumStatus.Unconfirm);
+                // P21/P26 調整 Tolocation 不是自動倉, 過程有任何錯誤, 要發給 WMS 要求(UnLock)
+                autoRecordListP07.Clear();
+                autoRecordListP18.Clear();
+                Prgs_WMS.UnLockorDeleteNotWMS(dtToWMS, EnumStatus.UnLock, autoRecordListP07, autoRecordListP18, 1);
+                Prgs_WMS.UnLockorDeleteNotWMS(dtToWMS, EnumStatus.UnLock, autoRecordListP07, autoRecordListP18, 2);
                 this.ShowErr(errMsg);
                 return;
             }
 
             // 調整後 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Delete) P07/P18
-            Prgs_WMS.DeleteNotWMS(dtToWMS);
+            Prgs_WMS.UnLockorDeleteNotWMS(dtToWMS, EnumStatus.Delete, autoRecordListP07, autoRecordListP18, 2);
 
             // 將當前所選位置記錄起來後, 待資料重整後定位回去!
             int currentRowIndexInt = this.gridReceiving.CurrentRow.Index;

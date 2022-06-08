@@ -3,6 +3,7 @@ using Ict.Win;
 using Microsoft.Reporting.WinForms;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using System;
@@ -262,7 +263,7 @@ where id = '{this.CurrentMaintain["ID"]}'
             }
 
             // AutoWHFabric WebAPI
-            Prgs_WMS.WMSprocess(true, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
             MyUtility.Msg.InfoBox("Checked successful");
         }
 
@@ -290,13 +291,15 @@ where id = '{this.CurrentMaintain["ID"]}'
             DualResult result;
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
             {
-                Prgs_WMS.WMSprocess(true, detailTable, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, detailTable);
+                Prgs_WMS.WMSUnLock(false, detailTable, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, detailTable);
                 this.ShowErr(sqlcmd, result);
                 return;
             }
 
             // PMS 更新之後,才執行WMS
-            Prgs_WMS.WMSprocess(true, detailTable, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, detailTable);
+            List<AutoRecord> autoRecordList = new List<AutoRecord>();
+            Prgs_WMS.WMSprocess(false, detailTable, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, detailTable, typeCreateRecord: 1, autoRecord: autoRecordList);
+            Prgs_WMS.WMSprocess(false, detailTable, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, detailTable, typeCreateRecord: 2, autoRecord: autoRecordList);
             MyUtility.Msg.InfoBox("UnChecked successful");
             #endregion
         }
@@ -433,7 +436,7 @@ where id = '{this.CurrentMaintain["ID"]}'
             // AutoWHFabric WebAPI
             if (dtAdjust_Detail.Rows.Count > 0)
             {
-                Prgs_WMS.WMSprocess(true, dtAdjust_Detail, formName, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+                Prgs_WMS.WMSprocess(false, dtAdjust_Detail, formName, EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
             }
 
             MyUtility.Msg.InfoBox("Confirmed successful");
