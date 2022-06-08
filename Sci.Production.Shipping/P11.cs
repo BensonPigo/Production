@@ -17,6 +17,8 @@ namespace Sci.Production.Shipping
     /// </summary>
     public partial class P11 : Win.Tems.Input6
     {
+        private bool IsChangeID = false;
+
         /// <summary>
         /// P11
         /// </summary>
@@ -179,6 +181,32 @@ select ID from BIRInvoice where ID like @IDkeyWord + '%'
             #endregion
 
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+
+            // 回填BIR Invoice 至GMTBooking.CMTInvoiceNo
+            if (this.detailgridbs.DataSource != null)
+            {
+                DataTable detail = (DataTable)this.detailgridbs.DataSource;
+                string updCmd = string.Empty;
+                foreach (DataRow item in detail.Rows)
+                {
+                    updCmd += $@"
+update GMTBooking
+set CMTInvoiceNo = '{this.CurrentMaintain["ID"]}'
+where ID='{item["InvNo"]}'
+";
+                }
+
+                DualResult reusult = DBProxy.Current.Execute(null, updCmd);
+                if (!reusult)
+                {
+                    this.ShowErr(reusult);
+                }
+            }
         }
 
         /// <inheritdoc/>
