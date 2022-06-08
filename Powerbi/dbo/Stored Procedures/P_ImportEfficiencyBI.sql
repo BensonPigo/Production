@@ -409,6 +409,10 @@ select OrderID from #Final s
 	AND t.OutputDate = s.OutputDate
 	AND t.SubConOutContractNumber = s.SubConOutContractNumber);
 
+update b
+	set b.TransferDate = getdate()
+from BITableInfo b
+where b.Id = ''P_SewingDailyOutput_Original''
 '
 
 SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd2 + @SqlCmd3 + @SqlCmd4
