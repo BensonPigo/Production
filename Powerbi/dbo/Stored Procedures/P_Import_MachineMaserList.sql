@@ -61,7 +61,8 @@ from OPENQUERY ([' + @LinkServerName + '], ''' + @openQuerySql + ''')
 
 delete p
 from P_MachineMasterList p
-where exists(select 1 from #tmp t where p.Month = t.YYYYMM and p.MachineID = t.MachineID and p.M = t.LocationM)
+where exists (select 1 from #tmp t where p.Month = t.YYYYMM and p.M = t.LocationM)
+--and not exists (select 1 from #tmp t where p.Month = t.YYYYMM and p.M = t.LocationM and p.MachineID = t.MachineID)
 
 insert into P_MachineMasterList(Month
 								,M
@@ -87,14 +88,15 @@ insert into P_MachineMasterList(Month
 								,Junk
 )
 select *
-from #tmp
+from #tmp t
+--where not exists (select 1 from P_MachineMasterList p where p.Month = t.YYYYMM and p.M = t.LocationM and p.MachineID = t.MachineID)
 
 drop table #tmp
 
-	update b
-		set b.TransferDate = getdate()
-	from BITableInfo b
-	where b.Id = ''P_MachineMasterList''
+update b
+	set b.TransferDate = getdate()
+from BITableInfo b
+where b.Id = ''P_MachineMasterList''
 '
 exec (@finalInsertSql)
 
