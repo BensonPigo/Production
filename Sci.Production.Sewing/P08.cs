@@ -118,6 +118,9 @@ group by pd.MDFailQty,pd.OrderID,o.CustPONo,o.StyleID,o.SeasonID,o.BrandID
                 this.numericBoxDiscrepancy.Text = MyUtility.Convert.GetString(row["MDFailQty"]);
                 this.numericBoxDiscrepancy.Maximum = MyUtility.Convert.GetInt(row["CartonQty"]);
             }
+
+            this.numericBoxDiscrepancy.ReadOnly = false;
+            this.dtDetail = new DataTable();
         }
 
         private bool BeforeSave()
@@ -223,7 +226,13 @@ values('{mDScan_Ukey}','{drDetail["PackingReasonID"]}',{drDetail["Qty"]})
 
         private void BtnDetail_Click(object sender, EventArgs e)
         {
-            P08_Detail callform = new P08_Detail(this.dt.Rows[0]);
+            if (this.dt == null || this.dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found");
+                return;
+            }
+
+            P08_Detail callform = new P08_Detail(this.dt.Rows[0], this.dtDetail);
             callform.ShowDialog();
             int ttlQty = callform.ttlDiscrepancy;
             this.dtDetail = callform.dtDetail;
@@ -234,6 +243,7 @@ values('{mDScan_Ukey}','{drDetail["PackingReasonID"]}',{drDetail["Qty"]})
             }
             else
             {
+                this.numericBoxDiscrepancy.Value = ttlQty;
                 this.numericBoxDiscrepancy.ReadOnly = false;
             }
         }

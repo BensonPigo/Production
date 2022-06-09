@@ -51,7 +51,6 @@
             this.displayCartonQty = new Sci.Win.UI.DisplayBox();
             this.btnSave = new Sci.Win.UI.Button();
             this.btnDetail = new Sci.Win.UI.Button();
-            this.gridIcon1 = new Sci.Win.UI.GridIcon();
             this.SuspendLayout();
             // 
             // lbScanCartonsBarcode
@@ -272,20 +271,11 @@
             this.btnDetail.UseVisualStyleBackColor = true;
             this.btnDetail.Click += new System.EventHandler(this.BtnDetail_Click);
             // 
-            // gridIcon1
-            // 
-            this.gridIcon1.Location = new System.Drawing.Point(425, 21);
-            this.gridIcon1.Name = "gridIcon1";
-            this.gridIcon1.Size = new System.Drawing.Size(100, 32);
-            this.gridIcon1.TabIndex = 21;
-            this.gridIcon1.Text = "gridIcon1";
-            // 
             // P08
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(565, 257);
-            this.Controls.Add(this.gridIcon1);
             this.Controls.Add(this.btnDetail);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.displayCartonQty);
@@ -335,7 +325,6 @@
             this.Controls.SetChildIndex(this.displayCartonQty, 0);
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.btnDetail, 0);
-            this.Controls.SetChildIndex(this.gridIcon1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -366,6 +355,5 @@
         private Win.UI.DisplayBox displayCartonQty;
         private Win.UI.Button btnSave;
         private Win.UI.Button btnDetail;
-        private Win.UI.GridIcon gridIcon1;
     }
 }

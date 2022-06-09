@@ -24,12 +24,17 @@ namespace Sci.Production.Sewing
         /// <inheritdoc/>
         public DataTable dtDetail;
 
+        private bool QtyCanEdit;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
+
         /// <inheritdoc/>
-        public P08_Detail(DataRow dr)
+        public P08_Detail(DataRow dr, DataTable dtHistory)
         {
             this.EditMode = true;
             this.InitializeComponent();
             this.drData = dr;
+            this.dtDetail = dtHistory;
+            this.QtyCanEdit = dtHistory.Rows.Count > 0 ? false : true;
         }
 
         /// <inheritdoc/>
@@ -37,13 +42,20 @@ namespace Sci.Production.Sewing
         {
             base.OnFormLoaded();
 
-            string sqlcmd = "select MDScanUKey,PackingReasonID,Qty,Remarks = '' from MDScan_Detail where 1=0";
-
-            DataTable dtDBSource;
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtDBSource);
-            if (result)
+            if (this.dtDetail == null || this.dtDetail.Rows.Count == 0)
             {
-                this.listControlBindingSource1.DataSource = dtDBSource;
+                string sqlcmd = "select MDScanUKey,PackingReasonID,Qty,Remarks = '' from MDScan_Detail where 1=0";
+
+                DataTable dtDBSource;
+                DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtDBSource);
+                if (result)
+                {
+                    this.listControlBindingSource1.DataSource = dtDBSource;
+                }
+            }
+            else
+            {
+                this.listControlBindingSource1.DataSource = this.dtDetail;
             }
 
             this.grid.IsEditingReadOnly = false;
@@ -59,7 +71,7 @@ namespace Sci.Production.Sewing
                 if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
-                    string item_cmd = "select ID,Description from PackingReason WHERE Type='MD' AND Junk=0";
+                    string item_cmd = $"select ID,Description from PackingReason WHERE Type='MD' AND Junk=0 ";
                     SelectItem item = new SelectItem(item_cmd, "10,25", dr["Remarks"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -69,8 +81,37 @@ namespace Sci.Production.Sewing
 
                     dr["Remarks"] = item.GetSelecteds()[0]["Description"].ToString();
                     dr["PackingReasonID"] = item.GetSelecteds()[0]["ID"].ToString();
+
+                    DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+                    if (dt.AsEnumerable().Where(w => w["Remarks"].ToString() == dr["Remarks"].ToString()).Count() > 1)
+                    {
+                        MyUtility.Msg.WarningBox("[Remarks] cannot be repeat!!");
+                        dr["Remarks"] = string.Empty;
+                        dr["PackingReasonID"] = string.Empty;
+                    }
+
                     dr.EndEdit();
                 }
+            };
+
+            col_Remark.CellValidating += (s, e) => 
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
+                DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+                if (dt.AsEnumerable().Where(w => w["Remarks"].ToString() != dr["Remarks"].ToString() && w["Remarks"].ToString() == e.FormattedValue.ToString()).Any())
+                {
+                    MyUtility.Msg.WarningBox("[Remarks] cannot be repeat!!");
+                    e.Cancel = true;
+                    return;
+                }
+
+                dr.EndEdit();
+
             };
 
             DataGridViewGeneratorNumericColumnSettings col_Discrepancy = new DataGridViewGeneratorNumericColumnSettings();
@@ -102,9 +143,34 @@ and SCICtnNo = '{this.drData["SCICtnNo"]}' and OrderID = '{this.drData["OrderID"
             };
 
             this.Helper.Controls.Grid.Generator(this.grid)
-                .Numeric("Qty", header: "Discrepancy", width: Widths.AnsiChars(15), decimal_places: 0, iseditingreadonly: false, settings: col_Discrepancy)
+                .Numeric("Qty", header: "Discrepancy", width: Widths.AnsiChars(15), decimal_places: 0, iseditingreadonly: false, settings: col_Discrepancy).Get(out this.col_Qty)
                 .Text("Remarks", header: "Remarks", width: Widths.AnsiChars(25), iseditingreadonly: true, settings: col_Remark)
                 ;
+
+            this.grid.RowEnter += this.Grid_RowEnter;
+        }
+
+        private void Grid_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+            {
+                return;
+            }
+
+            var data = ((DataRowView)this.grid.Rows[e.RowIndex].DataBoundItem).Row;
+            if (data == null)
+            {
+                return;
+            }
+
+            if (this.QtyCanEdit == false && !MyUtility.Check.Empty(data["Qty"]))
+            {
+                this.col_Qty.IsEditingReadOnly = true;
+            }
+            else
+            {
+                this.col_Qty.IsEditingReadOnly = false;
+            }
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
@@ -114,13 +180,18 @@ and SCICtnNo = '{this.drData["SCICtnNo"]}' and OrderID = '{this.drData["OrderID"
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            // 檢查是否有勾選資料
             this.grid.ValidateControl();
             this.listControlBindingSource1.EndEdit();
 
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dt))
             {
+                return;
+            }
+
+            if (dt.AsEnumerable().Where(w => MyUtility.Check.Empty(w["Remarks"])).Any())
+            {
+                MyUtility.Msg.WarningBox("Remarks cannot be empty!");
                 return;
             }
 
@@ -160,10 +231,9 @@ and SCICtnNo = '{this.drData["SCICtnNo"]}' and OrderID = '{this.drData["OrderID"
                 return;
             }
 
-            DataRow drSelect = this.grid.GetDataRow(this.listControlBindingSource1.Position);
-            if (drSelect != null)
+            if (this.grid.CurrentDataRow != null)
             {
-                drSelect.Delete();
+                this.grid.CurrentDataRow.Delete();
                 dt.AcceptChanges();
             }
         }
