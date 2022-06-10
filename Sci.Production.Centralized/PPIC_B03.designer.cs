@@ -31,13 +31,11 @@ namespace Sci.Production.Centralized
         {
             this.components = new System.ComponentModel.Container();
             this.labFactory = new Sci.Win.UI.Label();
-            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
             this.gridMailto = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.btnBatchImport = new Sci.Win.UI.Button();
             this.gridIcon1 = new Sci.Win.UI.GridIcon();
-            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
-            this.lbN = new Sci.Win.UI.Label();
+            this.txtFactory = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -48,15 +46,23 @@ namespace Sci.Production.Centralized
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(814, 257);
+            // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtFactory);
             this.detailcont.Controls.Add(this.gridIcon1);
             this.detailcont.Controls.Add(this.btnBatchImport);
             this.detailcont.Controls.Add(this.gridMailto);
-            this.detailcont.Controls.Add(this.txtfactory1);
-            this.detailcont.Controls.Add(this.txtMdivision1);
-            this.detailcont.Controls.Add(this.lbN);
             this.detailcont.Controls.Add(this.labFactory);
+            this.detailcont.Size = new System.Drawing.Size(814, 219);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 219);
+            this.detailbtm.Size = new System.Drawing.Size(814, 38);
             // 
             // browse
             // 
@@ -69,28 +75,13 @@ namespace Sci.Production.Centralized
             // labFactory
             // 
             this.labFactory.BackColor = System.Drawing.Color.Transparent;
-            this.labFactory.Location = new System.Drawing.Point(198, 10);
+            this.labFactory.Location = new System.Drawing.Point(10, 10);
             this.labFactory.Name = "labFactory";
             this.labFactory.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.labFactory.Size = new System.Drawing.Size(109, 23);
             this.labFactory.TabIndex = 3;
             this.labFactory.Text = "Factory";
             this.labFactory.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.BoolFtyGroupList = true;
-            this.txtfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
-            this.txtfactory1.FilteMDivision = false;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.IsProduceFty = false;
-            this.txtfactory1.IssupportJunk = false;
-            this.txtfactory1.Location = new System.Drawing.Point(310, 10);
-            this.txtfactory1.MDivision = null;
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 1;
             // 
             // gridMailto
             // 
@@ -116,7 +107,7 @@ namespace Sci.Production.Centralized
             this.gridMailto.RowTemplate.Height = 24;
             this.gridMailto.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridMailto.ShowCellToolTips = false;
-            this.gridMailto.Size = new System.Drawing.Size(881, 312);
+            this.gridMailto.Size = new System.Drawing.Size(798, 174);
             this.gridMailto.TabIndex = 5;
             // 
             // btnBatchImport
@@ -141,24 +132,18 @@ namespace Sci.Production.Centralized
             this.gridIcon1.InsertClick += new System.EventHandler(this.GridIcon1_InsertClick);
             this.gridIcon1.RemoveClick += new System.EventHandler(this.GridIcon1_RemoveClick);
             // 
-            // txtMdivision1
+            // txtFactory
             // 
-            this.txtMdivision1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtMdivision1.IsSupportEditMode = false;
-            this.txtMdivision1.Location = new System.Drawing.Point(120, 10);
-            this.txtMdivision1.Name = "txtMdivision1";
-            this.txtMdivision1.ReadOnly = true;
-            this.txtMdivision1.Size = new System.Drawing.Size(75, 23);
-            this.txtMdivision1.TabIndex = 0;
-            // 
-            // lbN
-            // 
-            this.lbN.Location = new System.Drawing.Point(8, 10);
-            this.lbN.Name = "lbN";
-            this.lbN.Size = new System.Drawing.Size(109, 23);
-            this.lbN.TabIndex = 4;
-            this.lbN.Text = "M";
+            this.txtFactory.BackColor = System.Drawing.Color.White;
+            this.txtFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.Location = new System.Drawing.Point(122, 10);
+            this.txtFactory.MaxLength = 10;
+            this.txtFactory.Name = "txtFactory";
+            this.txtFactory.Size = new System.Drawing.Size(106, 23);
+            this.txtFactory.TabIndex = 14;
+            this.txtFactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtFactory_PopUp);
+            this.txtFactory.Validating += new System.ComponentModel.CancelEventHandler(this.TxtFactory_Validating);
             // 
             // PPIC_B03
             // 
@@ -190,12 +175,10 @@ namespace Sci.Production.Centralized
 
         #endregion
         private Sci.Win.UI.Label labFactory;
-        private Production.Class.Txtfactory txtfactory1;
         private Win.UI.GridIcon gridIcon1;
         private Win.UI.Button btnBatchImport;
         private Win.UI.Grid gridMailto;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Class.TxtMdivision txtMdivision1;
-        private Win.UI.Label lbN;
+        private Win.UI.TextBox txtFactory;
     }
 }

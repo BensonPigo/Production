@@ -23,9 +23,7 @@ namespace Sci.Production.Centralized
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = $"exists (select 1 from Trade.dbo.Factory where MDivisionID = '{Env.User.Keyword}' and ID = MailGroup.FactoryID)";
-            this.txtfactory1.FilteMDivision = true;
-            this.txtMdivision1.Text = Env.User.Keyword;
+            this.DefaultFilter = $"exists (select 1 from Trade.dbo.Factory where ID = MailGroup.FactoryID)";
             this.dt.Columns.Add("ToAddress", typeof(string));
             this.listControlBindingSource1.DataSource = this.dt;
             this.GridSetup();
@@ -76,21 +74,21 @@ namespace Sci.Production.Centralized
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["Code"] = "300";
+            this.CurrentMaintain["Code"] = "P30";
             this.CurrentMaintain["FactoryID"] = Env.User.Factory;
         }
 
         /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
-            this.txtfactory1.ReadOnly = true;
+            this.txtFactory.ReadOnly = true;
             base.ClickEditAfter();
         }
 
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(this.txtfactory1.Text))
+            if (MyUtility.Check.Empty(this.txtFactory.Text))
             {
                 MyUtility.Msg.WarningBox("Factory can't empty");
                 return false;
@@ -98,7 +96,7 @@ namespace Sci.Production.Centralized
 
             if (this.IsDetailInserting)
             {
-                string sqlcmd = $@"select 1 from MailGroup where FactoryID = '{this.CurrentMaintain["FactoryID"]}' and Code = '300'";
+                string sqlcmd = $@"select 1 from MailGroup where FactoryID = '{this.CurrentMaintain["FactoryID"]}' and Code = 'P30'";
                 if (MyUtility.Check.Seek(sqlcmd))
                 {
                     MyUtility.Msg.WarningBox("<Factory> is duplicate in database. ");
@@ -152,6 +150,48 @@ namespace Sci.Production.Centralized
                     newdr["ToAddress"] = selectitem["Email"];
                     this.dt.Rows.Add(newdr);
                 }
+            }
+        }
+
+        private void TxtFactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string sqlcmd = @"
+SELECT FtyZone as Factory 
+FROM TradeDB.Trade.dbo.Factory 
+WHERE JUNK=0 
+AND ISNULL(FtyZone,'') != ''
+GROUP BY CountryID, FtyZone
+ORDER BY charindex(CountryID,'PH,VN,KH,CN,TW') ,FtyZone
+";
+
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "8", this.txtFactory.Text, false, ",");
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtFactory.Text = item.GetSelectedString();
+            this.txtFactory.ValidateControl();
+        }
+
+        private void TxtFactory_Validating(object sender, CancelEventArgs e)
+        {
+            string fty = this.txtFactory.Text;
+            string sqlcmd = $@"
+SELECT FtyZone as Factory 
+FROM TradeDB.Trade.dbo.Factory 
+WHERE JUNK=0 
+and FtyZone = '{fty}'
+AND ISNULL(FtyZone,'') != ''
+";
+
+            if (!MyUtility.Check.Seek(sqlcmd))
+            {
+                this.txtFactory.Text = string.Empty;
+                e.Cancel = true;
+
+                MyUtility.Msg.WarningBox($"<Factory : {fty}> not found!");
             }
         }
     }
