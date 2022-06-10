@@ -151,7 +151,10 @@ select * from (
 -- Resent
 select 
 [select] = 0
-,t.Ukey,t.CallFrom,t.Activity,t.SuppID,t.ModuleName,t.SuppAPIThread,t.AddDate
+,t.Ukey,t.CallFrom,t.Activity
+,SuppID = IIF( isnull(b.SuppID,'') = '', t.SuppID, b.SuppID)
+,ModuleName = IIF( isnull(b.ModuleName,'') = '', t.ModuleName, b.ModuleName)
+,t.SuppAPIThread,t.AddDate
 ,[JSON] = LEFT(t.JSON,100) + '...'
 ,[oriJson] = t.JSON
 ,[TransJSON] = LEFT(t.TransJSON,100) + '...'
@@ -166,6 +169,7 @@ select
 from fps.dbo.AutomationTransRecord t
 left join Production.dbo.AutomationErrMsg em on convert(varchar(80), em.Ukey) = t.Activity
 left join Production.dbo.AutomationCheckMsg cm on cm.AutomationTransRecordUkey = t.Ukey
+left join Production.dbo.AutomationDisplay b on t.SuppAPIThread = b.SuppAPIThread
 where 1=1
 and t.CallFrom = 'Resent'
  {strWhere}
@@ -175,7 +179,10 @@ and t.CallFrom = 'Resent'
 -- !Resent 
 select 
 [select] = 0
-,t.Ukey,t.CallFrom,t.Activity,t.SuppID,t.ModuleName,t.SuppAPIThread,t.AddDate
+,t.Ukey,t.CallFrom,t.Activity
+,SuppID = IIF( isnull(b.SuppID,'') = '', t.SuppID, b.SuppID)
+,ModuleName = IIF( isnull(b.ModuleName,'') = '', t.ModuleName, b.ModuleName)
+,t.SuppAPIThread,t.AddDate
 ,[JSON] = LEFT(t.JSON,100) + '...'
 ,[oriJson] = t.JSON
 ,[TransJSON] = LEFT(t.TransJSON,100) + '...'
@@ -190,6 +197,7 @@ select
 from fps.dbo.AutomationTransRecord t
 left join Production.dbo.AutomationErrMsg em on em.AutomationTransRecordUkey = t.Ukey
 left join Production.dbo.AutomationCheckMsg cm on cm.AutomationTransRecordUkey = t.Ukey
+left join Production.dbo.AutomationDisplay b on t.SuppAPIThread = b.SuppAPIThread
 where 1=1
 and t.CallFrom != 'Resent'
 {strWhere}
