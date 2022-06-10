@@ -1129,9 +1129,10 @@ select  t.ID
                                             and ID = t.SampleReason)
                                     , '')
         , SpecialMarkName = isnull ((select Name 
-                                     from Reason WITH (NOLOCK) 
-                                     where ReasonTypeID = 'Style_SpecialMark' 
-                                           and ID = t.SpecialMark)
+                                     from Style_SpecialMark sp WITH(NOLOCK) 
+                                     where sp.ID = t.SpecialMark
+                                     and sp.BrandID = t.BrandID
+                                     and sp.Junk = 0)
                                     , '') 
         , MTLExportTimes = isnull ([dbo].getMTLExport (t.POID, t.MTLExport), '')
         , GMTLT = dbo.GetGMTLT(t.BrandID, t.StyleID, t.SeasonID, t.FactoryID,t.ID)
@@ -1420,9 +1421,10 @@ select distinct
                                             and ID = t.SampleReason)
                                     , '') 
         , SpecialMarkName = isnull ((select Name 
-                                     from Reason WITH (NOLOCK) 
-                                     where  ReasonTypeID = 'Style_SpecialMark' 
-                                            and ID = t.SpecialMark)
+                                     from Style_SpecialMark sp WITH(NOLOCK) 
+                                     where sp.ID = t.SpecialMark 
+                                     and sp.BrandID = t.BrandID
+                                     and sp.Junk = 0)
                                    , '')
         , MTLExportTimes = isnull ([dbo].getMTLExport (t.POID, t.MTLExport), '')
         , GMTLT = dbo.GetGMTLT(t.BrandID, t.StyleID, t.SeasonID, t.FactoryID, t.ID)

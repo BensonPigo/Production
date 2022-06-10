@@ -5004,4 +5004,46 @@ left join production.dbo.PadPrint_Mold_Spec b on a.PadPrint_ukey = b.PadPrint_uk
 where b.PadPrint_ukey is null
 
 
+--Style_SpecialMark
+delete a
+from Production.dbo.Style_SpecialMark a
+left join Trade_To_Pms.dbo.Style_SpecialMark b on a.ID = b.ID and a.BrandID = b.BrandID
+where b.ID is null
+
+update a set 
+	[Name]			= ISNULL(b.[Name], '')
+	, [Remark]		= ISNULL(b.[Remark], '')
+	, [Junk]		= ISNULL(b.[Junk], 0)
+	, [AddName]		= ISNULL(b.[AddName], '')
+	, [AddDate]		= b.[AddDate]
+	, [EditName]	= ISNULL(b.[EditName], '')
+	, [EditDate]	= b.[EditDate]
+from Production.dbo.Style_SpecialMark a
+inner join Trade_To_Pms.dbo.Style_SpecialMark b on a.ID = b.ID and a.BrandID = b.BrandID
+
+insert Production.dbo.Style_SpecialMark 
+	([ID]
+	, [BrandID]
+	, [Name]
+	, [Remark]
+	, [Junk]
+	, [AddName]
+	, [AddDate]
+	, [EditName]
+	, [EditDate])
+select
+	 [ID] = ISNULL(a.[ID], '')
+	 , [BrandID] = ISNULL(a.[BrandID], '')
+	 , [Name] = ISNULL(a.[Name], '')
+	 , [Remark] = ISNULL(a.[Remark], '')
+	 , [Junk] = ISNULL(a.[Junk], 0)
+	 , [AddName] = ISNULL(a.[AddName], '')
+	 , a.[AddDate]
+	 , [EditName] = ISNULL(a.[EditName], '')
+	 , a.[EditDate]
+from Trade_To_Pms.dbo.Style_SpecialMark a
+left join Production.dbo.Style_SpecialMark b on a.ID = b.ID and a.BrandID = b.BrandID
+where b.ID is null
+
+
 END

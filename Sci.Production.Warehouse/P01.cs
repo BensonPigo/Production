@@ -142,7 +142,7 @@ namespace Sci.Production.Warehouse
             }
 
             this.displayUpdateDeliveryReason.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_BuyerDelivery' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["KPIChangeReason"])));
-            this.displaySpecialMark.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Style_SpecialMark' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["SpecialMark"])));
+            this.displaySpecialMark.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Style_SpecialMark sp WITH(NOLOCK) where sp.ID = '{0}' and sp.BrandID = '{1}' and sp.Junk = 0", MyUtility.Convert.GetString(this.CurrentMaintain["SpecialMark"]), MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"])));
             this.displayMTLCmpltSP.Value = MyUtility.Convert.GetString(this.CurrentMaintain["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
 
             #region 填Description, Exception Form, Fty Remark, Style Apv欄位值

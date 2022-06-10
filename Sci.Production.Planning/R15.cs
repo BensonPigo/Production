@@ -959,9 +959,10 @@ select t.MDivisionID
        , [MC Handle] = dbo.getTPEPass1(t.McHandle) 
        , t.DoxType
        , [SpecMark] = (select Name 
-                       from Reason WITH (NOLOCK) 
-                       where ReasonTypeID = 'Style_SpecialMark' 
-                             and ID = t.SpecialMark) 
+                        from Style_SpecialMark sp WITH(NOLOCK) 
+                        where sp.ID = t.SpecialMark
+                        and sp.BrandID = t.BrandID
+                        and sp.Junk = 0) 
        , t.GFR
        , t.SampleReason
        , [TMS] = (select s.StdTms * t.CPU 
@@ -1670,9 +1671,10 @@ select t.MDivisionID
        , [MC Handle] = dbo.getTPEPass1(t.McHandle) 
        , t.DoxType
        , [SpecMark] = (select Name 
-                       from Reason WITH (NOLOCK) 
-                       where ReasonTypeID = 'Style_SpecialMark' 
-                             and ID = t.SpecialMark) 
+                       from Style_SpecialMark sp WITH(NOLOCK) 
+                       where sp.ID = t.SpecialMark
+                       and sp.BrandID = t.BrandID
+                       and sp.Junk = 0) 
        , t.GFR
        , t.SampleReason
        , [TMS] = (select s.StdTms * t.CPU 
