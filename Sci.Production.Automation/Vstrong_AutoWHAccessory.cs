@@ -81,33 +81,40 @@ namespace Sci.Production.Automation
                     return true;
                 }
 
-                // 一次傳太大量會 Timeout 拆100傳出去
-                DataTable[] splittedtables = dtMaster.AsEnumerable()
-                    .Select((row, index) => new { row, index })
-                    .GroupBy(x => x.index / 100)
-                    .Select(g => g.Select(x => x.row).CopyToDataTable())
-                    .ToArray();
-
-                if (autoRecord != null)
+                if (statusAPI == EnumStatus.New)
                 {
-                    autoRecord.Add(new AutoRecord { fabricType = "A", automationCreateRecordUkey = new List<string>(), wh_Detail_Ukey = new List<string>() });
-                    autoRecordbyType = autoRecord.Where(w => w.fabricType == "A").FirstOrDefault();
+                    SentandUpdate(dtMaster, formName, statusAPI, action, 0);
                 }
-
-                for (int i = 0; i < splittedtables.Length; i++)
+                else
                 {
-                    DataTable dt = splittedtables[i];
-                    if (!SentandUpdate(dt, formName, statusAPI, action, typeCreateRecord, autoRecord: autoRecordbyType))
-                    {
-                        // 若 Lock 失敗 要把此次之前的 UnLock
-                        if (statusAPI == EnumStatus.Lock)
-                        {
-                            for (int j = 0; j < i; j++)
-                            {
-                                SentandUpdate(splittedtables[j], formName, EnumStatus.UnLock, action, typeCreateRecord);
-                            }
+                    // 一次傳太大量會 Timeout 拆100傳出去
+                    DataTable[] splittedtables = dtMaster.AsEnumerable()
+                        .Select((row, index) => new { row, index })
+                        .GroupBy(x => x.index / 100)
+                        .Select(g => g.Select(x => x.row).CopyToDataTable())
+                        .ToArray();
 
-                            return false;
+                    if (autoRecord != null)
+                    {
+                        autoRecord.Add(new AutoRecord { fabricType = "A", automationCreateRecordUkey = new List<string>(), wh_Detail_Ukey = new List<string>() });
+                        autoRecordbyType = autoRecord.Where(w => w.fabricType == "A").FirstOrDefault();
+                    }
+
+                    for (int i = 0; i < splittedtables.Length; i++)
+                    {
+                        DataTable dt = splittedtables[i];
+                        if (!SentandUpdate(dt, formName, statusAPI, action, typeCreateRecord, autoRecord: autoRecordbyType))
+                        {
+                            // 若 Lock 失敗 要把此次之前的 UnLock
+                            if (statusAPI == EnumStatus.Lock)
+                            {
+                                for (int j = 0; j < i; j++)
+                                {
+                                    SentandUpdate(splittedtables[j], formName, EnumStatus.UnLock, action, typeCreateRecord);
+                                }
+
+                                return false;
+                            }
                         }
                     }
                 }
