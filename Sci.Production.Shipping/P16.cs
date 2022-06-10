@@ -455,6 +455,14 @@ where ted.ID = '{0}'", masterID);
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
+            string checkStatus = $"select 1 from TransferExport where ID = '{this.CurrentMaintain["ID"]}' and FtyStatus = 'Confirmed'";
+            if (MyUtility.Check.Seek(checkStatus))
+            {
+                MyUtility.Msg.WarningBox("Data is already confirmed, cannot confirm again");
+                this.EnsureToolbarExt();
+                return;
+            }
+
             if (this.isFromProduceFty == false)
             {
                 MyUtility.Msg.WarningBox("Only from factory can use Confirm button.");
