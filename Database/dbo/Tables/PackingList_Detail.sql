@@ -73,6 +73,8 @@
     [PackingErrQty]                       SMALLINT        CONSTRAINT [DF_PackingList_Detail_PackingErrQty] DEFAULT ((0)) NOT NULL,
     [PackingErrorID]                      VARCHAR (8)     CONSTRAINT [DF_PackingList_Detail_PackingErrorID] DEFAULT ('') NOT NULL,
     [HaulingDate] DATE NULL, 
+    [PackingAuditDate] DATE NULL, 
+    [PackingAuditStatus] VARCHAR(4) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
