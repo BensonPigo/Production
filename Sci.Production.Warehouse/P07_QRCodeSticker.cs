@@ -34,6 +34,7 @@ namespace Sci.Production.Warehouse
             this.dtP07_QRCodeSticker = dtSource;
             this.printType = printType;
             this.callFrom = callFrom;
+            this.labSortBy.Visible = callFrom == "P07";
             this.radioPanel1.Visible = callFrom == "P07";
             this.listControlBindingSource.DataSource = dtSource;
 
