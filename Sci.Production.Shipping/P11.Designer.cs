@@ -38,7 +38,6 @@
             this.numExchangeRate = new Sci.Win.UI.NumericBox();
             this.displayApproveDate = new Sci.Win.UI.DisplayBox();
             this.displayApproveName = new Sci.Win.UI.DisplayBox();
-            this.displayID = new Sci.Win.UI.DisplayBox();
             this.lblStatus = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
@@ -51,6 +50,7 @@
             this.txtExVoucherID = new Sci.Win.UI.TextBox();
             this.gridPOList = new Sci.Win.UI.Grid();
             this.gridPOListbs = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.txtID = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -72,6 +72,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtID);
             this.masterpanel.Controls.Add(this.txtExVoucherID);
             this.masterpanel.Controls.Add(this.gridCurrency);
             this.masterpanel.Controls.Add(this.numDetailTotalQty);
@@ -80,7 +81,6 @@
             this.masterpanel.Controls.Add(this.numExchangeRate);
             this.masterpanel.Controls.Add(this.displayApproveDate);
             this.masterpanel.Controls.Add(this.displayApproveName);
-            this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.lblStatus);
             this.masterpanel.Controls.Add(this.label7);
             this.masterpanel.Controls.Add(this.label6);
@@ -100,7 +100,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
             this.masterpanel.Controls.SetChildIndex(this.label7, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblStatus, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayApproveName, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayApproveDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.numExchangeRate, 0);
@@ -110,6 +109,7 @@
             this.masterpanel.Controls.SetChildIndex(this.gridCurrency, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtExVoucherID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtID, 0);
             // 
             // detailpanel
             // 
@@ -161,7 +161,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1177, 668);
+            this.browse.Size = new System.Drawing.Size(1195, 668);
             // 
             // tabs
             // 
@@ -299,16 +299,6 @@
             this.displayApproveName.Size = new System.Drawing.Size(145, 23);
             this.displayApproveName.TabIndex = 30;
             // 
-            // displayID
-            // 
-            this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayID.Location = new System.Drawing.Point(137, 20);
-            this.displayID.Name = "displayID";
-            this.displayID.Size = new System.Drawing.Size(164, 23);
-            this.displayID.TabIndex = 29;
-            // 
             // lblStatus
             // 
             this.lblStatus.BackColor = System.Drawing.Color.Transparent;
@@ -419,6 +409,17 @@
             this.gridPOList.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridPOList.TabIndex = 3;
             // 
+            // txtID
+            // 
+            this.txtID.BackColor = System.Drawing.Color.White;
+            this.txtID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtID.Location = new System.Drawing.Point(137, 20);
+            this.txtID.Name = "txtID";
+            this.txtID.Size = new System.Drawing.Size(173, 23);
+            this.txtID.TabIndex = 40;
+            this.txtID.Validating += new System.ComponentModel.CancelEventHandler(this.TxtID_Validating);
+            // 
             // P11
             // 
             this.ApvChkValue = "New";
@@ -471,7 +472,6 @@
         private Win.UI.NumericBox numExchangeRate;
         private Win.UI.DisplayBox displayApproveDate;
         private Win.UI.DisplayBox displayApproveName;
-        private Win.UI.DisplayBox displayID;
         private Win.UI.Label lblStatus;
         private Win.UI.Label label7;
         private Win.UI.Label label6;
@@ -484,5 +484,6 @@
         private Win.UI.TextBox txtExVoucherID;
         private Win.UI.Grid gridPOList;
         private Win.UI.ListControlBindingSource gridPOListbs;
+        private Win.UI.TextBox txtID;
     }
 }
