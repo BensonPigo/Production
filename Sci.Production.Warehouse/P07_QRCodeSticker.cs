@@ -1,16 +1,10 @@
-﻿using Ict;
-using Ict.Win;
-using Sci.Data;
+﻿using Ict.Win;
 using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
-using Sci.Win;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -33,12 +27,14 @@ namespace Sci.Production.Warehouse
         /// <param name="dtSource">dtSource</param>
         /// <param name="printType">printType</param>
         /// <param name="callFrom">callFrom</param>
+        /// <inheritdoc/>
         public P07_QRCodeSticker(DataTable dtSource, string printType, string callFrom = "P07")
         {
             this.InitializeComponent();
             this.dtP07_QRCodeSticker = dtSource;
             this.printType = printType;
             this.callFrom = callFrom;
+            this.radioPanel1.Visible = callFrom == "P07";
             this.listControlBindingSource.DataSource = dtSource;
 
             this.dtP07_QRCodeSticker.Columns.Add("IsQRCodeCreatedByPMS", typeof(bool));
@@ -52,11 +48,27 @@ namespace Sci.Production.Warehouse
             {
                 MyUtility.Tool.SetupCombox(this.comboFilterQRCode, 1, 1, "All,Create by PMS,Not create by PMS");
                 this.comboFilterQRCode.Text = "Create by PMS";
+                this.grid1.ColumnHeaderMouseClick += this.Grid1_ColumnHeaderMouseClick;
+                this.RadioPanel1_ValueChanged(null, null);
             }
             else
             {
                 MyUtility.Tool.SetupCombox(this.comboFilterQRCode, 1, 1, "All,Partial Release");
                 this.comboFilterQRCode.Text = "Partial Release";
+            }
+        }
+
+        private void Grid1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            string strSort = ((DataTable)this.listControlBindingSource.DataSource).DefaultView.Sort.ToString();
+            this.radiobySP.Checked = false;
+            this.radioEncodeSeq.Checked = false;
+            if (this.listControlBindingSource.DataSource != null)
+            {
+                if (MyUtility.Check.Empty(((DataTable)this.listControlBindingSource.DataSource).DefaultView.Sort))
+                {
+                    ((DataTable)this.listControlBindingSource.DataSource).DefaultView.Sort = $"{strSort}";
+                }
             }
         }
 
@@ -114,7 +126,11 @@ namespace Sci.Production.Warehouse
             if (dtPrint != null
                 && dtPrint.AsEnumerable().Any(row => Convert.ToBoolean(row["Sel"])))
             {
-                var barcodeDatas = dtPrint.AsEnumerable().Where(s => (int)s["Sel"] == 1);
+                DataView dv = dtPrint.DefaultView;
+                dv.Sort = ((DataTable)this.listControlBindingSource.DataSource).DefaultView.Sort;
+                DataTable sortedtable1 = dv.ToTable();
+
+                var barcodeDatas = sortedtable1.AsEnumerable().Where(s => (int)s["Sel"] == 1);
 
                 #region Print
                 this.ShowWaitMessage("Data Loading ...");
@@ -195,7 +211,7 @@ namespace Sci.Production.Warehouse
                     winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyReading);
                     winword.Visible = true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     if (winword != null)
                     {
@@ -213,7 +229,6 @@ namespace Sci.Production.Warehouse
                 }
                 #endregion
                 this.HideWaitMessage();
-                this.Close();
                 #endregion
             }
             else
@@ -243,6 +258,23 @@ namespace Sci.Production.Warehouse
                 default:
                     this.listControlBindingSource.Filter = string.Empty;
                     break;
+            }
+        }
+
+        private void RadioPanel1_ValueChanged(object sender, EventArgs e)
+        {
+            if (this.callFrom == "P07" && this.listControlBindingSource.DataSource != null)
+            {
+                if (this.radioPanel1.Value == "1")
+                {
+                    // SP#, Seq, Roll, Dyelot
+                    ((DataTable)this.listControlBindingSource.DataSource).DefaultView.Sort = @"SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, Unoriginal, POID, SEQ, Roll, Dyelot ";
+                }
+                else
+                {
+                    // 使用OnDetailSelectCommandPrepare預設的排序(Encode Seq)
+                    ((DataTable)this.listControlBindingSource.DataSource).DefaultView.Sort = string.Empty;
+                }
             }
         }
     }
