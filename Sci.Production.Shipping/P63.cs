@@ -23,6 +23,7 @@ namespace Sci.Production.Shipping
     public partial class P63 : Sci.Win.Tems.Input6
     {
         private readonly string minETD = "20220101";
+        private bool IsChangeID = false;
 
         /// <summary>
         /// P63
@@ -295,11 +296,42 @@ select ID from KHCMTInvoice where ID like @IDkeyWord + '%'
                 }
 
                 this.CurrentMaintain["ID"] = idHeader + seq;
+                this.IsChangeID = true;
+            }
+            else
+            {
+                this.IsChangeID = false;
             }
 
             #endregion
 
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+
+            // 回填BIR Invoice 至GMTBooking.CMTInvoiceNo
+            if (this.detailgridbs.DataSource != null && this.IsChangeID == true)
+            {
+                DataTable detail = (DataTable)this.detailgridbs.DataSource;
+                string updCmd = string.Empty;
+                foreach (DataRow item in detail.Rows)
+                {
+                    updCmd += $@"
+update GMTBooking
+set CMTInvoiceNo = '{this.CurrentMaintain["ID"]}'
+where ID='{item["InvNo"]}'
+";
+                }
+
+                DualResult reusult = DBProxy.Current.Execute(null, updCmd);
+                if (!reusult)
+                {
+                    this.ShowErr(reusult);
+                }
+            }
         }
 
         /// <inheritdoc/>
