@@ -2898,7 +2898,6 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
                 CurrentDataRow = this.CurrentMaintain,
             };
 
-            // p.CurrentDataRow = this.CurrentDataRow;
             p.ShowDialog();
             return true;
         }
