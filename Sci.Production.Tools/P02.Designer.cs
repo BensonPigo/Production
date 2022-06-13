@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel5 = new Sci.Win.UI.Panel();
             this.btnClose = new Sci.Win.UI.Button();
@@ -43,7 +42,7 @@
             this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             this.btnQuery = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
             this.grid = new Sci.Win.UI.Grid();
             this.panel5.SuspendLayout();
             this.panel1.SuspendLayout();

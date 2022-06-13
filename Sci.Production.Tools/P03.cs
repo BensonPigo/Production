@@ -170,16 +170,15 @@ insert into FPS.dbo.AutomationTransRecord(
 select
 	'Resent'
 	,a.Ukey  
-	,SuppID = IIF( isnull(b.SuppID,'') = '', a.SuppID, b.SuppID)
-	,ModuleName = IIF( isnull(b.ModuleName,'') = '', a.ModuleName, b.ModuleName)
+	,a.SuppID
+	,a.ModuleName
 	,a.SuppAPIThread
 	,JSON
 	,JSON
 	,AddName
 	,AddDate
 from dbo.AutomationErrMsg a with (nolock) 
-left join AutomationDisplay b with (nolock) on a.SuppAPIThread = b.SuppAPIThread
-where ukey = '{(long)dr["Ukey"]}'
+where a.ukey = '{(long)dr["Ukey"]}'
 ";
                 result = DBProxy.Current.Select(null, cmdText, out DataTable resultDt);
                 if (!result)
