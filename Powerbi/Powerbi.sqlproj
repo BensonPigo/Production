@@ -153,6 +153,7 @@
     <Build Include="dbo\Tables\T_OrderList.sql" />
     <Build Include="dbo\Tables\T_LoadingvsCapacity.sql" />
     <Build Include="dbo\Tables\T_LoadingvsCapacity_buyer.sql" />
+    <Build Include="dbo\Tables\P_StyleInfo.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
