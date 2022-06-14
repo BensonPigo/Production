@@ -17,6 +17,7 @@ namespace Sci.Production.Tools
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_Select;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ErrType;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_Resent;
+
         /// <inheritdoc/>
         public P02(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -159,7 +160,9 @@ select
 ,[oriJson] = t.JSON
 ,[TransJSON] = LEFT(t.TransJSON,100) + '...'
 ,[oriTransJSON] = t.TransJSON
-,[TransferResult] = IIF(em.Ukey is null and cm.Ukey is null , 'Success','Fail')
+,[TransferResult] = case when isnull(em.ErrorMsg,'') !='' then 'Fail'
+						 when isnull(cm.ErrorMsg,'') !='' then 'Fail'
+						 else 'Success' end
 ,[Msg] = isnull(em.ErrorMsg,'') 
 ,[ErrorType] = IIF(em.Ukey != '', 'Error Msg' + CHAR(13) + CHAR(10) + convert(varchar(20), isnull(em.Ukey,'')) , ' Check Msg' + CHAR(13) + CHAR(10) + convert(varchar(20),isnull(cm.Ukey,'')))
 ,[ErrorType_Chk] = IIF(em.Ukey != '', 'Error Msg' , ' Check Msg')
@@ -187,7 +190,9 @@ select
 ,[oriJson] = t.JSON
 ,[TransJSON] = LEFT(t.TransJSON,100) + '...'
 ,[oriTransJSON] = t.TransJSON
-,[TransferResult] = IIF(em.Ukey is null and cm.Ukey is null , 'Success','Fail')
+,[TransferResult] = case when isnull(em.ErrorMsg,'') !='' then 'Fail'
+						 when isnull(cm.ErrorMsg,'') !='' then 'Fail'
+						 else 'Success' end
 ,[Msg] = iif( isnull(em.ErrorMsg,'') = '', isnull(cm.ErrorMsg,''), isnull(em.ErrorMsg,'')) 
 ,[ErrorType] = IIF(em.Ukey != '', 'Error Msg' + CHAR(13) + CHAR(10) + convert(varchar(20), isnull(em.Ukey,'')) , ' Check Msg' + CHAR(13) + CHAR(10) + convert(varchar(20),isnull(cm.Ukey,'')))
 ,[ErrorType_Chk] = IIF(em.Ukey != '', 'Error Msg' , ' Check Msg')

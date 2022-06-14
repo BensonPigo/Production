@@ -404,7 +404,7 @@ select ID = @ID
             }
             else
             {
-                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 20);
+                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 60);
                 automationErrMsg.AutomationTransRecordUkey = webApiBaseResult.TransRecordUkey;
                 bool saveAllmsg = MyUtility.Convert.GetBool(ConfigurationManager.AppSettings["OpenAll_AutomationCheckMsg"]);
 
