@@ -79,6 +79,9 @@ namespace Sci.Production.Automation
                     foreach (AutomationCreateRecord item in listSendData)
                     {
                         this.automationErrMsg.SetErrInfo(ex, item.json);
+                        Dictionary<string, string> requestHeaders = GetCustomHeaders();
+                        this.automationErrMsg.CallFrom = requestHeaders["CallFrom"];
+                        this.automationErrMsg.Activity = requestHeaders["Activity"];
                         SaveAutomationErrMsg(this.automationErrMsg);
                     }
                 }

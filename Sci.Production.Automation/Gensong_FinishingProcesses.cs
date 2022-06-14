@@ -115,6 +115,9 @@ namespace Sci.Production.Automation
                 }
 
                 this.automationErrMsg.SetErrInfo(ex, jsonBody);
+                Dictionary<string, string> requestHeaders = GetCustomHeaders();
+                this.automationErrMsg.CallFrom = requestHeaders["CallFrom"];
+                this.automationErrMsg.Activity = requestHeaders["Activity"];
                 SaveAutomationErrMsg(this.automationErrMsg);
             }
         }
@@ -184,6 +187,9 @@ namespace Sci.Production.Automation
                         }
 
                         this.automationErrMsg.SetErrInfo(ex, jsonBody);
+                        Dictionary<string, string> requestHeaders = GetCustomHeaders();
+                        this.automationErrMsg.CallFrom = requestHeaders["CallFrom"];
+                        this.automationErrMsg.Activity = requestHeaders["Activity"];
                         SaveAutomationErrMsg(this.automationErrMsg);
                     }
                 };
