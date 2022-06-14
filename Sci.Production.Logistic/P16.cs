@@ -42,7 +42,7 @@ namespace Sci.Production.Logistic
         private void BtnDetail_Click(object sender, EventArgs e)
         {
             DataRow dr = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
-            P16_BrokenNeedlesRecord callForm = new P16_BrokenNeedlesRecord(this.IsSupportEdit, dr["ID"].ToString(), null, null, dr);
+            P16_BrokenNeedlesRecord callForm = new P16_BrokenNeedlesRecord(true, dr["ID"].ToString(), null, null, dr);
             callForm.ShowDialog(this);
         }
 
