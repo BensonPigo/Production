@@ -7,6 +7,7 @@ begin
 	end
 
 	declare @RetryTimeFlag datetime = DATEADD( MINUTE, -11, GETDATE())
+	declare @TransRecordUkey bigint
 
 	select	Ukey
 			,SuppID
@@ -22,31 +23,30 @@ begin
 	from AutomationCreateRecord with (nolock)
 	where AddDate < @RetryTimeFlag
 
-	insert into AutomationErrMsg(SuppID
-								,ModuleName
-								,APIThread
-								,SuppAPIThread
-								,ErrorCode
-								,ErrorMsg
-								,JSON
-								,ReSented
-								,AddName
-								,AddDate
-								)
-					select	SuppID
-							,ModuleName
-							,APIThread
-							,SuppAPIThread
-							,'995'
-							,'Created from AutomationCreateRecord'
-							,JSON
-							,0
-							,AddName
-							,AddDate
-					from #tmpRetryAutomation
+	insert into AutomationErrMsg(
+		 SuppID
+		,ModuleName
+		,APIThread
+		,SuppAPIThread
+		,ErrorCode
+		,ErrorMsg
+		,JSON
+		,ReSented
+		,AddName
+		,AddDate
+	)
+	select	 SuppID
+			,ModuleName
+			,APIThread
+			,SuppAPIThread
+			,'995'
+			,'Created from AutomationCreateRecord'
+			,JSON
+			,0
+			,AddName
+			,AddDate
+	from #tmpRetryAutomation
 
-	delete AutomationCreateRecord 
-	where Ukey in (select Ukey from #tmpRetryAutomation)
 
 	select	APIThread,
 			[ErrorType] = SUBSTRING(ErrorMsg, 0, 6),
@@ -97,6 +97,41 @@ begin
 			if(isnull(@isSuccess, '') <> '')
 			begin
 				break
+			end
+			else	
+			begin
+				insert into FPS.dbo.AutomationTransRecord
+				(
+					[CallFrom]     
+					,Activity       
+					,SuppID         
+					,ModuleName     
+					,SuppAPIThread  
+					,JSON           
+					,TransJson      
+					,AddName        
+					,AddDate
+				)
+				select
+					'Resent'
+					,Ukey  
+					,SuppID
+					,ModuleName
+					,SuppAPIThread
+					,JSON
+					,JSON
+					,AddName
+					,AddDate
+				from dbo.AutomationErrMsg with (nolock)
+				where ukey = @Ukey
+
+				-- GET AutomationTransRecord NEW UKEY
+				set @TransRecordUkey = (select @@IDENTITY)
+
+				update AutomationErrMsg
+				set AutomationTransRecordUkey = @TransRecordUkey
+				where ukey = @Ukey
+
 			end
 		fetch next from cur_ResentUkey into @Ukey
 		end
