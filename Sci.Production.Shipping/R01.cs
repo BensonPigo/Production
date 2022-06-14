@@ -447,6 +447,7 @@ where 1=1 {0}";
         {
             StringBuilder sqlCmd = new StringBuilder();
             StringBuilder sqlCmd_where = new StringBuilder();
+            string sqlWherePack = string.Empty;
 
             #region Where 條件
 
@@ -536,7 +537,7 @@ where 1=1 {0}";
 
             if (!MyUtility.Check.Empty(this.category))
             {
-                sqlCmd_where.Append(string.Format(
+                sqlWherePack += string.Format(
                     @"
 and exists(
     select 1
@@ -545,14 +546,14 @@ and exists(
     inner join orders o WITH (NOLOCK) on o.id = pld.OrderID
     where pl.INVNo =g.ID
     and o.Category in ({0})
-)", this.category));
+)", this.category);
             }
 
             if (!MyUtility.Check.Empty(this.Delivery1))
             {
                 this.hasDelivery = true;
 
-                sqlCmd_where.Append(string.Format(
+                sqlWherePack += string.Format(
                     @"
 and exists (select 1
             from (
@@ -565,12 +566,12 @@ and exists (select 1
                                                          and a.OrderShipmodeSeq = oq.Seq 
                                                          and oq.BuyerDelivery between '{0}' and '{1}' )",
                     Convert.ToDateTime(this.Delivery1).ToString("yyyy/MM/dd"),
-                    Convert.ToDateTime(this.Delivery2).ToString("yyyy/MM/dd")));
+                    Convert.ToDateTime(this.Delivery2).ToString("yyyy/MM/dd"));
             }
             #endregion
 
-            string sqlGetLocalMainFin = string.Format(this.sqlGetLocalMain, sqlCmd_where);
-            string sqlGetLocalFin = string.Format(this.sqlGetLocal, sqlCmd_where);
+            string sqlGetLocalMainFin = string.Format(this.sqlGetLocalMain, sqlCmd_where + sqlWherePack);
+            string sqlGetLocalFin = string.Format(this.sqlGetLocal, sqlCmd_where　+ sqlWherePack);
             string sqlGetA2BFin = string.Format(this.sqlGetA2B, sqlCmd_where);
 
             if (this.reportType != "1")
@@ -644,7 +645,7 @@ OUTER APPLY(
 
                 if (dtMainA2B.Rows.Count > 0)
                 {
-                    string getPackFromA2B = @"
+                    string getPackFromA2B = $@"
 select  g2.ID, [QAQty] = sum(sodd.QAQty)
 into    #SewingOutput
 from    (
@@ -762,6 +763,7 @@ OUTER APPLY(
 		WHERE INVNo=g.ID AND  (po.Status = 'Confirmed' OR po.Status = 'Locked')
 	) a
 )PulloutIdConfirmLockCount
+where 1 = 1 {sqlWherePack}
 ";
 
                     var listGroupMainA2B = dtMainA2B.AsEnumerable()
