@@ -295,7 +295,7 @@ SELECT [Region] = 'TPE'
 	,[Name] = i.Name
     ,i.TSQL
 FROM P_TransImport i
-where i.Name in ('P_Import_Capacity')
+where i.Name in ('P_Import_Capacity', 'P_Import_StyleInfo')
 ";
 
             }
