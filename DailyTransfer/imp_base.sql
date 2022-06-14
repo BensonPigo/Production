@@ -5014,6 +5014,7 @@ update a set
 	[Name]			= ISNULL(b.[Name], '')
 	, [Remark]		= ISNULL(b.[Remark], '')
 	, [Junk]		= ISNULL(b.[Junk], 0)
+	, [IsGMTTest]		= ISNULL(b.[IsGMTTest], 0)
 	, [AddName]		= ISNULL(b.[AddName], '')
 	, [AddDate]		= b.[AddDate]
 	, [EditName]	= ISNULL(b.[EditName], '')
@@ -5027,6 +5028,7 @@ insert Production.dbo.Style_SpecialMark
 	, [Name]
 	, [Remark]
 	, [Junk]
+	, [IsGMTTest]
 	, [AddName]
 	, [AddDate]
 	, [EditName]
@@ -5037,6 +5039,7 @@ select
 	 , [Name] = ISNULL(a.[Name], '')
 	 , [Remark] = ISNULL(a.[Remark], '')
 	 , [Junk] = ISNULL(a.[Junk], 0)
+	 , [IsGMTTest] = ISNULL(a.[IsGMTTest], 0)
 	 , [AddName] = ISNULL(a.[AddName], '')
 	 , a.[AddDate]
 	 , [EditName] = ISNULL(a.[EditName], '')

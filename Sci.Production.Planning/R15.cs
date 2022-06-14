@@ -426,6 +426,7 @@ namespace Sci.Production.Planning
                            , sty.Lining
                            , sty.Gender
                            , sty.Construction
+                           , [StyleSpecialMark] = s.SpecialMark
                     into #cte 
                     from dbo.Orders o WITH (NOLOCK) 
                     inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
@@ -960,7 +961,7 @@ select t.MDivisionID
        , t.DoxType
        , [SpecMark] = (select Name 
                         from Style_SpecialMark sp WITH(NOLOCK) 
-                        where sp.ID = t.SpecialMark
+                        where sp.ID = t.[StyleSpecialMark]
                         and sp.BrandID = t.BrandID
                         and sp.Junk = 0) 
        , t.GFR
@@ -1672,7 +1673,7 @@ select t.MDivisionID
        , t.DoxType
        , [SpecMark] = (select Name 
                        from Style_SpecialMark sp WITH(NOLOCK) 
-                       where sp.ID = t.SpecialMark
+                       where sp.ID = t.[StyleSpecialMark]
                        and sp.BrandID = t.BrandID
                        and sp.Junk = 0) 
        , t.GFR
