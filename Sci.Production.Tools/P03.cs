@@ -38,6 +38,17 @@ namespace Sci.Production.Tools
             base.OnFormLoaded();
             this.grid.IsEditingReadOnly = false;
 
+            DataGridViewGeneratorTextColumnSettings col_Json = new DataGridViewGeneratorTextColumnSettings();
+            col_Json.EditingMouseDoubleClick += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
+                    Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(dr["oriJson"].ToString(), "Full JSON", false, null);
+                    callNextForm.ShowDialog(this);
+                }
+            };
+
             #region 表身欄位設定
             this.Helper.Controls.Grid.Generator(this.grid)
                 .CheckBox("select", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
@@ -47,7 +58,7 @@ namespace Sci.Production.Tools
                 .Text("APIThread", header: "API Thread", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SuppAPIThread", header: "Supp API Thread", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .EditText("ErrorMsg", header: "Error Msg", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .EditText("Json", header: "JSON", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                .Text("Json", header: "JSON", width: Widths.AnsiChars(30), iseditingreadonly: true, settings: col_Json)
                 .DateTime("AddDate", header: "Create Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 .CheckBox("ReSented", header: "ReSent", width: Widths.AnsiChars(5), iseditable: false, trueValue: 1, falseValue: 0)
                 .DateTime("EditDate", header: "ReSent Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
@@ -108,7 +119,8 @@ select
 ,APIThread
 ,a.SuppAPIThread
 ,ErrorMsg
-,JSON
+,[JSON] = LEFT(a.JSON,100) + '...'
+,[oriJson] = a.JSON
 ,AddDate
 ,ReSented
 ,EditDate

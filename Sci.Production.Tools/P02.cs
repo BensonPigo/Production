@@ -42,6 +42,28 @@ namespace Sci.Production.Tools
             base.OnFormLoaded();
             this.grid.IsEditingReadOnly = false;
 
+            DataGridViewGeneratorTextColumnSettings col_Json = new DataGridViewGeneratorTextColumnSettings();
+            col_Json.EditingMouseDoubleClick += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
+                    Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(dr["oriJson"].ToString(), "Full JSON", false, null);
+                    callNextForm.ShowDialog(this);
+                }
+            };
+
+            DataGridViewGeneratorTextColumnSettings col_TransJSON = new DataGridViewGeneratorTextColumnSettings();
+            col_TransJSON.EditingMouseDoubleClick += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
+                    Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(dr["oriTransJSON"].ToString(), "Full Trans JSON", false, null);
+                    callNextForm.ShowDialog(this);
+                }
+            };
+
             #region 表身欄位設定
             this.Helper.Controls.Grid.Generator(this.grid)
                 .CheckBox("select", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_Select)
@@ -52,8 +74,8 @@ namespace Sci.Production.Tools
                 .Text("ModuleName", header: "Module Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SuppAPIThread", header: "Supp API Thread", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .DateTime("AddDate", header: "Create Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
-                .EditText("oriJson", header: "JSON", width: Widths.AnsiChars(30), iseditingreadonly: true)
-                .EditText("oriTransJSON", header: "Trans JSON", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                .Text("Json", header: "JSON", width: Widths.AnsiChars(30), iseditingreadonly: true, settings: col_Json)
+                .Text("TransJSON", header: "Trans JSON", width: Widths.AnsiChars(30), iseditingreadonly: true, settings: col_TransJSON)
                 .Text("TransferResult", header: "Transfer Result", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .EditText("Msg", header: "Msg", width: Widths.AnsiChars(35), iseditingreadonly: true)
                 .Text("ErrorType", header: "Error Type", width: Widths.AnsiChars(8), iseditingreadonly: true).Get(out this.col_ErrType)

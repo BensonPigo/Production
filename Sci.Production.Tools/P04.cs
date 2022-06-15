@@ -39,6 +39,16 @@ namespace Sci.Production.Tools
             this.dateCreateTime.Value1 = DateTime.Now;
             this.dateCreateTime.Value2 = DateTime.Now;
             this.grid.IsEditingReadOnly = true;
+            DataGridViewGeneratorTextColumnSettings col_Json = new DataGridViewGeneratorTextColumnSettings();
+            col_Json.EditingMouseDoubleClick += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
+                    Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(dr["oriJson"].ToString(), "Full JSON", false, null);
+                    callNextForm.ShowDialog(this);
+                }
+            };
 
             #region 表身欄位設定
             this.Helper.Controls.Grid.Generator(this.grid)
@@ -48,7 +58,7 @@ namespace Sci.Production.Tools
                 .Text("APIThread", header: "APIThread", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Text("SuppAPIThread", header: "Supp API Thread", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .EditText("ErrorMsg", header: "Error Msg", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .EditText("Json", header: "JSON", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                .Text("Json", header: "JSON", width: Widths.AnsiChars(30), iseditingreadonly: true, settings: col_Json)
                 .DateTime("AddDate", header: "Create Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 ;
             #endregion
@@ -101,7 +111,8 @@ a.Ukey
 ,APIThread
 ,a.SuppAPIThread
 ,ErrorMsg
-,JSON
+,[JSON] = LEFT(a.JSON,100) + '...'
+,[oriJson] = a.JSON
 ,AddDate
 from AutomationCheckMsg a with (nolock)
 left join AutomationDisplay b with (nolock) on a.SuppAPIThread = b.SuppAPIThread

@@ -309,6 +309,12 @@ select ID = @ID
                 result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
                 SaveAutomationErrMsg(automationErrMsg);
             }
+            else
+            {
+                // 將資料新增至FPS AutomationTransRecord
+                bool isAutoWH = (automationErrMsg.apiThread.Contains("GensongAutoWHFabric") || automationErrMsg.apiThread.Contains("VstrongAutoWHAccessory")) ? true : false;
+                SaveAutomationTransRecord(automationErrMsg, isAutoWH);
+            }
 
             return result;
         }
@@ -336,6 +342,12 @@ select ID = @ID
                 automationErrMsg.SetErrInfo(webApiBaseResult, jsonBody);
                 result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
                 SaveAutomationErrMsg(automationErrMsg);
+            }
+            else
+            {
+                // 將資料新增至FPS AutomationTransRecord
+                bool isAutoWH = (automationErrMsg.apiThread.Contains("GensongAutoWHFabric") || automationErrMsg.apiThread.Contains("VstrongAutoWHAccessory")) ? true : false;
+                SaveAutomationTransRecord(automationErrMsg, isAutoWH);
             }
 
             return result;
@@ -400,6 +412,12 @@ select ID = @ID
                     automationErrMsg.json = jsonBody;
                     result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
                     SaveAutomationErrMsg(automationErrMsg);
+                }
+                else
+                {
+                    // 將資料新增至FPS AutomationTransRecord
+                    bool isAutoWH = (automationErrMsg.apiThread.Contains("GensongAutoWHFabric") || automationErrMsg.apiThread.Contains("VstrongAutoWHAccessory")) ? true : false;
+                    SaveAutomationTransRecord(automationErrMsg, isAutoWH);
                 }
             }
             else
