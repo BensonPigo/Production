@@ -4132,10 +4132,13 @@ and sd.FabricType = 'F'
 
 ";
                 DBProxy._OpenConnection("Production", out sqlConnection);
-                result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, sqlcmd, out dt, conn: sqlConnection);
-                if (!result)
+                using (sqlConnection)
                 {
-                    return result;
+                    result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, sqlcmd, out dt, conn: sqlConnection);
+                    if (!result)
+                    {
+                        return result;
+                    }
                 }
             }
             else
@@ -4686,9 +4689,12 @@ and w.Action = '{item.Action}'";
             if (wHBarcodeTransaction.Where(w => w.UpdatethisItem).Any())
             {
                 DBProxy._OpenConnection("Production", out sqlConnection);
-                if (!(result = MyUtility.Tool.ProcessWithObject(wHBarcodeTransaction.Where(w => w.UpdatethisItem), string.Empty, UpdateWHBarcodeTransaction(), out odt, conn: sqlConnection)))
+                using (sqlConnection)
                 {
-                    return result;
+                    if (!(result = MyUtility.Tool.ProcessWithObject(wHBarcodeTransaction.Where(w => w.UpdatethisItem), string.Empty, UpdateWHBarcodeTransaction(), out odt, conn: sqlConnection)))
+                    {
+                        return result;
+                    }
                 }
 
                 if (detailTableName == WHTableName.Receiving_Detail)
@@ -4748,9 +4754,12 @@ and w.Action = '{item.Action}'";
             }
 
             DBProxy._OpenConnection("Production", out sqlConnection);
-            if (!(result = MyUtility.Tool.ProcessWithObject(data_FtyBarcode, string.Empty, UpdateFtyInventoryBarCode(), out odt, conn: sqlConnection)))
+            using (sqlConnection)
             {
-                return result;
+                if (!(result = MyUtility.Tool.ProcessWithObject(data_FtyBarcode, string.Empty, UpdateFtyInventoryBarCode(), out odt, conn: sqlConnection)))
+                {
+                    return result;
+                }
             }
 
             // 轉料單才有 To...資訊 (P99 數量不能改成 0, Revise 無須更新 To 部分)
@@ -4779,9 +4788,12 @@ and w.Action = '{item.Action}'";
                     }
 
                     DBProxy._OpenConnection("Production", out sqlConnection);
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_To_FtyBarcode, string.Empty, UpdateFtyInventoryBarCode(), out odt, conn: sqlConnection)))
+                    using (sqlConnection)
                     {
-                        return result;
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_To_FtyBarcode, string.Empty, UpdateFtyInventoryBarCode(), out odt, conn: sqlConnection)))
+                        {
+                            return result;
+                        }
                     }
                 }
             }
