@@ -121,7 +121,19 @@ group by pd.MDFailQty,pd.OrderID,o.CustPONo,o.StyleID,o.SeasonID,o.BrandID
                 this.numericBoxDiscrepancy.Maximum = MyUtility.Convert.GetInt(row["CartonQty"]);
             }
 
-            this.numericBoxDiscrepancy.ReadOnly = false;
+            string sqlcmdChk = $@"
+select 1    from MDScan_Detail md     where md.MDScanUKey = (        select top 1 m.Ukey        from MDScan m        where exists(			select 1 from PackingList_Detail pd 			where (pd.ID = '{this.dt.Rows[0]["ID"]}'             and pd.CTNStartNo = '{this.dt.Rows[0]["CTNStartNo"]}')			and  pd.ID = m.PackingListID and pd.OrderID = m.OrderID  and pd.CTNStartNo = m.CTNStartNo and pd.MDStatus <> 'Pass')        order by m.AddDate desc    )
+";
+
+            if (MyUtility.Check.Seek(sqlcmdChk))
+            {
+                this.numericBoxDiscrepancy.ReadOnly = true;
+            }
+            else
+            {
+                this.numericBoxDiscrepancy.ReadOnly = false;
+            }
+
             this.dtDetail = new DataTable();
         }
 
@@ -234,7 +246,7 @@ values('{mDScan_Ukey}','{drDetail["PackingReasonID"]}',{drDetail["Qty"]})
                 return;
             }
 
-            P08_Detail callform = new P08_Detail(this.dt.Rows[0], this.txtScanCartonsBarcode.Text);
+            P08_Detail callform = new P08_Detail(this.dt.Rows[0], this.dtDetail);
             callform.ShowDialog();
             int ttlQty = callform.ttlDiscrepancy;
             this.dtDetail = callform.dtDetail;
