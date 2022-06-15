@@ -1144,7 +1144,7 @@ FtyExportData as (
 	where not exists (
 				select 1 
 				from View_ShareExpense WITH (NOLOCK) 
-				where WKNo = f.ID)");
+				where WKNo = f.ID or InvNo = f.ID)");
 
                     if (!MyUtility.Check.Empty(this.date1))
                     {
