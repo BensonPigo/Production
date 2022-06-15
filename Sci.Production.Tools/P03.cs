@@ -37,6 +37,11 @@ namespace Sci.Production.Tools
             this.EditMode = true;
             base.OnFormLoaded();
             this.grid.IsEditingReadOnly = false;
+            this.dateTimePicker1.CustomFormat = "yyyy/MM/dd HH:mm:ss";
+            this.dateTimePicker2.CustomFormat = "yyyy/MM/dd HH:mm:ss";
+
+            this.dateTimePicker1.Value = DateTime.Now.AddHours(-1);
+            this.dateTimePicker2.Value = DateTime.Now;
 
             DataGridViewGeneratorTextColumnSettings col_Json = new DataGridViewGeneratorTextColumnSettings();
             col_Json.EditingMouseDoubleClick += (s, e) =>
@@ -85,24 +90,13 @@ namespace Sci.Production.Tools
                 strWhere += $" and a.JSON like '%{this.txtJSONContains.Text}%'" + Environment.NewLine;
             }
 
-            if (!MyUtility.Check.Empty(this.dateCreateTime.Value1) && !MyUtility.Check.Empty(this.dateCreateTime.Value2))
-            {
-                strWhere += $@" and CONVERT(date,a.AddDate) between '{((DateTime)this.dateCreateTime.Value1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateCreateTime.Value2).ToString("yyyy/MM/dd")}' 
-    " + Environment.NewLine;
-            }
-            else if (!MyUtility.Check.Empty(this.dateCreateTime.Value1))
-            {
-                strWhere += $@"and CONVERT(date,a.AddDate) = '{((DateTime)this.dateCreateTime.Value1).ToString("yyyy/MM/dd")}' " + Environment.NewLine;
-            }
-            else if (!MyUtility.Check.Empty(this.dateCreateTime.Value2))
-            {
-                strWhere += $@"and CONVERT(date,a.AddDate) = '{((DateTime)this.dateCreateTime.Value2).ToString("yyyy/MM/dd")}' " + Environment.NewLine;
-            }
-
             if (this.checkNotResentYet.Checked)
             {
                 strWhere += $" and a.ReSented = 0";
             }
+
+            strWhere += $@"
+and a.AddDate between '{this.dateTimePicker1.Text}' and '{this.dateTimePicker2.Text}'";
             #endregion
 
             if (MyUtility.Check.Empty(strWhere))
@@ -124,8 +118,8 @@ select
 ,AddDate
 ,ReSented
 ,EditDate
-from AutomationErrMsg a
-left join AutomationDisplay b on a.SuppAPIThread = b.SuppAPIThread
+from AutomationErrMsg a with(nolock)
+left join AutomationDisplay b with(nolock) on a.SuppAPIThread = b.SuppAPIThread
 where 1=1
  {strWhere}
 
