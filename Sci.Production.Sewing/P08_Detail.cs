@@ -24,17 +24,17 @@ namespace Sci.Production.Sewing
         /// <inheritdoc/>
         public DataTable dtDetail;
 
+        private string strBarcode;
         private bool QtyCanEdit;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
 
         /// <inheritdoc/>
-        public P08_Detail(DataRow dr, DataTable dtHistory)
+        public P08_Detail(DataRow dr, string Barcode)
         {
             this.EditMode = true;
             this.InitializeComponent();
             this.drData = dr;
-            this.dtDetail = dtHistory;
-            this.QtyCanEdit = dtHistory.Rows.Count > 0 ? false : true;
+            this.strBarcode = Barcode;
         }
 
         /// <inheritdoc/>
@@ -42,21 +42,28 @@ namespace Sci.Production.Sewing
         {
             base.OnFormLoaded();
 
-            if (this.dtDetail == null || this.dtDetail.Rows.Count == 0)
+            string sqlcmd = $@"    select MDScanUKey		,PackingReasonID		,Qty		,Remarks =  (select Description from PackingReason WHERE Type='MD' AND Junk=0 and id = md.PackingReasonID)           from MDScan_Detail md     where md.MDScanUKey = (        select top 1 m.Ukey        from MDScan m        where exists(			select 1 from PackingList_Detail pd 			where (pd.ID = left('{this.strBarcode}',13) and pd.CTNStartNo = SUBSTRING('{this.strBarcode}',14,len('{this.strBarcode}')))			and  pd.ID = m.PackingListID and pd.OrderID = m.OrderID  and pd.CTNStartNo = m.CTNStartNo and pd.MDStatus <> 'Pass')        order by m.AddDate desc    )";
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dtDBSource);
+            if (result)
             {
-                string sqlcmd = "select MDScanUKey,PackingReasonID,Qty,Remarks = '' from MDScan_Detail where 1=0";
+                this.listControlBindingSource1.DataSource = dtDBSource;
+            }
 
-                DataTable dtDBSource;
-                DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtDBSource);
-                if (result)
-                {
-                    this.listControlBindingSource1.DataSource = dtDBSource;
-                }
-            }
-            else
-            {
-                this.listControlBindingSource1.DataSource = this.dtDetail;
-            }
+            //if (this.dtDetail == null || this.dtDetail.Rows.Count == 0)
+            //{
+            //    string sqlcmd = "select MDScanUKey,PackingReasonID,Qty,Remarks = '' from MDScan_Detail where 1=0";
+
+            //    DataTable dtDBSource;
+            //    DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtDBSource);
+            //    if (result)
+            //    {
+            //        this.listControlBindingSource1.DataSource = dtDBSource;
+            //    }
+            //}
+            //else
+            //{
+            //    this.listControlBindingSource1.DataSource = this.dtDetail;
+            //}
 
             this.grid.IsEditingReadOnly = false;
             this.grid.DataSource = this.listControlBindingSource1;
@@ -175,6 +182,15 @@ and SCICtnNo = '{this.drData["SCICtnNo"]}' and OrderID = '{this.drData["OrderID"
 
         private void BtnClose_Click(object sender, EventArgs e)
         {
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            if (MyUtility.Check.Empty(dt))
+            {
+                return;
+            }
+
+            decimal ttlDiscrepancy = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Sum(s => MyUtility.Convert.GetDecimal(s["Qty"]));
+            this.ttlDiscrepancy = MyUtility.Convert.GetInt(ttlDiscrepancy);
+            this.dtDetail = dt;
             this.Close();
         }
 
@@ -194,6 +210,22 @@ and SCICtnNo = '{this.drData["SCICtnNo"]}' and OrderID = '{this.drData["OrderID"
                 MyUtility.Msg.WarningBox("Remarks cannot be empty!");
                 return;
             }
+
+            #region 存檔Detail資料
+
+            string sqlcmd = $@"
+@
+
+merge MDScan_Detail as tusing(select * from #tmp) as son t.MDScanUKey = s.MDScanUKeywhen matched then	update set	t.qty = s.qty,	t.PackingReasonID = s.PackingReasonIDwhen not matched by target then	insert(MDScanUKey,PackingReasonID,qty)	values(s.MDScanUKey,s.PackingReasonID,s.qty);
+";
+
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlcmd, out DataTable dtResult);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+            #endregion
 
             decimal ttlDiscrepancy = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Sum(s => MyUtility.Convert.GetDecimal(s["Qty"]));
 

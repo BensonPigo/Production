@@ -101,6 +101,8 @@ group by pd.MDFailQty,pd.OrderID,o.CustPONo,o.StyleID,o.SeasonID,o.BrandID
             if (this.dt.Rows.Count == 0)
             {
                 this.txtScanCartonsBarcode.Text = string.Empty;
+                this.numericBoxDiscrepancy.Value = 0;
+                this.numericBoxDiscrepancy.ReadOnly = false;
                 MyUtility.Msg.WarningBox("Datas not found!");
                 return;
             }
@@ -232,7 +234,7 @@ values('{mDScan_Ukey}','{drDetail["PackingReasonID"]}',{drDetail["Qty"]})
                 return;
             }
 
-            P08_Detail callform = new P08_Detail(this.dt.Rows[0], this.dtDetail);
+            P08_Detail callform = new P08_Detail(this.dt.Rows[0], this.txtScanCartonsBarcode.Text);
             callform.ShowDialog();
             int ttlQty = callform.ttlDiscrepancy;
             this.dtDetail = callform.dtDetail;

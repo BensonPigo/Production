@@ -29,15 +29,15 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel4 = new Sci.Win.UI.Panel();
             this.btnSave = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.grid = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3 = new Sci.Win.UI.Panel();
-            this.gridIcon1 = new Sci.Win.UI.GridIcon();
             this.labText = new System.Windows.Forms.Label();
+            this.gridIcon1 = new Sci.Win.UI.GridIcon();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -92,14 +92,14 @@
             this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid.Location = new System.Drawing.Point(0, 49);
             this.grid.Name = "grid";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid.RowTemplate.Height = 24;
@@ -119,6 +119,17 @@
             this.panel3.Size = new System.Drawing.Size(517, 49);
             this.panel3.TabIndex = 6;
             // 
+            // labText
+            // 
+            this.labText.AutoSize = true;
+            this.labText.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labText.ForeColor = System.Drawing.Color.Red;
+            this.labText.Location = new System.Drawing.Point(91, 15);
+            this.labText.Name = "labText";
+            this.labText.Size = new System.Drawing.Size(245, 18);
+            this.labText.TabIndex = 1;
+            this.labText.Text = "Please right click for input Remarks.";
+            // 
             // gridIcon1
             // 
             this.gridIcon1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -130,17 +141,6 @@
             this.gridIcon1.AppendClick += new System.EventHandler(this.GridIcon1_AppendClick);
             this.gridIcon1.InsertClick += new System.EventHandler(this.GridIcon1_InsertClick);
             this.gridIcon1.RemoveClick += new System.EventHandler(this.GridIcon1_RemoveClick);
-            // 
-            // labText
-            // 
-            this.labText.AutoSize = true;
-            this.labText.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labText.ForeColor = System.Drawing.Color.Red;
-            this.labText.Location = new System.Drawing.Point(91, 15);
-            this.labText.Name = "labText";
-            this.labText.Size = new System.Drawing.Size(245, 18);
-            this.labText.TabIndex = 1;
-            this.labText.Text = "Please right click for input Remarks.";
             // 
             // P08_Detail
             // 
