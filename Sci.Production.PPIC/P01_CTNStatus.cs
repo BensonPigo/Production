@@ -74,7 +74,7 @@ order by Seq", this.orderID);
             DataTable transferDetail, ctnLastStatus;
             #region 組撈Transaction Detail的Sql
             string sqlCmd = string.Format(
-                @"
+				@"
 	select
 	ID,
 	CTNStartNo,
@@ -550,6 +550,25 @@ order by Seq", this.orderID);
 											pd.CTNStartNo = ch.CTNStartNo and
 											pd.OrderID = ch.OrderID
 
+	-- CTNPackingAudit
+	select	ch.PackingListID
+			, ch.CTNStartNo
+			, Type = 'Packing Audit'  
+			, ch.ID
+			, TypeDate = ch.PackingAuditDate 
+			, Location = '' 
+			, UpdateDate = ch.AddDate 
+			, Seq = isnull(pd.Seq, 0) 
+    		, pd.OrigID
+    		, pd.OrigOrderID
+    		, pd.OrigCTNStartNo
+	into #CTNPackingAudit
+	from CTNPackingAudit ch with (nolock)
+	inner join  #PackingList_Detail pd on	pd.ID = ch.PackingListID and
+											pd.CTNStartNo = ch.CTNStartNo and
+											pd.OrderID = ch.OrderID
+
+
 select * from #Transferclog
 union all
 select * from #CReceive
@@ -571,6 +590,8 @@ union all
 select * from #MDScan
 union all
 select * from #Hauling
+union all
+select * from #CTNPackingAudit
 order by PackingListID,Seq,UpdateDate
 
 drop table #PackingList_Detail,#Transferclog,#CReceive,#CReturn,#TransferCFA,#ReceiveCFA,#ReturnCFA,#CReceiveCFA ,#DryRoomReceive ,#DryRoomTransfer ,#MDScan, #Hauling
