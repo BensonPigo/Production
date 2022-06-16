@@ -156,7 +156,7 @@ namespace Sci.Production.Centralized
             this.IsSupportPrint = false;
             this.Name = "PPIC_B03";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
-            this.Text = "B03. Exception Notification";
+            this.Text = "PPIC_B03. OC Schedule Mail Group";
             this.WorkAlias = "MailGroup";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
