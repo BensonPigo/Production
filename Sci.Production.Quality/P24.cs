@@ -536,6 +536,12 @@ set TransferCFADate = null
 , DRYReceiveDate = NULL
 , DRYTransferDate = NULL
 , HaulingDate = null
+, PackingAuditDate = null
+, PackingAuditStatus = ''
+, MDScanDate = null
+, MDFailQty = 0
+, MDScanName = ''
+, MDStatus = ''
 where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'
 and DisposeFromClog= 0
 ");

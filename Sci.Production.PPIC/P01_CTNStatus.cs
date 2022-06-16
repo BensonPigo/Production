@@ -1,11 +1,11 @@
-﻿using System;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using Ict;
+﻿using Ict;
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.PublicPrg;
+using System;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
@@ -74,7 +74,7 @@ order by Seq", this.orderID);
             DataTable transferDetail, ctnLastStatus;
             #region 組撈Transaction Detail的Sql
             string sqlCmd = string.Format(
-				@"
+                @"
 	select
 	ID,
 	CTNStartNo,
@@ -611,6 +611,7 @@ select [PackingListID] =  p.ID
 ,pd.MDFailQty
 ,pd.DRYTransferDate
 ,pd.HaulingDate
+,pd.PackingAuditDate
 from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
 outer apply(
 	select sum(QtyPerCTN) QtyPerCTN ,sum(ScanQty) ScanQty 
@@ -650,8 +651,9 @@ order by p.ID,pd.Seq", this.orderID);
                 .Date("TransferDate", header: "Trans. Date", width: Widths.AnsiChars(10))
                 .Date("ReceiveDate", header: "Rec. Date", width: Widths.AnsiChars(10))
                 .Date("ReturnDate", header: "Return Date", width: Widths.AnsiChars(10))
-				.Date("HaulingDate", header: "Hauling Date", width: Widths.AnsiChars(10))
-				.Date("DryReceiveDate", header: "Dry Room Receive Date", width: Widths.AnsiChars(10))
+                .Date("PackingAuditDate", header: "Packing Audit Date", width: Widths.AnsiChars(10))
+                .Date("HaulingDate", header: "Hauling Date", width: Widths.AnsiChars(10))
+                .Date("DryReceiveDate", header: "Dry Room Receive Date", width: Widths.AnsiChars(10))
                 .Date("DRYTransferDate", header: "Dry Room Transfer Date", width: Widths.AnsiChars(10))
                 .Date("MDScanDate", header: "MD Room Scan Date", width: Widths.AnsiChars(10))
                 .Text("MDFailQty", header: "MD Discrepancy", width: Widths.AnsiChars(6))
