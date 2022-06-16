@@ -4695,20 +4695,20 @@ and w.Action = '{item.Action}'";
                     {
                         return result;
                     }
-                }
 
-                if (detailTableName == WHTableName.Receiving_Detail)
-                {
-                    string sqlUpdateReceiving_Detail = @"
+                    if (detailTableName == WHTableName.Receiving_Detail)
+                    {
+                        string sqlUpdateReceiving_Detail = @"
     update rd set rd.MINDQRCode = t.To_NewBarcode
     from Receiving_Detail rd 
     inner join #tmp t on rd.Ukey = t.TransactionUkey
     where rd.MINDQRCode = ''
 ";
-                    result = DBProxy.Current.ExecuteByConn(sqlConnection, sqlUpdateReceiving_Detail);
-                    if (!result)
-                    {
-                        return result;
+                        result = DBProxy.Current.ExecuteByConn(sqlConnection, sqlUpdateReceiving_Detail);
+                        if (!result)
+                        {
+                            return result;
+                        }
                     }
                 }
             }
