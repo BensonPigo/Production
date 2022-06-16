@@ -49,7 +49,8 @@ namespace Sci.Production.Tools
                 if (e.Button == MouseButtons.Left)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
-                    Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(dr["oriJson"].ToString(), "Full JSON", false, null);
+                    string fullJson = MyUtility.GetValue.Lookup($@"select Json from AutomationErrMsg with(nolock) where ukey = '{dr["Ukey"]}'");
+                    Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(fullJson, "Full JSON", false, null);
                     callNextForm.ShowDialog(this);
                 }
             };
@@ -114,7 +115,6 @@ select
 ,a.SuppAPIThread
 ,ErrorMsg
 ,[JSON] = LEFT(a.JSON,100) + '...'
-,[oriJson] = a.JSON
 ,AddDate
 ,ReSented
 ,EditDate

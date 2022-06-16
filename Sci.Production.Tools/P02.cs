@@ -53,7 +53,8 @@ namespace Sci.Production.Tools
                 if (e.Button == MouseButtons.Left)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
-                    Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(dr["oriJson"].ToString(), "Full JSON", false, null);
+                    string fullJson = MyUtility.GetValue.Lookup($@"select Json from fps.dbo.AutomationTransRecord with(nolock) where ukey = '{dr["Ukey"]}'");
+                    Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(fullJson, "Full JSON", false, null);
                     callNextForm.ShowDialog(this);
                 }
             };
@@ -64,7 +65,8 @@ namespace Sci.Production.Tools
                 if (e.Button == MouseButtons.Left)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
-                    Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(dr["oriTransJSON"].ToString(), "Full Trans JSON", false, null);
+                    string fullTransJSON = MyUtility.GetValue.Lookup($@"select TransJSON from fps.dbo.AutomationTransRecord with(nolock) where ukey = '{dr["Ukey"]}'");
+                    Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(fullTransJSON, "Full Trans JSON", false, null);
                     callNextForm.ShowDialog(this);
                 }
             };
@@ -134,18 +136,6 @@ namespace Sci.Production.Tools
              };
         }
 
-        private void ChangeDateTimepickCheck(DateTimePicker dateTimePicker)
-        {
-            if (dateTimePicker.Checked)
-            {
-                dateTimePicker.CustomFormat = "yyyy/MM/dd HH:mm:ss";
-            }
-            else
-            {
-                dateTimePicker.CustomFormat = " ";
-            }
-        }
-
         private void Search()
         {
             DBProxy.Current.DefaultTimeout = 900;  // timeout時間改為15分鐘
@@ -185,9 +175,7 @@ select
 ,ModuleName = IIF( isnull(b.ModuleName,'') = '', t.ModuleName, b.ModuleName)
 ,t.SuppAPIThread,t.AddDate
 ,[JSON] = LEFT(t.JSON,100) + '...'
-,[oriJson] = t.JSON
 ,[TransJSON] = LEFT(t.TransJSON,100) + '...'
-,[oriTransJSON] = t.TransJSON
 ,[TransferResult] = case when isnull(em.ErrorMsg,'') !='' then 'Fail'
 						 when isnull(cm.ErrorMsg,'') !='' then 'Fail'
 						 else 'Success' end
