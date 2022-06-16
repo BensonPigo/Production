@@ -36,9 +36,24 @@ namespace Sci.Production.Tools
         {
             this.EditMode = true;
             base.OnFormLoaded();
-            this.dateCreateTime.Value1 = DateTime.Now;
-            this.dateCreateTime.Value2 = DateTime.Now;
+            this.dateTimePicker1.CustomFormat = "yyyy/MM/dd HH:mm:ss";
+            this.dateTimePicker2.CustomFormat = "yyyy/MM/dd HH:mm:ss";
+
+            this.dateTimePicker1.Value = DateTime.Now.AddHours(-1);
+            this.dateTimePicker2.Value = DateTime.Now;
+
             this.grid.IsEditingReadOnly = true;
+            DataGridViewGeneratorTextColumnSettings col_Json = new DataGridViewGeneratorTextColumnSettings();
+            col_Json.EditingMouseDoubleClick += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
+                    string fullJson = MyUtility.GetValue.Lookup($@"select Json from AutomationCheckMsg with(nolock) where ukey = '{dr["Ukey"]}'");
+                    Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(fullJson, "Full JSON", false, null);
+                    callNextForm.ShowDialog(this);
+                }
+            };
 
             #region 表身欄位設定
             this.Helper.Controls.Grid.Generator(this.grid)
@@ -48,7 +63,7 @@ namespace Sci.Production.Tools
                 .Text("APIThread", header: "APIThread", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Text("SuppAPIThread", header: "Supp API Thread", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .EditText("ErrorMsg", header: "Error Msg", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .EditText("Json", header: "JSON", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                .Text("Json", header: "JSON", width: Widths.AnsiChars(30), iseditingreadonly: true, settings: col_Json)
                 .DateTime("AddDate", header: "Create Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 ;
             #endregion
@@ -72,19 +87,8 @@ namespace Sci.Production.Tools
                 strWhere += $" and a.JSON like '%{this.txtJSONContains.Text}%'" + Environment.NewLine;
             }
 
-            if (!MyUtility.Check.Empty(this.dateCreateTime.Value1) && !MyUtility.Check.Empty(this.dateCreateTime.Value2))
-            {
-                strWhere += $@" and CONVERT(date,a.AddDate) between '{((DateTime)this.dateCreateTime.Value1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateCreateTime.Value2).ToString("yyyy/MM/dd")}' 
-    " + Environment.NewLine;
-            }
-            else if (!MyUtility.Check.Empty(this.dateCreateTime.Value1))
-            {
-                strWhere += $@"and CONVERT(date,a.AddDate) = '{((DateTime)this.dateCreateTime.Value1).ToString("yyyy/MM/dd")}' " + Environment.NewLine;
-            }
-            else if (!MyUtility.Check.Empty(this.dateCreateTime.Value2))
-            {
-                strWhere += $@"and CONVERT(date,a.AddDate) = '{((DateTime)this.dateCreateTime.Value2).ToString("yyyy/MM/dd")}' " + Environment.NewLine;
-            }
+            strWhere += $@"
+and a.AddDate between '{this.dateTimePicker1.Text}' and '{this.dateTimePicker2.Text}'";
 
             #endregion
 
@@ -101,7 +105,7 @@ a.Ukey
 ,APIThread
 ,a.SuppAPIThread
 ,ErrorMsg
-,JSON
+,[JSON] = LEFT(a.JSON,100) + '...'
 ,AddDate
 from AutomationCheckMsg a with (nolock)
 left join AutomationDisplay b with (nolock) on a.SuppAPIThread = b.SuppAPIThread
