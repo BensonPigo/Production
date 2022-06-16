@@ -426,6 +426,7 @@ namespace Sci.Production.Planning
                            , sty.Lining
                            , sty.Gender
                            , sty.Construction
+                           , [StyleSpecialMark] = s.SpecialMark
                     into #cte 
                     from dbo.Orders o WITH (NOLOCK) 
                     inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
@@ -959,9 +960,10 @@ select t.MDivisionID
        , [MC Handle] = dbo.getTPEPass1(t.McHandle) 
        , t.DoxType
        , [SpecMark] = (select Name 
-                       from Reason WITH (NOLOCK) 
-                       where ReasonTypeID = 'Style_SpecialMark' 
-                             and ID = t.SpecialMark) 
+                        from Style_SpecialMark sp WITH(NOLOCK) 
+                        where sp.ID = t.[StyleSpecialMark]
+                        and sp.BrandID = t.BrandID
+                        and sp.Junk = 0) 
        , t.GFR
        , t.SampleReason
        , [TMS] = (select s.StdTms * t.CPU 
@@ -1670,9 +1672,10 @@ select t.MDivisionID
        , [MC Handle] = dbo.getTPEPass1(t.McHandle) 
        , t.DoxType
        , [SpecMark] = (select Name 
-                       from Reason WITH (NOLOCK) 
-                       where ReasonTypeID = 'Style_SpecialMark' 
-                             and ID = t.SpecialMark) 
+                       from Style_SpecialMark sp WITH(NOLOCK) 
+                       where sp.ID = t.[StyleSpecialMark]
+                       and sp.BrandID = t.BrandID
+                       and sp.Junk = 0) 
        , t.GFR
        , t.SampleReason
        , [TMS] = (select s.StdTms * t.CPU 

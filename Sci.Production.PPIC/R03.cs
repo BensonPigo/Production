@@ -349,7 +349,8 @@ with tmpOrders as (
             , o.DryRoomRecdDate
             , o.DryRoomTransDate
             , o.MdRoomScanDate
-            , [VasShasCutOffDate] = Format(DATEADD(DAY, -30, iif(GetMinDate.value	is null, coalesce(o.BuyerDelivery, o.CRDDate, o.PlanDate, o.OrigBuyerDelivery), GetMinDate.value)), 'yyyy/MM/dd')
+            , [VasShasCutOffDate] = Format(DATEADD(DAY, -30, iif(GetMinDate.value is null, coalesce(o.BuyerDelivery, o.CRDDate, o.PlanDate, o.OrigBuyerDelivery), GetMinDate.value)), 'yyyy/MM/dd')
+            , [StyleSpecialMark] = s.SpecialMark
             {seperCmd}
      from Orders o WITH (NOLOCK) 
     left join style s WITH (NOLOCK) on o.styleukey = s.ukey
@@ -712,6 +713,7 @@ tmpFilterZone as (
             , o.DryRoomTransDate
             , o.MdRoomScanDate
             , [VasShasCutOffDate] = Format(DATEADD(DAY, -30, iif(GetMinDate.value	is null, coalesce(o.BuyerDelivery, o.CRDDate, o.PlanDate, o.OrigBuyerDelivery), GetMinDate.value)), 'yyyy/MM/dd')
+            , [StyleSpecialMark] = s.SpecialMark
 "
             + seperCmd +
     @"from Orders o  WITH (NOLOCK) 
@@ -878,6 +880,7 @@ group by pd.OrderID, pd.OrderShipmodeSeq
             , t.DryRoomTransDate
             , t.MdRoomScanDate
             , t.VasShasCutOffDate
+            , t.StyleSpecialMark
     into #tmpFilterSeperate
     from #tmpListPoCombo t
     inner join Order_QtyShip oq WITH(NOLOCK) on t.ID = oq.Id and t.Seq = oq.Seq
@@ -1129,9 +1132,10 @@ select  t.ID
                                             and ID = t.SampleReason)
                                     , '')
         , SpecialMarkName = isnull ((select Name 
-                                     from Reason WITH (NOLOCK) 
-                                     where ReasonTypeID = 'Style_SpecialMark' 
-                                           and ID = t.SpecialMark)
+                                     from Style_SpecialMark sp WITH(NOLOCK) 
+                                     where sp.ID = t.[StyleSpecialMark]
+                                     and sp.BrandID = t.BrandID
+                                     and sp.Junk = 0)
                                     , '') 
         , MTLExportTimes = isnull ([dbo].getMTLExport (t.POID, t.MTLExport), '')
         , GMTLT = dbo.GetGMTLT(t.BrandID, t.StyleID, t.SeasonID, t.FactoryID,t.ID)
@@ -1420,9 +1424,10 @@ select distinct
                                             and ID = t.SampleReason)
                                     , '') 
         , SpecialMarkName = isnull ((select Name 
-                                     from Reason WITH (NOLOCK) 
-                                     where  ReasonTypeID = 'Style_SpecialMark' 
-                                            and ID = t.SpecialMark)
+                                     from Style_SpecialMark sp WITH(NOLOCK) 
+                                     where sp.ID = t.[StyleSpecialMark] 
+                                     and sp.BrandID = t.BrandID
+                                     and sp.Junk = 0)
                                    , '')
         , MTLExportTimes = isnull ([dbo].getMTLExport (t.POID, t.MTLExport), '')
         , GMTLT = dbo.GetGMTLT(t.BrandID, t.StyleID, t.SeasonID, t.FactoryID, t.ID)
