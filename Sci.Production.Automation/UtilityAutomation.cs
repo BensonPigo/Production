@@ -309,6 +309,12 @@ select ID = @ID
                 result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
                 SaveAutomationErrMsg(automationErrMsg);
             }
+            else
+            {
+                // 將資料新增至FPS AutomationTransRecord
+                bool isAutoWH = (automationErrMsg.apiThread.Contains("GensongAutoWHFabric") || automationErrMsg.apiThread.Contains("VstrongAutoWHAccessory")) ? true : false;
+                SaveAutomationTransRecord(automationErrMsg, isAutoWH);
+            }
 
             return result;
         }
@@ -336,6 +342,12 @@ select ID = @ID
                 automationErrMsg.SetErrInfo(webApiBaseResult, jsonBody);
                 result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
                 SaveAutomationErrMsg(automationErrMsg);
+            }
+            else
+            {
+                // 將資料新增至FPS AutomationTransRecord
+                bool isAutoWH = (automationErrMsg.apiThread.Contains("GensongAutoWHFabric") || automationErrMsg.apiThread.Contains("VstrongAutoWHAccessory")) ? true : false;
+                SaveAutomationTransRecord(automationErrMsg, isAutoWH);
             }
 
             return result;
@@ -401,10 +413,16 @@ select ID = @ID
                     result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
                     SaveAutomationErrMsg(automationErrMsg);
                 }
+                else
+                {
+                    // 將資料新增至FPS AutomationTransRecord
+                    bool isAutoWH = (automationErrMsg.apiThread.Contains("GensongAutoWHFabric") || automationErrMsg.apiThread.Contains("VstrongAutoWHAccessory")) ? true : false;
+                    SaveAutomationTransRecord(automationErrMsg, isAutoWH);
+                }
             }
             else
             {
-                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 20);
+                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 60);
                 automationErrMsg.AutomationTransRecordUkey = webApiBaseResult.TransRecordUkey;
                 bool saveAllmsg = MyUtility.Convert.GetBool(ConfigurationManager.AppSettings["OpenAll_AutomationCheckMsg"]);
 

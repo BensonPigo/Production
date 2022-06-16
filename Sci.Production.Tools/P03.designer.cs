@@ -29,21 +29,23 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel5 = new Sci.Win.UI.Panel();
             this.btnClose = new Sci.Win.UI.Button();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.checkNotResentYet = new Sci.Win.UI.CheckBox();
             this.btnResentByManual = new Sci.Win.UI.Button();
             this.txtJSONContains = new Sci.Win.UI.TextBox();
             this.labJsonContains = new Sci.Win.UI.Label();
-            this.dateCreateTime = new Sci.Win.UI.DateRange();
             this.labCreateTime = new Sci.Win.UI.Label();
             this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             this.btnQuery = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.grid = new Sci.Win.UI.Grid();
-            this.checkNotResentYet = new Sci.Win.UI.CheckBox();
+            this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
+            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.label8 = new Sci.Win.UI.Label();
             this.panel5.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -72,11 +74,13 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.dateTimePicker2);
+            this.panel1.Controls.Add(this.dateTimePicker1);
+            this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.checkNotResentYet);
             this.panel1.Controls.Add(this.btnResentByManual);
             this.panel1.Controls.Add(this.txtJSONContains);
             this.panel1.Controls.Add(this.labJsonContains);
-            this.panel1.Controls.Add(this.dateCreateTime);
             this.panel1.Controls.Add(this.labCreateTime);
             this.panel1.Controls.Add(this.txtsupplier);
             this.panel1.Controls.Add(this.btnQuery);
@@ -84,8 +88,20 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1026, 80);
+            this.panel1.Size = new System.Drawing.Size(1026, 79);
             this.panel1.TabIndex = 7;
+            // 
+            // checkNotResentYet
+            // 
+            this.checkNotResentYet.AutoSize = true;
+            this.checkNotResentYet.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkNotResentYet.IsSupportEditMode = false;
+            this.checkNotResentYet.Location = new System.Drawing.Point(515, 49);
+            this.checkNotResentYet.Name = "checkNotResentYet";
+            this.checkNotResentYet.Size = new System.Drawing.Size(116, 21);
+            this.checkNotResentYet.TabIndex = 63;
+            this.checkNotResentYet.Text = "Not resent yet";
+            this.checkNotResentYet.UseVisualStyleBackColor = true;
             // 
             // btnResentByManual
             // 
@@ -114,28 +130,6 @@
             this.labJsonContains.Size = new System.Drawing.Size(117, 23);
             this.labJsonContains.TabIndex = 8;
             this.labJsonContains.Text = "JSON Contains";
-            // 
-            // dateCreateTime
-            // 
-            // 
-            // 
-            // 
-            this.dateCreateTime.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateCreateTime.DateBox1.Name = "";
-            this.dateCreateTime.DateBox1.Size = new System.Drawing.Size(129, 23);
-            this.dateCreateTime.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dateCreateTime.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.dateCreateTime.DateBox2.Name = "";
-            this.dateCreateTime.DateBox2.Size = new System.Drawing.Size(129, 23);
-            this.dateCreateTime.DateBox2.TabIndex = 1;
-            this.dateCreateTime.IsRequired = false;
-            this.dateCreateTime.Location = new System.Drawing.Point(117, 45);
-            this.dateCreateTime.Name = "dateCreateTime";
-            this.dateCreateTime.Size = new System.Drawing.Size(280, 23);
-            this.dateCreateTime.TabIndex = 1;
             // 
             // labCreateTime
             // 
@@ -187,35 +181,54 @@
             this.grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid.Location = new System.Drawing.Point(0, 80);
+            this.grid.Location = new System.Drawing.Point(0, 79);
             this.grid.Name = "grid";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid.ShowCellToolTips = false;
-            this.grid.Size = new System.Drawing.Size(1026, 533);
+            this.grid.Size = new System.Drawing.Size(1026, 534);
             this.grid.TabIndex = 9;
             // 
-            // checkNotResentYet
+            // dateTimePicker2
             // 
-            this.checkNotResentYet.AutoSize = true;
-            this.checkNotResentYet.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkNotResentYet.IsSupportEditMode = false;
-            this.checkNotResentYet.Location = new System.Drawing.Point(415, 47);
-            this.checkNotResentYet.Name = "checkNotResentYet";
-            this.checkNotResentYet.Size = new System.Drawing.Size(116, 21);
-            this.checkNotResentYet.TabIndex = 63;
-            this.checkNotResentYet.Text = "Not resent yet";
-            this.checkNotResentYet.UseVisualStyleBackColor = true;
+            this.dateTimePicker2.Checked = false;
+            this.dateTimePicker2.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimePicker2.Location = new System.Drawing.Point(320, 45);
+            this.dateTimePicker2.Name = "dateTimePicker2";
+            this.dateTimePicker2.Size = new System.Drawing.Size(176, 23);
+            this.dateTimePicker2.TabIndex = 147;
+            this.dateTimePicker2.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
+            // 
+            // dateTimePicker1
+            // 
+            this.dateTimePicker1.Checked = false;
+            this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimePicker1.Location = new System.Drawing.Point(117, 45);
+            this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.Size = new System.Drawing.Size(176, 23);
+            this.dateTimePicker1.TabIndex = 146;
+            this.dateTimePicker1.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
+            // 
+            // label8
+            // 
+            this.label8.BackColor = System.Drawing.SystemColors.Control;
+            this.label8.Location = new System.Drawing.Point(296, 45);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(20, 23);
+            this.label8.TabIndex = 148;
+            this.label8.Text = "~";
+            this.label8.TextStyle.Alignment = System.Drawing.ContentAlignment.BottomCenter;
+            this.label8.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // P03
             // 
@@ -247,7 +260,6 @@
         private Win.UI.Button btnResentByManual;
         private Win.UI.TextBox txtJSONContains;
         private Win.UI.Label labJsonContains;
-        private Win.UI.DateRange dateCreateTime;
         private Win.UI.Label labCreateTime;
         private Class.Txtsupplier txtsupplier;
         private Win.UI.Button btnQuery;
@@ -255,5 +267,8 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Grid grid;
         private Win.UI.CheckBox checkNotResentYet;
+        private System.Windows.Forms.DateTimePicker dateTimePicker2;
+        private System.Windows.Forms.DateTimePicker dateTimePicker1;
+        private Win.UI.Label label8;
     }
 }

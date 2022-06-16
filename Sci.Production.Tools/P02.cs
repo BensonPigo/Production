@@ -17,6 +17,7 @@ namespace Sci.Production.Tools
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_Select;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ErrType;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_Resent;
+
         /// <inheritdoc/>
         public P02(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -40,6 +41,35 @@ namespace Sci.Production.Tools
             this.EditMode = true;
             base.OnFormLoaded();
             this.grid.IsEditingReadOnly = false;
+            this.dateTimePicker1.CustomFormat = "yyyy/MM/dd HH:mm:ss";
+            this.dateTimePicker2.CustomFormat = "yyyy/MM/dd HH:mm:ss";
+
+            this.dateTimePicker1.Value = DateTime.Now.AddHours(-1);
+            this.dateTimePicker2.Value = DateTime.Now;
+
+            DataGridViewGeneratorTextColumnSettings col_Json = new DataGridViewGeneratorTextColumnSettings();
+            col_Json.EditingMouseDoubleClick += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
+                    string fullJson = MyUtility.GetValue.Lookup($@"select Json from fps.dbo.AutomationTransRecord with(nolock) where ukey = '{dr["Ukey"]}'");
+                    Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(fullJson, "Full JSON", false, null);
+                    callNextForm.ShowDialog(this);
+                }
+            };
+
+            DataGridViewGeneratorTextColumnSettings col_TransJSON = new DataGridViewGeneratorTextColumnSettings();
+            col_TransJSON.EditingMouseDoubleClick += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
+                    string fullTransJSON = MyUtility.GetValue.Lookup($@"select TransJSON from fps.dbo.AutomationTransRecord with(nolock) where ukey = '{dr["Ukey"]}'");
+                    Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(fullTransJSON, "Full Trans JSON", false, null);
+                    callNextForm.ShowDialog(this);
+                }
+            };
 
             #region 表身欄位設定
             this.Helper.Controls.Grid.Generator(this.grid)
@@ -51,8 +81,8 @@ namespace Sci.Production.Tools
                 .Text("ModuleName", header: "Module Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SuppAPIThread", header: "Supp API Thread", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .DateTime("AddDate", header: "Create Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
-                .EditText("oriJson", header: "JSON", width: Widths.AnsiChars(30), iseditingreadonly: true)
-                .EditText("oriTransJSON", header: "Trans JSON", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                .Text("Json", header: "JSON", width: Widths.AnsiChars(30), iseditingreadonly: true, settings: col_Json)
+                .Text("TransJSON", header: "Trans JSON", width: Widths.AnsiChars(30), iseditingreadonly: true, settings: col_TransJSON)
                 .Text("TransferResult", header: "Transfer Result", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .EditText("Msg", header: "Msg", width: Widths.AnsiChars(35), iseditingreadonly: true)
                 .Text("ErrorType", header: "Error Type", width: Widths.AnsiChars(8), iseditingreadonly: true).Get(out this.col_ErrType)
@@ -108,6 +138,7 @@ namespace Sci.Production.Tools
 
         private void Search()
         {
+            DBProxy.Current.DefaultTimeout = 900;  // timeout時間改為15分鐘
             #region where條件
             string strWhere = string.Empty;
             if (!MyUtility.Check.Empty(this.txtsupplier.TextBox1.Text))
@@ -125,19 +156,9 @@ namespace Sci.Production.Tools
                 strWhere += $" and t.CallFrom like '%{this.txtCallFrom.Text}%'" + Environment.NewLine;
             }
 
-            if (!MyUtility.Check.Empty(this.dateCreateTime.Value1) && !MyUtility.Check.Empty(this.dateCreateTime.Value2))
-            {
-                strWhere += $@" and CONVERT(date,t.AddDate) between '{((DateTime)this.dateCreateTime.Value1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateCreateTime.Value2).ToString("yyyy/MM/dd")}' 
-    " + Environment.NewLine;
-            }
-            else if (!MyUtility.Check.Empty(this.dateCreateTime.Value1))
-            {
-                strWhere += $@"and CONVERT(date,t.AddDate) = '{((DateTime)this.dateCreateTime.Value1).ToString("yyyy/MM/dd")}' " + Environment.NewLine;
-            }
-            else if (!MyUtility.Check.Empty(this.dateCreateTime.Value2))
-            {
-                strWhere += $@"and CONVERT(date,t.AddDate) = '{((DateTime)this.dateCreateTime.Value2).ToString("yyyy/MM/dd")}' " + Environment.NewLine;
-            }
+            strWhere += $@"
+and t.AddDate between '{this.dateTimePicker1.Text}' and '{this.dateTimePicker2.Text}'";
+
             #endregion
 
             if (MyUtility.Check.Empty(strWhere))
@@ -147,8 +168,6 @@ namespace Sci.Production.Tools
 
             string sqlcmd = $@"
 
-select * from (
--- Resent
 select 
 [select] = 0
 ,t.Ukey,t.CallFrom,t.Activity
@@ -156,53 +175,25 @@ select
 ,ModuleName = IIF( isnull(b.ModuleName,'') = '', t.ModuleName, b.ModuleName)
 ,t.SuppAPIThread,t.AddDate
 ,[JSON] = LEFT(t.JSON,100) + '...'
-,[oriJson] = t.JSON
 ,[TransJSON] = LEFT(t.TransJSON,100) + '...'
-,[oriTransJSON] = t.TransJSON
-,[TransferResult] = IIF(em.Ukey is null and cm.Ukey is null , 'Success','Fail')
-,[Msg] = isnull(em.ErrorMsg,'') 
-,[ErrorType] = IIF(em.Ukey != '', 'Error Msg' + CHAR(13) + CHAR(10) + convert(varchar(20), isnull(em.Ukey,'')) , ' Check Msg' + CHAR(13) + CHAR(10) + convert(varchar(20),isnull(cm.Ukey,'')))
-,[ErrorType_Chk] = IIF(em.Ukey != '', 'Error Msg' , ' Check Msg')
+,[TransferResult] = case when isnull(em.ErrorMsg,'') !='' then 'Fail'
+						 when isnull(cm.ErrorMsg,'') !='' then 'Fail'
+						 else 'Success' end
+,[Msg] = case when t.CallFrom = 'Resent' then isnull(em.ErrorMsg,'') 
+			  else iif( isnull(em.ErrorMsg,'') = '', isnull(cm.ErrorMsg,''), isnull(em.ErrorMsg,''))  end
+,[ErrorType] = case when em.Ukey != '' then 'Error Msg' + CHAR(13) + CHAR(10) + convert(varchar(20), isnull(em.Ukey,''))
+					when cm.Ukey != '' then 'Check Msg' + CHAR(13) + CHAR(10) + convert(varchar(20),isnull(cm.Ukey,''))
+					else '' end,[ErrorType_Chk] = IIF(em.Ukey != '', 'Error Msg' , ' Check Msg')
 ,[Resent] = em.ReSented
 ,[ResentTime] = em.EditDate
 ,[ErrMsgUkey] = em.Ukey
-from fps.dbo.AutomationTransRecord t
-left join Production.dbo.AutomationErrMsg em on convert(varchar(80), em.Ukey) = t.Activity
-left join Production.dbo.AutomationCheckMsg cm on cm.AutomationTransRecordUkey = t.Ukey
-left join Production.dbo.AutomationDisplay b on t.SuppAPIThread = b.SuppAPIThread
+from fps.dbo.AutomationTransRecord t with(nolock)
+left join Production.dbo.AutomationErrMsg em with(nolock) on em.AutomationTransRecordUkey = t.Ukey
+left join Production.dbo.AutomationCheckMsg cm with(nolock) on cm.AutomationTransRecordUkey = t.Ukey
+left join Production.dbo.AutomationDisplay b with(nolock) on t.SuppAPIThread = b.SuppAPIThread
 where 1=1
-and t.CallFrom = 'Resent'
- {strWhere}
-
- union all
-
--- !Resent 
-select 
-[select] = 0
-,t.Ukey,t.CallFrom,t.Activity
-,SuppID = IIF( isnull(b.SuppID,'') = '', t.SuppID, b.SuppID)
-,ModuleName = IIF( isnull(b.ModuleName,'') = '', t.ModuleName, b.ModuleName)
-,t.SuppAPIThread,t.AddDate
-,[JSON] = LEFT(t.JSON,100) + '...'
-,[oriJson] = t.JSON
-,[TransJSON] = LEFT(t.TransJSON,100) + '...'
-,[oriTransJSON] = t.TransJSON
-,[TransferResult] = IIF(em.Ukey is null and cm.Ukey is null , 'Success','Fail')
-,[Msg] = iif( isnull(em.ErrorMsg,'') = '', isnull(cm.ErrorMsg,''), isnull(em.ErrorMsg,'')) 
-,[ErrorType] = IIF(em.Ukey != '', 'Error Msg' + CHAR(13) + CHAR(10) + convert(varchar(20), isnull(em.Ukey,'')) , ' Check Msg' + CHAR(13) + CHAR(10) + convert(varchar(20),isnull(cm.Ukey,'')))
-,[ErrorType_Chk] = IIF(em.Ukey != '', 'Error Msg' , ' Check Msg')
-,[Resent] =  em.ReSented
-,[ResentTime] = em.EditDate
-,[ErrMsgUkey] = em.Ukey
-from fps.dbo.AutomationTransRecord t
-left join Production.dbo.AutomationErrMsg em on em.AutomationTransRecordUkey = t.Ukey
-left join Production.dbo.AutomationCheckMsg cm on cm.AutomationTransRecordUkey = t.Ukey
-left join Production.dbo.AutomationDisplay b on t.SuppAPIThread = b.SuppAPIThread
-where 1=1
-and t.CallFrom != 'Resent'
 {strWhere}
-) a
-order by Ukey
+order by t.Ukey
 ";
 
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
@@ -212,6 +203,8 @@ order by Ukey
             }
 
             this.listControlBindingSource1.DataSource = dt;
+
+            DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
         }
 
         private void BtnResentByManual_Click(object sender, EventArgs e)
