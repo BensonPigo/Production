@@ -218,13 +218,14 @@ ted.ID
 		 when ted.PoType = 'M' and ted.FabricType = 'P' then 'Part' 
 		 when ted.PoType = 'M' and ted.FabricType = 'O' then 'Miscellaneous' 
 	else '' end)
-,[Preshrink] = iif(f.Preshrink = 1, 'V' ,'')
+,[Preshrink] = iif(fs.Preshrink = 1, 'V' ,'')
 from TransferExport_Detail ted WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = ted.PoID
 left join Supp s WITH (NOLOCK) on s.id = ted.SuppID 
 left join PO_Supp_Detail psdInv WITH (NOLOCK) on psdInv.ID = ted.InventoryPOID and psdInv.SEQ1 = ted.InventorySeq1 and psdInv.SEQ2 = ted.InventorySeq2
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ted.PoID and psd.SEQ1 = ted.Seq1 and psd.SEQ2 = ted.Seq2
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+left join Fabric_Supp fs WITH (NOLOCK) on fs.SCIRefno = f.SCIRefno and fs.SuppID = s.ID
 outer apply(
 	SELECT [Value] = STUFF((
     SELECT DISTINCT ','+esc.ContainerType + '-' +esc.ContainerNo
