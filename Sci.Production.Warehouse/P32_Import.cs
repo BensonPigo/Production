@@ -256,9 +256,9 @@ SELECT DISTINCT Refno, SizeSpec, ColorID ,BrandId INTO #tmp2 FROM #tmp
 select  distinct selected = 0 
         , id = '' 
         , FromFtyinventoryUkey = c.ukey 
-        , FromPoId = bd.ToPOID
-        , FromSeq1 = bd.ToSeq1 
-        , FromSeq2 = bd.ToSeq2 
+        , FromPoId = c.POID
+        , FromSeq1 = c.Seq1
+        , FromSeq2 = c.Seq2 
         , fromseq =concat(Ltrim(Rtrim(bd.ToSeq1 )), ' ', bd.ToSeq2) 
         , FromDyelot = c.dyelot 
         , FromRoll = c.roll 
