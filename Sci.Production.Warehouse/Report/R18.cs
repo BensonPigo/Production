@@ -92,6 +92,10 @@ with cte as (
 		    , o.SciDelivery
 		    , pd.Complete
 		    , pd.Refno
+            , [MtlType] = Concat(   case  when pd.FabricType = 'F' then 'Fabric'
+                                    when pd.FabricType = 'A' then 'Accessory'
+                                    when pd.FabricType = 'O' then 'Orher'
+                                    else pd.FabricType end, '-', Fabric.MtlTypeID)
 		    , pd.Width
 		    , pd.ColorID
 		    , pd.SizeSpec
@@ -127,6 +131,7 @@ with cte as (
     inner join dbo.Po_Supp po with (NoLock) on pd.ID = po.ID and pd.Seq1 = po.Seq1
     inner join orders o with(nolock) on o.id = pd.id
     inner join factory f with(nolock) on o.FactoryID = f.id
+    left join Fabric with (nolock) on Fabric.SCIRefno = pd.SCIRefno
     left join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = pd.id and mpd.seq1 = pd.seq1 and mpd.seq2= pd.SEQ2
     outer apply
     (
