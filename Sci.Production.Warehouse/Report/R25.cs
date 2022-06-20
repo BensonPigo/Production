@@ -173,6 +173,7 @@ select
 	o.BrandID,
     o.seasonid,
     po.styleid,
+    s.StyleName,
 	ed.PoID,
 	seq = ed.Seq1+' '+ed.Seq2,
 	ed.Refno,
@@ -205,6 +206,7 @@ INTO #tmp
 from Export e
 Inner join Export_Detail ed on e.ID = ed.ID
 inner join orders o on o.id = ed.poid
+left join Style s with (nolock) on s.Ukey = o.StyleUkey
 left join supp on supp.id = ed.suppid
 left join PO_Supp_Detail psd on psd.id = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
 left join po on po.id = ed.PoID
@@ -299,7 +301,7 @@ and ed.PoType = 'G'
 
  select 
 	WK, t.eta, t.FactoryID, Consignee, ShipModeID, CYCFS, Blno, Packages, Vessel, [ProdFactory], OrderTypeID, ProjectID, Category ,
-	BrandID, seasonid, styleid, t.PoID, seq, Refno,	[Color] , [Description], [MtlType], WeaveTypeID, suppid, [SuppName] 
+	BrandID, seasonid, styleid, t.StyleName, t.PoID, seq, Refno,	[Color] , [Description], [MtlType], WeaveTypeID, suppid, [SuppName] 
 	, UnitId
 	, SizeSpec,
     [ShipQty]=SUM(t.ShipQty),
@@ -326,7 +328,7 @@ OUTER APPLY(
  GROUP BY 
 	WK,t.eta,t.FactoryID,Consignee,ShipModeID,CYCFS,Blno,Packages,Vessel,[ProdFactory],OrderTypeID,ProjectID,Category ,BrandID, seasonid,styleid,t.PoID,seq,
 	Refno,[Color] ,[Description],[MtlType],WeaveTypeID,suppid,[SuppName] ,UnitId,SizeSpec,[ContainerType] ,[ContainerNo] ,PortArrival,
-	t.WhseArrival,KPILETA,[Earliest SCI Delivery],EarlyDays,[MR_Mail],[SMR_Mail],t.EditName,ReceiveQty,StockUnit
+	t.WhseArrival,KPILETA,[Earliest SCI Delivery],EarlyDays,[MR_Mail],[SMR_Mail],t.EditName,ReceiveQty,StockUnit, t.StyleName
 HAVING 1=1
 ";
             if (this.RecLessArv)
