@@ -281,7 +281,6 @@ OUTER APPLY(
 			    , 1, 1, '')
     )Location
 where R.id = @ID
-order by R.EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, R.Unoriginal, R.POID, R.Seq1, R.Seq2, R.Roll, R.Dyelot
 ";
 
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
@@ -289,6 +288,10 @@ order by R.EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCm
                 pars.Add(new SqlParameter("@poid", this.txtSPNo.Text));
                 sql += " and R.Poid = @poid";
             }
+
+            sql += @"
+order by R.EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, R.Unoriginal, R.POID, R.Seq1, R.Seq2, R.Roll, R.Dyelot
+";
 
             DualResult result = DBProxy.Current.Select(
                 string.Empty,
