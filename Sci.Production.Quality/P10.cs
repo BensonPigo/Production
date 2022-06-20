@@ -98,13 +98,12 @@ where sd.id='{0}' order by sd.No
         {
             base.OnDetailEntered();
             string sqlcmd = $@"
-select r.Name 
+select sp.Name 
 from Style s
-inner join Reason r on r.ID = s.SpecialMark
+inner join Style_SpecialMark sp on sp.ID = s.SpecialMark and sp.BrandID = s.BrandID
 where s.ID = '{this.CurrentMaintain["StyleID"]}' 
         and s.SeasonID = '{this.CurrentMaintain["SeasonID"]}' 
         and s.BrandID = '{this.CurrentMaintain["BrandID"]}'
-        and r.ReasonTypeID = 'Style_SpecialMark'
 ";
             this.disSpeciealMark.Text = MyUtility.GetValue.Lookup(sqlcmd);
         }

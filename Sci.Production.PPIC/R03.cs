@@ -349,9 +349,12 @@ with tmpOrders as (
             , o.DryRoomRecdDate
             , o.DryRoomTransDate
             , o.MdRoomScanDate
-            , [VasShasCutOffDate] = Format(DATEADD(DAY, -30, iif(GetMinDate.value	is null, coalesce(o.BuyerDelivery, o.CRDDate, o.PlanDate, o.OrigBuyerDelivery), GetMinDate.value)), 'yyyy/MM/dd')
+            , [VasShasCutOffDate] = Format(DATEADD(DAY, -30, iif(GetMinDate.value is null, coalesce(o.BuyerDelivery, o.CRDDate, o.PlanDate, o.OrigBuyerDelivery), GetMinDate.value)), 'yyyy/MM/dd')
+            , [StyleSpecialMark] = s.SpecialMark
             {seperCmd}
-     from Orders o WITH (NOLOCK) 
+	        , [SewingMtlComplt]  = isnull(CompltSP.SewingMtlComplt, '')
+	        , [PackingMtlComplt] = isnull(CompltSP.PackingMtlComplt, '')
+    from Orders o WITH (NOLOCK) 
     left join style s WITH (NOLOCK) on o.styleukey = s.ukey
 	left join DropDownList d ON o.CtnType=d.ID AND d.Type='PackingMethod'
 	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
@@ -370,6 +373,33 @@ with tmpOrders as (
 			where tmp.Date is not null
 		)
 	) GetMinDate
+    outer apply (
+	    select 
+		    [PackingMtlComplt] = max([PackingMtlComplt])
+		    , [SewingMtlComplt] = max([SewingMtlComplt])
+	    from 
+	    (
+		    select  f.ProductionType
+			    , [PackingMtlComplt] = iif(f.ProductionType = 'Packing' and sum(iif(f.ProductionType = 'Packing', 1, 0)) = sum(iif(f.ProductionType = 'Packing' and f.Complete = 1, 1, 0)), 'Y', '')
+			    , [SewingMtlComplt] = iif(f.ProductionType <> 'Packing' and sum(iif(f.ProductionType <> 'Packing', 1, 0)) = sum(iif(f.ProductionType <> 'Packing' and f.Complete = 1, 1, 0)), 'Y', '')
+		    from 
+		    (
+			    select f.ProductionType
+				    , psd.Complete
+			    from PO_Supp_Detail psd
+			    inner join PO_Supp_Detail_OrderList psdo on psd.ID = psdo.ID and psd.SEQ1 = psdo.SEQ1 and psd.SEQ2 = psdo.SEQ2
+			    outer apply (
+				    select [ProductionType] = iif(m.ProductionType = 'Packing', 'Packing', 'Sewing')
+				    from Fabric f
+				    left join MtlType m on f.MtlTypeID = m.ID
+				    where f.SCIRefno = psd.SCIRefno
+			    )f  
+			    where psdo.OrderID	= o.ID
+			    and psd.Junk = 0
+		    )f
+		    group by f.ProductionType
+	    )f
+    )CompltSP
 {order_QtyShip_OuterApply}    
 	outer apply(select oa.Article from Order_article oa WITH (NOLOCK) where oa.id = o.id) a
     where  1=1 {whereIncludeCancelOrder}
@@ -712,6 +742,9 @@ tmpFilterZone as (
             , o.DryRoomTransDate
             , o.MdRoomScanDate
             , [VasShasCutOffDate] = Format(DATEADD(DAY, -30, iif(GetMinDate.value	is null, coalesce(o.BuyerDelivery, o.CRDDate, o.PlanDate, o.OrigBuyerDelivery), GetMinDate.value)), 'yyyy/MM/dd')
+            , [StyleSpecialMark] = s.SpecialMark
+            , [SewingMtlComplt]  = isnull(CompltSP.SewingMtlComplt, '')
+            , [PackingMtlComplt] = isnull(CompltSP.PackingMtlComplt, '')
 "
             + seperCmd +
     @"from Orders o  WITH (NOLOCK) 
@@ -720,6 +753,33 @@ tmpFilterZone as (
 	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
 	left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
 	left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+    outer apply (
+	        select 
+		        [PackingMtlComplt] = max([PackingMtlComplt])
+		        , [SewingMtlComplt] = max([SewingMtlComplt])
+	        from 
+	        (
+		        select  f.ProductionType
+			        , [PackingMtlComplt] = iif(f.ProductionType = 'Packing' and sum(iif(f.ProductionType = 'Packing', 1, 0)) = sum(iif(f.ProductionType = 'Packing' and f.Complete = 1, 1, 0)), 'Y', '')
+			        , [SewingMtlComplt] = iif(f.ProductionType <> 'Packing' and sum(iif(f.ProductionType <> 'Packing', 1, 0)) = sum(iif(f.ProductionType <> 'Packing' and f.Complete = 1, 1, 0)), 'Y', '')
+		        from 
+		        (
+			        select f.ProductionType
+				        , psd.Complete
+			        from PO_Supp_Detail psd
+			        inner join PO_Supp_Detail_OrderList psdo on psd.ID = psdo.ID and psd.SEQ1 = psdo.SEQ1 and psd.SEQ2 = psdo.SEQ2
+			        outer apply (
+				        select [ProductionType] = iif(m.ProductionType = 'Packing', 'Packing', 'Sewing')
+				        from Fabric f
+				        left join MtlType m on f.MtlTypeID = m.ID
+				        where f.SCIRefno = psd.SCIRefno
+			        )f  
+			        where psdo.OrderID	= o.ID
+			        and psd.Junk = 0
+		        )f
+		        group by f.ProductionType
+	        )f
+        )CompltSP
    " + seperCmdkpi2 + $@"
     OUTER APPLY (
         SELECT Name 
@@ -878,6 +938,9 @@ group by pd.OrderID, pd.OrderShipmodeSeq
             , t.DryRoomTransDate
             , t.MdRoomScanDate
             , t.VasShasCutOffDate
+            , t.StyleSpecialMark
+            , t.SewingMtlComplt
+            , t.PackingMtlComplt
     into #tmpFilterSeperate
     from #tmpListPoCombo t
     inner join Order_QtyShip oq WITH(NOLOCK) on t.ID = oq.Id and t.Seq = oq.Seq
@@ -1129,9 +1192,10 @@ select  t.ID
                                             and ID = t.SampleReason)
                                     , '')
         , SpecialMarkName = isnull ((select Name 
-                                     from Reason WITH (NOLOCK) 
-                                     where ReasonTypeID = 'Style_SpecialMark' 
-                                           and ID = t.SpecialMark)
+                                     from Style_SpecialMark sp WITH(NOLOCK) 
+                                     where sp.ID = t.[StyleSpecialMark]
+                                     and sp.BrandID = t.BrandID
+                                     and sp.Junk = 0)
                                     , '') 
         , MTLExportTimes = isnull ([dbo].getMTLExport (t.POID, t.MTLExport), '')
         , GMTLT = dbo.GetGMTLT(t.BrandID, t.StyleID, t.SeasonID, t.FactoryID,t.ID)
@@ -1163,6 +1227,8 @@ select  t.ID
 		, DryRoomTransDate = IIF(isnull(t.FtyCtn1,0) =0 , t.DryRoomTransDate , null)
 		, MdRoomScanDate = IIF(isnull(t.FtyCtn1,0) =0 , t.MdRoomScanDate , null)
         , t.VasShasCutOffDate
+        , t.SewingMtlComplt
+        , t.PackingMtlComplt
 from #tmpFilterSeperate t
 left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
@@ -1420,9 +1486,10 @@ select distinct
                                             and ID = t.SampleReason)
                                     , '') 
         , SpecialMarkName = isnull ((select Name 
-                                     from Reason WITH (NOLOCK) 
-                                     where  ReasonTypeID = 'Style_SpecialMark' 
-                                            and ID = t.SpecialMark)
+                                     from Style_SpecialMark sp WITH(NOLOCK) 
+                                     where sp.ID = t.[StyleSpecialMark] 
+                                     and sp.BrandID = t.BrandID
+                                     and sp.Junk = 0)
                                    , '')
         , MTLExportTimes = isnull ([dbo].getMTLExport (t.POID, t.MTLExport), '')
         , GMTLT = dbo.GetGMTLT(t.BrandID, t.StyleID, t.SeasonID, t.FactoryID, t.ID)
@@ -1483,6 +1550,8 @@ select distinct
         , [DryRoomTransDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.DryRoomTransDate, null)
         , [MdRoomScanDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.MdRoomScanDate, null)
         , t.VasShasCutOffDate
+        , t.SewingMtlComplt
+        , t.PackingMtlComplt
 from #tmpListPoCombo t
 left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
@@ -2000,7 +2069,7 @@ drop table #tmp,#tmp2,#tmp3
 
         // 最後一欄 , 有新增欄位要改這
         // 注意!新增欄位也要新增到StandardReport_Detail(Customized)。
-        private int lastColA = 150;
+        private int lastColA = 152;
 
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -2197,72 +2266,75 @@ drop table #tmp,#tmp2,#tmp3
                 objArray[intRowsStart, 81] = dr["MTLETA"];
                 objArray[intRowsStart, 82] = dr["Fab_ETA"];
                 objArray[intRowsStart, 83] = dr["Acc_ETA"];
-                objArray[intRowsStart, 84] = dr["SewETA"];
-                objArray[intRowsStart, 85] = dr["PackETA"];
-                objArray[intRowsStart, 86] = MyUtility.Convert.GetString(dr["MTLDelay"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-                objArray[intRowsStart, 87] = MyUtility.Check.Empty(dr["MTLExport"]) ? dr["MTLExportTimes"] : dr["MTLExport"];
-                objArray[intRowsStart, 88] = MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : "N";
-                objArray[intRowsStart, 89] = dr["ArriveWHDate"];
-                objArray[intRowsStart, 90] = dr["SewInLine"];
-                objArray[intRowsStart, 91] = dr["SewOffLine"];
-                objArray[intRowsStart, 92] = dr["FirstOutDate"];
-                objArray[intRowsStart, 93] = dr["LastOutDate"]; // CA
-                objArray[intRowsStart, 94] = dr["FirstProduction"]; // CB
-                objArray[intRowsStart, 95] = dr["LastProductionDate"]; // CC
-                objArray[intRowsStart, 96] = dr["EachConsApv"];
-                objArray[intRowsStart, 97] = dr["KpiEachConsCheck"];
-                objArray[intRowsStart, 98] = dr["CutInLine"];
-                objArray[intRowsStart, 99] = dr["CutOffLine"];
-                objArray[intRowsStart, 100] =  dr["FirstCutDate"];
-                objArray[intRowsStart, 101] = dr["LastCutDate"];
-                objArray[intRowsStart, 102] = dr["PulloutDate"];
-                objArray[intRowsStart, 103] = dr["ActPulloutDate"];
-                objArray[intRowsStart, 104] = dr["PulloutQty"];
-                objArray[intRowsStart, 105] = dr["ActPulloutTime"];
-                objArray[intRowsStart, 106] = MyUtility.Convert.GetString(dr["PulloutComplete"]).ToUpper() == "TRUE" ? "OK" : string.Empty;
-                objArray[intRowsStart, 107] = dr["FtyKPI"];
-                objArray[intRowsStart, 108] = !MyUtility.Check.Empty(dr["KPIChangeReason"]) ? kPIChangeReasonName : string.Empty; // cc
-                objArray[intRowsStart, 109] = dr["PlanDate"];
-                objArray[intRowsStart, 110] = dr["OrigBuyerDelivery"];
-                objArray[intRowsStart, 111] = dr["SMR"];
-                objArray[intRowsStart, 112] = dr["SMRName"];
-                objArray[intRowsStart, 113] = dr["MRHandle"];
-                objArray[intRowsStart, 114] = dr["MRHandleName"];
-                objArray[intRowsStart, 115] = dr["POSMR"];
-                objArray[intRowsStart, 116] = dr["POSMRName"];
-                objArray[intRowsStart, 117] = dr["POHandle"];
-                objArray[intRowsStart, 118] = dr["POHandleName"];
-                objArray[intRowsStart, 119] = dr["PCHandle"];
-                objArray[intRowsStart, 120] = dr["PCHandleName"];
-                objArray[intRowsStart, 121] = dr["MCHandle"];
-                objArray[intRowsStart, 122] = dr["MCHandleName"];
-                objArray[intRowsStart, 123] = dr["DoxType"];
-                objArray[intRowsStart, 124] = dr["PackingCTN"];
-                objArray[intRowsStart, 125] = dr["TotalCTN1"];
-                objArray[intRowsStart, 126] = dr["PackErrorCtn"];
-                objArray[intRowsStart, 127] = dr["FtyCtn1"];
-                objArray[intRowsStart, 128] = dr["ClogCTN1"];
-                objArray[intRowsStart, 129] = dr["CFACTN"];
-                objArray[intRowsStart, 130] = dr["ClogRcvDate"];
-                objArray[intRowsStart, 131] = dr["InspDate"];
-                objArray[intRowsStart, 132] = dr["InspResult"];
-                objArray[intRowsStart, 133] = dr["InspHandle"];
-                objArray[intRowsStart, 134] = dr["SewLine"];
-                objArray[intRowsStart, 135] = dr["ShipModeList"];
-                objArray[intRowsStart, 136] = dr["Customize2"];
-                objArray[intRowsStart, 137] = dr["Article"];
-                objArray[intRowsStart, 138] = dr["SpecialMarkName"];
-                objArray[intRowsStart, 139] = dr["FTYRemark"];
-                objArray[intRowsStart, 140] = dr["SampleReasonName"];
-                objArray[intRowsStart, 141] = dr["IsMixMarker"];
-                objArray[intRowsStart, 142] = dr["CuttingSP"];
-                objArray[intRowsStart, 143] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-                objArray[intRowsStart, 144] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
-                objArray[intRowsStart, 145] = dr["LastCTNTransDate"];
-                objArray[intRowsStart, 146] = dr["LastCTNRecdDate"];
-                objArray[intRowsStart, 147] = dr["DryRoomRecdDate"];
-                objArray[intRowsStart, 148] = dr["DryRoomTransDate"];
-                objArray[intRowsStart, 149] = dr["MdRoomScanDate"];
+                objArray[intRowsStart, 84] = dr["SewingMtlComplt"];
+                objArray[intRowsStart, 85] = dr["PackingMtlComplt"];
+
+                objArray[intRowsStart, 86] = dr["SewETA"];
+                objArray[intRowsStart, 87] = dr["PackETA"];
+                objArray[intRowsStart, 88] = MyUtility.Convert.GetString(dr["MTLDelay"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+                objArray[intRowsStart, 89] = MyUtility.Check.Empty(dr["MTLExport"]) ? dr["MTLExportTimes"] : dr["MTLExport"];
+                objArray[intRowsStart, 90] = MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : "N";
+                objArray[intRowsStart, 91] = dr["ArriveWHDate"];
+                objArray[intRowsStart, 92] = dr["SewInLine"];
+                objArray[intRowsStart, 93] = dr["SewOffLine"];
+                objArray[intRowsStart, 94] = dr["FirstOutDate"];
+                objArray[intRowsStart, 95] = dr["LastOutDate"]; // CA
+                objArray[intRowsStart, 96] = dr["FirstProduction"]; // CB
+                objArray[intRowsStart, 97] = dr["LastProductionDate"]; // CC
+                objArray[intRowsStart, 98] = dr["EachConsApv"];
+                objArray[intRowsStart, 99] = dr["KpiEachConsCheck"];
+                objArray[intRowsStart, 100] = dr["CutInLine"];
+                objArray[intRowsStart, 101] = dr["CutOffLine"];
+                objArray[intRowsStart, 102] = dr["FirstCutDate"];
+                objArray[intRowsStart, 103] = dr["LastCutDate"];
+                objArray[intRowsStart, 104] = dr["PulloutDate"];
+                objArray[intRowsStart, 105] = dr["ActPulloutDate"];
+                objArray[intRowsStart, 106] = dr["PulloutQty"];
+                objArray[intRowsStart, 107] = dr["ActPulloutTime"];
+                objArray[intRowsStart, 108] = MyUtility.Convert.GetString(dr["PulloutComplete"]).ToUpper() == "TRUE" ? "OK" : string.Empty;
+                objArray[intRowsStart, 109] = dr["FtyKPI"];
+                objArray[intRowsStart, 110] = !MyUtility.Check.Empty(dr["KPIChangeReason"]) ? kPIChangeReasonName : string.Empty; // cc
+                objArray[intRowsStart, 111] = dr["PlanDate"];
+                objArray[intRowsStart, 112] = dr["OrigBuyerDelivery"];
+                objArray[intRowsStart, 113] = dr["SMR"];
+                objArray[intRowsStart, 114] = dr["SMRName"];
+                objArray[intRowsStart, 115] = dr["MRHandle"];
+                objArray[intRowsStart, 116] = dr["MRHandleName"];
+                objArray[intRowsStart, 117] = dr["POSMR"];
+                objArray[intRowsStart, 118] = dr["POSMRName"];
+                objArray[intRowsStart, 119] = dr["POHandle"];
+                objArray[intRowsStart, 120] = dr["POHandleName"];
+                objArray[intRowsStart, 121] = dr["PCHandle"];
+                objArray[intRowsStart, 122] = dr["PCHandleName"];
+                objArray[intRowsStart, 123] = dr["MCHandle"];
+                objArray[intRowsStart, 124] = dr["MCHandleName"];
+                objArray[intRowsStart, 125] = dr["DoxType"];
+                objArray[intRowsStart, 126] = dr["PackingCTN"];
+                objArray[intRowsStart, 127] = dr["TotalCTN1"];
+                objArray[intRowsStart, 128] = dr["PackErrorCtn"];
+                objArray[intRowsStart, 129] = dr["FtyCtn1"];
+                objArray[intRowsStart, 130] = dr["ClogCTN1"];
+                objArray[intRowsStart, 131] = dr["CFACTN"];
+                objArray[intRowsStart, 132] = dr["ClogRcvDate"];
+                objArray[intRowsStart, 133] = dr["InspDate"];
+                objArray[intRowsStart, 134] = dr["InspResult"];
+                objArray[intRowsStart, 135] = dr["InspHandle"];
+                objArray[intRowsStart, 136] = dr["SewLine"];
+                objArray[intRowsStart, 137] = dr["ShipModeList"];
+                objArray[intRowsStart, 138] = dr["Customize2"];
+                objArray[intRowsStart, 139] = dr["Article"];
+                objArray[intRowsStart, 140] = dr["SpecialMarkName"];
+                objArray[intRowsStart, 141] = dr["FTYRemark"];
+                objArray[intRowsStart, 142] = dr["SampleReasonName"];
+                objArray[intRowsStart, 143] = dr["IsMixMarker"];
+                objArray[intRowsStart, 144] = dr["CuttingSP"];
+                objArray[intRowsStart, 145] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+                objArray[intRowsStart, 146] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
+                objArray[intRowsStart, 147] = dr["LastCTNTransDate"];
+                objArray[intRowsStart, 148] = dr["LastCTNRecdDate"];
+                objArray[intRowsStart, 149] = dr["DryRoomRecdDate"];
+                objArray[intRowsStart, 150] = dr["DryRoomTransDate"];
+                objArray[intRowsStart, 151] = dr["MdRoomScanDate"];
                 #endregion
 
                 if (this.artwork || this.pap)
