@@ -98,6 +98,7 @@
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.displayMasterPlusGroup = new Sci.Win.UI.DisplayBox();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -115,6 +116,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.displayMasterPlusGroup);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.editAnnotation);
@@ -185,7 +187,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(900, 525);
+            this.browse.Size = new System.Drawing.Size(900, 555);
             // 
             // tabs
             // 
@@ -1019,10 +1021,26 @@
             this.displayMasterPlusGroup.Size = new System.Drawing.Size(100, 23);
             this.displayMasterPlusGroup.TabIndex = 58;
             // 
+            // checkJunk
+            // 
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkJunk.IsSupportEditMode = false;
+            this.checkJunk.Location = new System.Drawing.Point(451, 14);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.ReadOnly = true;
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 59;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
+            // 
             // B09
             // 
             this.ClientSize = new System.Drawing.Size(908, 617);
             this.DefaultOrder = "ID";
+            this.EnableGridJunkColor = true;
+            this.ExpressQuery = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportNew = false;
@@ -1120,5 +1138,6 @@
         private Win.UI.Label label1;
         private Win.UI.DisplayBox displayMasterPlusGroup;
         private Win.UI.Label label2;
+        private Win.UI.CheckBox checkJunk;
     }
 }

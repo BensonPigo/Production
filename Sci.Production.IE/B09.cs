@@ -23,6 +23,35 @@ namespace Sci.Production.IE
         {
             this.InitializeComponent();
             this.destination_path = MyUtility.GetValue.Lookup("select PicPath from System WITH (NOLOCK)", null);
+
+            MyUtility.Tool.SetupCombox(this.queryfors, 2, 1, "0,Exclude Junk,1,Include Junk");
+
+            // 預設查詢為 Exclude Junk
+            this.queryfors.SelectedIndex = 0;
+            this.DefaultWhere = "JUNK = 0";
+            this.ReloadDatas();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            this.queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                string hasJunk = MyUtility.Check.Empty(this.queryfors.SelectedValue) ? string.Empty : this.queryfors.SelectedValue.ToString();
+                switch (hasJunk)
+                {
+                    case "0":
+                        this.DefaultWhere = "JUNK = 0";
+                        break;
+                    case "1":
+                    default:
+                        this.DefaultWhere = string.Empty;
+                        break;
+                }
+
+                this.ReloadDatas();
+            };
         }
 
         /// <summary>
