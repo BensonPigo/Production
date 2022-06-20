@@ -25,6 +25,8 @@ namespace Sci.Production.Subcon
         private DateTime? dateBundle2;
         private DateTime? dateBundleTransDate1;
         private DateTime? dateBundleTransDate2;
+        private DateTime? dateEstCutDate1;
+        private DateTime? dateEstCutDate2;
 
         /// <inheritdoc/>
         public R42(ToolStripMenuItem menuitem)
@@ -56,9 +58,10 @@ namespace Sci.Production.Subcon
         protected override bool ValidateInput()
         {
             if (MyUtility.Check.Empty(this.dateBundleCDate.Value1) && MyUtility.Check.Empty(this.dateBundleCDate.Value2) &&
+                MyUtility.Check.Empty(this.dateEstCutDate.Value1) && MyUtility.Check.Empty(this.dateEstCutDate.Value2) &&
                 MyUtility.Check.Empty(this.dateBundleTransDate.Value1) && MyUtility.Check.Empty(this.dateBundleTransDate.Value2))
             {
-                MyUtility.Msg.WarningBox("Bundel CDate or Bundle Trans date can't empty!!");
+                MyUtility.Msg.WarningBox("[Est Cut Date] or [Bundle CDate] or [Bundle Trans Date] can't empty!!");
                 return false;
             }
 
@@ -72,6 +75,8 @@ namespace Sci.Production.Subcon
             this.dateBundle2 = this.dateBundleCDate.Value2;
             this.dateBundleTransDate1 = this.dateBundleTransDate.Value1;
             this.dateBundleTransDate2 = this.dateBundleTransDate.Value2;
+            this.dateEstCutDate1 = this.dateEstCutDate.Value1;
+            this.dateEstCutDate2 = this.dateEstCutDate.Value2;
             this.processLocation = this.comboRFIDProcessLocation.Text;
             return base.ValidateInput();
         }
@@ -226,6 +231,28 @@ where 1=1
                 {
                     this.sqlCmd.Append(string.Format(@" and bt.RFIDProcessLocationID = '{0}'", this.processLocation));
                 }
+
+                if (!MyUtility.Check.Empty(this.dateEstCutDate1) || !MyUtility.Check.Empty(this.dateEstCutDate2))
+                {
+                    string whereEstCut = string.Empty;
+                    if (!MyUtility.Check.Empty(this.dateEstCutDate1))
+                    {
+                        whereEstCut += $" and w.EstCutDate >= '{ Convert.ToDateTime(this.dateEstCutDate1).ToString("yyyy/MM/dd")}'";
+                    }
+
+                    if (!MyUtility.Check.Empty(this.dateEstCutDate2))
+                    {
+                        whereEstCut += $" and w.EstCutDate <= '{ Convert.ToDateTime(this.dateEstCutDate2).ToString("yyyy/MM/dd")}'";
+                    }
+
+                    this.sqlCmd.Append($@" 
+and exists(
+	select 1
+	from WorkOrder w	
+	where w.OrderID = o.ID and w.CutRef = b.CutRef
+	{whereEstCut}
+)");
+                }
                 #endregion
             }
             else
@@ -363,10 +390,32 @@ where 1=1
                 {
                     this.sqlCmd.Append(string.Format(@" and o.FtyGroup = '{0}'", this.Factory));
                 }
+
+                if (!MyUtility.Check.Empty(this.dateEstCutDate1) || !MyUtility.Check.Empty(this.dateEstCutDate2))
+                {
+                    string whereEstCut = string.Empty;
+                    if (!MyUtility.Check.Empty(this.dateEstCutDate1))
+                    {
+                        whereEstCut += $" and w.EstCutDate >= '{ Convert.ToDateTime(this.dateEstCutDate1).ToString("yyyy/MM/dd")}'";
+                    }
+
+                    if (!MyUtility.Check.Empty(this.dateEstCutDate2))
+                    {
+                        whereEstCut += $" and w.EstCutDate <= '{ Convert.ToDateTime(this.dateEstCutDate2).ToString("yyyy/MM/dd")}'";
+                    }
+
+                    this.sqlCmd.Append($@" 
+and exists(
+	select 1
+	from WorkOrder w	
+	where w.OrderID = o.ID and w.CutRef = b.CutRef
+	{whereEstCut}
+)");
+                }
             }
 
             this.sqlCmd.Append(@"
-select [Bundle#],[RFIDProcessLocationID],[RFIDProcessTable],[FabricKind],[Cut Ref#],
+select distinct [Bundle#],[RFIDProcessLocationID],[RFIDProcessTable],[FabricKind],[Cut Ref#],
 	[SP#],
 	[Master SP#],[M],[Factory],[Style],[Season],[Brand],[Comb],[Cutno],[Article],[Color],[Line],SewingLineID,
 	[Cell],[Pattern],[PtnDesc],[Group],[Size],[Qty],[RFID Reader],[Sub-process],[Post Sewing SubProcess],
