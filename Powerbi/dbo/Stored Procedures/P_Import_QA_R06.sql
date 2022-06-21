@@ -421,7 +421,7 @@ from(
 		Where (exists(select * from #SH1 where POID = rd.PoId and SEQ1 = RD.seq1 and seq2 = seq2 and Dyelot = RD.dyelot AND Refno=rd.Refno)
 		or exists(select * from #SH2 where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2 and Dyelot = RD.dyelot AND Refno=rd.Refno))
 	) rd 
-	inner join #View_AllReceivingDetail rd1 with (nolock) on rd.PoId = rd1.PoId and rd.Seq1 = rd1.Seq1 and rd.Seq2 = rd1.Seq2
+	inner join #View_AllReceivingDetail rd1 with (nolock) on rd.PoId = rd1.PoId and rd.Seq1 = rd1.Seq1 and rd.Seq2 = rd1.Seq2 and rd.WhseArrival = format(rd1.WhseArrival, ''yyyy/MM'')
 	inner join #PO_Supp_Detail psd ON rd.PoId=psd.ID AND rd.Seq1=psd.seq1 AND rd.Seq2=psd.seq2 AND rd.Refno=psd.Refno
 	inner join #PO_Supp ps on ps.id=psd.Id and ps.seq1=psd.seq1 and ps.SuppID=rd.SuppID
 	where rd1.WhseArrival >= '''+@WhseArrival_s_cast +''' and rd1.WhseArrival <= '''+@WhseArrival_e_cast +'''
