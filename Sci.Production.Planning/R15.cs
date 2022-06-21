@@ -1149,6 +1149,7 @@ select o.MDivisionID       , o.FactoryID  , o.SciDelivery     , O.CRDDate       
        , sty.Lining
        , sty.Gender
        , sty.Construction
+       , [StyleSpecialMark] = s.SpecialMark
 into #cte 
 from dbo.Orders o WITH (NOLOCK) 
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
