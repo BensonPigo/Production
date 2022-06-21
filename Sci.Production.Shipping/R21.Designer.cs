@@ -34,24 +34,30 @@
             this.label1 = new Sci.Win.UI.Label();
             this.dateOnBoard = new Sci.Win.UI.DateRange();
             this.label2 = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
+            this.dateVoucher = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
             // print
             // 
             this.print.Location = new System.Drawing.Point(422, 12);
+            this.print.TabIndex = 4;
             this.print.Visible = false;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(422, 48);
+            this.toexcel.TabIndex = 5;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(422, 84);
+            this.close.TabIndex = 6;
             // 
             // buttonCustomized
             // 
             this.buttonCustomized.Location = new System.Drawing.Point(376, 113);
+            this.buttonCustomized.TabIndex = 7;
             // 
             // checkUseCustomized
             // 
@@ -70,7 +76,7 @@
             this.lbArrivePortDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.lbArrivePortDate.RectStyle.ExtBorderWidth = 1F;
             this.lbArrivePortDate.Size = new System.Drawing.Size(108, 23);
-            this.lbArrivePortDate.TabIndex = 97;
+            this.lbArrivePortDate.TabIndex = 8;
             this.lbArrivePortDate.Text = "Create date";
             this.lbArrivePortDate.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.lbArrivePortDate.TextStyle.Color = System.Drawing.Color.Black;
@@ -126,7 +132,7 @@
             this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.label1.RectStyle.ExtBorderWidth = 1F;
             this.label1.Size = new System.Drawing.Size(108, 23);
-            this.label1.TabIndex = 109;
+            this.label1.TabIndex = 9;
             this.label1.Text = "Buyer delivery";
             this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label1.TextStyle.Color = System.Drawing.Color.Black;
@@ -150,7 +156,7 @@
             this.dateOnBoard.Location = new System.Drawing.Point(124, 81);
             this.dateOnBoard.Name = "dateOnBoard";
             this.dateOnBoard.Size = new System.Drawing.Size(280, 23);
-            this.dateOnBoard.TabIndex = 110;
+            this.dateOnBoard.TabIndex = 2;
             // 
             // label2
             // 
@@ -161,16 +167,53 @@
             this.label2.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.label2.RectStyle.ExtBorderWidth = 1F;
             this.label2.Size = new System.Drawing.Size(108, 23);
-            this.label2.TabIndex = 111;
+            this.label2.TabIndex = 10;
             this.label2.Text = "On Board date";
             this.label2.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label2.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(13, 114);
+            this.label3.Name = "label3";
+            this.label3.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label3.RectStyle.BorderWidth = 1F;
+            this.label3.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label3.RectStyle.ExtBorderWidth = 1F;
+            this.label3.Size = new System.Drawing.Size(108, 23);
+            this.label3.TabIndex = 11;
+            this.label3.Text = "Voucher date";
+            this.label3.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label3.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // dateVoucher
+            // 
+            // 
+            // 
+            // 
+            this.dateVoucher.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateVoucher.DateBox1.Name = "";
+            this.dateVoucher.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateVoucher.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateVoucher.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateVoucher.DateBox2.Name = "";
+            this.dateVoucher.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateVoucher.DateBox2.TabIndex = 1;
+            this.dateVoucher.Location = new System.Drawing.Point(124, 114);
+            this.dateVoucher.Name = "dateVoucher";
+            this.dateVoucher.Size = new System.Drawing.Size(280, 23);
+            this.dateVoucher.TabIndex = 3;
             // 
             // R21
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(514, 181);
+            this.Controls.Add(this.dateVoucher);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.dateOnBoard);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.dateBuyerDelivery);
@@ -194,6 +237,8 @@
             this.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.dateOnBoard, 0);
+            this.Controls.SetChildIndex(this.label3, 0);
+            this.Controls.SetChildIndex(this.dateVoucher, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -207,5 +252,7 @@
         private Win.UI.Label label1;
         private Win.UI.DateRange dateOnBoard;
         private Win.UI.Label label2;
+        private Win.UI.Label label3;
+        private Win.UI.DateRange dateVoucher;
     }
 }

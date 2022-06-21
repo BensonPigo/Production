@@ -64,6 +64,13 @@ namespace Sci.Production.Shipping
                 where = $"and aipp.ActETD between @ActETD_1 AND @ActETD_2 " + Environment.NewLine;
             }
 
+            if (this.dateVoucher.HasValue1 && this.dateVoucher.HasValue2)
+            {
+                this.paras.Add(new SqlParameter("@VoucherDate_1", SqlDbType.Date) { Value = this.dateVoucher.Value1 });
+                this.paras.Add(new SqlParameter("@VoucherDate_2", SqlDbType.Date) { Value = this.dateVoucher.Value2 });
+                where = $"and vaipp.VoucherDate between @VoucherDate_1 AND @VoucherDate_2 " + Environment.NewLine;
+            }
+
             #endregion
 
             #region SQL
@@ -102,7 +109,9 @@ select	aipp.ID,
 		aipp.APReceiveDoxDate,
 		aipp.APAmountEditDate,
 		vaipp.VoucherID,
-		vaipp.VoucherDate
+		vaipp.VoucherDate,
+        [ShippingAPID] = ShippingAP.ID,
+		ShippingAP.ApvDate        
 from AirPP aipp with (nolock)
 inner join Orders o with (nolock) on o.ID = aipp.OrderID
 left join Order_QtyShip oqs with (nolock) on oqs.Id = aipp.OrderID and oqs.Seq = aipp.OrderShipmodeSeq
@@ -128,7 +137,21 @@ outer apply (select [Responsibility] = Stuff(	iif(aipp.ResponsibleFty = 1, CONCA
 									iif(aipp.ResponsibleBuyer = 1, CONCAT('/', aipp.RatioBuyer), '')
 									,1,1,'')
 			) ResponsibilityInfo
-where 1 = 1 {where}
+outer apply(
+	SELECT	sa.ID,sa.ApvDate 
+	FROM ShippingAP sa
+	WHERE EXISTS(
+		SELECT 1
+		FROM ShareExpense_APP sea 
+		INNER JOIN FinanceEN.dbo.AccountNo an ON sea.AccountID = an.ID
+		WHERE	an.IsAPP=1 
+				AND sea.ShippingAPID=sa.ID
+				AND sea.AirPPID= aipp.ID
+				AND sea.Junk = 0
+		)
+)ShippingAP
+where 1 = 1 
+{where}
 ";
             #endregion
             return base.ValidateInput();
