@@ -176,6 +176,8 @@ namespace Sci.Production.Quality
             .Text("SuppID", header: "Supp", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: refno)
+            .Text("WeaveTypeID", header: "Weave Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
+
             .Text("ColorName", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
             .Date("InspectionReport", header: "Inspection Report\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
@@ -516,6 +518,7 @@ select distinct
 	ps.SuppID,
 	Supp.AbbEN,
 	psd.Refno,
+    f.WeaveTypeID,
 	psd.ColorID,
     [ColorName] = c.ColorName,
 	Qty = isnull(ed.Qty,0) + isnull(ed.Foc,0),
