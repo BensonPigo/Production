@@ -286,7 +286,7 @@ select	ted.InventoryPOID,
                                     , dateadd(day,-24,o.SciDelivery))
                                 , dateadd(day,-34
                         , o.SciDelivery))),
-        [Preshrink] = iif(f.Preshrink = 1, 'V' ,''),
+        [Preshrink] = iif(fs.Preshrink = 1, 'V' ,''),
         [Supp] = (ted.SuppID+'-'+s.AbbEN),
         [Color] = Color.Value,
         ted.Ukey,
@@ -303,6 +303,7 @@ left join PO_Supp_Detail psd with (nolock) on	ted.PoID = psd.ID and
 												ted.Seq2 = psd.SEQ2
 left join Supp s WITH (NOLOCK) on s.id = ted.SuppID 
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = ted.SCIRefno
+left join Fabric_Supp fs WITH (NOLOCK) on fs.SCIRefno = f.SCIRefno and fs.SuppID = s.ID
 outer apply(select	[ExportQty] = isnull(sum(isnull(tdc.Qty, 0)), 0) ,
 					[Foc] = isnull(sum(isnull(tdc.Foc, 0)), 0) 
 			from TransferExport_Detail_Carton tdc with (nolock) where tdc.TransferExport_DetailUkey = ted.Ukey) ExportCarton

@@ -85,7 +85,7 @@ select
 ,iif(ed.IsFormA = 1,'Y','') as IsFormA
 ,ed.FormXType,ed.FormXReceived,ed.FormXDraftCFM,ed.FormXINV,ed.ID,ed.Seq1,ed.Seq2,ed.Ukey
 ,[FindColumn] = rtrim(ed.PoID)+(SUBSTRING(ed.Seq1,1,3)+'-'+ed.Seq2)
-,[Preshrink] = iif(f.Preshrink = 1, 'V' ,'')
+,[Preshrink] = iif(fs.Preshrink = 1, 'V' ,'')
 ,c.FormXPayINV
 ,c.COName
 ,c.ReceiveDate
@@ -96,6 +96,7 @@ left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 left join Supp s WITH (NOLOCK) on s.id = ed.SuppID 
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+left join Fabric_Supp fs WITH (NOLOCK) on fs.SCIRefno = f.SCIRefno and fs.SuppID = s.ID
 left join CertOfOrigin c WITH (NOLOCK) on c.SuppID=ed.SuppID and c.FormXPayINV=ed.FormXPayINV
 OUTER APPLY(
 		SELECT [Val] = STUFF((
