@@ -624,7 +624,7 @@ WHERE Ukey = {MyUtility.Convert.GetString(dr["Ukey"])}
                         }
 
                         #region update PulloutID 到PackingList
-                        string updatePklst = $@"Update PackingList set pulloutID = '' where id='{dr["PackingListID", DataRowVersion.Original]}';";
+                        string updatePklst = $@"Update PackingList set pulloutID = '',PulloutStatus = '' where id='{dr["PackingListID", DataRowVersion.Original]}';";
 
                         string plFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByPackID(dr["PackingListID", DataRowVersion.Original].ToString());
 
@@ -1812,11 +1812,11 @@ from SummaryData",
                         ddr.Delete();
                     }
 
-                    // 清空PackingList.pulloutID
+                    // 清空PackingList.pulloutID, 也一併清空PulloutStatus
                     string updatePackinglistCmd = $@"
 Update PackingList 
 set pulloutID = '',
-PulloutStatus = '{this.CurrentMaintain["Status"]}'
+PulloutStatus = ''
 where id='{dr["PackingListID"]}' and pulloutID = '{this.CurrentMaintain["id"].ToString()}'; ";
                     if (MyUtility.Check.Empty(plFromRgCode))
                     {
