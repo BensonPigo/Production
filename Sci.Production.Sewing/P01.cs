@@ -2875,7 +2875,7 @@ values('{this.CurrentMaintain["ID"]}','{callReason.ReturnReason}',@Remark,getdat
         private void Email_SendingBefore(object sender, MailTo.SendMailBeforeArg e)
         {
             e.Mail.CC.Add("planning@sportscity.com.tw");
-            e.Mail.CC.Add("team3@sportscity.com.tw");
+            e.Mail.CC.Add("frank.lee@sportscity.com.tw");
         }
 
         /// <inheritdoc/>
