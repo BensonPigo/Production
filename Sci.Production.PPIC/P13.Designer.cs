@@ -32,6 +32,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.txtNewCDCode = new Sci.Win.UI.TextBox();
+            this.labNewCDCode = new Sci.Win.UI.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnUpdate = new Sci.Win.UI.Button();
             this.editBoxRemark = new Sci.Win.UI.EditBox();
@@ -98,6 +100,8 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.txtNewCDCode);
+            this.panel3.Controls.Add(this.labNewCDCode);
             this.panel3.Controls.Add(this.groupBox1);
             this.panel3.Controls.Add(this.dateBuyerDelivery);
             this.panel3.Controls.Add(this.label1);
@@ -126,6 +130,23 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1417, 114);
             this.panel3.TabIndex = 0;
+            // 
+            // txtNewCDCode
+            // 
+            this.txtNewCDCode.BackColor = System.Drawing.Color.White;
+            this.txtNewCDCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtNewCDCode.Location = new System.Drawing.Point(488, 85);
+            this.txtNewCDCode.Name = "txtNewCDCode";
+            this.txtNewCDCode.Size = new System.Drawing.Size(202, 23);
+            this.txtNewCDCode.TabIndex = 23;
+            // 
+            // labNewCDCode
+            // 
+            this.labNewCDCode.Location = new System.Drawing.Point(382, 85);
+            this.labNewCDCode.Name = "labNewCDCode";
+            this.labNewCDCode.Size = new System.Drawing.Size(103, 23);
+            this.labNewCDCode.TabIndex = 22;
+            this.labNewCDCode.Text = "New CD Code";
             // 
             // groupBox1
             // 
@@ -612,5 +633,7 @@
         private Win.UI.Label label5;
         private Win.UI.Label label3;
         private Win.UI.Label label2;
+        private Win.UI.Label labNewCDCode;
+        private Win.UI.TextBox txtNewCDCode;
     }
 }

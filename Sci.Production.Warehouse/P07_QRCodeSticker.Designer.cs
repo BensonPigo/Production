@@ -34,8 +34,14 @@
             this.btnPrint = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.comboFilterQRCode = new Sci.Win.UI.ComboBox();
+            this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.radioEncodeSeq = new Sci.Win.UI.RadioButton();
+            this.radiobySP = new Sci.Win.UI.RadioButton();
+            this.labSortBy = new Sci.Win.UI.Label();
+            this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource)).BeginInit();
+            this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // grid1
@@ -96,9 +102,66 @@
             this.comboFilterQRCode.TabIndex = 4;
             this.comboFilterQRCode.SelectedIndexChanged += new System.EventHandler(this.ComboFilterQRCode_SelectedIndexChanged);
             // 
+            // radioPanel1
+            // 
+            this.radioPanel1.Controls.Add(this.radioEncodeSeq);
+            this.radioPanel1.Controls.Add(this.radiobySP);
+            this.radioPanel1.IsSupportEditMode = false;
+            this.radioPanel1.Location = new System.Drawing.Point(343, 4);
+            this.radioPanel1.Name = "radioPanel1";
+            this.radioPanel1.Size = new System.Drawing.Size(339, 31);
+            this.radioPanel1.TabIndex = 66;
+            this.radioPanel1.Value = "2";
+            this.radioPanel1.ValueChanged += new System.EventHandler(this.RadioPanel1_ValueChanged);
+            // 
+            // radioEncodeSeq
+            // 
+            this.radioEncodeSeq.AutoSize = true;
+            this.radioEncodeSeq.Checked = true;
+            this.radioEncodeSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioEncodeSeq.Location = new System.Drawing.Point(182, 5);
+            this.radioEncodeSeq.Name = "radioEncodeSeq";
+            this.radioEncodeSeq.Size = new System.Drawing.Size(103, 21);
+            this.radioEncodeSeq.TabIndex = 1;
+            this.radioEncodeSeq.TabStop = true;
+            this.radioEncodeSeq.Text = "Encode Seq";
+            this.radioEncodeSeq.UseVisualStyleBackColor = true;
+            this.radioEncodeSeq.Value = "2";
+            // 
+            // radiobySP
+            // 
+            this.radiobySP.AutoSize = true;
+            this.radiobySP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radiobySP.Location = new System.Drawing.Point(9, 5);
+            this.radiobySP.Name = "radiobySP";
+            this.radiobySP.Size = new System.Drawing.Size(165, 21);
+            this.radiobySP.TabIndex = 0;
+            this.radiobySP.Text = "SP#, Seq, Roll, Dyelot";
+            this.radiobySP.UseVisualStyleBackColor = true;
+            this.radiobySP.Value = "1";
+            // 
+            // labSortBy
+            // 
+            this.labSortBy.Location = new System.Drawing.Point(230, 8);
+            this.labSortBy.Name = "labSortBy";
+            this.labSortBy.Size = new System.Drawing.Size(110, 23);
+            this.labSortBy.TabIndex = 65;
+            this.labSortBy.Text = "Sort by";
+            // 
+            // shapeContainer1
+            // 
+            this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer1.Name = "shapeContainer1";
+            this.shapeContainer1.Size = new System.Drawing.Size(1007, 234);
+            this.shapeContainer1.TabIndex = 54;
+            this.shapeContainer1.TabStop = false;
+            // 
             // P07_QRCodeSticker
             // 
             this.ClientSize = new System.Drawing.Size(854, 410);
+            this.Controls.Add(this.radioPanel1);
+            this.Controls.Add(this.labSortBy);
             this.Controls.Add(this.comboFilterQRCode);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnPrint);
@@ -108,6 +171,8 @@
             this.Text = "Print Fabric Sticker";
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource)).EndInit();
+            this.radioPanel1.ResumeLayout(false);
+            this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -119,5 +184,10 @@
         private Win.UI.ListControlBindingSource listControlBindingSource;
         private Win.UI.Label label1;
         private Win.UI.ComboBox comboFilterQRCode;
+        private Win.UI.RadioPanel radioPanel1;
+        private Win.UI.RadioButton radioEncodeSeq;
+        private Win.UI.RadioButton radiobySP;
+        private Win.UI.Label labSortBy;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
     }
 }

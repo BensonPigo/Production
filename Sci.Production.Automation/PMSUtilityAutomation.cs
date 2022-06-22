@@ -56,6 +56,9 @@ namespace Sci.Production.Automation
         public override bool OpenAll_AutomationCheckMsg => MyUtility.Convert.GetBool(ConfigurationManager.AppSettings["OpenAll_AutomationCheckMsg"]);
 
         /// <inheritdoc/>
+        public override string UserID => Env.User.UserID;
+
+        /// <inheritdoc/>
         public override DualResult OpenConnection(string connName, out SqlConnection sqlConnection)
         {
             return DBProxy._OpenConnection(connName, out sqlConnection);

@@ -1051,7 +1051,7 @@
             this.chkNoExportCharge.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkNoExportCharge.Location = new System.Drawing.Point(813, 277);
             this.chkNoExportCharge.Name = "chkNoExportCharge";
-            this.chkNoExportCharge.Size = new System.Drawing.Size(132, 20);
+            this.chkNoExportCharge.Size = new System.Drawing.Size(133, 20);
             this.chkNoExportCharge.TabIndex = 25;
             this.chkNoExportCharge.Text = "No Export Charge";
             this.chkNoExportCharge.UseVisualStyleBackColor = true;
@@ -1224,7 +1224,7 @@
             this.chkNonDeclare.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkNonDeclare.Location = new System.Drawing.Point(813, 304);
             this.chkNonDeclare.Name = "chkNonDeclare";
-            this.chkNonDeclare.Size = new System.Drawing.Size(102, 20);
+            this.chkNonDeclare.Size = new System.Drawing.Size(103, 20);
             this.chkNonDeclare.TabIndex = 26;
             this.chkNonDeclare.Text = "Non Declare";
             this.chkNonDeclare.UseVisualStyleBackColor = true;
@@ -1275,7 +1275,7 @@
             this.chkFoundry.Location = new System.Drawing.Point(813, 329);
             this.chkFoundry.Name = "chkFoundry";
             this.chkFoundry.ReadOnly = true;
-            this.chkFoundry.Size = new System.Drawing.Size(121, 20);
+            this.chkFoundry.Size = new System.Drawing.Size(122, 20);
             this.chkFoundry.TabIndex = 87;
             this.chkFoundry.Text = "Include Foundry";
             this.chkFoundry.UseVisualStyleBackColor = true;
@@ -1466,6 +1466,7 @@
             // displayCMTIvnNo
             // 
             this.displayCMTIvnNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCMTIvnNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CMTInvoiceNo", true));
             this.displayCMTIvnNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayCMTIvnNo.Location = new System.Drawing.Point(447, 326);
             this.displayCMTIvnNo.Name = "displayCMTIvnNo";

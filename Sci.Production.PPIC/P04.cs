@@ -120,7 +120,7 @@ namespace Sci.Production.PPIC
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.displaySpecialMark.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Style_SpecialMark' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["SpecialMark"])));
+            this.displaySpecialMark.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Style_SpecialMark sp WITH(NOLOCK) where sp.ID = '{0}' and sp.BrandID = '{1}' and sp.Junk = 0", MyUtility.Convert.GetString(this.CurrentMaintain["SpecialMark"]), MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"])));
             this.txttpeuserSMR.DisplayBox1Binding = MyUtility.Convert.GetString(this.CurrentMaintain["Phase"]) == "1" ? MyUtility.Convert.GetString(this.CurrentMaintain["SampleSMR"]) : MyUtility.Convert.GetString(this.CurrentMaintain["BulkSMR"]);
             this.txttpeuserHandle.DisplayBox1Binding = MyUtility.Convert.GetString(this.CurrentMaintain["Phase"]) == "1" ? MyUtility.Convert.GetString(this.CurrentMaintain["SampleMRHandle"]) : MyUtility.Convert.GetString(this.CurrentMaintain["BulkMRHandle"]);
             this.displayStyleApprove.Value = MyUtility.Convert.GetString(this.CurrentMaintain["ApvName"]) + " " + MyUtility.GetValue.Lookup(string.Format("select (Name + ' #' + ExtNo) as NameExtNo from TPEPass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ApvName"])));

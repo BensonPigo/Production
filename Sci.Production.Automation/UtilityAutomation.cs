@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Sci.Data;
 using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
@@ -74,9 +77,11 @@ namespace Sci.Production.Automation
         /// Save Automation Check Msg
         /// </summary>
         /// <param name="automationErrMsg">Automation Err Msg</param>
-        public static void SaveAutomationTransRecord(AutomationErrMsg automationErrMsg)
+        /// <param name="isAutoWH">isAutoWH</param>
+        /// <returns>AutomationTransRecord Ukey</returns>
+        public static long SaveAutomationTransRecord(AutomationErrMsg automationErrMsg, bool isAutoWH = true)
         {
-            PMSUtilityAutomation.UtilityAutomation.SaveAutomationTransRecord(automationErrMsg);
+            return PMSUtilityAutomation.UtilityAutomation.SaveAutomationTransRecord(automationErrMsg);
         }
 
         /// <summary>

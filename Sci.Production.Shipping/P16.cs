@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -455,6 +456,29 @@ where ted.ID = '{0}'", masterID);
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
+            string checkStatus = $"select 1 from TransferExport where ID = '{this.CurrentMaintain["ID"]}' and FtyStatus = 'Confirmed'";
+            if (MyUtility.Check.Seek(checkStatus))
+            {
+                MyUtility.Msg.WarningBox("Data is already confirmed, cannot confirm again");
+                this.EnsureToolbarExt();
+                return;
+            }
+
+            #region 判斷轉出物料,工廠都必須填上重量資訊
+            if (this.DetailDatas == null || this.DetailDatas.Count <= 0)
+            {
+                return;
+            }
+
+            if (this.DetailDatas.AsEnumerable().Where(r => MyUtility.Convert.GetDecimal(r["ExportQty"]) > 0 &&
+                                                            (MyUtility.Check.Empty(r["NetKg"]) || MyUtility.Check.Empty(r["WeightKg"]))).Any())
+            {
+                MyUtility.Msg.WarningBox("N.W (kg) & G.W.(kg) cannot be empty when Export Q'ty > 0.");
+                this.EnsureToolbarExt();
+                return;
+            }
+            #endregion
+
             if (this.isFromProduceFty == false)
             {
                 MyUtility.Msg.WarningBox("Only from factory can use Confirm button.");

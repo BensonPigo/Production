@@ -377,6 +377,11 @@ as
                 sqlCmd.Append(string.Format(" and o.MRHandle = '{0}'", this.txtMR.Text));
             }
 
+            if (!MyUtility.Check.Empty(this.txtNewCDCode.Text))
+            {
+                sqlCmd.Append($@" and sty.CDCodeNew = '{this.txtNewCDCode.Text}'");
+            }
+
             sqlCmd.Append(@")
 select selected = cast(1 as bit), *,iif(isnull(SewOutQty,0) >= Qty, tmpActSewOffLine, null) as ActSewOffLine,SUBSTRING(tmpArtworkType,1, LEN(tmpArtworkType)-1) as ArtworkType from tmpData order by SCIDelivery");
 

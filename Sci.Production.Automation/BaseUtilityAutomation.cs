@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -22,7 +23,6 @@ namespace Sci.Production.Automation
     /// </summary>
     public abstract class BaseUtilityAutomation
     {
-
         /// <summary>
         /// Sci
         /// </summary>
@@ -35,6 +35,9 @@ namespace Sci.Production.Automation
 
         /// <inheritdoc/>
         public abstract string ModuleType { get; }
+
+        /// <inheritdoc/>
+        public abstract string UserID { get; }
 
         /// <summary>
         /// OpenAll_AutomationCheckMsg
@@ -51,7 +54,7 @@ namespace Sci.Production.Automation
         /// <returns>DualResult</returns>
         public abstract DualResult Select(string connname, string sqlCmd, IList<SqlParameter> sqlPars, out DataTable dtResult);
 
-        public DualResult Execute(string sql, string connName, IList<SqlParameter> listPar = null)
+        public DualResult Execute(string connName, string sql,  IList<SqlParameter> listPar = null)
         {
             return this.Select(connName, sql, listPar, out DataTable dtResult);
         }
@@ -132,40 +135,28 @@ namespace Sci.Production.Automation
         /// <param name="automationErrMsg">Automation Err Msg</param>
         public void SaveAutomationErrMsg(AutomationErrMsg automationErrMsg)
         {
-            automationErrMsg.addName = Env.User.UserID;
-            SqlConnection sqlConnection = new SqlConnection();
-            DualResult result = this.OpenConnection("Production", out sqlConnection);
-            if (!result)
-            {
-                throw result.GetException();
-            }
+            bool isAutoWH = (automationErrMsg.apiThread.Contains("GensongAutoWHFabric") || automationErrMsg.apiThread.Contains("VstrongAutoWHAccessory")) ? true : false;
+            #region 先將資料新增至FPS AutomationTransRecord
+            long automationTransRecordUkey = MyUtility.Check.Empty(automationErrMsg.AutomationTransRecordUkey) ? this.SaveAutomationTransRecord(automationErrMsg, isAutoWH) : automationErrMsg.AutomationTransRecordUkey;
+            #endregion
 
-            using (sqlConnection)
-            {
-                PmsWebApiUtility20.Automation.SaveAutomationErrMsg(automationErrMsg, sqlConnection);
-            }
-        }
-
-        /// <summary>
-        /// Save Automation Check Msg
-        /// </summary>
-        /// <param name="automationErrMsg">Automation Err Msg</param>
-        public void SaveAutomationCheckMsg(AutomationErrMsg automationErrMsg)
-        {
             string saveSql = $@"
-      insert into AutomationCheckMsg( SuppID,  ModuleName,  APIThread,  SuppAPIThread,  ErrorCode,  ErrorMsg,  JSON,  AddName, AddDate)
-                        values(@SuppID, @ModuleName, @APIThread, @SuppAPIThread, @ErrorCode, @ErrorMsg, @JSON, @AddName, GETDATE())
-";
+            insert into AutomationErrMsg(SuppID, ModuleName, APIThread, SuppAPIThread, ErrorCode, ErrorMsg, JSON, ReSented, AddName, AddDate, AutomationTransRecordUkey)
+                        values(@SuppID, @ModuleName, @APIThread, @SuppAPIThread, @ErrorCode, @ErrorMsg, @JSON, 0, @AddName, GETDATE(), @AutomationTransRecordUkey)
+                
+            ";
+
             List<SqlParameter> listPar = new List<SqlParameter>()
             {
-               new SqlParameter("@SuppID", automationErrMsg.suppID),
-               new SqlParameter("@ModuleName", automationErrMsg.moduleName),
-               new SqlParameter("@APIThread", automationErrMsg.apiThread),
-               new SqlParameter("@SuppAPIThread", automationErrMsg.suppAPIThread),
-               new SqlParameter("@ErrorCode", automationErrMsg.errorCode),
-               new SqlParameter("@ErrorMsg", automationErrMsg.errorMsg),
-               new SqlParameter("@JSON", automationErrMsg.json),
-               new SqlParameter("@AddName", Env.User.UserID),
+                new SqlParameter("@SuppID", automationErrMsg.suppID),
+                new SqlParameter("@ModuleName", automationErrMsg.moduleName),
+                new SqlParameter("@APIThread", automationErrMsg.apiThread),
+                new SqlParameter("@SuppAPIThread", automationErrMsg.suppAPIThread),
+                new SqlParameter("@ErrorCode", automationErrMsg.errorCode),
+                new SqlParameter("@ErrorMsg", automationErrMsg.errorMsg),
+                new SqlParameter("@JSON", automationErrMsg.json),
+                new SqlParameter("@AddName", this.UserID),
+                new SqlParameter("@AutomationTransRecordUkey", automationTransRecordUkey),
             };
 
             DualResult result = this.Execute("Production", saveSql, listPar);
@@ -180,7 +171,43 @@ namespace Sci.Production.Automation
         /// Save Automation Check Msg
         /// </summary>
         /// <param name="automationErrMsg">Automation Err Msg</param>
-        public void SaveAutomationTransRecord(AutomationErrMsg automationErrMsg)
+        public void SaveAutomationCheckMsg(AutomationErrMsg automationErrMsg)
+        {
+            bool isAutoWH = (automationErrMsg.apiThread.Contains("GensongAutoWHFabric") || automationErrMsg.apiThread.Contains("VstrongAutoWHAccessory")) ? true : false;
+            #region 先將資料新增至FPS AutomationTransRecord
+            long automationTransRecordUkey = automationTransRecordUkey = MyUtility.Check.Empty(automationErrMsg.AutomationTransRecordUkey) ? SaveAutomationTransRecord(automationErrMsg, isAutoWH) : automationErrMsg.AutomationTransRecordUkey;
+            #endregion
+
+            string saveSql = $@"
+      insert into AutomationCheckMsg( SuppID,  ModuleName,  APIThread,  SuppAPIThread,  ErrorCode,  ErrorMsg,  JSON,  AddName, AddDate,AutomationTransRecordUkey)
+                        values(@SuppID, @ModuleName, @APIThread, @SuppAPIThread, @ErrorCode, @ErrorMsg, @JSON, @AddName, GETDATE(),@AutomationTransRecordUkey)
+";
+            List<SqlParameter> listPar = new List<SqlParameter>()
+            {
+               new SqlParameter("@SuppID", automationErrMsg.suppID),
+               new SqlParameter("@ModuleName", automationErrMsg.moduleName),
+               new SqlParameter("@APIThread", automationErrMsg.apiThread),
+               new SqlParameter("@SuppAPIThread", automationErrMsg.suppAPIThread),
+               new SqlParameter("@ErrorCode", automationErrMsg.errorCode),
+               new SqlParameter("@ErrorMsg", automationErrMsg.errorMsg),
+               new SqlParameter("@JSON", automationErrMsg.json),
+               new SqlParameter("@AddName", this.UserID),
+               new SqlParameter("@AutomationTransRecordUkey", automationTransRecordUkey),
+            };
+
+            DualResult result = this.Execute("Production", saveSql, listPar);
+
+            if (!result)
+            {
+                throw result.GetException();
+            }
+        }
+
+        /// <summary>
+        /// Save Automation Check Msg
+        /// </summary>
+        /// <param name="automationErrMsg">Automation Err Msg</param>
+        public long SaveAutomationTransRecord(AutomationErrMsg automationErrMsg, bool isAutoWH = true)
         {
             string saveSql = $@"
 insert into AutomationTransRecord(
@@ -206,27 +233,78 @@ values
 @AddName        ,
 getdate()
 )
+
+declare @ID bigint = (select @@IDENTITY)
+select ID = @ID
 ";
-            Dictionary<string, string> requestHeaders = GetCustomHeaders();
+            string strSimpleJson = automationErrMsg.json;
+
+            if (isAutoWH)
+            {
+                #region Get simple Json Data
+
+                Dictionary<string, object> resultDictionary = new Dictionary<string, object>();
+                #region 取得原始Json
+                string strJson = automationErrMsg.json;
+                int startIndex = strJson.LastIndexOf("[");
+                int endIndex = strJson.LastIndexOf("]");
+                int jsonLength = endIndex - startIndex;
+                string oriJson = strJson.Substring(startIndex, jsonLength + 1);
+
+                string strTableName = strJson.Substring(strJson.IndexOf("[") + 2, strJson.IndexOf("]") - strJson.IndexOf("[") - 3);
+                #endregion
+
+                // 取得Json的Status
+                DataTable dtJson = (DataTable)JsonConvert.DeserializeObject(oriJson, typeof(DataTable));
+                dynamic bodyObject = new ExpandoObject();
+                bodyObject = dtJson.AsEnumerable()
+                    .Select(dr => new
+                    {
+                        ID = dr["ID"].ToString(),
+                    });
+
+                strSimpleJson = JsonConvert.SerializeObject(this.CreateGensongStructure(strTableName, bodyObject));
+
+                #endregion
+            }
 
             List<SqlParameter> listPar = new List<SqlParameter>()
             {
-               new SqlParameter("@CallFrom", requestHeaders["CallFrom"]),
-               new SqlParameter("@Activity", requestHeaders["Activity"]),
+               new SqlParameter("@CallFrom", automationErrMsg.CallFrom),
+               new SqlParameter("@Activity", automationErrMsg.Activity),
                new SqlParameter("@SuppID", automationErrMsg.suppID),
                new SqlParameter("@ModuleName", automationErrMsg.moduleName),
                new SqlParameter("@SuppAPIThread", automationErrMsg.suppAPIThread),
-               new SqlParameter("@JSON", automationErrMsg.json),
+               new SqlParameter("@JSON", strSimpleJson),
                new SqlParameter("@TransJson", automationErrMsg.json),
-               new SqlParameter("@AddName", Env.User.UserID),
+               new SqlParameter("@AddName", this.UserID),
             };
 
-            DualResult result = this.Execute("FPS", saveSql, listPar);
+            DualResult result = this.Select("FPS", saveSql, listPar, out DataTable dt);
 
             if (!result)
             {
                 throw result.GetException();
             }
+
+            return MyUtility.Convert.GetLong(dt.Rows[0]["ID"]);
+        }
+
+        /// <inheritdoc/>
+        public object CreateGensongStructure(string tableName, object structureID)
+        {
+            Dictionary<string, object> resultObj = new Dictionary<string, object>
+            {
+                { "TableArray", new string[] { tableName } },
+            };
+
+            Dictionary<string, object> dataStructure = new Dictionary<string, object>
+            {
+                { tableName, structureID },
+            };
+            resultObj.Add("DataTable", dataStructure);
+
+            return resultObj;
         }
 
         /// <summary>
@@ -265,14 +343,23 @@ getdate()
         {
             DualResult result = new DualResult(true);
             WebApiBaseResult webApiBaseResult;
-            Dictionary<string, string> requestHeaders = GetCustomHeaders();
+            Dictionary<string, string> requestHeaders = this.GetCustomHeaders();
+            automationErrMsg.CallFrom = requestHeaders["CallFrom"];
+            automationErrMsg.Activity = requestHeaders["Activity"];
             webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 600, requestHeaders);
+            automationErrMsg.AutomationTransRecordUkey = webApiBaseResult.TransRecordUkey;
             automationErrMsg.json = jsonBody;
             if (!webApiBaseResult.isSuccess)
             {
                 automationErrMsg.SetErrInfo(webApiBaseResult, jsonBody);
                 result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
                 this.SaveAutomationErrMsg(automationErrMsg);
+            }
+            else
+            {
+                // 將資料新增至FPS AutomationTransRecord
+                bool isAutoWH = (automationErrMsg.apiThread.Contains("GensongAutoWHFabric") || automationErrMsg.apiThread.Contains("VstrongAutoWHAccessory")) ? true : false;
+                this.SaveAutomationTransRecord(automationErrMsg, isAutoWH);
             }
 
             return result;
@@ -291,13 +378,22 @@ getdate()
             DualResult result = new DualResult(true);
             WebApiBaseResult webApiBaseResult;
             Dictionary<string, string> requestHeaders = this.GetCustomHeaders();
+            automationErrMsg.CallFrom = requestHeaders["CallFrom"];
+            automationErrMsg.Activity = requestHeaders["Activity"];
             webApiBaseResult = await PmsWebApiUtility45.WebApiTool.WebApiPostAsync(baseUrl, requestUri, jsonBody, 600, requestHeaders);
+            automationErrMsg.AutomationTransRecordUkey = webApiBaseResult.TransRecordUkey;
             automationErrMsg.json = jsonBody;
             if (!webApiBaseResult.isSuccess)
             {
                 automationErrMsg.SetErrInfo(webApiBaseResult, jsonBody);
                 result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
                 this.SaveAutomationErrMsg(automationErrMsg);
+            }
+            else
+            {
+                // 將資料新增至FPS AutomationTransRecord
+                bool isAutoWH = (automationErrMsg.apiThread.Contains("GensongAutoWHFabric") || automationErrMsg.apiThread.Contains("VstrongAutoWHAccessory")) ? true : false;
+                this.SaveAutomationTransRecord(automationErrMsg, isAutoWH);
             }
 
             return result;
@@ -331,7 +427,7 @@ getdate()
 
             requestHeaders.Add("CallFrom", callFrom);
             requestHeaders.Add("Activity", activity);
-            requestHeaders.Add("User", Env.User.UserID);
+            requestHeaders.Add("User", this.UserID);
 
             return requestHeaders;
         }
@@ -352,10 +448,10 @@ getdate()
             if (reSented)
             {
                 Dictionary<string, string> requestHeaders = this.GetCustomHeaders();
+                automationErrMsg.CallFrom = requestHeaders["CallFrom"];
+                automationErrMsg.Activity = requestHeaders["Activity"];
                 webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 600, requestHeaders);
                 automationErrMsg.json = jsonBody;
-                automationErrMsg.suppID = "SCI";
-                automationErrMsg.moduleName = "SCI";
 
                 if (!webApiBaseResult.isSuccess)
                 {
@@ -365,11 +461,18 @@ getdate()
                     result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
                     this.SaveAutomationErrMsg(automationErrMsg);
                 }
+                else
+                {
+                    // 將資料新增至FPS AutomationTransRecord
+                    bool isAutoWH = (automationErrMsg.apiThread.Contains("GensongAutoWHFabric") || automationErrMsg.apiThread.Contains("VstrongAutoWHAccessory")) ? true : false;
+                    this.SaveAutomationTransRecord(automationErrMsg, isAutoWH);
+                }
             }
             else
             {
-                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 20);
-                bool saveAllmsg = this.OpenAll_AutomationCheckMsg;
+                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 60);
+                automationErrMsg.AutomationTransRecordUkey = webApiBaseResult.TransRecordUkey;
+                bool saveAllmsg = MyUtility.Convert.GetBool(ConfigurationManager.AppSettings["OpenAll_AutomationCheckMsg"]);
 
                 if (!webApiBaseResult.isSuccess)
                 {
@@ -377,11 +480,17 @@ getdate()
                     automationErrMsg.errorMsg = webApiBaseResult.responseContent.ToString();
                     automationErrMsg.json = jsonBody;
                     result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
+                    Dictionary<string, string> requestHeaders = this.GetCustomHeaders();
+                    automationErrMsg.CallFrom = requestHeaders["CallFrom"];
+                    automationErrMsg.Activity = requestHeaders["Activity"];
                     this.SaveAutomationCheckMsg(automationErrMsg);
                 }
                 else if (saveAllmsg)
                 {
                     automationErrMsg.json = jsonBody;
+                    Dictionary<string, string> requestHeaders = this.GetCustomHeaders();
+                    automationErrMsg.CallFrom = requestHeaders["CallFrom"];
+                    automationErrMsg.Activity = requestHeaders["Activity"];
                     this.SaveAutomationCheckMsg(automationErrMsg);
                 }
             }

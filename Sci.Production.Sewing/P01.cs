@@ -2815,7 +2815,7 @@ WHERE  f.ID = '{this.CurrentMaintain["FactoryID"]}' AND p1.EMail <>''
 
 UNION ALL
 
-SELECT TOP 2 CONCAT(p1.EMail,';')  
+SELECT CONCAT(p1.EMail,';')  
 FROM  Pass1 p1 
 INNER JOIN Pass0 p0 ON p0.PKey=p1.FKPass0  
 INNER JOIN Pass2 p2 ON p2.PKey=p0.PKey 
