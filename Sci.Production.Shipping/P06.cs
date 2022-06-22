@@ -602,7 +602,16 @@ WHERE Ukey = {MyUtility.Convert.GetString(dr["Ukey"])}
                                 pulloutID = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
                             }
 
-                            string updatePklst = $@"Update PackingList set pulloutID = '{pulloutID}' where id='{packingListID}';";
+                            // 如果pulloutID被清空, 那PulloutStatus也要清空
+                            string updatePklst = string.Empty;
+                            if (MyUtility.Check.Empty(pulloutID))
+                            {
+                                updatePklst = $@"Update PackingList set pulloutID = '',PulloutStatus = '' where id='{packingListID}';";
+                            }
+                            else
+                            {
+                                updatePklst = $@"Update PackingList set pulloutID = '{pulloutID}' where id='{packingListID}';";
+                            }
 
                             string plFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByPackID(packingListID);
 
