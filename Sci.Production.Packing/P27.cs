@@ -166,7 +166,7 @@ ORDER BY pd.SortCTNStartNo
             }
             #endregion
             #region 資料交換 - Sunrise
-            if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
+            if (PMSUtilityAutomation.IsSunrise_FinishingProcessesEnable)
             {
                 // 不透過Call API的方式，自己組合，傳送API
                 Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["PackingListID"].ToString(), string.Empty))

@@ -414,7 +414,7 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
             base.ClickSaveAfter();
 
             #region ISP20201344 資料交換 - Sunrise
-            if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
+            if (PMSUtilityAutomation.IsSunrise_FinishingProcessesEnable)
             {
                 string styleKey = $"{this.CurrentMaintain["ID"]}`{this.CurrentMaintain["SeasonID"]}`{this.CurrentMaintain["BrandID"]}";
                 Task.Run(() => new Sunrise_FinishingProcesses().SentStyleFPSSettingToFinishingProcesses(styleKey))

@@ -9,19 +9,35 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
 using static PmsWebApiUtility20.WebApiTool;
-using static Sci.Production.Automation.UtilityAutomation;
+using static Sci.Production.Automation.BaseUtilityAutomation;
 
 namespace Sci.Production.Automation
 {
     /// <inheritdoc/>
     public class Sunrise_FinishingProcesses
     {
-        private static readonly string sunriseSuppID = "3A0134";
-        private static readonly string moduleName = "FinishingProcesses";
+        public static readonly string sunriseSuppID = "3A0134";
+        public static readonly string moduleName = "FinishingProcesses";
         private AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS();
 
-        /// <inheritdoc/>
-        public static bool IsSunrise_FinishingProcessesEnable => IsModuleAutomationEnable(sunriseSuppID, moduleName);
+        private BaseUtilityAutomation UtilityAutomation;
+
+        /// <summary>
+        /// Sunrise_FinishingProcesses
+        /// </summary>
+        public Sunrise_FinishingProcesses()
+        {
+            this.UtilityAutomation = new PMSUtilityAutomation();
+        }
+
+        /// <summary>
+        /// Sunrise_FinishingProcesses
+        /// </summary>
+        /// <param name="baseUtilityAutomation">baseUtilityAutomation</param>
+        public Sunrise_FinishingProcesses(BaseUtilityAutomation baseUtilityAutomation)
+        {
+            this.UtilityAutomation = baseUtilityAutomation;
+        }
 
         /// <summary>
         /// SentPackingToFinishingProcesses
@@ -30,7 +46,7 @@ namespace Sci.Production.Automation
         /// <param name="actionType">Action Type</param>
         public async void SentPackingToFinishingProcesses(string listID, string actionType)
         {
-            if (!IsModuleAutomationEnable(sunriseSuppID, moduleName))
+            if (!this.UtilityAutomation.IsModuleAutomationEnable(sunriseSuppID, moduleName))
             {
                 return;
             }
@@ -67,7 +83,7 @@ namespace Sci.Production.Automation
 
                 foreach (AutomationCreateRecord item in listSendData)
                 {
-                    await SendWebAPIAsync(UtilityAutomation.GetSciUrl(), suppAPIThread, item.json, this.automationErrMsg);
+                    await this.UtilityAutomation.SendWebAPIAsync(this.UtilityAutomation.GetSciUrl(), suppAPIThread, item.json, this.automationErrMsg);
                     DBProxy._OpenConnection("Production", out sqlConnection);
                     item.DeleteAutomationCreateRecord(sqlConnection);
                 }
@@ -79,7 +95,7 @@ namespace Sci.Production.Automation
                     foreach (AutomationCreateRecord item in listSendData)
                     {
                         this.automationErrMsg.SetErrInfo(ex, item.json);
-                        SaveAutomationErrMsg(this.automationErrMsg);
+                        this.UtilityAutomation.SaveAutomationErrMsg(this.automationErrMsg);
                     }
                 }
                 else
@@ -96,7 +112,7 @@ namespace Sci.Production.Automation
         /// <param name="transTable">transTable</param>
         public void SentOrdersToFinishingProcesses(string orderID, string transTable)
         {
-            if (!IsModuleAutomationEnable(sunriseSuppID, moduleName))
+            if (!this.UtilityAutomation.IsModuleAutomationEnable(sunriseSuppID, moduleName))
             {
                 return;
             }
@@ -132,7 +148,7 @@ namespace Sci.Production.Automation
                 dataTable.Add(tableArray, orderIDs);
                 postBody = new { TableArray = new string[] { tableArray }, DataTable = dataTable };
 
-                SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, JsonConvert.SerializeObject(postBody), this.automationErrMsg);
+                this.UtilityAutomation.SendWebAPI(this.UtilityAutomation.GetSciUrl(), suppAPIThread, JsonConvert.SerializeObject(postBody), this.automationErrMsg);
 
                 dataTable.Remove(tableArray);
             }
@@ -144,7 +160,7 @@ namespace Sci.Production.Automation
         /// <param name="listRefNo">List RefNo</param>
         public void SentLocalItemToFinishingProcesses(string listRefNo)
         {
-            if (!IsModuleAutomationEnable(sunriseSuppID, moduleName))
+            if (!this.UtilityAutomation.IsModuleAutomationEnable(sunriseSuppID, moduleName))
             {
                 return;
             }
@@ -160,7 +176,7 @@ namespace Sci.Production.Automation
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateSunriseStructure("LocalItem", structureID));
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            this.UtilityAutomation.SendWebAPI(this.UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -169,7 +185,7 @@ namespace Sci.Production.Automation
         /// <param name="styleKey">styleKey</param>
         public void SentStyleFPSSettingToFinishingProcesses(string styleKey)
         {
-            if (!IsModuleAutomationEnable(sunriseSuppID, moduleName))
+            if (!this.UtilityAutomation.IsModuleAutomationEnable(sunriseSuppID, moduleName))
             {
                 return;
             }
@@ -194,7 +210,7 @@ namespace Sci.Production.Automation
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateSunriseStructure("StyleFPSetting", structureID));
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            this.UtilityAutomation.SendWebAPI(this.UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -203,7 +219,7 @@ namespace Sci.Production.Automation
         /// <param name="listDM300">listDM300</param>
         public void SentFinishingProcess(string listDM300)
         {
-            if (!IsModuleAutomationEnable(sunriseSuppID, moduleName))
+            if (!this.UtilityAutomation.IsModuleAutomationEnable(sunriseSuppID, moduleName))
             {
                 return;
             }
@@ -219,7 +235,7 @@ namespace Sci.Production.Automation
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateSunriseStructure("FinishingProcess", structureID));
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            this.UtilityAutomation.SendWebAPI(this.UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -228,7 +244,7 @@ namespace Sci.Production.Automation
         /// <param name="listUkey">listUkey</param>
         public void SentSewingOutputTransfer(string listUkey)
         {
-            if (!IsModuleAutomationEnable(sunriseSuppID, moduleName))
+            if (!this.UtilityAutomation.IsModuleAutomationEnable(sunriseSuppID, moduleName))
             {
                 return;
             }
@@ -244,7 +260,7 @@ namespace Sci.Production.Automation
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateSunriseStructure("SewingOutputTransfer", structureID));
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            this.UtilityAutomation.SendWebAPI(this.UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         private object CreateSunriseStructure(string tableName, object structureID)
@@ -271,7 +287,7 @@ namespace Sci.Production.Automation
         /// <returns>DualResult</returns>
         public DualResult CheckPackingListIsLock(string packingListID, string cannotModifyMsg = "Carton has been output from the hanger system or transferred to clog.", string actionType = "")
         {
-            if (!IsModuleAutomationEnable(sunriseSuppID, moduleName))
+            if (!this.UtilityAutomation.IsModuleAutomationEnable(sunriseSuppID, moduleName))
             {
                 return new DualResult(true);
             }
@@ -284,7 +300,7 @@ namespace Sci.Production.Automation
             }
 
             WebApiBaseResult webApiBaseResult;
-            string baseUrl = UtilityAutomation.GetSupplierUrl(sunriseSuppID, moduleName);
+            string baseUrl = this.UtilityAutomation.GetSupplierUrl(sunriseSuppID, moduleName);
             string requestUri = "OtherAPI/api/packliststatus";
 
             var structureID = new object[] { new { PackingListID = packingListID } };
