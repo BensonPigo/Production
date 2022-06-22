@@ -1,5 +1,4 @@
 ﻿
-
 CREATE PROCEDURE [dbo].[GetProductionOutputSummary]
 
 	@Year varchar(10) = '',
@@ -539,6 +538,7 @@ select
 	[FMSister] = IIF(o.SubconInType in (1, 2), 'Y', ''),
     toq.LastBuyerDelivery,
 	o.StyleID,
+	[Article] = ArticleList.value,
 	o.SeasonID,
 	o.CustPONO,
 	o.BrandID,
@@ -581,6 +581,18 @@ outer apply (Select TOP 1 ResName=b.Name
 outer apply (SELECT D.Name 
 			from DropDownList D 
 			where D.Type='ForecastSampleGroup' and D.ID= o.ForecastSampleGroup) SampleGroup
+outer apply(
+	select value = Stuff((
+		select concat(',',Article)
+		from (
+				select 	distinct
+					Article
+				from dbo.Order_Article od
+				where od.id = o.ID
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) ArticleList
 
 if @IsPowerBI = 0
 begin
