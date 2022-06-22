@@ -43,6 +43,7 @@
 	[PLToRgCode]        VARCHAR (3)    CONSTRAINT [DF_PackingList_PLToRgCode] DEFAULT ('') not NULL,
 	[PLCtnTrToRgCodeDate]         datetime            NULL,
 	[PLCtnRecvFMRgCodeDate]         datetime            NULL,
+    [PulloutStatus] VARCHAR(15) NULL DEFAULT (''), 
     CONSTRAINT [PK_PackingList] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
