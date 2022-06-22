@@ -1144,6 +1144,9 @@ inner join  #tmp t on t.OrderID = o.ID
                 scope.Complete();
             }
 
+            // 更新PackingList.PulloutStatus
+            this.UpdatePacking_PulloutStatus();
+
             #region ISP20200757 資料交換 - Sunrise
             if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
             {
@@ -1310,6 +1313,9 @@ inner join  #tmp t on t.OrderID = o.ID
 
                 scope.Complete();
             }
+
+            // 更新PackingList.PulloutStatus
+            this.UpdatePacking_PulloutStatus();
 
             #region ISP20200757 資料交換 - Sunrise
             if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
@@ -1807,7 +1813,11 @@ from SummaryData",
                     }
 
                     // 清空PackingList.pulloutID
-                    string updatePackinglistCmd = string.Format(@"Update PackingList set pulloutID = '' where id='{0}' and pulloutID = '{1}'; ", dr["PackingListID"], this.CurrentMaintain["id"].ToString());
+                    string updatePackinglistCmd = $@"
+Update PackingList 
+set pulloutID = '',
+PulloutStatus = '{this.CurrentMaintain["Status"]}'
+where id='{dr["PackingListID"]}' and pulloutID = '{this.CurrentMaintain["id"].ToString()}'; ";
                     if (MyUtility.Check.Empty(plFromRgCode))
                     {
                         this.updatePackinglist += updatePackinglistCmd;
@@ -1885,7 +1895,11 @@ select AllShipQty = (isnull ((select sum(ShipQty)
 
                     if (pulloutid == string.Empty || pulloutid == this.CurrentMaintain["id"].ToString())
                     {
-                        string updatePackinglistCmd = string.Format(@"Update PackingList set pulloutID = '{0}' where id='{1}'; ", this.CurrentMaintain["ID"], dr["PackingListID"]);
+                        string updatePackinglistCmd = $@"
+Update PackingList 
+set pulloutID = '{this.CurrentMaintain["ID"]}' ,
+PulloutStatus = '{this.CurrentMaintain["Status"]}'
+where id='{dr["PackingListID"]}'; ";
                         if (MyUtility.Check.Empty(plFromRgCode))
                         {
                             this.updatePackinglist += updatePackinglistCmd;
@@ -2316,7 +2330,11 @@ from SummaryData",
                         ((DataTable)this.detailgridbs.DataSource).Rows.Add(detailNewRow);
 
                         #region update PulloutID 到PackingList
-                        string updatePackinglistCmd = string.Format(@"Update PackingList set pulloutID = '{0}' where id='{1}'; ", this.CurrentMaintain["ID"], dr["PackingListID"]);
+                        string updatePackinglistCmd = $@"
+Update PackingList 
+set pulloutID = '{this.CurrentMaintain["ID"]}',
+PulloutStatus = '{this.CurrentMaintain["Status"]}' 
+where id='{dr["PackingListID"]}'; ";
                         if (MyUtility.Check.Empty(plFromRgCode))
                         {
                             this.updatePackinglist += updatePackinglistCmd;
@@ -2357,6 +2375,60 @@ from SummaryData",
 
             // this.status_Change();
             return true;
+        }
+
+        private void UpdatePacking_PulloutStatus()
+        {
+            string sqlUpdate = string.Empty;
+            string curDBStatus = MyUtility.GetValue.Lookup($"select Status from Pullout where ID='{this.CurrentMaintain["ID"]}' ");
+            this.dicUpdatePackinglistA2B = new Dictionary<string, List<string>>();
+            DualResult result;
+
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                string plFromRgCode = dr["PLFromRgCode"].ToString();
+                string updatePackinglistCmd = $@"
+Update PackingList
+set PulloutStatus = '{curDBStatus}'
+where id = '{dr["PackingListID"]}' and pulloutID = '{this.CurrentMaintain["id"].ToString()}';
+";
+
+                if (MyUtility.Check.Empty(plFromRgCode))
+                {
+                    sqlUpdate += updatePackinglistCmd;
+                }
+                else
+                {
+                    this.dicUpdatePackinglistA2B.AddSqlCmdByPLFromRgCode(plFromRgCode, updatePackinglistCmd);
+                }
+            }
+
+            using (TransactionScope scope = new TransactionScope())
+            {
+                if (sqlUpdate.Trim() != string.Empty)
+                {
+                    result = DBProxy.Current.Execute(null, sqlUpdate);
+                    if (!result)
+                    {
+                        scope.Dispose();
+                        DualResult failResult = new DualResult(false, "Update Packinglist fail!!\r\n" + result.ToString());
+                        return;
+                    }
+                }
+
+                // update A2B Packing Pullout Info
+                foreach (KeyValuePair<string, List<string>> itemUpdateA2B in this.dicUpdatePackinglistA2B)
+                {
+                    result = PackingA2BWebAPI.ExecuteBySql(itemUpdateA2B.Key, itemUpdateA2B.Value.JoinToString(" "));
+                    if (!result)
+                    {
+                        scope.Dispose();
+                        return;
+                    }
+                }
+
+                scope.Complete();
+            }
         }
 
         // Revise from ship plan and FOC/LO packing list
