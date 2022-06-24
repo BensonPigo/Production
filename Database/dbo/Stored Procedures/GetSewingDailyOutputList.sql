@@ -198,17 +198,63 @@ outer apply(
 	where s.ID = t.ID
 )s
 
+select [MaxOutputDate] = Max(OutputDate), [MinOutputDate] = MIN(OutputDate), MockupStyle, OrderStyle, SewingLineID, FactoryID 
+into #tmpOutputDate
+from(
+select distinct OutputDate, MockupStyle, OrderStyle, SewingLineID, FactoryID 
+from #tmpSewingGroup) a
+group by MockupStyle, OrderStyle, SewingLineID, FactoryID
+
+select t.FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, s.OutputDate
+into #tmpSewingOutput
+from #tmpOutputDate t
+inner join SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID and s.FactoryID = t.FactoryID and s.OutputDate between dateadd(day,-180, t.MinOutputDate) and t.MaxOutputDate
+where   exists(	select 1 from SewingOutput_Detail sd WITH (NOLOCK)
+				left join Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
+				left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
+				where s.ID = sd.ID and (o.StyleID = t.OrderStyle or mo.StyleID = t.MockupStyle))
+order by  FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, s.OutputDate
+
+select w.FactoryID, w.SewingLineID ,t.OrderStyle, t.MockupStyle, w.Date
+into #tmpWorkHour
+from WorkHour w WITH (NOLOCK)
+left join #tmpOutputDate t on t.SewingLineID = w.SewingLineID and t.FactoryID = w.FactoryID and w.Date between t.MinOutputDate and t.MaxOutputDate
+where w.Holiday=0 and isnull(w.Hours,0) != 0 and w.Date >= (select dateadd(day,-180, min(MinOutputDate)) from #tmpOutputDate) and  w.Date <= (select max(MaxOutputDate) from #tmpOutputDate)
+order by  FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, w.Date
 
 select t.*
     ,[LastShift] = IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) 
     ,[FtyType] = f.Type
     ,[FtyCountry] = f.CountryID
-    ,[CumulateDate] = (select cumulate from dbo.getSewingOutputCumulateOfDays(IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.OutputDate,t.FactoryID))
+    ,[CumulateDate] = CumulateDate.val
     ,[SPFactory] = o.FactoryID
 into #tmp1stFilter
 from #tmpSewingGroup t
 left join Factory f on t.FactoryID = f.ID
 left join Orders o on t.OrderId = o.ID
+outer apply (	select val = IIF(Count(1)=0, 1, Count(1))
+				from #tmpSewingOutput s
+				where	s.FactoryID = t.FactoryID and
+						s.MockupStyle = t.MockupStyle and
+						s.OrderStyle = t.OrderStyle and
+						s.SewingLineID = t.SewingLineID and
+						s.OutputDate <= t.OutputDate and
+						s.OutputDate >(
+										select isnull(max(w.Date), t.OutputDate)
+										from #tmpWorkHour w 
+										left join #tmpSewingOutput s1 on s1.OutputDate = w.Date and
+																		 s1.FactoryID = w.FactoryID and
+																		 s1.MockupStyle = w.MockupStyle and
+																		 s1.OrderStyle = w.OrderStyle and
+																		 s1.SewingLineID = w.SewingLineID
+										where	w.FactoryID = t.FactoryID and
+												w.MockupStyle = t.MockupStyle and
+												w.OrderStyle = t.OrderStyle and
+												w.SewingLineID = t.SewingLineID and
+												w.Date <= t.OutputDate and
+												s1.OutputDate is null
+									)
+) CumulateDate
 where	(	
 			not exists(select 1 from #CategoryCondition) or
 			(exists(select 1 from #CategoryCondition where Category = 'L') and t.LocalOrder = 1) or
