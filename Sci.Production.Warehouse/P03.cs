@@ -882,7 +882,7 @@ from(
                             inner join Receiving r on r.id= f.ReceivingID and r.InvNo=ed.ID 
 							where ed.poid = a.id and ed.seq1 = a.seq1 and ed.seq2 = a.seq2
                         ), 1, 0)
-                    , iif(Fabric.Preshrink=1,'V','') Preshrink
+                    , iif(fs.Preshrink=1,'V','') Preshrink
                     ,(Select cast(tmp.Remark as nvarchar)+',' 
                       from (
 			                    select b1.remark 
@@ -1039,7 +1039,7 @@ from(
                             inner join Receiving r on r.id= f.ReceivingID and r.InvNo=ed.ID 
 							where ed.poid = a.id and ed.seq1 = a.seq1 and ed.seq2 = a.seq2
                         ), 1, 0)
-                    , iif(Fabric.Preshrink=1,'V','') Preshrink
+                    , iif(fs.Preshrink=1,'V','') Preshrink
                     , (Select cast(tmp.Remark as nvarchar)+',' 
                        from (
 			                    select b1.remark 

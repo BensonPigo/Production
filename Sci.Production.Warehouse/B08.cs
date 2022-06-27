@@ -13,12 +13,31 @@ namespace Sci.Production.Warehouse
     /// <inheritdoc/>
     public partial class B08 : Sci.Win.Tems.Input1
     {
+        private string codeKey;
+
         /// <inheritdoc/>
-        public B08(ToolStripMenuItem menuitem)
+        public B08(ToolStripMenuItem menuitem, string type)
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "Code = '104'";
+            switch (type)
+            {
+                case "QAB27":
+                    this.Text = "B27 Fabric Inspection Related Mail Group";
+                    this.DefaultFilter = "Code = '007'";
+                    this.codeKey = "007";
+                    break;
+                case "WHB08":
+                    this.Text = "B08 Material Exception Mail To";
+                    this.DefaultFilter = "Code = '104'";
+                    this.codeKey = "104";
+                    break;
+                default:
+                    this.Text = "B08 Material Exception Mail To";
+                    this.DefaultFilter = "Code = '104'";
+                    this.codeKey = "104";
+                    break;
+            }
         }
 
         /// <inheritdoc/>
@@ -32,7 +51,7 @@ namespace Sci.Production.Warehouse
 
             if (this.IsDetailInserting)
             {
-                string sqlcmd = $"select 1 from MailGroup where Code = '104' and FactoryID = '{this.CurrentMaintain["FactoryID"]}'";
+                string sqlcmd = $"select 1 from MailGroup where Code = '{this.codeKey}' and FactoryID = '{this.CurrentMaintain["FactoryID"]}'";
                 if (MyUtility.Check.Seek(sqlcmd))
                 {
                     MyUtility.Msg.WarningBox($"Factory {this.CurrentMaintain["FactoryID"]} already exists.");
@@ -47,7 +66,7 @@ namespace Sci.Production.Warehouse
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["Code"] = "104";
+            this.CurrentMaintain["Code"] = $"{this.codeKey}";
         }
     }
 }
