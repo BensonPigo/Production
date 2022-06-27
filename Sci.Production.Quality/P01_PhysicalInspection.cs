@@ -1538,9 +1538,21 @@ where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", this.textID.Text, dtGrid.Row
                 string cmd_leader = $@"
 select ToAddress = stuff ((select concat (';', tmp.email)
 from (
-	select distinct email from pass1
-	where id in (select Supervisor from pass1 where  id='{Env.User.UserID}')
-			or id in (select Manager from Pass1 where id = '{Env.User.UserID}')
+    select distinct email 
+    from (
+        select email 
+        from pass1
+        where id in (select Supervisor from pass1 where  id='{Env.User.UserID}')
+		        or id in (select Manager from Pass1 where id = '{Env.User.UserID}')
+
+        union all
+
+        select email = iif( isnull(p.email,'') = '', isnull(m.ToAddress,''),isnull(p.email,''))
+		from Orders o
+		left join Pass1 p on o.MCHandle = p.ID
+		left join MailGroup m on m.Code = '007' and o.FactoryID = m.FactoryID
+        where o.ID='{this.displaySP.Text}'
+    ) a
 ) tmp
 for xml path('')
 ), 1, 1, '')";
@@ -1548,7 +1560,14 @@ for xml path('')
                 if (MyUtility.Check.Seek(cmd_leader, out DataRow dr))
                 {
                     string mailto = dr["ToAddress"].ToString();
-                    string ccAddress = Env.User.MailAddress;
+
+                    string ccMailGroup = MyUtility.GetValue.Lookup($@"
+select m.CCAddress 
+from Orders o 
+inner join MailGroup m on m.Code = '007' and o.FactoryID = m.FactoryID
+where o.ID = '{this.displaySP.Text}'");
+
+                    string ccAddress = Env.User.MailAddress + ";" + ccMailGroup;
                     string subject = string.Format(MyUtility.GetValue.Lookup("Subject", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
                     string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text)
                                      + Environment.NewLine
