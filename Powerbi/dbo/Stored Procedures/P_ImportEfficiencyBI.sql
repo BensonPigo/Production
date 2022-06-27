@@ -159,7 +159,7 @@ from ['+@LinkServerName+'].Production.dbo.SewingOutput s WITH (NOLOCK)
 inner join ['+@LinkServerName+'].Production.dbo.SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
 left join ['+@LinkServerName+'].Production.dbo.Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
 left join ['+@LinkServerName+'].Production.dbo.MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId  
-inner join (select [maxOutputDate] = max(OutputDate),[minOutputDate] = dateadd(day,-90, min(OutputDate)) from #tmpSewingGroup) t on s.OutputDate between t.minOutputDate and t.maxOutputDate
+inner join (select [maxOutputDate] = max(OutputDate),[minOutputDate] = dateadd(day,-180, min(OutputDate)) from #tmpSewingGroup) t on s.OutputDate between t.minOutputDate and t.maxOutputDate
 
 select t.*
 	,[LastShift] = IIF(t.Shift <> ''O'' and t.Category <> ''M'' and t.LocalOrder = 1, ''I'',t.Shift)
@@ -177,24 +177,24 @@ outer apply
 		from #tmp_s1 s
 		where (s.OrderStyle = t.OrderStyle  or s.MockupStyle = t.MockupStyle)
 		and s.SewingLineID = t.SewingLineID
-		and s.OutputDate between dateadd(day,-90, t.OutputDate) and t.OutputDate
+		and s.OutputDate between dateadd(day,-180, t.OutputDate) and t.OutputDate
 		and s.FactoryID = t.FactoryID
 	) s
 	where s.OutputDate >(
-							select date = max(Date)
+							select date = isnull(max(Date), (select min(OutputDate) from #tmp_s1 s))
 							from (
 								select top 360 w.Hours, w.Date
 								from ['+@LinkServerName+'].Production.dbo.WorkHour w WITH (NOLOCK)
 								where w.FactoryID = t.FactoryID
 								and w.SewingLineID = t.SewingLineID
-								and w.Date between dateadd(day,-90, t.OutputDate) and t.OutputDate
+								and w.Date between dateadd(day,-180, t.OutputDate) and t.OutputDate
 							) w 
 							left join (
 								select distinct s.OutputDate
 								from #tmp_s1 s
 								where (s.OrderStyle = t.OrderStyle  or s.MockupStyle = t.MockupStyle)
 								and s.SewingLineID = t.SewingLineID
-								and s.OutputDate between dateadd(day,-90, t.OutputDate) and t.OutputDate
+								and s.OutputDate between dateadd(day,-180, t.OutputDate) and t.OutputDate
 								and s.FactoryID = t.FactoryID
 							) s on s.OutputDate = w.Date
 							where s.OutputDate is null
