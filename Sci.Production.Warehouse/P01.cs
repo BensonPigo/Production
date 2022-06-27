@@ -607,8 +607,8 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
 
                 // WHClose
-                Gensong_AutoWHFabric.SentWHClose(true, dtMain);
-                Vstrong_AutoWHAccessory.SentWHClose(true, dtMain);
+                Gensong_AutoWHFabric.SentWHClose(false, dtMain);
+                Vstrong_AutoWHAccessory.SentWHClose(false, dtMain);
 
                 // SubTransfer_Detail
                 if (dtSubTransfer_Detail.Rows.Count > 0)

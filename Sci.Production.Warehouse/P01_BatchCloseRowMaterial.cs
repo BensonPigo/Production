@@ -340,12 +340,6 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                     return;
                 }
 
-                // WHClose
-                DataTable dtFilter = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).CopyToDataTable();
-                DataTable dtMain = dtFilter.DefaultView.ToTable(true, "POID", "WhseClose");
-                Gensong_AutoWHFabric.SentWHClose(true, dtMain);
-                Vstrong_AutoWHAccessory.SentWHClose(true, dtMain);
-
                 // SubTransfer_Detail
                 if (dtSubTransfer_Detail.Rows.Count > 0)
                 {
@@ -353,6 +347,12 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                     Vstrong_AutoWHAccessory.Sent(false, dtSubTransfer_Detail, "P25", EnumStatus.New, EnumStatus.Confirm);
                 }
             }
+
+            // WHClose 批次 只要傳一次
+            DataTable dtFilter = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).CopyToDataTable();
+            DataTable dtMain = dtFilter.DefaultView.ToTable(true, "POID", "WhseClose");
+            Gensong_AutoWHFabric.SentWHClose(false, dtMain);
+            Vstrong_AutoWHAccessory.SentWHClose(false, dtMain);
 
             if (lockPOID.Count > 0)
             {

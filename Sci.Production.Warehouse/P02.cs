@@ -197,7 +197,7 @@ select FactoryID = iif(ed.PoType='M'
         , ed.Ukey
         , PoidSeq1 = rtrim(ed.Poid) + Ltrim(Rtrim(ed.Seq1))
         , PoidSeq = rtrim(ed.PoID)+(Ltrim(Rtrim(ed.Seq1)) + ' ' + ed.Seq2)
-        , Preshrink = iif(f.Preshrink = 1, 'V' ,'')
+        , Preshrink = iif(fs.Preshrink = 1, 'V' ,'')
         , ed.Carton
 		, o.OrderTypeID
 		,[TPERemark] = psd.Remark
@@ -206,6 +206,7 @@ left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 left join Supp s WITH (NOLOCK) on s.id = ed.SuppID 
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+left join Fabric_Supp fs WITH (NOLOCK) on fs.SCIRefno = f.SCIRefno and fs.SuppID = s.ID
 OUTER APPLY(
 		SELECT [Val] = STUFF((
 		SELECT DISTINCT ','+esc.ContainerType + '-' +esc.ContainerNo

@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Class;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -51,19 +52,6 @@ namespace Sci.Production.Packing
             }
 
             this.txtRemark.Text = this.drDetail["Remark"].ToString();
-
-            string selectCommand = $@"
-select * from PackingErrorRecord
-where PackID = '{this.drDetail["PackID"]}'
-and CTN = '{this.drDetail["CTN"].ToString()}'
-";
-            DualResult returnResult = DBProxy.Current.Select(null, selectCommand, out DataTable dtDtail);
-            if (!returnResult)
-            {
-                return;
-            }
-
-            this.SetGrid(dtDtail);
         }
 
         /// <inheritdoc/>
@@ -77,16 +65,21 @@ and CTN = '{this.drDetail["CTN"].ToString()}'
         /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
+            DataGridViewGeneratorTextColumnSettings col_ReasonforGarmentSound = CellTextPackingReason.GetGridCell("EG");
+            DataGridViewGeneratorTextColumnSettings col_AreaOperation = CellTextPackingReason.GetGridCell("EO");
+            DataGridViewGeneratorTextColumnSettings col_ActionTaken = CellTextPackingReason.GetGridCell("ET");
+
             this.Helper.Controls.Grid.Generator(this.grid)
                 .ComboBox("Line", header: "Line", width: Widths.AnsiChars(9), iseditable: true, settings: this.Col_comboLine())
                 .ComboBox("Shift", header: "Shift", width: Widths.AnsiChars(9), iseditable: true, settings: this.Col_comboShift())
-                .Text("ReasonforGarmentSound", header: "Reason for Garment Sound", width: Widths.AnsiChars(20), iseditingreadonly: false)
-                .Text("AreaOperation", header: "Area/Operation", width: Widths.AnsiChars(20), iseditingreadonly: false)
-                .Text("ActionTaken", header: "Action Taken", width: Widths.AnsiChars(20), iseditingreadonly: false)
+                .Text("ReasonforGarmentSound", header: "Reason for Garment Sound", width: Widths.AnsiChars(28), iseditingreadonly: false, settings: col_ReasonforGarmentSound)
+                .Text("AreaOperation", header: "Area/Operation", width: Widths.AnsiChars(28), iseditingreadonly: false, settings: col_AreaOperation)
+                .Text("ActionTaken", header: "Action Taken", width: Widths.AnsiChars(28), iseditingreadonly: false, settings: col_ActionTaken)
                 ;
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void OnInsert()
         {
             DataTable dt = (DataTable)this.gridbs.DataSource;
@@ -139,12 +132,6 @@ and CTN = '{this.drDetail["CTN"].ToString()}'
             this.gridbs.EndEdit();
             foreach (DataRow dr in this.Datas)
             {
-                if (MyUtility.Convert.GetString(dr["ActionTaken"]).Length > 100)
-                {
-                    MyUtility.Msg.InfoBox("Please input maximum of 100 characters in <Action Taken>.");
-                    return false;
-                }
-
                 if (MyUtility.Check.Empty(dr["Line"]) &&
                     MyUtility.Check.Empty(dr["Shift"]))
                 {
@@ -153,6 +140,38 @@ and CTN = '{this.drDetail["CTN"].ToString()}'
             }
 
             return base.OnSaveBefore();
+        }
+
+        /// <summary>
+        /// OnRequery
+        /// </summary>
+        /// <returns>bool</returns>
+        protected override DualResult OnRequery()
+        {
+            string selectCommand = $@"
+select [ID]
+      ,[PackID]
+      ,[CTN]
+      ,[Line]
+      ,[Shift]
+      ,[ReasonforGarmentSound] = isnull((select ID+'-'+Description from PackingReason where Type = 'EG' and ID = p.PackingReasonIDForTypeEG),'')
+      ,[AreaOperation] = isnull((select ID+'-'+Description from PackingReason where Type = 'EO' and ID = p.PackingReasonIDForTypeEO),'')
+      ,[ActionTaken] = isnull((select ID+'-'+Description from PackingReason where Type = 'ET' and ID = p.PackingReasonIDForTypeET),'')
+      ,[PackingReasonIDForTypeEG]
+      ,[PackingReasonIDForTypeEO]
+      ,[PackingReasonIDForTypeET]
+from PackingErrorRecord p 
+where PackID = '{this.drDetail["PackID"]}'
+and CTN = '{this.drDetail["CTN"].ToString()}'
+";
+            DualResult returnResult = DBProxy.Current.Select(null, selectCommand, out DataTable dtDtail);
+            if (!returnResult)
+            {
+                return returnResult;
+            }
+
+            this.SetGrid(dtDtail);
+            return Ict.Result.True;
         }
     }
 }
