@@ -1527,7 +1527,7 @@ update se set   se.ShipModeID = ts.ShipModeID
 		        , se.Type = ts.Type
 from ShareExpense se
 inner join #tmpShareExpense ts on se.InvNo = ts.InvNo and se.FactoryID = ts.FactoryID
-where se.ShippingAPID = shippingAPID
+where se.ShippingAPID = '{shippingAPID}' 
 
 drop table #tmpShareExpense,  #tmpA2B
 ";

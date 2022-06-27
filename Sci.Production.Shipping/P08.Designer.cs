@@ -93,6 +93,7 @@
             this.btnImport = new Sci.Win.UI.Button();
             this.label6 = new Sci.Win.UI.Label();
             this.numCW = new Sci.Win.UI.NumericBox();
+            this.btnUpdateA2BData = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -104,6 +105,7 @@
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
+            this.browse.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -173,7 +175,7 @@
             this.masterpanel.Controls.Add(this.labelNo);
             this.masterpanel.Controls.Add(this.dateApvDate);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 241);
+            this.masterpanel.Size = new System.Drawing.Size(892, 241);
             this.masterpanel.TabIndex = 28;
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateApvDate, 0);
@@ -244,7 +246,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 241);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 287);
+            this.detailpanel.Size = new System.Drawing.Size(892, 108);
             // 
             // gridicon
             // 
@@ -257,7 +259,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 287);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 108);
             // 
             // detail2
             // 
@@ -271,22 +273,11 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1000, 566);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 528);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 528);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
-            // 
             // browse
             // 
+            this.browse.Controls.Add(this.btnUpdateA2BData);
             this.browse.Size = new System.Drawing.Size(1000, 566);
+            this.browse.Controls.SetChildIndex(this.btnUpdateA2BData, 0);
             // 
             // tabs
             // 
@@ -1043,6 +1034,16 @@
             0,
             0});
             // 
+            // btnUpdateA2BData
+            // 
+            this.btnUpdateA2BData.Location = new System.Drawing.Point(629, 5);
+            this.btnUpdateA2BData.Name = "btnUpdateA2BData";
+            this.btnUpdateA2BData.Size = new System.Drawing.Size(185, 30);
+            this.btnUpdateA2BData.TabIndex = 3;
+            this.btnUpdateA2BData.Text = "Updata A2B Data";
+            this.btnUpdateA2BData.UseVisualStyleBackColor = true;
+            this.btnUpdateA2BData.Click += new System.EventHandler(this.BtnUpdateA2BData_Click);
+            // 
             // P08
             // 
             this.ClientSize = new System.Drawing.Size(1008, 628);
@@ -1074,6 +1075,7 @@
             this.detailcont.ResumeLayout(false);
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
+            this.browse.ResumeLayout(false);
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -1146,5 +1148,6 @@
         private Win.UI.Button btnImport;
         private Win.UI.NumericBox numCW;
         private Win.UI.Label label6;
+        private Win.UI.Button btnUpdateA2BData;
     }
 }

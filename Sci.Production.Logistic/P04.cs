@@ -10,6 +10,7 @@ using Sci.Data;
 using Sci.Win;
 using System.Reflection;
 using System.IO;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Logistic
 {
@@ -256,15 +257,24 @@ namespace Sci.Production.Logistic
 
                             if (tmpTable.Rows[0]["ClogLocationId"].ToString() != currentRow["ClogLocationId"].ToString())
                             {
-                                updateCmd = @"update PackingList_Detail 
-                                                set ClogLocationId = @clogLocationId, Remark = @remark ,EditLocationDate=@EditLocationDate, EditLocationName =@EditLocationName 
-                                                where id = @id and CTNStartNo = @ctnStartNo;";
+                                updateCmd = @"
+update PackingList_Detail 
+set 
+  ClogLocationId = @clogLocationId
+, OriClogLocationID = @oriClogLocationID
+, Remark = @remark 
+, EditLocationDate=@EditLocationDate
+, EditLocationName =@EditLocationName 
+where id = @id and CTNStartNo = @ctnStartNo;";
                             }
                             else
                             {
-                                updateCmd = @"update PackingList_Detail 
-                                                set ClogLocationId = @clogLocationId, Remark = @remark 
-                                                where id = @id and CTNStartNo = @ctnStartNo;";
+                                updateCmd = @"
+update PackingList_Detail 
+set 
+  ClogLocationId = @clogLocationId
+, Remark = @remark 
+where id = @id and CTNStartNo = @ctnStartNo;";
                             }
 
                             #region 準備sql參數資料
@@ -272,6 +282,12 @@ namespace Sci.Production.Logistic
                             {
                                 ParameterName = "@clogLocationId",
                                 Value = currentRow["ClogLocationId"].ToString(),
+                            };
+
+                            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@oriClogLocationID",
+                                Value = tmpTable.Rows[0]["ClogLocationId"].ToString(),
                             };
 
                             // System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
@@ -325,6 +341,7 @@ namespace Sci.Production.Logistic
 
                             if (tmpTable.Rows[0]["ClogLocationId"].ToString() != currentRow["ClogLocationId"].ToString())
                             {
+                                cmds.Add(sp2);
                                 cmds.Add(sp7);
                                 cmds.Add(sp8);
                             }

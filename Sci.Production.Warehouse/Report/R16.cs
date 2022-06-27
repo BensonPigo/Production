@@ -117,6 +117,9 @@ select
 	,id.Qty
 	,BulkLocation=dbo.Getlocation(fi.Ukey)
 	,Createby=dbo.getPass1_ExtNo(i.AddName)
+    ,[MIND Releaser] = id.MINDReleaser
+	,[Start Time] = i.IssueStartTime
+	,[Completion %] = CompletionNum.value
 from issue i WITH (NOLOCK) 
 inner join issue_detail id WITH (NOLOCK) on i.id = id.id
 inner join Orders o WITH (NOLOCK) on id.POID = o.id
@@ -146,6 +149,13 @@ outer apply(
 		for xml path('')
 	),1,3,'')
 )x2
+outer apply(
+	select value = 
+	round(
+		cast((select count(1) from Issue_Detail sd with(nolock) where sd.id = i.id and sd.MINDReleaseDate is not null)as float) 
+			/ (select count(1) from Issue_Detail sd with(nolock) where sd.id = i.id)*100, 2
+	)
+)CompletionNum
 where 1=1
 And i.type = 'A' 
 AND i.Status = 'Confirmed' 

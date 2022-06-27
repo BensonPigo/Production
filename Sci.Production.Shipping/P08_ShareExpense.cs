@@ -30,7 +30,7 @@ namespace Sci.Production.Shipping
         private bool IsReason;
         private string LocalSuppID;
         private int isFreightForwarder;
-        private Func<DualResult> InitialShareExpense;
+        private Func<DataRow, bool, DualResult> InitialShareExpense;
         private string sqlInsertFromExportGMT = @"
 merge ShareExpense t
 using (
@@ -76,19 +76,60 @@ when not matched by target then
         /// <param name="apflag">apflag</param>
         /// <param name="isReasonAP007">Reason = AP007</param>
         /// <param name="initialShareExpense">InitialShareExpense</param>
-        public P08_ShareExpense(DataRow aPData, bool apflag, bool isReasonAP007, Func<DualResult> initialShareExpense)
+        /// <param name="isNeedOpenForm">isNeedOpenForm</param>
+        public P08_ShareExpense(DataRow aPData, bool apflag, bool isReasonAP007, Func<DataRow, bool, DualResult> initialShareExpense, bool isNeedOpenForm = true)
         {
-            this.InitializeComponent();
             this.apData = aPData;
             this.Apflag = apflag;
             this.IsReason = isReasonAP007;
             this.InitialShareExpense = initialShareExpense;
             this.isFreightForwarder = apflag ? 1 : 0;
-            this.displayCurrency.Value = MyUtility.Convert.GetString(this.apData["CurrencyID"]);
-            this.numTtlAmt.DecimalPlaces = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup("Exact", MyUtility.Convert.GetString(this.apData["CurrencyID"]), "Currency", "ID"));
-            this.numTtlAmt.Value = MyUtility.Convert.GetDecimal(this.apData["Amount"]);
             this.LocalSuppID = MyUtility.Convert.GetString(this.apData["LocalSuppID"]);
-            this.ControlButton();
+
+            if (isNeedOpenForm)
+            {
+                this.InitializeComponent();
+                this.ControlButton();
+                this.displayCurrency.Value = MyUtility.Convert.GetString(this.apData["CurrencyID"]);
+                this.numTtlAmt.DecimalPlaces = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup("Exact", MyUtility.Convert.GetString(this.apData["CurrencyID"]), "Currency", "ID"));
+                this.numTtlAmt.Value = MyUtility.Convert.GetDecimal(this.apData["Amount"]);
+            }
+            else
+            {
+                string sqlCmd = string.Format(
+                    @"
+select  ShippingAPID
+        , se.Blno
+        , [Bl2no] = (select BL2No from GMTBooking where id=se.InvNo)
+        , WKNo
+        , InvNo
+        , ShipModeID
+        , [GW] = sum(GW)
+        , [CBM] = sum(CBM)
+        , CurrencyID
+        , DropDownListName = (
+            select Name
+            from DropDownList dl
+            inner join FtyExport f on f.Type = dl.ID
+            where dl.Type='Pms_FtyExportType'
+            and f.ID = se.InvNo)
+        , ShipModeID
+        , FtyWK
+        , isnull(sum(Amount),0) as Amount 
+        , '' as SubTypeRule
+        , [NoExportCharges] = (select NoExportCharges from GMTBooking where id=se.InvNo)
+from ShareExpense se WITH (NOLOCK) 
+where   ShippingAPID = '{0}' 
+        and (Junk = 0 or Junk is null)
+group by ShippingAPID,se.BLNo,WKNo,InvNo,ShipModeID,CurrencyID,ShipModeID,FtyWK
+", MyUtility.Convert.GetString(this.apData["ID"]));
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.SEGroupData);
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox("Query Group Data fail.\r\n" + result.ToString());
+                    return;
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -692,7 +733,7 @@ where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
         private void AppendData()
         {
             DualResult result;
-            result = this.InitialShareExpense();
+            result = this.InitialShareExpense(this.apData, this.Apflag);
             if (!result)
             {
                 this.ShowErr(result);
@@ -750,7 +791,7 @@ where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
             }
         }
 
-        private void QueryData()
+        public void QueryData()
         {
             DataRow queryData;
             string sqlCmd = string.Format(
@@ -1619,18 +1660,20 @@ select [resultType] = 'OK',
             }
         }
 
-        // Re-Calculate
-        private void BtnReCalculate_Click(object sender, EventArgs e)
+        /// <summary>
+        /// ReCalculateShareExpense
+        /// </summary>
+        /// <returns>DualResult</returns>
+        public DualResult ReCalculateShareExpense()
         {
             DualResult result;
 
             if (this.Apflag && !this.IsReason)
             {
-                result = this.InitialShareExpense();
+                result = this.InitialShareExpense(this.apData, this.Apflag);
                 if (!result)
                 {
-                    this.ShowErr(result);
-                    return;
+                    return result;
                 }
             }
             else
@@ -1646,8 +1689,7 @@ select [resultType] = 'OK',
                         result = this.GetShareExpenseByUserInput(dr, ref dtExportGMT);
                         if (!result)
                         {
-                            this.ShowErr(result);
-                            return;
+                            return result;
                         }
 
                         if (dtExportGMT.Rows.Count > 0)
@@ -1655,8 +1697,7 @@ select [resultType] = 'OK',
                             result = MyUtility.Tool.ProcessWithDatatable(dtExportGMT, null, this.sqlInsertFromExportGMT, out DataTable dtEmpty);
                             if (!result)
                             {
-                                this.ShowErr(result);
-                                return;
+                                return result;
                             }
                         }
                     }
@@ -1666,15 +1707,13 @@ select [resultType] = 'OK',
             result = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(this.apData["ID"]), this.isFreightForwarder);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Re-Calculate Delete faile\r\n" + result.ToString());
-                return;
+                return result;
             }
 
             string sqlInvNo = $@"select distinct InvNo from ShareExpense where  ShippingAPID = '{this.apData["ID"]}'";
             if (!(result = DBProxy.Current.Select(string.Empty, sqlInvNo, out DataTable dtInvNo)))
             {
-                this.ShowErr(result.ToString());
-                return;
+                return result;
             }
 
             // 執行A2B跨廠區資料 & 寫入跨廠區資料到ShareExpense_APP
@@ -1690,8 +1729,7 @@ select [resultType] = 'OK',
 
                     if (!result)
                     {
-                        this.ShowErr(result);
-                        return;
+                        return result;
                     }
 
                     if (dt != null && dt.Rows.Count > 0)
@@ -1700,11 +1738,24 @@ select [resultType] = 'OK',
 
                         if (!result)
                         {
-                            this.ShowErr(result);
-                            return;
+                            return result;
                         }
                     }
                 }
+            }
+
+            return new DualResult(true);
+        }
+
+        // Re-Calculate
+        private void BtnReCalculate_Click(object sender, EventArgs e)
+        {
+            DualResult result = this.ReCalculateShareExpense();
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
             }
 
             this.QueryData();
