@@ -15,14 +15,14 @@ BEGIN
 	on t.id=s.id 
 	When matched  then
 		update set
-		t.Status =			s.Status,
+		t.Status =			    isnull(s.Status,              ''),
 		t.ConfirmedNewKPILETA =	s.ConfirmedNewKPILETA,
-		t.ApproveName =			s.ApproveName,
+		t.ApproveName =			isnull(s.ApproveName,         ''),
 		t.ApproveDate =			s.ApproveDate,
-		t.ConfirmName =			s.ConfirmName,
+		t.ConfirmName =			isnull(s.ConfirmName,         ''),
 		t.ConfirmDate =			s.ConfirmDate,
-		t.TPERemark =			s.TPERemark,
-		t.TPEEditName =			s.TPEEditName,
-		t.TPEEditDate =			s.TPEEditDate
-		;		
+		t.TPERemark =			isnull(s.TPERemark,           ''),
+		t.TPEEditName =			isnull(s.TPEEditName,         ''),
+		t.TPEEditDate =			s.TPEEditDate 
+		;		                                            
 END

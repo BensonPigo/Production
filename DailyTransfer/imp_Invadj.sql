@@ -52,36 +52,37 @@ insert(ID
       ,EditDate
       ,PriceCheckID
 	  ,OrderShipmodeSeq)
-values( s.ID
+values(
+       isnull(s.ID              ,'')
       ,s.IssueDate
-      ,s.REASON
-      ,s.GarmentInvoiceID
-      ,s.OrderID
+      ,isnull(s.REASON          ,0)
+      ,isnull(s.GarmentInvoiceID,'')
+      ,isnull(s.OrderID         ,'')
       ,s.PullDate
-      ,s.Ukey_Pullout
-      ,s.BrandID
-      ,s.FactoryID
-      ,s.ARVoucherID
-      ,s.VoucherID
-      ,s.Status
-      ,s.OrigPulloutQty
-      ,s.OrigPrice
-      ,s.OrigPulloutAmt
-      ,s.OrigSurcharge
-      ,s.OrigAddCharge
-      ,s.OrigCommission
-      ,s.OrigDocFee
-      ,s.AdjustPulloutQty
-      ,s.AdjustPulloutAmt
-      ,s.AdjustSurcharge
-      ,s.AdjustAddCharge
-      ,s.AdjustCommission
-      ,s.AdjustDocFee
-      ,s.AddName
+      ,isnull(s.Ukey_Pullout    ,0)
+      ,isnull(s.BrandID         ,'')
+      ,isnull(s.FactoryID       ,'')
+      ,isnull(s.ARVoucherID     ,'')
+      ,isnull(s.VoucherID       ,'')
+      ,isnull(s.Status          ,'')
+      ,isnull(s.OrigPulloutQty  ,0)
+      ,isnull(s.OrigPrice       ,0)
+      ,isnull(s.OrigPulloutAmt  ,0)
+      ,isnull(s.OrigSurcharge   ,0)
+      ,isnull(s.OrigAddCharge   ,0)
+      ,isnull(s.OrigCommission  ,0)
+      ,isnull(s.OrigDocFee      ,0)
+      ,isnull(s.AdjustPulloutQty,0)
+      ,isnull(s.AdjustPulloutAmt,0)
+      ,isnull(s.AdjustSurcharge ,0)
+      ,isnull(s.AdjustAddCharge ,0)
+      ,isnull(s.AdjustCommission,0)
+      ,isnull(s.AdjustDocFee    ,0)
+      ,isnull(s.AddName         ,'')
       ,s.AddDate
-      ,s.EditName
+      ,isnull(s.EditName        ,'')
       ,s.EditDate
-      ,s.PriceCheckID
+      ,isnull(s.PriceCheckID    ,'')
 	  ,isnull(s.OrderShipmodeSeq,''));
 
 --§ó·sMerge ¼gªk-------------------------InvAdjust_Qty
@@ -102,15 +103,16 @@ insert( ID
       ,NewItem
       ,DiffQty)
 values( 
-	   s.ID
-      ,s.Article
-      ,s.SizeCode
-      ,s.OrderQty
-      ,s.OrigQty
-      ,s.AdjustQty
-      ,s.Price
-      ,s.NewItem
-      ,s.DiffQty);
+	   isnull(s.ID       ,'')
+      ,isnull(s.Article  ,'')
+      ,isnull(s.SizeCode ,'')
+      ,isnull(s.OrderQty ,0)
+      ,isnull(s.OrigQty  ,0)
+      ,isnull(s.AdjustQty,0)
+      ,isnull(s.Price    ,0)
+      ,isnull(s.NewItem  ,0)
+      ,isnull(s.DiffQty  ,0)
+      );
 
 
 SELECT MAX(PulloutDate) as PulloutDate --,a.ID
@@ -166,18 +168,6 @@ AND EXISTS (
 )
 
 
-
 drop table #TMPPullout2Cdate
 
-
-
-
-
-
-
-
 END
-
-
-
-

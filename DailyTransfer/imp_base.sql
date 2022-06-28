@@ -21,43 +21,43 @@ where b.id is null
 UPDATE a
 SET 
       -- a. ID	      = b. ID
-      a. NameCH	      = b. NameCH
-      ,a. NameEN	      = b. NameEN
-      ,a. CountryID	      = b. CountryID
-      ,a. BuyerID	      = b. BuyerID
-      ,a. Tel	      = b. Tel
-      ,a. Fax	      = b. Fax
-      ,a. Contact1	      = b. Contact1
-      ,a. Contact2	      = b. Contact2
-      ,a. AddressCH	      = b. AddressCH
-      ,a. AddressEN	      = b. AddressEN
-      ,a. CurrencyID	      = b. CurrencyID
-      ,a. Remark	      = b. Remark
-      ,a. Customize1	      = b. Customize1
-      ,a. Customize2	      = b. Customize2
-      ,a. Customize3	      = b. Customize3
-      ,a. Commission	      = b. Commission
-      ,a. ZipCode	      = b. ZipCode
-      ,a. Email	      = b. Email
-      ,a. MrTeam	      = b. MrTeam
-      ,a. BrandGroup	      = b. BrandGroup
-      ,a. ApparelXlt	      = b. ApparelXlt
-      ,a. LossSampleFabric	      = b. LossSampleFabric
-      ,a. PayTermARIDBulk	      = b. PayTermARIDBulk
-      ,a. PayTermARIDSample	      = b. PayTermARIDSample
-      ,a. BrandFactoryAreaCaption	      = b. BrandFactoryAreaCaption
-      ,a. BrandFactoryCodeCaption	      = b. BrandFactoryCodeCaption
-      ,a. BrandFactoryVendorCaption	      = b. BrandFactoryVendorCaption
-      ,a. ShipCode	      = b. ShipCode
-      ,a. Junk	      = b. Junk
-      ,a. AddName	      = b. AddName
+      a. NameCH	      = isnull(b. NameCH, '')
+      ,a. NameEN	      = isnull(b. NameEN, '')
+      ,a. CountryID	      = isnull(b. CountryID, '')
+      ,a. BuyerID	      = isnull(b. BuyerID, '')
+      ,a. Tel	      = isnull(b. Tel, '')
+      ,a. Fax	      = isnull(b. Fax, '')
+      ,a. Contact1	      = isnull(b. Contact1, '')
+      ,a. Contact2	      = isnull(b. Contact2, '')
+      ,a. AddressCH	      = isnull(b. AddressCH, '')
+      ,a. AddressEN	      = isnull(b. AddressEN, '')
+      ,a. CurrencyID	      = isnull(b. CurrencyID, '')
+      ,a. Remark	      = isnull(b. Remark, '')
+      ,a. Customize1	      = isnull(b. Customize1, '')
+      ,a. Customize2	      = isnull(b. Customize2, '')
+      ,a. Customize3	      = isnull(b. Customize3, '')
+      ,a. Commission	      = isnull(b. Commission, 0)
+      ,a. ZipCode	      = isnull(b. ZipCode, '')
+      ,a. Email	      = isnull(b. Email, '')
+      ,a. MrTeam	      = isnull(b. MrTeam, '')
+      ,a. BrandGroup	      = isnull(b. BrandGroup, '')
+      ,a. ApparelXlt	      = isnull(b. ApparelXlt, '')
+      ,a. LossSampleFabric	      = isnull(b. LossSampleFabric, 0)
+      ,a. PayTermARIDBulk	      = isnull(b. PayTermARIDBulk, '')
+      ,a. PayTermARIDSample	      = isnull(b. PayTermARIDSample, '')
+      ,a. BrandFactoryAreaCaption	      = isnull(b. BrandFactoryAreaCaption, '')
+      ,a. BrandFactoryCodeCaption	      = isnull(b. BrandFactoryCodeCaption, '')
+      ,a. BrandFactoryVendorCaption	      = isnull(b. BrandFactoryVendorCaption, '')
+      ,a. ShipCode	      = isnull(b. ShipCode, '')
+      ,a. Junk	      = isnull(b. Junk, 0)
+      ,a. AddName	      = isnull(b. AddName, '')
       ,a. AddDate	      = b. AddDate
-      ,a. EditName	      = b. EditName
+      ,a. EditName	      = isnull(b. EditName, '')
       ,a. EditDate	      = b. EditDate
-	  ,a. LossSampleAccessory = b.LossSampleAccessory
-	  ,a. OTDExtension = b.OTDExtension
-	  ,a. UseRatioRule = b.UseRatioRule
-	  ,a. UseRatioRule_Thick = b.UseRatioRule_Thick
+	  ,a. LossSampleAccessory = isnull(b.LossSampleAccessory, 0)
+	  ,a. OTDExtension = isnull(b.OTDExtension, 0)
+	  ,a. UseRatioRule = isnull(b.UseRatioRule, '')
+	  ,a. UseRatioRule_Thick =isnull(b.UseRatioRule_Thick, '')
 	  ,a. Serial = isnull(b.Serial, 0)
 from Production.dbo.Brand as a inner join Trade_To_Pms.dbo.Brand as b ON a.id=b.id
 -------------------------- INSERT INTO 抓
@@ -104,43 +104,43 @@ INSERT INTO Production.dbo.Brand
 	  ,Serial
 )
 SELECT ID
-      ,NameCH
-      ,NameEN
-      ,CountryID
-      ,BuyerID
-      ,Tel
-      ,Fax
-      ,Contact1
-      ,Contact2
-      ,AddressCH
-      ,AddressEN
-      ,CurrencyID
-      ,Remark
-      ,Customize1
-      ,Customize2
-      ,Customize3
-      ,Commission
-      ,ZipCode
-      ,Email
-      ,MrTeam
-      ,BrandGroup
-      ,ApparelXlt
-      ,LossSampleFabric
-      ,PayTermARIDBulk
-      ,PayTermARIDSample
-      ,BrandFactoryAreaCaption
-      ,BrandFactoryCodeCaption
-      ,BrandFactoryVendorCaption
-      ,ShipCode
-      ,Junk
-      ,AddName
+      ,isnull(NameCH, '')
+      ,isnull(NameEN, '')
+      ,isnull(CountryID, '')
+      ,isnull(BuyerID, '')
+      ,isnull(Tel, '')
+      ,isnull(Fax, '')
+      ,isnull(Contact1, '')
+      ,isnull(Contact2, '')
+      ,isnull(AddressCH, '')
+      ,isnull(AddressEN, '')
+      ,isnull(CurrencyID, '')
+      ,isnull(Remark, '')
+      ,isnull(Customize1, '')
+      ,isnull(Customize2, '')
+      ,isnull(Customize3, '')
+      ,isnull(Commission, 0)
+      ,isnull(ZipCode, '')
+      ,isnull(Email, '')
+      ,isnull(MrTeam, '')
+      ,isnull(BrandGroup, '')
+      ,isnull(ApparelXlt, '')
+      ,isnull(LossSampleFabric, 0)
+      ,isnull(PayTermARIDBulk, '')
+      ,isnull(PayTermARIDSample, '')
+      ,isnull(BrandFactoryAreaCaption, '')
+      ,isnull(BrandFactoryCodeCaption, '')
+      ,isnull(BrandFactoryVendorCaption, '')
+      ,isnull(ShipCode, '')
+      ,isnull(Junk, 0)
+      ,isnull(AddName, '')
       ,AddDate
-      ,EditName
+      ,isnull(EditName, '')
       ,EditDate
-	  ,LossSampleAccessory
-	  ,OTDExtension
-	  ,UseRatioRule
-	  ,UseRatioRule_Thick
+	  ,isnull(LossSampleAccessory, 0)
+	  ,isnull(OTDExtension, 0)
+	  ,isnull(UseRatioRule, '')
+	  ,isnull(UseRatioRule_Thick, '')
 	  ,isnull(Serial, 0)
 from Trade_To_Pms.dbo.Brand as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Brand as a WITH (NOLOCK) where a.id = b.id)
@@ -153,10 +153,10 @@ where b.id is null
 
 UPDATE a
 SET 	
-     a.[MonthLabel]=b.[MonthLabel]
-    ,a.[AddName]	 =b.[AddName]
+     a.[MonthLabel]=  isnull(b.[MonthLabel], '')
+    ,a.[AddName]	 =isnull(b.[AddName], '')
     ,a.[AddDate]	 =b.[AddDate]
-    ,a.[EditName]	 =b.[EditName]
+    ,a.[EditName]	 =isnull(b.[EditName], '')
     ,a.[EditDate]	 =b.[EditDate]
 from Production.dbo.Brand_Month as a inner join Trade_To_Pms.dbo.Brand_Month as b ON a.id = b.id and a.Year = b.Year and a.Month = b.Month
 
@@ -170,13 +170,13 @@ INSERT INTO [dbo].[Brand_Month]
            ,[EditName]
            ,[EditDate])
 SELECT
-	 [ID]
-    ,[Year]
-    ,[Month]
-    ,[MonthLabel]
-    ,[AddName]
+	 isnull([ID], '')
+    ,isnull([Year], '')
+    ,isnull([Month], '')
+    ,isnull([MonthLabel], '')
+    ,isnull([AddName], '')
     ,[AddDate]
-    ,[EditName]
+    ,isnull([EditName], '')
     ,[EditDate]
 from Trade_To_Pms.dbo.Brand_Month as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Brand_Month as a WITH (NOLOCK) where a.id = b.id and a.Year = b.Year and a.Month = b.Month)
@@ -193,13 +193,13 @@ UPDATE a
 SET 
       -- a.ID		 =b.ID
       --,a.BrandID		      =b.BrandID
-      a.CostRatio		      =b.CostRatio
-      ,a.SeasonSCIID		      =b.SeasonSCIID
-      ,a.Month		      =b.Month
-      ,a.Junk		      =b.Junk
-      ,a.AddName		      =b.AddName
+      a.CostRatio		      =isnull(b.CostRatio, 0)
+      ,a.SeasonSCIID		      =isnull(b.SeasonSCIID, '')
+      ,a.Month		      =isnull(b.Month, '')
+      ,a.Junk		      =isnull(b.Junk, 0)
+      ,a.AddName		      =isnull(b.AddName, '')
       ,a.AddDate		      =b.AddDate
-      ,a.EditName		      =b.EditName
+      ,a.EditName		      =isnull(b.EditName, '')
       ,a.EditDate		      =b.EditDate
 
 from Production.dbo.Season as a inner join Trade_To_Pms.dbo.Season as b ON a.id=b.id and a.BrandID = b.BrandID
@@ -219,15 +219,15 @@ INSERT INTO Production.dbo.Season
 
 )
 select 
-       ID
-      ,BrandID
-      ,CostRatio
-      ,SeasonSCIID
-      ,Month
-      ,Junk
-      ,AddName
+       isnull(ID, '')
+      ,isnull(BrandID, '')
+      ,isnull(CostRatio, 0)
+      ,isnull(SeasonSCIID, '')
+      ,isnull(Month, '')
+      ,isnull(Junk, 0)
+      ,isnull(AddName, '')
       ,AddDate
-      ,EditName
+      ,isnull(EditName, '')
       ,EditDate
 from Trade_To_Pms.dbo.Season as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Season as a WITH (NOLOCK) where a.id = b.id and a.BrandID = b.BrandID)
@@ -244,27 +244,27 @@ where b.id is null
 UPDATE a
 SET 
 --a.ID		  =b.ID
-      a.Junk		      =b.Junk
-      ,a.AbbCH		      =b.AbbCH
-      ,a.AbbEN		      =b.AbbEN
-      ,a.NameCH		      =b.NameCH
-      ,a.NameEN		      =b.NameEN
-      ,a.CountryID		      =b.CountryID
-      ,a.ThirdCountry		      =b.ThirdCountry
-      ,a.Tel		      =b.Tel
-      ,a.Fax		      =b.Fax
-      ,a.AddressCH		      =b.AddressCH
-      ,a.AddressEN		      =b.AddressEN
-      ,a.ZipCode		      =b.ZipCode
+      a.Junk		      =isnull(b.Junk, 0)
+      ,a.AbbCH		      =isnull(b.AbbCH, '')
+      ,a.AbbEN		      =isnull(b.AbbEN, '')
+      ,a.NameCH		      =isnull(b.NameCH, '')
+      ,a.NameEN		      =isnull(b.NameEN, '')
+      ,a.CountryID		      =isnull(b.CountryID, '')
+      ,a.ThirdCountry		      =isnull(b.ThirdCountry, 0)
+      ,a.Tel		      =isnull(b.Tel, '')
+      ,a.Fax		      =isnull(b.Fax, '')
+      ,a.AddressCH		      =isnull(b.AddressCH, '')
+      ,a.AddressEN		      =isnull(b.AddressEN, '')
+      ,a.ZipCode		      =isnull(b.ZipCode, '')
       ,a.Delay		      =b.Delay
-      ,a.DelayMemo		      =b.DelayMemo
+      ,a.DelayMemo		      =isnull(b.DelayMemo, '')
       ,a.LockDate		      =b.LockDate
-      ,a.LockMemo		      =b.LockMemo
-      ,a.AddName		      =b.AddName
+      ,a.LockMemo		      =isnull(b.LockMemo, '')
+      ,a.AddName		      =isnull(b.AddName, '')
       ,a.AddDate		      =b.AddDate
-      ,a.EditName		      =b.EditName
+      ,a.EditName		      =isnull(b.EditName, '')
       ,a.EditDate		      =b.EditDate
-      ,a.Currencyid		      =b.Currencyid
+      ,a.Currencyid		      =isnull(b.Currencyid, '')
 
 from Production.dbo.Supp as a inner join Trade_To_Pms.dbo.Supp as b ON a.id=b.id
 -------------------------- INSERT INTO 抓
@@ -293,28 +293,28 @@ INSERT INTO Production.dbo.Supp(
       ,Currencyid
 )
 select 
-		ID
-      ,Junk
-      ,AbbCH
-      ,AbbEN
-      ,NameCH
-      ,NameEN
-      ,CountryID
-      ,ThirdCountry
-      ,Tel
-      ,Fax
-      ,AddressCH
-      ,AddressEN
-      ,ZipCode
+	   isnull(ID, '')
+      ,isnull(Junk, 0)
+      ,isnull(AbbCH, '')
+      ,isnull(AbbEN, '')
+      ,isnull(NameCH, '')
+      ,isnull(NameEN, '')
+      ,isnull(CountryID, '')
+      ,isnull(ThirdCountry, 0)
+      ,isnull(Tel, '')
+      ,isnull(Fax, '')
+      ,isnull(AddressCH, '')
+      ,isnull(AddressEN, '')
+      ,isnull(ZipCode, '')
       ,Delay
-      ,DelayMemo
+      ,isnull(DelayMemo, '')
       ,LockDate
-      ,LockMemo
-      ,AddName
+      ,isnull(LockMemo, '')
+      ,isnull(AddName, '')
       ,AddDate
-      ,EditName
+      ,isnull(EditName, '')
       ,EditDate
-      ,Currencyid
+      ,isnull(Currencyid, '')
 from Trade_To_Pms.dbo.Supp as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Supp as a WITH (NOLOCK) where a.id = b.id)
 
@@ -331,15 +331,15 @@ where b.id is null
 UPDATE a
 SET  
       -- a.ID					 =b.ID
-      a.Junk		         =b.Junk
-      ,a.Description		 =b.Description
-      ,a.Cpu		          =b.Cpu
-      ,a.ComboPcs		      =b.ComboPcs
-      ,a.AddName		      =b.AddName
+      a.Junk		         =isnull(b.Junk, 0)
+      ,a.Description		 =isnull(b.Description, '')
+      ,a.Cpu		          =isnull(b.Cpu, 0)
+      ,a.ComboPcs		      =isnull(b.ComboPcs, 0)
+      ,a.AddName		      =isnull(b.AddName, '')
       ,a.AddDate		      =b.AddDate
-      ,a.EditName		      =b.EditName
+      ,a.EditName		      =isnull(b.EditName, '')
       ,a.EditDate		      =b.EditDate
-      ,a.ProductionFamilyID		      =b.ProductionFamilyID
+      ,a.ProductionFamilyID		      =isnull(b.ProductionFamilyID, '')
 from Production.dbo.CDCode as a inner join Trade_To_Pms.dbo.CDCode as b ON a.id=b.id
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.CDCode(
@@ -355,16 +355,16 @@ INSERT INTO Production.dbo.CDCode(
 	  ,ProductionFamilyID
 )
 select 
-		ID
-      ,Junk
-      ,Description
-      ,Cpu
-      ,ComboPcs
-      ,AddName
+	   isnull(ID, '')
+      ,isnull(Junk, 0)
+      ,isnull(Description, '')
+      ,isnull(Cpu, 0)
+      ,isnull(ComboPcs, 0)
+      ,isnull(AddName, '')
       ,AddDate
-      ,EditName
+      ,isnull(EditName, '')
       ,EditDate
-	  ,ProductionFamilyID
+	  ,isnull(ProductionFamilyID, '')
 from Trade_To_Pms.dbo.CDCode as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.CDCode as a WITH (NOLOCK) where a.id = b.id)
 
@@ -379,17 +379,16 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-      a.NameCH		      =b.NameCH
-      ,a.NameEN		      =b.NameEN
-      ,a.Alias		      =b.Alias
-      ,a.Junk		      =b.Junk
-      ,a.MtlFormA		      =b.MtlFormA
-      ,a.Continent		      =b.Continent
-      ,a.AddName		      =b.AddName
+      a.NameCH		      =isnull(b.NameCH, '')
+      ,a.NameEN		      =isnull(b.NameEN, '')
+      ,a.Alias		      =isnull(b.Alias, '')
+      ,a.Junk		      =isnull(b.Junk, 0)
+      ,a.MtlFormA		      =isnull(b.MtlFormA, 0)
+      ,a.Continent		      =isnull(b.Continent, '')
+      ,a.AddName		      =isnull(b.AddName, '')
       ,a.AddDate		      =b.AddDate
-      ,a.EditName		      =b.EditName
+      ,a.EditName		      =isnull(b.EditName, '')
       ,a.EditDate		      =b.EditDate
-
 from Production.dbo.Country as a inner join Trade_To_Pms.dbo.Country as b ON a.id=b.id
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.Country(
@@ -406,16 +405,16 @@ INSERT INTO Production.dbo.Country(
       ,EditDate
 )
 select 
- ID
-      ,NameCH
-      ,NameEN
-      ,Alias
-      ,Junk
-      ,MtlFormA
-      ,Continent
-      ,AddName
+       isnull(ID, '')
+      ,isnull(NameCH, '')
+      ,isnull(NameEN, '')
+      ,isnull(Alias, '')
+      ,isnull(Junk, 0)
+      ,isnull(MtlFormA, 0)
+      ,isnull(Continent, '')
+      ,isnull(AddName, '')
       ,AddDate
-      ,EditName
+      ,isnull(EditName, '')
       ,EditDate
 from Trade_To_Pms.dbo.Country as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Country as a WITH (NOLOCK) where a.id = b.id)
@@ -425,11 +424,11 @@ merge Production.dbo.WeaveType t
 using Trade_To_Pms.dbo.WeaveType s
 on t.id = s.id
 when matched then update set
-	 t.isFabricLoss=s.isFabricLoss
-	,t.Junk		   =s.Junk
-	,t.AddName	   =s.AddName
+	 t.isFabricLoss=isnull(s.isFabricLoss, 0)
+	,t.Junk		   =isnull(s.Junk, 0)
+	,t.AddName	   =isnull(s.AddName, '')
 	,t.AddDate	   =s.AddDate
-	,t.EditName	   =s.EditName
+	,t.EditName	   =isnull(s.EditName, '')
 	,t.EditDate	   =s.EditDate
 when not matched by target then
 	insert(id,isFabricLoss,Junk,AddName,AddDate,EditName,EditDate)
@@ -472,21 +471,21 @@ else
 UPDATE a
 SET  
       --a.ID	      =b.ID		
-      a.FullName	      =b.FullName		
-      ,a.Type	      =b.Type		
-      ,a.Junk	      =b.Junk		
-      ,a.IrregularCost	      =b.IrregularCost		
-      ,a.CheckZipper	      =b.CheckZipper		
-      ,a.ProductionType	      =b.ProductionType		
-      ,a.OutputUnit	      =b.OutputUnit		
-      ,a.IsExtensionUnit	      =b.IsExtensionUnit		
-      ,a.AddName	      =b.AddName		
+      a.FullName	      =isnull(b.FullName, '')		
+      ,a.Type	      =isnull(b.Type, '')		
+      ,a.Junk	      =isnull(b.Junk, 0)		
+      ,a.IrregularCost	      =isnull(b.IrregularCost, 0)		
+      ,a.CheckZipper	      =isnull(b.CheckZipper, 0)		
+      ,a.ProductionType	      =isnull(b.ProductionType, '')		
+      ,a.OutputUnit	      =isnull(b.OutputUnit, '')		
+      ,a.IsExtensionUnit	      =isnull(b.IsExtensionUnit, 0)		
+      ,a.AddName	      =isnull(b.AddName	, '')	
       ,a.AddDate	      =b.AddDate		
-      ,a.EditName	      =b.EditName		
+      ,a.EditName	      =isnull(b.EditName, '')		
       ,a.EditDate	      =b.EditDate
-	  ,a.IsTrimCardOther = b.isTrimCardOther	
-	  ,a.IsThread        = b.IsThread
-	  ,a.LossQtyCalculateType        = b.LossQtyCalculateType
+	  ,a.IsTrimCardOther = isnull(b.isTrimCardOther, 0)	
+	  ,a.IsThread        = isnull(b.IsThread, 0)
+	  ,a.LossQtyCalculateType        = isnull(b.LossQtyCalculateType, '')
 
 from Production.dbo.MtlType as a inner join Trade_To_Pms.dbo.MtlType as b ON a.id=b.id
 where b.EditDate between @DateStart and @DateEnd
@@ -511,22 +510,22 @@ ID
 
 )
 select 
-ID
-      ,FullName
-      ,Type
-      ,Junk
-      ,IrregularCost
-      ,CheckZipper
-      ,ProductionType
-      ,OutputUnit
-      ,IsExtensionUnit
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
-	  ,isTrimCardOther
-	  ,IsThread
-	  ,LossQtyCalculateType
+       isnull(ID				  , '')
+      ,isnull(FullName			  , '')
+      ,isnull(Type				  , '')
+      ,isnull(Junk				  , 0)
+      ,isnull(IrregularCost		  , 0)
+      ,isnull(CheckZipper		  , 0)
+      ,isnull(ProductionType	  , '')
+      ,isnull(OutputUnit		  , '')
+      ,isnull(IsExtensionUnit	  , 0)
+      ,isnull(AddName			  , '')
+      ,AddDate			 
+      ,isnull(EditName			  , '')
+      ,EditDate			  
+	  ,isnull(isTrimCardOther	  , 0)
+	  ,isnull(IsThread			  , 0)
+	  ,isnull(LossQtyCalculateType, '')
 
 from Trade_To_Pms.dbo.MtlType as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.MtlType as a WITH (NOLOCK) where a.id = b.id)
@@ -547,26 +546,26 @@ where b.id is null
 UPDATE a
 SET  
        --a.ID	      =b.ID		
-      a.Abbreviation	      =b.Abbreviation		
-      ,a.Classify	      =b.Classify		
-      ,a.Seq	      =b.Seq		
-      ,a.Junk	      =b.Junk		
-      ,a.ArtworkUnit	      =b.ArtworkUnit		
-      ,a.ProductionUnit	      =b.ProductionUnit		
-      ,a.IsTMS	      =b.IsTMS		
-      ,a.IsPrice	      =b.IsPrice		
-      ,a.IsArtwork	      =b.IsArtwork		
-      ,a.IsTtlTMS	      =b.IsTtlTMS		
-      ,a.Remark	      =b.Remark		
-      ,a.ReportDropdown	      =b.ReportDropdown		
-      ,a.UseArtwork	      =b.UseArtwork		
-      ,a.SystemType	      =b.SystemType		
-      ,a.AddName	      =b.AddName		
-      ,a.AddDate	      =b.AddDate		
-      ,a.EditName	      =b.EditName		
-      ,a.EditDate	      =b.EditDate		
-	  ,a.IsPrintToCMP	  =b.IsPrintToCMP
-	  ,a.IsLocalPurchase = b.IsLocalPurchase
+      a.Abbreviation	      = isnull(b.Abbreviation		, '')
+      ,a.Classify	      = isnull(b.Classify			   , '')
+      ,a.Seq	      = isnull(b.Seq					   , '')
+      ,a.Junk	      = isnull(b.Junk					   , 0)
+      ,a.ArtworkUnit	      = isnull(b.ArtworkUnit		, '')
+      ,a.ProductionUnit	      = isnull(b.ProductionUnit		, '')
+      ,a.IsTMS	      = isnull(b.IsTMS					   , 0)
+      ,a.IsPrice	      = isnull(b.IsPrice			   , 0)
+      ,a.IsArtwork	      = isnull(b.IsArtwork			   , 0)
+      ,a.IsTtlTMS	      = isnull(b.IsTtlTMS			   , 0)
+      ,a.Remark	      = isnull(b.Remark					   , '')
+      ,a.ReportDropdown	      = isnull(b.ReportDropdown		, 0)
+      ,a.UseArtwork	      = isnull(b.UseArtwork			   , 0)
+      ,a.SystemType	      = isnull(b.SystemType			   , '')
+      ,a.AddName	      = isnull(b.AddName			   , '')
+      ,a.AddDate	      = b.AddDate			  
+      ,a.EditName	      = isnull(b.EditName			   , '')
+      ,a.EditDate	      = b.EditDate			  
+	  ,a.IsPrintToCMP	  = isnull(b.IsPrintToCMP		   , 0)
+	  ,a.IsLocalPurchase = isnull( b.IsLocalPurchase	   , 0)
 from Production.dbo.ArtworkType as a inner join Trade_To_Pms.dbo.ArtworkType as b ON a.id=b.id
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.ArtworkType(
@@ -594,28 +593,28 @@ INSERT INTO Production.dbo.ArtworkType(
 	  ,IsLocalPurchase
 )
 select 
-       ID
-      ,Abbreviation
-      ,Classify
-      ,Seq
-      ,Junk
-      ,ArtworkUnit
-      ,ProductionUnit
-      ,IsTMS
-      ,IsPrice
-      ,IsArtwork
-      ,IsTtlTMS
-      ,Remark
-      ,ReportDropdown
-      ,UseArtwork
-      ,SystemType
-	  ,'O'
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
-	  ,IsPrintToCMP
-	  ,IsLocalPurchase
+       isnull(ID			 , '')
+      ,isnull(Abbreviation	 , '')
+      ,isnull(Classify		 , '')
+      ,isnull(Seq			 , '')
+      ,isnull(Junk			 , 0)
+      ,isnull(ArtworkUnit	 , '')
+      ,isnull(ProductionUnit , '')
+      ,isnull(IsTMS			 , 0)
+      ,isnull(IsPrice		 , 0)
+      ,isnull(IsArtwork		 , 0)
+      ,isnull(IsTtlTMS		 , 0)
+      ,isnull(Remark		 , '')
+      ,isnull(ReportDropdown , 0)
+      ,isnull(UseArtwork	 , 0)
+      ,isnull(SystemType	 , '')
+	  ,'O'					
+      ,isnull(AddName		 , '')
+      ,AddDate				 
+      ,isnull(EditName		 , '')
+      ,EditDate				
+	  ,isnull(IsPrintToCMP	 , 0)
+	  ,isnull(IsLocalPurchase, 0)
 from Trade_To_Pms.dbo.ArtworkType as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.ArtworkType as a WITH (NOLOCK) where a.id = b.id)
 -------------------------------Artworktype_Detail
@@ -624,7 +623,7 @@ Using Trade_TO_Pms.dbo.Artworktype_Detail as s
 on t.ArtworktypeID = s.ArtworktypeID and t.MachineTypeID = s.MachineTypeID
 when not matched by target then
 	insert(ArtworktypeID,MachineTypeID)
-	values(ArtworktypeID,MachineTypeID)
+	values(isnull(ArtworktypeID, ''),isnull(MachineTypeID, ''))
 when not matched by source then
 	delete;
 
@@ -637,26 +636,26 @@ Using Trade_TO_Pms.dbo.MachineType as s
 on t.id = s.id
 when matched then
 		update set 
-		t.Description		=s.Description	
-		,t.DescCH		    =s.DescCH		    
-		,t.ISO				=s.ISO		    
-		,t.ArtworkTypeID	=s.ArtworkTypeID	
-		,t.Mold				=s.Mold		    
-		,t.RPM				=s.RPM		    
-		,t.Stitches			=s.Stitches		
-		,t.Picture1			=s.Picture1		
-		,t.Picture2			=s.Picture2		
-		,t.MachineAllow		=s.MachineAllow	
-		,t.ManAllow			=s.ManAllow		
-		,t.MachineGroupID	=s.MachineGroupID	
-		,t.Junk				=s.Junk		    
-		,t.AddName			=s.AddName		
+		t.Description		=isnull(s.Description	, '')
+		,t.DescCH		    =isnull(s.DescCH		, '')
+		,t.ISO				=isnull(s.ISO		    , '')
+		,t.ArtworkTypeID	=isnull(s.ArtworkTypeID	, '')
+		,t.Mold				=isnull(s.Mold		    , 0)
+		,t.RPM				=isnull(s.RPM		    , 0)
+		,t.Stitches			=isnull(s.Stitches		, 0)
+		,t.Picture1			=isnull(s.Picture1		, '')
+		,t.Picture2			=isnull(s.Picture2		, '')
+		,t.MachineAllow		=isnull(s.MachineAllow	, 0)
+		,t.ManAllow			=isnull(s.ManAllow		, 0)
+		,t.MachineGroupID	=isnull(s.MachineGroupID, '')
+		,t.Junk				=isnull(s.Junk		    , 0)
+		,t.AddName			=isnull(s.AddName		, '')
 		,t.AddDate			=s.AddDate		
-		,t.EditName			=s.EditName		
+		,t.EditName			=isnull(s.EditName		, '')
 		,t.EditDate			=s.EditDate		
-		,t.isThread         =s.isThread
-		,t.MasterGroupID	=s.MasterGroupID	
-		,t.Hem				=s.Hem
+		,t.isThread         =isnull(s.isThread		, 0)
+		,t.MasterGroupID	=isnull(s.MasterGroupID	, '')
+		,t.Hem				=isnull(s.Hem			, 0)
 when not matched by target then
 	insert(
 		ID
@@ -682,27 +681,27 @@ when not matched by target then
 		,Hem
 	)
 	values(
-		ID
-		,Description
-		,DescCH
-		,ISO
-		,ArtworkTypeID
-		,Mold
-		,RPM
-		,Stitches
-		,Picture1
-		,Picture2
-		,MachineAllow
-		,ManAllow
-		,MachineGroupID
-		,Junk
-		,AddName
-		,AddDate
-		,EditName
-		,EditDate
-		,isThread
-		,MasterGroupID
-		,Hem
+		 isnull(ID				, '')
+		,isnull(Description		, '')
+		,isnull(DescCH			, '')
+		,isnull(ISO				, '')
+		,isnull(ArtworkTypeID	, '')
+		,isnull(Mold			, 0)
+		,isnull(RPM				, 0)
+		,isnull(Stitches		, 0)
+		,isnull(Picture1		, '')
+		,isnull(Picture2		, '')
+		,isnull(MachineAllow	, 0)
+		,isnull(ManAllow		, 0)
+		,isnull(MachineGroupID	, '')
+		,isnull(Junk			, 0)
+		,isnull(AddName			, '')
+		,AddDate			
+		,isnull(EditName		, '')
+		,EditDate	
+		,isnull(isThread		, 0)
+		,isnull(MasterGroupID	, '')
+		,isnull(Hem				, 0)
 	)
 when not matched by source then
 	delete;
@@ -714,10 +713,10 @@ Using Trade_TO_Pms.dbo.MachineType_Detail as s
 on t.id = s.id and t.FactoryID = s.FactoryID
 when matched then
 		update set 
-		t.IsSubprocess		=s.IsSubprocess	
-		,t.IsNonSewingLine	=s.IsNonSewingLine		    
-		,t.IsNotShownInP01	=s.IsNotShownInP01		    
-		,t.IsNotShownInP03	=s.IsNotShownInP03	
+		t.IsSubprocess		=isnull(s.IsSubprocess	 , 0)
+		,t.IsNonSewingLine	=isnull(s.IsNonSewingLine, 0)	    
+		,t.IsNotShownInP01	=isnull(s.IsNotShownInP01, 0)	    
+		,t.IsNotShownInP03	=isnull(s.IsNotShownInP03, 0)
 when not matched by target then
 	insert(
 		[ID]
@@ -728,12 +727,12 @@ when not matched by target then
 		,[IsNotShownInP03]
 	)
 	values(
-	   s.[ID]
-      ,s.[FactoryID]
-      ,s.[IsSubprocess]
-      ,s.[IsNonSewingLine]
-      ,s.[IsNotShownInP01]
-      ,s.[IsNotShownInP03]
+	   isnull(s.[ID], '')
+      ,isnull(s.[FactoryID], '')
+      ,isnull(s.[IsSubprocess]	 , 0)
+      ,isnull(s.[IsNonSewingLine], 0)
+      ,isnull(s.[IsNotShownInP01], 0)
+      ,isnull(s.[IsNotShownInP03], 0)
 	)
 when not matched by source then
 	delete;
@@ -750,39 +749,39 @@ where b.id is null
 UPDATE a
 SET  
       -- a.BrandID		     =b.BrandID
-      a.Junk		      =b.Junk
-      ,a.ID		      =b.ID
-      ,a.CountryID		      =b.CountryID
-      ,a.City		      =b.City
-      ,a.QuotaArea		      =b.QuotaArea
-      ,a.ScanAndPack		      =b.ScanAndPack
-      ,a.ZipperInsert		      =b.ZipperInsert
-      ,a.SpecialCust		      =b.SpecialCust
-      ,a.VasShas		      =b.VasShas
-      ,a.Guid		      =b.Guid
-      ,a.Factories		      =b.Factories
-      ,a.PayTermARIDBulk		      =b.PayTermARIDBulk
-      ,a.PayTermARIDSample		      =b.PayTermARIDSample
-      ,a.ProformaInvoice		      =b.ProformaInvoice
-      ,a.BankIDSample		      =b.BankIDSample
-      ,a.BankIDBulk		      =b.BankIDBulk
-      ,a.BrandLabel		      =b.BrandLabel
-      ,a.MarkFront		      =b.MarkFront
-      ,a.MarkBack		      =b.MarkBack
-      ,a.MarkLeft		      =b.MarkLeft
-      ,a.MarkRight		      =b.MarkRight
-      ,a.BillTo		      =b.BillTo
-      ,a.ShipTo		      =b.ShipTo
-      ,a.Consignee		      =b.Consignee
-      ,a.Notify		      =b.Notify
-      ,a.Anotify		      =b.Anotify
-      ,a.ShipRemark		      =b.ShipRemark
-      ,a.AddName		      =b.AddName
-      ,a.AddDate		      =b.AddDate
-      ,a.EditName		      =b.EditName
-      ,a.EditDate		      =b.EditDate
-	  ,a.Kit		          =b.Kit
-	  ,a.HealthID		      =b.HealthID
+      a.Junk		      = isnull(b.Junk							, 0)
+      ,a.ID		      = isnull(b.ID									, '')
+      ,a.CountryID		      = isnull(b.CountryID					, '')
+      ,a.City		      = isnull(b.City							, '')
+      ,a.QuotaArea		      = isnull(b.QuotaArea					, '')
+      ,a.ScanAndPack		      = isnull(b.ScanAndPack			, 0)
+      ,a.ZipperInsert		      = isnull(b.ZipperInsert			, '')
+      ,a.SpecialCust		      = isnull(b.SpecialCust			, 0)
+      ,a.VasShas		      = isnull(b.VasShas					, 0)
+      ,a.Guid		      = isnull(b.Guid							, '')
+      ,a.Factories		      = isnull(b.Factories					, '')
+      ,a.PayTermARIDBulk		      = isnull(b.PayTermARIDBulk	, '')
+      ,a.PayTermARIDSample		      = isnull(b.PayTermARIDSample	, '')
+      ,a.ProformaInvoice		      = isnull(b.ProformaInvoice	, 0)
+      ,a.BankIDSample		      = isnull(b.BankIDSample			, '')
+      ,a.BankIDBulk		      = isnull(b.BankIDBulk					, '')
+      ,a.BrandLabel		      = isnull(b.BrandLabel					, '')
+      ,a.MarkFront		      = isnull(b.MarkFront					, '')
+      ,a.MarkBack		      = isnull(b.MarkBack					, '')
+      ,a.MarkLeft		      = isnull(b.MarkLeft					, '')
+      ,a.MarkRight		      = isnull(b.MarkRight					, '')
+      ,a.BillTo		      = isnull(b.BillTo							, '')
+      ,a.ShipTo		      = isnull(b.ShipTo							, '')
+      ,a.Consignee		      = isnull(b.Consignee					, '')
+      ,a.Notify		      = isnull(b.Notify							, '')
+      ,a.Anotify		      = isnull(b.Anotify					, '')
+      ,a.ShipRemark		      = isnull(b.ShipRemark					, '')
+      ,a.AddName		      = isnull(b.AddName					, '')
+      ,a.AddDate		      = b.AddDate				
+      ,a.EditName		      = isnull(b.EditName					, '')
+      ,a.EditDate		      = b.EditDate				
+	  ,a.Kit		          = isnull(b.Kit						, '')
+	  ,a.HealthID		      = isnull(b.HealthID					, '')
 
 from Production.dbo.CustCD as a inner join Trade_To_Pms.dbo.CustCD as b ON a.id=b.id and a.BrandID=b.BrandID
 -------------------------- INSERT INTO 抓
@@ -823,40 +822,40 @@ BrandID
 	  ,HealthID
 )
 select 
-BrandID
-      ,Junk
-      ,ID
-      ,CountryID
-      ,City
-      ,QuotaArea
-      ,ScanAndPack
-      ,ZipperInsert
-      ,SpecialCust
-      ,VasShas
-      ,Guid
-      ,Factories
-      ,PayTermARIDBulk
-      ,PayTermARIDSample
-      ,ProformaInvoice
-      ,BankIDSample
-      ,BankIDBulk
-      ,BrandLabel
-      ,MarkFront
-      ,MarkBack
-      ,MarkLeft
-      ,MarkRight
-      ,BillTo
-      ,ShipTo
-      ,Consignee
-      ,Notify
-      ,Anotify
-      ,ShipRemark
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
-	  ,Kit
-	  ,HealthID
+       isnull(BrandID			, '')
+      ,isnull(Junk				, 0)
+      ,isnull(ID				, '')
+      ,isnull(CountryID			, '')
+      ,isnull(City				, '')
+      ,isnull(QuotaArea			, '')
+      ,isnull(ScanAndPack		, 0)
+      ,isnull(ZipperInsert		, '')
+      ,isnull(SpecialCust		, 0)
+      ,isnull(VasShas			, 0)
+      ,isnull(Guid				, '')
+      ,isnull(Factories			, '')
+      ,isnull(PayTermARIDBulk	, '')
+      ,isnull(PayTermARIDSample	, '')
+      ,isnull(ProformaInvoice	, 0)
+      ,isnull(BankIDSample		, '')
+      ,isnull(BankIDBulk		, '')
+      ,isnull(BrandLabel		, '')
+      ,isnull(MarkFront			, '')
+      ,isnull(MarkBack			, '')
+      ,isnull(MarkLeft			, '')
+      ,isnull(MarkRight			, '')
+      ,isnull(BillTo			, '')
+      ,isnull(ShipTo			, '')
+      ,isnull(Consignee			, '')
+      ,isnull(Notify			, '')
+      ,isnull(Anotify			, '')
+      ,isnull(ShipRemark		, '')
+      ,isnull(AddName			, '')
+      ,AddDate			
+      ,isnull(EditName			, '')
+      ,EditDate			
+	  ,isnull(Kit				, '')
+	  ,isnull(HealthID			, '')
 from Trade_To_Pms.dbo.CustCD as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.CustCD as a WITH (NOLOCK) where a.id = b.id and a.BrandID=b.BrandID)
 
@@ -874,18 +873,18 @@ UPDATE a
 SET  
        --a.ReasonTypeID	        = b.ReasonTypeID	
       --,a.ID	       = b.ID	
-      a.Name	       = b.Name	
-      ,a.Remark	       = b.Remark	
-      ,a.No	       = b.No	
-      ,a.ReasonGroup	       = b.ReasonGroup	
-      ,a.Kpi	       = b.Kpi	
-      ,a.AccountID	       = b.AccountID	
-      ,a.FactoryKpi	       = b.FactoryKpi	
-      ,a.AddName	       = b.AddName	
+      a.Name	       = isnull(b.Name	, '')
+      ,a.Remark	       = isnull(b.Remark	, '')
+      ,a.No	       = isnull(b.No	, 0)
+      ,a.ReasonGroup	       = isnull(b.ReasonGroup	, '')
+      ,a.Kpi	       = isnull(b.Kpi	, 0)
+      ,a.AccountID	       = isnull(b.AccountID	, '')
+      ,a.FactoryKpi	       = isnull(b.FactoryKpi	, 0)
+      ,a.AddName	       = isnull(b.AddName	, '')
       ,a.AddDate	       = b.AddDate	
-      ,a.EditName	       = b.EditName	
+      ,a.EditName	       = isnull(b.EditName	, '')
       ,a.EditDate	       = b.EditDate	
-      ,a.Junk	       = b.Junk	
+      ,a.Junk	       = isnull(b.Junk	, 0)
 
 from Production.dbo.Reason as a inner join Trade_To_Pms.dbo.Reason as b ON a.id=b.id and a.ReasonTypeID = b.ReasonTypeID
 -------------------------- INSERT INTO 抓
@@ -907,20 +906,20 @@ INSERT INTO Production.dbo.Reason(
 
 )
 select 
-       ReasonTypeID
-      ,ID
-      ,Name
-      ,Remark
-      ,No
-      ,ReasonGroup
-      ,Kpi
-      ,AccountID
-      ,FactoryKpi
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
-      ,Junk
+       isnull(ReasonTypeID, '')
+      ,isnull(ID		  , '')
+      ,isnull(Name		  , '')
+      ,isnull(Remark	  , '')
+      ,isnull(No		  , 0)
+      ,isnull(ReasonGroup , '')
+      ,isnull(Kpi		  , 0)
+      ,isnull(AccountID	  , '')
+      ,isnull(FactoryKpi  , 0)
+      ,isnull(AddName	  , '')
+      ,AddDate	 
+      ,isnull(EditName	  , '')
+      ,EditDate	  
+      ,isnull(Junk		  , 0)
 from Trade_To_Pms.dbo.Reason as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Reason as a WITH (NOLOCK) where a.id = b.id and a.ReasonTypeID = b.ReasonTypeID)
 
@@ -936,10 +935,10 @@ where b.id is null
 UPDATE a
 SET  
 		--a.ID	   =b.ID	
-      a.Description	  =b.Description	
-      ,a.AddName	      =b.AddName	
+      a.Description	  =isnull(b.Description	, '')
+      ,a.AddName	      =isnull(b.AddName	, '')
       ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
+      ,a.EditName	      =isnull(b.EditName	, '')
       ,a.EditDate	      =b.EditDate	
 
 from Production.dbo.SHIPTerm as a inner join Trade_To_Pms.dbo.SHIPTerm as b ON a.id=b.id
@@ -953,11 +952,11 @@ INSERT INTO Production.dbo.SHIPTerm(
       ,EditDate
 )
 select 
-		ID
-      ,Description
-      ,AddName
+		isnull(ID, '')
+      ,isnull(Description, '')
+      ,isnull(AddName, '')
       ,AddDate
-      ,EditName
+      ,isnull(EditName, '')
       ,EditDate
 from Trade_To_Pms.dbo.SHIPTerm as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.SHIPTerm as a WITH (NOLOCK) where a.id = b.id)
@@ -981,32 +980,32 @@ UPDATE a
 SET  
       -- a.ID	    =b.ID	
       -- a.MDivisionID	      =b.MDivisionID	
-      a.Junk	      =b.Junk
-	  ,a.NameCH	      =b.NameCH	
-      ,a.CountryID	      =b.CountryID		
-      ,a.AddressCH	      =b.AddressCH	
-      ,a.CurrencyID	      =b.CurrencyID	
-      ,a.CPU	      =b.CPU	
-      ,a.ZipCode	      =b.ZipCode	
-      ,a.PortSea	      =b.PortSea	
-      ,a.PortAir	      =b.PortAir	
-      ,a.KitId	      =b.KitId	
-      ,a.ExpressGroup	      =b.ExpressGroup	
-      ,a.IECode	      =b.IECode	
-      ,a.AddName	      =b.AddName	
-      ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
-      ,a.EditDate	      =b.EditDate	
-      ,a.KPICode	      =b.KPICode	
-      ,a.Type	      =b.Type	
-      ,a.Zone	      =b.Zone	
-      ,a.FactorySort	      =b.FactorySort	
-	  ,a.IsSCI        =b.IsSCI
-	  ,a.TestDocFactoryGroup = b.TestDocFactoryGroup
-	  ,a.FtyZone      =b.FtyZone
-	  ,a.Foundry	  =b.Foundry
-	  ,a.ProduceM	  =b.MDivisionID
-	  ,a.LoadingFactoryGroup	  =b.LoadingFactoryGroup
+      a.Junk	      =isnull(b.Junk						   , 0)
+	  ,a.NameCH	      =isnull(b.NameCH						   , '')
+      ,a.CountryID	      =isnull(b.CountryID				   , '')
+      ,a.AddressCH	      =isnull(b.AddressCH				   , '')
+      ,a.CurrencyID	      =isnull(b.CurrencyID				   , '')
+      ,a.CPU	      =isnull(b.CPU							   , 0)
+      ,a.ZipCode	      =isnull(b.ZipCode					   , '')
+      ,a.PortSea	      =isnull(b.PortSea					   , '')
+      ,a.PortAir	      =isnull(b.PortAir					   , '')
+      ,a.KitId	      =isnull(b.KitId						   , '')
+      ,a.ExpressGroup	      =isnull(b.ExpressGroup		   , '')
+      ,a.IECode	      =isnull(b.IECode						   , '')
+      ,a.AddName	      =isnull(b.AddName					   , '')
+      ,a.AddDate	      =b.AddDate						 
+      ,a.EditName	      =isnull(b.EditName				   , '')
+      ,a.EditDate	      =b.EditDate						 
+      ,a.KPICode	      =isnull(b.KPICode					   , '')
+      ,a.Type	      =isnull(b.Type						   , '')
+      ,a.Zone	      =isnull(b.Zone						   , '')
+      ,a.FactorySort	      =isnull(b.FactorySort			   , '')
+	  ,a.IsSCI        =isnull(b.IsSCI						   , 0)
+	  ,a.TestDocFactoryGroup = isnull(b.TestDocFactoryGroup	   , '')
+	  ,a.FtyZone      =isnull(b.FtyZone						   , '')
+	  ,a.Foundry	  =isnull(b.Foundry						   , 0)
+	  ,a.ProduceM	  =isnull(b.MDivisionID					   , '')
+	  ,a.LoadingFactoryGroup	  =isnull(b.LoadingFactoryGroup, '')
 from Production.dbo.Factory as a inner join Trade_To_Pms.dbo.Factory as b ON a.id=b.id
 --Factory1
 --Factory_TMS
@@ -1018,7 +1017,7 @@ SET
       --,a.Year	      =b.Year	
       --,a.ArtworkTypeID	      =b.ArtworkTypeID	
      -- ,a.Month	      =b.Month	
-      a.TMS	      =b.TMS	
+      a.TMS	      =isnull(b.TMS	, 0)
 
 from Production.dbo.Factory_Tms as a inner join Trade_To_Pms.dbo.Factory_Tms as b ON a.id=b.id and a.Year=b.Year and a.ArtworkTypeID=b.ArtworkTypeID and a.Month=b.Month
 -------------------------- 根據 Factory_TMS Primary Key 新增不存在 PMS 的資料
@@ -1031,11 +1030,11 @@ INSERT INTO Production.dbo.Factory_Tms(
 
 )
 select 
-      ID
-      ,Year
-      ,ArtworkTypeID
-      ,Month
-      ,TMS
+       isnull(ID, '')
+      ,isnull(Year, '')
+      ,isnull(ArtworkTypeID, '')
+      ,isnull(Month, '')
+      ,isnull(TMS, 0)
 
 from Trade_To_Pms.dbo.Factory_Tms as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Factory_Tms as a WITH (NOLOCK) where a.id = b.id and a.Year=b.Year and a.ArtworkTypeID=b.ArtworkTypeID and a.Month=b.Month)
@@ -1060,13 +1059,13 @@ SET
       -- a.ID		     =b.ID
       --,a.BrandID		      =b.BrandID
       --,a.CDCodeID		      =b.CDCodeID
-      a.BrandAreaCode		      =b.BrandAreaCode
-      ,a.BrandFTYCode		      =b.BrandFTYCode
-      ,a.BrandVendorCode		      =b.BrandVendorCode
-      ,a.BrandReportCode		      =b.BrandReportCode
-      ,a.AddName		      =b.AddName
+      a.BrandAreaCode		      =isnull(b.BrandAreaCode, '')
+      ,a.BrandFTYCode		      =isnull(b.BrandFTYCode, '')
+      ,a.BrandVendorCode		      =isnull(b.BrandVendorCode, '')
+      ,a.BrandReportCode		      =isnull(b.BrandReportCode, '')
+      ,a.AddName		      =isnull(b.AddName, '')
       ,a.AddDate		      =b.AddDate
-      ,a.EditName		      =b.EditName
+      ,a.EditName		      =isnull(b.EditName, '')
       ,a.EditDate		      =b.EditDate
 
 from Production.dbo.Factory_BrandDefinition as a inner join Trade_To_Pms.dbo.Factory_BrandDefinition as b ON a.id=b.id and a.BrandID=b.BrandID and a.CDCodeID=b.CDCodeID
@@ -1077,11 +1076,11 @@ SET
       -- a.ID		     =b.ID
      -- ,a.BrandID		      =b.BrandID
       --,a.CDCodeID		      =b.CDCodeID
-      a.BrandAreaCode		      =b.BrandAreaCode
-      ,a.BrandFTYCode		      =b.BrandFTYCode
-      ,a.BrandVendorCode		      =b.BrandVendorCode
-      ,a.BrandReportCode		      =b.BrandReportCode
-      ,a.AddName		      =b.AddName
+      a.BrandAreaCode		      =isnull(b.BrandAreaCode, '')
+      ,a.BrandFTYCode		      =isnull(b.BrandFTYCode, '')
+      ,a.BrandVendorCode		      =isnull(b.BrandVendorCode, '')
+      ,a.BrandReportCode		      =isnull(b.BrandReportCode, '')
+      ,a.AddName		      =isnull(b.AddName, '')
       ,a.AddDate		      =b.AddDate
       --,a.EditName		      =b.EditName
       --,a.EditDate		      =b.EditDate
@@ -1104,16 +1103,16 @@ ID
 
 )
 select 
-ID
-      ,BrandID
-      ,CDCodeID
-      ,BrandAreaCode
-      ,BrandFTYCode
-      ,BrandVendorCode
-      ,BrandReportCode
-      ,AddName
+       isnull(ID, '')
+      ,isnull(BrandID, '')
+      ,isnull(CDCodeID, '')
+      ,isnull(BrandAreaCode, '')
+      ,isnull(BrandFTYCode, '')
+      ,isnull(BrandVendorCode, '')
+      ,isnull(BrandReportCode, '')
+      ,isnull(AddName, '')
       ,AddDate
-      ,EditName
+      ,isnull(EditName, '')
       ,EditDate
 
 from Trade_To_Pms.dbo.Factory_BrandDefinition as b WITH (NOLOCK)
@@ -1130,8 +1129,8 @@ SET
        --a.ID	     =b.ID	
       --,a.Year	      =b.Year	
       --,a.Month	      =b.Month	
-      a.HalfMonth1	      =b.HalfMonth1	
-      ,a.HalfMonth2	      =b.HalfMonth2	
+      a.HalfMonth1	      =isnull(b.HalfMonth1	, 0)
+      ,a.HalfMonth2	      =isnull(b.HalfMonth2	, 0)
 
 from Production.dbo.Factory_WorkHour as a inner join Trade_To_Pms.dbo.Factory_WorkHour as b ON a.id=b.id and a.Year=b.Year and a.Month=b.Month
 -------------------------- INSERT INTO 抓
@@ -1144,11 +1143,11 @@ INSERT INTO Production.dbo.Factory_WorkHour(
 
 )
 select 
-       ID
-      ,Year
-      ,Month
-      ,HalfMonth1
-      ,HalfMonth2
+       isnull(ID		, '')
+      ,isnull(Year		, '')
+      ,isnull(Month		, '')
+      ,isnull(HalfMonth1, 0)
+      ,isnull(HalfMonth2, 0)
 from Trade_To_Pms.dbo.Factory_WorkHour as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Factory_WorkHour as a WITH (NOLOCK) where a.id = b.id and a.Year=b.Year and a.Month=b.Month)
 
@@ -1165,26 +1164,26 @@ where b.id is null
 UPDATE a
 SET  
       -- a.ID	     =b.ID	
-      a.Junk	      =b.Junk	
-      ,a.Abb	      =b.Abb	
-      ,a.NameCH	      =b.NameCH	
-      ,a.NameEN	      =b.NameEN	
-      ,a.CountryID	      =b.CountryID	
-      ,a.Tel	      =b.Tel	
-      ,a.Fax	      =b.Fax	
-      ,a.AddressCH	      =b.AddressCH	
-      ,a.AddressEN	      =b.AddressEN	
-      ,a.CurrencyID	      =b.CurrencyID	
-      ,a.ExpressGroup	      =b.ExpressGroup	
-      ,a.PortAir	      =b.PortAir	
-      ,a.MDivisionID	      =b.MDivisionID	
-      ,a.AddName	      =b.AddName	
-      ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
-      ,a.EditDate	      =b.EditDate	
-      ,a.Type	      =b.Type	
-      ,a.Zone	      =b.Zone	
-	  ,a.FtyZone      =b.FtyZone 
+      a.Junk	      = isnull(b.Junk				 , 0)
+      ,a.Abb	      = isnull(b.Abb				 , '')
+      ,a.NameCH	      = isnull(b.NameCH				 , '')
+      ,a.NameEN	      = isnull(b.NameEN				 , '')
+      ,a.CountryID	      = isnull(b.CountryID		 , '')
+      ,a.Tel	      = isnull(b.Tel				 , '')
+      ,a.Fax	      = isnull(b.Fax				 , '')
+      ,a.AddressCH	      = isnull(b.AddressCH		 , '')
+      ,a.AddressEN	      = isnull(b.AddressEN		 , '')
+      ,a.CurrencyID	      = isnull(b.CurrencyID		 , '')
+      ,a.ExpressGroup	      = isnull(b.ExpressGroup, '')
+      ,a.PortAir	      = isnull(b.PortAir		 , '')
+      ,a.MDivisionID	      = isnull(b.MDivisionID , '')
+      ,a.AddName	      = isnull(b.AddName		 , '')
+      ,a.AddDate	      = b.AddDate		
+      ,a.EditName	      = isnull(b.EditName		 , '')
+      ,a.EditDate	      = b.EditDate	
+      ,a.Type	      = isnull(b.Type				 , '')
+      ,a.Zone	      = isnull(b.Zone				 , '')
+	  ,a.FtyZone      = isnull(b.FtyZone			 , '')
 from Production.dbo.SCIFty as a inner join Trade_To_Pms.dbo.Factory as b ON a.id=b.id
 where b.IsSCI=1
 
@@ -1213,27 +1212,27 @@ INSERT INTO Production.dbo.SCIFty(
 	  ,FtyZone
 )
 select 
-       ID
-      ,Junk
-      ,Abb
-      ,NameCH
-      ,NameEN
-      ,CountryID
-      ,Tel
-      ,Fax
-      ,AddressCH
-      ,AddressEN
-      ,CurrencyID
-      ,ExpressGroup
-      ,PortAir
-      ,MDivisionID
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
-	  ,Type
-	  ,Zone
-	  ,FtyZone 
+       isnull(ID		   , '')
+      ,isnull(Junk		   , 0)
+      ,isnull(Abb		   , '')
+      ,isnull(NameCH	   , '')
+      ,isnull(NameEN	   , '')
+      ,isnull(CountryID	   , '')
+      ,isnull(Tel		   , '')
+      ,isnull(Fax		   , '')
+      ,isnull(AddressCH	   , '')
+      ,isnull(AddressEN	   , '')
+      ,isnull(CurrencyID   , '')
+      ,isnull(ExpressGroup , '')
+      ,isnull(PortAir	   , '')
+      ,isnull(MDivisionID  , '')
+      ,isnull(AddName	   , '')
+      ,AddDate	  
+      ,isnull(EditName	   , '')
+      ,EditDate	   
+	  ,isnull(Type		   , '')
+	  ,isnull(Zone		   , '')
+	  ,isnull(FtyZone      , '')
 from Trade_To_Pms.dbo.Factory as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.SCIFty as a WITH (NOLOCK) where a.id = b.id)
 and b.IsSCI=1
@@ -1248,18 +1247,18 @@ where b.id is null
 UPDATE a
 SET  
      --  a.ID	      =b.ID	
-      a.PriceRate	      =b.PriceRate	
-      ,a.Round	      =b.Round	
-      ,a.Description	      =b.Description	
+      a.PriceRate	      =isnull(b.PriceRate	, 0)
+      ,a.Round	      =isnull(b.Round	, 0)
+      ,a.Description	      =isnull(b.Description	, '')
       ,a.ExtensionUnit	      =isnull(b.ExtensionUnit,'')	
-      ,a.Junk	      =b.TradeJunk	
-      ,a.AddName	      =b.AddName	
+      ,a.Junk	      =isnull(b.TradeJunk	, 0)
+      ,a.AddName	      =isnull(b.AddName	, '')
       ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
+      ,a.EditName	      =isnull(b.EditName	, '')
       ,a.EditDate	      =b.EditDate	
-	  ,a.MiAdidasRound    =b.MiAdidasRound
-	  ,a.RoundStep        =b.RoundStep
-	  ,a.StockRound		  =b.StockRound
+	  ,a.MiAdidasRound    =isnull(b.MiAdidasRound, 0)
+	  ,a.RoundStep        =isnull(b.RoundStep, 0)
+	  ,a.StockRound		  =isnull(b.StockRound, 0)
 
 from Production.dbo.Unit as a inner join Trade_To_Pms.dbo.Unit as b ON a.id=b.id
 -------------------------- INSERT INTO 抓
@@ -1279,19 +1278,19 @@ INSERT INTO Production.dbo.Unit(
 	  ,StockRound
 )
 select 
-       ID
-      ,PriceRate
-      ,Round
-      ,Description
+       isnull(ID		 , '')
+      ,isnull(PriceRate	 , 0)
+      ,isnull(Round		 , 0)
+      ,isnull(Description, '')
       ,isnull(ExtensionUnit,'')
-      ,TradeJunk
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
-	  ,MiAdidasRound
-	  ,RoundStep
-	  ,StockRound
+      ,isnull(TradeJunk, 0)
+      ,isnull(AddName	   , '')
+      ,AddDate	   
+      ,isnull(EditName	   , '')
+      ,EditDate	 
+	  ,isnull(MiAdidasRound, 0)
+	  ,isnull(RoundStep	   , 0)
+	  ,isnull(StockRound   , 0)
 from Trade_To_Pms.dbo.Unit as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Unit as a WITH (NOLOCK) where a.id = b.id)
 
@@ -1309,11 +1308,11 @@ UPDATE a
 SET  
       -- a.UnitFrom	    =b.UnitFrom	
      -- ,a.UnitTo	      =b.UnitTo	
-      a.Rate	      =b.Rate	
-      ,a.RateValue	      =b.RateValue	
-      ,a.AddName	      =b.AddName	
+      a.Rate	      =isnull(b.Rate	, '')
+      ,a.RateValue	      =isnull(b.RateValue	, 0)
+      ,a.AddName	      =isnull(b.AddName	, '')
       ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
+      ,a.EditName	      =isnull(b.EditName	, '')
       ,a.EditDate	      =b.EditDate	
 
 from Production.dbo.Unit_Rate as a inner join Trade_To_Pms.dbo.Unit_Rate as b ON a.UnitFrom = b.UnitFrom and a.UnitTo = b.UnitTo
@@ -1330,14 +1329,14 @@ INSERT INTO Production.dbo.Unit_Rate(
 
 )
 select 
-       UnitFrom
-      ,UnitTo
-      ,Rate
-      ,RateValue
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
+       isnull(UnitFrom	, '')
+      ,isnull(UnitTo	, '')
+      ,isnull(Rate		, '')
+      ,isnull(RateValue	, 0)
+      ,isnull(AddName	, '')
+      ,AddDate	
+      ,isnull(EditName	, '')
+      ,EditDate 
 from Trade_To_Pms.dbo.Unit_Rate as b WITH (NOLOCK)
 where not exists(select UnitFrom from Production.dbo.Unit_Rate as a WITH (NOLOCK) where a.UnitFrom = b.UnitFrom  and a.UnitTo = b.UnitTo)
 
@@ -1354,9 +1353,9 @@ where b.id is null
 UPDATE a
 SET  
  --a.ID	     =b.ID	
-      a.Name	      =b.Name	
-      ,a.ExtNo	      =b.ExtNo	
-      ,a.EMail	      =b.EMail	
+      a.Name	      =isnull(b.Name	, '')
+      ,a.ExtNo	      =isnull(b.ExtNo	, '')
+      ,a.EMail	      =isnull(b.EMail	, '')
 from Production.dbo.TPEPass1 as a inner join Trade_To_Pms.dbo.Pass1 as b ON a.id=b.id
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.TPEPass1(
@@ -1366,10 +1365,10 @@ INSERT INTO Production.dbo.TPEPass1(
       ,EMail
 )
 select 
-       ID
-      ,Name
-      ,ExtNo
-      ,EMail
+       isnull(ID, '')
+      ,isnull(Name, '')
+      ,isnull(ExtNo, '')
+      ,isnull(EMail, '')
 from Trade_To_Pms.dbo.Pass1 as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.TPEPass1 as a WITH (NOLOCK) where a.id = b.id)
 
@@ -1385,13 +1384,13 @@ UPDATE a
 SET  
  --a.BrandId		 =b.BrandId
      -- ,a.ID		      =b.ID
-      a.Name		      =b.Name
-      ,a.Varicolored		      =b.Varicolored
-      ,a.JUNK		      =b.JUNK
-      ,a.VIVID		      =b.VIVID
-      ,a.AddName		      =b.AddName
+      a.Name		      =isnull(b.Name, '')
+      ,a.Varicolored		      =isnull(b.Varicolored, 0)
+      ,a.JUNK		      =isnull(b.JUNK, 0)
+      ,a.VIVID		      =isnull(b.VIVID, 0)
+      ,a.AddName		      =isnull(b.AddName, '')
       ,a.AddDate		      =b.AddDate
-      ,a.EditName		      =b.EditName
+      ,a.EditName		      =isnull(b.EditName, '')
       ,a.EditDate		      =b.EditDate
 	  ,a.ukey =b.ukey
 
@@ -1412,17 +1411,17 @@ INSERT INTO Production.dbo.Color(
 
 )
 select 
-       BrandId
-      ,ID
-      ,Name
-      ,Varicolored
-      ,JUNK
-      ,VIVID
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
-	  ,ukey
+       isnull(BrandId		  , '')
+      ,isnull(ID			  , '')
+      ,isnull(Name			  , '')
+      ,isnull(Varicolored	  , 0)
+      ,isnull(JUNK			  , 0)
+      ,isnull(VIVID			  , 0)
+      ,isnull(AddName		  , '')
+      ,AddDate		 
+      ,isnull(EditName		  , '')
+      ,EditDate		 
+	  ,isnull(ukey            , 0)
 from Trade_To_Pms.dbo.Color as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Color as a WITH (NOLOCK) where a.id = b.id and a.BrandId = b.BrandId)
 
@@ -1438,15 +1437,15 @@ where b.id is null
 UPDATE a
 SET  
       -- a.ID		      =b.ID
-      a.StdRate		      =b.StdRate
-      ,a.NameCH		      =b.NameCH
-      ,a.NameEN		      =b.NameEN
-      ,a.Junk		      =b.Junk
-      ,a.Exact		      =b.Exact
-      ,a.Symbol		      =b.Symbol
-      ,a.AddName		      =b.AddName
+      a.StdRate		      =isnull(b.StdRate	 , 0)
+      ,a.NameCH		      =isnull(b.NameCH	 , '')
+      ,a.NameEN		      =isnull(b.NameEN	 , '')
+      ,a.Junk		      =isnull(b.Junk	 , 0)
+      ,a.Exact		      =isnull(b.Exact	 , 0)
+      ,a.Symbol		      =isnull(b.Symbol   , '')
+      ,a.AddName		      =isnull(b.AddName, '')
       ,a.AddDate		      =b.AddDate
-      ,a.EditName		      =b.EditName
+      ,a.EditName		      =isnull(b.EditName, '')
       ,a.EditDate		      =b.EditDate
 
 from Production.dbo.Currency as a inner join Trade_To_Pms.dbo.Currency as b ON a.id=b.id
@@ -1466,16 +1465,16 @@ ID
 
 )
 select 
-ID
-      ,StdRate
-      ,NameCH
-      ,NameEN
-      ,Junk
-      ,Exact
-      ,Symbol
-      ,AddName
+       isnull(ID	  , '')
+      ,isnull(StdRate , 0)
+      ,isnull(NameCH  , '')
+      ,isnull(NameEN  , '')
+      ,isnull(Junk	  , 0)
+      ,isnull(Exact	  , 0)
+      ,isnull(Symbol  , '')
+      ,isnull(AddName , '')
       ,AddDate
-      ,EditName
+      ,isnull(EditName, '')
       ,EditDate
 from Trade_To_Pms.dbo.Currency as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Currency as a WITH (NOLOCK) where a.id = b.id)
@@ -1492,24 +1491,24 @@ where b.WeaveTypeID is null
 UPDATE a
 SET  
        --a.WeaveTypeID	     =b.WeaveTypeID		
-      a.LossType	      =b.LossType		
-      ,a.Limit	      =b.Limit		
-      ,a.LimitDown	      =b.LimitDown		
-      ,a.TWLimitDown	      =b.TWLimitDown		
-      ,a.NonTWLimitDown	      =b.NonTWLimitDown		
-      ,a.LimitUp	      =b.LimitUp		
-      ,a.TWLimitUp	      =b.TWLimitUp		
-      ,a.NonTWLimitUP	      =b.NonTWLimitUP		
-      ,a.Allowance	      =b.Allowance		
-      ,a.AddName	      =b.AddName		
-      ,a.AddDate	      =b.AddDate		
-      ,a.EditName	      =b.EditName		
-      ,a.EditDate	      =b.EditDate		
-	  ,a.MaxLossQty		 = b.MaxLossQty
-	  ,a.MinGmtQty		 = b.MinGmtQty
-	  ,a.MinLossQty		 = b.MinLossQty
-	  ,a.PerGmtQty		 = b.PerGmtQty
-	  ,a.PlsLossQty		 = b.PlsLossQty
+      a.LossType	      =isnull(b.LossType		     , 0)
+      ,a.Limit	      =isnull(b.Limit					 , 0)
+      ,a.LimitDown	      =isnull(b.LimitDown			 , 0)
+      ,a.TWLimitDown	      =isnull(b.TWLimitDown		 , 0)
+      ,a.NonTWLimitDown	      =isnull(b.NonTWLimitDown	, 0)
+      ,a.LimitUp	      =isnull(b.LimitUp				 , 0)
+      ,a.TWLimitUp	      =isnull(b.TWLimitUp			 , 0)
+      ,a.NonTWLimitUP	      =isnull(b.NonTWLimitUP	, 0)
+      ,a.Allowance	     =isnull(b.Allowance			 , 0)
+      ,a.AddName	     =isnull(b.AddName				 , '')
+      ,a.AddDate	     =b.AddDate				
+      ,a.EditName	     =isnull(b.EditName				 , '')
+      ,a.EditDate	     =b.EditDate				
+	  ,a.MaxLossQty		 =isnull(b.MaxLossQty			 , 0)
+	  ,a.MinGmtQty		 =isnull(b.MinGmtQty			 , 0)
+	  ,a.MinLossQty		 =isnull(b.MinLossQty			 , 0)
+	  ,a.PerGmtQty		 =isnull(b.PerGmtQty			 , 0)
+	  ,a.PlsLossQty		 =isnull(b.PlsLossQty			 , 0)
 from Production.dbo.LossRateFabric as a inner join Trade_To_Pms.dbo.LossRateFabric as b ON a.WeaveTypeID=b.WeaveTypeID
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.LossRateFabric(
@@ -1534,25 +1533,25 @@ INSERT INTO Production.dbo.LossRateFabric(
 	  ,PlsLossQty
 )
 select 
-       WeaveTypeID
-      ,LossType
-      ,Limit
-      ,LimitDown
-      ,TWLimitDown
-      ,NonTWLimitDown
-      ,LimitUp
-      ,TWLimitUp
-      ,NonTWLimitUP
-      ,Allowance
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
-	  ,MaxLossQty
-	  ,MinGmtQty
-	  ,MinLossQty
-	  ,PerGmtQty
-	  ,PlsLossQty
+       isnull(WeaveTypeID     , '')
+      ,isnull(LossType		  , 0)
+      ,isnull(Limit			  , 0)
+      ,isnull(LimitDown		  , 0)
+      ,isnull(TWLimitDown	  , 0)
+      ,isnull(NonTWLimitDown  , 0)
+      ,isnull(LimitUp		  , 0)
+      ,isnull(TWLimitUp		  , 0)
+      ,isnull(NonTWLimitUP	  , 0)
+      ,isnull(Allowance		  , 0)
+      ,isnull(AddName		  , '')
+      ,AddDate	
+      ,isnull(EditName		  , '')
+      ,EditDate		 
+	  ,isnull(MaxLossQty	  , 0)
+	  ,isnull(MinGmtQty		  , 0)
+	  ,isnull(MinLossQty	  , 0)
+	  ,isnull(PerGmtQty		  , 0)
+	  ,isnull(PlsLossQty	  , 0)
 from Trade_To_Pms.dbo.LossRateFabric as b WITH (NOLOCK)
 where not exists(select WeaveTypeID from Production.dbo.LossRateFabric as a WITH (NOLOCK) where a.WeaveTypeID = b.WeaveTypeID)
 --Acc_Loss
@@ -1584,21 +1583,21 @@ MtltypeId
 	  ,IgnoreLimitUpBrand
 )
 select 
-MtltypeId
-      ,LossUnit
-      ,LossTW
-      ,LossNonTW
-      ,PerQtyTW
-      ,PlsQtyTW
-      ,PerQtyNonTW
-      ,PlsQtyNonTW
-      ,FOCTW
-      ,FOCNonTW
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
-	  ,IgnoreLimitUpBrand
+       isnull(MtltypeId			, '')
+      ,isnull(LossUnit			, 0)
+      ,isnull(LossTW			, 0)
+      ,isnull(LossNonTW			, 0)
+      ,isnull(PerQtyTW			, 0)
+      ,isnull(PlsQtyTW			, 0)
+      ,isnull(PerQtyNonTW		, 0)
+      ,isnull(PlsQtyNonTW		, 0)
+      ,isnull(FOCTW				, 0)
+      ,isnull(FOCNonTW			, 0)
+      ,isnull(AddName			, '')
+      ,AddDate		
+      ,isnull(EditName			, '')
+      ,EditDate			
+	  ,isnull(IgnoreLimitUpBrand, '')
 from Trade_To_Pms.dbo.LossRateAccessory as b WITH (NOLOCK)
 where not exists(select MtltypeId from Production.dbo.LossRateAccessory as a WITH (NOLOCK) where a.MtltypeId = b.MtltypeId)
 
@@ -1619,12 +1618,12 @@ INSERT INTO Production.dbo.LossRateAccessory_Limit(
 	  ,EditDate
 )
 select 
-	MtltypeId
-      ,UsageUnit
-	  ,LimitUp
-	  ,AddName
+	   isnull(MtltypeId, '')
+      ,isnull(UsageUnit, '')
+	  ,isnull(LimitUp  , 0)
+	  ,isnull(AddName  , '')
 	  ,AddDate
-	  ,EditName
+	  ,isnull(EditName, '')
 	  ,EditDate
 from Trade_To_Pms.dbo.LossRateAccessory_Limit as b WITH (NOLOCK)
 where not exists(select MtltypeId from Production.dbo.LossRateAccessory_Limit as a WITH (NOLOCK)
@@ -1635,21 +1634,21 @@ where not exists(select MtltypeId from Production.dbo.LossRateAccessory_Limit as
 UPDATE a--特別處理waste的欄位
 SET  
     --  a.MtltypeId	     =b.MtltypeId	
-      a.LossUnit	      =b.LossUnit	
-      ,a.LossTW	      =b.LossTW	
-      ,a.LossNonTW	      =b.LossNonTW	
-      ,a.PerQtyTW	      =b.PerQtyTW	
-      ,a.PlsQtyTW	      =b.PlsQtyTW	
-      ,a.PerQtyNonTW	      =b.PerQtyNonTW	
-      ,a.PlsQtyNonTW	      =b.PlsQtyNonTW	
-      ,a.FOCTW	      =b.FOCTW	
-      ,a.FOCNonTW	      =b.FOCNonTW	
-      ,a.AddName	      =b.AddName	
-      ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
-      ,a.EditDate	      =b.EditDate	
-      ,a.Waste	      = (b.LossTW + b.LossNonTW)/2
-      ,a.IgnoreLimitUpBrand	      =b.IgnoreLimitUpBrand	
+      a.LossUnit	      = isnull(b.LossUnit					, 0)
+      ,a.LossTW	      = isnull(b.LossTW							, 0)
+      ,a.LossNonTW	      = isnull(b.LossNonTW					, 0)
+      ,a.PerQtyTW	      = isnull(b.PerQtyTW					, 0)
+      ,a.PlsQtyTW	      = isnull(b.PlsQtyTW					, 0)
+      ,a.PerQtyNonTW	      = isnull(b.PerQtyNonTW			, 0)
+      ,a.PlsQtyNonTW	      = isnull(b.PlsQtyNonTW			, 0)
+      ,a.FOCTW	      = isnull(b.FOCTW							, 0)
+      ,a.FOCNonTW	      = isnull(b.FOCNonTW					, 0)
+      ,a.AddName	      = isnull(b.AddName					, '')
+      ,a.AddDate	      = b.AddDate					
+      ,a.EditName	      = isnull(b.EditName					, '')
+      ,a.EditDate	      = b.EditDate				
+      ,a.Waste	      = isnull( (b.LossTW + b.LossNonTW)/2		, 0)
+      ,a.IgnoreLimitUpBrand	      = isnull(b.IgnoreLimitUpBrand	, '')
 	  
 
 from Production.dbo.LossRateAccessory as a inner join Trade_To_Pms.dbo.LossRateAccessory as b ON a.MtltypeId=b.MtltypeId
@@ -1657,21 +1656,21 @@ where a.LossUnit=1
 
 UPDATE a--特別處理waste的欄位
 SET  
-      --a.MtltypeId	     =b.MtltypeId	
-      a.LossUnit	      =b.LossUnit	
-      ,a.LossTW	      =b.LossTW	
-      ,a.LossNonTW	      =b.LossNonTW	
-      ,a.PerQtyTW	      =b.PerQtyTW	
-      ,a.PlsQtyTW	      =b.PlsQtyTW	
-      ,a.PerQtyNonTW	      =b.PerQtyNonTW	
-      ,a.PlsQtyNonTW	      =b.PlsQtyNonTW	
-      ,a.FOCTW	      =b.FOCTW	
-      ,a.FOCNonTW	      =b.FOCNonTW	
-      ,a.AddName	      =b.AddName	
-      ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
-      ,a.EditDate	      =b.EditDate	
-      ,a.Waste	      =IIF((b.PerQtyTW + b.PerQtyNonTW)=0,'0',(b.PlsQtyTW + b.PlsQtyNonTW)/(b.PerQtyTW + b.PerQtyNonTW) * 100) 
+      --a.MtltypeId	     = isnull(b.MtltypeId	
+      a.LossUnit	      = isnull(b.LossUnit		 , 0)
+      ,a.LossTW	      = isnull(b.LossTW				 , 0)
+      ,a.LossNonTW	      = isnull(b.LossNonTW		 , 0)
+      ,a.PerQtyTW	      = isnull(b.PerQtyTW		 , 0)
+      ,a.PlsQtyTW	      = isnull(b.PlsQtyTW		 , 0)
+      ,a.PerQtyNonTW	      = isnull(b.PerQtyNonTW, 0)
+      ,a.PlsQtyNonTW	      = isnull(b.PlsQtyNonTW, 0)
+      ,a.FOCTW	      = isnull(b.FOCTW				 , 0)
+      ,a.FOCNonTW	      = isnull(b.FOCNonTW	     , 0)
+      ,a.AddName	      = isnull(b.AddName		, '')
+      ,a.AddDate	      = b.AddDate	
+      ,a.EditName	      = isnull(b.EditName		, '')
+      ,a.EditDate	      = b.EditDate	
+      ,a.Waste	      = isnull(IIF((b.PerQtyTW + b.PerQtyNonTW)= 0,'0',(b.PlsQtyTW + b.PlsQtyNonTW)/(b.PerQtyTW + b.PerQtyNonTW) * 100) , 0)
 from Production.dbo.LossRateAccessory as a inner join Trade_To_Pms.dbo.LossRateAccessory as b ON a.MtltypeId=b.MtltypeId
 where a.LossUnit <> 1
 
@@ -1689,12 +1688,12 @@ where b.id is null
 UPDATE a
 SET  
        --a.ID		 =b.ID
-      a.SuppID		      =b.SuppID
-      ,a.Account		      =b.Account
-      ,a.Junk		      =b.Junk
-      ,a.AddName		      =b.AddName
-      ,a.AddDate		      =b.AddDate
-      ,a.EditName		      =b.EditName
+      a.SuppID		      = isnull(b.SuppID, '')
+      ,a.Account		      = isnull(b.Account, '')
+      ,a.Junk		      = isnull(b.Junk, 0)
+      ,a.AddName		      = isnull(b.AddName, '')
+      ,a.AddDate		      = b.AddDate
+      ,a.EditName		      = isnull(b.EditName, '')
       ,a.EditDate		      =b.EditDate
 
 from Production.dbo.Carrier as a inner join Trade_To_Pms.dbo.Carrier as b ON a.id=b.id
@@ -1711,13 +1710,13 @@ INSERT INTO Production.dbo.Carrier(
 
 )
 select 
-       ID
-      ,SuppID
-      ,Account
-      ,Junk
-      ,AddName
+       isnull(ID, '')
+      ,isnull(SuppID, '')
+      ,isnull(Account, '')
+      ,isnull(Junk, 0)
+      ,isnull(AddName, '')
       ,AddDate
-      ,EditName
+      ,isnull(EditName, '')
       ,EditDate
 from Trade_To_Pms.dbo.Carrier as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Carrier as a WITH (NOLOCK) where a.id = b.id)
@@ -1737,21 +1736,21 @@ where b.id is null
 UPDATE a
 SET  
       -- a.ID			      =b.ID
-      a.Description			      =b.Description
-      ,a.Term			      =b.Term
-      ,a.BeforeAfter			      =b.BeforeAfter
-      ,a.BaseDate			      =b.BaseDate
-      ,a.AccountDay			      =b.AccountDay
-      ,a.CloseAccountDay			      =b.CloseAccountDay
-      ,a.CloseMonth			      =b.CloseMonth
-      ,a.CloseDay			      =b.CloseDay
-      ,a.DueAccountday			      =b.DueAccountday
-      ,a.DueMonth			      =b.DueMonth
-      ,a.DueDay			      =b.DueDay
-      ,a.JUNK			      =b.JUNK
-      ,a.AddName			      =b.AddName
-      ,a.AddDate			      =b.AddDate
-      ,a.EditName			      =b.EditName
+      a.Description			      = isnull(b.Description             , '')
+      ,a.Term			      = isnull(b.Term						 , '')
+      ,a.BeforeAfter			      = isnull(b.BeforeAfter		 , '')
+      ,a.BaseDate			      = isnull(b.BaseDate				 , '')
+      ,a.AccountDay			      = isnull(b.AccountDay				 , 0)
+      ,a.CloseAccountDay			      = isnull(b.CloseAccountDay , '')
+      ,a.CloseMonth			      = isnull(b.CloseMonth				 , 0)
+      ,a.CloseDay			      = isnull(b.CloseDay				 , 0)
+      ,a.DueAccountday			      = isnull(b.DueAccountday		 , '')
+      ,a.DueMonth			      = isnull(b.DueMonth				 , 0)
+      ,a.DueDay			      = isnull(b.DueDay						 , 0)
+      ,a.JUNK			      = isnull(b.JUNK						 , 0)
+      ,a.AddName			      = isnull(b.AddName, '')
+      ,a.AddDate			      = b.AddDate
+      ,a.EditName			      = isnull(b.EditName, '')
       ,a.EditDate			      =b.EditDate
 
 from Production.dbo.PayTermAP as a inner join Trade_To_Pms.dbo.PayTermAP as b ON a.id=b.id
@@ -1777,22 +1776,22 @@ INSERT INTO Production.dbo.PayTermAP(
 
 )
 select 
-		ID
-      ,Description
-      ,Term
-      ,BeforeAfter
-      ,BaseDate
-      ,AccountDay
-      ,CloseAccountDay
-      ,CloseMonth
-      ,CloseDay
-      ,DueAccountday
-      ,DueMonth
-      ,DueDay
-      ,JUNK
-      ,AddName
+	   isnull(ID              , '')
+      ,isnull(Description	  , '')
+      ,isnull(Term			  , '')
+      ,isnull(BeforeAfter	  , '')
+      ,isnull(BaseDate		  , '')
+      ,isnull(AccountDay	  , 0)
+      ,isnull(CloseAccountDay , '')
+      ,isnull(CloseMonth	  , 0)
+      ,isnull(CloseDay		  , 0)
+      ,isnull(DueAccountday	  , '')
+      ,isnull(DueMonth		  , 0)
+      ,isnull(DueDay		  , 0)
+      ,isnull(JUNK			  , 0)
+      ,isnull(AddName		  , '')
       ,AddDate
-      ,EditName
+      ,isnull(EditName, '')
       ,EditDate
 from Trade_To_Pms.dbo.PayTermAP as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.PayTermAP as a WITH (NOLOCK) where a.id = b.id)
@@ -1804,23 +1803,23 @@ Using Trade_TO_Pms.dbo.PayTermAR as s
 	on t.id=s.id
 	when matched then
 		update set
-		t.Description= s.Description,
-		t.Term= s.Term,
-		t.BeforeAfter= s.BeforeAfter,
-		t.BaseDate= s.BaseDate,
-		t.AccountDay= s.AccountDay,
-		t.CloseAccountDay= s.CloseAccountDay,
-		t.CloseMonth= s.CloseMonth,
-		t.CloseDay= s.CloseDay,
-		t.DueAccountday= s.DueAccountday,
-		t.DueMonth= s.DueMonth,
-		t.DueDay= s.DueDay,
-		t.JUNK= s.JUNK,
-		t.SamplePI= s.SamplePI,
-		t.BulkPI= s.BulkPI,
-		t.AddName= s.AddName,
-		t.AddDate= s.AddDate,
-		t.EditName= s.EditName,
+		t.Description= isnull( s.Description,            ''),
+		t.Term= isnull( s.Term,							 ''),
+		t.BeforeAfter= isnull( s.BeforeAfter,			 ''),
+		t.BaseDate= isnull( s.BaseDate,					 ''),
+		t.AccountDay= isnull( s.AccountDay,				 0),
+		t.CloseAccountDay= isnull( s.CloseAccountDay,	 ''),
+		t.CloseMonth= isnull( s.CloseMonth,				 0),
+		t.CloseDay= isnull( s.CloseDay,					 0),
+		t.DueAccountday= isnull( s.DueAccountday,		 ''),
+		t.DueMonth= isnull( s.DueMonth,					 0),
+		t.DueDay= isnull( s.DueDay,						 0),
+		t.JUNK= isnull( s.JUNK,							 0),
+		t.SamplePI= isnull( s.SamplePI,					 0),
+		t.BulkPI= isnull( s.BulkPI,						 0),
+		t.AddName= isnull( s.AddName,					 ''),
+		t.AddDate= s.AddDate,							 
+		t.EditName= isnull( s.EditName,					 ''),
 		t.EditDate= s.EditDate
 	when not matched by target then
 	insert(ID
@@ -1843,24 +1842,25 @@ Using Trade_TO_Pms.dbo.PayTermAR as s
 ,EditName
 ,EditDate
 )
-	values(s.ID,
-s.Description,
-s.Term,
-s.BeforeAfter,
-s.BaseDate,
-s.AccountDay,
-s.CloseAccountDay,
-s.CloseMonth,
-s.CloseDay,
-s.DueAccountday,
-s.DueMonth,
-s.DueDay,
-s.JUNK,
-s.SamplePI,
-s.BulkPI,
-s.AddName,
-s.AddDate,
-s.EditName,
+	values(
+isnull(s.ID,			  ''),
+isnull(s.Description,	  ''),
+isnull(s.Term,			  ''),
+isnull(s.BeforeAfter,	  ''),
+isnull(s.BaseDate,		  ''),
+isnull(s.AccountDay,	  0),
+isnull(s.CloseAccountDay, ''),
+isnull(s.CloseMonth,	  0),
+isnull(s.CloseDay,		  0),
+isnull(s.DueAccountday,	  ''),
+isnull(s.DueMonth,		  0),
+isnull(s.DueDay,		  0),
+isnull(s.JUNK,			  0),
+isnull(s.SamplePI,		  0),
+isnull(s.BulkPI,		  0),
+isnull(s.AddName,		  ''),
+s.AddDate,				 
+isnull(s.EditName,        ''),
 s.EditDate
 )
 	 when not matched by source then
@@ -1878,12 +1878,12 @@ where b.id is null
 UPDATE a
 SET  
       -- a.ID	 =b.ID	
-      a.Description	      =b.Description	
-      ,a.SMV	      =b.SMV	
-      ,a.CPU	      =b.CPU	
-      ,a.AddName	      =b.AddName	
-      ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
+      a.Description	      =isnull(b.Description	,'')
+      ,a.SMV	      =isnull(b.SMV	,0)
+      ,a.CPU	      =isnull(b.CPU	,0)
+      ,a.AddName	      =isnull(b.AddName	,'')
+      ,a.AddDate	      =b.AddDate	 
+      ,a.EditName	      =isnull(b.EditName	,'')
       ,a.EditDate	      =b.EditDate	
 
 from Production.dbo.Mockup as a inner join Trade_To_Pms.dbo.Mockup as b ON a.id=b.id
@@ -1900,13 +1900,13 @@ INSERT INTO Production.dbo.Mockup(
 
 )
 select 
-      ID
-      ,Description
-      ,SMV
-      ,CPU
-      ,AddName
+       isnull(ID	,'')
+      ,isnull(Description	,'')
+      ,isnull(SMV	,0)
+      ,isnull(CPU	,0)
+      ,isnull(AddName	,'')
       ,AddDate
-      ,EditName
+      ,isnull(EditName	,'')
       ,EditDate
 from Trade_To_Pms.dbo.Mockup as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Mockup as a WITH (NOLOCK) where a.id = b.id)
@@ -1919,25 +1919,25 @@ UPDATE a
 SET  
        -- a.ID	 =b.ID	
       --,a.BrandID	      =b.BrandID	
-      a.PhaseID	      =b.PhaseID	
-      ,a.ProjectID	      =b.ProjectID	
-      ,a.KPIProjectID	      =b.KPIProjectID	
-      ,a.Junk	      =b.Junk	
-      ,a.CpuRate	      =b.CpuRate	
-      ,a.Category	      =b.Category	
-      ,a.PriceDays	      =b.PriceDays	
-      ,a.MtlLetaDays	      =b.MtlLetaDays	
-      ,a.EachConsDays	      =b.EachConsDays	
-      ,a.KPI	      =b.KPI	
-      ,a.Remark	      =b.Remark	
-      ,a.AddName	      =b.AddName	
-      ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
-      ,a.EditDate	      =b.EditDate	
-	  ,a.IsGMTMaster	  =b.IsGMTMaster
-	  ,a.IsGMTDetail      =b.IsGMTDetail
-	  ,a.IsDevSample      =b.IsDevSample
-	  ,a.CalByBOFConsumption      =b.CalByBOFConsumption
+      a.PhaseID	      = isnull(b.PhaseID						,'')
+      ,a.ProjectID	      = isnull(b.ProjectID					,'')
+      ,a.KPIProjectID	      = isnull(b.KPIProjectID			,'')
+      ,a.Junk	      = isnull(b.Junk							,0)
+      ,a.CpuRate	      = isnull(b.CpuRate					,0)
+      ,a.Category	      = isnull(b.Category					,'')
+      ,a.PriceDays	      = isnull(b.PriceDays					,0)
+      ,a.MtlLetaDays	      = isnull(b.MtlLetaDays			,0)
+      ,a.EachConsDays	      = isnull(b.EachConsDays			,0)
+      ,a.KPI	      = isnull(b.KPI							,0)
+      ,a.Remark	      = isnull(b.Remark							,'')
+      ,a.AddName	      = isnull(b.AddName					,'')
+      ,a.AddDate	      = b.AddDate				
+      ,a.EditName	      = isnull(b.EditName					,'')
+      ,a.EditDate	      = b.EditDate				
+	  ,a.IsGMTMaster	  = isnull(b.IsGMTMaster				,0)
+	  ,a.IsGMTDetail      = isnull(b.IsGMTDetail				,0)
+	  ,a.IsDevSample      = isnull(b.IsDevSample				,0)
+	  ,a.CalByBOFConsumption      = isnull(b.CalByBOFConsumption,0)
 from Production.dbo.OrderType as a inner join Trade_To_Pms.dbo.OrderType as b ON a.id=b.id and a.BrandID =b.BrandID
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.OrderType(
@@ -1964,27 +1964,27 @@ INSERT INTO Production.dbo.OrderType(
 	  ,CalByBOFConsumption
 )
 select 
-		 ID
-      ,BrandID
-      ,PhaseID
-      ,ProjectID
-      ,KPIProjectID
-      ,Junk
-      ,CpuRate
-      ,Category
-      ,PriceDays
-      ,MtlLetaDays
-      ,EachConsDays
-      ,KPI
-      ,Remark
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
-	  ,IsGMTMaster
-	  ,IsGMTDetail
-	  ,IsDevSample
-	  ,CalByBOFConsumption
+	   isnull(ID				 ,'')
+      ,isnull(BrandID			 ,'')
+      ,isnull(PhaseID			 ,'')
+      ,isnull(ProjectID			 ,'')
+      ,isnull(KPIProjectID		 ,'')
+      ,isnull(Junk				 ,0)
+      ,isnull(CpuRate			 ,0)
+      ,isnull(Category			 ,'')
+      ,isnull(PriceDays			 ,0)
+      ,isnull(MtlLetaDays		 ,0)
+      ,isnull(EachConsDays		 ,0)
+      ,isnull(KPI				 ,0)
+      ,isnull(Remark			 ,'')
+      ,isnull(AddName			 ,0)
+      ,AddDate		
+      ,isnull(EditName			 ,'')
+      ,EditDate			
+	  ,isnull(IsGMTMaster		 ,0)
+	  ,isnull(IsGMTDetail		 ,0)
+	  ,isnull(IsDevSample		 ,0)
+	  ,isnull(CalByBOFConsumption,0)
 from Trade_To_Pms.dbo.OrderType as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.OrderType as a WITH (NOLOCK) where a.id = b.id and a.BrandID =b.BrandID)
 
@@ -2001,12 +2001,12 @@ UPDATE a
 SET  
      -- a.ID	      =b.ID	
      -- ,a.BrandID	      =b.BrandID	
-      a.RateCost	      =b.RateCost	
-      ,a.AddName	      =b.AddName	
+      a.RateCost	      =isnull(b.RateCost	,0)
+      ,a.AddName	      =isnull(b.AddName	,'')
       ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
+      ,a.EditName	      =isnull(b.EditName	,'')
       ,a.EditDate	      =b.EditDate	
-	  ,a.MiAdidas         =b.MiAdidas
+	  ,a.MiAdidas         =isnull(b.MiAdidas,0)
 
 from Production.dbo.Program as a inner join Trade_To_Pms.dbo.Program as b ON a.id=b.id and a.BrandID = b.BrandID
 -------------------------- INSERT INTO 抓
@@ -2022,14 +2022,14 @@ INSERT INTO Production.dbo.Program(
 
 )
 select 
- ID
-      ,BrandID
-      ,RateCost
-      ,AddName
+       isnull(ID	  ,'')
+      ,isnull(BrandID ,'')
+      ,isnull(RateCost,0)
+      ,isnull(AddName ,'')
       ,AddDate
-      ,EditName
+      ,isnull(EditName,'')
       ,EditDate
-	  ,MiAdidas
+	  ,isnull(MiAdidas,0)
 from Trade_To_Pms.dbo.Program as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Program as a WITH (NOLOCK) where a.id = b.id and a.BrandID = b.BrandID)
 
@@ -2045,18 +2045,18 @@ where b.id is null
 UPDATE a
 SET  
      --  a.Type	     =b.Type	
-      --,a.ID	      =b.ID	
-      a.Pattern	      =b.Pattern	
-      ,a.PatternCode	      =b.PatternCode	
-      ,a.Drape	      =b.Drape	
-      ,a.DrapeCode	      =b.DrapeCode	
-      ,a.Color	      =b.Color	
-      ,a.ColorCode	      =b.ColorCode	
-      ,a.Rate	      =b.Rate	
-      ,a.AddName	      =b.AddName	
-      ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
-      ,a.EditDate	      =b.EditDate	
+      --,a.ID	      = isnull(b.ID	
+      a.Pattern	      = isnull(b.Pattern	         ,'')
+      ,a.PatternCode	      = isnull(b.PatternCode,'')
+      ,a.Drape	      = isnull(b.Drape				 ,'')
+      ,a.DrapeCode	      = isnull(b.DrapeCode		 ,'')
+      ,a.Color	      = isnull(b.Color				 ,'')
+      ,a.ColorCode	      = isnull(b.ColorCode		 ,'')
+      ,a.Rate	      = isnull(b.Rate				 ,0)
+      ,a.AddName	      = isnull(b.AddName		 ,'')
+      ,a.AddDate	      = b.AddDate		
+      ,a.EditName	      = isnull(b.EditName		 ,'')
+      ,a.EditDate	      = b.EditDate		
 
 from Production.dbo.MtlFactor as a inner join Trade_To_Pms.dbo.MtlFactor as b ON a.id=b.id and a.Type = b.Type
 -------------------------- INSERT INTO 抓
@@ -2077,18 +2077,18 @@ INSERT INTO Production.dbo.MtlFactor(
 
 )
 select 
- Type
-      ,ID
-      ,Pattern
-      ,PatternCode
-      ,Drape
-      ,DrapeCode
-      ,Color
-      ,ColorCode
-      ,Rate
-      ,AddName
-      ,AddDate
-      ,EditName
+       isnull(Type       ,'')
+      ,isnull(ID		 ,'')
+      ,isnull(Pattern	 ,'')
+      ,isnull(PatternCode,'')
+      ,isnull(Drape		 ,'')
+      ,isnull(DrapeCode	 ,'')
+      ,isnull(Color		 ,'')
+      ,isnull(ColorCode	 ,'')
+      ,isnull(Rate		 ,0)
+      ,isnull(AddName	 ,'')
+      ,AddDate	 
+      ,isnull(EditName	 ,'')
       ,EditDate
 from Trade_To_Pms.dbo.MtlFactor as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.MtlFactor as a WITH (NOLOCK) where a.id = b.id and a.Type = b.Type)
@@ -2105,13 +2105,13 @@ where b.id is null
 UPDATE a
 SET  
        --a.Id		     =b.Id	
-      a.Name		      =b.Name	
-      ,a.CuttingLayer		      =b.CuttingLayer	
-      ,a.Junk		      =b.Junk	
-      ,a.AddName		      =b.AddName	
-      ,a.AddDate		      =b.AddDate	
-      ,a.EditName		      =b.EditName	
-      ,a.EditDate		      =b.EditDate	
+      a.Name		      = isnull(b.Name	               ,'')
+      ,a.CuttingLayer		      = isnull(b.CuttingLayer	,0)
+      ,a.Junk		      = isnull(b.Junk				   ,0)
+      ,a.AddName		      = isnull(b.AddName		   ,'')
+      ,a.AddDate		      = b.AddDate		  
+      ,a.EditName		      = isnull(b.EditName		   ,'')
+      ,a.EditDate		      = b.EditDate		
 
 from Production.dbo.Construction as a inner join Trade_To_Pms.dbo.Construction as b ON a.id=b.id
 -------------------------- INSERT INTO 抓
@@ -2127,13 +2127,13 @@ INSERT INTO Production.dbo.Construction(
 
 )
 select 
-       Id
-      ,Name
-      ,CuttingLayer
-      ,Junk
-      ,AddName
-      ,AddDate
-      ,EditName
+       isnull(Id           ,'')
+      ,isnull(Name		   ,'')
+      ,isnull(CuttingLayer ,0)
+      ,isnull(Junk		   ,0)
+      ,isnull(AddName	   ,'')
+      ,AddDate	 
+      ,isnull(EditName	   ,'')
       ,EditDate
 from Trade_To_Pms.dbo.Construction as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Construction as a WITH (NOLOCK) where a.id = b.id)
@@ -2150,16 +2150,16 @@ where b.id is null
 UPDATE a
 SET  
      --  a.ID	     =b.ID	
-      a.CountryID	      =b.CountryID	
-      ,a.Remark	      =b.Remark	
-      ,a.AddName	      =b.AddName	
-      ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
-      ,a.EditDate	      =b.EditDate	
-      ,a.Junk	      =b.Junk	
-      ,a.Name	      =b.Name	
-      ,a.AirPort	  =b.AirPort	
-      ,a.SeaPort	  =b.SeaPort
+      a.CountryID	      = isnull(b.CountryID	,'')
+      ,a.Remark	      = isnull(b.Remark			,'')
+      ,a.AddName	      = isnull(b.AddName	,'')
+      ,a.AddDate	      = b.AddDate	
+      ,a.EditName	      = isnull(b.EditName	,'')
+      ,a.EditDate	      = b.EditDate	
+      ,a.Junk	      = isnull(b.Junk			,0)
+      ,a.Name	      = isnull(b.Name			,'')
+      ,a.AirPort	  = isnull(b.AirPort		,0)
+      ,a.SeaPort	  = isnull(b.SeaPort		,0)
 from Production.dbo.Port as a inner join Trade_To_Pms.dbo.Port as b ON a.id=b.id
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.Port(
@@ -2176,17 +2176,17 @@ ID
       ,SeaPort
 
 )
-select ID
-      ,CountryID
-      ,Remark
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
-      ,Junk
-      ,Name
-      ,AirPort
-      ,SeaPort
+select isnull(ID	   ,'')
+      ,isnull(CountryID,'')
+      ,isnull(Remark   ,'')
+      ,isnull(AddName  ,'')
+      ,AddDate  
+      ,isnull(EditName ,'')
+      ,EditDate 
+      ,isnull(Junk	   ,0)
+      ,isnull(Name	   ,'')
+      ,isnull(AirPort  ,0)
+      ,isnull(SeaPort  ,0)
 from Trade_To_Pms.dbo.Port as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Port as a WITH (NOLOCK) where a.id = b.id)
 
@@ -2202,9 +2202,9 @@ UPDATE a
 SET  
        --a.ShipperID	    =b.ShipperID	
       a.AddDate	      =b.AddDate	
-      ,a.AddName	      =b.AddName	
+      ,a.AddName	      =isnull(b.AddName	 ,'')
       ,a.EditDate	      =b.EditDate	
-      ,a.EditName	      =b.EditName	
+      ,a.EditName	      =isnull(b.EditName	 ,'')
 
 from Production.dbo.FSRCpuCost as a inner join Trade_To_Pms.dbo.FSRCpuCost as b ON a.ShipperID=b.ShipperID
 -------------------------- INSERT INTO 抓
@@ -2217,11 +2217,11 @@ INSERT INTO Production.dbo.FSRCpuCost(
 
 )
 select 
-       ShipperID
+       isnull(ShipperID,'')
       ,AddDate
-      ,AddName
+      ,isnull(AddName,'')
       ,EditDate
-      ,EditName
+      ,isnull(EditName,'')
 from Trade_To_Pms.dbo.FSRCpuCost as b WITH (NOLOCK)
 where not exists(select ShipperID from Production.dbo.FSRCpuCost as a WITH (NOLOCK) where a.ShipperID = b.ShipperID)
 
@@ -2238,11 +2238,11 @@ SET
       -- a.ShipperID	    =b.ShipperID	
      -- ,a.BeginDate	      =b.BeginDate	
     --  ,a.EndDate	      =b.EndDate	
-      a.CpuCost	      =b.CpuCost	
+      a.CpuCost	      =isnull(b.CpuCost	,0)
       ,a.AddDate	      =b.AddDate	
-      ,a.AddName	      =b.AddName	
+      ,a.AddName	      =isnull(b.AddName	,'')
       ,a.EditDate	      =b.EditDate	
-      ,a.EditName	      =b.EditName	
+      ,a.EditName	      =isnull(b.EditName	,'')
 
 from Production.dbo.FSRCpuCost_Detail as a inner join Trade_To_Pms.dbo.FSRCpuCost_Detail as b ON a.ShipperID = b.ShipperID AND a.BeginDate  =b.BeginDate AND  a.EndDate =b.EndDate
 -------------------------- INSERT INTO 抓
@@ -2258,14 +2258,14 @@ INSERT INTO Production.dbo.FSRCpuCost_Detail(
 
 )
 select 
-       ShipperID
+       isnull(ShipperID,'')
       ,BeginDate
-      ,EndDate
-      ,CpuCost
-      ,AddDate
-      ,AddName
-      ,EditDate
-      ,EditName
+      ,EndDate 
+      ,isnull(CpuCost  ,0)
+      ,AddDate  
+      ,isnull(AddName  ,'')
+      ,EditDate 
+      ,isnull(EditName ,'')
 from Trade_To_Pms.dbo.FSRCpuCost_Detail as b WITH (NOLOCK)
 where not exists(select ShipperID from Production.dbo.FSRCpuCost_Detail as a WITH (NOLOCK) where a.ShipperID = b.ShipperID AND a.BeginDate  =b.BeginDate AND  a.EndDate =b.EndDate)
 
@@ -2283,9 +2283,9 @@ SET
       -- a.BrandID	    =b.BrandID	
      -- ,a.FactoryID	      =b.FactoryID	
       a.AddDate	      =b.AddDate	
-      ,a.AddName	      =b.AddName	
+      ,a.AddName	      =isnull(b.AddName	,'')
       ,a.EditDate	      =b.EditDate	
-      ,a.EditName	      =b.EditName	
+      ,a.EditName	      =isnull(b.EditName	,'')
 
 from Production.dbo.FtyShipper as a inner join Trade_To_Pms.dbo.FtyShipper as b ON a.BrandID = b.BrandID and a.FactoryID=b.FactoryID
 
@@ -2300,12 +2300,12 @@ INSERT INTO Production.dbo.FtyShipper(
 
 )
 select 
-       BrandID
-      ,FactoryID
-      ,AddDate
-      ,AddName
-      ,EditDate
-      ,EditName
+       isnull(BrandID  ,'')
+      ,isnull(FactoryID,'')
+      ,AddDate 
+      ,isnull(AddName  ,'')
+      ,EditDate 
+      ,isnull(EditName ,'')
 from Trade_To_Pms.dbo.FtyShipper as b WITH (NOLOCK)
 where not exists(select BrandID from Production.dbo.FtyShipper as a WITH (NOLOCK) where a.BrandID = b.BrandID and a.FactoryID=b.FactoryID	)
 
@@ -2323,7 +2323,7 @@ SET
       --,a.FactoryID	      =b.FactoryID	
       --,a.BeginDate	      =b.BeginDate	
       a.EndDate	      =b.EndDate	
-      ,a.ShipperID	      =b.ShipperID	
+      ,a.ShipperID	      =isnull(b.ShipperID	,'')
 
 from Production.dbo.FtyShipper_Detail as a
 inner join Trade_To_Pms.dbo.FtyShipper_Detail as b ON a.BrandID = b.BrandID and a.FactoryID =b.FactoryID  and a.BeginDate	=b.BeginDate  and a.SeasonID	=b.SeasonID
@@ -2337,12 +2337,12 @@ INSERT INTO Production.dbo.FtyShipper_Detail(
 	  ,SeasonID
 )
 select 
-       BrandID
-      ,FactoryID
+       isnull(BrandID  ,'')
+      ,isnull(FactoryID,'')
       ,BeginDate
-      ,EndDate
-      ,ShipperID
-	  ,SeasonID
+      ,EndDate  
+      ,isnull(ShipperID,'')
+	  ,isnull(SeasonID ,'')
 from Trade_To_Pms.dbo.FtyShipper_Detail as b WITH (NOLOCK)
 where not exists(select BrandID from Production.dbo.FtyShipper_Detail as a WITH (NOLOCK) 
 where a.BrandID = b.BrandID and a.FactoryID =b.FactoryID  and a.BeginDate	=b.BeginDate and a.SeasonID	=b.SeasonID)
@@ -2358,14 +2358,14 @@ where b.PhraseTypeName is null
 UPDATE a
 SET  
       -- a.PhraseTypeName	 =b.PhraseTypeName	
-      a.Junk	      =b.Junk	
-     -- ,a.Name	      =b.Name	
-      ,a.Seq	      =b.Seq	
-      ,a.Description	      =b.Description	
-      ,a.Module	      =b.Module	
-      ,a.AddName	      =b.AddName	
-      ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
+      a.Junk	      = isnull(b.Junk				 ,0)
+     -- ,a.Name	      = isnull(b.Name				 ,'')
+      ,a.Seq	      = isnull(b.Seq				 ,0)
+      ,a.Description	      = isnull(b.Description,'')
+      ,a.Module	      = isnull(b.Module				 ,'')
+      ,a.AddName	      = isnull(b.AddName		 ,'')
+      ,a.AddDate	      = b.AddDate		
+      ,a.EditName	      = isnull(b.EditName	     ,'')
       ,a.EditDate	      =b.EditDate	
 
 from Production.dbo.Phrase as a inner join Trade_To_Pms.dbo.Phrase as b ON a.PhraseTypeName=b.PhraseTypeName and a.Name = b.Name
@@ -2384,15 +2384,15 @@ INSERT INTO Production.dbo.Phrase(
 
 )
 select 
- PhraseTypeName
-      ,Junk
-      ,Name
-      ,Seq
-      ,Description
-      ,Module
-      ,AddName
-      ,AddDate
-      ,EditName
+       isnull(PhraseTypeName,'')
+      ,isnull(Junk			,0)
+      ,isnull(Name			,'')
+      ,isnull(Seq			,0)
+      ,isnull(Description	,'')
+      ,isnull(Module		,'')
+      ,isnull(AddName		,'')
+      ,AddDate		
+      ,isnull(EditName		,'')
       ,EditDate
 from Trade_To_Pms.dbo.Phrase as b WITH (NOLOCK)
 where not exists(select PhraseTypeName from Production.dbo.Phrase as a WITH (NOLOCK) where a.PhraseTypeName = b.PhraseTypeName and a.Name = b.Name)
@@ -2409,23 +2409,23 @@ where b.id is null
 UPDATE a
 SET  
        --a.ID	      =b.ID	
-      a.Title	      =b.Title	
-      ,a.Abbr	      =b.Abbr	
-      ,a.Country	      =b.Country	
-      ,a.Junk	      =b.Junk	
-      ,a.Currency	      =b.Currency	
-      ,a.NameCH	      =b.NameCH	
-      ,a.NameEN	      =b.NameEN	
-      ,a.hasTax	      =b.hasTax	
-      ,a.IsDefault	      =b.IsDefault	
-      ,a.VatNO	      =b.VatNO	
-      ,a.AddressCH	      =b.AddressCH	
-      ,a.AddressEN	      =b.AddressEN	
-      ,a.Tel	      =b.Tel	
-      ,a.Fax	      =b.Fax	
-      ,a.AddName	      =b.AddName	
-      ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
+      a.Title	      = isnull(b.Title	         ,'')
+      ,a.Abbr	      = isnull(b.Abbr			 ,'')
+      ,a.Country	      = isnull(b.Country	 ,'')
+      ,a.Junk	      = isnull(b.Junk			 ,0)
+      ,a.Currency	      = isnull(b.Currency	 ,'')
+      ,a.NameCH	      = isnull(b.NameCH			 ,'')
+      ,a.NameEN	      = isnull(b.NameEN			 ,'')
+      ,a.hasTax	      = isnull(b.hasTax			 ,0)
+      ,a.IsDefault	      = isnull(b.IsDefault	 ,0)
+      ,a.VatNO	      = isnull(b.VatNO			 ,'')
+      ,a.AddressCH	      = isnull(b.AddressCH	 ,'')
+      ,a.AddressEN	      = isnull(b.AddressEN	 ,'')
+      ,a.Tel	      = isnull(b.Tel			 ,'')
+      ,a.Fax	      = isnull(b.Fax			 ,'')
+      ,a.AddName	      = isnull(b.AddName	 ,'')
+      ,a.AddDate	      = b.AddDate	
+      ,a.EditName	      = isnull(b.EditName	 ,'')
       ,a.EditDate	      =b.EditDate	
 
 from Production.dbo.Company as a inner join Trade_To_Pms.dbo.Company as b ON a.id=b.id
@@ -2453,24 +2453,24 @@ INSERT INTO Production.dbo.Company(
 
 )
 select 
-       ID
-      ,Title
-      ,Abbr
-      ,Country
-      ,Junk
-      ,Currency
-      ,NameCH
-      ,NameEN
-      ,hasTax
-      ,IsDefault
-      ,VatNO
-      ,AddressCH
-      ,AddressEN
-      ,Tel
-      ,Fax
-      ,AddName
+       isnull(ID		,'')
+      ,isnull(Title		,'')
+      ,isnull(Abbr		,'')
+      ,isnull(Country	,'')
+      ,isnull(Junk		,0)
+      ,isnull(Currency	,'')
+      ,isnull(NameCH	,'')
+      ,isnull(NameEN	,'')
+      ,isnull(hasTax	,0)
+      ,isnull(IsDefault	,0)
+      ,isnull(VatNO		,'')
+      ,isnull(AddressCH	,'')
+      ,isnull(AddressEN	,'')
+      ,isnull(Tel		,'')
+      ,isnull(Fax		,'')
+      ,isnull(AddName	,'')
       ,AddDate
-      ,EditName
+      ,isnull(EditName  ,'')
       ,EditDate
 from Trade_To_Pms.dbo.Company as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Company as a WITH (NOLOCK) where a.id = b.id)
@@ -2486,12 +2486,12 @@ where b.id is null
 UPDATE a
 SET  
        --a.ID	      =b.ID	
-      a.ExcelName	      =b.ExcelName	
-      ,a.ExcelColumn	      =b.ExcelColumn	
-      ,a.isArtwork	      =b.isArtwork	
-      ,a.AddName	      =b.AddName	
-      ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
+      a.ExcelName	      = isnull(b.ExcelName	     ,'')
+      ,a.ExcelColumn	      = isnull(b.ExcelColumn,'')
+      ,a.isArtwork	      = isnull(b.isArtwork		 ,0)
+      ,a.AddName	      = isnull(b.AddName		 ,'')
+      ,a.AddDate	      = b.AddDate		
+      ,a.EditName	      = isnull(b.EditName		 ,'')
       ,a.EditDate	      =b.EditDate	
 
 from Production.dbo.ADIDASMiSetup_ColorComb as a inner join Trade_To_Pms.dbo.ADIDASMiSetup_ColorComb as b ON a.id=b.id
@@ -2509,12 +2509,12 @@ ID
 )
 select 
 ID
-      ,ExcelName
-      ,ExcelColumn
-      ,isArtwork
-      ,AddName
-      ,AddDate
-      ,EditName
+      ,isnull(ExcelName   ,'')
+      ,isnull(ExcelColumn ,'')
+      ,isnull(isArtwork	  ,0)
+      ,isnull(AddName	  ,'')
+      ,AddDate	 
+      ,isnull(EditName	  ,'')
       ,EditDate
 from Trade_To_Pms.dbo.ADIDASMiSetup_ColorComb as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.ADIDASMiSetup_ColorComb as a WITH (NOLOCK) where a.id = b.id)
@@ -2527,15 +2527,15 @@ using Trade_To_Pms.dbo.ShipMode as s
 on t.id=s.id
 	when matched then
 		update set 
-		t.ID= s.ID,
-		t.Description= s.Description,
-		t.UseFunction= s.UseFunction,
-		t.Junk= s.Junk,
-		t.ShareBase= s.ShareBase,
-		t.AddName= s.AddName,
-		t.AddDate= s.AddDate,
-		t.EditName= s.EditName,
-		t.EditDate= s.EditDate
+		t.ID= isnull( s.ID,                 ''),
+		t.Description= isnull( s.Description,''),
+		t.UseFunction= isnull( s.UseFunction,''),
+		t.Junk= isnull( s.Junk,				0),
+		t.ShareBase= isnull( s.ShareBase,	''),
+		t.AddName= isnull( s.AddName,		''),
+		t.AddDate=  s.AddDate,	
+		t.EditName= isnull( s.EditName,     ''),
+		t.EditDate=  s.EditDate
 	when not matched by target then
 		insert(ID
 		,Description
@@ -2548,16 +2548,17 @@ on t.id=s.id
 		,EditDate
 		, shipgroup
 		)
-				values(s.ID,
-		s.Description,
-		s.UseFunction,
-		s.Junk,
-		s.ShareBase,
-		s.AddName,
-		s.AddDate,
-		s.EditName,
-		s.EditDate,
-		s.ID
+				values(
+		isnull(s.ID,		 ''),
+		isnull(s.Description,''),
+		isnull(s.UseFunction,''),
+		isnull(s.Junk,		 0),
+		isnull(s.ShareBase,	 ''),
+		isnull(s.AddName,	 ''),
+		s.AddDate,	
+		isnull(s.EditName,	 ''),
+		s.EditDate,	
+		isnull(s.ID          ,'')
 		)
 	when not matched by source then
 		delete;
@@ -2571,12 +2572,12 @@ Using Trade_To_Pms.dbo.DropDownList as s
 on t.type=s.type and t.id=s.id
 	when matched then
 	update set
-		t.Type= s.Type,
-		t.ID= s.ID,
-		t.Name= s.Name,
-		t.RealLength= s.RealLength,
-		t.Description= s.Description,
-		t.Seq= s.Seq
+		t.Type= isnull( s.Type,              ''),
+		t.ID= isnull( s.ID,					 ''),
+		t.Name= isnull( s.Name,				 ''),
+		t.RealLength= isnull( s.RealLength,	 0),
+		t.Description= isnull( s.Description,''),
+		t.Seq= isnull( s.Seq				 ,0)
 	when not matched by target then
 		insert(Type
 				,ID
@@ -2585,12 +2586,12 @@ on t.type=s.type and t.id=s.id
 				,Description
 				,Seq
 				)
-						values(s.Type,
-				s.ID,
-				s.Name,
-				s.RealLength,
-				s.Description,
-				s.Seq
+						values(isnull(s.Type,''),
+				isnull(s.ID,				 ''),
+				isnull(s.Name,				 ''),
+				isnull(s.RealLength,		 0),
+				isnull(s.Description,		 ''),
+				isnull(s.Seq				 ,0)
 				)
 	when not matched by source then
 		delete;
@@ -2602,16 +2603,16 @@ on t.type=s.type and t.id=s.id
 	on t.id=s.id
 		when matched then
 		update set 
-		t.Description= s.Description,
-		t.Junk= s.Junk,
-		t.Prefix= s.Prefix,
-		t.Fieldname= s.Fieldname,
-		t.Postfix= s.Postfix,
-		t.IsSize= s.IsSize,
-		t.IsPatternPanel= s.IsPatternPanel,
-		t.AddName= s.AddName,
-		t.AddDate= s.AddDate,
-		t.EditName= s.EditName,
+		t.Description= isnull( s.Description,       ''),
+		t.Junk= isnull( s.Junk,						0),
+		t.Prefix= isnull( s.Prefix,					''),
+		t.Fieldname= isnull( s.Fieldname,			''),
+		t.Postfix= isnull( s.Postfix,				''),
+		t.IsSize= isnull( s.IsSize,					0),
+		t.IsPatternPanel= isnull( s.IsPatternPanel,	0),
+		t.AddName= isnull( s.AddName,				''),
+		t.AddDate=  s.AddDate,		
+		t.EditName= isnull( s.EditName,				''),
 		t.EditDate= s.EditDate
 	when not matched by target then 
 		insert(ID
@@ -2627,17 +2628,18 @@ on t.type=s.type and t.id=s.id
 		,EditName
 		,EditDate
 		)
-			values(s.ID,
-		s.Description,
-		s.Junk,
-		s.Prefix,
-		s.Fieldname,
-		s.Postfix,
-		s.IsSize,
-		s.IsPatternPanel,
-		s.AddName,
-		s.AddDate,
-		s.EditName,
+			values(
+		isnull(s.ID,             ''),
+		isnull(s.Description,	 ''),
+		isnull(s.Junk,			 0),
+		isnull(s.Prefix,		 ''),
+		isnull(s.Fieldname,		 ''),
+		isnull(s.Postfix,		 ''),
+		isnull(s.IsSize,		 0),
+		isnull(s.IsPatternPanel, 0),
+		isnull(s.AddName,		 ''),
+		s.AddDate,	
+		isnull(s.EditName,		 ''),
 		s.EditDate
 		)
 		when not matched by source then
@@ -2647,35 +2649,35 @@ on t.type=s.type and t.id=s.id
 		---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 		UPDATE a
 		SET  
-			   a.AbbCH	       = b.AbbCH	      
-			  ,a.AbbEN	       = b.AbbEN	      
-			  ,a.AddDate	   = b.AddDate	  
-			  ,a.AddName	   = b.AddName	  
-			  ,a.AllowanceRate = b.AllowanceRate
-			  ,a.AllowanceType = b.AllowanceType
-			  ,a.BrandID	   = b.BrandID	  
-			  ,a.Delay		   = b.Delay		  
-			  ,a.DelayMemo	   = b.DelayMemo	  
-			  ,a.EditDate	   = b.EditDate	  
-			  ,a.EditName	   = b.EditName	  
-			  ,a.IsECFA		   = b.IsECFA		  
-			  ,a.ItemType	   = b.ItemType	  
-			  ,a.Junk		   = b.Junk		  
-			  ,a.Keyword	   = b.Keyword	  
-			  ,a.Lock		   = b.Lock		  
-			  ,a.LTDay		   = b.LTDay		  
-			  ,a.NOForecast	   = b.NOForecast	  
-			  ,a.OldSys_Ukey   = b.OldSys_Ukey  
-			  ,a.OldSys_Ver	   = b.OldSys_Ver	  
-			  ,a.OrganicCotton = b.OrganicCotton
-			  ,a.POUnit		   = b.POUnit		  
-			  ,a.PreShrink	   = b.PreShrink	  
-			  ,a.Refno		   = b.Refno		  
-			  ,a.Remark		   = b.Remark		  
-			  ,a.SeasonID	   = b.SeasonID	  
-			  ,a.ShowSuppColor = b.ShowSuppColor
-			  ,a.SuppRefno	   = b.SuppRefno
-			  ,a.SustainableMaterial	   = b.SustainableMaterial
+			   a.AbbCH	       = isnull(b.AbbCH	       ,'')
+			  ,a.AbbEN	       = isnull(b.AbbEN	       ,'')
+			  ,a.AddDate	   = b.AddDate	   
+			  ,a.AddName	   = isnull(b.AddName	   ,'')
+			  ,a.AllowanceRate = isnull(b.AllowanceRate,0)
+			  ,a.AllowanceType = isnull(b.AllowanceType,0)
+			  ,a.BrandID	   = isnull(b.BrandID	   ,'')
+			  ,a.Delay		   = b.Delay		 
+			  ,a.DelayMemo	   = isnull(b.DelayMemo	   ,'')
+			  ,a.EditDate	   = b.EditDate	   
+			  ,a.EditName	   = isnull(b.EditName	   ,'')
+			  ,a.IsECFA		   = isnull(b.IsECFA		,0)
+			  ,a.ItemType	   = isnull(b.ItemType	   ,'')
+			  ,a.Junk		   = isnull(b.Junk		   ,0)
+			  ,a.Keyword	   = isnull(b.Keyword	   ,'')
+			  ,a.Lock		   = isnull(b.Lock		   ,0)
+			  ,a.LTDay		   = isnull(b.LTDay		   ,0)
+			  ,a.NOForecast	   = isnull(b.NOForecast	,0)
+			  ,a.OldSys_Ukey   = isnull(b.OldSys_Ukey  ,'')
+			  ,a.OldSys_Ver	   = isnull(b.OldSys_Ver	,'')
+			  ,a.OrganicCotton = isnull(b.OrganicCotton,0)
+			  ,a.POUnit		   = isnull(b.POUnit		,'')
+			  ,a.PreShrink	   = isnull(b.PreShrink	   ,0)
+			  ,a.Refno		   = isnull(b.Refno		   ,'')
+			  ,a.Remark		   = isnull(b.Remark		,'')
+			  ,a.SeasonID	   = isnull(b.SeasonID	   ,'')
+			  ,a.ShowSuppColor = isnull(b.ShowSuppColor,0)
+			  ,a.SuppRefno	   = isnull(b.SuppRefno	   ,'')
+			  ,a.SustainableMaterial	   = isnull(b.SustainableMaterial,'')
 
 		from Production.dbo.Fabric_Supp as a 
 		inner join Trade_To_Pms.dbo.Fabric_Supp as b ON a.SuppID=b.SuppID and a.SCIRefno = b.SCIRefno
@@ -2715,38 +2717,38 @@ on t.type=s.type and t.id=s.id
 				,SustainableMaterial
 		)
 		select 
-				 AbbCH	      
-				,AbbEN	      
-				,AddDate	  
-				,AddName	  
-				,AllowanceRate
-				,AllowanceType
-				,BrandID	  
-				,Delay		  
-				,DelayMemo	  
-				,EditDate	  
-				,EditName	  
-				,IsECFA		  
-				,ItemType	  
-				,Junk		  
-				,Keyword	  
-				,Lock		  
-				,LTDay		  
-				,NOForecast	  
-				,OldSys_Ukey  
-				,OldSys_Ver	  
-				,OrganicCotton
-				,POUnit		  
-				,PreShrink	  
-				,Refno		  
-				,Remark		  
-				,SeasonID	  
-				,ShowSuppColor
-				,SuppRefno	  
-				,ukey
-				,SuppID
-				,SCIRefno
-				,SustainableMaterial
+				 isnull(AbbCH	      	   ,'')
+				,isnull(AbbEN	      	   ,'')
+				,AddDate	  		 
+				,isnull(AddName	  		   ,'')
+				,isnull(AllowanceRate	   ,0)
+				,isnull(AllowanceType	   ,0)
+				,isnull(BrandID	  		   ,'')
+				,Delay		  	   
+				,isnull(DelayMemo	  	   ,'')
+				,EditDate	  	   
+				,isnull(EditName	  	   ,'')
+				,isnull(IsECFA		  	   ,0)
+				,isnull(ItemType	  	   ,'')
+				,isnull(Junk		  	   ,0)
+				,isnull(Keyword	  		   ,'')
+				,isnull(Lock		  	   ,0)
+				,isnull(LTDay		  	   ,0)
+				,isnull(NOForecast	  	   ,0)
+				,isnull(OldSys_Ukey  	   ,'')
+				,isnull(OldSys_Ver	  	   ,'')
+				,isnull(OrganicCotton	   ,0)
+				,isnull(POUnit		  	   ,'')
+				,isnull(PreShrink	  	   ,0)
+				,isnull(Refno		  	   ,'')
+				,isnull(Remark		  	   ,'')
+				,isnull(SeasonID	  	   ,'')
+				,isnull(ShowSuppColor	   ,0)
+				,isnull(SuppRefno	  	   ,'')
+				,isnull(ukey			   ,0)
+				,isnull(SuppID			   ,'')
+				,isnull(SCIRefno		   ,'')
+				,isnull(SustainableMaterial,'')
 
 		from Trade_To_Pms.dbo.Fabric_Supp as b WITH (NOLOCK)
 		where not exists(select SuppID from Production.dbo.Fabric_Supp as a WITH (NOLOCK) where a.SuppID = b.SuppID and a.SCIRefno = b.SCIRefno)
@@ -2758,12 +2760,12 @@ Using Trade_To_Pms.dbo.Color_Multiple as s
 on t.colorUkey=s.colorUkey and t.Seqno=s.Seqno
 	when matched then
 	update set
-	t.ID= s.ID,	
-	t.BrandID= s.BrandID,	
-	t.ColorID= s.ColorID,
-	t.AddName= s.AddName,
-	t.AddDate= s.AddDate,
-	t.EditName= s.EditName,
+	t.ID= isnull( s.ID,			   ''),
+	t.BrandID= isnull( s.BrandID,	''),
+	t.ColorID= isnull( s.ColorID,  ''),
+	t.AddName= isnull( s.AddName,  ''),
+	t.AddDate=  s.AddDate,  
+	t.EditName= isnull( s.EditName,''),
 	t.EditDate= s.EditDate
 when not matched by target then 
 	insert(ID
@@ -2776,14 +2778,15 @@ when not matched by target then
 	,EditName
 	,EditDate
 	)
-	values(s.ID,
-	s.ColorUkey,
-	s.BrandID,
-	s.Seqno,
-	s.ColorID,
-	s.AddName,
-	s.AddDate,
-	s.EditName,
+	values(
+	isnull(s.ID,	   ''),
+	isnull(s.ColorUkey,0),
+	isnull(s.BrandID,  ''),
+	isnull(s.Seqno,	   ''),
+	isnull(s.ColorID,  ''),
+	isnull(s.AddName,  ''),
+	s.AddDate, 
+	isnull(s.EditName, ''),
 	s.EditDate	)
 when not matched by source then
 	delete;
@@ -2796,20 +2799,20 @@ Using Trade_To_Pms.dbo.Color_SuppColor as s
 on t.ukey=s.ukey
 when matched then
 	update set
-	t.ID= s.ID,
-	t.Ukey= s.Ukey,
-	t.BrandId= s.BrandId,
-	t.ColorUkey= s.ColorUkey,
-	t.SeasonID= s.SeasonID,
-	t.SuppID= s.SuppID,
-	t.SuppColor= s.SuppColor,
-	t.ProgramID= s.ProgramID,
-	t.StyleID= s.StyleID,
-	t.Refno= s.Refno,
-	t.Remark= s.Remark,
-	t.AddName= s.AddName,
-	t.AddDate= s.AddDate,
-	t.EditName= s.EditName,
+	t.ID= isnull( s.ID,					 ''),
+	t.Ukey= isnull( s.Ukey,				 0),
+	t.BrandId= isnull( s.BrandId,		 ''),
+	t.ColorUkey= isnull( s.ColorUkey,	 0),
+	t.SeasonID= isnull( s.SeasonID,		 ''),
+	t.SuppID= isnull( s.SuppID,			 ''),
+	t.SuppColor= isnull( s.SuppColor,	 ''),
+	t.ProgramID= isnull( s.ProgramID,	 ''),
+	t.StyleID= isnull( s.StyleID,		 ''),
+	t.Refno= isnull( s.Refno,			 ''),
+	t.Remark= isnull( s.Remark,			 ''),
+	t.AddName= isnull( s.AddName,		 ''),
+	t.AddDate=  s.AddDate,		
+	t.EditName= isnull( s.EditName,      ''),
 	t.EditDate= s.EditDate
 when not matched by target then
 	insert(ID
@@ -2828,20 +2831,21 @@ when not matched by target then
 	,EditName
 	,EditDate
 	)
-	values(s.ID,
-	s.Ukey,
-	s.BrandId,
-	s.ColorUkey,
-	s.SeasonID,
-	s.SuppID,
-	s.SuppColor,
-	s.ProgramID,
-	s.StyleID,
-	s.Refno,
-	s.Remark,
-	s.AddName,
-	s.AddDate,
-	s.EditName,
+	values(
+	isnull(s.ID,	   ''),
+	isnull(s.Ukey,	   0),
+	isnull(s.BrandId,  ''),
+	isnull(s.ColorUkey,0),
+	isnull(s.SeasonID, ''),
+	isnull(s.SuppID,   ''),
+	isnull(s.SuppColor,''),
+	isnull(s.ProgramID,''),
+	isnull(s.StyleID,  ''),
+	isnull(s.Refno,	   ''),
+	isnull(s.Remark,   ''),
+	isnull(s.AddName,  ''),
+	s.AddDate,  
+	isnull(s.EditName, ''),
 	s.EditDate)
 when not matched by source then 
 	delete;
@@ -2849,7 +2853,7 @@ when not matched by source then
 ----update system.ProphetSingleSizeDeduct欄位
 update Production.dbo.System
 set ProphetSingleSizeDeduct =
-(select ProphetSingleSizeDeduct from Trade_To_Pms.dbo.Tradesystem s)
+isnull((select ProphetSingleSizeDeduct from Trade_To_Pms.dbo.Tradesystem s),0)
 
 	
 --------Buyer---------------
@@ -2859,30 +2863,30 @@ Using Trade_To_Pms.dbo.Buyer as s
 on t.ID=s.ID
 when matched then
 	update set
-	t.CountryID= s.CountryID,
-	t.NameCH= s.NameCH,
-	t.NameEN= s.NameEN,
-	t.Tel= s.Tel,
-	t.Fax= s.Fax,
-	t.Contact1= s.Contact1,
-	t.Contact2= s.Contact2,
-	t.AddressCH= s.AddressCH,
-	t.AddressEN= s.AddressEN,
-	t.BillTo1= s.BillTo1,
-	t.BillTo2= s.BillTo2,
-	t.BillTo3= s.BillTo3,
-	t.BillTo4= s.BillTo4,
-	t.BillTo5= s.BillTo5,
-	t.CurrencyID= s.CurrencyID,
-	t.Remark= s.Remark,
-	t.ZipCode= s.ZipCode,
-	t.Email= s.Email,
-	t.MrTeam= s.MrTeam,
-	t.AddName= s.AddName,
-	t.AddDate= s.AddDate,
-	t.EditName= s.EditName,
-	t.EditDate= s.EditDate,
-	t.Junk= s.Junk
+	t.CountryID= isnull( s.CountryID,  ''),
+	t.NameCH= isnull( s.NameCH,		   ''),
+	t.NameEN= isnull( s.NameEN,		   ''),
+	t.Tel= isnull( s.Tel,			   ''),
+	t.Fax= isnull( s.Fax,			   ''),
+	t.Contact1= isnull( s.Contact1,	   ''),
+	t.Contact2= isnull( s.Contact2,	   ''),
+	t.AddressCH= isnull( s.AddressCH,  ''),
+	t.AddressEN= isnull( s.AddressEN,  ''),
+	t.BillTo1= isnull( s.BillTo1,	   ''),
+	t.BillTo2= isnull( s.BillTo2,	   ''),
+	t.BillTo3= isnull( s.BillTo3,	   ''),
+	t.BillTo4= isnull( s.BillTo4,	   ''),
+	t.BillTo5= isnull( s.BillTo5,	   ''),
+	t.CurrencyID= isnull( s.CurrencyID,''),
+	t.Remark= isnull( s.Remark,		   ''),
+	t.ZipCode= isnull( s.ZipCode,	   ''),
+	t.Email= isnull( s.Email,		   ''),
+	t.MrTeam= isnull( s.MrTeam,		   ''),
+	t.AddName= isnull( s.AddName,	   ''),
+	t.AddDate=  s.AddDate,	   
+	t.EditName= isnull( s.EditName,	   ''),
+	t.EditDate=  s.EditDate,	   
+	t.Junk= isnull( s.Junk			  , 0)
 when not matched by target then
 	insert(ID
 	,CountryID
@@ -2910,31 +2914,33 @@ when not matched by target then
 	,EditDate
 	,Junk
 	)
-	values(s.ID,
-	s.CountryID,
-	s.NameCH,
-	s.NameEN,
-	s.Tel,
-	s.Fax,
-	s.Contact1,
-	s.Contact2,
-	s.AddressCH,
-	s.AddressEN,
-	s.BillTo1,
-	s.BillTo2,
-	s.BillTo3,
-	s.BillTo4,
-	s.BillTo5,
-	s.CurrencyID,
-	s.Remark,
-	s.ZipCode,
-	s.Email,
-	s.MrTeam,
-	s.AddName,
-	s.AddDate,
-	s.EditName,
-	s.EditDate,
-	s.Junk)
+	values(
+	isnull(s.ID,        ''),
+	isnull(s.CountryID,	''),
+	isnull(s.NameCH,	''),
+	isnull(s.NameEN,	''),
+	isnull(s.Tel,		''),
+	isnull(s.Fax,		''),
+	isnull(s.Contact1,	''),
+	isnull(s.Contact2,	''),
+	isnull(s.AddressCH,	''),
+	isnull(s.AddressEN,	''),
+	isnull(s.BillTo1,	''),
+	isnull(s.BillTo2,	''),
+	isnull(s.BillTo3,	''),
+	isnull(s.BillTo4,	''),
+	isnull(s.BillTo5,	''),
+	isnull(s.CurrencyID,''),
+	isnull(s.Remark,	''),
+	isnull(s.ZipCode,	''),
+	isnull(s.Email,		''),
+	isnull(s.MrTeam,	''),
+	isnull(s.AddName,	''),
+	s.AddDate,	
+	isnull(s.EditName,	''),
+	s.EditDate,	
+	isnull(s.Junk		,0)
+	)
 when not matched by source then 
 	delete;	
 
@@ -2946,12 +2952,12 @@ Using Trade_To_Pms.dbo.CutReason as s
 on t.Type=s.Type and t.ID=s.ID 
 when matched then
 	update set
-	t.Description= s.Description,
-	t.Remark= s.Remark,
-	t.Junk= s.Junk,
-	t.AddName= s.AddName,
-	t.AddDate= s.AddDate,
-	t.EditName= s.EditName,
+	t.Description= isnull( s.Description,''),
+	t.Remark= isnull( s.Remark,			 ''),
+	t.Junk= isnull( s.Junk,				 0),
+	t.AddName= isnull( s.AddName,		 ''),
+	t.AddDate=  s.AddDate,		 
+	t.EditName= isnull( s.EditName,		 ''),
 	t.EditDate= s.EditDate
 when not matched by target then
 	insert(Type
@@ -2964,14 +2970,15 @@ when not matched by target then
 	,EditName
 	,EditDate
 	)
-	values(s.Type,
-	s.ID,
-	s.Description,
-	s.Remark,
-	s.Junk,
-	s.AddName,
-	s.AddDate,
-	s.EditName,
+	values(
+	isnull(s.Type,		 ''),
+	isnull(s.ID,		 ''),
+	isnull(s.Description,''),
+	isnull(s.Remark,	 ''),
+	isnull(s.Junk,		 0),
+	isnull(s.AddName,	 ''),
+	s.AddDate,	 
+	isnull(s.EditName,   ''),
 	s.EditDate)
 when not matched by source then 
 	delete;	
@@ -2983,11 +2990,11 @@ Using Trade_To_Pms.dbo.IEReason as s
 on t.Type=s.Type and t.ID=s.ID
 when matched then
 	update set
-	t.Description= s.Description,
-	t.Junk= s.Junk,
-	t.AddName= s.AddName,
-	t.AddDate= s.AddDate,
-	t.EditName= s.EditName,
+	t.Description= isnull( s.Description, ''),
+	t.Junk= isnull( s.Junk,				  0),
+	t.AddName= isnull( s.AddName,		  ''),
+	t.AddDate=  s.AddDate,		
+	t.EditName= isnull( s.EditName,		  ''),
 	t.EditDate= s.EditDate
 when not matched by target then
 	insert(Type
@@ -2999,13 +3006,14 @@ when not matched by target then
 	,EditName
 	,EditDate
 	)
-	values(s.Type,
-	s.ID,
-	s.Description,
-	s.Junk,
-	s.AddName,
-	s.AddDate,
-	s.EditName,
+	values(
+	isnull(s.Type,       ''),
+	isnull(s.ID,		 ''),
+	isnull(s.Description,''),
+	isnull(s.Junk,		 0),
+	isnull(s.AddName,	 ''),
+	s.AddDate,	 
+	isnull(s.EditName,	 ''),
 	s.EditDate)
 when not matched by source then 
 	delete;	
@@ -3018,11 +3026,11 @@ Using Trade_To_Pms.dbo.PackingReason as s
 on t.Type=s.Type and t.ID=s.ID
 when matched then
 	update set
-	t.Description= s.Description,
-	t.Junk= s.Junk,
-	t.AddName= s.AddName,
-	t.AddDate= s.AddDate,
-	t.EditName= s.EditName,
+	t.Description= isnull( s.Description,''),
+	t.Junk= isnull( s.Junk,				 0),
+	t.AddName= isnull( s.AddName,		 ''),
+	t.AddDate=  s.AddDate,		
+	t.EditName= isnull( s.EditName,		 ''),
 	t.EditDate= s.EditDate
 when not matched by target then
 	insert(Type
@@ -3034,13 +3042,14 @@ when not matched by target then
 	,EditName
 	,EditDate
 	)
-	values(s.Type,
-	s.ID,
-	s.Description,
-	s.Junk,
-	s.AddName,
-	s.AddDate,
-	s.EditName,
+	values(
+	isnull(s.Type,         ''),
+	isnull(s.ID,		   ''),
+	isnull(s.Description,  ''),
+	isnull(s.Junk,		   0),
+	isnull(s.AddName,	   ''),
+	s.AddDate,	   
+	isnull(s.EditName,	   ''),
 	s.EditDate)
 when not matched by source and t.type <> 'ER' then 
 	delete;	
@@ -3052,13 +3061,13 @@ Using Trade_To_Pms.dbo.PPICReason as s
 on t.Type=s.Type and t.ID=s.ID
 when matched then
 	update set
-	t.Description= s.Description,
-	t.Remark= s.Remark,
-	t.Junk= s.Junk,
-	t.TypeForUse= s.TypeForUse,
-	t.AddName= s.AddName,
-	t.AddDate= s.AddDate,
-	t.EditName= s.EditName,
+	t.Description= isnull( s.Description,''),
+	t.Remark= isnull( s.Remark,			 ''),
+	t.Junk= isnull( s.Junk,				 0),
+	t.TypeForUse= isnull( s.TypeForUse,	 ''),
+	t.AddName= isnull( s.AddName,		 ''),
+	t.AddDate=  s.AddDate,		
+	t.EditName= isnull( s.EditName,		 ''),
 	t.EditDate= s.EditDate
 when not matched by target then
 	insert(Type
@@ -3072,15 +3081,16 @@ when not matched by target then
 	,EditName
 	,EditDate
 	)
-	values(s.Type,
-	s.ID,
-	s.Description,
-	s.Remark,
-	s.Junk,
-	s.TypeForUse,
-	s.AddName,
-	s.AddDate,
-	s.EditName,
+	values(
+	isnull(s.Type,		  ''),
+	isnull(s.ID,		  ''),
+	isnull(s.Description, ''),
+	isnull(s.Remark,	  ''),
+	isnull(s.Junk,		  0),
+	isnull(s.TypeForUse,  ''),
+	isnull(s.AddName,	  ''),
+	s.AddDate,	  
+	isnull(s.EditName,    ''),
 	s.EditDate)
 when not matched by source then 
 	delete;	
@@ -3090,7 +3100,7 @@ when not matched by source then
 delete Production.dbo.AutomationSubProcess
 
 insert into Production.dbo.AutomationSubProcess(ID)
-select s.ID
+select isnull(s.ID,'')
 from Trade_To_Pms.dbo.SubProcess s with (nolock)
 left Join Production.dbo.SubProcess t with (nolock) on s.ID = t.ID
 where s.Junk <> t.Junk or t.Junk is null
@@ -3100,22 +3110,22 @@ Using Trade_To_Pms.dbo.SubProcess as s
 on t.ID=s.ID
 when matched then
 	update set
-	t.ArtworkTypeId= s.ArtworkTypeId,
-	t.IsSelection= s.IsSelection,
-	t.IsRFIDProcess= s.IsRFIDProcess,
-	t.IsRFIDDefault= s.IsRFIDDefault,
-	t.ShowSeq= s.ShowSeq,
-	t.Junk= s.Junk,
-	t.AddName= s.AddName,
-	t.AddDate= s.AddDate,
-	t.EditName= s.EditName,
-	t.EditDate= s.EditDate,
-	t.BCSDate= s.BCSDate,
-	t.InOutRule  = s.InOutRule ,
-	t.FullName  = s.FullName ,
-	t.IsLackingAndReplacement  = s.IsLackingAndReplacement,
-	t.IsBoundedProcess  = s.IsBoundedProcess ,
-	t.IsSubprocessInspection  = s.IsSubprocessInspection 
+	t.ArtworkTypeId= isnull( s.ArtworkTypeId,					   ''),
+	t.IsSelection= isnull( s.IsSelection,						   0),
+	t.IsRFIDProcess= isnull( s.IsRFIDProcess,					   0),
+	t.IsRFIDDefault= isnull( s.IsRFIDDefault,					   0),
+	t.ShowSeq= isnull( s.ShowSeq,								   ''),
+	t.Junk= isnull( s.Junk,										   0),
+	t.AddName= isnull( s.AddName,								   ''),
+	t.AddDate=  s.AddDate,								  
+	t.EditName= isnull( s.EditName,								   ''),
+	t.EditDate=  s.EditDate,								
+	t.BCSDate= isnull( s.BCSDate,								   0),
+	t.InOutRule  = isnull( s.InOutRule ,						   0),
+	t.FullName  = isnull( s.FullName ,							   ''),
+	t.IsLackingAndReplacement  = isnull( s.IsLackingAndReplacement,0),
+	t.IsBoundedProcess  = isnull( s.IsBoundedProcess ,			   0),
+	t.IsSubprocessInspection  = isnull( s.IsSubprocessInspection   ,0)
 
 when not matched by target then
 	insert(ID
@@ -3136,23 +3146,25 @@ when not matched by target then
 	,IsBoundedProcess
 	,IsSubprocessInspection
 	)
-	values(s.ID,
-	s.ArtworkTypeId,
-	s.IsSelection,
-	s.IsRFIDProcess,
-	s.IsRFIDDefault,
-	s.ShowSeq,
-	s.Junk,
-	s.AddName,
-	s.AddDate,
-	s.EditName,
-	s.EditDate,
-	s.BCSDate,
-	s.InOutRule,
-	s.FullName,
-	s.IsLackingAndReplacement,
-	s.IsBoundedProcess,
-	s.IsSubprocessInspection)
+	values(
+	isnull(s.ID,                   	 ''),
+	isnull(s.ArtworkTypeId,			 ''),
+	isnull(s.IsSelection,			 0),
+	isnull(s.IsRFIDProcess,			 0),
+	isnull(s.IsRFIDDefault,			 0),
+	isnull(s.ShowSeq,				 ''),
+	isnull(s.Junk,					 0),
+	isnull(s.AddName,				 ''),
+	s.AddDate,				
+	isnull(s.EditName,				 ''),
+	s.EditDate,			
+	isnull(s.BCSDate,				 0),
+	isnull(s.InOutRule,				 0),
+	isnull(s.FullName,				 ''),
+	isnull(s.IsLackingAndReplacement,0),
+	isnull(s.IsBoundedProcess,		 0),
+	isnull(s.IsSubprocessInspection, 0)
+	)
 when not matched by source then 
 	delete;	
 
@@ -3164,13 +3176,13 @@ Using Trade_To_Pms.dbo.WhseReason as s
 on t.Type=s.Type and t.ID=s.ID
 when matched then
 	update set
-	t.Description= s.Description,
-	t.Remark= s.Remark,
-	t.Junk= s.Junk,
-	t.ActionCode= s.ActionCode,
-	t.AddName= s.AddName,
-	t.AddDate= s.AddDate,
-	t.EditName= s.EditName,
+	t.Description= isnull( s.Description,''),
+	t.Remark= isnull( s.Remark,			 ''),
+	t.Junk= isnull( s.Junk,				 0),
+	t.ActionCode= isnull( s.ActionCode,	 ''),
+	t.AddName= isnull( s.AddName,		 ''),
+	t.AddDate=  s.AddDate,		
+	t.EditName= isnull( s.EditName,		 ''),
 	t.EditDate= s.EditDate,
 	t.No= s.No
 when not matched by target then
@@ -3186,17 +3198,19 @@ when not matched by target then
 	,EditDate
 	,No
 	)
-	values(s.Type,
-	s.ID,
-	s.Description,
-	s.Remark,
-	s.Junk,
-	s.ActionCode,
-	s.AddName,
-	s.AddDate,
-	s.EditName,
-	s.EditDate,
-	s.No)
+	values(
+	isnull(s.Type,         ''),
+	isnull(s.ID,		   ''),
+	isnull(s.Description,  ''),
+	isnull(s.Remark,	   ''),
+	isnull(s.Junk,		   0),
+	isnull(s.ActionCode,   ''),
+	isnull(s.AddName,	   ''),
+	s.AddDate,	 
+	isnull(s.EditName,	   ''),
+	s.EditDate,	   
+	isnull(s.No			  ,0)
+	)
 when not matched by source then 
 	delete;	
 
@@ -3207,12 +3221,12 @@ Using Trade_To_Pms.dbo.ClogReason as s
 on t.Type=s.Type and t.ID=s.ID
 when matched then
 	update set
-	t.Description= s.Description,
-	t.Remark= s.Remark,
-	t.Junk= s.Junk,
-	t.AddName= s.AddName,
-	t.AddDate= s.AddDate,
-	t.EditName= s.EditName,
+	t.Description= isnull( s.Description,''),
+	t.Remark= isnull( s.Remark,			 ''),
+	t.Junk= isnull( s.Junk,				 0),
+	t.AddName= isnull( s.AddName,		 ''),
+	t.AddDate=  s.AddDate,		
+	t.EditName= isnull( s.EditName,		 ''),
 	t.EditDate= s.EditDate
 when not matched by target then
 	insert(Type
@@ -3225,15 +3239,17 @@ when not matched by target then
 	,EditName
 	,EditDate
 	)
-	values(s.Type,
-	s.ID,
-	s.Description,
-	s.Remark,
-	s.Junk,
-	s.AddName,
-	s.AddDate,
-	s.EditName,
-	s.EditDate)
+	values(
+	isnull(s.Type,        ''),
+	isnull(s.ID,		  ''),
+	isnull(s.Description, ''),
+	isnull(s.Remark,	  ''),
+	isnull(s.Junk,		  0),
+	isnull(s.AddName,	  ''),
+	s.AddDate,	
+	isnull(s.EditName,	  ''),
+	s.EditDate
+	)
 when not matched by source then 
 	delete;	
 
@@ -3244,21 +3260,28 @@ Using Trade_To_Pms.dbo.ThreadAllowanceScale as s
 on t.ID = s.ID
 when matched then
       update set
-      t.LowerBound = s.LowerBound,
-      t.UpperBound = s.UpperBound,
-      t.Allowance = s.Allowance,
-      t.Remark = s.Remark,
-      t.AddName = s.AddName,
-      t.AddDate= s.AddDate,
-      t.EditName = s.EditName,
+      t.LowerBound = isnull( s.LowerBound,0),
+      t.UpperBound = isnull( s.UpperBound,0),
+      t.Allowance = isnull( s.Allowance,  0),
+      t.Remark = isnull( s.Remark,		  ''),
+      t.AddName = isnull( s.AddName,	  ''),
+      t.AddDate=  s.AddDate,	
+      t.EditName = isnull( s.EditName,	  ''),
       t.EditDate = s.EditDate
 when not matched by target then
       insert (
             ID , LowerBound  , UpperBound  , Allowance  , Remark    , AddName
             , AddDate   , EditName    , EditDate
       ) values (
-           s.ID, s.LowerBound, s.UpperBound, s.Allowance, s.Remark  , s.AddName
-            , s.AddDate , s.EditName  , s.EditDate
+             isnull(s.ID		,'')
+		   , isnull(s.LowerBound,0)
+		   , isnull(s.UpperBound,0)
+		   , isnull(s.Allowance	,0)
+		   , isnull(s.Remark  	,'')
+		   , isnull(s.AddName	,'')
+		   , s.AddDate	
+		   , isnull(s.EditName  ,'')
+		   , s.EditDate
       )
 when not matched by source then 
       delete;     
@@ -3269,17 +3292,27 @@ Merge Production.dbo.SubconReason as t
 Using Trade_To_Pms.dbo.SubconReason as s
 on t.ID = s.ID and t.Type = s.Type
 when matched then
-      update set	t.Reason		 = s.Reason		 ,
-					t.Responsible	 = s.Responsible ,
-					t.Junk			 = s.Junk		 ,
-					t.AddDate		 = s.AddDate	 ,
-					t.AddName		 = s.AddName	 ,
-					t.EditDate		 = s.EditDate	 ,
-					t.EditName		 = s.EditName	 ,
-					t.Status		 = s.Status
+      update set	t.Reason		 = isnull( s.Reason		 ,''),
+					t.Responsible	 = isnull( s.Responsible ,''),
+					t.Junk			 = isnull( s.Junk		 ,0),
+					t.AddDate		 =  s.AddDate	 ,
+					t.AddName		 = isnull( s.AddName	 ,''),
+					t.EditDate		 =  s.EditDate	 ,
+					t.EditName		 = isnull( s.EditName	 ,''),
+					t.Status		 = isnull( s.Status		 ,'')
 when not matched by target then
       insert (Type,ID,Reason,Responsible,Junk,AddDate,AddName,EditDate,EditName ,Status
-      ) values (s.Type,s.ID,s.Reason,s.Responsible,s.Junk,s.AddDate,s.AddName,s.EditDate,s.EditName ,Status
+      ) values (
+	   isnull(s.Type		,'')
+	  ,isnull(s.ID			,'')
+	  ,isnull(s.Reason		,'')
+	  ,isnull(s.Responsible	,'')
+	  ,isnull(s.Junk		,0)
+	  ,s.AddDate		
+	  ,isnull(s.AddName		,'')
+	  ,s.EditDate	
+	  ,isnull(s.EditName	,'')
+	  ,isnull(Status        ,'')
       )
 when not matched by source then 
       delete;     
@@ -3291,23 +3324,30 @@ Using Trade_To_Pms.dbo.SewingReason as tsr
 on sr.ID = tsr.ID AND sr.Type=tsr.Type
 when matched then
       update set
-       sr.Type = tsr.Type,
-       sr.ID = tsr.ID,
-       sr.Description= tsr.Description,
-       sr.Junk = tsr.Junk,
-       sr.AddName = tsr.AddName,
-       sr.AddDate = tsr.AddDate,
-       sr.EditName = tsr.EditName,
-       sr.EditDate = tsr.EditDate,
-       sr.ForDQSCheck = tsr.ForDQSCheck
+       sr.Type = isnull( tsr.Type,				 ''),
+       sr.ID = isnull( tsr.ID,					 ''),
+       sr.Description= isnull( tsr.Description,	 ''),
+       sr.Junk = isnull( tsr.Junk,				 0),
+       sr.AddName = isnull( tsr.AddName,		 ''),
+       sr.AddDate =  tsr.AddDate,		
+       sr.EditName = isnull( tsr.EditName,		 ''),
+       sr.EditDate =  tsr.EditDate,    
+       sr.ForDQSCheck = isnull( tsr.ForDQSCheck ,0)
 
 when not matched by target then
       insert (
             Type , ID  , Description  , Junk  , AddName    , AddDate
             , EditName   , EditDate   , ForDQSCheck  
       ) values (
-            tsr.Type , tsr.ID  , tsr.Description  , tsr.Junk  , tsr.AddName    , tsr.AddDate
-            , tsr.EditName   , tsr.EditDate		  , tsr.ForDQSCheck  
+              isnull(tsr.Type		   , '')
+			, isnull(tsr.ID			   , '')
+			, isnull(tsr.Description   , '')
+			, isnull(tsr.Junk		   , 0)
+			, isnull(tsr.AddName	   , '')
+			, tsr.AddDate	  
+            , isnull(tsr.EditName 	   , '')
+			, tsr.EditDate	  
+			, isnull(tsr.ForDQSCheck  , 0)
       )
 when not matched by source then 
       delete;     
@@ -3316,13 +3356,13 @@ when not matched by source then
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET   
-      a.Vessel     =b.Vessel
-      ,a.ETD       =b.ETD 
-      ,a.ETA       =b.ETA 
-      ,a.InvDate   =b.InvDate 
-      ,a.FCRDate   =b.FCRDate 
-	  ,a.BLNo	   =b.BLNo
-	  ,a.BL2No	   =b.BL2No
+      a.Vessel     = isnull(b.Vessel  , '')
+      ,a.ETD       = b.ETD 	  
+      ,a.ETA       = b.ETA 	
+      ,a.InvDate   = b.InvDate
+      ,a.FCRDate   = b.FCRDate 
+	  ,a.BLNo	   = isnull(b.BLNo	  , '')
+	  ,a.BL2No	   = isnull(b.BL2No	  , '')
 	  ,a.InvoiceApproveDate	   =b.InvoiceApproveDate
 	  ,a.IntendDeliveryDate	   =b.IntendDeliveryDate
 	  ,a.ActFCRDate	   =b.ActFCRDate
@@ -3331,7 +3371,7 @@ where b.InvDate is not null
 
 UPDATE a
 SET   
-     a.Foundry = b.Foundry
+     a.Foundry = isnull(b.Foundry, 0)
 from Production.dbo.GMTBooking as a 
 inner join Trade_To_Pms.dbo.GarmentInvoice as b ON a.id=b.id
 
@@ -3340,15 +3380,20 @@ inner join Trade_To_Pms.dbo.GarmentInvoice as b ON a.id=b.id
 
 UPDATE t
 SET 
-	 t.GW = s.GW
-	,t.CBM=s.CBM
-	,t.Ratio=s.Ratio
+	 t.GW = isnull(s.GW	   , 0)
+	,t.CBM=isnull(s.CBM	   , 0)
+	,t.Ratio=isnull(s.Ratio, 0)
 FROM Production.dbo.GarmentInvoice_Foundry t WITH (NOLOCK)
 inner join Trade_To_Pms.dbo.GarmentInvoice_Foundry s WITH (NOLOCK) on t.InvoiceNo=s.InvoiceNo and t.FactoryGroup=s.FactoryGroup
 
 INSERT INTO Production.dbo.GarmentInvoice_Foundry 
 	  (InvoiceNo,FactoryGroup,GW,CBM,Ratio)
-select InvoiceNo,FactoryGroup,GW,CBM,Ratio 
+select
+	 isnull(InvoiceNo   , '')
+	,isnull(FactoryGroup, '')
+	,isnull(GW			, 0)
+	,isnull(CBM			, 0)
+	,isnull(Ratio   	, 0)
 FROM Trade_To_Pms.dbo.GarmentInvoice_Foundry as b WITH (NOLOCK)
 where not exists(
 	select 1 
@@ -3377,7 +3422,15 @@ and not exists(
 --------SeasonSCI---------------
 truncate table production.dbo.SeasonSCI
 insert into production.dbo.SeasonSCI([ID],[Month],[AddName],[AddDate],[EditName],[EditDate],[Junk])
-select [ID],[Month],[AddName],[AddDate],[EditName],[EditDate],[Junk] from Trade_To_Pms.dbo.SeasonSCI
+select
+	 isnull([ID], '')
+	,isnull([Month], '')
+	,isnull([AddName], '')
+	,[AddDate]
+	,isnull([EditName], '')
+	,[EditDate]
+	,isnull([Junk] , 0)
+from Trade_To_Pms.dbo.SeasonSCI
 
 
 ------FirstSaleCostSetting---------------
@@ -3387,14 +3440,25 @@ on sr.CountryID = tsr.CountryID AND sr.ArtWorkID=tsr.ArtWorkID AND sr.CostTypeID
 when matched then
       update set 
        sr.EndDate = tsr.EndDate, 
-	   sr.IsJunk = tsr.IsJunk, 
+	   sr.IsJunk = isnull(tsr.IsJunk,  0),
 	   sr.AddDate = tsr.AddDate, 
-	   sr.AddName = tsr.AddName, 
+	   sr.AddName = isnull(tsr.AddName,  ''),
 	   sr.EditDate = tsr.EditDate, 
-	   sr.EditName = tsr.EditName
+	   sr.EditName = isnull(tsr.EditName, '')
 when not matched by target then
       insert (CountryID, ArtWorkID, CostTypeID, BeginDate, EndDate, IsJunk, AddDate, AddName, EditDate, EditName) 
-	  values (tsr.CountryID, tsr.ArtWorkID, tsr.CostTypeID, tsr.BeginDate, tsr.EndDate, tsr.IsJunk, tsr.AddDate, tsr.AddName, tsr.EditDate,tsr.EditName)
+	  values (
+		  isnull(tsr.CountryID	, '')
+		, isnull(tsr.ArtWorkID	, '')
+		, isnull(tsr.CostTypeID	, '')
+		, tsr.BeginDate	
+		, tsr.EndDate	
+		, isnull(tsr.IsJunk		, 0)
+		, tsr.AddDate	
+		, isnull(tsr.AddName	, '')
+		, tsr.EditDate	
+		, isnull(tsr.EditName   , '')
+		)
 when not matched by source then 
       delete;
 
@@ -3403,8 +3467,8 @@ Merge Production.dbo.Brand_ThreadCalculateRules as t
 Using (select a.* from Trade_To_Pms.dbo.Brand_ThreadCalculateRules a ) as s
 on t.ID=s.ID and t.FabricType = s.FabricType and t.ProgramID = s.ProgramID
 when matched then 
-	update set	t.UseRatioRule	= s.UseRatioRule,
-				t.UseRatioRule_Thick	= s.UseRatioRule_Thick
+	update set	t.UseRatioRule	= isnull( s.UseRatioRule, ''),
+				t.UseRatioRule_Thick	= isnull( s.UseRatioRule_Thick, '')
 when not matched by target then
 	insert (ID,
 			FabricType,
@@ -3412,11 +3476,11 @@ when not matched by target then
 			UseRatioRule_Thick,
 			ProgramID
 			) 
-		values (s.ID,
-				s.FabricType,
-				s.UseRatioRule,
-				s.UseRatioRule_Thick,
-				s.ProgramID	)
+		values (isnull(s.ID,				''),
+				isnull(s.FabricType,		''),
+				isnull(s.UseRatioRule,		''),
+				isnull(s.UseRatioRule_Thick,''),
+				isnull(s.ProgramID	,''))
 when not matched by source then 
 	delete;
 
@@ -3425,10 +3489,10 @@ Merge Production.dbo.MachineType_ThreadRatio as t
 Using (select a.* from Trade_To_Pms.dbo.MachineType_ThreadRatio a ) as s
 on t.ID=s.ID and t.SEQ = s.SEQ
 when matched then 
-	update set	t.ThreadLocation	   = s.ThreadLocation	 ,
-				t.UseRatio			   = s.UseRatio			 ,
-				t.Allowance			   = s.Allowance		 ,
-				t.AllowanceTubular     = s.AllowanceTubular
+	update set	t.ThreadLocation	   = isnull( s.ThreadLocation	 ,''),
+				t.UseRatio			   = isnull( s.UseRatio			 ,0),
+				t.Allowance			   = isnull( s.Allowance		 ,0),
+				t.AllowanceTubular     = isnull( s.AllowanceTubular	 ,0)
 when not matched by target then
 	insert (ID				 ,
 			SEQ				 ,
@@ -3437,12 +3501,12 @@ when not matched by target then
 			Allowance        ,
 			AllowanceTubular
 			) 
-		values (s.ID				 ,
-				s.SEQ				 ,
-				s.ThreadLocation	 ,
-				s.UseRatio			 ,
-				s.Allowance			 ,
-				s.AllowanceTubular
+		values ( isnull(s.ID				 ,''),
+				 isnull(s.SEQ				 ,''),
+				 isnull(s.ThreadLocation	 ,''),
+				 isnull(s.UseRatio			 ,0),
+				 isnull(s.Allowance			 ,0),
+				 isnull(s.AllowanceTubular	 ,0)
 				)
 when not matched by source then 
 	delete;
@@ -3454,11 +3518,17 @@ on t.id = s.id
 and t.Seq = s.Seq and t.UseRatioRule = s.UseRatioRule
 when matched then
 	update set
-	t.UseRatio = s.UseRatio,
-	t.ukey = s.ukey
+	t.UseRatio = isnull( s.UseRatio ,0),
+	t.ukey = isnull( s.ukey ,0)
 when not matched by target then
 	insert(ID,Seq,UseRatioRule,UseRatio,Ukey)
-	values(s.ID,s.Seq,s.UseRatioRule,s.UseRatio,s.Ukey)
+	values(
+	 isnull(s.ID			,'')
+	,isnull(s.Seq			,'')
+	,isnull(s.UseRatioRule	,'')
+	,isnull(s.UseRatio		,0)
+	,isnull(s.Ukey			,0)
+	)
 when not matched by source then
 	delete;
 
@@ -3467,88 +3537,150 @@ Merge Production.dbo.MachineType_ThreadRatio_Regular as t
 Using (select a.* from Trade_To_Pms.dbo.MachineType_ThreadRatio_Regular a ) as s
 on t.ID=s.ID and t.SEQ = s.SEQ and t.UseRatioRule = s.UseRatioRule
 when matched then 
-	update set	t.UseRatio	   = s.UseRatio	 
+	update set	t.UseRatio	   = isnull(s.UseRatio	 ,0)
 when not matched by target then
 	insert (ID				,
 			Seq				,
 			UseRatioRule	,
 			UseRatio
 			) 
-		values (s.ID				,
-				s.Seq				,
-				s.UseRatioRule	,
-				s.UseRatio)
+		values (isnull(s.ID				 ,''),
+				isnull(s.Seq			 ,'')	,
+				isnull(s.UseRatioRule	 ,''),
+				isnull(s.UseRatio ,0))
 when not matched by source then 
 	delete;	
 
 
 
 ------FreightCollectByCustomer---------------
-Merge Production.dbo.FreightCollectByCustomer as t
-Using (select a.* from Trade_To_Pms.dbo.FreightCollectByCustomer a ) as s
-on t.[Dest]=s.[Dest] and t.[BrandID] = s.[BrandID] and t.[CarrierID] = s.[CarrierID] and t.[Account]=s.[Account]
-when matched then 
-	update set	
-		 t.[CustCDID]		=s.[CustCDID]	
-		,t.[DestPort]		=s.[DestPort]	
-		,t.[OrderTypeID]	=s.[OrderTypeID]
-		,t.[Remarks]		=s.[Remarks]	
-		,t.[AddDate]		=s.[AddDate]	
-		,t.[AddName]		=s.[AddName]	
-		,t.[EditDate]		=s.[EditDate]	
-		,t.[EditName] 		=s.[EditName] 	
-when not matched by target then
-	insert ([BrandID],[Dest],[CarrierID],[Account],[CustCDID],[DestPort],[OrderTypeID],[Remarks],[AddDate],[AddName],[EditDate],[EditName]) 
-	values (s.[BrandID],s.[Dest],s.[CarrierID],s.[Account],s.[CustCDID],s.[DestPort],s.[OrderTypeID],s.[Remarks],s.[AddDate],s.[AddName],s.[EditDate],s.[EditName])
-when not matched by source then 
-	delete;	
-	
+
+MERGE Production.dbo.FreightCollectByCustomer AS t
+USING
+(
+    SELECT a.*
+    FROM Trade_To_Pms.dbo.FreightCollectByCustomer AS a
+) AS s
+ON t.Dest = s.Dest
+   AND t.BrandID = s.BrandID
+   AND t.CarrierID = s.CarrierID
+   AND t.Account = s.Account
+    WHEN MATCHED
+    THEN UPDATE SET 
+                    t.CustCDID = ISNULL(s.CustCDID, ''), 
+                    t.DestPort = ISNULL(s.DestPort, ''), 
+                    t.OrderTypeID = ISNULL(s.OrderTypeID, ''), 
+                    t.Remarks = ISNULL(s.Remarks, ''), 
+                    t.AddDate = s.AddDate, 
+                    t.AddName = ISNULL(s.AddName, ''), 
+                    t.EditDate = s.EditDate, 
+                    t.EditName = ISNULL(s.EditName, '')
+    WHEN NOT MATCHED BY TARGET
+    THEN
+      INSERT(BrandID, 
+             Dest, 
+             CarrierID, 
+             Account, 
+             CustCDID, 
+             DestPort, 
+             OrderTypeID, 
+             Remarks, 
+             AddDate, 
+             AddName, 
+             EditDate, 
+             EditName)
+      VALUES
+(ISNULL(s.BrandID,    ''), 
+ ISNULL(s.Dest, 	  ''), 
+ ISNULL(s.CarrierID,  ''), 
+ ISNULL(s.Account, 	  ''), 
+ ISNULL(s.CustCDID,   ''), 
+ ISNULL(s.DestPort,   ''), 
+ ISNULL(s.OrderTypeID,''), 
+ ISNULL(s.Remarks, 	  ''), 
+ s.AddDate, 	  
+ ISNULL(s.AddName, 	  ''), 
+ s.EditDate,   
+ ISNULL(s.EditName	, '')
+)
+    WHEN NOT MATCHED BY SOURCE
+    THEN DELETE;
+
 ------[Carrier_Detail_Freight]---------------
-Merge Production.dbo.[Carrier_Detail_Freight] as t
-Using (select a.* from Trade_To_Pms.dbo.[Carrier_Detail_Freight] a ) as s
-on t.[ID]=s.[ID] and t.[Ukey] = s.[Ukey]
-when matched then 
-	update set	
-		 t.[Payer]		=s.[Payer]
-		,t.[FromTag]	=s.[FromTag]
-		,t.[FromInclude]=s.[FromInclude]
-		,t.[FromExclude]=s.[FromExclude]
-		,t.[ToTag]		=s.[ToTag]
-		,t.[ToInclude]	=s.[ToInclude]
-		,t.[ToExclude]	=s.[ToExclude]
-		,t.[ToFty]		=s.[ToFty]
-		,t.[AddName]	=s.[AddName]
-		,t.[AddDate]	=s.[AddDate]
-		,t.[EditName]	=s.[EditName]
-		,t.[EditDate]	=s.[EditDate]	
-when not matched by target then
-	insert ([ID],[Payer],[FromTag],[FromInclude],[FromExclude],[ToTag],[ToInclude],[ToExclude],[ToFty],[AddName],[AddDate],[EditName],[EditDate])
-	values (s.[ID],s.[Payer],s.[FromTag],s.[FromInclude],s.[FromExclude],s.[ToTag],s.[ToInclude],s.[ToExclude],s.[ToFty],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])
-when not matched by source then 
-	delete;	
+
+MERGE Production.dbo.[Carrier_Detail_Freight] AS t
+USING Trade_To_Pms.dbo.[Carrier_Detail_Freight] AS s
+ON t.[ID] = s.[ID]
+   AND t.[Ukey] = s.[Ukey]
+    WHEN MATCHED
+    THEN UPDATE SET 
+                    t.[Payer] = ISNULL(s.[Payer], ''), 
+                    t.[FromTag] = ISNULL(s.[FromTag], ''), 
+                    t.[FromInclude] = ISNULL(s.[FromInclude], ''), 
+                    t.[FromExclude] = ISNULL(s.[FromExclude], ''), 
+                    t.[ToTag] = ISNULL(s.[ToTag], ''), 
+                    t.[ToInclude] = ISNULL(s.[ToInclude], ''), 
+                    t.[ToExclude] = ISNULL(s.[ToExclude], ''), 
+                    t.[ToFty] = ISNULL(s.[ToFty], ''), 
+                    t.[AddName] = ISNULL(s.[AddName], ''), 
+                    t.[AddDate] = s.[AddDate], 
+                    t.[EditName] = ISNULL(s.[EditName], ''), 
+                    t.[EditDate] = s.[EditDate]
+    WHEN NOT MATCHED BY TARGET
+    THEN
+      INSERT([ID], 
+             [Payer], 
+             [FromTag], 
+             [FromInclude], 
+             [FromExclude], 
+             [ToTag], 
+             [ToInclude], 
+             [ToExclude], 
+             [ToFty], 
+             [AddName], 
+             [AddDate], 
+             [EditName], 
+             [EditDate])
+      VALUES
+(ISNULL(s.[ID],         ''), 
+ ISNULL(s.[Payer], 		''), 
+ ISNULL(s.[FromTag], 	''), 
+ ISNULL(s.[FromInclude],''),  
+ ISNULL(s.[FromExclude],''),  
+ ISNULL(s.[ToTag], 		''), 
+ ISNULL(s.[ToInclude], 	''), 
+ ISNULL(s.[ToExclude], 	''), 
+ ISNULL(s.[ToFty], 		''), 
+ ISNULL(s.[AddName], 	''), 
+ s.[AddDate], 	
+ ISNULL(s.[EditName], 	''), 
+ s.[EditDate]	
+)
+    WHEN NOT MATCHED BY SOURCE
+    THEN DELETE;
 
 
 -------FactoryExpress_SendingSchedule
 UPDATE a
 SET 
-a.[Seq]			=b.[Seq],
-a.[Country]		=b.[Country],
-a.[RegionCode]	=b.[RegionCode],
-a.[ToID]		=b.[ToID],
-a.[ToAlias]		=b.[ToAlias],
-a.[BeginDate]	=b.[BeginDate],
-a.[SUN]			=b.[SUN],
-a.[MON]			=b.[MON],
-a.[TUE]			=b.[TUE],
-a.[WED]			=b.[WED],
-a.[THU]			=b.[THU],
-a.[FRI]			=b.[FRI],
-a.[SAT]			=b.[SAT],
-a.[Junk]		=b.[Junk],
-a.[AddName]		=b.[AddName],
-a.[AddDate]		=b.[AddDate],
-a.[EditName]	=b.[EditName],
-a.[EditDate]	=b.[EditDate]
+a.[Seq]			= isnull(b.[Seq],       0), 
+a.[Country]		= isnull(b.[Country],	''), 
+a.[RegionCode]	= isnull(b.[RegionCode],''), 
+a.[ToID]		= isnull(b.[ToID],		''), 
+a.[ToAlias]		= isnull(b.[ToAlias],	''), 
+a.[BeginDate]	= b.[BeginDate],	
+a.[SUN]			= isnull(b.[SUN],		0), 
+a.[MON]			= isnull(b.[MON],		0), 
+a.[TUE]			= isnull(b.[TUE],		0), 
+a.[WED]			= isnull(b.[WED],		0), 
+a.[THU]			= isnull(b.[THU],		0), 
+a.[FRI]			= isnull(b.[FRI],		0), 
+a.[SAT]			= isnull(b.[SAT],		0), 
+a.[Junk]		= isnull(b.[Junk],		0), 
+a.[AddName]		= isnull(b.[AddName],	''), 
+a.[AddDate]		= b.[AddDate],	 
+a.[EditName]	= isnull(b.[EditName],	''), 
+a.[EditDate]	= b.[EditDate]	
 from Production.dbo.FactoryExpress_SendingSchedule as a 
 inner join Trade_To_Pms.dbo.FactoryExpress_SendingSchedule as b 
 	ON a.RegionCode=b.RegionCode and a.ToID = b.ToID
@@ -3574,23 +3706,23 @@ INSERT INTO Production.dbo.FactoryExpress_SendingSchedule
       ,[EditName]
       ,[EditDate]
 )
-SELECT [Seq]
-      ,[Country]
-      ,[RegionCode]
-      ,[ToID]
-      ,[ToAlias]
+SELECT isnull([Seq]       ,0)
+      ,isnull([Country]	  ,'')
+      ,isnull([RegionCode],'')
+      ,isnull([ToID]	  ,'')
+      ,isnull([ToAlias]	  ,'')
       ,[BeginDate]
-      ,[SUN]
-      ,[MON]
-      ,[TUE]
-      ,[WED]
-      ,[THU]
-      ,[FRI]
-      ,[SAT]
-      ,[Junk]
-      ,[AddName]
-      ,[AddDate]
-      ,[EditName]
+      ,isnull([SUN]		  ,0)
+      ,isnull([MON]		  ,0)
+      ,isnull([TUE]		  ,0)
+      ,isnull([WED]		  ,0)
+      ,isnull([THU]		  ,0)
+      ,isnull([FRI]		  ,0)
+      ,isnull([SAT]		  ,0)
+      ,isnull([Junk]	  ,0)
+      ,isnull([AddName]	  ,'')
+      ,[AddDate]	  
+      ,isnull([EditName]  ,'')
       ,[EditDate]
 from Trade_To_Pms.dbo.FactoryExpress_SendingSchedule as b WITH (NOLOCK)
 where not exists(
@@ -3611,24 +3743,24 @@ where b.ToID is null
 -------FactoryExpress_SendingScheduleHistory
 UPDATE a
 SET 
-a.[Ukey]		=b.[Ukey],
-a.[Country]		=b.[Country],
-a.[RegionCode]	=b.[RegionCode],
-a.[ToID]		=b.[ToID],
-a.[ToAlias]		=b.[ToAlias],
-a.[BeginDate]	=b.[BeginDate],
-a.[EndDate]	=b.[EndDate],
-a.[SUN]			=b.[SUN],
-a.[MON]			=b.[MON],
-a.[TUE]			=b.[TUE],
-a.[WED]			=b.[WED],
-a.[THU]			=b.[THU],
-a.[FRI]			=b.[FRI],
-a.[SAT]			=b.[SAT],
-a.[AddName]		=b.[AddName],
-a.[AddDate]		=b.[AddDate],
-a.[EditName]	=b.[EditName],
-a.[EditDate]	=b.[EditDate]
+a.[Ukey]		= isnull(b.[Ukey],      0), 
+a.[Country]		= isnull(b.[Country],	''), 
+a.[RegionCode]	= isnull(b.[RegionCode],''), 
+a.[ToID]		= isnull(b.[ToID],		''), 
+a.[ToAlias]		= isnull(b.[ToAlias],	''), 
+a.[BeginDate]	= b.[BeginDate],	
+a.[EndDate]	= b.[EndDate],	
+a.[SUN]			= isnull(b.[SUN],		0), 
+a.[MON]			= isnull(b.[MON],		0), 
+a.[TUE]			= isnull(b.[TUE],		0), 
+a.[WED]			= isnull(b.[WED],		0), 
+a.[THU]			= isnull(b.[THU],		0), 
+a.[FRI]			= isnull(b.[FRI],		0), 
+a.[SAT]			= isnull(b.[SAT],		0), 
+a.[AddName]		= isnull(b.[AddName],	''), 
+a.[AddDate]		= b.[AddDate],	
+a.[EditName]	= isnull(b.[EditName],	''), 
+a.[EditDate]	= b.[EditDate]	
 from Production.dbo.FactoryExpress_SendingScheduleHistory as a 
 inner join Trade_To_Pms.dbo.FactoryExpress_SendingScheduleHistory as b 
 	ON a.Ukey=b.Ukey
@@ -3653,22 +3785,22 @@ INSERT INTO Production.dbo.FactoryExpress_SendingScheduleHistory
       ,[EditName]
       ,[EditDate]
 )
-SELECT [Ukey]
-      ,[Country]
-      ,[RegionCode]
-      ,[ToID]
-      ,[ToAlias]
-      ,[BeginDate]
-      ,[SUN]
-      ,[MON]
-      ,[TUE]
-      ,[WED]
-      ,[THU]
-      ,[FRI]
-      ,[SAT]      
-      ,[AddName]
-      ,[AddDate]
-      ,[EditName]
+SELECT isnull([Ukey]       ,	0)
+      ,isnull([Country]	   ,	'')
+      ,isnull([RegionCode] ,	'')
+      ,isnull([ToID]	   ,	'')
+      ,isnull([ToAlias]	   ,	'')
+      ,[BeginDate]  
+      ,isnull([SUN]		   ,	0)
+      ,isnull([MON]		   ,	0)
+      ,isnull([TUE]		   ,	0)
+      ,isnull([WED]		   ,	0)
+      ,isnull([THU]		   ,	0)
+      ,isnull([FRI]		   ,	0)
+      ,isnull([SAT]        ,	0)
+      ,isnull([AddName]	   ,	'')
+      ,[AddDate]	   
+      ,isnull([EditName]   ,	'')
       ,[EditDate]
 from Trade_To_Pms.dbo.FactoryExpress_SendingScheduleHistory as b WITH (NOLOCK)
 where not exists(
@@ -3689,11 +3821,11 @@ where b.ToID is null
 
 -------FIR_Grade-------
 UPDATE a
-SET  a.WeaveTypeID	= b.WeaveTypeID
-    ,a.Percentage	= b.Percentage
-    ,a.Grade		= b.Grade
-    ,a.Result		= b.Result
-    ,a.BrandID		= b.BrandID
+SET  a.WeaveTypeID	= isnull( b.WeaveTypeID,	'')
+    ,a.Percentage	= isnull( b.Percentage ,	0)
+    ,a.Grade		= isnull( b.Grade	   ,	'')
+    ,a.Result		= isnull( b.Result	   ,	'')
+    ,a.BrandID		= isnull( b.BrandID	   ,	'')
 FROM Production.dbo.FIR_Grade a 
 INNER JOIN Trade_To_Pms.dbo.FIR_Grade as b  
 ON a.WeaveTypeID=b.WeaveTypeID AND a.Percentage=b.Percentage AND a.BrandID=b.BrandID 
@@ -3705,11 +3837,11 @@ INSERT INTO Production.dbo.FIR_Grade
            ,Grade
            ,Result
            ,BrandID)
-SELECT   WeaveTypeID
-		,Percentage
-		,Grade
-		,Result
-		,BrandID
+SELECT   isnull( WeaveTypeID, '')
+		,isnull( Percentage	, 0)
+		,isnull( Grade		, '')
+		,isnull( Result		, '')
+		,isnull( BrandID	, '')
 FROM Trade_To_Pms.dbo.FIR_Grade b
 WHERE NOT EXISTS(
 	SELECT  1
@@ -3725,15 +3857,15 @@ WHERE b.Grade is null
 
 -----FtyStdRate_PRT-----
 update tar set
- tar.Length    = S.Length    
-,tar.Width	   = S.Width	   
-,tar.Surcharge = S.Surcharge 
-,tar.Price	   = S.Price	   
-,tar.Ratio	   = S.Ratio	   
-,tar.SEQ	   = S.SEQ	   
-,tar.AddName   = S.AddName   
-,tar.AddDate   = S.AddDate   
-,tar.EditName  = S.EditName  
+ tar.Length    = isnull( S.Length    , 0)
+,tar.Width	   = isnull( S.Width	 , 0)
+,tar.Surcharge = isnull( S.Surcharge , 0)
+,tar.Price	   = isnull( S.Price	 , 0)
+,tar.Ratio	   = isnull( S.Ratio	 , 0)
+,tar.SEQ	   = isnull( S.SEQ	   	 , '')
+,tar.AddName   = isnull( S.AddName   , '')
+,tar.AddDate   =  S.AddDate 
+,tar.EditName  = isnull( S.EditName  , '')
 ,tar.EditDate  = S.EditDate  
 from Trade_To_Pms.dbo.FtyStdRate_PRT S
 inner join Production.dbo.FtyStdRate_PRT tar 
@@ -3761,20 +3893,20 @@ INSERT INTO FtyStdRate_PRT(
 	,EditDate
 )
 SELECT 
-	Region
-	,SeasonID
-	,InkType
-	,Colors
-	,Area
-	,Length
-	,Width
-	,Surcharge
-	,Price
-	,Ratio
-	,SEQ
-	,AddName
-	,AddDate
-	,EditName
+	 isnull(Region   , '')
+	,isnull(SeasonID , '')
+	,isnull(InkType	 , '')
+	,isnull(Colors	 , '')
+	,isnull(Area	 , 0)
+	,isnull(Length	 , 0)
+	,isnull(Width	 , 0)
+	,isnull(Surcharge, 0)
+	,isnull(Price	 , 0)
+	,isnull(Ratio	 , 0)
+	,isnull(SEQ		 , '')
+	,isnull(AddName	 , '')
+	,AddDate	 
+	,isnull(EditName , '')
 	,EditDate
 from Trade_To_Pms.dbo.FtyStdRate_PRT S
 where not exists(
@@ -3799,17 +3931,17 @@ where not exists(
 
 -----FtyStdRate_EMB-----
 update tar set
- tar.EndRange      = S.EndRange
-,tar.BasedStitches = S.BasedStitches
-,tar.BasedPay	   = S.BasedPay
-,tar.AddedStitches = S.AddedStitches
-,tar.AddedPay	   = S.AddedPay
-,tar.ThreadRatio   = S.ThreadRatio
-,tar.Ratio		   = S.Ratio
-,tar.AddName	   = S.AddName
-,tar.AddDate	   = S.AddDate
-,tar.EditName	   = S.EditName
-,tar.EditDate	   = S.EditDate
+ tar.EndRange      = isnull( S.EndRange     , 0)
+,tar.BasedStitches = isnull( S.BasedStitches, 0)
+,tar.BasedPay	   = isnull( S.BasedPay		, 0)
+,tar.AddedStitches = isnull( S.AddedStitches, 0)
+,tar.AddedPay	   = isnull( S.AddedPay		, 0)
+,tar.ThreadRatio   = isnull( S.ThreadRatio	, 0)
+,tar.Ratio		   = isnull( S.Ratio		, 0)
+,tar.AddName	   = isnull( S.AddName		, '')
+,tar.AddDate	   =  S.AddDate		
+,tar.EditName	   = isnull( S.EditName		, '')
+,tar.EditDate	   =  S.EditDate		
 from Trade_To_Pms.dbo.FtyStdRate_EMB S
 inner join Production.dbo.FtyStdRate_EMB tar 
 	on tar.Region = S.Region
@@ -3833,19 +3965,19 @@ INSERT INTO FtyStdRate_EMB(
 	,EditDate
 )
 SELECT 
-	 Region
-	,SeasonID
-	,StartRange
-	,EndRange
-	,BasedStitches
-	,BasedPay
-	,AddedStitches
-	,AddedPay
-	,ThreadRatio
-	,Ratio
-	,AddName
-	,AddDate
-	,EditName
+	 isnull(Region       , '')
+	,isnull(SeasonID	 , '')
+	,isnull(StartRange	 , 0)
+	,isnull(EndRange	 , 0)
+	,isnull(BasedStitches, 0)
+	,isnull(BasedPay	 , 0)
+	,isnull(AddedStitches, 0)
+	,isnull(AddedPay	 , 0)
+	,isnull(ThreadRatio	 , 0)
+	,isnull(Ratio		 , 0)
+	,isnull(AddName		 , '')
+	,AddDate		
+	,isnull(EditName	 , '')
 	,EditDate
 from Trade_To_Pms.dbo.FtyStdRate_EMB S
 where not exists(
@@ -3867,30 +3999,43 @@ where not exists(
 	
 --------AccountNoSetting---------------
 
-Merge Production.dbo.AccountNoSetting as t
-Using Trade_To_Pms.dbo.AccountNoSetting as s
-on t.ID=s.ID
-when matched then
-	update set
-	t.UnselectableShipB03= s.UnselectableShipB03
-	,t.AddDate= s.AddDate
-	,t.AddName= s.AddName
-	,t.EditDate= s.EditDate
-	,t.EditName= s.EditName
-when not matched by target then
-	insert(ID, UnselectableShipB03 ,AddDate ,AddName ,EditDate ,EditName)
-	values(s.ID, s.UnselectableShipB03 ,s.AddDate ,s.AddName ,s.EditDate ,s.EditName)
-when not matched by source then 
-	delete;	
+MERGE Production.dbo.AccountNoSetting AS t
+USING Trade_To_Pms.dbo.AccountNoSetting AS s
+ON t.ID = s.ID
+    WHEN MATCHED
+    THEN UPDATE SET 
+                    t.UnselectableShipB03 = ISNULL(s.UnselectableShipB03, 0), 
+                    t.AddDate = s.AddDate, 
+                    t.AddName = ISNULL(s.AddName, ''), 
+                    t.EditDate = s.EditDate, 
+                    t.EditName = ISNULL(s.EditName, '')
+    WHEN NOT MATCHED BY TARGET
+    THEN
+      INSERT(ID, 
+             UnselectableShipB03, 
+             AddDate, 
+             AddName, 
+             EditDate, 
+             EditName)
+      VALUES
+(ISNULL(s.ID,                 ''),
+ ISNULL(s.UnselectableShipB03, 0),
+ s.AddDate, 			  
+ ISNULL(s.AddName, 			   ''),
+ s.EditDate, 		  
+ ISNULL(s.EditName			  , '')
+)
+    WHEN NOT MATCHED BY SOURCE
+    THEN DELETE;
 
 
 --SubProDefectCode 
 update tar set
- tar.Junk          = S.Junk
-,tar.Description   = S.Description
-,tar.AddName	   = S.AddName
-,tar.AddDate	   = S.AddDate
-,tar.EditName	   = S.EditName
+ tar.Junk          = isnull( S.Junk       , 0)
+,tar.Description   = isnull( S.Description, '')
+,tar.AddName	   = isnull( S.AddName	  , '')
+,tar.AddDate	   =  S.AddDate
+,tar.EditName	   = isnull( S.EditName	  , '')
 ,tar.EditDate	   = S.EditDate
 from Trade_To_Pms.dbo.SubProDefectCode S
 inner join Production.dbo.SubProDefectCode tar 
@@ -3909,14 +4054,14 @@ INSERT INTO SubProDefectCode
 	,[Editname]
 )
 SELECT
-	[SubProcessID]
-	,[DefectCode]
-	,[Junk]
-	,[Description]
-	,[AddDate]
-	,[AddName]
-	,[EditDate]
-	,[Editname]
+	 isnull([SubProcessID], '')
+	,isnull([DefectCode]  , '')
+	,isnull([Junk]		  , 0)
+	,isnull([Description] , '')
+	,[AddDate]	 
+	,isnull([AddName]	  , '')
+	,[EditDate]	  
+	,isnull([Editname]	  , '')
 from Trade_To_Pms.dbo.SubProDefectCode S
 where not exists(
 	select 1
@@ -3934,12 +4079,12 @@ where not exists(
 
 -----PortByBrandShipmode -----
 update t SET
-	   t.Remark = s.Remark
-      ,t.Junk = s.Junk
-      ,t.AddDate = s.AddDate
-      ,t.AddName = s.AddName
-      ,t.EditDate = s.EditDate
-      ,t.EditName = s.EditName
+	   t.Remark = isnull( s.Remark        , '')
+      ,t.Junk = isnull( s.Junk			  , 0)
+      ,t.AddDate =  s.AddDate	 
+      ,t.AddName = isnull( s.AddName	  , '')
+      ,t.EditDate =  s.EditDate	  
+      ,t.EditName = isnull( s.EditName	  , '')
 from Trade_To_Pms.dbo.PortByBrandShipmode  s
 inner join Production.dbo.PortByBrandShipmode t on t.PulloutPortID = S.PulloutPortID and t.BrandID = S.BrandID
 
@@ -3953,14 +4098,14 @@ INSERT INTO Production.dbo.PortByBrandShipmode
            ,AddName
            ,EditDate
            ,EditName)
-SELECT PulloutPortID
-      ,BrandID
-      ,Remark
-      ,Junk
-      ,AddDate
-      ,AddName
-      ,EditDate
-      ,EditName
+SELECT isnull(PulloutPortID , '')
+      ,isnull(BrandID	    , '')
+      ,isnull(Remark	    , '')
+      ,isnull(Junk		    , 0)
+      ,AddDate	   
+      ,isnull(AddName	    , '')
+      ,EditDate	   
+      ,isnull(EditName	    , '')
 FROM Trade_To_Pms.dbo.PortByBrandShipmode  s
 WHERE NOT EXISTS(
 	SELECT 1
@@ -3979,17 +4124,17 @@ WHERE NOT EXISTS(
 -- 全轉入PulloutPort
 UPDATE t
 SET  
-t.Name =			   s.Name,
-t.InternationalCode =  s.InternationalCode,
-t.CountryID =		   s.CountryID,
-t.AirPort =			   s.AirPort,
-t.SeaPort =			   s.SeaPort,
-t.Remark =			   s.Remark,
-t.AddName =			   s.AddName,
-t.AddDate =			   s.AddDate,
-t.EditName =		   s.EditName,
-t.EditDate =		   s.EditDate,
-t.Junk =			   s.Junk
+t.Name = isnull(			   s.Name,              ''),
+t.InternationalCode = isnull(  s.InternationalCode,	''),
+t.CountryID = isnull(		   s.CountryID,			''),
+t.AirPort = isnull(			   s.AirPort,			0),
+t.SeaPort = isnull(			   s.SeaPort,			0),
+t.Remark = isnull(			   s.Remark,			''),
+t.AddName = isnull(			   s.AddName,			''),
+t.AddDate = 			   s.AddDate,		
+t.EditName = isnull(		   s.EditName,			''),
+t.EditDate = 		   s.EditDate,			
+t.Junk = isnull(			   s.Junk				,0)
 FROM Production.dbo.PulloutPort t
 INNER JOIN Trade_To_Pms.dbo.PulloutPort as s 
 ON t.id	=s.id
@@ -4008,18 +4153,18 @@ INSERT INTO Production.dbo.PulloutPort(
       ,[EditName]
       ,[EditDate]
       ,[Junk])
-SELECT [ID]
-      ,[Name]
-      ,[InternationalCode]
-      ,[CountryID]
-      ,[AirPort]
-      ,[SeaPort]
-      ,[Remark]
-      ,[AddName]
-      ,[AddDate]
-      ,[EditName]
-      ,[EditDate]
-      ,[Junk]
+SELECT isnull([ID]                ,'')
+      ,isnull([Name]			  ,'')
+      ,isnull([InternationalCode] ,'')
+      ,isnull([CountryID]		  ,'')
+      ,isnull([AirPort]			  ,0)
+      ,isnull([SeaPort]			  ,0)
+      ,isnull([Remark]			  ,'')
+      ,isnull([AddName]			  ,'')
+      ,[AddDate]		
+      ,isnull([EditName]		  ,'')
+      ,[EditDate]	
+      ,isnull([Junk]			  ,0)
 FROM Trade_To_Pms.dbo.PulloutPort b
 WHERE NOT EXISTS(
 	SELECT  1
@@ -4036,11 +4181,11 @@ WHERE b.id is null
 -- 全轉入Consignee
 UPDATE t
 SET  
-t.Junk =			   s.Junk,
-t.AddName =			   s.AddName,
-t.AddDate =			   s.AddDate,
-t.EditName =		   s.EditName,
-t.EditDate =		   s.EditDate
+t.Junk = isnull(			   s.Junk,0),
+t.AddName = isnull(			   s.AddName,''),
+t.AddDate = 			   s.AddDate,
+t.EditName = isnull(		   s.EditName,''),
+t.EditDate = 		   s.EditDate
 FROM Production.dbo.Consignee t
 INNER JOIN Trade_To_Pms.dbo.Consignee as s ON t.id	=s.id
 
@@ -4051,11 +4196,11 @@ INSERT INTO Production.dbo.Consignee(
       ,[AddDate]
       ,[EditName]
       ,[EditDate])
-SELECT [ID]
-      ,[Junk]
-      ,[AddName]
+SELECT isnull([ID],'')
+      ,isnull([Junk],0)
+      ,isnull([AddName],'')
       ,[AddDate]
-      ,[EditName]
+      ,isnull([EditName],'')
       ,[EditDate]
 FROM Trade_To_Pms.dbo.Consignee b
 WHERE NOT EXISTS(
@@ -4072,8 +4217,8 @@ WHERE b.id is null
 -- 全轉入Consignee_Detail
 UPDATE t
 SET  
-t.ID =			   s.ID,
-t.Email =		   s.Email
+t.ID =			   isnull(s.ID,''),
+t.Email =		   isnull(s.Email,'')
 FROM Production.dbo.Consignee_Detail t
 INNER JOIN Trade_To_Pms.dbo.Consignee_Detail as s ON t.Ukey = s.Ukey
 
@@ -4081,9 +4226,9 @@ INSERT INTO Production.dbo.Consignee_Detail(
 	   [Ukey]
 	  ,[ID]
       ,[Email])
-SELECT [Ukey]
-      ,[ID]
-      ,[Email]
+SELECT isnull([Ukey],0)
+      ,isnull([ID],'')
+      ,isnull([Email],'')
 FROM Trade_To_Pms.dbo.Consignee_Detail b
 WHERE NOT EXISTS(
 	SELECT  1
@@ -4105,14 +4250,14 @@ WHERE b.id is null
 
 UPDATE a
 SET  
-     a.[Registry]		= b.[Registry]
+     a.[Registry]		= isnull(b.[Registry]      ,'')
     ,a.[Expiration]		= b.[Expiration]
-    ,a.[AddName]		= b.[AddName]
-    ,a.[AddDate]		= b.[AddDate]
-    ,a.[EditName]		= b.[EditName]
+    ,a.[AddName]		= isnull(b.[AddName]       ,'')
+    ,a.[AddDate]		= b.[AddDate]     
+    ,a.[EditName]		= isnull(b.[EditName]      ,'')
     ,a.[EditDate]		= b.[EditDate]
-    ,a.[ApplyExtension]	= b.[ApplyExtension]
-    ,a.[Remark]			= b.[Remark]
+    ,a.[ApplyExtension]	= isnull(b.[ApplyExtension],'')
+    ,a.[Remark]			= isnull(b.[Remark]        ,'')
 FROM Production.dbo.HealthLabelSupp_FtyExpiration a
 INNER JOIN Trade_To_Pms.dbo.HealthLabelSupp_FtyExpiration b ON a.id = b.id and a.FactoryID = b.FactoryID
 
@@ -4128,16 +4273,16 @@ INSERT INTO [dbo].[HealthLabelSupp_FtyExpiration]
            ,[ApplyExtension]
            ,[Remark])
 select 
-	 a.[ID]
-	,a.[FactoryID]
-	,a.[Registry]
-	,a.[Expiration]
-	,a.[AddName]
-	,a.[AddDate]
-	,a.[EditName]
-	,a.[EditDate]
-	,a.[ApplyExtension]
-	,a.[Remark]
+	  isnull(a.[ID]             ,'')
+	, isnull(a.[FactoryID]      ,'')
+	, isnull(a.[Registry]       ,'')
+	, a.[Expiration]  
+	, isnull(a.[AddName]        ,'')
+	, a.[AddDate]
+	, isnull(a.[EditName]       ,'')
+	, a.[EditDate]       
+	, isnull(a.[ApplyExtension] ,'')
+	, isnull(a.[Remark]         ,'')
 FROM Trade_To_Pms.dbo.HealthLabelSupp_FtyExpiration a
 LEFT JOIN Production.dbo.HealthLabelSupp_FtyExpiration b ON a.id = b.id and a.FactoryID = b.FactoryID
 WHERE b.id is null
@@ -4155,13 +4300,13 @@ WHERE b.EffectiveDate is null
 UPDATE a
 SET
 	 a.[EffectiveDate] = b.[EffectiveDate]
-	,a.[MDivisionID]   = b.[MDivisionID]
-	,a.[Type]		   = b.[Type]
-	,a.[Target]		   = b.[Target]
-	,a.[AddName]	   = b.[AddName]
-	,a.[AddDate]	   = b.[AddDate]
-	,a.[EditName]	   = b.[EditName]
-	,a.[EditDate]	   = b.[EditDate]
+	,a.[MDivisionID]   = isnull(b.[MDivisionID]  ,'')
+	,a.[Type]		   = isnull(b.[Type]         ,'')
+	,a.[Target]		   = isnull(b.[Target]       ,0)
+	,a.[AddName]	   = isnull(b.[AddName]      ,'')
+	,a.[AddDate]	   = b.[AddDate]   
+	,a.[EditName]	   = isnull(b.[EditName]     ,'')
+	,a.[EditDate]	   = b.[EditDate] 
 FROM Production.dbo.ChgOverTarget a
 INNER JOIN Trade_To_Pms.dbo.ChgOverTarget b ON a.EffectiveDate = b.EffectiveDate and a.MDivisionID = b.MDivisionID and a.Type = b.Type
 
@@ -4178,12 +4323,12 @@ INSERT INTO [dbo].[ChgOverTarget]
            ,[EditDate])
 select 
 	 a.[EffectiveDate]
-    ,a.[MDivisionID]
-    ,a.[Type]
-    ,a.[Target]
-    ,a.[AddName]
-    ,a.[AddDate]
-    ,a.[EditName]
+    ,isnull(a.[MDivisionID],'')
+    ,isnull(a.[Type]       ,'')
+    ,isnull(a.[Target]     ,0)
+    ,isnull(a.[AddName]    ,'')
+    ,a.[AddDate]  
+    ,isnull(a.[EditName]   ,'')
     ,a.[EditDate]
 FROM Trade_To_Pms.dbo.ChgOverTarget a
 LEFT JOIN Production.dbo.ChgOverTarget b ON a.EffectiveDate = b.EffectiveDate and a.MDivisionID = b.MDivisionID and a.Type = b.Type
@@ -4199,16 +4344,16 @@ WHERE b.[Classifty] is null
 
 UPDATE a
 SET
-	 [TypeName]		= b.[TypeName]
-	,[Placket]		= b.[Placket]
-	,[Definition]	= b.[Definition]
-	,[CPU]			= b.[CPU]
-	,[ComboPcs]		= b.[ComboPcs]
-	,[Remark]		= b.[Remark]
-	,[Junk]			= b.[Junk]
-	,[AddName]		= b.[AddName]
+	 [TypeName]		= isnull(b.[TypeName]  ,'')
+	,[Placket]		= isnull(b.[Placket]   ,'')
+	,[Definition]	= isnull(b.[Definition],'')
+	,[CPU]			= isnull(b.[CPU]       ,0)
+	,[ComboPcs]		= isnull(b.[ComboPcs]  ,0)
+	,[Remark]		= isnull(b.[Remark]    ,'')
+	,[Junk]			= isnull(b.[Junk]      ,0)
+	,[AddName]		= isnull(b.[AddName]   ,'')
 	,[AddDate]		= b.[AddDate]
-	,[EditName]		= b.[EditName]
+	,[EditName]		= isnull(b.[EditName]  ,'')
 	,[EditDate]		= b.[EditDate]
 from Production.dbo.NewCDCode as a inner join Trade_To_Pms.dbo.NewCDCode as b ON a.[Classifty] = b.[Classifty] and a.[ID] = b.[ID]
 -------------------------- INSERT INTO 抓
@@ -4226,18 +4371,18 @@ INSERT INTO Production.dbo.NewCDCode
            ,[AddDate]
            ,[EditName]
            ,[EditDate])
-SELECT [Classifty]
-           ,[TypeName]
-           ,[ID]
-           ,[Placket]
-           ,[Definition]
-           ,[CPU]
-           ,[ComboPcs]
-           ,[Remark]
-           ,[Junk]
-           ,[AddName]
-           ,[AddDate]
-           ,[EditName]
+SELECT      isnull([Classifty]  ,'')
+           ,isnull([TypeName]   ,'')
+           ,isnull([ID]         ,'')
+           ,isnull([Placket]    ,'')
+           ,isnull([Definition] ,'')
+           ,isnull([CPU]        ,0)
+           ,isnull([ComboPcs]   ,0)
+           ,isnull([Remark]     ,'')
+           ,isnull([Junk]       ,0)
+           ,isnull([AddName]    ,'')
+           ,[AddDate]  
+           ,isnull([EditName]   ,'')
            ,[EditDate]
 from Trade_To_Pms.dbo.NewCDCode as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.NewCDCode as a WITH (NOLOCK) where a.[Classifty] = b.[Classifty] and a.[ID] = b.[ID])
@@ -4252,9 +4397,9 @@ WHERE b.id is null
 
 UPDATE a
 SET
-	a.[FullName]	= b.[FullName]
-	,a.[Type]		= b.[Type]
-	,a.[Junk]		= b.[Junk]
+	a.[FullName]	= isnull(b.[FullName],'')
+	,a.[Type]		= isnull(b.[Type],'')
+	,a.[Junk]		= isnull(b.[Junk],0)
 FROM Production.dbo.[QAMtlTypeSetting] a
 INNER JOIN Trade_To_Pms.dbo.MtlType b ON a.id = b.id
 
@@ -4264,10 +4409,10 @@ INSERT INTO [dbo].[QAMtlTypeSetting]
            ,[Type]
            ,[Junk])
 select
-		 a.[ID]
-		,a.[FullName]
-		,a.[Type]
-		,a.[Junk]
+		 isnull(a.[ID]       ,'')
+		,isnull(a.[FullName] ,'')
+		,isnull(a.[Type]     ,'')
+		,isnull(a.[Junk]     ,0)
 FROM Trade_To_Pms.dbo.MtlType a
 LEFT JOIN Production.dbo.[QAMtlTypeSetting] b ON a.id = b.id
 where b.id is null
@@ -4283,11 +4428,11 @@ where b.RateTypeID is null
 
 UPDATE a
 SET   a.EndDate		      =b.EndDate
-      ,a.Rate		      =b.Rate
-      ,a.Remark		      =b.Remark
-      ,a.AddName		      =b.AddName
+      ,a.Rate		      =isnull(b.Rate,0)
+      ,a.Remark		      =isnull(b.Remark,'')
+      ,a.AddName		      =isnull(b.AddName,'')
       ,a.AddDate		      =b.AddDate
-      ,a.EditName		      =b.EditName
+      ,a.EditName		      =isnull(b.EditName,'')
       ,a.EditDate		      =b.EditDate
 
 from Production.dbo.FinanceRate as a 
@@ -4314,17 +4459,17 @@ INSERT INTO Production.dbo.FinanceRate(
 
 )
 select 
-       RateTypeID
-      ,BeginDate
-      ,EndDate
-      ,OriginalCurrency
-      ,ExchangeCurrency
-      ,Rate
-      ,Remark
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
+       isnull(RateTypeID       ,'')
+      ,BeginDate     
+      ,EndDate        
+      ,isnull(OriginalCurrency ,'')
+      ,isnull(ExchangeCurrency ,'')
+      ,isnull(Rate             ,0)
+      ,isnull(Remark           ,'')
+      ,isnull(AddName          ,'')
+      ,AddDate      
+      ,isnull(EditName         ,'')
+      ,EditDate        
 from Trade_To_Pms.dbo.FinanceRate as b WITH (NOLOCK)
 where not exists(
     select 1 
@@ -4346,10 +4491,10 @@ where b.RateTypeID is null
 
 UPDATE a
 SET   a.EndDate		      =b.EndDate
-      ,a.Rate		      =b.Rate
-      ,a.AddName		      =b.AddName
+      ,a.Rate		      =isnull(b.Rate,0)
+      ,a.AddName		      =isnull(b.AddName,'')
       ,a.AddDate		      =b.AddDate
-      ,a.EditName		      =b.EditName
+      ,a.EditName		      =isnull(b.EditName,'')
       ,a.EditDate		      =b.EditDate
 
 from Production.dbo.FinanceTWRate as a 
@@ -4374,15 +4519,15 @@ INSERT INTO Production.dbo.FinanceTWRate(
 
 )
 select 
-       RateTypeID
-      ,BeginDate
-      ,EndDate
-      ,OriginalCurrency
-      ,ExchangeCurrency
-      ,Rate
-      ,AddName
-      ,AddDate
-      ,EditName
+       isnull(RateTypeID        ,'')
+      ,BeginDate   
+      ,EndDate        
+      ,isnull(OriginalCurrency  ,'')
+      ,isnull(ExchangeCurrency  ,'')
+      ,isnull(Rate              ,0)
+      ,isnull(AddName           ,'')
+      ,AddDate       
+      ,isnull(EditName          ,'')
       ,EditDate
 from Trade_To_Pms.dbo.FinanceTWRate as b WITH (NOLOCK)
 where not exists(
@@ -4402,10 +4547,10 @@ WHERE b.Type is null
 
 UPDATE a
 SET
-	 a.[Junk]		   = b.[Junk]
-	,a.[AddName]	   = b.[AddName]
+	 a.[Junk]		   = isnull(b.[Junk],0)
+	,a.[AddName]	   = isnull(b.[AddName],'')
 	,a.[AddDate]	   = b.[AddDate]
-	,a.[EditName]	   = b.[EditName]
+	,a.[EditName]	   = isnull(b.[EditName],'')
 	,a.[EditDate]	   = b.[EditDate]
 FROM Production.dbo.IEReasonType a
 INNER JOIN Trade_To_Pms.dbo.IEReasonType b ON a.Type = b.Type
@@ -4418,10 +4563,10 @@ INSERT INTO [dbo].[IEReasonType]
            ,[EditName]
            ,[EditDate])
 select a.[Type]
-	,a.[Junk]
-    ,a.[AddName]
+	,isnull(a.[Junk],0)
+    ,isnull(a.[AddName],'')
     ,a.[AddDate]
-    ,a.[EditName]
+    ,isnull(a.[EditName],'')
     ,a.[EditDate]
 FROM Trade_To_Pms.dbo.IEReasonType a
 LEFT JOIN Production.dbo.IEReasonType b ON a.Type = b.Type
@@ -4436,11 +4581,11 @@ WHERE b.Type is null
 
 UPDATE a
 SET
-	 a.[IEReasonApplyFunction]	= b.[IEReasonApplyFunction]
-	,a.[Junk]					= b.[Junk]
-	,a.[AddName]				= b.[AddName]
-	,a.[AddDate]				= b.[AddDate]
-	,a.[EditName]				= b.[EditName]
+	 a.[IEReasonApplyFunction]	= isnull(b.[IEReasonApplyFunction],0)
+	,a.[Junk]					= isnull(b.[Junk]                 ,0)
+	,a.[AddName]				= isnull(b.[AddName]              ,'')
+	,a.[AddDate]				= b.[AddDate]              
+	,a.[EditName]				= isnull(b.[EditName]             ,'')
 	,a.[EditDate]				= b.[EditDate]
 FROM Production.dbo.IEReasonTypeGroup a
 INNER JOIN Trade_To_Pms.dbo.IEReasonTypeGroup b ON a.Type = b.Type and a.TypeGroup = b.TypeGroup
@@ -4455,12 +4600,12 @@ INSERT INTO [dbo].[IEReasonTypeGroup]
            ,[EditName]
            ,[EditDate])
 select a.[Type]
-	,a.[TypeGroup]
-	,a.[IEReasonApplyFunction]
-	,a.[Junk]
-    ,a.[AddName]
-    ,a.[AddDate]
-    ,a.[EditName]
+	,isnull(a.[TypeGroup]            ,'')
+	,isnull(a.[IEReasonApplyFunction],0)
+	,isnull(a.[Junk]                 ,0)
+    ,isnull(a.[AddName]              ,'')
+    ,a.[AddDate]             
+    ,isnull(a.[EditName]             ,'')
     ,a.[EditDate]
 FROM Trade_To_Pms.dbo.IEReasonTypeGroup a
 LEFT JOIN Production.dbo.IEReasonTypeGroup b ON a.Type = b.Type and a.TypeGroup = b.TypeGroup
@@ -4475,13 +4620,13 @@ WHERE b.Type is null
 
 UPDATE a
 SET
-	 a.[Ukey]		   = b.[Ukey]
-	,a.[Name]		   = b.[Name]
-	,a.[Remark]		   = b.[Remark]
-	,a.[Junk]		   = b.[Junk]
-	,a.[AddName]	   = b.[AddName]
-	,a.[AddDate]	   = b.[AddDate]
-	,a.[EditName]	   = b.[EditName]
+	 a.[Ukey]		   = isnull(b.[Ukey]    ,0)
+	,a.[Name]		   = isnull(b.[Name]    ,'')
+	,a.[Remark]		   = isnull(b.[Remark]  ,'')
+	,a.[Junk]		   = isnull(b.[Junk]    ,0)
+	,a.[AddName]	   = isnull(b.[AddName] ,'')
+	,a.[AddDate]	   = b.[AddDate] 
+	,a.[EditName]	   = isnull(b.[EditName],'')
 	,a.[EditDate]	   = b.[EditDate]
 FROM Production.dbo.IEReasonLBRNotHit_1st a
 INNER JOIN Trade_To_Pms.dbo.IEReasonLBRNotHit_1st b ON a.Type = b.Type and a.TypeGroup = b.TypeGroup and a.Code = b.Code
@@ -4498,16 +4643,17 @@ INSERT INTO [dbo].[IEReasonLBRNotHit_1st]
            ,[AddDate]
            ,[EditName]
            ,[EditDate])
-select a.[Type]
-	,a.[TypeGroup]
-	,a.[Code]
-	,a.[Ukey]
-	,a.[Name]
-	,a.[Remark]
-	,a.[Junk]
-    ,a.[AddName]
-    ,a.[AddDate]
-    ,a.[EditName]
+select 
+     isnull(a.[Type]     ,'')
+	,isnull(a.[TypeGroup],'')
+	,isnull(a.[Code]     ,'')
+	,isnull(a.[Ukey]     ,0)
+	,isnull(a.[Name]     ,'')
+	,isnull(a.[Remark]   ,'')
+	,isnull(a.[Junk]     ,0)
+    ,isnull(a.[AddName]  ,'')
+    ,a.[AddDate] 
+    ,isnull(a.[EditName] ,'')
     ,a.[EditDate]
 FROM Trade_To_Pms.dbo.IEReasonLBRNotHit_1st a
 LEFT JOIN Production.dbo.IEReasonLBRNotHit_1st b ON a.Type = b.Type and a.TypeGroup = b.TypeGroup and a.Code = b.Code
@@ -4522,13 +4668,13 @@ WHERE b.Type is null
 
 UPDATE a
 SET
-	 a.[Ukey]		   = b.[Ukey]
-	,a.[Name]		   = b.[Name]
-	,a.[Remark]		   = b.[Remark]
-	,a.[Junk]		   = b.[Junk]
-	,a.[AddName]	   = b.[AddName]
+	 a.[Ukey]		   = isnull(b.[Ukey]    ,0)
+	,a.[Name]		   = isnull(b.[Name]    ,'')
+	,a.[Remark]		   = isnull(b.[Remark]  ,'')
+	,a.[Junk]		   = isnull(b.[Junk]    ,0)
+	,a.[AddName]	   = isnull(b.[AddName] ,'')
 	,a.[AddDate]	   = b.[AddDate]
-	,a.[EditName]	   = b.[EditName]
+	,a.[EditName]	   = isnull(b.[EditName],'')
 	,a.[EditDate]	   = b.[EditDate]
 FROM Production.dbo.IEReasonLBRNotHit_Detail a
 INNER JOIN Trade_To_Pms.dbo.IEReasonLBRNotHit_Detail b ON a.Type = b.Type and a.TypeGroup = b.TypeGroup and a.Code = b.Code
@@ -4545,16 +4691,17 @@ INSERT INTO [dbo].[IEReasonLBRNotHit_Detail]
            ,[AddDate]
            ,[EditName]
            ,[EditDate])
-select a.[Type]
-	,a.[TypeGroup]
-	,a.[Code]
-	,a.[Ukey]
-	,a.[Name]
-	,a.[Remark]
-	,a.[Junk]
-    ,a.[AddName]
-    ,a.[AddDate]
-    ,a.[EditName]
+select 
+     isnull(a.[Type]       ,'')
+	,isnull(a.[TypeGroup]  ,'')
+	,isnull(a.[Code]       ,'')
+	,isnull(a.[Ukey]       ,0)
+	,isnull(a.[Name]       ,'')
+	,isnull(a.[Remark]     ,'')
+	,isnull(a.[Junk]       ,0)
+    ,isnull(a.[AddName]    ,'')
+    ,a.[AddDate]   
+    ,isnull(a.[EditName]   ,'')
     ,a.[EditDate]
 FROM Trade_To_Pms.dbo.IEReasonLBRNotHit_Detail a
 LEFT JOIN Production.dbo.IEReasonLBRNotHit_Detail b ON a.Type = b.Type and a.TypeGroup = b.TypeGroup and a.Code = b.Code
@@ -4564,14 +4711,14 @@ WHERE b.Type is null
 ---------------GarmentDefectType
 
 update b set
-	 b.[ID]			 = a.[ID]
-	,b.[Description] = a.[Description]
-	,b.[Junk]		 = a.[Junk]
-	,b.[AddName]	 = a.[AddName]
-	,b.[AddDate]	 = a.[AddDate]
-	,b.[EditName]	 = a.[EditName]
-	,b.[EditDate]	 = a.[EditDate]
-	,b.[Seq]		 = a.[Seq]
+	 b.[ID]			 = isnull(a.[ID]            ,'')
+	,b.[Description] = isnull(a.[Description]   ,'')
+	,b.[Junk]		 = isnull(a.[Junk]          ,0)
+	,b.[AddName]	 = isnull(a.[AddName]       ,'')
+	,b.[AddDate]	 = a.[AddDate]      
+	,b.[EditName]	 = isnull(a.[EditName]      ,'')
+	,b.[EditDate]	 = a.[EditDate]   
+	,b.[Seq]		 = isnull(a.[Seq]           ,0)
 FROM Trade_To_Pms.dbo.[GarmentDefectType] a
 inner JOIN Production.dbo.[GarmentDefectType] b ON a.ID = b.ID
 
@@ -4584,32 +4731,32 @@ INSERT INTO [dbo].[GarmentDefectType]
            ,[EditName]
            ,[EditDate]
            ,[Seq])
-select		a.[ID]
-           ,a.[Description]
-           ,a.[Junk]
-           ,a.[AddName]
-           ,a.[AddDate]
-           ,a.[EditName]
-           ,a.[EditDate]
-           ,a.[Seq]
+select		isnull(a.[ID]           ,'')
+           ,isnull(a.[Description]  ,'')
+           ,isnull(a.[Junk]         ,0)
+           ,isnull(a.[AddName]      ,'')
+           ,a.[AddDate]    
+           ,isnull(a.[EditName]     ,'')
+           ,a.[EditDate]  
+           ,isnull(a.[Seq]          ,0)
 FROM Trade_To_Pms.dbo.[GarmentDefectType] a
 LEFT JOIN Production.dbo.[GarmentDefectType] b ON a.ID = b.ID
 WHERE b.ID is null
 
 ---------------GarmentDefectCode
 update b set
-	 b.[ID]						= a.[ID]
-	,b.[Description]			= a.[Description]
-	,b.[GarmentDefectTypeID]	= a.[GarmentDefectTypeID]
-	,b.[AddName]				= a.[AddName]
-	,b.[AddDate]				= a.[AddDate]
-	,b.[EditName]				= a.[EditName]
-	,b.[EditDate]				= a.[EditDate]
-	,b.[Junk]					= a.[Junk]
-	,b.[Seq]					= a.[Seq]
-	,b.[ReworkTotalFailCode]	= a.[ReworkTotalFailCode]
-	,b.[IsCFA]					= a.[IsCFA]
-	,b.[IsCriticalDefect]		= a.[IsCriticalDefect]
+	 b.[ID]						= isnull(a.[ID]                 ,'')
+	,b.[Description]			= isnull(a.[Description]        ,'')
+	,b.[GarmentDefectTypeID]	= isnull(a.[GarmentDefectTypeID],'')
+	,b.[AddName]				= isnull(a.[AddName]            ,'')
+	,b.[AddDate]				= a.[AddDate]      
+	,b.[EditName]				= isnull(a.[EditName]           ,'')
+	,b.[EditDate]				= a.[EditDate]       
+	,b.[Junk]					= isnull(a.[Junk]               ,0)
+	,b.[Seq]					= isnull(a.[Seq]                ,0)
+	,b.[ReworkTotalFailCode]	= isnull(a.[ReworkTotalFailCode],'')
+	,b.[IsCFA]					= isnull(a.[IsCFA]              ,0)
+	,b.[IsCriticalDefect]		= isnull(a.[IsCriticalDefect]   ,0)
 FROM Trade_To_Pms.dbo.[GarmentDefectCode] a
 inner JOIN Production.dbo.[GarmentDefectCode] b ON a.ID = b.ID
 
@@ -4627,29 +4774,29 @@ INSERT INTO [dbo].[GarmentDefectCode]
            ,[IsCFA]
            ,[IsCriticalDefect])
 select
-			a.[ID]
-           ,a.[Description]
-           ,a.[GarmentDefectTypeID]
-           ,a.[AddName]
+			isnull(a.[ID]                  ,'')
+           ,isnull(a.[Description]         ,'')
+           ,isnull(a.[GarmentDefectTypeID] ,'')
+           ,isnull(a.[AddName]             ,'')
            ,a.[AddDate]
-           ,a.[EditName]
+           ,isnull(a.[EditName]            ,'')
            ,a.[EditDate]
-           ,a.[Junk]
-           ,a.[Seq]
-           ,a.[ReworkTotalFailCode]
-           ,a.[IsCFA]
-           ,a.[IsCriticalDefect]  
+           ,isnull(a.[Junk]                ,0)
+           ,isnull(a.[Seq]                 ,0)
+           ,isnull(a.[ReworkTotalFailCode] ,'')
+           ,isnull(a.[IsCFA]               ,0)
+           ,isnull(a.[IsCriticalDefect]    ,0)
 FROM Trade_To_Pms.dbo.[GarmentDefectCode] a
 LEFT JOIN Production.dbo.[GarmentDefectCode] b ON a.ID = b.ID
 WHERE b.ID is null
 
 --FabricDefect
-update a set	a.Type = b.Type,
-				a.DescriptionEN = b.DescriptionEN,
-				a.Junk = b.Junk,
-				a.AddName = b.AddName,
+update a set	a.Type = isnull(b.Type,''),
+				a.DescriptionEN = isnull(b.DescriptionEN,''),
+				a.Junk = isnull(b.Junk ,0),
+				a.AddName = isnull(b.AddName,''),
 				a.AddDate = b.AddDate,
-				a.EditName = b.EditName,
+				a.EditName = isnull(b.EditName,''),
 				a.EditDate = b.EditDate
 FROM Production.dbo.FabricDefect a
 INNER JOIN Trade_To_Pms.dbo.FabricDefect b ON a.ID = b.ID
@@ -4659,17 +4806,25 @@ FROM Production.dbo.FabricDefect a
 where not exists(select 1 from Trade_To_Pms.dbo.FabricDefect b where a.ID = b.ID)
 
 insert into Production.dbo.FabricDefect(ID, Type, DescriptionEN, Junk, AddName, AddDate, EditName, EditDate)
-select	b.ID, b.Type, b.DescriptionEN, b.Junk, b.AddName, b.AddDate, b.EditName, b.EditDate
+select	
+      isnull(b.ID           ,'')
+    , isnull(b.Type         ,'')
+    , isnull(b.DescriptionEN,'')
+    , isnull(b.Junk         ,0)
+    , isnull(b.AddName      ,'')
+    , b.AddDate  
+    , isnull(b.EditName     ,'')
+    , b.EditDate
 from Trade_To_Pms.dbo.FabricDefect b
 where not exists(select 1 from Production.dbo.FabricDefect a where a.ID = b.ID)
 
 --AccessoryDefect
-update a set	a.Description = b.Description,
-				a.Junk = b.Junk,
-				a.AddName = b.AddName,
-				a.AddDate = b.AddDate,
-				a.EditName = b.EditName,
-				a.EditDate = b.EditDate
+update a set	a.Description = isnull( b.Description,''),
+				a.Junk = isnull( b.Junk,0),
+				a.AddName = isnull( b.AddName,''),
+				a.AddDate =  b.AddDate,
+				a.EditName = isnull( b.EditName,''),
+				a.EditDate =  b.EditDate
 FROM Production.dbo.AccessoryDefect a
 INNER JOIN Trade_To_Pms.dbo.AccessoryDefect b ON a.ID = b.ID
 
@@ -4678,7 +4833,14 @@ FROM Production.dbo.AccessoryDefect a
 where not exists(select 1 from Trade_To_Pms.dbo.AccessoryDefect b where a.ID = b.ID)
 
 insert into Production.dbo.AccessoryDefect(ID, Description, Junk, AddName, AddDate, EditName, EditDate)
-select	b.ID, b.Description, b.Junk, b.AddName, b.AddDate, b.EditName, b.EditDate
+select	
+      isnull(b.ID           ,'')
+    , isnull(b.Description  ,'')
+    , isnull(b.Junk         ,0)
+    , isnull(b.AddName      ,'')
+    , b.AddDate
+    , isnull(b.EditName     ,'')
+    , b.EditDate
 from Trade_To_Pms.dbo.AccessoryDefect b
 where not exists(select 1 from Production.dbo.AccessoryDefect a where a.ID = b.ID)
 
@@ -4694,13 +4856,13 @@ left join Trade_To_Pms.dbo.Adidas_FGWT b on
 where b.[Location] is null
 
 update a set
-	 Seq	    = b.Seq		
-	,TestName   = b.TestName  
-	,SystemType = b.SystemType
-	,TestDetail = b.TestDetail
-	,Scale	    = b.Scale	   
-	,Criteria   = b.Criteria  
-	,Criteria2  = b.Criteria2 
+	 Seq	    = isnull( b.Seq		  ,0)
+	,TestName   = isnull( b.TestName  ,'')
+	,SystemType = isnull( b.SystemType,'')
+	,TestDetail = isnull( b.TestDetail,'')
+	,Scale	    = isnull( b.Scale	  ,'')
+	,Criteria   = isnull( b.Criteria  ,0)
+	,Criteria2  = isnull( b.Criteria2 ,0)
 from production.dbo.Adidas_FGWT a
 inner join Trade_To_Pms.dbo.Adidas_FGWT b on 
 		a.[Location] 		  = b.[Location] 
@@ -4722,18 +4884,18 @@ insert into production.dbo.Adidas_FGWT
            ,[Scale]
            ,[Criteria]
            ,[Criteria2])
-select		a.[Seq]
-           ,a.[TestName]
-           ,a.[Location]
-           ,a.[SystemType]
-           ,a.[ReportType]
-           ,a.[MtlTypeID]
-           ,a.[Washing]
-           ,a.[FabricComposition]
-           ,a.[TestDetail]
-           ,a.[Scale]
-           ,a.[Criteria]
-           ,a.[Criteria2]
+select		isnull(a.[Seq]              ,0)
+           ,isnull(a.[TestName]         ,'')
+           ,isnull(a.[Location]         ,'')
+           ,isnull(a.[SystemType]       ,'')
+           ,isnull(a.[ReportType]       ,'')
+           ,isnull(a.[MtlTypeID]        ,'')
+           ,isnull(a.[Washing]          ,'')
+           ,isnull(a.[FabricComposition],'')
+           ,isnull(a.[TestDetail]       ,'')
+           ,isnull(a.[Scale]            ,'')
+           ,isnull(a.[Criteria]         ,0)
+           ,isnull(a.[Criteria2]        ,0)
 from Trade_To_Pms.dbo.Adidas_FGWT a
 LEFT join production.dbo.Adidas_FGWT b on 
 		a.[Location] 		  = b.[Location] 
@@ -4751,15 +4913,15 @@ left join Trade_To_Pms.dbo.TypeSelection b on a.VersionID = b.VersionID and a.Se
 where b.VersionID is null
 
 update a set 
-	Code = b.Code
+	Code = isnull(b.Code,'')
 from production.dbo.TypeSelection a
 inner join Trade_To_Pms.dbo.TypeSelection b on a.VersionID = b.VersionID and a.Seq = b.Seq 
 
 insert production.dbo.TypeSelection (VersionID,Seq,Code)
 select 
-	 a.VersionID
-	,a.Seq
-	,a.Code
+	 isnull(a.VersionID,0)
+	,isnull(a.Seq      ,0)
+	,isnull(a.Code     ,'')
 from Trade_To_Pms.dbo.TypeSelection a
 left join production.dbo.TypeSelection b on a.VersionID = b.VersionID and a.Seq = b.Seq 
 where b.VersionID is null
@@ -4767,7 +4929,7 @@ where b.VersionID is null
 
 --QABrandSetting
 update a set
-	a.PullingTest_PullForceUnit = b.PullingTest_PullForceUnit 
+	a.PullingTest_PullForceUnit = isnull(b.PullingTest_PullForceUnit ,'')
 from  production.dbo.QABrandSetting a
 inner join Trade_To_Pms.dbo.QABrandSetting b on a.BrandID = b.BrandID
 
@@ -4777,8 +4939,8 @@ INSERT INTO production.[dbo].[QABrandSetting]
            ,[AddDate]
            ,[AddName])
 select 
-	a.BrandID
-	,a.PullingTest_PullForceUnit
+	 isnull(a.BrandID,'')
+	,isnull(a.PullingTest_PullForceUnit,'')
 	,GETDATE()
 	,'SCIMIS'
 from  Trade_To_Pms.dbo.QABrandSetting a
@@ -4792,13 +4954,18 @@ left join Trade_To_Pms.dbo.Brand_PullingTestStandarList b on a.BrandID = b.Brand
 where b.BrandID is null
 
 update a set 
-	PullForce = b.PullForce,
-	Time = b.Time
+	PullForce = isnull(b.PullForce,0),
+	Time = isnull(b.Time,0)
 from production.dbo.Brand_PullingTestStandarList a
 inner join Trade_To_Pms.dbo.Brand_PullingTestStandarList b on a.BrandID = b.BrandID and a.TestItem = b.TestItem and a.PullForceUnit = b.PullForceUnit
 
 insert production.dbo.Brand_PullingTestStandarList (BrandID,TestItem,PullForceUnit,PullForce,Time)
-select a.BrandID,a.TestItem,a.PullForceUnit,a.PullForce,a.Time
+select
+     isnull(a.BrandID       ,'')
+    ,isnull(a.TestItem      ,'')
+    ,isnull(a.PullForceUnit ,'')
+    ,isnull(a.PullForce     ,0)
+    ,isnull(a.Time          ,0)
 from Trade_To_Pms.dbo.Brand_PullingTestStandarList a
 left join production.dbo.Brand_PullingTestStandarList b on a.BrandID = b.BrandID and a.TestItem = b.TestItem and a.PullForceUnit = b.PullForceUnit
 where b.BrandID is null
@@ -4810,11 +4977,11 @@ left join Trade_To_Pms.dbo.GarmentTestShrinkage b on a.Ukey = b.Ukey
 where b.Ukey is null
 
 update a set 
- [BrandID] = b.[BrandID]
-,[LocationGroup] = b.[LocationGroup]
-,[Location] = b.[Location]
-,[Seq] = b.[Seq]
-,[Type] = b.[Type]
+ [BrandID] = isnull( b.[BrandID],'')
+,[LocationGroup] = isnull( b.[LocationGroup],'')
+,[Location] = isnull( b.[Location],'')
+,[Seq] = isnull( b.[Seq],0)
+,[Type] = isnull( b.[Type],'')
 from production.dbo.GarmentTestShrinkage a
 inner join Trade_To_Pms.dbo.GarmentTestShrinkage b on a.Ukey = b.Ukey 
 
@@ -4824,7 +4991,12 @@ insert production.dbo.GarmentTestShrinkage
            ,[Location]
            ,[Seq]
            ,[Type])
-select a.[BrandID],a.[LocationGroup],a.[Location],a.[Seq],a.[Type]
+select
+     isnull(a.[BrandID]        ,'')
+    ,isnull(a.[LocationGroup]  ,'')
+    ,isnull(a.[Location]       ,'')
+    ,isnull(a.[Seq]            ,0)
+    ,isnull(a.[Type]           ,'')
 from Trade_To_Pms.dbo.GarmentTestShrinkage a
 left join production.dbo.GarmentTestShrinkage b on  a.Ukey = b.Ukey 
 where b.BrandID is null
@@ -4836,17 +5008,17 @@ left join Trade_To_Pms.dbo.PadPrint b on a.Ukey = b.Ukey
 where b.Ukey is null
 
 update a set 
-	 [Refno]      = b.[Refno]
-	,[BrandID]	  = b.[BrandID]
-	,[Category]	  = b.[Category]
-	,[SuppID]	  = b.[SuppID]
-	,[CurrencyID] = b.[CurrencyID]
-	,[Junk]		  = b.[Junk]
-	,[Remark]	  = b.[Remark]
-	,[AddName]	  = b.[AddName]
-	,[AddDate]	  = b.[AddDate]
-	,[EditName]	  = b.[EditName]
-	,[EditDate]	  = b.[EditDate]
+	 [Refno]      = isnull(b.[Refno]      ,'')
+	,[BrandID]	  = isnull(b.[BrandID]    ,'')
+	,[Category]	  = isnull(b.[Category]   ,'')
+	,[SuppID]	  = isnull(b.[SuppID]     ,'')
+	,[CurrencyID] = isnull(b.[CurrencyID] ,'')
+	,[Junk]		  = isnull(b.[Junk]       ,0)
+	,[Remark]	  = isnull(b.[Remark]     ,'')
+	,[AddName]	  = isnull(b.[AddName]    ,'')
+	,[AddDate]	  = b.[AddDate]   
+	,[EditName]	  = isnull(b.[EditName]   ,'')
+	,[EditDate]	  = b.[EditDate]  
 from production.dbo.PadPrint a
 inner join Trade_To_Pms.dbo.PadPrint b on a.Ukey = b.Ukey 
 
@@ -4864,17 +5036,17 @@ insert production.dbo.PadPrint
            ,[EditName]
            ,[EditDate])
 select
-	a.Ukey
-	,a.[Refno]
-    ,a.[BrandID]
-    ,a.[Category]
-    ,a.[SuppID]
-    ,a.[CurrencyID]
-    ,a.[Junk]
-    ,a.[Remark]
-    ,a.[AddName]
-    ,a.[AddDate]
-    ,a.[EditName]
+	 isnull(a.Ukey          ,0)
+	,isnull(a.[Refno]       ,'')
+    ,isnull(a.[BrandID]     ,'')
+    ,isnull(a.[Category]    ,'')
+    ,isnull(a.[SuppID]      ,'')
+    ,isnull(a.[CurrencyID]  ,'')
+    ,isnull(a.[Junk]        ,0)
+    ,isnull(a.[Remark]      ,'')
+    ,isnull(a.[AddName]     ,'')
+    ,a.[AddDate]  
+    ,isnull(a.[EditName]    ,'')
     ,a.[EditDate]
 from Trade_To_Pms.dbo.PadPrint a
 left join production.dbo.PadPrint b on  a.Ukey = b.Ukey 
@@ -4887,20 +5059,20 @@ left join Trade_To_Pms.dbo.PadPrint_Mold b on a.[PadPrint_ukey] = b.[PadPrint_uk
 where b.[PadPrint_ukey] is null
 
 update a set 
-	 [Refno]		 = b.[Refno]
-	,[BrandID]		 = b.[BrandID]
-	,[Season]		 = b.[Season]
-	,[LabelFor]		 = b.[LabelFor]
-	,[MainSize]		 = b.[MainSize]
-	,[Gender]		 = b.[Gender]
-	,[AgeGroup]		 = b.[AgeGroup]
-	,[SizeSpec]		 = b.[SizeSpec]
-	,[Part]			 = b.[Part]
-	,[MadeIn]		 = b.[MadeIn]
-	,[Region]		 = b.[Region]
-	,[AddName]		 = b.[AddName]
-	,[AddDate]		 = b.[AddDate]
-	,[EditName]		 = b.[EditName]
+	 [Refno]		 = isnull( b.[Refno]        ,'')
+	,[BrandID]		 = isnull( b.[BrandID]      ,'')
+	,[Season]		 = isnull( b.[Season]       ,'')
+	,[LabelFor]		 = isnull( b.[LabelFor]     ,'')
+	,[MainSize]		 = isnull( b.[MainSize]     ,'')
+	,[Gender]		 = isnull( b.[Gender]       ,'')
+	,[AgeGroup]		 = isnull( b.[AgeGroup]     ,'')
+	,[SizeSpec]		 = isnull( b.[SizeSpec]     ,'')
+	,[Part]			 = isnull( b.[Part]         ,'')
+	,[MadeIn]		 = isnull( b.[MadeIn]       ,'')
+	,[Region]		 = isnull( b.[Region]       ,'')
+	,[AddName]		 = isnull( b.[AddName]      ,'')
+	,[AddDate]		 =  b.[AddDate]            
+	,[EditName]		 = isnull( b.[EditName]     ,'')
 	,[EditDate]		 = b.[EditDate]
 from production.dbo.PadPrint_Mold a
 inner join Trade_To_Pms.dbo.PadPrint_Mold b on a.[PadPrint_ukey] = b.[PadPrint_ukey] and a.[MoldID] = b.[MoldID]
@@ -4924,23 +5096,23 @@ insert production.dbo.PadPrint_Mold
            ,[EditName]
            ,[EditDate])
 select
-	 a.[PadPrint_ukey]
-	,a.[MoldID]
-	,a.[Refno]
-	,a.[BrandID]
-	,a.[Season]
-	,a.[LabelFor]
-	,a.[MainSize]
-	,a.[Gender]
-	,a.[AgeGroup]
-	,a.[SizeSpec]
-	,a.[Part]
-	,a.[MadeIn]
-	,a.[Region]
-	,a.[AddName]
-	,a.[AddDate]
-	,a.[EditName]
-	,a.[EditDate]
+	 isnull(a.[PadPrint_ukey],0)
+	,isnull(a.[MoldID]       ,'')
+	,isnull(a.[Refno]        ,'')
+	,isnull(a.[BrandID]      ,'')
+	,isnull(a.[Season]       ,'')
+	,isnull(a.[LabelFor]     ,'')
+	,isnull(a.[MainSize]     ,'')
+	,isnull(a.[Gender]       ,'')
+	,isnull(a.[AgeGroup]     ,'')
+	,isnull(a.[SizeSpec]     ,'')
+	,isnull(a.[Part]         ,'')
+	,isnull(a.[MadeIn]       ,'')
+	,isnull(a.[Region]       ,'')
+	,isnull(a.[AddName]      ,'')
+	,a.[AddDate]   
+	,isnull(a.[EditName]     ,'')
+	,a.[EditDate]  
 from Trade_To_Pms.dbo.PadPrint_Mold a
 left join production.dbo.PadPrint_Mold b on a.[PadPrint_ukey] = b.[PadPrint_ukey] and a.[MoldID] = b.[MoldID]
 where b.[PadPrint_ukey] is null
@@ -4952,17 +5124,17 @@ left join Trade_To_Pms.dbo.PadPrint_Mold_Spec b on a.PadPrint_ukey = b.PadPrint_
 where b.PadPrint_ukey is null
 
 update a set 
-	 [SizePage]		 = b.[SizePage]
-	,[SourceSize]	 = b.[SourceSize]
-	,[CustomerSize]	 = b.[CustomerSize]
-	,[MoldRef]		 = b.[MoldRef]
-	,[Version]		 = b.[Version]
-	,[ReversionMold] = b.[ReversionMold]
-	,[Junk]			 = b.[Junk]
-	,[Reason]		 = b.[Reason]
-	,[AddName]		 = b.[AddName]
-	,[AddDate]		 = b.[AddDate]
-	,[EditName]		 = b.[EditName]
+	 [SizePage]		 = isnull( b.[SizePage]       ,'')
+	,[SourceSize]	 = isnull( b.[SourceSize]     ,'')
+	,[CustomerSize]	 = isnull( b.[CustomerSize]   ,'')
+	,[MoldRef]		 = isnull( b.[MoldRef]        ,'')
+	,[Version]		 = isnull( b.[Version]        ,'')
+	,[ReversionMold] = isnull( b.[ReversionMold]  ,'')
+	,[Junk]			 = isnull( b.[Junk]           ,0)
+	,[Reason]		 = isnull( b.[Reason]         ,'')
+	,[AddName]		 = isnull( b.[AddName]        ,'')
+	,[AddDate]		 =  b.[AddDate]
+	,[EditName]		 = isnull( b.[EditName]       ,'')
 	,[EditDate]		 = b.[EditDate]
 from production.dbo.PadPrint_Mold_Spec a
 inner join Trade_To_Pms.dbo.PadPrint_Mold_Spec b on a.PadPrint_ukey = b.PadPrint_ukey and a.MoldID = b.MoldID and a.Side = b.Side
@@ -4984,20 +5156,20 @@ insert production.dbo.PadPrint_Mold_Spec
            ,[EditName]
            ,[EditDate])
 select
-	 a.[PadPrint_ukey]
-	,a.[MoldID]
-	,a.[Side]
-	,a.[SizePage]
-	,a.[SourceSize]
-	,a.[CustomerSize]
-	,a.[MoldRef]
-	,a.[Version]
-	,a.[ReversionMold]
-	,a.[Junk]
-	,a.[Reason]
-	,a.[AddName]
-	,a.[AddDate]
-	,a.[EditName]
+	 isnull(a.[PadPrint_ukey],0)
+	,isnull(a.[MoldID]       ,'')
+	,isnull(a.[Side]         ,'')
+	,isnull(a.[SizePage]     ,'')
+	,isnull(a.[SourceSize]   ,'')
+	,isnull(a.[CustomerSize] ,'')
+	,isnull(a.[MoldRef]      ,'')
+	,isnull(a.[Version]      ,'')
+	,isnull(a.[ReversionMold],'')
+	,isnull(a.[Junk]         ,0)
+	,isnull(a.[Reason]       ,'')
+	,isnull(a.[AddName]      ,'')
+	,a.[AddDate]    
+	,isnull(a.[EditName]     ,'')
 	,a.[EditDate]
 from Trade_To_Pms.dbo.PadPrint_Mold_Spec a
 left join production.dbo.PadPrint_Mold_Spec b on a.PadPrint_ukey = b.PadPrint_ukey and a.MoldID = b.MoldID and a.Side = b.Side

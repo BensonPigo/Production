@@ -11,35 +11,29 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-
-
-
---SMNotice
---SMNotice
 ---------------------------UPDATE �DTABLE��ӷ�TABLE ���@��(�DTABLE�h���� �O�_�� ~�ӷ�TABLE�h���ܤ��z�|)
 UPDATE a
 SET  
---a.ID	= b.ID
-a.MainID	= b.MainID
-,a.Mr	= b.Mr
-,a.SMR	= b.SMR
-,a.BrandID	= b.BrandID
-,a.StyleID	= b.StyleID
-,a.SeasonID	= b.SeasonID
-,a.StyleUkey	= b.StyleUkey
-,a.CountryID	= b.CountryID
-,a.PatternNo	= b.PatternNo
-,a.OldStyleID	= b.OldStyleID
-,a.OldSeasonID	= b.OldSeasonID
-,a.SizeGroup	= b.SizeGroup
-,a.SizeCode	= b.SizeCode
-,a.BuyReady	= b.BuyReady
-,a.Status	= b.Status
-,a.StatusPattern	= b.StatusPattern
-,a.StatusIE	= b.StatusIE
-,a.AddName	= b.AddName
-,a.AddDate	= b.AddDate
-,a.EditName	= b.EditName
+a.MainID	= isnull( b.MainID               , '')
+,a.Mr	= isnull( b.Mr                       , '')
+,a.SMR	= isnull( b.SMR                      , '')
+,a.BrandID	= isnull( b.BrandID              , '')
+,a.StyleID	= isnull( b.StyleID              , '')
+,a.SeasonID	= isnull( b.SeasonID             , '')
+,a.StyleUkey	= isnull( b.StyleUkey        , 0)
+,a.CountryID	= isnull( b.CountryID        , '')
+,a.PatternNo	= isnull( b.PatternNo        , '')
+,a.OldStyleID	= isnull( b.OldStyleID       , '')
+,a.OldSeasonID	= isnull( b.OldSeasonID      , '')
+,a.SizeGroup	= isnull( b.SizeGroup        , '')
+,a.SizeCode	= isnull( b.SizeCode             , '')
+,a.BuyReady	=  b.BuyReady
+,a.Status	= isnull( b.Status               , '')
+,a.StatusPattern	= isnull( b.StatusPattern, '')
+,a.StatusIE	= isnull( b.StatusIE             , '')
+,a.AddName	= isnull( b.AddName              , '')
+,a.AddDate	=  b.AddDate
+,a.EditName	= isnull( b.EditName             , '')
 ,a.EditDate	= b.EditDate
 
 from Production.dbo.SMNotice as a inner join Trade_To_Pms.dbo.SMNotice as b ON a.id=b.id
@@ -70,27 +64,27 @@ ID
 
 )
 select 
-ID
-,MainID
-,Mr
-,SMR
-,BrandID
-,StyleID
-,SeasonID
-,StyleUkey
-,CountryID
-,PatternNo
-,OldStyleID
-,OldSeasonID
-,SizeGroup
-,SizeCode
+ isnull(ID           , '')
+,isnull(MainID       , '')
+,isnull(Mr           , '')
+,isnull(SMR          , '')
+,isnull(BrandID      , '')
+,isnull(StyleID      , '')
+,isnull(SeasonID     , '')
+,isnull(StyleUkey    , 0)
+,isnull(CountryID    , '')
+,isnull(PatternNo    , '')
+,isnull(OldStyleID   , '')
+,isnull(OldSeasonID  , '')
+,isnull(SizeGroup    , '')
+,isnull(SizeCode     , '')
 ,BuyReady
-,Status
-,StatusPattern
-,StatusIE
-,AddName
+,isnull(Status       , '')
+,isnull(StatusPattern, '')
+,isnull(StatusIE     , '')
+,isnull(AddName      , '')
 ,AddDate
-,EditName
+,isnull(EditName     , '')
 ,EditDate
 
 from Trade_To_Pms.dbo.SMNotice as b WITH (NOLOCK)
@@ -102,28 +96,48 @@ Using (select * from Trade_To_Pms.dbo.smnotice_detail a WITH (NOLOCK) where id i
 on t.id = s.id and t.type = s.type
 when matched then
 	update set 
-		t.[UseFor]			=s.[UseFor]
-		,t.[PhaseID]			=s.[PhaseID]
-		,t.[RequireDate]		=s.[RequireDate]
-		,t.[Apv2SampleTime]	=s.[Apv2SampleTime]
-		,t.[Apv2SampleHandle]	=s.[Apv2SampleHandle]
-		,t.[ApvName]			=s.[ApvName]
-		,t.[ApvDate]			=s.[ApvDate]
-		,t.[Factory]			=s.[Factory]
-		,t.[IEConfirmMR]		=s.[IEConfirmMR]
-		,t.[PendingStatus]	=s.[PendingStatus]
-		,t.[BasicPattern]		=s.[BasicPattern]
-		,t.[Remark1]			=s.[Remark1]
-		,t.[Remark2]			=s.[Remark2]
-		,t.[AddName]			=s.[AddName]
-		,t.[AddDate]			=s.[AddDate]
-		,t.[EditName]			=s.[EditName]
+		t.[UseFor]			= isnull(s.[UseFor]              , '')
+		,t.[PhaseID]			= isnull(s.[PhaseID]         , '')
+		,t.[RequireDate]		= s.[RequireDate]
+		,t.[Apv2SampleTime]	= s.[Apv2SampleTime]
+		,t.[Apv2SampleHandle]	= isnull(s.[Apv2SampleHandle], '')
+		,t.[ApvName]			= isnull(s.[ApvName]         , '')
+		,t.[ApvDate]			= s.[ApvDate]
+		,t.[Factory]			= isnull(s.[Factory]         , '')
+		,t.[IEConfirmMR]		= isnull(s.[IEConfirmMR]     , '')
+		,t.[PendingStatus]	= isnull(s.[PendingStatus]       , 0)
+		,t.[BasicPattern]		= isnull(s.[BasicPattern]    , '')
+		,t.[Remark1]			= isnull(s.[Remark1]         , '')
+		,t.[Remark2]			= isnull(s.[Remark2]         , '')
+		,t.[AddName]			= isnull(s.[AddName]         , '')
+		,t.[AddDate]			= s.[AddDate]
+		,t.[EditName]			= isnull(s.[EditName]        , '')
 		,t.[EditDate]			=s.[EditDate]
 when not matched by target then 	
 insert([ID],[Type],[UseFor],[PhaseID],[RequireDate],[Apv2SampleTime],[Apv2SampleHandle],[ApvName],[ApvDate],[Factory]
 ,[IEConfirmMR],[PendingStatus],[BasicPattern],[Remark1],[Remark2],[AddName],[AddDate],[EditName],[EditDate])
-values(s.[ID],s.[Type],s.[UseFor],s.[PhaseID],s.[RequireDate],s.[Apv2SampleTime],s.[Apv2SampleHandle],s.[ApvName],s.[ApvDate]
-,s.[Factory],s.[IEConfirmMR],s.[PendingStatus],s.[BasicPattern],s.[Remark1],s.[Remark2],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])	;
+       VALUES
+       (
+              isnull(s.[ID],               ''),
+              isnull(s.[Type],             ''),
+              isnull(s.[UseFor],           ''),
+              isnull(s.[PhaseID],          ''),
+              s.[RequireDate],
+              s.[Apv2SampleTime],
+              isnull(s.[Apv2SampleHandle], ''),
+              isnull(s.[ApvName],          ''),
+              s.[ApvDate] ,
+              isnull(s.[Factory],          ''),
+              isnull(s.[IEConfirmMR],      ''),
+              isnull(s.[PendingStatus],    0),
+              isnull(s.[BasicPattern],     ''),
+              isnull(s.[Remark1],          ''),
+              isnull(s.[Remark2],          ''),
+              isnull(s.[AddName],          ''),
+              s.[AddDate],
+              isnull(s.[EditName],         ''),
+              s.[EditDate]
+       ) ;
 
 
 delete t
@@ -144,15 +158,13 @@ where b.id is null
 ---------------------------UPDATE �DTABLE��ӷ�TABLE ���@��(�DTABLE�h���� �O�_�� ~�ӷ�TABLE�h���ܤ��z�|)
 UPDATE a
 SET  
---a.ID	= b.ID
---,a.SEQ	= b.SEQ
---,a.MarkerVersion	= b.MarkerVersion
-a.MarkerNo	= b.MarkerNo
-,a.PatternSMID	= b.PatternSMID
-,a.PatternVersion	= b.PatternVersion
-,a.ToFactory	= b.ToFactory
-,a.TransLate	= b.TransLate
-,a.AddName	= b.AddName
+
+a.MarkerNo	= isnull( b.MarkerNo              , '')
+,a.PatternSMID	= isnull( b.PatternSMID       , '')
+,a.PatternVersion	= isnull( b.PatternVersion, '')
+,a.ToFactory	= isnull( b.ToFactory         , '')
+,a.TransLate	= isnull( b.TransLate         , 0)
+,a.AddName	= isnull( b.AddName               , '')
 ,a.AddDate	= b.AddDate
 
 from Production.dbo.Marker_Send as a 
@@ -172,16 +184,16 @@ ID
 
 )
 select 
-ID
-,SEQ
-,MarkerVersion
-,MarkerNo
-,PatternSMID
-,PatternVersion
-,ToFactory
-,TransLate
-,AddName
-,AddDate
+     isnull(ID            , '')
+    ,isnull(SEQ           , '')
+    ,isnull(MarkerVersion , '')
+    ,isnull(MarkerNo      , '')
+    ,isnull(PatternSMID   , '')
+    ,isnull(PatternVersion, '')
+    ,isnull(ToFactory     , '')
+    ,isnull(TransLate     , 0)
+    ,isnull(AddName       , '')
+    ,AddDate
  
 from Trade_To_Pms.dbo.Marker_Send as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Marker_Send as a WITH (NOLOCK) where a.id = b.id and a.SEQ=b.SEQ and a.MarkerVersion = b.MarkerVersion)
