@@ -35,6 +35,11 @@ update SewingMonthlyLock
 update PullOut
 set LockDate=CONVERT(date, GETDATE()), Status='Locked'
 where PulloutDate <= @PullOutLock and LockDate is null and Status='Confirmed'  
+
+update PackingList
+set PulloutStatus = 'Locked'
+where PulloutDate <= @PulloutLock 
+and PulloutStatus = 'Confirmed'
                                       
 
 update System set PullLock=@PullOutLock
