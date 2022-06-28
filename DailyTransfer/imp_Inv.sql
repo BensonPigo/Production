@@ -15,46 +15,46 @@ BEGIN
    -- INVENTORY
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
-SET		--a.Ukey					= b.Ukey
-		a.POID				= b.POID
-		,a.Seq1				= b.Seq1
-		 ,a.Seq2				= b.Seq2
-		,a.ProjectID			= b.ProjectID
-		,a.FactoryID			= b.FactoryID
-		 ,a.UnitID			= b.UnitID
-		,a.InventoryRefnoId	= b.InventoryRefnoId
-		, a.SuppID				= b.SuppID 
-		, a.Refno				= b.Refno
-		, a.BrandGroup			= b.BrandGroup
-		, a.BrandID				= b.BrandID
-		, a.LimitHandle			= b.LimitHandle
-		, a.LimitSmr			= b.LimitSmr
-		, a.AuthMr				= b.AuthMr
-		, a.Payable				= b.Payable
-		, a.Qty					= b.Qty
-		, a.InputQty			= b.InputQty
-		, a.OutputQty			= b.OutputQty
-		, a.Deadline			= b.Deadline
-		, a.PoFactory			= b.PoFactory	
-		, a.OrderHandle			= b.OrderHandle
-		, a.OrderSmr			= b.OrderSmr
-		, a.PoHandle			= b.PoHandle
-		, a.PoSmr				= b.PoSmr
-		, a.StyleID				= b.StyleID
-		, a.SeasonID			= b.SeasonID
-		, a.FabricType			= b.FabricType
-		, a.MtlTypeID			= b.MtlTypeID
-		, a.ReasonID			= b.ReasonID
-		, a.Remark				= b.Remark
-		, a.IcrNo				= b.IcrNo
-		, a.DebitID				= b.DebitID
-		, a.Lock				= b.Lock
-		, a.AddName				= b.AddName
-		, a.AddDate				= b.AddDate
-		, a.EditName			= b.EditName
-		, a.EditDate			= b.EditDate
-		, a.ETA					= b.ETA
-		, a.SCIRefno			= b.SCIRefno
+SET
+		a.POID				= isnull( b.POID            , '')
+		,a.Seq1				= isnull( b.Seq1            , '')
+		 ,a.Seq2				= isnull( b.Seq2        , '')
+		,a.ProjectID			= isnull( b.ProjectID   , '')
+		,a.FactoryID			= isnull( b.FactoryID   , '')
+		 ,a.UnitID			= isnull( b.UnitID          , '')
+		,a.InventoryRefnoId	= isnull( b.InventoryRefnoId, 0)
+		, a.SuppID				= isnull( b.SuppID      , '')
+		, a.Refno				= isnull( b.Refno       , '')
+		, a.BrandGroup			= isnull( b.BrandGroup  , '')
+		, a.BrandID				= isnull( b.BrandID     , '')
+		, a.LimitHandle			= isnull( b.LimitHandle , '')
+		, a.LimitSmr			= isnull( b.LimitSmr    , '')
+		, a.AuthMr				= isnull( b.AuthMr      , '')
+		, a.Payable				= isnull( b.Payable     , '')
+		, a.Qty					= isnull( b.Qty         , 0)
+		, a.InputQty			= isnull( b.InputQty    , 0)
+		, a.OutputQty			= isnull( b.OutputQty   , 0)
+		, a.Deadline			=  b.Deadline
+		, a.PoFactory			= isnull( b.PoFactory	, '')
+		, a.OrderHandle			= isnull( b.OrderHandle , '')
+		, a.OrderSmr			= isnull( b.OrderSmr    , '')
+		, a.PoHandle			= isnull( b.PoHandle    , '')
+		, a.PoSmr				= isnull( b.PoSmr       , '')
+		, a.StyleID				= isnull( b.StyleID     , '')
+		, a.SeasonID			= isnull( b.SeasonID    , '')
+		, a.FabricType			= isnull( b.FabricType  , '')
+		, a.MtlTypeID			= isnull( b.MtlTypeID   , '')
+		, a.ReasonID			= isnull( b.ReasonID    , '')
+		, a.Remark				= isnull( b.Remark      , '')
+		, a.IcrNo				= isnull( b.IcrNo       , '')
+		, a.DebitID				= isnull( b.DebitID     , '')
+		, a.Lock				= isnull( b.Lock        , 0)
+		, a.AddName				= isnull( b.AddName     , '')
+		, a.AddDate				=  b.AddDate
+		, a.EditName			= isnull( b.EditName    , '')
+		, a.EditDate			=  b.EditDate
+		, a.ETA					=  b.ETA
+		, a.SCIRefno			= isnull( b.SCIRefno    , '')
 		, A.MDivisionID			= isnull(C.MDivisionID,'')
 from Production.dbo.Inventory as a 
 inner join Trade_To_Pms.dbo.Inventory as b ON	a.ukey = b.ukey
@@ -103,104 +103,64 @@ INSERT INTO Production.dbo.Inventory(
 	, MDivisionID
 	, SuppID
 )
-select	Ukey
-		, iif(POID is null ,'',POID)
-		, iif(Seq1 is null, '' ,seq1)
-		, iif(Seq2 is null, '' ,seq2)
-		, iif(ProjectID is null,'',ProjectID)
-		, iif(FactoryID is null,'',FactoryID)
-		, iif(UnitID is null,'',UnitID)
-		, iif(InventoryRefnoId is null,'',InventoryRefnoId)
-		, Refno
-		, BrandGroup
-		, BrandID
-		, LimitHandle
-		, LimitSmr
-		, AuthMr
-		, Payable
-		, Qty
-		, InputQty
-		, OutputQty
+select	  isnull(Ukey            , '')
+		, isnull(POID            , '')
+		, isnull(Seq1            , '')
+		, isnull(Seq2            , '')
+		, isnull(ProjectID       , '')
+		, isnull(FactoryID       , '')
+		, isnull(UnitID          , '')
+		, isnull(InventoryRefnoId, 0)
+		, isnull(Refno           , '')
+		, isnull(BrandGroup      , '')
+		, isnull(BrandID         , '')
+		, isnull(LimitHandle     , '')
+		, isnull(LimitSmr        , '')
+		, isnull(AuthMr          , '')
+		, isnull(Payable         , '')
+		, isnull(Qty             , 0)
+		, isnull(InputQty        , 0)
+		, isnull(OutputQty       , 0)
 		, Deadline
-		, PoFactory
-		, OrderHandle
-		, OrderSmr
-		, PoHandle
-		, PoSmr
-		, StyleID
-		, SeasonID
-		, FabricType
-		, MtlTypeID
-		, ReasonID
-		, Remark
-		, IcrNo
-		, DebitID
-		, Lock
-		, AddName
+		, isnull(PoFactory       , '')
+		, isnull(OrderHandle     , '')
+		, isnull(OrderSmr        , '')
+		, isnull(PoHandle        , '')
+		, isnull(PoSmr           , '')
+		, isnull(StyleID         , '')
+		, isnull(SeasonID        , '')
+		, isnull(FabricType      , '')
+		, isnull(MtlTypeID       , '')
+		, isnull(ReasonID        , '')
+		, isnull(Remark          , '')
+		, isnull(IcrNo           , '')
+		, isnull(DebitID         , '')
+		, isnull(Lock            , 0)
+		, isnull(AddName         , '')
 		, AddDate
-		, EditName
+		, isnull(EditName        , '')
 		, EditDate
 		, ETA
-		, SCIRefno
+		, isnull(SCIRefno        , '')
 		, isnull((SELECT MDivisionID FROM Production.dbo.SCIFty WITH (NOLOCK) WHERE ID= A.FactoryID ),'')	
-		, SuppID 
+		, isnull(SuppID, '')
 		from Trade_To_Pms.dbo.Inventory as a WITH (NOLOCK)
 		where not exists(select 1 from Production.dbo.Inventory  WITH (NOLOCK) where a.Ukey = Ukey)
 
-
-/* ISP20180567 pkey 改回Ukey 
-from (
-	select	[SameNo] = ROW_NUMBER() over (partition by POID,Seq1,Seq2,ProjectID,FactoryID,UnitID,InventoryRefnoId order by POID,Seq1,Seq2,ProjectID,FactoryID,UnitID,InventoryRefnoId)
-			, b.* 
-	from Trade_To_Pms.dbo.Inventory as b WITH (NOLOCK)
-	where	not exists(
-				select	distinct POID
-						, Seq1
-						, Seq2
-						, ProjectID
-						, FactoryID
-						, UnitID
-						, InventoryRefnoId 
-				from Production.dbo.Inventory as a WITH (NOLOCK) 
-				where	a.POID = b.POID 
-						and a.Seq1 = b.Seq1 
-						and a.Seq2 = b.Seq2 
-						and a.FactoryID = iif(B.FactoryID is null,'',B.FactoryID)
-						and a.UnitID = b.UnitID 
-						and a.ProjectID = b.ProjectID 
-						and a.InventoryRefnoId = b.InventoryRefnoId
-			)
-) as a
-where sameno=1*/
-
-/* That code will insert error, because duplicate key will happen.  Edit by willy on 20161227
-from Trade_To_Pms.dbo.Inventory as b
-where not exists(select POID from Production.dbo.Inventory as a where a.POID=b.POID and a.Seq1=b.Seq1 and a.Seq2=b.Seq2 and a.FactoryID=ISNULL(B.FactoryID,'') and a.UnitID=b.UnitID and a.ProjectID=b.ProjectID and a.InventoryRefnoId=b.InventoryRefnoId)
-*/
-
-
---invref
---InventoryRefno
---      ,[BomArticle]
---      ,[BomBuymonth]
---      ,[BomCountry]
---      ,[BomCustCD]
---,[BomFactory]
---      ,[BomStyle]
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET		-- a.ID				= b.ID
-		a.Refno				= b.Refno
-		, a.Width			= b.Width
-		, a.ColorID			= b.ColorID
-		, a.SizeSpec	    = b.SizeSpec
-		, a.SizeUnit	    = b.SizeUnit
-		, a.BomCustPONo	    = b.BomCustPONo
-		, a.BomZipperInsert	= b.BomZipperInsert
-		, a.Special_Old	    = b.Special_Old
-		, a.Spec_Old	    = b.Spec_Old
-		, a.ProdID_Old	    = b.ProdID_Old
-		, a.AddName			= b.AddName
+		a.Refno				= isnull( b.Refno         , '')
+		, a.Width			= isnull( b.Width         , 0)
+		, a.ColorID			= isnull( b.ColorID       , '')
+		, a.SizeSpec	    = isnull( b.SizeSpec      , '')
+		, a.SizeUnit	    = isnull( b.SizeUnit      , '')
+		, a.BomCustPONo	    = isnull( b.BomCustPONo   , '')
+		, a.BomZipperInsert	= isnull( b.BomZipperInsert, '')
+		, a.Special_Old	    = isnull( b.Special_Old   , '')
+		, a.Spec_Old	    = isnull( b.Spec_Old      , '')
+		, a.ProdID_Old	    = isnull( b.ProdID_Old    , '')
+		, a.AddName			= isnull( b.AddName       , '')
 		, a.AddDate			= b.AddDate
 from Production.dbo.InventoryRefno as a 
 inner join Trade_To_Pms.dbo.InventoryRefno as b ON a.id = b.id
@@ -221,18 +181,18 @@ INSERT INTO Production.dbo.InventoryRefno(
 	, AddDate
 )
 select 
-	ID
-	, Refno
-	, Width
-	, ColorID
-	, SizeSpec
-	, SizeUnit
-	, BomCustPONo
-	, BomZipperInsert
-	, Special_Old
-	, Spec_Old
-	, ProdID_Old
-	, AddName
+	  isnull(ID             , 0)
+	, isnull(Refno          , '')
+	, isnull(Width          , 0)
+	, isnull(ColorID        , '')
+	, isnull(SizeSpec       , '')
+	, isnull(SizeUnit       , '')
+	, isnull(BomCustPONo    , '')
+	, isnull(BomZipperInsert, '')
+	, isnull(Special_Old    , '')
+	, isnull(Spec_Old       , '')
+	, isnull(ProdID_Old     , '')
+	, isnull(AddName        , '')
 	, AddDate
 from Trade_To_Pms.dbo.InventoryRefno as b WITH (NOLOCK)
 where not exists(
@@ -256,58 +216,58 @@ where	b.id is null
 UPDATE a
 SET		--a.ID					= b.ID
 		--,a.Ukey				= b.Ukey
-		a.ConfirmDate			= b.ConfirmDate
-		, a.ConfirmHandle		= b.ConfirmHandle
-		, a.Confirmed			= b.Confirmed
-		, a.Qty					= b.Qty
+		  a.ConfirmDate			= b.ConfirmDate
+		, a.ConfirmHandle		= isnull( b.ConfirmHandle, '')
+		, a.Confirmed			= isnull( b.Confirmed    , 0)
+		, a.Qty					= isnull( b.Qty          , 0)
 		, a.Type				= isnull(b.Type,'')
 		, a.TransferMDivisionID	= isnull(c.MDivisionID ,'') 
-		, a.TransferFactory		= iif(b.Type = '3', b.TransferFactory, b.OrderFactory)
-		, a.InventoryUkey		= b.InventoryUkey
-		, a.InventoryRefnoId	= b.InventoryRefnoId
-		, a.PoID				= b.PoID
-		, a.Seq1				= b.Seq1
-		, a.Seq2				= b.Seq2
-		, a.InventoryPOID		= b.InventoryPOID
-		, a.InventorySeq1		= b.InventorySeq1
-		, a.InventorySeq2		= b.InventorySeq2
-		, a.Remark				= b.Remark
-		, a.JunkPo3				= b.JunkPo3
+		, a.TransferFactory		= isnull(iif(b.Type = '3', b.TransferFactory, b.OrderFactory), '')
+		, a.InventoryUkey		= isnull( b.InventoryUkey   , 0)
+		, a.InventoryRefnoId	= isnull( b.InventoryRefnoId, 0)
+		, a.PoID				= isnull( b.PoID            , '')
+		, a.Seq1				= isnull( b.Seq1            , '')
+		, a.Seq2				= isnull( b.Seq2            , '')
+		, a.InventoryPOID		= isnull( b.InventoryPOID   , '')
+		, a.InventorySeq1		= isnull( b.InventorySeq1   , '')
+		, a.InventorySeq2		= isnull( b.InventorySeq2   , '')
+		, a.Remark				= isnull( b.Remark          , '')
+		, a.JunkPo3				= isnull( b.JunkPo3         , '')
 		, a.Deadline			= b.Deadline
-		, a.ReasonID			= b.ReasonID
-		, a.Payable				= b.Payable
-		, a.PoHandle			= b.PoHandle
-		, a.PoSmr				= b.PoSmr
-		, a.OrderHandle			= b.OrderHandle
-		, a.OrderSmr			= b.OrderSmr
-		, a.PoFactory			= b.PoFactory
-		, a.LimitHandle			= b.LimitHandle
-		, a.LimitSmr			= b.LimitSmr
-		, a.AuthMr				= b.AuthMr
-		, a.VoucherID			= b.VoucherID
-		, a.TransferUkey		= b.TransferUkey
-		, a.Po3QtyOld			= b.Po3QtyOld
-		, a.InventoryQtyOld		= b.InventoryQtyOld
-		, a.ProjectOld			= b.ProjectOld
-		, a.BrandID				= b.BrandID
-		, a.BrandGroup			= b.BrandGroup
-		, a.Refno				= b.Refno
-		, a.FabricType			= b.FabricType
-		, a.FactoryID			= b.FactoryID
-		, a.MtlTypeID			= b.MtlTypeID
-		, a.ProjectID			= b.ProjectID
-		, a.SeasonID			= b.SeasonID
-		, a.StyleID				= b.StyleID
-		, a.UnitID				= b.UnitID
-		, a.BomCustPONo			= b.BomCustPONo
-		, a.BomZipperInsert		= b.BomZipperInsert
-		, a.AddName				= b.AddName
+		, a.ReasonID			= isnull( b.ReasonID        , '')
+		, a.Payable				= isnull( b.Payable         , '')
+		, a.PoHandle			= isnull( b.PoHandle        , '')
+		, a.PoSmr				= isnull( b.PoSmr           , '')
+		, a.OrderHandle			= isnull( b.OrderHandle     , '')
+		, a.OrderSmr			= isnull( b.OrderSmr        , '')
+		, a.PoFactory			= isnull( b.PoFactory       , '')
+		, a.LimitHandle			= isnull( b.LimitHandle     , '')
+		, a.LimitSmr			= isnull( b.LimitSmr        , '')
+		, a.AuthMr				= isnull( b.AuthMr          , '')
+		, a.VoucherID			= isnull( b.VoucherID       , '')
+		, a.TransferUkey		= isnull( b.TransferUkey    , 0)
+		, a.Po3QtyOld			= isnull( b.Po3QtyOld       , 0)
+		, a.InventoryQtyOld		= isnull( b.InventoryQtyOld , 0)
+		, a.ProjectOld			= isnull( b.ProjectOld      , '')
+		, a.BrandID				= isnull( b.BrandID         , '')
+		, a.BrandGroup			= isnull( b.BrandGroup      , '')
+		, a.Refno				= isnull( b.Refno           , '')
+		, a.FabricType			= isnull( b.FabricType      , '')
+		, a.FactoryID			= isnull( b.FactoryID       , '')
+		, a.MtlTypeID			= isnull( b.MtlTypeID       , '')
+		, a.ProjectID			= isnull( b.ProjectID       , '')
+		, a.SeasonID			= isnull( b.SeasonID        , '')
+		, a.StyleID				= isnull( b.StyleID         , '')
+		, a.UnitID				= isnull( b.UnitID          , '')
+		, a.BomCustPONo			= isnull( b.BomCustPONo     , '')
+		, a.BomZipperInsert		= isnull( b.BomZipperInsert , '')
+		, a.AddName				= isnull( b.AddName         , '')
 		, a.AddDate				= b.AddDate
 		, a.EditDate			= b.EditDate
-		, a.EditName			= b.EditName
-		, a.Seq70PoID			= b.Seq70PoID
-		, a.Seq70Seq1			= b.Seq70Seq1
-		, a.Seq70Seq2			= b.Seq70Seq2
+		, a.EditName			= isnull( b.EditName        , '')
+		, a.Seq70PoID			= isnull( b.Seq70PoID       , '')
+		, a.Seq70Seq1			= isnull( b.Seq70Seq1       , '')
+		, a.Seq70Seq2			= isnull( b.Seq70Seq2       , '')
 from Production.dbo.Invtrans  as a 
 inner join Trade_To_Pms.dbo.Invtrans  as b ON a.id=b.id   and a.Ukey = b.Ukey
 left JOIN Production.dbo.SCIFty c on b.TransferFactory=c.ID
@@ -371,60 +331,60 @@ INSERT INTO Production.dbo.Invtrans (
 	, Seq70Seq1
 	, Seq70Seq2
 )
-select	b.ID
-		, Ukey
+select	  ISNULL(b.ID, '')
+		, ISNULL(Ukey         ,0)
 		, ConfirmDate
-		, ConfirmHandle
+		, ISNULL(ConfirmHandle,0)
 		, ISNULL(Confirmed,0)
 		, ISNULL(Qty,0)
 		, ISNULL(b.Type,'')
-		, iif(b.Type = '3', b.TransferFactory, b.OrderFactory)      
+		, ISNULL(iif(b.Type = '3', b.TransferFactory, b.OrderFactory), '')
 		, isnull(c.MDivisionID,'')
-		, InventoryUkey
-		, InventoryRefnoId
-		, PoID
-		, Seq1
-		, Seq2
-		, InventoryPOID
-		, InventorySeq1
-		, InventorySeq2
-		, Remark
-		, JunkPo3
+		, ISNULL(InventoryUkey   , 0)
+		, ISNULL(InventoryRefnoId, 0)
+		, ISNULL(PoID            , '')
+		, ISNULL(Seq1            , '')
+		, ISNULL(Seq2            , '')
+		, ISNULL(InventoryPOID   , '')
+		, ISNULL(InventorySeq1   , '')
+		, ISNULL(InventorySeq2   , '')
+		, ISNULL(Remark          , '')
+		, ISNULL(JunkPo3         , '')
 		, Deadline
-		, ReasonID
-		, Payable
-		, PoHandle
-		, PoSmr
-		, OrderHandle
-		, OrderSmr
-		, PoFactory
-		, LimitHandle
-		, LimitSmr
-		, AuthMr
-		, VoucherID
-		, TransferUkey
-		, Po3QtyOld
-		, InventoryQtyOld
-		, ProjectOld
-		, BrandID
-		, BrandGroup
-		, Refno
-		, FabricType
-		, FactoryID
-		, MtlTypeID
-		, ProjectID
-		, SeasonID
-		, StyleID
-		, UnitID
-		, BomCustPONo
-		, BomZipperInsert
-		, b.AddName
+		, ISNULL(ReasonID        , '')
+		, ISNULL(Payable         , '')
+		, ISNULL(PoHandle        , '')
+		, ISNULL(PoSmr           , '')
+		, ISNULL(OrderHandle     , '')
+		, ISNULL(OrderSmr        , '')
+		, ISNULL(PoFactory       , '')
+		, ISNULL(LimitHandle     , '')
+		, ISNULL(LimitSmr        , '')
+		, ISNULL(AuthMr          , '')
+		, ISNULL(VoucherID       , '')
+		, ISNULL(TransferUkey    , 0)
+		, ISNULL(Po3QtyOld       , 0)
+		, ISNULL(InventoryQtyOld , 0)
+		, ISNULL(ProjectOld      , '')
+		, ISNULL(BrandID         , '')
+		, ISNULL(BrandGroup      , '')
+		, ISNULL(Refno           , '')
+		, ISNULL(FabricType      , '')
+		, ISNULL(FactoryID       , '')
+		, ISNULL(MtlTypeID       , '')
+		, ISNULL(ProjectID       , '')
+		, ISNULL(SeasonID        , '')
+		, ISNULL(StyleID         , '')
+		, ISNULL(UnitID          , '')
+		, ISNULL(BomCustPONo     , '')
+		, ISNULL(BomZipperInsert , '')
+		, ISNULL(b.AddName       , '')
 		, b.AddDate
 		, b.EditDate
-		, b.EditName
-		, Seq70PoID
-		, Seq70Seq1
-		, Seq70Seq2
+		, ISNULL(b.EditName      , '')
+		, ISNULL(Seq70PoID       , '')
+		, ISNULL(Seq70Seq1       , '')
+		, ISNULL(Seq70Seq2       , '')
 from Trade_To_Pms.dbo.Invtrans as b WITH (NOLOCK)
 left JOIN Production.dbo.SCIFty c WITH (NOLOCK) on b.TransferFactory=c.ID
 where	not exists(
@@ -434,7 +394,6 @@ where	not exists(
 					and a.Ukey = b.Ukey
 		)
 		AND b.Confirmed=1
---InReason  InvtransReason
 
 update Production.dbo.invtrans
 set TransferMDivisionID = isnull(c.MDivisionID ,'')
@@ -451,15 +410,15 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET		-- a.ID				= b.ID
-		a.ReasonEN			= b.ReasonEN
-		, a.ReasonCH		= b.ReasonCH
-		, a.IsDefault		= b.IsDefault
-		, a.Junk			= b.Junk
-		, a.AdjustFields	= b.AdjustFields
-		, a.AdjustDesc		= b.AdjustDesc
-		, a.AddName			= b.AddName
+		a.ReasonEN			= isnull( b.ReasonEN    , '')
+		, a.ReasonCH		= isnull( b.ReasonCH    , '')
+		, a.IsDefault		= isnull( b.IsDefault   , 0)
+		, a.Junk			= isnull( b.Junk        , 0)
+		, a.AdjustFields	= isnull( b.AdjustFields, '')
+		, a.AdjustDesc		= isnull( b.AdjustDesc  , '')
+		, a.AddName			= isnull( b.AddName     , '')
 		, a.AddDate			= b.AddDate
-		, a.EditName		= b.EditName
+		, a.EditName		= isnull( b.EditName    , '')
 		, a.EditDate		= b.EditDate
 from Production.dbo.InvtransReason as a 
 inner join Trade_To_Pms.dbo.InvtransReason as b ON a.id = b.id
@@ -478,16 +437,16 @@ INSERT INTO Production.dbo.InvtransReason(
 	, EditDate
 )
 select 
-	ID
-	, ReasonEN
-	, ReasonCH
-	, IsDefault
-	, Junk
-	, AdjustFields
-	, AdjustDesc
-	, AddName
+	  isnull(ID          , '')
+	, isnull(ReasonEN    , '')
+	, isnull(ReasonCH    , '')
+	, isnull(IsDefault   , 0)
+	, isnull(Junk        , 0)
+	, isnull(AdjustFields, '')
+	, isnull(AdjustDesc  , '')
+	, isnull(AddName     , '')
 	, AddDate
-	, EditName
+	, isnull(EditName    , '')
 	, EditDate
 from Trade_To_Pms.dbo.InvtransReason as b WITH (NOLOCK)
 where	not exists (

@@ -3120,7 +3120,7 @@ when matched then
 	t.AddDate=  s.AddDate,								  
 	t.EditName= isnull( s.EditName,								   ''),
 	t.EditDate=  s.EditDate,								
-	t.BCSDate= isnull( s.BCSDate,								   ''),
+	t.BCSDate= isnull( s.BCSDate,								   0),
 	t.InOutRule  = isnull( s.InOutRule ,						   0),
 	t.FullName  = isnull( s.FullName ,							   ''),
 	t.IsLackingAndReplacement  = isnull( s.IsLackingAndReplacement,0),
@@ -4217,8 +4217,8 @@ WHERE b.id is null
 -- ¥þÂà¤JConsignee_Detail
 UPDATE t
 SET  
-t.ID =			   s.ID,
-t.Email =		   s.Email
+t.ID =			   isnull(s.ID,''),
+t.Email =		   isnull(s.Email,'')
 FROM Production.dbo.Consignee_Detail t
 INNER JOIN Trade_To_Pms.dbo.Consignee_Detail as s ON t.Ukey = s.Ukey
 
@@ -4226,9 +4226,9 @@ INSERT INTO Production.dbo.Consignee_Detail(
 	   [Ukey]
 	  ,[ID]
       ,[Email])
-SELECT [Ukey]
-      ,[ID]
-      ,[Email]
+SELECT isnull([Ukey],0)
+      ,isnull([ID],'')
+      ,isnull([Email],'')
 FROM Trade_To_Pms.dbo.Consignee_Detail b
 WHERE NOT EXISTS(
 	SELECT  1
@@ -4250,14 +4250,14 @@ WHERE b.id is null
 
 UPDATE a
 SET  
-     a.[Registry]		= b.[Registry]
+     a.[Registry]		= isnull(b.[Registry]      ,'')
     ,a.[Expiration]		= b.[Expiration]
-    ,a.[AddName]		= b.[AddName]
-    ,a.[AddDate]		= b.[AddDate]
-    ,a.[EditName]		= b.[EditName]
+    ,a.[AddName]		= isnull(b.[AddName]       ,'')
+    ,a.[AddDate]		= b.[AddDate]     
+    ,a.[EditName]		= isnull(b.[EditName]      ,'')
     ,a.[EditDate]		= b.[EditDate]
-    ,a.[ApplyExtension]	= b.[ApplyExtension]
-    ,a.[Remark]			= b.[Remark]
+    ,a.[ApplyExtension]	= isnull(b.[ApplyExtension],'')
+    ,a.[Remark]			= isnull(b.[Remark]        ,'')
 FROM Production.dbo.HealthLabelSupp_FtyExpiration a
 INNER JOIN Trade_To_Pms.dbo.HealthLabelSupp_FtyExpiration b ON a.id = b.id and a.FactoryID = b.FactoryID
 
@@ -4273,16 +4273,16 @@ INSERT INTO [dbo].[HealthLabelSupp_FtyExpiration]
            ,[ApplyExtension]
            ,[Remark])
 select 
-	 a.[ID]
-	,a.[FactoryID]
-	,a.[Registry]
-	,a.[Expiration]
-	,a.[AddName]
-	,a.[AddDate]
-	,a.[EditName]
-	,a.[EditDate]
-	,a.[ApplyExtension]
-	,a.[Remark]
+	  isnull(a.[ID]             ,'')
+	, isnull(a.[FactoryID]      ,'')
+	, isnull(a.[Registry]       ,'')
+	, a.[Expiration]  
+	, isnull(a.[AddName]        ,'')
+	, a.[AddDate]
+	, isnull(a.[EditName]       ,'')
+	, a.[EditDate]       
+	, isnull(a.[ApplyExtension] ,'')
+	, isnull(a.[Remark]         ,'')
 FROM Trade_To_Pms.dbo.HealthLabelSupp_FtyExpiration a
 LEFT JOIN Production.dbo.HealthLabelSupp_FtyExpiration b ON a.id = b.id and a.FactoryID = b.FactoryID
 WHERE b.id is null
@@ -4300,13 +4300,13 @@ WHERE b.EffectiveDate is null
 UPDATE a
 SET
 	 a.[EffectiveDate] = b.[EffectiveDate]
-	,a.[MDivisionID]   = b.[MDivisionID]
-	,a.[Type]		   = b.[Type]
-	,a.[Target]		   = b.[Target]
-	,a.[AddName]	   = b.[AddName]
-	,a.[AddDate]	   = b.[AddDate]
-	,a.[EditName]	   = b.[EditName]
-	,a.[EditDate]	   = b.[EditDate]
+	,a.[MDivisionID]   = isnull(b.[MDivisionID]  ,'')
+	,a.[Type]		   = isnull(b.[Type]         ,'')
+	,a.[Target]		   = isnull(b.[Target]       ,0)
+	,a.[AddName]	   = isnull(b.[AddName]      ,'')
+	,a.[AddDate]	   = b.[AddDate]   
+	,a.[EditName]	   = isnull(b.[EditName]     ,'')
+	,a.[EditDate]	   = b.[EditDate] 
 FROM Production.dbo.ChgOverTarget a
 INNER JOIN Trade_To_Pms.dbo.ChgOverTarget b ON a.EffectiveDate = b.EffectiveDate and a.MDivisionID = b.MDivisionID and a.Type = b.Type
 
@@ -4323,12 +4323,12 @@ INSERT INTO [dbo].[ChgOverTarget]
            ,[EditDate])
 select 
 	 a.[EffectiveDate]
-    ,a.[MDivisionID]
-    ,a.[Type]
-    ,a.[Target]
-    ,a.[AddName]
-    ,a.[AddDate]
-    ,a.[EditName]
+    ,isnull(a.[MDivisionID],'')
+    ,isnull(a.[Type]       ,'')
+    ,isnull(a.[Target]     ,0)
+    ,isnull(a.[AddName]    ,'')
+    ,a.[AddDate]  
+    ,isnull(a.[EditName]   ,'')
     ,a.[EditDate]
 FROM Trade_To_Pms.dbo.ChgOverTarget a
 LEFT JOIN Production.dbo.ChgOverTarget b ON a.EffectiveDate = b.EffectiveDate and a.MDivisionID = b.MDivisionID and a.Type = b.Type
@@ -4344,16 +4344,16 @@ WHERE b.[Classifty] is null
 
 UPDATE a
 SET
-	 [TypeName]		= b.[TypeName]
-	,[Placket]		= b.[Placket]
-	,[Definition]	= b.[Definition]
-	,[CPU]			= b.[CPU]
-	,[ComboPcs]		= b.[ComboPcs]
-	,[Remark]		= b.[Remark]
-	,[Junk]			= b.[Junk]
-	,[AddName]		= b.[AddName]
+	 [TypeName]		= isnull(b.[TypeName]  ,'')
+	,[Placket]		= isnull(b.[Placket]   ,'')
+	,[Definition]	= isnull(b.[Definition],'')
+	,[CPU]			= isnull(b.[CPU]       ,0)
+	,[ComboPcs]		= isnull(b.[ComboPcs]  ,0)
+	,[Remark]		= isnull(b.[Remark]    ,'')
+	,[Junk]			= isnull(b.[Junk]      ,0)
+	,[AddName]		= isnull(b.[AddName]   ,'')
 	,[AddDate]		= b.[AddDate]
-	,[EditName]		= b.[EditName]
+	,[EditName]		= isnull(b.[EditName]  ,'')
 	,[EditDate]		= b.[EditDate]
 from Production.dbo.NewCDCode as a inner join Trade_To_Pms.dbo.NewCDCode as b ON a.[Classifty] = b.[Classifty] and a.[ID] = b.[ID]
 -------------------------- INSERT INTO §ì
@@ -4371,18 +4371,18 @@ INSERT INTO Production.dbo.NewCDCode
            ,[AddDate]
            ,[EditName]
            ,[EditDate])
-SELECT [Classifty]
-           ,[TypeName]
-           ,[ID]
-           ,[Placket]
-           ,[Definition]
-           ,[CPU]
-           ,[ComboPcs]
-           ,[Remark]
-           ,[Junk]
-           ,[AddName]
-           ,[AddDate]
-           ,[EditName]
+SELECT      isnull([Classifty]  ,'')
+           ,isnull([TypeName]   ,'')
+           ,isnull([ID]         ,'')
+           ,isnull([Placket]    ,'')
+           ,isnull([Definition] ,'')
+           ,isnull([CPU]        ,0)
+           ,isnull([ComboPcs]   ,0)
+           ,isnull([Remark]     ,'')
+           ,isnull([Junk]       ,0)
+           ,isnull([AddName]    ,'')
+           ,[AddDate]  
+           ,isnull([EditName]   ,'')
            ,[EditDate]
 from Trade_To_Pms.dbo.NewCDCode as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.NewCDCode as a WITH (NOLOCK) where a.[Classifty] = b.[Classifty] and a.[ID] = b.[ID])
@@ -4397,9 +4397,9 @@ WHERE b.id is null
 
 UPDATE a
 SET
-	a.[FullName]	= b.[FullName]
-	,a.[Type]		= b.[Type]
-	,a.[Junk]		= b.[Junk]
+	a.[FullName]	= isnull(b.[FullName],'')
+	,a.[Type]		= isnull(b.[Type],'')
+	,a.[Junk]		= isnull(b.[Junk],0)
 FROM Production.dbo.[QAMtlTypeSetting] a
 INNER JOIN Trade_To_Pms.dbo.MtlType b ON a.id = b.id
 
@@ -4409,10 +4409,10 @@ INSERT INTO [dbo].[QAMtlTypeSetting]
            ,[Type]
            ,[Junk])
 select
-		 a.[ID]
-		,a.[FullName]
-		,a.[Type]
-		,a.[Junk]
+		 isnull(a.[ID]       ,'')
+		,isnull(a.[FullName] ,'')
+		,isnull(a.[Type]     ,'')
+		,isnull(a.[Junk]     ,0)
 FROM Trade_To_Pms.dbo.MtlType a
 LEFT JOIN Production.dbo.[QAMtlTypeSetting] b ON a.id = b.id
 where b.id is null
@@ -4428,11 +4428,11 @@ where b.RateTypeID is null
 
 UPDATE a
 SET   a.EndDate		      =b.EndDate
-      ,a.Rate		      =b.Rate
-      ,a.Remark		      =b.Remark
-      ,a.AddName		      =b.AddName
+      ,a.Rate		      =isnull(b.Rate,0)
+      ,a.Remark		      =isnull(b.Remark,'')
+      ,a.AddName		      =isnull(b.AddName,'')
       ,a.AddDate		      =b.AddDate
-      ,a.EditName		      =b.EditName
+      ,a.EditName		      =isnull(b.EditName,'')
       ,a.EditDate		      =b.EditDate
 
 from Production.dbo.FinanceRate as a 
@@ -4459,17 +4459,17 @@ INSERT INTO Production.dbo.FinanceRate(
 
 )
 select 
-       RateTypeID
-      ,BeginDate
-      ,EndDate
-      ,OriginalCurrency
-      ,ExchangeCurrency
-      ,Rate
-      ,Remark
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
+       isnull(RateTypeID       ,'')
+      ,BeginDate     
+      ,EndDate        
+      ,isnull(OriginalCurrency ,'')
+      ,isnull(ExchangeCurrency ,'')
+      ,isnull(Rate             ,0)
+      ,isnull(Remark           ,'')
+      ,isnull(AddName          ,'')
+      ,AddDate      
+      ,isnull(EditName         ,'')
+      ,EditDate        
 from Trade_To_Pms.dbo.FinanceRate as b WITH (NOLOCK)
 where not exists(
     select 1 
@@ -4491,10 +4491,10 @@ where b.RateTypeID is null
 
 UPDATE a
 SET   a.EndDate		      =b.EndDate
-      ,a.Rate		      =b.Rate
-      ,a.AddName		      =b.AddName
+      ,a.Rate		      =isnull(b.Rate,0)
+      ,a.AddName		      =isnull(b.AddName,'')
       ,a.AddDate		      =b.AddDate
-      ,a.EditName		      =b.EditName
+      ,a.EditName		      =isnull(b.EditName,'')
       ,a.EditDate		      =b.EditDate
 
 from Production.dbo.FinanceTWRate as a 
@@ -4519,15 +4519,15 @@ INSERT INTO Production.dbo.FinanceTWRate(
 
 )
 select 
-       RateTypeID
-      ,BeginDate
-      ,EndDate
-      ,OriginalCurrency
-      ,ExchangeCurrency
-      ,Rate
-      ,AddName
-      ,AddDate
-      ,EditName
+       isnull(RateTypeID        ,'')
+      ,BeginDate   
+      ,EndDate        
+      ,isnull(OriginalCurrency  ,'')
+      ,isnull(ExchangeCurrency  ,'')
+      ,isnull(Rate              ,0)
+      ,isnull(AddName           ,'')
+      ,AddDate       
+      ,isnull(EditName          ,'')
       ,EditDate
 from Trade_To_Pms.dbo.FinanceTWRate as b WITH (NOLOCK)
 where not exists(
@@ -4547,10 +4547,10 @@ WHERE b.Type is null
 
 UPDATE a
 SET
-	 a.[Junk]		   = b.[Junk]
-	,a.[AddName]	   = b.[AddName]
+	 a.[Junk]		   = isnull(b.[Junk],0)
+	,a.[AddName]	   = isnull(b.[AddName],'')
 	,a.[AddDate]	   = b.[AddDate]
-	,a.[EditName]	   = b.[EditName]
+	,a.[EditName]	   = isnull(b.[EditName],'')
 	,a.[EditDate]	   = b.[EditDate]
 FROM Production.dbo.IEReasonType a
 INNER JOIN Trade_To_Pms.dbo.IEReasonType b ON a.Type = b.Type
@@ -4563,10 +4563,10 @@ INSERT INTO [dbo].[IEReasonType]
            ,[EditName]
            ,[EditDate])
 select a.[Type]
-	,a.[Junk]
-    ,a.[AddName]
+	,isnull(a.[Junk],0)
+    ,isnull(a.[AddName],'')
     ,a.[AddDate]
-    ,a.[EditName]
+    ,isnull(a.[EditName],'')
     ,a.[EditDate]
 FROM Trade_To_Pms.dbo.IEReasonType a
 LEFT JOIN Production.dbo.IEReasonType b ON a.Type = b.Type
@@ -4581,11 +4581,11 @@ WHERE b.Type is null
 
 UPDATE a
 SET
-	 a.[IEReasonApplyFunction]	= b.[IEReasonApplyFunction]
-	,a.[Junk]					= b.[Junk]
-	,a.[AddName]				= b.[AddName]
-	,a.[AddDate]				= b.[AddDate]
-	,a.[EditName]				= b.[EditName]
+	 a.[IEReasonApplyFunction]	= isnull(b.[IEReasonApplyFunction],0)
+	,a.[Junk]					= isnull(b.[Junk]                 ,0)
+	,a.[AddName]				= isnull(b.[AddName]              ,'')
+	,a.[AddDate]				= b.[AddDate]              
+	,a.[EditName]				= isnull(b.[EditName]             ,'')
 	,a.[EditDate]				= b.[EditDate]
 FROM Production.dbo.IEReasonTypeGroup a
 INNER JOIN Trade_To_Pms.dbo.IEReasonTypeGroup b ON a.Type = b.Type and a.TypeGroup = b.TypeGroup
@@ -4600,12 +4600,12 @@ INSERT INTO [dbo].[IEReasonTypeGroup]
            ,[EditName]
            ,[EditDate])
 select a.[Type]
-	,a.[TypeGroup]
-	,a.[IEReasonApplyFunction]
-	,a.[Junk]
-    ,a.[AddName]
-    ,a.[AddDate]
-    ,a.[EditName]
+	,isnull(a.[TypeGroup]            ,'')
+	,isnull(a.[IEReasonApplyFunction],0)
+	,isnull(a.[Junk]                 ,0)
+    ,isnull(a.[AddName]              ,'')
+    ,a.[AddDate]             
+    ,isnull(a.[EditName]             ,'')
     ,a.[EditDate]
 FROM Trade_To_Pms.dbo.IEReasonTypeGroup a
 LEFT JOIN Production.dbo.IEReasonTypeGroup b ON a.Type = b.Type and a.TypeGroup = b.TypeGroup
@@ -4620,13 +4620,13 @@ WHERE b.Type is null
 
 UPDATE a
 SET
-	 a.[Ukey]		   = b.[Ukey]
-	,a.[Name]		   = b.[Name]
-	,a.[Remark]		   = b.[Remark]
-	,a.[Junk]		   = b.[Junk]
-	,a.[AddName]	   = b.[AddName]
-	,a.[AddDate]	   = b.[AddDate]
-	,a.[EditName]	   = b.[EditName]
+	 a.[Ukey]		   = isnull(b.[Ukey]    ,0)
+	,a.[Name]		   = isnull(b.[Name]    ,'')
+	,a.[Remark]		   = isnull(b.[Remark]  ,'')
+	,a.[Junk]		   = isnull(b.[Junk]    ,0)
+	,a.[AddName]	   = isnull(b.[AddName] ,'')
+	,a.[AddDate]	   = b.[AddDate] 
+	,a.[EditName]	   = isnull(b.[EditName],'')
 	,a.[EditDate]	   = b.[EditDate]
 FROM Production.dbo.IEReasonLBRNotHit_1st a
 INNER JOIN Trade_To_Pms.dbo.IEReasonLBRNotHit_1st b ON a.Type = b.Type and a.TypeGroup = b.TypeGroup and a.Code = b.Code
@@ -4643,16 +4643,17 @@ INSERT INTO [dbo].[IEReasonLBRNotHit_1st]
            ,[AddDate]
            ,[EditName]
            ,[EditDate])
-select a.[Type]
-	,a.[TypeGroup]
-	,a.[Code]
-	,a.[Ukey]
-	,a.[Name]
-	,a.[Remark]
-	,a.[Junk]
-    ,a.[AddName]
-    ,a.[AddDate]
-    ,a.[EditName]
+select 
+     isnull(a.[Type]     ,'')
+	,isnull(a.[TypeGroup],'')
+	,isnull(a.[Code]     ,'')
+	,isnull(a.[Ukey]     ,0)
+	,isnull(a.[Name]     ,'')
+	,isnull(a.[Remark]   ,'')
+	,isnull(a.[Junk]     ,0)
+    ,isnull(a.[AddName]  ,'')
+    ,a.[AddDate] 
+    ,isnull(a.[EditName] ,'')
     ,a.[EditDate]
 FROM Trade_To_Pms.dbo.IEReasonLBRNotHit_1st a
 LEFT JOIN Production.dbo.IEReasonLBRNotHit_1st b ON a.Type = b.Type and a.TypeGroup = b.TypeGroup and a.Code = b.Code
@@ -4667,13 +4668,13 @@ WHERE b.Type is null
 
 UPDATE a
 SET
-	 a.[Ukey]		   = b.[Ukey]
-	,a.[Name]		   = b.[Name]
-	,a.[Remark]		   = b.[Remark]
-	,a.[Junk]		   = b.[Junk]
-	,a.[AddName]	   = b.[AddName]
+	 a.[Ukey]		   = isnull(b.[Ukey]    ,0)
+	,a.[Name]		   = isnull(b.[Name]    ,'')
+	,a.[Remark]		   = isnull(b.[Remark]  ,'')
+	,a.[Junk]		   = isnull(b.[Junk]    ,0)
+	,a.[AddName]	   = isnull(b.[AddName] ,'')
 	,a.[AddDate]	   = b.[AddDate]
-	,a.[EditName]	   = b.[EditName]
+	,a.[EditName]	   = isnull(b.[EditName],'')
 	,a.[EditDate]	   = b.[EditDate]
 FROM Production.dbo.IEReasonLBRNotHit_Detail a
 INNER JOIN Trade_To_Pms.dbo.IEReasonLBRNotHit_Detail b ON a.Type = b.Type and a.TypeGroup = b.TypeGroup and a.Code = b.Code
@@ -4690,16 +4691,17 @@ INSERT INTO [dbo].[IEReasonLBRNotHit_Detail]
            ,[AddDate]
            ,[EditName]
            ,[EditDate])
-select a.[Type]
-	,a.[TypeGroup]
-	,a.[Code]
-	,a.[Ukey]
-	,a.[Name]
-	,a.[Remark]
-	,a.[Junk]
-    ,a.[AddName]
-    ,a.[AddDate]
-    ,a.[EditName]
+select 
+     isnull(a.[Type]       ,'')
+	,isnull(a.[TypeGroup]  ,'')
+	,isnull(a.[Code]       ,'')
+	,isnull(a.[Ukey]       ,0)
+	,isnull(a.[Name]       ,'')
+	,isnull(a.[Remark]     ,'')
+	,isnull(a.[Junk]       ,0)
+    ,isnull(a.[AddName]    ,'')
+    ,a.[AddDate]   
+    ,isnull(a.[EditName]   ,'')
     ,a.[EditDate]
 FROM Trade_To_Pms.dbo.IEReasonLBRNotHit_Detail a
 LEFT JOIN Production.dbo.IEReasonLBRNotHit_Detail b ON a.Type = b.Type and a.TypeGroup = b.TypeGroup and a.Code = b.Code
@@ -4709,14 +4711,14 @@ WHERE b.Type is null
 ---------------GarmentDefectType
 
 update b set
-	 b.[ID]			 = a.[ID]
-	,b.[Description] = a.[Description]
-	,b.[Junk]		 = a.[Junk]
-	,b.[AddName]	 = a.[AddName]
-	,b.[AddDate]	 = a.[AddDate]
-	,b.[EditName]	 = a.[EditName]
-	,b.[EditDate]	 = a.[EditDate]
-	,b.[Seq]		 = a.[Seq]
+	 b.[ID]			 = isnull(a.[ID]            ,'')
+	,b.[Description] = isnull(a.[Description]   ,'')
+	,b.[Junk]		 = isnull(a.[Junk]          ,0)
+	,b.[AddName]	 = isnull(a.[AddName]       ,'')
+	,b.[AddDate]	 = a.[AddDate]      
+	,b.[EditName]	 = isnull(a.[EditName]      ,'')
+	,b.[EditDate]	 = a.[EditDate]   
+	,b.[Seq]		 = isnull(a.[Seq]           ,0)
 FROM Trade_To_Pms.dbo.[GarmentDefectType] a
 inner JOIN Production.dbo.[GarmentDefectType] b ON a.ID = b.ID
 
@@ -4729,32 +4731,32 @@ INSERT INTO [dbo].[GarmentDefectType]
            ,[EditName]
            ,[EditDate]
            ,[Seq])
-select		a.[ID]
-           ,a.[Description]
-           ,a.[Junk]
-           ,a.[AddName]
-           ,a.[AddDate]
-           ,a.[EditName]
-           ,a.[EditDate]
-           ,a.[Seq]
+select		isnull(a.[ID]           ,'')
+           ,isnull(a.[Description]  ,'')
+           ,isnull(a.[Junk]         ,0)
+           ,isnull(a.[AddName]      ,'')
+           ,a.[AddDate]    
+           ,isnull(a.[EditName]     ,'')
+           ,a.[EditDate]  
+           ,isnull(a.[Seq]          ,0)
 FROM Trade_To_Pms.dbo.[GarmentDefectType] a
 LEFT JOIN Production.dbo.[GarmentDefectType] b ON a.ID = b.ID
 WHERE b.ID is null
 
 ---------------GarmentDefectCode
 update b set
-	 b.[ID]						= a.[ID]
-	,b.[Description]			= a.[Description]
-	,b.[GarmentDefectTypeID]	= a.[GarmentDefectTypeID]
-	,b.[AddName]				= a.[AddName]
-	,b.[AddDate]				= a.[AddDate]
-	,b.[EditName]				= a.[EditName]
-	,b.[EditDate]				= a.[EditDate]
-	,b.[Junk]					= a.[Junk]
-	,b.[Seq]					= a.[Seq]
-	,b.[ReworkTotalFailCode]	= a.[ReworkTotalFailCode]
-	,b.[IsCFA]					= a.[IsCFA]
-	,b.[IsCriticalDefect]		= a.[IsCriticalDefect]
+	 b.[ID]						= isnull(a.[ID]                 ,'')
+	,b.[Description]			= isnull(a.[Description]        ,'')
+	,b.[GarmentDefectTypeID]	= isnull(a.[GarmentDefectTypeID],'')
+	,b.[AddName]				= isnull(a.[AddName]            ,'')
+	,b.[AddDate]				= a.[AddDate]      
+	,b.[EditName]				= isnull(a.[EditName]           ,'')
+	,b.[EditDate]				= a.[EditDate]       
+	,b.[Junk]					= isnull(a.[Junk]               ,0)
+	,b.[Seq]					= isnull(a.[Seq]                ,0)
+	,b.[ReworkTotalFailCode]	= isnull(a.[ReworkTotalFailCode],'')
+	,b.[IsCFA]					= isnull(a.[IsCFA]              ,0)
+	,b.[IsCriticalDefect]		= isnull(a.[IsCriticalDefect]   ,0)
 FROM Trade_To_Pms.dbo.[GarmentDefectCode] a
 inner JOIN Production.dbo.[GarmentDefectCode] b ON a.ID = b.ID
 
@@ -4772,29 +4774,29 @@ INSERT INTO [dbo].[GarmentDefectCode]
            ,[IsCFA]
            ,[IsCriticalDefect])
 select
-			a.[ID]
-           ,a.[Description]
-           ,a.[GarmentDefectTypeID]
-           ,a.[AddName]
+			isnull(a.[ID]                  ,'')
+           ,isnull(a.[Description]         ,'')
+           ,isnull(a.[GarmentDefectTypeID] ,'')
+           ,isnull(a.[AddName]             ,'')
            ,a.[AddDate]
-           ,a.[EditName]
+           ,isnull(a.[EditName]            ,'')
            ,a.[EditDate]
-           ,a.[Junk]
-           ,a.[Seq]
-           ,a.[ReworkTotalFailCode]
-           ,a.[IsCFA]
-           ,a.[IsCriticalDefect]  
+           ,isnull(a.[Junk]                ,0)
+           ,isnull(a.[Seq]                 ,0)
+           ,isnull(a.[ReworkTotalFailCode] ,'')
+           ,isnull(a.[IsCFA]               ,0)
+           ,isnull(a.[IsCriticalDefect]    ,0)
 FROM Trade_To_Pms.dbo.[GarmentDefectCode] a
 LEFT JOIN Production.dbo.[GarmentDefectCode] b ON a.ID = b.ID
 WHERE b.ID is null
 
 --FabricDefect
-update a set	a.Type = b.Type,
-				a.DescriptionEN = b.DescriptionEN,
-				a.Junk = b.Junk,
-				a.AddName = b.AddName,
+update a set	a.Type = isnull(b.Type,''),
+				a.DescriptionEN = isnull(b.DescriptionEN,''),
+				a.Junk = isnull(b.Junk ,0),
+				a.AddName = isnull(b.AddName,''),
 				a.AddDate = b.AddDate,
-				a.EditName = b.EditName,
+				a.EditName = isnull(b.EditName,''),
 				a.EditDate = b.EditDate
 FROM Production.dbo.FabricDefect a
 INNER JOIN Trade_To_Pms.dbo.FabricDefect b ON a.ID = b.ID
@@ -4804,17 +4806,25 @@ FROM Production.dbo.FabricDefect a
 where not exists(select 1 from Trade_To_Pms.dbo.FabricDefect b where a.ID = b.ID)
 
 insert into Production.dbo.FabricDefect(ID, Type, DescriptionEN, Junk, AddName, AddDate, EditName, EditDate)
-select	b.ID, b.Type, b.DescriptionEN, b.Junk, b.AddName, b.AddDate, b.EditName, b.EditDate
+select	
+      isnull(b.ID           ,'')
+    , isnull(b.Type         ,'')
+    , isnull(b.DescriptionEN,'')
+    , isnull(b.Junk         ,0)
+    , isnull(b.AddName      ,'')
+    , b.AddDate  
+    , isnull(b.EditName     ,'')
+    , b.EditDate
 from Trade_To_Pms.dbo.FabricDefect b
 where not exists(select 1 from Production.dbo.FabricDefect a where a.ID = b.ID)
 
 --AccessoryDefect
-update a set	a.Description = b.Description,
-				a.Junk = b.Junk,
-				a.AddName = b.AddName,
-				a.AddDate = b.AddDate,
-				a.EditName = b.EditName,
-				a.EditDate = b.EditDate
+update a set	a.Description = isnull( b.Description,''),
+				a.Junk = isnull( b.Junk,0),
+				a.AddName = isnull( b.AddName,''),
+				a.AddDate =  b.AddDate,
+				a.EditName = isnull( b.EditName,''),
+				a.EditDate =  b.EditDate
 FROM Production.dbo.AccessoryDefect a
 INNER JOIN Trade_To_Pms.dbo.AccessoryDefect b ON a.ID = b.ID
 
@@ -4823,7 +4833,14 @@ FROM Production.dbo.AccessoryDefect a
 where not exists(select 1 from Trade_To_Pms.dbo.AccessoryDefect b where a.ID = b.ID)
 
 insert into Production.dbo.AccessoryDefect(ID, Description, Junk, AddName, AddDate, EditName, EditDate)
-select	b.ID, b.Description, b.Junk, b.AddName, b.AddDate, b.EditName, b.EditDate
+select	
+      isnull(b.ID           ,'')
+    , isnull(b.Description  ,'')
+    , isnull(b.Junk         ,0)
+    , isnull(b.AddName      ,'')
+    , b.AddDate
+    , isnull(b.EditName     ,'')
+    , b.EditDate
 from Trade_To_Pms.dbo.AccessoryDefect b
 where not exists(select 1 from Production.dbo.AccessoryDefect a where a.ID = b.ID)
 
@@ -4839,13 +4856,13 @@ left join Trade_To_Pms.dbo.Adidas_FGWT b on
 where b.[Location] is null
 
 update a set
-	 Seq	    = b.Seq		
-	,TestName   = b.TestName  
-	,SystemType = b.SystemType
-	,TestDetail = b.TestDetail
-	,Scale	    = b.Scale	   
-	,Criteria   = b.Criteria  
-	,Criteria2  = b.Criteria2 
+	 Seq	    = isnull( b.Seq		  ,0)
+	,TestName   = isnull( b.TestName  ,'')
+	,SystemType = isnull( b.SystemType,'')
+	,TestDetail = isnull( b.TestDetail,'')
+	,Scale	    = isnull( b.Scale	  ,'')
+	,Criteria   = isnull( b.Criteria  ,0)
+	,Criteria2  = isnull( b.Criteria2 ,0)
 from production.dbo.Adidas_FGWT a
 inner join Trade_To_Pms.dbo.Adidas_FGWT b on 
 		a.[Location] 		  = b.[Location] 
@@ -4867,18 +4884,18 @@ insert into production.dbo.Adidas_FGWT
            ,[Scale]
            ,[Criteria]
            ,[Criteria2])
-select		a.[Seq]
-           ,a.[TestName]
-           ,a.[Location]
-           ,a.[SystemType]
-           ,a.[ReportType]
-           ,a.[MtlTypeID]
-           ,a.[Washing]
-           ,a.[FabricComposition]
-           ,a.[TestDetail]
-           ,a.[Scale]
-           ,a.[Criteria]
-           ,a.[Criteria2]
+select		isnull(a.[Seq]              ,0)
+           ,isnull(a.[TestName]         ,'')
+           ,isnull(a.[Location]         ,'')
+           ,isnull(a.[SystemType]       ,'')
+           ,isnull(a.[ReportType]       ,'')
+           ,isnull(a.[MtlTypeID]        ,'')
+           ,isnull(a.[Washing]          ,'')
+           ,isnull(a.[FabricComposition],'')
+           ,isnull(a.[TestDetail]       ,'')
+           ,isnull(a.[Scale]            ,'')
+           ,isnull(a.[Criteria]         ,0)
+           ,isnull(a.[Criteria2]        ,0)
 from Trade_To_Pms.dbo.Adidas_FGWT a
 LEFT join production.dbo.Adidas_FGWT b on 
 		a.[Location] 		  = b.[Location] 
@@ -4896,15 +4913,15 @@ left join Trade_To_Pms.dbo.TypeSelection b on a.VersionID = b.VersionID and a.Se
 where b.VersionID is null
 
 update a set 
-	Code = b.Code
+	Code = isnull(b.Code,'')
 from production.dbo.TypeSelection a
 inner join Trade_To_Pms.dbo.TypeSelection b on a.VersionID = b.VersionID and a.Seq = b.Seq 
 
 insert production.dbo.TypeSelection (VersionID,Seq,Code)
 select 
-	 a.VersionID
-	,a.Seq
-	,a.Code
+	 isnull(a.VersionID,0)
+	,isnull(a.Seq      ,0)
+	,isnull(a.Code     ,'')
 from Trade_To_Pms.dbo.TypeSelection a
 left join production.dbo.TypeSelection b on a.VersionID = b.VersionID and a.Seq = b.Seq 
 where b.VersionID is null
@@ -4912,7 +4929,7 @@ where b.VersionID is null
 
 --QABrandSetting
 update a set
-	a.PullingTest_PullForceUnit = b.PullingTest_PullForceUnit 
+	a.PullingTest_PullForceUnit = isnull(b.PullingTest_PullForceUnit ,'')
 from  production.dbo.QABrandSetting a
 inner join Trade_To_Pms.dbo.QABrandSetting b on a.BrandID = b.BrandID
 
@@ -4922,8 +4939,8 @@ INSERT INTO production.[dbo].[QABrandSetting]
            ,[AddDate]
            ,[AddName])
 select 
-	a.BrandID
-	,a.PullingTest_PullForceUnit
+	 isnull(a.BrandID,'')
+	,isnull(a.PullingTest_PullForceUnit,'')
 	,GETDATE()
 	,'SCIMIS'
 from  Trade_To_Pms.dbo.QABrandSetting a
@@ -4937,13 +4954,18 @@ left join Trade_To_Pms.dbo.Brand_PullingTestStandarList b on a.BrandID = b.Brand
 where b.BrandID is null
 
 update a set 
-	PullForce = b.PullForce,
-	Time = b.Time
+	PullForce = isnull(b.PullForce,0),
+	Time = isnull(b.Time,0)
 from production.dbo.Brand_PullingTestStandarList a
 inner join Trade_To_Pms.dbo.Brand_PullingTestStandarList b on a.BrandID = b.BrandID and a.TestItem = b.TestItem and a.PullForceUnit = b.PullForceUnit
 
 insert production.dbo.Brand_PullingTestStandarList (BrandID,TestItem,PullForceUnit,PullForce,Time)
-select a.BrandID,a.TestItem,a.PullForceUnit,a.PullForce,a.Time
+select
+     isnull(a.BrandID       ,'')
+    ,isnull(a.TestItem      ,'')
+    ,isnull(a.PullForceUnit ,'')
+    ,isnull(a.PullForce     ,0)
+    ,isnull(a.Time          ,0)
 from Trade_To_Pms.dbo.Brand_PullingTestStandarList a
 left join production.dbo.Brand_PullingTestStandarList b on a.BrandID = b.BrandID and a.TestItem = b.TestItem and a.PullForceUnit = b.PullForceUnit
 where b.BrandID is null
@@ -4955,11 +4977,11 @@ left join Trade_To_Pms.dbo.GarmentTestShrinkage b on a.Ukey = b.Ukey
 where b.Ukey is null
 
 update a set 
- [BrandID] = b.[BrandID]
-,[LocationGroup] = b.[LocationGroup]
-,[Location] = b.[Location]
-,[Seq] = b.[Seq]
-,[Type] = b.[Type]
+ [BrandID] = isnull( b.[BrandID],'')
+,[LocationGroup] = isnull( b.[LocationGroup],'')
+,[Location] = isnull( b.[Location],'')
+,[Seq] = isnull( b.[Seq],0)
+,[Type] = isnull( b.[Type],'')
 from production.dbo.GarmentTestShrinkage a
 inner join Trade_To_Pms.dbo.GarmentTestShrinkage b on a.Ukey = b.Ukey 
 
@@ -4969,7 +4991,12 @@ insert production.dbo.GarmentTestShrinkage
            ,[Location]
            ,[Seq]
            ,[Type])
-select a.[BrandID],a.[LocationGroup],a.[Location],a.[Seq],a.[Type]
+select
+     isnull(a.[BrandID]        ,'')
+    ,isnull(a.[LocationGroup]  ,'')
+    ,isnull(a.[Location]       ,'')
+    ,isnull(a.[Seq]            ,0)
+    ,isnull(a.[Type]           ,'')
 from Trade_To_Pms.dbo.GarmentTestShrinkage a
 left join production.dbo.GarmentTestShrinkage b on  a.Ukey = b.Ukey 
 where b.BrandID is null
@@ -4981,17 +5008,17 @@ left join Trade_To_Pms.dbo.PadPrint b on a.Ukey = b.Ukey
 where b.Ukey is null
 
 update a set 
-	 [Refno]      = b.[Refno]
-	,[BrandID]	  = b.[BrandID]
-	,[Category]	  = b.[Category]
-	,[SuppID]	  = b.[SuppID]
-	,[CurrencyID] = b.[CurrencyID]
-	,[Junk]		  = b.[Junk]
-	,[Remark]	  = b.[Remark]
-	,[AddName]	  = b.[AddName]
-	,[AddDate]	  = b.[AddDate]
-	,[EditName]	  = b.[EditName]
-	,[EditDate]	  = b.[EditDate]
+	 [Refno]      = isnull(b.[Refno]      ,'')
+	,[BrandID]	  = isnull(b.[BrandID]    ,'')
+	,[Category]	  = isnull(b.[Category]   ,'')
+	,[SuppID]	  = isnull(b.[SuppID]     ,'')
+	,[CurrencyID] = isnull(b.[CurrencyID] ,'')
+	,[Junk]		  = isnull(b.[Junk]       ,0)
+	,[Remark]	  = isnull(b.[Remark]     ,'')
+	,[AddName]	  = isnull(b.[AddName]    ,'')
+	,[AddDate]	  = b.[AddDate]   
+	,[EditName]	  = isnull(b.[EditName]   ,'')
+	,[EditDate]	  = b.[EditDate]  
 from production.dbo.PadPrint a
 inner join Trade_To_Pms.dbo.PadPrint b on a.Ukey = b.Ukey 
 
@@ -5009,17 +5036,17 @@ insert production.dbo.PadPrint
            ,[EditName]
            ,[EditDate])
 select
-	a.Ukey
-	,a.[Refno]
-    ,a.[BrandID]
-    ,a.[Category]
-    ,a.[SuppID]
-    ,a.[CurrencyID]
-    ,a.[Junk]
-    ,a.[Remark]
-    ,a.[AddName]
-    ,a.[AddDate]
-    ,a.[EditName]
+	 isnull(a.Ukey          ,0)
+	,isnull(a.[Refno]       ,'')
+    ,isnull(a.[BrandID]     ,'')
+    ,isnull(a.[Category]    ,'')
+    ,isnull(a.[SuppID]      ,'')
+    ,isnull(a.[CurrencyID]  ,'')
+    ,isnull(a.[Junk]        ,0)
+    ,isnull(a.[Remark]      ,'')
+    ,isnull(a.[AddName]     ,'')
+    ,a.[AddDate]  
+    ,isnull(a.[EditName]    ,'')
     ,a.[EditDate]
 from Trade_To_Pms.dbo.PadPrint a
 left join production.dbo.PadPrint b on  a.Ukey = b.Ukey 
@@ -5032,20 +5059,20 @@ left join Trade_To_Pms.dbo.PadPrint_Mold b on a.[PadPrint_ukey] = b.[PadPrint_uk
 where b.[PadPrint_ukey] is null
 
 update a set 
-	 [Refno]		 = b.[Refno]
-	,[BrandID]		 = b.[BrandID]
-	,[Season]		 = b.[Season]
-	,[LabelFor]		 = b.[LabelFor]
-	,[MainSize]		 = b.[MainSize]
-	,[Gender]		 = b.[Gender]
-	,[AgeGroup]		 = b.[AgeGroup]
-	,[SizeSpec]		 = b.[SizeSpec]
-	,[Part]			 = b.[Part]
-	,[MadeIn]		 = b.[MadeIn]
-	,[Region]		 = b.[Region]
-	,[AddName]		 = b.[AddName]
-	,[AddDate]		 = b.[AddDate]
-	,[EditName]		 = b.[EditName]
+	 [Refno]		 = isnull( b.[Refno]        ,'')
+	,[BrandID]		 = isnull( b.[BrandID]      ,'')
+	,[Season]		 = isnull( b.[Season]       ,'')
+	,[LabelFor]		 = isnull( b.[LabelFor]     ,'')
+	,[MainSize]		 = isnull( b.[MainSize]     ,'')
+	,[Gender]		 = isnull( b.[Gender]       ,'')
+	,[AgeGroup]		 = isnull( b.[AgeGroup]     ,'')
+	,[SizeSpec]		 = isnull( b.[SizeSpec]     ,'')
+	,[Part]			 = isnull( b.[Part]         ,'')
+	,[MadeIn]		 = isnull( b.[MadeIn]       ,'')
+	,[Region]		 = isnull( b.[Region]       ,'')
+	,[AddName]		 = isnull( b.[AddName]      ,'')
+	,[AddDate]		 =  b.[AddDate]            
+	,[EditName]		 = isnull( b.[EditName]     ,'')
 	,[EditDate]		 = b.[EditDate]
 from production.dbo.PadPrint_Mold a
 inner join Trade_To_Pms.dbo.PadPrint_Mold b on a.[PadPrint_ukey] = b.[PadPrint_ukey] and a.[MoldID] = b.[MoldID]
@@ -5069,23 +5096,23 @@ insert production.dbo.PadPrint_Mold
            ,[EditName]
            ,[EditDate])
 select
-	 a.[PadPrint_ukey]
-	,a.[MoldID]
-	,a.[Refno]
-	,a.[BrandID]
-	,a.[Season]
-	,a.[LabelFor]
-	,a.[MainSize]
-	,a.[Gender]
-	,a.[AgeGroup]
-	,a.[SizeSpec]
-	,a.[Part]
-	,a.[MadeIn]
-	,a.[Region]
-	,a.[AddName]
-	,a.[AddDate]
-	,a.[EditName]
-	,a.[EditDate]
+	 isnull(a.[PadPrint_ukey],0)
+	,isnull(a.[MoldID]       ,'')
+	,isnull(a.[Refno]        ,'')
+	,isnull(a.[BrandID]      ,'')
+	,isnull(a.[Season]       ,'')
+	,isnull(a.[LabelFor]     ,'')
+	,isnull(a.[MainSize]     ,'')
+	,isnull(a.[Gender]       ,'')
+	,isnull(a.[AgeGroup]     ,'')
+	,isnull(a.[SizeSpec]     ,'')
+	,isnull(a.[Part]         ,'')
+	,isnull(a.[MadeIn]       ,'')
+	,isnull(a.[Region]       ,'')
+	,isnull(a.[AddName]      ,'')
+	,a.[AddDate]   
+	,isnull(a.[EditName]     ,'')
+	,a.[EditDate]  
 from Trade_To_Pms.dbo.PadPrint_Mold a
 left join production.dbo.PadPrint_Mold b on a.[PadPrint_ukey] = b.[PadPrint_ukey] and a.[MoldID] = b.[MoldID]
 where b.[PadPrint_ukey] is null
@@ -5097,17 +5124,17 @@ left join Trade_To_Pms.dbo.PadPrint_Mold_Spec b on a.PadPrint_ukey = b.PadPrint_
 where b.PadPrint_ukey is null
 
 update a set 
-	 [SizePage]		 = b.[SizePage]
-	,[SourceSize]	 = b.[SourceSize]
-	,[CustomerSize]	 = b.[CustomerSize]
-	,[MoldRef]		 = b.[MoldRef]
-	,[Version]		 = b.[Version]
-	,[ReversionMold] = b.[ReversionMold]
-	,[Junk]			 = b.[Junk]
-	,[Reason]		 = b.[Reason]
-	,[AddName]		 = b.[AddName]
-	,[AddDate]		 = b.[AddDate]
-	,[EditName]		 = b.[EditName]
+	 [SizePage]		 = isnull( b.[SizePage]       ,'')
+	,[SourceSize]	 = isnull( b.[SourceSize]     ,'')
+	,[CustomerSize]	 = isnull( b.[CustomerSize]   ,'')
+	,[MoldRef]		 = isnull( b.[MoldRef]        ,'')
+	,[Version]		 = isnull( b.[Version]        ,'')
+	,[ReversionMold] = isnull( b.[ReversionMold]  ,'')
+	,[Junk]			 = isnull( b.[Junk]           ,0)
+	,[Reason]		 = isnull( b.[Reason]         ,'')
+	,[AddName]		 = isnull( b.[AddName]        ,'')
+	,[AddDate]		 =  b.[AddDate]
+	,[EditName]		 = isnull( b.[EditName]       ,'')
 	,[EditDate]		 = b.[EditDate]
 from production.dbo.PadPrint_Mold_Spec a
 inner join Trade_To_Pms.dbo.PadPrint_Mold_Spec b on a.PadPrint_ukey = b.PadPrint_ukey and a.MoldID = b.MoldID and a.Side = b.Side
@@ -5129,20 +5156,20 @@ insert production.dbo.PadPrint_Mold_Spec
            ,[EditName]
            ,[EditDate])
 select
-	 a.[PadPrint_ukey]
-	,a.[MoldID]
-	,a.[Side]
-	,a.[SizePage]
-	,a.[SourceSize]
-	,a.[CustomerSize]
-	,a.[MoldRef]
-	,a.[Version]
-	,a.[ReversionMold]
-	,a.[Junk]
-	,a.[Reason]
-	,a.[AddName]
-	,a.[AddDate]
-	,a.[EditName]
+	 isnull(a.[PadPrint_ukey],0)
+	,isnull(a.[MoldID]       ,'')
+	,isnull(a.[Side]         ,'')
+	,isnull(a.[SizePage]     ,'')
+	,isnull(a.[SourceSize]   ,'')
+	,isnull(a.[CustomerSize] ,'')
+	,isnull(a.[MoldRef]      ,'')
+	,isnull(a.[Version]      ,'')
+	,isnull(a.[ReversionMold],'')
+	,isnull(a.[Junk]         ,0)
+	,isnull(a.[Reason]       ,'')
+	,isnull(a.[AddName]      ,'')
+	,a.[AddDate]    
+	,isnull(a.[EditName]     ,'')
 	,a.[EditDate]
 from Trade_To_Pms.dbo.PadPrint_Mold_Spec a
 left join production.dbo.PadPrint_Mold_Spec b on a.PadPrint_ukey = b.PadPrint_ukey and a.MoldID = b.MoldID and a.Side = b.Side

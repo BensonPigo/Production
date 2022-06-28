@@ -40,71 +40,71 @@ BEGIN
 	on t.id=s.id
 		when matched then
 		update set 
-		t.ScheduleID = s.ScheduleID 
-		, t.ScheduleDate = s.ScheduleDate 
-		, t.LoadDate = s.LoadDate 
-		, t.CloseDate = s.CloseDate 
-		, t.Etd = s.Etd 
-		, t.Eta = s.Eta 
-		, t.ExportCountry = s.ExportCountry 
-		, t.ImportCountry = s.ImportCountry 
-		, t.ExportPort = s.ExportPort 
-		, t.ImportPort = s.ImportPort 
-		, t.CYCFS = s.CYCFS 
-		, t.ShipModeID = s.ShipModeID 
-		, t.ShipmentTerm = s.ShipmentTerm 
-		, t.FactoryID = s.FactoryID 
-		, t.ShipMark = s.ShipMark 
-		, t.ShipMarkDesc = s.ShipMarkDesc 
-		, t.Consignee = s.Consignee 
-		, t.Handle = s.Handle 
-		, t.Posting = s.Posting 
-		, t.Payer = s.Payer 
-		, t.CompanyID = s.CompanyID 
-		, t.Confirm = s.Confirm 
-		, t.LastEdit = s.LastEdit 
-		, t.Remark = s.Remark 
-		, t.Ecfa = s.Ecfa 
-		, t.FormStatus = s.FormStatus 
-		, t.Carrier = s.Carrier 
-		, t.Forwarder = s.Forwarder 
-		, t.Vessel = s.Vessel 
-		, t.ShipTo = s.ShipTo 
-		, t.Sono = s.Sono 
-		, t.Blno = s.Blno 
-		, t.InvNo = s.InvNo 
-		, t.Exchange = s.Exchange 
-		, t.Packages = s.Packages 
-		, t.WeightKg = s.WeightKg 
-		, t.NetKg = s.NetKg 
-		, t.Cbm = s.Cbm 
-		, t.CbmFor = s.CbmFor 
-		, t.Takings = s.Takings 
-		, t.TakingFee = s.TakingFee 
-		, t.Broker = s.Broker 
-		, t.Insurer = s.Insurer 
-		, t.Trailer1 = s.Trailer1 
-		, t.Trailer2 = s.Trailer2 
-		, t.Freight = s.Freight 
-		, t.Insurance = s.Insurance 
-		, t.Junk = s.Junk 
-		, t.AddName = s.AddName 
+		t.ScheduleID = isnull( s.ScheduleID        , '')
+		, t.ScheduleDate = s.ScheduleDate
+		, t.LoadDate = s.LoadDate
+		, t.CloseDate = s.CloseDate
+		, t.Etd = s.Etd
+		, t.Eta = s.Eta
+		, t.ExportCountry = isnull( s.ExportCountry, '')
+		, t.ImportCountry = isnull( s.ImportCountry, '')
+		, t.ExportPort = isnull( s.ExportPort      , '')
+		, t.ImportPort = isnull( s.ImportPort      , '')
+		, t.CYCFS = isnull( s.CYCFS                , '')
+		, t.ShipModeID = isnull( s.ShipModeID      , '')
+		, t.ShipmentTerm = isnull( s.ShipmentTerm  , '')
+		, t.FactoryID = isnull( s.FactoryID        , '')
+		, t.ShipMark = isnull( s.ShipMark          , '')
+		, t.ShipMarkDesc = isnull( s.ShipMarkDesc  , '')
+		, t.Consignee = isnull( s.Consignee        , '')
+		, t.Handle = isnull( s.Handle              , '')
+		, t.Posting = isnull( s.Posting            , 0)
+		, t.Payer = isnull( s.Payer                , '')
+		, t.CompanyID = isnull( s.CompanyID        , 0)
+		, t.Confirm = isnull( s.Confirm            , 0)
+		, t.LastEdit = s.LastEdit
+		, t.Remark = isnull( s.Remark              , '')
+		, t.Ecfa = isnull( s.Ecfa                  , 0)
+		, t.FormStatus = isnull( s.FormStatus      , '')
+		, t.Carrier = isnull( s.Carrier            , '')
+		, t.Forwarder = isnull( s.Forwarder        , '')
+		, t.Vessel = isnull( s.Vessel              , '')
+		, t.ShipTo = isnull( s.ShipTo              , '')
+		, t.Sono = isnull( s.Sono                  , '')
+		, t.Blno = isnull( s.Blno                  , '')
+		, t.InvNo = isnull( s.InvNo                , '')
+		, t.Exchange = isnull( s.Exchange          , 0)
+		, t.Packages = isnull( s.Packages          , 0)
+		, t.WeightKg = isnull( s.WeightKg          , 0)
+		, t.NetKg = isnull( s.NetKg                , 0)
+		, t.Cbm = isnull( s.Cbm                    , 0)
+		, t.CbmFor = isnull( s.CbmFor              , 0)
+		, t.Takings = isnull( s.Takings            , 0)
+		, t.TakingFee = isnull( s.TakingFee        , 0)
+		, t.Broker = isnull( s.Broker              , '')
+		, t.Insurer = isnull( s.Insurer            , '')
+		, t.Trailer1 = isnull( s.Trailer1          , '')
+		, t.Trailer2 = isnull( s.Trailer2          , '')
+		, t.Freight = isnull( s.Freight            , 0)
+		, t.Insurance = isnull( s.Insurance        , 0)
+		, t.Junk = isnull( s.Junk                  , 0)
+		, t.AddName = isnull( s.AddName            , '')
 		, t.AddDate = s.AddDate 
 		, t.EditName= iif(s.[EditDate] <= t.EditDate,t.EditName,s.[EditName])
 		, t.EditDate= iif(s.[EditDate] <= t.EditDate,t.EditDate,s.[EditDate])
-		, t.MainExportID = s.MainExportID
-		, t.Replacement = s.Replacement
-		, t.Delay = s.Delay
-		, t.PrepaidFtyImportFee = s.PrepaidFtyImportFee
-		, t.NoImportCharges = iif(s.PrepaidFtyImportFee2 > 0, 1 ,0)
-		, t.MainExportID08 = s.MainExportID08
-		, t.FormE = s.FormE
-		, t.SQCS = s.SQCS
-		, t.FtyTruckFee  = s.FtyTruckFee 
-		, t.FtyTrucker = s.FtyTrucker
-		, t.OTFee = s.OTFee
-		, t.CIFTerms = s.CIFTerms
-		, t.FtyDisburseSD = s.FtyDisburseSD
+		, t.MainExportID = isnull( s.MainExportID                          , '')
+		, t.Replacement = isnull( s.Replacement                            , 0)
+		, t.Delay = isnull( s.Delay                                        , 0)
+		, t.PrepaidFtyImportFee = isnull( s.PrepaidFtyImportFee            , 0)
+		, t.NoImportCharges = iif(isnull(s.PrepaidFtyImportFee2, 0) > 0, 1 ,0)
+		, t.MainExportID08 = isnull( s.MainExportID08                      , '')
+		, t.FormE = isnull( s.FormE                                        , 0)
+		, t.SQCS = isnull( s.SQCS                                          , 0)
+		, t.FtyTruckFee  = isnull( s.FtyTruckFee                           , 0)
+		, t.FtyTrucker = isnull( s.FtyTrucker                              , '')
+		, t.OTFee = isnull( s.OTFee                                        , 0)
+		, t.CIFTerms = isnull( s.CIFTerms                                  , 0)
+		, t.FtyDisburseSD = isnull( s.FtyDisburseSD                        , '')
 		, t.MainWKID = isnull(s.MainWKID, '')
 	  when not matched  by target then 
 		insert (ID ,ScheduleID ,ScheduleDate ,LoadDate ,CloseDate ,Etd ,Eta ,ExportCountry ,ImportCountry ,ExportPort ,ImportPort 
@@ -113,13 +113,78 @@ BEGIN
 		,Packages ,WeightKg ,NetKg ,Cbm ,CbmFor ,Takings ,TakingFee ,PortArrival ,DocArrival ,Broker 
 		,Insurer ,Trailer1 ,Trailer2 ,Freight ,Insurance ,Junk ,AddName ,AddDate ,EditName ,EditDate,MainExportID ,Replacement ,Delay ,PrepaidFtyImportFee,NoImportCharges
 		,MainExportID08 ,FormE, SQCS, FtyTruckFee, FtyTrucker, OTFee, CIFTerms,FtyDisburseSD,MainWKID)
-	    values( 
-		s.ID ,s.ScheduleID ,s.ScheduleDate ,s.LoadDate ,s.CloseDate ,s.Etd ,s.Eta ,s.ExportCountry ,s.ImportCountry ,s.ExportPort ,s.ImportPort 
-		,s.CYCFS,s.ShipModeID ,s.ShipmentTerm ,s.FactoryID ,s.ShipMark ,s.ShipMarkDesc ,s.Consignee ,s.Handle ,s.Posting ,s.Payer ,s.CompanyID 
-		,s.Confirm ,s.LastEdit ,s.Remark ,s.Ecfa ,s.FormStatus,s.Carrier ,s.Forwarder ,s.Vessel ,s.ShipTo ,s.Sono ,s.Blno ,s.InvNo ,s.Exchange 
-		,s.Packages ,s.WeightKg ,s.NetKg ,s.Cbm ,s.CbmFor ,s.Takings ,s.TakingFee ,s.PortArrival ,s.DocArrival ,s.Broker 
-		,s.Insurer ,s.Trailer1 ,s.Trailer2 ,s.Freight ,s.Insurance ,s.Junk ,s.AddName ,s.AddDate ,s.EditName ,s.EditDate,s.MainExportID ,s.Replacement ,s.Delay, s.PrepaidFtyImportFee, iif(s.PrepaidFtyImportFee2 > 0, 1 ,0)
-		,s.MainExportID08 ,s.FormE, s.SQCS, s.FtyTruckFee, s.FtyTrucker, s.OTFee, s.CIFTerms,s.FtyDisburseSD,isnull(s.MainWKID, ''))
+       VALUES
+       (
+              isnull(s.id ,                 ''),
+              isnull(s.scheduleid ,         ''),
+              s.scheduledate ,
+              s.loaddate ,
+              s.closedate ,
+              s.etd ,
+              s.eta ,
+              isnull(s.exportcountry ,      ''),
+              isnull(s.importcountry ,      ''),
+              isnull(s.exportport ,         ''),
+              isnull(s.importport ,         ''),
+              isnull(s.cycfs,               ''),
+              isnull(s.shipmodeid ,         ''),
+              isnull(s.shipmentterm ,       ''),
+              isnull(s.factoryid ,          ''),
+              isnull(s.shipmark ,           ''),
+              isnull(s.shipmarkdesc ,       ''),
+              isnull(s.consignee ,          ''),
+              isnull(s.handle ,             ''),
+              isnull(s.posting ,            0),
+              isnull(s.payer ,              ''),
+              isnull(s.companyid ,          0),
+              isnull(s.confirm ,            0),
+              s.lastedit ,
+              isnull(s.remark ,             ''),
+              isnull(s.ecfa ,               0),
+              isnull(s.formstatus,          ''),
+              isnull(s.carrier ,            ''),
+              isnull(s.forwarder ,          ''),
+              isnull(s.vessel ,             ''),
+              isnull(s.shipto ,             ''),
+              isnull(s.sono ,               ''),
+              isnull(s.blno ,               ''),
+              isnull(s.invno ,              ''),
+              isnull(s.exchange ,           0),
+              isnull(s.packages ,           0),
+              isnull(s.weightkg ,           0),
+              isnull(s.netkg ,              0),
+              isnull(s.cbm ,                0),
+              isnull(s.cbmfor ,             0),
+              isnull(s.takings ,            0),
+              isnull(s.takingfee ,          0),
+              s.portarrival ,
+              s.docarrival ,
+              isnull(s.broker ,             ''),
+              isnull(s.insurer ,            ''),
+              isnull(s.trailer1 ,           ''),
+              isnull(s.trailer2 ,           ''),
+              isnull(s.freight ,            0),
+              isnull(s.insurance ,          0),
+              isnull(s.junk ,               0),
+              isnull(s.addname ,            ''),
+              s.adddate ,
+              isnull(s.editname ,           ''),
+              s.editdate,
+              isnull(s.mainexportid ,       ''),
+              isnull(s.replacement ,        0),
+              isnull(s.delay,               0),
+              isnull(s.prepaidftyimportfee, 0),
+              iif(isnull(s.prepaidftyimportfee2, 0) > 0, 1 ,0) ,
+              isnull(s.mainexportid08 ,''),
+              isnull(s.forme,          0),
+              isnull(s.sqcs,           0),
+              isnull(s.ftytruckfee,    0),
+              isnull(s.ftytrucker,     ''),
+              isnull(s.otfee,          0),
+              isnull(s.cifterms,       0),
+              isnull(s.ftydisbursesd,  ''),
+              isnull(s.mainwkid, '')
+       )
 	  output inserted.id into @T; 
 
 -----------------------Export_detail-----------------------------
@@ -134,59 +199,109 @@ BEGIN
 				 and PE2.ShipPlanHandle = TE2.ShipPlanHandle
 	 when matched then 
 		update set
-		  PE2.[ID] = TE2.[ID]
-		  , PE2.[PoID] = TE2.[PoID]
-		  , PE2.[Seq1] = TE2.[Seq1]
-		  , PE2.[Seq2] = TE2.[Seq2]
-		  , PE2.[FormXReceived] = TE2.[FormXReceived]
-		  , PE2.[FormXFTYEdit] = TE2.[FormXFTYEdit]
-	      , PE2.[ExportIDOld]= TE2.[ExportIDOld]
-	      , PE2.[Qty]=TE2.[Qty]
-	      , PE2.[Foc]=TE2.[Foc]
-	      , PE2.[Carton]=TE2.[Carton]
-	      , PE2.[Confirm]=TE2.[Confirm]
-	      , PE2.[UnitId]=TE2.[UnitId]
-	      , PE2.[Price]=TE2.[Price]
-	      , PE2.[NetKg]=TE2.[NetKg]
-	      , PE2.[WeightKg]=TE2.[WeightKg]
-	      , PE2.[Remark]=TE2.[Remark]
-	      , PE2.[PayDesc]=TE2.[PayDesc]
-	      , PE2.[LastEta]=TE2.[LastEta]
-	      , PE2.[Refno]=TE2.[Refno]
-	      , PE2.[SuppID]=TE2.[SuppID]
-	      , PE2.[Pino]=TE2.[Pino]
-	      , PE2.[Description]=TE2.[Description]
-	      , PE2.[UnitOld]=TE2.[UnitOld]
-	      , PE2.[PinoOld]=TE2.[PinoOld]
-	      , PE2.[SuppIDOld]=TE2.[SuppIDOld]
-	      , PE2.[PriceOld]=TE2.[PriceOld]
-	      , PE2.[ShipPlanID]=TE2.[ShipPlanID]
-	      , PE2.[PoHandle]=TE2.[PoHandle]
-	      , PE2.[PcHandle]=TE2.[PcHandle]
-	      , PE2.[IsFormA]=TE2.[IsFormA]
-	      , PE2.[FormXDraftCFM]=TE2.[FormXDraftCFM]
-	      , PE2.[FormXINV]=TE2.[FormXINV]      
-	      , PE2.[FormXEdit]=TE2.[FormXEdit]
-	      , PE2.[FormXPayINV]=TE2.[FormXPayINV]
-	      , PE2.[FormXType]=TE2.[FormXType]
-	      , PE2.[FormXAwb]=TE2.[FormXAwb]
-	      , PE2.[FormXCarrier]=TE2.[FormXCarrier]
-	      , PE2.[FormXRemark]=TE2.[FormXRemark]
-	      , PE2.[AddName]=TE2.[AddName]
-	      , PE2.[AddDate]=TE2.[AddDate]
-	      , PE2.[EditDate]=TE2.[EditDate]
-	      , PE2.[EditName]=TE2.[EditName]
-		  , PE2.PoType = Te2.PoType
-		  , Pe2.FabricType=Te2.FabricType
-		  , pe2.[BalanceQty] = te2.[BalanceQty]
-		  , pe2.[BalanceFOC]=te2.[BalanceFOC]
-		  , pe2.[ShipPlanHandle]=te2.[ShipPlanHandle]
+		  PE2.[ID] = isnull( TE2.[ID]                        , '')
+		  , PE2.[PoID] = isnull( TE2.[PoID]                  , '')
+		  , PE2.[Seq1] = isnull( TE2.[Seq1]                  , '')
+		  , PE2.[Seq2] = isnull( TE2.[Seq2]                  , '')
+		  , PE2.[FormXReceived] =  TE2.[FormXReceived]
+		  , PE2.[FormXFTYEdit] =  TE2.[FormXFTYEdit]
+	      , PE2.[ExportIDOld]= isnull( TE2.[ExportIDOld]     , '')
+	      , PE2.[Qty]= isnull(TE2.[Qty]                      , 0)
+	      , PE2.[Foc]= isnull(TE2.[Foc]                      , 0)
+	      , PE2.[Carton]= isnull(TE2.[Carton]                , '')
+	      , PE2.[Confirm]= isnull(TE2.[Confirm]              , 0)
+	      , PE2.[UnitId]= isnull(TE2.[UnitId]                , '')
+	      , PE2.[Price]= isnull(TE2.[Price]                  , 0)
+	      , PE2.[NetKg]= isnull(TE2.[NetKg]                  , 0)
+	      , PE2.[WeightKg]= isnull(TE2.[WeightKg]            , 0)
+	      , PE2.[Remark]= isnull(TE2.[Remark]                , '')
+	      , PE2.[PayDesc]= isnull(TE2.[PayDesc]              , '')
+	      , PE2.[LastEta]= TE2.[LastEta]
+	      , PE2.[Refno]= isnull(TE2.[Refno]                  , '')
+	      , PE2.[SuppID]= isnull(TE2.[SuppID]                , '')
+	      , PE2.[Pino]= isnull(TE2.[Pino]                    , '')
+	      , PE2.[Description]= isnull(TE2.[Description]      , '')
+	      , PE2.[UnitOld]= isnull(TE2.[UnitOld]              , '')
+	      , PE2.[PinoOld]= isnull(TE2.[PinoOld]              , '')
+	      , PE2.[SuppIDOld]= isnull(TE2.[SuppIDOld]          , '')
+	      , PE2.[PriceOld]= isnull(TE2.[PriceOld]            , 0)
+	      , PE2.[ShipPlanID]= isnull(TE2.[ShipPlanID]        , '')
+	      , PE2.[PoHandle]= isnull(TE2.[PoHandle]            , '')
+	      , PE2.[PcHandle]= isnull(TE2.[PcHandle]            , '')
+	      , PE2.[IsFormA]= isnull(TE2.[IsFormA]              , 0)
+	      , PE2.[FormXDraftCFM]= TE2.[FormXDraftCFM]
+	      , PE2.[FormXINV]= isnull(TE2.[FormXINV]            , '')
+	      , PE2.[FormXEdit]= TE2.[FormXEdit]
+	      , PE2.[FormXPayINV]= isnull(TE2.[FormXPayINV]      , '')
+	      , PE2.[FormXType]= isnull(TE2.[FormXType]          , '')
+	      , PE2.[FormXAwb]= isnull(TE2.[FormXAwb]            , '')
+	      , PE2.[FormXCarrier]= isnull(TE2.[FormXCarrier]    , '')
+	      , PE2.[FormXRemark]= isnull(TE2.[FormXRemark]      , '')
+	      , PE2.[AddName]= isnull(TE2.[AddName]              , '')
+	      , PE2.[AddDate]= TE2.[AddDate]
+	      , PE2.[EditDate]= TE2.[EditDate]
+	      , PE2.[EditName]= isnull(TE2.[EditName]            , '')
+		  , PE2.PoType = isnull( Te2.PoType                  , '')
+		  , Pe2.FabricType= isnull(Te2.FabricType            , '')
+		  , pe2.[BalanceQty] = isnull( te2.[BalanceQty]      , 0)
+		  , pe2.[BalanceFOC]= isnull(te2.[BalanceFOC]        , 0)
+		  , pe2.[ShipPlanHandle]= isnull(te2.[ShipPlanHandle], '')
 		  , pe2.currencyID=(select isnull(currencyID,'') from supp where id=te2.suppid)
-		  , pe2.InvoiceNo = te2.InvoiceNo
+		  , pe2.InvoiceNo = isnull( te2.InvoiceNo, '')
 	  when not matched by target then 
 		insert (    [ID],    [PoID],    [Seq1],    [Seq2],    [ExportIDOld],    [Ukey],    [Qty],    [Foc],    [Carton],    [Confirm],    [UnitId],    [Price],    [NetKg],    [WeightKg],    [Remark],    [PayDesc],    [LastEta],    [Refno],    [SuppID],    [Pino],    [Description],    [UnitOld],    [PinoOld],    [SuppIDOld],    [PriceOld],    [ShipPlanID],    [ShipPlanHandle],    [PoHandle],    [PcHandle],    [IsFormA],    [FormXDraftCFM],    [FormXINV],    [FormXReceived],    [FormXFTYEdit],    [FormXEdit],    [FormXPayINV],    [FormXType],    [FormXAwb],    [FormXCarrier],    [FormXRemark],    [AddName],    [AddDate],    [EditDate],    [EditName],    [BalanceQty],    [BalanceFOC],    PoType,    FabricType,  InvoiceNo)
-		values (TE2.[ID],TE2.[PoID],TE2.[Seq1],TE2.[Seq2],TE2.[ExportIDOld],TE2.[Ukey],TE2.[Qty],TE2.[Foc],TE2.[Carton],TE2.[Confirm],TE2.[UnitID],TE2.[Price],TE2.[NetKg],TE2.[WeightKg],TE2.[Remark],TE2.[PayDesc],TE2.[LastEta],TE2.[Refno],TE2.[SuppID],TE2.[Pino],TE2.[Description],TE2.[UnitOld],TE2.[PinoOld],TE2.[SuppIDOld],TE2.[PriceOld],TE2.[ShipPlanID],TE2.[ShipPlanHandle],TE2.[PoHandle],TE2.[PcHandle],TE2.[IsFormA],TE2.[FormXDraftCFM],TE2.[FormXINV],TE2.[FormXReceived],TE2.[FormXFTYEdit],TE2.[FormXEdit],TE2.[FormXPayINV],TE2.[FormXType],TE2.[FormXAwb],TE2.[FormXCarrier],TE2.[FormXRemark],TE2.[AddName],TE2.[AddDate],TE2.[EditDate],TE2.[EditName],TE2.[BalanceQty],TE2.[BalanceFOC],Te2.PoType,Te2.FabricType,
-Te2.InvoiceNo)
+       VALUES
+       (
+              isnull(te2.[ID],             ''),
+              isnull(te2.[PoID],           ''),
+              isnull(te2.[Seq1],           ''),
+              isnull(te2.[Seq2],           ''),
+              isnull(te2.[ExportIDOld],    ''),
+              isnull(te2.[Ukey],           0),
+              isnull(te2.[Qty],            0),
+              isnull(te2.[Foc],            0),
+              isnull(te2.[Carton],         ''),
+              isnull(te2.[Confirm],        0),
+              isnull(te2.[UnitID],         ''),
+              isnull(te2.[Price],          0),
+              isnull(te2.[NetKg],          0),
+              isnull(te2.[WeightKg],       0),
+              isnull(te2.[Remark],         ''),
+              isnull(te2.[PayDesc],        ''),
+              te2.[LastEta],
+              isnull(te2.[Refno],          ''),
+              isnull(te2.[SuppID],         ''),
+              isnull(te2.[Pino],           ''),
+              isnull(te2.[Description],    ''),
+              isnull(te2.[UnitOld],        ''),
+              isnull(te2.[PinoOld],        ''),
+              isnull(te2.[SuppIDOld],      ''),
+              isnull(te2.[PriceOld],       0),
+              isnull(te2.[ShipPlanID],     ''),
+              isnull(te2.[ShipPlanHandle], ''),
+              isnull(te2.[PoHandle],       ''),
+              isnull(te2.[PcHandle],       ''),
+              isnull(te2.[IsFormA],        0),
+              te2.[FormXDraftCFM],
+              isnull(te2.[FormXINV],       ''),
+              te2.[FormXReceived],
+              te2.[FormXFTYEdit],
+              te2.[FormXEdit],
+              isnull(te2.[FormXPayINV],    ''),
+              isnull(te2.[FormXType],      ''),
+              isnull(te2.[FormXAwb],       ''),
+              isnull(te2.[FormXCarrier],   ''),
+              isnull(te2.[FormXRemark],    ''),
+              isnull(te2.[AddName],        ''),
+              te2.[AddDate],
+              te2.[EditDate],
+              isnull(te2.[EditName],       ''),
+              isnull(te2.[BalanceQty],     0),
+              isnull(te2.[BalanceFOC],     0),
+              isnull(te2.potype,           ''),
+              isnull(te2.fabrictype,       ''),
+              isnull(te2.invoiceno,        '')
+       )
 	  when not matched by source and PE2.id in (select id from @T)then
 	  	delete;
 
@@ -197,17 +312,24 @@ Te2.InvoiceNo)
 
 INSERT INTO Production.dbo.Export_ShipAdvice_Container
         (Ukey,Export_DetailUkey,ContainerType,ContainerNo,AddName,AddDate,EditName,EditDate)
-SELECT Ukey,Export_DetailUkey,ContainerType,ContainerNo,AddName,AddDate,EditName,EditDate
-FROM Trade_To_Pms.dbo.Export_ShipAdvice_Container s
+SELECT isnull(ukey,              0),
+       isnull(export_detailukey, 0),
+       isnull(containertype,     ''),
+       isnull(containerno,       ''),
+       isnull(addname,           ''),
+       adddate,
+       isnull(editname,          ''),
+       editdate
+FROM   trade_to_pms.dbo.export_shipadvice_container s 
 WHERE NOT EXISTS (SELECT 1 FROM Production.dbo.Export_ShipAdvice_Container WHERE Ukey = s.Ukey)
 
 UPDATE t
-SET  t.Export_DetailUkey = s.Export_DetailUkey
-    ,t.ContainerType = s.ContainerType
-    ,t.ContainerNo = s.ContainerNo
-    ,t.AddName = s.AddName
-    ,t.AddDate = s.AddDate
-    ,t.EditName = s.EditName
+SET  t.Export_DetailUkey = isnull( s.Export_DetailUkey, 0)
+    ,t.ContainerType = isnull( s.ContainerType        , '')
+    ,t.ContainerNo = isnull( s.ContainerNo            , '')
+    ,t.AddName = isnull( s.AddName                    , '')
+    ,t.AddDate =  s.AddDate
+    ,t.EditName = isnull( s.EditName                  , '')
     ,t.EditDate = s.EditDate
 FROM Production.dbo.Export_ShipAdvice_Container t
 INNER JOIN Trade_To_Pms.dbo.Export_ShipAdvice_Container s ON t.Ukey = s.Ukey
@@ -232,23 +354,37 @@ AND t.Export_DetailUkey IN (
 	on t.ukey = s.ukey
 	when matched then
 		update set
-		 t.[Export_DetailUkey] =s.[Export_DetailUkey]
-		,t.[Id]				   =s.[Id]
-		,t.[PoID]			   =s.[PoID]
-		,t.[Seq1]			   =s.[Seq1]
-		,t.[Seq2]			   =s.[Seq2]
-		,t.[Carton]			   =s.[Carton]
-		,t.[LotNo]			   =s.[LotNo]
-		,t.[Qty]			   =s.[Qty]
-		,t.[Foc]			   =s.[Foc]
-		,t.[NetKg]			   =s.[NetKg]
-		,t.[WeightKg]		   =s.[WeightKg]
-		,t.[EditName]		   =s.[EditName]
-		,t.[EditDate]		   =s.[EditDate]
+		 t.[Export_DetailUkey] = isnull(s.[Export_DetailUkey], 0)
+		,t.[Id]				   = isnull(s.[Id]               , '')
+		,t.[PoID]			   = isnull(s.[PoID]             , '')
+		,t.[Seq1]			   = isnull(s.[Seq1]             , '')
+		,t.[Seq2]			   = isnull(s.[Seq2]             , '')
+		,t.[Carton]			   = isnull(s.[Carton]           , '')
+		,t.[LotNo]			   = isnull(s.[LotNo]            , '')
+		,t.[Qty]			   = isnull(s.[Qty]              , 0)
+		,t.[Foc]			   = isnull(s.[Foc]              , 0)
+		,t.[NetKg]			   = isnull(s.[NetKg]            , 0)
+		,t.[WeightKg]		   = isnull(s.[WeightKg]         , 0)
+		,t.[EditName]		   = isnull(s.[EditName]         , '')
+		,t.[EditDate]		   = s.[EditDate]
 	when not matched by target then 	
 	insert([Export_DetailUkey],[Id],[PoID],[Seq1],[Seq2],[Carton],[LotNo],[Qty],[Foc],[NetKg],[WeightKg],[EditName],[EditDate])
-	values(s.[Export_DetailUkey],s.[Id],s.[PoID],s.[Seq1],s.[Seq2],s.[Carton],s.[LotNo],s.[Qty],s.[Foc],s.[NetKg],s.[WeightKg]
-	,s.[EditName],s.[EditDate])
+       VALUES
+       (
+              isnull(s.[Export_DetailUkey], 0),
+              isnull(s.[Id],                ''),
+              isnull(s.[PoID],              ''),
+              isnull(s.[Seq1],              ''),
+              isnull(s.[Seq2],              ''),
+              isnull(s.[Carton],            ''),
+              isnull(s.[LotNo],             ''),
+              isnull(s.[Qty],               0),
+              isnull(s.[Foc],               0),
+              isnull(s.[NetKg],             0),
+              isnull(s.[WeightKg] ,         0),
+              isnull(s.[EditName],          ''),
+              s.[EditDate]
+       )
 	when not matched by source and exists (select ID from @T where id = t.id)then
 	  		delete;
 			
@@ -260,37 +396,37 @@ where not exists (select 1 from Trade_To_Pms.dbo.POShippingList_Line s where s.P
 
 --更新:存在Trade_To_Pms.Export_Detail存在Production.POShippingList_Line
 update t set
-	 [RefNo]				=s.[RefNo]
-	,[Description]			=s.[Description]
-	,[MaterialColor]		=s.[MaterialColor]
-	,[Weight]				=s.[Weight]
-	,[WeightUnitID]			=s.[WeightUnitID]
-	,[Width]				=s.[Width]
-	,[WidthUnitID]			=s.[WidthUnitID]
-	,[Length]				=s.[Length]
-	,[LengthUnitID]			=s.[LengthUnitID]
-	,[Height]				=s.[Height]
-	,[HeightUnitID]			=s.[HeightUnitID]
-	,[Thickness]			=s.[Thickness]
-	,[ThicknessUnitID]		=s.[ThicknessUnitID]
-	,[SizeSpec]				=s.[SizeSpec]
-	,[Price]				=s.[Price]
-	,[BatchNo]				=s.[BatchNo]
-	,[PackageNo]			=s.[PackageNo]
-	,[ShipQty]				=s.[ShipQty]
-	,[ShipQtyUnitID]		=s.[ShipQtyUnitID]
-	,[FOC]					=s.[FOC]
-	,[FOCUnitID]			=s.[FOCUnitID]
-	,[NW]					=s.[NW]
-	,[NWUnitID]				=s.[NWUnitID]
-	,[GW]					=s.[GW]
-	,[GWUnitID]				=s.[GWUnitID]
-	,[AdditionalOptional1]	=s.[AdditionalOptional1]
-	,[AdditionalOptional2]	=s.[AdditionalOptional2]
-	,[AdditionalOptional3]	=s.[AdditionalOptional3]
-	,[AdditionalOptional4]	=s.[AdditionalOptional4]
-	,[AdditionalOptional5]	=s.[AdditionalOptional5]
-	,[AddName]				=s.[AddName]
+	 [RefNo]				= isnull(s.[RefNo]              , '')
+	,[Description]			= isnull(s.[Description]        , '')
+	,[MaterialColor]		= isnull(s.[MaterialColor]      , '')
+	,[Weight]				= isnull(s.[Weight]             , '')
+	,[WeightUnitID]			= isnull(s.[WeightUnitID]       , '')
+	,[Width]				= isnull(s.[Width]              , '')
+	,[WidthUnitID]			= isnull(s.[WidthUnitID]        , '')
+	,[Length]				= isnull(s.[Length]             , '')
+	,[LengthUnitID]			= isnull(s.[LengthUnitID]       , '')
+	,[Height]				= isnull(s.[Height]             , '')
+	,[HeightUnitID]			= isnull(s.[HeightUnitID]       , '')
+	,[Thickness]			= isnull(s.[Thickness]          , '')
+	,[ThicknessUnitID]		= isnull(s.[ThicknessUnitID]    , '')
+	,[SizeSpec]				= isnull(s.[SizeSpec]           , '')
+	,[Price]				= isnull(s.[Price]              , '')
+	,[BatchNo]				= isnull(s.[BatchNo]            , '')
+	,[PackageNo]			= isnull(s.[PackageNo]          , '')
+	,[ShipQty]				= isnull(s.[ShipQty]            , 0)
+	,[ShipQtyUnitID]		= isnull(s.[ShipQtyUnitID]      , '')
+	,[FOC]					= isnull(s.[FOC]                , 0)
+	,[FOCUnitID]			= isnull(s.[FOCUnitID]          , '')
+	,[NW]					= isnull(s.[NW]                 , 0)
+	,[NWUnitID]				= isnull(s.[NWUnitID]           , '')
+	,[GW]					= isnull(s.[GW]                 , 0)
+	,[GWUnitID]				= isnull(s.[GWUnitID]           , '')
+	,[AdditionalOptional1]	= isnull(s.[AdditionalOptional1], '')
+	,[AdditionalOptional2]	= isnull(s.[AdditionalOptional2], '')
+	,[AdditionalOptional3]	= isnull(s.[AdditionalOptional3], '')
+	,[AdditionalOptional4]	= isnull(s.[AdditionalOptional4], '')
+	,[AdditionalOptional5]	= isnull(s.[AdditionalOptional5], '')
+	,[AddName]				= isnull(s.[AddName]            , '')
 	,[AddDate]				=s.[AddDate]
 from Trade_To_Pms.dbo.POShippingList_Line s
 inner join Production.dbo.POShippingList_Line t on s.POShippingList_Ukey = t.POShippingList_Ukey and s.QRCode = t.QRCode and s.Line = t.Line
@@ -333,40 +469,40 @@ INSERT INTO [dbo].[POShippingList_Line]
            ,[AddName]
            ,[AddDate])
 select
-	 s.[POShippingList_Ukey]
-	,s.[QRCode]
-	,s.[Line]
-	,s.[RefNo]
-	,s.[Description]
-	,s.[MaterialColor]
-	,s.[Weight]
-	,s.[WeightUnitID]
-	,s.[Width]
-	,s.[WidthUnitID]
-	,s.[Length]
-	,s.[LengthUnitID]
-	,s.[Height]
-	,s.[HeightUnitID]
-	,s.[Thickness]
-	,s.[ThicknessUnitID]
-	,s.[SizeSpec]
-	,s.[Price]
-	,s.[BatchNo]
-	,s.[PackageNo]
-	,s.[ShipQty]
-	,s.[ShipQtyUnitID]
-	,s.[FOC]
-	,s.[FOCUnitID]
-	,s.[NW]
-	,s.[NWUnitID]
-	,s.[GW]
-	,s.[GWUnitID]
-	,s.[AdditionalOptional1]
-	,s.[AdditionalOptional2]
-	,s.[AdditionalOptional3]
-	,s.[AdditionalOptional4]
-	,s.[AdditionalOptional5]
-	,s.[AddName]
+	 isnull(s.[POShippingList_Ukey], 0)
+	,isnull(s.[QRCode]             , '')
+	,isnull(s.[Line]               , '')
+	,isnull(s.[RefNo]              , '')
+	,isnull(s.[Description]        , '')
+	,isnull(s.[MaterialColor]      , '')
+	,isnull(s.[Weight]             , '')
+	,isnull(s.[WeightUnitID]       , '')
+	,isnull(s.[Width]              , '')
+	,isnull(s.[WidthUnitID]        , '')
+	,isnull(s.[Length]             , '')
+	,isnull(s.[LengthUnitID]       , '')
+	,isnull(s.[Height]             , '')
+	,isnull(s.[HeightUnitID]       , '')
+	,isnull(s.[Thickness]          , '')
+	,isnull(s.[ThicknessUnitID]    , '')
+	,isnull(s.[SizeSpec]           , '')
+	,isnull(s.[Price]              , '')
+	,isnull(s.[BatchNo]            , '')
+	,isnull(s.[PackageNo]          , '')
+	,isnull(s.[ShipQty]            , 0)
+	,isnull(s.[ShipQtyUnitID]      , '')
+	,isnull(s.[FOC]                , 0)
+	,isnull(s.[FOCUnitID]          , '')
+	,isnull(s.[NW]                 , 0)
+	,isnull(s.[NWUnitID]           , '')
+	,isnull(s.[GW]                 , 0)
+	,isnull(s.[GWUnitID]           , '')
+	,isnull(s.[AdditionalOptional1], '')
+	,isnull(s.[AdditionalOptional2], '')
+	,isnull(s.[AdditionalOptional3], '')
+	,isnull(s.[AdditionalOptional4], '')
+	,isnull(s.[AdditionalOptional5], '')
+	,isnull(s.[AddName]            , '')
 	,s.[AddDate]
 from Trade_To_Pms.dbo.POShippingList_Line s
 left join Production.dbo.POShippingList_Line t on s.POShippingList_Ukey = t.POShippingList_Ukey and s.QRCode = t.QRCode and s.Line = t.Line
@@ -375,29 +511,29 @@ where t.QRCode is null
 -----------------------POShippingList-----------------------------
 --更新: 存在表身 Production.dbo.POShippingList_Line, 表頭存在
 UPDATE t set
-	 [IssueDate]		=s.[IssueDate]
-	,[POID]				=s.[POID]
-	,[Seq1]				=s.[Seq1]
-	,[T1Name]			=s.[T1Name]
-	,[T1MR]				=s.[T1MR]
-	,[T1FtyName]		=s.[T1FtyName]
-	,[T1FtyBrandCode]	=s.[T1FtyBrandCode]
-	,[T2Name]			=s.[T2Name]
-	,[T2SuppName]		=s.[T2SuppName]
-	,[T2SuppBrandCode]	=s.[T2SuppBrandCode]
-	,[T2SuppCountry]	=s.[T2SuppCountry]
-	,[BrandID]			=s.[BrandID]
-	,[CurrencyID]		=s.[CurrencyID]
-	,[PackingNo]		=s.[PackingNo]
-	,[PackingDate]		=s.[PackingDate]
-	,[InvoiceNo]		=s.[InvoiceNo]
-	,[InvoiceDate]		=s.[InvoiceDate]
-	,[CloseDate]		=s.[CloseDate]
-	,[Vessel]			=s.[Vessel]
-	,[ETD]				=s.[ETD]
-	,[FinalShipmodeID]	=s.[FinalShipmodeID]
-	,[SuppID]			=s.[SuppID]
-	,[AddName]			=s.[AddName]
+	 [IssueDate]		= s.[IssueDate]
+	,[POID]				= isnull(s.[POID]           , '')
+	,[Seq1]				= isnull(s.[Seq1]           , '')
+	,[T1Name]			= isnull(s.[T1Name]         , '')
+	,[T1MR]				= isnull(s.[T1MR]           , '')
+	,[T1FtyName]		= isnull(s.[T1FtyName]      , '')
+	,[T1FtyBrandCode]	= isnull(s.[T1FtyBrandCode] , '')
+	,[T2Name]			= isnull(s.[T2Name]         , '')
+	,[T2SuppName]		= isnull(s.[T2SuppName]     , '')
+	,[T2SuppBrandCode]	= isnull(s.[T2SuppBrandCode], '')
+	,[T2SuppCountry]	= isnull(s.[T2SuppCountry]  , '')
+	,[BrandID]			= isnull(s.[BrandID]        , '')
+	,[CurrencyID]		= isnull(s.[CurrencyID]     , '')
+	,[PackingNo]		= isnull(s.[PackingNo]      , '')
+	,[PackingDate]		= s.[PackingDate]
+	,[InvoiceNo]		= isnull(s.[InvoiceNo]      , '')
+	,[InvoiceDate]		= s.[InvoiceDate]
+	,[CloseDate]		= s.[CloseDate]
+	,[Vessel]			= isnull(s.[Vessel]         , '')
+	,[ETD]				= s.[ETD]
+	,[FinalShipmodeID]	= isnull(s.[FinalShipmodeID], '')
+	,[SuppID]			= isnull(s.[SuppID]         , '')
+	,[AddName]			= isnull(s.[AddName]        , '')
 	,[AddDate]			=s.[AddDate]
 from Trade_To_Pms.dbo.POShippingList s
 inner join Production.dbo.POShippingList t on s.Ukey = t.Ukey
@@ -430,30 +566,30 @@ INSERT INTO [dbo].[POShippingList]
            ,[AddName]
            ,[AddDate])
 select
-	 s.[Ukey]
+	 isnull(s.[Ukey]           , 0)
 	,s.[IssueDate]
-	,s.[POID]
-	,s.[Seq1]
-	,s.[T1Name]
-	,s.[T1MR]
-	,s.[T1FtyName]
-	,s.[T1FtyBrandCode]
-	,s.[T2Name]
-	,s.[T2SuppName]
-	,s.[T2SuppBrandCode]
-	,s.[T2SuppCountry]
-	,s.[BrandID]
-	,s.[CurrencyID]
-	,s.[PackingNo]
+	,isnull(s.[POID]           , '')
+	,isnull(s.[Seq1]           , '')
+	,isnull(s.[T1Name]         , '')
+	,isnull(s.[T1MR]           , '')
+	,isnull(s.[T1FtyName]      , '')
+	,isnull(s.[T1FtyBrandCode] , '')
+	,isnull(s.[T2Name]         , '')
+	,isnull(s.[T2SuppName]     , '')
+	,isnull(s.[T2SuppBrandCode], '')
+	,isnull(s.[T2SuppCountry]  , '')
+	,isnull(s.[BrandID]        , '')
+	,isnull(s.[CurrencyID]     , '')
+	,isnull(s.[PackingNo]      , '')
 	,s.[PackingDate]
-	,s.[InvoiceNo]
+	,isnull(s.[InvoiceNo]      , '')
 	,s.[InvoiceDate]
 	,s.[CloseDate]
-	,s.[Vessel]
+	,isnull(s.[Vessel]         , '')
 	,s.[ETD]
-	,s.[FinalShipmodeID]
-	,s.[SuppID]
-	,s.[AddName]
+	,isnull(s.[FinalShipmodeID], '')
+	,isnull(s.[SuppID]         , '')
+	,isnull(s.[AddName]        , '')
 	,s.[AddDate]
 from Trade_To_Pms.dbo.POShippingList s
 left join Production.dbo.POShippingList t on s.Ukey = t.Ukey
@@ -480,17 +616,29 @@ where pll.POShippingList_Ukey is null
 	) as s on t.ID = s.ID AND t.Container = s.Container
 	when matched then 
 		update set
-			  t.Seq				=  s.Seq
-			, t.Type			=  s.Type
-			, t.CartonQty		=  s.CartonQty
-			, t.WeightKg		=  s.WeightKg
-			, t.AddName			=  s.AddName
-			, t.AddDate			=  s.AddDate
-			, t.EditName		=  s.EditName
+			  t.Seq				= isnull(  s.Seq      , '')
+			, t.Type			= isnull(  s.Type     , '')
+			, t.CartonQty		= isnull(  s.CartonQty, 0)
+			, t.WeightKg		= isnull(  s.WeightKg , 0)
+			, t.AddName			= isnull(  s.AddName  , '')
+			, t.AddDate			= s.AddDate
+			, t.EditName		= isnull(  s.EditName , '')
 			, t.EditDate		=  s.EditDate
 	when not matched by target then 
 		insert (   [ID],  [Seq],  [Type],  [Container],  [CartonQty],  [WeightKg],  [AddName],  [AddDate],  [EditName],  [EditDate])
-		values ( s.[ID],s.[Seq],s.[Type],s.[Container],s.[CartonQty],s.[WeightKg],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])
+       VALUES
+       (
+              isnull(s.[ID],        ''),
+              isnull(s.[Seq],       ''),
+              isnull(s.[Type],      ''),
+              isnull(s.[Container], ''),
+              isnull(s.[CartonQty], 0),
+              isnull(s.[WeightKg],  0),
+              isnull(s.[AddName],   ''),
+              s.[AddDate],
+              isnull(s.[EditName],  ''),
+              s.[EditDate]
+       )
 	;
 	
 	DELETE pms
@@ -629,15 +777,15 @@ drop table #TExport;
 	inner join Production.dbo.Factory f on f.ID = m.Consignee
 	where f.IsOriginalFty = 1
 	
-	update m set	m.Consignee		 = tm.Consignee	   ,
-				m.CartonNo		 = tm.CartonNo	   ,
-				m.ExportID		 = tm.ExportID	   ,
-				m.Handle		 = tm.Handle	   ,
-				m.Mailed		 = tm.Mailed	   ,
-				m.Junk			 = tm.Junk		   ,
-				m.AddName		 = tm.AddName	   ,
-				m.AddDate		 = tm.AddDate	   ,
-				m.TPEEditName	 = tm.EditName	   ,
+	update m set	m.Consignee	 = isnull( tm.Consignee	   , ''),
+				m.CartonNo		 = isnull( tm.CartonNo	   , ''),
+				m.ExportID		 = isnull( tm.ExportID	   , ''),
+				m.Handle		 = isnull( tm.Handle	   , ''),
+				m.Mailed		 = isnull( tm.Mailed	   , 0),
+				m.Junk			 = isnull( tm.Junk		   , 0),
+				m.AddName		 = isnull( tm.AddName	   , ''),
+				m.AddDate		 =  tm.AddDate,
+				m.TPEEditName	 = isnull( tm.EditName	   , ''),
 				m.TPEEditDate	 = tm.EditDate
 	from Production.dbo.MtlCertificate m
 	inner join #tmpMtlCertificate tm on tm.ID = M.ID
@@ -654,16 +802,16 @@ drop table #TExport;
 												TPEEditName,
 												TPEEditDate
 												)
-				select	tm.ID		   ,
-						tm.Consignee  ,
-						tm.CartonNo   ,
-						tm.ExportID   ,
-						tm.Handle	   ,
-						tm.Mailed	   ,
-						tm.Junk	   ,
-						tm.AddName	   ,
+				select	isnull(tm.ID		   , ''),
+						isnull(tm.Consignee  ,   ''),
+						isnull(tm.CartonNo   ,   ''),
+						isnull(tm.ExportID   ,   ''),
+						isnull(tm.Handle	   , ''),
+						isnull(tm.Mailed	   , 0),
+						isnull(tm.Junk	   ,     0),
+						isnull(tm.AddName	   , ''),
 						tm.AddDate	   ,
-						tm.EditName   ,
+						isnull(tm.EditName   ,   ''),
 						tm.EditDate
 				from #tmpMtlCertificate tm
 				where not exists(select 1 from Production.dbo.MtlCertificate m with (nolock) where tm.ID = m.ID)
@@ -687,17 +835,17 @@ drop table #TExport;
 	from Trade_To_Pms.dbo.MtlCertificate_Detail md
 	where exists(select 1 from #tmpMtlCertificate tm where tm.ID = md.ID)
 
-	update md set	md.ID				=tmd.ID,
-					md.SuppID			=tmd.SuppID,
-					md.InvoiceNo		=tmd.InvoiceNo,
-					md.FormType			=tmd.FormType,
-					md.FormNo			=tmd.FormNo,
-					md.TPEReceiveDate	=tmd.TPEReceiveDate,
-					md.TPERemark		=tmd.Remark,
-					md.Junk				=tmd.Junk,
-					md.TPEAddName		=tmd.AddName,
-					md.TPEAddDate		=tmd.AddDate,
-					md.TPEEditName		=tmd.EditName,
+	update md set	md.ID				= isnull(tmd.ID,             ''),
+					md.SuppID			= isnull(tmd.SuppID,         ''),
+					md.InvoiceNo		= isnull(tmd.InvoiceNo,      ''),
+					md.FormType			= isnull(tmd.FormType,       ''),
+					md.FormNo			= isnull(tmd.FormNo,         ''),
+					md.TPEReceiveDate	= tmd.TPEReceiveDate, 
+					md.TPERemark		= isnull(tmd.Remark,         ''),
+					md.Junk				= isnull(tmd.Junk,           0),
+					md.TPEAddName		= isnull(tmd.AddName,        ''),
+					md.TPEAddDate		= tmd.AddDate, 
+					md.TPEEditName		= isnull(tmd.EditName,       ''),
 					md.TPEEditDate		=tmd.EditDate
 	from Production.dbo.MtlCertificate_Detail md
 	inner join #tmpMtlCertificate_Detail tmd on md.ukey = tmd.ukey
@@ -715,18 +863,18 @@ drop table #TExport;
 														TPEAddDate	   ,
 														TPEEditName	   ,
 														TPEEditDate)
-							select	tmd.Ukey		  ,
-									tmd.ID			  ,
-									tmd.SuppID		  ,
-									tmd.InvoiceNo	  ,
-									tmd.FormType	  ,
-									tmd.FormNo		  ,
+							select	isnull(tmd.Ukey		  ,     0),
+									isnull(tmd.ID			  , ''),
+									isnull(tmd.SuppID		  , ''),
+									isnull(tmd.InvoiceNo	  , ''),
+									isnull(tmd.FormType	  ,     ''),
+									isnull(tmd.FormNo		  , ''),
 									tmd.TPEReceiveDate,
-									tmd.Remark		  ,
-									tmd.Junk		  ,
-									tmd.AddName		  ,
+									isnull(tmd.Remark		  , ''),
+									isnull(tmd.Junk		  ,     0),
+									isnull(tmd.AddName		  , ''),
 									tmd.AddDate		  ,
-									tmd.EditName	  ,
+									isnull(tmd.EditName	  ,     ''),
 									tmd.EditDate
 							from #tmpMtlCertificate_Detail tmd
 							where not exists( select 1 from Production.dbo.MtlCertificate_Detail md with (nolock) where md.Ukey = tmd.Ukey)
@@ -736,12 +884,12 @@ drop table #tmpMtlCertificate,#tmpMtlCertificate_Detail
 -----------------------FormType-----------------------------
 Delete a from Production.dbo.FormType a where not exists(select 1 from Trade_To_Pms.dbo.FormType b where a.ID = b.ID)
 
-update a set	a.Name	   = b.Name			,
-				a.Remark	   = b.Remark	,
-				a.Junk	   = b.Junk			,
-				a.AddName	   = b.AddName	,
-				a.AddDate	   = b.AddDate	,
-				a.EditName   = b.EditName	,
+update a set	a.Name	   = isnull( b.Name			,''),
+				a.Remark	   = isnull( b.Remark	,''),
+				a.Junk	   = isnull( b.Junk			,0),
+				a.AddName	   = isnull( b.AddName	,''),
+				a.AddDate	   =  b.AddDate	,
+				a.EditName   = isnull( b.EditName	,''),
 				a.EditDate   = b.EditDate	
 from Production.dbo.FormType a
 inner join Trade_To_Pms.dbo.FormType b on b.ID = a.ID
@@ -755,13 +903,13 @@ insert into Production.dbo.FormType(	ID		,
 										EditName,
 										EditDate
 										)
-					select	a.ID		,
-							a.Name	,
-							a.Remark	,
-							a.Junk	,
-							a.AddName	,
+					select	isnull(a.ID		,    ''),
+							isnull(a.Name	,    ''),
+							isnull(a.Remark	,    ''),
+							isnull(a.Junk	,    0),
+							isnull(a.AddName	,''),
 							a.AddDate	,
-							a.EditName,
+							isnull(a.EditName,   ''),
 							a.EditDate
 					from Trade_To_Pms.dbo.FormType a
 					where not exists (select 1 from Production.dbo.FormType b where a.ID = b.ID)
@@ -769,7 +917,7 @@ insert into Production.dbo.FormType(	ID		,
 
 -----------------------TransferExport-----------------------------
 update a set	
-	a.OTFee = b.OTFee
+	a.OTFee = isnull(b.OTFee, 0)
 	,a.CloseDate = b.CloseDate
 	,a.LoadDate = b.LoadDate
 from Production.dbo.TransferExport a
@@ -777,19 +925,26 @@ inner join Trade_To_Pms.dbo.TransferExport b on b.ID = a.ID
 
 INSERT INTO Production.dbo.TransferExport_ShipAdvice_Container
 	(Ukey,TransferExport_Detail_Ukey,ContainerType,ContainerNo,AddName,AddDate,EditName,EditDate)
-SELECT Ukey,TransferExport_Detail_Ukey,ContainerType,ContainerNo,AddName,AddDate,EditName,EditDate
-FROM Trade_To_Pms.dbo.TransferExport_ShipAdvice_Container s
+SELECT isnull(ukey,                       0),
+       isnull(transferexport_detail_ukey, 0),
+       isnull(containertype,              ''),
+       isnull(containerno,                ''),
+       isnull(addname,                    ''),
+       adddate,
+       isnull(editname,                   ''),
+       editdate
+FROM   trade_to_pms.dbo.transferexport_shipadvice_container s 
 WHERE NOT EXISTS (SELECT 1 FROM Production.dbo.TransferExport_ShipAdvice_Container WHERE Ukey = s.Ukey)
 
 UPDATE t
 SET
-	 t.TransferExport_Detail_Ukey = s.TransferExport_Detail_Ukey
-	,t.ContainerType			 = s.ContainerType
-	,t.ContainerNo				 = s.ContainerNo
-	,t.AddName				     = s.AddName
-	,t.AddDate				     = s.AddDate
-	,t.EditName				     = s.EditName
-	,t.EditDate				     = s.EditDate
+	 t.TransferExport_Detail_Ukey = isnull(s.TransferExport_Detail_Ukey,0)
+	,t.ContainerType			  = isnull(s.ContainerType             ,'')
+	,t.ContainerNo				  = isnull(s.ContainerNo               ,'')
+	,t.AddName				      = isnull(s.AddName                   ,'')
+	,t.AddDate				      = s.AddDate
+	,t.EditName				      = isnull(s.EditName                  ,'')
+	,t.EditDate				      = s.EditDate
 FROM Production.dbo.TransferExport_ShipAdvice_Container t
 INNER JOIN Trade_To_Pms.dbo.TransferExport_ShipAdvice_Container s ON t.Ukey = s.Ukey
 

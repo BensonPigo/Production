@@ -12,7 +12,14 @@ BEGIN
 		t.AWBNo  = isnull(s.AWBNo,'') 
 	when not matched by target then 	
 		insert(  [Export_DetailUkey],  TPEInspectionReport,  TPETestReport, TPEContinuityCard,		   AWBNo )
-		values(s.[Export_DetailUkey],s.[InspectionReport] ,s.[TestReport] ,s.[ContinuityCard],isnull(s.AWBNo,'') );
+       VALUES
+       (
+              isnull(s.[Export_DetailUkey],0),
+              s.[InspectionReport] ,
+              s.[TestReport] ,
+              s.[ContinuityCard],
+              isnull(s.awbno,'')
+       );
 
 
 	Merge Production.dbo.FirstDyelot  as t
@@ -23,7 +30,16 @@ BEGIN
 		t.Period  =s.Period 
 	when not matched by target then 	
 		insert(TestDocFactoryGroup,  [Refno],  [SuppID],  [ColorID],  TPEFirstDyelot ,SeasonSCIID,    Period )
-		values(s.TestDocFactoryGroup,s.[Refno],s.[SuppID],s.[ColorID],s.[FirstDyelot],s.SeasonSCIID,s.Period );
+       VALUES
+       (
+              isnull(s.testdocfactorygroup, ''),
+              isnull(s.[Refno],             ''),
+              isnull(s.[SuppID],            ''),
+              isnull(s.[ColorID],           ''),
+              s.[FirstDyelot],
+              isnull(s.seasonsciid,         ''),
+              isnull(s.period,              0)
+       );
 END
 
 
