@@ -155,6 +155,7 @@
             this.gridStock.Size = new System.Drawing.Size(529, 456);
             this.gridStock.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridStock.TabIndex = 0;
+            this.gridStock.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.GridStock_ColumnHeaderMouseClick);
             // 
             // btnQuery
             // 

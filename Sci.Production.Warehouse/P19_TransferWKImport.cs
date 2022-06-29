@@ -339,5 +339,11 @@ drop table #tmpTransferExport
         {
             this.Close();
         }
+
+        private void GridStock_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            this.gridStock.ValidateControl();
+            this.UpdateExportQty();
+        }
     }
 }
