@@ -78,6 +78,7 @@ select  r.POID,
                 .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("refno", header: "Refno", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Numeric("StickerQty", header: "Sticker Qty", width: Widths.AnsiChars(4))
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 ;
         }
 
@@ -137,6 +138,14 @@ select  r.POID,
             frm.MdiParent = this.MdiParent;
             frm.Show();
             return;
+        }
+
+        private void BtnCleanStickerQty_Click(object sender, EventArgs e)
+        {
+            foreach (DataRow row in ((DataTable)this.gridSticker.DataSource).Rows)
+            {
+                row["StickerQty"] = 0;
+            }
         }
     }
 }
