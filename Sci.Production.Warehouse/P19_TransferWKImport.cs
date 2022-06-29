@@ -270,6 +270,9 @@ drop table #tmpTransferExport
             {
                 curExportRow["ExportQty"] = 0;
             }
+
+            DataTable dtexp = (DataTable)this.gridExport.DataSource;
+            this.displayTotal.Text = MyUtility.Convert.GetString(dtexp.AsEnumerable().Sum(s => (decimal)s["ExportQty"]));
         }
 
         private void BtnImport_Click(object sender, EventArgs e)

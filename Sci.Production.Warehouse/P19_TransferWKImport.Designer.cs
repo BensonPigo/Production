@@ -40,6 +40,8 @@
             this.btnImport = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.bindingGridStock = new Sci.Win.UI.BindingSource(this.components);
+            this.label3 = new Sci.Win.UI.Label();
+            this.displayTotal = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitGrid)).BeginInit();
             this.splitGrid.Panel1.SuspendLayout();
             this.splitGrid.Panel2.SuspendLayout();
@@ -187,11 +189,30 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(264, 510);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(108, 23);
+            this.label3.TabIndex = 8;
+            this.label3.Text = "Total Export Qty ";
+            // 
+            // displayTotal
+            // 
+            this.displayTotal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTotal.Location = new System.Drawing.Point(375, 510);
+            this.displayTotal.Name = "displayTotal";
+            this.displayTotal.Size = new System.Drawing.Size(103, 23);
+            this.displayTotal.TabIndex = 9;
+            // 
             // P19_TransferWKImport
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1065, 546);
+            this.Controls.Add(this.displayTotal);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.btnQuery);
@@ -228,5 +249,7 @@
         private Win.UI.Grid gridExport;
         private Win.UI.Grid gridStock;
         private Win.UI.BindingSource bindingGridStock;
+        private Win.UI.Label label3;
+        private Win.UI.DisplayBox displayTotal;
     }
 }
