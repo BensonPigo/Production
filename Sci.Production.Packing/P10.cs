@@ -226,6 +226,12 @@ where   pd.ID = '{0}'
         and pd.CTNStartNo = '{1}' 
         and pd.CTNQty > 0 
         and pd.DisposeFromClog= 0
+        and ((
+			[ReturnDate] is null and 
+			[TransferDate] is null and 
+			[PackErrTransferDate] is null and
+			([DRYReceiveDate] is null or([DRYReceiveDate] is not null and [DRYTransferDate] is not null))
+		) or [ReturnDate] is not null)
 ",
                                         dr["PackingListID"].ToString(),
                                         dr["CTNStartNo"].ToString());
@@ -299,6 +305,12 @@ inner join PackingList p WITH (NOLOCK) on pd.id = p.id
 where   pd.CustCTN= '{dr["CustCTN"]}' 
         and pd.CTNQty > 0 
         and pd.DisposeFromClog= 0
+        and ((
+			[ReturnDate] is null and 
+			[TransferDate] is null and 
+			[PackErrTransferDate] is null and
+			([DRYReceiveDate] is null or([DRYReceiveDate] is not null and [DRYTransferDate] is not null))
+		) or [ReturnDate] is not null)
 ";
 
                                         if (MyUtility.Check.Seek(sqlCmd, out seekData))
@@ -385,6 +397,12 @@ inner join PackingList p WITH (NOLOCK) on pd.id = p.id
 where   pd.CustCTN= '{dr["CustCTN"]}' 
         and pd.CTNQty > 0 
         and pd.DisposeFromClog= 0
+        and ((
+			[ReturnDate] is null and 
+			[TransferDate] is null and 
+			[PackErrTransferDate] is null and
+			([DRYReceiveDate] is null or([DRYReceiveDate] is not null and [DRYTransferDate] is not null))
+		) or [ReturnDate] is not null)
 ";
 
                                     if (MyUtility.Check.Seek(sqlCmd, out seekData))

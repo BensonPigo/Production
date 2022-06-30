@@ -644,6 +644,17 @@ where	pd.CTNStartNo <> ''
 		and p.Type in ('B','L') 
         and pd.CTNQty = 1
         and pd.DisposeFromClog= 0
+        and (
+		        [PackErrTransferDate] is null and 
+		        [TransferDate] is null and 
+		        (	
+		        [DRYReceiveDate] is null or 
+		        (
+                        [DRYReceiveDate] is not null and 
+		            [DRYTransferDate] is not null
+                    )
+		        )
+	        )
         {keyWhere}
 ";
             bool result = MyUtility.Check.Seek(checkPackSql, listPar, out drPackResult);
