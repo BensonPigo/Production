@@ -37,7 +37,7 @@
             // btnPrint
             // 
             this.btnPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPrint.Location = new System.Drawing.Point(492, 575);
+            this.btnPrint.Location = new System.Drawing.Point(543, 575);
             this.btnPrint.Name = "btnPrint";
             this.btnPrint.Size = new System.Drawing.Size(80, 30);
             this.btnPrint.TabIndex = 1;
@@ -67,14 +67,14 @@
             this.gridSticker.RowTemplate.Height = 24;
             this.gridSticker.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridSticker.ShowCellToolTips = false;
-            this.gridSticker.Size = new System.Drawing.Size(560, 557);
+            this.gridSticker.Size = new System.Drawing.Size(611, 557);
             this.gridSticker.TabIndex = 2;
             this.gridSticker.TabStop = false;
             // 
             // btnCleanStickerQty
             // 
             this.btnCleanStickerQty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCleanStickerQty.Location = new System.Drawing.Point(347, 575);
+            this.btnCleanStickerQty.Location = new System.Drawing.Point(398, 575);
             this.btnCleanStickerQty.Name = "btnCleanStickerQty";
             this.btnCleanStickerQty.Size = new System.Drawing.Size(139, 30);
             this.btnCleanStickerQty.TabIndex = 3;
@@ -84,7 +84,7 @@
             // 
             // P07_PrintAccessorySticker
             // 
-            this.ClientSize = new System.Drawing.Size(584, 611);
+            this.ClientSize = new System.Drawing.Size(635, 611);
             this.Controls.Add(this.btnCleanStickerQty);
             this.Controls.Add(this.gridSticker);
             this.Controls.Add(this.btnPrint);
