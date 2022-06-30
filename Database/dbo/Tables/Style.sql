@@ -77,6 +77,7 @@
     [ThreadVersion] VARCHAR(5) NULL, 
     [DevRegion] VARCHAR(2) NULL DEFAULT (''), 
     [DevOption] BIT NULL DEFAULT ((0)), 
+    Teamwear bit not null CONSTRAINT [DF_Style_Teamwear] default 0,
     CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC, [SeasonID] ASC)
 );
 GO
