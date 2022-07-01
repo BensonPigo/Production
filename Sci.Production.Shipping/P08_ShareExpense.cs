@@ -1827,7 +1827,7 @@ outer apply(select distinct [val] = sd.AccountID
                 and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
 		            or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
 inner join GMTBooking_Detail gd with (nolock) on g.ID = gd.ID
-where g.ID = '{dr["InvNo"]}'
+where g.ID = '{dr["InvNo"]}' and AccountID.val is not null
 ";
                 DataTable dtA2BGMT;
 
@@ -1918,7 +1918,7 @@ inner join PackingList p with (nolock) on p.INVNo = g.ID
 inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty = 1
 inner join Orders o with (nolock) on o.ID = pd.OrderID
 inner join LocalItem l with (nolock) on l.Refno = pd.Refno
-where g.ID = '{dr["InvNo"]}'
+where g.ID = '{dr["InvNo"]}'  and AccountID.val is not null
 group by g.BLNo, g.BL2No, g.id, g.ShipModeID, AccountID.val, o.FactoryID
 ";
                 DataTable dtLocalGMT;
