@@ -666,7 +666,8 @@ a.Seq	= b.Seq
 --,a.Article	= b.Article
 ,a.TissuePaper	= b.TissuePaper
 ,a.ArticleName	= b.ArticleName
-,a.Contents	= b.Contents
+,a.Contents		= b.Contents
+,a.BuyReadyDate = b.BuyReadyDate
 from Production.dbo.Style_Article as a 
 inner join Trade_To_Pms.dbo.Style_Article as b ON a.StyleUkey	= b.StyleUkey AND a.Article	= b.Article
 -------------------------- INSERT INTO 抓
@@ -681,6 +682,7 @@ StyleUkey
 ,SourceFile
 ,Description
 ,FDUploadDate
+,BuyReadyDate
 )
 select 
  b.StyleUkey
@@ -692,6 +694,7 @@ select
 ,b.SourceFile
 ,b.Description
 ,b.FDUploadDate
+,b.BuyReadyDate
 from Trade_To_Pms.dbo.Style_Article as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_Article as a WITH (NOLOCK) where a.StyleUkey	= b.StyleUkey AND a.Article	= b.Article)
 
