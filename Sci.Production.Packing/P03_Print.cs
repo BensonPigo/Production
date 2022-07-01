@@ -503,7 +503,7 @@ select * from(
 	INNER JOIN LocalItem li ON li.RefNo=pd.RefNo
 	INNER JOIN PackingList p ON p.ID=pd.ID
     outer apply (
-	    select SizeCode=stuff((select ('/'+isnull(x.SizeSpec,z.SizeSpec)) 
+	    select SizeCode=stuff((select ('/'+isnull(z.SizeSpec, x.SizeSpec)) 
 	    from PackingList_Detail pd2 
 	    outer apply(select SizeSpec from Order_SizeSpec os where os.SizeCode = pd2.SizeCode and os.id = o.poid and os.SizeItem = 'S01')x
 		outer apply(select SizeSpec from Order_SizeSpec_OrderCombo oso where oso.SizeCode = pd2.SizeCode and oso.id = o.poid and oso.OrderComboID = o.OrderComboID and SizeItem = 'S01')z
