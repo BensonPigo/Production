@@ -2811,7 +2811,8 @@ WHERE sewqty < (packqty + adjQty)",
 SELECT CONCAT(p1.EMail,';')  
 FROM Factory f  
 INNER JOIN Pass1 p1 ON p1.id = f.Manager  
-WHERE  f.ID = '{this.CurrentMaintain["FactoryID"]}' AND p1.EMail <>''
+WHERE   f.ID = '{this.CurrentMaintain["FactoryID"]}' AND p1.EMail <>'' and
+        (p1.Resign is null or p1.Resign > getdate())
 
 UNION ALL
 
@@ -2823,7 +2824,8 @@ WHERE p1.Factory LIKE ('%{this.CurrentMaintain["FactoryID"]}%') AND p1.ID <> 'SC
 AND p0.PKey IN ( 
 				SELECT FKPass0 
 				FROM Pass2 WHERE MenuName = 'Sewing' AND BarPrompt='P01. Sewing daily output' 
-				AND CanRecall = 1)  
+				AND CanRecall = 1) and
+        (p1.Resign is null or p1.Resign > getdate())
 FOR XML PATH('')
 
 ");
