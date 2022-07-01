@@ -1244,7 +1244,7 @@ BEGIN
 						,@login
 						,@editdate
 						,@LnCurveTemplateID
-						,CONVERT(numeric(5,2),isnull(@OriEff*100,100))
+						,iif(@OriEff >= 10, 999.99, CONVERT(numeric(5,2),isnull(@OriEff*100,100)))
 						,CONVERT(numeric(5,2),isnull(@SewLineEff*100,100))
 						,@LNCSERIALNumber
 						,isnull(@SwitchTime,0)
@@ -1412,7 +1412,7 @@ BEGIN
 									, EditName = @login
 									, EditDate = @editdate
 									, LearnCurveID = @LnCurveTemplateID
-									, OriEff = CONVERT(numeric(5,2),isnull( @OriEff*100,100))
+									, OriEff = iif(@OriEff >= 10, 999.99, CONVERT(numeric(5,2),isnull(@OriEff*100,100)))
 									, SewLineEff = CONVERT(numeric(5,2),isnull( @SewLineEff*100,100))
 									, LNCSERIALNumber = @LNCSERIALNumber
 									, SwitchTime = isnull(@SwitchTime,0)
