@@ -155,6 +155,9 @@
     <Build Include="dbo\Tables\T_LoadingvsCapacity_buyer.sql" />
     <Build Include="dbo\Tables\P_StyleInfo.sql" />
     <Build Include="dbo\Tables\T_ADIDASComplain_24Month.sql" />
+    <Build Include="dbo\Tables\P_Capacity.sql" />
+    <Build Include="dbo\Tables\T_Capacity.sql" />
+    <Build Include="dbo\Tables\T_SDP.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
