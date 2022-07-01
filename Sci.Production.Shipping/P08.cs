@@ -924,7 +924,7 @@ outer apply(select top 1 [val] = sd.AccountID
                 and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
 		            or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
 inner join GMTBooking_Detail gd with (nolock) on g.ID = gd.ID
-where g.BLNo='{drCurrentMaintain["BLNO"]}' or g.BL2No='{drCurrentMaintain["BLNO"]}' 
+where (g.BLNo='{drCurrentMaintain["BLNO"]}' or g.BL2No='{drCurrentMaintain["BLNO"]}') and AccountID.val is not null
 ";
                     DataTable dtA2BResult = new DataTable();
                     DataTable dtA2BGMT;
@@ -1053,7 +1053,7 @@ inner join PackingList p with (nolock) on p.INVNo = g.ID
 inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty = 1
 inner join Orders o with (nolock) on o.ID = pd.OrderID
 inner join LocalItem l with (nolock) on l.Refno = pd.Refno
-where g.BLNo='{drCurrentMaintain["BLNO"]}' or g.BL2No='{drCurrentMaintain["BLNO"]}' 
+where (g.BLNo='{drCurrentMaintain["BLNO"]}' or g.BL2No='{drCurrentMaintain["BLNO"]}')  and AccountID.val is not null
 group by g.BLNo, g.BL2No, g.id, g.ShipModeID, AccountID.val, o.FactoryID
 {sqlUnionA2B}
 ) a group by ShippingAPID
@@ -1157,7 +1157,7 @@ using (
                 ,[FactoryID] = ''
         from GMTBooking g WITH (NOLOCK) 
         where BLNo='{drCurrentMaintain["BLNO"]}' or BL2No='{drCurrentMaintain["BLNO"]}'
-    ) a
+    ) a where AccountID is not null
 ) as s 
 on	t.ShippingAPID = s.ShippingAPID 
 	and t.WKNO = s.WKNO	and t.InvNo = s.InvNo and t.FactoryID = s.FactoryID
