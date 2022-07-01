@@ -659,12 +659,13 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_WashLab,#tmp_Air,#tmp_Air_Lab
             StringBuilder sqlcmd = new StringBuilder();
             foreach (DataRow item in find)
             {
-                sqlcmd.Append(string.Format(@"update dbo.ftyinventory set lock={1},lockname='{2}',lockdate=GETDATE(),Remark='{3}' where ukey ={0};", item["ukey"], flag, Env.User.UserID, item["Remark"]));
+                sqlcmd.Append(string.Format(@"update dbo.ftyinventory set lock={1},lockname='{2}',lockdate=GETDATE(),Remark='{3}' where ukey ={0};", MyUtility.Convert.GetLong(item["ukey"]), flag, Env.User.UserID, item["Remark"]));
             }
 
-            if (!DBProxy.Current.Execute(null, sqlcmd.ToString()))
+            DualResult result = DBProxy.Current.Execute(null, sqlcmd.ToString());
+            if (!result)
             {
-                MyUtility.Msg.WarningBox($"{keyword} failed, Pleaes re-try");
+                this.ShowErr(result);
                 return;
             }
             else
