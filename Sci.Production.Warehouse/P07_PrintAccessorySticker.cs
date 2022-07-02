@@ -45,7 +45,8 @@ select  r.POID,
         s.SizeSpec,
         [Packages] = @Packages,
         r.Remark,
-        [StickerQty] = 0
+        [StickerQty] = 0,
+        rec.WhseArrival
  from dbo.Receiving_Detail r WITH (NOLOCK) 
  left join dbo.PO_Supp_Detail s WITH (NOLOCK) on s.id=r.POID and s.SEQ1=r.Seq1 and s.SEQ2=r.seq2
  left join Fabric f WITH (NOLOCK) ON s.SCIRefNo=f.SCIRefNo
@@ -78,6 +79,7 @@ select  r.POID,
                 .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("refno", header: "Refno", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Numeric("StickerQty", header: "Sticker Qty", width: Widths.AnsiChars(4))
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 ;
         }
 
@@ -112,6 +114,7 @@ select  r.POID,
                             SizeSpec = drPrintSticker["SizeSpec"].ToString(),
                             Packages = drPrintSticker["Packages"].ToString(),
                             Remark = drPrintSticker["Remark"].ToString(),
+                            ArriveWHDate = MyUtility.Check.Empty(drPrintSticker["WhseArrival"]) ? string.Empty : ((DateTime)drPrintSticker["WhseArrival"]).ToString("yyyy/MM/dd"),
                         });
                 }
             }
@@ -124,7 +127,6 @@ select  r.POID,
             IReportResource reportresource;
             if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
             {
-                // this.ShowException(result);
                 return;
             }
 
@@ -137,6 +139,14 @@ select  r.POID,
             frm.MdiParent = this.MdiParent;
             frm.Show();
             return;
+        }
+
+        private void BtnCleanStickerQty_Click(object sender, EventArgs e)
+        {
+            foreach (DataRow row in ((DataTable)this.gridSticker.DataSource).Rows)
+            {
+                row["StickerQty"] = 0;
+            }
         }
     }
 }
