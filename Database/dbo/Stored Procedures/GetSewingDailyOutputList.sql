@@ -205,7 +205,7 @@ select distinct OutputDate, MockupStyle, OrderStyle, SewingLineID, FactoryID
 from #tmpSewingGroup) a
 group by MockupStyle, OrderStyle, SewingLineID, FactoryID
 
-select t.FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, s.OutputDate
+select distinct t.FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, s.OutputDate
 into #tmpSewingOutput
 from #tmpOutputDate t
 inner join SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID and s.FactoryID = t.FactoryID and s.OutputDate between dateadd(day,-180, t.MinOutputDate) and t.MaxOutputDate
@@ -244,12 +244,12 @@ outer apply (	select val = IIF(Count(1)=0, 1, Count(1))
 										from #tmpWorkHour w 
 										left join #tmpSewingOutput s1 on s1.OutputDate = w.Date and
 																		 s1.FactoryID = w.FactoryID and
-																		 s1.MockupStyle = w.MockupStyle and
-																		 s1.OrderStyle = w.OrderStyle and
+																		 s1.MockupStyle = t.MockupStyle and
+																		 s1.OrderStyle = t.OrderStyle and
 																		 s1.SewingLineID = w.SewingLineID
 										where	w.FactoryID = t.FactoryID and
-												w.MockupStyle = t.MockupStyle and
-												w.OrderStyle = t.OrderStyle and
+												isnull(w.MockupStyle, t.MockupStyle) = t.MockupStyle and
+												isnull(w.OrderStyle, t.OrderStyle) = t.OrderStyle and
 												w.SewingLineID = t.SewingLineID and
 												w.Date <= t.OutputDate and
 												s1.OutputDate is null
