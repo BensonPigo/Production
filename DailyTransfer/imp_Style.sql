@@ -138,6 +138,7 @@ a.Ukey	= b.Ukey
 ,a.ThreadVersion = b.ThreadVersion
 ,a.DevRegion = b.DevRegion
 ,a.DevOption = b.DevOption
+,a.Teamwear = b.Teamwear
 from Production.dbo.Style as a 
 inner join Trade_To_Pms.dbo.Style as b ON a.ID	= b.ID AND a.BrandID	= b.BrandID AND a.SeasonID	= b.SeasonID
 
@@ -224,6 +225,7 @@ ID
 ,ThreadVersion
 ,DevRegion
 ,DevOption
+,Teamwear
 )
 output	inserted.ID,
 		inserted.SeasonID,
@@ -298,6 +300,7 @@ select
 ,b.ThreadVersion
 ,b.DevRegion
 ,b.DevOption
+,b.Teamwear
 from Trade_To_Pms.dbo.Style as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.ID=b.ID and a.BrandID=b.BrandID and a.SeasonID=b.SeasonID and a.LocalStyle=1)
 AND not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.Ukey=b.Ukey )
@@ -663,7 +666,8 @@ a.Seq	= b.Seq
 --,a.Article	= b.Article
 ,a.TissuePaper	= b.TissuePaper
 ,a.ArticleName	= b.ArticleName
-,a.Contents	= b.Contents
+,a.Contents		= b.Contents
+,a.BuyReadyDate = b.BuyReadyDate
 from Production.dbo.Style_Article as a 
 inner join Trade_To_Pms.dbo.Style_Article as b ON a.StyleUkey	= b.StyleUkey AND a.Article	= b.Article
 -------------------------- INSERT INTO 抓
@@ -678,6 +682,7 @@ StyleUkey
 ,SourceFile
 ,Description
 ,FDUploadDate
+,BuyReadyDate
 )
 select 
  b.StyleUkey
@@ -689,6 +694,7 @@ select
 ,b.SourceFile
 ,b.Description
 ,b.FDUploadDate
+,b.BuyReadyDate
 from Trade_To_Pms.dbo.Style_Article as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_Article as a WITH (NOLOCK) where a.StyleUkey	= b.StyleUkey AND a.Article	= b.Article)
 

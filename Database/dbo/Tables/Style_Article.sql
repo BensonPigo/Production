@@ -9,6 +9,7 @@
     [SourceFile] NVARCHAR(266) NOT NULL DEFAULT (''), 
     [Description] NVARCHAR(60) NOT NULL DEFAULT (''), 
     [FDUploadDate] DATETIME NULL, 
+    [BuyReadyDate] DATE NULL, 
     CONSTRAINT [PK_Style_Article] PRIMARY KEY CLUSTERED ([StyleUkey] ASC, [Article] ASC)
 );
 

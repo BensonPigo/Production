@@ -270,6 +270,9 @@ drop table #tmpTransferExport
             {
                 curExportRow["ExportQty"] = 0;
             }
+
+            DataTable dtexp = (DataTable)this.gridExport.DataSource;
+            this.displayTotal.Text = MyUtility.Convert.GetString(dtexp.AsEnumerable().Sum(s => (decimal)s["ExportQty"]));
         }
 
         private void BtnImport_Click(object sender, EventArgs e)
@@ -335,6 +338,12 @@ drop table #tmpTransferExport
         private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void GridStock_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            this.gridStock.ValidateControl();
+            this.UpdateExportQty();
         }
     }
 }

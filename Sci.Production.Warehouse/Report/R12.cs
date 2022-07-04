@@ -98,7 +98,7 @@ select
 	, psd.RefNo
 	, psd.ColorID
 	, psd.SizeSpec
-	,MaterialType = IIF(il.FabricType = 'F', 'Fabric', 'Accessory')
+	,MaterialType = Concat (iif(psd.FabricType='F','Fabric',iif(psd.FabricType='A','Accessory',iif(psd.FabricType='O','Orher',psd.FabricType))), '-', Fabric.MtlTypeID)
 	,IssueQty = ild.Qty
 	,BulkLocation = dbo.Getlocation(f.Ukey)
 from IssueLack il with (nolock)
@@ -107,6 +107,7 @@ inner join Orders o with (nolock) on o.ID = ild.poid
 left join PO_Supp_Detail psd with (nolock) on psd.ID = ild.POID and psd.SEQ1 = ild.Seq1 and psd.SEQ2 = ild.Seq2 
 left join FtyInventory f with (nolock) on f.POID = ild.POID and f.SEQ1 = ild.Seq1 and f.SEQ2 = ild.Seq2  and f.Roll = ild.Roll and f.Dyelot = ild.Dyelot
 left join Lack l with (nolock) on l.ID = il.RequestID
+left join Fabric  with (nolock) on Fabric.SCIRefno = psd.SCIRefno
 where il.Status <> 'New'
 {sqlWhere}
 order by il.IssueDate,il.Id,ild.POID,ild.Seq1,ild.Seq2,ild.Roll,ild.Dyelot

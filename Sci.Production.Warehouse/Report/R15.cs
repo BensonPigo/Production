@@ -109,20 +109,19 @@ select
         ,b.Roll
         ,b.Dyelot
         ,Description = dbo.getMtlDesc(b.POID, b.Seq1, b.Seq2, 2, 0)
-        ,c.StockUnit
-        ,c.Refno
-        ,c.ColorID
-        ,c.SizeSpec
-        ,MaterialType= iif(c.FabricType='F', 'Fabric'
-                                                  , iif(c.FabricType='A','Accessory'
-                                                                        ,c.fabrictype)) 
+        ,psd.StockUnit
+        ,psd.Refno
+        ,psd.ColorID
+        ,psd.SizeSpec
+        ,MaterialType = Concat (iif(psd.FabricType='F','Fabric',iif(psd.FabricType='A','Accessory',iif(psd.FabricType='O','Orher',psd.FabricType))), '-', Fabric.MtlTypeID)
         ,IssueQty = b.Qty
         ,BulkLocation = dbo.Getlocation(f.Ukey)
 from issue as a WITH (NOLOCK) 
 inner join issue_detail b WITH (NOLOCK) on a.id = b.id
 inner join Orders orders on b.POID = orders.id
-left join po_supp_detail c WITH (NOLOCK) on c.id = b.poid and c.seq1 = b.seq1 and c.seq2 =b.seq2
+left join po_supp_detail psd WITH (NOLOCK) on psd.id = b.poid and psd.seq1 = b.seq1 and psd.seq2 =b.seq2
 left join FtyInventory f with (nolock) on f.POID = b.POID and f.SEQ1 = b.Seq1 and f.SEQ2 = b.Seq2  and f.Roll = b.Roll and f.Dyelot = b.Dyelot
+left join Fabric  with (nolock) on Fabric.SCIRefno = psd.SCIRefno
 where a.type = 'D' AND a.Status = 'Confirmed' 
 ");
 
