@@ -2723,6 +2723,7 @@
     <Build Include="dbo\Stored Procedures\imp_BundleInfo.sql" />
     <Build Include="dbo\Tables\Style_SpecialMark.sql" />
     <Build Include="dbo\Tables\AutomationDisplay.sql" />
+    <Build Include="dbo\Functions\GETRelaxationStatus.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

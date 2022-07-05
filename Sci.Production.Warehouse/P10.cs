@@ -819,6 +819,23 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             string sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
             #endregion
 
+            #region 是否攤布表身 Ukey
+            string sqlisNeedUnroll = $@"
+    select sd.ukey
+    from Issue_Detail sd with(nolock)
+    inner join PO_Supp_Detail psd with(nolock) on psd.id= sd.poid and psd.SEQ1 = sd.Seq1 and psd.seq2 = sd.Seq2
+    inner join [SciMES_RefnoRelaxtime] rr with(nolock) on rr.Refno = psd.Refno
+    inner join [SciMES_FabricRelaxation] fr with(nolock) on fr.ID = rr.FabricRelaxationID and fr.Junk = 0
+    where sd.id = '{this.CurrentMaintain["ID"]}'
+    and fr.NeedUnroll = 1  -- 攤布
+";
+            if (!(result = DBProxy.Current.Select(null, sqlisNeedUnroll, out DataTable dtNeedUnroll)))
+            {
+                this.ShowErr(result);
+                return;
+            }
+            #endregion
+
             Exception errMsg = null;
             using (TransactionScope transactionscope = new TransactionScope())
             {
@@ -849,6 +866,26 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                     if (!(result = DBProxy.Current.Execute(null, $"update Issue set status = 'Confirmed', editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
                     {
                         throw result.GetException();
+                    }
+
+                    if (dtNeedUnroll.Rows.Count > 0)
+                    {
+                        string dtUkey = dtNeedUnroll.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["Ukey"])).ToList().JoinToString(",");
+                        string sqlUnroll = $@"
+update Issue_Detail set UnrollStatus = 'Ongoing' where Ukey in ({dtUkey})
+update Issue set IncludeUnrollRelaxationRoll = 1 where id = '{this.CurrentMaintain["ID"]}'
+";
+                        if (!(result = DBProxy.Current.Execute(null, sqlUnroll)))
+                        {
+                            throw result.GetException();
+                        }
+                    }
+                    else
+                    {
+                        if (!(result = DBProxy.Current.Execute(null, $"update Issue set IncludeUnrollRelaxationRoll = 0 where id = '{this.CurrentMaintain["id"]}'")))
+                        {
+                            throw result.GetException();
+                        }
                     }
 
                     transactionscope.Complete();
