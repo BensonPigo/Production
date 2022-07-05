@@ -194,7 +194,7 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
 	OUTER APPLY(
 		SELECT [Val]=STUFF((
 		    SELECT  DISTINCT ','+ Cast(CFAFinalInspectDate as varchar)
-		    from Order_QtyShip oq
+		    from Order_QtyShip oq WITH (NOLOCK)
 		    WHERE ID = o.id
 		    FOR XML PATH('')
 		),1,1,'')
@@ -202,7 +202,7 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
 	OUTER APPLY(
 		SELECT [Val]=STUFF((
 		    SELECT  DISTINCT ','+ CFAFinalInspectResult
-		    from Order_QtyShip oq
+		    from Order_QtyShip oq WITH (NOLOCK)
 		    WHERE ID = o.id AND CFAFinalInspectResult <> '' AND CFAFinalInspectResult IS NOT NULL
 		    FOR XML PATH('')
 		),1,1,'')
@@ -210,7 +210,7 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
 	OUTER APPLY(
 		SELECT [Val]=STUFF((
 		SELECT  DISTINCT ','+ CFAFinalInspectHandle +'-'+ p.Name
-		    from Order_QtyShip oq
+		    from Order_QtyShip oq WITH (NOLOCK)
 			LEFT JOIN Pass1 p WITH (NOLOCK) ON oq.CFAFinalInspectHandle = p.ID 
 		    WHERE oq.ID = o.id AND CFAFinalInspectHandle <> '' AND CFAFinalInspectHandle IS NOT NULL
 		    FOR XML PATH('')
@@ -245,7 +245,7 @@ with tmpOrders as (
             , o.SeasonID
             , o.BrandID
             , o.ProjectID
-            , Kit=(SELECT top 1 c.Kit From CustCD c where c.ID=o.CustCDID AND c.BrandID=o.BrandID)
+            , Kit=(SELECT top 1 c.Kit From CustCD c WITH (NOLOCK) where c.ID=o.CustCDID AND c.BrandID=o.BrandID)
 			,[PackingMethod]=d.Name 
             , o.HangerPack
             , o.Customize1
@@ -334,7 +334,7 @@ with tmpOrders as (
             , o.GFR 
 			, isForecast = iif(isnull(o.Category,'')='','1','')
             , [AirFreightByBrand] = IIF(o.AirFreightByBrand='1','Y','')
-            , [BuyBack] = iif(exists (select 1 from Order_BuyBack where ID = o.ID), 'Y', '')
+            , [BuyBack] = iif(exists (select 1 from Order_BuyBack WITH (NOLOCK) where ID = o.ID), 'Y', '')
             , [Cancelled] = case when o.junk = 1 then 
                                  case when o.NeedProduction = 1 then 'Y' 
                                       when o.KeepPanels = 1 then 'K'
@@ -386,12 +386,12 @@ with tmpOrders as (
 		    (
 			    select f.ProductionType
 				    , psd.Complete
-			    from PO_Supp_Detail psd
-			    inner join PO_Supp_Detail_OrderList psdo on psd.ID = psdo.ID and psd.SEQ1 = psdo.SEQ1 and psd.SEQ2 = psdo.SEQ2
+			    from PO_Supp_Detail psd WITH (NOLOCK)
+			    inner join PO_Supp_Detail_OrderList psdo WITH (NOLOCK) on psd.ID = psdo.ID and psd.SEQ1 = psdo.SEQ1 and psd.SEQ2 = psdo.SEQ2
 			    outer apply (
 				    select [ProductionType] = iif(m.ProductionType = 'Packing', 'Packing', 'Sewing')
-				    from Fabric f
-				    left join MtlType m on f.MtlTypeID = m.ID
+				    from Fabric f WITH (NOLOCK)
+				    left join MtlType m WITH (NOLOCK) on f.MtlTypeID = m.ID
 				    where f.SCIRefno = psd.SCIRefno
 			    )f  
 			    where psdo.OrderID	= o.ID
@@ -637,7 +637,7 @@ tmpFilterZone as (
             , o.SeasonID
             , o.BrandID
             , o.ProjectID
-            , Kit=(SELECT top 1 c.Kit From CustCD c where c.ID=o.CustCDID AND c.BrandID=o.BrandID)
+            , Kit=(SELECT top 1 c.Kit From CustCD c WITH (NOLOCK) where c.ID=o.CustCDID AND c.BrandID=o.BrandID)
 			,[PackingMethod] = d.Name
             , o.HangerPack
             , o.Customize1
@@ -726,7 +726,7 @@ tmpFilterZone as (
             , o.GFR 
 			, isForecast = iif(isnull(o.Category,'')='','1','') 
             , [AirFreightByBrand] = IIF(o.AirFreightByBrand='1','Y','')
-            , [BuyBack] = iif(exists (select 1 from Order_BuyBack where ID = o.ID), 'Y', '')
+            , [BuyBack] = iif(exists (select 1 from Order_BuyBack WITH (NOLOCK) where ID = o.ID), 'Y', '')
             , [Cancelled] = case when o.junk = 1 then 
                                  case when o.NeedProduction = 1 then 'Y' 
                                       when o.KeepPanels = 1 then 'K'
@@ -749,7 +749,7 @@ tmpFilterZone as (
             + seperCmd +
     @"from Orders o  WITH (NOLOCK) 
     left join style s WITH (NOLOCK) on o.styleukey = s.ukey
-	left join DropDownList d ON o.CtnType=d.ID AND d.Type='PackingMethod'
+	left join DropDownList d WITH (NOLOCK) ON o.CtnType=d.ID AND d.Type='PackingMethod'
 	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
 	left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
 	left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
@@ -766,12 +766,12 @@ tmpFilterZone as (
 		        (
 			        select f.ProductionType
 				        , psd.Complete
-			        from PO_Supp_Detail psd
-			        inner join PO_Supp_Detail_OrderList psdo on psd.ID = psdo.ID and psd.SEQ1 = psdo.SEQ1 and psd.SEQ2 = psdo.SEQ2
+			        from PO_Supp_Detail psd WITH (NOLOCK)
+			        inner join PO_Supp_Detail_OrderList psdo WITH (NOLOCK) on psd.ID = psdo.ID and psd.SEQ1 = psdo.SEQ1 and psd.SEQ2 = psdo.SEQ2
 			        outer apply (
 				        select [ProductionType] = iif(m.ProductionType = 'Packing', 'Packing', 'Sewing')
-				        from Fabric f
-				        left join MtlType m on f.MtlTypeID = m.ID
+				        from Fabric f WITH (NOLOCK)
+				        left join MtlType m WITH (NOLOCK) on f.MtlTypeID = m.ID
 				        where f.SCIRefno = psd.SCIRefno
 			        )f  
 			        where psdo.OrderID	= o.ID
@@ -824,7 +824,7 @@ select pd.OrderID, pd.OrderShipmodeSeq, Sum( pd.CTNQty) PackingCTN ,
 	MAX(p.PulloutDate)  ActPulloutDate
 into #tmp_PLDetial
 from PackingList_Detail pd WITH (NOLOCK) 
-LEFT JOIN PackingList p on pd.ID = p.ID 
+LEFT JOIN PackingList p WITH (NOLOCK) on pd.ID = p.ID 
 inner join (select distinct id, seq from #tmpListPoCombo) t on pd.OrderID = t.ID  and pd.OrderShipmodeSeq = t.Seq
 group by pd.OrderID, pd.OrderShipmodeSeq 
 
@@ -999,16 +999,16 @@ group by POID
 
 select pd.OrderID, pd.OrderShipmodeSeq, sum(pd.ShipQty) PulloutQty
 into #tmp_PulloutQty
-from PackingList_Detail pd
+from PackingList_Detail pd WITH (NOLOCK)
 inner join #tmpFilterSeperate t on pd.OrderID = t.ID and pd.OrderShipmodeSeq = t.Seq
-inner join PackingList p on p.ID = pd.ID
+inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
 where p.PulloutID <> ''
 group by pd.OrderID, pd.OrderShipmodeSeq
 
 select pd.OrderID, count(distinct p.PulloutID) ActPulloutTime
 into #tmp_ActPulloutTime
-from PackingList p
-inner join PackingList_Detail pd on p.ID = pd.ID
+from PackingList p WITH (NOLOCK)
+inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
 inner join #tmpFilterSeperate t on t.ID = pd.OrderID
 where p.PulloutID <> ''
 and pd.ShipQty > 0
@@ -1129,7 +1129,7 @@ select  t.ID
             , t.CFACTN
 			, t.isForecast
 			, t.AirFreightByBrand
-            , [BuyBack] = iif(exists (select 1 from Order_BuyBack where ID = t.ID), 'Y', '')
+            , [BuyBack] = iif(exists (select 1 from Order_BuyBack WITH (NOLOCK) where ID = t.ID), 'Y', '')
             , t.Cancelled
             , t.Customize2
             , t.KpiMNotice
@@ -1215,8 +1215,8 @@ select  t.ID
 							 where a.ID = t.ID and a.Seq = t.Seq
 							 for xml path(''))
                            , '')
-        , [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail where id=p.ID  and FabricType='F')
-        , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail where id=p.ID  and FabricType='A')
+        , [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail WITH (NOLOCK) where id=p.ID  and FabricType='F')
+        , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail WITH (NOLOCK) where id=p.ID  and FabricType='A')
 		, t.Cancelled
         , t.Customize2
         , t.KpiMNotice
@@ -1232,7 +1232,7 @@ select  t.ID
 from #tmpFilterSeperate t
 left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
-left join DropDownList dd on dd.Type = 'FactoryDisclaimer' and dd.id = s.ExpectionFormStatus
+left join DropDownList dd WITH (NOLOCK) on dd.Type = 'FactoryDisclaimer' and dd.id = s.ExpectionFormStatus
 left join PO p WITH (NOLOCK) on p.ID = t.POID
 left join Country c WITH (NOLOCK) on c.ID = t.Dest
 left join #tmp_sewDetial som on som.OrderID = t.ID
@@ -1515,14 +1515,14 @@ select distinct
                          inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
                          where sod.OrderID = t.ID)
         , PulloutQty = isnull ((select sum(pd.ShipQty)
-                                from PackingList_Detail pd
-                                inner join PackingList p on p.ID = pd.ID
+                                from PackingList_Detail pd WITH (NOLOCK)
+                                inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
                                 where p.PulloutID <> ''
                                 and pd.OrderID = t.ID)
                               , 0)
         , ActPulloutTime = (select count(distinct p.PulloutID)
-                            from PackingList_Detail pd
-                            inner join PackingList p on p.ID = pd.ID
+                            from PackingList_Detail pd WITH (NOLOCK)
+                            inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
                             where p.PulloutID <> ''
                             and pd.OrderID = t.ID
                             and pd.ShipQty > 0)
@@ -1539,8 +1539,8 @@ select distinct
 							 where a.ID = t.ID
 							 for xml path(''))
                            , '') 
-        , [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail where id=p.ID  and FabricType='F')
-        , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail where id=p.ID  and FabricType='A')
+        , [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail WITH (NOLOCK) where id=p.ID  and FabricType='F')
+        , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail WITH (NOLOCK) where id=p.ID  and FabricType='A')
         , t.Customize2
         , t.KpiMNotice
         , t.KpiEachConsCheck
@@ -1555,7 +1555,7 @@ select distinct
 from #tmpListPoCombo t
 left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
-left join DropDownList dd on dd.Type = 'FactoryDisclaimer' and dd.id = s.ExpectionFormStatus
+left join DropDownList dd WITH (NOLOCK) on dd.Type = 'FactoryDisclaimer' and dd.id = s.ExpectionFormStatus
 left join PO p WITH (NOLOCK) on p.ID = t.POID
 left join Country c WITH (NOLOCK) on c.ID = t.Dest
 left join #tmp_PFRemark pf on pf.ID = t.ID
