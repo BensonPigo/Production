@@ -199,17 +199,17 @@ namespace Sci.Production.PPIC
         {
 
             string sqlGetDate = $@"
-select	f.KPICode,
+select  f.KPICode,
 		o.FactoryID,
-		o.ID,
+		[OrderID] = o.ID,
 		oqs.Seq,
 		o.BrandID, 
 		o.StyleID,
 		o.SeasonID,
 		oqs.BuyerDelivery,
-		[PackID] = pld.ID,
+		pld.ID,
 		pld.CTNStartNo,
-		pld.ShipQty,
+		[ShipQty] = sum(pld2.ShipQty),
 		[Status] = case when pld.TransferDate is null then 'Fty'
 						when pld.TransferDate is not null and pld.ReceiveDate is null then 'Transit to CLOG'
 						when pld.ReceiveDate is not null and 
@@ -217,6 +217,56 @@ select	f.KPICode,
 							 (pld.TransferCFADate is null and pld.CFAReceiveDate is null and pld.ClogReceiveCFADate is not null) or 
 							 (pld.TransferCFADate is not null and pld.CFAReceiveDate is null)) then'Clog'
 						else 'CFA' end,
+		pld.ScanEditDate,
+		pld.ScanQty,
+		pld.ClogLocationId,
+		pld.DisposeDate,
+		[PulloutComplete] = iif(o.PulloutComplete = 1, 'Y', 'N'),
+		p.PulloutDate
+into #tmp
+from  Orders o with (nolock)
+inner join Order_QtyShip oqs with (nolock) on oqs.Id = o.ID
+inner join Factory f with (nolock) on f.ID = o.FactoryID
+inner join PackingList_Detail pld with (nolock) on pld.OrderID = oqs.ID and pld.CTNQty = 1
+inner join PackingList p with (nolock) on p.ID = pld.ID
+inner join PackingList_Detail pld2 with (nolock) on pld2.ID = pld.ID and pld2.CTNStartNo = pld.CTNStartNo
+where o.Category in ('B','G') {this.sqlWhere}
+group by	f.KPICode,
+			o.FactoryID,
+			o.ID,
+			oqs.Seq,
+			o.BrandID, 
+			o.StyleID,
+			o.SeasonID,
+			oqs.BuyerDelivery,
+			pld.ID,
+			pld.CTNStartNo,
+			pld.TransferDate,
+			pld.ReceiveDate,
+			pld.TransferCFADate,
+			pld.CFAReceiveDate,
+			pld.CFAReturnClogDate,
+			pld.ClogReceiveCFADate,
+			pld.ScanEditDate,
+			pld.ScanQty,
+			pld.ClogLocationId,
+			pld.DisposeDate,
+			o.PulloutComplete,
+			p.PulloutDate
+
+
+select	pld.KPICode,
+		pld.FactoryID,
+		pld.OrderID,
+		pld.Seq,
+		pld.BrandID, 
+		pld.StyleID,
+		pld.SeasonID,
+		pld.BuyerDelivery,
+		[PackID] = pld.ID,
+		pld.CTNStartNo,
+		pld.ShipQty,
+		pld.Status,
 		[HaulingScanTime] = Hauling.AddDate,
 		[DryRoomReceiveTime] = DRYReceive.AddDate,
 		[DryRoomTransferTime] = DRYTransfer.AddDate,
@@ -236,12 +286,9 @@ select	f.KPICode,
 		[CFA Return Destination] = CFAReturn.ReturnTo,
 		[Clog Receive From CFA Time] = ClogReceiveCFA.AddDate,
 		pld.DisposeDate,
-		[PulloutComplete] = iif(o.PulloutComplete = 1, 'Y', 'N'),
-		p.PulloutDate
-from Orders o with (nolock)
-inner join Factory f with (nolock) on f.ID = o.FactoryID
-inner join PackingList_Detail pld with (nolock) on pld.OrderID = o.ID and pld.CTNQty = 1
-inner join PackingList p with (nolock) on p.ID = pld.ID
+		pld.PulloutComplete,
+		pld.PulloutDate
+from #tmp pld
 outer apply(select [AddDate] = max(AddDate) 
 			from CTNHauling ch with (nolock) 
 			where	ch.PackingListID = pld.ID and 
@@ -313,8 +360,6 @@ outer apply(select [AddDate] = max(AddDate)
 			where	tc.PackingListID = pld.ID and 
 					tc.CTNStartNo = pld.CTNStartNo and 
 					tc.OrderID = pld.OrderID ) ClogReceiveCFA
-inner join Order_QtyShip oqs with (nolock) on oqs.Id = o.ID
-where 1 = 1 {this.sqlWhere}
 ";
             DBProxy.Current.DefaultTimeout = 1800;
             DualResult result = DBProxy.Current.Select(null, sqlGetDate, this.listPar, out this.dtPrintData);
