@@ -27,7 +27,6 @@ namespace Sci.Production.Shipping
     {
         private string id;
         private DataGridViewGeneratorNumericColumnSettings shipqty = new DataGridViewGeneratorNumericColumnSettings();
-        private DataGridViewGeneratorTextColumnSettings status = new DataGridViewGeneratorTextColumnSettings();
         private ITableSchema revisedTS;
         private ITableSchema revised_detailTS;
         private DataTable PulloutReviseData;
@@ -146,40 +145,6 @@ order by os.Seq", masterID);
                     this.OpenSubDetailPage();
                 }
             };
-            this.status.EditingTextChanged += (s, e) =>
-                {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (MyUtility.Convert.GetString(dr["Status"]) == "C")
-                    {
-                        dr["StatusExp"] = dr["StatusExp"];
-                        return;
-                    }
-
-                    if (!MyUtility.Check.Empty(e.DataGridView.Rows[e.RowIndex].Cells[9].EditedFormattedValue))
-                    {
-                        switch (e.DataGridView.Rows[e.RowIndex].Cells[9].EditedFormattedValue.ToString().ToUpper().Substring(0, 1))
-                        {
-                            case "C":
-                                dr["StatusExp"] = "Complete";
-                                dr["Status"] = "C";
-                                dr.EndEdit();
-                                break;
-                            case "P":
-                                dr["StatusExp"] = "Partial";
-                                dr["Status"] = "P";
-                                dr.EndEdit();
-                                break;
-                            case "S":
-                                dr["StatusExp"] = "Shortage";
-                                dr["Status"] = "S";
-                                dr.EndEdit();
-                                break;
-                            default:
-                                dr["StatusExp"] = dr["StatusExp"];
-                                break;
-                        }
-                    }
-                };
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -191,7 +156,7 @@ order by os.Seq", masterID);
                 .Numeric("OrderQty", header: "Order Q'ty", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("ShipQty", header: "Ship Q’ty", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: this.shipqty)
                 .Numeric("Variance", header: "Variance", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .ExtText("StatusExp", header: "Status", width: Widths.AnsiChars(10), charCasing: CharacterCasing.Normal, settings: this.status)
+                .ExtText("StatusExp", header: "Status", width: Widths.AnsiChars(10), charCasing: CharacterCasing.Normal, iseditingreadonly: true)
                 .Text("ShipmodeID", header: "Shipping Mode", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("PackingListID", header: "Packing#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("INVNo", header: "Invoice No.", width: Widths.AnsiChars(25), iseditingreadonly: true)
