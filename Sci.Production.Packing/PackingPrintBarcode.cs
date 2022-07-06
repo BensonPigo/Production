@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 using ZXing;
 using ZXing.QrCode;
@@ -91,6 +92,7 @@ namespace Sci.Production.Packing
                                 #endregion
 
                                 Bitmap oriBitmap = this.NewBarcode(barcode, barcodeShowText);
+
                                 Clipboard.SetImage(oriBitmap);
                                 tables.Cell(((p % 6) * 7) + 1, 1).Range.Paste();
                                 tables.Cell(((p % 6) * 7) + 1, 1).Range.InlineShapes[1].ScaleHeight = 40f;
@@ -617,9 +619,10 @@ namespace Sci.Production.Packing
             string finalShowText = MyUtility.Check.Empty(showText) ? strBarcode : showText;
 
             Bitmap oriBarcodeBitmap = code.drawBarcode();
-            Bitmap newBarcodeBitmap = new Bitmap(oriBarcodeBitmap.Width, oriBarcodeBitmap.Height + 50);
-            var destinationRect = new Rectangle(0, 0, oriBarcodeBitmap.Width, oriBarcodeBitmap.Height);
-            RectangleF stringRectf = new RectangleF(0, oriBarcodeBitmap.Height, oriBarcodeBitmap.Width, 50);
+            Bitmap newBarcodeBitmap = new Bitmap(oriBarcodeBitmap.Width - 250, oriBarcodeBitmap.Height + 30);
+            var destinationRect = new Rectangle(0, 0, oriBarcodeBitmap.Width - 250, oriBarcodeBitmap.Height);
+
+            RectangleF stringRectf = new RectangleF(0, oriBarcodeBitmap.Height, oriBarcodeBitmap.Width - 250, 30);
             StringFormat format = new StringFormat();
             format.LineAlignment = StringAlignment.Center;
             format.Alignment = StringAlignment.Center;
