@@ -50,6 +50,7 @@
             this.displayBuyerDelivery = new Sci.Win.UI.DisplayBox();
             this.displayCartonQty = new Sci.Win.UI.DisplayBox();
             this.btnSave = new Sci.Win.UI.Button();
+            this.btnDetail = new Sci.Win.UI.Button();
             this.SuspendLayout();
             // 
             // lbScanCartonsBarcode
@@ -260,11 +261,22 @@
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
+            // btnDetail
+            // 
+            this.btnDetail.Location = new System.Drawing.Point(310, 45);
+            this.btnDetail.Name = "btnDetail";
+            this.btnDetail.Size = new System.Drawing.Size(80, 30);
+            this.btnDetail.TabIndex = 20;
+            this.btnDetail.Text = "Detail";
+            this.btnDetail.UseVisualStyleBackColor = true;
+            this.btnDetail.Click += new System.EventHandler(this.BtnDetail_Click);
+            // 
             // P08
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(565, 257);
+            this.Controls.Add(this.btnDetail);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.displayCartonQty);
             this.Controls.Add(this.displayBuyerDelivery);
@@ -312,6 +324,7 @@
             this.Controls.SetChildIndex(this.displayBuyerDelivery, 0);
             this.Controls.SetChildIndex(this.displayCartonQty, 0);
             this.Controls.SetChildIndex(this.btnSave, 0);
+            this.Controls.SetChildIndex(this.btnDetail, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -341,5 +354,6 @@
         private Win.UI.DisplayBox displayBuyerDelivery;
         private Win.UI.DisplayBox displayCartonQty;
         private Win.UI.Button btnSave;
+        private Win.UI.Button btnDetail;
     }
 }

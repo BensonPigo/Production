@@ -13,6 +13,7 @@ namespace Sci.Production.Sewing
     public partial class P08 : Win.Tems.QueryForm
     {
         private DataTable dt = new DataTable();
+        private DataTable dtDetail = new DataTable();
 
         /// <inheritdoc/>
         public P08(ToolStripMenuItem menuitem)
@@ -100,6 +101,8 @@ group by pd.MDFailQty,pd.OrderID,o.CustPONo,o.StyleID,o.SeasonID,o.BrandID
             if (this.dt.Rows.Count == 0)
             {
                 this.txtScanCartonsBarcode.Text = string.Empty;
+                this.numericBoxDiscrepancy.Value = 0;
+                this.numericBoxDiscrepancy.ReadOnly = false;
                 MyUtility.Msg.WarningBox("Datas not found!");
                 return;
             }
@@ -117,6 +120,21 @@ group by pd.MDFailQty,pd.OrderID,o.CustPONo,o.StyleID,o.SeasonID,o.BrandID
                 this.numericBoxDiscrepancy.Text = MyUtility.Convert.GetString(row["MDFailQty"]);
                 this.numericBoxDiscrepancy.Maximum = MyUtility.Convert.GetInt(row["CartonQty"]);
             }
+
+            string sqlcmdChk = $@"
+select 1    from MDScan_Detail md     where md.MDScanUKey = (        select top 1 m.Ukey        from MDScan m        where exists(			select 1 from PackingList_Detail pd 			where (pd.ID = '{this.dt.Rows[0]["ID"]}'             and pd.CTNStartNo = '{this.dt.Rows[0]["CTNStartNo"]}')			and  pd.ID = m.PackingListID and pd.OrderID = m.OrderID  and pd.CTNStartNo = m.CTNStartNo and pd.MDStatus <> 'Pass')        order by m.AddDate desc    )
+";
+
+            if (MyUtility.Check.Seek(sqlcmdChk))
+            {
+                this.numericBoxDiscrepancy.ReadOnly = true;
+            }
+            else
+            {
+                this.numericBoxDiscrepancy.ReadOnly = false;
+            }
+
+            this.dtDetail = new DataTable();
         }
 
         private bool BeforeSave()
@@ -145,35 +163,58 @@ group by pd.MDFailQty,pd.OrderID,o.CustPONo,o.StyleID,o.SeasonID,o.BrandID
         private void Save()
         {
             DataRow dr = this.dt.Rows[0];
-            string sqlcmd = string.Format(
-                @"
+            string strMDStatus = this.numericBoxDiscrepancy.Value > 0 ? "Hold" : "Pass";
+            string mDScan_Ukey = string.Empty;
+            string sqlcmd = $@"
 update PackingList_Detail
-set MDFailQty = {0}, MDScanDate = getdate(), MDScanName = '{5}'
-where ID = '{3}' and CTNStartNo = '{4}';
+set MDFailQty = {this.numericBoxDiscrepancy.Text}, MDScanDate = getdate(), MDScanName = '{Env.User.UserID}'
+,MDStatus  = '{strMDStatus}'
+where ID = '{dr["ID"]}' and CTNStartNo = '{dr["CTNStartNo"]}';
 
 insert into MDScan([ScanDate], [MDivisionID], [OrderID], [PackingListID], [CTNStartNo], [AddName], [AddDate], [SCICtnNo], [MDFailQty], [CartonQty])
-values(getdate(), '{1}', '{2}', '{3}', '{4}', '{5}', getdate(), '{6}', {0}, {7});
+values(getdate(), '{Env.User.Keyword}', '{dr["OrderID"]}', '{dr["ID"]}', '{dr["CTNStartNo"]}', '{Env.User.UserID}', getdate(), '{dr["SCICtnNo"]}', {this.numericBoxDiscrepancy.Text}, {dr["CartonQty"]});
+
+declare @MDScan_Ukey bigint
+select @MDScan_Ukey = @@IDENTITY
+
+select MDScan_Ukey = @MDScan_Ukey
 
 update o
 set o.MdRoomScanDate  = GETDATE()
 from Orders o
 inner join PackingList_Detail pd on pd.OrderID = o.ID
-where pd.ID = '{3}' and pd.OrderID = '{2}'; 
-                ",
-                this.numericBoxDiscrepancy.Text,
-                Env.User.Keyword,
-                dr["OrderID"],
-                dr["ID"],
-                dr["CTNStartNo"],
-                Env.User.UserID,
-                dr["SCICtnNo"],
-                dr["CartonQty"]);
-
-            DualResult result = DBProxy.Current.Execute("Production", sqlcmd);
+where pd.ID = '{dr["ID"]}' and pd.OrderID = '{dr["OrderID"]}'; 
+                ";
+            DualResult result = DBProxy.Current.Select("Production", sqlcmd, out DataTable dtUkey);
             if (!result)
             {
                 this.ShowErr(result);
                 return;
+            }
+
+            if (dtUkey != null && dtUkey.Rows.Count > 0)
+            {
+                mDScan_Ukey = dtUkey.Rows[0]["MDScan_Ukey"].ToString();
+            }
+
+            // 取得Detail資料
+            if (this.dtDetail != null && this.dtDetail.Rows.Count > 0 && mDScan_Ukey != string.Empty)
+            {
+                string sqlDetail = string.Empty;
+                foreach (DataRow drDetail in this.dtDetail.Rows)
+                {
+                    sqlDetail += $@"
+insert into MDScan_Detail(MDScanUKey,PackingReasonID,Qty)
+values('{mDScan_Ukey}','{drDetail["PackingReasonID"]}',{drDetail["Qty"]})
+";
+                }
+
+                result = DBProxy.Current.Execute("Production", sqlDetail);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
             }
 
             MyUtility.Msg.InfoBox("Save Completed");
@@ -192,7 +233,33 @@ where pd.ID = '{3}' and pd.OrderID = '{2}';
             this.displayDestination.Text = string.Empty;
             this.displayBuyerDelivery.Text = string.Empty;
             this.displayCartonQty.Text = string.Empty;
+            this.numericBoxDiscrepancy.ReadOnly = false;
+            this.dtDetail = new DataTable();
             this.dt.Clear();
+        }
+
+        private void BtnDetail_Click(object sender, EventArgs e)
+        {
+            if (this.dt == null || this.dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found");
+                return;
+            }
+
+            P08_Detail callform = new P08_Detail(this.dt.Rows[0], this.dtDetail);
+            callform.ShowDialog();
+            int ttlQty = callform.ttlDiscrepancy;
+            this.dtDetail = callform.dtDetail;
+            if (!MyUtility.Check.Empty(ttlQty))
+            {
+                this.numericBoxDiscrepancy.Value = ttlQty;
+                this.numericBoxDiscrepancy.ReadOnly = true;
+            }
+            else
+            {
+                this.numericBoxDiscrepancy.Value = ttlQty;
+                this.numericBoxDiscrepancy.ReadOnly = false;
+            }
         }
     }
 }

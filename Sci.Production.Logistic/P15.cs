@@ -296,10 +296,12 @@ order by p.ID, pd.OrderID
                         return true;
                     }
 
-                    int dryReceiveDateNotNull = s.Where(detail => !MyUtility.Check.Empty(detail["DRYReceiveDate"]) &&
-                                                                  !MyUtility.Check.Empty(detail["DRYTransferDate"])).Count();
+                    int dryDryRoomPassCnt = s.Where(detail =>
+                    (!MyUtility.Check.Empty(detail["DRYReceiveDate"]) && !MyUtility.Check.Empty(detail["DRYTransferDate"])) ||
+                    (MyUtility.Check.Empty(detail["DRYReceiveDate"]) && MyUtility.Check.Empty(detail["DRYTransferDate"])))
+                    .Count();
 
-                    if (allDetailCnt == dryReceiveDateNotNull)
+                    if (allDetailCnt == dryDryRoomPassCnt)
                     {
                         return true;
                     }
