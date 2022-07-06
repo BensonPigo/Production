@@ -29,24 +29,41 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.lbScanDate = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.txtPackID = new Sci.Win.UI.TextBox();
             this.txtsp = new Sci.Win.UI.TextBox();
             this.btnQuery = new Sci.Win.UI.Button();
-            this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.dateTransfer = new Sci.Win.UI.DateRange();
             this.lbPackIDmsg = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.panel1 = new Sci.Win.UI.Panel();
+            this.labelmetal = new Sci.Win.UI.Label();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.gridMain = new Sci.Win.UI.Grid();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.label1 = new Sci.Win.UI.Label();
+            this.gridDetail = new Sci.Win.UI.Grid();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridMain)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
             this.SuspendLayout();
             // 
             // lbScanDate
             // 
-            this.lbScanDate.Location = new System.Drawing.Point(9, 9);
+            this.lbScanDate.Location = new System.Drawing.Point(9, 14);
             this.lbScanDate.Name = "lbScanDate";
             this.lbScanDate.Size = new System.Drawing.Size(93, 23);
             this.lbScanDate.TabIndex = 1;
@@ -54,7 +71,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(9, 46);
+            this.label2.Location = new System.Drawing.Point(9, 51);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(93, 23);
             this.label2.TabIndex = 2;
@@ -62,7 +79,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(390, 46);
+            this.label3.Location = new System.Drawing.Point(390, 51);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
             this.label3.TabIndex = 3;
@@ -73,7 +90,7 @@
             this.txtPackID.BackColor = System.Drawing.Color.White;
             this.txtPackID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtPackID.IsSupportEditMode = false;
-            this.txtPackID.Location = new System.Drawing.Point(105, 46);
+            this.txtPackID.Location = new System.Drawing.Point(105, 51);
             this.txtPackID.Name = "txtPackID";
             this.txtPackID.Size = new System.Drawing.Size(163, 23);
             this.txtPackID.TabIndex = 3;
@@ -83,54 +100,20 @@
             this.txtsp.BackColor = System.Drawing.Color.White;
             this.txtsp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtsp.IsSupportEditMode = false;
-            this.txtsp.Location = new System.Drawing.Point(468, 46);
+            this.txtsp.Location = new System.Drawing.Point(468, 51);
             this.txtsp.Name = "txtsp";
             this.txtsp.Size = new System.Drawing.Size(147, 23);
             this.txtsp.TabIndex = 4;
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(684, 9);
+            this.btnQuery.Location = new System.Drawing.Point(684, 14);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 5;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
-            // 
-            // grid1
-            // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(12, 94);
-            this.grid1.Name = "grid1";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(748, 277);
-            this.grid1.TabIndex = 8;
             // 
             // dateTransfer
             // 
@@ -149,7 +132,7 @@
             this.dateTransfer.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateTransfer.DateBox2.TabIndex = 1;
             this.dateTransfer.IsSupportEditMode = false;
-            this.dateTransfer.Location = new System.Drawing.Point(107, 9);
+            this.dateTransfer.Location = new System.Drawing.Point(107, 14);
             this.dateTransfer.Name = "dateTransfer";
             this.dateTransfer.Size = new System.Drawing.Size(280, 23);
             this.dateTransfer.TabIndex = 10;
@@ -158,40 +141,156 @@
             // 
             this.lbPackIDmsg.AutoSize = true;
             this.lbPackIDmsg.ForeColor = System.Drawing.Color.Red;
-            this.lbPackIDmsg.Location = new System.Drawing.Point(12, 74);
+            this.lbPackIDmsg.Location = new System.Drawing.Point(12, 79);
             this.lbPackIDmsg.Name = "lbPackIDmsg";
             this.lbPackIDmsg.Size = new System.Drawing.Size(438, 17);
             this.lbPackIDmsg.TabIndex = 11;
             this.lbPackIDmsg.Text = "The Qty here is by pieces instead of complete set on below function.";
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.labelmetal);
+            this.panel1.Controls.Add(this.lbScanDate);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.lbPackIDmsg);
+            this.panel1.Controls.Add(this.txtPackID);
+            this.panel1.Controls.Add(this.dateTransfer);
+            this.panel1.Controls.Add(this.txtsp);
+            this.panel1.Controls.Add(this.btnQuery);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(813, 135);
+            this.panel1.TabIndex = 12;
+            // 
+            // labelmetal
+            // 
+            this.labelmetal.Location = new System.Drawing.Point(9, 99);
+            this.labelmetal.Name = "labelmetal";
+            this.labelmetal.Size = new System.Drawing.Size(185, 23);
+            this.labelmetal.TabIndex = 13;
+            this.labelmetal.Text = "Metal Detection Record";
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 135);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.gridMain);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
+            this.splitContainer1.Size = new System.Drawing.Size(813, 393);
+            this.splitContainer1.SplitterDistance = 206;
+            this.splitContainer1.TabIndex = 13;
+            // 
+            // gridMain
+            // 
+            this.gridMain.AllowUserToAddRows = false;
+            this.gridMain.AllowUserToDeleteRows = false;
+            this.gridMain.AllowUserToResizeRows = false;
+            this.gridMain.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridMain.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridMain.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridMain.DataSource = this.listControlBindingSource1;
+            this.gridMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridMain.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridMain.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridMain.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridMain.Location = new System.Drawing.Point(0, 0);
+            this.gridMain.Name = "gridMain";
+            this.gridMain.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridMain.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridMain.RowTemplate.Height = 24;
+            this.gridMain.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridMain.ShowCellToolTips = false;
+            this.gridMain.Size = new System.Drawing.Size(813, 206);
+            this.gridMain.TabIndex = 0;
+            this.gridMain.TabStop = false;
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.label1);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.gridDetail);
+            this.splitContainer2.Size = new System.Drawing.Size(813, 183);
+            this.splitContainer2.SplitterDistance = 33;
+            this.splitContainer2.TabIndex = 6;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(6, 5);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(149, 23);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Discrepancy Record";
+            // 
+            // gridDetail
+            // 
+            this.gridDetail.AllowUserToAddRows = false;
+            this.gridDetail.AllowUserToDeleteRows = false;
+            this.gridDetail.AllowUserToResizeRows = false;
+            this.gridDetail.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridDetail.DataSource = this.listControlBindingSource2;
+            this.gridDetail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridDetail.Location = new System.Drawing.Point(0, 0);
+            this.gridDetail.Name = "gridDetail";
+            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridDetail.RowTemplate.Height = 24;
+            this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridDetail.ShowCellToolTips = false;
+            this.gridDetail.Size = new System.Drawing.Size(813, 146);
+            this.gridDetail.TabIndex = 0;
+            this.gridDetail.TabStop = false;
+            // 
             // P09
             // 
-            this.ClientSize = new System.Drawing.Size(772, 383);
-            this.Controls.Add(this.lbPackIDmsg);
-            this.Controls.Add(this.dateTransfer);
-            this.Controls.Add(this.grid1);
-            this.Controls.Add(this.btnQuery);
-            this.Controls.Add(this.txtsp);
-            this.Controls.Add(this.txtPackID);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.lbScanDate);
+            this.ClientSize = new System.Drawing.Size(813, 528);
+            this.Controls.Add(this.splitContainer1);
+            this.Controls.Add(this.panel1);
             this.Name = "P09";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P09.Query for MD Room Scan";
-            this.Controls.SetChildIndex(this.lbScanDate, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.txtPackID, 0);
-            this.Controls.SetChildIndex(this.txtsp, 0);
-            this.Controls.SetChildIndex(this.btnQuery, 0);
-            this.Controls.SetChildIndex(this.grid1, 0);
-            this.Controls.SetChildIndex(this.dateTransfer, 0);
-            this.Controls.SetChildIndex(this.lbPackIDmsg, 0);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            this.Controls.SetChildIndex(this.panel1, 0);
+            this.Controls.SetChildIndex(this.splitContainer1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridMain)).EndInit();
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -203,9 +302,16 @@
         private Win.UI.TextBox txtPackID;
         private Win.UI.TextBox txtsp;
         private Win.UI.Button btnQuery;
-        private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.DateRange dateTransfer;
         private System.Windows.Forms.Label lbPackIDmsg;
+        private Win.UI.ListControlBindingSource listControlBindingSource2;
+        private Win.UI.Panel panel1;
+        private Win.UI.Label labelmetal;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private Win.UI.Grid gridMain;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private Win.UI.Label label1;
+        private Win.UI.Grid gridDetail;
     }
 }
