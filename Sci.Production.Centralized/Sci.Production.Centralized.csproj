@@ -169,6 +169,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Packing_B09.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Packing_B09.designer.cs">
+      <DependentUpon>Packing_B09.cs</DependentUpon>
+    </Compile>
     <Compile Include="IE_B05.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -506,6 +512,9 @@
       <DependentUpon>WH_B01.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Packing_B09.resx">
+      <DependentUpon>Packing_B09.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="IE_B05.resx">
       <DependentUpon>IE_B05.cs</DependentUpon>
     </EmbeddedResource>
