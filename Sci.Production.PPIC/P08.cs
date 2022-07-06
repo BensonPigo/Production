@@ -380,6 +380,12 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
                     continue;
                 }
 
+                if (MyUtility.Check.Empty(dr["Seq1"]) || MyUtility.Check.Empty(dr["Seq2"]))
+                {
+                    dr.Delete();
+                    continue;
+                }
+
                 count++;
             }
 
