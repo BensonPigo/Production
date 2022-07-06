@@ -224,7 +224,7 @@ where	pd.CTNStartNo != '' and
             if (PackNo.Length > 13)
             {
                 PackingListID = PackNo.Substring(0, 13);
-                CTNStarNo = PackNo.Substring(13, PackNo.Length - 13);
+                CTNStarNo = PackNo.Substring(13, PackNo.Length - 13).TrimStart('^');
             }
 
             if (fromCustCTN == true)

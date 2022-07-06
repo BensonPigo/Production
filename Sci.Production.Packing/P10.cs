@@ -212,7 +212,7 @@ ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
                                 if (sl.Count > 1 && sl[1].Length > 13)
                                 {
                                     dr["PackingListID"] = sl[1].Substring(0, 13);
-                                    dr["CTNStartNo"] = MyUtility.Convert.GetInt(sl[1].Substring(13));
+                                    dr["CTNStartNo"] = sl[1].Substring(13, sl[1].Length - 13).TrimStart('^');
                                     sqlCmd = string.Format(
                                         @"
 select  pd.OrderID

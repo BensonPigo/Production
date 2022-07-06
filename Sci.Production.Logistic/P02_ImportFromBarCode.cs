@@ -204,7 +204,7 @@ namespace Sci.Production.Logistic
                             IList<string> sl = line.Split(" \t\r\n".ToCharArray());
 
                             // 如果有資料重複就不再匯入重複的資料
-                            findRow = this.grid2Data.Select(string.Format("PackingListID = '{0}' and CTNStartNo = '{1}'", sl[2].Substring(0, 13), sl[2].Substring(13).Trim()));
+                            findRow = this.grid2Data.Select(string.Format("PackingListID = '{0}' and CTNStartNo = '{1}'", sl[2].Substring(0, 13), sl[2].Substring(13).Trim().TrimStart('^')));
                             if (findRow.Length == 0)
                             {
                                 DataRow dr1 = this.grid2Data.NewRow();

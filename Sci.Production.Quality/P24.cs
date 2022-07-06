@@ -261,7 +261,7 @@ and p2.CFAReceiveDate is not null
 and p2.DisposeFromClog= 0
 and (po.Status ='New' or po.Status is null)
 and p2.id='{sl[1].Substring(0, 13)}'
-and p2.CTNStartNo='{sl[1].Substring(13, sl[1].Length - 13)}'
+and p2.CTNStartNo='{sl[1].Substring(13).TrimStart('^')}'
 order by p2.ID,p2.CTNStartNo
 ";
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
