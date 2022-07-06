@@ -76,6 +76,7 @@
     [OriClogLocationID] NVARCHAR(50) NOT NULL DEFAULT (''), 
     [PackingAuditDate] DATE NULL, 
     [PackingAuditStatus] VARCHAR(4) NOT NULL DEFAULT (''), 
+    [MDStatus] VARCHAR(4) NULL DEFAULT (''), 
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
