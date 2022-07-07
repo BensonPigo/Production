@@ -490,6 +490,9 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             .Text("RevisedETA", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(2), iseditingreadonly: true) // 5
             .Text("FabricCombo", header: "Fabric" + Environment.NewLine + "Combo", iseditingreadonly: true)
             .Text("refno", header: "Ref#", iseditingreadonly: true, settings: ts2) // 6
+            .CheckBox("RR", header: "RR", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
+            .CheckBox("LR", header: "LR", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
+            .CheckBox("IsHighRisk", header: "HR", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             .CheckBox("SustainableMaterial", header: "Recycled", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(33)) // 8
             .Text("fabrictype2", header: "Material\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 7
@@ -547,6 +550,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             this.displayFtySupp.BackColor = Color.FromArgb(220, 140, 255);
             this.displayCalSize.BackColor = Color.FromArgb(255, 170, 100);
             this.displayJunk.BackColor = Color.FromArgb(190, 190, 190);
+            this.displayRrLrHr.BackColor = Color.FromArgb(255, 204, 204);
         }
 
         /// <inheritdoc/>
@@ -576,6 +580,11 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
                     if (dr["BomTypeCalculate"].ToString() == "1")
                     {
                         this.gridMaterialStatus.Rows[i].Cells["description"].Style.BackColor = Color.FromArgb(255, 170, 100);
+                    }
+
+                    if (dr["RR"].ToString() == "1" || dr["LR"].ToString() == "1" || dr["IsHighRisk"].ToString() == "1")
+                    {
+                        this.gridMaterialStatus.Rows[i].Cells["Refno"].Style.BackColor = Color.FromArgb(255, 204, 204);
                     }
 
                     decimal shipQty = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(dr["ShipQty"]) + MyUtility.Convert.GetDecimal(dr["ShipFOC"])) ? 0 : MyUtility.Convert.GetDecimal(dr["ShipQty"]) + MyUtility.Convert.GetDecimal(dr["ShipFOC"]);
@@ -630,7 +639,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
                 = @"
 declare @id varchar(20) = @sp1		
 
-select distinct StyleID,BrandID,POID,FtyGroup ,CuttingSP
+select distinct StyleID,BrandID,POID,FtyGroup ,CuttingSP ,StyleUkey
 into #tmpOrder
 from View_WH_Orders where id like @id
 
@@ -782,6 +791,9 @@ from(
 			, TPERemark
 			, TestReport
             , [VAS_Shas] 
+			, RR
+			, LR
+			, IsHighRisk
     from (
         select  *
                 , -len(description) as len_D 
@@ -909,6 +921,9 @@ from(
 					, [TPERemark]=a.Remark
 					, [TestReport] = TestReport.value
                     , [VAS_Shas] = dbo.GetVASSHAS_bit(a.ID,a.SEQ1,a.SEQ2)
+					,RR = ISNULL(Style_RRLR_Report.RR ,0)
+					,LR = ISNULL(Style_RRLR_Report.LR ,0)					
+					,IsHighRisk =  dbo.GetIsHighRisk(b.suppid, a.RefNo)
             from #tmpOrder as orders WITH (NOLOCK) 
             inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
 	        left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
@@ -916,6 +931,7 @@ from(
 	        left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
             left join supp s WITH (NOLOCK) on s.id = b.suppid
             LEFT JOIN dbo.Factory f on orders.FtyGroup=f.ID
+            LEFT JOIN dbo.Style_RRLR_Report  on Style_RRLR_Report.StyleUkey = orders.StyleUkey AND Style_RRLR_Report.SuppID =  b.suppid AND Style_RRLR_Report.Refno = a.RefNo
             left join #ArticleForThread aft on	aft.ID = m.POID		and
 												aft.SuppId	   = b.SuppId	and
 												aft.SCIRefNo   = a.SCIRefNo	and
@@ -1066,6 +1082,9 @@ from(
 					, [TPERemark]=a.Remark
 					, [TestReport] = TestReport.value
                     , [VAS_Shas] = dbo.GetVASSHAS_bit(a.ID,a.SEQ1,a.SEQ2)
+					,RR = ISNULL(Style_RRLR_Report.RR ,0)
+					,LR = ISNULL(Style_RRLR_Report.LR ,0)					
+					,IsHighRisk =  dbo.GetIsHighRisk(b.suppid, a.RefNo)
         from dbo.MDivisionPoDetail m WITH (NOLOCK) 
         inner join #tmpOrder as o on o.poid = m.poid
         left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 
@@ -1080,6 +1099,7 @@ from(
 									a.SEQ1 like 'T%' 
 		LEFT JOIN Order_BOF ob ON  a.RefNo=ob.RefNo AND a.ID=ob.Id
 		LEFT JOIN Fabric_Supp fs WITH (NOLOCK) ON fs.SCIRefno = a.SCIRefno AND fs.SuppID = iif(left(a.SEQ1, 1) = '7', a.StockSuppID, b.SuppID) 
+        LEFT JOIN dbo.Style_RRLR_Report  on Style_RRLR_Report.StyleUkey = o.StyleUkey AND Style_RRLR_Report.SuppID =  b.suppid AND Style_RRLR_Report.Refno = a.RefNo
         outer apply(select fabrictype2 = iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))))mt
 		OUTER APPLY(
 		SELECT [FabricCombo]=STUFF((
@@ -1169,6 +1189,9 @@ select ROW_NUMBER_D = 1
 	   , [TPERemark]=''
 	   , [TestReport] = null
        , [VAS_Shas] = 0
+	   , RR = 0
+	   , LR = 0
+	   , IsHighRisk=0
 from #tmpLocalPO_Detail a
 left join LocalInventory l on a.OrderId = l.OrderID and a.Refno = l.Refno and a.ThreadColorID = l.ThreadColorID
 left join LocalItem b on a.Refno=b.RefNo
