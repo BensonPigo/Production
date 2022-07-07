@@ -153,23 +153,64 @@ Outer apply (
 	and s.BrandID = t.OrderBrandID
 )sty
 
- 
---select distinct s.SewingLineID,s.FactoryID,[OrderStyle] = o.StyleID, [MockupStyle] = mo.StyleID,s.OutputDate
---into #tmp_s1
---from Production.dbo.SewingOutput s WITH (NOLOCK)
---inner join Production.dbo.SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
---left join Production.dbo.Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
---left join Production.dbo.MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId  
---inner join (select [maxOutputDate] = max(OutputDate),[minOutputDate] = dateadd(day,-90, min(OutputDate)) from #tmpSewingGroup) t on s.OutputDate between t.minOutputDate and t.maxOutputDate
+select [MaxOutputDate] = Max(OutputDate), [MinOutputDate] = MIN(OutputDate), MockupStyle, OrderStyle, SewingLineID, FactoryID 
+into #tmpOutputDate
+from(
+	select distinct OutputDate, MockupStyle, OrderStyle, SewingLineID, FactoryID 
+	from #tmpSewingGroup
+) a
+group by MockupStyle, OrderStyle, SewingLineID, FactoryID 
+
+select distinct t.FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, s.OutputDate
+into #tmpSewingOutput
+from #tmpOutputDate t
+inner join Production.dbo.SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID 
+										and s.FactoryID = t.FactoryID 
+										and s.OutputDate between dateadd(day,-180, t.MinOutputDate) and t.MaxOutputDate
+where   exists(	select 1 from Production.dbo.SewingOutput_Detail sd WITH (NOLOCK)
+				left join Production.dbo.Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
+				left join Production.dbo.MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
+				where s.ID = sd.ID and (o.StyleID = t.OrderStyle or mo.StyleID = t.MockupStyle))
+order by  FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, s.OutputDate
+
+select w.FactoryID, w.SewingLineID ,t.OrderStyle, t.MockupStyle, w.Date
+into #tmpWorkHour
+from Production.dbo.WorkHour w WITH (NOLOCK)
+left join #tmpOutputDate t on t.SewingLineID = w.SewingLineID and t.FactoryID = w.FactoryID and w.Date between t.MinOutputDate and t.MaxOutputDate
+where w.Holiday=0 and isnull(w.Hours,0) != 0 and w.Date >= (select dateadd(day,-180, min(MinOutputDate)) from #tmpOutputDate) and  w.Date <= (select max(MaxOutputDate) from #tmpOutputDate)
+order by  FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, w.Date
 
 select t.*
 	,[LastShift] = IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift)
 	,[FtyType] = f.Type
 	,[FtyCountry] = f.CountryID
-	,[CumulateDate] = (select cumulate from Production.dbo.getSewingOutputCumulateOfDays(IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.OutputDate,t.FactoryID))
+	,[CumulateDate] = CumulateDate.val
 into #tmp1stFilter
 from #tmpSewingGroup t
 left join Production.dbo.Factory f on t.FactoryID = f.ID
+outer apply (	select val = IIF(Count(1)=0, 1, Count(1))
+				from #tmpSewingOutput s
+				where	s.FactoryID = t.FactoryID and
+						s.MockupStyle = t.MockupStyle and
+						s.OrderStyle = t.OrderStyle and
+						s.SewingLineID = t.SewingLineID and
+						s.OutputDate <= t.OutputDate and
+						s.OutputDate >(
+										select isnull(max(w.Date), t.OutputDate)
+										from #tmpWorkHour w 
+										left join #tmpSewingOutput s1 on s1.OutputDate = w.Date and
+																		 s1.FactoryID = w.FactoryID and
+																		 s1.MockupStyle = t.MockupStyle and
+																		 s1.OrderStyle = t.OrderStyle and
+																		 s1.SewingLineID = w.SewingLineID
+										where	w.FactoryID = t.FactoryID and
+												isnull(w.MockupStyle, t.MockupStyle) = t.MockupStyle and
+												isnull(w.OrderStyle, t.OrderStyle) = t.OrderStyle and
+												w.SewingLineID = t.SewingLineID and
+												w.Date <= t.OutputDate and
+												s1.OutputDate is null
+									)
+) CumulateDate
 where t.OrderCategory in ('B','S')-----Artwork
  
 -----by orderid & all ArtworkTypeID
