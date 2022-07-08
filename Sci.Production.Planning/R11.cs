@@ -21,6 +21,7 @@ namespace Sci.Production.Planning
         private string category2;
         private DateTime? sciDelivery1;
         private DateTime? sciDelivery2;
+        private DateTime? outputDate;
         private DataTable printData;
         private DataTable dtArtworkType;
         private StringBuilder condition = new StringBuilder();
@@ -59,8 +60,8 @@ namespace Sci.Production.Planning
             this.factory = this.txtfactory.Text;
             this.category = this.comboCategory.SelectedValue.ToString();
             this.category2 = this.comboCategory.Text;
-
             this.months = this.numNewStyleBaseOn.Value;
+            this.outputDate = this.dateOutputDate.Value;
 
             DualResult result;
             if (!(result = DBProxy.Current.Select(string.Empty, "select id,seq from dbo.artworktype WITH (NOLOCK) where istms=1 or isprice= 1 order by seq", out this.dtArtworkType)))
@@ -270,6 +271,15 @@ where 1=1"));
             {
                 sqlCmd.Append(string.Format(@" and  dateadd(month,{0},o2.SciDelivery ) < so.OutputDate", -this.months));
                 this.condition.Append(string.Format(@"    New Style base on {0} month(s)", this.months));
+            }
+
+            if (MyUtility.Check.Empty(this.outputDate) && this.chkByCMPMonthlyLockDate.Checked)
+            {
+                sqlCmd.Append($" and so.OutputDate <= (select top 1 sewLock from dbo.System)");
+            }
+            else if (!MyUtility.Check.Empty(this.outputDate))
+            {
+                sqlCmd.Append($" and so.OutputDate <= '{Convert.ToDateTime(this.outputDate).ToString("yyyy/MM/dd")}'");
             }
 
             sqlCmd.Append($" and o.Category in ({this.category})");
@@ -489,6 +499,32 @@ drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls");
             #endregion
             this.HideWaitMessage();
             return true;
+        }
+
+        private void DateOutputDate_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!MyUtility.Check.Empty(this.dateOutputDate.Value))
+            {
+                this.chkByCMPMonthlyLockDate.Checked = false;
+                this.chkByCMPMonthlyLockDate.Enabled = false;
+            }
+            else
+            {
+                this.chkByCMPMonthlyLockDate.Enabled = true;
+            }
+        }
+
+        private void ChkByCMPMonthlyLockDate_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.chkByCMPMonthlyLockDate.Checked)
+            {
+                this.dateOutputDate.Value = null;
+                this.dateOutputDate.Enabled = false;
+            }
+            else
+            {
+                this.dateOutputDate.Enabled = true;
+            }
         }
     }
 }
