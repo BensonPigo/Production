@@ -169,6 +169,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Packing_B09.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Packing_B09.designer.cs">
+      <DependentUpon>Packing_B09.cs</DependentUpon>
+    </Compile>
     <Compile Include="IE_B05.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -180,6 +186,12 @@
     </Compile>
     <Compile Include="IE_B05_CopyFromOtherFactory.Designer.cs">
       <DependentUpon>IE_B05_CopyFromOtherFactory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Packing_B10.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Packing_B10.designer.cs">
+      <DependentUpon>Packing_B10.cs</DependentUpon>
     </Compile>
     <Compile Include="QA_B20.cs">
       <SubType>Form</SubType>
@@ -506,11 +518,17 @@
       <DependentUpon>WH_B01.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Packing_B09.resx">
+      <DependentUpon>Packing_B09.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="IE_B05.resx">
       <DependentUpon>IE_B05.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="IE_B05_CopyFromOtherFactory.resx">
       <DependentUpon>IE_B05_CopyFromOtherFactory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Packing_B10.resx">
+      <DependentUpon>Packing_B10.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="QA_B20.resx">
       <DependentUpon>QA_B20.cs</DependentUpon>
