@@ -10,6 +10,9 @@ namespace Sci.Production.Sewing
     /// <inheritdoc/>
     public partial class P09 : Win.Tems.QueryForm
     {
+        private DataTable dtMaster;
+        private DataTable dtDetail;
+
         /// <inheritdoc/>
         public P09(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -22,25 +25,34 @@ namespace Sci.Production.Sewing
         {
             base.OnFormLoaded();
 
-            this.Helper.Controls.Grid.Generator(this.grid1)
-                .Date("ScanDate", header: "Scan Date", iseditingreadonly: true)
-                .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("CTNStartNo", header: "CTN#", iseditingreadonly: true)
-                .Text("CartonQty", header: "Carton Qty", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("MDFailQty", header: "Discrepancy", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("BrandID", header: "Brand", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("Alias", header: "Destination", width: Widths.Auto(), iseditingreadonly: true)
-                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditingreadonly: true)
-                .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("Barcode", header: "Barcode", width: Widths.AnsiChars(15), iseditingreadonly: false)
-                .Text("ReceivedBy", header: "Scan By", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("AddDate", header: "Scan Time", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
-                .Text("RepackOrderID", header: "Repack To SP#", width: Widths.AnsiChars(15), iseditable: false)
-                .Text("RepackCtnStartNo", header: "Repack To CTN#", width: Widths.AnsiChars(6), iseditable: false);
+            #region GridMain Setting
+            this.Helper.Controls.Grid.Generator(this.gridMain)
+               .Date("ScanDate", header: "Scan Date", iseditingreadonly: true)
+               .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditingreadonly: true)
+               .Text("CTNStartNo", header: "CTN#", iseditingreadonly: true)
+               .Text("CartonQty", header: "Carton Qty", width: Widths.Auto(), iseditingreadonly: true)
+               .Text("MDFailQty", header: "Discrepancy", width: Widths.Auto(), iseditingreadonly: true)
+               .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditingreadonly: true)
+               .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditingreadonly: true)
+               .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditingreadonly: true)
+               .Text("BrandID", header: "Brand", width: Widths.Auto(), iseditingreadonly: true)
+               .Text("Alias", header: "Destination", width: Widths.Auto(), iseditingreadonly: true)
+               .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditingreadonly: true)
+               .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditingreadonly: true)
+               .Text("Barcode", header: "Barcode", width: Widths.AnsiChars(15), iseditingreadonly: false)
+               .Text("ReceivedBy", header: "Scan By", width: Widths.Auto(), iseditingreadonly: true)
+               .Text("AddDate", header: "Scan Time", width: Widths.Auto(), iseditingreadonly: true)
+               .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
+               .Text("RepackOrderID", header: "Repack To SP#", width: Widths.AnsiChars(15), iseditable: false)
+               .Text("RepackCtnStartNo", header: "Repack To CTN#", width: Widths.AnsiChars(6), iseditable: false);
+            #endregion
+
+            #region GridDetail Setting
+            this.Helper.Controls.Grid.Generator(this.gridDetail)
+                .Text("Description", header: "Description", iseditingreadonly: true)
+                .Numeric("Qty", header: "Discrepancy", iseditingreadonly: true)
+                ;
+            #endregion
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)
@@ -103,6 +115,8 @@ select md.ScanDate
                                         AND md.PackingListID = pd.id 
 					            FOR XML PATH('')
 				            )) ,1,1,'')
+	    ,md.Ukey
+into #tmp
 from MDScan md with(nolock)
 left join orders o with(nolock) on md.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
@@ -119,24 +133,66 @@ left join Order_QtyShip os on pd.OrderID = os.Id
 
 where 1=1
         {sqlwhere}
-ORDER BY md.ScanDate,[PackingListID],[CTNStartNo],[OrderID]
+
+select * from #tmp
+ORDER BY ScanDate,[PackingListID],[CTNStartNo],[OrderID]
+
+select mdd.MDScanUKey
+,[Description] = (select Description from PackingReason WHERE Type='MD' AND Junk=0 and id = mdd.PackingReasonID)
+, mdd.Qty
+from MDScan_Detail mdd
+inner join #tmp md on mdd.MDScanUKey = md.Ukey
+
+drop table #tmp
+
 ";
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
-            if (!result)
+            DataSet datas = null;
+            if (!SQL.Selects(string.Empty, sqlcmd, out datas))
             {
-                this.ShowErr(result);
+                MyUtility.Msg.WarningBox(sqlcmd, "DB error!!");
                 return;
             }
 
-            if (dt.Rows.Count == 0)
+            if (this.listControlBindingSource1.DataSource != null)
             {
-                MyUtility.Msg.WarningBox("Datas not found!");
+                this.listControlBindingSource1.DataSource = null;
             }
 
+            if (this.listControlBindingSource2.DataSource != null)
+            {
+                this.listControlBindingSource2.DataSource = null;
+            }
+
+            datas.Tables[0].AcceptChanges();
+            datas.Tables[1].AcceptChanges();
+
+            if (datas.Tables[0].Rows.Count == 0)
+            {
+                return;
+            }
+
+            this.dtMaster = datas.Tables[0];
+            this.dtMaster.TableName = "Master";
+
+            this.dtDetail = datas.Tables[1];
+            this.dtDetail.TableName = "Detail";
+
+            DataRelation relation = new DataRelation(
+              "rel1",
+              new DataColumn[] { this.dtMaster.Columns["Ukey"] },
+              new DataColumn[] { this.dtDetail.Columns["MDScanUKey"] });
+
+            datas.Relations.Add(relation);
+
+            this.listControlBindingSource1.DataSource = datas;
+            this.listControlBindingSource1.DataMember = "Master";
+            this.listControlBindingSource2.DataSource = this.listControlBindingSource1;
+            this.listControlBindingSource2.DataMember = "rel1";
+            this.gridMain.AutoResizeColumns();
+            this.gridDetail.AutoResizeColumns();
+
             this.HideWaitMessage();
-            this.listControlBindingSource1.DataSource = dt;
-            this.grid1.AutoResizeColumns();
+            this.gridMain.AutoResizeColumns();
         }
     }
 }

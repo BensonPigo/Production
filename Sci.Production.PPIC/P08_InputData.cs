@@ -48,7 +48,7 @@ namespace Sci.Production.PPIC
         /// <inheritdoc/>
         protected override bool DoSave()
         {
-            if (MyUtility.Check.Empty(this.CurrentData["Seq"]))
+            if (MyUtility.Check.Empty(this.CurrentData["Seq"]) || MyUtility.Check.Empty(this.CurrentData["Seq1"]) || MyUtility.Check.Empty(this.CurrentData["Seq2"]))
             {
                 MyUtility.Msg.WarningBox("SEQ can't empty!!");
                 this.txtSEQ.Focus();
@@ -74,6 +74,7 @@ namespace Sci.Production.PPIC
                 if (this.txtSEQ.Text.IndexOf("'") != -1)
                 {
                     this.txtSEQ.Text = string.Empty;
+                    e.Cancel = true;
                     MyUtility.Msg.WarningBox("Can not enter the  '  character!!");
                     return;
                 }
@@ -82,8 +83,8 @@ namespace Sci.Production.PPIC
 
                 if (seqSplit.Length != 2)
                 {
-                    MyUtility.Msg.WarningBox("SEQ input format is wrong!!");
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("SEQ input format is wrong!!");
                     return;
                 }
 
@@ -144,11 +145,11 @@ and mpd.InQty > 0",
 
                     if (!MyUtility.Check.Seek(sqlCmd, out DataRow poData))
                     {
+                        MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > have no receive record!!!", this.txtSEQ.Text));
                         this.CurrentData["Seq"] = string.Empty;
                         this.CurrentData["Seq1"] = string.Empty;
                         this.CurrentData["Seq2"] = string.Empty;
                         e.Cancel = true;
-                        MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > have no receive record!!!", this.txtSEQ.Text));
                         return;
                     }
 

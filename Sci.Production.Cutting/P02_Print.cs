@@ -827,8 +827,16 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                     }
                     #endregion
                     double unit = Convert.ToDouble(workorderArry[0]["yds"]) * 0.9144;
+                    string markerNo = MyUtility.Convert.GetString(workorderArry[0]["MarkerNo"]);
+                    string markerNo2 = string.Empty;
+                    if (markerNo.Length >= 2)
+                    {
+                        markerNo2 = markerNo.Substring(markerNo.Length - 2);
+                    }
+
                     worksheet.Cells[12, 1] = workorderArry[0]["MarkerName"].ToString();
-                    worksheet.Cells[12, 4] = workorderArry[0]["MarkerNo"].ToString();
+                    worksheet.Cells[12, 3] = markerNo2;
+                    worksheet.Cells[12, 4] = markerNo;
                     worksheet.Cells[12, 6] = workorderArry[0]["MarkerLength"].ToString() + "\n" + workorderArry[0]["yds"].ToString() + "Y (" + unit + "M)";
                     worksheet.Cells[12, 10] = size;
                     worksheet.Cells[12, 12] = ratio;
