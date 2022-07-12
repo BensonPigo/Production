@@ -159,14 +159,14 @@ from(
 	select distinct OutputDate, MockupStyle, OrderStyle, SewingLineID, FactoryID 
 	from #tmpSewingGroup
 ) a
-group by MockupStyle, OrderStyle, SewingLineID, FactoryID 
+group by MockupStyle, OrderStyle, SewingLineID, FactoryID
 
 select distinct t.FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, s.OutputDate
 into #tmpSewingOutput
 from #tmpOutputDate t
 inner join Production.dbo.SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID 
-										and s.FactoryID = t.FactoryID 
-										and s.OutputDate between dateadd(day,-180, t.MinOutputDate) and t.MaxOutputDate
+											and s.FactoryID = t.FactoryID 
+											and s.OutputDate between dateadd(day,-240, t.MinOutputDate) and t.MaxOutputDate
 where   exists(	select 1 from Production.dbo.SewingOutput_Detail sd WITH (NOLOCK)
 				left join Production.dbo.Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
 				left join Production.dbo.MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
@@ -177,7 +177,7 @@ select w.FactoryID, w.SewingLineID ,t.OrderStyle, t.MockupStyle, w.Date
 into #tmpWorkHour
 from Production.dbo.WorkHour w WITH (NOLOCK)
 left join #tmpOutputDate t on t.SewingLineID = w.SewingLineID and t.FactoryID = w.FactoryID and w.Date between t.MinOutputDate and t.MaxOutputDate
-where w.Holiday=0 and isnull(w.Hours,0) != 0 and w.Date >= (select dateadd(day,-180, min(MinOutputDate)) from #tmpOutputDate) and  w.Date <= (select max(MaxOutputDate) from #tmpOutputDate)
+where w.Holiday=0 and isnull(w.Hours,0) != 0 and w.Date >= (select dateadd(day,-240, min(MinOutputDate)) from #tmpOutputDate) and  w.Date <= (select max(MaxOutputDate) from #tmpOutputDate)
 order by  FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, w.Date
 
 select t.*
@@ -196,7 +196,9 @@ outer apply (	select val = IIF(Count(1)=0, 1, Count(1))
 						s.SewingLineID = t.SewingLineID and
 						s.OutputDate <= t.OutputDate and
 						s.OutputDate >(
-										select isnull(max(w.Date), t.OutputDate)
+										select case when max(iif(s1.OutputDate is null, w.Date, null)) is not null then max(iif(s1.OutputDate is null, w.Date, null))
+													when min(w.Date) is not null then min(w.Date)
+													else t.OutputDate end
 										from #tmpWorkHour w 
 										left join #tmpSewingOutput s1 on s1.OutputDate = w.Date and
 																		 s1.FactoryID = w.FactoryID and
@@ -207,8 +209,7 @@ outer apply (	select val = IIF(Count(1)=0, 1, Count(1))
 												isnull(w.MockupStyle, t.MockupStyle) = t.MockupStyle and
 												isnull(w.OrderStyle, t.OrderStyle) = t.OrderStyle and
 												w.SewingLineID = t.SewingLineID and
-												w.Date <= t.OutputDate and
-												s1.OutputDate is null
+												w.Date <= t.OutputDate
 									)
 ) CumulateDate
 where t.OrderCategory in ('B','S')-----Artwork
