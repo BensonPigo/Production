@@ -197,7 +197,7 @@ outer apply (	select val = IIF(Count(1)=0, 1, Count(1))
 						s.OutputDate <= t.OutputDate and
 						s.OutputDate >(
 										select case when max(iif(s1.OutputDate is null, w.Date, null)) is not null then max(iif(s1.OutputDate is null, w.Date, null))
-													when min(w.Date) is not null then min(w.Date)
+													when min(w.Date) is not null then dateadd(day, -1, min(w.Date))
 													else t.OutputDate end
 										from #tmpWorkHour w 
 										left join #tmpSewingOutput s1 on s1.OutputDate = w.Date and
