@@ -1,11 +1,11 @@
-﻿using System;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using Ict;
+﻿using Ict;
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.PublicPrg;
+using System;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
@@ -550,6 +550,25 @@ order by Seq", this.orderID);
 											pd.CTNStartNo = ch.CTNStartNo and
 											pd.OrderID = ch.OrderID
 
+	-- CTNPackingAudit
+	select	ch.PackingListID
+			, ch.CTNStartNo
+			, Type = 'Packing Audit'  
+			, ch.ID
+			, TypeDate = ch.PackingAuditDate 
+			, Location = '' 
+			, UpdateDate = ch.AddDate 
+			, Seq = isnull(pd.Seq, 0) 
+    		, pd.OrigID
+    		, pd.OrigOrderID
+    		, pd.OrigCTNStartNo
+	into #CTNPackingAudit
+	from CTNPackingAudit ch with (nolock)
+	inner join  #PackingList_Detail pd on	pd.ID = ch.PackingListID and
+											pd.CTNStartNo = ch.CTNStartNo and
+											pd.OrderID = ch.OrderID
+
+
 select * from #Transferclog
 union all
 select * from #CReceive
@@ -571,6 +590,8 @@ union all
 select * from #MDScan
 union all
 select * from #Hauling
+union all
+select * from #CTNPackingAudit
 order by PackingListID,Seq,UpdateDate
 
 drop table #PackingList_Detail,#Transferclog,#CReceive,#CReturn,#TransferCFA,#ReceiveCFA,#ReturnCFA,#CReceiveCFA ,#DryRoomReceive ,#DryRoomTransfer ,#MDScan, #Hauling
@@ -611,6 +632,7 @@ select [PackingListID] =  p.ID
 ,pd.MDFailQty
 ,pd.DRYTransferDate
 ,pd.HaulingDate
+,pd.PackingAuditDate
 from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
 outer apply(
 	select sum(QtyPerCTN) QtyPerCTN ,sum(ScanQty) ScanQty 
@@ -650,8 +672,9 @@ order by p.ID,pd.Seq", this.orderID);
                 .Date("TransferDate", header: "Trans. Date", width: Widths.AnsiChars(10))
                 .Date("ReceiveDate", header: "Rec. Date", width: Widths.AnsiChars(10))
                 .Date("ReturnDate", header: "Return Date", width: Widths.AnsiChars(10))
-				.Date("HaulingDate", header: "Hauling Date", width: Widths.AnsiChars(10))
-				.Date("DryReceiveDate", header: "Dry Room Receive Date", width: Widths.AnsiChars(10))
+                .Date("PackingAuditDate", header: "Packing Audit Date", width: Widths.AnsiChars(10))
+                .Date("HaulingDate", header: "Hauling Date", width: Widths.AnsiChars(10))
+                .Date("DryReceiveDate", header: "Dry Room Receive Date", width: Widths.AnsiChars(10))
                 .Date("DRYTransferDate", header: "Dry Room Transfer Date", width: Widths.AnsiChars(10))
                 .Date("MDScanDate", header: "MD Room Scan Date", width: Widths.AnsiChars(10))
                 .Text("MDFailQty", header: "MD Discrepancy", width: Widths.AnsiChars(6))

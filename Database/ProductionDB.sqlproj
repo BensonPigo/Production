@@ -2723,6 +2723,9 @@
     <Build Include="dbo\Stored Procedures\imp_BundleInfo.sql" />
     <Build Include="dbo\Tables\Style_SpecialMark.sql" />
     <Build Include="dbo\Tables\AutomationDisplay.sql" />
+    <Build Include="dbo\Tables\CTNPackingAudit_Detail.sql" />
+    <Build Include="dbo\Tables\CTNPackingAudit.sql" />
+    <Build Include="dbo\Functions\GetIsHighRisk.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
