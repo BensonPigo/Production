@@ -29,6 +29,12 @@ namespace Sci.Production.Class
         public bool IsMiscOverseas { get; set; } = false;
 
         /// <summary>
+        /// 是否要顯示 Is Sintex Subcon 的資料
+        /// </summary>
+        [Description("是否只顯示 LocalSupp.IsSintexSubcon 的資料")]
+        public bool IsSintexSubcon { get; set; } = false;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="TxtLocalSupp"/> class.
         /// </summary>
         public TxtLocalSupp()
@@ -91,6 +97,11 @@ where l.Junk=0 AND l.ID ='{textValue}'
                     sql += "and l.IsMiscOverseas = 1" + Environment.NewLine;
                 }
 
+                if (this.IsSintexSubcon)
+                {
+                    sql += "and l.IsSintexSubcon = 1" + Environment.NewLine;
+                }
+
                 if (!MyUtility.Check.Seek(sql))
                 {
                     this.TextBox1.Text = string.Empty;
@@ -129,6 +140,11 @@ where l.Junk=0
             if (this.IsMiscOverseas)
             {
                 sql += "and l.IsMiscOverseas = 1" + Environment.NewLine;
+            }
+
+            if (this.IsSintexSubcon)
+            {
+                sql += "and l.IsSintexSubcon = 1" + Environment.NewLine;
             }
 
             sql += "order by l.ID" + Environment.NewLine;

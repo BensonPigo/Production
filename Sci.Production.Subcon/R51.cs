@@ -21,6 +21,8 @@ namespace Sci.Production.Subcon
     public partial class R51 : Sci.Win.Tems.PrintForm
     {
         private DataTable printData;
+        private string supplierID;
+        private string supplierAbb;
 
         /// <summary>
         /// R51
@@ -30,13 +32,32 @@ namespace Sci.Production.Subcon
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.txtLocalSupp1.TextBox1.Text = MyUtility.GetValue.Lookup(@"SELECT TOP 1 PrintingSuppID FROM [Production].[dbo].SYSTEM");
+        }
+
+        // 驗證輸入條件
+
+        /// <inheritdoc/>
+        protected override bool ValidateInput()
+        {
+            this.supplierID = this.txtLocalSupp1.TextBox1.Text;
+            this.supplierAbb = this.txtLocalSupp1.DisplayBox1.Text;
+
+            // Supplier 為必輸條件
+            if (MyUtility.Check.Empty(this.supplierID))
+            {
+                MyUtility.Msg.InfoBox("Supplier cannot be empty.");
+                return false;
+            }
+
+            return base.ValidateInput();
         }
 
         /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region SQL CMD
-            string sqlCmd = string.Format(@"
+            string sqlCmd = string.Format($@"
 select	distinct
         AP.ID
 		,O.poid
@@ -87,8 +108,8 @@ outer apply (
 ) o2
 Where	AP.POType='O' 
 		and APD.ArtworkTypeID='PRINTING' 
-		and AP.Status <> 'New' 
-		And  AP.LocalSuppID = (SELECT TOP 1 PrintingSuppID FROM [Production].[dbo].SYSTEM )
+        and AP.LocalSuppID = '{this.supplierID}'
+		and AP.Status <> 'New'
 		And 
             (Convert (date, AP.AddDate)  >= Convert(date, DATEADD(m, -2, GETDATE()))
 		Or Convert (date, AP.EditDate) >=Convert(date, DATEADD(d, -7, GETDATE())) )
@@ -182,7 +203,8 @@ group by    ID
             Excel.Worksheet worksheet = objApp.Sheets[1];
             worksheet.Cells[1, 2] = DateTime.Today.AddMonths(-2).ToShortDateString();
             worksheet.Cells[1, 4] = DateTime.Today.ToShortDateString();
-            worksheet.Cells[1, 6] = MyUtility.GetValue.Lookup(@"SELECT TOP 1 PrintingSuppID FROM [Production].[dbo].SYSTEM");
+            worksheet.Cells[1, 6] = this.supplierID;
+            worksheet.Cells[1, 7] = this.supplierAbb;
             worksheet.Columns.AutoFit();
 
             #region Save & Show Excel
