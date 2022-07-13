@@ -241,7 +241,8 @@ outer apply (	select val = IIF(Count(1)=0, 1, Count(1))
 						s.OutputDate <= t.OutputDate and
 						s.OutputDate >(
 										select case when max(iif(s1.OutputDate is null, w.Date, null)) is not null then max(iif(s1.OutputDate is null, w.Date, null))
-													when min(w.Date) is not null then min(w.Date)
+													--區間內都連續生產，第一天也要算是生產日，所以要減一天
+													when min(w.Date) is not null then DATEADD(day, -1, min(w.Date))
 													else t.OutputDate end
 										from #tmpWorkHour w 
 										left join #tmpSewingOutput s1 on s1.OutputDate = w.Date and
