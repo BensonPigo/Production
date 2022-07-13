@@ -205,9 +205,39 @@ where not exists (select 1 from Factory f WITH (NOLOCK) where f.ID = o.FactoryID
             sqlCmd.Append($" and o.Category in ({this.category})");
 
             this.condition.Append(string.Format(@"    Category : {0}", this.category2));
+
+            // #tmp_AR_Basic filter
+            StringBuilder sqlcmdWhere = new StringBuilder();
+            if (!MyUtility.Check.Empty(this.mdivision))
+            {
+                sqlcmdWhere.Append(" and o.mdivisionid = @MDivision");
+            }
+
+            if (!MyUtility.Check.Empty(this.factory))
+            {
+                sqlcmdWhere.Append(" and o.FtyGroup = @factory");
+            }
+
+            if (this.numNewStyleBaseOn.Value != 0)
+            {
+                sqlcmdWhere.Append(string.Format(@" and  dateadd(month,{0},o2.SciDelivery ) < so.OutputDate", -this.months));
+                this.condition.Append(string.Format(@"    New Style base on {0} month(s)", this.months));
+            }
+
+            if (MyUtility.Check.Empty(this.outputDate) && this.chkByCMPMonthlyLockDate.Checked)
+            {
+                sqlcmdWhere.Append($" and so.OutputDate <= (select top 1 sewLock from dbo.System)");
+            }
+            else if (!MyUtility.Check.Empty(this.outputDate))
+            {
+                sqlcmdWhere.Append($" and so.OutputDate <= '{Convert.ToDateTime(this.outputDate).ToString("yyyy/MM/dd")}'");
+            }
+
+            sqlcmdWhere.Append($" and o.Category in ({this.category})");
+
             #endregion
 
-            sqlCmd.Append(string.Format(@"
+            sqlCmd.Append($@"
 select o.FtyGroup
 	,o.Styleid
 	,oa.Article
@@ -237,6 +267,23 @@ outer apply(
 ) oa
 group by o.FtyGroup,o.Styleid,oa.Article,oa.Brand,o.SeasonID,o.CdCodeID,o.CPU
 	, o.CDCodeNew, o.ProductType, o.FabricType, o.Lining, o.Gender, o.Construction
+
+-- get Style_SimilarStyle 
+select distinct StyleID,OldStyleID
+into #tmpStyle_SimilarStyle
+From 
+(
+		Select StyleID = MasterStyleID, BrandID = MasterBrandID, OldStyleID = t.StyleID
+		From Style_SimilarStyle	s	
+		inner join #tmpo t on (t.StyleID = s.MasterStyleID and t.BrandID = s.MasterBrandID) or (t.StyleID = s.ChildrenStyleID and t.BrandID = s.ChildrenBrandID)
+		Union 
+		Select StyleID = ChildrenStyleID, BrandID = ChildrenBrandID, OldStyleID = t.StyleID
+		From Style_SimilarStyle	s	
+		inner join #tmpo t on (t.StyleID = s.MasterStyleID and t.BrandID = s.MasterBrandID) or (t.StyleID = s.ChildrenStyleID and t.BrandID = s.ChildrenBrandID)
+) main
+	Left join Style s on s.ID = main.StyleID And s.BrandID = main.BrandID
+	Where s.Ukey is null
+
 --
 select 
 	o.StyleID
@@ -256,33 +303,27 @@ inner join SewingOutput so  WITH (NOLOCK) on sod.id = so.id
 --inner join Style_Location sl  WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey AND sl.Location = iif(o.StyleUnit = 'PCS',sl.Location,sod.ComboType)
 --inner join Order_Location ol  WITH (NOLOCK) on ol.OrderId = o.ID AND ol.Location = sod.ComboType
 --outer apply (select value = dbo.GetOrderLocation_Rate(o.id,sod.ComboType)) ol_rate
-where 1=1"));
-            if (!MyUtility.Check.Empty(this.mdivision))
-            {
-                sqlCmd.Append(" and o.mdivisionid = @MDivision");
-            }
+where 1=1
+{sqlcmdWhere}
 
-            if (!MyUtility.Check.Empty(this.factory))
-            {
-                sqlCmd.Append(" and o.FtyGroup = @factory");
-            }
 
-            if (this.numNewStyleBaseOn.Value != 0)
-            {
-                sqlCmd.Append(string.Format(@" and  dateadd(month,{0},o2.SciDelivery ) < so.OutputDate", -this.months));
-                this.condition.Append(string.Format(@"    New Style base on {0} month(s)", this.months));
-            }
-
-            if (MyUtility.Check.Empty(this.outputDate) && this.chkByCMPMonthlyLockDate.Checked)
-            {
-                sqlCmd.Append($" and so.OutputDate <= (select top 1 sewLock from dbo.System)");
-            }
-            else if (!MyUtility.Check.Empty(this.outputDate))
-            {
-                sqlCmd.Append($" and so.OutputDate <= '{Convert.ToDateTime(this.outputDate).ToString("yyyy/MM/dd")}'");
-            }
-
-            sqlCmd.Append($" and o.Category in ({this.category})");
+select 
+	o.StyleID,o.BrandID,o2.OldStyleID
+	,qty = sod.QAQty
+	,MH = so.manpower * sod.WorkHour
+	,tms = iif(o.Category = 'S',o.CPU*StdTMS,o.CPU*s.StdTMS*(dbo.GetOrderLocation_Rate(o.id,sod.ComboType)/100))
+	,S = sum(iif(o.Category = 'S',1,0)) over(partition by o.StyleID)
+	,B = sum(iif(o.Category = 'B',1,0)) over(partition by o.StyleID)
+	,OutputDate
+	,SewingLineID
+into #tmp_AR_Basic_S
+from System s,(select distinct StyleID,OldStyleID from  #tmpStyle_SimilarStyle) o2
+inner join Orders o WITH (NOLOCK) on o2.StyleID = o.StyleID
+inner join SewingOutput_Detail sod  WITH (NOLOCK) on sod.OrderId = o.ID
+inner join SewingOutput so  WITH (NOLOCK) on sod.id = so.id
+where 1=1
+{sqlcmdWhere}
+");
 
             sqlCmd.Append(
                 $@"
@@ -298,9 +339,22 @@ select a.StyleID
                     else concat(min(a.SewingLineID),'(',format(b.max_OutputDate,'yyyy/MM/dd'),')')
                     end
 into #tmp_R
-from #tmp_AR_Basic a inner join (select StyleID,max_OutputDate = max(OutputDate) from #tmp_AR_Basic group by StyleID) b
+from #tmp_AR_Basic a 
+inner join (select StyleID,max_OutputDate = max(OutputDate) from #tmp_AR_Basic group by StyleID) b
 on a.StyleID = b.StyleID and a.OutputDate = b.max_OutputDate
 group by a.StyleID,b.max_OutputDate,S,B
+
+select a.StyleID,a.OldStyleID
+	,R_Similar =    case    when max_OutputDate is null then 'New Style'
+                    when a.S > 0 AND a.B = 0 then 'New Style'
+                    else  concat(b.StyleID,'→',min(a.SewingLineID),'(',format(b.max_OutputDate,'yyyy/MM/dd'),')')
+                    end
+into #tmp_R_Similar
+from #tmp_AR_Basic_S a 
+inner join (select StyleID,max_OutputDate = max(OutputDate) from #tmp_AR_Basic_S group by StyleID) b
+on a.StyleID = b.StyleID and a.OutputDate = b.max_OutputDate
+group by a.StyleID,b.max_OutputDate,S,B,b.StyleID,a.OldStyleID
+
 --
 select o.StyleID,P = sum(st.Price)
 into #tmp_P
@@ -344,6 +398,7 @@ select o.FtyGroup
 	   , TCPU = format(o.TCPU,'0.00')
 	   , a.A
 	   , R = isnull(r.R,'New Style')
+       , RS = ISNULL(rs.RS,'New Style')
 	   , W = iif(w.P=0 or w.P is null,'N','Y')
 	   {this.pvtid}
 from #tmpol o
@@ -351,6 +406,13 @@ left join #tmp_A a on a.StyleID = o.StyleID
 left join #tmp_R r on r.StyleID = o.StyleID
 left join #tmp_P w on w.StyleID = o.StyleID
 left join #cls s on s.StyleID = o.StyleID
+outer apply(	
+	select RS = Stuff((
+	select  concat(',',R_Similar)
+	from #tmp_R_Similar s
+	where s.OldStyleID = o.StyleID
+	for XML path('')),1,1,'')
+)rs
 order by o.FtyGroup,o.StyleID,o.SeasonID
 
 drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls");
@@ -477,7 +539,7 @@ drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls");
                 }
                 #endregion
 
-                objSheets.Cells[3, 19 + i] = strArtworkType + "-" + this.dtArtworkType.Rows[i]["seq"].ToString();
+                objSheets.Cells[3, 20 + i] = strArtworkType + "-" + this.dtArtworkType.Rows[i]["seq"].ToString();
             }
 
             objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬
