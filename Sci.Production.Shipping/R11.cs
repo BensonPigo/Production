@@ -864,31 +864,37 @@ as (
    outer apply(
 	-- 只要cnt = 0, 沒資料 = 就存在
 		select cnt = count(1) from (
-			select distinct sap.AccountID from View_ShareExpense se with (nolock)
+			select distinct sap.AccountID 
+            from View_ShareExpense se with (nolock)
 			inner join ShippingAP_Detail sap WITH (NOLOCK) on sap.ID = se.ShippingAPID
 			where 1=1
 			and se.InvNo = g.id
 			and sap.AccountID in ('61022001')
+            and se.Junk = 0
 		) a
 	)major1
 	outer apply(	
 	-- 只要cnt != 2, 代表任何一筆都沒有 = 就存在
 		select cnt = count(1) from (
-			select distinct sap.AccountID from View_ShareExpense se with (nolock)
+			select distinct sap.AccountID
+            from View_ShareExpense se with (nolock)
 			inner join ShippingAP_Detail sap WITH (NOLOCK) on sap.ID = se.ShippingAPID
 			where 1=1
 			and se.InvNo = g.id
 			and sap.AccountID in ('61092101','61092106')
+            and se.Junk = 0
 		) a
 	)major2
 	outer apply(	
 	-- 只要 cnt = 0,代表這三筆都沒有 = 就存在
 		select cnt = count(1) from (
-			select distinct sap.AccountID from View_ShareExpense se with (nolock)
+			select distinct sap.AccountID
+            from View_ShareExpense se with (nolock)
 			inner join ShippingAP_Detail sap WITH (NOLOCK) on sap.ID = se.ShippingAPID
 			where 1=1
 			and se.InvNo = g.id
 			and sap.AccountID in ('61022003','6102','61021005')
+            and se.Junk = 0
 		) a
 	)major3
     where 1=1

@@ -208,7 +208,7 @@ group by MockupStyle, OrderStyle, SewingLineID, FactoryID
 select distinct t.FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, s.OutputDate
 into #tmpSewingOutput
 from #tmpOutputDate t
-inner join SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID and s.FactoryID = t.FactoryID and s.OutputDate between dateadd(day,-180, t.MinOutputDate) and t.MaxOutputDate
+inner join SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID and s.FactoryID = t.FactoryID and s.OutputDate between dateadd(day,-240, t.MinOutputDate) and t.MaxOutputDate
 where   exists(	select 1 from SewingOutput_Detail sd WITH (NOLOCK)
 				left join Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
 				left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
@@ -219,7 +219,7 @@ select w.FactoryID, w.SewingLineID ,t.OrderStyle, t.MockupStyle, w.Date
 into #tmpWorkHour
 from WorkHour w WITH (NOLOCK)
 left join #tmpOutputDate t on t.SewingLineID = w.SewingLineID and t.FactoryID = w.FactoryID and w.Date between t.MinOutputDate and t.MaxOutputDate
-where w.Holiday=0 and isnull(w.Hours,0) != 0 and w.Date >= (select dateadd(day,-180, min(MinOutputDate)) from #tmpOutputDate) and  w.Date <= (select max(MaxOutputDate) from #tmpOutputDate)
+where w.Holiday=0 and isnull(w.Hours,0) != 0 and w.Date >= (select dateadd(day,-240, min(MinOutputDate)) from #tmpOutputDate) and  w.Date <= (select max(MaxOutputDate) from #tmpOutputDate)
 order by  FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, w.Date
 
 select t.*
@@ -240,7 +240,10 @@ outer apply (	select val = IIF(Count(1)=0, 1, Count(1))
 						s.SewingLineID = t.SewingLineID and
 						s.OutputDate <= t.OutputDate and
 						s.OutputDate >(
-										select isnull(max(w.Date), t.OutputDate)
+										select case when max(iif(s1.OutputDate is null, w.Date, null)) is not null then max(iif(s1.OutputDate is null, w.Date, null))
+													--區間內都連續生產，第一天也要算是生產日，所以要減一天
+													when min(w.Date) is not null then DATEADD(day, -1, min(w.Date))
+													else t.OutputDate end
 										from #tmpWorkHour w 
 										left join #tmpSewingOutput s1 on s1.OutputDate = w.Date and
 																		 s1.FactoryID = w.FactoryID and
@@ -251,8 +254,7 @@ outer apply (	select val = IIF(Count(1)=0, 1, Count(1))
 												isnull(w.MockupStyle, t.MockupStyle) = t.MockupStyle and
 												isnull(w.OrderStyle, t.OrderStyle) = t.OrderStyle and
 												w.SewingLineID = t.SewingLineID and
-												w.Date <= t.OutputDate and
-												s1.OutputDate is null
+												w.Date <= t.OutputDate
 									)
 ) CumulateDate
 where	(	
@@ -469,8 +471,8 @@ from(
 		,CPUSewer = IIF(ROUND(ActManPower*WorkHour,2)>0,(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/ROUND(ActManPower*WorkHour,2),0)
 		,EFF = ROUND(IIF(ROUND(ActManPower*WorkHour,2)>0,((IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/(ROUND(ActManPower*WorkHour,2)*3600/StdTMS))*100,0),1)
 		,RFT = IIF(ori_InlineQty = 0, 0, ROUND(ori_QAQty* 1.0 / ori_InlineQty * 1.0 * 100 ,2))
-		,CumulateDate
-		,DateRange = IIF(CumulateDate>=10,''>=10'',CONVERT(VARCHAR,CumulateDate))
+		,CumulateDate = IIF(CumulateDate > 180,''>180'',CONVERT(VARCHAR,CumulateDate))
+		,DateRange = IIF(CumulateDate >= 10,''>=10'',CONVERT(VARCHAR,CumulateDate))
 		,InlineQty'
 
 		if(@ShowAccumulate_output = 1)
