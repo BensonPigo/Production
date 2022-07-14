@@ -370,9 +370,9 @@ values(GETDATE(),'{Env.User.Keyword}','{dr["MainSP"]}','{dr["ID"]}','{dr["CTNSta
                 string sqlcmdfail = @"
 select t.*,  per.Line,
 	per.Shift,
-	per.ReasonforGarmentSound,
-	per.AreaOperation,
-	per.ActionTaken 
+    EG_Description = (select pr.Description from PackingReason pr where pr.type = 'EG' and id = per.PackingReasonIDForTypeEG),
+    EO_Description = (select pr.Description from PackingReason pr where pr.type = 'EO' and id = per.PackingReasonIDForTypeEO),
+    ET_Description = (select pr.Description from PackingReason pr where pr.type = 'ET' and id = per.PackingReasonIDForTypeET)
 from #tmp t
 left join PackingErrorRecord Per with (nolock) on per.PackID = t.ID and Per.CTN = t.CTNStartNo
 order by t.ID,t.Seq
@@ -479,9 +479,9 @@ drop table #tmp
             <td>{item["BrandID"]}</td>
             <td>{item["SewLine"]}</td>
             <td>{item["ErrQty"]}</td>
-            <td>{item["ReasonforGarmentSound"]}</td>
-            <td>{item["AreaOperation"]}</td>
-            <td>{item["ActionTaken"]}</td>
+            <td>{item["EG_Description"]}</td>
+            <td>{item["EO_Description"]}</td>
+            <td>{item["ET_Description"]}</td>
         </tr>";
                         }
 
@@ -784,9 +784,9 @@ t.ID
 ,t.ErrorType
 ,t.Alias
 ,t.BuyerDelivery
-,per.ReasonforGarmentSound
-,per.AreaOperation
-,per.ActionTaken
+    ,EG_Description = (select pr.Description from PackingReason pr where pr.type = 'EG' and id = per.PackingReasonIDForTypeEG)
+    ,EO_Description = (select pr.Description from PackingReason pr where pr.type = 'EO' and id = per.PackingReasonIDForTypeEO)
+    ,ET_Description = (select pr.Description from PackingReason pr where pr.type = 'ET' and id = per.PackingReasonIDForTypeET)
 ,t.Remark
 from #tmp t
 left join PackingErrorRecord Per with (nolock) on per.PackID = t.ID and Per.CTN = t.CTNStartNo
