@@ -249,10 +249,16 @@ namespace Sci.Production.Subcon
             }
 
             // 當沒有需求來源時（Request ID 為空），『必須』在表身填入 Reason  才允許存檔。
-            foreach (DataRow row in ((DataTable)this.detailgridbs.DataSource).Select("RequestID='' AND ReasonID=''"))
+            foreach (DataRow row in ((DataTable)this.detailgridbs.DataSource).Rows)
             {
-                MyUtility.Msg.InfoBox("< Reason ID > can't be empty when < Request ID > is empty.");
-                return false;
+                if (row.RowState != DataRowState.Deleted)
+                {
+                    if (MyUtility.Check.Empty(row["RequestID"]) && MyUtility.Check.Empty(row["ReasonID"]))
+                    {
+                        MyUtility.Msg.InfoBox("< Reason ID > can't be empty when < Request ID > is empty.");
+                        return false;
+                    }
+                }
             }
 
             if (this.DetailDatas.Count == 0)
