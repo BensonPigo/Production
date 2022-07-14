@@ -1284,7 +1284,7 @@
             <param name="ischanged">true : Data changed, false : Data unchanged.</param>
             <returns>result of the SQL command is executed.</returns>
         </member>
-        <member name="M:Sci.Data.DBProxy.OnUpdateByChanged(Sci.Data.ITableSchema,System.Data.DataRow,System.Data.SqlClient.SqlCommand@)">
+        <member name="M:Sci.Data.DBProxy.OnUpdateByChanged(Sci.Data.ITableSchema,System.Data.DataRow,System.Collections.Generic.List{Sci.DB.DBColumn},System.Data.SqlClient.SqlCommand@)">
             <summary>
             Update row data.
             </summary>
@@ -1398,7 +1398,7 @@
             result = Sci.Data.DBProxy.Current.DeleteByConn(conn, ts, dr);
             </example>
         </member>
-        <member name="M:Sci.Data.DBProxy.OnDelete(Sci.Data.ITableSchema,System.Data.DataRow,System.Data.SqlClient.SqlCommand@)">
+        <member name="M:Sci.Data.DBProxy.OnDelete(Sci.Data.ITableSchema,System.Data.DataRow,System.Collections.Generic.List{Sci.DB.DBColumn},System.Data.SqlClient.SqlCommand@)">
             <summary>
             Delete DataRow from Database.
             </summary>
@@ -1897,6 +1897,30 @@
             <param name="data">destination datarow</param>
             <param name="new">source datarow</param>
         </member>
+        <member name="M:Sci.Slack.SlackAPI.PostSlackMessage(Sci.Slack.SlackAPI.SlackAppName,System.String,System.String)">
+            <summary>
+            Slack直接傳送訊息
+            </summary>
+            <param name="robotName">機器人名稱，指定SCIBot 或 TradeBot 傳送訊息 </param>
+            <param name="target">傳送收件者Email，多個Email使用分號;區隔</param>
+            <param name="text">傳送內文</param>
+            <returns>DualResult</returns>
+        </member>
+        <member name="M:Sci.Slack.SlackAPI.PostSlackMessageByCode(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Slack 透過code傳送訊息 (請在issue Trakgin維護)
+            </summary>
+            <param name="codeID">機器人名稱，指定SCIBot 或 TradeBot 傳送訊息 </param>
+            <param name="parameters">傳送收件者Email</param>
+            <returns>DualResult</returns>
+        </member>
+        <member name="M:Sci.Slack.SlackAPI.SendSlackAPI(Sci.Slack.SlackAPI.SlackParameters)">
+            <summary>
+            傳送API
+            </summary>
+            <param name="slackParameter">slackParameter</param>
+            <returns>DualResult</returns>
+        </member>
         <member name="F:Sci.SQL.QueryConnectionName">
             
              SqlBuliCopy
@@ -2204,24 +2228,27 @@
             <param name="xls">xls / xlsx 檔案</param>
             <returns>判斷open xls成功失敗的dualResult</returns>
         </member>
-        <member name="M:Sci.Utility.Report.ExcelCOM.Save_n_Open(System.String)">
+        <member name="M:Sci.Utility.Report.ExcelCOM.Save_n_Open(System.String,Sci.Utility.Report.ExcelCOM.ExcelType)">
             <summary>
             存檔後, 關閉C#開的excel process, 再開啟Excel 檔 , 開啟方式是用 Windows open file 的方式 (不彈出訊息視窗顯示成功or失敗)
             </summary>
             <param name="fileName">Excel檔名路徑; 給null 的話會自動編檔名</param>
+            <param name="excelType">Excel 存檔類型</param>
             <returns>存檔成功或失敗</returns>
         </member>
-        <member name="M:Sci.Utility.Report.ExcelCOM.SaveOnly(System.String)">
+        <member name="M:Sci.Utility.Report.ExcelCOM.SaveOnly(System.String,Sci.Utility.Report.ExcelCOM.ExcelType)">
             <summary>
             僅儲存Excel 檔 , 不再開啟之 (不彈出訊息視窗顯示成功or失敗)
             </summary>
             <param name="fileName">Excel檔名路徑; 給null 的話會自動編檔名</param>
+            <param name="excelType">Excel 存檔類型</param>
             <returns>存檔成功或失敗</returns>
         </member>
-        <member name="M:Sci.Utility.Report.ExcelCOM.RandomFileName">
+        <member name="M:Sci.Utility.Report.ExcelCOM.RandomFileName(Sci.Utility.Report.ExcelCOM.ExcelType)">
             <summary>
             自動編檔名, 格式: ReportTemp Dir/{UserID}_yyMMdd_HHmmssff
             </summary>
+            <param name="excelType">Excel 存檔類型</param>
             <returns>file name</returns>
         </member>
         <member name="M:Sci.Utility.Report.ExcelCOM.Transfer_2_Array(System.Data.DataTable,System.Int32)">
@@ -4263,7 +4290,26 @@
             <param name="datas">DataTable of result.</param>
             <returns>result of the method is executed.</returns>
         </member>
+        <member name="M:Sci.Win.PrivUtils.GetClips(System.String,System.String,System.String,Sci.Win.SYS.CLIPDataTable@)">
+            <summary>
+            get Clip information from Database.
+            從資料庫中取得特定夾檔資訊.(新增linitedClip參數用於限制呈現夾檔)
+            </summary>
+            <param name="tablename">Table name.</param>
+            <param name="uniquekey">data row unique key.</param>
+            <param name="limitedClip">DataTable of result.</param>
+            <param name="datas">DataTable of result.</param>
+            <returns>result of the method is executed.</returns>
+        </member>
         <member name="M:Sci.Win.PrivUtils.AddClips(System.Collections.Generic.IList{Sci.Win.SYS.CLIPRow},System.String)">
+            <summary>
+            New add some Clip information and clip files.
+            </summary>
+            <param name="datas">DataRow information of clip</param>
+            <param name="dir">Path dir of Clip.</param>
+            <returns>result of the method is executed.</returns>
+        </member>
+        <member name="M:Sci.Win.PrivUtils.AddClips(System.Collections.Generic.IList{Sci.Win.SYS.CLIPRow},System.String,System.String)">
             <summary>
             New add some Clip information and clip files.
             </summary>
@@ -7210,12 +7256,12 @@
             Represents a strongly typed in-memory cache of data.
             </summary>
         </member>
-        <member name="T:Sci.Win.SYS.USERLOGDataTable">
+        <member name="T:Sci.Win.SYS.CLIPDataTable">
              <summary>
             Represents the strongly named DataTable class.
             </summary>
         </member>
-        <member name="T:Sci.Win.SYS.CLIPDataTable">
+        <member name="T:Sci.Win.SYS.USERLOGDataTable">
              <summary>
             Represents the strongly named DataTable class.
             </summary>
@@ -7537,6 +7583,16 @@
             <summary>
             Property of uniqueexpress.
             VFP : cUniqueExpress
+            </summary>
+        </member>
+        <member name="F:Sci.Win.Tems.Base._limitedClip">
+            <summary>
+            FIeld of limitedClip.
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tems.Base.LimitedClip">
+            <summary>
+            Property of limitedClip.
             </summary>
         </member>
         <member name="F:Sci.Win.Tems.Base._connectionname">
@@ -9329,6 +9385,13 @@
         <member name="M:Sci.Win.Tems.Input1.RemoveData(System.Data.DataRow,System.Nullable{System.Int32})">
             <summary>
             Delete datarow from current DataTable.
+            </summary>
+            <param name="data">DataRow</param>
+            <param name="movingdirection">Data navigate direction.</param>
+        </member>
+        <member name="M:Sci.Win.Tems.Input1.DetectData(System.Data.DataRow,System.Boolean@)">
+            <summary>
+            detect datarow from current DataTable.
             </summary>
             <param name="data">DataRow</param>
             <param name="movingdirection">Data navigate direction.</param>
@@ -12477,13 +12540,14 @@
             Constructor of Clip.
             </summary>
         </member>
-        <member name="M:Sci.Win.Tools.Clip.#ctor(System.String,System.String,System.Boolean)">
+        <member name="M:Sci.Win.Tools.Clip.#ctor(System.String,System.String,System.Boolean,System.String)">
             <summary>
             Constructor of Clip with parameters.
             </summary>
             <param name="tablename">Table name.</param>
             <param name="uid">Usercode.</param>
             <param name="canedit">Flag of CanEdit.</param>
+            <param name="limitedClip">Limited Clip</param>
         </member>
         <member name="M:Sci.Win.Tools.Clip.OnFormLoaded">
             <summary>
@@ -12538,6 +12602,16 @@
         <member name="P:Sci.Win.Tools.Clip.UID">
             <summary>
             Property of Usercode.
+            </summary>
+        </member>
+        <member name="F:Sci.Win.Tools.Clip._limitedClip">
+            <summary>
+            Field of limitedClip.
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.Clip.LimitedClip">
+            <summary>
+            Property of limitedClip
             </summary>
         </member>
         <member name="M:Sci.Win.Tools.Clip.SetButton">
@@ -12662,12 +12736,44 @@
             <param name="addTime"></param>
             <returns>success or not</returns>
         </member>
+        <member name="M:Sci.Win.Tools.Clip.AddLimitedClip(System.String,System.String,System.String,System.String,System.String,System.String[])">
+            <summary>
+            不顯示畫面, 直接夾檔
+            </summary>
+            <param name="tablename">Table name</param>
+            <param name="uniqueID">a unique value in {tablename} </param>
+            <param name="userID">who add clip (refer to Pass1.ID )</param>
+            <param name="description"> description of files </param>
+            <param name="clipFiles">one or more strings for each file (full path)</param>
+            <returns>success or not</returns>
+        </member>
+        <member name="M:Sci.Win.Tools.Clip.AddLimitedClip(System.Collections.Generic.IList{Sci.Win.SYS.CLIPRow},System.String,System.String,System.Nullable{System.DateTime},System.String)">
+            <summary>
+            
+            </summary>
+            <param name="datas"></param>
+            <param name="dir"></param>
+            <param name="_yyyymm"></param>
+            <param name="addTime"></param>
+             <param name="limitedClip"></param>
+            <returns>success or not</returns>
+        </member>
         <member name="M:Sci.Win.Tools.Clip.GetAllClipFiles(System.String,System.String,System.String[]@)">
             <summary>
             列出所有的附檔
             </summary>
             <param name="tableName"></param>
             <param name="uniqueID"></param>
+            <param name="files"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.Win.Tools.Clip.GetAllClipFiles(System.String,System.String,System.String,System.String[]@)">
+            <summary>
+            列出所有的附檔
+            </summary>
+            <param name="tableName"></param>
+            <param name="uniqueID"></param>
+            <param name="limitedClip"></param>
             <param name="files"></param>
             <returns></returns>
         </member>
@@ -12736,6 +12842,11 @@
             File path of user.
             </summary>
         </member>
+        <member name="F:Sci.Win.Tools.Clip01._limitedClip">
+            <summary>
+            LimitedClip
+            </summary>
+        </member>
         <member name="F:Sci.Win.Tools.Clip01._tablename">
             <summary>
             Field of table name.
@@ -12760,7 +12871,7 @@
         <member name="M:Sci.Win.Tools.Clip01.#ctor">
             <inheritdoc />
         </member>
-        <member name="M:Sci.Win.Tools.Clip01.#ctor(System.String,System.String,System.String,System.String)">
+        <member name="M:Sci.Win.Tools.Clip01.#ctor(System.String,System.String,System.String,System.String,System.String)">
             <inheritdoc />
         </member>
         <member name="M:Sci.Win.Tools.Clip01.OnFormLoaded">
@@ -13292,9 +13403,24 @@
             Property of IsSendNow.
             </summary>
         </member>
+        <member name="P:Sci.Win.Tools.MailTo.PersonSignFrom">
+            <summary>
+            Property of PersonSignFrom.
+            </summary>
+        </member>
         <member name="P:Sci.Win.Tools.MailTo.IsNoShowMessage">
             <summary>
              Property of IsNoShowMessage.
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.PictureList">
+            <summary>
+             Property of PictureList.
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.IsHtmlBody">
+            <summary>
+             Property of isHtmlBody.
             </summary>
         </member>
         <member name="P:Sci.Win.Tools.MailTo.MailServerIP">
@@ -13367,7 +13493,7 @@
             <param name="issendnow">Flag of send now.</param>
             <param name="isshowmessage">Flag of show message.</param>
         </member>
-        <member name="M:Sci.Win.Tools.MailTo.#ctor(System.String,System.String,System.String,System.String,System.String,System.Collections.Generic.IList{System.String},System.Boolean,System.Boolean,System.Boolean)">
+        <member name="M:Sci.Win.Tools.MailTo.#ctor(System.String,System.String,System.String,System.String,System.String,System.Collections.Generic.IList{System.String},System.Boolean,System.Boolean,System.Boolean,System.String)">
             <summary>
             Constructor of MailTo with parameters.
             </summary>
@@ -13380,8 +13506,9 @@
             <param name="issendnow">Flag of send now.</param>
             <param name="isshowmessage">Flag of show message.</param>
             <param name="personal_Sign">Flag of has PersonSign.</param>
+            <param name="personal_Sign_From">PersonSign From who </param>
         </member>
-        <member name="M:Sci.Win.Tools.MailTo.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.Boolean,System.Boolean,System.Boolean)">
+        <member name="M:Sci.Win.Tools.MailTo.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.String)">
             <summary>
             Constructor of MailTo with parameters.
             </summary>
@@ -13394,6 +13521,22 @@
             <param name="issendnow">Flag of send now.</param>
             <param name="isshowmessage">Flag of show message.</param>
             <param name="personal_Sign">Flag of has PersonSign.</param>
+            <param name="personal_Sign_From">PersonSign From who </param>
+        </member>
+        <member name="M:Sci.Win.Tools.MailTo.#ctor(System.String,System.String,System.String,System.String,System.String,System.Collections.Generic.IList{System.String},System.Boolean,System.Boolean,System.Collections.Generic.IList{System.Net.Mail.Attachment},System.Boolean)">
+            <summary>
+            Constructor of MailTo with parameters.
+            </summary>
+            <param name="from">From of mail.</param>
+            <param name="to">To of mail.</param>
+            <param name="cc">CC of mail.</param>
+            <param name="subject">Subject of mail.</param>
+            <param name="attachmentList">attachment of mail.</param>
+            <param name="description">description of mail.</param>
+            <param name="issendnow">Flag of send now.</param>
+            <param name="isshowmessage">Flag of show message.</param>
+            <param name="picturePathList">picturePathList.</param>
+            <param name="isHtmlBody">isHtmlBody.</param>
         </member>
         <member name="M:Sci.Win.Tools.MailTo.OnFormLoaded">
             <summary>
@@ -13449,7 +13592,7 @@
         <member name="M:Sci.Win.Tools.MailTo.ImgResource(System.Net.Mail.AlternateView)">
             <inheritdoc/>
         </member>
-        <member name="M:Sci.Win.Tools.MailTo.PersonalSign">
+        <member name="M:Sci.Win.Tools.MailTo.PersonalSign(System.String)">
             <summary>
             取得簽名檔
             </summary>
