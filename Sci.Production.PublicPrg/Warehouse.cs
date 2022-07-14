@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Transactions;
+using System.Windows.Forms;
 
 namespace Sci.Production.PublicPrg
 {
@@ -6315,6 +6316,52 @@ and ml.IsWMS = 1
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// WH P07 與 P18
+        /// 修改資料時新增檢查
+        /// 查該捲布是否已經有完成 Shadeband 的檢驗
+        /// 如果有完成檢驗則不允許 UnConfirm 或者是 Modify Roll, Dyelot
+        /// # 請注意此次調整皆只針對主料 Fabric
+        /// </summary>
+        /// <inheritdoc/>
+        public static bool CheckShadebandResult(string function, string id)
+        {
+            WHTableName detailTableName = GetWHDetailTableName(function);
+            string sqlcmd = $@"
+select distinct
+    FIR.POID,
+    FIR.Seq1,
+    FIR.Seq2,
+    fs.Roll,
+    fs.Dyelot,
+    fs.Result
+from {detailTableName} sd with(nolock)
+inner join PO_Supp_Detail psd with(nolock) on psd.ID = sd.PoId and psd.SEQ1 = sd.Seq1 and psd.SEQ2 = sd.Seq2
+inner join FIR with (nolock) on FIR.ReceivingID = sd.ID and FIR.POID = sd.PoId and FIR.SEQ1 = sd.Seq1 and FIR.SEQ2 = sd.Seq2
+inner join FIR_Shadebone fs with (nolock) on fs.id = FIR.ID
+where sd.id = '{id}'
+and psd.FabricType = 'F'
+and fs.Result <>''
+";
+            DualResult result = DBProxy.Current.Select("Production", sqlcmd, out DataTable dt);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return false;
+            }
+
+            if (dt.Rows.Count > 0)
+            {
+                var form = MyUtility.Msg.ShowMsgGrid(dt, msg: "Those fabric roll already completed shade band inspection, please check with QA team and revise inspection result to empty before modiy roll dyelot.", caption: "Warring");
+                form.grid1.Columns[0].Width = 120;
+                form.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+                form.TopMost = true;
+                return false;
+            }
+
+            return true;
         }
     }
 }

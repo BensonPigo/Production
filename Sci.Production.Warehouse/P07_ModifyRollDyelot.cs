@@ -683,6 +683,14 @@ where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and d
                 return;
             }
 
+            DataTable dtFIR_Shadebone = new DataTable();
+            dtFIR_Shadebone.Columns.Add("POID");
+            dtFIR_Shadebone.Columns.Add("Seq1");
+            dtFIR_Shadebone.Columns.Add("Seq2");
+            dtFIR_Shadebone.Columns.Add("Roll");
+            dtFIR_Shadebone.Columns.Add("Dyelot");
+            dtFIR_Shadebone.Columns.Add("Result");
+
             // 修改到Roll或Dyelot時。因為主索引鍵被修改，需要檢查
             foreach (var drModify in modifyDrList)
             {
@@ -694,6 +702,36 @@ where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and d
 
                 if (original_Roll != current_Roll || original_Dyelot != current_Dyelot)
                 {
+                    string sqlCheckShadebandResult = $@"
+select
+    FIR.POID,
+    FIR.Seq1,
+    FIR.Seq2,
+    fs.Roll,
+    fs.Dyelot,
+    fs.Result
+from {this.gridAlias} sd with(nolock)
+inner join PO_Supp_Detail psd with(nolock) on psd.ID = sd.PoId and psd.SEQ1 = sd.Seq1 and psd.SEQ2 = sd.Seq2
+inner join FIR with (nolock) on FIR.ReceivingID = sd.ID and FIR.POID = sd.PoId and FIR.SEQ1 = sd.Seq1 and FIR.SEQ2 = sd.Seq2
+inner join FIR_Shadebone fs with (nolock) on fs.id = FIR.ID
+where sd.id = '{this.docno}'
+and psd.FabricType = 'F'
+and fs.Result <>''
+and fs.roll='{original_Roll}'
+and fs.dyelot='{original_Dyelot}'
+";
+                    if (MyUtility.Check.Seek(sqlCheckShadebandResult, out DataRow rowFIR_Shadebone))
+                    {
+                        DataRow dataRow = dtFIR_Shadebone.NewRow();
+                        dataRow["POID"] = rowFIR_Shadebone["POID"];
+                        dataRow["Seq1"] = rowFIR_Shadebone["Seq1"];
+                        dataRow["Seq2"] = rowFIR_Shadebone["Seq2"];
+                        dataRow["Roll"] = rowFIR_Shadebone["Roll"];
+                        dataRow["Dyelot"] = rowFIR_Shadebone["Dyelot"];
+                        dataRow["Result"] = rowFIR_Shadebone["Result"];
+                        dtFIR_Shadebone.Rows.Add(dataRow);
+                    }
+
                     // 只修改ActualQty時，判斷Roll# & Dyelot#是否重複,須排除自己
                     sqlcmd = string.Format(
                         @"
@@ -722,6 +760,15 @@ and r.seq1='{3}' and r.seq2='{4}' and r.poid='{5}'
                         duplicateList.Add($"{drModify["poid"]} - {drModify["seq1"].ToString() + " " + drModify["seq2"].ToString()} - {drModify["roll"]} - {drModify["dyelot"]}");
                     }
                 }
+            }
+
+            if (dtFIR_Shadebone.Rows.Count > 0)
+            {
+                var form = MyUtility.Msg.ShowMsgGrid(dtFIR_Shadebone, msg: "Those fabric roll already completed shade band inspection, please check with QA team and revise inspection result to empty before modiy roll dyelot.", caption: "Warring");
+                form.grid1.Columns[0].Width = 120;
+                form.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+                form.TopMost = true;
+                return;
             }
 
             if (duplicateList.Count() > 0)
