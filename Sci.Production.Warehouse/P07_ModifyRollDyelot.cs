@@ -764,10 +764,10 @@ and r.seq1='{3}' and r.seq2='{4}' and r.poid='{5}'
 
             if (dtFIR_Shadebone.Rows.Count > 0)
             {
-                var form = MyUtility.Msg.ShowMsgGrid(dtFIR_Shadebone, msg: "Those fabric roll already completed shade band inspection, please check with QA team and revise inspection result to empty before modiy roll dyelot.", caption: "Warring");
-                form.grid1.Columns[0].Width = 120;
-                form.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-                form.TopMost = true;
+                var m = MyUtility.Msg.ShowMsgGrid_LockScreen(dtFIR_Shadebone, msg: "Those fabric roll already completed shade band inspection, please check with QA team and revise inspection result to empty before modiy roll dyelot.", caption: "Warring");
+                m.Visible = false;
+                m.grid1.Columns[0].Width = 120;
+                m.ShowDialog();
                 return;
             }
 

@@ -6354,10 +6354,7 @@ and fs.Result <>''
 
             if (dt.Rows.Count > 0)
             {
-                var form = MyUtility.Msg.ShowMsgGrid(dt, msg: "Those fabric roll already completed shade band inspection, please check with QA team and revise inspection result to empty before modiy roll dyelot.", caption: "Warring");
-                form.grid1.Columns[0].Width = 120;
-                form.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-                form.TopMost = true;
+                var m = MyUtility.Msg.ShowMsgGrid_LockScreen(dt, msg: "Those fabric roll already completed shade band inspection, please check with QA team and revise inspection result to empty before unconfirm.", caption: "Warring");
                 return false;
             }
 
