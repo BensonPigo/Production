@@ -50,22 +50,24 @@
             this.cmbReportType = new Sci.Win.UI.ComboBox();
             this.chkJunk = new Sci.Win.UI.CheckBox();
             this.chkReplacementReport = new Sci.Win.UI.CheckBox();
+            this.labVoucherdate = new Sci.Win.UI.Label();
+            this.dateVoucher = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
             // print
             // 
             this.print.Location = new System.Drawing.Point(469, 12);
-            this.print.TabIndex = 5;
+            this.print.TabIndex = 13;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(469, 48);
-            this.toexcel.TabIndex = 10;
+            this.toexcel.TabIndex = 14;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(469, 84);
-            this.close.TabIndex = 11;
+            this.close.TabIndex = 15;
             // 
             // labelCreateDate
             // 
@@ -85,7 +87,7 @@
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(14, 128);
+            this.labelM.Location = new System.Drawing.Point(14, 160);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(99, 23);
             this.labelM.TabIndex = 96;
@@ -93,7 +95,7 @@
             // 
             // labelType
             // 
-            this.labelType.Location = new System.Drawing.Point(14, 187);
+            this.labelType.Location = new System.Drawing.Point(14, 219);
             this.labelType.Name = "labelType";
             this.labelType.Size = new System.Drawing.Size(99, 23);
             this.labelType.TabIndex = 97;
@@ -149,11 +151,11 @@
             this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboM.FormattingEnabled = true;
             this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(116, 127);
+            this.comboM.Location = new System.Drawing.Point(116, 159);
             this.comboM.Name = "comboM";
             this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(66, 24);
-            this.comboM.TabIndex = 4;
+            this.comboM.TabIndex = 5;
             // 
             // comboType
             // 
@@ -161,15 +163,15 @@
             this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboType.FormattingEnabled = true;
             this.comboType.IsSupportUnselect = true;
-            this.comboType.Location = new System.Drawing.Point(116, 187);
+            this.comboType.Location = new System.Drawing.Point(116, 219);
             this.comboType.Name = "comboType";
             this.comboType.OldText = "";
             this.comboType.Size = new System.Drawing.Size(112, 24);
-            this.comboType.TabIndex = 6;
+            this.comboType.TabIndex = 7;
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(14, 157);
+            this.labelFactory.Location = new System.Drawing.Point(14, 189);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(99, 23);
             this.labelFactory.TabIndex = 102;
@@ -181,11 +183,11 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(116, 157);
+            this.comboFactory.Location = new System.Drawing.Point(116, 189);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(66, 24);
-            this.comboFactory.TabIndex = 5;
+            this.comboFactory.TabIndex = 6;
             // 
             // dateLock
             // 
@@ -251,15 +253,15 @@
             this.cmbStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cmbStatus.FormattingEnabled = true;
             this.cmbStatus.IsSupportUnselect = true;
-            this.cmbStatus.Location = new System.Drawing.Point(116, 217);
+            this.cmbStatus.Location = new System.Drawing.Point(116, 249);
             this.cmbStatus.Name = "cmbStatus";
             this.cmbStatus.OldText = "";
             this.cmbStatus.Size = new System.Drawing.Size(112, 24);
-            this.cmbStatus.TabIndex = 7;
+            this.cmbStatus.TabIndex = 8;
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(14, 217);
+            this.label3.Location = new System.Drawing.Point(14, 249);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(99, 23);
             this.label3.TabIndex = 108;
@@ -267,7 +269,7 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(14, 247);
+            this.label4.Location = new System.Drawing.Point(14, 279);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(99, 23);
             this.label4.TabIndex = 109;
@@ -277,15 +279,15 @@
             // 
             this.txtSharedept.BackColor = System.Drawing.Color.White;
             this.txtSharedept.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSharedept.Location = new System.Drawing.Point(116, 247);
+            this.txtSharedept.Location = new System.Drawing.Point(116, 279);
             this.txtSharedept.Name = "txtSharedept";
             this.txtSharedept.Size = new System.Drawing.Size(152, 23);
-            this.txtSharedept.TabIndex = 8;
+            this.txtSharedept.TabIndex = 9;
             this.txtSharedept.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSharedept_PopUp);
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(14, 277);
+            this.label5.Location = new System.Drawing.Point(14, 309);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(99, 23);
             this.label5.TabIndex = 111;
@@ -297,11 +299,11 @@
             this.cmbReportType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cmbReportType.FormattingEnabled = true;
             this.cmbReportType.IsSupportUnselect = true;
-            this.cmbReportType.Location = new System.Drawing.Point(116, 276);
+            this.cmbReportType.Location = new System.Drawing.Point(116, 308);
             this.cmbReportType.Name = "cmbReportType";
             this.cmbReportType.OldText = "";
             this.cmbReportType.Size = new System.Drawing.Size(136, 24);
-            this.cmbReportType.TabIndex = 9;
+            this.cmbReportType.TabIndex = 10;
             this.cmbReportType.SelectedIndexChanged += new System.EventHandler(this.CmbReportType_SelectedIndexChanged);
             // 
             // chkJunk
@@ -309,10 +311,10 @@
             this.chkJunk.AutoSize = true;
             this.chkJunk.Enabled = false;
             this.chkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkJunk.Location = new System.Drawing.Point(14, 312);
+            this.chkJunk.Location = new System.Drawing.Point(14, 344);
             this.chkJunk.Name = "chkJunk";
             this.chkJunk.Size = new System.Drawing.Size(106, 21);
-            this.chkJunk.TabIndex = 10;
+            this.chkJunk.TabIndex = 11;
             this.chkJunk.Text = "Include Junk";
             this.chkJunk.UseVisualStyleBackColor = true;
             // 
@@ -321,16 +323,47 @@
             this.chkReplacementReport.AutoSize = true;
             this.chkReplacementReport.Enabled = false;
             this.chkReplacementReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkReplacementReport.Location = new System.Drawing.Point(14, 339);
+            this.chkReplacementReport.Location = new System.Drawing.Point(14, 371);
             this.chkReplacementReport.Name = "chkReplacementReport";
             this.chkReplacementReport.Size = new System.Drawing.Size(525, 21);
-            this.chkReplacementReport.TabIndex = 11;
+            this.chkReplacementReport.TabIndex = 12;
             this.chkReplacementReport.Text = "Outstanding(Replacement report not yet locked and all material isn\'t mark junk)";
             this.chkReplacementReport.UseVisualStyleBackColor = true;
             // 
+            // labVoucherdate
+            // 
+            this.labVoucherdate.Location = new System.Drawing.Point(14, 129);
+            this.labVoucherdate.Name = "labVoucherdate";
+            this.labVoucherdate.Size = new System.Drawing.Size(99, 23);
+            this.labVoucherdate.TabIndex = 113;
+            this.labVoucherdate.Text = "Voucher date";
+            // 
+            // dateVoucher
+            // 
+            // 
+            // 
+            // 
+            this.dateVoucher.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateVoucher.DateBox1.Name = "";
+            this.dateVoucher.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateVoucher.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateVoucher.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateVoucher.DateBox2.Name = "";
+            this.dateVoucher.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateVoucher.DateBox2.TabIndex = 1;
+            this.dateVoucher.Location = new System.Drawing.Point(116, 129);
+            this.dateVoucher.Name = "dateVoucher";
+            this.dateVoucher.Size = new System.Drawing.Size(280, 23);
+            this.dateVoucher.TabIndex = 4;
+            // 
             // R08
             // 
-            this.ClientSize = new System.Drawing.Size(561, 399);
+            this.ClientSize = new System.Drawing.Size(561, 434);
+            this.Controls.Add(this.labVoucherdate);
+            this.Controls.Add(this.dateVoucher);
             this.Controls.Add(this.chkReplacementReport);
             this.Controls.Add(this.chkJunk);
             this.Controls.Add(this.cmbReportType);
@@ -387,6 +420,8 @@
             this.Controls.SetChildIndex(this.cmbReportType, 0);
             this.Controls.SetChildIndex(this.chkJunk, 0);
             this.Controls.SetChildIndex(this.chkReplacementReport, 0);
+            this.Controls.SetChildIndex(this.dateVoucher, 0);
+            this.Controls.SetChildIndex(this.labVoucherdate, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -416,5 +451,7 @@
         private Win.UI.ComboBox cmbReportType;
         private Win.UI.CheckBox chkJunk;
         private Win.UI.CheckBox chkReplacementReport;
+        private Win.UI.Label labVoucherdate;
+        private Win.UI.DateRange dateVoucher;
     }
 }

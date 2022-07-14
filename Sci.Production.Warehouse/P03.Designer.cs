@@ -51,6 +51,8 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.panel2 = new Sci.Win.UI.Panel();
             this.gridMaterialStatus = new Sci.Win.UI.Grid();
+            this.label1 = new Sci.Win.UI.Label();
+            this.displayRrLrHr = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -122,6 +124,8 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.label1);
+            this.panel3.Controls.Add(this.displayRrLrHr);
             this.panel3.Controls.Add(this.labelJunk);
             this.panel3.Controls.Add(this.displayJunk);
             this.panel3.Controls.Add(this.labelCalSize);
@@ -144,7 +148,7 @@
             // 
             this.labelJunk.BackColor = System.Drawing.Color.Transparent;
             this.labelJunk.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelJunk.Location = new System.Drawing.Point(671, 16);
+            this.labelJunk.Location = new System.Drawing.Point(655, 17);
             this.labelJunk.Name = "labelJunk";
             this.labelJunk.Size = new System.Drawing.Size(29, 23);
             this.labelJunk.TabIndex = 47;
@@ -157,7 +161,7 @@
             this.displayJunk.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayJunk.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayJunk.Location = new System.Drawing.Point(700, 17);
+            this.displayJunk.Location = new System.Drawing.Point(684, 18);
             this.displayJunk.Name = "displayJunk";
             this.displayJunk.Size = new System.Drawing.Size(20, 21);
             this.displayJunk.TabIndex = 46;
@@ -166,7 +170,7 @@
             // 
             this.labelCalSize.BackColor = System.Drawing.Color.Transparent;
             this.labelCalSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelCalSize.Location = new System.Drawing.Point(526, 16);
+            this.labelCalSize.Location = new System.Drawing.Point(515, 16);
             this.labelCalSize.Name = "labelCalSize";
             this.labelCalSize.Size = new System.Drawing.Size(111, 23);
             this.labelCalSize.TabIndex = 45;
@@ -179,7 +183,7 @@
             this.displayCalSize.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCalSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayCalSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCalSize.Location = new System.Drawing.Point(637, 17);
+            this.displayCalSize.Location = new System.Drawing.Point(626, 17);
             this.displayCalSize.Name = "displayCalSize";
             this.displayCalSize.Size = new System.Drawing.Size(20, 21);
             this.displayCalSize.TabIndex = 44;
@@ -188,7 +192,7 @@
             // 
             this.labelFtySupp.BackColor = System.Drawing.Color.Transparent;
             this.labelFtySupp.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelFtySupp.Location = new System.Drawing.Point(415, 16);
+            this.labelFtySupp.Location = new System.Drawing.Point(411, 16);
             this.labelFtySupp.Name = "labelFtySupp";
             this.labelFtySupp.Size = new System.Drawing.Size(77, 23);
             this.labelFtySupp.TabIndex = 43;
@@ -201,7 +205,7 @@
             this.displayFtySupp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayFtySupp.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayFtySupp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayFtySupp.Location = new System.Drawing.Point(492, 17);
+            this.displayFtySupp.Location = new System.Drawing.Point(488, 17);
             this.displayFtySupp.Name = "displayFtySupp";
             this.displayFtySupp.Size = new System.Drawing.Size(20, 21);
             this.displayFtySupp.TabIndex = 42;
@@ -314,6 +318,28 @@
             this.gridMaterialStatus.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.GridMaterialStatus_DataError);
             this.gridMaterialStatus.Sorted += new System.EventHandler(this.GridMaterialStatus_Sorted);
             // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.label1.Location = new System.Drawing.Point(715, 17);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(29, 23);
+            this.label1.TabIndex = 49;
+            this.label1.Text = "RR/LR/HR";
+            this.label1.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
+            this.label1.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            // 
+            // displayRrLrHr
+            // 
+            this.displayRrLrHr.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayRrLrHr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayRrLrHr.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayRrLrHr.Location = new System.Drawing.Point(746, 18);
+            this.displayRrLrHr.Name = "displayRrLrHr";
+            this.displayRrLrHr.Size = new System.Drawing.Size(20, 21);
+            this.displayRrLrHr.TabIndex = 48;
+            // 
             // P03
             // 
             this.ClientSize = new System.Drawing.Size(1008, 661);
@@ -361,5 +387,7 @@
         private Win.UI.DisplayBox displayCalSize;
         private Win.UI.Label labelFtySupp;
         private Win.UI.DisplayBox displayFtySupp;
+        private Win.UI.Label label1;
+        private Win.UI.DisplayBox displayRrLrHr;
     }
 }
