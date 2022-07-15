@@ -345,8 +345,8 @@ on a.StyleID = b.StyleID and a.OutputDate = b.max_OutputDate
 group by a.StyleID,b.max_OutputDate,S,B
 
 select a.StyleID,a.OldStyleID
-	,R_Similar =    case    when max_OutputDate is null then 'New Style'
-                    when a.S > 0 AND a.B = 0 then 'New Style'
+	,R_Similar =    case    when max_OutputDate is null then ''
+                    when a.S > 0 AND a.B = 0 then ''
                     else  concat(b.StyleID,'→',min(a.SewingLineID),'(',format(b.max_OutputDate,'yyyy/MM/dd'),')')
                     end
 into #tmp_R_Similar
@@ -398,7 +398,8 @@ select o.FtyGroup
 	   , TCPU = format(o.TCPU,'0.00')
 	   , a.A
 	   , R = isnull(r.R,'New Style')
-       , RS = ISNULL(rs.RS,'New Style')
+       , RS = ISNULL(rs.RS,'')
+       , [Type] = IIF(isnull(r.R,'New Style') !='' or isnull(rs.RS,'') != '','Repeat','New')
 	   , W = iif(w.P=0 or w.P is null,'N','Y')
 	   {this.pvtid}
 from #tmpol o
@@ -415,7 +416,8 @@ outer apply(
 )rs
 order by o.FtyGroup,o.StyleID,o.SeasonID
 
-drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls");
+drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls,#tmp_AR_Basic_S,#tmp_R_Similar,#tmpStyle_SimilarStyle
+");
 
             DBProxy.Current.DefaultTimeout = 10800;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
@@ -539,7 +541,7 @@ drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls");
                 }
                 #endregion
 
-                objSheets.Cells[3, 20 + i] = strArtworkType + "-" + this.dtArtworkType.Rows[i]["seq"].ToString();
+                objSheets.Cells[3, 21 + i] = strArtworkType + "-" + this.dtArtworkType.Rows[i]["seq"].ToString();
             }
 
             objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬
