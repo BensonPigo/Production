@@ -84,10 +84,12 @@ and exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and s
             #region 組SQL
             sqlCmd.Append(string.Format(
                 @"
-DECLARE @sewinginline DATETIME ='{0}'
+DECLARE @sewinginlineOri  DATETIME ='{0}'
 DECLARE @sewingoffline DATETIME ='{1}'
 DECLARE @MDivisionID Nvarchar(8)= '{2}'
 DECLARE @FactoryID Nvarchar(8)= '{3}'
+
+Declare @sewinginline DATETIME = dateadd(MONTH, -3, @sewinginlineOri) 
 --整個月 table
 ;WITH cte AS (
     SELECT [date] = @sewinginline
@@ -97,6 +99,7 @@ DECLARE @FactoryID Nvarchar(8)= '{3}'
 SELECT [date] = cast([date] as date) 
 into #daterange 
 FROM cte
+option (maxrecursion 0)
 --WorkHour table
 select FactoryID,SewingLineID,Date,Hours,Holiday
 into #workhourtmp
@@ -147,6 +150,7 @@ select distinct
 	,IsNextMonth = iif(s.SciDelivery > DateAdd(DAY,-1,@sewingoffline),1,0)--綠 優先度2
 	,IsBulk = iif(s.Category = 'B',1,0)--藍 優先度3
 	,IsSMS = iif(s.OrderTypeID = 'SMS',1,0)--紅 優先度4
+    ,IsSample = iif(s.Category = 'S',1,0)
 	,s.BuyerDelivery
 	,s.CdCodeID
 into #Stmp
@@ -192,21 +196,24 @@ outer apply(
 		for xml path('')
 	)
 )a
-
+where s.date >= @sewinginlineOri
 
 --
-select h.FactoryID,h.SewingLineID,h.date,h.Holiday,IsLastMonth,IsNextMonth,IsBulk,IsSMS,BuyerDelivery
+select	h.FactoryID,h.SewingLineID,h.date,h.Holiday,IsLastMonth,IsNextMonth,IsBulk,IsSample,IsSMS,BuyerDelivery,[OriStyle] = s.StyleID,
+		[IsRepeatStyle] = iif(DENSE_RANK() OVER (PARTITION BY s.FactoryID, s.SewingLineID, s.StyleID, h.Holiday ORDER BY s.date) > 10, 1, 0)
 into #c
 from #Holiday h
 left join #Stmp s on s.FactoryID = h.FactoryID and s.SewingLineID = h.SewingLineID and s.date = h.date
 inner join(select distinct FactoryID,SewingLineID from #Stmp) x on x.FactoryID = h.FactoryID and x.SewingLineID = h.SewingLineID--排掉沒有在SewingSchedule內的資料by FactoryID,SewingLineID
 order by h.FactoryID,h.SewingLineID,h.date
+
 ------------------------------------------------------------------------------------------------
 DECLARE cursor_sewingschedule CURSOR FOR
 select distinct c.FactoryID,c.SewingLineID,c.date
 	,StyleID = isnull(iif(c.Holiday = 1,'Holiday', cs.StyleID),'')
-	,IsLastMonth,IsNextMonth,IsBulk,IsSMS,BuyerDelivery
+	,IsLastMonth,IsNextMonth,IsBulk,IsSample,IsSMS,BuyerDelivery,IsRepeatStyle,c.OriStyle
 from #c c left join #ConcatStyle cs on c.FactoryID = cs.FactoryID and c.SewingLineID = cs.SewingLineID and c.date = cs.date
+where c.date >= @sewinginlineOri
 order by c.FactoryID,c.SewingLineID,c.date
 
 --建立tmpe table存放最後要列印的資料
@@ -217,10 +224,21 @@ DECLARE @tempPintData TABLE (
    InLine DATE,
    OffLine DATE,
    IsBulk BIT,
+   IsSample BIT,
    IsSMS BIT,
    IsLastMonth BIT,
    IsNextMonth BIT,
-   MinBuyerDelivery DATE
+   MinBuyerDelivery DATE,
+   IsFirst BIT,
+   IsRepeatStyle BIT,
+   IsSimilarStyle BIT default 0
+)
+
+--判斷相似款所使用暫存table
+DECLARE @tempSimilarStyle TABLE (
+   ScheduleDate date,
+   MasterStyleID VARCHAR(15),
+   ChildrenStyleID VARCHAR(15)
 )
 --
 DECLARE @factory VARCHAR(8),
@@ -229,30 +247,56 @@ DECLARE @factory VARCHAR(8),
 		@IsLastMonth int,
 		@IsNextMonth int,
 		@IsBulk int,
+		@IsSample int,
 		@IsSMS int,
 		@BuyerDelivery DATE,
 		@date DATE,
 		@beforefactory VARCHAR(8) = '',
 		@beforesewingline VARCHAR(5) = '',
 		@beforeStyleID VARCHAR(200) = '',
+		@beforeStyleIDExcludeHoliday VARCHAR(200) = '',
 		@beforeIsLastMonth int,
 		@beforeIsNextMonth int,
 		@beforeIsBulk int,
 		@beforeIsSMS int,
 		@beforeBuyerDelivery DATE,
-		@beforedate DATE
+		@beforedate DATE,
+		@IsFirst bit = 1,
+		@beforeIsSample bit = 1,
+		@IsRepeatStyle bit = 1,
+		@beforeIsRepeatStyle bit = 1,
+		@OriStyle varchar(15) = ''
 
 OPEN cursor_sewingschedule
-FETCH NEXT FROM cursor_sewingschedule INTO @factory,@sewingline,@date,@StyleID,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSMS,@BuyerDelivery
+FETCH NEXT FROM cursor_sewingschedule INTO @factory,@sewingline,@date,@StyleID,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSample,@IsSMS,@BuyerDelivery,@IsRepeatStyle,@OriStyle
 WHILE @@FETCH_STATUS = 0
 BEGIN
+
+	if(@sewingline <> @beforesewingline)
+		delete @tempSimilarStyle
 	
-	IF @factory <> @beforefactory or @sewingline <> @beforesewingline or @StyleID <> @beforeStyleID
+	--換款新增資料
+	IF @factory <> @beforefactory or @sewingline <> @beforesewingline or (@StyleID <> @beforeStyleID and @beforeStyleIDExcludeHoliday not like '%' + @StyleID + '%')
 	Begin
-		INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine,IsLastMonth ,IsNextMonth ,IsBulk ,IsSMS ,MinBuyerDelivery) 
-		VALUES					 (@factory, @sewingline, @StyleID,@date,@date  ,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSMS,@BuyerDelivery);
+		set @IsFirst = 1
+		INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine,IsLastMonth ,IsNextMonth ,IsBulk, IsSample,IsSMS ,MinBuyerDelivery, IsFirst, IsRepeatStyle) 
+		VALUES					 (@factory, @sewingline, @StyleID,@date,@date  ,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSample,@IsSMS,@BuyerDelivery, @IsFirst, @IsRepeatStyle);
 	END
-	ELSE
+	--同款連續生產的第二天
+	ELSE IF @IsFirst = 1 and @date <> @beforedate and @StyleID <> 'Holiday' and @IsSample <> 1
+	Begin
+		set @IsFirst = 0
+		INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine,IsLastMonth ,IsNextMonth ,IsBulk, IsSample,IsSMS ,MinBuyerDelivery, IsFirst, IsRepeatStyle) 
+		VALUES					 (@factory, @sewingline, @StyleID,@date,@date  ,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSample,@IsSMS,@BuyerDelivery, @IsFirst, @IsRepeatStyle);
+	end
+	--有含Sample獨立顯示 or 三個月內生產超過10天
+	else if (@IsSample <> @beforeIsSample or @beforeStyleID = 'Holiday'  or @IsRepeatStyle <> @beforeIsRepeatStyle) and @date <> @beforedate and @StyleID <> 'Holiday'
+	begin
+		INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine,IsLastMonth ,IsNextMonth ,IsBulk, IsSample,IsSMS ,MinBuyerDelivery, IsFirst, IsRepeatStyle) 
+		VALUES					 (@factory, @sewingline, @StyleID,@date,@date  ,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSample,@IsSMS,@BuyerDelivery, @IsFirst, @IsRepeatStyle);
+	end
+	else
+	--同款連續生產
 	Begin
 		update @tempPintData set
 			 OffLine = @date
@@ -264,6 +308,22 @@ BEGIN
 		where FactoryID = @factory and SewingLineID = @sewingline and StyleID = @StyleID and OffLine = @beforedate
 	END
 	
+	if @IsFirst = 1 and @StyleID <> 'Holiday'
+	begin
+		--只保留當天與前一天的SimilarStyle資料
+		delete @tempSimilarStyle 
+		where	ScheduleDate <> (select top 1 ScheduleDate from @tempSimilarStyle where ScheduleDate <> @date order by ScheduleDate desc) and
+				ScheduleDate <> @date
+		
+		if exists(select 1 from @tempSimilarStyle where ChildrenStyleID = @OriStyle)
+			update @tempPintData set IsSimilarStyle = 1 where FactoryID = @factory and SewingLineID = @sewingline and StyleID = @StyleID and OffLine = @date
+
+		if not exists(select 1 from @tempSimilarStyle where ScheduleDate = @date and MasterStyleID = @OriStyle)
+		insert into @tempSimilarStyle(ScheduleDate, MasterStyleID, ChildrenStyleID)
+			select @date, MasterStyleID, ChildrenStyleID
+			from Style_SimilarStyle where MasterStyleID = @OriStyle
+	end
+
 	set @beforefactory = @factory
 	set @beforesewingline = @sewingline
 	set @beforeStyleID = @StyleID
@@ -271,9 +331,12 @@ BEGIN
 	set @beforeIsNextMonth = @IsNextMonth
 	set @beforeIsBulk = @IsBulk
 	set @beforeIsSMS = @IsSMS
+	set @beforeIsSample = @IsSample
 	set @beforeBuyerDelivery = @BuyerDelivery
 	set @beforedate = @date
-	FETCH NEXT FROM cursor_sewingschedule INTO @factory,@sewingline,@date,@StyleID,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSMS,@BuyerDelivery
+	set @beforeIsRepeatStyle = @IsRepeatStyle
+	set @beforeStyleIDExcludeHoliday = iif(@StyleID = 'Holiday', @beforeStyleIDExcludeHoliday, @StyleID)
+	FETCH NEXT FROM cursor_sewingschedule INTO @factory,@sewingline,@date,@StyleID,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSample,@IsSMS,@BuyerDelivery,@IsRepeatStyle,@OriStyle
 END
 CLOSE cursor_sewingschedule
 DEALLOCATE cursor_sewingschedule
@@ -472,11 +535,38 @@ drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle,
                     worksheet.Cells[intRowsStart, startCol] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["StyleID"]), MyUtility.Check.Empty(dr["MinBuyerDelivery"]) ? string.Empty : " " + Convert.ToDateTime(dr["MinBuyerDelivery"]).ToString("yyyy/MM/dd"));
                 }
 
-                if (MyUtility.Convert.GetInt(dr["WorkDays"]) > 10)
+                if (MyUtility.Convert.GetString(dr["StyleID"]) != "Holiday")
                 {
-                    // 設置儲存格的背景色
-                    worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Cells.Interior.Color = Color.FromArgb(255, 219, 183);
+                    if (MyUtility.Convert.GetString(dr["IsSample"]).ToUpper() == "TRUE")
+                    {
+                        // 設置儲存格的背景色
+                        worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Cells.Interior.Color = Color.Yellow;
+                    }
+                    else if (MyUtility.Convert.GetString(dr["IsFirst"]).ToUpper() == "TRUE")
+                    {
+                        if (MyUtility.Convert.GetString(dr["IsSimilarStyle"]).ToUpper() == "TRUE")
+                        {
+                            // 設置儲存格的背景色
+                            worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Cells.Interior.Color = Color.LightGray;
+                        }
+                        else
+                        {
+                            // 設置儲存格的背景色
+                            worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Cells.Interior.Color = Color.White;
+                        }
+                    }
+                    else if (MyUtility.Convert.GetString(dr["IsRepeatStyle"]).ToUpper() == "TRUE")
+                    {
+                        // 設置儲存格的背景色
+                        worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Cells.Interior.Color = Color.FromArgb(175, 203, 154);
+                    }
+                    else
+                    {
+                        // 設置儲存格的背景色
+                        worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Cells.Interior.Color = Color.FromArgb(134, 187, 249);
+                    }
                 }
+
                 #endregion
                 colCount = colCount + (startCol - colCount - 1) + totalDays;
                 Marshal.ReleaseComObject(selrng);
