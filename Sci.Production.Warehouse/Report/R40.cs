@@ -42,25 +42,13 @@ namespace Sci.Production.Warehouse
                 { "Cut Shadeband", "1" },
                 { "Fabric to Lab", "2" },
                 { "Checker", "3" },
+                { "Scanned by MIND", "4" },
             };
             this.comboUpdateInfo.DataSource = new BindingSource(updateInfo_source, null);
             this.comboUpdateInfo.DisplayMember = "Key";
             this.comboUpdateInfo.ValueMember = "Value";
 
             this.comboUpdateInfo.SelectedIndex = 0;
-
-            // Status下拉選單
-            Dictionary<string, string> status_source = new Dictionary<string, string>
-            {
-                { "ALL", "All" },
-                { "Already updated", "AlreadyUpdated" },
-                { "Not yet Update", "NotYetUpdate" },
-            };
-
-            this.comboStatus.DataSource = new BindingSource(status_source, null);
-            this.comboStatus.DisplayMember = "Key";
-            this.comboStatus.ValueMember = "Value";
-            this.comboStatus.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -141,6 +129,7 @@ namespace Sci.Production.Warehouse
             string whereCutShadeband = string.Empty;
             string whereFabricLab = string.Empty;
             string whereChecker = string.Empty;
+            string whereMind = string.Empty;
 
             if (this.status == "AlreadyUpdated")
             {
@@ -156,6 +145,16 @@ namespace Sci.Production.Warehouse
                 whereCutShadeband += " and CutShadebandTime is null";
                 whereFabricLab += " and Fabric2LabTime is null";
                 whereChecker += " and ISNULL(Checker,'') = ''";
+            }
+
+            if (this.status == "AlreadyScanned")
+            {
+                whereMind += " and MINDCheckAddDate is not null";
+            }
+
+            if (this.status == "NotyetScanned")
+            {
+                whereMind += " and MINDCheckAddDate is null";
             }
 
             string strSql = $@"
@@ -185,10 +184,24 @@ select * into #tmpResult
 			,rd.Fabric2LabBy
 			,rd.Fabric2LabTime
             ,rd.Checker
+            ,IsQRCodeCreatedByPMS = iif (dbo.IsQRCodeCreatedByPMS(rd.MINDQRCode) = 1, 'Create from PMS', '')
+            ,LastP26RemarkData = (
+                select top 1 l.Remark
+                from LocationTrans_detail ld (nolock)
+                inner join LocationTrans l (nolock) on l.id = ld.id
+                where l.Status = 'Confirmed'
+                and ld.poid = rd.poid and ld.seq1 = rd.seq1 and ld.seq2 = rd.seq2  AND ld.Roll = rd.Roll and ld.Dyelot = rd.Dyelot
+                order by EditDate desc)
+            ,rd.MINDChecker
+            ,rd.QRCode_PrintDate
+            ,rd.MINDCheckAddDate
+            ,rd.MINDCheckEditDate
+            ,AbbEN = (select Supp.AbbEN from Supp with (nolock) where Supp.id =ps.SuppID)
 		from  Receiving r with (nolock)
 		inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
 		inner join Orders o with (nolock) on o.ID = rd.POID 
 		inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
+        inner join PO_Supp ps with (nolock) on ps.ID = psd.id and ps.SEQ1 = psd.SEQ1
 		inner join Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
         left join DropDownList ddl WITH (NOLOCK) on ddl.Type = 'Pms_StockType'
                                                     and REPLACE(ddl.ID,'''','') = rd.StockType
@@ -224,10 +237,24 @@ select * into #tmpResult
 			,rd.Fabric2LabBy
 			,rd.Fabric2LabTime
             ,rd.Checker
+            ,IsQRCodeCreatedByPMS = ''
+            ,LastP26RemarkData = (
+                select top 1 l.Remark
+                from LocationTrans_detail ld (nolock)
+                inner join LocationTrans l (nolock) on l.id = ld.id
+                where l.Status = 'Confirmed'
+                and ld.poid = rd.poid and ld.seq1 = rd.seq1 and ld.seq2 = rd.seq2  AND ld.Roll = rd.Roll and ld.Dyelot = rd.Dyelot
+                order by EditDate desc)
+            ,MINDChecker = ''
+            ,rd.QRCode_PrintDate
+            ,MINDCheckAddDate = null
+            ,MINDCheckEditDate =null
+            ,AbbEN = (select Supp.AbbEN from Supp with (nolock) where Supp.id =ps.SuppID)
 		FROM TransferIn r with (nolock)
 		INNER JOIN TransferIn_Detail rd with (nolock) ON r.ID = rd.ID
 		INNER JOIN Orders o with (nolock) ON o.ID = rd.POID
 		INNER JOIN PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
+        inner join PO_Supp ps with (nolock) on ps.ID = psd.id and ps.SEQ1 = psd.SEQ1
 		INNER JOIN Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
         left join DropDownList ddl WITH (NOLOCK) on ddl.Type = 'Pms_StockType'
                                                     and REPLACE(ddl.ID,'''','') = rd.StockType
@@ -318,6 +345,32 @@ select  ReceivingID
 from #tmpResult
 where 1 = 1 {whereChecker}
 
+select  ReceivingID
+		,ExportID
+		,ArriveDate
+		,PoId
+		,Seq
+		,BrandID
+		,refno
+		,WeaveTypeID
+		,Color
+		,Roll
+		,Dyelot
+		,StockQty
+		,StockType
+		,Location
+		,Weight
+        ,ActualWeight
+        ,IsQRCodeCreatedByPMS
+        ,LastP26RemarkData
+        ,MINDChecker
+        ,QRCode_PrintDate
+        ,MINDCheckAddDate
+        ,MINDCheckEditDate
+        ,AbbEN
+from #tmpResult
+where 1 = 1 {whereMind}
+
 drop table #tmpResult
 ";
             #endregion
@@ -383,6 +436,9 @@ drop table #tmpResult
                     case 3:
                         excelName = "Warehouse_R40_Checker";
                         break;
+                    case 4:
+                        excelName = "Warehouse_R40_ScannedbyMIND";
+                        break;
                     default:
                         continue;
                 }
@@ -411,6 +467,39 @@ drop table #tmpResult
             this.HideWaitMessage();
             #endregion
             return true;
+        }
+
+        private void ComboUpdateInfo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Status下拉選單
+            Dictionary<string, string> status_source = new Dictionary<string, string>
+            {
+                { "ALL", "All" },
+                { "Already updated", "AlreadyUpdated" },
+                { "Not yet Update", "NotYetUpdate" },
+            };
+
+            // Status下拉選單
+            Dictionary<string, string> status_source_MIND = new Dictionary<string, string>
+            {
+                { "ALL", "All" },
+                { "Already Scanned", "AlreadyScanned" },
+                { "Not yet Scanned", "NotYetScanned" },
+            };
+
+            this.comboStatus.DataSource = null;
+            if (this.comboUpdateInfo.SelectedValue.ToString() == "4")
+            {
+                this.comboStatus.DataSource = new BindingSource(status_source_MIND, null);
+            }
+            else
+            {
+                this.comboStatus.DataSource = new BindingSource(status_source, null);
+            }
+
+            this.comboStatus.DisplayMember = "Key";
+            this.comboStatus.ValueMember = "Value";
+            this.comboStatus.SelectedIndex = 0;
         }
     }
 }
