@@ -309,7 +309,7 @@ select SP = (select ID + ','
             int intRowsStart = 2;
             int dataRowCount = gridData.DefaultView.Count;
             int rownum = 0;
-            object[,] objArray = new object[1, 6];
+            object[,] objArray = new object[1, 7];
             foreach (DataRowView dr in gridData.DefaultView)
             {
                 objArray[0, 0] = dr["POID"];
@@ -318,8 +318,9 @@ select SP = (select ID + ','
                 objArray[0, 3] = dr["BuyerDelivery"];
                 objArray[0, 4] = dr["POCombo"];
                 objArray[0, 5] = dr["MCHandle"];
+                objArray[0, 6] = dr["MaterialLockStatus"];
 
-                worksheet.Range[string.Format("A{0}:F{0}", intRowsStart + rownum)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:G{0}", intRowsStart + rownum)].Value2 = objArray;
                 rownum++;
             }
 

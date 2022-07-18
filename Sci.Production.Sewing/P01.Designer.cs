@@ -64,6 +64,7 @@
             this.btnBatchRecall = new Sci.Win.UI.Button();
             this.lbstatus = new Sci.Win.UI.Label();
             this.comboSewingTeam1 = new Sci.Production.Class.ComboSewingTeam(this.components);
+            this.btnQuery = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -80,6 +81,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnQuery);
             this.masterpanel.Controls.Add(this.comboSewingTeam1);
             this.masterpanel.Controls.Add(this.lbstatus);
             this.masterpanel.Controls.Add(this.btnRequestUnlock);
@@ -150,6 +152,7 @@
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbstatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboSewingTeam1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnQuery, 0);
             // 
             // detailpanel
             // 
@@ -585,6 +588,7 @@
             this.txtSubconOutFty.IsFactory = false;
             this.txtSubconOutFty.IsMisc = false;
             this.txtSubconOutFty.IsMiscOverseas = false;
+            this.txtSubconOutFty.IsSintexSubcon = false;
             this.txtSubconOutFty.Location = new System.Drawing.Point(112, 84);
             this.txtSubconOutFty.Name = "txtSubconOutFty";
             this.txtSubconOutFty.Size = new System.Drawing.Size(252, 23);
@@ -660,6 +664,17 @@
             this.comboSewingTeam1.Size = new System.Drawing.Size(84, 24);
             this.comboSewingTeam1.TabIndex = 3;
             this.comboSewingTeam1.SelectedIndexChanged += new System.EventHandler(this.ComboSewingTeam1_SelectedIndexChanged);
+            // 
+            // btnQuery
+            // 
+            this.btnQuery.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnQuery.Location = new System.Drawing.Point(750, 40);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(86, 30);
+            this.btnQuery.TabIndex = 36;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // P01
             // 
@@ -746,5 +761,6 @@
         private Win.UI.Button btnBatchRecall;
         private Win.UI.Label lbstatus;
         private Class.ComboSewingTeam comboSewingTeam1;
+        private Win.UI.Button btnQuery;
     }
 }

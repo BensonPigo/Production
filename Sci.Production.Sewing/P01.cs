@@ -4622,5 +4622,26 @@ end
                 return isUnlockFromMonthLock;
             }
         }
+
+        private void BtnQuery_Click(object sender, EventArgs e)
+        {
+            var frm = new P01_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            frm.ShowDialog(this);
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    DataTable subDt;
+                    this.GetSubDetailDatas(dr, out subDt);
+                    if (subDt.Rows.Count == 0)
+                    {
+                        this.CreateSubDetailDatas(dr);
+                    }
+
+                    this.GetRFT(dr);
+                }
+            }
+            this.RenewData();
+        }
     }
 }

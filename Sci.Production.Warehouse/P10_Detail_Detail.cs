@@ -63,8 +63,7 @@ namespace Sci.Production.Warehouse
 
             StringBuilder strSQLCmd = new StringBuilder();
             #region -- sqlcmd query --
-            strSQLCmd.Append(string.Format(
-                @"
+            strSQLCmd.Append($@"
 with cte as 
 (
       select Dyelot
@@ -73,12 +72,12 @@ with cte as
       inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID 
                                                        and p.seq1 = a.Seq1 
                                                        and p.seq2 = a.Seq2
-      where poid = '{0}' 
+      where poid = '{this.dr_master["poid"]}' 
             and Stocktype = 'B' 
             and inqty - OutQty + AdjustQty - ReturnQty > 0
-            and p.Refno = '{2}' 
-            and p.ColorID = '{3}' 
-            {4}--and a.Seq1 BETWEEN '00' AND '99'
+            and p.Refno = '{this.dr_master["Refno"]}' 
+            and p.ColorID = '{this.dr_master["colorid"]}' 
+            {(this.Type == 0 ? " and a.Seq1 BETWEEN '00' AND '99'" : string.Empty)}--and a.Seq1 BETWEEN '00' AND '99'
       Group by Dyelot
 ) 
 select 0 as selected 
@@ -101,24 +100,26 @@ select 0 as selected
        , c.outqty
        , c.adjustqty 
        , c.ReturnQty
-       , [Tone] = ShadeboneTone.Tone
+       , [Tone] = isnull(ShadeboneTone.Tone,ShadeboneTone2.Tone)
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 inner join cte d on d.Dyelot=c.Dyelot
-outer apply (select [Tone] = MAX(fs.Tone)
-            from FtyInventory fi with (nolock) 
-            Left join FIR f with (nolock) on f.poid = fi.poid and f.seq1 = fi.seq1 and f.seq2 = fi.seq2
-	        Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
-	        where fi.Ukey = c.Ukey
-			) ShadeboneTone
-Where a.id = '{0}' and c.lock = 0 and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 
-and a.Refno='{2}' and a.colorid='{3}' {5}--and ltrim(a.seq1) between '01' and '99'
-order by d.GroupQty DESC,c.Dyelot,balanceqty DESC", this.dr_master["poid"],
-                Env.User.Keyword,
-                this.dr_master["Refno"],
-                this.dr_master["colorid"],
-                this.Type == 0 ? " and a.Seq1 BETWEEN '00' AND '99'" : string.Empty,
-                this.Type == 0 ? " and ltrim(a.seq1) between '01' and '99'" : string.Empty));
+outer apply (
+    select [Tone] = MAX(fs.Tone)
+    from FtyInventory fi with (nolock) 
+    Left join FIR f with (nolock) on f.poid = fi.poid and f.seq1 = fi.seq1 and f.seq2 = fi.seq2
+    Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
+    where fi.Ukey = c.Ukey
+) ShadeboneTone
+outer apply (
+	select [Tone] = MAX(fs.Tone)
+	from FIR f with (nolock) 
+	Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = Rtrim(Ltrim(c.Roll)) and fs.Dyelot = Rtrim(Ltrim(c.Dyelot))
+	where f.POID = a.StockPOID and f.SEQ1 = a.StockSeq1 and f.SEQ2 = a.StockSeq2
+) ShadeboneTone2
+Where a.id = '{this.dr_master["poid"]}' and c.lock = 0 and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 
+and a.Refno='{this.dr_master["Refno"]}' and a.colorid='{this.dr_master["colorid"]}' {(this.Type == 0 ? " and ltrim(a.seq1) between '01' and '99'" : string.Empty)}--and ltrim(a.seq1) between '01' and '99'
+order by d.GroupQty DESC,c.Dyelot,balanceqty DESC");
             #endregion
 
             this.P10_Detail.ShowWaitMessage("Data Loading....");

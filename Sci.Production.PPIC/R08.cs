@@ -24,6 +24,8 @@ namespace Sci.Production.PPIC
         private DateTime? Lockdate2;
         private DateTime? Cfmdate1;
         private DateTime? Cfmdate2;
+        private DateTime? Voucher1;
+        private DateTime? Voucher2;
         private string MDivisionID;
         private string FtyGroup;
         private string T;
@@ -67,6 +69,8 @@ namespace Sci.Production.PPIC
             this.Lockdate2 = this.dateLock.Value2;
             this.Cfmdate1 = this.dateCfm.Value1;
             this.Cfmdate2 = this.dateCfm.Value2;
+            this.Voucher1 = this.dateVoucher.Value1;
+            this.Voucher2 = this.dateVoucher.Value2;
             this.MDivisionID = this.comboM.Text;
             this.FtyGroup = this.comboFactory.Text;
             this.T = MyUtility.Convert.GetString(this.comboType.SelectedValue);
@@ -135,6 +139,18 @@ namespace Sci.Production.PPIC
             {
                 where += $@"and cast(rr.RespDeptConfirmDate as date) <= @Cfmdate2 " + Environment.NewLine;
                 sqlpar.Add(new SqlParameter("@Cfmdate2", this.Cfmdate2));
+            }
+
+            if (!MyUtility.Check.Empty(this.Voucher1))
+            {
+                where += $@"and cast(rr.VoucherDate as date) >= @Voucher1 " + Environment.NewLine;
+                sqlpar.Add(new SqlParameter("@Voucher1", this.Voucher1));
+            }
+
+            if (!MyUtility.Check.Empty(this.Voucher2))
+            {
+                where += $@"and cast(rr.VoucherDate as date) <= @Voucher2 " + Environment.NewLine;
+                sqlpar.Add(new SqlParameter("@Voucher2", this.Voucher2));
             }
 
             if (!MyUtility.Check.Empty(this.MDivisionID))

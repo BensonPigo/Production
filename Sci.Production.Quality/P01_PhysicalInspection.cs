@@ -1540,13 +1540,6 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 from (
     select distinct email 
     from (
-        select email 
-        from pass1
-        where id in (select Supervisor from pass1 where  id='{Env.User.UserID}')
-		        or id in (select Manager from Pass1 where id = '{Env.User.UserID}')
-
-        union all
-
         select email = iif( isnull(p.email,'') = '', isnull(m.ToAddress,''),isnull(p.email,''))
 		from Orders o
 		left join Pass1 p on o.MCHandle = p.ID
@@ -1567,7 +1560,7 @@ from Orders o
 inner join MailGroup m on m.Code = '007' and o.FactoryID = m.FactoryID
 where o.ID = '{this.displaySP.Text}'");
 
-                    string ccAddress = Env.User.MailAddress + ";" + ccMailGroup;
+                    string ccAddress = ccMailGroup;
                     string subject = string.Format(MyUtility.GetValue.Lookup("Subject", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
                     string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text)
                                      + Environment.NewLine
