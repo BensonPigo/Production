@@ -68,7 +68,7 @@ select t.poid
        , [ContainerCode] = FTY.ContainerCode
 	   , GroupQty = Sum(FTY.InQty - FTY.OutQty + FTY.AdjustQty - FTY.ReturnQty) over (partition by t.dyelot)
        , [DetailFIR] = concat(isnull(Physical.Result,' '),'/',isnull(Weight.Result,' '),'/',isnull(Shadebone.Result,' '),'/',isnull(Continuity.Result,' '),'/',isnull(Odor.Result,' '))
-       , [Tone] = ShadeboneTone.Tone
+       , [Tone] = isnull(ShadeboneTone.Tone,ShadeboneTone2.Tone)
 from #tmp t
 Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.FtyInventoryUkey=FTY.Ukey
 left join dbo.Issue_Summary isum with (nolock) on t.Issue_SummaryUkey = isum.Ukey
@@ -104,6 +104,12 @@ outer apply (select [Tone] = MAX(fs.Tone)
 	        Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
 	        where fi.Ukey = FTY.Ukey
 			) ShadeboneTone
+outer apply (select [Tone] = MAX(fs.Tone)
+	        from FIR f 
+	        Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = t.Roll and fs.Dyelot = t.Dyelot
+            left join PO_Supp_Detail po3 with (nolock) on po3.ID = t.POID and po3.Seq1 = t.Seq1 and po3.Seq2 = t.Seq2
+	        where f.POID = po3.StockPOID and f.SEQ1 = po3.StockSeq1 and f.SEQ2 = po3.StockSeq2
+            ) ShadeboneTone2
 order by GroupQty desc, t.dyelot, balanceqty desc";
                 if (!(result = MyUtility.Tool.ProcessWithDatatable(
                         temp, string.Empty, cmdd, out dtFtyinventory, "#tmp")))
