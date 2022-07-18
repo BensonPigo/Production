@@ -107,7 +107,7 @@ left join Supp WITH (NOLOCK) on Supp.ID = ps.SuppID
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 outer apply(
     select Qty = rd.FinalNeedQty 
-                 * isnull((select RateValue 
+                 * isnull((select RateValue = IIF(Denominator = 0,0, Numerator / Denominator)
                            from Unit_Rate 
                            where UnitFrom = rd.ReplacementUnit 
                                  and UnitTo = psd.POUnit),1)

@@ -672,7 +672,7 @@ WITH BreakdownByArticle as (
 	    AND psd2.ColorID = iis.ColorID
     )StockUnit
     OUTER APPLY(
-	    SELECT RateValue
+	    SELECT RateValue = IIF(Denominator = 0,0, Numerator / Denominator)
 	    FROM Unit_Rate
 	    WHERE UnitFrom='M' and  UnitTo = StockUnit.StockUnit
     )UnitRate
