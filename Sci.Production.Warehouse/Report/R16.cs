@@ -111,6 +111,8 @@ select
 	,psd.Refno
 	,psd.ColorID
 	,DescDetail=LTRIM(RTRIM(f.DescDetail))
+    ,f.WeaveTypeID
+	,r.Relaxtime
 	,id.roll
 	,id.dyelot
 	,psd.StockUnit
@@ -127,6 +129,11 @@ inner join Cutplan c WITH (NOLOCK) on c.ID = i.CutplanID
 left join po_supp_detail psd WITH (NOLOCK) on psd.id = id.poid and psd.seq1 = id.seq1 and psd.seq2 =id.seq2
 left join Fabric f WITH (NOLOCK) on f.SCIRefno  = psd.SCIRefno
 left join FtyInventory fi WITH (NOLOCK) on fi.POID = id.POID and fi.Seq1 = id.Seq1 and fi.Seq2 = id.Seq2 and fi.Roll = id.Roll and fi.Dyelot = id.Dyelot and id.StockType = fi.StockType
+left join (
+	select Relaxtime,rr.Refno
+	from [ExtendServer].ManufacturingExecution.dbo.FabricRelaxation fr
+	left join [ExtendServer].ManufacturingExecution.dbo.RefnoRelaxtime rr on fr.ID = rr.FabricRelaxationID
+)r on r.Refno = psd.Refno
 outer apply(
 	select cutref = stuff((
 		Select concat(' / ', w.FabricCombo,'-',x1.CutNo)
@@ -198,7 +205,7 @@ order by IssueDate, ID, SP, Seq, Roll, Dyelot
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, reportName, 1, false, null, excelApp, wSheet: excelApp.Sheets[1]);
 
             #region 釋放上面開啟過excel物件
-            string strExcelName = Class.MicrosoftFile.GetName("Shipping_R16");
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R16");
             Excel.Workbook workbook = excelApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
