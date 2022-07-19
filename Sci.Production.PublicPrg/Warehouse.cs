@@ -3797,13 +3797,13 @@ inner join #tmp s on s.POID = sd.PoId
                 columnIsWMS = @"
 	,IsWMS = iif(exists(
 				select 1
-				from FtyInventory_Detail fd 
-				inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+				from FtyInventory_Detail fd with (nolock)
+				inner join MtlLocation ml with (nolock) on ml.ID = fd.MtlLocationID
 				where fd.Ukey = f.Ukey
 				and ml.IsWMS = 1
 				and ml.StockType = sd.FromStockType), 1, 0)
 	,ToIsWMS = iif(exists(	
-				select 1 from MtlLocation ml 
+				select 1 from MtlLocation ml with (nolock) 
 				inner join dbo.SplitString(sd.ToLocation,',') sp on sp.Data = ml.ID and ml.StockType = sd.ToStockType
 				where ml.IsWMS = 1), 1, 0)
     ,ToUkey = fto.Ukey
@@ -3815,12 +3815,12 @@ inner join #tmp s on s.POID = sd.PoId
                 columnIsWMS = $@"
 	,IsWMS = iif(exists(
                 select 1
-	            from MtlLocation ml
+	            from MtlLocation ml with (nolock)
                 inner join dbo.SplitString(sd.FromLocation, ',') sp on sp.Data = ml.ID
 	            where ml.IsWMS =1 ), 1, 0)
 	,ToIsWMS = iif(exists(
                 select 1
-	            from MtlLocation ml
+	            from MtlLocation ml with (nolock)
                 inner join dbo.SplitString(sd.ToLocation, ',') sp on sp.Data = ml.ID
 	            where ml.IsWMS =1 ), 1, 0)
 ";
@@ -3830,8 +3830,8 @@ inner join #tmp s on s.POID = sd.PoId
                 columnIsWMS = $@"
 	,IsWMS = iif(exists(
 				select 1
-				from FtyInventory_Detail fd 
-				inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+				from FtyInventory_Detail fd with (nolock) 
+				inner join MtlLocation ml with (nolock) on ml.ID = fd.MtlLocationID
 				where fd.Ukey = f.Ukey
 				and ml.IsWMS = 1), 1, 0)
 ";
