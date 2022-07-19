@@ -384,6 +384,7 @@ seq[1]), out this.dr))
             .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)
             .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("Garment Size", header: "Garment Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("usedqty", header: "@Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)
             .Text("SizeUnit", header: "SizeUnit", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("location", header: "Location", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -421,6 +422,7 @@ select  a.Id
         , a.Qty
         , Colorid = isnull(dbo.GetColorMultipleID(p.BrandId, p.ColorID), '')
         , p.SizeSpec
+        , [Garment Size] = dbo.GetGarmentSizeByOrderIDSeq(a.POID,a.Seq1,a.Seq2)
         , p.UsedQty
         , p.SizeUnit
         , p.StockUnit
