@@ -2292,15 +2292,15 @@ END", Env.User.UserID,
             {
                 try
                 {
-                    string deleteFIR_Shadebone = @"
+                    string deleteFIR_Shadebone = $@"
 delete fs
 from Receiving_Detail sd with(nolock)
 inner join PO_Supp_Detail psd with(nolock) on psd.ID = sd.PoId and psd.SEQ1 = sd.Seq1 and psd.SEQ2 = sd.Seq2
 inner join FIR f with (nolock) on sd.id = f.ReceivingID and sd.PoId = F.POID and sd.Seq1 = F.SEQ1 and sd.Seq2 = F.SEQ2
 inner join FIR_Shadebone fs with (nolock) on f.id = fs.ID
-where sd.id = '{id}'
+where sd.id = '{this.CurrentMaintain["ID"]}'
 ";
-                    if (!(result = DBProxy.Current.Execute("Prodution", deleteFIR_Shadebone)))
+                    if (!(result = DBProxy.Current.Execute(null, deleteFIR_Shadebone)))
                     {
                         throw result.GetException();
                     }
