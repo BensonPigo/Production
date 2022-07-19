@@ -190,6 +190,7 @@ select  poid = b.ID
         , a.StockType
         , ColorID = isnull(dbo.GetColorMultipleID(b.BrandId, b.ColorID), '')
         , b.SizeSpec
+        , [Garment Size] = dbo.GetGarmentSizeByOrderIDSeq(b.ID,b.Seq1,b.Seq2)
         , b.UsedQty
         , b.SizeUnit
         , b.StockUnit
@@ -254,6 +255,7 @@ order by b.ID, b.seq1, b.seq2", this.CurrentDetailData["poid"]);
                     this.CurrentDetailData["ftyinventoryukey"] = x[0]["ukey"];
                     this.CurrentDetailData["Colorid"] = x[0]["Colorid"];
                     this.CurrentDetailData["SizeSpec"] = x[0]["SizeSpec"];
+                    this.CurrentDetailData["Garment Size"] = x[0]["Garment Size"];
                     this.CurrentDetailData["UsedQty"] = x[0]["UsedQty"];
                     this.CurrentDetailData["SizeUnit"] = x[0]["SizeUnit"];
                     this.CurrentDetailData["location"] = x[0]["location"];
@@ -306,6 +308,7 @@ order by b.ID, b.seq1, b.seq2", this.CurrentDetailData["poid"]);
         , a.StockType
         , ColorID = isnull(dbo.GetColorMultipleID(b.BrandId, b.ColorID), '')
         , b.SizeSpec
+        , [Garment Size] = dbo.GetGarmentSizeByOrderIDSeq(a.POID,a.Seq1,a.Seq2)
         , b.UsedQty
         , b.SizeUnit
         , b.StockUnit
@@ -369,6 +372,7 @@ seq[1]), out this.dr))
                             this.CurrentDetailData["accu_issue"] = this.dr["accu_issue"];
                             this.CurrentDetailData["balanceqty"] = this.dr["balanceqty"];
                             this.CurrentDetailData["StockUnit"] = this.dr["StockUnit"];
+                            this.CurrentDetailData["Garment Size"] = this.dr["Garment Size"];
                         }
                     }
                 }
@@ -1983,6 +1987,7 @@ select  poid = b.ID
         , a.StockType
         , ColorID = isnull(dbo.GetColorMultipleID(b.BrandId, b.ColorID), '')
         , b.SizeSpec
+        , [Garment Size] = dbo.GetGarmentSizeByOrderIDSeq(b.ID,b.Seq1,b.Seq2)
         , b.UsedQty
         , b.SizeUnit
         , b.StockUnit
@@ -2032,6 +2037,7 @@ order by b.ID, b.seq1, b.seq2", Env.User.Keyword,
                 ndr["ftyinventoryukey"] = dr["ukey"];
                 ndr["StockUnit"] = dr["StockUnit"];
                 ndr["MtlTypeID"] = dr["MtlTypeID"];
+                ndr["Garment Size"] = dr["Garment Size"];
 
                 detailDt.Rows.Add(ndr);
 

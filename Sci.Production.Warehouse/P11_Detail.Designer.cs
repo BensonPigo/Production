@@ -39,6 +39,8 @@
             this.labelSpecial = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.editGarmentSize = new Sci.Win.UI.EditBox();
+            this.labGarmentSize = new Sci.Win.UI.Label();
             this.eb_desc = new Sci.Win.UI.EditBox();
             this.editOrderList = new Sci.Win.UI.EditBox();
             this.labelQty = new Sci.Win.UI.Label();
@@ -52,8 +54,6 @@
             this.displayTotalIssueQty = new Sci.Win.UI.DisplayBox();
             this.label1 = new Sci.Win.UI.Label();
             this.displayDiffqty = new Sci.Win.UI.DisplayBox();
-            this.editGarmentSize = new Sci.Win.UI.EditBox();
-            this.labGarmentSize = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -223,6 +223,26 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Issue Item";
             // 
+            // editGarmentSize
+            // 
+            this.editGarmentSize.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editGarmentSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editGarmentSize.IsSupportEditMode = false;
+            this.editGarmentSize.Location = new System.Drawing.Point(114, 126);
+            this.editGarmentSize.Multiline = true;
+            this.editGarmentSize.Name = "editGarmentSize";
+            this.editGarmentSize.ReadOnly = true;
+            this.editGarmentSize.Size = new System.Drawing.Size(422, 50);
+            this.editGarmentSize.TabIndex = 118;
+            // 
+            // labGarmentSize
+            // 
+            this.labGarmentSize.Location = new System.Drawing.Point(9, 126);
+            this.labGarmentSize.Name = "labGarmentSize";
+            this.labGarmentSize.Size = new System.Drawing.Size(102, 23);
+            this.labGarmentSize.TabIndex = 117;
+            this.labGarmentSize.Text = "Garment Size";
+            // 
             // eb_desc
             // 
             this.eb_desc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -348,26 +368,6 @@
             this.displayDiffqty.Name = "displayDiffqty";
             this.displayDiffqty.Size = new System.Drawing.Size(124, 23);
             this.displayDiffqty.TabIndex = 119;
-            // 
-            // editGarmentSize
-            // 
-            this.editGarmentSize.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.editGarmentSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.editGarmentSize.IsSupportEditMode = false;
-            this.editGarmentSize.Location = new System.Drawing.Point(114, 126);
-            this.editGarmentSize.Multiline = true;
-            this.editGarmentSize.Name = "editGarmentSize";
-            this.editGarmentSize.ReadOnly = true;
-            this.editGarmentSize.Size = new System.Drawing.Size(422, 50);
-            this.editGarmentSize.TabIndex = 118;
-            // 
-            // labGarmentSize
-            // 
-            this.labGarmentSize.Location = new System.Drawing.Point(9, 126);
-            this.labGarmentSize.Name = "labGarmentSize";
-            this.labGarmentSize.Size = new System.Drawing.Size(102, 23);
-            this.labGarmentSize.TabIndex = 117;
-            this.labGarmentSize.Text = "Garment Size";
             // 
             // P11_Detail
             // 
