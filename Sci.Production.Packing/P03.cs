@@ -1751,6 +1751,24 @@ AND pd.CTNQty = 1
                 m.TopMost = true;
                 return;
             }
+
+            // ShipModeID in ('A/P', 'E/P') AND PackingList.NW = 0 就不可以confirm by ISP20220899
+            string sqlChk = $@"
+select ttlNW = sum(pd.NW),p.ID
+from PackingList p
+inner join PackingList_Detail pd on p.ID = pd.ID
+where ShipModeID in ('A/P', 'E/P') 
+and p.ID = '{this.CurrentMaintain["ID"]}'
+group by p.ID
+";
+            if (MyUtility.Check.Seek(sqlChk,out DataRow drChk))
+            {
+                if (MyUtility.Check.Empty(drChk["ttlNW"]))
+                {
+                    MyUtility.Msg.WarningBox("Ship Mode is A/P or E/P, NW cannot be zero.");
+                    return;
+                }
+            }
             #endregion
 
             string sqlcmd = $@"exec dbo.usp_Packing_P03_Confirm '{this.CurrentMaintain["ID"]}','{Env.User.Factory}','{Env.User.UserID}','1'";
