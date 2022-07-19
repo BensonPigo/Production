@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[LocalDebit_Detail] (
     [ID]           VARCHAR (13)    CONSTRAINT [DF_LocalDebit_Detail_ID] DEFAULT ('') NOT NULL,
-    [Orderid]      VARCHAR (13)    CONSTRAINT [DF_LocalDebit_Detail_Orderid] DEFAULT ('') NOT NULL,
+    [Orderid]      VARCHAR (13)    CONSTRAINT [DF_LocalDebit_Detail_Orderid] DEFAULT ('') NULL,
     [UnitID]       VARCHAR (8)     CONSTRAINT [DF_LocalDebit_Detail_UnitID] DEFAULT ('') NULL,
     [Qty]          NUMERIC (11, 2) CONSTRAINT [DF_LocalDebit_Detail_Qty] DEFAULT ((0)) NULL,
     [Amount]       NUMERIC (12, 2) CONSTRAINT [DF_LocalDebit_Detail_Amount] DEFAULT ((0)) NULL,
