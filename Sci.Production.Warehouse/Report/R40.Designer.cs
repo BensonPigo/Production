@@ -192,9 +192,9 @@
             // label4
             // 
             this.label4.BackColor = System.Drawing.SystemColors.Control;
-            this.label4.Location = new System.Drawing.Point(260, 70);
+            this.label4.Location = new System.Drawing.Point(260, 77);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(20, 34);
+            this.label4.Size = new System.Drawing.Size(20, 22);
             this.label4.TabIndex = 160;
             this.label4.Text = "~";
             this.label4.TextStyle.Color = System.Drawing.Color.Black;
