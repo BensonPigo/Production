@@ -764,10 +764,7 @@ and r.seq1='{3}' and r.seq2='{4}' and r.poid='{5}'
 
             if (dtFIR_Shadebone.Rows.Count > 0)
             {
-                var m = MyUtility.Msg.ShowMsgGrid_LockScreen(dtFIR_Shadebone, msg: "Those fabric roll already completed shade band inspection, please check with QA team and revise inspection result to empty before modiy roll dyelot.", caption: "Warring");
-                m.Visible = false;
-                m.grid1.Columns[0].Width = 120;
-                m.ShowDialog();
+                MyUtility.Msg.ShowMsgGrid_LockScreen(dtFIR_Shadebone, msg: "Those fabric roll already completed shade band inspection, please check with QA team and revise inspection result to empty before modiy roll dyelot.", caption: "Warring");
                 return;
             }
 
@@ -797,7 +794,7 @@ SELECT   [FirID]=f.ID
 FROM {this.gridAlias} r
 INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
 INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2
-WHERE r.ID='{this.docno}' AND p.FabricType='F' AND ROLL='{drModify["roll"]}' AND  r.Dyelot='{drModify["dyelot"]}'
+WHERE r.ID='{this.docno}' AND p.FabricType='F' AND ROLL='{drModify["roll", DataRowVersion.Original]}' AND  r.Dyelot='{drModify["dyelot", DataRowVersion.Original]}'
 ");
 
                 if (this.gridAlias.ToUpper().EqualString("RECEIVING_DETAIL"))
@@ -826,13 +823,14 @@ and seq1='{drModify["seq1"]}' and seq2='{drModify["seq2"]}'
 and roll='{original_Roll}' and dyelot='{original_Dyelot}' 
 and stocktype = '{drModify["stocktype"]}';
 
-UPDATE FIR_Shadebone SET 
-Roll = '{drModify["roll"]}'
-,Dyelot  = '{drModify["dyelot"]}'
-,TicketYds   = '{drModify["ActualQty"]}'
-,EditName = '{Env.User.UserID}'
-,EditDate = GETDATE()
-WHERE  roll='{original_Roll}' AND dyelot='{original_Dyelot}' AND ID='{firID}'
+delete FIR_Shadebone WHERE  roll='{original_Roll}' AND dyelot='{original_Dyelot}' AND ID='{firID}'
+--UPDATE FIR_Shadebone SET 
+--Roll = '{drModify["roll"]}'
+--,Dyelot  = '{drModify["dyelot"]}'
+--,TicketYds   = '{drModify["ActualQty"]}'
+--,EditName = '{Env.User.UserID}'
+--,EditDate = GETDATE()
+--WHERE  roll='{original_Roll}' AND dyelot='{original_Dyelot}' AND ID='{firID}'
 ";
                 }
                 else if (this.gridAlias.ToUpper().EqualString("TRANSFERIN_DETAIL"))
