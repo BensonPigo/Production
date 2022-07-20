@@ -483,7 +483,7 @@ PL as
 (   select distinct 0 as Selected,ID as InvNo,ShipModeID,GW,CBM, '' as ShippingAPID, '' as BLNo,'' as BL2No,
     '' as WKNo,'' as Type,'' as CurrencyID,0 as Amount, '' as ShareBase,0 as FtyWK 
     from PackingList WITH (NOLOCK) 
-    where  (Type = 'F' or Type = 'L')  and id='{0}' 
+    where  Type = 'F'  and id='{0}' 
 ) ,
 FTY AS
 (
@@ -1293,13 +1293,19 @@ where   s.ShippingAPID = '{0}'
                         {
                             addCmds.Add(string.Format(
                                 @"
+Declare @FactoryID varchar(8) = ''
+
+select  @FactoryID = FactoryID
+from PackingList with (nolock)
+where ID = '{3}'
+
 merge ShareExpense t
 using (select [ShippingAPID] = '{0}', [WKNO] = '{2}', [InvNo] = '{3}', AccountID from #tmp) as s
 on	t.ShippingAPID = s.ShippingAPID 	
 	and t.WKNO = s.WKNO
 	and t.InvNo = s.InvNo
 	and t.AccountID = s.AccountID
-    and t.FactoryID = ''
+    and t.FactoryID = isnull(@FactoryID, '')
 when matched then
 	update set t.Junk = 0
     , ShipModeID = '{8}'
@@ -1307,7 +1313,7 @@ when matched then
     , CBM = {6} 
 when not matched then 
 	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk, FactoryID)
-	values (s.ShippingAPID, '{1}', s.WKNO, s.InvNo, '{4}', {5}, {6}, '{7}', '{8}', {9}, s.AccountID, 0, '');
+	values (s.ShippingAPID, '{1}', s.WKNO, s.InvNo, '{4}', {5}, {6}, '{7}', '{8}', {9}, s.AccountID, 0, isnull(@FactoryID, ''));
 
 drop table #tmp;",
                                 MyUtility.Convert.GetString(this.apData["ID"]),
@@ -1855,7 +1861,7 @@ select  g.ShippingAPID
         ,g.Junk
         ,o.FactoryID
 from #tmp g
-inner join PackingList p with (nolock) on p.INVNo = g.InvNo and p.ID = g.PackingListID
+inner join PackingList p with (nolock) on p.INVNo = g.InvNo and p.ID = g.PackingListID and p.Type != 'L'
 inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty = 1
 inner join Orders o with (nolock) on o.ID = pd.OrderID
 inner join LocalItem l with (nolock) on l.Refno = pd.Refno
@@ -1914,7 +1920,7 @@ outer apply(select distinct [val] = sd.AccountID
                 where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
                 and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
 		            or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
-inner join PackingList p with (nolock) on p.INVNo = g.ID
+inner join PackingList p with (nolock) on p.INVNo = g.ID  and p.Type != 'L'
 inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty = 1
 inner join Orders o with (nolock) on o.ID = pd.OrderID
 inner join LocalItem l with (nolock) on l.Refno = pd.Refno
