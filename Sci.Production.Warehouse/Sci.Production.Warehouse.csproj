@@ -2383,7 +2383,6 @@
     <None Include="Properties\DataSources\P11_PrintData.datasource" />
     <None Include="Properties\DataSources\P11_PrintKarbanCard_PrintData.datasource" />
     <None Include="Properties\DataSources\P13_FabricSticker_PrintData.datasource" />
-    <None Include="Properties\DataSources\P13_FabricSticker_PrintData2.datasource" />
     <None Include="Properties\DataSources\P13_PrintData.datasource" />
     <None Include="Properties\DataSources\P14_PrintData.datasource" />
     <None Include="Properties\DataSources\P16_PrintData.datasource" />
