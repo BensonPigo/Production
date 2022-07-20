@@ -331,6 +331,8 @@ select
 	,r.ExportID
 	,[ArriveDate] = r.WhseArrival
 	,rd.PoId
+    ,rd.seq1
+    ,rd.seq2
 	,[Seq] = rd.Seq1 + ' ' + rd.Seq2
 	,o.BrandID
 	,psd.refno
@@ -351,13 +353,6 @@ select
 	,rd.Fabric2LabTime
     ,rd.Checker
     ,IsQRCodeCreatedByPMS = iif (dbo.IsQRCodeCreatedByPMS(rd.MINDQRCode) = 1, 'Create from PMS', '')
-    ,LastP26RemarkData = (
-        select top 1 l.Remark
-        from LocationTrans_detail ld (nolock)
-        inner join LocationTrans l (nolock) on l.id = ld.id
-        where l.Status = 'Confirmed'
-        and ld.poid = rd.poid and ld.seq1 = rd.seq1 and ld.seq2 = rd.seq2  AND ld.Roll = rd.Roll and ld.Dyelot = rd.Dyelot
-        order by EditDate desc)
     ,rd.MINDChecker
     ,rd.QRCode_PrintDate
     ,rd.MINDCheckAddDate
@@ -404,7 +399,15 @@ select  ReceivingID
         ,MINDCheckAddDate
         ,MINDCheckEditDate
         ,AbbEN
-from #tmpMind
+from #tmpMind rd
+OUTER APPLY(
+    select top 1 LastP26RemarkData =  lt.Remark
+	FROM LocationTrans lt
+	INNER JOIN LocationTrans_detail ltd ON lt.ID=ltd.ID
+    where lt.Status='Confirmed'
+    and ltd.poid = rd.poid and ltd.seq1 = rd.seq1 and ltd.seq2 = rd.seq2  AND ltd.Roll = rd.Roll and ltd.Dyelot = rd.Dyelot
+    order by EditDate desc
+)p26
 where 1 = 1 {whereMind}
 drop table #tmpMind
 ";
