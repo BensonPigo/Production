@@ -235,7 +235,8 @@ select
 	,[SortCmbSeq2] = ISNULL(cmb.Seq2,R.Seq2)
 	,[SortCmbRoll] = ISNULL(cmb.Roll,R.Roll)
 	,[SortCmbDyelot] = ISNULL(cmb.Dyelot,R.Dyelot)
-    ,R.Unoriginal 
+    ,R.Unoriginal
+    ,R.Ukey
 from dbo.Receiving_Detail R WITH (NOLOCK) 
 LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
 left join Ftyinventory  fi with (nolock) on    R.POID = fi.POID and
