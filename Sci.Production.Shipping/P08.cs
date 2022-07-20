@@ -1808,8 +1808,8 @@ You can complete Account Payment only after the corresponding Number is updated,
             needDoCheckNoExportChargesGMT = false;
             if (isExists)
             {
-                this.checkIsFreightForwarder.Checked = MyUtility.Convert.GetBool(drResult["IsFreightForwarder"]);
                 needDoCheckNoExportChargesGMT = true;
+                return MyUtility.Convert.GetBool(drResult["IsFreightForwarder"]);
             }
 
             return false;
