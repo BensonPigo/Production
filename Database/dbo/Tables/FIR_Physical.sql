@@ -25,6 +25,7 @@
     [Issue_DetailUkey] BIGINT         DEFAULT ((0)) NOT NULL,
     [TransactionID]    VARCHAR (30)   NULL,
     [QMSMachineID]     VARCHAR (20)   NULL DEFAULT (''),
+    [StartTime] DATETIME NULL, 
     CONSTRAINT [PK_FIR_Physical] PRIMARY KEY CLUSTERED ([DetailUkey] ASC)
 );
 
