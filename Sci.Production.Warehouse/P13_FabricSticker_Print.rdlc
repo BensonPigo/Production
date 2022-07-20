@@ -790,7 +790,7 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox25">
+                    <Textbox Name="Textbox2">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -806,7 +806,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox21</rd:DefaultName>
+                      <rd:DefaultName>Textbox2</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1663,7 +1663,7 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="RowNo3">
+                    <Textbox Name="Textbox3">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -1679,7 +1679,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>RowNo</rd:DefaultName>
+                      <rd:DefaultName>Textbox3</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1737,7 +1737,7 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox44">
+                    <Textbox Name="Textbox1">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -1753,7 +1753,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox21</rd:DefaultName>
+                      <rd:DefaultName>Textbox1</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1921,11 +1921,25 @@
       </ConnectionProperties>
       <rd:DataSourceID>36d2e761-bf85-4a72-a522-281d240cd6ae</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="SciProductionWarehouse1">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>f4d42afa-ce8f-49af-8cd8-e696b02b6c9c</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="SciProductionWarehouse2">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>ddaf1d33-0486-4537-a204-a212cee1d9dd</rd:DataSourceID>
+    </DataSource>
   </DataSources>
   <DataSets>
     <DataSet Name="DataSet1">
       <Query>
-        <DataSourceName>SciProductionWarehouse</DataSourceName>
+        <DataSourceName>SciProductionWarehouse2</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
