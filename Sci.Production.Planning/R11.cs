@@ -273,16 +273,16 @@ select distinct StyleID,OldStyleID
 into #tmpStyle_SimilarStyle
 From 
 (
-		Select StyleID = MasterStyleID, BrandID = MasterBrandID, OldStyleID = t.StyleID
+		Select StyleID = MasterStyleID, BrandID = MasterBrandID, OldStyleID = t.StyleID,t.StyleUkey
 		From Style_SimilarStyle	s	
 		inner join #tmpo t on (t.StyleID = s.MasterStyleID and t.BrandID = s.MasterBrandID) or (t.StyleID = s.ChildrenStyleID and t.BrandID = s.ChildrenBrandID)
 		Union 
-		Select StyleID = ChildrenStyleID, BrandID = ChildrenBrandID, OldStyleID = t.StyleID
+		Select StyleID = ChildrenStyleID, BrandID = ChildrenBrandID, OldStyleID = t.StyleID,t.StyleUkey
 		From Style_SimilarStyle	s	
 		inner join #tmpo t on (t.StyleID = s.MasterStyleID and t.BrandID = s.MasterBrandID) or (t.StyleID = s.ChildrenStyleID and t.BrandID = s.ChildrenBrandID)
 ) main
 	Left join Style s on s.ID = main.StyleID And s.BrandID = main.BrandID
-	Where s.Ukey is null
+	Where s.Ukey <> main.StyleUkey
 
 --
 select 
@@ -399,7 +399,7 @@ select o.FtyGroup
 	   , a.A
 	   , R = isnull(r.R,'New Style')
        , RS = ISNULL(rs.RS,'')
-       , [Type] = IIF(isnull(r.R,'New Style') !='' or isnull(rs.RS,'') != '','Repeat','New')
+       , [Type] = IIF(isnull(r.R,'') !='' or isnull(rs.RS,'') != '','Repeat','New')
 	   , W = iif(w.P=0 or w.P is null,'N','Y')
 	   {this.pvtid}
 from #tmpol o
