@@ -412,6 +412,7 @@ outer apply(
 	select  concat(',',R_Similar)
 	from #tmp_R_Similar s
 	where s.OldStyleID = o.StyleID
+	and R_Similar !=''
 	for XML path('')),1,1,'')
 )rs
 order by o.FtyGroup,o.StyleID,o.SeasonID
