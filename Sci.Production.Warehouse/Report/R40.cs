@@ -358,6 +358,7 @@ select
     ,rd.MINDCheckAddDate
     ,rd.MINDCheckEditDate
     ,AbbEN = (select Supp.AbbEN from Supp with (nolock) where Supp.id =ps.SuppID)
+    ,rdStockType = rd.StockType
 into #tmpMind
 from  Receiving r with (nolock)
 inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
@@ -405,7 +406,7 @@ OUTER APPLY(
 	FROM LocationTrans lt
 	INNER JOIN LocationTrans_detail ltd ON lt.ID=ltd.ID
     where lt.Status='Confirmed'
-    and ltd.poid = rd.poid and ltd.seq1 = rd.seq1 and ltd.seq2 = rd.seq2  AND ltd.Roll = rd.Roll and ltd.Dyelot = rd.Dyelot
+    and ltd.poid = rd.poid and ltd.seq1 = rd.seq1 and ltd.seq2 = rd.seq2  AND ltd.Roll = rd.Roll and ltd.Dyelot = rd.Dyelot and ltd.StockType = rd.rdStockType
     order by EditDate desc
 )p26
 where 1 = 1 {whereMind}
