@@ -148,12 +148,12 @@ namespace Sci.Production.Warehouse
                 whereChecker += " and ISNULL(Checker,'') = ''";
             }
 
-            if (this.status == "AlreadyScanned")
+            if (this.status.EqualString("AlreadyScanned"))
             {
                 whereMind += " and MINDCheckAddDate is not null";
             }
 
-            if (this.status == "NotyetScanned")
+            if (this.status.EqualString("NotYetScanned"))
             {
                 whereMind += " and MINDCheckAddDate is null";
             }
