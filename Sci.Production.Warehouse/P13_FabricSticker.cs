@@ -91,7 +91,7 @@ select Sel = 0
         , fi.ContainerCode
         , [StockQty] = (isnull(fi.InQty, 0) - isnull(fi.OutQty, 0) + isnull(fi.AdjustQty, 0)) - isnull(fi.ReturnQty, 0)
         , [BulkLocation] = BulkLocation.val
-        , [Remarks] = {col_remarks}
+        , [Remark] = {col_remarks}
 from {this.fromTable} isd with (nolock)
 left join Orders o with (nolock) on o.ID=isd.POID
 left join Po_Supp_Detail psd with (nolock) on isd.POID = psd.ID
