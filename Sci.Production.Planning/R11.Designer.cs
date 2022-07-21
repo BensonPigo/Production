@@ -41,6 +41,9 @@
             this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
+            this.chkByCMPMonthlyLockDate = new Sci.Win.UI.CheckBox();
+            this.dateOutputDate = new Sci.Win.UI.DateBox();
+            this.labOutputDate = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numNewStyleBaseOn)).BeginInit();
             this.SuspendLayout();
             // 
@@ -174,6 +177,7 @@
             // 
             // comboCategory
             // 
+            this.comboCategory.AddAllItem = false;
             this.comboCategory.BackColor = System.Drawing.Color.White;
             this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCategory.FormattingEnabled = true;
@@ -196,9 +200,40 @@
             this.chkIncludeCancelOrder.Text = "Include Cancel order";
             this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
             // 
+            // chkByCMPMonthlyLockDate
+            // 
+            this.chkByCMPMonthlyLockDate.AutoSize = true;
+            this.chkByCMPMonthlyLockDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkByCMPMonthlyLockDate.Location = new System.Drawing.Point(12, 235);
+            this.chkByCMPMonthlyLockDate.Name = "chkByCMPMonthlyLockDate";
+            this.chkByCMPMonthlyLockDate.Size = new System.Drawing.Size(197, 21);
+            this.chkByCMPMonthlyLockDate.TabIndex = 160;
+            this.chkByCMPMonthlyLockDate.Text = "By CMP Monthly Lock Date";
+            this.chkByCMPMonthlyLockDate.UseVisualStyleBackColor = true;
+            this.chkByCMPMonthlyLockDate.CheckedChanged += new System.EventHandler(this.ChkByCMPMonthlyLockDate_CheckedChanged);
+            // 
+            // dateOutputDate
+            // 
+            this.dateOutputDate.Location = new System.Drawing.Point(115, 198);
+            this.dateOutputDate.Name = "dateOutputDate";
+            this.dateOutputDate.Size = new System.Drawing.Size(110, 23);
+            this.dateOutputDate.TabIndex = 161;
+            this.dateOutputDate.Validating += new System.ComponentModel.CancelEventHandler(this.DateOutputDate_Validating);
+            // 
+            // labOutputDate
+            // 
+            this.labOutputDate.Location = new System.Drawing.Point(13, 198);
+            this.labOutputDate.Name = "labOutputDate";
+            this.labOutputDate.Size = new System.Drawing.Size(98, 23);
+            this.labOutputDate.TabIndex = 162;
+            this.labOutputDate.Text = "Output Date";
+            // 
             // R11
             // 
-            this.ClientSize = new System.Drawing.Size(568, 219);
+            this.ClientSize = new System.Drawing.Size(568, 297);
+            this.Controls.Add(this.dateOutputDate);
+            this.Controls.Add(this.labOutputDate);
+            this.Controls.Add(this.chkByCMPMonthlyLockDate);
             this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.numNewStyleBaseOn);
@@ -235,6 +270,9 @@
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.comboCategory, 0);
             this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
+            this.Controls.SetChildIndex(this.chkByCMPMonthlyLockDate, 0);
+            this.Controls.SetChildIndex(this.labOutputDate, 0);
+            this.Controls.SetChildIndex(this.dateOutputDate, 0);
             ((System.ComponentModel.ISupportInitialize)(this.numNewStyleBaseOn)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -255,5 +293,8 @@
         private Win.UI.NumericUpDown numNewStyleBaseOn;
         private Class.ComboDropDownList comboCategory;
         private Win.UI.CheckBox chkIncludeCancelOrder;
+        private Win.UI.CheckBox chkByCMPMonthlyLockDate;
+        private Win.UI.DateBox dateOutputDate;
+        private Win.UI.Label labOutputDate;
     }
 }

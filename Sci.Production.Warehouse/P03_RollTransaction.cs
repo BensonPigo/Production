@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Drawing;
+﻿using Ict;
 using Ict.Win;
 using Sci;
 using Sci.Data;
-using Ict;
-using System.Linq;
+using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
@@ -134,6 +134,7 @@ where a.Poid = '{0}'
     and a.Seq1 = '{1}'
     and a.Seq2 = '{2}' 
     and a.StockType <> 'O'  --C倉不用算
+and not (inqty = 0 and outqty = 0 and adjustqty = 0 and returnQty = 0)
 order by a.dyelot,a.roll,a.stocktype
 ",
                     this.dr["id"].ToString(),
@@ -637,17 +638,6 @@ group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp
                 this.ShowErr(selectCommand2, selectResult2);
             }
 
-            this.dtTrans.TableName = "dtTrans";
-            this.data.Tables.Add(this.dtFtyinventory);
-            this.data.Tables.Add(this.dtTrans);
-            this.data.Tables.Add("dtSummary");
-
-            // remove [Dyelot] DataRelation
-            // DataRelation relation = new DataRelation("rel1"
-            //    , new DataColumn[] { dtFtyinventory.Columns["Roll"], dtFtyinventory.Columns["Dyelot"], dtFtyinventory.Columns["StockType"] }
-            //    , new DataColumn[] { dtTrans.Columns["roll"], dtTrans.Columns["dyelot"], dtTrans.Columns["stocktype"] }
-            //    );
-            // 105.12.23 Jimmy
             if (this.dtFtyinventory.Rows.Count == 0 || this.dtTrans.Rows.Count == 0)
             {
                 // MyUtility.Msg.ErrorBox("Data not found!!");
@@ -656,16 +646,8 @@ group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp
 
             try
             {
-                DataRelation relation = new DataRelation(
-                    "Rol1",
-                    new DataColumn[] { this.dtFtyinventory.Columns["Roll"], this.dtFtyinventory.Columns["StockType"], this.dtFtyinventory.Columns["Dyelot"] },
-                    new DataColumn[] { this.dtTrans.Columns["roll"], this.dtTrans.Columns["stocktype"], this.dtTrans.Columns["Dyelot"] });
-
-                this.data.Relations.Add(relation);
-                this.bindingSource1.DataSource = this.data;
-                this.bindingSource1.DataMember = "dtFtyinventory";
-                this.bindingSource2.DataSource = this.bindingSource1;
-                this.bindingSource2.DataMember = "Rol1";
+                this.bindingSource1.DataSource = this.dtFtyinventory;
+                this.bindingSource2.DataSource = this.dtTrans;
 
                 Ict.Win.UI.DataGridViewTextBoxColumn col_ContainerCode;
 
@@ -728,7 +710,7 @@ group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp
                      ;
                 this.gridSummary.Columns["DTM"].Visible = this.bUseQty;
             }
-            catch
+            catch (Exception ex)
             {
                 MyUtility.Msg.ErrorBox("Data error ,Please doubleclick 'Balance' field to click 'Re-Calculate' button for recalculate inventory qty, then retry to doubleclick this 'Release Qty' field.!!");
                 return;
@@ -787,6 +769,14 @@ group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp
 
         private void GridFtyinventory_SelectionChanged(object sender, EventArgs e)
         {
+            if (this.gridFtyinventory.CurrentDataRow == null)
+            {
+                return;
+            }
+
+            string filter = $"roll = '{this.gridFtyinventory.CurrentDataRow["roll"]}' and stocktype = '{this.gridFtyinventory.CurrentDataRow["stocktype"]}' and Dyelot = '{this.gridFtyinventory.CurrentDataRow["Dyelot"]}'";
+            this.dtTrans.DefaultView.RowFilter = filter;
+
             this.Change_Color();
         }
 
@@ -814,26 +804,39 @@ group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp
 
             var tmp = from b in this.dtFtyinventory.AsEnumerable()
                       where tmpStocktype.Contains(b.Field<string>("StockType"))
-                       group b by new
-                       {
-                           Dyelot = b.Field<string>("Dyelot"),
-                       }
+                      group b by new
+                      {
+                          Dyelot = b.Field<string>("Dyelot"),
+                      }
                         into m
-                       select new
-                       {
-                           dyelot = m.First().Field<string>("Dyelot"),
-                           rollcount = m.Count(),
-                           roll = string.Join(";", m.Select(r => r.Field<string>("roll")).Distinct()),
-                           inqty = m.Sum(w => w.Field<decimal>("inqty")),
-                           outQty = m.Sum(w => w.Field<decimal>("outqty")),
-                           AdjustQty = m.Sum(i => i.Field<decimal>("AdjustQty")),
-                           ReturnQty = m.Sum(i => i.Field<decimal>("ReturnQty")),
-                           balance = m.Sum(w => w.Field<decimal>("inqty")) - m.Sum(w => w.Field<decimal>("outqty")) + m.Sum(i => i.Field<decimal>("AdjustQty")) - m.Sum(i => i.Field<decimal>("ReturnQty")),
-                           DTM = this.numArrivedQtyBySeq.Value == 0 ? 0 : m.Sum(w => w.Field<decimal>("inqty")) / this.numArrivedQtyBySeq.Value * this.useQty,
-                       };
+                      select new
+                      {
+                          dyelot = m.First().Field<string>("Dyelot"),
+                          rollcount = m.Count(),
+                          roll = string.Join(";", m.Select(r => r.Field<string>("roll")).Distinct()),
+                          inqty = m.Sum(w => w.Field<decimal>("inqty")),
+                          outQty = m.Sum(w => w.Field<decimal>("outqty")),
+                          AdjustQty = m.Sum(i => i.Field<decimal>("AdjustQty")),
+                          ReturnQty = m.Sum(i => i.Field<decimal>("ReturnQty")),
+                          balance = m.Sum(w => w.Field<decimal>("inqty")) - m.Sum(w => w.Field<decimal>("outqty")) + m.Sum(i => i.Field<decimal>("AdjustQty")) - m.Sum(i => i.Field<decimal>("ReturnQty")),
+                          DTM = this.numArrivedQtyBySeq.Value == 0 ? 0 : m.Sum(w => w.Field<decimal>("inqty")) / this.numArrivedQtyBySeq.Value * this.useQty,
+                      };
 
             this.dtSummary.Rows.Clear();
-            tmp.ToList().ForEach(q2 => this.dtSummary.Rows.Add(q2.roll, q2.dyelot, null, q2.inqty, q2.outQty, q2.AdjustQty, q2.ReturnQty, q2.balance, null, q2.rollcount, q2.DTM));
+            foreach (var item in tmp)
+            {
+                DataRow newdr = this.dtSummary.NewRow();
+                newdr["roll"] = item.roll;
+                newdr["dyelot"] = item.dyelot;
+                newdr["inqty"] = item.inqty;
+                newdr["outQty"] = item.outQty;
+                newdr["AdjustQty"] = item.AdjustQty;
+                newdr["ReturnQty"] = item.ReturnQty;
+                newdr["balance"] = item.balance;
+                newdr["rollcount"] = item.rollcount;
+                newdr["DTM"] = item.DTM;
+                this.dtSummary.Rows.Add(newdr);
+            }
         }
 
         private void BtnPrint_Click(object sender, EventArgs e)
