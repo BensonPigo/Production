@@ -334,8 +334,8 @@ from #tmp_AR_Basic a
 group by a.StyleID
 --
 select a.StyleID
-	,R =    case    when max_OutputDate is null then 'New Style'
-                    when a.S > 0 AND a.B = 0 then 'New Style'
+	,R =    case    when max_OutputDate is null then ''
+                    when a.S > 0 AND a.B = 0 then ''
                     else concat(min(a.SewingLineID),'(',format(b.max_OutputDate,'yyyy/MM/dd'),')')
                     end
 into #tmp_R
@@ -397,9 +397,9 @@ select o.FtyGroup
 	   , o.TQty
 	   , TCPU = format(o.TCPU,'0.00')
 	   , a.A
-	   , R = isnull(r.R,'New Style')
+	   , R = isnull(r.R,'')
        , RS = ISNULL(rs.RS,'')
-       , [Type] = IIF(isnull(r.R,'') !='' or isnull(rs.RS,'') != '','Repeat','New')
+       , [Type] = IIF(isnull(r.R,'') ='' and isnull(rs.RS,'') = '','New Style','Repeat')
 	   , W = iif(w.P=0 or w.P is null,'N','Y')
 	   {this.pvtid}
 from #tmpol o
