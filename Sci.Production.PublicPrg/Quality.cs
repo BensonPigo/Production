@@ -206,7 +206,8 @@ namespace Sci.Production.PublicPrg
             /// GetGridCell
             /// </summary>
             /// <returns>CellResult</returns>
-            public static DataGridViewGeneratorTextColumnSettings GetGridCell()
+            /// <inheritdoc/>
+            public static DataGridViewGeneratorTextColumnSettings GetGridCell(bool hasempty = false)
             {
                 CellResult result = new CellResult();
                 result.CellMouseDoubleClick += (s, e) =>
@@ -222,14 +223,27 @@ namespace Sci.Production.PublicPrg
                         return;
                     }
 
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
-                    if (dr["Result"].ToString().ToUpper() == "PASS")
+                    Dictionary<int, string> dict = new Dictionary<int, string>
                     {
-                        dr["Result"] = "Fail";
+                        { 0, "Pass" },
+                        { 1, "Fail" },
+                    };
+
+                    if (hasempty)
+                    {
+                        dict.Add(2, string.Empty);
                     }
-                    else
+
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    int key = dict.AsEnumerable().Where(w => w.Value.ToUpper() == dr["Result"].ToString().ToUpper()).Select(row => row.Key).FirstOrDefault();
+                    if (++key >= dict.Count)
                     {
-                        dr["Result"] = "Pass";
+                        key = 0;
+                    }
+
+                    if (dict.TryGetValue(key, out string nextResult))
+                    {
+                        dr["Result"] = nextResult;
                     }
                 };
                 return result;

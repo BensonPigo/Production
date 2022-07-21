@@ -683,6 +683,14 @@ where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and d
                 return;
             }
 
+            DataTable dtFIR_Shadebone = new DataTable();
+            dtFIR_Shadebone.Columns.Add("POID");
+            dtFIR_Shadebone.Columns.Add("Seq1");
+            dtFIR_Shadebone.Columns.Add("Seq2");
+            dtFIR_Shadebone.Columns.Add("Roll");
+            dtFIR_Shadebone.Columns.Add("Dyelot");
+            dtFIR_Shadebone.Columns.Add("Result");
+
             // 修改到Roll或Dyelot時。因為主索引鍵被修改，需要檢查
             foreach (var drModify in modifyDrList)
             {
@@ -694,6 +702,36 @@ where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and d
 
                 if (original_Roll != current_Roll || original_Dyelot != current_Dyelot)
                 {
+                    string sqlCheckShadebandResult = $@"
+select
+    FIR.POID,
+    FIR.Seq1,
+    FIR.Seq2,
+    fs.Roll,
+    fs.Dyelot,
+    fs.Result
+from {this.gridAlias} sd with(nolock)
+inner join PO_Supp_Detail psd with(nolock) on psd.ID = sd.PoId and psd.SEQ1 = sd.Seq1 and psd.SEQ2 = sd.Seq2
+inner join FIR with (nolock) on FIR.ReceivingID = sd.ID and FIR.POID = sd.PoId and FIR.SEQ1 = sd.Seq1 and FIR.SEQ2 = sd.Seq2
+inner join FIR_Shadebone fs with (nolock) on fs.id = FIR.ID
+where sd.id = '{this.docno}'
+and psd.FabricType = 'F'
+and fs.Result <>''
+and fs.roll='{original_Roll}'
+and fs.dyelot='{original_Dyelot}'
+";
+                    if (MyUtility.Check.Seek(sqlCheckShadebandResult, out DataRow rowFIR_Shadebone))
+                    {
+                        DataRow dataRow = dtFIR_Shadebone.NewRow();
+                        dataRow["POID"] = rowFIR_Shadebone["POID"];
+                        dataRow["Seq1"] = rowFIR_Shadebone["Seq1"];
+                        dataRow["Seq2"] = rowFIR_Shadebone["Seq2"];
+                        dataRow["Roll"] = rowFIR_Shadebone["Roll"];
+                        dataRow["Dyelot"] = rowFIR_Shadebone["Dyelot"];
+                        dataRow["Result"] = rowFIR_Shadebone["Result"];
+                        dtFIR_Shadebone.Rows.Add(dataRow);
+                    }
+
                     // 只修改ActualQty時，判斷Roll# & Dyelot#是否重複,須排除自己
                     sqlcmd = string.Format(
                         @"
@@ -724,6 +762,12 @@ and r.seq1='{3}' and r.seq2='{4}' and r.poid='{5}'
                 }
             }
 
+            if (dtFIR_Shadebone.Rows.Count > 0)
+            {
+                MyUtility.Msg.ShowMsgGrid_LockScreen(dtFIR_Shadebone, msg: "Those fabric roll already completed shade band inspection, please check with QA team and revise inspection result to empty before modiy roll dyelot.", caption: "Warring");
+                return;
+            }
+
             if (duplicateList.Count() > 0)
             {
                 MyUtility.Msg.WarningBox(@"Roll# & Dyelot# already existed!!"
@@ -750,7 +794,7 @@ SELECT   [FirID]=f.ID
 FROM {this.gridAlias} r
 INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
 INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2
-WHERE r.ID='{this.docno}' AND p.FabricType='F' AND ROLL='{drModify["roll"]}' AND  r.Dyelot='{drModify["dyelot"]}'
+WHERE r.ID='{this.docno}' AND p.FabricType='F' AND ROLL='{drModify["roll", DataRowVersion.Original]}' AND  r.Dyelot='{drModify["dyelot", DataRowVersion.Original]}'
 ");
 
                 if (this.gridAlias.ToUpper().EqualString("RECEIVING_DETAIL"))
@@ -779,13 +823,14 @@ and seq1='{drModify["seq1"]}' and seq2='{drModify["seq2"]}'
 and roll='{original_Roll}' and dyelot='{original_Dyelot}' 
 and stocktype = '{drModify["stocktype"]}';
 
-UPDATE FIR_Shadebone SET 
-Roll = '{drModify["roll"]}'
-,Dyelot  = '{drModify["dyelot"]}'
-,TicketYds   = '{drModify["ActualQty"]}'
-,EditName = '{Env.User.UserID}'
-,EditDate = GETDATE()
-WHERE  roll='{original_Roll}' AND dyelot='{original_Dyelot}' AND ID='{firID}'
+delete FIR_Shadebone WHERE  roll='{original_Roll}' AND dyelot='{original_Dyelot}' AND ID='{firID}'
+--UPDATE FIR_Shadebone SET 
+--Roll = '{drModify["roll"]}'
+--,Dyelot  = '{drModify["dyelot"]}'
+--,TicketYds   = '{drModify["ActualQty"]}'
+--,EditName = '{Env.User.UserID}'
+--,EditDate = GETDATE()
+--WHERE  roll='{original_Roll}' AND dyelot='{original_Dyelot}' AND ID='{firID}'
 ";
                 }
                 else if (this.gridAlias.ToUpper().EqualString("TRANSFERIN_DETAIL"))

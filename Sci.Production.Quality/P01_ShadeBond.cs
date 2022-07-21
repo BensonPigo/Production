@@ -161,7 +161,7 @@ namespace Sci.Production.Quality
         {
             DataGridViewGeneratorTextColumnSettings rollcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings scalecell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings resulCell = PublicPrg.Prgs.CellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings resulCell = PublicPrg.Prgs.CellResult.GetGridCell(true);
             DataGridViewGeneratorTextColumnSettings inspectorCell = new DataGridViewGeneratorTextColumnSettings();
             #region Scale
             scalecell.CellValidating += (s, e) =>
@@ -972,12 +972,6 @@ select Roll,Dyelot,TicketYds,Scale,Result,Tone
 
         private void BtnInspected_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.comboScale.Text) || MyUtility.Check.Empty(this.comboResult.Text))
-            {
-                MyUtility.Msg.WarningBox("Scale and Result can not be empty");
-                return;
-            }
-
             this.grid.ValidateControl();
             DataRow[] drs = ((DataTable)this.gridbs.DataSource).Select("Selected = 1");
             if (drs.Length == 0)
@@ -989,7 +983,15 @@ select Roll,Dyelot,TicketYds,Scale,Result,Tone
             {
                 item["Scale"] = this.comboScale.Text;
                 item["Result"] = this.comboResult.Text;
-                item["Inspdate"] = DateTime.Now.ToShortDateString();
+                if (MyUtility.Check.Empty(this.comboScale.Text) && MyUtility.Check.Empty(this.comboResult.Text))
+                {
+                    item["Inspdate"] = DBNull.Value;
+                }
+                else
+                {
+                    item["Inspdate"] = DateTime.Now.ToShortDateString();
+                }
+
                 item["Inspector"] = this.loginID;
                 item["Name"] = MyUtility.GetValue.Lookup("Name", this.loginID, "Pass1", "ID");
             }
