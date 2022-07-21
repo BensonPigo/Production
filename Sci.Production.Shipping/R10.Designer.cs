@@ -46,8 +46,8 @@
             this.txtcustcd = new Sci.Production.Class.Txtcustcd();
             this.txtcountryDestination = new Sci.Production.Class.Txtcountry();
             this.txtshipmode = new Sci.Production.Class.Txtshipmode();
-            this.txtsubconForwarder = new Sci.Production.Class.TxtsubconNoConfirm();
             this.radioPanel2 = new Sci.Win.UI.RadioPanel();
+            this.radioExportFeeReportMerged = new Sci.Win.UI.RadioButton();
             this.radioAirPrepaidExpenseReport = new Sci.Win.UI.RadioButton();
             this.radioDetailListBySPNoByFeeType = new Sci.Win.UI.RadioButton();
             this.radioDetailListbySPNo = new Sci.Win.UI.RadioButton();
@@ -58,22 +58,30 @@
             this.dateVoucherDate = new Sci.Win.UI.DateRange();
             this.lbRateType = new Sci.Win.UI.Label();
             this.comboRateType = new Sci.Win.UI.ComboBox();
-            this.radioExportFeeReportMerged = new Sci.Win.UI.RadioButton();
+            this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.txtForwarder = new Sci.Win.UI.TextBox();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(437, 12);
+            this.print.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.print.Location = new System.Drawing.Point(439, 12);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(437, 48);
+            this.toexcel.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.toexcel.Location = new System.Drawing.Point(439, 48);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(437, 84);
+            this.close.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.close.Location = new System.Drawing.Point(439, 84);
+            // 
+            // buttonCustomized
+            // 
+            this.buttonCustomized.EditMode = Sci.Win.UI.AdvEditModes.None;
             // 
             // labelReportContent
             // 
@@ -267,19 +275,6 @@
             this.txtshipmode.TabIndex = 8;
             this.txtshipmode.UseFunction = null;
             // 
-            // txtsubconForwarder
-            // 
-            this.txtsubconForwarder.DisplayBox1Binding = "";
-            this.txtsubconForwarder.IsIncludeJunk = true;
-            this.txtsubconForwarder.IsMisc = false;
-            this.txtsubconForwarder.IsShipping = false;
-            this.txtsubconForwarder.IsSubcon = false;
-            this.txtsubconForwarder.Location = new System.Drawing.Point(119, 292);
-            this.txtsubconForwarder.Name = "txtsubconForwarder";
-            this.txtsubconForwarder.Size = new System.Drawing.Size(170, 23);
-            this.txtsubconForwarder.TabIndex = 9;
-            this.txtsubconForwarder.TextBox1Binding = "";
-            // 
             // radioPanel2
             // 
             this.radioPanel2.Controls.Add(this.radioExportFeeReportMerged);
@@ -291,6 +286,18 @@
             this.radioPanel2.Name = "radioPanel2";
             this.radioPanel2.Size = new System.Drawing.Size(302, 147);
             this.radioPanel2.TabIndex = 11;
+            // 
+            // radioExportFeeReportMerged
+            // 
+            this.radioExportFeeReportMerged.AutoSize = true;
+            this.radioExportFeeReportMerged.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioExportFeeReportMerged.Location = new System.Drawing.Point(3, 28);
+            this.radioExportFeeReportMerged.Name = "radioExportFeeReportMerged";
+            this.radioExportFeeReportMerged.Size = new System.Drawing.Size(272, 21);
+            this.radioExportFeeReportMerged.TabIndex = 4;
+            this.radioExportFeeReportMerged.TabStop = true;
+            this.radioExportFeeReportMerged.Text = "Export Fee Report(Mergerd Acct Code)";
+            this.radioExportFeeReportMerged.UseVisualStyleBackColor = true;
             // 
             // radioAirPrepaidExpenseReport
             // 
@@ -420,21 +427,31 @@
             this.comboRateType.Size = new System.Drawing.Size(171, 24);
             this.comboRateType.TabIndex = 10;
             // 
-            // radioExportFeeReportMerged
+            // displayBox1
             // 
-            this.radioExportFeeReportMerged.AutoSize = true;
-            this.radioExportFeeReportMerged.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioExportFeeReportMerged.Location = new System.Drawing.Point(3, 28);
-            this.radioExportFeeReportMerged.Name = "radioExportFeeReportMerged";
-            this.radioExportFeeReportMerged.Size = new System.Drawing.Size(272, 21);
-            this.radioExportFeeReportMerged.TabIndex = 4;
-            this.radioExportFeeReportMerged.TabStop = true;
-            this.radioExportFeeReportMerged.Text = "Export Fee Report(Mergerd Acct Code)";
-            this.radioExportFeeReportMerged.UseVisualStyleBackColor = true;
+            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox1.Location = new System.Drawing.Point(176, 291);
+            this.displayBox1.Name = "displayBox1";
+            this.displayBox1.Size = new System.Drawing.Size(100, 23);
+            this.displayBox1.TabIndex = 118;
+            // 
+            // txtForwarder
+            // 
+            this.txtForwarder.BackColor = System.Drawing.Color.White;
+            this.txtForwarder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtForwarder.Location = new System.Drawing.Point(117, 291);
+            this.txtForwarder.Name = "txtForwarder";
+            this.txtForwarder.Size = new System.Drawing.Size(61, 23);
+            this.txtForwarder.TabIndex = 117;
+            this.txtForwarder.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtForwarder_PopUp);
+            this.txtForwarder.Validating += new System.ComponentModel.CancelEventHandler(this.TxtForwarder_Validating);
             // 
             // R10
             // 
-            this.ClientSize = new System.Drawing.Size(525, 546);
+            this.ClientSize = new System.Drawing.Size(525, 563);
+            this.Controls.Add(this.displayBox1);
+            this.Controls.Add(this.txtForwarder);
             this.Controls.Add(this.comboRateType);
             this.Controls.Add(this.lbRateType);
             this.Controls.Add(this.dateVoucherDate);
@@ -442,7 +459,6 @@
             this.Controls.Add(this.dateOnBoardDate);
             this.Controls.Add(this.labelOnBoardDate);
             this.Controls.Add(this.radioPanel2);
-            this.Controls.Add(this.txtsubconForwarder);
             this.Controls.Add(this.txtshipmode);
             this.Controls.Add(this.txtcountryDestination);
             this.Controls.Add(this.txtcustcd);
@@ -485,7 +501,6 @@
             this.Controls.SetChildIndex(this.txtcustcd, 0);
             this.Controls.SetChildIndex(this.txtcountryDestination, 0);
             this.Controls.SetChildIndex(this.txtshipmode, 0);
-            this.Controls.SetChildIndex(this.txtsubconForwarder, 0);
             this.Controls.SetChildIndex(this.radioPanel2, 0);
             this.Controls.SetChildIndex(this.labelOnBoardDate, 0);
             this.Controls.SetChildIndex(this.dateOnBoardDate, 0);
@@ -493,6 +508,8 @@
             this.Controls.SetChildIndex(this.dateVoucherDate, 0);
             this.Controls.SetChildIndex(this.lbRateType, 0);
             this.Controls.SetChildIndex(this.comboRateType, 0);
+            this.Controls.SetChildIndex(this.txtForwarder, 0);
+            this.Controls.SetChildIndex(this.displayBox1, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.radioPanel2.ResumeLayout(false);
@@ -522,7 +539,6 @@
         private Class.Txtcustcd txtcustcd;
         private Class.Txtcountry txtcountryDestination;
         private Class.Txtshipmode txtshipmode;
-        private Class.TxtsubconNoConfirm txtsubconForwarder;
         private Win.UI.RadioPanel radioPanel2;
         private Win.UI.RadioButton radioDetailListBySPNoByFeeType;
         private Win.UI.RadioButton radioDetailListbySPNo;
@@ -535,5 +551,7 @@
         private Win.UI.ComboBox comboRateType;
         private Win.UI.RadioButton radioAirPrepaidExpenseReport;
         private Win.UI.RadioButton radioExportFeeReportMerged;
+        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.TextBox txtForwarder;
     }
 }

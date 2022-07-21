@@ -65,6 +65,7 @@ namespace Sci.Production.Shipping
                 this.radioDetailListBySPNoByFeeType.Text = "Detail List by SP# by Fee Type";
                 this.radioAirPrepaidExpenseReport.Enabled = true;
                 this.dateOnBoardDate.Enabled = true;
+                this.radioExportFeeReportMerged.Enabled = true;
             }
         }
 
@@ -79,6 +80,7 @@ namespace Sci.Production.Shipping
                 this.radioDetailListBySPNoByFeeType.Text = "Detail List by WK# by Fee Type";
                 this.radioAirPrepaidExpenseReport.Enabled = false;
                 this.dateOnBoardDate.Enabled = false;
+                this.radioExportFeeReportMerged.Enabled = false;
 
                 if (this.radioAirPrepaidExpenseReport.Checked)
                 {
@@ -102,7 +104,7 @@ namespace Sci.Production.Shipping
             this.custcd = this.txtcustcd.Text;
             this.dest = this.txtcountryDestination.TextBox1.Text;
             this.shipmode = this.txtshipmode.Text;
-            this.forwarder = this.txtsubconForwarder.TextBox1.Text;
+            this.forwarder = this.txtForwarder.Text;
             this.rateType = this.comboRateType.SelectedValue.ToString();
             this.reportContent = this.radioGarment.Checked ? 1 : 2;
 
@@ -195,6 +197,7 @@ alter table #tmpPackingListDetailA2B alter column ID varchar(13)
 alter table #tmpPackingListDetailA2B alter column OrderID varchar(13)
 alter table #tmpPackingListDetailA2B alter column OrderShipmodeSeq varchar(2);
 ");
+
                     // Export Fee Report or Detail List by SP#
                     if (this.reportType == 1 || this.reportType == 2)
                     {
@@ -1944,10 +1947,10 @@ drop table #tmp, #tmp_unpivot, #tmp_Detail
                     // Export Fee Report or Detail List by SP#
                     if (this.reportType == 1 || this.reportType == 2)
                     {
-                        // Export Fee Report
+                        // FtyExportData
                         if (this.reportType == 1)
                         {
-                            #region 組SQL
+                            // Export Fee Report
                             sqlCmd.Append($@"
 with tmpMaterialData
 as (
@@ -1976,11 +1979,10 @@ as (
     left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
     where s.Type = 'EXPORT'
 ");
-                            #endregion
                         }
                         else
-                        { // Detail List by SP#
-                            #region 組SQL
+                        {
+                            // Detail List by SP#
                             sqlCmd.Append($@"
 with tmpMaterialData
 as (
@@ -2013,7 +2015,6 @@ as (
 	left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
 	where s.Type = 'EXPORT'
 ");
-                            #endregion
                         }
                         #region 組條件
                         if (!MyUtility.Check.Empty(this.date1))
@@ -2061,95 +2062,75 @@ as (
                             sqlCmd.Append(string.Format(" and f.Forwarder = '{0}'", this.forwarder));
                         }
                         #endregion
-                        queryAccount = string.Format(
-                            "{0}{1}",
-                            sqlCmd.ToString(),
-                            string.Format(@"
-) 
-select distinct a.* 
-into #Accno 
-from (
-select Accountid as Accno from tmpMaterialData where AccountID not in ('61022001','61022002','61022003','61022004','61022005','59121111')
-and AccountID <> ''
-) a
-select Accno=cast(Accno as nvarchar(100)) ,rn=ROW_NUMBER() over (order by Accno)
-into #AccnoNo
-from #Accno
 
-if exists(select Accno from #AccnoNo where Accno like '5912%')
-begin
-insert into #AccnoNo
-select '5912-Total',max(rn)+1 from #AccnoNo 
-end 
-
-if exists(select Accno from #AccnoNo where Accno like '6105%')
-begin
-insert into #AccnoNo
-select '6105-Total',max(rn)+1 from #AccnoNo 
-end 
-
-select Accno,rn
-from #AccnoNo
-order by SUBSTRING(Accno,1,4),rn"));
-                        result = DBProxy.Current.Select(null, queryAccount, out this.accnoData);
-                        if (!result)
+                        // TransferExportData
+                        if (this.reportType == 1)
                         {
-                            DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
-                            return failResult;
+                            // Export Fee Report
+                            sqlCmd.Append($@"
+), TransferExportData as (
+	select [Type] = 'MATERIAL'
+		, f.ID
+		, [Shipper] = s.MDivisionID
+		, [BrandID] = '' 
+		, [Category] = '' 
+		, [OQty] = 0
+		, [CustCDID] = ''
+		, [Dest] = f.ImportCountry
+		, f.ShipModeID
+		, [PulloutDate] = f.PortArrival
+		, [ShipQty] = 0
+		, [CTNQty] = f.Packages
+		, [GW] = (select sum(WeightKg) from TransferExport_Detail WITH (NOLOCK) where id = f.id)
+		, [CBM] = (select sum(Cbm) from TransferExport_Detail WITH (NOLOCK) where id = f.id)
+		, [Forwarder] = Concat(f.Forwarder, '-' + ls.Abb)
+		, [BLNo] = f.Blno
+		, se.CurrencyID
+		, [AccountID]= iif(se.AccountID='','Empty',se.AccountID)
+		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+    from ShippingAP s WITH (NOLOCK) 
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join TransferExport f WITH (NOLOCK) on f.ID = se.InvNo
+    left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
+    where s.Type = 'EXPORT'
+");
                         }
-
-                        StringBuilder allAccno = new StringBuilder();
-                        allAccno.Append("[61022001],[61022002],[61022003],[61022004],[61022005],[59121111]");
-                        foreach (DataRow dr in this.accnoData.Rows)
+                        else
                         {
-                            allAccno.Append(string.Format(",[{0}]", MyUtility.Convert.GetString(dr["Accno"])));
+                            // Detail List by SP#
+                            sqlCmd.Append($@"
+), TransferExportData as (
+	select [Type] = 'MATERIAL'
+		, f.ID
+		, [Shipper] = s.MDivisionID
+		, [BrandID] = ''
+		, [Category] = ''
+		, [OrderID] = ''
+		, [BuyerDelivery] = null
+		, [OQty] = 0
+		, [CustCDID] = ''
+		, [Dest] = f.ImportCountry
+		, f.ShipModeID
+		, [PackID] = ''
+		, [PulloutID] = ''
+		, [PulloutDate] = f.PortArrival
+		, [ShipQty] = 0
+		, [CTNQty] = f.Packages
+		, [GW] = (select sum(WeightKg) from TransferExport_Detail WITH (NOLOCK) where id = f.id)
+		, [CBM] = (select sum(cbm) from TransferExport_Detail WITH (NOLOCK) where id = f.id)
+		, [Forwarder] = Concat(f.Forwarder, '-' + ls.Abb)
+		, [BLNo] = f.Blno
+		, se.CurrencyID
+		, [AccountID]= iif(se.AccountID='','Empty',se.AccountID)
+		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+	from ShippingAP s WITH (NOLOCK) 
+	inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+	inner join TransferExport f WITH (NOLOCK) on f.ID = se.InvNo
+	left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
+	where s.Type = 'EXPORT'
+");
                         }
-
-                        sqlCmd.Append(string.Format(
-                            @")
-select * from tmpMaterialData
-PIVOT (SUM(Amount)
-FOR AccountID IN ({0})) a", allAccno.ToString()));
-                    }
-                    else
-                    { // Detail List by SP# by Fee Type
-                        #region 組SQL
-                        sqlCmd.Append($@"
-select [Type] = 'MATERIAL'
-	, f.ID
-	, [Shipper] = s.MDivisionID
-	, [BrandID] = ''
-	, [Category] = ''
-	, [OrderID] = ''
-	, [BuyerDelivery] = null 
-	, [OQty] = 0
-	, [CustCDID] = ''
-	, [Dest] = f.ImportCountry 
-	, f.ShipModeID
-	, [PackID] = ''
-	, [PulloutID] = ''
-	, [PulloutDate] = f.PortArrival 
-	, [ShipQty] = 0 
-	, [CTNQty] = 0
-	, [GW] = f.WeightKg
-	, [CBM] = f.Cbm
-	, [Forwarder] = f.Forwarder+'-'+isnull(ls.Abb,'') 
-	, [BLNo] = f.Blno 
-	, [FeeType] = se.AccountID+'-'+isnull(a.Name,'')
-	, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
-	, se.CurrencyID
-	, [APID] = s.ID
-	, s.CDate
-	, [ApvDate] = CONVERT(DATE,s.ApvDate)
-	, s.VoucherID
-	, s.VoucherDate
-	, s.SubType
-from ShippingAP s WITH (NOLOCK) 
-inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
-inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
-left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
-left join SciFMS_AccountNo a on a.ID = se.AccountID
-where s.Type = 'EXPORT'");
+                        #region 組條件
                         if (!MyUtility.Check.Empty(this.date1))
                         {
                             sqlCmd.Append(string.Format(" and f.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
@@ -2194,9 +2175,236 @@ where s.Type = 'EXPORT'");
                         {
                             sqlCmd.Append(string.Format(" and f.Forwarder = '{0}'", this.forwarder));
                         }
+                        #endregion
+
+                        queryAccount = string.Format(
+                            "{0}{1}",
+                            sqlCmd.ToString(),
+                            string.Format(@"
+) 
+select distinct a.* 
+into #Accno 
+from (
+    select Accountid as Accno from tmpMaterialData where AccountID not in ('61022001','61022002','61022003','61022004','61022005','59121111')
+    and AccountID <> ''
+
+    union all
+    select Accountid as Accno from TransferExportData where AccountID not in ('61022001','61022002','61022003','61022004','61022005','59121111')
+    and AccountID <> ''
+) a
+select Accno=cast(Accno as nvarchar(100)) ,rn=ROW_NUMBER() over (order by Accno)
+into #AccnoNo
+from #Accno
+
+if exists(select Accno from #AccnoNo where Accno like '5912%')
+begin
+insert into #AccnoNo
+select '5912-Total',max(rn)+1 from #AccnoNo 
+end 
+
+if exists(select Accno from #AccnoNo where Accno like '6105%')
+begin
+insert into #AccnoNo
+select '6105-Total',max(rn)+1 from #AccnoNo 
+end 
+
+select Accno,rn
+from #AccnoNo
+order by SUBSTRING(Accno,1,4),rn"));
+                        result = DBProxy.Current.Select(null, queryAccount, out this.accnoData);
+                        if (!result)
+                        {
+                            DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                            return failResult;
+                        }
+
+                        StringBuilder allAccno = new StringBuilder();
+                        allAccno.Append("[61022001],[61022002],[61022003],[61022004],[61022005],[59121111]");
+                        foreach (DataRow dr in this.accnoData.Rows)
+                        {
+                            allAccno.Append(string.Format(",[{0}]", MyUtility.Convert.GetString(dr["Accno"])));
+                        }
+
+                        sqlCmd.Append(string.Format(
+                            @")
+select * from tmpMaterialData
+PIVOT (SUM(Amount) FOR AccountID IN ({0})) a
+union all
+select * from TransferExportData
+PIVOT (SUM(Amount) FOR AccountID IN ({0})) a", allAccno.ToString()));
+                    }
+                    else
+                    {
+                        // FtyExportData
+                        sqlCmd.Append($@"
+select [Type] = 'MATERIAL'
+	, f.ID
+	, [Shipper] = s.MDivisionID
+	, [BrandID] = ''
+	, [Category] = ''
+	, [OrderID] = ''
+	, [BuyerDelivery] = null 
+	, [OQty] = 0
+	, [CustCDID] = ''
+	, [Dest] = f.ImportCountry 
+	, f.ShipModeID
+	, [PackID] = ''
+	, [PulloutID] = ''
+	, [PulloutDate] = f.PortArrival 
+	, [ShipQty] = 0 
+	, [CTNQty] = 0
+	, [GW] = f.WeightKg
+	, [CBM] = f.Cbm
+	, [Forwarder] = f.Forwarder+'-'+isnull(ls.Abb,'') 
+	, [BLNo] = f.Blno 
+	, [FeeType] = se.AccountID+'-'+isnull(a.Name,'')
+	, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+	, se.CurrencyID
+	, [APID] = s.ID
+	, s.CDate
+	, [ApvDate] = CONVERT(DATE,s.ApvDate)
+	, s.VoucherID
+	, s.VoucherDate
+	, s.SubType
+from ShippingAP s WITH (NOLOCK) 
+inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
+left join SciFMS_AccountNo a on a.ID = se.AccountID
+where s.Type = 'EXPORT'");
+                        #region where
+                        if (!MyUtility.Check.Empty(this.date1))
+                        {
+                            sqlCmd.Append(string.Format(" and f.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.date2))
+                        {
+                            sqlCmd.Append(string.Format(" and f.PortArrival <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.apApvDate1))
+                        {
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.apApvDate2))
+                        {
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.voucherDate1))
+                        {
+                            sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.voucherDate2))
+                        {
+                            sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.dest))
+                        {
+                            sqlCmd.Append(string.Format(" and f.ImportCountry = '{0}'", this.dest));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.shipmode))
+                        {
+                            sqlCmd.Append(string.Format(" and f.ShipModeID = '{0}'", this.shipmode));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.forwarder))
+                        {
+                            sqlCmd.Append(string.Format(" and f.Forwarder = '{0}'", this.forwarder));
+                        }
+                        #endregion
+
+                        // TransferExportData
+                        sqlCmd.Append($@"
+union all
+select [Type] = 'MATERIAL'
+	, f.ID
+	, [Shipper] = s.MDivisionID
+	, [BrandID] = ''
+	, [Category] = ''
+	, [OrderID] = ''
+	, [BuyerDelivery] = null 
+	, [OQty] = 0
+	, [CustCDID] = ''
+	, [Dest] = f.ImportCountry 
+	, f.ShipModeID
+	, [PackID] = ''
+	, [PulloutID] = ''
+	, [PulloutDate] = f.PortArrival 
+	, [ShipQty] = 0 
+	, [CTNQty] = f.Packages
+	, [GW] = (select sum(WeightKg) from TransferExport_Detail WITH (NOLOCK) where id = f.id)
+	, [CBM] = (select sum(Cbm) from TransferExport_Detail WITH (NOLOCK) where id = f.id)
+    , [Forwarder] = Concat(f.Forwarder, '-' + ls.Abb)
+	, [BLNo] = f.Blno 
+	, [FeeType] = se.AccountID+'-'+isnull(a.Name,'')
+	, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+	, se.CurrencyID
+	, [APID] = s.ID
+	, s.CDate
+	, [ApvDate] = CONVERT(DATE,s.ApvDate)
+	, s.VoucherID
+	, s.VoucherDate
+	, s.SubType
+from ShippingAP s WITH (NOLOCK) 
+inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+inner join TransferExport f WITH (NOLOCK) on f.ID = se.InvNo
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
+left join SciFMS_AccountNo a on a.ID = se.AccountID
+where s.Type = 'EXPORT'");
+                        #region where
+                        if (!MyUtility.Check.Empty(this.date1))
+                        {
+                            sqlCmd.Append(string.Format(" and f.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.date2))
+                        {
+                            sqlCmd.Append(string.Format(" and f.PortArrival <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.apApvDate1))
+                        {
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.apApvDate2))
+                        {
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.voucherDate1))
+                        {
+                            sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.voucherDate2))
+                        {
+                            sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.dest))
+                        {
+                            sqlCmd.Append(string.Format(" and f.ImportCountry = '{0}'", this.dest));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.shipmode))
+                        {
+                            sqlCmd.Append(string.Format(" and f.ShipModeID = '{0}'", this.shipmode));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.forwarder))
+                        {
+                            sqlCmd.Append(string.Format(" and f.Forwarder = '{0}'", this.forwarder));
+                        }
+                        #endregion
 
                         sqlCmd.Append(" order by f.ID");
-                        #endregion
                     }
                 }
 
@@ -2215,7 +2423,6 @@ where s.Type = 'EXPORT'");
                     DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                     return failResult;
                 }
-
             }
 
             return Ict.Result.True;
@@ -4046,6 +4253,66 @@ FOR AccountID IN ({account})) a
             public decimal? A_59129999 { get; set; }
 
             public decimal? A_61050001 { get; set; }
+        }
+
+        private void TxtForwarder_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string selectCommand;
+            selectCommand = @"
+select DISTINCT l.ID ,l.Abb
+from LocalSupp l WITH (NOLOCK) 
+union all
+select ID,AbbEN from Supp WITH (NOLOCK) 
+order by ID";
+
+            DataTable tbSelect;
+            DBProxy.Current.Select(null, selectCommand, out tbSelect);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(tbSelect, "ID,Abb", "9,13", this.Text, false, ",", "ID,Abb");
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            IList<DataRow> selected = item.GetSelecteds();
+            this.txtForwarder.Text = item.GetSelectedString();
+            this.displayBox1.Value = MyUtility.Convert.GetString(selected[0]["Abb"]);
+        }
+
+        private void TxtForwarder_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (this.txtForwarder.OldValue != this.txtForwarder.Text)
+            {
+                if (!MyUtility.Check.Empty(this.txtForwarder.Text))
+                {
+                    DataRow inputData;
+                    string sql = string.Format(
+                        @"select * from (
+select DISTINCT l.ID ,l.Abb
+from LocalSupp l WITH (NOLOCK) 
+union all
+select ID,AbbEN from Supp WITH (NOLOCK) ) a
+where a.ID = '{0}'", this.txtForwarder.Text);
+                    if (!MyUtility.Check.Seek(sql, out inputData))
+                    {
+                        this.txtForwarder.Text = string.Empty;
+                        this.displayBox1.Value = string.Empty;
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Forwarder: {0} > not found!!!", this.txtForwarder.Text));
+                        return;
+                    }
+                    else
+                    {
+                        this.txtForwarder.Text = this.txtForwarder.Text;
+                        this.displayBox1.Value = MyUtility.Convert.GetString(inputData["Abb"]);
+                    }
+                }
+                else
+                {
+                    this.txtForwarder.Text = string.Empty;
+                    this.displayBox1.Value = string.Empty;
+                }
+            }
         }
     }
 }

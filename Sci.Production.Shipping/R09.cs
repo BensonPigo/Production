@@ -76,7 +76,7 @@ namespace Sci.Production.Shipping
             StringBuilder sqlCmd = new StringBuilder();
             if (this.reportType == 1)
             {
-                #region 組SQL Command
+                #region ExportData
                 sqlCmd.Append($@"
 with ExportData
 as (
@@ -163,7 +163,9 @@ as (
                 {
                     sqlCmd.Append(" and (e.Delay = 1 or e.Replacement = 1) ");
                 }
+                #endregion
 
+                #region FtyExportData
                 sqlCmd.Append($@"),
 FtyExportData as (
 	select fe.InvNo
@@ -245,6 +247,94 @@ FtyExportData as (
                     sqlCmd.Append(string.Format(" and fe.Forwarder = '{0}'", this.forwarder));
                 }
                 #endregion
+
+                #region TransferExport
+                sqlCmd.Append($@"),
+TransferExportData
+as (
+	select e.InvNo
+		,[Type] = 'Material'
+		,[WKNo] = e.ID 
+		,[FtyWKNo] = ''
+        ,DelayRepacement=case when e.Delay = 1 and e.Replacement = 1 then 'Delay Repacement'
+                              when e.Delay = 1 and e.Replacement = 0 then 'Delay'
+                              when e.Delay = 0 and e.Replacement = 1 then 'Repacement'
+                              else ''
+                              end
+		,e.ShipModeID
+		,e.CYCFS
+		,e.Packages
+		,e.Blno
+		,WeightKg = (select sum(WeightKg) from TransferExport_Detail WITH (NOLOCK) where id = e.id)
+		,Cbm = (select sum(cbm) from TransferExport_Detail WITH (NOLOCK) where id = e.id)
+		,[Forwarder] = concat(e.Forwarder, '-'+ supp.AbbEN)
+		,e.PortArrival
+		,e.DocArrival
+		,se.CurrencyID
+		,[Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+		,se.AccountID		
+    from ShippingAP s WITH (NOLOCK) 
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+    inner join TransferExport e WITH (NOLOCK) on se.WKNo = e.ID
+    left join Supp WITH (NOLOCK) on supp.ID = e.Forwarder
+    where s.Type = 'IMPORT'
+    AND se.Junk <> 1
+");
+                if (!MyUtility.Check.Empty(this.arrivePortDate1))
+                {
+                    sqlCmd.Append(string.Format(" and e.PortArrival >= '{0}'", Convert.ToDateTime(this.arrivePortDate1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.arrivePortDate2))
+                {
+                    sqlCmd.Append(string.Format(" and e.PortArrival <= '{0}'", Convert.ToDateTime(this.arrivePortDate2).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.doxRcvdDate1))
+                {
+                    sqlCmd.Append(string.Format(" and e.DocArrival >= '{0}'", Convert.ToDateTime(this.doxRcvdDate1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.doxRcvdDate2))
+                {
+                    sqlCmd.Append(string.Format(" and e.DocArrival <= '{0}'", Convert.ToDateTime(this.doxRcvdDate2).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.apApvDate1))
+                {
+                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.apApvDate2))
+                {
+                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.voucherDate1))
+                {
+                    sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.voucherDate2))
+                {
+                    sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.shipMode))
+                {
+                    sqlCmd.Append(string.Format(" and e.ShipModeID = '{0}'", this.shipMode));
+                }
+
+                if (!MyUtility.Check.Empty(this.forwarder))
+                {
+                    sqlCmd.Append(string.Format(" and e.Forwarder = '{0}'", this.forwarder));
+                }
+
+                if (this.IsDelayReplacement)
+                {
+                    sqlCmd.Append(" and (e.Delay = 1 or e.Replacement = 1) ");
+                }
+                #endregion
                 string queryAccount = string.Format(
                     "{0}{1}",
                     sqlCmd.ToString(),
@@ -252,6 +342,8 @@ FtyExportData as (
 select AccountID as Accno from ExportData --where AccountID not in ('61012001','61012002','61012003','61012004','61012005')
 union
 select AccountID from FtyExportData --where AccountID not in ('61012001','61012002','61012003','61012004','61012005')
+union
+select AccountID from TransferExportData --where AccountID not in ('61012001','61012002','61012003','61012004','61012005')
 ) a where Accno!='' order by Accno"));
                 DualResult result = DBProxy.Current.Select(null, queryAccount, out this.accnoData);
                 if (!result)
@@ -281,6 +373,10 @@ as (
     select InvNo,Type,WKNo,FtyWKNo,DelayRepacement,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
         PortArrival,DocArrival,CurrencyID,AccountID,Amount
     from FtyExportData
+    union all
+    select InvNo,Type,WKNo,FtyWKNo,DelayRepacement,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
+        PortArrival,DocArrival,CurrencyID,AccountID,Amount
+    from TransferExportData
 )
 
 select * from tmpAllData
@@ -301,7 +397,7 @@ FOR AccountID IN ({0})) a", allAccno.ToString()));
             }
             else
             {
-                #region 組SQL Command
+                #region ExportData
                 sqlCmd.Append($@"
 with ExportData as 
 (
@@ -397,7 +493,9 @@ with ExportData as
                 {
                     sqlCmd.Append(" and (e.Delay = 1 or e.Replacement = 1)");
                 }
+                #endregion
 
+                #region FtyExportData
                 sqlCmd.Append($@"
 ),
 FtyExportData as 
@@ -490,11 +588,110 @@ FtyExportData as
                     sqlCmd.Append(string.Format(" and fe.Forwarder = '{0}'", this.forwarder));
                 }
 
+                #endregion
+                #region TransferExportData
+                sqlCmd.Append($@"),
+TransferExportData as 
+(
+	select e.InvNo
+		,[Type] = 'Material'
+		,s.MDivisionID
+		,e.Consignee
+		,[WKNo] = e.ID
+		,[FtyWKNo] = ''
+        ,DelayRepacement=case when e.Delay = 1 and e.Replacement = 1 then 'Delay Repacement'
+                              when e.Delay = 1 and e.Replacement = 0 then 'Delay'
+                              when e.Delay = 0 and e.Replacement = 1 then 'Repacement'
+                              else ''
+                              end
+		,e.ShipModeID
+		,e.CYCFS
+		,e.Packages
+		,e.Blno
+		,WeightKg = (select sum(WeightKg) from TransferExport_Detail WITH (NOLOCK) where id = e.id)
+		,Cbm = (select sum(cbm) from TransferExport_Detail WITH (NOLOCK) where id = e.id)
+		,[Forwarder] = e.Forwarder+'-'+isnull(supp.AbbEN,'')
+		,e.PortArrival
+		,e.DocArrival
+		,[AccountNo] = se.AccountID+'-'+isnull(a.Name,'')
+		,[Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+		,se.CurrencyID
+		,se.ShippingAPID
+		,s.CDate
+		,[ApvDate] = CONVERT(DATE,s.ApvDate)
+		,s.VoucherID
+		,s.VoucherDate
+		,s.SubType 
+    from ShippingAP s WITH (NOLOCK) 
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+    inner join TransferExport e WITH (NOLOCK) on se.WKNo = e.ID
+    left join Supp WITH (NOLOCK) on supp.ID = e.Forwarder
+    left join SciFMS_AccountNo a on a.ID = se.AccountID
+    where s.Type = 'IMPORT'
+    AND se.Junk <> 1
+");
+                if (!MyUtility.Check.Empty(this.arrivePortDate1))
+                {
+                    sqlCmd.Append(string.Format(" and e.PortArrival >= '{0}'", Convert.ToDateTime(this.arrivePortDate1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.arrivePortDate2))
+                {
+                    sqlCmd.Append(string.Format(" and e.PortArrival <= '{0}'", Convert.ToDateTime(this.arrivePortDate2).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.doxRcvdDate1))
+                {
+                    sqlCmd.Append(string.Format(" and e.DocArrival >= '{0}'", Convert.ToDateTime(this.doxRcvdDate1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.doxRcvdDate2))
+                {
+                    sqlCmd.Append(string.Format(" and e.DocArrival <= '{0}'", Convert.ToDateTime(this.doxRcvdDate2).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.apApvDate1))
+                {
+                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.apApvDate2))
+                {
+                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.voucherDate1))
+                {
+                    sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.voucherDate2))
+                {
+                    sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.shipMode))
+                {
+                    sqlCmd.Append(string.Format(" and e.ShipModeID = '{0}'", this.shipMode));
+                }
+
+                if (!MyUtility.Check.Empty(this.forwarder))
+                {
+                    sqlCmd.Append(string.Format(" and e.Forwarder = '{0}'", this.forwarder));
+                }
+
+                if (this.IsDelayReplacement)
+                {
+                    sqlCmd.Append(" and (e.Delay = 1 or e.Replacement = 1)");
+                }
+                #endregion
                 sqlCmd.Append(@")
 select * from ExportData
 union all
-select * from FtyExportData");
-                #endregion
+select * from FtyExportData
+union all
+select * from TransferExportData");
+
                 DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
                 if (!result)
                 {

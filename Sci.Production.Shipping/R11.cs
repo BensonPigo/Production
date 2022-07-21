@@ -1177,6 +1177,89 @@ FtyExportData as (
                         sqlCmd.Append(string.Format(" and f.Forwarder = '{0}'", this.forwarder));
                     }
 
+                    sqlCmd.Append(@"),
+TransferExportData as (
+	select IE = case
+                when Export.v = 1 then 'Export'                
+                when Import.v = 1 then 'Import'
+                else ''
+                end
+           , Type = 'MATERIAL'
+		   , e.ID
+		   , e.ImportCountry
+		   , e.ShipModeID
+		   , e.PortArrival
+		   , WeightKg = (select sum(WeightKg) from TransferExport_Detail WITH (NOLOCK) where id = e.id)
+		   , Cbm = (select sum(Cbm) from TransferExport_Detail WITH (NOLOCK) where id = e.id)
+		   , Forwarder = Concat (e.Forwarder, '-'+s.AbbEN)
+		   , e.Blno
+		   , APId1 = (select top 1 ShippingAPID 
+		   			  from View_ShareExpense WITH (NOLOCK) 
+		   			  where Blno = e.Blno)
+		   , APId2 = (select top 1 ShippingAPID 
+		   			  from View_ShareExpense WITH (NOLOCK) 
+		   			  where WKNo = e.ID)
+		   , [NoImportChg] =
+                case
+                when Export.v = 1 then iif(isnull(e.NoExportCharge, 0) = 1, 'Y','')
+                when Import.v = 1 then iif(isnull(e.NoImportCharges, 0) = 1, 'Y','')
+                else ''
+                end
+		   , LoadingOrigin = Concat (e.ExportPort, '-', e.ExportCountry)
+		   , DoortoDoorDelivery = iif(dtd1.v = 1 or dtd2.v = 1,'Y','')
+		   , FactoryID = e.FromFactoryID
+		   , e.Consignee
+           , e.ETA
+           , e.Packages
+	from TransferExport e WITH (NOLOCK) 
+	left join Supp s WITH (NOLOCK) on s.ID = e.Forwarder
+    outer apply (select v = 1 from Factory where id =e.FromFactoryID and IsProduceFty = 1) Export
+    outer apply (select v = 1 from Factory where id =e.FactoryID and IsProduceFty = 1) Import
+	outer apply(
+		select v=1
+		from Door2DoorDelivery 
+		where ExportPort = e.ExportPort
+		      and ExportCountry = e.ExportCountry
+		      and ImportCountry =e.ImportCountry
+		      and ShipModeID = e.ShipModeID
+		      and Vessel =e.Vessel
+	)dtd1
+	outer apply(
+		select v=1
+		from Door2DoorDelivery 
+		where ExportPort = e.ExportPort
+		      and ExportCountry = e.ExportCountry
+		      and ImportCountry =e.ImportCountry
+		      and ShipModeID = e.ShipModeID
+		      and Vessel =''
+	)dtd2
+	where e.Junk = 0");
+
+                    if (!MyUtility.Check.Empty(this.date1))
+                    {
+                        sqlCmd.Append(string.Format(" and e.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.date2))
+                    {
+                        sqlCmd.Append(string.Format(" and e.PortArrival <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.dest))
+                    {
+                        sqlCmd.Append(string.Format(" and e.ImportCountry = '{0}'", this.dest));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.shipMode))
+                    {
+                        sqlCmd.Append(string.Format(" and e.ShipModeID = '{0}'", this.shipMode));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.forwarder))
+                    {
+                        sqlCmd.Append(string.Format(" and e.Forwarder = '{0}'", this.forwarder));
+                    }
+
                     sqlCmd.Append(@")
 
 select	IE
@@ -1225,7 +1308,31 @@ select	IE
 		, NoImportChg
 		, DoortoDoorDelivery 
         , BrandID = '' 
-from FtyExportData");
+from FtyExportData
+union all
+select	IE
+		, Type
+		, ID
+		, ETA
+		, FactoryID
+		, Consignee
+		, Category = '' 
+		, OrderQty = 0 
+		, LoadingOrigin
+		, ImportCountry
+		, ShipModeID
+		, PortArrival
+		, ShipQty = 0
+		, CTNQty = Packages
+		, WeightKg
+		, Cbm
+		, Forwarder
+		, Blno
+		, NoImportChg
+		, DoortoDoorDelivery 
+        , BrandID = '' 
+from TransferExportData
+");
                     #endregion
                 }
 
