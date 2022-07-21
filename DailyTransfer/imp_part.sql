@@ -1060,7 +1060,20 @@ where b.ID is null
 
 	update m set m.Status = 'Good'
 	from dbo.Machine m
-	where exists(select 1 from @Tdebit t where t.MachineID = m.ID and TPEReject = 1)
+    where exists(
+        select 1
+        from @Tdebit t
+        where t.MachineID = m.ID
+        and TPEReject = 1
+        and (
+            select top 1 ml.EditDate
+            from MachineLend ml
+            inner join MachineLend_Detail mld on mld.ID = ml.ID
+            where ml.Status <> 'New'
+            and mld.MachineID = t.MachineID
+            order by EditDate desc
+        ) < t.TPEApvDate
+    )
 
 	update md set Results = 'Reject'
 	from dbo.MachinePending_Detail md
