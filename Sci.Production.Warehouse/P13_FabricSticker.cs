@@ -61,6 +61,16 @@ namespace Sci.Production.Warehouse
             List<SqlParameter> listSqlParameters = new List<SqlParameter>();
             listSqlParameters.Add(new SqlParameter("@ID", this.strSubTransferID));
 
+            string col_remarks = "''";
+            if (this.fromTable.ToUpper() == "ISSUELACK_DETAIL")
+            {
+                col_remarks = "(select Remark from Issuelack where Id = isd.Id)";
+            }
+            else if (this.fromTable.ToUpper() == "ISSUE_DETAIL")
+            {
+                col_remarks = "(select Remark from issue where Id = isd.Id)";
+            }
+
             string gridSql = $@"
 select Sel = 0
         , RowNo = Row_Number() over (order by isd.POID, isd.Seq1, isd.Seq2)
@@ -81,6 +91,7 @@ select Sel = 0
         , fi.ContainerCode
         , [StockQty] = (isnull(fi.InQty, 0) - isnull(fi.OutQty, 0) + isnull(fi.AdjustQty, 0)) - isnull(fi.ReturnQty, 0)
         , [BulkLocation] = BulkLocation.val
+        , [Remark] = {col_remarks}
 from {this.fromTable} isd with (nolock)
 left join Orders o with (nolock) on o.ID=isd.POID
 left join Po_Supp_Detail psd with (nolock) on isd.POID = psd.ID
@@ -156,6 +167,7 @@ order by NewRowNo";
                     Location = row["Location"].ToString().Trim() + Environment.NewLine + row["ContainerCode"].ToString().Trim(),
                     StockUnit = row["StockUnit"].ToString().Trim(),
                     Qty = Convert.ToDouble(row["Qty"]),
+                    Remark = row["Remark"].ToString().Trim(),
                 }).ToList();
 
                 ReportDefinition report = new ReportDefinition();

@@ -790,14 +790,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox25">
+                    <Textbox Name="Remark1">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value />
+                              <Value>=Fields!Remark.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -806,7 +806,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox21</rd:DefaultName>
+                      <rd:DefaultName>Remark1</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1663,7 +1663,7 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="RowNo3">
+                    <Textbox Name="Textbox3">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -1679,7 +1679,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>RowNo</rd:DefaultName>
+                      <rd:DefaultName>Textbox3</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1737,14 +1737,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox44">
+                    <Textbox Name="Remark">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value />
+                              <Value>=Fields!Remark.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -1753,7 +1753,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox21</rd:DefaultName>
+                      <rd:DefaultName>Remark</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1921,11 +1921,25 @@
       </ConnectionProperties>
       <rd:DataSourceID>36d2e761-bf85-4a72-a522-281d240cd6ae</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="SciProductionWarehouse1">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>f4d42afa-ce8f-49af-8cd8-e696b02b6c9c</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="SciProductionWarehouse2">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>ddaf1d33-0486-4537-a204-a212cee1d9dd</rd:DataSourceID>
+    </DataSource>
   </DataSources>
   <DataSets>
     <DataSet Name="DataSet1">
       <Query>
-        <DataSourceName>SciProductionWarehouse</DataSourceName>
+        <DataSourceName>SciProductionWarehouse2</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
@@ -1947,6 +1961,10 @@
         </Field>
         <Field Name="Refno">
           <DataField>Refno</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Remark">
+          <DataField>Remark</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Roll">
