@@ -50,6 +50,8 @@ namespace Sci.Production.Warehouse
 select t.poid
        , t.Seq1
        , t.Seq2
+       , t.UnrollStatus
+       , RelaxationStatus = dbo.GETRelaxationStatus(t.Ukey)
        , roll = Rtrim(Ltrim(t.roll))
        , dyelot = Rtrim(Ltrim(t.dyelot))
        , t.Qty
@@ -184,6 +186,8 @@ order by GroupQty desc, t.dyelot, balanceqty desc";
             .Numeric("balanceqty", header: "Balance" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true) // 11
             .Text("DetailFIR", header: "Phy/Wei/Shade/Cont/Odor", width: Widths.AnsiChars(18), iseditingreadonly: true) // 13
             .Text("Tone", header: "Shade Band" + Environment.NewLine + "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("UnrollStatus", header: "Unroll Status", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("RelaxationStatus", header: "Relaxation Status", width: Widths.AnsiChars(8), iseditingreadonly: true)
             ;
 
             // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
