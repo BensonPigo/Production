@@ -153,7 +153,7 @@ SELECT [Inspected Date] = FP.InspDate
        ,Fabric.WeaveTypeID
 	   ,[InspectorName] = Pass1.Name
        ,[QCMachineStopTime] = case when fp.AddDate is null or fp.StartTime is null then fp.QCTime
-								   else DATEDIFF(SECOND,fp.AddDate,fp.StartTime) - fp.QCTime end
+								   else DATEDIFF(SECOND,fp.StartTime,fp.AddDate) - fp.QCTime end
 	   ,[QCMachineRunTime] = fp.QCTime
 into #tmp
 FROM System,FIR_Physical AS FP
