@@ -1317,7 +1317,7 @@ select	IE
 		, FactoryID
 		, Consignee
 		, Category = '' 
-		, OrderQty = 0 
+		, OrderQty = null
 		, LoadingOrigin
 		, ImportCountry
 		, ShipModeID
