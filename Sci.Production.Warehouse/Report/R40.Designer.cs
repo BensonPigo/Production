@@ -66,8 +66,9 @@
             this.comboUpdateInfo.Location = new System.Drawing.Point(123, 101);
             this.comboUpdateInfo.Name = "comboUpdateInfo";
             this.comboUpdateInfo.OldText = "";
-            this.comboUpdateInfo.Size = new System.Drawing.Size(121, 26);
+            this.comboUpdateInfo.Size = new System.Drawing.Size(191, 24);
             this.comboUpdateInfo.TabIndex = 5;
+            this.comboUpdateInfo.SelectedIndexChanged += new System.EventHandler(this.ComboUpdateInfo_SelectedIndexChanged);
             // 
             // labelStockType
             // 
@@ -94,7 +95,7 @@
             this.comboStatus.Location = new System.Drawing.Point(123, 131);
             this.comboStatus.Name = "comboStatus";
             this.comboStatus.OldText = "";
-            this.comboStatus.Size = new System.Drawing.Size(121, 26);
+            this.comboStatus.Size = new System.Drawing.Size(157, 24);
             this.comboStatus.TabIndex = 6;
             // 
             // labelSCIDelivery
@@ -146,18 +147,18 @@
             // 
             this.dateRangeArriveDate.DateBox1.Location = new System.Drawing.Point(0, 0);
             this.dateRangeArriveDate.DateBox1.Name = "";
-            this.dateRangeArriveDate.DateBox1.Size = new System.Drawing.Size(128, 24);
+            this.dateRangeArriveDate.DateBox1.Size = new System.Drawing.Size(129, 23);
             this.dateRangeArriveDate.DateBox1.TabIndex = 0;
             // 
             // 
             // 
             this.dateRangeArriveDate.DateBox2.Location = new System.Drawing.Point(151, 0);
             this.dateRangeArriveDate.DateBox2.Name = "";
-            this.dateRangeArriveDate.DateBox2.Size = new System.Drawing.Size(128, 24);
+            this.dateRangeArriveDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateRangeArriveDate.DateBox2.TabIndex = 1;
             this.dateRangeArriveDate.Location = new System.Drawing.Point(123, 14);
             this.dateRangeArriveDate.Name = "dateRangeArriveDate";
-            this.dateRangeArriveDate.Size = new System.Drawing.Size(280, 24);
+            this.dateRangeArriveDate.Size = new System.Drawing.Size(280, 23);
             this.dateRangeArriveDate.TabIndex = 156;
             // 
             // label8
@@ -176,7 +177,7 @@
             this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSPNoEnd.Location = new System.Drawing.Point(279, 42);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
-            this.txtSPNoEnd.Size = new System.Drawing.Size(130, 24);
+            this.txtSPNoEnd.Size = new System.Drawing.Size(130, 23);
             this.txtSPNoEnd.TabIndex = 159;
             // 
             // txtSPNoStart
@@ -185,15 +186,15 @@
             this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSPNoStart.Location = new System.Drawing.Point(123, 42);
             this.txtSPNoStart.Name = "txtSPNoStart";
-            this.txtSPNoStart.Size = new System.Drawing.Size(130, 24);
+            this.txtSPNoStart.Size = new System.Drawing.Size(130, 23);
             this.txtSPNoStart.TabIndex = 158;
             // 
             // label4
             // 
             this.label4.BackColor = System.Drawing.SystemColors.Control;
-            this.label4.Location = new System.Drawing.Point(260, 70);
+            this.label4.Location = new System.Drawing.Point(260, 77);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(20, 34);
+            this.label4.Size = new System.Drawing.Size(20, 22);
             this.label4.TabIndex = 160;
             this.label4.Text = "~";
             this.label4.TextStyle.Color = System.Drawing.Color.Black;
@@ -204,7 +205,7 @@
             this.txtWKEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtWKEnd.Location = new System.Drawing.Point(279, 72);
             this.txtWKEnd.Name = "txtWKEnd";
-            this.txtWKEnd.Size = new System.Drawing.Size(130, 24);
+            this.txtWKEnd.Size = new System.Drawing.Size(130, 23);
             this.txtWKEnd.TabIndex = 162;
             // 
             // txtWKStart
@@ -213,7 +214,7 @@
             this.txtWKStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtWKStart.Location = new System.Drawing.Point(123, 72);
             this.txtWKStart.Name = "txtWKStart";
-            this.txtWKStart.Size = new System.Drawing.Size(130, 24);
+            this.txtWKStart.Size = new System.Drawing.Size(130, 23);
             this.txtWKStart.TabIndex = 161;
             // 
             // R40

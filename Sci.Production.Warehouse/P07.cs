@@ -2155,6 +2155,11 @@ from MailTo where ID ='104'
                 return;
             }
 
+            if (!Prgs.CheckShadebandResult(this.Name, this.CurrentMaintain["ID"].ToString()))
+            {
+                return;
+            }
+
             // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
             DualResult result = Prgs.GetFtyInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtOriFtyInventory);
 
@@ -2287,6 +2292,19 @@ END", Env.User.UserID,
             {
                 try
                 {
+                    string deleteFIR_Shadebone = $@"
+delete fs
+from Receiving_Detail sd with(nolock)
+inner join PO_Supp_Detail psd with(nolock) on psd.ID = sd.PoId and psd.SEQ1 = sd.Seq1 and psd.SEQ2 = sd.Seq2
+inner join FIR f with (nolock) on sd.id = f.ReceivingID and sd.PoId = F.POID and sd.Seq1 = F.SEQ1 and sd.Seq2 = F.SEQ2
+inner join FIR_Shadebone fs with (nolock) on f.id = fs.ID
+where sd.id = '{this.CurrentMaintain["ID"]}'
+";
+                    if (!(result = DBProxy.Current.Execute(null, deleteFIR_Shadebone)))
+                    {
+                        throw result.GetException();
+                    }
+
                     DataTable resulttb;
                     #region MdivisionPoDetail
                     string upd_MD_2F = Prgs.UpdateMPoDetail(2, data_MD_2F, false);

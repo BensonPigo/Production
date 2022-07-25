@@ -193,6 +193,7 @@ namespace Sci.Production.Warehouse
                     return;
                 }
 
+                string receivingSource = MyUtility.Convert.GetString(dr["ReceivingSource"]);
                 string sp = MyUtility.Convert.GetString(dr["poid"]);
                 string seq = MyUtility.Convert.GetString(dr["Seq"]);
                 string refno = MyUtility.Convert.GetString(dr["refno"]);
@@ -275,6 +276,14 @@ namespace Sci.Production.Warehouse
                 };
 
                 frm.Show();
+
+                string detailTableName = receivingSource == "Receiving" ? "Receiving_Detail" : "TransferIn_Detail";
+                string sqlcmd = $@"update {detailTableName} set QRCode_PrintDate = Getdate() where ukey ={dr["Ukey"]} and QRCode_PrintDate is null";
+                result = DBProxy.Current.Execute(null, sqlcmd);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                }
             }
         }
 

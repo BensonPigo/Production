@@ -706,12 +706,6 @@ and ID = '{Sci.Env.User.UserID}'"))
             string ids = string.Empty;
             DataTable datacheck;
 
-            // 檢查 Barcode不可為空
-            if (!Prgs.CheckBarCode(dtOriFtyInventory, this.Name))
-            {
-                return;
-            }
-
             #region 檢查物料Location 是否存在WMS
             if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), this.Name))
             {
@@ -818,6 +812,12 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, true));
             string sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
             #endregion
+
+            // 檢查 Barcode不可為空
+            if (!Prgs.CheckBarCode(dtOriFtyInventory, this.Name))
+            {
+                return;
+            }
 
             #region 是否攤布表身 Ukey
             string sqlisNeedUnroll = $@"

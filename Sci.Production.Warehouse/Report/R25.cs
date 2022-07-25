@@ -363,6 +363,7 @@ HAVING 1=1
 
                 Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R25.xltx"); // 預先開啟excel app
                 Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R25.xltx", objApp);
+                com.ColumnsAutoFit = false;
                 com.WriteTable(this.dataTable, 2);
 
                 Excel.Worksheet worksheet = objApp.Sheets[1];

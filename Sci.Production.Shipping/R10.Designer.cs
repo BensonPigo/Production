@@ -48,6 +48,7 @@
             this.txtshipmode = new Sci.Production.Class.Txtshipmode();
             this.txtsubconForwarder = new Sci.Production.Class.TxtsubconNoConfirm();
             this.radioPanel2 = new Sci.Win.UI.RadioPanel();
+            this.radioExportFeeReportMerged = new Sci.Win.UI.RadioButton();
             this.radioAirPrepaidExpenseReport = new Sci.Win.UI.RadioButton();
             this.radioDetailListBySPNoByFeeType = new Sci.Win.UI.RadioButton();
             this.radioDetailListbySPNo = new Sci.Win.UI.RadioButton();
@@ -58,7 +59,8 @@
             this.dateVoucherDate = new Sci.Win.UI.DateRange();
             this.lbRateType = new Sci.Win.UI.Label();
             this.comboRateType = new Sci.Win.UI.ComboBox();
-            this.radioExportFeeReportMerged = new Sci.Win.UI.RadioButton();
+            this.chkExcludePackingLocalOrder = new Sci.Win.UI.CheckBox();
+            this.chkExcludePackingFOC = new Sci.Win.UI.CheckBox();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -74,6 +76,10 @@
             // close
             // 
             this.close.Location = new System.Drawing.Point(437, 84);
+            // 
+            // txtVersion
+            // 
+            this.txtVersion.Location = new System.Drawing.Point(418, 1);
             // 
             // labelReportContent
             // 
@@ -270,6 +276,7 @@
             // txtsubconForwarder
             // 
             this.txtsubconForwarder.DisplayBox1Binding = "";
+            this.txtsubconForwarder.IsFreightForwarder = false;
             this.txtsubconForwarder.IsIncludeJunk = true;
             this.txtsubconForwarder.IsMisc = false;
             this.txtsubconForwarder.IsShipping = false;
@@ -291,6 +298,18 @@
             this.radioPanel2.Name = "radioPanel2";
             this.radioPanel2.Size = new System.Drawing.Size(302, 147);
             this.radioPanel2.TabIndex = 11;
+            // 
+            // radioExportFeeReportMerged
+            // 
+            this.radioExportFeeReportMerged.AutoSize = true;
+            this.radioExportFeeReportMerged.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioExportFeeReportMerged.Location = new System.Drawing.Point(3, 28);
+            this.radioExportFeeReportMerged.Name = "radioExportFeeReportMerged";
+            this.radioExportFeeReportMerged.Size = new System.Drawing.Size(272, 21);
+            this.radioExportFeeReportMerged.TabIndex = 4;
+            this.radioExportFeeReportMerged.TabStop = true;
+            this.radioExportFeeReportMerged.Text = "Export Fee Report(Mergerd Acct Code)";
+            this.radioExportFeeReportMerged.UseVisualStyleBackColor = true;
             // 
             // radioAirPrepaidExpenseReport
             // 
@@ -420,21 +439,37 @@
             this.comboRateType.Size = new System.Drawing.Size(171, 24);
             this.comboRateType.TabIndex = 10;
             // 
-            // radioExportFeeReportMerged
+            // chkExcludePackingLocalOrder
             // 
-            this.radioExportFeeReportMerged.AutoSize = true;
-            this.radioExportFeeReportMerged.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioExportFeeReportMerged.Location = new System.Drawing.Point(3, 28);
-            this.radioExportFeeReportMerged.Name = "radioExportFeeReportMerged";
-            this.radioExportFeeReportMerged.Size = new System.Drawing.Size(272, 21);
-            this.radioExportFeeReportMerged.TabIndex = 4;
-            this.radioExportFeeReportMerged.TabStop = true;
-            this.radioExportFeeReportMerged.Text = "Export Fee Report(Mergerd Acct Code)";
-            this.radioExportFeeReportMerged.UseVisualStyleBackColor = true;
+            this.chkExcludePackingLocalOrder.AutoSize = true;
+            this.chkExcludePackingLocalOrder.Checked = true;
+            this.chkExcludePackingLocalOrder.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkExcludePackingLocalOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkExcludePackingLocalOrder.Location = new System.Drawing.Point(13, 528);
+            this.chkExcludePackingLocalOrder.Name = "chkExcludePackingLocalOrder";
+            this.chkExcludePackingLocalOrder.Size = new System.Drawing.Size(209, 21);
+            this.chkExcludePackingLocalOrder.TabIndex = 119;
+            this.chkExcludePackingLocalOrder.Text = "Exclude Packing Local Order";
+            this.chkExcludePackingLocalOrder.UseVisualStyleBackColor = true;
+            // 
+            // chkExcludePackingFOC
+            // 
+            this.chkExcludePackingFOC.AutoSize = true;
+            this.chkExcludePackingFOC.Checked = true;
+            this.chkExcludePackingFOC.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkExcludePackingFOC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkExcludePackingFOC.Location = new System.Drawing.Point(13, 501);
+            this.chkExcludePackingFOC.Name = "chkExcludePackingFOC";
+            this.chkExcludePackingFOC.Size = new System.Drawing.Size(162, 21);
+            this.chkExcludePackingFOC.TabIndex = 118;
+            this.chkExcludePackingFOC.Text = "Exclude Packing FOC";
+            this.chkExcludePackingFOC.UseVisualStyleBackColor = true;
             // 
             // R10
             // 
-            this.ClientSize = new System.Drawing.Size(525, 546);
+            this.ClientSize = new System.Drawing.Size(525, 583);
+            this.Controls.Add(this.chkExcludePackingLocalOrder);
+            this.Controls.Add(this.chkExcludePackingFOC);
             this.Controls.Add(this.comboRateType);
             this.Controls.Add(this.lbRateType);
             this.Controls.Add(this.dateVoucherDate);
@@ -493,6 +528,8 @@
             this.Controls.SetChildIndex(this.dateVoucherDate, 0);
             this.Controls.SetChildIndex(this.lbRateType, 0);
             this.Controls.SetChildIndex(this.comboRateType, 0);
+            this.Controls.SetChildIndex(this.chkExcludePackingFOC, 0);
+            this.Controls.SetChildIndex(this.chkExcludePackingLocalOrder, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.radioPanel2.ResumeLayout(false);
@@ -535,5 +572,7 @@
         private Win.UI.ComboBox comboRateType;
         private Win.UI.RadioButton radioAirPrepaidExpenseReport;
         private Win.UI.RadioButton radioExportFeeReportMerged;
+        private Win.UI.CheckBox chkExcludePackingLocalOrder;
+        private Win.UI.CheckBox chkExcludePackingFOC;
     }
 }

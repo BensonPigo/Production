@@ -1,5 +1,8 @@
-﻿using Ict.Win;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
 using Sci.Production.Prg;
+using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using System;
 using System.Data;
@@ -229,6 +232,18 @@ namespace Sci.Production.Warehouse
                     GC.WaitForPendingFinalizers();
                 }
                 #endregion
+                if (this.callFrom == "P07")
+                {
+                    string ukeys = barcodeDatas.Select(s => s["Ukey"].ToString()).JoinToString(",");
+                    WHTableName detailTableName = Prgs.GetWHDetailTableName(this.callFrom);
+                    string sqlcmd = $@"update {detailTableName} set QRCode_PrintDate = Getdate() where ukey in ({ukeys}) and QRCode_PrintDate is null";
+                    DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                    }
+                }
+
                 this.HideWaitMessage();
                 #endregion
             }
