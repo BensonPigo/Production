@@ -1026,7 +1026,7 @@ where b.ID is null
 	where t.status = 'Confirmed'
 
 	------------MachinePending_Detail------------------
-	declare @Tdebit table(id varchar(13),MachineID varchar(16),TPEReject int)
+	declare @Tdebit table(id varchar(13),MachineID varchar(16),TPEReject int,TPEApvDate datetime)
 
 	select	md.id
 			,md.seq
@@ -1046,8 +1046,8 @@ where b.ID is null
 	inner join #tmpMachinePending_Detail s on t.id=s.id and t.seq = s.seq
 	where s.status = 'Confirmed' and s.TPEApvDate is not null
 
-	insert into @Tdebit(id, MachineID, TPEReject)
-	select t.ID, t.MachineID, s.TPEReject
+	insert into @Tdebit(id, MachineID, TPEReject,TPEApvDate)
+	select t.ID, t.MachineID, s.TPEReject,s.TPEApvDate
 	from dbo.MachinePending_Detail t
 	inner join #tmpMachinePending_Detail s on t.id=s.id and t.seq = s.seq
 	where s.status = 'Confirmed' and s.TPEApvDate is not null
