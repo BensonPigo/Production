@@ -872,8 +872,8 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                     {
                         string dtUkey = dtNeedUnroll.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["Ukey"])).ToList().JoinToString(",");
                         string sqlUnroll = $@"
--- 先全部清空
-update Issue_Detail set NeedUnroll = 0 where id = '{this.CurrentMaintain["ID"]}'
+-- 先全部清空，除了已經完成的
+update Issue_Detail set NeedUnroll = 0, UnrollStatus = '' where id = '{this.CurrentMaintain["ID"]}' and UnrollStatus not in ('Done')
 --再重新更新需要的
 update Issue_Detail set NeedUnroll = 1, UnrollStatus = 'Ongoing' where Ukey in ({dtUkey}) and UnrollStatus = ''
 
