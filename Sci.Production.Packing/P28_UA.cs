@@ -826,6 +826,11 @@ DROP TABLE #tmp
                     throw r.GetException();
                 }
 
+                if (dt.Rows.Count == 0)
+                {
+                    MyUtility.Msg.WarningBox("This PL# already pullout, cannot mapping carton number.");
+                }
+
                 // 產生要填入Match Grid的物件
                 MatchGridData m = new MatchGridData()
                 {
@@ -978,6 +983,11 @@ AND (pu.Status NOT IN ('Confirmed', 'Locked') OR pu.Status IS NULL)
                 if (!r)
                 {
                     throw r.GetException();
+                }
+
+                if (dt.Rows.Count == 0)
+                {
+                    MyUtility.Msg.WarningBox("This PL# already pullout, cannot mapping carton number.");
                 }
 
                 // 產生要填入Match Grid的物件
