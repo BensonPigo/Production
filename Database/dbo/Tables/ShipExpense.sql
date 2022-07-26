@@ -3,7 +3,7 @@
     [BrandID]     VARCHAR (8)     CONSTRAINT [DF_ShipExpense_BrandID] DEFAULT ('') NULL,
     [Junk]        BIT             CONSTRAINT [DF_ShipExpense_Junk] DEFAULT ((0)) NULL,
     [Description] NVARCHAR (MAX)  CONSTRAINT [DF_ShipExpense_Description] DEFAULT ('') NOT NULL,
-    [LocalSuppID] VARCHAR (6)     CONSTRAINT [DF_ShipExpense_LocalSuppID] DEFAULT ('') NULL,
+    [LocalSuppID] VARCHAR (8)     CONSTRAINT [DF_ShipExpense_LocalSuppID] DEFAULT ('') NULL,
     [Price]       NUMERIC (13, 5) CONSTRAINT [DF_ShipExpense_Price] DEFAULT ((0)) NULL,
 	[UnitID] VARCHAR(8) NULL DEFAULT (''),
     [CanvassDate] DATE            NULL,
