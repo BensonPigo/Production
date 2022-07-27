@@ -187,27 +187,49 @@ namespace Sci.Production.Warehouse
                     foreach (var printItem in barcodeDatas)
                     {
                         tables = table[i + 1];
-                        tables.Cell(1, 1).Range.Text = $"QC ID:{printItem["Inspector"]}";
-                        tables.Cell(1, 3).Range.Text = printItem["PoId"].ToString();
-                        tables.Cell(1, 5).Range.Text = printItem["SEQ"].ToString();
-                        tables.Cell(1, 6).Range.Text = $"Insp Date:{printItem["InspDate"]}";
-                        tables.Cell(2, 3).Range.Text = printItem["RefNo"].ToString();
-                        tables.Cell(2, 5).Range.Text = printItem["Location"].ToString();
-                        tables.Cell(3, 3).Range.Text = $"{printItem["Weight"]}KG";
-                        tables.Cell(3, 5).Range.Text = $"{printItem["ActualWeight"]}KG";
+                        tables.Cell(1, 1).Range.Text = $"SP#:{printItem["PoId"]}";
+                        tables.Cell(1, 2).Range.Text = $"SEQ:{printItem["SEQ"]}";
+
+                        tables.Cell(2, 1).Range.Text = $@"GW:{printItem["Weight"]}KG
+AW:{printItem["ActualWeight"]}KG";
+                        tables.Cell(2, 2).Range.Text = $"Lct:{printItem["Location"]}";
+
+                        tables.Cell(3, 1).Range.Text = $"REF:{printItem["RefNo"]}";
+
                         Bitmap oriBitmap = printItem["MINDQRCode"].ToString().ToBitmapQRcode(qrCodeWidth, qrCodeWidth);
                         Clipboard.SetImage(oriBitmap);
                         Thread.Sleep(100);
-                        tables.Cell(4, 2).Range.Paste();
-                        tables.Cell(4, 4).Range.Paste();
+                        tables.Cell(4, 1).Range.Paste();
+                        tables.Cell(4, 3).Range.Paste();
 
-                        tables.Cell(4, 3).Range.Text = printItem["FactoryID"].ToString();
+                        tables.Cell(4, 2).Range.Text = printItem["FactoryID"].ToString();
 
-                        tables.Cell(5, 3).Range.Text = printItem["Roll"].ToString();
-                        tables.Cell(5, 5).Range.Text = printItem["Dyelot"].ToString();
-                        tables.Cell(6, 3).Range.Text = printItem["StockQty"].ToString();
-                        tables.Cell(6, 5).Range.Text = printItem["ColorID"].ToString();
-                        tables.Cell(7, 2).Range.Text = printItem["FirRemark"].ToString();
+                        Word.Paragraph pText;
+                        Word.Range range;
+
+                        range = tables.Cell(5, 1).Range;
+                        range.Text = $"{printItem["Roll"]}";
+                        pText = range.Paragraphs.Add(range);
+                        pText.Range.Bold = 0;
+                        pText.Range.Text = $"Roll#:";
+
+                        range = tables.Cell(5, 2).Range;
+                        range.Text = $"{printItem["Dyelot"]}";
+                        pText = range.Paragraphs.Add(range);
+                        pText.Range.Bold = 0;
+                        pText.Range.Text = $"Lot#:";
+
+                        range = tables.Cell(6, 1).Range;
+                        range.Text = $"{printItem["ColorID"]}";
+                        pText = range.Paragraphs.Add(range);
+                        pText.Range.Bold = 0;
+                        pText.Range.Text = $"Color:";
+
+                        range = tables.Cell(6, 2).Range;
+                        range.Text = $"{printItem["StockQty"]}";
+                        pText = range.Paragraphs.Add(range);
+                        pText.Range.Bold = 0;
+                        pText.Range.Text = $"Yd#:";
                         i++;
                     }
 
