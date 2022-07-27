@@ -1547,14 +1547,19 @@ select * from @tempQtyBDown";
                                                   && decimal.Parse(MyUtility.Convert.GetString(x["GW"])) > 0)
                                         .Select(x => MyUtility.Convert.GetString(x["GW"]))
                                         .FirstOrDefault();
+                        string nnw = printData.Tables[dr["ID"].ToString()].AsEnumerable()
+                                    .Where(x => x["CTNStartNo"].EqualString(MyUtility.Convert.GetString(drBody["CTNStartNo"]))
+                                              && decimal.Parse(MyUtility.Convert.GetString(x["NNW"])) > 0)
+                                    .Select(x => MyUtility.Convert.GetString(x["NNW"]))
+                                    .FirstOrDefault();
                         worksheet.Cells[bodyRowIndex, bodyCtn1Column] = MyUtility.Convert.GetString(drBody["CTNStartNo"]);
                         worksheet.Cells[bodyRowIndex, bodyCtnsColumn] = MyUtility.Convert.GetString(ctns);
                         worksheet.Cells[bodyRowIndex, bodyNWColumn] = nw;
                         worksheet.Cells[bodyRowIndex, bodyGWColumn] = gw;
-                        worksheet.Cells[bodyRowIndex, bodyNNWColumn] = MyUtility.Convert.GetString(drBody["NNW"]);
+                        worksheet.Cells[bodyRowIndex, bodyNNWColumn] = nnw;
                         worksheet.Cells[bodyRowIndex, bodyTTLNWColumn] = MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(nw) * ctns);
                         worksheet.Cells[bodyRowIndex, bodyTTLGWColumn] = MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(gw) * ctns);
-                        worksheet.Cells[bodyRowIndex, bodyTTLNNWColumn] = MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(drBody["NNW"]) * ctns);
+                        worksheet.Cells[bodyRowIndex, bodyTTLNNWColumn] = MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(nnw) * ctns);
 
                         // 多筆 SP 限定
                         if (boolMultiple)
