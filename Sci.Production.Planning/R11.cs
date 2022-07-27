@@ -317,7 +317,12 @@ select
 	,OutputDate
 	,SewingLineID
 into #tmp_AR_Basic_S
-from System s,(select distinct StyleID,OldStyleID from  #tmpStyle_SimilarStyle) o2
+from System s,(
+	select t.StyleID,t.OldStyleID,SciDelivery = min(orders.SciDelivery)
+	from  #tmpStyle_SimilarStyle t
+	inner join Orders on orders.StyleID = t.StyleID
+	group by t.StyleID,t.OldStyleID
+) o2
 inner join Orders o WITH (NOLOCK) on o2.StyleID = o.StyleID
 inner join SewingOutput_Detail sod  WITH (NOLOCK) on sod.OrderId = o.ID
 inner join SewingOutput so  WITH (NOLOCK) on sod.id = so.id
