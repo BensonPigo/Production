@@ -2727,6 +2727,7 @@
     <Build Include="dbo\Tables\CTNPackingAudit.sql" />
     <Build Include="dbo\Functions\GetIsHighRisk.sql" />
     <Build Include="dbo\Functions\IsQRCodeCreatedByPMS.sql" />
+    <Build Include="dbo\Tables\Bundle_Detail_Order_History.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

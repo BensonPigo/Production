@@ -29,6 +29,24 @@ Begin try
 		from Bundle_Detail bd
 		where exists(select 1 from #tmp_Bundle where id = bd.id)
 
+		/*****************************  Bundle_Detail_Order  ************************************/
+		Begin
+			select *
+			into #tmp_Bundle_Detail_Order
+			from Bundle_Detail_Order bo
+			where exists (select 1 from #tmp_orders_ID where ID = bo.OrderID)
+
+			insert into Bundle_Detail_Order_History([ID], [BundleNo], [OrderID], [Qty])
+			select [ID], [BundleNo], [OrderID], [Qty]
+			from #tmp_Bundle_Detail_Order
+
+			delete from bo
+			from Bundle_Detail_Order bo
+			where exists (select 1 from #tmp_Bundle_Detail_Order where Ukey = bo.Ukey)
+
+			drop table #tmp_Bundle_Detail_Order
+		end
+
 		/*****************************  Bundle_Detail_Art  ************************************/
 		Begin
 			select *
