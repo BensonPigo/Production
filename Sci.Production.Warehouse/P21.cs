@@ -194,16 +194,16 @@ namespace Sci.Production.Warehouse
                 }
 
                 string receivingSource = MyUtility.Convert.GetString(dr["ReceivingSource"]);
-                string sp = MyUtility.Convert.GetString(dr["poid"]);
-                string seq = MyUtility.Convert.GetString(dr["Seq"]);
-                string refno = MyUtility.Convert.GetString(dr["refno"]);
-                string dyelot = MyUtility.Convert.GetString(dr["dyelot"]);
-                string color = MyUtility.Convert.GetString(dr["color"]);
-                string roll = MyUtility.Convert.GetString(dr["Roll"]);
-                string qty = MyUtility.Convert.GetString(dr["StockQty"]);
-                string location = MyUtility.Convert.GetString(dr["location"]);
-                string gw = MyUtility.Convert.GetString(dr["Weight"]) + "KG";
-                string aw = MyUtility.Convert.GetString(dr["ActualWeight"]) + "KG";
+                string sp = "SP#:" + MyUtility.Convert.GetString(dr["poid"]);
+                string seq = $"SEQ:{dr["Seq1"]}-{dr["Seq2"]}";
+                string refno = "REF#:" + MyUtility.Convert.GetString(dr["refno"]);
+                string dyelot = "Lot#:" + MyUtility.Convert.GetString(dr["dyelot"]);
+                string color = "Color:" + MyUtility.Convert.GetString(dr["color"]);
+                string roll = "Roll#:" + MyUtility.Convert.GetString(dr["Roll"]);
+                string qty = "Yd#:" + MyUtility.Convert.GetString(dr["StockQty"]);
+                string location = "Lct:" + MyUtility.Convert.GetString(dr["location"]);
+                string gw = "GW:" + MyUtility.Convert.GetString(dr["Weight"]) + "KG";
+                string aw = "AW:" + MyUtility.Convert.GetString(dr["ActualWeight"]) + "KG";
                 string remark = MyUtility.Convert.GetString(dr["FirRemark"]);
                 string factory = MyUtility.Convert.GetString(dr["FactoryID"]);
                 string inspector = "QCID:" + MyUtility.Convert.GetString(dr["Inspector"]);

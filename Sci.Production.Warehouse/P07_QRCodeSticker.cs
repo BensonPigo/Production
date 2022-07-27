@@ -194,7 +194,7 @@ namespace Sci.Production.Warehouse
 AW:{printItem["ActualWeight"]}KG";
                         tables.Cell(2, 2).Range.Text = $"Lct:{printItem["Location"]}";
 
-                        tables.Cell(3, 1).Range.Text = $"REF:{printItem["RefNo"]}";
+                        tables.Cell(3, 1).Range.Text = $"REF#:{printItem["RefNo"]}";
 
                         Bitmap oriBitmap = printItem["MINDQRCode"].ToString().ToBitmapQRcode(qrCodeWidth, qrCodeWidth);
                         Clipboard.SetImage(oriBitmap);
