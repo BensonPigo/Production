@@ -40,7 +40,8 @@ namespace Sci.Production.Subcon
             .Text("SeasonID", header: "Season", iseditingreadonly: true, width: Widths.AnsiChars(13))
             .Text("Refno", header: "Refno", iseditingreadonly: true)
             .Text("Description", header: "Description", iseditingreadonly: true)
-            .Numeric("Qty", header: "Qty", iseditingreadonly: true)
+            .Numeric("PackingQty", header: "Packing ID Qty", iseditingreadonly: true)
+            .Numeric("Qty", header: "PO Qty", iseditingreadonly: true)
             .Text("UnitID", header: "Unit", iseditingreadonly: true)
             .Numeric("Price", header: "Price", iseditable: true, decimal_places: 4, integer_places: 4, iseditingreadonly: true)
             .Numeric("Amount", header: "Amount", iseditable: true, decimal_places: 4, integer_places: 4, iseditingreadonly: true)
@@ -153,6 +154,7 @@ select
     o.SeasonID,
     rld.Refno,
     Description = dbo.getitemdesc('Carton', rld.Refno),
+    [PackingQty] = 0,
     Qty = rld.RequestQty,
     l.UnitID,
     l.Price,
@@ -175,7 +177,6 @@ select
     Delivery = NULL,
     OldSeq1='',
     OldSeq2=''
-
 from ReplacementLocalItem rl WITH (NOLOCK)
 inner join orders o WITH (NOLOCK) on o.id = rl.OrderID
 inner join ReplacementLocalItem_Detail rld WITH (NOLOCK) on rld.ID = rl.ID
