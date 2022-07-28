@@ -181,6 +181,19 @@ namespace Sci.Production.Warehouse
                     }
 
                     int qrCodeWidth = this.printType == "10X10" ? 90 : 45;
+                    float otherSize = 8;
+                    switch (this.printType)
+                    {
+                        case "10X10":
+                            otherSize = (float)12;
+                            break;
+                        case "7X7":
+                            otherSize = (float)7.5;
+                            break;
+                        case "5X5":
+                            otherSize = (float)5.5;
+                            break;
+                    }
 
                     // 填入資料
                     int i = 0;
@@ -211,18 +224,21 @@ AW:{printItem["ActualWeight"]}KG";
                         range.Text = $"{printItem["Roll"]}";
                         pText = range.Paragraphs.Add(range);
                         pText.Range.Bold = 0;
+                        pText.Range.Font.Size = otherSize;
                         pText.Range.Text = $"Roll#:";
 
                         range = tables.Cell(5, 2).Range;
                         range.Text = $"{printItem["Dyelot"]}";
                         pText = range.Paragraphs.Add(range);
                         pText.Range.Bold = 0;
+                        pText.Range.Font.Size = otherSize;
                         pText.Range.Text = $"Lot#:";
 
                         range = tables.Cell(6, 1).Range;
                         range.Text = $"{printItem["ColorID"]}";
                         pText = range.Paragraphs.Add(range);
                         pText.Range.Bold = 0;
+                        pText.Range.Font.Size = otherSize;
                         pText.Range.Text = $"Color:";
 
                         range = tables.Cell(6, 2).Range;

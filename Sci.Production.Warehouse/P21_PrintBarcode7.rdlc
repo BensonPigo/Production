@@ -10,7 +10,7 @@
               <TextRun>
                 <Value>=Parameters!SP.Value</Value>
                 <Style>
-                  <FontSize>6pt</FontSize>
+                  <FontSize>8.5pt</FontSize>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -56,7 +56,7 @@
               <TextRun>
                 <Value>=Parameters!seq.Value</Value>
                 <Style>
-                  <FontSize>6pt</FontSize>
+                  <FontSize>9pt</FontSize>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -171,7 +171,7 @@
               <TextRun>
                 <Value>=Parameters!gw.Value</Value>
                 <Style>
-                  <FontSize>6pt</FontSize>
+                  <FontSize>9pt</FontSize>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -203,7 +203,7 @@
           <RightBorder>
             <Style>None</Style>
           </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
+          <VerticalAlign>Bottom</VerticalAlign>
         </Style>
       </Textbox>
       <Textbox Name="Textbox14">
@@ -214,7 +214,7 @@
               <TextRun>
                 <Value>=Parameters!aw.Value</Value>
                 <Style>
-                  <FontSize>6pt</FontSize>
+                  <FontSize>9pt</FontSize>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -246,7 +246,7 @@
           <RightBorder>
             <Style>None</Style>
           </RightBorder>
-          <VerticalAlign>Middle</VerticalAlign>
+          <VerticalAlign>Top</VerticalAlign>
         </Style>
       </Textbox>
       <Textbox Name="Textbox7">
@@ -254,6 +254,12 @@
         <Paragraphs>
           <Paragraph>
             <TextRuns>
+              <TextRun>
+                <Value>Roll#:</Value>
+                <Style>
+                  <FontSize>8pt</FontSize>
+                </Style>
+              </TextRun>
               <TextRun>
                 <Value>=Parameters!roll.Value</Value>
                 <Style>
@@ -287,6 +293,12 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
+                <Value>Lot#:</Value>
+                <Style>
+                  <FontSize>8pt</FontSize>
+                </Style>
+              </TextRun>
+              <TextRun>
                 <Value>=Parameters!dyelot.Value</Value>
                 <Style>
                   <FontSize>8pt</FontSize>
@@ -319,6 +331,12 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
+                <Value>Yd#:</Value>
+                <Style>
+                  <FontSize>8pt</FontSize>
+                </Style>
+              </TextRun>
+              <TextRun>
                 <Value>=Parameters!qty.Value</Value>
                 <Style>
                   <FontSize>8pt</FontSize>
@@ -350,6 +368,12 @@
         <Paragraphs>
           <Paragraph>
             <TextRuns>
+              <TextRun>
+                <Value>Color:</Value>
+                <Style>
+                  <FontSize>8pt</FontSize>
+                </Style>
+              </TextRun>
               <TextRun>
                 <Value>=Parameters!color.Value</Value>
                 <Style>
