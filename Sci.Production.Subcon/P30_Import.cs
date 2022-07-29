@@ -566,6 +566,7 @@ select qty = sum(qty)
                 if (packingQty - POQty - currentQty < 0)
                 {
                     MyUtility.Msg.WarningBox($"[PO Qty] cannot more than {packingQty - POQty}");
+                    e.Cancel = true;
                     return;
                 }
 

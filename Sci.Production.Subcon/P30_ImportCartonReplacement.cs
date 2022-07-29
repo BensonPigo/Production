@@ -30,6 +30,33 @@ namespace Sci.Production.Subcon
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
+            DataGridViewGeneratorNumericColumnSettings col_Qty = new DataGridViewGeneratorNumericColumnSettings();
+            col_Qty.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode || e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                decimal currentQty = MyUtility.Convert.GetDecimal(e.FormattedValue);
+                if (MyUtility.Check.Empty(currentQty))
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
+                decimal ReplacementQty = MyUtility.Convert.GetDecimal(dr["ReplacementQty"]);
+                if (ReplacementQty - currentQty < 0)
+                {
+                    MyUtility.Msg.WarningBox($"[PO Qty] cannot more than {ReplacementQty}");
+                    e.Cancel = true;
+                    return;
+                }
+
+                dr["qty"] = currentQty;
+                dr.EndEdit();
+            };
+
             base.OnFormLoaded();
             this.gridImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.Helper.Controls.Grid.Generator(this.gridImport)
@@ -40,8 +67,8 @@ namespace Sci.Production.Subcon
             .Text("SeasonID", header: "Season", iseditingreadonly: true, width: Widths.AnsiChars(13))
             .Text("Refno", header: "Refno", iseditingreadonly: true)
             .Text("Description", header: "Description", iseditingreadonly: true)
-            .Numeric("PackingQty", header: "Packing ID Qty", iseditingreadonly: true)
-            .Numeric("Qty", header: "PO Qty", iseditingreadonly: true)
+            .Numeric("ReplacementQty", header: "Replacement Qty", iseditingreadonly: true)
+            .Numeric("Qty", header: "PO Qty", iseditingreadonly: false,settings: col_Qty)
             .Text("UnitID", header: "Unit", iseditingreadonly: true)
             .Numeric("Price", header: "Price", iseditable: true, decimal_places: 4, integer_places: 4, iseditingreadonly: true)
             .Numeric("Amount", header: "Amount", iseditable: true, decimal_places: 4, integer_places: 4, iseditingreadonly: true)
@@ -49,7 +76,7 @@ namespace Sci.Production.Subcon
             .Text("ReplacementLocalItemID", header: "Carton Replacement#", iseditingreadonly: true)
             .Text("BuyerID", header: "Buyer", iseditingreadonly: true)
             ;
-
+            this.gridImport.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
             Color backDefaultColor = this.gridImport.DefaultCellStyle.BackColor;
             this.gridImport.RowPrePaint += (s, e) =>
             {
@@ -72,6 +99,7 @@ namespace Sci.Production.Subcon
                     if (this.gridImport.Rows[e.RowIndex].DefaultCellStyle.BackColor != backDefaultColor)
                     {
                         this.gridImport.Rows[e.RowIndex].DefaultCellStyle.BackColor = backDefaultColor;
+                        this.gridImport.Rows[e.RowIndex].Cells["Qty"].Style.BackColor = Color.Pink;
                     }
                 }
                 #endregion
@@ -154,7 +182,7 @@ select
     o.SeasonID,
     rld.Refno,
     Description = dbo.getitemdesc('Carton', rld.Refno),
-    [PackingQty] = 0,
+    [ReplacementQty] = rld.RequestQty,
     Qty = rld.RequestQty,
     l.UnitID,
     l.Price,
