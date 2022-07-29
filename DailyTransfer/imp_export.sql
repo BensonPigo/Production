@@ -770,8 +770,23 @@ insert into Production.dbo.FormType(	ID		,
 -----------------------TransferExport-----------------------------
 update a set	
 	a.OTFee = b.OTFee
-	,a.CloseDate = b.CloseDate
-	,a.LoadDate = b.LoadDate
+	, a.CloseDate = b.CloseDate
+	, a.LoadDate = b.LoadDate
+	, a.ImportPort = b.ImportPort
+	, a.ExportPort = b.ExportPort
+	, a.CompanyID = b.CompanyID
+	, a.ShipmentTerm = b.ShipmentTerm
+	, a.ShipModeID = b.ShipModeID
+	, a.Payer = b.Payer
+	, a.Etd = b.Etd
+	, a.eta = b.eta
+	, a.Handle = b.Handle
+	, a.Forwarder = b.Forwarder
+	, a.Vessel = b.Vessel
+	, a.Carrier = b.Carrier
+	, a.Blno = b.Blno
+	, a.Confirm = b.Confirm
+	, a.ConfirmTime = b.ConfirmTime
 from Production.dbo.TransferExport a
 inner join Trade_To_Pms.dbo.TransferExport b on b.ID = a.ID
 
