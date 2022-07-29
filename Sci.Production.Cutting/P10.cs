@@ -105,24 +105,6 @@ where MDivisionID = '{Env.User.Keyword}'";
                 DataTable curdtBundle_Detail_Order = this.GetBundle_Detail_Order(dr["Bundleno"].ToString());
                 this.ShowBundle_Detail_Order(curdtBundle_Detail_Order);
             };
-            bundleno.CellPainting += (s, e) =>
-            {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
-
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                DataTable curdtBundle_Detail_Order = this.GetBundle_Detail_Order(dr["Bundleno"].ToString());
-                if (curdtBundle_Detail_Order.Rows.Count > 1)
-                {
-                    e.CellStyle.BackColor = Color.Yellow;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.White;
-                }
-            };
 
             DataGridViewGeneratorTextColumnSettings cutpart = new DataGridViewGeneratorTextColumnSettings();
             cutpart.EditingMouseDoubleClick += (s, e) =>
@@ -310,6 +292,12 @@ order by bundlegroup,bundleno";
             this.GetFabricKind();
 
             this.btnSPs.ForeColor = this.Bundle_Detail_Order.Rows.Count > 1 ? System.Drawing.Color.Blue : System.Drawing.Color.Black;
+
+            // 表身Bundle No 變色
+            if (this.DetailDatas.Count > 0)
+            {
+                this.ChangeColor_ByID();
+            }
         }
 
         private void QueryTable()
@@ -402,12 +390,17 @@ order by bundlegroup,bundleno";
         protected override bool ClickEditBefore()
         {
             this.QueryBundle_Detail_Order();
+
+            // 表身Bundle No 變色
+            if (this.DetailDatas.Count > 0)
+            {
+                this.ChangeColor_ByID();
+            }
             if (this.CurrentMaintain != null && this.Bundle_Detail_Order.Rows.Count > 1)
             {
                 MyUtility.Msg.WarningBox($"Cannot edit if SP# more than one, please delete this ID:{this.CurrentMaintain["ID"]} and create a new one.");
                 return false;
             }
-
             return base.ClickEditBefore();
         }
 
@@ -454,6 +447,12 @@ order by bundlegroup,bundleno";
                 dr["ID"] = string.Empty;
             }
             #endregion
+
+            // 表身Bundle No 變色
+            if (this.DetailDatas.Count > 0)
+            {
+                this.ChangeColor_ByID();
+            }
         }
 
         /// <inheritdoc/>
@@ -1165,6 +1164,12 @@ where b.poid = '{poid}'
             frm.ShowDialog(this);
 
             dt.DefaultView.Sort = "BundleGroup";
+
+            // 表身Bundle No 變色
+            if (this.DetailDatas.Count > 0)
+            {
+                this.ChangeColor_ByID();
+            }
         }
 
         private int at;
@@ -1400,7 +1405,7 @@ AND DD.id = LIST.kind ";
         private DataTable GetBundle_Detail_Order(string bundleno)
         {
             string sqlcmd = $@"
-select [SP#] = OrderID, Qty from Bundle_Detail_Order where Bundleno = '{bundleno}' order by OrderID";
+select [SP#] = OrderID, Qty from Bundle_Detail_Order WITH (NOLOCK) where Bundleno = '{bundleno}' order by OrderID";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable curdtBundle_Detail_Order);
             if (!result)
             {
@@ -1408,6 +1413,43 @@ select [SP#] = OrderID, Qty from Bundle_Detail_Order where Bundleno = '{bundleno
             }
 
             return curdtBundle_Detail_Order;
+        }
+
+        /// <summary>
+        /// 同一個BundleNo 有2筆以上, 就將表身BundleNo變成黃底
+        /// </summary>
+        /// <param name="ID"></param>
+        private void ChangeColor_ByID()
+        {
+            string sqlcmd = $@"
+select BundleNo from Bundle_Detail_Order WITH (NOLOCK) where ID = '{this.CurrentMaintain["ID"].ToString()}'";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable curdtBundle_Detail_Order);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (curdtBundle_Detail_Order == null)
+            {
+                return;
+            }
+
+            int rowindx = 0;
+            foreach (var item in this.DetailDatas)
+            {
+                DataRow[] drExists = curdtBundle_Detail_Order.Select($" BundleNo = '{item["BundleNo"]}'");
+                if (drExists.Length > 1)
+                {
+                    this.detailgrid.Rows[rowindx].Cells["BundleNo"].Style.BackColor = Color.Yellow;
+                }
+                else
+                {
+                    this.detailgrid.Rows[rowindx].Cells["BundleNo"].Style.BackColor = Color.White;
+                }
+
+                rowindx++;
+            }
         }
 
         private void ShowBundle_Detail_Order(DataTable dt)
