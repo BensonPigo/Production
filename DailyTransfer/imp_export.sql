@@ -96,7 +96,7 @@ BEGIN
 		, t.Replacement = s.Replacement
 		, t.Delay = s.Delay
 		, t.PrepaidFtyImportFee = s.PrepaidFtyImportFee
-		, t.NoImportCharges = iif(s.PrepaidFtyImportFee2 > 0, 1 ,0)
+		, t.NoImportCharges = iif(s.PrepaidFtyImportFee2 > 0, 1 ,t.NoImportCharges)
 		, t.MainExportID08 = s.MainExportID08
 		, t.FormE = s.FormE
 		, t.SQCS = s.SQCS
