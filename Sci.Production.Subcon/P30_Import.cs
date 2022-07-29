@@ -539,6 +539,40 @@ where Qty - ShipQty - DiffQty = 0";
                 }
             };
 
+            qty.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode || e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                decimal currentQty = MyUtility.Convert.GetDecimal(e.FormattedValue);
+                if (MyUtility.Check.Empty(currentQty))
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
+                decimal packingQty = MyUtility.Convert.GetDecimal(dr["PackingQty"]);
+                decimal POQty = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($@"
+select qty = sum(qty)                    
+	from LocalPo_Detail lpd WITH (NOLOCK) 
+    inner join LocalPo lp WITH (NOLOCK)  on lpd.id = lp.id
+    where lpd.OrderId = '{dr["OrderID"]}'
+    and lpd.Refno = '{dr["RefNo"]}'
+    and lpd.RequestID = '{dr["requestid"]}'
+    and lp.Status = 'Approved'
+"));
+                if (packingQty - POQty - currentQty < 0)
+                {
+                    MyUtility.Msg.WarningBox($"[PO Qty] cannot more than {packingQty - POQty}");
+                    return;
+                }
+
+                dr["qty"] = currentQty;
+                dr.EndEdit();
+            };
+
             this.gridImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.gridImport.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridImport)
@@ -551,7 +585,7 @@ where Qty - ShipQty - DiffQty = 0";
             .Text("description", header: "Description", iseditingreadonly: true) // 5
             .Text("threadcolorid", header: "Color Shade", iseditingreadonly: true) // 6
             .Numeric("PackingQty", header: "Packing ID Qty", iseditingreadonly: true, settings: qty) // 7
-            .Numeric("qty", header: "PO Qty", iseditingreadonly: true, settings: qty) // 7
+            .Numeric("qty", header: "PO Qty", iseditingreadonly: false, settings: qty) // 7
             .Text("Unitid", header: "Unit", iseditingreadonly: true) // 8
             .Numeric("Price", header: "Price", iseditable: true, decimal_places: 4, integer_places: 4) // 9
             .Numeric("amount", header: "Amount", iseditable: true, decimal_places: 4, integer_places: 4) // 10
@@ -560,10 +594,11 @@ where Qty - ShipQty - DiffQty = 0";
             .Text("requestid", header: "Request ID", iseditingreadonly: true) // 13
             .Text("BuyerID", header: "Buyer", iseditingreadonly: true) // 14
             ;
+            this.gridImport.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             Color backDefaultColor = this.gridImport.DefaultCellStyle.BackColor;
             this.gridImport.RowPrePaint += (s, e) =>
             {
-                if (e.RowIndex < 0)
+                if (e.RowIndex < 0 )
                 {
                     return;
                 }
@@ -575,13 +610,6 @@ where Qty - ShipQty - DiffQty = 0";
                     if (this.gridImport.Rows[e.RowIndex].DefaultCellStyle.BackColor != Color.FromArgb(217, 217, 217))
                     {
                         this.gridImport.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(217, 217, 217);
-                    }
-                }
-                else
-                {
-                    if (this.gridImport.Rows[e.RowIndex].DefaultCellStyle.BackColor != backDefaultColor)
-                    {
-                        this.gridImport.Rows[e.RowIndex].DefaultCellStyle.BackColor = backDefaultColor;
                     }
                 }
                 #endregion
