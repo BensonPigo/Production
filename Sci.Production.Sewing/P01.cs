@@ -58,6 +58,8 @@ namespace Sci.Production.Sewing
             };
 
             this.detailgrid.CellPainting += this.Detailgrid_CellPainting;
+            this.txtSewingReasonIDForTypeIC.ListFixedID.Add("00001");
+            this.txtSewingReasonIDForTypeIC.ListFixedID.Add("00006");
         }
 
         private void Detailgrid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
@@ -165,6 +167,15 @@ and SunriseNid != 0
                     this.CurrentMaintain["DefectQty"] = 0;
                 }
             }
+
+            KeyValuePair<string, DualResult> resultInlineCategory = this.GetInlineCategory(this.CurrentMaintain, this.DetailDatas.CopyToDataTable());
+            if (!resultInlineCategory.Value)
+            {
+                this.ShowErr(resultInlineCategory.Value);
+                return;
+            }
+
+            this.CurrentMaintain["SewingReasonIDForTypeIC"] = resultInlineCategory.Key;
         }
 
         /// <inheritdoc/>
@@ -235,7 +246,11 @@ select  sd.*
         , [QAOutput] = (select t.TEMP+',' from (select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) AS TEMP from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.SewingOutput_DetailUKey = sd.UKey) t for xml path(''))
 		, [SewingReasonID]=sr.id
 		, [ReasonDescription]=sr.Description
-from SewingOutput_Detail sd WITH (NOLOCK) 
+        , o.StyleUkey
+        , [OrderCategory] = o.Category
+        , [StyleRepeat] = dbo.IsRepeatStyleBySewingOutput(s.FactoryID, s.OutputDate, s.SewinglineID, s.Team, o.StyleUkey)
+from SewingOutput_Detail sd WITH (NOLOCK)
+left join Orders o with (nolock) on o.ID = sd.OrderID
 left join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
 LEFT JOIN SewingReason sr ON sd.SewingReasonID=sr.ID
 outer apply( select top 1 * from Rft WITH (NOLOCK) where rft.OrderID = sd.OrderId 
@@ -411,9 +426,10 @@ where   ss.FactoryID = '{0}'
                         IList<SqlParameter> cmds = new List<SqlParameter>();
                         cmds.Add(sp1);
                         cmds.Add(sp2);
+                        cmds.Add(new SqlParameter("@outputDate", this.CurrentMaintain["OutputDate"]));
 
                         DataTable ordersData;
-                        string sqlCmd = @"
+                        string sqlCmd = $@"
 select  o.IsForecast
         , o.SewLine
         , o.CPU
@@ -421,6 +437,7 @@ select  o.IsForecast
         , o.StyleUkey
         , StdTMS = (select StdTMS 
                       from System WITH (NOLOCK))
+        , [StyleRepeat] = dbo.IsRepeatStyleBySewingOutput('{this.CurrentMaintain["FactoryID"]}', @outputDate, '{this.CurrentMaintain["SewingLineID"]}', '{this.CurrentMaintain["Team"]}', o.StyleUkey)
 from Orders o WITH (NOLOCK) 
 inner join Factory f on o.FactoryID = f.ID
 where   o.FtyGroup = @factoryid 
@@ -481,6 +498,7 @@ where   o.FtyGroup = @factoryid
                             dr["Color"] = string.Empty;
                             dr["QAOutput"] = string.Empty;
                             dr["TMS"] = 0;
+                            dr["StyleRepeat"] = ordersData.Rows[0]["StyleRepeat"];
                             this.GetRFT(dr);
 
                             #region 若此SP是套裝的話，就跳出視窗讓使用者選擇部位
@@ -511,39 +529,55 @@ where StyleUkey = {0}",
 
                             DataTable orderLocation;
                             result = DBProxy.Current.Select(null, sqlCmd, out orderLocation);
-                            if (!result || orderLocation.Rows.Count <= 0)
+                            if (!result)
                             {
-                                if (!result)
-                                {
-                                    MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
-                                }
-                                else
-                                {
-                                    MyUtility.Msg.WarningBox("No combo type data!!");
-                                }
+                                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
+                                return;
                             }
 
+                            if (orderLocation.Rows.Count <= 0)
                             {
-                                if (orderLocation.Rows.Count == 1)
+                                MyUtility.Msg.WarningBox("No combo type data!!");
+                                return;
+                            }
+
+                            if (orderLocation.Rows.Count == 1)
+                            {
+                                dr["ComboType"] = orderLocation.Rows[0]["Location"];
+                                dr["TMS"] = this.CalculateTMS(ordersData.Rows[0], 100);
+                            }
+                            else
+                            {
+                                SelectItem item = new SelectItem(orderLocation, "Location", "3", MyUtility.Convert.GetString(dr["ComboType"]), headercaptions: "*");
+                                DialogResult returnResult = item.ShowDialog();
+                                if (returnResult != DialogResult.Cancel)
                                 {
-                                    dr["ComboType"] = orderLocation.Rows[0]["Location"];
-                                    dr["TMS"] = this.CalculateTMS(ordersData.Rows[0], 100);
-                                }
-                                else
-                                {
-                                    SelectItem item = new SelectItem(orderLocation, "Location", "3", MyUtility.Convert.GetString(dr["ComboType"]), headercaptions: "*");
-                                    DialogResult returnResult = item.ShowDialog();
-                                    if (returnResult != DialogResult.Cancel)
-                                    {
-                                        IList<DataRow> location = item.GetSelecteds();
-                                        dr["ComboType"] = item.GetSelectedString();
-                                        dr["TMS"] = this.CalculateTMS(ordersData.Rows[0], MyUtility.Convert.GetDecimal(location[0]["Rate"]));
-                                    }
+                                    IList<DataRow> location = item.GetSelecteds();
+                                    dr["ComboType"] = item.GetSelectedString();
+                                    dr["TMS"] = this.CalculateTMS(ordersData.Rows[0], MyUtility.Convert.GetDecimal(location[0]["Rate"]));
                                 }
                             }
                             #endregion
+
+                            #region 檢查detail的SewingOutput Efficiency 是否都有維護(要馬全維護，要馬都不維護)
+                            if (!this.CheckDetailSewingOutputEfficiency())
+                            {
+                                dr["OrderID"] = string.Empty;
+                                e.Cancel = true;
+                                return;
+                            }
+                            #endregion
+
                             dr.EndEdit();
                             this.CreateSubDetailDatas(dr);
+                            KeyValuePair<string, DualResult> resultInlineCategory = this.GetInlineCategory(this.CurrentMaintain, this.DetailDatas.CopyToDataTable());
+                            if (!resultInlineCategory.Value)
+                            {
+                                this.ShowErr(resultInlineCategory.Value);
+                                return;
+                            }
+
+                            this.CurrentMaintain["SewingReasonIDForTypeIC"] = resultInlineCategory.Key;
                         }
                     }
                 }
@@ -856,7 +890,8 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(40), iseditingreadonly: false)
                 .Text("SewingReasonID", header: "Reason ID", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: this.SewingReasonID)
                 .Text("ReasonDescription", header: "Description", width: Widths.AnsiChars(40), iseditingreadonly: true)
-                .CheckBox("AutoCreate", header: "Auto Create", trueValue: 1, falseValue: 0, iseditable: false);
+                .CheckBox("AutoCreate", header: "Auto Create", trueValue: 1, falseValue: 0, iseditable: false)
+                .Text("StyleRepeat", header: "New Style / Repeat Style", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
             this.detailgrid.RowEnter += (s, e) =>
             {
@@ -1414,6 +1449,13 @@ order by a.OrderId,os.Seq",
             }
             #endregion
 
+            #region 檢查detail的SewingOutput Efficiency 是否都有維護(要馬全維護，要馬都不維護)
+            if (!this.CheckDetailSewingOutputEfficiency())
+            {
+                return false;
+            }
+            #endregion
+
             #region 檢查QA Ttl Output是否為0 和Reason ID 是否存在
 
             foreach (DataGridViewRow item in this.detailgrid.Rows)
@@ -1965,6 +2007,24 @@ Type B= Cancel order selected as Buyback, formula: this output qty = [Cancel Ord
             this.CurrentMaintain["DefectQty"] = gridDefectQty;
             this.CurrentMaintain["TMS"] = MyUtility.Math.Round(gridTms, 0);
             this.CurrentMaintain["Efficiency"] = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TMS"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["ManHour"]) == 0 ? 0 : MyUtility.Convert.GetDecimal(gridQaQty) / (3600 / MyUtility.Convert.GetDecimal(this.CurrentMaintain["TMS"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["ManHour"])) * 100;
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["SewingReasonIDForTypeIC"]))
+            {
+                KeyValuePair<string, DualResult> resultInlineCategory = this.GetInlineCategory(this.CurrentMaintain, this.DetailDatas.CopyToDataTable());
+                if (!resultInlineCategory.Value)
+                {
+                    return resultInlineCategory.Value;
+                }
+
+                this.CurrentMaintain["SewingReasonIDForTypeIC"] = resultInlineCategory.Key;
+            }
+
+            bool isCanSave = this.HintInputLowOutputReason();
+            if (!isCanSave)
+            {
+                return false;
+            }
+
             return base.ClickSaveBefore();
         }
 
@@ -2084,6 +2144,92 @@ select id,GarmentDefectCodeID,GarmentDefectTypeID,qty from #tmp";
             }
             #endregion
 
+            #region 如果detail有變更就要重算未來30天內的 Inline Category
+            bool isDetailChanged = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Any(s => s.RowState == DataRowState.Added || s.RowState == DataRowState.Deleted);
+
+            if (isDetailChanged)
+            {
+                string sqlGetReRunData = $@"
+--會影響的只有30天內的資料
+select  top 30  so.ID, so.SewingLineID, so.Team, so.FactoryID, so.OutputDate, so.SewingReasonIDForTypeIC
+into    #tmpMain
+from    SewingOutput so with (nolock)
+where   so.SewingLineID = '{this.CurrentMaintain["SewingLineID"]}' and
+        so.Team = '{this.CurrentMaintain["Team"]}' and
+        so.FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
+        so.OutputDate > @OutputDate
+order by so.OutputDate
+
+select  *
+from    #tmpMain
+order by OutputDate
+
+select  distinct tm.ID, o.StyleUkey, [OrderCategory] = o.Category
+from    #tmpMain tm
+inner join SewingOutput_Detail sod with (nolock) on sod.ID = tm.ID
+inner join Orders o with (nolock) on o.ID = sod.OrderID
+
+drop table #tmpMain
+
+";
+                DataTable[] dtReRuns;
+                List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@OutputDate", this.CurrentMaintain["OutputDate"]) };
+                result = DBProxy.Current.Select(null, sqlGetReRunData, listPar, out dtReRuns);
+
+                if (!result)
+                {
+                    return result;
+                }
+
+                DataTable dtMain = dtReRuns[0];
+                int countChangeOver = 0;
+                foreach (DataRow drMain in dtMain.Rows)
+                {
+                    DataTable dtDetail = dtReRuns[1].AsEnumerable().Where(s => s["ID"].ToString() == drMain["ID"].ToString()).TryCopyToDataTable(dtReRuns[1]);
+                    if (dtDetail.Rows.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    KeyValuePair<string, DualResult> inlineCategoryResult = this.GetInlineCategory(drMain, dtDetail);
+
+                    if (!inlineCategoryResult.Value)
+                    {
+                        return inlineCategoryResult.Value;
+                    }
+
+                    if (inlineCategoryResult.Key == "00001")
+                    {
+                        countChangeOver++;
+                    }
+                    else
+                    {
+                        countChangeOver = 0;
+                    }
+
+                    if (drMain["SewingReasonIDForTypeIC"].ToString() == inlineCategoryResult.Key)
+                    {
+                        continue;
+                    }
+
+                    string updateSewingOutput = $@"
+update  SewingOutput set SewingReasonIDForTypeIC = '{inlineCategoryResult.Key}' where ID = '{drMain["ID"]}'
+";
+                    result = DBProxy.Current.Execute(null, updateSewingOutput);
+                    if (!result)
+                    {
+                        return result;
+                    }
+
+                    // 如果連續4天都是ChangeOver，表示後面的天數沒有被這次調整影響，所以就不用重算
+                    if (countChangeOver == 4)
+                    {
+                        break;
+                    }
+                }
+
+            }
+            #endregion
             return base.ClickSavePost();
         }
 
@@ -4113,6 +4259,7 @@ select t.OrderId
 ,ukey = 0
 ,RFT = CONVERT(VARCHAR, convert(Decimal(5, 2), round((t.InlineQty - t.DefectQty) /  cast(t.InlineQty as decimal) * 100.0, 2))) + '%'
 ,ID = '{this.CurrentMaintain["ID"]}'
+, [StyleRepeat] = dbo.IsRepeatStyleBySewingOutput('{this.CurrentMaintain["FactoryID"]}', @outputDate, '{this.CurrentMaintain["SewingLineID"]}', '{this.CurrentMaintain["Team"]}', o.StyleUkey)
 from #tmp t
 left join orders o  with(nolock) on o.id = t.OrderId
 outer apply(
@@ -4641,7 +4788,307 @@ end
                     this.GetRFT(dr);
                 }
             }
+
             this.RenewData();
+        }
+
+        private KeyValuePair<string, DualResult> GetInlineCategory(DataRow drMain, DataTable dtDetail)
+        {
+            if (dtDetail == null || dtDetail.Rows.Count == 0)
+            {
+                return new KeyValuePair<string, DualResult>(string.Empty, new DualResult(false, "Get InlineCategory no Detail data"));
+            }
+
+            foreach (DataRow drDetail in dtDetail.Rows)
+            {
+                if (!MyUtility.Check.Empty(drDetail["StyleUkey"]))
+                {
+                    continue;
+                }
+
+                DataRow drOrder;
+                bool isExists = MyUtility.Check.Seek($"select StyleUkey, [OrderCategory] = Category from Orders where ID = '{drDetail["OrderID"]}'", out drOrder);
+
+                if (isExists)
+                {
+                    drDetail["StyleUkey"] = drOrder["StyleUkey"];
+                    drDetail["OrderCategory"] = drOrder["OrderCategory"];
+                }
+            }
+
+            // 優先度1 sample單
+            bool hasSample = dtDetail.AsEnumerable().Any(s => s.RowState != DataRowState.Deleted && s["OrderCategory"].ToString() == "S");
+            if (hasSample)
+            {
+                return new KeyValuePair<string, DualResult>("00005", new DualResult(true));
+            }
+
+            int maxContinusDays = 0;
+            foreach (long styleUkey in dtDetail.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).Select(s => MyUtility.Convert.GetLong(s["StyleUkey"])))
+            {
+                KeyValuePair<int, DualResult> resultContinusDays = this.IsSimilarStyle(
+                drMain["SewingLineID"].ToString(),
+                drMain["Team"].ToString(),
+                drMain["FactoryID"].ToString(),
+                MyUtility.Convert.GetDate(drMain["OutputDate"]),
+                styleUkey);
+
+                if (!resultContinusDays.Value)
+                {
+                    return new KeyValuePair<string, DualResult>(string.Empty, resultContinusDays.Value);
+                }
+
+                maxContinusDays = resultContinusDays.Key > maxContinusDays ? resultContinusDays.Key : maxContinusDays;
+            }
+
+            if (maxContinusDays > 29)
+            {
+                return new KeyValuePair<string, DualResult>("00004", new DualResult(true));
+            }
+            else if (maxContinusDays > 14)
+            {
+                return new KeyValuePair<string, DualResult>("00003", new DualResult(true));
+            }
+            else if (maxContinusDays > 3)
+            {
+                return new KeyValuePair<string, DualResult>("00002", new DualResult(true));
+            }
+            else
+            {
+                return new KeyValuePair<string, DualResult>("00001", new DualResult(true));
+            }
+        }
+
+        private KeyValuePair<int, DualResult> IsSimilarStyle(string line, string team, string factoryID, DateTime? sewingDate, long styleUkey)
+        {
+            if (MyUtility.Check.Empty(styleUkey))
+            {
+                return new KeyValuePair<int, DualResult>(0, new DualResult(false, "No pass in Style"));
+            }
+
+            string sqlCheck = $@"
+--取得比對來源style資訊
+select  ID, BrandID
+into    #tmpStyle
+from Style with (nolock)
+where   Ukey = '{styleUkey}'
+
+select  top 30 so.ID, so.OutputDate
+into #tmpSewingOutputDay
+from SewingOutput so with (nolock)
+where   so.SewingLineID = @SewingLineID and
+        so.FactoryID = @FactoryID and
+        so.Team = @Team and
+        so.OutputDate < @SewingDate
+order by    so.OutputDate desc
+
+select  distinct
+        so.OutputDate,
+        o.StyleID,
+        o.BrandID
+into    #tmpSewingOutputStyle
+from    #tmpSewingOutputDay so
+inner join  SewingOutput_Detail sod with (nolock) on sod.ID = so.ID
+inner join  Orders o  with (nolock) on o.ID = sod.OrderID
+
+--取得30天前生產的Style與SimlarStyle
+select * into #tmpSewingSimlarStyle
+from (
+        select  OutputDate, StyleID, BrandID from #tmpSewingOutputStyle
+        union
+        select  tso.OutputDate, [StyleID] = ss.ChildrenStyleID, [BrandID] = ss.ChildrenBrandID
+        from #tmpSewingOutputStyle tso
+        inner join Style_SimilarStyle ss with (nolock) on   ss.MasterBrandID = tso.BrandID and
+                                                            ss.MasterStyleID = tso.StyleID
+    ) a
+
+declare @interruptDate date
+
+--取得30天內沒生產的日期
+select  @interruptDate = max(OutputDate)
+from    #tmpSewingOutputDay
+where   OutputDate not in (
+            select  distinct OutputDate
+            from #tmpSewingSimlarStyle tss
+            where exists(select 1 from #tmpStyle s where s.ID = tss.StyleID and s.BrandID = tss.BrandID))
+
+--抓取區間內連續生產
+if  @interruptDate is null and
+    exists(  select  1
+            from #tmpSewingSimlarStyle tss
+            where exists(select 1 from #tmpStyle s where s.ID = tss.StyleID and s.BrandID = tss.BrandID))
+begin
+    select  [ContinusDays] = count(1) + 1
+    from #tmpSewingOutputDay
+end
+--抓取區間內無生產
+else if @interruptDate is null
+begin
+    select  [ContinusDays] = 1
+end
+else
+begin
+    select  [ContinusDays] = count(1) + 1
+    from #tmpSewingOutputDay
+    where   OutputDate  >   @interruptDate
+end
+
+drop table #tmpStyle, #tmpSewingOutputDay, #tmpSewingOutputStyle, #tmpSewingSimlarStyle
+";
+
+            DataTable dtResult;
+            List<SqlParameter> listPar = new List<SqlParameter>()
+            {
+                new SqlParameter("@SewingLineID", line),
+                new SqlParameter("@FactoryID", factoryID),
+                new SqlParameter("@SewingDate", sewingDate),
+                new SqlParameter("@Team", team),
+            };
+            DualResult result = DBProxy.Current.Select(null, sqlCheck, listPar, out dtResult);
+
+            if (!result)
+            {
+                return new KeyValuePair<int, DualResult>(0, result);
+            }
+
+            return new KeyValuePair<int, DualResult>(MyUtility.Convert.GetInt(dtResult.Rows[0]["ContinusDays"]), new DualResult(true));
+        }
+
+        private bool CheckDetailSewingOutputEfficiency()
+        {
+            if (this.DetailDatas.Count == 0)
+            {
+                return true;
+            }
+
+            string whereOrderID = this.DetailDatas.Select(s => $"'{s["OrderID"]}'").JoinToString(",");
+
+            string sqlCheck = $@"
+select
+[SP#] = o.ID ,
+[Style]= o.StyleID,
+[Brand]= o.BrandID,
+[Season]= o.SeasonID,
+[Set Efficiency By Style]= iif(se.ukey is null,'','Efficiency has been manually set')
+from orders o
+left join SewingOutputEfficiency se on o.StyleUkey = se.StyleUkey and se.FactoryID = '{this.CurrentMaintain["FactoryID"]}' and se.junk=0
+where o.ID in ({whereOrderID})
+";
+
+            DataTable dtResult;
+            DualResult result = DBProxy.Current.Select(null, sqlCheck, out dtResult);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            // 同時有維護與未維護SewingOutputEfficiency時報錯
+            if (dtResult.AsEnumerable().Any(s => MyUtility.Check.Empty(s["Set Efficiency By Style"])) &&
+                dtResult.AsEnumerable().Any(s => !MyUtility.Check.Empty(s["Set Efficiency By Style"])))
+            {
+                MyUtility.Msg.ShowMsgGrid(dtResult, "The following Styles must all be set to Efficiency in [Sewing_B05. CMP Efficiency Setting By Factory], or none of them must be set.", "SewingOutput Efficiency");
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 檢查表頭Eff%是否有達到目標設定效率，所沒有須提醒user維護Low Output Reason，但不強制
+        /// </summary>
+        /// <returns>bool</returns>
+        private bool HintInputLowOutputReason()
+        {
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["SewingReasonIDForTypeLO"]))
+            {
+                return true;
+            }
+
+            if (this.DetailDatas.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Detail no data exists");
+                return new DualResult(false);
+            }
+
+            string whereOrderID = this.DetailDatas.Select(s => $"'{s["OrderID"]}'").JoinToString(",");
+
+            string sqlCheck = $@"
+select  distinct
+se.StyleUkey,
+se.Efficiency
+from orders o
+inner join SewingOutputEfficiency se on o.StyleUkey = se.StyleUkey and se.FactoryID = '{this.CurrentMaintain["FactoryID"]}' and se.junk=0
+where o.ID in ({whereOrderID})
+";
+
+            DataTable dtResult;
+            DualResult result = DBProxy.Current.Select(null, sqlCheck, out dtResult);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return result;
+            }
+
+            if (dtResult.Rows.Count == 0)
+            {
+                List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@outputDate", this.CurrentMaintain["OutputDate"]) };
+                string sqlGetSewingLineScheduleEfficiency = $@"
+select Production.dbo.GetSewingLineScheduleData_Efficiency(@outputDate,'{this.CurrentMaintain["SewingLineID"]}','{this.CurrentMaintain["FactoryID"]}')
+";
+                decimal sewingLineScheduleEfficiency = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlGetSewingLineScheduleEfficiency, listPar));
+                if (sewingLineScheduleEfficiency > MyUtility.Convert.GetDecimal(this.CurrentMaintain["Efficiency"]))
+                {
+                    DialogResult dialogResult = MyUtility.Msg.QuestionBox("The CMP efficiency is too low, do you want to fill in [Low Output Reason]?");
+                    return dialogResult == DialogResult.Yes ? false : true;
+                }
+
+                return true;
+            }
+
+            var detailEffRatio = this.DetailDatas
+                .GroupBy(s =>
+                {
+                    long styleUkey = MyUtility.Convert.GetLong(s["StyleUkey"]);
+
+                    if (MyUtility.Check.Empty(styleUkey))
+                    {
+                        DataRow drOrder;
+                        bool isExists = MyUtility.Check.Seek($"select StyleUkey, [OrderCategory] = Category from Orders where ID = '{s["OrderID"]}'", out drOrder);
+
+                        if (isExists)
+                        {
+                            styleUkey = MyUtility.Convert.GetLong(drOrder["StyleUkey"]);
+                        }
+                    }
+
+                    return new { StyleUkey = styleUkey, TMS = MyUtility.Convert.GetInt(s["TMS"]) };
+                })
+                .Select(groupItem =>
+                    new
+                    {
+                        groupItem.Key.StyleUkey,
+                        ratioValue = MyUtility.Convert.GetDecimal(groupItem.Sum(s => MyUtility.Convert.GetInt(s["QAQty"])) / (3600.0 / groupItem.Key.TMS)),
+                    }
+                ).ToList();
+
+            decimal totalRatioValue = MyUtility.Convert.GetDecimal(detailEffRatio.Sum(s => s.ratioValue));
+            decimal tarEfficiency = detailEffRatio.Sum(s =>
+            {
+                decimal tarSewingOutputEfficiency = dtResult.AsEnumerable()
+                        .Where(tarItem => MyUtility.Convert.GetDecimal(tarItem["StyleUkey"]) == s.StyleUkey)
+                        .Select(tarItem => MyUtility.Convert.GetDecimal(tarItem["Efficiency"]))
+                        .First();
+                return tarSewingOutputEfficiency * (s.ratioValue / totalRatioValue);
+            });
+
+            if (tarEfficiency > MyUtility.Convert.GetDecimal(this.CurrentMaintain["Efficiency"]))
+            {
+                DialogResult dialogResult = MyUtility.Msg.QuestionBox("The CMP efficiency is too low, do you want to fill in [Low Output Reason]?");
+                return dialogResult == DialogResult.Yes ? false : true;
+            }
+
+            return true;
         }
     }
 }

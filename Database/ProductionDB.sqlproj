@@ -2728,6 +2728,7 @@
     <Build Include="dbo\Functions\GetIsHighRisk.sql" />
     <Build Include="dbo\Functions\IsQRCodeCreatedByPMS.sql" />
     <Build Include="dbo\Functions\GETRelaxationStatus.sql" />
+    <Build Include="dbo\Functions\IsRepeatStyleBySewingOutput.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
