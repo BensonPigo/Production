@@ -121,8 +121,7 @@ namespace Sci.Production.Subcon
                 // 建立可以符合回傳的Cursor - Carton
                 if (this.dr_localPO["category"].ToString().TrimEnd().ToUpper() == "CARTON")
                 {
-                    strSQLCmd = string.Format(
-                        @"
+                    strSQLCmd = $@"
 select distinct iif(sum(b.CTNQty) -isnull(lp.qty,0)<=0,0,1) as Selected
        , c.POID 
        , b.OrderID 
@@ -130,8 +129,9 @@ select distinct iif(sum(b.CTNQty) -isnull(lp.qty,0)<=0,0,1) as Selected
        , c.SciDelivery
        , c.SeasonID 
        , b.RefNo 
-       , dbo.getitemdesc('{2}',b.refno) as description 
+       , dbo.getitemdesc('{this.dr_localPO["category"]}',b.refno) as description 
        , '' as threadcolorid
+       ,[PackingQty] = sum(b.CTNQty)
        , qty = iif(sum(b.CTNQty) -isnull(lp.qty,0)<0,0,sum(b.CTNQty) -isnull(lp.qty,0))
        , d.UnitID
        , d.Price
@@ -151,7 +151,7 @@ inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID
 inner join Brand br WITH (NOLOCK) on c.BrandID = br.ID
 inner join LocalItem d WITH (NOLOCK) on b.RefNo = d.RefNo
 inner join factory WITH (NOLOCK) on c.FactoryID = factory.id
-left join Order_TmsCost ot WITH (NOLOCK) on ot.id = c.ID and ot.ArtworkTypeID = '{2}'
+left join Order_TmsCost ot WITH (NOLOCK) on ot.id = c.ID and ot.ArtworkTypeID = '{this.dr_localPO["category"]}'
 outer apply(
 	select qty   = sum(qty)                    
 	from LocalPo_Detail lpd WITH (NOLOCK) 
@@ -159,17 +159,14 @@ outer apply(
 )lp
 where a.ApvToPurchase = 1 
       and a.LocalPOID = ''
-      and d.localsuppid = '{3}'
-      --and a.factoryid = '{0}'    
-      and a.mdivisionid ='{1}'
+      and d.localsuppid = '{this.dr_localPO["localsuppid"]}'
+      --and a.factoryid = '{Env.User.Factory}'    
+      and a.mdivisionid ='{Env.User.Keyword}'
       and c.Category  in ('B','S')
       and c.Junk = 0
       and factory.IsProduceFty = 1
       and c.PulloutComplete = 0
-", Env.User.Factory,
-                        Env.User.Keyword,
-                        this.dr_localPO["category"],
-                        this.dr_localPO["localsuppid"]);
+";
 
                     if (!MyUtility.Check.Empty(sp_b))
                     {
@@ -267,8 +264,7 @@ group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTN
                         wf = $" and c.FactoryID = '{factory}'";
                     }
 
-                    strSQLCmd = string.Format(
-                        @"
+                    strSQLCmd = $@"
 select distinct 1 as Selected
        , c.POID 
        , a.OrderID 
@@ -276,8 +272,9 @@ select distinct 1 as Selected
        , c.SciDelivery
        , a.SeasonID 
        , b.RefNo 
-       , dbo.getitemdesc('{2}',b.refno) as description 
+       , dbo.getitemdesc('{this.dr_localPO["category"]}',b.refno) as description 
        , b.threadcolorid
+       ,[PackingQty] = 0
        , b.PurchaseQty as qty
        , d.UnitID
        , [Price] = iif(tc.price is null , iif(tc2.price is null , d.Price,tc2.price) ,tc.price)
@@ -304,19 +301,19 @@ left join LocalItem_ThreadBuyerColorGroupPrice tc with (nolock)
 left join LocalItem_ThreadBuyerColorGroupPrice tc2 with (nolock) 
     on tc2.refno=b.Refno and tc2.ThreadColorGroupID=t.ThreadColorGroupID and tc2.BuyerID = ''
 --inner join LocalPO_Detail e WITH (NOLOCK) on c.id=e.OrderId
-left join Order_TmsCost ot WITH (NOLOCK) on ot.id = c.ID and ot.ArtworkTypeID = '{2}'
+left join Order_TmsCost ot WITH (NOLOCK) on ot.id = c.ID and ot.ArtworkTypeID = '{this.dr_localPO["category"]}'
 
 where a.status = 'Approved' 
       and factory.IsProduceFty = 1
-      --and a.factoryid = '{0}'
-      and d.localsuppid= '{3}'
-      and a.Mdivisionid = '{1}'
+      --and a.factoryid = '{Env.User.Factory}'
+      and d.localsuppid= '{this.dr_localPO["localsuppid"]}'
+      and a.Mdivisionid = '{Env.User.Keyword}'
       and c.Category  in ('B','S')
       and exists (select id from orders where poid=b.OrderID and junk=0)
       and b.PurchaseQty > 0 
       and c.PulloutComplete = 0
       and b.PoId = ''
-      {5}
+      {wf}
       and not exists (select orderID 
       				  from LocalPo_Detail 
       				  where RequestID = a.OrderID
@@ -324,12 +321,7 @@ where a.status = 'Approved'
       				  		and OrderID = a.OrderID 
       				  		and Refno = b.RefNo 
       				  		and ThreadColorID = b.threadcolorid
-                            and ID !='{4}')", Env.User.Factory,
-                        Env.User.Keyword,
-                        this.dr_localPO["category"],
-                        this.dr_localPO["localsuppid"],
-                        this.dr_localPO["ID"],
-                        wf);
+                            and ID !='{this.dr_localPO["ID"]}')";
 
                     if (!MyUtility.Check.Empty(sp_b))
                     {
@@ -547,6 +539,41 @@ where Qty - ShipQty - DiffQty = 0";
                 }
             };
 
+            qty.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode || e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                decimal currentQty = MyUtility.Convert.GetDecimal(e.FormattedValue);
+                if (MyUtility.Check.Empty(currentQty))
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
+                decimal packingQty = MyUtility.Convert.GetDecimal(dr["PackingQty"]);
+                decimal POQty = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($@"
+select qty = sum(qty)                    
+	from LocalPo_Detail lpd WITH (NOLOCK) 
+    inner join LocalPo lp WITH (NOLOCK)  on lpd.id = lp.id
+    where lpd.OrderId = '{dr["OrderID"]}'
+    and lpd.Refno = '{dr["RefNo"]}'
+    and lpd.RequestID = '{dr["requestid"]}'
+    and lp.Status = 'Approved'
+"));
+                if (packingQty - POQty - currentQty < 0)
+                {
+                    MyUtility.Msg.WarningBox($"[PO Qty] cannot more than {packingQty - POQty}");
+                    e.Cancel = true;
+                    return;
+                }
+
+                dr["qty"] = currentQty;
+                dr.EndEdit();
+            };
+
             this.gridImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.gridImport.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridImport)
@@ -558,7 +585,8 @@ where Qty - ShipQty - DiffQty = 0";
             .Text("refno", header: "Refno", iseditingreadonly: true) // 4
             .Text("description", header: "Description", iseditingreadonly: true) // 5
             .Text("threadcolorid", header: "Color Shade", iseditingreadonly: true) // 6
-            .Numeric("qty", header: "Qty", iseditingreadonly: true, settings: qty) // 7
+            .Numeric("PackingQty", header: "Packing ID Qty", iseditingreadonly: true, settings: qty) // 7
+            .Numeric("qty", header: "PO Qty", iseditingreadonly: false, settings: qty) // 7
             .Text("Unitid", header: "Unit", iseditingreadonly: true) // 8
             .Numeric("Price", header: "Price", iseditable: true, decimal_places: 4, integer_places: 4) // 9
             .Numeric("amount", header: "Amount", iseditable: true, decimal_places: 4, integer_places: 4) // 10
@@ -567,10 +595,11 @@ where Qty - ShipQty - DiffQty = 0";
             .Text("requestid", header: "Request ID", iseditingreadonly: true) // 13
             .Text("BuyerID", header: "Buyer", iseditingreadonly: true) // 14
             ;
+            this.gridImport.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             Color backDefaultColor = this.gridImport.DefaultCellStyle.BackColor;
             this.gridImport.RowPrePaint += (s, e) =>
             {
-                if (e.RowIndex < 0)
+                if (e.RowIndex < 0 )
                 {
                     return;
                 }
@@ -582,13 +611,6 @@ where Qty - ShipQty - DiffQty = 0";
                     if (this.gridImport.Rows[e.RowIndex].DefaultCellStyle.BackColor != Color.FromArgb(217, 217, 217))
                     {
                         this.gridImport.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(217, 217, 217);
-                    }
-                }
-                else
-                {
-                    if (this.gridImport.Rows[e.RowIndex].DefaultCellStyle.BackColor != backDefaultColor)
-                    {
-                        this.gridImport.Rows[e.RowIndex].DefaultCellStyle.BackColor = backDefaultColor;
                     }
                 }
                 #endregion

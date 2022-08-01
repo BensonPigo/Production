@@ -389,6 +389,9 @@ select distinct t.FactoryID
 	,os.os
     ,x.ap_qty	
 	,[CartonQty] = x.CartonQty
+    ,[PulloutComplete] = iif( isnull(PulloutComplete.cnt,0) > 0,'N','Y')
+	,[PackingID] = isnull(s.RequestIDList,'')
+	,[POQTY] = POQTY.ttlQty
     ,x.ap_amt
     ,[ap_price]=IIF(totalSamePoidQty.value IS NULL OR totalSamePoidQty.value=0, NULL, round(x.ap_amt / totalSamePoidQty.value,3))
     ,[std_price]=IIF(y.order_qty  IS NULL OR y.order_qty=0  , NULL, round(y.order_amt/y.order_qty,3) )    
@@ -410,6 +413,30 @@ outer apply(
     LEFT JOIN DropDownList  d ON d.type = 'Pms_PoIr_Responsible' AND d.ID=sr.Responsible
 	WHERE al.POId = aa.poid  AND al.Category=t.artworktypeid
 )IrregularPrice 
+outer apply(
+	select  cnt = count(1)
+	from orders with(nolock)
+	where Orders.POID = t.POID
+	and Orders.PulloutComplete = 0
+)PulloutComplete
+outer apply(
+	select RequestIDList = Stuff((
+		select concat(',',RequestID)
+		from (
+				select distinct RequestID
+				from LocalPO_Detail t1
+				inner join Orders t2 on t1.OrderId = t2.ID
+				where t2.POID = t.POID
+				and t1.RequestID !=''
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) s
+outer apply(
+	select ttlQty = sum(t1.Qty) 
+	from LocalPO_Detail t1
+	where t1.POID = t.POID
+)POQTY
 where 1=1 
 {sqlCmd_Where}
 
@@ -473,6 +500,9 @@ select distinct t.FactoryID
 	,os.os
     ,x.ap_qty	
 	,[CartonQty] = x.CartonQty
+    ,[PulloutComplete] = IIF(isnull(aa.PulloutComplete,0) = 0, 'N','Y')
+	,[PackingID] = isnull(s.RequestIDList,'')
+	,[POQTY] = POQTY.ttlQty
     ,x.ap_amt
     ,[ap_price]=IIF(totalSamePoidQty.value IS NULL OR totalSamePoidQty.value=0, NULL, round(x.ap_amt / totalSamePoidQty.value,3))
     ,[std_price]=IIF(y.order_qty  IS NULL OR y.order_qty=0  , NULL, round(y.order_amt/y.order_qty,3) )    
@@ -494,6 +524,23 @@ outer apply(
     LEFT JOIN DropDownList  d ON d.type = 'Pms_PoIr_Responsible' AND d.ID=sr.Responsible
 	WHERE al.POId = aa.ID  AND al.Category=t.artworktypeid
 )IrregularPrice 
+outer apply(
+	select RequestIDList = Stuff((
+		select concat(',',RequestID)
+		from (
+				select distinct RequestID
+				from LocalPO_Detail t1				
+				where t1.OrderId = t.ID
+				and t1.RequestID !=''
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) s
+outer apply(
+	select ttlQty = sum(t1.Qty) 
+	from LocalPO_Detail t1
+	where t1.OrderId = t.ID
+)POQTY
 where 1=1 
 {sqlCmd_Where}
 
