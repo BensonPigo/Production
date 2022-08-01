@@ -708,7 +708,7 @@ where s.ID = '{this.CurrentMaintain["StyleID"]}'
 Delete From GarmentTest_Detail WITH (NOLOCK) Where id =@id and no=@no
 
 DELETE a
-from ExtendServer.PMSFile.dbo.GarmentTest_Detail a
+from SciPMSFile_GarmentTest_Detail a
 WHERE NOT EXISTS(
     select 1 from GarmentTest_Detail b
     where a.ID = b.ID AND a.No=b.No
@@ -1042,18 +1042,18 @@ INSERT INTO GarmentTest_Detail_FGPT
 SET XACT_ABORT ON
 
 DELETE a
-from ExtendServer.PMSFile.dbo.GarmentTest_Detail a
+from SciPMSFile_GarmentTest_Detail a
 WHERE NOT EXISTS(
     select 1 from GarmentTest_Detail b
     where a.ID = b.ID AND a.No=b.No
     
 )
 
-INSERT INTO ExtendServer.PMSFile.dbo.GarmentTest_Detail
+INSERT INTO SciPMSFile_GarmentTest_Detail
            (ID,No)
 select ID,No
 from GarmentTest_Detail t WITH(NOLOCK)
-where not exists (select 1 from ExtendServer.PMSFile.dbo.GarmentTest_Detail s WITH(NOLOCK) where s.ID = t.ID AND s.No = t.No )
+where not exists (select 1 from SciPMSFile_GarmentTest_Detail s WITH(NOLOCK) where s.ID = t.ID AND s.No = t.No )
 ";
 
             DualResult r = DBProxy.Current.Execute(null, sqlcmd);

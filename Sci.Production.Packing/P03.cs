@@ -1378,7 +1378,7 @@ SET XACT_ABORT ON
     DELETE pi
     FROM ShippingMarkPic pic
     INNER JOIN ShippingMarkPic_Detail picd ON pic.Ukey = picd.ShippingMarkPicUkey
-    INNER JOIN {(sameInstance ? string.Empty : "[ExtendServer].")}PMSFile.dbo.ShippingMarkPic_Detail pi ON  pi.ShippingMarkPicUkey = picd.ShippingMarkPicUkey 
+    INNER JOIN SciPMSFile_ShippingMarkPic_Detail pi ON  pi.ShippingMarkPicUkey = picd.ShippingMarkPicUkey 
                                                                 AND pi.SCICtnNo = picd.SCICtnNo
                                                                 AND pi.ShippingMarkTypeUkey = picd.ShippingMarkTypeUkey
     WHERE pic.PackingListID='{this.CurrentMaintain["ID"]}'

@@ -98,7 +98,7 @@ SELECT pd.OrderID
     ,pd.SortCTNStartNo
 FROm ShippingMarkPic a
 INNER JOIN ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey
-LEFT JOIN [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail PmsFile on  b.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
+LEFT JOIN SciPMSFile_ShippingMarkPic_Detail PmsFile on  b.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
                                         AND b.SCICtnNo=PmsFile.SCICtnNo 
                                         AND b.ShippingMarkTypeUkey=PmsFile.ShippingMarkTypeUkey 
 INNER JOIN PackingListDetail pd ON pd.ID = a.PackingListID AND b.SCICtnNo = pd.SCICtnNo
@@ -448,7 +448,7 @@ SET FileName = @FileName{idx}
 WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
 
 
-UPDATE [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
+UPDATE SciPMSFile_ShippingMarkPic_Detail
 SET Image = @Image{idx}
 WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
 ";
@@ -465,7 +465,7 @@ UPDATE ShippingMarkPic_Detail
 SET FileName = ''
 WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
 
-UPDATE [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
+UPDATE SciPMSFile_ShippingMarkPic_Detail
 SET Image = NULL 
 WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTypeUkey}'
 ";
@@ -516,12 +516,12 @@ WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkTypeUkey='{body.ShippingMarkTyp
             string sqlcmd = $@"
 SET XACT_ABORT ON
 
-INSERT INTO ExtendServer.PMSFile.dbo.ShippingMarkPic_Detail
+INSERT INTO SciPMSFile_ShippingMarkPic_Detail
            (ShippingMarkPicUkey,SCICtnNo,ShippingMarkTypeUkey)
 
 select ShippingMarkPicUkey,SCICtnNo,ShippingMarkTypeUkey
 from ShippingMarkPic_Detail t WITH(NOLOCK)
-where not exists (select 1 from ExtendServer.PMSFile.dbo.ShippingMarkPic_Detail s WITH(NOLOCK) where s.ShippingMarkPicUkey = t.ShippingMarkPicUkey AND s.SCICtnNo = t.SCICtnNo AND s.ShippingMarkTypeUkey = t.ShippingMarkTypeUkey )
+where not exists (select 1 from SciPMSFile_ShippingMarkPic_Detail s WITH(NOLOCK) where s.ShippingMarkPicUkey = t.ShippingMarkPicUkey AND s.SCICtnNo = t.SCICtnNo AND s.ShippingMarkTypeUkey = t.ShippingMarkTypeUkey )
 ";
 
             r = DBProxy.Current.Execute(null, sqlcmd);
@@ -555,7 +555,7 @@ delete ShippingMarkPic where ukey = {this.CurrentMaintain["Ukey"]}
 delete ShippingMarkPic_Detail where ShippingMarkPicUkey = {this.CurrentMaintain["Ukey"]}
 
 DELETE a
-from ExtendServer.PMSFile.dbo.ShippingMarkPic_Detail a
+from SciPMSFile_ShippingMarkPic_Detail a
 WHERE NOT EXISTS(
     select 1 from ShippingMarkPic_Detail b
     where a.ShippingMarkPicUkey = b.ShippingMarkPicUkey AND a.SCICtnNo=b.SCICtnNo AND a.ShippingMarkTypeUkey=b.ShippingMarkTypeUkey
@@ -945,7 +945,7 @@ UPDATE PmsFile
 SET PmsFile.Image = @Image{idx} 
 FROM ShippingMarkPic a
 INNER JOIN ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey
-INNER JOIN [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail PmsFile on  b.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
+INNER JOIN SciPMSFile_ShippingMarkPic_Detail PmsFile on  b.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
                                                                     AND b.SCICtnNo=PmsFile.SCICtnNo 
                                                                     AND b.ShippingMarkTypeUkey=PmsFile.ShippingMarkTypeUkey 
 WHERE a.PackingListID='{item.PackingListID}'
@@ -970,7 +970,7 @@ UPDATE PmsFile
 SET PmsFile.Image = NULL
 FROM ShippingMarkPic a
 INNER JOIN ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey
-INNER JOIN [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail PmsFile on  b.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
+INNER JOIN SciPMSFile_ShippingMarkPic_Detail PmsFile on  b.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
                                                                     AND b.SCICtnNo=PmsFile.SCICtnNo 
                                                                     AND b.ShippingMarkTypeUkey=PmsFile.ShippingMarkTypeUkey 
 WHERE a.PackingListID='{item.PackingListID}'

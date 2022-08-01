@@ -1123,9 +1123,9 @@ when matched then
                 {
                     string firInsertIDs = firinsertlist.Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().JoinToString(",");
                     cmd += $@"
-INSERT INTO ExtendServer.PMSFile.dbo.FIR_Laboratory (ID)
+INSERT INTO SciPMSFile_FIR_Laboratory (ID)
 select ID from FIR_Laboratory t WITH(NOLOCK) where id in ({firInsertIDs})
-and not exists (select 1 from ExtendServer.PMSFile.dbo.FIR_Laboratory s (NOLOCK) where s.ID = t.ID )
+and not exists (select 1 from SciPMSFile_FIR_Laboratory s (NOLOCK) where s.ID = t.ID )
 ";
                 }
 
@@ -1134,7 +1134,7 @@ and not exists (select 1 from ExtendServer.PMSFile.dbo.FIR_Laboratory s (NOLOCK)
                 {
                     string firDeleteIDs = firDeletelist.Select(s => MyUtility.Convert.GetString(s["deID"])).Distinct().JoinToString(",");
                     cmd += $@"
-Delete ExtendServer.PMSFile.dbo.FIR_Laboratory where id in ({firDeleteIDs})
+Delete SciPMSFile_FIR_Laboratory where id in ({firDeleteIDs})
 and ID NOT IN(select ID from FIR_Laboratory)";
                 }
 
@@ -1143,9 +1143,9 @@ and ID NOT IN(select ID from FIR_Laboratory)";
                 {
                     string airInsertIDs = airinsertlist.Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().JoinToString(",");
                     cmd += $@"
-INSERT INTO ExtendServer.PMSFile.dbo.AIR_Laboratory (ID,POID,SEQ1,SEQ2)
+INSERT INTO SciPMSFile_AIR_Laboratory (ID,POID,SEQ1,SEQ2)
 select  ID,POID,SEQ1,SEQ2 from AIR_Laboratory t WITH(NOLOCK) where id in ({airInsertIDs})
-and not exists (select 1 from ExtendServer.PMSFile.dbo.AIR_Laboratory s WITH(NOLOCK) where s.ID = t.ID AND s.POID = t.POID AND s.SEQ1 = t.SEQ1 AND s.SEQ2 = t.SEQ2 )
+and not exists (select 1 from SciPMSFile_AIR_Laboratory s WITH(NOLOCK) where s.ID = t.ID AND s.POID = t.POID AND s.SEQ1 = t.SEQ1 AND s.SEQ2 = t.SEQ2 )
 ";
                 }
 
@@ -1155,7 +1155,7 @@ and not exists (select 1 from ExtendServer.PMSFile.dbo.AIR_Laboratory s WITH(NOL
                     string airDeleteIDs = airDeletelist.Select(s => MyUtility.Convert.GetString(s["deID"])).Distinct().JoinToString(",");
                     cmd += $@"
 Delete a 
-from ExtendServer.PMSFile.dbo.AIR_Laboratory a
+from SciPMSFile_AIR_Laboratory a
 where id in ({airDeleteIDs})
 and NOT EXISTS(select 1 from AIR_Laboratory b    where a.ID = b.ID AND a.POID=b.POID AND a.Seq1=b.Seq1 AND a.Seq2=b.Seq2)
 ";

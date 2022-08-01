@@ -308,7 +308,7 @@ delete from Oven_Detail where id=@id ;
 delete from Oven where id=@id;
 
 DELETE t
-from ExtendServer.PMSFile.dbo.Oven t
+from SciPMSFile_Oven t
 where not exists (select 1 from Oven s WITH(NOLOCK) where s.ID = t.ID  )
 
 delete
@@ -341,6 +341,7 @@ where id not IN (
             if (dr == null)
             {
                 // oven 空的
+                this.add.Enabled = !this.EditMode;
                 this.edit.Enabled = false;
                 this.delete.Enabled = false;
                 return;
@@ -453,14 +454,14 @@ where id not IN (
             string sqlcmd = $@"
 SET XACT_ABORT ON
 
-INSERT INTO ExtendServer.PMSFile.dbo.Oven
+INSERT INTO SciPMSFile_Oven
            (ID,POID,TestNo)
 select ID,POID,TestNo
 from Oven t WITH(NOLOCK)
-where not exists (select 1 from ExtendServer.PMSFile.dbo.Oven s WITH(NOLOCK) where s.POID = t.POID AND s.TestNo = t.TestNo )
+where not exists (select 1 from SciPMSFile_Oven s WITH(NOLOCK) where s.POID = t.POID AND s.TestNo = t.TestNo )
 
 delete
-from ExtendServer.PMSFile.dbo.Oven a
+from SciPMSFile_Oven a
 where not exists(
 	select 1
 	from Oven b
