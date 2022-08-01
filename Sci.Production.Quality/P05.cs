@@ -341,6 +341,7 @@ where id not IN (
             if (dr == null)
             {
                 // oven 空的
+                this.add.Enabled = !this.EditMode;
                 this.edit.Enabled = false;
                 this.delete.Enabled = false;
                 return;
