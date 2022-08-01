@@ -289,11 +289,11 @@ masterID);
             string sqlcmd = $@"
 SET XACT_ABORT ON
 
-INSERT INTO ExtendServer.PMSFile.dbo.MockupCrocking
+INSERT INTO SciPMSFile_MockupCrocking
            (ReportNo)
 select ReportNo
 from MockupCrocking t WITH(NOLOCK)
-where not exists (select 1 from ExtendServer.PMSFile.dbo.MockupCrocking s WITH(NOLOCK) where s.ReportNo = t.ReportNo )
+where not exists (select 1 from SciPMSFile_MockupCrocking s WITH(NOLOCK) where s.ReportNo = t.ReportNo )
 ";
 
             DualResult r = DBProxy.Current.Execute(null, sqlcmd);

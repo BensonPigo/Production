@@ -1018,11 +1018,11 @@ values(@id ,@poid,@testNO,GETDATE(),@Article,'','New',@logid,@remark,@logid,GETD
 SET IDENTITY_INSERT oven off
 
 
-INSERT INTO ExtendServer.PMSFile.dbo.Oven
+INSERT INTO SciPMSFile_Oven
            (ID,POID,TestNo)
 select ID,POID,TestNo
 from Oven t WITH(NOLOCK)
-where not exists (select 1 from ExtendServer.PMSFile.dbo.Oven s WITH(NOLOCK) where s.POID = t.POID AND s.TestNo = t.TestNo )
+where not exists (select 1 from SciPMSFile_Oven s WITH(NOLOCK) where s.POID = t.POID AND s.TestNo = t.TestNo )
 ";
                         List<SqlParameter> spamAddNew = new List<SqlParameter>
                         {

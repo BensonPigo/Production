@@ -769,7 +769,7 @@ INNER JOIN #tmp_Pic{ii} t ON pic.PackingListID = t.PackingListID
 
 DELETE picd
 FROM ShippingMarkPic pic
-INNER JOIN [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail picd ON pic.Ukey = picd.ShippingMarkPicUkey
+INNER JOIN SciPMSFile_ShippingMarkPic_Detail picd ON pic.Ukey = picd.ShippingMarkPicUkey
 INNER JOIN #tmp_Pic{ii} t ON pic.PackingListID = t.PackingListID 
 
 DELETE p
@@ -939,7 +939,7 @@ INNER JOIN StickerSize s ON s.ID = b.StickerSizeID
 INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
 
 ----圖片專用Table也寫入一筆
-INSERT [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail 
+INSERT SciPMSFile_ShippingMarkPic_Detail 
 		(ShippingMarkPicUkey,SCICtnNo,ShippingMarkTypeUkey)
 SELECT 
 	 [ShippingMarkPicUkey]=pic.Ukey
@@ -998,7 +998,7 @@ WHERE ShippingMarkPicUkey In (
 ) 
 
 DELETE 
-FROM [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
+FROM SciPMSFile_ShippingMarkPic_Detail
 WHERE ShippingMarkPicUkey In (
     SELECT Ukey
     FROM ShippingMarkPic
@@ -1175,7 +1175,7 @@ SET XACT_ABORT ON
 UPDATE b
 SET Image = NULL
 from ShippingMarkPic a 
-inner join [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail b on a.Ukey = b.ShippingMarkPicUkey
+inner join SciPMSFile_ShippingMarkPic_Detail b on a.Ukey = b.ShippingMarkPicUkey
 where a.PackingListID IN ('{packingID}')
 ";
                     DBProxy.Current.Execute(null, cmd);
@@ -1573,7 +1573,7 @@ WHERE a.PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o[
 )
 
 ----圖片專用Table也刪除
-DELETE FROM [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
+DELETE FROM SciPMSFile_ShippingMarkPic_Detail
 WHERE ShippingMarkTypeUkey IN (
 SELECT a.Ukey 
 FROM ShippingMarkPic a 
@@ -1606,7 +1606,7 @@ WHERE a.PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o[
 )
 
 ----圖片專用Table也刪除
-DELETE FROM [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
+DELETE FROM SciPMSFile_ShippingMarkPic_Detail
 WHERE ShippingMarkTypeUkey IN (
 SELECT a.Ukey 
 FROM ShippingMarkPic a 
@@ -2041,7 +2041,7 @@ SET XACT_ABORT ON
 UPDATE PmsFile
 SET PmsFile.Image=@Image{this.imageIdx}
 FROM ShippingMarkPic_Detail sd 
-INNER JOIN [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail PmsFile on  sd.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
+INNER JOIN SciPMSFile_ShippingMarkPic_Detail PmsFile on  sd.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
                                                                     AND sd.SCICtnNo=PmsFile.SCICtnNo 
                                                                     AND sd.ShippingMarkTypeUkey=PmsFile.ShippingMarkTypeUkey 
 INNER JOIN ShippingMarkPic s ON s.Ukey = sd.ShippingMarkPicUkey
@@ -2105,7 +2105,7 @@ where a.PackingListID = '{packingListID}'  and b.SCICtnNo ='{sCICtnNo}'
 UPDATE PmsFile
 SET PmsFile.Image=@Image{counter}
 FROM ShippingMarkPic_Detail sd 
-INNER JOIN [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail PmsFile on  sd.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
+INNER JOIN SciPMSFile_ShippingMarkPic_Detail PmsFile on  sd.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
                                                                     AND sd.SCICtnNo=PmsFile.SCICtnNo 
                                                                     AND sd.ShippingMarkTypeUkey=PmsFile.ShippingMarkTypeUkey 
 INNER JOIN #tmp{counter} t on sd.ShippingMarkPicUkey = t.ShippingMarkPicUkey 
