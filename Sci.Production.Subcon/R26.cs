@@ -311,14 +311,22 @@ select DISTINCT c.FactoryID
 			,a.Status
 			,rec.IssueDate
             ,b.RequestID
+	        ,[PoQty] = b.Qty
+			,[PulloutComplete] = IIF(isnull(c.PulloutComplete,0) = 0,'N','Y')
 	        ,b.Remark
+			,b.ReasonID
+			,[Reason] = isnull(rlr.Description,'')
+			,Brand.BuyerID
+			,b.ReplacementLocalItemID
 from localpo a WITH (NOLOCK) 
 inner join LocalPO_Detail b WITH (NOLOCK) on a.id=b.id
 left join orders c WITH (NOLOCK) on c.ID = b.OrderId
+left join Brand WITH (NOLOCK) on Brand.ID = c.BrandID
 left join Style s (NOLOCK) on s.Ukey = c.StyleUkey
 left join localsupp d  WITH (NOLOCK) on  d.id =a.LocalSuppID 
 left join ThreadColor on b.ThreadColorID = ThreadColor.ID
 left join LocalItem li WITH (NOLOCK) on li.RefNo=b.Refno
+left join ReplacementLocalItemReason rlr WITH (NOLOCK) on rlr.ID = b.ReasonID
 outer apply(select KPIRate = dbo.getrate('KP','USD',a.CurrencyID ,a.IssueDate))x
 OUTER APPLY(
 	SELECT TOP 1 l.IssueDate
