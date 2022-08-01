@@ -62,7 +62,7 @@ delete from ColorFastness_Detail where id='New'
 delete from ColorFastness where id='New'
 
 DELETE A 
-from ExtendServer.PMSFile.dbo.ColorFastness a
+from SciPMSFile_ColorFastness a
 WHERE NOT EXISTS(
     select 1 from ColorFastness b
     where a.ID = b.ID

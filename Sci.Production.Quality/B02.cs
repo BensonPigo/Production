@@ -63,7 +63,7 @@ namespace Sci.Production.Quality
                 return;
             }
 
-            string sqlcmd = $@"select * from [ExtendServer].PMSFile.dbo.Basic_AccessoryDefectImage where AccessoryDefectID = '{this.CurrentMaintain["ID"]}' order by ukey";
+            string sqlcmd = $@"select * from SciPMSFile_Basic_AccessoryDefectImage where AccessoryDefectID = '{this.CurrentMaintain["ID"]}' order by ukey";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)
             {
@@ -176,7 +176,7 @@ namespace Sci.Production.Quality
                     paras = new List<SqlParameter> { new SqlParameter($"@Image", item.Img) };
                     sqlcmd = $@"
 set XACT_ABORT on
-INSERT INTO [ExtendServer].PMSFile.dbo.Basic_AccessoryDefectImage([AccessoryDefectID],[Image])VALUES('{this.CurrentMaintain["ID"]}',@Image)
+INSERT INTO SciPMSFile_Basic_AccessoryDefectImage([AccessoryDefectID],[Image])VALUES('{this.CurrentMaintain["ID"]}',@Image)
 ";
                 }
                 else if (item.UpdType == DefectImgUpdType.Remove && item.Ukey > 0)
@@ -184,7 +184,7 @@ INSERT INTO [ExtendServer].PMSFile.dbo.Basic_AccessoryDefectImage([AccessoryDefe
                     paras = new List<SqlParameter> { new SqlParameter($"@Ukey", item.Ukey) };
                     sqlcmd = $@"
 set XACT_ABORT on
-delete [ExtendServer].PMSFile.dbo.[Basic_AccessoryDefectImage] where Ukey = @Ukey
+delete SciPMSFile_Basic_AccessoryDefectImage where Ukey = @Ukey
 ";
                 }
                 else

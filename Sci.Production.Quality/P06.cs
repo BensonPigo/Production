@@ -255,11 +255,11 @@ namespace Sci.Production.Quality
             string sqlcmd = $@"
 SET XACT_ABORT ON
 
-INSERT INTO ExtendServer.PMSFile.dbo.ColorFastness
+INSERT INTO SciPMSFile_ColorFastness
            (ID,POID,TestNO)
 select ID,POID,TestNO
 from ColorFastness t WITH(NOLOCK)
-where not exists (select 1 from ExtendServer.PMSFile.dbo.ColorFastness s WITH(NOLOCK) where s.ID = t.ID and s.POID = t.POID and s.TestNo = t.TestNo )
+where not exists (select 1 from SciPMSFile_ColorFastness s WITH(NOLOCK) where s.ID = t.ID and s.POID = t.POID and s.TestNo = t.TestNo )
 ";
 
             DualResult r = DBProxy.Current.Execute(null, sqlcmd);
@@ -337,7 +337,7 @@ delete from ColorFastness_Detail where id=@id
 delete from ColorFastness where id=@id
 
 DELETE A 
-from ExtendServer.PMSFile.dbo.ColorFastness a
+from SciPMSFile_ColorFastness a
 WHERE NOT EXISTS(
     select 1 from ColorFastness b
     where a.ID = b.ID
