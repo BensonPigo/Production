@@ -344,7 +344,7 @@ select
 	,rd.Dyelot
 	,rd.StockQty
 	,StockType = isnull (ddl.Name, rd.StockType)
-	,rd.Location
+	,Location= dbo.Getlocation(fi.Ukey)
 	,rd.Weight
 	,rd.ActualWeight
 	,[CutShadebandTime]=cutTime.CutTime
@@ -368,6 +368,12 @@ inner join PO_Supp ps with (nolock) on ps.ID = psd.id and ps.SEQ1 = psd.SEQ1
 inner join Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
 left join DropDownList ddl WITH (NOLOCK) on ddl.Type = 'Pms_StockType'
                                             and REPLACE(ddl.ID,'''','') = rd.StockType
+left join FtyInventory fi with (nolock) on  fi.POID = rd.POID and 
+                                            fi.Seq1 = rd.Seq1 and 
+                                            fi.Seq2 = rd.Seq2 and 
+                                            fi.Roll = rd.Roll and
+                                            fi.Dyelot = rd.Dyelot and
+                                            fi.StockType = rd.StockType
 OUTER APPLY(
 	SELECT  fs.CutTime,fs.CutBy
 	FROM FIR f
