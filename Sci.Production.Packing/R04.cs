@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Prg;
 using System;
 using System.Data;
 using System.Runtime.InteropServices;
@@ -293,7 +294,7 @@ order by p.FactoryID,p.id,LEN(pld.CTNStartNo), pld.CTNStartNo,oq.Seq
             #region To Excel
             string excelName = "Packing_R04";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
-            MyUtility.Excel.CopyToXls(this._printData, string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]);
+            ExcelPrg.CopyToXlsAutoSplitSheet(this._printData, string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]);
 
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
             worksheet.Columns.AutoFit();
