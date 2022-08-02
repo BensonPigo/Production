@@ -193,6 +193,12 @@
     <Compile Include="Packing_B10.designer.cs">
       <DependentUpon>Packing_B10.cs</DependentUpon>
     </Compile>
+    <Compile Include="PPIC_B03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PPIC_B03.designer.cs">
+      <DependentUpon>PPIC_B03.cs</DependentUpon>
+    </Compile>
     <Compile Include="QA_B20.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -529,6 +535,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Packing_B10.resx">
       <DependentUpon>Packing_B10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PPIC_B03.resx">
+      <DependentUpon>PPIC_B03.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="QA_B20.resx">
       <DependentUpon>QA_B20.cs</DependentUpon>

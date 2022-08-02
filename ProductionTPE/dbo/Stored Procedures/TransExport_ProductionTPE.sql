@@ -165,6 +165,14 @@ BEGIN
 	RAISERROR('MachineType_Detail  - Starts',0,0)
 	select * into dbo.MachineType_Detail from (select * from ProductionTPE.dbo.MachineType_Detail ) as tmp
 
+	-------------MailTo-------------------
+	RAISERROR('MailTo  - Starts',0,0)
+	select * into dbo.MailTo from (select * from ProductionTPE.dbo.MailTo where ID like 'P%') as tmp
+
+	-------------MailGroup-------------------
+	RAISERROR('MailGroup  - Starts',0,0)
+	select * into dbo.MailGroup from (select * from ProductionTPE.dbo.MailGroup where Code like 'P%') as tmp
+
 	set transaction isolation level read committed
 END
 

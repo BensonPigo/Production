@@ -93,5 +93,6 @@
     <Build Include="dbo\Tables\Brand_PullingTestStandarList.sql" />
     <Build Include="dbo\Tables\Adidas_FGWT.sql" />
     <Build Include="dbo\Tables\MachineType_Detail.sql" />
+    <Build Include="dbo\Tables\MailGroup.sql" />
   </ItemGroup>
 </Project>
