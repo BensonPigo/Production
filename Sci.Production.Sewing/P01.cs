@@ -4873,7 +4873,7 @@ into    #tmpStyle
 from Style with (nolock)
 where   Ukey = '{styleUkey}'
 
-select  top 30 so.ID, so.OutputDate
+select distinct top 30 so.OutputDate
 into #tmpSewingOutputDay
 from SewingOutput so with (nolock)
 where   so.SewingLineID = @SewingLineID and
@@ -4882,12 +4882,21 @@ where   so.SewingLineID = @SewingLineID and
         so.OutputDate < @SewingDate
 order by    so.OutputDate desc
 
+select  so.ID, so.OutputDate
+into #tmpSewingOutputID
+from SewingOutput so with (nolock)
+where   so.SewingLineID = @SewingLineID and
+        so.FactoryID = @FactoryID and
+        so.Team = @Team and
+        so.OutputDate in (select OutputDate from #tmpSewingOutputDay)
+order by    so.OutputDate desc
+
 select  distinct
         so.OutputDate,
         o.StyleID,
         o.BrandID
 into    #tmpSewingOutputStyle
-from    #tmpSewingOutputDay so
+from    #tmpSewingOutputID so
 inner join  SewingOutput_Detail sod with (nolock) on sod.ID = so.ID
 inner join  Orders o  with (nolock) on o.ID = sod.OrderID
 
@@ -4933,7 +4942,7 @@ begin
     where   OutputDate  >   @interruptDate
 end
 
-drop table #tmpStyle, #tmpSewingOutputDay, #tmpSewingOutputStyle, #tmpSewingSimlarStyle
+drop table #tmpStyle, #tmpSewingOutputDay, #tmpSewingOutputStyle, #tmpSewingSimlarStyle, #tmpSewingOutputID
 ";
 
             DataTable dtResult;
