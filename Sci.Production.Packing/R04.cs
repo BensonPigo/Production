@@ -182,7 +182,7 @@ select p.FactoryID
 								select ','+  pl.CTNStartNo 
 								from PackingList_Detail pl
 								where pl.ID=p.Id AND pl.SizeCode=pd.SizeCode AND pl.Article=pd.Article AND pl.Color=pd.Color
-								order by Cast( pl.CTNStartNo as int )
+								order by pl.Seq
 								for xml path('')
 						),1,1,'')
 					)
@@ -247,7 +247,7 @@ where 1=1 --AND pld.CTNQty=1
 
 group by p.FactoryID,o.BuyerDelivery,p.id,p.OrderID,o.StyleID,o.SeasonID,pd.Article,pd.Color,o.Customize1,o.CustPONo,o.CustCDID,c.NameEN,pd.SizeCode,pld.CTNStartNo,li.Description
 ,oq.Seq
-order by p.FactoryID,p.id,Cast(pld.CTNStartNO as int ),oq.Seq
+order by p.FactoryID,p.id,LEN(pld.CTNStartNo), pld.CTNStartNo,oq.Seq
 ";
             }
 
