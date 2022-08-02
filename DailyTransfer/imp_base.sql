@@ -1315,8 +1315,10 @@ SET
       ,a.AddDate	      =b.AddDate	
       ,a.EditName	      =b.EditName	
       ,a.EditDate	      =b.EditDate	
-
-from Production.dbo.Unit_Rate as a inner join Trade_To_Pms.dbo.Unit_Rate as b ON a.UnitFrom = b.UnitFrom and a.UnitTo = b.UnitTo
+	  ,a.Numerator        =b.Numerator
+	  ,a.Denominator      =b.Denominator
+from Production.dbo.Unit_Rate as a 
+inner join Trade_To_Pms.dbo.Unit_Rate as b ON a.UnitFrom = b.UnitFrom and a.UnitTo = b.UnitTo
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.Unit_Rate(
        UnitFrom
@@ -1327,7 +1329,8 @@ INSERT INTO Production.dbo.Unit_Rate(
       ,AddDate
       ,EditName
       ,EditDate
-
+	  ,Numerator
+	  ,Denominator
 )
 select 
        UnitFrom
@@ -1338,6 +1341,8 @@ select
       ,AddDate
       ,EditName
       ,EditDate
+	  ,Numerator
+	  ,Denominator
 from Trade_To_Pms.dbo.Unit_Rate as b WITH (NOLOCK)
 where not exists(select UnitFrom from Production.dbo.Unit_Rate as a WITH (NOLOCK) where a.UnitFrom = b.UnitFrom  and a.UnitTo = b.UnitTo)
 
