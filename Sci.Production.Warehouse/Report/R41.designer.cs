@@ -43,15 +43,18 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(415, 12);
+            this.print.TabIndex = 5;
             this.print.Visible = false;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(415, 48);
+            this.toexcel.TabIndex = 6;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(415, 84);
+            this.close.TabIndex = 7;
             // 
             // buttonCustomized
             // 
@@ -70,7 +73,7 @@
             this.labRequest.Location = new System.Drawing.Point(9, 42);
             this.labRequest.Name = "labRequest";
             this.labRequest.Size = new System.Drawing.Size(98, 23);
-            this.labRequest.TabIndex = 97;
+            this.labRequest.TabIndex = 9;
             this.labRequest.Text = "Request#";
             // 
             // label2
@@ -78,7 +81,7 @@
             this.label2.Location = new System.Drawing.Point(9, 69);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(98, 23);
-            this.label2.TabIndex = 98;
+            this.label2.TabIndex = 10;
             this.label2.Text = "M";
             // 
             // label3
@@ -86,7 +89,7 @@
             this.label3.Location = new System.Drawing.Point(9, 99);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(98, 23);
-            this.label3.TabIndex = 99;
+            this.label3.TabIndex = 11;
             this.label3.Text = "Factory";
             // 
             // txtRequest_From
@@ -96,7 +99,7 @@
             this.txtRequest_From.Location = new System.Drawing.Point(110, 42);
             this.txtRequest_From.Name = "txtRequest_From";
             this.txtRequest_From.Size = new System.Drawing.Size(114, 23);
-            this.txtRequest_From.TabIndex = 102;
+            this.txtRequest_From.TabIndex = 1;
             // 
             // txtRequest_To
             // 
@@ -105,7 +108,7 @@
             this.txtRequest_To.Location = new System.Drawing.Point(251, 42);
             this.txtRequest_To.Name = "txtRequest_To";
             this.txtRequest_To.Size = new System.Drawing.Size(114, 23);
-            this.txtRequest_To.TabIndex = 104;
+            this.txtRequest_To.TabIndex = 2;
             // 
             // txtMdivision
             // 
@@ -114,7 +117,7 @@
             this.txtMdivision.Location = new System.Drawing.Point(110, 68);
             this.txtMdivision.Name = "txtMdivision";
             this.txtMdivision.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision.TabIndex = 105;
+            this.txtMdivision.TabIndex = 3;
             // 
             // txtFactory
             // 
@@ -128,7 +131,7 @@
             this.txtFactory.MDivision = null;
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.Size = new System.Drawing.Size(66, 23);
-            this.txtFactory.TabIndex = 106;
+            this.txtFactory.TabIndex = 4;
             // 
             // dateIssue
             // 
@@ -150,7 +153,7 @@
             this.dateIssue.Location = new System.Drawing.Point(111, 14);
             this.dateIssue.Name = "dateIssue";
             this.dateIssue.Size = new System.Drawing.Size(280, 23);
-            this.dateIssue.TabIndex = 107;
+            this.dateIssue.TabIndex = 0;
             // 
             // labelSCIDelivery
             // 
@@ -161,7 +164,7 @@
             this.labelSCIDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelSCIDelivery.RectStyle.ExtBorderWidth = 1F;
             this.labelSCIDelivery.Size = new System.Drawing.Size(98, 23);
-            this.labelSCIDelivery.TabIndex = 108;
+            this.labelSCIDelivery.TabIndex = 8;
             this.labelSCIDelivery.Text = "Issue Date";
             this.labelSCIDelivery.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.labelSCIDelivery.TextStyle.Color = System.Drawing.Color.Black;

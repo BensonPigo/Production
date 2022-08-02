@@ -12,20 +12,32 @@ using Excel = Microsoft.Office.Interop.Excel;
 namespace Sci.Production.Warehouse
 {
     /// <summary>
-    /// R39
+    /// R41
     /// </summary>
     public partial class R41 : Win.Tems.PrintForm
     {
         private DataTable dtResult;
 
         /// <summary>
-        /// R39
+        /// R41
         /// </summary>
         /// <param name="menuitem">menuitem</param>
         public R41(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
+        }
+
+        /// <inheritdoc/>
+        protected override bool ValidateInput()
+        {
+            if (!this.dateIssue.HasValue)
+            {
+                MyUtility.Msg.WarningBox("Issue Date cannot be empty.");
+                return false;
+            }
+
+            return base.ValidateInput();
         }
 
         /// <inheritdoc/>
@@ -36,108 +48,72 @@ namespace Sci.Production.Warehouse
             string sqlHaving = string.Empty;
             List<SqlParameter> listPar = new List<SqlParameter>();
 
+            if (!MyUtility.Check.Empty(this.dateIssue.Value1))
+            {
+                sqlWhere += $@" and i.IssueDate >= @IssueDate_S";
+                listPar.Add(new SqlParameter("@IssueDate_S", this.dateIssue.Value1));
+            }
+
+            if (!MyUtility.Check.Empty(this.dateIssue.Value2))
+            {
+                sqlWhere += $@" and i.IssueDate <= @IssueDate_E";
+                listPar.Add(new SqlParameter("@IssueDate_E", this.dateIssue.Value2));
+            }
+
             if (!MyUtility.Check.Empty(this.txtRequest_From.Text))
             {
-                sqlWhere += $@" and sfi.POID >= @FromPOID";
-                listPar.Add(new SqlParameter("@FromPOID", this.txtRequest_From.Text));
+                sqlWhere += $@" and i.CutplanID >= @FromRequestNo";
+                listPar.Add(new SqlParameter("@FromRequestNo", this.txtRequest_From.Text));
             }
 
             if (!MyUtility.Check.Empty(this.txtRequest_To.Text))
             {
-                sqlWhere += $@" and sfi.POID <= @ToPOID";
-                listPar.Add(new SqlParameter("@ToPOID", this.txtRequest_To.Text));
+                sqlWhere += $@" and i.CutplanID <= @ToRequestNo";
+                listPar.Add(new SqlParameter("@ToRequestNo", this.txtRequest_To.Text));
             }
 
             if (!MyUtility.Check.Empty(this.txtMdivision.Text))
             {
-                sqlWhere += $@" and o.Mdivision = @Mdivision";
+                sqlWhere += $@" and i.MDivisionID = @Mdivision";
                 listPar.Add(new SqlParameter("@Mdivision", this.txtMdivision.Text));
             }
 
             if (!MyUtility.Check.Empty(this.txtFactory.Text))
             {
-                sqlWhere += $@" and o.FtyGroup = @FtyGroup";
+                sqlWhere += $@" and i.FactoryID = @FtyGroup";
                 listPar.Add(new SqlParameter("@FtyGroup", this.txtFactory.Text));
             }
 
-            if (this.checkQty.Checked)
-            {
-                if (this.radioDetail.Checked)
-                {
-                    sqlWhere += $@" and (isnull(sfi.InQty, 0) - isnull(sfi.OutQty, 0) + isnull(sfi.AdjustQty, 0)) > 0";
-                }
-                else
-                {
-                    sqlHaving += $@" having (sum(isnull(sfi.InQty, 0)) - sum(isnull(sfi.OutQty, 0)) + sum(isnull(sfi.AdjustQty, 0))) > 0";
-                }
-            }
-
-            if (this.radioSummary.Checked)
-            {
-                sqlQuery = $@"
-select  sfi.POID,
-        sfi.Seq,
-        sf.[Desc],
-        sf.Color,
-        sf.Unit,
-        [InQty] = sum(isnull(sfi.InQty, 0)),
-        [OutQty] = sum(isnull(sfi.OutQty, 0)),
-        [AdjustQty] = sum(isnull(sfi.AdjustQty, 0)),
-        [Balance] = sum(isnull(sfi.InQty, 0)) - sum(isnull(sfi.OutQty, 0)) + sum(isnull(sfi.AdjustQty, 0)),
-        [BulkLocation] = BulkLocation.val
-from    SemiFinishedInventory sfi with (nolock) 
-inner join orders o  with (nolock) on o.ID = sfi.POID
-inner join  SemiFinished sf with (nolock) on sf.Poid = sfi.Poid and sf.Seq = sfi.Seq
-outer apply(SELECT val =  Stuff((select distinct concat( ',',sfl.MtlLocationID)   
-                                    from SemiFinishedInventory_Location sfl with (nolock)
-                                    where   sfl.POID        = sfi.POID          and
-                                            sfl.Seq         = sfi.Seq           and
-                                            sfl.StockType   = sfi.StockType
-                                FOR XML PATH('')),1,1,'') 
-                ) BulkLocation
-where   sfi.StockType  = 'B' {sqlWhere}
-group by    sfi.POID,
-            sfi.Seq,
-            sf.[Desc],
-            sf.Unit,
-            sfi.StockType,
-            sf.Color,
-            BulkLocation.val
-{sqlHaving}
+            sqlQuery = $@"
+select i.Id
+,i.MDivisionID
+,i.FactoryID
+,i.CutplanID
+,i.IssueDate
+,i.AddDate
+,[EditBy] = dbo.getPass1_ExtNo(i.EditName)
+,i.EditDate
+,i.Remark
+,id.POID
+,[Seq] = CONCAT(id.Seq1,' ',id.Seq2)
+,po3.Refno
+,po3.ColorID
+,f.DescDetail
+,id.Roll
+,id.Dyelot
+,po3.StockUnit
+,id.Qty
+,[BulkLocation] = dbo.Getlocation(fi.Ukey)
+,[CreateBy] = dbo.getPass1_ExtNo(i.AddName)
+from issue i
+inner join Issue_Detail id on id.Id = i.Id
+left join PO_Supp_Detail po3 on po3.ID = id.POID and po3.SEQ1 = id.Seq1 and po3.SEQ2 = id.Seq2
+left join FtyInventory fi on fi.Ukey = id.FtyInventoryUkey
+left join Fabric f on f.SCIRefno = po3.SCIRefno
+where i.Type = 'I'
+and i.Status = 'Confirmed'
+{sqlWhere}
 ";
-            }
-            else
-            {
-                sqlQuery = $@"
-select  sfi.POID,
-        sfi.Seq,
-        sf.[Desc],
-        sf.Color,
-        sf.Unit,
-        sfi.Roll,
-        sfi.Dyelot,
-        sfi.Tone,
-        sfi.InQty,
-        sfi.OutQty,
-        sfi.AdjustQty,
-        [Balance] = isnull(sfi.InQty, 0) - isnull(sfi.OutQty, 0) + isnull(sfi.AdjustQty, 0),
-        [BulkLocation] = BulkLocation.val
-from    SemiFinishedInventory sfi with (nolock) 
-inner join orders o  with (nolock) on o.ID = sfi.POID
-inner join  SemiFinished sf with (nolock) on sf.Poid = sfi.Poid and sf.Seq = sfi.Seq
-outer apply(SELECT val =  Stuff((select distinct concat( ',',sfl.MtlLocationID)   
-                                    from SemiFinishedInventory_Location sfl with (nolock)
-                                    where   sfl.POID        = sfi.POID          and
-                                            sfl.seq         = sfi.seq           and
-                                            sfl.StockType   = sfi.StockType     and
-                                            sfl.Roll        = sfi.Roll          and
-                                            sfl.Tone        = sfi.Tone          and
-                                            sfl.Dyelot      = sfi.Dyelot     
-                                FOR XML PATH('')),1,1,'') 
-                ) BulkLocation
-where   StockType = 'B' {sqlWhere}
-";
-            }
 
             DualResult result = DBProxy.Current.Select(null, sqlQuery, listPar, out this.dtResult);
             return result;
@@ -151,7 +127,7 @@ where   StockType = 'B' {sqlWhere}
                 this.SetCount(this.dtResult.Rows.Count);
                 this.ShowWaitMessage("Excel Processing...");
 
-                string reportName = this.radioSummary.Checked ? "Warehouse_R39_Summary" : "Warehouse_R39_Detail";
+                string reportName = "Warehouse_R41";
 
                 Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{reportName}.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.dtResult, null, $"{reportName}.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
