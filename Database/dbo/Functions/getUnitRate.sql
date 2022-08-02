@@ -4,7 +4,7 @@ RETURNS float
 BEGIN
 	DECLARE @rate float
 	SET @rate = 1
-	select @rate = isnull(RateValue,'1') from Unit_Rate WITH (NOLOCK) where UnitFrom = @fromUnit and UnitTo = @toUnit
+	select @rate = isnull(IIF(Denominator = 0,0, Numerator / Denominator),'1') from Unit_Rate WITH (NOLOCK) where UnitFrom = @fromUnit and UnitTo = @toUnit
 	
 	RETURN @rate
 END

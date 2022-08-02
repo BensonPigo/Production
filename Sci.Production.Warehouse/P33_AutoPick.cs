@@ -385,7 +385,7 @@ OUTER APPLY(
 	WHERE a.ID =psd.ID	AND a.SCIRefno=psd.SCIRefno AND a.ColorID=psd.ColorID
 )StockUnit
 OUTER APPLY(
-	SELECT RateValue
+	SELECT RateValue = IIF(Denominator = 0,0, Numerator / Denominator)
 	FROM Unit_Rate
 	WHERE UnitFrom='M' and  UnitTo = StockUnit.StockUnit
 )UnitRate

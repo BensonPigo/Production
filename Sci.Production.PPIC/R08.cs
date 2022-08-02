@@ -252,7 +252,7 @@ outer apply(
         ) po_price
         outer apply (
             select Qty = iif (rr.Type = 'A', rrd.TotalRequest, rrd.FinalNeedQty)
-                         * isnull ((select RateValue 
+                         * isnull ((select RateValue = IIF(Denominator = 0,0, Numerator / Denominator) 
                                     from Unit_Rate 
                                     where UnitFrom = rrd.ReplacementUnit 
                                           and UnitTo = psd.POUnit),1)
@@ -342,7 +342,7 @@ left join PO with(nolock) on PO.ID = rr.POID
 left join Fabric f with(nolock) on f.SCIRefno = rrd.SCIRefno
 outer apply (
     select Qty = iif (rr.Type = 'A', rrd.TotalRequest, rrd.FinalNeedQty)
-                    * isnull ((select RateValue 
+                    * isnull ((select RateValue = IIF(Denominator = 0,0, Numerator / Denominator) 
                             from Unit_Rate 
                             where UnitFrom = rrd.ReplacementUnit 
                                     and UnitTo = psd.POUnit),1)
@@ -428,7 +428,7 @@ outer apply(
 		left join Supp WITH (NOLOCK) on Supp.ID = ps.SuppID
         outer apply (
             select Qty = iif (rr.Type = 'A', rrd.TotalRequest, rrd.FinalNeedQty)
-                         * isnull ((select RateValue 
+                         * isnull ((select RateValue = IIF(Denominator = 0,0, Numerator / Denominator) 
                                     from Unit_Rate 
                                     where UnitFrom = rrd.ReplacementUnit 
                                           and UnitTo = psd.POUnit),1)
