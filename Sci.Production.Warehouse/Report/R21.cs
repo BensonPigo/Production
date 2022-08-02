@@ -484,7 +484,7 @@ outer apply
 )d
 outer apply
 (
-	select RateValue
+	select RateValue = IIF(Denominator = 0,0, Numerator / Denominator)
 	from Unit_Rate WITH (NOLOCK) 
 	where UnitFrom = psd.PoUnit and UnitTo = psd.StockUnit
 )r
