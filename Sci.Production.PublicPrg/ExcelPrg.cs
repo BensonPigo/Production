@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Ict;
 using Sci.Production.PublicPrg;
+using Sci.Utility.Report;
 using MsExcel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Prg
@@ -208,6 +212,67 @@ namespace Sci.Production.Prg
             }
 
             return dt;
+        }
+
+        /// <summary>
+        /// 如果資料超過100萬筆，自動拆分sheet，防止記憶體爆掉60萬放一個sheet
+        /// </summary>
+        /// <param name="data">data</param>
+        /// <param name="fileName">fileName</param>
+        /// <param name="xltfile">xltfile</param>
+        /// <param name="headerRow">headerRow</param>
+        /// <param name="showExcel">showExcel</param>
+        /// <param name="fieldList">fieldList</param>
+        /// <param name="excelApp">excelApp</param>
+        /// <param name="showSaveMsg">showSaveMsg</param>
+        /// <param name="wSheet">wSheet</param>
+        /// <param name="DisplayAlerts_ForSaveFile">DisplayAlerts_ForSaveFile</param>
+        /// <param name="excelType">excelType</param>
+        /// <returns>DualResult</returns>
+        public static DualResult CopyToXlsAutoSplitSheet(DataTable data, string fileName, string xltfile = "", int headerRow = 1, bool showExcel = true, string fieldList = null, object excelApp = null, bool showSaveMsg = true, object wSheet = null, bool DisplayAlerts_ForSaveFile = false, ExcelCOM.ExcelType excelType = ExcelCOM.ExcelType.xlsx)
+        {
+            if (data == null)
+            {
+                return new DualResult(false, "Source no data");
+            }
+
+            if (data.Rows.Count == 0)
+            {
+                return new DualResult(false, "Source no data");
+            }
+
+            try
+            {
+                if (data.Rows.Count <= 1000000)
+                {
+                    MyUtility.Excel.CopyToXls(data, fileName, xltfile, headerRow, showExcel, fieldList, excelApp, showSaveMsg, wSheet, DisplayAlerts_ForSaveFile, excelType);
+                }
+                else
+                {
+                    int sheetCnt = MyUtility.Convert.GetInt(Math.Ceiling(data.Rows.Count / 600000.0));
+                    MsExcel.Workbook xlWb = ((MsExcel.Application)excelApp).ActiveWorkbook;
+                    for (int i = 1; i < sheetCnt; i++)
+                    {
+                        MsExcel.Worksheet xlSht = xlWb.Sheets[1];
+                        xlSht.Copy(Type.Missing, xlWb.Sheets[xlWb.Sheets.Count]); // copy
+                        Marshal.FinalReleaseComObject(xlSht);
+                    }
+
+                    for (int i = 0; i < sheetCnt; i++)
+                    {
+                        DataTable dtPrint = data.AsEnumerable().Skip(i * 600000).Take(600000).TryCopyToDataTable(data);
+                        MyUtility.Excel.CopyToXls(dtPrint, fileName, xltfile, headerRow, showExcel, fieldList, excelApp, showSaveMsg, xlWb.Sheets[i + 1], DisplayAlerts_ForSaveFile, excelType);
+                    }
+
+                    Marshal.FinalReleaseComObject(xlWb);
+                }
+            }
+            catch (Exception ex)
+            {
+                return new DualResult(true, ex);
+            }
+
+            return new DualResult(true);
         }
 
         /// <inheritdoc />
