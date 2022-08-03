@@ -249,7 +249,7 @@ where 1=1
 and exists(
 	select 1
 	from WorkOrder w	
-	where w.OrderID = o.ID and w.CutRef = b.CutRef
+	where w.CutRef = b.CutRef 
 	{whereEstCut}
 )");
                 }
@@ -408,7 +408,7 @@ where 1=1
 and exists(
 	select 1
 	from WorkOrder w	
-	where w.OrderID = o.ID and w.CutRef = b.CutRef
+	where w.CutRef = b.CutRef
 	{whereEstCut}
 )");
                 }
