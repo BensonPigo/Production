@@ -1989,10 +1989,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Tables\BundleTransfer.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Tables\BundleInOut.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -2728,6 +2724,7 @@
     <Build Include="dbo\Functions\GetIsHighRisk.sql" />
     <Build Include="dbo\Functions\IsQRCodeCreatedByPMS.sql" />
     <Build Include="dbo\Functions\GETRelaxationStatus.sql" />
+    <Build Include="dbo\Tables\BundleTransfer.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
