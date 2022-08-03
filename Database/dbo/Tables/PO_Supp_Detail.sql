@@ -1,83 +1,86 @@
 ﻿CREATE TABLE [dbo].[PO_Supp_Detail] (
-    [ID]              VARCHAR (13)    CONSTRAINT [DF_PO_Supp_Detail_ID] DEFAULT ('') NOT NULL,
-    [SEQ1]            VARCHAR (3)     CONSTRAINT [DF_PO_Supp_Detail_SEQ1] DEFAULT ('') NOT NULL,
-    [SEQ2]            VARCHAR (2)     CONSTRAINT [DF_PO_Supp_Detail_SEQ2] DEFAULT ('') NOT NULL,
-    [FactoryID]       VARCHAR (8)     DEFAULT ('') NULL,
-    [Refno]           VARCHAR (20)    CONSTRAINT [DF_PO_Supp_Detail_Refno] DEFAULT ('') NOT NULL,
-    [SCIRefno]        VARCHAR (30)    CONSTRAINT [DF_PO_Supp_Detail_SCIRefno] DEFAULT ('') NULL,
-    [FabricType]      VARCHAR (1)     CONSTRAINT [DF_PO_Supp_Detail_FabricType] DEFAULT ('') NOT NULL,
-    [Price]           NUMERIC (16, 4) CONSTRAINT [DF_PO_Supp_Detail_Price] DEFAULT ((0)) NOT NULL,
-    [UsedQty]         NUMERIC (10, 4) CONSTRAINT [DF_PO_Supp_Detail_UsedQty] DEFAULT ((0)) NULL,
-    [Qty]             NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_Qty] DEFAULT ((0)) NULL,
-    [POUnit]          VARCHAR (8)     CONSTRAINT [DF_PO_Supp_Detail_POUnit] DEFAULT ('') NOT NULL,
-    [Complete]        BIT             CONSTRAINT [DF_PO_Supp_Detail_Complete] DEFAULT ((0)) NULL,
-    [SystemETD]       DATE            NULL,
-    [CFMETD]          DATE            NULL,
-    [RevisedETA]      DATE            NULL,
-    [FinalETD]        DATE            NULL,
-    [ShipETA]         DATE            NULL,
-    [ETA]             DATE            NULL,
-    [FinalETA]        DATE            NULL,
-    [ShipModeID]      VARCHAR (10)    CONSTRAINT [DF_PO_Supp_Detail_ShipModeID] DEFAULT ('') NOT NULL,
-    [SMRLock]         VARCHAR (10)    CONSTRAINT [DF_PO_Supp_Detail_SMRLock] DEFAULT ('') NULL,
-    [SystemLock]      DATE            NULL,
-    [PrintDate]       DATETIME        NULL,
-    [PINO]            VARCHAR (25)    CONSTRAINT [DF_PO_Supp_Detail_PINO] DEFAULT ('') NULL,
-    [PIDate]          DATE            NULL,
-    [BrandId]         VARCHAR (8)     DEFAULT ('') NULL,
-    [ColorID]         VARCHAR (6)     CONSTRAINT [DF_PO_Supp_Detail_ColorID] DEFAULT ('') NULL,
-    [ColorID_Old]     VARCHAR (MAX)   DEFAULT ('') NULL,
-    [SuppColor]       NVARCHAR (MAX)  CONSTRAINT [DF_PO_Supp_Detail_SuppColor] DEFAULT ('') NULL,
-    [SizeSpec]        VARCHAR (15)    CONSTRAINT [DF_PO_Supp_Detail_SizeSpec] DEFAULT ('') NULL,
-    [SizeUnit]        VARCHAR (8)     CONSTRAINT [DF_PO_Supp_Detail_SizeUnit] DEFAULT ('') NULL,
-    [Remark]          NVARCHAR (MAX)  CONSTRAINT [DF_PO_Supp_Detail_Remark] DEFAULT ('') NULL,
-    [Special]         NVARCHAR (MAX)  CONSTRAINT [DF_PO_Supp_Detail_Special] DEFAULT ('') NULL,
-    [Width]           NUMERIC (5, 2)  CONSTRAINT [DF_PO_Supp_Detail_Width] DEFAULT ((0)) NULL,
-    [StockQty]        NUMERIC (12, 1) CONSTRAINT [DF_PO_Supp_Detail_StockQty] DEFAULT ((0)) NULL,
-    [NETQty]          NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_NETQty] DEFAULT ((0)) NULL,
-    [LossQty]         NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_lossQty] DEFAULT ((0)) NULL,
-    [SystemNetQty]    NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_SystemNetQty] DEFAULT ((0)) NULL,
-    [StockPOID]       VARCHAR (13)    CONSTRAINT [DF_PO_Supp_Detail_StockPOID] DEFAULT ('') NULL,
-    [StockSeq1]       VARCHAR (3)     NULL,
-    [StockSeq2]       VARCHAR (2)     NULL,
-    [InventoryUkey]   BIGINT          CONSTRAINT [DF_PO_Supp_Detail_InventoryUkey] DEFAULT ('') NULL,
-    [OutputSeq1]      VARCHAR (3)     CONSTRAINT [DF_PO_Supp_Detail_OutputSeq1] DEFAULT ('') NULL,
-    [OutputSeq2]      VARCHAR (2)     CONSTRAINT [DF_PO_Supp_Detail_OutputSeq2] DEFAULT ('') NULL,
-    [SystemCreate]    BIT             CONSTRAINT [DF_PO_Supp_Detail_SystemCreate] DEFAULT ((0)) NULL,
-    [ShipQty]         NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_ShipQty] DEFAULT ((0)) NULL,
-    [ShipFOC]         NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_ShipFOC] DEFAULT ((0)) NULL,
-    [ApQty]           NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_ApQty] DEFAULT ((0)) NULL,
-    [Shortage]        NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_Shortage] DEFAULT ((0)) NULL,
-    [FOC]             NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_FOC] DEFAULT ((0)) NULL,
-    [Junk]            BIT             CONSTRAINT [DF_PO_Supp_Detail_Junk] DEFAULT ((0)) NULL,
-    [ColorDetail]     NVARCHAR (MAX)  CONSTRAINT [DF_PO_Supp_Detail_ColorDetail] DEFAULT ('') NULL,
-    [BomFactory]      VARCHAR (10)    CONSTRAINT [DF_PO_Supp_Detail_BomFactory] DEFAULT ('') NULL,
-    [BomCountry]      VARCHAR (2)     CONSTRAINT [DF_PO_Supp_Detail_BomCountry] DEFAULT ('') NULL,
-    [BomStyle]        VARCHAR (15)    CONSTRAINT [DF_PO_Supp_Detail_BomStyle] DEFAULT ('') NULL,
-    [BomCustCD]       VARCHAR (20)    CONSTRAINT [DF_PO_Supp_Detail_BomCustCD] DEFAULT ('') NULL,
-    [BomArticle]      VARCHAR (8)     CONSTRAINT [DF_PO_Supp_Detail_BomArticle] DEFAULT ('') NULL,
-    [BomZipperInsert] VARCHAR (5)     CONSTRAINT [DF_PO_Supp_Detail_BomZipperInsert] DEFAULT ('') NULL,
-    [BomBuymonth]     VARCHAR (10)    CONSTRAINT [DF_PO_Supp_Detail_BomBuymonth] DEFAULT ('') NULL,
-    [BomCustPONo]     VARCHAR (30)    CONSTRAINT [DF_PO_Supp_Detail_BomCustPONo] DEFAULT ('') NULL,
-    [Spec]            NVARCHAR (MAX)  NULL,
-    [InputQty]        NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_InputQty] DEFAULT ((0)) NULL,
-    [OutputQty]       NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_OutputQty] DEFAULT ((0)) NULL,
-    [AddName]         VARCHAR (10)    CONSTRAINT [DF_PO_Supp_Detail_AddName] DEFAULT ('') NULL,
-    [AddDate]         DATETIME        NULL,
-    [EditName]        VARCHAR (10)    CONSTRAINT [DF_PO_Supp_Detail_EditName] DEFAULT ('') NULL,
-    [EditDate]        DATETIME        NULL,
-    [StockUnit]       VARCHAR (8)     CONSTRAINT [DF_PO_Supp_Detail_StockUnit] DEFAULT ('') NULL,
-    [CfmETA]          DATE            NULL,
-    [RevisedETD]      DATE            NULL,
-    [POAmt] NUMERIC(16, 4) NOT NULL DEFAULT ((0)), 
-    [ShipAmt] NUMERIC(16, 4) NOT NULL DEFAULT ((0)), 
-    [StockSuppID] VARCHAR(6) CONSTRAINT [DF_Po_Supp_Detail_StockSuppID] NOT NULL DEFAULT (''), 
-    [IsForOtherBrand] BIT NOT NULL DEFAULT 0, 
-    [ToMtlPOID] VARCHAR(13) NOT NULL DEFAULT (''), 
-    [ToMtlSeq1] VARCHAR(3) NOT NULL DEFAULT (''), 
-    [ToMtlSeq2] VARCHAR(2) NOT NULL DEFAULT (''), 
+    [ID]                 VARCHAR (13)    CONSTRAINT [DF_PO_Supp_Detail_ID] DEFAULT ('') NOT NULL,
+    [SEQ1]               VARCHAR (3)     CONSTRAINT [DF_PO_Supp_Detail_SEQ1] DEFAULT ('') NOT NULL,
+    [SEQ2]               VARCHAR (2)     CONSTRAINT [DF_PO_Supp_Detail_SEQ2] DEFAULT ('') NOT NULL,
+    [FactoryID]          VARCHAR (8)     DEFAULT ('') NULL,
+    [Refno]              VARCHAR (36)    CONSTRAINT [DF_PO_Supp_Detail_Refno] DEFAULT ('') NULL,
+    [SCIRefno]           VARCHAR (30)    CONSTRAINT [DF_PO_Supp_Detail_SCIRefno] DEFAULT ('') NULL,
+    [FabricType]         VARCHAR (1)     CONSTRAINT [DF_PO_Supp_Detail_FabricType] DEFAULT ('') NOT NULL,
+    [Price]              NUMERIC (16, 4) CONSTRAINT [DF_PO_Supp_Detail_Price] DEFAULT ((0)) NULL,
+    [UsedQty]            NUMERIC (10, 4) CONSTRAINT [DF_PO_Supp_Detail_UsedQty] DEFAULT ((0)) NULL,
+    [Qty]                NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_Qty] DEFAULT ((0)) NULL,
+    [POUnit]             VARCHAR (8)     CONSTRAINT [DF_PO_Supp_Detail_POUnit] DEFAULT ('') NOT NULL,
+    [Complete]           BIT             CONSTRAINT [DF_PO_Supp_Detail_Complete] DEFAULT ((0)) NULL,
+    [SystemETD]          DATE            NULL,
+    [CFMETD]             DATE            NULL,
+    [RevisedETA]         DATE            NULL,
+    [FinalETD]           DATE            NULL,
+    [ShipETA]            DATE            NULL,
+    [ETA]                DATE            NULL,
+    [FinalETA]           DATE            NULL,
+    [ShipModeID]         VARCHAR (10)    CONSTRAINT [DF_PO_Supp_Detail_ShipModeID] DEFAULT ('') NOT NULL,
+    [SMRLock]            VARCHAR (10)    CONSTRAINT [DF_PO_Supp_Detail_SMRLock] DEFAULT ('') NULL,
+    [SystemLock]         DATE            NULL,
+    [PrintDate]          DATETIME        NULL,
+    [PINO]               VARCHAR (25)    CONSTRAINT [DF_PO_Supp_Detail_PINO] DEFAULT ('') NULL,
+    [PIDate]             DATE            NULL,
+    [BrandId]            VARCHAR (8)     DEFAULT ('') NULL,
+    [ColorID_Old]        VARCHAR (MAX)   DEFAULT ('') NULL,
+    [SuppColor]          NVARCHAR (MAX)  CONSTRAINT [DF_PO_Supp_Detail_SuppColor] DEFAULT ('') NULL,
+    [Remark]             NVARCHAR (MAX)  CONSTRAINT [DF_PO_Supp_Detail_Remark] DEFAULT ('') NULL,
+    [Special]            NVARCHAR (MAX)  CONSTRAINT [DF_PO_Supp_Detail_Special] DEFAULT ('') NULL,
+    [Width]              NUMERIC (5, 2)  CONSTRAINT [DF_PO_Supp_Detail_Width] DEFAULT ((0)) NULL,
+    [StockQty]           NUMERIC (12, 1) CONSTRAINT [DF_PO_Supp_Detail_StockQty] DEFAULT ((0)) NULL,
+    [NETQty]             NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_NETQty] DEFAULT ((0)) NULL,
+    [LossQty]            NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_lossQty] DEFAULT ((0)) NULL,
+    [SystemNetQty]       NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_SystemNetQty] DEFAULT ((0)) NULL,
+    [StockPOID]          VARCHAR (13)    CONSTRAINT [DF_PO_Supp_Detail_StockPOID] DEFAULT ('') NULL,
+    [StockSeq1]          VARCHAR (3)     NULL,
+    [StockSeq2]          VARCHAR (2)     NULL,
+    [InventoryUkey]      BIGINT          CONSTRAINT [DF_PO_Supp_Detail_InventoryUkey] DEFAULT ('') NULL,
+    [OutputSeq1]         VARCHAR (3)     CONSTRAINT [DF_PO_Supp_Detail_OutputSeq1] DEFAULT ('') NULL,
+    [OutputSeq2]         VARCHAR (2)     CONSTRAINT [DF_PO_Supp_Detail_OutputSeq2] DEFAULT ('') NULL,
+    [SystemCreate]       BIT             CONSTRAINT [DF_PO_Supp_Detail_SystemCreate] DEFAULT ((0)) NULL,
+    [ShipQty]            NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_ShipQty] DEFAULT ((0)) NULL,
+    [ShipFOC]            NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_ShipFOC] DEFAULT ((0)) NULL,
+    [ApQty]              NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_ApQty] DEFAULT ((0)) NULL,
+    [Shortage]           NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_Shortage] DEFAULT ((0)) NULL,
+    [FOC]                NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_FOC] DEFAULT ((0)) NULL,
+    [Junk]               BIT             CONSTRAINT [DF_PO_Supp_Detail_Junk] DEFAULT ((0)) NULL,
+    [ColorDetail]        NVARCHAR (MAX)  CONSTRAINT [DF_PO_Supp_Detail_ColorDetail] DEFAULT ('') NULL,
+    [BomFactory]         VARCHAR (10)    CONSTRAINT [DF_PO_Supp_Detail_BomFactory] DEFAULT ('') NULL,
+    [BomCountry]         VARCHAR (2)     CONSTRAINT [DF_PO_Supp_Detail_BomCountry] DEFAULT ('') NULL,
+    [BomStyle]           VARCHAR (15)    CONSTRAINT [DF_PO_Supp_Detail_BomStyle] DEFAULT ('') NULL,
+    [BomCustCD]          VARCHAR (20)    CONSTRAINT [DF_PO_Supp_Detail_BomCustCD] DEFAULT ('') NULL,
+    [BomArticle]         VARCHAR (8)     CONSTRAINT [DF_PO_Supp_Detail_BomArticle] DEFAULT ('') NULL,
+    [BomBuymonth]        VARCHAR (10)    CONSTRAINT [DF_PO_Supp_Detail_BomBuymonth] DEFAULT ('') NULL,
+    [Spec]               NVARCHAR (MAX)  NULL,
+    [InputQty]           NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_InputQty] DEFAULT ((0)) NULL,
+    [OutputQty]          NUMERIC (10, 2) CONSTRAINT [DF_PO_Supp_Detail_OutputQty] DEFAULT ((0)) NULL,
+    [AddName]            VARCHAR (10)    CONSTRAINT [DF_PO_Supp_Detail_AddName] DEFAULT ('') NULL,
+    [AddDate]            DATETIME        NULL,
+    [EditName]           VARCHAR (10)    CONSTRAINT [DF_PO_Supp_Detail_EditName] DEFAULT ('') NULL,
+    [EditDate]           DATETIME        NULL,
+    [StockUnit]          VARCHAR (8)     CONSTRAINT [DF_PO_Supp_Detail_StockUnit] DEFAULT ('') NULL,
+    [CfmETA]             DATE            NULL,
+    [RevisedETD]         DATE            NULL,
+    [OldStockUnit]       VARCHAR (8)     NULL,
+    [POAmt]              NUMERIC (16, 4) DEFAULT ((0)) NOT NULL,
+    [ShipAmt]            NUMERIC (16, 4) DEFAULT ((0)) NOT NULL,
+    [StockSuppID]        VARCHAR (6)     DEFAULT ('') NOT NULL,
+    [IsForOtherBrand]    BIT             CONSTRAINT [DF_PO_Supp_Detail_IsForOtherBrand] DEFAULT ((0)) NOT NULL,
+    [ToMtlPOID]          VARCHAR (13)    CONSTRAINT [DF_PO_Supp_Detail_ToMtlPOID] DEFAULT ('') NOT NULL,
+    [ToMtlSeq1]          VARCHAR (3)     CONSTRAINT [DF_PO_Supp_Detail_ToMtlSeq1] DEFAULT ('') NOT NULL,
+    [ToMtlSeq2]          VARCHAR (2)     CONSTRAINT [DF_PO_Supp_Detail_ToMtlSeq2] DEFAULT ('') NOT NULL,
+    [CopyFromSeq1]       VARCHAR (3)     CONSTRAINT [DF_PO_Supp_Detail_CopyFromSeq1] DEFAULT ('') NOT NULL,
+    [CopyFromSeq2]       VARCHAR (2)     CONSTRAINT [DF_PO_Supp_Detail_CopyFromSeq2] DEFAULT ('') NOT NULL,
+    [BomSpecDiffReason]  VARCHAR (5)     CONSTRAINT [DF_PO_Supp_Detail_BomSpecDiffReason] DEFAULT ('') NOT NULL,
+    [CannotOperateStock] BIT             CONSTRAINT [DF_PO_Supp_Detail_CannotOperateStock] DEFAULT ((0)) NOT NULL,
+    [Keyword_Original]   VARCHAR (MAX)   CONSTRAINT [DF_PO_Supp_Detail_Keyword_Original] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_PO_Supp_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [SEQ1] ASC, [SEQ2] ASC)
 );
+
+
 
 
 
@@ -143,7 +146,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'顏色組',
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'拉鋉左右拉', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail', @level2type = N'COLUMN', @level2name = N'BomZipperInsert';
+
 
 
 GO
@@ -151,7 +154,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂購月�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客戶訂單單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail', @level2type = N'COLUMN', @level2name = N'BomCustPONo';
+
 
 
 GO
@@ -339,7 +342,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'收到PI的
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'色號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail', @level2type = N'COLUMN', @level2name = N'ColorID';
+
 
 
 GO
@@ -347,11 +350,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠商顏�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'尺寸', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail', @level2type = N'COLUMN', @level2name = N'SizeSpec';
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'尺寸單位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail', @level2type = N'COLUMN', @level2name = N'SizeUnit';
+
 
 
 GO
@@ -383,11 +386,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'耗損數�
 
 
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'原始庫存項的SuppID',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'PO_Supp_Detail',
-    @level2type = N'COLUMN',
-    @level2name = N'StockSuppID'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��l�w�s����SuppID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail', @level2type = N'COLUMN', @level2name = N'StockSuppID';
+

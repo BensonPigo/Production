@@ -24,15 +24,14 @@
     [AddDate]       DATETIME       NULL,
     [EditName]      VARCHAR (10)   NULL,
     [EditDate]      DATETIME       NULL,
-    [OldSys_Ukey]   VARCHAR (10)   NULL,
-    [OldSys_Ver]    VARCHAR (2)    NULL,
     [ukey]          BIGINT         NOT NULL,
-    [Keyword]       VARCHAR (MAX)  NULL,
     [PreShrink]     BIT            NULL,
     [Junk]          BIT            NULL,
-	[SustainableMateria] nvarchar(150) NULL,
+    [IsDefault]     BIT            CONSTRAINT [DF_Fabric_Supp_IsDefault] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Fabric_Supp] PRIMARY KEY CLUSTERED ([SCIRefno] ASC, [SuppID] ASC)
 );
+
+
 
 
 

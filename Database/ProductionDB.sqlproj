@@ -2728,6 +2728,15 @@
     <Build Include="dbo\Functions\GetIsHighRisk.sql" />
     <Build Include="dbo\Functions\IsQRCodeCreatedByPMS.sql" />
     <Build Include="dbo\Functions\GETRelaxationStatus.sql" />
+    <Build Include="dbo\Tables\Style_BOA_Location.sql" />
+    <Build Include="dbo\Tables\PO_Supp_Detail_Spec.sql" />
+    <Build Include="dbo\Tables\PO_Supp_Detail_Keyword.sql" />
+    <Build Include="dbo\Tables\Order_BOA_Location.sql" />
+    <Build Include="dbo\Tables\Order_BOA_Expend_Spec.sql" />
+    <Build Include="dbo\Tables\Order_BOA_Expend_Keyword.sql" />
+    <Build Include="dbo\Tables\Keyword_BomType.sql" />
+    <Build Include="dbo\Tables\InventoryRefNo_Spec.sql" />
+    <Build Include="dbo\Tables\BomType.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
