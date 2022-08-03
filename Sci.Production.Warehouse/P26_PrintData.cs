@@ -21,5 +21,7 @@
         public string From_Location { get; set; }
 
         public string ToLocation { get; set; }
+
+        public string Total { get; set; }
     }
 }

@@ -539,25 +539,31 @@ Where a.id = '{0}' ", masterID);
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             string cmd = @"
-select a.FromPOID
-        ,a.FromSeq1+'-'+a.Fromseq2 as SEQ
-        ,IIF((b.ID = lag(b.ID,1,'')over (order by b.ID,b.seq1,b.seq2) 
-		    AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
-		    AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
-		,'',dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,0))[DESC]
+select a.POID
+        ,[SEQ] = a.Seq1+' '+a.Seq2
+        ,[DESC] = b.Refno + CHAR(13) + CHAR(10) +
+				 IIF(f.MtlTypeID = 'EMB THREAD' or f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
+                                     ,IIF( b.SuppColor = '' or b.SuppColor is null,dbo.GetColorMultipleID(o.BrandID, b.ColorID), b.SuppColor)
+                                     ,dbo.GetColorMultipleID(o.BrandID, b.ColorID)
+                                 )+ CHAR(13) + CHAR(10) +
+				 b.SizeSpec + CHAR(13) + CHAR(10) +
+				 Concat(iif(b.FabricType='F','Fabric',iif(b.FabricType='A','Accessory',iif(b.FabricType='O','Orher',b.FabricType))), '-', f.MtlTypeID)
+		,a.Roll
+		,a.Dyelot
 		,unit = b.StockUnit
-		,a.FromRoll
-        ,a.FromDyelot
 		,a.Qty
-		,[From_Location]=dbo.Getlocation(fi.ukey)
-        ,[From_ContainerCode] = fi.ContainerCode
-		,a.ToLocation 
-        ,a.ToContainerCode
-        ,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.Fromseq2 )      
-from dbo.Subtransfer_detail a  WITH (NOLOCK) 
-left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
-left join dbo.FtyInventory FI on a.fromPoid = fi.poid and a.fromSeq1 = fi.seq1 and a.fromSeq2 = fi.seq2 and a.fromDyelot = fi.Dyelot
-    and a.fromRoll = fi.roll and a.fromStocktype = fi.stocktype
+		,[StockType] = case a.StockType 
+					when 'B' then 'Bulk'
+					when 'I' then 'Inventory'
+					when 'O' then 'Scrap'
+					else a.StockType end
+		,[From_Location]=a.FromLocation
+        ,[ToLocation] = a.ToLocation    
+        ,[Total] = sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 )    
+from dbo.LocationTrans_detail a  WITH (NOLOCK) 
+left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
+left join orders o with(nolock) on o.ID = b.ID
+left join Fabric f with(nolock) on f.SCIRefno = b.SCIRefno
 where a.id= @ID";
             result = DBProxy.Current.Select(string.Empty, cmd, pars, out dd);
             if (!result)
@@ -572,18 +578,18 @@ where a.id= @ID";
             }
 
             // 傳 list 資料
-            List<P22_PrintData> data = dd.AsEnumerable()
-                .Select(row1 => new P22_PrintData()
+            List<P26_PrintData> data = dd.AsEnumerable()
+                .Select(row1 => new P26_PrintData()
                 {
-                    FromPOID = row1["FromPOID"].ToString().Trim(),
+                    POID = row1["POID"].ToString().Trim(),
                     SEQ = row1["SEQ"].ToString().Trim(),
                     DESC = row1["DESC"].ToString().Trim(),
                     Unit = row1["unit"].ToString().Trim(),
-                    FromRoll = row1["FromRoll"].ToString().Trim(),
-                    FromDyelot = row1["FromDyelot"].ToString().Trim(),
+                    Roll = row1["Roll"].ToString().Trim(),
+                    Dyelot = row1["Dyelot"].ToString().Trim(),
                     QTY = row1["QTY"].ToString().Trim(),
-                    From_Location = row1["From_Location"].ToString().Trim() + Environment.NewLine + row1["From_ContainerCode"].ToString().Trim(),
-                    ToLocation = row1["ToLocation"].ToString().Trim() + Environment.NewLine + row1["ToContainerCode"].ToString().Trim(),
+                    From_Location = row1["From_Location"].ToString().Trim(),
+                    ToLocation = row1["ToLocation"].ToString().Trim(),
                     Total = row1["Total"].ToString().Trim(),
                 }).ToList();
 
@@ -594,9 +600,9 @@ where a.id= @ID";
             #region  指定是哪個 RDLC
 
             // DualResult result;
-            Type reportResourceNamespace = typeof(P22_PrintData);
+            Type reportResourceNamespace = typeof(P26_PrintData);
             Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
-            string reportResourceName = "P22_Print.rdlc";
+            string reportResourceName = "P26_Print.rdlc";
 
             IReportResource reportresource;
             if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
