@@ -7,19 +7,33 @@
     [BundleNo]              NVARCHAR (43) CONSTRAINT [DF_BundleTransfer_BundleNo] DEFAULT ('') NULL,
     [TransferDate]          DATETIME      NULL,
     [AddDate]               DATETIME      NULL,
-    [LocationID]            VARCHAR (10)  DEFAULT ('') NOT NULL,
+    [LocationID]            VARCHAR (10)  CONSTRAINT [DF_BundleTransfer_LocationID] DEFAULT ('') NOT NULL,
     [RFIDProcessLocationID] VARCHAR (15)  CONSTRAINT [DF_BundleTransfer_RFIDProcessLocationID] DEFAULT ('') NOT NULL,
     [PanelNo]               VARCHAR (24)  CONSTRAINT [DF_BundleTransfer_PanelNo] DEFAULT ('') NOT NULL,
-    [CutCellID]             VARCHAR (10)  CONSTRAINT [DF_BundleTransfer_CutCellID] DEFAULT ('') NOT NULL, 
-    [SewingLineID] VARCHAR(5) NOT NULL DEFAULT (''),
+    [CutCellID]             VARCHAR (10)  CONSTRAINT [DF_BundleTransfer_CutCellID] DEFAULT ('') NOT NULL,
+    [SewingLineID]          VARCHAR (5)   DEFAULT ('') NOT NULL,
     [RFIDProcessTable]      VARCHAR (2)   CONSTRAINT [DF_BundleTransfer_RFIDProcessTable] DEFAULT ('') NULL
 );
 
 
+GO
+CREATE NONCLUSTERED INDEX [ForM360API]
+    ON [dbo].[BundleTransfer]([Type] ASC, [SubProcessId] ASC, [BundleNo] ASC, [RFIDProcessLocationID] ASC, [RFIDProcessTable] ASC);
 
 
+GO
+CREATE NONCLUSTERED INDEX [IDX_BundleTransfer_AddDate]
+    ON [dbo].[BundleTransfer]([AddDate] DESC)
+    INCLUDE([BundleNo]);
 
 
+GO
+CREATE NONCLUSTERED INDEX [BundleTransferDate]
+    ON [dbo].[BundleTransfer]([TransferDate] ASC);
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'產線桌子', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'BundleTransfer', @level2type = N'COLUMN', @level2name = N'RFIDProcessTable';
 
 
 GO
@@ -56,20 +70,3 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Sid', @leve
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Bundle transfer record', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'BundleTransfer';
-
-
-GO
-CREATE NONCLUSTERED INDEX [BundleTransferDate]
-<<<<<<< HEAD
-    ON [dbo].[BundleTransfer]([TransferDate] ASC);
-
-
-=======
-    ON [dbo].[BundleTransfer]([TransferDate] ASC)
-    INCLUDE([RFIDReaderId], [Type], [SubProcessId], [TagId], [BundleNo], [LocationID], [RFIDProcessLocationID], [PanelNo], [CutCellID]);
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'產線桌子', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'BundleTransfer', @level2type = N'COLUMN', @level2name = N'RFIDProcessTable';
->>>>>>> Mantis/ISP20211341
-
