@@ -386,5 +386,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'耗損數�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��l�w�s����SuppID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail', @level2type = N'COLUMN', @level2name = N'StockSuppID';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'原始庫存項的SuppID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail', @level2type = N'COLUMN', @level2name = N'StockSuppID';
 

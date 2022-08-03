@@ -228,5 +228,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'平方米�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���ƬO�_���^������]WH �ΦA�P�_ Hangtag �O�_�ݭn���˰w�^', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric', @level2type = N'COLUMN', @level2name = N'IsRecycled';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'物料是否為回收材質（WH 用再判斷 Hangtag 是否需要避檢針）', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric', @level2type = N'COLUMN', @level2name = N'IsRecycled';
 
