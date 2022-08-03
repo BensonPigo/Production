@@ -77,6 +77,7 @@ select id2.*
 ,[HSCode] = kcd.HSCode
 ,kd.CDCCode
 ,rn = row_number()over(order by id2.ukey)
+,vk_Refno = (select top 1 vk.Refno from View_KHImportItem vk with(nolock) where id2.RefNo =vk.SCIRefno order by vk.Refno)
 from KHImportDeclaration_Detail id2
 inner join KHImportDeclaration i on i.ID = id2.ID
 left join KHCustomsItem kc on kc.RefNo=id2.Refno
@@ -240,9 +241,9 @@ where id2.id = '{masterID}'
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 DataRow drSeek;
                 string sqlcmd = $@"
-Select Refno,Description,Unit 
+Select Refno,SciRefno,Description,Unit 
 from view_KHImportItem 
-where SciRefNo='{e.FormattedValue}' and junk=0
+where refno='{e.FormattedValue}' and junk=0
 ";
 
                 if (!MyUtility.Check.Seek(sqlcmd, out drSeek))
@@ -250,6 +251,7 @@ where SciRefNo='{e.FormattedValue}' and junk=0
                     MyUtility.Msg.WarningBox("There is no this <Ref#>.");
                     dr["Description"] = string.Empty;
                     dr["UnitID"] = string.Empty;
+                    dr["vk_Refno"] = string.Empty;
                     dr["Refno"] = string.Empty;
 
                     dr["CustomsType"] = string.Empty;
@@ -265,6 +267,7 @@ where SciRefNo='{e.FormattedValue}' and junk=0
 
                 dr["Description"] = drSeek["Description"];
                 dr["UnitID"] = drSeek["Unit"];
+                dr["Refno"] = drSeek["SciRefno"];
 
                 sqlcmd = $@"
 Select kd.CDCUnit, Ki.CDCUnitPrice,kd.CustomsType
@@ -273,11 +276,12 @@ Select kd.CDCUnit, Ki.CDCUnitPrice,kd.CustomsType
 , [CDCUnitPrice] = ki.CDCUnitPrice  
 , kd.CDCCode
 , HSCode = (select HSCode from KHCustomsItem_Detail kid where kid.KHCustomsItemUkey = ki.ukey and kid.Port = '{this.CurrentMaintain["ImportPort"]}')
+, vk.SciRefno
 from view_KHImportItem vk
 inner join KHCustomsItem ki on vk.Refno=Ki.Refno
 inner join KHCustomsDescription kd on  kd.CDCName=ki.KHCustomsDescriptionCDCName and vk.CustomsType = kd.CustomsType
 inner join KHCustomsDescription_Detail kdd on  kd.CDCName=kdd.CDCName and kdd.PurchaseUnit = vk.Unit
-where vk.SciRefno = '{e.FormattedValue}'
+where vk.Refno = '{e.FormattedValue}'
 ";
                 if (MyUtility.Check.Seek(sqlcmd, out drSeek))
                 {
@@ -298,7 +302,7 @@ where vk.SciRefno = '{e.FormattedValue}'
                     dr["HSCode"] = string.Empty;
                 }
 
-                dr["Refno"] = e.FormattedValue;
+                dr["vk_Refno"] = e.FormattedValue;
                 dr.EndEdit();
             };
 
@@ -311,8 +315,8 @@ where vk.SciRefno = '{e.FormattedValue}'
 
                 if (e.Button == MouseButtons.Right)
                 {
-                    string sqlcmd = @"Select SCIRefno,Refno,CustomsType,Description,Unit from view_KHImportItem where Junk = 0";
-                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "23,20,12,35,10", this.CurrentDetailData["Refno"].ToString(), "SCIRefno,Refno,CustomsType,Description,Unit");
+                    string sqlcmd = @"Select Refno,SCIRefno,CustomsType,Description,Unit from view_KHImportItem where Junk = 0";
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "23,23,12,35,10", this.CurrentDetailData["vk_Refno"].ToString(), "Refno,SCIRefno,CustomsType,Description,Unit");
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -320,6 +324,7 @@ where vk.SciRefno = '{e.FormattedValue}'
                     }
 
                     DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    dr["vk_Refno"] = item.GetSelecteds()[0]["Refno"];
                     dr["Refno"] = item.GetSelecteds()[0]["SCIRefno"];
                     dr.EndEdit();
                 }
@@ -407,7 +412,8 @@ where vk.Refno = '{dr["Refno"]}'
            .Text("ShipModeID", header: "ShipMode", width: Widths.AnsiChars(10), settings: shipMode_setting, iseditingreadonly: true).Get(out this.col_ShipMode) // Edit on AddRow by hand
            .Text("Vessel", header: "Vessel", width: Widths.AnsiChars(25), iseditingreadonly: true).Get(out this.col_Vessel) // Edit on AddRow by hand
            .Text("ExportPort", header: "Loading (Port)", width: Widths.AnsiChars(15), settings: port_setting, iseditingreadonly: true).Get(out this.col_Port) // Edit on AddRow by hand
-           .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(23), settings: refno_setting, iseditingreadonly: true).Get(out this.col_Refno) // Edit on AddRow by hand
+           .Text("vk_RefNo", header: "RefNo", width: Widths.AnsiChars(23), settings: refno_setting, iseditingreadonly: true).Get(out this.col_Refno) // Edit on AddRow by hand
+           .Text("RefNo", header: "SCI RefNo", width: Widths.AnsiChars(23), iseditingreadonly: true)
            .Text("Description", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
            .Numeric("Qty", header: "Q'ty", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, settings: qty_setting, iseditingreadonly: true).Get(out this.col_Qty) // Edit on AddRow by hand
            .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -437,7 +443,7 @@ where vk.Refno = '{dr["Refno"]}'
             this.detailgrid.Columns["ShipModeID"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["Vessel"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["ExportPort"].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns["RefNo"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["vk_RefNo"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["NetKg"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["WeightKg"].DefaultCellStyle.BackColor = Color.Pink;
