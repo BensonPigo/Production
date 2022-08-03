@@ -4879,7 +4879,9 @@ from SewingOutput so with (nolock)
 where   so.SewingLineID = @SewingLineID and
         so.FactoryID = @FactoryID and
         so.Team = @Team and
-        so.OutputDate < @SewingDate
+        so.OutputDate < @SewingDate and
+        so.Shift <> 'O' and
+        so.Category = 'O'
 order by    so.OutputDate desc
 
 select  so.ID, so.OutputDate
@@ -4888,7 +4890,9 @@ from SewingOutput so with (nolock)
 where   so.SewingLineID = @SewingLineID and
         so.FactoryID = @FactoryID and
         so.Team = @Team and
-        so.OutputDate in (select OutputDate from #tmpSewingOutputDay)
+        so.OutputDate in (select OutputDate from #tmpSewingOutputDay) and
+        so.Shift <> 'O' and
+        so.Category = 'O'
 order by    so.OutputDate desc
 
 select  distinct

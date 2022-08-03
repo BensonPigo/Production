@@ -28,13 +28,17 @@ BEGIN
 														from SewingOutput so with (nolock)
 														where	so.SewingLineID = @SewingLineID and
 																so.FactoryID = @FactoryID and
-																so.Team = @Team and
+																so.Team = @Team  and
+																so.Shift <> 'O' and
+																so.Category = 'O' and
 																so.OutputDate in (select distinct top 30 so.OutputDate
 																				  from SewingOutput so with (nolock)
 																				  where   so.SewingLineID = @SewingLineID and
 																				          so.FactoryID = @FactoryID and
 																				          so.Team = @Team and
-																				          so.OutputDate < @OutputDate
+																				          so.OutputDate < @OutputDate  and
+																						  so.Shift <> 'O' and
+																						  so.Category = 'O'
 																				  order by    so.OutputDate desc)
 														) and
 									o.BrandID = OriStyleInfo.BrandID and
