@@ -213,6 +213,7 @@
     <Compile Include="P07_QRCodeSticker.Designer.cs">
       <DependentUpon>P07_QRCodeSticker.cs</DependentUpon>
     </Compile>
+    <Compile Include="P26_PrintData.cs" />
     <Compile Include="P65_PrintData.cs" />
     <Compile Include="P06.cs">
       <SubType>Form</SubType>
