@@ -737,7 +737,7 @@ where a.id='{this.id}'
                     paras = new List<SqlParameter> { new SqlParameter($"@Image", item.Img) };
                     sqlcmd = $@"
 set XACT_ABORT on
-INSERT INTO [ExtendServer].PMSFile.dbo.AIR_DefectImage([AIRID],[ReceivingID],[Image])VALUES('{this.id}','{this.receivingID}',@Image)
+INSERT INTO SciPMSFile_AIR_DefectImage ([AIRID],[ReceivingID],[Image])VALUES('{this.id}','{this.receivingID}',@Image)
 ";
                 }
                 else if (item.UpdType == DefectImgUpdType.Remove && item.Ukey > 0)
@@ -745,7 +745,7 @@ INSERT INTO [ExtendServer].PMSFile.dbo.AIR_DefectImage([AIRID],[ReceivingID],[Im
                     paras = new List<SqlParameter> { new SqlParameter($"@Ukey", item.Ukey) };
                     sqlcmd = $@"
 set XACT_ABORT on
-delete [ExtendServer].PMSFile.dbo.[AIR_DefectImage] where Ukey = @Ukey
+delete SciPMSFile_AIR_DefectImage where Ukey = @Ukey
 ";
                 }
                 else
@@ -765,7 +765,7 @@ delete [ExtendServer].PMSFile.dbo.[AIR_DefectImage] where Ukey = @Ukey
 
         private void LoadPicture()
         {
-            string sqlcmd = $@"select * from [ExtendServer].PMSFile.dbo.AIR_DefectImage where AIRID = '{this.id}' and ReceivingID = '{this.receivingID}' order by ukey";
+            string sqlcmd = $@"select * from SciPMSFile_AIR_DefectImage where AIRID = '{this.id}' and ReceivingID = '{this.receivingID}' order by ukey";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)
             {

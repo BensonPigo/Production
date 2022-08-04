@@ -96,7 +96,7 @@ BEGIN
 		, t.Replacement = s.Replacement
 		, t.Delay = s.Delay
 		, t.PrepaidFtyImportFee = s.PrepaidFtyImportFee
-		, t.NoImportCharges = iif(s.PrepaidFtyImportFee2 > 0, 1 ,0)
+		, t.NoImportCharges = iif(s.PrepaidFtyImportFee2 > 0, 1 ,t.NoImportCharges)
 		, t.MainExportID08 = s.MainExportID08
 		, t.FormE = s.FormE
 		, t.SQCS = s.SQCS
@@ -253,10 +253,34 @@ AND t.Export_DetailUkey IN (
 	  		delete;
 			
 -----------------------POShippingList_Line-----------------------------
+------------------------------------------------------------------------------------------------------
+--***資料交換的條件限制***
+--1. 優先取得Production.dbo.DateInfo
+declare @DateInfoName varchar(30) ='POShippingList';
+declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
+declare @Remark nvarchar(max) = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
+
+--2.取得預設值
+if @DateStart is Null
+	set @DateStart= (Select DateStart From Trade_To_Pms.dbo.DateInfo Where Name = @DateInfoName)
+if @DateEnd is Null
+	set @DateEnd = (Select DateEnd From Trade_To_Pms.dbo.DateInfo Where Name = @DateInfoName)
+
+--3.更新Pms_To_Trade.dbo.dateInfo
+if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
+	update Pms_To_Trade.dbo.dateInfo  set DateStart = @DateStart,DateEnd = @DateEnd, Remark=@Remark where Name = @DateInfoName 
+else
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName,@DateStart,@DateEnd,@Remark);
+
 --刪除:存在Trade_To_Pms.Export_Detail不存在Trade_To_Pms.POShippingList_Line
+declare @deleteukeys table (POShippingList_Ukey bigint)
 delete t
+output deleted.POShippingList_Ukey into @deleteukeys
 from Production.dbo.POShippingList_Line t
 where not exists (select 1 from Trade_To_Pms.dbo.POShippingList_Line s where s.POShippingList_Ukey = t.POShippingList_Ukey and s.QRCode = t.QRCode and s.Line = t.Line)
+and t.AddDate between @DateStart and @DateEnd
 
 --更新:存在Trade_To_Pms.Export_Detail存在Production.POShippingList_Line
 update t set
@@ -295,7 +319,7 @@ update t set
 from Trade_To_Pms.dbo.POShippingList_Line s
 inner join Production.dbo.POShippingList_Line t on s.POShippingList_Ukey = t.POShippingList_Ukey and s.QRCode = t.QRCode and s.Line = t.Line
 
---刪除:存在Trade_To_Pms.Export_Detail不存在Production.POShippingList_Line
+--新增:存在Trade_To_Pms.Export_Detail不存在Production.POShippingList_Line
 INSERT INTO [dbo].[POShippingList_Line]
            ([POShippingList_Ukey]
            ,[QRCode]
@@ -463,9 +487,9 @@ and exists(select 1 from Production.dbo.POShippingList_Line where POShippingList
 --刪除: 上面做完後,表身為空,表頭刪除
 delete pl
 from Production.dbo.POShippingList pl
-left join Production.dbo.POShippingList_Line pll on pl.ukey = pll.POShippingList_Ukey
-where pll.POShippingList_Ukey is null
-
+where exists(select 1 from @deleteukeys d where d.POShippingList_Ukey = pl.Ukey)
+and not exists(select 1 from POShippingList_Line pll where pl.ukey = pll.POShippingList_Ukey)
+ 
 -----------------------Export_Container-----------------------------
 	RAISERROR('Import Export_Container - Starts',0,0)
 
@@ -770,8 +794,23 @@ insert into Production.dbo.FormType(	ID		,
 -----------------------TransferExport-----------------------------
 update a set	
 	a.OTFee = b.OTFee
-	,a.CloseDate = b.CloseDate
-	,a.LoadDate = b.LoadDate
+	, a.CloseDate = b.CloseDate
+	, a.LoadDate = b.LoadDate
+	, a.ImportPort = b.ImportPort
+	, a.ExportPort = b.ExportPort
+	, a.CompanyID = b.CompanyID
+	, a.ShipmentTerm = b.ShipmentTerm
+	, a.ShipModeID = b.ShipModeID
+	, a.Payer = b.Payer
+	, a.Etd = b.Etd
+	, a.eta = b.eta
+	, a.Handle = b.Handle
+	, a.Forwarder = b.Forwarder
+	, a.Vessel = b.Vessel
+	, a.Carrier = b.Carrier
+	, a.Blno = b.Blno
+	, a.Confirm = b.Confirm
+	, a.ConfirmTime = b.ConfirmTime
 from Production.dbo.TransferExport a
 inner join Trade_To_Pms.dbo.TransferExport b on b.ID = a.ID
 

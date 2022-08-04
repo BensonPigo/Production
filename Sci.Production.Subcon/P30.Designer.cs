@@ -380,7 +380,7 @@
             this.btnImportThread.Name = "btnImportThread";
             this.btnImportThread.Size = new System.Drawing.Size(160, 49);
             this.btnImportThread.TabIndex = 8;
-            this.btnImportThread.Text = "Import Thread, Carton request";
+            this.btnImportThread.Text = "Import Carton request";
             this.btnImportThread.UseVisualStyleBackColor = true;
             this.btnImportThread.Click += new System.EventHandler(this.BtnImportThread_Click);
             // 

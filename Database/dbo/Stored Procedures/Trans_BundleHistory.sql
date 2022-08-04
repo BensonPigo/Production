@@ -13,21 +13,39 @@ BEGIN
 Begin try
 	Begin Transaction 
 
-		select distinct o.ID
+		select *
 		into #tmp_orders_ID
 		from Orders o
 		where o.WhseClose is not null
-		and not exists(select 1 from Bundle_History where o.ID = OrderID)
+		or o.SciDelivery <= DATEADD(month, -6, GETDATE())		
 
 		select *
-		into #tmp_Bundle
-		from Bundle b 
-		where exists (select 1 from #tmp_orders_ID where id = b.Orderid)
+		into #tmp_Bundle_Detail_Order
+		from Bundle_Detail_Order bo
+		where exists (select 1 from #tmp_orders_ID where ID = bo.OrderID)
 
 		select *
 		into #tmp_Bundle_Detail
 		from Bundle_Detail bd
-		where exists(select 1 from #tmp_Bundle where id = bd.id)
+		where exists (select 1 from #tmp_Bundle_Detail_Order bo where bo.BundleNo = bd.BundleNo)
+		
+		select *
+		into #tmp_Bundle
+		from Bundle b 
+		where exists (select 1 from #tmp_Bundle_Detail bd where b.ID = bd.ID)
+		 
+		/*****************************  Bundle_Detail_Order  ************************************/
+		Begin
+			insert into Bundle_Detail_Order_History([ID], [BundleNo], [OrderID], [Qty])
+			select [ID], [BundleNo], [OrderID], [Qty]
+			from #tmp_Bundle_Detail_Order
+
+			delete from bo
+			from Bundle_Detail_Order bo
+			where exists (select 1 from #tmp_Bundle_Detail_Order where Ukey = bo.Ukey)
+
+			drop table #tmp_Bundle_Detail_Order
+		end
 
 		/*****************************  Bundle_Detail_Art  ************************************/
 		Begin
@@ -151,6 +169,7 @@ End Catch
 
 
 END
+
 GO
 
 

@@ -113,6 +113,7 @@ from (
             , t.AddDate
             , tid = t.id
             , [PackingList_Detail_Ukey]=pd.Ukey
+	        , t.SCICtnNo
     from TransferToClog t WITH (NOLOCK) 
     left join Orders o WITH (NOLOCK) on t.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
@@ -193,21 +194,15 @@ from (
                 string updateCmd = @"
 update TransferToClog
 set TransferSlipNo=''
-where id in (select id from #tmp) 
-;
-update PackingList_Detail
-set TransferDate = NULL
-where Ukey in (select PackingList_Detail_Ukey from #tmp) 
+where SCICtnNo in (select SCICtnNo from #tmp) 
 ;
 ";
                 DataTable dtUpdate = new DataTable();
-                dtUpdate.Columns.Add("ID");
-                dtUpdate.Columns.Add("PackingList_Detail_Ukey");
+                dtUpdate.Columns.Add("SCICtnNo");
                 foreach (DataRow item in drCheck)
                 {
                     DataRow drNew = dtUpdate.NewRow();
-                    drNew["ID"] = item["tid"].ToString();
-                    drNew["PackingList_Detail_Ukey"] = item["PackingList_Detail_Ukey"].ToString();
+                    drNew["SCICtnNo"] = item["SCICtnNo"].ToString();
                     dtUpdate.Rows.Add(drNew);
                 }
 

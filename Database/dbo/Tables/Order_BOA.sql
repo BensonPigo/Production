@@ -5,7 +5,7 @@
     [SCIRefno]            VARCHAR (30)   CONSTRAINT [DF_Order_BOA_SCIRefno] DEFAULT ('') NOT NULL,
     [SuppID]              VARCHAR (6)    CONSTRAINT [DF_Order_BOA_SuppID] DEFAULT ('') NOT NULL,
     [Seq]                 VARCHAR (3)    CONSTRAINT [DF_Order_BOA_Seq] DEFAULT ('') NOT NULL,
-    [ConsPC]              NUMERIC (8, 4) CONSTRAINT [DF_Order_BOA_ConsPC] DEFAULT ((0)) NULL,
+    [ConsPC]              NUMERIC (12, 4) CONSTRAINT [DF_Order_BOA_ConsPC] DEFAULT ((0)) NULL,
     [BomTypeSize]         BIT            CONSTRAINT [DF_Order_BOA_BomTypeSize] DEFAULT ((0)) NULL,
     [BomTypeColor]        BIT            CONSTRAINT [DF_Order_BOA_BomTypeColor] DEFAULT ((0)) NULL,
     [BomTypePono]         BIT            CONSTRAINT [DF_Order_BOA_BomTypePono] DEFAULT ((0)) NULL,

@@ -875,7 +875,7 @@ select [dbo].[getWaste]( '{this.CurrentMaintain["StyleID"]}','{this.CurrentMaint
                 StyleUkey = MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]),
                 SizeCode = MyUtility.Convert.GetString(this.CurrentMaintain["SizeCode"]),
                 Article = colorway[0],
-                Category = this.comboCategory.Text,
+                Category = this.comboCategory.SelectedValue.ToString(),
                 ContractID = this.CurrentMaintain["VNContractID"].ToString(),
             };
             DualResult result = Prgs.GetVNConsumption_Detail_Detail(parData, out queryDetail2Data);

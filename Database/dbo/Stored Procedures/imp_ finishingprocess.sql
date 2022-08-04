@@ -350,7 +350,7 @@ Begin
 			where SCICtnNo = s.SCICtnNo
 			and SCIUpdate = s.SCIUpdate
 		)t
-		where s.SCIUpdate = 0
+		where 1=1
 		and t.r_ID = 1
 		and t.ID = s.ID
 		and (
@@ -378,13 +378,18 @@ Begin
 					and p.PLCtnTrToRgCodeDate is null
 					and (po.Status = 'New' or po.Status is null) ) )and s.Type = 'CFAToClog')		
 
+
 		select * 
 		 ,[row] = ROW_NUMBER() over(partition by SCICtnNo order by time desc)
 		 into #tmp_LastLocation
 		 from 
 		(
-			select tfl.ClogLocationId, tfl.Pallet, tfl.Time, tfl.SCICtnNo
-			from #tmpTransferLocation_for04 tfl with (nolock)
+			select  s.ClogLocationId, s.Pallet, s.Time, s.SCICtnNo
+			from TransferLocation s
+			where s.SCIUpdate = 0
+			and exists(
+			select 1 from #tmpTransferLocation_for04 where s.SCICtnNo = SCICtnNo
+			)
 		) a 
 
 		update pd

@@ -25,6 +25,7 @@ namespace Sci.Production.Warehouse
         private string updateInfo;
         private string status;
         private DataTable[] listResult;
+        private DataTable mindDt;
 
         /// <summary>
         /// R40
@@ -42,25 +43,13 @@ namespace Sci.Production.Warehouse
                 { "Cut Shadeband", "1" },
                 { "Fabric to Lab", "2" },
                 { "Checker", "3" },
+                { "Scanned by MIND", "4" },
             };
             this.comboUpdateInfo.DataSource = new BindingSource(updateInfo_source, null);
             this.comboUpdateInfo.DisplayMember = "Key";
             this.comboUpdateInfo.ValueMember = "Value";
 
             this.comboUpdateInfo.SelectedIndex = 0;
-
-            // Status下拉選單
-            Dictionary<string, string> status_source = new Dictionary<string, string>
-            {
-                { "ALL", "All" },
-                { "Already updated", "AlreadyUpdated" },
-                { "Not yet Update", "NotYetUpdate" },
-            };
-
-            this.comboStatus.DataSource = new BindingSource(status_source, null);
-            this.comboStatus.DisplayMember = "Key";
-            this.comboStatus.ValueMember = "Value";
-            this.comboStatus.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -141,6 +130,7 @@ namespace Sci.Production.Warehouse
             string whereCutShadeband = string.Empty;
             string whereFabricLab = string.Empty;
             string whereChecker = string.Empty;
+            string whereMind = string.Empty;
 
             if (this.status == "AlreadyUpdated")
             {
@@ -156,6 +146,16 @@ namespace Sci.Production.Warehouse
                 whereCutShadeband += " and CutShadebandTime is null";
                 whereFabricLab += " and Fabric2LabTime is null";
                 whereChecker += " and ISNULL(Checker,'') = ''";
+            }
+
+            if (this.status.EqualString("AlreadyScanned") || this.status == "AlreadyUpdated")
+            {
+                whereMind += " and MINDCheckAddDate is not null";
+            }
+
+            if (this.status.EqualString("NotYetScanned") || this.status == "NotYetUpdate")
+            {
+                whereMind += " and MINDCheckAddDate is null";
             }
 
             string strSql = $@"
@@ -189,6 +189,7 @@ select * into #tmpResult
 		inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
 		inner join Orders o with (nolock) on o.ID = rd.POID 
 		inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
+        inner join PO_Supp ps with (nolock) on ps.ID = psd.id and ps.SEQ1 = psd.SEQ1
 		inner join Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
         left join DropDownList ddl WITH (NOLOCK) on ddl.Type = 'Pms_StockType'
                                                     and REPLACE(ddl.ID,'''','') = rd.StockType
@@ -228,6 +229,7 @@ select * into #tmpResult
 		INNER JOIN TransferIn_Detail rd with (nolock) ON r.ID = rd.ID
 		INNER JOIN Orders o with (nolock) ON o.ID = rd.POID
 		INNER JOIN PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
+        inner join PO_Supp ps with (nolock) on ps.ID = psd.id and ps.SEQ1 = psd.SEQ1
 		INNER JOIN Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
         left join DropDownList ddl WITH (NOLOCK) on ddl.Type = 'Pms_StockType'
                                                     and REPLACE(ddl.ID,'''','') = rd.StockType
@@ -320,19 +322,116 @@ where 1 = 1 {whereChecker}
 
 drop table #tmpResult
 ";
-            #endregion
-            #region SQL Data Loading...
-            DualResult result = DBProxy.Current.Select(null, strSql, listPar, out this.listResult);
+            DualResult result;
+            if (this.updateInfo == "*" || this.updateInfo == "4")
+            {
+                string sqlmind = $@"
+select
+	[ReceivingID] = r.ID
+	,r.ExportID
+	,[ArriveDate] = r.WhseArrival
+	,rd.PoId
+    ,rd.seq1
+    ,rd.seq2
+	,[Seq] = rd.Seq1 + ' ' + rd.Seq2
+	,o.BrandID
+	,psd.refno
+	,fb.WeaveTypeID
+	,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' 
+				, IIF(psd.SuppColor = '', dbo.GetColorMultipleID (o.BrandID, psd.ColorID) , psd.SuppColor)
+				, psd.ColorID)
+	,rd.Roll
+	,rd.Dyelot
+	,rd.StockQty
+	,StockType = isnull (ddl.Name, rd.StockType)
+	,Location= dbo.Getlocation(fi.Ukey)
+	,rd.Weight
+	,rd.ActualWeight
+	,[CutShadebandTime]=cutTime.CutTime
+	,cutTime.CutBy
+	,rd.Fabric2LabBy
+	,rd.Fabric2LabTime
+    ,rd.Checker
+    ,IsQRCodeCreatedByPMS = iif (dbo.IsQRCodeCreatedByPMS(rd.MINDQRCode) = 1, 'Create from PMS', '')
+    ,rd.MINDChecker
+    ,rd.QRCode_PrintDate
+    ,rd.MINDCheckAddDate
+    ,rd.MINDCheckEditDate
+    ,AbbEN = (select Supp.AbbEN from Supp with (nolock) where Supp.id =ps.SuppID)
+    ,rdStockType = rd.StockType
+into #tmpMind
+from  Receiving r with (nolock)
+inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
+inner join Orders o with (nolock) on o.ID = rd.POID 
+inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
+inner join PO_Supp ps with (nolock) on ps.ID = psd.id and ps.SEQ1 = psd.SEQ1
+inner join Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
+left join DropDownList ddl WITH (NOLOCK) on ddl.Type = 'Pms_StockType'
+                                            and REPLACE(ddl.ID,'''','') = rd.StockType
+left join FtyInventory fi with (nolock) on  fi.POID = rd.POID and 
+                                            fi.Seq1 = rd.Seq1 and 
+                                            fi.Seq2 = rd.Seq2 and 
+                                            fi.Roll = rd.Roll and
+                                            fi.Dyelot = rd.Dyelot and
+                                            fi.StockType = rd.StockType
+OUTER APPLY(
+	SELECT  fs.CutTime,fs.CutBy
+	FROM FIR f
+	INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
+	WHERE  r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
+) cutTime
+where   psd.FabricType ='F' and r.Type = 'A'
+{whereReceiving}
+
+select  ReceivingID
+		,ExportID
+		,ArriveDate
+		,PoId
+		,Seq
+		,BrandID
+		,refno
+		,WeaveTypeID
+		,Color
+		,Roll
+		,Dyelot
+		,StockQty
+		,StockType
+		,Location
+		,Weight
+        ,ActualWeight
+        ,IsQRCodeCreatedByPMS
+        ,LastP26RemarkData
+        ,MINDChecker
+        ,QRCode_PrintDate
+        ,MINDCheckAddDate
+        ,MINDCheckEditDate
+        ,AbbEN
+from #tmpMind rd
+OUTER APPLY(
+    select top 1 LastP26RemarkData =  lt.Remark
+	FROM LocationTrans lt
+	INNER JOIN LocationTrans_detail ltd ON lt.ID=ltd.ID
+    where lt.Status='Confirmed'
+    and ltd.poid = rd.poid and ltd.seq1 = rd.seq1 and ltd.seq2 = rd.seq2  AND ltd.Roll = rd.Roll and ltd.Dyelot = rd.Dyelot and ltd.StockType = rd.rdStockType
+    order by EditDate desc
+)p26
+where 1 = 1 {whereMind}
+drop table #tmpMind
+";
+                result = DBProxy.Current.Select(null, sqlmind, listPar, out this.mindDt);
+                if (!result)
+                {
+                    return result;
+                }
+            }
             #endregion
 
-            if (result)
+            if (this.updateInfo != "4")
             {
-                return Ict.Result.True;
+                return DBProxy.Current.Select(null, strSql, listPar, out this.listResult);
             }
-            else
-            {
-                return new DualResult(false, "Query data fail\r\n" + result.ToString());
-            }
+
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -342,12 +441,16 @@ drop table #tmpResult
 
             if (this.updateInfo == "*")
             {
-                dataCnt = this.listResult.Sum(s => s.Rows.Count);
+                dataCnt = this.listResult.Sum(s => s.Rows.Count) + this.mindDt.Rows.Count;
             }
-            else
+            else if (this.updateInfo != "4")
             {
                 int dataNum = MyUtility.Convert.GetInt(this.updateInfo);
                 dataCnt = this.listResult[dataNum].Rows.Count;
+            }
+            else
+            {
+                dataCnt = this.mindDt.Rows.Count;
             }
 
             this.SetCount(dataCnt);
@@ -358,39 +461,67 @@ drop table #tmpResult
             }
 
             this.ShowWaitMessage("Excel Processing...");
-            int serReport = 0;
-            foreach (DataTable dataTable in this.listResult)
+            if (this.updateInfo != "4")
             {
-                string excelName = string.Empty;
-
-                if (this.updateInfo != "*" && this.updateInfo != serReport.ToString())
+                int serReport = 0;
+                foreach (DataTable dataTable in this.listResult)
                 {
-                    serReport++;
-                    continue;
-                }
+                    string excelName = string.Empty;
 
-                switch (serReport)
-                {
-                    case 0:
-                        excelName = "Warehouse_R40_ReceivingActkg";
-                        break;
-                    case 1:
-                        excelName = "Warehouse_R40_CutShadeband";
-                        break;
-                    case 2:
-                        excelName = "Warehouse_R40_FabrictoLab";
-                        break;
-                    case 3:
-                        excelName = "Warehouse_R40_Checker";
-                        break;
-                    default:
+                    if (this.updateInfo != "*" && this.updateInfo != serReport.ToString())
+                    {
+                        serReport++;
                         continue;
-                }
+                    }
 
+                    switch (serReport)
+                    {
+                        case 0:
+                            excelName = "Warehouse_R40_ReceivingActkg";
+                            break;
+                        case 1:
+                            excelName = "Warehouse_R40_CutShadeband";
+                            break;
+                        case 2:
+                            excelName = "Warehouse_R40_FabrictoLab";
+                            break;
+                        case 3:
+                            excelName = "Warehouse_R40_Checker";
+                            break;
+                        default:
+                            continue;
+                    }
+
+                    Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx"); // 預先開啟excel app
+                    if (dataTable.Rows.Count > 0)
+                    {
+                        MyUtility.Excel.CopyToXls(dataTable, null, $"{excelName}.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
+                    }
+
+                    Excel.Worksheet worksheet = objApp.Sheets[1];
+                    worksheet.Rows.AutoFit();
+                    worksheet.Columns.AutoFit();
+
+                    #region Save & Show Excel
+                    string strExcelName = Class.MicrosoftFile.GetName(excelName);
+                    objApp.ActiveWorkbook.SaveAs(strExcelName);
+                    objApp.Quit();
+                    Marshal.ReleaseComObject(objApp);
+                    Marshal.ReleaseComObject(worksheet);
+
+                    strExcelName.OpenFile();
+                    serReport++;
+                    #endregion
+                }
+            }
+
+            if (this.updateInfo == "*" || this.updateInfo == "4")
+            {
+                string excelName = "Warehouse_R40_ScannedbyMIND";
                 Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx"); // 預先開啟excel app
-                if (dataTable.Rows.Count > 0)
+                if (this.mindDt.Rows.Count > 0)
                 {
-                    MyUtility.Excel.CopyToXls(dataTable, null, $"{excelName}.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
+                    MyUtility.Excel.CopyToXls(this.mindDt, null, $"{excelName}.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
                 }
 
                 Excel.Worksheet worksheet = objApp.Sheets[1];
@@ -405,12 +536,44 @@ drop table #tmpResult
                 Marshal.ReleaseComObject(worksheet);
 
                 strExcelName.OpenFile();
-                serReport++;
+                #endregion
             }
 
             this.HideWaitMessage();
-            #endregion
             return true;
+        }
+
+        private void ComboUpdateInfo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Status下拉選單
+            Dictionary<string, string> status_source = new Dictionary<string, string>
+            {
+                { "ALL", "All" },
+                { "Already updated", "AlreadyUpdated" },
+                { "Not yet Update", "NotYetUpdate" },
+            };
+
+            // Status下拉選單
+            Dictionary<string, string> status_source_MIND = new Dictionary<string, string>
+            {
+                { "ALL", "All" },
+                { "Already Scanned", "AlreadyScanned" },
+                { "Not yet Scanned", "NotYetScanned" },
+            };
+
+            this.comboStatus.DataSource = null;
+            if (this.comboUpdateInfo.SelectedValue.ToString() == "4")
+            {
+                this.comboStatus.DataSource = new BindingSource(status_source_MIND, null);
+            }
+            else
+            {
+                this.comboStatus.DataSource = new BindingSource(status_source, null);
+            }
+
+            this.comboStatus.DisplayMember = "Key";
+            this.comboStatus.ValueMember = "Value";
+            this.comboStatus.SelectedIndex = 0;
         }
     }
 }

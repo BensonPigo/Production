@@ -23,5 +23,8 @@
         public string Style { get; set; }
 
         public double Qty { get; set; }
+
+        public string Remark { get; set; }
     }
 }
+

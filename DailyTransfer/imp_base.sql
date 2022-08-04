@@ -1315,8 +1315,10 @@ SET
       ,a.AddDate	      =b.AddDate	
       ,a.EditName	      =b.EditName	
       ,a.EditDate	      =b.EditDate	
-
-from Production.dbo.Unit_Rate as a inner join Trade_To_Pms.dbo.Unit_Rate as b ON a.UnitFrom = b.UnitFrom and a.UnitTo = b.UnitTo
+	  ,a.Numerator        =b.Numerator
+	  ,a.Denominator      =b.Denominator
+from Production.dbo.Unit_Rate as a 
+inner join Trade_To_Pms.dbo.Unit_Rate as b ON a.UnitFrom = b.UnitFrom and a.UnitTo = b.UnitTo
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.Unit_Rate(
        UnitFrom
@@ -1327,7 +1329,8 @@ INSERT INTO Production.dbo.Unit_Rate(
       ,AddDate
       ,EditName
       ,EditDate
-
+	  ,Numerator
+	  ,Denominator
 )
 select 
        UnitFrom
@@ -1338,6 +1341,8 @@ select
       ,AddDate
       ,EditName
       ,EditDate
+	  ,Numerator
+	  ,Denominator
 from Trade_To_Pms.dbo.Unit_Rate as b WITH (NOLOCK)
 where not exists(select UnitFrom from Production.dbo.Unit_Rate as a WITH (NOLOCK) where a.UnitFrom = b.UnitFrom  and a.UnitTo = b.UnitTo)
 
@@ -5003,7 +5008,6 @@ from Trade_To_Pms.dbo.PadPrint_Mold_Spec a
 left join production.dbo.PadPrint_Mold_Spec b on a.PadPrint_ukey = b.PadPrint_ukey and a.MoldID = b.MoldID and a.Side = b.Side
 where b.PadPrint_ukey is null
 
-
 --Style_SpecialMark
 delete a
 from Production.dbo.Style_SpecialMark a
@@ -5048,5 +5052,79 @@ from Trade_To_Pms.dbo.Style_SpecialMark a
 left join Production.dbo.Style_SpecialMark b on a.ID = b.ID and a.BrandID = b.BrandID
 where b.ID is null
 
+-- MailGroup
+Merge Production.dbo.MailGroup as t
+using Trade_To_Pms.dbo.MailGroup as s
+on t.code=s.code and t.FactoryID = s.FactoryID
+	when matched then
+		update set 
+		t.ToAddress= s.ToAddress,
+		t.CCAddress= s.CCAddress,
+		t.AddName= s.AddName,
+		t.AddDate= s.AddDate,
+		t.EditName= s.EditName,
+		t.EditDate= s.EditDate
+	when not matched by target then
+		insert(
+		Code
+		,FactoryID
+		,ToAddress
+		,CCAddress
+		,AddName
+		,AddDate
+		,EditName
+		,EditDate
+		)
+		values(
+		s.Code
+		,s.FactoryID
+		,s.ToAddress
+		,s.CCAddress
+		,s.AddName
+		,s.AddDate
+		,s.EditName
+		,s.EditDate
+		);
+
+-- Mailto
+Merge Production.dbo.Mailto as t
+using Trade_To_Pms.dbo.Mailto as s
+on t.ID=s.ID
+	when matched then
+		update set 
+		t.Description = s.Description,
+		t.ToAddress= s.ToAddress,
+		t.CCAddress= s.CCAddress,
+		t.Subject = s.Subject,
+		t.Content = s.Content,
+		t.AddName= s.AddName,
+		t.AddDate= s.AddDate,
+		t.EditName= s.EditName,
+		t.EditDate= s.EditDate
+	when not matched by target then
+		insert(
+		ID
+		,Description
+		,ToAddress
+		,CCAddress
+		,Subject
+		,Content
+		,AddName
+		,AddDate
+		,EditName
+		,EditDate
+		)
+		values(
+		 s.ID
+		,s.Description
+		,s.ToAddress
+		,s.CCAddress
+		,s.Subject
+		,s.Content
+		,s.AddName
+		,s.AddDate
+		,s.EditName
+		,s.EditDate
+		);
 
 END

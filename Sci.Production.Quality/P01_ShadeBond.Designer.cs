@@ -147,14 +147,14 @@
             // 
             this.undo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.undo.Dock = System.Windows.Forms.DockStyle.None;
-            this.undo.Location = new System.Drawing.Point(1624, 41);
+            this.undo.Location = new System.Drawing.Point(1801, 41);
             this.undo.Size = new System.Drawing.Size(75, 30);
             // 
             // save
             // 
             this.save.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.save.Dock = System.Windows.Forms.DockStyle.None;
-            this.save.Location = new System.Drawing.Point(1624, 8);
+            this.save.Location = new System.Drawing.Point(1801, 8);
             this.save.Size = new System.Drawing.Size(75, 30);
             // 
             // displayBrand
@@ -612,6 +612,7 @@
             this.comboScale.FormattingEnabled = true;
             this.comboScale.IsSupportUnselect = true;
             this.comboScale.Items.AddRange(new object[] {
+            "",
             "1",
             "1-2",
             "2",
@@ -633,6 +634,7 @@
             this.comboResult.FormattingEnabled = true;
             this.comboResult.IsSupportUnselect = true;
             this.comboResult.Items.AddRange(new object[] {
+            "",
             "PASS",
             "FAIL"});
             this.comboResult.Location = new System.Drawing.Point(508, 11);

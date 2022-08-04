@@ -55,44 +55,45 @@ namespace Sci.Production.Sewing
 
             if (!MyUtility.Check.Empty(this.txtLine.Text))
             {
-                strWhere += $@" and s.SewingLineID = '{this.txtLine.Text}'";
+                strWhere += $@" and ss.SewingLineID = '{this.txtLine.Text}'";
             }
 
             string sqlcmd = $@"
-select sd.OrderID,sd.Article,sd.ComboType,sd.Color,AutoCreate = 0,QAQty = 0
-,od.StyleID,ss.Inline,s.FactoryID,s.SewingLineID
+select  ss.OrderID,sod.Article,ss.ComboType,sod.Color,AutoCreate = 0,QAQty = 0
+,ss.Inline,ss.FactoryID,ss.SewingLineID
 ,ttlQAQty = isnull(sewing.ttlQAQty,0)
-,ttlQty = isnull(od.ttlQty,0)
-,rowno = ROW_NUMBER() over(partition by sd.OrderID order by sd.ID)
+,ttlQty = isnull(o.Qty,0)
+,o.StyleID
 into #tmpQty
-from SewingOutput s
-inner join SewingOutput_Detail sd on s.ID = sd.ID
-left join SewingSchedule ss on ss.SewingLineID = s.SewingLineID and ss.OrderID = sd.OrderId
-left join Factory f on f.ID = s.FactoryID
+from SewingSchedule ss
+inner join Orders o on o.ID = ss.OrderID
+left join SewingOutput_Detail sod on sod.OrderId = ss.OrderID and sod.ComboType = ss.ComboType
+left join SewingOutput so on so.SewingLineID = ss.SewingLineID and so.ID = sod.ID
+left join Factory f on f.ID = o.FactoryID
 outer apply(
 	select ttlQAQty = sum(QAQty) 
 	from SewingOutput_Detail t
-	where t.OrderId = sd.OrderId
-	and t.ID = s.ID
+	where t.OrderId = ss.OrderId
 ) sewing
-outer apply(
-	select t.StyleID,ttlQty = sum(Qty) 
-	from Orders t
-	where t.ID = sd.OrderId
-	group by t.StyleID
-) od
-where f.UseAPS = 0
+where f.UseAPS = 0 
 and not exists(
     select 1 from #tmp t
-    where t.OrderID = sd.OrderID
+    where t.OrderID = ss.OrderID
+)
+and o.Category not in ('G','M','T')
+and f.IsProduceFty = 1
+and not exists (
+	select 1 from Orders exludeOrder with (nolock) 
+    where ((exludeOrder.junk = 1 and exludeOrder.NeedProduction = 0 AND exludeOrder.Category='B') or 
+            (exludeOrder.IsBuyBack = 1 and exludeOrder.BuyBackReason = 'Garment')) and
+            exludeOrder.ID = o.ID
 )
 {strWhere}
 
 
-select  Selected = 0,id = '',t.*
+select distinct Selected = 0,id = '',t.*
 from #tmpQty t
 where ttlQAQty < ttlQty 
-and rowno = 1
 order by OrderId desc
 
 drop table #tmpQty

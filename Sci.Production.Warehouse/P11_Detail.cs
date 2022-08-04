@@ -208,6 +208,7 @@ select  p.*
                                       and seq1 = p.seq1 
                                       and seq2 = p.seq2
                           )t for xml path('')) 
+        , [Garment Size] = dbo.GetGarmentSizeByOrderIDSeq(P.ID,P.Seq1,P.Seq2)
 from dbo.po_supp_detail p WITH (NOLOCK) 
 where p.id='{this.CurrentDetailData["poid"]}' and p.seq1='{this.CurrentDetailData["seq1"]}' and p.seq2='{this.CurrentDetailData["seq2"]}'";
             if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
@@ -220,6 +221,7 @@ where p.id='{this.CurrentDetailData["poid"]}' and p.seq1='{this.CurrentDetailDat
                 this.displySpecial.Text = dr["special"].ToString();
                 this.editOrderList.Text = dr["orderlist"].ToString();
                 this.eb_desc.Text = dr["description"].ToString();
+                this.editGarmentSize.Text = dr["Garment Size"].ToString();
             }
 
             #region -- matrix breakdown

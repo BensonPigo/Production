@@ -672,7 +672,7 @@ WITH BreakdownByArticle as (
 	    AND psd2.ColorID = iis.ColorID
     )StockUnit
     OUTER APPLY(
-	    SELECT RateValue
+	    SELECT RateValue = IIF(Denominator = 0,0, Numerator / Denominator)
 	    FROM Unit_Rate
 	    WHERE UnitFrom='M' and  UnitTo = StockUnit.StockUnit
     )UnitRate
@@ -2943,22 +2943,22 @@ inner join #tmp s on t2.Ukey = s.Ukey
                                                     string cmd = $@"
 SET XACT_ABORT ON
 
-INSERT INTO ExtendServer.PMSFile.dbo.AIR_Laboratory
+INSERT INTO SciPMSFile_AIR_Laboratory
            (ID,POID,SEQ1,SEQ2)
 
 select  ID,POID,SEQ1,SEQ2
 from AIR_Laboratory t WITH(NOLOCK)
-where not exists (select 1 from ExtendServer.PMSFile.dbo.AIR_Laboratory s WITH(NOLOCK) where s.ID = t.ID AND s.POID = t.POID AND s.SEQ1 = t.SEQ1 AND s.SEQ2 = t.SEQ2 )
+where not exists (select 1 from SciPMSFile_AIR_Laboratory s WITH(NOLOCK) where s.ID = t.ID AND s.POID = t.POID AND s.SEQ1 = t.SEQ1 AND s.SEQ2 = t.SEQ2 )
 ;
 
-INSERT INTO ExtendServer.PMSFile.dbo.FIR_Laboratory
+INSERT INTO SciPMSFile_FIR_Laboratory
            (ID)
 select ID
 from FIR_Laboratory t (NOLOCK)
-where not exists (select 1 from ExtendServer.PMSFile.dbo.FIR_Laboratory s (NOLOCK) where s.ID = t.ID )
+where not exists (select 1 from SciPMSFile_FIR_Laboratory s (NOLOCK) where s.ID = t.ID )
 
 Delete a 
-from ExtendServer.PMSFile.dbo.AIR_Laboratory a
+from SciPMSFile_AIR_Laboratory a
 WHERE NOT EXISTS(
     select 1 from AIR_Laboratory b
     where a.ID = b.ID AND a.POID=b.POID AND a.Seq1=b.Seq1 AND a.Seq2=b.Seq2
@@ -2966,7 +2966,7 @@ WHERE NOT EXISTS(
 )
 
 Delete
-from ExtendServer.PMSFile.dbo.FIR_Laboratory
+from SciPMSFile_FIR_Laboratory
 WHERE ID NOT IN(
 	select ID
 	from FIR_Laboratory

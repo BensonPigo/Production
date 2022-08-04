@@ -1026,7 +1026,7 @@ where b.ID is null
 	where t.status = 'Confirmed'
 
 	------------MachinePending_Detail------------------
-	declare @Tdebit table(id varchar(13),MachineID varchar(16),TPEReject int)
+	declare @Tdebit table(id varchar(13),MachineID varchar(16),TPEReject int,TPEApvDate datetime)
 
 	select	md.id
 			,md.seq
@@ -1046,8 +1046,8 @@ where b.ID is null
 	inner join #tmpMachinePending_Detail s on t.id=s.id and t.seq = s.seq
 	where s.status = 'Confirmed' and s.TPEApvDate is not null
 
-	insert into @Tdebit(id, MachineID, TPEReject)
-	select t.ID, t.MachineID, s.TPEReject
+	insert into @Tdebit(id, MachineID, TPEReject,TPEApvDate)
+	select t.ID, t.MachineID, s.TPEReject,s.TPEApvDate
 	from dbo.MachinePending_Detail t
 	inner join #tmpMachinePending_Detail s on t.id=s.id and t.seq = s.seq
 	where s.status = 'Confirmed' and s.TPEApvDate is not null
@@ -1060,7 +1060,20 @@ where b.ID is null
 
 	update m set m.Status = 'Good'
 	from dbo.Machine m
-	where exists(select 1 from @Tdebit t where t.MachineID = m.ID and TPEReject = 1)
+    where exists(
+        select 1
+        from @Tdebit t
+        where t.MachineID = m.ID
+        and TPEReject = 1
+        and (
+            select top 1 ml.EditDate
+            from MachineLend ml
+            inner join MachineLend_Detail mld on mld.ID = ml.ID
+            where ml.Status <> 'New'
+            and mld.MachineID = t.MachineID
+            order by EditDate desc
+        ) < t.TPEApvDate
+    )
 
 	update md set Results = 'Reject'
 	from dbo.MachinePending_Detail md

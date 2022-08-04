@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Prg;
 using System;
 using System.Data;
 using System.Runtime.InteropServices;
@@ -182,7 +183,7 @@ select p.FactoryID
 								select ','+  pl.CTNStartNo 
 								from PackingList_Detail pl
 								where pl.ID=p.Id AND pl.SizeCode=pd.SizeCode AND pl.Article=pd.Article AND pl.Color=pd.Color
-								order by Cast( pl.CTNStartNo as int )
+								order by pl.Seq
 								for xml path('')
 						),1,1,'')
 					)
@@ -247,7 +248,7 @@ where 1=1 --AND pld.CTNQty=1
 
 group by p.FactoryID,o.BuyerDelivery,p.id,p.OrderID,o.StyleID,o.SeasonID,pd.Article,pd.Color,o.Customize1,o.CustPONo,o.CustCDID,c.NameEN,pd.SizeCode,pld.CTNStartNo,li.Description
 ,oq.Seq
-order by p.FactoryID,p.id,Cast(pld.CTNStartNO as int ),oq.Seq
+order by p.FactoryID,p.id,LEN(pld.CTNStartNo), pld.CTNStartNo,oq.Seq
 ";
             }
 
@@ -293,7 +294,7 @@ order by p.FactoryID,p.id,Cast(pld.CTNStartNO as int ),oq.Seq
             #region To Excel
             string excelName = "Packing_R04";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
-            MyUtility.Excel.CopyToXls(this._printData, string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]);
+            ExcelPrg.CopyToXlsAutoSplitSheet(this._printData, string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]);
 
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
             worksheet.Columns.AutoFit();

@@ -887,7 +887,7 @@ DELETE FROM ShippingMarkPic_Detail
 WHERE ShippingMarkPicUkey IN (SELECT Ukey FROM ShippingMarkPic WHERE PackingListID = '{packingListID}')
 
 ----PMSFile也刪掉
-DELETE FROM [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
+DELETE FROM SciPMSFile_ShippingMarkPic_Detail
 WHERE ShippingMarkPicUkey IN (SELECT Ukey FROM ShippingMarkPic WHERE PackingListID = '{packingListID}')
 
 DELETE FROM ShippingMarkPic
@@ -939,7 +939,7 @@ BEGIN
     AND ShippingMarkTypeUkey IN (SELECT Ukey FROM ShippingMarkType t WHERE t.FromTemplate = 1)
 
     ---- Image寫進PMSFile
-    UPDATE [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
+    UPDATE SciPMSFile_ShippingMarkPic_Detail
     SET Image = NULL
     WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
     AND SCICtnNo = '{p24_Template.SCICtnNo}'
@@ -981,7 +981,7 @@ BEGIN
                 )
     ;
 
-    INSERT INTO [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
+    INSERT INTO SciPMSFile_ShippingMarkPic_Detail
                (ShippingMarkPicUkey,  SCICtnNo ,ShippingMarkTypeUkey )
          VALUES
                ( (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
@@ -1046,7 +1046,7 @@ WHERE ShippingMarkPicUkey IN (
 )
 
 ----PMSFile也刪掉
-DELETE FROM [ExtendServer].PMSFile.dbo.ShippingMarkPic_Detail
+DELETE FROM SciPMSFile_ShippingMarkPic_Detail
 WHERE ShippingMarkPicUkey IN (
     SELECT Ukey 
     FROM ShippingMarkPic WHERE PackingListID IN ('{p24_Templates.Select(o => o.PackingListID).Distinct().JoinToString("','")}')

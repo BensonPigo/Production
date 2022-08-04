@@ -1378,7 +1378,7 @@ SET XACT_ABORT ON
     DELETE pi
     FROM ShippingMarkPic pic
     INNER JOIN ShippingMarkPic_Detail picd ON pic.Ukey = picd.ShippingMarkPicUkey
-    INNER JOIN {(sameInstance ? string.Empty : "[ExtendServer].")}PMSFile.dbo.ShippingMarkPic_Detail pi ON  pi.ShippingMarkPicUkey = picd.ShippingMarkPicUkey 
+    INNER JOIN SciPMSFile_ShippingMarkPic_Detail pi ON  pi.ShippingMarkPicUkey = picd.ShippingMarkPicUkey 
                                                                 AND pi.SCICtnNo = picd.SCICtnNo
                                                                 AND pi.ShippingMarkTypeUkey = picd.ShippingMarkTypeUkey
     WHERE pic.PackingListID='{this.CurrentMaintain["ID"]}'
@@ -1750,6 +1750,24 @@ AND pd.CTNQty = 1
                 m.grid1.Columns[6].Width = 100;
                 m.TopMost = true;
                 return;
+            }
+
+            // ShipModeID in ('A/P', 'E/P') AND PackingList.NW = 0 就不可以confirm by ISP20220899
+            string sqlChk = $@"
+select ttlNW = sum(pd.NW),p.ID
+from PackingList p
+inner join PackingList_Detail pd on p.ID = pd.ID
+where ShipModeID in ('A/P', 'E/P') 
+and p.ID = '{this.CurrentMaintain["ID"]}'
+group by p.ID
+";
+            if (MyUtility.Check.Seek(sqlChk,out DataRow drChk))
+            {
+                if (MyUtility.Check.Empty(drChk["ttlNW"]))
+                {
+                    MyUtility.Msg.WarningBox("Ship Mode is A/P or E/P, NW cannot be zero.");
+                    return;
+                }
             }
             #endregion
 

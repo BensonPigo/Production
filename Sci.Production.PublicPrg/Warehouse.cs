@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Transactions;
+using System.Windows.Forms;
 
 namespace Sci.Production.PublicPrg
 {
@@ -3797,13 +3798,13 @@ inner join #tmp s on s.POID = sd.PoId
                 columnIsWMS = @"
 	,IsWMS = iif(exists(
 				select 1
-				from FtyInventory_Detail fd 
-				inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+				from FtyInventory_Detail fd with (nolock)
+				inner join MtlLocation ml with (nolock) on ml.ID = fd.MtlLocationID
 				where fd.Ukey = f.Ukey
 				and ml.IsWMS = 1
 				and ml.StockType = sd.FromStockType), 1, 0)
 	,ToIsWMS = iif(exists(	
-				select 1 from MtlLocation ml 
+				select 1 from MtlLocation ml with (nolock) 
 				inner join dbo.SplitString(sd.ToLocation,',') sp on sp.Data = ml.ID and ml.StockType = sd.ToStockType
 				where ml.IsWMS = 1), 1, 0)
     ,ToUkey = fto.Ukey
@@ -3815,12 +3816,12 @@ inner join #tmp s on s.POID = sd.PoId
                 columnIsWMS = $@"
 	,IsWMS = iif(exists(
                 select 1
-	            from MtlLocation ml
+	            from MtlLocation ml with (nolock)
                 inner join dbo.SplitString(sd.FromLocation, ',') sp on sp.Data = ml.ID
 	            where ml.IsWMS =1 ), 1, 0)
 	,ToIsWMS = iif(exists(
                 select 1
-	            from MtlLocation ml
+	            from MtlLocation ml with (nolock)
                 inner join dbo.SplitString(sd.ToLocation, ',') sp on sp.Data = ml.ID
 	            where ml.IsWMS =1 ), 1, 0)
 ";
@@ -3830,8 +3831,8 @@ inner join #tmp s on s.POID = sd.PoId
                 columnIsWMS = $@"
 	,IsWMS = iif(exists(
 				select 1
-				from FtyInventory_Detail fd 
-				inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+				from FtyInventory_Detail fd with (nolock) 
+				inner join MtlLocation ml with (nolock) on ml.ID = fd.MtlLocationID
 				where fd.Ukey = f.Ukey
 				and ml.IsWMS = 1), 1, 0)
 ";
@@ -6315,6 +6316,49 @@ and ml.IsWMS = 1
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// WH P07 與 P18
+        /// 修改資料時新增檢查
+        /// 查該捲布是否已經有完成 Shadeband 的檢驗
+        /// 如果有完成檢驗則不允許 UnConfirm 或者是 Modify Roll, Dyelot
+        /// # 請注意此次調整皆只針對主料 Fabric
+        /// </summary>
+        /// <inheritdoc/>
+        public static bool CheckShadebandResult(string function, string id)
+        {
+            WHTableName detailTableName = GetWHDetailTableName(function);
+            string sqlcmd = $@"
+select distinct
+    FIR.POID,
+    FIR.Seq1,
+    FIR.Seq2,
+    fs.Roll,
+    fs.Dyelot,
+    fs.Result
+from {detailTableName} sd with(nolock)
+inner join PO_Supp_Detail psd with(nolock) on psd.ID = sd.PoId and psd.SEQ1 = sd.Seq1 and psd.SEQ2 = sd.Seq2
+inner join FIR with (nolock) on FIR.ReceivingID = sd.ID and FIR.POID = sd.PoId and FIR.SEQ1 = sd.Seq1 and FIR.SEQ2 = sd.Seq2
+inner join FIR_Shadebone fs with (nolock) on fs.id = FIR.ID
+where sd.id = '{id}'
+and psd.FabricType = 'F'
+and fs.Result <>''
+";
+            DualResult result = DBProxy.Current.Select("Production", sqlcmd, out DataTable dt);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return false;
+            }
+
+            if (dt.Rows.Count > 0)
+            {
+                var m = MyUtility.Msg.ShowMsgGrid_LockScreen(dt, msg: "Those fabric roll already completed shade band inspection, please check with QA team and revise inspection result to empty before unconfirm.", caption: "Warring");
+                return false;
+            }
+
+            return true;
         }
     }
 }

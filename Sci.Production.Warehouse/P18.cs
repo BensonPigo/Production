@@ -1123,9 +1123,9 @@ when matched then
                 {
                     string firInsertIDs = firinsertlist.Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().JoinToString(",");
                     cmd += $@"
-INSERT INTO ExtendServer.PMSFile.dbo.FIR_Laboratory (ID)
+INSERT INTO SciPMSFile_FIR_Laboratory (ID)
 select ID from FIR_Laboratory t WITH(NOLOCK) where id in ({firInsertIDs})
-and not exists (select 1 from ExtendServer.PMSFile.dbo.FIR_Laboratory s (NOLOCK) where s.ID = t.ID )
+and not exists (select 1 from SciPMSFile_FIR_Laboratory s (NOLOCK) where s.ID = t.ID )
 ";
                 }
 
@@ -1134,7 +1134,7 @@ and not exists (select 1 from ExtendServer.PMSFile.dbo.FIR_Laboratory s (NOLOCK)
                 {
                     string firDeleteIDs = firDeletelist.Select(s => MyUtility.Convert.GetString(s["deID"])).Distinct().JoinToString(",");
                     cmd += $@"
-Delete ExtendServer.PMSFile.dbo.FIR_Laboratory where id in ({firDeleteIDs})
+Delete SciPMSFile_FIR_Laboratory where id in ({firDeleteIDs})
 and ID NOT IN(select ID from FIR_Laboratory)";
                 }
 
@@ -1143,9 +1143,9 @@ and ID NOT IN(select ID from FIR_Laboratory)";
                 {
                     string airInsertIDs = airinsertlist.Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().JoinToString(",");
                     cmd += $@"
-INSERT INTO ExtendServer.PMSFile.dbo.AIR_Laboratory (ID,POID,SEQ1,SEQ2)
+INSERT INTO SciPMSFile_AIR_Laboratory (ID,POID,SEQ1,SEQ2)
 select  ID,POID,SEQ1,SEQ2 from AIR_Laboratory t WITH(NOLOCK) where id in ({airInsertIDs})
-and not exists (select 1 from ExtendServer.PMSFile.dbo.AIR_Laboratory s WITH(NOLOCK) where s.ID = t.ID AND s.POID = t.POID AND s.SEQ1 = t.SEQ1 AND s.SEQ2 = t.SEQ2 )
+and not exists (select 1 from SciPMSFile_AIR_Laboratory s WITH(NOLOCK) where s.ID = t.ID AND s.POID = t.POID AND s.SEQ1 = t.SEQ1 AND s.SEQ2 = t.SEQ2 )
 ";
                 }
 
@@ -1155,7 +1155,7 @@ and not exists (select 1 from ExtendServer.PMSFile.dbo.AIR_Laboratory s WITH(NOL
                     string airDeleteIDs = airDeletelist.Select(s => MyUtility.Convert.GetString(s["deID"])).Distinct().JoinToString(",");
                     cmd += $@"
 Delete a 
-from ExtendServer.PMSFile.dbo.AIR_Laboratory a
+from SciPMSFile_AIR_Laboratory a
 where id in ({airDeleteIDs})
 and NOT EXISTS(select 1 from AIR_Laboratory b    where a.ID = b.ID AND a.POID=b.POID AND a.Seq1=b.Seq1 AND a.Seq2=b.Seq2)
 ";
@@ -1286,6 +1286,11 @@ and NOT EXISTS(select 1 from AIR_Laboratory b    where a.ID = b.ID AND a.POID=b.
             base.ClickUnconfirm();
             if (this.CurrentMaintain == null ||
                 MyUtility.Msg.QuestionBox("Do you want to unconfirme it?") == DialogResult.No)
+            {
+                return;
+            }
+
+            if (!Prgs.CheckShadebandResult(this.Name, this.CurrentMaintain["ID"].ToString()))
             {
                 return;
             }
@@ -1453,6 +1458,19 @@ where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - isn
                 {
                     try
                     {
+                        string deleteFIR_Shadebone = $@"
+delete fs
+from TransferIn_Detail sd with(nolock)
+inner join PO_Supp_Detail psd with(nolock) on psd.ID = sd.PoId and psd.SEQ1 = sd.Seq1 and psd.SEQ2 = sd.Seq2
+inner join FIR f with (nolock) on sd.id = f.ReceivingID and sd.PoId = F.POID and sd.Seq1 = F.SEQ1 and sd.Seq2 = F.SEQ2
+inner join FIR_Shadebone fs with (nolock) on f.id = fs.ID
+where sd.id = '{this.CurrentMaintain["ID"]}'
+";
+                        if (!(result = DBProxy.Current.Execute(null, deleteFIR_Shadebone)))
+                        {
+                            throw result.GetException();
+                        }
+
                         /*
                          * 先更新 FtyInventory 後更新 MDivisionPoDetail
                          * 所有 MDivisionPoDetail 資料都在 Transaction 中更新，

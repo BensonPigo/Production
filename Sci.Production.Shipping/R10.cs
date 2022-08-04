@@ -36,6 +36,8 @@ namespace Sci.Production.Shipping
         private DataTable printData;
         private DataTable[] printDataS;
         private DataTable accnoData;
+        private bool excludePackingFoc;
+        private bool excludePackingLocalOrder;
 
         /// <inheritdoc/>
         public R10(ToolStripMenuItem menuitem)
@@ -65,6 +67,10 @@ namespace Sci.Production.Shipping
                 this.radioDetailListBySPNoByFeeType.Text = "Detail List by SP# by Fee Type";
                 this.radioAirPrepaidExpenseReport.Enabled = true;
                 this.dateOnBoardDate.Enabled = true;
+                this.chkExcludePackingFOC.Enabled = true;
+                this.chkExcludePackingLocalOrder.Enabled = true;
+                this.chkExcludePackingFOC.Checked = true;
+                this.chkExcludePackingLocalOrder.Checked = true;
             }
         }
 
@@ -79,7 +85,10 @@ namespace Sci.Production.Shipping
                 this.radioDetailListBySPNoByFeeType.Text = "Detail List by WK# by Fee Type";
                 this.radioAirPrepaidExpenseReport.Enabled = false;
                 this.dateOnBoardDate.Enabled = false;
-
+                this.chkExcludePackingFOC.Enabled = false;
+                this.chkExcludePackingLocalOrder.Enabled = false;
+                this.chkExcludePackingFOC.Checked = false;
+                this.chkExcludePackingLocalOrder.Checked = false;
                 if (this.radioAirPrepaidExpenseReport.Checked)
                 {
                     this.radioExportFeeReport.Checked = true;
@@ -105,6 +114,8 @@ namespace Sci.Production.Shipping
             this.forwarder = this.txtsubconForwarder.TextBox1.Text;
             this.rateType = this.comboRateType.SelectedValue.ToString();
             this.reportContent = this.radioGarment.Checked ? 1 : 2;
+            this.excludePackingFoc = this.chkExcludePackingFOC.Checked;
+            this.excludePackingLocalOrder = this.chkExcludePackingLocalOrder.Checked;
 
             if (this.radioExportFeeReport.Checked)
             {
@@ -184,6 +195,17 @@ namespace Sci.Production.Shipping
                 // Garment
                 if (this.reportContent == 1)
                 {
+                    StringBuilder whereForPLData = new StringBuilder();
+                    if (this.excludePackingFoc)
+                    {
+                        whereForPLData.Append(string.Format(" and p.Type != 'F' "));
+                    }
+
+                    if (this.excludePackingLocalOrder)
+                    {
+                        whereForPLData.Append(string.Format(" and p.Type != 'L' "));
+                    }
+
                     sqlCmd.Append(@"
 alter table #tmpPackingListA2B alter column OrderID varchar(13)
 alter table #tmpPackingListA2B alter column ID varchar(13)
@@ -202,6 +224,7 @@ alter table #tmpPackingListDetailA2B alter column OrderShipmodeSeq varchar(2);
                         if (this.reportType == 1)
                         {
                             StringBuilder whereTmpGB = new StringBuilder();
+
                             if (!MyUtility.Check.Empty(this.date1))
                             {
                                 whereTmpGB.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
@@ -311,7 +334,7 @@ as (
 　　	  and Foundry = 1
 	)gm
     where   s.Type = 'EXPORT'
-            {whereTmpGB}
+            {whereTmpGB} {whereForPLData}
     ),
 tmpGB_A2B 
 as (
@@ -449,7 +472,7 @@ tmpPL as
 　　	  and Foundry = 1
 	)gm
     where   s.Type = 'EXPORT'
-            {whereTmpPL}
+            {whereTmpPL} {whereForPLData}
 ),
 tmpPL_A2B as 
 (
@@ -616,7 +639,7 @@ as (
 　　	  and Foundry = 1
 	)gm
     where   s.Type = 'EXPORT'
-            {whereTmpGB}
+            {whereTmpGB} {whereForPLData}
 ),
 tmpGB_A2B 
 as (
@@ -771,7 +794,7 @@ tmpPL as
 　　	  and Foundry = 1
 	)gm
     where   s.Type = 'EXPORT'
-            {whereTmpPL}
+            {whereTmpPL} {whereForPLData}
 ),
 tmpPL_A2B as 
 (
@@ -844,7 +867,7 @@ from tmpAllData");
                         // Export Fee Report
                         if (this.reportType == 1)
                         {
-                            sqlCmd.Append(@"
+                            sqlCmd.Append($@"
 -----temp2
 select distinct [type]
 	, id
@@ -908,7 +931,7 @@ from #temp2 a
 outer apply(select sum(qty) as OQty from Order_QtyShip  WITH (NOLOCK) where id=a.OrderID) as oqs
 outer apply (   select sum(shipqty) as shipqty,sum(CTNQty)as CTNQty,sum(GW) as GW,sum(CBM)as CBM 
                 from    (
-                            select shipqty, CTNQty, GW, CBM from PackingList WITH (NOLOCK)  where id=a.packingID
+                            select shipqty, CTNQty, GW, CBM from PackingList p WITH (NOLOCK)  where p.id = a.packingID {whereForPLData}
                             union all
                             select shipqty, CTNQty, GW, CBM from #tmpPackingListA2B WITH (NOLOCK)  where id=a.packingID
                         ) pack
@@ -969,7 +992,7 @@ from #temp3 a
                         }
                         else
                         {
-                            sqlCmd.Append(@"
+                            sqlCmd.Append($@"
 -----temp2 detail List by SP#
 select distinct [type]
 	,id
@@ -1047,7 +1070,7 @@ from #temp2 a
 outer apply(select sum(qty) as OQty from Order_QtyShip WITH (NOLOCK)  where id=a.OrderID) as oqs
 outer apply (   select sum(shipqty) as shipqty,sum(CTNQty)as CTNQty,sum(GW) as GW,sum(CBM)as CBM 
                 from    (
-                            select shipqty, CTNQty, GW, CBM from PackingList WITH (NOLOCK)  where id=a.packingID
+                            select shipqty, CTNQty, GW, CBM from PackingList p WITH (NOLOCK)  where p.id=a.packingID {whereForPLData}
                             union all
                             select shipqty, CTNQty, GW, CBM from #tmpPackingListA2B WITH (NOLOCK)  where id=a.packingID
                         ) pack
@@ -1379,7 +1402,7 @@ with tmpGB as (
 	    )pTotal
     )pTotal
     where   s.Type = 'EXPORT'
-            {whereTmpGB}
+            {whereTmpGB}  {whereForPLData}
 ),
 tmpGB_A2B as (
 	select distinct [Type] = 'GARMENT'
@@ -1595,7 +1618,7 @@ tmpPL as
 	    )pTotal
     )pTotal
     where   s.Type = 'EXPORT'
-            {whereTmpPL}
+            {whereTmpPL}  {whereForPLData}
 ),
 tmpPL_A2B as 
 (
@@ -1693,7 +1716,7 @@ order by ID,OrderID,PackID");
                     {
                         // Air Prepaid Expense Report
                         #region 組SQL
-                        sqlCmd.Append(@"
+                        sqlCmd.Append($@"
 select se.ShippingAPID
 	, o.FactoryID
 	, a.ResponsibleFty
@@ -1724,7 +1747,7 @@ from ShareExpense_APP se
 left join ShippingAP s on se.ShippingAPID = s.ID
 left join GMTBooking g on se.InvNo = g.id
 left join AirPP a on se.AirPPID = a.ID
-left join PackingList p on se.PackingListID = p.ID
+left join PackingList p on se.PackingListID = p.ID  {whereForPLData}
 left join Orders o on a.OrderID = o.ID
 left join Order_QtyShip oqs on a.OrderID = oqs.Id and a.OrderShipmodeSeq = oqs.Seq
 left join LocalSupp l on s.LocalSuppID = l.ID
@@ -2287,6 +2310,17 @@ where s.Type = 'EXPORT'");
             dtPackingA2B = new DataTable();
             dtPackingDetailA2B = new DataTable();
             StringBuilder where = new StringBuilder();
+            StringBuilder whereForPLData = new StringBuilder();
+
+            if (this.excludePackingFoc)
+            {
+                whereForPLData.Append(string.Format(" and p.Type != 'F' "));
+            }
+
+            if (this.excludePackingLocalOrder)
+            {
+                whereForPLData.Append(string.Format(" and p.Type != 'L' "));
+            }
 
             if (!MyUtility.Check.Empty(this.date1))
             {
@@ -2378,7 +2412,7 @@ where 1 = 1 {where}
                                     WherePackID = s.Select(groupItem => $"'{groupItem["PackingListID"]}'").JoinToString(","),
                                 });
 
-            string sqlGetPackA2B = @"
+            string sqlGetPackA2B = $@"
 select  p.PulloutDate ,
         p.OrderID     ,
         p.ID          ,
@@ -2391,7 +2425,7 @@ select  p.PulloutDate ,
         p.CBM         ,
         p.BrandID
 from PackingList p with (nolock)
-where p.ID in ({0})
+where p.ID in ({"{0}"}) {whereForPLData}
 ";
             string sqlGetPackDetailA2B = @"
 select  distinct
@@ -2450,6 +2484,17 @@ where pd.ID in ({0})
                 // Garment
                 if (this.reportContent == 1)
                 {
+                    StringBuilder whereForPLData = new StringBuilder();
+                    if (this.excludePackingFoc)
+                    {
+                        whereForPLData.Append(string.Format(" and p.Type != 'F' "));
+                    }
+
+                    if (this.excludePackingLocalOrder)
+                    {
+                        whereForPLData.Append(string.Format(" and p.Type != 'L' "));
+                    }
+
                     StringBuilder whereTmpGB = new StringBuilder();
                     if (!MyUtility.Check.Empty(this.date1))
                     {
@@ -2561,7 +2606,7 @@ as (
 　　	  and Foundry = 1
 	)gm
     where   s.Type = 'EXPORT'
-            {whereTmpGB}
+            {whereTmpGB} {whereForPLData}
 ),
 tmpGB_A2B
 as (
@@ -2703,7 +2748,7 @@ tmpPL as
 　　	  and Foundry = 1
 	)gm
     where   s.Type = 'EXPORT'
-            {whereTmpPL}
+            {whereTmpPL} {whereForPLData}
 ),
 tmpPL_A2B as 
 (

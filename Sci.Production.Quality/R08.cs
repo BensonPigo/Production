@@ -145,12 +145,16 @@ SELECT [Inspected Date] = FP.InspDate
 	                Round(FP.ActualYds/((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty)/60),2))
 	   ,[Total Defect Points]=FP.TotalPoint
        ,[Grade] = FP.Grade
+       ,[ActualInspectionTimeStart] = FP.StartTime
 	   ,[inspectionTimeStart] = DATEADD(second, FP.QCTime*-1, FP.AddDate)
 	   ,[inspectionTimeFinish] = FP.AddDate
        ,[Remark]=FP.Remark
        ,[MCHandle]= dbo.getPass1_ExtNo(o.MCHandle)
        ,Fabric.WeaveTypeID
 	   ,[InspectorName] = Pass1.Name
+       ,[QCMachineStopTime] = case when fp.AddDate is null or fp.StartTime is null then fp.QCTime
+								   else DATEDIFF(SECOND,fp.StartTime,fp.AddDate) - fp.QCTime end
+	   ,[QCMachineRunTime] = fp.QCTime
 into #tmp
 FROM System,FIR_Physical AS FP
 LEFT JOIN FIR AS F ON FP.ID=F.ID
@@ -171,7 +175,7 @@ ORDER BY [Inspected Date],[Inspector],[SP#],[SEQ#],[Roll#],[Dyelot#]
             {
                 sqlCmd.Append($@"
 select 
-        [Inspected Date] ,[Inspector] ,brandID
+        [Inspected Date] ,[Inspector] ,[InspectorName] ,brandID
        ,FtyGroup ,StyleID ,[SP#] 
        ,[SEQ#] 
        ,[StockType]
@@ -194,8 +198,11 @@ select
        ,[Speed] 
 	   ,[Total Defect Points]
        ,[Grade]
+       ,[ActualInspectionTimeStart]
 	   ,[inspectionTimeStart] 
 	   ,[inspectionTimeFinish]
+       ,[QCMachineStopTime]
+	   ,[QCMachineRunTime]
        ,[Remark]
        ,[MCHandle]
        ,WeaveTypeID
