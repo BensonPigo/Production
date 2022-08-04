@@ -157,6 +157,7 @@
     <Build Include="dbo\Tables\T_Capacity.sql" />
     <Build Include="dbo\Tables\T_SDP.sql" />
     <Build Include="dbo\Tables\T_AdiCompReport.sql" />
+    <Build Include="dbo\Tables\PurchaseAnalysis.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

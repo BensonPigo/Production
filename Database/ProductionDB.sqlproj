@@ -2737,6 +2737,9 @@
     <Build Include="dbo\Tables\Keyword_BomType.sql" />
     <Build Include="dbo\Tables\InventoryRefNo_Spec.sql" />
     <Build Include="dbo\Tables\BomType.sql" />
+    <Build Include="dbo\Tables\PadPrintReq_Detail.sql" />
+    <Build Include="dbo\Tables\PadPrint_Mold.sql" />
+    <Build Include="dbo\Tables\PadPrint.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
