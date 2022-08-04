@@ -24,9 +24,6 @@ namespace Sci.Production.Sewing
         /// <inheritdoc/>
         public DataTable dtDetail;
 
-        private bool QtyCanEdit;
-        private Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
-
         /// <inheritdoc/>
         public P08_Detail(DataRow dr, DataTable dtHistory)
         {
@@ -34,7 +31,6 @@ namespace Sci.Production.Sewing
             this.InitializeComponent();
             this.drData = dr;
             this.dtDetail = dtHistory;
-            this.QtyCanEdit = dtHistory.Rows.Count > 0 ? false : true;
         }
 
         /// <inheritdoc/>
@@ -48,7 +44,6 @@ namespace Sci.Production.Sewing
                 if (result)
                 {
                     this.listControlBindingSource1.DataSource = dtDBSource;
-                    this.QtyCanEdit = dtDBSource.Rows.Count > 0 ? false : true;
                 }
                 else
                 {
@@ -150,34 +145,9 @@ and SCICtnNo = '{this.drData["SCICtnNo"]}' and OrderID = '{this.drData["OrderID"
             };
 
             this.Helper.Controls.Grid.Generator(this.grid)
-                .Numeric("Qty", header: "Discrepancy", width: Widths.AnsiChars(15), decimal_places: 0, iseditingreadonly: false, settings: col_Discrepancy).Get(out this.col_Qty)
+                .Numeric("Qty", header: "Discrepancy", width: Widths.AnsiChars(15), decimal_places: 0, iseditingreadonly: false, settings: col_Discrepancy)
                 .Text("Remarks", header: "Remarks", width: Widths.AnsiChars(25), iseditingreadonly: true, settings: col_Remark)
                 ;
-
-            this.grid.RowEnter += this.Grid_RowEnter;
-        }
-
-        private void Grid_RowEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0)
-            {
-                return;
-            }
-
-            var data = ((DataRowView)this.grid.Rows[e.RowIndex].DataBoundItem).Row;
-            if (data == null)
-            {
-                return;
-            }
-
-            if (this.QtyCanEdit == false && !MyUtility.Check.Empty(data["Qty"]) && MyUtility.Check.Empty(data["CanEdit"]))
-            {
-                this.col_Qty.IsEditingReadOnly = true;
-            }
-            else
-            {
-                this.col_Qty.IsEditingReadOnly = false;
-            }
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
