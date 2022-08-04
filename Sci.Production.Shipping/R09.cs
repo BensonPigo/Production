@@ -100,7 +100,11 @@ as (
 		,e.DocArrival
 		,se.CurrencyID
 		,[Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
-		,se.AccountID		
+		,se.AccountID
+        ,[ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
+                            from Export_ShippingMemo with (nolock)
+                            where ID = e.ID
+                            order by adddate desc)
     from ShippingAP s WITH (NOLOCK) 
     inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
     inner join Export e WITH (NOLOCK) on se.WKNo = e.ID
@@ -183,6 +187,10 @@ FtyExportData as (
 		,se.CurrencyID
 		,[Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
 		,se.AccountID 
+        ,[ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
+                            from FtyExport_ShippingMemo with (nolock)
+                            where ID = fe.ID
+                            order by adddate desc)
     from ShippingAP s WITH (NOLOCK) 
     inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
     left join FtyExport fe WITH (NOLOCK) on se.WKNo = fe.ID
@@ -275,17 +283,24 @@ select AccountID from FtyExportData --where AccountID not in ('61012001','610120
 tmpAllData
 as (
     select InvNo,Type,WKNo,FtyWKNo,DelayRepacement,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
-        PortArrival,DocArrival,CurrencyID,AccountID,Amount
+        PortArrival,DocArrival,CurrencyID,AccountID,Amount,ShippingMemo
     from ExportData
     union all
     select InvNo,Type,WKNo,FtyWKNo,DelayRepacement,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
-        PortArrival,DocArrival,CurrencyID,AccountID,Amount
+        PortArrival,DocArrival,CurrencyID,AccountID,Amount,ShippingMemo
     from FtyExportData
 )
+select  *, System.RgCode
+from    (
+            select a.* 
+            from tmpAllData
+            
+            PIVOT (SUM(tmpAllData.Amount)
+            FOR tmpAllData.AccountID IN ({0})) a
+        )   b     
+cross join System
+", allAccno.ToString()));
 
-select * from tmpAllData
-PIVOT (SUM(Amount)
-FOR AccountID IN ({0})) a", allAccno.ToString()));
 
                 if (allAccno.ToString() == "[]")
                 {
@@ -533,22 +548,23 @@ select * from FtyExportData");
                 foreach (DataRow dr in this.accnoData.Rows)
                 {
                     i++;
-                    worksheet.Cells[1, 15 + i] = MyUtility.GetValue.Lookup(string.Format("select Name from SciFMS_AccountNo where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"])));
+                    worksheet.Cells[1, 16 + i] = MyUtility.GetValue.Lookup(string.Format("select Name from SciFMS_AccountNo where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"])));
                 }
 
-                worksheet.Cells[1, 15 + i + 1] = "Total Import Fee";
+                worksheet.Cells[1, 16 + i + 1] = "Total Import Fee";
+                worksheet.Cells[1, 16 + i + 2] = "Shipping Memo";
 
                 // 匯率選擇 Fixed, KPI, 各費用欄位名稱加上 (USD)
                 if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
                 {
-                    for (int k = 16; k <= 15 + i + 1; k++)
+                    for (int k = 17; k <= 16 + i + 1; k++)
                     {
                         worksheet.Cells[1, k] = worksheet.Cells[1, k].Value + "\r\n(USD)";
                     }
                 }
 
-                string excelSumCol = PublicPrg.Prgs.GetExcelEnglishColumnName(15 + i);
-                string excelColumn = PublicPrg.Prgs.GetExcelEnglishColumnName(15 + i + 1);
+                string excelSumCol = PublicPrg.Prgs.GetExcelEnglishColumnName(16 + i);
+                string excelColumn = PublicPrg.Prgs.GetExcelEnglishColumnName(16 + i + 2);
 
                 // 填內容值
                 int intRowsStart = 2;
@@ -557,19 +573,20 @@ select * from FtyExportData");
                 {
                     objArray[0, 0] = dr["InvNo"];
                     objArray[0, 1] = dr["Type"];
-                    objArray[0, 2] = dr["WKNo"];
-                    objArray[0, 3] = dr["FtyWKNo"];
-                    objArray[0, 4] = dr["DelayRepacement"];
-                    objArray[0, 5] = dr["ShipModeID"];
-                    objArray[0, 6] = dr["CYCFS"];
-                    objArray[0, 7] = dr["Packages"];
-                    objArray[0, 8] = dr["Blno"];
-                    objArray[0, 9] = dr["WeightKg"];
-                    objArray[0, 10] = dr["Cbm"];
-                    objArray[0, 11] = dr["Forwarder"];
-                    objArray[0, 12] = dr["PortArrival"];
-                    objArray[0, 13] = dr["DocArrival"];
-                    objArray[0, 14] = dr["CurrencyID"];
+                    objArray[0, 2] = dr["RgCode"];
+                    objArray[0, 3] = dr["WKNo"];
+                    objArray[0, 4] = dr["FtyWKNo"];
+                    objArray[0, 5] = dr["DelayRepacement"];
+                    objArray[0, 6] = dr["ShipModeID"];
+                    objArray[0, 7] = dr["CYCFS"];
+                    objArray[0, 8] = dr["Packages"];
+                    objArray[0, 9] = dr["Blno"];
+                    objArray[0, 10] = dr["WeightKg"];
+                    objArray[0, 11] = dr["Cbm"];
+                    objArray[0, 12] = dr["Forwarder"];
+                    objArray[0, 13] = dr["PortArrival"];
+                    objArray[0, 14] = dr["DocArrival"];
+                    objArray[0, 15] = dr["CurrencyID"];
 
                     // objArray[0, 15] = MyUtility.Check.Empty(dr["61012001"]) ? 0 : dr["61012001"];
                     // objArray[0, 16] = MyUtility.Check.Empty(dr["61012002"]) ? 0 : dr["61012002"];
@@ -580,10 +597,11 @@ select * from FtyExportData");
                     foreach (DataRow ddr in this.accnoData.Rows)
                     {
                         i++;
-                        objArray[0, 14 + i] = MyUtility.Check.Empty(dr[14 + i]) ? 0 : dr[14 + i];
+                        objArray[0, 15 + i] = MyUtility.Check.Empty(dr[15 + i]) ? 0 : dr[15 + i];
                     }
 
-                    objArray[0, 14 + i + 1] = string.Format("=SUM(O{0}:{1}{0})", intRowsStart, excelSumCol);
+                    objArray[0, 15 + i + 1] = string.Format("=SUM(O{0}:{1}{0})", intRowsStart, excelSumCol);
+                    objArray[0, 15 + i + 2] = dr["ShippingMemo"];
                     worksheet.Range[string.Format("A{0}:{1}{0}", intRowsStart, excelColumn)].Value2 = objArray;
                     intRowsStart++;
                 }

@@ -88,6 +88,7 @@
             this.dateShipDate = new Sci.Win.UI.DateBox();
             this.btnConsigneeMail = new Sci.Win.UI.Button();
             this.txtSupplier = new Sci.Production.Class.Txtsupplier();
+            this.btnShippingMemo = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -106,6 +107,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnShippingMemo);
             this.masterpanel.Controls.Add(this.txtSupplier);
             this.masterpanel.Controls.Add(this.lbShipDate);
             this.masterpanel.Controls.Add(this.txtLocalSupp1);
@@ -217,6 +219,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtLocalSupp1, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbShipDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSupplier, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnShippingMemo, 0);
             // 
             // detailpanel
             // 
@@ -696,7 +699,7 @@
             this.txtVslvoyFltNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtVslvoyFltNo.Location = new System.Drawing.Point(702, 62);
             this.txtVslvoyFltNo.Name = "txtVslvoyFltNo";
-            this.txtVslvoyFltNo.Size = new System.Drawing.Size(254, 23);
+            this.txtVslvoyFltNo.Size = new System.Drawing.Size(185, 23);
             this.txtVslvoyFltNo.TabIndex = 22;
             // 
             // dateArrivePortDate
@@ -729,7 +732,7 @@
             // 
             this.btnExpenseData.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnExpenseData.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnExpenseData.Location = new System.Drawing.Point(886, 91);
+            this.btnExpenseData.Location = new System.Drawing.Point(914, 6);
             this.btnExpenseData.Name = "btnExpenseData";
             this.btnExpenseData.Size = new System.Drawing.Size(106, 30);
             this.btnExpenseData.TabIndex = 90;
@@ -741,9 +744,9 @@
             // 
             this.btnImportData.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportData.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnImportData.Location = new System.Drawing.Point(899, 127);
+            this.btnImportData.Location = new System.Drawing.Point(914, 42);
             this.btnImportData.Name = "btnImportData";
-            this.btnImportData.Size = new System.Drawing.Size(93, 30);
+            this.btnImportData.Size = new System.Drawing.Size(106, 30);
             this.btnImportData.TabIndex = 91;
             this.btnImportData.Text = "Import Data";
             this.btnImportData.UseVisualStyleBackColor = true;
@@ -815,6 +818,7 @@
             this.txtLocalSupp.IsFactory = false;
             this.txtLocalSupp.IsMisc = false;
             this.txtLocalSupp.IsMiscOverseas = false;
+            this.txtLocalSupp.IsSintexSubcon = false;
             this.txtLocalSupp.Location = new System.Drawing.Point(109, 117);
             this.txtLocalSupp.Name = "txtLocalSupp";
             this.txtLocalSupp.Size = new System.Drawing.Size(230, 23);
@@ -918,6 +922,7 @@
             this.txtLocalSupp1.IsFactory = true;
             this.txtLocalSupp1.IsMisc = false;
             this.txtLocalSupp1.IsMiscOverseas = false;
+            this.txtLocalSupp1.IsSintexSubcon = false;
             this.txtLocalSupp1.Location = new System.Drawing.Point(109, 146);
             this.txtLocalSupp1.Name = "txtLocalSupp1";
             this.txtLocalSupp1.Size = new System.Drawing.Size(228, 23);
@@ -960,6 +965,17 @@
             this.txtSupplier.Size = new System.Drawing.Size(147, 23);
             this.txtSupplier.TabIndex = 92;
             this.txtSupplier.TextBox1Binding = "";
+            // 
+            // btnShippingMemo
+            // 
+            this.btnShippingMemo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnShippingMemo.Location = new System.Drawing.Point(914, 78);
+            this.btnShippingMemo.Name = "btnShippingMemo";
+            this.btnShippingMemo.Size = new System.Drawing.Size(106, 30);
+            this.btnShippingMemo.TabIndex = 93;
+            this.btnShippingMemo.Text = "Shipping Memo";
+            this.btnShippingMemo.UseVisualStyleBackColor = true;
+            this.btnShippingMemo.Click += new System.EventHandler(this.BtnShippingMemo_Click);
             // 
             // P04
             // 
@@ -1064,5 +1080,6 @@
         private Win.UI.Button btnConsigneeMail;
         private Class.Txtsupplier txtSupplier;
         private Win.UI.RadioButton radioMiscellaneous;
+        private Win.UI.Button btnShippingMemo;
     }
 }

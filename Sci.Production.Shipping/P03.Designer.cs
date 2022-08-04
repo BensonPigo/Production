@@ -106,6 +106,7 @@
             this.numOTFee = new Sci.Win.UI.NumericBox();
             this.labOTFee = new Sci.Win.UI.Label();
             this.chkCIFTermsBySupplier = new Sci.Win.UI.CheckBox();
+            this.btnShippingMemo = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -122,6 +123,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnShippingMemo);
             this.masterpanel.Controls.Add(this.chkCIFTermsBySupplier);
             this.masterpanel.Controls.Add(this.numOTFee);
             this.masterpanel.Controls.Add(this.labOTFee);
@@ -147,7 +149,6 @@
             this.masterpanel.Controls.Add(this.chkImportChange);
             this.masterpanel.Controls.Add(this.RemarkToTaipei);
             this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.txtCountry);
             this.masterpanel.Controls.Add(this.txtPort);
             this.masterpanel.Controls.Add(this.label1);
@@ -199,7 +200,9 @@
             this.masterpanel.Controls.Add(this.dateArrivePortDate);
             this.masterpanel.Controls.Add(this.dateArriveWHDate);
             this.masterpanel.Controls.Add(this.dateDoxRcvDate);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 375);
+            this.masterpanel.Controls.Add(this.label2);
+            this.masterpanel.Size = new System.Drawing.Size(1035, 375);
+            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDoxRcvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateArriveWHDate, 0);
@@ -252,7 +255,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtPort, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCountry, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.RemarkToTaipei, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkImportChange, 0);
@@ -278,11 +280,12 @@
             this.masterpanel.Controls.SetChildIndex(this.labOTFee, 0);
             this.masterpanel.Controls.SetChildIndex(this.numOTFee, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkCIFTermsBySupplier, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnShippingMemo, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 375);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 198);
+            this.detailpanel.Size = new System.Drawing.Size(1035, 198);
             // 
             // gridicon
             // 
@@ -294,7 +297,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 198);
+            this.detailgridcont.Size = new System.Drawing.Size(1035, 198);
             // 
             // detail2
             // 
@@ -310,24 +313,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1000, 611);
+            this.detail.Size = new System.Drawing.Size(1035, 611);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 573);
+            this.detailcont.Size = new System.Drawing.Size(1035, 573);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 573);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1035, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 611);
+            this.browse.Size = new System.Drawing.Size(1035, 611);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1008, 640);
+            this.tabs.Size = new System.Drawing.Size(1043, 640);
             // 
             // createby
             // 
@@ -780,7 +783,7 @@
             // btnExpenseData
             // 
             this.btnExpenseData.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnExpenseData.Location = new System.Drawing.Point(861, 62);
+            this.btnExpenseData.Location = new System.Drawing.Point(898, 61);
             this.btnExpenseData.Name = "btnExpenseData";
             this.btnExpenseData.Size = new System.Drawing.Size(134, 30);
             this.btnExpenseData.TabIndex = 42;
@@ -790,7 +793,7 @@
             // 
             // btnShippingMark
             // 
-            this.btnShippingMark.Location = new System.Drawing.Point(861, 98);
+            this.btnShippingMark.Location = new System.Drawing.Point(898, 93);
             this.btnShippingMark.Name = "btnShippingMark";
             this.btnShippingMark.Size = new System.Drawing.Size(134, 30);
             this.btnShippingMark.TabIndex = 43;
@@ -865,7 +868,7 @@
             this.txtPort.Location = new System.Drawing.Point(693, 168);
             this.txtPort.Name = "txtPort";
             this.txtPort.ReadOnly = true;
-            this.txtPort.Size = new System.Drawing.Size(131, 23);
+            this.txtPort.Size = new System.Drawing.Size(109, 23);
             this.txtPort.TabIndex = 50;
             // 
             // txtCountry
@@ -873,7 +876,7 @@
             this.txtCountry.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtCountry.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ExportCountry", true));
             this.txtCountry.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtCountry.Location = new System.Drawing.Point(826, 168);
+            this.txtCountry.Location = new System.Drawing.Point(803, 168);
             this.txtCountry.Name = "txtCountry";
             this.txtCountry.ReadOnly = true;
             this.txtCountry.Size = new System.Drawing.Size(48, 23);
@@ -884,7 +887,7 @@
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.SystemColors.ControlDark;
-            this.label2.Location = new System.Drawing.Point(873, 168);
+            this.label2.Location = new System.Drawing.Point(849, 171);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(44, 18);
             this.label2.TabIndex = 52;
@@ -1091,7 +1094,7 @@
             // 
             // btnCOInfo
             // 
-            this.btnCOInfo.Location = new System.Drawing.Point(861, 132);
+            this.btnCOInfo.Location = new System.Drawing.Point(898, 125);
             this.btnCOInfo.Name = "btnCOInfo";
             this.btnCOInfo.Size = new System.Drawing.Size(134, 30);
             this.btnCOInfo.TabIndex = 67;
@@ -1232,9 +1235,19 @@
             this.chkCIFTermsBySupplier.Text = "CIF terms by supplier";
             this.chkCIFTermsBySupplier.UseVisualStyleBackColor = true;
             // 
+            // btnShippingMemo
+            // 
+            this.btnShippingMemo.Location = new System.Drawing.Point(898, 157);
+            this.btnShippingMemo.Name = "btnShippingMemo";
+            this.btnShippingMemo.Size = new System.Drawing.Size(134, 30);
+            this.btnShippingMemo.TabIndex = 73;
+            this.btnShippingMemo.Text = "Shipping Memo";
+            this.btnShippingMemo.UseVisualStyleBackColor = true;
+            this.btnShippingMemo.Click += new System.EventHandler(this.BtnShippingMemo_Click);
+            // 
             // P03
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 673);
+            this.ClientSize = new System.Drawing.Size(1043, 673);
             this.Controls.Add(this.btnBatchUpload);
             this.DefaultControl = "dateArrivePortDate";
             this.DefaultControlForEdit = "dateArrivePortDate";
@@ -1354,5 +1367,6 @@
         private Win.UI.NumericBox numOTFee;
         private Win.UI.Label labOTFee;
         private Win.UI.CheckBox chkCIFTermsBySupplier;
+        private Win.UI.Button btnShippingMemo;
     }
 }
