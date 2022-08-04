@@ -3,7 +3,7 @@
     [ID]              VARCHAR (13)    NULL,
     [LabelType]       VARCHAR (20)    NULL,
     [Seq]             INT             NULL,
-    [RefNo]           VARCHAR (36)    NULL,
+    [RefNo]           VARCHAR (MAX)    NULL,
     [Description]     NVARCHAR (MAX)  NULL,
     [Position]        NVARCHAR (MAX)  NULL,
     [Order_BOAUkey]   BIGINT          NULL,

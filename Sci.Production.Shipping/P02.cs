@@ -619,10 +619,11 @@ FROM(
             ,pl.PulloutID
             ,pl.Type
             ,ColorID = IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
-                        ,IIF(isnull(p.SuppColor,'') = '',dbo.GetColorMultipleID(o.BrandID,p.ColorID) , p.SuppColor)
-                        ,dbo.GetColorMultipleID(o.BrandID,p.ColorID))
+                        ,IIF(isnull(p.SuppColor,'') = '',dbo.GetColorMultipleID(o.BrandID,psds.SpecValue) , p.SuppColor)
+                        ,dbo.GetColorMultipleID(o.BrandID,psds.SpecValue))
 	    from Express_Detail ed WITH (NOLOCK) 
 	    left join PO_Supp_Detail p WITH (NOLOCK) on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2 = p.SEQ2
+	    left join PO_Supp_Detail_Spec psds WITH (NOLOCK) on psds.ID = p.id and psds.seq1 = p.seq1 and psds.seq2 = p.seq2 and psds.SpecColumnID = 'Color'
 	    left join Supp s WITH (NOLOCK) on ed.SuppID = s.ID
 	    left join Express_CTNData ec WITH (NOLOCK) on ed.ID = ec.ID and ed.CTNNo = ec.CTNNo
         left join DropDownList dp ON dp.Type='Pms_Sort_HC_DHL_Cate' AND ed.Category = dp.ID

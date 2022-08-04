@@ -9,7 +9,7 @@
     [AddDate]      DATETIME        NULL,
     [EditName]     VARCHAR (10)    CONSTRAINT [DF_FixedDeclareItem_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME        NULL,
-    [Refno]        VARCHAR (21)    CONSTRAINT [DF_FixedDeclareItem_Refno] DEFAULT ('') NOT NULL,
+    [Refno]        VARCHAR (36)    CONSTRAINT [DF_FixedDeclareItem_Refno] DEFAULT ('') NOT NULL,
     [StockUnit]    VARCHAR (8)     CONSTRAINT [DF_FixedDeclareItem_StockUnit] DEFAULT ('') NULL,
     [FabricType]   VARCHAR (1)     CONSTRAINT [DF_FixedDeclareItem_FabricType] DEFAULT ('') NOT NULL,
     [VNContractID] VARCHAR (15)    DEFAULT ('') NOT NULL,

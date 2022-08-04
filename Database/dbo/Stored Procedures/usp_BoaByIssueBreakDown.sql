@@ -1,9 +1,4 @@
-﻿-- Batch submitted through debugger: SQLQuery7.sql|7|0|C:\Users\JIMMY~1.LIA\AppData\Local\Temp\~vsCB42.sql
--- =============================================
--- Author:		Mike
--- Create date: 2015/12/31
--- Description:	BOA AutoPick Prepare
--- =============================================
+﻿
 CREATE PROCEDURE [dbo].[usp_BoaByIssueBreakDown]
 	@IssueID			varchar(13)				--	Issue ID
 	, @POID				VarChar(13)				--採購母單
@@ -150,14 +145,14 @@ BEGIN
 
 	Exec BoaExpend @POID, @Order_BOAUkey, @TestType, @UserID,0,1;
 	Drop Table #tmpOrder_Qty;
-
+	
 	select	p.id as [poid]
 			, p.seq1
 			, p.seq2
 			, p.SCIRefno
 			, dbo.getMtlDesc(p.id, p.seq1, p.seq2,2,0) [description] 
-			, p.ColorID
-			, p.SizeSpec
+			, ColorID = isnull(psdsC.SpecValue ,'')
+			, SizeSpec = isnull(psdsS.SpecValue ,'')
 			, p.Spec
 			, p.Special
 			, p.Remark 
@@ -165,6 +160,8 @@ BEGIN
 	from dbo.PO_Supp_Detail as p WITH (NOLOCK)
 	inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
 	inner join dbo.MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = p.id and psdsC.seq1 = p.seq1 and psdsC.seq2 = p.seq2 and psdsC.SpecColumnID = 'Color'
+    left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = p.id and psdsC.seq1 = p.seq1 and psdsC.seq2 = p.seq2 and psdsS.SpecColumnID = 'Size'
 	where p.id=@POID and p.FabricType = 'A' and m.IssueType=@IssueType
 
 	;with cte2 as (

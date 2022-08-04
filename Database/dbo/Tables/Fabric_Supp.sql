@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[Fabric_Supp] (
     [SCIRefno]      VARCHAR (30)   NOT NULL,
     [BrandID]       VARCHAR (8)    NULL,
-    [Refno]         VARCHAR (20)   NULL,
+    [Refno]         VARCHAR (36)   NULL,
     [SuppRefno]     VARCHAR (50)   NULL,
     [NOForecast]    BIT            NULL,
     [IsECFA]        BIT            NULL,

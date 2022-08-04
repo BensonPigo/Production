@@ -2,7 +2,7 @@
     [ID]         VARCHAR (13)    CONSTRAINT [DF_PO_Artwork_ID] DEFAULT ('') NOT NULL,
     [SEQ1]       VARCHAR (3)     CONSTRAINT [DF_PO_Artwork_SEQ1] DEFAULT ('') NOT NULL,
     [SEQ2]       VARCHAR (2)     CONSTRAINT [DF_PO_Artwork_SEQ2] DEFAULT ('') NOT NULL,
-    [Refno]      VARCHAR (20)    CONSTRAINT [DF_PO_Artwork_Refno] DEFAULT ('') NOT NULL,
+    [Refno]      VARCHAR (36)    CONSTRAINT [DF_PO_Artwork_Refno] DEFAULT ('') NOT NULL,
     [SCIRefno]   VARCHAR (26)    CONSTRAINT [DF_PO_Artwork_SCIRefno] DEFAULT ('') NULL,
     [FabricType] VARCHAR (1)     CONSTRAINT [DF_PO_Artwork_FabricType] DEFAULT ('') NOT NULL,
     [Qty]        NUMERIC (8, 2)  CONSTRAINT [DF_PO_Artwork_Qty] DEFAULT ((0)) NULL,

@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[Fabric] (
     [SCIRefno]                VARCHAR (30)    CONSTRAINT [DF_Fabric_SCIRefno] DEFAULT ('') NOT NULL,
     [BrandID]                 VARCHAR (8)     CONSTRAINT [DF_Fabric_BrandID] DEFAULT ('') NULL,
-    [Refno]                   VARCHAR (20)    CONSTRAINT [DF_Fabric_Refno] DEFAULT ('') NULL,
+    [Refno]                   VARCHAR (36)    CONSTRAINT [DF_Fabric_Refno] DEFAULT ('') NULL,
     [Junk]                    BIT             CONSTRAINT [DF_Fabric_Junk] DEFAULT ((0)) NULL,
     [Type]                    VARCHAR (1)     CONSTRAINT [DF_Fabric_Type] DEFAULT ('') NULL,
     [MtlTypeID]               VARCHAR (20)    CONSTRAINT [DF_Fabric_MtlTypeID] DEFAULT ('') NULL,

@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[ThreadAdjust_Detail] (
     [ID]               VARCHAR (13)   CONSTRAINT [DF_ThreadAdjust_Detail_ID] DEFAULT ('') NOT NULL,
-    [Refno]            VARCHAR (21)   CONSTRAINT [DF_ThreadAdjust_Detail_Refno] DEFAULT ('') NOT NULL,
+    [Refno]            VARCHAR (36)   CONSTRAINT [DF_ThreadAdjust_Detail_Refno] DEFAULT ('') NOT NULL,
     [ThreadColorID]    VARCHAR (15)   CONSTRAINT [DF_ThreadAdjust_Detail_ThreadColorID] DEFAULT ('') NOT NULL,
     [NewConeBook]      NUMERIC (5)    NULL,
     [UsedConeBook]     NUMERIC (5)    NULL,

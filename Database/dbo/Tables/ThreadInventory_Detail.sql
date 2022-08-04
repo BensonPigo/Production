@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[ThreadInventory_Detail] (
     [ID]               VARCHAR (13) CONSTRAINT [DF_ThreadInventory_Detail_ID] DEFAULT ('') NOT NULL,
-    [Refno]            VARCHAR (21) CONSTRAINT [DF_ThreadInventory_Detail_Refno] DEFAULT ('') NOT NULL,
+    [Refno]            VARCHAR (36) CONSTRAINT [DF_ThreadInventory_Detail_Refno] DEFAULT ('') NOT NULL,
     [ThreadColorID]    VARCHAR (15) CONSTRAINT [DF_ThreadInventory_Detail_ThreadColorID] DEFAULT ('') NOT NULL,
     [NewConeBook]      NUMERIC (5)  CONSTRAINT [DF_ThreadInventory_Detail_NewConeBook] DEFAULT ((0)) NULL,
     [UsedConeBook]     NUMERIC (5)  CONSTRAINT [DF_ThreadInventory_Detail_UsedConeBook] DEFAULT ((0)) NULL,
