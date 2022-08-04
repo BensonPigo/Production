@@ -541,13 +541,16 @@ Where a.id = '{0}' ", masterID);
             string cmd = @"
 select a.POID
         ,[SEQ] = a.Seq1+' '+a.Seq2
-        ,[DESC] = b.Refno + CHAR(13) + CHAR(10) +
-				 IIF(f.MtlTypeID = 'EMB THREAD' or f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
-                                     ,IIF( b.SuppColor = '' or b.SuppColor is null,dbo.GetColorMultipleID(o.BrandID, b.ColorID), b.SuppColor)
-                                     ,dbo.GetColorMultipleID(o.BrandID, b.ColorID)
-                                 )+ CHAR(13) + CHAR(10) +
-				 b.SizeSpec + CHAR(13) + CHAR(10) +
-				 Concat(iif(b.FabricType='F','Fabric',iif(b.FabricType='A','Accessory',iif(b.FabricType='O','Orher',b.FabricType))), '-', f.MtlTypeID)
+         ,[DESC] = IIF((a.POID = lag(a.POID,1,'')over (order by a.POID,a.seq1,a.seq2) -- same POID,Seq show first Desc
+		    AND(a.seq1 = lag(a.seq1,1,'')over (order by a.POID,a.seq1,a.seq2))
+		    AND(a.seq2 = lag(a.seq2,1,'')over (order by a.POID,a.seq1,a.seq2))) ,'',		
+		b.Refno + CHAR(13) + CHAR(10) +
+					IIF(f.MtlTypeID = 'EMB THREAD' or f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
+										,IIF( b.SuppColor = '' or b.SuppColor is null,dbo.GetColorMultipleID(o.BrandID, b.ColorID), b.SuppColor)
+										,dbo.GetColorMultipleID(o.BrandID, b.ColorID)
+									)+ CHAR(13) + CHAR(10) +
+					b.SizeSpec + CHAR(13) + CHAR(10) +
+					Concat(iif(b.FabricType='F','Fabric',iif(b.FabricType='A','Accessory',iif(b.FabricType='O','Orher',b.FabricType))), '-', f.MtlTypeID))
 		,a.Roll
 		,a.Dyelot
 		,unit = b.StockUnit
