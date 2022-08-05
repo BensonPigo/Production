@@ -108,9 +108,9 @@ Begin
 					 , SCIRefNo			= po3.SCIRefNo
 					 , FabricType		= ft.Name
 					 , MaterialType		= f.MtltypeId
-					 , Color			= Concat(po3.ColorID,'''' '''', c.Name)
-					 , SizeSpec			= po3.SizeSpec
-					 , SizeUnit			= po3.SizeUnit
+					 , Color			= Concat(pc.SpecValue,'''' '''', c.Name)
+					 , SizeSpec			= ps.SpecValue
+					 , SizeUnit			= pu.SpecValue
 					 , Deadline			= Convert(VarChar(10), i.Deadline, 111)
 					 , OrderSMR			= OrderSMR.IdAndNameAndExt
 					 , OrderHandle		= OrderHandle.IdAndNameAndExt
@@ -172,11 +172,13 @@ Begin
 					On po.ID = i.POID
 				 Inner Join Trade.dbo.PO_Supp as po2
 					On po2.ID = i.POID And po2.Seq1 = i.Seq1
-				 Inner Join Trade.dbo.PO_Supp_Detail as po3
-					On po3.ID = i.POID And po3.Seq1 = i.Seq1 And po3.Seq2 = i.Seq2
+				 Inner Join Trade.dbo.PO_Supp_Detail as po3 on po3.ID = i.POID And po3.Seq1 = i.Seq1 And po3.Seq2 = i.Seq2
+				  Left Join Trade.dbo.PO_Supp_Detail_Spec as pc on po3.ID = pc.POID And po3.Seq1 = pc.Seq1 And po3.Seq2 = pc.Seq2 And pc.SpecColumnID = ''Color''
+				  Left Join Trade.dbo.PO_Supp_Detail_Spec as ps on po3.ID = ps.POID And po3.Seq1 = ps.Seq1 And po3.Seq2 = ps.Seq2 And ps.SpecColumnID = ''Size''
+				  Left Join Trade.dbo.PO_Supp_Detail_Spec as pu on po3.ID = pu.POID And po3.Seq1 = pu.Seq1 And po3.Seq2 = pu.Seq2 And pu.SpecColumnID = ''SizeUnit''
 				  Left Join Trade.dbo.Supp as s On s.ID = po2.SuppID
 				  Left Join Trade.dbo.Supp as sg On sg.ID = s.SuppGroupFabric
-				  Left Join Trade.dbo.Color as c On c.BrandId = o.BrandID And c.ID = po3.ColorID
+				  Left Join Trade.dbo.Color as c On c.BrandId = o.BrandID And c.ID = pc.SpecValue
 				  Left Join Trade.dbo.Fabric as f On f.SCIRefno = po3.SCIRefNo
 				  Left Join Trade.dbo.GetName as OrderSMR On OrderSMR.ID = o.SMR
 				  Left Join Trade.dbo.GetName as OrderHandle On OrderHandle.ID = o.MRHandle
