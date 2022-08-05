@@ -1,15 +1,19 @@
 ﻿using Ict;
 using Ict.Win;
+using Microsoft.Reporting.WinForms;
 using Sci.Data;
 using Sci.Production.Automation;
 using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
+using Sci.Win;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -491,6 +495,136 @@ Where a.id = '{0}' ", masterID);
             var frm = new P26_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
+        }
+
+        protected override bool ClickPrint()
+        {
+            if (this.CurrentMaintain["status"].ToString().ToUpper() != "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
+                return false;
+            }
+
+            DataRow row = this.CurrentMaintain;
+            string id = row["ID"].ToString();
+            string remark = this.CurrentMaintain["Remark"].ToString();
+            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+
+            #region  抓表頭資料
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select(string.Empty, @"select NameEN from MDivision where id = @MDivision", pars, out dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!!", "DataTable dt");
+                return false;
+            }
+
+            string rptTitle = dt.Rows[0]["NameEN"].ToString();
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new ReportParameter("RptTitle", rptTitle));
+            report.ReportParameters.Add(new ReportParameter("ID", id));
+            report.ReportParameters.Add(new ReportParameter("Remark", remark));
+            report.ReportParameters.Add(new ReportParameter("issuedate", issuedate));
+            #endregion
+
+            #region  抓表身資料
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dd;
+            string cmd = @"
+select a.POID
+        ,[SEQ] = a.Seq1+' '+a.Seq2
+        ,[DESC] = IIF(
+		 (a.POID = lag(a.POID,1,'')over (order by a.POID,a.seq1,a.seq2) -- same POID,Seq show first Desc
+		    AND(a.seq1 = lag(a.seq1,1,'')over (order by a.POID,a.seq1,a.seq2))
+		    AND(a.seq2 = lag(a.seq2,1,'')over (order by a.POID,a.seq1,a.seq2))) ,'',	
+		b.Refno + CHAR(13) + CHAR(10) +
+					IIF(f.MtlTypeID = 'EMB THREAD' or f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
+										,IIF( b.SuppColor = '' or b.SuppColor is null,isnull(dbo.GetColorMultipleID(o.BrandID, b.ColorID),''), isnull(b.SuppColor,''))
+										,isnull(dbo.GetColorMultipleID(o.BrandID, b.ColorID),'')
+									)+ CHAR(13) + CHAR(10) +
+					isnull(b.SizeSpec,'') + CHAR(13) + CHAR(10) +
+					Concat(iif(b.FabricType='F','Fabric',iif(b.FabricType='A','Accessory',iif(b.FabricType='O','Orher',b.FabricType))), '-',isnull( f.MtlTypeID,'')))
+		,a.Roll
+		,a.Dyelot
+		,unit = b.StockUnit
+		,a.Qty
+		,[StockType] = case a.StockType 
+					when 'B' then 'Bulk'
+					when 'I' then 'Inventory'
+					when 'O' then 'Scrap'
+					else a.StockType end
+		,[From_Location]=a.FromLocation
+        ,[ToLocation] = a.ToLocation    
+        ,[Total] = sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 )    
+from dbo.LocationTrans_detail a  WITH (NOLOCK) 
+left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
+left join orders o with(nolock) on o.ID = b.ID
+left join Fabric f with(nolock) on f.SCIRefno = b.SCIRefno
+where a.id= @ID";
+            result = DBProxy.Current.Select(string.Empty, cmd, pars, out dd);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+
+            if (dd == null || dd.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!!", "DataTabe dd");
+                return false;
+            }
+
+            // 傳 list 資料
+            List<P26_PrintData> data = dd.AsEnumerable()
+                .Select(row1 => new P26_PrintData()
+                {
+                    POID = row1["POID"].ToString().Trim(),
+                    SEQ = row1["SEQ"].ToString().Trim(),
+                    DESC = row1["DESC"].ToString().Trim(),
+                    Unit = row1["unit"].ToString().Trim(),
+                    Roll = row1["Roll"].ToString().Trim(),
+                    Dyelot = row1["Dyelot"].ToString().Trim(),
+                    QTY = row1["QTY"].ToString().Trim(),
+                    From_Location = row1["From_Location"].ToString().Trim(),
+                    ToLocation = row1["ToLocation"].ToString().Trim(),
+                    Total = row1["Total"].ToString().Trim(),
+                    StockType = row1["StockType"].ToString().Trim(),
+                }).ToList();
+
+            report.ReportDataSource = data;
+            #endregion
+
+            // 指定是哪個 RDLC
+            #region  指定是哪個 RDLC
+
+            // DualResult result;
+            Type reportResourceNamespace = typeof(P26_PrintData);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P26_Print.rdlc";
+
+            IReportResource reportresource;
+            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
+            {
+                // this.ShowException(result);
+                return false;
+            }
+
+            report.ReportResource = reportresource;
+            #endregion
+
+            // 開啟 report view
+            var frm = new Win.Subs.ReportView(report);
+            frm.MdiParent = this.MdiParent;
+            frm.Show();
+
+            return true;
         }
     }
 }

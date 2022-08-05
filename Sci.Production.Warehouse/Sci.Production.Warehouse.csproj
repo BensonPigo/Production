@@ -213,6 +213,7 @@
     <Compile Include="P07_QRCodeSticker.Designer.cs">
       <DependentUpon>P07_QRCodeSticker.cs</DependentUpon>
     </Compile>
+    <Compile Include="P26_PrintData.cs" />
     <Compile Include="P65_PrintData.cs" />
     <Compile Include="P06.cs">
       <SubType>Form</SubType>
@@ -1583,6 +1584,7 @@
     <EmbeddedResource Include="P08_ExcelImport.resx">
       <DependentUpon>P08_ExcelImport.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P26_Print.rdlc" />
     <EmbeddedResource Include="P67_Import .resx">
       <DependentUpon>P67_Import .cs</DependentUpon>
     </EmbeddedResource>
@@ -2400,6 +2402,7 @@
     <None Include="Properties\DataSources\P21_PrintBarcode_Data.datasource" />
     <None Include="Properties\DataSources\P22_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P23_FabricSticker_PrintData.datasource" />
+    <None Include="Properties\DataSources\P26_PrintData.datasource" />
     <None Include="Properties\DataSources\P33_PrintData.datasource">
       <SubType>Designer</SubType>
     </None>
