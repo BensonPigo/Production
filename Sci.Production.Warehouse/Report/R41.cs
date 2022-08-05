@@ -113,6 +113,7 @@ left join Fabric f on f.SCIRefno = po3.SCIRefno
 where i.Type = 'I'
 and i.Status = 'Confirmed'
 {sqlWhere}
+order by i.ID, id.POID, id.Seq1, id.Seq2, id.Roll, id.Dyelot
 ";
 
             DualResult result = DBProxy.Current.Select(null, sqlQuery, listPar, out this.dtResult);
