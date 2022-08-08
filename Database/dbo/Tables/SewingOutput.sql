@@ -25,6 +25,8 @@
     [SubconOutFty]            VARCHAR (8)    DEFAULT ('') NULL,
     [SubConOutContractNumber] VARCHAR (50)   CONSTRAINT [DF_SewingOutput_SubConOutContractNumber] DEFAULT ('') NULL,
     [ReDailyTransferDate]     DATE           NULL,
+    [SewingReasonIDForTypeLO] varchar(5) CONSTRAINT [DF_SewingOutput_SewingReasonIDForTypeLO] DEFAULT ('') not NULL, 
+    [SewingReasonIDForTypeIC] varchar(5) CONSTRAINT [DF_SewingOutput_SewingReasonIDForTypeIC] DEFAULT ('') not NULL, 
     CONSTRAINT [PK_SewingOutput] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

@@ -242,6 +242,12 @@
     <Compile Include="TxtmulitFSRCpuCost.Designer.cs">
       <DependentUpon>TxtmulitFSRCpuCost.cs</DependentUpon>
     </Compile>
+    <Compile Include="TxtSewingReason.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TxtSewingReason.Designer.cs">
+      <DependentUpon>TxtSewingReason.cs</DependentUpon>
+    </Compile>
     <Compile Include="TxtToPlace.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -848,6 +854,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="TxtPulloutPort.resx">
       <DependentUpon>TxtPulloutPort.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TxtSewingReason.resx">
+      <DependentUpon>TxtSewingReason.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TxtShippingReason.resx">
       <DependentUpon>TxtShippingReason.cs</DependentUpon>

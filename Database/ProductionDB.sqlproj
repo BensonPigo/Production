@@ -2727,6 +2727,7 @@
     <Build Include="dbo\Tables\BundleTransfer.sql" />
     <Build Include="dbo\Tables\SewingOutputEfficiency.sql" />
     <Build Include="dbo\Tables\SewingOutputEfficiency_History.sql" />
+    <Build Include="dbo\Functions\IsRepeatStyleBySewingOutput.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
