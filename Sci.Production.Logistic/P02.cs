@@ -284,7 +284,7 @@ where 1=0";
                                 dr["ID"] = string.Empty;
                                 dr["selected"] = 0;
                                 dr["PackingListID"] = sl[2].Substring(0, 13);
-                                dr["CTNStartNo"] = MyUtility.Convert.GetInt(sl[2].Substring(13));
+                                dr["CTNStartNo"] = sl[2].Substring(13).TrimStart('^');
                                 dr["ClogLocationId"] = sl[1];
 
                                 string sqlCmd = string.Format(
