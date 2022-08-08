@@ -1081,6 +1081,7 @@ with ExportData as (
 		   , e.FactoryID
 		   , e.Consignee
            , e.ETA
+           , e.ETD
 	from Export e WITH (NOLOCK) 
 	left join Supp s WITH (NOLOCK) on s.ID = e.Forwarder
 	outer apply(
@@ -1145,6 +1146,7 @@ FtyExportData as (
 		   , [FactoryID]=''
 		   , f.Consignee
            , [ETA] = null
+           , [ETD] = null
 	from FtyExport f WITH (NOLOCK) 
 	left join LocalSupp l WITH (NOLOCK) on l.ID = f.Forwarder
 	where not exists (
@@ -1188,7 +1190,10 @@ TransferExportData as (
 		   , e.ID
 		   , e.ImportCountry
 		   , e.ShipModeID
-		   , e.PortArrival
+           , PortArrival = case
+                when Export.v = 1 then e.CloseDate              
+                when Import.v = 1 then e.PortArrival
+                end
 		   , WeightKg = (select sum(WeightKg) from TransferExport_Detail WITH (NOLOCK) where id = e.id)
 		   , Cbm = (select sum(Cbm) from TransferExport_Detail WITH (NOLOCK) where id = e.id)
 		   , Forwarder = Concat (e.Forwarder, '-'+s.AbbEN)
@@ -1210,6 +1215,7 @@ TransferExportData as (
 		   , FactoryID = e.FromFactoryID
 		   , e.Consignee
            , e.ETA
+           , e.Etd
            , e.Packages
 	from TransferExport e WITH (NOLOCK) 
 	left join Supp s WITH (NOLOCK) on s.ID = e.Forwarder
@@ -1237,12 +1243,12 @@ TransferExportData as (
 
                     if (!MyUtility.Check.Empty(this.date1))
                     {
-                        sqlCmd.Append(string.Format(" and e.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
+                        sqlCmd.Append(string.Format(" and ((Export.v = 1 and e.CloseDate >= '{0}') or (Import.v = 1 and e.PortArrival >= '{0}'))", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.date2))
                     {
-                        sqlCmd.Append(string.Format(" and e.PortArrival <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
+                        sqlCmd.Append(string.Format(" and ((Export.v = 1 and e.CloseDate <= '{0}') or (Import.v = 1 and e.PortArrival <= '{0}'))", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.dest))
@@ -1266,6 +1272,7 @@ select	IE
 		, Type
 		, ID
 		, ETA
+		, ETD
 		, FactoryID
 		, Consignee
 		, '' as Category
@@ -1291,6 +1298,7 @@ select	IE
 		, Type
 		, ID
 		, ETA
+		, ETD
 		, FactoryID
 		, Consignee
 		, Category = '' 
@@ -1314,6 +1322,7 @@ select	IE
 		, Type
 		, ID
 		, ETA
+		, ETD
 		, FactoryID
 		, Consignee
 		, Category = '' 
