@@ -3,8 +3,10 @@ using OnBarcode.Barcode;
 using System;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 using ZXing;
 using ZXing.QrCode;
@@ -80,7 +82,8 @@ namespace Sci.Production.Packing
                                 }
 
                                 #region 準備資料
-                                string barcode = printData.Rows[p]["ID"].ToString() + printData.Rows[p]["CTNStartNo"].ToString();
+                                string barcode = printData.Rows[p]["ID"].ToString() + printData.Rows[p]["CTNStartNo"].ToString().PadLeft(6, '^');
+                                string barcodeShowText = printData.Rows[p]["ID"].ToString() + printData.Rows[p]["CTNStartNo"].ToString();
                                 string packingNo = "　　　　PackingNo.: " + printData.Rows[p]["ID"];
                                 string spNo = "　　　　SP No.: " + printData.Rows[p]["OrderID"];
                                 string cartonNo = "　　　　Carton No.: " + printData.Rows[p]["CTNStartNo"] + " OF " + printData.Rows[p]["CtnQty"];
@@ -88,7 +91,8 @@ namespace Sci.Production.Packing
                                 string sizeQty = "　　　　Size/Qty: " + printData.Rows[p]["SizeCode"] + "/" + printData.Rows[p]["ShipQty"];
                                 #endregion
 
-                                Bitmap oriBitmap = this.NewBarcode(barcode);
+                                Bitmap oriBitmap = this.NewBarcode(barcode, barcodeShowText);
+
                                 Clipboard.SetImage(oriBitmap);
                                 tables.Cell(((p % 6) * 7) + 1, 1).Range.Paste();
                                 tables.Cell(((p % 6) * 7) + 1, 1).Range.InlineShapes[1].ScaleHeight = 40f;
@@ -160,7 +164,8 @@ namespace Sci.Production.Packing
                             {
                                 #region New format
                                 #region 準備資料
-                                string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString();
+                                string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString().PadLeft(6, '^');
+                                string barcodeShowText = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString();
                                 string packingNo = "PG#.: " + printData.Rows[i]["ID"];
                                 string spNo = "SP#.: " + printData.Rows[i]["OrderID"];
                                 string style = "Style#.: " + printData.Rows[i]["StyleID"];
@@ -170,7 +175,7 @@ namespace Sci.Production.Packing
                                 string brandFTYCode = "Fty Code: " + printData.Rows[i]["BrandFTYCode"].ToString();
                                 #endregion
 
-                                Bitmap oriBitmap = this.NewBarcode(barcode);
+                                Bitmap oriBitmap = this.NewBarcode(barcode, barcodeShowText);
                                 Clipboard.SetImage(oriBitmap);
                                 tables.Cell(6, 1).Range.Paste();
                                 tables.Cell(6, 1).Range.InlineShapes[1].ScaleHeight = 40f;
@@ -199,7 +204,8 @@ namespace Sci.Production.Packing
                             {
                                 #region old format
                                 #region 準備資料
-                                string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString();
+                                string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString().PadLeft(6, '^');
+                                string barcodeShowText = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString();
                                 string packingNo = "　　　　PackingNo.: " + printData.Rows[i]["ID"];
                                 string spNo = "　　　　SP No.: " + printData.Rows[i]["OrderID"];
                                 string cartonNo = "　　　　Carton No.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
@@ -207,7 +213,7 @@ namespace Sci.Production.Packing
                                 string sizeQty = "　　　　Size/Qty: " + printData.Rows[i]["SizeCode"] + "/" + printData.Rows[i]["ShipQty"];
                                 #endregion
 
-                                Bitmap oriBitmap = this.NewBarcode(barcode);
+                                Bitmap oriBitmap = this.NewBarcode(barcode, barcodeShowText);
                                 Clipboard.SetImage(oriBitmap);
                                 tables.Cell(1, 1).Range.Paste();
                                 tables.Cell(1, 1).Range.InlineShapes[1].ScaleHeight = 40f;
@@ -305,7 +311,8 @@ namespace Sci.Production.Packing
                 {
                     tables = table[i + 1];
                     #region 準備資料
-                    string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString();
+                    string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString().PadLeft(6, '^');
+                    string barcodeSowText = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString();
                     string packingNo = "P/L#.: " + printData.Rows[i]["ID"];
                     string spNo = "SP#.: " + printData.Rows[i]["OrderID"];
                     string poNo = "PO#.: " + printData.Rows[i]["PONo"].ToString();
@@ -322,7 +329,7 @@ namespace Sci.Production.Packing
                     tables.Cell(1, 1).Range.InlineShapes[1].LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoFalse;
                     tables.Cell(1, 1).Range.InlineShapes[1].ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapSquare;
 
-                    tables.Cell(2, 1).Range.Text = "        " + barcode + Environment.NewLine + packingNo + Environment.NewLine + spNo + Environment.NewLine + poNo + Environment.NewLine + sizeQty + " " + cartonNo;
+                    tables.Cell(2, 1).Range.Text = "        " + barcodeSowText + Environment.NewLine + packingNo + Environment.NewLine + spNo + Environment.NewLine + poNo + Environment.NewLine + sizeQty + " " + cartonNo;
                 }
                 #endregion
                 winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
@@ -421,7 +428,7 @@ namespace Sci.Production.Packing
                         }
 
                         #region 準備資料
-                        string barcode = printData.Rows[p]["ID"].ToString() + printData.Rows[p]["CTNStartNo"].ToString();
+                        string barcode = printData.Rows[p]["ID"].ToString() + printData.Rows[p]["CTNStartNo"].ToString().PadLeft(6, '^');
                         string packingNo = "P/L#:" + printData.Rows[p]["ID"];
                         string spNo = "SP#:" + printData.Rows[p]["OrderID"];
                         string cartonNo = "CTN:" + printData.Rows[p]["CTNStartNo"] + " OF " + printData.Rows[p]["CtnQty"];
@@ -594,8 +601,9 @@ namespace Sci.Production.Packing
         /// 將 Barcode 轉換成圖片
         /// </summary>
         /// <param name="strBarcode">Barcode 內容</param>
+        /// <param name="showText">Barcode 顯示文字</param>
         /// <returns>Image</returns>
-        private Bitmap NewBarcode(string strBarcode)
+        private Bitmap NewBarcode(string strBarcode, string showText = "")
         {
             Linear code = new Linear
             {
@@ -604,11 +612,32 @@ namespace Sci.Production.Packing
                 Format = ImageFormat.Bmp,
                 X = 4,
                 Y = 160,
-                TextFont = new Font("Arial", 18f, FontStyle.Regular),
                 Resolution = 600,
+                ShowText = false,
             };
-            code.drawBarcode("c#-barcode.Bmp");
-            return code.drawBarcode();
+
+            string finalShowText = MyUtility.Check.Empty(showText) ? strBarcode : showText;
+
+            Bitmap oriBarcodeBitmap = code.drawBarcode();
+            Bitmap newBarcodeBitmap = new Bitmap(oriBarcodeBitmap.Width - 250, oriBarcodeBitmap.Height + 30);
+            var destinationRect = new Rectangle(0, 0, oriBarcodeBitmap.Width - 250, oriBarcodeBitmap.Height);
+
+            RectangleF stringRectf = new RectangleF(0, oriBarcodeBitmap.Height, oriBarcodeBitmap.Width - 250, 30);
+            StringFormat format = new StringFormat();
+            format.LineAlignment = StringAlignment.Center;
+            format.Alignment = StringAlignment.Center;
+
+            using (var graphics = Graphics.FromImage(newBarcodeBitmap))
+            using (SolidBrush brush = new SolidBrush(Color.White))
+            {
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+
+                graphics.FillRectangle(brush, 0, 0, newBarcodeBitmap.Width, newBarcodeBitmap.Height);
+                graphics.DrawImage(oriBarcodeBitmap, destinationRect);
+                graphics.DrawString(finalShowText, new Font("Arial", 18f, FontStyle.Regular), Brushes.Black, stringRectf, format);
+            }
+
+            return newBarcodeBitmap;
         }
 
         private Bitmap NewBarcode_NoText(string strBarcode)
@@ -624,7 +653,7 @@ namespace Sci.Production.Packing
                 TextFont = new Font("Arial", 18f, FontStyle.Regular),
                 Resolution = 600,
             };
-            code.drawBarcode("c#-barcode.Bmp");
+
             return code.drawBarcode();
         }
 

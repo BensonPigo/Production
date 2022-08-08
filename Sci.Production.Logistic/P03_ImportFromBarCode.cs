@@ -194,7 +194,7 @@ namespace Sci.Production.Logistic
                                 DataRow dr1 = this.grid2Data.NewRow();
                                 dr1["ID"] = string.Empty;
                                 dr1["PackingListID"] = sl[1].Substring(0, 13);
-                                dr1["CTNStartNo"] = sl[1].Substring(13);
+                                dr1["CTNStartNo"] = sl[1].Substring(13).TrimStart('^');
 
                                 // dr1["FactoryID"] = sl[1].Substring(0, 3);
                                 dr1["MDivisionID"] = Env.User.Keyword;

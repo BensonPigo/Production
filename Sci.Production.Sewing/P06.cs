@@ -210,7 +210,7 @@ where	pd.CTNStartNo != '' and
             if (packNo.Length > 13)
             {
                 packingListID = packNo.Substring(0, 13);
-                cTNStarNo = packNo.Substring(13, packNo.Length - 13);
+                cTNStarNo = packNo.Substring(13, packNo.Length - 13).TrimStart('^');
             }
 
             if (fromCustCTN == true)
@@ -264,7 +264,6 @@ where	pd.CTNStartNo != '' and
             if (checkBarcode == false)
             {
                 packDataResult.errMsg = $"<CTN#:{packNo}> does not exist!";
-                packDataResult.result = true;
                 return packDataResult;
             }
 
