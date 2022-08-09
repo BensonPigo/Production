@@ -2892,7 +2892,7 @@ where s.Type = 'EXPORT'");
                         objArray[0, 28] = dr["VoucherDate"];
                         objArray[0, 29] = dr["SubType"];
 
-                        worksheet.Range[string.Format("A{0}:AC{0}", intRowsStart)].Value2 = objArray;
+                        worksheet.Range[string.Format("A{0}:AD{0}", intRowsStart)].Value2 = objArray;
                     }
 
                     intRowsStart++;
