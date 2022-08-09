@@ -187,6 +187,7 @@
     [DryRoomRecdDate] DATETIME NULL, 
     [DryRoomTransDate] DATETIME NULL, 
     [MdRoomScanDate] DATETIME NULL, 
+    [OrganicCotton] BIT NOT NULL CONSTRAINT [DF_Orders_OrganicCotton] DEFAULT ((0)), 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -1058,3 +1059,13 @@ CREATE NONCLUSTERED INDEX [IDX_Orders_MES_EndlineR01]
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單在生產過程中是否有出現斷針', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'BrokenNeedles';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Organic Cotton/Recycle Polyester',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Orders',
+    @level2type = N'COLUMN',
+    @level2name = N'OrganicCotton'
