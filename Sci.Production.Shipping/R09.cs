@@ -782,7 +782,7 @@ select * from TransferExportData");
                         objArray[0, allcol + i] = MyUtility.Check.Empty(dr[allcol + i]) ? 0 : dr[allcol + i];
                     }
 
-                    objArray[0, allcol + i + 1] = string.Format("=SUM(O{0}:{1}{0})", intRowsStart, excelSumCol);
+                    objArray[0, allcol + i + 1] = string.Format("=SUM(Q{0}:{1}{0})", intRowsStart, excelSumCol);
                     worksheet.Range[string.Format("A{0}:{1}{0}", intRowsStart, excelColumn)].Value2 = objArray;
                     intRowsStart++;
                 }

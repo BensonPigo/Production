@@ -2458,6 +2458,7 @@ where s.Type = 'EXPORT'");
             string strXltName = Env.Cfg.XltPathDir + (this.reportType == 1 ? "\\Shipping_R10_ShareExpenseExportFeeReport.xltx" : this.reportType == 2 ? "\\Shipping_R10_ShareExpenseExportBySP.xltx" : this.reportType == 3 ? "\\Shipping_R10_ShareExpenseExportBySPByFee.xltx" : "\\Shipping_R10_AirPrepaidExpense.xltx");
 
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            excel.Visible = true;
             if (excel == null)
             {
                 return false;
@@ -2681,7 +2682,7 @@ where s.Type = 'EXPORT'");
                                 {
                                     if (MyUtility.Check.Empty(sumCol5912start))
                                     {
-                                        sumCol5912start = PublicPrg.Prgs.GetExcelEnglishColumnName(23 + t);
+                                        sumCol5912start = PublicPrg.Prgs.GetExcelEnglishColumnName(24 + t);
                                     }
                                 }
 
@@ -2693,7 +2694,7 @@ where s.Type = 'EXPORT'");
                                         sumCol5912TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(endcol+1 + t);
                                     }
 
-                                    objArray[0, endcol + t] = $"=W{intRowsStart}+SUM({sumCol5912start}{intRowsStart}:{sumCol5912}{intRowsStart})";
+                                    objArray[0, endcol + t] = $"=X{intRowsStart}+SUM({sumCol5912start}{intRowsStart}:{sumCol5912}{intRowsStart})";
                                 }
                                 else if (MyUtility.Convert.GetString(dr.Table.Columns[endcol + t].ColumnName).EqualString("6105-Total"))
                                 {
@@ -2748,7 +2749,8 @@ where s.Type = 'EXPORT'");
                                         sumCol5912TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + c);
                                     }
 
-                                    objArray[0, allColumn - 1 + c] = $"=AA{intRowsStart}+SUM({sumCol5912start}{intRowsStart}:{sumCol5912}{intRowsStart})";
+                                    string col5912 = this.reportContent == 1 ? "AD" : "AB";
+                                    objArray[0, allColumn - 1 + c] = $"={col5912}{intRowsStart}+SUM({sumCol5912start}{intRowsStart}:{sumCol5912}{intRowsStart})";
                                 }
                                 else if (MyUtility.Convert.GetString(dr.Table.Columns[allColumn - 1 + c].ColumnName).EqualString("6105-Total"))
                                 {
@@ -2782,7 +2784,16 @@ where s.Type = 'EXPORT'");
 
                     int totalSumcolumn = allColumn + this.accnoData.Rows.Count;
 
-                    string sumStartColEng = this.reportType == 1 ? "R" : this.reportContent == 2 ? "V" : "Y";
+                    string sumStartColEng = string.Empty;
+                    if (this.reportType == 1)
+                    {
+                        sumStartColEng = this.reportContent == 1 ? "R" : "S";
+                    }
+                    else
+                    {
+                        sumStartColEng = this.reportContent == 1 ? "Y" : "W";
+                    }
+
                     objArray[0, totalSumcolumn] = string.Format("=SUM({2}{0}:{1}{0}) {3} {4}", intRowsStart, excelSumCol, sumStartColEng, sc1, sc2);
 
                     worksheet.Range[string.Format("A{0}:{1}{0}", intRowsStart, excelColumn)].Value2 = objArray;
