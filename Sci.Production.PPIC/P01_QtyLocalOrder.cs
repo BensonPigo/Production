@@ -427,7 +427,7 @@ and oqs.Id = '{0}'
                 }
             }
 
-            if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
+            if (PMSUtilityAutomation.IsSunrise_FinishingProcessesEnable)
             {
                 Task.Run(() => new Sunrise_FinishingProcesses().SentOrdersToFinishingProcesses(this.orderID, "Orders,Order_QtyShip,Order_SizeCode,Order_Qty"))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());

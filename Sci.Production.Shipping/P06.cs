@@ -1122,7 +1122,7 @@ inner join  #tmp t on t.OrderID = o.ID
             this.UpdatePacking_PulloutStatus();
 
             #region ISP20200757 資料交換 - Sunrise
-            if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
+            if (PMSUtilityAutomation.IsSunrise_FinishingProcessesEnable)
             {
                 string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
                 Task.Run(() => new Sunrise_FinishingProcesses().SentOrdersToFinishingProcesses(listOrderID, "Orders,Order_QtyShip,Order_Qty"))
@@ -1292,7 +1292,7 @@ inner join  #tmp t on t.OrderID = o.ID
             this.UpdatePacking_PulloutStatus();
 
             #region ISP20200757 資料交換 - Sunrise
-            if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
+            if (PMSUtilityAutomation.IsSunrise_FinishingProcessesEnable)
             {
                 string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
                 Task.Run(() => new Sunrise_FinishingProcesses().SentOrdersToFinishingProcesses(listOrderID, "Orders,Order_QtyShip"))
