@@ -4239,6 +4239,8 @@ group by InspectionDate, FactoryID, Line, Shift, Team, OrderId, Article, Locatio
                 return Ict.Result.F("DQS Data not found!");
             }
 
+            List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@outputDate", this.CurrentMaintain["OutputDate"])};
+
             string sqlcmd = $@"
 select t.OrderId
 ,t.Article
@@ -4287,7 +4289,7 @@ outer apply(
     ,0)
 )O_Location
 ";
-            result = MyUtility.Tool.ProcessWithDatatable(sewDt1, string.Empty, sqlcmd, out sewDt1);
+            result = MyUtility.Tool.ProcessWithDatatable(sewDt1, string.Empty, sqlcmd, out sewDt1, paramters: listPar);
             if (!result)
             {
                 return result;

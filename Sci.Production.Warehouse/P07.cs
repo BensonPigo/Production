@@ -2564,7 +2564,7 @@ from (
 		, c.OrderTypeID
 		, [ContainerType] = Container.Val
 		, [QRCode] = pll.QRCode -- b.FabricType = 'F'  相同 QRCode 其中一筆為 [+] 剩下為 [-]
-		, [MINDQRCode] = pll.QRCode
+		, [MINDQRCode] = iif(isnull(pll.BatchNo, '') = '' or isnull(pll.PackageNo, '') = '', '', pll.QRCode)
 		, clickInsert = 1
 		, DRQ = IIF(isnull(pll.QRCode, '') = '', Null, DENSE_RANK() over(order by pll.QRCode))
         , Fabric.MtlTypeID
