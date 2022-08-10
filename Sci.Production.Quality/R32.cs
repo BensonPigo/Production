@@ -50,7 +50,22 @@ namespace Sci.Production.Quality
             this.Buyerdelivery2 = this.dateBuyerDev.Value2;
             this.AuditDate1 = this.AuditDate.Value1;
             this.AuditDate2 = this.AuditDate.Value2;
-            this.reportType = this.radioSummary.Checked ? "Summary" : "Detail";
+            if (this.radioSummary.Checked)
+            {
+                this.reportType = "Summary";
+            }
+            else if (this.radioDetail.Checked)
+            {
+                this.reportType = "Detail";
+            }
+            else if (this.radio5X5.Checked)
+            {
+                this.reportType = "5X5Report";
+            }
+            else
+            {
+                this.reportType = string.Empty;
+            }
 
             if (MyUtility.Check.Empty(this.AuditDate1) &&
                     MyUtility.Check.Empty(this.AuditDate2) &&
@@ -463,6 +478,250 @@ DROP TABLE #tmp ,#MainData ,#PackingList_Detail,#MainData1
                 #endregion
             }
 
+            if (this.reportType == "5X5Report")
+            {
+                sqlCmd.Append($@"
+----QA R32 5X5 report
+select 
+ [ID] = cfa.ID
+,[AuditDate] = cfa.AuditDate
+,[Auditor] = p.Name
+,[Factory] = cfa.FactoryID
+,[PONo] = SUBSTRING(o.CustPONo,1,10) --取前10碼
+,[POQty] = o.Qty
+,[AuditSampleSize] = cfa.InspectQty
+,[StyleNo] = o.StyleID
+,[Colorway] = s.ArticleList
+,[Season] = SUBSTRING(o.SeasonID,3,2) -- 取後2碼
+,[SeasonYear] = '20'+SUBSTRING(o.SeasonID,1,2)
+,[Lot] = right(o.CustPONo,2)
+,[MetalDetection] = 'PASS'
+,[NikeDefectCodeID] = gdf.NikeDefectCodeID
+,[Qty] = cfad.Qty
+,[row] =  ROW_NUMBER() over(partition by cfad.ID order by gdf.NikeDefectCodeID )
+into #tmpMain
+FROM CFAInspectionRecord cfa
+inner join CFAInspectionRecord_OrderSEQ cfao on cfao.ID = cfa.id 
+inner join orders o on o.id = cfao.OrderID
+inner join CFAInspectionRecord_Detail cfad on cfad.ID = cfa.ID
+inner join GarmentDefectCode gdf on gdf.id = cfad.GarmentDefectCodeID
+left join Pass1 p on p.ID = cfa.CFA
+outer apply(
+	select ArticleList = Stuff((
+		select concat(',',Article)
+		from (
+				select 	distinct
+					Article
+				from dbo.Order_Article d
+				where d.id = o.ID
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) s
+WHERE 1=1
+and exists (select 1 from Factory f where o.FactoryId = id and f.IsProduceFty = 1)
+");
+
+                #region Where
+                if (!MyUtility.Check.Empty(this.AuditDate1) && !MyUtility.Check.Empty(this.AuditDate1))
+                {
+                    sqlCmd.Append($"AND cfa.AuditDate BETWEEN @AuditDate1 AND @AuditDate2" + Environment.NewLine);
+                    paramList.Add(new SqlParameter("@AuditDate1", this.AuditDate1.Value));
+                    paramList.Add(new SqlParameter("@AuditDate2", this.AuditDate2.Value));
+                }
+
+                if (!MyUtility.Check.Empty(this.Buyerdelivery1) && !MyUtility.Check.Empty(this.Buyerdelivery1))
+                {
+                    sqlCmd.Append($"AND o.BuyerDelivery BETWEEN @Buyerdelivery1 AND @Buyerdelivery2" + Environment.NewLine);
+                    paramList.Add(new SqlParameter("@Buyerdelivery1", this.Buyerdelivery1.Value));
+                    paramList.Add(new SqlParameter("@BuyerDelivery2", this.Buyerdelivery2.Value));
+                }
+
+                if (!MyUtility.Check.Empty(this.MDivisionID))
+                {
+                    sqlCmd.Append($"AND o.MDivisionID=@MDivisionID " + Environment.NewLine);
+                    paramList.Add(new SqlParameter("@MDivisionID", this.MDivisionID));
+                }
+
+                if (!MyUtility.Check.Empty(this.FactoryID))
+                {
+                    sqlCmd.Append($"AND o.FtyGroup =@FactoryID " + Environment.NewLine);
+                    paramList.Add(new SqlParameter("@FactoryID", this.FactoryID));
+                }
+
+                if (!MyUtility.Check.Empty(this.sp1))
+                {
+                    sqlCmd.Append($"AND cfao.OrderID  >= @sp1" + Environment.NewLine);
+                    SqlParameter p = new SqlParameter("@sp1", SqlDbType.VarChar)
+                    {
+                        Value = this.sp1,
+                    };
+                    paramList.Add(p);
+                }
+
+                if (!MyUtility.Check.Empty(this.sp2))
+                {
+                    sqlCmd.Append($"AND cfao.OrderID  <= @sp2" + Environment.NewLine);
+                    SqlParameter p = new SqlParameter("@sp2", SqlDbType.VarChar)
+                    {
+                        Value = this.sp2,
+                    };
+                    paramList.Add(p);
+                }
+
+                if (!MyUtility.Check.Empty(this.Stage))
+                {
+                    sqlCmd.Append($"AND cfa.Stage=@Stage " + Environment.NewLine);
+                    paramList.Add(new SqlParameter("@Stage", this.Stage));
+                }
+
+                sqlCmd.Append($"AND o.BrandID=@Brand " + Environment.NewLine);
+                paramList.Add(new SqlParameter("@Brand", this.Brand));
+
+                #endregion
+
+                sqlCmd.Append(@"
+
+select  
+[ID]
+,[AuditDate] 
+,[Auditor]
+,[Factory] 
+,[PONo]
+,[POQty]
+,[AuditSampleSize]
+,[StyleNo]
+,[Colorway]
+,[Season]
+,[SeasonYear]
+,[Lot]
+,[MetalDetection]
+,[NikeDefectCodeID]
+,[Qty]
+, [Row] = CONVERT(varchar,[row]) 
+into #tmpMainRow6 
+from #tmpMain where row <=6 
+
+declare @DateString varchar(200) = '[1],[2],[3],[4],[5],[6]'
+declare @SqlCmd2 nvarchar(max) =''
+set @SqlCmd2 = '
+;with 
+Q as (
+	select [ID]
+		,[AuditDate] 
+		,[Auditor]
+		,[Factory] 
+		,[PONo]
+		,[POQty]
+		,[AuditSampleSize]
+		,[StyleNo]
+		,[Colorway]
+		,[Season]
+		,[SeasonYear]
+		,[Lot]
+		,[MetalDetection]
+		,'+@DateString+' 
+	from (
+		select [ID]
+		,[AuditDate] 
+		,[Auditor]
+		,[Factory] 
+		,[PONo]
+		,[POQty]
+		,[AuditSampleSize]
+		,[StyleNo]
+		,[Colorway]
+		,[Season]
+		,[SeasonYear]
+		,[Lot]
+		,[MetalDetection]
+		,[Qty]
+		,Row from #tmpMainRow6
+	) as p
+	PIVOT(
+		sum([Qty]) 
+		for [Row] 
+		in ('+@DateString+')
+	) as pt
+),
+C as
+(
+	select [ID]
+		,[AuditDate] 
+		,[Auditor]
+		,[Factory] 
+		,[PONo]
+		,[POQty]
+		,[AuditSampleSize]
+		,[StyleNo]
+		,[Colorway]
+		,[Season]
+		,[SeasonYear]
+		,[Lot]
+		,[MetalDetection]
+	,'+@DateString+' 
+	from (
+		select 
+		[ID]
+		,[AuditDate] 
+		,[Auditor]
+		,[Factory] 
+		,[PONo]
+		,[POQty]
+		,[AuditSampleSize]
+		,[StyleNo]
+		,[Colorway]
+		,[Season]
+		,[SeasonYear]
+		,[Lot]
+		,[MetalDetection]
+		,[NikeDefectCodeID]
+		,Row
+		from #tmpMainRow6
+	) as p
+	PIVOT(
+		Max([NikeDefectCodeID]) 
+		for [Row] 
+		in ('+@DateString+')
+	) as pt
+)
+select 
+	 Q.[ID]
+	,Q.[AuditDate] 
+	,Q.[Auditor]
+	,Q.[Factory] 
+	,Q.[PONo]
+	,Q.[POQty]
+	,Q.[AuditSampleSize]
+	,Q.[StyleNo]
+	,Q.[Colorway]
+	,Q.[Season]
+	,Q.[SeasonYear]
+	,Q.[Lot]
+	,Q.[MetalDetection]
+	,Defect_1 = c.[1]
+	,Defects1_Qty = q.[1]
+	,Defect_2 = c.[2]
+	,Defects2_Qty = q.[2]
+	,Defect_3 =c.[3]
+	,Defects3_Qty = q.[3]
+	,Defect_4 = c.[4]
+	,Defects4_Qty = q.[4]
+	,Defect_5 = c.[5]
+	,Defects5_Qty = q.[5]
+	,Defect_6 = c.[6]
+	,Defects6_Qty = q.[6]
+from Q
+left join C on Q.ID = C.ID
+order by Q.ID
+'
+
+EXEC sp_executesql @SqlCmd2
+
+drop table #tmpMain,#tmpMainRow6
+");
+            }
+
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), paramList, out this.final);
             if (!result)
             {
@@ -664,6 +923,11 @@ DROP TABLE #tmp ,#MainData ,#PackingList_Detail,#MainData1
                 }
             }
 
+            if (this.reportType == "5X5Report")
+            {
+                this.printData = this.final.Copy();
+            }
+
             return Result.True;
         }
 
@@ -677,7 +941,22 @@ DROP TABLE #tmp ,#MainData ,#PackingList_Detail,#MainData1
                 return false;
             }
 
-            string templateName = this.reportType == "Summary" ? "Quality_R32_Summary" : "Quality_R32_Detail";
+            string templateName = string.Empty;
+            if (this.reportType == "Summary")
+            {
+                templateName = "Quality_R32_Summary";
+            }
+
+            if (this.reportType == "Detail")
+            {
+                templateName = "Quality_R32_Detail";
+            }
+
+            if (this.reportType == "5X5Report")
+            {
+                templateName = "Quality_R32_5X5Report";
+            }
+
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{templateName}.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, $"{templateName}.xltx", 2, false, null, objApp); // 將datatable copy to excel
 
@@ -690,6 +969,22 @@ DROP TABLE #tmp ,#MainData ,#PackingList_Detail,#MainData1
             Marshal.ReleaseComObject(objApp);
             #endregion
             return true;
+        }
+
+        private void Radio5X5_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.radio5X5.Checked)
+            {
+                this.txtBrand.Text = "Nike";
+                this.txtBrand.ReadOnly = true;
+                this.txtBrand.IsSupportEditMode = false;
+            }
+            else
+            {
+                this.txtBrand.Text = string.Empty;
+                this.txtBrand.ReadOnly = false;
+                this.txtBrand.IsSupportEditMode = true;
+            }
         }
     }
 }
