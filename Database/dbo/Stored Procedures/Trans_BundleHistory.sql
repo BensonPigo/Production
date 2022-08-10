@@ -29,6 +29,22 @@ Begin try
 		from Bundle_Detail bd
 		where exists(select 1 from #tmp_Bundle where id = bd.id)
 
+		/*****************************  SetQtyBySubprocess  ************************************/
+		Begin
+			select *
+			into #tmp_SetQtyBySubprocess
+			from SetQtyBySubprocess s
+			where exists (select 1 from #tmp_Bundle_Detail_Order where OrderID = s.OrderID)
+
+			insert into SetQtyBySubprocess_History([OrderID], [Article], [SizeCode], [PatternPanel], [InQtyBySet], [OutQtyBySet], [FinishedQtyBySet], [SubprocessID], [TransferTime], [AddDate])
+			select [OrderID], [Article], [SizeCode], [PatternPanel], [InQtyBySet], [OutQtyBySet], [FinishedQtyBySet], [SubprocessID], [TransferTime], [AddDate]
+			from #tmp_SetQtyBySubprocess s
+
+			delete from s
+			from SetQtyBySubprocess s
+			where exists (select 1 from #tmp_SetQtyBySubprocess where OrderID = s.OrderID and Article = s.Article and SizeCode = s.SizeCode and PatternPanel = s.PatternPanel and SubprocessID = s.SubprocessID and TransferTime = s.TransferTime)
+		end
+
 		/*****************************  Bundle_Detail_Order  ************************************/
 		Begin
 			select *
