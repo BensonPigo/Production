@@ -646,6 +646,8 @@ OUTER APPLY(
                 if (dtMainA2B.Rows.Count > 0)
                 {
                     string getPackFromA2B = $@"
+alter table #tmp alter column ID varchar(25)
+
 select  g2.ID, [QAQty] = sum(sodd.QAQty)
 into    #SewingOutput
 from    (
@@ -657,15 +659,16 @@ from    (
 inner join SewingOutput_Detail_Detail sodd with (nolock) on sodd.OrderID = g2.OrderId
 group by g2.ID
 
-select  [ID] = pl.INVNo, [Category] = dl.Name, o.MDivisionID, [BuyerDelivery] = min(oq.BuyerDelivery)
+select  [ID] = pl.INVNo, [Category] = isnull(dl.Name, ''), o.MDivisionID, [BuyerDelivery] = min(oq.BuyerDelivery)
 into    #Packing
 from PackingList pl WITH (NOLOCK)
 inner join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
 inner join orders o WITH (NOLOCK) on o.id = pld.OrderID
-inner join DropDownList dl on dl.id = o.Category and dl.type = 'category'
 inner join Order_QtyShip oq WITH (NOLOCK) on pld.OrderID = oq.Id and pld.OrderShipmodeSeq = oq.Seq
-where pl.INVNo in (select ID from #tmp)
-group by pl.INVNo, dl.Name, o.MDivisionID
+left join DropDownList dl on dl.id = o.Category and dl.type = 'category'
+where exists(select 1 from #tmp where ID = pl.INVNo) 
+group by pl.INVNo, isnull(dl.Name, ''), o.MDivisionID
+
 
 select DISTINCT
     g.ID
@@ -764,6 +767,8 @@ OUTER APPLY(
 	) a
 )PulloutIdConfirmLockCount
 where 1 = 1 {sqlWherePack}
+
+drop table #Packing, #tmp, #SewingOutput
 ";
 
                     var listGroupMainA2B = dtMainA2B.AsEnumerable()
@@ -892,6 +897,7 @@ outer apply(
                 if (dtMainA2B.Rows.Count > 0)
                 {
                     string getPackFromA2B = @"
+
 select DISTINCT
     g.ID
 	,Category = stuff((
