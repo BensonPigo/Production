@@ -477,6 +477,16 @@ Begin
 				on tmp.SCICtnNo = pd.SCICtnNo
 			where tmp.SCICtnNo= t.SCICtnNo and row=1
 		)
+
+		update t
+		set t.ClogLocationId=s.ClogLocationId
+		from Production.dbo.PackingList_Detail t
+		inner join MiniToPallet s on t.SCICtnNo = s.SCICtnNo
+		where exists(
+			select * 
+			from #tmpMiniToPallet_for04 tmp			
+			where tmp.SCICtnNo= t.SCICtnNo and row=1
+		)
 	End
 
 	drop table #tmpSCIUpdateCanUpdate
