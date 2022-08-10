@@ -94,18 +94,21 @@ namespace Sci.Production.Quality
             this.OnRequery();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void OnRequery()
         {
-             this.sql = string.Format(
-                 @"select  C.ExportId , B.ArriveQty , E.StockUnit , E.SizeSpec , B.SCIRefno
-	                                    , B.Refno , B.Suppid + '-' + D.AbbEN as supplier , E.ColorID
-                                    from AIR_Laboratory A WITH (NOLOCK) 
-                                    left join AIR B WITH (NOLOCK) on A.id=B.id
-                                    left join Receiving C WITH (NOLOCK) on C.id=B.receivingID
-                                    left join Supp D WITH (NOLOCK) on D.ID=B.Suppid
-                                    left join PO_Supp_Detail E WITH (NOLOCK) on E.ID=A.POID and E.SEQ1=A.SEQ1 and E.SEQ2=A.SEQ2
-                                    where A.id={0} and A.POID='{1}' and A.SEQ1='{2}' and A.SEQ2='{3}'", this.ID, this.PoID, this.SEQ1, this.SEQ2);
+             this.sql = $@"
+select  C.ExportId , B.ArriveQty , E.StockUnit , B.SCIRefno, B.Refno , B.Suppid + '-' + D.AbbEN as supplier ,
+    ColorID = isnull(psdsC.SpecValue ,''),
+    SizeSpec= isnull(psdsS.SpecValue ,'')
+from AIR_Laboratory A WITH (NOLOCK) 
+left join AIR B WITH (NOLOCK) on A.id=B.id
+left join Receiving C WITH (NOLOCK) on C.id=B.receivingID
+left join Supp D WITH (NOLOCK) on D.ID=B.Suppid
+left join PO_Supp_Detail E WITH (NOLOCK) on E.ID=A.POID and E.SEQ1=A.SEQ1 and E.SEQ2=A.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = E.id and psdsC.seq1 = E.seq1 and psdsC.seq2 = E.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = E.id and psdsS.seq1 = E.seq1 and psdsS.seq2 = E.seq2 and psdsS.SpecColumnID = 'Size'
+where A.id={this.ID} and A.POID='{this.PoID}' and A.SEQ1='{this.SEQ1}' and A.SEQ2='{this.SEQ2}'
+";
              if (MyUtility.Check.Seek(this.sql, out this.DR))
             {
                 this.displaySP.Text = this.maindr["SEQ1"] + "-" + this.maindr["SEQ2"];

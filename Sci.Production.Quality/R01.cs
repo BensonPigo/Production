@@ -256,7 +256,9 @@ select
 	,mp.BLocation	
 	,[MinSciDelivery] = (SELECT MinSciDelivery FROM  DBO.GetSCI(F.Poid,O.Category))
 	,[MinBuyerDelivery] = (SELECT MinBuyerDelivery  FROM  DBO.GetSCI(F.Poid,O.Category))
-	,F.Refno,C.Description,P.ColorID,(SP.SuppID+'-'+s.AbbEN)Supplier
+	,F.Refno,C.Description
+    ,ColorID = (Select isnull(SpecValue ,'') from PO_Supp_Detail_Spec psdsC WITH (NOLOCK) where psdsC.ID = P.id and psdsC.seq1 = P.seq1 and psdsC.seq2 = P.seq2 and psdsC.SpecColumnID = 'Color')
+    ,(SP.SuppID+'-'+s.AbbEN)Supplier
 	,C.WeaveTypeID
 	,[N/A Physical] = IIF(F.Nonphysical = 1,'Y',' ')
 	,F.Result

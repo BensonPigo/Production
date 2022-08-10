@@ -519,7 +519,7 @@ select distinct
 	Supp.AbbEN,
 	psd.Refno,
     f.WeaveTypeID,
-	psd.ColorID,
+	ColorID = isnull(psdsC.SpecValue ,''),
     [ColorName] = c.ColorName,
 	Qty = isnull(ed.Qty,0) + isnull(ed.Foc,0),
 	sr.InspectionReport,
@@ -548,7 +548,7 @@ select distinct
     o.BrandID,
     f.Clima,
     sr.AWBNo,
-    [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, psd.ColorID, Format(Export.CloseDate,'yyyyMM') order by Export.CloseDate) else 0 end,
+    [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, isnull(psdsC.SpecValue ,''), Format(Export.CloseDate,'yyyyMM') order by Export.CloseDate) else 0 end,
     o.SeasonID
 from Export_Detail ed with(nolock)
 inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
@@ -561,11 +561,12 @@ left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join Factory fty with (nolock) on fty.ID = Export.Consignee
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 Left join #probablySeasonList seasonSCI on seasonSCI.ID = s.SeasonSCIID
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 OUTER APPLY(
 	Select Top 1 FirstDyelot,TPEFirstDyelot,SeasonSCIID
 	From dbo.FirstDyelot fd
 	Inner join #probablySeasonList season on fd.SeasonSCIID = season.ID
-	WHERE fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
+	WHERE fd.Refno = psd.Refno and fd.ColorID = isnull(psdsC.SpecValue ,'') and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
 		And seasonSCI.RowNo >= season.RowNo
 	Order by season.RowNo Desc
 )FirstDyelot
@@ -586,7 +587,7 @@ outer apply(
 outer apply(
     select [ColorName] = iif(c.Varicolored > 1, c.Name, c.ID)
     from Color c
-    where c.ID = psd.ColorID
+    where c.ID = isnull(psdsC.SpecValue ,'')
     and c.BrandID = psd.BrandID 
 )c
 {sqlwhere}
@@ -814,7 +815,7 @@ select distinct
 	ps.SuppID,
 	Supp.AbbEN,
 	psd.Refno,
-	psd.ColorID,
+	ColorID = isnull(psdsC.SpecValue ,''),
 	o.SeasonID,
     fd.SeasonSCIID,
     fd.Period,
@@ -835,7 +836,8 @@ left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
 left join Supp with(nolock) on Supp.ID = ps.SuppID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join Factory fty with (nolock) on fty.ID = Export.Consignee
-left outer join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup 
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left outer join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = isnull(psdsC.SpecValue ,'') and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup 
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 where ps.seq1 not like '7%' 
 and psd.FabricType = 'F'

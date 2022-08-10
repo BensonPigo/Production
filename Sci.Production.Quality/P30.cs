@@ -82,22 +82,21 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                string sqlcmd = string.Format(
-                    @" 
+                string sqlcmd = $@" 
 select ColorID
 from (
-	select distinct ColorID = dbo.GetColorMultipleID(a.BrandId, ColorID)
-		   , RowNum = ROW_NUMBER() over (order by ColorID, a.BrandID)
-	from po_supp_detail a WITH (NOLOCK) 
-		 , Orders b WITH (NOLOCK)  
-	where a.id = b.POID 
-		  and a.fabrictype = 'A' 
-		  and colorid is not null 
-		  and b.id='{0}' 
-		  and a.ColorID != ''
-	Group by ColorID, a.BrandID
+    select distinct ColorID = dbo.GetColorMultipleID(psd.BrandId, isnull(psdsC.SpecValue ,''))
+        , RowNum = ROW_NUMBER() over (order by isnull(psdsC.SpecValue ,''), psd.BrandID)
+    from po_supp_detail psd WITH (NOLOCK) 
+    inner join Orders o WITH (NOLOCK) on psd.id = o.POID
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+    where psd.fabrictype = 'A' 
+    and isnull(psdsC.SpecValue ,'') <> ''
+    and o.id='{this.txtSP.Text.ToString()}' 
+    Group by isnull(psdsC.SpecValue ,''), psd.BrandID
 )x
-order by RowNum", this.txtSP.Text.ToString());
+order by RowNum
+";
                 SelectItem item = new SelectItem(sqlcmd, "30", dr["ColorID"].ToString());
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel)
@@ -259,21 +258,20 @@ order by RowNum", this.txtSP.Text.ToString());
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 DataRow dr1;
 
-                string sqlcmd = string.Format(
-                    @" 
+                string sqlcmd = $@" 
 select ColorID
 from (
-	select distinct ColorID = dbo.GetColorMultipleID(a.BrandId, ColorID)
-	from po_supp_detail a WITH (NOLOCK) 
-		 , Orders b WITH (NOLOCK)  
-	where a.id = b.POID 
-		  and a.fabrictype = 'A' 
-		  and colorid is not null 
-		  and b.id = '{0}' 
-		  and a.ColorID != ''
-	Group by ColorID, a.BrandID
+    select distinct ColorID = dbo.GetColorMultipleID(psd.BrandId, isnull(psdsC.SpecValue ,''))
+    from po_supp_detail psd WITH (NOLOCK) 
+    inner join Orders o WITH (NOLOCK) on psd.id = o.POID
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+    where psd.fabrictype = 'A' 
+    and isnull(psdsC.SpecValue ,'') <> ''
+    and o.id = '{this.txtSP.Text.ToString()}' 
+    Group by isnull(psdsC.SpecValue ,''), psd.BrandID
 )x
-where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
+where ColorID = '{e.FormattedValue}'
+";
                 if (MyUtility.Check.Seek(sqlcmd, out dr1))
                 {
                     dr["Colorid"] = e.FormattedValue;

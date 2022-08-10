@@ -348,8 +348,8 @@ namespace Sci.Production.Quality
 
             if (!MyUtility.Check.Empty(this.txtColor.Text))
             {
-                sqlWhere += $" and psd.ColorID = '{this.txtColor.Text}'" + Environment.NewLine;
-                sqlWhere2 += $" and psd.ColorID = '{this.txtColor.Text}'" + Environment.NewLine;
+                sqlWhere += $" and isnull(psdsC.SpecValue ,'') = '{this.txtColor.Text}'" + Environment.NewLine;
+                sqlWhere2 += $" and isnull(psdsC.SpecValue ,'') = '{this.txtColor.Text}'" + Environment.NewLine;
             }
 
             if (!this.txtSeq.CheckSeq1Empty() && this.txtSeq.CheckSeq2Empty())
@@ -438,7 +438,8 @@ inner join Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
 inner join FIR f with (nolock) on r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2
 inner join FIR_Shadebone fs with (nolock) on f.id = fs.ID and rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
 inner join Orders o with (nolock) on o.ID = rd.PoId
-left join Color c with (nolock) on psd.ColorID = c.ID and psd.BrandId = c.BrandID
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join Color c with (nolock) on isnull(psdsC.SpecValue ,'') = c.ID and psd.BrandId = c.BrandID
 outer apply (
     select [Packages] = sum(e.Packages)
     from Export e with (nolock) 
@@ -484,12 +485,11 @@ INNER JOIN Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
 INNER JOIN FIR f with (nolock) on t.id = f.ReceivingID and td.PoId = F.POID and td.Seq1 = F.SEQ1 and td.Seq2 = F.SEQ2
 INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID and td.Roll = fs.Roll and td.Dyelot = fs.Dyelot
 INNER JOIN Orders o with (nolock) on o.ID = td.PoId
-left join Color c with (nolock) on psd.ColorID = c.ID and psd.BrandId = c.BrandID
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join Color c with (nolock) on isnull(psdsC.SpecValue ,'') = c.ID and psd.BrandId = c.BrandID
 {sqlWhere2}
 ";
-
-            DataTable dt = new DataTable();
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable dt);
             if (!result)
             {
                 this.ShowErr(result);
