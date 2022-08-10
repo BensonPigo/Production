@@ -2057,6 +2057,7 @@ select  pd.ID as PackingListID
     where (p.Type = 'B' or p.Type = 'S')
           and o.junk = 0
           and p.ID in ({0})
+          and (p.PulloutID = '' or p.PulloutID='{2}')
     group by pd.ID, p.Type, p.ShipModeID, pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.SizeCode, o.Qty
           , oq.Qty, oqd.Qty, p.INVNo, o.StyleID, o.BrandID, o.Dest
 ";
@@ -2073,7 +2074,7 @@ select  pd.ID as PackingListID
                 {
                     result = PackingA2BWebAPI.GetDataBySql(
                         itemA2B.PLFromRgCode,
-                        string.Format(sqlGetPulloutA2B, itemA2B.WherePackID, itemA2B.PLFromRgCode),
+                        string.Format(sqlGetPulloutA2B, itemA2B.WherePackID, itemA2B.PLFromRgCode, pulloutID),
                         out DataTable dtResultA2B);
 
                     if (!result)
