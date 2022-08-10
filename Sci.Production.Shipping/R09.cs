@@ -76,7 +76,7 @@ namespace Sci.Production.Shipping
             StringBuilder sqlCmd = new StringBuilder();
             if (this.reportType == 1)
             {
-                #region 組SQL Command
+                #region ExportData
                 sqlCmd.Append($@"
 with ExportData
 as (
@@ -84,6 +84,7 @@ as (
 		,[Type] = 'Material'
 		,[WKNo] = e.ID 
 		,[FtyWKNo] = ''
+        ,e.ETD
         ,DelayRepacement=case when e.Delay = 1 and e.Replacement = 1 then 'Delay Repacement'
                               when e.Delay = 1 and e.Replacement = 0 then 'Delay'
                               when e.Delay = 0 and e.Replacement = 1 then 'Repacement'
@@ -163,13 +164,16 @@ as (
                 {
                     sqlCmd.Append(" and (e.Delay = 1 or e.Replacement = 1) ");
                 }
+                #endregion
 
+                #region FtyExportData
                 sqlCmd.Append($@"),
 FtyExportData as (
 	select fe.InvNo
 		,[Type] = IIF(fe.Type = 1,'3rd Country',IIF(fe.Type = 2,'Transfer In','Local Purchase')) 
 		,[WKNo] = ''
 		,[FtyWKNo] = fe.ID
+        ,ETD = null
         ,DelayRepacement=''
 		,fe.ShipModeID
 		,fe.CYCFS
@@ -245,6 +249,95 @@ FtyExportData as (
                     sqlCmd.Append(string.Format(" and fe.Forwarder = '{0}'", this.forwarder));
                 }
                 #endregion
+
+                #region TransferExport
+                sqlCmd.Append($@"),
+TransferExportData
+as (
+	select e.InvNo
+		,[Type] = 'Material'
+		,[WKNo] = e.ID 
+		,[FtyWKNo] = ''
+        ,e.ETD
+        ,DelayRepacement=case when e.Delay = 1 and e.Replacement = 1 then 'Delay Repacement'
+                              when e.Delay = 1 and e.Replacement = 0 then 'Delay'
+                              when e.Delay = 0 and e.Replacement = 1 then 'Repacement'
+                              else ''
+                              end
+		,e.ShipModeID
+		,e.CYCFS
+		,e.Packages
+		,e.Blno
+		,WeightKg = (select sum(WeightKg) from TransferExport_Detail WITH (NOLOCK) where id = e.id)
+		,Cbm = (select sum(cbm) from TransferExport_Detail WITH (NOLOCK) where id = e.id)
+		,[Forwarder] = concat(e.Forwarder, '-'+ supp.AbbEN)
+		,e.PortArrival
+		,e.DocArrival
+		,se.CurrencyID
+		,[Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+		,se.AccountID		
+    from ShippingAP s WITH (NOLOCK) 
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+    inner join TransferExport e WITH (NOLOCK) on se.WKNo = e.ID
+    left join Supp WITH (NOLOCK) on supp.ID = e.Forwarder
+    where s.Type = 'IMPORT'
+    AND se.Junk <> 1
+");
+                if (!MyUtility.Check.Empty(this.arrivePortDate1))
+                {
+                    sqlCmd.Append(string.Format(" and e.PortArrival >= '{0}'", Convert.ToDateTime(this.arrivePortDate1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.arrivePortDate2))
+                {
+                    sqlCmd.Append(string.Format(" and e.PortArrival <= '{0}'", Convert.ToDateTime(this.arrivePortDate2).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.doxRcvdDate1))
+                {
+                    sqlCmd.Append(string.Format(" and e.DocArrival >= '{0}'", Convert.ToDateTime(this.doxRcvdDate1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.doxRcvdDate2))
+                {
+                    sqlCmd.Append(string.Format(" and e.DocArrival <= '{0}'", Convert.ToDateTime(this.doxRcvdDate2).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.apApvDate1))
+                {
+                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.apApvDate2))
+                {
+                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.voucherDate1))
+                {
+                    sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.voucherDate2))
+                {
+                    sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.shipMode))
+                {
+                    sqlCmd.Append(string.Format(" and e.ShipModeID = '{0}'", this.shipMode));
+                }
+
+                if (!MyUtility.Check.Empty(this.forwarder))
+                {
+                    sqlCmd.Append(string.Format(" and e.Forwarder = '{0}'", this.forwarder));
+                }
+
+                if (this.IsDelayReplacement)
+                {
+                    sqlCmd.Append(" and (e.Delay = 1 or e.Replacement = 1) ");
+                }
+                #endregion
                 string queryAccount = string.Format(
                     "{0}{1}",
                     sqlCmd.ToString(),
@@ -252,6 +345,8 @@ FtyExportData as (
 select AccountID as Accno from ExportData --where AccountID not in ('61012001','61012002','61012003','61012004','61012005')
 union
 select AccountID from FtyExportData --where AccountID not in ('61012001','61012002','61012003','61012004','61012005')
+union
+select AccountID from TransferExportData --where AccountID not in ('61012001','61012002','61012003','61012004','61012005')
 ) a where Accno!='' order by Accno"));
                 DualResult result = DBProxy.Current.Select(null, queryAccount, out this.accnoData);
                 if (!result)
@@ -274,13 +369,17 @@ select AccountID from FtyExportData --where AccountID not in ('61012001','610120
                     @"),
 tmpAllData
 as (
-    select InvNo,Type,WKNo,FtyWKNo,DelayRepacement,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
+    select InvNo,Type,WKNo,FtyWKNo,ETD,DelayRepacement,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
         PortArrival,DocArrival,CurrencyID,AccountID,Amount
     from ExportData
     union all
-    select InvNo,Type,WKNo,FtyWKNo,DelayRepacement,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
+    select InvNo,Type,WKNo,FtyWKNo,ETD,DelayRepacement,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
         PortArrival,DocArrival,CurrencyID,AccountID,Amount
     from FtyExportData
+    union all
+    select InvNo,Type,WKNo,FtyWKNo,ETD,DelayRepacement,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
+        PortArrival,DocArrival,CurrencyID,AccountID,Amount
+    from TransferExportData
 )
 
 select * from tmpAllData
@@ -301,7 +400,7 @@ FOR AccountID IN ({0})) a", allAccno.ToString()));
             }
             else
             {
-                #region 組SQL Command
+                #region ExportData
                 sqlCmd.Append($@"
 with ExportData as 
 (
@@ -311,6 +410,7 @@ with ExportData as
 		,e.Consignee
 		,[WKNo] = e.ID
 		,[FtyWKNo] = ''
+        ,e.ETD
         ,DelayRepacement=case when e.Delay = 1 and e.Replacement = 1 then 'Delay Repacement'
                               when e.Delay = 1 and e.Replacement = 0 then 'Delay'
                               when e.Delay = 0 and e.Replacement = 1 then 'Repacement'
@@ -397,7 +497,9 @@ with ExportData as
                 {
                     sqlCmd.Append(" and (e.Delay = 1 or e.Replacement = 1)");
                 }
+                #endregion
 
+                #region FtyExportData
                 sqlCmd.Append($@"
 ),
 FtyExportData as 
@@ -408,6 +510,7 @@ FtyExportData as
 		,fe.Consignee
 		,'' as WKNo
 		,fe.ID as FtyWKNo
+        ,ETD = null
         ,DelayRepacement=''
 		,fe.ShipModeID
 		,fe.CYCFS
@@ -490,11 +593,111 @@ FtyExportData as
                     sqlCmd.Append(string.Format(" and fe.Forwarder = '{0}'", this.forwarder));
                 }
 
+                #endregion
+                #region TransferExportData
+                sqlCmd.Append($@"),
+TransferExportData as 
+(
+	select e.InvNo
+		,[Type] = 'Material'
+		,s.MDivisionID
+		,e.Consignee
+		,[WKNo] = e.ID
+		,[FtyWKNo] = ''
+        ,e.ETD
+        ,DelayRepacement=case when e.Delay = 1 and e.Replacement = 1 then 'Delay Repacement'
+                              when e.Delay = 1 and e.Replacement = 0 then 'Delay'
+                              when e.Delay = 0 and e.Replacement = 1 then 'Repacement'
+                              else ''
+                              end
+		,e.ShipModeID
+		,e.CYCFS
+		,e.Packages
+		,e.Blno
+		,WeightKg = (select sum(WeightKg) from TransferExport_Detail WITH (NOLOCK) where id = e.id)
+		,Cbm = (select sum(cbm) from TransferExport_Detail WITH (NOLOCK) where id = e.id)
+		,[Forwarder] = e.Forwarder+'-'+isnull(supp.AbbEN,'')
+		,e.PortArrival
+		,e.DocArrival
+		,[AccountNo] = se.AccountID+'-'+isnull(a.Name,'')
+		,[Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+		,se.CurrencyID
+		,se.ShippingAPID
+		,s.CDate
+		,[ApvDate] = CONVERT(DATE,s.ApvDate)
+		,s.VoucherID
+		,s.VoucherDate
+		,s.SubType 
+    from ShippingAP s WITH (NOLOCK) 
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+    inner join TransferExport e WITH (NOLOCK) on se.WKNo = e.ID
+    left join Supp WITH (NOLOCK) on supp.ID = e.Forwarder
+    left join SciFMS_AccountNo a on a.ID = se.AccountID
+    where s.Type = 'IMPORT'
+    AND se.Junk <> 1
+");
+                if (!MyUtility.Check.Empty(this.arrivePortDate1))
+                {
+                    sqlCmd.Append(string.Format(" and e.PortArrival >= '{0}'", Convert.ToDateTime(this.arrivePortDate1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.arrivePortDate2))
+                {
+                    sqlCmd.Append(string.Format(" and e.PortArrival <= '{0}'", Convert.ToDateTime(this.arrivePortDate2).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.doxRcvdDate1))
+                {
+                    sqlCmd.Append(string.Format(" and e.DocArrival >= '{0}'", Convert.ToDateTime(this.doxRcvdDate1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.doxRcvdDate2))
+                {
+                    sqlCmd.Append(string.Format(" and e.DocArrival <= '{0}'", Convert.ToDateTime(this.doxRcvdDate2).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.apApvDate1))
+                {
+                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.apApvDate2))
+                {
+                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.voucherDate1))
+                {
+                    sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.voucherDate2))
+                {
+                    sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.shipMode))
+                {
+                    sqlCmd.Append(string.Format(" and e.ShipModeID = '{0}'", this.shipMode));
+                }
+
+                if (!MyUtility.Check.Empty(this.forwarder))
+                {
+                    sqlCmd.Append(string.Format(" and e.Forwarder = '{0}'", this.forwarder));
+                }
+
+                if (this.IsDelayReplacement)
+                {
+                    sqlCmd.Append(" and (e.Delay = 1 or e.Replacement = 1)");
+                }
+                #endregion
                 sqlCmd.Append(@")
 select * from ExportData
 union all
-select * from FtyExportData");
-                #endregion
+select * from FtyExportData
+union all
+select * from TransferExportData");
+
                 DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
                 if (!result)
                 {
@@ -530,60 +733,56 @@ select * from FtyExportData");
             if (this.reportType == 1)
             {
                 int i = 0;
+                int allcol = 15;
                 foreach (DataRow dr in this.accnoData.Rows)
                 {
                     i++;
-                    worksheet.Cells[1, 15 + i] = MyUtility.GetValue.Lookup(string.Format("select Name from SciFMS_AccountNo where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"])));
+                    worksheet.Cells[1, allcol + 1 + i] = MyUtility.GetValue.Lookup(string.Format("select Name from SciFMS_AccountNo where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"])));
                 }
 
-                worksheet.Cells[1, 15 + i + 1] = "Total Import Fee";
+                worksheet.Cells[1, allcol + 1 + i + 1] = "Total Import Fee";
 
                 // 匯率選擇 Fixed, KPI, 各費用欄位名稱加上 (USD)
                 if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
                 {
-                    for (int k = 16; k <= 15 + i + 1; k++)
+                    for (int k = allcol + 2; k <= allcol + 1 + i + 1; k++)
                     {
                         worksheet.Cells[1, k] = worksheet.Cells[1, k].Value + "\r\n(USD)";
                     }
                 }
 
-                string excelSumCol = PublicPrg.Prgs.GetExcelEnglishColumnName(15 + i);
-                string excelColumn = PublicPrg.Prgs.GetExcelEnglishColumnName(15 + i + 1);
+                string excelSumCol = PublicPrg.Prgs.GetExcelEnglishColumnName(allcol + 1 + i);
+                string excelColumn = PublicPrg.Prgs.GetExcelEnglishColumnName(allcol + 1 + i + 1);
 
                 // 填內容值
                 int intRowsStart = 2;
-                object[,] objArray = new object[1, 20 + i + 1];
+                object[,] objArray = new object[1, allcol + 6 + i + 1];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["InvNo"];
                     objArray[0, 1] = dr["Type"];
                     objArray[0, 2] = dr["WKNo"];
                     objArray[0, 3] = dr["FtyWKNo"];
-                    objArray[0, 4] = dr["DelayRepacement"];
-                    objArray[0, 5] = dr["ShipModeID"];
-                    objArray[0, 6] = dr["CYCFS"];
-                    objArray[0, 7] = dr["Packages"];
-                    objArray[0, 8] = dr["Blno"];
-                    objArray[0, 9] = dr["WeightKg"];
-                    objArray[0, 10] = dr["Cbm"];
-                    objArray[0, 11] = dr["Forwarder"];
-                    objArray[0, 12] = dr["PortArrival"];
-                    objArray[0, 13] = dr["DocArrival"];
-                    objArray[0, 14] = dr["CurrencyID"];
-
-                    // objArray[0, 15] = MyUtility.Check.Empty(dr["61012001"]) ? 0 : dr["61012001"];
-                    // objArray[0, 16] = MyUtility.Check.Empty(dr["61012002"]) ? 0 : dr["61012002"];
-                    // objArray[0, 17] = MyUtility.Check.Empty(dr["61012003"]) ? 0 : dr["61012003"];
-                    // objArray[0, 18] = MyUtility.Check.Empty(dr["61012004"]) ? 0 : dr["61012004"];
-                    // objArray[0, 19] = MyUtility.Check.Empty(dr["61012005"]) ? 0 : dr["61012005"];
+                    objArray[0, 4] = dr["ETD"];
+                    objArray[0, 5] = dr["DelayRepacement"];
+                    objArray[0, 6] = dr["ShipModeID"];
+                    objArray[0, 7] = dr["CYCFS"];
+                    objArray[0, 8] = dr["Packages"];
+                    objArray[0, 9] = dr["Blno"];
+                    objArray[0, 10] = dr["WeightKg"];
+                    objArray[0, 11] = dr["Cbm"];
+                    objArray[0, 12] = dr["Forwarder"];
+                    objArray[0, 13] = dr["PortArrival"];
+                    objArray[0, 14] = dr["DocArrival"];
+                    objArray[0, 15] = dr["CurrencyID"];
                     i = 0;
                     foreach (DataRow ddr in this.accnoData.Rows)
                     {
                         i++;
-                        objArray[0, 14 + i] = MyUtility.Check.Empty(dr[14 + i]) ? 0 : dr[14 + i];
+                        objArray[0, allcol + i] = MyUtility.Check.Empty(dr[allcol + i]) ? 0 : dr[allcol + i];
                     }
 
-                    objArray[0, 14 + i + 1] = string.Format("=SUM(O{0}:{1}{0})", intRowsStart, excelSumCol);
+                    objArray[0, allcol + i + 1] = string.Format("=SUM(Q{0}:{1}{0})", intRowsStart, excelSumCol);
                     worksheet.Range[string.Format("A{0}:{1}{0}", intRowsStart, excelColumn)].Value2 = objArray;
                     intRowsStart++;
                 }
@@ -593,12 +792,12 @@ select * from FtyExportData");
                 // 匯率選擇 Fixed, KPI, 各費用欄位名稱加上 (USD)
                 if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
                 {
-                    worksheet.Cells[1, 18] = worksheet.Cells[1, 18].Value + "\r\n(USD)";
+                    worksheet.Cells[1, 19] = worksheet.Cells[1, 19].Value + "\r\n(USD)";
                 }
 
                 // 填內容值
                 int intRowsStart = 2;
-                object[,] objArray = new object[1, 25];
+                object[,] objArray = new object[1, 26];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["InvNo"];
@@ -607,27 +806,28 @@ select * from FtyExportData");
                     objArray[0, 3] = dr["Consignee"];
                     objArray[0, 4] = dr["WKNo"];
                     objArray[0, 5] = dr["FtyWKNo"];
-                    objArray[0, 6] = dr["DelayRepacement"];
-                    objArray[0, 7] = dr["ShipModeID"];
-                    objArray[0, 8] = dr["CYCFS"];
-                    objArray[0, 9] = dr["Packages"];
-                    objArray[0, 10] = dr["Blno"];
-                    objArray[0, 11] = dr["WeightKg"];
-                    objArray[0, 12] = dr["Cbm"];
-                    objArray[0, 13] = dr["Forwarder"];
-                    objArray[0, 14] = dr["PortArrival"];
-                    objArray[0, 15] = dr["DocArrival"];
-                    objArray[0, 16] = dr["AccountNo"];
-                    objArray[0, 17] = dr["Amount"];
-                    objArray[0, 18] = dr["CurrencyID"];
-                    objArray[0, 19] = dr["ShippingAPID"];
-                    objArray[0, 20] = dr["CDate"];
-                    objArray[0, 21] = dr["ApvDate"];
-                    objArray[0, 22] = dr["VoucherID"];
-                    objArray[0, 23] = dr["VoucherDate"];
-                    objArray[0, 24] = dr["SubType"];
+                    objArray[0, 6] = dr["ETD"];
+                    objArray[0, 7] = dr["DelayRepacement"];
+                    objArray[0, 8] = dr["ShipModeID"];
+                    objArray[0, 9] = dr["CYCFS"];
+                    objArray[0, 10] = dr["Packages"];
+                    objArray[0, 11] = dr["Blno"];
+                    objArray[0, 12] = dr["WeightKg"];
+                    objArray[0, 13] = dr["Cbm"];
+                    objArray[0, 14] = dr["Forwarder"];
+                    objArray[0, 15] = dr["PortArrival"];
+                    objArray[0, 16] = dr["DocArrival"];
+                    objArray[0, 17] = dr["AccountNo"];
+                    objArray[0, 18] = dr["Amount"];
+                    objArray[0, 19] = dr["CurrencyID"];
+                    objArray[0, 20] = dr["ShippingAPID"];
+                    objArray[0, 21] = dr["CDate"];
+                    objArray[0, 22] = dr["ApvDate"];
+                    objArray[0, 23] = dr["VoucherID"];
+                    objArray[0, 24] = dr["VoucherDate"];
+                    objArray[0, 25] = dr["SubType"];
 
-                    worksheet.Range[string.Format("A{0}:Y{0}", intRowsStart)].Value2 = objArray;
+                    worksheet.Range[string.Format("A{0}:Z{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
             }

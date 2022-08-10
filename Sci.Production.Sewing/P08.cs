@@ -182,8 +182,8 @@ set MDFailQty = {this.numericBoxDiscrepancy.Text}, MDScanDate = getdate(), MDSca
 ,MDStatus  = '{strMDStatus}'
 where ID = '{dr["ID"]}' and CTNStartNo = '{dr["CTNStartNo"]}';
 
-insert into MDScan([ScanDate], [MDivisionID], [OrderID], [PackingListID], [CTNStartNo], [AddName], [AddDate], [SCICtnNo], [MDFailQty], [CartonQty])
-values(getdate(), '{Env.User.Keyword}', '{dr["OrderID"]}', '{dr["ID"]}', '{dr["CTNStartNo"]}', '{Env.User.UserID}', getdate(), '{dr["SCICtnNo"]}', {this.numericBoxDiscrepancy.Text}, {dr["CartonQty"]});
+insert into MDScan([ScanDate], [MDivisionID], [OrderID], [PackingListID], [CTNStartNo], [AddName], [AddDate], [SCICtnNo], [MDFailQty], [CartonQty], [DataRemark])
+values(getdate(), '{Env.User.Keyword}', '{dr["OrderID"]}', '{dr["ID"]}', '{dr["CTNStartNo"]}', '{Env.User.UserID}', getdate(), '{dr["SCICtnNo"]}', {this.numericBoxDiscrepancy.Text}, {dr["CartonQty"]}, 'Create from PMS');
 
 declare @MDScan_Ukey bigint
 select @MDScan_Ukey = @@IDENTITY

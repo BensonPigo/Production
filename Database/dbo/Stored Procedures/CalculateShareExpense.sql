@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[CalculateShareExpense]
+﻿
+CREATE PROCEDURE [dbo].[CalculateShareExpense]
 (
     @APID as varchar(13) = '',
     @login as varchar(20) = '',
@@ -101,6 +102,7 @@ BEGIN
 			where s.ShippingAPID = @ShippingAPID and s.WKNo != '' 
 				  and	s.WKNo not in (select ID from Export where ID = s.WKNo and ID is not null) 
 				  and	s.WKNo not in (select ID from FtyExport where ID = s.WKNo and ID is not null)
+				  and	s.WKNo not in (select ID from TransferExport where ID = s.WKNo and ID is not null)
 						
 			/*
 			 * 更新 WK 基本資料

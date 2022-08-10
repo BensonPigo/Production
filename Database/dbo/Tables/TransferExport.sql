@@ -66,6 +66,7 @@
 	[MainWKID] varchar(13) NOT NULL CONSTRAINT [DF_TransferExport_MainWKID] DEFAULT ('') ,
 	[CloseDate] date NULL, 
 	[LoadDate] date NULL, 
+    [NoExportCharge] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_TransferExport] PRIMARY KEY CLUSTERED ([ID] ASC)
 )
 
@@ -422,3 +423,12 @@ New > Send > Confirm
     @level1name = N'TransferExport',
     @level2type = N'COLUMN',
     @level2name = N'FtyStatus'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'沒有出口費用',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferExport',
+    @level2type = N'COLUMN',
+    @level2name = N'NoExportCharge'

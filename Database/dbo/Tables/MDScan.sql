@@ -10,6 +10,7 @@
 	[AddName] [varchar](10) NOT NULL,
 	[AddDate] [datetime] NULL,
 	[SCICtnNo] [varchar](15) NOT NULL,
+	[DataRemark] [nvarchar](200) NOT NULL  CONSTRAINT [DF_MDScan_DataRemark] DEFAULT (''),
  CONSTRAINT [PK_MDScan] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC
