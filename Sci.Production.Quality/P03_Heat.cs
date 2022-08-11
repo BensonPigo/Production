@@ -1089,7 +1089,13 @@ this.ID);
                 DataRow row = dt.Rows[i];
                 for (int j = 0; j < columnNames.Length; j++)
                 {
-                    ret[i, j] = row[columnNames[j]];
+                    var val = row[columnNames[j]];
+                    if (row[columnNames[j]].GetType() == typeof(DateTime))
+                    {
+                       val = DateTime.Parse(row[columnNames[j]].ToString()).ToString("yyyy/MM/dd");
+                    }
+
+                    ret[i, j] = val;
                 }
             }
 
