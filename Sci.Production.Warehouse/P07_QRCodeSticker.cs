@@ -223,28 +223,32 @@ AW:{printItem["ActualWeight"]}KG";
                         range = tables.Cell(5, 1).Range;
                         range.Text = $"{printItem["Roll"]}";
                         pText = range.Paragraphs.Add(range);
-                        pText.Range.Bold = 0;
+
+                        // pText.Range.Bold = 0;
                         pText.Range.Font.Size = otherSize;
                         pText.Range.Text = $"Roll#:";
 
                         range = tables.Cell(5, 2).Range;
                         range.Text = $"{printItem["Dyelot"]}";
                         pText = range.Paragraphs.Add(range);
-                        pText.Range.Bold = 0;
+
+                        // pText.Range.Bold = 0;
                         pText.Range.Font.Size = otherSize;
                         pText.Range.Text = $"Lot#:";
 
                         range = tables.Cell(6, 1).Range;
                         range.Text = $"{printItem["ColorID"]}";
                         pText = range.Paragraphs.Add(range);
-                        pText.Range.Bold = 0;
+
+                        // pText.Range.Bold = 0;
                         pText.Range.Font.Size = otherSize;
                         pText.Range.Text = $"Color:";
 
                         range = tables.Cell(6, 2).Range;
                         range.Text = $"{printItem["StockQty"]}";
                         pText = range.Paragraphs.Add(range);
-                        pText.Range.Bold = 0;
+
+                        // pText.Range.Bold = 0;
                         pText.Range.Text = $"Yd#:";
                         i++;
                     }

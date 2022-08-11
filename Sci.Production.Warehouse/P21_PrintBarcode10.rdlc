@@ -11,6 +11,7 @@
                 <Value>=Parameters!SP.Value</Value>
                 <Style>
                   <FontSize>12pt</FontSize>
+                  <FontWeight>Bold</FontWeight>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -57,6 +58,7 @@
                 <Value>=Parameters!seq.Value</Value>
                 <Style>
                   <FontSize>12pt</FontSize>
+                  <FontWeight>Bold</FontWeight>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -173,6 +175,7 @@
                 <Value>=Parameters!gw.Value</Value>
                 <Style>
                   <FontSize>12pt</FontSize>
+                  <FontWeight>Bold</FontWeight>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -216,6 +219,7 @@
                 <Value>=Parameters!aw.Value</Value>
                 <Style>
                   <FontSize>12pt</FontSize>
+                  <FontWeight>Bold</FontWeight>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -256,6 +260,7 @@
                 <Value>Roll#:</Value>
                 <Style>
                   <FontSize>11.5pt</FontSize>
+                  <FontWeight>Bold</FontWeight>
                 </Style>
               </TextRun>
               <TextRun>
@@ -294,6 +299,7 @@
                 <Value>Lot#:</Value>
                 <Style>
                   <FontSize>11.5pt</FontSize>
+                  <FontWeight>Bold</FontWeight>
                 </Style>
               </TextRun>
               <TextRun>
@@ -332,6 +338,7 @@
                 <Value>Yd#:</Value>
                 <Style>
                   <FontSize>11.5pt</FontSize>
+                  <FontWeight>Bold</FontWeight>
                 </Style>
               </TextRun>
               <TextRun>
@@ -370,6 +377,7 @@
                 <Value>Color:</Value>
                 <Style>
                   <FontSize>11.5pt</FontSize>
+                  <FontWeight>Bold</FontWeight>
                 </Style>
               </TextRun>
               <TextRun>
