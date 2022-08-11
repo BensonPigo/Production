@@ -168,14 +168,16 @@ and SunriseNid != 0
                 }
             }
 
-            KeyValuePair<string, DualResult> resultInlineCategory = this.GetInlineCategory(this.CurrentMaintain, this.DetailDatas.CopyToDataTable());
-            if (!resultInlineCategory.Value)
+            if (this.DetailDatas.Count > 0)
             {
-                this.ShowErr(resultInlineCategory.Value);
-                return;
+                KeyValuePair<string, DualResult> resultInlineCategory = this.GetInlineCategory(this.CurrentMaintain, this.DetailDatas.CopyToDataTable());
+                if (!resultInlineCategory.Value)
+                {
+                    this.ShowErr(resultInlineCategory.Value);
+                    return;
+                }
+                this.CurrentMaintain["SewingReasonIDForTypeIC"] = resultInlineCategory.Key;
             }
-
-            this.CurrentMaintain["SewingReasonIDForTypeIC"] = resultInlineCategory.Key;
         }
 
         /// <inheritdoc/>
