@@ -44,8 +44,7 @@ namespace Sci.Production.Sewing
                .Text("AddDate", header: "Scan Time", width: Widths.Auto(), iseditingreadonly: true)
                .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
                .Text("RepackOrderID", header: "Repack To SP#", width: Widths.AnsiChars(15), iseditable: false)
-               .Text("RepackCtnStartNo", header: "Repack To CTN#", width: Widths.AnsiChars(6), iseditable: false)
-               .Text("DataRemark", header: "Data Remark", width: Widths.AnsiChars(12), iseditable: false);
+               .Text("RepackCtnStartNo", header: "Repack To CTN#", width: Widths.AnsiChars(6), iseditable: false);
             #endregion
 
             #region GridDetail Setting
@@ -117,7 +116,6 @@ select md.ScanDate
 					            FOR XML PATH('')
 				            )) ,1,1,'')
 	    ,md.Ukey
-        ,md.DataRemark
 into #tmp
 from MDScan md with(nolock)
 left join orders o with(nolock) on md.OrderID = o.ID
