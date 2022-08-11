@@ -325,6 +325,7 @@
             this.displayProductType = new Sci.Win.UI.DisplayBox();
             this.displayFabricType = new Sci.Win.UI.DisplayBox();
             this.displayConstruction = new Sci.Win.UI.DisplayBox();
+            this.checkOrganicCotton = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -341,6 +342,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkOrganicCotton);
             this.detailcont.Controls.Add(this.displayConstruction);
             this.detailcont.Controls.Add(this.displayFabricType);
             this.detailcont.Controls.Add(this.displayProductType);
@@ -3638,6 +3640,20 @@
             this.displayConstruction.Size = new System.Drawing.Size(100, 21);
             this.displayConstruction.TabIndex = 253;
             // 
+            // checkOrganicCotton
+            // 
+            this.checkOrganicCotton.AutoSize = true;
+            this.checkOrganicCotton.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OrganicCotton", true));
+            this.checkOrganicCotton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkOrganicCotton.IsSupportEditMode = false;
+            this.checkOrganicCotton.Location = new System.Drawing.Point(707, 415);
+            this.checkOrganicCotton.Name = "checkOrganicCotton";
+            this.checkOrganicCotton.ReadOnly = true;
+            this.checkOrganicCotton.Size = new System.Drawing.Size(286, 19);
+            this.checkOrganicCotton.TabIndex = 254;
+            this.checkOrganicCotton.Text = "Organic Cotton/Recycle Polyester/Recycle Nylon";
+            this.checkOrganicCotton.UseVisualStyleBackColor = true;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 752);
@@ -3966,5 +3982,6 @@
         private Win.UI.DisplayBox displayProductType;
         private Win.UI.DisplayBox displayGender;
         private Win.UI.DisplayBox displayLining;
+        private Win.UI.CheckBox checkOrganicCotton;
     }
 }
