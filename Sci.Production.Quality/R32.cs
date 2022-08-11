@@ -498,6 +498,7 @@ select
 ,[MetalDetection] = 'PASS'
 ,[NikeDefectCodeID] = gdf.NikeDefectCodeID
 ,[Qty] = cfad.Qty
+,[Result] = cfa.Result
 ,[row] =  ROW_NUMBER() over(partition by cfad.ID order by gdf.NikeDefectCodeID )
 into #tmpMain
 FROM CFAInspectionRecord cfa
@@ -598,6 +599,7 @@ select
 ,[MetalDetection]
 ,[NikeDefectCodeID]
 ,[Qty]
+,[Result]
 , [Row] = CONVERT(varchar,[row]) 
 into #tmpMainRow6 
 from #tmpMain where row <=6 
@@ -620,6 +622,7 @@ Q as (
 		,[SeasonYear]
 		,[Lot]
 		,[MetalDetection]
+        ,[Result]
 		,'+@DateString+' 
 	from (
 		select [ID]
@@ -635,6 +638,7 @@ Q as (
 		,[SeasonYear]
 		,[Lot]
 		,[MetalDetection]
+        ,[Result]
 		,[Qty]
 		,Row from #tmpMainRow6
 	) as p
@@ -659,6 +663,7 @@ C as
 		,[SeasonYear]
 		,[Lot]
 		,[MetalDetection]
+        ,[Result]
 	,'+@DateString+' 
 	from (
 		select 
@@ -675,6 +680,7 @@ C as
 		,[SeasonYear]
 		,[Lot]
 		,[MetalDetection]
+        ,[Result]
 		,[NikeDefectCodeID]
 		,Row
 		from #tmpMainRow6
@@ -711,6 +717,7 @@ select
 	,Defects5_Qty = q.[5]
 	,Defect_6 = c.[6]
 	,Defects6_Qty = q.[6]
+    ,Q.[Result]
 from Q
 left join C on Q.ID = C.ID
 order by Q.ID
