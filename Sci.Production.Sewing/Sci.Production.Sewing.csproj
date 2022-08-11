@@ -218,6 +218,7 @@
     <Compile Include="P08_Detail.Designer.cs">
       <DependentUpon>P08_Detail.cs</DependentUpon>
     </Compile>
+    <Compile Include="P11_SewingOutputOrderChange.cs" />
     <Compile Include="P14.cs">
       <SubType>Form</SubType>
     </Compile>
