@@ -176,6 +176,7 @@
     <Compile Include="Packing.cs" />
     <Compile Include="PmsWebAPI.cs" />
     <Compile Include="Entity\Prgs_POSuppDetailData.cs" />
+    <Compile Include="SewingOutputOrderChange.cs" />
     <Compile Include="StaticEntity.cs" />
     <Compile Include="Thread.cs" />
     <Compile Include="Planning.cs" />
