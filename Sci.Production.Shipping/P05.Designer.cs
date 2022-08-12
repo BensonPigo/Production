@@ -126,6 +126,7 @@
             this.displayCMTIvnNo = new Sci.Win.UI.DisplayBox();
             this.btnNoExportEdit = new Sci.Win.UI.Button();
             this.btnNoExportHistory = new Sci.Win.UI.Button();
+            this.btnShippingMemo = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -142,6 +143,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnShippingMemo);
             this.masterpanel.Controls.Add(this.btnNoExportHistory);
             this.masterpanel.Controls.Add(this.btnNoExportEdit);
             this.masterpanel.Controls.Add(this.displayCMTIvnNo);
@@ -339,6 +341,7 @@
             this.masterpanel.Controls.SetChildIndex(this.displayCMTIvnNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnNoExportEdit, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnNoExportHistory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnShippingMemo, 0);
             // 
             // detailpanel
             // 
@@ -1051,7 +1054,7 @@
             this.chkNoExportCharge.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkNoExportCharge.Location = new System.Drawing.Point(813, 277);
             this.chkNoExportCharge.Name = "chkNoExportCharge";
-            this.chkNoExportCharge.Size = new System.Drawing.Size(133, 20);
+            this.chkNoExportCharge.Size = new System.Drawing.Size(132, 20);
             this.chkNoExportCharge.TabIndex = 25;
             this.chkNoExportCharge.Text = "No Export Charge";
             this.chkNoExportCharge.UseVisualStyleBackColor = true;
@@ -1224,7 +1227,7 @@
             this.chkNonDeclare.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkNonDeclare.Location = new System.Drawing.Point(813, 304);
             this.chkNonDeclare.Name = "chkNonDeclare";
-            this.chkNonDeclare.Size = new System.Drawing.Size(103, 20);
+            this.chkNonDeclare.Size = new System.Drawing.Size(102, 20);
             this.chkNonDeclare.TabIndex = 26;
             this.chkNonDeclare.Text = "Non Declare";
             this.chkNonDeclare.UseVisualStyleBackColor = true;
@@ -1275,7 +1278,7 @@
             this.chkFoundry.Location = new System.Drawing.Point(813, 329);
             this.chkFoundry.Name = "chkFoundry";
             this.chkFoundry.ReadOnly = true;
-            this.chkFoundry.Size = new System.Drawing.Size(122, 20);
+            this.chkFoundry.Size = new System.Drawing.Size(121, 20);
             this.chkFoundry.TabIndex = 87;
             this.chkFoundry.Text = "Include Foundry";
             this.chkFoundry.UseVisualStyleBackColor = true;
@@ -1496,6 +1499,16 @@
             this.btnNoExportHistory.UseVisualStyleBackColor = true;
             this.btnNoExportHistory.Click += new System.EventHandler(this.BtnNoExportHistory_Click);
             // 
+            // btnShippingMemo
+            // 
+            this.btnShippingMemo.Location = new System.Drawing.Point(904, 213);
+            this.btnShippingMemo.Name = "btnShippingMemo";
+            this.btnShippingMemo.Size = new System.Drawing.Size(146, 30);
+            this.btnShippingMemo.TabIndex = 99;
+            this.btnShippingMemo.Text = "Shipping Memo";
+            this.btnShippingMemo.UseVisualStyleBackColor = true;
+            this.btnShippingMemo.Click += new System.EventHandler(this.BtnShippingMemo_Click);
+            // 
             // P05
             // 
             this.ApvChkValue = "New";
@@ -1638,5 +1651,6 @@
         private Win.UI.Label label2;
         private Win.UI.Button btnNoExportHistory;
         private Win.UI.Button btnNoExportEdit;
+        private Win.UI.Button btnShippingMemo;
     }
 }

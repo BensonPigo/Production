@@ -1232,10 +1232,22 @@
     <None Include="XLT\Shipping_B42_Batch Import.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Shipping_R10_AirPrepaidExpense.xltx">
+    <None Include="XLT\Shipping_R10_AirPrepaidExpense_Garment.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Shipping_R10_ExportFeeReport%28MergerdAcctCode%29.xltx">
+    <None Include="XLT\Shipping_R10_ExportFeeReport%28MergerdAcctCode%29_Garment.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Shipping_R10_ExportFeeReport%28MergerdAcctCode%29_RawMaterial.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Shipping_R10_ShareExpenseExportBySPByFee_RawMaterial.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Shipping_R10_ShareExpenseExportBySP_RawMaterial.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Shipping_R10_ShareExpenseExportFeeReport_RawMaterial.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Shipping_R11_NonSharedListGarment_Main.xltx">
@@ -1355,13 +1367,13 @@
     <None Include="XLT\Shipping_R09_ShareExpenseImportByWKByFee.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Shipping_R10_ShareExpenseExportBySP.xltx">
+    <None Include="XLT\Shipping_R10_ShareExpenseExportBySP_Garment.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Shipping_R10_ShareExpenseExportBySPByFee.xltx">
+    <None Include="XLT\Shipping_R10_ShareExpenseExportBySPByFee_Garment.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Shipping_R10_ShareExpenseExportFeeReport.xltx">
+    <None Include="XLT\Shipping_R10_ShareExpenseExportFeeReport_Garment.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Shipping_R11_NonSharedListGarment.xltx">

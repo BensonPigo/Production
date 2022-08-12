@@ -507,6 +507,8 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
             this.CurrentMaintain["Handle"] = Env.User.UserID;
             this.CurrentMaintain["ShipModeID"] = "SEA";
             this.CurrentMaintain["ShipTermID"] = "FOB";
+
+            this.btnShippingMemo.Enabled = false;
         }
 
         /// <inheritdoc/>
@@ -2756,6 +2758,16 @@ where ID = '{this.CurrentMaintain["ID"]}'
 
             callNextForm.grid1.AutoResizeColumns();
             callNextForm.Visible = true;
+        }
+
+        private void BtnShippingMemo_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
+            {
+                return;
+            }
+
+            new ShippingMemo(ShippingMemo.ShippingMemoType.GMTBooking_ShippingMemo, this.CurrentMaintain["ID"].ToString()).ShowDialog();
         }
     }
 }

@@ -828,6 +828,7 @@ as (
            , Type = 'GARMENT'
            , g.ID
            , OnBoardDate = g.ETD
+           , s.RgCode
            , g.Shipper 
            , [Foundry] = iif(ISNULL(g.Foundry,'0') = '0', '' , 'Y')
            , g.BrandID
@@ -859,7 +860,12 @@ as (
 		   , g.BLNo
 		   , g.BL2No
 		   , [NoExportCharges] = iif(isnull(g.NoExportCharges,0)=1,'V','')
-    from GMTBooking g WITH (NOLOCK) 
+           , [ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
+                            from GMTBooking_ShippingMemo with (nolock)
+                            where ID = g.ID
+                            order by adddate desc)
+    from GMTBooking g WITH (NOLOCK)
+    cross join dbo.System s with (nolock)
     left join LocalSupp l WITH (NOLOCK) on l.ID = g.Forwarder
    outer apply(
 	-- 只要cnt = 0, 沒資料 = 就存在
@@ -1014,6 +1020,7 @@ select  IE = 'Export'
 			, Type = 'GARMENT'
 			, p.ID
 			, OnBoardDate = null 
+            , s.RgCode
 			, p.MDivisionID
             , [Foundry] = ''
 			, p.BrandID
@@ -1039,7 +1046,12 @@ select  IE = 'Export'
 			, BLNo = ''
             , BL2No = ''
 			, [NoExportCharges] = ''
-	from #tmpPackingA2B_final p WITH (NOLOCK) 
+            , [ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
+                            from GMTBooking_ShippingMemo with (nolock)
+                            where ID = p.ID
+                            order by adddate desc)
+	from #tmpPackingA2B_final p WITH (NOLOCK)
+    cross join dbo.System s with (nolock)
 	where (p.Type = 'F' or p.Type = 'L')
     and not exists (
 		  		select 1 
@@ -1267,80 +1279,94 @@ TransferExportData as (
                     }
 
                     sqlCmd.Append(@")
-
-select	IE
-		, Type
-		, ID
-		, ETA
-		, ETD
-		, FactoryID
-		, Consignee
+select	e.IE
+		, e.Type
+		, e.ID
+		, e.ETA
+		, e.ETD
+        , s.RgCode
+		, e.FactoryID
+		, e.Consignee
 		, '' as Category
 		, 0 as OrderQty
-		, LoadingOrigin
-		, ImportCountry
-		, ShipModeID
-		, PortArrival
+		, e.LoadingOrigin
+		, e.ImportCountry
+		, e.ShipModeID
+		, e.PortArrival
 		, 0 as ShipQty
 		, 0 as CTNQty
-		, WeightKg
-		, Cbm
-		, Forwarder
-		, Blno
-		, NoImportChg
-		, DoortoDoorDelivery 
+		, e.WeightKg
+		, e.Cbm
+		, e.Forwarder
+		, e.Blno
+		, e.NoImportChg
+		, e.DoortoDoorDelivery 
         , '' as BrandID
-from ExportData
+        , [ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
+                            from Export_ShippingMemo with (nolock)
+                            where ID = e.ID
+                            order by adddate desc)
+from ExportData e with (nolock)
+cross join System s
 where (Blno <> '' and APId1 is null) 
 	  or (Blno = '' and APId2 is null)
 union all
-select	IE
-		, Type
-		, ID
-		, ETA
-		, ETD
-		, FactoryID
-		, Consignee
+select	f.IE
+		, f.Type
+		, f.ID
+		, f.ETA
+        , f.ETD
+        , s.RgCode
+		, f.FactoryID
+		, f.Consignee
 		, Category = '' 
 		, OrderQty = 0 
-		, LoadingOrigin
-		, ImportCountry
-		, ShipModeID
-		, PortArrival
+		, f.LoadingOrigin
+		, f.ImportCountry
+		, f.ShipModeID
+		, f.PortArrival
 		, ShipQty = 0
 		, CTNQty = 0
-		, WeightKg
-		, Cbm
-		, Forwarder
-		, Blno
-		, NoImportChg
-		, DoortoDoorDelivery 
+		, f.WeightKg
+		, f.Cbm
+		, f.Forwarder
+		, f.Blno
+		, f.NoImportChg
+		, f.DoortoDoorDelivery 
         , BrandID = '' 
-from FtyExportData
+        , [ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
+                            from FtyExport_ShippingMemo with (nolock)
+                            where ID = f.ID
+                            order by adddate desc)
+from FtyExportData f with (nolock)
+cross join System s
 union all
-select	IE
-		, Type
-		, ID
-		, ETA
-		, ETD
-		, FactoryID
-		, Consignee
+select	t.IE
+		, t.Type
+		, t.ID
+		, t.ETA
+		, t.ETD
+        , s.RgCode
+		, t.FactoryID
+		, t.Consignee
 		, Category = '' 
 		, OrderQty = null
-		, LoadingOrigin
-		, ImportCountry
-		, ShipModeID
-		, PortArrival
+		, t.LoadingOrigin
+		, t.ImportCountry
+		, t.ShipModeID
+		, t.PortArrival
 		, ShipQty = 0
-		, CTNQty = Packages
-		, WeightKg
-		, Cbm
-		, Forwarder
-		, Blno
-		, NoImportChg
-		, DoortoDoorDelivery 
+		, CTNQty = t.Packages
+		, t.WeightKg
+		, t.Cbm
+		, t.Forwarder
+		, t.Blno
+		, t.NoImportChg
+		, t.DoortoDoorDelivery 
         , BrandID = '' 
-from TransferExportData
+        , [ShippingMemo] = ''
+from TransferExportData t with (nolock)
+cross join System s
 ");
                     #endregion
                 }

@@ -452,5 +452,15 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
             this.CurrentMaintain["CustomOT"] = chkChecked;
             this.CurrentMaintain.EndEdit();
         }
+
+        private void BtnShippingMemo_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
+            {
+                return;
+            }
+
+            new ShippingMemo(ShippingMemo.ShippingMemoType.Export_ShippingMemo, this.CurrentMaintain["ID"].ToString()).ShowDialog();
+        }
     }
 }
