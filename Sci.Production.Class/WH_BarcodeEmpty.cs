@@ -10,10 +10,11 @@ namespace Sci.Production.Class
     {
         private DataTable dtFty;
 
-        public WH_BarcodeEmpty(DataTable dt)
+        public WH_BarcodeEmpty(DataTable dt, string Msg)
         {
             this.InitializeComponent();
             this.dtFty = dt;
+            this.labMsg.Text = Msg;
         }
 
         protected override void OnFormLoaded()

@@ -3734,7 +3734,7 @@ order by Barcode desc
 
             if (dtDetail.Select(checkFilter).Length > 0)
             {
-                Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(dtDetail.Select(checkFilter).CopyToDataTable());
+                Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(dtDetail.Select(checkFilter).CopyToDataTable(), "FtyInventory barcode can't empty");
                 wH_Barcode.ShowDialog();
                 return false;
             }
@@ -3744,7 +3744,7 @@ order by Barcode desc
                 DataRow[] dtSelect = dtDetail.Select("FabricType = 'F' and isnull(Barcode, '') = ''");
                 if (dtSelect.Length > 0)
                 {
-                    Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(dtSelect.CopyToDataTable());
+                    Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(dtSelect.CopyToDataTable(), "FtyInventory barcode can't empty");
                     wH_Barcode.ShowDialog();
                     return false;
                 }
