@@ -151,6 +151,9 @@ namespace Sci.Production.Quality
             this.gridSpSeq.DataSource = null;
             this.gridSpSeq.DataSource = dt_GridSpSeq;
             #endregion 欄位設定
+
+
+            this.numInspectionFailCount.Text = MyUtility.Check.Empty(this.CurrentMaintain["InspectionFailCount"]) ? string.Empty : this.CurrentMaintain["InspectionFailCount"].ToString();
         }
 
         /// <inheritdoc/>
@@ -438,7 +441,7 @@ WHERE a.ID ='{masterID}'
                 {
                     this.topOrderID = this._sourceHeader.OrderID;
                     this.topSeq = this._sourceHeader.Seq;
-                    this.disPO.Value = this._sourceHeader.PO;
+                    this.txtPO.Text = this._sourceHeader.PO;
                     this.disStyle.Value = this._sourceHeader.Style;
                     this.disBrand.Value = this._sourceHeader.Brand;
                     this.disSeason.Value = this._sourceHeader.Season;
@@ -1236,6 +1239,11 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
 
         private void TxtSpSeq_Leave(object sender, EventArgs e)
         {
+            this.SPSeq_Validating();
+        }
+
+        private void SPSeq_Validating()
+        {
             string newOrderID = this.txtSpSeq.TextBoxSPBinding;
             string newSeq = this.txtSpSeq.TextBoxSeqBinding;
             if (this.CurrentMaintain != null)
@@ -1785,7 +1793,7 @@ FROM Orders  WITH(NOLOCK)
 WHERE ID = '{orderID}'
 ");
 
-            this.disPO.Value = MyUtility.GetValue.Lookup($@"
+            this.txtPO.Text = MyUtility.GetValue.Lookup($@"
 SELECT  CustPoNo
 FROM Orders  WITH(NOLOCK)
 WHERE ID = '{orderID}'
@@ -2019,6 +2027,80 @@ SELECT STUFF(
 
                 this.txtInspectedCarton.Text = string.Empty;
                 this.topCarton = string.Empty;
+            }
+        }
+
+        private void TxtPO_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!MyUtility.Check.Empty(this.txtPO.Text))
+            {
+                string MaxSP = MyUtility.GetValue.Lookup($@"select top 1 id from Orders where CustPONo='{this.txtPO.Text}' order by AddDate desc");
+                if (!MyUtility.Check.Empty(MaxSP))
+                {
+                    this.txtSpSeq.TextBoxSPBinding = MaxSP;
+
+                    // 帶入SEQ
+                    DualResult result;
+                    string cmd = string.Empty;
+                    cmd = $@"
+SELECT ID , Seq
+FROM Order_QtyShip
+WHERE ID = '{MaxSP}'
+";
+
+                    result = DBProxy.Current.Select(null, cmd, out DataTable dt);
+                    if (result)
+                    {
+                        if (dt.Rows.Count > 1)
+                        {
+                            // > 1
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(dt, "ID,Seq", "15,10", MaxSP, "ID,Seq")
+                            {
+                                Width = 600,
+                            };
+                            DialogResult dresult = item.ShowDialog();
+                            if (dresult == DialogResult.OK)
+                            {
+                                IList<DataRow> selectedDatas = item.GetSelecteds();
+                                this.txtSpSeq.TextBoxSeqBinding = selectedDatas[0]["Seq"].ToString();
+                            }
+                        }
+                        else if (dt.Rows.Count == 1)
+                        {
+                            this.txtSpSeq.TextBoxSeqBinding = dt.Rows[0]["Seq"].ToString();
+                        }
+                    }
+                    else
+                    {
+                        string msg = string.Empty;
+
+                        foreach (var message in result.Messages)
+                        {
+                            msg += message + "\r\n";
+                        }
+
+                        MyUtility.Msg.WarningBox("DB Query Error : " + msg);
+                    }
+
+                    this.SPSeq_Validating();
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox($@"PO# {this.txtPO.Text} not found!");
+                    e.Cancel = true;
+                }
+            }
+        }
+
+        private void NumInspectionFailCount_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!MyUtility.Check.Empty(this.numInspectionFailCount.Text))
+            {
+                this.CurrentMaintain["InspectionFailCount"] = this.numInspectionFailCount.Text;
+            }
+            else
+            {
+                this.CurrentMaintain["InspectionFailCount"] = 0;
             }
         }
     }
