@@ -3734,15 +3734,18 @@ order by Barcode desc
 
             if (dtDetail.Select(checkFilter).Length > 0)
             {
-                MyUtility.Msg.WarningBox("FtyInventory barcode can't empty!");
+                Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(dtDetail.Select(checkFilter).CopyToDataTable());
+                wH_Barcode.ShowDialog();
                 return false;
             }
 
             if (detailTableName == WHTableName.SubTransfer_Detail || detailTableName == WHTableName.BorrowBack_Detail || detailTableName == WHTableName.LocationTrans_Detail)
             {
-                if (dtDetail.Select("FabricType = 'F' and isnull(Barcode, '') = ''").Length > 0)
+                DataRow[] dtSelect = dtDetail.Select("FabricType = 'F' and isnull(Barcode, '') = ''");
+                if (dtSelect.Length > 0)
                 {
-                    MyUtility.Msg.WarningBox("FtyInventory barcode can't empty!");
+                    Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(dtSelect.CopyToDataTable());
+                    wH_Barcode.ShowDialog();
                     return false;
                 }
             }
