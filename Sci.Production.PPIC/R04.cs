@@ -100,36 +100,36 @@ namespace Sci.Production.PPIC
                 sqlCondition.Append(string.Format(" and l.FactoryID = '{0}'", this.factory));
             }
 
-            sqlCmd.Append(string.Format(
-                @"select distinct l.MDivisionID,l.FactoryID,l.ID,l.SewingLineID
-	                    ,[SewingCell] = isnull(s.SewingCell,'')
-	                    ,[StyleID] = isnull(o.StyleID,'')
-	                    ,l.OrderID
-	                    ,[Seq] = concat(ld.Seq1,' ',ld.Seq2)
-	                    ,[ColorName] = isnull(c.Name,'')
-	                    ,[Refno] = isnull(psd.Refno,'')
-	                    ,l.ApvDate
-	                    ,ld.RejectQty
-	                    ,ld.RequestQty
-	                    ,ld.IssueQty
-	                    ,[FinishedDate] = IIF(l.Status= 'Received',l.EditDate,null)
-	                    ,[Type] = IIF(l.Type='R','Replacement','Lacking')
-	                    ,[Description] = isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),PPICReasonID)
-	                    ,[OnTime] = IIF(l.Status = 'Received',IIF(DATEDIFF(ss,l.ApvDate,l.EditDate) <= {1},'Y','N'),'N')
-	                    ,l.Remark
-                        ,ld.Process
-                    from Lack l WITH (NOLOCK) 
-                    inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
-                    left join SewingLine s WITH (NOLOCK) on s.ID = l.SewingLineID AND S.FactoryID=L.FactoryID
-                    left join Orders o WITH (NOLOCK) on o.ID = l.OrderID
-                    left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
-                    left join Color c WITH (NOLOCK) on c.BrandId = o.BrandID and c.ID = psd.ColorID
-                    left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and (pr.ID = ld.PPICReasonID or pr.ID = concat('FR','0',ld.PPICReasonID))
-                    left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and (pr1.ID = ld.PPICReasonID or pr1.ID = concat('AR','0',ld.PPICReasonID))
-                    {0} 
-                    order by l.MDivisionID,l.FactoryID,l.ID",
-                sqlCondition.ToString(),
-                this.leadtime.ToString()));
+            sqlCmd.Append($@"
+select distinct l.MDivisionID,l.FactoryID,l.ID,l.SewingLineID
+	,[SewingCell] = isnull(s.SewingCell,'')
+	,[StyleID] = isnull(o.StyleID,'')
+	,l.OrderID
+	,[Seq] = concat(ld.Seq1,' ',ld.Seq2)
+	,[ColorName] = isnull(c.Name,'')
+	,[Refno] = isnull(psd.Refno,'')
+	,l.ApvDate
+	,ld.RejectQty
+	,ld.RequestQty
+	,ld.IssueQty
+	,[FinishedDate] = IIF(l.Status= 'Received',l.EditDate,null)
+	,[Type] = IIF(l.Type='R','Replacement','Lacking')
+	,[Description] = isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),PPICReasonID)
+	,[OnTime] = IIF(l.Status = 'Received',IIF(DATEDIFF(ss,l.ApvDate,l.EditDate) <= {this.leadtime.ToString()},'Y','N'),'N')
+	,l.Remark
+    ,ld.Process
+from Lack l WITH (NOLOCK) 
+inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
+left join SewingLine s WITH (NOLOCK) on s.ID = l.SewingLineID AND S.FactoryID=L.FactoryID
+left join Orders o WITH (NOLOCK) on o.ID = l.OrderID
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join Color c WITH (NOLOCK) on c.BrandId = o.BrandID and c.ID = isnull(psdsC.SpecValue ,'')
+left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and (pr.ID = ld.PPICReasonID or pr.ID = concat('FR','0',ld.PPICReasonID))
+left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and (pr1.ID = ld.PPICReasonID or pr1.ID = concat('AR','0',ld.PPICReasonID))
+{sqlCondition}
+order by l.MDivisionID,l.FactoryID,l.ID
+");
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {

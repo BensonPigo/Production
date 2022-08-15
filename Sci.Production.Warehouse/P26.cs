@@ -1,7 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Production.Automation;
 using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
@@ -11,7 +10,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -453,15 +451,14 @@ where m.IsWMS = 0";
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
 
-            this.DetailSelectCommand = string.Format(
-                @"
+            this.DetailSelectCommand = $@"
 select a.id
 	,a.PoId
 	,a.Seq1
 	,a.Seq2
 	,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-	, p1.colorid
-	, p1.sizespec
+    ,ColorID = isnull(psdsC.SpecValue, '')
+    ,SizeSpec= isnull(psdsS.SpecValue, '')
 	,a.Roll
 	,a.Dyelot
 	,a.Qty
@@ -470,19 +467,14 @@ select a.id
 	,a.ToLocation
 	,a.ftyinventoryukey
 	,a.ukey
-	,p1.Refno
+	,psd.Refno
 	,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
 from dbo.LocationTrans_detail a WITH (NOLOCK) 
-outer apply
-(
-	select p1.colorid, p1.sizespec, p1.Refno
-	from PO_Supp_Detail p1 WITH (NOLOCK) 
-	where p1.ID = a.PoId 
-	and p1.seq1 = a.SEQ1 
-	and p1.SEQ2 = a.seq2
-)p1
-Where a.id = '{0}' ", masterID);
-
+left join PO_Supp_Detail psd WITH (NOLOCK) on  psd.ID = a.PoId and psd.seq1 = a.SEQ1 and psd.SEQ2 = a.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+Where a.id = '{masterID}'
+";
             return base.OnDetailSelectCommandPrepare(e);
         }
 

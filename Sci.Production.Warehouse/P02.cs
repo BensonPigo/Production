@@ -172,7 +172,7 @@ select FactoryID = iif(ed.PoType='M'
                                         , '')
         , ed.UnitId
         , ColorID = Color.Value
-        , SizeSpec = isnull(psd.SizeSpec,'')
+        , SizeSpec = isnull(psdsS.SpecValue, '')
 		,[OrderQty] =  iif(ed.PoType='M'
                         , (case when ed.FabricType = 'M' then mpo.OrderQty
                                 when ed.FabricType = 'P' then ppo.OrderQty 
@@ -205,6 +205,7 @@ from Export_Detail ed WITH (NOLOCK)
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 left join Supp s WITH (NOLOCK) on s.id = ed.SuppID 
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 left join Fabric_Supp fs WITH (NOLOCK) on fs.SCIRefno = f.SCIRefno and fs.SuppID = s.ID
 OUTER APPLY(
@@ -239,8 +240,8 @@ Outer APPLY (
 )mipo
 OUTER APPLY(
  SELECT [Value]=
-	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(psd.BrandID,psd.ColorID),psd.SuppColor)
-		 ELSE dbo.GetColorMultipleID(psd.BrandID,psd.ColorID)
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(psd.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
+		 ELSE dbo.GetColorMultipleID(psd.BrandID,isnull(psdsC.SpecValue, ''))
 	 END
 )Color
 where ed.ID = '{0}'

@@ -832,35 +832,34 @@ select  e.poid
         , ColorID = Color.Value
         , eta = (SELECT eta from dbo.export WITH (NOLOCK) where id = e.id)
         , M.InQty
-        , p.pounit
-        , StockUnit = p.StockUnit
+        , psd.pounit
+        , StockUnit = psd.StockUnit
         , M.OutQty
         , M.AdjustQty
         , M.ReturnQty
         , BalanceQty = M.inqty - M.OutQty + M.AdjustQty - M.ReturnQty
         , M.LInvQty
-        , p.fabrictype
+        , psd.fabrictype
         , e.seq1
         , e.seq2
         , f.MtlTypeID
 from dbo.Export_Detail e WITH (NOLOCK) 
-left join dbo.PO_Supp_Detail p WITH (NOLOCK) on e.PoID = p.ID 
-                                                and e.Seq1 = p.SEQ1 
-                                                and e.Seq2 = p.seq2
+left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on e.PoID = psd.ID and e.Seq1 = psd.SEQ1 and e.Seq2 = psd.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left JOIN MDivisionPoDetail M WITH (NOLOCK) ON E.PoID = M.POID 
                                                 and e.Seq1 = M.SEQ1 
                                                 and e.Seq2 = M.seq2 
-LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
+LEFT JOIN Fabric f WITH (NOLOCK) ON psd.SCIRefNo=f.SCIRefNo
 OUTER APPLY(
  SELECT [Value]=
-	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(p.SuppColor = '' or p.SuppColor is null,dbo.GetColorMultipleID(p.BrandID,p.ColorID),p.SuppColor)
-		 ELSE dbo.GetColorMultipleID(p.BrandID,p.ColorID)
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(psd.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
+		 ELSE dbo.GetColorMultipleID(psd.BrandID,isnull(psdsC.SpecValue, ''))
 	 END
 )Color
 where   e.PoID ='{this.CurrentDetailData["poid"]}' 
         and e.id = '{this.CurrentMaintain["exportid"]}'
-and p.Junk=0
-Order By e.Seq1, e.Seq2, e.Refno";
+and psd.Junk=0
+Order By e.Seq1, e.Seq2, e.Refnoo";
 
                         DBProxy.Current.Select(null, sqlcmd, out DataTable poitems);
 
@@ -2053,12 +2052,12 @@ select * from (
     ,[Season] = s.SeasonID
     ,[Remark] = Replace(REPLACE('The RR under {Refno} was failed due to {RR Remark}.','{Refno}',sr.Refno),'{RR Remark}',sr.RRRemark)
     from Receiving_Detail rd
-    inner join PO_Supp_Detail p on rd.PoId = p.ID and rd.Seq1 = p.SEQ1 and rd.Seq2 = p.SEQ2
-    inner join PO_Supp p1 on p1.ID = p.ID and p.SEQ1 = p1.SEQ1
-    inner join Orders o on p.ID = o.ID
+    inner join PO_Supp_Detail psd on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
+    inner join PO_Supp p1 on p1.ID = psd.ID and psd.SEQ1 = p1.SEQ1
+    inner join Orders o on psd.ID = o.ID
+    inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
     inner join Style s on o.StyleUkey = s.Ukey
-    inner join Style_RRLR_Report sr on sr.StyleUkey = s.Ukey and sr.SuppID = p1.SuppID
-    and sr.Refno = p.Refno and sr.ColorID = p.ColorID
+    inner join Style_RRLR_Report sr on sr.StyleUkey = s.Ukey and sr.SuppID = p1.SuppID and sr.Refno = psd.Refno and sr.ColorID = isnull(psdsC.SpecValue, '')
     where sr.RR= 1
     and rd.Id=@ID
 
@@ -2073,19 +2072,17 @@ select * from (
     ,[Season] = s.SeasonID
     ,[Remark] = Replace('The LR under {Refno} was failed.','{Refno}',sr.Refno)
     from Receiving_Detail rd
-    inner join PO_Supp_Detail p on rd.PoId = p.ID and rd.Seq1 = p.SEQ1 and rd.Seq2 = p.SEQ2
-    inner join PO_Supp p1 on p1.ID = p.ID and p.SEQ1 = p1.SEQ1
-    inner join Orders o on p.ID = o.ID
+    inner join PO_Supp_Detail psd on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
+    inner join PO_Supp p1 on p1.ID = psd.ID and psd.SEQ1 = p1.SEQ1
+    inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+    inner join Orders o on psd.ID = o.ID
     inner join Style s on o.StyleUkey = s.Ukey
-    inner join Style_RRLR_Report sr on sr.StyleUkey = s.Ukey and sr.SuppID = p1.SuppID
-    and sr.Refno = p.Refno and sr.ColorID = p.ColorID
+    inner join Style_RRLR_Report sr on sr.StyleUkey = s.Ukey and sr.SuppID = p1.SuppID and sr.Refno = psd.Refno and sr.ColorID = isnull(psdsC.SpecValue, '')
     where rd.Id=@ID
     and sr.LR= 1
 
 ) a
 order by Style,Brand,Season,Remark
-
-
 
 select * from MailGroup where Code= '104'
 
@@ -2386,7 +2383,7 @@ select  a.id
         , a.Poid + concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as PoidSeq
         , a.Poid + Ltrim(Rtrim(a.seq1)) as PoidSeq1
         , (select p1.FabricType from PO_Supp_Detail p1 WITH (NOLOCK) where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
-        , [RefNo]=p.RefNo
+        , [RefNo]=psd.RefNo
 		, [ColorID]=Color.Value
         , a.shipqty
         , a.Weight
@@ -2440,8 +2437,9 @@ select  a.id
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 INNER JOIN Receiving b WITH (NOLOCK) ON a.id= b.Id
 left join View_WH_Orders o WITH (NOLOCK) on o.id = a.PoId
-LEFT JOIN PO_Supp_Detail p  WITH (NOLOCK) ON p.ID=a.PoId AND p.SEQ1=a.Seq1 AND p.SEQ2 = a.Seq2
-LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
+LEFT JOIN PO_Supp_Detail psd  WITH (NOLOCK) ON psd.ID=a.PoId AND psd.SEQ1=a.Seq1 AND psd.SEQ2 = a.Seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+LEFT JOIN Fabric f WITH (NOLOCK) ON psd.SCIRefNo=f.SCIRefNo
 left join Receiving_Detail cmb on  a.Id = cmb.Id
 									and a.CombineBarcode = cmb.CombineBarcode
 									and cmb.CombineBarcode is not null
@@ -2454,8 +2452,8 @@ left join FtyInventory ft on ft.POID = a.PoId
                             and ft.Dyelot = a.Dyelot
 OUTER APPLY(
  SELECT [Value]=
-	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(p.SuppColor = '' or p.SuppColor is null, dbo.GetColorMultipleID(o.BrandID,p.ColorID), p.SuppColor)
-		 ELSE dbo.GetColorMultipleID(o.BrandID,p.ColorID)
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(psd.SuppColor = '' or psd.SuppColor is null, dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')), psd.SuppColor)
+		 ELSE dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, ''))
 	 END
 )Color
 OUTER APPLY(
@@ -2545,9 +2543,9 @@ from (
 		, Weight = isnull(pll.GW, isnull(edc.WeightKg, a.WeightKg))
 		, ActualWeight = isnull(pll.GW, isnull(edc.NetKg, a.NetKg))
 		, stocktype = iif(c.category='M','I','B')
-		, b.POUnit 
-		, StockUnit = b.StockUnit
-		, b.FabricType
+		, psd.POUnit 
+		, StockUnit = psd.StockUnit
+		, psd.FabricType
 		, seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
 		, stockqty = round(x.qty * v.RateValue,2)
 		, shipqty = x.qty
@@ -2558,24 +2556,25 @@ from (
 		, FullDyelot = convert(varchar(50), isnull(pll.BatchNo, isnull(edc.LotNo, '')))
 		, remark = ''
 		, location = ''
-		, b.Refno
+		, psd.Refno
 		, [ColorID] = Color.Value
 		, c.FactoryID
 		, c.OrderTypeID
 		, [ContainerType] = Container.Val
-		, [QRCode] = pll.QRCode -- b.FabricType = 'F'  相同 QRCode 其中一筆為 [+] 剩下為 [-]
+		, [QRCode] = pll.QRCode -- psd.FabricType = 'F'  相同 QRCode 其中一筆為 [+] 剩下為 [-]
 		, [MINDQRCode] = pll.QRCode
 		, clickInsert = 1
 		, DRQ = IIF(isnull(pll.QRCode, '') = '', Null, DENSE_RANK() over(order by pll.QRCode))
         , Fabric.MtlTypeID
         , ExportDetailUkey = a.Ukey
 	from dbo.Export_Detail a WITH (NOLOCK) 
-	inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id   
-													 and a.Seq1 = b.SEQ1    
-													 and a.Seq2 = b.SEQ2
+	inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on a.PoID= psd.id   
+													 and a.Seq1 = psd.SEQ1    
+													 and a.Seq2 = psd.SEQ2
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 	inner join View_WH_Orders c WITH (NOLOCK) on c.id = a.poid
-	inner join View_unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit
-	left join Fabric WITH (NOLOCK) ON b.SCIRefNo=Fabric.SCIRefNo
+	inner join View_unitrate v on v.FROM_U = psd.POUnit and v.TO_U = psd.StockUnit
+	left join Fabric WITH (NOLOCK) ON psd.SCIRefNo=Fabric.SCIRefNo
 	left join Export_Detail_Carton edc with (nolock) on a.Ukey = edc.Export_DetailUkey
 	left join Poshippinglist pl with (nolock) on pl.POID = a.POID and pl.Seq1 = a.Seq1
 	left join POShippingList_Line pll WITH (NOLOCK) ON  pll.POShippingList_Ukey = pl.Ukey and 
@@ -2593,11 +2592,11 @@ from (
 	)Container
 	OUTER APPLY(
 	 SELECT [Value]=
-		 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(b.SuppColor = '' or b.SuppColor is null,dbo.GetColorMultipleID(b.BrandID,b.ColorID),b.SuppColor)
-			 ELSE dbo.GetColorMultipleID(b.BrandID,b.ColorID)
+		 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(psd.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
+			 ELSE dbo.GetColorMultipleID(psd.BrandID,isnull(psdsC.SpecValue, ''))
 		 END
 	)Color
-	where b.FabricType = 'F'
+	where psd.FabricType = 'F'
 	and a.id = '{this.CurrentMaintain["exportid"]}'
 	union 
 
@@ -2611,9 +2610,9 @@ from (
 		, Weight = isnull(edc.WeightKg, a.WeightKg)
 		, ActualWeight = isnull(edc.NetKg, a.NetKg)
 		, stocktype = iif(c.category='M','I','B')
-		, b.POUnit 
-		, StockUnit = b.StockUnit
-		, b.FabricType
+		, psd.POUnit 
+		, StockUnit = psd.StockUnit
+		, psd.FabricType
 		, seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
 		, stockqty = round(x.qty * v.RateValue,2)
 		, shipqty = x.qty
@@ -2624,7 +2623,7 @@ from (
 		, FullDyelot = ''
 		, remark = ''
 		, location = ''
-		, b.Refno
+		, psd.Refno
 		, [ColorID] = Color.Value
 		, c.FactoryID
 		, c.OrderTypeID
@@ -2636,12 +2635,13 @@ from (
         , Fabric.MtlTypeID
         , ExportDetailUkey = a.Ukey
 	from dbo.Export_Detail a WITH (NOLOCK) 
-	inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id   
-													 and a.Seq1 = b.SEQ1    
-													 and a.Seq2 = b.SEQ2
+	inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on a.PoID= psd.id   
+													 and a.Seq1 = psd.SEQ1    
+													 and a.Seq2 = psd.SEQ2
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 	inner join View_WH_Orders c WITH (NOLOCK) on c.id = a.poid
-	inner join View_unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit
-	left join Fabric WITH (NOLOCK) ON b.SCIRefNo=Fabric.SCIRefNo
+	inner join View_unitrate v on v.FROM_U = psd.POUnit and v.TO_U = psd.StockUnit
+	left join Fabric WITH (NOLOCK) ON psd.SCIRefNo=Fabric.SCIRefNo
 	outer apply (
 		select edc.Export_DetailUkey, edc.Id, edc.PoID, edc.Seq1, edc.Seq2
 			, Qty = SUM(edc.Qty)
@@ -2663,11 +2663,11 @@ from (
 	)Container
 	OUTER APPLY(
 	 SELECT [Value]=
-		 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(b.SuppColor = '' or b.SuppColor is null,dbo.GetColorMultipleID(b.BrandID,b.ColorID),b.SuppColor)
-			 ELSE dbo.GetColorMultipleID(b.BrandID,b.ColorID)
+		 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(psd.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
+			 ELSE dbo.GetColorMultipleID(psd.BrandID,isnull(psdsC.SpecValue, ''))
 		 END
 	)Color
-	where b.FabricType = 'A'
+	where psd.FabricType = 'A'
 	and a.id = '{this.CurrentMaintain["exportid"]}'
 )a
 order by a.Ukey

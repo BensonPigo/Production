@@ -31,8 +31,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             StringBuilder selectCommand1 = new StringBuilder();
-            selectCommand1.Append(string.Format(
-                @"
+            selectCommand1.Append($@"
 select [Select] = cast(0 as bit)
 	, [sPOID] = rd.PoId
 	, [sSeq] = CONCAT(rd.seq1, ' ', rd.Seq2)
@@ -42,16 +41,16 @@ select [Select] = cast(0 as bit)
 	, [Ref] = psd.Refno
 	, [Color] =  case 
 					when f.MtlTypeID = 'SP THREAD' and ThreadColor.SuppColor is not null 
-						THEN iif(ISNULL(ThreadColor.SuppColor,'') = '',  dbo.GetColorMultipleID(o.BrandID,psd.ColorID), ThreadColor.SuppColor) 
+						THEN iif(ISNULL(ThreadColor.SuppColor,'') = '',  dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')), ThreadColor.SuppColor) 
 					when f.MtlTypeID = 'SP THREAD' and ThreadColor.SuppColor is null 
-						THEN IIF(psd.SuppColor = '' or psd.SuppColor is null,  dbo.GetColorMultipleID(o.BrandID,psd.ColorID), psd.SuppColor)
-					else  isnull (psd.ColorID, '') 
+						THEN IIF(psd.SuppColor = '' or psd.SuppColor is null,  dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')), psd.SuppColor)
+					else  isnull (isnull(psdsC.SpecValue, ''), '') 
 				  end
 	, [Qty] = rd.StockQty
 	, [Roll] = rd.Roll
 	, [FabWidth] = f.Width
 	, [Dyelot] = rd.Dyelot
-	, [CutWidth] = psd.SizeSpec
+	, [CutWidth] = isnull(psdsS.SpecValue, '')
 	, [CutType] = psd.Special
 	, [ExpSlice] = ''
 	, [ActSlice] = ''
@@ -59,18 +58,19 @@ select [Select] = cast(0 as bit)
 from  Receiving r with (nolock)
 inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
 left join Orders o on o.ID=rd.POID
-left join Po_Supp_Detail psd on rd.POID = psd.ID
-								and rd.Seq1 = psd.SEQ1
-								and rd.Seq2 = psd.SEQ2
+left join Po_Supp_Detail psd on rd.POID = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join Fabric f on psd.SCIRefno = f.SCIRefno
-left join Color c WITH (NOLOCK) on f.BrandID = c.BrandId and psd.ColorID = c.ID 
+left join Color c WITH (NOLOCK) on f.BrandID = c.BrandId and isnull(psdsC.SpecValue, '') = c.ID 
 outer apply(
 			SELECT DISTINCT pp.SuppColor
 			FROM po_supp_detail pp
 			WHERE pp.ID = psd.StockPOID AND pp.Seq1 = psd.StockSeq1 AND pp.Seq2 = psd.StockSeq2
 		)
 ThreadColor
-where r.id = '{0}'", this.ID));
+where r.id = '{this.ID}'
+");
 
             DualResult result = DBProxy.Current.Select(null, selectCommand1.ToString(), out DataTable dt);
 

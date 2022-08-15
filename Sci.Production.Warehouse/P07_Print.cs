@@ -1,18 +1,12 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Win;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using Word = Microsoft.Office.Interop.Word;
-// using System.Data.SqlClient;
-using Sci.Win;
 using System.Runtime.InteropServices;
-using System.Drawing;
-using Sci.Production.Prg;
-using System.Windows.Forms;
-using Sci.Win.Tools;
 
 namespace Sci.Production.Warehouse
 {
@@ -179,13 +173,13 @@ select
 	,R.Dyelot
 	,R.PoId
 	,R.Seq1+'-'+R.Seq2 AS SEQ
-	,[RefNo]=p.RefNo
+	,[RefNo]=psd.RefNo
 	, [ColorID]=Color.Value 
 	,f.WeaveTypeID
 	,o.BrandID
-	,IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2)  
-			AND (p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))  
-			AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
+	,IIF((psd.ID = lag(psd.ID,1,'')over (order by psd.ID,psd.seq1,psd.seq2)  
+			AND (psd.seq1 = lag(psd.seq1,1,'')over (order by psd.ID,psd.seq1,psd.seq2))  
+			AND(psd.seq2 = lag(psd.seq2,1,'')over (order by psd.ID,psd.seq1,psd.seq2))) 
 				,'',dbo.getMtlDesc(R.poid,R.seq1,R.seq2,2,0))[Desc]            
 	,R.ShipQty
 	,R.pounit
@@ -200,9 +194,9 @@ select
 	,[SubGW]=sum(R.Weight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 ) 
 	,[SubAW]=sum(R.ActualWeight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
 	,[SubStockQty]=sum(R.StockQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
-	,[TotalReceivingQty]=IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2)  
-			AND (p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))  
-			AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
+	,[TotalReceivingQty]=IIF((psd.ID = lag(psd.ID,1,'')over (order by psd.ID,psd.seq1,psd.seq2)  
+			AND (psd.seq1 = lag(psd.seq1,1,'')over (order by psd.ID,psd.seq1,psd.seq2))  
+			AND(psd.seq2 = lag(psd.seq2,1,'')over (order by psd.ID,psd.seq1,psd.seq2))) 
 				,null,sum(R.StockQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 ))
 	,[SubVaniance]=R.ShipQty - R.ActualQty
 	,R.Remark		
@@ -217,10 +211,10 @@ select
                                 wbt.Action = 'Confirm'
                          order by CommitTime desc)
                     )
-    ,[SuppColor] = p.ColorID
+    ,[SuppColor] = isnull(psdsC.SpecValue, '')
     ,R.ActualQty
-    ,[FabricType] = case when p.FabricType = 'F' then 'Fabric'
-                         when p.FabricType = 'A' then 'Accessory'
+    ,[FabricType] = case when psd.FabricType = 'F' then 'Fabric'
+                         when psd.FabricType = 'A' then 'Accessory'
                          else 'Other' end
     ,TtlQty = convert(varchar(20),
 			iif(r.CombineBarcode is null , r.ActualQty, 
@@ -238,7 +232,8 @@ select
     ,R.Unoriginal
     ,R.Ukey
 from dbo.Receiving_Detail R WITH (NOLOCK) 
-LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
+LEFT join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = R.POID and  psd.SEQ1 = R.Seq1 and psd.seq2 = R.Seq2 
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Ftyinventory  fi with (nolock) on    R.POID = fi.POID and
                                                R.Seq1 = fi.Seq1 and
                                                R.Seq2 = fi.Seq2 and
@@ -246,8 +241,8 @@ left join Ftyinventory  fi with (nolock) on    R.POID = fi.POID and
                                                R.Dyelot  = fi.Dyelot and
                                                R.StockType = fi.StockType
 left join View_WH_Orders o WITH (NOLOCK) on o.ID = r.PoId
-LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
-LEFT JOIN color c on c.id = p.colorid and c.BrandId = p.BrandId 
+LEFT JOIN Fabric f WITH (NOLOCK) ON psd.SCIRefNo=f.SCIRefNo
+LEFT JOIN color c on c.id = isnull(psdsC.SpecValue, '') and c.BrandId = psd.BrandId 
 left join FIR with (nolock) on  FIR.ReceivingID = r.ID and 
                                 FIR.POID = r.POID and 
                                 FIR.Seq1 = r.Seq1 and 
@@ -261,8 +256,8 @@ left join Receiving_Detail cmb on  R.Id = cmb.Id
 									and ISNULL(cmb.Unoriginal,0) = 0
 OUTER APPLY(
  SELECT [Value]=
-	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(p.SuppColor = '' or p.SuppColor is null, dbo.GetColorMultipleID(o.BrandID,p.ColorID),p.SuppColor)
-		 ELSE dbo.GetColorMultipleID(o.BrandID,p.ColorID)
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(psd.SuppColor = '' or psd.SuppColor is null, dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
+		 ELSE dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, ''))
 	 END
 )Color
 outer apply(

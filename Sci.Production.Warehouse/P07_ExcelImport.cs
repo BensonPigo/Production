@@ -654,25 +654,26 @@ GROUP BY PL.QRCode
 
             DataRow dr2;
             string sql = @"
-select  pd.fabrictype
-        , pd.POUnit
-        , StockUnit = pd.StockUnit
-        , Round(dbo.GetUnitQty(pd.POUnit, pd.StockUnit, @shipqty), 2) as stockqty 
-        , (select o.Category from View_WH_Orders o WITH (NOLOCK) where o.id= pd.id) as category
-        , pd.Refno
+select  psd.fabrictype
+        , psd.POUnit
+        , StockUnit = psd.StockUnit
+        , Round(dbo.GetUnitQty(psd.POUnit, psd.StockUnit, @shipqty), 2) as stockqty 
+        , (select o.Category from View_WH_Orders o WITH (NOLOCK) where o.id= psd.id) as category
+        , psd.Refno
         , [ColorID] = isnull(Color.Value,'')
         , ff.MtlTypeID
-from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
-inner join [dbo].[Fabric] ff WITH (NOLOCK) on pd.SCIRefno= ff.SCIRefno
+from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
+inner join [dbo].[Fabric] ff WITH (NOLOCK) on psd.SCIRefno= ff.SCIRefno
 inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
 inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 OUTER APPLY(
  SELECT [Value]=
-	 CASE WHEN ff.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(pd.SuppColor = '' or pd.SuppColor is null, dbo.GetColorMultipleID(pd.BrandID,pd.ColorID),pd.SuppColor)
-		 ELSE dbo.GetColorMultipleID(pd.BrandID,pd.ColorID)
+	 CASE WHEN ff.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(psd.SuppColor = '' or psd.SuppColor is null, dbo.GetColorMultipleID(psd.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
+		 ELSE dbo.GetColorMultipleID(psd.BrandID,isnull(psdsC.SpecValue, ''))
 	 END
 )Color
-where pd.id=@poid and pd.seq1 =@seq1 and pd.seq2 = @seq2";
+where psd.id=@poid and psd.seq1 =@seq1 and psd.seq2 = @seq2";
 
             if (MyUtility.Check.Seek(sql, sqlpar, out dr2))
             {

@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Microsoft.Reporting.WinForms;
+using Sci.Data;
+using Sci.Win;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Ict;
-using Ict.Win;
-using Microsoft.Reporting.WinForms;
-using Sci.Data;
-using Sci.Win;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
@@ -97,12 +97,6 @@ where   b.id = a.mdivisionid
                     return new DualResult(false, "Data not found!!!");
                 }
 
-                // 抓M的EN NAME
-                DataTable dtNAME;
-                DBProxy.Current.Select(
-                    string.Empty,
-                    string.Format(@"select NameEN from MDivision where ID='{0}'", Env.User.Keyword), out dtNAME);
-                string rptTitle = dtNAME.Rows[0]["NameEN"].ToString();
                 #endregion
 
                 #region -- 撈表身資料 --
@@ -151,13 +145,12 @@ where a.id = @ID";
             else
             {
                 string cmd = $@"
-
 select  a.Roll
 		, a.Dyelot
 		, a.POID
         , a.Seq1 + '-' + a.seq2 as SEQ
-		, b.Refno
-		, Color = dbo.GetColorMultipleID(b.BrandID, b.ColorID)
+		, psd.Refno
+		, Color = dbo.GetColorMultipleID(psd.BrandID, isnull(psdsC.SpecValue, ''))
 		, ColorName = c.Name
 		, f.WeaveTypeID
 		, o.BrandID
@@ -173,11 +166,12 @@ select  a.Roll
         , a.ContainerCode
 		, a.Remark
 from dbo.TransferIn_detail a WITH (NOLOCK) 
-left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID 
-                                                and b.SEQ1 = a.Seq1 
-                                                and b.SEQ2=a.seq2
-left join Color c WITH (NOLOCK) on c.ID = b.ColorID AND c.BrandId = b.BrandId
-LEFT JOIN Fabric f WITH (NOLOCK) ON b.SCIRefNo=f.SCIRefNo
+left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.id = a.POID 
+                                                and psd.SEQ1 = a.Seq1 
+                                                and psd.SEQ2=a.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join Color c WITH (NOLOCK) on c.ID = isnull(psdsC.SpecValue, '') AND c.BrandId = psd.BrandId
+LEFT JOIN Fabric f WITH (NOLOCK) ON psd.SCIRefNo=f.SCIRefNo
 left join View_WH_Orders o WITH (NOLOCK) on o.ID = a.POID
 WHERE a.ID = '{id}'
 ";

@@ -52,23 +52,24 @@ namespace Sci.Production.Warehouse
 
             #region "顯示DTM"
             DataTable dtmDt;
-            string sql = string.Format(
-                @"
-                select id,seq1,seq2,qty,ShipQty,Refno,ColorID,iif(qty <= shipqty, 'True','False') bUseQty
-                into #tmp
-                from Po_Supp_Detail
-                where id = '{0}'
-                and seq1 = '{1}'
-                and seq2 = '{2}'
+            string sql = $@"
+select psd.id,psd.seq1,psd.seq2,qty,ShipQty,Refno,ColorID = isnull(psdsC.SpecValue, ''),iif(qty <= shipqty, 'True','False') bUseQty
+into #tmp
+from Po_Supp_Detail psd
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+where psd.id = '{this.dr["id"]}'
+and psd.seq1 = '{this.dr["seq1"]}'
+and psd.seq2 = '{this.dr["seq2"]}'
  
-                select isnull(Round(dbo.getUnitQty(a.POUnit, a.StockUnit, (isnull(A.NETQty,0)+isnull(A.lossQty,0))), 2),0.0) as UseQty,b.bUseQty
-                from Po_Supp_Detail a
-                inner join #tmp b on a.id = b.id and a.Refno = b.Refno and a.ColorID = b.ColorID and b.bUseQty = 'True' 
-                where a.id = '{0}'
-                and a.seq1 = 'A1' 
+select isnull(Round(dbo.getUnitQty(psd.POUnit, psd.StockUnit, (isnull(psd.NETQty,0)+isnull(psd.lossQty,0))), 2),0.0) as UseQty,b.bUseQty
+from Po_Supp_Detail psd
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+inner join #tmp b on psd.id = b.id and psd.Refno = b.Refno and isnull(psdsC.SpecValue, '') = b.ColorID and b.bUseQty = 'True' 
+where psd.id = '{this.dr["id"]}'
+and psd.seq1 = 'A1' 
 
-                drop table #tmp
-            ", this.dr["id"].ToString(), this.dr["seq1"].ToString(), this.dr["seq2"].ToString());
+drop table #tmp
+            ";
             DualResult dtmResult = DBProxy.Current.Select(null, sql, out dtmDt);
             if (dtmResult == false)
             {
@@ -851,22 +852,22 @@ group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp
             pars.Add(new SqlParameter("@seq2", seq2));
             DualResult result;
             DataTable dtt, dt;
-            string sqlcmd = string.Format(@"
+            string sqlcmd = @"
 select  a.id [SP]
         , a.SEQ1+'-'+a.SEQ2 [SEQ]
         , a.Refno [Ref]
-        , a.ColorID [Color]
+        , isnull(psdsC.SpecValue, '') [Color]
         , b.InQty [Arrived_Qty_by_Seq]
         , b.OutQty [Released_Qty_by_Seq]
         , b.InQty-b.OutQty+b.AdjustQty-b.ReturnQty [Bal_Qty]
         , [Description] = dbo.getMtlDesc(a.id,a.SEQ1,a.SEQ2,2,0) 
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
-inner join dbo.MDivisionPoDetail b WITH (NOLOCK) on a.id = b.POID 
-                                                    and a.SEQ1 = b.Seq1 
-                                                    and a.SEQ2=b.Seq2
+inner join dbo.MDivisionPoDetail b WITH (NOLOCK) on a.id = b.POID and a.SEQ1 = b.Seq1 and a.SEQ2=b.Seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
 where   a.id = @ID 
         and a.seq1 = @seq1 
-        and a.seq2=@seq2");
+        and a.seq2=@seq2
+";
             result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out dt);
             if (!result)
             {

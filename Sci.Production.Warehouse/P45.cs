@@ -442,7 +442,7 @@ select  ad.POID
 	, [Seq] = concat(ad.Seq1, '-', ad.Seq2)
 	, ad.Roll
 	, ad.Dyelot
-	, [ColorID] = dbo.GetColorMultipleID(psd.BrandId, psd.ColorID)
+	, [ColorID] = dbo.GetColorMultipleID(psd.BrandId, isnull(psdsC.SpecValue, ''))
 	, [Description] =IIF((
 								ad.POID = LAG(ad.POID,1,'') OVER (ORDER BY ad.POID,ad.seq1,ad.seq2, ad.Dyelot,ad.Roll) 
 								AND ad.Seq1 = LAG(ad.Seq1,1,'') OVER (ORDER BY ad.POID,ad.seq1,ad.seq2, ad.Dyelot,ad.Roll) 
@@ -458,6 +458,7 @@ select  ad.POID
 from Adjust a
 inner join Adjust_Detail ad on a.ID = ad.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.id = ad.POID and psd.SEQ1 = ad.Seq1 and psd.SEQ2 = ad.Seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 left join FtyInventory fi WITH (NOLOCK) on fi.POID = ad.POID and fi.Seq1 = ad.Seq1 and fi.Seq2 = ad.Seq2 and fi.Roll = ad.Roll and fi.StockType = ad.StockType and fi.Dyelot = ad.Dyelot
 where a.ID = @ID
@@ -544,8 +545,7 @@ and ID = '{Sci.Env.User.UserID}'"))
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(
-                @"
+            this.DetailSelectCommand = $@"
 select
     ad.*
 	,seq = concat(ad.Seq1,'-',ad.Seq2)
@@ -555,13 +555,14 @@ select
 	,Location = dbo.Getlocation(fi.ukey)
     ,fi.ContainerCode
 	,reason_nm = (select Name FROM Reason WHERE id=ReasonId AND junk = 0 and ReasonTypeID='Stock_Remove')
-    ,ColorID =dbo.GetColorMultipleID(psd.BrandId, psd.ColorID)
+    ,ColorID =dbo.GetColorMultipleID(psd.BrandId, isnull(psdsC.SpecValue, ''))
 from Adjust_detail ad WITH (NOLOCK) 
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.id = ad.POID and psd.SEQ1 = ad.Seq1 and psd.SEQ2 = ad.Seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 left join FtyInventory fi WITH (NOLOCK) on fi.POID = ad.POID and fi.Seq1 = ad.Seq1 and fi.Seq2 = ad.Seq2 and fi.Roll = ad.Roll and fi.StockType = ad.StockType and fi.Dyelot = ad.Dyelot
-where ad.Id='{0}' 
-", masterID);
+where ad.Id='{masterID}' 
+";
             return base.OnDetailSelectCommandPrepare(e);
         }
 

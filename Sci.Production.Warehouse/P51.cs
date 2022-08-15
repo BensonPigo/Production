@@ -576,29 +576,31 @@ and stocktype='{this.CurrentDetailData["stocktype"]}' and roll='{e.FormattedValu
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(
-                @"select a.id
-,a.PoId,a.Seq1,a.Seq2
-,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-,a.Roll
-,a.Dyelot
-,dbo.Getlocation(fi.ukey) location
-,a.QtyBefore
-,a.QtyAfter
-,a.QtyAfter - a.QtyBefore as variance
-,a.StockType
-,p1.Refno
-,p1.colorid
-,p1.FabricType
-,p1.stockunit
-,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
-,a.ukey
-,a.ftyinventoryukey
+            this.DetailSelectCommand = $@"
+select a.id
+    ,a.PoId,a.Seq1,a.Seq2
+    ,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+    ,a.Roll
+    ,a.Dyelot
+    ,dbo.Getlocation(fi.ukey) location
+    ,a.QtyBefore
+    ,a.QtyAfter
+    ,a.QtyAfter - a.QtyBefore as variance
+    ,a.StockType
+    ,psd.Refno
+    ,ColorID = isnull(psdsC.SpecValue, '')
+    ,psd.FabricType
+    ,psd.stockunit
+    ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
+    ,a.ukey
+    ,a.ftyinventoryukey
 from dbo.StockTaking_detail as a WITH (NOLOCK) 
-left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.PoId and psd.seq1 = a.SEQ1 and psd.SEQ2 = a.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
     and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
-Where a.id = '{0}'", masterID);
+Where a.id = '{masterID}'
+";
             return base.OnDetailSelectCommandPrepare(e);
         }
 

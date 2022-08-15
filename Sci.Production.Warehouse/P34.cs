@@ -757,41 +757,33 @@ where (isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(
-                @"
+            this.DetailSelectCommand = $@"
 select a.id,a.PoId,a.Seq1,a.Seq2
-,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-,p1.FabricType
-,p1.stockunit
-,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
-,a.Roll
-,a.Dyelot
-,a.QtyAfter
-,a.QtyBefore
-,isnull(a.QtyAfter,0.00) - isnull(a.QtyBefore,0.00) adjustqty
-,a.ReasonId
-,(select Name from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Adjust' AND ID= A.ReasonId) reason_nm
-,a.StockType
-,dbo.Getlocation(fi.ukey) location
-,fi.ContainerCode
-,a.ukey
-,a.ftyinventoryukey
-,ColorID =dbo.GetColorMultipleID(p1.BrandId, p1.ColorID)
+    ,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+    ,psd.FabricType
+    ,psd.stockunit
+    ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
+    ,a.Roll
+    ,a.Dyelot
+    ,a.QtyAfter
+    ,a.QtyBefore
+    ,isnull(a.QtyAfter,0.00) - isnull(a.QtyBefore,0.00) adjustqty
+    ,a.ReasonId
+    ,(select Name from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Adjust' AND ID= A.ReasonId) reason_nm
+    ,a.StockType
+    ,dbo.Getlocation(fi.ukey) location
+    ,fi.ContainerCode
+    ,a.ukey
+    ,a.ftyinventoryukey
+    ,ColorID =dbo.GetColorMultipleID(psd.BrandId, isnull(psdsC.SpecValue, ''))
 from dbo.Adjust_Detail a WITH (NOLOCK) 
-left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.PoId and psd.seq1 = a.SEQ1 and psd.SEQ2 = a.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
     and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
-Where a.id = '{0}' ", masterID);
+Where a.id = '{masterID}'
+";
             return base.OnDetailSelectCommandPrepare(e);
-        }
-
-        // delete all
-        private void Button9_Click(object sender, EventArgs e)
-        {
-            this.detailgrid.ValidateControl();
-
-            // detailgridbs.EndEdit();
-            ((DataTable)this.detailgridbs.DataSource).Select("qty=0.00 or qty is null").ToList().ForEach(r => r.Delete());
         }
 
         // Import

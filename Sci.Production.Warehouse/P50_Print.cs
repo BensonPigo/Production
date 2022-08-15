@@ -3,8 +3,8 @@ using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
@@ -26,7 +26,7 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-           return base.ValidateInput();
+            return base.ValidateInput();
         }
 
         /// <inheritdoc/>
@@ -55,22 +55,24 @@ where id = @ID";
 
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-            DataTable dd;
+
             cmdd = @"
 select a.POID
         ,a.Seq1+'-'+a.seq2 as SEQ
 		,a.Roll,a.Dyelot	        
-		,Ref = b.Refno 
-		,Material_Type =b.fabrictype 
-		,Color =b.colorid 
-		,Unit=b.stockunit 		     
+		,Ref = psd.Refno 
+		,Material_Type =psd.fabrictype 
+		,Color = isnull(psdsC.SpecValue, '')
+		,Unit=psd.stockunit 		     
 		,[Book_Location]=dbo.Getlocation(fi.ukey)
 from dbo.Stocktaking_detail a WITH (NOLOCK) 
-left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
+left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.id=a.POID and psd.SEQ1=a.Seq1 and psd.SEQ2=a.Seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
     and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
-where a.id= @ID";
-            result = DBProxy.Current.Select(string.Empty, cmdd, pars, out dd);
+where a.id= @ID
+";
+            result = DBProxy.Current.Select(string.Empty, cmdd, pars, out DataTable dd);
             if (!result)
             {
                 this.ShowErr(result);
@@ -78,15 +80,15 @@ where a.id= @ID";
 
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-            DataTable da;
+
             cmdd = @"
 select a.POID
         ,a.Seq1+'-'+a.seq2 as SEQ
 		,a.Roll,a.Dyelot	        
-		,Ref = b.Refno 
-		,Material_Type =b.fabrictype 
-		,Color =b.colorid 
-		,Unit=b.stockunit 
+		,Ref = psd.Refno 
+		,Material_Type =psd.fabrictype 
+		,Color =isnull(psdsC.SpecValue, '')
+		,Unit=psd.stockunit 
 		,Book_Qty=a.qtybefore	
 		,[Book_Location]=dbo.Getlocation(fi.ukey) 
 		,Actual_Qty=a.Qtyafter
@@ -94,11 +96,13 @@ select a.POID
 		,[Total1]=sum(a.qtybefore) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 )
 		,[Total2]=sum(a.Qtyafter) OVER (PARTITION BY a.POID ,a.seq1,a.Seq2 )
 from dbo.Stocktaking_detail a WITH (NOLOCK) 
-left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
+left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.id=a.POID and psd.SEQ1=a.Seq1 and psd.SEQ2=a.Seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
     and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
-where a.id= @ID";
-            result = DBProxy.Current.Select(string.Empty, cmdd, pars, out da);
+where a.id= @ID
+";
+            result = DBProxy.Current.Select(string.Empty, cmdd, pars, out DataTable da);
             if (!result)
             {
                 this.ShowErr(result);

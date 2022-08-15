@@ -18,7 +18,6 @@ namespace Sci.Production.Warehouse
     {
         private const byte UnLock = 0;
         private const byte Lock = 1;
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         /// <inheritdoc/>
         public P38(ToolStripMenuItem menuitem)
@@ -83,7 +82,7 @@ namespace Sci.Production.Warehouse
             this.gridMaterialLock.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.gridMaterialLock.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridMaterialLock)
-                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                  .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                   .Text("seq2", header: "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
@@ -158,11 +157,11 @@ select 0 as [selected]
         , fi.POID
         , fi.seq1
         , fi.seq2
-        , FabricType = case when pd.FabricType = 'F' then 'Fabric' when  pd.FabricType = 'A' then 'Accessory' end
+        , FabricType = case when psd.FabricType = 'F' then 'Fabric' when  psd.FabricType = 'A' then 'Accessory' end
         , fi.Roll
         , fi.Dyelot
         , iif(fi.Lock=0,'Unlocked','Locked') [status]
-        , WhseArrival = case when pd.FabricType = 'F' then r.WhseArrival when  pd.FabricType = 'A' then pd.RevisedETA end 
+        , WhseArrival = case when psd.FabricType = 'F' then r.WhseArrival when  psd.FabricType = 'A' then psd.RevisedETA end 
         , fi.InQty
         , fi.OutQty
         , fi.AdjustQty
@@ -178,16 +177,17 @@ select 0 as [selected]
         , fi.ukey
         , [location] = dbo.Getlocation(fi.ukey)
         , [Description] = dbo.getMtlDesc(fi.poid,fi.seq1,fi.seq2,2,0)
-        , pd.ColorID
+        , ColorID = isnull(psdsC.SpecValue, '')
         , o.styleid
         , o.BrandID
         , o.FactoryID
         , x.*
         , fi.Remark
-		, pd.FabricType sFabricType
+		, psd.FabricType sFabricType
 into #tmp_FtyInventory
 from dbo.FtyInventory fi WITH (NOLOCK) 
-left join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = fi.POID and pd.seq1 = fi.seq1 and pd.seq2  = fi.Seq2
+left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.id = fi.POID and psd.seq1 = fi.seq1 and psd.seq2  = fi.Seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join View_WH_Orders o WITH (NOLOCK) on o.id = fi.POID
 left join dbo.factory f WITH (NOLOCK) on o.FtyGroup=f.id
 left join Receiving_Detail rd WITH (NOLOCK) on rd.PoId = fi.POID and rd.Seq1 = fi.seq1 and rd.seq2 = fi.seq2 and rd.Roll = fi.Roll and rd.Dyelot = fi.Dyelot
@@ -284,7 +284,7 @@ and r.WhseArrival between '{0}' and '{1}'", this.dateATA.TextBox1.Text, this.dat
             {
                 strSQLCmd.Append(string.Format(
                     @" 
-and pd.FabricType in ({0})", this.comboDropDownList1.SelectedValue));
+and psd.FabricType in ({0})", this.comboDropDownList1.SelectedValue));
             }
 
             if (!MyUtility.Check.Empty(this.txtMtlLocation.Text))

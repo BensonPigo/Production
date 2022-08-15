@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Ict.Win;
-using Sci.Data;
-using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
@@ -57,29 +57,28 @@ namespace Sci.Production.Warehouse
                     where = " AND c.lock = 0 ";
                 }
 
-                strSQLCmd.Append(string.Format(
-                    @"
+                strSQLCmd.Append($@"
 select 	selected = 0   
 		, id = '' 
 		, FromFtyinventoryUkey = c.ukey
-		, fromPoId = a.id
-		, fromseq1 = a.Seq1
-		, fromseq2 = a.Seq2 
+		, fromPoId = psd.id
+		, fromseq1 = psd.Seq1
+		, fromseq2 = psd.Seq2 
         , fromFactoryID = o.FactoryID
-		, fromseq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
-		, Description = dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0)
+		, fromseq = concat(Ltrim(Rtrim(psd.seq1)), ' ', psd.Seq2)
+		, Description = dbo.getmtldesc(psd.id,psd.seq1,psd.seq2,2,0)
         , i.Deadline as Deadline
 		, fromRoll = c.Roll
 		, fromDyelot = c.Dyelot 
 		, fromStocktype = c.StockType 
 		, balance = c.inqty - c.outqty + c.adjustqty - c.ReturnQty
 		, qty = 0.00 
-		, FabricType  = Case a.FabricType WHEN 'F' THEN 'Fabric' WHEN 'A' THEN 'Accessory' ELSE 'Other'  END 
-		, a.stockunit
-		, a.InputQty
-		, topoid = a.id 
-		, toseq1 = a.SEQ1 
-		, toseq2 = a.SEQ2 
+		, FabricType  = Case psd.FabricType WHEN 'F' THEN 'Fabric' WHEN 'A' THEN 'Accessory' ELSE 'Other'  END 
+		, psd.stockunit
+		, psd.InputQty
+		, topoid = psd.id 
+		, toseq1 = psd.SEQ1 
+		, toseq2 = psd.SEQ2 
 		, toroll = c.Roll 
 		, todyelot = c.Dyelot 
         , toFactoryID = o.FactoryID
@@ -96,17 +95,19 @@ select 	selected = 0
 			                ) s
 			                for xml path(''))
 		                , 1, 1, '')
-	    ,a.Refno
-	    ,a.SizeSpec	
+	    ,psd.Refno
+	    ,SizeSpec= isnull(psdsS.SpecValue, '')
         , ColorID = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
-                        ,IIF( a.SuppColor = '' or a.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,a.ColorID),a.SuppColor)
-                        ,dbo.GetColorMultipleID(o.BrandID,a.ColorID)
+                        ,IIF( psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, '')),psd.SuppColor)
+                        ,dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, ''))
                     )
-from dbo.PO_Supp_Detail a WITH (NOLOCK) 
-inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
+from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
+inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = psd.id and c.seq1 = psd.seq1 and c.seq2  = psd.seq2 
 inner join View_WH_Orders o WITH (NOLOCK) on c.Poid = o.id
 inner join Factory WITH (NOLOCK) on o.FactoryID = factory.id
-left join Fabric WITH (NOLOCK) on Fabric.SCIRefno = a.SCIRefno
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+left join Fabric WITH (NOLOCK) on Fabric.SCIRefno = psd.SCIRefno
 outer apply(
 	select listValue = Stuff((
 			select concat(',',MtlLocationID)
@@ -122,12 +123,13 @@ outer apply(
 			for xml path ('')
 		) , 1, 1, '')
 )Fromlocation2
-outer apply(select  Deadline = max(i.Deadline) from Inventory  i where i.POID = a.id and i.seq1 = a.seq1 and i.seq2 = a.seq2)i
+outer apply(select  Deadline = max(i.Deadline) from Inventory  i where i.POID = psd.id and i.seq1 = psd.seq1 and i.seq2 = psd.seq2)i
 Where   1=1
-{1}
+{where}
         and c.InQty - c.OutQty + c.AdjustQty - c.ReturnQty > 0 
         and c.stocktype = 'I'
-        and factory.MDivisionID = '{0}'", Env.User.Keyword, where));
+        and factory.MDivisionID = '{Env.User.Keyword}'
+");
                 #endregion
 
                 System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();

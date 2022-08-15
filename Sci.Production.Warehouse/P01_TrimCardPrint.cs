@@ -496,10 +496,11 @@ SELECT Article FROM
 					,BOA_Article.Article 
 					)				
 
-	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}', PSD.ColorID),PSD.SuppColor)
+	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}', isnull(psdsC.SpecValue, '')),PSD.SuppColor)
 	FROM PO_Supp_Detail PSD
 	INNER join Fabric f on f.SCIRefno = PSD.SCIRefno
 	LEFT JOIN PO_Supp_Detail_OrderList pd ON PSD.ID = pd.ID AND PSD.SEQ1= pd.SEQ1 AND PSD.SEQ2= pd.SEQ2
+    LEFT JOIN PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 	LEFT JOIN Order_BOA boa ON boa.id =psd.ID and boa.SCIRefno = psd.SCIRefno and boa.seq=psd.SEQ1
 	OUTER APPLY(
 		SELECT oba.Article FROM Order_BOA ob
@@ -553,11 +554,12 @@ SELECT * FROM
 					,BOA_Article.Article 
 					)				
 
-	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}', PSD.ColorID),PSD.SuppColor)
+	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}', isnull(psdsC.SpecValue, '')),PSD.SuppColor)
 	FROM PO_Supp_Detail PSD
 	INNER join Fabric f on f.SCIRefno = PSD.SCIRefno
 	LEFT JOIN Order_BOA boa ON boa.id =psd.ID and boa.SCIRefno = psd.SCIRefno and boa.seq=psd.SEQ1
 	LEFT JOIN PO_Supp_Detail_OrderList pd ON PSD.ID = pd.ID AND PSD.SEQ1= pd.SEQ1 AND PSD.SEQ2= pd.SEQ2
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 	OUTER APPLY(
 		SELECT oba.Article FROM Order_BOA ob
 		LEFT join Order_BOA_Article oba on oba.Order_BoAUkey = ob.Ukey

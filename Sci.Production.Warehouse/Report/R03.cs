@@ -1,15 +1,16 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
-using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R03 : Win.Tems.PrintForm
     {
         private string season;
@@ -39,6 +40,7 @@ namespace Sci.Production.Warehouse
         private DateTime? ata2;
         private DataTable printData;
 
+        /// <inheritdoc/>
         public R03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -49,8 +51,6 @@ namespace Sci.Production.Warehouse
             MyUtility.Tool.SetupCombox(this.comboOrderBy, 1, 1, "Supplier,SP#");
             this.comboOrderBy.SelectedIndex = 0;
         }
-
-        // 驗證輸入條件
 
         /// <inheritdoc/>
         protected override bool ValidateInput()
@@ -177,7 +177,7 @@ left join Export ex with (nolock) on ex.ID = exd.ID
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format($@"
+            sqlCmd.Append($@"
 select  F.MDivisionID
         ,O.FactoryID
         ,[Wkno] = wk.wkno
@@ -330,8 +330,8 @@ select wkno = stuff((
 	    for xml path('')
 	),1,1,'')
 )Wk
-where 1=1  
-"));
+where 1=1
+");
 
             #region --- 條件組合  ---
             if (!MyUtility.Check.Empty(this.sciDelivery1))

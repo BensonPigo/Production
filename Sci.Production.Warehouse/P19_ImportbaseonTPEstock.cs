@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict;
+﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using System.Linq;
-using System.Data.SqlClient;
 using Sci.Production.Prg;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
@@ -183,22 +182,24 @@ select  POID = rtrim(i.seq70poid)
 		, psd.FabricType
 		, PSD.Refno
 		, Color
-		, PSD.SizeSpec
+		, SizeSpec= isnull(psdsS.SpecValue, '')
 into #tmp
 from dbo.Invtrans i WITH (NOLOCK) 
 inner join PO_Supp_Detail psd WITH (NOLOCK) on i.InventoryPOID = psd.ID
 												and i.InventorySeq1 = psd.SEQ1
 												and i.InventorySeq2 = psd.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 inner join View_WH_Orders o WITH (NOLOCK) on psd.ID = o.ID
 left join Fabric on Fabric.SCIRefno = psd.SCIRefno
 outer apply (select Color = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
-												,IIF( PSD.SuppColor = '' or PSD.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,PSD.ColorID),PSD.SuppColor)
-												,dbo.GetColorMultipleID(o.BrandID,PSD.ColorID)
+												,IIF( PSD.SuppColor = '' or PSD.SuppColor is null,dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, '')),PSD.SuppColor)
+												,dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, ''))
 											))c
 where (i.type='2' or i.type='6')
 		and i.seq70poid = @IssueSP
 		and o.MDivisionID = @MDivisionID
-group by i.seq70poid,rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.TransferFactory, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit, psd.FabricType,PSD.Refno, PSD.SizeSpec,c.Color
+group by i.seq70poid,rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.TransferFactory, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit, psd.FabricType,PSD.Refno, isnull(psdsS.SpecValue, ''),c.Color
 
 
 select  selected = 0

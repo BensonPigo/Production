@@ -11,10 +11,12 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P10_RelaxationSticker : Win.Subs.Base
     {
         private string strIssueID;
 
+        /// <inheritdoc/>
         public P10_RelaxationSticker(string issueID)
         {
             this.InitializeComponent();
@@ -52,13 +54,12 @@ Sel = 0
  , Roll = isd.Roll
  , Dyelot = isd.Dyelot
  , Refno = isnull (psd.Refno, '')
- , Color = isnull (psd.ColorID, '')
+ , Color = isnull(psdsC.SpecValue, '')
  , Qty = isd.Qty
 from Issue_Detail isd
 left join Orders o on o.ID=isd.POID
-left join Po_Supp_Detail psd on isd.POID = psd.ID
- and isd.Seq1 = psd.SEQ1
- and isd.Seq2 = psd.SEQ2
+left join Po_Supp_Detail psd on isd.POID = psd.ID and isd.Seq1 = psd.SEQ1 and isd.Seq2 = psd.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 where isd.ID = '{this.strIssueID}'
 order by RowNo
 ";

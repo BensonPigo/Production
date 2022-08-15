@@ -773,12 +773,11 @@ where (isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(
-                @"
+            this.DetailSelectCommand = $@"
 select a.id,a.PoId,a.Seq1,a.Seq2
     ,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-    ,p1.FabricType
-    ,p1.stockunit
+    ,psd.FabricType
+    ,psd.stockunit
     ,a.Roll
     ,a.Dyelot
     ,a.QtyAfter
@@ -792,9 +791,10 @@ select a.id,a.PoId,a.Seq1,a.Seq2
     ,[location] = Getlocation.Value 
     ,fi.ContainerCode
     ,[ColorID] = ColorID.Value
-    ,[Description] = dbo.getmtldesc(p1.id,p1.seq1,p1.seq2,2,0)
+    ,[Description] = dbo.getmtldesc(psd.id,psd.seq1,psd.seq2,2,0)
 from dbo.Adjust_Detail a WITH (NOLOCK) 
-left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.PoId and psd.seq1 = a.SEQ1 and psd.SEQ2 = a.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
     and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
 outer apply (
@@ -813,13 +813,13 @@ outer apply (
 			   from dbo.Color as c 
 			   LEFT join dbo.Color_multiple as m on m.ID = c.ID 
 				  								    and m.BrandID = c.BrandId 
-			   where c.ID = p1.ColorID and c.BrandId =  p1.BrandId 
+			   where c.ID = isnull(psdsC.SpecValue, '') and c.BrandId =  psd.BrandId 
 			   order by m.Seqno 
 			   for xml path('') ) 
 			 , 1, 1, '')  
 ) as ColorID
-Where a.id = '{0}'
-", masterID);
+Where a.id = '{masterID}'
+";
             return base.OnDetailSelectCommandPrepare(e);
         }
 

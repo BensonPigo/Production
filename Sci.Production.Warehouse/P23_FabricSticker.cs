@@ -66,8 +66,8 @@ select
     , ToFactory = std.ToFactoryID
     , Refno = isnull (psd.Refno, '')
     , Color =  IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
-	            , IIF(isnull(SuppColor,'')='',isnull(dbo.GetColorMultipleID (o.BrandID, psd.ColorID), ''),SuppColor)
-	            , isnull(dbo.GetColorMultipleID (o.BrandID, psd.ColorID), ''))
+	            , IIF(isnull(SuppColor,'')='',isnull(dbo.GetColorMultipleID (o.BrandID, isnull(psdsC.SpecValue, '')), ''),SuppColor)
+	            , isnull(dbo.GetColorMultipleID (o.BrandID, isnull(psdsC.SpecValue, '')), ''))
     , StockUnit = isnull (dbo.GetStockUnitBySPSeq (std.FromPOID, std.FromSeq1, std.FromSeq2), '')
     , Qty = std.Qty
     , [FromLocation]= dbo.Getlocation (fi.ukey)
@@ -77,6 +77,7 @@ left join View_WH_Orders o WITH (NOLOCK) on std.FromPOID = o.ID
 left join Po_Supp_Detail psd WITH (NOLOCK) on std.FromPOID = psd.ID
 								and std.FromSeq1 = psd.SEQ1
 								and std.FromSeq2 = psd.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join FtyInventory FI on std.FromPoid = fi.poid 
                              and std.fromSeq1 = fi.seq1 
                              and std.fromSeq2 = fi.seq2

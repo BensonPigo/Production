@@ -593,8 +593,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(
-                @"
+            this.DetailSelectCommand = $@"
 select [Selected] = 0 
     ,a.id
     ,a.FromFtyinventoryUkey
@@ -602,8 +601,8 @@ select [Selected] = 0
     ,a.FromSeq1
     ,a.FromSeq2
     ,FromSeq = concat(Ltrim(Rtrim(a.FromSeq1)), ' ', a.FromSeq2)
-    ,FabricType = Case p1.FabricType WHEN 'F' THEN 'Fabric' WHEN 'A' THEN 'Accessory' ELSE 'Other'  END 
-    ,p1.stockunit
+    ,FabricType = Case psd.FabricType WHEN 'F' THEN 'Fabric' WHEN 'A' THEN 'Accessory' ELSE 'Other'  END 
+    ,psd.stockunit
     ,description = dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0)
     ,a.FromRoll
     ,a.FromDyelot
@@ -622,16 +621,18 @@ select [Selected] = 0
     ,a.tolocation
     ,a.ToContainerCode
     ,Fromlocation2 = Fromlocation2.listValue
-	,p1.Refno
-	,p1.SizeSpec	
+	,psd.Refno
+	,SizeSpec= isnull(psdsS.SpecValue, '')
     , ColorID = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
-                    ,IIF( p1.SuppColor = '' or p1.SuppColor is null,dbo.GetColorMultipleID(Orders.BrandID,p1.ColorID),p1.SuppColor)
-                    ,dbo.GetColorMultipleID(Orders.BrandID,p1.ColorID)
+                    ,IIF( psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(Orders.BrandID, isnull(psdsC.SpecValue, '')),psd.SuppColor)
+                    ,dbo.GetColorMultipleID(Orders.BrandID, isnull(psdsC.SpecValue, ''))
                 )
 from dbo.SubTransfer_Detail a WITH (NOLOCK) 
-left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
-left join Orders orders WITH (NOLOCK) on p1.id = orders.ID
-left join Fabric WITH (NOLOCK) on Fabric.SCIRefno = p1.SCIRefno
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.FromPoId and psd.seq1 = a.FromSeq1 and psd.SEQ2 = a.FromSeq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+left join Orders orders WITH (NOLOCK) on psd.id = orders.ID
+left join Fabric WITH (NOLOCK) on Fabric.SCIRefno = psd.SCIRefno
 left join FtyInventory f WITH (NOLOCK) on a.FromPOID=f.POID and a.FromSeq1=f.Seq1 and a.FromSeq2=f.Seq2 and a.FromRoll=f.Roll and a.FromDyelot=f.Dyelot and a.FromStockType=f.StockType
 outer apply(
 	select listValue = Stuff((
@@ -648,7 +649,8 @@ outer apply(
 			for xml path ('')
 		) , 1, 1, '')
 )Fromlocation2
-Where a.id = '{0}'", masterID);
+Where a.id = '{masterID}'
+";
             return base.OnDetailSelectCommandPrepare(e);
         }
 

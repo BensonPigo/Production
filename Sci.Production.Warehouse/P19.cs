@@ -498,13 +498,13 @@ having f.balanceQty - sum(d.Qty) < 0
                        }).ToList();
             var bs1I = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                         .Where(w => w.Field<string>("stocktype").Trim() == "I" && !MyUtility.Check.Empty(w["qty"]))
-                       group b by new
-                       {
-                           poid = b.Field<string>("poid").Trim(),
-                           seq1 = b.Field<string>("seq1").Trim(),
-                           seq2 = b.Field<string>("seq2").Trim(),
-                           stocktype = b.Field<string>("stocktype").Trim(),
-                       }
+                        group b by new
+                        {
+                            poid = b.Field<string>("poid").Trim(),
+                            seq1 = b.Field<string>("seq1").Trim(),
+                            seq2 = b.Field<string>("seq2").Trim(),
+                            stocktype = b.Field<string>("stocktype").Trim(),
+                        }
                         into m
                         select new Prgs_POSuppDetailData
                         {
@@ -909,13 +909,12 @@ where   exists(select 1 from #tmp t where
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(
-                @"
+            this.DetailSelectCommand = $@"
 select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll
 ,a.Dyelot
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
-,p1.StockUnit
+,psd.StockUnit
 ,a.Qty
 ,a.StockType
 ,a.ukey
@@ -927,18 +926,20 @@ select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as se
 ,a.ToSeq2
 ,[ToSeq] = a.ToSeq1 +' ' + a.ToSeq2
 ,wk.ExportId
-, p1.Refno
+, psd.Refno
 , Color = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
-										,IIF( p1.SuppColor = '' or p1.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,p1.ColorID),p1.SuppColor)
-										,dbo.GetColorMultipleID(o.BrandID,p1.ColorID)
+										,IIF( psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, '')),psd.SuppColor)
+										,dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, ''))
 									)
-, p1.SizeSpec
+,SizeSpec= isnull(psdsS.SpecValue, '')
 ,a.TransferExportID
 ,a.TransferExport_DetailUkey
 from dbo.TransferOut_Detail a WITH (NOLOCK) 
-left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
-left join View_WH_Orders o WITH (NOLOCK) on p1.ID = o.ID
-left join Fabric on Fabric.SCIRefno = p1.SCIRefno
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.PoId and psd.seq1 = a.SEQ1 and psd.SEQ2 = a.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+left join View_WH_Orders o WITH (NOLOCK) on psd.ID = o.ID
+left join Fabric on Fabric.SCIRefno = psd.SCIRefno
 left join FtyInventory FI on a.POID = FI.POID and a.Seq1 = FI.Seq1 and a.Seq2 = FI.Seq2 and a.Dyelot = FI.Dyelot
     and a.Roll = FI.Roll and a.StockType = FI.StockType
 outer apply(
@@ -955,7 +956,8 @@ outer apply(
 		for xml path ('')
 	) , 1, 1, '')
 ) WK
-Where a.id = '{0}'", masterID);
+Where a.id = '{masterID}'
+";
             return base.OnDetailSelectCommandPrepare(e);
         }
 

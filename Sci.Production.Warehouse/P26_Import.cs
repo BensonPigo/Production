@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Ict.Win;
-using Sci.Data;
-using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
@@ -80,8 +80,7 @@ select * from (");
                 sql1 = true;
 
                 // 建立可以符合回傳的Cursor
-                strSQLCmd.Append(string.Format(
-                    @"
+                strSQLCmd.Append($@"
 select   0 as selected
         , r.exportID
         , a.Poid
@@ -97,17 +96,19 @@ select   0 as selected
         , '' tolocation
         , '' id
 		, a.Ukey ftyinventoryukey
-        , p1.refno
-        , p1.colorid
-        , p1.sizespec
+        , psd.refno
+        , ColorID = isnull(psdsC.SpecValue, '')
+        , SizeSpec= isnull(psdsS.SpecValue, '')
         , Receiving_Detail_ukey = min(rd.Ukey) 		
         , a.StockType
         , [LastEditDate] = LastEditDate.val
 from dbo.FtyInventory a WITH (NOLOCK) 
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
-left join dbo.PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.PoId and psd.seq1 = a.SEQ1 and psd.SEQ2 = a.seq2
 inner join View_WH_Orders o WITH (NOLOCK) on o.ID = a.POID
 inner join dbo.Factory f WITH (NOLOCK) on f.ID = o.factoryID 
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join dbo.Receiving_Detail rd WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
 left join dbo.Receiving r WITH (NOLOCK) on r.Id = rd.Id
 Outer apply (
@@ -115,8 +116,8 @@ Outer apply (
 	from #tmp_LastEditDate t
 	where t.FtyInventoryUkey = a.Ukey
 )LastEditDate
-where f.MDivisionID='{0}' 
-", Env.User.Keyword));
+where f.MDivisionID='{Env.User.Keyword}' 
+");
 
                 if (!MyUtility.Check.Empty(sp))
                 {
@@ -227,7 +228,7 @@ select  0 as selected
         , '' id
         , a.ukey as ftyinventoryukey
         , (select refno from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
-        , (select ColorID from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) ColorID
+        , (select isnull(SpecValue, '') from dbo.PO_Supp_Detail_Spec P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 and P.SpecColumnID = 'Color') ColorID
 		,sizespec=''
         , r2.Ukey Receiving_Detail_ukey
         , a.StockType
@@ -257,7 +258,7 @@ select  0 as selected
         , '' id
         , a.ukey ftyinventoryukey
         , (select refno from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2) refno
-        , (select ColorID from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) ColorID
+        , (select isnull(SpecValue, '') from dbo.PO_Supp_Detail_Spec P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 and P.SpecColumnID = 'Color') ColorID
 		,sizespec=''
         , rd.Ukey Receiving_Detail_ukey
         , a.StockType
@@ -289,7 +290,7 @@ select  0 as selected
         ,  '' id
         , a.ukey ftyinventoryukey
         , (select refno from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
-        , (select ColorID from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) ColorID
+        , (select isnull(SpecValue, '') from dbo.PO_Supp_Detail_Spec P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 and P.SpecColumnID = 'Color') ColorID
 		,sizespec=''
         , rd.Ukey Receiving_Detail_ukey
         , a.StockType
@@ -321,7 +322,7 @@ select  0 as selected
         , '' id
         , a.ukey ftyinventoryukey
         , (select refno from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
-        , (select ColorID from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) ColorID
+        , (select isnull(SpecValue, '') from dbo.PO_Supp_Detail_Spec P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 and P.SpecColumnID = 'Color') ColorID
 		,sizespec=''
         , rd.Ukey Receiving_Detail_ukey
         , a.StockType
@@ -353,7 +354,7 @@ select  0 as selected
         , '' id
         , a.ukey ftyinventoryukey 
         , (select refno from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
-        , (select ColorID from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) ColorID
+        , (select isnull(SpecValue, '') from dbo.PO_Supp_Detail_Spec P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 and P.SpecColumnID = 'Color') ColorID
 		,sizespec=''
         , rd.Ukey Receiving_Detail_ukey
         , a.StockType
@@ -478,8 +479,8 @@ WHERE   StockType='{0}'
 
                     if (!selectId)
                     {
-                       e.Cancel = true;
-                       MyUtility.Msg.WarningBox("Location : " + string.Join(",", errLocation.ToArray()) + "  Data not found !!", "Data not found");
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", errLocation.ToArray()) + "  Data not found !!", "Data not found");
                     }
 
                     trueLocation.Sort();

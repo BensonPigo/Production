@@ -40,26 +40,29 @@ where MainExportID = (select MainExportID from Export with (nolock) where ID = '
 
 select  r.POID,
         r.Seq1+' '+r.seq2 as SEQ,
-        s.refno,
+        psd.refno,
         [Color] = Color.Value,
-        s.SizeSpec,
+        SizeSpec= isnull(psdsS.SpecValue, ''),
         [Packages] = @Packages,
         r.Remark,
         [StickerQty] = 0,
         rec.WhseArrival
- from dbo.Receiving_Detail r WITH (NOLOCK) 
- left join dbo.PO_Supp_Detail s WITH (NOLOCK) on s.id=r.POID and s.SEQ1=r.Seq1 and s.SEQ2=r.seq2
- left join Fabric f WITH (NOLOCK) ON s.SCIRefNo=f.SCIRefNo
- left join dbo.po p WITH (NOLOCK)  on  p.id = r.poid
- left join dbo.View_WH_Orders o WITH (NOLOCK) on o.id = r.PoId
- left join dbo.Receiving rec WITH (NOLOCK) on rec.id = r.ID
- OUTER APPLY(
-  SELECT [Value]=
- 	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(s.SuppColor = '' or s.SuppColor is null, dbo.GetColorMultipleID(o.BrandID,s.ColorID), s.SuppColor)
- 		 ELSE dbo.GetColorMultipleID(o.BrandID,s.ColorID)
- 	 END
- ) Color
- where r.id= @ID and s.FabricType = 'A'";
+from dbo.Receiving_Detail r WITH (NOLOCK) 
+left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.id=r.POID and psd.SEQ1=r.Seq1 and psd.SEQ2=r.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+left join Fabric f WITH (NOLOCK) ON psd.SCIRefNo=f.SCIRefNo
+left join dbo.po p WITH (NOLOCK)  on  p.id = r.poid
+left join dbo.View_WH_Orders o WITH (NOLOCK) on o.id = r.PoId
+left join dbo.Receiving rec WITH (NOLOCK) on rec.id = r.ID
+OUTER APPLY(
+SELECT [Value]=
+ 	CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(psd.SuppColor = '' or psd.SuppColor is null, dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, '')), psd.SuppColor)
+ 		ELSE dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, ''))
+ 	END
+) Color
+where r.id= @ID and psd.FabricType = 'A'
+";
             result = DBProxy.Current.Select(string.Empty, cmdd, pars, out dtDetail);
             if (!result)
             {

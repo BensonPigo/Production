@@ -97,7 +97,7 @@ namespace Sci.Production.Warehouse
             this.BOA_PO_Size = null;
 
             string sqlcmd = string.Format(
-                @";
+                @"
 ;WITH UNPIVOT_1 AS (
     SELECT * 
     FROM #tmp
@@ -237,40 +237,43 @@ Create Table #Tmp_BoaExpend
 Exec dbo.BoaExpend '{3}', {4}, {5}, '{6}',0,1;
 
 --BoAExpend SizeSpec 與 Po_Supp_Detail SizeSpec 意義不同，因此比對時 Po_Supp_Detail 也需要展開
-select	distinct p.id as [poid]
-        , p.seq1
-        , p.seq2
-        , p.Refno
-        , p.SCIRefno
-        , dbo.getMtlDesc(p.id, p.seq1, p.seq2,2,0) [description] 
-	    , p.ColorID
-		, SizeSpec = dbo.getSizeSpecTrans(ISNULL (iif (f.BomTypeCalculate = 1, os.SizeSpec, p.SizeSpec), ''),p.SizeUnit)
-        , PoSizeSpec = p.SizeSpec
-        , p.Spec
-        , p.Special
-        , p.Remark
-        , IIF ( p.UsedQty = 0.0000, 0, p.UsedQty ) as UsedQty  
+select	distinct psd.id as [poid]
+        , psd.seq1
+        , psd.seq2
+        , psd.Refno
+        , psd.SCIRefno
+        , dbo.getMtlDesc(psd.id, psd.seq1, psd.seq2,2,0) [description] 
+	    , ColorID = isnull(psdsC.SpecValue, '')
+		, SizeSpec = dbo.getSizeSpecTrans(ISNULL (iif (f.BomTypeCalculate = 1, os.SizeSpec, isnull(psdsS.SpecValue, '')), ''), isnull(psdsSU.SpecValue, ''))
+        , PoSizeSpec = isnull(psdsS.SpecValue, '')
+        , psd.Spec
+        , psd.Special
+        , psd.Remark
+        , IIF ( psd.UsedQty = 0.0000, 0, psd.UsedQty ) as UsedQty  
         , RATE = case 
-                    when f.BomTypeCalculate = 1 then dbo.GetUnitRate(o.SizeUnit, p.StockUnit) 
-                    else dbo.GetUnitRate(p.POUnit, p.StockUnit)
+                    when f.BomTypeCalculate = 1 then dbo.GetUnitRate(o.SizeUnit, psd.StockUnit) 
+                    else dbo.GetUnitRate(psd.POUnit, psd.StockUnit)
                  end
-        , p.StockUnit
+        , psd.StockUnit
         , f.BomTypeCalculate
-        , ColorMultipleID = isnull(dbo.GetColorMultipleID(p.BrandId, p.ColorID), '')
+        , ColorMultipleID = isnull(dbo.GetColorMultipleID(psd.BrandId, isnull(psdsC.SpecValue, '')), '')
         , f.MTLTYPEID
         , ob.BomTypeColor
         , CompareBoAExpandSeq1 = case 
-                                    when p.Seq1 like '7_' then p.OutputSeq1
-                                    else p.Seq1
+                                    when psd.Seq1 like '7_' then psd.OutputSeq1
+                                    else psd.Seq1
                                  end
-		, [Garment Size]=dbo.GetGarmentSizeByOrderIDSeq(p.id ,p.SEQ1 ,p.SEQ2)
+		, [Garment Size]=dbo.GetGarmentSizeByOrderIDSeq(psd.id ,psd.SEQ1 ,psd.SEQ2)
 into #tmpPO_supp_detail
-from dbo.PO_Supp_Detail as p WITH (NOLOCK) 
-inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
+from dbo.PO_Supp_Detail as psd WITH (NOLOCK) 
+inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 inner join dbo.MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID
-inner join orders o With(NoLock) on p.id = o.id
-left join order_boa ob With(NoLock) on p.id = ob.id
-                                       and p.SciRefno = ob.SciRefno      
+inner join orders o With(NoLock) on psd.id = o.id
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+left join PO_Supp_Detail_Spec psdsSU WITH (NOLOCK) on psdsSU.ID = psd.id and psdsSU.seq1 = psd.seq1 and psdsSU.seq2 = psd.seq2 and psdsSU.SpecColumnID = 'SizeUnit'
+left join order_boa ob With(NoLock) on psd.id = ob.id
+                                       and psd.SciRefno = ob.SciRefno      
                                        --and f.BomTypeCalculate = 1
 outer apply (
     select value = case 
@@ -279,12 +282,12 @@ outer apply (
                         else ''
                    end
 ) SizeItem
-left join Order_SizeSpec os on	os.Id = p.ID
+left join Order_SizeSpec os on	os.Id = psd.ID
 								and os.SizeItem = SizeItem.value
-where   p.id = '{3}' 
-        and p.FabricType = 'A' 
+where   psd.id = '{3}' 
+        and psd.FabricType = 'A' 
         and m.IssueType = '{7}'
-        and p.junk != 1
+        and psd.junk != 1
 
 --計算 FtyInventory 庫存量
 --因為 #tmpPo_Supp_Detail 有用 Order_BoA 展開，把多餘的先做排除，再尋找 【庫存量】
@@ -436,7 +439,8 @@ left join cte on cte.SizeCode = z.SizeCode
                  and cte.seq1 = z.seq1
                  and cte.seq2 = z.seq2
 
-order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSizecode.ToString().Length - 1),
+order by z.seq1,z.seq2,z.Seq
+", this.sbSizecode.ToString().Substring(0, this.sbSizecode.ToString().Length - 1),
                 this.issueid,
                 this.orderid,
                 this.poid,

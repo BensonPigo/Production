@@ -16,15 +16,14 @@ namespace Sci.Production.Cutting
         private static DataTable GetPoSuppDetail(string refno, string poid, Win.Forms.Base srcForm)
         {
             string sqlcmd = $@"
-select SEQ1,SEQ2,ColorID
-from PO_Supp_Detail psd1
-where 
-psd1.ID = '{poid}'
-and psd1.Refno = '{refno}'
-and psd1.Junk != 1
+select psd.SEQ1, psd.SEQ2, ColorID = isnull(psdsC.SpecValue ,'')
+from PO_Supp_Detail psd
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+where psd.ID = '{poid}'
+and psd.Refno = '{refno}'
+and psd.Junk = 0
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtPoSuppDetail);
-
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.Description);

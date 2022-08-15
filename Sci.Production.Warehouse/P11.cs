@@ -179,25 +179,24 @@ namespace Sci.Production.Warehouse
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    string sqlcmd = string.Format(
-                        @"
-select  poid = b.ID
+                    string sqlcmd = $@"
+select  poid = psd.ID
         , a.Ukey
-        , b.Seq1
-        , b.Seq2
-        , concat(Ltrim(Rtrim(b.seq1)), ' ', b.seq2) seq
-        , b.Refno
+        , psd.Seq1
+        , psd.Seq2
+        , concat(Ltrim(Rtrim(psd.seq1)), ' ', psd.seq2) seq
+        , psd.Refno
         , a.StockType
-        , ColorID = isnull(dbo.GetColorMultipleID(b.BrandId, b.ColorID), '')
-        , b.SizeSpec
-        , [Garment Size] = dbo.GetGarmentSizeByOrderIDSeq(b.ID,b.Seq1,b.Seq2)
-        , b.UsedQty
-        , b.SizeUnit
-        , b.StockUnit
+        , ColorID = isnull(dbo.GetColorMultipleID(psd.BrandId, isnull(psdsC.SpecValue, '')), '')
+        , SizeSpec= isnull(psdsS.SpecValue, '')
+        , [Garment Size] = dbo.GetGarmentSizeByOrderIDSeq(psd.ID,psd.Seq1,psd.Seq2)
+        , psd.UsedQty
+        , SizeUnit = isnull(psdsSU.SpecValue, '')
+        , psd.StockUnit
         , dbo.Getlocation(a.ukey)[location]
-        , [Production].[dbo].getmtldesc(b.id, b.seq1, b.seq2, 2, 0)[description]
+        , [Production].[dbo].getmtldesc(psd.id, psd.seq1, psd.seq2, 2, 0)[description]
         , isnull((a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty), 0.00) as balanceqty
-        , b.FabricType,b.SCIRefno,f.MtlTypeID,m.IssueType,a.inqty,a.outqty,a.adjustqty,a.ReturnQty
+        , psd.FabricType,psd.SCIRefno,f.MtlTypeID,m.IssueType,a.inqty,a.outqty,a.adjustqty,a.ReturnQty
         , [accu_issue] = isnull((select sum(Issue_Detail.qty) 
                                  from dbo.issue WITH (NOLOCK) 
                                  inner join dbo.Issue_Detail WITH (NOLOCK) on Issue_Detail.id = Issue.Id 
@@ -209,19 +208,22 @@ select  poid = b.ID
                                 where a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
                                         and a.roll = fi.roll and a.stocktype = fi.stocktype)
                               ,0.00)
-from[Production].[dbo].po_supp_detail b WITH(NOLOCK)
-inner join[Production].[dbo].Fabric f WITH(NOLOCK) on f.SCIRefno = b.SCIRefno
+from[Production].[dbo].po_supp_detail psd WITH(NOLOCK)
+inner join[Production].[dbo].Fabric f WITH(NOLOCK) on f.SCIRefno = psd.SCIRefno
 inner join[Production].[dbo].MtlType m WITH(NOLOCK) on m.ID = f.MtlTypeID
-left join[Production].[dbo].ftyinventory a WITH(NOLOCK) on b.id = a.POID
-                                                             and b.seq1 = a.seq1
-                                                             and b.seq2 = a.Seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+left join PO_Supp_Detail_Spec psdsSU WITH (NOLOCK) on psdsSU.ID = psd.id and psdsSU.seq1 = psd.seq1 and psdsSU.seq2 = psd.seq2 and psdsSU.SpecColumnID = 'SizeUnit'
+left join[Production].[dbo].ftyinventory a WITH(NOLOCK) on psd.id = a.POID
+                                                             and psd.seq1 = a.seq1
+                                                             and psd.seq2 = a.Seq2
                                                              and stocktype = 'B'
-                                                          --   and a.Roll = ''
-where   b.ID = '{0}'
-        and b.FabricType = 'A'
+where   psd.ID = '{this.CurrentDetailData["poid"]}'
+        and psd.FabricType = 'A'
         and m.IssueType = 'Sewing'
-        and b.Junk != 1
-order by b.ID, b.seq1, b.seq2", this.CurrentDetailData["poid"]);
+        and psd.Junk != 1
+order by psd.ID, psd.seq1, psd.seq2
+";
                     IList<DataRow> x;
                     DualResult result2;
                     if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out DataTable bulkItems)))
@@ -298,24 +300,24 @@ order by b.ID, b.seq1, b.seq2", this.CurrentDetailData["poid"]);
                         }
 
                         if (!MyUtility.Check.Seek(
-                            string.Format(
-@"select  poid = b.ID
+                            $@"
+select  poid = psd.ID
         , a.Ukey
-        , b.Seq1
-        , b.Seq2
-        , concat(Ltrim(Rtrim(b.seq1)), ' ', b.seq2) seq
-        , b.Refno
+        , psd.Seq1
+        , psd.Seq2
+        , concat(Ltrim(Rtrim(psd.seq1)), ' ', psd.seq2) seq
+        , psd.Refno
         , a.StockType
-        , ColorID = isnull(dbo.GetColorMultipleID(b.BrandId, b.ColorID), '')
-        , b.SizeSpec
+        , ColorID = isnull(dbo.GetColorMultipleID(psd.BrandId, isnull(psdsC.SpecValue, '')), '')
+        , SizeSpec= isnull(psdsS.SpecValue, '')
         , [Garment Size] = dbo.GetGarmentSizeByOrderIDSeq(a.POID,a.Seq1,a.Seq2)
-        , b.UsedQty
-        , b.SizeUnit
-        , b.StockUnit
+        , psd.UsedQty
+        , SizeUnit = isnull(psdsSU.SpecValue, '')
+        , psd.StockUnit
         , dbo.Getlocation(a.ukey)[location]
-        , [Production].[dbo].getmtldesc(b.id, b.seq1, b.seq2, 2, 0)[description]
+        , [Production].[dbo].getmtldesc(psd.id, psd.seq1, psd.seq2, 2, 0)[description]
         , isnull((a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty), 0.00) as balanceqty
-        ,b.FabricType,b.SCIRefno,f.MtlTypeID,m.IssueType,a.inqty,a.outqty,a.adjustqty
+        ,psd.FabricType,psd.SCIRefno,f.MtlTypeID,m.IssueType,a.inqty,a.outqty,a.adjustqty
          , [accu_issue] = isnull((select sum(Issue_Detail.qty) 
                                  from dbo.issue WITH (NOLOCK) 
                                  inner join dbo.Issue_Detail WITH (NOLOCK) on Issue_Detail.id = Issue.Id 
@@ -327,26 +329,27 @@ order by b.ID, b.seq1, b.seq2", this.CurrentDetailData["poid"]);
                                 where a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
                                         and a.roll = fi.roll and a.stocktype = fi.stocktype)
                               ,0.00)
-from[Production].[dbo].po_supp_detail b WITH(NOLOCK)
-inner join[Production].[dbo].Fabric f WITH(NOLOCK) on f.SCIRefno = b.SCIRefno
+from[Production].[dbo].po_supp_detail psd WITH(NOLOCK)
+inner join[Production].[dbo].Fabric f WITH(NOLOCK) on f.SCIRefno = psd.SCIRefno
 inner join[Production].[dbo].MtlType m WITH(NOLOCK) on m.ID = f.MtlTypeID
-left join[Production].[dbo].ftyinventory a WITH(NOLOCK) on b.id = a.POID
-                                                             and b.seq1 = a.seq1
-                                                             and b.seq2 = a.Seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+left join PO_Supp_Detail_Spec psdsSU WITH (NOLOCK) on psdsSU.ID = psd.id and psdsSU.seq1 = psd.seq1 and psdsSU.seq2 = psd.seq2 and psdsSU.SpecColumnID = 'SizeUnit'
+left join[Production].[dbo].ftyinventory a WITH(NOLOCK) on psd.id = a.POID
+                                                             and psd.seq1 = a.seq1
+                                                             and psd.seq2 = a.Seq2
                                                              and stocktype = 'B'
                                                           --   and a.Roll = ''
-LEFT JOIN Orders o ON o.ID = b.ID
-where   b.ID = '{0}'
-        and b.FabricType = 'A'
-        and b.seq1 = '{1}' 
-        and b.seq2 = '{2}' 
+LEFT JOIN Orders o ON o.ID = psd.ID
+where   psd.ID = '{this.CurrentDetailData["poid"]}'
+        and psd.FabricType = 'A'
+        and psd.seq1 = '{seq[0]}' 
+        and psd.seq2 = '{seq[1]}' 
         and m.IssueType = 'Sewing'
-        and b.Junk != 1
+        and psd.Junk != 1
 		and o.Category <> 'A'
-order by b.ID, b.seq1, b.seq2",
-this.CurrentDetailData["poid"],
-seq[0],
-seq[1]), out this.dr))
+order by psd.ID, psd.seq1, psd.seq2
+", out this.dr))
                         {
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");
@@ -413,23 +416,22 @@ seq[1]), out this.dr))
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.Ismatrix_Reload = true;
-            this.DetailSelectCommand = string.Format(
-                @"  
+            this.DetailSelectCommand = $@"
 select  a.Id
         , isnull(a.FtyInventoryUkey,0) [FtyInventoryUkey]
         , a.Poid
         , a.seq1
         , a.seq2
         , concat(Ltrim(Rtrim(a.seq1)), ' ', a.seq2) as seq
-        , p.Refno
+        , psd.Refno
         , a.StockType
         , a.Qty
-        , Colorid = isnull(dbo.GetColorMultipleID(p.BrandId, p.ColorID), '')
-        , p.SizeSpec
+        , Colorid = isnull(dbo.GetColorMultipleID(psd.BrandId, isnull(psdsC.SpecValue, '')), '')
+        , SizeSpec= isnull(psdsS.SpecValue, '')
         , [Garment Size] = dbo.GetGarmentSizeByOrderIDSeq(a.POID,a.Seq1,a.Seq2)
-        , p.UsedQty
-        , p.SizeUnit
-        , p.StockUnit
+        , psd.UsedQty
+        , SizeUnit = isnull(psdsSU.SpecValue, '')
+        , psd.StockUnit
         , dbo.Getlocation(fi.ukey) [location]
         , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
         , [accu_issue] = isnull(( select sum(Issue_Detail.qty) 
@@ -459,17 +461,21 @@ select  a.Id
 			)
         , f.MtlTypeID
 from dbo.Issue_Detail a WITH (NOLOCK) 
-left join dbo.po_supp_detail p WITH (NOLOCK) on p.id  = a.poid 
-                                                and p.seq1= a.seq1 
-                                                and p.seq2 =a.seq2
-left join Fabric f on f.SciRefno = p.SciRefno
+left join dbo.po_supp_detail psd WITH (NOLOCK) on psd.id  = a.poid 
+                                                and psd.seq1= a.seq1 
+                                                and psd.seq2 =a.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+left join PO_Supp_Detail_Spec psdsSU WITH (NOLOCK) on psdsSU.ID = psd.id and psdsSU.seq1 = psd.seq1 and psdsSU.seq2 = psd.seq2 and psdsSU.SpecColumnID = 'SizeUnit'
+left join Fabric f on f.SciRefno = psd.SciRefno
 left join dbo.FtyInventory FI on    a.Poid = Fi.Poid 
                                     and a.Seq1 = fi.seq1 
                                     and a.seq2 = fi.seq2 
                                     and a.roll = fi.roll 
                                     and a.stocktype = fi.stocktype
                                     and a.Dyelot = fi.Dyelot
-Where a.id = '{0}'", masterID);
+Where a.id = '{masterID}'
+";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -1520,12 +1526,11 @@ for xml path('')) as [poid]";
 
             #region SEQ
 
-            sqlcmd = string.Format(
-                @"
+            sqlcmd = $@"
 select  a.Seq1 + '-' + a.Seq2 as SEQ
         ,dbo.getMtlDesc(a.poid,a.Seq1,a.Seq2,2,0) as Description
-        ,Po_supp_detail.sizeunit as Unit
-        ,Po_supp_detail.colorid as Color
+        ,Unit = isnull(psdsSU.SpecValue, '')
+        ,Color = isnull(psdsC.SpecValue, '')
         ,a.Qty as TransferQTY
         ,dbo.Getlocation(fi.ukey) as Location
         ,s.*
@@ -1543,15 +1548,17 @@ from(
     PIVOT
     (
         Sum(qty)
-        FOR sizecode  IN ({0})
+        FOR sizecode  IN ({sizecodes})
     ) AS PivotTable
 ) as s
 left join dbo.Issue_detail a WITH (NOLOCK) on ukey = s.Issue_DetailUkey
-left join dbo.po_supp_detail WITH (NOLOCK) on po_supp_detail.id = a.POID and po_supp_detail.seq1 = a.seq1 and po_supp_detail.seq2=a.seq2
+left join dbo.po_supp_detail psd WITH (NOLOCK) on psd.id = a.POID and psd.seq1 = a.seq1 and psd.seq2=a.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsSU WITH (NOLOCK) on psdsSU.ID = psd.id and psdsSU.seq1 = psd.seq1 and psdsSU.seq2 = psd.seq2 and psdsSU.SpecColumnID = 'SizeUnit'
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2 = fi.seq2 
     and a.roll = fi.roll and a.stocktype = fi.stocktype
-left join fabric f on f.SciRefno = po_supp_detail.SciRefno
-", sizecodes);
+left join fabric f on f.SciRefno = psd.SciRefno
+";
             result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtseq);
 
             if (!result)
@@ -1977,39 +1984,40 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             }
 
             // StockType 必須保留，否則 BalanceQty 會出問題
-            string sqlcmd = string.Format(
-                @"
-select  poid = b.ID
+            string sqlcmd = $@"
+select  poid = psd.ID
         , a.Ukey
-        , b.Seq1
-        , b.Seq2
-        , concat (Ltrim (Rtrim (b.seq1)), ' ', b.seq2) seq
+        , psd.Seq1
+        , psd.Seq2
+        , concat (Ltrim (Rtrim (psd.seq1)), ' ', psd.seq2) seq
         , a.StockType
-        , ColorID = isnull(dbo.GetColorMultipleID(b.BrandId, b.ColorID), '')
-        , b.SizeSpec
-        , [Garment Size] = dbo.GetGarmentSizeByOrderIDSeq(b.ID,b.Seq1,b.Seq2)
-        , b.UsedQty
-        , b.SizeUnit
-        , b.StockUnit
+        , ColorID = isnull(dbo.GetColorMultipleID(psd.BrandId, isnull(psdsC.SpecValue, '')), '')
+        , SizeSpec= isnull(psdsS.SpecValue, '')
+        , [Garment Size] = dbo.GetGarmentSizeByOrderIDSeq(psd.ID,psd.Seq1,psd.Seq2)
+        , psd.UsedQty
+        , SizeUnit = isnull(psdsSU.SpecValue, '')
+        , psd.StockUnit
         , dbo.Getlocation (a.ukey) [location]
-        , [Production].[dbo].getmtldesc (b.id, b.seq1, b.seq2, 2, 0)[description]
+        , [Production].[dbo].getmtldesc (psd.id, psd.seq1, psd.seq2, 2, 0)[description]
         , isnull ((a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty ),0.00) as balanceqty
         , f.MtlTypeID
-from [Production].[dbo].po_supp_detail b WITH (NOLOCK) 
-inner join [Production].[dbo].Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
+from [Production].[dbo].po_supp_detail psd WITH (NOLOCK) 
+inner join [Production].[dbo].Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 inner join [Production].[dbo].MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
-left join [Production].[dbo].ftyinventory a WITH (NOLOCK) on b.id = a.POID 
-                                                             and b.seq1 = a.seq1 
-                                                             and b.seq2 = a.Seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+left join PO_Supp_Detail_Spec psdsSU WITH (NOLOCK) on psdsSU.ID = psd.id and psdsSU.seq1 = psd.seq1 and psdsSU.seq2 = psd.seq2 and psdsSU.SpecColumnID = 'SizeUnit'
+left join [Production].[dbo].ftyinventory a WITH (NOLOCK) on psd.id = a.POID 
+                                                             and psd.seq1 = a.seq1 
+                                                             and psd.seq2 = a.Seq2
                                                              and stocktype = 'B'
                                                              and a.Roll = ''
-where   b.ID = '{1}' 
-        and b.FabricType = 'A'
+where   psd.ID = '{this.poid}' 
+        and psd.FabricType = 'A'
         and m.IssueType = 'Sewing' 
-        and b.Junk != 1
-order by b.ID, b.seq1, b.seq2", Env.User.Keyword,
-                this.poid,
-                0);
+        and psd.Junk != 1
+order by psd.ID, psd.seq1, psd.seq2
+";
             DBProxy.Current.Select(null, sqlcmd, out DataTable subData);
             if (subData.Rows.Count == 0)
             {

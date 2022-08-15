@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict;
-using Ict.Win;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
-using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
@@ -280,14 +280,17 @@ namespace Sci.Production.Warehouse
                     sqlpar.Add(new SqlParameter("@poid", newRow["poid"].ToString().Trim()));
                     sqlpar.Add(new SqlParameter("@seq1", newRow["seq1"].ToString().Trim()));
                     sqlpar.Add(new SqlParameter("@seq2", newRow["seq2"].ToString().Trim()));
-                    DataRow dr2;
-                    string sql = @"
-select    pd.Refno
-        , pd.ColorID
-from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
-where pd.id=@poid and pd.seq1 =@seq1 and pd.seq2 = @seq2";
 
-                    if (MyUtility.Check.Seek(sql, sqlpar, out dr2))
+                    string sql = @"
+select
+    psd.Refno
+    , ColorID = isnull(psdsC.SpecValue, '')
+from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+where psd.id=@poid and psd.seq1 =@seq1 and psd.seq2 = @seq2
+";
+
+                    if (MyUtility.Check.Seek(sql, sqlpar, out DataRow dr2))
                     {
                         newRow["Refno"] = dr2["Refno"].ToString();
                         newRow["ColorID"] = dr2["ColorID"].ToString();
