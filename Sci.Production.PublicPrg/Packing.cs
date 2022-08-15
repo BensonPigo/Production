@@ -4832,5 +4832,29 @@ DROP TABLE #ShippingMarkPicture_PIC,#ShippingMarkPicture_HTML,#Ukeys,#CustPONo_H
         }
 
         #endregion
+
+        /// <summary>
+        /// 因為與U.ARMOUR系統barcode格式字數相同，所以我們要加特殊字元避開
+        /// </summary>
+        /// <param name="cTNStartNo">cTNStartNo</param>
+        /// <param name="brandID">brandID</param>
+        /// <param name="orderID">brandID</param>
+        /// <returns>string</returns>
+        public static string CTNStartNoPrintFormatByBrand(this string cTNStartNo, string brandID = "", string orderID = "")
+        {
+            string finalBrandID = brandID;
+
+            if (!MyUtility.Check.Empty(orderID))
+            {
+                finalBrandID = MyUtility.GetValue.Lookup($"select BrandID from Orders with (nolock) where ID = '{orderID}'");
+            }
+
+            if (finalBrandID == "U.ARMOUR")
+            {
+                return cTNStartNo.PadLeft(6, '^');
+            }
+
+            return cTNStartNo;
+        }
     }
 }

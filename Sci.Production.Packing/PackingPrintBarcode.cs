@@ -1,5 +1,6 @@
 ﻿using Ict;
 using OnBarcode.Barcode;
+using Sci.Production.PublicPrg;
 using System;
 using System.Data;
 using System.Drawing;
@@ -82,7 +83,7 @@ namespace Sci.Production.Packing
                                 }
 
                                 #region 準備資料
-                                string barcode = printData.Rows[p]["ID"].ToString() + printData.Rows[p]["CTNStartNo"].ToString().PadLeft(6, '^');
+                                string barcode = printData.Rows[p]["ID"].ToString() + printData.Rows[p]["CTNStartNo"].ToString().CTNStartNoPrintFormatByBrand(orderID: printData.Rows[p]["OrderID"].ToString());
                                 string barcodeShowText = printData.Rows[p]["ID"].ToString() + printData.Rows[p]["CTNStartNo"].ToString();
                                 string packingNo = "　　　　PackingNo.: " + printData.Rows[p]["ID"];
                                 string spNo = "　　　　SP No.: " + printData.Rows[p]["OrderID"];
@@ -164,7 +165,7 @@ namespace Sci.Production.Packing
                             {
                                 #region New format
                                 #region 準備資料
-                                string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString().PadLeft(6, '^');
+                                string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString().CTNStartNoPrintFormatByBrand(orderID: printData.Rows[i]["OrderID"].ToString());
                                 string barcodeShowText = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString();
                                 string packingNo = "PG#.: " + printData.Rows[i]["ID"];
                                 string spNo = "SP#.: " + printData.Rows[i]["OrderID"];
@@ -204,7 +205,7 @@ namespace Sci.Production.Packing
                             {
                                 #region old format
                                 #region 準備資料
-                                string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString().PadLeft(6, '^');
+                                string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString().CTNStartNoPrintFormatByBrand(orderID: printData.Rows[i]["OrderID"].ToString());
                                 string barcodeShowText = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString();
                                 string packingNo = "　　　　PackingNo.: " + printData.Rows[i]["ID"];
                                 string spNo = "　　　　SP No.: " + printData.Rows[i]["OrderID"];
@@ -311,7 +312,7 @@ namespace Sci.Production.Packing
                 {
                     tables = table[i + 1];
                     #region 準備資料
-                    string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString().PadLeft(6, '^');
+                    string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString().CTNStartNoPrintFormatByBrand(orderID: printData.Rows[i]["OrderID"].ToString());
                     string barcodeSowText = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString();
                     string packingNo = "P/L#.: " + printData.Rows[i]["ID"];
                     string spNo = "SP#.: " + printData.Rows[i]["OrderID"];
@@ -428,7 +429,7 @@ namespace Sci.Production.Packing
                         }
 
                         #region 準備資料
-                        string barcode = printData.Rows[p]["ID"].ToString() + printData.Rows[p]["CTNStartNo"].ToString().PadLeft(6, '^');
+                        string barcode = printData.Rows[p]["ID"].ToString() + printData.Rows[p]["CTNStartNo"].ToString().CTNStartNoPrintFormatByBrand(orderID: printData.Rows[p]["OrderID"].ToString());
                         string packingNo = "P/L#:" + printData.Rows[p]["ID"];
                         string spNo = "SP#:" + printData.Rows[p]["OrderID"];
                         string cartonNo = "CTN:" + printData.Rows[p]["CTNStartNo"] + " OF " + printData.Rows[p]["CtnQty"];
