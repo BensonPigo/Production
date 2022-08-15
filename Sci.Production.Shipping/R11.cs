@@ -862,7 +862,7 @@ as (
 		   , [NoExportCharges] = iif(isnull(g.NoExportCharges,0)=1,'V','')
            , [ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
                             from GMTBooking_ShippingMemo with (nolock)
-                            where ID = g.ID
+                            where ID = g.ID and ShippingExpense = 1
                             order by adddate desc)
     from GMTBooking g WITH (NOLOCK)
     cross join dbo.System s with (nolock)
@@ -1048,7 +1048,7 @@ select  IE = 'Export'
 			, [NoExportCharges] = ''
             , [ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
                             from GMTBooking_ShippingMemo with (nolock)
-                            where ID = p.ID
+                            where ID = p.ID and ShippingExpense = 1
                             order by adddate desc)
 	from #tmpPackingA2B_final p WITH (NOLOCK)
     cross join dbo.System s with (nolock)
@@ -1304,7 +1304,7 @@ select	e.IE
         , '' as BrandID
         , [ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
                             from Export_ShippingMemo with (nolock)
-                            where ID = e.ID
+                            where ID = e.ID and ShippingExpense = 1
                             order by adddate desc)
 from ExportData e with (nolock)
 cross join System s
@@ -1336,7 +1336,7 @@ select	f.IE
         , BrandID = '' 
         , [ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
                             from FtyExport_ShippingMemo with (nolock)
-                            where ID = f.ID
+                            where ID = f.ID and ShippingExpense = 1
                             order by adddate desc)
 from FtyExportData f with (nolock)
 cross join System s

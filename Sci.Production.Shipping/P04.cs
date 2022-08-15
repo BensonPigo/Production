@@ -696,6 +696,15 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
             {
                 this.btnExpenseData.ForeColor = Color.Black;
             }
+
+            if (ShippingMemo.IsDataExists(ShippingMemo.ShippingMemoType.FtyExport_ShippingMemo, this.CurrentMaintain["ID"].ToString()))
+            {
+                this.btnShippingMemo.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnShippingMemo.ForeColor = Color.Black;
+            }
         }
 
         private void SendMail()
@@ -769,6 +778,15 @@ where f.ID = '{this.CurrentMaintain["ID"].ToString()}'
             }
 
             new ShippingMemo(ShippingMemo.ShippingMemoType.FtyExport_ShippingMemo, this.CurrentMaintain["ID"].ToString()).ShowDialog();
+
+            if (ShippingMemo.IsDataExists(ShippingMemo.ShippingMemoType.FtyExport_ShippingMemo, this.CurrentMaintain["ID"].ToString()))
+            {
+                this.btnShippingMemo.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnShippingMemo.ForeColor = Color.Black;
+            }
         }
     }
 }

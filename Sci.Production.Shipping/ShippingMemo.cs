@@ -72,9 +72,22 @@ namespace Sci.Production.Shipping
                 .Text("AddName", header: "Create by", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .DateTime("AddDate", header: "Create Date", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("EditName", header: "Edit by", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .DateTime("Edit Date", header: "EditDate", width: Widths.AnsiChars(15), iseditingreadonly: true);
+                .DateTime("EditDate", header: "Edit Date", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
+            this.gridShippingMemo.Columns["ShippingExpense"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridShippingMemo.Columns["Subject"].DefaultCellStyle.BackColor = Color.Pink;
             this.Query();
+        }
+
+        /// <summary>
+        /// IsDataExists
+        /// </summary>
+        /// <param name="shippingMemoType">shippingMemoType</param>
+        /// <param name="ID">ID</param>
+        /// <returns>bool</returns>
+        public static bool IsDataExists(ShippingMemoType shippingMemoType, string ID)
+        {
+            return MyUtility.Check.Seek($"select 1 from {shippingMemoType} sm with (nolock)where   ID = '{ID}'");
         }
 
         private void Query()
@@ -85,9 +98,9 @@ select  sm.Ukey
         ,[ShippingExpense] = cast(sm.ShippingExpense as int)
         ,sm.Subject
         ,sm.Description
-        ,[AddName] = (select ID + '-' Name from Pass1 with (nolock) where ID = sm.AddName)
+        ,[AddName] = (select ID + '-' + Name from Pass1 with (nolock) where ID = sm.AddName)
         ,sm.AddDate
-        ,[EditName] = (select ID + '-' Name from Pass1 with (nolock) where ID = sm.EditName)
+        ,[EditName] = (select ID + '-' + Name from Pass1 with (nolock) where ID = sm.EditName)
         ,sm.EditDate
 from    {this.shippingMemoType} sm with (nolock)
 where   ID = '{this.id}'
@@ -158,7 +171,7 @@ insert into {this.shippingMemoType}(ID, ShippingExpense, Subject, Description, A
                         break;
                     case DataRowState.Deleted:
                         sqlUpdateShippingMemo += $@"
-delete {this.shippingMemoType} where Ukey = '{dr["UKey"]}'
+delete {this.shippingMemoType} where Ukey = '{dr["UKey", DataRowVersion.Original]}'
 ";
                         break;
                     case DataRowState.Modified:
@@ -193,7 +206,10 @@ where Ukey = '{dr["UKey"]}'
 
         private void BtnAppend_Click(object sender, EventArgs e)
         {
-            ((DataTable)this.gridShippingMemo.DataSource).Rows.Add();
+            DataTable dtSource = (DataTable)this.gridShippingMemo.DataSource;
+            DataRow drNewRow = dtSource.NewRow();
+            drNewRow["ShippingExpense"] = false;
+            dtSource.Rows.Add(drNewRow);
         }
 
         private void BtnDelete_Click(object sender, EventArgs e)

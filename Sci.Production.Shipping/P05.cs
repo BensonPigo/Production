@@ -2526,6 +2526,16 @@ order by min(o.BuyerDelivery)
 
         private bool ControlColor()
         {
+
+            if (ShippingMemo.IsDataExists(ShippingMemo.ShippingMemoType.GMTBooking_ShippingMemo, this.CurrentMaintain["ID"].ToString()))
+            {
+                this.btnShippingMemo.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnShippingMemo.ForeColor = Color.Black;
+            }
+
             string sqlCmd = $@"
 select 1
 from View_ShareExpense se WITH (NOLOCK) 
@@ -2768,6 +2778,15 @@ where ID = '{this.CurrentMaintain["ID"]}'
             }
 
             new ShippingMemo(ShippingMemo.ShippingMemoType.GMTBooking_ShippingMemo, this.CurrentMaintain["ID"].ToString()).ShowDialog();
+
+            if (ShippingMemo.IsDataExists(ShippingMemo.ShippingMemoType.GMTBooking_ShippingMemo, this.CurrentMaintain["ID"].ToString()))
+            {
+                this.btnShippingMemo.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnShippingMemo.ForeColor = Color.Black;
+            }
         }
     }
 }

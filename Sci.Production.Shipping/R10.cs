@@ -2000,7 +2000,7 @@ as (
 		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
         , [ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
                             from FtyExport_ShippingMemo with (nolock)
-                            where ID = f.ID
+                            where ID = f.ID and ShippingExpense = 1
                             order by adddate desc)
     from ShippingAP s WITH (NOLOCK) 
     cross join System with (nolock)
@@ -2043,7 +2043,7 @@ as (
 		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
         , [ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
                             from FtyExport_ShippingMemo with (nolock)
-                            where ID = f.ID
+                            where ID = f.ID and ShippingExpense = 1
                             order by adddate desc)
 	from ShippingAP s WITH (NOLOCK)
     cross join System with (nolock)
@@ -3236,7 +3236,7 @@ GROUP BY a.Origin, a.RgCode, a.Type, a.id, a.OnBoardDate, a.Shipper, a.Foundry, 
 select  b.*
         , [ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
                                     from GMTBooking_ShippingMemo with (nolock)
-                                    where ID = b.ID
+                                    where ID = b.ID and ShippingExpense = 1
                                     order by adddate desc)
 from (
         select  *

@@ -104,7 +104,7 @@ as (
 		,se.AccountID
         ,[ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
                             from Export_ShippingMemo with (nolock)
-                            where ID = e.ID
+                            where ID = e.ID and ShippingExpense = 1
                             order by adddate desc)
     from ShippingAP s WITH (NOLOCK) 
     inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
@@ -193,7 +193,7 @@ FtyExportData as (
 		,se.AccountID 
         ,[ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
                             from FtyExport_ShippingMemo with (nolock)
-                            where ID = fe.ID
+                            where ID = fe.ID and ShippingExpense = 1
                             order by adddate desc)
     from ShippingAP s WITH (NOLOCK) 
     inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
