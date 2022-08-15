@@ -115,6 +115,10 @@ namespace Sci.Production.Packing
 
             #region SQL Command
             string strSqlCmd = $@"
+select ID, Name
+into #mesPass1
+from [ExtendServer].ManufacturingExecution.dbo.Pass1
+
 select [PackingAuditDate] = c.PackingAuditDate
 	,[PackingListID] = c.PackingListID
 	,[CTN] = c.CTNStartNo
@@ -136,7 +140,7 @@ into #tmp
 from CTNPackingAudit c WITH(NOLOCK)
 inner join Orders o WITH(NOLOCK) on c.OrderID = o.ID
 left join Country co WITH(NOLOCK) on o.Dest = co.ID
-left join Pass1 on Pass1.ID = c.AddName
+left join #mesPass1 Pass1 on Pass1.ID = c.AddName
 outer apply (
 	select Qty = SUM(QtyPerCTN)
 	from PackingList_Detail pd WITH(NOLOCK)
@@ -166,6 +170,8 @@ select cd.ID,cd.PackingReasonID,pr.Description,cd.Qty
 from CTNPackingAudit_Detail cd
 inner join #tmp t on t.ID = cd.ID
 left join PackingReason pr on cd.PackingReasonID = pr.ID and pr.Type = 'PA'
+
+drop table #mesPass1
 ";
             #endregion
 
