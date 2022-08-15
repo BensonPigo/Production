@@ -600,7 +600,7 @@ tmpFilterZone as (
             {
                 sqlCmd.Append(string.Format(
                     @"
-    inner join Style_TmsCost st on t.StyleUkey = st.StyleUkey
+    inner join Style_TmsCost st WITH (NOLOCK) on t.StyleUkey = st.StyleUkey
     where st.ArtworkTypeID = '{0}' AND (st.Qty>0 or st.TMS>0 and st.Price>0) ", this.subProcess));
             }
 
@@ -1741,7 +1741,7 @@ With SubProcess  as (
             , ColumnN = 'TTL_' + ColumnN
             , ColumnSeq
             , rno = (ROW_NUMBER() OVER (ORDER BY ID, ColumnSeq)) + 1000
-            from SubProcess 
+            from SubProcess WITH (NOLOCK)
             where ID <> 'PrintSubCon' and ColumnN <> 'Printing LT' and ColumnN <> 'InkType/color/size'
 )
 select  ID
@@ -1755,7 +1755,7 @@ select  ID
         , rno = (ROW_NUMBER() OVER (ORDER BY a.rno)) + {2}
 from (
     select * 
-    from SubProcess
+    from SubProcess WITH (NOLOCK)
 
     union all
     SELECT  ID = 'TTLTMS'
@@ -1788,7 +1788,7 @@ from (
                     try
                     {
                         string wherenoRestrictOrdersDelivery = string.Empty;
-                        MyUtility.Check.Seek($"select NoRestrictOrdersDelivery from system", out DataRow dr);
+                        MyUtility.Check.Seek($"select NoRestrictOrdersDelivery from system WITH (NOLOCK)", out DataRow dr);
                         if (!MyUtility.Convert.GetBool(dr["NoRestrictOrdersDelivery"]))
                         {
                             wherenoRestrictOrdersDelivery = @"
@@ -1976,14 +1976,14 @@ outer apply(select  PUnit=iif('{this.checkByCPU.Checked}'='true' and at.Producti
 outer apply(
 	select Abb = Stuff((
 			select distinct concat( ',', l.Abb)   
-			from ArtworkPO ap
-			inner join ArtworkPO_Detail apd on ap.ID = apd.ID
+			from ArtworkPO ap WITH (NOLOCK)
+			inner join ArtworkPO_Detail apd WITH (NOLOCK) on ap.ID = apd.ID
 			left join LocalSupp l on ap.LocalSuppID = l.ID
 			where ap.ArtworkTypeID = 'PRINTING'
 			and apd.OrderID = ot.ID
 		FOR XML PATH('')),1,1,'') 
 )ap
-where exists (select id from OrderID where ot.ID = OrderID.ID )");
+where exists (select id from OrderID WITH (NOLOCK) where ot.ID = OrderID.ID )");
                         MyUtility.Tool.ProcessWithDatatable(
                             this.subprocessColumnName,
                             "ID,Seq,ArtworkUnit,ProductionUnit,SystemType,FakeID,ColumnN,ColumnSeq,rno",
@@ -2005,18 +2005,18 @@ SELECT distinct
 	,[InkTypecolorsize] = concat(oa.InkType,'/',oa.Colors,' ','/',IIF(s.SmallLogo = 1,'Small logo','Big logo'))
 	,PrintingLT = cast(plt.LeadTime + plt.AddLeadTime as float)
 into #tmp2
-FROM Order_Artwork oa
-outer apply(select SmallLogo = iif(oa.Width >= (select SmallLogoCM from system) or oa.Length >= (select SmallLogoCM from system), 0, 1) )s
-inner join orders o on o.id = oa.id
-outer apply(select tmpRTL = IIF(o.Cpu = 0, 0, s.SewlineAvgCPU  / o.Cpu)  from System s)tr
+FROM Order_Artwork oa WITH (NOLOCK)
+outer apply(select SmallLogo = iif(oa.Width >= (select SmallLogoCM from system WITH (NOLOCK)) or oa.Length >= (select SmallLogoCM from system WITH (NOLOCK)), 0, 1) )s
+inner join orders o WITH (NOLOCK) on o.id = oa.id
+outer apply(select tmpRTL = IIF(o.Cpu = 0, 0, s.SewlineAvgCPU  / o.Cpu)  from System s WITH (NOLOCK))tr
 outer apply(select RTLQty = iif(o.Qty < tmpRTL, o.Qty, tmpRTL))r
 outer apply(select Colors = iif(isnull(oa.Colors,'')='', 0, oa.Colors))c
-outer apply(select ex = iif(exists(select 1 from PrintLeadTime plt where plt.InkType = oa.InkType), 1, 0))e
-outer apply(select * from PrintLeadTime plt where plt.InkType = oa.InkType and plt.SmallLogo = s.SmallLogo 
+outer apply(select ex = iif(exists(select 1 from PrintLeadTime plt WITH (NOLOCK) where plt.InkType = oa.InkType), 1, 0))e
+outer apply(select * from PrintLeadTime plt WITH (NOLOCK) where plt.InkType = oa.InkType and plt.SmallLogo = s.SmallLogo 
 	and r.RTLQty between plt.RTLQtyLowerBound and plt.RTLQtyUpperBound
 	and c.Colors between plt.ColorsLowerBound and plt.ColorsUpperBound
 )pEx
-outer apply(select * from PrintLeadTime plt where plt.SmallLogo = s.SmallLogo and plt.IsDefault = 1
+outer apply(select * from PrintLeadTime plt WITH (NOLOCK) where plt.SmallLogo = s.SmallLogo and plt.IsDefault = 1
 	and r.RTLQty between plt.RTLQtyLowerBound and plt.RTLQtyUpperBound
 	and c.Colors between plt.ColorsLowerBound and plt.ColorsUpperBound
 )pNEx
