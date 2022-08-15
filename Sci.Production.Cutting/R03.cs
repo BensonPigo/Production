@@ -174,8 +174,8 @@ inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
 inner join Cutting c WITH (NOLOCK) on c.ID = o.CuttingSP
 left join fabric f WITH (NOLOCK) on f.SCIRefno = wo.SCIRefno
 left join PO_Supp_Detail psd with(nolock) on psd.id = wo.id and psd.seq1 = wo.seq1 and psd.seq2 = wo.seq2
-left join Cutting_WIPExcludePatternPanel wop  with(nolock) on wo.id=wop.id and wo.FabricCombo=wop.PatternPanel
-outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa where aa.WorkOrderUkey = wo.Ukey)acc
+left join Cutting_WIPExcludePatternPanel wop with(nolock) on wo.id=wop.id and wo.FabricCombo=wop.PatternPanel
+outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa WITH (NOLOCK) where aa.WorkOrderUkey = wo.Ukey)acc
 outer apply(
     Select MincoDate = iif(sum(cod.Layer) = wo.Layer, Max(co.cdate),null)
 	From cuttingoutput co WITH (NOLOCK) 
@@ -200,7 +200,7 @@ outer apply(
 outer apply(
 	select SewingCell = (
 		select distinct concat('/',SewingCell)
-		from SewingLine,SewingSchedule WITH (NOLOCK) 
+		from SewingLine WITH (NOLOCK),SewingSchedule WITH (NOLOCK) 
 		where SewingSchedule.OrderID = wo.OrderID
 		and SewingLine.ID = SewingSchedule.SewingLineID 
 		and SewingLine.FactoryID = SewingSchedule.FactoryID
@@ -263,7 +263,7 @@ outer apply(
 ) as fi
 outer apply(
 	SELECT TOP 1 SizeGroup=IIF(ISNULL(SizeGroup,'')='','N',SizeGroup)
-	FROM Order_SizeCode 
+	FROM Order_SizeCode WITH (NOLOCK)
 	WHERE ID = o.POID and SizeCode IN 
 	(
 		select distinct wd.SizeCode
@@ -398,15 +398,15 @@ outer apply(
 	select distinct concat('+',s.data)
 	from(
 		select distinct pg.Annotation
-		from Pattern_GL_LectraCode pgl
-		inner join Pattern_GL pg on pgl.PatternUKEY = pg.PatternUKEY
-									and pgl.seq = pg.SEQ
-									and pg.Annotation is not null
-									and pg.Annotation!=''
+		from Pattern_GL_LectraCode pgl WITH (NOLOCK)
+		inner join Pattern_GL pg WITH (NOLOCK) on pgl.PatternUKEY = pg.PatternUKEY
+									            and pgl.seq = pg.SEQ
+									            and pg.Annotation is not null
+									            and pg.Annotation!=''
 		where pgl.PatternUKEY = t.patternUKey and pgl.FabricPanelCode = t.FabricPanelCode
 	)a
 	outer apply(select data=RTRIM(LTRIM(data)) from SplitString(dbo.[RemoveNumericCharacters](a.Annotation),'+'))s
-	where exists(select 1 from SubProcess where id = s.data)
+	where exists(select 1 from SubProcess WITH (NOLOCK) where id = s.data)
 	for xml path(''))
 	,1,1,'')
 )Artwork
@@ -426,10 +426,10 @@ outer apply(
 )cl
 outer apply(
 	SELECT top 1 OBE.Width
-	FROM Order_BOF OB 
-	INNER JOIN Order_BOF_Expend OBE ON OBE.Order_BOFUkey = OB.Ukey
-	INNER JOIN PO_Supp PS ON PS.ID = OB.Id --AND PS.SuppID = OB.SuppID
-	INNER JOIN PO_Supp_Detail PSD ON PSD.ID= OB.Id AND PSD.RefNo = OB.Refno AND PSD.ColorID = OBE.ColorId --and ps.SEQ1 = psd.SEQ1
+	FROM Order_BOF OB WITH (NOLOCK)
+	INNER JOIN Order_BOF_Expend OBE WITH (NOLOCK) ON OBE.Order_BOFUkey = OB.Ukey
+	INNER JOIN PO_Supp PS WITH (NOLOCK) ON PS.ID = OB.Id --AND PS.SuppID = OB.SuppID
+	INNER JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID= OB.Id AND PSD.RefNo = OB.Refno AND PSD.ColorID = OBE.ColorId --and ps.SEQ1 = psd.SEQ1
 	WHERE PSD.ID =t.[Master SP#] AND PSD.SEQ1=t.Seq1 AND PSD.SEQ2=t.SEQ2
 )w
 
