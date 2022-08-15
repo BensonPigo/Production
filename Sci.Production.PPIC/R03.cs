@@ -354,6 +354,7 @@ with tmpOrders as (
             {seperCmd}
 	        , [SewingMtlComplt]  = isnull(CompltSP.SewingMtlComplt, '')
 	        , [PackingMtlComplt] = isnull(CompltSP.PackingMtlComplt, '')
+            , o.OrganicCotton
     from Orders o WITH (NOLOCK) 
     left join style s WITH (NOLOCK) on o.styleukey = s.ukey
 	left join DropDownList d ON o.CtnType=d.ID AND d.Type='PackingMethod'
@@ -745,6 +746,7 @@ tmpFilterZone as (
             , [StyleSpecialMark] = s.SpecialMark
             , [SewingMtlComplt]  = isnull(CompltSP.SewingMtlComplt, '')
             , [PackingMtlComplt] = isnull(CompltSP.PackingMtlComplt, '')
+            , o.OrganicCotton
 "
             + seperCmd +
     @"from Orders o  WITH (NOLOCK) 
@@ -941,6 +943,7 @@ group by pd.OrderID, pd.OrderShipmodeSeq
             , t.StyleSpecialMark
             , t.SewingMtlComplt
             , t.PackingMtlComplt
+            , t.OrganicCotton
     into #tmpFilterSeperate
     from #tmpListPoCombo t
     inner join Order_QtyShip oq WITH(NOLOCK) on t.ID = oq.Id and t.Seq = oq.Seq
@@ -1229,6 +1232,7 @@ select  t.ID
         , t.VasShasCutOffDate
         , t.SewingMtlComplt
         , t.PackingMtlComplt
+        , [OrganicCotton] = iif(t.OrganicCotton = 1, 'Y', 'N')
 from #tmpFilterSeperate t
 left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
@@ -1552,6 +1556,7 @@ select distinct
         , t.VasShasCutOffDate
         , t.SewingMtlComplt
         , t.PackingMtlComplt
+        , [OrganicCotton] = iif(t.OrganicCotton = 1, 'Y', 'N')
 from #tmpListPoCombo t
 left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
@@ -2069,7 +2074,7 @@ drop table #tmp,#tmp2,#tmp3
 
         // 最後一欄 , 有新增欄位要改這
         // 注意!新增欄位也要新增到StandardReport_Detail(Customized)。
-        private int lastColA = 152;
+        private int lastColA = 153;
 
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -2335,6 +2340,7 @@ drop table #tmp,#tmp2,#tmp3
                 objArray[intRowsStart, 149] = dr["DryRoomRecdDate"];
                 objArray[intRowsStart, 150] = dr["DryRoomTransDate"];
                 objArray[intRowsStart, 151] = dr["MdRoomScanDate"];
+                objArray[intRowsStart, 152] = dr["OrganicCotton"];
                 #endregion
 
                 if (this.artwork || this.pap)

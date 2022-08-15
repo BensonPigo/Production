@@ -800,7 +800,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         {
             base.ClickSaveAfter();
             #region ISP20200757 資料交換 - Sunrise
-            if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
+            if (PMSUtilityAutomation.IsSunrise_FinishingProcessesEnable)
             {
                 Task.Run(() => new Sunrise_FinishingProcesses().SentOrdersToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), "Orders,Order_QtyShip,Order_SizeCode,Order_Qty"))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());

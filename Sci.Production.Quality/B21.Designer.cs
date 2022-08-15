@@ -34,7 +34,6 @@
             this.txtDefectcode = new Sci.Win.UI.TextBox();
             this.txtDefectType = new Sci.Win.UI.TextBox();
             this.editDescription = new Sci.Win.UI.EditBox();
-            this.editLocalDesc = new Sci.Win.UI.EditBox();
             this.labLocalDesc = new Sci.Win.UI.Label();
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.label1 = new Sci.Win.UI.Label();
@@ -43,6 +42,11 @@
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.label2 = new Sci.Win.UI.Label();
             this.displayPivot88DefectCodeID = new Sci.Win.UI.DisplayBox();
+            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label4 = new Sci.Win.UI.Label();
+            this.editLocalDesc = new Sci.Win.UI.EditBox();
+            this.editBox1 = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -53,10 +57,14 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(831, 441);
+            this.detail.Size = new System.Drawing.Size(831, 525);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.editBox1);
+            this.detailcont.Controls.Add(this.textBox1);
+            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.displayPivot88DefectCodeID);
             this.detailcont.Controls.Add(this.label2);
@@ -72,12 +80,12 @@
             this.detailcont.Controls.Add(this.labelDefectcode);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelDefectType);
-            this.detailcont.Size = new System.Drawing.Size(831, 403);
+            this.detailcont.Size = new System.Drawing.Size(831, 487);
             this.detailcont.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Detailcont_MouseDown);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 403);
+            this.detailbtm.Location = new System.Drawing.Point(0, 487);
             this.detailbtm.Size = new System.Drawing.Size(831, 38);
             // 
             // browse
@@ -86,7 +94,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(839, 470);
+            this.tabs.Size = new System.Drawing.Size(839, 554);
             // 
             // createby
             // 
@@ -103,7 +111,7 @@
             // 
             // labelDefectcode
             // 
-            this.labelDefectcode.Location = new System.Drawing.Point(58, 66);
+            this.labelDefectcode.Location = new System.Drawing.Point(58, 17);
             this.labelDefectcode.Name = "labelDefectcode";
             this.labelDefectcode.Size = new System.Drawing.Size(133, 23);
             this.labelDefectcode.TabIndex = 2;
@@ -111,7 +119,7 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Location = new System.Drawing.Point(58, 132);
+            this.labelDescription.Location = new System.Drawing.Point(58, 79);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(133, 23);
             this.labelDescription.TabIndex = 3;
@@ -119,7 +127,7 @@
             // 
             // labelDefectType
             // 
-            this.labelDefectType.Location = new System.Drawing.Point(58, 99);
+            this.labelDefectType.Location = new System.Drawing.Point(58, 48);
             this.labelDefectType.Name = "labelDefectType";
             this.labelDefectType.Size = new System.Drawing.Size(133, 23);
             this.labelDefectType.TabIndex = 4;
@@ -131,7 +139,7 @@
             this.txtDefectcode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
             this.txtDefectcode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtDefectcode.IsSupportEditMode = false;
-            this.txtDefectcode.Location = new System.Drawing.Point(194, 66);
+            this.txtDefectcode.Location = new System.Drawing.Point(194, 17);
             this.txtDefectcode.Name = "txtDefectcode";
             this.txtDefectcode.ReadOnly = true;
             this.txtDefectcode.Size = new System.Drawing.Size(135, 23);
@@ -145,7 +153,7 @@
             this.txtDefectType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "GarmentDefectTypeID", true));
             this.txtDefectType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtDefectType.IsSupportEditMode = false;
-            this.txtDefectType.Location = new System.Drawing.Point(194, 99);
+            this.txtDefectType.Location = new System.Drawing.Point(194, 48);
             this.txtDefectType.Name = "txtDefectType";
             this.txtDefectType.ReadOnly = true;
             this.txtDefectType.Size = new System.Drawing.Size(135, 23);
@@ -158,7 +166,7 @@
             this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editDescription.IsSupportEditMode = false;
-            this.editDescription.Location = new System.Drawing.Point(194, 132);
+            this.editDescription.Location = new System.Drawing.Point(194, 79);
             this.editDescription.Multiline = true;
             this.editDescription.Name = "editDescription";
             this.editDescription.ReadOnly = true;
@@ -166,20 +174,9 @@
             this.editDescription.TabIndex = 2;
             this.editDescription.Leave += new System.EventHandler(this.EditDescription_Leave);
             // 
-            // editLocalDesc
-            // 
-            this.editLocalDesc.BackColor = System.Drawing.Color.White;
-            this.editLocalDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LocalDescription", true));
-            this.editLocalDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editLocalDesc.Location = new System.Drawing.Point(194, 239);
-            this.editLocalDesc.Multiline = true;
-            this.editLocalDesc.Name = "editLocalDesc";
-            this.editLocalDesc.Size = new System.Drawing.Size(460, 86);
-            this.editLocalDesc.TabIndex = 8;
-            // 
             // labLocalDesc
             // 
-            this.labLocalDesc.Location = new System.Drawing.Point(58, 239);
+            this.labLocalDesc.Location = new System.Drawing.Point(58, 184);
             this.labLocalDesc.Name = "labLocalDesc";
             this.labLocalDesc.Size = new System.Drawing.Size(133, 23);
             this.labLocalDesc.TabIndex = 9;
@@ -191,7 +188,7 @@
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkJunk.IsSupportEditMode = false;
-            this.checkJunk.Location = new System.Drawing.Point(344, 68);
+            this.checkJunk.Location = new System.Drawing.Point(344, 19);
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.ReadOnly = true;
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
@@ -201,7 +198,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(58, 335);
+            this.label1.Location = new System.Drawing.Point(58, 278);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(133, 23);
             this.label1.TabIndex = 11;
@@ -212,7 +209,7 @@
             this.displayHangerFailCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayHangerFailCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ReworkTotalFailCode", true));
             this.displayHangerFailCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayHangerFailCode.Location = new System.Drawing.Point(194, 335);
+            this.displayHangerFailCode.Location = new System.Drawing.Point(194, 278);
             this.displayHangerFailCode.Name = "displayHangerFailCode";
             this.displayHangerFailCode.Size = new System.Drawing.Size(135, 23);
             this.displayHangerFailCode.TabIndex = 12;
@@ -223,8 +220,7 @@
             this.chk_isCriticalDefect.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsCriticalDefect", true));
             this.chk_isCriticalDefect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chk_isCriticalDefect.IsSupportEditMode = false;
-            this.chk_isCriticalDefect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chk_isCriticalDefect.Location = new System.Drawing.Point(344, 335);
+            this.chk_isCriticalDefect.Location = new System.Drawing.Point(344, 278);
             this.chk_isCriticalDefect.Name = "chk_isCriticalDefect";
             this.chk_isCriticalDefect.ReadOnly = true;
             this.chk_isCriticalDefect.Size = new System.Drawing.Size(128, 21);
@@ -238,16 +234,17 @@
             this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsCFA", true));
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkBox1.IsSupportEditMode = false;
-            this.checkBox1.Location = new System.Drawing.Point(478, 335);
+            this.checkBox1.Location = new System.Drawing.Point(478, 278);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.ReadOnly = true;
             this.checkBox1.Size = new System.Drawing.Size(111, 21);
             this.checkBox1.TabIndex = 15;
             this.checkBox1.Text = "For CFA Only";
             this.checkBox1.UseVisualStyleBackColor = true;
+            // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(58, 368);
+            this.label2.Location = new System.Drawing.Point(58, 309);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(133, 23);
             this.label2.TabIndex = 14;
@@ -258,14 +255,64 @@
             this.displayPivot88DefectCodeID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayPivot88DefectCodeID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Pivot88DefectCodeID", true));
             this.displayPivot88DefectCodeID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayPivot88DefectCodeID.Location = new System.Drawing.Point(194, 368);
+            this.displayPivot88DefectCodeID.Location = new System.Drawing.Point(194, 309);
             this.displayPivot88DefectCodeID.Name = "displayPivot88DefectCodeID";
             this.displayPivot88DefectCodeID.Size = new System.Drawing.Size(135, 23);
             this.displayPivot88DefectCodeID.TabIndex = 15;
             // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.Color.White;
+            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NikeDefectCodeID", true));
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox1.Location = new System.Drawing.Point(194, 340);
+            this.textBox1.MaxLength = 5;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(135, 23);
+            this.textBox1.TabIndex = 16;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(58, 371);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(133, 23);
+            this.label3.TabIndex = 18;
+            this.label3.Text = "Nike Desc";
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(58, 340);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(133, 23);
+            this.label4.TabIndex = 19;
+            this.label4.Text = "Nike Defect Code";
+            // 
+            // editLocalDesc
+            // 
+            this.editLocalDesc.BackColor = System.Drawing.Color.White;
+            this.editLocalDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LocalDescription", true));
+            this.editLocalDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editLocalDesc.Location = new System.Drawing.Point(194, 184);
+            this.editLocalDesc.Multiline = true;
+            this.editLocalDesc.Name = "editLocalDesc";
+            this.editLocalDesc.Size = new System.Drawing.Size(460, 86);
+            this.editLocalDesc.TabIndex = 8;
+            // 
+            // editBox1
+            // 
+            this.editBox1.BackColor = System.Drawing.Color.White;
+            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NikeDefectCodeDesc", true));
+            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editBox1.Location = new System.Drawing.Point(194, 369);
+            this.editBox1.MaxLength = 100;
+            this.editBox1.Multiline = true;
+            this.editBox1.Name = "editBox1";
+            this.editBox1.Size = new System.Drawing.Size(460, 86);
+            this.editBox1.TabIndex = 20;
+            // 
             // B21
             // 
-            this.ClientSize = new System.Drawing.Size(839, 503);
+            this.ClientSize = new System.Drawing.Size(839, 587);
             this.DefaultControl = "txtDefectcode";
             this.DefaultControlForEdit = "editDescription";
             this.DefaultOrder = "GarmentDefectTypeID,Seq";
@@ -300,7 +347,6 @@
         private Win.UI.TextBox txtDefectType;
         private Win.UI.TextBox txtDefectcode;
         private Win.UI.EditBox editDescription;
-        private Win.UI.EditBox editLocalDesc;
         private Win.UI.Label labLocalDesc;
         private Win.UI.CheckBox checkJunk;
         private Win.UI.DisplayBox displayHangerFailCode;
@@ -309,5 +355,10 @@
         private Win.UI.CheckBox checkBox1;
         private Win.UI.DisplayBox displayPivot88DefectCodeID;
         private Win.UI.Label label2;
+        private Win.UI.EditBox editBox1;
+        private Win.UI.TextBox textBox1;
+        private Win.UI.Label label3;
+        private Win.UI.Label label4;
+        private Win.UI.EditBox editLocalDesc;
     }
 }

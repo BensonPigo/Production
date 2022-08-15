@@ -59,6 +59,15 @@ namespace Sci.Production.Shipping
                 this.chkImportChange.ReadOnly = true;
             }
 
+            if (this.EditMode)
+            {
+                this.chkExportChange.ReadOnly = !this.isFromProduceFty;
+            }
+            else
+            {
+                this.chkExportChange.ReadOnly = true;
+            }
+
             // TPE Status
             if (!MyUtility.Check.Empty(this.CurrentMaintain["Junk"]))
             {
