@@ -90,9 +90,8 @@ BEGIN
 	Where ISsci = 1 /* And Factory.Junk = 0 */ And Artworktype.ReportDropdown = 1 
 	And Artworktype.ID = @ArtWorkType
 	And (@MDivisionID = '' or Factory.MDivisionID = @MDivisionID)
-	And (@Fty = '' or Factory.ID = @Fty )
+	And (@Fty = '' or Factory.FtyZone = @Fty )
 	And (@Zone = '' or Factory.Zone = @Zone)
-	and Factory.IsProduceFty = 1
 
 	---------------------------------------------------------------------------------------------------------------------------------
 	--Order
@@ -111,7 +110,6 @@ BEGIN
 	and Orders.Qty > 0  And Orders.Category in ('B','S') 
 	AND @HasOrders = 1
 	And localorder = 0
-	and Factory.IsProduceFty = 1
 	and 
 	(
 		(
@@ -199,7 +197,6 @@ BEGIN
 	AND @HasFtyLocalOrder = 1
 	AND Orders.LocalOrder = 1 -- PMS此處才加, 當地訂單在trade是記錄在Table:FactoryOrder
 	AND Orders.IsForecast = 0
-	and Factory.IsProduceFty = 1
 	and 
 	(
 		(
@@ -293,7 +290,6 @@ BEGIN
 	AND @HasForecast = 1
 	And localorder = 0
 	AND Orders.IsForecast = 1 -- PMS此處才加, 預估單 在trade是記錄在Table:FactoryOrder
-	and Factory.IsProduceFty = 1
 	and 
 	(
 		(
@@ -392,9 +388,8 @@ BEGIN
 		inner join Country on Factory.CountryID = Country.ID
 		where Type in ('B','S') and isnull(FactorySort,'') <> ''		
 		And (@MDivisionID = '' or Factory.MDivisionID = @MDivisionID)
-		And (@Fty = '' or Factory.ID = @Fty) -- PMS這才有
+		And (@Fty = '' or Factory.FtyZone = @Fty) -- PMS這才有
 		And (@Zone = '' or Factory.Zone = @Zone)
-		AND Factory.IsProduceFty = 1
 		
 		select FactoryID = Factory.LoadingFactoryGroup, BrandID
 		into #tmpFtyData1
@@ -543,9 +538,8 @@ BEGIN
 		inner join Country on Factory.CountryID = Country.ID
 		where Type in ('B','S') and isnull(FactorySort,'') <> ''		
 		And (@MDivisionID = '' or Factory.MDivisionID = @MDivisionID)
-		And (@Fty = '' or Factory.ID = @Fty) -- PMS這才有
+		And (@Fty = '' or Factory.FtyZone = @Fty) -- PMS這才有
 		And (@Zone = '' or Factory.Zone = @Zone)		
-		AND Factory.IsProduceFty = 1
 		
 		select FactoryID = Factory.LoadingFactoryGroup, BrandID
 		into #tmpFtyData2
