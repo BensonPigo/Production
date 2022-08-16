@@ -205,6 +205,7 @@ where ed.ID = '{0}'
             base.ClickNewAfter();
             this.CurrentMaintain["Type"] = 1;
             this.CurrentMaintain["Handle"] = Env.User.UserID;
+            this.btnShippingMemo.Enabled = false;
         }
 
         /// <inheritdoc/>
@@ -695,6 +696,15 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
             {
                 this.btnExpenseData.ForeColor = Color.Black;
             }
+
+            if (ShippingMemo.IsDataExists(ShippingMemo.ShippingMemoType.FtyExport_ShippingMemo, this.CurrentMaintain["ID"].ToString()))
+            {
+                this.btnShippingMemo.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnShippingMemo.ForeColor = Color.Black;
+            }
         }
 
         private void SendMail()
@@ -758,6 +768,25 @@ where f.ID = '{this.CurrentMaintain["ID"].ToString()}'
         private void Button1_Click(object sender, EventArgs e)
         {
             this.SendMail();
+        }
+
+        private void BtnShippingMemo_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
+            {
+                return;
+            }
+
+            new ShippingMemo(ShippingMemo.ShippingMemoType.FtyExport_ShippingMemo, this.CurrentMaintain["ID"].ToString()).ShowDialog();
+
+            if (ShippingMemo.IsDataExists(ShippingMemo.ShippingMemoType.FtyExport_ShippingMemo, this.CurrentMaintain["ID"].ToString()))
+            {
+                this.btnShippingMemo.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnShippingMemo.ForeColor = Color.Black;
+            }
         }
     }
 }
