@@ -1,6 +1,10 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Prg;
 using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Transactions;
 using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
@@ -39,18 +43,39 @@ namespace Sci.Production.Sewing
             // 12分鐘  比照排程執行時間
             DBProxy.Current.DefaultTimeout = 7200;
             this.ShowWaitMessage("Update processing....");
-            DualResult result = DBProxy.Current.Execute(null, sqlcmd);
-            this.HideWaitMessage();
+            DataTable dtSewingOutput;
+            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.FromSeconds(7200)))
+            using (sqlConn)
+            {
+                DualResult result = DBProxy.Current.SelectByConn(sqlConn, sqlcmd, out dtSewingOutput);
+                if (!result)
+                {
+                    transactionScope.Dispose();
+                    this.HideWaitMessage();
+                    this.ShowErr(result);
+                    return;
+                }
 
-            if (!result)
-            {
-                MyUtility.Msg.WarningBox(result.Messages.ToString());
-                return;
+                foreach (DataRow dr in dtSewingOutput.Rows)
+                {
+                    // 減一天是為了可以跑當天資料
+                    DateTime? startOutputDate = MyUtility.Convert.GetDate(dr["OutputDate"]).GetValueOrDefault(this.dateBoxUpdateDate.Value.GetValueOrDefault()).AddDays(-1);
+                    result = SewingPrg.ReCheckInlineCategory(dr["SewingLineID"].ToString(), dr["Team"].ToString(), dr["FactoryID"].ToString(), startOutputDate, sqlConn);
+                    if (!result)
+                    {
+                        transactionScope.Dispose();
+                        this.HideWaitMessage();
+                        this.ShowErr(result);
+                        return;
+                    }
+                }
+
+                transactionScope.Complete();
             }
-            else
-            {
-                MyUtility.Msg.InfoBox("Updated successfully.");
-            }
+
+            this.HideWaitMessage();
+            MyUtility.Msg.InfoBox("Updated successfully.");
         }
     }
 }

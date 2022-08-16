@@ -170,7 +170,7 @@ and SunriseNid != 0
 
             if (this.DetailDatas.Count > 0)
             {
-                KeyValuePair<string, DualResult> resultInlineCategory = this.GetInlineCategory(this.CurrentMaintain, this.DetailDatas.CopyToDataTable());
+                KeyValuePair<string, DualResult> resultInlineCategory = SewingPrg.GetInlineCategory(this.CurrentMaintain, this.DetailDatas.CopyToDataTable());
                 if (!resultInlineCategory.Value)
                 {
                     this.ShowErr(resultInlineCategory.Value);
@@ -572,7 +572,7 @@ where StyleUkey = {0}",
 
                             dr.EndEdit();
                             this.CreateSubDetailDatas(dr);
-                            KeyValuePair<string, DualResult> resultInlineCategory = this.GetInlineCategory(this.CurrentMaintain, this.DetailDatas.CopyToDataTable());
+                            KeyValuePair<string, DualResult> resultInlineCategory = SewingPrg.GetInlineCategory(this.CurrentMaintain, this.DetailDatas.CopyToDataTable());
                             if (!resultInlineCategory.Value)
                             {
                                 this.ShowErr(resultInlineCategory.Value);
@@ -2012,7 +2012,7 @@ Type B= Cancel order selected as Buyback, formula: this output qty = [Cancel Ord
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["SewingReasonIDForTypeIC"]))
             {
-                KeyValuePair<string, DualResult> resultInlineCategory = this.GetInlineCategory(this.CurrentMaintain, this.DetailDatas.CopyToDataTable());
+                KeyValuePair<string, DualResult> resultInlineCategory = SewingPrg.GetInlineCategory(this.CurrentMaintain, this.DetailDatas.CopyToDataTable());
                 if (!resultInlineCategory.Value)
                 {
                     return resultInlineCategory.Value;
@@ -2151,85 +2151,11 @@ select id,GarmentDefectCodeID,GarmentDefectTypeID,qty from #tmp";
 
             if (isDetailChanged)
             {
-                string sqlGetReRunData = $@"
---會影響的只有30天內的資料
-select  top 30  so.ID, so.SewingLineID, so.Team, so.FactoryID, so.OutputDate, so.SewingReasonIDForTypeIC
-into    #tmpMain
-from    SewingOutput so with (nolock)
-where   so.SewingLineID = '{this.CurrentMaintain["SewingLineID"]}' and
-        so.Team = '{this.CurrentMaintain["Team"]}' and
-        so.FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
-        so.OutputDate > @OutputDate
-order by so.OutputDate
-
-select  *
-from    #tmpMain
-order by OutputDate
-
-select  distinct tm.ID, o.StyleUkey, [OrderCategory] = o.Category
-from    #tmpMain tm
-inner join SewingOutput_Detail sod with (nolock) on sod.ID = tm.ID
-inner join Orders o with (nolock) on o.ID = sod.OrderID
-
-drop table #tmpMain
-
-";
-                DataTable[] dtReRuns;
-                List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@OutputDate", this.CurrentMaintain["OutputDate"]) };
-                result = DBProxy.Current.Select(null, sqlGetReRunData, listPar, out dtReRuns);
-
+                result = SewingPrg.ReCheckInlineCategory(this.CurrentMaintain["SewingLineID"].ToString(), this.CurrentMaintain["Team"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]));
                 if (!result)
                 {
                     return result;
                 }
-
-                DataTable dtMain = dtReRuns[0];
-                int countChangeOver = 0;
-                foreach (DataRow drMain in dtMain.Rows)
-                {
-                    DataTable dtDetail = dtReRuns[1].AsEnumerable().Where(s => s["ID"].ToString() == drMain["ID"].ToString()).TryCopyToDataTable(dtReRuns[1]);
-                    if (dtDetail.Rows.Count == 0)
-                    {
-                        continue;
-                    }
-
-                    KeyValuePair<string, DualResult> inlineCategoryResult = this.GetInlineCategory(drMain, dtDetail);
-
-                    if (!inlineCategoryResult.Value)
-                    {
-                        return inlineCategoryResult.Value;
-                    }
-
-                    if (inlineCategoryResult.Key == "00001")
-                    {
-                        countChangeOver++;
-                    }
-                    else
-                    {
-                        countChangeOver = 0;
-                    }
-
-                    if (drMain["SewingReasonIDForTypeIC"].ToString() == inlineCategoryResult.Key)
-                    {
-                        continue;
-                    }
-
-                    string updateSewingOutput = $@"
-update  SewingOutput set SewingReasonIDForTypeIC = '{inlineCategoryResult.Key}' where ID = '{drMain["ID"]}'
-";
-                    result = DBProxy.Current.Execute(null, updateSewingOutput);
-                    if (!result)
-                    {
-                        return result;
-                    }
-
-                    // 如果連續4天都是ChangeOver，表示後面的天數沒有被這次調整影響，所以就不用重算
-                    if (countChangeOver == 4)
-                    {
-                        break;
-                    }
-                }
-
             }
             #endregion
             return base.ClickSavePost();
@@ -4794,181 +4720,6 @@ end
             }
 
             this.RenewData();
-        }
-
-        private KeyValuePair<string, DualResult> GetInlineCategory(DataRow drMain, DataTable dtDetail)
-        {
-            if (dtDetail == null || dtDetail.Rows.Count == 0)
-            {
-                return new KeyValuePair<string, DualResult>(string.Empty, new DualResult(false, "Get InlineCategory no Detail data"));
-            }
-
-            foreach (DataRow drDetail in dtDetail.Rows)
-            {
-                if (!MyUtility.Check.Empty(drDetail["StyleUkey"]))
-                {
-                    continue;
-                }
-
-                DataRow drOrder;
-                bool isExists = MyUtility.Check.Seek($"select StyleUkey, [OrderCategory] = Category from Orders where ID = '{drDetail["OrderID"]}'", out drOrder);
-
-                if (isExists)
-                {
-                    drDetail["StyleUkey"] = drOrder["StyleUkey"];
-                    drDetail["OrderCategory"] = drOrder["OrderCategory"];
-                }
-            }
-
-            // 優先度1 sample單
-            bool hasSample = dtDetail.AsEnumerable().Any(s => s.RowState != DataRowState.Deleted && s["OrderCategory"].ToString() == "S");
-            if (hasSample)
-            {
-                return new KeyValuePair<string, DualResult>("00005", new DualResult(true));
-            }
-
-            int maxContinusDays = 0;
-            foreach (long styleUkey in dtDetail.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).Select(s => MyUtility.Convert.GetLong(s["StyleUkey"])))
-            {
-                KeyValuePair<int, DualResult> resultContinusDays = this.IsSimilarStyle(
-                drMain["SewingLineID"].ToString(),
-                drMain["Team"].ToString(),
-                drMain["FactoryID"].ToString(),
-                MyUtility.Convert.GetDate(drMain["OutputDate"]),
-                styleUkey);
-
-                if (!resultContinusDays.Value)
-                {
-                    return new KeyValuePair<string, DualResult>(string.Empty, resultContinusDays.Value);
-                }
-
-                maxContinusDays = resultContinusDays.Key > maxContinusDays ? resultContinusDays.Key : maxContinusDays;
-            }
-
-            if (maxContinusDays > 29)
-            {
-                return new KeyValuePair<string, DualResult>("00004", new DualResult(true));
-            }
-            else if (maxContinusDays > 14)
-            {
-                return new KeyValuePair<string, DualResult>("00003", new DualResult(true));
-            }
-            else if (maxContinusDays > 3)
-            {
-                return new KeyValuePair<string, DualResult>("00002", new DualResult(true));
-            }
-            else
-            {
-                return new KeyValuePair<string, DualResult>("00001", new DualResult(true));
-            }
-        }
-
-        private KeyValuePair<int, DualResult> IsSimilarStyle(string line, string team, string factoryID, DateTime? sewingDate, long styleUkey)
-        {
-            if (MyUtility.Check.Empty(styleUkey))
-            {
-                return new KeyValuePair<int, DualResult>(0, new DualResult(false, "No pass in Style"));
-            }
-
-            string sqlCheck = $@"
---取得比對來源style資訊
-select  ID, BrandID
-into    #tmpStyle
-from Style with (nolock)
-where   Ukey = '{styleUkey}'
-
-select distinct top 30 so.OutputDate
-into #tmpSewingOutputDay
-from SewingOutput so with (nolock)
-where   so.SewingLineID = @SewingLineID and
-        so.FactoryID = @FactoryID and
-        so.Team = @Team and
-        so.OutputDate < @SewingDate and
-        so.Shift <> 'O' and
-        so.Category = 'O'
-order by    so.OutputDate desc
-
-select  so.ID, so.OutputDate
-into #tmpSewingOutputID
-from SewingOutput so with (nolock)
-where   so.SewingLineID = @SewingLineID and
-        so.FactoryID = @FactoryID and
-        so.Team = @Team and
-        so.OutputDate in (select OutputDate from #tmpSewingOutputDay) and
-        so.Shift <> 'O' and
-        so.Category = 'O'
-order by    so.OutputDate desc
-
-select  distinct
-        so.OutputDate,
-        o.StyleID,
-        o.BrandID
-into    #tmpSewingOutputStyle
-from    #tmpSewingOutputID so
-inner join  SewingOutput_Detail sod with (nolock) on sod.ID = so.ID
-inner join  Orders o  with (nolock) on o.ID = sod.OrderID
-
---取得30天前生產的Style與SimlarStyle
-select * into #tmpSewingSimlarStyle
-from (
-        select  OutputDate, StyleID, BrandID from #tmpSewingOutputStyle
-        union
-        select  tso.OutputDate, [StyleID] = ss.ChildrenStyleID, [BrandID] = ss.ChildrenBrandID
-        from #tmpSewingOutputStyle tso
-        inner join Style_SimilarStyle ss with (nolock) on   ss.MasterBrandID = tso.BrandID and
-                                                            ss.MasterStyleID = tso.StyleID
-    ) a
-
-declare @interruptDate date
-
---取得30天內沒生產的日期
-select  @interruptDate = max(OutputDate)
-from    #tmpSewingOutputDay
-where   OutputDate not in (
-            select  distinct OutputDate
-            from #tmpSewingSimlarStyle tss
-            where exists(select 1 from #tmpStyle s where s.ID = tss.StyleID and s.BrandID = tss.BrandID))
-
---抓取區間內連續生產
-if  @interruptDate is null and
-    exists(  select  1
-            from #tmpSewingSimlarStyle tss
-            where exists(select 1 from #tmpStyle s where s.ID = tss.StyleID and s.BrandID = tss.BrandID))
-begin
-    select  [ContinusDays] = count(1) + 1
-    from #tmpSewingOutputDay
-end
---抓取區間內無生產
-else if @interruptDate is null
-begin
-    select  [ContinusDays] = 1
-end
-else
-begin
-    select  [ContinusDays] = count(1) + 1
-    from #tmpSewingOutputDay
-    where   OutputDate  >   @interruptDate
-end
-
-drop table #tmpStyle, #tmpSewingOutputDay, #tmpSewingOutputStyle, #tmpSewingSimlarStyle, #tmpSewingOutputID
-";
-
-            DataTable dtResult;
-            List<SqlParameter> listPar = new List<SqlParameter>()
-            {
-                new SqlParameter("@SewingLineID", line),
-                new SqlParameter("@FactoryID", factoryID),
-                new SqlParameter("@SewingDate", sewingDate),
-                new SqlParameter("@Team", team),
-            };
-            DualResult result = DBProxy.Current.Select(null, sqlCheck, listPar, out dtResult);
-
-            if (!result)
-            {
-                return new KeyValuePair<int, DualResult>(0, result);
-            }
-
-            return new KeyValuePair<int, DualResult>(MyUtility.Convert.GetInt(dtResult.Rows[0]["ContinusDays"]), new DualResult(true));
         }
 
         private bool CheckDetailSewingOutputEfficiency()

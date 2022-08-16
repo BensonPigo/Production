@@ -12,7 +12,6 @@ BEGIN
 	SET NOCOUNT ON;
 	
 	BEGIN TRY
-		begin transaction	
 			--Declare
 			Declare 
 			@DateStart date,
@@ -712,41 +711,13 @@ BEGIN
 		--		@copy_recipients= 'roger.lo@sportscity.com.vn',
 		--		@body = @mailBody,  
 		--		@subject = 'Daily Hanger system data to PMS - Sewing Output & RFT'; 
-		commit transaction
+
+		select distinct OutputDate, SewingLineID, Team, FactoryID from #tmp_SewingOutput
+
 	END TRY
 	BEGIN CATCH
 		EXECUTE [usp_GetErrorString];
-		--Prepare Mail
-		--DECLARE @ErrorMessage As VARCHAR(1000) = CHAR(10)+'Error Code�G' +CAST(ERROR_NUMBER() AS VARCHAR)
-		--										+CHAR(10)+'Error Message�G'+	ERROR_MESSAGE()
-		--										+CHAR(10)+'Line�G'+	CAST(ERROR_LINE() AS VARCHAR)
-		--										+CHAR(10)+'Procedure Name�G'+	ISNULL(ERROR_PROCEDURE(),'')
-		--DECLARE @ErrorSeverity As Numeric = ERROR_SEVERITY()
-		--DECLARE @ErrorState As Numeric = ERROR_STATE()
-		
-		--PRINT @ErrorMessage
-
-		--SET @mailBody   =   'Transfer Date�G'+ Cast( Cast(@execuDatetime as Date) as Varchar)
-		--					+CHAR(10) + 'Result�GError'
-		--					+CHAR(10) 
-		--					+ @ErrorMessage
-		--					+CHAR(10) 
-		--					+CHAR(10) + 'This email is SUNRISEEXCH DB Transfer data to Production DB.'
-		--					+CHAR(10) + 'Please do not reply this mail.';
-		IF @@TRANCOUNT > 0  
-        ROLLBACK TRANSACTION;
-				
-		----------------------------Masil send----------------------------
-		--EXEC msdb.dbo.sp_send_dbmail  
-		--@profile_name = 'SUNRISEmailnotice',  
-		--@recipients ='pmshelp@sportscity.com.tw',
-		--@copy_recipients= 'roger.lo@sportscity.com.vn',
-		--@body = @mailBody,  
-		--@subject = 'Daily Hanger system data to PMS - Sewing Output & RFT'; 
 	END CATCH
 
-
-	--IF @@TRANCOUNT > 0  
-	--	COMMIT TRANSACTION;  
 END
 Go
