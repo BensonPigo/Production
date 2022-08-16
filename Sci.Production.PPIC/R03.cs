@@ -709,7 +709,7 @@ tmpFilterZone as (
             , o.MnorderApv2
             , o.MnorderApv
             , o.PulloutComplete
-            , " + seperCmdkpi + @"
+            , " + seperCmdkpi + $@"
             , o.KPIChangeReason
             , o.EachConsApv
             , o.Junk
@@ -744,12 +744,13 @@ tmpFilterZone as (
             , o.MdRoomScanDate
             , [VasShasCutOffDate] = Format(DATEADD(DAY, -30, iif(GetMinDate.value	is null, coalesce(o.BuyerDelivery, o.CRDDate, o.PlanDate, o.OrigBuyerDelivery), GetMinDate.value)), 'yyyy/MM/dd')
             , [StyleSpecialMark] = s.SpecialMark
+            {seperCmd}
             , [SewingMtlComplt]  = isnull(CompltSP.SewingMtlComplt, '')
             , [PackingMtlComplt] = isnull(CompltSP.PackingMtlComplt, '')
             , o.OrganicCotton
-"
-            + seperCmd +
-    @"from Orders o  WITH (NOLOCK) 
+" +
+    @"      
+    from Orders o  WITH (NOLOCK) 
     left join style s WITH (NOLOCK) on o.styleukey = s.ukey
 	left join DropDownList d WITH (NOLOCK) ON o.CtnType=d.ID AND d.Type='PackingMethod'
 	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
