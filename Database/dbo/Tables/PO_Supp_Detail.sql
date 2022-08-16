@@ -76,6 +76,7 @@
     [ToMtlPOID] VARCHAR(13) NOT NULL DEFAULT (''), 
     [ToMtlSeq1] VARCHAR(3) NOT NULL DEFAULT (''), 
     [ToMtlSeq2] VARCHAR(2) NOT NULL DEFAULT (''), 
+    [StockOrderFactory] VARCHAR(8) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_PO_Supp_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [SEQ1] ASC, [SEQ2] ASC)
 );
 
@@ -391,3 +392,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'PO_Supp_Detail',
     @level2type = N'COLUMN',
     @level2name = N'StockSuppID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'當 Seq 為領料項時 (7X)，此欄位會記錄庫存項 - 庫存訂單的 Factory。',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PO_Supp_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'StockOrderFactory'
