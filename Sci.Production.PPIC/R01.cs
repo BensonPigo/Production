@@ -579,9 +579,9 @@ DECLARE @tempPintData TABLE (
    MinBuyerDelivery DATE,
    StadOutPutQtyPerDay int,
    PPH numeric(12,4),
-   IsFirst BIT,
    IsRepeatStyle BIT,
-   IsSimilarStyle BIT default 0
+   IsSimilarStyle BIT default 0,
+   IsCrossStyle BIT default 0
 )
 
 --判斷相似款所使用暫存table
@@ -613,7 +613,6 @@ DECLARE @factory VARCHAR(8),
 		@beforeIsSMS int,
 		@beforeBuyerDelivery DATE,
 		@beforedate DATE,
-		@IsFirst bit = 1,
 		@beforeIsSample bit = 1,
 		@IsRepeatStyle bit = 1,
 		@beforeIsRepeatStyle bit = 1,
@@ -628,22 +627,14 @@ BEGIN
 
 	IF @factory <> @beforefactory or @sewingline <> @beforesewingline or (@StyleID <> @beforeStyleID and @beforeStyleIDExcludeHoliday not like '%' + @StyleID + '%')
 	Begin
-		set @IsFirst = 1
-		INSERT INTO @tempPintData(FactoryID, SewingLineID, StyleID, InLine, OffLine, IsLastMonth, IsNextMonth, IsBulk, IsSMS, MinBuyerDelivery, StadOutPutQtyPerDay, PPH, IsSample, IsFirst, IsRepeatStyle) 
-		VALUES (@factory, @sewingline, @StyleID, @date, @date, @IsLastMonth, @IsNextMonth, @IsBulk, @IsSMS, @BuyerDelivery, @StadOutPutQtyPerDay, @PPH, @IsSample, @IsFirst, @IsRepeatStyle);
+		INSERT INTO @tempPintData(FactoryID, SewingLineID, StyleID, InLine, OffLine, IsLastMonth, IsNextMonth, IsBulk, IsSMS, MinBuyerDelivery, StadOutPutQtyPerDay, PPH, IsSample, IsRepeatStyle) 
+		VALUES (@factory, @sewingline, @StyleID, @date, @date, @IsLastMonth, @IsNextMonth, @IsBulk, @IsSMS, @BuyerDelivery, @StadOutPutQtyPerDay, @PPH, @IsSample, @IsRepeatStyle);
 	END
-	--同款連續生產的第二天
-	ELSE IF @IsFirst = 1 and @date <> @beforedate and @StyleID <> 'Holiday' and @IsSample <> 1
-	Begin
-		set @IsFirst = 0
-		INSERT INTO @tempPintData(FactoryID, SewingLineID, StyleID, InLine, OffLine, IsLastMonth, IsNextMonth, IsBulk, IsSMS, MinBuyerDelivery, StadOutPutQtyPerDay, PPH, IsSample, IsFirst, IsRepeatStyle) 
-		VALUES (@factory, @sewingline, @StyleID, @date, @date, @IsLastMonth, @IsNextMonth, @IsBulk, @IsSMS, @BuyerDelivery, @StadOutPutQtyPerDay, @PPH, @IsSample, @IsFirst, @IsRepeatStyle);
-	end
 	--有含Sample獨立顯示 三個月內生產超過10天
 	else if (@IsSample <> @beforeIsSample or @beforeStyleID = 'Holiday' or @IsRepeatStyle <> @beforeIsRepeatStyle) and @date <> @beforedate and @StyleID <> 'Holiday'
 	begin
-		INSERT INTO @tempPintData(FactoryID, SewingLineID, StyleID, InLine, OffLine, IsLastMonth, IsNextMonth, IsBulk, IsSMS, MinBuyerDelivery, StadOutPutQtyPerDay, PPH, IsSample, IsFirst, IsRepeatStyle) 
-		VALUES (@factory, @sewingline, @StyleID, @date, @date, @IsLastMonth, @IsNextMonth, @IsBulk, @IsSMS, @BuyerDelivery, @StadOutPutQtyPerDay, @PPH, @IsSample, @IsFirst, @IsRepeatStyle);
+		INSERT INTO @tempPintData(FactoryID, SewingLineID, StyleID, InLine, OffLine, IsLastMonth, IsNextMonth, IsBulk, IsSMS, MinBuyerDelivery, StadOutPutQtyPerDay, PPH, IsSample, IsRepeatStyle) 
+		VALUES (@factory, @sewingline, @StyleID, @date, @date, @IsLastMonth, @IsNextMonth, @IsBulk, @IsSMS, @BuyerDelivery, @StadOutPutQtyPerDay, @PPH, @IsSample, @IsRepeatStyle);
 	end
 	ELSE
 	Begin
@@ -657,6 +648,25 @@ BEGIN
 		where FactoryID = @factory and SewingLineID = @sewingline and StyleID = @StyleID and OffLine = @beforedate
 	END
 	
+    if	(select count(*) from SplitString(@StyleID,';') where data <> '') > 1 and 
+		@StyleID <> 'Holiday'
+	begin
+		--只保留當天與前一天的SimilarStyle資料
+		delete @tempSimilarStyle 
+		where	ScheduleDate <> (select top 1 ScheduleDate from @tempSimilarStyle where ScheduleDate <> @date order by ScheduleDate desc) and
+				ScheduleDate <> @date
+		
+		if exists(select 1 from @tempSimilarStyle where ChildrenStyleID = @OriStyle)
+			update @tempPintData set IsSimilarStyle = 1, IsCrossStyle = 1 where FactoryID = @factory and SewingLineID = @sewingline and StyleID = @StyleID and OffLine = @date
+		else
+			update @tempPintData set IsCrossStyle = 1 where FactoryID = @factory and SewingLineID = @sewingline and StyleID = @StyleID and OffLine = @date
+
+		if not exists(select 1 from @tempSimilarStyle where ScheduleDate = @date and MasterStyleID = @OriStyle)
+		insert into @tempSimilarStyle(ScheduleDate, MasterStyleID, ChildrenStyleID)
+			select @date, MasterStyleID, ChildrenStyleID
+			from Style_SimilarStyle where MasterStyleID = @OriStyle
+	end
+
 	set @beforefactory = @factory
 	set @beforesewingline = @sewingline
 	set @beforeStyleID = @StyleID
@@ -960,7 +970,7 @@ drop table #tmpFinal_step1
                                 // 設置儲存格的背景色
                                 rngColor.Cells.Interior.Color = Color.Yellow;
                             }
-                            else if (MyUtility.Convert.GetString(dr["IsFirst"]).ToUpper() == "TRUE")
+                            else if (MyUtility.Convert.GetString(dr["IsCrossStyle"]).ToUpper() == "TRUE")
                             {
                                 if (MyUtility.Convert.GetString(dr["IsSimilarStyle"]).ToUpper() == "TRUE")
                                 {
