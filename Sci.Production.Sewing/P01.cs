@@ -254,7 +254,7 @@ select  sd.*
 from SewingOutput_Detail sd WITH (NOLOCK)
 left join Orders o with (nolock) on o.ID = sd.OrderID
 left join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
-LEFT JOIN SewingReason sr ON sd.SewingReasonID=sr.ID
+LEFT JOIN SewingReason sr ON sd.SewingReasonID = sr.ID and sr.Type = 'SO'
 outer apply( select top 1 * from Rft WITH (NOLOCK) where rft.OrderID = sd.OrderId 
                                and rft.CDate = s.OutputDate 
                                and rft.SewinglineID = s.SewingLineID 
