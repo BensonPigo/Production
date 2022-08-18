@@ -81,7 +81,7 @@ namespace Sci.Production.Automation
         /// <returns>AutomationTransRecord Ukey</returns>
         public static long SaveAutomationTransRecord(AutomationErrMsg automationErrMsg, bool isAutoWH = true)
         {
-            return PMSUtilityAutomation.UtilityAutomation.SaveAutomationTransRecord(automationErrMsg);
+            return PMSUtilityAutomation.UtilityAutomation.SaveAutomationTransRecord(automationErrMsg, isAutoWH);
         }
 
         /// <summary>
