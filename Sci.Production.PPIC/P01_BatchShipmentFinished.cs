@@ -426,7 +426,7 @@ select Selected = 1
 	   , a.POID
 	   , StyleID = isnull(o.StyleID, '')
 	   , BuyerID = isnull(b.BuyerID, '')
-	   , o.BuyerDelivery
+	   , [BuyerDelivery] = MaxBuyerDelivery.val
 	   , POCombo = [dbo].getPOComboList(a.POID, a.POID)
 	   , MCHandle = (o.MCHandle + ' - ' + isnull(p.Name, ''))
 	   , o.Category
@@ -449,6 +449,11 @@ outer apply (
     and f.StockType='B'
     and f.Lock=1
 ) f
+outer apply (
+    select [val] = max(BuyerDelivery)
+    from Orders o with (nolock)
+    where   o.POID = a.POID
+) MaxBuyerDelivery
 ",
                 Env.User.Keyword);
 
