@@ -823,14 +823,76 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
             {
                 string[] subprocessIDs = dt[1].AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SubProcessID"])).ToArray();
                 bool bySP = summaryType == 0;
-                string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#enn", bySP: bySP, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
                 string columns = bySP ? "OrderID" : "OrderID,Article,SizeCode";
                 string sqlCmd = $@"
 select distinct {columns}, InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null into #enn from #tmp
-{qtyBySetPerSubprocess}
 
-select t.*
+select s.OrderID
+    , s.SubProcessID
+    , TransferTime = MAX(s.TransferTime)
+into #tmp_SetQtyBySubprocess_Last
+from SetQtyBySubprocess s WITH (NOLOCK)
+where exists (select 1 from #enn t where s.OrderID = t.OrderID)
+group by s.OrderID, s.SubProcessID
+
 ";
+
+                if (bySP)
+                {
+                    sqlCmd += $@"
+select s.OrderID, s.SubprocessID 
+    , InQtyBySet = SUM(s.InQtyBySet)
+	, OutQtyBySet = SUM(s.OutQtyBySet)
+	, FinishedQtyBySet = SUM(s.FinishedQtyBySet)
+into #tmp_SetQtyBySubprocess
+from 
+(
+    select s.OrderID
+        , s.Article
+        , s.SizeCode 
+        , s.SubprocessID
+	    , InQtyBySet = MIN(s.InQtyBySet)
+	    , OutQtyBySet = MIN(s.OutQtyBySet)
+	    , FinishedQtyBySet = MIN(s.FinishedQtyBySet)
+    from SetQtyBySubprocess s WITH (NOLOCK)
+    where exists (select 1 from #tmp_SetQtyBySubprocess_Last t where t.OrderID = s.OrderID and t.SubProcessID = s.SubProcessID and t.TransferTime = s.TransferTime)
+    and SubProcessID in ('{string.Join("','", subprocessIDs)}')
+	group by s.OrderID, s.Article, s.SizeCode, s.SubprocessID
+)s
+group by s.OrderID, s.SubprocessID
+";
+
+                    foreach (string subprocessID in subprocessIDs)
+                    {
+                        string subprocessIDtmp = PublicPrg.Prgs.SubprocesstmpNoSymbol(subprocessID);
+                        sqlCmd += $@"select * into #{subprocessIDtmp} from #tmp_SetQtyBySubprocess where SubprocessID = '{subprocessID}'" + Environment.NewLine;
+                    }
+                }
+                else
+                {
+                    sqlCmd += $@"
+ select s.OrderID
+     , s.Article
+     , s.SizeCode 
+     , s.SubprocessID
+    , InQtyBySet = MIN(s.InQtyBySet)
+    , OutQtyBySet = MIN(s.OutQtyBySet)
+    , FinishedQtyBySet = MIN(s.FinishedQtyBySet)
+into #tmp_SetQtyBySubprocess
+from SetQtyBySubprocess s WITH (NOLOCK)
+where exists (select 1 from #tmp_SetQtyBySubprocess_Last t where t.OrderID = s.OrderID and t.SubProcessID = s.SubProcessID and t.TransferTime = s.TransferTime)
+and SubProcessID in ('{string.Join("','", subprocessIDs)}')
+group by s.OrderID, s.Article, s.SizeCode, s.SubprocessID
+";
+
+                    foreach (string subprocessID in subprocessIDs)
+                    {
+                        string subprocessIDtmp = PublicPrg.Prgs.SubprocesstmpNoSymbol(subprocessID);
+                        sqlCmd += $@"select * into #QtyBySetPerSubprocess{subprocessIDtmp} from #tmp_SetQtyBySubprocess where SubprocessID = '{subprocessID}'" + Environment.NewLine;
+                    }
+                }
+
+                sqlCmd += "select t.*" + Environment.NewLine;
                 string tmpjoin = string.Empty;
                 foreach (string subprocessID in subprocessIDs)
                 {
