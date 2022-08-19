@@ -1,10 +1,7 @@
-﻿USE [Production]
-GO
-
-CREATE FUNCTION [dbo].[CheckShippingMarkSetting]
+﻿CREATE FUNCTION [dbo].[CheckShippingMarkSetting]
 (
 	@PackingListID varchar(15),
-	@SCICtnNo varchar(15),
+	@SCICtnNo varchar(16),
 	@CtnRefno varchar(21),
 	@IsMixPack bit,
 	@CustCDID varchar(16),

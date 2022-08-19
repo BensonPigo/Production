@@ -4,7 +4,7 @@
 CREATE FUNCTION [dbo].[CheckShippingMarkStampSetting]
 (
 	@PackingListID varchar(15),
-	@SCICtnNo varchar(15),
+	@SCICtnNo varchar(16),
 	@CtnRefno varchar(21),
 	@CustCDID varchar(16),
 	@BrandID varchar(8)

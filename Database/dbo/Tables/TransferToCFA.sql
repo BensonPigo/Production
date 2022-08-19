@@ -9,7 +9,7 @@
     [AddDate]        DATETIME     NOT NULL,
     [OrigLoactionID] VARCHAR (10) DEFAULT ('') NULL,
     [CompleteTime]   DATETIME     NULL,
-    [SCICtnNo] VARCHAR(15) CONSTRAINT [DF_TransferToCFA_SCICtnNo] DEFAULT ('') NOT NULL, 
+    [SCICtnNo] VARCHAR(16) CONSTRAINT [DF_TransferToCFA_SCICtnNo] DEFAULT ('') NOT NULL, 
     PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

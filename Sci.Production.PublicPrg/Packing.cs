@@ -2881,7 +2881,7 @@ order by min(pd.seq)
                     }
 
                     sciNo++;
-                    sciCtnNo = sciCtnNoleft + sciNo.ToString().PadLeft(6, '0');
+                    sciCtnNo = sciCtnNoleft + sciNo.ToString().PadLeft(7, '0');
                 }
             }
             else
@@ -2925,7 +2925,7 @@ order by min(pd.seq)
                     }
 
                     sciNo++;
-                    sciCtnNo = sciCtnNoleft + sciNo.ToString().PadLeft(6, '0');
+                    sciCtnNo = sciCtnNoleft + sciNo.ToString().PadLeft(7, '0');
                 }
             }
 

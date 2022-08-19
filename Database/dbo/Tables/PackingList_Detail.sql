@@ -43,7 +43,7 @@
     [FtyReqReturnDate]                    DATE            NULL,
     [FtyReqReturnReason]                  VARCHAR (5)     DEFAULT ('') NOT NULL,
     [DisposeFromClog]                     BIT             CONSTRAINT [DF_PackingList_Detail_DisposeFromClog] DEFAULT ((0)) NULL,
-    [SCICtnNo]                            VARCHAR (15)    CONSTRAINT [DF_PackingList_Detail_SCICtnNo] DEFAULT ('') NULL,
+    [SCICtnNo]                            VARCHAR (16)    CONSTRAINT [DF_PackingList_Detail_SCICtnNo] DEFAULT ('') NULL,
     [Pallet]                              NVARCHAR (50)    NULL,
     [NewGW]                               NUMERIC (7, 3)  NULL,
     [OrigID]                              VARCHAR (13)    CONSTRAINT [DF_PackingList_Detail_OrigID] DEFAULT ('') NOT NULL,
