@@ -646,7 +646,6 @@ OUTER APPLY(
                 if (dtMainA2B.Rows.Count > 0)
                 {
                     string getPackFromA2B = $@"
-alter table #tmp alter column ID varchar(25)
 
 select  g2.ID, [QAQty] = sum(sodd.QAQty)
 into    #SewingOutput
