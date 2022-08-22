@@ -2730,6 +2730,7 @@
     <Build Include="dbo\Tables\Bundle_Detail_Order_History.sql" />
     <Build Include="dbo\Tables\SetQtyBySubprocess.sql" />
     <Build Include="dbo\Tables\SetQtyBySubprocess_History.sql" />
+    <Build Include="dbo\Tables\JobCrashLog.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
