@@ -486,6 +486,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(2), settings: seq) // 2
             .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(2), settings: seq) // 3
             .Text("Suppid", header: "Supp", iseditingreadonly: true, width: Widths.AnsiChars(4), settings: ts1) // 3
+            .Text("StockOrderFactory", header: "Stock Order Fty", iseditingreadonly: true, width: Widths.AnsiChars(7)) // 3
             .Text("eta", header: "Sup. 1st " + Environment.NewLine + "Cfm ETA", width: Widths.AnsiChars(2), iseditingreadonly: true) // 4
             .Text("RevisedETA", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(2), iseditingreadonly: true) // 5
             .Text("FabricCombo", header: "Fabric" + Environment.NewLine + "Combo", iseditingreadonly: true)
@@ -794,6 +795,7 @@ from(
 			, RR
 			, LR
 			, IsHighRisk
+            , StockOrderFactory
     from (
         select  *
                 , -len(description) as len_D 
@@ -924,6 +926,7 @@ from(
 					,RR = ISNULL(Style_RRLR_Report.RR ,0)
 					,LR = ISNULL(Style_RRLR_Report.LR ,0)					
 					,IsHighRisk =  dbo.GetIsHighRisk(b.suppid, a.RefNo)
+                    ,[StockOrderFactory] = a.StockOrderFactory
             from #tmpOrder as orders WITH (NOLOCK) 
             inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
 	        left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
@@ -1085,6 +1088,7 @@ from(
 					,RR = ISNULL(Style_RRLR_Report.RR ,0)
 					,LR = ISNULL(Style_RRLR_Report.LR ,0)					
 					,IsHighRisk =  dbo.GetIsHighRisk(b.suppid, a.RefNo)
+                    ,[StockOrderFactory] = a.StockOrderFactory
         from dbo.MDivisionPoDetail m WITH (NOLOCK) 
         inner join #tmpOrder as o on o.poid = m.poid
         left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 
@@ -1192,6 +1196,7 @@ select ROW_NUMBER_D = 1
 	   , RR = 0
 	   , LR = 0
 	   , IsHighRisk=0
+       ,[StockOrderFactory] = ''
 from #tmpLocalPO_Detail a
 left join LocalInventory l on a.OrderId = l.OrderID and a.Refno = l.Refno and a.ThreadColorID = l.ThreadColorID
 left join LocalItem b on a.Refno=b.RefNo

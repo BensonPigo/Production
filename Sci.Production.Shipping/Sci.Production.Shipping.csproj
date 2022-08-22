@@ -911,6 +911,9 @@
     <Compile Include="R10.Designer.cs">
       <DependentUpon>R10.cs</DependentUpon>
     </Compile>
+    <Compile Include="R10_ToExcel.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="R11.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1049,6 +1052,12 @@
       <DependentUpon>R12.cs</DependentUpon>
     </Compile>
     <Compile Include="Customs_WebAPI.cs" />
+    <Compile Include="ShippingMemo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ShippingMemo.Designer.cs">
+      <DependentUpon>ShippingMemo.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utility_WebAPI.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1503,6 +1512,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R62.resx">
       <DependentUpon>R62.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShippingMemo.resx">
+      <DependentUpon>ShippingMemo.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

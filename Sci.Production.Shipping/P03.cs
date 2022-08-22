@@ -414,6 +414,15 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
             {
                 this.btnExpenseData.ForeColor = Color.Black;
             }
+
+            if (ShippingMemo.IsDataExists(ShippingMemo.ShippingMemoType.Export_ShippingMemo, this.CurrentMaintain["ID"].ToString()))
+            {
+                this.btnShippingMemo.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnShippingMemo.ForeColor = Color.Black;
+            }
         }
 
         private void BtnCOInfo_Click(object sender, EventArgs e)
@@ -451,6 +460,25 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
             this.CurrentMaintain["CustomOTRespFty2"] = customOTRespFty2;
             this.CurrentMaintain["CustomOT"] = chkChecked;
             this.CurrentMaintain.EndEdit();
+        }
+
+        private void BtnShippingMemo_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
+            {
+                return;
+            }
+
+            new ShippingMemo(ShippingMemo.ShippingMemoType.Export_ShippingMemo, this.CurrentMaintain["ID"].ToString()).ShowDialog();
+
+            if (ShippingMemo.IsDataExists(ShippingMemo.ShippingMemoType.Export_ShippingMemo, this.CurrentMaintain["ID"].ToString()))
+            {
+                this.btnShippingMemo.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnShippingMemo.ForeColor = Color.Black;
+            }
         }
     }
 }
