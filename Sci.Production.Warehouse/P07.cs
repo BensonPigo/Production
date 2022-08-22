@@ -813,7 +813,7 @@ and ID = '{Sci.Env.User.UserID}'"))
                     IList<DataRow> x;
                     if (MyUtility.Check.Empty(this.CurrentMaintain["exportid"]))
                     {
-                        Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(this.CurrentDetailData["poid"].ToString(), this.CurrentDetailData["seq"].ToString(), "left(p.seq1,1) !='7'");
+                        Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(this.CurrentDetailData["poid"].ToString(), this.CurrentDetailData["seq"].ToString(), "left(psd.seq1,1) !='7'");
                         DialogResult result = selepoitem.ShowDialog();
                         if (result == DialogResult.Cancel)
                         {
@@ -948,7 +948,7 @@ Order By e.Seq1, e.Seq2, e.Refnoo";
                             return;
                         }
 
-                        string sqlmcd = string.Format(Prgs.SelePoItemSqlCmd() + @"and p.seq1 ='{2}' and p.seq2 = '{3}' and left(p.seq1, 1) !='7'", this.CurrentDetailData["poid"], Env.User.Keyword, seq[0], seq[1]);
+                        string sqlmcd = string.Format(Prgs.SelePoItemSqlCmd() + @"and psd.seq1 ='{2}' and psd.seq2 = '{3}' and left(psd.seq1, 1) !='7'", this.CurrentDetailData["poid"], Env.User.Keyword, seq[0], seq[1]);
                         if (!MyUtility.Check.Seek(sqlmcd, out DataRow dr))
                         {
                             e.Cancel = true;

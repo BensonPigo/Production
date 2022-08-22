@@ -297,7 +297,7 @@ namespace Sci.Production.Warehouse
                         if (!MyUtility.Check.Seek(
                             string.Format(
                             Prgs.SelePoItemSqlCmd() +
-                                    @"and f.MDivisionID = '{1}' and p.seq1 ='{2}' and p.seq2 = '{3}'", this.CurrentDetailData["poid"], Env.User.Keyword, seq[0], seq[1]), out dr, null))
+                                    @"and f.MDivisionID = '{1}' and psd.seq1 ='{2}' and psd.seq2 = '{3}'", this.CurrentDetailData["poid"], Env.User.Keyword, seq[0], seq[1]), out dr, null))
                         {
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");

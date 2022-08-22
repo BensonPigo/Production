@@ -82,14 +82,15 @@ order by ColorID, SizeSpec ,SewinLine
             // if (!dts2.Empty()) comboSize.DataSource = dts3;
             string sizespeccmd = string.Format(
                 @"
-Select distinct b.sizespec ,a.WhseClose
+Select distinct SizeSpec= isnull(psdsS.SpecValue, '') ,a.WhseClose
 into #tmp
 from View_WH_Orders a WITH (NOLOCK) 
 inner join po_supp_detail b WITH (NOLOCK) on a.id = b.id
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = b.id and psdsS.seq1 = b.seq1 and psdsS.seq2 = b.seq2 and psdsS.SpecColumnID = 'Size'
 inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
 inner join  po_supp c WITH (NOLOCK) on a.id = c.id
 where b.scirefno = '{0}'
-group by b.sizespec ,a.WhseClose
+group by isnull(psdsS.SpecValue, '') ,a.WhseClose
 
 select sizespec = 'All' 
 union all 

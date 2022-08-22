@@ -267,7 +267,7 @@ and ID = '{Sci.Env.User.UserID}'"))
                 {
                     IList<DataRow> x;
 
-                    Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(this.CurrentDetailData["poid"].ToString(), this.CurrentDetailData["seq"].ToString(), "left(p.seq1,1) !='7'");
+                    Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(this.CurrentDetailData["poid"].ToString(), this.CurrentDetailData["seq"].ToString(), "left(psd.seq1,1) !='7'");
                     DialogResult result = selepoitem.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -323,7 +323,7 @@ and ID = '{Sci.Env.User.UserID}'"))
                             if (!MyUtility.Check.Seek(
                                 string.Format(
                                 Prgs.SelePoItemSqlCmd() +
-                                    @"and p.seq1 ='{2}'and p.seq2 = '{3}' and left(p.seq1,1) !='7'",
+                                    @"and psd.seq1 ='{2}'and psd.seq2 = '{3}' and left(psd.seq1,1) !='7'",
                                 this.CurrentDetailData["poid"],
                                 Env.User.Keyword,
                                 seq[0],

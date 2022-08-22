@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Data.SqlClient;
-using Ict;
+﻿using Ict;
 using Sci.Data;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R08 : Win.Tems.PrintForm
     {
         private DateTime? arrive_s;
@@ -24,10 +20,7 @@ namespace Sci.Production.Warehouse
         private string brand;
         private DataTable printData;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="R08"/> class.
-        /// </summary>
-        /// <param name="menuitem">Q_Q</param>
+        /// <inheritdoc/>
         public R08(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -113,14 +106,13 @@ namespace Sci.Production.Warehouse
             #endregion
 
             string cmd = $@"
-
 SELECT
 	f.POID
 	,[Seq]=RD.Seq1+ '-'+RD.Seq2
 	,o.BrandID
 	,o.StyleID
 	,PSD.Refno
-	,PSD.ColorID
+	,ColorID = isnull(psdsC.SpecValue, '')
 	,FC.WeaveTypeID
 	,R.WhseArrival
 	,F.ArriveQty
@@ -131,6 +123,7 @@ inner join Receiving_Detail RD on F.ReceivingID=RD.ID and F.POID=RD.PoId and RD.
 inner join Receiving R on RD.ID=R.ID
 Left join Orders O on F.POID=O.ID
 Left join PO_Supp_Detail PSD on PSD.ID=F.POID and PSD.Seq1=F.Seq1 and PSD.Seq2=F.Seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 Left join Fabric FC on PSD.SCIRefno=FC.SCIRefno
 outer apply (
 	select OutQty = sum(OutQty)
@@ -169,7 +162,7 @@ OUTER APPLY(
 
 WHERE {whereList.JoinToString(" AND ")}
 
-Group by F.POID,RD.Seq1,RD.Seq2,O.StyleID,PSD.Refno,PSD.ColorID,FC.WeaveTypeID,R.WhseArrival,F.ArriveQty,o.BrandID,F.ReceivingID
+Group by F.POID,RD.Seq1,RD.Seq2,O.StyleID,PSD.Refno,isnull(psdsC.SpecValue, ''),FC.WeaveTypeID,R.WhseArrival,F.ArriveQty,o.BrandID,F.ReceivingID
 
 UNION---------------
 
@@ -179,7 +172,7 @@ select
 	,o.BrandID
 	,O.StyleID
 	,PSD.Refno
-	,PSD.ColorID
+	,ColorID = isnull(psdsC.SpecValue, '')
 	,FC.WeaveTypeID
 	,t.IssueDate
 	,F.ArriveQty
@@ -190,6 +183,7 @@ inner join TransferIn_Detail TD on F.ReceivingID=TD.ID and F.POID=TD.PoId and TD
 inner join TransferIn T on TD.ID=T.ID
 Left join Orders O on F.POID=O.ID
 Left join PO_Supp_Detail PSD on PSD.ID=F.POID and PSD.Seq1=F.Seq1 and PSD.Seq2=F.Seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 Left join Fabric FC on PSD.SCIRefno=FC.SCIRefno
 OUTER APPLY(
 	select OutQty = sum(OutQty)
@@ -228,7 +222,7 @@ OUTER APPLY(
 
 WHERE {whereList_2.JoinToString(" AND ")}
 
-Group by F.POID,TD.Seq1,TD.Seq2,o.BrandID,O.StyleID,PSD.Refno,PSD.ColorID,FC.WeaveTypeID,t.IssueDate,F.ArriveQty,F.ReceivingID
+Group by F.POID,TD.Seq1,TD.Seq2,o.BrandID,O.StyleID,PSD.Refno,isnull(psdsC.SpecValue, ''),FC.WeaveTypeID,t.IssueDate,F.ArriveQty,F.ReceivingID
 ";
 
             DualResult result = DBProxy.Current.Select(null, cmd.ToString(), paras, out this.printData);

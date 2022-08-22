@@ -162,7 +162,7 @@ where f.MDivisionID='{Env.User.Keyword}'
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-        and p1.FabricType='{0}' ", materialType));
+        and psd.FabricType='{0}' ", materialType));
                 }
 
                 if (!MyUtility.Check.Empty(stockType))
@@ -183,7 +183,7 @@ where f.MDivisionID='{Env.User.Keyword}'
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-        and p1.ColorID='{0}'", color));
+        and isnull(psdsC.SpecValue, '')='{0}'", color));
                 }
 
                 if (!MyUtility.Check.Empty(roll))
@@ -194,7 +194,7 @@ where f.MDivisionID='{Env.User.Keyword}'
                 }
 
                 strSQLCmd.Append(@" 
-group by a.Poid, a.seq1, a.seq2, a.Roll, a.Dyelot, a.InQty , a.OutQty , a.AdjustQty, a.ReturnQty, a.Ukey, p1.refno, p1.colorid, p1.sizespec, a.StockType, r.exportID, LastEditDate.val");
+group by a.Poid, a.seq1, a.seq2, a.Roll, a.Dyelot, a.InQty , a.OutQty , a.AdjustQty, a.ReturnQty, a.Ukey, psd.refno, isnull(psdsC.SpecValue, ''), isnull(psdsS.SpecValue, ''), a.StockType, r.exportID, LastEditDate.val");
             }
 
             // break;

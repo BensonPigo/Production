@@ -1125,7 +1125,7 @@ OUTER APPLY(
 	AND Lock = 1
 )LockStatus
 where psd.id ='{0}'
-" + (junk ? "and p.Junk = 0" : string.Empty);
+" + (junk ? "and psd.Junk = 0" : string.Empty);
         }
 
         /// <summary>

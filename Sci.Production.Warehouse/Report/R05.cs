@@ -119,7 +119,7 @@ namespace Sci.Production.Warehouse
                 sqlCmd.Append(@"
 select
 	t.id,t.MDivisionID,t.FromFtyID,t.FactoryID,t.IssueDate,t.Status
-	,td.POID, o.StyleID, p.Refno, p.ColorID, p.SizeSpec
+	,td.POID, o.StyleID, psd.Refno, ColorID = isnull(psdsC.SpecValue, ''), SizeSpec= isnull(psdsS.SpecValue, '')
 	,td.Seq1,td.Seq2,td.Roll,td.Dyelot
 	,[StockType] = case when td.StockType = 'B' then 'Bulk'
 	        when td.StockType = 'I' then 'Inventory'
@@ -131,10 +131,11 @@ select
     ,f.MtlTypeID
 from TransferIn t with(nolock)
 inner join TransferIn_Detail td with(nolock) on td.id = t.id
-left join Po_Supp_Detail p WITH (NOLOCK) on td.poid = p.id and td.seq1 = p.seq1 and td.seq2 = p.seq2
-left join Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
+left join Po_Supp_Detail psd WITH (NOLOCK) on td.poid = psd.id and td.seq1 = psd.seq1 and td.seq2 = psd.seq2
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 left join Orders o with(nolock) on o.id = td.poid
-where 1=1
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 ");
                 if (!MyUtility.Check.Empty(this.Issuedate1))
                 {
@@ -163,7 +164,7 @@ where 1=1
 
                 if (!MyUtility.Check.Empty(this.materialType))
                 {
-                    sqlCmd.Append(string.Format(@" and p.FabricType  = '{0}'", this.materialType));
+                    sqlCmd.Append(string.Format(@" and psd.FabricType  = '{0}'", this.materialType));
                 }
             }
             else
@@ -172,7 +173,7 @@ where 1=1
 select
 	t.id,t.MDivisionID,t.FactoryID,t.ToMDivisionid,t.IssueDate,t.Status
 	,WK.ExportId
-	,td.POID, o.StyleID, p.Refno, p.ColorID, p.SizeSpec
+	,td.POID, o.StyleID, psd.Refno, ColorID = isnull(psdsC.SpecValue, ''), SizeSpec= isnull(psdsS.SpecValue, '')
 	,td.Seq1, td.Seq2, td.Roll, td.Dyelot
 	,[StockType] = case when td.StockType = 'B' then 'Bulk'
 	        when td.StockType = 'I' then 'Inventory'
@@ -185,9 +186,11 @@ select
 	,td.ToPOID,td.ToSeq1,td.ToSeq2
 from TransferOut t with(nolock)
 inner join TransferOut_Detail td with(nolock) on td.id = t.id
-left join Po_Supp_Detail p WITH (NOLOCK) on td.poid = p.id and td.seq1 = p.seq1 and td.seq2 = p.seq2
-left join Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
+left join Po_Supp_Detail psd WITH (NOLOCK) on td.poid = psd.id and td.seq1 = psd.seq1 and td.seq2 = psd.seq2
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 left join Orders o with(nolock) on o.id = td.poid
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 outer apply(
 	select ExportId = Stuff((
 		select concat(',',ExportId)
@@ -241,7 +244,7 @@ where 1=1
 
                 if (!MyUtility.Check.Empty(this.materialType))
                 {
-                    sqlCmd.Append(string.Format(@" and p.FabricType  = '{0}'", this.materialType));
+                    sqlCmd.Append(string.Format(@" and psd.FabricType  = '{0}'", this.materialType));
                 }
             }
 
@@ -257,7 +260,7 @@ where 1=1
                 sqlCmd.Append(@"
 select distinct
 	t.id,t.MDivisionID,t.FromFtyID,t.FactoryID,t.IssueDate,t.Status
-	,td.POID, o.StyleID, p.Refno, p.ColorID, p.SizeSpec
+	,td.POID, o.StyleID, psd.Refno, ColorID = isnull(psdsC.SpecValue, ''), SizeSpec= isnull(psdsS.SpecValue, '')
 	,td.Seq1, td.Seq2
 	,[StockType] = case when td.StockType = 'B' then 'Bulk'
 	        when td.StockType = 'I' then 'Inventory'
@@ -269,9 +272,11 @@ select distinct
     ,f.MtlTypeID
 from TransferIn t with(nolock)
 inner join TransferIn_Detail td with(nolock) on td.id = t.id
-left join Po_Supp_Detail p WITH (NOLOCK) on td.poid = p.id and td.seq1 = p.seq1 and td.seq2 = p.seq2
-left join Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
+left join Po_Supp_Detail psd WITH (NOLOCK) on td.poid = psd.id and td.seq1 = psd.seq1 and td.seq2 = psd.seq2
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 left join Orders o with(nolock) on o.id = td.poid 
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 outer apply (
 	select [Qty] = sum(Qty)
 	from TransferIn_Detail ttd with(nolock)
@@ -311,7 +316,7 @@ where 1=1
 
                 if (!MyUtility.Check.Empty(this.materialType))
                 {
-                    sqlCmd.Append(string.Format(@" and p.FabricType  = '{0}'", this.materialType));
+                    sqlCmd.Append(string.Format(@" and psd.FabricType  = '{0}'", this.materialType));
                 }
             }
             else
@@ -358,7 +363,7 @@ outer apply (
                 sqlCmd.Append($@"
 select distinct
 	t.id,t.MDivisionID,t.FactoryID,t.ToMDivisionid,t.IssueDate,t.Status
-	,td.POID, o.StyleID, p.Refno, p.ColorID, p.SizeSpec
+	,td.POID, o.StyleID, psd.Refno, ColorID = isnull(psdsC.SpecValue, ''), SizeSpec= isnull(psdsS.SpecValue, '')
 	,td.Seq1, td.Seq2
 	,[StockType] = case when td.StockType = 'B' then 'Bulk'
 	        when td.StockType = 'I' then 'Inventory'
@@ -371,9 +376,11 @@ select distinct
 	{toColumn}
 from TransferOut t with(nolock)
 inner join TransferOut_Detail td with(nolock) on td.id = t.id
-left join Po_Supp_Detail p WITH (NOLOCK) on td.poid = p.id and td.seq1 = p.seq1 and td.seq2 = p.seq2
-left join Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
+left join Po_Supp_Detail psd WITH (NOLOCK) on td.poid = psd.id and td.seq1 = psd.seq1 and td.seq2 = psd.seq2
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 left join Orders o with(nolock) on o.id = td.poid 
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 {summaryby}
 where 1=1
 ");
@@ -414,7 +421,7 @@ where 1=1
 
                 if (!MyUtility.Check.Empty(this.materialType))
                 {
-                    sqlCmd.Append(string.Format(@" and p.FabricType  = '{0}'", this.materialType));
+                    sqlCmd.Append(string.Format(@" and psd.FabricType  = '{0}'", this.materialType));
                 }
             }
 

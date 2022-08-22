@@ -118,7 +118,7 @@ outer apply (
 	where f.POID = psd.StockPOID and f.SEQ1 = psd.StockSeq1 and f.SEQ2 = psd.StockSeq2
 ) ShadeboneTone2
 Where psd.id = '{this.dr_master["poid"]}' and c.lock = 0 and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 
-and psd.Refno='{this.dr_master["Refno"]}' and isnull(psdsC.SpecValue, '')='{this.dr_master["colorid"]}' {(this.Type == 0 ? " and ltrim(a.seq1) between '01' and '99'" : string.Empty)}--and ltrim(a.seq1) between '01' and '99'
+and psd.Refno='{this.dr_master["Refno"]}' and isnull(psdsC.SpecValue, '')='{this.dr_master["colorid"]}' {(this.Type == 0 ? " and ltrim(psd.seq1) between '01' and '99'" : string.Empty)}
 order by d.GroupQty DESC,c.Dyelot,balanceqty DESC
 ");
             #endregion

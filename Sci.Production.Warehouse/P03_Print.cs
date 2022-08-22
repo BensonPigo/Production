@@ -100,7 +100,7 @@ namespace Sci.Production.Warehouse
 			                                       ,concat(mt.fabrictype2,'-',Fabric.MtlTypeID) Material_Type
                                                    ,Fabric.WeaveTypeID
 			                                       ,dbo.GetColorMultipleID(b.BrandID,isnull(psdsC.SpecValue, '')) [Color]
-			                                       ,a.SizeSpec [Size]
+			                                       ,psdsS.SpecValue [Size]
 			                                       ,h.Currencyid [Currency]
 			                                       ,format(a.UsedQty,'#,###,###,###.####')  [Qty]
 			                                       ,format(a.Qty,'#,###,###,###.##')  [Order Qty]
@@ -138,6 +138,7 @@ namespace Sci.Production.Warehouse
 			                                        ,a.junk
                                             from dbo.PO_Supp_Detail a WITH (NOLOCK) 
                                             left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
+                                            left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = a.id and psdsS.seq1 = a.seq1 and psdsS.seq2 = a.seq2 and psdsS.SpecColumnID = 'Size'
 			                                left join View_WH_Orders b WITH (NOLOCK) on a.id=b.id
 			                                left join dbo.PO_Supp c WITH (NOLOCK) on c.id=a.id and c.SEQ1=a.SEQ1
                                             left join Fabric with(nolock) on Fabric.SCIRefno = a.SCIRefno

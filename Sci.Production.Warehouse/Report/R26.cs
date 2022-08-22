@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using Sci.Win;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Windows.Forms;
-using Ict;
-using Sci.Win;
-using Sci.Data;
-using Excel = Microsoft.Office.Interop.Excel;
-using System.Runtime.InteropServices;
 using System.Data.SqlClient;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
@@ -125,7 +125,7 @@ select
 	LD.Roll,
 	LD.Dyelot,
 	PSD.Refno,
-	PSD.ColorID,
+	ColorID = isnull(psdsC.SpecValue, ''),
 	X.Qty,
     LD.fromLocation,
 	Location = STUFF((
@@ -145,6 +145,7 @@ from LocationTrans L
 inner join LocationTrans_detail LD on L.id=LD.ID
 inner join orders O on LD.Poid=O.ID
 inner join PO_Supp_Detail PSD on LD.Poid=PSD.ID and LD.Seq1=PSD.SEQ1 and LD.Seq2=PSD.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join FtyInventory FI on LD.FtyInventoryUkey=FI.UKEY
 outer  apply(
 	select top 1 R.ExportId,Qty=RD.ActualQty,RD.Weight,RD.ActualWeight

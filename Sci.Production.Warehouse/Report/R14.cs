@@ -1,23 +1,19 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Sci.Data;
-using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R14 : Win.Tems.PrintForm
     {
-        // string reason, factory, stocktype, fabrictype, ordertype;
         private string factory;
-
-        // string reason, factory, stocktype, fabrictype, ordertype;
         private string fabrictype;
-
-        // string reason, factory, stocktype, fabrictype, ordertype;
         private string ordertype;
         private int ordertypeindex;
         private DateTime? eta1;
@@ -25,6 +21,7 @@ namespace Sci.Production.Warehouse
         private DataTable printData;
         private StringBuilder condition = new StringBuilder();
 
+        /// <inheritdoc/>
         public R14(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -34,8 +31,6 @@ namespace Sci.Production.Warehouse
             this.comboFabricType.SelectedIndex = 0;
             this.txtdropdownlistOrderType.SelectedIndex = 0;
         }
-
-        // 驗證輸入條件
 
         /// <inheritdoc/>
         protected override bool ValidateInput()
@@ -90,8 +85,6 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
-        // 非同步取資料
-
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
@@ -104,25 +97,26 @@ namespace Sci.Production.Warehouse
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(
-                @"
+            sqlCmd.Append($@"
 select  d.FactoryID
         ,wkno_a = b.id 
         ,order_a = b.poid
         ,seq_a = b.seq1 + b.seq2 
         ,b.refno 
-        ,c.ColorID
-        ,c.SizeSpec
-        ,c.StockUnit
+        ,ColorID = isnull(psdsC.SpecValue, '')
+        ,SizeSpec= isnull(psdsS.SpecValue, '')
+        ,psd.StockUnit
         ,shipqty = v.ShipQty
         ,over1 = iif (v.ShipQty > isnull(x.qty,0),'V','') 
         ,received_qty = isnull(x.qty,0) 
         ,over2 = iif (v.ShipQty < isnull(x.qty,0),'V','') 
 from dbo.export A WITH (NOLOCK) 
 inner join dbo.export_detail B WITH (NOLOCK) ON B.ID = A.ID
-inner join dbo.PO_Supp_Detail c WITH (NOLOCK) on c.ID = b.PoID and c.seq1 = b.seq1 and c.seq2 =  b.seq2 
+inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = b.PoID and psd.seq1 = b.seq1 and psd.seq2 =  b.seq2 
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 outer apply (
-    select ShipQty = Round(dbo.GetUnitQty(c.POUnit, c.StockUnit, (b.qty + b.foc)), 2)
+    select ShipQty = Round(dbo.GetUnitQty(psd.POUnit, psd.StockUnit, (b.qty + b.foc)), 2)
 ) v
 outer apply ( 
     select sum(b1.StockQty) qty 
@@ -131,7 +125,7 @@ outer apply (
     where a1.ExportId = a.id and b1.PoId = b.PoID and b1.seq1 = b.seq1 and b1.seq2 = b.seq2 and a1.Status = 'Confirmed'
     ) x
 inner join dbo.orders d WITH (NOLOCK) on d.id = b.poid
-WHERE  D.Category in {0}", this.ordertype));
+WHERE  D.Category in {this.ordertype}");
 
             if (!MyUtility.Check.Empty(this.eta1))
             {
@@ -152,10 +146,10 @@ WHERE  D.Category in {0}", this.ordertype));
 
             if (!MyUtility.Check.Empty(this.fabrictype))
             {
-                sqlCmd.Append(string.Format(@" and c.fabrictype = '{0}'", this.fabrictype));
+                sqlCmd.Append(string.Format(@" and psd.fabrictype = '{0}'", this.fabrictype));
             }
 
-            sqlCmd.Append(" order by b.id, b.poid, b.seq1, b.seq2, b.refno, c.colorid, c.sizeSpec, c.stockunit");
+            sqlCmd.Append(" order by b.id, b.poid, b.seq1, b.seq2, b.refno, ColorID, sizeSpec, psd.stockunit");
             #endregion
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);

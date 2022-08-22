@@ -503,7 +503,7 @@ from
 		,[OrderSeq2] = cast(ROW_NUMBER() over(order by r.ExportID, rd.Id, rd.EncodeSeq, rd.PoId, rd.Seq1, rd.Seq2, rd.Roll, rd.Dyelot) as int)	
         ,fb.MtlTypeID
 		,psd.SuppColor
-		,isnull(psdsC.SpecValue, '')
+		,ColorID = isnull(psdsC.SpecValue, '')
         ,fp.Inspector
         ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd')
         ,[FirRemark] = fp.Remark
@@ -598,7 +598,7 @@ from
 		,[OrderSeq2] = cast(ROW_NUMBER() over(order by t.ID, td.PoId, td.Seq1, td.Seq2, td.Roll, td.Dyelot) as int)
         ,fb.MtlTypeID
 		,psd.SuppColor
-		,isnull(psdsC.SpecValue, '')
+		,ColorID = isnull(psdsC.SpecValue, '')
         ,fp.Inspector
         ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd hh:mmtt')
         ,[FirRemark] = fp.Remark
