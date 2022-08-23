@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[ShippingMarkPic_Detail](
 	[ShippingMarkPicUkey] [bigint] NOT NULL,
-	[SCICtnNo] [varchar](15) NOT NULL,
+	[SCICtnNo] [varchar](16) NOT NULL,
 	[FileName] [varchar](30) NOT NULL,
 	[Image] [varbinary](max) NULL,
 	[ShippingMarkCombinationUkey] [bigint] NOT NULL,

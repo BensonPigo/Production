@@ -2731,6 +2731,7 @@
     <Build Include="dbo\Tables\SewingOutputEfficiency.sql" />
     <Build Include="dbo\Tables\SewingOutputEfficiency_History.sql" />
     <Build Include="dbo\Functions\IsRepeatStyleBySewingOutput.sql" />
+    <Build Include="dbo\Tables\CTNHauling.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

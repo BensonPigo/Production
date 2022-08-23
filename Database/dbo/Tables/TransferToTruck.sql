@@ -8,7 +8,7 @@
     [TruckNo]       VARCHAR (15) NULL,
     [AddName]       VARCHAR (10) NULL,
     [AddDate]       DATETIME     NULL,
-    [SCICtnNo]      VARCHAR (15) DEFAULT ('') NOT NULL
+    [SCICtnNo]      VARCHAR (16) DEFAULT ('') NOT NULL
 );
 
 
