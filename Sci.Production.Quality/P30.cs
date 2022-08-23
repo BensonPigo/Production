@@ -17,6 +17,7 @@ namespace Sci.Production.Quality
     {
         private Size thisSize;
         private bool FirstTime = true;
+        private string History;
 
         /// <inheritdoc/>
         // (menuitem, args= 參數)
@@ -26,6 +27,7 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
             this.thisSize = this.Size;
             this.FirstTime = false;
+            this.History = history;
 
             // 設定init()
             string mDivisionID = Env.User.Keyword;
@@ -38,7 +40,6 @@ namespace Sci.Production.Quality
             {
                 this.DefaultFilter = string.Format("MDivisionID= '{0}' and MDClose is not null", mDivisionID);
                 this.Text = "P31 .MD Master List(History)";
-                this.IsSupportEdit = false;
             }
         }
 
@@ -323,72 +324,75 @@ where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
         protected override void ClickEditAfter()
         {
             #region 設定表頭欄位只能Readonly
-                this.txtSP.ReadOnly = true;
-                this.txtBrand.ReadOnly = true;
-                this.txtStyle.ReadOnly = true;
-                this.txtSeason.ReadOnly = true;
-                this.txtProject.ReadOnly = true;
-                this.numOrderQty.ReadOnly = true;
-                this.txtOrderQty.ReadOnly = true;
-                this.dateMDFinished.ReadOnly = true;
-                this.txtuserMCHandle.TextBox1.ReadOnly = true;
-                this.dateSewingInline.ReadOnly = true;
-                this.dateSewingOffline.ReadOnly = true;
-                this.dateBuyerDelivery.ReadOnly = true;
-                this.dateSDPDate.ReadOnly = true;
-                this.dateRMTLETA.ReadOnly = true;
-                this.comboCategory.ReadOnly = true;
-                this.checkLocalOrder.ReadOnly = true;
-                this.checkPullForwardOrder.ReadOnly = true;
-                this.checkCancelledOrder.ReadOnly = true;
+            this.txtSP.ReadOnly = true;
+            this.txtBrand.ReadOnly = true;
+            this.txtStyle.ReadOnly = true;
+            this.txtSeason.ReadOnly = true;
+            this.txtProject.ReadOnly = true;
+            this.numOrderQty.ReadOnly = true;
+            this.txtOrderQty.ReadOnly = true;
+            this.dateMDFinished.ReadOnly = true;
+            this.txtuserMCHandle.TextBox1.ReadOnly = true;
+            this.dateSewingInline.ReadOnly = true;
+            this.dateSewingOffline.ReadOnly = true;
+            this.dateBuyerDelivery.ReadOnly = true;
+            this.dateSDPDate.ReadOnly = true;
+            this.dateRMTLETA.ReadOnly = true;
+            this.comboCategory.ReadOnly = true;
+            this.checkLocalOrder.ReadOnly = true;
+            this.checkPullForwardOrder.ReadOnly = true;
+            this.checkCancelledOrder.ReadOnly = true;
 
             #endregion
+            if (this.History == "1")
+            {
                 DataRow row = this.detailgrid.GetDataRow(this.detailgridbs.Position);
                 if (MyUtility.Check.Empty(row))
-            {
-                string id = this.txtSP.Text;
+                {
+                    string id = this.txtSP.Text;
 
-                DataTable detailDt = (DataTable)this.detailgridbs.DataSource;
+                    DataTable detailDt = (DataTable)this.detailgridbs.DataSource;
 
-                // Row 1
-                DataRow newRow1 = detailDt.NewRow();
-                newRow1["Type"] = "Accessory Items";
-                newRow1["ID"] = id;
-                detailDt.Rows.Add(newRow1);
-                this.DetailDatas.Add(newRow1);
+                    // Row 1
+                    DataRow newRow1 = detailDt.NewRow();
+                    newRow1["Type"] = "Accessory Items";
+                    newRow1["ID"] = id;
+                    detailDt.Rows.Add(newRow1);
+                    this.DetailDatas.Add(newRow1);
 
-                // Row 2
-                DataRow newRow2 = detailDt.NewRow();
-                newRow2["Type"] = "Accessory Items";
-                newRow2["ID"] = id;
-                detailDt.Rows.Add(newRow2);
-                this.DetailDatas.Add(newRow2);
+                    // Row 2
+                    DataRow newRow2 = detailDt.NewRow();
+                    newRow2["Type"] = "Accessory Items";
+                    newRow2["ID"] = id;
+                    detailDt.Rows.Add(newRow2);
+                    this.DetailDatas.Add(newRow2);
 
-                // Row 3
-                DataRow newRow3 = detailDt.NewRow();
-                newRow3["Type"] = "CutParts";
-                newRow3["ID"] = id;
-                detailDt.Rows.Add(newRow3);
-                this.DetailDatas.Add(newRow3);
+                    // Row 3
+                    DataRow newRow3 = detailDt.NewRow();
+                    newRow3["Type"] = "CutParts";
+                    newRow3["ID"] = id;
+                    detailDt.Rows.Add(newRow3);
+                    this.DetailDatas.Add(newRow3);
 
-                // Row 4
-                DataRow newRow4 = detailDt.NewRow();
-                newRow4["Type"] = "Garment";
-                newRow4["Item"] = "First MD";
-                newRow4["ID"] = id;
-                detailDt.Rows.Add(newRow4);
-                this.DetailDatas.Add(newRow4);
+                    // Row 4
+                    DataRow newRow4 = detailDt.NewRow();
+                    newRow4["Type"] = "Garment";
+                    newRow4["Item"] = "First MD";
+                    newRow4["ID"] = id;
+                    detailDt.Rows.Add(newRow4);
+                    this.DetailDatas.Add(newRow4);
 
-                // Row 5
-                DataRow newRow5 = detailDt.NewRow();
-                newRow5["Type"] = "Garment";
-                newRow5["Item"] = "If Open carton";
-                newRow5["ID"] = id;
-                detailDt.Rows.Add(newRow5);
-                this.DetailDatas.Add(newRow5);
+                    // Row 5
+                    DataRow newRow5 = detailDt.NewRow();
+                    newRow5["Type"] = "Garment";
+                    newRow5["Item"] = "If Open carton";
+                    newRow5["ID"] = id;
+                    detailDt.Rows.Add(newRow5);
+                    this.DetailDatas.Add(newRow5);
+                }
             }
 
-                base.ClickEditAfter();
+            base.ClickEditAfter();
         }
 
         /// <inheritdoc/>

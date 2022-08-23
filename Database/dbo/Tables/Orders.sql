@@ -188,6 +188,7 @@
     [DryRoomTransDate] DATETIME NULL, 
     [MdRoomScanDate] DATETIME NULL, 
     [OrganicCotton] BIT NOT NULL CONSTRAINT [DF_Orders_OrganicCotton] DEFAULT ((0)), 
+    [QMSMarketFeedback] NVARCHAR(200) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
