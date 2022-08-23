@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].ShippingMarkStamp_Detail(
 	PackingListID	varchar(15)	NOT NULL ,
-	SCICtnNo	varchar(15)	NOT NULL ,
+	SCICtnNo	varchar(16)	NOT NULL ,
 	ShippingMarkCombinationUkey bigint	NOT NULL CONSTRAINT [DF_ShippingMarkStamp_Detail_ShippingMarkCombinationUkey] DEFAULT(0),
 	ShippingMarkTypeUkey bigint	NOT NULL CONSTRAINT [DF_ShippingMarkStamp_Detail_ShippingMarkTypeUkey] DEFAULT(0),
 	FilePath	varchar(150)	NOT NULL CONSTRAINT [DF_ShippingMarkStamp_Detail_FilePath] DEFAULT(''),

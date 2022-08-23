@@ -7,7 +7,7 @@
     [CTNStartNo]    VARCHAR (6)  DEFAULT ('') NOT NULL,
     [AddName]       VARCHAR (10) DEFAULT ('') NOT NULL,
     [AddDate]       DATETIME     NOT NULL,
-    [SCICtnNo]      VARCHAR (15) CONSTRAINT [DF_CFAReceive_SCICtnNo] DEFAULT ('') NOT NULL,
+    [SCICtnNo]      VARCHAR (16) CONSTRAINT [DF_CFAReceive_SCICtnNo] DEFAULT ('') NOT NULL,
     [CFALocationID] VARCHAR (10) DEFAULT ('') NULL,
     PRIMARY KEY CLUSTERED ([ID] ASC)
 );

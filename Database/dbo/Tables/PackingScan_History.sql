@@ -4,7 +4,7 @@
 	[PackingListID] [varchar](13) NOT NULL DEFAULT (''),
 	[OrderID] [varchar](13) NOT NULL DEFAULT (''),
 	[CTNStartNo] [varchar](6) NOT NULL DEFAULT (''),
-	[SCICtnNo] [varchar](15) NULL DEFAULT (''),
+	[SCICtnNo] [varchar](16) NULL DEFAULT (''),
 	[DeleteFrom] [varchar](12) NOT NULL DEFAULT (''),
 	[ScanQty] [smallint] NOT NULL DEFAULT ((0)),
 	[ScanEditDate] [datetime] NULL,
