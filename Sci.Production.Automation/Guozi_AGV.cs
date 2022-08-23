@@ -34,7 +34,8 @@ namespace Sci.Production.Automation
             string suppAPIThread = "api/GuoziAGV/SentDataByApiTag";
             string sqlGetData;
             this.automationErrMsg.apiThread = apiThread;
-            this.automationErrMsg.suppAPIThread = suppAPIThread; Dictionary<string, string> requestHeaders = GetCustomHeaders();
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+            Dictionary<string, string> requestHeaders = GetCustomHeaders();
             this.automationErrMsg.CallFrom = requestHeaders["CallFrom"];
             this.automationErrMsg.Activity = requestHeaders["Activity"];
 
@@ -48,6 +49,9 @@ namespace Sci.Production.Automation
                     UtilityAutomation.SaveAutomationErrMsg(this.automationErrMsg);
                 }
 
+                DataRow drWorkOrder;
+                MyUtility.Check.Seek($"select ColorID, MarkerNo from WorkOrder with (nolock) where Ukey = '{dr["Ukey"]}'", out drWorkOrder);
+
                 listWorkOrder.Add(
                     new WorkOrderToAGV_PostBody()
                     {
@@ -58,6 +62,8 @@ namespace Sci.Production.Automation
                         ID = dr["ID"].ToString(),
                         OrderID = dr["OrderID"].ToString(),
                         CutCellID = dr["CutCellID"].ToString(),
+                        ColorID = drWorkOrder["ColorID"].ToString(),
+                        MarkerNo = drWorkOrder["MarkerNo"].ToString(),
                     });
             }
 
@@ -105,8 +111,24 @@ namespace Sci.Production.Automation
                 return;
             }
 
+            DataTable allNoDatas = null;
+
             foreach (BundleToAGV_PostBody bundle in impListBundle)
             {
+                if (allNoDatas == null)
+                {
+                    allNoDatas = PublicPrg.Prgs.GetNoDatas(bundle.POID, bundle.FabricPanelCode, bundle.Article, bundle.SizeCode);
+                }
+
+                string cardFromQty = PublicPrg.Prgs.GetNo(bundle.BundleNo, allNoDatas);
+                if (MyUtility.Check.Empty(cardFromQty))
+                {
+                    allNoDatas.Merge(PublicPrg.Prgs.GetNoDatas(bundle.POID, bundle.FabricPanelCode, bundle.Article, bundle.SizeCode));
+                    cardFromQty = PublicPrg.Prgs.GetNo(bundle.BundleNo, allNoDatas);
+                }
+
+                bundle.CardFromQty = cardFromQty;
+
                 sqlGetData = $@"
 select  bda.Ukey,
         bda.BundleNo,
@@ -129,6 +151,14 @@ select  Ukey,
 from    Bundle_Detail_Order with (nolock)
 where   BundleNo = '{bundle.BundleNo}'
 
+select  bd.Tone,
+        bd.Parts,
+        b.Item,
+        bd.Dyelot,
+        b.SubCutNo
+from Bundle b with (nolock)
+inner join Bundle_Detail bd with (nolock) on bd.ID = b.ID
+where bd.BundleNo = '{bundle.BundleNo}'
 ";
                 DualResult result = DBProxy.Current.Select(null, sqlGetData, out DataTable[] dtResults);
 
@@ -136,10 +166,20 @@ where   BundleNo = '{bundle.BundleNo}'
                 {
                     this.automationErrMsg.SetErrInfo(result);
                     SaveAutomationErrMsg(this.automationErrMsg);
+                    return;
                 }
 
                 bundle.Bundle_SubProcess = dtResults[0];
                 bundle.Bundle_Order = dtResults[1];
+
+                if (dtResults[2].Rows.Count > 0)
+                {
+                    bundle.Tone = dtResults[2].Rows[0]["Tone"].ToString();
+                    bundle.Parts = MyUtility.Convert.GetDecimal(dtResults[2].Rows[0]["Parts"]);
+                    bundle.Item = dtResults[2].Rows[0]["Item"].ToString();
+                    bundle.Dyelot = dtResults[2].Rows[0]["Dyelot"].ToString();
+                    bundle.SubCutNo = dtResults[2].Rows[0]["SubCutNo"].ToString();
+                }
             }
 
             dynamic bodyObject = new ExpandoObject();
@@ -161,6 +201,12 @@ where   BundleNo = '{bundle.BundleNo}'
                 s.SewingLineID,
                 s.RFUID,
                 s.AddDate,
+                s.Tone,
+                s.Parts,
+                s.Item,
+                s.CardFromQty,
+                s.Dyelot,
+                s.SubCutNo,
             });
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Bundle"));
@@ -221,7 +267,12 @@ where   BundleNo = '{bundle.BundleNo}'
             dynamic bodyObject = new ExpandoObject();
             string wherePOID = listPOID.Select(s => $"'{s}'").JoinToString(",");
             string sqlGetOrders = $@"
-select  distinct ID
+select  ID,
+        FactoryID,
+        StyleID,
+        SeasonID,
+        BrandID,
+        Dest
 from Orders with (nolock) where POID in ({wherePOID})
 ";
             DataTable dtSentOrderID;
@@ -231,7 +282,7 @@ from Orders with (nolock) where POID in ({wherePOID})
                 throw result.GetException();
             }
 
-            bodyObject.ID = dtSentOrderID.AsEnumerable().Select(s => s["ID"].ToString()).ToArray();
+            bodyObject.Orders = dtSentOrderID;
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Orders"));
 
             SendWebAPISaveAutomationCreateRecord(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
@@ -551,6 +602,10 @@ from Orders with (nolock) where POID in ({wherePOID})
             public string OrderID { get; set; }
 
             public string CutCellID { get; set; }
+
+            public string ColorID { get; set; }
+
+            public string MarkerNo { get; set; }
         }
 
         /// <summary>
@@ -647,6 +702,36 @@ from Orders with (nolock) where POID in ({wherePOID})
             /// AddDate
             /// </summary>
             public DateTime? AddDate { get; set; }
+
+            /// <summary>
+            /// Tone
+            /// </summary>
+            public string Tone { get; set; }
+
+            /// <summary>
+            /// Parts
+            /// </summary>
+            public decimal Parts { get; set; }
+
+            /// <summary>
+            /// Item
+            /// </summary>
+            public string Item { get; set; }
+
+            /// <summary>
+            /// CardFromQty
+            /// </summary>
+            public string CardFromQty { get; set; }
+
+            /// <summary>
+            /// Dyelot
+            /// </summary>
+            public string Dyelot { get; set; }
+
+            /// <summary>
+            /// SubCutNo
+            /// </summary>
+            public string SubCutNo { get; set; }
         }
     }
 }
