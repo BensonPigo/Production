@@ -42,7 +42,7 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            if (Prgs.IsAutomation())
+            if (Prgs.IsAutomation() || Automation.UtilityAutomation.IsAutomationEnable)
             {
                 this.chkIsWMS.Visible = true;
             }

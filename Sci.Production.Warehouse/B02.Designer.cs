@@ -170,11 +170,9 @@
             // 
             this.chkIsWMS.AutoSize = true;
             this.chkIsWMS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsWMS", true));
-            this.chkIsWMS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.chkIsWMS.IsSupportEditMode = false;
+            this.chkIsWMS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkIsWMS.Location = new System.Drawing.Point(299, 49);
             this.chkIsWMS.Name = "chkIsWMS";
-            this.chkIsWMS.ReadOnly = true;
             this.chkIsWMS.Size = new System.Drawing.Size(132, 21);
             this.chkIsWMS.TabIndex = 10;
             this.chkIsWMS.Text = "Is WMS Location";
