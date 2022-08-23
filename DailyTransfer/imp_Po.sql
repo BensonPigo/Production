@@ -331,7 +331,7 @@ SET
 	  ,a.POAmt			=b.POAmt
 	  ,a.ShipAmt		=b.ShipAmt
 	  ,a.StockSuppID	=b.StockSuppID
-	  ,a.StockOrderFactory = isnull(b.StockOrderFactory,'')
+	  ,a.StockOrdersFactory = isnull(b.StockOrdersFactory,'')
 from Production.dbo.PO_Supp_Detail as a 
 inner join Trade_To_Pms.dbo.PO_Supp_Detail as b ON a.id=b.id and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
 inner join  #Trade_To_Pms_PO c ON b.ID = c.ID 
@@ -404,7 +404,7 @@ ID
 	  ,POAmt
 	  ,ShipAmt
 	  ,StockSuppID
-	  ,StockOrderFactory
+	  ,StockOrdersFactory
 )
 select 
        b.ID
@@ -472,7 +472,7 @@ select
 	  ,b.POAmt
 	  ,b.ShipAmt
 	  ,b.StockSuppID
-	  ,isnull(b.StockOrderFactory,'')
+	  ,isnull(b.StockOrdersFactory,'')
 from Trade_To_Pms.dbo.PO_Supp_Detail as b WITH (NOLOCK) inner join  #Trade_To_Pms_PO c ON b.ID = c.ID
 where not exists(select id from Production.dbo.PO_Supp_Detail as a WITH (NOLOCK) where a.id = b.id and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2	)
 

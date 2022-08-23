@@ -76,7 +76,7 @@
     [ToMtlPOID] VARCHAR(13) NOT NULL DEFAULT (''), 
     [ToMtlSeq1] VARCHAR(3) NOT NULL DEFAULT (''), 
     [ToMtlSeq2] VARCHAR(2) NOT NULL DEFAULT (''), 
-    [StockOrderFactory] VARCHAR(8) NOT NULL DEFAULT (''), 
+    [StockOrdersFactory] VARCHAR(8) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_PO_Supp_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [SEQ1] ASC, [SEQ2] ASC)
 );
 
@@ -400,4 +400,4 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1type = N'TABLE',
     @level1name = N'PO_Supp_Detail',
     @level2type = N'COLUMN',
-    @level2name = N'StockOrderFactory'
+    @level2name = N'StockOrdersFactory'
