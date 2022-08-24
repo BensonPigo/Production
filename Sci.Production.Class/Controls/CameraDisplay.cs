@@ -24,6 +24,11 @@ namespace Sci.ManufacturingExecution.Class.Controls
         public string Pkey { get; set; }
 
         /// <summary>
+        /// 識別該元件的Seq
+        /// </summary>
+        public int Seq { get; set; }
+
+        /// <summary>
         /// 相同ID的不同序號
         /// </summary>
         public string ImagePath { get; set; }
@@ -37,11 +42,12 @@ namespace Sci.ManufacturingExecution.Class.Controls
             this.LastItem = false;
         }
 
-        public void SetPictureDisplay(string desc, string Pkey, Bitmap bitmap, string imgPath, double x, double y, bool reSize)
+        public void SetPictureDisplay(string desc, string Pkey, int Seq, Bitmap bitmap, string imgPath, double x, double y, bool reSize)
         {
             this.pictureBox1.Image = Camera_Prg.ResizeImage(Convert.ToInt32(this.pictureBox1.Width * x), Convert.ToInt32((this.pictureBox1.Height + 60) * y), bitmap, reSize);
             this.editDesc.Text = desc;
             this.Pkey = Pkey;
+            this.Seq = Seq;
             this.ImagePath = imgPath;
 
             // 隱藏split分隔線
@@ -69,7 +75,7 @@ namespace Sci.ManufacturingExecution.Class.Controls
 
             ((Panel)this.Parent).Controls.Remove(this);
 
-            Camera_Prg.MasterSchemas.RemoveAll(a => a.Pkey == this.Pkey);
+            Camera_Prg.MasterSchemas.RemoveAll(a => a.ID == this.Pkey && a.Seq == this.Seq);
         }
 
         private void editDesc_Validated(object sender, EventArgs e)
@@ -79,18 +85,18 @@ namespace Sci.ManufacturingExecution.Class.Controls
                 return;
             }
 
-            List<Endline_Camera_Schema> tempShow = Camera_Prg.MasterSchemas.Where(t => t.Pkey == this.Pkey).ToList();
+            List<Endline_Camera_Schema> tempShow = Camera_Prg.MasterSchemas.Where(t => t.ID == this.Pkey && t.Seq == this.Seq).ToList();
             foreach (var item in tempShow)
             {
                 item.desc = this.editDesc.Text;
             }
 
-            string sqlcmdDelete = $@"
-update ManufacturingExecution.dbo.Clip 
+            string sqlcmdEdit = $@"
+update PMSFile.dbo.FIR_Physical_Defect_RealtimeImage
 set Description = '{this.editDesc.Text}'
-where PKey = '{this.Pkey}'
+where FIRPhysicalDefectRealtimeID = '{this.Pkey}' and Seq = '{this.Seq}'
 ";
-            DBProxy.Current.Execute(string.Empty, sqlcmdDelete);
+            DBProxy.Current.Execute(string.Empty, sqlcmdEdit);
         }
     }
 }
