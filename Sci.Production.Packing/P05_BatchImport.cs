@@ -242,7 +242,8 @@ outer apply(
 	pd.Article = t.Article and
 	pd.Color = t.Color and
 	pd.SizeCode = t.SizeCode and
-	pd.OrderShipmodeSeq = t.OrderShipmodeSeq
+	pd.OrderShipmodeSeq = t.OrderShipmodeSeq and
+    p.PulloutID = ''
 )pd
 where Price = 0 
 and t.ShipQty - isnull(pd.ShipQty,0) > 0
