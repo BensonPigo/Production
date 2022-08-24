@@ -215,7 +215,7 @@ drop table #tmp", Env.User.Keyword, this.dr_master["id"]));
 
                 this.ShowWaitMessage("Data Loading....");
 
-                if (!SQL.Selects(string.Empty, strSQLCmd.ToString(), out this.dsTmp, paras))
+                if (!PublicPrg.Prgs.SelectSet(string.Empty, strSQLCmd.ToString(), out this.dsTmp, paras))
                 {
                     return;
                 }

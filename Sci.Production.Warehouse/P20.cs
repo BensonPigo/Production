@@ -441,7 +441,7 @@ where   stocktype='I'");
             DBProxy.Current.DefaultTimeout = 3000;
             try
             {
-                if (!SQL.Selects(string.Empty, sqlcmd.ToString(), out data, paras))
+                if (!PublicPrg.Prgs.SelectSet(string.Empty, sqlcmd.ToString(), out data, paras))
                 {
                     this.ShowErr(sqlcmd.ToString());
                     return;

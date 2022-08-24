@@ -213,7 +213,7 @@ and sot.Status ='Confirmed'
 and sotd.FromOrderID in (select distinct o3.id from Orders o2 inner join Orders o3 on o3.POID = o2.POID where o2.id=@SP)
 order by Transfer_Type, FromOrderID
 ";
-            if (!SQL.Selects(string.Empty, sqlcmd, out this.ds, sqls))
+            if (!PublicPrg.Prgs.SelectSet(string.Empty, sqlcmd, out this.ds, sqls))
             {
                 MyUtility.Msg.WarningBox(sqlcmd, "DB error!!");
                 return;

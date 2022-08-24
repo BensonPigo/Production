@@ -649,7 +649,7 @@ drop table #tmp  {(!string.IsNullOrEmpty(invCfmDate_s) && !string.IsNullOrEmpty(
 
             this.ShowWaitMessage("Data Loading....");
             #endregion
-            if (!SQL.Selects(string.Empty, sqlcmd.ToString(), out this.dataSet))
+            if (!PublicPrg.Prgs.SelectSet(string.Empty, sqlcmd.ToString(), out this.dataSet))
             {
                 MyUtility.Msg.WarningBox(sqlcmd.ToString(), "DB error!!");
                 return;

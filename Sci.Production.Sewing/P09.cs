@@ -149,7 +149,7 @@ drop table #tmp
 
 ";
             DataSet datas = null;
-            if (!SQL.Selects(string.Empty, sqlcmd, out datas))
+            if (!PublicPrg.Prgs.SelectSet(string.Empty, sqlcmd, out datas))
             {
                 MyUtility.Msg.WarningBox(sqlcmd, "DB error!!");
                 return;

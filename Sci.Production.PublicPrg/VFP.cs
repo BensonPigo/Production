@@ -240,7 +240,7 @@ namespace Sci.Production.Prg
 
             if (conn == null)
             {
-                SQL.GetConnection(out conn);
+                DBProxy.Current.OpenConnection(null, out conn);
             }
 
             string id = null;

@@ -179,7 +179,7 @@ drop table #mesPass1
             #region Set Grid Data
             DataSet datas = null;
 
-            if (!SQL.Selects(string.Empty, strSqlCmd, out datas, listSqlParameter))
+            if (!PublicPrg.Prgs.SelectSet(string.Empty, strSqlCmd, out datas, listSqlParameter))
             {
                 MyUtility.Msg.WarningBox(strSqlCmd, "DB error!!");
                 return;
