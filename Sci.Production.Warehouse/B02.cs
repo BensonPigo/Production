@@ -42,7 +42,7 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            if (Prgs.IsAutomation())
+            if (Prgs.IsAutomation() || Automation.UtilityAutomation.IsAutomationEnable)
             {
                 this.chkIsWMS.Visible = true;
             }
@@ -65,12 +65,6 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (!MyUtility.Check.Empty(this.CurrentMaintain["IsWMS"]))
-            {
-                MyUtility.Msg.WarningBox("Cannot edit WMS data!");
-                return false;
-            }
-
             return base.ClickEditBefore();
         }
 
@@ -85,15 +79,6 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override bool ClickCopy()
         {
-            if (!(this.CurrentMaintain == null))
-            {
-                if (!MyUtility.Check.Empty(this.CurrentMaintain["IsWMS"]))
-                {
-                    MyUtility.Msg.WarningBox("Cannot copy WMS data!");
-                    return false;
-                }
-            }
-
             return base.ClickCopy();
         }
 
