@@ -40,6 +40,7 @@ namespace Sci.Production.Quality
             {
                 this.DefaultFilter = string.Format("MDivisionID= '{0}' and MDClose is not null", mDivisionID);
                 this.Text = "P31 .MD Master List(History)";
+                this.gridicon.Visible = false;
             }
         }
 
