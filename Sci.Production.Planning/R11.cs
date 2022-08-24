@@ -269,15 +269,15 @@ group by o.FtyGroup,o.Styleid,oa.Article,oa.Brand,o.SeasonID,o.CdCodeID,o.CPU
 	, o.CDCodeNew, o.ProductType, o.FabricType, o.Lining, o.Gender, o.Construction
 
 -- get Style_SimilarStyle 
-select distinct StyleID,OldStyleID
+select distinct StyleID,OldStyleID,SciDelivery
 into #tmpStyle_SimilarStyle
 From 
 (
-		Select StyleID = MasterStyleID, BrandID = MasterBrandID, OldStyleID = t.StyleID,t.StyleUkey
+		Select StyleID = MasterStyleID, BrandID = MasterBrandID, OldStyleID = t.StyleID,t.StyleUkey,t.SciDelivery
 		From Style_SimilarStyle	s	
 		inner join #tmpo t on (t.StyleID = s.MasterStyleID and t.BrandID = s.MasterBrandID) or (t.StyleID = s.ChildrenStyleID and t.BrandID = s.ChildrenBrandID)
 		Union 
-		Select StyleID = ChildrenStyleID, BrandID = ChildrenBrandID, OldStyleID = t.StyleID,t.StyleUkey
+		Select StyleID = ChildrenStyleID, BrandID = ChildrenBrandID, OldStyleID = t.StyleID,t.StyleUkey,t.SciDelivery
 		From Style_SimilarStyle	s	
 		inner join #tmpo t on (t.StyleID = s.MasterStyleID and t.BrandID = s.MasterBrandID) or (t.StyleID = s.ChildrenStyleID and t.BrandID = s.ChildrenBrandID)
 ) main
@@ -317,7 +317,7 @@ select
 	,OutputDate
 	,SewingLineID
 into #tmp_AR_Basic_S
-from System s,(select distinct StyleID,OldStyleID from  #tmpStyle_SimilarStyle) o2
+from System s,(select distinct StyleID,OldStyleID,SciDelivery from  #tmpStyle_SimilarStyle) o2
 inner join Orders o WITH (NOLOCK) on o2.StyleID = o.StyleID
 inner join SewingOutput_Detail sod  WITH (NOLOCK) on sod.OrderId = o.ID
 inner join SewingOutput so  WITH (NOLOCK) on sod.id = so.id
