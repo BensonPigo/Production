@@ -268,11 +268,7 @@ where bd.BundleNo = '{bundle.BundleNo}'
             string wherePOID = listPOID.Select(s => $"'{s}'").JoinToString(",");
             string sqlGetOrders = $@"
 select  ID,
-        FactoryID,
-        StyleID,
-        SeasonID,
-        BrandID,
-        Dest
+        [Finished] = 1
 from Orders with (nolock) where POID in ({wherePOID})
 ";
             DataTable dtSentOrderID;
