@@ -828,8 +828,8 @@ from(
                     , NetQty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(A.NETQty, 0)), 2)
                     , [useqty] = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, (isnull(A.NETQty,0)+isnull(A.lossQty,0))), 2)
                     , shipQty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.ShipQty, 0)), 2)
-                    , FOC = a.foc
-                    , ShipFOC = a.shipfoc
+                    , FOC =  Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.foc, 0)), 2)
+                    , ShipFOC = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.shipfoc, 0)), 2)
                     , InputQty = isnull((select Round(sum(invtQty), 2)
                                          from (
                                             SELECT  dbo.getUnitQty(inv.UnitID, a.StockUnit, isnull(Qty, 0.00))  as invtQty
@@ -996,8 +996,8 @@ from(
                     , NetQty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(A.NETQty, 0)), 2)
                     , useqty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, (isnull(A.NETQty,0)+isnull(A.lossQty,0))), 2)
                     , ShipQty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.ShipQty, 0)), 2)
-                    , FOC = a.FOC
-                    , ShipFOC = a.ShipFOC
+                    , FOC = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.FOC, 0)), 2)
+                    , ShipFOC = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.ShipFOC, 0)), 2)
                     , InputQty = isnull((select Round(sum(invtQty), 2)
                                          from (
 	                                        SELECT dbo.getUnitQty(inv.UnitID, a.StockUnit, isnull(Qty, 0.0)) as invtQty
