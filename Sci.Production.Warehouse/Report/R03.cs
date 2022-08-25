@@ -208,6 +208,7 @@ select  F.MDivisionID
         ,PSD.NETQty
         ,PSD.NETQty+PSD.LossQty
         ,PSD.ShipQty
+        ,PSD.FOC
         ,PSD.ShipFOC
         ,PSD.ApQty
         ,PSD.InputQty

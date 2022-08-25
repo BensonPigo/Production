@@ -508,7 +508,8 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             .Text("NETQty", header: "Net\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight) // 14
             .Text("useqty", header: "Use\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight) // 15
             .Text("ShipQty", header: "Ship\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts3) // 16
-            .Text("ShipFOC", header: "F.O.C", iseditingreadonly: true, width: Widths.AnsiChars(3), alignment: DataGridViewContentAlignment.MiddleRight) // 17
+            .Text("FOC", header: "F.O.C", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight) // 17
+            .Text("ShipFOC", header: "Ship F.O.C", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight) // 17
             .Text("InputQty", header: "Taipei" + Environment.NewLine + "Stock Qty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts4) // 19
             .Text("POUnit", header: "PO Unit", iseditingreadonly: true, width: Widths.AnsiChars(4)) // 20
             .Text("Complete", header: "Cmplt", iseditingreadonly: true, width: Widths.AnsiChars(3)) // 21
@@ -755,6 +756,7 @@ from(
             , NetQty = iif (NetQty = 0, '', format(NetQty,'#,###,###,###.##'))
             , useqty = iif (useqty = 0, '',format(useqty,'#,###,###,###.##'))
             , shipQty = iif (shipQty = 0, '',format(shipQty,'#,###,###,###.##'))
+            , FOC = iif (FOC = 0, '', format(FOC,'###.##'))
             , ShipFOC = iif (ShipFOC = 0, '', format(ShipFOC,'###.##'))
             , InputQty = iif (InputQty = 0, '',format(InputQty,'#,###,###,###.##'))
             , POUnit
@@ -826,7 +828,8 @@ from(
                     , NetQty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(A.NETQty, 0)), 2)
                     , [useqty] = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, (isnull(A.NETQty,0)+isnull(A.lossQty,0))), 2)
                     , shipQty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.ShipQty, 0)), 2)
-                    , ShipFOC = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.ShipFOC, 0)), 2)
+                    , FOC =  Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.foc, 0)), 2)
+                    , ShipFOC = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.shipfoc, 0)), 2)
                     , InputQty = isnull((select Round(sum(invtQty), 2)
                                          from (
                                             SELECT  dbo.getUnitQty(inv.UnitID, a.StockUnit, isnull(Qty, 0.00))  as invtQty
@@ -993,6 +996,7 @@ from(
                     , NetQty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(A.NETQty, 0)), 2)
                     , useqty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, (isnull(A.NETQty,0)+isnull(A.lossQty,0))), 2)
                     , ShipQty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.ShipQty, 0)), 2)
+                    , FOC = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.FOC, 0)), 2)
                     , ShipFOC = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.ShipFOC, 0)), 2)
                     , InputQty = isnull((select Round(sum(invtQty), 2)
                                          from (
@@ -1156,6 +1160,7 @@ select ROW_NUMBER_D = 1
        , [NetQty] = '-'
        , [useqty] = '-'
        , [shipQty] = '-'
+       , [FOC] = '-'
        , [ShipFOC] = '-'
        , [InputQty] = '-'
        , [POUnit] = '-'
