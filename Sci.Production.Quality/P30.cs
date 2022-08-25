@@ -41,6 +41,8 @@ namespace Sci.Production.Quality
                 this.DefaultFilter = string.Format("MDivisionID= '{0}' and MDClose is not null", mDivisionID);
                 this.Text = "P31 .MD Master List(History)";
                 this.gridicon.Visible = false;
+                this.detailgrid.IsEditable = false;
+                this.InsertDetailGridOnDoubleClick = false;
             }
         }
 
@@ -307,7 +309,7 @@ where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
 
             this.detailgrid.RowPostPaint += (s, e) =>
             {
-                if (this.EditMode == true)
+                if (this.EditMode == true && this.History == "1")
                 {
                     this.detailgrid.Rows[e.RowIndex].Cells["Colorid"].Style.ForeColor = Color.Red;
                 }
