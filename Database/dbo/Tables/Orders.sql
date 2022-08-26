@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[Orders] (
     [ID]                     VARCHAR (13)    CONSTRAINT [DF_Orders_ID] DEFAULT ('') NOT NULL,
     [BrandID]                VARCHAR (8)     CONSTRAINT [DF_Orders_BrandID] DEFAULT ('') NULL,
-    [ProgramID]              VARCHAR (12)    CONSTRAINT [DF_Orders_ProgramID] DEFAULT ('') NULL,
+    [ProgramID]              NVARCHAR(12)    CONSTRAINT [DF_Orders_ProgramID] DEFAULT ('') NULL,
     [StyleID]                VARCHAR (15)    CONSTRAINT [DF_Orders_StyleID] DEFAULT ('') NULL,
     [SeasonID]               VARCHAR (10)    CONSTRAINT [DF_Orders_SeasonID] DEFAULT ('') NULL,
     [ProjectID]              VARCHAR (5)     CONSTRAINT [DF_Orders_ProjectID] DEFAULT ('') NULL,
