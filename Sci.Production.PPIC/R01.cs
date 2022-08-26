@@ -1316,6 +1316,7 @@ select  s.SewingLineID
 	        ,[Lining] = sty.Lining
 	        ,[Gender] = sty.Gender
 	        ,[Construction] = sty.Construction
+            ,o.Category
 	into #tmp_main
     from SewingSchedule s WITH (NOLOCK) 
     inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
@@ -1520,6 +1521,7 @@ select  SewingLineID
         , FactoryID
         , OrderID
 		, CustPONo
+        , Category
         , ComboType
         , [Switch to Workorder]
         , IIF(Article = '', '', SUBSTRING(Article, 1, LEN(Article) - 1)) as Article
@@ -1645,6 +1647,7 @@ select  s.SewingLineID
 	        ,[Lining] = sty.Lining
 	        ,[Gender] = sty.Gender
 	        ,[Construction] = sty.Construction
+            ,o.Category
 	into #tmp_main
     from SewingSchedule s WITH (NOLOCK) 
 	inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID
@@ -1899,6 +1902,7 @@ select  SewingLineID
         , FactoryID
         , OrderID
 		, CustPONo
+        , Category
         , ComboType
         , [Switch to Workorder]
         , Article 
