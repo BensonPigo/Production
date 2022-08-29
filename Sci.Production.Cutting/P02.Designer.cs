@@ -29,9 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelCuttingSP = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
@@ -119,6 +116,7 @@
             this.label6 = new Sci.Win.UI.Label();
             this.BackgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.btnExWip = new Sci.Win.UI.Button();
+            this.btnKHImportMarker = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -151,6 +149,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnKHImportMarker);
             this.masterpanel.Controls.Add(this.btnExWip);
             this.masterpanel.Controls.Add(this.dispSubprocess);
             this.masterpanel.Controls.Add(this.numLeadTime);
@@ -204,6 +203,7 @@
             this.masterpanel.Controls.SetChildIndex(this.numLeadTime, 0);
             this.masterpanel.Controls.SetChildIndex(this.dispSubprocess, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnExWip, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnKHImportMarker, 0);
             // 
             // detailpanel
             // 
@@ -225,7 +225,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(7677, 561);
+            this.refresh.Location = new System.Drawing.Point(7832, 561);
             // 
             // detailgridcont
             // 
@@ -233,8 +233,20 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
-            this.detailgridcont.Location = new System.Drawing.Point(0, 93);
-            this.detailgridcont.Size = new System.Drawing.Size(830, 585);
+            this.detailgridcont.Location = new System.Drawing.Point(3, 97);
+            this.detailgridcont.Size = new System.Drawing.Size(823, 579);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(1203, 713);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(1197, 667);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(1197, 40);
             // 
             // detail
             // 
@@ -478,9 +490,10 @@
             // btnBatchAssign
             // 
             this.btnBatchAssign.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnBatchAssign.Location = new System.Drawing.Point(384, 61);
+            this.btnBatchAssign.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.btnBatchAssign.Location = new System.Drawing.Point(377, 61);
             this.btnBatchAssign.Name = "btnBatchAssign";
-            this.btnBatchAssign.Size = new System.Drawing.Size(107, 30);
+            this.btnBatchAssign.Size = new System.Drawing.Size(78, 30);
             this.btnBatchAssign.TabIndex = 17;
             this.btnBatchAssign.Text = "Batch assign";
             this.btnBatchAssign.UseVisualStyleBackColor = true;
@@ -709,14 +722,6 @@
             this.gridSizeRatio.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridSizeRatio.Location = new System.Drawing.Point(0, 13);
             this.gridSizeRatio.Name = "gridSizeRatio";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridSizeRatio.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSizeRatio.RowTemplate.Height = 24;
@@ -733,19 +738,19 @@
             this.insertSizeRatioToolStripMenuItem,
             this.deleteToolStripMenuItem});
             this.sizeratioMenuStrip.Name = "sizeratioMenuStrip";
-            this.sizeratioMenuStrip.Size = new System.Drawing.Size(166, 48);
+            this.sizeratioMenuStrip.Size = new System.Drawing.Size(164, 48);
             // 
             // insertSizeRatioToolStripMenuItem
             // 
             this.insertSizeRatioToolStripMenuItem.Name = "insertSizeRatioToolStripMenuItem";
-            this.insertSizeRatioToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.insertSizeRatioToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.insertSizeRatioToolStripMenuItem.Text = "Insert Size Ratio";
             this.insertSizeRatioToolStripMenuItem.Click += new System.EventHandler(this.InsertSizeRatioToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.deleteToolStripMenuItem.Text = "Delete Record";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.DeleteToolStripMenuItem_Click);
             // 
@@ -792,14 +797,6 @@
             this.gridDistributetoSPNo.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridDistributetoSPNo.Location = new System.Drawing.Point(0, 18);
             this.gridDistributetoSPNo.Name = "gridDistributetoSPNo";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridDistributetoSPNo.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.gridDistributetoSPNo.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridDistributetoSPNo.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDistributetoSPNo.RowTemplate.Height = 24;
@@ -817,19 +814,19 @@
             this.insertNewRecordToolStripMenuItem,
             this.deleteRecordToolStripMenuItem});
             this.distributeMenuStrip.Name = "contextMenuStrip1";
-            this.distributeMenuStrip.Size = new System.Drawing.Size(180, 48);
+            this.distributeMenuStrip.Size = new System.Drawing.Size(178, 48);
             // 
             // insertNewRecordToolStripMenuItem
             // 
             this.insertNewRecordToolStripMenuItem.Name = "insertNewRecordToolStripMenuItem";
-            this.insertNewRecordToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.insertNewRecordToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.insertNewRecordToolStripMenuItem.Text = "Insert New Record";
             this.insertNewRecordToolStripMenuItem.Click += new System.EventHandler(this.InsertNewRecordToolStripMenuItem_Click);
             // 
             // deleteRecordToolStripMenuItem
             // 
             this.deleteRecordToolStripMenuItem.Name = "deleteRecordToolStripMenuItem";
-            this.deleteRecordToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.deleteRecordToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.deleteRecordToolStripMenuItem.Text = "Delete Record";
             this.deleteRecordToolStripMenuItem.Click += new System.EventHandler(this.DeleteRecordToolStripMenuItem_Click);
             // 
@@ -850,14 +847,6 @@
             this.gridQtyBreakdown.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBreakdown.Location = new System.Drawing.Point(0, 14);
             this.gridQtyBreakdown.Name = "gridQtyBreakdown";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBreakdown.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBreakdown.RowTemplate.Height = 24;
@@ -922,7 +911,7 @@
             this.downloadid_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.downloadid_Text.Location = new System.Drawing.Point(5, 61);
             this.downloadid_Text.Name = "downloadid_Text";
-            this.downloadid_Text.Size = new System.Drawing.Size(266, 23);
+            this.downloadid_Text.Size = new System.Drawing.Size(260, 23);
             this.downloadid_Text.TabIndex = 53;
             this.downloadid_Text.Text = "DownLoad ID/ Apply # Different";
             this.downloadid_Text.TextStyle.Color = System.Drawing.Color.Red;
@@ -1183,9 +1172,10 @@
             // 
             // btnStdQtyWIP
             // 
-            this.btnStdQtyWIP.Location = new System.Drawing.Point(490, 61);
+            this.btnStdQtyWIP.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.btnStdQtyWIP.Location = new System.Drawing.Point(455, 61);
             this.btnStdQtyWIP.Name = "btnStdQtyWIP";
-            this.btnStdQtyWIP.Size = new System.Drawing.Size(119, 30);
+            this.btnStdQtyWIP.Size = new System.Drawing.Size(81, 30);
             this.btnStdQtyWIP.TabIndex = 54;
             this.btnStdQtyWIP.Text = "Std. Qty/WIP";
             this.btnStdQtyWIP.UseVisualStyleBackColor = true;
@@ -1218,9 +1208,10 @@
             // 
             // BtnImportMarker
             // 
-            this.BtnImportMarker.Location = new System.Drawing.Point(608, 61);
+            this.BtnImportMarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.BtnImportMarker.Location = new System.Drawing.Point(536, 61);
             this.BtnImportMarker.Name = "BtnImportMarker";
-            this.BtnImportMarker.Size = new System.Drawing.Size(119, 30);
+            this.BtnImportMarker.Size = new System.Drawing.Size(82, 30);
             this.BtnImportMarker.TabIndex = 59;
             this.BtnImportMarker.Text = "Import Marker";
             this.BtnImportMarker.UseVisualStyleBackColor = true;
@@ -1282,13 +1273,24 @@
             // 
             this.btnExWip.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnExWip.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnExWip.Location = new System.Drawing.Point(277, 56);
+            this.btnExWip.Location = new System.Drawing.Point(270, 56);
             this.btnExWip.Name = "btnExWip";
             this.btnExWip.Size = new System.Drawing.Size(107, 35);
             this.btnExWip.TabIndex = 68;
             this.btnExWip.Text = "Exclude fabric combo in WIP";
             this.btnExWip.UseVisualStyleBackColor = true;
             this.btnExWip.Click += new System.EventHandler(this.BtnExWip_Click);
+            // 
+            // btnKHImportMarker
+            // 
+            this.btnKHImportMarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.btnKHImportMarker.Location = new System.Drawing.Point(618, 61);
+            this.btnKHImportMarker.Name = "btnKHImportMarker";
+            this.btnKHImportMarker.Size = new System.Drawing.Size(107, 30);
+            this.btnKHImportMarker.TabIndex = 69;
+            this.btnKHImportMarker.Text = "KH Import Marker";
+            this.btnKHImportMarker.UseVisualStyleBackColor = true;
+            this.btnKHImportMarker.Click += new System.EventHandler(this.BtnKHImportMarker_Click);
             // 
             // P02
             // 
@@ -1439,5 +1441,6 @@
         private Win.UI.Label label5;
         private Win.UI.Label label6;
         private Win.UI.Button btnExWip;
+        private Win.UI.Button btnKHImportMarker;
     }
 }

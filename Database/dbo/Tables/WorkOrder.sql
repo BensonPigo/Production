@@ -39,6 +39,7 @@
     [SpreadingNoID]       VARCHAR (3)    NULL,
     [Shift]               VARCHAR (1)    DEFAULT ('') NOT NULL,
     [WKETA]               DATE           NULL,
+    [Tone] VARCHAR(15) CONSTRAINT [DF_WorkOrder_Tone] DEFAULT ('') not NULL,
     CONSTRAINT [PK_WorkOrder] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -211,3 +212,12 @@ GO
 CREATE NONCLUSTERED INDEX [BundleESCDate]
     ON [dbo].[WorkOrder]([ID] ASC, [MDivisionId] ASC, [CutRef] ASC);
 
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Tone 色差',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'WorkOrder',
+    @level2type = N'COLUMN',
+    @level2name = N'Tone'

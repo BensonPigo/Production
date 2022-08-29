@@ -4068,5 +4068,10 @@ DEALLOCATE CURSOR_
             var exwip = new P02_ExcludefabriccomboinWIP(this.CurrentMaintain["id"].ToString());
             exwip.ShowDialog();
         }
+
+        private void BtnKHImportMarker_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
