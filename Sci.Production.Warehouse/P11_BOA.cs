@@ -1,11 +1,12 @@
-﻿using System;
-using System.Data;
-using Ict.Win;
+﻿using Ict.Win;
 using Sci.Data;
+using System;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P11_BOA : Win.Subs.Base
     {
         private string poid;
@@ -13,7 +14,7 @@ namespace Sci.Production.Warehouse
         private string cutplanid;
         private string orderid;
 
-       // Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        /// <inheritdoc/>
         public P11_BOA(string issueid, string poid, string cutplanid, string orderid)
         {
             this.InitializeComponent();
@@ -51,8 +52,6 @@ namespace Sci.Production.Warehouse
                 sqlCmd.Parameters.Add(new SqlParameter("@TestType", "1"));
                 sqlCmd.Parameters.Add(new SqlParameter("@UserID", Env.User.UserID));
                 sqlCmd.Parameters.Add(new SqlParameter("@IssueType", "Sewing"));
-
-                // sqlCmd.Parameters.Add(new SqlParameter("@MDivisionId", Env.User.Keyword));
                 sqlCmd.CommandTimeout = 300;
                 sqlDataAdapter = new SqlDataAdapter(sqlCmd);
 
@@ -95,15 +94,6 @@ namespace Sci.Production.Warehouse
                  .Text("remark", header: "Remark", width: Widths.AnsiChars(10))
                   .Text("usageqty", header: "Usage Qty", width: Widths.AnsiChars(10))
                   .Text("usageunit", header: "Usage Unit", width: Widths.AnsiChars(10))
-
-                  // .Text("bomfactory", header: "bom factory", width: Widths.AnsiChars(6))
-                 // .Text("bomcountry", header: "bom country", width: Widths.AnsiChars(15))
-                 // .Text("bomstyle", header: "bom style", width: Widths.AnsiChars(10))
-                  // .Text("bomcustcd", header: "bom custcd", width: Widths.AnsiChars(10))
-                  // .Text("bomarticle", header: "bom article", width: Widths.AnsiChars(10))
-                  // .Text("bomzipperinsert", header: "bom zipperinsert", width: Widths.AnsiChars(10))
-                  // .Text("bombuymonth", header: "bom buymonth", width: Widths.AnsiChars(10))
-                  // .Text("bomcustpono", header: "bom custpono", width: Widths.AnsiChars(10))
                  ;
             this.gridBOA.Columns[5].Frozen = true;  // Order Qty
         }

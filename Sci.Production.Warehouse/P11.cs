@@ -633,9 +633,9 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
 ;delete from dbo.issue_breakdown where id='{0}' and qty = 0; ", this.CurrentMaintain["id"],
                     this.sbSizecode.ToString().Substring(0, this.sbSizecode.ToString().Length - 1));
 
-                string aaa = this.sbSizecode.ToString().Substring(0, this.sbSizecode.ToString().Length - 1).Replace("[", string.Empty).Replace("]", string.Empty);
+                string sizecodes = this.sbSizecode.ToString().Substring(0, this.sbSizecode.ToString().Length - 1).Replace("[", string.Empty).Replace("]", string.Empty);
 
-                ProcessWithDatatable2(this.dtIssueBreakDown, "OrderID,Article," + aaa, sqlcmd, out result, "#tmp");
+                ProcessWithDatatable2(this.dtIssueBreakDown, "OrderID,Article," + sizecodes, sqlcmd, out result, "#tmp");
             }
 
             // 將需新增的資料狀態更改為新增

@@ -224,17 +224,27 @@ end
 
 Create Table #Tmp_BoaExpend
 (  ExpendUkey BigInt Identity(1,1) Not Null, ID Varchar(13), Order_BOAUkey BigInt
-	, RefNo VarChar(20), SCIRefNo VarChar(30), Article VarChar(8), ColorID VarChar(6), SuppColor NVarChar(Max)
+	, RefNo VarChar(36), SCIRefNo VarChar(30), Article VarChar(8), ColorID VarChar(6), SuppColor NVarChar(Max)
 	, SizeCode VarChar(8), SizeSpec VarChar(15), SizeUnit VarChar(8), Remark NVarChar(Max)
 	, OrderQty Numeric(6,0)
-	--, Price Numeric(12,4)
-	, UsageQty Numeric(11,2), UsageUnit VarChar(8), SysUsageQty  Numeric(11,2)
-	, BomZipperInsert VarChar(5), BomCustPONo VarChar(30), Keyword VarChar(Max), OrderList nvarchar(max), ColorDesc nvarchar(150)
-	, Special nvarchar(max)
+    --, Price Numeric(12,4)--pms does not use this column
+    , UsageQty Numeric(11,2), UsageUnit VarChar(8), SysUsageQty  Numeric(11,2)
+	, BomZipperInsert VarChar(5), BomCustPONo VarChar(30), Keyword VarChar(Max), Keyword_Original VarChar(Max), Keyword_xml VarChar(Max), OrderList nvarchar(max), ColorDesc nvarchar(150), Special nvarchar(max)
+	, BomTypeColorID varchar(50), BomTypeSize varchar(50), BomTypeSizeUnit varchar(50), BomTypeZipperInsert varchar(50), BomTypeArticle varchar(50), BomTypeCOO varchar(50)
+	, BomTypeGender varchar(50), BomTypeCustomerSize varchar(50), BomTypeDecLabelSize varchar(50), BomTypeBrandFactoryCode varchar(50), BomTypeStyle varchar(50)
+	, BomTypeStyleLocation varchar(50), BomTypeSeason varchar(50), BomTypeCareCode varchar(50), BomTypeCustomerPO varchar(50)
 	, Primary Key (ExpendUkey)
 	, Index Idx_ID NonClustered (ID, Order_BOAUkey, ColorID) -- table index
-)
-Exec dbo.BoaExpend '{3}', {4}, {5}, '{6}',0,1;
+);
+
+if  (select CFMDate from orders with(nolock) where id = '{3}') < '2022/08/01'
+begin
+    Exec dbo.BoaExpend '{3}', {4}, {5}, '{6}',0,1;
+end
+else
+begin
+	Exec BoaExpend_New '{3}', {4}, {5}, '{6}',0,1;
+end
 
 --BoAExpend SizeSpec 與 Po_Supp_Detail SizeSpec 意義不同，因此比對時 Po_Supp_Detail 也需要展開
 select	distinct psd.id as [poid]
@@ -453,8 +463,8 @@ order by z.seq1,z.seq2,z.Seq
             // 呼叫procedure，取得BOA展開結果
             try
             {
-                string aaa = this.sbSizecode.ToString().Substring(0, this.sbSizecode.ToString().Length - 1).Replace("[", string.Empty).Replace("]", string.Empty);
-                var rESULT = MyUtility.Tool.ProcessWithDatatable(this.dtIssueBreakDown, "OrderID,Article," + aaa, sqlcmd, out result, "#tmp");
+                string sizecodes = this.sbSizecode.ToString().Substring(0, this.sbSizecode.ToString().Length - 1).Replace("[", string.Empty).Replace("]", string.Empty);
+                var rESULT = MyUtility.Tool.ProcessWithDatatable(this.dtIssueBreakDown, "OrderID,Article," + sizecodes, sqlcmd, out result, "#tmp");
 
                 if (!rESULT)
                 {

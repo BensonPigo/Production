@@ -14,6 +14,8 @@
     [AddDate]   DATETIME      NULL,
     [EditName]  VARCHAR (10)  CONSTRAINT [DF_Color_SuppColor_EditName] DEFAULT ('') NULL,
     [EditDate]  DATETIME      NULL,
+    [SuppGroupFabric] VARCHAR(8) NULL, 
+    [MtlTypeId] VARCHAR(20) NULL, 
     CONSTRAINT [PK_Color_SuppColor] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

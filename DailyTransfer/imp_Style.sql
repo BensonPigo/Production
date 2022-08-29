@@ -139,6 +139,8 @@ a.Ukey	= b.Ukey
 ,a.DevRegion = b.DevRegion
 ,a.DevOption = b.DevOption
 ,a.Teamwear = b.Teamwear
+,a.BrandGender = b.BrandGender
+,a.AgeGroup = b.AgeGroup
 from Production.dbo.Style as a 
 inner join Trade_To_Pms.dbo.Style as b ON a.ID	= b.ID AND a.BrandID	= b.BrandID AND a.SeasonID	= b.SeasonID
 
@@ -226,6 +228,8 @@ ID
 ,DevRegion
 ,DevOption
 ,Teamwear
+,BrandGender
+,AgeGroup
 )
 output	inserted.ID,
 		inserted.SeasonID,
@@ -301,6 +305,8 @@ select
 ,b.DevRegion
 ,b.DevOption
 ,b.Teamwear
+,b.BrandGender
+,b.AgeGroup
 from Trade_To_Pms.dbo.Style as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.ID=b.ID and a.BrandID=b.BrandID and a.SeasonID=b.SeasonID and a.LocalStyle=1)
 AND not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.Ukey=b.Ukey )

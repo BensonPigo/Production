@@ -201,6 +201,7 @@ SET
       ,a.AddDate		      =b.AddDate
       ,a.EditName		      =b.EditName
       ,a.EditDate		      =b.EditDate
+      ,a.SeasonForDisplay	  =b.SeasonForDisplay
 
 from Production.dbo.Season as a inner join Trade_To_Pms.dbo.Season as b ON a.id=b.id and a.BrandID = b.BrandID
 -------------------------- INSERT INTO §ì
@@ -216,7 +217,7 @@ INSERT INTO Production.dbo.Season
       ,AddDate
       ,EditName
       ,EditDate
-
+      ,SeasonForDisplay
 )
 select 
        ID
@@ -229,6 +230,7 @@ select
       ,AddDate
       ,EditName
       ,EditDate
+      ,SeasonForDisplay
 from Trade_To_Pms.dbo.Season as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Season as a WITH (NOLOCK) where a.id = b.id and a.BrandID = b.BrandID)
 
@@ -265,6 +267,7 @@ SET
       ,a.EditName		      =b.EditName
       ,a.EditDate		      =b.EditDate
       ,a.Currencyid		      =b.Currencyid
+      ,a.SuppGroupFabric	  =b.SuppGroupFabric
 
 from Production.dbo.Supp as a inner join Trade_To_Pms.dbo.Supp as b ON a.id=b.id
 -------------------------- INSERT INTO §ì
@@ -291,6 +294,7 @@ INSERT INTO Production.dbo.Supp(
       ,EditName
       ,EditDate
       ,Currencyid
+      ,SuppGroupFabric
 )
 select 
 		ID
@@ -315,6 +319,7 @@ select
       ,EditName
       ,EditDate
       ,Currencyid
+      ,SuppGroupFabric
 from Trade_To_Pms.dbo.Supp as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Supp as a WITH (NOLOCK) where a.id = b.id)
 
@@ -1068,6 +1073,7 @@ SET
       ,a.AddDate		      =b.AddDate
       ,a.EditName		      =b.EditName
       ,a.EditDate		      =b.EditDate
+      ,a.V_Code		          =b.V_Code
 
 from Production.dbo.Factory_BrandDefinition as a inner join Trade_To_Pms.dbo.Factory_BrandDefinition as b ON a.id=b.id and a.BrandID=b.BrandID and a.CDCodeID=b.CDCodeID
 where b.EditDate > a.EditDate
@@ -1083,6 +1089,7 @@ SET
       ,a.BrandReportCode		      =b.BrandReportCode
       ,a.AddName		      =b.AddName
       ,a.AddDate		      =b.AddDate
+      ,a.V_Code		          =b.V_Code
       --,a.EditName		      =b.EditName
       --,a.EditDate		      =b.EditDate
 
@@ -1101,7 +1108,7 @@ ID
       ,AddDate
       ,EditName
       ,EditDate
-
+      ,V_Code
 )
 select 
 ID
@@ -1115,6 +1122,7 @@ ID
       ,AddDate
       ,EditName
       ,EditDate
+      ,V_Code
 
 from Trade_To_Pms.dbo.Factory_BrandDefinition as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Factory_BrandDefinition as a WITH (NOLOCK) where a.id = b.id and a.BrandID=b.BrandID and a.CDCodeID=b.CDCodeID)
@@ -2810,7 +2818,9 @@ when matched then
 	t.AddName= s.AddName,
 	t.AddDate= s.AddDate,
 	t.EditName= s.EditName,
-	t.EditDate= s.EditDate
+	t.EditDate= s.EditDate,
+	t.SuppGroupFabric= s.SuppGroupFabric,
+	t.MtlTypeId= s.MtlTypeId
 when not matched by target then
 	insert(ID
 	,Ukey
@@ -2827,6 +2837,8 @@ when not matched by target then
 	,AddDate
 	,EditName
 	,EditDate
+    ,SuppGroupFabric
+    ,MtlTypeId
 	)
 	values(s.ID,
 	s.Ukey,
@@ -2842,7 +2854,10 @@ when not matched by target then
 	s.AddName,
 	s.AddDate,
 	s.EditName,
-	s.EditDate)
+	s.EditDate,
+    s.SuppGroupFabric,
+    s.MtlTypeId
+    )
 when not matched by source then 
 	delete;
 
