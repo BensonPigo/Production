@@ -2732,6 +2732,7 @@
     <Build Include="dbo\Tables\SewingOutputEfficiency_History.sql" />
     <Build Include="dbo\Functions\IsRepeatStyleBySewingOutput.sql" />
     <Build Include="dbo\Tables\CTNHauling.sql" />
+    <Build Include="dbo\Tables\Lost1stMDNotification.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
