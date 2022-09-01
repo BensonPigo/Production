@@ -244,7 +244,7 @@ select	ted.InventoryPOID,
 		ted.Description,
 		ted.UnitID,
 		[ColorID] = isnull(psdinv.SpecValue, psdsC.SpecValue),
-		[SizeSpec] = isnull(psdinv.SpecValue, psdsC.SpecValue),
+		[SizeSpec] = isnull(psdInvS.SpecValue, psdsS.SpecValue),
 		ted.PoQty,
 		ExportCarton.ExportQty,
 		ExportCarton.Foc,
@@ -295,6 +295,7 @@ select	ted.InventoryPOID,
 from TransferExport_Detail ted with (nolock) 
 left join Orders o with (nolock) on ted.PoID = o.ID
 left join PO_Supp_Detail_Spec psdInv with (nolock) on ted.InventoryPOID = psdInv.ID and ted.InventorySeq1 = psdInv.SEQ1 and ted.InventorySeq2 = psdinv.SEQ2 and psdinv.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdInvS with (nolock) on ted.InventoryPOID = psdInvS.ID and ted.InventorySeq1 = psdInvS.SEQ1 and ted.InventorySeq2 = psdInvS.SEQ2 and psdInvS.SpecColumnID = 'Size'
 left join PO_Supp_Detail psd with (nolock) on ted.PoID = psd.ID and ted.Seq1 = psd.SEQ1 and ted.Seq2 = psd.SEQ2
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
