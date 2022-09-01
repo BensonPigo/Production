@@ -105,12 +105,23 @@ select Orderid = oq.ID,oq.Article,oq.SizeCode,oq.Qty, InStartDate = Null,InEndDa
 into #enn
 from Order_Qty oq  with(nolock)
 {where}
-";
 
-            string[] subprocessIDs = new string[] { "SewingLine", "Loading" };
-            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#enn", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
+select s.OrderID, s.SubProcessID, TransferTime = MAX(s.TransferTime)
+into #tmp_SetQtyBySubprocess_Last
+from SetQtyBySubprocess s WITH (NOLOCK)
+where exists (select 1 from #enn t where s.OrderID = t.OrderID)
+group by s.OrderID, s.SubProcessID
 
-            sqlcmd += qtyBySetPerSubprocess + $@"
+select s.OrderID, s.Article, s.SizeCode, s.SubprocessID
+	, InQtyBySet = MIN(s.InQtyBySet)
+	, OutQtyBySet = MIN(s.OutQtyBySet)
+	, FinishedQtyBySet = MIN(s.FinishedQtyBySet)
+into #tmp_SetQtyBySubprocess_Final
+from SetQtyBySubprocess s WITH (NOLOCK)
+where exists (select 1 from #tmp_SetQtyBySubprocess_Last t where t.OrderID = s.OrderID and t.SubProcessID = s.SubProcessID and t.TransferTime = s.TransferTime)
+and SubProcessID in ('Loading', 'SewingLine')
+group by s.OrderID, s.Article, s.SizeCode, s.SubprocessID 
+
 select oq.Orderid,oq.Article,oq.SizeCode,
 	oq.Qty,
 	[Accu. Ready Qty]=a.InQtyBySet,
@@ -120,8 +131,8 @@ select oq.Orderid,oq.Article,oq.SizeCode,
     wbin = s.InQtyBySet
 into #tmp
 from #enn oq
-left join #QtyBySetPerSubprocessLoading a on oq.Orderid = a.OrderID and oq.Article = a.Article and oq.SizeCode = a.SizeCode
-left join #QtyBySetPerSubprocessSewingLine s on oq.Orderid = s.OrderID and oq.Article = s.Article and oq.SizeCode = s.SizeCode
+left join #tmp_SetQtyBySubprocess_Final a on oq.Orderid = a.OrderID and oq.Article = a.Article and oq.SizeCode = a.SizeCode and a.SubprocessID = 'Loading'
+left join #tmp_SetQtyBySubprocess_Final s on oq.Orderid = s.OrderID and oq.Article = s.Article and oq.SizeCode = s.SizeCode and s.SubprocessID = 'SewingLine'
 
 ; with SewQty as (
 	select	oq.Article
@@ -213,20 +224,36 @@ select ID from SubProcess s where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
                 return;
             }
 
+            string[] subprocessIDs = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SubProcessID"])).ToArray();
+
             sqlcmd = $@"
 select OrderID = '{this.DataRow["OrderID"]}', InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null into #enn
+
+select s.OrderID, s.SubProcessID, TransferTime = MAX(s.TransferTime)
+into #tmp_SetQtyBySubprocess_Last
+from SetQtyBySubprocess s WITH (NOLOCK)
+where exists (select 1 from #enn t where s.OrderID = t.OrderID)
+group by s.OrderID, s.SubProcessID
+
+select s.OrderID, s.Article, s.SizeCode, s.SubprocessID
+	, InQtyBySet = MIN(s.InQtyBySet)
+	, OutQtyBySet = MIN(s.OutQtyBySet)
+	, FinishedQtyBySet = MIN(s.FinishedQtyBySet)
+into #tmp_SetQtyBySubprocess_Final
+from SetQtyBySubprocess s WITH (NOLOCK)
+where exists (select 1 from #tmp_SetQtyBySubprocess_Last t where t.OrderID = s.OrderID and t.SubProcessID = s.SubProcessID and t.TransferTime = s.TransferTime)
+and SubProcessID in ('{string.Join("','", subprocessIDs)}')
+group by s.OrderID, s.Article, s.SizeCode, s.SubprocessID
 ";
-            string[] subprocessIDs = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SubProcessID"])).ToArray();
-            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#enn", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
-            sqlcmd += qtyBySetPerSubprocess;
 
             List<string> sqlJ = new List<string>();
             foreach (string subprocessID in subprocessIDs)
             {
-                string subprocessIDtmp = subprocessID.Replace("-", string.Empty); // 把PAD-PRT為PADPRT, #table名稱用
                 sqlJ.Add($@"
-    select SubprocessId='{subprocessID}',FinishedQtyBySet from #QtyBySetPerSubprocess{subprocessIDtmp} a
+    select SubprocessID, FinishedQtyBySet 
+    from #tmp_SetQtyBySubprocess_Final a
     where oq.id = a.OrderID and oq.Article = a.Article and oq.SizeCode = a.SizeCode
+    and a.SubprocessID = '{subprocessID}'
 ");
             }
 
@@ -292,11 +319,23 @@ select Orderid = oq.ID,oq.Article,oq.SizeCode,oq.Qty, InStartDate = Null,InEndDa
 into #enn
 from Order_Qty oq  with(nolock)
 {where}
-";
-            string[] subprocessIDs = new string[] { "Sorting", };
-            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#enn", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
 
-            sqlcmd += qtyBySetPerSubprocess + $@"
+select s.OrderID, s.SubProcessID, TransferTime = MAX(s.TransferTime)
+into #tmp_SetQtyBySubprocess_Last
+from SetQtyBySubprocess s WITH (NOLOCK) 
+where exists (select 1 from  #enn t where s.OrderID = t.OrderID)
+group by s.OrderID, s.SubProcessID
+
+select s.OrderID, s.Article, s.SizeCode, s.PatternPanel, s.SubprocessID
+	, InQtyBySet = MIN(s.InQtyBySet)
+	, OutQtyBySet = MIN(s.OutQtyBySet)
+	, FinishedQtyBySet = MIN(s.FinishedQtyBySet)
+into #QtyBySetPerSubprocess_PatternPanelSorting
+from SetQtyBySubprocess s WITH (NOLOCK)
+where exists (select 1 from #tmp_SetQtyBySubprocess_Last t where t.OrderID = s.OrderID and t.SubProcessID = s.SubProcessID and t.TransferTime = s.TransferTime)
+and SubProcessID = 'Sorting'
+group by s.OrderID, s.Article, s.SizeCode, s.PatternPanel, s.SubprocessID 
+
 select oq.ID,oq.Article,oq.SizeCode,Colorid='',FabricCombo='=',oq.Qty,OutQty=cast(null as int),variance=cast(null as int)
 into #tmp
 from Order_Qty oq with(nolock)

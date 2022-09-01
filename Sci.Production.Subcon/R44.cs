@@ -157,16 +157,41 @@ select distinct t.orderID,
 into #enn
 from #tsp t
 cross join #CBDate cb
-";
 
-            string[] subprocessIDs = new string[] { "Loading", };
-            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#enn", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
+select s.OrderID
+    , s.SubProcessID
+    , TransferTime = MAX(s.TransferTime)
+into #tmp_SetQtyBySubprocess_Last
+from SetQtyBySubprocess s WITH (NOLOCK)
+inner join #enn t on s.OrderID = t.OrderID and s.TransferTime <= t.InEndDate
+group by s.OrderID, s.SubProcessID
 
-            strSQL += qtyBySetPerSubprocess + @"
 
-            /*
-            *	準備好要印的資料
-            */
+select s.OrderID, s.SubprocessID 
+    , InQtyBySet = SUM(s.InQtyBySet)
+	, OutQtyBySet = SUM(s.OutQtyBySet)
+	, FinishedQtyBySet = SUM(s.FinishedQtyBySet)
+into #Loading
+from 
+(
+    select s.OrderID
+        , s.Article
+        , s.SizeCode 
+        , s.SubprocessID
+	    , InQtyBySet = MIN(s.InQtyBySet)
+	    , OutQtyBySet = MIN(s.OutQtyBySet)
+	    , FinishedQtyBySet = MIN(s.FinishedQtyBySet)
+    from SetQtyBySubprocess s WITH (NOLOCK)
+    where exists (select 1 from #tmp_SetQtyBySubprocess_Last t where t.OrderID = s.OrderID and t.SubProcessID = s.SubProcessID and t.TransferTime = s.TransferTime)
+    and SubProcessID = 'Loading'
+    group by s.OrderID, s.Article, s.SizeCode, s.SubprocessID 
+)s
+group by s.OrderID, s.SubprocessID 
+
+
+/*
+*	準備好要印的資料
+*/
 
 select
     t.FactoryID,
@@ -179,7 +204,7 @@ select
 into #print0
 from #tsp t
 cross join #CBDate cb
-left join #Loading sub on sub.orderID = t.orderID and sub.InEndDate = cast(cb.SewDate as datetime)+cast('23:59:59' as datetime) -- 此處有相同orderID不同InEndDate
+left join #Loading sub on sub.orderID = t.orderID
 
 select FactoryID
 		, SP
@@ -240,7 +265,7 @@ select	p.FactoryID,p.SP,p.StyleID,p.SewingDate,p.Line
     	select value = ROUND(cast(p.AccuLoad as decimal) / iif(AccuStd = 0, 1, AccuStd) * 100, 2)
     ) BCS
 where SewingDate between @StartDate and @EndDate 
-and not (p.AccuLoad = 0 and p.AccuStd =0 )
+and not (p.AccuLoad = 0 and p.AccuStd = 0)
 order by p.FactoryID,p.SP,p.SewingDate,p.Line
 
 drop table #tsp
