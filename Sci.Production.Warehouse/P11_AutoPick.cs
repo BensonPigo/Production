@@ -237,6 +237,7 @@ Create Table #Tmp_BoaExpend
 	, Index Idx_ID NonClustered (ID, Order_BOAUkey, ColorID) -- table index
 );
 
+--依日期分新舊使用BoaExpend還有procedure usp_BoaByIssueBreakDown 有用到
 if  (select CFMDate from orders with(nolock) where id = '{3}') < '2022/08/01'
 begin
     Exec dbo.BoaExpend '{3}', {4}, {5}, '{6}',0,1;
