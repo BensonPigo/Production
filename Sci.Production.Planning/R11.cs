@@ -232,6 +232,7 @@ outer apply(
 	from #tmp_R_Similar s
 	where s.OldStyleID = o.StyleID 
 	and R_Similar !=''
+    and s.StyleID != o.StyleID -- 排除自己StyleID
 	and s.max_OutputDate > dateadd(month,{-this.months},{strOutputDate} ) 
 )rs2
 ";
@@ -297,8 +298,13 @@ From
 		From Style_SimilarStyle	s	
 		inner join #tmpo t on (t.StyleID = s.MasterStyleID and t.BrandID = s.MasterBrandID) or (t.StyleID = s.ChildrenStyleID and t.BrandID = s.ChildrenBrandID)
 ) main
-	Left join Style s on s.ID = main.StyleID And s.BrandID = main.BrandID
-	Where s.Ukey <> main.StyleUkey
+Left join Style s on s.ID = main.StyleID And s.BrandID = main.BrandID
+Where s.Ukey <> main.StyleUkey
+and exists(
+	select 1 from #tmpo t
+	where t.StyleID = main.OldStyleID
+	and t.BrandID = main.BrandID
+)
 
 --
 select 
@@ -436,6 +442,7 @@ outer apply(
 	from #tmp_R_Similar s
 	where s.OldStyleID = o.StyleID
 	and R_Similar !=''
+    and s.StyleID != o.StyleID -- 排除自己StyleID
 	for XML path('')),1,1,'')
 )rs
 {smileBaseOnWhere}
