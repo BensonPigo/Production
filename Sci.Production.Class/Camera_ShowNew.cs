@@ -53,7 +53,7 @@ namespace Sci.Production.Class
                         break;
                     default:
                         CameraDisplay picItem = new CameraDisplay();
-                        picItem.SetPictureDisplay(item.desc, item.Pkey, item.image, item.imgPath, x, y, resize);
+                        picItem.SetPictureDisplay(item.desc, item.ID, item.Seq, item.image, item.imgPath, x, y, resize);
                         picItem.Dock = DockStyle.Top;
                         this.panel1.Controls.Add(picItem);
                         break;

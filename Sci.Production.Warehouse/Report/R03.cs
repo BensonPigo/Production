@@ -208,6 +208,7 @@ select  F.MDivisionID
         ,PSD.NETQty
         ,PSD.NETQty+PSD.LossQty
         ,PSD.ShipQty
+        ,PSD.FOC
         ,PSD.ShipFOC
         ,PSD.ApQty
         ,PSD.InputQty
@@ -564,11 +565,11 @@ where 1=1
 
             if (this.chkSeparateByWK.Checked)
             {
-                objApp.Sheets[1].Cells[1, 39].Value = "WK No.";
-                objApp.Sheets[1].Cells[1, 40].Value = "WK ETA";
-                objApp.Sheets[1].Cells[1, 41].Value = "WK Arrive W/H Date";
-                objApp.Sheets[1].Cells[1, 42].Value = "WK ShipQty";
-                objApp.Sheets[1].Cells[1, 43].Value = "WK F.O.C";
+                objApp.Sheets[1].Cells[1, 40].Value = "WK No.";
+                objApp.Sheets[1].Cells[1, 41].Value = "WK ETA";
+                objApp.Sheets[1].Cells[1, 42].Value = "WK Arrive W/H Date";
+                objApp.Sheets[1].Cells[1, 43].Value = "WK ShipQty";
+                objApp.Sheets[1].Cells[1, 44].Value = "WK F.O.C";
             }
 
             // Excel.Worksheet worksheet = objApp.Sheets[1];

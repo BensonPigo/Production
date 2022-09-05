@@ -1495,6 +1495,12 @@
     <Compile Include="Report\R39.Designer.cs">
       <DependentUpon>R39.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R42.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R42.designer.cs">
+      <DependentUpon>R42.cs</DependentUpon>
+    </Compile>
     <Compile Include="Report\R41.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -2295,6 +2301,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R39.resx">
       <DependentUpon>R39.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R42.resx">
+      <DependentUpon>R42.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R41.resx">
       <DependentUpon>R41.cs</DependentUpon>

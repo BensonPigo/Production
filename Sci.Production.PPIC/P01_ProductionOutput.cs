@@ -311,10 +311,30 @@ order by oa.Seq,os.Seq", string.Format("o.ID = '{0}'", MyUtility.Convert.GetStri
             this.numSewingQty.Value = MyUtility.Convert.GetInt(sewingData.Compute("sum(SewQty)", string.Empty));  // Sewing Q'ty
             this.numCuttingQty.Value = MyUtility.Convert.GetDecimal(cuttingData.Compute("sum(CutQty)", string.Empty));  // Cutting Q'ty
 
-            sqlCmd = $"select OrderID = '{this.masterData["ID"]}', InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null into #enn ";
-            string[] subprocessIDs = new string[] { "Loading" };
-            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#enn", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
-            sqlCmd += qtyBySetPerSubprocess + $@"
+            sqlCmd = $@"
+select OrderID = '{this.masterData["ID"]}', InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null into #enn 
+
+select s.OrderID
+    , s.SubProcessID
+    , TransferTime = MAX(s.TransferTime)
+into #tmp_SetQtyBySubprocess_Last
+from SetQtyBySubprocess s WITH (NOLOCK)
+where exists (select 1 from #enn t where s.OrderID = t.OrderID)
+group by s.OrderID, s.SubProcessID
+
+select s.OrderID
+    , s.Article
+    , s.SizeCode 
+    , s.SubprocessID
+    , InQtyBySet = MIN(s.InQtyBySet)
+    , OutQtyBySet = MIN(s.OutQtyBySet)
+    , FinishedQtyBySet = MIN(s.FinishedQtyBySet)
+into #QtyBySetPerSubprocessLoading
+from SetQtyBySubprocess s WITH (NOLOCK)
+where exists (select 1 from #tmp_SetQtyBySubprocess_Last t where t.OrderID = s.OrderID and t.SubProcessID = s.SubProcessID and t.TransferTime = s.TransferTime)
+and SubProcessID = 'Loading'
+group by s.OrderID, s.Article, s.SizeCode, s.SubprocessID 
+
 select oq.ID,oq.SizeCode,oq.Qty,AccuInCome=a.InQtyBySet,oq.Article,oq.SizeCode
 from Order_Qty oq 
 left join #QtyBySetPerSubprocessLoading a on a.OrderID = oq.ID and a.Article = oq.Article and a.SizeCode = oq.SizeCode
