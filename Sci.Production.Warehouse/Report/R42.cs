@@ -255,7 +255,7 @@ select ml.MDivisionID
 		, ml.Roll
 		, ml.Dyelot
 		, ml.StockPOID
-		, StockSeq = Concat (ml.Seq1, ' ', ml.Seq2)
+		, StockSeq = Concat (ml.StockSeq1, ' ', ml.StockSeq2)
 		, psd.Refno
 		, MaterialType = Concat (iif(psd.FabricType='F','Fabric',iif(psd.FabricType='A','Accessory',iif(psd.FabricType='O','Orher',psd.FabricType))), '-', f.MtlTypeID)
 		, f.WeaveTypeID
