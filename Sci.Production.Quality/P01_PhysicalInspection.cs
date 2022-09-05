@@ -1063,7 +1063,7 @@ and not exists
             // FabricDefect 基本資料 DB
             DataTable dtBasic;
             DualResult result;
-            if (result = DBProxy.Current.Select("Production", "SELECT id,type,DescriptionEN FROM FabricDefect WITH (NOLOCK) order by ID", out dtBasic))
+            if (result = DBProxy.Current.Select("Production", "SELECT id,type,DescriptionEN FROM FabricDefect WITH (NOLOCK) where id <>'' order by ID", out dtBasic))
             {
                 if (dtBasic.Rows.Count < 1)
                 {
