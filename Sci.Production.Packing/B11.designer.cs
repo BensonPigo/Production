@@ -243,9 +243,10 @@
             // 
             // dateBuyerDlv
             // 
-            this.dateBuyerDlv.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyerDeliveryDate", true));
+            this.dateBuyerDlv.IsSupportEditMode = false;
             this.dateBuyerDlv.Location = new System.Drawing.Point(125, 49);
             this.dateBuyerDlv.Name = "dateBuyerDlv";
+            this.dateBuyerDlv.ReadOnly = true;
             this.dateBuyerDlv.Size = new System.Drawing.Size(131, 23);
             this.dateBuyerDlv.TabIndex = 1;
             // 

@@ -1,19 +1,20 @@
 ﻿CREATE TABLE [dbo].[Lost1stMDNotification] (
-    [FactoryID]         VARCHAR (8)    NOT NULL,
-    [BuyerDeliveryDate] DATE           NULL,
-    [ToAddress]         VARCHAR (500)  CONSTRAINT [DF_Lost1stMDNotification_ToAddress] DEFAULT ('') NOT NULL,
-    [CcAddress]         VARCHAR (500)  CONSTRAINT [DF_Lost1stMDNotification_CcAddress] DEFAULT ('') NOT NULL,
-    [StartTime]         TIME (7)       NULL,
-    [EndTime]           TIME (7)       NULL,
-    [Frequency]         VARCHAR (20)   CONSTRAINT [DF_Lost1stMDNotification_Frequency] DEFAULT ('') NOT NULL,
-    [Description]       NVARCHAR (500) CONSTRAINT [DF_Lost1stMDNotification_Description] DEFAULT ('') NOT NULL,
-    [AddDate]           DATETIME       NULL,
-    [AddName]           VARCHAR (10)   CONSTRAINT [DF_Lost1stMDNotification_AddName] DEFAULT ('') NOT NULL,
-    [EditDate]          DATETIME       NULL,
-    [Editname]          VARCHAR (10)   CONSTRAINT [DF_Lost1stMDNotification_Editname] DEFAULT ('') NOT NULL,
-    [LastExecuteTime]   DATETIME       NULL,
+    [FactoryID]       VARCHAR (8)    NOT NULL,
+    [ToAddress]       VARCHAR (500)  CONSTRAINT [DF_Lost1stMDNotification_ToAddress] DEFAULT ('') NOT NULL,
+    [CcAddress]       VARCHAR (500)  CONSTRAINT [DF_Lost1stMDNotification_CcAddress] DEFAULT ('') NOT NULL,
+    [StartTime]       TIME (7)       NULL,
+    [EndTime]         TIME (7)       NULL,
+    [Frequency]       VARCHAR (20)   CONSTRAINT [DF_Lost1stMDNotification_Frequency] DEFAULT ('') NOT NULL,
+    [Description]     NVARCHAR (500) CONSTRAINT [DF_Lost1stMDNotification_Description] DEFAULT ('') NOT NULL,
+    [AddDate]         DATETIME       NULL,
+    [AddName]         VARCHAR (10)   CONSTRAINT [DF_Lost1stMDNotification_AddName] DEFAULT ('') NOT NULL,
+    [EditDate]        DATETIME       NULL,
+    [Editname]        VARCHAR (10)   CONSTRAINT [DF_Lost1stMDNotification_Editname] DEFAULT ('') NOT NULL,
+    [LastExecuteTime] DATETIME       NULL,
     CONSTRAINT [PK_Lost1stMDNotification] PRIMARY KEY CLUSTERED ([FactoryID] ASC)
 );
+
+
 
 
 GO
@@ -61,7 +62,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Mail To', @
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Buyer Delivery Date', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lost1stMDNotification', @level2type = N'COLUMN', @level2name = N'BuyerDeliveryDate';
+
 
 
 GO

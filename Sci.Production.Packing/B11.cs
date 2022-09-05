@@ -23,10 +23,15 @@ namespace Sci.Production.Packing
             this.comboFrequency.SelectedIndex = 0;
         }
 
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            this.dateBuyerDlv.Value = DateTime.Now.AddDays(-3);
+        }
+
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["BuyerDeliveryDate"] = DateTime.Now.AddDays(-3);
             this.CurrentMaintain["StartTime"] = "08:00";
             this.CurrentMaintain["EndTime"] = "09:00";
             this.comboFrequency.SelectedIndex = 0;
