@@ -1764,5 +1764,11 @@ and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
                 #endregion
             }
         }
+
+        private void btnCalibrationList_Click(object sender, EventArgs e)
+        {
+            P18_Calibration_List callForm = new P18_Calibration_List(true, drSelect["ID"].ToString(), drSelect["CTNStartNo"].ToString(), null, dr[0]);
+            callForm.ShowDialog(this);
+        }
     }
 }
