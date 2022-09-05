@@ -18,6 +18,7 @@ CREATE TABLE [dbo].[Bundle_Detail_History](
 	[RFPrintDate] [datetime] NULL,
 	[PrintGroup] [tinyint] NULL,
 	[RFIDScan] [bit] NOT NULL,
+	[Dyelot] VARCHAR(50) CONSTRAINT [DF_Bundle_Detail_History_Dyelot] DEFAULT ('') NOT NULL,
  CONSTRAINT [PK_Bundle_Detail_History] PRIMARY KEY CLUSTERED 
 (
 	[BundleNo] ASC,
@@ -118,3 +119,12 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Bundle Detail 
 GO
 
 
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'缸號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Bundle_Detail_History',
+    @level2type = N'COLUMN',
+    @level2name = N'Dyelot'
