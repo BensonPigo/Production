@@ -1123,8 +1123,8 @@ where Junk = 0
 
             this.ComputeTaktTime();
 
-            // Vision為空的話就要填值
-            if (MyUtility.Check.Empty(this.CurrentMaintain["Version"]) || this.CurrentMaintain["Version"].ToString() == "0")
+            // Vision為空的話就要填值 or ID是空值(新增)也要重新計算Version
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Version"]) || this.CurrentMaintain["Version"].ToString() == "0" || MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
             {
                 string newVersion = MyUtility.GetValue.Lookup($"select isnull(max(Version),0)+1 as Newversion from LineMapping WITH (NOLOCK) where StyleUKey =  {this.CurrentMaintain["StyleUkey"]} and FactoryID = '{this.CurrentMaintain["FactoryID"]}'");
                 if (MyUtility.Check.Empty(newVersion))
