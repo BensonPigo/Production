@@ -342,7 +342,7 @@ namespace Sci.Production.Planning
 
                     if (!this.txtFactory.Text.Empty())
                     {
-                        workWheres.Add(" w.FactoryID ='" + this.Fty + "'");
+                        workWheres.Add(" exists(select 1 from Factory WITH (NOLOCK) where ID = w.FactoryID and FtyZone = '" + this.Fty + "')");
                     }
 
                     if (this.txtFactory.Text.Empty())
@@ -353,11 +353,11 @@ namespace Sci.Production.Planning
 
                 if (!this.txtFactory.Text.Empty())
                 {
-                    sqlWheres.Add(" f.ID = '" + this.Fty + "'");
-                    loadingWheres.Add(" o.Factoryid ='" + this.Fty + "'");
+                    sqlWheres.Add(" f.FtyZone = '" + this.Fty + "'");
+                    loadingWheres.Add(" exists(select 1 from Factory WITH (NOLOCK) where ID = o.Factoryid and FtyZone ='" + this.Fty + "')");
                     if (this.txtMDivision.Text.Empty())
                     {
-                        workWheres.Add(" w.FactoryID ='" + this.Fty + "'");
+                        workWheres.Add(" exists(select 1 from Factory WITH (NOLOCK) where ID = w.FactoryID and FtyZone = '" + this.Fty + "')");
                     }
                 }
 
