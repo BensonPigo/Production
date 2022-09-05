@@ -326,6 +326,9 @@
             this.displayFabricType = new Sci.Win.UI.DisplayBox();
             this.displayConstruction = new Sci.Win.UI.DisplayBox();
             this.checkOrganicCotton = new Sci.Win.UI.CheckBox();
+            this.datePFETA = new Sci.Win.UI.DateBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.shapeContainer7 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -334,11 +337,6 @@
             this.tabs.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // detail
-            // 
-            this.detail.Location = new System.Drawing.Point(4, 24);
-            this.detail.Size = new System.Drawing.Size(1000, 691);
             // 
             // detailcont
             // 
@@ -496,13 +494,13 @@
             this.detailcont.Controls.Add(this.txtuser1);
             this.detailcont.Controls.Add(this.txttpeuser2);
             this.detailcont.Controls.Add(this.txttpeuser1);
-            this.detailcont.Size = new System.Drawing.Size(1000, 691);
+            this.detailcont.Size = new System.Drawing.Size(897, 395);
             this.detailcont.Title = "Gender";
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 691);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 0);
+            this.detailbtm.Location = new System.Drawing.Point(0, 395);
+            this.detailbtm.Size = new System.Drawing.Size(897, 0);
             // 
             // browse
             // 
@@ -539,6 +537,8 @@
             // 
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.Controls.Add(this.datePFETA);
+            this.tabPage1.Controls.Add(this.label3);
             this.tabPage1.Controls.Add(this.btnIntendedDeliveryDate);
             this.tabPage1.Controls.Add(this.dateKpiMNotice);
             this.tabPage1.Controls.Add(this.labelKpiMNotice);
@@ -667,10 +667,10 @@
             this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.PcHandleText);
             this.tabPage1.Controls.Add(this.txttpeuser4);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(897, 395);
+            this.tabPage1.Size = new System.Drawing.Size(1000, 691);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
             // 
@@ -688,7 +688,7 @@
             // 
             this.dateKpiMNotice.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "KpiMNotice", true));
             this.dateKpiMNotice.IsSupportEditMode = false;
-            this.dateKpiMNotice.Location = new System.Drawing.Point(163, 143);
+            this.dateKpiMNotice.Location = new System.Drawing.Point(449, 224);
             this.dateKpiMNotice.Name = "dateKpiMNotice";
             this.dateKpiMNotice.ReadOnly = true;
             this.dateKpiMNotice.Size = new System.Drawing.Size(100, 21);
@@ -696,9 +696,9 @@
             // 
             // labelKpiMNotice
             // 
-            this.labelKpiMNotice.Location = new System.Drawing.Point(5, 143);
+            this.labelKpiMNotice.Location = new System.Drawing.Point(304, 224);
             this.labelKpiMNotice.Name = "labelKpiMNotice";
-            this.labelKpiMNotice.Size = new System.Drawing.Size(149, 21);
+            this.labelKpiMNotice.Size = new System.Drawing.Size(142, 21);
             this.labelKpiMNotice.TabIndex = 200;
             this.labelKpiMNotice.Text = "Est M/Notice Apv.";
             // 
@@ -706,7 +706,7 @@
             // 
             this.dateKpiEachConsCheck.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "KpiEachConsCheck", true));
             this.dateKpiEachConsCheck.IsSupportEditMode = false;
-            this.dateKpiEachConsCheck.Location = new System.Drawing.Point(163, 116);
+            this.dateKpiEachConsCheck.Location = new System.Drawing.Point(163, 224);
             this.dateKpiEachConsCheck.Name = "dateKpiEachConsCheck";
             this.dateKpiEachConsCheck.ReadOnly = true;
             this.dateKpiEachConsCheck.Size = new System.Drawing.Size(100, 21);
@@ -714,7 +714,7 @@
             // 
             // labelKpiEachConsCheck
             // 
-            this.labelKpiEachConsCheck.Location = new System.Drawing.Point(5, 116);
+            this.labelKpiEachConsCheck.Location = new System.Drawing.Point(5, 224);
             this.labelKpiEachConsCheck.Name = "labelKpiEachConsCheck";
             this.labelKpiEachConsCheck.Size = new System.Drawing.Size(149, 21);
             this.labelKpiEachConsCheck.TabIndex = 198;
@@ -742,7 +742,7 @@
             // 
             this.dateLastProductionDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LastProductionDate", true));
             this.dateLastProductionDate.IsSupportEditMode = false;
-            this.dateLastProductionDate.Location = new System.Drawing.Point(896, 195);
+            this.dateLastProductionDate.Location = new System.Drawing.Point(896, 219);
             this.dateLastProductionDate.Name = "dateLastProductionDate";
             this.dateLastProductionDate.ReadOnly = true;
             this.dateLastProductionDate.Size = new System.Drawing.Size(100, 21);
@@ -750,7 +750,7 @@
             // 
             // labLastProductionDate
             // 
-            this.labLastProductionDate.Location = new System.Drawing.Point(772, 195);
+            this.labLastProductionDate.Location = new System.Drawing.Point(772, 219);
             this.labLastProductionDate.Name = "labLastProductionDate";
             this.labLastProductionDate.Size = new System.Drawing.Size(122, 21);
             this.labLastProductionDate.TabIndex = 194;
@@ -758,7 +758,7 @@
             // 
             // btnPFHistory
             // 
-            this.btnPFHistory.Location = new System.Drawing.Point(266, 62);
+            this.btnPFHistory.Location = new System.Drawing.Point(266, 89);
             this.btnPFHistory.Name = "btnPFHistory";
             this.btnPFHistory.Size = new System.Drawing.Size(30, 23);
             this.btnPFHistory.TabIndex = 193;
@@ -1391,7 +1391,7 @@
             // 
             this.dateCFMShipmentdate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CFMShipment", true));
             this.dateCFMShipmentdate.IsSupportEditMode = false;
-            this.dateCFMShipmentdate.Location = new System.Drawing.Point(896, 170);
+            this.dateCFMShipmentdate.Location = new System.Drawing.Point(896, 194);
             this.dateCFMShipmentdate.Name = "dateCFMShipmentdate";
             this.dateCFMShipmentdate.ReadOnly = true;
             this.dateCFMShipmentdate.Size = new System.Drawing.Size(100, 21);
@@ -1449,7 +1449,7 @@
             // 
             // labelCFMShipmentdate
             // 
-            this.labelCFMShipmentdate.Location = new System.Drawing.Point(772, 170);
+            this.labelCFMShipmentdate.Location = new System.Drawing.Point(772, 194);
             this.labelCFMShipmentdate.Name = "labelCFMShipmentdate";
             this.labelCFMShipmentdate.Size = new System.Drawing.Size(122, 21);
             this.labelCFMShipmentdate.TabIndex = 48;
@@ -1602,7 +1602,7 @@
             // 
             this.datePlanDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PlanDate", true));
             this.datePlanDate.IsSupportEditMode = false;
-            this.datePlanDate.Location = new System.Drawing.Point(391, 197);
+            this.datePlanDate.Location = new System.Drawing.Point(896, 170);
             this.datePlanDate.Name = "datePlanDate";
             this.datePlanDate.ReadOnly = true;
             this.datePlanDate.Size = new System.Drawing.Size(100, 21);
@@ -1650,9 +1650,9 @@
             // 
             // labelPlanDate
             // 
-            this.labelPlanDate.Location = new System.Drawing.Point(304, 197);
+            this.labelPlanDate.Location = new System.Drawing.Point(772, 170);
             this.labelPlanDate.Name = "labelPlanDate";
-            this.labelPlanDate.Size = new System.Drawing.Size(83, 21);
+            this.labelPlanDate.Size = new System.Drawing.Size(122, 21);
             this.labelPlanDate.TabIndex = 27;
             this.labelPlanDate.Text = "Plan Date";
             // 
@@ -1700,7 +1700,7 @@
             // 
             this.displayRMTLETAMasterSP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayRMTLETAMasterSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayRMTLETAMasterSP.Location = new System.Drawing.Point(269, 224);
+            this.displayRMTLETAMasterSP.Location = new System.Drawing.Point(269, 200);
             this.displayRMTLETAMasterSP.Name = "displayRMTLETAMasterSP";
             this.displayRMTLETAMasterSP.Size = new System.Drawing.Size(27, 21);
             this.displayRMTLETAMasterSP.TabIndex = 21;
@@ -1709,7 +1709,7 @@
             // 
             this.displayMTLCmpltSP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayMTLCmpltSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayMTLCmpltSP.Location = new System.Drawing.Point(449, 224);
+            this.displayMTLCmpltSP.Location = new System.Drawing.Point(449, 197);
             this.displayMTLCmpltSP.Name = "displayMTLCmpltSP";
             this.displayMTLCmpltSP.Size = new System.Drawing.Size(27, 21);
             this.displayMTLCmpltSP.TabIndex = 20;
@@ -1718,7 +1718,7 @@
             // 
             this.dateRMTLETAMasterSP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MTLETA", true));
             this.dateRMTLETAMasterSP.IsSupportEditMode = false;
-            this.dateRMTLETAMasterSP.Location = new System.Drawing.Point(163, 224);
+            this.dateRMTLETAMasterSP.Location = new System.Drawing.Point(163, 200);
             this.dateRMTLETAMasterSP.Name = "dateRMTLETAMasterSP";
             this.dateRMTLETAMasterSP.ReadOnly = true;
             this.dateRMTLETAMasterSP.Size = new System.Drawing.Size(100, 21);
@@ -1728,7 +1728,7 @@
             // 
             this.datePkgMTLETASP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PackETA", true));
             this.datePkgMTLETASP.IsSupportEditMode = false;
-            this.datePkgMTLETASP.Location = new System.Drawing.Point(163, 197);
+            this.datePkgMTLETASP.Location = new System.Drawing.Point(163, 173);
             this.datePkgMTLETASP.Name = "datePkgMTLETASP";
             this.datePkgMTLETASP.ReadOnly = true;
             this.datePkgMTLETASP.Size = new System.Drawing.Size(100, 21);
@@ -1738,7 +1738,7 @@
             // 
             this.dateSewMTLETASP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewETA", true));
             this.dateSewMTLETASP.IsSupportEditMode = false;
-            this.dateSewMTLETASP.Location = new System.Drawing.Point(163, 170);
+            this.dateSewMTLETASP.Location = new System.Drawing.Point(163, 146);
             this.dateSewMTLETASP.Name = "dateSewMTLETASP";
             this.dateSewMTLETASP.ReadOnly = true;
             this.dateSewMTLETASP.Size = new System.Drawing.Size(100, 21);
@@ -1748,7 +1748,7 @@
             // 
             this.dateSCHDLETAMasterSP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LETA", true));
             this.dateSCHDLETAMasterSP.IsSupportEditMode = false;
-            this.dateSCHDLETAMasterSP.Location = new System.Drawing.Point(163, 89);
+            this.dateSCHDLETAMasterSP.Location = new System.Drawing.Point(163, 116);
             this.dateSCHDLETAMasterSP.Name = "dateSCHDLETAMasterSP";
             this.dateSCHDLETAMasterSP.ReadOnly = true;
             this.dateSCHDLETAMasterSP.Size = new System.Drawing.Size(100, 21);
@@ -1766,7 +1766,7 @@
             // 
             // labelMTLCmpltSP
             // 
-            this.labelMTLCmpltSP.Location = new System.Drawing.Point(304, 224);
+            this.labelMTLCmpltSP.Location = new System.Drawing.Point(304, 197);
             this.labelMTLCmpltSP.Name = "labelMTLCmpltSP";
             this.labelMTLCmpltSP.Size = new System.Drawing.Size(142, 21);
             this.labelMTLCmpltSP.TabIndex = 14;
@@ -1774,7 +1774,7 @@
             // 
             // labelRMTLETAMasterSP
             // 
-            this.labelRMTLETAMasterSP.Location = new System.Drawing.Point(5, 224);
+            this.labelRMTLETAMasterSP.Location = new System.Drawing.Point(5, 200);
             this.labelRMTLETAMasterSP.Name = "labelRMTLETAMasterSP";
             this.labelRMTLETAMasterSP.Size = new System.Drawing.Size(149, 21);
             this.labelRMTLETAMasterSP.TabIndex = 13;
@@ -1782,7 +1782,7 @@
             // 
             // labelPkgMTLETASP
             // 
-            this.labelPkgMTLETASP.Location = new System.Drawing.Point(5, 197);
+            this.labelPkgMTLETASP.Location = new System.Drawing.Point(5, 173);
             this.labelPkgMTLETASP.Name = "labelPkgMTLETASP";
             this.labelPkgMTLETASP.Size = new System.Drawing.Size(149, 21);
             this.labelPkgMTLETASP.TabIndex = 12;
@@ -1790,7 +1790,7 @@
             // 
             // labelSewMTLETASP
             // 
-            this.labelSewMTLETASP.Location = new System.Drawing.Point(5, 170);
+            this.labelSewMTLETASP.Location = new System.Drawing.Point(5, 146);
             this.labelSewMTLETASP.Name = "labelSewMTLETASP";
             this.labelSewMTLETASP.Size = new System.Drawing.Size(149, 21);
             this.labelSewMTLETASP.TabIndex = 11;
@@ -1798,7 +1798,7 @@
             // 
             // labelSCHDLETAMasterSP
             // 
-            this.labelSCHDLETAMasterSP.Location = new System.Drawing.Point(5, 89);
+            this.labelSCHDLETAMasterSP.Location = new System.Drawing.Point(5, 116);
             this.labelSCHDLETAMasterSP.Name = "labelSCHDLETAMasterSP";
             this.labelSCHDLETAMasterSP.Size = new System.Drawing.Size(149, 21);
             this.labelSCHDLETAMasterSP.TabIndex = 10;
@@ -1810,7 +1810,7 @@
             this.labelKPILETA.Name = "labelKPILETA";
             this.labelKPILETA.Size = new System.Drawing.Size(149, 21);
             this.labelKPILETA.TabIndex = 9;
-            this.labelKPILETA.Text = "KPI L/ETA(Material)";
+            this.labelKPILETA.Text = "KPI L/ETA (Earliest PF)";
             // 
             // labelDetailsPOHandle
             // 
@@ -1870,12 +1870,11 @@
             this.shapeContainer2.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer2.Name = "shapeContainer2";
             this.shapeContainer2.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape9,
             this.lineShape8,
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(990, 649);
+            this.shapeContainer2.Size = new System.Drawing.Size(994, 685);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -2335,7 +2334,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape3});
-            this.shapeContainer1.Size = new System.Drawing.Size(1000, 691);
+            this.shapeContainer1.Size = new System.Drawing.Size(993, 678);
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
             // 
@@ -3654,6 +3653,33 @@
             this.checkOrganicCotton.Text = "Organic Cotton/Recycle Polyester/Recycle Nylon";
             this.checkOrganicCotton.UseVisualStyleBackColor = true;
             // 
+            // datePFETA
+            // 
+            this.datePFETA.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PFETA", true));
+            this.datePFETA.IsSupportEditMode = false;
+            this.datePFETA.Location = new System.Drawing.Point(163, 89);
+            this.datePFETA.Name = "datePFETA";
+            this.datePFETA.ReadOnly = true;
+            this.datePFETA.Size = new System.Drawing.Size(100, 21);
+            this.datePFETA.TabIndex = 17;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(5, 89);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(149, 21);
+            this.label3.TabIndex = 16;
+            this.label3.Text = "PF ETA";
+            // 
+            // shapeContainer7
+            // 
+            this.shapeContainer7.Location = new System.Drawing.Point(3, 3);
+            this.shapeContainer7.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer7.Name = "shapeContainer2";
+            this.shapeContainer7.Size = new System.Drawing.Size(994, 685);
+            this.shapeContainer7.TabIndex = 8;
+            this.shapeContainer7.TabStop = false;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 752);
@@ -3983,5 +4009,8 @@
         private Win.UI.DisplayBox displayGender;
         private Win.UI.DisplayBox displayLining;
         private Win.UI.CheckBox checkOrganicCotton;
+        private Win.UI.DateBox datePFETA;
+        private Win.UI.Label label3;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer7;
     }
 }
