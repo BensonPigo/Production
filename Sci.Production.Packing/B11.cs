@@ -87,62 +87,6 @@ namespace Sci.Production.Packing
                 return false;
             }
 
-            //if (MyUtility.Check.Empty(this.CurrentMaintain["Frequency"]))
-            //{
-            //    MyUtility.Msg.WarningBox("<Frequency> can not empty!");
-            //    return false;
-            //}
-            //else
-            //{
-            //    #region 檢查日期區間
-            //    string startTimeHour = this.CurrentMaintain["StartTime"].ToString().Left(2);
-            //    string endTimeHour = this.CurrentMaintain["EndTime"].ToString().Left(2);
-            //    string startTimeMin = this.CurrentMaintain["StartTime"].ToString().Right(5).Left(2);
-            //    string endTimeMin = this.CurrentMaintain["EndTime"].ToString().Right(5).Left(2);
-
-            //    switch (this.CurrentMaintain["Frequency"].ToString())
-            //    {
-            //        case "1 Hour":
-            //            if (MyUtility.Convert.GetInt(endTimeHour) - MyUtility.Convert.GetInt(startTimeHour) <= 0)
-            //            {
-            //                MyUtility.Msg.WarningBox("Time range cannot lower than 1 hour");
-            //                return false;
-            //            }
-
-            //            break;
-            //        case "6 Hour":
-            //            if (MyUtility.Convert.GetInt(endTimeHour) - MyUtility.Convert.GetInt(startTimeHour) < 6 ||
-            //                (MyUtility.Convert.GetInt(endTimeHour) - MyUtility.Convert.GetInt(startTimeHour) == 6 &&
-            //                MyUtility.Convert.GetInt(endTimeMin) - MyUtility.Convert.GetInt(startTimeMin) < 0))
-            //            {
-            //                MyUtility.Msg.WarningBox("Time range cannot lower than 6 hour");
-            //                return false;
-            //            }
-
-            //            break;
-            //        case "Half Day":
-            //            if (MyUtility.Convert.GetInt(endTimeHour) - MyUtility.Convert.GetInt(startTimeHour) < 12 ||
-            //                (MyUtility.Convert.GetInt(endTimeHour) - MyUtility.Convert.GetInt(startTimeHour) == 12 &&
-            //                MyUtility.Convert.GetInt(endTimeMin) - MyUtility.Convert.GetInt(startTimeMin) < 0))
-            //            {
-            //                MyUtility.Msg.WarningBox("Time range cannot lower than 12 hour");
-            //                return false;
-            //            }
-
-            //            break;
-
-            //        // 1 Day 回填時間
-            //        case "1 Day":
-            //            this.CurrentMaintain["StartTime"] = DBNull.Value;
-            //            this.CurrentMaintain["EndTime"] = DBNull.Value;
-            //            break;
-            //        default:
-            //            break;
-            //    }
-
-            //    #endregion
-            //}
-
             string[] toAddressarr = this.CurrentMaintain["ToAddress"].ToString().Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             string[] ccAddressarr = this.CurrentMaintain["CcAddress"].ToString().Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             string errmsg = string.Empty;
