@@ -17,6 +17,7 @@
     [Tone]        VARCHAR (1)    CONSTRAINT [DF_Bundle_Detail_Tone] DEFAULT ('') NOT NULL,
     [PrintGroup]  TINYINT        NULL,
     [RFIDScan] BIT CONSTRAINT [DF_Bundle_Detail_RFIDScan] DEFAULT ((0)) NOT NULL,
+    [Dyelot] VARCHAR(50) CONSTRAINT [DF_Bundle_Detail_Dyelot] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Bundle_Detail] PRIMARY KEY CLUSTERED ([BundleNo] ASC, [Id] ASC),
     CONSTRAINT [UK_BundleNo_Bundle_Detail] UNIQUE NONCLUSTERED ([BundleNo] ASC)
 );
@@ -117,3 +118,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'列印Bundl
 
 
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'缸號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Bundle_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Dyelot'

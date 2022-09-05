@@ -824,11 +824,11 @@ OPTION (RECOMPILE)"
                 {
                     if (allNoDatas == null)
                     {
-                        allNoDatas = P10_Print.GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size);
+                        allNoDatas = GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size);
                     }
                     else
                     {
-                        allNoDatas.Merge(P10_Print.GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size));
+                        allNoDatas.Merge(GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size));
                     }
                 });
 
@@ -939,11 +939,11 @@ where bd.BundleNo = '{dr["Bundle"]}'
             {
                 if (allNoDatas == null)
                 {
-                    allNoDatas = P10_Print.GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size);
+                    allNoDatas = GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size);
                 }
                 else
                 {
-                    allNoDatas.Merge(P10_Print.GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size));
+                    allNoDatas.Merge(GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size));
                 }
             });
 
@@ -980,7 +980,7 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 Comb = dr["Comb"].ToString(),
                 Cut = dr["cut"].ToString(),
                 GroupCombCut = 0,
-                No = P10_Print.GetNo(dr["Bundle"].ToString(), allNoDatas),
+                No = GetNo(dr["Bundle"].ToString(), allNoDatas),
                 BundleID = dr["BundleID"].ToString(),
                 BundleNo = dr["Bundle"].ToString(),
                 RFIDScan = MyUtility.Convert.GetBool(dr["RFIDScan"]),
