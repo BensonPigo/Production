@@ -98,6 +98,8 @@
             this.label5 = new Sci.Win.UI.Label();
             this.displayCustCD = new Sci.Win.UI.DisplayBox();
             this.chkAutoScan = new Sci.Win.UI.CheckBox();
+            this.btnCalibrationList = new Sci.Win.UI.Button();
+            this.chkAutoCalibration = new Sci.Win.UI.CheckBox();
             this.tabControlScanArea.SuspendLayout();
             this.tabPageCarton.SuspendLayout();
             this.tabPageScan.SuspendLayout();
@@ -261,7 +263,7 @@
             // 
             this.tabControlScanArea.Controls.Add(this.tabPageCarton);
             this.tabControlScanArea.Controls.Add(this.tabPageScan);
-            this.tabControlScanArea.Location = new System.Drawing.Point(9, 239);
+            this.tabControlScanArea.Location = new System.Drawing.Point(9, 254);
             this.tabControlScanArea.Name = "tabControlScanArea";
             this.tabControlScanArea.SelectedIndex = 0;
             this.tabControlScanArea.Size = new System.Drawing.Size(319, 196);
@@ -430,7 +432,7 @@
             this.gridScanDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridScanDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridScanDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridScanDetail.Location = new System.Drawing.Point(345, 263);
+            this.gridScanDetail.Location = new System.Drawing.Point(345, 278);
             this.gridScanDetail.Name = "gridScanDetail";
             this.gridScanDetail.ReadOnly = true;
             this.gridScanDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
@@ -445,7 +447,7 @@
             // label1
             // 
             this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Location = new System.Drawing.Point(13, 438);
+            this.label1.Location = new System.Drawing.Point(13, 453);
             this.label1.Name = "label1";
             this.label1.RectStyle.BorderColors.Bottom = System.Drawing.Color.Black;
             this.label1.RectStyle.BorderWidth = 2F;
@@ -461,7 +463,7 @@
             this.chkBoxNotScan.Checked = true;
             this.chkBoxNotScan.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBoxNotScan.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkBoxNotScan.Location = new System.Drawing.Point(13, 464);
+            this.chkBoxNotScan.Location = new System.Drawing.Point(13, 479);
             this.chkBoxNotScan.Name = "chkBoxNotScan";
             this.chkBoxNotScan.Size = new System.Drawing.Size(198, 21);
             this.chkBoxNotScan.TabIndex = 3;
@@ -471,7 +473,7 @@
             // 
             // labelPKFilter
             // 
-            this.labelPKFilter.Location = new System.Drawing.Point(211, 473);
+            this.labelPKFilter.Location = new System.Drawing.Point(211, 488);
             this.labelPKFilter.Name = "labelPKFilter";
             this.labelPKFilter.Size = new System.Drawing.Size(113, 23);
             this.labelPKFilter.TabIndex = 30;
@@ -483,7 +485,7 @@
             this.comboPKFilter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboPKFilter.FormattingEnabled = true;
             this.comboPKFilter.IsSupportUnselect = true;
-            this.comboPKFilter.Location = new System.Drawing.Point(327, 473);
+            this.comboPKFilter.Location = new System.Drawing.Point(327, 488);
             this.comboPKFilter.Name = "comboPKFilter";
             this.comboPKFilter.OldText = "";
             this.comboPKFilter.Size = new System.Drawing.Size(121, 24);
@@ -492,7 +494,7 @@
             // 
             // labelQuickSelCTN
             // 
-            this.labelQuickSelCTN.Location = new System.Drawing.Point(451, 473);
+            this.labelQuickSelCTN.Location = new System.Drawing.Point(451, 488);
             this.labelQuickSelCTN.Name = "labelQuickSelCTN";
             this.labelQuickSelCTN.Size = new System.Drawing.Size(122, 23);
             this.labelQuickSelCTN.TabIndex = 32;
@@ -502,7 +504,7 @@
             // 
             this.txtQuickSelCTN.BackColor = System.Drawing.Color.White;
             this.txtQuickSelCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtQuickSelCTN.Location = new System.Drawing.Point(576, 473);
+            this.txtQuickSelCTN.Location = new System.Drawing.Point(576, 488);
             this.txtQuickSelCTN.Name = "txtQuickSelCTN";
             this.txtQuickSelCTN.Size = new System.Drawing.Size(99, 23);
             this.txtQuickSelCTN.TabIndex = 5;
@@ -520,7 +522,7 @@
             this.gridSelectCartonDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridSelectCartonDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridSelectCartonDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridSelectCartonDetail.Location = new System.Drawing.Point(13, 511);
+            this.gridSelectCartonDetail.Location = new System.Drawing.Point(13, 526);
             this.gridSelectCartonDetail.MultiSelect = false;
             this.gridSelectCartonDetail.Name = "gridSelectCartonDetail";
             this.gridSelectCartonDetail.ReadOnly = true;
@@ -735,7 +737,7 @@
             // 
             // lbTotalWeight
             // 
-            this.lbTotalWeight.Location = new System.Drawing.Point(678, 473);
+            this.lbTotalWeight.Location = new System.Drawing.Point(678, 488);
             this.lbTotalWeight.Name = "lbTotalWeight";
             this.lbTotalWeight.Size = new System.Drawing.Size(140, 23);
             this.lbTotalWeight.TabIndex = 109;
@@ -745,7 +747,7 @@
             // 
             this.txtTotalWeight.BackColor = System.Drawing.Color.White;
             this.txtTotalWeight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtTotalWeight.Location = new System.Drawing.Point(821, 473);
+            this.txtTotalWeight.Location = new System.Drawing.Point(821, 488);
             this.txtTotalWeight.Name = "txtTotalWeight";
             this.txtTotalWeight.Size = new System.Drawing.Size(101, 23);
             this.txtTotalWeight.TabIndex = 110;
@@ -877,16 +879,41 @@
             // 
             this.chkAutoScan.AutoSize = true;
             this.chkAutoScan.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkAutoScan.Location = new System.Drawing.Point(13, 487);
+            this.chkAutoScan.Location = new System.Drawing.Point(13, 502);
             this.chkAutoScan.Name = "chkAutoScan";
             this.chkAutoScan.Size = new System.Drawing.Size(181, 21);
             this.chkAutoScan.TabIndex = 123;
             this.chkAutoScan.Text = "Auto Scan Next Cartons.";
             this.chkAutoScan.UseVisualStyleBackColor = true;
             // 
+            // btnCalibrationList
+            // 
+            this.btnCalibrationList.Location = new System.Drawing.Point(807, 239);
+            this.btnCalibrationList.Name = "btnCalibrationList";
+            this.btnCalibrationList.Size = new System.Drawing.Size(115, 30);
+            this.btnCalibrationList.TabIndex = 124;
+            this.btnCalibrationList.Text = "Calibration List";
+            this.btnCalibrationList.UseVisualStyleBackColor = true;
+            this.btnCalibrationList.Click += new System.EventHandler(this.btnCalibrationList_Click);
+            // 
+            // chkAutoCalibration
+            // 
+            this.chkAutoCalibration.AutoSize = true;
+            this.chkAutoCalibration.Checked = true;
+            this.chkAutoCalibration.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAutoCalibration.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkAutoCalibration.Location = new System.Drawing.Point(9, 212);
+            this.chkAutoCalibration.Name = "chkAutoCalibration";
+            this.chkAutoCalibration.Size = new System.Drawing.Size(127, 21);
+            this.chkAutoCalibration.TabIndex = 125;
+            this.chkAutoCalibration.Text = "Auto Calibration";
+            this.chkAutoCalibration.UseVisualStyleBackColor = true;
+            // 
             // P18
             // 
-            this.ClientSize = new System.Drawing.Size(934, 672);
+            this.ClientSize = new System.Drawing.Size(934, 684);
+            this.Controls.Add(this.chkAutoCalibration);
+            this.Controls.Add(this.btnCalibrationList);
             this.Controls.Add(this.chkAutoScan);
             this.Controls.Add(this.displayCustCD);
             this.Controls.Add(this.label5);
@@ -1001,6 +1028,8 @@
             this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.displayCustCD, 0);
             this.Controls.SetChildIndex(this.chkAutoScan, 0);
+            this.Controls.SetChildIndex(this.btnCalibrationList, 0);
+            this.Controls.SetChildIndex(this.chkAutoCalibration, 0);
             this.tabControlScanArea.ResumeLayout(false);
             this.tabPageCarton.ResumeLayout(false);
             this.tabPageCarton.PerformLayout();
@@ -1086,5 +1115,7 @@
         private Win.UI.Label label5;
         private Win.UI.DisplayBox displayCustCD;
         private Win.UI.CheckBox chkAutoScan;
+        private Win.UI.Button btnCalibrationList;
+        private Win.UI.CheckBox chkAutoCalibration;
     }
 }
