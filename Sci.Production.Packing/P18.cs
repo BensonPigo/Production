@@ -14,6 +14,7 @@ using Sci.Win.Tools;
 using System.Transactions;
 using System.Threading.Tasks;
 using Sci.Production.Automation;
+using org.apache.pdfbox.io;
 
 namespace Sci.Production.Packing
 {
@@ -71,6 +72,46 @@ namespace Sci.Production.Packing
             this.Tab_Focus("CARTON");
 
             this.txtDest.TextBox1.ReadOnly = true;
+        }
+
+        private void disable_Carton_Scan()
+        {
+            // 待確認
+            string machineID = string.Empty;
+            string sqlcmd = $@"
+select top 1 * from MDCalibrationList where MachineID = '{machineID}' and CalibrationDate = CONVERT(date, GETDATE()) order by CalibrationTime desc";
+
+            DataTable dtMDCalibrationList;
+            Ict.DualResult result;
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out dtMDCalibrationList)))
+            {
+                this.ShowErr(result);
+            }
+
+            DataRow[] MDCalibrationListChk = dtMDCalibrationList.Select(@"
+   Point1 = 0
+or Point2 = 0
+or Point3 = 0
+or Point4 = 0
+or Point5 = 0
+or Point6 = 0
+or Point7 = 0
+or Point8 = 0
+or Point9 = 0
+");
+
+            if (this.chkAutoCalibration.Checked && MDCalibrationListChk.Length > 0)
+            {
+                this.txtScanCartonSP.Enabled = false;
+                this.txtScanEAN.Enabled = false;
+                this.btnPackingError.Enabled = false;
+            }
+            else
+            {
+                this.txtScanCartonSP.Enabled = true;
+                this.txtScanEAN.Enabled = true;
+                this.btnPackingError.Enabled = true;
+            }
         }
 
         private void TxtScanCartonSP_Validating(object sender, CancelEventArgs e)
@@ -1767,8 +1808,9 @@ and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
 
         private void btnCalibrationList_Click(object sender, EventArgs e)
         {
-            P18_Calibration_List callForm = new P18_Calibration_List(true, drSelect["ID"].ToString(), drSelect["CTNStartNo"].ToString(), null, dr[0]);
+            P18_Calibration_List callForm = new P18_Calibration_List(true, String.Empty, String.Empty, String.Empty);
             callForm.ShowDialog(this);
+            this.disable_Carton_Scan();
         }
     }
 }

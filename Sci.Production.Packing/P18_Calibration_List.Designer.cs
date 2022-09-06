@@ -61,12 +61,14 @@
             this.undo.Dock = System.Windows.Forms.DockStyle.None;
             this.undo.Location = new System.Drawing.Point(379, 5);
             this.undo.Size = new System.Drawing.Size(72, 30);
+            this.undo.Visible = false;
             // 
             // save
             // 
             this.save.Dock = System.Windows.Forms.DockStyle.None;
             this.save.Location = new System.Drawing.Point(299, 5);
             this.save.Size = new System.Drawing.Size(72, 30);
+            this.save.Visible = false;
             // 
             // labMDMachine
             // 
@@ -94,6 +96,7 @@
             this.btnClose.TabIndex = 125;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // btnSubmit
             // 
@@ -104,6 +107,7 @@
             this.btnSubmit.TabIndex = 126;
             this.btnSubmit.Text = "Submit";
             this.btnSubmit.UseVisualStyleBackColor = true;
+            this.btnSubmit.Click += new System.EventHandler(this.btnSubmit_Click);
             // 
             // P18_Calibration_List
             // 
