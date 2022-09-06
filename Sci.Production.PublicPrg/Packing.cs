@@ -19,6 +19,8 @@ using System.Net;
 using Sci.Win.Tools;
 using Sci.Utility.Excel;
 using Sci.Production.CallPmsAPI;
+using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace Sci.Production.PublicPrg
 {
@@ -2868,6 +2870,7 @@ order by min(pd.seq)
                 string sciCtnNo = MyUtility.GetValue.GetID(Env.User.Keyword + string.Empty, "PackingList_Detail", DateTime.Today, 3, "SCICtnNo", null);
                 string sciCtnNoleft = sciCtnNo.Substring(0, 9);
                 int sciNo = MyUtility.Convert.GetInt(sciCtnNo.Substring(9));
+
                 var ctnlist = dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted)
                     .GroupBy(s => s["CTNStartNo"]).Select(group => new { CTNStartNo = group.Key });
 
@@ -2955,14 +2958,59 @@ order by min(pd.seq)
                 return new DualResult(false, new Exception("GetSCICtnNo Error"));
             }
 
-            string sqlCreateSCICtnNo = $@"
+            // 先檢查是否已被取號，避免重複
+            int reRunCount = 0;
+            while (true)
+            {
+                if (reRunCount > 3)
+                {
+                    return new DualResult(false, "GetSCICtnNo duplicate Error");
+                }
+
+                string sqlCreateSCICtnNo = $@"
+alter table #tmp alter column SCICtnNo varchar(16)
+if exists(  select 1 
+            from PackingList_Detail pd2 with (nolock)
+            where SCICtnNo in (select SCICtnNo from #tmp)
+        )
+begin
+    drop table #tmp
+    select [IsDup] = cast(1 as bit)
+    return
+end
+
 update pd2 set 
 	SCICtnNo = pd.SCICtnNo
 from  PackingList_Detail pd2
-inner join #tmp pd  on pd2.Ukey	= pd.Ukey				
+inner join #tmp pd  on pd2.Ukey	= pd.Ukey
+
+select [IsDup] = cast(0 as bit)
+
+drop table #tmp
 ";
-            DataTable dt;
-            result = MyUtility.Tool.ProcessWithDatatable(packinglist_detaildt, "SCICtnNo,Ukey", sqlCreateSCICtnNo, out dt);
+                DataTable dt;
+                result = MyUtility.Tool.ProcessWithDatatable(packinglist_detaildt, "SCICtnNo,Ukey", sqlCreateSCICtnNo, out dt);
+
+                if (!result)
+                {
+                    return result;
+                }
+
+                if (MyUtility.Convert.GetBool(dt.Rows[0]["IsDup"]))
+                {
+                    reRunCount++;
+                    Thread.Sleep(1500);
+                    if (!GetSCICtnNo(packinglist_detaildt, id, "IsDetailInserting"))
+                    {
+                        return new DualResult(false, new Exception("GetSCICtnNo Error"));
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+
             return result;
         }
         #endregion
