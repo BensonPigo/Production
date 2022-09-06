@@ -29,6 +29,6 @@
 	[DefectSub] [nvarchar](260) NULL,
 	[Responsibility] [varchar](2) NULL,
 	[MDivisionID] [varchar](8) NULL,
-	[TableUkey] [bigint] NOT NULL
+	[TableUkey] [bigint] NULL
 ) ON [PRIMARY]
 GO

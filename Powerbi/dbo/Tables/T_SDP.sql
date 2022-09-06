@@ -33,7 +33,7 @@
 	[OutstandingReason] [varchar](500) NULL,
 	[ReasonRemark] [nvarchar](max) NULL,
 	[TransferBIDate] [datetime] NULL,
-	[Ukey] [bigint] NOT NULL
+	[Ukey] [bigint] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 

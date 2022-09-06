@@ -32,6 +32,6 @@
 	[Orig. Buyer Delivery] [date] NULL,
 	[TransferBIDate] [date] NULL,
 	[Project] [varchar](5) NULL, 
-    [Ukey] [bigint] NOT NULL
+    [Ukey] [bigint] NULL
 ) ON [PRIMARY]
 GO

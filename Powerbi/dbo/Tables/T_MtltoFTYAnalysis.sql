@@ -53,6 +53,6 @@
 	[MaterialConfirm] [varchar](1) NULL,
 	[SupplierGroup] [varchar](8) NULL,
 	[TransferBIDate] [date] NULL,
-	[Ukey] [bigint] NOT NULL
+	[Ukey] [bigint] NULL
 ) ON [PRIMARY]
 GO
