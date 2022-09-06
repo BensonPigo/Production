@@ -146,7 +146,7 @@ Where   1=1
                 if (!MyUtility.Check.Empty(sp))
                 {
                     strSQLCmd.Append(@" 
-        and a.id = @sp1 ");
+        and psd.id = @sp1 ");
                     sp1.Value = sp;
                     cmds.Add(sp1);
                 }
@@ -166,13 +166,13 @@ Where   1=1
                 if (!this.txtSeq.CheckSeq1Empty())
                 {
                     strSQLCmd.Append(@" 
-        and a.seq1 = @seq1 ");
+        and psd.seq1 = @seq1 ");
                 }
 
                 if (!this.txtSeq.CheckSeq2Empty())
                 {
                     strSQLCmd.Append(@" 
-        and a.seq2 = @seq2");
+        and psd.seq2 = @seq2");
                 }
 
                 this.ShowWaitMessage("Data Loading....");
