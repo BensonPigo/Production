@@ -207,63 +207,78 @@ Where Junk = 0
                 return;
             }
 
-            string sqlMerge = $@"
-merge MDCalibrationList as t
-using #tmp as s
-on t.MachineID = s.MachineID and t.CalibrationDate = convert(date,getDate())
-when matched then 
-update set 
-	t.CalibrationTime  = s.CalibrationTime
-	,t.[Point1]     = iif(s.[Point1] = 'True' , 1,0)
-    ,t.[Point2]		= iif(s.[Point2]= 'True' , 1,0)
-    ,t.[Point3]		= iif(s.[Point3]= 'True' , 1,0)
-    ,t.[Point4]		= iif(s.[Point4]= 'True' , 1,0)
-    ,t.[Point5]		= iif(s.[Point5]= 'True' , 1,0)
-    ,t.[Point6]		= iif(s.[Point6]= 'True' , 1,0)
-    ,t.[Point7]		= iif(s.[Point7]= 'True' , 1,0)
-    ,t.[Point8]		= iif(s.[Point8]= 'True' , 1,0)
-    ,t.[Point9]		= iif(s.[Point9]= 'True' , 1,0)
-    ,t.[SubmitDate] = getdate()
-    ,t.Operator     = '{Env.User.UserID}'
-when not matched by target then
-insert([MachineID]
-      ,[CalibrationTime]
-      ,[Point1]
-      ,[Point2]
-      ,[Point3]
-      ,[Point4]
-      ,[Point5]
-      ,[Point6]
-      ,[Point7]
-      ,[Point8]
-      ,[Point9]
-      ,[CalibrationDate]
-      ,[SubmitDate]
-      ,[Operator])
-values(s.[MachineID]
-      ,s.[CalibrationTime]
-      ,s.[Point1]
-      ,s.[Point2]
-      ,s.[Point3]
-      ,s.[Point4]
-      ,s.[Point5]
-      ,s.[Point6]
-      ,s.[Point7]
-      ,s.[Point8]
-      ,s.[Point9]
-      ,convert(date,getdate())
-      ,getdate()
-      ,'{Env.User.UserID}'
-);
-";
+            string sqlcmd = string.Empty;
 
-            string sqlchk = "select 1 from #tmp";
+            foreach (var item in upd_list)
+            {
+                if (MyUtility.Check.Seek($@"select 1 from MDCalibrationList where MachineID = '{item["MachineID"]}' and CalibrationDate = convert(date,getDate())"))
+                {
+                    sqlcmd += $@"
+use Production
+update MDCalibrationList
+set CalibrationTime = '{item["CalibrationTime"]}',
+Point1 = iif('{item["Point1"]}' = 'True',1,0)    ,
+Point2=  iif('{item["Point2"]}' = 'True',1,0)    ,
+Point3=  iif('{item["Point3"]}' = 'True',1,0)    ,
+Point4=  iif('{item["Point4"]}' = 'True',1,0)    ,
+Point5=  iif('{item["Point5"]}' = 'True',1,0)    ,
+Point6=  iif('{item["Point6"]}' = 'True',1,0)    ,
+Point7=  iif('{item["Point7"]}' = 'True',1,0)    ,
+Point8=  iif('{item["Point8"]}' = 'True',1,0)    ,
+Point9=  iif('{item["Point9"]}' = 'True',1,0)    ,
+SubmitDate = GETDATE(),
+Operator = '{Env.User.UserID}'
+where MachineID = '{item["MachineID"]}' 
+and CalibrationDate = convert(date,getDate())
+" + Environment.NewLine;
+                }
+                else
+                {
+                    sqlcmd += $@"
+insert into MDCalibrationList
+(
+MachineID,
+CalibrationTime,
+Point1,
+Point2,
+Point3,
+Point4,
+Point5,
+Point6,
+Point7,
+Point8,
+Point9,
+CalibrationDate,
+SubmitDate,
+Operator
+)values
+(
+'{item["MachineID"]}',
+ '{item["CalibrationTime"]}',
+iif('{item["Point1"]}' = 'True',1,0),
+iif('{item["Point2"]}' = 'True',1,0),
+iif('{item["Point3"]}' = 'True',1,0),
+iif('{item["Point4"]}' = 'True',1,0),
+iif('{item["Point5"]}' = 'True',1,0),
+iif('{item["Point6"]}' = 'True',1,0),
+iif('{item["Point7"]}' = 'True',1,0),
+iif('{item["Point8"]}' = 'True',1,0),
+iif('{item["Point9"]}' = 'True',1,0),
+convert(date,getDate()),
+getdate(),
+'{Env.User.UserID}')
+" + Environment.NewLine;
+                }
+            }
+
             DualResult result;
-            if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlchk, out DataTable dtresult)))
+            if (!(result = DBProxy.Current.Execute("Production", sqlcmd)))
             {
                 this.ShowErr(result);
                 return;
             }
+
+            // 其他事件
         }
     }
 }
