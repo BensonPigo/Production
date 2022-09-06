@@ -7,5 +7,5 @@
 	[Capacity(CPU)] [numeric](38, 6) NULL,
 	[Loading (CPU)] [numeric](38, 6) NULL,
 	[TransferBIDate] [datetime] NULL,
-	[Ukey] [bigint] NOT NULL
+	[Ukey] [bigint] NULL
 ) ON [PRIMARY]

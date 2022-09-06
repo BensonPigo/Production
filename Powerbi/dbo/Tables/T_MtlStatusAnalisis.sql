@@ -34,6 +34,6 @@
 	[Duty] [nvarchar](600) NULL,
 	[PF Remark] [varchar](max) NULL,
 	[Type] [varchar](10) NULL,
-	[Ukey] [bigint] NOT NULL
+	[Ukey] [bigint] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO

@@ -101,6 +101,6 @@
 	[Mtl. O.Standing Reason] [nvarchar](510) NULL,
 	[KPI L/ETA by Order List] [date] NULL,
 	[Print Date] [date] NULL,
-	[Ukey] [bigint] NOT NULL
+	[Ukey] [bigint] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO

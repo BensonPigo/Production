@@ -31,5 +31,5 @@
 	[ReceivedDate] [nvarchar](max) NULL,
 	[Destination] [nvarchar](30) NULL,
 	[Supplier/Subcon name] [varchar](40) NULL,
-	[Ukey] [bigint] NOT NULL
+	[Ukey] [bigint] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
