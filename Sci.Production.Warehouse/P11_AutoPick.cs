@@ -275,6 +275,7 @@ select	distinct psd.id as [poid]
                                     else psd.Seq1
                                  end
 		, [Garment Size]=dbo.GetGarmentSizeByOrderIDSeq(psd.id ,psd.SEQ1 ,psd.SEQ2)
+        ,SizeUnit = psdsSU.SpecValue
 into #tmpPO_supp_detail
 from dbo.PO_Supp_Detail as psd WITH (NOLOCK) 
 inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
@@ -336,6 +337,7 @@ from (
             , checkOrderListEmpty = checkOrderListEmpty.value
             , Orderlist_chk = psdo.Orderid
 			, b.[Garment Size]
+            , b.SizeUnit
     from #tmpPO_supp_detail b
     left join (
          select distinct tmpB.id
