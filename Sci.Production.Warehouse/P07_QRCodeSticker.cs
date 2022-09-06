@@ -5,6 +5,7 @@ using Sci.Production.Prg;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -134,146 +135,13 @@ namespace Sci.Production.Warehouse
                 dv.Sort = ((DataTable)this.listControlBindingSource.DataSource).DefaultView.Sort;
                 DataTable sortedtable1 = dv.ToTable();
 
-                var barcodeDatas = sortedtable1.AsEnumerable().Where(s => (int)s["Sel"] == 1);
-
+                var barcodeDatas = sortedtable1.AsEnumerable().Where(s => (int)s["Sel"] == 1).ToList();
+                string type = this.printType;
                 #region Print
                 this.ShowWaitMessage("Data Loading ...");
-                Word._Application winword = new Word.Application();
-                Word._Document document;
-                Word.Table tables = null;
 
-                string fileName = "\\Warehouse_P07_Sticker5.dotx";
+                PrintQRCode(barcodeDatas, type);
 
-                if (this.printType == "5X5")
-                {
-                    fileName = "\\Warehouse_P07_Sticker5.dotx";
-                }
-                else if (this.printType == "7X7")
-                {
-                    fileName = "\\Warehouse_P07_Sticker7.dotx";
-                }
-                else
-                {
-                    fileName = "\\Warehouse_P07_Sticker10.dotx";
-                }
-
-                object printFile = Sci.Env.Cfg.XltPathDir + fileName;
-                document = winword.Documents.Add(ref printFile);
-                #region PrintBarCode
-                try
-                {
-                    document.Activate();
-                    Word.Tables table = document.Tables;
-
-                    // 計算頁數
-                    winword.Selection.Tables[1].Select();
-                    winword.Selection.Copy();
-                    for (int j = 1; j < barcodeDatas.Count(); j++)
-                    {
-                        winword.Selection.MoveDown();
-                        if (barcodeDatas.Count() > 1)
-                        {
-                            winword.Selection.InsertAfter(Environment.NewLine);
-                            winword.Selection.MoveRight();
-                        }
-
-                        winword.Selection.Paste();
-                    }
-
-                    int qrCodeWidth = this.printType == "10X10" ? 90 : 45;
-                    float otherSize = 8;
-                    switch (this.printType)
-                    {
-                        case "10X10":
-                            otherSize = (float)12;
-                            break;
-                        case "7X7":
-                            otherSize = (float)7.5;
-                            break;
-                        case "5X5":
-                            otherSize = (float)5.5;
-                            break;
-                    }
-
-                    // 填入資料
-                    int i = 0;
-                    foreach (var printItem in barcodeDatas)
-                    {
-                        tables = table[i + 1];
-                        tables.Cell(1, 1).Range.Text = $"SP#:{printItem["PoId"]}";
-                        tables.Cell(1, 2).Range.Text = $"SEQ:{printItem["SEQ"]}";
-
-                        tables.Cell(2, 1).Range.Text = $@"GW:{printItem["Weight"]}KG
-AW:{printItem["ActualWeight"]}KG";
-                        tables.Cell(2, 2).Range.Text = $"Lct:{printItem["Location"]}";
-
-                        tables.Cell(3, 1).Range.Text = $"REF#:{printItem["RefNo"]}";
-
-                        Bitmap oriBitmap = printItem["MINDQRCode"].ToString().ToBitmapQRcode(qrCodeWidth, qrCodeWidth);
-                        Clipboard.SetImage(oriBitmap);
-                        Thread.Sleep(100);
-                        tables.Cell(4, 1).Range.Paste();
-                        tables.Cell(4, 3).Range.Paste();
-
-                        tables.Cell(4, 2).Range.Text = printItem["FactoryID"].ToString();
-
-                        Word.Paragraph pText;
-                        Word.Range range;
-
-                        range = tables.Cell(5, 1).Range;
-                        range.Text = $"{printItem["Roll"]}";
-                        pText = range.Paragraphs.Add(range);
-
-                        // pText.Range.Bold = 0;
-                        pText.Range.Font.Size = otherSize;
-                        pText.Range.Text = $"Roll#:";
-
-                        range = tables.Cell(5, 2).Range;
-                        range.Text = $"{printItem["Dyelot"]}";
-                        pText = range.Paragraphs.Add(range);
-
-                        // pText.Range.Bold = 0;
-                        pText.Range.Font.Size = otherSize;
-                        pText.Range.Text = $"Lot#:";
-
-                        range = tables.Cell(6, 1).Range;
-                        range.Text = $"{printItem["ColorID"]}";
-                        pText = range.Paragraphs.Add(range);
-
-                        // pText.Range.Bold = 0;
-                        pText.Range.Font.Size = otherSize;
-                        pText.Range.Text = $"Color:";
-
-                        range = tables.Cell(6, 2).Range;
-                        range.Text = $"{printItem["StockQty"]}";
-                        pText = range.Paragraphs.Add(range);
-
-                        // pText.Range.Bold = 0;
-                        pText.Range.Text = $"Yd#:";
-                        i++;
-                    }
-
-                    // 產生的Word檔不可編輯
-                    winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyReading);
-                    winword.Visible = true;
-                }
-                catch (Exception)
-                {
-                    if (winword != null)
-                    {
-                        winword.Quit();
-                    }
-
-                    MyUtility.Msg.WarningBox("Export Word error.");
-                }
-                finally
-                {
-                    Marshal.ReleaseComObject(document);
-                    Marshal.ReleaseComObject(winword);
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
-                }
-                #endregion
                 if (this.callFrom == "P07")
                 {
                     string ukeys = barcodeDatas.Select(s => s["Ukey"].ToString()).JoinToString(",");
@@ -292,6 +160,135 @@ AW:{printItem["ActualWeight"]}KG";
             else
             {
                 MyUtility.Msg.InfoBox("Select data first.");
+            }
+        }
+
+        /// <inheritdoc/>
+        public static void PrintQRCode(List<DataRow> barcodeDatas, string type, string form = "")
+        {
+            Word._Application winword = new Word.Application();
+            Word._Document document;
+            Word.Table tables = null;
+
+            string fileName;
+            float otherSize;
+            switch (type)
+            {
+                case "5X5":
+                    fileName = "\\Warehouse_P07_Sticker5.dotx";
+                    otherSize = (float)6;
+                    break;
+                case "7X7":
+                    fileName = "\\Warehouse_P07_Sticker7.dotx";
+                    otherSize = (float)10;
+                    break;
+                default:
+                    fileName = "\\Warehouse_P07_Sticker10.dotx";
+                    otherSize = (float)13;
+                    break;
+            }
+
+            object printFile = Sci.Env.Cfg.XltPathDir + fileName;
+            document = winword.Documents.Add(ref printFile);
+            try
+            {
+                document.Activate();
+                Word.Tables table = document.Tables;
+
+                // 計算頁數
+                winword.Selection.Tables[1].Select();
+                winword.Selection.Copy();
+                for (int j = 1; j < barcodeDatas.Count(); j++)
+                {
+                    winword.Selection.MoveDown();
+                    if (barcodeDatas.Count() > 1)
+                    {
+                        winword.Selection.InsertAfter(Environment.NewLine);
+                        winword.Selection.MoveRight();
+                    }
+
+                    winword.Selection.Paste();
+                }
+
+                // 填入資料
+                int i = 0;
+                foreach (var printItem in barcodeDatas)
+                {
+                    tables = table[i + 1];
+                    tables.Cell(1, 1).Range.Text = $"SP#:{printItem["PoId"]}";
+                    tables.Cell(1, 2).Range.Text = $"SEQ:{printItem["SEQ"]}";
+
+                    tables.Cell(2, 1).Range.Text = $@"GW:{printItem["Weight"]}KG
+AW:{printItem["ActualWeight"]}KG";
+                    tables.Cell(2, 2).Range.Text = $"Lct:{printItem["Location"]}";
+
+                    tables.Cell(3, 1).Range.Text = $"REF#:{printItem["RefNo"]}";
+
+                    int qrCodeWidth = type == "10X10" ? 90 : 45;
+                    string qrcode = form == "P21" ? "Barcode" : "MINDQRCode";
+                    Bitmap oriBitmap = printItem[qrcode].ToString().ToBitmapQRcode(qrCodeWidth, qrCodeWidth);
+                    Clipboard.SetImage(oriBitmap);
+                    Thread.Sleep(100);
+                    tables.Cell(4, 1).Range.Paste();
+                    tables.Cell(4, 3).Range.Paste();
+
+                    tables.Cell(4, 2).Range.Text = printItem["FactoryID"].ToString();
+
+                    Word.Paragraph pText;
+                    Word.Range range;
+
+                    range = tables.Cell(5, 1).Range;
+                    range.Text = $"{printItem["Roll"]}";
+                    pText = range.Paragraphs.Add(range);
+
+                    // pText.Range.Bold = 0;
+                    pText.Range.Font.Size = otherSize;
+                    pText.Range.Text = $"Roll#:";
+
+                    range = tables.Cell(5, 2).Range;
+                    range.Text = $"{printItem["Dyelot"]}";
+                    pText = range.Paragraphs.Add(range);
+
+                    // pText.Range.Bold = 0;
+                    pText.Range.Font.Size = otherSize;
+                    pText.Range.Text = $"Lot#:";
+
+                    range = tables.Cell(6, 1).Range;
+                    range.Text = $"{printItem["ColorID"]}";
+                    pText = range.Paragraphs.Add(range);
+
+                    // pText.Range.Bold = 0;
+                    pText.Range.Font.Size = otherSize;
+                    pText.Range.Text = $"Color:";
+
+                    range = tables.Cell(6, 2).Range;
+                    range.Text = $"{printItem["StockQty"]}";
+                    pText = range.Paragraphs.Add(range);
+
+                    // pText.Range.Bold = 0;
+                    pText.Range.Text = $"Yd#:";
+                    i++;
+                }
+
+                // 產生的Word檔不可編輯
+                winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyReading);
+                winword.Visible = true;
+            }
+            catch (Exception)
+            {
+                if (winword != null)
+                {
+                    winword.Quit();
+                }
+
+                MyUtility.Msg.WarningBox("Export Word error.");
+            }
+            finally
+            {
+                Marshal.ReleaseComObject(document);
+                Marshal.ReleaseComObject(winword);
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
             }
         }
 

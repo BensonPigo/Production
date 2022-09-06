@@ -16,7 +16,7 @@
               </TextRun>
             </TextRuns>
             <Style>
-              <TextAlign>Center</TextAlign>
+              <TextAlign>Left</TextAlign>
             </Style>
           </Paragraph>
         </Paragraphs>
@@ -31,6 +31,7 @@
             <Width>0.3pt</Width>
           </Border>
           <VerticalAlign>Middle</VerticalAlign>
+          <PaddingLeft>3pt</PaddingLeft>
         </Style>
       </Textbox>
       <Image Name="Image4">
@@ -63,7 +64,7 @@
               </TextRun>
             </TextRuns>
             <Style>
-              <TextAlign>Center</TextAlign>
+              <TextAlign>Left</TextAlign>
             </Style>
           </Paragraph>
         </Paragraphs>
@@ -79,6 +80,7 @@
             <Width>0.3pt</Width>
           </Border>
           <VerticalAlign>Middle</VerticalAlign>
+          <PaddingLeft>3pt</PaddingLeft>
         </Style>
       </Textbox>
       <Textbox Name="Textbox4">
@@ -95,7 +97,7 @@
               </TextRun>
             </TextRuns>
             <Style>
-              <TextAlign>Center</TextAlign>
+              <TextAlign>Left</TextAlign>
             </Style>
           </Paragraph>
         </Paragraphs>
@@ -111,6 +113,7 @@
             <Width>0.3pt</Width>
           </Border>
           <VerticalAlign>Middle</VerticalAlign>
+          <PaddingLeft>3pt</PaddingLeft>
         </Style>
       </Textbox>
       <Image Name="Image5">
@@ -180,7 +183,7 @@
               </TextRun>
             </TextRuns>
             <Style>
-              <TextAlign>Center</TextAlign>
+              <TextAlign>Left</TextAlign>
             </Style>
           </Paragraph>
         </Paragraphs>
@@ -208,6 +211,7 @@
             <Style>None</Style>
           </RightBorder>
           <VerticalAlign>Bottom</VerticalAlign>
+          <PaddingLeft>3pt</PaddingLeft>
         </Style>
       </Textbox>
       <Textbox Name="Textbox14">
@@ -224,7 +228,7 @@
               </TextRun>
             </TextRuns>
             <Style>
-              <TextAlign>Center</TextAlign>
+              <TextAlign>Left</TextAlign>
             </Style>
           </Paragraph>
         </Paragraphs>
@@ -249,6 +253,7 @@
             <Style>None</Style>
           </RightBorder>
           <VerticalAlign>Top</VerticalAlign>
+          <PaddingLeft>3pt</PaddingLeft>
         </Style>
       </Textbox>
       <Textbox Name="Textbox7">
@@ -272,7 +277,7 @@
               </TextRun>
             </TextRuns>
             <Style>
-              <TextAlign>Center</TextAlign>
+              <TextAlign>Left</TextAlign>
             </Style>
           </Paragraph>
         </Paragraphs>
@@ -288,6 +293,7 @@
             <Width>0.3pt</Width>
           </Border>
           <VerticalAlign>Middle</VerticalAlign>
+          <PaddingLeft>3pt</PaddingLeft>
         </Style>
       </Textbox>
       <Textbox Name="Textbox8">
@@ -311,7 +317,7 @@
               </TextRun>
             </TextRuns>
             <Style>
-              <TextAlign>Center</TextAlign>
+              <TextAlign>Left</TextAlign>
             </Style>
           </Paragraph>
         </Paragraphs>
@@ -327,6 +333,7 @@
             <Width>0.3pt</Width>
           </Border>
           <VerticalAlign>Middle</VerticalAlign>
+          <PaddingLeft>3pt</PaddingLeft>
         </Style>
       </Textbox>
       <Textbox Name="Textbox18">
@@ -350,7 +357,7 @@
               </TextRun>
             </TextRuns>
             <Style>
-              <TextAlign>Center</TextAlign>
+              <TextAlign>Left</TextAlign>
             </Style>
           </Paragraph>
         </Paragraphs>
@@ -366,6 +373,7 @@
             <Width>0.3pt</Width>
           </Border>
           <VerticalAlign>Middle</VerticalAlign>
+          <PaddingLeft>3pt</PaddingLeft>
         </Style>
       </Textbox>
       <Textbox Name="Textbox19">
@@ -389,7 +397,7 @@
               </TextRun>
             </TextRuns>
             <Style>
-              <TextAlign>Center</TextAlign>
+              <TextAlign>Left</TextAlign>
             </Style>
           </Paragraph>
         </Paragraphs>
@@ -405,6 +413,7 @@
             <Width>0.3pt</Width>
           </Border>
           <VerticalAlign>Middle</VerticalAlign>
+          <PaddingLeft>3pt</PaddingLeft>
         </Style>
       </Textbox>
       <Textbox Name="Textbox3">
@@ -421,7 +430,7 @@
               </TextRun>
             </TextRuns>
             <Style>
-              <TextAlign>Center</TextAlign>
+              <TextAlign>Left</TextAlign>
             </Style>
           </Paragraph>
         </Paragraphs>
@@ -437,6 +446,7 @@
             <Width>0.3pt</Width>
           </Border>
           <VerticalAlign>Middle</VerticalAlign>
+          <PaddingLeft>3pt</PaddingLeft>
         </Style>
       </Textbox>
       <Textbox Name="Textbox9">
