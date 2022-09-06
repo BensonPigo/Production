@@ -24,6 +24,7 @@
 	[SubconCPU] [decimal](18, 2) NOT NULL,
 	[TtlManpower] [decimal](18, 2) NOT NULL,
 	[TtlInderectManpower] [decimal](18, 2) NOT NULL,
+	[Ukey] [bigint] NOT NULL,
  CONSTRAINT [PK_T_Capacity] PRIMARY KEY CLUSTERED 
 (
 	[FactoryID] ASC,
