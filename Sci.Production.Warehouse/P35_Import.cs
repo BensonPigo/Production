@@ -82,14 +82,14 @@ and f.mdivisionid='{Env.User.Keyword}'
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-        and a.id = '{0}' ", sp));
+        and psd.id = '{0}' ", sp));
                 }
 
                 if (!MyUtility.Check.Empty(refno))
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-        and a.refno = '{0}' ", refno));
+        and psd.refno = '{0}' ", refno));
                 }
 
                 if (!MyUtility.Check.Empty(location))
@@ -105,14 +105,14 @@ and f.mdivisionid='{Env.User.Keyword}'
                 {
                     strSQLCmd.Append(string.Format(
                         @"
-        and a.seq1 = '{0}'", this.txtSeq.Seq1));
+        and psd.seq1 = '{0}'", this.txtSeq.Seq1));
                 }
 
                 if (!this.txtSeq.CheckSeq2Empty())
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-        and a.seq2 = '{0}'", this.txtSeq.Seq2));
+        and psd.seq2 = '{0}'", this.txtSeq.Seq2));
                 }
 
                 switch (fabrictype)
@@ -121,11 +121,11 @@ and f.mdivisionid='{Env.User.Keyword}'
                         break;
                     case "F":
                         strSQLCmd.Append(@" 
-        And a.fabrictype = 'F'");
+        And psd.fabrictype = 'F'");
                         break;
                     case "A":
                         strSQLCmd.Append(@" 
-        And a.fabrictype = 'A'");
+        And psd.fabrictype = 'A'");
                         break;
                 }
 
