@@ -92,7 +92,6 @@
             this.label4 = new Sci.Win.UI.Label();
             this.displayKIT = new Sci.Win.UI.DisplayBox();
             this.boxPackingRemark = new Sci.Win.UI.EditBox();
-            this.txtDest = new Sci.Production.Class.Txtcountry();
             this.chkVasShas = new Sci.Win.UI.CheckBox();
             this.chkBrokenneedles = new Sci.Win.UI.CheckBox();
             this.label5 = new Sci.Win.UI.Label();
@@ -100,6 +99,9 @@
             this.chkAutoScan = new Sci.Win.UI.CheckBox();
             this.btnCalibrationList = new Sci.Win.UI.Button();
             this.chkAutoCalibration = new Sci.Win.UI.CheckBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.txtDest = new Sci.Production.Class.Txtcountry();
+            this.lbCalibrationTime = new Sci.Win.UI.Label();
             this.tabControlScanArea.SuspendLayout();
             this.tabPageCarton.SuspendLayout();
             this.tabPageScan.SuspendLayout();
@@ -311,10 +313,10 @@
             this.tabPageScan.Controls.Add(this.labelQtyScan);
             this.tabPageScan.Controls.Add(this.labelTabScanTtlQty);
             this.tabPageScan.Controls.Add(this.labelTabScan);
-            this.tabPageScan.Location = new System.Drawing.Point(4, 25);
+            this.tabPageScan.Location = new System.Drawing.Point(4, 22);
             this.tabPageScan.Name = "tabPageScan";
             this.tabPageScan.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageScan.Size = new System.Drawing.Size(311, 167);
+            this.tabPageScan.Size = new System.Drawing.Size(311, 170);
             this.tabPageScan.TabIndex = 1;
             this.tabPageScan.Text = "Scan";
             // 
@@ -823,15 +825,6 @@
             this.boxPackingRemark.Size = new System.Drawing.Size(449, 50);
             this.boxPackingRemark.TabIndex = 117;
             // 
-            // txtDest
-            // 
-            this.txtDest.DisplayBox1Binding = "";
-            this.txtDest.Location = new System.Drawing.Point(88, 153);
-            this.txtDest.Name = "txtDest";
-            this.txtDest.Size = new System.Drawing.Size(236, 22);
-            this.txtDest.TabIndex = 106;
-            this.txtDest.TextBox1Binding = "";
-            // 
             // chkVasShas
             // 
             this.chkVasShas.AutoSize = true;
@@ -908,10 +901,36 @@
             this.chkAutoCalibration.TabIndex = 125;
             this.chkAutoCalibration.Text = "Auto Calibration";
             this.chkAutoCalibration.UseVisualStyleBackColor = true;
+            this.chkAutoCalibration.CheckedChanged += new System.EventHandler(this.chkAutoCalibration_CheckedChanged);
+            // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // txtDest
+            // 
+            this.txtDest.DisplayBox1Binding = "";
+            this.txtDest.Location = new System.Drawing.Point(88, 153);
+            this.txtDest.Name = "txtDest";
+            this.txtDest.Size = new System.Drawing.Size(236, 22);
+            this.txtDest.TabIndex = 106;
+            this.txtDest.TextBox1Binding = "";
+            // 
+            // lbCalibrationTime
+            // 
+            this.lbCalibrationTime.BackColor = System.Drawing.Color.Transparent;
+            this.lbCalibrationTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbCalibrationTime.Location = new System.Drawing.Point(350, 245);
+            this.lbCalibrationTime.Name = "lbCalibrationTime";
+            this.lbCalibrationTime.Size = new System.Drawing.Size(338, 23);
+            this.lbCalibrationTime.TabIndex = 126;
+            this.lbCalibrationTime.Text = "Next Calibration Time : hh:mm";
+            this.lbCalibrationTime.TextStyle.Color = System.Drawing.Color.Red;
             // 
             // P18
             // 
             this.ClientSize = new System.Drawing.Size(934, 684);
+            this.Controls.Add(this.lbCalibrationTime);
             this.Controls.Add(this.chkAutoCalibration);
             this.Controls.Add(this.btnCalibrationList);
             this.Controls.Add(this.chkAutoScan);
@@ -1030,6 +1049,7 @@
             this.Controls.SetChildIndex(this.chkAutoScan, 0);
             this.Controls.SetChildIndex(this.btnCalibrationList, 0);
             this.Controls.SetChildIndex(this.chkAutoCalibration, 0);
+            this.Controls.SetChildIndex(this.lbCalibrationTime, 0);
             this.tabControlScanArea.ResumeLayout(false);
             this.tabPageCarton.ResumeLayout(false);
             this.tabPageCarton.PerformLayout();
@@ -1117,5 +1137,7 @@
         private Win.UI.CheckBox chkAutoScan;
         private Win.UI.Button btnCalibrationList;
         private Win.UI.CheckBox chkAutoCalibration;
+        private System.Windows.Forms.Timer timer1;
+        private Win.UI.Label lbCalibrationTime;
     }
 }

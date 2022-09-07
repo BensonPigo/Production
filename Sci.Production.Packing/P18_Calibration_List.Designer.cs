@@ -31,7 +31,6 @@
             this.labMDMachine = new Sci.Win.UI.Label();
             this.comboMDMachineID = new System.Windows.Forms.ComboBox();
             this.btnClose = new Sci.Win.UI.Button();
-            this.btnSubmit = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -39,7 +38,6 @@
             // 
             // btmcont
             // 
-            this.btmcont.Controls.Add(this.btnSubmit);
             this.btmcont.Controls.Add(this.btnClose);
             this.btmcont.Location = new System.Drawing.Point(0, 487);
             this.btmcont.Size = new System.Drawing.Size(805, 40);
@@ -49,7 +47,6 @@
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.btnClose, 0);
-            this.btmcont.Controls.SetChildIndex(this.btnSubmit, 0);
             // 
             // gridcont
             // 
@@ -59,16 +56,15 @@
             // undo
             // 
             this.undo.Dock = System.Windows.Forms.DockStyle.None;
-            this.undo.Location = new System.Drawing.Point(379, 5);
+            this.undo.Location = new System.Drawing.Point(269, 5);
             this.undo.Size = new System.Drawing.Size(72, 30);
             this.undo.Visible = false;
             // 
             // save
             // 
             this.save.Dock = System.Windows.Forms.DockStyle.None;
-            this.save.Location = new System.Drawing.Point(299, 5);
+            this.save.Location = new System.Drawing.Point(635, 5);
             this.save.Size = new System.Drawing.Size(72, 30);
-            this.save.Visible = false;
             // 
             // labMDMachine
             // 
@@ -90,24 +86,13 @@
             // btnClose
             // 
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnClose.Location = new System.Drawing.Point(626, 5);
+            this.btnClose.Location = new System.Drawing.Point(713, 5);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 125;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-            // 
-            // btnSubmit
-            // 
-            this.btnSubmit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSubmit.Location = new System.Drawing.Point(712, 5);
-            this.btnSubmit.Name = "btnSubmit";
-            this.btnSubmit.Size = new System.Drawing.Size(80, 30);
-            this.btnSubmit.TabIndex = 126;
-            this.btnSubmit.Text = "Submit";
-            this.btnSubmit.UseVisualStyleBackColor = true;
-            this.btnSubmit.Click += new System.EventHandler(this.btnSubmit_Click);
             // 
             // P18_Calibration_List
             // 
@@ -133,7 +118,6 @@
 
         private Win.UI.Label labMDMachine;
         private System.Windows.Forms.ComboBox comboMDMachineID;
-        private Win.UI.Button btnSubmit;
         private Win.UI.Button btnClose;
     }
 }

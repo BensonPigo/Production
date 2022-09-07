@@ -1,19 +1,18 @@
 ﻿using Ict;
 using Ict.Win;
+using java.awt.dnd;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
     public partial class P18_Calibration_List : Sci.Win.Subs.Input4
     {
+        public static string MachineID;
+
         public P18_Calibration_List(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
              : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
@@ -31,8 +30,7 @@ namespace Sci.Production.Packing
 
             string selectCommand = $@"
 select 
-[Selected] = 0
-,CalibrationTime
+CalibrationTime
 ,Point1
 ,Point2
 ,Point3
@@ -50,8 +48,6 @@ from MDCalibrationList
 where 1=1
 and MachineID = '{this.comboMDMachineID.Text}'
 and CalibrationDate = CONVERT(date,getdate())
-
-
 ";
             DualResult returnResult = DBProxy.Current.Select(null, selectCommand, out DataTable dtDtail);
             if (!returnResult)
@@ -93,13 +89,14 @@ Where Junk = 0
             {
                 int row = MyUtility.Convert.GetInt(drUserRowNB[0]["row"]);
                 this.comboMDMachineID.SelectedIndex = row;
+                MachineID = this.comboMDMachineID.Text;
             }
             else
             {
                 this.comboMDMachineID.SelectedIndex = 0;
             }
 
-            this.EditMode = CanEdit;
+            this.EditMode = this.CanEdit;
         }
 
         protected override bool OnGridSetup()
@@ -119,7 +116,17 @@ Where Junk = 0
 
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
 
-                string strTime = e.FormattedValue.ToString().Substring(0, 2) + ":" + e.FormattedValue.ToString().Substring(2, 2);//e.FormattedValue.ToString();
+                string strTime = string.Empty;
+
+                if (e.FormattedValue.ToString().Contains(":"))
+                {
+                    strTime = e.FormattedValue.ToString().Substring(0, 2) + ":" + e.FormattedValue.ToString().Substring(3, 2);
+                }
+                else
+                {
+                    strTime = e.FormattedValue.ToString().Substring(0, 2) + ":" + e.FormattedValue.ToString().Substring(2, 2);
+                }
+
                 if (this.IsDateTimeFormat(strTime))
                 {
                     dr["CalibrationTime"] = strTime;
@@ -131,7 +138,6 @@ Where Junk = 0
                 }
             };
             this.Helper.Controls.Grid.Generator(this.grid)
-               .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                .MaskedText("CalibrationTime", "00:00", header: "Calibration Time", width: Widths.AnsiChars(8), iseditingreadonly: false, settings: mask_CalibrationTime)
                .CheckBox("Point1", header: "1", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                .CheckBox("Point2", header: "2", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
@@ -154,6 +160,7 @@ Where Junk = 0
 
             DataRow selectDr = ((DataRowView)this.grid.GetSelecteds(SelectedSort.Index)[0]).Row;
 
+            selectDr["MachineID"] = this.comboMDMachineID.Text;
             selectDr["CalibrationDate"] = DateTime.Now;
             selectDr["Operator"] = Env.User.UserID;
         }
@@ -179,6 +186,7 @@ Where Junk = 0
                 return;
             }
 
+            MachineID = this.comboMDMachineID.Text;
             this.OnRequery();
         }
 
@@ -279,6 +287,34 @@ getdate(),
             }
 
             // 其他事件
+        }
+
+        protected override void OnSaveAfter()
+        {
+            base.OnSaveAfter();
+            if (this.save.Text.ToUpper() == "SAVE")
+            {
+                string selectCommand = $@"
+select top 2
+[Date] =　SUBSTRING(CONVERT(varchar, CalibrationDate)　+' '+　convert(varchar,CalibrationTime),0,17)
+from MDCalibrationList
+where 1=1
+and MachineID = '{this.comboMDMachineID.Text}'
+and CalibrationDate = CONVERT(date,getdate())
+order by CalibrationTime desc
+";
+                DualResult returnResult = DBProxy.Current.Select(null, selectCommand, out DataTable dtDtail);
+                if (!returnResult)
+                {
+                    this.ShowErr(returnResult);
+                }
+
+                if (dtDtail.Rows.Count == 2)
+                {
+                    P18_Calibration_History callForm = new P18_Calibration_History(dtDtail.Rows[0]["Date"].ToString(), dtDtail.Rows[1]["Date"].ToString());
+                    callForm.ShowDialog(this);
+                }
+            }
         }
     }
 }

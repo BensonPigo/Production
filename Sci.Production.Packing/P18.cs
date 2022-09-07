@@ -15,6 +15,8 @@ using System.Transactions;
 using System.Threading.Tasks;
 using Sci.Production.Automation;
 using org.apache.pdfbox.io;
+using System.Data.SqlTypes;
+using System.Windows.Forms.VisualStyles;
 
 namespace Sci.Production.Packing
 {
@@ -71,24 +73,30 @@ namespace Sci.Production.Packing
                 .Numeric("ScanQty", header: "Scan Qty");
             this.Tab_Focus("CARTON");
 
+            // 重啟P18 必須重新判斷校正記錄
+            this.alert_Calibration(IsTimer: false);
             this.txtDest.TextBox1.ReadOnly = true;
+
+            // 啟動計時器
+            this.timer1.Start();
         }
 
         private void disable_Carton_Scan()
         {
-            // 待確認
-            string machineID = string.Empty;
-            string sqlcmd = $@"
+            if (this.chkAutoCalibration.Checked)
+            {
+                string machineID = P18_Calibration_List.MachineID;
+                string sqlcmd = $@"
 select top 1 * from MDCalibrationList where MachineID = '{machineID}' and CalibrationDate = CONVERT(date, GETDATE()) order by CalibrationTime desc";
 
-            DataTable dtMDCalibrationList;
-            Ict.DualResult result;
-            if (!(result = DBProxy.Current.Select(null, sqlcmd, out dtMDCalibrationList)))
-            {
-                this.ShowErr(result);
-            }
+                DataTable dtMDCalibrationList;
+                Ict.DualResult result;
+                if (!(result = DBProxy.Current.Select(null, sqlcmd, out dtMDCalibrationList)))
+                {
+                    this.ShowErr(result);
+                }
 
-            DataRow[] MDCalibrationListChk = dtMDCalibrationList.Select(@"
+                DataRow[] MDCalibrationListChk = dtMDCalibrationList.Select(@"
    Point1 = 0
 or Point2 = 0
 or Point3 = 0
@@ -100,17 +108,127 @@ or Point8 = 0
 or Point9 = 0
 ");
 
-            if (this.chkAutoCalibration.Checked && MDCalibrationListChk.Length > 0)
+                if (MDCalibrationListChk.Length > 0)
+                {
+                    this.txtScanCartonSP.Enabled = false;
+                    this.txtScanEAN.Enabled = false;
+                    this.btnPackingError.Enabled = false;
+                }
+                else
+                {
+                    this.txtScanCartonSP.Enabled = true;
+                    this.txtScanEAN.Enabled = true;
+                    this.btnPackingError.Enabled = true;
+                }
+            }
+        }
+
+        private void alert_Calibration(bool IsTimer)
+        {
+            if (this.chkAutoCalibration.Checked)
             {
-                this.txtScanCartonSP.Enabled = false;
-                this.txtScanEAN.Enabled = false;
-                this.btnPackingError.Enabled = false;
+                string machineID = P18_Calibration_List.MachineID;
+                string sqlcmd = $@"
+select top 1 * from MDCalibrationList where MachineID = '{machineID}' and CalibrationDate = CONVERT(date, GETDATE()) order by CalibrationTime desc";
+                if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
+                {
+                    // 全都勾選
+                    if (!MyUtility.Check.Empty(dr["Point1"]) &&
+                        !MyUtility.Check.Empty(dr["Point2"]) &&
+                        !MyUtility.Check.Empty(dr["Point3"]) &&
+                        !MyUtility.Check.Empty(dr["Point4"]) &&
+                        !MyUtility.Check.Empty(dr["Point5"]) &&
+                        !MyUtility.Check.Empty(dr["Point6"]) &&
+                        !MyUtility.Check.Empty(dr["Point7"]) &&
+                        !MyUtility.Check.Empty(dr["Point8"]) &&
+                        !MyUtility.Check.Empty(dr["Point9"]))
+                    {
+                        int hh = MyUtility.Convert.GetInt(dr["CalibrationTime"].ToString().Substring(0, 2));
+                        int mm = MyUtility.Convert.GetInt(dr["CalibrationTime"].ToString().Substring(3, 2));
+
+                        int currHH = DateTime.Now.Hour;
+                        int currMM = DateTime.Now.Minute;
+
+                        // 觸發Timer: 時間要剛好是一小時整才會觸發
+                        if (IsTimer == true)
+                        {
+                            if ((currHH - hh == 1 && currMM - mm == 0))
+                            {
+                                this.AlterMSg();
+                                this.timer1.Stop();
+                            }
+                        }
+                        else
+                        {
+                            // 當前時間 > 設定時間一小時以上 代表未做校正記錄
+                            if ((currHH - hh > 1) || (currHH - hh == 1 && currMM - mm > 0))
+                            {
+                                this.AlterMSg();
+                            }
+                        }
+
+                        this.Display_Calibration(hh, mm);
+                    }
+                }
+            }
+        }
+
+        private P18_Calibration_List callP18_Calibration_List = null;
+
+        private void AlterMSg()
+        {
+            //P18_Message msg = new P18_Message();
+            //msg.color = Color.Red;
+            //msg.Show("Move to MD Hourly Calibration!");
+            MyUtility.Msg.WarningBox("Move to MD Hourly Calibration!");
+
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form is P18_Calibration_List)
+                {
+                    form.Activate();
+                    return;
+                }
+            }
+
+            P18_Calibration_List callForm = new P18_Calibration_List(true, string.Empty, string.Empty, string.Empty);
+            callForm.ShowDialog(this);
+            this.disable_Carton_Scan();
+        }
+
+        private void Display_Calibration(int HH, int MM)
+        {
+            if (HH == 0 && MM == 0)
+            {
+                if (this.chkAutoCalibration.Checked)
+                {
+                    string machineID = P18_Calibration_List.MachineID;
+                    string sqlcmd = $@"
+select top 1 * from MDCalibrationList where MachineID = '{machineID}' and CalibrationDate = CONVERT(date, GETDATE()) order by CalibrationTime desc";
+                    if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
+                    {
+                        // 全都勾選
+                        if (!MyUtility.Check.Empty(dr["Point1"]) &&
+                            !MyUtility.Check.Empty(dr["Point2"]) &&
+                            !MyUtility.Check.Empty(dr["Point3"]) &&
+                            !MyUtility.Check.Empty(dr["Point4"]) &&
+                            !MyUtility.Check.Empty(dr["Point5"]) &&
+                            !MyUtility.Check.Empty(dr["Point6"]) &&
+                            !MyUtility.Check.Empty(dr["Point7"]) &&
+                            !MyUtility.Check.Empty(dr["Point8"]) &&
+                            !MyUtility.Check.Empty(dr["Point9"]))
+                        {
+                            int hh = MyUtility.Convert.GetInt(dr["CalibrationTime"].ToString().Substring(0, 2));
+                            int mm = MyUtility.Convert.GetInt(dr["CalibrationTime"].ToString().Substring(2, 2));
+
+                            this.lbCalibrationTime.Text = $@"Next Calibration Time : {hh + 1}:{mm}";
+                        }
+                    }
+                }
             }
             else
             {
-                this.txtScanCartonSP.Enabled = true;
-                this.txtScanEAN.Enabled = true;
-                this.btnPackingError.Enabled = true;
+                this.lbCalibrationTime.Text = $@"Next Calibration Time : {HH + 1}:{MM}";
             }
         }
 
@@ -905,6 +1023,8 @@ WHERE o.ID='{dr.OrderID}'");
                     this.ShowErr(result_load);
                 }
 
+                // 整箱掃完後 才可跳通知
+                this.alert_Calibration(IsTimer: false);
                 e.Cancel = true;
             }
             else
@@ -1811,6 +1931,32 @@ and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
             P18_Calibration_List callForm = new P18_Calibration_List(true, String.Empty, String.Empty, String.Empty);
             callForm.ShowDialog(this);
             this.disable_Carton_Scan();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            // 每30秒跑一次
+            this.timer1.Interval = 1000 * 5;
+            this.alert_Calibration(IsTimer: true);
+        }
+
+        private void chkAutoCalibration_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.chkAutoCalibration != null)
+            {
+                if (this.chkAutoCalibration.Checked == true)
+                {
+                    this.lbCalibrationTime.Visible = true;
+                    this.Display_Calibration(0, 0);
+                }
+                else
+                {
+                    this.lbCalibrationTime.Visible = false;
+                    this.txtScanCartonSP.Enabled = true;
+                    this.txtScanEAN.Enabled = true;
+                    this.btnPackingError.Enabled = true;
+                }
+            }
         }
     }
 }
