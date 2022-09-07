@@ -136,6 +136,7 @@ left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 left join Orders o with(nolock) on o.id = td.poid
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+where 1=1
 ");
                 if (!MyUtility.Check.Empty(this.Issuedate1))
                 {
