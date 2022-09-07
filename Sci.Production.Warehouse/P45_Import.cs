@@ -59,7 +59,7 @@ select  0 as selected
         , c.inqty - c.outqty + c.adjustqty - c.ReturnQty as adjustqty
         , dbo.Getlocation(c.ukey) as location
         , '' reasonid
-        , '' reason_nm6
+        , '' reason_nm
         , psd.FabricType
         , psd.stockunit
         , c.stockType
