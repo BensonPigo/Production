@@ -89,19 +89,18 @@
             // 
             this.txtTransferOutNo.BackColor = System.Drawing.Color.White;
             this.txtTransferOutNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtTransferOutNo.Location = new System.Drawing.Point(117, 11);
+            this.txtTransferOutNo.Location = new System.Drawing.Point(197, 11);
             this.txtTransferOutNo.Name = "txtTransferOutNo";
             this.txtTransferOutNo.Size = new System.Drawing.Size(120, 23);
             this.txtTransferOutNo.TabIndex = 0;
             // 
             // labelTransferOutNo
             // 
-            this.labelTransferOutNo.Lines = 0;
             this.labelTransferOutNo.Location = new System.Drawing.Point(4, 11);
             this.labelTransferOutNo.Name = "labelTransferOutNo";
-            this.labelTransferOutNo.Size = new System.Drawing.Size(110, 23);
+            this.labelTransferOutNo.Size = new System.Drawing.Size(190, 23);
             this.labelTransferOutNo.TabIndex = 0;
-            this.labelTransferOutNo.Text = "Transfer Out No.";
+            this.labelTransferOutNo.Text = "Transfer Out No. / Adjust No.";
             // 
             // panel4
             // 
@@ -163,6 +162,7 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.ShowCellToolTips = false;
             this.gridImport.Size = new System.Drawing.Size(720, 417);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
@@ -177,8 +177,8 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Name = "P04_ImportTransferOut";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Import Data - Transfer Out";
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();

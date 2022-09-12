@@ -408,12 +408,15 @@ and INVNo = '{this.CurrentMaintain["INVNo"]}'
             if (this.CurrentMaintain["Type"].ToString() == "2" && MyUtility.Check.Empty(this.txtSisFtyWK.Text))
             {
                 this.txtSisFtyWK.Focus();
-                DialogResult questionResult = MyUtility.Msg.QuestionBox($@" [Sis Fty WK#] is empty. Do you want to save data?", caption: "Question", buttons: MessageBoxButtons.YesNo);
+                MyUtility.Msg.WarningBox("Type = Transfer In, [Sis Fty WK#] cannot be empty.");
+                return false;
 
-                if (questionResult == DialogResult.No)
-                {
-                    return false;
-                }
+                //DialogResult questionResult = MyUtility.Msg.QuestionBox($@" [Sis Fty WK#] is empty. Do you want to save data?", caption: "Question", buttons: MessageBoxButtons.YesNo);
+
+                //if (questionResult == DialogResult.No)
+                //{
+                //    return false;
+                //}
             }
 
             // 已經有做出口費用分攤，不能勾選[No Import/Export Charge]
