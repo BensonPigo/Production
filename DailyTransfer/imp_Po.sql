@@ -286,7 +286,6 @@ SET
       ,a.ETA	      =b.EstETA	
       ,a.FinalETA	      =b.FinalETA	
       ,a.ShipModeID	      =b.ShipModeID	
-      ,a.SMRLock	      =b.SMRLock	
       ,a.SystemLock	      =b.SystemLock	
       ,a.PrintDate	      =b.PrintDate	
       ,a.PINO	      =b.PINO	
@@ -359,7 +358,6 @@ ID
       ,ETA
       ,FinalETA
       ,ShipModeID
-      ,SMRLock
       ,SystemLock
       ,PrintDate
       ,PINO
@@ -427,7 +425,6 @@ select
       ,EstETA
       ,FinalETA
       ,ShipModeID
-      ,SMRLock
       ,SystemLock
       ,PrintDate
       ,PINO
