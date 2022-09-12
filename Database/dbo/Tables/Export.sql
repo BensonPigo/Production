@@ -77,6 +77,7 @@
     [CIFTerms] BIT    CONSTRAINT [DF_Export_CIFTerms] DEFAULT ((0)) NOT NULL,
     [FtyDisburseSD] VARCHAR(13) NULL DEFAULT (''), 
 	[MainWKID] varchar(13) CONSTRAINT [DF_Export_MainWKID] DEFAULT ('') NOT NULL,
+    [MainWKID08] VARCHAR(13) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Export] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -350,3 +351,11 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level2name = N'CIFTerms'
 
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'台北代墊進口費母單單號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Export',
+    @level2type = N'COLUMN',
+    @level2name = N'MainWKID08'
