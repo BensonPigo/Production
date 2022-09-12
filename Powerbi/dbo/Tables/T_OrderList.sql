@@ -311,6 +311,7 @@
 	[TTL_ZIG ZAG (CPU)] [numeric](38, 6) NULL,
 	[Subcon In TypeID] [varchar](2) NOT NULL,
 	[Article] [varchar](1000) NULL,
+	[Ukey] [bigint] NULL
  CONSTRAINT [T_OrderList_PK] PRIMARY KEY CLUSTERED 
 (
 	[SPNO] ASC,
