@@ -1015,7 +1015,7 @@ drop table #tmpFinal_step1
                     // Summary By = SP# 則刪除欄位Size
                     if (this.type == "SP#")
                     {
-                        worksheet.get_Range("H:H").EntireColumn.Delete();
+                        worksheet.get_Range("I:I").EntireColumn.Delete();
                     }
                     #region Set Excel Title
                     string factoryName = MyUtility.GetValue.Lookup(
@@ -1078,11 +1078,11 @@ where id = '{0}'", Env.User.Factory), null);
                     // Summary By = SP# 則刪除欄位Size
                     if (this.type == "SP#")
                     {
-                        worksheet.get_Range("J:J").EntireColumn.Delete();
+                        worksheet.get_Range("K:K").EntireColumn.Delete();
                     }
                     else
                     {
-                        worksheet.get_Range("AU:AV").EntireColumn.Delete();
+                        worksheet.get_Range("AV:AW").EntireColumn.Delete();
                     }
 
                     #region Save & Show Excel
