@@ -25,9 +25,7 @@ namespace Sci.Production.Shipping
         private ToolStripMenuItem bulkpl;
         private ToolStripMenuItem samplepl;
         private ToolStripMenuItem focpl;
-        private ToolStripMenuItem purchase;
-        private ToolStripMenuItem transferOutNo;
-        private ToolStripMenuItem poitem;
+        private ToolStripMenuItem materialShipment;
         private ToolStripMenuItem newitem;
         private ToolStripMenuItem edit;
         private ToolStripMenuItem delete;
@@ -83,9 +81,7 @@ namespace Sci.Production.Shipping
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import Bulk PL#", onclick: (s, e) => this.ImportBulkPL()).Get(out this.bulkpl);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from Sample PL#", onclick: (s, e) => this.ImportFromSamplePL()).Get(out this.samplepl);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from FOC PL# (Garment FOC)", onclick: (s, e) => this.ImportFromFOCPL()).Get(out this.focpl);
-            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Add by PO# item (Garment Chargeable)", onclick: (s, e) => this.AddByPOItem()).Get(out this.poitem);
-            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from Purchase (Material)", onclick: (s, e) => this.ImportFromPurchase()).Get(out this.purchase);
-            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from Transfer Out No.", onclick: (s, e) => this.ImportFromPOTransferOutNo()).Get(out this.transferOutNo);
+            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from Raw Material Shipment Data (Fty WK#)", onclick: (s, e) => this.ImportFromMaterialShipment()).Get(out this.materialShipment);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Add new Item", onclick: (s, e) => this.AddNewItem()).Get(out this.newitem);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Separator();
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Delete this Record - ", onclick: (s, e) => this.MenuDelete()).Get(out this.delete);
@@ -102,9 +98,7 @@ namespace Sci.Production.Shipping
             this.bulkpl.Enabled = status;
             this.samplepl.Enabled = status;
             this.focpl.Enabled = status;
-            this.purchase.Enabled = status;
-            this.transferOutNo.Enabled = status;
-            this.poitem.Enabled = status;
+            this.materialShipment.Enabled = status;
             this.newitem.Enabled = status;
             this.delete.Enabled = status;
             this.edit.Enabled = status;
@@ -181,6 +175,17 @@ namespace Sci.Production.Shipping
         private void ImportFromPurchase()
         {
             P02_ImportFromPO callPurchaseForm = new P02_ImportFromPO(this.CurrentMaintain);
+            DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
+            callPurchaseForm.ShowDialog(this);
+            this.RenewData();
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
+        }
+
+        // Context Menu選擇Import from Raw Material Shipment Data (Fty WK#)
+        private void ImportFromMaterialShipment()
+        {
+            P02_ImportFromFtyWK callPurchaseForm = new P02_ImportFromFtyWK(this.CurrentMaintain);
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callPurchaseForm.ShowDialog(this);
             this.RenewData();
@@ -738,9 +743,7 @@ Order by CTNNo,Seq1,Seq2", masterID);
                     this.bulkpl.Enabled = false;
                     this.samplepl.Enabled = false;
                     this.focpl.Enabled = false;
-                    this.purchase.Enabled = false;
-                    this.transferOutNo.Enabled = false;
-                    this.poitem.Enabled = false;
+                    this.materialShipment.Enabled = false;
                     this.newitem.Enabled = false;
                     this.delete.Enabled = false;
                     this.edit.Enabled = false;

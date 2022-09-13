@@ -13,6 +13,7 @@
     [EditName]     VARCHAR (10)   CONSTRAINT [DF_Reason_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME       NULL,
     [FactoryKpi]   BIT            CONSTRAINT [DF_Reason_FactoryKpi] DEFAULT ((0)) NULL,
+    [TransferOut] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Reason] PRIMARY KEY CLUSTERED ([ReasonTypeID] ASC, [ID] ASC)
 );
 
