@@ -141,7 +141,7 @@ select Selected = 1
        ,[TransferExportID] = ''
 from Adjust_Detail ad WITH (NOLOCK) 
 inner join Adjust a with (nolock) on ad.ID = a.ID
-left join Reason r on r.ID = ad.ReasonId  and Type = 'Stock_Adjust'
+left join Reason r on r.ID = ad.ReasonId  and ReasonTypeID = 'Stock_Adjust'
 left join PO_Supp ps WITH (NOLOCK) on ps.ID = ad.Poid and ps.SEQ1 = ad.Seq1
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ad.Poid and psd.SEQ1= ad.Seq1 and psd.SEQ2 = ad.Seq2
 left join Supp s WITH (NOLOCK) on s.ID = ps.SuppID

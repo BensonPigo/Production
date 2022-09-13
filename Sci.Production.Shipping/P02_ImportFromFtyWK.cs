@@ -15,15 +15,15 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P02_ImportFromPO
     /// </summary>
-    public partial class P02_ImportFromRawMaterialShipment : Win.Subs.Base
+    public partial class P02_ImportFromFtyWK : Win.Subs.Base
     {
         private DataRow masterData;
 
         /// <summary>
-        /// P02_ImportFromPO
+        /// P02_ImportFromFtyWK
         /// </summary>
         /// <param name="masterData">masterData</param>
-        public P02_ImportFromRawMaterialShipment(DataRow masterData)
+        public P02_ImportFromFtyWK(DataRow masterData)
         {
             this.InitializeComponent();
             this.masterData = masterData;
@@ -51,18 +51,16 @@ namespace Sci.Production.Shipping
             this.gridImport.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out Ict.Win.UI.DataGridViewCheckBoxColumn col_chk)
-                .Text("ID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Seq1", header: "Seq1#", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("Seq2", header: "Seq2#", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("Supp", header: "Supplier", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Receiver", header: "Receiver", width: Widths.AnsiChars(10), settings: receiver)
                 .Text("Leader", header: "Team Leader", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("CTNNo", header: "CTN No.", width: Widths.AnsiChars(5), settings: ctnno)
                 .Numeric("Price", header: "Price", decimal_places: 4, iseditingreadonly: true)
-                .Numeric("POQty", header: "PO Qty", integer_places: 6, decimal_places: 2, maximum: 999999.99m, minimum: 0m)
-                .Numeric("AccuExpressQty", header: "Accu. Express Qty", integer_places: 6, decimal_places: 2, maximum: 999999.99m, minimum: 0m)
-                .Numeric("Qty", header: "Q'ty", integer_places: 6, decimal_places: 2, maximum: 999999.99m, minimum: 0m)
+                .Numeric("Qty", header: "Qty", integer_places: 6, decimal_places: 2, maximum: 999999.99m, minimum: 0m)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("NW", header: "N.W. (kg)", integer_places: 5, decimal_places: 2, maximum: 99999.99m, minimum: 0m);
 
@@ -79,7 +77,7 @@ namespace Sci.Production.Shipping
             if (MyUtility.Check.Empty(this.txtWKNo.Text))
             {
                 this.txtWKNo.Focus();
-                MyUtility.Msg.WarningBox("SP# can't empty!!");
+                MyUtility.Msg.WarningBox("Fty WK# cannot be empty!!");
                 return;
             }
 
@@ -88,33 +86,38 @@ namespace Sci.Production.Shipping
                 this.txtWKNo.Text = this.txtWKNo.Text.Replace("'", string.Empty);
             }
 
-            string sqlCmd = string.Format(
-                @"
+            string sqlCmd =
+                $@"
 select Selected = 0 
-    , a.ID,a.SEQ1,SEQ2,Price,UnitID,BrandID,Leader,LeaderID,SuppID,Supplier,Receiver,CTNNo,NW,FOC
-    , POQty = isnull(a.Qty,0) + isnull(a.FOC,0)
-    , AccuExpressQty = a.ExpressQty
-    , Qty = iif(isnull(a.Qty,0)+isnull(a.FOC,0)-isnull(a.ExpressQty,0)>0,isnull(a.Qty,0)+isnull(a.FOC,0)-isnull(a.ExpressQty,0),0)
-    , expressID = '{3}'
-from (
-    select psd.ID,psd.SEQ1,psd.SEQ2,psd.Price,psd.POUnit as UnitID,isnull(o.BrandID,'') as BrandID,
-		isnull(t.Name,'') as Leader, o.SMR  as LeaderID,ps.SuppID,ps.SuppID+'-'+s.AbbEN as Supplier,psd.Qty,
-		(select isnull(sum(ed.Qty),0) from Express_Detail ed WITH (NOLOCK) where ed.OrderID = psd.ID and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2) as ExpressQty,
-		'' as Receiver,'' as CTNNo, 0.0 as NW,
-		psd.FOC
-    from PO_Supp_Detail psd WITH (NOLOCK) 
-    left join PO_Supp ps WITH (NOLOCK) on psd.ID = ps.ID and psd.SEQ1 = ps.SEQ1
-    left join Supp s WITH (NOLOCK) on ps.SuppID = s.ID
-    left join Orders o WITH (NOLOCK) on psd.ID = o.ID
-    left join TPEPass1 t WITH (NOLOCK) on o.SMR = t.ID
-    left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
-    where psd.ID = '{0}'{1}{2}
-) a",
-                this.txtWKNo.Text,
-                //MyUtility.Check.Empty(this.txtSEQ1.Text) ? string.Empty : " and psd.SEQ1 = '" + this.txtSEQ1.Text + "'",
-                //MyUtility.Check.Empty(this.txtSEQ2.Text) ? string.Empty : " and psd.SEQ2 = '" + this.txtSEQ2.Text + "'",
-                this.masterData["ID"]);
-
+,fd.ID
+,fd.POID
+,fd.Seq1,fd.Seq2
+,o.SeasonID
+,o.StyleID
+,psd.Refno
+,psd.ColorID
+,[Supp] = ps.SuppID+'-'+s.AbbEN
+,[SuppID] = ps.SuppID
+,[CTNNo] = ''
+,[NW] = fd.NetKg
+,[Price] = fd.Price
+,fd.Qty
+,[UnitID]= fd.UnitID
+,[Category] = 'Material' --4
+,[Receiver]=''
+,[BrandID] = o.BrandID
+,[Leader]=o.SMR
+,[Remark]=''
+,[InCharge]=''
+,[AddName]=''
+,[AddDate]=''
+from FtyExport_Detail fd
+left join PO_Supp_Detail psd with (nolock) on psd.ID = fd.POID and psd.SEQ1 = fd.Seq1 and psd.SEQ2 = fd.Seq2
+left join PO_Supp ps WITH (NOLOCK) on fd.POID = ps.ID and fd.SEQ1 = ps.SEQ1
+left join Supp s WITH (NOLOCK) on ps.SuppID = s.ID
+left join orders o with(nolock) on o.ID = fd.POID
+where fd.ID ='{this.txtWKNo.Text}'
+";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable selectData);
             if (!result)
             {
@@ -159,26 +162,30 @@ from (
             IList<string> insertCmds = new List<string>();
             foreach (DataRow dr in selectedRow)
             {
-                insertCmds.Add(string.Format(
-                    @"
-insert into Express_Detail(ID,OrderID,Seq1,Seq2,Qty,NW,CTNNo,Category,SuppID,Price,UnitID,Receiver,BrandID,Leader,Remark,InCharge,AddName,AddDate)
- values('{0}','{1}','{2}','{3}',{4},{5},'{6}','4','{7}',{8},'{9}','{10}','{11}','{12}','{13}','{14}','{14}',GETDATE());
-",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    MyUtility.Convert.GetString(dr["ID"]),
-                    MyUtility.Convert.GetString(dr["Seq1"]),
-                    MyUtility.Convert.GetString(dr["Seq2"]),
-                    MyUtility.Convert.GetString(dr["Qty"]),
-                    MyUtility.Convert.GetString(dr["NW"]),
-                    MyUtility.Convert.GetString(dr["CTNNo"]),
-                    MyUtility.Convert.GetString(dr["SuppID"]),
-                    MyUtility.Convert.GetString(dr["Price"]),
-                    MyUtility.Convert.GetString(dr["UnitID"]),
-                    MyUtility.Convert.GetString(dr["Receiver"]),
-                    MyUtility.Convert.GetString(dr["BrandID"]),
-                    MyUtility.Convert.GetString(dr["LeaderID"]),
-                    this.txtRemark.Text.Replace("'", "''"),
-                    Env.User.UserID));
+                insertCmds.Add($@"
+insert into Express_Detail(ID,OrderID,Seq1,Seq2,SeasonID,StyleID,Qty,NW,CTNNo,Category,SuppID,Price,UnitID,Receiver,BrandID,Leader,Remark,InCharge,AddName,AddDate)
+ values('{MyUtility.Convert.GetString(this.masterData["ID"])}'
+,'{MyUtility.Convert.GetString(dr["POID"])}'
+,'{MyUtility.Convert.GetString(dr["Seq1"])}'
+,'{MyUtility.Convert.GetString(dr["Seq2"])}'
+,'{MyUtility.Convert.GetString(dr["SeasonID"])}'
+,'{MyUtility.Convert.GetString(dr["StyleID"])}'
+, {MyUtility.Convert.GetString(dr["Qty"])}
+, {MyUtility.Convert.GetString(dr["NW"])}
+,'{MyUtility.Convert.GetString(dr["CTNNo"])}'
+,'4'
+,'{MyUtility.Convert.GetString(dr["SuppID"])}'
+, {MyUtility.Convert.GetString(dr["Price"])}
+,'{MyUtility.Convert.GetString(dr["UnitID"])}'
+,'{MyUtility.Convert.GetString(dr["Receiver"])}'
+,'{MyUtility.Convert.GetString(dr["BrandID"])}'
+,'{MyUtility.Convert.GetString(dr["Leader"])}'
+,'{this.txtRemark.Text.Replace("'", "''")}'
+,'{Env.User.UserID}'
+,'{Env.User.UserID}'
+,GETDATE()
+);
+");
             }
 
             using (TransactionScope transactionScope = new TransactionScope())
@@ -263,19 +270,19 @@ insert into Express_Detail(ID,OrderID,Seq1,Seq2,Qty,NW,CTNNo,Category,SuppID,Pri
                 return false;
             }
 
-            // ISP20201574 檢查 SP#, Seq1, Seq2, CTN No., Category = (DB 固定 4, 顯示 Material) 重複. A.勾選重複, B.DB與勾選重複
+            // 檢查 SP#, Seq1, Seq2, Category = (DB 固定 4, 顯示 Material) 重複. A.勾選重複, B.DB與勾選重複
             string sqlcmd = $@"
-select distinct ID,Seq1,Seq2,CTNNo
+select distinct POID,Seq1,Seq2
 from(
-    select t.ID,t.Seq1,t.Seq2,t.CTNNo from #tmp t
-    group by ID,Seq1,Seq2,CTNNo
+    select t.POID,t.Seq1,t.Seq2
+    from #tmp t
+    group by POID,Seq1,Seq2,CTNNo
     having count(1) >1
 
     union
-    select t.ID, t.Seq1, t.Seq2, t.CTNNo
+    select t.POID, t.Seq1, t.Seq2
     from #tmp t
-    inner join Express_Detail ed on ed.OrderID = t.ID and ed.Seq1 = t.Seq1 and ed.Seq2 = t.Seq2 and ed.CTNNo = t.CTNNo
-        and t.expressID = ed.id
+    inner join Express_Detail ed on ed.OrderID = t.POID and ed.Seq1 = t.Seq1 and ed.Seq2 = t.Seq2 
     where ed.Category = '4'
 )x
 ";
@@ -292,27 +299,27 @@ from(
                 msgStr.Append("Data can't duplicate!!\r\n");
                 foreach (DataRow dr in checkData.Rows)
                 {
-                    msgStr.Append($"SP#:{dr["ID"]}, Seq1#:{dr["Seq1"]}, Seq2#:{dr["Seq2"]}, CTN No.:{dr["CTNNo"]}, Category:Material\r\n");
+                    msgStr.Append($"SP#:{dr["POID"]}, Seq1#:{dr["Seq1"]}, Seq2#:{dr["Seq2"]}, Category:Material\r\n");
                 }
 
                 MyUtility.Msg.WarningBox(msgStr.ToString());
                 return false;
             }
 
-            // 檢查Total Qty是否有超過PO Qty
+            // 檢查Total Qty是否有超過Fty Export Qty
             sqlcmd = @"
-select a.ID,a.Seq1,a.Seq2
+select a.POID,a.Seq1,a.Seq2
 from (
-    select e.ID,e.Seq1,e.Seq2,e.POQty,e.FOC,
+    select e.POID,e.Seq1,e.Seq2,e.Qty,
     TtlQty = e.Qty +
         isnull((
             select sum(ed.Qty)
             from Express_Detail ed WITH (NOLOCK)
-            where ed.OrderID = e.ID and ed.Seq1 = e.Seq1 and ed.Seq2 = e.Seq2
+            where ed.OrderID = e.POID and ed.Seq1 = e.Seq1 and ed.Seq2 = e.Seq2
         ), 0)
     from #tmp e
 ) a
-where a.TtlQty > a.POQty
+where a.TtlQty > a.Qty
 ";
             result = MyUtility.Tool.ProcessWithDatatable(sourcedt, string.Empty, sqlcmd, out checkData);
             if (!result)
@@ -326,10 +333,10 @@ where a.TtlQty > a.POQty
                 StringBuilder msgStr = new StringBuilder();
                 foreach (DataRow dr in checkData.Rows)
                 {
-                    msgStr.Append(string.Format("SP#:{0}, Seq1#:{1}, Seq2#:{2}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"])));
+                    msgStr.Append(string.Format("SP#:{0}, Seq1#:{1}, Seq2#:{2}\r\n", MyUtility.Convert.GetString(dr["POID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"])));
                 }
 
-                msgStr.Append("Total Qty > PO Qty, pls check!!");
+                msgStr.Append("Total Qty > FtyExport Qty, pls check!!");
                 MyUtility.Msg.WarningBox(msgStr.ToString());
                 return false;
             }

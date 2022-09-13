@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Shipping
 {
-    partial class P02_ImportFromRawMaterialShipment
+    partial class P02_ImportFromFtyWK
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -39,7 +39,7 @@
             this.labelCategory = new Sci.Win.UI.Label();
             this.btnFindNow = new Sci.Win.UI.Button();
             this.txtWKNo = new Sci.Win.UI.TextBox();
-            this.labelSPNo = new Sci.Win.UI.Label();
+            this.labFtyWKNo = new Sci.Win.UI.Label();
             this.panel4 = new Sci.Win.UI.Panel();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnUpdate = new Sci.Win.UI.Button();
@@ -76,7 +76,7 @@
             this.panel3.Controls.Add(this.labelCategory);
             this.panel3.Controls.Add(this.btnFindNow);
             this.panel3.Controls.Add(this.txtWKNo);
-            this.panel3.Controls.Add(this.labelSPNo);
+            this.panel3.Controls.Add(this.labFtyWKNo);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(10, 0);
             this.panel3.Name = "panel3";
@@ -137,13 +137,13 @@
             this.txtWKNo.Size = new System.Drawing.Size(120, 23);
             this.txtWKNo.TabIndex = 0;
             // 
-            // labelSPNo
+            // labFtyWKNo
             // 
-            this.labelSPNo.Location = new System.Drawing.Point(4, 9);
-            this.labelSPNo.Name = "labelSPNo";
-            this.labelSPNo.Size = new System.Drawing.Size(85, 23);
-            this.labelSPNo.TabIndex = 0;
-            this.labelSPNo.Text = "Fty WK#";
+            this.labFtyWKNo.Location = new System.Drawing.Point(4, 9);
+            this.labFtyWKNo.Name = "labFtyWKNo";
+            this.labFtyWKNo.Size = new System.Drawing.Size(85, 23);
+            this.labFtyWKNo.TabIndex = 0;
+            this.labFtyWKNo.Text = "Fty WK#";
             // 
             // panel4
             // 
@@ -210,7 +210,7 @@
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
             // 
-            // P02_ImportFromRawMaterialShipment
+            // P02_ImportFromFtyWK
             // 
             this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(823, 449);
@@ -219,7 +219,7 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.Name = "P02_ImportFromRawMaterialShipment";
+            this.Name = "P02_ImportFromFtyWK";
             this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "International Air/Express - Import from Raw Material Shipment Data (Fty WK#)";
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
@@ -240,7 +240,7 @@
         private Win.UI.Panel panel3;
         private Win.UI.Button btnFindNow;
         private Win.UI.TextBox txtWKNo;
-        private Win.UI.Label labelSPNo;
+        private Win.UI.Label labFtyWKNo;
         private Win.UI.Panel panel4;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnUpdate;
