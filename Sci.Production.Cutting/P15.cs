@@ -181,6 +181,34 @@ namespace Sci.Production.Cutting
                 dr["ToneChar"] = e.FormattedValue;
                 dr.EndEdit();
             };
+
+            DataGridViewGeneratorTextColumnSettings dyelot = new DataGridViewGeneratorTextColumnSettings();
+            dyelot.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1 || e.Button != MouseButtons.Right)
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridQty.GetDataRow(e.RowIndex);
+                string sqlcmd = $@"
+SELECT distinct Dyelot
+FROM ftyinventory  f
+inner join PO_Supp_Detail psd on f.POID=psd.ID  and f.Seq1 =psd.SEQ1 and f.Seq2 =psd.SEQ2 and f.StockType ='B'
+where 1=1
+and POID = '{dr["POID"]}'
+and psd.Refno = (select top 1 wo.Refno from WorkOrder wo where wo.CutRef='{this.gridCutRef.CurrentDataRow["Cutref"]}' and wo.MDivisionId = '{this.keyWord}')
+";
+                SelectItem sele = new SelectItem(sqlcmd, "50", dr["Dyelot"].ToString()) { Width = 333 };
+                DialogResult result = sele.ShowDialog();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                e.EditingControl.Text = sele.GetSelectedString();
+                dr.EndEdit();
+            };
             #endregion
             #region 中上 gridQty
             this.gridQty.IsEditingReadOnly = false;
@@ -188,11 +216,13 @@ namespace Sci.Production.Cutting
                 .Numeric("No", header: "No", width: Widths.AnsiChars(1), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: qtySizecell)
                 .Text("ToneChar", header: "Tone", width: Widths.AnsiChars(1), settings: tone)
+                .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), settings: dyelot)
                 ;
             this.gridQty.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             this.gridQty.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             this.gridQty.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridQty.Columns["ToneChar"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridQty.Columns["Dyelot"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
             #region 右上 gridArticleSize 事件
@@ -1317,6 +1347,7 @@ and o.mDivisionid = '{this.keyWord}'
                     g.Key.SizeCode,
                     g.Key.StyleUkey,
                     Qty = g.Sum(s => (decimal?)s["cutoutput"]),
+                    Dyelot = string.Empty,
                 })
                 .OrderBy(o => o.Article)
                 .ThenBy(o => o.SizeCode)
@@ -2278,6 +2309,7 @@ and wd.orderid = 'EXCESS'
                 Dup = -1, // 紀錄是否完全一樣的組別 Ukey, Article, Size, 左下資料
                 StyleUkey = MyUtility.Convert.GetLong(s["StyleUkey"]),
                 SubCut = string.Empty,
+                Dyelot = MyUtility.Convert.GetString(s["Dyelot"]),
             }).ToList();
             var asList = this.ArticleSizeTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Select(s => new ArticleSize
             {
@@ -2651,6 +2683,9 @@ Values(@ID, @PatternCode, @PatternDesc, @Parts, @isPair, @Location)";
                             var selDTAPList = seldupList.Where(w => w.Tone == selitem.Tone && w.Tone > 0 && pattern.PatternCode.Equals("ALLPARTS")).ToList();
                             int bdQty = pattern.PatternCode.Equals("ALLPARTS") && selitem.Tone > 0 ? selDTAPList.Sum(s => s.Qty) : selitem.Qty;
 
+                            // dyelot 若有 by Tone, 則 Allpart 的 dyelot 要記錄同 Tone 所有 dyelot
+                            string dyelot = pattern.PatternCode.Equals("ALLPARTS") && selitem.Tone > 0 ? selDTAPList.Select(s => s.Dyelot).Distinct().OrderBy(o => o).JoinToString(",") : selitem.Dyelot;
+
                             List<SqlParameter> parameters4 = new List<SqlParameter>
                             {
                                 new SqlParameter("@ID", bundleID),
@@ -2666,9 +2701,10 @@ Values(@ID, @PatternCode, @PatternDesc, @Parts, @isPair, @Location)";
                                 new SqlParameter("@Tone", selitem.ToneChar),
                                 new SqlParameter("@PrintGroup", printGroup_x),
                                 new SqlParameter("@RFIDScan", pattern.RFIDScan),
+                                new SqlParameter("@Dyelot", dyelot),
                             };
                             string insert_Bundle_Detail = $@"
-Insert into Bundle_Detail (ID, Bundleno, BundleGroup, PatternCode, PatternDesc, SizeCode, Qty, Parts, Farmin, Farmout, isPair, Location, Tone, PrintGroup, RFIDScan)
+Insert into Bundle_Detail (ID, Bundleno, BundleGroup, PatternCode, PatternDesc, SizeCode, Qty, Parts, Farmin, Farmout, isPair, Location, Tone, PrintGroup, RFIDScan, Dyelot)
 Values
     (@ID
     ,@Bundleno
@@ -2683,7 +2719,9 @@ Values
     ,@Location
     ,@Tone
     ,@PrintGroup
-    ,@RFIDScan);
+    ,@RFIDScan
+    ,@Dyelot
+);
 ";
                             if (!(result = DBProxy.Current.Execute(null, insert_Bundle_Detail, parameters4)))
                             {

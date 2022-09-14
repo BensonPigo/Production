@@ -12,8 +12,6 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -40,7 +38,6 @@ namespace Sci.Production.Cutting
         private DataTable artTb;
         private DataTable qtyTb;
         private DataTable SizeRatioTb;
-        private DataTable headertb;
         private DataTable ArticleSizeTb_View;
 
         /// <inheritdoc/>
@@ -63,7 +60,7 @@ namespace Sci.Production.Cutting
             string cmd_art = "Select PatternCode,subprocessid,NoBundleCardAfterSubprocess_String='',PostSewingSubProcess_String='' from Bundle_detail_art WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_art, out this.artTb);
 
-            string cmd_qty = "Select 0 as No,qty,'' as orderid,'' as cutref,'' as article, SizeCode, 0 as iden from Bundle_Detail_Qty WITH (NOLOCK) where 1=0";
+            string cmd_qty = "Select 0 as No,qty,'' as orderid,'' as cutref,'' as article, SizeCode, 0 as iden, Dyelot = '' from Bundle_Detail_Qty WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_qty, out this.qtyTb);
 
             this.GridSetup();
@@ -410,16 +407,46 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                 int qty = MyUtility.Convert.GetInt(this.qtyTb.Compute("Sum(Qty)", string.Format("iden ='{0}'", dr["iden"])));
                 this.label_TotalQty.Text = qty.ToString();
             };
+
+            DataGridViewGeneratorTextColumnSettings dyelot = new DataGridViewGeneratorTextColumnSettings();
+            dyelot.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1 || e.Button != MouseButtons.Right)
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridQty.GetDataRow(e.RowIndex);
+                string sqlcmd = $@"
+SELECT distinct Dyelot
+FROM ftyinventory  f
+inner join PO_Supp_Detail psd on f.POID=psd.ID  and f.Seq1 =psd.SEQ1 and f.Seq2 =psd.SEQ2 and f.StockType ='B'
+where 1=1
+and POID = '{dr["POID"]}'
+and psd.Refno = (select top 1 wo.Refno from WorkOrder wo where wo.CutRef='{this.gridCutRef.CurrentDataRow["Cutref"]}' and wo.MDivisionId = '{this.keyWord}')
+";
+                SelectItem sele = new SelectItem(sqlcmd, "50", dr["Dyelot"].ToString()) { Width = 333 };
+                DialogResult result = sele.ShowDialog();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                e.EditingControl.Text = sele.GetSelectedString();
+                dr.EndEdit();
+            };
             #endregion
             #region 左下 Qty
             this.gridQty.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.gridQty)
                 .Numeric("No", header: "No", width: Widths.AnsiChars(3), integer_places: 2, iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(4), integer_places: 3, settings: qtySizecell)
+                .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), settings: dyelot)
                 ;
             this.gridQty.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             this.gridQty.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             this.gridQty.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridQty.Columns["Dyelot"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
             #region 下中 gridPattern 事件
@@ -855,7 +882,6 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
             this.ArticleSizeTb_View = null;
             this.ExcessTb = null;
             this.SizeRatioTb = null;
-            this.headertb = null;
             this.gridPattern.DataSource = null;
             this.gridAllPart.DataSource = null;
             this.gridQty.DataSource = null;
@@ -2417,7 +2443,6 @@ values
                     {
                         // 不為 Allparts 的依照 Pattern_GL 紀錄 Location，否則帶入空白
                         string location = rowPat["PatternCode"].ToString() == "ALLPARTS" ? string.Empty : rowPat["Location"].ToString();
-
                         if (MyUtility.Check.Empty(rowPat["PatternCode"]))
                         {
                             MyUtility.Msg.WarningBox("CutPart cannot be empty.");
@@ -2433,6 +2458,7 @@ values
                         bundleDetail_pre["PatternCode"] = rowPat["PatternCode"];
                         bundleDetail_pre["PatternDesc"] = rowPat["PatternDesc"].ToString().Replace("'", "''");
                         bundleDetail_pre["SizeCode"] = artar["SizeCode"];
+                        bundleDetail_pre["Dyelot"] = rowqty["Dyelot"];
                         bundleDetail_pre["Qty"] = rowqty["Qty"];
                         bundleDetail_pre["Parts"] = rowPat["Parts"];
                         bundleDetail_pre["Farmin"] = 0;
@@ -2627,6 +2653,9 @@ values
                             new_startno = startno_bytone + i;
                             int notAllpart = patternAry.Rows.Count - 1;
                             notAllpart = notAllpart == 0 ? 1 : notAllpart;
+
+                            // 同 Tone 中 Dyelot 多個用,合併
+                            row["Dyelot"] = tmpBundle_Detail.Select($"Tone = '{row["Tone"]}'").AsEnumerable().Select(s => MyUtility.Convert.GetString(s["Dyelot"])).Distinct().JoinToString(",");
                             dtAllPart2.ImportRow(row);
                         }
 
@@ -2699,25 +2728,46 @@ values
                 foreach (DataRow item in tmpBundle_Detail.Rows)
                 {
                     DataRow nBundleDetail_dr = insert_Bundle_Detail.NewRow();
-                    nBundleDetail_dr["Insert"] = string.Format(
-                        @"Insert into Bundle_Detail
-                            (ID,Bundleno,BundleGroup,PatternCode,
-                            PatternDesc,SizeCode,Qty,Parts,Farmin,Farmout,IsPair ,Location,Tone,PrintGroup, RFIDScan) Values
-                            ('{0}','{1}',{2},'{3}',
-                            '{4}','{5}',{6},{7},0,0,'{8}','{9}','{10}','{11}', {12})",
-                        item["ID"],
-                        item["Bundleno"],
-                        item["BundleGroup"],
-                        item["PatternCode"],
-                        item["PatternDesc"],
-                        item["SizeCode"],
-                        item["Qty"],
-                        item["Parts"],
-                        MyUtility.Convert.GetBool(item["IsPair"]) ? 1 : 0,
-                        item["Location"],
-                        item["Tone"],
-                        item["PrintGroup"],
-                        MyUtility.Convert.GetBool(item["RFIDScan"]) ? 1 : 0);
+                    nBundleDetail_dr["Insert"] = $@"
+Insert into Bundle_Detail
+(
+    ID
+    ,Bundleno
+    ,BundleGroup
+    ,PatternCode
+    ,PatternDesc
+    ,SizeCode
+    ,Qty
+    ,Parts
+    ,Farmin
+    ,Farmout
+    ,IsPair
+    ,Location
+    ,Tone
+    ,PrintGroup
+    ,RFIDScan
+    ,Dyelot
+)
+Values
+(
+    '{item["ID"]}'
+    ,'{item["Bundleno"]}'
+    ,{item["BundleGroup"]}
+    ,'{item["PatternCode"]}'
+    ,'{item["PatternDesc"]}'
+    ,'{item["SizeCode"]}'
+    ,{item["Qty"]}
+    ,{item["Parts"]}
+    ,0
+    ,0
+    ,'{(MyUtility.Convert.GetBool(item["IsPair"]) ? 1 : 0)}'
+    ,'{item["Location"]}'
+    ,'{item["Tone"]}'
+    ,'{item["PrintGroup"]}'
+    ,{(MyUtility.Convert.GetBool(item["RFIDScan"]) ? 1 : 0)}
+    ,'{item["Dyelot"]}'
+)
+";
                     insert_Bundle_Detail.Rows.Add(nBundleDetail_dr);
 
                     DataRow drBundleNo = insert_BundleNo.NewRow();
