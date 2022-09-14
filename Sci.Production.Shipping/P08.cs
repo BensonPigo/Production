@@ -1,19 +1,20 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Newtonsoft.Json;
+using Sci.Data;
+using Sci.Production.CallPmsAPI;
+using Sci.Production.PublicPrg;
+using Sci.Win;
+using Sci.Win.Tools;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
-using Sci.Production.PublicPrg;
-using Sci.Win;
-using System.Reflection;
-using System.Linq;
 using System.Data.SqlClient;
-using Sci.Production.CallPmsAPI;
-using Newtonsoft.Json;
+using System.Drawing;
+using System.Linq;
+using System.Reflection;
+using System.Windows.Forms;
 using static Sci.Production.CallPmsAPI.PackingA2BWebAPI_Model;
 
 namespace Sci.Production.Shipping
@@ -1499,6 +1500,41 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 {
                     MyUtility.Msg.ErrorBox("Confirm fail !\r\n" + result.ToString());
                     return;
+                }
+
+                string apemail = MyUtility.GetValue.Lookup($"select Email from Pass1 with(nolock) where id = '{this.CurrentMaintain["Handle"]}'");
+                sqlCmd = $@"
+select distinct
+    e.id,
+    subjuct = concat('IP for', e.ID, ' ', e.Consignee, ' ', e.ShipModeID, ' B/L#', e.Blno),
+    HandleEmail = (select Email from TPEPass1 with(nolock) where ID = e.Handle),
+    ShipPlanHandleEmail = (select Email from TPEPass1 with(nolock) where ID = ed.ShipPlanHandle)
+from Export e with(nolock)
+inner join ShareExpense se with(nolock) on se.WKNo = e.ID
+inner join Export_Detail ed with(nolock) on ed.ID = e.ID
+where e.Payer='M'
+and se.ShippingAPID = '{this.CurrentMaintain["ID"]}'
+";
+                DBProxy.Current.Select(null, sqlCmd, out DataTable emailDt);
+                if (emailDt.Rows.Count > 0)
+                {
+                    string description = @"Hi,
+We paid freight /clearance fee for supplier, pls issue SD (Supplier debit note) to charge it.
+Thank you.";
+
+                    // by exportID 寄不同封信件
+                    foreach (string exportID in emailDt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["ID"])).Distinct().ToList())
+                    {
+                        DataRow[] drs = emailDt.Select($"ID = '{exportID}'");
+                        string subject = MyUtility.Convert.GetString(drs[0]["subjuct"]);
+                        List<string> maillist = new List<string>() { apemail };
+                        drs.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["HandleEmail"])).Distinct().ToList().ForEach(em => maillist.Add(em));
+                        drs.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["ShipPlanHandleEmail"])).Distinct().ToList().ForEach(em => maillist.Add(em));
+
+                        string mailto = maillist.Distinct().JoinToString(";");
+                        var email = new MailTo(Env.Cfg.MailFrom, mailto, string.Empty, subject, string.Empty, description, true, true);
+                        email.ShowDialog(this);
+                    }
                 }
 
                 this.RenewData();
