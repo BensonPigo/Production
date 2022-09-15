@@ -430,6 +430,13 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
                     return failResult;
                 }
 
+                result = DBProxy.Current.Execute(null, $@"update FtyExport set ExpressID = '' where ExpressID = '{MyUtility.Convert.GetString(this.CurrentData["ID"])}' and ID = '{this.CurrentData["DutyNo"]}'");
+                if (!result)
+                {
+                    failResult = new DualResult(false, "Update Fty Export list fail!! Pls try again.\r\n" + result.ToString());
+                    return failResult;
+                }
+
                 result = DBProxy.Current.Execute(null, string.Format("delete Express_Detail where ID = '{0}' and PackingListID = '{1}'", MyUtility.Convert.GetString(this.CurrentData["ID"]), MyUtility.Convert.GetString(this.CurrentData["PackingListID"])));
                 if (!result)
                 {
@@ -449,7 +456,12 @@ WHERE PackingListID='{this.CurrentData["PackingListID"]}'
 
 update PackingList set ExpressID = ''
 FROM PackingList
-WHERE ID='{this.CurrentData["PackingListID"]}' AND @count <= 1";
+WHERE ID='{this.CurrentData["PackingListID"]}' AND @count <= 1
+
+update FtyExport set ExpressID = '' 
+where ExpressID ='{this.CurrentData["ID"]}'
+and ID = '{this.CurrentData["DutyNo"]}'
+";
                 DualResult result = DBProxy.Current.Execute(null, sqlCmd);
                 if (!result)
                 {

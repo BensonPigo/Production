@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
@@ -34,6 +35,13 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+
+            Dictionary<string, string> di_inhouseOsp = new Dictionary<string, string>();
+            di_inhouseOsp.Add(string.Empty, "All");
+            di_inhouseOsp.Add("O", "OSP");
+            di_inhouseOsp.Add("I", "InHouse");
+
+
             DataGridViewGeneratorTextColumnSettings ctnno = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings receiver = new DataGridViewGeneratorTextColumnSettings();
 
@@ -55,20 +63,23 @@ namespace Sci.Production.Shipping
                 .Text("Seq1", header: "Seq1#", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("Seq2", header: "Seq2#", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("Supp", header: "Supplier", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("Receiver", header: "Receiver", width: Widths.AnsiChars(10), settings: receiver)
+                .Text("Receiver", header: "Receiver", width: Widths.AnsiChars(10), settings: receiver, iseditingreadonly: false)
                 .Text("Leader", header: "Team Leader", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("CTNNo", header: "CTN No.", width: Widths.AnsiChars(5), settings: ctnno)
                 .Numeric("Price", header: "Price", decimal_places: 4, iseditingreadonly: true)
-                .Numeric("Qty", header: "Qty", integer_places: 6, decimal_places: 2, maximum: 999999.99m, minimum: 0m)
+                .Numeric("Qty", header: "Qty", integer_places: 6, decimal_places: 2, maximum: 999999.99m, minimum: 0m, iseditingreadonly: true)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("NW", header: "N.W. (kg)", integer_places: 5, decimal_places: 2, maximum: 99999.99m, minimum: 0m);
 
             this.gridImport.Columns["Selected"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
             this.gridImport.Columns["Receiver"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
             this.gridImport.Columns["CTNNo"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            this.gridImport.Columns["Qty"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
             this.gridImport.Columns["NW"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+
+            this.gridImport.Columns["Receiver"].DefaultCellStyle.ForeColor = Color.Red;
+            this.gridImport.Columns["CTNNo"].DefaultCellStyle.ForeColor = Color.Red;
+            this.gridImport.Columns["NW"].DefaultCellStyle.ForeColor = Color.Red;
         }
 
         // Find Now
@@ -142,28 +153,34 @@ where fd.ID ='{this.txtWKNo.Text}'
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             if (dt == null || dt.Rows.Count == 0)
             {
-                MyUtility.Msg.WarningBox("No data, can't update!");
+                MyUtility.Msg.WarningBox("No data, cannot import!");
                 return;
             }
 
-            DataRow[] selectedRow = dt.Select("Selected = 1");
-            if (selectedRow.Length == 0)
-            {
-                MyUtility.Msg.WarningBox("Please select datas first!!");
-                return;
-            }
-
-            DataTable sourcedt = selectedRow.CopyToDataTable();
-            if (!this.BeforeUpdate(sourcedt))
+            if (!this.BeforeUpdate(dt))
             {
                 return;
             }
 
             IList<string> insertCmds = new List<string>();
-            foreach (DataRow dr in selectedRow)
+            foreach (DataRow dr in dt.Rows)
             {
+                string sqlChk = $@"select ID from Express_Detail where DutyNo = '{dr["ID"]}'";
+                if (MyUtility.Check.Seek(sqlChk, out DataRow drChk))
+                {
+                    MyUtility.Msg.WarningBox($@"Fty WK# <{dr["ID"]}> already exists in HC No. <{drChk["ID"]}>");
+                    return;
+                }
+
+                sqlChk = $@"select ExpressID from FtyExport where ID = '{dr["ID"]}' and ExpressID !=''";
+                if (MyUtility.Check.Seek(sqlChk, out drChk))
+                {
+                    MyUtility.Msg.WarningBox($@"Fty WK# <{dr["ID"]}> already exists in HC No. <{drChk["ExpressID"]}>");
+                    return;
+                }
+
                 insertCmds.Add($@"
-insert into Express_Detail(ID,OrderID,Seq1,Seq2,SeasonID,StyleID,Qty,NW,CTNNo,Category,SuppID,Price,UnitID,Receiver,BrandID,Leader,Remark,InCharge,AddName,AddDate)
+insert into Express_Detail(ID,OrderID,Seq1,Seq2,SeasonID,StyleID,Qty,NW,CTNNo,Category,SuppID,Price,UnitID,Receiver,BrandID,Leader,Remark,InCharge,AddName,AddDate,DutyNo)
  values('{MyUtility.Convert.GetString(this.masterData["ID"])}'
 ,'{MyUtility.Convert.GetString(dr["POID"])}'
 ,'{MyUtility.Convert.GetString(dr["Seq1"])}'
@@ -184,7 +201,14 @@ insert into Express_Detail(ID,OrderID,Seq1,Seq2,SeasonID,StyleID,Qty,NW,CTNNo,Ca
 ,'{Env.User.UserID}'
 ,'{Env.User.UserID}'
 ,GETDATE()
+,'{MyUtility.Convert.GetString(dr["ID"])}'
 );
+
+update FtyExport
+set ExpressID = '{MyUtility.Convert.GetString(this.masterData["ID"])}'
+,EditDate = GetDate()
+,EditName = '{Env.User.UserID}'
+where ID = '{dr["ID"]}'
 ");
             }
 
@@ -218,7 +242,7 @@ insert into Express_Detail(ID,OrderID,Seq1,Seq2,SeasonID,StyleID,Qty,NW,CTNNo,Ca
                 }
             }
 
-            MyUtility.Msg.InfoBox("Update complete!!");
+            MyUtility.Msg.InfoBox("Import complete!!");
         }
 
         private bool BeforeUpdate(DataTable sourcedt)
@@ -270,78 +294,41 @@ insert into Express_Detail(ID,OrderID,Seq1,Seq2,SeasonID,StyleID,Qty,NW,CTNNo,Ca
                 return false;
             }
 
-            // 檢查 SP#, Seq1, Seq2, Category = (DB 固定 4, 顯示 Material) 重複. A.勾選重複, B.DB與勾選重複
-            string sqlcmd = $@"
-select distinct POID,Seq1,Seq2
-from(
-    select t.POID,t.Seq1,t.Seq2
-    from #tmp t
-    group by POID,Seq1,Seq2,CTNNo
-    having count(1) >1
-
-    union
-    select t.POID, t.Seq1, t.Seq2
-    from #tmp t
-    inner join Express_Detail ed on ed.OrderID = t.POID and ed.Seq1 = t.Seq1 and ed.Seq2 = t.Seq2 
-    where ed.Category = '4'
-)x
-";
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(sourcedt, string.Empty, sqlcmd, out DataTable checkData);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return false;
-            }
-
-            if (checkData.Rows.Count > 0)
-            {
-                StringBuilder msgStr = new StringBuilder();
-                msgStr.Append("Data can't duplicate!!\r\n");
-                foreach (DataRow dr in checkData.Rows)
-                {
-                    msgStr.Append($"SP#:{dr["POID"]}, Seq1#:{dr["Seq1"]}, Seq2#:{dr["Seq2"]}, Category:Material\r\n");
-                }
-
-                MyUtility.Msg.WarningBox(msgStr.ToString());
-                return false;
-            }
-
-            // 檢查Total Qty是否有超過Fty Export Qty
-            sqlcmd = @"
-select a.POID,a.Seq1,a.Seq2
-from (
-    select e.POID,e.Seq1,e.Seq2,e.Qty,
-    TtlQty = e.Qty +
-        isnull((
-            select sum(ed.Qty)
-            from Express_Detail ed WITH (NOLOCK)
-            where ed.OrderID = e.POID and ed.Seq1 = e.Seq1 and ed.Seq2 = e.Seq2
-        ), 0)
-    from #tmp e
-) a
-where a.TtlQty > a.Qty
-";
-            result = MyUtility.Tool.ProcessWithDatatable(sourcedt, string.Empty, sqlcmd, out checkData);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return false;
-            }
-
-            if (checkData.Rows.Count > 0)
-            {
-                StringBuilder msgStr = new StringBuilder();
-                foreach (DataRow dr in checkData.Rows)
-                {
-                    msgStr.Append(string.Format("SP#:{0}, Seq1#:{1}, Seq2#:{2}\r\n", MyUtility.Convert.GetString(dr["POID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"])));
-                }
-
-                msgStr.Append("Total Qty > FtyExport Qty, pls check!!");
-                MyUtility.Msg.WarningBox(msgStr.ToString());
-                return false;
-            }
-
             return true;
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            this.listControlBindingSource1.EndEdit();
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return;
+            }
+
+            DataRow[] drfound = dt.Select("selected = 1");
+
+            foreach (var item in drfound)
+            {
+                item["Receiver"] = this.txtReceiver.Text;
+            }
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+            this.listControlBindingSource1.EndEdit();
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return;
+            }
+
+            DataRow[] drfound = dt.Select("selected = 1");
+
+            foreach (var item in drfound)
+            {
+                item["CTNNo"] = this.txtCtnNo.Text;
+            }
         }
     }
 }
