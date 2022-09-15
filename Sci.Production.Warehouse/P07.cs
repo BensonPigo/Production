@@ -1935,7 +1935,7 @@ and exists(select 1 from WHBarcodeTransaction wht with (nolock) where [Function]
             #endregion
             DBProxy.Current.DefaultTimeout = 900;  // 加長時間為15分鐘，避免timeout
             Exception errMsg = null;
-            using (TransactionScope transactionscope = new TransactionScope())
+            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 15, 0)))
             {
                 DBProxy.Current.OpenConnection(null, out SqlConnection sqlConn);
                 using (sqlConn)
@@ -2288,7 +2288,7 @@ END", Env.User.UserID,
             // PMS 的資料更新
             Exception errMsg = null;
             List<AutoRecord> autoRecordList = new List<AutoRecord>();
-            using (TransactionScope transactionscope = new TransactionScope())
+            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 15, 0)))
             {
                 try
                 {
