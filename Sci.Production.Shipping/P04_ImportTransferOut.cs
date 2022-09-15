@@ -234,6 +234,13 @@ group by TransactionID,Poid, Seq1, Seq2, Seq, SuppID, Supp, RefNo
                 MyUtility.Tool.ProcessWithDatatable(dr.CopyToDataTable(), string.Empty, strComputeQtySQL, out dtComputeQty);
                 foreach (DataRow currentRow in dtComputeQty.Rows)
                 {
+                    string sqlChk = $@"select 1 from FtyExport_Detail where TransactionID = '{currentRow["TransactionID"]}'";
+                    if (MyUtility.Check.Seek(sqlChk))
+                    {
+                        MyUtility.Msg.WarningBox("Transfer Out No. / Adjust No. <No> already exists in WK# <WK>.");
+                        return;
+                    }
+
                     DataRow[] findrow = this.detailData.Select($@"
 TransactionID = '{MyUtility.Convert.GetString(currentRow["TransactionID"])}' 
 AND POID = '{MyUtility.Convert.GetString(currentRow["POID"])}' 

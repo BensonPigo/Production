@@ -31,6 +31,7 @@
     [NonDeclare] BIT NOT NULL DEFAULT ((0)), 
     [ShipDate] DATE NULL, 
     [ETA] DATE NULL, 
+    [ExpressID] VARCHAR(13) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_FtyExport] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
