@@ -153,25 +153,17 @@ where fd.ID ='{this.txtWKNo.Text}'
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             if (dt == null || dt.Rows.Count == 0)
             {
-                MyUtility.Msg.WarningBox("No data, can't update!");
+                MyUtility.Msg.WarningBox("No data, cannot import!");
                 return;
             }
 
-            DataRow[] selectedRow = dt.Select("Selected = 1");
-            if (selectedRow.Length == 0)
-            {
-                MyUtility.Msg.WarningBox("Please select datas first!!");
-                return;
-            }
-
-            DataTable sourcedt = selectedRow.CopyToDataTable();
-            if (!this.BeforeUpdate(sourcedt))
+            if (!this.BeforeUpdate(dt))
             {
                 return;
             }
 
             IList<string> insertCmds = new List<string>();
-            foreach (DataRow dr in selectedRow)
+            foreach (DataRow dr in dt.Rows)
             {
                 string sqlChk = $@"select ID from Express_Detail where DutyNo = '{dr["ID"]}'";
                 if (MyUtility.Check.Seek(sqlChk, out DataRow drChk))
@@ -250,7 +242,7 @@ where ID = '{dr["ID"]}'
                 }
             }
 
-            MyUtility.Msg.InfoBox("Update complete!!");
+            MyUtility.Msg.InfoBox("Import complete!!");
         }
 
         private bool BeforeUpdate(DataTable sourcedt)
