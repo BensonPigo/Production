@@ -120,7 +120,7 @@
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.dateDeclarationDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 219);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 219);
             this.masterpanel.Controls.SetChildIndex(this.dateDeclarationDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
@@ -164,7 +164,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 219);
-            this.detailpanel.Size = new System.Drawing.Size(892, 130);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 231);
             // 
             // gridicon
             // 
@@ -172,7 +172,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 130);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 231);
             // 
             // detail2
             // 
@@ -185,6 +185,19 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1000, 488);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(1000, 450);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 450);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             // 
             // browse
             // 
@@ -456,6 +469,7 @@
             // 
             this.txtForwarder.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder", true));
             this.txtForwarder.DisplayBox1Binding = "";
+            this.txtForwarder.IsFreightForwarder = false;
             this.txtForwarder.IsIncludeJunk = false;
             this.txtForwarder.IsMisc = false;
             this.txtForwarder.IsShipping = false;
@@ -673,8 +687,6 @@
             this.GridUniqueKey = "ID,InvNo,OrderID,Location";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
-            this.IsSupportDelete = false;
-            this.IsSupportJunk = true;
             this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
