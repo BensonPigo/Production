@@ -77,6 +77,9 @@
     [PackingAuditDate] DATE NULL, 
     [PackingAuditStatus] VARCHAR(4) NOT NULL DEFAULT (''), 
     [MDStatus] VARCHAR(4) NULL DEFAULT (''), 
+    ClogPackingErrorDate date null,
+    ClogPackingErrorID varchar(8) not null constraint [DF_PackingList_Detail_ClogPackingErrorID] DEFAULT '',
+    ClogPackingErrorQty smallint not null constraint [DF_PackingList_Detail_ClogPackingErrorQty] DEFAULT 0,
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -288,4 +291,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'包裝異�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'包裝異常的原因', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'PackingErrorID';
+GO
 
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'發現包裝錯誤日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'ClogPackingErrorDate';
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'包裝異常的原因', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'ClogPackingErrorID';
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'包裝異常的數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'ClogPackingErrorQty';
+GO
