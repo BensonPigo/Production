@@ -1,9 +1,14 @@
 ﻿using Ict;
 using Ict.Win;
+using Microsoft.VisualBasic.PowerPacks.Printing.Compatibility.VB6;
 using Sci.Data;
 using System;
 using System.Data;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using static Sci.MyUtility;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Sewing
 {
@@ -18,6 +23,7 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.EditMode = true;
         }
 
         /// <inheritdoc/>
@@ -28,6 +34,7 @@ namespace Sci.Production.Sewing
             #region GridMain Setting
             this.Helper.Controls.Grid.Generator(this.gridMain)
                .Date("ScanDate", header: "Scan Date", iseditingreadonly: true)
+               .Text("FactoryID", header: "Factory", iseditingreadonly: true)
                .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditingreadonly: true)
                .Text("CTNStartNo", header: "CTN#", iseditingreadonly: true)
                .Text("CartonQty", header: "Carton Qty", width: Widths.Auto(), iseditingreadonly: true)
@@ -60,7 +67,7 @@ namespace Sci.Production.Sewing
         {
             this.listControlBindingSource1.DataSource = null;
 
-            string dateTransfer1 = string.Empty, dateTransfer2 = string.Empty, packid = string.Empty, sp = string.Empty;
+            string dateTransfer1 = string.Empty, dateTransfer2 = string.Empty, packid = string.Empty, sp = string.Empty, M = string.Empty, fty = string.Empty;
             string sqlwhere = string.Empty;
             if (this.dateTransfer.HasValue)
             {
@@ -81,6 +88,18 @@ namespace Sci.Production.Sewing
                 sqlwhere += $@" and (md.OrderID = @sp or pd.OrigOrderID = @sp) ";
             }
 
+            if (!MyUtility.Check.Empty(this.txtMdivision1.Text))
+            {
+                M = this.txtMdivision1.Text;
+                sqlwhere += $@" and o.Mdivisionid = @M";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtfactory1.Text))
+            {
+                fty = this.txtfactory1.Text;
+                sqlwhere += $@" and o.FactoryID = @fty";
+            }
+
             this.ShowWaitMessage("Data Loading...");
 
             string sqlcmd = $@"
@@ -88,12 +107,17 @@ declare @TransferDate1  datetime = '{dateTransfer1}'
 declare @TransferDate2  datetime = '{dateTransfer2}'
 declare @packid nvarchar(20) = '{packid}'
 declare @sp nvarchar(20) = '{sp}'
+declare @M varchar(15) = '{M}'
+declare @fty varchar(15) = '{fty}'
+
 
 select md.ScanDate
+        , [FactoryID] = o.factoryid
 	    , [PackingListID] = iif(isnull(pd.OrigID, '') = '', md.PackingListID, pd.OrigID)
 	    , [CTNStartNo] = iif(isnull(pd.OrigCTNStartNo, '') = '', md.CTNStartNo, pd.OrigCTNStartNo)
 	    , [CartonQty] = md.CartonQty
         , [MDFailQty] = md.MDFailQty
+		, [Desc] = isnull(pd.Description,'')
 	    , [OrderID] = iif(isnull(pd.OrigOrderID, '') = '', md.OrderID, pd.OrigOrderID)
 	    , o.CustPONo
 	    , o.StyleID
@@ -101,12 +125,7 @@ select md.ScanDate
 	    , Country.Alias
 	    , os.BuyerDelivery
 	    , o.SciDelivery
-	    , ReceivedBy = dbo.getPass1(md.AddName)
-        , [AddDate] = format(md.AddDate, 'yyyy/MM/dd HH:mm:ss')
-	    , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
-        , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
-        , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
-        , [Barcode] = STUFF((SELECT 
+		, [Barcode] = STUFF((SELECT 
 				            (
 					            SELECT DISTINCT concat('/', pd.Barcode)
                                 from PackingList_Detail pd with(nolock) 
@@ -115,16 +134,27 @@ select md.ScanDate
 		                                AND md.CTNStartNo = pd.CTNStartNo
                                         AND md.PackingListID = pd.id 
 					            FOR XML PATH('')
-				            )) ,1,1,'')
-	    ,md.Ukey
+				            )) ,1,1,'')	    
+		, ReceivedBy = dbo.getPass1(md.AddName)
+        , [AddDate] = format(md.AddDate, 'yyyy/MM/dd HH:mm:ss')
+	    , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
+        , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
+        , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
         ,md.DataRemark
+		,[Status] = case when md.MDFailQty = 0 then 'Pass'
+			when md.MDFailQty > 0 then 'Hold'
+			else 'Please check Discrepancy'
+			end
+		,md.Ukey
 into #tmp
 from MDScan md with(nolock)
 left join orders o with(nolock) on md.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
 outer apply (
-    select top 1 *
+    select top 1 pd.*,pr.Description
     from PackingList_Detail pd with(nolock) 
+	left join MDScan_Detail msd on md.Ukey = msd.MDScanUKey
+	left join PackingReason pr on msd.PackingReasonID = pr.ID and pr.Type = 'MD'
     where md.SCICtnNo = pd.SCICtnNo
 		    AND md.OrderID = pd.OrderID
 		    AND md.CTNStartNo = pd.CTNStartNo
@@ -136,7 +166,8 @@ left join Order_QtyShip os on pd.OrderID = os.Id
 where 1=1
         {sqlwhere}
 
-select * from #tmp
+select  *
+from #tmp
 ORDER BY ScanDate,[PackingListID],[CTNStartNo],[OrderID]
 
 select mdd.MDScanUKey
@@ -152,6 +183,7 @@ drop table #tmp
             if (!SQL.Selects(string.Empty, sqlcmd, out datas))
             {
                 MyUtility.Msg.WarningBox(sqlcmd, "DB error!!");
+                this.HideWaitMessage();
                 return;
             }
 
@@ -170,6 +202,7 @@ drop table #tmp
 
             if (datas.Tables[0].Rows.Count == 0)
             {
+                this.HideWaitMessage();
                 return;
             }
 
@@ -195,6 +228,41 @@ drop table #tmp
 
             this.HideWaitMessage();
             this.gridMain.AutoResizeColumns();
+        }
+
+        private void btnExcel_Click(object sender, EventArgs e)
+        {
+            if (this.dtMaster == null || this.dtMaster.Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("No Data!");
+                return;
+            }
+
+            this.ShowWaitMessage("Excel Processing...");
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Sewing_P09.xltx"); // 預先開啟excel app
+            if (objApp == null)
+            {
+                this.HideWaitMessage();
+                return;
+            }
+
+            MyUtility.Excel.CopyToXls(this.dtMaster, string.Empty, "Sewing_P09.xltx", 2, false, null, objApp); // 將datatable copy to excel
+            Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
+
+            // 移除最後一欄Ukey
+            objSheets.Columns["W"].Delete();
+            #region Save & Show Excel
+            string strExcelName = Class.MicrosoftFile.GetName("Sewing_P09");
+            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            strExcelName.OpenFile();
+            #endregion
+
+            this.HideWaitMessage();
+
         }
     }
 }
