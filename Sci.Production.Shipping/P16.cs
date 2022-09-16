@@ -62,6 +62,11 @@ namespace Sci.Production.Shipping
             if (this.EditMode)
             {
                 this.chkExportChange.ReadOnly = !this.isFromProduceFty;
+                this.detailgrid.IsEditingReadOnly = false;
+                if (this.isFromProduceFty && MyUtility.Convert.GetString(this.CurrentMaintain["FtyStatus"]) == "Confirmed")
+                {
+                    this.detailgrid.IsEditingReadOnly = true;
+                }
             }
             else
             {
@@ -354,6 +359,7 @@ where ted.ID = '{0}'", masterID);
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
+            this.GetProduceFTY();
             if (this.isToProduceFty == false)
             {
                 if (this.isFromProduceFty == false)
