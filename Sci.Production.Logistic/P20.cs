@@ -162,6 +162,12 @@ where Type='TP' and Junk=0";
             this.gridPackErrTransfer.ValidateControl();
             DataRow drSelect = this.gridPackErrTransfer.GetDataRow(this.listControlBindingSource1.Position);
 
+            // 有ClogPackingError記錄才可以Completed
+            if (MyUtility.Check.Empty(drSelect["ErrorID"]))
+            {
+                return;
+            }
+
             string packingID = MyUtility.Convert.GetString(drSelect["PackingListID"]);
             string cTNStartNo = MyUtility.Convert.GetString(drSelect["CTNStartNo"]);
             string clogPackingErrorID = MyUtility.Convert.GetString(drSelect["ClogPackingErrorID"]);
@@ -690,7 +696,11 @@ order by pd.ID,pd.Seq
                 if (!row.Cells[10].Value.StrStartsWith(specialErrorID))
                 {
                     row.Cells[14].Style = dataGridViewCellStyle2;
+                }
 
+                if (MyUtility.Check.Empty(row.Cells[10].Value))
+                {
+                    row.Cells[15].Style = dataGridViewCellStyle2;
                 }
             }
         }
