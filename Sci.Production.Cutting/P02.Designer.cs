@@ -98,6 +98,8 @@
             this.txtMarkerLength = new Sci.Win.UI.TextBox();
             this.btn_Refresh = new Sci.Win.UI.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.txtTone = new Sci.Win.UI.TextBox();
+            this.lblTone = new Sci.Win.UI.Label();
             this.btnAdditionalrevisedmarker = new Sci.Win.UI.Button();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.displayTime = new Sci.Win.UI.DisplayBox();
@@ -225,7 +227,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(7832, 561);
+            this.refresh.Location = new System.Drawing.Point(8142, 561);
             // 
             // detailgridcont
             // 
@@ -233,8 +235,8 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
-            this.detailgridcont.Location = new System.Drawing.Point(3, 97);
-            this.detailgridcont.Size = new System.Drawing.Size(823, 579);
+            this.detailgridcont.Location = new System.Drawing.Point(8, 97);
+            this.detailgridcont.Size = new System.Drawing.Size(818, 575);
             // 
             // detail2
             // 
@@ -571,7 +573,7 @@
             // 
             // labelFabricType_Refno
             // 
-            this.labelFabricType_Refno.Location = new System.Drawing.Point(3, 110);
+            this.labelFabricType_Refno.Location = new System.Drawing.Point(3, 137);
             this.labelFabricType_Refno.Name = "labelFabricType_Refno";
             this.labelFabricType_Refno.Size = new System.Drawing.Size(117, 23);
             this.labelFabricType_Refno.TabIndex = 32;
@@ -667,7 +669,7 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Location = new System.Drawing.Point(3, 136);
+            this.labelDescription.Location = new System.Drawing.Point(3, 163);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(97, 23);
             this.labelDescription.TabIndex = 40;
@@ -677,7 +679,7 @@
             // 
             this.displayFabricType_Refno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayFabricType_Refno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayFabricType_Refno.Location = new System.Drawing.Point(122, 110);
+            this.displayFabricType_Refno.Location = new System.Drawing.Point(122, 137);
             this.displayFabricType_Refno.Name = "displayFabricType_Refno";
             this.displayFabricType_Refno.Size = new System.Drawing.Size(245, 23);
             this.displayFabricType_Refno.TabIndex = 16;
@@ -687,7 +689,7 @@
             this.editDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editDescription.IsSupportEditMode = false;
-            this.editDescription.Location = new System.Drawing.Point(103, 136);
+            this.editDescription.Location = new System.Drawing.Point(103, 163);
             this.editDescription.Multiline = true;
             this.editDescription.Name = "editDescription";
             this.editDescription.ReadOnly = true;
@@ -720,14 +722,14 @@
             this.gridSizeRatio.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridSizeRatio.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridSizeRatio.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridSizeRatio.Location = new System.Drawing.Point(0, 13);
+            this.gridSizeRatio.Location = new System.Drawing.Point(0, 16);
             this.gridSizeRatio.Name = "gridSizeRatio";
             this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSizeRatio.RowTemplate.Height = 24;
             this.gridSizeRatio.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridSizeRatio.ShowCellToolTips = false;
-            this.gridSizeRatio.Size = new System.Drawing.Size(137, 156);
+            this.gridSizeRatio.Size = new System.Drawing.Size(137, 139);
             this.gridSizeRatio.TabIndex = 44;
             this.gridSizeRatio.TabStop = false;
             this.gridSizeRatio.EditingKeyProcessing += new System.EventHandler<Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs>(this.GridSizeRatio_EditingKeyProcessing);
@@ -756,7 +758,7 @@
             // 
             // labelCutplanNo
             // 
-            this.labelCutplanNo.Location = new System.Drawing.Point(141, 43);
+            this.labelCutplanNo.Location = new System.Drawing.Point(140, 43);
             this.labelCutplanNo.Name = "labelCutplanNo";
             this.labelCutplanNo.Size = new System.Drawing.Size(86, 23);
             this.labelCutplanNo.TabIndex = 45;
@@ -764,7 +766,7 @@
             // 
             // labelTotalCutQty
             // 
-            this.labelTotalCutQty.Location = new System.Drawing.Point(141, 70);
+            this.labelTotalCutQty.Location = new System.Drawing.Point(140, 70);
             this.labelTotalCutQty.Name = "labelTotalCutQty";
             this.labelTotalCutQty.Size = new System.Drawing.Size(86, 23);
             this.labelTotalCutQty.TabIndex = 46;
@@ -774,7 +776,7 @@
             // 
             this.displayCutplanNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCutplanNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCutplanNo.Location = new System.Drawing.Point(231, 43);
+            this.displayCutplanNo.Location = new System.Drawing.Point(230, 43);
             this.displayCutplanNo.Name = "displayCutplanNo";
             this.displayCutplanNo.Size = new System.Drawing.Size(135, 23);
             this.displayCutplanNo.TabIndex = 22;
@@ -802,7 +804,7 @@
             this.gridDistributetoSPNo.RowTemplate.Height = 24;
             this.gridDistributetoSPNo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDistributetoSPNo.ShowCellToolTips = false;
-            this.gridDistributetoSPNo.Size = new System.Drawing.Size(373, 160);
+            this.gridDistributetoSPNo.Size = new System.Drawing.Size(373, 146);
             this.gridDistributetoSPNo.TabIndex = 48;
             this.gridDistributetoSPNo.TabStop = false;
             this.gridDistributetoSPNo.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.Distribute_grid_DataError);
@@ -868,7 +870,7 @@
             // 
             // labelTotalDistributionQty
             // 
-            this.labelTotalDistributionQty.Location = new System.Drawing.Point(141, 126);
+            this.labelTotalDistributionQty.Location = new System.Drawing.Point(140, 97);
             this.labelTotalDistributionQty.Name = "labelTotalDistributionQty";
             this.labelTotalDistributionQty.Size = new System.Drawing.Size(133, 23);
             this.labelTotalDistributionQty.TabIndex = 51;
@@ -879,7 +881,7 @@
             this.numTotalDistributionQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotalDistributionQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalDistributionQty.IsSupportEditMode = false;
-            this.numTotalDistributionQty.Location = new System.Drawing.Point(275, 126);
+            this.numTotalDistributionQty.Location = new System.Drawing.Point(274, 97);
             this.numTotalDistributionQty.Name = "numTotalDistributionQty";
             this.numTotalDistributionQty.NullValue = new decimal(new int[] {
             0,
@@ -954,9 +956,9 @@
             // 
             this.displayTotalCutQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayTotalCutQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTotalCutQty.Location = new System.Drawing.Point(141, 97);
+            this.displayTotalCutQty.Location = new System.Drawing.Point(230, 70);
             this.displayTotalCutQty.Name = "displayTotalCutQty";
-            this.displayTotalCutQty.Size = new System.Drawing.Size(225, 23);
+            this.displayTotalCutQty.Size = new System.Drawing.Size(135, 23);
             this.displayTotalCutQty.TabIndex = 23;
             // 
             // btnPatternPanel
@@ -1040,6 +1042,8 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.txtTone);
+            this.splitContainer1.Panel1.Controls.Add(this.lblTone);
             this.splitContainer1.Panel1.Controls.Add(this.btnAdditionalrevisedmarker);
             this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel1.Controls.Add(this.lbshc);
@@ -1076,11 +1080,28 @@
             this.splitContainer1.SplitterDistance = 567;
             this.splitContainer1.TabIndex = 61;
             // 
+            // txtTone
+            // 
+            this.txtTone.BackColor = System.Drawing.Color.White;
+            this.txtTone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTone.Location = new System.Drawing.Point(103, 111);
+            this.txtTone.Name = "txtTone";
+            this.txtTone.Size = new System.Drawing.Size(100, 23);
+            this.txtTone.TabIndex = 63;
+            // 
+            // lblTone
+            // 
+            this.lblTone.Location = new System.Drawing.Point(3, 110);
+            this.lblTone.Name = "lblTone";
+            this.lblTone.Size = new System.Drawing.Size(97, 23);
+            this.lblTone.TabIndex = 62;
+            this.lblTone.Text = "Tone";
+            // 
             // btnAdditionalrevisedmarker
             // 
             this.btnAdditionalrevisedmarker.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnAdditionalrevisedmarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAdditionalrevisedmarker.Location = new System.Drawing.Point(3, 156);
+            this.btnAdditionalrevisedmarker.Location = new System.Drawing.Point(3, 183);
             this.btnAdditionalrevisedmarker.Name = "btnAdditionalrevisedmarker";
             this.btnAdditionalrevisedmarker.Size = new System.Drawing.Size(97, 40);
             this.btnAdditionalrevisedmarker.TabIndex = 61;
@@ -1093,7 +1114,7 @@
             this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer2.Location = new System.Drawing.Point(0, 215);
+            this.splitContainer2.Location = new System.Drawing.Point(0, 243);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -1115,15 +1136,15 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.gridDistributetoSPNo);
             this.splitContainer2.Panel2.Controls.Add(this.labelDistributetoSPNo);
-            this.splitContainer2.Size = new System.Drawing.Size(377, 352);
-            this.splitContainer2.SplitterDistance = 169;
+            this.splitContainer2.Size = new System.Drawing.Size(377, 324);
+            this.splitContainer2.SplitterDistance = 155;
             this.splitContainer2.TabIndex = 0;
             // 
             // displayTime
             // 
             this.displayTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTime.Location = new System.Drawing.Point(140, 151);
+            this.displayTime.Location = new System.Drawing.Point(139, 122);
             this.displayTime.Name = "displayTime";
             this.displayTime.Size = new System.Drawing.Size(225, 23);
             this.displayTime.TabIndex = 64;
@@ -1133,7 +1154,7 @@
             // 
             this.txtBoxMarkerNo.BackColor = System.Drawing.Color.White;
             this.txtBoxMarkerNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBoxMarkerNo.Location = new System.Drawing.Point(231, 14);
+            this.txtBoxMarkerNo.Location = new System.Drawing.Point(230, 14);
             this.txtBoxMarkerNo.Name = "txtBoxMarkerNo";
             this.txtBoxMarkerNo.Size = new System.Drawing.Size(136, 23);
             this.txtBoxMarkerNo.TabIndex = 63;
@@ -1142,7 +1163,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(141, 14);
+            this.label1.Location = new System.Drawing.Point(140, 14);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(86, 23);
             this.label1.TabIndex = 61;
@@ -1153,7 +1174,7 @@
             this.lbshc.AutoSize = true;
             this.lbshc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
             this.lbshc.ForeColor = System.Drawing.Color.Red;
-            this.lbshc.Location = new System.Drawing.Point(2, 199);
+            this.lbshc.Location = new System.Drawing.Point(2, 226);
             this.lbshc.Name = "lbshc";
             this.lbshc.Size = new System.Drawing.Size(199, 13);
             this.lbshc.TabIndex = 60;
@@ -1442,5 +1463,7 @@
         private Win.UI.Label label6;
         private Win.UI.Button btnExWip;
         private Win.UI.Button btnKHImportMarker;
+        private Win.UI.TextBox txtTone;
+        private Win.UI.Label lblTone;
     }
 }

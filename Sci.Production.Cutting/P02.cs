@@ -101,7 +101,7 @@ namespace Sci.Production.Cutting
             this.txtPatternPanel.DataBindings.Add(new Binding("Text", this.bindingSource2, "PatternPanel", true));
             this.lbshc.DataBindings.Add(new Binding("Text", this.bindingSource2, "shc", true));
             this.txtBoxMarkerNo.DataBindings.Add(new Binding("Text", this.bindingSource2, "MarkerNo", true));
-
+            this.txtTone.DataBindings.Add(new Binding("Text", this.bindingSource2, "Tone", true));
             this.sizeratioMenuStrip.Enabled = this.EditMode;
             this.distributeMenuStrip.Enabled = this.EditMode;
 
@@ -4071,7 +4071,11 @@ DEALLOCATE CURSOR_
 
         private void BtnKHImportMarker_Click(object sender, EventArgs e)
         {
-
+            DualResult result = this.ImportKHMarkerExcel();
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
         }
     }
 }
