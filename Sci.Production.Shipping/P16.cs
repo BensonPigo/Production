@@ -62,11 +62,6 @@ namespace Sci.Production.Shipping
             if (this.EditMode)
             {
                 this.chkExportChange.ReadOnly = !this.isFromProduceFty;
-                this.detailgrid.IsEditingReadOnly = false;
-                if (this.isFromProduceFty && MyUtility.Convert.GetString(this.CurrentMaintain["FtyStatus"]) == "Confirmed")
-                {
-                    this.detailgrid.IsEditingReadOnly = true;
-                }
             }
             else
             {
@@ -321,11 +316,20 @@ where ted.ID = '{0}'", masterID);
             }
 
             // 只有 isProduceFty = 1 才允許編輯此欄位
-            if (this.isFromProduceFty == true)
+            if (this.isFromProduceFty)
             {
-                this.col_NW.IsEditingReadOnly = false;
-                this.col_GW.IsEditingReadOnly = false;
-                this.col_CBM.IsEditingReadOnly = false;
+                if (MyUtility.Convert.GetString(this.CurrentMaintain["FtyStatus"]) == "Confirmed")
+                {
+                    this.col_NW.IsEditingReadOnly = true;
+                    this.col_GW.IsEditingReadOnly = true;
+                    this.col_CBM.IsEditingReadOnly = true;
+                }
+                else
+                {
+                    this.col_NW.IsEditingReadOnly = false;
+                    this.col_GW.IsEditingReadOnly = false;
+                    this.col_CBM.IsEditingReadOnly = false;
+                }
             }
             else
             {
