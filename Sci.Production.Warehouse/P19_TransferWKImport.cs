@@ -94,6 +94,7 @@ namespace Sci.Production.Warehouse
                 .Text("StockTypeDesc", header: "Stock Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("StockBalance", header: "Stock Balance", decimal_places: 2, width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("TransferQty", header: "Transfer Qty", decimal_places: 2, width: Widths.AnsiChars(5), settings: settingTransferQty)
+                .Text("Tone", header: "Tone", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Location", header: "Location", width: Widths.AnsiChars(15), iseditingreadonly: true);
         }
 
@@ -131,13 +132,23 @@ select  ted.InventoryPOID,
         ted.Seq2,
         te.ID,
         ted.Ukey,
-        [Description] = dbo.getMtlDesc(ted.InventoryPOID, ted.InventorySeq1, ted.InventorySeq2, 2, 0)
+        [Description] = dbo.getMtlDesc(ted.InventoryPOID, ted.InventorySeq1, ted.InventorySeq2, 2, 0),
+        Tone
 into #tmpTransferExport
 from    TransferExport te with (nolock)
 inner   join TransferExport_Detail ted with (nolock) on te.ID = ted.ID
 left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID and 
 													ted.InventorySeq1 = psdInv.SEQ1 and
 													ted.InventorySeq2 = psdinv.SEQ2
+outer apply(
+    select Tone = MAX(fs.Tone)
+    from dbo.FtyInventory fi WITH (NOLOCK)
+    Left join FIR f with (nolock) on  f.poid = fi.poid and f.seq1 = fi.seq1 and f.seq2 = fi.seq2
+    Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
+    where fi.POID = ted.InventoryPOID 
+    and fi.seq1 = ted.Inventoryseq1 
+    and fi.seq2 = ted.InventorySEQ2
+)Tone
 where   te.ID = @ID and
         te.FtyStatus = 'New' and
         te.Sent = 1 and
@@ -173,7 +184,8 @@ select  [select] = 0,
         te.StockUnit,
         te.Description,
         [TransferExportID] = te.ID,
-        [TransferExport_DetailUkey] = te.Ukey
+        [TransferExport_DetailUkey] = te.Ukey,
+        Tone
 from  #tmpTransferExport te with (nolock)
 inner join FtyInventory fi on te.InventoryPOID = fi.POID and
                               te.InventorySeq1 = fi.Seq1 and
@@ -201,7 +213,8 @@ select  [select] = 0,
         te.StockUnit,
         te.Description,
         [TransferExportID] = te.ID,
-        [TransferExport_DetailUkey] = te.Ukey
+        [TransferExport_DetailUkey] = te.Ukey,
+        Tone
 from    #tmpTransferExport te with (nolock)
 
 
@@ -329,6 +342,7 @@ drop table #tmpTransferExport
                 newRow["Location"] = importItem["Location"];
                 newRow["StockUnit"] = importItem["StockUnit"];
                 newRow["Description"] = importItem["Description"];
+                newRow["Tone"] = importItem["Tone"];
                 this.mainDetail.Rows.Add(newRow);
             }
 

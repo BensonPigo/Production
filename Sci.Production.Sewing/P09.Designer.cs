@@ -46,6 +46,11 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.label1 = new Sci.Win.UI.Label();
             this.gridDetail = new Sci.Win.UI.Grid();
+            this.btnExcel = new Sci.Win.UI.Button();
+            this.label4 = new Sci.Win.UI.Label();
+            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
+            this.label5 = new Sci.Win.UI.Label();
+            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.panel1.SuspendLayout();
@@ -66,7 +71,7 @@
             this.lbScanDate.Location = new System.Drawing.Point(9, 14);
             this.lbScanDate.Name = "lbScanDate";
             this.lbScanDate.Size = new System.Drawing.Size(93, 23);
-            this.lbScanDate.TabIndex = 1;
+            this.lbScanDate.TabIndex = 7;
             this.lbScanDate.Text = "Scan Date";
             // 
             // label2
@@ -74,7 +79,7 @@
             this.label2.Location = new System.Drawing.Point(9, 51);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(93, 23);
-            this.label2.TabIndex = 2;
+            this.label2.TabIndex = 10;
             this.label2.Text = "Pack ID";
             // 
             // label3
@@ -82,7 +87,7 @@
             this.label3.Location = new System.Drawing.Point(390, 51);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 3;
+            this.label3.TabIndex = 11;
             this.label3.Text = "SP#";
             // 
             // txtPackID
@@ -102,12 +107,12 @@
             this.txtsp.IsSupportEditMode = false;
             this.txtsp.Location = new System.Drawing.Point(468, 51);
             this.txtsp.Name = "txtsp";
-            this.txtsp.Size = new System.Drawing.Size(147, 23);
+            this.txtsp.Size = new System.Drawing.Size(166, 23);
             this.txtsp.TabIndex = 4;
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(684, 14);
+            this.btnQuery.Location = new System.Drawing.Point(656, 14);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 5;
@@ -135,7 +140,7 @@
             this.dateTransfer.Location = new System.Drawing.Point(107, 14);
             this.dateTransfer.Name = "dateTransfer";
             this.dateTransfer.Size = new System.Drawing.Size(280, 23);
-            this.dateTransfer.TabIndex = 10;
+            this.dateTransfer.TabIndex = 0;
             // 
             // lbPackIDmsg
             // 
@@ -144,11 +149,16 @@
             this.lbPackIDmsg.Location = new System.Drawing.Point(12, 79);
             this.lbPackIDmsg.Name = "lbPackIDmsg";
             this.lbPackIDmsg.Size = new System.Drawing.Size(438, 17);
-            this.lbPackIDmsg.TabIndex = 11;
+            this.lbPackIDmsg.TabIndex = 12;
             this.lbPackIDmsg.Text = "The Qty here is by pieces instead of complete set on below function.";
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.txtfactory1);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.txtMdivision1);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.btnExcel);
             this.panel1.Controls.Add(this.labelmetal);
             this.panel1.Controls.Add(this.lbScanDate);
             this.panel1.Controls.Add(this.label2);
@@ -161,7 +171,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(813, 135);
+            this.panel1.Size = new System.Drawing.Size(834, 135);
             this.panel1.TabIndex = 12;
             // 
             // labelmetal
@@ -186,7 +196,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(813, 393);
+            this.splitContainer1.Size = new System.Drawing.Size(834, 393);
             this.splitContainer1.SplitterDistance = 206;
             this.splitContainer1.TabIndex = 13;
             // 
@@ -211,7 +221,7 @@
             this.gridMain.RowTemplate.Height = 24;
             this.gridMain.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridMain.ShowCellToolTips = false;
-            this.gridMain.Size = new System.Drawing.Size(813, 206);
+            this.gridMain.Size = new System.Drawing.Size(834, 206);
             this.gridMain.TabIndex = 0;
             this.gridMain.TabStop = false;
             // 
@@ -229,7 +239,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.gridDetail);
-            this.splitContainer2.Size = new System.Drawing.Size(813, 183);
+            this.splitContainer2.Size = new System.Drawing.Size(834, 183);
             this.splitContainer2.SplitterDistance = 33;
             this.splitContainer2.TabIndex = 6;
             // 
@@ -262,13 +272,62 @@
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDetail.ShowCellToolTips = false;
-            this.gridDetail.Size = new System.Drawing.Size(813, 146);
+            this.gridDetail.Size = new System.Drawing.Size(834, 146);
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
             // 
+            // btnExcel
+            // 
+            this.btnExcel.Location = new System.Drawing.Point(740, 14);
+            this.btnExcel.Name = "btnExcel";
+            this.btnExcel.Size = new System.Drawing.Size(80, 30);
+            this.btnExcel.TabIndex = 6;
+            this.btnExcel.Text = "Excel";
+            this.btnExcel.UseVisualStyleBackColor = true;
+            this.btnExcel.Click += new System.EventHandler(this.btnExcel_Click);
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(390, 14);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(46, 23);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "M";
+            // 
+            // txtMdivision1
+            // 
+            this.txtMdivision1.BackColor = System.Drawing.Color.White;
+            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision1.Location = new System.Drawing.Point(439, 14);
+            this.txtMdivision1.Name = "txtMdivision1";
+            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision1.TabIndex = 1;
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(508, 14);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(57, 23);
+            this.label5.TabIndex = 9;
+            this.label5.Text = "Factory";
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.BoolFtyGroupList = true;
+            this.txtfactory1.FilteMDivision = false;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IsProduceFty = false;
+            this.txtfactory1.IssupportJunk = false;
+            this.txtfactory1.Location = new System.Drawing.Point(568, 14);
+            this.txtfactory1.MDivision = null;
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 2;
+            // 
             // P09
             // 
-            this.ClientSize = new System.Drawing.Size(813, 528);
+            this.ClientSize = new System.Drawing.Size(834, 528);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.panel1);
             this.Name = "P09";
@@ -313,5 +372,10 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private Win.UI.Label label1;
         private Win.UI.Grid gridDetail;
+        private Class.Txtfactory txtfactory1;
+        private Win.UI.Label label5;
+        private Class.TxtMdivision txtMdivision1;
+        private Win.UI.Label label4;
+        private Win.UI.Button btnExcel;
     }
 }
