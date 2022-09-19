@@ -1,7 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Production.Automation;
 using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg;
 using Sci.Production.Prg.Entity;
@@ -144,9 +143,8 @@ namespace Sci.Production.Warehouse
 
             this.Helper.Controls.Grid.Generator(this.gridReceiving)
                  .CheckBox("select", header: string.Empty, trueValue: 1, falseValue: 0, settings: col_Select)
+                 .Text("ID", header: "Receiving ID", width: Widths.AnsiChars(14), iseditingreadonly: true)
                  .Text("ExportID", header: "WK#", width: Widths.AnsiChars(14), iseditingreadonly: true)
-
-                 // .Text("ID", header: "Receiving ID", width: Widths.AnsiChars(14), iseditingreadonly: true)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("Seq", header: "Seq", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
