@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -272,16 +273,23 @@ AW:{printItem["ActualWeight"]}KG";
 
                 // 產生的Word檔不可編輯
                 winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyReading);
+                document.ReadOnlyRecommended = true;
                 winword.Visible = true;
+                if (form == "P21")
+                {
+                    winword.DisplayAlerts = Word.WdAlertLevel.wdAlertsNone;
+                    winword.Dialogs[Word.WdWordDialog.wdDialogFilePrint].Show();
+                    document.Close(SaveChanges: false);
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 if (winword != null)
                 {
                     winword.Quit();
                 }
 
-                MyUtility.Msg.WarningBox("Export Word error.");
+                MyUtility.Msg.WarningBox("Export Word error."+ex.ToString());
             }
             finally
             {
