@@ -1654,7 +1654,7 @@ select  s.SewingLineID
 	inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID
     inner join Style st with (nolock) on st.Ukey = o.StyleUkey
 	inner join SewingSchedule_Detail sd WITH (NOLOCK) on s.ID=sd.ID 
-	left join Order_SizeCode oz  WITH (NOLOCK) on oz.ID =  o.ID AND oz.SizeCode=sd.SizeCode
+	left join Order_SizeCode oz  WITH (NOLOCK) on oz.ID =  o.POID AND oz.SizeCode=sd.SizeCode
     left join Country c WITH (NOLOCK) on o.Dest = c.ID 
     left join cutting on cutting.ID =o.CuttingSP 
 	OUTER APPLY(	
