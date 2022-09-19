@@ -20,7 +20,7 @@ Begin
 	BEGIN
 		CREATE TABLE [dbo].[TransferLocation](
 		[ID] [bigint] NOT NULL,
-		[SCICtnNo] [varchar](15) NOT NULL,
+		[SCICtnNo] [varchar](16) NOT NULL,
 		[CustCTN] [varchar](30) NOT NULL,
 		[GW] [numeric](7, 3) NULL,
 		[ClogLocationId] nvarchar(50) NULL,
@@ -43,7 +43,7 @@ UpdLocation : Clog 儲位調整', N'SCHEMA', N'dbo', N'TABLE', N'TransferLocatio
 	BEGIN
 		CREATE TABLE [dbo].[MiniToPallet](
 		[ID] [bigint] NOT NULL,
-		[SCICtnNo] [varchar](15) NOT NULL,
+		[SCICtnNo] [varchar](16) NOT NULL,
 		[CustCTN] [varchar](30) NOT NULL,
 		[ClogLocationId] nvarchar(50) NOT NULL,
 		[Pallet] [nvarchar](50) NULL,
@@ -61,7 +61,7 @@ UpdLocation : Clog 儲位調整', N'SCHEMA', N'dbo', N'TABLE', N'TransferLocatio
 	BEGIN
 		CREATE TABLE [dbo].[CompleteClogReturn](
 		[ID] [bigint] not null,
-		[SCICtnNo] varchar(15) NOT NULL DEFAULT (('')),
+		[SCICtnNo] varchar(16) NOT NULL DEFAULT (('')),
 		[Time] [datetime] NOT NULL,
 		[SCIUpdate] [bit] NOT NULL DEFAULT ((0)),
 	 CONSTRAINT [PK_CompleteClogReturn] PRIMARY KEY CLUSTERED 
@@ -77,7 +77,7 @@ UpdLocation : Clog 儲位調整', N'SCHEMA', N'dbo', N'TABLE', N'TransferLocatio
 	BEGIN
 		CREATE TABLE [dbo].[CompleteTransferToCFA](
 		[ID] [bigint] not null,
-		[SCICtnNo] varchar(15) NOT NULL DEFAULT (('')),
+		[SCICtnNo] varchar(16) NOT NULL DEFAULT (('')),
 		[Time] [datetime] NOT NULL,
 		[SCIUpdate] [bit] NOT NULL DEFAULT ((0)),
 	 CONSTRAINT [PK_CompleteTransferToCFA] PRIMARY KEY CLUSTERED 
@@ -93,7 +93,7 @@ UpdLocation : Clog 儲位調整', N'SCHEMA', N'dbo', N'TABLE', N'TransferLocatio
 	BEGIN
 		CREATE TABLE [dbo].[CompletePullout](
 		[ID] [bigint] NOT NULL,
-		[SCICtnNo] [varchar](15) NOT NULL,
+		[SCICtnNo] [varchar](16) NOT NULL,
 		[CustCTN] [varchar](30) NOT NULL,
 		[Pulloutscanname] [varchar](10) NOT NULL,
 		[Pulloutscandate] [datetime] NOT NULL,
@@ -112,7 +112,7 @@ UpdLocation : Clog 儲位調整', N'SCHEMA', N'dbo', N'TABLE', N'TransferLocatio
 	BEGIN 
 		CREATE TABLE [dbo].[CompleteSacnPack] (
 			ID				bigint NOT NULL,
-			SCICtnNo		varchar(15) NOT NULL,
+			SCICtnNo		varchar(16) NOT NULL,
 			Article			varchar(8) NOT NULL,
 			SizeCode		varchar(8) NOT NULL,
 			ScanQty			smallint NOT NULL,
@@ -141,7 +141,7 @@ UpdLocation : Clog 儲位調整', N'SCHEMA', N'dbo', N'TABLE', N'TransferLocatio
 	BEGIN
 		CREATE TABLE [dbo].[CompleteCFAReceive](
 		[ID] [bigint] NOT NULL,
-		[SCICtnNo] [varchar](15) NOT NULL,
+		[SCICtnNo] [varchar](16) NOT NULL,
 		[Time] [datetime] NULL,
 		[SCIUpdate] [bit] NOT NULL DEFAULT ((0)),
 	 CONSTRAINT [PK_CompleteCFAReceive] PRIMARY KEY CLUSTERED 
@@ -159,7 +159,7 @@ UpdLocation : Clog 儲位調整', N'SCHEMA', N'dbo', N'TABLE', N'TransferLocatio
 	BEGIN
 		CREATE TABLE [dbo].CompleteCFAReturn(
 		[ID] [bigint] NOT NULL,
-		[SCICtnNo] [varchar](15) NOT NULL,
+		[SCICtnNo] [varchar](16) NOT NULL,
 		[Time] [datetime] NULL,
 		[SCIUpdate] [bit] NOT NULL DEFAULT ((0)),
 	 CONSTRAINT [PK_CompleteCFAReturn] PRIMARY KEY CLUSTERED 
