@@ -155,8 +155,8 @@ Begin try
 
 		/*****************************  Bundle_Detail  ************************************/
 		Begin
-			insert into Bundle_Detail_History([BundleNo], [Id], [BundleGroup], [Patterncode], [PatternDesc], [SizeCode], [Qty], [Parts], [Farmin], [FarmOut], [PrintDate], [IsPair], [Location], [RFUID], [Tone], [RFPrintDate], [PrintGroup], [RFIDScan])
-			select [BundleNo], [Id], [BundleGroup], [Patterncode], [PatternDesc], [SizeCode], [Qty], [Parts], [Farmin], [FarmOut], [PrintDate], [IsPair], [Location], [RFUID], [Tone], [RFPrintDate], [PrintGroup], [RFIDScan]
+			insert into Bundle_Detail_History([BundleNo], [Id], [BundleGroup], [Patterncode], [PatternDesc], [SizeCode], [Qty], [Parts], [Farmin], [FarmOut], [PrintDate], [IsPair], [Location], [RFUID], [Tone], [RFPrintDate], [PrintGroup], [RFIDScan],[Dyelot])
+			select [BundleNo], [Id], [BundleGroup], [Patterncode], [PatternDesc], [SizeCode], [Qty], [Parts], [Farmin], [FarmOut], [PrintDate], [IsPair], [Location], [RFUID], [Tone], [RFPrintDate], [PrintGroup], [RFIDScan],[Dyelot]
 			from #tmp_Bundle_Detail 
 
 			delete from bd

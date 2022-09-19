@@ -10,8 +10,6 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -473,6 +471,34 @@ drop table #tmp,#tmp2";
                 dr.EndEdit();
                 this.CalsumQty();
             };
+
+            DataGridViewGeneratorTextColumnSettings dyelot = new DataGridViewGeneratorTextColumnSettings();
+            dyelot.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1 || e.Button != MouseButtons.Right)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid_qty.GetDataRow(e.RowIndex);
+                string sqlcmd = $@"
+SELECT distinct Dyelot
+FROM ftyinventory  f
+inner join PO_Supp_Detail psd on f.POID=psd.ID  and f.Seq1 =psd.SEQ1 and f.Seq2 =psd.SEQ2 and f.StockType ='B'
+where 1=1
+and POID = '{this.maindatarow["POID"]}'
+and psd.Refno = (select top 1 wo.Refno from WorkOrder wo where wo.CutRef='{this.maindatarow["Cutref"]}' and wo.MDivisionId = '{this.maindatarow["mDivisionid"]}')
+";
+                SelectItem sele = new SelectItem(sqlcmd, "50", dr["Dyelot"].ToString()) { Width = 333 };
+                DialogResult result = sele.ShowDialog();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                e.EditingControl.Text = sele.GetSelectedString();
+                dr.EndEdit();
+            };
             #endregion
 
             #region 左下grid
@@ -830,9 +856,12 @@ drop table #tmp,#tmp2";
             this.Helper.Controls.Grid.Generator(this.grid_qty)
             .Numeric("No", header: "No", width: Widths.AnsiChars(4), integer_places: 5, settings: noCell)
             .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(7), integer_places: 5, settings: qtyCell);
+            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(7), integer_places: 5, settings: qtyCell)
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(20), settings: dyelot)
+            ;
             this.grid_qty.Columns["No"].DefaultCellStyle.BackColor = Color.Pink;
             this.grid_qty.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid_qty.Columns["Dyelot"].DefaultCellStyle.BackColor = Color.Pink;
 
             // 左下
             this.gridPattern.DataSource = this.patternTb;
@@ -1186,8 +1215,8 @@ drop table #tmp,#tmp2";
 
         private void NumNoOfBundle_Validating(object sender, CancelEventArgs e)
         {
-            int newvalue = (int)this.numNoOfBundle.Value;
-            int oldvalue = (int)this.numNoOfBundle.OldValue;
+            int newvalue = MyUtility.Convert.GetInt(this.numNoOfBundle.Value);
+            int oldvalue = MyUtility.Convert.GetInt(this.numNoOfBundle.OldValue);
             if (newvalue == oldvalue)
             {
                 return;
@@ -1459,6 +1488,7 @@ drop table #tmp,#tmp2";
                         nDetail["Parts"] = dr2["Parts"];
                         nDetail["Qty"] = dr["Qty"];
                         nDetail["SizeCode"] = dr["SizeCode"];
+                        nDetail["Dyelot"] = dr["Dyelot"];
                         nDetail["bundlegroup"] = bundlegroup;
                         nDetail["printGroup"] = printGroup;
                         nDetail["CombineSubprocessGroup"] = dr2["CombineSubprocessGroup"];
@@ -1523,6 +1553,7 @@ drop table #tmp,#tmp2";
                     dr["Parts"] = tmpdr["Parts"];
                     dr["Qty"] = tmpdr["Qty"];
                     dr["SizeCode"] = tmpdr["SizeCode"];
+                    dr["Dyelot"] = tmpdr["Dyelot"];
                     dr["ukey1"] = tmpdr["ukey1"];
                     dr["isPair"] = tmpdr["isPair"];
                     dr["RFIDScan"] = tmpdr["RFIDScan"];
@@ -1658,6 +1689,7 @@ drop table #tmp,#tmp2";
                     ndr["Parts"] = tmpdr["Parts"];
                     ndr["Qty"] = tmpdr["Qty"];
                     ndr["SizeCode"] = tmpdr["SizeCode"];
+                    ndr["Dyelot"] = tmpdr["Dyelot"];
                     ndr["ukey1"] = tmpdr["ukey1"];
                     ndr["isPair"] = tmpdr["isPair"];
                     ndr["RFIDScan"] = tmpdr["RFIDScan"];
@@ -1757,7 +1789,7 @@ drop table #tmp,#tmp2";
                         DataTable dtMax = this.bundle_Detail_T.Copy();
                         dtMax.AcceptChanges();
                         DataView view = new DataView(dtMax);
-                        DataTable dtAllPart = view.ToTable(true, "BundleGroup", "printGroup", "SizeCode", "qty");
+                        DataTable dtAllPart = view.ToTable(true, "BundleGroup", "printGroup", "SizeCode", "qty", "Dyelot");
                         if (dtAllPart.Rows.Count > 0)
                         {
                             for (int i = 0; i < dtAllPart.Rows.Count; i++)
@@ -1769,6 +1801,7 @@ drop table #tmp,#tmp2";
                                 drAll["PatternDesc"] = "All Parts";
                                 drAll["Qty"] = dtAllPart.Rows[i]["qty"].ToString();
                                 drAll["SizeCode"] = dtAllPart.Rows[i]["SizeCode"].ToString();
+                                drAll["Dyelot"] = dtAllPart.Rows[i]["Dyelot"];
                                 drAll["parts"] = parts;
                                 drAll["BundleGroup"] = dtAllPart.Rows[i]["BundleGroup"].ToString();
                                 drAll["printGroup"] = dtAllPart.Rows[i]["printGroup"].ToString();
@@ -1779,12 +1812,13 @@ drop table #tmp,#tmp2";
                         else if (this.bundle_Detail != null && this.bundle_Detail.Rows.Count > 0)
                         {
                             DataView view2 = new DataView(this.bundle_Detail);
-                            dtAllPart = view2.ToTable(true, "BundleGroup", "printGroup", "SizeCode", "qty");
+                            dtAllPart = view2.ToTable(true, "BundleGroup", "printGroup", "SizeCode", "qty", "Dyelot");
                             DataRow drAll = this.bundle_Detail_T.NewRow();
                             drAll["PatternCode"] = "ALLPARTS";
                             drAll["PatternDesc"] = "All Parts";
                             drAll["Qty"] = dtAllPart.Rows[0]["qty"].ToString();
                             drAll["SizeCode"] = dtAllPart.Rows[0]["SizeCode"].ToString();
+                            drAll["Dyelot"] = dtAllPart.Rows[0]["Dyelot"];
                             drAll["parts"] = parts;
                             drAll["BundleGroup"] = dtAllPart.Rows[0]["BundleGroup"].ToString();
                             drAll["printGroup"] = dtAllPart.Rows[0]["printGroup"].ToString();
@@ -1894,6 +1928,9 @@ drop table #tmp,#tmp2";
                         row["Tone"] = MyUtility.Excel.ConvertNumericToExcelColumn(i + 1);
                         int notAllpart = this.patternTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().Count() - 1;
                         notAllpart = notAllpart == 0 ? 1 : notAllpart;
+
+                        // 同 Tone 中 Dyelot 多個用,合併
+                        row["Dyelot"] = this.bundle_Detail_T.Select($"Tone = '{row["Tone"]}'").AsEnumerable().Select(s => MyUtility.Convert.GetString(s["Dyelot"])).Distinct().JoinToString(",");
                         dtAllPart2.ImportRow(row);
                     }
 
