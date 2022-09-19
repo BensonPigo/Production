@@ -1,11 +1,9 @@
 ﻿using Ict;
 using Ict.Win;
-using java.awt.dnd;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 
 namespace Sci.Production.Packing
 {
@@ -19,6 +17,7 @@ namespace Sci.Production.Packing
             InitializeComponent();
 
             this.comboMDMachineID.DataSource = new List<string>();
+            this.revise.Visible = false;
         }
 
         protected override DualResult OnRequery()
@@ -195,100 +194,6 @@ Where Junk = 0
             this.Close();
         }
 
-        private void btnSubmit_Click(object sender, EventArgs e)
-        {
-            if (this.gridbs == null)
-            {
-                return;
-            }
-
-            DataTable dt = (DataTable)this.gridbs.DataSource;
-
-            if (dt.Rows.Count <= 0)
-            {
-                return;
-            }
-
-            var upd_list = dt.AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).ToList();
-            if (upd_list.Count == 0)
-            {
-                return;
-            }
-
-            string sqlcmd = string.Empty;
-
-            foreach (var item in upd_list)
-            {
-                if (MyUtility.Check.Seek($@"select 1 from MDCalibrationList where MachineID = '{item["MachineID"]}' and CalibrationDate = convert(date,getDate())"))
-                {
-                    sqlcmd += $@"
-use Production
-update MDCalibrationList
-set CalibrationTime = '{item["CalibrationTime"]}',
-Point1 = iif('{item["Point1"]}' = 'True',1,0)    ,
-Point2=  iif('{item["Point2"]}' = 'True',1,0)    ,
-Point3=  iif('{item["Point3"]}' = 'True',1,0)    ,
-Point4=  iif('{item["Point4"]}' = 'True',1,0)    ,
-Point5=  iif('{item["Point5"]}' = 'True',1,0)    ,
-Point6=  iif('{item["Point6"]}' = 'True',1,0)    ,
-Point7=  iif('{item["Point7"]}' = 'True',1,0)    ,
-Point8=  iif('{item["Point8"]}' = 'True',1,0)    ,
-Point9=  iif('{item["Point9"]}' = 'True',1,0)    ,
-SubmitDate = GETDATE(),
-Operator = '{Env.User.UserID}'
-where MachineID = '{item["MachineID"]}' 
-and CalibrationDate = convert(date,getDate())
-" + Environment.NewLine;
-                }
-                else
-                {
-                    sqlcmd += $@"
-insert into MDCalibrationList
-(
-MachineID,
-CalibrationTime,
-Point1,
-Point2,
-Point3,
-Point4,
-Point5,
-Point6,
-Point7,
-Point8,
-Point9,
-CalibrationDate,
-SubmitDate,
-Operator
-)values
-(
-'{item["MachineID"]}',
- '{item["CalibrationTime"]}',
-iif('{item["Point1"]}' = 'True',1,0),
-iif('{item["Point2"]}' = 'True',1,0),
-iif('{item["Point3"]}' = 'True',1,0),
-iif('{item["Point4"]}' = 'True',1,0),
-iif('{item["Point5"]}' = 'True',1,0),
-iif('{item["Point6"]}' = 'True',1,0),
-iif('{item["Point7"]}' = 'True',1,0),
-iif('{item["Point8"]}' = 'True',1,0),
-iif('{item["Point9"]}' = 'True',1,0),
-convert(date,getDate()),
-getdate(),
-'{Env.User.UserID}')
-" + Environment.NewLine;
-                }
-            }
-
-            DualResult result;
-            if (!(result = DBProxy.Current.Execute("Production", sqlcmd)))
-            {
-                this.ShowErr(result);
-                return;
-            }
-
-            // 其他事件
-        }
-
         protected override void OnSaveAfter()
         {
             base.OnSaveAfter();
@@ -315,6 +220,11 @@ order by CalibrationTime desc
                     callForm.ShowDialog(this);
                 }
             }
+        }
+
+        private void save_Click(object sender, EventArgs e)
+        {
+            this.revise.Visible = false;
         }
     }
 }

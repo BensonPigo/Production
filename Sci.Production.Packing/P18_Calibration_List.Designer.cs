@@ -53,6 +53,11 @@
             this.gridcont.Location = new System.Drawing.Point(12, 59);
             this.gridcont.Size = new System.Drawing.Size(781, 418);
             // 
+            // revise
+            // 
+            this.revise.Enabled = false;
+            this.revise.Visible = false;
+            // 
             // undo
             // 
             this.undo.Dock = System.Windows.Forms.DockStyle.None;
@@ -65,6 +70,7 @@
             this.save.Dock = System.Windows.Forms.DockStyle.None;
             this.save.Location = new System.Drawing.Point(635, 5);
             this.save.Size = new System.Drawing.Size(72, 30);
+            this.save.Click += new System.EventHandler(this.save_Click);
             // 
             // labMDMachine
             // 
