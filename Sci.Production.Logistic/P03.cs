@@ -784,13 +784,6 @@ set TransferDate = null
 , ActCTNWeight = null
 , DRYReceiveDate  = null
 , DRYTransferDate = null
-, HaulingDate = null
-, PackingAuditDate = null
-, PackingAuditStatus = ''
-, MDScanDate = null
-, MDFailQty = 0
-, MDScanName = ''
-, MDStatus = ''
 from PackingList_Detail pd
 inner join #tmp t on pd.ID = t.PackingListID and pd.CTNStartNo = t.CTNStartNo 
 where pd.DisposeFromClog= 0 ;
