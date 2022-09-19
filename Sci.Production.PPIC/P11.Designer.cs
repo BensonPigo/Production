@@ -532,6 +532,7 @@
             this.txtLocalSupp1.IsFactory = false;
             this.txtLocalSupp1.IsMisc = false;
             this.txtLocalSupp1.IsMiscOverseas = false;
+            this.txtLocalSupp1.IsSintexSubcon = false;
             this.txtLocalSupp1.Location = new System.Drawing.Point(103, 113);
             this.txtLocalSupp1.Name = "txtLocalSupp1";
             this.txtLocalSupp1.Size = new System.Drawing.Size(252, 23);
