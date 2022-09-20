@@ -52,6 +52,7 @@ namespace Sci.Production.Cutting
                         ndr["cutref"] = dr["Cutref"];
                         ndr["Cuttingid"] = dr["Cuttingid"];
                         ndr["OrderID"] = dr["Orderid"];
+                        ndr["StyleID"] = dr["StyleID"];
                         ndr["FabricCombo"] = dr["FabricCombo"];
                         ndr["FabricPanelCode"] = dr["FabricPanelCode"];
                         ndr["Cutno"] = dr["cutno"];
@@ -74,6 +75,7 @@ namespace Sci.Production.Cutting
                         exist[0]["cutref"] = dr["Cutref"];
                         exist[0]["Cuttingid"] = dr["Cuttingid"];
                         exist[0]["OrderID"] = dr["Orderid"];
+                        exist[0]["StyleID"] = dr["StyleID"];
                         exist[0]["FabricCombo"] = dr["FabricCombo"];
                         exist[0]["FabricPanelCode"] = dr["FabricPanelCode"];
                         exist[0]["Cutno"] = dr["cutno"];
@@ -242,8 +244,10 @@ select 0 as sel,
                     else cl.CuttingLayer
                     end,
 	LackingLayers =  wo.Layer - isnull(acc.AccuCuttingLayer,0) - final.CuttingLayer,
-    SRQ.SizeRatioQty
+    SRQ.SizeRatioQty,
+    o.StyleID
 from WorkOrder WO WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on o.ID = WO.ID 
 left join #AccuCuttingLayer acc on wo.Ukey = acc.WorkOrderUkey
 outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b WITH (NOLOCK)  where b.WorkOrderUkey = wo.Ukey)SRQ
 outer apply(
@@ -266,7 +270,7 @@ outer apply(select CuttingLayer = case when cl.CuttingLayer > WO.Layer - isnull(
                     when cl.CuttingLayer < 0 then 0
                     else cl.CuttingLayer
                     end) final
-where mDivisionid = '{0}' 
+where WO.mDivisionid = '{0}' 
 and wo.Layer >  isnull(acc.AccuCuttingLayer,0)
 and WO.CutRef != ''
 and WO.ukey not in ( {1} )   

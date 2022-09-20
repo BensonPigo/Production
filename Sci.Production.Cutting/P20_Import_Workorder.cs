@@ -152,8 +152,10 @@ Select sel = 0,
 	AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0),
 	CuttingLayer = final.CuttingLayer,
 	LackingLayers =  a.Layer - isnull(acc.AccuCuttingLayer,0) - final.CuttingLayer,
-    SRQ.SizeRatioQty
+    SRQ.SizeRatioQty,
+    o.StyleID
 from WorkOrder a WITH (NOLOCK)
+left join Orders o WITH (NOLOCK) on o.ID = a.ID 
 outer apply(select AccuCuttingLayer = sum(b.Layer) from cuttingoutput_Detail b where b.WorkOrderUkey = a.Ukey)acc
 outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b where b.WorkOrderUkey = a.Ukey)SRQ
 outer apply(
@@ -176,7 +178,7 @@ outer apply(select CuttingLayer = case when cl.CuttingLayer > a.Layer - isnull(a
                     when cl.CuttingLayer < 0 then 0
                     else cl.CuttingLayer
                     end) final
-where mDivisionid = '{0}'
+where a.mDivisionid = '{0}'
 and a.Layer > isnull(acc.AccuCuttingLayer,0)
 and CutRef != ''
 and a.ukey not in ( {1} ) ",
@@ -244,6 +246,7 @@ and a.ukey not in ( {1} ) ",
                         ndr["cutref"] = dr["Cutref"];
                         ndr["Cuttingid"] = dr["Cuttingid"];
                         ndr["OrderID"] = dr["Orderid"];
+                        ndr["StyleID"] = dr["StyleID"];
                         ndr["FabricCombo"] = dr["FabricCombo"];
                         ndr["FabricPanelCode"] = dr["FabricPanelCode"];
                         ndr["Cutno"] = dr["cutno"];
@@ -266,6 +269,7 @@ and a.ukey not in ( {1} ) ",
                         exist[0]["cutref"] = dr["Cutref"];
                         exist[0]["Cuttingid"] = dr["Cuttingid"];
                         exist[0]["OrderID"] = dr["Orderid"];
+                        exist[0]["StyleID"] = dr["StyleID"];
                         exist[0]["FabricCombo"] = dr["FabricCombo"];
                         exist[0]["FabricPanelCode"] = dr["FabricPanelCode"];
                         exist[0]["Cutno"] = dr["cutno"];
