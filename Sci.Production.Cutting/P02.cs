@@ -4075,7 +4075,11 @@ DEALLOCATE CURSOR_
             if (!result)
             {
                 this.ShowErr(result);
+                return;
             }
+
+            this.OnRefreshClick();
+            MyUtility.Msg.InfoBox("Import complete");
         }
     }
 }

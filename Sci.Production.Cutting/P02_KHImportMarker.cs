@@ -99,11 +99,13 @@ namespace Sci.Production.Cutting
 
                     transactionScope.Complete();
                     transactionScope.Dispose();
+                    Marshal.ReleaseComObject(excel);
                 }
                 catch (Exception ex)
                 {
                     this.HideWaitMessage();
                     transactionScope.Dispose();
+                    Marshal.ReleaseComObject(excel);
                     return new DualResult(false, ex);
                 }
             }
@@ -174,7 +176,7 @@ select top 1	oc.PatternPanel,
 				[CuttingLayer] = iif(isnull(c.CuttingLayer, 100) = 0, 100, isnull(c.CuttingLayer, 100))
 from Order_ColorCombo oc with (nolock)
 inner join Order_BOF ob with (nolock) on ob.Id = oc.id and ob.FabricCode = oc.FabricCode
-inner join PO_Supp_Detail psd with (nolock) on psd.ID = oc.Id and psd.SCIRefno = ob.SCIRefno and psd.ColorID = oc.ColorID
+inner join PO_Supp_Detail psd with (nolock) on psd.ID = oc.Id and psd.SCIRefno = ob.SCIRefno
 inner join Fabric f with(nolock) ON ob.SCIRefno=f.SCIRefno
 left join Construction c on c.Id = f.ConstructionID and c.Junk = 0
 where oc.ID = '{poID}' and oc.FabricPanelCode = '{drWorkOrder["FabricPanelCode"]}' and oc.ColorID = '{drWorkOrder["Colorid"]}'
@@ -330,7 +332,7 @@ values
 ,@Cons --Cons
 ,'{drWorkOrder["Refno"]}'
 ,'{drWorkOrder["SCIRefno"]}'
-,''
+,'001'
 ,-1
 ,'1'
 ,'{Env.User.UserID}'
@@ -351,7 +353,7 @@ values
 
 select [WorkOrderUkey] = @@IDENTITY
 ";
-                DualResult result = DBProxy.Current.SelectByConn(sqlConnection, sqlInsertWorkOrder, out DataTable dtResult);
+                DualResult result = DBProxy.Current.SelectByConn(sqlConnection, sqlInsertWorkOrder, sqlParameters, out DataTable dtResult);
 
                 if (!result)
                 {
@@ -392,25 +394,30 @@ order by ukey
 select * from #tmpCutting
 
 
-select oq.ID, oq.Article, oq.SizeCode, [Qty] = isnull(oq.Qty, 0), oc.ColorID, oc.PatternPanel, o.SewInLine
+select oq.ID, oq.Article, oq.SizeCode, [Qty] = Cast(isnull(oq.Qty, 0) as int), oc.ColorID, oc.PatternPanel, o.SewInLine
 from Orders o with (nolock)
 inner join Order_Qty oq with (nolock) on oq.ID = o.ID
-inner join Order_ColorCombo oc with (nolock) on oc.Id = o.POID and oc.Article = oq.Article and oc.FabricType = 'F' and oc.ColorID = 'PELT'
+inner join Order_ColorCombo oc with (nolock) on oc.Id = o.POID and oc.Article = oq.Article
 where   o.POID = '{this.CurrentMaintain["ID"]}'
 order by o.SewInLine, oq.ID
 
 
 ";
-
+            DualResult result = new DualResult(true);
             DataTable[] dtResults;
-            DBProxy.Current.SelectByConn(sqlConnection, sqlInsertWorkOrder_Distribute, out dtResults);
+            result = DBProxy.Current.SelectByConn(sqlConnection, sqlInsertWorkOrder_Distribute, out dtResults);
+            if (!result)
+            {
+                return result;
+            }
+
             DataTable dtWorkOrderDistribute = dtResults[0];
             DataTable dtOrderQty = dtResults[1];
             string sqlInsertWorkOrderDistribute = string.Empty;
-            DualResult result = new DualResult(true);
+
             foreach (DataRow itemDistribute in dtWorkOrderDistribute.Rows)
             {
-                if ((int)itemDistribute["CutQty"] == 0)
+                if (MyUtility.Convert.GetInt(itemDistribute["CutQty"]) == 0)
                 {
                     continue;
                 }
@@ -426,13 +433,13 @@ Qty > 0
                 foreach (DataRow drDistributeOrderQty in arrayDistributeOrderQty)
                 {
                     int distributrQty = 0;
-                    if ((int)itemDistribute["CutQty"] >= (int)drDistributeOrderQty["Qty"])
+                    if (MyUtility.Convert.GetInt(itemDistribute["CutQty"]) >= MyUtility.Convert.GetInt(drDistributeOrderQty["Qty"]))
                     {
-                        distributrQty = (int)drDistributeOrderQty["Qty"];
+                        distributrQty = MyUtility.Convert.GetInt(drDistributeOrderQty["Qty"]);
                     }
                     else
                     {
-                        distributrQty = (int)itemDistribute["CutQty"];
+                        distributrQty = MyUtility.Convert.GetInt(itemDistribute["CutQty"]);
                     }
 
                     // 表示workOrder size數已經分配完
@@ -441,8 +448,8 @@ Qty > 0
                         break;
                     }
 
-                    itemDistribute["CutQty"] = (int)itemDistribute["CutQty"] - distributrQty;
-                    drDistributeOrderQty["Qty"] = (int)drDistributeOrderQty["Qty"] - distributrQty;
+                    itemDistribute["CutQty"] = MyUtility.Convert.GetInt(itemDistribute["CutQty"]) - distributrQty;
+                    drDistributeOrderQty["Qty"] = MyUtility.Convert.GetInt(drDistributeOrderQty["Qty"]) - distributrQty;
 
                     sqlInsertWorkOrderDistribute += $@"
 insert into WorkOrder_Distribute(WorkOrderUkey, ID, OrderID, Article, SizeCode, Qty)
@@ -451,7 +458,7 @@ values({itemDistribute["Ukey"]}, '{this.CurrentMaintain["ID"]}', '{drDistributeO
                 }
 
                 // 如果還有未分配就insert EXCESS
-                if ((int)itemDistribute["CutQty"] > 0)
+                if (MyUtility.Convert.GetInt(itemDistribute["CutQty"]) > 0)
                 {
                     sqlInsertWorkOrderDistribute += $@"
 insert into WorkOrder_Distribute(WorkOrderUkey, ID, OrderID, Article, SizeCode, Qty)
