@@ -70,6 +70,7 @@ left join Orders o with (nolock) on o.ID = pd.OrderID
 left join Country c with (nolock) on c.ID = o.Dest
 left join Pullout pu with (nolock) on pu.ID = p.PulloutID
 outer apply(
+    ----一個紙箱，可以做多次的ClogPackingError檢驗紀錄，但一定要Completed之後才能再新增新的，因此需要判斷CFMDate IS NULL
 	select top 1 *
 	from ClogPackingError cpe
 	where cpe.CFMDate IS NULL
