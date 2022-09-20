@@ -30,15 +30,19 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.lbSP = new Sci.Win.UI.Label();
+            this.lbPackID = new Sci.Win.UI.Label();
+            this.lbScanDate = new Sci.Win.UI.Label();
             this.buttonFindNow = new Sci.Win.UI.Button();
             this.dateScanDate = new Sci.Win.UI.DateRange();
             this.txtSP = new Sci.Win.UI.TextBox();
             this.txtPackID = new Sci.Win.UI.TextBox();
             this.grid = new Sci.Win.UI.Grid();
             this.bindingSource = new Sci.Win.UI.BindingSource(this.components);
-            this.lbSP = new Sci.Win.UI.Label();
-            this.lbPackID = new Sci.Win.UI.Label();
-            this.lbScanDate = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
+            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).BeginInit();
@@ -48,6 +52,10 @@
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.txtfactory1);
+            this.panel1.Controls.Add(this.txtMdivision1);
             this.panel1.Controls.Add(this.lbSP);
             this.panel1.Controls.Add(this.lbPackID);
             this.panel1.Controls.Add(this.lbScanDate);
@@ -57,16 +65,46 @@
             this.panel1.Controls.Add(this.txtPackID);
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(946, 64);
+            this.panel1.Size = new System.Drawing.Size(946, 71);
             this.panel1.TabIndex = 1;
+            // 
+            // lbSP
+            // 
+            this.lbSP.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.lbSP.Location = new System.Drawing.Point(244, 41);
+            this.lbSP.Name = "lbSP";
+            this.lbSP.Size = new System.Drawing.Size(75, 23);
+            this.lbSP.TabIndex = 9;
+            this.lbSP.Text = "SP#";
+            this.lbSP.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbPackID
+            // 
+            this.lbPackID.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.lbPackID.Location = new System.Drawing.Point(3, 41);
+            this.lbPackID.Name = "lbPackID";
+            this.lbPackID.Size = new System.Drawing.Size(93, 23);
+            this.lbPackID.TabIndex = 8;
+            this.lbPackID.Text = "Pack ID";
+            this.lbPackID.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbScanDate
+            // 
+            this.lbScanDate.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.lbScanDate.Location = new System.Drawing.Point(3, 6);
+            this.lbScanDate.Name = "lbScanDate";
+            this.lbScanDate.Size = new System.Drawing.Size(93, 23);
+            this.lbScanDate.TabIndex = 6;
+            this.lbScanDate.Text = "Scan Date";
+            this.lbScanDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // buttonFindNow
             // 
             this.buttonFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonFindNow.Location = new System.Drawing.Point(838, 19);
+            this.buttonFindNow.Location = new System.Drawing.Point(838, 26);
             this.buttonFindNow.Name = "buttonFindNow";
             this.buttonFindNow.Size = new System.Drawing.Size(99, 30);
-            this.buttonFindNow.TabIndex = 3;
+            this.buttonFindNow.TabIndex = 5;
             this.buttonFindNow.Text = "Find Now";
             this.buttonFindNow.UseVisualStyleBackColor = true;
             this.buttonFindNow.Click += new System.EventHandler(this.ButtonFindNow_Click);
@@ -91,7 +129,7 @@
             this.dateScanDate.Location = new System.Drawing.Point(99, 6);
             this.dateScanDate.Name = "dateScanDate";
             this.dateScanDate.Size = new System.Drawing.Size(280, 23);
-            this.dateScanDate.TabIndex = 2;
+            this.dateScanDate.TabIndex = 0;
             // 
             // txtSP
             // 
@@ -100,7 +138,7 @@
             this.txtSP.Location = new System.Drawing.Point(322, 41);
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(121, 23);
-            this.txtSP.TabIndex = 1;
+            this.txtSP.TabIndex = 3;
             // 
             // txtPackID
             // 
@@ -109,7 +147,7 @@
             this.txtPackID.Location = new System.Drawing.Point(99, 41);
             this.txtPackID.Name = "txtPackID";
             this.txtPackID.Size = new System.Drawing.Size(121, 23);
-            this.txtPackID.TabIndex = 1;
+            this.txtPackID.TabIndex = 2;
             // 
             // grid
             // 
@@ -127,45 +165,58 @@
             this.grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid.Location = new System.Drawing.Point(3, 70);
+            this.grid.Location = new System.Drawing.Point(3, 73);
             this.grid.Name = "grid";
             this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid.ShowCellToolTips = false;
-            this.grid.Size = new System.Drawing.Size(946, 481);
+            this.grid.Size = new System.Drawing.Size(946, 478);
             this.grid.TabIndex = 2;
             // 
-            // lbSP
+            // label3
             // 
-            this.lbSP.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.lbSP.Location = new System.Drawing.Point(244, 41);
-            this.lbSP.Name = "lbSP";
-            this.lbSP.Size = new System.Drawing.Size(75, 23);
-            this.lbSP.TabIndex = 6;
-            this.lbSP.Text = "SP#";
-            this.lbSP.TextStyle.Color = System.Drawing.Color.Black;
+            this.label3.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.label3.Location = new System.Drawing.Point(470, 41);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(77, 23);
+            this.label3.TabIndex = 10;
+            this.label3.Text = "Factory";
+            this.label3.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // lbPackID
+            // label2
             // 
-            this.lbPackID.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.lbPackID.Location = new System.Drawing.Point(3, 41);
-            this.lbPackID.Name = "lbPackID";
-            this.lbPackID.Size = new System.Drawing.Size(93, 23);
-            this.lbPackID.TabIndex = 5;
-            this.lbPackID.Text = "Pack ID";
-            this.lbPackID.TextStyle.Color = System.Drawing.Color.Black;
+            this.label2.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.label2.Location = new System.Drawing.Point(470, 6);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(77, 23);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "M";
+            this.label2.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // lbScanDate
+            // txtfactory1
             // 
-            this.lbScanDate.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.lbScanDate.Location = new System.Drawing.Point(3, 6);
-            this.lbScanDate.Name = "lbScanDate";
-            this.lbScanDate.Size = new System.Drawing.Size(93, 23);
-            this.lbScanDate.TabIndex = 4;
-            this.lbScanDate.Text = "Scan Date";
-            this.lbScanDate.TextStyle.Color = System.Drawing.Color.Black;
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.BoolFtyGroupList = true;
+            this.txtfactory1.FilteMDivision = false;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IsProduceFty = false;
+            this.txtfactory1.IssupportJunk = false;
+            this.txtfactory1.Location = new System.Drawing.Point(550, 41);
+            this.txtfactory1.MDivision = null;
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(121, 23);
+            this.txtfactory1.TabIndex = 4;
+            // 
+            // txtMdivision1
+            // 
+            this.txtMdivision1.BackColor = System.Drawing.Color.White;
+            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision1.Location = new System.Drawing.Point(550, 6);
+            this.txtMdivision1.Name = "txtMdivision1";
+            this.txtMdivision1.Size = new System.Drawing.Size(121, 23);
+            this.txtMdivision1.TabIndex = 1;
             // 
             // P14
             // 
@@ -200,5 +251,9 @@
         private Win.UI.Label lbSP;
         private Win.UI.Label lbPackID;
         private Win.UI.Label lbScanDate;
+        private Win.UI.Label label3;
+        private Win.UI.Label label2;
+        private Class.Txtfactory txtfactory1;
+        private Class.TxtMdivision txtMdivision1;
     }
 }
