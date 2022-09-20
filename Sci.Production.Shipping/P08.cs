@@ -1700,6 +1700,13 @@ please go to Trade/Garment Export/P04. Garment Invoice Data Iaintain to modify i
             [Field] = '[B/L(AWB) No.]',
             [Descriptions] = 'If the [B/L (AWB) No.] in FTY WK# is entered incorrectly,
 pleasse go to PMS/Shipping/P04. Raw Material Shipment Data Maintain to modify it.'
+    union all
+
+    select  [Code]='P16. ',
+            [Manual] = 'P16. Transfer Material WK',
+            [Abbr.] ='Transfer WK#',
+            [Field] = 'B/L No.'
+            [Descriptions] = 'If the [B/L No.] in Transfer WK# is entered incorrectly, please contact TPE Shipping to modify it.'
 end         
 ";
                 DataTable resultBLNoCheck;
