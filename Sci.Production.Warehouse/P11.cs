@@ -1995,6 +1995,7 @@ select  poid = b.ID
         , [Production].[dbo].getmtldesc (b.id, b.seq1, b.seq2, 2, 0)[description]
         , isnull ((a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty ),0.00) as balanceqty
         , f.MtlTypeID
+        , b.refno
 from [Production].[dbo].po_supp_detail b WITH (NOLOCK) 
 inner join [Production].[dbo].Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
 inner join [Production].[dbo].MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
@@ -2038,6 +2039,7 @@ order by b.ID, b.seq1, b.seq2", Env.User.Keyword,
                 ndr["StockUnit"] = dr["StockUnit"];
                 ndr["MtlTypeID"] = dr["MtlTypeID"];
                 ndr["Garment Size"] = dr["Garment Size"];
+                ndr["refno"] = dr["refno"];
 
                 detailDt.Rows.Add(ndr);
 
