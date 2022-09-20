@@ -56,19 +56,26 @@ select
     [ErrorType] = ce.PackingErrorID + '-'+pe.Description,
     pd.SCICtnNo,
     ShipQty=(select sum(ShipQty) from PackingList_Detail pd2 with(nolock) where pd2.id=pd.id and pd2.ctnstartno=pd.ctnstartno),
-    ErrQty = 0, --ISNULL(ce.ErrQty, 0) ,
+    ErrQty = ISNULL(ce.ErrQty, 0) ,
     ClogPackingErrorErrQty = ISNULL(ce.ErrQty, 0) ,
     o.FtyGroup,
     pd.SizeCode,
     o.SewLine,
     pd.Seq,
-    ClogPackingErrorID = ce.ID
+    ClogPackingErrorID = ce.ID,
+    ce.CFMDate
 from PackingList_Detail pd with (nolock)
 inner join PackingList p with (nolock) on pd.ID = p.ID
 left join Orders o with (nolock) on o.ID = pd.OrderID
 left join Country c with (nolock) on c.ID = o.Dest
 left join Pullout pu with (nolock) on pu.ID = p.PulloutID
-left join ClogPackingError ce with (nolock) on pd.ID=ce.PackingListID AND pd.OrderID = ce.OrderID AND pd.CTNStartNo=ce.CTNStartNo AND pd.SCICtnNo=ce.SCICtnNo
+outer apply(
+	select top 1 *
+	from ClogPackingError cpe
+	where cpe.CFMDate IS NULL
+	AND pd.ID=cpe.PackingListID AND pd.OrderID = cpe.OrderID AND pd.CTNStartNo=cpe.CTNStartNo AND pd.SCICtnNo=cpe.SCICtnNo
+	order by cpe.AddDate desc
+)ce
 left join PackingError pe with (nolock)  on ce.PackingErrorID = pe.ID
  ";
 
@@ -124,6 +131,7 @@ where Type='TP' and Junk=0";
            .Text("ErrorType", header: "ErrorType", width: Widths.AnsiChars(20), iseditingreadonly: true)
            .Text("Alias", header: "Destination", width: Widths.AnsiChars(20), iseditingreadonly: true)
            .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true)
+           .Date("CFMDate", header: "CFMDate", iseditingreadonly: true)
            .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)
            .Button("Detail", null, header: "Detail", width: Widths.AnsiChars(8), onclick: this.BtnDetail_Click)
            .Button("Compeleted", null, header: string.Empty, width: Widths.AnsiChars(13), onclick: this.BtCompleted_Click)
@@ -132,6 +140,9 @@ where Type='TP' and Junk=0";
             string emptySql = this.mainPackQuerySql + " where 1 = 0";
             DualResult result = DBProxy.Current.Select(null, emptySql, out this.dtPackErrTransfer);
             this.listControlBindingSource1.DataSource = this.dtPackErrTransfer;
+
+            // Column的Visible設定為false，但Index要照算
+            this.gridPackErrTransfer.Columns["CFMDate"].Visible = false;
         }
 
         private void BtnDetail_Click(object sender, EventArgs e)
@@ -664,18 +675,7 @@ where	pd.CTNStartNo <> ''
         and pd.DisposeFromClog= 0		
 		and (pu.Status = 'New' or pu.Status is null) 
         and pd.CTNQty = 1
-		AND ce.CFMDate IS NULL
-        /*and (
-		        [ClogPackingErrorDate] is null and 
-		        [PackingErrorDate] is null and 
-		        (	
-			        [DRYReceiveDate] is null or 
-			        (
-                        [DRYReceiveDate] is not null and 
-			            [DRYTransferDate] is not null
-                    )
-		        )
-	        )*/
+		--AND ce.CFMDate IS NULL
         {sqlWhere}
 order by pd.ID,pd.Seq
 ";
@@ -688,21 +688,7 @@ order by pd.ID,pd.Seq
                 return;
             }
 
-            // DataGridView，把Button Cell隱藏
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            dataGridViewCellStyle2.Padding = new Padding(0, 0, 1000, 0);
-            foreach (DataGridViewRow row in this.gridPackErrTransfer.Rows)
-            {
-                if (!row.Cells[10].Value.StrStartsWith(specialErrorID))
-                {
-                    row.Cells[14].Style = dataGridViewCellStyle2;
-                }
-
-                if (MyUtility.Check.Empty(row.Cells[10].Value))
-                {
-                    row.Cells[15].Style = dataGridViewCellStyle2;
-                }
-            }
+            this.HideButton();
         }
 
         private CheckPackResult CheckPackID(string packID, string cartonStartNo, bool fromCustCTN = false)
@@ -738,18 +724,7 @@ where	pd.CTNStartNo <> ''
 		and p.Type in ('B','L') 
         and pd.CTNQty = 1
         and pd.DisposeFromClog= 0
-		AND ce.CFMDate IS NULL
-        /*and (
-		        [ClogPackingErrorDate] is null and 
-		        [PackingErrorDate] is null and 
-		        (	
-		        [DRYReceiveDate] is null or 
-		        (
-                        [DRYReceiveDate] is not null and 
-		            [DRYTransferDate] is not null
-                    )
-		        )
-	        )*/
+		--AND ce.CFMDate IS NULL
         {keyWhere}
 ";
             bool result = MyUtility.Check.Seek(checkPackSql, listPar, out drPackResult);
@@ -901,6 +876,38 @@ drop table #tmp
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Logistic_P20.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(dt, string.Empty, "Logistic_P20.xltx", 2, true, null, objApp);
+        }
+
+        /// <summary>
+        /// /重新排序，也要做隱藏紐
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GridPackErrTransfer_Sorted(object sender, EventArgs e)
+        {
+            this.HideButton();
+        }
+
+        private void HideButton()
+        {
+            // DataGridView，把Button Cell隱藏
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            dataGridViewCellStyle2.Padding = new Padding(0, 0, 1000, 0);
+            foreach (DataGridViewRow row in this.gridPackErrTransfer.Rows)
+            {
+                // Cells[10] = ErrorType、Cells[13] = CFNDate、Cells[15] = Detail按鈕、Cells[16] = Completed按鈕
+                if (!row.Cells[10].Value.StrStartsWith(specialErrorID))
+                {
+                    // Detail按鈕
+                    row.Cells[15].Style = dataGridViewCellStyle2;
+                }
+
+                if (MyUtility.Check.Empty(row.Cells[13].Value) && MyUtility.Check.Empty(row.Cells[10].Value))
+                {
+                    // Completed按鈕
+                    row.Cells[16].Style = dataGridViewCellStyle2;
+                }
+            }
         }
     }
 }

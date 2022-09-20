@@ -43,18 +43,18 @@
             this.btnSave = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.gridPackErrTransfer = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.labErrorType = new Sci.Win.UI.Label();
             this.comboErrorType = new Sci.Win.UI.ComboBox();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.picUpdate = new Sci.Win.UI.PictureBox();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gridPackErrTransfer)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picUpdate)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -192,6 +192,7 @@
             this.gridPackErrTransfer.Size = new System.Drawing.Size(866, 339);
             this.gridPackErrTransfer.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridPackErrTransfer.TabIndex = 13;
+            this.gridPackErrTransfer.Sorted += new System.EventHandler(this.GridPackErrTransfer_Sorted);
             // 
             // panel1
             // 
@@ -291,12 +292,12 @@
             this.Controls.SetChildIndex(this.comboErrorType, 0);
             this.Controls.SetChildIndex(this.btnToExcel, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridPackErrTransfer)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picUpdate)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }

@@ -25,6 +25,7 @@ namespace Sci.Production.Logistic
             this.InitializeComponent();
             this.drDetail = mainDr;
             this.factory = Sci.Env.User.Factory;
+            this.grid.MultiSelect = true;
         }
 
         /// <inheritdoc/>
@@ -113,7 +114,8 @@ select   b.ID
         ,b.EditDate
 from ClogPackingError a
 inner join ClogPackingError_Detail b on a.ID=b.ClogPackingErrorID
-where a.PackingListID = '{this.drDetail["PackID"]}'
+where a.CFMDate IS NULL
+and a.PackingListID = '{this.drDetail["PackID"]}'
 and a.CTNStartNo = '{this.drDetail["CTN"]}'
 ";
             DualResult returnResult = DBProxy.Current.Select(null, selectCommand, out DataTable dtDtail);
