@@ -95,7 +95,7 @@ namespace Sci.Production.Shipping
                 {
                     DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                     string sqlitem = "Select distinct LoadingType from ShipMode WITH (NOLOCK) where Junk = 0 and LoadingType !=''";
-                    SelectItem2 item = new SelectItem2(sqlitem, "20", dr["LoadingType"].ToString());
+                    SelectItem2 item = new SelectItem2(sqlitem, headercaptions: "Loading Type", columnwidths: "20", defaults: string.Empty);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -108,7 +108,7 @@ namespace Sci.Production.Shipping
             };
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("ShipModeID", header: "Ship Mode", width: Widths.AnsiChars(30), settings: col_ShipMode)
-                .Text("LoadingType", header: "Loading Type#", width: Widths.AnsiChars(30), iseditingreadonly: true, settings: col_LoadingType)
+                .Text("LoadingType", header: "Loading Type", width: Widths.AnsiChars(30), iseditingreadonly: true, settings: col_LoadingType)
                 ;
         }
 
@@ -150,11 +150,11 @@ namespace Sci.Production.Shipping
             if (this.EditMode)
             {
                 string sqlWhere = "SELECT Id,NameCH,NameEN FROM Production.dbo.Brand WITH (NOLOCK) WHERE Junk=0  ORDER BY Id";
-
-                Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlWhere, string.Empty, "10,29,35", string.Empty, null, null, null)
+                Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlWhere, headercaptions: "Id", columnwidths: "10,29,35", defaults: this.editBrandID.Text)
                 {
                     Size = new System.Drawing.Size(810, 666),
                 };
+
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel)
                 {
