@@ -383,7 +383,7 @@ seq[1]), out this.dr))
             #region -- 欄位設定 --
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts2)
-            .Text("Refno", header: "Refno", width: Widths.AnsiChars(13))
+            .Text("Refno", header: "Refno", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)
@@ -1995,6 +1995,7 @@ select  poid = b.ID
         , [Production].[dbo].getmtldesc (b.id, b.seq1, b.seq2, 2, 0)[description]
         , isnull ((a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty ),0.00) as balanceqty
         , f.MtlTypeID
+        , b.refno
 from [Production].[dbo].po_supp_detail b WITH (NOLOCK) 
 inner join [Production].[dbo].Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
 inner join [Production].[dbo].MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
@@ -2038,6 +2039,7 @@ order by b.ID, b.seq1, b.seq2", Env.User.Keyword,
                 ndr["StockUnit"] = dr["StockUnit"];
                 ndr["MtlTypeID"] = dr["MtlTypeID"];
                 ndr["Garment Size"] = dr["Garment Size"];
+                ndr["refno"] = dr["refno"];
 
                 detailDt.Rows.Add(ndr);
 
