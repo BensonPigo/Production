@@ -383,7 +383,7 @@ seq[1]), out this.dr))
             #region -- 欄位設定 --
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts2)
-            .Text("Refno", header: "Refno", width: Widths.AnsiChars(13))
+            .Text("Refno", header: "Refno", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)
