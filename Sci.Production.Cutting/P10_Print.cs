@@ -110,6 +110,7 @@ from (
         , b.SubCutNo
         , a.RFIDScan
         , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
+        , a.Dyelot
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -165,7 +166,7 @@ order by x.[Barcode]
 declare @extend varchar(1) = @extend_p
 ,@ID varchar(13) = @ID_p
 
-select distinct [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
+select distinct [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty],[Dyelot]
 from (
 	select b.id [Bundle_ID]
 	    ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
@@ -184,6 +185,7 @@ from (
 		,Artwork.Artwork [SubProcess]
 		,a.Parts [Parts]
 		,a.Qty [Qty]
+        ,a.Dyelot
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -215,6 +217,7 @@ from (
 		,Artwork.Artwork [SubProcess]
 		,d.Parts [Parts]
 		,a.Qty [Qty]
+        ,a.Dyelot
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -244,7 +247,7 @@ order by x.[Bundle]");
 declare @extend varchar(1) = @extend_p
 ,@ID varchar(13) = @ID_p
 
-select distinct [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
+select distinct [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty],[Dyelot]
 from (
 	select b.id [Bundle_ID]
 	        ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
@@ -263,6 +266,7 @@ from (
 			,Artwork.Artwork [SubProcess]
 			,a.Parts [Parts]
 			,a.Qty [Qty]
+            ,a.Dyelot
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -294,6 +298,7 @@ from (
 			,Artwork.Artwork [SubProcess]
 			,a.Parts [Parts]
 			,a.Qty [Qty]
+            ,a.Dyelot
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -382,6 +387,7 @@ order by x.[Bundle]");
                     BundleID = row1["BundleID"].ToString(),
                     RFIDScan = MyUtility.Convert.GetBool(row1["RFIDScan"]),
                     CutCell = row1["CutCell"].ToString(),
+                    Dyelot = row1["Dyelot"].ToString(),
                 }).ToList();
                 string fileName = "Cutting_P10_Layout1";
                 Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
@@ -734,7 +740,7 @@ SP#:{r.SP}
 Style#: {r.Style} Cell: {r.CutCell}
 Cut#: {r.Body_Cut}
 Color: {r.Color}
-Size: {r.Size}     Part: {r.Parts}
+Size: {r.Size}     Part: {r.Parts}     Dyelot: {r.Dyelot}
 Sea: {r.Season}     Brand: {r.ShipCode}
 MK#: {r.MarkerNo}     Cut/L:
 Sub Process: {r.Artwork}

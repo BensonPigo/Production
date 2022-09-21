@@ -582,7 +582,7 @@ where a.RequestQty > a.StockQty",
 
             string sqlCmd = string.Format(
                 @"select (left(ld.Seq1+' ',3)+'-'+ld.Seq2) as Seq, dbo.getMtlDesc(l.POID,ld.Seq1,ld.Seq2,1,0) as Description,
-            ld.FTYLastRecvDate,ld.FTYInQty,ld.WhseInQty,ld.RequestQty,ld.IssueQty
+            ld.FTYLastRecvDate,ld.FTYInQty,ld.WhseInQty,ld.RequestQty,ld.IssueQty,ld.Remark
             from Lack l WITH (NOLOCK) 
             left join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
             where l.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
@@ -621,7 +621,7 @@ where a.RequestQty > a.StockQty",
             int intRowsStart = 10;
             int dataRowCount = excelData.Rows.Count;
             int rownum = 0;
-            object[,] objArray = new object[1, 7];
+            object[,] objArray = new object[1, 8];
             for (int i = 0; i < dataRowCount; i++)
             {
                 DataRow dr = excelData.Rows[i];
@@ -633,8 +633,9 @@ where a.RequestQty > a.StockQty",
                 objArray[0, 4] = dr["WhseInQty"];
                 objArray[0, 5] = dr["RequestQty"];
                 objArray[0, 6] = dr["IssueQty"];
+                objArray[0, 7] = dr["Remark"];
 
-                worksheet.Range[string.Format("A{0}:G{0}", rownum)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:H{0}", rownum)].Value2 = objArray;
             }
 
             #region Save & Show Excel
