@@ -282,7 +282,7 @@ select a.FabricdefectID
 ,b.Image
 ,b.Description
 from FIR_Physical_Defect_Realtime a
-inner join PMSFile.dbo.FIR_Physical_Defect_RealtimeImage b on a.id = b.FIRPhysicalDefectRealtimeID
+inner join SciPMSFile_FIR_Physical_Defect_RealtimeImage b on a.id = b.FIRPhysicalDefectRealtimeID
 where a.FIR_PhysicalDetailUkey = '{this.CurrentData["DetailUkey"]}'
 order by a.FabricdefectID,a.FIR_PhysicalDetailUkey
 ";
