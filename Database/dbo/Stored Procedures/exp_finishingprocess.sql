@@ -65,7 +65,7 @@ IF OBJECT_ID(N'PackingList_Detail') IS NULL
 BEGIN
 	CREATE TABLE [dbo].[PackingList_Detail](
 	[ID]				[varchar](13) NOT NULL,
-	[SCICtnNo]			[varchar](15) NOT NULL,
+	[SCICtnNo]			[varchar](16) NOT NULL,
 	[CustCTN]			[varchar](30) NOT NULL,
 	[PulloutDate]		[date] NULL,
 	[OrderID]			[varchar](13) NOT NULL,
@@ -119,7 +119,7 @@ IF OBJECT_ID(N'ClogReturn') IS NULL
 BEGIN
 	CREATE TABLE [dbo].[ClogReturn](
 	[ID]			 [bigint] NOT NULL,
-	[SCICtnNo]		 [varchar](15) NOT NULL,
+	[SCICtnNo]		 [varchar](16) NOT NULL,
 	[ReturnDate]	 [date] NOT NULL,
 	[OrderID]		 [varchar](13) NOT NULL,
 	[PackingListID]  [varchar](13) NOT NULL,
@@ -138,7 +138,7 @@ IF OBJECT_ID(N'TransferToCFA') IS NULL
 BEGIN
 	CREATE TABLE [dbo].[TransferToCFA](
 	[ID]			 [bigint] NOT NULL,
-	[SCICtnNo]		 [varchar](15) NOT NULL,
+	[SCICtnNo]		 [varchar](16) NOT NULL,
 	[TransferDate]	 [date] NOT NULL,
 	[OrderID]		 [varchar](13) NOT NULL,
 	[PackingListID]  [varchar](13) NOT NULL,
@@ -205,7 +205,7 @@ IF OBJECT_ID(N'ShippingMarkPic_Detail') IS NULL
 BEGIN
 	CREATE TABLE [dbo].[ShippingMarkPic_Detail](
 	[PackingListID]			[varchar](15) NOT NULL,
-	[SCICtnNo]  			[varchar](15) NOT NULL,
+	[SCICtnNo]  			[varchar](16) NOT NULL,
 	[Side]					[varchar](5) NOT NULL,
 	[GensongUpdateTime]		[varchar](50) NULL,
 	[Seq]					[int] NOT NULL,
@@ -248,7 +248,7 @@ IF OBJECT_ID(N'ShippingMarkStamp_Detail') IS NULL
 BEGIN
 	CREATE TABLE [dbo].[ShippingMarkStamp_Detail](
 		[PackingListID] [varchar](15) NOT NULL,
-		[SCICtnNo] [varchar](15) NOT NULL,
+		[SCICtnNo] [varchar](16) NOT NULL,
 		[ShippingMarkTypeUkey] [bigint] NOT NULL,
 		[FilePath] [varchar](150) NOT NULL,
 		[FileName] [varchar](30) NOT NULL,
@@ -418,7 +418,7 @@ END
 IF OBJECT_ID(N'CFANeedInsp') IS NULL
 BEGIN 
 CREATE TABLE [dbo].[CFANeedInsp] (
-    [SCICtnNo]			varchar(15) NOT NULL,
+    [SCICtnNo]			varchar(16) NOT NULL,
 	[CmdTime]			Datetime NOT NULL,
     [GenSongUpdated]	bit   NOT NULL DEFAULT ((0)) ,
 	CONSTRAINT [PK_CFANeedInsp] PRIMARY KEY CLUSTERED 
@@ -435,7 +435,7 @@ END
 IF OBJECT_ID(N'ClogGarmentDispose') IS NULL
 BEGIN 
 CREATE TABLE [dbo].[ClogGarmentDispose] (
-    [SCICtnNo]			varchar(15) NOT NULL,
+    [SCICtnNo]			varchar(16) NOT NULL,
 	[CmdTime]			Datetime NOT NULL,
     [Dispose]			bit   NOT NULL DEFAULT ((1)) ,
     [GenSongUpdated]	bit   NOT NULL DEFAULT ((0)) ,
