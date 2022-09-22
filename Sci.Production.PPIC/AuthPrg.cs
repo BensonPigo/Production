@@ -37,7 +37,7 @@ namespace Sci.Production.Class.Commons
             brandAuths = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
             DataTable brandData;
             string sqlCmd = "select BrandID from dbo.PASS_AuthBrand where id = '" + Env.User.UserID + "'";
-            DBProxy.Current.SelectByConn(SQL.queryConn, sqlCmd, out brandData);
+            DBProxy.Current.Select(null, sqlCmd, out brandData);
             foreach (DataRow row in brandData.Rows)
             {
                 brandAuths.Add(row["BrandID"].ToString().TrimEnd(), true);
@@ -124,7 +124,7 @@ namespace Sci.Production.Class.Commons
 
             string sqlCmd = SqlCmd_hasHandleAuth;
 
-            SqlCommand cmd = new SqlCommand(sqlCmd, SQL.queryConn);
+            SqlCommand cmd = new SqlCommand(sqlCmd, PublicPrg.Prgs.queryConn);
             cmd.Parameters.Add(new SqlParameter("@handle", handleID));
             cmd.Parameters.Add(new SqlParameter("@userid", Env.User.UserID));
             bool hasAuth = false;
@@ -183,7 +183,7 @@ namespace Sci.Production.Class.Commons
             DataTable ids;
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@userID", userID));
-            if (!SQL.Select(string.Empty, sqlCmd, out ids, pars))
+            if (!DBProxy.Current.Select(string.Empty, sqlCmd, pars, out ids))
             {
                 return new List<string>();
             }
@@ -252,7 +252,7 @@ select cast(iif(
             }
 
             string sqlCmd = SqlCmd_hasHandle_O_SMR_Auth;
-            SqlCommand cmd = new SqlCommand(sqlCmd, SQL.queryConn);
+            SqlCommand cmd = new SqlCommand(sqlCmd, PublicPrg.Prgs.queryConn);
             cmd.Parameters.Add(new SqlParameter("@userid", Env.User.UserID));
             cmd.Parameters.Add(new SqlParameter("@Smr", smr == null ? string.Empty : smr));
             cmd.Parameters.Add(new SqlParameter("@Handle", handle == null ? string.Empty : handle));
@@ -298,7 +298,7 @@ from dbo.PO as po1
 where po1.ID = @poid
 " + Environment.NewLine + SqlCmd_hasHandle_O_SMR_Auth;
 
-            SqlCommand cmd = new SqlCommand(sqlCmd, SQL.queryConn);
+            SqlCommand cmd = new SqlCommand(sqlCmd, PublicPrg.Prgs.queryConn);
             cmd.Parameters.Add(new SqlParameter("@userid", Env.User.UserID));
             cmd.Parameters.Add(new SqlParameter("@poid", poid));
             bool hasAuth = false;
@@ -335,7 +335,7 @@ where po1.ID = @poid
             }
 
             string sqlCmd = SqlCmd_hasHandle_O_SMR_Auth;
-            SqlCommand cmd = new SqlCommand(sqlCmd, SQL.queryConn);
+            SqlCommand cmd = new SqlCommand(sqlCmd, PublicPrg.Prgs.queryConn);
             cmd.Parameters.Add(new SqlParameter("@userid", Env.User.UserID));
             cmd.Parameters.Add(new SqlParameter("@Smr", pOSmr == null ? string.Empty : pOSmr));
             cmd.Parameters.Add(new SqlParameter("@Handle", pOHandle == null ? string.Empty : pOHandle));

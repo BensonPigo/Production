@@ -304,7 +304,7 @@ namespace Sci.Production.Subcon
 
             try
             {
-                 if (!SQL.Selects(string.Empty, sqlCmd, out localPOs_And_Details))
+                 if (!PublicPrg.Prgs.SelectSet(string.Empty, sqlCmd, out localPOs_And_Details))
                 {
                     MyUtility.Msg.WarningBox(sqlCmd, "Query error!!");
                     return;

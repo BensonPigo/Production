@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using SciConvert = Sci.MyUtility.Convert;
@@ -58,7 +59,8 @@ namespace Sci.Production.Class.Commons
 From Production.dbo.Pass1 WITH (NOLOCK) 
 Left Join Production.dbo.Factory WITH (NOLOCK) 
     On Factory.ID =  Pass1.Factory ";
-            if (!SQL.Select(SQL.queryConn, sqlCmd, out users))
+
+            if (!DBProxy.Current.Select(null, sqlCmd, out users))
             {
                 return;
             }

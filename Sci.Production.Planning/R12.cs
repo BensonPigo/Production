@@ -93,7 +93,7 @@ namespace Sci.Production.Planning
 
             string where = " ", groupBy, select;
             SqlConnection con;
-            SQL.GetConnection(out con);
+            DBProxy.Current.OpenConnection(null, out con);
 
             #region tmpData1
             if (this.txtBrand.Text != string.Empty)

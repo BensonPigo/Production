@@ -103,7 +103,7 @@ namespace Sci.Production.Subcon
                 where a.[Status] = 'Locked'
                       and a.POTYPE = 'O'");
 
-            if (!SQL.Selects(string.Empty, sqlCmd, out ds))
+            if (!PublicPrg.Prgs.SelectSet(string.Empty, sqlCmd, out ds))
             {
                 MyUtility.Msg.WarningBox(sqlCmd, "DB error!!");
                 return;
