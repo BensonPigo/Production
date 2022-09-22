@@ -33,6 +33,7 @@ namespace Sci.Production.Sewing
             #region Grid Setting
             this.Helper.Controls.Grid.Generator(this.grid)
                 .Date("ScanDate", header: "Scan Date", iseditingreadonly: false)
+                .Text("FactoryID", header: "Factory", iseditingreadonly: true)
                 .Text("PackID", header: "Pack ID", iseditingreadonly: false)
                 .Text("CTN", header: "CTN#", iseditingreadonly: false)
                 .Numeric("Qty", header: "Qty", iseditingreadonly: false)
@@ -73,6 +74,8 @@ namespace Sci.Production.Sewing
             listSqlParameter.Add(new SqlParameter("@SP", this.txtSP.Text));
             listSqlParameter.Add(new SqlParameter("@ScanDate_S", this.dateScanDate.Value1.Empty() ? string.Empty : ((DateTime)this.dateScanDate.Value1).ToString("yyyy/MM/dd 00:00:00")));
             listSqlParameter.Add(new SqlParameter("@ScanDate_E", this.dateScanDate.Value2.Empty() ? string.Empty : ((DateTime)this.dateScanDate.Value2).ToString("yyyy/MM/dd 23:59:59")));
+            listSqlParameter.Add(new SqlParameter("@M", this.txtMdivision1.Text));
+            listSqlParameter.Add(new SqlParameter("@fty", this.txtfactory1.Text));
             #endregion
 
             #region BuyerDelivery Filte
@@ -100,6 +103,16 @@ namespace Sci.Production.Sewing
                 strWhere += " and c.OrderID = @SP";
             }
 
+            if (!MyUtility.Check.Empty(this.txtMdivision1.Text))
+            {
+                strWhere += $@" and o.Mdivisionid = @M";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtfactory1.Text))
+            {
+                strWhere += $@" and o.FactoryID = @fty";
+            }
+
             #endregion
 
             #region SQL Command
@@ -111,6 +124,7 @@ from [ExtendServer].ManufacturingExecution.dbo.pass1
 
 
 select [ScanDate] = c.HaulingDate
+    ,[FactoryID] = o.factoryid
 	,[PackID] = c.PackingListID
 	,[CTN] = c.CTNStartNo
 	,[Qty] = pd_QtyPerCTN.Qty
