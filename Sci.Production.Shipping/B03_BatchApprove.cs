@@ -212,7 +212,7 @@ order by Ukey, seq
 drop table #bas
 ";
             #endregion
-            if (!SQL.Selects(string.Empty, sqlCmd, out datas))
+            if (!PublicPrg.Prgs.SelectSet(string.Empty, sqlCmd, out datas))
             {
                 MyUtility.Msg.WarningBox(sqlCmd, "DB error!!");
                 return;

@@ -261,7 +261,7 @@ group by e.id,e.FactoryID,e.Consignee,e.Eta,e.ShipModeID
 ,ed.FormXPayINV,ed.SuppID
 ";
 
-            if (!SQL.Selects(string.Empty, sqlcmd, out this.ds))
+            if (!PublicPrg.Prgs.SelectSet(string.Empty, sqlcmd, out this.ds))
             {
                 MyUtility.Msg.WarningBox(sqlcmd, "DB error!!");
                 return;

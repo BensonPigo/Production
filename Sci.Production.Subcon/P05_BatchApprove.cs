@@ -130,7 +130,7 @@ where 1=1
 {filter}
                       ";
 
-            if (!SQL.Selects(string.Empty, sqlCmd, out ds))
+            if (!PublicPrg.Prgs.SelectSet(string.Empty, sqlCmd, out ds))
             {
                 MyUtility.Msg.WarningBox(sqlCmd, "DB error!!");
                 return;

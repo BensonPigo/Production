@@ -138,7 +138,7 @@ Where a.id = '{0}'
             DBProxy.Current.DefaultTimeout = 1200;
             try
             {
-                if (!SQL.Selects(string.Empty, strSQLCmd.ToString(), out data))
+                if (!PublicPrg.Prgs.SelectSet(string.Empty, strSQLCmd.ToString(), out data))
                 {
                     this.ShowErr(strSQLCmd.ToString());
                     return;

@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Data;
 using System;
 using System.Data;
 using System.Drawing;
@@ -130,7 +131,8 @@ DROP TABLE #Master
 
 ";
             #endregion
-            if (!SQL.Selects(string.Empty, sqlCmd, out DataSet datas))
+
+            if (!PublicPrg.Prgs.SelectSet(string.Empty, sqlCmd, out DataSet datas))
             {
                 MyUtility.Msg.WarningBox(sqlCmd, "DB error!!");
                 return;

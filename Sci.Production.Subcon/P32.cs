@@ -300,7 +300,7 @@ drop table  #tmp,#tmp2
             DBProxy.Current.DefaultTimeout = 1200;
             try
             {
-                if (!SQL.Selects(string.Empty, this.sqlcmd.ToString(), out this.dataSet))
+                if (!PublicPrg.Prgs.SelectSet(string.Empty, this.sqlcmd.ToString(), out this.dataSet))
                 {
                     this.ShowErr(this.sqlcmd.ToString());
                     return;

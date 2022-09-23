@@ -556,7 +556,7 @@ drop table #tmp");
             this.ShowWaitMessage("Data Loading....");
             #endregion
             DataSet dataSet;
-            if (!SQL.Selects(string.Empty, sqlcmd.ToString(), out dataSet))
+            if (!PublicPrg.Prgs.SelectSet(string.Empty, sqlcmd.ToString(), out dataSet))
             {
                 MyUtility.Msg.WarningBox(sqlcmd.ToString(), "DB error!!");
                 return;
