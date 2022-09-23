@@ -231,7 +231,7 @@ order by MDivisionID,FactoryID",
 
             excel.DisplayAlerts = false;
 
-            excel.Visible = true;
+            excel.Visible = false;
             for (int i = 0; i < this.pivotData.Rows.Count; i++)
             {
                 if (i > 0)
