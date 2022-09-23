@@ -491,7 +491,6 @@ inner join #Trade_To_Pms_PO as b ON a.id=b.id
 where not exists(select id from Trade_To_Pms.dbo.PO_Supp_Detail as c where a.id = c.id)
 and InputQty <> 0
 
-
 ----------------------更新 StockUnit
 -------需更新的資料 => StockUnit in FtyInventory 
 -------比對欄位　　 => Poid, Seq1, Seq2
@@ -501,6 +500,22 @@ set po.StockUnit = Production.dbo.GetStockUnitBySPSeq(po.ID, po.SEQ1, po.SEQ2)
 from Production.dbo.PO_Supp_Detail po With(NoLock)
 WHERE po.StockUnit = '' OR po.StockUnit IS NULL
 ------------------------------------------------------------------PO3 END
+
+----PO_Supp_Detail_Spec
+update a
+set
+    SpecValue = b.SpecValue,
+    AddName = b.AddName,
+    AddDate = b.AddDate,
+    EditName = b.EditName,
+    EditDate = b.EditDate
+from Production.dbo.PO_Supp_Detail_Spec as a 
+inner join Trade_To_Pms.dbo.PO_Supp_Detail_Spec as b ON a.id=b.id and a.seq1 = b.seq1 and a.seq2 = b.seq2 and a.SpecColumnID = b.SpecColumnID
+
+insert into  Production.dbo.PO_Supp_Detail_Spec(ID,Seq1,Seq2,SpecColumnID,SpecValue,AddName,AddDate,EditName,EditDate)
+select ID,Seq1,Seq2,SpecColumnID,SpecValue,AddName,AddDate,EditName,EditDate
+from Trade_To_Pms.dbo.PO_Supp_Detail_Spec a
+where not exists(select 1 from Production.dbo.PO_Supp_Detail_Spec b where a.id=b.id and a.seq1 = b.seq1 and a.seq2 = b.seq2 and a.SpecColumnID = b.SpecColumnID)
 
 ------Delete Po from Trade PO_Delete function
 -- Create #deletePo3
@@ -579,6 +594,10 @@ inner join #deletePo2 s on t.id=s.id and t.seq1=s.seq1
 
 delete t
 from Production.dbo.PO_Supp_Detail t
+inner join #deletePo3 s on t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2
+
+delete t
+from Production.dbo.PO_Supp_Detail_Spec t
 inner join #deletePo3 s on t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2
 
 delete t

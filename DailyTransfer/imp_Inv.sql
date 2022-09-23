@@ -241,6 +241,19 @@ where not exists(
 		where a.id = b.id
 	  )
 
+
+--InventoryRefNo_Spec
+update a
+set
+    SpecValue = b.SpecValue
+from Production.dbo.InventoryRefNo_Spec as a 
+inner join Trade_To_Pms.dbo.InventoryRefNo_Spec as b ON a.InventoryRefNoID=b.InventoryRefNoID and a.SpecColumnID = b.SpecColumnID
+
+insert into  Production.dbo.InventoryRefNo_Spec(InventoryRefNoID,SpecColumnID,SpecValue)
+select InventoryRefNoID,SpecColumnID,SpecValue
+from Trade_To_Pms.dbo.InventoryRefNo_Spec a
+where not exists(select 1 from Production.dbo.InventoryRefNo_Spec b where a.InventoryRefNoID=b.InventoryRefNoID and a.SpecColumnID = b.SpecColumnID)
+
 --Invtrans
 ----------------------刪除主TABLE多的資料
 declare @ID varchar(13)
