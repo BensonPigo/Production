@@ -1157,6 +1157,36 @@ using (
                 ,[FactoryID] = ''
         from GMTBooking g WITH (NOLOCK) 
         where BLNo='{drCurrentMaintain["BLNO"]}' or BL2No='{drCurrentMaintain["BLNO"]}'
+
+        union
+        -- ISP20221136 add Shipping.P16 data
+        select [ShippingAPID] = '{drCurrentMaintain["ID"]}'
+                ,[BLNo] = te.BLNo
+                ,[WKNo] = te.id
+                ,[InvNo] = ''
+                ,[Type] = '{drCurrentMaintain["Type"]}'
+                ,[GW] = te.WeightKg 
+                ,[CBM] = t2.CBM 
+                ,[CurrencyID] = '{drCurrentMaintain["CurrencyID"]}'
+                ,[ShipModeID] = te.ShipModeID
+                ,[FtyWK] = 1
+                ,[AccountID] = AccountID.val
+                ,[Junk] = 0
+                ,[FactoryID] = ''
+        from TransferExport te WITH (NOLOCK) 
+        outer apply(
+	        select WeightKg = sum(s.WeightKg) , Cbm = sum(s.CBM)
+	        from TransferExport_Detail s
+	        where s.ID = te.ID
+        )t2
+        outer apply (
+	        select top 1 [val] = sd.AccountID
+            from ShippingAP_Detail sd WITH(NOLOCK)
+	        where sd.ID = '{drCurrentMaintain["ID"]}' and sd.AccountID != ''
+	        and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+		        or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)
+        ) AccountID
+        where   BLNo = '{drCurrentMaintain["BLNO"]}'
     ) a where AccountID is not null
 ) as s 
 on	t.ShippingAPID = s.ShippingAPID 
@@ -1700,6 +1730,13 @@ please go to Trade/Garment Export/P04. Garment Invoice Data Iaintain to modify i
             [Field] = '[B/L(AWB) No.]',
             [Descriptions] = 'If the [B/L (AWB) No.] in FTY WK# is entered incorrectly,
 pleasse go to PMS/Shipping/P04. Raw Material Shipment Data Maintain to modify it.'
+    union all
+
+    select  [Code]='P16. ',
+            [Manual] = 'P16. Transfer Material WK',
+            [Abbr.] ='Transfer WK#',
+            [Field] = 'B/L No.',
+            [Descriptions] = 'If the [B/L No.] in Transfer WK# is entered incorrectly, please contact TPE Shipping to modify it.'
 end         
 ";
                 DataTable resultBLNoCheck;
