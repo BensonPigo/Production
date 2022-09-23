@@ -1,4 +1,5 @@
 ﻿using Ict;
+using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -137,7 +138,7 @@ namespace Sci.Production.Prg
             try
             {
                 TransactionOptions tOpt = default(TransactionOptions);
-                tOpt.Timeout = new TimeSpan(0, 5, 0);
+                tOpt.Timeout = new TimeSpan(0, 30, 0);
                 using (TransactionScope scope = new TransactionScope(TransactionScopeOption.RequiresNew, tOpt))
                 {
                     result = this.UpdateSewingOutputTransfer(isNeedUpdateDetail);
@@ -236,6 +237,7 @@ DEALLOCATE CUR_SewingOutput_Detail
 drop table #tmp,#tmpFromG,#tmpByIDCanTransQty,#tmpFromToG,#tmpUp
 ";
             DataTable[] dt;
+            DBProxy.Current.DefaultTimeout = 1800;
             DualResult result = this.ProcessWithDatatable("Production", this.dtDetail, string.Empty, sqlcmd, out dt);
             if (!result)
             {
@@ -524,6 +526,8 @@ inner join #tmp t on t.[UKey] = sod.[UKey]
                 }
             }
             #endregion
+
+            DBProxy.Current.DefaultTimeout = 300;
 
             return new DualResult(true);
         }
