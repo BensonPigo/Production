@@ -92,7 +92,7 @@ namespace Sci.ManufacturingExecution.Class.Controls
             }
 
             string sqlcmdEdit = $@"
-update PMSFile.dbo.FIR_Physical_Defect_RealtimeImage
+update SciPMSFile_FIR_Physical_Defect_RealtimeImage
 set Description = '{this.editDesc.Text}'
 where FIRPhysicalDefectRealtimeID = '{this.Pkey}' and Seq = '{this.Seq}'
 ";

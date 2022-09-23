@@ -90,7 +90,7 @@ order by fd.ID ";
                         if (Camera_Prg.MasterSchemas.Where(r => r.ID.Equals(item.ID) && r.Seq.Equals(item.Seq)).Any() == false)
                         {
                             string sqlcmdDelete = $@"
-delete from PMSFile.dbo.FIR_Physical_Defect_RealtimeImage
+delete from SciPMSFile_FIR_Physical_Defect_RealtimeImage
 where FIRPhysicalDefectRealtimeID = '{item.ID}'
 and Seq = '{item.Seq}'
 ";
@@ -140,7 +140,7 @@ select a.FabricdefectID
 ,b.Image
 ,b.Description
 from FIR_Physical_Defect_Realtime a
-inner join PMSFile.dbo.FIR_Physical_Defect_RealtimeImage b on a.id = b.FIRPhysicalDefectRealtimeID
+inner join SciPMSFile_FIR_Physical_Defect_RealtimeImage b on a.id = b.FIRPhysicalDefectRealtimeID
 where a.FIR_PhysicalDetailUkey = '{this.def_dr["DetailUkey"]}'
 order by a.FabricdefectID,a.FIR_PhysicalDetailUkey
 ";
