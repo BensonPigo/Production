@@ -693,7 +693,7 @@ end
             base.ClickConfirm();
 
             P11_SewingOutputOrderChange p11_SewingOutputOrderChange = new P11_SewingOutputOrderChange(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, Env.User.UserID);
-
+            DBProxy.Current.DefaultTimeout = 1800;
             DualResult result = p11_SewingOutputOrderChange.Confirm();
 
             if (!result)
@@ -707,6 +707,7 @@ end
             Task.Run(() => new Sunrise_FinishingProcesses().SentSewingOutputTransfer(listUkey))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             #endregion
+            DBProxy.Current.DefaultTimeout = 300;
             MyUtility.Msg.InfoBox("Complete!");
         }
 
