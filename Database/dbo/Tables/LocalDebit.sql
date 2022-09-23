@@ -8,7 +8,7 @@
     [Description]      NVARCHAR (MAX)  CONSTRAINT [DF_LocalDebit_Description] DEFAULT ('') NULL,
     [Exchange]         NUMERIC (8, 3)  CONSTRAINT [DF_LocalDebit_Exchange] DEFAULT ((0)) NULL,
     [Currencyid]       VARCHAR (3)     CONSTRAINT [DF_LocalDebit_Currencyid] DEFAULT ('') NULL,
-    [Amount]           NUMERIC (12, 2) CONSTRAINT [DF_LocalDebit_Amount] DEFAULT ((0)) NULL,
+    [Amount]           NUMERIC (13, 2) CONSTRAINT [DF_LocalDebit_Amount] DEFAULT ((0)) NULL,
     [Tax]              NUMERIC (11, 2) CONSTRAINT [DF_LocalDebit_Tax] DEFAULT ((0)) NULL,
     [TaxRate]          NUMERIC (5, 2)  CONSTRAINT [DF_LocalDebit_TaxRate] DEFAULT ((0)) NULL,
     [AmtReviseDate]    DATETIME        NULL,
