@@ -4,23 +4,14 @@ using Ict.Win;
 
 namespace Sci.Production.PublicForm
 {
+    /// <inheritdoc />
     public partial class PFHis : Win.Subs.Input4
     {
-        private DataRow drOrders;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PFHis"/> class.
-        /// </summary>
-        /// <param name="canedit"></param>
-        /// <param name="keyvalue1"></param>
-        /// <param name="keyvalue2"></param>
-        /// <param name="keyvalue3"></param>
-        /// <param name="drOrders"></param>
+        /// <inheritdoc />
         public PFHis(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow drOrders)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             this.InitializeComponent();
-            this.drOrders = drOrders;
 
             DateTime? dtStr = MyUtility.Convert.GetDate(drOrders["CFMDate"]).Value.AddDays(14);
             DateTime? dtLETA = MyUtility.Convert.GetDate(drOrders["LETA"]);
@@ -60,6 +51,8 @@ namespace Sci.Production.PublicForm
                 string create = MyUtility.GetValue.Lookup($@"select id+'-'+Name from TPEpass1 where id = '{row["AddName"]}'");
                 row["AddInfo"] = create + " " + row["AddDate"].ToString();
             }
+
+            datas.DefaultView.Sort = "AddDate";
         }
     }
 }

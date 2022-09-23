@@ -128,7 +128,7 @@ SELECT [Inspected Date] = FP.InspDate
        ,[WK#] = rd.ExportID
 	   ,[Supplier]=f.SuppID
 	   ,[Supplier Name]=(select AbbEN from Supp where id = f.SuppID)
-	   ,[ATA] = p.FinalETA 
+	   ,[ATA] = rd.WhseArrival
        ,[Roll#] = fp.Roll
        ,[Dyelot#] = fp.Dyelot
 	   ,[Ref#]=p.RefNo

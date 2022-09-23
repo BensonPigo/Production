@@ -486,6 +486,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(2), settings: seq) // 2
             .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(2), settings: seq) // 3
             .Text("Suppid", header: "Supp", iseditingreadonly: true, width: Widths.AnsiChars(4), settings: ts1) // 3
+            .Text("StockOrdersFactory", header: "Stock Order Fty", iseditingreadonly: true, width: Widths.AnsiChars(7)) // 3
             .Text("eta", header: "Sup. 1st " + Environment.NewLine + "Cfm ETA", width: Widths.AnsiChars(2), iseditingreadonly: true) // 4
             .Text("RevisedETA", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(2), iseditingreadonly: true) // 5
             .Text("FabricCombo", header: "Fabric" + Environment.NewLine + "Combo", iseditingreadonly: true)
@@ -507,7 +508,8 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             .Text("NETQty", header: "Net\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight) // 14
             .Text("useqty", header: "Use\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight) // 15
             .Text("ShipQty", header: "Ship\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts3) // 16
-            .Text("ShipFOC", header: "F.O.C", iseditingreadonly: true, width: Widths.AnsiChars(3), alignment: DataGridViewContentAlignment.MiddleRight) // 17
+            .Text("FOC", header: "F.O.C", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight) // 17
+            .Text("ShipFOC", header: "Ship F.O.C", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight) // 17
             .Text("InputQty", header: "Taipei" + Environment.NewLine + "Stock Qty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts4) // 19
             .Text("POUnit", header: "PO Unit", iseditingreadonly: true, width: Widths.AnsiChars(4)) // 20
             .Text("Complete", header: "Cmplt", iseditingreadonly: true, width: Widths.AnsiChars(3)) // 21
@@ -754,6 +756,7 @@ from(
             , NetQty = iif (NetQty = 0, '', format(NetQty,'#,###,###,###.##'))
             , useqty = iif (useqty = 0, '',format(useqty,'#,###,###,###.##'))
             , shipQty = iif (shipQty = 0, '',format(shipQty,'#,###,###,###.##'))
+            , FOC = iif (FOC = 0, '', format(FOC,'###.##'))
             , ShipFOC = iif (ShipFOC = 0, '', format(ShipFOC,'###.##'))
             , InputQty = iif (InputQty = 0, '',format(InputQty,'#,###,###,###.##'))
             , POUnit
@@ -794,6 +797,7 @@ from(
 			, RR
 			, LR
 			, IsHighRisk
+            , StockOrdersFactory
     from (
         select  *
                 , -len(description) as len_D 
@@ -824,7 +828,8 @@ from(
                     , NetQty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(A.NETQty, 0)), 2)
                     , [useqty] = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, (isnull(A.NETQty,0)+isnull(A.lossQty,0))), 2)
                     , shipQty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.ShipQty, 0)), 2)
-                    , ShipFOC = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.ShipFOC, 0)), 2)
+                    , FOC =  Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.foc, 0)), 2)
+                    , ShipFOC = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.shipfoc, 0)), 2)
                     , InputQty = isnull((select Round(sum(invtQty), 2)
                                          from (
                                             SELECT  dbo.getUnitQty(inv.UnitID, a.StockUnit, isnull(Qty, 0.00))  as invtQty
@@ -924,6 +929,7 @@ from(
 					,RR = ISNULL(Style_RRLR_Report.RR ,0)
 					,LR = ISNULL(Style_RRLR_Report.LR ,0)					
 					,IsHighRisk =  dbo.GetIsHighRisk(b.suppid, a.RefNo)
+                    ,[StockOrdersFactory] = a.StockOrdersFactory
             from #tmpOrder as orders WITH (NOLOCK) 
             inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
 	        left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
@@ -990,6 +996,7 @@ from(
                     , NetQty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(A.NETQty, 0)), 2)
                     , useqty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, (isnull(A.NETQty,0)+isnull(A.lossQty,0))), 2)
                     , ShipQty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.ShipQty, 0)), 2)
+                    , FOC = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.FOC, 0)), 2)
                     , ShipFOC = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.ShipFOC, 0)), 2)
                     , InputQty = isnull((select Round(sum(invtQty), 2)
                                          from (
@@ -1085,6 +1092,7 @@ from(
 					,RR = ISNULL(Style_RRLR_Report.RR ,0)
 					,LR = ISNULL(Style_RRLR_Report.LR ,0)					
 					,IsHighRisk =  dbo.GetIsHighRisk(b.suppid, a.RefNo)
+                    ,[StockOrdersFactory] = a.StockOrdersFactory
         from dbo.MDivisionPoDetail m WITH (NOLOCK) 
         inner join #tmpOrder as o on o.poid = m.poid
         left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 
@@ -1152,6 +1160,7 @@ select ROW_NUMBER_D = 1
        , [NetQty] = '-'
        , [useqty] = '-'
        , [shipQty] = '-'
+       , [FOC] = '-'
        , [ShipFOC] = '-'
        , [InputQty] = '-'
        , [POUnit] = '-'
@@ -1192,6 +1201,7 @@ select ROW_NUMBER_D = 1
 	   , RR = 0
 	   , LR = 0
 	   , IsHighRisk=0
+       ,[StockOrdersFactory] = ''
 from #tmpLocalPO_Detail a
 left join LocalInventory l on a.OrderId = l.OrderID and a.Refno = l.Refno and a.ThreadColorID = l.ThreadColorID
 left join LocalItem b on a.Refno=b.RefNo

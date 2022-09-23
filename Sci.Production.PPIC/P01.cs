@@ -463,11 +463,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 }
             }
 
-            sqlCmd = string.Format(
-                "select cast(iif(dateadd(day, 7, cast('{1}' as date)) <= (select top 1 LETA from Order_PFHis where id = '{0}' order by AddDate desc), 1, 0) as bit)",
-                MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                MyUtility.Convert.GetDate(this.CurrentMaintain["KPILETA"]).HasValue ? MyUtility.Convert.GetDate(this.CurrentMaintain["KPILETA"]).Value.ToShortDateString() : string.Empty);
-            if (MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup(sqlCmd)))
+            if (MyUtility.Convert.GetDate(this.CurrentMaintain["KPILETA"]) != MyUtility.Convert.GetDate(this.CurrentMaintain["PFETA"]))
             {
                 this.dateKPILETA.TextBackColor = Color.Yellow;
             }
@@ -800,7 +796,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         {
             base.ClickSaveAfter();
             #region ISP20200757 資料交換 - Sunrise
-            if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
+            if (PMSUtilityAutomation.IsSunrise_FinishingProcessesEnable)
             {
                 Task.Run(() => new Sunrise_FinishingProcesses().SentOrdersToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), "Orders,Order_QtyShip,Order_SizeCode,Order_Qty"))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());

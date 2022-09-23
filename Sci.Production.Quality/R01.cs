@@ -254,6 +254,7 @@ select
     ,mp.ALocation
     ,LT.BulkLocationDate
 	,mp.BLocation	
+	,ILT.InvLocationDate
 	,[MinSciDelivery] = (SELECT MinSciDelivery FROM  DBO.GetSCI(F.Poid,O.Category))
 	,[MinBuyerDelivery] = (SELECT MinBuyerDelivery  FROM  DBO.GetSCI(F.Poid,O.Category))
 	,F.Refno,C.Description,P.ColorID,(SP.SuppID+'-'+s.AbbEN)Supplier
@@ -421,6 +422,14 @@ outer apply
 	WHERE a.status = 'Confirmed' and b.stocktype='B'
 	AND b.Poid=f.POID and b.Seq1=f.SEQ1 and b.Seq2=f.SEQ2
 )LT
+outer apply
+(
+	SELECT Min(a.EditDate) InvLocationDate
+	FROM LocationTrans a WITH (NOLOCK) 
+	inner join LocationTrans_detail as b WITH (NOLOCK) on a.ID = b.ID 
+	WHERE a.status = 'Confirmed' and b.stocktype='I'
+	AND b.Poid=f.POID and b.Seq1=f.SEQ1 and b.Seq2=f.SEQ2
+)ILT
 {sqlWhere} 
 ORDER BY POID,SEQ
 OPTION (OPTIMIZE FOR UNKNOWN)
@@ -444,6 +453,7 @@ select
     ,tf.ALocation
     ,tf.BulkLocationDate
 	,tf.BLocation	
+    ,tf.InvLocationDate
 	,tf.MinSciDelivery
 	,tf.MinBuyerDelivery
 	,tf.Refno

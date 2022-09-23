@@ -87,26 +87,12 @@ order by fd.ID ";
 
                     foreach (var item in tempShow)
                     {
-                        if (Camera_Prg.MasterSchemas.Where(r => r.Pkey.Equals(item.Pkey) && r.ID.Equals(item.ID)).Any() == false)
+                        if (Camera_Prg.MasterSchemas.Where(r => r.ID.Equals(item.ID) && r.Seq.Equals(item.Seq)).Any() == false)
                         {
-                            // 刪除檔案
-                            if (System.IO.File.Exists(item.imgPath))
-                            {
-                                try
-                                {
-                                    item.image.Dispose();
-                                    System.IO.File.Delete(item.imgPath);
-                                }
-                                catch (Exception ex)
-                                {
-                                    this.ShowErr(ex.Message.ToString());
-                                    break;
-                                }
-                            }
-
                             string sqlcmdDelete = $@"
-delete from [ExtendServer].ManufacturingExecution.dbo.Clip 
-where PKey = '{item.Pkey}'
+delete from SciPMSFile_FIR_Physical_Defect_RealtimeImage
+where FIRPhysicalDefectRealtimeID = '{item.ID}'
+and Seq = '{item.Seq}'
 ";
                             DualResult result;
                             if (!(result = DBProxy.Current.Execute(string.Empty, sqlcmdDelete)))
@@ -147,28 +133,17 @@ where PKey = '{item.Pkey}'
 
             DataTable dt;
             string sqlcmd = $@"
-select  c.SourceFile,
-        c.UniqueKey,
-        c.Description,
-        c.Pkey,
-        [yyyyMM] = format(c.AddDate,'yyyyMM')
-into    #MES_Clip        
-from    [ExtendServer].ManufacturingExecution.dbo.Clip c
-where   c.TableName = 'FIR_Physical_Defect_Realtime' and
-        c.UniqueKey in (select ID from FIR_Physical_Defect_Realtime with (nolock) where FIR_PhysicalDetailUkey = {this.def_dr["DetailUkey"]})
-
-
-select  r.FabricdefectID,
-        r.FIR_PhysicalDetailUkey,
-        c.SourceFile,
-        c.UniqueKey,
-        c.Description,
-        c.Pkey,
-        c.yyyyMM
-from FIR_Physical_Defect_Realtime r 
-inner join #MES_Clip  c on c.UniqueKey = r.Id
-where r.FIR_PhysicalDetailUkey = {this.def_dr["DetailUkey"]}
-order by r.FabricdefectID,r.FIR_PhysicalDetailUkey,c.SourceFile";
+select a.FabricdefectID
+,a.FIR_PhysicalDetailUkey
+,b.FIRPhysicalDefectRealtimeID
+,b.Seq
+,b.Image
+,b.Description
+from FIR_Physical_Defect_Realtime a
+inner join SciPMSFile_FIR_Physical_Defect_RealtimeImage b on a.id = b.FIRPhysicalDefectRealtimeID
+where a.FIR_PhysicalDetailUkey = '{this.def_dr["DetailUkey"]}'
+order by a.FabricdefectID,a.FIR_PhysicalDetailUkey
+";
 
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
 
@@ -180,25 +155,22 @@ order by r.FabricdefectID,r.FIR_PhysicalDetailUkey,c.SourceFile";
 
             foreach (DataRow item in dt.Rows)
             {
-                string strpath = Path.Combine(Camera_Prg.GetCameraPath(item["yyyyMM"].ToString()), item["SourceFile"].ToString());
-                if (!File.Exists(strpath))
+                Bitmap bmp;
+                byte[] data = (byte[])item["Image"];
+                using (var ms = new MemoryStream((byte[])item["Image"]))
                 {
-                    continue;
+                    bmp = new Bitmap(ms);
                 }
 
-                using (var fs = new System.IO.FileStream(strpath, System.IO.FileMode.Open))
+                var temp1 = new Endline_Camera_Schema()
                 {
-                    var temp1 = new Endline_Camera_Schema()
-                    {
-                        Pkey = item["Pkey"].ToString(),
-                        ID = item["UniqueKey"].ToString(),
-                        desc = item["Description"].ToString(),
-                        image = new Bitmap(fs),
-                        FabricdefectID = item["FabricdefectID"].ToString(),
-                        imgPath = strpath,
-                    };
-                    this.picList.Add(temp1);
-                }
+                    ID = item["FIRPhysicalDefectRealtimeID"].ToString(),
+                    Seq = MyUtility.Convert.GetInt(item["Seq"]),
+                    image = bmp,
+                    desc = item["Description"].ToString(),
+                    FabricdefectID = item["FabricdefectID"].ToString(),
+                };
+                this.picList.Add(temp1);
             }
 
             Camera_Prg.MasterSchemas = this.picList.ToList();

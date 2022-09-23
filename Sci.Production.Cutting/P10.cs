@@ -4,6 +4,7 @@ using Sci.Data;
 using Sci.Production.Automation;
 using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
+using Sci.Win.Tools;
 using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
@@ -159,6 +160,34 @@ where MDivisionID = '{Env.User.Keyword}'";
                 }
             };
 
+            DataGridViewGeneratorTextColumnSettings dyelot = new DataGridViewGeneratorTextColumnSettings();
+            dyelot.EditingMouseDown += (s, e) =>
+             {
+                 if (e.RowIndex == -1 || e.Button != MouseButtons.Right)
+                 {
+                     return;
+                 }
+
+                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                 string sqlcmd = $@"
+SELECT distinct Dyelot
+FROM ftyinventory  f
+inner join PO_Supp_Detail psd on f.POID=psd.ID  and f.Seq1 =psd.SEQ1 and f.Seq2 =psd.SEQ2 and f.StockType ='B'
+where 1=1
+and POID = '{this.CurrentMaintain["POID"]}'
+and psd.Refno = (select top 1 wo.Refno from WorkOrder wo where wo.CutRef='{this.CurrentMaintain["Cutref"]}' and wo.MDivisionId = '{this.CurrentMaintain["mDivisionid"]}')
+";
+                 SelectItem sele = new SelectItem(sqlcmd, "50", dr["Dyelot"].ToString()) { Width = 333 };
+                 DialogResult result = sele.ShowDialog();
+                 if (result == DialogResult.Cancel)
+                 {
+                     return;
+                 }
+
+                 e.EditingControl.Text = sele.GetSelectedString();
+                 dr.EndEdit();
+             };
+
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Numeric("BundleGroup", header: "Group", width: Widths.AnsiChars(4), integer_places: 5, iseditingreadonly: true)
                 .Text("Tone", header: "Tone", width: Widths.AnsiChars(1), iseditingreadonly: true)
@@ -174,7 +203,10 @@ where MDivisionID = '{Env.User.Keyword}'";
                 .Text("PostSewingSubProcess_String", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("NoBundleCardAfterSubprocess_String", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .CheckBox("RFIDScan", header: "RFID Scan", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
+                .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(20), settings: dyelot)
             ;
+
+            this.detailgrid.Columns["Dyelot"].DefaultCellStyle.BackColor = Color.Pink;
             return base.OnGridSetup();
         }
 
@@ -304,7 +336,7 @@ order by bundlegroup,bundleno";
         {
             string masterID = MyUtility.Convert.GetString(this.CurrentMaintain["id"]);
             string allPart_cmd = $@"Select *,sel = 0, ukey1 = 0, annotation = '' from Bundle_Detail_Allpart WITH (NOLOCK) Where id ='{masterID}'";
-            string qty_cmd = $@"Select *, No = 0 from Bundle_Detail_qty WITH (NOLOCK) Where id ='{masterID}'";
+            string qty_cmd = $@"Select *, No = 0,Dyelot = '' from Bundle_Detail_qty WITH (NOLOCK) Where id ='{masterID}'";
             string art_cmd = $@"Select *, ukey1 = 0,NoBundleCardAfterSubprocess_String='',PostSewingSubProcess_String=''from Bundle_Detail_art WITH (NOLOCK) Where id ='{masterID}' ";
             string comebine_cmd = $@"Select *, ukey1 = 0 from Bundle_Detail_CombineSubprocess WITH (NOLOCK) Where id ='{masterID}'";
             DualResult dRes = DBProxy.Current.Select(null, allPart_cmd, out this.Bundle_Detail_Allpart);
@@ -317,6 +349,25 @@ order by bundlegroup,bundleno";
             if (!dRes)
             {
                 this.ShowErr(qty_cmd, dRes);
+            }
+
+            foreach (DataRow dr in this.Bundle_Detail_Qty.Rows)
+            {
+                DataRow[] drs = ((DataTable)this.detailgridbs.DataSource).Select($"sizecode = '{dr["sizecode"]}' and qty = '{dr["qty"]}'");
+                if (drs.Length > 0)
+                {
+                    List<string> dyelotlist = new List<string>();
+                    foreach (var dyelot in drs.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["dyelot"])))
+                    {
+                        var dyelots = dyelot.Split(',');
+                        foreach (var item in dyelots)
+                        {
+                            dyelotlist.Add(item);
+                        }
+                    }
+
+                    dr["dyelot"] = dyelotlist.Distinct().OrderBy(o => o).JoinToString(",");
+                }
             }
 
             dRes = DBProxy.Current.Select(null, art_cmd, out this.Bundle_Detail_Art);
@@ -396,11 +447,13 @@ order by bundlegroup,bundleno";
             {
                 this.ChangeColor_ByID();
             }
+
             if (this.CurrentMaintain != null && this.Bundle_Detail_Order.Rows.Count > 1)
             {
                 MyUtility.Msg.WarningBox($"Cannot edit if SP# more than one, please delete this ID:{this.CurrentMaintain["ID"]} and create a new one.");
                 return false;
             }
+
             return base.ClickEditBefore();
         }
 
@@ -521,6 +574,14 @@ order by bundlegroup,bundleno";
                 foreach (DataRow dr in this.Bundle_Detail_CombineSubprocess.Rows)
                 {
                     dr["ID"] = cid;
+                }
+            }
+
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                if (dr["dyelot"] == DBNull.Value)
+                {
+                    dr["dyelot"] = string.Empty;
                 }
             }
 
@@ -1194,7 +1255,7 @@ where b.poid = '{poid}'
 select distinct Article ,w.Colorid
 from workorder w WITH (NOLOCK) 
 inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
-where Article!='' and w.cutref='{this.CurrentMaintain["cutref"].ToString()}' and w.mDivisionid = '{this.keyword}' {sqlwhere}";
+where Article!='' and w.cutref='{this.CurrentMaintain["cutref"]}' and w.mDivisionid = '{this.keyword}' {sqlwhere}";
                 item = new Win.Tools.SelectItem(selectCommand, "20", this.Text);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
@@ -1213,7 +1274,7 @@ where Article!='' and w.cutref='{this.CurrentMaintain["cutref"].ToString()}' and
 select distinct count(Article)
 from workorder w WITH (NOLOCK) 
 inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
-where Article!='' and w.OrderID = '{this.CurrentMaintain["Orderid"].ToString()}' and w.mDivisionid = '{this.keyword}' {sqlwhere}";
+where Article!='' and w.OrderID = '{this.CurrentMaintain["Orderid"]}' and w.mDivisionid = '{this.keyword}' {sqlwhere}";
                     string count = MyUtility.GetValue.Lookup(scount, null);
                     if (count != "0")
                     {
@@ -1221,7 +1282,7 @@ where Article!='' and w.OrderID = '{this.CurrentMaintain["Orderid"].ToString()}'
 select distinct Article ,w.Colorid
 from workorder w WITH (NOLOCK) 
 inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
-where Article!='' and w.OrderID = '{this.CurrentMaintain["Orderid"].ToString()}' and w.mDivisionid = '{this.keyword}' {sqlwhere}";
+where Article!='' and w.OrderID = '{this.CurrentMaintain["Orderid"]}' and w.mDivisionid = '{this.keyword}' {sqlwhere}";
                         this.at = 1;
                     }
                     else
@@ -1230,7 +1291,7 @@ where Article!='' and w.OrderID = '{this.CurrentMaintain["Orderid"].ToString()}'
 SELECT OA.Article , color.ColorID
 FROM Order_Article OA WITH (NOLOCK)
 CROSS APPLY (SELECT TOP 1 ColorID FROM Order_ColorCombo OCC WITH (NOLOCK) WHERE OCC.Id=OA.id and OCC.Article=OA.Article) color
-where OA.id = '{this.CurrentMaintain["Orderid"].ToString()}'
+where OA.id = '{this.CurrentMaintain["Orderid"]}'
 ORDER BY Seq";
                     }
 
@@ -1418,11 +1479,11 @@ select [SP#] = OrderID, Qty from Bundle_Detail_Order WITH (NOLOCK) where Bundlen
         /// <summary>
         /// 同一個BundleNo 有2筆以上, 就將表身BundleNo變成黃底
         /// </summary>
-        /// <param name="ID"></param>
+        /// <inheritdoc/>
         private void ChangeColor_ByID()
         {
             string sqlcmd = $@"
-select BundleNo from Bundle_Detail_Order WITH (NOLOCK) where ID = '{this.CurrentMaintain["ID"].ToString()}'";
+select BundleNo from Bundle_Detail_Order WITH (NOLOCK) where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable curdtBundle_Detail_Order);
             if (!result)
             {

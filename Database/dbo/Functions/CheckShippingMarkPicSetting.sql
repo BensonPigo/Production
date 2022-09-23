@@ -1,10 +1,8 @@
-﻿USE FPS
-
-
+﻿
 CREATE FUNCTION [dbo].[CheckShippingMarkPicSetting]
 (
 	@PackingListID varchar(15),
-	@SCICtnNo varchar(15),
+	@SCICtnNo varchar(16),
 	@CtnRefno varchar(21),
 	@IsMixPack bit,
 	@CustCDID varchar(16),

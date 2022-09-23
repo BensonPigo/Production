@@ -1731,9 +1731,15 @@ set SharedAmtFactory = @SharedAmtFactory
 	, EditDate = @adddate
 where ID = @ShippingAPID
 
---drop table #InvNoSharedAmt,#PLSharedAmtStep1,#PLSharedAmt,#PLSharedAmtStep2,#tmpPackingList,#OrderSharedAmt,#OrderSharedAmtStep1,#OrderSharedAmtStep2,#source,#tmpPackingListMaster
+update a set a.ActAmt = airAmt.ActAmt, a.ExchangeRate = airAmt.ExchangeRate, a.ShareExpenseEditDate = getdate()
+	from AirPP a
+	inner join dbo.GetAirPPAmt(@ShippingAPID, '') airAmt on airAmt.AirPPID = a.ID
+
 select AirPPID, ActAmt, ExchangeRate
 from dbo.GetAirPPAmt(@ShippingAPID, '')
+
+drop table #InvNoSharedAmt,#PLSharedAmtStep1,#PLSharedAmt,#PLSharedAmtStep2,#tmpPackingList,#OrderSharedAmt,#OrderSharedAmtStep1,#OrderSharedAmtStep2,#source,#tmpPackingListMaster
+
 ";
             result = MyUtility.Tool.ProcessWithDatatable(dtServer, null, sqlcmd, out DataTable dtAirPPAmt, temptablename: "#tmpPackingList");
 

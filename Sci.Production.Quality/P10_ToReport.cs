@@ -112,7 +112,7 @@ namespace Sci.Production.Quality
 
         private void PrintWash18(string to)
         {
-            if (this.dtApperance.Rows.Count == 0 || this.dtShrinkage.Rows.Count == 0)
+            if (this.dtApperance == null || this.dtShrinkage == null || this.dtApperance.Rows.Count == 0 || this.dtShrinkage.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Datas not found!");
                 return;

@@ -2548,257 +2548,57 @@ DROP TABLE #beforeTmp
         /// <summary>
         /// P10 Print Data
         /// </summary>
+#pragma warning disable SA1600 // Elements should be documented
+#pragma warning disable SA1516 // Elements should be separated by blank line
         public class P10_PrintData
         {
-            /// <inheritdoc/>
             public string Group_right { get; set; }
-
-            /// <inheritdoc/>
             public string Group_left { get; set; }
-
-            /// <inheritdoc/>
             public string CutRef { get; set; }
-
-            /// <inheritdoc/>
             public string Tone { get; set; }
-
-            /// <inheritdoc/>
             public string Line { get; set; }
-
-            /// <inheritdoc/>
             public string Cell { get; set; }
-
-            /// <inheritdoc/>
             public string POID { get; set; }
-
-            /// <inheritdoc/>
             public string SP { get; set; }
-
-            /// <inheritdoc/>
             public string Style { get; set; }
-
-            /// <inheritdoc/>
             public string MarkerNo { get; set; }
-
-            /// <inheritdoc/>
             public string Body_Cut { get; set; }
-
-            /// <inheritdoc/>
             public string Parts { get; set; }
-
-            /// <inheritdoc/>
             public string Color { get; set; }
-
-            /// <inheritdoc/>
             public string Article { get; set; }
-
-            /// <inheritdoc/>
             public string Size { get; set; }
-
-            /// <inheritdoc/>
             public string SizeSpec { get; set; }
-
-            /// <inheritdoc/>
             public string Desc { get; set; }
-
-            /// <inheritdoc/>
             public string Artwork { get; set; }
-
-            /// <inheritdoc/>
             public string Quantity { get; set; }
-
-            /// <inheritdoc/>
             public string Barcode { get; set; }
-
-            /// <inheritdoc/>
             public string Season { get; set; }
-
-            /// <inheritdoc/>
             public string Brand { get; set; }
-
-            /// <inheritdoc/>
             public string Item { get; set; }
-
-            /// <inheritdoc/>
             public string EXCESS1 { get; set; }
-
-            /// <inheritdoc/>
             public string NoBundleCardAfterSubprocess1 { get; set; }
-
-            /// <inheritdoc/>
             public string Replacement1 { get; set; }
-
-            /// <inheritdoc/>
             public string CutCell { get; set; }
-
-            /// <inheritdoc/>
-            public string Group_right2 { get; set; }
-
-            /// <inheritdoc/>
-            public string Group_left2 { get; set; }
-
-            /// <inheritdoc/>
-            public string Line2 { get; set; }
-
-            /// <inheritdoc/>
-            public string Cell2 { get; set; }
-
-            /// <inheritdoc/>
-            public string SP2 { get; set; }
-
-            /// <inheritdoc/>
-            public string Style2 { get; set; }
-
-            /// <inheritdoc/>
-            public string MarkerNo2 { get; set; }
-
-            /// <inheritdoc/>
-            public string Body_Cut2 { get; set; }
-
-            /// <inheritdoc/>
-            public string Parts2 { get; set; }
-
-            /// <inheritdoc/>
-            public string Color2 { get; set; }
-
-            /// <inheritdoc/>
-            public string Size2 { get; set; }
-
-            /// <inheritdoc/>
-            public string SizeSpec2 { get; set; }
-
-            /// <inheritdoc/>
-            public string Desc2 { get; set; }
-
-            /// <inheritdoc/>
-            public string Artwork2 { get; set; }
-
-            /// <inheritdoc/>
-            public string Quantity2 { get; set; }
-
-            /// <inheritdoc/>
-            public string Barcode2 { get; set; }
-
-            /// <inheritdoc/>
-            public string Season2 { get; set; }
-
-            /// <inheritdoc/>
-            public string Brand2 { get; set; }
-
-            /// <inheritdoc/>
-            public string Item2 { get; set; }
-
-            /// <inheritdoc/>
-            public string EXCESS2 { get; set; }
-
-            /// <inheritdoc/>
-            public string NoBundleCardAfterSubprocess2 { get; set; }
-
-            /// <inheritdoc/>
-            public string Replacement2 { get; set; }
-
-            /// <inheritdoc/>
-            public string Group_right3 { get; set; }
-
-            /// <inheritdoc/>
-            public string Group_left3 { get; set; }
-
-            /// <inheritdoc/>
-            public string Line3 { get; set; }
-
-            /// <inheritdoc/>
-            public string Cell3 { get; set; }
-
-            /// <inheritdoc/>
-            public string SP3 { get; set; }
-
-            /// <inheritdoc/>
-            public string Style3 { get; set; }
-
-            /// <inheritdoc/>
-            public string MarkerNo3 { get; set; }
-
-            /// <inheritdoc/>
-            public string Body_Cut3 { get; set; }
-
-            /// <inheritdoc/>
-            public string Parts3 { get; set; }
-
-            /// <inheritdoc/>
-            public string Color3 { get; set; }
-
-            /// <inheritdoc/>
-            public string Size3 { get; set; }
-
-            /// <inheritdoc/>
-            public string SizeSpec3 { get; set; }
-
-            /// <inheritdoc/>
-            public string Desc3 { get; set; }
-
-            /// <inheritdoc/>
-            public string Artwork3 { get; set; }
-
-            /// <inheritdoc/>
-            public string Quantity3 { get; set; }
-
-            /// <inheritdoc/>
-            public string Barcode3 { get; set; }
-
-            /// <inheritdoc/>
-            public string Season3 { get; set; }
-
-            /// <inheritdoc/>
-            public string Brand3 { get; set; }
-
-            /// <inheritdoc/>
-            public string Item3 { get; set; }
-
-            /// <inheritdoc/>
-            public string EXCESS3 { get; set; }
-
-            /// <inheritdoc/>
-            public string NoBundleCardAfterSubprocess3 { get; set; }
-
-            /// <inheritdoc/>
-            public string Replacement3 { get; set; }
-
-            /// <inheritdoc/>
             public string ShipCode { get; set; }
-
-            /// <inheritdoc/>
             public string FabricPanelCode { get; set; }
-
-            /// <inheritdoc/>
             public string Comb { get; set; }
-
-            /// <inheritdoc/>
             public string Cut { get; set; }
-
-            /// <inheritdoc/>
             public int GroupCombCut { get; set; }
-
-            /// <inheritdoc/>
             public string No { get; set; }
-
-            /// <inheritdoc/>
             public string BundleID { get; set; }
-
-            /// <inheritdoc/>
             public string BundleNo { get; set; }
-
-            /// <inheritdoc/>
             public bool RFIDScan { get; set; }
+            public string Dyelot { get; set; }
         }
+#pragma warning restore SA1516 // Elements should be separated by blank line
+#pragma warning restore SA1600 // Elements should be documented
         #endregion
         #endregion
 
         /// <summary>
         /// InitialRFIDScan(ISP20210568)
         /// </summary>
-        /// <param name="dtPattern">dtPattern</param>
-        /// <param name="iden">iden</param>
-        /// <returns>DualResult</returns>
+        /// <inheritdoc/>
         public static DualResult InitialRFIDScan(DataTable dtPattern)
         {
             try
@@ -2846,6 +2646,140 @@ DROP TABLE #beforeTmp
             {
                 return new DualResult(false, ex);
             }
+        }
+
+        /// <summary>
+        /// GetNo
+        /// </summary>
+        /// <param name="bundleNo">bundleNo</param>
+        /// <param name="dt">dt</param>
+        /// <param name="poid">poid</param>
+        /// <param name="fabricPanelCode">fabricPanelCode</param>
+        /// <param name="article">article</param>
+        /// <param name="size">size</param>
+        /// <returns>string</returns>
+        public static string GetNo(string bundleNo, DataTable dt = null, string poid = null, string fabricPanelCode = null, string article = null, string size = null)
+        {
+            if (dt == null)
+            {
+                dt = GetNoDatas(poid, fabricPanelCode, article, size);
+            }
+
+            DataRow[] drs = dt.Select($"BundleNo = '{bundleNo}'");
+            if (drs.Length == 0)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return drs[0]["No"].ToString();
+            }
+        }
+
+        /// <summary>
+        /// GetNoDatas
+        /// </summary>
+        /// <param name="poid">poid</param>
+        /// <param name="fabricPanelCode">fabricPanelCode</param>
+        /// <param name="article">article</param>
+        /// <param name="size">size</param>
+        /// <returns>DataTable</returns>
+        public static DataTable GetNoDatas(string poid, string fabricPanelCode, string article, string size)
+        {
+            string sqlcmd = $@"
+SELECT 1
+FROM BUNDLE_DETAIL bd with(nolock)
+INNER JOIN BUNDLE B with(nolock) ON B.ID = bd.ID
+WHERE  B.POID ='{poid}' And B.FabricPanelCode='{fabricPanelCode}' And B.Article = '{article}' AND bd.SizeCode='{size}'
+and bd.PrintGroup is null";
+
+            if (!MyUtility.Check.Seek(sqlcmd))
+            {
+                sqlcmd = $@"
+SELECT bd.id, bd.PrintGroup, DR = DENSE_RANK() over(order by  bd.id, bd.PrintGroup), bd.BundleNo, bd.Qty, bd.Patterncode
+into #tmp
+FROM BUNDLE_DETAIL bd with(nolock)
+INNER JOIN BUNDLE B with(nolock) ON B.ID = bd.ID
+WHERE  B.POID ='{poid}' And B.FabricPanelCode='{fabricPanelCode}' AND bd.SizeCode='{size}'
+ORDER BY bd.id,bd.PrintGroup
+
+select
+	x.BundleNo,
+	No = CONCAT(x.startno, '~',  x.startno + Qty - 1)
+	,x.Id, x.DR, x.Patterncode	
+from(
+	select t.BundleNo, t.Qty,
+		startno = 1+isnull((select SUM(qty) from(select qty = min(qty) from #tmp where DR < t.DR group by DR)x), 0)
+		,t.Id,t.DR,t.Patterncode
+	from #tmp t
+)x
+order by BundleNo
+
+drop table #tmp
+";
+            }
+
+            // 舊規(未有PrintGroup之前)
+            else
+            {
+                sqlcmd = $@"
+SELECT bd.id, bd.BundleGroup, bd.BundleNo,bd.Patterncode, bd.Qty, IsPair
+into #beforetmp
+FROM BUNDLE_DETAIL bd with(nolock)
+INNER JOIN BUNDLE B with(nolock) ON B.ID = bd.ID
+WHERE  B.POID ='{poid}' And B.FabricPanelCode='{fabricPanelCode}' And B.Article = '{article}' AND bd.SizeCode='{size}'
+ORDER BY BundleGroup,bd.BundleNo
+
+--maxQty 為每組綁包的總數,在相同 ID, BundleGroup 加總數
+--分子 Bundle_Detail_qty 在P15寫入,每組綁包都會寫入一筆, 但是沒有直接關係分別是哪一組綁包的
+--直接除有幾個 BundleGroup, 是因P15寫入規則, 每組綁包資訊必須一樣才會合併在同一張單
+select *,
+	maxQty=(Select sum(Qty) from Bundle_Detail_qty bdq WITH (NOLOCK) Where bdq.id = bt.id)/(select count(distinct BundleGroup) from #beforetmp where id = bt.id)
+into #tmp
+from #beforetmp bt
+
+--同Patterncode下有數量不同
+--IsPair 兩個為一組
+select t.*,	
+	IsPairRn = IIF(IsPair = 0, 0, row_number() over(partition by ID,BundleGroup,Patterncode Order by BundleNo) % 2 + 1)	
+into #tmpx0
+from #tmp t
+
+select t.*,
+	tmpLastNo = IIF(Qty < maxQty, sum(qty) over(partition by ID,BundleGroup,Patterncode,IsPairRn Order by BundleNo), Qty)
+into #tmpx1
+from #tmpx0 t
+order by bundleno
+
+select distinct Id,BundleGroup,maxQty into #tmp2 from #tmp
+select *, lastNo = SUM(maxQty) over(Order by Id,BundleGroup) into #tmp3 from #tmp2
+select *, before = LAG(lastNo,1,0) over(Order by Id,BundleGroup) into #tmp4 from #tmp3
+
+select
+	x1.*,
+	minPatterncodeNo = min(tmpLastNo)  over(partition by x1.ID,x1.BundleGroup,x1.Patterncode,x1.IsPairRn Order by x1.BundleNo),
+	tmpbefore = t4.before + 1,
+	lastno = t4.before + x1.tmpLastNo
+into #tmp5
+from #tmp4 t4
+inner join #tmpx1 x1 on x1.Id = t4.Id and x1.BundleGroup = t4.BundleGroup
+
+select t5.*,
+	startNo = case when Qty = maxQty or tmpLastNo = minPatterncodeNo then tmpbefore
+					else LAG(lastNo,1,0) over(partition by ID,BundleGroup,Patterncode,IsPairRn Order by BundleNo) + 1
+					end
+into #tmp6
+from #tmp5 t5
+
+select BundleNo,No = CONCAT(startNo,'~',lastno)
+from #tmp6
+
+drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
+";
+            }
+
+            DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
+            return dt;
         }
     }
 }

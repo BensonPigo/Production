@@ -314,6 +314,7 @@ and ID = '{Sci.Env.User.UserID}'"))
             .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("stockunit", header: "Unit", iseditingreadonly: true) // 5
             .Numeric("qty", header: "Out Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, settings: qtySetting) // 6
+            .Text("Tone", header: "Tone/Grp", iseditingreadonly: true)
             .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), iseditable: false).Get(out cbb_stocktype) // 7
             .Text("Location", header: "Location", iseditingreadonly: true) // 8
             .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
@@ -935,6 +936,7 @@ select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as se
 , p1.SizeSpec
 ,a.TransferExportID
 ,a.TransferExport_DetailUkey
+,ShadeboneTone2.Tone 
 from dbo.TransferOut_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 left join View_WH_Orders o WITH (NOLOCK) on p1.ID = o.ID
@@ -955,6 +957,12 @@ outer apply(
 		for xml path ('')
 	) , 1, 1, '')
 ) WK
+outer apply (
+    select [Tone] = MAX(fs.Tone)
+    from FIR f 
+    Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID
+    where f.poid = fi.poid and f.seq1 = fi.seq1 and f.seq2 = fi.seq2 and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
+) ShadeboneTone2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }

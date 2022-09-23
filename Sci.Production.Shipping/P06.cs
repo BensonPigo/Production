@@ -1122,7 +1122,7 @@ inner join  #tmp t on t.OrderID = o.ID
             this.UpdatePacking_PulloutStatus();
 
             #region ISP20200757 資料交換 - Sunrise
-            if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
+            if (PMSUtilityAutomation.IsSunrise_FinishingProcessesEnable)
             {
                 string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
                 Task.Run(() => new Sunrise_FinishingProcesses().SentOrdersToFinishingProcesses(listOrderID, "Orders,Order_QtyShip,Order_Qty"))
@@ -1292,7 +1292,7 @@ inner join  #tmp t on t.OrderID = o.ID
             this.UpdatePacking_PulloutStatus();
 
             #region ISP20200757 資料交換 - Sunrise
-            if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
+            if (PMSUtilityAutomation.IsSunrise_FinishingProcessesEnable)
             {
                 string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
                 Task.Run(() => new Sunrise_FinishingProcesses().SentOrdersToFinishingProcesses(listOrderID, "Orders,Order_QtyShip"))
@@ -1599,24 +1599,27 @@ select  pd.ID as PackingListID
 
             if (dtPulloutA2B.Rows.Count > 0)
             {
-                sqlUnionA2B = @"
+                sqlUnionA2B = $@"
 union all
-select  PackingListID
-        , Type
-        , ShipModeID
-        , OrderID
-        , OrderShipmodeSeq
-        , Article
-        , SizeCode
-        , OrderQty
-        , OrderShipQty
-        , SeqQty
-        , Shipqty
-        , INVNo
-        , StyleID
-        , BrandID
-        , Dest
-from #tmp
+select  t.PackingListID
+        , t.Type
+        , t.ShipModeID
+        , t.OrderID
+        , t.OrderShipmodeSeq
+        , t.Article
+        , t.SizeCode
+        , t.OrderQty
+        , t.OrderShipQty
+        , t.SeqQty
+        , t.Shipqty
+        , t.INVNo
+        , t.StyleID
+        , t.BrandID
+        , t.Dest
+from #tmp t
+inner join Orders o with (nolock) on o.ID = t.OrderID
+where o.MDivisionID = '{Env.User.Keyword}'
+
 ";
             }
 
@@ -2057,6 +2060,7 @@ select  pd.ID as PackingListID
     where (p.Type = 'B' or p.Type = 'S')
           and o.junk = 0
           and p.ID in ({0})
+          and (p.PulloutID = '' or p.PulloutID='{2}')
     group by pd.ID, p.Type, p.ShipModeID, pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.SizeCode, o.Qty
           , oq.Qty, oqd.Qty, p.INVNo, o.StyleID, o.BrandID, o.Dest
 ";
@@ -2073,7 +2077,7 @@ select  pd.ID as PackingListID
                 {
                     result = PackingA2BWebAPI.GetDataBySql(
                         itemA2B.PLFromRgCode,
-                        string.Format(sqlGetPulloutA2B, itemA2B.WherePackID, itemA2B.PLFromRgCode),
+                        string.Format(sqlGetPulloutA2B, itemA2B.WherePackID, itemA2B.PLFromRgCode, pulloutID),
                         out DataTable dtResultA2B);
 
                     if (!result)
@@ -2097,25 +2101,27 @@ select  pd.ID as PackingListID
 
             if (dtPulloutA2BForPullOut.Rows.Count > 0)
             {
-                sqlUnionA2BForPullOut = @"
+                sqlUnionA2BForPullOut = $@"
 union all
-select  PackingListID
-        , Type
-        , ShipModeID
-        , OrderID
-        , OrderShipmodeSeq
-        , Article
-        , SizeCode
-        , OrderQty
-        , OrderShipQty
-        , SeqQty
-        , Shipqty
-        , INVNo
-        , StyleID
-        , BrandID
-        , Dest
-        , PLFromRgCode
-from #tmp
+select  t.PackingListID
+        , t.Type
+        , t.ShipModeID
+        , t.OrderID
+        , t.OrderShipmodeSeq
+        , t.Article
+        , t.SizeCode
+        , t.OrderQty
+        , t.OrderShipQty
+        , t.SeqQty
+        , t.Shipqty
+        , t.INVNo
+        , t.StyleID
+        , t.BrandID
+        , t.Dest
+        , t.PLFromRgCode
+from #tmp t
+inner join Orders o with (nolock) on o.ID = t.OrderID
+where o.MDivisionID = '{Env.User.Keyword}'
 ";
             }
 

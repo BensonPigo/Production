@@ -158,6 +158,24 @@
     <Compile Include="B03.Designer.cs">
       <DependentUpon>B03.cs</DependentUpon>
     </Compile>
+    <Compile Include="B05.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B05.Designer.cs">
+      <DependentUpon>B05.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B05_BatchImport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B05_BatchImport.Designer.cs">
+      <DependentUpon>B05_BatchImport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B05_History.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B05_History.Designer.cs">
+      <DependentUpon>B05_History.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -200,6 +218,7 @@
     <Compile Include="P08_Detail.Designer.cs">
       <DependentUpon>P08_Detail.cs</DependentUpon>
     </Compile>
+    <Compile Include="P11_SewingOutputOrderChange.cs" />
     <Compile Include="P14.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -388,6 +407,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B03.resx">
       <DependentUpon>B03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B05.resx">
+      <DependentUpon>B05.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B05_BatchImport.resx">
+      <DependentUpon>B05_BatchImport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B05_History.resx">
+      <DependentUpon>B05_History.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>

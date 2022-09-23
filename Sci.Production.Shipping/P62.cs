@@ -303,6 +303,17 @@ where id = '{this.CurrentMaintain["ID"]}'
             return base.ClickSaveBefore();
         }
 
+        protected override bool ClickDeleteBefore()
+        {
+            if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
+            {
+                MyUtility.Msg.WarningBox("Data is confirmed, cannot delete.", "Warning");
+                return false;
+            }
+
+            return base.ClickDeleteBefore();
+        }
+
         /// <summary>
         /// 將表身資料加總後更新到表頭
         /// </summary>

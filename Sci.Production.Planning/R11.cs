@@ -208,6 +208,9 @@ where not exists (select 1 from Factory f WITH (NOLOCK) where f.ID = o.FactoryID
 
             // #tmp_AR_Basic filter
             StringBuilder sqlcmdWhere = new StringBuilder();
+            string smileBaseOnWhere = string.Empty;
+            string strType = " , [Type] = IIF(isnull(r.R,'') ='' and isnull(rs.RS,'') = '','New Style','Repeat')";
+            string strOutputDate = MyUtility.Check.Empty(this.outputDate) ? "format(GetDate(),'yyyy/MM/dd')" : "'" + Convert.ToDateTime(this.outputDate).ToString("yyyy/MM/dd") + "'";
             if (!MyUtility.Check.Empty(this.mdivision))
             {
                 sqlcmdWhere.Append(" and o.mdivisionid = @MDivision");
@@ -220,8 +223,22 @@ where not exists (select 1 from Factory f WITH (NOLOCK) where f.ID = o.FactoryID
 
             if (this.numNewStyleBaseOn.Value != 0)
             {
-                sqlcmdWhere.Append(string.Format(@" and  dateadd(month,{0},o2.SciDelivery ) < so.OutputDate", -this.months));
-                this.condition.Append(string.Format(@"    New Style base on {0} month(s)", this.months));
+                sqlcmdWhere.Append($@" and  dateadd(month,{-this.months},o2.SciDelivery ) < so.OutputDate");
+                this.condition.Append($@"    New Style base on {this.months} month(s)");
+
+                smileBaseOnWhere = $@"
+outer apply(
+	select cnt = count(1)
+	from #tmp_R_Similar s
+	where s.OldStyleID = o.StyleID 
+	and R_Similar !=''
+    and s.StyleID != o.StyleID -- 排除自己StyleID
+	and s.max_OutputDate > dateadd(month,{-this.months},{strOutputDate} ) 
+)rs2
+";
+                strType = $@", [Type] = case 
+				   when r.max_OutputDate > dateadd(month,{-this.months},{strOutputDate} )  or rs2.cnt >= 1 then 'Repeat'
+				   else 'New Style' end";
             }
 
             if (MyUtility.Check.Empty(this.outputDate) && this.chkByCMPMonthlyLockDate.Checked)
@@ -269,20 +286,25 @@ group by o.FtyGroup,o.Styleid,oa.Article,oa.Brand,o.SeasonID,o.CdCodeID,o.CPU
 	, o.CDCodeNew, o.ProductType, o.FabricType, o.Lining, o.Gender, o.Construction
 
 -- get Style_SimilarStyle 
-select distinct StyleID,OldStyleID
+select distinct StyleID,OldStyleID,SciDelivery
 into #tmpStyle_SimilarStyle
 From 
 (
-		Select StyleID = MasterStyleID, BrandID = MasterBrandID, OldStyleID = t.StyleID,t.StyleUkey
+		Select StyleID = MasterStyleID, BrandID = MasterBrandID, OldStyleID = t.StyleID,t.StyleUkey,t.SciDelivery
 		From Style_SimilarStyle	s	
 		inner join #tmpo t on (t.StyleID = s.MasterStyleID and t.BrandID = s.MasterBrandID) or (t.StyleID = s.ChildrenStyleID and t.BrandID = s.ChildrenBrandID)
 		Union 
-		Select StyleID = ChildrenStyleID, BrandID = ChildrenBrandID, OldStyleID = t.StyleID,t.StyleUkey
+		Select StyleID = ChildrenStyleID, BrandID = ChildrenBrandID, OldStyleID = t.StyleID,t.StyleUkey,t.SciDelivery
 		From Style_SimilarStyle	s	
 		inner join #tmpo t on (t.StyleID = s.MasterStyleID and t.BrandID = s.MasterBrandID) or (t.StyleID = s.ChildrenStyleID and t.BrandID = s.ChildrenBrandID)
 ) main
-	Left join Style s on s.ID = main.StyleID And s.BrandID = main.BrandID
-	Where s.Ukey <> main.StyleUkey
+Left join Style s on s.ID = main.StyleID And s.BrandID = main.BrandID
+Where s.Ukey <> main.StyleUkey
+and exists(
+	select 1 from #tmpo t
+	where t.StyleID = main.OldStyleID
+	and t.BrandID = main.BrandID
+)
 
 --
 select 
@@ -343,6 +365,7 @@ select a.StyleID
                     when a.S > 0 AND a.B = 0 then ''
                     else concat(min(a.SewingLineID),'(',format(b.max_OutputDate,'yyyy/MM/dd'),')')
                     end
+	,b.max_OutputDate
 into #tmp_R
 from #tmp_AR_Basic a 
 inner join (select StyleID,max_OutputDate = max(OutputDate) from #tmp_AR_Basic group by StyleID) b
@@ -354,6 +377,7 @@ select a.StyleID,a.OldStyleID
                     when a.S > 0 AND a.B = 0 then ''
                     else  concat(b.StyleID,'→',min(a.SewingLineID),'(',format(b.max_OutputDate,'yyyy/MM/dd'),')')
                     end
+	,b.max_OutputDate
 into #tmp_R_Similar
 from #tmp_AR_Basic_S a 
 inner join (select StyleID,max_OutputDate = max(OutputDate) from #tmp_AR_Basic_S group by StyleID) b
@@ -404,7 +428,7 @@ select o.FtyGroup
 	   , a.A
 	   , R = isnull(r.R,'')
        , RS = ISNULL(rs.RS,'')
-       , [Type] = IIF(isnull(r.R,'') ='' and isnull(rs.RS,'') = '','New Style','Repeat')
+       {strType}
 	   , W = iif(w.P=0 or w.P is null,'N','Y')
 	   {this.pvtid}
 from #tmpol o
@@ -418,8 +442,10 @@ outer apply(
 	from #tmp_R_Similar s
 	where s.OldStyleID = o.StyleID
 	and R_Similar !=''
+    and s.StyleID != o.StyleID -- 排除自己StyleID
 	for XML path('')),1,1,'')
 )rs
+{smileBaseOnWhere}
 order by o.FtyGroup,o.StyleID,o.SeasonID
 
 drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls,#tmp_AR_Basic_S,#tmp_R_Similar,#tmpStyle_SimilarStyle

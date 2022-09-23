@@ -720,21 +720,53 @@ outer apply(select v = case when #HT.OutQtyBySet is null or #HT.OutQtyBySet >= t
                 subprocessIDs = this.subprocessID.Split(',');
                 subprocessQtyColumns = subprocessIDs.Length > 1 ? this.MultiSuboricessColumns() : this.SingleSubprocessColumn();
                 subprocessQtyColumnsSource = string.Empty;
-                if (subprocessIDs.Length > 1)
+                foreach (var item in subprocessIDs)
                 {
-                    foreach (var item in subprocessIDs)
-                    {
-                        subprocessQtyColumnsSource += $@"left join #{item} on #{item}.OrderID = t.OrderID" + Environment.NewLine;
-                    }
-                }
-                else
-                {
-                    string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(this.subprocessID);
-                    subprocessQtyColumnsSource = $@"left join #{subprocessIDtmp} on #{subprocessIDtmp}.OrderID = t.OrderID";
+                    string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(item);
+                    subprocessQtyColumnsSource += $@"left join #{subprocessIDtmp} on #{subprocessIDtmp}.OrderID = t.OrderID" + Environment.NewLine;
                 }
             }
 
             string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#cte", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "0", rfidProcessLocationID: this.RFIDProcessLocation);
+            if (string.IsNullOrEmpty(this.RFIDProcessLocation))
+            {
+                qtyBySetPerSubprocess = $@"
+select s.OrderID
+    , s.SubProcessID
+    , TransferTime = MAX(s.TransferTime)
+into #tmp_SetQtyBySubprocess_Last
+from SetQtyBySubprocess s WITH (NOLOCK)
+where exists (select 1 from #cte t where s.OrderID = t.OrderID)
+group by s.OrderID, s.SubProcessID
+
+
+select s.OrderID, s.SubprocessID 
+    , InQtyBySet = SUM(s.InQtyBySet)
+	, OutQtyBySet = SUM(s.OutQtyBySet)
+	, FinishedQtyBySet = SUM(s.FinishedQtyBySet)
+into #tmp_SetQtyBySubprocess
+from 
+(
+    select s.OrderID
+        , s.Article
+        , s.SizeCode 
+        , s.SubprocessID
+	    , InQtyBySet = MIN(s.InQtyBySet)
+	    , OutQtyBySet = MIN(s.OutQtyBySet)
+	    , FinishedQtyBySet = MIN(s.FinishedQtyBySet)
+    from SetQtyBySubprocess s WITH (NOLOCK)
+    where exists (select 1 from #tmp_SetQtyBySubprocess_Last t where t.OrderID = s.OrderID and t.SubProcessID = s.SubProcessID and t.TransferTime = s.TransferTime)
+    and SubProcessID in ('{string.Join("','", subprocessIDs)}')
+    group by s.OrderID, s.Article, s.SizeCode, s.SubprocessID 
+)s
+group by s.OrderID, s.SubprocessID 
+";
+                foreach (var item in subprocessIDs)
+                {
+                    string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(item);
+                    qtyBySetPerSubprocess += $@"select * into #{subprocessIDtmp} from #tmp_SetQtyBySubprocess where SubprocessID = '{item}'" + Environment.NewLine;
+                }
+            }
 
             #region SummaryBy SP#
             sqlCmd.Append($@"
@@ -1438,24 +1470,47 @@ outer apply(select v = case when HT.OutQtyBySet is null or HT.OutQtyBySet >= t.Q
             {
                 subprocessIDs = this.subprocessID.Split(',');
                 subprocessQtyColumns = subprocessIDs.Length > 1 ? this.MultiSuboricessColumns(1) : this.SingleSubprocessColumn(1);
-                string subprocessIDtmp = string.Empty;
                 subprocessQtyColumnsSource = string.Empty;
-                if (subprocessIDs.Length > 1)
+                foreach (var item in subprocessIDs)
                 {
-                    foreach (var item in subprocessIDs)
-                    {
-                        subprocessQtyColumnsSource += $@"left join #QtyBySetPerSubprocess{item} on #QtyBySetPerSubprocess{item}.OrderID = t.OrderID and #QtyBySetPerSubprocess{item}.Article = t.Article and #QtyBySetPerSubprocess{item}.SizeCode = t.SizeCode " + Environment.NewLine;
-                    }
-                }
-                else
-                {
-                    subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(this.subprocessID);
-                    subprocessIDtmp = "QtyBySetPerSubprocess" + subprocessIDtmp;
-                    subprocessQtyColumnsSource = $@"left join #{subprocessIDtmp} on #{subprocessIDtmp}.OrderID = t.OrderID and #{subprocessIDtmp}.Article = t.Article and #{subprocessIDtmp}.SizeCode = t.SizeCode ";
+                    string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(item);
+                    subprocessQtyColumnsSource += $@"left join #QtyBySetPerSubprocess{subprocessIDtmp} on #QtyBySetPerSubprocess{subprocessIDtmp}.OrderID = t.OrderID and #QtyBySetPerSubprocess{subprocessIDtmp}.Article = t.Article and #QtyBySetPerSubprocess{subprocessIDtmp}.SizeCode = t.SizeCode " + Environment.NewLine;
                 }
             }
 
             string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#cte", bySP: false, isNeedCombinBundleGroup: true, isMorethenOrderQty: "0", rfidProcessLocationID: this.RFIDProcessLocation);
+            if (string.IsNullOrEmpty(this.RFIDProcessLocation))
+            {
+                qtyBySetPerSubprocess = $@"
+select s.OrderID
+    , s.SubProcessID
+    , TransferTime = MAX(s.TransferTime)
+into #tmp_SetQtyBySubprocess_Last
+from SetQtyBySubprocess s WITH (NOLOCK) 
+where exists (select 1 from #cte t where s.OrderID = t.OrderID)
+group by s.OrderID, s.SubProcessID
+
+select s.OrderID
+    , s.Article
+    , s.SizeCode 
+    , s.SubprocessID
+    , InQtyBySet = MIN(s.InQtyBySet)
+    , OutQtyBySet = MIN(s.OutQtyBySet)
+    , FinishedQtyBySet = MIN(s.FinishedQtyBySet)
+into #tmp_SetQtyBySubprocess
+from SetQtyBySubprocess s WITH (NOLOCK)
+where exists (select 1 from #tmp_SetQtyBySubprocess_Last t where t.OrderID = s.OrderID and t.SubProcessID = s.SubProcessID and t.TransferTime = s.TransferTime)
+and SubProcessID in ('{string.Join("','", subprocessIDs)}')
+group by s.OrderID, s.Article, s.SizeCode, s.SubprocessID 
+
+";
+                foreach (var item in subprocessIDs)
+                {
+                    string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(item);
+                    qtyBySetPerSubprocess += $@"select * into #QtyBySetPerSubprocess{subprocessIDtmp} from #tmp_SetQtyBySubprocess where SubprocessID = '{item}'" + Environment.NewLine;
+                }
+            }
+
             #region SummaryBy Acticle/Size
             sqlCmd.Append($@"
 -- 依撈出來的order資料(cte)去找各製程的WIP
@@ -1848,13 +1903,7 @@ outer apply(
             sqlCmd.Append(" drop table #cte, #cte2, #tmp_PackingList_Detail;" + Environment.NewLine);
             foreach (string subprocess in subprocessIDs)
             {
-                string whereSubprocess = subprocess;
-                if (subprocess.Equals("PAD-PRT"))
-                {
-                    whereSubprocess = "PADPRT";
-                }
-
-                sqlCmd.Append(string.Format(@" drop table #QtyBySetPerSubprocess{0};" + Environment.NewLine, whereSubprocess));
+                sqlCmd.Append(string.Format(@" drop table #QtyBySetPerSubprocess{0};" + Environment.NewLine, Prgs.SubprocesstmpNoSymbol(subprocess)));
             }
             #endregion
 

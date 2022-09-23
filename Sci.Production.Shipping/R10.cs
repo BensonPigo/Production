@@ -71,6 +71,7 @@ namespace Sci.Production.Shipping
                 this.chkExcludePackingLocalOrder.Enabled = true;
                 this.chkExcludePackingFOC.Checked = true;
                 this.chkExcludePackingLocalOrder.Checked = true;
+                this.radioExportFeeReportMerged.Enabled = true;
             }
         }
 
@@ -89,6 +90,7 @@ namespace Sci.Production.Shipping
                 this.chkExcludePackingLocalOrder.Enabled = false;
                 this.chkExcludePackingFOC.Checked = false;
                 this.chkExcludePackingLocalOrder.Checked = false;
+                this.radioExportFeeReportMerged.Enabled = false;
                 if (this.radioAirPrepaidExpenseReport.Checked)
                 {
                     this.radioExportFeeReport.Checked = true;
@@ -111,7 +113,7 @@ namespace Sci.Production.Shipping
             this.custcd = this.txtcustcd.Text;
             this.dest = this.txtcountryDestination.TextBox1.Text;
             this.shipmode = this.txtshipmode.Text;
-            this.forwarder = this.txtsubconForwarder.TextBox1.Text;
+            this.forwarder = this.txtForwarder.Text;
             this.rateType = this.comboRateType.SelectedValue.ToString();
             this.reportContent = this.radioGarment.Checked ? 1 : 2;
             this.excludePackingFoc = this.chkExcludePackingFOC.Checked;
@@ -217,6 +219,7 @@ alter table #tmpPackingListDetailA2B alter column ID varchar(13)
 alter table #tmpPackingListDetailA2B alter column OrderID varchar(13)
 alter table #tmpPackingListDetailA2B alter column OrderShipmodeSeq varchar(2);
 ");
+
                     // Export Fee Report or Detail List by SP#
                     if (this.reportType == 1 || this.reportType == 2)
                     {
@@ -1967,15 +1970,17 @@ drop table #tmp, #tmp_unpivot, #tmp_Detail
                     // Export Fee Report or Detail List by SP#
                     if (this.reportType == 1 || this.reportType == 2)
                     {
-                        // Export Fee Report
+                        // FtyExportData
                         if (this.reportType == 1)
                         {
-                            #region 組SQL
+                            // Export Fee Report
                             sqlCmd.Append($@"
 with tmpMaterialData
 as (
 	select [Type] = 'MATERIAL'
 		, f.ID
+		, ETD = null
+        , System.RgCode
 		, [Shipper] = s.MDivisionID
 		, [BrandID] = '' 
 		, [Category] = '' 
@@ -1993,27 +1998,33 @@ as (
 		, se.CurrencyID
 		, [AccountID]= iif(se.AccountID='','Empty',se.AccountID)
 		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+        , [ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
+                            from FtyExport_ShippingMemo with (nolock)
+                            where ID = f.ID and ShippingExpense = 1
+                            order by adddate desc)
     from ShippingAP s WITH (NOLOCK) 
+    cross join System with (nolock)
     inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
     left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
     where s.Type = 'EXPORT'
 ");
-                            #endregion
                         }
                         else
-                        { // Detail List by SP#
-                            #region 組SQL
+                        {
+                            // Detail List by SP#
                             sqlCmd.Append($@"
 with tmpMaterialData
 as (
 	select [Type] = 'MATERIAL'
 		, f.ID
+		, ETD = null
+        , System.RgCode
 		, [Shipper] = s.MDivisionID
 		, [BrandID] = ''
 		, [Category] = ''
 		, [OrderID] = ''
-		, [BuyerDelivery] = null
+		, [BuyerDelivery] = ''
 		, [OQty] = 0
 		, [CustCDID] = ''
 		, [Dest] = f.ImportCountry
@@ -2030,13 +2041,17 @@ as (
 		, se.CurrencyID
 		, [AccountID]= iif(se.AccountID='','Empty',se.AccountID)
 		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
-	from ShippingAP s WITH (NOLOCK) 
+        , [ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
+                            from FtyExport_ShippingMemo with (nolock)
+                            where ID = f.ID and ShippingExpense = 1
+                            order by adddate desc)
+	from ShippingAP s WITH (NOLOCK)
+    cross join System with (nolock)
 	inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
 	inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
 	left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
 	where s.Type = 'EXPORT'
 ");
-                            #endregion
                         }
                         #region 組條件
                         if (!MyUtility.Check.Empty(this.date1))
@@ -2084,6 +2099,129 @@ as (
                             sqlCmd.Append(string.Format(" and f.Forwarder = '{0}'", this.forwarder));
                         }
                         #endregion
+
+                        // TransferExportData
+                        if (this.reportType == 1)
+                        {
+                            // Export Fee Report
+                            sqlCmd.Append($@"
+), TransferExportData as (
+	select [Type] = 'MATERIAL'
+		, f.ID
+		, f.ETD
+        , System.RgCode
+		, [Shipper] = s.MDivisionID
+		, [BrandID] = '' 
+		, [Category] = '' 
+		, [OQty] = 0
+		, [CustCDID] = ''
+		, [Dest] = f.ImportCountry
+		, f.ShipModeID
+		, [PulloutDate] = f.CloseDate
+		, [ShipQty] = 0
+		, [CTNQty] = f.Packages
+		, [GW] = (select sum(WeightKg) from TransferExport_Detail WITH (NOLOCK) where id = f.id)
+		, [CBM] = (select sum(Cbm) from TransferExport_Detail WITH (NOLOCK) where id = f.id)
+		, [Forwarder] = Concat(f.Forwarder, '-' + ls.Abb)
+		, [BLNo] = f.Blno
+		, se.CurrencyID
+		, [AccountID]= iif(se.AccountID='','Empty',se.AccountID)
+		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+        , [ShippingMemo] = ''
+    from ShippingAP s WITH (NOLOCK) 
+    cross join System with (nolock)
+    inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join TransferExport f WITH (NOLOCK) on f.ID = se.InvNo
+    left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
+    where s.Type = 'EXPORT'
+");
+                        }
+                        else
+                        {
+                            // Detail List by SP#
+                            sqlCmd.Append($@"
+), TransferExportData as (
+	select [Type] = 'MATERIAL'
+		, f.ID
+		, f.ETD
+        , System.RgCode
+		, [Shipper] = s.MDivisionID
+		, [BrandID] = ''
+		, [Category] = ''
+		, [OrderID] = ''
+		, [BuyerDelivery] = null
+		, [OQty] = 0
+		, [CustCDID] = ''
+		, [Dest] = f.ImportCountry
+		, f.ShipModeID
+		, [PackID] = ''
+		, [PulloutID] = ''
+		, [PulloutDate] = f.CloseDate
+		, [ShipQty] = 0
+		, [CTNQty] = f.Packages
+		, [GW] = (select sum(WeightKg) from TransferExport_Detail WITH (NOLOCK) where id = f.id)
+		, [CBM] = (select sum(cbm) from TransferExport_Detail WITH (NOLOCK) where id = f.id)
+		, [Forwarder] = Concat(f.Forwarder, '-' + ls.Abb)
+		, [BLNo] = f.Blno
+		, se.CurrencyID
+		, [AccountID]= iif(se.AccountID='','Empty',se.AccountID)
+		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+        , [ShippingMemo] = ''
+	from ShippingAP s WITH (NOLOCK) 
+    cross join System with (nolock)
+	inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+	inner join TransferExport f WITH (NOLOCK) on f.ID = se.InvNo
+	left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
+	where s.Type = 'EXPORT'
+");
+                        }
+                        #region 組條件
+                        if (!MyUtility.Check.Empty(this.date1))
+                        {
+                            sqlCmd.Append(string.Format(" and f.CloseDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.date2))
+                        {
+                            sqlCmd.Append(string.Format(" and f.CloseDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.apApvDate1))
+                        {
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.apApvDate2))
+                        {
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.voucherDate1))
+                        {
+                            sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.voucherDate2))
+                        {
+                            sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.dest))
+                        {
+                            sqlCmd.Append(string.Format(" and f.ImportCountry = '{0}'", this.dest));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.shipmode))
+                        {
+                            sqlCmd.Append(string.Format(" and f.ShipModeID = '{0}'", this.shipmode));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.forwarder))
+                        {
+                            sqlCmd.Append(string.Format(" and f.Forwarder = '{0}'", this.forwarder));
+                        }
+                        #endregion
+
                         queryAccount = string.Format(
                             "{0}{1}",
                             sqlCmd.ToString(),
@@ -2092,8 +2230,12 @@ as (
 select distinct a.* 
 into #Accno 
 from (
-select Accountid as Accno from tmpMaterialData where AccountID not in ('61022001','61022002','61022003','61022004','61022005','59121111')
-and AccountID <> ''
+    select Accountid as Accno from tmpMaterialData where AccountID not in ('61022001','61022002','61022003','61022004','61022005','59121111')
+    and AccountID <> ''
+
+    union all
+    select Accountid as Accno from TransferExportData where AccountID not in ('61022001','61022002','61022003','61022004','61022005','59121111')
+    and AccountID <> ''
 ) a
 select Accno=cast(Accno as nvarchar(100)) ,rn=ROW_NUMBER() over (order by Accno)
 into #AccnoNo
@@ -2131,15 +2273,18 @@ order by SUBSTRING(Accno,1,4),rn"));
                         sqlCmd.Append(string.Format(
                             @")
 select * from tmpMaterialData
-PIVOT (SUM(Amount)
-FOR AccountID IN ({0})) a", allAccno.ToString()));
+PIVOT (SUM(Amount) FOR AccountID IN ({0})) a
+union all
+select * from TransferExportData
+PIVOT (SUM(Amount) FOR AccountID IN ({0})) a", allAccno.ToString()));
                     }
                     else
-                    { // Detail List by SP# by Fee Type
-                        #region 組SQL
+                    {
+                        // FtyExportData
                         sqlCmd.Append($@"
 select [Type] = 'MATERIAL'
 	, f.ID
+	, ETD = null
 	, [Shipper] = s.MDivisionID
 	, [BrandID] = ''
 	, [Category] = ''
@@ -2173,6 +2318,7 @@ inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
 left join SciFMS_AccountNo a on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
+                        #region where
                         if (!MyUtility.Check.Empty(this.date1))
                         {
                             sqlCmd.Append(string.Format(" and f.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
@@ -2217,9 +2363,95 @@ where s.Type = 'EXPORT'");
                         {
                             sqlCmd.Append(string.Format(" and f.Forwarder = '{0}'", this.forwarder));
                         }
+                        #endregion
+
+                        // TransferExportData
+                        sqlCmd.Append($@"
+union all
+select [Type] = 'MATERIAL'
+	, f.ID
+	, f.ETD
+	, [Shipper] = s.MDivisionID
+	, [BrandID] = ''
+	, [Category] = ''
+	, [OrderID] = ''
+	, [BuyerDelivery] = null 
+	, [OQty] = 0
+	, [CustCDID] = ''
+	, [Dest] = f.ImportCountry 
+	, f.ShipModeID
+	, [PackID] = ''
+	, [PulloutID] = ''
+	, [PulloutDate] = f.CloseDate 
+	, [ShipQty] = 0 
+	, [CTNQty] = f.Packages
+	, [GW] = (select sum(WeightKg) from TransferExport_Detail WITH (NOLOCK) where id = f.id)
+	, [CBM] = (select sum(Cbm) from TransferExport_Detail WITH (NOLOCK) where id = f.id)
+    , [Forwarder] = Concat(f.Forwarder, '-' + ls.Abb)
+	, [BLNo] = f.Blno 
+	, [FeeType] = se.AccountID+'-'+isnull(a.Name,'')
+	, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+	, se.CurrencyID
+	, [APID] = s.ID
+	, s.CDate
+	, [ApvDate] = CONVERT(DATE,s.ApvDate)
+	, s.VoucherID
+	, s.VoucherDate
+	, s.SubType
+from ShippingAP s WITH (NOLOCK) 
+inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+inner join TransferExport f WITH (NOLOCK) on f.ID = se.InvNo
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
+left join SciFMS_AccountNo a on a.ID = se.AccountID
+where s.Type = 'EXPORT'");
+                        #region where
+                        if (!MyUtility.Check.Empty(this.date1))
+                        {
+                            sqlCmd.Append(string.Format(" and f.CloseDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.date2))
+                        {
+                            sqlCmd.Append(string.Format(" and f.CloseDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.apApvDate1))
+                        {
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.apApvDate2))
+                        {
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.voucherDate1))
+                        {
+                            sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.voucherDate2))
+                        {
+                            sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.dest))
+                        {
+                            sqlCmd.Append(string.Format(" and f.ImportCountry = '{0}'", this.dest));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.shipmode))
+                        {
+                            sqlCmd.Append(string.Format(" and f.ShipModeID = '{0}'", this.shipmode));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.forwarder))
+                        {
+                            sqlCmd.Append(string.Format(" and f.Forwarder = '{0}'", this.forwarder));
+                        }
+                        #endregion
 
                         sqlCmd.Append(" order by f.ID");
-                        #endregion
                     }
                 }
 
@@ -2238,7 +2470,6 @@ where s.Type = 'EXPORT'");
                     DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                     return failResult;
                 }
-
             }
 
             return Ict.Result.True;
@@ -2258,6 +2489,7 @@ where s.Type = 'EXPORT'");
 
             this.ShowWaitMessage("Starting EXCEL...");
 
+            // ExportFeeReportMerged
             if (this.reportType == 5)
             {
                 this.ReportType5ToExcel();
@@ -2265,477 +2497,37 @@ where s.Type = 'EXPORT'");
                 return true;
             }
 
-            string strXltName = Env.Cfg.XltPathDir + (this.reportType == 1 ? "\\Shipping_R10_ShareExpenseExportFeeReport.xltx" : this.reportType == 2 ? "\\Shipping_R10_ShareExpenseExportBySP.xltx" : this.reportType == 3 ? "\\Shipping_R10_ShareExpenseExportBySPByFee.xltx" : "\\Shipping_R10_AirPrepaidExpense.xltx");
-
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null)
+            // ExportFeeReport
+            if (this.reportType == 1)
             {
-                return false;
+                this.ShareExpenseExportFeeReportToExcel();
+                this.HideWaitMessage();
+                return true;
             }
 
-            // excel.Visible = true;
-            DataTable tb_onBoardDate = new DataTable();
-            DataTable tb_IncludeFoundry = new DataTable();
-            DataTable tb_SisFtyAP = new DataTable();
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            if (this.reportContent == 2)
+            // DetailListbySPNo
+            else if (this.reportType == 2)
             {
-                if (this.reportType == 3)
-                {
-                    worksheet.get_Range("Z1").EntireColumn.Delete(Missing.Value);
-                }
-
-                if (this.reportType != 1)
-                {
-                    worksheet.get_Range("C1", "E1").EntireColumn.Delete(Missing.Value);
-                }
-
-                worksheet.Cells[1, 2] = "FTY WK#";
-                worksheet.Cells[1, 3] = "M";
-                if (this.reportType == 1)
-                {
-                    worksheet.Cells[1, 10] = "Ship Date";
-                }
-                else
-                {
-                    worksheet.Cells[1, 14] = "Ship Date";
-                }
+                this.ShareExpenseExportBySPToExcel();
+                this.HideWaitMessage();
+                return true;
             }
 
-            // mantis9831 增加On Board Date，因為只針對Garment keep OnBoardDate欄位之後插入
-            else
-            {
-                if (this.reportType != 4)
-                {
-                    tb_onBoardDate = this.printData.Copy();
-                    for (int f = 0; f < tb_onBoardDate.Columns.Count; f++)
-                    {
-                        if (!tb_onBoardDate.Columns[f].ColumnName.Equals("OnBoardDate"))
-                        {
-                            tb_onBoardDate.Columns.RemoveAt(f);
-                            f--;
-                        }
-                    }
-
-                    this.printData.Columns.Remove("OnBoardDate");
-
-                    tb_IncludeFoundry = this.printData.Copy();
-                    for (int f = 0; f < tb_IncludeFoundry.Columns.Count; f++)
-                    {
-                        if (!tb_IncludeFoundry.Columns[f].ColumnName.Equals("Foundry"))
-                        {
-                            tb_IncludeFoundry.Columns.RemoveAt(f);
-                            f--;
-                        }
-                    }
-
-                    this.printData.Columns.Remove("Foundry");
-
-                    tb_SisFtyAP = this.printData.Copy();
-                    for (int f = 0; f < tb_SisFtyAP.Columns.Count; f++)
-                    {
-                        if (!tb_SisFtyAP.Columns[f].ColumnName.Equals("SisFtyAPID"))
-                        {
-                            tb_SisFtyAP.Columns.RemoveAt(f);
-                            f--;
-                        }
-                    }
-
-                    this.printData.Columns.Remove("SisFtyAPID");
-                }
-            }
-
-            if (this.reportType == 1 || this.reportType == 2)
-            {
-                int allColumn = 0;
-                if (this.reportType == 1)
-                {
-                    allColumn = 23;
-                }
-                else
-                {
-                    if (this.reportContent == 1)
-                    {
-                        allColumn = 30;
-                    }
-                    else
-                    {
-                        allColumn = 27;
-                    }
-                }
-
-                #region Setting AccountNo
-                int i = 0;
-                int counts = 0;
-                string accnoL1 = "5912"; // Z欄 5912-2222 Airfreight
-                string accnoLnow = string.Empty;
-                if (this.reportType != 3)
-                {
-                    counts = this.accnoData.Rows.Count;
-                    foreach (DataRow dr in this.accnoData.Rows)
-                    {
-                        i++;
-                        string sql = string.Format("select concat(SUBSTRING(id,1,4),iif(len(id)>4,'-'+SUBSTRING(id,5,4),''),char(10)+char(13) ,Name) from SciFMS_AccountNo  WITH (NOLOCK)  where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"]));
-                        string accnoColName = MyUtility.GetValue.Lookup(sql);
-                        accnoLnow = MyUtility.Convert.GetString(dr["Accno"]).Substring(0, 4);
-                        string accnoLnow2 = MyUtility.Convert.GetString(dr["Accno"]).Length > 8 ? MyUtility.Convert.GetString(dr["Accno"]).Substring(4) : MyUtility.Convert.GetString(dr["Accno"]).Length > 4 ? "-" + MyUtility.Convert.GetString(dr["Accno"]).Substring(4) : string.Empty;
-                        worksheet.Cells[1, allColumn + i] = MyUtility.Check.Empty(accnoColName) ? accnoLnow + accnoLnow2 : accnoColName;
-
-                        accnoL1 = MyUtility.Convert.GetString(dr["Accno"]).Substring(0, 4);
-                    }
-
-                    worksheet.Cells[1, allColumn + i + 1] = "Total Export Fee";
-                }
-
-                // 匯率選擇 Fixed, KPI, 各費用欄位名稱加上 (USD)
-                if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
-                {
-                    for (int k = allColumn - 5; k <= allColumn + i + 1; k++)
-                    {
-                        worksheet.Cells[1, k] = worksheet.Cells[1, k].Value + "\r\n(USD)";
-                    }
-                }
-
-                string excelSumCol = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + i);
-                string excelColumn = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + i + 1);
-
-                var first6105 = this.accnoData.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["Accno"]).Substring(0, 4).EqualString("6105")).GroupBy(t => 1).Select(s => new { rn = s.Min(m => MyUtility.Convert.GetInt(m["rn"])) }).ToList();
-                string first6105Column = string.Empty;
-                if (first6105.Count > 0)
-                {
-                    if (this.accnoData.Select("Accno like '5912%'").Count() > 0)
-                    {
-                        first6105Column = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + first6105[0].rn + 1);
-                    }
-                    else
-                    {
-                        first6105Column = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + first6105[0].rn);
-                    }
-                }
-
-                string sumCol5912start = string.Empty;
-                string sumCol5912 = string.Empty;
-                string sumCol6105 = string.Empty;
-                string sumCol5912TTL = string.Empty;
-                string sumCol6105TTL = string.Empty;
-                #endregion
-
-                // 填內容值
-                int intRowsStart = 2;
-                object[,] objArray = new object[1, allColumn + i + 1];
-                foreach (DataRow dr in this.printData.Rows)
-                {
-                    objArray[0, 0] = dr[0];
-                    objArray[0, 1] = dr[1];
-                    objArray[0, 2] = dr[2];
-                    objArray[0, 3] = dr[3];
-                    objArray[0, 4] = dr[4];
-                    objArray[0, 5] = dr[5];
-                    objArray[0, 6] = dr[6];
-                    objArray[0, 7] = dr[7];
-                    objArray[0, 8] = dr[8];
-                    objArray[0, 9] = dr[9];
-                    objArray[0, 10] = dr[10];
-                    objArray[0, 11] = dr[11];
-                    objArray[0, 12] = dr[12];
-                    objArray[0, 13] = dr[13];
-                    objArray[0, 14] = dr[14];
-                    objArray[0, 15] = dr[15];
-                    objArray[0, 16] = dr[16];
-
-                    if (this.reportType == 1)
-                    {
-                        objArray[0, 17] = MyUtility.Check.Empty(dr[17]) ? 0 : dr[17];
-                        objArray[0, 18] = MyUtility.Check.Empty(dr[18]) ? 0 : dr[18];
-                        objArray[0, 19] = MyUtility.Check.Empty(dr[19]) ? 0 : dr[19];
-                        objArray[0, 20] = MyUtility.Check.Empty(dr[20]) ? 0 : dr[20];
-                        objArray[0, 21] = MyUtility.Check.Empty(dr[21]) ? 0 : dr[21];
-                        objArray[0, 22] = MyUtility.Check.Empty(dr[22]) ? 0 : dr[22];
-
-                        // 多增加的AccountID, 必須要動態的填入欄位值!
-                        if (counts > 0)
-                        {
-                            for (int t = 1; t <= counts; t++)
-                            {
-                                if (MyUtility.Convert.GetString(dr.Table.Columns[22 + t].ColumnName).Contains("5912"))
-                                {
-                                    if (MyUtility.Check.Empty(sumCol5912start))
-                                    {
-                                        sumCol5912start = PublicPrg.Prgs.GetExcelEnglishColumnName(23 + t);
-                                    }
-                                }
-
-                                if (MyUtility.Convert.GetString(dr.Table.Columns[22 + t].ColumnName).EqualString("5912-Total"))
-                                {
-                                    if (MyUtility.Check.Empty(sumCol5912))
-                                    {
-                                        sumCol5912 = PublicPrg.Prgs.GetExcelEnglishColumnName(22 + t);
-                                        sumCol5912TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(23 + t);
-                                    }
-
-                                    objArray[0, 22 + t] = $"=W{intRowsStart}+SUM({sumCol5912start}{intRowsStart}:{sumCol5912}{intRowsStart})";
-                                }
-                                else if (MyUtility.Convert.GetString(dr.Table.Columns[22 + t].ColumnName).EqualString("6105-Total"))
-                                {
-                                    if (MyUtility.Check.Empty(sumCol6105))
-                                    {
-                                        sumCol6105 = PublicPrg.Prgs.GetExcelEnglishColumnName(22 + t);
-                                        sumCol6105TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(23 + t);
-                                    }
-
-                                    objArray[0, 22 + t] = $"=SUM({first6105Column}{intRowsStart}:{sumCol6105}{intRowsStart})";
-                                }
-                                else
-                                {
-                                    objArray[0, 22 + t] = MyUtility.Check.Empty(dr[22 + t]) ? 0 : dr[22 + t];
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        for (int f = 17; f < allColumn; f++)
-                        {
-                            if (f >= allColumn - 6)
-                            {
-                                objArray[0, f] = MyUtility.Check.Empty(dr[f]) ? 0 : dr[f];
-                            }
-                            else
-                            {
-                                objArray[0, f] = dr[f];
-                            }
-                        }
-
-                        // 多增加的AccountID, 必須要動態的填入欄位值!
-                        if (counts > 0)
-                        {
-                            for (int c = 1; c <= counts; c++)
-                            {
-                                if (MyUtility.Convert.GetString(dr.Table.Columns[allColumn - 1 + c].ColumnName).Contains("5912"))
-                                {
-                                    if (MyUtility.Check.Empty(sumCol5912start))
-                                    {
-                                        sumCol5912start = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + c);
-                                    }
-                                }
-
-                                if (MyUtility.Convert.GetString(dr.Table.Columns[allColumn - 1 + c].ColumnName).EqualString("5912-Total"))
-                                {
-                                    if (MyUtility.Check.Empty(sumCol5912))
-                                    {
-                                        sumCol5912 = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn - 1 + c);
-                                        sumCol5912TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + c);
-                                    }
-
-                                    objArray[0, allColumn - 1 + c] = $"=AA{intRowsStart}+SUM({sumCol5912start}{intRowsStart}:{sumCol5912}{intRowsStart})";
-                                }
-                                else if (MyUtility.Convert.GetString(dr.Table.Columns[allColumn - 1 + c].ColumnName).EqualString("6105-Total"))
-                                {
-                                    if (MyUtility.Check.Empty(sumCol6105))
-                                    {
-                                        sumCol6105 = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn - 1 + c);
-                                        sumCol6105TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + c);
-                                    }
-
-                                    objArray[0, allColumn - 1 + c] = $"=SUM({first6105Column}{intRowsStart}:{sumCol6105}{intRowsStart})";
-                                }
-                                else
-                                {
-                                    objArray[0, allColumn - 1 + c] = MyUtility.Check.Empty(dr[allColumn - 1 + c]) ? 0 : dr[allColumn - 1 + c];
-                                }
-                            }
-                        }
-                    }
-
-                    string sc1 = string.Empty;
-                    string sc2 = string.Empty;
-                    if (!MyUtility.Check.Empty(sumCol5912TTL))
-                    {
-                        sc1 = $"-{sumCol5912TTL}{intRowsStart}";
-                    }
-
-                    if (!MyUtility.Check.Empty(sumCol6105TTL))
-                    {
-                        sc2 = $"-{sumCol6105TTL}{intRowsStart}";
-                    }
-
-                    int totalSumcolumn = allColumn + this.accnoData.Rows.Count;
-
-                    // if (this.reportContent == 2)
-                    // {
-                    //    totalSumcolumn += 1;
-                    // }
-                    string sumStartColEng = this.reportType == 1 ? "R" : this.reportContent == 2 ? "V" : "Y";
-                    objArray[0, totalSumcolumn] = string.Format("=SUM({2}{0}:{1}{0}) {3} {4}", intRowsStart, excelSumCol, sumStartColEng, sc1, sc2);
-
-                    worksheet.Range[string.Format("A{0}:{1}{0}", intRowsStart, excelColumn)].Value2 = objArray;
-                    intRowsStart++;
-                }
-            }
+            // DetailListBySPNoByFeeType
             else if (this.reportType == 3)
             {
-                // 匯率選擇 Fixed, KPI, 各費用欄位名稱加上 (USD)
-                if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
-                {
-                    if (this.reportContent == 1)
-                    {
-                        worksheet.Cells[1, 25] = worksheet.Cells[1, 25].Value + "\r\n(USD)";
-                    }
-                    else
-                    {
-                        worksheet.Cells[1, 22] = worksheet.Cells[1, 22].Value + "\r\n(USD)";
-                    }
-                }
-
-                // 填內容值
-                int intRowsStart = 2;
-                object[,] objArray = new object[1, 33];
-                foreach (DataRow dr in this.printData.Rows)
-                {
-                    if (this.reportContent == 1)
-                    {
-                        objArray[0, 0] = dr["Type"];
-                        objArray[0, 1] = dr["ID"];
-                        objArray[0, 2] = dr["Shipper"];
-                        objArray[0, 3] = dr["FactoryID"];
-                        objArray[0, 4] = dr["MDivisionID"];
-                        objArray[0, 5] = dr["KPICode"];
-                        objArray[0, 6] = dr["BrandID"];
-                        objArray[0, 7] = dr["Category"];
-                        objArray[0, 8] = dr["OrderID"];
-                        objArray[0, 9] = dr["BuyerDelivery"];
-                        objArray[0, 10] = dr["OQty"];
-                        objArray[0, 11] = dr["CustCDID"];
-                        objArray[0, 12] = dr["Dest"];
-                        objArray[0, 13] = dr["ShipModeID"];
-                        objArray[0, 14] = dr["PackID"];
-                        objArray[0, 15] = dr["PulloutID"];
-                        objArray[0, 16] = dr["PulloutDate"];
-                        objArray[0, 17] = dr["ShipQty"];
-                        objArray[0, 18] = dr["CTNQty"];
-                        objArray[0, 19] = dr["GW"];
-                        objArray[0, 20] = dr["CBM"];
-                        objArray[0, 21] = dr["Forwarder"];
-                        objArray[0, 22] = dr["BLNo"];
-                        objArray[0, 23] = dr["FeeType"];
-                        objArray[0, 24] = dr["Amount"];
-                        objArray[0, 25] = dr["freeSP"];
-                        objArray[0, 26] = dr["CurrencyID"];
-                        objArray[0, 27] = dr["APID"];
-                        objArray[0, 28] = dr["CDate"];
-                        objArray[0, 29] = dr["ApvDate"];
-                        objArray[0, 30] = dr["VoucherID"];
-                        objArray[0, 31] = dr["VoucherDate"];
-                        objArray[0, 32] = dr["SubType"];
-
-                        worksheet.Range[string.Format("A{0}:AG{0}", intRowsStart)].Value2 = objArray;
-                    }
-                    else
-                    {
-                        objArray[0, 0] = dr["Type"];
-                        objArray[0, 1] = dr["ID"];
-                        objArray[0, 2] = dr["Shipper"];
-                        objArray[0, 3] = dr["BrandID"];
-                        objArray[0, 4] = dr["Category"];
-                        objArray[0, 5] = dr["OrderID"];
-                        objArray[0, 6] = dr["BuyerDelivery"];
-                        objArray[0, 7] = dr["OQty"];
-                        objArray[0, 8] = dr["CustCDID"];
-                        objArray[0, 9] = dr["Dest"];
-                        objArray[0, 10] = dr["ShipModeID"];
-                        objArray[0, 11] = dr["PackID"];
-                        objArray[0, 12] = dr["PulloutID"];
-                        objArray[0, 13] = dr["PulloutDate"];
-                        objArray[0, 14] = dr["ShipQty"];
-                        objArray[0, 15] = dr["CTNQty"];
-                        objArray[0, 16] = dr["GW"];
-                        objArray[0, 17] = dr["CBM"];
-                        objArray[0, 18] = dr["Forwarder"];
-                        objArray[0, 19] = dr["BLNo"];
-                        objArray[0, 20] = dr["FeeType"];
-                        objArray[0, 21] = dr["Amount"];
-                        objArray[0, 22] = dr["CurrencyID"];
-                        objArray[0, 23] = dr["APID"];
-                        objArray[0, 24] = dr["CDate"];
-                        objArray[0, 25] = dr["ApvDate"];
-                        objArray[0, 26] = dr["VoucherID"];
-                        objArray[0, 27] = dr["VoucherDate"];
-                        objArray[0, 28] = dr["SubType"];
-
-                        worksheet.Range[string.Format("A{0}:AC{0}", intRowsStart)].Value2 = objArray;
-                    }
-
-                    intRowsStart++;
-                }
+                this.ShareExpenseExportBySPByFeeToExcel();
+                this.HideWaitMessage();
+                return true;
             }
-            else if (this.reportType == 4)
+
+            // ExportFeeReportMerged
+            else
             {
-                MyUtility.Excel.CopyToXls(this.printDataS[0], string.Empty, "Shipping_R10_AirPrepaidExpense.xltx", 1, false, null, excel, wSheet: excel.Sheets[1]);
-                MyUtility.Excel.CopyToXls(this.printDataS[1], string.Empty, "Shipping_R10_AirPrepaidExpense.xltx", 1, false, null, excel, wSheet: excel.Sheets[2]);
+                this.AirPrepaidExpenseToExcel();
+                this.HideWaitMessage();
+                return true;
             }
-
-            // [On Board Date],[Shipper],[Include Foundry]因為只針對Garment所以在excel產生後插入
-            if (this.reportContent == 1 && this.reportType != 4)
-            {
-                Microsoft.Office.Interop.Excel.Range range = worksheet.get_Range("C1", Missing.Value);
-                range.EntireColumn.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight, Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow);
-                worksheet.Cells[1, 3] = "On Board Date";
-                range = worksheet.get_Range("C2", "C" + (this.printData.Rows.Count + 1));
-                range.EntireColumn.NumberFormat = "yyyy/MM/dd";
-
-                // Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM();
-                object[,] arrayValues = tb_onBoardDate.ToArray2D();
-                range.Value2 = arrayValues;
-
-                if (this.reportType == 1)
-                {
-                    range = worksheet.get_Range("E1", Missing.Value);
-                    range.EntireColumn.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight, Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow);
-                    worksheet.Cells[1, 5] = "Include Foundry";
-                    range = worksheet.get_Range("E2", "E" + (this.printData.Rows.Count + 1));
-                    arrayValues = tb_IncludeFoundry.ToArray2D();
-                    range.Value2 = arrayValues;
-
-                    range = worksheet.get_Range("F1", Missing.Value);
-                    range.EntireColumn.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight, Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow);
-                    worksheet.Cells[1, 6] = "Sis. Fty A/P#";
-                    range = worksheet.get_Range("F2", "F" + (this.printData.Rows.Count + 1));
-                    arrayValues = tb_SisFtyAP.ToArray2D();
-                    range.Value2 = arrayValues;
-                }
-
-                if (this.reportType == 2 || this.reportType == 3)
-                {
-                    range = worksheet.get_Range("H1", Missing.Value);
-                    range.EntireColumn.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight, Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow);
-                    worksheet.Cells[1, 8] = "Include Foundry";
-                    range = worksheet.get_Range("H2", "H" + (this.printData.Rows.Count + 1));
-                    arrayValues = tb_IncludeFoundry.ToArray2D();
-                    range.Value2 = arrayValues;
-
-                    range = worksheet.get_Range("I1", Missing.Value);
-                    range.EntireColumn.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight, Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow);
-                    worksheet.Cells[1, 9] = "Sis. Fty A/P#";
-                    range = worksheet.get_Range("I2", "I" + (this.printData.Rows.Count + 1));
-                    arrayValues = tb_SisFtyAP.ToArray2D();
-                    range.Value2 = arrayValues;
-                }
-            }
-
-            excel.Cells.EntireColumn.AutoFit();
-            excel.Cells.EntireRow.AutoFit();
-            this.HideWaitMessage();
-
-            #region Save & Show Excel
-            string strExcelName = Class.MicrosoftFile.GetName(this.reportType == 1 ? "Shipping_R10_ShareExpenseExportFeeReport" : this.reportType == 2 ? "Shipping_R10_ShareExpenseExportBySP" : this.reportType == 3 ? "Shipping_R10_ShareExpenseExportBySPByFee" : "Shipping_R10_AirPrepaidExpense");
-            excel.ActiveWorkbook.SaveAs(strExcelName);
-            excel.Quit();
-            Marshal.ReleaseComObject(excel);
-            Marshal.ReleaseComObject(worksheet);
-
-            strExcelName.OpenFile();
-            #endregion
-            return true;
         }
 
         private DualResult GetPackingA2B(out DataTable dtPackingA2B, out DataTable dtPackingDetailA2B)
@@ -3441,12 +3233,20 @@ GROUP BY a.Origin, a.RgCode, a.Type, a.id, a.OnBoardDate, a.Shipper, a.Foundry, 
                     string account = this.GetAccount();
                     sqlCmd.Append($@"
 
-select *
-from #temp5
-PIVOT (SUM(Amount)
-FOR AccountID IN (
-    {account}
-)) a
+select  b.*
+        , [ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
+                                    from GMTBooking_ShippingMemo with (nolock)
+                                    where ID = b.ID and ShippingExpense = 1
+                                    order by adddate desc)
+from (
+        select  *
+                
+        from #temp5
+        PIVOT (SUM(Amount)
+        FOR AccountID IN (
+            {account}
+        )) a
+) b
 order by id
 
 drop table #temp1,#temp2,#temp3,#temp4,#temp5
@@ -3593,49 +3393,6 @@ FOR AccountID IN ({account})) a
                 this.ShowErr(ex);
                 return false;
             }
-        }
-
-        private void ReportType5ToExcel()
-        {
-            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_R10_ExportFeeReport(MergerdAcctCode).xltx";
-
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-
-            //excel.Visible = true
-
-            if (excel == null)
-            {
-                return;
-            }
-
-            DataTable tb_onBoardDate = new DataTable();
-            DataTable tb_IncludeFoundry = new DataTable();
-            DataTable tb_SisFtyAP = new DataTable();
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-
-            if (this.reportContent == 2)
-            {
-                worksheet.Cells[1, 4] = "FTY WK#";
-            }
-
-            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Shipping_R10_ExportFeeReport(MergerdAcctCode).xltx", 1, showExcel: false, excelApp: excel);
-
-            // 刪除不必要的欄位
-            worksheet.get_Range("BA:BQ").EntireColumn.Delete();
-
-            int x = this.printData.Rows.Count + 2;
-
-            // 剩下的底色弄成白色，抓個兩百行不要被User看到就好
-            worksheet.get_Range($"A{x}:AZ{x + 200}").Interior.Color = Color.White;
-
-            #region Save & Show Excel
-            string strExcelName = Class.MicrosoftFile.GetName("Shipping_R10_ExportFeeReport(MergerdAcctCode)");
-            excel.ActiveWorkbook.SaveAs(strExcelName);
-            excel.Quit();
-            Marshal.ReleaseComObject(excel);
-
-            strExcelName.OpenFile();
-            #endregion
         }
 
         /// <summary>
@@ -4029,6 +3786,7 @@ FOR AccountID IN ({account})) a
             public decimal? A_61021005 { get; set; }
 
             public decimal? TotalExportFee { get; set; }
+            public string ShippingMemo { get; set; }
 
             public string Blank1 { get; set; }
 
@@ -4091,6 +3849,66 @@ FOR AccountID IN ({account})) a
             public decimal? A_59129999 { get; set; }
 
             public decimal? A_61050001 { get; set; }
+        }
+
+        private void TxtForwarder_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string selectCommand;
+            selectCommand = @"
+select DISTINCT l.ID ,l.Abb
+from LocalSupp l WITH (NOLOCK) 
+union all
+select ID,AbbEN from Supp WITH (NOLOCK) 
+order by ID";
+
+            DataTable tbSelect;
+            DBProxy.Current.Select(null, selectCommand, out tbSelect);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(tbSelect, "ID,Abb", "9,13", this.Text, false, ",", "ID,Abb");
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            IList<DataRow> selected = item.GetSelecteds();
+            this.txtForwarder.Text = item.GetSelectedString();
+            this.displayBox1.Value = MyUtility.Convert.GetString(selected[0]["Abb"]);
+        }
+
+        private void TxtForwarder_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (this.txtForwarder.OldValue != this.txtForwarder.Text)
+            {
+                if (!MyUtility.Check.Empty(this.txtForwarder.Text))
+                {
+                    DataRow inputData;
+                    string sql = string.Format(
+                        @"select * from (
+select DISTINCT l.ID ,l.Abb
+from LocalSupp l WITH (NOLOCK) 
+union all
+select ID,AbbEN from Supp WITH (NOLOCK) ) a
+where a.ID = '{0}'", this.txtForwarder.Text);
+                    if (!MyUtility.Check.Seek(sql, out inputData))
+                    {
+                        this.txtForwarder.Text = string.Empty;
+                        this.displayBox1.Value = string.Empty;
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Forwarder: {0} > not found!!!", this.txtForwarder.Text));
+                        return;
+                    }
+                    else
+                    {
+                        this.txtForwarder.Text = this.txtForwarder.Text;
+                        this.displayBox1.Value = MyUtility.Convert.GetString(inputData["Abb"]);
+                    }
+                }
+                else
+                {
+                    this.txtForwarder.Text = string.Empty;
+                    this.displayBox1.Value = string.Empty;
+                }
+            }
         }
     }
 }

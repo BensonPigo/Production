@@ -212,6 +212,7 @@ ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
                                 DataRow dr = selectDataTable.NewRow();
                                 if (sl[1].Length >= 13)
                                 {
+
                                     dr["ID"] = string.Empty;
                                     dr["selected"] = 1;
 
@@ -219,13 +220,10 @@ ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
                                     List<SqlParameter> sqlParameters = new List<SqlParameter>();
                                     if (sl.Count > 1 && sl[1].Length > 13)
                                     {
-                                        string packingListID = sl[1].Substring(0, 13);
-                                        int ctnStartNo = MyUtility.Convert.GetInt(sl[1].Substring(13));
-                                        dr["PackingListID"] = packingListID;
-                                        dr["CTNStartNo"] = ctnStartNo;
-                                        sqlParameters.Add(new SqlParameter("@ID", packingListID));
-                                        sqlParameters.Add(new SqlParameter("@CTNStartNo", ctnStartNo));
-
+                                        dr["PackingListID"] = sl[1].Substring(0, 13);
+                                        dr["CTNStartNo"] = sl[1].Substring(13, sl[1].Length - 13).TrimStart('^');
+                                        sqlParameters.Add(new SqlParameter("@ID", dr["PackingListID"]));
+                                        sqlParameters.Add(new SqlParameter("@CTNStartNo", dr["CTNStartNo"]));
                                         sqlCmd = @"
 select  pd.OrderID
         , pd.OrderShipmodeSeq  

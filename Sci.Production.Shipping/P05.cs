@@ -507,6 +507,8 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
             this.CurrentMaintain["Handle"] = Env.User.UserID;
             this.CurrentMaintain["ShipModeID"] = "SEA";
             this.CurrentMaintain["ShipTermID"] = "FOB";
+
+            this.btnShippingMemo.Enabled = false;
         }
 
         /// <inheritdoc/>
@@ -2524,6 +2526,16 @@ order by min(o.BuyerDelivery)
 
         private bool ControlColor()
         {
+
+            if (ShippingMemo.IsDataExists(ShippingMemo.ShippingMemoType.GMTBooking_ShippingMemo, this.CurrentMaintain["ID"].ToString()))
+            {
+                this.btnShippingMemo.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnShippingMemo.ForeColor = Color.Black;
+            }
+
             string sqlCmd = $@"
 select 1
 from View_ShareExpense se WITH (NOLOCK) 
@@ -2756,6 +2768,25 @@ where ID = '{this.CurrentMaintain["ID"]}'
 
             callNextForm.grid1.AutoResizeColumns();
             callNextForm.Visible = true;
+        }
+
+        private void BtnShippingMemo_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
+            {
+                return;
+            }
+
+            new ShippingMemo(ShippingMemo.ShippingMemoType.GMTBooking_ShippingMemo, this.CurrentMaintain["ID"].ToString()).ShowDialog();
+
+            if (ShippingMemo.IsDataExists(ShippingMemo.ShippingMemoType.GMTBooking_ShippingMemo, this.CurrentMaintain["ID"].ToString()))
+            {
+                this.btnShippingMemo.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnShippingMemo.ForeColor = Color.Black;
+            }
         }
     }
 }

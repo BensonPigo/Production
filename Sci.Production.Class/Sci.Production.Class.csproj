@@ -242,6 +242,12 @@
     <Compile Include="TxtmulitFSRCpuCost.Designer.cs">
       <DependentUpon>TxtmulitFSRCpuCost.cs</DependentUpon>
     </Compile>
+    <Compile Include="TxtSewingReason.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TxtSewingReason.Designer.cs">
+      <DependentUpon>TxtSewingReason.cs</DependentUpon>
+    </Compile>
     <Compile Include="TxtToPlace.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -703,6 +709,12 @@
     <Compile Include="TxtCentralizedFactory.Designer.cs">
       <DependentUpon>TxtCentralizedFactory.cs</DependentUpon>
     </Compile>
+    <Compile Include="WH_BarcodeEmpty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WH_BarcodeEmpty.designer.cs">
+      <DependentUpon>WH_BarcodeEmpty.cs</DependentUpon>
+    </Compile>
     <Compile Include="WordFileeNameExtension.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -849,6 +861,9 @@
     <EmbeddedResource Include="TxtPulloutPort.resx">
       <DependentUpon>TxtPulloutPort.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="TxtSewingReason.resx">
+      <DependentUpon>TxtSewingReason.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TxtShippingReason.resx">
       <DependentUpon>TxtShippingReason.cs</DependentUpon>
     </EmbeddedResource>
@@ -926,6 +941,9 @@
     <EmbeddedResource Include="UserData.resx">
       <DependentUpon>UserData.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="WH_BarcodeEmpty.resx">
+      <DependentUpon>WH_BarcodeEmpty.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -946,6 +964,9 @@
       <Project>{fc94fcaf-9216-4a2d-9e89-15fe27aef028}</Project>
       <Name>Sci.Production.CallPmsAPI</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\exclamation_mark_PNG86.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

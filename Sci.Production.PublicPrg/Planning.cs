@@ -146,8 +146,7 @@ into #beforeAllO1
 from WorkOrder w with(nolock)
 inner join WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w.Ukey
 inner join WorkOrder_PatternPanel wp with(nolock) on wp.WorkOrderUkey = w.Ukey
-inner join Orders o with(nolock) on wd.OrderID  = o.ID
-where exists(select 1 from {tempTable}  t where t.orderid = o.id and o.LocalOrder = 0) --非local單
+where exists (select 1 from Orders o with(nolock) where wd.OrderID  = o.ID and exists(select 1 from {tempTable} t where t.orderid = o.id and o.LocalOrder = 0)) --非local單 
 and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.ID = w.ID and cw.PatternPanel = wp.PatternPanel) -- ISP20201886 排除指定 PatternPanel
 and(((select WIP_ByShell from system) = 1
         and exists(select 1 from Order_BOF bof WITH (NOLOCK) where bof.Id = w.Id and bof.FabricCode = w.FabricCode and bof.Kind = 1))
@@ -172,13 +171,12 @@ into #BundleLocal
 from Bundle_Detail_Order bdo WITH (NOLOCK)
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = bdo.BundleNo
 inner join Bundle bun WITH (NOLOCK) on bun.id = bd.id
-inner join Orders o WITH (NOLOCK) on bdo.Orderid = o.ID and  bun.MDivisionID = o.MDivisionID
-and exists (select 1 from {tempTable} t where t.OrderID = o.ID and o.LocalOrder = 1) --Local單
+where exists (select 1 from Orders o WITH (NOLOCK) where bdo.Orderid = o.ID and  bun.MDivisionID = o.MDivisionID 
+		and exists (select 1 from {tempTable} t where t.OrderID = o.ID and o.LocalOrder = 1)) --Local單
 
 select distinct t.Orderid,t.POID,t.Article,t.SizeCode,t.PatternPanel,t.FabricPanelCode
 into #AllOrders
 from #beforeAllO t
-
 union all
 select * from #BundleLocal
 
@@ -217,6 +215,14 @@ and exists (
 group by bdo.Orderid,
 bunD.ID, bunD.BundleGroup, bunD.BundleNo, bunD.Sizecode, bunD.Patterncode, bunD.IsPair,
 bun.AddDate, bun.PatternPanel, bun.FabricPanelCode, bun.Article
+
+select *
+into #tmp_Bundle_Detail_Art
+from Bundle_Detail_Art bda WITH (NOLOCK)
+where exists (select 1  from #tmp_Bundle_QtyBySubprocess bunD where bda.BundleNo = bunD.BundleNo)
+
+create nonclustered index idx_QtyBySubprocess on #tmp_Bundle_QtyBySubprocess (Orderid, PatternPanel,Article,Sizecode,FabricPanelCode)
+create nonclustered index idx_SubprocessId on #tmp_Bundle_Detail_Art (Bundleno, SubprocessId)
 ";
             foreach (string subprocessID in subprocessIDs)
             {
@@ -234,6 +240,7 @@ bun.AddDate, bun.PatternPanel, bun.FabricPanelCode, bun.Article
                 // --  部位有須要用 X 外加工計算
                 sqlcmd += $@"
 /*******************   {subprocessIDtmp} start  ********************/
+BEGIN
 select distinct	st1.OrderID,
 		st1.POID,
 		st1.Article,
@@ -267,7 +274,7 @@ outer apply (
 					and bunD.Sizecode = x0.Sizecode
 				    and bunD.FabricPanelCode = x0.FabricPanelCode
 					and exists (select 1
-									from Bundle_Detail_Art BunDArt WITH (NOLOCK)
+									from #tmp_Bundle_Detail_Art BunDArt WITH (NOLOCK)
 									where BunDArt.Bundleno = bunD.BundleNo
 										and BunDArt.SubprocessId = '{subprocessID}')
 			order by bunD.AddDate desc
@@ -290,7 +297,7 @@ outer apply (
 	outer apply (
 		select v = (select 1
 					where exists (select 1								  
-									from Bundle_Detail_Art BunDArt WITH (NOLOCK) 
+									from #tmp_Bundle_Detail_Art BunDArt WITH (NOLOCK) 
 									where BunDArt.Bundleno = bunD.BundleNo
 										and BunDArt.SubprocessId = '{subprocessID}'))
 	) QtyBySubprocess
@@ -380,7 +387,7 @@ select    st0.Orderid
         --其它Subprocess若是Main(主裁片)，其Bundleno之下不會有NoBundleCardAfterSubprocess
 		, NoBundleCardAfterSubprocess = isnull(x.NoBundleCardAfterSubprocess,0)
 		, PostSewingSubProcess_SL =iif(isnull(Bundle_Art.PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0)
-				, bunDQty = bunD.Qty
+		, bunDQty = bunD.Qty
 		, st0.IsLackPatternPanel
 		, bundID= bund.ID
 		, st0.StdCtn
@@ -392,22 +399,22 @@ left join #tmp_Bundle_QtyBySubprocess bund on bunD.Orderid = st0.Orderid
 							and	bunD.Article = st0.Article  
 							and	bunD.Patterncode = st0.Patterncode 
 							and	bunD.Sizecode = st0.SizeCode
-left join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId = st0.SubprocessId {(rfidProcessLocationID.ToUpper() == "ALL" ? string.Empty : $"and isnull(bunIO.RFIDProcessLocationID,'') = '{rfidProcessLocationID}'")} 
-left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = bunD.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
-left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = bunD.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
+left join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId = st0.SubprocessId {(rfidProcessLocationID.ToUpper() == "ALL" ? string.Empty : $"and bunIO.RFIDProcessLocationID = '{rfidProcessLocationID}'")} 
+left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = bunD.BundleNo and bunIOS.SubProcessId = 'SORTING' and bunIOS.RFIDProcessLocationID = ''
+left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = bunD.BundleNo and bunIOL.SubProcessId = 'LOADING' and bunIOL.RFIDProcessLocationID = ''
 OUTER APPLY(  --BundleNo + SubProcessId 可能多筆，故這樣處理
-	SELECT  DISTINCT PostSewingSubProcess 
-    FROM Bundle_Detail_Art bda 
+	SELECT DISTINCT PostSewingSubProcess 
+    FROM #tmp_Bundle_Detail_Art bda WITH (NOLOCK) 
     WHERE bda.BundleNo = bunD.BundleNo and bda.SubProcessId = st0.SubprocessId
 )Bundle_Art
 outer apply(
 	select NoBundleCardAfterSubprocess=MAX(cast(NoBundleCardAfterSubprocess as int))
-	from Bundle_Detail_art bda WITH (NOLOCK) 
+	from #tmp_Bundle_Detail_Art bda WITH (NOLOCK) 
 	where bda.BundleNo = bunD.BundleNo
 )x
 OUTER APPLY(  --取得這個bundle no的指定加工段
 	SELECT  DISTINCT SubProcessId 
-    FROM Bundle_Detail_Art bda 
+    FROM #tmp_Bundle_Detail_Art bda WITH (NOLOCK)
     WHERE bda.BundleNo = bunD.BundleNo and bda.SubProcessId = st0.SubprocessId
 )BundleArt
  where (st0.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0)
@@ -420,15 +427,19 @@ into #QtyBySetPerCutpart4{subprocessIDtmp}
 from #QtyBySetPerCutpart3{subprocessIDtmp} st3
 OUTER APPLY(
     ----PMS系統內，實際建立的Bundle 部位數
-	SELECT [Ctn]=COUNT(DISTINCT Patterncode)
-	FROM #tmp_Bundle_QtyBySubprocess
-	WHERE ID = st3.bundID AND BundleGroup = st3.BundleGroup AND Orderid = st3.Orderid AND Article = st3.Article 
-    AND SizeCode = st3.SizeCode AND PatternPanel = st3.PatternPanel   AND FabricPanelCode = st3.FabricPanelCode
+	SELECT [Ctn]=COUNT(*)
+	from (
+		SELECT Patterncode
+		FROM #tmp_Bundle_QtyBySubprocess
+		WHERE ID = st3.bundID AND BundleGroup = st3.BundleGroup AND Orderid = st3.Orderid AND Article = st3.Article 
+		AND SizeCode = st3.SizeCode AND PatternPanel = st3.PatternPanel   AND FabricPanelCode = st3.FabricPanelCode
+		GROUP BY Patterncode
+	)a
 )RealCont
 
 select bdo.Orderid,bdo.BundleNo,bunD.Patterncode,bunD.Sizecode,bunD.IsPair,bun.PatternPanel,bun.Article, bun.AddDate
 into #QtyBySetPerCutpart5{subprocessIDtmp}
-from(select st4.Orderid from #QtyBySetPerCutpart4{subprocessIDtmp} st4 group by st4.Orderid) x
+from(select distinct st4.Orderid from #QtyBySetPerCutpart4{subprocessIDtmp} st4) x
 inner join Orders o WITH (NOLOCK) ON x.Orderid = o.id
 inner join Bundle_Detail_Order bdo on bdo.Orderid = x.Orderid
 inner join Bundle_Detail bunD WITH (NOLOCK) on bunD.BundleNo = bdo.BundleNo
@@ -694,6 +705,8 @@ where FinishedQty is not null
 drop table #QtyBySetPerCutpart{subprocessIDtmp},#QtyBySetPerCutpart2{subprocessIDtmp},#QtyBySetPerCutpart3{subprocessIDtmp}
 , #QtyBySetPerCutpart4{subprocessIDtmp}, #QtyBySetPerCutpart5{subprocessIDtmp}
 , #CutpartBySet{subprocessIDtmp}, #FinalQtyBySet{subprocessIDtmp}
+
+
 ";
                 if (bySP)
                 {
@@ -710,7 +723,9 @@ group by OrderID, InStartDate,InEndDate,OutStartDate,OutEndDate
 ";
                 }
 
-                sqlcmd += Environment.NewLine + $@"/*******************   {subprocessIDtmp} END  ********************/";
+                sqlcmd += Environment.NewLine + $@"
+END
+/*******************   {subprocessIDtmp} END  ********************/";
             }
 
             sqlcmd += Environment.NewLine + " drop table #AllOrders, #tmp_Bundle_QtyBySubprocess " + Environment.NewLine;

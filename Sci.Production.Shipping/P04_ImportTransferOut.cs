@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using Ict;
 using Ict.Win;
 using Sci.Data;
@@ -33,7 +34,7 @@ namespace Sci.Production.Shipping
             this.gridImport.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
-                .Text("TransactionID", header: "Transfer Out No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("TransactionID", header: "Transfer Out No./ Adjust No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Seq", header: "SEQ", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Supp", header: "Supplier", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -96,13 +97,60 @@ select Selected = 1
 	   ,td.ToSeq1
 	   ,td.ToSeq2
        ,[ToSeq] = td.ToSeq1 + ' ' +td.ToSeq2
+       ,td.TransferExportID
 from TransferOut_Detail td WITH (NOLOCK) 
 left join PO_Supp ps WITH (NOLOCK) on ps.ID = td.Poid and ps.SEQ1 = td.Seq1
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = td.Poid and psd.SEQ1= td.Seq1 and psd.SEQ2 = td.Seq2
 left join Supp s WITH (NOLOCK) on s.ID = ps.SuppID
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 left join Orders o WITH (NOLOCK) on o.ID = td.Poid
-where td.ID = @id";
+where td.ID = @id
+
+union all
+
+select Selected = 1
+       , [TransactionID] = ad.ID
+	   , ad.Poid
+	   , ad.Seq1
+	   , ad.Seq2
+	   , Seq = (left(ad.Seq1 + ' ', 3) + '-' + ad.Seq2)
+	   , SuppID = isnull(ps.SuppID, '')
+	   , Supp = (isnull(ps.SuppID, '') + '-' + isnull(s.AbbEN, ''))
+	   , RefNo = isnull(psd.Refno, '')
+	   , SCIRefNo = isnull(psd.SCIRefno, '')
+	   , Description = isnull(f.DescDetail, '') 
+	   , FabricType = isnull(psd.FabricType, '')
+	   , Type = (case 
+	   				when psd.FabricType = 'F' then 'Fabric' 
+	   				when psd.FabricType = 'A' then 'Accessory' 
+   				 	else '' 
+			 	 end)
+	   , MtlTypeID = isnull(f.MtlTypeID, '') 
+	   , UnitId = isnull(psd.StockUnit, '') 
+	   , Qty = isnull(ad.QtyAfter,0.00) - isnull(ad.QtyBefore,0.00) 
+	   , NetKg = 0.0
+	   , WeightKg = 0.0
+	   , o.BuyerDelivery
+	   , BrandID = isnull(o.BrandID, '')
+	   , FactoryID = isnull(o.FactoryID, '')
+	   , o.SciDelivery
+	   ,[ToPOID] = ad.POID
+	   ,[ToSeq1] = ad.Seq1
+	   ,[ToSeq2] = ad.Seq2
+       ,[ToSeq] = ad.Seq1 + ' ' +ad.Seq2
+       ,[TransferExportID] = ''
+from Adjust_Detail ad WITH (NOLOCK) 
+inner join Adjust a with (nolock) on ad.ID = a.ID
+left join Reason r on r.ID = ad.ReasonId  and ReasonTypeID = 'Stock_Adjust'
+left join PO_Supp ps WITH (NOLOCK) on ps.ID = ad.Poid and ps.SEQ1 = ad.Seq1
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ad.Poid and psd.SEQ1= ad.Seq1 and psd.SEQ2 = ad.Seq2
+left join Supp s WITH (NOLOCK) on s.ID = ps.SuppID
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+left join Orders o WITH (NOLOCK) on o.ID = ad.Poid
+where ad.ID = @id
+and r.TransferOut = 1
+and a.Type in ('A','B') -- P34,P35
+";
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out selectData);
             if (!result)
@@ -128,6 +176,23 @@ where td.ID = @id";
             if (MyUtility.Check.Empty(gridData) || gridData.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("No data!");
+                return;
+            }
+
+            List<string> drChkExport = gridData.AsEnumerable()
+                .Where(w => !MyUtility.Check.Empty(w["Selected"]) && !MyUtility.Check.Empty(w["TransferExportID"]))
+                .Select(s => MyUtility.Convert.GetString(s["Poid"]))
+                .Distinct().ToList();
+
+            if (drChkExport.Count > 0)
+            {
+                string spList = string.Empty;
+                foreach (var item in drChkExport)
+                {
+                    spList += $@"{item}" + Environment.NewLine;
+                }
+
+                MyUtility.Msg.WarningBox(@"The following SP# contains Transfer WK# and can not import into Shipping_P04." + Environment.NewLine + spList);
                 return;
             }
 
@@ -169,6 +234,12 @@ group by TransactionID,Poid, Seq1, Seq2, Seq, SuppID, Supp, RefNo
                 MyUtility.Tool.ProcessWithDatatable(dr.CopyToDataTable(), string.Empty, strComputeQtySQL, out dtComputeQty);
                 foreach (DataRow currentRow in dtComputeQty.Rows)
                 {
+                    string sqlChk = $@"select 1 from FtyExport_Detail where TransactionID = '{currentRow["TransactionID"]}'";
+                    if (MyUtility.Check.Seek(sqlChk))
+                    {
+                        MyUtility.Msg.WarningBox("Transfer Out No. / Adjust No. <No> already exists in WK# <WK>.");
+                        return;
+                    }
 
                     DataRow[] findrow = this.detailData.Select($@"
 TransactionID = '{MyUtility.Convert.GetString(currentRow["TransactionID"])}' 

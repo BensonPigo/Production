@@ -46,7 +46,6 @@
             this.txtcustcd = new Sci.Production.Class.Txtcustcd();
             this.txtcountryDestination = new Sci.Production.Class.Txtcountry();
             this.txtshipmode = new Sci.Production.Class.Txtshipmode();
-            this.txtsubconForwarder = new Sci.Production.Class.TxtsubconNoConfirm();
             this.radioPanel2 = new Sci.Win.UI.RadioPanel();
             this.radioExportFeeReportMerged = new Sci.Win.UI.RadioButton();
             this.radioAirPrepaidExpenseReport = new Sci.Win.UI.RadioButton();
@@ -61,21 +60,23 @@
             this.comboRateType = new Sci.Win.UI.ComboBox();
             this.chkExcludePackingLocalOrder = new Sci.Win.UI.CheckBox();
             this.chkExcludePackingFOC = new Sci.Win.UI.CheckBox();
+            this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.txtForwarder = new Sci.Win.UI.TextBox();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(437, 12);
+            this.print.Location = new System.Drawing.Point(432, 12);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(437, 48);
+            this.toexcel.Location = new System.Drawing.Point(432, 48);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(437, 84);
+            this.close.Location = new System.Drawing.Point(432, 84);
             // 
             // txtVersion
             // 
@@ -273,20 +274,6 @@
             this.txtshipmode.TabIndex = 8;
             this.txtshipmode.UseFunction = null;
             // 
-            // txtsubconForwarder
-            // 
-            this.txtsubconForwarder.DisplayBox1Binding = "";
-            this.txtsubconForwarder.IsFreightForwarder = false;
-            this.txtsubconForwarder.IsIncludeJunk = true;
-            this.txtsubconForwarder.IsMisc = false;
-            this.txtsubconForwarder.IsShipping = false;
-            this.txtsubconForwarder.IsSubcon = false;
-            this.txtsubconForwarder.Location = new System.Drawing.Point(119, 292);
-            this.txtsubconForwarder.Name = "txtsubconForwarder";
-            this.txtsubconForwarder.Size = new System.Drawing.Size(170, 23);
-            this.txtsubconForwarder.TabIndex = 9;
-            this.txtsubconForwarder.TextBox1Binding = "";
-            // 
             // radioPanel2
             // 
             this.radioPanel2.Controls.Add(this.radioExportFeeReportMerged);
@@ -465,9 +452,31 @@
             this.chkExcludePackingFOC.Text = "Exclude Packing FOC";
             this.chkExcludePackingFOC.UseVisualStyleBackColor = true;
             // 
+            // displayBox1
+            // 
+            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox1.Location = new System.Drawing.Point(176, 291);
+            this.displayBox1.Name = "displayBox1";
+            this.displayBox1.Size = new System.Drawing.Size(100, 23);
+            this.displayBox1.TabIndex = 118;
+            // 
+            // txtForwarder
+            // 
+            this.txtForwarder.BackColor = System.Drawing.Color.White;
+            this.txtForwarder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtForwarder.Location = new System.Drawing.Point(117, 291);
+            this.txtForwarder.Name = "txtForwarder";
+            this.txtForwarder.Size = new System.Drawing.Size(61, 23);
+            this.txtForwarder.TabIndex = 117;
+            this.txtForwarder.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtForwarder_PopUp);
+            this.txtForwarder.Validating += new System.ComponentModel.CancelEventHandler(this.TxtForwarder_Validating);
+            // 
             // R10
             // 
-            this.ClientSize = new System.Drawing.Size(525, 583);
+            this.ClientSize = new System.Drawing.Size(525, 578);
+            this.Controls.Add(this.displayBox1);
+            this.Controls.Add(this.txtForwarder);
             this.Controls.Add(this.chkExcludePackingLocalOrder);
             this.Controls.Add(this.chkExcludePackingFOC);
             this.Controls.Add(this.comboRateType);
@@ -477,7 +486,6 @@
             this.Controls.Add(this.dateOnBoardDate);
             this.Controls.Add(this.labelOnBoardDate);
             this.Controls.Add(this.radioPanel2);
-            this.Controls.Add(this.txtsubconForwarder);
             this.Controls.Add(this.txtshipmode);
             this.Controls.Add(this.txtcountryDestination);
             this.Controls.Add(this.txtcustcd);
@@ -520,7 +528,6 @@
             this.Controls.SetChildIndex(this.txtcustcd, 0);
             this.Controls.SetChildIndex(this.txtcountryDestination, 0);
             this.Controls.SetChildIndex(this.txtshipmode, 0);
-            this.Controls.SetChildIndex(this.txtsubconForwarder, 0);
             this.Controls.SetChildIndex(this.radioPanel2, 0);
             this.Controls.SetChildIndex(this.labelOnBoardDate, 0);
             this.Controls.SetChildIndex(this.dateOnBoardDate, 0);
@@ -530,6 +537,8 @@
             this.Controls.SetChildIndex(this.comboRateType, 0);
             this.Controls.SetChildIndex(this.chkExcludePackingFOC, 0);
             this.Controls.SetChildIndex(this.chkExcludePackingLocalOrder, 0);
+            this.Controls.SetChildIndex(this.txtForwarder, 0);
+            this.Controls.SetChildIndex(this.displayBox1, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.radioPanel2.ResumeLayout(false);
@@ -559,7 +568,6 @@
         private Class.Txtcustcd txtcustcd;
         private Class.Txtcountry txtcountryDestination;
         private Class.Txtshipmode txtshipmode;
-        private Class.TxtsubconNoConfirm txtsubconForwarder;
         private Win.UI.RadioPanel radioPanel2;
         private Win.UI.RadioButton radioDetailListBySPNoByFeeType;
         private Win.UI.RadioButton radioDetailListbySPNo;
@@ -574,5 +582,7 @@
         private Win.UI.RadioButton radioExportFeeReportMerged;
         private Win.UI.CheckBox chkExcludePackingLocalOrder;
         private Win.UI.CheckBox chkExcludePackingFOC;
+        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.TextBox txtForwarder;
     }
 }

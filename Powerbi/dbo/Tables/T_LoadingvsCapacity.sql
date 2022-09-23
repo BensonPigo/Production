@@ -6,5 +6,6 @@
 	[ArtworkTypeID] [varchar](20) NULL,
 	[Capacity(CPU)] [numeric](38, 6) NULL,
 	[Loading (CPU)] [numeric](38, 6) NULL,
-	[TransferBIDate] [datetime] NULL
+	[TransferBIDate] [datetime] NULL,
+	[Ukey] [bigint] NULL
 ) ON [PRIMARY]

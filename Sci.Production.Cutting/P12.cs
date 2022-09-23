@@ -78,6 +78,7 @@ namespace Sci.Production.Cutting
                 .Numeric("Qty", header: "Qty", decimal_places: 0, integer_places: 10, width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("PostSewingSubProcess_String", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("NoBundleCardAfterSubprocess_String", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 ;
         }
 
@@ -294,6 +295,7 @@ select
     , a.RFPrintDate
     , a.RFIDScan
     , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
+    , a.Dyelot
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -386,6 +388,7 @@ select
     , a.RFPrintDate
     , a.RFIDScan
     , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
+    , a.Dyelot
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -522,6 +525,7 @@ select
     , a.RFPrintDate
     , a.RFIDScan
     , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
+    , a.Dyelot
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -614,6 +618,7 @@ select
     , a.RFPrintDate
     , a.RFIDScan
     , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
+    , a.Dyelot
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -785,6 +790,7 @@ OPTION (RECOMPILE)"
                 GroupCombCut = 0,
                 BundleID = row1["BundleID"].ToString(),
                 CutCell = row1["CutCell"].ToString(),
+                Dyelot = row1["Dyelot"].ToString(),
             }).ToList();
             string fileName = "Cutting_P10_Layout1";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
@@ -824,11 +830,11 @@ OPTION (RECOMPILE)"
                 {
                     if (allNoDatas == null)
                     {
-                        allNoDatas = P10_Print.GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size);
+                        allNoDatas = GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size);
                     }
                     else
                     {
-                        allNoDatas.Merge(P10_Print.GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size));
+                        allNoDatas.Merge(GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size));
                     }
                 });
 
@@ -939,11 +945,11 @@ where bd.BundleNo = '{dr["Bundle"]}'
             {
                 if (allNoDatas == null)
                 {
-                    allNoDatas = P10_Print.GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size);
+                    allNoDatas = GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size);
                 }
                 else
                 {
-                    allNoDatas.Merge(P10_Print.GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size));
+                    allNoDatas.Merge(GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size));
                 }
             });
 
@@ -980,7 +986,7 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 Comb = dr["Comb"].ToString(),
                 Cut = dr["cut"].ToString(),
                 GroupCombCut = 0,
-                No = P10_Print.GetNo(dr["Bundle"].ToString(), allNoDatas),
+                No = GetNo(dr["Bundle"].ToString(), allNoDatas),
                 BundleID = dr["BundleID"].ToString(),
                 BundleNo = dr["Bundle"].ToString(),
                 RFIDScan = MyUtility.Convert.GetBool(dr["RFIDScan"]),

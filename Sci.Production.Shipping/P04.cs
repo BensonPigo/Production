@@ -205,6 +205,7 @@ where ed.ID = '{0}'
             base.ClickNewAfter();
             this.CurrentMaintain["Type"] = 1;
             this.CurrentMaintain["Handle"] = Env.User.UserID;
+            this.btnShippingMemo.Enabled = false;
         }
 
         /// <inheritdoc/>
@@ -407,12 +408,15 @@ and INVNo = '{this.CurrentMaintain["INVNo"]}'
             if (this.CurrentMaintain["Type"].ToString() == "2" && MyUtility.Check.Empty(this.txtSisFtyWK.Text))
             {
                 this.txtSisFtyWK.Focus();
-                DialogResult questionResult = MyUtility.Msg.QuestionBox($@" [Sis Fty WK#] is empty. Do you want to save data?", caption: "Question", buttons: MessageBoxButtons.YesNo);
+                MyUtility.Msg.WarningBox("Type = Transfer In, [Sis Fty WK#] cannot be empty.");
+                return false;
 
-                if (questionResult == DialogResult.No)
-                {
-                    return false;
-                }
+                //DialogResult questionResult = MyUtility.Msg.QuestionBox($@" [Sis Fty WK#] is empty. Do you want to save data?", caption: "Question", buttons: MessageBoxButtons.YesNo);
+
+                //if (questionResult == DialogResult.No)
+                //{
+                //    return false;
+                //}
             }
 
             // 已經有做出口費用分攤，不能勾選[No Import/Export Charge]
@@ -695,6 +699,15 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
             {
                 this.btnExpenseData.ForeColor = Color.Black;
             }
+
+            if (ShippingMemo.IsDataExists(ShippingMemo.ShippingMemoType.FtyExport_ShippingMemo, this.CurrentMaintain["ID"].ToString()))
+            {
+                this.btnShippingMemo.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnShippingMemo.ForeColor = Color.Black;
+            }
         }
 
         private void SendMail()
@@ -758,6 +771,25 @@ where f.ID = '{this.CurrentMaintain["ID"].ToString()}'
         private void Button1_Click(object sender, EventArgs e)
         {
             this.SendMail();
+        }
+
+        private void BtnShippingMemo_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
+            {
+                return;
+            }
+
+            new ShippingMemo(ShippingMemo.ShippingMemoType.FtyExport_ShippingMemo, this.CurrentMaintain["ID"].ToString()).ShowDialog();
+
+            if (ShippingMemo.IsDataExists(ShippingMemo.ShippingMemoType.FtyExport_ShippingMemo, this.CurrentMaintain["ID"].ToString()))
+            {
+                this.btnShippingMemo.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnShippingMemo.ForeColor = Color.Black;
+            }
         }
     }
 }

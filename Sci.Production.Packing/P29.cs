@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Data.SqlClient;
-using Sci.Data;
 using Ict;
-using System.Transactions;
+using System.Runtime.InteropServices;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Packing
 {
@@ -27,6 +25,7 @@ namespace Sci.Production.Packing
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.EditMode = true;
         }
 
         /// <inheritdoc/>
@@ -36,6 +35,7 @@ namespace Sci.Production.Packing
             #region GridMain Setting
             this.Helper.Controls.Grid.Generator(this.gridMain)
                 .Date("PackingAuditDate", header: "Audit Date", iseditingreadonly: true)
+                .Text("FactoryID", header: "Factory", iseditingreadonly: true)
                 .Text("PackingListID", header: "Pack ID", iseditingreadonly: true)
                 .Text("CTN", header: "CTN#", iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", iseditingreadonly: true)
@@ -82,6 +82,9 @@ namespace Sci.Production.Packing
             List<SqlParameter> listSqlParameter = new List<SqlParameter>();
             listSqlParameter.Add(new SqlParameter("@PackID", this.txtPackID.Text));
             listSqlParameter.Add(new SqlParameter("@SP", this.txtSP.Text));
+            listSqlParameter.Add(new SqlParameter("@M", this.txtMdivision1.Text));
+            listSqlParameter.Add(new SqlParameter("@fty", this.txtfactory1.Text));
+
             listSqlParameter.Add(new SqlParameter("@PackingAuditDate_S", this.dateAuditDate.Value1.Empty() ? string.Empty : ((DateTime)this.dateAuditDate.Value1).ToString("yyyy/MM/dd 00:00:00")));
             listSqlParameter.Add(new SqlParameter("@PackingAuditDate_E", this.dateAuditDate.Value2.Empty() ? string.Empty : ((DateTime)this.dateAuditDate.Value2).ToString("yyyy/MM/dd 23:59:59")));
             #endregion
@@ -111,15 +114,31 @@ namespace Sci.Production.Packing
                 strWhere += " and c.OrderID = @SP";
             }
 
+            if (!MyUtility.Check.Empty(this.txtMdivision1.Text))
+            {
+                strWhere += $@" and o.Mdivisionid = @M";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtfactory1.Text))
+            {
+                strWhere += $@" and o.FactoryID = @fty";
+            }
+
             #endregion
 
             #region SQL Command
             string strSqlCmd = $@"
+select ID, Name
+into #mesPass1
+from [ExtendServer].ManufacturingExecution.dbo.Pass1
+
 select [PackingAuditDate] = c.PackingAuditDate
+    ,[FactoryID] = o.factoryid
 	,[PackingListID] = c.PackingListID
 	,[CTN] = c.CTNStartNo
 	,[Qty] = pd_QtyPerCTN.Qty
 	,[Discrepancy] = c.Qty
+    ,[Desc] = isnull(pd.Description,'')
 	,[SP] = c.OrderID
 	,[PO] = o.CustPONo
 	,[Style] = o.StyleID
@@ -131,12 +150,16 @@ select [PackingAuditDate] = c.PackingAuditDate
 	,[AuditBy] = c.AddName + '-' + pass1.Name
 	,[AuditTime] = Format(c.AddDate, 'yyyy/MM/dd HH:mm:ss')
 	,[PassDate] = PassDate.AddDate
+    ,[Status] = case when c.Qty = 0 then 'Pass'
+			when c.Qty > 0 then 'Hold'
+			else 'Please check Discrepancy'
+			end
 	,c.ID
 into #tmp
 from CTNPackingAudit c WITH(NOLOCK)
 inner join Orders o WITH(NOLOCK) on c.OrderID = o.ID
 left join Country co WITH(NOLOCK) on o.Dest = co.ID
-left join Pass1 on Pass1.ID = c.AddName
+left join #mesPass1 Pass1 on Pass1.ID = c.AddName
 outer apply (
 	select Qty = SUM(QtyPerCTN)
 	from PackingList_Detail pd WITH(NOLOCK)
@@ -156,6 +179,16 @@ outer apply(
 	where Status='Pass' 
 	and AddDate> = c.AddDate
 )PassDate
+outer apply (
+    select top 1 pr.Description 
+    from PackingList_Detail pd
+    left join CTNPackingAudit_Detail cd on c.ID = cd.ID
+    left join PackingReason pr on cd.PackingReasonID = pr.ID
+    where pr.Type = 'PA'
+    and pd.id = c.PackingListID
+    and pd.CTNStartNo = c.CTNStartNo
+    and pd.Orderid = c.Orderid
+) PD
 where 1 = 1
 {strWhere}
 
@@ -166,6 +199,8 @@ select cd.ID,cd.PackingReasonID,pr.Description,cd.Qty
 from CTNPackingAudit_Detail cd
 inner join #tmp t on t.ID = cd.ID
 left join PackingReason pr on cd.PackingReasonID = pr.ID and pr.Type = 'PA'
+
+drop table #mesPass1
 ";
             #endregion
 
@@ -194,6 +229,7 @@ left join PackingReason pr on cd.PackingReasonID = pr.ID and pr.Type = 'PA'
 
             if (datas.Tables[0].Rows.Count == 0)
             {
+                this.HideWaitMessage();
                 return;
             }
 
@@ -218,6 +254,40 @@ left join PackingReason pr on cd.PackingReasonID = pr.ID and pr.Type = 'PA'
             this.gridDetail.AutoResizeColumns();
 
             #endregion
+            this.HideWaitMessage();
+        }
+
+        private void btnExcel_Click(object sender, EventArgs e)
+        {
+            if (this.dtMaster == null || this.dtMaster.Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("No Data!");
+                return;
+            }
+
+            this.ShowWaitMessage("Excel Processing...");
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Packing_P29.xltx"); // 預先開啟excel app
+            if (objApp == null)
+            {
+                this.HideWaitMessage();
+                return;
+            }
+
+            MyUtility.Excel.CopyToXls(this.dtMaster, string.Empty, "Packing_P29.xltx", 2, false, null, objApp); // 將datatable copy to excel
+            Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
+
+            // 移除最後一欄ID
+            objSheets.Columns["T"].Delete();
+            #region Save & Show Excel
+            string strExcelName = Class.MicrosoftFile.GetName("Packing_P29");
+            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            strExcelName.OpenFile();
+            #endregion
+
             this.HideWaitMessage();
         }
     }

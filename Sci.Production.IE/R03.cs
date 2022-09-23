@@ -112,12 +112,16 @@ outer apply (
                 if (!MyUtility.Check.Empty(this.dateSewingDate.Value1) && !MyUtility.Check.Empty(this.dateSewingDate.Value2))
                 {
                     dateSewing += $@"
-AND 
-( 
-	(Cast(s.Inline as Date) >= convert(varchar(10), '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}', 120) AND Cast(s.Inline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}' )
-    OR
-    (Cast(s.Offline as Date) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}' AND Cast(s.Offline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}')
-)";
+and (
+        (convert(varchar(10), s.Inline, 120) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}' 
+            and  convert(varchar(10), s.Offline, 120) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}'
+        )
+        or
+        ( '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}' >= convert(varchar(10), s.Inline, 120) 
+            and '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}' <= convert(varchar(10), s.Offline, 120)
+        )
+)
+";
                 }
 
                 sqlCmd.Append($@"

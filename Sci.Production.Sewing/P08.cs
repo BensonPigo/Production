@@ -42,8 +42,19 @@ namespace Sci.Production.Sewing
                 return;
             }
 
+            string packingListID = string.Empty;
+            string cTNStarNo = string.Empty;
+
+            if (cartonsBarcode.Length > 13)
+            {
+                packingListID = cartonsBarcode.Substring(0, 13);
+                cTNStarNo = cartonsBarcode.Substring(13, cartonsBarcode.Length - 13).TrimStart('^');
+            }
+
             List<SqlParameter> sqlParameters = new List<SqlParameter>();
             sqlParameters.Add(new SqlParameter("@cartonsBarcode", cartonsBarcode));
+            sqlParameters.Add(new SqlParameter("@packingListID", packingListID));
+            sqlParameters.Add(new SqlParameter("@cTNStarNo", cTNStarNo));
             sqlParameters.Add(new SqlParameter("@M", Env.User.Keyword));
 
             string sqlcmd =
@@ -78,7 +89,7 @@ outer apply
 	from Style_Location with(nolock)
 	where StyleUkey = o.StyleUkey
 )sl
-where ((pd.ID = left(@cartonsBarcode,13) and pd.CTNStartNo = SUBSTRING(@cartonsBarcode,14,len(@cartonsBarcode)))
+where ((pd.ID = @packingListID and pd.CTNStartNo = @cTNStarNo)
         or pd.CustCTN = @cartonsBarcode
         or pd.SCICtnNo = @cartonsBarcode)
 		and p.MDivisionID =@M
@@ -171,8 +182,8 @@ set MDFailQty = {this.numericBoxDiscrepancy.Text}, MDScanDate = getdate(), MDSca
 ,MDStatus  = '{strMDStatus}'
 where ID = '{dr["ID"]}' and CTNStartNo = '{dr["CTNStartNo"]}';
 
-insert into MDScan([ScanDate], [MDivisionID], [OrderID], [PackingListID], [CTNStartNo], [AddName], [AddDate], [SCICtnNo], [MDFailQty], [CartonQty])
-values(getdate(), '{Env.User.Keyword}', '{dr["OrderID"]}', '{dr["ID"]}', '{dr["CTNStartNo"]}', '{Env.User.UserID}', getdate(), '{dr["SCICtnNo"]}', {this.numericBoxDiscrepancy.Text}, {dr["CartonQty"]});
+insert into MDScan([ScanDate], [MDivisionID], [OrderID], [PackingListID], [CTNStartNo], [AddName], [AddDate], [SCICtnNo], [MDFailQty], [CartonQty], [DataRemark])
+values(getdate(), '{Env.User.Keyword}', '{dr["OrderID"]}', '{dr["ID"]}', '{dr["CTNStartNo"]}', '{Env.User.UserID}', getdate(), '{dr["SCICtnNo"]}', {this.numericBoxDiscrepancy.Text}, {dr["CartonQty"]}, 'Create from PMS');
 
 declare @MDScan_Ukey bigint
 select @MDScan_Ukey = @@IDENTITY

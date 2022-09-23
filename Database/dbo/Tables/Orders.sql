@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[Orders] (
     [ID]                     VARCHAR (13)    CONSTRAINT [DF_Orders_ID] DEFAULT ('') NOT NULL,
     [BrandID]                VARCHAR (8)     CONSTRAINT [DF_Orders_BrandID] DEFAULT ('') NULL,
-    [ProgramID]              VARCHAR (12)    CONSTRAINT [DF_Orders_ProgramID] DEFAULT ('') NULL,
+    [ProgramID]              NVARCHAR(12)    CONSTRAINT [DF_Orders_ProgramID] DEFAULT ('') NULL,
     [StyleID]                VARCHAR (15)    CONSTRAINT [DF_Orders_StyleID] DEFAULT ('') NULL,
     [SeasonID]               VARCHAR (10)    CONSTRAINT [DF_Orders_SeasonID] DEFAULT ('') NULL,
     [ProjectID]              VARCHAR (5)     CONSTRAINT [DF_Orders_ProjectID] DEFAULT ('') NULL,
@@ -187,6 +187,8 @@
     [DryRoomRecdDate] DATETIME NULL, 
     [DryRoomTransDate] DATETIME NULL, 
     [MdRoomScanDate] DATETIME NULL, 
+    [OrganicCotton] BIT NOT NULL CONSTRAINT [DF_Orders_OrganicCotton] DEFAULT ((0)), 
+    [QMSMarketFeedback] NVARCHAR(200) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -1058,3 +1060,13 @@ CREATE NONCLUSTERED INDEX [IDX_Orders_MES_EndlineR01]
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單在生產過程中是否有出現斷針', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'BrokenNeedles';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Organic Cotton/Recycle Polyester',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Orders',
+    @level2type = N'COLUMN',
+    @level2name = N'OrganicCotton'

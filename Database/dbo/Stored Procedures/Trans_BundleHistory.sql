@@ -47,6 +47,40 @@ Begin try
 			drop table #tmp_Bundle_Detail_Order
 		end
 
+		/*****************************  SetQtyBySubprocess  ************************************/
+		Begin
+			select *
+			into #tmp_SetQtyBySubprocess
+			from SetQtyBySubprocess s
+			where exists (select 1 from #tmp_Bundle_Detail_Order where OrderID = s.OrderID)
+
+			insert into SetQtyBySubprocess_History([OrderID], [Article], [SizeCode], [PatternPanel], [InQtyBySet], [OutQtyBySet], [FinishedQtyBySet], [SubprocessID], [TransferTime], [AddDate])
+			select [OrderID], [Article], [SizeCode], [PatternPanel], [InQtyBySet], [OutQtyBySet], [FinishedQtyBySet], [SubprocessID], [TransferTime], [AddDate]
+			from #tmp_SetQtyBySubprocess s
+
+			delete from s
+			from SetQtyBySubprocess s
+			where exists (select 1 from #tmp_SetQtyBySubprocess where OrderID = s.OrderID and Article = s.Article and SizeCode = s.SizeCode and PatternPanel = s.PatternPanel and SubprocessID = s.SubprocessID and TransferTime = s.TransferTime)
+		end
+
+		/*****************************  Bundle_Detail_Order  ************************************/
+		Begin
+			select *
+			into #tmp_Bundle_Detail_Order
+			from Bundle_Detail_Order bo
+			where exists (select 1 from #tmp_orders_ID where ID = bo.OrderID)
+
+			insert into Bundle_Detail_Order_History([ID], [BundleNo], [OrderID], [Qty])
+			select [ID], [BundleNo], [OrderID], [Qty]
+			from #tmp_Bundle_Detail_Order
+
+			delete from bo
+			from Bundle_Detail_Order bo
+			where exists (select 1 from #tmp_Bundle_Detail_Order where Ukey = bo.Ukey)
+
+			drop table #tmp_Bundle_Detail_Order
+		end
+
 		/*****************************  Bundle_Detail_Art  ************************************/
 		Begin
 			select *
@@ -121,8 +155,8 @@ Begin try
 
 		/*****************************  Bundle_Detail  ************************************/
 		Begin
-			insert into Bundle_Detail_History([BundleNo], [Id], [BundleGroup], [Patterncode], [PatternDesc], [SizeCode], [Qty], [Parts], [Farmin], [FarmOut], [PrintDate], [IsPair], [Location], [RFUID], [Tone], [RFPrintDate], [PrintGroup], [RFIDScan])
-			select [BundleNo], [Id], [BundleGroup], [Patterncode], [PatternDesc], [SizeCode], [Qty], [Parts], [Farmin], [FarmOut], [PrintDate], [IsPair], [Location], [RFUID], [Tone], [RFPrintDate], [PrintGroup], [RFIDScan]
+			insert into Bundle_Detail_History([BundleNo], [Id], [BundleGroup], [Patterncode], [PatternDesc], [SizeCode], [Qty], [Parts], [Farmin], [FarmOut], [PrintDate], [IsPair], [Location], [RFUID], [Tone], [RFPrintDate], [PrintGroup], [RFIDScan],[Dyelot])
+			select [BundleNo], [Id], [BundleGroup], [Patterncode], [PatternDesc], [SizeCode], [Qty], [Parts], [Farmin], [FarmOut], [PrintDate], [IsPair], [Location], [RFUID], [Tone], [RFPrintDate], [PrintGroup], [RFIDScan],[Dyelot]
 			from #tmp_Bundle_Detail 
 
 			delete from bd

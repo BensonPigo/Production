@@ -411,7 +411,7 @@ namespace Sci.Production.Quality
                         {
                             if (item.Length >= 13)
                             {
-                                wheresql += $" or (PL.ID = '{item.Substring(0, 13)}' and PLD.CTNStartNo = '{item.Substring(13, item.Length - 13)}') ";
+                                wheresql += $" or (PL.ID = '{item.Substring(0, 13)}' and PLD.CTNStartNo = '{item.Substring(13, item.Length - 13).TrimStart('^')}') ";
                             }
                         }
                     }

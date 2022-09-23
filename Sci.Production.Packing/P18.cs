@@ -106,7 +106,7 @@ namespace Sci.Production.Packing
             if (this.txtScanCartonSP.Text.Length > 13)
             {
                 this.PackingListID = this.txtScanCartonSP.Text.Substring(0, 13);
-                this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13);
+                this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13).TrimStart('^');
             }
 
             this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串
@@ -317,8 +317,7 @@ where p.Type in ('B','L')
 
                 var obj = this.selcartonBS.List.OfType<SelectCartonDetail>().ToList().Find(f => f.CTNStartNo.Equals(scanFirst.CTNStartNo) && f.ID == scanFirst.ID);
                 rowidx = this.selcartonBS.IndexOf(obj);
-                this.selcartonBS.Position = rowidx;
-                }
+            }
 
             SelectCartonDetail dr = (SelectCartonDetail)this.gridSelectCartonDetail.GetData(rowidx);
             if (dr == null)
@@ -390,6 +389,7 @@ where p.Type in ('B','L')
             this.scanDetailBS.DataSource = dr_scanDetail.OrderBy(s => s["Article"]).ThenBy(s => s["Seq"]).CopyToDataTable();
             this.LoadHeadData(dr);
             this.Tab_Focus("EAN");
+            this.selcartonBS.Position = rowidx;
 
             return result;
         }
@@ -1400,7 +1400,7 @@ drop table #tmpUpdatedID
             if (this.txtScanCartonSP.Text.Length > 13)
             {
                 this.PackingListID = this.txtScanCartonSP.Text.Substring(0, 13);
-                this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13);
+                this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13).TrimStart('^');
             }
 
             this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串
@@ -1409,7 +1409,7 @@ drop table #tmpUpdatedID
             if (this.txtScanCartonSP.Text.Length > 13)
             {
                 this.PackingListID = this.txtScanCartonSP.Text.Substring(0, 13);
-                this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13);
+                this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13).TrimStart('^');
             }
 
             this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串

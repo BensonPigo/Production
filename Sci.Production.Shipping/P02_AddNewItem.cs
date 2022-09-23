@@ -270,6 +270,13 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
                 return failResult;
             }
 
+            result = DBProxy.Current.Execute(null, $@"update FtyExport set ExpressID = '' where ExpressID = '{MyUtility.Convert.GetString(this.CurrentData["ID"])}' and ID = '{this.CurrentData["DutyNo"]}'");
+            if (!result)
+            {
+                DualResult failResult = new DualResult(false, "Update Fty Export list fail!! Pls try again.\r\n" + result.ToString());
+                return failResult;
+            }
+
             return Ict.Result.True;
         }
 

@@ -110,6 +110,7 @@ from (
         , b.SubCutNo
         , a.RFIDScan
         , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
+        , a.Dyelot
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -165,7 +166,7 @@ order by x.[Barcode]
 declare @extend varchar(1) = @extend_p
 ,@ID varchar(13) = @ID_p
 
-select distinct [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
+select distinct [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty],[Dyelot]
 from (
 	select b.id [Bundle_ID]
 	    ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
@@ -184,6 +185,7 @@ from (
 		,Artwork.Artwork [SubProcess]
 		,a.Parts [Parts]
 		,a.Qty [Qty]
+        ,a.Dyelot
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -215,6 +217,7 @@ from (
 		,Artwork.Artwork [SubProcess]
 		,d.Parts [Parts]
 		,a.Qty [Qty]
+        ,a.Dyelot
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -244,7 +247,7 @@ order by x.[Bundle]");
 declare @extend varchar(1) = @extend_p
 ,@ID varchar(13) = @ID_p
 
-select distinct [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
+select distinct [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty],[Dyelot]
 from (
 	select b.id [Bundle_ID]
 	        ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
@@ -263,6 +266,7 @@ from (
 			,Artwork.Artwork [SubProcess]
 			,a.Parts [Parts]
 			,a.Qty [Qty]
+            ,a.Dyelot
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -294,6 +298,7 @@ from (
 			,Artwork.Artwork [SubProcess]
 			,a.Parts [Parts]
 			,a.Qty [Qty]
+            ,a.Dyelot
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -382,6 +387,7 @@ order by x.[Bundle]");
                     BundleID = row1["BundleID"].ToString(),
                     RFIDScan = MyUtility.Convert.GetBool(row1["RFIDScan"]),
                     CutCell = row1["CutCell"].ToString(),
+                    Dyelot = row1["Dyelot"].ToString(),
                 }).ToList();
                 string fileName = "Cutting_P10_Layout1";
                 Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
@@ -734,7 +740,7 @@ SP#:{r.SP}
 Style#: {r.Style} Cell: {r.CutCell}
 Cut#: {r.Body_Cut}
 Color: {r.Color}
-Size: {r.Size}     Part: {r.Parts}
+Size: {r.Size}     Part: {r.Parts}     Dyelot: {r.Dyelot}
 Sea: {r.Season}     Brand: {r.ShipCode}
 MK#: {r.MarkerNo}     Cut/L:
 Sub Process: {r.Artwork}
@@ -763,124 +769,6 @@ Qty: {r.Quantity}(#{no})  Item: {r.Item}";
 
                 i++;
             });
-        }
-
-        /// <inheritdoc/>
-        public static string GetNo(string bundleNo, DataTable dt = null, string poid = null, string fabricPanelCode = null, string article = null, string size = null)
-        {
-            if (dt == null)
-            {
-                dt = GetNoDatas(poid, fabricPanelCode, article, size);
-            }
-
-            DataRow[] drs = dt.Select($"BundleNo = '{bundleNo}'");
-            if (drs.Length == 0)
-            {
-                return string.Empty;
-            }
-            else
-            {
-                return drs[0]["No"].ToString();
-            }
-        }
-
-        /// <inheritdoc/>
-        public static DataTable GetNoDatas(string poid, string fabricPanelCode, string article, string size)
-        {
-            string sqlcmd = $@"
-SELECT 1
-FROM BUNDLE_DETAIL bd with(nolock)
-INNER JOIN BUNDLE B with(nolock) ON B.ID = bd.ID
-WHERE  B.POID ='{poid}' And B.FabricPanelCode='{fabricPanelCode}' And B.Article = '{article}' AND bd.SizeCode='{size}'
-and bd.PrintGroup is null";
-
-            if (!MyUtility.Check.Seek(sqlcmd))
-            {
-                sqlcmd = $@"
-SELECT bd.id, bd.PrintGroup, DR = DENSE_RANK() over(order by  bd.id, bd.PrintGroup), bd.BundleNo, bd.Qty, bd.Patterncode
-into #tmp
-FROM BUNDLE_DETAIL bd with(nolock)
-INNER JOIN BUNDLE B with(nolock) ON B.ID = bd.ID
-WHERE  B.POID ='{poid}' And B.FabricPanelCode='{fabricPanelCode}' AND bd.SizeCode='{size}'
-ORDER BY bd.id,bd.PrintGroup
-
-select
-	x.BundleNo,
-	No = CONCAT(x.startno, '~',  x.startno + Qty - 1)
-	,x.Id, x.DR, x.Patterncode	
-from(
-	select t.BundleNo, t.Qty,
-		startno = 1+isnull((select SUM(qty) from(select qty = min(qty) from #tmp where DR < t.DR group by DR)x), 0)
-		,t.Id,t.DR,t.Patterncode
-	from #tmp t
-)x
-order by BundleNo
-
-drop table #tmp
-";
-            }
-
-            // 舊規(未有PrintGroup之前)
-            else
-            {
-                sqlcmd = $@"
-SELECT bd.id, bd.BundleGroup, bd.BundleNo,bd.Patterncode, bd.Qty, IsPair
-into #beforetmp
-FROM BUNDLE_DETAIL bd with(nolock)
-INNER JOIN BUNDLE B with(nolock) ON B.ID = bd.ID
-WHERE  B.POID ='{poid}' And B.FabricPanelCode='{fabricPanelCode}' And B.Article = '{article}' AND bd.SizeCode='{size}'
-ORDER BY BundleGroup,bd.BundleNo
-
---maxQty 為每組綁包的總數,在相同 ID, BundleGroup 加總數
---分子 Bundle_Detail_qty 在P15寫入,每組綁包都會寫入一筆, 但是沒有直接關係分別是哪一組綁包的
---直接除有幾個 BundleGroup, 是因P15寫入規則, 每組綁包資訊必須一樣才會合併在同一張單
-select *,
-	maxQty=(Select sum(Qty) from Bundle_Detail_qty bdq WITH (NOLOCK) Where bdq.id = bt.id)/(select count(distinct BundleGroup) from #beforetmp where id = bt.id)
-into #tmp
-from #beforetmp bt
-
---同Patterncode下有數量不同
---IsPair 兩個為一組
-select t.*,	
-	IsPairRn = IIF(IsPair = 0, 0, row_number() over(partition by ID,BundleGroup,Patterncode Order by BundleNo) % 2 + 1)	
-into #tmpx0
-from #tmp t
-
-select t.*,
-	tmpLastNo = IIF(Qty < maxQty, sum(qty) over(partition by ID,BundleGroup,Patterncode,IsPairRn Order by BundleNo), Qty)
-into #tmpx1
-from #tmpx0 t
-order by bundleno
-
-select distinct Id,BundleGroup,maxQty into #tmp2 from #tmp
-select *, lastNo = SUM(maxQty) over(Order by Id,BundleGroup) into #tmp3 from #tmp2
-select *, before = LAG(lastNo,1,0) over(Order by Id,BundleGroup) into #tmp4 from #tmp3
-
-select
-	x1.*,
-	minPatterncodeNo = min(tmpLastNo)  over(partition by x1.ID,x1.BundleGroup,x1.Patterncode,x1.IsPairRn Order by x1.BundleNo),
-	tmpbefore = t4.before + 1,
-	lastno = t4.before + x1.tmpLastNo
-into #tmp5
-from #tmp4 t4
-inner join #tmpx1 x1 on x1.Id = t4.Id and x1.BundleGroup = t4.BundleGroup
-
-select t5.*,
-	startNo = case when Qty = maxQty or tmpLastNo = minPatterncodeNo then tmpbefore
-					else LAG(lastNo,1,0) over(partition by ID,BundleGroup,Patterncode,IsPairRn Order by BundleNo) + 1
-					end
-into #tmp6
-from #tmp5 t5
-
-select BundleNo,No = CONCAT(startNo,'~',lastno)
-from #tmp6
-
-drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
-";
-            }
-
-            DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
-            return dt;
         }
 
         private void P10_Print_FormClosed(object sender, FormClosedEventArgs e)

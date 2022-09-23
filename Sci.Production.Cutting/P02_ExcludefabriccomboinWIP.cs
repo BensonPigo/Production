@@ -91,8 +91,14 @@ and oe.CuttingPiece <> 1
         {
             string sqlcmd = $@"
 Delete Cutting_WIPExcludePatternPanel where id = '{this.id}'
+
 insert into Cutting_WIPExcludePatternPanel(ID,PatternPanel,AddName,AddDate)
 select distinct '{this.id}',FabricCombo,'{Sci.Env.User.UserID}',getdate() from #tmp where ExWip = 1
+
+update j set j.Success = 1 from JobCrashLog j where j.JobName = 'SetQtyBySubprocess' and j.Success = 0 and j.OrderID = '{this.id}'
+
+insert into JobCrashLog(JobName, OrderID)
+values('SetQtyBySubprocess' , '{this.id}')
 ";
             DataTable sdt = (DataTable)this.listControlBindingSource1.DataSource;
             DualResult result1 = MyUtility.Tool.ProcessWithDatatable(sdt, string.Empty, sqlcmd, out DataTable odt);

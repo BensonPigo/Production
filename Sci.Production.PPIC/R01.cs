@@ -1015,7 +1015,7 @@ drop table #tmpFinal_step1
                     // Summary By = SP# 則刪除欄位Size
                     if (this.type == "SP#")
                     {
-                        worksheet.get_Range("H:H").EntireColumn.Delete();
+                        worksheet.get_Range("I:I").EntireColumn.Delete();
                     }
                     #region Set Excel Title
                     string factoryName = MyUtility.GetValue.Lookup(
@@ -1078,11 +1078,11 @@ where id = '{0}'", Env.User.Factory), null);
                     // Summary By = SP# 則刪除欄位Size
                     if (this.type == "SP#")
                     {
-                        worksheet.get_Range("J:J").EntireColumn.Delete();
+                        worksheet.get_Range("K:K").EntireColumn.Delete();
                     }
                     else
                     {
-                        worksheet.get_Range("AU:AV").EntireColumn.Delete();
+                        worksheet.get_Range("AV:AW").EntireColumn.Delete();
                     }
 
                     #region Save & Show Excel
@@ -1316,6 +1316,7 @@ select  s.SewingLineID
 	        ,[Lining] = sty.Lining
 	        ,[Gender] = sty.Gender
 	        ,[Construction] = sty.Construction
+            ,o.Category
 	into #tmp_main
     from SewingSchedule s WITH (NOLOCK) 
     inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
@@ -1520,6 +1521,7 @@ select  SewingLineID
         , FactoryID
         , OrderID
 		, CustPONo
+        , Category
         , ComboType
         , [Switch to Workorder]
         , IIF(Article = '', '', SUBSTRING(Article, 1, LEN(Article) - 1)) as Article
@@ -1645,11 +1647,14 @@ select  s.SewingLineID
 	        ,[Lining] = sty.Lining
 	        ,[Gender] = sty.Gender
 	        ,[Construction] = sty.Construction
+            ,o.Category
+			,SizeCodeSeq = oz.Seq
 	into #tmp_main
     from SewingSchedule s WITH (NOLOCK) 
 	inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID
     inner join Style st with (nolock) on st.Ukey = o.StyleUkey
 	inner join SewingSchedule_Detail sd WITH (NOLOCK) on s.ID=sd.ID 
+	left join Order_SizeCode oz  WITH (NOLOCK) on oz.ID =  o.POID AND oz.SizeCode=sd.SizeCode
     left join Country c WITH (NOLOCK) on o.Dest = c.ID 
     left join cutting on cutting.ID =o.CuttingSP 
 	OUTER APPLY(	
@@ -1899,6 +1904,7 @@ select  SewingLineID
         , FactoryID
         , OrderID
 		, CustPONo
+        , Category
         , ComboType
         , [Switch to Workorder]
         , Article 
@@ -1964,7 +1970,7 @@ from
 	left join #tmp_ClogQty clogQty on clogQty.OrderID = t.OrderID and clogQty.Article = t.Article and clogQty.SizeCode = t.SizeCode
     left join #tmp_CutInLine tc on tc.OrderID = t.OrderID and tc.Article = t.Article and tc.SizeCode = t.SizeCode
 ) t
-order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID
+order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID,SizeCodeSeq
 
 drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_AlloQty,#tmp_CutQty,#tmp_SewingQty,#tmp_ClogQty,#tmp_CutInLine
 ");

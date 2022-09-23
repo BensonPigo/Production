@@ -1935,7 +1935,7 @@ and exists(select 1 from WHBarcodeTransaction wht with (nolock) where [Function]
             #endregion
             DBProxy.Current.DefaultTimeout = 900;  // 加長時間為15分鐘，避免timeout
             Exception errMsg = null;
-            using (TransactionScope transactionscope = new TransactionScope())
+            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 15, 0)))
             {
                 DBProxy.Current.OpenConnection(null, out SqlConnection sqlConn);
                 using (sqlConn)
@@ -2288,7 +2288,7 @@ END", Env.User.UserID,
             // PMS 的資料更新
             Exception errMsg = null;
             List<AutoRecord> autoRecordList = new List<AutoRecord>();
-            using (TransactionScope transactionscope = new TransactionScope())
+            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 15, 0)))
             {
                 try
                 {
@@ -2564,7 +2564,7 @@ from (
 		, c.OrderTypeID
 		, [ContainerType] = Container.Val
 		, [QRCode] = pll.QRCode -- b.FabricType = 'F'  相同 QRCode 其中一筆為 [+] 剩下為 [-]
-		, [MINDQRCode] = pll.QRCode
+		, [MINDQRCode] = iif(isnull(pll.BatchNo, '') = '' or isnull(pll.PackageNo, '') = '', '', pll.QRCode)
 		, clickInsert = 1
 		, DRQ = IIF(isnull(pll.QRCode, '') = '', Null, DENSE_RANK() over(order by pll.QRCode))
         , Fabric.MtlTypeID

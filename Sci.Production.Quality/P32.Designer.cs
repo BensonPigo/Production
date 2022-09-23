@@ -48,7 +48,6 @@
             this.disFactoryID = new Sci.Win.UI.DisplayBox();
             this.disStyle = new Sci.Win.UI.DisplayBox();
             this.dateBuyerDev = new Sci.Win.UI.DateBox();
-            this.disPO = new Sci.Win.UI.DisplayBox();
             this.disBrand = new Sci.Win.UI.DisplayBox();
             this.disDest = new Sci.Win.UI.DisplayBox();
             this.disOrderQty = new Sci.Win.UI.DisplayBox();
@@ -84,6 +83,8 @@
             this.chkFirstInspection = new Sci.Win.UI.CheckBox();
             this.labImportFromMES = new Sci.Win.UI.Label();
             this.comboSewingTeam1 = new Sci.Production.Class.ComboSewingTeam(this.components);
+            this.numInspectionFailCount = new Sci.Win.UI.NumericBox();
+            this.txtPO = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -103,6 +104,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtPO);
+            this.masterpanel.Controls.Add(this.numInspectionFailCount);
             this.masterpanel.Controls.Add(this.comboSewingTeam1);
             this.masterpanel.Controls.Add(this.labImportFromMES);
             this.masterpanel.Controls.Add(this.chkFirstInspection);
@@ -138,7 +141,6 @@
             this.masterpanel.Controls.Add(this.disOrderQty);
             this.masterpanel.Controls.Add(this.disDest);
             this.masterpanel.Controls.Add(this.disBrand);
-            this.masterpanel.Controls.Add(this.disPO);
             this.masterpanel.Controls.Add(this.dateBuyerDev);
             this.masterpanel.Controls.Add(this.disStyle);
             this.masterpanel.Controls.Add(this.disFactoryID);
@@ -174,7 +176,6 @@
             this.masterpanel.Controls.SetChildIndex(this.disFactoryID, 0);
             this.masterpanel.Controls.SetChildIndex(this.disStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBuyerDev, 0);
-            this.masterpanel.Controls.SetChildIndex(this.disPO, 0);
             this.masterpanel.Controls.SetChildIndex(this.disBrand, 0);
             this.masterpanel.Controls.SetChildIndex(this.disDest, 0);
             this.masterpanel.Controls.SetChildIndex(this.disOrderQty, 0);
@@ -211,6 +212,8 @@
             this.masterpanel.Controls.SetChildIndex(this.chkFirstInspection, 0);
             this.masterpanel.Controls.SetChildIndex(this.labImportFromMES, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboSewingTeam1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numInspectionFailCount, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtPO, 0);
             // 
             // detailpanel
             // 
@@ -399,15 +402,6 @@
             this.dateBuyerDev.Size = new System.Drawing.Size(97, 23);
             this.dateBuyerDev.TabIndex = 1;
             this.dateBuyerDev.TabStop = false;
-            // 
-            // disPO
-            // 
-            this.disPO.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.disPO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disPO.Location = new System.Drawing.Point(108, 64);
-            this.disPO.Name = "disPO";
-            this.disPO.Size = new System.Drawing.Size(100, 23);
-            this.disPO.TabIndex = 27;
             // 
             // disBrand
             // 
@@ -609,7 +603,7 @@
             this.comboResult.Location = new System.Drawing.Point(604, 89);
             this.comboResult.Name = "comboResult";
             this.comboResult.OldText = "";
-            this.comboResult.Size = new System.Drawing.Size(110, 24);
+            this.comboResult.Size = new System.Drawing.Size(65, 24);
             this.comboResult.TabIndex = 9;
             this.comboResult.SelectedIndexChanged += new System.EventHandler(this.ComboResult_SelectedIndexChanged);
             // 
@@ -843,6 +837,29 @@
             this.comboSewingTeam1.Size = new System.Drawing.Size(97, 24);
             this.comboSewingTeam1.TabIndex = 7;
             // 
+            // numInspectionFailCount
+            // 
+            this.numInspectionFailCount.BackColor = System.Drawing.Color.White;
+            this.numInspectionFailCount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numInspectionFailCount.Location = new System.Drawing.Point(671, 89);
+            this.numInspectionFailCount.MaxLength = 3;
+            this.numInspectionFailCount.Name = "numInspectionFailCount";
+            this.numInspectionFailCount.NullValue = null;
+            this.numInspectionFailCount.Size = new System.Drawing.Size(43, 23);
+            this.numInspectionFailCount.TabIndex = 80;
+            this.numInspectionFailCount.TabStop = false;
+            this.numInspectionFailCount.Validating += new System.ComponentModel.CancelEventHandler(this.NumInspectionFailCount_Validating);
+            // 
+            // txtPO
+            // 
+            this.txtPO.BackColor = System.Drawing.Color.White;
+            this.txtPO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPO.Location = new System.Drawing.Point(108, 64);
+            this.txtPO.Name = "txtPO";
+            this.txtPO.Size = new System.Drawing.Size(100, 23);
+            this.txtPO.TabIndex = 81;
+            this.txtPO.Validating += new System.ComponentModel.CancelEventHandler(this.TxtPO_Validating);
+            // 
             // P32
             // 
             this.ApvChkValue = "New";
@@ -906,7 +923,6 @@
         private Win.UI.DisplayBox disOrderQty;
         private Win.UI.DisplayBox disDest;
         private Win.UI.DisplayBox disBrand;
-        private Win.UI.DisplayBox disPO;
         private Class.TxtSpSeq txtSpSeq;
         private Win.UI.EditBox editBoxRemark;
         private Win.UI.DateBox dateAuditDate;
@@ -941,5 +957,7 @@
         private Win.UI.CheckBox chkFirstInspection;
         private Win.UI.Label labImportFromMES;
         private Class.ComboSewingTeam comboSewingTeam1;
+        private Win.UI.NumericBox numInspectionFailCount;
+        private Win.UI.TextBox txtPO;
     }
 }

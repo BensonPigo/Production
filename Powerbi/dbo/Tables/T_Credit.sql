@@ -8,10 +8,10 @@
 	[Onwer] [varchar](40) NULL,
 	[Name] [nvarchar](60) NULL,
 	[Reason] [nvarchar](500) NULL,
-	[Subject] [nvarchar](100) NULL,
+	[Subject] [nvarchar](200) NULL,
 	[Description] [varchar](max) NULL,
 	[VoucherDate] [date] NULL,
-	[Responsibility] [nvarchar](50) NULL,
+	[Responsibility] [nvarchar](100) NULL,
 	[Incharge] [varchar](10) NULL,
 	[SourceID] [varchar](13) NULL,
 	[OrderID] [varchar](13) NULL,
@@ -30,5 +30,6 @@
 	[DebitID] [varchar](13) NULL,
 	[ReceivedDate] [nvarchar](max) NULL,
 	[Destination] [nvarchar](30) NULL,
-	[Supplier/Subcon name] [varchar](30) NULL
+	[Supplier/Subcon name] [varchar](40) NULL,
+	[Ukey] [bigint] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]

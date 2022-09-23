@@ -993,7 +993,7 @@ BEGIN
 	--SampleGarmentTest
 	DELETE FROM t
 	FROM Quality.dbo.SampleGarmentTest t
-	WHERE NOT EXISTS (
+	WHERE EXISTS (
 		SELECT 1 FROM Trade_To_Pms.dbo.SampleGarmentTest_History s
 		WHERE t.StyleID = s.StyleID AND t.BrandID= s.BrandID AND t.SeasonID = s.SeasonID AND t.Article = s.Article
 	)	

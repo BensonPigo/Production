@@ -54,17 +54,21 @@
             this.btnRevisedHistory = new Sci.Win.UI.Button();
             this.btnShareWorkingHoursToSP = new Sci.Win.UI.Button();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.txtdropdownlistShift = new Sci.Production.Class.Txtdropdownlist();
-            this.txtsewinglineLine = new Sci.Production.Class.Txtsewingline();
             this.labelSubconOutFty = new Sci.Win.UI.Label();
-            this.txtSubconOutFty = new Sci.Production.Class.TxtLocalSupp();
             this.label1 = new Sci.Win.UI.Label();
             this.txtSubConOutContractNumber = new Sci.Win.UI.TextBox();
             this.btnRequestUnlock = new Sci.Win.UI.Button();
             this.btnBatchRecall = new Sci.Win.UI.Button();
             this.lbstatus = new Sci.Win.UI.Label();
-            this.comboSewingTeam1 = new Sci.Production.Class.ComboSewingTeam(this.components);
             this.btnQuery = new Sci.Win.UI.Button();
+            this.label2 = new Sci.Win.UI.Label();
+            this.comboSewingTeam1 = new Sci.Production.Class.ComboSewingTeam(this.components);
+            this.txtSubconOutFty = new Sci.Production.Class.TxtLocalSupp();
+            this.txtdropdownlistShift = new Sci.Production.Class.Txtdropdownlist();
+            this.txtsewinglineLine = new Sci.Production.Class.Txtsewingline();
+            this.txtSewingReasonIDForTypeIC = new Sci.Production.Class.TxtSewingReason();
+            this.label3 = new Sci.Win.UI.Label();
+            this.txtSewingReasonIDForTypeLO = new Sci.Production.Class.TxtSewingReason();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -81,6 +85,10 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtSewingReasonIDForTypeLO);
+            this.masterpanel.Controls.Add(this.label3);
+            this.masterpanel.Controls.Add(this.txtSewingReasonIDForTypeIC);
+            this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.btnQuery);
             this.masterpanel.Controls.Add(this.comboSewingTeam1);
             this.masterpanel.Controls.Add(this.lbstatus);
@@ -116,7 +124,7 @@
             this.masterpanel.Controls.Add(this.labelLine);
             this.masterpanel.Controls.Add(this.labelDate);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 140);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 166);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelLine, 0);
@@ -153,15 +161,19 @@
             this.masterpanel.Controls.SetChildIndex(this.lbstatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboSewingTeam1, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnQuery, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtSewingReasonIDForTypeIC, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtSewingReasonIDForTypeLO, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 140);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 285);
+            this.detailpanel.Location = new System.Drawing.Point(0, 166);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 308);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(887, 105);
+            this.gridicon.Location = new System.Drawing.Point(887, 131);
             this.gridicon.TabIndex = 8;
             // 
             // refresh
@@ -170,19 +182,19 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 285);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 308);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1000, 463);
+            this.detail.Size = new System.Drawing.Size(1000, 512);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 425);
+            this.detailcont.Size = new System.Drawing.Size(1000, 474);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 425);
+            this.detailbtm.Location = new System.Drawing.Point(0, 474);
             this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             this.detailbtm.TabIndex = 1;
             // 
@@ -192,7 +204,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1008, 492);
+            this.tabs.Size = new System.Drawing.Size(1008, 541);
             // 
             // createby
             // 
@@ -546,33 +558,6 @@
             this.labelFactory.TabIndex = 28;
             this.labelFactory.Text = "Factory";
             // 
-            // txtdropdownlistShift
-            // 
-            this.txtdropdownlistShift.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlistShift.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Shift", true));
-            this.txtdropdownlistShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlistShift.FormattingEnabled = true;
-            this.txtdropdownlistShift.IsSupportUnselect = true;
-            this.txtdropdownlistShift.Location = new System.Drawing.Point(249, 58);
-            this.txtdropdownlistShift.Name = "txtdropdownlistShift";
-            this.txtdropdownlistShift.OldText = "";
-            this.txtdropdownlistShift.Size = new System.Drawing.Size(115, 24);
-            this.txtdropdownlistShift.TabIndex = 2;
-            this.txtdropdownlistShift.Type = "SewingOutput_Shift";
-            this.txtdropdownlistShift.SelectedValueChanged += new System.EventHandler(this.TxtdropdownlistShift_SelectedValueChanged);
-            // 
-            // txtsewinglineLine
-            // 
-            this.txtsewinglineLine.BackColor = System.Drawing.Color.White;
-            this.txtsewinglineLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtsewinglineLine.FactoryobjectName = this.displayFactory;
-            this.txtsewinglineLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtsewinglineLine.Location = new System.Drawing.Point(112, 30);
-            this.txtsewinglineLine.Name = "txtsewinglineLine";
-            this.txtsewinglineLine.Size = new System.Drawing.Size(60, 23);
-            this.txtsewinglineLine.TabIndex = 1;
-            this.txtsewinglineLine.Validating += new System.ComponentModel.CancelEventHandler(this.TxtsewinglineLine_Validating);
-            // 
             // labelSubconOutFty
             // 
             this.labelSubconOutFty.Location = new System.Drawing.Point(5, 85);
@@ -580,21 +565,6 @@
             this.labelSubconOutFty.Size = new System.Drawing.Size(104, 23);
             this.labelSubconOutFty.TabIndex = 29;
             this.labelSubconOutFty.Text = "Subcon-Out-Fty";
-            // 
-            // txtSubconOutFty
-            // 
-            this.txtSubconOutFty.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "SubconOutFty", true));
-            this.txtSubconOutFty.DisplayBox1Binding = "";
-            this.txtSubconOutFty.IsFactory = false;
-            this.txtSubconOutFty.IsMisc = false;
-            this.txtSubconOutFty.IsMiscOverseas = false;
-            this.txtSubconOutFty.IsSintexSubcon = false;
-            this.txtSubconOutFty.Location = new System.Drawing.Point(112, 84);
-            this.txtSubconOutFty.Name = "txtSubconOutFty";
-            this.txtSubconOutFty.Size = new System.Drawing.Size(252, 23);
-            this.txtSubconOutFty.TabIndex = 30;
-            this.txtSubconOutFty.TextBox1Binding = "";
-            this.txtSubconOutFty.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSubconOutFty_Validating);
             // 
             // label1
             // 
@@ -649,6 +619,25 @@
             this.lbstatus.TextStyle.ExtBorderColor = System.Drawing.Color.Fuchsia;
             this.lbstatus.TextStyle.GradientColor = System.Drawing.Color.Fuchsia;
             // 
+            // btnQuery
+            // 
+            this.btnQuery.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnQuery.Location = new System.Drawing.Point(750, 40);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(86, 30);
+            this.btnQuery.TabIndex = 36;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(5, 139);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(104, 23);
+            this.label2.TabIndex = 37;
+            this.label2.Text = "Inline Category";
+            // 
             // comboSewingTeam1
             // 
             this.comboSewingTeam1.BackColor = System.Drawing.Color.White;
@@ -665,20 +654,83 @@
             this.comboSewingTeam1.TabIndex = 3;
             this.comboSewingTeam1.SelectedIndexChanged += new System.EventHandler(this.ComboSewingTeam1_SelectedIndexChanged);
             // 
-            // btnQuery
+            // txtSubconOutFty
             // 
-            this.btnQuery.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnQuery.Location = new System.Drawing.Point(750, 40);
-            this.btnQuery.Name = "btnQuery";
-            this.btnQuery.Size = new System.Drawing.Size(86, 30);
-            this.btnQuery.TabIndex = 36;
-            this.btnQuery.Text = "Query";
-            this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
+            this.txtSubconOutFty.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "SubconOutFty", true));
+            this.txtSubconOutFty.DisplayBox1Binding = "";
+            this.txtSubconOutFty.IsFactory = false;
+            this.txtSubconOutFty.IsMisc = false;
+            this.txtSubconOutFty.IsMiscOverseas = false;
+            this.txtSubconOutFty.IsSintexSubcon = false;
+            this.txtSubconOutFty.Location = new System.Drawing.Point(112, 84);
+            this.txtSubconOutFty.Name = "txtSubconOutFty";
+            this.txtSubconOutFty.Size = new System.Drawing.Size(252, 23);
+            this.txtSubconOutFty.TabIndex = 30;
+            this.txtSubconOutFty.TextBox1Binding = "";
+            this.txtSubconOutFty.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSubconOutFty_Validating);
+            // 
+            // txtdropdownlistShift
+            // 
+            this.txtdropdownlistShift.BackColor = System.Drawing.Color.White;
+            this.txtdropdownlistShift.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Shift", true));
+            this.txtdropdownlistShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtdropdownlistShift.FormattingEnabled = true;
+            this.txtdropdownlistShift.IsSupportUnselect = true;
+            this.txtdropdownlistShift.Location = new System.Drawing.Point(249, 58);
+            this.txtdropdownlistShift.Name = "txtdropdownlistShift";
+            this.txtdropdownlistShift.OldText = "";
+            this.txtdropdownlistShift.Size = new System.Drawing.Size(115, 24);
+            this.txtdropdownlistShift.TabIndex = 2;
+            this.txtdropdownlistShift.Type = "SewingOutput_Shift";
+            this.txtdropdownlistShift.SelectedValueChanged += new System.EventHandler(this.TxtdropdownlistShift_SelectedValueChanged);
+            // 
+            // txtsewinglineLine
+            // 
+            this.txtsewinglineLine.BackColor = System.Drawing.Color.White;
+            this.txtsewinglineLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
+            this.txtsewinglineLine.FactoryobjectName = this.displayFactory;
+            this.txtsewinglineLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtsewinglineLine.Location = new System.Drawing.Point(112, 30);
+            this.txtsewinglineLine.Name = "txtsewinglineLine";
+            this.txtsewinglineLine.Size = new System.Drawing.Size(60, 23);
+            this.txtsewinglineLine.TabIndex = 1;
+            this.txtsewinglineLine.Validating += new System.ComponentModel.CancelEventHandler(this.TxtsewinglineLine_Validating);
+            // 
+            // txtSewingReasonIDForTypeIC
+            // 
+            this.txtSewingReasonIDForTypeIC.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "SewingReasonIDForTypeIC", true));
+            this.txtSewingReasonIDForTypeIC.DisplayBox1Binding = "";
+            this.txtSewingReasonIDForTypeIC.LinkDB = "Production";
+            this.txtSewingReasonIDForTypeIC.Location = new System.Drawing.Point(112, 137);
+            this.txtSewingReasonIDForTypeIC.Name = "txtSewingReasonIDForTypeIC";
+            this.txtSewingReasonIDForTypeIC.Size = new System.Drawing.Size(252, 27);
+            this.txtSewingReasonIDForTypeIC.TabIndex = 38;
+            this.txtSewingReasonIDForTypeIC.TextBox1Binding = "";
+            this.txtSewingReasonIDForTypeIC.Type = "IC";
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(377, 139);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(127, 23);
+            this.label3.TabIndex = 39;
+            this.label3.Text = "Low Output Reason";
+            // 
+            // txtSewingReasonIDForTypeLO
+            // 
+            this.txtSewingReasonIDForTypeLO.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "SewingReasonIDForTypeLO", true));
+            this.txtSewingReasonIDForTypeLO.DisplayBox1Binding = "";
+            this.txtSewingReasonIDForTypeLO.LinkDB = "Production";
+            this.txtSewingReasonIDForTypeLO.Location = new System.Drawing.Point(507, 137);
+            this.txtSewingReasonIDForTypeLO.Name = "txtSewingReasonIDForTypeLO";
+            this.txtSewingReasonIDForTypeLO.Size = new System.Drawing.Size(252, 27);
+            this.txtSewingReasonIDForTypeLO.TabIndex = 40;
+            this.txtSewingReasonIDForTypeLO.TextBox1Binding = "";
+            this.txtSewingReasonIDForTypeLO.Type = "LO";
             // 
             // P01
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 525);
+            this.ClientSize = new System.Drawing.Size(1008, 574);
             this.Controls.Add(this.btnBatchRecall);
             this.DefaultControl = "dateDate";
             this.DefaultControlForEdit = "txtdropdownlistShift";
@@ -762,5 +814,9 @@
         private Win.UI.Label lbstatus;
         private Class.ComboSewingTeam comboSewingTeam1;
         private Win.UI.Button btnQuery;
+        private Win.UI.Label label2;
+        private Class.TxtSewingReason txtSewingReasonIDForTypeIC;
+        private Class.TxtSewingReason txtSewingReasonIDForTypeLO;
+        private Win.UI.Label label3;
     }
 }

@@ -132,6 +132,8 @@ delete #WorkDate where datepart(WEEKDAY,ReadyDate) = 1 ";
 
             #region main sql
 
+            string[] subprocessIDs = new string[] { "Emb", "BO", "PRT", "AT", "PAD-PRT", "SUBCONEMB", "HT", "Loading", "SORTING", "FM" };
+
             this.tsql = $@"
 declare @time time = '{(this.txtTime.Text.Equals(":") ? "00:00:00" : this.txtTime.Text)}'
 declare @GAP int = @inputGAP
@@ -230,11 +232,43 @@ select distinct
     ,OutEndDate = WorkTime
 into #enn
 from #orders_tmp
-";
 
-            string[] subprocessIDs = new string[] { "Emb", "BO", "PRT", "AT", "PAD-PRT", "SUBCONEMB", "HT", "Loading", "SORTING", "FM" };
-            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#enn", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
-            this.tsql += qtyBySetPerSubprocess + $@"
+select s.OrderID
+    , s.SubProcessID
+    , TransferTime = MAX(s.TransferTime)
+into #tmp_SetQtyBySubprocess_Last
+from SetQtyBySubprocess s WITH (NOLOCK)
+where exists (select 1 from #enn t where s.OrderID = t.OrderID)
+group by s.OrderID, s.SubProcessID
+
+select s.OrderID, s.SubprocessID 
+    , InQtyBySet = SUM(s.InQtyBySet)
+	, OutQtyBySet = SUM(s.OutQtyBySet)
+	, FinishedQtyBySet = SUM(s.FinishedQtyBySet)
+into #tmp_SetQtyBySubprocess
+from 
+(
+    select s.OrderID
+        , s.Article
+        , s.SizeCode 
+        , s.SubprocessID
+	    , InQtyBySet = MIN(s.InQtyBySet)
+	    , OutQtyBySet = MIN(s.OutQtyBySet)
+	    , FinishedQtyBySet = MIN(s.FinishedQtyBySet)
+    from SetQtyBySubprocess s WITH (NOLOCK)
+    where exists (select 1 from #tmp_SetQtyBySubprocess_Last t where t.OrderID = s.OrderID and t.SubProcessID = s.SubProcessID and t.TransferTime = s.TransferTime)
+    and SubProcessID in ('{string.Join("','", subprocessIDs)}')
+    group by s.OrderID, s.Article, s.SizeCode, s.SubprocessID 
+)s
+group by s.OrderID, s.SubprocessID 
+";
+            foreach (var item in subprocessIDs)
+            {
+                string subprocessIDtmp = PublicPrg.Prgs.SubprocesstmpNoSymbol(item);
+                this.tsql += $@"select * into #{subprocessIDtmp} from #tmp_SetQtyBySubprocess where SubprocessID = '{item}'" + Environment.NewLine;
+            }
+
+            this.tsql += $@"
 --抓取subprocess in
 select	[M] = o.MDivisionID,
 		[Factory] = o.FtyGroup,

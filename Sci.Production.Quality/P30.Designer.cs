@@ -65,6 +65,8 @@
             this.btnFabricInspectionList = new Sci.Win.UI.Button();
             this.btnMDFailbyCarton = new Sci.Win.UI.Button();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.labMarketFeedback = new Sci.Win.UI.Label();
+            this.editQMSMarketFeedback = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -81,6 +83,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.editQMSMarketFeedback);
+            this.masterpanel.Controls.Add(this.labMarketFeedback);
             this.masterpanel.Controls.Add(this.checkBox1);
             this.masterpanel.Controls.Add(this.btnMDFailbyCarton);
             this.masterpanel.Controls.Add(this.btnAccessoryInspectionList);
@@ -118,7 +122,7 @@
             this.masterpanel.Controls.Add(this.labelStyle);
             this.masterpanel.Controls.Add(this.labelBrand);
             this.masterpanel.Controls.Add(this.labelSP);
-            this.masterpanel.Size = new System.Drawing.Size(913, 238);
+            this.masterpanel.Size = new System.Drawing.Size(913, 310);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelBrand, 0);
@@ -157,16 +161,18 @@
             this.masterpanel.Controls.SetChildIndex(this.btnAccessoryInspectionList, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnMDFailbyCarton, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labMarketFeedback, 0);
+            this.masterpanel.Controls.SetChildIndex(this.editQMSMarketFeedback, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 238);
-            this.detailpanel.Size = new System.Drawing.Size(913, 312);
+            this.detailpanel.Location = new System.Drawing.Point(0, 310);
+            this.detailpanel.Size = new System.Drawing.Size(913, 240);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(796, 203);
+            this.gridicon.Location = new System.Drawing.Point(796, 266);
             this.gridicon.TabIndex = 15;
             // 
             // refresh
@@ -175,7 +181,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(913, 312);
+            this.detailgridcont.Size = new System.Drawing.Size(913, 240);
             // 
             // detail2
             // 
@@ -374,7 +380,7 @@
             this.checkLocalOrder.AutoSize = true;
             this.checkLocalOrder.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LocalOrder", true));
             this.checkLocalOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkLocalOrder.Location = new System.Drawing.Point(314, 13);
+            this.checkLocalOrder.Location = new System.Drawing.Point(306, 13);
             this.checkLocalOrder.Name = "checkLocalOrder";
             this.checkLocalOrder.Size = new System.Drawing.Size(102, 21);
             this.checkLocalOrder.TabIndex = 18;
@@ -386,7 +392,7 @@
             this.checkPullForwardOrder.AutoSize = true;
             this.checkPullForwardOrder.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "pforder", true));
             this.checkPullForwardOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkPullForwardOrder.Location = new System.Drawing.Point(314, 37);
+            this.checkPullForwardOrder.Location = new System.Drawing.Point(306, 37);
             this.checkPullForwardOrder.Name = "checkPullForwardOrder";
             this.checkPullForwardOrder.Size = new System.Drawing.Size(146, 21);
             this.checkPullForwardOrder.TabIndex = 19;
@@ -398,7 +404,7 @@
             this.checkCancelledOrder.AutoSize = true;
             this.checkCancelledOrder.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkCancelledOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkCancelledOrder.Location = new System.Drawing.Point(466, 13);
+            this.checkCancelledOrder.Location = new System.Drawing.Point(458, 13);
             this.checkCancelledOrder.Name = "checkCancelledOrder";
             this.checkCancelledOrder.Size = new System.Drawing.Size(130, 21);
             this.checkCancelledOrder.TabIndex = 20;
@@ -407,47 +413,47 @@
             // 
             // labelMCHandle
             // 
-            this.labelMCHandle.Location = new System.Drawing.Point(314, 64);
+            this.labelMCHandle.Location = new System.Drawing.Point(306, 64);
             this.labelMCHandle.Name = "labelMCHandle";
-            this.labelMCHandle.Size = new System.Drawing.Size(102, 23);
+            this.labelMCHandle.Size = new System.Drawing.Size(114, 23);
             this.labelMCHandle.TabIndex = 21;
             this.labelMCHandle.Text = "MC Handle";
             // 
             // labelSewingInline
             // 
-            this.labelSewingInline.Location = new System.Drawing.Point(314, 91);
+            this.labelSewingInline.Location = new System.Drawing.Point(306, 91);
             this.labelSewingInline.Name = "labelSewingInline";
-            this.labelSewingInline.Size = new System.Drawing.Size(102, 23);
+            this.labelSewingInline.Size = new System.Drawing.Size(114, 23);
             this.labelSewingInline.TabIndex = 22;
             this.labelSewingInline.Text = "Sewing Inline";
             // 
             // labelSewingOffline
             // 
-            this.labelSewingOffline.Location = new System.Drawing.Point(314, 118);
+            this.labelSewingOffline.Location = new System.Drawing.Point(306, 118);
             this.labelSewingOffline.Name = "labelSewingOffline";
-            this.labelSewingOffline.Size = new System.Drawing.Size(102, 23);
+            this.labelSewingOffline.Size = new System.Drawing.Size(114, 23);
             this.labelSewingOffline.TabIndex = 23;
             this.labelSewingOffline.Text = "Sewing Offline";
             // 
             // labelBuyerDelivery
             // 
-            this.labelBuyerDelivery.Location = new System.Drawing.Point(314, 145);
+            this.labelBuyerDelivery.Location = new System.Drawing.Point(306, 145);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
-            this.labelBuyerDelivery.Size = new System.Drawing.Size(102, 23);
+            this.labelBuyerDelivery.Size = new System.Drawing.Size(114, 23);
             this.labelBuyerDelivery.TabIndex = 24;
             this.labelBuyerDelivery.Text = "Buyer Delivery";
             // 
             // labelSDPDate
             // 
-            this.labelSDPDate.Location = new System.Drawing.Point(314, 172);
+            this.labelSDPDate.Location = new System.Drawing.Point(306, 172);
             this.labelSDPDate.Name = "labelSDPDate";
-            this.labelSDPDate.Size = new System.Drawing.Size(102, 23);
+            this.labelSDPDate.Size = new System.Drawing.Size(114, 23);
             this.labelSDPDate.TabIndex = 25;
             this.labelSDPDate.Text = "SDP Date";
             // 
             // labelRMTLETA
             // 
-            this.labelRMTLETA.Location = new System.Drawing.Point(314, 200);
+            this.labelRMTLETA.Location = new System.Drawing.Point(306, 200);
             this.labelRMTLETA.Name = "labelRMTLETA";
             this.labelRMTLETA.Size = new System.Drawing.Size(165, 23);
             this.labelRMTLETA.TabIndex = 26;
@@ -478,7 +484,7 @@
             // 
             this.dateBuyerDelivery.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "buyerdelivery", true));
             this.dateBuyerDelivery.IsSupportEditMode = false;
-            this.dateBuyerDelivery.Location = new System.Drawing.Point(422, 144);
+            this.dateBuyerDelivery.Location = new System.Drawing.Point(425, 144);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
             this.dateBuyerDelivery.ReadOnly = true;
             this.dateBuyerDelivery.Size = new System.Drawing.Size(120, 23);
@@ -488,7 +494,7 @@
             // 
             this.dateSDPDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "sdpdate", true));
             this.dateSDPDate.IsSupportEditMode = false;
-            this.dateSDPDate.Location = new System.Drawing.Point(422, 173);
+            this.dateSDPDate.Location = new System.Drawing.Point(425, 173);
             this.dateSDPDate.Name = "dateSDPDate";
             this.dateSDPDate.ReadOnly = true;
             this.dateSDPDate.Size = new System.Drawing.Size(120, 23);
@@ -498,7 +504,7 @@
             // 
             this.dateSewingOffline.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "sewoffline", true));
             this.dateSewingOffline.IsSupportEditMode = false;
-            this.dateSewingOffline.Location = new System.Drawing.Point(422, 118);
+            this.dateSewingOffline.Location = new System.Drawing.Point(425, 118);
             this.dateSewingOffline.Name = "dateSewingOffline";
             this.dateSewingOffline.ReadOnly = true;
             this.dateSewingOffline.Size = new System.Drawing.Size(120, 23);
@@ -508,7 +514,7 @@
             // 
             this.dateSewingInline.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "sewinline", true));
             this.dateSewingInline.IsSupportEditMode = false;
-            this.dateSewingInline.Location = new System.Drawing.Point(422, 91);
+            this.dateSewingInline.Location = new System.Drawing.Point(425, 91);
             this.dateSewingInline.Name = "dateSewingInline";
             this.dateSewingInline.ReadOnly = true;
             this.dateSewingInline.Size = new System.Drawing.Size(120, 23);
@@ -518,7 +524,7 @@
             // 
             this.dateRMTLETA.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "mtleta", true));
             this.dateRMTLETA.IsSupportEditMode = false;
-            this.dateRMTLETA.Location = new System.Drawing.Point(482, 200);
+            this.dateRMTLETA.Location = new System.Drawing.Point(474, 200);
             this.dateRMTLETA.Name = "dateRMTLETA";
             this.dateRMTLETA.ReadOnly = true;
             this.dateRMTLETA.Size = new System.Drawing.Size(120, 23);
@@ -554,7 +560,7 @@
             // 
             this.txtuserMCHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "MCHandle", true));
             this.txtuserMCHandle.DisplayBox1Binding = "";
-            this.txtuserMCHandle.Location = new System.Drawing.Point(422, 64);
+            this.txtuserMCHandle.Location = new System.Drawing.Point(425, 64);
             this.txtuserMCHandle.Name = "txtuserMCHandle";
             this.txtuserMCHandle.Size = new System.Drawing.Size(266, 23);
             this.txtuserMCHandle.TabIndex = 41;
@@ -596,13 +602,32 @@
             this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BrokenNeedles", true));
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkBox1.IsSupportEditMode = false;
-            this.checkBox1.Location = new System.Drawing.Point(466, 37);
+            this.checkBox1.Location = new System.Drawing.Point(458, 37);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.ReadOnly = true;
             this.checkBox1.Size = new System.Drawing.Size(128, 21);
             this.checkBox1.TabIndex = 103;
             this.checkBox1.Text = "Broken Needles";
             this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // labMarketFeedback
+            // 
+            this.labMarketFeedback.Location = new System.Drawing.Point(306, 228);
+            this.labMarketFeedback.Name = "labMarketFeedback";
+            this.labMarketFeedback.Size = new System.Drawing.Size(114, 23);
+            this.labMarketFeedback.TabIndex = 104;
+            this.labMarketFeedback.Text = "Market Feedback";
+            // 
+            // editQMSMarketFeedback
+            // 
+            this.editQMSMarketFeedback.BackColor = System.Drawing.Color.White;
+            this.editQMSMarketFeedback.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "QMSMarketFeedback", true));
+            this.editQMSMarketFeedback.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editQMSMarketFeedback.Location = new System.Drawing.Point(427, 228);
+            this.editQMSMarketFeedback.Multiline = true;
+            this.editQMSMarketFeedback.Name = "editQMSMarketFeedback";
+            this.editQMSMarketFeedback.Size = new System.Drawing.Size(342, 70);
+            this.editQMSMarketFeedback.TabIndex = 105;
             // 
             // P30
             // 
@@ -686,5 +711,7 @@
         private Win.UI.Button btnFabricInspectionList;
         private Win.UI.Button btnMDFailbyCarton;
         private Win.UI.CheckBox checkBox1;
+        private Win.UI.EditBox editQMSMarketFeedback;
+        private Win.UI.Label labMarketFeedback;
     }
 }

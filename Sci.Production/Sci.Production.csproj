@@ -614,6 +614,9 @@
     <None Include="XLT\Packing_P24_Download.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Packing_P29.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Packing_R01.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -627,6 +630,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Packing_R04.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Packing_R05.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Planning_P01_BatchApprove.xltx">
@@ -1106,6 +1112,9 @@
     <None Include="XLT\Quality_R31_Outstanding.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Quality_R32_5X5Report.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Quality_R32_Detail.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -1158,6 +1167,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\RunningChange.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Sewing_P09.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Sewing_R01_DailyCMPReport.xltx">
@@ -1232,10 +1244,22 @@
     <None Include="XLT\Shipping_B42_Batch Import.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Shipping_R10_AirPrepaidExpense.xltx">
+    <None Include="XLT\Shipping_R10_AirPrepaidExpense_Garment.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Shipping_R10_ExportFeeReport%28MergerdAcctCode%29.xltx">
+    <None Include="XLT\Shipping_R10_ExportFeeReport%28MergerdAcctCode%29_Garment.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Shipping_R10_ExportFeeReport%28MergerdAcctCode%29_RawMaterial.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Shipping_R10_ShareExpenseExportBySPByFee_RawMaterial.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Shipping_R10_ShareExpenseExportBySP_RawMaterial.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Shipping_R10_ShareExpenseExportFeeReport_RawMaterial.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Shipping_R11_NonSharedListGarment_Main.xltx">
@@ -1355,13 +1379,13 @@
     <None Include="XLT\Shipping_R09_ShareExpenseImportByWKByFee.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Shipping_R10_ShareExpenseExportBySP.xltx">
+    <None Include="XLT\Shipping_R10_ShareExpenseExportBySP_Garment.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Shipping_R10_ShareExpenseExportBySPByFee.xltx">
+    <None Include="XLT\Shipping_R10_ShareExpenseExportBySPByFee_Garment.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Shipping_R10_ShareExpenseExportFeeReport.xltx">
+    <None Include="XLT\Shipping_R10_ShareExpenseExportFeeReport_Garment.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Shipping_R11_NonSharedListGarment.xltx">
@@ -1875,6 +1899,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Warehouse_R40_LocalItemInventoryReport.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Warehouse_R42.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Warehouse_R41.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

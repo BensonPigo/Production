@@ -32,7 +32,8 @@
 	[PartialShipment] [varchar](1) NULL,
 	[OutstandingReason] [varchar](500) NULL,
 	[ReasonRemark] [nvarchar](max) NULL,
-	[TransferBIDate] [datetime] NULL
+	[TransferBIDate] [datetime] NULL,
+	[Ukey] [bigint] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 

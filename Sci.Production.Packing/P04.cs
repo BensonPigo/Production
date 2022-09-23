@@ -1256,7 +1256,7 @@ from (
 SELECT  msg=concat(pd.OrderID,'(',pd.OrderShipmodeSeq,')')
 FROm PackingList p
 INNER JOIN PackingList_Detail pd On p.ID=pd.ID
-INNER JOIN  Order_QtyShip oq ON pd.OrderID=oq.Id
+INNER JOIN  Order_QtyShip oq ON pd.OrderID=oq.Id and oq.Seq = pd.OrderShipmodeSeq
 LEFt JOIN ShipMode s ON oq.ShipModeID=s.ID
 WHERE p.ID='{this.CurrentMaintain["ID"]}'
 AND s.ShipGroup <> (

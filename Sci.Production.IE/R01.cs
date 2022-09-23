@@ -103,10 +103,6 @@ namespace Sci.Production.IE
             this.style = this.txtStyle.Text;
             this.season = this.txtSeason.Text;
             this.team = this.comboSewingTeam1.Text;
-            //this.inline1 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value1);
-            //this.inline2 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value2);
-            //this.sewingline1 = string.Format("{0:yyyy-MM-dd}", this.dateSewingDate.Value1);
-            //this.sewingline2 = string.Format("{0:yyyy-MM-dd}", this.dateSewingDate.Value2);
             this.bolSummary = this.radioSummary.Checked;
             this.bolBalancing = this.chkBalancing.Checked;
 
@@ -308,12 +304,16 @@ and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (
                 if (!MyUtility.Check.Empty(this.dateSewingDate.Value1) && !MyUtility.Check.Empty(this.dateSewingDate.Value2))
                 {
                     dateQuery += $@"
-AND 
-( 
-	(Cast(ss.Inline as Date) >= convert(varchar(10), '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}', 120) AND Cast(ss.Inline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}' )
-    OR
-    (Cast(ss.Offline as Date) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}' AND Cast(ss.Offline as Date) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}')
-)";
+and (
+        (convert(varchar(10), ss.Inline, 120) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}' 
+            and  convert(varchar(10), ss.Offline, 120) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}'
+        )
+        or
+        ( '{this.dateSewingDate.Value1.Value.ToString("yyyy-MM-dd")}' >= convert(varchar(10), ss.Inline, 120) 
+            and '{this.dateSewingDate.Value2.Value.ToString("yyyy-MM-dd")}' <= convert(varchar(10), ss.Offline, 120)
+        )
+)
+";
                 }
 
                 this.sqlCmd.Append($@"
@@ -321,7 +321,7 @@ AND
 	select *
 	from SewingSchedule ss
 	join Orders o on ss.OrderID = o.ID
-	where o.Finished = 1 
+	where 1=1
 	{dateQuery}
 	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
  )
