@@ -28,6 +28,8 @@ namespace Sci.Production.Warehouse
         // int ordertypeindex;
         private string shift;
 
+        private DateTime? requestdate1;
+        private DateTime? requestdate2;
         private DateTime? issuedate1;
         private DateTime? issuedate2;
         private DateTime? approveDate1;
@@ -40,7 +42,7 @@ namespace Sci.Production.Warehouse
         {
             this.InitializeComponent();
             this.txtMdivision.Text = Env.User.Keyword;
-            this.txtfactory.Text = Env.User.Keyword;
+            this.txtfactory.Text = Env.User.Factory;
             MyUtility.Tool.SetupCombox(this.comboFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
             this.comboFabricType.SelectedIndex = 0;
             this.txtdropdownlistShift.SelectedIndex = 0;
@@ -52,12 +54,16 @@ namespace Sci.Production.Warehouse
         protected override bool ValidateInput()
         {
             if (MyUtility.Check.Empty(this.dateIssueDate.Value1) && MyUtility.Check.Empty(this.dateIssueDate.Value2) &&
-                MyUtility.Check.Empty(this.dateApproveDate.Value2) && MyUtility.Check.Empty(this.dateApproveDate.Value1))
+                MyUtility.Check.Empty(this.dateApproveDate.Value1) && MyUtility.Check.Empty(this.dateApproveDate.Value2) &&
+                MyUtility.Check.Empty(this.dateRequest.Value1) && MyUtility.Check.Empty(this.dateRequest.Value2)
+                )
             {
-                MyUtility.Msg.WarningBox("< Issue date > , < Approve date > can't be empty!!");
+                MyUtility.Msg.WarningBox("< Issue date > , < Approve date > , <Request date> can't be empty!!");
                 return false;
             }
 
+            this.requestdate1 = this.dateRequest.Value1;
+            this.requestdate2 = this.dateRequest.Value2;
             this.issuedate1 = this.dateIssueDate.Value1;
             this.issuedate2 = this.dateIssueDate.Value2;
             this.approveDate1 = this.dateApproveDate.Value1;
@@ -148,16 +154,29 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
 
             #region --- 條件組合  ---
 
+            if (!MyUtility.Check.Empty(this.requestdate1) || !MyUtility.Check.Empty(this.requestdate2))
+            {
+                if (!MyUtility.Check.Empty(this.requestdate1))
+                {
+                    sqlCmd.Append(string.Format(@" and '{0}' <= a.issuedate", Convert.ToDateTime(this.requestdate1).ToString("yyyy/MM/dd")));
+                }
+
+                if (!MyUtility.Check.Empty(this.requestdate2))
+                {
+                    sqlCmd.Append(string.Format(@" and a.issuedate <= '{0}'", Convert.ToDateTime(this.requestdate2).ToString("yyyy/MM/dd")));
+                }
+            }
+
             if (!MyUtility.Check.Empty(this.issuedate1) || !MyUtility.Check.Empty(this.issuedate2))
             {
                 if (!MyUtility.Check.Empty(this.issuedate1))
                 {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= a.issuedate", Convert.ToDateTime(this.issuedate1).ToString("yyyy/MM/dd")));
+                    sqlCmd.Append(string.Format(@" and '{0}' <= il.issuedate", Convert.ToDateTime(this.issuedate1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.issuedate2))
                 {
-                    sqlCmd.Append(string.Format(@" and a.issuedate <= '{0}'", Convert.ToDateTime(this.issuedate2).ToString("yyyy/MM/dd")));
+                    sqlCmd.Append(string.Format(@" and il.issuedate <= '{0}'", Convert.ToDateTime(this.issuedate2).ToString("yyyy/MM/dd")));
                 }
             }
 
@@ -235,25 +254,31 @@ from factory
 where id = '{0}'", Env.User.Keyword));
             objSheets.Cells[2, 1] = @"Fabric/Accessory Lacking & Replacement Report";
 
-            // Lacking Date (3, 2)
+            // Request Date (3, 2)
             objSheets.Cells[3, 2] = string.Format(
                 @"{0} ~ {1}" + "   ",
-                Convert.ToDateTime(this.issuedate1).ToString("yyyy/MM/dd"),
-                Convert.ToDateTime(this.issuedate2).ToString("yyyy/MM/dd"));
+              MyUtility.Check.Empty(this.requestdate1) ? string.Empty : Convert.ToDateTime(this.requestdate1).ToString("yyyy/MM/dd"),
+              MyUtility.Check.Empty(this.requestdate2) ? string.Empty : Convert.ToDateTime(this.requestdate2).ToString("yyyy/MM/dd"));
 
-            // Approve Date (3, 4)
-            objSheets.Cells[3, 4] = string.Format(
+            // Lacking Date (3, 7)
+            objSheets.Cells[3, 7] = string.Format(
                 @"{0} ~ {1}" + "   ",
-                Convert.ToDateTime(this.approveDate1).ToString("yyyy/MM/dd"),
-                Convert.ToDateTime(this.approveDate2).ToString("yyyy/MM/dd"));
+              MyUtility.Check.Empty(this.issuedate1) ? string.Empty : Convert.ToDateTime(this.issuedate1).ToString("yyyy/MM/dd"),
+              MyUtility.Check.Empty(this.issuedate2) ? string.Empty : Convert.ToDateTime(this.issuedate2).ToString("yyyy/MM/dd"));
 
-            // Shift (3, 6)
-            objSheets.Cells[3, 6] = string.Format(
+            // Approve Date (3, 13)
+            objSheets.Cells[3, 13] = string.Format(
+                @"{0} ~ {1}" + "   ",
+              MyUtility.Check.Empty(this.approveDate1) ? string.Empty : Convert.ToDateTime(this.approveDate1).ToString("yyyy/MM/dd"),
+              MyUtility.Check.Empty(this.approveDate2) ? string.Empty : Convert.ToDateTime(this.approveDate2).ToString("yyyy/MM/dd"));
+
+            // Shift (3, 18)
+            objSheets.Cells[3, 18] = string.Format(
                 @"{0}" + "   ",
                 this.txtdropdownlistShift.Text);
 
-            // Date (3, 11)
-            objSheets.Cells[3, 11] = string.Format("{0:d}", DateTime.Now);
+            // Date (3, 24)
+            objSheets.Cells[3, 24] = string.Format("{0:d}", DateTime.Now);
 
             this.ShowWaitMessage("Excel Processing...");
             for (int i = 1; i <= this.printData.Rows.Count; i++)
