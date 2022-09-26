@@ -1,9 +1,11 @@
 ﻿using Ict;
 using Ict.Win;
+using org.apache.pdfbox.io;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 
 namespace Sci.Production.Packing
 {
@@ -17,7 +19,14 @@ namespace Sci.Production.Packing
             InitializeComponent();
 
             this.comboMDMachineID.DataSource = new List<string>();
+        }
+
+        protected override void OnUIConvertToMaintain()
+        {
+            base.OnUIConvertToMaintain();
             this.revise.Visible = false;
+            this.undo.Visible = false;
+            this.save.Text = "Submit";
         }
 
         protected override DualResult OnRequery()
@@ -29,7 +38,19 @@ namespace Sci.Production.Packing
 
             string selectCommand = $@"
 select 
-CalibrationTime
+SelectAll = case when 
+(
+Point1 = 1 and 
+Point2 = 1 and 
+Point3 = 1 and 
+Point4 = 1 and 
+Point5 = 1 and 
+Point6 = 1 and 
+Point7 = 1 and 
+Point8 = 1 and 
+Point9 = 1
+) then cast(1 as bit) else cast(0 as bit) end
+,CalibrationTime
 ,Point1
 ,Point2
 ,Point3
@@ -94,8 +115,6 @@ Where Junk = 0
             {
                 this.comboMDMachineID.SelectedIndex = 0;
             }
-
-            this.EditMode = this.CanEdit;
         }
 
         protected override bool OnGridSetup()
@@ -103,7 +122,7 @@ Where Junk = 0
             Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings mask_CalibrationTime = new DataGridViewGeneratorMaskedTextColumnSettings();
             mask_CalibrationTime.CellValidating += (s, e) =>
             {
-                if (e.RowIndex == -1)
+                if (e.RowIndex == -1 || this.EditMode == false)
                 {
                     return;
                 }
@@ -136,7 +155,35 @@ Where Junk = 0
                     e.Cancel = true;
                 }
             };
+
+            Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings col_allselect = new DataGridViewGeneratorCheckBoxColumnSettings();
+            col_allselect.CellValidating += (s, e) => 
+            {
+                if (e.RowIndex == -1 || this.EditMode == false)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    dr["Point1"] = 1;
+                    dr["Point2"] = 1;
+                    dr["Point3"] = 1;
+                    dr["Point4"] = 1;
+                    dr["Point5"] = 1;
+                    dr["Point6"] = 1;
+                    dr["Point7"] = 1;
+                    dr["Point8"] = 1;
+                    dr["Point9"] = 1;
+                    dr["SelectAll"] = 1;
+                }
+
+                dr.EndEdit();
+            };
+
             this.Helper.Controls.Grid.Generator(this.grid)
+               .CheckBox("SelectAll", header: string.Empty, width: Widths.AnsiChars(4), iseditable: true, trueValue: true, falseValue: false, settings: col_allselect)
                .MaskedText("CalibrationTime", "00:00", header: "Calibration Time", width: Widths.AnsiChars(8), iseditingreadonly: false, settings: mask_CalibrationTime)
                .CheckBox("Point1", header: "1", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                .CheckBox("Point2", header: "2", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
@@ -197,7 +244,8 @@ Where Junk = 0
         protected override void OnSaveAfter()
         {
             base.OnSaveAfter();
-            if (this.save.Text.ToUpper() == "SAVE")
+            //if (this.save.Text.ToUpper() == "SAVE")
+            if (this.save.Text.ToUpper() == "SUBMIT")
             {
                 string selectCommand = $@"
 select top 2
@@ -220,11 +268,6 @@ order by CalibrationTime desc
                     callForm.ShowDialog(this);
                 }
             }
-        }
-
-        private void save_Click(object sender, EventArgs e)
-        {
-            this.revise.Visible = false;
         }
     }
 }

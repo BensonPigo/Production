@@ -100,8 +100,8 @@
             this.btnCalibrationList = new Sci.Win.UI.Button();
             this.chkAutoCalibration = new Sci.Win.UI.CheckBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.txtDest = new Sci.Production.Class.Txtcountry();
             this.lbCalibrationTime = new Sci.Win.UI.Label();
+            this.txtDest = new Sci.Production.Class.Txtcountry();
             this.tabControlScanArea.SuspendLayout();
             this.tabPageCarton.SuspendLayout();
             this.tabPageScan.SuspendLayout();
@@ -271,6 +271,7 @@
             this.tabControlScanArea.Size = new System.Drawing.Size(319, 196);
             this.tabControlScanArea.TabIndex = 99;
             this.tabControlScanArea.TabStop = false;
+            this.tabControlScanArea.SelectedIndexChanged += new System.EventHandler(this.tabControlScanArea_SelectedIndexChanged);
             // 
             // tabPageCarton
             // 
@@ -313,10 +314,10 @@
             this.tabPageScan.Controls.Add(this.labelQtyScan);
             this.tabPageScan.Controls.Add(this.labelTabScanTtlQty);
             this.tabPageScan.Controls.Add(this.labelTabScan);
-            this.tabPageScan.Location = new System.Drawing.Point(4, 22);
+            this.tabPageScan.Location = new System.Drawing.Point(4, 25);
             this.tabPageScan.Name = "tabPageScan";
             this.tabPageScan.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageScan.Size = new System.Drawing.Size(311, 170);
+            this.tabPageScan.Size = new System.Drawing.Size(311, 167);
             this.tabPageScan.TabIndex = 1;
             this.tabPageScan.Text = "Scan";
             // 
@@ -907,15 +908,6 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // txtDest
-            // 
-            this.txtDest.DisplayBox1Binding = "";
-            this.txtDest.Location = new System.Drawing.Point(88, 153);
-            this.txtDest.Name = "txtDest";
-            this.txtDest.Size = new System.Drawing.Size(236, 22);
-            this.txtDest.TabIndex = 106;
-            this.txtDest.TextBox1Binding = "";
-            // 
             // lbCalibrationTime
             // 
             this.lbCalibrationTime.BackColor = System.Drawing.Color.Transparent;
@@ -924,8 +916,17 @@
             this.lbCalibrationTime.Name = "lbCalibrationTime";
             this.lbCalibrationTime.Size = new System.Drawing.Size(338, 23);
             this.lbCalibrationTime.TabIndex = 126;
-            this.lbCalibrationTime.Text = "Next Calibration Time : hh:mm";
+            this.lbCalibrationTime.Text = "Next Calibration Time :";
             this.lbCalibrationTime.TextStyle.Color = System.Drawing.Color.Red;
+            // 
+            // txtDest
+            // 
+            this.txtDest.DisplayBox1Binding = "";
+            this.txtDest.Location = new System.Drawing.Point(88, 153);
+            this.txtDest.Name = "txtDest";
+            this.txtDest.Size = new System.Drawing.Size(236, 22);
+            this.txtDest.TabIndex = 106;
+            this.txtDest.TextBox1Binding = "";
             // 
             // P18
             // 

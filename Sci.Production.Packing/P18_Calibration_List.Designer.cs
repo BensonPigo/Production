@@ -68,9 +68,9 @@
             // save
             // 
             this.save.Dock = System.Windows.Forms.DockStyle.None;
-            this.save.Location = new System.Drawing.Point(635, 5);
-            this.save.Size = new System.Drawing.Size(72, 30);
-            this.save.Click += new System.EventHandler(this.save_Click);
+            this.save.Location = new System.Drawing.Point(623, 5);
+            this.save.Size = new System.Drawing.Size(84, 30);
+            this.save.Text = "Submit";
             // 
             // labMDMachine
             // 

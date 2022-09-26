@@ -17,6 +17,8 @@ using Sci.Production.Automation;
 using org.apache.pdfbox.io;
 using System.Data.SqlTypes;
 using System.Windows.Forms.VisualStyles;
+using System.Threading;
+using System.Security.AccessControl;
 
 namespace Sci.Production.Packing
 {
@@ -31,6 +33,7 @@ namespace Sci.Production.Packing
         private bool UseAutoScanPack = false;
         private string PackingListID = string.Empty;
         private string CTNStarNo = string.Empty;
+        private bool Boolfirst = true;
 
         /// <summary>
         /// P18
@@ -74,7 +77,7 @@ namespace Sci.Production.Packing
             this.Tab_Focus("CARTON");
 
             // 重啟P18 必須重新判斷校正記錄
-            this.alert_Calibration(IsTimer: false);
+            this.btnCalibrationList.Enabled = false;
             this.txtDest.TextBox1.ReadOnly = true;
 
             // 啟動計時器
@@ -87,7 +90,7 @@ namespace Sci.Production.Packing
             {
                 string machineID = P18_Calibration_List.MachineID;
                 string sqlcmd = $@"
-select top 1 * from MDCalibrationList where MachineID = '{machineID}' and CalibrationDate = CONVERT(date, GETDATE()) order by CalibrationTime desc";
+select * from MDCalibrationList where MachineID = '{machineID}' and CalibrationDate = CONVERT(date, GETDATE()) and operator = '{Sci.Env.User.UserID}' order by CalibrationTime desc";
 
                 DataTable dtMDCalibrationList;
                 Ict.DualResult result;
@@ -129,7 +132,7 @@ or Point9 = 0
             {
                 string machineID = P18_Calibration_List.MachineID;
                 string sqlcmd = $@"
-select top 1 * from MDCalibrationList where MachineID = '{machineID}' and CalibrationDate = CONVERT(date, GETDATE()) order by CalibrationTime desc";
+select top 1 * from MDCalibrationList where MachineID = '{machineID}' and CalibrationDate = CONVERT(date, GETDATE()) and operator = '{Sci.Env.User.UserID}' order by CalibrationTime desc";
                 if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
                 {
                     // 全都勾選
@@ -150,12 +153,12 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
                         int currMM = DateTime.Now.Minute;
 
                         // 觸發Timer: 時間要剛好是一小時整才會觸發
-                        if (IsTimer == true)
+                        if (IsTimer == true && !Boolfirst)
                         {
-                            if ((currHH - hh == 1 && currMM - mm == 0))
+                            if (currHH - hh == 1 && currMM - mm == 0)
                             {
-                                this.AlterMSg();
                                 this.timer1.Stop();
+                                this.AlterMSg();
                             }
                         }
                         else
@@ -163,6 +166,7 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
                             // 當前時間 > 設定時間一小時以上 代表未做校正記錄
                             if ((currHH - hh > 1) || (currHH - hh == 1 && currMM - mm > 0))
                             {
+                                this.timer1.Stop();
                                 this.AlterMSg();
                             }
                         }
@@ -180,6 +184,8 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
             //P18_Message msg = new P18_Message();
             //msg.color = Color.Red;
             //msg.Show("Move to MD Hourly Calibration!");
+
+            //Thread.Sleep(7000); // delay 1 sec
             MyUtility.Msg.WarningBox("Move to MD Hourly Calibration!");
 
             foreach (Form form in Application.OpenForms)
@@ -204,7 +210,7 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
                 {
                     string machineID = P18_Calibration_List.MachineID;
                     string sqlcmd = $@"
-select top 1 * from MDCalibrationList where MachineID = '{machineID}' and CalibrationDate = CONVERT(date, GETDATE()) order by CalibrationTime desc";
+select top 1 * from MDCalibrationList where MachineID = '{machineID}' and CalibrationDate = CONVERT(date, GETDATE()) and operator = '{Sci.Env.User.UserID}' order by CalibrationTime desc";
                     if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
                     {
                         // 全都勾選
@@ -218,17 +224,23 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
                             !MyUtility.Check.Empty(dr["Point8"]) &&
                             !MyUtility.Check.Empty(dr["Point9"]))
                         {
-                            int hh = MyUtility.Convert.GetInt(dr["CalibrationTime"].ToString().Substring(0, 2));
-                            int mm = MyUtility.Convert.GetInt(dr["CalibrationTime"].ToString().Substring(2, 2));
-
-                            this.lbCalibrationTime.Text = $@"Next Calibration Time : {hh + 1}:{mm}";
+                            string hh = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(dr["CalibrationTime"].ToString().Substring(0, 2)) + 1);
+                            string mm = dr["CalibrationTime"].ToString().Substring(3, 2);
+                            this.lbCalibrationTime.Text = $@"Next Calibration Time : {hh}:{mm}";
                         }
                     }
                 }
             }
             else
             {
-                this.lbCalibrationTime.Text = $@"Next Calibration Time : {HH + 1}:{MM}";
+                if (MM < 10)
+                {
+                    this.lbCalibrationTime.Text = $@"Next Calibration Time : {HH + 1}:0{MM}";
+                }
+                else
+                {
+                    this.lbCalibrationTime.Text = $@"Next Calibration Time : {HH + 1}:{MM}";
+                }
             }
         }
 
@@ -336,6 +348,16 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
                 DualResult result_load = this.LoadScanDetail(0);
             }
             #endregion
+
+            // 底部grid有資料就開放button btnCalibration List按鈕
+            if (this.tabControlScanArea.SelectedIndex == 0 && this.gridSelectCartonDetail.RowCount == 0)
+            {
+                this.btnCalibrationList.Enabled = false;
+            }
+            else
+            {
+                this.btnCalibrationList.Enabled = true;
+            }
         }
 
         private bool LoadDatas()
@@ -1931,12 +1953,13 @@ and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
             P18_Calibration_List callForm = new P18_Calibration_List(true, String.Empty, String.Empty, String.Empty);
             callForm.ShowDialog(this);
             this.disable_Carton_Scan();
+            this.Display_Calibration(0, 0);
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            // 每30秒跑一次
-            this.timer1.Interval = 1000 * 5;
+            // 每15秒跑一次
+            this.timer1.Interval = 1000 * 15;
             this.alert_Calibration(IsTimer: true);
         }
 
@@ -1956,6 +1979,18 @@ and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
                     this.txtScanEAN.Enabled = true;
                     this.btnPackingError.Enabled = true;
                 }
+            }
+        }
+
+        private void tabControlScanArea_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.tabControlScanArea.SelectedIndex == 0 && this.gridSelectCartonDetail.RowCount == 0)
+            {
+                this.btnCalibrationList.Enabled = false;
+            }
+            else
+            {
+                this.btnCalibrationList.Enabled = true;
             }
         }
     }
