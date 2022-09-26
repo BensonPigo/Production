@@ -241,7 +241,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
 ";
             MyUtility.Tool.ProcessWithDatatable(this.WorkorderTb, "SpreadingNoID,CutCellID,Cutref,Cutplanid,estCutDate,shc,ukey,id", sqlCutrefTb, out this.CutrefTb);
 
-            MyUtility.Tool.ProcessWithDatatable(this.WorkorderDisTb, string.Format("{0},OrderID", byType), $@"Select distinct {byType},OrderID,SewLineList From #tmp", out this.CutDisOrderIDTb); // 整理sp
+            MyUtility.Tool.ProcessWithDatatable(this.WorkorderDisTb, $"{byType},OrderID,SewLineList", $@"Select distinct {byType},OrderID,SewLineList From #tmp", out this.CutDisOrderIDTb); // 整理sp
 
             MyUtility.Tool.ProcessWithDatatable(this.WorkorderSizeTb, string.Format("{0},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricPanelCode", byType), string.Format("Select distinct {0},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricPanelCode,dbo.MarkerLengthToYDS(MarkerLength) as yds From #tmp order by FabricPanelCode,MarkerName,seq", byType), out this.CutSizeTb); // 整理SizeGroup,Qty
 
