@@ -39,6 +39,7 @@
     [SpreadingNoID]       VARCHAR (3)    NULL,
     [Shift]               VARCHAR (1)    DEFAULT ('') NOT NULL,
     [WKETA]               DATE           NULL,
+    [UnfinishedCuttingReason] VARCHAR(50) CONSTRAINT [DF_WorkOrder_UnfinishedCuttingReason] DEFAULT ('') not NULL,
     CONSTRAINT [PK_WorkOrder] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
