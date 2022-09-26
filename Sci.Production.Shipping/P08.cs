@@ -954,7 +954,7 @@ select  g.ShippingAPID
         ,o.FactoryID
 from #tmp g
 inner join PackingList p with (nolock) on p.INVNo = g.InvNo and p.ID = g.PackingListID and p.Type != 'L'
-inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty = 1
+inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty > 0
 inner join Orders o with (nolock) on o.ID = pd.OrderID
 inner join LocalItem l with (nolock) on l.Refno = pd.Refno
 group by g.ShippingAPID
@@ -1050,7 +1050,7 @@ outer apply(select top 1 [val] = sd.AccountID
                 and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
 		            or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
 inner join PackingList p with (nolock) on p.INVNo = g.ID and p.Type != 'L'
-inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty = 1
+inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty > 0
 inner join Orders o with (nolock) on o.ID = pd.OrderID
 inner join LocalItem l with (nolock) on l.Refno = pd.Refno
 where (g.BLNo='{drCurrentMaintain["BLNO"]}' or g.BL2No='{drCurrentMaintain["BLNO"]}')  and AccountID.val is not null
