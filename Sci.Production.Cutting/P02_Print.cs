@@ -189,7 +189,25 @@ and a.id='{0}'
                 return dResult;
             }
 
-            workorder_cmd = string.Format("Select {1},a.Cutno,a.Colorid,a.Layer,a.Cons,b.* from Workorder a WITH (NOLOCK) ,Workorder_Distribute b WITH (NOLOCK) Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}' and a.ukey = b.workorderukey order by b.OrderID,b.Article,b.SizeCode", this.detDr["ID"], byType);
+            workorder_cmd = $@"
+Select {byType},a.Cutno,a.Colorid,a.Layer,a.Cons,b.* ,s.SewLineList
+from Workorder a WITH (NOLOCK) 
+inner join Workorder_Distribute b WITH (NOLOCK) on  a.ukey = b.workorderukey 
+outer apply(
+	select SewLineList = Stuff((
+		select concat('\',SewLine)
+		from (
+				select SewLine
+				from dbo.orders d
+				where exists(
+					select 1 from Workorder_Distribute where workorderukey = a.ukey
+					and orderid = d.id
+				)
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) s
+Where {byType}>=@Cutref1 and {byType}<=@Cutref2 and a.id='{this.detDr["ID"]}' and a.ukey = b.workorderukey order by b.OrderID,b.Article,b.SizeCode";
             dResult = DBProxy.Current.Select(null, workorder_cmd, paras, out this.WorkorderDisTb);
             if (!dResult)
             {
@@ -223,7 +241,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
 ";
             MyUtility.Tool.ProcessWithDatatable(this.WorkorderTb, "SpreadingNoID,CutCellID,Cutref,Cutplanid,estCutDate,shc,ukey,id", sqlCutrefTb, out this.CutrefTb);
 
-            MyUtility.Tool.ProcessWithDatatable(this.WorkorderDisTb, string.Format("{0},OrderID", byType), string.Format("Select distinct {0},OrderID From #tmp", byType), out this.CutDisOrderIDTb); // 整理sp
+            MyUtility.Tool.ProcessWithDatatable(this.WorkorderDisTb, $"{byType},OrderID,SewLineList", $@"Select distinct {byType},OrderID,SewLineList From #tmp", out this.CutDisOrderIDTb); // 整理sp
 
             MyUtility.Tool.ProcessWithDatatable(this.WorkorderSizeTb, string.Format("{0},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricPanelCode", byType), string.Format("Select distinct {0},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricPanelCode,dbo.MarkerLengthToYDS(MarkerLength) as yds From #tmp order by FabricPanelCode,MarkerName,seq", byType), out this.CutSizeTb); // 整理SizeGroup,Qty
 
@@ -288,7 +306,8 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
             worksheet.Cells[3, 12] = this.detDr["CutCellid"];
             worksheet.Cells[9, 2] = this.OrderDr["Styleid"];
             worksheet.Cells[10, 2] = this.OrderDr["Seasonid"];
-            worksheet.Cells[10, 13] = this.OrderDr["Sewline"];
+            worksheet.Cells[10, 13] = this.CutDisOrderIDTb.Rows[0]["SewLineList"].ToString();
+                //this.OrderDr["Sewline"];
             for (int nColumn = 3; nColumn <= 21; nColumn += 3)
             {
                 worksheet.Cells[36, nColumn] = this.OrderDr["Styleid"];
@@ -430,7 +449,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                     }
 
                     worksheet.Cells[8, 2] = spList;
-                    worksheet.Cells[10, 13] = line;
+                    worksheet.Cells[10, 13] = this.CutDisOrderIDTb.Rows[0]["SewLineList"].ToString();
                     int l = 54;
                     int la = spList.Length / l;
                     for (int i = 1; i <= la; i++)
@@ -665,7 +684,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
             // worksheet.Cells[3, 12] = detDr["CutCellid"];
             worksheet.Cells[9, 2] = this.OrderDr["Styleid"];
             worksheet.Cells[10, 2] = this.OrderDr["Seasonid"];
-            worksheet.Cells[10, 13] = this.OrderDr["Sewline"];
+            worksheet.Cells[10, 13] = this.CutDisOrderIDTb.Rows[0]["SewLineList"].ToString();
 
             for (int nColumn = 3; nColumn <= 21; nColumn += 3)
             {
