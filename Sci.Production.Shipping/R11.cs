@@ -903,13 +903,28 @@ as (
             and se.Junk = 0
 		) a
 	)major3
+    outer apply(
+	-- 只要cnt = 0, 沒資料 = 就存在, 只要有任一筆AccountID就排除 by ISP20221137
+		select cnt = count(1) from (
+			select distinct sap.AccountID 
+            from View_ShareExpense se with (nolock)
+			inner join ShippingAP_Detail sap WITH (NOLOCK) on sap.ID = se.ShippingAPID
+			where 1=1
+			and se.InvNo = g.id
+            and se.Junk = 0
+		) a
+	)major4
     where 1=1
 	and (
-			(major1.cnt = 0 and g.ShipModeID in ('A/C','A/P-C','E/C','E/P-C','RAIL','RIVER','S-A/C','SEA','SEA-TRUCK'))
+			(major1.cnt = 0 and g.ShipModeID in ('A/C','A/P-C','RAIL','RIVER','S-A/C','SEA','SEA-TRUCK'))
 			or 
-			(major2.cnt != 2 and g.ShipModeID in ('A/P','E/P','S-A/P'))
+			(major2.cnt != 2 and g.ShipModeID in ('A/P','S-A/P'))
+			or 
+			(major2.cnt = 0 and g.ShipModeID in ('E/P'))
 			or 
 			(major3.cnt = 0) and g.ShipModeID in ('TRUCK')
+			or
+			(major4.cnt = 0 and g.ShipModeID in ('E/C','E/P-C'))
 		)
 ");
 
