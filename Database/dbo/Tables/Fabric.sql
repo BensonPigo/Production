@@ -14,7 +14,7 @@
     [LossStep]                INT             CONSTRAINT [DF_Fabric_LossStep] DEFAULT ((0)) NULL,
     [UsageUnit]               VARCHAR (8)     CONSTRAINT [DF_Fabric_UsageUnit] DEFAULT ('') NULL,
     [Width]                   NUMERIC (5, 2)  CONSTRAINT [DF_Fabric_Width] DEFAULT ((0)) NULL,
-    [Weight]                  NUMERIC (9, 4)  CONSTRAINT [DF_Fabric_Supp_WeightYDS] DEFAULT ((0)) NULL,
+    [Weight]                  NUMERIC (10, 4)  CONSTRAINT [DF_Fabric_Supp_WeightYDS] DEFAULT ((0)) NULL,
     [CBM]                     NUMERIC (7, 2)  NULL,
     [CBMWeight]               NUMERIC (10, 4) NULL,
     [NoSizeUnit]              BIT             CONSTRAINT [DF_Fabric_NoSizeUnit] DEFAULT ((0)) NULL,

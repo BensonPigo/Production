@@ -28,6 +28,16 @@
     [EditName]            VARCHAR (10)    CONSTRAINT [DF_Style_BOA_EditName] DEFAULT ('') NULL,
     [EditDate]            DATETIME        NULL,
     [FabricPanelCode]     VARCHAR (2)     NULL,
+    [BomTypeCOO] BIT NULL, 
+    [BomTypeGender] BIT NULL, 
+    [BomTypeCustomerSize] BIT NULL, 
+    [CustomerSizeRelation] VARCHAR(3) NULL, 
+    [BomTypeDecLabelSize] BIT NULL, 
+    [DecLabelSizeRelation] VARCHAR(3) NULL, 
+    [BomTypeBrandFactoryCode] BIT NULL, 
+    [BomTypeStyleLocation] BIT NULL, 
+    [BomTypeSeason] BIT NULL, 
+    [BomTypeCareCode] BIT NULL, 
     CONSTRAINT [PK_Style_BOA] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

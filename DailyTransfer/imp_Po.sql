@@ -266,9 +266,6 @@ where not exists(select id from Production.dbo.PO_Supp as a WITH (NOLOCK) where 
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-      -- a.ID	     =b.ID	
-      --,a.Seq1	      =b.Seq1	
-      --,a.Seq2	      =b.Seq2	
       a.FactoryID	      =(select top 1 a.FactoryID from Orders a where a.POID=b.ID)
       ,a.RefNo	      =b.RefNo	
       ,a.SCIRefNo	      =b.SCIRefNo	
@@ -291,10 +288,7 @@ SET
       ,a.PrintDate	      =b.PrintDate	
       ,a.PINO	      =b.PINO	
       ,a.PIDate	      =b.PIDate	
-      ,a.ColorID	      =b.ColorID	
       ,a.SuppColor	      =b.SuppColor	
-      ,a.SizeSpec	      =b.SizeSpec	
-      ,a.SizeUnit	      =b.SizeUnit	
       ,a.Remark	      =b.Remark	
       ,a.Special	      =b.Special	
       ,a.Width	      =b.Width	
@@ -312,8 +306,6 @@ SET
       ,a.FOC	      =b.FOC	
       ,a.Junk	      =b.Junk	
       ,a.ColorDetail	      =b.ColorDetail	
-      ,a.BomZipperInsert	      =b.BomZipperInsert	
-      ,a.BomCustPONo	      =b.BomCustPONo	
       ,a.ShipQty	      =b.ShipQty	
       ,a.Shortage	      =b.Shortage	
       ,a.ShipFOC	      =b.ShipFOC	
@@ -331,11 +323,15 @@ SET
 	  ,a.POAmt			=b.POAmt
 	  ,a.ShipAmt		=b.ShipAmt
 	  ,a.StockSuppID	=b.StockSuppID
+    ,a.CopyFromSeq1       = isnull(b.CopyFromSeq1      , '')
+    ,a.CopyFromSeq2       = isnull(b.CopyFromSeq2      , '')
+    ,a.BomSpecDiffReason  = isnull(b.BomSpecDiffReason , '')
+    ,a.CannotOperateStock = isnull(b.CannotOperateStock, 0)
+    ,a.Keyword_Original   = isnull(b.Keyword_Original  , '')
+
 from Production.dbo.PO_Supp_Detail as a 
 inner join Trade_To_Pms.dbo.PO_Supp_Detail as b ON a.id=b.id and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
-inner join  #Trade_To_Pms_PO c ON b.ID = c.ID 
-
-
+inner join  #Trade_To_Pms_PO c ON b.ID = c.ID
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.PO_Supp_Detail(
 ID
@@ -363,10 +359,7 @@ ID
       ,PrintDate
       ,PINO
       ,PIDate
-      ,ColorID
       ,SuppColor
-      ,SizeSpec
-      ,SizeUnit
       ,Remark
       ,Special
       ,Width
@@ -384,8 +377,6 @@ ID
       ,FOC
       ,Junk
       ,ColorDetail
-      ,BomZipperInsert
-      ,BomCustPONo
       ,ShipQty
       ,Shortage
       ,ShipFOC
@@ -403,6 +394,11 @@ ID
 	  ,POAmt
 	  ,ShipAmt
 	  ,StockSuppID
+    ,CopyFromSeq1
+    ,CopyFromSeq2
+    ,BomSpecDiffReason
+    ,CannotOperateStock
+    ,Keyword_Original
 )
 select 
        b.ID
@@ -430,10 +426,7 @@ select
       ,PrintDate
       ,PINO
       ,PIDate
-      ,ColorID
       ,SuppColor
-      ,SizeSpec
-      ,SizeUnit
       ,Remark
       ,Special
       ,Width
@@ -451,8 +444,6 @@ select
       ,FOC
       ,Junk
       ,ColorDetail
-      ,BomZipperInsert
-      ,BomCustPONo
       ,ShipQty
       ,Shortage
       ,ShipFOC
@@ -470,6 +461,11 @@ select
 	  ,b.POAmt
 	  ,b.ShipAmt
 	  ,b.StockSuppID
+      ,isnull(b.CopyFromSeq1      , '')
+      ,isnull(b.CopyFromSeq2      , '')
+      ,isnull(b.BomSpecDiffReason , '')
+      ,isnull(b.CannotOperateStock, 0)
+      ,isnull(b.Keyword_Original  , '')
 from Trade_To_Pms.dbo.PO_Supp_Detail as b WITH (NOLOCK) inner join  #Trade_To_Pms_PO c ON b.ID = c.ID
 where not exists(select id from Production.dbo.PO_Supp_Detail as a WITH (NOLOCK) where a.id = b.id and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2	)
 
@@ -502,20 +498,78 @@ WHERE po.StockUnit = '' OR po.StockUnit IS NULL
 ------------------------------------------------------------------PO3 END
 
 ----PO_Supp_Detail_Spec
-update a
-set
-    SpecValue = b.SpecValue,
-    AddName = b.AddName,
-    AddDate = b.AddDate,
-    EditName = b.EditName,
-    EditDate = b.EditDate
-from Production.dbo.PO_Supp_Detail_Spec as a 
-inner join Trade_To_Pms.dbo.PO_Supp_Detail_Spec as b ON a.id=b.id and a.seq1 = b.seq1 and a.seq2 = b.seq2 and a.SpecColumnID = b.SpecColumnID
+UPDATE a
+SET  
+     [SpecValue] = isnull(b.[SpecValue], '')
+    ,[AddName]   = isnull(b.[AddName]  , '')
+    ,[AddDate]   = b.[AddDate]
+    ,[EditName]  = isnull(b.[EditName] , '')
+    ,[EditDate]  = b.[EditDate]
 
-insert into  Production.dbo.PO_Supp_Detail_Spec(ID,Seq1,Seq2,SpecColumnID,SpecValue,AddName,AddDate,EditName,EditDate)
-select ID,Seq1,Seq2,SpecColumnID,SpecValue,AddName,AddDate,EditName,EditDate
-from Trade_To_Pms.dbo.PO_Supp_Detail_Spec a
-where not exists(select 1 from Production.dbo.PO_Supp_Detail_Spec b where a.id=b.id and a.seq1 = b.seq1 and a.seq2 = b.seq2 and a.SpecColumnID = b.SpecColumnID)
+from Production.dbo.PO_Supp_Detail_Spec as a 
+inner join Trade_To_Pms.dbo.PO_Supp_Detail_Spec as b ON a.id = b.id and a.SEQ1 = b.Seq1 and a.SEQ2 = b.Seq2 and a.SpecColumnID = b.SpecColumnID
+inner join  #Trade_To_Pms_PO c ON b.ID = c.ID 
+
+INSERT INTO Production.dbo.PO_Supp_Detail_Spec
+           ([ID]
+           ,[Seq1]
+           ,[Seq2]
+           ,[SpecColumnID]
+           ,[SpecValue]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate])
+select 
+     isnull(b.[ID]          , '')
+    ,isnull(b.[Seq1]        , '')
+    ,isnull(b.[Seq2]        , '')
+    ,isnull(b.[SpecColumnID], '')
+    ,isnull(b.[SpecValue], '')
+    ,isnull(b.[AddName]  , '')
+    ,b.[AddDate]
+    ,isnull(b.[EditName] , '')
+    ,b.[EditDate]
+from Trade_To_Pms.dbo.PO_Supp_Detail_Spec as b WITH (NOLOCK) inner join  #Trade_To_Pms_PO c ON b.ID = c.ID
+where not exists(select id from Production.dbo.PO_Supp_Detail_Spec as a WITH (NOLOCK) where a.id = b.id and a.SEQ1 = b.Seq1 and a.SEQ2 = b.Seq2 and a.SpecColumnID = b.SpecColumnID)
+
+--PO_Supp_Detail_Keyword
+UPDATE a
+SET  
+     KeywordValue = isnull(b.KeywordValue, '')
+    ,[AddName]   = isnull(b.[AddName]  , '')
+    ,[AddDate]   = b.[AddDate]
+    ,[EditName]  = isnull(b.[EditName] , '')
+    ,[EditDate]  = b.[EditDate]
+
+from Production.dbo.PO_Supp_Detail_Keyword as a 
+inner join Trade_To_Pms.dbo.PO_Supp_Detail_Keyword as b ON a.id = b.id and a.SEQ1 = b.Seq1 and a.SEQ2 = b.Seq2 and a.KeywordField = b.KeywordField
+inner join  #Trade_To_Pms_PO c ON b.ID = c.ID 
+
+INSERT INTO Production.dbo.PO_Supp_Detail_Keyword
+           ([ID]
+           ,[Seq1]
+           ,[Seq2]
+           ,KeywordField
+           ,KeywordValue
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate])
+select 
+     isnull(b.[ID]          , '')
+    ,isnull(b.[Seq1]        , '')
+    ,isnull(b.[Seq2]        , '')
+    ,isnull(b.KeywordField, '')
+    ,isnull(b.KeywordValue, '')
+    ,isnull(b.[AddName]  , '')
+    ,b.[AddDate]
+    ,isnull(b.[EditName] , '')
+    ,b.[EditDate]
+from Trade_To_Pms.dbo.PO_Supp_Detail_Keyword as b WITH (NOLOCK) inner join  #Trade_To_Pms_PO c ON b.ID = c.ID
+where not exists(select id from Production.dbo.PO_Supp_Detail_Keyword as a WITH (NOLOCK) where a.id = b.id and a.SEQ1 = b.Seq1 and a.SEQ2 = b.Seq2 and a.KeywordField = b.KeywordField)
+
+
 
 ------Delete Po from Trade PO_Delete function
 -- Create #deletePo3
@@ -601,6 +655,10 @@ from Production.dbo.PO_Supp_Detail_Spec t
 inner join #deletePo3 s on t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2
 
 delete t
+from Production.dbo.PO_Supp_Detail_Keyword t
+inner join #deletePo3 s on t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2
+
+delete t
 from Production.dbo.PO_Supp_Detail_OrderList t
 inner join #deletePo_OrderList s on t.ID=s.id and t.SEQ1=s.seq1 and t.SEQ2=s.seq2
 
@@ -667,21 +725,9 @@ where not exists(select id from Production.dbo.PO_Supp_Detail_OrderList as a WIT
 ------------最後要清空多的TEMP TABLE
 drop table #Trade_To_Pms_PO 
 --Fabric
---PMS多的欄位
---,[NLCode]
---      ,[HSCode]
---      ,[CustomsUnit]
---      ,[PcsWidth]
---      ,[PcsLength]
---      ,[PcsKg]
---      ,[NoDeclare]
---      ,[NLCodeEditName]
---      ,[NLCodeEditDate]
-
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       -- a.SCIRefno	 =b.SCIRefno
       a.BrandID	            = b.BrandID
       , a.Refno	            = b.Refno
       , a.Width	            = b.Width
@@ -715,10 +761,23 @@ SET
       , a.RibItem           = b.RibItem 
 	  , a.Clima = b.Clima
 	  , a.BomTypeCalculateWeight = b.BomTypeCalculateWeight
-	  , a.IsRecycled = b.IsRecycled
+	  , a.IsRecycled = b.IsRecycled      
+    ,a.[Keyword]                 = isnull(b.[Keyword]                , '')
+    ,a.[Textile]                 = isnull(b.[Textile]                , 0)
+    ,a.[BomTypeArticle]          = isnull(b.[BomTypeArticle]         , 0)
+    ,a.[BomTypeCOO]              = isnull(b.[BomTypeCOO]             , 0)
+    ,a.[BomTypeGender]           = isnull(b.[BomTypeGender]          , 0)
+    ,a.[BomTypeCustomerSize]     = isnull(b.[BomTypeCustomerSize]    , 0)
+    ,a.[BomTypeDecLabelSize]     = isnull(b.[BomTypeDecLabelSize]    , 0)
+    ,a.[BomTypeBrandFactoryCode] = isnull(b.[BomTypeBrandFactoryCode], 0)
+    ,a.[BomTypeStyle]            = isnull(b.[BomTypeStyle]           , 0)
+    ,a.[BomTypeStyleLocation]    = isnull(b.[BomTypeStyleLocation]   , 0)
+    ,a.[BomTypeSeason]           = isnull(b.[BomTypeSeason]          , 0)
+    ,a.[BomTypeCareCode]         = isnull(b.[BomTypeCareCode]        , 0)
+    ,a.[CannotOperateStock]      = isnull(b.[CannotOperateStock]     , 0)
 from Production.dbo.Fabric as a 
 inner join Trade_To_Pms.dbo.Fabric as b ON a.SCIRefno=b.SCIRefno
--------------------------- INSERT INTO 抓
+
 INSERT INTO Production.dbo.Fabric(
        SCIRefno
        , BrandID
@@ -755,6 +814,19 @@ INSERT INTO Production.dbo.Fabric(
 	   , Clima
 	   , BomTypeCalculateWeight
 	   , IsRecycled
+        ,[Keyword]
+        ,[Textile]
+        ,[BomTypeArticle]
+        ,[BomTypeCOO]
+        ,[BomTypeGender]
+        ,[BomTypeCustomerSize]
+        ,[BomTypeDecLabelSize]
+        ,[BomTypeBrandFactoryCode]
+        ,[BomTypeStyle]
+        ,[BomTypeStyleLocation]
+        ,[BomTypeSeason]
+        ,[BomTypeCareCode]
+        ,[CannotOperateStock]
 )
 select 
       SCIRefno
@@ -792,6 +864,19 @@ select
 	  , Clima
 	  , BomTypeCalculateWeight
 	  , IsRecycled
+    ,isnull([Keyword]                , '')
+    ,isnull([Textile]                , 0)
+    ,isnull([BomTypeArticle]         , 0)
+    ,isnull([BomTypeCOO]             , 0)
+    ,isnull([BomTypeGender]          , 0)
+    ,isnull([BomTypeCustomerSize]    , 0)
+    ,isnull([BomTypeDecLabelSize]    , 0)
+    ,isnull([BomTypeBrandFactoryCode], 0)
+    ,isnull([BomTypeStyle]           , 0)
+    ,isnull([BomTypeStyleLocation]   , 0)
+    ,isnull([BomTypeSeason]          , 0)
+    ,isnull([BomTypeCareCode]        , 0)
+    ,isnull([CannotOperateStock]     , 0)
 from Trade_To_Pms.dbo.Fabric as b WITH (NOLOCK)
 where not exists(select SCIRefno from Production.dbo.Fabric as a WITH (NOLOCK) where a.SCIRefno = b.SCIRefno)
 

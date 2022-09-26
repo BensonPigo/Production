@@ -673,7 +673,8 @@ a.Seq	= b.Seq
 ,a.TissuePaper	= b.TissuePaper
 ,a.ArticleName	= b.ArticleName
 ,a.Contents		= b.Contents
-,a.BuyReadyDate = b.BuyReadyDate
+,a.CertificateNumber = isnull(b.CertificateNumber, '')
+,a.SecurityCode = isnull(b.SecurityCode, '')
 from Production.dbo.Style_Article as a 
 inner join Trade_To_Pms.dbo.Style_Article as b ON a.StyleUkey	= b.StyleUkey AND a.Article	= b.Article
 -------------------------- INSERT INTO 抓
@@ -689,6 +690,8 @@ StyleUkey
 ,Description
 ,FDUploadDate
 ,BuyReadyDate
+,CertificateNumber
+,SecurityCode
 )
 select 
  b.StyleUkey
@@ -701,6 +704,8 @@ select
 ,b.Description
 ,b.FDUploadDate
 ,b.BuyReadyDate
+,isnull(b.CertificateNumber, '')
+,isnull(b.SecurityCode, '')
 from Trade_To_Pms.dbo.Style_Article as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_Article as a WITH (NOLOCK) where a.StyleUkey	= b.StyleUkey AND a.Article	= b.Article)
 
@@ -1101,6 +1106,18 @@ a.StyleUkey	= b.StyleUkey
 ,a.EditName	= b.EditName
 ,a.EditDate	= b.EditDate
 ,a.FabricPanelCode = b.FabricPanelCode
+,a.BomTypeArticle          = isnull(b.BomTypeArticle          , 0)
+,a.BomTypeCOO              = isnull(b.BomTypeCOO              , 0)
+,a.BomTypeGender           = isnull(b.BomTypeGender           , 0)
+,a.BomTypeCustomerSize     = isnull(b.BomTypeCustomerSize     , 0)
+,a.CustomerSizeRelation    = isnull(b.CustomerSizeRelation    , '')
+,a.BomTypeDecLabelSize     = isnull(b.BomTypeDecLabelSize     , 0)
+,a.DecLabelSizeRelation    = isnull(b.DecLabelSizeRelation    , '')
+,a.BomTypeBrandFactoryCode = isnull(b.BomTypeBrandFactoryCode , 0)
+,a.BomTypeStyle            = isnull(b.BomTypeStyle            , 0)
+,a.BomTypeStyleLocation    = isnull(b.BomTypeStyleLocation    , 0)
+,a.BomTypeSeason           = isnull(b.BomTypeSeason           , 0)
+,a.BomTypeCareCode         = isnull(b.BomTypeCareCode         , 0)
 
 from Production.dbo.Style_BOA as a 
 inner join Trade_To_Pms.dbo.Style_BOA as b ON a.Ukey=b.Ukey
@@ -1130,6 +1147,19 @@ StyleUkey
 ,EditName
 ,EditDate
 ,FabricPanelCode
+,BomTypeArticle
+,BomTypeCOO
+,BomTypeGender
+,BomTypeCustomerSize
+,CustomerSizeRelation
+,BomTypeDecLabelSize
+,DecLabelSizeRelation
+,BomTypeBrandFactoryCode
+,BomTypeStyle
+,BomTypeStyleLocation
+,BomTypeSeason
+,BomTypeCareCode
+
 )
 select 
  b.StyleUkey
@@ -1155,8 +1185,52 @@ select
 ,b.EditName
 ,b.EditDate
 ,b.FabricPanelCode
+,isnull(b.BomTypeArticle          , 0)
+,isnull(b.BomTypeCOO              , 0)
+,isnull(b.BomTypeGender           , 0)
+,isnull(b.BomTypeCustomerSize     , 0)
+,isnull(b.CustomerSizeRelation    , '')
+,isnull(b.BomTypeDecLabelSize     , 0)
+,isnull(b.DecLabelSizeRelation    , '')
+,isnull(b.BomTypeBrandFactoryCode , 0)
+,isnull(b.BomTypeStyle            , 0)
+,isnull(b.BomTypeStyleLocation    , 0)
+,isnull(b.BomTypeSeason           , 0)
+,isnull(b.BomTypeCareCode         , 0)
 from Trade_To_Pms.dbo.Style_BOA as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_BOA as a WITH (NOLOCK) where a.Ukey = b.Ukey)
+
+----Style_BOA_Location
+RAISERROR('imp_Style - Starts',0,0)
+UPDATE a
+SET  
+     [Location] = isnull(b.[Location], '')
+    ,[AddName]  = isnull(b.[AddName] , '')
+    ,[AddDate]  = b.[AddDate]
+    ,[EditName] = isnull(b.[EditName], '')
+    ,[EditDate] = b.[EditDate]
+from Production.dbo.Style_BOA_Location as a 
+inner join Trade_To_Pms.dbo.Style_BOA_Location as b ON a.StyleUkey=b.StyleUkey and a.Style_BOAUkey=b.Style_BOAUkey
+-------------------------- INSERT INTO 抓
+RAISERROR('imp_Style - Starts',0,0)
+INSERT INTO Production.dbo.Style_BOA_Location
+           ([StyleUkey]
+           ,[Style_BOAUkey]
+           ,[Location]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate])
+select
+            isnull([StyleUkey]    , 0)
+           ,isnull([Style_BOAUkey], 0)
+           ,isnull([Location]     , '')
+           ,isnull([AddName]      , '')
+           ,AddDate
+           ,isnull([EditName]     , '')
+           ,[EditDate]
+from Trade_To_Pms.dbo.Style_BOA_Location as b WITH (NOLOCK)
+where not exists(select 1 from Production.dbo.Style_BOA_Location as a WITH (NOLOCK) where a.StyleUkey=b.StyleUkey and a.Style_BOAUkey=b.Style_BOAUkey)
 
 -----------------------[Style_BOA_CustCD]-----------------------
 /*

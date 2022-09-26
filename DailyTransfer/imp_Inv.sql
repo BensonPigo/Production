@@ -148,55 +148,11 @@ select	Ukey
 		where not exists(select 1 from Production.dbo.Inventory  WITH (NOLOCK) where a.Ukey = Ukey)
 
 
-/* ISP20180567 pkey 改回Ukey 
-from (
-	select	[SameNo] = ROW_NUMBER() over (partition by POID,Seq1,Seq2,ProjectID,FactoryID,UnitID,InventoryRefnoId order by POID,Seq1,Seq2,ProjectID,FactoryID,UnitID,InventoryRefnoId)
-			, b.* 
-	from Trade_To_Pms.dbo.Inventory as b WITH (NOLOCK)
-	where	not exists(
-				select	distinct POID
-						, Seq1
-						, Seq2
-						, ProjectID
-						, FactoryID
-						, UnitID
-						, InventoryRefnoId 
-				from Production.dbo.Inventory as a WITH (NOLOCK) 
-				where	a.POID = b.POID 
-						and a.Seq1 = b.Seq1 
-						and a.Seq2 = b.Seq2 
-						and a.FactoryID = iif(B.FactoryID is null,'',B.FactoryID)
-						and a.UnitID = b.UnitID 
-						and a.ProjectID = b.ProjectID 
-						and a.InventoryRefnoId = b.InventoryRefnoId
-			)
-) as a
-where sameno=1*/
-
-/* That code will insert error, because duplicate key will happen.  Edit by willy on 20161227
-from Trade_To_Pms.dbo.Inventory as b
-where not exists(select POID from Production.dbo.Inventory as a where a.POID=b.POID and a.Seq1=b.Seq1 and a.Seq2=b.Seq2 and a.FactoryID=ISNULL(B.FactoryID,'') and a.UnitID=b.UnitID and a.ProjectID=b.ProjectID and a.InventoryRefnoId=b.InventoryRefnoId)
-*/
-
-
---invref
---InventoryRefno
---      ,[BomArticle]
---      ,[BomBuymonth]
---      ,[BomCountry]
---      ,[BomCustCD]
---,[BomFactory]
---      ,[BomStyle]
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
-SET		-- a.ID				= b.ID
+SET
 		a.Refno				= b.Refno
 		, a.Width			= b.Width
-		, a.ColorID			= b.ColorID
-		, a.SizeSpec	    = b.SizeSpec
-		, a.SizeUnit	    = b.SizeUnit
-		, a.BomCustPONo	    = b.BomCustPONo
-		, a.BomZipperInsert	= b.BomZipperInsert
 		, a.Special_Old	    = b.Special_Old
 		, a.Spec_Old	    = b.Spec_Old
 		, a.ProdID_Old	    = b.ProdID_Old
@@ -204,16 +160,11 @@ SET		-- a.ID				= b.ID
 		, a.AddDate			= b.AddDate
 from Production.dbo.InventoryRefno as a 
 inner join Trade_To_Pms.dbo.InventoryRefno as b ON a.id = b.id
--------------------------- INSERT INTO 抓
+
 INSERT INTO Production.dbo.InventoryRefno(
 	ID
 	, Refno
 	, Width
-	, ColorID
-	, SizeSpec
-	, SizeUnit
-	, BomCustPONo
-	, BomZipperInsert
 	, Special_Old
 	, Spec_Old
 	, ProdID_Old
@@ -224,11 +175,6 @@ select
 	ID
 	, Refno
 	, Width
-	, ColorID
-	, SizeSpec
-	, SizeUnit
-	, BomCustPONo
-	, BomZipperInsert
 	, Special_Old
 	, Spec_Old
 	, ProdID_Old
@@ -245,12 +191,15 @@ where not exists(
 --InventoryRefNo_Spec
 update a
 set
-    SpecValue = b.SpecValue
+    SpecValue = isnull(b.SpecValue, '')
 from Production.dbo.InventoryRefNo_Spec as a 
 inner join Trade_To_Pms.dbo.InventoryRefNo_Spec as b ON a.InventoryRefNoID=b.InventoryRefNoID and a.SpecColumnID = b.SpecColumnID
 
 insert into  Production.dbo.InventoryRefNo_Spec(InventoryRefNoID,SpecColumnID,SpecValue)
-select InventoryRefNoID,SpecColumnID,SpecValue
+select
+	 isnull(InventoryRefNoID, 0)
+	,isnull(SpecColumnID, '')
+	,isnull(SpecValue	, '')
 from Trade_To_Pms.dbo.InventoryRefNo_Spec a
 where not exists(select 1 from Production.dbo.InventoryRefNo_Spec b where a.InventoryRefNoID=b.InventoryRefNoID and a.SpecColumnID = b.SpecColumnID)
 

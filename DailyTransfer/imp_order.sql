@@ -1457,7 +1457,7 @@ else
 			delete;
 
 		-------------Order_BOA------------------Bill of Accessory
-
+		
 		Merge Production.dbo.Order_BOA as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_BOA a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.ukey=s.ukey
@@ -1495,7 +1495,20 @@ else
 				t.BomTypeCalculatePCS	= s.BomTypeCalculatePCS,
 				t.SizeItem_PCS			= s.SizeItem_PCS,
 				t.LimitUp				= s.LimitUp,
-				t.LimitDown				= s.LimitDown
+				t.LimitDown				= s.LimitDown,
+                t.BomTypeArticle          = isnull(s.BomTypeArticle         , 0),
+                t.BomTypeCOO              = isnull(s.BomTypeCOO             , 0),
+                t.BomTypeGender           = isnull(s.BomTypeGender          , 0),
+                t.BomTypeCustomerSize     = isnull(s.BomTypeCustomerSize    , 0),
+                t.CustomerSizeRelation    = isnull(s.CustomerSizeRelation   , ''),
+                t.BomTypeDecLabelSize     = isnull(s.BomTypeDecLabelSize    , 0),
+                t.DecLabelSizeRelation    = isnull(s.DecLabelSizeRelation   , ''),
+                t.BomTypeBrandFactoryCode = isnull(s.BomTypeBrandFactoryCode, 0),
+                t.BomTypeStyle            = isnull(s.BomTypeStyle           , 0),
+                t.BomTypeStyleLocation    = isnull(s.BomTypeStyleLocation   , 0),
+                t.BomTypeSeason           = isnull(s.BomTypeSeason          , 0),
+                t.BomTypeCareCode         = isnull(s.BomTypeCareCode        , 0)
+
 		when not matched by target then
 			insert (
 				Id					, Ukey				, Refno					, SCIRefno				, SuppID
@@ -1505,6 +1518,18 @@ else
 				, AddName			, AddDate			, EditName				, EditDate				, SizeItem_Elastic		
 				, BomTypePo			, Keyword			, Seq1					, BomTypeMatching		, BomTypeCalculatePCS
 				, SizeItem_PCS		, LimitUp			, LimitDown
+                ,BomTypeArticle          
+                ,BomTypeCOO              
+                ,BomTypeGender           
+                ,BomTypeCustomerSize     
+                ,CustomerSizeRelation    
+                ,BomTypeDecLabelSize     
+                ,DecLabelSizeRelation    
+                ,BomTypeBrandFactoryCode 
+                ,BomTypeStyle            
+                ,BomTypeStyleLocation    
+                ,BomTypeSeason           
+                ,BomTypeCareCode         
 			) values (
 				s.Id				, s.Ukey			, s.Refno				, s.SCIRefno			, s.SuppID
 				, s.Seq1			, s.ConsPC			, s.BomTypeSize			, s.FabricPanelCode		, s.PatternPanel		
@@ -1513,11 +1538,56 @@ else
 				, s.AddName			, s.AddDate			, s.EditName			, s.EditDate			, s.SizeItem_Elastic	
 				, s.BomTypePo		, s.Keyword			, s.Seq1				, s.BomTypeMatching		, s.BomTypeCalculatePCS
 				, s.SizeItem_PCS	, s.LimitUp			, s.LimitDown
+                , isnull(s.BomTypeArticle         , 0)
+                , isnull(s.BomTypeCOO             , 0)
+                , isnull(s.BomTypeGender          , 0) 
+                , isnull(s.BomTypeCustomerSize    , 0) 
+                , isnull(s.CustomerSizeRelation   , '')
+                , isnull(s.BomTypeDecLabelSize    , 0)
+                , isnull(s.DecLabelSizeRelation   , '')
+                , isnull(s.BomTypeBrandFactoryCode, 0)
+                , isnull(s.BomTypeStyle           , 0) 
+                , isnull(s.BomTypeStyleLocation   , 0) 
+                , isnull(s.BomTypeSeason          , 0) 
+                , isnull(s.BomTypeCareCode        , 0)
+			)
+		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
+			delete;
+
+
+        ---Order_BOA_Location
+		Merge Production.dbo.Order_BOA_Location as t
+		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_Location a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
+		on t.Order_BOAUkey = s.Order_BOAUkey and t.Location = s.Location
+		when matched then 
+			update set
+                t.[ID]       = isnull(s.[ID]      , '')
+               ,t.[AddName]  = isnull(s.[AddName] , '')
+               ,t.[AddDate]  = s.[AddDate]
+               ,t.[EditName] = isnull(s.[EditName], '')
+               ,t.[EditDate] = s.[EditDate]
+
+		when not matched by target then
+			insert (
+                [ID]
+               ,[Order_BOAUkey]
+               ,[Location]
+               ,[AddName]
+               ,[AddDate]
+               ,[EditName]
+               ,[EditDate]    
+			) values (
+                isnull([ID]           , '')
+               ,isnull([Order_BOAUkey], 0)
+               ,isnull([Location]     , '')
+               ,isnull([AddName]      , '')
+               ,[AddDate]
+               ,isnull([EditName]     , '')
+               ,[EditDate] 
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 		
-
 		-----------------Order_BoA_Article----------------
 		Merge Production.dbo.Order_BoA_Article as t
 		Using (
@@ -1561,41 +1631,85 @@ else
 				t.UsageQty			= s.UsageQty,
 				t.UsageUnit			= s.UsageUnit,
 				t.Article			= s.Article,
-				t.ColorId			= s.ColorId,
 				t.SuppColor			= s.SuppColor,
 				t.SizeCode			= s.SizeCode,
-				t.Sizespec			= s.Sizespec,
-				t.SizeUnit			= s.SizeUnit,
 				t.OrderIdList		= s.OrderIdList,
 				t.SysUsageQty		= s.SysUsageQty,
 				t.Remark			= s.Remark,			
-				t.BomZipperInsert	= s.BomZipperInsert,			
-				t.BomCustPONo		= s.BomCustPONo,
 				t.AddName			= s.AddName,
 				t.AddDate			= s.AddDate,
 				t.EditName			= s.EditName,
 				t.EditDate			= s.EditDate,
 				t.Keyword			= s.Keyword,
-				t.Special			= s.Special
+				t.Special			= s.Special,
+				t.Keyword_Original	= isnull(s.Keyword_Original, '')
 		when not matched by target then
 			insert (
 				Id				, UKEY			, Order_BOAUkey		, OrderQty			, Refno
 				, SCIRefno		, Price			, UsageQty			, UsageUnit			, Article
-				, ColorId		, SuppColor		, SizeCode			, Sizespec			, SizeUnit
-				, OrderIdList	, SysUsageQty	, Remark			, BomZipperInsert	, BomCustPONo
+				, SuppColor		, SizeCode
+				, OrderIdList	, SysUsageQty	, Remark
 				, AddName		, AddDate		, EditName			, EditDate			, Keyword
 				, Special
+				, Keyword_Original
 			) values (
 				s.Id			, s.UKEY		, s.Order_BOAUkey	, s.OrderQty		, s.Refno
 				, s.SCIRefno	, s.Price		, s.UsageQty		, s.UsageUnit		, s.Article
-				, s.ColorId		, s.SuppColor	, s.SizeCode		, s.Sizespec		, s.SizeUnit
-				, s.OrderIdList	, s.SysUsageQty	, s.Remark			, s.BomZipperInsert	, s.BomCustPONo
+				, s.SuppColor	, s.SizeCode
+				, s.OrderIdList	, s.SysUsageQty	, s.Remark
 				, s.AddName		, s.AddDate		, s.EditName		, s.EditDate		, s.Keyword
 				, s.Special
+				, isnull(s.Keyword_Original, '')
+			)
+		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
+			delete;
+	    -----Order_BOA_Expend_Spec
+		Merge Production.dbo.Order_BOA_Expend_Spec as t
+		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_Expend_Spec a WITH (NOLOCK) inner join #Torder b on a.id=b.id) as s
+		on t.Order_BOA_ExpendUkey=s.Order_BOA_ExpendUkey and t.SpecColumnID=s.SpecColumnID
+		when matched then 
+			update set
+                t.[Id]        = isnull(s.[Id]       , '')
+               ,t.[SpecValue] = isnull(s.[SpecValue], '')
+		when not matched by target then
+			insert(
+                [Id]
+               ,[Order_BOA_ExpendUkey]
+               ,[SpecColumnID]
+               ,[SpecValue]
+               )
+           values (
+                isnull(s.[Id]                  , '')
+               ,isnull(s.[Order_BOA_ExpendUkey], 0)
+               ,isnull(s.[SpecColumnID]        , '')
+               ,isnull(s.[SpecValue]           , '')
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 
+		--Order_BOA_Expend_Keyword
+		Merge Production.dbo.Order_BOA_Expend_Keyword as t
+		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_Expend_Keyword a WITH (NOLOCK) inner join #Torder b on a.id=b.id) as s
+		on t.Order_BOA_ExpendUkey=s.Order_BOA_ExpendUkey and t.KeywordField=s.KeywordField
+		when matched then 
+			update set
+                t.[Id]        = isnull(s.[Id]       , '')
+               ,t.KeywordValue = isnull(s.KeywordValue, '')
+		when not matched by target then
+			insert(
+                [Id]
+               ,[Order_BOA_ExpendUkey]
+               ,[KeywordField]
+               ,[KeywordValue]
+               )
+           values (
+                isnull([Id]                  , '')
+               ,isnull([Order_BOA_ExpendUkey], 0)
+               ,isnull([KeywordField]        , '')
+               ,isnull([KeywordValue]        , '')
+			)
+		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
+			delete;
 		---------------Order_BOA_Matching
 		Merge Production.dbo.Order_BOA_Matching as t
 		Using (
@@ -1952,12 +2066,14 @@ else
 		when matched then 
 			update set 
 				t.Seq			= s.Seq,
-				t.TissuePaper	= s.TissuePaper
+				t.TissuePaper	= s.TissuePaper,
+				t.CertificateNumber	= isnull(s.CertificateNumber, ''),
+				t.SecurityCode	= isnull(s.SecurityCode, '')
 		when not matched by target then
 			insert (
-				id		, Seq	, Article	, TissuePaper
+				id		, Seq	, Article	, TissuePaper, CertificateNumber, SecurityCode
 			) values (
-				s.id	, s.Seq	, s.Article	, s.TissuePaper
+				s.id	, s.Seq	, s.Article	, s.TissuePaper, isnull(s.CertificateNumber, ''), isnull(s.SecurityCode, '')
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
 			delete;
