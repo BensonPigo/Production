@@ -841,7 +841,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             this.label25.Text = this.CurrentMaintain["status"].ToString();
             this.dateDeliveryDate.Value = null;
             this.txtBuyer.Text = string.Empty;
-
+            this.txtBatchRemark.Text = string.Empty;
             #endregion
 
             #region Batch Import, Special record button
@@ -1930,6 +1930,11 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
 
         private void BtnBatchUpdateDellivery_Click(object sender, EventArgs e)
         {
+            if (this.detailgrid == null)
+            {
+                return;
+            }
+
             // int deleteIndex = 0;
             foreach (DataGridViewRow dr in this.detailgrid.Rows)
             {
@@ -1954,7 +1959,14 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
                             }
                         }
                     }
+
+                    if (!MyUtility.Check.Empty(this.txtBatchRemark.Text))
+                    {
+                        row["Remark"] = this.txtBatchRemark.Text;
+                    }
                 }
+
+                row.EndEdit();
             }
         }
 
