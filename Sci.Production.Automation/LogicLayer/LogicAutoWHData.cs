@@ -176,7 +176,7 @@ and exists(
     ,sd.PoUnit
     ,sd.ShipQty
     ,sd.Weight
-    ,[Barcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'F', f.Ukey, 0, {fromNewBarcodeBit},sd.Qty)
+    ,[Barcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'F', f.Ukey, 0, {fromNewBarcodeBit},0)
     ,[IsInspection] = convert(bit, 0)
     ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, psd.ColorID, Fabric.MtlTypeID, psd.SuppColor)
 ";
@@ -193,7 +193,7 @@ and exists(
     ,psd.PoUnit
     ,ShipQty = sd.Qty
     ,sd.Weight
-    ,[Barcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'F', f.Ukey, 0, {fromNewBarcodeBit},sd.Qty)
+    ,[Barcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'F', f.Ukey, 0, {fromNewBarcodeBit},0)
     ,[IsInspection] = convert(bit, 0)
     ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, psd.ColorID, Fabric.MtlTypeID, psd.SuppColor)
 ";
@@ -241,7 +241,7 @@ and exists(
                         columns += $@"
     ,sd.Qty
     ,StockUnit = dbo.GetStockUnitBySpSeq (sd.POID, sd.seq1, sd.seq2)
-    ,[Barcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'F', f.Ukey, 0, {fromNewBarcodeBit},sd.Qty)
+    ,[Barcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'F', f.Ukey, 0, {fromNewBarcodeBit},0)
     ,[Description] = dbo.getMtlDesc(psd.ID, psd.Seq1, psd.Seq2, 2, 0)
     ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, psd.ColorID, Fabric.MtlTypeID, psd.SuppColor)
 ";
@@ -251,7 +251,7 @@ and exists(
                     case WHTableName.ReturnReceipt_Detail:
                         columns += $@"
     ,sd.Qty
-    ,[Barcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'F', f.Ukey, 0, {fromNewBarcodeBit},sd.Qty)
+    ,[Barcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'F', f.Ukey, 0, {fromNewBarcodeBit},0)
     ,[Description] = dbo.getMtlDesc(psd.ID, psd.Seq1, psd.Seq2, 2, 0)
 ";
                         break;
@@ -291,8 +291,8 @@ outer apply (
                         columns += $@"
     ,[Type] = '{formName}'
     ,sd.Qty
-    ,[Barcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'F', f.Ukey, 0, {fromNewBarcodeBit},sd.Qty)
-    ,[NewBarcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'T', f.Ukey, 0, {fromNewBarcodeBit},sd.Qty)
+    ,[Barcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'F', f.Ukey, 0, {fromNewBarcodeBit},0)
+    ,[NewBarcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'T', f.Ukey, 0, {fromNewBarcodeBit},0)
     ,[Description] = dbo.getMtlDesc(psd.ID, psd.Seq1, psd.Seq2, 2, 0)
     ,ShadeboneTone.Tone
 ";
@@ -306,7 +306,8 @@ outer apply (
     ,sd.QtyAfter
     ,[Barcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'F', f.Ukey,
 	    isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) {(action == EnumStatus.Confirm ? "-" : "+")} (isnull(sd.QtyAfter, 0) - isnull(sd.QtyBefore, 0))-- 帶入調整前的balanceQty
-        , {fromNewBarcodeBit},sd.Qty)
+        , {fromNewBarcodeBit}
+        ,0)
 ";
                         break;
 
