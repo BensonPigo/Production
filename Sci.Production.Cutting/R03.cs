@@ -387,6 +387,7 @@ select
 [M],[Factory],[Fabrication],[FinalETA],[PPIC Close],WKETA,[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
 ,[Style#],[FabRef#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination],[Exclude In WIP]
 ,[Color Way],[Color],Artwork.Artwork,[Layers],[LackingLayers],[Qty],[Ratio],[OrderQty],[ExcessQty],[Consumption],[ActConsOutput]
+,[BalanceCons] = [Consumption] - [ActConsOutput]
 ,[Spreading Time (mins)],[Cutting Time (mins)]
 ,t.Markername,t.MarkerNo,w.Width
 ,[Marker Length],ActCuttingPerimeter,ActCuttingPerimeterDecimal=0.0,SCIDelivery,BuyerDelivery
