@@ -1437,7 +1437,7 @@ select  g.InvNo,
         o.FactoryID
 from #tmp g
 inner join PackingList p with (nolock) on p.INVNo = g.InvNo and p.ID = g.PackingListID
-inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty = 1
+inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty > 0
 inner join Orders o with (nolock) on o.ID = pd.OrderID
 inner join LocalItem l with (nolock) on l.Refno = pd.Refno
 group by    g.InvNo,
@@ -1501,7 +1501,7 @@ select  [InvNo] = g.ID,
 from    ShippingAP s WITH (NOLOCK)
 inner join GMTBooking g WITH (NOLOCK) on  exists (select 1 from ShareExpense se WITH (NOLOCK)  where s.id = se.ShippingAPID and g.ID = se.InvNo and se.FtyWK = 0 and se.Junk = 0)
 inner join PackingList p with (nolock) on p.INVNo = g.ID and p.Type != 'L'
-inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty = 1
+inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty > 0
 inner join Orders o with (nolock) on o.ID = pd.OrderID
 inner join LocalItem l with (nolock) on l.Refno = pd.Refno
 where   s.id = '{shippingAPID}' 
