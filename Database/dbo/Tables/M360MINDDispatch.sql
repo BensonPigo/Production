@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[M360MINDDispatch] (
-    [Ukey]                BIGINT       NOT NULL,
+    [Ukey]                BIGINT       NOT NULL IDENTITY,
     [RackLocationID]      VARCHAR (20) CONSTRAINT [DF_M360MINDDispatch_RackLocationID] DEFAULT ('') NOT NULL,
     [FactoryID]           VARCHAR (8)  CONSTRAINT [DF_M360MINDDispatch_FactoryID] DEFAULT ('') NOT NULL,
     [RegisterTime]        DATETIME     NULL,
