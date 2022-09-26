@@ -94,7 +94,7 @@ and o.Category != 'A'
             DBProxy.Current.DefaultTimeout = 1200;
             try
             {
-                if (!SQL.Select(string.Empty, strSQLCmd.ToString(), out data))
+                if (!DBProxy.Current.Select(string.Empty, strSQLCmd.ToString(), out data))
                 {
                     this.ShowErr(strSQLCmd.ToString());
                     return;

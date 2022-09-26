@@ -223,7 +223,6 @@ namespace Sci.Production.Cutting
             if (inserts_marker_ML.Count > 0)
             {
                 using (var transactionScope = new TransactionScope())
-                using (var helper = new AutoUpdator())
                 {
                     foreach (DataRow currentRow_marker_ml in inserts_marker_ML)
                     {

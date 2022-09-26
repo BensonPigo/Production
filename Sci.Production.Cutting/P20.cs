@@ -82,8 +82,10 @@ Select a.* , e.FabricCombo, e.FabricPanelCode,
 	, AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0)
     , LackingLayers = e.Layer -isnull(acc.AccuCuttingLayer,0)- a.layer
     , e.ConsPC,SRQ.SizeRatioQty
+    , o.StyleID
 From cuttingoutput_Detail a WITH (NOLOCK)
 left join WorkOrder e WITH (NOLOCK) on a.WorkOrderUkey = e.Ukey
+left join Orders o WITH (NOLOCK) on o.ID = e.ID 
 outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa where aa.WorkOrderUkey = e.Ukey and id <> '{0}')acc
 outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b where b.WorkOrderUkey = e.Ukey)SRQ
 where a.id = '{0}' 
@@ -180,8 +182,10 @@ Select
 	,LackingLayers = 0
 	,a.ConsPC
 	,SRQ.SizeRatioQty
+    ,o.StyleID
 	,a.Layer
 from WorkOrder a WITH (NOLOCK)
+left join Orders o WITH (NOLOCK) on o.ID = a.ID 
 outer apply(select AccuCuttingLayer = sum(b.Layer) from cuttingoutput_Detail b where b.WorkOrderUkey = a.Ukey and id <> '{this.CurrentMaintain["ID"]}')acc
 outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b where b.WorkOrderUkey = a.Ukey)SRQ
 outer apply(
@@ -213,6 +217,7 @@ and a.MDivisionId = '{Env.User.Keyword}'
                 }
 
                 dr["Orderid"] = string.Empty;
+                dr["StyleID"] = string.Empty;
                 dr["Cuttingid"] = string.Empty;
                 dr["Cutref"] = string.Empty;
                 dr["FabricCombo"] = string.Empty;
@@ -317,6 +322,7 @@ and a.MDivisionId = '{Env.User.Keyword}'
                     }
 
                     dr["Orderid"] = seldr["Orderid"];
+                    dr["StyleID"] = seldr["StyleID"];
                     dr["Cuttingid"] = seldr["ID"];
                     dr["Cutref"] = seldr["cutref"];
                     dr["FabricCombo"] = seldr["FabricCombo"];
@@ -375,6 +381,7 @@ and a.MDivisionId = '{Env.User.Keyword}'
             .Text("Cutref", header: "Cut Ref#", width: Widths.AnsiChars(6), settings: cutref)
             .Text("Cuttingid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("OrderID", header: "Sub-SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("StyleID", header: "Style#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("FabricCombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
             .Text("FabricPanelCode", header: "Fab_Panel Code", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(10), iseditingreadonly: true)

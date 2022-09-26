@@ -16,10 +16,12 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P24 : Win.Tems.QueryForm
     {
         private DataTable selectDataTable;
 
+        /// <inheritdoc/>
         public P24(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -356,7 +358,7 @@ order by p2.ID,p2.CTNStartNo
                             }
                             else
                             {
-                               string sqlCmd = $@"
+                                string sqlCmd = $@"
 select distinct
     [selected] = 1
     ,p2.ID
@@ -398,7 +400,7 @@ and (po.Status ='New' or po.Status is null)
 and p2.CustCTN='{sl[1]}'
 order by p2.ID,p2.CTNStartNo
 ";
-                               if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                                if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
                                     dr["selected"] = 1;
                                     dr["ID"] = seekData["ID"].ToString().Trim();
@@ -535,13 +537,6 @@ set TransferCFADate = null
 , ScanName = ''
 , DRYReceiveDate = NULL
 , DRYTransferDate = NULL
-, HaulingDate = null
-, PackingAuditDate = null
-, PackingAuditStatus = ''
-, MDScanDate = null
-, MDFailQty = 0
-, MDScanName = ''
-, MDStatus = ''
 where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'
 and DisposeFromClog= 0
 ");

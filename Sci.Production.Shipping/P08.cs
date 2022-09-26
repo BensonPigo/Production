@@ -1,19 +1,20 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Newtonsoft.Json;
+using Sci.Data;
+using Sci.Production.CallPmsAPI;
+using Sci.Production.PublicPrg;
+using Sci.Win;
+using Sci.Win.Tools;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
-using Sci.Production.PublicPrg;
-using Sci.Win;
-using System.Reflection;
-using System.Linq;
 using System.Data.SqlClient;
-using Sci.Production.CallPmsAPI;
-using Newtonsoft.Json;
+using System.Drawing;
+using System.Linq;
+using System.Reflection;
+using System.Windows.Forms;
 using static Sci.Production.CallPmsAPI.PackingA2BWebAPI_Model;
 
 namespace Sci.Production.Shipping
@@ -1157,6 +1158,36 @@ using (
                 ,[FactoryID] = ''
         from GMTBooking g WITH (NOLOCK) 
         where BLNo='{drCurrentMaintain["BLNO"]}' or BL2No='{drCurrentMaintain["BLNO"]}'
+
+        union
+        -- ISP20221136 add Shipping.P16 data
+        select [ShippingAPID] = '{drCurrentMaintain["ID"]}'
+                ,[BLNo] = te.BLNo
+                ,[WKNo] = te.id
+                ,[InvNo] = ''
+                ,[Type] = '{drCurrentMaintain["Type"]}'
+                ,[GW] = te.WeightKg 
+                ,[CBM] = t2.CBM 
+                ,[CurrencyID] = '{drCurrentMaintain["CurrencyID"]}'
+                ,[ShipModeID] = te.ShipModeID
+                ,[FtyWK] = 1
+                ,[AccountID] = AccountID.val
+                ,[Junk] = 0
+                ,[FactoryID] = ''
+        from TransferExport te WITH (NOLOCK) 
+        outer apply(
+	        select WeightKg = sum(s.WeightKg) , Cbm = sum(s.CBM)
+	        from TransferExport_Detail s
+	        where s.ID = te.ID
+        )t2
+        outer apply (
+	        select top 1 [val] = sd.AccountID
+            from ShippingAP_Detail sd WITH(NOLOCK)
+	        where sd.ID = '{drCurrentMaintain["ID"]}' and sd.AccountID != ''
+	        and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+		        or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)
+        ) AccountID
+        where   BLNo = '{drCurrentMaintain["BLNO"]}'
     ) a where AccountID is not null
 ) as s 
 on	t.ShippingAPID = s.ShippingAPID 
@@ -1501,6 +1532,41 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                     return;
                 }
 
+                string apemail = MyUtility.GetValue.Lookup($"select Email from Pass1 with(nolock) where id = '{this.CurrentMaintain["Handle"]}'");
+                sqlCmd = $@"
+select distinct
+    e.id,
+    subjuct = concat('IP for', e.ID, ' ', e.Consignee, ' ', e.ShipModeID, ' B/L#', e.Blno),
+    HandleEmail = (select Email from TPEPass1 with(nolock) where ID = e.Handle),
+    ShipPlanHandleEmail = (select Email from TPEPass1 with(nolock) where ID = ed.ShipPlanHandle)
+from Export e with(nolock)
+inner join ShareExpense se with(nolock) on se.WKNo = e.ID
+inner join Export_Detail ed with(nolock) on ed.ID = e.ID
+where e.Payer='M'
+and se.ShippingAPID = '{this.CurrentMaintain["ID"]}'
+";
+                DBProxy.Current.Select(null, sqlCmd, out DataTable emailDt);
+                if (emailDt.Rows.Count > 0)
+                {
+                    string description = @"Hi,
+We paid freight /clearance fee for supplier, pls issue SD (Supplier debit note) to charge it.
+Thank you.";
+
+                    // by exportID 寄不同封信件
+                    foreach (string exportID in emailDt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["ID"])).Distinct().ToList())
+                    {
+                        DataRow[] drs = emailDt.Select($"ID = '{exportID}'");
+                        string subject = MyUtility.Convert.GetString(drs[0]["subjuct"]);
+                        List<string> maillist = new List<string>() { apemail };
+                        drs.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["HandleEmail"])).Distinct().ToList().ForEach(em => maillist.Add(em));
+                        drs.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["ShipPlanHandleEmail"])).Distinct().ToList().ForEach(em => maillist.Add(em));
+
+                        string mailto = maillist.Distinct().JoinToString(";");
+                        var email = new MailTo(Env.Cfg.MailFrom, mailto, string.Empty, subject, string.Empty, description, true, true);
+                        email.ShowDialog(this);
+                    }
+                }
+
                 this.RenewData();
                 this.OnDetailEntered();
             }
@@ -1700,6 +1766,13 @@ please go to Trade/Garment Export/P04. Garment Invoice Data Iaintain to modify i
             [Field] = '[B/L(AWB) No.]',
             [Descriptions] = 'If the [B/L (AWB) No.] in FTY WK# is entered incorrectly,
 pleasse go to PMS/Shipping/P04. Raw Material Shipment Data Maintain to modify it.'
+    union all
+
+    select  [Code]='P16. ',
+            [Manual] = 'P16. Transfer Material WK',
+            [Abbr.] ='Transfer WK#',
+            [Field] = 'B/L No.',
+            [Descriptions] = 'If the [B/L No.] in Transfer WK# is entered incorrectly, please contact TPE Shipping to modify it.'
 end         
 ";
                 DataTable resultBLNoCheck;

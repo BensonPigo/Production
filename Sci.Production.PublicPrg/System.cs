@@ -4,6 +4,7 @@ using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -17,6 +18,29 @@ namespace Sci.Production.PublicPrg
     /// </summary>
     public static partial class Prgs
     {
+
+        private static SqlConnection _queryConn;
+        public static string QueryConnectionName;
+        /// <summary>
+        /// 提供常駐的Connection, 並會判斷連線狀態是否關閉做重開
+        /// </summary>
+        public static SqlConnection queryConn
+        {
+            get
+            {
+                if (_queryConn == null || ConnectionState.Open != _queryConn.State)
+                {
+                    DBProxy.Current.OpenConnection(QueryConnectionName, out _queryConn);
+                }
+
+                return _queryConn;
+            }
+            set
+            {
+                _queryConn = value;
+            }
+        }
+
         /// <inheritdoc/>
         public static byte[] ImageToByteArray(System.Drawing.Image image)
         {
@@ -126,6 +150,38 @@ namespace Sci.Production.PublicPrg
         public static bool IsNullOrWhiteSpace(this string source)
         {
             return string.IsNullOrWhiteSpace(source);
+        }
+
+        /// <summary>
+        /// SelectSet
+        /// </summary>
+        /// <param name="connname">connname</param>
+        /// <param name="sqlCmd">sqlCmd</param>
+        /// <param name="set">set</param>
+        /// <param name="parameters">parameters</param>
+        /// <returns>DualResult</returns>
+        public static DualResult SelectSet(string connname, string sqlCmd, out DataSet set, IList<SqlParameter> parameters = null)
+        {
+            SqlConnection conn = null;
+            DualResult result;
+            set = new DataSet();
+            try
+            {
+                result = DBProxy.Current.OpenConnection(connname, out conn);
+                if (!result)
+                {
+                    return result;
+                }
+
+                return DBProxy.Current.SelectSetByConn(conn, sqlCmd, parameters, out set);
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    conn.Dispose();
+                }
+            }
         }
 
         private static DataTable dtPass1 = null;

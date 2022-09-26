@@ -557,7 +557,11 @@ select
 	o.Dest,
 	o.OrderTypeID,
 	o.ProgramID,
-	o.CdCodeID,
+	[ProductType] = (select 
+					[ProductType] = Reason.Name
+					from Style s WITH (NOLOCK) 
+					left join Reason WITH(NOLOCK) on ReasonTypeID= 'Style_Apparel_Type' and Reason.ID = s.ApparelType
+					where s.Ukey = o.StyleUkey),
 	s.CDCodeNew,
     o.FtyGroup,
     [PulloutComplete] = iif(o.PulloutComplete = 1, 'OK', ''),
