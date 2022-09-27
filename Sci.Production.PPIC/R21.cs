@@ -277,8 +277,8 @@ select	pld.KPICode,
 		[MDFailQty] = MDScanQty.MDFailQty,
 		[Packing Audit Scan Time]  = AuditScanTime.value,--ISP20221189
 		[Packing Audit Fail Qty] = isnull(AuditFailQty.value,0),--ISP20221189
-		[2nd MD Scan Time] = MDScanTime.value,--ISP20221189
-		[2nd MD Fail Qty] = isnull(MDFailQty.value,0),--ISP20221189
+		[M360 MD Scan Time] = MDScanTime.value,--ISP20221189
+		[M360 MD Fail Qty] = isnull(MDFailQty.value,0),--ISP20221189
 		[TransferToPackingErrorTime] = PackErrTransfer.AddDate,
 		[ConfirmPackingErrorReviseTime] = PackErrCFM.AddDate,
 		pld.ScanEditDate,
