@@ -222,7 +222,8 @@ select  f.KPICode,
 		pld.ClogLocationId,
 		pld.DisposeDate,
 		[PulloutComplete] = iif(o.PulloutComplete = 1, 'Y', 'N'),
-		p.PulloutDate
+		p.PulloutDate,
+		pld.SCICtnNo
 into #tmp
 from  Orders o with (nolock)
 inner join Order_QtyShip oqs with (nolock) on oqs.Id = o.ID
@@ -252,7 +253,8 @@ group by	f.KPICode,
 			pld.ClogLocationId,
 			pld.DisposeDate,
 			o.PulloutComplete,
-			p.PulloutDate
+			p.PulloutDate,
+			pld.SCICtnNo
 
 
 select	pld.KPICode,
@@ -268,10 +270,15 @@ select	pld.KPICode,
 		pld.ShipQty,
 		pld.Status,
 		[HaulingScanTime] = Hauling.AddDate,
+		[QtyPerCTN] = isnull(QtyPerCTN.value,0),--ISP20221189
 		[DryRoomReceiveTime] = DRYReceive.AddDate,
 		[DryRoomTransferTime] = DRYTransfer.AddDate,
 		[MDScanTime] = MDScan.AddDate,
 		[MDFailQty] = MDScanQty.MDFailQty,
+		[Packing Audit Scan Time]  = AuditScanTime.value,--ISP20221189
+		[Packing Audit Fail Qty] = isnull(AuditFailQty.value,0),--ISP20221189
+		[2nd MD Scan Time] = MDScanTime.value,--ISP20221189
+		[2nd MD Fail Qty] = isnull(MDFailQty.value,0),--ISP20221189
 		[TransferToPackingErrorTime] = PackErrTransfer.AddDate,
 		[ConfirmPackingErrorReviseTime] = PackErrCFM.AddDate,
 		pld.ScanEditDate,
@@ -289,6 +296,38 @@ select	pld.KPICode,
 		pld.PulloutComplete,
 		pld.PulloutDate
 from #tmp pld
+outer apply(
+	select value = sum(QtyPerCTN)
+	from PackingList_Detail pd with(nolock)
+	where pd.SCICtnNo = pld.SCICtnNo
+	and pd.ID = pld.ID
+)QtyPerCTN
+outer apply(
+	select value = FORMAT(max(t.AddDate),'yyyy/MM/dd HH:mm:ss')
+	from CTNPackingAudit t with(nolock)
+	where t.SCICtnNo = pld.SCICtnNo
+	and t.PackingListID = pld.ID
+)AuditScanTime
+outer apply(
+	select value = sum(t.Qty) 
+	from CTNPackingAudit t with(nolock)
+	where t.SCICtnNo = pld.SCICtnNo
+	and t.PackingListID = pld.ID
+)AuditFailQty
+outer apply(
+	select value = FORMAT(max(md.AddDate),'yyyy/MM/dd HH:mm:ss')
+	from MDScan md 
+	where md.DataRemark = 'Create from M360'
+	and md.PackingListID = pld.ID
+	and md.SCICtnNo = pld.SCICtnNo
+)MDScanTime
+outer apply(
+	select value = sum(md.MDFailQty)
+	from MDScan md 
+	where md.DataRemark = 'Create from M360'
+	and md.PackingListID = pld.ID
+	and md.SCICtnNo = pld.SCICtnNo
+)MDFailQty
 outer apply(select [AddDate] = max(AddDate) 
 			from CTNHauling ch with (nolock) 
 			where	ch.PackingListID = pld.ID and 
