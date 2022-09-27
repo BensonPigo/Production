@@ -2375,7 +2375,9 @@ select  pd.ID
 		, pd.CustCTN
         , o.StyleID
         , o.BrandFTYCode
+        , p.Dest
 from PackingList_Detail pd WITH (NOLOCK) 
+inner join PackingList p with (nolock) on p.ID = pd.ID
 left join orders o with(nolock) on o.id = pd.OrderID
 outer apply (
 	select value = count (1)
