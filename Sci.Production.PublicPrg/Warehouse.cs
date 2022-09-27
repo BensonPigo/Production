@@ -3761,12 +3761,13 @@ inner join #tmp s on s.POID = sd.PoId
             string psd_FtyDt = GetWHjoinPSD_Fty(detailTableName);
 
             // Issue 部分程式第 2 層是 Issue_Summary,第3層才是 Issue_Detail
-            string ukeys;
-            if (dtDetail.Columns.Contains("Issue_DetailUkey"))
+            string ukeys = "0";
+            if (dtDetail.Columns.Contains("Issue_DetailUkey") && dtDetail.Rows.Count > 0)
             {
                 ukeys = dtDetail.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["Issue_DetailUkey"])).ToList().JoinToString(",");
             }
-            else
+
+            if (dtDetail.Columns.Contains("Ukey") && dtDetail.Rows.Count > 0)
             {
                 ukeys = dtDetail.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["Ukey"])).ToList().JoinToString(",");
             }

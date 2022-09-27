@@ -343,7 +343,9 @@ and ID = '{Sci.Env.User.UserID}'"))
             }
 
             // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
-            DualResult result = Prgs.GetFtyInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtOriFtyInventory);
+            DataTable detailDt = (DataTable)this.detailgridbs.DataSource;
+            DataTable dtQty = detailDt.Select("Qty > 0").TryCopyToDataTable(detailDt);
+            DualResult result = Prgs.GetFtyInventoryData(dtQty, this.Name, out DataTable dtOriFtyInventory);
             string ids = string.Empty;
 
             // 檢查 Barcode不可為空
@@ -570,8 +572,6 @@ left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID a
                 dtTransferExportDetail = this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["TransferExportID"])).CopyToDataTable();
             }
 
-            DataTable detailDt = (DataTable)this.detailgridbs.DataSource;
-            DataTable dtQty = detailDt.Select("Qty > 0").TryCopyToDataTable(detailDt);
             Exception errMsg = null;
             TransactionScope transactionscope = new TransactionScope();
             using (transactionscope)
