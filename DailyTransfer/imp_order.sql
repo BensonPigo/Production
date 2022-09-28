@@ -487,7 +487,13 @@ else
 				select id from #tmpOrders as t 
 				where not exists(select 1 from #TOrder as s where t.id=s.ID)
 			)
-			and exists (select 1 from Production.dbo.PO_Supp_Detail p where a.ID = p.ID and p.ShipQty  > 0)
+			and (exists (select 1 
+						from Production.dbo.PO_Supp_Detail p
+						left join MDivisionPoDetail c on p.id = c.poid and p.SEQ1=c.Seq1 and p.SEQ2=c.Seq2
+						where a.ID = p.ID and (p.ShipQty  > 0 or c.InQty > 0))
+				 or
+				 exists (select 1 from Production.dbo.Invtrans i where i.InventoryPOID = a.ID and i.Type = '1')						
+				)
 		) as s
 		on t.id = s.id
 		when matched then 
