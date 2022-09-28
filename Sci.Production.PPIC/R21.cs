@@ -275,10 +275,10 @@ select	pld.KPICode,
 		[DryRoomTransferTime] = DRYTransfer.AddDate,
 		[MDScanTime] = MDScan.AddDate,
 		[MDFailQty] = MDScanQty.MDFailQty,
-		[Packing Audit Scan Time]  = AuditScanTime.value,--ISP20221189
-		[Packing Audit Fail Qty] = isnull(AuditFailQty.value,0),--ISP20221189
-		[M360 MD Scan Time] = MDScanTime.value,--ISP20221189
-		[M360 MD Fail Qty] = isnull(MDFailQty.value,0),--ISP20221189
+		[Packing Audit Scan Time]  = AuditScanTime.ScanTime,--ISP20221189
+		[Packing Audit Fail Qty] = isnull(AuditScanTime.AuditFailQty,0),--ISP20221189
+		[M360 MD Scan Time] = MDScanTime.ScanTime,--ISP20221189
+		[M360 MD Fail Qty] = isnull(MDScanTime.MDFailQty,0),--ISP20221189
 		[TransferToPackingErrorTime] = PackErrTransfer.AddDate,
 		[ConfirmPackingErrorReviseTime] = PackErrCFM.AddDate,
 		pld.ScanEditDate,
@@ -303,31 +303,28 @@ outer apply(
 	and pd.ID = pld.ID
 )QtyPerCTN
 outer apply(
-	select value = FORMAT(max(t.AddDate),'yyyy/MM/dd HH:mm:ss')
+	select ScanTime = FORMAT(t.AddDate,'yyyy/MM/dd HH:mm:ss'), AuditFailQty = t.Qty
 	from CTNPackingAudit t with(nolock)
 	where t.SCICtnNo = pld.SCICtnNo
 	and t.PackingListID = pld.ID
+	and t.AddDate = (
+		select max(AddDate)
+		from CTNPackingAudit 
+		where PackingListID = pld.ID and OrderID=pld.SCICtnNo
+	)
 )AuditScanTime
 outer apply(
-	select value = sum(t.Qty) 
-	from CTNPackingAudit t with(nolock)
-	where t.SCICtnNo = pld.SCICtnNo
-	and t.PackingListID = pld.ID
-)AuditFailQty
-outer apply(
-	select value = FORMAT(max(md.AddDate),'yyyy/MM/dd HH:mm:ss')
-	from MDScan md 
-	where md.DataRemark = 'Create from M360'
-	and md.PackingListID = pld.ID
-	and md.SCICtnNo = pld.SCICtnNo
+	select ScanTime = FORMAT(md.AddDate,'yyyy/MM/dd HH:mm:ss'), md.MDFailQty
+	from MDScan md
+	where DataRemark = 'Create from M360' 
+	and md.PackingListID = pld.ID and md.SCICtnNo= pld.SCICtnNo
+	and AddDate = (
+		select max(AddDate)
+		from MDScan 
+		where DataRemark = 'Create from M360' 
+		and PackingListID=pld.ID and OrderID=pld.SCICtnNo
+	)
 )MDScanTime
-outer apply(
-	select value = sum(md.MDFailQty)
-	from MDScan md 
-	where md.DataRemark = 'Create from M360'
-	and md.PackingListID = pld.ID
-	and md.SCICtnNo = pld.SCICtnNo
-)MDFailQty
 outer apply(select [AddDate] = max(AddDate) 
 			from CTNHauling ch with (nolock) 
 			where	ch.PackingListID = pld.ID and 
