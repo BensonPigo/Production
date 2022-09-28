@@ -303,7 +303,7 @@ outer apply(
 	and pd.ID = pld.ID
 )QtyPerCTN
 outer apply(
-	select ScanTime = FORMAT(t.AddDate,'yyyy/MM/dd HH:mm:ss'), AuditFailQty = t.Qty
+	select ScanTime = t.AddDate, AuditFailQty = t.Qty
 	from CTNPackingAudit t with(nolock)
 	where t.SCICtnNo = pld.SCICtnNo
 	and t.PackingListID = pld.ID
@@ -314,7 +314,7 @@ outer apply(
 	)
 )AuditScanTime
 outer apply(
-	select ScanTime = FORMAT(md.AddDate,'yyyy/MM/dd HH:mm:ss'), md.MDFailQty
+	select ScanTime = md.AddDate, md.MDFailQty
 	from MDScan md
 	where DataRemark = 'Create from M360' 
 	and md.PackingListID = pld.ID and md.SCICtnNo= pld.SCICtnNo
