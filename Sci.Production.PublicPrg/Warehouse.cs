@@ -1925,17 +1925,11 @@ where    psd.ID = '{material["poid"]}'
 
             StringBuilder sqlupd2 = new StringBuilder();
             string sqlcmd = string.Empty;
-            string ids = string.Empty;
+            string checkmsg = string.Empty;
             DataTable datacheck;
 
             // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
             DualResult result = Prgs.GetFtyInventoryData(dtDetail, "P22", out DataTable dtOriFtyInventory);
-
-            // 檢查 Barcode不可為空
-            if (!Prgs.CheckBarCode(dtOriFtyInventory, "P22"))
-            {
-                return false;
-            }
 
             #region 檢查物料Location 是否存在WMS
             if (!PublicPrg.Prgs.Chk_WMS_Location(dr["ID"].ToString(), "P22"))
@@ -1970,10 +1964,10 @@ and d.Id = '{0}'", dr["id"]);
                     {
                         foreach (DataRow tmp in datacheck.Rows)
                         {
-                            ids += $"SP#: {tmp["frompoid"]} Seq#: {tmp["fromseq1"]}-{tmp["fromseq2"]} Roll#: {tmp["fromroll"]} Dyelot: {tmp["Dyelot"]} is locked!!" + Environment.NewLine;
+                            checkmsg += $"SP#: {tmp["frompoid"]} Seq#: {tmp["fromseq1"]}-{tmp["fromseq2"]} Roll#: {tmp["fromroll"]} Dyelot: {tmp["Dyelot"]} is locked!!" + Environment.NewLine;
                         }
 
-                        MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
+                        MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + checkmsg, "Warning");
                         return false;
                     }
                 }
@@ -2024,66 +2018,36 @@ and d.Id = '{0}'", dr["id"]);
             #endregion
             #region -- 檢查負數庫存 --
 
-            sqlcmd = string.Format(
-                @"
-Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
-    ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty
-    ,f.Dyelot
-from dbo.SubTransfer_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.FromPOID = f.POID  AND D.FromStockType = F.StockType
-and d.FromSeq1 = f.Seq1 and d.FromSeq2 = f.seq2 and d.FromRoll = f.Roll and d.FromDyelot = f.Dyelot
-where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) - d.Qty < 0) and d.Qty>0  and d.Id = '{0}'", dr["id"]);
-            if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            // 判斷轉出方
+            foreach (DataRow tmp in dtOriFtyInventory.Select("Qty > 0 and BalanceQty - Qty < 0"))
             {
-                MyUtility.Msg.ErrorBox(sqlcmd + result.ToString());
+                checkmsg += $"SP#: {tmp["frompoid"]} Seq#: {tmp["fromseq1"]}-{tmp["fromseq2"]} Roll#: {tmp["fromroll"]} Dyelot: {tmp["fromDyelot"]}'s balance: {tmp["balanceqty"]} is less than transfer qty: {tmp["qty"]}" + Environment.NewLine;
+            }
+
+            if (!checkmsg.Empty())
+            {
+                MyUtility.Msg.WarningBox("Bulk balacne Qty is not enough!!" + Environment.NewLine + checkmsg);
                 return false;
             }
-            else
-            {
-                if (datacheck.Rows.Count > 0)
-                {
-                    foreach (DataRow tmp in datacheck.Rows)
-                    {
-                        ids += $"SP#: {tmp["frompoid"]} Seq#: {tmp["fromseq1"]}-{tmp["fromseq2"]} Roll#: {tmp["fromroll"]} Dyelot: {tmp["Dyelot"]}'s balance: {tmp["balanceqty"]} is less than transfer qty: {tmp["qty"]}" + Environment.NewLine;
-                    }
 
-                    MyUtility.Msg.WarningBox("Bulk balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
-                    return false;
-                }
+            // 判斷轉入方 (轉負數/反向轉倉)
+            foreach (DataRow tmp in dtOriFtyInventory.Select("Qty < 0 and ToBalanceQty + Qty < 0"))
+            {
+                checkmsg += $"SP#: {tmp["topoid"]} Seq#: {tmp["toseq1"]}-{tmp["toseq2"]} Roll#: {tmp["toroll"]} Dyelot: {tmp["ToDyelot"]}'s balance: {tmp["ToBalanceQty"]} is less than transfer qty: {tmp["qty"]}" + Environment.NewLine;
             }
 
-            sqlcmd = string.Format(
-                @"
-Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
-    ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty
-    , f.Dyelot
-from dbo.SubTransfer_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on  d.toPoId = f.PoId
-and d.toSeq1 = f.Seq1
-and d.toSeq2 = f.seq2
-and d.toStocktype = f.StockType
-and d.toRoll = f.Roll
-and d.toDyelot = f.Dyelot
-where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) + d.Qty < 0) and d.Qty<0 and d.Id = '{0}'", dr["id"]);
-            if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            if (!checkmsg.Empty())
             {
-                MyUtility.Msg.ErrorBox(sqlcmd + result.ToString());
+                MyUtility.Msg.WarningBox("Inventory balacne Qty is not enough!!" + Environment.NewLine + checkmsg);
                 return false;
             }
-            else
-            {
-                if (datacheck.Rows.Count > 0)
-                {
-                    foreach (DataRow tmp in datacheck.Rows)
-                    {
-                        ids += $"SP#: {tmp["topoid"]} Seq#: {tmp["toseq1"]}-{tmp["toseq2"]} Roll#: {tmp["toroll"]} Dyelot: {tmp["Dyelot"]}'s balance: {tmp["balanceqty"]} is less than transfer qty: {tmp["qty"]}" + Environment.NewLine;
-                    }
+            #endregion
 
-                    MyUtility.Msg.WarningBox("Inventory balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
-                    return false;
-                }
+            // 檢查 Barcode不可為空, 轉料功能再檢查庫存後,因為轉入方可能沒有 ftyinventory 資料
+            if (!Prgs.CheckBarCode(dtOriFtyInventory, "P22"))
+            {
+                return false;
             }
-            #endregion -- 檢查負數庫存 --
 
             #region -- 更新mdivisionpodetail B倉數 --
             var data_MD_8T = (from b in dtDetail.AsEnumerable()
@@ -2293,12 +2257,6 @@ DROP TABLE #TmpSource
             // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
             result = Prgs.GetFtyInventoryData(dtDetail, "P23", out DataTable dtOriFtyInventory);
 
-            // 檢查 Barcode不可為空
-            if (!Prgs.CheckBarCode(dtOriFtyInventory, "P23"))
-            {
-                return new DualResult(false);
-            }
-
             #region 檢查物料Location 是否存在WMS
             if (!PublicPrg.Prgs.Chk_WMS_Location(subTransfer_ID, "P23"))
             {
@@ -2493,6 +2451,12 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             }
 
             #endregion -- 檢查負數庫存 --
+
+            // 檢查 Barcode不可為空
+            if (!Prgs.CheckBarCode(dtOriFtyInventory, "P23"))
+            {
+                return new DualResult(false);
+            }
 
             #region -- 更新表頭狀態資料 --
             sqlupd3 = string.Format(
@@ -3704,7 +3668,7 @@ order by Barcode desc
         }
 
         /// <summary>
-        /// 檢查 IsWMS = 1 & FtyInventory.BarCode 是否為空
+        /// 檢查 FtyInventory.BarCode 是否為空
         /// Confirm 時檢查
         /// </summary>
         /// <inheritdoc/>
@@ -3720,31 +3684,43 @@ order by Barcode desc
                 return true;
             }
 
-            if (!IsAutomation())
-            {
-                return true;
-            }
-
             WHTableName detailTableName = GetWHDetailTableName(function);
-            string checkFilter = "FabricType = 'F' and isnull(Barcode, '') = ''";
-            if (detailTableName == WHTableName.Adjust_Detail || detailTableName == WHTableName.Stocktaking_Detail || detailTableName == WHTableName.IssueReturn_Detail)
-            {
-                checkFilter += " and balanceQty > 0";
-            }
-
-            if (dtDetail.Select(checkFilter).Length > 0)
-            {
-                Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(dtDetail.Select(checkFilter).CopyToDataTable(), "FtyInventory barcode can't empty");
-                wH_Barcode.ShowDialog();
-                return false;
-            }
 
             if (detailTableName == WHTableName.SubTransfer_Detail || detailTableName == WHTableName.BorrowBack_Detail || detailTableName == WHTableName.LocationTrans_Detail)
             {
-                DataRow[] dtSelect = dtDetail.Select("FabricType = 'F' and isnull(Barcode, '') = ''");
-                if (dtSelect.Length > 0)
+                DataTable emptyBarcodedt = new DataTable();
+                emptyBarcodedt.Columns.Add("Ukey");
+
+                foreach (DataRow dr in dtDetail.Select("Qty >= 0 and FabricType = 'F' and isnull(Barcode, '') = ''"))
                 {
-                    Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(dtSelect.CopyToDataTable(), "FtyInventory barcode can't empty");
+                    emptyBarcodedt.ImportRow(dr);
+                }
+
+                foreach (DataRow dr in dtDetail.Select("Qty < 0 and FabricType = 'F' and isnull(ToBarcode, '') = ''"))
+                {
+                    DataRow newrow = emptyBarcodedt.NewRow();
+                    newrow["Ukey"] = dr["ToUkey"];
+                    emptyBarcodedt.Rows.Add(newrow);
+                }
+
+                if (emptyBarcodedt.Rows.Count > 0)
+                {
+                    Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(emptyBarcodedt, "FtyInventory barcode can't empty");
+                    wH_Barcode.ShowDialog();
+                    return false;
+                }
+            }
+            else
+            {
+                string checkFilter = "FabricType = 'F' and isnull(Barcode, '') = ''";
+                if (detailTableName == WHTableName.Adjust_Detail || detailTableName == WHTableName.Stocktaking_Detail || detailTableName == WHTableName.IssueReturn_Detail)
+                {
+                    checkFilter += " and balanceQty > 0";
+                }
+
+                if (dtDetail.Select(checkFilter).Length > 0)
+                {
+                    Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(dtDetail.Select(checkFilter).CopyToDataTable(), "FtyInventory barcode can't empty");
                     wH_Barcode.ShowDialog();
                     return false;
                 }
@@ -3785,59 +3761,37 @@ inner join #tmp s on s.POID = sd.PoId
             string psd_FtyDt = GetWHjoinPSD_Fty(detailTableName);
 
             // Issue 部分程式第 2 層是 Issue_Summary,第3層才是 Issue_Detail
-            string ukeys;
-            if (dtDetail.Columns.Contains("Issue_DetailUkey"))
+            string ukeys = "0";
+            if (dtDetail.Columns.Contains("Issue_DetailUkey") && dtDetail.Rows.Count > 0)
             {
                 ukeys = dtDetail.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["Issue_DetailUkey"])).ToList().JoinToString(",");
             }
-            else
+
+            if (dtDetail.Columns.Contains("Ukey") && dtDetail.Rows.Count > 0)
             {
                 ukeys = dtDetail.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["Ukey"])).ToList().JoinToString(",");
             }
 
-            string columnIsWMS;
+            string columnIsWMS = string.Empty;
             if (detailTableName == WHTableName.SubTransfer_Detail || detailTableName == WHTableName.BorrowBack_Detail)
             {
                 columnIsWMS = @"
-	,IsWMS = iif(exists(
-				select 1
-				from FtyInventory_Detail fd with (nolock)
-				inner join MtlLocation ml with (nolock) on ml.ID = fd.MtlLocationID
-				where fd.Ukey = f.Ukey
-				and ml.IsWMS = 1
-				and ml.StockType = sd.FromStockType), 1, 0)
-	,ToIsWMS = iif(exists(	
-				select 1 from MtlLocation ml with (nolock) 
-				inner join dbo.SplitString(sd.ToLocation,',') sp on sp.Data = ml.ID and ml.StockType = sd.ToStockType
-				where ml.IsWMS = 1), 1, 0)
     ,ToUkey = fto.Ukey
+    ,ToBarcode = fto.Barcode
     ,[ToBalanceQty] = isnull(fto.InQty,0) -isnull(fto.OutQty,0) + isnull(fto.AdjustQty,0) - isnull(fto.ReturnQty,0)
-";
-            }
-            else if (detailTableName == WHTableName.LocationTrans_Detail)
-            {
-                columnIsWMS = $@"
-	,IsWMS = iif(exists(
-                select 1
-	            from MtlLocation ml with (nolock)
-                inner join dbo.SplitString(sd.FromLocation, ',') sp on sp.Data = ml.ID
-	            where ml.IsWMS =1 ), 1, 0)
-	,ToIsWMS = iif(exists(
-                select 1
-	            from MtlLocation ml with (nolock)
-                inner join dbo.SplitString(sd.ToLocation, ',') sp on sp.Data = ml.ID
-	            where ml.IsWMS =1 ), 1, 0)
-";
-            }
-            else
-            {
-                columnIsWMS = $@"
-	,IsWMS = iif(exists(
-				select 1
-				from FtyInventory_Detail fd with (nolock) 
-				inner join MtlLocation ml with (nolock) on ml.ID = fd.MtlLocationID
-				where fd.Ukey = f.Ukey
-				and ml.IsWMS = 1), 1, 0)
+    ,sd.Qty
+    ,sd.FromPOID
+    ,sd.FromSeq1
+    ,sd.FromSeq2
+    ,sd.FromRoll
+    ,sd.FromDyelot
+    ,sd.FromStockType
+    ,sd.ToPOID
+    ,sd.ToSeq1
+    ,sd.ToSeq2
+    ,sd.ToRoll
+    ,sd.ToDyelot
+    ,sd.ToStockType
 ";
             }
 
@@ -4042,6 +3996,7 @@ inner join Production.dbo.FtyInventory f with(nolock) on f.POID = sd.PoId
     ,Roll = sd.FromRoll
     ,Dyelot = sd.FromDyelot
     ,StockType = sd.FromStockType
+    ,sd.Qty
 
     ,ToFabric_FtyInventoryUkey = fto.Ukey
     ,[ToBalanceQty] = isnull(fto.InQty,0) -isnull(fto.OutQty,0) + isnull(fto.AdjustQty,0) - isnull(fto.ReturnQty,0)
@@ -4445,70 +4400,147 @@ and sd.Ukey in ({ukeys})
                             item.ToFabric_FtyInventoryUkey = MyUtility.Convert.GetString(dr["ToFabric_FtyInventoryUkey"]);
                             string barcode = MyUtility.Convert.GetString(dr["Barcode"]);
                             string barcodeSeq = MyUtility.Convert.GetString(dr["BarcodeSeq"]);
-                            item.From_OldBarcode = barcode;
-                            item.From_OldBarcodeSeq = barcodeSeq;
                             string tobarcode = MyUtility.Convert.GetString(dr["ToBarcode"]);
                             string tobarcodeSeq = MyUtility.Convert.GetString(dr["ToBarcodeSeq"]);
+                            double qty = MyUtility.Convert.GetDouble(dr["Qty"]);
                             if (isConfirmed)
                             {
-                                if (!MyUtility.Check.Empty(dr["ToBarcode"]))
+                                // 轉出數量是否負數
+                                if (qty >= 0)
                                 {
-                                    item.To_OldBarcode = tobarcode;
-                                    item.To_OldBarcodeSeq = tobarcodeSeq;
-                                    item.To_NewBarcode = tobarcode;
-                                    item.To_NewBarcodeSeq = tobarcodeSeq;
-                                    if (!MyUtility.Check.Empty(dr["balanceQty"]))
+                                    item.From_OldBarcode = barcode;
+                                    item.From_OldBarcodeSeq = barcodeSeq;
+                                    if (!MyUtility.Check.Empty(tobarcode))
                                     {
-                                        item.From_NewBarcode = barcode;
-                                        item.From_NewBarcodeSeq = barcodeSeq;
-                                    }
-                                }
-                                else
-                                {
-                                    item.To_NewBarcode = barcode;
-                                    if (!MyUtility.Check.Empty(dr["balanceQty"]))
-                                    {
-                                        item.From_NewBarcode = barcode;
-                                        item.From_NewBarcodeSeq = barcodeSeq;
-                                        item.To_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(barcode, wHBarcodeTransaction, "To");
+                                        item.To_OldBarcode = tobarcode;
+                                        item.To_OldBarcodeSeq = tobarcodeSeq;
+                                        item.To_NewBarcode = tobarcode;
+                                        item.To_NewBarcodeSeq = tobarcodeSeq;
+                                        if (!MyUtility.Check.Empty(dr["balanceQty"]))
+                                        {
+                                            item.From_NewBarcode = barcode;
+                                            item.From_NewBarcodeSeq = barcodeSeq;
+                                        }
                                     }
                                     else
                                     {
-                                        item.To_NewBarcodeSeq = barcodeSeq;
-                                    }
+                                        item.To_NewBarcode = barcode;
+                                        if (!MyUtility.Check.Empty(dr["balanceQty"]))
+                                        {
+                                            item.From_NewBarcode = barcode;
+                                            item.From_NewBarcodeSeq = barcodeSeq;
+                                            item.To_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(barcode, wHBarcodeTransaction, "To");
+                                        }
+                                        else
+                                        {
+                                            item.To_NewBarcodeSeq = barcodeSeq;
+                                        }
 
-                                    UpdateSameFtyBarcode(dt, item, "To", "ToBarcode");
+                                        UpdateSameFtyBarcode(dt, item, "To", "ToBarcode");
+                                    }
+                                }
+
+                                // 轉出數量為負數
+                                else
+                                {
+                                    item.To_OldBarcode = tobarcode;
+                                    item.To_OldBarcodeSeq = tobarcodeSeq;
+                                    if (!MyUtility.Check.Empty(barcode))
+                                    {
+                                        item.From_NewBarcode = barcode;
+                                        item.From_NewBarcodeSeq = barcodeSeq;
+                                        if (!MyUtility.Check.Empty(dr["TobalanceQty"]))
+                                        {
+                                            item.To_NewBarcode = tobarcode;
+                                            item.To_NewBarcodeSeq = tobarcodeSeq;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        item.From_NewBarcode = tobarcode;
+                                        if (!MyUtility.Check.Empty(dr["TobalanceQty"]))
+                                        {
+                                            item.From_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(tobarcode, wHBarcodeTransaction, "From");
+                                            item.To_NewBarcode = tobarcode;
+                                            item.To_NewBarcodeSeq = tobarcodeSeq;
+                                        }
+                                        else
+                                        {
+                                            item.From_NewBarcodeSeq = tobarcodeSeq;
+                                        }
+
+                                        UpdateSameFtyBarcode(dt, item, "From", "Barcode");
+                                    }
                                 }
                             }
                             else
                             {
-                                item.To_OldBarcode = tobarcode;
-                                item.To_OldBarcodeSeq = tobarcodeSeq;
-                                if (!MyUtility.Check.Empty(barcode))
+                                // 轉出數量是否負數
+                                if (qty >= 0)
                                 {
-                                    item.From_NewBarcode = barcode;
-                                    item.From_NewBarcodeSeq = barcodeSeq;
-                                    if (!MyUtility.Check.Empty(dr["TobalanceQty"]))
+                                    item.To_OldBarcode = tobarcode;
+                                    item.To_OldBarcodeSeq = tobarcodeSeq;
+                                    if (!MyUtility.Check.Empty(barcode))
                                     {
-                                        item.To_NewBarcode = tobarcode;
-                                        item.To_NewBarcodeSeq = tobarcodeSeq;
-                                    }
-                                }
-                                else
-                                {
-                                    item.From_NewBarcode = tobarcode;
-                                    if (!MyUtility.Check.Empty(dr["TobalanceQty"]))
-                                    {
-                                        item.From_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(tobarcode, wHBarcodeTransaction, "From");
-                                        item.To_NewBarcode = tobarcode;
-                                        item.To_NewBarcodeSeq = tobarcodeSeq;
+                                        item.From_NewBarcode = barcode;
+                                        item.From_NewBarcodeSeq = barcodeSeq;
+                                        if (!MyUtility.Check.Empty(dr["TobalanceQty"]))
+                                        {
+                                            item.To_NewBarcode = tobarcode;
+                                            item.To_NewBarcodeSeq = tobarcodeSeq;
+                                        }
                                     }
                                     else
                                     {
-                                        item.From_NewBarcodeSeq = tobarcodeSeq;
-                                    }
+                                        item.From_NewBarcode = tobarcode;
+                                        if (!MyUtility.Check.Empty(dr["TobalanceQty"]))
+                                        {
+                                            item.From_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(tobarcode, wHBarcodeTransaction, "From");
+                                            item.To_NewBarcode = tobarcode;
+                                            item.To_NewBarcodeSeq = tobarcodeSeq;
+                                        }
+                                        else
+                                        {
+                                            item.From_NewBarcodeSeq = tobarcodeSeq;
+                                        }
 
-                                    UpdateSameFtyBarcode(dt, item, "From", "Barcode");
+                                        UpdateSameFtyBarcode(dt, item, "From", "Barcode");
+                                    }
+                                }
+
+                                // 轉出數量為負數
+                                else
+                                {
+                                    item.From_OldBarcode = barcode;
+                                    item.From_OldBarcodeSeq = barcodeSeq;
+                                    if (!MyUtility.Check.Empty(tobarcode))
+                                    {
+                                        item.To_OldBarcode = tobarcode;
+                                        item.To_OldBarcodeSeq = tobarcodeSeq;
+                                        item.To_NewBarcode = tobarcode;
+                                        item.To_NewBarcodeSeq = tobarcodeSeq;
+                                        if (!MyUtility.Check.Empty(dr["balanceQty"]))
+                                        {
+                                            item.From_NewBarcode = barcode;
+                                            item.From_NewBarcodeSeq = barcodeSeq;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        item.To_NewBarcode = barcode;
+                                        if (!MyUtility.Check.Empty(dr["balanceQty"]))
+                                        {
+                                            item.From_NewBarcode = barcode;
+                                            item.From_NewBarcodeSeq = barcodeSeq;
+                                            item.To_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(barcode, wHBarcodeTransaction, "To");
+                                        }
+                                        else
+                                        {
+                                            item.To_NewBarcodeSeq = barcodeSeq;
+                                        }
+
+                                        UpdateSameFtyBarcode(dt, item, "To", "ToBarcode");
+                                    }
                                 }
                             }
                         }
