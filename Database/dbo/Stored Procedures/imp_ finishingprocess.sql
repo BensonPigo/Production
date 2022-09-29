@@ -193,7 +193,7 @@ Begin
 	--用來判斷transaction是否有被update到PMS，在update SCIUpdate判斷使用
 	Create table #tmpSCIUpdateCanUpdate
 	(
-		SCICtnNo varchar(15) null,
+		SCICtnNo varchar(16) null,
 		Type varchar(15) null
 	)
 
