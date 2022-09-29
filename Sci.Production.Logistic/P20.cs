@@ -459,6 +459,9 @@ values(GETDATE(),'{Env.User.Keyword}','{dr["MainSP"]}','{dr["PackingListID"]}','
                 }
             }
 
+            // 存檔完成後，重新載入資料，讓Detail按鈕自動判斷要不要出現
+            this.QueryData();
+
             var mdFaillist = drSelected.Where(w => MyUtility.Convert.GetString(w["ErrorID"]) == specialErrorID).ToList();
             if (mdFaillist.Any())
             {
@@ -632,9 +635,6 @@ drop table #tmp
                     }
                 }
             }
-
-            // 存檔完成後，重新載入資料，讓Detail按鈕自動判斷要不要出現
-            this.QueryData();
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
