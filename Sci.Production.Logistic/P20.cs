@@ -151,6 +151,11 @@ where Type='TP' and Junk=0";
             this.gridPackErrTransfer.EndEdit();
             this.gridPackErrTransfer.ValidateControl();
             DataRow drSelect = this.gridPackErrTransfer.GetDataRow(this.listControlBindingSource1.Position);
+            // 當按鈕被隱藏起來就不要開窗顯示
+            if (!ChkButtonHide(15))// detail index
+            {
+                return;
+            }
 
             // 只有特定的ErrorID需要跳出Detail
             if (MyUtility.Convert.GetString(drSelect["ErrorID"]) != specialErrorID)
@@ -173,6 +178,11 @@ where Type='TP' and Junk=0";
             this.gridPackErrTransfer.EndEdit();
             this.gridPackErrTransfer.ValidateControl();
             DataRow drSelect = this.gridPackErrTransfer.GetDataRow(this.listControlBindingSource1.Position);
+            // 當按鈕被隱藏起來就不要開窗顯示
+            if (!ChkButtonHide(16))// complete index
+            {
+                return;
+            }
 
             // 有ClogPackingError記錄才可以Completed
             if (MyUtility.Check.Empty(drSelect["ErrorID"]))
@@ -224,6 +234,23 @@ where ID = '{clogPackingErrorID}'
             }
 
             this.QueryData();
+        }
+
+        private bool ChkButtonHide(int cellNB)
+        {
+            DataGridViewCellStyle btnCompleteStyle = this.gridPackErrTransfer.Rows[this.listControlBindingSource1.Position].Cells[cellNB].Style;
+            DataGridViewCellStyle cellStyleDelete = new DataGridViewCellStyle();
+            cellStyleDelete.Padding = new Padding(0, 0, 1000, 0);
+
+            // 當按鈕被隱藏起來就不要開窗顯示
+            if (btnCompleteStyle.Padding == cellStyleDelete.Padding)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         private void BtnFind_Click(object sender, EventArgs e)
