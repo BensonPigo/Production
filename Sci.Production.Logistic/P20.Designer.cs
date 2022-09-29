@@ -281,7 +281,7 @@
             this.Controls.Add(this.btnSave);
             this.Name = "P20";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "P19. Transfer To Packing Error";
+            this.Text = "P20. Clog Packing Error";
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.gridPackErrTransfer, 0);
