@@ -3686,7 +3686,7 @@ order by Barcode desc
 
             WHTableName detailTableName = GetWHDetailTableName(function);
 
-            if (detailTableName == WHTableName.SubTransfer_Detail || detailTableName == WHTableName.BorrowBack_Detail || detailTableName == WHTableName.LocationTrans_Detail)
+            if (detailTableName == WHTableName.SubTransfer_Detail || detailTableName == WHTableName.BorrowBack_Detail)
             {
                 DataTable emptyBarcodedt = new DataTable();
                 emptyBarcodedt.Columns.Add("Ukey");
