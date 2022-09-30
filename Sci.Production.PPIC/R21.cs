@@ -310,7 +310,7 @@ outer apply(
 	and t.AddDate = (
 		select max(AddDate)
 		from CTNPackingAudit 
-		where PackingListID = pld.ID and OrderID=pld.SCICtnNo
+		where PackingListID = pld.ID and SCICtnNo=pld.SCICtnNo
 	)
 )AuditScanTime
 outer apply(
@@ -322,7 +322,7 @@ outer apply(
 		select max(AddDate)
 		from MDScan 
 		where DataRemark = 'Create from M360' 
-		and PackingListID=pld.ID and OrderID=pld.SCICtnNo
+		and PackingListID=pld.ID and SCICtnNo=pld.SCICtnNo
 	)
 )MDScanTime
 outer apply(select [AddDate] = max(AddDate) 
