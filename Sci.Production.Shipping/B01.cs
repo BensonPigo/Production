@@ -38,7 +38,7 @@ namespace Sci.Production.Shipping
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                    string sqlitem = "Select distinct ID from ShipMode WITH (NOLOCK) where Junk = 0";
+                    string sqlitem = "Select distinct ID from ShipMode WITH (NOLOCK) where Junk = 0 and UseFunction like '%ORDER%'";
                     SelectItem item = new SelectItem(sqlitem, "20", dr["ShipModeID"].ToString());
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -62,7 +62,7 @@ namespace Sci.Production.Shipping
 
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    string cmd = "Select ID from ShipMode WITH (NOLOCK) where Junk = 0 and ID = @ShipModeID";
+                    string cmd = "Select ID from ShipMode WITH (NOLOCK) where Junk = 0 and ID = @ShipModeID and UseFunction like '%ORDER%'";
                     List<SqlParameter> spam = new List<SqlParameter>
                     {
                         new SqlParameter("@ShipModeID", e.FormattedValue),
@@ -94,7 +94,24 @@ namespace Sci.Production.Shipping
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                    string sqlitem = "Select distinct LoadingType from ShipMode WITH (NOLOCK) where Junk = 0 and LoadingType !=''";
+                    string sqlitem = @"
+select distinct data 
+from SplitString
+(
+	(
+	select LoadingTypeList = Stuff((
+			select concat(',',LoadingType)
+			from (
+					select 	distinct
+						LoadingType
+					from dbo.ShipMode d
+					where Junk = 0 and LoadingType !=''
+				) s
+			for xml path ('')
+		) , 1, 1, '')
+	),','
+)
+";
                     SelectItem2 item = new SelectItem2(sqlitem, headercaptions: "Loading Type", columnwidths: "20", defaults: string.Empty);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -134,6 +151,16 @@ namespace Sci.Production.Shipping
                 this.editAddress.Focus();
                 MyUtility.Msg.WarningBox("< Address > cannot be empty!");
                 return false;
+            }
+
+            if (this.IsDetailInserting)
+            {
+                string sqlchk = $@"select 1 from ForwarderWarehouse where WhseCode = '{this.CurrentMaintain["WhseCode"].ToString().Trim()}' and WhseName = '{this.CurrentMaintain["WhseName"].ToString().Trim()}'";
+                if (MyUtility.Check.Seek(sqlchk))
+                {
+                    MyUtility.Msg.WarningBox("【Port/WH Code】and【Name】can NOT be the same.");
+                    return false;
+                }
             }
 
             if (this.DetailDatas.Count == 0)
