@@ -173,7 +173,7 @@ namespace Sci.Production.Warehouse
 select  POID = rtrim(i.seq70poid)
 		, Seq1 = rtrim(i.seq70seq1)
 		, Seq2 = i.seq70seq2
-		, ToFactory = i.TransferFactory
+		, ToFactory = MAX(iif (i.type = 2, i.TransferFactory, ''))
 		, InventoryPOID = i.InventoryPOID
         , Inventoryseq1 = i.InventorySeq1
         , InventorySEQ2 = i.InventorySeq2
@@ -198,7 +198,7 @@ outer apply (select Color = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTyp
 where (i.type='2' or i.type='6')
 		and i.seq70poid = @IssueSP
 		and o.MDivisionID = @MDivisionID
-group by i.seq70poid,rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.TransferFactory, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit, psd.FabricType,PSD.Refno, PSD.SizeSpec,c.Color
+group by i.seq70poid,rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit, psd.FabricType,PSD.Refno, PSD.SizeSpec,c.Color
 
 
 select  selected = 0

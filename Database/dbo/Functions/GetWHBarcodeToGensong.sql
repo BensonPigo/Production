@@ -1,6 +1,6 @@
 ﻿
 
-Create Function [dbo].GetWHBarcodeToGensong
+Create Function [dbo].[GetWHBarcodeToGensong]
 	(
 	  @Function			VarChar(4)
 	 ,@TransactionID	VarChar(13)
@@ -10,6 +10,7 @@ Create Function [dbo].GetWHBarcodeToGensong
 	 ,@FtyInventoryUkey bigint = 0 -- for Old Datas
 	 ,@OriBlanceQty		numeric(20,2) = 0.0 --only for Adjust
 	 ,@FromNewBarcode	bit = 0
+     ,@Qty              numeric(20,2) = 0.0
 	)
 Returns VarChar(255)
 As
@@ -28,10 +29,15 @@ Begin
 									,'P31','P32'--BorrowBack_Detail
 									,'P37')-- ReturnReceipt_Detail
 				then
-					(case when w.Action = 'Confirm' and @FromNewBarcode = 0
-					then concat(w.From_OldBarcode, iif(w.From_OldBarcodeSeq='', '', '-'+w.From_OldBarcodeSeq))
-					else concat(w.From_NewBarcode, iif(w.From_NewBarcodeSeq='', '', '-'+w.From_NewBarcodeSeq))
-					end)			
+                    case when @Qty >= 0
+                    then (case when w.Action = 'Confirm' and @FromNewBarcode = 0 
+					    then concat(w.From_OldBarcode, iif(w.From_OldBarcodeSeq='', '', '-'+w.From_OldBarcodeSeq))
+					    else concat(w.From_NewBarcode, iif(w.From_NewBarcodeSeq='', '', '-'+w.From_NewBarcodeSeq))
+					    end)
+                    else (case when w.Action = 'Confirm' and @FromNewBarcode = 0 
+					    then concat(w.From_NewBarcode, iif(w.From_NewBarcodeSeq='', '', '-'+w.From_NewBarcodeSeq))
+					    else concat(w.From_OldBarcode, iif(w.From_OldBarcodeSeq='', '', '-'+w.From_OldBarcodeSeq))
+					    end)end
 				when @Function in('P07','P08'--Receiving_Detail
 									,'P17'--IssueReturn_Detail
 									,'P18')--TransferIn_Detail
@@ -57,15 +63,21 @@ Begin
 									,'P22','P23','P24','P25','P36'--SubTransfer_Detail
 									,'P31','P32')--BorrowBack_Detail
 				then
-					(case w.Action when 'Confirm'
-					then concat(w.To_NewBarcode, iif(w.To_NewBarcodeSeq = '', '', '-' + w.To_NewBarcodeSeq))
-					else concat(w.To_OldBarcode, iif(w.To_OldBarcodeSeq = '', '', '-' + w.To_OldBarcodeSeq))
-					end)
+                    case when @Qty >= 0
+                    then (case w.Action when 'Confirm'
+					    then concat(w.To_NewBarcode, iif(w.To_NewBarcodeSeq = '', '', '-' + w.To_NewBarcodeSeq))
+					    else concat(w.To_OldBarcode, iif(w.To_OldBarcodeSeq = '', '', '-' + w.To_OldBarcodeSeq))
+					    end)
+                    else (case w.Action when 'Confirm'
+					    then concat(w.To_OldBarcode, iif(w.To_OldBarcodeSeq = '', '', '-' + w.To_OldBarcodeSeq))
+					    else concat(w.To_NewBarcode, iif(w.To_NewBarcodeSeq = '', '', '-' + w.To_NewBarcodeSeq))
+					    end)
+                    end
 				else ''
 				end
 			)
 			End
-	from WHBarcodeTransaction w with(nolock)
+	from WHBarcodeTransaction w with(nolock)    
 	where w.[Function] = @Function
 	and w.TransactionID = @TransactionID
 	and w.TransactionUkey = @TransactionUkey

@@ -6,10 +6,12 @@ using System.Data;
 
 namespace Sci.Production.Class
 {
+    /// <inheritdoc/>
     public partial class WH_BarcodeEmpty : Sci.Win.Tems.QueryForm
     {
         private DataTable dtFty;
 
+        /// <inheritdoc/>
         public WH_BarcodeEmpty(DataTable dt, string Msg)
         {
             this.InitializeComponent();
@@ -17,6 +19,7 @@ namespace Sci.Production.Class
             this.labMsg.Text = Msg;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

@@ -86,7 +86,7 @@ namespace Sci.Production.Packing
                                 string barcode = printData.Rows[p]["ID"].ToString() + printData.Rows[p]["CTNStartNo"].ToString().CTNStartNoPrintFormatByBrand(orderID: printData.Rows[p]["OrderID"].ToString());
                                 string barcodeShowText = printData.Rows[p]["ID"].ToString() + printData.Rows[p]["CTNStartNo"].ToString();
                                 string packingNo = "　　　　PackingNo.: " + printData.Rows[p]["ID"];
-                                string spNo = "　　　　SP No.: " + printData.Rows[p]["OrderID"];
+                                string spNo = "　　　　SP No.: " + printData.Rows[p]["OrderID"] + "     Dest: " + printData.Rows[p]["Dest"];
                                 string cartonNo = "　　　　Carton No.: " + printData.Rows[p]["CTNStartNo"] + " OF " + printData.Rows[p]["CtnQty"];
                                 string poNo = "　　　　PO No.: " + printData.Rows[p]["PONo"];
                                 string sizeQty = "　　　　Size/Qty: " + printData.Rows[p]["SizeCode"] + "/" + printData.Rows[p]["ShipQty"];
@@ -174,6 +174,7 @@ namespace Sci.Production.Packing
                                 string poNo = printData.Rows[i]["PONo"].ToString();
                                 string sizeQty = "Size/Qty: " + printData.Rows[i]["SizeCode"] + "/" + printData.Rows[i]["ShipQty"];
                                 string brandFTYCode = "Fty Code: " + printData.Rows[i]["BrandFTYCode"].ToString();
+                                string dest = "Dest: " + printData.Rows[i]["Dest"];
                                 #endregion
 
                                 Bitmap oriBitmap = this.NewBarcode(barcode, barcodeShowText);
@@ -188,6 +189,7 @@ namespace Sci.Production.Packing
                                 tables.Cell(2, 1).Range.Text = spNo;
                                 tables.Cell(3, 1).Range.Text = style;
                                 tables.Cell(3, 2).Range.Text = brandFTYCode;
+                                tables.Cell(3, 3).Range.Text = dest;
                                 tables.Cell(2, 2).Range.Text = cartonNo;
                                 tables.Cell(1, 2).Range.Text = sizeQty;
                                 if (country)
