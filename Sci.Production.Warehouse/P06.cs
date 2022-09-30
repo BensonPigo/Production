@@ -134,6 +134,45 @@ namespace Sci.Production.Warehouse
                 return;
             }
 
+            // ISP20221216 Send前判斷Export Q'ty cannot more than Po Q'ty
+            string sqlchkExportQty = $@"
+select	[From SP#] = ted.InventoryPOID,
+		[From Seq] = Concat (ted.InventorySeq1, ' ', ted.InventorySeq2),
+		[To SP#] = ted.PoID,
+		[To SEQ] = Concat (ted.Seq1, ' ', ted.Seq2),
+		[Po Q'ty] = ted.PoQty,
+		[Export Q'ty] = ExportCarton.ExportQty,
+		[Balance] = ted.PoQty - ExportCarton.ExportQty,
+		[Transfer Out ID] = ted.ID
+from TransferExport_Detail ted with (nolock) 
+outer apply(
+    select	[ExportQty] = isnull(sum(isnull(tdc.StockQty, 0)), 0) 
+	from TransferExport_Detail_Carton tdc with (nolock) 
+    where tdc.TransferExport_DetailUkey = ted.Ukey
+) ExportCarton
+outer apply(
+	select top 1 * 
+	from TransferOut_Detail s
+	where s.TransferExport_DetailUkey = ted.Ukey
+)TransferOut 
+where 1=1
+and ted.ID = '{this.CurrentMaintain["ID"]}'
+and ExportCarton.ExportQty - ted.PoQty  > 0
+";
+            DualResult result1;
+            if (!(result1 = DBProxy.Current.Select(null, sqlchkExportQty,out DataTable dtChkExportQty)))
+            {
+                this.ShowErr(result1.ToString());
+                return;
+            }
+
+            if (dtChkExportQty != null && dtChkExportQty.Rows.Count > 0)
+            {
+                var m = MyUtility.Msg.ShowMsgGrid(gridTable: dtChkExportQty, msg: "Export Q'ty cannot more than Po Q'ty.");
+                m.TopMost = true;
+                return;
+            }
+
             string sqlCheckTransferOut = @"
 select  distinct ted.POID, [Seq] = Concat (ted.Seq1, ' ', ted.Seq2)
 from TransferExport_Detail ted with (nolock)
@@ -229,6 +268,7 @@ where   ted.ID = @ID and
             }
 
             this.numCBM.Value = this.DetailDatas.Sum(s => MyUtility.Convert.GetDecimal(s["CBM"]));
+            this.ChangeRowColor();
         }
 
         /// <inheritdoc/>
@@ -249,7 +289,7 @@ select	ted.InventoryPOID,
 		ted.PoQty,
 		ExportCarton.ExportQty,
 		ExportCarton.Foc,
-		[BalanceQty] = ExportCarton.ExportQty + ExportCarton.Foc,
+		[BalanceQty] = ted.PoQty -  ExportCarton.ExportQty,
 		ted.TransferExportReason,
 		[ReasonDesc] = (select wr.Description from WhseReason wr with (nolock) where wr.Type = 'TE' and ID = ted.TransferExportReason),
 		ted.NetKg,
@@ -304,9 +344,12 @@ left join PO_Supp_Detail psd with (nolock) on	ted.PoID = psd.ID and
 left join Supp s WITH (NOLOCK) on s.id = ted.SuppID 
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = ted.SCIRefno
 left join Fabric_Supp fs WITH (NOLOCK) on fs.SCIRefno = f.SCIRefno and fs.SuppID = s.ID
-outer apply(select	[ExportQty] = isnull(sum(isnull(tdc.Qty, 0)), 0) ,
-					[Foc] = isnull(sum(isnull(tdc.Foc, 0)), 0) 
-			from TransferExport_Detail_Carton tdc with (nolock) where tdc.TransferExport_DetailUkey = ted.Ukey) ExportCarton
+outer apply(
+    select	[ExportQty] = isnull(sum(isnull(tdc.Qty, 0)), 0) ,
+				  [Foc] = isnull(sum(isnull(tdc.Foc, 0)), 0) 
+	from TransferExport_Detail_Carton tdc with (nolock) 
+    where tdc.TransferExport_DetailUkey = ted.Ukey
+) ExportCarton
 OUTER APPLY(
  SELECT [Value]=
 	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(psd.BrandID,psd.ColorID),psd.SuppColor)
@@ -404,7 +447,6 @@ where ted.ID = '{0}'
                 .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("PoQty", header: "Po Q'ty", decimal_places: 2, width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("ExportQty", header: "Export Q'ty", decimal_places: 2, width: Widths.AnsiChars(5), iseditingreadonly: true, settings: settingExportQty)
-                .Numeric("Foc", header: "F.O.C.", decimal_places: 2, width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Numeric("BalanceQty", header: "Balance", decimal_places: 2, width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("TransferExportReason", header: "Reason", width: Widths.AnsiChars(8), settings: settingReason)
                 .Text("ReasonDesc", header: "Reason Desc", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -414,6 +456,25 @@ where ted.ID = '{0}'
                 .Text("ContainerType", header: "ContainerType & No", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
             this.detailgrid.Columns["TransferExportReason"].DefaultCellStyle.BackColor = Color.Pink;
+            this.ChangeRowColor();
+        }
+
+        private void ChangeRowColor()
+        {
+            DataTable tmp_dt = (DataTable)this.detailgridbs.DataSource;
+            if (tmp_dt == null)
+            {
+                return;
+            }
+
+            for (int index = 0; index < tmp_dt.Rows.Count; index++)
+            {
+                // BalanceQty < 0
+                if (MyUtility.Convert.GetDecimal(tmp_dt.Rows[index]["BalanceQty"]) < 0)
+                {
+                    this.detailgrid.Rows[index].DefaultCellStyle.BackColor = Color.FromArgb(254, 99, 99);
+                }
+            }
         }
 
         /// <inheritdoc/>

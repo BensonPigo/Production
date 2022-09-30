@@ -170,6 +170,7 @@ where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
             this.labFromE.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["FormE"]) == "True" ? true : false;
 
             this.ControlColor();
+            this.ChangeRowColor();
         }
 
         /// <inheritdoc/>
@@ -197,7 +198,7 @@ ted.ID
 ,ted.PoQty
 ,[ExportQty] = isnull(carton.ttlQty,0)
 ,[FOC] = isnull(carton.ttlFoc,0)
-,[Balance] = isnull(carton.ttlQty,0) + isnull(carton.ttlFoc,0)
+,[Balance] = ted.PoQty - isnull(carton.ttlQty,0)
 ,ted.TransferExportReason
 ,[ReasonDesc] = isnull((select [Description] from WhseReason where Type = 'TE' and ID = ted.TransferExportReason),'')
 ,ted.NetKg
@@ -288,7 +289,6 @@ where ted.ID = '{0}'", masterID);
                 .Text("Size", header: "Size", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Numeric("PoQty", header: "Po  Q'ty", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("ExportQty", header: "Export Q'ty", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5), settings: exportQtycell, iseditingreadonly: true)
-                .Numeric("FOC", header: "F.O.C.", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(2), iseditingreadonly: true)
                 .Numeric("Balance", header: "Balance", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("TransferExportReason", header: "Reason", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("ReasonDesc", header: "Reason Desc", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
@@ -300,6 +300,25 @@ where ted.ID = '{0}'", masterID);
 
             // 設定detailGrid Rows 是否可以編輯
             this.detailgrid.RowEnter += this.Detailgrid_RowEnter;
+            this.ChangeRowColor();
+        }
+
+        private void ChangeRowColor()
+        {
+            DataTable tmp_dt = (DataTable)this.detailgridbs.DataSource;
+            if (tmp_dt == null)
+            {
+                return;
+            }
+
+            for (int index = 0; index < tmp_dt.Rows.Count; index++)
+            {
+                // BalanceQty < 0
+                if (MyUtility.Convert.GetDecimal(tmp_dt.Rows[index]["Balance"]) < 0)
+                {
+                    this.detailgrid.Rows[index].DefaultCellStyle.BackColor = Color.FromArgb(254, 99, 99);
+                }
+            }
         }
 
         private void Detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
@@ -316,20 +335,11 @@ where ted.ID = '{0}'", masterID);
             }
 
             // 只有 isProduceFty = 1 才允許編輯此欄位
-            if (this.isFromProduceFty)
+            if (this.isFromProduceFty == true)
             {
-                if (MyUtility.Convert.GetString(this.CurrentMaintain["FtyStatus"]) == "Confirmed")
-                {
-                    this.col_NW.IsEditingReadOnly = true;
-                    this.col_GW.IsEditingReadOnly = true;
-                    this.col_CBM.IsEditingReadOnly = true;
-                }
-                else
-                {
-                    this.col_NW.IsEditingReadOnly = false;
-                    this.col_GW.IsEditingReadOnly = false;
-                    this.col_CBM.IsEditingReadOnly = false;
-                }
+                this.col_NW.IsEditingReadOnly = false;
+                this.col_GW.IsEditingReadOnly = false;
+                this.col_CBM.IsEditingReadOnly = false;
             }
             else
             {
@@ -350,6 +360,15 @@ where ted.ID = '{0}'", masterID);
 
             this.GetProduceFTY();
 
+            if (string.Compare(this.CurrentMaintain["FtyStatus"].ToString(), "New", true) != 0)
+            {
+                this.toolbar.cmdEdit.Enabled = true;
+            }
+            else
+            {
+                this.toolbar.cmdEdit.Enabled = false;
+            }
+
             if (string.Compare(this.CurrentMaintain["FtyStatus"].ToString(), "Send", true) == 0 && this.EditMode == false)
             {
                 this.toolbar.cmdConfirm.Enabled = true;
@@ -358,12 +377,22 @@ where ted.ID = '{0}'", masterID);
             {
                 this.toolbar.cmdConfirm.Enabled = false;
             }
+
+            // Confirmed and FromFactory 不可編輯
+            if (this.isFromProduceFty == true &&
+                string.Compare(this.CurrentMaintain["FtyStatus"].ToString(), "Confirmed", true) == 0)
+            {
+                this.toolbar.cmdEdit.Enabled = false;
+            }
+            else
+            {
+                this.toolbar.cmdEdit.Enabled = true;
+            }
         }
 
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            this.GetProduceFTY();
             if (this.isToProduceFty == false)
             {
                 if (this.isFromProduceFty == false)
