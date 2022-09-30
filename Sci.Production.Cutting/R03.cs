@@ -167,11 +167,13 @@ select
 	wo.SCIRefno,
 	wo.Seq1,
 	wo.Seq2,
-    [ActConsOutput] = cast(isnull(iif(wo.Layer - isnull(acc.AccuCuttingLayer,0) = 0, wo.Cons, acc.AccuCuttingLayer * ML.YDSMarkerLength),0) as numeric(9,4))
+    [ActConsOutput] = cast(isnull(iif(wo.Layer - isnull(acc.AccuCuttingLayer,0) = 0, wo.Cons, acc.AccuCuttingLayer * ML.YDSMarkerLength),0) as numeric(9,4)),
+    [UnfinishedCuttingReasonDesc] = dw.Name
 into #tmp
 from WorkOrder wo WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
 inner join Cutting c WITH (NOLOCK) on c.ID = o.CuttingSP
+left join DropDownList dw with (nolock) on dw.Type = 'PMS_UnFinCutReason' and dw.ID = wo.UnfinishedCuttingReason
 left join fabric f WITH (NOLOCK) on f.SCIRefno = wo.SCIRefno
 left join PO_Supp_Detail psd with(nolock) on psd.id = wo.id and psd.seq1 = wo.seq1 and psd.seq2 = wo.seq2
 left join Cutting_WIPExcludePatternPanel wop with(nolock) on wo.id=wop.id and wo.FabricCombo=wop.PatternPanel
@@ -392,6 +394,7 @@ select
 ,t.Markername,t.MarkerNo,w.Width
 ,[Marker Length],ActCuttingPerimeter,ActCuttingPerimeterDecimal=0.0,SCIDelivery,BuyerDelivery
 ,[To be combined]=cl.v
+,t.UnfinishedCuttingReasonDesc
 from #tmp t
 --因效能,此欄位outer apply寫在這, 寫在上面會慢5倍
 outer apply(
