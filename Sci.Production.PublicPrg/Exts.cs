@@ -7,6 +7,7 @@ using System.Drawing;
 using ZXing;
 using ZXing.QrCode;
 using ZXing.QrCode.Internal;
+using MsExcel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Prg
 {
@@ -322,6 +323,54 @@ namespace Sci.Production.Prg
             };
 
             return writer.Write(strBarcode);
+        }
+
+        /// <summary>
+        /// GetCellValue
+        /// </summary>
+        /// <param name="worksheet">worksheet</param>
+        /// <param name="indexCol">indexCol</param>
+        /// <param name="indexRow">indexRow</param>
+        /// <returns>string</returns>
+        public static string GetCellValue(this MsExcel.Worksheet worksheet, int indexCol, int indexRow)
+        {
+
+            if (worksheet.Cells[indexCol, indexRow] == null)
+            {
+                return string.Empty;
+            }
+            else if (worksheet.Cells[indexRow, indexCol].Value == null)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return worksheet.Cells[indexRow, indexCol].Value.ToString();
+            }
+        }
+
+        /// <summary>
+        /// GetCellValue
+        /// </summary>
+        /// <param name="range">range</param>
+        /// <param name="indexCol">indexCol</param>
+        /// <param name="indexRow">indexRow</param>
+        /// <returns>string</returns>
+        public static string GetCellValue(this MsExcel.Range range, int indexCol, int indexRow)
+        {
+
+            if (range.Cells[indexCol, indexRow] == null)
+            {
+                return string.Empty;
+            }
+            else if (range.Cells[indexRow, indexCol].Value == null)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return range.Cells[indexRow, indexCol].Value.ToString();
+            }
         }
     }
 }
