@@ -77,7 +77,6 @@ namespace Sci.Production.Packing
             this.Tab_Focus("CARTON");
 
             // 重啟P18 必須重新判斷校正記錄
-            this.btnCalibrationList.Enabled = false;
             this.txtDest.TextBox1.ReadOnly = true;
 
             // 啟動計時器
@@ -250,6 +249,9 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
             this.PackingListID = string.Empty;
             this.CTNStarNo = string.Empty;
 
+            // 底部grid有資料就開放button btnCalibration List按鈕
+            this.ShowCalibrationButton();
+
             if (MyUtility.Check.Empty(this.txtScanCartonSP.Text))
             {
                 return;
@@ -348,16 +350,6 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
                 DualResult result_load = this.LoadScanDetail(0);
             }
             #endregion
-
-            // 底部grid有資料就開放button btnCalibration List按鈕
-            if (this.tabControlScanArea.SelectedIndex == 0 && this.gridSelectCartonDetail.RowCount == 0)
-            {
-                this.btnCalibrationList.Enabled = false;
-            }
-            else
-            {
-                this.btnCalibrationList.Enabled = true;
-            }
         }
 
         private bool LoadDatas()
@@ -758,13 +750,14 @@ INSERT INTO [dbo].[PackingScan_History]
 
             var selectCartonFilterResult = list_selectCarton.Where(default_where);
 
-            if (selectCartonFilterResult.Any())
+                if (selectCartonFilterResult.Any())
             {
                 this.selcartonBS.DataSource = list_selectCarton.Where(default_where);
             }
             else
             {
                 this.selcartonBS.DataSource = null;
+                this.ShowCalibrationButton();
             }
 
             var queryTotal = from c in list_selectCarton
@@ -1984,13 +1977,19 @@ and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
 
         private void tabControlScanArea_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (this.tabControlScanArea.SelectedIndex == 0 && this.gridSelectCartonDetail.RowCount == 0)
+            this.ShowCalibrationButton();
+        }
+
+        private void ShowCalibrationButton()
+        {
+            // 底部grid有資料就開放button btnCalibration List按鈕
+            if (this.tabControlScanArea.SelectedIndex == 0 && this.gridSelectCartonDetail.RowCount == 0 && MyUtility.Check.Empty(this.txtScanCartonSP.Text))
             {
-                this.btnCalibrationList.Enabled = false;
+                this.btnCalibrationList.Enabled = true;
             }
             else
             {
-                this.btnCalibrationList.Enabled = true;
+                this.btnCalibrationList.Enabled = false;
             }
         }
     }
