@@ -99,6 +99,9 @@ select s.id
     ,o.SciDelivery 
     ,[NonRevenue]=IIF(o.NonRevenue=1,'Y','N')
     ,Cancel=iif(o.Junk=1,'Y','' )
+    ,[Inline Category] = (select CONCAT(s.SewingReasonIDForTypeIC, '-' + SR.Description) from SewingReason sr where sr.ID = s.SewingReasonIDForTypeIC and sr.Type='IC')
+    ,[Low output Reason] = (select CONCAT(s.SewingReasonIDForTypeLO, '-' + SR.Description) from SewingReason sr where sr.ID = s.SewingReasonIDForTypeLO and sr.Type='LO')
+    ,[New Style/Repeat style] = dbo.IsRepeatStyleBySewingOutput(s.FactoryID, s.OutputDate, s.SewinglineID, s.Team, o.StyleUkey)
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
@@ -191,6 +194,9 @@ select distinct OutputDate
     ,NonRevenue
     ,Remark
     ,Cancel
+    ,[Inline Category]
+    ,[Low output Reason]
+    ,[New Style/Repeat style]
 into #tmpSewingGroup
 from #tmpSewingDetail t
 outer apply(
@@ -423,6 +429,9 @@ select	MDivisionID
 			set @lastSql = @lastSql + ' ' + @NameFinal + N' '
 
 		set @lastSql = @lastSql + '
+        ,[Inline Category]
+        ,[Low output Reason]
+        ,[New Style/Repeat style]
 from(
 	select distinct
 		 MDivisionID,t.FactoryID
@@ -490,7 +499,11 @@ from(
 		if(@Include_Artwork = 1)
 			set @lastSql = @lastSql + ' ' + @TTLZ + N' '
 
-		set @lastSql = @lastSql + 'from #tmp1stFilter t
+		set @lastSql = @lastSql + '
+        ,t.[Inline Category]
+        ,t.[Low output Reason]
+        ,t.[New Style/Repeat style]
+    from #tmp1stFilter t
     Outer apply (
 	    SELECT s.CDCodeNew
             , ProductType = r2.Name

@@ -141,6 +141,9 @@
     <Compile Include="P02_ExcludefabriccomboinWIP.Designer.cs">
       <DependentUpon>P02_ExcludefabriccomboinWIP.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02_KHImportMarker.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="P02_PatternPanel_n.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -411,6 +414,12 @@
     </Compile>
     <Compile Include="P15_SpreadingStauts.Designer.cs">
       <DependentUpon>P15_SpreadingStauts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P16.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P16.Designer.cs">
+      <DependentUpon>P16.cs</DependentUpon>
     </Compile>
     <Compile Include="P20_Detail.cs">
       <SubType>Form</SubType>
@@ -751,6 +760,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P15_SpreadingStauts.resx">
       <DependentUpon>P15_SpreadingStauts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P16.resx">
+      <DependentUpon>P16.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P20_Detail.resx">
       <DependentUpon>P20_Detail.cs</DependentUpon>

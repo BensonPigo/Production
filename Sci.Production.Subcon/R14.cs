@@ -342,6 +342,7 @@ namespace Sci.Production.Subcon
                 ,aa.BrandID
                 ,[SMR]=dbo.getTPEPass1(aa.SMR) 
                 ,xx.PCS
+                ,[PulloutComplete] = IIF(pc.cnt > 0,'N','Y')
                 ,y.order_qty
                 ,x.ap_qty
                 ,[amount]=round(isnull(x.ap_amt,0.0)+isnull(z.localap_amt,0.0),2) 
@@ -393,6 +394,12 @@ namespace Sci.Production.Subcon
                 left join orders aa on aa.id = t.POID
                 left join Order_TmsCost bb on bb.id = aa.ID and bb.ArtworkTypeID = t.artworktypeid
                 left join Brand cc on aa.BrandID=cc.id
+	            outer apply(
+					select cnt = count(1)
+					from orders o
+					where o.POID = aa.POID
+					and o.PulloutComplete = 0
+				)pc
                 outer apply (
 	                select isnull(sum(t.ap_amt),0.00) ap_amt
                 , isnull(sum(t.ap_qty),0) ap_qty 
@@ -459,6 +466,7 @@ namespace Sci.Production.Subcon
                 ,aa.BrandID
                 ,[SMR]=dbo.getTPEPass1(aa.SMR) 
                 ,xx.PCS
+                ,[PulloutComplete] = IIF( isnull(aa.PulloutComplete,0) = 0,'N','Y')
                 ,y.order_qty
                 ,x.ap_qty
                 ,[amount]=round(isnull(x.ap_amt,0.0)+isnull(z.localap_amt,0.0),2) 
@@ -580,6 +588,7 @@ namespace Sci.Production.Subcon
                 ,aa.BrandID
                 ,[SMR]= dbo.getTPEPass1(aa.SMR) 
                 ,[PCS]= iif(t.artworktypeid ='EMBROIDERY',xx.PCS,yy.PCS) 
+                ,[PulloutComplete] = IIF(pc.cnt > 0,'N','Y')
                 ,y.order_qty
                 ,x.ap_qty
                 ,[ap_amt]= round(x.ap_amt,2) 
@@ -603,6 +612,12 @@ namespace Sci.Production.Subcon
                 left join orders aa on aa.id = t.POID
                 left join Order_TmsCost bb on bb.id = aa.ID and bb.ArtworkTypeID = t.artworktypeid
                 left join Brand cc on aa.BrandID=cc.id
+                outer apply(
+					select cnt = count(1)
+					from orders o
+					where o.POID = aa.POID
+					and o.PulloutComplete = 0
+				)pc
                 outer apply (
 	                select isnull(sum(t.ap_amt),0.00) ap_amt
                 , isnull(sum(t.ap_qty),0) ap_qty from (
@@ -661,6 +676,7 @@ namespace Sci.Production.Subcon
                 ,aa.BrandID
                 ,[SMR]= dbo.getTPEPass1(aa.SMR) 
                 ,[PCS]= iif(t.artworktypeid ='EMBROIDERY',xx.PCS,yy.PCS) 
+                ,[PulloutComplete] = IIF( isnull(aa.PulloutComplete,0) = 0,'N','Y')
                 ,y.order_qty
                 ,x.ap_qty
                 ,[ap_amt]= round(x.ap_amt,2) 
