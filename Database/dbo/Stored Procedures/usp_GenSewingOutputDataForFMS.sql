@@ -13,7 +13,8 @@ begin
 select s.ID,s.OutputDate,s.SewingLineID,s.Team,s.FactoryID,s.Shift,s.Manpower,s.WorkHour,s.ManHour,s.TMS,s.QAQty,s.Efficiency,s.SewingReasonIDForTypeIC,sr.Description as 'Inlne Category',s.Status,s.AddName,s.AddDate,s.EditName,s.EditDate,s.Category
     ,[ActManPower] = s.Manpower
 	,[MockupStyle] = isnull(mo.StyleID,'')
-	,[OrderStyle] = isnull(o.StyleID,'') 
+	,[OrderStyle] = isnull(o.StyleID,'') 	
+	,sd.UKey
 into #tmp
 from SewingOutput s
 left join SewingOutput_Detail sd on s.ID = sd.ID
@@ -85,7 +86,7 @@ select distinct sd.ID, sd.OrderId, sd.Article, sd.Color
 		isnull([dbo].[GetOrderLocation_Rate](o.id,sd.ComboType),100)/100) * sd.QAQty)/ROUND(t.ActManPower * sd.WorkHour,2),0)
 ,[Cumulate Date] = IIF(CumulateDate.val > 180,'>180',CONVERT(VARCHAR,CumulateDate.val))
 from SewingOutput_Detail sd
-inner join #tmp t on sd.ID = t.ID
+inner join #tmp t on sd.UKey = t.UKey
 left join Orders o on o.ID = sd.OrderId
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 outer apply (	
