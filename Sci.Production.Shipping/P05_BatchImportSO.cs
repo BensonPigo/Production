@@ -43,21 +43,20 @@ namespace Sci.Production.Shipping
 
                     sqlcmd = $@"
 select 
-        fwd.WhseNo
-        ,fwd.address 
-        ,fwd.UKey
-from  ForwarderWhse fw 
-     ,ForwarderWhse_Detail fwd
+         WhseCode
+        ,address 
+        ,UKey
+from  ForwarderWarehouse fw 
+     ,ForwarderWarehouse_Detail fwd
  where 
         fw.ID = fwd.ID
-        and fw.BrandID = '{cuttentDr["BrandID"]}'
-        and fw.Forwarder = '{cuttentDr["Forwarder"]}'
+        and fw.BrandID like '%{cuttentDr["BrandID"]}%'
         and fw.ShipModeID = '{cuttentDr["ShipModeID"]}'
- order by fwd.WhseNo
+ order by WhseCode
 ";
                     DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
 
-                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(dt, "WhseNo,address", "20,20", string.Empty);
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(dt, "WhseCode,address", "20,20", string.Empty);
 
                     DialogResult result1 = item.ShowDialog();
                     if (result1 == DialogResult.Cancel)
@@ -82,9 +81,9 @@ from  ForwarderWhse fw
                 DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
                 string sqlCmd = $@"
 select fwd.UKey
-from ForwarderWhse fw WITH (NOLOCK) 
-inner join ForwarderWhse_Detail fwd WITH (NOLOCK) on fw.ID = fwd.ID
-where fwd.whseno = '{e.FormattedValue}'
+from ForwarderWarehouse fw WITH (NOLOCK) 
+inner join ForwarderWarehouse_Detail fwd WITH (NOLOCK) on fw.ID = fwd.ID
+where WhseCode = '{e.FormattedValue}'
 ";
                 if (MyUtility.Check.Seek(sqlCmd, out DataRow drr))
                 {
@@ -223,15 +222,15 @@ VALUES (
     ,InvDate
     ,[SONo]
     ,ForwarderWhse_DetailUKey
-    ,[ForwarderWhse_DetailUKey_ForShow]=fwd.WhseNo
+    ,[ForwarderWhse_DetailUKey_ForShow] = WhseCode
     ,[CutOffDate]
     ,[SOCFMDate]
     ,g.Forwarder 
     ,g.ShipModeID 
     ,g.DocumentRefNo
 FROM GMTBooking g
-LEFT JOIN ForwarderWhse_Detail fwd ON  g.ForwarderWhse_DetailUKey=fwd.UKey
-LEFT JOIN ForwarderWhse fw ON  fw.ID = fwd.ID
+LEFT JOIN ForwarderWarehouse_Detail fwd ON  g.ForwarderWhse_DetailUKey=fwd.UKey
+LEFT JOIN ForwarderWarehouse fw ON  fw.ID = fwd.ID
 WHERE 1=1 AND g.Status='New'
 " + Environment.NewLine;
 
