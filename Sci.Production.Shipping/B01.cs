@@ -47,15 +47,14 @@ namespace Sci.Production.Shipping
                     }
 
                     dr["ShipModeID"] = item.GetSelectedString();
+                    dr["LoadingType"] = string.Empty;
                     dr.EndEdit();
                 }
             };
             col_ShipMode.CellValidating += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                string oldvalue = dr["ShipModeID"].ToString();
-                string newvalue = e.FormattedValue.ToString();
-                if (!this.EditMode || e.RowIndex == -1 || oldvalue.Equals(newvalue))
+                if (!this.EditMode || e.RowIndex == -1)
                 {
                     return;
                 }
@@ -79,6 +78,12 @@ namespace Sci.Production.Shipping
                         dr["ShipModeID"] = e.FormattedValue;
                     }
 
+                    cmd = $@"Select 1 from ShipMode WITH (NOLOCK) where Junk = 0 and ID ='{e.FormattedValue}'  and LoadingType = '{dr["LoadingType"]}'";
+                    if (!MyUtility.Check.Seek(cmd))
+                    {
+                        dr["LoadingType"] = string.Empty;
+                    }
+
                     dr.EndEdit();
                 }
             };
@@ -94,7 +99,13 @@ namespace Sci.Production.Shipping
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                    string sqlitem = @"
+                    if (MyUtility.Check.Empty(dr["ShipModeID"]))
+                    {
+                        MyUtility.Msg.WarningBox("Please fill [Ship Mode] first.");
+                        return;
+                    }
+
+                    string sqlitem = $@"
 select distinct data 
 from SplitString
 (
@@ -106,6 +117,7 @@ from SplitString
 						LoadingType
 					from dbo.ShipMode d
 					where Junk = 0 and LoadingType !=''
+                    and ID = '{dr["ShipModeID"]}'
 				) s
 			for xml path ('')
 		) , 1, 1, '')
@@ -171,6 +183,13 @@ from SplitString
 
             return base.ClickSaveBefore();
         }
+
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            this.txtWhseCode.ReadOnly = true;
+        }
+
 
         private void editPOCombo_PopUp(object sender, Win.UI.EditBoxPopUpEventArgs e)
         {

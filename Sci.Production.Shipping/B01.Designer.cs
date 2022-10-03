@@ -62,7 +62,7 @@
             this.masterpanel.Controls.Add(this.editAddress);
             this.masterpanel.Controls.Add(this.labelAddress);
             this.masterpanel.Controls.Add(this.labelBrand);
-            this.masterpanel.Size = new System.Drawing.Size(892, 168);
+            this.masterpanel.Size = new System.Drawing.Size(824, 168);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelBrand, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelAddress, 0);
@@ -77,7 +77,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 168);
-            this.detailpanel.Size = new System.Drawing.Size(892, 181);
+            this.detailpanel.Size = new System.Drawing.Size(824, 223);
             // 
             // gridicon
             // 
@@ -89,7 +89,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 181);
+            this.detailgridcont.Size = new System.Drawing.Size(824, 223);
             // 
             // detail2
             // 
@@ -102,6 +102,19 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(824, 429);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(824, 391);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 391);
+            this.detailbtm.Size = new System.Drawing.Size(824, 38);
             // 
             // browse
             // 
