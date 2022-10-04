@@ -349,7 +349,7 @@ select distinct '{this.cuttingid}',FabricCombo,'{this.loginID}',getdate() from #
                 catch (Exception ex)
                 {
                     transactionscope.Dispose();
-                    dResult = new DualResult(false, "Commit transaction error.", ex);
+                    this.ShowErr(new DualResult(false, "Commit transaction error.", ex));
                     return;
                 }
             }
