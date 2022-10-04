@@ -175,7 +175,7 @@ select g.ID
 , g.SONo
 , g.CutOffDate
 , g.ForwarderWhse_DetailUKey
-, WhseNo = isnull(fd.WhseNo,'')
+, WhseNo = isnull(fw.WhseCode,'')
 , Status = iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed'))
 , [TotalCTNQty] = isnull(g.TotalCTNQty,0)
 , g.TotalCBM
@@ -188,7 +188,8 @@ select g.ID
 )
 ,[TotalShipQty] =  isnull(g.TotalShipQty,0)
 from GMTBooking g WITH (NOLOCK) 
-left join ForwarderWhse_Detail fd WITH (NOLOCK) on g.ForwarderWhse_DetailUKey = fd.UKey
+left join ForwarderWarehouse_Detail fd WITH (NOLOCK) on g.ForwarderWhse_DetailUKey = fd.UKey
+left join ForwarderWarehouse fw WITH (NOLOCK) on fd.id = fw.id
 where {0} 
 order by g.ID", masterID);
 
@@ -910,7 +911,7 @@ g.ShipModeID,
 g.CYCFS,
 g.SONo,
 g.CutOffDate,
-[WhseNo] = concat(fd.WhseNo,'-',fd.Address),
+[WhseNo] = concat(fw.WhseCode,'-',fw.Address),
 [Status] = iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed')),
 g.TotalCTNQty,
 g.TotalCBM,
@@ -933,7 +934,8 @@ p.InspStatus,
 p.PulloutDate
 from PackingList p WITH (NOLOCK) 
 left join GMTBooking g WITH (NOLOCK) on p.INVNo = g.ID
-left join ForwarderWhse_Detail fd WITH (NOLOCK) on g.ForwarderWhse_DetailUKey = fd.UKey
+left join ForwarderWarehouse_Detail fd WITH (NOLOCK) on g.ForwarderWhse_DetailUKey = fd.UKey
+left join ForwarderWarehouse fw WITH (NOLOCK) on fd.id =fw.id
 left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
 where p.ShipPlanID = '{0}'
 order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
@@ -958,7 +960,7 @@ select  t.ShipPlanID,
         g.CYCFS,
         g.SONo,
         g.CutOffDate,
-        [WhseNo] = concat(fd.WhseNo,'-',fd.Address),
+        [WhseNo] = concat(fw.WhseCode,'-',fw.Address),
         [Status] = iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed')),
         g.TotalCTNQty,
         g.TotalCBM,
@@ -975,7 +977,8 @@ select  t.ShipPlanID,
         t.PulloutDate
 from #tmp t
 left join GMTBooking g WITH (NOLOCK) on t.INVNo = g.ID
-left join ForwarderWhse_Detail fd WITH (NOLOCK) on g.ForwarderWhse_DetailUKey = fd.UKey
+left join ForwarderWarehouse_Detail fd WITH (NOLOCK) on g.ForwarderWhse_DetailUKey = fd.UKey
+lefy join ForwarderWarehouse fw WITH (NOLOCK) on fd.id  = fw.id
 left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
 ";
 
