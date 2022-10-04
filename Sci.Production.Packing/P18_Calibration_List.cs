@@ -132,10 +132,15 @@ Where Junk = 0
                     return;
                 }
 
+                if (e.FormattedValue.ToString().Trim().Length < 4)
+                {
+                    MyUtility.Msg.WarningBox("[Calibration Time] length should be 4 !");
+                    e.Cancel = true;
+                    return;
+                }
+
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
-
                 string strTime = string.Empty;
-
                 if (e.FormattedValue.ToString().Contains(":"))
                 {
                     strTime = e.FormattedValue.ToString().Substring(0, 2) + ":" + e.FormattedValue.ToString().Substring(3, 2);
@@ -157,7 +162,7 @@ Where Junk = 0
             };
 
             Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings col_allselect = new DataGridViewGeneratorCheckBoxColumnSettings();
-            col_allselect.CellValidating += (s, e) => 
+            col_allselect.CellValidating += (s, e) =>
             {
                 if (e.RowIndex == -1 || this.EditMode == false)
                 {
@@ -177,6 +182,19 @@ Where Junk = 0
                     dr["Point8"] = 1;
                     dr["Point9"] = 1;
                     dr["SelectAll"] = 1;
+                }
+                else
+                {
+                    dr["Point1"] = 0;
+                    dr["Point2"] = 0;
+                    dr["Point3"] = 0;
+                    dr["Point4"] = 0;
+                    dr["Point5"] = 0;
+                    dr["Point6"] = 0;
+                    dr["Point7"] = 0;
+                    dr["Point8"] = 0;
+                    dr["Point9"] = 0;
+                    dr["SelectAll"] = 0;
                 }
 
                 dr.EndEdit();
@@ -267,6 +285,8 @@ order by CalibrationTime desc
                     P18_Calibration_History callForm = new P18_Calibration_History(dtDtail.Rows[0]["Date"].ToString(), dtDtail.Rows[1]["Date"].ToString());
                     callForm.ShowDialog(this);
                 }
+
+                P18.timer.Start();
             }
         }
     }

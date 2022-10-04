@@ -35,6 +35,8 @@ namespace Sci.Production.Packing
         private string CTNStarNo = string.Empty;
         private bool Boolfirst = true;
 
+        public static System.Windows.Forms.Timer timer;
+
         /// <summary>
         /// P18
         /// </summary>
@@ -143,7 +145,8 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
                         !MyUtility.Check.Empty(dr["Point6"]) &&
                         !MyUtility.Check.Empty(dr["Point7"]) &&
                         !MyUtility.Check.Empty(dr["Point8"]) &&
-                        !MyUtility.Check.Empty(dr["Point9"]))
+                        !MyUtility.Check.Empty(dr["Point9"]) &&
+                        !MyUtility.Check.Empty(dr["CalibrationTime"]))
                     {
                         int hh = MyUtility.Convert.GetInt(dr["CalibrationTime"].ToString().Substring(0, 2));
                         int mm = MyUtility.Convert.GetInt(dr["CalibrationTime"].ToString().Substring(3, 2));
@@ -152,7 +155,7 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
                         int currMM = DateTime.Now.Minute;
 
                         // 觸發Timer: 時間要剛好是一小時整才會觸發
-                        if (IsTimer == true && !Boolfirst)
+                        if (IsTimer == true && !this.Boolfirst)
                         {
                             if (currHH - hh == 1 && currMM - mm == 0)
                             {
@@ -180,11 +183,6 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
 
         private void AlterMSg()
         {
-            //P18_Message msg = new P18_Message();
-            //msg.color = Color.Red;
-            //msg.Show("Move to MD Hourly Calibration!");
-
-            //Thread.Sleep(7000); // delay 1 sec
             MyUtility.Msg.WarningBox("Move to MD Hourly Calibration!");
 
             foreach (Form form in Application.OpenForms)
@@ -203,30 +201,34 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
 
         private void Display_Calibration(int HH, int MM)
         {
+            string machineID = P18_Calibration_List.MachineID;
+
+            // Machine 沒資料就不用顯示下一次時間
+            if (MyUtility.Check.Empty(machineID))
+            {
+                return;
+            }
+
             if (HH == 0 && MM == 0)
             {
-                if (this.chkAutoCalibration.Checked)
-                {
-                    string machineID = P18_Calibration_List.MachineID;
-                    string sqlcmd = $@"
+                string sqlcmd = $@"
 select top 1 * from MDCalibrationList where MachineID = '{machineID}' and CalibrationDate = CONVERT(date, GETDATE()) and operator = '{Sci.Env.User.UserID}' order by CalibrationTime desc";
-                    if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
+                if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
+                {
+                    // 全都勾選
+                    if (!MyUtility.Check.Empty(dr["Point1"]) &&
+                        !MyUtility.Check.Empty(dr["Point2"]) &&
+                        !MyUtility.Check.Empty(dr["Point3"]) &&
+                        !MyUtility.Check.Empty(dr["Point4"]) &&
+                        !MyUtility.Check.Empty(dr["Point5"]) &&
+                        !MyUtility.Check.Empty(dr["Point6"]) &&
+                        !MyUtility.Check.Empty(dr["Point7"]) &&
+                        !MyUtility.Check.Empty(dr["Point8"]) &&
+                       !MyUtility.Check.Empty(dr["CalibrationTime"]))
                     {
-                        // 全都勾選
-                        if (!MyUtility.Check.Empty(dr["Point1"]) &&
-                            !MyUtility.Check.Empty(dr["Point2"]) &&
-                            !MyUtility.Check.Empty(dr["Point3"]) &&
-                            !MyUtility.Check.Empty(dr["Point4"]) &&
-                            !MyUtility.Check.Empty(dr["Point5"]) &&
-                            !MyUtility.Check.Empty(dr["Point6"]) &&
-                            !MyUtility.Check.Empty(dr["Point7"]) &&
-                            !MyUtility.Check.Empty(dr["Point8"]) &&
-                            !MyUtility.Check.Empty(dr["Point9"]))
-                        {
-                            string hh = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(dr["CalibrationTime"].ToString().Substring(0, 2)) + 1);
-                            string mm = dr["CalibrationTime"].ToString().Substring(3, 2);
-                            this.lbCalibrationTime.Text = $@"Next Calibration Time : {hh}:{mm}";
-                        }
+                        string hh = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(dr["CalibrationTime"].ToString().Substring(0, 2)) + 1);
+                        string mm = dr["CalibrationTime"].ToString().Substring(3, 2);
+                        this.lbCalibrationTime.Text = $@"Next Calibration Time : {hh}:{mm}";
                     }
                 }
             }
@@ -1943,16 +1945,20 @@ and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
 
         private void btnCalibrationList_Click(object sender, EventArgs e)
         {
-            P18_Calibration_List callForm = new P18_Calibration_List(true, String.Empty, String.Empty, String.Empty);
+            P18_Calibration_List callForm = new P18_Calibration_List(true, string.Empty, string.Empty, string.Empty);
             callForm.ShowDialog(this);
             this.disable_Carton_Scan();
             this.Display_Calibration(0, 0);
+
+            // 啟動計時器
+            this.timer1.Start();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            // 每15秒跑一次
-            this.timer1.Interval = 1000 * 15;
+            // 每10秒跑一次
+            timer = this.timer1;
+            this.timer1.Interval = 1000 * 10;
             this.alert_Calibration(IsTimer: true);
         }
 
@@ -1986,10 +1992,12 @@ and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
             if (this.tabControlScanArea.SelectedIndex == 0 && this.gridSelectCartonDetail.RowCount == 0 && MyUtility.Check.Empty(this.txtScanCartonSP.Text))
             {
                 this.btnCalibrationList.Enabled = true;
+                this.timer1.Start();
             }
             else
             {
                 this.btnCalibrationList.Enabled = false;
+                this.timer1.Stop();
             }
         }
     }
