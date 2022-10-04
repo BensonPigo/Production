@@ -119,9 +119,22 @@ select
 	,id.Qty
 	,BulkLocation=dbo.Getlocation(fi.Ukey)
 	,Createby=dbo.getPass1_ExtNo(i.AddName)
-    ,[MIND Releaser] = id.MINDReleaser
-	,[Start Time] = i.IssueStartTime
-	,[Completion %] = CompletionNum.value
+    ,[MIND Releaser] = concat(id.MINDReleaser,'-',(select Name from Pass1 where Pass1.id =id.MINDReleaser ))
+	,[Start Time] = format(i.IssueStartTime,'yyyy/MM/dd HH:mm')
+	,[Scan Time] = format(id.MINDReleaseDate,'yyyy/MM/dd HH:mm')
+	,[Picking Completion %] = CompletionNum.value
+    ,[Need Unroll] = iif (id.NeedUnroll = 1, 'Y', '')
+	,[MIND Unroll & Relax Scan By] = concat(id.UnrollScanner,'-',(select Name from Pass1 where Pass1.id =id.UnrollScanner ))
+	,[Start Time Unroll] = format(id.UnrollStartTime,'yyyy/MM/dd HH:mm')
+	,[End Time Unroll] = format(id.UnrollEndTime,'yyyy/MM/dd HH:mm')
+	,[Start Time Relax] = format(id.RelaxationStartTime,'yyyy/MM/dd HH:mm')
+	,[End Time Relax] = format(id.RelaxationEndTime,'yyyy/MM/dd HH:mm')
+	,[Actual Qty] = id.UnrollActualQty
+	,[Yardage Remarks] = id.UnrollRemark
+	,[Unrolling & Relaxation Completion %] = case 
+					when (id.NeedUnroll = 1 and id.UnrollStatus = 'Done' and id.RelaxationStartTime is null) then 100
+					when (id.NeedUnroll = 1 and id.UnrollStatus = 'Done' and id.RelaxationStartTime is not null and id.RelaxationEndTime <= GETDATE()) then 100
+					else 0 end
 from issue i WITH (NOLOCK) 
 inner join issue_detail id WITH (NOLOCK) on i.id = id.id
 inner join Orders o WITH (NOLOCK) on id.POID = o.id
