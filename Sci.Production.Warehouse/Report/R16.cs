@@ -123,6 +123,7 @@ select
 	,[Start Time] = format(i.IssueStartTime,'yyyy/MM/dd HH:mm')
 	,[Scan Time] = format(id.MINDReleaseDate,'yyyy/MM/dd HH:mm')
 	,[Picking Completion %] = CompletionNum.value
+    ,[Need Unroll] = iif (id.NeedUnroll = 1, 'Y', '')
 	,[MIND Unroll & Relax Scan By] = concat(id.UnrollScanner,'-',(select Name from Pass1 where Pass1.id =id.UnrollScanner ))
 	,[Start Time Unroll] = format(id.UnrollStartTime,'yyyy/MM/dd HH:mm')
 	,[End Time Unroll] = format(id.UnrollEndTime,'yyyy/MM/dd HH:mm')
