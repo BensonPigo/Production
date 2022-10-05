@@ -151,6 +151,7 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
                         int hh = MyUtility.Convert.GetInt(dr["CalibrationTime"].ToString().Substring(0, 2));
                         int mm = MyUtility.Convert.GetInt(dr["CalibrationTime"].ToString().Substring(3, 2));
 
+                        this.Display_Calibration(hh, mm);
                         int currHH = DateTime.Now.Hour;
                         int currMM = DateTime.Now.Minute;
 
@@ -172,8 +173,6 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
                                 this.AlterMSg();
                             }
                         }
-
-                        this.Display_Calibration(hh, mm);
                     }
                 }
             }
@@ -197,6 +196,7 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
             P18_Calibration_List callForm = new P18_Calibration_List(true, string.Empty, string.Empty, string.Empty);
             callForm.ShowDialog(this);
             this.disable_Carton_Scan();
+            this.Display_Calibration(0, 0);
         }
 
         private void Display_Calibration(int HH, int MM)
