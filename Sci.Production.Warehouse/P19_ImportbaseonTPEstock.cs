@@ -77,19 +77,27 @@ namespace Sci.Production.Warehouse
                 if (this.EditMode)
                 {
                     DataRow dr = this.grid2.GetDataRow(e.RowIndex);
-                    if (MyUtility.Convert.GetDecimal(e.FormattedValue) > MyUtility.Convert.GetDecimal(dr["StockBalance"]))
+                    // 數量0要拉開判斷且不能自動勾選Selected
+                    if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["qty"] = 0;
+                        dr.EndEdit();
+                    }
+                    else if (MyUtility.Convert.GetDecimal(e.FormattedValue) > MyUtility.Convert.GetDecimal(dr["StockBalance"]))
                     {
                         MyUtility.Msg.WarningBox("TransferQty can not more than Stock Balance!");
                         dr["qty"] = 0;
+                        dr.EndEdit();
                     }
                     else
                     {
+                        // 先填入數值 > EndEdit > 才能自動勾選! 不然會觸發到Select事件
                         dr["qty"] = e.FormattedValue;
+                        dr.EndEdit();
                         dr["Selected"] = 1;
                     }
 
-                    dr.EndEdit();
-                    this.CaculateTotalTransfer();
+                    this.CaculateTotalTransfer(selectAll: false);
                 }
             };
 
@@ -98,9 +106,18 @@ namespace Sci.Production.Warehouse
             {
                 DataRow dr = this.grid2.GetDataRow<DataRow>(e.RowIndex);
                 dr["selected"] = e.FormattedValue;
-                dr.EndEdit();
 
-                this.CaculateTotalTransfer();
+                // 手動勾選要單獨判斷是把StockBalance給Qty
+                if (MyUtility.Convert.GetBool(dr["Selected"]))
+                {
+                    if (dr["qty"].Empty())
+                    {
+                        dr["qty"] = dr["StockBalance"];
+                    }
+                }
+
+                dr.EndEdit();
+                this.CaculateTotalTransfer(selectAll: false);
             };
 
             this.grid2.IsEditingReadOnly = false;
@@ -132,11 +149,11 @@ namespace Sci.Production.Warehouse
         {
             if (e.ColumnIndex == 0)
             {
-                this.CaculateTotalTransfer();
+                this.CaculateTotalTransfer(selectAll: true);
             }
         }
 
-        private void CaculateTotalTransfer()
+        private void CaculateTotalTransfer(bool selectAll)
         {
             decimal totalTransfer = 0;
             foreach (DataGridViewRow gridDr in this.grid2.Rows)
@@ -144,14 +161,18 @@ namespace Sci.Production.Warehouse
                 DataRow dr = this.grid2.GetDataRow(gridDr.Index);
                 if (MyUtility.Convert.GetBool(dr["Selected"]))
                 {
-                    if (dr["qty"].Empty())
+                    // 此功能for全選要自動給值
+                    if (selectAll)
                     {
-                        dr["qty"] = dr["StockBalance"];
-                        dr.EndEdit();
+                        if (dr["qty"].Empty())
+                        {
+                            dr["qty"] = dr["StockBalance"];
+                            dr.EndEdit();
+                        }
                     }
-
-                    totalTransfer += MyUtility.Convert.GetDecimal(gridDr.Cells["qty"].Value);
                 }
+
+                totalTransfer += MyUtility.Convert.GetDecimal(gridDr.Cells["qty"].Value);
             }
 
             DataRow drSelect = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
@@ -496,7 +517,7 @@ drop table #tmp, #tmpDetailResult, #tmpDetail
             this.grid2.ValidateControl();
 
             string filter = string.Empty;
-            if (this.grid1.RowCount > 0)
+            if (this.grid1 != null)
             {
                 switch (this.chk_Balance.Checked)
                 {
