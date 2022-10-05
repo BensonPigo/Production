@@ -2741,6 +2741,7 @@
     <Build Include="dbo\Tables\ClogPackingError_Detail.sql" />
     <Build Include="dbo\Stored Procedures\GetMonthlyProductionOutputReport.sql" />
     <Build Include="dbo\Stored Procedures\usp_GenSewingOutputDataForFMS.sql" />
+    <Build Include="dbo\Functions\GetSewingOutputID_For_SNPAutoTransferToSewingOutput.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
