@@ -110,9 +110,6 @@ Select
     [RFIDProcessTable] = bt.RFIDProcessTable,
 	[FabricKind] = FabricKind.val,
     [Cut Ref#] = b.CutRef,
-	[SP#] =iif((select count(1) from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo) = 1
-		, (select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo)
-		, dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo order by OrderID for XML RAW))),
     [Master SP#] = b.POID,
     [M] = b.MDivisionid,
     [Factory] = o.FtyGroup,
@@ -181,21 +178,6 @@ where 1=1
             ");
                 #endregion
                 #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(this.SubProcess))
-                {
-                    this.sqlCmd.Append($@" and (bt.SubprocessId in ('{this.SubProcess.Replace(",", "','")}') or '{this.SubProcess}'='')");
-                }
-
-                if (!MyUtility.Check.Empty(this.CutRef1) && (!MyUtility.Check.Empty(this.CutRef1)))
-                {
-                    this.sqlCmd.Append(string.Format(@" and b.CutRef between '{0}' and '{1}'", this.CutRef1, this.CutRef2));
-                }
-
-                if (!MyUtility.Check.Empty(this.SP))
-                {
-                    this.sqlCmd.Append(string.Format(@" and exists(select 1 from Bundle_Detail_Order with(nolock) where bundleNo = bd.bundleNo and Orderid= '{0}')", this.SP));
-                }
-
                 if (!MyUtility.Check.Empty(this.dateBundle1))
                 {
                     this.sqlCmd.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(this.dateBundle1).ToString("yyyy/MM/dd")));
@@ -215,6 +197,21 @@ where 1=1
                 {
                     // TransferDate 是 datetime, 直接用日期做判斷的話要加一天才不會漏掉最後一天的資料
                     this.sqlCmd.Append(" and bt.TransferDate <= @TransferDateTo");
+                }
+
+                if (!MyUtility.Check.Empty(this.SubProcess))
+                {
+                    this.sqlCmd.Append($@" and (bt.SubprocessId in ('{this.SubProcess.Replace(",", "','")}') or '{this.SubProcess}'='')");
+                }
+
+                if (!MyUtility.Check.Empty(this.CutRef1) && (!MyUtility.Check.Empty(this.CutRef1)))
+                {
+                    this.sqlCmd.Append(string.Format(@" and b.CutRef between '{0}' and '{1}'", this.CutRef1, this.CutRef2));
+                }
+
+                if (!MyUtility.Check.Empty(this.SP))
+                {
+                    this.sqlCmd.Append(string.Format(@" and exists(select 1 from Bundle_Detail_Order with(nolock) where bundleNo = bd.bundleNo and Orderid= '{0}')", this.SP));
                 }
 
                 if (!MyUtility.Check.Empty(this.M))
@@ -271,9 +268,6 @@ Select
     [RFIDProcessTable] = bt.RFIDProcessTable,
     [FabricKind] = FabricKind.val,
     [Cut Ref#] = b.CutRef,
-	[SP#] =iif((select count(1) from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo) = 1
-		, (select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo)
-		, dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo order by OrderID for XML RAW))),
     [Master SP#] = b.POID,
     [M] = b.MDivisionid,
     [Factory] = o.FtyGroup,
@@ -340,14 +334,14 @@ outer apply(
 )FabricKind
 where 1=1
 ");
-                if (!MyUtility.Check.Empty(this.SubProcess))
+                if (!MyUtility.Check.Empty(this.dateBundle1))
                 {
-                    this.sqlCmd.Append($@" and (bt.SubprocessId in ('{this.SubProcess.Replace(",", "','")}') or '{this.SubProcess}'='')" + Environment.NewLine);
+                    this.sqlCmd.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(this.dateBundle1).ToString("yyyy/MM/dd")));
                 }
 
-                if (this.processLocation != "ALL")
+                if (!MyUtility.Check.Empty(this.dateBundle2))
                 {
-                    this.sqlCmd.Append($@" and bt.RFIDProcessLocationID = '{this.processLocation}'" + Environment.NewLine);
+                    this.sqlCmd.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(this.dateBundle2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.dateBundleTransDate1))
@@ -361,6 +355,16 @@ where 1=1
                     this.sqlCmd.Append(" and bt.TransferDate <= @TransferDateTo");
                 }
 
+                if (!MyUtility.Check.Empty(this.SubProcess))
+                {
+                    this.sqlCmd.Append($@" and (bt.SubprocessId in ('{this.SubProcess.Replace(",", "','")}') or '{this.SubProcess}'='')" + Environment.NewLine);
+                }
+
+                if (this.processLocation != "ALL")
+                {
+                    this.sqlCmd.Append($@" and bt.RFIDProcessLocationID = '{this.processLocation}'" + Environment.NewLine);
+                }
+
                 if (!MyUtility.Check.Empty(this.CutRef1) && (!MyUtility.Check.Empty(this.CutRef1)))
                 {
                     this.sqlCmd.Append(string.Format(@" and b.CutRef between '{0}' and '{1}'", this.CutRef1, this.CutRef2));
@@ -369,16 +373,6 @@ where 1=1
                 if (!MyUtility.Check.Empty(this.SP))
                 {
                     this.sqlCmd.Append(string.Format(@" and exists(select 1 from Bundle_Detail_Order with(nolock) where bundleNo = bd.bundleNo and Orderid= '{0}')", this.SP));
-                }
-
-                if (!MyUtility.Check.Empty(this.dateBundle1))
-                {
-                    this.sqlCmd.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(this.dateBundle1).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.dateBundle2))
-                {
-                    this.sqlCmd.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(this.dateBundle2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.M))
@@ -416,11 +410,17 @@ and exists(
 
             this.sqlCmd.Append(@"
 select distinct [Bundle#],[RFIDProcessLocationID],[RFIDProcessTable],[FabricKind],[Cut Ref#],
-	[SP#],
+	[SP#] = sp.val,
 	[Master SP#],[M],[Factory],[Style],[Season],[Brand],[Comb],[Cutno],[Article],[Color],[Line],SewingLineID,
 	[Cell],[Pattern],[PtnDesc],[Group],[Size],[Qty],[RFID Reader],[Sub-process],[Post Sewing SubProcess],
 	[No Bundle Card After Subprocess],[Type],[TagId],[TransferDate],[TransferTime],LocationID,item,PanelNo,CutCellID
-from #tmp
+from #tmp t
+outer apply (
+	select val = case when (select count(1) from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = t.[Bundle#]) = 1 
+				then (select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = t.[Bundle#])
+				else dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = t.[Bundle#] order by OrderID for XML RAW))
+				end
+)sp
 
 drop table #tmp
 ");
