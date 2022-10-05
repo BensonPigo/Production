@@ -170,9 +170,9 @@ namespace Sci.Production.Warehouse
                             dr.EndEdit();
                         }
                     }
-                }
 
-                totalTransfer += MyUtility.Convert.GetDecimal(gridDr.Cells["qty"].Value);
+                    totalTransfer += MyUtility.Convert.GetDecimal(gridDr.Cells["qty"].Value);
+                }
             }
 
             DataRow drSelect = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
