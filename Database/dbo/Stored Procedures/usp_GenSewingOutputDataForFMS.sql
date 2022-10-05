@@ -10,20 +10,29 @@ begin
 
 --撈資料規則
 --1. SewingOutput
-select s.ID,s.OutputDate,s.SewingLineID,s.Team,s.FactoryID,s.Shift,s.Manpower,s.WorkHour,s.ManHour,s.TMS,s.QAQty,s.Efficiency,s.SewingReasonIDForTypeIC,sr.Description as 'Inlne Category',s.Status,s.AddName,s.AddDate,s.EditName,s.EditDate,s.Category
+select s.ID,s.OutputDate,s.SewingLineID,s.Team,s.FactoryID,s.Shift,s.Manpower,s.WorkHour,s.ManHour,s.TMS,s.QAQty,s.Efficiency,s.SewingReasonIDForTypeIC
+,sr.Description as 'Inlne Category',s.Status,s.AddName,s.AddDate,s.EditName,s.EditDate,s.Category
+into #tmpMaster
+from SewingOutput s
+left join SewingReason sr on s.SewingReasonIDForTypeIC = sr.ID and sr.Type = 'IC'
+where s.OutputDate between @StartOutputDate and @EndOutputDate
+and s.MDivisionID = iif(isnull(@MDivisionID,'') !='',@MDivisionID,s.MDivisionID)
+and s.FactoryID =  iif(isnull(@FactoryID,'')!='',@FactoryID,s.FactoryID)
+
+
+select s.ID,s.OutputDate,s.SewingLineID,s.Team,s.FactoryID,s.Shift,s.Manpower,s.WorkHour,s.ManHour,s.TMS,s.QAQty,s.Efficiency,s.SewingReasonIDForTypeIC
+,sr.Description as 'Inlne Category',s.Status,s.AddName,s.AddDate,s.EditName,s.EditDate
+	,s.Category
     ,[ActManPower] = s.Manpower
 	,[MockupStyle] = isnull(mo.StyleID,'')
-	,[OrderStyle] = isnull(o.StyleID,'') 	
+	,[OrderStyle] = isnull(o.StyleID,'') 
 	,sd.UKey
 into #tmp
-from SewingOutput s
-left join SewingOutput_Detail sd on s.ID = sd.ID
+from #tmpMaster s
+inner join SewingOutput_Detail sd on s.ID = sd.ID
 left join SewingReason sr on s.SewingReasonIDForTypeIC = sr.ID and sr.Type = 'IC'
 left join Orders o on o.ID = sd.OrderId
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
-where s.OutputDate between @StartOutputDate and @EndOutputDate
-and s.MDivisionID = iif(@MDivisionID!='',@MDivisionID,s.MDivisionID)
-and s.FactoryID =  iif(@FactoryID!='',@FactoryID,s.FactoryID)
 
 -- 準備中間資料
 -- 取得Max & Min OutputDate
@@ -62,6 +71,10 @@ and w.Date >= (select dateadd(day,-240, min(MinOutputDate)) from #tmpOutputDate)
 and w.Date <= (select max(MaxOutputDate) from #tmpOutputDate)
 order by  FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, w.Date
 
+
+select ID,OutputDate,SewingLineID,Team,FactoryID,Shift,Manpower,WorkHour,ManHour,TMS,QAQty,Efficiency,SewingReasonIDForTypeIC
+,[Inlne Category],Status,AddName,AddDate,EditName,EditDate
+from #tmpMaster
 
 --2. SewingOutput_Detail
 select distinct sd.ID, sd.OrderId, sd.Article, sd.Color
@@ -127,3 +140,6 @@ outer apply (
 
 drop table #tmp,#tmpOutputDate,#tmpSewingOutput,#tmpWorkHour
 end
+GO
+
+
