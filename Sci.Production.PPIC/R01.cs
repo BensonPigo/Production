@@ -534,7 +534,7 @@ into #c
 from #Holiday h
 left join #tmpStmp_step2 s on s.FactoryID = h.FactoryID and s.SewingLineID = h.SewingLineID and s.date = h.date
 inner join(select distinct FactoryID,SewingLineID from #tmpStmp_step2) x on x.FactoryID = h.FactoryID and x.SewingLineID = h.SewingLineID--排掉沒有在SewingSchedule內的資料by FactoryID,SewingLineID
-order by h.FactoryID,h.SewingLineID,h.date
+order by h.FactoryID,h.SewingLineID,h.date ASC, IsSample DESC
 
 
 select FactoryID,SewingLineID,date,APSNo
@@ -545,14 +545,20 @@ group by  FactoryID,SewingLineID,date,APSNo
 
 ------------------------------------------------------------------------------------------------
 DECLARE cursor_sewingschedule CURSOR FOR
-select c.FactoryID,c.SewingLineID,c.date
-	,StyleID = isnull(iif(c.Holiday = 1,'Holiday', cs.StyleID),'')
-	,IsLastMonth,IsNextMonth,IsBulk,IsSMS,BuyerDelivery
-	,StadOutPutQtyPerDay = sum(s.StdQ)
-	,PPH = sum(iif(isnull(c.TotalSewingTime,0)=0 or isnull(s.StdQ,0)=0,0,c.CPU / c.TotalSewingTime * s.StdQ))	
-	,IsSample
-	,c.IsRepeatStyle
-	,c.OriStyle
+select  c.FactoryID
+        ,c.SewingLineID
+        ,c.date
+	    ,StyleID = isnull(iif(c.Holiday = 1,'Holiday', cs.StyleID),'')
+	    ,[IsLastMonth] = max(IsLastMonth)
+		,[IsNextMonth] = max(IsNextMonth)
+		,[IsBulk] = max(IsBulk)
+		,IsSMS
+        ,[BuyerDelivery] = min(BuyerDelivery)
+	    ,StadOutPutQtyPerDay = sum(s.StdQ)
+	    ,PPH = sum(iif(isnull(c.TotalSewingTime,0)=0 or isnull(s.StdQ,0)=0,0,c.CPU / c.TotalSewingTime * s.StdQ))	
+        ,[IsSample] = max(IsSample)
+	    ,c.IsRepeatStyle
+	    ,c.OriStyle
 from #c c 
 left join #ConcatStyle cs on c.FactoryID = cs.FactoryID and c.SewingLineID = cs.SewingLineID and c.date = cs.date
 left join #tmpTotalWT twt on twt.APSNo = c.APSNo and twt.SewingLineID = c.SewingLineID and twt.FactoryID = c.FactoryID
@@ -561,8 +567,8 @@ left join LearnCurve_Detail lcd with (nolock) on c.LearnCurveID = lcd.ID and c.W
 outer  apply(select * from dbo.[getDailystdq](c.APSNo)x where x.APSNo=c.APSNo and x.Date = cast(c.date as date)
 			)s
 where c.date >= @sewinginlineOri
-group by c.FactoryID,c.SewingLineID,c.date,c.Holiday,cs.StyleID,IsLastMonth,IsNextMonth,IsBulk,IsSMS,BuyerDelivery,c.IsRepeatStyle,c.OriStyle,IsSample
-order by c.FactoryID,c.SewingLineID,c.date
+group by c.FactoryID,c.SewingLineID,c.date,c.Holiday,cs.StyleID,IsSMS,c.IsRepeatStyle,c.OriStyle
+order by c.FactoryID,c.SewingLineID,c.date ASC, IsSample DESC
 
 --建立tmpe table存放最後要列印的資料
 DECLARE @tempPintData TABLE (
@@ -631,7 +637,7 @@ BEGIN
 		VALUES (@factory, @sewingline, @StyleID, @date, @date, @IsLastMonth, @IsNextMonth, @IsBulk, @IsSMS, @BuyerDelivery, @StadOutPutQtyPerDay, @PPH, @IsSample, @IsRepeatStyle);
 	END
 	--有含Sample獨立顯示 三個月內生產超過10天
-	else if (@IsSample <> @beforeIsSample or @beforeStyleID = 'Holiday' or @IsRepeatStyle <> @beforeIsRepeatStyle) and @date <> @beforedate and @StyleID <> 'Holiday'
+	else if (@IsSample <> @beforeIsSample or @beforeStyleID = 'Holiday' or (@IsRepeatStyle <> @beforeIsRepeatStyle and @IsSample <> 1)) and @date <> @beforedate and @StyleID <> 'Holiday'
 	begin
 		INSERT INTO @tempPintData(FactoryID, SewingLineID, StyleID, InLine, OffLine, IsLastMonth, IsNextMonth, IsBulk, IsSMS, MinBuyerDelivery, StadOutPutQtyPerDay, PPH, IsSample, IsRepeatStyle) 
 		VALUES (@factory, @sewingline, @StyleID, @date, @date, @IsLastMonth, @IsNextMonth, @IsBulk, @IsSMS, @BuyerDelivery, @StadOutPutQtyPerDay, @PPH, @IsSample, @IsRepeatStyle);

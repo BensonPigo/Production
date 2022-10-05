@@ -209,12 +209,22 @@ order by h.FactoryID,h.SewingLineID,h.date
 
 ------------------------------------------------------------------------------------------------
 DECLARE cursor_sewingschedule CURSOR FOR
-select distinct c.FactoryID,c.SewingLineID,c.date
-	,StyleID = isnull(iif(c.Holiday = 1,'Holiday', cs.StyleID),'')
-	,IsLastMonth,IsNextMonth,IsBulk,IsSample,IsSMS,BuyerDelivery,IsRepeatStyle,c.OriStyle
+select c.FactoryID
+		,c.SewingLineID
+		,c.date
+		,StyleID = isnull(iif(c.Holiday = 1,'Holiday', cs.StyleID),'')
+		,[IsLastMonth] = max(IsLastMonth)
+		,[IsNextMonth] = max(IsNextMonth)
+		,[IsBulk] = max(IsBulk)
+		,[IsSample] = max(IsSample)
+		,IsSMS
+        ,[BuyerDelivery] = min(BuyerDelivery)
+		,IsRepeatStyle
+		,c.OriStyle
 from #c c left join #ConcatStyle cs on c.FactoryID = cs.FactoryID and c.SewingLineID = cs.SewingLineID and c.date = cs.date
 where c.date >= @sewinginlineOri
-order by c.FactoryID,c.SewingLineID,c.date
+group by c.FactoryID,c.SewingLineID,c.date,isnull(iif(c.Holiday = 1,'Holiday', cs.StyleID),''),IsSMS,IsRepeatStyle,c.OriStyle
+order by c.FactoryID, c.SewingLineID, c.date ASC, IsSample DESC
 
 --建立tmpe table存放最後要列印的資料
 DECLARE @tempPintData TABLE (
@@ -281,7 +291,7 @@ BEGIN
 		VALUES					 (@factory, @sewingline, @StyleID,@date,@date  ,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSample,@IsSMS,@BuyerDelivery, @IsRepeatStyle);
 	END
 	--有含Sample獨立顯示 or 三個月內生產超過10天
-	else if (@IsSample <> @beforeIsSample or @beforeStyleID = 'Holiday'  or @IsRepeatStyle <> @beforeIsRepeatStyle) and @date <> @beforedate and @StyleID <> 'Holiday'
+	else if (@IsSample <> @beforeIsSample or @beforeStyleID = 'Holiday'  or (@IsRepeatStyle <> @beforeIsRepeatStyle and @IsSample <> 1)) and @date <> @beforedate and @StyleID <> 'Holiday'
 	begin
 		INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine,IsLastMonth ,IsNextMonth ,IsBulk, IsSample,IsSMS ,MinBuyerDelivery, IsRepeatStyle) 
 		VALUES					 (@factory, @sewingline, @StyleID,@date,@date  ,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSample,@IsSMS,@BuyerDelivery, @IsRepeatStyle);
