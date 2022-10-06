@@ -20,8 +20,35 @@ namespace Sci.Production.Shipping
         private DataGridViewNumericBoxColumn col_NW;
         private DataGridViewNumericBoxColumn col_GW;
         private DataGridViewNumericBoxColumn col_CBM;
-        private bool isToProduceFty;
-        private bool isFromProduceFty;
+
+        /// <summary>
+        /// 代表 TK 在這間工廠屬於轉出方
+        /// FromFactory
+        /// </summary>
+        private bool IsTransferOut
+        {
+            get
+            {
+                if (this.CurrentMaintain == null)
+                {
+                    return false;
+                }
+
+                if (MyUtility.Check.Empty(this.CurrentMaintain["TransferType"]))
+                {
+                    return false;
+                }
+
+                if (this.CurrentMaintain["TransferType"].ToString().ToUpper() == "TRANSFER OUT")
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
 
         /// <inheritdoc/>
         public P16(ToolStripMenuItem menuitem)
@@ -40,9 +67,7 @@ namespace Sci.Production.Shipping
                 return;
             }
 
-            this.GetProduceFTY();
-
-            if (this.isToProduceFty == true && this.EditMode == true)
+            if (this.IsTransferOut == false && this.EditMode == true)
             {
                 this.dateArrivePortDate.ReadOnly = false;
                 this.dateDoxRcvDate.ReadOnly = false;
@@ -61,7 +86,7 @@ namespace Sci.Production.Shipping
 
             if (this.EditMode)
             {
-                this.chkExportChange.ReadOnly = !this.isFromProduceFty;
+                this.chkExportChange.ReadOnly = !this.IsTransferOut;
             }
             else
             {
@@ -195,10 +220,13 @@ ted.ID
 ,[Size] = case  when psdInv.SizeSpec is not null then psdInv.SizeSpec
 			    when psd.SizeSpec is not null then psd.SizeSpec
 				else '' end
-,ted.PoQty
-,[ExportQty] = isnull(carton.ttlQty,0)
+,[PoQty] = isnull(dbo.GetUnitQty(ted.UnitID ,IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ted.PoQty), 0)
+,[ExportQty] = isnull(dbo.GetUnitQty(carton.StockUnitID, IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), carton.ttlQty), 0)
 ,[FOC] = isnull(carton.ttlFoc,0)
-,[Balance] = ted.PoQty - isnull(carton.ttlQty,0)
+,[Balance] = 
+		(isnull(dbo.GetUnitQty(ted.UnitID ,IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ted.PoQty), 0)) -  
+		(isnull(dbo.GetUnitQty(carton.StockUnitID, IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), carton.ttlQty), 0))
+,[StockUnit] = IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit)
 ,ted.TransferExportReason
 ,[ReasonDesc] = isnull((select [Description] from WhseReason where Type = 'TE' and ID = ted.TransferExportReason),'')
 ,ted.NetKg
@@ -231,6 +259,7 @@ ted.ID
 	else '' end)
 ,[Preshrink] = iif(fs.Preshrink = 1, 'V' ,'')
 from TransferExport_Detail ted WITH (NOLOCK) 
+inner join TransferExport te with(nolock) on ted.ID = te.ID
 left join Orders o WITH (NOLOCK) on o.ID = ted.PoID
 left join Supp s WITH (NOLOCK) on s.id = ted.SuppID 
 left join PO_Supp_Detail psdInv WITH (NOLOCK) on psdInv.ID = ted.InventoryPOID and psdInv.SEQ1 = ted.InventorySeq1 and psdInv.SEQ2 = ted.InventorySeq2
@@ -248,10 +277,12 @@ outer apply(
 )ContainerType 
 
 outer apply(
-	select ttlQty = sum(tedc.Qty)
+	select ttlQty = sum(tedc.StockQty)
 	,ttlFoc = sum(tedc.Foc)
+    ,tedc.StockUnitID
 	from TransferExport_Detail_Carton tedc
 	where tedc.TransferExport_DetailUkey = ted.Ukey
+	group by tedc.StockUnitID
 ) carton
 where ted.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
@@ -287,9 +318,9 @@ where ted.ID = '{0}'", masterID);
                 .Text("Color", header: "Color", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Size", header: "Size", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Numeric("PoQty", header: "Po Q'ty" + Environment.NewLine + "(Stock Unit)", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
-                .Numeric("ExportQty", header: "Export Q'ty", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5), settings: exportQtycell, iseditingreadonly: true)
+                .Numeric("ExportQty", header: "Export Q'ty" + Environment.NewLine + "(Stock Unit)", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5), settings: exportQtycell, iseditingreadonly: true)
                 .Numeric("Balance", header: "Balance", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
-                .Text("StockUnit ", header: "Stock Unit", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("StockUnit", header: "Stock Unit", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("TransferExportReason", header: "Reason", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("ReasonDesc", header: "Reason Desc", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
                 .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2, iseditingreadonly: true).Get(out this.col_NW)
@@ -334,8 +365,8 @@ where ted.ID = '{0}'", masterID);
                 return;
             }
 
-            // 只有 isProduceFty = 1 才允許編輯此欄位
-            if (this.isFromProduceFty == true)
+            // 只有 Transfer out 才允許編輯此欄位
+            if (this.IsTransferOut == true)
             {
                 this.col_NW.IsEditingReadOnly = false;
                 this.col_GW.IsEditingReadOnly = false;
@@ -358,8 +389,6 @@ where ted.ID = '{0}'", masterID);
                 return;
             }
 
-            this.GetProduceFTY();
-
             if (string.Compare(this.CurrentMaintain["FtyStatus"].ToString(), "New", true) != 0)
             {
                 this.toolbar.cmdEdit.Enabled = true;
@@ -379,7 +408,7 @@ where ted.ID = '{0}'", masterID);
             }
 
             // Confirmed and FromFactory 不可編輯
-            if (this.isFromProduceFty == true &&
+            if (this.IsTransferOut == true &&
                 string.Compare(this.CurrentMaintain["FtyStatus"].ToString(), "Confirmed", true) == 0)
             {
                 this.toolbar.cmdEdit.Enabled = false;
@@ -393,13 +422,15 @@ where ted.ID = '{0}'", masterID);
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (this.isToProduceFty == false)
+            if (this.CurrentMaintain == null)
             {
-                if (this.isFromProduceFty == false)
-                {
-                    MyUtility.Msg.WarningBox("Only from or to factory can use edit button.");
-                    return false;
-                }
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["TransferType"]))
+            {
+                MyUtility.Msg.WarningBox("Only from or to factory can use edit button.");
+                return false;
             }
 
             return base.ClickEditBefore();
@@ -508,7 +539,7 @@ where ted.ID = '{0}'", masterID);
             }
             #endregion
 
-            if (this.isFromProduceFty == false)
+            if (this.IsTransferOut == false)
             {
                 MyUtility.Msg.WarningBox("Only from factory can use Confirm button.");
                 return;
@@ -722,12 +753,6 @@ where ID = '{this.CurrentMaintain["ID"]}'
             {
                 this.detailgridbs.Position = index;
             }
-        }
-
-        private void GetProduceFTY()
-        {
-            this.isToProduceFty = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"select IsProduceFty from Factory where id ='{this.CurrentMaintain["FactoryID"]}' and IsProduceFty = 1"));
-            this.isFromProduceFty = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"select IsProduceFty from Factory where id ='{this.CurrentMaintain["FromFactoryID"]}' and IsProduceFty = 1"));
         }
     }
 }
