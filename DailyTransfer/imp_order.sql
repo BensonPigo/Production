@@ -2683,9 +2683,13 @@ and 0 = (
 -------------------------------------[dbo].[PO_Supp_Detail]
 Delete b
 from Production.dbo.PO_Supp_Detail b
+left join Production.dbo.MDivisionPoDetail c on b.id = c.poid and b.SEQ1=c.Seq1 and b.SEQ2=c.Seq2
 where id in (select POID from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
 and b.ShipQty = 0
+and (c.poid is null or c.InQty = 0)
+and not exists(select 1 from Production.dbo.Invtrans i where i.InventoryPOID = b.ID and i.InventorySeq1 = b.Seq1 and InventorySeq2 = b.Seq2 and i.Type = '1')
+
 -------------------------------------[dbo].[PO_Supp_Detail_OrderList]
 Delete b
 from Production.dbo.PO_Supp_Detail_OrderList b
