@@ -158,7 +158,7 @@ into #tmpWO
 from WorkOrder WO
 INNER join Cutting as c WITH (NOLOCK) on c.ID = wo.ID
 outer apply(
-	select cDate=min(co.cDate),Status=min(Status)
+	select cDate=max(co.cDate),Status=max(Status)
 	from CuttingOutput co WITH (NOLOCK) 
 	inner join CuttingOutput_Detail cod WITH (NOLOCK) on co.ID = cod.ID
 	where cod.WorkOrderUkey = wo.Ukey and Status != 'New'
@@ -264,7 +264,7 @@ into #tmpWO
 from WorkOrder WO
 INNER join Cutting as c WITH (NOLOCK) on c.ID = wo.ID
 outer apply(
-	select cDate=min(co.cDate),Status=min(Status)
+	select cDate=max(co.cDate),Status=max(Status)
 	from CuttingOutput co WITH (NOLOCK) 
 	inner join CuttingOutput_Detail cod WITH (NOLOCK) on co.ID = cod.ID
 	where cod.WorkOrderUkey = wo.Ukey and Status != 'New'
@@ -392,7 +392,7 @@ from  WorkOrder as wo
 inner join Cutting as c WITH (NOLOCK) on c.ID = wo.ID 
 inner join CutCell as cc WITH (NOLOCK) on cc.ID = wo.CutCellID and WO.MDivisionID = cc.MDivisionID
 outer apply(
-	select cDate=min(co.cDate),Status=min(Status)
+	select cDate=max(co.cDate),Status=max(Status)
 	from CuttingOutput co WITH (NOLOCK) 
 	inner join CuttingOutput_Detail cod WITH (NOLOCK) on co.ID = cod.ID
 	where cod.WorkOrderUkey = wo.Ukey and Status != 'New'
