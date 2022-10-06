@@ -50,7 +50,7 @@ namespace Sci.Production.Automation
                 }
 
                 DataRow drWorkOrder;
-                MyUtility.Check.Seek($"select ColorID, MarkerNo from WorkOrder with (nolock) where Ukey = '{dr["Ukey"]}'", out drWorkOrder);
+                MyUtility.Check.Seek($"select ColorID, MarkerNo, CutNo, FabricCombo from WorkOrder with (nolock) where Ukey = '{dr["Ukey"]}'", out drWorkOrder);
 
                 listWorkOrder.Add(
                     new WorkOrderToAGV_PostBody()
@@ -61,6 +61,8 @@ namespace Sci.Production.Automation
                         EstCutDate = (DateTime?)dr["EstCutDate"],
                         ID = dr["ID"].ToString(),
                         OrderID = dr["OrderID"].ToString(),
+                        CutNo = drWorkOrder["CutNo"].ToString(),
+                        PatternPanel = drWorkOrder["FabricCombo"].ToString(),
                         CutCellID = dr["CutCellID"].ToString(),
                         ColorID = drWorkOrder["ColorID"].ToString(),
                         MarkerNo = drWorkOrder["MarkerNo"].ToString(),
@@ -596,6 +598,10 @@ from Orders with (nolock) where POID in ({wherePOID})
             public string ID { get; set; }
 
             public string OrderID { get; set; }
+
+            public string CutNo { get; set; }
+
+            public string PatternPanel { get; set; }
 
             public string CutCellID { get; set; }
 
