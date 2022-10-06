@@ -50,6 +50,7 @@
     [SysDate]        DATETIME        NULL,
     [ResponFTY]      VARCHAR (8)     DEFAULT ('') NOT NULL,
     [SubName]        NVARCHAR (20)   DEFAULT ('') NULL,
+    [SubconID] VARCHAR(8) CONSTRAINT [DF_Debit_SubconID] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Debit] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

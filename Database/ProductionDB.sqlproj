@@ -2761,6 +2761,4 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-</Project>Include="System.Xml" />
-  </ItemGroup>
 </Project>
