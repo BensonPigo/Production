@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sci.Win.Tools;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,18 +12,19 @@ using System.Windows.Forms;
 namespace Sci.Production.Quality
 {
     /// <summary>
-    /// B18
+    /// B33
     /// </summary>
-    public partial class B18 : Sci.Win.Tems.Input1
+    public partial class B33 : Sci.Win.Tems.Input1
     {
         /// <summary>
-        /// B18
+        /// B33
         /// </summary>
         /// <param name="menuitem">menuitem</param>
-        public B18(ToolStripMenuItem menuitem)
+        public B33(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
+            MyUtility.Tool.SetupCombox(this.comboShift, 2, 1, ",,D,Day,N,Night");
         }
 
         /// <inheritdoc/>
@@ -30,19 +32,22 @@ namespace Sci.Production.Quality
         {
             base.ClickEditAfter();
             this.txtfactory.ReadOnly = true;
-            this.txtEmployeeID.ReadOnly = true;
-            this.txtsubprocess.ReadOnly = true;
+            this.comboShift.ReadOnly = true;
+            this.dateStartDate.ReadOnly = true;
         }
 
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(this.CurrentMaintain["EmployeeID"]) ||
+            if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["Shift"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["SubprocessID"]))
             {
-                MyUtility.Msg.WarningBox("< Employee ID > and < Subprocess >cannot be empty.");
+                MyUtility.Msg.WarningBox("<Factory>, <Subprocess> and <Shift> cannot empty.");
+
                 return false;
             }
+
             return base.ClickSaveBefore();
         }
     }

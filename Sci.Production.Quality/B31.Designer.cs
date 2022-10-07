@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Quality
 {
-    partial class B18
+    partial class B31
     {
         /// <summary>
         /// Required designer variable.
@@ -181,23 +181,26 @@
             this.txtsubprocess.BackColor = System.Drawing.Color.White;
             this.txtsubprocess.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SubprocessID", true));
             this.txtsubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtsubprocess.IsRFIDProcess = false;
             this.txtsubprocess.Location = new System.Drawing.Point(117, 115);
-            this.txtsubprocess.MultiSelect = true;
+            this.txtsubprocess.MultiSelect = false;
             this.txtsubprocess.Name = "txtsubprocess";
             this.txtsubprocess.Size = new System.Drawing.Size(122, 23);
             this.txtsubprocess.TabIndex = 10;
             // 
-            // B18
+            // B31
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.IsDeleteOnBrowse = false;
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
             this.IsSupportPrint = false;
-            this.Name = "B18";
+            this.Name = "B31";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
-            this.Text = "B18. Sub-Process Operator";
+            this.Text = "B31. Sub-Process Operator";
             this.WorkAlias = "SubProOperator";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();

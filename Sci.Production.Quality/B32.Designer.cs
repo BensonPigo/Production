@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Quality
 {
-    partial class B19
+    partial class B32
     {
         /// <summary>
         /// Required designer variable.
@@ -34,7 +34,13 @@
             this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.comboShift = new Sci.Win.UI.ComboBox();
+            this.dateStartDate = new Sci.Win.UI.DateBox();
+            this.txtBeginTime = new Sci.Win.UI.TextBox();
+            this.txtEndTime = new Sci.Win.UI.TextBox();
+            this.txtsubprocess = new Sci.Production.Class.Txtsubprocess();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -51,22 +57,34 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.checkBox1);
+            this.masterpanel.Controls.Add(this.txtsubprocess);
+            this.masterpanel.Controls.Add(this.txtEndTime);
+            this.masterpanel.Controls.Add(this.txtBeginTime);
+            this.masterpanel.Controls.Add(this.comboShift);
+            this.masterpanel.Controls.Add(this.txtfactory);
+            this.masterpanel.Controls.Add(this.checkJunk);
             this.masterpanel.Controls.Add(this.label6);
             this.masterpanel.Controls.Add(this.label5);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.dateStartDate);
             this.masterpanel.Size = new System.Drawing.Size(904, 227);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateStartDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.label5, 0);
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.checkBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.checkJunk, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtfactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboShift, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtBeginTime, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtEndTime, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtsubprocess, 0);
             // 
             // detailpanel
             // 
@@ -116,7 +134,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(30, 13);
+            this.label1.Location = new System.Drawing.Point(30, 15);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
             this.label1.TabIndex = 1;
@@ -124,7 +142,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(30, 46);
+            this.label2.Location = new System.Drawing.Point(30, 48);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(75, 23);
             this.label2.TabIndex = 2;
@@ -132,7 +150,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(30, 82);
+            this.label3.Location = new System.Drawing.Point(30, 84);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
             this.label3.TabIndex = 3;
@@ -140,7 +158,7 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(30, 118);
+            this.label4.Location = new System.Drawing.Point(30, 120);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(75, 23);
             this.label4.TabIndex = 4;
@@ -148,7 +166,7 @@
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(30, 153);
+            this.label5.Location = new System.Drawing.Point(30, 155);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(75, 23);
             this.label5.TabIndex = 5;
@@ -156,24 +174,95 @@
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(273, 13);
+            this.label6.Location = new System.Drawing.Point(273, 15);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(84, 23);
             this.label6.TabIndex = 6;
             this.label6.Text = "Subprocess";
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(273, 61);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 7;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(273, 48);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 7;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // B19
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.BoolFtyGroupList = true;
+            this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsProduceFty = true;
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(108, 15);
+            this.txtfactory.MDivision = null;
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 8;
+            // 
+            // comboShift
+            // 
+            this.comboShift.BackColor = System.Drawing.Color.White;
+            this.comboShift.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Shift", true));
+            this.comboShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboShift.FormattingEnabled = true;
+            this.comboShift.IsSupportUnselect = true;
+            this.comboShift.Location = new System.Drawing.Point(108, 48);
+            this.comboShift.Name = "comboShift";
+            this.comboShift.OldText = "";
+            this.comboShift.Size = new System.Drawing.Size(121, 24);
+            this.comboShift.TabIndex = 9;
+            // 
+            // dateStartDate
+            // 
+            this.dateStartDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StartDate", true));
+            this.dateStartDate.Location = new System.Drawing.Point(108, 84);
+            this.dateStartDate.Name = "dateStartDate";
+            this.dateStartDate.Size = new System.Drawing.Size(130, 23);
+            this.dateStartDate.TabIndex = 10;
+            // 
+            // txtBeginTime
+            // 
+            this.txtBeginTime.BackColor = System.Drawing.Color.White;
+            this.txtBeginTime.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BeginTime", true));
+            this.txtBeginTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBeginTime.Location = new System.Drawing.Point(108, 120);
+            this.txtBeginTime.Mask = "90:00";
+            this.txtBeginTime.Name = "txtBeginTime";
+            this.txtBeginTime.Size = new System.Drawing.Size(53, 23);
+            this.txtBeginTime.TabIndex = 11;
+            // 
+            // txtEndTime
+            // 
+            this.txtEndTime.BackColor = System.Drawing.Color.White;
+            this.txtEndTime.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "EndTime", true));
+            this.txtEndTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtEndTime.Location = new System.Drawing.Point(108, 155);
+            this.txtEndTime.Mask = "90:00";
+            this.txtEndTime.Name = "txtEndTime";
+            this.txtEndTime.Size = new System.Drawing.Size(53, 23);
+            this.txtEndTime.TabIndex = 12;
+            // 
+            // txtsubprocess
+            // 
+            this.txtsubprocess.BackColor = System.Drawing.Color.White;
+            this.txtsubprocess.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SubprocessID", true));
+            this.txtsubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtsubprocess.IsRFIDProcess = false;
+            this.txtsubprocess.Location = new System.Drawing.Point(360, 15);
+            this.txtsubprocess.MultiSelect = false;
+            this.txtsubprocess.Name = "txtsubprocess";
+            this.txtsubprocess.Size = new System.Drawing.Size(122, 23);
+            this.txtsubprocess.TabIndex = 13;
+            // 
+            // B32
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -181,9 +270,9 @@
             this.GridAlias = "SubProWorkTime_Detail";
             this.KeyField1 = "ID";
             this.KeyField2 = "SubProWOrkTimeID";
-            this.Name = "B19";
+            this.Name = "B32";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
-            this.Text = "B19. Sub-Process Work Time Setting";
+            this.Text = "B32. Sub-Process Work Time Setting";
             this.WorkAlias = "SubProWorkTime";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
@@ -212,7 +301,13 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
-        private Win.UI.CheckBox checkBox1;
+        private Win.UI.CheckBox checkJunk;
         private Win.UI.Label label6;
+        private Win.UI.TextBox txtEndTime;
+        private Win.UI.TextBox txtBeginTime;
+        private Win.UI.DateBox dateStartDate;
+        private Win.UI.ComboBox comboShift;
+        private Class.Txtfactory txtfactory;
+        private Class.Txtsubprocess txtsubprocess;
     }
 }
