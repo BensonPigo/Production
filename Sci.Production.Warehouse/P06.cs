@@ -82,8 +82,14 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.detailgrid.Sorted += this.Detailgrid_Sorted;
             this.RecallChkValue = "Send";
             this.SendChkValue = "New";
+        }
+
+        private void Detailgrid_Sorted(object sender, EventArgs e)
+        {
+            this.ChangeRowColor();
         }
 
         /// <inheritdoc/>
@@ -143,8 +149,8 @@ select	[From SP#] = ted.InventoryPOID,
 		[From Seq] = Concat (ted.InventorySeq1, ' ', ted.InventorySeq2),
 		[To SP#] = ted.PoID,
 		[To SEQ] = Concat (ted.Seq1, ' ', ted.Seq2),
-		[Po Q'ty] = isnull(dbo.GetUnitQty(ted.UnitID ,IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ted.PoQty), 0),
-		[Export Q'ty] = isnull(dbo.GetUnitQty(ExportCarton.StockUnitID, IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ExportCarton.ExportQty), 0),
+		[Po Q'ty] = Round(isnull(dbo.GetUnitQty(ted.UnitID ,IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ted.PoQty), 0), 2),
+		[Export Q'ty] = Round(isnull(dbo.GetUnitQty(ExportCarton.StockUnitID, IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ExportCarton.ExportQty), 0), 2),
 		[Transfer Out ID] = ted.ID
 into #tmp
 from TransferExport_Detail ted with (nolock) 
@@ -303,12 +309,12 @@ select	ted.InventoryPOID,
 		ted.UnitID,
 		[ColorID] = isnull(psdinv.ColorID, psd.ColorID),
 		[SizeSpec] = isnull(psdinv.SizeSpec, psd.SizeSpec),
-		[PoQty] = isnull(dbo.GetUnitQty(ted.UnitID ,IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ted.PoQty), 0),
-		[ExportQty] = isnull(dbo.GetUnitQty(ExportCarton.StockUnitID, IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ExportCarton.ExportQty), 0),
+		[PoQty] = round(isnull(dbo.GetUnitQty(ted.UnitID ,IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ted.PoQty),0), 2),
+		[ExportQty] = round(isnull(dbo.GetUnitQty(ExportCarton.StockUnitID, IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ExportCarton.ExportQty), 0), 2),
 		ExportCarton.Foc,
 		[BalanceQty] = 
-		(isnull(dbo.GetUnitQty(ted.UnitID ,IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ted.PoQty), 0)) -  
-		(isnull(dbo.GetUnitQty(ExportCarton.StockUnitID, IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ExportCarton.ExportQty), 0)),
+		    round(isnull(dbo.GetUnitQty(ted.UnitID ,IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ted.PoQty), 0), 2) -  
+		    round(isnull(dbo.GetUnitQty(ExportCarton.StockUnitID, IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ExportCarton.ExportQty), 0), 2),
 		[StockUnit] = IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit),
 		ted.TransferExportReason,
 		[ReasonDesc] = (select wr.Description from WhseReason wr with (nolock) where wr.Type = 'TE' and ID = ted.TransferExportReason),
@@ -632,5 +638,7 @@ where ted.ID = '{0}'
                 this.detailgridbs.Position = index;
             }
         }
+
+        
     }
 }

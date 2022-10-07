@@ -55,6 +55,12 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.detailgrid.Sorted += this.Detailgrid_Sorted;
+        }
+
+        private void Detailgrid_Sorted(object sender, EventArgs e)
+        {
+            this.ChangeRowColor();
         }
 
         /// <inheritdoc/>
@@ -220,12 +226,12 @@ ted.ID
 ,[Size] = case  when psdInv.SizeSpec is not null then psdInv.SizeSpec
 			    when psd.SizeSpec is not null then psd.SizeSpec
 				else '' end
-,[PoQty] = isnull(dbo.GetUnitQty(ted.UnitID ,IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ted.PoQty), 0)
-,[ExportQty] = isnull(dbo.GetUnitQty(carton.StockUnitID, IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), carton.ttlQty), 0)
+,[PoQty] = round(isnull(dbo.GetUnitQty(ted.UnitID ,IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ted.PoQty), 0), 2)
+,[ExportQty] = round(isnull(dbo.GetUnitQty(carton.StockUnitID, IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), carton.ttlQty), 0), 2)
 ,[FOC] = isnull(carton.ttlFoc,0)
 ,[Balance] = 
-		(isnull(dbo.GetUnitQty(ted.UnitID ,IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ted.PoQty), 0)) -  
-		(isnull(dbo.GetUnitQty(carton.StockUnitID, IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), carton.ttlQty), 0))
+		round(isnull(dbo.GetUnitQty(ted.UnitID ,IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ted.PoQty), 0), 2) -  
+		round(isnull(dbo.GetUnitQty(carton.StockUnitID, IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), carton.ttlQty), 0), 2)
 ,[StockUnit] = IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit)
 ,ted.TransferExportReason
 ,[ReasonDesc] = isnull((select [Description] from WhseReason where Type = 'TE' and ID = ted.TransferExportReason),'')
