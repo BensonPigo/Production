@@ -33,7 +33,7 @@ namespace Sci.Production.Packing
         private bool UseAutoScanPack = false;
         private string PackingListID = string.Empty;
         private string CTNStarNo = string.Empty;
-        private bool Boolfirst = true;
+        private bool Boolfirst;
 
         public static System.Windows.Forms.Timer timer;
 
@@ -47,6 +47,7 @@ namespace Sci.Production.Packing
             this.InitializeComponent();
             this.EditMode = true;
             this.UseAutoScanPack = MyUtility.Check.Seek("select 1 from system where UseAutoScanPack = 1");
+            this.Boolfirst = true;
         }
 
         /// <summary>
@@ -127,9 +128,11 @@ or Point9 = 0
             }
         }
 
-        private void alert_Calibration(bool IsTimer)
+        private void alert_Calibration()
         {
-            if (this.chkAutoCalibration.Checked)
+            // 不在掃箱掃碼過程才動作!
+            bool isScan = this.tabControlScanArea.SelectedIndex == 0 && this.gridSelectCartonDetail.RowCount == 0 && MyUtility.Check.Empty(this.txtScanCartonSP.Text);
+            if (this.chkAutoCalibration.Checked && (this.Boolfirst || isScan))
             {
                 string machineID = P18_Calibration_List.MachineID;
                 string sqlcmd = $@"
@@ -155,16 +158,9 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
                         int currHH = DateTime.Now.Hour;
                         int currMM = DateTime.Now.Minute;
 
-                        // 觸發Timer: 時間要剛好是一小時整才會觸發
-                        if (IsTimer == true && !this.Boolfirst)
-                        {
-                            if (currHH - hh == 1 && currMM - mm == 0)
-                            {
-                                this.timer1.Stop();
-                                this.AlterMSg();
-                            }
-                        }
-                        else
+                        // 觸發Timer:
+                        // 第一次開畫面
+                        if (this.Boolfirst)
                         {
                             // 當前時間 > 設定時間一小時以上 代表未做校正記錄
                             if ((currHH - hh > 1) || (currHH - hh == 1 && currMM - mm > 0))
@@ -172,10 +168,21 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
                                 this.timer1.Stop();
                                 this.AlterMSg();
                             }
+
+                            this.Boolfirst = false;
+                        }
+
+                        // 時間要剛好是一小時整才會觸發
+                        else if (currHH - hh == 1 && currMM - mm == 0)
+                        {
+                            this.timer1.Stop();
+                            this.AlterMSg();
                         }
                     }
                 }
             }
+
+            this.Boolfirst = false;
         }
 
         private P18_Calibration_List callP18_Calibration_List = null;
@@ -752,7 +759,7 @@ INSERT INTO [dbo].[PackingScan_History]
 
             var selectCartonFilterResult = list_selectCarton.Where(default_where);
 
-                if (selectCartonFilterResult.Any())
+            if (selectCartonFilterResult.Any())
             {
                 this.selcartonBS.DataSource = list_selectCarton.Where(default_where);
             }
@@ -1040,8 +1047,6 @@ WHERE o.ID='{dr.OrderID}'");
                     this.ShowErr(result_load);
                 }
 
-                // 整箱掃完後 才可跳通知
-                this.alert_Calibration(IsTimer: false);
                 e.Cancel = true;
             }
             else
@@ -1956,10 +1961,10 @@ and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            // 每10秒跑一次
+            // 每15秒跑一次
             timer = this.timer1;
-            this.timer1.Interval = 1000 * 10;
-            this.alert_Calibration(IsTimer: true);
+            this.timer1.Interval = 1000 * 15;
+            this.alert_Calibration();
         }
 
         private void chkAutoCalibration_CheckedChanged(object sender, EventArgs e)
@@ -1992,12 +1997,10 @@ and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
             if (this.tabControlScanArea.SelectedIndex == 0 && this.gridSelectCartonDetail.RowCount == 0 && MyUtility.Check.Empty(this.txtScanCartonSP.Text))
             {
                 this.btnCalibrationList.Enabled = true;
-                this.timer1.Start();
             }
             else
             {
                 this.btnCalibrationList.Enabled = false;
-                this.timer1.Stop();
             }
         }
     }
