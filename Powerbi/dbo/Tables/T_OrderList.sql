@@ -311,7 +311,9 @@
 	[TTL_ZIG ZAG (CPU)] [numeric](38, 6) NULL,
 	[Subcon In TypeID] [varchar](2) NOT NULL,
 	[Article] [varchar](1000) NULL,
-	[Ukey] [bigint] NULL
+	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
+	[Delay Supp by Ref] [varchar](2000) NOT NULL,
+	[SCHD L/ETA(SP excl. Repl.)] [date] NULL,
  CONSTRAINT [T_OrderList_PK] PRIMARY KEY CLUSTERED 
 (
 	[SPNO] ASC,
@@ -333,4 +335,5 @@ GO
 
 ALTER TABLE [dbo].[T_OrderList] ADD  DEFAULT ('') FOR [Subcon In TypeID]
 GO
+
 
