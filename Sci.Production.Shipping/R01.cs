@@ -110,7 +110,7 @@ select
     ,g.SONo
     ,[SoConfirmDate] = g.SOCFMDate
     ,g.CutOffDate
-	,[Terminal/Whse#] = fd.WhseNo
+	,[Terminal/Whse#] = fw.WhseCode
     ,g.ShipPlanID
     ,[ShipPlan Status] = sp.Status
     ,g.CYCFS	
@@ -157,7 +157,8 @@ from GMTBooking g WITH (NOLOCK)
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
 left join ShipPlan sp WITH (NOLOCK) on sp.ID = g.ShipPlanID
-left join ForwarderWhse_Detail fd WITH (NOLOCK) on fd.UKey = g.ForwarderWhse_DetailUKey
+left join ForwarderWarehouse_Detail fd WITH (NOLOCK) on fd.UKey = g.ForwarderWhse_DetailUKey
+left join ForwarderWarehouse fw WITH (NOLOCK) on fw.id=fd.id
 OUTER APPLY(
 	SELECT [Value]=Count(ID)
 	 FROM
@@ -303,7 +304,7 @@ select DISTINCT
 	,g.SONo
     ,[SoConfirmDate]=g.SOCFMDate
     ,g.CutOffDate
-    ,[Terminal/Whse#]= fd.WhseNo
+    ,[Terminal/Whse#]= fw.WhseCode
 	,g.ShipPlanID
     ,[ShipPlan Status] = sp.Status
     ,g.CYCFS
@@ -360,7 +361,8 @@ from GMTBooking g WITH (NOLOCK)
 left join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join Pass1 p WITH (NOLOCK) on p.ID = g.AddName
-left join ForwarderWhse_Detail fd ON g.ForwarderWhse_DetailUKey=fd.UKey
+left join ForwarderWarehouse_Detail fd ON g.ForwarderWhse_DetailUKey=fd.UKey
+left join ForwarderWarehouse fw WITH (NOLOCK) on fw.id=fd.id
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
 left join ShipPlan sp WITH (NOLOCK) on sp.ID = g.ShipPlanID
 OUTER APPLY(
@@ -393,7 +395,7 @@ select DISTINCT
     ,g.InvDate
     ,g.CutOffDate
     ,[SoConfirmDate]=g.SOCFMDate
-    ,[Terminal/Whse#]= fd.WhseNo
+    ,[Terminal/Whse#]= fw.WhseCode
     ,g.ETD
     ,g.ETA
     ,g.CustCDID
@@ -431,7 +433,8 @@ from GMTBooking g WITH (NOLOCK)
 inner join GMTBooking_Detail gd with (nolock) on g.ID = gd.ID
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join Pass1 p WITH (NOLOCK) on p.ID = g.AddName
-left join ForwarderWhse_Detail fd ON g.ForwarderWhse_DetailUKey=fd.UKey
+left join ForwarderWarehouse_Detail fd ON g.ForwarderWhse_DetailUKey=fd.UKey
+left join ForwarderWarehouse fw on fw.id = fd.id
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
 left join ShipPlan sp WITH (NOLOCK) on sp.ID = g.ShipPlanID
 OUTER APPLY(

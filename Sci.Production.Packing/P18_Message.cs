@@ -5,6 +5,8 @@ namespace Sci.Production.Packing
     /// <inheritdoc/>
     public partial class P18_Message : Win.Forms.Base
     {
+        public Color color;
+
         /// <summary>
         /// P18_Message
         /// </summary>
@@ -23,6 +25,7 @@ namespace Sci.Production.Packing
         public void Show(string msg)
         {
             this.txt_msg.Text = msg;
+            this.txt_msg.ForeColor = this.color;
             this.ShowDialog();
         }
     }

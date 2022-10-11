@@ -10,6 +10,7 @@ using Sci.Data;
 using System.Linq;
 using System.Data.SqlClient;
 using Sci.Production.Prg;
+using Sci.Utility.Excel;
 
 namespace Sci.Production.Warehouse
 {
@@ -53,7 +54,9 @@ namespace Sci.Production.Warehouse
                 .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Date("TaipeiLastOutput", header: "Taipei" + Environment.NewLine + "Last Output", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Numeric("TaipeiOutput", header: "Taipei" + Environment.NewLine + "Output", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
+                .Numeric("AccuTransferred", header: "Accu Transferred", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Numeric("TotalTransfer", header: "Total Transfer", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
+                .Numeric("Balance", header: "Balance", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
                ;
 
             selected.CellValidating += (s, e) =>
@@ -71,21 +74,30 @@ namespace Sci.Production.Warehouse
             DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
-                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
+                if (this.EditMode)
                 {
                     DataRow dr = this.grid2.GetDataRow(e.RowIndex);
-                    if (MyUtility.Convert.GetDecimal(e.FormattedValue) > MyUtility.Convert.GetDecimal(dr["StockBalance"]))
+                    // 數量0要拉開判斷且不能自動勾選Selected
+                    if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["qty"] = 0;
+                        dr.EndEdit();
+                    }
+                    else if (MyUtility.Convert.GetDecimal(e.FormattedValue) > MyUtility.Convert.GetDecimal(dr["StockBalance"]))
                     {
                         MyUtility.Msg.WarningBox("TransferQty can not more than Stock Balance!");
                         dr["qty"] = 0;
+                        dr.EndEdit();
                     }
                     else
                     {
+                        // 先填入數值 > EndEdit > 才能自動勾選! 不然會觸發到Select事件
                         dr["qty"] = e.FormattedValue;
+                        dr.EndEdit();
+                        dr["Selected"] = 1;
                     }
 
-                    dr.EndEdit();
-                    this.CaculateTotalTransfer();
+                    this.CaculateTotalTransfer(selectAll: false);
                 }
             };
 
@@ -94,9 +106,18 @@ namespace Sci.Production.Warehouse
             {
                 DataRow dr = this.grid2.GetDataRow<DataRow>(e.RowIndex);
                 dr["selected"] = e.FormattedValue;
-                dr.EndEdit();
 
-                this.CaculateTotalTransfer();
+                // 手動勾選要單獨判斷是把StockBalance給Qty
+                if (MyUtility.Convert.GetBool(dr["Selected"]))
+                {
+                    if (dr["qty"].Empty())
+                    {
+                        dr["qty"] = dr["StockBalance"];
+                    }
+                }
+
+                dr.EndEdit();
+                this.CaculateTotalTransfer(selectAll: false);
             };
 
             this.grid2.IsEditingReadOnly = false;
@@ -128,11 +149,11 @@ namespace Sci.Production.Warehouse
         {
             if (e.ColumnIndex == 0)
             {
-                this.CaculateTotalTransfer();
+                this.CaculateTotalTransfer(selectAll: true);
             }
         }
 
-        private void CaculateTotalTransfer()
+        private void CaculateTotalTransfer(bool selectAll)
         {
             decimal totalTransfer = 0;
             foreach (DataGridViewRow gridDr in this.grid2.Rows)
@@ -140,17 +161,24 @@ namespace Sci.Production.Warehouse
                 DataRow dr = this.grid2.GetDataRow(gridDr.Index);
                 if (MyUtility.Convert.GetBool(dr["Selected"]))
                 {
-                    if (dr["qty"].Empty())
+                    // 此功能for全選要自動給值
+                    if (selectAll)
                     {
-                        dr["qty"] = dr["StockBalance"];
-                        dr.EndEdit();
+                        if (dr["qty"].Empty())
+                        {
+                            dr["qty"] = dr["StockBalance"];
+                            dr.EndEdit();
+                        }
                     }
 
                     totalTransfer += MyUtility.Convert.GetDecimal(gridDr.Cells["qty"].Value);
                 }
             }
 
+            DataRow drSelect = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
+
             this.grid1.SelectedRows[0].Cells["TotalTransfer"].Value = totalTransfer;
+            this.grid1.SelectedRows[0].Cells["Balance"].Value = MyUtility.Convert.GetDecimal(drSelect["TaipeiOutput"]) - MyUtility.Convert.GetDecimal(drSelect["AccuTransferred"]) - totalTransfer;
             this.grid1.RefreshEdit();
         }
 
@@ -184,6 +212,7 @@ select  POID = rtrim(i.seq70poid)
 		, PSD.Refno
 		, Color
 		, PSD.SizeSpec
+		, [AccuTransferred] = isnull(TransferOut.Qty,0)
 into #tmp
 from dbo.Invtrans i WITH (NOLOCK) 
 inner join PO_Supp_Detail psd WITH (NOLOCK) on i.InventoryPOID = psd.ID
@@ -191,14 +220,27 @@ inner join PO_Supp_Detail psd WITH (NOLOCK) on i.InventoryPOID = psd.ID
 												and i.InventorySeq2 = psd.SEQ2
 inner join View_WH_Orders o WITH (NOLOCK) on psd.ID = o.ID
 left join Fabric on Fabric.SCIRefno = psd.SCIRefno
-outer apply (select Color = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
-												,IIF( PSD.SuppColor = '' or PSD.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,PSD.ColorID),PSD.SuppColor)
-												,dbo.GetColorMultipleID(o.BrandID,PSD.ColorID)
-											))c
+outer apply (
+        select Color = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
+	        ,IIF( PSD.SuppColor = '' or PSD.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,PSD.ColorID),PSD.SuppColor)
+	        ,dbo.GetColorMultipleID(o.BrandID,PSD.ColorID)
+))c
+outer apply(
+	select Qty = sum(td.Qty)
+	from TransferOut_Detail td 
+	inner join TransferOut t on t.Id = td.ID
+	where t.Status !='New'
+	and td.POID = i.InventoryPOID
+	and td.Seq1 = i.InventorySeq1 
+	and td.Seq2 = i.InventorySeq2
+	and td.ToPOID = i.seq70poid
+	and td.ToSeq1 = i.seq70seq1
+	and td.ToSeq2 = i.seq70seq2
+) TransferOut
 where (i.type='2' or i.type='6')
 		and i.seq70poid = @IssueSP
 		and o.MDivisionID = @MDivisionID
-group by i.seq70poid,rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit, psd.FabricType,PSD.Refno, PSD.SizeSpec,c.Color
+group by i.seq70poid,rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit, psd.FabricType,PSD.Refno, PSD.SizeSpec,c.Color,TransferOut.Qty
 
 
 select  selected = 0
@@ -207,7 +249,7 @@ select  selected = 0
                 inner join Receiving_Detail rd WITH (NOLOCK) on r.id = rd.id
                 where rd.PoId = fi.POID and rd.Seq1 = fi.SEQ1 and rd.Seq2 = fi.SEQ2 and rd.Roll = fi.Roll and rd.Dyelot = fi.Dyelot
 				FOR XML PATH('')),1,1,'') 
-		, MDivisionID = @MDivisionID
+		, MDivisionID = 'km1'
         , '' id
         , ftyinventoryukey = FI.ukey
         , fi.POID 
@@ -238,6 +280,7 @@ select  selected = 0
         , Color
         , SizeSpec
         , [Tone] = Tone.val
+		, #tmp.[AccuTransferred]
 into    #tmpDetailResult
 from    #tmp  
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID 
@@ -293,6 +336,7 @@ select  selected = cast(0 as bit)
         , Color
         , SizeSpec
         , Tone
+		, [AccuTransferred]
 into    #tmpDetail
 from    #tmpDetailResult
 where   StockBalance > 0
@@ -309,10 +353,12 @@ select  selected
 		, StockUnit
         , TaipeiLastOutput
         , TaipeiOutput
-        , [TotalTransfer] = 0.00
+		, [AccuTransferred]
+        , [TotalTransfer] = 0.00		
+		, [Balance] = TaipeiOutput-AccuTransferred
 from    #tmpDetail
 group by selected, ToPOID, ToSeq1, ToSeq2, ToFactory, InventoryPOID, Inventoryseq1, InventorySEQ2
-        , FabricType, StockUnit, TaipeiLastOutput, TaipeiOutput     
+        , FabricType, StockUnit, TaipeiLastOutput, TaipeiOutput, AccuTransferred
 order by ToPOID, ToSeq1, ToSeq2;
 
 select  *
@@ -354,7 +400,7 @@ drop table #tmp, #tmpDetailResult, #tmpDetail
             this.listControlBindingSource1.DataMember = "masterdt";
             this.listControlBindingSource2.DataMember = "rel1";
             this.listControlBindingSource2.DataSource = this.listControlBindingSource1;
-
+            this.Grid_Filter();
             this.Grid1Select_ReadOnly();
         }
 
@@ -457,6 +503,43 @@ drop table #tmp, #tmpDetailResult, #tmpDetail
 
                 dr1["TotalTransfer"] = totalTransfer;
                 dr1.EndEdit();
+            }
+        }
+
+        private void chk_includeJunk_CheckedChanged(object sender, EventArgs e)
+        {
+            this.Grid_Filter();
+        }
+
+        private void Grid_Filter()
+        {
+            this.grid1.ValidateControl();
+            this.grid2.ValidateControl();
+
+            string filter = string.Empty;
+            if (this.grid1 != null)
+            {
+                switch (this.chk_Balance.Checked)
+                {
+                    case true:
+                        if (MyUtility.Check.Empty(this.grid1))
+                        {
+                            break;
+                        }
+
+                        filter = @" Balance > 0";
+                        this.listControlBindingSource1.Filter = filter;
+                        break;
+                    case false:
+                        if (MyUtility.Check.Empty(this.grid1))
+                        {
+                            break;
+                        }
+
+                        filter = string.Empty;
+                        this.listControlBindingSource1.Filter = filter;
+                        break;
+                }
             }
         }
     }

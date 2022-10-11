@@ -115,8 +115,9 @@ SELECT DISTINCT [Selected] = 1,
                 g.cycfs, 
                 g.sono, 
                 g.forwarderwhse_detailukey, 
-                [WhseNo] = Isnull((SELECT whseno 
-                        FROM   forwarderwhse_detail WITH (nolock) 
+                [WhseCode] = Isnull((SELECT WhseCode 
+                        FROM  ForwarderWarehouse_detail fwd WITH (nolock) 
+                        inner join ForwarderWarehouse fw with (nolock) on fwd.id = fw.id
                         WHERE  ukey = g.forwarderwhse_detailukey), ''), 
                 [Status] = Iif(
 					g.status = 'Confirmed', 'GB Confirmed', 
@@ -264,7 +265,7 @@ select  Selected,
         cycfs, 
         sono, 
         forwarderwhse_detailukey, 
-        WhseNo, 
+        WhseCode, 
         Status, 
         totalctnqty, 
         totalshipqty, 
@@ -280,8 +281,9 @@ from    (
                     g.cycfs, 
                     g.sono, 
                     g.forwarderwhse_detailukey, 
-                    [WhseNo] = Isnull((SELECT whseno 
-                            FROM   forwarderwhse_detail WITH (nolock) 
+                    [WhseCode] = Isnull((SELECT WhseCode 
+                            FROM   ForwarderWarehouse_detail fwd WITH (nolock) 
+                            inner join ForwarderWarehouse fw WITH (nolock) on fwd.id = fw.id
                             WHERE  ukey = g.forwarderwhse_detailukey), ''), 
                     [Status] = Iif(
             			g.status = 'Confirmed', 'GB Confirmed', 
@@ -305,7 +307,7 @@ group by    Selected,
             cycfs, 
             sono, 
             forwarderwhse_detailukey, 
-            WhseNo, 
+            WhseCode, 
             Status, 
             totalctnqty, 
             totalshipqty, 

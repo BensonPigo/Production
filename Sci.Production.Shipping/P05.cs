@@ -291,7 +291,16 @@ this.masterID);
         {
             base.OnDetailEntered();
 
-            this.txtTerminalWhse.Text = MyUtility.GetValue.Lookup("WhseNo", MyUtility.Convert.GetString(this.CurrentMaintain["ForwarderWhse_DetailUKey"]), "ForwarderWhse_Detail", "UKey");
+            if (MyUtility.Check.Seek($@"
+select WhseCode,WhseName,* 
+from ForwarderWarehouse fw
+inner join ForwarderWarehouse_Detail fwd on fwd.ID = fw.ID
+where fwd.UKey ='{this.CurrentMaintain["ForwarderWhse_DetailUKey"]}'", out DataRow dr))
+            {
+                this.txtTerminalWhse.Text = dr["WhseCode"].ToString();
+                this.txtTerminalWhseName.Text = dr["WhseName"].ToString();
+            }
+
             this.displayBoxDeclarationID.Text = MyUtility.GetValue.Lookup("ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "VNExportDeclaration", "INVNo");
             this.displayBoxCustomsNo.Text = MyUtility.GetValue.Lookup("DeclareNo", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "VNExportDeclaration", "INVNo");
             this.btnRemark.Enabled = this.CurrentMaintain != null;
@@ -841,18 +850,14 @@ where   pl.INVNo = '{0}'
                 }
             }
 
-            string sqlCmd = string.Format(
-            @"select fwd.WhseNo,fwd.address,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK) 
+            string sqlCmd = $@"
+select fw.WhseCode,fw.address,fwd.UKey 
+from ForwarderWarehouse fw WITH (NOLOCK) , ForwarderWarehouse_Detail fwd WITH (NOLOCK) 
 where fw.ID = fwd.ID
-and fw.BrandID = '{0}'
-and fw.Forwarder = '{1}'
-and fw.ShipModeID = '{2}'
-and  fwd.WhseNo = '{3}'
-order by fwd.WhseNo",
-            MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]),
-            MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder"]),
-            MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]),
-            this.txtTerminalWhse.Text);
+and fw.BrandID like '%{MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"])}%'
+and fwd.ShipModeID = '{MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"])}'
+and  fw.WhseCode = '{this.txtTerminalWhse.Text}'
+order by fw.WhseCode";
 
             if (!MyUtility.Check.Empty(this.txtTerminalWhse.Text))
             {
@@ -1357,7 +1362,18 @@ end");
             worksheet.Cells[4, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder"]) + "  " + MyUtility.GetValue.Lookup(string.Format("select Name from LocalSupp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder"])));
             worksheet.Cells[5, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["CYCFS"]);
             worksheet.Cells[6, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["SONo"]);
-            worksheet.Cells[7, 9] = MyUtility.GetValue.Lookup("WhseNo", MyUtility.Convert.GetString(this.CurrentMaintain["ForwarderWhse_DetailUKey"]), "ForwarderWhse_Detail", "UKey");
+
+            string WhseCode = string.Empty;
+            if (MyUtility.Check.Seek($@"
+select WhseCode,WhseName
+from ForwarderWarehouse fw
+inner join ForwarderWarehouse_Detail fwd on fwd.ID = fw.ID
+where fwd.UKey ='{this.CurrentMaintain["ForwarderWhse_DetailUKey"]}'", out DataRow drSeek))
+            {
+                WhseCode = drSeek["WhseCode"].ToString();
+            }
+
+            worksheet.Cells[7, 9] = WhseCode;
             worksheet.Cells[8, 9] = MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["CutOffDate"]).ToString("yyyy/MM/dd HH:mm:ss");
             worksheet.Cells[9, 9] = MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["SOCFMDate"]).ToString("yyyy/MM/dd");
             worksheet.Cells[10, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["Vessel"]);
@@ -2274,25 +2290,29 @@ MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
         // Terminal/Whse#
         private void TxtTerminalWhse_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlCmd = string.Format(
-                @"select fwd.WhseNo,fwd.address,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK) 
-where fw.ID = fwd.ID
-and fw.BrandID = '{0}'
-and fw.Forwarder = '{1}'
-and fw.ShipModeID = '{2}'
-order by fwd.WhseNo",
-                MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]),
-                MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder"]),
-                MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]));
-
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable dt);
-            if (!result)
+            if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]) || MyUtility.Check.Empty(this.CurrentMaintain["ShipModeID"]))
             {
-                this.ShowErr(result);
+                MyUtility.Msg.WarningBox("Please fill in【Shipping Mode】and【Brand】.");
                 return;
             }
 
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(dt, "WhseNo,address", "20,20", MyUtility.Convert.GetString(this.txtTerminalWhse.Text));
+            string sqlCmd = $@"
+select WhseCode,WhseName,Address,fwd.Ukey
+from ForwarderWarehouse fw WITH (NOLOCK)
+inner join ForwarderWarehouse_Detail fwd with (nolock) on fw.id = fwd.id
+where 1=1
+and fw.BrandID like '%{MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"])}%'
+and fwd.ShipModeID = '{MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"])}'
+order by WhseCode";
+
+            //DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable dt);
+            //if (!result)
+            //{
+            //    this.ShowErr(result);
+            //    return;
+            //}
+
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "20,20,20", MyUtility.Convert.GetString(this.txtTerminalWhse.Text));
 
             DialogResult result1 = item.ShowDialog();
             if (result1 == DialogResult.Cancel)
@@ -2301,8 +2321,9 @@ order by fwd.WhseNo",
             }
 
             IList<DataRow> dr = item.GetSelecteds();
-            this.txtTerminalWhse.Text = item.GetSelectedString();
             this.CurrentMaintain["ForwarderWhse_DetailUKey"] = dr[0]["Ukey"];
+            this.txtTerminalWhse.Text = dr[0]["WhseCode"].ToString();
+            this.txtTerminalWhseName.Text = dr[0]["WhseName"].ToString();
         }
 
         private void TxtTerminalWhse_Validating(object sender, CancelEventArgs e)
@@ -2324,23 +2345,34 @@ order by fwd.WhseNo",
                 return;
             }
 
-            string sqlCmd = string.Format(
-                @"select fwd.WhseNo,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK) 
+            if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]) || MyUtility.Check.Empty(this.CurrentMaintain["ShipModeID"]))
+            {
+                MyUtility.Msg.WarningBox("Please fill in【Shipping Mode】and【Brand】.");
+                return;
+            }
+
+            string sqlCmd = $@"
+select top 1 fw.WhseCode,fw.WhseName,fwd.Ukey
+from ForwarderWarehouse fw WITH (NOLOCK) , ForwarderWarehouse_Detail fwd WITH (NOLOCK) 
 where fw.ID = fwd.ID
-and fwd.whseno = '{0}'
-order by fwd.WhseNo", this.txtTerminalWhse.Text.ToString().Trim());
+and fw.BrandID like '%{MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"])}%'
+and fw.WhseCode = '{this.txtTerminalWhse.Text.ToString().Trim()}'
+and fwd.ShipModeID = '{MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"])}'
+";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable dt);
             if (result)
             {
                 if (dt.Rows.Count >= 1)
                 {
-                    this.txtTerminalWhse.Text = dt.Rows[0]["WhseNo"].ToString();
+                    this.txtTerminalWhse.Text = dt.Rows[0]["WhseCode"].ToString();
+                    this.txtTerminalWhseName.Text = dt.Rows[0]["WhseName"].ToString();
                     this.CurrentMaintain["ForwarderWhse_DetailUKey"] = dt.Rows[0]["Ukey"].ToString();
                 }
                 else
                 {
                     this.CurrentMaintain["ForwarderWhse_DetailUKey"] = 0;
                     this.txtTerminalWhse.Text = string.Empty;
+                    this.txtTerminalWhseName.Text = string.Empty;
                     MyUtility.Msg.WarningBox("Terminal/Whse# is not found!!");
                     e.Cancel = true;
                 }

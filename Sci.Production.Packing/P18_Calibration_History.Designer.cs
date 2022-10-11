@@ -1,6 +1,6 @@
-﻿namespace Sci.Production.Class
+﻿namespace Sci.Production.Packing
 {
-    partial class WH_BarcodeEmpty
+    partial class P18_Calibration_History
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -33,15 +33,10 @@
             this.btnOK = new Sci.Win.UI.Button();
             this.gridInfo = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.panel3 = new Sci.Win.UI.Panel();
-            this.labMsg = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridInfo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
-            this.panel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -51,13 +46,13 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(0, 349);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(461, 50);
+            this.panel4.Size = new System.Drawing.Size(634, 50);
             this.panel4.TabIndex = 7;
             // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(319, 11);
+            this.btnOK.Location = new System.Drawing.Point(492, 11);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(119, 30);
             this.btnOK.TabIndex = 0;
@@ -86,68 +81,33 @@
             this.gridInfo.RowTemplate.Height = 24;
             this.gridInfo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridInfo.ShowCellToolTips = false;
-            this.gridInfo.Size = new System.Drawing.Size(461, 313);
+            this.gridInfo.Size = new System.Drawing.Size(634, 349);
             this.gridInfo.TabIndex = 5;
             this.gridInfo.TabStop = false;
-            // 
-            // panel3
-            // 
-            this.panel3.Controls.Add(this.labMsg);
-            this.panel3.Controls.Add(this.pictureBox1);
-            this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel3.Location = new System.Drawing.Point(0, 0);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(461, 36);
-            this.panel3.TabIndex = 6;
-            // 
-            // labMsg
-            // 
-            this.labMsg.AutoSize = true;
-            this.labMsg.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labMsg.Location = new System.Drawing.Point(96, 9);
-            this.labMsg.Name = "labMsg";
-            this.labMsg.Size = new System.Drawing.Size(243, 20);
-            this.labMsg.TabIndex = 6;
-            this.labMsg.Text = "FtyInventory barcode can\'t empty";
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = global::Sci.Production.Class.Resource1.exclamation_mark_PNG86;
-            this.pictureBox1.Location = new System.Drawing.Point(66, 7);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(24, 21);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 5;
-            this.pictureBox1.TabStop = false;
             // 
             // panel1
             // 
             this.panel1.Controls.Add(this.gridInfo);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 36);
+            this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(461, 313);
+            this.panel1.Size = new System.Drawing.Size(634, 349);
             this.panel1.TabIndex = 8;
             // 
-            // WH_BarcodeEmpty
+            // P18_Calibration_History
             // 
-            this.ClientSize = new System.Drawing.Size(461, 399);
+            this.ClientSize = new System.Drawing.Size(634, 399);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel4);
-            this.Controls.Add(this.panel3);
-            this.Name = "WH_BarcodeEmpty";
+            this.Name = "P18_Calibration_History";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Warning";
-            this.Controls.SetChildIndex(this.panel3, 0);
             this.Controls.SetChildIndex(this.panel4, 0);
             this.Controls.SetChildIndex(this.panel1, 0);
             this.panel4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridInfo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
-            this.panel3.ResumeLayout(false);
-            this.panel3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -158,9 +118,6 @@
         private Win.UI.Panel panel4;
         private Win.UI.Button btnOK;
         private Win.UI.Grid gridInfo;
-        private Win.UI.Panel panel3;
-        private System.Windows.Forms.Label labMsg;
-        private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Panel panel1;
     }
 }
