@@ -687,6 +687,11 @@ and ID = '{Sci.Env.User.UserID}'"))
                 return;
             }
 
+            foreach (var dr in this.DetailDatas)
+            {
+                dr["UnrollActualQty"] = dr["Qty"];
+            }
+
             // 第3層才是 issue_detail
             DualResult result = DBProxy.Current.Select(null, $"select * from issue_detail WITH (NOLOCK) where id = '{this.CurrentMaintain["ID"]}'", out DataTable dtIssue_Detail);
             if (!result)
