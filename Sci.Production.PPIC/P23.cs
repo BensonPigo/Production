@@ -1,4 +1,6 @@
-﻿using Sci.Data;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,6 +8,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 
 namespace Sci.Production.PPIC
 {
@@ -19,7 +22,27 @@ namespace Sci.Production.PPIC
 
         private void btnFind_Click(object sender, EventArgs e)
         {
-            this.Find();
+            if (MyUtility.Check.Empty(this.txtStyle.Text) || MyUtility.Check.Empty(this.comboBrand.Text))
+            {
+                MyUtility.Msg.WarningBox("Style# & Brand cannot be empty.");
+                return;
+            }
+
+            // filter
+            if (MyUtility.Check.Empty(this.listControlBindingSource1.DataSource))
+            {
+                return;
+            }
+
+            int index = this.listControlBindingSource1.Find("StyleBrand", this.txtStyle.Text.Trim() + this.comboBrand.Text);
+            if (index == -1)
+            {
+                MyUtility.Msg.WarningBox("Data not found! ");
+            }
+            else
+            {
+                this.listControlBindingSource1.Position = index;
+            }
         }
 
         protected override void OnFormLoaded()
@@ -34,7 +57,28 @@ namespace Sci.Production.PPIC
                 this.comboBrand.DisplayMember = "ID";
                 this.comboBrand.ValueMember = "ID";
             }
-            else { this.ShowErr(cbResult); }
+            else
+            {
+                this.ShowErr(cbResult);
+            }
+
+            this.comboBrand.Text = "ADIDAS";
+
+            // Grid設定
+            this.grid.IsEditingReadOnly = false;
+            this.grid.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.grid)
+                .Text("StyleID", header: "Style", width: Widths.Auto(), iseditable: false)
+                .Text("SeasonID", header: "Season", width: Widths.Auto(), iseditable: false)
+                .Numeric("ForecastQty", header: "Forecast Qty", width: Widths.Auto(), iseditable: false)
+                .Numeric("OrderQty", header: "Order Qty", width: Widths.Auto(), iseditable: false)
+                .Text("Status", header: "Status", width: Widths.Auto(), iseditable: false)
+                ;
+
+            // 一進入畫面, 先開啟Data Filter 選擇Season
+            P23_DataFilter frm = new P23_DataFilter();
+            frm.ShowDialog(this);
+            this.txtSeason.Text = P23_DataFilter.Season;
         }
 
         private void btnDataFilter_Click(object sender, EventArgs e)
@@ -47,10 +91,66 @@ namespace Sci.Production.PPIC
 
         private void Find()
         {
-            if (MyUtility.Check.Empty(this.txtStyle.Text) || MyUtility.Check.Empty(this.comboBrand.Text))
+            string sqlcmd = $@"
+select a.StyleID, a.SeasonID
+,[ForecastQty] = sum(a.ForecastQty)
+,[OrderQty] = sum(a.OrderQty)
+,[Status] = iif(StatusCnt.cnt > 1, 'DONE', 'ON-GOING') 
+,[StyleBrand] = Ltrim(Rtrim(a.StyleID)) + Ltrim(Rtrim(a.BrandID))
+into #tmp
+from (
+	select o.StyleID,o.SeasonID,o.BrandID,o.StyleUkey, iif(o.Category = '', o.Qty, 0) as ForecastQty, iif(o.Category = 'B', o.Qty, 0) as OrderQty
+	from Season s
+	inner join Orders o on o.SeasonID = s.ID and o.BrandID = s.BrandID
+	inner join Factory f on o.FactoryID = f.ID
+	inner join System sy on sy.RgCode = f.NegoRegion
+	where 1=1
+	and s.SeasonSCIID = '{this.txtSeason.Text}'
+	and o.BrandID = 'ADIDAS'
+	and o.LocalOrder = 0
+	and o.Category in ('B','S','')
+	and o.Junk = 0
+) a
+outer apply(
+	select cnt = Count(ID)
+    from Orders
+    where Category in ('B','S')
+    and BrandID = 'ADIDAS'
+    and SeasonID = a.SeasonID
+    and StyleID = a.StyleID
+    and OrderTypeID in ('SEALING SPL','SEALING SPL W/O ETA','SIZE SET','BULK KEEPING')
+    and LocalOrder = 0
+)StatusCnt
+group by a.StyleID, a.SeasonID,StatusCnt.cnt,a.BrandID
+
+select *
+,[ttlStyleCnt] = (select cnt = count(1) from (select distinct StyleID from #tmp)a )
+,[DoneCnt] = ROUND(cast((select cnt = count(1) from (select distinct StyleID from #tmp where Status = 'DONE' )a ) as float) / (select cnt = count(1) from (select distinct StyleID from #tmp)a ) ,4) * 100
+,[OnGoingCnt] = 100 - ROUND(cast((select cnt = count(1) from (select distinct StyleID from #tmp where Status = 'DONE' )a ) as float) / (select cnt = count(1) from (select distinct StyleID from #tmp)a ) ,4) * 100
+from #tmp
+
+drop table #tmp
+";
+
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtGrid);
+            if (!result)
             {
-                MyUtility.Msg.WarningBox("Style# & Brand cannot be empty.");
-                return;
+                MyUtility.Msg.WarningBox("Query data fail.\r\n" + result.ToString());
+            }
+
+            this.listControlBindingSource1.DataSource = dtGrid;
+
+            if (dtGrid != null && dtGrid.Rows.Count > 0)
+            {
+                this.labTtlStyles.Text = dtGrid.Rows[0]["ttlStyleCnt"].ToString();
+                this.labDone.Text = dtGrid.Rows[0]["DoneCnt"].ToString() + "%";
+                this.labDone.Text = dtGrid.Rows[0]["OnGoingCnt"].ToString() + "%";
+            }
+            else
+            {
+                this.labTtlStyles.Text = "0";
+                this.labDone.Text = "0%";
+                this.labDone.Text = "0%";
             }
         }
     }
