@@ -1212,7 +1212,7 @@ where p.PulloutDate <= @PullOutLock
                 #endregion
                 string subject = "Pullout Report is pending Lock. - " + this.CurrentData["RgCode"].ToString().Trim();
                 string desc = "Attached is the data should be Lock but Pullout Report not yet encode.";
-                Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(this.CurrentData["SendFrom"].ToString(), "Pullout_Lock_Notice@sportscity.com.tw", "", subject, path + "\\" + fileName, desc, true, true);
+                Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(this.CurrentData["SendFrom"].ToString(), "fin-ar@sportscity.com.tw", "", subject, path + "\\" + fileName, desc, true, true);
                 DualResult mailResult = mail.Send();
                 if (!mailResult)
                 {
