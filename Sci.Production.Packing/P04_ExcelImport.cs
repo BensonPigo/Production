@@ -228,6 +228,7 @@ namespace Sci.Production.Packing
                             dr["Status"] = "Check & Import Completed.";
                         }
 
+                        excel.DisplayAlerts = false;
                         excel.Workbooks.Close();
                         excel.Quit();
                         excel = null;
