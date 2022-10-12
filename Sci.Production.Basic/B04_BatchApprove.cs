@@ -85,50 +85,45 @@ namespace Sci.Production.Basic
             #region
             string sqlCmd =
                 $@"
+                   SELECT  DISTINCT
+                        Selected = 0
+                        ,lb.ID
+                        ,lb.PKey
+                        ,l.Abb
+                        ,[ByCheck]=iif(lb.ByCheck=1,'Y','N')
+                        ,lb.Status
+                    INTO #Master
+                    FROM LocalSupp l
+                    INNER JOIN LocalSupp_Bank lb ON l.ID=lb.ID
+                    INNER JOIN LocalSupp_Bank_Detail lbd ON lb.ID=lbd.ID AND lb.PKey=lbd.PKey
+                    WHERE 1=1 and l.Junk = 0
+                    AND(lb.ByCheck=1 OR lbd.IsDefault=1)
 
-SELECT  DISTINCT
-    Selected = 0
-    ,lb.ID
-    ,lb.PKey
-    ,l.Abb
-    ,[ByCheck]=iif(lb.ByCheck=1,'Y','N')
-    ,lb.Status
-INTO #Master
-FROM LocalSupp l
-INNER JOIN LocalSupp_Bank lb ON l.ID=lb.ID
-INNER JOIN LocalSupp_Bank_Detail lbd ON lb.ID=lbd.ID AND lb.PKey=lbd.PKey
-WHERE 1=1
-AND(lb.ByCheck=1 OR lbd.IsDefault=1)
+                    SELECT * FROM #Master
 
-SELECT * FROM #Master
+                    SELECT 
+                        lbd.ID
+                        ,lbd.AccountNo
+                        ,IsDefault
+                        ,SWIFTCode
+                        ,AccountName
+                        ,BankName
+                        ,BranchCode
+                        ,BranchName
+                        ,CountryID
+                        ,c.Alias
+                        ,City
+                        ,MidBankName
+                        ,MidSWIFTCode
+                        ,Remark
+	                    ,l.PKey
+                        ,lbd.VNBankBranch
+                    FROM LocalSupp_Bank_Detail lbd
+                    INNER JOIN #Master l ON l.ID=lbd.ID AND l.PKey = lbd.PKey
+                    LEFT JOIN Country c ON c.ID=lbd.CountryID
+                    ORDER BY  lbd.ID, lbd.PKey
 
-SELECT 
-    lbd.ID
-    ,lbd.AccountNo
-    ,IsDefault
-    ,SWIFTCode
-    ,AccountName
-    ,BankName
-    ,BranchCode
-    ,BranchName
-    ,CountryID
-    ,c.Alias
-    ,City
-    ,MidBankName
-    ,MidSWIFTCode
-    ,Remark
-	,l.PKey
-    ,lbd.VNBankBranch
-FROM LocalSupp_Bank_Detail lbd
-INNER JOIN #Master l ON l.ID=lbd.ID AND l.PKey = lbd.PKey
-LEFT JOIN Country c ON c.ID=lbd.CountryID
-ORDER BY  lbd.ID, lbd.PKey
-
-DROP TABLE #Master
-
-
-
-
+                    DROP TABLE #Master
 ";
             #endregion
 
