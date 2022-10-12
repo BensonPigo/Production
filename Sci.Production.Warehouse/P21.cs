@@ -182,101 +182,13 @@ namespace Sci.Production.Warehouse
             if (this.dtReceiving != null && this.dtReceiving.Rows.Count > 0 && this.gridReceiving.CurrentDataRow != null)
             {
                 DataRow dr = this.gridReceiving.CurrentDataRow;
-
                 if (MyUtility.Check.Empty(dr["Barcode"]))
                 {
                     return;
                 }
 
-                List<DataRow> drs = new List<DataRow> { dr };
-                P07_QRCodeSticker.PrintQRCode(drs, this.cmbBarcoedType.Text, this.Name);
-
-                string receivingSource = MyUtility.Convert.GetString(dr["ReceivingSource"]);
-                #region
-                //string sp = "SP#:" + MyUtility.Convert.GetString(dr["poid"]);
-                //string seq = $"SEQ:{dr["Seq1"]}-{dr["Seq2"]}";
-                //string refno = "REF#:" + MyUtility.Convert.GetString(dr["refno"]);
-                //string dyelot = MyUtility.Convert.GetString(dr["dyelot"]);
-                //string color = MyUtility.Convert.GetString(dr["color"]);
-                //string roll = MyUtility.Convert.GetString(dr["Roll"]);
-                //string qty = MyUtility.Convert.GetString(dr["StockQty"]);
-                //string location = "Lct:" + MyUtility.Convert.GetString(dr["location"]);
-                //string gw = "GW:" + MyUtility.Convert.GetString(dr["Weight"]) + "KG";
-                //string aw = "AW:" + MyUtility.Convert.GetString(dr["ActualWeight"]) + "KG";
-                //string remark = MyUtility.Convert.GetString(dr["FirRemark"]);
-                //string factory = MyUtility.Convert.GetString(dr["FactoryID"]);
-                //string inspector = "QCID:" + MyUtility.Convert.GetString(dr["Inspector"]);
-                //string inspectdate = "Insp Date:" + MyUtility.Convert.GetString(dr["InspDate"]);
-
-                //ReportDefinition report = new ReportDefinition();
-                //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SP", sp));
-                //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("seq", seq));
-                //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("refno", refno));
-                //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("dyelot", dyelot));
-                //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("color", color));
-                //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("roll", roll));
-                //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("qty", qty));
-                //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("location", location));
-                //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("gw", gw));
-                //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("aw", aw));
-                //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", remark));
-                //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("factory", factory));
-                //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("inspector", inspector));
-                //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("inspectdate", inspectdate));
-
-                //#region QRCode 參數
-                //int qrCodeWidth = 90;
-                //string rdlcName = "P21_PrintBarcode5.rdlc";
-                //if (this.cmbBarcoedType.Text == "10X10")
-                //{
-                //    qrCodeWidth = 180;
-                //    rdlcName = "P21_PrintBarcode10.rdlc";
-                //}
-                //else if (this.cmbBarcoedType.Text == "7X7")
-                //{
-                //    rdlcName = "P21_PrintBarcode7.rdlc";
-                //}
-                //else
-                //{
-                //    rdlcName = "P21_PrintBarcode5.rdlc";
-                //}
-
-                //Bitmap oriBitmap = MyUtility.Convert.GetString(dr["Barcode"]).ToBitmapQRcode(qrCodeWidth, qrCodeWidth);
-                //string paramValue;
-                //using (var b = new Bitmap(oriBitmap))
-                //{
-                //    using (var ms = new MemoryStream())
-                //    {
-                //        b.Save(ms, ImageFormat.Png);
-                //        paramValue = Convert.ToBase64String(ms.ToArray());
-                //    }
-                //}
-
-                //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Image", paramValue));
-                //#endregion
-
-                //#region  指定是哪個 RDLC
-                //DualResult result = ReportResources.ByEmbeddedResource(typeof(P21_PrintBarcode_Data), rdlcName, out IReportResource reportresource);
-                //if (!result)
-                //{
-                //    this.ShowErr(result);
-                //    return;
-                //}
-
-                //report.ReportDataSource = new List<P21_PrintBarcode_Data>(); // 其實不用, 但寫法需要, 給個空的即可
-                //report.ReportResource = reportresource;
-                //#endregion
-
-                //// 開啟 report view
-                //var frm = new Win.Subs.ReportView(report)
-                //{
-                //    MdiParent = this.MdiParent,
-                //    DirectPrint = true,
-                //};
-
-                //frm.Show();
-                #endregion
-                string detailTableName = receivingSource == "Receiving" ? "Receiving_Detail" : "TransferIn_Detail";
+                P07_QRCodeSticker.PrintQRCode_RDLC(new List<DataRow>() { dr }, this.cmbBarcoedType.Text, this.Name);
+                string detailTableName = MyUtility.Convert.GetString(dr["ReceivingSource"]) == "Receiving" ? "Receiving_Detail" : "TransferIn_Detail";
                 string sqlcmd = $@"update {detailTableName} set QRCode_PrintDate = Getdate() where ukey ={dr["Ukey"]} and QRCode_PrintDate is null";
                 DualResult result = DBProxy.Current.Execute(null, sqlcmd);
                 if (!result)
