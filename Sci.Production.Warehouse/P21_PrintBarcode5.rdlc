@@ -605,7 +605,7 @@
         </Field>
         <Field Name="Image">
           <DataField>Image</DataField>
-          <rd:TypeName>System.Drawing.Bitmap</rd:TypeName>
+          <rd:TypeName>System.Byte[]</rd:TypeName>
         </Field>
         <Field Name="Location">
           <DataField>Location</DataField>
