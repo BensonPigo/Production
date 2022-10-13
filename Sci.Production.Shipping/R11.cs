@@ -1208,18 +1208,18 @@ FtyExportData as (
 
                     sqlCmd.Append(@"),
 TransferExportData as (
-	select IE = case
-                when Export.v = 1 then 'Export'                
-                when Import.v = 1 then 'Import'
+	select IE = case e.TransferType
+                when 'Transfer Out' then 'Export'                
+                when 'Transfer In' then 'Import'
                 else ''
                 end
            , Type = 'MATERIAL'
 		   , e.ID
 		   , e.ImportCountry
 		   , e.ShipModeID
-           , PortArrival = case
-                when Export.v = 1 then e.CloseDate              
-                when Import.v = 1 then e.PortArrival
+           , PortArrival = case e.TransferType
+                when 'Transfer Out' then e.CloseDate              
+                when 'Transfer In'  then e.PortArrival
                 end
 		   , WeightKg = (select sum(WeightKg) from TransferExport_Detail WITH (NOLOCK) where id = e.id)
 		   , Cbm = (select sum(Cbm) from TransferExport_Detail WITH (NOLOCK) where id = e.id)
@@ -1232,9 +1232,9 @@ TransferExportData as (
 		   			  from View_ShareExpense WITH (NOLOCK) 
 		   			  where WKNo = e.ID)
 		   , [NoImportChg] =
-                case
-                when Export.v = 1 then iif(isnull(e.NoExportCharge, 0) = 1, 'Y','')
-                when Import.v = 1 then iif(isnull(e.NoImportCharges, 0) = 1, 'Y','')
+                case e.TransferType
+                when 'Transfer Out' then iif(isnull(e.NoExportCharge, 0) = 1, 'Y','')
+                when 'Transfer In'  then iif(isnull(e.NoImportCharges, 0) = 1, 'Y','')
                 else ''
                 end
 		   , LoadingOrigin = Concat (e.ExportPort, '-', e.ExportCountry)
@@ -1246,8 +1246,6 @@ TransferExportData as (
            , e.Packages
 	from TransferExport e WITH (NOLOCK) 
 	left join Supp s WITH (NOLOCK) on s.ID = e.Forwarder
-    outer apply (select v = 1 from Factory where id =e.FromFactoryID and IsProduceFty = 1) Export
-    outer apply (select v = 1 from Factory where id =e.FactoryID and IsProduceFty = 1) Import
 	outer apply(
 		select v=1
 		from Door2DoorDelivery 
@@ -1270,12 +1268,12 @@ TransferExportData as (
 
                     if (!MyUtility.Check.Empty(this.date1))
                     {
-                        sqlCmd.Append(string.Format(" and ((Export.v = 1 and e.CloseDate >= '{0}') or (Import.v = 1 and e.PortArrival >= '{0}'))", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
+                        sqlCmd.Append(string.Format(" and ((e.TransferType = 'Transfer Out' and e.CloseDate >= '{0}') or (e.TransferType = 'Transfer In' and e.PortArrival >= '{0}'))", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.date2))
                     {
-                        sqlCmd.Append(string.Format(" and ((Export.v = 1 and e.CloseDate <= '{0}') or (Import.v = 1 and e.PortArrival <= '{0}'))", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
+                        sqlCmd.Append(string.Format(" and ((e.TransferType = 'Transfer Out' and e.CloseDate <= '{0}') or (e.TransferType = 'Transfer In' and e.PortArrival <= '{0}'))", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.dest))
