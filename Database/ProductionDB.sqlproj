@@ -2745,6 +2745,7 @@
     <Build Include="dbo\Functions\GetSewingOutputID_For_SNPAutoTransferToSewingOutput.sql" />
     <Build Include="dbo\Tables\MDMachineBasic.sql" />
     <Build Include="dbo\Tables\MDCalibrationList.sql" />
+    <Build Include="dbo\Tables\M360MINDDispatch.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
