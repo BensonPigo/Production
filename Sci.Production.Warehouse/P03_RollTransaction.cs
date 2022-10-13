@@ -99,7 +99,16 @@ Select a.Roll,a.Dyelot
             ,a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty as balance
             ,dbo.Getlocation(a.ukey)  MtlLocationID 
             ,a.ContainerCode
+            ,Tone = FIRT.TONGrp
 from FtyInventory a WITH (NOLOCK) 
+outer apply(select Max(fs.Tone) as TONGrp from FIR f
+                        left join FIR_Shadebone fs on f.ID = fs.ID
+                        where f.POID = a.POID
+		                        and f.SEQ1 = a.SEQ1
+		                        and f.SEQ2 = a.SEQ2
+		                        and fs.Roll = a.Roll
+		                        and fs.Dyelot = a.Dyelot)FIRT
+
 outer apply(
 	select List = Stuff((
 		select concat(',',FullRoll)
@@ -132,7 +141,7 @@ outer apply(
 )FullDyelot 
 where a.Poid = '{0}'
     and a.Seq1 = '{1}'
-    and a.Seq2 = '{2}' 
+    and a.Seq2 = '{2}'
     and a.StockType <> 'O'  --C倉不用算
 and not (inqty = 0 and outqty = 0 and adjustqty = 0 and returnQty = 0)
 order by a.dyelot,a.roll,a.stocktype
@@ -667,6 +676,7 @@ group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp
                      .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 6, decimal_places: 2)
                      .Text("MtlLocationID", header: "Location", width: Widths.AnsiChars(10))
                      .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out col_ContainerCode)
+                     .Text("Tone", header: "Ton Grp",width:Widths.AnsiChars(6),iseditingreadonly: true)
                      ;
 
                 // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
