@@ -230,7 +230,7 @@ where   ted.ID = @ID and
             }
 
             // 檢查是否有漏填Reason
-            bool isNeedInputReason = this.DetailDatas.Any(s => MyUtility.Convert.GetDecimal(s["PoQty"]) > MyUtility.Convert.GetDecimal(s["BalanceQty"]) && MyUtility.Check.Empty(s["TransferExportReason"]));
+            bool isNeedInputReason = this.DetailDatas.Any(s => MyUtility.Convert.GetDecimal(s["BalanceQty"]) > 0 && MyUtility.Check.Empty(s["TransferExportReason"]));
             if (isNeedInputReason)
             {
                 MyUtility.Msg.WarningBox("Export q'ty less than PO q'ty must input the reason.");
