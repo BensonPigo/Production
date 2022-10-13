@@ -67,6 +67,7 @@
 	[CloseDate] date NULL, 
 	[LoadDate] date NULL, 
     [NoExportCharge] BIT NOT NULL DEFAULT ((0)), 
+    [TransferType] VARCHAR(12) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_TransferExport] PRIMARY KEY CLUSTERED ([ID] ASC)
 )
 
@@ -432,3 +433,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'TransferExport',
     @level2type = N'COLUMN',
     @level2name = N'NoExportCharge'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'確認該單據屬於轉出還是轉入方 Transfer Out/Transfer In',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferExport',
+    @level2type = N'COLUMN',
+    @level2name = N'TransferType'

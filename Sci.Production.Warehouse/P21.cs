@@ -1067,8 +1067,11 @@ where m.IsWMS = 0";
             int currentRowIndexInt = this.gridReceiving.CurrentRow.Index;
             int currentColumnIndexInt = this.gridReceiving.CurrentCell.ColumnIndex;
             this.Query();
-            this.gridReceiving.CurrentCell = this.gridReceiving[currentColumnIndexInt, currentRowIndexInt];
-            this.gridReceiving.FirstDisplayedScrollingRowIndex = currentRowIndexInt;
+            if (this.gridReceiving.Rows.Count >= currentRowIndexInt)
+            {
+                this.gridReceiving.CurrentCell = this.gridReceiving[currentColumnIndexInt, currentRowIndexInt];
+                this.gridReceiving.FirstDisplayedScrollingRowIndex = currentRowIndexInt;
+            }
 
             MyUtility.Msg.InfoBox("Complete");
         }
