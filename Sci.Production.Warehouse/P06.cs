@@ -21,7 +21,10 @@ namespace Sci.Production.Warehouse
     /// </summary>
     public partial class P06 : Sci.Win.Tems.Input6
     {
-        private bool IsProduceFty
+        /// <summary>
+        /// 代表 TK 在這間工廠屬於轉出方
+        /// </summary>
+        private bool IsTransferOut
         {
             get
             {
@@ -30,19 +33,19 @@ namespace Sci.Production.Warehouse
                     return false;
                 }
 
-                if (MyUtility.Check.Empty(this.CurrentMaintain["FromFactoryID"]))
+                if (MyUtility.Check.Empty(this.CurrentMaintain["TransferType"]))
                 {
                     return false;
                 }
 
-                List<SqlParameter> listPar = new List<SqlParameter>()
+                if (this.CurrentMaintain["TransferType"].ToString().ToUpper() == "TRANSFER OUT")
                 {
-                    new SqlParameter("@FromFactoryID", this.CurrentMaintain["FromFactoryID"]),
-                };
-
-                string sqlFtyCheck = @"select 1 from Factory where ID = @FromFactoryID and IsProduceFty = 1";
-
-                return MyUtility.Check.Seek(sqlFtyCheck, listPar);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
@@ -79,14 +82,20 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.detailgrid.Sorted += this.Detailgrid_Sorted;
             this.RecallChkValue = "Send";
             this.SendChkValue = "New";
+        }
+
+        private void Detailgrid_Sorted(object sender, EventArgs e)
+        {
+            this.ChangeRowColor();
         }
 
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (!this.IsProduceFty)
+            if (!this.IsTransferOut)
             {
                 MyUtility.Msg.WarningBox("Only from factory can use Edit button.");
                 return false;
@@ -116,7 +125,7 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override void ClickSend()
         {
-            if (!this.IsProduceFty)
+            if (!this.IsTransferOut)
             {
                 MyUtility.Msg.WarningBox("Only from factory can use send button.");
                 return;
@@ -131,6 +140,59 @@ namespace Sci.Production.Warehouse
             if (MyUtility.Convert.GetBool(this.CurrentMaintain["Junk"]))
             {
                 MyUtility.Msg.WarningBox("This record already Junk can not edit");
+                return;
+            }
+
+            // ISP20221216 Send前判斷Export Q'ty cannot more than Po Q'ty
+            string sqlchkExportQty = $@"
+select	[From SP#] = ted.InventoryPOID,
+		[From Seq] = Concat (ted.InventorySeq1, ' ', ted.InventorySeq2),
+		[To SP#] = ted.PoID,
+		[To SEQ] = Concat (ted.Seq1, ' ', ted.Seq2),
+		[Po Q'ty] = Round(isnull(dbo.GetUnitQty(ted.UnitID ,IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ted.PoQty), 0), 2),
+		[Export Q'ty] = Round(isnull(dbo.GetUnitQty(ExportCarton.StockUnitID, IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ExportCarton.ExportQty), 0), 2),
+		[Transfer Out ID] = ted.ID
+into #tmp
+from TransferExport_Detail ted with (nolock) 
+inner join TransferExport te with(nolock) on ted.ID = te.ID
+left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID and 
+													ted.InventorySeq1 = psdInv.SEQ1 and
+													ted.InventorySeq2 = psdinv.SEQ2
+left join PO_Supp_Detail psd with (nolock) on	ted.PoID = psd.ID and 
+												ted.Seq1 = psd.SEQ1 and
+												ted.Seq2 = psd.SEQ2
+outer apply(
+    select	[ExportQty] = isnull(sum(isnull(tdc.StockQty, 0)), 0) 
+	,StockUnitID
+	from TransferExport_Detail_Carton tdc with (nolock) 
+    where tdc.TransferExport_DetailUkey = ted.Ukey
+	group by StockUnitID
+) ExportCarton
+outer apply(
+	select top 1 * 
+	from TransferOut_Detail s
+	where s.TransferExport_DetailUkey = ted.Ukey
+)TransferOut 
+where 1=1
+and ted.ID = '{this.CurrentMaintain["ID"]}'
+
+select [From SP#],[From Seq],[To SP#],[To SEQ],[Po Q'ty],[Export Q'ty],[Balance] = [Po Q'ty]-[Export Q'ty],[Transfer Out ID]
+from #tmp
+where [Export Q'ty] - [Po Q'ty]>0
+
+drop table #tmp
+";
+            DualResult result1;
+            if (!(result1 = DBProxy.Current.Select(null, sqlchkExportQty, out DataTable dtChkExportQty)))
+            {
+                this.ShowErr(result1.ToString());
+                return;
+            }
+
+            if (dtChkExportQty != null && dtChkExportQty.Rows.Count > 0)
+            {
+                var m = MyUtility.Msg.ShowMsgGrid(gridTable: dtChkExportQty, msg: "Export Q'ty cannot more than Po Q'ty.");
+                m.TopMost = true;
                 return;
             }
 
@@ -168,7 +230,7 @@ where   ted.ID = @ID and
             }
 
             // 檢查是否有漏填Reason
-            bool isNeedInputReason = this.DetailDatas.Any(s => MyUtility.Convert.GetDecimal(s["PoQty"]) > MyUtility.Convert.GetDecimal(s["BalanceQty"]) && MyUtility.Check.Empty(s["TransferExportReason"]));
+            bool isNeedInputReason = this.DetailDatas.Any(s => MyUtility.Convert.GetDecimal(s["BalanceQty"]) > 0 && MyUtility.Check.Empty(s["TransferExportReason"]));
             if (isNeedInputReason)
             {
                 MyUtility.Msg.WarningBox("Export q'ty less than PO q'ty must input the reason.");
@@ -194,7 +256,7 @@ where   ted.ID = @ID and
         /// <inheritdoc/>
         protected override void ClickRecall()
         {
-            if (!this.IsProduceFty)
+            if (!this.IsTransferOut)
             {
                 MyUtility.Msg.WarningBox("Only from factory can use recall button.");
                 return;
@@ -229,6 +291,7 @@ where   ted.ID = @ID and
             }
 
             this.numCBM.Value = this.DetailDatas.Sum(s => MyUtility.Convert.GetDecimal(s["CBM"]));
+            this.ChangeRowColor();
         }
 
         /// <inheritdoc/>
@@ -246,10 +309,13 @@ select	ted.InventoryPOID,
 		ted.UnitID,
 		[ColorID] = isnull(psdinv.ColorID, psd.ColorID),
 		[SizeSpec] = isnull(psdinv.SizeSpec, psd.SizeSpec),
-		ted.PoQty,
-		ExportCarton.ExportQty,
+		[PoQty] = round(isnull(dbo.GetUnitQty(ted.UnitID ,IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ted.PoQty),0), 2),
+		[ExportQty] = round(isnull(dbo.GetUnitQty(ExportCarton.StockUnitID, IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ExportCarton.ExportQty), 0), 2),
 		ExportCarton.Foc,
-		[BalanceQty] = ExportCarton.ExportQty + ExportCarton.Foc,
+		[BalanceQty] = 
+		    round(isnull(dbo.GetUnitQty(ted.UnitID ,IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ted.PoQty), 0), 2) -  
+		    round(isnull(dbo.GetUnitQty(ExportCarton.StockUnitID, IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ExportCarton.ExportQty), 0), 2),
+		[StockUnit] = IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit),
 		ted.TransferExportReason,
 		[ReasonDesc] = (select wr.Description from WhseReason wr with (nolock) where wr.Type = 'TE' and ID = ted.TransferExportReason),
 		ted.NetKg,
@@ -294,6 +360,7 @@ select	ted.InventoryPOID,
         PoidSeq = rtrim(ted.InventoryPOID)+(Ltrim(Rtrim(ted.InventorySeq1)) + ' ' + ted.InventorySeq2),
         ted.Refno
 from TransferExport_Detail ted with (nolock) 
+inner join TransferExport te with(nolock) on ted.ID = te.ID
 left join Orders o with (nolock) on ted.PoID = o.ID
 left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID and 
 													ted.InventorySeq1 = psdInv.SEQ1 and
@@ -304,9 +371,14 @@ left join PO_Supp_Detail psd with (nolock) on	ted.PoID = psd.ID and
 left join Supp s WITH (NOLOCK) on s.id = ted.SuppID 
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = ted.SCIRefno
 left join Fabric_Supp fs WITH (NOLOCK) on fs.SCIRefno = f.SCIRefno and fs.SuppID = s.ID
-outer apply(select	[ExportQty] = isnull(sum(isnull(tdc.Qty, 0)), 0) ,
-					[Foc] = isnull(sum(isnull(tdc.Foc, 0)), 0) 
-			from TransferExport_Detail_Carton tdc with (nolock) where tdc.TransferExport_DetailUkey = ted.Ukey) ExportCarton
+outer apply(
+    select	[ExportQty] = isnull(sum(isnull(tdc.StockQty, 0)), 0) ,
+				  [Foc] = isnull(sum(isnull(tdc.Foc, 0)), 0) ,
+				  tdc.StockUnitID
+	from TransferExport_Detail_Carton tdc with (nolock) 
+    where tdc.TransferExport_DetailUkey = ted.Ukey
+	group by tdc.StockUnitID
+) ExportCarton
 OUTER APPLY(
  SELECT [Value]=
 	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(psd.BrandID,psd.ColorID),psd.SuppColor)
@@ -399,13 +471,12 @@ where ted.ID = '{0}'
                 .Text("ToSEQ", header: "To SEQ", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("SuppID", header: "Supplier", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("UnitId", header: "Unit", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("ColorID", header: "Color", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Numeric("PoQty", header: "Po Q'ty", decimal_places: 2, width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Numeric("ExportQty", header: "Export Q'ty", decimal_places: 2, width: Widths.AnsiChars(5), iseditingreadonly: true, settings: settingExportQty)
-                .Numeric("Foc", header: "F.O.C.", decimal_places: 2, width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Numeric("PoQty", header: "Po Q'ty" + Environment.NewLine + "(Stock Unit)", decimal_places: 2, width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Numeric("ExportQty", header: "Export Q'ty" + Environment.NewLine + "(Stock Unit)", decimal_places: 2, width: Widths.AnsiChars(5), iseditingreadonly: true, settings: settingExportQty)
                 .Numeric("BalanceQty", header: "Balance", decimal_places: 2, width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("StockUnit", header: "Stock Unit", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("TransferExportReason", header: "Reason", width: Widths.AnsiChars(8), settings: settingReason)
                 .Text("ReasonDesc", header: "Reason Desc", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2, iseditingreadonly: true)
@@ -414,6 +485,25 @@ where ted.ID = '{0}'
                 .Text("ContainerType", header: "ContainerType & No", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
             this.detailgrid.Columns["TransferExportReason"].DefaultCellStyle.BackColor = Color.Pink;
+            this.ChangeRowColor();
+        }
+
+        private void ChangeRowColor()
+        {
+            DataTable tmp_dt = (DataTable)this.detailgridbs.DataSource;
+            if (tmp_dt == null)
+            {
+                return;
+            }
+
+            for (int index = 0; index < tmp_dt.Rows.Count; index++)
+            {
+                // BalanceQty < 0
+                if (MyUtility.Convert.GetDecimal(tmp_dt.Rows[index]["BalanceQty"]) < 0)
+                {
+                    this.detailgrid.Rows[index].DefaultCellStyle.BackColor = Color.FromArgb(254, 99, 99);
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -548,5 +638,7 @@ where ted.ID = '{0}'
                 this.detailgridbs.Position = index;
             }
         }
+
+        
     }
 }
