@@ -1970,7 +1970,7 @@ from
 	left join #tmp_ClogQty clogQty on clogQty.OrderID = t.OrderID and clogQty.Article = t.Article and clogQty.SizeCode = t.SizeCode
     left join #tmp_CutInLine tc on tc.OrderID = t.OrderID and tc.Article = t.Article and tc.SizeCode = t.SizeCode
 ) t
-order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID,SizeCodeSeq
+order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID asc,SizeCodeSeq desc
 
 drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_AlloQty,#tmp_CutQty,#tmp_SewingQty,#tmp_ClogQty,#tmp_CutInLine
 ");
