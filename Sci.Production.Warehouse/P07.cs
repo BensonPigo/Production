@@ -3259,13 +3259,16 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
 
         private void GridSortBy(bool isEncodeSeq)
         {
-            if (isEncodeSeq)
+            if (this.detailgridbs != null && this.detailgridbs.DataSource != null)
             {
-                ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = string.Empty;
-            }
-            else
-            {
-                ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = @"SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, Unoriginal, POID, Seq1, Seq2, Roll, Dyelot ";
+                if (isEncodeSeq)
+                {
+                    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = string.Empty;
+                }
+                else
+                {
+                    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = @"SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, Unoriginal, POID, Seq1, Seq2, Roll, Dyelot ";
+                }
             }
         }
 
