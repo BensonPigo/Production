@@ -178,7 +178,8 @@ select s.id
     ,o.SubconInType
     ,[SewingReasonDesc] = isnull(sr.SewingReasonDesc,'')
 	,[Remark] = isnull(ssd.SewingOutputRemark,'')
-    ,o.SciDelivery 
+    ,o.SciDelivery
+    ,[SP Factory] = o.FactoryID
     ,[NonRevenue]=IIF(o.NonRevenue=1,'Y','N')
     ,Cancel=iif(o.Junk=1,'Y','' )
 into #tmpSewingDetail
@@ -325,6 +326,7 @@ select distinct OutputDate
     ,NonRevenue
     ,Remark
     ,Cancel
+    ,[SP Factory]
 into #tmpSewingGroup
 from #tmpSewingDetail t
 outer apply(
@@ -482,11 +484,11 @@ select * from(
                                 ,Balance =  t.OrderQty -  acc_output.value 
                             ");
             }
-
             sqlCmd.Append($@",Diff = t.QAQty-InlineQty
 		,rate
         ,t.Remark
         ,t.SewingReasonDesc
+        ,[SP Factory]
         ,t.NonRevenue
 		{(this.chk_Include_Artwork.Checked ? "'+@TTLZ+N'" : " ")}
     from #tmp1stFilter t
