@@ -301,10 +301,13 @@ WHERE   StockType='{0}'
             // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
             DualResult result = Prgs.GetFtyInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtOriFtyInventory);
 
-            // 檢查 Barcode不可為空
-            if (!Prgs.CheckBarCode(dtOriFtyInventory, this.Name))
+            if (Prgs.IsAutomation())
             {
-                return;
+                // 檢查 Barcode不可為空
+                if (!Prgs.CheckBarCode(dtOriFtyInventory, this.Name))
+                {
+                    return;
+                }
             }
 
             #region 排除Location 包含WMS & 非WMS資料
