@@ -349,6 +349,7 @@ select Shift =    CASE    WHEN LastShift='D' then 'Day'
 	   , CumulateDate
 	   , InlineQty
 	   , Diff = QAQty - InlineQty
+        ,FactoryID 
 	   , LastShift
 	   , ComboType
 from #tmp1stFilter
@@ -647,7 +648,7 @@ order by ArtworkTypeID"),
             worksheet.Cells[1, 1] = this._factoryName;
             worksheet.Cells[2, 1] = string.Format("{0} Daily CMP Report, DD.{1} {2}", this._factory, Convert.ToDateTime(this._date).ToString("MM/dd"), "(Included Subcon-IN)");
 
-            object[,] objArray = new object[1, 25];
+            object[,] objArray = new object[1, 26];
             string[] subTtlRowInOut = new string[8];
             string[] subTtlRowExOut = new string[8];
             string[] subTtlRowExInOut = new string[8];
@@ -738,7 +739,8 @@ order by ArtworkTypeID"),
                 objArray[0, 22] = dr["CumulateDate"];
                 objArray[0, 23] = dr["InlineQty"];
                 objArray[0, 24] = dr["Diff"];
-                worksheet.Range[string.Format("A{0}:Y{0}", insertRow)].Value2 = objArray;
+                objArray[0, 25] = dr["FactoryID"];
+                worksheet.Range[string.Format("A{0}:Z{0}", insertRow)].Value2 = objArray;
                 insertRow++;
 
                 // 插入一筆Record
@@ -777,7 +779,8 @@ order by ArtworkTypeID"),
             worksheet.Cells[insertRow, 20] = string.Format("=S{0}/M{0}", MyUtility.Convert.GetString(insertRow));
             worksheet.Cells[insertRow, 21] = string.Format("=ROUND((S{0}/(M{0}*3600/1400))*100,1)", MyUtility.Convert.GetString(insertRow));
             worksheet.Cells[insertRow, 24] = string.Format("=SUM(X{0}:X{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-            worksheet.Cells[insertRow, 25] = string.Format("=SUM(Y{0}:Y{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
+            worksheet.Cells[insertRow, 25] = string.Format("=SUM(Y{0}:Y{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1)); 
+
             subTtlRowInOut[subRows] = MyUtility.Convert.GetString(insertRow);
             if (shift != "Subcon-Out")
             {
@@ -801,7 +804,7 @@ order by ArtworkTypeID"),
             insertRow += 2;
 
             // 填Grand Total資料
-            string ttlManhour, targetCPU, targetQty, qaQty, ttlCPU, prodOutput, diff;
+            string ttlManhour, targetCPU, targetQty, qaQty, ttlCPU, prodOutput, diff, factoryID;
             if (this._ttlData != null)
             {
                 selectRow = this._ttlData.Select("Type = 'Grand'");
@@ -819,6 +822,7 @@ order by ArtworkTypeID"),
                         ttlCPU = "=";
                         prodOutput = "=";
                         diff = "=";
+                        factoryID = "=";
                         #region 組公式
                         if (MyUtility.Convert.GetString(selectRow[i]["Sort"]) == "2")
                         {
@@ -833,6 +837,7 @@ order by ArtworkTypeID"),
                                     ttlCPU += string.Format("S{0}+", subTtlRowInOut[j]);
                                     prodOutput += string.Format("X{0}+", subTtlRowInOut[j]);
                                     diff += string.Format("Y{0}+", subTtlRowInOut[j]);
+                                    factoryID += string.Format("Z{0}+", subTtlRowInOut[j]);
                                 }
                             }
                         }
@@ -849,6 +854,7 @@ order by ArtworkTypeID"),
                                     ttlCPU += string.Format("S{0}+", subTtlRowExOut[j]);
                                     prodOutput += string.Format("X{0}+", subTtlRowExOut[j]);
                                     diff += string.Format("Y{0}+", subTtlRowExOut[j]);
+                                    factoryID += string.Format("Z{0}+", subTtlRowExOut[j]);
                                 }
                             }
                         }
@@ -865,6 +871,7 @@ order by ArtworkTypeID"),
                                     ttlCPU += string.Format("S{0}+", subTtlRowExInOut[j]);
                                     prodOutput += string.Format("X{0}+", subTtlRowExInOut[j]);
                                     diff += string.Format("Y{0}+", subTtlRowExInOut[j]);
+                                    factoryID += string.Format("Z{0}+", subTtlRowExInOut[j]);
                                 }
                             }
                         }
@@ -879,6 +886,7 @@ order by ArtworkTypeID"),
                         worksheet.Cells[insertRow, 21] = string.Format("=ROUND((S{0}/(M{0}*3600/1400))*100,1)", MyUtility.Convert.GetString(insertRow));
                         worksheet.Cells[insertRow, 24] = prodOutput.Substring(0, prodOutput.Length - 1);
                         worksheet.Cells[insertRow, 25] = diff.Substring(0, diff.Length - 1);
+                        worksheet.Cells[insertRow, 26] = factoryID.Substring(0, factoryID.Length - 1);
                         insertRow++;
                     }
                 }
