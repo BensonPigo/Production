@@ -17,17 +17,23 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
+    /// <summary>
+    /// R43
+    /// </summary>
     public partial class R43 : Win.Tems.PrintForm
     {
         private DataTable dtResult;
+
         /// <summary>
-        /// R43
+        /// Initializes a new instance of the <see cref="R43"/> class.
         /// </summary>
+        /// <param name="menuitem"></param>
         public R43(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
+
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
@@ -36,8 +42,10 @@ namespace Sci.Production.Warehouse
                 MyUtility.Msg.WarningBox("Issue Date cannot be empty.");
                 return false;
             }
+
             return base.ValidateInput();
         }
+
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
@@ -102,6 +110,7 @@ namespace Sci.Production.Warehouse
             return result;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.dtResult.Rows.Count > 0)
