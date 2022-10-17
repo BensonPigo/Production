@@ -14,10 +14,15 @@ namespace Sci.Production.PPIC
 {
     public partial class P23 : Sci.Win.Tems.QueryForm
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P23"/> class.
+        /// </summary>
+        /// <param name="menuitem"></param>
         public P23(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
+            this.EditMode = true;
         }
 
         private void btnFind_Click(object sender, EventArgs e)
@@ -49,7 +54,7 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
 
-            // combo Datasource 
+            // combo Datasource
             Ict.DualResult cbResult;
             if (cbResult = DBProxy.Current.Select(null, @"Select ID from Brand where Junk = 0", out DataTable dtCountry))
             {
@@ -68,17 +73,28 @@ namespace Sci.Production.PPIC
             this.grid.IsEditingReadOnly = false;
             this.grid.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.grid)
-                .Text("StyleID", header: "Style", width: Widths.Auto(), iseditable: false)
-                .Text("SeasonID", header: "Season", width: Widths.Auto(), iseditable: false)
-                .Numeric("ForecastQty", header: "Forecast Qty", width: Widths.Auto(), iseditable: false)
-                .Numeric("OrderQty", header: "Order Qty", width: Widths.Auto(), iseditable: false)
-                .Text("Status", header: "Status", width: Widths.Auto(), iseditable: false)
+                .Text("StyleID", header: "Style", width: Widths.AnsiChars(25), iseditable: false)
+                .Text("SeasonID", header: "Season", width: Widths.AnsiChars(15), iseditable: false)
+                .Numeric("ForecastQty", header: "Forecast Qty", width: Widths.AnsiChars(20), iseditable: false)
+                .Numeric("OrderQty", header: "Order Qty", width: Widths.AnsiChars(20), iseditable: false)
+                .Text("Status", header: "Status", width: Widths.AnsiChars(15), iseditable: false)
                 ;
+
+            this.grid.CellDoubleClick += this.Grid_CellDoubleClick;
 
             // 一進入畫面, 先開啟Data Filter 選擇Season
             P23_DataFilter frm = new P23_DataFilter();
             frm.ShowDialog(this);
             this.txtSeason.Text = P23_DataFilter.Season;
+            this.Find();
+        }
+
+        private void Grid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            this.grid.ValidateControl();
+            DataRow dr = this.grid.GetDataRow(e.RowIndex);
+            P24 callform = new P24(null, dr["StyleID"].ToString(), dr["SeasonID"].ToString(), "ADIDAS");
+            callform.ShowDialog();
         }
 
         private void btnDataFilter_Click(object sender, EventArgs e)
@@ -144,13 +160,37 @@ drop table #tmp
             {
                 this.labTtlStyles.Text = dtGrid.Rows[0]["ttlStyleCnt"].ToString();
                 this.labDone.Text = dtGrid.Rows[0]["DoneCnt"].ToString() + "%";
-                this.labDone.Text = dtGrid.Rows[0]["OnGoingCnt"].ToString() + "%";
+                this.labonGoing.Text = dtGrid.Rows[0]["OnGoingCnt"].ToString() + "%";
             }
             else
             {
                 this.labTtlStyles.Text = "0";
                 this.labDone.Text = "0%";
-                this.labDone.Text = "0%";
+                this.labonGoing.Text = "0%";
+            }
+        }
+
+        private void txtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            if (this.listControlBindingSource1 != null)
+            {
+                DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+                if (dt.Rows.Count > 0)
+                {
+                    Win.Tools.SelectItem item;
+                    string sqlcmd = $@"
+select distinct StyleID from #tmp
+";
+                    MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlcmd, out DataTable dtStyle);
+                    item = new Win.Tools.SelectItem(dtStyle, "StyleID", "16", this.Text);
+                    DialogResult returnResult = item.ShowDialog();
+                    if (returnResult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    this.txtStyle.Text = item.GetSelectedString();
+                }
             }
         }
     }
