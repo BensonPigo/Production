@@ -59,21 +59,24 @@ insert @Sayfty select id from Production.dbo.Factory
 			t.SysDate=s.SysDate ,
 			t.MDivisionID=(SELECT iif(MDivisionID is null,'',MDivisionID) FROM Production.dbo.scifty WITH (NOLOCK) where id=s.ResponFTY),
 			t.ResponFTY = s.ResponFTY,
-			t.SubName = s.SubName
+			t.SubName = s.SubName,
+			t.SubconID = s.SubconID
 	when not matched by target then 	
 		insert(	 ID,  CurrencyID,  Amount,  Received,  BuyerID,  BrandID,  BankID,  LCFNO,  LCFDate,  EstPayDate,  Title,  SendFrom,  Attn,  CC,
 				  Subject,  Handle,  SMR,  VoucherID,  BadID,  Status,  StatusRevise,  StatusReviseNm, CustPayId,   Settled,  SettleDate,  Cfm,  CfmDate,
 				  Lock,  Lockdate,  OldAmount,  Type,  ShareFob,  VoucherFactory,  VoucherSettle,  IsSubcon,  LCLName,  LCLCurrency,  LCLAmount,  LCLRate,
 				  AddName,issuedate,  AddDate,  EditName,  EditDate,
 				  SysDate,MDivisionID,
-				  ResponFTY,SubName
+				  ResponFTY,SubName,
+				  SubconID
 				  )
 		values(s.ID,s.CurrencyID,s.Amount,s.Received,s.BuyerID,s.BrandID,s.BankID,s.LCFNO,s.LCFDate,s.EstPayDate,s.Title,s.SendFrom,s.Attn,s.CC,
 				s.Subject,s.Handle,s.SMR,s.VoucherID,s.BadID,s.Status,s.StatusRevise,s.StatusReviseNm,s.CustPayId,s.Settled,s.SettleDate,s.Cfm,s.CfmDate,
 				s.Lock,s.Lockdate,s.OldAmount,s.Type,s.ShareFob,s.VoucherFactory,s.VoucherSettle,s.IsSubcon,s.LCLName,s.LCLCurrency,s.LCLAmount,s.LCLRate,
 				s.AddName,s.cdate,s.AddDate,s.EditName,s.EditDate,
 				s.SysDate,(SELECT iif(MDivisionID is null,'',MDivisionID) FROM Production.dbo.scifty WITH (NOLOCK) where id=s.ResponFTY),
-				s.ResponFTY,SubName
+				s.ResponFTY,s.SubName,
+				s.SubconID
 				)
 		
 		output inserted.id,$action into @Tdebit ;

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Transactions;
 using System.Windows.Forms;
@@ -437,7 +438,13 @@ when matched then update set
                 worksheet.Cells[irow, 13] = selectdt.Rows[i]["currencyid"];
                 worksheet.Cells[irow, 14] = MyUtility.Convert.GetDecimal(selectdt.Rows[i]["price"]).ToString("#,#.####");
 
-                DataView dv = this.detail.Select($"Refno = '{selectdt.Rows[i]["Refno"]}' and Ukey = {selectdt.Rows[i]["ukey"]} and LocalSuppID <> '' and price <> 0 ").CopyToDataTable().DefaultView;
+                var checkdataRow = this.detail.Select($"Refno = '{selectdt.Rows[i]["Refno"]}' and Ukey = {selectdt.Rows[i]["ukey"]} and LocalSuppID <> '' and price <> 0 ");
+                if (checkdataRow.Count() == 0)
+                {
+                    continue;
+                }
+
+                DataView dv = checkdataRow.CopyToDataTable().DefaultView;
                 dv.Sort = "Selected desc, Price";
                 DataTable ddt = dv.ToTable();
                 for (int j = 0; j < ddt.Rows.Count; j++)
@@ -447,6 +454,7 @@ when matched then update set
                     worksheet.Cells[irow + j, 10] = MyUtility.Convert.GetDecimal(ddt.Rows[j]["Price"]).ToString("#,#.####");
                     worksheet.Cells[irow + j, 11] = MyUtility.Convert.GetDate(ddt.Rows[j]["QuotDate"]);
                 }
+
             }
 
             worksheet.Columns.AutoFit();
