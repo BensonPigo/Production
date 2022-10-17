@@ -687,11 +687,6 @@ and ID = '{Sci.Env.User.UserID}'"))
                 return;
             }
 
-            foreach (var dr in this.DetailDatas)
-            {
-                dr["UnrollActualQty"] = dr["Qty"];
-            }
-
             // 第3層才是 issue_detail
             DualResult result = DBProxy.Current.Select(null, $"select * from issue_detail WITH (NOLOCK) where id = '{this.CurrentMaintain["ID"]}'", out DataTable dtIssue_Detail);
             if (!result)
@@ -873,6 +868,14 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                         throw result.GetException();
                     }
 
+                    string sqUnrollActualQty = $@"
+update Issue_Detail set UnrollActualQty = Qty where id = '{this.CurrentMaintain["ID"]}'
+";
+                    if (!(result = DBProxy.Current.Execute(null, sqUnrollActualQty)))
+                    {
+                        throw result.GetException();
+                    }
+
                     if (dtNeedUnroll.Rows.Count > 0)
                     {
                         string dtUkey = dtNeedUnroll.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["Ukey"])).ToList().JoinToString(",");
@@ -892,7 +895,7 @@ update Issue set IncludeUnrollRelaxationRoll = 1 where id = '{this.CurrentMainta
                     else
                     {
                         string sqlUnroll = $@"
-update Issue_Detail set NeedUnroll = 0 where id = '{this.CurrentMaintain["ID"]}'
+update Issue_Detail set NeedUnroll = 0, UnrollActualQty = Qty where id = '{this.CurrentMaintain["ID"]}'
 update Issue set IncludeUnrollRelaxationRoll = 0 where id = '{this.CurrentMaintain["id"]}'
 ";
                         if (!(result = DBProxy.Current.Execute(null, sqlUnroll)))
