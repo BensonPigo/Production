@@ -35,7 +35,7 @@
             this.label3 = new Sci.Win.UI.Label();
             this.txtTransfer = new Sci.Win.UI.TextBox();
             this.txtMdivision = new Sci.Production.Class.TxtMdivision();
-            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtFactory = new Sci.Production.Class.Txtfactory();
             this.SuspendLayout();
             // 
             // print
@@ -140,26 +140,26 @@
             this.txtMdivision.Size = new System.Drawing.Size(107, 23);
             this.txtMdivision.TabIndex = 103;
             // 
-            // txtfactory
+            // txtFactory
             // 
-            this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.BoolFtyGroupList = true;
-            this.txtfactory.FilteMDivision = false;
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory.IsProduceFty = false;
-            this.txtfactory.IssupportJunk = false;
-            this.txtfactory.Location = new System.Drawing.Point(123, 95);
-            this.txtfactory.MDivision = null;
-            this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(107, 23);
-            this.txtfactory.TabIndex = 104;
+            this.txtFactory.BackColor = System.Drawing.Color.White;
+            this.txtFactory.BoolFtyGroupList = true;
+            this.txtFactory.FilteMDivision = false;
+            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.IsProduceFty = false;
+            this.txtFactory.IssupportJunk = false;
+            this.txtFactory.Location = new System.Drawing.Point(123, 95);
+            this.txtFactory.MDivision = null;
+            this.txtFactory.Name = "txtFactory";
+            this.txtFactory.Size = new System.Drawing.Size(107, 23);
+            this.txtFactory.TabIndex = 104;
             // 
             // R43
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(507, 163);
-            this.Controls.Add(this.txtfactory);
+            this.Controls.Add(this.txtFactory);
             this.Controls.Add(this.txtMdivision);
             this.Controls.Add(this.txtTransfer);
             this.Controls.Add(this.label3);
@@ -183,7 +183,7 @@
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.txtTransfer, 0);
             this.Controls.SetChildIndex(this.txtMdivision, 0);
-            this.Controls.SetChildIndex(this.txtfactory, 0);
+            this.Controls.SetChildIndex(this.txtFactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -198,6 +198,6 @@
         private Win.UI.Label label3;
         private Win.UI.TextBox txtTransfer;
         private Class.TxtMdivision txtMdivision;
-        private Class.Txtfactory txtfactory;
+        private Class.Txtfactory txtFactory;
     }
 }
