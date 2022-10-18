@@ -24,6 +24,9 @@
     [UnrollEndTime]        DATETIME        NULL,
     [RelaxationStartTime]  DATETIME        NULL,
     [RelaxationEndTime]    DATETIME        NULL,
+    [UnrollScanner]        VARCHAR (10)    DEFAULT ('') NOT NULL,
+    [UnrollActualQty]      NUMERIC (11, 2) DEFAULT ((0)) NOT NULL,
+    [UnrollRemark]         NVARCHAR (100)  DEFAULT ('') NOT NULL,
     [M360MINDDispatchUkey] BIGINT          NULL,
     CONSTRAINT [PK_Issue_Detail] PRIMARY KEY CLUSTERED ([ukey] ASC),
     CONSTRAINT [FK_Issue_Detail_Issue_Detail] FOREIGN KEY ([ukey]) REFERENCES [dbo].[Issue_Detail] ([ukey])
@@ -166,5 +169,20 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Confirm �
 
 
 GO
+<<<<<<< HEAD
+=======
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'M360 Unroll ���y Unroll Location ���ϥΪ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'UnrollScanner';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'M360 Unroll ���q�Ƶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'UnrollRemark';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'M360 Unroll ���q��ڦ��쪺�ƶq', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'UnrollActualQty';
+
+
+GO
+>>>>>>> HotFix/ISP20221186
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'M360 倉庫準備完成的清單 Ukey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'M360MINDDispatchUkey';
 
