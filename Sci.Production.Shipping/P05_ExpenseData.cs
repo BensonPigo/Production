@@ -55,6 +55,13 @@ namespace Sci.Production.Shipping
         {
             switch (this.columnName)
             {
+                case "TK":
+                    this.sqlCmd = string.Format(
+                        @"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.DebitID,se.ShippingAPID,se.BLNo,se.WKNo,se.InvNo,se.AccountID
+                        from View_ShareExpense se WITH (NOLOCK) 
+                        LEFT JOIN dbo.SciFMS_AccountNo a on se.AccountID = a.ID
+                        where (se.WKNo = '{0}' or se.InvNo = '{0}') and se.junk=0", this.id);
+                    break;
                 case "InvNo":
                     this.sqlCmd = string.Format(
                         @"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.DebitID,se.ShippingAPID,se.BLNo,se.WKNo,se.InvNo,se.AccountID
