@@ -177,9 +177,12 @@ namespace Sci.Production.Warehouse
 
             DataRow drSelect = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
 
-            this.grid1.SelectedRows[0].Cells["TotalTransfer"].Value = totalTransfer;
-            this.grid1.SelectedRows[0].Cells["Balance"].Value = MyUtility.Convert.GetDecimal(drSelect["TaipeiOutput"]) - MyUtility.Convert.GetDecimal(drSelect["AccuTransferred"]) - totalTransfer;
-            this.grid1.RefreshEdit();
+            if (this.grid1.SelectedRows != null && this.grid1.SelectedRows.Count > 0)
+            {
+                this.grid1.SelectedRows[0].Cells["TotalTransfer"].Value = totalTransfer;
+                this.grid1.SelectedRows[0].Cells["Balance"].Value = MyUtility.Convert.GetDecimal(drSelect["TaipeiOutput"]) - MyUtility.Convert.GetDecimal(drSelect["AccuTransferred"]) - totalTransfer;
+                this.grid1.RefreshEdit();
+            }
         }
 
         private void BtnFindNow_Click(object sender, EventArgs e)
@@ -242,7 +245,6 @@ where (i.type='2' or i.type='6')
 		and o.MDivisionID = @MDivisionID
 group by i.seq70poid,rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit, psd.FabricType,PSD.Refno, PSD.SizeSpec,c.Color,TransferOut.Qty
 
-
 select  selected = 0
 		, [ExportID] = Stuff((select distinct concat(',', r.ExportId)
 				from Receiving r WITH (NOLOCK)
@@ -281,9 +283,10 @@ select  selected = 0
         , SizeSpec
         , [Tone] = Tone.val
 		, #tmp.[AccuTransferred]
+        , fi.Lock
 into    #tmpDetailResult
 from    #tmp  
-inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID 
+left join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID 
                                                 and fi.seq1 = Inventoryseq1 
                                                 and fi.seq2 = InventorySEQ2 
                                                 and fi.StockType = 'I'
@@ -295,7 +298,6 @@ outer apply(select [val] = isnull(max(Tone), '')
                     f.Seq2 = fi.Seq2 and
                     fs.Roll = fi.Roll and
                     fs.Dyelot = fi.Dyelot) Tone
-where fi.Lock = 0
 Order by GroupQty desc, Dyelot, StockBalance desc
 
 select  selected = cast(0 as bit)
@@ -337,9 +339,9 @@ select  selected = cast(0 as bit)
         , SizeSpec
         , Tone
 		, [AccuTransferred]
+        , Lock
 into    #tmpDetail
 from    #tmpDetailResult
-where   StockBalance > 0
 
 select  selected
         , [POID] = ToPOID
@@ -363,6 +365,8 @@ order by ToPOID, ToSeq1, ToSeq2;
 
 select  *
 from    #tmpDetail
+where Lock = 0
+and StockBalance > 0
 
 
 drop table #tmp, #tmpDetailResult, #tmpDetail
