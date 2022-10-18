@@ -106,6 +106,7 @@ namespace Sci.Production.Sewing
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            
             StringBuilder sqlCmd = new StringBuilder();
             #region 組撈Data SQL
             sqlCmd.Append(string.Format(

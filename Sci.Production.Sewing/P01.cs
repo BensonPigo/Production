@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -3214,9 +3215,9 @@ end
             DataTable subprocessData = null;
             List<APIData> dataMode = new List<APIData>();
             DateTime? dateMaxOutputDate = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup(@"
-select max(OutputDate) 
-from SewingOutput 
-where OutputDate != convert(date,GETDATE())"));
+            select max(OutputDate) 
+            from SewingOutput 
+            where OutputDate != convert(date,GETDATE())"));
 
             #region 判斷Sewing.P01+P02 是否Locked
 
@@ -3492,6 +3493,7 @@ select Shift =    CASE    WHEN LastShift='D' then 'Day'
 	   , CumulateDate
 	   , InlineQty
 	   , Diff = QAQty - InlineQty
+        ,FactoryID 
 	   , LastShift
 	   , ComboType
 from #tmp1stFilter
@@ -3779,7 +3781,7 @@ order by ArtworkTypeID"),
             // 沒資料就顯示空的Excel
             if (dtR01.Rows.Count > 0 && !MyUtility.Check.Empty(dtR01))
             {
-                object[,] objArray = new object[1, 25];
+                object[,] objArray = new object[1, 26];
                 string[] subTtlRowInOut = new string[8];
                 string[] subTtlRowExOut = new string[8];
                 string[] subTtlRowExInOut = new string[8];
@@ -3871,7 +3873,8 @@ order by ArtworkTypeID"),
                     objArray[0, 22] = dr["CumulateDate"];
                     objArray[0, 23] = dr["InlineQty"];
                     objArray[0, 24] = dr["Diff"];
-                    worksheet.Range[string.Format("A{0}:Y{0}", insertRow)].Value2 = objArray;
+                    objArray[0, 25] = dr["FactoryID"];
+                    worksheet.Range[string.Format("A{0}:Z{0}", insertRow)].Value2 = objArray;
                     insertRow++;
 
                     // 插入一筆Record
@@ -3934,7 +3937,7 @@ order by ArtworkTypeID"),
                 insertRow += 2;
 
                 // 填Grand Total資料
-                string ttlManhour, targetCPU, targetQty, qaQty, ttlCPU, prodOutput, diff;
+                string ttlManhour, targetCPU, targetQty, qaQty, ttlCPU, prodOutput, diff, factoryID;
                 if (ttlData != null)
                 {
                     selectRow = ttlData.Select("Type = 'Grand'");
@@ -3952,6 +3955,7 @@ order by ArtworkTypeID"),
                             ttlCPU = "=";
                             prodOutput = "=";
                             diff = "=";
+                            factoryID = "=";
                             #region 組公式
                             if (MyUtility.Convert.GetString(selectRow[i]["Sort"]) == "2")
                             {
@@ -3966,6 +3970,7 @@ order by ArtworkTypeID"),
                                         ttlCPU = ttlCPU + string.Format("S{0}+", subTtlRowInOut[j]);
                                         prodOutput = prodOutput + string.Format("X{0}+", subTtlRowInOut[j]);
                                         diff = diff + string.Format("Y{0}+", subTtlRowInOut[j]);
+                                        factoryID += string.Format("Z{0}+", subTtlRowInOut[j]);
                                     }
                                 }
                             }
@@ -3982,6 +3987,7 @@ order by ArtworkTypeID"),
                                         ttlCPU = ttlCPU + string.Format("S{0}+", subTtlRowExOut[j]);
                                         prodOutput = prodOutput + string.Format("X{0}+", subTtlRowExOut[j]);
                                         diff = diff + string.Format("Y{0}+", subTtlRowExOut[j]);
+                                        factoryID += string.Format("Z{0}+", subTtlRowExOut[j]);
                                     }
                                 }
                             }
@@ -3998,6 +4004,7 @@ order by ArtworkTypeID"),
                                         ttlCPU = ttlCPU + string.Format("S{0}+", subTtlRowExInOut[j]);
                                         prodOutput = prodOutput + string.Format("X{0}+", subTtlRowExInOut[j]);
                                         diff = diff + string.Format("Y{0}+", subTtlRowExInOut[j]);
+                                        factoryID += string.Format("Z{0}+", subTtlRowExInOut[j]);
                                     }
                                 }
                             }
@@ -4012,6 +4019,7 @@ order by ArtworkTypeID"),
                             worksheet.Cells[insertRow, 21] = string.Format("=ROUND((S{0}/(M{0}*3600/1400))*100,1)", MyUtility.Convert.GetString(insertRow));
                             worksheet.Cells[insertRow, 24] = prodOutput.Substring(0, prodOutput.Length - 1);
                             worksheet.Cells[insertRow, 25] = diff.Substring(0, diff.Length - 1);
+                            worksheet.Cells[insertRow, 26] = factoryID.Substring(0, factoryID.Length - 1);
                             insertRow++;
                         }
                     }
@@ -4068,8 +4076,52 @@ order by ArtworkTypeID"),
 
             #region 產生R04 報表
             DataTable dtR04;
-            string sqlcmd = $"exec [dbo].[Send_SewingDailyOutput] '{Env.User.Factory}', '{Convert.ToDateTime(dateMaxOutputDate).ToString("yyyy/MM/dd")}'";
-            result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtR04);
+
+            List<SqlParameter> listPar = new List<SqlParameter>()
+            {
+                new SqlParameter("@M", string.Empty),
+                new SqlParameter("@Factory", string.Empty),
+                new SqlParameter("@Category", string.Empty),
+                new SqlParameter("@Brand", string.Empty),
+                new SqlParameter("@CDCode", string.Empty),
+                new SqlParameter("@ProductType", string.Empty),
+                new SqlParameter("@FabricType", string.Empty),
+                new SqlParameter("@Lining", string.Empty),
+                new SqlParameter("@Construction", string.Empty),
+                new SqlParameter("@Gender", string.Empty),
+                new SqlParameter("@Shift", string.Empty),
+                new SqlParameter("@Include_Artwork", false),
+                new SqlParameter("@ShowAccumulate_output", false),
+                new SqlParameter("@ExcludeSampleFty", false),
+                new SqlParameter("@OnlyCancelOrder", false),
+                new SqlParameter("@ExcludeNonRevenue", false),
+                new SqlParameter("@SubconOut", false),
+                new SqlParameter("@StartDate", dateMaxOutputDate),
+                new SqlParameter("@EndDate", DBNull.Value),
+            };
+
+            string sqlGetSewingDailyOutputList = @"
+                                exec GetSewingDailyOutputList   @M						
+	                            ,@Factory	
+	                            ,@StartDate    
+	                            ,@EndDate      
+	                            ,@Category	
+	                            ,@Brand		   
+	                            ,@CDCode	
+	                            ,@ProductType
+	                            ,@FabricType
+	                            ,@Lining	
+	                            ,@Construction
+	                            ,@Gender	
+	                            ,@Shift		
+	                            ,@Include_Artwork			
+	                            ,@ShowAccumulate_output	
+	                            ,@ExcludeSampleFty		
+	                            ,@OnlyCancelOrder		
+	                            ,@ExcludeNonRevenue		
+	                            ,@SubconOut				
+                ";
+            result = DBProxy.Current.Select(null, sqlGetSewingDailyOutputList, listPar, out dtR04);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
