@@ -3,30 +3,23 @@
 namespace Sci.Production.Warehouse
 {
     /// <inheritdoc/>
+#pragma warning disable SA1516 // Elements should be separated by blank line
+#pragma warning disable SA1600 // Elements should be documented
     internal class P21_PrintBarcode_Data
     {
-        /// <inheritdoc/>
         public string SP { get; set; }
-
-        /// <inheritdoc/>
-        public string Ref { get; set; }
-
-        /// <inheritdoc/>
-        public string SEQ { get; set; }
-
-        /// <inheritdoc/>
-        public string Lot { get; set; }
-
-        /// <inheritdoc/>
-        public string Color { get; set; }
-
-        /// <inheritdoc/>
+        public string Seq { get; set; }
+        public string GW { get; set; }
+        public string AW { get; set; }
+        public string Location { get; set; }
+        public string Refno { get; set; }
         public string Roll { get; set; }
-
-        /// <inheritdoc/>
+        public string Color { get; set; }
+        public string Dyelot { get; set; }
         public string Qty { get; set; }
-
-        /// <inheritdoc/>
-        public Bitmap Barcode { get; set; }
+        public string FactoryID { get; set; }
+        public byte[] Image { get; set; }
     }
+#pragma warning restore SA1516 // Elements should be separated by blank line
+#pragma warning restore SA1600 // Elements should be documented
 }
