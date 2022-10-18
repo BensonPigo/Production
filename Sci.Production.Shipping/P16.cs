@@ -737,7 +737,7 @@ where ID = '{this.CurrentMaintain["ID"]}'
 
         private void BtnExpenseData_Click(object sender, EventArgs e)
         {
-            P05_ExpenseData callNextForm = new P05_ExpenseData(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "WKNo", false);
+            P05_ExpenseData callNextForm = new P05_ExpenseData(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "TK", false);
             callNextForm.ShowDialog(this);
         }
 
