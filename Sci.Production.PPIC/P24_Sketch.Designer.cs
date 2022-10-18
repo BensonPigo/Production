@@ -49,7 +49,7 @@
             this.comboPictureSize2.Location = new System.Drawing.Point(523, 10);
             this.comboPictureSize2.Name = "comboPictureSize2";
             this.comboPictureSize2.OldText = "";
-            this.comboPictureSize2.Size = new System.Drawing.Size(100, 24);
+            this.comboPictureSize2.Size = new System.Drawing.Size(172, 24);
             this.comboPictureSize2.TabIndex = 19;
             this.comboPictureSize2.TargetPictureBox = null;
             // 
@@ -63,7 +63,7 @@
             this.comboPictureSize1.Location = new System.Drawing.Point(74, 11);
             this.comboPictureSize1.Name = "comboPictureSize1";
             this.comboPictureSize1.OldText = "";
-            this.comboPictureSize1.Size = new System.Drawing.Size(100, 24);
+            this.comboPictureSize1.Size = new System.Drawing.Size(140, 24);
             this.comboPictureSize1.TabIndex = 18;
             this.comboPictureSize1.TargetPictureBox = null;
             // 

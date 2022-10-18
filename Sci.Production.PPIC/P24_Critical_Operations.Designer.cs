@@ -29,10 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.gridCritical_Operations = new Sci.Win.UI.Grid();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.btnDownload = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.btnDownload = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridCritical_Operations)).BeginInit();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -47,6 +48,14 @@
             this.gridCritical_Operations.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridCritical_Operations.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.gridCritical_Operations.DataSource = this.listControlBindingSource1;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.gridCritical_Operations.DefaultCellStyle = dataGridViewCellStyle1;
             this.gridCritical_Operations.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridCritical_Operations.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridCritical_Operations.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
@@ -60,7 +69,7 @@
             this.gridCritical_Operations.RowTemplate.Height = 24;
             this.gridCritical_Operations.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCritical_Operations.ShowCellToolTips = false;
-            this.gridCritical_Operations.Size = new System.Drawing.Size(583, 392);
+            this.gridCritical_Operations.Size = new System.Drawing.Size(493, 392);
             this.gridCritical_Operations.TabIndex = 5;
             this.gridCritical_Operations.TabStop = false;
             // 
@@ -70,22 +79,30 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(583, 46);
+            this.panel3.Size = new System.Drawing.Size(493, 46);
             this.panel3.TabIndex = 6;
             // 
             // btnDownload
             // 
-            this.btnDownload.Location = new System.Drawing.Point(460, 8);
+            this.btnDownload.BackColor = System.Drawing.Color.Gray;
+            this.btnDownload.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnDownload.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnDownload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDownload.ForeColor = System.Drawing.Color.White;
+            this.btnDownload.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.btnDownload.Location = new System.Drawing.Point(336, 9);
+            this.btnDownload.Margin = new System.Windows.Forms.Padding(0);
             this.btnDownload.Name = "btnDownload";
-            this.btnDownload.Size = new System.Drawing.Size(111, 30);
-            this.btnDownload.TabIndex = 8;
+            this.btnDownload.Size = new System.Drawing.Size(132, 32);
+            this.btnDownload.TabIndex = 21;
             this.btnDownload.Text = "Download";
-            this.btnDownload.UseVisualStyleBackColor = true;
+            this.btnDownload.UseVisualStyleBackColor = false;
             this.btnDownload.Click += new System.EventHandler(this.btnDownload_Click);
             // 
             // P24_Critical_Operations
             // 
-            this.ClientSize = new System.Drawing.Size(583, 438);
+            this.ClientSize = new System.Drawing.Size(493, 438);
             this.Controls.Add(this.gridCritical_Operations);
             this.Controls.Add(this.panel3);
             this.Name = "P24_Critical_Operations";
@@ -101,7 +118,7 @@
         #endregion
         private Win.UI.Grid gridCritical_Operations;
         private Win.UI.Panel panel3;
-        private Win.UI.Button btnDownload;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.Button btnDownload;
     }
 }

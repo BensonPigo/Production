@@ -79,6 +79,7 @@
             this.Controls.Add(this.label2);
             this.Name = "P23_DataFilter";
             this.OnLineHelpID = "Sci.Win.Forms.Base";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Data Filter";
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -42,9 +42,9 @@
             this.labDone = new System.Windows.Forms.Label();
             this.labonGoing = new System.Windows.Forms.Label();
             this.grid = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.btn_Search = new Sci.Win.UI.Button();
             this.btnDataFilter = new Sci.Win.UI.Button();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
@@ -176,7 +176,6 @@
             this.grid.AllowUserToAddRows = false;
             this.grid.AllowUserToDeleteRows = false;
             this.grid.AllowUserToResizeRows = false;
-            this.grid.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.grid.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -198,7 +197,6 @@
             // 
             // btn_Search
             // 
-            this.btn_Search.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.btn_Search.BackColor = System.Drawing.Color.Gray;
             this.btn_Search.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.btn_Search.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -217,7 +215,6 @@
             // 
             // btnDataFilter
             // 
-            this.btnDataFilter.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.btnDataFilter.BackColor = System.Drawing.Color.Gray;
             this.btnDataFilter.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.btnDataFilter.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));

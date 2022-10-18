@@ -2,6 +2,7 @@
 using Microsoft.Office.Interop.Excel;
 using Sci.Data;
 using Sci.Production.IE;
+using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -20,9 +21,7 @@ namespace Sci.Production.PPIC
     {
         private Form frontForm;
         private System.Windows.Forms.Button btnCurrentPage;
-        private string style;
-        private string season;
-        private string brand;
+        private bool canNew;
 
         private enum Status
         {
@@ -38,20 +37,32 @@ namespace Sci.Production.PPIC
              : base(menuitem)
         {
             this.InitializeComponent();
-            this.Init_Layout();
+            this.canNew = Prgs.GetAuthority(Env.User.UserID, "P24. Query Handover List", "CanNew");
+            this.EditMode = true;
             this.FormBorderStyle = FormBorderStyle.Sizable;
             //EndlineInfo.Shift = null;
             //EndlineInfo.P01_CanConfirm = Prgs.GetAuthority(Env.User.UserID, "P01. Sintex End-line E-Inspection system", "CanConfirm");
         }
 
-        /// <inheritdoc/>
-        public P24(ToolStripMenuItem menuitem, string styleID, string seasonID, string brandID)
+        public P24(string styleID, string seasonID, string brandID, ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             this.txtStyle.Text = styleID;
             this.txtSeason.Text = seasonID;
             this.comboBrand.Text = brandID;
+            this.canNew = Prgs.GetAuthority(Env.User.UserID, "P24. Query Handover List", "CanNew");
+            this.Init_Layout();
+            this.FormBorderStyle = FormBorderStyle.Sizable;
+        }
+
+        /// <inheritdoc/>
+        public void P24Call(string styleID, string seasonID, string brandID)
+        {
+            this.txtStyle.Text = styleID;
+            this.txtSeason.Text = seasonID;
+            this.comboBrand.Text = brandID;
+            this.canNew = Prgs.GetAuthority(Env.User.UserID, "P24. Query Handover List", "CanNew");
             this.Init_Layout();
             this.FormBorderStyle = FormBorderStyle.Sizable;
         }
@@ -65,31 +76,9 @@ namespace Sci.Production.PPIC
             this.SetMenuClick(this.left_btn_FinalPatternAndMarkerList, null); // 先放空白
             this.SetMenuClick(this.left_btn_OperationsBreakdown, new P24_Operations_Breakdown(this.txtStyle.Text, this.txtSeason.Text, this.comboBrand.Text));
             this.SetMenuClick(this.left_btn_CriticalOperations, new P24_Critical_Operations(this.txtStyle.Text));
-            //this.SetMenuClick(this.left_btn_POstatus, new P01_PoStatus());
-            //this.SetMenuClick(this.left_btn_TurnOver, new P01_TurnOver());
-            //this.SetMenuClick(this.left_btn_Comment, new P01_First_Output_Comment());
-            //this.SetMenuClick(this.left_btn_Moisture, new P01_Moisture());
-            //this.SetMenuClick(this.left_btn_DefectRateSummaryReport, new P01_DefectRateSummaryReport());
-
-            foreach (System.Windows.Forms.Button menybtn in this.splitContainerMain.Panel1.Controls)
-            {
-                //menybtn.BackColor = this.colorMenuDefault;
-            }
-
-            // combo Datasource
-            Ict.DualResult cbResult;
-            if (cbResult = DBProxy.Current.Select(null, @"Select ID from Brand where Junk = 0", out System.Data.DataTable dtCountry))
-            {
-                this.comboBrand.DataSource = dtCountry;
-                this.comboBrand.DisplayMember = "ID";
-                this.comboBrand.ValueMember = "ID";
-            }
-            else
-            {
-                this.ShowErr(cbResult);
-            }
-
-            this.comboBrand.Text = "ADIDAS";
+            this.SetMenuClick(this.left_btn_TemplateAutoTemplateList, new P24_TemplateList(this.txtStyle.Text, this.txtSeason.Text, this.comboBrand.Text, this.canNew, "Template"));
+            this.SetMenuClick(this.left_btn_SkillMatrix, null); // 先放空白
+            this.SetMenuClick(this.left_btn_SpecialTools, new P24_TemplateList(this.txtStyle.Text, this.txtSeason.Text, this.comboBrand.Text, this.canNew, "SpecialTools"));
         }
 
         private void StatusChange(Status status)
@@ -101,11 +90,9 @@ namespace Sci.Production.PPIC
                     this.left_btn_AD.Enabled = false;
                     this.left_btn_FinalPatternAndMarkerList.Enabled = false;
                     this.left_btn_OperationsBreakdown.Enabled = false;
-                    this.left_btn_Measure.Enabled = false;
                     this.left_btn_CriticalOperations.Enabled = false;
                     this.left_btn_TemplateAutoTemplateList.Enabled = false;
                     this.left_btn_SkillMatrix.Enabled = false;
-                    this.left_btn_Close.Enabled = false;
                     this.left_btn_LineLayoutMachine.Enabled = false;
                     this.left_btn_SpecialTools.Enabled = false;
                     break;
@@ -114,11 +101,9 @@ namespace Sci.Production.PPIC
                     this.left_btn_AD.Enabled = true;
                     this.left_btn_FinalPatternAndMarkerList.Enabled = true;
                     this.left_btn_OperationsBreakdown.Enabled = true;
-                    this.left_btn_Measure.Enabled = true;
                     this.left_btn_CriticalOperations.Enabled = true;
                     this.left_btn_TemplateAutoTemplateList.Enabled = true;
                     this.left_btn_SkillMatrix.Enabled = true;
-                    this.left_btn_Close.Enabled = true;
                     this.left_btn_LineLayoutMachine.Enabled = true;
                     this.left_btn_SpecialTools.Enabled = true;
                     break;
@@ -132,16 +117,6 @@ namespace Sci.Production.PPIC
         /// </summary>
         public void SetBottomInfo()
         {
-
-            //this.labelBottom.Text = $"{CodeMsg.Factory}: {EndlineInfo.Factory}    {CodeMsg.Line}: {EndlineInfo.Line}    {CodeMsg.Shift}: {EndlineInfo.Shift}    {CodeMsg.Team}: {EndlineInfo.Team}    {CodeMsg.LoginUser}: {Env.User.UserID}-{Env.User.UserName}";
-            //foreach (Form child in this.splitContainerMain.Panel2.Controls)
-            //{
-            //    if (child.GetType().Name == "P01_Inspection")
-            //    {
-            //        ((P01_Inspection)child).Reset();
-            //    }
-            //}
-
             if (MyUtility.Check.Empty(this.txtSeason.Text) ||
                 MyUtility.Check.Empty(this.txtStyle.Text)  ||
                 MyUtility.Check.Empty(this.comboBrand.Text))
@@ -153,7 +128,7 @@ namespace Sci.Production.PPIC
                 this.StatusChange(Status.hasStyle);
             }
 
-            this.left_btn_Sketch.PerformClick();
+            //this.left_btn_Sketch.PerformClick();
         }
 
         private void SetMenuClick(System.Windows.Forms.Button setBtn, Form calledForm)
@@ -242,8 +217,6 @@ namespace Sci.Production.PPIC
 
         private void P01_Show_FormLoaded(object sender, EventArgs e)
         {
-            this.WindowState = FormWindowState.Maximized;
-
             if (MyUtility.Check.Empty(this.txtSeason.Text) ||
              MyUtility.Check.Empty(this.txtStyle.Text) ||
              MyUtility.Check.Empty(this.comboBrand.Text))
@@ -254,6 +227,21 @@ namespace Sci.Production.PPIC
             {
                 this.StatusChange(Status.hasStyle);
             }
+
+            // combo Datasource
+            Ict.DualResult cbResult;
+            if (cbResult = DBProxy.Current.Select(null, @"Select ID from Brand where Junk = 0", out System.Data.DataTable dtCountry))
+            {
+                this.comboBrand.DataSource = dtCountry;
+                this.comboBrand.DisplayMember = "ID";
+                this.comboBrand.ValueMember = "ID";
+            }
+            else
+            {
+                this.ShowErr(cbResult);
+            }
+
+            this.comboBrand.Text = "ADIDAS";
         }
 
         private System.Data.DataTable GetDtByComboID(string poid)
@@ -441,12 +429,7 @@ order by Month desc";
 
         private void btn_Search_Click(object sender, EventArgs e)
         {
-            this.btnSketch();
-        }
-
-        private void left_btn_Sketch_Click(object sender, EventArgs e)
-        {
-
+            this.Init_Layout();
         }
 
         private bool CheckParm()
@@ -464,37 +447,19 @@ order by Month desc";
 
         private void btnSketch()
         {
-            if (!this.CheckParm())
-            {
-                return;
-            }
-
-            P24_Sketch callForm = new P24_Sketch(this.txtStyle.Text, this.txtSeason.Text, this.comboBrand.Text);
-            callForm.ShowDialog();
-
+            this.SetMenuClick(this.left_btn_Sketch, new P24_Sketch(this.txtStyle.Text, this.txtSeason.Text, this.comboBrand.Text));
             this.StatusChange(Status.hasStyle);
         }
 
-        private void left_btn_OperationsBreakdown_Click(object sender, EventArgs e)
+        private void left_btn_Close_Click(object sender, EventArgs e)
         {
-            if (!this.CheckParm())
-            {
-                return;
-            }
-
-            P24_Operations_Breakdown callForm = new P24_Operations_Breakdown(this.txtStyle.Text, this.txtSeason.Text, this.comboBrand.Text);
-            callForm.ShowDialog();
+            this.Close();
         }
 
-        private void left_btn_CriticalOperations_Click(object sender, EventArgs e)
+        private void left_btn_LineLayoutMachine_Click(object sender, EventArgs e)
         {
-            if (!this.CheckParm())
-            {
-                return;
-            }
-
-            P24_Critical_Operations callForm = new P24_Critical_Operations(this.txtStyle.Text);
-            callForm.ShowDialog();
+            IE.P03 callNextForm = new IE.P03(this.txtStyle.Text, this.comboBrand.Text, this.txtSeason.Text, isReadOnly: true);
+            callNextForm.ShowDialog(this);
         }
     }
 }

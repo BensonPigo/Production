@@ -22,7 +22,7 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
 
-            // combo Datasource 
+            // combo Datasource
             Ict.DualResult cbResult;
             if (cbResult = DBProxy.Current.Select(null, @"select ID from SeasonSCI where Junk = 0 order by Month desc", out DataTable dtCountry))
             {

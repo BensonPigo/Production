@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using static Ict.Win.Design.DateTimeConverter;
 
 namespace Sci.Production.PPIC
@@ -93,7 +94,7 @@ namespace Sci.Production.PPIC
                 listFile.AddRange(this.GetFile(sub_di, filename));
             }
 
-            listFile.AddRange(di.GetFiles("*.png").Where(x => x.EqualString(filename)).ToList());
+            listFile.AddRange(di.GetFiles().Where(x => x.EqualString(filename)).ToList());
 
             return listFile;
         }
@@ -105,7 +106,7 @@ namespace Sci.Production.PPIC
             this.Helper.Controls.Grid.Generator(this.gridCritical_Operations)
           .Text("FileName", header: "File Name", width: Widths.AnsiChars(35), iseditingreadonly: true)
           ;
-
+            this.gridCritical_Operations.DefaultCellStyle.Font = new Font(this.gridCritical_Operations.DefaultCellStyle.Font.Name, 16);
             this.Query();
         }
 
@@ -121,6 +122,7 @@ select CriticalOperationPath from System
             }
             else
             {
+                this.strPath = string.Empty;
                 return;
             }
 
@@ -129,7 +131,18 @@ select CriticalOperationPath from System
 
             if (!MyUtility.Check.Empty(this.strPath))
             {
-                //dirs = Directory.GetDirectories(this.strPath);
+                if (Directory.Exists(this.strPath) == false)
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(this.strPath);
+                    }
+                    catch (IOException exception)
+                    {
+                        MyUtility.Msg.ErrorBox("Error: Create file fail. Original error: " + exception.Message);
+                    }
+                }
+
                 dirs = Directory.GetFileSystemEntries(this.strPath);
                 foreach (string item in dirs)
                 {

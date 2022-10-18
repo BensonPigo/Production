@@ -30,14 +30,12 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(P24));
             this.splitContainerMain = new System.Windows.Forms.SplitContainer();
-            this.left_btn_Quit = new System.Windows.Forms.Button();
             this.left_btn_Close = new System.Windows.Forms.Button();
             this.left_btn_SpecialTools = new System.Windows.Forms.Button();
             this.left_btn_LineLayoutMachine = new System.Windows.Forms.Button();
             this.left_btn_SkillMatrix = new System.Windows.Forms.Button();
             this.left_btn_TemplateAutoTemplateList = new System.Windows.Forms.Button();
             this.left_btn_CriticalOperations = new System.Windows.Forms.Button();
-            this.left_btn_Measure = new System.Windows.Forms.Button();
             this.left_btn_OperationsBreakdown = new System.Windows.Forms.Button();
             this.left_btn_FinalPatternAndMarkerList = new System.Windows.Forms.Button();
             this.left_btn_AD = new System.Windows.Forms.Button();
@@ -62,49 +60,37 @@
             // 
             // splitContainerMain.Panel1
             // 
-            this.splitContainerMain.Panel1.Controls.Add(this.left_btn_Quit);
             this.splitContainerMain.Panel1.Controls.Add(this.left_btn_Close);
             this.splitContainerMain.Panel1.Controls.Add(this.left_btn_SpecialTools);
             this.splitContainerMain.Panel1.Controls.Add(this.left_btn_LineLayoutMachine);
             this.splitContainerMain.Panel1.Controls.Add(this.left_btn_SkillMatrix);
             this.splitContainerMain.Panel1.Controls.Add(this.left_btn_TemplateAutoTemplateList);
             this.splitContainerMain.Panel1.Controls.Add(this.left_btn_CriticalOperations);
-            this.splitContainerMain.Panel1.Controls.Add(this.left_btn_Measure);
             this.splitContainerMain.Panel1.Controls.Add(this.left_btn_OperationsBreakdown);
             this.splitContainerMain.Panel1.Controls.Add(this.left_btn_FinalPatternAndMarkerList);
             this.splitContainerMain.Panel1.Controls.Add(this.left_btn_AD);
             this.splitContainerMain.Panel1.Controls.Add(this.left_btn_Sketch);
             this.splitContainerMain.Paint += new System.Windows.Forms.PaintEventHandler(this.SplitContainerMain_Paint);
             // 
-            // left_btn_Quit
-            // 
-            this.left_btn_Quit.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            resources.ApplyResources(this.left_btn_Quit, "left_btn_Quit");
-            this.left_btn_Quit.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-            this.left_btn_Quit.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.left_btn_Quit.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.left_btn_Quit.Name = "left_btn_Quit";
-            this.left_btn_Quit.UseVisualStyleBackColor = false;
-            this.left_btn_Quit.Click += new System.EventHandler(this.Left_btn_Quit_Click);
-            // 
             // left_btn_Close
             // 
             this.left_btn_Close.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
             resources.ApplyResources(this.left_btn_Close, "left_btn_Close");
             this.left_btn_Close.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-            this.left_btn_Close.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.left_btn_Close.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.left_btn_Close.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.left_btn_Close.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.left_btn_Close.ForeColor = System.Drawing.Color.White;
             this.left_btn_Close.Name = "left_btn_Close";
             this.left_btn_Close.UseVisualStyleBackColor = false;
+            this.left_btn_Close.Click += new System.EventHandler(this.left_btn_Close_Click);
             // 
             // left_btn_SpecialTools
             // 
             this.left_btn_SpecialTools.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
             resources.ApplyResources(this.left_btn_SpecialTools, "left_btn_SpecialTools");
             this.left_btn_SpecialTools.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-            this.left_btn_SpecialTools.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.left_btn_SpecialTools.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.left_btn_SpecialTools.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.left_btn_SpecialTools.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.left_btn_SpecialTools.ForeColor = System.Drawing.Color.White;
             this.left_btn_SpecialTools.Name = "left_btn_SpecialTools";
             this.left_btn_SpecialTools.UseVisualStyleBackColor = false;
@@ -114,19 +100,20 @@
             this.left_btn_LineLayoutMachine.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
             resources.ApplyResources(this.left_btn_LineLayoutMachine, "left_btn_LineLayoutMachine");
             this.left_btn_LineLayoutMachine.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-            this.left_btn_LineLayoutMachine.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.left_btn_LineLayoutMachine.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.left_btn_LineLayoutMachine.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.left_btn_LineLayoutMachine.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.left_btn_LineLayoutMachine.ForeColor = System.Drawing.Color.White;
             this.left_btn_LineLayoutMachine.Name = "left_btn_LineLayoutMachine";
             this.left_btn_LineLayoutMachine.UseVisualStyleBackColor = false;
+            this.left_btn_LineLayoutMachine.Click += new System.EventHandler(this.left_btn_LineLayoutMachine_Click);
             // 
             // left_btn_SkillMatrix
             // 
             this.left_btn_SkillMatrix.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
             resources.ApplyResources(this.left_btn_SkillMatrix, "left_btn_SkillMatrix");
             this.left_btn_SkillMatrix.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-            this.left_btn_SkillMatrix.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.left_btn_SkillMatrix.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.left_btn_SkillMatrix.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.left_btn_SkillMatrix.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.left_btn_SkillMatrix.ForeColor = System.Drawing.Color.White;
             this.left_btn_SkillMatrix.Name = "left_btn_SkillMatrix";
             this.left_btn_SkillMatrix.UseVisualStyleBackColor = false;
@@ -136,8 +123,8 @@
             this.left_btn_TemplateAutoTemplateList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
             resources.ApplyResources(this.left_btn_TemplateAutoTemplateList, "left_btn_TemplateAutoTemplateList");
             this.left_btn_TemplateAutoTemplateList.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-            this.left_btn_TemplateAutoTemplateList.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.left_btn_TemplateAutoTemplateList.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.left_btn_TemplateAutoTemplateList.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.left_btn_TemplateAutoTemplateList.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.left_btn_TemplateAutoTemplateList.ForeColor = System.Drawing.Color.White;
             this.left_btn_TemplateAutoTemplateList.Name = "left_btn_TemplateAutoTemplateList";
             this.left_btn_TemplateAutoTemplateList.UseVisualStyleBackColor = false;
@@ -147,43 +134,30 @@
             this.left_btn_CriticalOperations.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
             resources.ApplyResources(this.left_btn_CriticalOperations, "left_btn_CriticalOperations");
             this.left_btn_CriticalOperations.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-            this.left_btn_CriticalOperations.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.left_btn_CriticalOperations.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.left_btn_CriticalOperations.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.left_btn_CriticalOperations.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.left_btn_CriticalOperations.ForeColor = System.Drawing.Color.White;
             this.left_btn_CriticalOperations.Name = "left_btn_CriticalOperations";
             this.left_btn_CriticalOperations.UseVisualStyleBackColor = false;
-            this.left_btn_CriticalOperations.Click += new System.EventHandler(this.left_btn_CriticalOperations_Click);
-            // 
-            // left_btn_Measure
-            // 
-            this.left_btn_Measure.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-            resources.ApplyResources(this.left_btn_Measure, "left_btn_Measure");
-            this.left_btn_Measure.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-            this.left_btn_Measure.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.left_btn_Measure.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.left_btn_Measure.ForeColor = System.Drawing.Color.White;
-            this.left_btn_Measure.Name = "left_btn_Measure";
-            this.left_btn_Measure.UseVisualStyleBackColor = false;
             // 
             // left_btn_OperationsBreakdown
             // 
             this.left_btn_OperationsBreakdown.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
             resources.ApplyResources(this.left_btn_OperationsBreakdown, "left_btn_OperationsBreakdown");
             this.left_btn_OperationsBreakdown.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-            this.left_btn_OperationsBreakdown.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.left_btn_OperationsBreakdown.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.left_btn_OperationsBreakdown.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.left_btn_OperationsBreakdown.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.left_btn_OperationsBreakdown.ForeColor = System.Drawing.Color.White;
             this.left_btn_OperationsBreakdown.Name = "left_btn_OperationsBreakdown";
             this.left_btn_OperationsBreakdown.UseVisualStyleBackColor = false;
-            this.left_btn_OperationsBreakdown.Click += new System.EventHandler(this.left_btn_OperationsBreakdown_Click);
             // 
             // left_btn_FinalPatternAndMarkerList
             // 
             this.left_btn_FinalPatternAndMarkerList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
             resources.ApplyResources(this.left_btn_FinalPatternAndMarkerList, "left_btn_FinalPatternAndMarkerList");
             this.left_btn_FinalPatternAndMarkerList.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-            this.left_btn_FinalPatternAndMarkerList.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.left_btn_FinalPatternAndMarkerList.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.left_btn_FinalPatternAndMarkerList.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.left_btn_FinalPatternAndMarkerList.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.left_btn_FinalPatternAndMarkerList.ForeColor = System.Drawing.Color.White;
             this.left_btn_FinalPatternAndMarkerList.Name = "left_btn_FinalPatternAndMarkerList";
             this.left_btn_FinalPatternAndMarkerList.UseVisualStyleBackColor = false;
@@ -193,8 +167,8 @@
             this.left_btn_AD.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
             resources.ApplyResources(this.left_btn_AD, "left_btn_AD");
             this.left_btn_AD.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-            this.left_btn_AD.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.left_btn_AD.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.left_btn_AD.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.left_btn_AD.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.left_btn_AD.ForeColor = System.Drawing.Color.White;
             this.left_btn_AD.Name = "left_btn_AD";
             this.left_btn_AD.UseVisualStyleBackColor = false;
@@ -205,8 +179,8 @@
             this.left_btn_Sketch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
             resources.ApplyResources(this.left_btn_Sketch, "left_btn_Sketch");
             this.left_btn_Sketch.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-            this.left_btn_Sketch.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.left_btn_Sketch.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.left_btn_Sketch.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.left_btn_Sketch.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.left_btn_Sketch.ForeColor = System.Drawing.Color.White;
             this.left_btn_Sketch.Name = "left_btn_Sketch";
             this.left_btn_Sketch.UseVisualStyleBackColor = false;
@@ -305,12 +279,10 @@
         private System.Windows.Forms.SplitContainer splitContainerMain;
         private System.Windows.Forms.Button left_btn_AD;
         private System.Windows.Forms.Button left_btn_Sketch;
-        private System.Windows.Forms.Button left_btn_Quit;
         private System.Windows.Forms.Button left_btn_Close;
         private System.Windows.Forms.Button left_btn_SkillMatrix;
         private System.Windows.Forms.Button left_btn_TemplateAutoTemplateList;
         private System.Windows.Forms.Button left_btn_CriticalOperations;
-        private System.Windows.Forms.Button left_btn_Measure;
         private System.Windows.Forms.Button left_btn_OperationsBreakdown;
         private System.Windows.Forms.Button left_btn_FinalPatternAndMarkerList;
         private System.Windows.Forms.Button left_btn_LineLayoutMachine;

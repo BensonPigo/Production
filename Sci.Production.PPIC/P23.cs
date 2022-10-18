@@ -89,12 +89,47 @@ namespace Sci.Production.PPIC
             this.Find();
         }
 
+        private P24 callP24 = null;
         private void Grid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             this.grid.ValidateControl();
             DataRow dr = this.grid.GetDataRow(e.RowIndex);
-            P24 callform = new P24(null, dr["StyleID"].ToString(), dr["SeasonID"].ToString(), "ADIDAS");
-            callform.ShowDialog();
+
+            if (this.callP24 != null && this.callP24.Visible == true)
+            {
+                this.callP24.P24Call(dr["StyleID"].ToString(), dr["SeasonID"].ToString(), "ADIDAS");
+                this.callP24.Activate();
+            }
+            else
+            {
+                this.P24FormOpen(dr["StyleID"].ToString(), dr["SeasonID"].ToString(), "ADIDAS");
+            }
+        }
+
+        private void P24FormOpen(string style, string season, string brand)
+        {
+            ToolStripMenuItem p24MenuItem = null;
+            foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
+            {
+                if (toolMenuItem.Text.EqualString("PPIC"))
+                {
+                    foreach (var subMenuItem in toolMenuItem.DropDown.Items)
+                    {
+                        if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
+                        {
+                            if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P24. Query Handover List"))
+                            {
+                                p24MenuItem = (ToolStripMenuItem)subMenuItem;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            this.callP24 = new P24(style, season, brand, p24MenuItem);
+            this.callP24.MdiParent = this.MdiParent;
+            this.callP24.Show();
         }
 
         private void btnDataFilter_Click(object sender, EventArgs e)

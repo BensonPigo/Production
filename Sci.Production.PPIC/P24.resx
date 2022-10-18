@@ -128,46 +128,6 @@
   <data name="splitContainerMain.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 65</value>
   </data>
-  <data name="left_btn_Quit.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
-  <data name="left_btn_Quit.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
-  <data name="left_btn_Quit.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 14pt</value>
-  </data>
-  <data name="left_btn_Quit.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="left_btn_Quit.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 649</value>
-  </data>
-  <data name="left_btn_Quit.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 0, 3, 0</value>
-  </data>
-  <data name="left_btn_Quit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>160, 59</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="left_btn_Quit.TabIndex" type="System.Int32, mscorlib">
-    <value>11</value>
-  </data>
-  <data name="left_btn_Quit.Text" xml:space="preserve">
-    <value>Quit</value>
-  </data>
-  <data name="&gt;&gt;left_btn_Quit.Name" xml:space="preserve">
-    <value>left_btn_Quit</value>
-  </data>
-  <data name="&gt;&gt;left_btn_Quit.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;left_btn_Quit.Parent" xml:space="preserve">
-    <value>splitContainerMain.Panel1</value>
-  </data>
-  <data name="&gt;&gt;left_btn_Quit.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <data name="left_btn_Close.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
   </data>
@@ -181,7 +141,7 @@
     <value>NoControl</value>
   </data>
   <data name="left_btn_Close.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 590</value>
+    <value>0, 531</value>
   </data>
   <data name="left_btn_Close.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 0, 3, 0</value>
@@ -189,6 +149,7 @@
   <data name="left_btn_Close.Size" type="System.Drawing.Size, System.Drawing">
     <value>160, 59</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="left_btn_Close.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
   </data>
@@ -205,7 +166,7 @@
     <value>splitContainerMain.Panel1</value>
   </data>
   <data name="&gt;&gt;left_btn_Close.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>0</value>
   </data>
   <data name="left_btn_SpecialTools.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
@@ -220,7 +181,7 @@
     <value>NoControl</value>
   </data>
   <data name="left_btn_SpecialTools.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 531</value>
+    <value>0, 472</value>
   </data>
   <data name="left_btn_SpecialTools.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 0, 3, 0</value>
@@ -244,7 +205,7 @@
     <value>splitContainerMain.Panel1</value>
   </data>
   <data name="&gt;&gt;left_btn_SpecialTools.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>1</value>
   </data>
   <data name="left_btn_LineLayoutMachine.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
@@ -259,7 +220,7 @@
     <value>NoControl</value>
   </data>
   <data name="left_btn_LineLayoutMachine.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 472</value>
+    <value>0, 413</value>
   </data>
   <data name="left_btn_LineLayoutMachine.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 0, 3, 0</value>
@@ -283,7 +244,7 @@
     <value>splitContainerMain.Panel1</value>
   </data>
   <data name="&gt;&gt;left_btn_LineLayoutMachine.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>2</value>
   </data>
   <data name="left_btn_SkillMatrix.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
@@ -295,7 +256,7 @@
     <value>Microsoft Sans Serif, 14pt</value>
   </data>
   <data name="left_btn_SkillMatrix.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 413</value>
+    <value>0, 354</value>
   </data>
   <data name="left_btn_SkillMatrix.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 0, 3, 0</value>
@@ -319,7 +280,7 @@
     <value>splitContainerMain.Panel1</value>
   </data>
   <data name="&gt;&gt;left_btn_SkillMatrix.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>3</value>
   </data>
   <data name="left_btn_TemplateAutoTemplateList.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
@@ -331,7 +292,7 @@
     <value>Microsoft Sans Serif, 14pt</value>
   </data>
   <data name="left_btn_TemplateAutoTemplateList.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 354</value>
+    <value>0, 295</value>
   </data>
   <data name="left_btn_TemplateAutoTemplateList.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 0, 3, 0</value>
@@ -355,7 +316,7 @@
     <value>splitContainerMain.Panel1</value>
   </data>
   <data name="&gt;&gt;left_btn_TemplateAutoTemplateList.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>4</value>
   </data>
   <data name="left_btn_CriticalOperations.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
@@ -367,7 +328,7 @@
     <value>Microsoft Sans Serif, 14pt</value>
   </data>
   <data name="left_btn_CriticalOperations.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 295</value>
+    <value>0, 236</value>
   </data>
   <data name="left_btn_CriticalOperations.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 0, 3, 0</value>
@@ -391,43 +352,7 @@
     <value>splitContainerMain.Panel1</value>
   </data>
   <data name="&gt;&gt;left_btn_CriticalOperations.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="left_btn_Measure.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
-  <data name="left_btn_Measure.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
-  <data name="left_btn_Measure.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 14pt</value>
-  </data>
-  <data name="left_btn_Measure.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 236</value>
-  </data>
-  <data name="left_btn_Measure.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 0, 3, 0</value>
-  </data>
-  <data name="left_btn_Measure.Size" type="System.Drawing.Size, System.Drawing">
-    <value>160, 59</value>
-  </data>
-  <data name="left_btn_Measure.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
-  </data>
-  <data name="left_btn_Measure.Text" xml:space="preserve">
-    <value>Measurement Report </value>
-  </data>
-  <data name="&gt;&gt;left_btn_Measure.Name" xml:space="preserve">
-    <value>left_btn_Measure</value>
-  </data>
-  <data name="&gt;&gt;left_btn_Measure.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;left_btn_Measure.Parent" xml:space="preserve">
-    <value>splitContainerMain.Panel1</value>
-  </data>
-  <data name="&gt;&gt;left_btn_Measure.ZOrder" xml:space="preserve">
-    <value>7</value>
   </data>
   <data name="left_btn_OperationsBreakdown.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
@@ -463,7 +388,7 @@
     <value>splitContainerMain.Panel1</value>
   </data>
   <data name="&gt;&gt;left_btn_OperationsBreakdown.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>6</value>
   </data>
   <data name="left_btn_FinalPatternAndMarkerList.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
@@ -499,7 +424,7 @@
     <value>splitContainerMain.Panel1</value>
   </data>
   <data name="&gt;&gt;left_btn_FinalPatternAndMarkerList.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>7</value>
   </data>
   <data name="left_btn_AD.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
@@ -538,7 +463,7 @@
     <value>splitContainerMain.Panel1</value>
   </data>
   <data name="&gt;&gt;left_btn_AD.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>8</value>
   </data>
   <data name="left_btn_Sketch.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
@@ -577,7 +502,7 @@
     <value>splitContainerMain.Panel1</value>
   </data>
   <data name="&gt;&gt;left_btn_Sketch.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>9</value>
   </data>
   <data name="&gt;&gt;splitContainerMain.Panel1.Name" xml:space="preserve">
     <value>splitContainerMain.Panel1</value>

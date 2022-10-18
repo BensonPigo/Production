@@ -34,7 +34,7 @@ namespace Sci.Production.PPIC
 
         private void btn_FactoryGSDList_Click(object sender, EventArgs e)
         {
-            IE.P01 callNextForm = new IE.P01(this.style, this.brand, this.season, string.Empty, canEdit: false);
+            IE.P01 callNextForm = new IE.P01(this.style, this.brand, this.season, string.Empty, isReadOnly: true);
             callNextForm.ShowDialog(this);
         }
     }
