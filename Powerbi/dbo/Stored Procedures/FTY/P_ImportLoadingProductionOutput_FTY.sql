@@ -318,7 +318,7 @@ and not exists (select 1 from #Final s where t.FactoryID=s.FactoryID AND t.SPNO=
 
 delete t
 from P_LoadingProductionOutput t
-left join [MainServer].Production.dbo.Orders o on t.SPNO = o.ID
+left join [MainServer].Production.dbo.Orders o on t.SPNO = o.ID and t.FactoryID = o.FactoryID
 where o.ID is null
 and t.Category = ''Forecast''
 
