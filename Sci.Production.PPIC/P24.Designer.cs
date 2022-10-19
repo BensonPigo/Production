@@ -82,7 +82,7 @@
             this.left_btn_Close.ForeColor = System.Drawing.Color.White;
             this.left_btn_Close.Name = "left_btn_Close";
             this.left_btn_Close.UseVisualStyleBackColor = false;
-            this.left_btn_Close.Click += new System.EventHandler(this.left_btn_Close_Click);
+            this.left_btn_Close.Click += new System.EventHandler(this.Left_btn_Close_Click);
             // 
             // left_btn_SpecialTools
             // 
@@ -105,7 +105,7 @@
             this.left_btn_LineLayoutMachine.ForeColor = System.Drawing.Color.White;
             this.left_btn_LineLayoutMachine.Name = "left_btn_LineLayoutMachine";
             this.left_btn_LineLayoutMachine.UseVisualStyleBackColor = false;
-            this.left_btn_LineLayoutMachine.Click += new System.EventHandler(this.left_btn_LineLayoutMachine_Click);
+            this.left_btn_LineLayoutMachine.Click += new System.EventHandler(this.Left_btn_LineLayoutMachine_Click);
             // 
             // left_btn_SkillMatrix
             // 
@@ -191,7 +191,7 @@
             resources.ApplyResources(this.labelTop, "labelTop");
             this.labelTop.ForeColor = System.Drawing.SystemColors.Control;
             this.labelTop.Name = "labelTop";
-            this.labelTop.Click += new System.EventHandler(this.labelTop_Click);
+            this.labelTop.Click += new System.EventHandler(this.LabelTop_Click);
             // 
             // txtSeason
             // 
@@ -199,7 +199,8 @@
             resources.ApplyResources(this.txtSeason, "txtSeason");
             this.txtSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSeason.Name = "txtSeason";
-            this.txtSeason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSeason_PopUp);
+            this.txtSeason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeason_PopUp);
+            this.txtSeason.Validating += new System.ComponentModel.CancelEventHandler(this.txtSeason_Validating);
             // 
             // label3
             // 
@@ -228,7 +229,8 @@
             resources.ApplyResources(this.txtStyle, "txtStyle");
             this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtStyle.Name = "txtStyle";
-            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtStyle_PopUp);
+            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStyle_PopUp);
+            this.txtStyle.Validating += new System.ComponentModel.CancelEventHandler(this.txtStyle_Validating);
             // 
             // btn_Search
             // 
@@ -239,7 +241,7 @@
             this.btn_Search.ForeColor = System.Drawing.Color.White;
             this.btn_Search.Name = "btn_Search";
             this.btn_Search.UseVisualStyleBackColor = false;
-            this.btn_Search.Click += new System.EventHandler(this.btn_Search_Click);
+            this.btn_Search.Click += new System.EventHandler(this.Btn_Search_Click);
             // 
             // P24
             // 
@@ -255,9 +257,9 @@
             this.Controls.Add(this.labelTop);
             this.Name = "P24";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.FormLoaded += new System.EventHandler(this.P01_Show_FormLoaded);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.P01_FormClosed);
-            this.ResizeEnd += new System.EventHandler(this.P01_Show_ResizeEnd);
+            this.FormLoaded += new System.EventHandler(this.P24_Show_FormLoaded);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.P24_FormClosed);
+            this.ResizeEnd += new System.EventHandler(this.P24_Show_ResizeEnd);
             this.Controls.SetChildIndex(this.labelTop, 0);
             this.Controls.SetChildIndex(this.splitContainerMain, 0);
             this.Controls.SetChildIndex(this.txtStyle, 0);

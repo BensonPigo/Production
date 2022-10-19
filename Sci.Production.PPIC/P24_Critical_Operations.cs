@@ -104,9 +104,9 @@ namespace Sci.Production.PPIC
             base.OnFormLoaded();
 
             this.Helper.Controls.Grid.Generator(this.gridCritical_Operations)
-          .Text("FileName", header: "File Name", width: Widths.AnsiChars(35), iseditingreadonly: true)
+          .Text("FileName", header: "File Name", width: Widths.AnsiChars(50), iseditingreadonly: true)
           ;
-            this.gridCritical_Operations.DefaultCellStyle.Font = new Font(this.gridCritical_Operations.DefaultCellStyle.Font.Name, 16);
+            this.gridCritical_Operations.DefaultCellStyle.Font = new Font(this.gridCritical_Operations.DefaultCellStyle.Font.Name, 14);
             this.Query();
         }
 

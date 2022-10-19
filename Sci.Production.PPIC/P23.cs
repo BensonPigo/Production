@@ -182,6 +182,7 @@ from #tmp
 
 drop table #tmp
 ";
+            this.ShowWaitMessage("Loading....");
 
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtGrid);
             if (!result)
@@ -203,6 +204,8 @@ drop table #tmp
                 this.labDone.Text = "0%";
                 this.labonGoing.Text = "0%";
             }
+
+            this.HideWaitMessage();
         }
 
         private void txtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -225,6 +228,29 @@ select distinct StyleID from #tmp
                     }
 
                     this.txtStyle.Text = item.GetSelectedString();
+                }
+            }
+        }
+
+        private void txtStyle_Validating(object sender, CancelEventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.txtStyle.Text))
+            {
+                return;
+            }
+
+            if (this.listControlBindingSource1 != null)
+            {
+                DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+                if (dt.Rows.Count > 0)
+                {
+                    DataRow[] dtSelect = dt.Select($"StyleID = '{this.txtStyle.Text}'");
+                    if (dtSelect.Length == 0)
+                    {
+                        MyUtility.Msg.WarningBox("Data not found!");
+                        this.txtStyle.Text = string.Empty;
+                        e.Cancel = true;
+                    }
                 }
             }
         }

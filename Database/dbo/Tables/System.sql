@@ -71,6 +71,9 @@ CREATE TABLE [dbo].[System] (
     [MailServerPort] smallint NOT NULL CONSTRAINT [DF_System_MailServerPort]  DEFAULT((0)), 
     [PMS_FabricQRCode_LabelSize] VARCHAR(5) NOT NULL CONSTRAINT [DF_System_PMS_FabricQRCode_LabelSize]  DEFAULT('5X5'), 
     [PDA_FabricQRCode_LabelSize] VARCHAR(5) NOT NULL CONSTRAINT [DF_System_PDA_FabricQRCode_LabelSize]  DEFAULT('5X5'), 
+    [HandoverATPath] VARCHAR(80) NOT NULL DEFAULT (''), 
+    [HandoverSpecialToolsPath] VARCHAR(80) NOT NULL DEFAULT (''), 
+    [CriticalOperationPath] VARCHAR(80) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
@@ -360,3 +363,30 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'System',
     @level2type = N'COLUMN',
     @level2name = N'PDA_FabricQRCode_LabelSize'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'放Template/Auto Template檔案的路徑',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'HandoverATPath'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'放Special Tools檔案的路徑',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'HandoverSpecialToolsPath'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'放Critical Operation檔案的路徑',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'CriticalOperationPath'

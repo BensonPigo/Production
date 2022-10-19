@@ -25,12 +25,12 @@ namespace Sci.Production.PPIC
 
         private enum Status
         {
-            hasStyle = 1,
-            noStyle = 2,
+            HasStyle = 1,
+            NoStyle = 2,
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="P01"/> class.
+        /// Initializes a new instance of the <see cref="P24"/> class.
         /// </summary>
         /// <param name="menuitem">ToolStripMenuItem</param>
         public P24(ToolStripMenuItem menuitem)
@@ -40,10 +40,9 @@ namespace Sci.Production.PPIC
             this.canNew = Prgs.GetAuthority(Env.User.UserID, "P24. Query Handover List", "CanNew");
             this.EditMode = true;
             this.FormBorderStyle = FormBorderStyle.Sizable;
-            //EndlineInfo.Shift = null;
-            //EndlineInfo.P01_CanConfirm = Prgs.GetAuthority(Env.User.UserID, "P01. Sintex End-line E-Inspection system", "CanConfirm");
         }
 
+        /// <inheritdoc/>
         public P24(string styleID, string seasonID, string brandID, ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -85,7 +84,7 @@ namespace Sci.Production.PPIC
         {
             switch (status)
             {
-                case Status.noStyle:
+                case Status.NoStyle:
                     this.left_btn_Sketch.Enabled = false;
                     this.left_btn_AD.Enabled = false;
                     this.left_btn_FinalPatternAndMarkerList.Enabled = false;
@@ -96,7 +95,7 @@ namespace Sci.Production.PPIC
                     this.left_btn_LineLayoutMachine.Enabled = false;
                     this.left_btn_SpecialTools.Enabled = false;
                     break;
-                case Status.hasStyle:
+                case Status.HasStyle:
                     this.left_btn_Sketch.Enabled = true;
                     this.left_btn_AD.Enabled = true;
                     this.left_btn_FinalPatternAndMarkerList.Enabled = true;
@@ -118,27 +117,20 @@ namespace Sci.Production.PPIC
         public void SetBottomInfo()
         {
             if (MyUtility.Check.Empty(this.txtSeason.Text) ||
-                MyUtility.Check.Empty(this.txtStyle.Text)  ||
+                MyUtility.Check.Empty(this.txtStyle.Text) ||
                 MyUtility.Check.Empty(this.comboBrand.Text))
             {
-                this.StatusChange(Status.noStyle);
+                this.StatusChange(Status.NoStyle);
             }
             else
             {
-                this.StatusChange(Status.hasStyle);
+                this.StatusChange(Status.HasStyle);
             }
-
-            //this.left_btn_Sketch.PerformClick();
         }
 
         private void SetMenuClick(System.Windows.Forms.Button setBtn, Form calledForm)
         {
             if (calledForm == null)
-            {
-                return;
-            }
-
-            if (!this.CheckParm())
             {
                 return;
             }
@@ -153,7 +145,6 @@ namespace Sci.Production.PPIC
                         return;
                     }
 
-                    // calledForm.BringToFront();
                     calledForm.Visible = true;
                     if (this.frontForm != null)
                     {
@@ -171,7 +162,6 @@ namespace Sci.Production.PPIC
                     calledForm.Show();
                     calledForm.Visible = true;
 
-                    // calledForm.BringToFront();
                     if (this.frontForm != null)
                     {
                         this.frontForm.Visible = false;
@@ -180,12 +170,6 @@ namespace Sci.Production.PPIC
                     this.frontForm = calledForm;
                 }
 
-                if (this.btnCurrentPage != null)
-                {
-                    //this.btnCurrentPage.BackColor = this.colorMenuDefault;
-                }
-
-                //setBtn.BackColor = this.colorMenuCurrentPage;
                 this.btnCurrentPage = setBtn;
             };
         }
@@ -205,63 +189,6 @@ namespace Sci.Production.PPIC
             }
         }
 
-        private void Left_btn_Quit_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void P01_Show_ResizeEnd(object sender, EventArgs e)
-        {
-            this.splitContainerMain.Refresh();
-        }
-
-        private void P01_Show_FormLoaded(object sender, EventArgs e)
-        {
-            if (MyUtility.Check.Empty(this.txtSeason.Text) ||
-             MyUtility.Check.Empty(this.txtStyle.Text) ||
-             MyUtility.Check.Empty(this.comboBrand.Text))
-            {
-                this.StatusChange(Status.noStyle);
-            }
-            else
-            {
-                this.StatusChange(Status.hasStyle);
-            }
-
-            // combo Datasource
-            Ict.DualResult cbResult;
-            if (cbResult = DBProxy.Current.Select(null, @"Select ID from Brand where Junk = 0", out System.Data.DataTable dtCountry))
-            {
-                this.comboBrand.DataSource = dtCountry;
-                this.comboBrand.DisplayMember = "ID";
-                this.comboBrand.ValueMember = "ID";
-            }
-            else
-            {
-                this.ShowErr(cbResult);
-            }
-
-            this.comboBrand.Text = "ADIDAS";
-        }
-
-        private System.Data.DataTable GetDtByComboID(string poid)
-        {
-            string cmd = @"select distinct id as OrderComboID from Orders
-outer apply (select 1 as cnt from Orders tmp where tmp.OrderComboID = Orders.ID) cnt
-WHERE Orders.ordercomboid = @POID and Orders.ordercomboid <> ''";
-
-            DualResult res = DBProxy.Current.Select("Production", cmd, new List<SqlParameter> { new SqlParameter("@POID", poid) }, out System.Data.DataTable dt);
-
-            if (res && dt.Rows.Count > 0)
-            {
-                return dt;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         private void Left_btn_AD_Click(object sender, EventArgs e)
         {
             if (!this.CheckParm())
@@ -271,7 +198,7 @@ WHERE Orders.ordercomboid = @POID and Orders.ordercomboid <> ''";
 
             string path;
 
-            if (MyUtility.Check.Seek($@"select top 1 Path, IsDirectOpenFile from ADPath where BrandID='{this.comboBrand.Text}' and SeasonID='{this.txtSeason}' ", out DataRow dr, "ManufacturingExecution"))
+            if (MyUtility.Check.Seek($@"select top 1 Path, IsDirectOpenFile from ADPath where BrandID='{this.comboBrand.Text}' and SeasonID='{this.txtSeason.Text}' and MDivisionID= '{Env.User.Keyword}'", out DataRow dr, "ManufacturingExecution"))
             {
                 path = dr["path"].ToString();
             }
@@ -281,7 +208,7 @@ WHERE Orders.ordercomboid = @POID and Orders.ordercomboid <> ''";
                 return;
             }
 
-            if (MyUtility.Check.Seek($"select top 1 Path, IsDirectOpenFile from ADPath where BrandID='{this.comboBrand.Text}' and SeasonID='{this.txtSeason}'", "ManufacturingExecution"))
+            if (MyUtility.Check.Seek($"select top 1 Path, IsDirectOpenFile from ADPath where BrandID='{this.comboBrand.Text}' and SeasonID='{this.txtSeason.Text}' and MDivisionID= '{Env.User.Keyword}'", "ManufacturingExecution"))
             {
                 this.OpenFile(path, this.txtStyle.Text, "AD");
             }
@@ -293,43 +220,47 @@ WHERE Orders.ordercomboid = @POID and Orders.ordercomboid <> ''";
 
         private void OpenFile(string path, string filename, string type)
         {
-            //if (!Directory.Exists(path))
-            //{
-            //    MyUtility.Msg.WarningBox("Please check the path setting.");
-            //    return;
-            //}
+            if (!Directory.Exists(path))
+            {
+                MyUtility.Msg.WarningBox("Please check the path setting.");
+                return;
+            }
 
-            //DirectoryInfo diInfo = new DirectoryInfo(path);
+            DirectoryInfo diInfo = new DirectoryInfo(path);
 
-            //if (!diInfo.Exists)
-            //{
-            //    P01_MsgShow callmsg = new P01_MsgShow(path + $" {CodeMsg.Not_exists}", type);
-            //    callmsg.ShowDialog();
-            //    return;
-            //}
+            if (!diInfo.Exists)
+            {
+                MyUtility.Msg.WarningBox("Please check the path setting.");
+                return;
+            }
 
-            //// 排除excel 暫存檔(~$)
-            //FileInfo[] arr;
-            //if (type.EqualString("AD"))
-            //{
-            //    arr = this.GetADFile(diInfo, filename).ToArray();
-            //}
-            //else
-            //{
-            //    arr = diInfo.GetFiles($@"*{filename}*" + " td print.pdf").Where(file => !file.StrStartsWith("~$")).ToArray();
-            //}
+            // 排除excel 暫存檔(~$)
+            FileInfo[] arr;
+            if (type.EqualString("AD"))
+            {
+                arr = this.GetADFile(diInfo, filename).ToArray();
+            }
+            else
+            {
+                arr = diInfo.GetFiles($@"*{filename}*" + " td print.pdf").Where(file => !file.StrStartsWith("~$")).ToArray();
+            }
 
-            //this.SortAsFile(ref arr);
-            //if (arr.Length == 0)
-            //{
-            //    P01_MsgShow callmsg = new P01_MsgShow(CodeMsg.File_not_exists, type);
-            //    callmsg.ShowDialog();
-            //    return;
-            //}
-            //else
-            //{
-            //    Process.Start(arr[0].FullName);
-            //}
+            this.SortAsFile(ref arr);
+            if (arr.Length == 0)
+            {
+                MyUtility.Msg.WarningBox("File not exists.");
+                return;
+            }
+            else
+            {
+                Process.Start(arr[0].FullName);
+            }
+        }
+
+        // Sort by LastWriteTime Desc
+        private void SortAsFile(ref FileInfo[] arrFi)
+        {
+            Array.Sort(arrFi, (x, y) => { return y.LastWriteTime.CompareTo(x.LastWriteTime); });
         }
 
         private void OpenFile(string path, string type)
@@ -366,13 +297,88 @@ WHERE Orders.ordercomboid = @POID and Orders.ordercomboid <> ''";
             return listFile;
         }
 
-        // Sort by LastWriteTime Desc
-        private void SortAsFile(ref FileInfo[] arrFi)
+        private void LabelTop_Click(object sender, EventArgs e)
         {
-            Array.Sort(arrFi, (x, y) => { return y.LastWriteTime.CompareTo(x.LastWriteTime); });
+
         }
 
-        private void P01_FormClosed(object sender, FormClosedEventArgs e)
+        private void Btn_Search_Click(object sender, EventArgs e)
+        {
+            if (!this.CheckParm())
+            {
+                return;
+            }
+
+            this.Init_Layout();
+            this.Click_Sketch();
+        }
+
+        private void Click_Sketch()
+        {
+            Form calledForm = new P24_Sketch(this.txtStyle.Text, this.txtSeason.Text, this.comboBrand.Text);
+
+            if (this.splitContainerMain.Panel2.Controls.Contains(calledForm))
+            {
+                if (calledForm == this.frontForm)
+                {
+                    return;
+                }
+
+                // calledForm.BringToFront();
+                calledForm.Visible = true;
+                if (this.frontForm != null)
+                {
+                    this.frontForm.Visible = false;
+                }
+
+                this.frontForm = calledForm;
+            }
+            else
+            {
+                calledForm.TopLevel = false;
+                this.splitContainerMain.Panel2.Controls.Add(calledForm);
+                calledForm.FormBorderStyle = FormBorderStyle.None;
+                calledForm.Dock = DockStyle.Fill;
+                calledForm.Show();
+                calledForm.Visible = true;
+
+                // calledForm.BringToFront();
+                if (this.frontForm != null)
+                {
+                    this.frontForm.Visible = false;
+                }
+
+                this.frontForm = calledForm;
+            }
+
+            this.btnCurrentPage = this.left_btn_Sketch;
+        }
+
+        private bool CheckParm()
+        {
+            if (MyUtility.Check.Empty(this.txtStyle.Text) ||
+             MyUtility.Check.Empty(this.txtSeason.Text) ||
+             MyUtility.Check.Empty(this.comboBrand.Text))
+            {
+                MyUtility.Msg.WarningBox("Style# & Season & Brand cannot be empty.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private void Left_btn_Close_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void Left_btn_LineLayoutMachine_Click(object sender, EventArgs e)
+        {
+            IE.P03 callNextForm = new IE.P03(this.txtStyle.Text, this.comboBrand.Text, this.txtSeason.Text, isReadOnly: true);
+            callNextForm.ShowDialog(this);
+        }
+
+        private void P24_FormClosed(object sender, FormClosedEventArgs e)
         {
             for (int i = this.splitContainerMain.Panel2.Controls.Count - 1; i >= 0; i--)
             {
@@ -390,12 +396,41 @@ WHERE Orders.ordercomboid = @POID and Orders.ordercomboid <> ''";
             }
         }
 
-        private void labelTop_Click(object sender, EventArgs e)
+        private void P24_Show_FormLoaded(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.txtSeason.Text) ||
+             MyUtility.Check.Empty(this.txtStyle.Text) ||
+             MyUtility.Check.Empty(this.comboBrand.Text))
+            {
+                this.StatusChange(Status.NoStyle);
+            }
+            else
+            {
+                this.StatusChange(Status.HasStyle);
+            }
 
+            // combo Datasource
+            Ict.DualResult cbResult;
+            if (cbResult = DBProxy.Current.Select(null, @"Select ID from Brand where Junk = 0", out System.Data.DataTable dtCountry))
+            {
+                this.comboBrand.DataSource = dtCountry;
+                this.comboBrand.DisplayMember = "ID";
+                this.comboBrand.ValueMember = "ID";
+            }
+            else
+            {
+                this.ShowErr(cbResult);
+            }
+
+            this.comboBrand.Text = "ADIDAS";
         }
 
-        private void txtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void P24_Show_ResizeEnd(object sender, EventArgs e)
+        {
+            this.splitContainerMain.Refresh();
+        }
+
+        private void TxtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Win.Tools.SelectItem item;
             string sqlCmd = "select ID, SeasonID, BrandID from Style where BrandID = 'ADIDAS' and LocalStyle = 0";
@@ -407,9 +442,11 @@ WHERE Orders.ordercomboid = @POID and Orders.ordercomboid <> ''";
             }
 
             this.txtStyle.Text = item.GetSelectedString();
+            this.txtSeason.Text = item.GetSelecteds()[0]["SeasonID"].ToString();
+            this.comboBrand.Text = item.GetSelecteds()[0]["BrandID"].ToString();
         }
 
-        private void txtSeason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtSeason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Win.Tools.SelectItem item;
             string sqlCmd = @"
@@ -427,39 +464,36 @@ order by Month desc";
             this.txtSeason.Text = item.GetSelectedString();
         }
 
-        private void btn_Search_Click(object sender, EventArgs e)
+        private void txtStyle_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if (!MyUtility.Check.Empty(this.txtStyle.Text))
+            {
+                string sqlCmd = $@"select 1 from Style where BrandID = 'ADIDAS' and LocalStyle = 0 and ID = '{this.txtStyle.Text}'";
+                if (!MyUtility.Check.Seek(sqlCmd))
+                {
+                    MyUtility.Msg.WarningBox($"Style: {this.txtStyle.Text} not found.");
+                    this.txtStyle.Text = string.Empty;
+                    e.Cancel = true;
+                }
+            }
+
             this.Init_Layout();
         }
 
-        private bool CheckParm()
+        private void txtSeason_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (MyUtility.Check.Empty(this.txtStyle.Text) ||
-             MyUtility.Check.Empty(this.txtSeason.Text) ||
-             MyUtility.Check.Empty(this.comboBrand.Text))
+            if (!MyUtility.Check.Empty(this.txtSeason.Text))
             {
-                MyUtility.Msg.WarningBox("Style# & Season & Brand cannot be empty.");
-                return false;
+                string sqlCmd = $@"select 1 from Style where BrandID = 'ADIDAS' and LocalStyle = 0 and SeasonID = '{this.txtSeason.Text}'";
+                if (!MyUtility.Check.Seek(sqlCmd))
+                {
+                    MyUtility.Msg.WarningBox($"Season: {this.txtSeason.Text} not found.");
+                    this.txtSeason.Text = string.Empty;
+                    e.Cancel = true;
+                }
             }
 
-            return true;
-        }
-
-        private void btnSketch()
-        {
-            this.SetMenuClick(this.left_btn_Sketch, new P24_Sketch(this.txtStyle.Text, this.txtSeason.Text, this.comboBrand.Text));
-            this.StatusChange(Status.hasStyle);
-        }
-
-        private void left_btn_Close_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void left_btn_LineLayoutMachine_Click(object sender, EventArgs e)
-        {
-            IE.P03 callNextForm = new IE.P03(this.txtStyle.Text, this.comboBrand.Text, this.txtSeason.Text, isReadOnly: true);
-            callNextForm.ShowDialog(this);
+            this.Init_Layout();
         }
     }
 }

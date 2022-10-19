@@ -132,11 +132,6 @@ namespace Sci.Production.PPIC
           .Text("CreatedBy", header: "Created by", width: Widths.AnsiChars(30), iseditingreadonly: true)
           ;
             this.styleUkey = MyUtility.GetValue.Lookup($@"select Ukey from Style where ID = '{this.style}' and SeasonID = '{this.season}' and BrandID = 'ADIDAS'");
-            if (MyUtility.Check.Empty(this.styleUkey))
-            {
-                MyUtility.Msg.WarningBox("Style Ukey not found.");
-                return;
-            }
 
             this.strPath = string.Empty;
             if (this.type == "Template")

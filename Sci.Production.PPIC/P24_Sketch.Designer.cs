@@ -46,7 +46,7 @@
             this.comboPictureSize2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboPictureSize2.FormattingEnabled = true;
             this.comboPictureSize2.IsSupportUnselect = true;
-            this.comboPictureSize2.Location = new System.Drawing.Point(523, 10);
+            this.comboPictureSize2.Location = new System.Drawing.Point(484, 10);
             this.comboPictureSize2.Name = "comboPictureSize2";
             this.comboPictureSize2.OldText = "";
             this.comboPictureSize2.Size = new System.Drawing.Size(172, 24);
@@ -70,9 +70,9 @@
             // pictureBox2
             // 
             this.pictureBox2.Image = null;
-            this.pictureBox2.Location = new System.Drawing.Point(460, 37);
+            this.pictureBox2.Location = new System.Drawing.Point(421, 37);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(430, 429);
+            this.pictureBox2.Size = new System.Drawing.Size(386, 428);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox2.TabIndex = 17;
             this.pictureBox2.TabStop = false;
@@ -80,9 +80,9 @@
             // 
             // labelPicture2
             // 
-            this.labelPicture2.Location = new System.Drawing.Point(466, 11);
+            this.labelPicture2.Location = new System.Drawing.Point(421, 11);
             this.labelPicture2.Name = "labelPicture2";
-            this.labelPicture2.Size = new System.Drawing.Size(54, 23);
+            this.labelPicture2.Size = new System.Drawing.Size(60, 23);
             this.labelPicture2.TabIndex = 15;
             this.labelPicture2.Text = "Picture2";
             // 
@@ -91,7 +91,7 @@
             this.pictureBox1.Image = null;
             this.pictureBox1.Location = new System.Drawing.Point(11, 38);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(430, 428);
+            this.pictureBox1.Size = new System.Drawing.Size(386, 428);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 14;
             this.pictureBox1.TabStop = false;
@@ -99,15 +99,15 @@
             // 
             // labelPicture1
             // 
-            this.labelPicture1.Location = new System.Drawing.Point(17, 11);
+            this.labelPicture1.Location = new System.Drawing.Point(11, 11);
             this.labelPicture1.Name = "labelPicture1";
-            this.labelPicture1.Size = new System.Drawing.Size(54, 23);
+            this.labelPicture1.Size = new System.Drawing.Size(60, 23);
             this.labelPicture1.TabIndex = 12;
             this.labelPicture1.Text = "Picture1";
             // 
             // P24_Sketch
             // 
-            this.ClientSize = new System.Drawing.Size(902, 499);
+            this.ClientSize = new System.Drawing.Size(816, 499);
             this.Controls.Add(this.comboPictureSize2);
             this.Controls.Add(this.comboPictureSize1);
             this.Controls.Add(this.pictureBox2);

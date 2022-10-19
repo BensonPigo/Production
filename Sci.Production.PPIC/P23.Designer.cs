@@ -59,6 +59,7 @@
             this.txtStyle.Size = new System.Drawing.Size(148, 26);
             this.txtStyle.TabIndex = 3;
             this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtStyle_PopUp);
+            this.txtStyle.Validating += new System.ComponentModel.CancelEventHandler(this.txtStyle_Validating);
             // 
             // comboBrand
             // 
