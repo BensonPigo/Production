@@ -22,7 +22,6 @@ namespace Sci.Production.Sewing
         private DataTable _printData;
         private DataTable _ttlData;
         private DataTable _subprocessData;
-        private DataTable[] dtR01Array;
         private List<APIData> dataMode = new List<APIData>();
 
         /// <summary>
@@ -108,6 +107,7 @@ namespace Sci.Production.Sewing
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            DataTable[] dtR01Array;
             StringBuilder sqlCmd = new StringBuilder();
 
             List<SqlParameter> listParR01 = new List<SqlParameter>()
@@ -120,16 +120,16 @@ namespace Sci.Production.Sewing
 	                                            ,@OutputDate
                                                 ,@Team";
 
-            DualResult result = DBProxy.Current.Select(null, sqlGetSewing_R01List, listParR01, out this.dtR01Array);
+            DualResult result = DBProxy.Current.Select(null, sqlGetSewing_R01List, listParR01, out dtR01Array);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
 
-            this._printData = this.dtR01Array[0];
-            this._ttlData = this.dtR01Array[1];
-            this._subprocessData = this.dtR01Array[2];
+            this._printData = dtR01Array[0];
+            this._ttlData = dtR01Array[1];
+            this._subprocessData = dtR01Array[2];
 
             this._factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", this._factory));
             return Ict.Result.True;
