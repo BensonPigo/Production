@@ -1507,6 +1507,12 @@
     <Compile Include="Report\R41.designer.cs">
       <DependentUpon>R41.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R43.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R43.Designer.cs">
+      <DependentUpon>R43.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -2308,6 +2314,9 @@
     <EmbeddedResource Include="Report\R41.resx">
       <DependentUpon>R41.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Report\R43.resx">
+      <DependentUpon>R43.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Automation\Sci.Production.Automation.csproj">
@@ -2423,6 +2432,8 @@
     <None Include="Properties\DataSources\P65_PrintData.datasource" />
     <None Include="Properties\DataSources\P66_PrintData.datasource" />
     <None Include="Sci.Production.Warehouse.ruleset" />
+    <None Include="stylecop.json" />
+    <None Include="stylecop1.json" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
