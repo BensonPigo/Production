@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
@@ -191,6 +192,11 @@ exec GetSewingDailyOutputList   @M
             objSheets.get_Range("A1", r + "1").AutoFilter(1);
             bool result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: objApp);
 
+            #region Save & Show Excel
+            string strExcelName = Class.MicrosoftFile.GetName("Sewing_R04_SewingDailyOutputList");
+            Marshal.ReleaseComObject(objApp);
+            strExcelName.OpenFile();
+            #endregion
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.ToString(), "Warning");
