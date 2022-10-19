@@ -32,6 +32,10 @@ namespace Sci.Production.PPIC
         private DateTime? sciDelivery2;
         private DataRow[] drSummary;
 
+        private DataTable dtGantt;
+        private DataTable[] dtGanttSumery;
+        private DataTable dtHours;
+
         /// <summary>
         /// R01
         /// </summary>
@@ -174,9 +178,9 @@ namespace Sci.Production.PPIC
             {
                 objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_R01_Style_PerEachSewingDate.xltx"); // 預先開啟excel app
 
-// #if DEBUG
-//                objApp.Visible = true;
-// #endif
+                // #if DEBUG
+                //                objApp.Visible = true;
+                // #endif
 
                 // 關閉Excel提示訊息
                 objApp.DisplayAlerts = false;
@@ -229,550 +233,6 @@ namespace Sci.Production.PPIC
 
                 if (this.chkGanttChart.Checked)
                 {
-                    #region Query Gantt Chart
-                    string whereM = string.Empty;
-                    string whereF = string.Empty;
-                    string whereLine1 = string.Empty;
-                    string whereLine2 = string.Empty;
-                    string whereList = string.Empty;
-
-                    #region Where
-                    if (!MyUtility.Check.Empty(this.mDivision))
-                    {
-                        whereM = $"and s.MDivisionID = '{this.mDivision}'";
-                    }
-
-                    if (!MyUtility.Check.Empty(this.factory))
-                    {
-                        whereF = $" AND (s.FactoryID = '{this.factory}' or '{this.factory}' ='')";
-                    }
-
-                    if (!MyUtility.Check.Empty(this.line1))
-                    {
-                        whereLine1 = $" and s.SewingLineID >= '{this.line1}'";
-                    }
-
-                    if (!MyUtility.Check.Empty(this.line2))
-                    {
-                        whereLine2 = $" and s.SewingLineID <= '{this.line2}'";
-                    }
-
-                    if (!MyUtility.Check.Empty(this.buyerDelivery1))
-                    {
-                        whereList += $" and o.BuyerDelivery >= '{Convert.ToDateTime(this.buyerDelivery1):yyyy/MM/dd}'";
-                    }
-
-                    if (!MyUtility.Check.Empty(this.buyerDelivery2))
-                    {
-                        whereList += $" and o.BuyerDelivery <= '{Convert.ToDateTime(this.buyerDelivery2):yyyy/MM/dd}'";
-                    }
-
-                    if (!MyUtility.Check.Empty(this.sciDelivery1))
-                    {
-                        whereList += $" and o.SciDelivery >= '{Convert.ToDateTime(this.sciDelivery1):yyyy/MM/dd}'";
-                    }
-
-                    if (!MyUtility.Check.Empty(this.sciDelivery2))
-                    {
-                        whereList += $" and o.SciDelivery <= '{Convert.ToDateTime(this.sciDelivery2):yyyy/MM/dd}'";
-                    }
-
-                    if (!MyUtility.Check.Empty(this.brand))
-                    {
-                        whereList += $" and o.BrandID = '{this.brand}'";
-                    }
-
-                    if (!MyUtility.Check.Empty(this.subProcess))
-                    {
-                        whereList += $@"
-and exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and st.ArtworkTypeID = '{this.subProcess}' AND (st.Qty>0 or st.TMS>0 and st.Price>0) )";
-                    }
-                    #endregion
-
-                    string sqlcmd = $@"
-DECLARE @sewinginlineOri DATETIME ='{Convert.ToDateTime(this.SewingDate1):yyyy/MM/dd}'
-DECLARE @sewingoffline DATETIME ='{Convert.ToDateTime(this.SewingDate2):yyyy/MM/dd}'
-DECLARE @LINE1 VARCHAR(10) = '{this.line1}'
-DECLARE @LINE2 VARCHAR(10) = '{this.line2}'
-
-Declare @sewinginline DATETIME = dateadd(MONTH, -3, @sewinginlineOri) 
---整個月 table
-;WITH cte AS (
-    SELECT [date] = @sewinginline
-    UNION ALL
-    SELECT [date] + 1 FROM cte WHERE ([date] <= DATEADD(DAY,-1,@sewingoffline))
-)
-SELECT [date] = cast([date] as date) 
-into #daterange 
-FROM cte
-option (maxrecursion 0) -- 突破遞迴100筆資料限制
-
-
---WorkHour table
-select FactoryID,SewingLineID,Date,Hours,Holiday
-into #workhourtmp
-from WorkHour s
-where 1=1
-{whereF}
-and Date between @sewinginline and @sewingoffline
-{whereLine1}
-{whereLine2}
---order by Date
---準備一整個月workhour的資料判斷Holiday
-select distinct d.date,w.FactoryID,w.SewingLineID
-into #tmpd
-from #daterange d,#workhourtmp w
---
-select distinct d.FactoryID,d.SewingLineID,d.date,Holiday = iif(w.Holiday is null or w.Holiday = 1 or w.Hours = 0,1,0)
-into #Holiday
-from #tmpd d
-left join #workhourtmp w on d.date = w.Date and d.FactoryID = w.FactoryID and d.SewingLineID = w.SewingLineID
-order by FactoryID,SewingLineID,date
---先將符合條件的Sewing schedule撈出來
-select
-	 s.FactoryID
-	,s.SewingLineID
-	,o.StyleID
-	,Inline = cast(s.Inline as date)
-	,Offline = cast(s.Offline as date)
-	,[InlineHour] = DATEDIFF(ss,Cast(s.Inline as date),s.Inline) / 3600.0
-    ,[OfflineHour] = DATEDIFF(ss,Cast(s.Offline as date),s.Offline) / 3600.0
-	,OrderTypeID = isnull(o.OrderTypeID,'')
-	,o.SciDelivery
-	,o.BuyerDelivery
-	,Category = isnull(o.Category,'')
-	,[CdCodeID] = st.CDCodeNew
-	,s.APSNo
-	,[CPU] = cast(o.CPU * o.CPUFactor * isnull(dbo.GetOrderLocation_Rate(s.OrderID,s.ComboType),isnull(dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType),100)) / 100 as float)
-	,[HourOutput] = iif(isnull(s.TotalSewingTime,0) = 0,0,(s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime)
-	,[OriWorkHour] = iif (isnull(s.Sewer,0) = 0 or isnull(s.TotalSewingTime,0)=0 or isnull(ScheduleEff.val,0)=0 , 0, sum(s.AlloQty) / ((s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime))
-	,s.TotalSewingTime
-	,s.LearnCurveID
-	,s.LNCSERIALNumber
-	,[OrderID] = o.ID
-	,s.ComboType
-into #Sewtmp
-from SewingSchedule s WITH (NOLOCK) 
-left join Orders o WITH (NOLOCK) on s.OrderID = o.ID and exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
-left join Style st WITH (NOLOCK) on st.Ukey = o.StyleUkey
-outer apply(select [val] = iif(isnull(s.OriEff,0) = 0 or isnull(s.SewLineEff,0) = 0,s.MaxEff, isnull(s.OriEff,100) * isnull(s.SewLineEff,100) / 100) ) ScheduleEff
-where (
-       CONVERT(date, s.Inline)  between @sewinginline and @sewingoffline 
-    or CONVERT(date, s.Offline) between @sewinginline and @sewingoffline
-	or @sewinginline  between CONVERT(date, s.Inline) and CONVERT(date, s.Offline)
-	or @sewingoffline between CONVERT(date, s.Inline) and CONVERT(date, s.Offline)
-)
-{whereM}
-{whereF}
-{whereLine1}
-{whereLine2}
-{whereList}
-group by  s.FactoryID,s.SewingLineID,o.StyleID,s.Inline,s.Offline
-	,o.OrderTypeID
-	,o.SciDelivery
-	,o.BuyerDelivery
-	,o.Category
-	,st.CDCodeNew
-	,s.APSNo
-	,o.CPU,o.CPUFactor
-	,s.Sewer
-	,ScheduleEff.val
-	,s.TotalSewingTime
-	,s.LearnCurveID
-	,s.LNCSERIALNumber
-	,s.OrderID
-	,s.ComboType
-	,o.StyleUkey
-	,o.ID
-
-select distinct
-	d.FactoryID
-	,d.SewingLineID
-	,d.date
-	,s.StyleID
-	,s.Inline
-	,s.Offline
-	,s.InlineHour
-	,s.OfflineHour
-	,IsLastMonth = iif(s.SciDelivery < @sewinginline,1,0)--紫 優先度1
-	,IsNextMonth = iif(s.SciDelivery > DateAdd(DAY,-1,@sewingoffline),1,0)--綠 優先度2
-	,IsBulk = iif(s.Category = 'B',1,0)--藍 優先度3
-	,IsSMS = iif(s.OrderTypeID = 'SMS',1,0)--紅 優先度4
-    ,IsSample = iif(s.Category = 'S',1,0)
-	,s.BuyerDelivery
-	,s.CdCodeID
-	,s.APSNo
-	,StartHour = CAST(wkd.StartHour as float)
-	,EndHour = CAST(wkd.EndHour as float)
-	,s.CPU
-	,s.OriWorkHour,s.HourOutput
-	,s.TotalSewingTime
-	,s.LearnCurveID
-	,s.LNCSERIALNumber
-	,s.OrderID
-	,s.ComboType
-into #Stmp
-from #Sewtmp s 
-left join #tmpd d on d.FactoryID = s.FactoryID and d.SewingLineID = s.SewingLineID and d.date between s.Inline and s.Offline
-left join Workhour_Detail wkd with(nolock) on wkd.FactoryID = s.FactoryID
-										and wkd.SewingLineID = s.SewingLineID and wkd.Date = d.date
-
-
-select FactoryID
-, SewingLineID
-,date
-,StyleID
-,Inline,Offline
-,InlineHour,OfflineHour
-,IsLastMonth
-,IsNextMonth
-,IsBulk
-,IsSMS
-,IsSample
-,BuyerDelivery
-,CdCodeID
-,APSNo
-,StartHour
-,EndHour
-,CPU
-,OriWorkHour
-,HourOutput
-,TotalSewingTime
-,LearnCurveID
-,LNCSERIALNumber
-,[WorkingTime] = sum(EndHour - StartHour)
-,[OriWorkDateSer] = ROW_NUMBER() OVER (PARTITION BY APSNo,OrderID,ComboType ORDER BY date)
-into #tmpStmp_step1
-from #Stmp
-group by FactoryID, SewingLineID,date,StyleID,IsLastMonth,IsNextMonth,IsBulk
-,IsSMS,BuyerDelivery,CdCodeID,APSNo,StartHour,EndHour,CPU,OriWorkHour,HourOutput,TotalSewingTime
-,LearnCurveID,LNCSERIALNumber,OrderID,ComboType,Inline,Offline,InlineHour,OfflineHour,IsSample
-
---抓出各style連續作業天數，不含假日
-select distinct FactoryID, SewingLineID, date, StyleID into #tmpLongDayCheck1 from #Stmp where FactoryID is not null
-
-select *,
-	   isBegin = iif(lag(date) over (order by factoryid, sewinglineid, styleID, date) = dateadd(day, -1, date), 0, 1),
-	   isEnd =  iif(lead(date) over (order by factoryid, sewinglineid, styleID, date) = dateadd(day, 1, date), 0, 1)
-into #tmpLongDayCheck2
-from #tmpLongDayCheck1
-order by factoryid, sewinglineid, styleID, date
-
-select rownum, factoryid, sewinglineid, styleID, BeginDate = min(date), EndDate = max(date)
-into #tmpLongDayCheck3
-from (
-select *, rownum = ROW_NUMBER() over (order by factoryid, sewinglineid, styleID, date) from #tmpLongDayCheck2 where isBegin = 1 
-union all
-select *, rownum = ROW_NUMBER() over (order by factoryid, sewinglineid, styleID, date) from #tmpLongDayCheck2 where isEnd = 1
-) a 
-group by rownum, factoryid, sewinglineid, styleID
-
-
-select *, [WorkDays] = DATEDIFF(day, BeginDate, EndDate) + 1 - holiday.val
-into #tmpLongDayCheck
-from #tmpLongDayCheck3 t
-outer apply(select val = count(*) from #Holiday where Holiday = 1 and FactoryID = t.FactoryID and SewingLineID = t.SewingLineID and date between BeginDate and EndDate) holiday
-
---
-
-
---刪除每個計畫inline,offline當天超過時間的班表                                                
-delete #tmpStmp_step1 where [date] = Inline and EndHour <= InlineHour
-delete #tmpStmp_step1 where [date] = Offline and StartHour >= OfflineHour
-
-
-select FactoryID
-, SewingLineID
-,date
-,StyleID
-,IsLastMonth
-,IsNextMonth
-,IsBulk
-,IsSample
-,IsSMS
-,BuyerDelivery
-,CdCodeID
-,APSNo
-,WorkingTime
-,CPU
-,OriWorkHour
-,HourOutput
-,OriWorkDateSer
-,[WorkDateSer] = case	when isnull(LNCSERIALNumber,0) = 0 then OriWorkDateSer
-						when LNCSERIALNumber - isnull(max(OriWorkDateSer) OVER (PARTITION BY APSNo),0) <= 0 then OriWorkDateSer
-						else OriWorkDateSer + LNCSERIALNumber - isnull(max(OriWorkDateSer) OVER (PARTITION BY APSNo),0) end
-
-,TotalSewingTime
-,LearnCurveID
-,LNCSERIALNumber
-into #tmpStmp_step2
-from #tmpStmp_step1
-
-
-select distinct FactoryID,SewingLineID,date,StyleID = a.s
-into #ConcatStyle
-from #tmpStmp_step2 s
-outer apply(
-	select s =(
-		select distinct concat(StyleID,'(',CdCodeID,')',';')
-		from #tmpStmp_step2 s2
-		where s2.FactoryID = s.FactoryID and s2.SewingLineID = s.SewingLineID and s2.date = s.date
-		for xml path('')
-	)
-)a
-
---
-select h.FactoryID,h.SewingLineID,h.date,h.Holiday,IsLastMonth,IsNextMonth,IsBulk,IsSample,IsSMS,BuyerDelivery
-,s.APSNo
-,WorkingTime
-,s.CPU,s.TotalSewingTime
-,s.LearnCurveID
-,s.WorkDateSer
-,[OriStyle] = s.StyleID
-,[IsRepeatStyle] = iif(DENSE_RANK() OVER (PARTITION BY s.FactoryID, s.SewingLineID, s.StyleID, h.Holiday ORDER BY s.date) > 10, 1, 0)
-into #c
-from #Holiday h
-left join #tmpStmp_step2 s on s.FactoryID = h.FactoryID and s.SewingLineID = h.SewingLineID and s.date = h.date
-inner join(select distinct FactoryID,SewingLineID from #tmpStmp_step2) x on x.FactoryID = h.FactoryID and x.SewingLineID = h.SewingLineID--排掉沒有在SewingSchedule內的資料by FactoryID,SewingLineID
-order by h.FactoryID,h.SewingLineID,h.date ASC, IsSample DESC
-
-
-select FactoryID,SewingLineID,date,APSNo
-,[Total_WorkingTime] = sum(OriWorkHour)
-into #tmpTotalWT
-from #Stmp
-group by  FactoryID,SewingLineID,date,APSNo
-
-------------------------------------------------------------------------------------------------
-DECLARE cursor_sewingschedule CURSOR FOR
-select  c.FactoryID
-        ,c.SewingLineID
-        ,c.date
-	    ,StyleID = isnull(iif(c.Holiday = 1,'Holiday', cs.StyleID),'')
-	    ,[IsLastMonth] = max(IsLastMonth)
-		,[IsNextMonth] = max(IsNextMonth)
-		,[IsBulk] = max(IsBulk)
-		,IsSMS
-        ,[BuyerDelivery] = min(BuyerDelivery)
-	    ,StadOutPutQtyPerDay = sum(s.StdQ)
-	    ,PPH = sum(iif(isnull(c.TotalSewingTime,0)=0 or isnull(s.StdQ,0)=0,0,c.CPU / c.TotalSewingTime * s.StdQ))	
-        ,[IsSample] = max(IsSample)
-	    ,c.IsRepeatStyle
-	    ,c.OriStyle
-from #c c 
-left join #ConcatStyle cs on c.FactoryID = cs.FactoryID and c.SewingLineID = cs.SewingLineID and c.date = cs.date
-left join #tmpTotalWT twt on twt.APSNo = c.APSNo and twt.SewingLineID = c.SewingLineID and twt.FactoryID = c.FactoryID
-and twt.date = c.date
-left join LearnCurve_Detail lcd with (nolock) on c.LearnCurveID = lcd.ID and c.WorkDateSer = lcd.Day
-outer  apply(select * from dbo.[getDailystdq](c.APSNo)x where x.APSNo=c.APSNo and x.Date = cast(c.date as date)
-			)s
-where c.date >= @sewinginlineOri
-group by c.FactoryID,c.SewingLineID,c.date,c.Holiday,cs.StyleID,IsSMS,c.IsRepeatStyle,c.OriStyle
-order by c.FactoryID,c.SewingLineID,c.date ASC, IsSample DESC
-
---建立tmpe table存放最後要列印的資料
-DECLARE @tempPintData TABLE (
-   FactoryID VARCHAR(8),
-   SewingLineID VARCHAR(5),
-   StyleID VARCHAR(MAX),
-   InLine DATE,
-   OffLine DATE,
-   IsBulk BIT,
-   IsSample BIT,
-   IsSMS BIT,
-   IsLastMonth BIT,
-   IsNextMonth BIT,
-   MinBuyerDelivery DATE,
-   StadOutPutQtyPerDay int,
-   PPH numeric(12,4),
-   IsRepeatStyle BIT,
-   IsSimilarStyle BIT default 0,
-   IsCrossStyle BIT default 0
-)
-
---判斷相似款所使用暫存table
-DECLARE @tempSimilarStyle TABLE (
-   ScheduleDate date,
-   MasterStyleID VARCHAR(15),
-   ChildrenStyleID VARCHAR(15)
-)
---
-DECLARE @factory VARCHAR(8),
-		@sewingline VARCHAR(5),
-		@StyleID VARCHAR(200),
-		@IsLastMonth int,
-		@IsNextMonth int,
-		@IsBulk int,
-		@IsSample int,
-		@IsSMS int,
-		@BuyerDelivery DATE,
-		@StadOutPutQtyPerDay int,
-		@PPH numeric(12,4),
-		@date DATE,
-		@beforefactory VARCHAR(8) = '',
-		@beforesewingline VARCHAR(5) = '',
-		@beforeStyleID VARCHAR(200) = '',
-		@beforeStyleIDExcludeHoliday VARCHAR(200) = '',
-		@beforeIsLastMonth int,
-		@beforeIsNextMonth int,
-		@beforeIsBulk int,
-		@beforeIsSMS int,
-		@beforeBuyerDelivery DATE,
-		@beforedate DATE,
-		@beforeIsSample bit = 1,
-		@IsRepeatStyle bit = 1,
-		@beforeIsRepeatStyle bit = 1,
-		@OriStyle varchar(15) = ''
-
-OPEN cursor_sewingschedule
-FETCH NEXT FROM cursor_sewingschedule INTO @factory,@sewingline,@date,@StyleID,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSMS,@BuyerDelivery,@StadOutPutQtyPerDay,@PPH,@IsSample,@IsRepeatStyle,@OriStyle
-WHILE @@FETCH_STATUS = 0
-BEGIN
-	if(@sewingline <> @beforesewingline)
-		delete @tempSimilarStyle
-
-	IF @factory <> @beforefactory or @sewingline <> @beforesewingline or (@StyleID <> @beforeStyleID and @beforeStyleIDExcludeHoliday not like '%' + @StyleID + '%')
-	Begin
-		INSERT INTO @tempPintData(FactoryID, SewingLineID, StyleID, InLine, OffLine, IsLastMonth, IsNextMonth, IsBulk, IsSMS, MinBuyerDelivery, StadOutPutQtyPerDay, PPH, IsSample, IsRepeatStyle) 
-		VALUES (@factory, @sewingline, @StyleID, @date, @date, @IsLastMonth, @IsNextMonth, @IsBulk, @IsSMS, @BuyerDelivery, @StadOutPutQtyPerDay, @PPH, @IsSample, @IsRepeatStyle);
-	END
-	--有含Sample獨立顯示 三個月內生產超過10天
-	else if (@IsSample <> @beforeIsSample or @beforeStyleID = 'Holiday' or (@IsRepeatStyle <> @beforeIsRepeatStyle and @IsSample <> 1)) and @date <> @beforedate and @StyleID <> 'Holiday'
-	begin
-		INSERT INTO @tempPintData(FactoryID, SewingLineID, StyleID, InLine, OffLine, IsLastMonth, IsNextMonth, IsBulk, IsSMS, MinBuyerDelivery, StadOutPutQtyPerDay, PPH, IsSample, IsRepeatStyle) 
-		VALUES (@factory, @sewingline, @StyleID, @date, @date, @IsLastMonth, @IsNextMonth, @IsBulk, @IsSMS, @BuyerDelivery, @StadOutPutQtyPerDay, @PPH, @IsSample, @IsRepeatStyle);
-	end
-	ELSE
-	Begin
-		update @tempPintData set
-			 OffLine = @date
-			,IsLastMonth = iif(IsLastMonth = 1, IsLastMonth, @IsLastMonth)
-			,IsNextMonth = iif(IsNextMonth = 1, IsNextMonth, @IsNextMonth)
-			,IsBulk = iif(IsBulk = 1, IsBulk, @IsBulk)
-			,IsSMS = iif(IsSMS = 1, IsSMS, @IsSMS)
-			,MinBuyerDelivery = iif(MinBuyerDelivery < @BuyerDelivery,MinBuyerDelivery,@BuyerDelivery)
-		where FactoryID = @factory and SewingLineID = @sewingline and StyleID = @StyleID and OffLine = @beforedate
-	END
-	
-    if	(select count(*) from SplitString(@StyleID,';') where data <> '') > 1 and 
-		@StyleID <> 'Holiday'
-	begin
-		--只保留當天與前一天的SimilarStyle資料
-		delete @tempSimilarStyle 
-		where	ScheduleDate <> (select top 1 ScheduleDate from @tempSimilarStyle where ScheduleDate <> @date order by ScheduleDate desc) and
-				ScheduleDate <> @date
-		
-		if exists(select 1 from @tempSimilarStyle where ChildrenStyleID = @OriStyle)
-			update @tempPintData set IsSimilarStyle = 1, IsCrossStyle = 1 where FactoryID = @factory and SewingLineID = @sewingline and StyleID = @StyleID and OffLine = @date
-		else
-			update @tempPintData set IsCrossStyle = 1 where FactoryID = @factory and SewingLineID = @sewingline and StyleID = @StyleID and OffLine = @date
-
-		if not exists(select 1 from @tempSimilarStyle where ScheduleDate = @date and MasterStyleID = @OriStyle)
-		insert into @tempSimilarStyle(ScheduleDate, MasterStyleID, ChildrenStyleID)
-			select @date, MasterStyleID, ChildrenStyleID
-			from Style_SimilarStyle where MasterStyleID = @OriStyle
-	end
-
-	set @beforefactory = @factory
-	set @beforesewingline = @sewingline
-	set @beforeStyleID = @StyleID
-	set @beforeIsLastMonth = @IsLastMonth
-	set @beforeIsNextMonth = @IsNextMonth
-	set @beforeIsBulk = @IsBulk
-	set @beforeIsSMS = @IsSMS
-	set @beforeBuyerDelivery = @BuyerDelivery
-	set @beforedate = @date
-	set @beforeIsSample = @IsSample
-	set @beforeIsRepeatStyle = @IsRepeatStyle
-	set @beforeStyleIDExcludeHoliday = iif(@StyleID = 'Holiday', @beforeStyleIDExcludeHoliday, @StyleID)
-	FETCH NEXT FROM cursor_sewingschedule INTO @factory,@sewingline,@date,@StyleID,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSMS,@BuyerDelivery,@StadOutPutQtyPerDay,@PPH,@IsSample,@IsRepeatStyle,@OriStyle
-END
-CLOSE cursor_sewingschedule
-DEALLOCATE cursor_sewingschedule
-
-select  t.*,
-        [WorkDays] = isnull(workDays.val, 0)
-from @tempPintData t
-outer apply (   select val = max(WorkDays) 
-                from #tmpLongDayCheck tdc
-                where   tdc.FactoryID = t.FactoryID and
-                        tdc.SewingLineID = t.SewingLineID and
-                        t.StyleID like '%' + tdc.StyleID + '%'  and
-                        t.InLine between tdc.BeginDate and tdc.EndDate
-            ) workDays
-where t.StyleID<>''
-
-drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle,#tmpStmp_step1,#tmpStmp_step2,#tmpTotalWT,#tmpLongDayCheck1,#tmpLongDayCheck2,#tmpLongDayCheck3,#tmpLongDayCheck
-";
-                    DualResult resultCmd = DBProxy.Current.Select(null, sqlcmd, out DataTable dtGantt);
-                    if (!resultCmd)
-                    {
-                        this.ShowErr(resultCmd);
-                        return resultCmd;
-                    }
-
-                    // from Detail甘特圖資料
-                    string sqlcmd2 = $@"
-select SewingLineID,SewingDay,FactoryID
-,[Total_StdOutput] = sum(StardardOutputPerDay)
-,[s] = SewingCPU * sum(StardardOutputPerDay)
-,[m] = sum(New_WorkHourPerDay) * Sewer
-,[CPU] = sum(CPU)
-into #tmpFinal_step1
-from #tmp
-where SewingDay between '{Convert.ToDateTime(this.SewingDate1):yyyy/MM/dd}' and '{Convert.ToDateTime(this.SewingDate2):yyyy/MM/dd}'
-group by SewingLineID,SewingDay,SewingCPU,Sewer,FactoryID
-
-select 
-SewingLineID,SewingDay,FactoryID
-,[CPU] = sum(CPU)
-,[Total_StdOutput] = sum(Total_StdOutput)
-,[PPH] = round(iif(isnull(sum(m),0)=0, 0, sum(s) / sum(m)),2)
-from #tmpFinal_step1
-group by SewingLineID,SewingDay,FactoryID
-
-union all
-
--- Total by SewingLineID
-select 
-SewingLineID
-,SewingDay = DATEADD(day,1, convert(date, max(SewingDay))) -- 目的:排序時 放置最後一欄位置
-,FactoryID
-,[CPU] = sum(CPU)
-,[Total_StdOutput] = sum(Total_StdOutput)
-,[PPH] = round(iif(isnull(sum(m),0)=0, 0, sum(s) / sum(m)),2)
-from #tmpFinal_step1
-group by SewingLineID,FactoryID
-order by SewingLineID,SewingDay
-
-
--- by Factory SubTotal
-select FactoryID
-,[TotalCPU] = sum(CPU)
-,[TotalStdQ] = sum(Total_StdOutput)
-,[TotalPPH] = round(iif(isnull(sum(m),0)=0, 0, sum(s) / sum(m)),2)
-from #tmpFinal_step1
-group by FactoryID
-
-drop table #tmpFinal_step1
-
-";
-                    resultCmd = MyUtility.Tool.ProcessWithDatatable(this.printData, string.Empty, sqlcmd2, out DataTable[] dtGanttSumery);
-                    if (!resultCmd)
-                    {
-                        this.ShowErr(resultCmd);
-                        return resultCmd;
-                    }
-
-                    string sqlHours = $@"select FactoryID,Date,Hours,SewingLineID from WorkHour where date between '{Convert.ToDateTime(this.SewingDate1):yyyy/MM/dd}' and '{Convert.ToDateTime(this.SewingDate2):yyyy/MM/dd}'";
-                    resultCmd = DBProxy.Current.Select(null, sqlHours, out DataTable drHours);
-                    if (!resultCmd)
-                    {
-                        this.ShowErr(resultCmd);
-                        return resultCmd;
-                    }
-                    #endregion
-
                     worksheet = objApp.Sheets[4];
                     worksheet.Select();
 
@@ -788,7 +248,7 @@ drop table #tmpFinal_step1
                     int monthDays = ((TimeSpan)(MyUtility.Convert.GetDate(this.SewingDate2) - MyUtility.Convert.GetDate(this.SewingDate1))).Days;
                     string colRight = PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4);
 
-                    foreach (DataRow dr in dtGantt.Rows)
+                    foreach (DataRow dr in this.dtGantt.Rows)
                     {
                         // 當有換工廠別時，要換Sheet
                         if (writeFty != MyUtility.Convert.GetString(dr["FactoryID"]))
@@ -807,7 +267,7 @@ drop table #tmpFinal_step1
 
                                 // 從dtGanttSumery  填入Total StdQty,PPH, CPU
                                 // 對dtGanttSumery防錯誤用!
-                                this.SetGanntTotal(worksheet, dtGanttSumery, drHours, intRowsStart, writeFty, line, monthDays + 4);
+                                this.SetGanntTotal(worksheet, this.dtGanttSumery, this.dtHours, intRowsStart, writeFty, line, monthDays + 4);
 
                                 // 畫線 & 設定格式
                                 this.GanntCellStyle(worksheet, (rowcnt * 5) + 1, colRight);
@@ -827,7 +287,7 @@ drop table #tmpFinal_step1
                             rowcnt = 0;
 
                             // 填入SubTotal
-                            this.drSummary = dtGanttSumery[1].Select($@" FactoryID = '{dr["FactoryID"]}'");
+                            this.drSummary = this.dtGanttSumery[1].Select($@" FactoryID = '{dr["FactoryID"]}'");
 
                             if (this.drSummary.Length > 0)
                             {
@@ -875,7 +335,7 @@ drop table #tmpFinal_step1
                             intRowsStart = (rowcnt * 5) + 2;
 
                             // 從dtGanttSumery  填入Total StdQty,PPH, CPU
-                            this.SetGanntTotal(worksheet, dtGanttSumery, drHours, intRowsStart - 5, dr["FactoryID"].ToString(), line, monthDays + 4);
+                            this.SetGanntTotal(worksheet, this.dtGanttSumery, this.dtHours, intRowsStart - 5, dr["FactoryID"].ToString(), line, monthDays + 4);
 
                             // 插入四行
                             Excel.Range rngToInsert;
@@ -966,7 +426,7 @@ drop table #tmpFinal_step1
                         int dateRange = ((TimeSpan)(MyUtility.Convert.GetDate(dr["OffLine"]) - MyUtility.Convert.GetDate(dr["InLine"]))).Days;
                         for (int d = 0; d <= dateRange; d++)
                         {
-                            this.SetGannt(worksheet, dtGanttSumery, drHours, intRowsStart, dr, startCol, rngColor, d);
+                            this.SetGannt(worksheet, this.dtGanttSumery, this.dtHours, intRowsStart, dr, startCol, rngColor, d);
                         }
 
                         if (MyUtility.Convert.GetString(dr["StyleID"]) != "Holiday")
@@ -1006,7 +466,7 @@ drop table #tmpFinal_step1
                     }
 
                     // 從dtGanttSumery  填入Total StdQty,PPH, CPU
-                    this.SetGanntTotal(worksheet, dtGanttSumery, drHours, (rowcnt * 5) + 2 - 5, worksheet.Name, line, monthDays + 4);
+                    this.SetGanntTotal(worksheet, this.dtGanttSumery, this.dtHours, (rowcnt * 5) + 2 - 5, worksheet.Name, line, monthDays + 4);
 
                     if (colCount - 1 != monthDays)
                     {
@@ -2078,6 +1538,7 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
         private DualResult Query_by_StylePerEachSewingDate()
         {
             DualResult result;
+
             StringBuilder sqlCmd = new StringBuilder();
 
             #region MinSQL
@@ -2112,8 +1573,28 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
             #endregion
 
             DBProxy.Current.DefaultTimeout = 900;
-            result = DBProxy.Current.Select(null, sqlCmd.ToString().Substring(0, sqlCmd.Length - 1), out this.printData);
+            DataTable[] dtsResult;
+            result = DBProxy.Current.Select(null, sqlCmd.ToString().Substring(0, sqlCmd.Length - 1), out dtsResult);
             DBProxy.Current.DefaultTimeout = 300;
+
+            if (!result)
+            {
+                return result;
+            }
+
+            this.printData = dtsResult[0];
+            this.dtGantt = dtsResult[1];
+
+            if (this.chkGanttChart.Checked)
+            {
+                result = this.GetGanttChartData();
+
+                if (!result)
+                {
+                    return result;
+                }
+            }
+
             return result;
         }
 
@@ -2153,6 +1634,77 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
 
                 return hour;
             }
+        }
+
+        private DualResult GetGanttChartData()
+        {
+            #region Query Gantt Chart
+
+            DualResult resultCmd;
+
+            // from Detail甘特圖資料
+            string sqlcmd2 = $@"
+select SewingLineID,SewingDay,FactoryID
+,[Total_StdOutput] = sum(StardardOutputPerDay)
+,[s] = SewingCPU * sum(StardardOutputPerDay)
+,[m] = sum(New_WorkHourPerDay) * Sewer
+,[CPU] = sum(CPU)
+into #tmpFinal_step1
+from #tmp
+where SewingDay between '{Convert.ToDateTime(this.SewingDate1):yyyy/MM/dd}' and '{Convert.ToDateTime(this.SewingDate2):yyyy/MM/dd}'
+group by SewingLineID,SewingDay,SewingCPU,Sewer,FactoryID
+
+select 
+SewingLineID,SewingDay,FactoryID
+,[CPU] = sum(CPU)
+,[Total_StdOutput] = sum(Total_StdOutput)
+,[PPH] = round(iif(isnull(sum(m),0)=0, 0, sum(s) / sum(m)),2)
+from #tmpFinal_step1
+group by SewingLineID,SewingDay,FactoryID
+
+union all
+
+-- Total by SewingLineID
+select 
+SewingLineID
+,SewingDay = DATEADD(day,1, convert(date, max(SewingDay))) -- 目的:排序時 放置最後一欄位置
+,FactoryID
+,[CPU] = sum(CPU)
+,[Total_StdOutput] = sum(Total_StdOutput)
+,[PPH] = round(iif(isnull(sum(m),0)=0, 0, sum(s) / sum(m)),2)
+from #tmpFinal_step1
+group by SewingLineID,FactoryID
+order by SewingLineID,SewingDay
+
+
+-- by Factory SubTotal
+select FactoryID
+,[TotalCPU] = sum(CPU)
+,[TotalStdQ] = sum(Total_StdOutput)
+,[TotalPPH] = round(iif(isnull(sum(m),0)=0, 0, sum(s) / sum(m)),2)
+from #tmpFinal_step1
+group by FactoryID
+
+drop table #tmpFinal_step1
+
+";
+            resultCmd = MyUtility.Tool.ProcessWithDatatable(this.printData, string.Empty, sqlcmd2, out this.dtGanttSumery);
+            if (!resultCmd)
+            {
+                this.ShowErr(resultCmd);
+                return resultCmd;
+            }
+
+            string sqlHours = $@"select FactoryID,Date,Hours,SewingLineID from WorkHour where date between '{Convert.ToDateTime(this.SewingDate1):yyyy/MM/dd}' and '{Convert.ToDateTime(this.SewingDate2):yyyy/MM/dd}'";
+            resultCmd = DBProxy.Current.Select(null, sqlHours, out this.dtHours);
+            if (!resultCmd)
+            {
+                this.ShowErr(resultCmd);
+                return resultCmd;
+            }
+            #endregion
+
+            return new DualResult(true);
         }
     }
 }
