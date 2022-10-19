@@ -320,7 +320,6 @@ delete t
 from P_LoadingProductionOutput t
 left join [MainServer].Production.dbo.Orders o on t.SPNO = o.ID and t.FactoryID = o.FactoryID
 where o.ID is null
-and t.Category = ''Forecast''
 
 update b
     set b.TransferDate = getdate()
