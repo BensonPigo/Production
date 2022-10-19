@@ -316,6 +316,12 @@ where
 and exists	   (select 1 from #Final f where t.FactoryID=f.FactoryID AND t.MDivisionID=f.MDivisionID  ) 
 and not exists (select 1 from #Final s where t.FactoryID=s.FactoryID AND t.SPNO=s.ID );
 
+delete t
+from P_LoadingProductionOutput t
+left join [MainServer].Production.dbo.Orders o on t.SPNO = o.ID
+where o.ID is null
+and t.Category = ''Forecast''
+
 update b
     set b.TransferDate = getdate()
 from BITableInfo b
