@@ -432,8 +432,37 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr))
 
             #region Batch Create
 
-            // *依照POID 批次建立P45 ID
             dr2 = dtGridBS1.Select("adjustqty <> 0 and Selected = 1");
+            var duplicateData = dr2.AsEnumerable()
+                .GroupBy(g => new
+                {
+                    poid = MyUtility.Convert.GetString(g["poid"]),
+                    seq1 = MyUtility.Convert.GetString(g["seq1"]),
+                    seq2 = MyUtility.Convert.GetString(g["seq2"]),
+                    roll = MyUtility.Convert.GetString(g["roll"]),
+                    dyelot = MyUtility.Convert.GetString(g["dyelot"]),
+                }).Select(s => new
+                {
+                    s.Key.poid,
+                    s.Key.seq1,
+                    s.Key.seq2,
+                    s.Key.roll,
+                    s.Key.dyelot,
+                    count = s.Count(),
+                }).Where(w => w.count > 1).ToList();
+            if (duplicateData.Any())
+            {
+                string duplicatemsg = "These data's duplicate!\r\n";
+                foreach (var item in duplicateData)
+                {
+                    duplicatemsg += $"POID:{item.poid},SEQ1:{item.seq1},SEQ2:{item.seq2},Roll:{item.roll},Dyelot:{item.dyelot}\r\n";
+                }
+
+                MyUtility.Msg.WarningBox(duplicatemsg);
+                return;
+            }
+
+            // *依照POID 批次建立P45 ID
             var listPoid = dr2.Select(row => row["Poid"]).Distinct().ToList();
             var tmpId = MyUtility.GetValue.GetBatchID(Env.User.Keyword + "AM", "Adjust", DateTime.Now, batchNumber: listPoid.Count);
             if (MyUtility.Check.Empty(tmpId))
