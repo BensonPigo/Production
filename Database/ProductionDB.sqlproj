@@ -2746,7 +2746,7 @@
     <Build Include="dbo\Tables\MDMachineBasic.sql" />
     <Build Include="dbo\Tables\MDCalibrationList.sql" />
     <Build Include="dbo\Tables\M360MINDDispatch.sql" />
-    <Build Include="dbo\Stored Procedures\GetSewing_R01_1.sql" />
+    <Build Include="dbo\Stored Procedures\GetSewing_R01.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

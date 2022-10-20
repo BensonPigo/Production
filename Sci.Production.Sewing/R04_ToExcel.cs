@@ -10,18 +10,21 @@ using System.Threading.Tasks;
 
 namespace Sci.Production.Sewing
 {
+    /// <summary>
+    /// R04_ToExcel
+    /// </summary>
     internal class R04_ToExcel
     {
         /// <summary>
         /// 製作R04 Excel
         /// </summary>
-        /// <param name="IsR04"></param>
-        /// <param name="show_Accumulate_output"></param>
-        /// <param name="dtR04"></param>
-        /// <param name="dateMaxOutputDate"></param>
-        /// <param name="excelName"></param>
-        /// <returns></returns>
-        public static bool ToExcel(bool IsR04,bool show_Accumulate_output, DataTable dtR04,DateTime? dateMaxOutputDate,ref string excelName)
+        /// <param name="isR04">isR04</param>
+        /// <param name="show_Accumulate_output">show_Accumulate_output</param>
+        /// <param name="dtR04">dtR04</param>
+        /// <param name="dateMaxOutputDate">dateMaxOutputDate</param>
+        /// <param name="excelName">excelName</param>
+        /// <returns>true</returns>
+        public static bool ToExcel(bool isR04, bool show_Accumulate_output, DataTable dtR04,DateTime? dateMaxOutputDate,ref string excelName)
         {
             int start_column = 0;
             string excelFile = "Sewing_R04_SewingDailyOutputList.xltx";
@@ -46,10 +49,13 @@ namespace Sci.Production.Sewing
             objSheets.get_Range("A1", r + "1").Cells.Interior.Color = Color.LightGreen;
             objSheets.get_Range("A1", r + "1").AutoFilter(1);
 
-            if (IsR04 == true)
+            if (isR04 == true)
             {
                 bool result = MyUtility.Excel.CopyToXls(dtR04, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: objApp);
-                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                }
             }
             else
             {

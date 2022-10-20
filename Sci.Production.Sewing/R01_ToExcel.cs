@@ -18,17 +18,19 @@ namespace Sci.Production.Sewing
     internal class R01_ToExcel
     {
         /// <summary>
-        /// 製成R01 Excel
+        /// 製作R01 報表
         /// </summary>
-        /// <param name="factoryName"></param>
-        /// <param name="factory"></param>
-        /// <param name="date"></param>
-        /// <param name="dateDate"></param>
-        /// <param name="printData"></param>
-        /// <param name="ttlData"></param>
-        /// <param name="subprocessData"></param>
-        /// <param name="dataMode"></param>
-        /// <returns></returns>
+        /// <param name="factoryName">factoryName</param>
+        /// <param name="factory">factory</param>
+        /// <param name="date">date</param>
+        /// <param name="dateDate">dateDate</param>
+        /// <param name="printData">printData</param>
+        /// <param name="ttlData">ttlData</param>
+        /// <param name="subprocessData">subprocessData</param>
+        /// <param name="dataMode">dataMode</param>
+        /// <param name="saveFileName">saveFileName</param>
+        /// <param name="excelName">excelName</param>
+        /// <returns>true</returns>
         public static bool ToExcel(string factoryName, string factory, DateTime? date, DateTime? dateDate, DataTable printData, DataTable ttlData, DataTable subprocessData, List<APIData> dataMode, string saveFileName, ref string excelName)
         {
             string strXltName = Env.Cfg.XltPathDir + "\\Sewing_R01_DailyCMPReport.xltx";
@@ -339,7 +341,3 @@ namespace Sci.Production.Sewing
         }
     }
 }
-
-
-
-

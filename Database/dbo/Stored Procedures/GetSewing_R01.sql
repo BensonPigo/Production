@@ -1,7 +1,9 @@
 ﻿CREATE PROCEDURE [dbo].[GetSewing_R01]
+(
 	 @Factory		varchar(80) ,
 	 @OutputDate   date ,
 	 @Team  varchar(5) =''
+	 )
 AS
 BEGIN	
 -------------------------------------------------------------
@@ -246,56 +248,7 @@ BEGIN
 		where 1 =1
 		order by LastShift,Team,SewingLineID,OrderId
 		---↓最後Select 
-		select  Shift =    CASE    WHEN LastShift='D' then 'Day'
-								  WHEN LastShift='N' then 'Night'
-								  WHEN LastShift='O' then 'Subcon-Out'
-								  WHEN LastShift='I' then 'Subcon-In(Sister)'
-								  else 'Subcon-In(Non Sister)' end				
-			   , Team
-			   , SewingLineID
-			   , OrderId
-			   , Style = IIF(Category='M',MockupStyle,OrderStyle) 
-			   , CDNo = IIF(Category = 'M', MockupCDCodeID, OrderCdCodeID) + '-' + ComboType
-			   , CDCodeNew
-			   , ProductType
-			   , FabricType
-			   , Lining
-			   , Gender
-			   , Construction
-			   , ActManPower = IIF(SHIFT = 'O'
-									,MAX(ActManPower) OVER (PARTITION BY SHIFT,Team,SewingLineID)
-									,ActManPower)
-			   , WorkHour
-			   , ManHour = ActManPower * WorkHour
-			   , TargetCPU = ROUND(ROUND(ActManPower * WorkHour, 3) * 3600 / StdTMS, 3) 
-			   , TMS = IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate) * StdTMS
-			   , CPUPrice = IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)
-			   , TargetQty = IIF(IIF(Category = 'M', MockupCPU * MockupCPUFactor
-	   											   , OrderCPU * OrderCPUFactor * Rate) > 0
-	   								, ROUND(ROUND(ActManPower * WorkHour, 2) * 3600 / StdTMS, 2) / IIF(Category = 'M', MockupCPU * MockupCPUFactor
-	   					    																										 , OrderCPU * OrderCPUFactor * Rate)
-									, 0) 
-			   , QAQty
-			   , TotalCPU = IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate) * QAQty
-			   , CPUSewer = IIF(ROUND(ActManPower * WorkHour, 2) > 0
-   										 , ROUND((IIF(Category = 'M', MockupCPU * MockupCPUFactor
-   							     									, OrderCPU * OrderCPUFactor * Rate) * QAQty), 3) / ROUND(ActManPower * WorkHour, 3)
-     									 , 0) 
-			   , EFF = ROUND(IIF(ROUND(ActManPower * WorkHour, 2) > 0
-	   									  , (ROUND(IIF(Category = 'M', MockupCPU * MockupCPUFactor
-	   						      									 , OrderCPU * OrderCPUFactor * Rate) * QAQty, 2) / (ROUND(ActManPower * WorkHour, 2) * 3600 / StdTMS)) * 100, 0)
-	   									  , 1) 
-			   , RFT = IIF(ori_InlineQty = 0, 0, ROUND(ori_QAQty* 1.0 / ori_InlineQty * 1.0 * 100 ,2))
-			   , CumulateDate
-			   , InlineQty
-			   , Diff = QAQty - InlineQty
-				,FactoryID 
-			   , LastShift
-			   , ComboType
-		from #tmp1stFilter
-		where 1 =1
-		order by LastShift,Team,SewingLineID,OrderId
-
+		select * from #tmp where 1 =1 order by LastShift,Team,SewingLineID,OrderId
 ---------------------------------------------------------------------------------
 		;with SubMaxActManpower as (
 			select Shift
@@ -504,5 +457,9 @@ from tmpAllSubprocess t
 left join ArtworkType att WITH (NOLOCK) on att.id = t.ArtworkTypeID
 group by ArtworkTypeID,att.ProductionUnit
 order by ArtworkTypeID
+
+
+
+
 
 END
