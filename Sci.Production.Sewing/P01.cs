@@ -3253,7 +3253,6 @@ end
             #region 產生R01 報表
 
             #region 撈R01 SQL
-            StringBuilder sqlCmd = new StringBuilder();
 
             List<SqlParameter> listParR01 = new List<SqlParameter>()
             {
@@ -3276,314 +3275,10 @@ end
             dtR01 = dtR01Array[0];
             ttlData = dtR01Array[1];
             subprocessData = dtR01Array[2];
-
+            #endregion
+            string excelFileNameR01 = string.Empty;
             string factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", Env.User.Factory));
-            #endregion
-
-            #region ToExcel
-
-            string strXltName = Env.Cfg.XltPathDir + "\\Sewing_R01_DailyCMPReport.xltx";
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null)
-            {
-                return;
-            }
-
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-
-            worksheet.Cells[1, 1] = factoryName;
-            worksheet.Cells[2, 1] = string.Format("{0} Daily CMP Report, DD.{1} {2}", Env.User.Factory, Convert.ToDateTime(dateMaxOutputDate).ToString("MM/dd"), "(Included Subcon-IN)");
-
-            // 沒資料就顯示空的Excel
-            if (dtR01.Rows.Count > 0 && !MyUtility.Check.Empty(dtR01))
-            {
-                object[,] objArray = new object[1, 26];
-                string[] subTtlRowInOut = new string[8];
-                string[] subTtlRowExOut = new string[8];
-                string[] subTtlRowExInOut = new string[8];
-
-                string shift = MyUtility.Convert.GetString(dtR01.Rows[0]["Shift"]);
-                string team = MyUtility.Convert.GetString(dtR01.Rows[0]["Team"]);
-
-                int insertRow = 5, startRow = 5, ttlShift = 1, subRows = 0;
-                worksheet.Cells[3, 1] = string.Format("{0} SHIFT: {1} Team", shift, team);
-                DataRow[] selectRow;
-                foreach (DataRow dr in dtR01.Rows)
-                {
-                    if (shift != MyUtility.Convert.GetString(dr["Shift"]) || team != MyUtility.Convert.GetString(dr["Team"]))
-                    {
-                        // 將多出來的Record刪除
-                        for (int i = 1; i <= 2; i++)
-                        {
-                            Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[insertRow, Type.Missing];
-                            rng.Select();
-                            rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
-                            Marshal.ReleaseComObject(rng);
-                        }
-
-                        // 填入Sub Total資料
-                        if (ttlData != null)
-                        {
-                            selectRow = ttlData.Select(string.Format("Type = 'Sub' and Shift = '{0}' and  Team = '{1}'", shift, team));
-                            if (selectRow.Length > 0)
-                            {
-                                worksheet.Cells[insertRow, 11] = MyUtility.Convert.GetDecimal(selectRow[0]["ActManPower"]);
-                                worksheet.Cells[insertRow, 15] = MyUtility.Convert.GetDecimal(selectRow[0]["TMS"]);
-                                worksheet.Cells[insertRow, 22] = MyUtility.Convert.GetDecimal(selectRow[0]["RFT"]);
-                            }
-                        }
-
-                        worksheet.Cells[insertRow, 13] = string.Format("=SUM(M{0}:M{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                        worksheet.Cells[insertRow, 14] = string.Format("=SUM(N{0}:N{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                        worksheet.Cells[insertRow, 17] = string.Format("=SUM(Q{0}:Q{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                        worksheet.Cells[insertRow, 18] = string.Format("=SUM(R{0}:R{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                        worksheet.Cells[insertRow, 19] = string.Format("=SUM(S{0}:S{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                        worksheet.Cells[insertRow, 20] = string.Format("=S{0}/M{0}", MyUtility.Convert.GetString(insertRow));
-                        worksheet.Cells[insertRow, 21] = string.Format("=ROUND((S{0}/(M{0}*3600/1400))*100,1)", MyUtility.Convert.GetString(insertRow));
-                        worksheet.Cells[insertRow, 24] = string.Format("=SUM(X{0}:X{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                        worksheet.Cells[insertRow, 25] = string.Format("=SUM(Y{0}:Y{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-
-                        subTtlRowInOut[subRows] = MyUtility.Convert.GetString(insertRow);
-                        if (shift != "Subcon-Out")
-                        {
-                            subTtlRowExOut[subRows] = MyUtility.Convert.GetString(insertRow);
-                        }
-
-                        if (shift != "Subcon-Out" && shift != "Subcon-In(Non Sister)")
-                        {
-                            subTtlRowExInOut[subRows] = MyUtility.Convert.GetString(insertRow);
-                        }
-
-                        // 重置參數資料
-                        shift = MyUtility.Convert.GetString(dr["Shift"]);
-                        team = MyUtility.Convert.GetString(dr["Team"]);
-                        worksheet.Cells[insertRow + 2, 1] = string.Format("{0} SHIFT: {1} Team", shift, team);
-                        insertRow = insertRow + 4;
-                        startRow = insertRow;
-                        ttlShift++;
-                        subRows++;
-                    }
-
-                    objArray[0, 0] = dr["SewingLineID"];
-                    objArray[0, 1] = dr["OrderId"];
-                    objArray[0, 2] = dr["Style"];
-                    objArray[0, 3] = dr["CDNo"];
-                    objArray[0, 4] = dr["CDCodeNew"];
-                    objArray[0, 5] = dr["ProductType"];
-                    objArray[0, 6] = dr["FabricType"];
-                    objArray[0, 7] = dr["Lining"];
-                    objArray[0, 8] = dr["Gender"];
-                    objArray[0, 9] = dr["Construction"];
-                    objArray[0, 10] = dr["ActManPower"];
-                    objArray[0, 11] = dr["WorkHour"];
-                    objArray[0, 12] = dr["ManHour"];
-                    objArray[0, 13] = dr["TargetCPU"];
-                    objArray[0, 14] = dr["TMS"];
-                    objArray[0, 15] = dr["CPUPrice"];
-                    objArray[0, 16] = dr["TargetQty"];
-                    objArray[0, 17] = dr["QAQty"];
-                    objArray[0, 18] = dr["TotalCPU"];
-                    objArray[0, 19] = dr["CPUSewer"];
-                    objArray[0, 20] = string.Format("=ROUND((S{0}/(M{0}*3600/1400))*100,1)", insertRow);
-                    objArray[0, 21] = dr["RFT"];
-                    objArray[0, 22] = dr["CumulateDate"];
-                    objArray[0, 23] = dr["InlineQty"];
-                    objArray[0, 24] = dr["Diff"];
-                    objArray[0, 25] = dr["FactoryID"];
-                    worksheet.Range[string.Format("A{0}:Z{0}", insertRow)].Value2 = objArray;
-                    insertRow++;
-
-                    // 插入一筆Record
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
-                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
-                    Marshal.ReleaseComObject(rngToInsert);
-                }
-
-                // 最後一個Shift資料
-                // 將多出來的Record刪除
-                for (int i = 1; i <= 2; i++)
-                {
-                    Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[insertRow, Type.Missing];
-                    rng.Select();
-                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
-                    Marshal.ReleaseComObject(rng);
-                }
-
-                // 填入Sub Total資料
-                if (ttlData != null)
-                {
-                    selectRow = ttlData.Select(string.Format("Type = 'Sub' and Shift = '{0}' and  Team = '{1}'", shift, team));
-                    if (selectRow.Length > 0)
-                    {
-                        worksheet.Cells[insertRow, 11] = MyUtility.Convert.GetDecimal(selectRow[0]["ActManPower"]);
-                        worksheet.Cells[insertRow, 15] = MyUtility.Convert.GetDecimal(selectRow[0]["TMS"]);
-                        worksheet.Cells[insertRow, 22] = MyUtility.Convert.GetDecimal(selectRow[0]["RFT"]);
-                    }
-                }
-
-                worksheet.Cells[insertRow, 13] = string.Format("=SUM(M{0}:M{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                worksheet.Cells[insertRow, 14] = string.Format("=SUM(N{0}:N{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                worksheet.Cells[insertRow, 17] = string.Format("=SUM(Q{0}:Q{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                worksheet.Cells[insertRow, 18] = string.Format("=SUM(R{0}:R{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                worksheet.Cells[insertRow, 19] = string.Format("=SUM(S{0}:S{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                worksheet.Cells[insertRow, 20] = string.Format("=S{0}/M{0}", MyUtility.Convert.GetString(insertRow));
-                worksheet.Cells[insertRow, 21] = string.Format("=ROUND((S{0}/(M{0}*3600/1400))*100,1)", MyUtility.Convert.GetString(insertRow));
-                worksheet.Cells[insertRow, 24] = string.Format("=SUM(X{0}:X{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                worksheet.Cells[insertRow, 25] = string.Format("=SUM(Y{0}:Y{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                subTtlRowInOut[subRows] = MyUtility.Convert.GetString(insertRow);
-                if (shift != "Subcon-Out")
-                {
-                    subTtlRowExOut[subRows] = MyUtility.Convert.GetString(insertRow);
-                }
-
-                if (shift != "Subcon-Out" && shift != "Subcon-In(Non Sister)")
-                {
-                    subTtlRowExInOut[subRows] = MyUtility.Convert.GetString(insertRow);
-                }
-
-                // 刪除多出來的Shift Record
-                for (int i = 1; i <= (8 - ttlShift) * 6; i++)
-                {
-                    Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[insertRow + 1, Type.Missing];
-                    rng.Select();
-                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
-                    Marshal.ReleaseComObject(rng);
-                }
-
-                insertRow += 2;
-
-                // 填Grand Total資料
-                string ttlManhour, targetCPU, targetQty, qaQty, ttlCPU, prodOutput, diff, factoryID;
-                if (ttlData != null)
-                {
-                    selectRow = ttlData.Select("Type = 'Grand'");
-                    if (selectRow.Length > 0)
-                    {
-                        for (int i = 0; i < selectRow.Length; i++)
-                        {
-                            worksheet.Cells[insertRow, 11] = MyUtility.Convert.GetDecimal(selectRow[i]["ActManPower"]);
-                            worksheet.Cells[insertRow, 15] = MyUtility.Convert.GetDecimal(selectRow[i]["TMS"]);
-                            worksheet.Cells[insertRow, 22] = MyUtility.Convert.GetDecimal(selectRow[i]["RFT"]);
-                            ttlManhour = "=";
-                            targetCPU = "=";
-                            targetQty = "=";
-                            qaQty = "=";
-                            ttlCPU = "=";
-                            prodOutput = "=";
-                            diff = "=";
-                            factoryID = "=";
-                            #region 組公式
-                            if (MyUtility.Convert.GetString(selectRow[i]["Sort"]) == "2")
-                            {
-                                for (int j = 0; j < 8; j++)
-                                {
-                                    if (!MyUtility.Check.Empty(subTtlRowInOut[j]))
-                                    {
-                                        ttlManhour = ttlManhour + string.Format("M{0}+", subTtlRowInOut[j]);
-                                        targetCPU = targetCPU + string.Format("N{0}+", subTtlRowInOut[j]);
-                                        targetQty = targetQty + string.Format("Q{0}+", subTtlRowInOut[j]);
-                                        qaQty = qaQty + string.Format("R{0}+", subTtlRowInOut[j]);
-                                        ttlCPU = ttlCPU + string.Format("S{0}+", subTtlRowInOut[j]);
-                                        prodOutput = prodOutput + string.Format("X{0}+", subTtlRowInOut[j]);
-                                        diff = diff + string.Format("Y{0}+", subTtlRowInOut[j]);
-                                    }
-                                }
-                            }
-                            else if (MyUtility.Convert.GetString(selectRow[i]["Sort"]) == "3")
-                            {
-                                for (int j = 0; j < 8; j++)
-                                {
-                                    if (!MyUtility.Check.Empty(subTtlRowExOut[j]))
-                                    {
-                                        ttlManhour = ttlManhour + string.Format("M{0}+", subTtlRowExOut[j]);
-                                        targetCPU = targetCPU + string.Format("N{0}+", subTtlRowExOut[j]);
-                                        targetQty = targetQty + string.Format("Q{0}+", subTtlRowExOut[j]);
-                                        qaQty = qaQty + string.Format("R{0}+", subTtlRowExOut[j]);
-                                        ttlCPU = ttlCPU + string.Format("S{0}+", subTtlRowExOut[j]);
-                                        prodOutput = prodOutput + string.Format("X{0}+", subTtlRowExOut[j]);
-                                        diff = diff + string.Format("Y{0}+", subTtlRowExOut[j]);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                for (int j = 0; j < 8; j++)
-                                {
-                                    if (!MyUtility.Check.Empty(subTtlRowExInOut[j]))
-                                    {
-                                        ttlManhour = ttlManhour + string.Format("M{0}+", subTtlRowExInOut[j]);
-                                        targetCPU = targetCPU + string.Format("N{0}+", subTtlRowExInOut[j]);
-                                        targetQty = targetQty + string.Format("Q{0}+", subTtlRowExInOut[j]);
-                                        qaQty = qaQty + string.Format("R{0}+", subTtlRowExInOut[j]);
-                                        ttlCPU = ttlCPU + string.Format("S{0}+", subTtlRowExInOut[j]);
-                                        prodOutput = prodOutput + string.Format("X{0}+", subTtlRowExInOut[j]);
-                                        diff = diff + string.Format("Y{0}+", subTtlRowExInOut[j]);
-                                    }
-                                }
-                            }
-                            #endregion
-
-                            worksheet.Cells[insertRow, 13] = ttlManhour.Substring(0, ttlManhour.Length - 1);
-                            worksheet.Cells[insertRow, 14] = targetCPU.Substring(0, targetCPU.Length - 1);
-                            worksheet.Cells[insertRow, 17] = targetQty.Substring(0, targetQty.Length - 1);
-                            worksheet.Cells[insertRow, 18] = qaQty.Substring(0, qaQty.Length - 1);
-                            worksheet.Cells[insertRow, 19] = ttlCPU.Substring(0, ttlCPU.Length - 1);
-                            worksheet.Cells[insertRow, 20] = string.Format("=S{0}/M{0}", MyUtility.Convert.GetString(insertRow));
-                            worksheet.Cells[insertRow, 21] = string.Format("=ROUND((S{0}/(M{0}*3600/1400))*100,1)", MyUtility.Convert.GetString(insertRow));
-                            worksheet.Cells[insertRow, 24] = prodOutput.Substring(0, prodOutput.Length - 1);
-                            worksheet.Cells[insertRow, 25] = diff.Substring(0, diff.Length - 1);
-                            worksheet.Cells[insertRow, 26] = factoryID.Substring(0, factoryID.Length - 1);
-                            insertRow++;
-                        }
-                    }
-                }
-                #region Direct Manpower(From PAMS)
-                if (Env.User.Keyword.EqualString("CM1") ||
-                    Env.User.Keyword.EqualString("CM2"))
-                {
-                    worksheet.Cells[insertRow, 11] = 0;
-                    worksheet.Cells[insertRow, 13] = 0;
-                }
-                else
-                {
-                    dataMode = new List<APIData>();
-                    GetApiData.GetAPIData(string.Empty, Env.User.Factory, (DateTime)DateTime.Now.AddDays(-1), (DateTime)DateTime.Now.AddDays(-1), out dataMode);
-                    if (dataMode != null)
-                    {
-                        worksheet.Cells[insertRow, 11] = dataMode[0].SewTtlManpower;
-                        worksheet.Cells[insertRow, 13] = dataMode[0].SewTtlManhours;
-                    }
-
-                    insertRow++;
-                }
-                #endregion
-
-                insertRow = insertRow + 2;
-                foreach (DataRow dr in subprocessData.Rows)
-                {
-                    worksheet.Cells[insertRow, 3] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["ArtworkTypeID"]).PadRight(20, ' '), MyUtility.Convert.GetString(dr["rs"]));
-                    worksheet.Cells[insertRow, 12] = MyUtility.Convert.GetString(dr["Price"]);
-                    insertRow++;
-
-                    // 插入一筆Record
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
-                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
-                    Marshal.ReleaseComObject(rngToInsert);
-                }
-            }
-
-            excel.Visible = false;
-            #region Save & Show Excel
-            string excelFileR01 = Path.Combine(
-                Env.Cfg.ReportTempDir,
-                "Daily CMP Report" + ((DateTime)dateMaxOutputDate).ToString("_yyyyMMdd") + DateTime.Now.ToString("_HHmmssfff") + "(" + Env.User.Factory + ").xlsx");
-            excel.ActiveWorkbook.SaveAs(excelFileR01);
-            excel.Quit();
-            Marshal.ReleaseComObject(excel);
-            Marshal.ReleaseComObject(worksheet);
-            #endregion
-
-            #endregion
+            R01_ToExcel.ToExcel(factoryName, Env.User.Factory, dateMaxOutputDate, (DateTime)DateTime.Now.AddDays(-1), dtR01, ttlData, subprocessData, dataMode, string.Empty, ref excelFileNameR01);
 
             #endregion
 
@@ -3640,38 +3335,12 @@ end
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return;
             }
-
-            string excelFile = "Sewing_R04_SewingDailyOutputList.xltx";
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + excelFile); // 開excelapp
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-
-            objSheets.get_Range("AU:AV").EntireColumn.Delete();
-            for (int i = 47; i < dtR04.Columns.Count; i++)
-            {
-                objSheets.Cells[1, i + 1] = dtR04.Columns[i].ColumnName;
-            }
-
-            string r = MyUtility.Excel.ConvertNumericToExcelColumn(dtR04.Columns.Count);
-            objSheets.get_Range("A1", r + "1").Cells.Interior.Color = Color.LightGreen;
-            objSheets.get_Range("A1", r + "1").AutoFilter(1);
-            objApp.Visible = false;
-
-            if (dtR04.Rows.Count != 0)
-            {
-                MyUtility.Excel.CopyToXls(dtR04, string.Empty, "Sewing_R04_SewingDailyOutputList.xltx", 1, false, null, objApp);
-            }
-
-            string excelFileR04 = Path.Combine(
-                Env.Cfg.ReportTempDir,
-                "Sewing daily output list -" + ((DateTime)dateMaxOutputDate).ToString("_yyyyMMdd") + DateTime.Now.ToString("_HHmmssfff") + "(" + Env.User.Factory + ").xlsx");
-            objApp.ActiveWorkbook.SaveAs(excelFileR04);
-            objApp.Quit();
-            Marshal.ReleaseComObject(objApp);
-            Marshal.ReleaseComObject(objSheets);
+            string excelFileNameR04 = string.Empty;
+            R04_ToExcel.ToExcel(false,false,dtR04,dateMaxOutputDate,ref excelFileNameR04);
             #endregion
 
             #region SendMail
-            if (!MyUtility.Check.Empty(excelFileR01) && !MyUtility.Check.Empty(excelFileR04))
+            if (!MyUtility.Check.Empty(excelFileNameR01) && !MyUtility.Check.Empty(excelFileNameR04))
             {
                 DataRow dr, drMail;
                 if (MyUtility.Check.Seek("select * from system", out dr))
@@ -3684,8 +3353,8 @@ Hi all,
                     if (MyUtility.Check.Seek("select * from mailto where id='020'", out drMail))
                     {
                         List<string> attachFiles = new List<string>();
-                        attachFiles.Add(excelFileR01);
-                        attachFiles.Add(excelFileR04);
+                        attachFiles.Add(excelFileNameR01);
+                        attachFiles.Add(excelFileNameR04);
 
                         string subject = drMail["Subject"].ToString() + $@"{Convert.ToDateTime(dateMaxOutputDate).ToString("yyyy/MM/dd")} ({Env.User.Factory})";
                         MailTo mail = new MailTo(dr["SendFrom"].ToString(), drMail["ToAddress"].ToString(), drMail["ccAddress"].ToString(), subject, desc, attachFiles, true, true);

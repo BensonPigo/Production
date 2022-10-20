@@ -161,47 +161,14 @@ exec GetSewingDailyOutputList   @M
         {
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.printData.Rows.Count);
-            int start_column;
             if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
-
             this.ShowWaitMessage("Starting EXCEL...");
-            string excelFile = "Sewing_R04_SewingDailyOutputList.xltx";
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + excelFile); // 開excelapp
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            if (this.show_Accumulate_output == true)
-            {
-                start_column = 49;
-            }
-            else
-            {
-                start_column = 47;
-                objSheets.get_Range("AU:AV").EntireColumn.Delete();
-            }
-
-            for (int i = start_column; i < this.printData.Columns.Count; i++)
-            {
-                objSheets.Cells[1, i + 1] = this.printData.Columns[i].ColumnName;
-            }
-
-            string r = MyUtility.Excel.ConvertNumericToExcelColumn(this.printData.Columns.Count);
-            objSheets.get_Range("A1", r + "1").Cells.Interior.Color = Color.LightGreen;
-            objSheets.get_Range("A1", r + "1").AutoFilter(1);
-            bool result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: objApp);
-
-            #region Save & Show Excel
-            string strExcelName = Class.MicrosoftFile.GetName("Sewing_R04_SewingDailyOutputList");
-            Marshal.ReleaseComObject(objApp);
-            strExcelName.OpenFile();
-            #endregion
-            if (!result)
-            {
-                MyUtility.Msg.WarningBox(result.ToString(), "Warning");
-            }
-
+            string excelName = string.Empty;
+            R04_ToExcel.ToExcel(true,show_Accumulate_output, printData, null,ref excelName);
             this.HideWaitMessage();
             return true;
         }

@@ -176,6 +176,7 @@
     <Compile Include="B05_History.Designer.cs">
       <DependentUpon>B05_History.cs</DependentUpon>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -322,6 +323,8 @@
     <Compile Include="R01.Designer.cs">
       <DependentUpon>R01.cs</DependentUpon>
     </Compile>
+    <Compile Include="R01_ToExcel.cs" />
+    <Compile Include="R04_ToExcel.cs" />
     <Compile Include="R11.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -544,6 +547,8 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Sci.Production.Sewing.ruleset" />
+    <None Include="stylecop.json" />
+    <None Include="stylecop1.json" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
