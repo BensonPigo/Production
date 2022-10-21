@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Transactions;
-using System.Windows.Forms;
 
 namespace Sci.Production.PublicPrg
 {
@@ -4184,7 +4183,7 @@ and sd.Ukey in ({ukeys})
                         filter = "FabricType = 'F' and isnull(Barcode, '') = ''";
                         break;
                     case WHTableName.Adjust_Detail:
-                        filter = "FabricType = 'F' and balanceQty = 0"; // 舊資料有坑,所以判斷要用<未更新>庫存判斷
+                        filter = "FabricType = 'F' and balanceQty <= 0"; // 舊資料有坑,所以判斷要用<未更新>庫存判斷
                         break;
                 }
 
@@ -4706,7 +4705,6 @@ and w.Action = '{item.Action}'";
                                             item.From_NewBarcodeSeq = GetNextBarcodeSeqInObjWHBarcodeTransaction(MyUtility.Convert.GetString(dr["OldData_BarCode"]), wHBarcodeTransaction, "From");
                                             break;
                                     }
-
                                 }
 
                                 UpdateSameFtyBarcode(dt, item, "From", "Barcode");
@@ -6394,6 +6392,104 @@ and fs.Result <>''
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// 負數庫存檢查 因為(舊)資料會改,同一張單有重複物料狀況,所以要加總 Adjustqty 計算
+        /// </summary>
+        /// <inheritdoc/>
+        public static DualResult GetAdjustSumBalance(string id, bool isConfirm, out DataTable datacheck)
+        {
+            string chksql = $@"
+select x.*
+from(
+    Select
+        a.POID,
+        SEQ = concat(a.Seq1, '-',  a.Seq2),
+        a.Roll,
+        a.Dyelot,
+	    BalanceQty = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0),
+	    Adjustqty  = Sum(isnull(a.QtyAfter,0) - isnull(a.QtyBefore,0))
+    from dbo.Adjust_Detail a WITH (NOLOCK) 
+    inner join FtyInventory f WITH (NOLOCK) on a.POID = f.POID and a.Roll = f.Roll and a.Seq1 =f.Seq1 and a.Seq2 = f.Seq2 and a.Dyelot = f.Dyelot and a.stocktype = f.stocktype 
+    where a.Id = '{id}'
+    group by a.POID, a.Seq1, a.Seq2, a.Roll, a.Dyelot, a.StockType ,f.InQty, f.OutQty, f.AdjustQty, f.ReturnQty
+)x
+where x.BalanceQty {(isConfirm ? "+" : "-")} x.Adjustqty < 0
+";
+            return DBProxy.Current.Select(null, chksql, out datacheck);
+        }
+
+        /// <summary>
+        /// 負數庫存檢查 因為(舊)資料會改,同一張單有重複物料狀況,所以要加總 Adjustqty 計算
+        /// </summary>
+        /// <inheritdoc/>
+        public static bool CheckAdjustBalance(string id, bool isConfirm)
+        {
+            DualResult result = GetAdjustSumBalance(id, isConfirm, out DataTable datacheck);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return false;
+            }
+
+            if (datacheck.Rows.Count > 0)
+            {
+                MyUtility.Msg.ShowMsgGrid_LockScreen(datacheck, "Balacne Qty is not enough!!");
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 調整單的 confrim & unconfrim 更新庫存
+        /// </summary>
+        /// <inheritdoc/>
+        public static DualResult UpdateScrappAdjustFtyInventory(string id, bool isConfirm)
+        {
+            string sign = isConfirm ? "+" : "-";
+            string upcmd = $@"
+declare @POID varchar(13)
+		, @seq1 varchar(3)
+		, @seq2 varchar(3)
+		, @Roll varchar(8)
+		, @Dyelot varchar(8)
+		, @StockType varchar(1)
+		, @AdjustQty numeric(11, 2)
+
+DECLARE _cursor CURSOR FOR
+select ad.POID, ad.Seq1, ad.Seq2, ad.Roll, ad.Dyelot, ad.StockType, [AdjustQty] = isnull(ad.QtyAfter, 0) - isnull(ad.QtyBefore, 0)
+from Adjust_Detail ad
+where ad.id	 = '{id}'
+
+OPEN _cursor
+FETCH NEXT FROM _cursor INTO @POID, @seq1, @seq2, @Roll, @Dyelot, @StockType, @AdjustQty
+WHILE @@FETCH_STATUS = 0
+BEGIN	
+	update f
+		set [AdjustQty] = f.AdjustQty {sign} @AdjustQty
+	from FtyInventory f
+	where f.POID = @POID
+	and f.Seq1 = @seq1
+	and f.Seq2 = @seq2
+	and f.Roll = @Roll
+	and f.Dyelot = @Dyelot
+	and f.StockType = 'O'
+
+	update m
+		set [LObQty] = m.LObQty {sign} @AdjustQty  
+	from MDivisionPoDetail m
+	where m.POID = @POID
+	and m.Seq1 = @seq1
+	and m.Seq2 = @seq2
+
+	FETCH NEXT FROM _cursor INTO @POID, @seq1, @seq2, @Roll, @Dyelot, @StockType, @AdjustQty
+END
+CLOSE _cursor
+DEALLOCATE _cursor
+";
+            return DBProxy.Current.Execute(null, upcmd);
         }
     }
 }

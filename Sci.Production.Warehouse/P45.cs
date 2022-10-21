@@ -164,6 +164,12 @@ Reason can’t be empty!!",
             // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
             DualResult result = Prgs.GetFtyInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtOriFtyInventory);
 
+            // 檢查負數庫存
+            if (!Prgs.CheckAdjustBalance(MyUtility.Convert.GetString(this.CurrentMaintain["id"]), isConfirm: true))
+            {
+                return;
+            }
+
             #region 檢查物料Location 是否存在WMS
             if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P45"))
             {
@@ -183,18 +189,12 @@ Reason can’t be empty!!",
             {
                 try
                 {
-                    List<SqlParameter> para = new List<SqlParameter>
-                    {
-                        new SqlParameter("@ID", this.CurrentMaintain["ID"].ToString()),
-                        new SqlParameter("@UserID", Env.User.UserID),
-                    };
-
-                    if (!(result = DBProxy.Current.SelectSP(string.Empty, "dbo.usp_RemoveScrapById", para, out DataTable[] dts)))
+                    if (!(result = Prgs.UpdateScrappAdjustFtyInventory(MyUtility.Convert.GetString(this.CurrentMaintain["id"]), isConfirm: true)))
                     {
                         throw result.GetException();
                     }
 
-                    if (!(result = ReturnMsg(result, dts)))
+                    if (!(result = DBProxy.Current.Execute(null, $"update Adjust set status = 'Confirmed', editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
                     {
                         throw result.GetException();
                     }
@@ -224,37 +224,6 @@ Reason can’t be empty!!",
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
-        private static DualResult ReturnMsg(DualResult result, DataTable[] dts)
-        {
-            if (dts.Length > 0)
-            {
-                StringBuilder warningmsg = new StringBuilder();
-                foreach (DataRow drs in dts[0].Rows)
-                {
-                    if (MyUtility.Convert.GetDecimal(drs["q"]) < 0)
-                    {
-                        warningmsg.Append(string.Format(
-                            @"SP#: {0} SEQ#: {1} Roll#: {2} Dyelot: {3}'s balance: {4} is less than Adjust qty: {5}
-Balacne Qty is not enough!!
-",
-                            drs["POID"].ToString(),
-                            drs["seq"].ToString(),
-                            drs["Roll"].ToString(),
-                            drs["Dyelot"].ToString(),
-                            drs["balance"].ToString(),
-                            drs["Adjustqty"].ToString()));
-                    }
-                }
-
-                if (!MyUtility.Check.Empty(warningmsg.ToString()))
-                {
-                    result = Result.F(new Exception(warningmsg.ToString()));
-                }
-            }
-
-            return result;
-        }
-
         /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
@@ -268,59 +237,18 @@ Balacne Qty is not enough!!
             // 取得 FtyInventory 資料
             DualResult result = Prgs.GetFtyInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtOriFtyInventory);
 
-            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+            // 檢查資料有任一筆WMS已完成, 就不能unConfirmed
             if (!Prgs.ChkWMSCompleteTime((DataTable)this.detailgridbs.DataSource, "Adjust_Detail"))
             {
                 return;
             }
-            #endregion
 
-            #region    依SP#+SEQ#+Roll#+ StockType = 'O' 檢查庫存是否足夠
-            string sql = string.Format(
-                @"
-from dbo.Adjust_Detail d WITH (NOLOCK) 
-inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.Dyelot = f.Dyelot
-where d.Id = '{0}'
-and f.StockType = 'O'", this.CurrentMaintain["id"]);
-
-            string chksql = string.Format(
-                @"
-Select d.POID,seq = concat(d.Seq1,'-',d.Seq2),d.Roll,d.Dyelot
-	,balance = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
-	,Adjustqty  = isnull(d.QtyBefore,0) - isnull(d.QtyAfter,0)
-	,q = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) - (isnull(d.QtyAfter,0)-isnull(d.QtyBefore,0))
-{0}", sql);
-            if (!(result = DBProxy.Current.Select(null, chksql, out DataTable dtCheck)))
+            // 檢查負數庫存
+            if (!Prgs.CheckAdjustBalance(MyUtility.Convert.GetString(this.CurrentMaintain["id"]), isConfirm: false))
             {
-                MyUtility.Msg.WarningBox("Update datas error!!");
                 return;
             }
 
-            StringBuilder warningmsg = new StringBuilder();
-            foreach (DataRow drs in dtCheck.Rows)
-            {
-                if (MyUtility.Convert.GetInt(drs["q"]) < 0)
-                {
-                    warningmsg.Append(string.Format(
-                        @"SP#: {0} SEQ#: {1} Roll#: {2} Dyelot: {3}'s balance: {4} is less than Adjust qty: {5}
-Balacne Qty is not enough!!
-",
-                        drs["POID"].ToString(),
-                        drs["seq"].ToString(),
-                        drs["Roll"].ToString(),
-                        drs["Dyelot"].ToString(),
-                        drs["balance"].ToString(),
-                        drs["Adjustqty"].ToString()));
-                }
-            }
-
-            if (!MyUtility.Check.Empty(warningmsg.ToString()))
-            {
-                MyUtility.Msg.WarningBox(warningmsg.ToString());
-                return;
-            }
-
-            #endregion
             #region UnConfirmed 廠商能上鎖→PMS更新→廠商更新
 
             // 先確認 WMS 能否上鎖, 不能直接 return
@@ -336,53 +264,12 @@ Balacne Qty is not enough!!
             {
                 try
                 {
-                    string upcmd = string.Format(
-                @"
-declare @POID varchar(13)
-		, @seq1 varchar(3)
-		, @seq2 varchar(3)
-		, @Roll varchar(8)
-		, @Dyelot varchar(8)
-		, @StockType varchar(1)
-		, @AdjustQty numeric(11, 2)
+                    if (!(result = Prgs.UpdateScrappAdjustFtyInventory(MyUtility.Convert.GetString(this.CurrentMaintain["id"]), isConfirm: false)))
+                    {
+                        throw result.GetException();
+                    }
 
-
-DECLARE _cursor CURSOR FOR
-select ad.POID, ad.Seq1, ad.Seq2, ad.Roll, ad.Dyelot, ad.StockType, [AdjustQty] = (ad.QtyAfter - ad.QtyBefore) 
-from Adjust_Detail ad
-where ad.id	 = '{0}'
-
-OPEN _cursor
-FETCH NEXT FROM _cursor INTO @POID, @seq1, @seq2, @Roll, @Dyelot, @StockType, @AdjustQty
-WHILE @@FETCH_STATUS = 0
-BEGIN	
-	update f
-		set [AdjustQty] = f.AdjustQty - @AdjustQty
-	from FtyInventory f
-	where f.POID = @POID
-	and f.Seq1 = @seq1
-	and f.Seq2 = @seq2
-	and f.Roll = @Roll
-	and f.Dyelot = @Dyelot
-	and f.StockType = 'O'
-
-	update m
-		set [LObQty] = m.LObQty - @AdjustQty  
-	from MDivisionPoDetail m
-	where m.POID = @POID
-	and m.Seq1 = @seq1
-	and m.Seq2 = @seq2
-
-	FETCH NEXT FROM _cursor INTO @POID, @seq1, @seq2, @Roll, @Dyelot, @StockType, @AdjustQty
-END
-CLOSE _cursor
-DEALLOCATE _cursor
-
-update Adjust set Status ='New', EditName = '{1}', EditDate = Getdate() where id = '{0}'
-",
-                this.CurrentMaintain["id"],
-                Env.User.UserID);
-                    if (!(result = DBProxy.Current.Execute(null, upcmd)))
+                    if (!(result = DBProxy.Current.Execute(null, $"update Adjust set status = 'New', editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
                     {
                         throw result.GetException();
                     }

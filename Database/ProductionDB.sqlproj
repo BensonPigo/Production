@@ -2199,7 +2199,6 @@
     <Build Include="dbo\Functions\GetBOFExpend.sql" />
     <Build Include="dbo\Functions\getOvenTest.sql" />
     <Build Include="dbo\Tables\TradeHIS_Order.sql" />
-    <Build Include="dbo\Stored Procedures\usp_RemoveScrapById.sql" />
     <Build Include="dbo\Views\View_PackingP03.sql" />
     <Build Include="dbo\Functions\GetOrderLocation_Rate.sql" />
     <Build Include="dbo\Tables\Order_Location.sql" />
