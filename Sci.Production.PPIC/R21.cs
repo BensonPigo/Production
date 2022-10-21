@@ -342,7 +342,8 @@ outer apply(select [AddDate] = max(AddDate)
 					drt.OrderID = pld.OrderID ) DRYTransfer
 outer apply(select	[AddDate] = max(AddDate)
 			from MDScan md with (nolock) 
-			where	md.PackingListID = pld.ID and 
+			where	md.DataRemark = 'Create from PMS' and
+					md.PackingListID = pld.ID and 
 					md.CTNStartNo = pld.CTNStartNo and 
 					md.OrderID = pld.OrderID ) MDScan
 outer apply(select	[MDFailQty] = MAX(MDFailQty)
