@@ -94,6 +94,7 @@
             this.grid1.ShowCellToolTips = false;
             this.grid1.Size = new System.Drawing.Size(1005, 224);
             this.grid1.TabIndex = 0;
+            this.grid1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.Grid1_ColumnHeaderMouseClick);
             // 
             // grid2
             // 
@@ -188,7 +189,7 @@
             this.chk_Balance.TabIndex = 20;
             this.chk_Balance.Text = "Balance > 0";
             this.chk_Balance.UseVisualStyleBackColor = true;
-            this.chk_Balance.CheckedChanged += new System.EventHandler(this.chk_includeJunk_CheckedChanged);
+            this.chk_Balance.CheckedChanged += new System.EventHandler(this.Chk_includeJunk_CheckedChanged);
             // 
             // P19_ImportbaseonTPEstock
             // 
