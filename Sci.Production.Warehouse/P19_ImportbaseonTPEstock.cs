@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict;
+﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using System.Linq;
-using System.Data.SqlClient;
 using Sci.Production.Prg;
-using Sci.Utility.Excel;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
@@ -58,7 +56,6 @@ namespace Sci.Production.Warehouse
                 .Numeric("TotalTransfer", header: "Total Transfer", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Numeric("Balance", header: "Balance", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
                ;
-
             selected.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
@@ -74,31 +71,29 @@ namespace Sci.Production.Warehouse
             DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
-                if (this.EditMode)
-                {
-                    DataRow dr = this.grid2.GetDataRow(e.RowIndex);
-                    // 數量0要拉開判斷且不能自動勾選Selected
-                    if (MyUtility.Check.Empty(e.FormattedValue))
-                    {
-                        dr["qty"] = 0;
-                        dr.EndEdit();
-                    }
-                    else if (MyUtility.Convert.GetDecimal(e.FormattedValue) > MyUtility.Convert.GetDecimal(dr["StockBalance"]))
-                    {
-                        MyUtility.Msg.WarningBox("TransferQty can not more than Stock Balance!");
-                        dr["qty"] = 0;
-                        dr.EndEdit();
-                    }
-                    else
-                    {
-                        // 先填入數值 > EndEdit > 才能自動勾選! 不然會觸發到Select事件
-                        dr["qty"] = e.FormattedValue;
-                        dr.EndEdit();
-                        dr["Selected"] = 1;
-                    }
+                DataRow dr = this.grid2.GetDataRow(e.RowIndex);
 
-                    this.CaculateTotalTransfer(selectAll: false);
+                // 數量0要拉開判斷且不能自動勾選Selected
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    dr["qty"] = 0;
+                    dr.EndEdit();
                 }
+                else if (MyUtility.Convert.GetDecimal(e.FormattedValue) > MyUtility.Convert.GetDecimal(dr["StockBalance"]))
+                {
+                    MyUtility.Msg.WarningBox("TransferQty can not more than Stock Balance!");
+                    dr["qty"] = 0;
+                    dr.EndEdit();
+                }
+                else
+                {
+                    // 先填入數值 > EndEdit > 才能自動勾選! 不然會觸發到Select事件
+                    dr["qty"] = e.FormattedValue;
+                    dr.EndEdit();
+                    dr["Selected"] = 1;
+                }
+
+                this.CaculateTotalTransfer(selectAll: false);
             };
 
             DataGridViewGeneratorCheckBoxColumnSettings selectedSetting = new DataGridViewGeneratorCheckBoxColumnSettings();
@@ -177,9 +172,12 @@ namespace Sci.Production.Warehouse
 
             DataRow drSelect = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
 
-            this.grid1.SelectedRows[0].Cells["TotalTransfer"].Value = totalTransfer;
-            this.grid1.SelectedRows[0].Cells["Balance"].Value = MyUtility.Convert.GetDecimal(drSelect["TaipeiOutput"]) - MyUtility.Convert.GetDecimal(drSelect["AccuTransferred"]) - totalTransfer;
-            this.grid1.RefreshEdit();
+            if (this.grid1.SelectedRows != null && this.grid1.SelectedRows.Count > 0)
+            {
+                this.grid1.SelectedRows[0].Cells["TotalTransfer"].Value = totalTransfer;
+                this.grid1.SelectedRows[0].Cells["Balance"].Value = MyUtility.Convert.GetDecimal(drSelect["TaipeiOutput"]) - MyUtility.Convert.GetDecimal(drSelect["AccuTransferred"]) - totalTransfer;
+                this.grid1.RefreshEdit();
+            }
         }
 
         private void BtnFindNow_Click(object sender, EventArgs e)
@@ -242,7 +240,6 @@ where (i.type='2' or i.type='6')
 		and o.MDivisionID = @MDivisionID
 group by i.seq70poid,rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit, psd.FabricType,PSD.Refno, PSD.SizeSpec,c.Color,TransferOut.Qty
 
-
 select  selected = 0
 		, [ExportID] = Stuff((select distinct concat(',', r.ExportId)
 				from Receiving r WITH (NOLOCK)
@@ -281,9 +278,10 @@ select  selected = 0
         , SizeSpec
         , [Tone] = Tone.val
 		, #tmp.[AccuTransferred]
+        , fi.Lock
 into    #tmpDetailResult
 from    #tmp  
-inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID 
+left join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID 
                                                 and fi.seq1 = Inventoryseq1 
                                                 and fi.seq2 = InventorySEQ2 
                                                 and fi.StockType = 'I'
@@ -295,7 +293,6 @@ outer apply(select [val] = isnull(max(Tone), '')
                     f.Seq2 = fi.Seq2 and
                     fs.Roll = fi.Roll and
                     fs.Dyelot = fi.Dyelot) Tone
-where fi.Lock = 0
 Order by GroupQty desc, Dyelot, StockBalance desc
 
 select  selected = cast(0 as bit)
@@ -337,9 +334,9 @@ select  selected = cast(0 as bit)
         , SizeSpec
         , Tone
 		, [AccuTransferred]
+        , Lock
 into    #tmpDetail
 from    #tmpDetailResult
-where   StockBalance > 0
 
 select  selected
         , [POID] = ToPOID
@@ -363,6 +360,8 @@ order by ToPOID, ToSeq1, ToSeq2;
 
 select  *
 from    #tmpDetail
+where Lock = 0
+and StockBalance > 0
 
 
 drop table #tmp, #tmpDetailResult, #tmpDetail
@@ -502,11 +501,12 @@ drop table #tmp, #tmpDetailResult, #tmpDetail
                 }
 
                 dr1["TotalTransfer"] = totalTransfer;
+                dr1["Balance"] = MyUtility.Convert.GetDecimal(dr1["TaipeiOutput"]) - MyUtility.Convert.GetDecimal(dr1["AccuTransferred"]) - totalTransfer;
                 dr1.EndEdit();
             }
         }
 
-        private void chk_includeJunk_CheckedChanged(object sender, EventArgs e)
+        private void Chk_includeJunk_CheckedChanged(object sender, EventArgs e)
         {
             this.Grid_Filter();
         }
@@ -541,6 +541,11 @@ drop table #tmp, #tmpDetailResult, #tmpDetail
                         break;
                 }
             }
+        }
+
+        private void Grid1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            this.Grid1Select_ReadOnly();
         }
     }
 }
