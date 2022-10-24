@@ -85,6 +85,7 @@ select o.FtyGroup
 ,lm.StyleUkey
 ,MaxVersion = ROW_NUMBER() over(partition by isnull(lm.StyleID,o.StyleID),isnull(lm.SeasonID,o.SeasonID),isnull(lm.BrandID,o.BrandID),isnull(lm.StyleUKey,o.StyleUKey) order by lm.Version desc)
 from Orders o
+inner join factory f on f.id=o.FactoryID
 left join LineMapping lm on lm.StyleUKey = o.StyleUkey
 
 Outer Apply (
@@ -95,7 +96,7 @@ Outer Apply (
     select IdAndNameAndExt
     from dbo.GetPassName(lm.EditName)
 )EditName
-where o.Category = 'B'
+where o.Category = 'B' and f.IsProduceFty = 1
 {strWhere}
 group by o.FtyGroup,o.StyleID,o.SeasonID,o.BrandID,lm.Version,lm.Status,AddName.IdAndNameAndExt,EditName.IdAndNameAndExt,lm.AddDate
 ,lm.TotalGSD,lm.TotalCycle,lm.EditDate,lm.StyleID,lm.SeasonID,lm.BrandID,lm.StyleUKey,o.StyleUkey
