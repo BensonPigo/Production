@@ -322,6 +322,8 @@
     <Compile Include="R01.Designer.cs">
       <DependentUpon>R01.cs</DependentUpon>
     </Compile>
+    <Compile Include="R01_ToExcel.cs" />
+    <Compile Include="R04_ToExcel.cs" />
     <Compile Include="R11.cs">
       <SubType>Form</SubType>
     </Compile>

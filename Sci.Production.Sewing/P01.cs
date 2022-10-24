@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -3209,14 +3210,15 @@ end
         /// </summary>
         public static void SendMail()
         {
+            DataTable[] dtR01Array;
             DataTable dtR01;
             DataTable ttlData = null;
             DataTable subprocessData = null;
             List<APIData> dataMode = new List<APIData>();
             DateTime? dateMaxOutputDate = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup(@"
-select max(OutputDate) 
-from SewingOutput 
-where OutputDate != convert(date,GETDATE())"));
+            select max(OutputDate) 
+            from SewingOutput 
+            where OutputDate != convert(date,GETDATE())"));
 
             #region 判斷Sewing.P01+P02 是否Locked
 
@@ -3251,860 +3253,94 @@ where OutputDate != convert(date,GETDATE())"));
             #region 產生R01 報表
 
             #region 撈R01 SQL
-            StringBuilder sqlCmd = new StringBuilder();
-            #region 組撈Data SQL
-            sqlCmd.Append(string.Format(
-                @"
-select  s.OutputDate
-		, s.Category
-		, s.Shift
-		, s.SewingLineID
-		, [ActManPower] = IIF(sd.QAQty = 0, s.Manpower, s.Manpower * sd.QAQty)
-		, s.Team
-		, sd.OrderId
-		, sd.ComboType
-		, sd.WorkHour
-		, sd.QAQty
-		, sd.InlineQty
-		, [OrderCategory] = isnull(o.Category,'')
-		, o.LocalOrder
-		, [OrderCdCodeID] = isnull(st.CDCodeNew,'')
-        , sty.CDCodeNew
-	    , sty.ProductType
-	    , sty.FabricType
-	    , sty.Lining
-	    , sty.Gender
-	    , sty.Construction
-		, [MockupCDCodeID] = isnull(mo.MockupID,'')
-		, s.FactoryID
-		, [OrderCPU] = isnull(o.CPU,0)
-		, [OrderCPUFactor] = isnull(o.CPUFactor,0)
-		, [MockupCPU] = isnull(mo.Cpu,0)
-		, [MockupCPUFactor] = isnull(mo.CPUFactor,0)
-		, [OrderStyle] = isnull(o.StyleID,'')
-		, [MockupStyle] = isnull(mo.StyleID,'')
-		, [OrderSeason] = isnull(o.SeasonID,'')
-		, [MockupSeason] = isnull(mo.SeasonID,'')
-	    , [Rate] = isnull([dbo].[GetOrderLocation_Rate](o.id, sd.ComboType),100)/100
-		, System.StdTMS
-		, [ori_QAQty] = sd.QAQty
-		, [ori_InlineQty] = sd.InlineQty
-        , [SubconInSisterFty] = isnull(o.SubconInSisterFty,0)
-into #tmpSewingDetail
-from System,SewingOutput s WITH (NOLOCK) 
-inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
-left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId 
-left join Style st with (nolock) on st.Ukey = o.StyleUkey
-left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
-Outer apply (
-	SELECT ProductType = r2.Name
-		, FabricType = r1.Name
-		, Lining
-		, Gender
-		, Construction = d1.Name
-        , s.CDCodeNew
-	FROM Style s WITH(NOLOCK)
-	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
-	left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
-	left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
-	where s.Ukey = o.StyleUkey
-)sty
-where s.OutputDate = '{0}'
-	  and s.FactoryID = '{1}'
-      and (o.CateGory NOT IN ('G','A') or s.Category='M')  ",
-                Convert.ToDateTime(dateMaxOutputDate).ToString("yyyy/MM/dd"),
-                Env.User.Factory));
 
-            sqlCmd.Append(@"
-select OutputDate
-	   , Category
-	   , Shift
-	   , SewingLineID
-	   , ActManPower = Round(Sum(ActManPower),2)
-	   , Team
-	   , OrderId
-	   , ComboType
-	   , WorkHour = Round(sum(WorkHour),3)
-	   , QAQty = sum(QAQty) 
-	   , InlineQty = sum(InlineQty) 
-	   , OrderCategory
-	   , LocalOrder
-	   , OrderCdCodeID
-	   , CDCodeNew
-	   , ProductType
-	   , FabricType
-	   , Lining
-	   , Gender
-	   , Construction
-	   , MockupCDCodeID
-	   , FactoryID
-	   , OrderCPU
-	   , OrderCPUFactor
-	   , MockupCPU
-	   , MockupCPUFactor
-	   , OrderStyle
-	   , MockupStyle
-	   , OrderSeason
-	   , MockupSeason
-	   , Rate
-	   , StdTMS
-	   , ori_QAQty = sum(ori_QAQty)
-	   , ori_InlineQty = sum(ori_InlineQty)
-       , SubconInSisterFty
-into #tmpSewingGroup
-from #tmpSewingDetail
-group by OutputDate, Category, Shift, SewingLineID, Team, OrderId
-		 , ComboType, OrderCategory, LocalOrder, OrderCdCodeID
-		 , MockupCDCodeID, FactoryID, OrderCPU, OrderCPUFactor
-		 , MockupCPU, MockupCPUFactor, OrderStyle, MockupStyle
-		 , OrderSeason, MockupSeason, Rate, StdTMS, SubconInSisterFty
-	     , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
+            List<SqlParameter> listParR01 = new List<SqlParameter>()
+            {
+                new SqlParameter("@Factory", Env.User.Factory),
+                new SqlParameter("@OutputDate", dateMaxOutputDate),
+                new SqlParameter("@Team", string.Empty),
+            };
 
-----↓計算累計天數 function table太慢直接寫在這
-select distinct scOutputDate = s.OutputDate 
-	   , style = IIF(t.Category <> 'M', OrderStyle, MockupStyle)
-	   , t.SewingLineID
-	   , t.FactoryID
-	   , t.Shift
-	   , t.Team
-	   , t.OrderId
-	   , t.ComboType
-into #stmp
-from #tmpSewingGroup t
-inner join SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID 
-										   and s.OutputDate between dateadd(day,-90,t.OutputDate) and  t.OutputDate 
-										   and s.FactoryID = t.FactoryID
-inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
-left join Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
-left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
-where (o.StyleID = OrderStyle or mo.StyleID = MockupStyle) and (o.CateGory NOT IN ('G','A') or t.Category='M')   
-order by style, s.OutputDate
-
-select w.Hours
-	   , w.Date
-	   , style = IIF(t.Category <> 'M', OrderStyle, MockupStyle)
-	   , t.SewingLineID
-	   , t.FactoryID
-	   , t.Shift
-	   , t.Team
-	   , t.OrderId
-	   , t.ComboType
-into #wtmp
-from #tmpSewingGroup t
-inner join  WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID 
-										and w.SewingLineID = t.SewingLineID 
-										and w.Date between dateadd(day,-90,t.OutputDate) and  t.OutputDate and isnull(w.Hours,0) != 0
-
-select cumulate = IIF(Count(1)=0, 1, Count(1))
-	   , s.style
-	   , s.SewingLineID
-	   , s.FactoryID
-	   , s.Shift
-	   , s.Team
-	   , s.OrderId
-	   , s.ComboType
-into #cl
-from #stmp s
-where s.scOutputDate > isnull((select date = max(Date)
-						from #wtmp w 
-						left join #stmp s2 on s2.scOutputDate = w.Date 
-											  and w.style = s2.style 
-											  and w.SewingLineID = s2.SewingLineID 
-											  and w.FactoryID = s2.FactoryID 
-											  and w.Shift = s2.Shift 
-											  and w.Team = s2.Team
-											  and w.OrderId = s2.OrderId 
-											  and w.ComboType = s2.ComboType
-						where s2.scOutputDate is null
-							  and w.style = s.style 
-							  and w.SewingLineID = s.SewingLineID 
-							  and w.FactoryID = s.FactoryID 
-							  and w.Shift = s.Shift 
-							  and w.Team = s.Team 
-							  and w.OrderId = s.OrderId 
-							  and w.ComboType = s.ComboType),'1900/01/01')
-group by s.style, s.SewingLineID, s.FactoryID, s.Shift, s.Team
-		 , s.OrderId, s.ComboType
------↑計算累計天數
-select t.*
-	   , LastShift = CASE WHEN t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1 and t.SubconInSisterFty = 1 then 'I'
-                          WHEN t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1 and t.SubconInSisterFty = 0 then 'IN'
-                     ELSE t.Shift END
-	   , FtyType = f.Type
-	   , FtyCountry = f.CountryID
-	   , CumulateDate = isnull(c.cumulate,1)
-into #tmp1stFilter
-from #tmpSewingGroup t
-left join #cl c on c.style = IIF(t.Category <> 'M', OrderStyle, MockupStyle) 
-				   and c.SewingLineID = t.SewingLineID 
-				   and c.FactoryID = t.FactoryID 
-				   and c.Shift = t.Shift 
-				   and c.Team = t.Team 
-				   and c.OrderId = t.OrderId 
-				   and c.ComboType = t.ComboType
-left join Factory f WITH (NOLOCK) on t.FactoryID = f.ID
----↓最後組成
-select Shift =    CASE    WHEN LastShift='D' then 'Day'
-                          WHEN LastShift='N' then 'Night'
-                          WHEN LastShift='O' then 'Subcon-Out'
-                          WHEN LastShift='I' then 'Subcon-In(Sister)'
-                          else 'Subcon-In(Non Sister)' end				
-	   , Team
-	   , SewingLineID
-	   , OrderId
-	   , Style = IIF(Category='M',MockupStyle,OrderStyle) 
-	   , CDNo = IIF(Category = 'M', MockupCDCodeID, OrderCdCodeID) + '-' + ComboType
-	   , CDCodeNew
-	   , ProductType
-	   , FabricType
-	   , Lining
-	   , Gender
-	   , Construction
-	   , ActManPower = IIF(SHIFT = 'O'
-                            ,MAX(IIF(QAQty > 0, ActManPower / QAQty, ActManPower)) OVER (PARTITION BY SHIFT,Team,SewingLineID)
-                            ,IIF(QAQty > 0, ActManPower / QAQty, ActManPower))
-	   , WorkHour
-	   , ManHour = IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour
-	   , TargetCPU = ROUND(ROUND(IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour, 3) * 3600 / StdTMS, 3) 
-	   , TMS = IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate) * StdTMS
-	   , CPUPrice = IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)
-	   , TargetQty = IIF(IIF(Category = 'M', MockupCPU * MockupCPUFactor
-	   									   , OrderCPU * OrderCPUFactor * Rate) > 0
-	   					    , ROUND(ROUND(IIF(QAQty > 0, ActManPower / QAQty
-	   					    						   , ActManPower) * WorkHour, 2) * 3600 / StdTMS, 2) / IIF(Category = 'M', MockupCPU * MockupCPUFactor
-	   					    																							     , OrderCPU * OrderCPUFactor * Rate)
-						    , 0) 
-	   , QAQty
-	   , TotalCPU = IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate) * QAQty
-	   , CPUSewer = IIF(ROUND(IIF(QAQty > 0, ActManPower / QAQty
-	   									   , ActManPower) * WorkHour, 2) > 0
-   							     , ROUND((IIF(Category = 'M', MockupCPU * MockupCPUFactor
-   							     						    , OrderCPU * OrderCPUFactor * Rate) * QAQty), 3) / ROUND(IIF(QAQty > 0, ActManPower / QAQty
-   							     																								  , ActManPower) * WorkHour, 3)
-     						     , 0) 
-	   , EFF = ROUND(IIF(ROUND(IIF(QAQty > 0, ActManPower / QAQty
-	   										, ActManPower) * WorkHour, 2) > 0
-	   						      , (ROUND(IIF(Category = 'M', MockupCPU * MockupCPUFactor
-	   						      							 , OrderCPU * OrderCPUFactor * Rate) * QAQty, 2) / (ROUND(IIF(QAQty > 0, ActManPower / QAQty
-	   						      							 																	   , ActManPower) * WorkHour, 2) * 3600 / StdTMS)) * 100, 0)
-	   							  , 1) 
-	   , RFT = IIF(ori_InlineQty = 0, 0, ROUND(ori_QAQty* 1.0 / ori_InlineQty * 1.0 * 100 ,2))
-	   , CumulateDate
-	   , InlineQty
-	   , Diff = QAQty - InlineQty
-	   , LastShift
-	   , ComboType
-from #tmp1stFilter
-where 1 =1");
-
-            sqlCmd.Append(@" order by LastShift,Team,SewingLineID,OrderId");
-            #endregion
-            result = DBProxy.Current.Select(null, sqlCmd.ToString(), out dtR01);
+            string sqlGetSewing_R01List = @"exec GetSewing_R01  @Factory
+	                                       ,@OutputDate
+                                           ,@Team
+            ";
+            result = DBProxy.Current.Select(null, sqlGetSewing_R01List, listParR01, out dtR01Array);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return;
             }
 
-            #region 整理Total資料
-            if (dtR01.Rows.Count > 0)
-            {
-                try
-                {
-                    DualResult resultTotal = MyUtility.Tool.ProcessWithDatatable(
-                        dtR01,
-                        "Shift,Team,SewingLineID,ActManPower,TMS,QAQty,RFT,LastShift",
-                        string.Format(@"
-;with SubMaxActManpower as (
-	select Shift
-		   , Team
-		   , SewingLineID
-		   , ActManPower = max(ActManPower)
-	from #tmp
-	group by Shift, Team, SewingLineID
-),
-SubSummaryData as (
-	select Shift
-		   , Team
-		   , TMS = sum(TMS * QAQty)
-		   , QAQty = sum(QAQty)
-		   , RFT = AVG(RFT)
-	from #tmp
-	group by Shift, Team
-),
-SubTotal as (
-	select s.Shift
-		   , s.Team
-		   , TMS = case 
-						when s.QAQty = 0 then 0
-						else (s.TMS/s.QAQty)
-				   end
-		   , s.RFT
-		   , ActManPower = Round(sum(m.ActManPower),2)
-	from SubSummaryData s 
-	left join SubMaxActManpower m on s.Shift = m.Shift 
-									 and s.Team = m.Team
-	group by s.Shift, s.Team, s.RFT, s.TMS, s.QAQty
-),
-GrandIncludeInOutMaxActManpower as (
-	select Shift
-		   , Team
-		   , SewingLineID
-		   , ActManPower = max(ActManPower) 
-	from #tmp
-	group by Shift, Team, SewingLineID
-),
-GrandIncludeInOutSummaryData as (
-	select TMS = sum(TMS*QAQty)
-		   , QAQty = sum(QAQty)
-		   , RFT = AVG(RFT)
-	from #tmp
-),
-GenTotal1 as (
-	select TMS = Case 
-                    when s.QaQty = 0 then 0
-                    else (s.TMS/s.QAQty)
-                 end
-		   , s.RFT
-		   , ActManPower = sum(m.ActManPower) - sum(iif(shift = 'Subcon-In', 0, isnull(d.ActManPower,0))) 
-	from GrandIncludeInOutSummaryData s
-	left join GrandIncludeInOutMaxActManpower m on 1 = 1
-	outer apply(
-		select ActManPower
-		from GrandIncludeInOutMaxActManpower m2
-		where m2.Shift = 'Subcon-In' 
-			  and m2.Team = m.Team 
-			  and m2.SewingLineID = m.SewingLineID	
-	) d
-	group by s.TMS, s.QAQty, s.RFT
-),
-GrandExcludeOutMaxActManpower as (
-	select Shift
-		   , Team
-		   , SewingLineID
-		   , ActManPower = max(ActManPower)
-	from #tmp
-	where LastShift <> 'O'
-	group by Shift, Team, SewingLineID
-),
-GrandExcludeOutSummaryData as (
-	select TMS = sum(TMS * QAQty)
-		   , QAQty = sum(QAQty)
-		   , RFT = AVG(RFT)
-	from #tmp
-	where LastShift <> 'O'
-),
-GenTotal2 as (
-	select TMS = case
-                    when s.QaQty = 0 then 0
-                    else (s.TMS / s.QAQty)
-                 end
-		   , s.RFT
-		   , ActManPower = sum(m.ActManPower) - sum(iif(shift = 'Subcon-In', 0, isnull(d.ActManPower,0))) 
-	from GrandExcludeOutSummaryData s
-	left join GrandExcludeOutMaxActManpower m on 1 = 1
-	outer apply(
-		select ActManPower
-		from GrandExcludeOutMaxActManpower m2
-		where m2.Shift = 'Subcon-In' and m2.Team = m.Team 
-									     and m2.SewingLineID = m.SewingLineID	
-	) d
-	group by s.TMS, s.QAQty, s.RFT
-),
-GrandExcludeInOutMaxActManpower as (
-	select Shift
-		   , Team
-		   , SewingLineID
-		   , ActManPower = max(ActManPower)
-	from #tmp
-	where LastShift <> 'O' 
-	and LastShift <> 'IN' 
-	group by Shift, Team, SewingLineID
-),
-GrandExcludeInOutSummaryData as (
-	select TMS = sum(TMS*QAQty)
-		   , QAQty = sum(QAQty)
-		   , RFT = AVG(RFT)
-	from #tmp
-	where LastShift <> 'O'
-	and LastShift <> 'IN' 
-),
-GenTotal3 as (
-	select TMS = case 
-                    when s.QaQty = 0 then 0
-                    else (s.TMS/s.QAQty)
-                 end
-		   , s.RFT
-		   , ActManPower = sum(m.ActManPower)
-	from GrandExcludeInOutSummaryData s
-	left join GrandExcludeInOutMaxActManpower m on 1 = 1
-	group by s.TMS, s.QAQty, s.RFT
-)
-select Type = 'Sub'
-	   , Sort = '1'
-	   , * 
-from SubTotal
-
-union all
-select Type = 'Grand'  
-	   , Sort = '2' 
-	   , Shift = '' 
-	   , Team = ''
-	   , TMS
-	   , RFT
-	   , ActManPower 
-from GenTotal1
-
-union all
-select Type = 'Grand'
-	   , Sort = '3'
-	   , Shift = '' 
-	   , Team = ''
-	   , TMS
-	   , RFT
-	   , ActManPower 
-from GenTotal2
-
-union all
-select Type = 'Grand'
-	   , Sort = '4'
-	   , Shift = ''
-	   , Team = '' 
-	   , TMS
-	   , RFT
-	   , ActManPower 
-from GenTotal3"),
-                        out ttlData);
-
-                    if (resultTotal == false)
-                    {
-                        return;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    DualResult failResult = new DualResult(false, "Query total data fail\r\n" + ex.ToString());
-                    return;
-                }
-            }
+            dtR01 = dtR01Array[0];
+            ttlData = dtR01Array[1];
+            subprocessData = dtR01Array[2];
             #endregion
-
-            #region 整理Subprocess資料
-            if (dtR01.Rows.Count > 0)
-            {
-                try
-                {
-                    DualResult resultSubprocess = MyUtility.Tool.ProcessWithDatatable(
-                        dtR01,
-                        "OrderId,ComboType,QAQty,LastShift",
-                        string.Format(@"
-	--準備台北資料(須排除這些)
-	select ps.ID
-	into #TPEtmp
-	from PO_Supp ps
-	inner join PO_Supp_Detail psd on ps.ID=psd.id and ps.SEQ1=psd.Seq1
-	inner join Fabric fb on psd.SCIRefno = fb.SCIRefno 
-	inner join MtlType ml on ml.id = fb.MtlTypeID
-	where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
-	and ml.isThread=1 
-	and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
-
-;with tmpArtwork as (
-	Select  ID,
-            [DecimalNumber] =case   when ProductionUnit = 'QTY' then 4
-							        when ProductionUnit = 'TMS' then 3
-							        else 0 end
-	from ArtworkType WITH (NOLOCK) 
-	where Classify in ('I','A','P') 
-	      and IsTtlTMS = 0
-          and IsPrintToCMP=1
-),
-tmpAllSubprocess as (
-	select ot.ArtworkTypeID
-		   , a.OrderId
-		   , a.ComboType
-           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](o.id ,a.ComboType), 100) / 100), ta.DecimalNumber) 
-	from #tmp a
-	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
-	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
-	inner join tmpArtwork ta on ta.ID = ot.ArtworkTypeID
---	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
---												 and sl.Location = a.ComboType
-	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O')) 
-          and o.LocalOrder <> 1
-		  and ot.Price > 0         
-		  and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
-			  or ot.ArtworkTypeID <> 'SP_THREAD')
-    group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,[dbo].[GetOrderLocation_Rate](o.id ,a.ComboType),ta.DecimalNumber
-)
-select ArtworkTypeID
-	   , Price = sum(Price)
-	   , rs = iif(att.ProductionUnit = 'TMS','CPU',iif(att.ProductionUnit = 'QTY','AMT',''))
-from tmpAllSubprocess t
-left join ArtworkType att WITH (NOLOCK) on att.id = t.ArtworkTypeID
-group by ArtworkTypeID,att.ProductionUnit
-order by ArtworkTypeID"),
-                        out subprocessData);
-
-                    if (resultSubprocess == false)
-                    {
-                        return;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    DualResult failResult = new DualResult(false, "Query sub process data fail\r\n" + ex.ToString());
-                    return;
-                }
-            }
-            #endregion
-
+            string excelFileNameR01 = string.Empty;
             string factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", Env.User.Factory));
-            #endregion
-
-            #region ToExcel
-
-            string strXltName = Env.Cfg.XltPathDir + "\\Sewing_R01_DailyCMPReport.xltx";
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null)
-            {
-                return;
-            }
-
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-
-            worksheet.Cells[1, 1] = factoryName;
-            worksheet.Cells[2, 1] = string.Format("{0} Daily CMP Report, DD.{1} {2}", Env.User.Factory, Convert.ToDateTime(dateMaxOutputDate).ToString("MM/dd"), "(Included Subcon-IN)");
-
-            // 沒資料就顯示空的Excel
-            if (dtR01.Rows.Count > 0 && !MyUtility.Check.Empty(dtR01))
-            {
-                object[,] objArray = new object[1, 25];
-                string[] subTtlRowInOut = new string[8];
-                string[] subTtlRowExOut = new string[8];
-                string[] subTtlRowExInOut = new string[8];
-
-                string shift = MyUtility.Convert.GetString(dtR01.Rows[0]["Shift"]);
-                string team = MyUtility.Convert.GetString(dtR01.Rows[0]["Team"]);
-
-                int insertRow = 5, startRow = 5, ttlShift = 1, subRows = 0;
-                worksheet.Cells[3, 1] = string.Format("{0} SHIFT: {1} Team", shift, team);
-                DataRow[] selectRow;
-                foreach (DataRow dr in dtR01.Rows)
-                {
-                    if (shift != MyUtility.Convert.GetString(dr["Shift"]) || team != MyUtility.Convert.GetString(dr["Team"]))
-                    {
-                        // 將多出來的Record刪除
-                        for (int i = 1; i <= 2; i++)
-                        {
-                            Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[insertRow, Type.Missing];
-                            rng.Select();
-                            rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
-                            Marshal.ReleaseComObject(rng);
-                        }
-
-                        // 填入Sub Total資料
-                        if (ttlData != null)
-                        {
-                            selectRow = ttlData.Select(string.Format("Type = 'Sub' and Shift = '{0}' and  Team = '{1}'", shift, team));
-                            if (selectRow.Length > 0)
-                            {
-                                worksheet.Cells[insertRow, 11] = MyUtility.Convert.GetDecimal(selectRow[0]["ActManPower"]);
-                                worksheet.Cells[insertRow, 15] = MyUtility.Convert.GetDecimal(selectRow[0]["TMS"]);
-                                worksheet.Cells[insertRow, 22] = MyUtility.Convert.GetDecimal(selectRow[0]["RFT"]);
-                            }
-                        }
-
-                        worksheet.Cells[insertRow, 13] = string.Format("=SUM(M{0}:M{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                        worksheet.Cells[insertRow, 14] = string.Format("=SUM(N{0}:N{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                        worksheet.Cells[insertRow, 17] = string.Format("=SUM(Q{0}:Q{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                        worksheet.Cells[insertRow, 18] = string.Format("=SUM(R{0}:R{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                        worksheet.Cells[insertRow, 19] = string.Format("=SUM(S{0}:S{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                        worksheet.Cells[insertRow, 20] = string.Format("=S{0}/M{0}", MyUtility.Convert.GetString(insertRow));
-                        worksheet.Cells[insertRow, 21] = string.Format("=ROUND((S{0}/(M{0}*3600/1400))*100,1)", MyUtility.Convert.GetString(insertRow));
-                        worksheet.Cells[insertRow, 24] = string.Format("=SUM(X{0}:X{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                        worksheet.Cells[insertRow, 25] = string.Format("=SUM(Y{0}:Y{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-
-                        subTtlRowInOut[subRows] = MyUtility.Convert.GetString(insertRow);
-                        if (shift != "Subcon-Out")
-                        {
-                            subTtlRowExOut[subRows] = MyUtility.Convert.GetString(insertRow);
-                        }
-
-                        if (shift != "Subcon-Out" && shift != "Subcon-In(Non Sister)")
-                        {
-                            subTtlRowExInOut[subRows] = MyUtility.Convert.GetString(insertRow);
-                        }
-
-                        // 重置參數資料
-                        shift = MyUtility.Convert.GetString(dr["Shift"]);
-                        team = MyUtility.Convert.GetString(dr["Team"]);
-                        worksheet.Cells[insertRow + 2, 1] = string.Format("{0} SHIFT: {1} Team", shift, team);
-                        insertRow = insertRow + 4;
-                        startRow = insertRow;
-                        ttlShift++;
-                        subRows++;
-                    }
-
-                    objArray[0, 0] = dr["SewingLineID"];
-                    objArray[0, 1] = dr["OrderId"];
-                    objArray[0, 2] = dr["Style"];
-                    objArray[0, 3] = dr["CDNo"];
-                    objArray[0, 4] = dr["CDCodeNew"];
-                    objArray[0, 5] = dr["ProductType"];
-                    objArray[0, 6] = dr["FabricType"];
-                    objArray[0, 7] = dr["Lining"];
-                    objArray[0, 8] = dr["Gender"];
-                    objArray[0, 9] = dr["Construction"];
-                    objArray[0, 10] = dr["ActManPower"];
-                    objArray[0, 11] = dr["WorkHour"];
-                    objArray[0, 12] = dr["ManHour"];
-                    objArray[0, 13] = dr["TargetCPU"];
-                    objArray[0, 14] = dr["TMS"];
-                    objArray[0, 15] = dr["CPUPrice"];
-                    objArray[0, 16] = dr["TargetQty"];
-                    objArray[0, 17] = dr["QAQty"];
-                    objArray[0, 18] = dr["TotalCPU"];
-                    objArray[0, 19] = dr["CPUSewer"];
-                    objArray[0, 20] = string.Format("=ROUND((S{0}/(M{0}*3600/1400))*100,1)", insertRow);
-                    objArray[0, 21] = dr["RFT"];
-                    objArray[0, 22] = dr["CumulateDate"];
-                    objArray[0, 23] = dr["InlineQty"];
-                    objArray[0, 24] = dr["Diff"];
-                    worksheet.Range[string.Format("A{0}:Y{0}", insertRow)].Value2 = objArray;
-                    insertRow++;
-
-                    // 插入一筆Record
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
-                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
-                    Marshal.ReleaseComObject(rngToInsert);
-                }
-
-                // 最後一個Shift資料
-                // 將多出來的Record刪除
-                for (int i = 1; i <= 2; i++)
-                {
-                    Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[insertRow, Type.Missing];
-                    rng.Select();
-                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
-                    Marshal.ReleaseComObject(rng);
-                }
-
-                // 填入Sub Total資料
-                if (ttlData != null)
-                {
-                    selectRow = ttlData.Select(string.Format("Type = 'Sub' and Shift = '{0}' and  Team = '{1}'", shift, team));
-                    if (selectRow.Length > 0)
-                    {
-                        worksheet.Cells[insertRow, 11] = MyUtility.Convert.GetDecimal(selectRow[0]["ActManPower"]);
-                        worksheet.Cells[insertRow, 15] = MyUtility.Convert.GetDecimal(selectRow[0]["TMS"]);
-                        worksheet.Cells[insertRow, 22] = MyUtility.Convert.GetDecimal(selectRow[0]["RFT"]);
-                    }
-                }
-
-                worksheet.Cells[insertRow, 13] = string.Format("=SUM(M{0}:M{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                worksheet.Cells[insertRow, 14] = string.Format("=SUM(N{0}:N{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                worksheet.Cells[insertRow, 17] = string.Format("=SUM(Q{0}:Q{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                worksheet.Cells[insertRow, 18] = string.Format("=SUM(R{0}:R{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                worksheet.Cells[insertRow, 19] = string.Format("=SUM(S{0}:S{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                worksheet.Cells[insertRow, 20] = string.Format("=S{0}/M{0}", MyUtility.Convert.GetString(insertRow));
-                worksheet.Cells[insertRow, 21] = string.Format("=ROUND((S{0}/(M{0}*3600/1400))*100,1)", MyUtility.Convert.GetString(insertRow));
-                worksheet.Cells[insertRow, 24] = string.Format("=SUM(X{0}:X{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                worksheet.Cells[insertRow, 25] = string.Format("=SUM(Y{0}:Y{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                subTtlRowInOut[subRows] = MyUtility.Convert.GetString(insertRow);
-                if (shift != "Subcon-Out")
-                {
-                    subTtlRowExOut[subRows] = MyUtility.Convert.GetString(insertRow);
-                }
-
-                if (shift != "Subcon-Out" && shift != "Subcon-In(Non Sister)")
-                {
-                    subTtlRowExInOut[subRows] = MyUtility.Convert.GetString(insertRow);
-                }
-
-                // 刪除多出來的Shift Record
-                for (int i = 1; i <= (8 - ttlShift) * 6; i++)
-                {
-                    Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[insertRow + 1, Type.Missing];
-                    rng.Select();
-                    rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
-                    Marshal.ReleaseComObject(rng);
-                }
-
-                insertRow += 2;
-
-                // 填Grand Total資料
-                string ttlManhour, targetCPU, targetQty, qaQty, ttlCPU, prodOutput, diff;
-                if (ttlData != null)
-                {
-                    selectRow = ttlData.Select("Type = 'Grand'");
-                    if (selectRow.Length > 0)
-                    {
-                        for (int i = 0; i < selectRow.Length; i++)
-                        {
-                            worksheet.Cells[insertRow, 11] = MyUtility.Convert.GetDecimal(selectRow[i]["ActManPower"]);
-                            worksheet.Cells[insertRow, 15] = MyUtility.Convert.GetDecimal(selectRow[i]["TMS"]);
-                            worksheet.Cells[insertRow, 22] = MyUtility.Convert.GetDecimal(selectRow[i]["RFT"]);
-                            ttlManhour = "=";
-                            targetCPU = "=";
-                            targetQty = "=";
-                            qaQty = "=";
-                            ttlCPU = "=";
-                            prodOutput = "=";
-                            diff = "=";
-                            #region 組公式
-                            if (MyUtility.Convert.GetString(selectRow[i]["Sort"]) == "2")
-                            {
-                                for (int j = 0; j < 8; j++)
-                                {
-                                    if (!MyUtility.Check.Empty(subTtlRowInOut[j]))
-                                    {
-                                        ttlManhour = ttlManhour + string.Format("M{0}+", subTtlRowInOut[j]);
-                                        targetCPU = targetCPU + string.Format("N{0}+", subTtlRowInOut[j]);
-                                        targetQty = targetQty + string.Format("Q{0}+", subTtlRowInOut[j]);
-                                        qaQty = qaQty + string.Format("R{0}+", subTtlRowInOut[j]);
-                                        ttlCPU = ttlCPU + string.Format("S{0}+", subTtlRowInOut[j]);
-                                        prodOutput = prodOutput + string.Format("X{0}+", subTtlRowInOut[j]);
-                                        diff = diff + string.Format("Y{0}+", subTtlRowInOut[j]);
-                                    }
-                                }
-                            }
-                            else if (MyUtility.Convert.GetString(selectRow[i]["Sort"]) == "3")
-                            {
-                                for (int j = 0; j < 8; j++)
-                                {
-                                    if (!MyUtility.Check.Empty(subTtlRowExOut[j]))
-                                    {
-                                        ttlManhour = ttlManhour + string.Format("M{0}+", subTtlRowExOut[j]);
-                                        targetCPU = targetCPU + string.Format("N{0}+", subTtlRowExOut[j]);
-                                        targetQty = targetQty + string.Format("Q{0}+", subTtlRowExOut[j]);
-                                        qaQty = qaQty + string.Format("R{0}+", subTtlRowExOut[j]);
-                                        ttlCPU = ttlCPU + string.Format("S{0}+", subTtlRowExOut[j]);
-                                        prodOutput = prodOutput + string.Format("X{0}+", subTtlRowExOut[j]);
-                                        diff = diff + string.Format("Y{0}+", subTtlRowExOut[j]);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                for (int j = 0; j < 8; j++)
-                                {
-                                    if (!MyUtility.Check.Empty(subTtlRowExInOut[j]))
-                                    {
-                                        ttlManhour = ttlManhour + string.Format("M{0}+", subTtlRowExInOut[j]);
-                                        targetCPU = targetCPU + string.Format("N{0}+", subTtlRowExInOut[j]);
-                                        targetQty = targetQty + string.Format("Q{0}+", subTtlRowExInOut[j]);
-                                        qaQty = qaQty + string.Format("R{0}+", subTtlRowExInOut[j]);
-                                        ttlCPU = ttlCPU + string.Format("S{0}+", subTtlRowExInOut[j]);
-                                        prodOutput = prodOutput + string.Format("X{0}+", subTtlRowExInOut[j]);
-                                        diff = diff + string.Format("Y{0}+", subTtlRowExInOut[j]);
-                                    }
-                                }
-                            }
-                            #endregion
-
-                            worksheet.Cells[insertRow, 13] = ttlManhour.Substring(0, ttlManhour.Length - 1);
-                            worksheet.Cells[insertRow, 14] = targetCPU.Substring(0, targetCPU.Length - 1);
-                            worksheet.Cells[insertRow, 17] = targetQty.Substring(0, targetQty.Length - 1);
-                            worksheet.Cells[insertRow, 18] = qaQty.Substring(0, qaQty.Length - 1);
-                            worksheet.Cells[insertRow, 19] = ttlCPU.Substring(0, ttlCPU.Length - 1);
-                            worksheet.Cells[insertRow, 20] = string.Format("=S{0}/M{0}", MyUtility.Convert.GetString(insertRow));
-                            worksheet.Cells[insertRow, 21] = string.Format("=ROUND((S{0}/(M{0}*3600/1400))*100,1)", MyUtility.Convert.GetString(insertRow));
-                            worksheet.Cells[insertRow, 24] = prodOutput.Substring(0, prodOutput.Length - 1);
-                            worksheet.Cells[insertRow, 25] = diff.Substring(0, diff.Length - 1);
-                            insertRow++;
-                        }
-                    }
-                }
-                #region Direct Manpower(From PAMS)
-                if (Env.User.Keyword.EqualString("CM1") ||
-                    Env.User.Keyword.EqualString("CM2"))
-                {
-                    worksheet.Cells[insertRow, 11] = 0;
-                    worksheet.Cells[insertRow, 13] = 0;
-                }
-                else
-                {
-                    dataMode = new List<APIData>();
-                    GetApiData.GetAPIData(string.Empty, Env.User.Factory, (DateTime)DateTime.Now.AddDays(-1), (DateTime)DateTime.Now.AddDays(-1), out dataMode);
-                    if (dataMode != null)
-                    {
-                        worksheet.Cells[insertRow, 11] = dataMode[0].SewTtlManpower;
-                        worksheet.Cells[insertRow, 13] = dataMode[0].SewTtlManhours;
-                    }
-
-                    insertRow++;
-                }
-                #endregion
-
-                insertRow = insertRow + 2;
-                foreach (DataRow dr in subprocessData.Rows)
-                {
-                    worksheet.Cells[insertRow, 3] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["ArtworkTypeID"]).PadRight(20, ' '), MyUtility.Convert.GetString(dr["rs"]));
-                    worksheet.Cells[insertRow, 12] = MyUtility.Convert.GetString(dr["Price"]);
-                    insertRow++;
-
-                    // 插入一筆Record
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
-                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
-                    Marshal.ReleaseComObject(rngToInsert);
-                }
-            }
-
-            excel.Visible = false;
-            #region Save & Show Excel
-            string excelFileR01 = Path.Combine(
-                Env.Cfg.ReportTempDir,
-                "Daily CMP Report" + ((DateTime)dateMaxOutputDate).ToString("_yyyyMMdd") + DateTime.Now.ToString("_HHmmssfff") + "(" + Env.User.Factory + ").xlsx");
-            excel.ActiveWorkbook.SaveAs(excelFileR01);
-            excel.Quit();
-            Marshal.ReleaseComObject(excel);
-            Marshal.ReleaseComObject(worksheet);
-            #endregion
-
-            #endregion
+            R01_ToExcel.ToExcel(factoryName, Env.User.Factory, dateMaxOutputDate, (DateTime)DateTime.Now.AddDays(-1), dtR01, ttlData, subprocessData, dataMode, string.Empty, ref excelFileNameR01);
 
             #endregion
 
             #region 產生R04 報表
             DataTable dtR04;
-            string sqlcmd = $"exec [dbo].[Send_SewingDailyOutput] '{Env.User.Factory}', '{Convert.ToDateTime(dateMaxOutputDate).ToString("yyyy/MM/dd")}'";
-            result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtR04);
+
+            List<SqlParameter> listPar = new List<SqlParameter>()
+            {
+                new SqlParameter("@M", string.Empty),
+                new SqlParameter("@Factory", string.Empty),
+                new SqlParameter("@Category", string.Empty),
+                new SqlParameter("@Brand", string.Empty),
+                new SqlParameter("@CDCode", string.Empty),
+                new SqlParameter("@ProductType", string.Empty),
+                new SqlParameter("@FabricType", string.Empty),
+                new SqlParameter("@Lining", string.Empty),
+                new SqlParameter("@Construction", string.Empty),
+                new SqlParameter("@Gender", string.Empty),
+                new SqlParameter("@Shift", string.Empty),
+                new SqlParameter("@Include_Artwork", false),
+                new SqlParameter("@ShowAccumulate_output", false),
+                new SqlParameter("@ExcludeSampleFty", false),
+                new SqlParameter("@OnlyCancelOrder", false),
+                new SqlParameter("@ExcludeNonRevenue", false),
+                new SqlParameter("@SubconOut", false),
+                new SqlParameter("@StartDate", dateMaxOutputDate),
+                new SqlParameter("@EndDate", DBNull.Value),
+            };
+
+            string sqlGetSewingDailyOutputList = @"
+                                exec GetSewingDailyOutputList   @M						
+	                            ,@Factory	
+	                            ,@StartDate    
+	                            ,@EndDate      
+	                            ,@Category	
+	                            ,@Brand		   
+	                            ,@CDCode	
+	                            ,@ProductType
+	                            ,@FabricType
+	                            ,@Lining	
+	                            ,@Construction
+	                            ,@Gender	
+	                            ,@Shift		
+	                            ,@Include_Artwork			
+	                            ,@ShowAccumulate_output	
+	                            ,@ExcludeSampleFty		
+	                            ,@OnlyCancelOrder		
+	                            ,@ExcludeNonRevenue		
+	                            ,@SubconOut				
+                ";
+            result = DBProxy.Current.Select(null, sqlGetSewingDailyOutputList, listPar, out dtR04);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return;
             }
-
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Sewing_R04_SewingDailyOutputList.xltx"); // 預先開啟excel app
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得
-            objSheets.get_Range("AM:AN").EntireColumn.Delete();
-            for (int i = 40; i < dtR04.Columns.Count; i++)
-            {
-                objSheets.Cells[1, i + 1] = dtR04.Columns[i].ColumnName;
-            }
-
-            string r = MyUtility.Excel.ConvertNumericToExcelColumn(dtR04.Columns.Count);
-            objSheets.get_Range("A1", r + "1").Cells.Interior.Color = Color.LightGreen;
-            objSheets.get_Range("A1", r + "1").AutoFilter(1);
-            objApp.Visible = false;
-
-            if (dtR04.Rows.Count != 0)
-            {
-                MyUtility.Excel.CopyToXls(dtR04, string.Empty, "Sewing_R04_SewingDailyOutputList.xltx", 1, false, null, objApp);
-            }
-
-            string excelFileR04 = Path.Combine(
-                Env.Cfg.ReportTempDir,
-                "Sewing daily output list -" + ((DateTime)dateMaxOutputDate).ToString("_yyyyMMdd") + DateTime.Now.ToString("_HHmmssfff") + "(" + Env.User.Factory + ").xlsx");
-            objApp.ActiveWorkbook.SaveAs(excelFileR04);
-            objApp.Quit();
-            Marshal.ReleaseComObject(objApp);
-            Marshal.ReleaseComObject(objSheets);
+            string excelFileNameR04 = string.Empty;
+            R04_ToExcel.ToExcel(false,false,dtR04,dateMaxOutputDate,ref excelFileNameR04);
             #endregion
 
             #region SendMail
-            if (!MyUtility.Check.Empty(excelFileR01) && !MyUtility.Check.Empty(excelFileR04))
+            if (!MyUtility.Check.Empty(excelFileNameR01) && !MyUtility.Check.Empty(excelFileNameR04))
             {
                 DataRow dr, drMail;
                 if (MyUtility.Check.Seek("select * from system", out dr))
@@ -4117,8 +3353,8 @@ Hi all,
                     if (MyUtility.Check.Seek("select * from mailto where id='020'", out drMail))
                     {
                         List<string> attachFiles = new List<string>();
-                        attachFiles.Add(excelFileR01);
-                        attachFiles.Add(excelFileR04);
+                        attachFiles.Add(excelFileNameR01);
+                        attachFiles.Add(excelFileNameR04);
 
                         string subject = drMail["Subject"].ToString() + $@"{Convert.ToDateTime(dateMaxOutputDate).ToString("yyyy/MM/dd")} ({Env.User.Factory})";
                         MailTo mail = new MailTo(dr["SendFrom"].ToString(), drMail["ToAddress"].ToString(), drMail["ccAddress"].ToString(), subject, desc, attachFiles, true, true);
