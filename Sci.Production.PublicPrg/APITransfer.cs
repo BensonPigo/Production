@@ -85,15 +85,7 @@ where ID = '{id}'
 
             string tradeWebApiUri = PmsWebAPI.TradeWebApiUri;
             string jsonBody = JsonConvert.SerializeObject(obj);
-            string requestUri;
-            if (DBProxy.Current.DefaultModuleName.Contains("Formal"))
-            {
-                requestUri = MyUtility.GetValue.Lookup("select [URL] from WebApiURL where SuppID = 'Trade' and ModuleName = 'TransferWK' and ModuleType = 'Formal'");
-            }
-            else
-            {
-                requestUri = MyUtility.GetValue.Lookup("select [URL] from WebApiURL where SuppID = 'Trade' and ModuleName = 'TransferWK' and ModuleType = 'Dummy'");
-            }
+            string requestUri = "api/GetTradeData/ConfirmTK";
 
             WebApiBaseResult webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(tradeWebApiUri, requestUri, jsonBody, 600);
 
