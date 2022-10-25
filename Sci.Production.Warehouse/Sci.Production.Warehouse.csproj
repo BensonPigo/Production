@@ -2432,8 +2432,6 @@
     <None Include="Properties\DataSources\P65_PrintData.datasource" />
     <None Include="Properties\DataSources\P66_PrintData.datasource" />
     <None Include="Sci.Production.Warehouse.ruleset" />
-    <None Include="stylecop.json" />
-    <None Include="stylecop1.json" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
