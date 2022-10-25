@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -314,5 +315,7 @@ update  SewingOutput set SewingReasonIDForTypeIC = '{inlineCategoryResult.Key}' 
 
             return new DualResult(true);
         }
+
+        
     }
 }

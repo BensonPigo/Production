@@ -166,10 +166,6 @@ namespace PowerBI.Daily
             {
                 ShowErr(result);
             }
-            else
-            {
-                writeJobLog(true, 0);
-            }
 
             // type 1 只跑 P_ImportEstShippingReport 
             result = AsyncHelper.Current.DataProcess(this, () =>
@@ -182,10 +178,6 @@ namespace PowerBI.Daily
             {
                 ShowErr(result);
             }
-            else
-            {
-                writeJobLog(true, 1);
-            }
 
             conn.Close();
             issucess = true;
@@ -195,15 +187,12 @@ namespace PowerBI.Daily
         #region Export/Update (非同步)
         private DualResult AsyncUpdateExport(SqlConnection conn, int type = 0)
         {
+            DualResult result = new DualResult(true);
             try
             {
                 intHashCode = Guid.NewGuid().GetHashCode();
-                DualResult result = DailyUpdate(type);
-                if (!result)
-                {
-                    writeJobLog(false, type);
-                    return result;
-                }
+                result = DailyUpdate(type);
+                writeJobLog(result, type);
             }
             catch (SqlException se)
             {
@@ -211,7 +200,7 @@ namespace PowerBI.Daily
                 return Ict.Result.F(se);
             }
 
-            return Ict.Result.True;
+            return result;
         }
         #endregion
 
