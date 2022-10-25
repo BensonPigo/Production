@@ -74,6 +74,7 @@ CREATE TABLE [dbo].[System] (
     [HandoverATPath] VARCHAR(80) NOT NULL DEFAULT (''), 
     [HandoverSpecialToolsPath] VARCHAR(80) NOT NULL DEFAULT (''), 
     [CriticalOperationPath] VARCHAR(80) NOT NULL DEFAULT (''), 
+    [FinalPatternPath] VARCHAR(80) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
@@ -390,3 +391,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'System',
     @level2type = N'COLUMN',
     @level2name = N'CriticalOperationPath'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'放Final Pattern and Marker List檔案的路徑',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'FinalPatternPath'

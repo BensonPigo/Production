@@ -85,8 +85,44 @@ namespace Sci.Production.PPIC
             // 一進入畫面, 先開啟Data Filter 選擇Season
             P23_DataFilter frm = new P23_DataFilter();
             frm.ShowDialog(this);
+            if (frm.DialogResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.txtSeason.Text = P23_DataFilter.Season;
             this.Find();
+            this.ChangeRowColor();
+        }
+
+        private void ChangeRowColor()
+        {
+            //DataTable dtTemp = (DataTable)this.grid.DataSource;
+            //if (dtTemp == null)
+            //{
+            //    return;
+            //}
+
+            for (int index = 0; index < this.grid.Rows.Count; index++)
+            {
+                DataRow dr = this.grid.GetDataRow(index);
+                if (this.grid.Rows.Count <= index || index < 0)
+                {
+                    return;
+                }
+
+                switch (dr["Status"])
+                {
+                    case "DONE":
+                        this.grid.Rows[index].DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#008000");
+                        break;
+                    case "ON-GOING":
+                        this.grid.Rows[index].DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#ffff00");
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         private P24 callP24 = null;
@@ -136,8 +172,14 @@ namespace Sci.Production.PPIC
         {
             P23_DataFilter frm = new P23_DataFilter();
             frm.ShowDialog(this);
+            if (frm.DialogResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.txtSeason.Text = P23_DataFilter.Season;
             this.Find();
+            this.ChangeRowColor();
         }
 
         private void Find()
@@ -176,9 +218,10 @@ group by a.StyleID, a.SeasonID,StatusCnt.cnt,a.BrandID
 
 select *
 ,[ttlStyleCnt] = (select cnt = count(1) from (select distinct StyleID from #tmp)a )
-,[DoneCnt] = ROUND(cast((select cnt = count(1) from (select distinct StyleID from #tmp where Status = 'DONE' )a ) as float) / (select cnt = count(1) from (select distinct StyleID from #tmp)a ) ,4) * 100
-,[OnGoingCnt] = 100 - ROUND(cast((select cnt = count(1) from (select distinct StyleID from #tmp where Status = 'DONE' )a ) as float) / (select cnt = count(1) from (select distinct StyleID from #tmp)a ) ,4) * 100
+,[DoneCnt] = ROUND(cast((select cnt = count(1) from (select distinct StyleID from #tmp where Status = 'DONE' )a ) as float) / (select cnt = count(1) from (select distinct StyleID from #tmp)a ) ,4, 1) * 100 --無條件捨去到小數點第二位
+,[OnGoingCnt] = 100 - ROUND(cast((select cnt = count(1) from (select distinct StyleID from #tmp where Status = 'DONE' )a ) as float) / (select cnt = count(1) from (select distinct StyleID from #tmp)a ) ,4, 1) * 100 --無條件捨去到小數點第二位
 from #tmp
+order by StyleID
 
 drop table #tmp
 ";
@@ -253,6 +296,16 @@ select distinct StyleID from #tmp
                     }
                 }
             }
+        }
+
+        private void grid_Sorted(object sender, EventArgs e)
+        {
+            this.ChangeRowColor();
+        }
+
+        private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+
         }
     }
 }

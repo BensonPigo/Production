@@ -118,6 +118,20 @@
             this.txtuserMiscPOApproveName = new Sci.Production.Class.Txtuser();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.btnCriticalOperationPath = new Sci.Win.UI.Button();
+            this.txtCriticalOperationPath = new Sci.Win.UI.TextBox();
+            this.labCriticalOperationPath = new Sci.Win.UI.Label();
+            this.btnHandoverSpecialToolsPath = new Sci.Win.UI.Button();
+            this.btnHandoverATPath = new Sci.Win.UI.Button();
+            this.txtHandoverSpecialToolsPath = new Sci.Win.UI.TextBox();
+            this.labHandoverSpecialToolsPath = new Sci.Win.UI.Label();
+            this.txtHandoverATPath = new Sci.Win.UI.TextBox();
+            this.labHandoverATPath = new Sci.Win.UI.Label();
+            this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.txtFinalPatternPath = new Sci.Win.UI.TextBox();
+            this.labFinalPatternPath = new Sci.Win.UI.Label();
+            this.shapeContainer3 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.btnFinalPatternPath = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutoApprovedWhileDateBefore)).BeginInit();
             this.panel1.SuspendLayout();
@@ -340,7 +354,7 @@
             0,
             0});
             this.numCuttingLeadTime.Size = new System.Drawing.Size(50, 23);
-            this.numCuttingLeadTime.TabIndex = 9;
+            this.numCuttingLeadTime.TabIndex = 12;
             this.numCuttingLeadTime.Value = new decimal(new int[] {
             0,
             0,
@@ -368,7 +382,7 @@
             0,
             0});
             this.numMtlInspectionLeadTime.Size = new System.Drawing.Size(50, 23);
-            this.numMtlInspectionLeadTime.TabIndex = 10;
+            this.numMtlInspectionLeadTime.TabIndex = 13;
             this.numMtlInspectionLeadTime.Value = new decimal(new int[] {
             0,
             0,
@@ -396,7 +410,7 @@
             0,
             0});
             this.numReadyDayByProd.Size = new System.Drawing.Size(50, 23);
-            this.numReadyDayByProd.TabIndex = 11;
+            this.numReadyDayByProd.TabIndex = 14;
             this.numReadyDayByProd.Value = new decimal(new int[] {
             0,
             0,
@@ -419,7 +433,7 @@
             this.dateDailyOutputLockDate.Name = "dateDailyOutputLockDate";
             this.dateDailyOutputLockDate.ReadOnly = true;
             this.dateDailyOutputLockDate.Size = new System.Drawing.Size(110, 23);
-            this.dateDailyOutputLockDate.TabIndex = 12;
+            this.dateDailyOutputLockDate.TabIndex = 18;
             // 
             // labelPulloutLockDate
             // 
@@ -437,7 +451,7 @@
             this.datePulloutLockDate.Name = "datePulloutLockDate";
             this.datePulloutLockDate.ReadOnly = true;
             this.datePulloutLockDate.Size = new System.Drawing.Size(110, 23);
-            this.datePulloutLockDate.TabIndex = 13;
+            this.datePulloutLockDate.TabIndex = 19;
             // 
             // labelSMTPIP
             // 
@@ -456,7 +470,7 @@
             this.txtSMTPIP.Location = new System.Drawing.Point(95, 366);
             this.txtSMTPIP.Name = "txtSMTPIP";
             this.txtSMTPIP.Size = new System.Drawing.Size(471, 23);
-            this.txtSMTPIP.TabIndex = 14;
+            this.txtSMTPIP.TabIndex = 24;
             // 
             // labelSendFrom
             // 
@@ -475,7 +489,7 @@
             this.txtSendFrom.Location = new System.Drawing.Point(95, 395);
             this.txtSendFrom.Name = "txtSendFrom";
             this.txtSendFrom.Size = new System.Drawing.Size(246, 23);
-            this.txtSendFrom.TabIndex = 15;
+            this.txtSendFrom.TabIndex = 25;
             // 
             // labelEmailID
             // 
@@ -494,7 +508,7 @@
             this.txtEmailID.Location = new System.Drawing.Point(95, 423);
             this.txtEmailID.Name = "txtEmailID";
             this.txtEmailID.Size = new System.Drawing.Size(246, 23);
-            this.txtEmailID.TabIndex = 16;
+            this.txtEmailID.TabIndex = 26;
             // 
             // labelEmailPassword
             // 
@@ -513,7 +527,7 @@
             this.txtEmailPassword.Location = new System.Drawing.Point(438, 423);
             this.txtEmailPassword.Name = "txtEmailPassword";
             this.txtEmailPassword.Size = new System.Drawing.Size(100, 23);
-            this.txtEmailPassword.TabIndex = 17;
+            this.txtEmailPassword.TabIndex = 27;
             // 
             // labelFTPIP
             // 
@@ -532,7 +546,7 @@
             this.txtFTPIP.Location = new System.Drawing.Point(95, 452);
             this.txtFTPIP.Name = "txtFTPIP";
             this.txtFTPIP.Size = new System.Drawing.Size(274, 23);
-            this.txtFTPIP.TabIndex = 18;
+            this.txtFTPIP.TabIndex = 28;
             // 
             // labelFTPID
             // 
@@ -551,7 +565,7 @@
             this.txtFTPID.Location = new System.Drawing.Point(95, 481);
             this.txtFTPID.Name = "txtFTPID";
             this.txtFTPID.Size = new System.Drawing.Size(100, 23);
-            this.txtFTPID.TabIndex = 19;
+            this.txtFTPID.TabIndex = 29;
             // 
             // labelFTPPassword
             // 
@@ -570,13 +584,13 @@
             this.txtFTPPassword.Location = new System.Drawing.Point(438, 481);
             this.txtFTPPassword.Name = "txtFTPPassword";
             this.txtFTPPassword.Size = new System.Drawing.Size(100, 23);
-            this.txtFTPPassword.TabIndex = 20;
+            this.txtFTPPassword.TabIndex = 30;
             // 
             // labelSketchFilesPath
             // 
-            this.labelSketchFilesPath.Location = new System.Drawing.Point(15, 523);
+            this.labelSketchFilesPath.Location = new System.Drawing.Point(13, 523);
             this.labelSketchFilesPath.Name = "labelSketchFilesPath";
-            this.labelSketchFilesPath.Size = new System.Drawing.Size(112, 23);
+            this.labelSketchFilesPath.Size = new System.Drawing.Size(138, 23);
             this.labelSketchFilesPath.TabIndex = 42;
             this.labelSketchFilesPath.Text = "Sketch Files Path ";
             // 
@@ -586,10 +600,10 @@
             this.txtSketchFilesPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtSketchFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "StyleSketch", true));
             this.txtSketchFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSketchFilesPath.Location = new System.Drawing.Point(131, 523);
+            this.txtSketchFilesPath.Location = new System.Drawing.Point(155, 523);
             this.txtSketchFilesPath.Name = "txtSketchFilesPath";
             this.txtSketchFilesPath.Size = new System.Drawing.Size(506, 23);
-            this.txtSketchFilesPath.TabIndex = 22;
+            this.txtSketchFilesPath.TabIndex = 32;
             // 
             // txtCilpFilesPath
             // 
@@ -597,10 +611,10 @@
             this.txtCilpFilesPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtCilpFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ClipPath", true));
             this.txtCilpFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCilpFilesPath.Location = new System.Drawing.Point(131, 577);
+            this.txtCilpFilesPath.Location = new System.Drawing.Point(155, 577);
             this.txtCilpFilesPath.Name = "txtCilpFilesPath";
             this.txtCilpFilesPath.Size = new System.Drawing.Size(506, 23);
-            this.txtCilpFilesPath.TabIndex = 24;
+            this.txtCilpFilesPath.TabIndex = 34;
             // 
             // btnMailTo
             // 
@@ -608,7 +622,7 @@
             this.btnMailTo.Location = new System.Drawing.Point(556, 478);
             this.btnMailTo.Name = "btnMailTo";
             this.btnMailTo.Size = new System.Drawing.Size(80, 30);
-            this.btnMailTo.TabIndex = 21;
+            this.btnMailTo.TabIndex = 31;
             this.btnMailTo.Text = "Mail to";
             this.btnMailTo.UseVisualStyleBackColor = true;
             this.btnMailTo.Click += new System.EventHandler(this.BtnMailTo_Click);
@@ -616,10 +630,10 @@
             // btnSketchFilesPath
             // 
             this.btnSketchFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnSketchFilesPath.Location = new System.Drawing.Point(641, 523);
+            this.btnSketchFilesPath.Location = new System.Drawing.Point(666, 523);
             this.btnSketchFilesPath.Name = "btnSketchFilesPath";
             this.btnSketchFilesPath.Size = new System.Drawing.Size(30, 25);
-            this.btnSketchFilesPath.TabIndex = 23;
+            this.btnSketchFilesPath.TabIndex = 42;
             this.btnSketchFilesPath.Text = "...";
             this.btnSketchFilesPath.UseVisualStyleBackColor = true;
             this.btnSketchFilesPath.Click += new System.EventHandler(this.BtnSketchFilesPath_Click);
@@ -627,10 +641,10 @@
             // btnCilpFilesPath
             // 
             this.btnCilpFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnCilpFilesPath.Location = new System.Drawing.Point(641, 577);
+            this.btnCilpFilesPath.Location = new System.Drawing.Point(666, 577);
             this.btnCilpFilesPath.Name = "btnCilpFilesPath";
             this.btnCilpFilesPath.Size = new System.Drawing.Size(30, 25);
-            this.btnCilpFilesPath.TabIndex = 25;
+            this.btnCilpFilesPath.TabIndex = 44;
             this.btnCilpFilesPath.Text = "...";
             this.btnCilpFilesPath.UseVisualStyleBackColor = true;
             this.btnCilpFilesPath.Click += new System.EventHandler(this.BtnCilpFilesPath_Click);
@@ -644,7 +658,7 @@
             this.lineShape9.X1 = 726;
             this.lineShape9.X2 = 728;
             this.lineShape9.Y1 = 8;
-            this.lineShape9.Y2 = 691;
+            this.lineShape9.Y2 = 795;
             // 
             // lineShape8
             // 
@@ -655,7 +669,7 @@
             this.lineShape8.X1 = 8;
             this.lineShape8.X2 = 8;
             this.lineShape8.Y1 = 8;
-            this.lineShape8.Y2 = 691;
+            this.lineShape8.Y2 = 795;
             // 
             // lineShape7
             // 
@@ -723,6 +737,18 @@
             // panel1
             // 
             this.panel1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.panel1.Controls.Add(this.btnFinalPatternPath);
+            this.panel1.Controls.Add(this.txtFinalPatternPath);
+            this.panel1.Controls.Add(this.labFinalPatternPath);
+            this.panel1.Controls.Add(this.btnCriticalOperationPath);
+            this.panel1.Controls.Add(this.txtCriticalOperationPath);
+            this.panel1.Controls.Add(this.labCriticalOperationPath);
+            this.panel1.Controls.Add(this.btnHandoverSpecialToolsPath);
+            this.panel1.Controls.Add(this.btnHandoverATPath);
+            this.panel1.Controls.Add(this.txtHandoverSpecialToolsPath);
+            this.panel1.Controls.Add(this.labHandoverSpecialToolsPath);
+            this.panel1.Controls.Add(this.txtHandoverATPath);
+            this.panel1.Controls.Add(this.labHandoverATPath);
             this.panel1.Controls.Add(this.comboPDA_FabricQRCode_LabelSize);
             this.panel1.Controls.Add(this.label12);
             this.panel1.Controls.Add(this.label11);
@@ -802,9 +828,9 @@
             this.panel1.Controls.Add(this.labelDailyOutputLockDate);
             this.panel1.Controls.Add(this.dateDailyOutputLockDate);
             this.panel1.Controls.Add(this.shapeContainer2);
-            this.panel1.Location = new System.Drawing.Point(10, 54);
+            this.panel1.Location = new System.Drawing.Point(10, 36);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(737, 697);
+            this.panel1.Size = new System.Drawing.Size(737, 812);
             this.panel1.TabIndex = 50;
             // 
             // comboPDA_FabricQRCode_LabelSize
@@ -818,7 +844,7 @@
             this.comboPDA_FabricQRCode_LabelSize.Name = "comboPDA_FabricQRCode_LabelSize";
             this.comboPDA_FabricQRCode_LabelSize.OldText = "";
             this.comboPDA_FabricQRCode_LabelSize.Size = new System.Drawing.Size(121, 24);
-            this.comboPDA_FabricQRCode_LabelSize.TabIndex = 72;
+            this.comboPDA_FabricQRCode_LabelSize.TabIndex = 23;
             // 
             // label12
             // 
@@ -857,7 +883,7 @@
             this.comboPMS_FabricQRCode_LabelSize.Name = "comboPMS_FabricQRCode_LabelSize";
             this.comboPMS_FabricQRCode_LabelSize.OldText = "";
             this.comboPMS_FabricQRCode_LabelSize.Size = new System.Drawing.Size(121, 24);
-            this.comboPMS_FabricQRCode_LabelSize.TabIndex = 69;
+            this.comboPMS_FabricQRCode_LabelSize.TabIndex = 22;
             // 
             // label10
             // 
@@ -875,7 +901,7 @@
             this.checknsncap.Location = new System.Drawing.Point(496, 232);
             this.checknsncap.Name = "checknsncap";
             this.checknsncap.Size = new System.Drawing.Size(226, 21);
-            this.checknsncap.TabIndex = 67;
+            this.checknsncap.TabIndex = 17;
             this.checknsncap.Text = "None \"Shell\" no create All Parts";
             this.checknsncap.UseVisualStyleBackColor = true;
             // 
@@ -887,7 +913,7 @@
             this.checkbcs.Location = new System.Drawing.Point(246, 231);
             this.checkbcs.Name = "checkbcs";
             this.checkbcs.Size = new System.Drawing.Size(209, 21);
-            this.checkbcs.TabIndex = 66;
+            this.checkbcs.TabIndex = 16;
             this.checkbcs.Text = "Bundle Combine Subprocess";
             this.checkbcs.UseVisualStyleBackColor = true;
             // 
@@ -901,7 +927,7 @@
             this.checkBox1.Location = new System.Drawing.Point(183, 238);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(15, 14);
-            this.checkBox1.TabIndex = 65;
+            this.checkBox1.TabIndex = 15;
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // label9
@@ -941,7 +967,7 @@
             0});
             this.numericUpDownMiscPOApproveDay.Name = "numericUpDownMiscPOApproveDay";
             this.numericUpDownMiscPOApproveDay.Size = new System.Drawing.Size(49, 23);
-            this.numericUpDownMiscPOApproveDay.TabIndex = 60;
+            this.numericUpDownMiscPOApproveDay.TabIndex = 10;
             this.numericUpDownMiscPOApproveDay.Value = new decimal(new int[] {
             0,
             0,
@@ -954,7 +980,7 @@
             this.label7.Location = new System.Drawing.Point(540, 153);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(75, 23);
-            this.label7.TabIndex = 61;
+            this.label7.TabIndex = 11;
             this.label7.Text = "day(s) ago";
             this.label7.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label7.TextStyle.Color = System.Drawing.Color.Black;
@@ -964,10 +990,10 @@
             // btnReplacementReport
             // 
             this.btnReplacementReport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnReplacementReport.Location = new System.Drawing.Point(643, 663);
+            this.btnReplacementReport.Location = new System.Drawing.Point(666, 663);
             this.btnReplacementReport.Name = "btnReplacementReport";
             this.btnReplacementReport.Size = new System.Drawing.Size(30, 25);
-            this.btnReplacementReport.TabIndex = 58;
+            this.btnReplacementReport.TabIndex = 47;
             this.btnReplacementReport.Text = "...";
             this.btnReplacementReport.UseVisualStyleBackColor = true;
             this.btnReplacementReport.Click += new System.EventHandler(this.BtnReplacementReport_Click);
@@ -978,16 +1004,16 @@
             this.txtReplacementReport.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtReplacementReport.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ReplacementReport", true));
             this.txtReplacementReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtReplacementReport.Location = new System.Drawing.Point(178, 664);
+            this.txtReplacementReport.Location = new System.Drawing.Point(201, 664);
             this.txtReplacementReport.Name = "txtReplacementReport";
             this.txtReplacementReport.Size = new System.Drawing.Size(460, 23);
-            this.txtReplacementReport.TabIndex = 56;
+            this.txtReplacementReport.TabIndex = 37;
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(16, 664);
+            this.label4.Location = new System.Drawing.Point(13, 664);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(159, 23);
+            this.label4.Size = new System.Drawing.Size(185, 23);
             this.label4.TabIndex = 57;
             this.label4.Text = "Replacement Report ";
             // 
@@ -999,17 +1025,17 @@
             this.chkMtlAutoLock.Location = new System.Drawing.Point(340, 306);
             this.chkMtlAutoLock.Name = "chkMtlAutoLock";
             this.chkMtlAutoLock.Size = new System.Drawing.Size(219, 21);
-            this.chkMtlAutoLock.TabIndex = 50;
+            this.chkMtlAutoLock.TabIndex = 21;
             this.chkMtlAutoLock.Text = "Auto lock all received material.";
             this.chkMtlAutoLock.UseVisualStyleBackColor = true;
             // 
             // btnMarkerOutputPath
             // 
             this.btnMarkerOutputPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnMarkerOutputPath.Location = new System.Drawing.Point(642, 634);
+            this.btnMarkerOutputPath.Location = new System.Drawing.Point(666, 634);
             this.btnMarkerOutputPath.Name = "btnMarkerOutputPath";
             this.btnMarkerOutputPath.Size = new System.Drawing.Size(30, 25);
-            this.btnMarkerOutputPath.TabIndex = 55;
+            this.btnMarkerOutputPath.TabIndex = 46;
             this.btnMarkerOutputPath.Text = "...";
             this.btnMarkerOutputPath.UseVisualStyleBackColor = true;
             this.btnMarkerOutputPath.Click += new System.EventHandler(this.BtnMarkerOutputPath_Click);
@@ -1017,10 +1043,10 @@
             // btnMarkerInputPath
             // 
             this.btnMarkerInputPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnMarkerInputPath.Location = new System.Drawing.Point(642, 606);
+            this.btnMarkerInputPath.Location = new System.Drawing.Point(666, 606);
             this.btnMarkerInputPath.Name = "btnMarkerInputPath";
             this.btnMarkerInputPath.Size = new System.Drawing.Size(30, 25);
-            this.btnMarkerInputPath.TabIndex = 54;
+            this.btnMarkerInputPath.TabIndex = 45;
             this.btnMarkerInputPath.Text = "...";
             this.btnMarkerInputPath.UseVisualStyleBackColor = true;
             this.btnMarkerInputPath.Click += new System.EventHandler(this.BtnMarkerInputPath_Click);
@@ -1031,16 +1057,16 @@
             this.txtMarkerOutputPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtMarkerOutputPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkerOutputPath", true));
             this.txtMarkerOutputPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerOutputPath.Location = new System.Drawing.Point(177, 635);
+            this.txtMarkerOutputPath.Location = new System.Drawing.Point(201, 635);
             this.txtMarkerOutputPath.Name = "txtMarkerOutputPath";
             this.txtMarkerOutputPath.Size = new System.Drawing.Size(460, 23);
-            this.txtMarkerOutputPath.TabIndex = 52;
+            this.txtMarkerOutputPath.TabIndex = 36;
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(15, 635);
+            this.label3.Location = new System.Drawing.Point(13, 635);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(159, 23);
+            this.label3.Size = new System.Drawing.Size(185, 23);
             this.label3.TabIndex = 53;
             this.label3.Text = "Marker Files Output Path";
             // 
@@ -1050,26 +1076,26 @@
             this.txtMarkerInputPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtMarkerInputPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkerInputPath", true));
             this.txtMarkerInputPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerInputPath.Location = new System.Drawing.Point(177, 606);
+            this.txtMarkerInputPath.Location = new System.Drawing.Point(201, 606);
             this.txtMarkerInputPath.Name = "txtMarkerInputPath";
             this.txtMarkerInputPath.Size = new System.Drawing.Size(460, 23);
-            this.txtMarkerInputPath.TabIndex = 50;
+            this.txtMarkerInputPath.TabIndex = 35;
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(15, 606);
+            this.label1.Location = new System.Drawing.Point(13, 606);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(159, 23);
+            this.label1.Size = new System.Drawing.Size(185, 23);
             this.label1.TabIndex = 51;
             this.label1.Text = "Marker Files Input Path";
             // 
             // btnPicFilesPath
             // 
             this.btnPicFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnPicFilesPath.Location = new System.Drawing.Point(641, 550);
+            this.btnPicFilesPath.Location = new System.Drawing.Point(666, 550);
             this.btnPicFilesPath.Name = "btnPicFilesPath";
             this.btnPicFilesPath.Size = new System.Drawing.Size(30, 25);
-            this.btnPicFilesPath.TabIndex = 48;
+            this.btnPicFilesPath.TabIndex = 43;
             this.btnPicFilesPath.Text = "...";
             this.btnPicFilesPath.UseVisualStyleBackColor = true;
             this.btnPicFilesPath.Click += new System.EventHandler(this.BtnPicFilesPath_Click);
@@ -1080,16 +1106,16 @@
             this.txtPicFilesPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtPicFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "PicPath", true));
             this.txtPicFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPicFilesPath.Location = new System.Drawing.Point(131, 550);
+            this.txtPicFilesPath.Location = new System.Drawing.Point(155, 550);
             this.txtPicFilesPath.Name = "txtPicFilesPath";
             this.txtPicFilesPath.Size = new System.Drawing.Size(506, 23);
-            this.txtPicFilesPath.TabIndex = 47;
+            this.txtPicFilesPath.TabIndex = 33;
             // 
             // labPicFilesPath
             // 
-            this.labPicFilesPath.Location = new System.Drawing.Point(15, 550);
+            this.labPicFilesPath.Location = new System.Drawing.Point(13, 550);
             this.labPicFilesPath.Name = "labPicFilesPath";
-            this.labPicFilesPath.Size = new System.Drawing.Size(112, 23);
+            this.labPicFilesPath.Size = new System.Drawing.Size(138, 23);
             this.labPicFilesPath.TabIndex = 49;
             this.labPicFilesPath.Text = "Pic Files Path";
             // 
@@ -1125,7 +1151,7 @@
             0});
             this.numQCMachineDelayTime.Name = "numQCMachineDelayTime";
             this.numQCMachineDelayTime.Size = new System.Drawing.Size(49, 23);
-            this.numQCMachineDelayTime.TabIndex = 45;
+            this.numQCMachineDelayTime.TabIndex = 20;
             this.numQCMachineDelayTime.Value = new decimal(new int[] {
             0,
             0,
@@ -1142,9 +1168,9 @@
             // 
             // labelClipFilesPath
             // 
-            this.labelClipFilesPath.Location = new System.Drawing.Point(15, 577);
+            this.labelClipFilesPath.Location = new System.Drawing.Point(13, 577);
             this.labelClipFilesPath.Name = "labelClipFilesPath";
-            this.labelClipFilesPath.Size = new System.Drawing.Size(112, 23);
+            this.labelClipFilesPath.Size = new System.Drawing.Size(138, 23);
             this.labelClipFilesPath.TabIndex = 43;
             this.labelClipFilesPath.Text = "Clip Files Path";
             // 
@@ -1165,7 +1191,7 @@
             this.txtuserMiscPOApproveName.Location = new System.Drawing.Point(374, 124);
             this.txtuserMiscPOApproveName.Name = "txtuserMiscPOApproveName";
             this.txtuserMiscPOApproveName.Size = new System.Drawing.Size(300, 23);
-            this.txtuserMiscPOApproveName.TabIndex = 59;
+            this.txtuserMiscPOApproveName.TabIndex = 9;
             this.txtuserMiscPOApproveName.TextBox1Binding = "";
             // 
             // shapeContainer2
@@ -1173,19 +1199,8 @@
             this.shapeContainer2.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer2.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer2.Name = "shapeContainer2";
-            this.shapeContainer2.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape10,
-            this.lineShape8,
-            this.lineShape9,
-            this.lineShape7,
-            this.lineShape6,
-            this.lineShape5,
-            this.lineShape4,
-            this.lineShape3,
-            this.lineShape2,
-            this.lineShape1});
-            this.shapeContainer2.Size = new System.Drawing.Size(737, 697);
-            this.shapeContainer2.TabIndex = 0;
+            this.shapeContainer2.Size = new System.Drawing.Size(737, 812);
+            this.shapeContainer2.TabIndex = 51;
             this.shapeContainer2.TabStop = false;
             // 
             // lineShape10
@@ -1197,9 +1212,158 @@
             this.lineShape10.Y1 = 362;
             this.lineShape10.Y2 = 362;
             // 
+            // btnCriticalOperationPath
+            // 
+            this.btnCriticalOperationPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnCriticalOperationPath.Location = new System.Drawing.Point(666, 749);
+            this.btnCriticalOperationPath.Name = "btnCriticalOperationPath";
+            this.btnCriticalOperationPath.Size = new System.Drawing.Size(30, 25);
+            this.btnCriticalOperationPath.TabIndex = 50;
+            this.btnCriticalOperationPath.Text = "...";
+            this.btnCriticalOperationPath.UseVisualStyleBackColor = true;
+            this.btnCriticalOperationPath.Click += new System.EventHandler(this.btnCriticalOperationPath_Click);
+            // 
+            // txtCriticalOperationPath
+            // 
+            this.txtCriticalOperationPath.BackColor = System.Drawing.Color.White;
+            this.txtCriticalOperationPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtCriticalOperationPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CriticalOperationPath", true));
+            this.txtCriticalOperationPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCriticalOperationPath.Location = new System.Drawing.Point(201, 750);
+            this.txtCriticalOperationPath.Name = "txtCriticalOperationPath";
+            this.txtCriticalOperationPath.Size = new System.Drawing.Size(460, 23);
+            this.txtCriticalOperationPath.TabIndex = 40;
+            // 
+            // labCriticalOperationPath
+            // 
+            this.labCriticalOperationPath.Location = new System.Drawing.Point(13, 750);
+            this.labCriticalOperationPath.Name = "labCriticalOperationPath";
+            this.labCriticalOperationPath.Size = new System.Drawing.Size(185, 23);
+            this.labCriticalOperationPath.TabIndex = 80;
+            this.labCriticalOperationPath.Text = "Critical Operation Path";
+            // 
+            // btnHandoverSpecialToolsPath
+            // 
+            this.btnHandoverSpecialToolsPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnHandoverSpecialToolsPath.Location = new System.Drawing.Point(666, 720);
+            this.btnHandoverSpecialToolsPath.Name = "btnHandoverSpecialToolsPath";
+            this.btnHandoverSpecialToolsPath.Size = new System.Drawing.Size(30, 25);
+            this.btnHandoverSpecialToolsPath.TabIndex = 49;
+            this.btnHandoverSpecialToolsPath.Text = "...";
+            this.btnHandoverSpecialToolsPath.UseVisualStyleBackColor = true;
+            this.btnHandoverSpecialToolsPath.Click += new System.EventHandler(this.btnHandoverSpecialToolsPath_Click);
+            // 
+            // btnHandoverATPath
+            // 
+            this.btnHandoverATPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnHandoverATPath.Location = new System.Drawing.Point(666, 692);
+            this.btnHandoverATPath.Name = "btnHandoverATPath";
+            this.btnHandoverATPath.Size = new System.Drawing.Size(30, 25);
+            this.btnHandoverATPath.TabIndex = 48;
+            this.btnHandoverATPath.Text = "...";
+            this.btnHandoverATPath.UseVisualStyleBackColor = true;
+            this.btnHandoverATPath.Click += new System.EventHandler(this.btnHandoverATPath_Click);
+            // 
+            // txtHandoverSpecialToolsPath
+            // 
+            this.txtHandoverSpecialToolsPath.BackColor = System.Drawing.Color.White;
+            this.txtHandoverSpecialToolsPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtHandoverSpecialToolsPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "HandoverSpecialToolsPath", true));
+            this.txtHandoverSpecialToolsPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtHandoverSpecialToolsPath.Location = new System.Drawing.Point(201, 721);
+            this.txtHandoverSpecialToolsPath.Name = "txtHandoverSpecialToolsPath";
+            this.txtHandoverSpecialToolsPath.Size = new System.Drawing.Size(460, 23);
+            this.txtHandoverSpecialToolsPath.TabIndex = 39;
+            // 
+            // labHandoverSpecialToolsPath
+            // 
+            this.labHandoverSpecialToolsPath.Location = new System.Drawing.Point(13, 721);
+            this.labHandoverSpecialToolsPath.Name = "labHandoverSpecialToolsPath";
+            this.labHandoverSpecialToolsPath.Size = new System.Drawing.Size(185, 23);
+            this.labHandoverSpecialToolsPath.TabIndex = 76;
+            this.labHandoverSpecialToolsPath.Text = "Handover Special Tools Path";
+            // 
+            // txtHandoverATPath
+            // 
+            this.txtHandoverATPath.BackColor = System.Drawing.Color.White;
+            this.txtHandoverATPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtHandoverATPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "HandoverATPath", true));
+            this.txtHandoverATPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtHandoverATPath.Location = new System.Drawing.Point(201, 692);
+            this.txtHandoverATPath.Name = "txtHandoverATPath";
+            this.txtHandoverATPath.Size = new System.Drawing.Size(460, 23);
+            this.txtHandoverATPath.TabIndex = 38;
+            // 
+            // labHandoverATPath
+            // 
+            this.labHandoverATPath.Location = new System.Drawing.Point(13, 692);
+            this.labHandoverATPath.Name = "labHandoverATPath";
+            this.labHandoverATPath.Size = new System.Drawing.Size(185, 23);
+            this.labHandoverATPath.TabIndex = 74;
+            this.labHandoverATPath.Text = "Handover AT Path";
+            // 
+            // shapeContainer1
+            // 
+            this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer1.Name = "shapeContainer2";
+            this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
+            this.lineShape10,
+            this.lineShape8,
+            this.lineShape9,
+            this.lineShape7,
+            this.lineShape6,
+            this.lineShape5,
+            this.lineShape4,
+            this.lineShape3,
+            this.lineShape2,
+            this.lineShape1});
+            this.shapeContainer1.Size = new System.Drawing.Size(737, 801);
+            this.shapeContainer1.TabIndex = 0;
+            this.shapeContainer1.TabStop = false;
+            // 
+            // txtFinalPatternPath
+            // 
+            this.txtFinalPatternPath.BackColor = System.Drawing.Color.White;
+            this.txtFinalPatternPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtFinalPatternPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FinalPatternPath", true));
+            this.txtFinalPatternPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFinalPatternPath.Location = new System.Drawing.Point(201, 778);
+            this.txtFinalPatternPath.Name = "txtFinalPatternPath";
+            this.txtFinalPatternPath.Size = new System.Drawing.Size(460, 23);
+            this.txtFinalPatternPath.TabIndex = 41;
+            // 
+            // labFinalPatternPath
+            // 
+            this.labFinalPatternPath.Location = new System.Drawing.Point(13, 778);
+            this.labFinalPatternPath.Name = "labFinalPatternPath";
+            this.labFinalPatternPath.Size = new System.Drawing.Size(185, 23);
+            this.labFinalPatternPath.TabIndex = 83;
+            this.labFinalPatternPath.Text = "Final Pattern Path";
+            // 
+            // shapeContainer3
+            // 
+            this.shapeContainer3.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer3.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer3.Name = "shapeContainer2";
+            this.shapeContainer3.Size = new System.Drawing.Size(737, 812);
+            this.shapeContainer3.TabIndex = 0;
+            this.shapeContainer3.TabStop = false;
+            // 
+            // btnFinalPatternPath
+            // 
+            this.btnFinalPatternPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnFinalPatternPath.Location = new System.Drawing.Point(666, 776);
+            this.btnFinalPatternPath.Name = "btnFinalPatternPath";
+            this.btnFinalPatternPath.Size = new System.Drawing.Size(30, 25);
+            this.btnFinalPatternPath.TabIndex = 52;
+            this.btnFinalPatternPath.Text = "...";
+            this.btnFinalPatternPath.UseVisualStyleBackColor = true;
+            this.btnFinalPatternPath.Click += new System.EventHandler(this.btnFinalPatternPath_Click);
+            // 
             // B02
             // 
-            this.ClientSize = new System.Drawing.Size(759, 763);
+            this.ClientSize = new System.Drawing.Size(759, 849);
             this.Controls.Add(this.panel1);
             this.DefaultControl = "numSample";
             this.DefaultControlForEdit = "numSample";
@@ -1312,5 +1476,19 @@
         private Win.UI.Label label11;
         private Win.UI.ComboBox comboPMS_FabricQRCode_LabelSize;
         private Win.UI.Label label10;
+        private Win.UI.Button btnFinalPatternPath;
+        private Win.UI.TextBox txtFinalPatternPath;
+        private Win.UI.Label labFinalPatternPath;
+        private Win.UI.Button btnCriticalOperationPath;
+        private Win.UI.TextBox txtCriticalOperationPath;
+        private Win.UI.Label labCriticalOperationPath;
+        private Win.UI.Button btnHandoverSpecialToolsPath;
+        private Win.UI.Button btnHandoverATPath;
+        private Win.UI.TextBox txtHandoverSpecialToolsPath;
+        private Win.UI.Label labHandoverSpecialToolsPath;
+        private Win.UI.TextBox txtHandoverATPath;
+        private Win.UI.Label labHandoverATPath;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer3;
     }
 }

@@ -35,7 +35,7 @@ namespace Sci.Production.PPIC
 
         private void btnDownload_Click(object sender, EventArgs e)
         {
-            if (this.listControlBindingSource1.DataSource == null || this.gridCritical_Operations == null)
+            if (this.listControlBindingSource1.DataSource == null || this.gridCritical_Operations == null || this.gridCritical_Operations.Rows.Count <= 0)
             {
                 return;
             }
@@ -106,6 +106,7 @@ namespace Sci.Production.PPIC
             this.Helper.Controls.Grid.Generator(this.gridCritical_Operations)
           .Text("FileName", header: "File Name", width: Widths.AnsiChars(50), iseditingreadonly: true)
           ;
+            this.gridCritical_Operations.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             this.gridCritical_Operations.DefaultCellStyle.Font = new Font(this.gridCritical_Operations.DefaultCellStyle.Font.Name, 14);
             this.Query();
         }
@@ -131,24 +132,24 @@ select CriticalOperationPath from System
 
             if (!MyUtility.Check.Empty(this.strPath))
             {
-                if (Directory.Exists(this.strPath) == false)
+                if (Directory.Exists(this.strPath) == true)
                 {
-                    try
-                    {
-                        Directory.CreateDirectory(this.strPath);
-                    }
-                    catch (IOException exception)
-                    {
-                        MyUtility.Msg.ErrorBox("Error: Create file fail. Original error: " + exception.Message);
-                    }
-                }
+                    //try
+                    //{
+                    //    Directory.CreateDirectory(this.strPath);
+                    //}
+                    //catch (IOException exception)
+                    //{
+                    //    MyUtility.Msg.ErrorBox("Error: Create file fail. Original error: " + exception.Message);
+                    //}
 
-                dirs = Directory.GetFileSystemEntries(this.strPath);
-                foreach (string item in dirs)
-                {
-                    DataRow dr = dtGrid.NewRow();
-                    dr["FileName"] = Path.GetFileName(item.ToString());
-                    dtGrid.Rows.Add(dr);
+                    dirs = Directory.GetFileSystemEntries(this.strPath);
+                    foreach (string item in dirs)
+                    {
+                        DataRow dr = dtGrid.NewRow();
+                        dr["FileName"] = Path.GetFileName(item.ToString());
+                        dtGrid.Rows.Add(dr);
+                    }
                 }
             }
 

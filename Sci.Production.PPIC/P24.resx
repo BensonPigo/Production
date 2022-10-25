@@ -747,26 +747,17 @@
   <data name="&gt;&gt;txtStyle.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
-  <data name="btn_Search.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
   <data name="btn_Search.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 14.25pt, style=Bold</value>
-  </data>
-  <data name="btn_Search.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
+    <value>Microsoft Sans Serif, 12pt</value>
   </data>
   <data name="btn_Search.Location" type="System.Drawing.Point, System.Drawing">
-    <value>698, 13</value>
-  </data>
-  <data name="btn_Search.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 0, 0</value>
+    <value>699, 14</value>
   </data>
   <data name="btn_Search.Size" type="System.Drawing.Size, System.Drawing">
-    <value>132, 32</value>
+    <value>114, 30</value>
   </data>
   <data name="btn_Search.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+    <value>34</value>
   </data>
   <data name="btn_Search.Text" xml:space="preserve">
     <value>Search</value>

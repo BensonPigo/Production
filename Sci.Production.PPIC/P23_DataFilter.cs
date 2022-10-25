@@ -42,6 +42,7 @@ namespace Sci.Production.PPIC
             }
 
             Season = this.comboSeason.Text;
+            this.DialogResult = DialogResult.OK;
             this.Close();
         }
     }

@@ -54,21 +54,13 @@
             // 
             // btn_OK
             // 
-            this.btn_OK.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.btn_OK.BackColor = System.Drawing.Color.Gray;
-            this.btn_OK.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btn_OK.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btn_OK.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btn_OK.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_OK.ForeColor = System.Drawing.Color.White;
-            this.btn_OK.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.btn_OK.Location = new System.Drawing.Point(158, 107);
-            this.btn_OK.Margin = new System.Windows.Forms.Padding(0);
+            this.btn_OK.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_OK.Location = new System.Drawing.Point(158, 120);
             this.btn_OK.Name = "btn_OK";
-            this.btn_OK.Size = new System.Drawing.Size(114, 42);
-            this.btn_OK.TabIndex = 13;
+            this.btn_OK.Size = new System.Drawing.Size(114, 37);
+            this.btn_OK.TabIndex = 35;
             this.btn_OK.Text = "OK";
-            this.btn_OK.UseVisualStyleBackColor = false;
+            this.btn_OK.UseVisualStyleBackColor = true;
             this.btn_OK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // P23_DataFilter

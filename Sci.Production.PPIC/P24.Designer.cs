@@ -94,6 +94,7 @@
             this.left_btn_SpecialTools.ForeColor = System.Drawing.Color.White;
             this.left_btn_SpecialTools.Name = "left_btn_SpecialTools";
             this.left_btn_SpecialTools.UseVisualStyleBackColor = false;
+            this.left_btn_SpecialTools.Click += new System.EventHandler(this.left_btn_SpecialTools_Click);
             // 
             // left_btn_LineLayoutMachine
             // 
@@ -117,6 +118,7 @@
             this.left_btn_SkillMatrix.ForeColor = System.Drawing.Color.White;
             this.left_btn_SkillMatrix.Name = "left_btn_SkillMatrix";
             this.left_btn_SkillMatrix.UseVisualStyleBackColor = false;
+            this.left_btn_SkillMatrix.Click += new System.EventHandler(this.left_btn_SkillMatrix_Click);
             // 
             // left_btn_TemplateAutoTemplateList
             // 
@@ -128,6 +130,7 @@
             this.left_btn_TemplateAutoTemplateList.ForeColor = System.Drawing.Color.White;
             this.left_btn_TemplateAutoTemplateList.Name = "left_btn_TemplateAutoTemplateList";
             this.left_btn_TemplateAutoTemplateList.UseVisualStyleBackColor = false;
+            this.left_btn_TemplateAutoTemplateList.Click += new System.EventHandler(this.left_btn_TemplateAutoTemplateList_Click);
             // 
             // left_btn_CriticalOperations
             // 
@@ -139,6 +142,7 @@
             this.left_btn_CriticalOperations.ForeColor = System.Drawing.Color.White;
             this.left_btn_CriticalOperations.Name = "left_btn_CriticalOperations";
             this.left_btn_CriticalOperations.UseVisualStyleBackColor = false;
+            this.left_btn_CriticalOperations.Click += new System.EventHandler(this.left_btn_CriticalOperations_Click);
             // 
             // left_btn_OperationsBreakdown
             // 
@@ -150,6 +154,7 @@
             this.left_btn_OperationsBreakdown.ForeColor = System.Drawing.Color.White;
             this.left_btn_OperationsBreakdown.Name = "left_btn_OperationsBreakdown";
             this.left_btn_OperationsBreakdown.UseVisualStyleBackColor = false;
+            this.left_btn_OperationsBreakdown.Click += new System.EventHandler(this.left_btn_OperationsBreakdown_Click);
             // 
             // left_btn_FinalPatternAndMarkerList
             // 
@@ -161,6 +166,7 @@
             this.left_btn_FinalPatternAndMarkerList.ForeColor = System.Drawing.Color.White;
             this.left_btn_FinalPatternAndMarkerList.Name = "left_btn_FinalPatternAndMarkerList";
             this.left_btn_FinalPatternAndMarkerList.UseVisualStyleBackColor = false;
+            this.left_btn_FinalPatternAndMarkerList.Click += new System.EventHandler(this.left_btn_FinalPatternAndMarkerList_Click);
             // 
             // left_btn_AD
             // 
@@ -184,6 +190,7 @@
             this.left_btn_Sketch.ForeColor = System.Drawing.Color.White;
             this.left_btn_Sketch.Name = "left_btn_Sketch";
             this.left_btn_Sketch.UseVisualStyleBackColor = false;
+            this.left_btn_Sketch.Click += new System.EventHandler(this.left_btn_Sketch_Click);
             // 
             // labelTop
             // 
@@ -191,7 +198,6 @@
             resources.ApplyResources(this.labelTop, "labelTop");
             this.labelTop.ForeColor = System.Drawing.SystemColors.Control;
             this.labelTop.Name = "labelTop";
-            this.labelTop.Click += new System.EventHandler(this.LabelTop_Click);
             // 
             // txtSeason
             // 
@@ -234,13 +240,9 @@
             // 
             // btn_Search
             // 
-            this.btn_Search.BackColor = System.Drawing.Color.Gray;
-            this.btn_Search.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btn_Search.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             resources.ApplyResources(this.btn_Search, "btn_Search");
-            this.btn_Search.ForeColor = System.Drawing.Color.White;
             this.btn_Search.Name = "btn_Search";
-            this.btn_Search.UseVisualStyleBackColor = false;
+            this.btn_Search.UseVisualStyleBackColor = true;
             this.btn_Search.Click += new System.EventHandler(this.Btn_Search_Click);
             // 
             // P24

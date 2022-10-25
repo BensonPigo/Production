@@ -43,13 +43,22 @@ namespace Sci.Production.PPIC
                 this.btn_Remove.Enabled = false;
             }
 
-            if (type == "Template")
+            switch (type)
             {
-                this.table = "HandoverATUpload";
-            }
-            else
-            {
-                this.table = "HandoverSpecialToolsUpload";
+                case "Template":
+                    this.table = "HandoverATUpload";
+                    this.strPath = MyUtility.GetValue.Lookup(@"select HandoverATPath from System");
+                    break;
+                case "SpecialTools":
+                    this.table = "HandoverSpecialToolsUpload";
+                    this.strPath = MyUtility.GetValue.Lookup(@"select HandoverSpecialToolsPath from System");
+                    break;
+                case "FinalPattern":
+                    this.table = "FinalPatternUpload";
+                    this.strPath = MyUtility.GetValue.Lookup(@"select FinalPatternPath from System");
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -58,6 +67,12 @@ namespace Sci.Production.PPIC
         {
             if (this.listControlBindingSource1.DataSource == null || this.gridTemplateList == null)
             {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.strPath))
+            {
+                MyUtility.Msg.WarningBox("Path not found.");
                 return;
             }
 
@@ -127,26 +142,28 @@ namespace Sci.Production.PPIC
             base.OnFormLoaded();
 
             this.Helper.Controls.Grid.Generator(this.gridTemplateList)
-          .Text("SourceFile", header: "File Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
-          .Text("Description", header: "Description", width: Widths.AnsiChars(35), iseditingreadonly: true)
+          .Text("SourceFile", header: "File Name", width: Widths.AnsiChars(30), iseditingreadonly: true)
+          .Text("Description", header: "Description", width: Widths.AnsiChars(41), iseditingreadonly: true)
           .Text("CreatedBy", header: "Created by", width: Widths.AnsiChars(30), iseditingreadonly: true)
           ;
             this.styleUkey = MyUtility.GetValue.Lookup($@"select Ukey from Style where ID = '{this.style}' and SeasonID = '{this.season}' and BrandID = 'ADIDAS'");
 
-            this.strPath = string.Empty;
-            if (this.type == "Template")
+            switch (this.type)
             {
-                this.strPath = MyUtility.GetValue.Lookup(@"select HandoverATPath from System");
-            }
-            else
-            {
-                this.strPath = MyUtility.GetValue.Lookup(@"select HandoverSpecialToolsPath from System");
-            }
-
-            if (MyUtility.Check.Empty(this.strPath))
-            {
-                MyUtility.Msg.WarningBox("Path not found.");
-                return;
+                case "Template":
+                    this.table = "HandoverATUpload";
+                    this.strPath = MyUtility.GetValue.Lookup(@"select HandoverATPath from System");
+                    break;
+                case "SpecialTools":
+                    this.table = "HandoverSpecialToolsUpload";
+                    this.strPath = MyUtility.GetValue.Lookup(@"select HandoverSpecialToolsPath from System");
+                    break;
+                case "FinalPattern":
+                    this.table = "FinalPatternUpload";
+                    this.strPath = MyUtility.GetValue.Lookup(@"select FinalPatternPath from System");
+                    break;
+                default:
+                    break;
             }
 
             this.Query();
@@ -174,11 +191,17 @@ where h.StyleUkey = '{this.styleUkey}'
         /// <inheritdoc/>
         private void btn_New_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.strPath))
+            {
+                MyUtility.Msg.WarningBox("Path not found.");
+                return;
+            }
+
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Title = "Open file to upload";
             string fullFileName;
             string onlyFileName;
-            //dialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;";
+
             // 開窗且有選擇檔案
             if (dialog.ShowDialog() != DialogResult.OK)
             {

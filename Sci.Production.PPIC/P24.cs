@@ -51,7 +51,7 @@ namespace Sci.Production.PPIC
             this.txtSeason.Text = seasonID;
             this.comboBrand.Text = brandID;
             this.canNew = Prgs.GetAuthority(Env.User.UserID, "P24. Query Handover List", "CanNew");
-            this.Init_Layout();
+            this.Click_Search();
             this.FormBorderStyle = FormBorderStyle.Sizable;
         }
 
@@ -62,7 +62,7 @@ namespace Sci.Production.PPIC
             this.txtSeason.Text = seasonID;
             this.comboBrand.Text = brandID;
             this.canNew = Prgs.GetAuthority(Env.User.UserID, "P24. Query Handover List", "CanNew");
-            this.Init_Layout();
+            this.Click_Search();
             this.FormBorderStyle = FormBorderStyle.Sizable;
         }
 
@@ -72,11 +72,12 @@ namespace Sci.Production.PPIC
 
             this.SetBottomInfo();
             this.SetMenuClick(this.left_btn_Sketch, new P24_Sketch(this.txtStyle.Text, this.txtSeason.Text, this.comboBrand.Text));
-            this.SetMenuClick(this.left_btn_FinalPatternAndMarkerList, null); // 先放空白
+            this.SetMenuClick(this.left_btn_FinalPatternAndMarkerList, new P24_TemplateList(this.txtStyle.Text, this.txtSeason.Text, this.comboBrand.Text, this.canNew, "FinalPattern"));
             this.SetMenuClick(this.left_btn_OperationsBreakdown, new P24_Operations_Breakdown(this.txtStyle.Text, this.txtSeason.Text, this.comboBrand.Text));
             this.SetMenuClick(this.left_btn_CriticalOperations, new P24_Critical_Operations(this.txtStyle.Text));
             this.SetMenuClick(this.left_btn_TemplateAutoTemplateList, new P24_TemplateList(this.txtStyle.Text, this.txtSeason.Text, this.comboBrand.Text, this.canNew, "Template"));
-            this.SetMenuClick(this.left_btn_SkillMatrix, null); // 先放空白
+            this.SetMenuClick(this.left_btn_SkillMatrix, new P24_SkillMatrix()); // 先放空畫面
+            this.SetMenuClick(this.left_btn_LineLayoutMachine, new P24_LineLayoutMachine()); // 先放空畫面
             this.SetMenuClick(this.left_btn_SpecialTools, new P24_TemplateList(this.txtStyle.Text, this.txtSeason.Text, this.comboBrand.Text, this.canNew, "SpecialTools"));
         }
 
@@ -170,6 +171,12 @@ namespace Sci.Production.PPIC
                     this.frontForm = calledForm;
                 }
 
+                //if (calledForm.Name == "P24_LineLayoutMachine")
+                //{
+                //    IE.P03 callNextForm = new IE.P03(this.txtStyle.Text, this.comboBrand.Text, this.txtSeason.Text, isReadOnly: true);
+                //    callNextForm.ShowDialog(this);
+                //}
+
                 this.btnCurrentPage = setBtn;
             };
         }
@@ -186,35 +193,6 @@ namespace Sci.Production.PPIC
                     Width = 5,
                 };
                 e.Graphics.DrawLine(line, left, top, left, bottom);
-            }
-        }
-
-        private void Left_btn_AD_Click(object sender, EventArgs e)
-        {
-            if (!this.CheckParm())
-            {
-                return;
-            }
-
-            string path;
-
-            if (MyUtility.Check.Seek($@"select top 1 Path, IsDirectOpenFile from ADPath where BrandID='{this.comboBrand.Text}' and SeasonID='{this.txtSeason.Text}' and MDivisionID= '{Env.User.Keyword}'", out DataRow dr, "ManufacturingExecution"))
-            {
-                path = dr["path"].ToString();
-            }
-            else
-            {
-                MyUtility.Msg.WarningBox("No Data.");
-                return;
-            }
-
-            if (MyUtility.Check.Seek($"select top 1 Path, IsDirectOpenFile from ADPath where BrandID='{this.comboBrand.Text}' and SeasonID='{this.txtSeason.Text}' and MDivisionID= '{Env.User.Keyword}'", "ManufacturingExecution"))
-            {
-                this.OpenFile(path, this.txtStyle.Text, "AD");
-            }
-            else
-            {
-                this.OpenFile(path, "AD");
             }
         }
 
@@ -297,12 +275,12 @@ namespace Sci.Production.PPIC
             return listFile;
         }
 
-        private void LabelTop_Click(object sender, EventArgs e)
+        private void Btn_Search_Click(object sender, EventArgs e)
         {
-
+            this.Click_Search();
         }
 
-        private void Btn_Search_Click(object sender, EventArgs e)
+        private void Click_Search()
         {
             if (!this.CheckParm())
             {
@@ -370,12 +348,6 @@ namespace Sci.Production.PPIC
         private void Left_btn_Close_Click(object sender, EventArgs e)
         {
             this.Close();
-        }
-
-        private void Left_btn_LineLayoutMachine_Click(object sender, EventArgs e)
-        {
-            IE.P03 callNextForm = new IE.P03(this.txtStyle.Text, this.comboBrand.Text, this.txtSeason.Text, isReadOnly: true);
-            callNextForm.ShowDialog(this);
         }
 
         private void P24_FormClosed(object sender, FormClosedEventArgs e)
@@ -494,6 +466,111 @@ order by Month desc";
             }
 
             this.Init_Layout();
+        }
+
+        private void left_btn_Sketch_Click(object sender, EventArgs e)
+        {
+            this.Text = "P24. Query Handover List" + " - " + "Sketch";
+        }
+
+        private void Left_btn_AD_Click(object sender, EventArgs e)
+        {
+            this.Text = "P24. Query Handover List" + " - " + "AD";
+
+            if (!this.CheckParm())
+            {
+                return;
+            }
+
+            string path;
+
+            if (MyUtility.Check.Seek($@"select top 1 Path, IsDirectOpenFile from ADPath where BrandID='{this.comboBrand.Text}' and SeasonID='{this.txtSeason.Text}' and MDivisionID= '{Env.User.Keyword}'", out DataRow dr, "ManufacturingExecution"))
+            {
+                path = dr["path"].ToString();
+            }
+            else
+            {
+                MyUtility.Msg.WarningBox("No Data.");
+                return;
+            }
+
+            if (MyUtility.Check.Seek($"select top 1 Path, IsDirectOpenFile from ADPath where BrandID='{this.comboBrand.Text}' and SeasonID='{this.txtSeason.Text}' and MDivisionID= '{Env.User.Keyword}'", "ManufacturingExecution"))
+            {
+                this.OpenFile(path, this.txtStyle.Text, "AD");
+            }
+            else
+            {
+                this.OpenFile(path, "AD");
+            }
+        }
+
+        private void left_btn_FinalPatternAndMarkerList_Click(object sender, EventArgs e)
+        {
+            this.Text = "P24. Query Handover List" + " - " + "Final Pattern And Marker List";
+        }
+
+        private void left_btn_OperationsBreakdown_Click(object sender, EventArgs e)
+        {
+            this.Text = "P24. Query Handover List" + " - " + "Operations Breakdown";
+        }
+
+        private void left_btn_CriticalOperations_Click(object sender, EventArgs e)
+        {
+            this.Text = "P24. Query Handover List" + " - " + "Critical Operations";
+        }
+
+        private void left_btn_TemplateAutoTemplateList_Click(object sender, EventArgs e)
+        {
+            this.Text = "P24. Query Handover List" + " - " + "Template/Auto Template List";
+        }
+
+        private void left_btn_SkillMatrix_Click(object sender, EventArgs e)
+        {
+            this.Text = "P24. Query Handover List" + " - " + "Skill Matrix";
+        }
+
+        private void Left_btn_LineLayoutMachine_Click(object sender, EventArgs e)
+        {
+            Form calledForm = new P24_LineLayoutMachine();
+            if (this.splitContainerMain.Panel2.Controls.Contains(calledForm))
+            {
+                if (calledForm == this.frontForm)
+                {
+                    return;
+                }
+
+                calledForm.Visible = true;
+                if (this.frontForm != null)
+                {
+                    this.frontForm.Visible = false;
+                }
+
+                this.frontForm = calledForm;
+            }
+            else
+            {
+                calledForm.TopLevel = false;
+                this.splitContainerMain.Panel2.Controls.Add(calledForm);
+                calledForm.FormBorderStyle = FormBorderStyle.None;
+                calledForm.Dock = DockStyle.Fill;
+                calledForm.Show();
+                calledForm.Visible = true;
+
+                if (this.frontForm != null)
+                {
+                    this.frontForm.Visible = false;
+                }
+
+                this.frontForm = calledForm;
+            }
+            IE.P03 callNextForm = new IE.P03(this.txtStyle.Text, this.comboBrand.Text, this.txtSeason.Text, isReadOnly: true);
+            callNextForm.ShowDialog(this);
+            this.Text = "P24. Query Handover List" + " - " + "Line Layout Machine";
+        }
+
+        private void left_btn_SpecialTools_Click(object sender, EventArgs e)
+        {
+            this.Text = "P24. Query Handover List" + " - " + "Special Tools";
         }
     }
 }

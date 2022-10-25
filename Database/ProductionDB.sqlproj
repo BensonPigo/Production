@@ -2745,6 +2745,7 @@
     <Build Include="dbo\Functions\GetSewingOutputID_For_SNPAutoTransferToSewingOutput.sql" />
     <Build Include="dbo\Tables\HandoverSpecialToolsUpload.sql" />
     <Build Include="dbo\Tables\HandoverATUpload.sql" />
+    <Build Include="dbo\Tables\FinalPatternUpload.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

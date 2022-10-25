@@ -87,6 +87,9 @@ namespace Sci.Production.IE
             this.DefaultFilter = df.ToString();
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
+            this.comboSewingTeam1.SetDataSource();
+            this.splitContainer1.Panel1.Controls.Add(this.detailpanel);
+            this.detailpanel.Dock = DockStyle.Fill;
         }
 
         /// <summary>
@@ -2136,11 +2139,6 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
                     currencyManager.ResumeBinding();
                 }
             }
-        }
-
-        private void P03_Load(object sender, EventArgs e)
-        {
-
         }
     }
 

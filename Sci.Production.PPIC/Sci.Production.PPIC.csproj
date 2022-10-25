@@ -618,6 +618,12 @@
     <Compile Include="P24_Critical_Operations.Designer.cs">
       <DependentUpon>P24_Critical_Operations.cs</DependentUpon>
     </Compile>
+    <Compile Include="P24_LineLayoutMachine.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P24_LineLayoutMachine.Designer.cs">
+      <DependentUpon>P24_LineLayoutMachine.cs</DependentUpon>
+    </Compile>
     <Compile Include="P24_Operations_Breakdown.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -629,6 +635,12 @@
     </Compile>
     <Compile Include="P24_Sketch.Designer.cs">
       <DependentUpon>P24_Sketch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P24_SkillMatrix.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P24_SkillMatrix.Designer.cs">
+      <DependentUpon>P24_SkillMatrix.cs</DependentUpon>
     </Compile>
     <Compile Include="P24_TemplateList.cs">
       <SubType>Form</SubType>
@@ -1100,11 +1112,17 @@
     <EmbeddedResource Include="P24_Critical_Operations.resx">
       <DependentUpon>P24_Critical_Operations.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P24_LineLayoutMachine.resx">
+      <DependentUpon>P24_LineLayoutMachine.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P24_Operations_Breakdown.resx">
       <DependentUpon>P24_Operations_Breakdown.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P24_Sketch.resx">
       <DependentUpon>P24_Sketch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P24_SkillMatrix.resx">
+      <DependentUpon>P24_SkillMatrix.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P24_TemplateList.resx">
       <DependentUpon>P24_TemplateList.cs</DependentUpon>
