@@ -61,14 +61,19 @@ FROM (
                 else '1' 
               end AS SEQ
             , inv.remark
-            ,cn.SpecificDestination
+            ,SpecificDestination = iif( aa.SpecificDestination> 1 ,1,0)
             , inv.ukey
     FROM InvTrans Inv WITH (NOLOCK) 
-    left join View_WH_Orders wh  on inv.seq70poid = wh.ID
-	left join Country cn on wh.Dest = cn.ID
     inner join Po_Supp_Detail po on inv.InventoryPoid = po.id and inv.InventorySeq1 = po.seq1 and inv.InventorySeq2 = po.seq2
     left join invtransReason WITH (NOLOCK) on inv.reasonid = invtransreason.id
     LEFT JOIN TPEPASS1 WITH (NOLOCK) ON inv.ConfirmHandle = TPEPASS1.ID
+    outer apply (
+		select COUNT(cn.SpecificDestination) as SpecificDestination
+		from View_WH_Orders wh WITH (NOLOCK) 
+		inner join Country cn WITH (NOLOCK) on wh.Dest = cn.ID
+		where inv.seq70POID = wh.POID 
+	) aa
+
     WHERE   inv.InventoryPOID ='{0}'
             and inv.InventorySeq1 = '{1}'
             and inv.InventorySeq2 = '{2}' 
@@ -102,7 +107,7 @@ FROM (
                 else '2' 
               end AS SEQ
             , inv.remark
-            ,cn.SpecificDestination
+            ,SpecificDestination = iif( aa.SpecificDestination> 1 ,1,0)
             , inv.ukey
     FROM InvTrans inv WITH (NOLOCK) 
 	left join View_WH_Orders wh  on inv.seq70poid = wh.ID
@@ -110,6 +115,14 @@ FROM (
     inner join Po_Supp_Detail po on inv.InventoryPoid = po.id and inv.InventorySeq1 = po.seq1 and inv.InventorySeq2 = po.seq2
     left join invtransReason WITH (NOLOCK) on inv.reasonid = invtransreason.id
 	LEFT JOIN TPEPASS1 WITH (NOLOCK) ON inv.ConfirmHandle = TPEPASS1.ID
+    outer apply (
+		select COUNT(cn.SpecificDestination) as SpecificDestination
+		from View_WH_Orders wh WITH (NOLOCK) 
+		inner join Country cn WITH (NOLOCK) on wh.Dest = cn.ID
+		where inv.seq70POID = wh.POID 
+	) aa
+
+
     WHERE   inv.InventoryPOID ='{0}'
             and inv.InventorySeq1 = '{1}'
             and inv.InventorySeq2 = '{2}'
@@ -143,7 +156,7 @@ FROM (
                 else '2' 
               end AS SEQ
             , inv.remark
-            ,cn.SpecificDestination
+            ,SpecificDestination = iif( aa.SpecificDestination> 1 ,1,0)
             , inv.ukey
     FROM InvTrans inv WITH (NOLOCK) 
 	left join View_WH_Orders wh  on inv.seq70poid = wh.ID
@@ -151,6 +164,13 @@ FROM (
     inner join Po_Supp_Detail po on inv.InventoryPoid = po.id and inv.InventorySeq1 = po.seq1 and inv.InventorySeq2 = po.seq2
     left join invtransReason WITH (NOLOCK) on inv.reasonid = invtransreason.id
 	LEFT JOIN TPEPASS1 WITH (NOLOCK) ON inv.ConfirmHandle = TPEPASS1.ID
+    outer apply (
+		select COUNT(cn.SpecificDestination) as SpecificDestination
+		from View_WH_Orders wh WITH (NOLOCK) 
+		inner join Country cn WITH (NOLOCK) on wh.Dest = cn.ID
+		where inv.seq70POID = wh.POID 
+	) aa
+
     WHERE   inv.InventoryPOID ='{0}'
             and inv.InventorySeq1 = '{1}'
             and inv.InventorySeq2 = '{2}'
