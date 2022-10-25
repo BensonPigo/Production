@@ -398,9 +398,6 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr))
 
             // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
             DualResult result = Prgs.GetFtyInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtOriFtyInventory);
-            string ids = string.Empty, sqlcmd = string.Empty;
-            DualResult result2;
-            DataTable datacheck;
 
             #region 檢查物料不能有WMS Location && IsFromWMS = 0
             if (!PublicPrg.Prgs.Chk_WMS_Location_Adj((DataTable)this.detailgridbs.DataSource) && MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
@@ -417,67 +414,10 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr))
             }
             #endregion
 
-            #region 檢查負數庫存
-
-            sqlcmd = string.Format(
-                @"
-SELECT AD2.poid, [Seq]= AD2.Seq1+' '+AD2.Seq2,
-        AD2.Seq1,AD2.Seq2,
-        AD2.Roll,AD2.Dyelot,
-       [CheckQty] = (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty) + ( AD2.qtyafter - AD2.qtybefore ) , 
-       [FTYLobQty] = (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty),
-       [AdjustQty]= (AD2.qtyafter - AD2.qtybefore )       
-FROM    FtyInventory FTI
-inner join Adjust_detail AD2 on FTI.POID=AD2.POID 
-and FTI.Seq1=AD2.Seq1
-and FTI.Seq2=AD2.Seq2 
-and FTI.Roll=AD2.Roll
-and FTI.Dyelot = AD2.Dyelot
-WHERE FTI.StockType='O' and AD2.ID = '{0}' ", this.CurrentMaintain["id"]);
-            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            // 檢查負數庫存
+            if (!Prgs.CheckAdjustBalance(MyUtility.Convert.GetString(this.CurrentMaintain["id"]), isConfirm: true))
             {
-                this.ShowErr(sqlcmd, result2);
                 return;
-            }
-
-            foreach (DataRow tmp in datacheck.Rows)
-            {
-                if (MyUtility.Convert.GetDecimal(tmp["CheckQty"]) < 0)
-                {
-                    ids += string.Format(
-                        "SP#: {0} SEQ#:{1} Roll#:{2} Dyelot:{3}'s balance: {4} is less than Adjust qty: {5}" + Environment.NewLine + "Balacne Qty is not enough!!",
-                        tmp["poid"],
-                        tmp["Seq"],
-                        tmp["Roll"],
-                        tmp["Dyelot"],
-                        tmp["FTYLobQty"],
-                        tmp["AdjustQty"]) + Environment.NewLine;
-                }
-            }
-
-            if (!MyUtility.Check.Empty(ids))
-            {
-                MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
-                return;
-            }
-
-            #endregion 檢查負數庫存
-
-            string sqlupdHeader = string.Empty;
-            foreach (DataRow tmp in datacheck.Rows)
-            {
-                sqlupdHeader += string.Format(
-                    @"
-update FtyInventory  
-set  AdjustQty = AdjustQty + ({0}) 
-where POID = '{1}' AND SEQ1='{2}' AND SEQ2='{3}' and StockType='O' and Roll = '{4}' and Dyelot = '{5}'
-",
-                    MyUtility.Convert.GetDecimal(tmp["AdjustQty"]),
-                    tmp["Poid"],
-                    tmp["seq1"].ToString(),
-                    tmp["seq2"],
-                    tmp["Roll"],
-                    tmp["Dyelot"]);
             }
 
             Exception errMsg = null;
@@ -485,14 +425,12 @@ where POID = '{1}' AND SEQ1='{2}' AND SEQ2='{3}' and StockType='O' and Roll = '{
             {
                 try
                 {
-                    if (!(result = DBProxy.Current.Execute(null, sqlupdHeader)))
+                    if (!(result = Prgs.UpdateScrappAdjustFtyInventory(MyUtility.Convert.GetString(this.CurrentMaintain["id"]), isConfirm: true)))
                     {
                         throw result.GetException();
                     }
 
-                    this.UpdMDivisionPoDetail();
-
-                    if (!(result = DBProxy.Current.Execute(null, $"update Adjust set status='Confirmed', editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
+                    if (!(result = DBProxy.Current.Execute(null, $"update Adjust set status = 'Confirmed', editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
                     {
                         throw result.GetException();
                     }
@@ -534,130 +472,71 @@ where POID = '{1}' AND SEQ1='{2}' AND SEQ2='{3}' and StockType='O' and Roll = '{
 
             // 取得 FtyInventory 資料
             DualResult result = Prgs.GetFtyInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtOriFtyInventory);
-            string ids = string.Empty, sqlcmd = string.Empty;
-            DualResult result2;
-            DataTable datacheck;
-            string sqlupdHeader = string.Empty;
-            sqlcmd = string.Format(
-                @"
-SELECT AD2.poid, [Seq]= AD2.Seq1+' '+AD2.Seq2,
-        AD2.Seq1,AD2.Seq2,
-        AD2.Roll,AD2.Dyelot,
-       [CheckQty] = (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty) - ( AD2.qtyafter - AD2.qtybefore ) , 
-       [FTYLobQty] = (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty),
-       [AdjustQty]= (AD2.qtyafter - AD2.qtybefore )   ,
-       AD2.Ukey
-FROM    FtyInventory FTI
-inner join Adjust_detail AD2 on FTI.POID=AD2.POID 
-and FTI.Seq1=AD2.Seq1
-and FTI.Seq2=AD2.Seq2 
-and FTI.Roll=AD2.Roll
-and FTI.Dyelot = AD2.Dyelot
-WHERE FTI.StockType='O' and AD2.ID = '{0}' ", this.CurrentMaintain["id"]);
-            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+
+            // 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+            if (!Prgs.ChkWMSCompleteTime((DataTable)this.detailgridbs.DataSource, "Adjust_Detail"))
             {
-                this.ShowErr(sqlcmd, result2);
                 return;
             }
 
-            if (datacheck.Rows.Count > 0)
+            // 檢查負數庫存
+            if (!Prgs.CheckAdjustBalance(MyUtility.Convert.GetString(this.CurrentMaintain["id"]), isConfirm: false))
             {
-                #region 檢查負數庫存
-                foreach (DataRow tmp in datacheck.Rows)
-                {
-                    if (MyUtility.Convert.GetDecimal(tmp["CheckQty"]) >= 0)
-                    {
-                        #region 更新表頭狀態資料 and 數量
-                        // 更新FtyInventory
-                        // 20171006 mantis 7895 增加roll dyelot條件
-                        sqlupdHeader += $@"
-                            update FtyInventory  
-                            set  AdjustQty = AdjustQty - ({MyUtility.Convert.GetDecimal(tmp["AdjustQty"])})
-                            where POID = '{tmp["Poid"]}' AND SEQ1='{tmp["seq1"].ToString()}' AND SEQ2='{tmp["seq2"]}' and StockType='O'  and Roll = '{tmp["Roll"]}' and Dyelot = '{tmp["Dyelot"]}'" + Environment.NewLine;
-
-                        // 更新Adjust
-                        sqlupdHeader += $@"
-                            update Adjust
-                            set Status='New',
-                            editname = '{Env.User.UserID}' , editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'" + Environment.NewLine;
-                        #endregion
-                    }
-                    else
-                    {
-                        ids += $@"SP#: {tmp["poid"]} SEQ#:{tmp["Seq"]} Roll#:{tmp["Roll"]} Dyelot:{tmp["Dyelot"]}'s balance: {tmp["FTYLobQty"]} is less than Adjust qty: {tmp["AdjustQty"]}
-Balacne Qty is not enough!!" + Environment.NewLine;
-                    }
-                }
-
-                if (!MyUtility.Check.Empty(ids))
-                {
-                    MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
-                    return;
-                }
-
-                #endregion 檢查負數庫存
-
-                #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-                if (!Prgs.ChkWMSCompleteTime(datacheck, "Adjust_Detail"))
-                {
-                    return;
-                }
-                #endregion
-
-                #region UnConfirmed 廠商能上鎖→PMS更新→廠商更新
-
-                // 先確認 WMS 能否上鎖, 不能直接 return
-                if (!Prgs_WMS.WMSLock((DataTable)this.detailgridbs.DataSource, dtOriFtyInventory, this.Name, EnumStatus.Unconfirm))
-                {
-                    return;
-                }
-
-                // PMS 的資料更新
-                Exception errMsg = null;
-                List<AutoRecord> autoRecordList = new List<AutoRecord>();
-                using (TransactionScope transactionscope = new TransactionScope())
-                {
-                    try
-                    {
-                        if (!MyUtility.Check.Empty(sqlupdHeader))
-                        {
-                            if (!(result = DBProxy.Current.Execute(null, sqlupdHeader)))
-                            {
-                                throw result.GetException();
-                            }
-                        }
-
-                        // 更新MDivisionPoDetail
-                        this.UpdMDivisionPoDetail();
-
-                        // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
-                        if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
-                        {
-                            throw result.GetException();
-                        }
-
-                        // transactionscope 內, 準備 WMS 資料 & 將資料寫入 AutomationCreateRecord (Delete, Unconfirm)
-                        Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory, typeCreateRecord: 1, autoRecord: autoRecordList);
-                        transactionscope.Complete();
-                    }
-                    catch (Exception ex)
-                    {
-                        errMsg = ex;
-                    }
-                }
-
-                if (!MyUtility.Check.Empty(errMsg))
-                {
-                    Prgs_WMS.WMSUnLock(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
-                    this.ShowErr(errMsg);
-                    return;
-                }
-
-                // PMS 更新之後,才執行WMS
-                Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory, typeCreateRecord: 2, autoRecord: autoRecordList);
-                MyUtility.Msg.InfoBox("UnConfirmed successful");
-                #endregion
+                return;
             }
+
+            #region UnConfirmed 廠商能上鎖→PMS更新→廠商更新
+
+            // 先確認 WMS 能否上鎖, 不能直接 return
+            if (!Prgs_WMS.WMSLock((DataTable)this.detailgridbs.DataSource, dtOriFtyInventory, this.Name, EnumStatus.Unconfirm))
+            {
+                return;
+            }
+
+            // PMS 的資料更新
+            Exception errMsg = null;
+            List<AutoRecord> autoRecordList = new List<AutoRecord>();
+            using (TransactionScope transactionscope = new TransactionScope())
+            {
+                try
+                {
+                    if (!(result = Prgs.UpdateScrappAdjustFtyInventory(MyUtility.Convert.GetString(this.CurrentMaintain["id"]), isConfirm: false)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    if (!(result = DBProxy.Current.Execute(null, $"update Adjust set status = 'New', editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
+                    {
+                        throw result.GetException();
+                    }
+
+                    // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                    if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    // transactionscope 內, 準備 WMS 資料 & 將資料寫入 AutomationCreateRecord (Delete, Unconfirm)
+                    Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory, typeCreateRecord: 1, autoRecord: autoRecordList);
+                    transactionscope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    errMsg = ex;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(errMsg))
+            {
+                Prgs_WMS.WMSUnLock(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
+                this.ShowErr(errMsg);
+                return;
+            }
+
+            // PMS 更新之後,才執行WMS
+            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory, typeCreateRecord: 2, autoRecord: autoRecordList);
+            MyUtility.Msg.InfoBox("UnConfirmed successful");
+            #endregion
         }
 
         private void BtnImport_Click(object sender, EventArgs e)

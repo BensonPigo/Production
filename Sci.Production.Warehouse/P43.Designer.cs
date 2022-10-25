@@ -73,7 +73,7 @@
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(952, 192);
+            this.masterpanel.Size = new System.Drawing.Size(892, 192);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -92,7 +92,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 192);
-            this.detailpanel.Size = new System.Drawing.Size(952, 157);
+            this.detailpanel.Size = new System.Drawing.Size(892, 157);
             // 
             // gridicon
             // 
@@ -100,7 +100,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(952, 157);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 157);
             // 
             // detail2
             // 
@@ -114,18 +114,9 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(952, 387);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(952, 349);
-            // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnCallP99);
-            this.detailbtm.Size = new System.Drawing.Size(952, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -302,7 +293,7 @@
             this.Grid2New = 0;
             this.GridAlias = "Adjust_detail";
             this.GridNew = 0;
-            this.GridUniqueKey = "poid,seq1,seq2,roll";
+            this.GridUniqueKey = "poid,seq1,seq2,roll,Dyelot";
             this.IsSupportClip = false;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
