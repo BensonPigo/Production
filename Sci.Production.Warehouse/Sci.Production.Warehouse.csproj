@@ -1440,6 +1440,12 @@
     <Compile Include="Report\R07.Designer.cs">
       <DependentUpon>R07.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R44.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R44.Designer.cs">
+      <DependentUpon>R44.cs</DependentUpon>
+    </Compile>
     <Compile Include="Report\R26.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -2274,6 +2280,9 @@
     <EmbeddedResource Include="P52_StocktakingList.rdlc" />
     <EmbeddedResource Include="Report\R07.resx">
       <DependentUpon>R07.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R44.resx">
+      <DependentUpon>R44.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R26.resx">
       <DependentUpon>R26.cs</DependentUpon>

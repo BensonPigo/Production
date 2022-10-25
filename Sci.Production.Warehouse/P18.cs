@@ -1949,6 +1949,7 @@ group by ted.POID, ted.Seq1, ted.Seq2, tdc.Carton, tdc.LotNo, ted.FabricType, ps
             if (dtTrasnferExport.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Transfer WK# not found");
+                this.CurrentMaintain["TransferExportID"] = string.Empty;
                 return;
             }
 
