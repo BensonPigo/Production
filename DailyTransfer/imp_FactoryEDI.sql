@@ -1098,14 +1098,15 @@ BEGIN
 	FROM Quality.dbo.SampleGarmentTest_Detail_Appear t
 	WHERE EXISTS (
 		SELECT 1 FROM Trade_To_Pms.dbo.SampleGarmentTest_Detail_Appear_History s
-		WHERE t.ID = s.ID AND t.No= s.No AND t.Seq = s.Seq 
+		WHERE t.ID = s.ID AND t.ReportNo= s.ReportNo AND t.Seq = s.Seq 
 	)
 	Merge Quality.dbo.SampleGarmentTest_Detail_Appear as t
 	Using (select a.* from Trade_To_Pms.dbo.SampleGarmentTest_Detail_Appear a ) as s
-		on t.ID = s.ID AND t.No= s.No AND t.Seq = s.Seq 
+		on t.ID = s.ID AND t.ReportNo= s.ReportNo AND t.Seq = s.Seq 
 	when matched then 
 		update set 
 			 t.Type = s.Type
+			,t.No = s.No
 			,t.Wash1 = s.Wash1
 			,t.Wash2 = s.Wash2
 			,t.Wash3 = s.Wash3
@@ -1114,18 +1115,18 @@ BEGIN
 			,t.EditDate = s.EditDate
 	when not matched by target then
 		insert (
-			 ID,No,Seq,Type,Wash1,Wash2,Wash3,Comment,AddDate,EditDate
+			 ID,ReportNo,No,Seq,Type,Wash1,Wash2,Wash3,Comment,AddDate,EditDate
 		) values (
-			s.ID,s.No,s.Seq,s.Type,s.Wash1,s.Wash2,s.Wash3,s.Comment,s.AddDate,s.EditDate
+			s.ID,s.ReportNo,s.No,s.Seq,s.Type,s.Wash1,s.Wash2,s.Wash3,s.Comment,s.AddDate,s.EditDate
 		)
 	;
 	INSERT INTO Quality.dbo.SampleGarmentTest_Detail_Appear_History( 
-			HistoryUkey,ID,No,Seq,Type,Wash1,Wash2,Wash3,Comment,AddDate,EditDate,DeleteDate)
-	SELECT  HistoryUkey,ID,No,Seq,Type,Wash1,Wash2,Wash3,Comment,AddDate,EditDate,DeleteDate
+			HistoryUkey,ID,ReportNo,No,Seq,Type,Wash1,Wash2,Wash3,Comment,AddDate,EditDate,DeleteDate)
+	SELECT  HistoryUkey,ID,ReportNo,No,Seq,Type,Wash1,Wash2,Wash3,Comment,AddDate,EditDate,DeleteDate
 	FROM Trade_To_Pms.dbo.SampleGarmentTest_Detail_Appear_History t
 	WHERE EXISTS (
 		SELECT 1 FROM Quality.dbo.SampleGarmentTest_Detail_Appear_History s
-		WHERE t.ID = s.ID AND t.No= s.No AND t.Seq = s.Seq 
+		WHERE t.ID = s.ID AND t.ReportNo= s.ReportNo AND t.Seq = s.Seq 
 	)
 
 	--SampleGarmentTest_Detail_Shrink
@@ -1133,14 +1134,15 @@ BEGIN
 	FROM Quality.dbo.SampleGarmentTest_Detail_Shrink t
 	WHERE EXISTS (
 		SELECT 1 FROM Trade_To_Pms.dbo.SampleGarmentTest_Detail_Shrink_History s
-		WHERE t.ID = s.ID AND t.No= s.No AND t.Location = s.Location AND t.Type = s.Type
+		WHERE t.ID = s.ID AND t.ReportNo= s.ReportNo AND t.Location = s.Location AND t.Type = s.Type
 	)
 	Merge Quality.dbo.SampleGarmentTest_Detail_Shrink as t
 	Using (select a.* from Trade_To_Pms.dbo.SampleGarmentTest_Detail_Shrink a ) as s
-		on t.ID = s.ID AND t.No= s.No AND t.Location = s.Location AND t.Type = s.Type
+		on t.ID = s.ID AND t.ReportNo= s.ReportNo AND t.Location = s.Location AND t.Type = s.Type
 	when matched then 
 		update set 
 			 t.Seq = s.Seq
+			,t.No = s.No
 			,t.BeforeWash = s.BeforeWash
 			,t.SizeSpec = s.SizeSpec
 			,t.AfterWash1 = s.AfterWash1
@@ -1154,18 +1156,18 @@ BEGIN
 
 	when not matched by target then
 		insert (
-			 ID,No,Location,Type,Seq,BeforeWash,SizeSpec,AfterWash1,Shrinkage1,AfterWash2,Shrinkage2,AfterWash3,Shrinkage3,AddDate,EditDate
+			 ID,ReportNo,No,Location,Type,Seq,BeforeWash,SizeSpec,AfterWash1,Shrinkage1,AfterWash2,Shrinkage2,AfterWash3,Shrinkage3,AddDate,EditDate
 		) values (
-			s.ID,s.No,s.Location,s.Type,s.Seq,s.BeforeWash,s.SizeSpec,s.AfterWash1,s.Shrinkage1,s.AfterWash2,s.Shrinkage2,s.AfterWash3,s.Shrinkage3,s.AddDate,s.EditDate
+			s.ID,s.ReportNo,s.No,s.Location,s.Type,s.Seq,s.BeforeWash,s.SizeSpec,s.AfterWash1,s.Shrinkage1,s.AfterWash2,s.Shrinkage2,s.AfterWash3,s.Shrinkage3,s.AddDate,s.EditDate
 		)
 	;
 	INSERT INTO Quality.dbo.SampleGarmentTest_Detail_Shrink_History( 
-			HistoryUkey,ID,No,Location,Type,Seq,BeforeWash,SizeSpec,AfterWash1,Shrinkage1,AfterWash2,Shrinkage2,AfterWash3,Shrinkage3,AddDate,EditDate,DeleteDate)
-	SELECT  HistoryUkey,ID,No,Location,Type,Seq,BeforeWash,SizeSpec,AfterWash1,Shrinkage1,AfterWash2,Shrinkage2,AfterWash3,Shrinkage3,AddDate,EditDate,DeleteDate
+			HistoryUkey,ID,ReportNo,No,Location,Type,Seq,BeforeWash,SizeSpec,AfterWash1,Shrinkage1,AfterWash2,Shrinkage2,AfterWash3,Shrinkage3,AddDate,EditDate,DeleteDate)
+	SELECT  HistoryUkey,ID,ReportNo,No,Location,Type,Seq,BeforeWash,SizeSpec,AfterWash1,Shrinkage1,AfterWash2,Shrinkage2,AfterWash3,Shrinkage3,AddDate,EditDate,DeleteDate
 	FROM Trade_To_Pms.dbo.SampleGarmentTest_Detail_Shrink_History t
 	WHERE NOT EXISTS (
 		SELECT 1 FROM Quality.dbo.SampleGarmentTest_Detail_Shrink_History s
-		WHERE t.ID = s.ID AND t.No= s.No AND t.Location = s.Location AND t.Type = s.Type
+		WHERE t.ID = s.ID AND t.ReportNo= s.ReportNo AND t.Location = s.Location AND t.Type = s.Type
 	)
 
 	--SampleGarmentTest_Detail_FGPT
@@ -1173,14 +1175,15 @@ BEGIN
 	FROM Quality.dbo.SampleGarmentTest_Detail_FGPT t
 	WHERE EXISTS (
 		SELECT 1 FROM Trade_To_Pms.dbo.SampleGarmentTest_Detail_FGPT_History s
-		WHERE t.ID = s.ID AND t.No= s.No AND t.Location = s.Location AND t.Seq = s.Seq AND t.Type = s.Type AND t.TestName = s.TestName
+		WHERE t.ID = s.ID AND t.ReportNo= s.ReportNo AND t.Location = s.Location AND t.Seq = s.Seq AND t.Type = s.Type AND t.TestName = s.TestName
 	)
 	Merge Quality.dbo.SampleGarmentTest_Detail_FGPT as t
 	Using (select a.* from Trade_To_Pms.dbo.SampleGarmentTest_Detail_FGPT a ) as s
-		on t.ID = s.ID AND t.No= s.No AND t.Location = s.Location AND t.Seq = s.Seq AND t.Type = s.Type AND t.TestName = s.TestName
+		on t.ID = s.ID AND t.ReportNo= s.ReportNo AND t.Location = s.Location AND t.Seq = s.Seq AND t.Type = s.Type AND t.TestName = s.TestName
 	when matched then 
 		update set 
 			 t.TypeSelection_VersionID = s.TypeSelection_VersionID
+			,t.No = s.No
 			,t.TypeSelection_Seq = s.TypeSelection_Seq
 			,t.TestDetail = s.TestDetail
 			,t.Criteria = s.Criteria
@@ -1191,18 +1194,18 @@ BEGIN
 			,t.EditDate = s.EditDate
 	when not matched by target then
 		insert (
-			 ID,No,Location,Seq,TestName,Type,TypeSelection_VersionID,TypeSelection_Seq,TestDetail,Criteria,TestResult,TestUnit,IsOriginal,AddDate,EditDate
+			 ID,ReportNo,No,Location,Seq,TestName,Type,TypeSelection_VersionID,TypeSelection_Seq,TestDetail,Criteria,TestResult,TestUnit,IsOriginal,AddDate,EditDate
 		) values (
-			s.ID,s.No,s.Location,s.Seq,s.TestName,s.Type,s.TypeSelection_VersionID,s.TypeSelection_Seq,s.TestDetail,s.Criteria,s.TestResult,s.TestUnit,s.IsOriginal,s.AddDate,s.EditDate
+			s.ID,s.ReportNo,s.No,s.Location,s.Seq,s.TestName,s.Type,s.TypeSelection_VersionID,s.TypeSelection_Seq,s.TestDetail,s.Criteria,s.TestResult,s.TestUnit,s.IsOriginal,s.AddDate,s.EditDate
 		)
 	;
 	INSERT INTO Quality.dbo.SampleGarmentTest_Detail_FGPT_History( 
-			HistoryUkey,ID,No,Location,Seq,TestName,Type,TypeSelection_VersionID,TypeSelection_Seq,TestDetail,Criteria,TestResult,TestUnit,IsOriginal,AddDate,EditDate,DeleteDate)
-	SELECT  HistoryUkey,ID,No,Location,Seq,TestName,Type,TypeSelection_VersionID,TypeSelection_Seq,TestDetail,Criteria,TestResult,TestUnit,IsOriginal,AddDate,EditDate,DeleteDate
+			HistoryUkey,ID,ReportNo,No,Location,Seq,TestName,Type,TypeSelection_VersionID,TypeSelection_Seq,TestDetail,Criteria,TestResult,TestUnit,IsOriginal,AddDate,EditDate,DeleteDate)
+	SELECT  HistoryUkey,ID,ReportNo,No,Location,Seq,TestName,Type,TypeSelection_VersionID,TypeSelection_Seq,TestDetail,Criteria,TestResult,TestUnit,IsOriginal,AddDate,EditDate,DeleteDate
 	FROM Trade_To_Pms.dbo.SampleGarmentTest_Detail_FGPT_History t
 	WHERE NOT EXISTS (
 		SELECT 1 FROM Quality.dbo.SampleGarmentTest_Detail_FGPT_History s
-		WHERE t.ID = s.ID AND t.No= s.No AND t.Location = s.Location AND t.Seq = s.Seq AND t.Type = s.Type AND t.TestName = s.TestName
+		WHERE t.ID = s.ID AND t.ReportNo= s.ReportNo AND t.Location = s.Location AND t.Seq = s.Seq AND t.Type = s.Type AND t.TestName = s.TestName
 	)
 
 	--SampleGarmentTest_Detail_FGWT
@@ -1210,14 +1213,15 @@ BEGIN
 	FROM Quality.dbo.SampleGarmentTest_Detail_FGWT t
 	WHERE EXISTS (
 		SELECT 1 FROM Trade_To_Pms.dbo.SampleGarmentTest_Detail_FGWT_History s
-		WHERE t.ID = s.ID AND t.No= s.No AND t.Location = s.Location AND t.Seq = s.Seq AND t.Type = s.Type
+		WHERE t.ID = s.ID AND t.ReportNo= s,ReportNo AND t.Location = s.Location AND t.Seq = s.Seq AND t.Type = s.Type
 	)
 	Merge Quality.dbo.SampleGarmentTest_Detail_FGWT as t
 	Using (select a.* from Trade_To_Pms.dbo.SampleGarmentTest_Detail_FGWT a ) as s
-		on t.ID = s.ID AND t.No= s.No AND t.Location = s.Location AND t.Seq = s.Seq AND t.Type = s.Type
+		on t.ID = s.ID AND t.ReportNo= s.ReportNo AND t.Location = s.Location AND t.Seq = s.Seq AND t.Type = s.Type
 	when matched then 
 		update set
 			 t.SystemType = s.SystemType
+			,t.No = s.No
 			,t.TestDetail = s.TestDetail
 			,t.BeforeWash = s.BeforeWash
 			,t.AfterWash = s.AfterWash
@@ -1230,18 +1234,18 @@ BEGIN
 
 	when not matched by target then
 		insert (
-			 ID,No,Location,Type,SystemType,Seq,TestDetail,BeforeWash,AfterWash,Shrinkage,Scale,Criteria,Criteria2,AddDate,EditDate
+			 ID,ReportNo,No,Location,Type,SystemType,Seq,TestDetail,BeforeWash,AfterWash,Shrinkage,Scale,Criteria,Criteria2,AddDate,EditDate
 		) values (
-			s.ID,s.No,s.Location,s.Type,s.SystemType,s.Seq,s.TestDetail,s.BeforeWash,s.AfterWash,s.Shrinkage,s.Scale,s.Criteria,s.Criteria2,s.AddDate,s.EditDate
+			s.ID,s.ReportNo,s.No,s.Location,s.Type,s.SystemType,s.Seq,s.TestDetail,s.BeforeWash,s.AfterWash,s.Shrinkage,s.Scale,s.Criteria,s.Criteria2,s.AddDate,s.EditDate
 		)
 	;
 	INSERT INTO Quality.dbo.SampleGarmentTest_Detail_FGWT_History( 
-			HistoryUkey,ID,No,Location,Type,SystemType,Seq,TestDetail,BeforeWash,AfterWash,Shrinkage,Scale,Criteria,Criteria2,AddDate,EditDate,DeleteDate)
-	SELECT  HistoryUkey,ID,No,Location,Type,SystemType,Seq,TestDetail,BeforeWash,AfterWash,Shrinkage,Scale,Criteria,Criteria2,AddDate,EditDate,DeleteDate
+			HistoryUkey,ID,ReportNo,No,Location,Type,SystemType,Seq,TestDetail,BeforeWash,AfterWash,Shrinkage,Scale,Criteria,Criteria2,AddDate,EditDate,DeleteDate)
+	SELECT  HistoryUkey,ID,ReportNo,No,Location,Type,SystemType,Seq,TestDetail,BeforeWash,AfterWash,Shrinkage,Scale,Criteria,Criteria2,AddDate,EditDate,DeleteDate
 	FROM Trade_To_Pms.dbo.SampleGarmentTest_Detail_FGWT_History t
 	WHERE NOT EXISTS (
 		SELECT 1 FROM Quality.dbo.SampleGarmentTest_Detail_FGWT_History s
-		WHERE t.ID = s.ID AND t.No= s.No AND t.Location = s.Location AND t.Seq = s.Seq AND t.Type = s.Type
+		WHERE t.ID = s.ID AND t.ReportNo= s.ReportNo AND t.Location = s.Location AND t.Seq = s.Seq AND t.Type = s.Type
 	)
 
 	--SampleGarment_Detail_Spirality
@@ -1249,11 +1253,11 @@ BEGIN
 	FROM Quality.dbo.SampleGarment_Detail_Spirality t
 	WHERE EXISTS (
 		SELECT 1 FROM Trade_To_Pms.dbo.SampleGarment_Detail_Spirality_History s
-		WHERE t.ID = s.ID AND t.No= s.No AND t.Location = s.Location
+		WHERE t.ID = s.ID AND t.ReportNo= s.ReportNo AND t.Location = s.Location
 	)
 	Merge Quality.dbo.SampleGarment_Detail_Spirality as t
 	Using (select a.* from Trade_To_Pms.dbo.SampleGarment_Detail_Spirality a ) as s
-		on t.ID = s.ID AND t.No= s.No AND t.Location = s.Location
+		on t.ID = s.ID AND t.ReportNo= s.ReportNo AND t.Location = s.Location
 	when matched then 
 		update set
 			 t.MethodA_AAPrime = s.MethodA_AAPrime
@@ -1265,20 +1269,21 @@ BEGIN
 			,t.MethodB = s.MethodB
 			,t.AddDate = s.AddDate
 			,t.EditDate = s.EditDate
+			,t.No = s.No
 	when not matched by target then
 		insert (
-			 ID,No,Location,MethodA_AAPrime,MethodA_APrimeB,MethodB_AAPrime,MethodB_AB,CM,MethodA,MethodB,AddDate,EditDate
+			 ID,ReportNo,No,Location,MethodA_AAPrime,MethodA_APrimeB,MethodB_AAPrime,MethodB_AB,CM,MethodA,MethodB,AddDate,EditDate
 		) values (
-			s.ID,s.No,s.Location,s.MethodA_AAPrime,s.MethodA_APrimeB,s.MethodB_AAPrime,s.MethodB_AB,s.CM,s.MethodA,s.MethodB,s.AddDate,s.EditDate
+			s.ID,s.ReportNo,s.No,s.Location,s.MethodA_AAPrime,s.MethodA_APrimeB,s.MethodB_AAPrime,s.MethodB_AB,s.CM,s.MethodA,s.MethodB,s.AddDate,s.EditDate
 		)
 	;
 	INSERT INTO Quality.dbo.SampleGarment_Detail_Spirality_History( 
-			HistoryUkey,ID,No,Location,MethodA_AAPrime,MethodA_APrimeB,MethodB_AAPrime,MethodB_AB,CM,MethodA,MethodB,AddDate,EditDate,DeleteDate)
-	SELECT  HistoryUkey,ID,No,Location,MethodA_AAPrime,MethodA_APrimeB,MethodB_AAPrime,MethodB_AB,CM,MethodA,MethodB,AddDate,EditDate,DeleteDate
+			HistoryUkey,ID,ReportNo,No,Location,MethodA_AAPrime,MethodA_APrimeB,MethodB_AAPrime,MethodB_AB,CM,MethodA,MethodB,AddDate,EditDate,DeleteDate)
+	SELECT  HistoryUkey,ID,ReportNo,No,Location,MethodA_AAPrime,MethodA_APrimeB,MethodB_AAPrime,MethodB_AB,CM,MethodA,MethodB,AddDate,EditDate,DeleteDate
 	FROM Trade_To_Pms.dbo.SampleGarment_Detail_Spirality_History t
 	WHERE NOT EXISTS (
 		SELECT 1 FROM Quality.dbo.SampleGarment_Detail_Spirality_History s
-		WHERE t.ID = s.ID AND t.No= s.No AND t.Location = s.Location
+		WHERE t.ID = s.ID AND t.ReportNo= s.ReportNo AND t.Location = s.Location
 	)
 	
 	
