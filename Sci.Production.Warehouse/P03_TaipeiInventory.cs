@@ -72,6 +72,7 @@ FROM (
 		from View_WH_Orders wh WITH (NOLOCK) 
 		inner join Country cn WITH (NOLOCK) on wh.Dest = cn.ID
 		where inv.seq70POID = wh.POID 
+              and cn.SpecificDestination = 1 
 	) aa
 
     WHERE   inv.InventoryPOID ='{0}'
@@ -120,6 +121,7 @@ FROM (
 		from View_WH_Orders wh WITH (NOLOCK) 
 		inner join Country cn WITH (NOLOCK) on wh.Dest = cn.ID
 		where inv.seq70POID = wh.POID 
+              and cn.SpecificDestination = 1 
 	) aa
 
 
@@ -169,6 +171,7 @@ FROM (
 		from View_WH_Orders wh WITH (NOLOCK) 
 		inner join Country cn WITH (NOLOCK) on wh.Dest = cn.ID
 		where inv.seq70POID = wh.POID 
+              and cn.SpecificDestination = 1 
 	) aa
 
     WHERE   inv.InventoryPOID ='{0}'
