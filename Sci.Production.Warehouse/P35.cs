@@ -438,44 +438,11 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             }
             #endregion
 
-            #region 檢查負數庫存
-
-            sqlcmd = string.Format(
-                @"
-Select d.poid,d.seq1,d.seq2,d.Roll,isnull(d.QtyAfter,0.00) - isnull(d.QtyBefore,0.00) qty
-    ,isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty
-    ,d.Dyelot
-from dbo.Adjust_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.POID = f.POID  AND D.StockType = F.StockType
-and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.Dyelot = f.Dyelot
-where (isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) + (isnull(d.QtyAfter,0) - isnull(d.QtyBefore,0)) < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
-            if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            // 檢查負數庫存
+            if (!Prgs.CheckAdjustBalance(MyUtility.Convert.GetString(this.CurrentMaintain["id"]), isConfirm: true))
             {
-                this.ShowErr(sqlcmd, result);
                 return;
             }
-            else
-            {
-                if (datacheck.Rows.Count > 0)
-                {
-                    foreach (DataRow tmp in datacheck.Rows)
-                    {
-                        ids += string.Format(
-                            "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than Adjust qty: {5}" + Environment.NewLine,
-                            tmp["poid"],
-                            tmp["seq1"],
-                            tmp["seq2"],
-                            tmp["roll"],
-                            tmp["balanceqty"],
-                            tmp["qty"],
-                            tmp["Dyelot"]);
-                    }
-
-                    MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
-                    return;
-                }
-            }
-            #endregion 檢查負數庫存
 
             #region -- 更新 MdivisionPoDetail --
             var bs1 = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
@@ -514,8 +481,7 @@ where (isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.
                         throw result.GetException();
                     }
 
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable(
-                        dtio, string.Empty, sqlupd2_FIO.ToString(), out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithDatatable(dtio, string.Empty, sqlupd2_FIO.ToString(), out resulttb, "#TmpSource")))
                     {
                         throw result.GetException();
                     }
@@ -629,54 +595,11 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             }
             #endregion
 
-            #region 檢查負數庫存
-
-            sqlcmd = string.Format(
-                @"
-Select d.poid,d.seq1,d.seq2,d.Roll,isnull(d.QtyAfter,0.00) - isnull(d.QtyBefore,0.00) qty
-    ,isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty
-    ,d.Dyelot
-from dbo.Adjust_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.POID = f.POID  AND D.StockType = F.StockType
-and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.Dyelot = f.Dyelot
-where (isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) - (isnull(d.QtyAfter,0.00) - isnull(d.QtyBefore,0.00)) < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
-            if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            // 檢查負數庫存
+            if (!Prgs.CheckAdjustBalance(MyUtility.Convert.GetString(this.CurrentMaintain["id"]), isConfirm: false))
             {
-                this.ShowErr(sqlcmd, result);
                 return;
             }
-            else
-            {
-                if (datacheck.Rows.Count > 0)
-                {
-                    // 資料量太多，超過20筆的話訊息不要全部跑完
-                    int index = 0;
-                    foreach (DataRow tmp in datacheck.Rows)
-                    {
-                        ids += string.Format(
-                            "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than Adjust qty: {5}" + Environment.NewLine,
-                            tmp["poid"],
-                            tmp["seq1"],
-                            tmp["seq2"],
-                            tmp["roll"],
-                            tmp["balanceqty"],
-                            tmp["qty"],
-                            tmp["Dyelot"]);
-                        if (index > 20)
-                        {
-                            ids += "......and more.";
-                            break;
-                        }
-
-                        index++;
-                    }
-
-                    MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
-                    return;
-                }
-            }
-
-            #endregion 檢查負數庫存
 
             #region -- 更新 MdivisionPoDetail --
             var bs1 = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()

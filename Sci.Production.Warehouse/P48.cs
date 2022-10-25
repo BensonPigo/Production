@@ -1,7 +1,8 @@
 ﻿using Ict;
 using Ict.Win;
+using Ict.Win.Defs;
 using Sci.Data;
-using Sci.Production.Automation;
+using Sci.Production.Prg;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using System;
@@ -11,7 +12,6 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -432,8 +432,33 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr))
 
             #region Batch Create
 
-            // *依照POID 批次建立P45 ID
             dr2 = dtGridBS1.Select("adjustqty <> 0 and Selected = 1");
+
+            // 建立前檢查重複物料
+            var duplicateData = dr2.AsEnumerable()
+                .GroupBy(g => new
+                {
+                    POID = MyUtility.Convert.GetString(g["poid"]),
+                    SEQ1 = MyUtility.Convert.GetString(g["seq1"]),
+                    SEQ2 = MyUtility.Convert.GetString(g["seq2"]),
+                    Roll = MyUtility.Convert.GetString(g["roll"]),
+                    Dyelot = MyUtility.Convert.GetString(g["dyelot"]),
+                }).Select(s => new
+                {
+                    s.Key.POID,
+                    s.Key.SEQ1,
+                    s.Key.SEQ2,
+                    s.Key.Roll,
+                    s.Key.Dyelot,
+                    Count = s.Count(),
+                }).Where(w => w.Count > 1).ToList();
+            if (duplicateData.Any())
+            {
+                MyUtility.Msg.ShowMsgGrid_LockScreen(ListToDataTable.ToDataTable(duplicateData), "These data's duplicate!");
+                return;
+            }
+
+            // *依照POID 批次建立P45 ID
             var listPoid = dr2.Select(row => row["Poid"]).Distinct().ToList();
             var tmpId = MyUtility.GetValue.GetBatchID(Env.User.Keyword + "AM", "Adjust", DateTime.Now, batchNumber: listPoid.Count);
             if (MyUtility.Check.Empty(tmpId))
@@ -589,7 +614,6 @@ from #tmp";
                     }
 
                     transactionscope.Complete();
-                    transactionscope.Dispose();
                 }
                 catch (Exception ex)
                 {
@@ -598,8 +622,6 @@ from #tmp";
                     return;
                 }
             }
-
-            transactionscope = null;
             #endregion
 
             // Create後Btn失效，需重新Qurey才能再使用。
@@ -623,55 +645,62 @@ from #tmp";
 
                 // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
                 result = Prgs.GetFtyInventoryData(dtDetail_Ukeys, "P45", out DataTable dtOriFtyInventory);
-
-                DataTable[] dts;
-                List<SqlParameter> para = new List<SqlParameter>
+                if (!result)
                 {
-                    new SqlParameter("@ID", tmpId[i].ToString()),
-                    new SqlParameter("@UserID", Env.User.UserID),
-                };
-                DualResult res = DBProxy.Current.SelectSP(string.Empty, "dbo.usp_RemoveScrapById", para, out dts);
-                if (!res)
-                {
-                    DataRow[] drfound = this.dtInventory.Select(string.Format("poid='{0}' and selected=1", listPoid[i].ToString()));
-                    foreach (var item in drfound)
-                    {
-                        item["CreateStatus"] = string.Format("{0} Confirmed Fail! ", tmpId[i].ToString()) + res.ToString();
-                    }
+                    this.ShowErr(result);
+                    return;
                 }
 
-                if (dts.Length > 0)
+                // 檢查負數庫存
+                if (!(result = Prgs.GetAdjustSumBalance(tmpId[i].ToString(), true, out DataTable datacheck)))
                 {
-                    foreach (DataRow drs in dts[0].Rows)
+                    this.ShowErr(result);
+                    return;
+                }
+
+                if (datacheck.Rows.Count > 0)
+                {
+                    // 將負數庫存資訊顯示在 Grid 上
+                    foreach (DataRow drs in datacheck.Rows)
                     {
-                        if (MyUtility.Convert.GetDecimal(drs["q"]) < 0)
+                        foreach (var item in this.dtInventory.Select($@"poid='{drs["POID"]}' and seq1='{drs["seq1"]}' and seq2='{drs["seq2"]}' and Roll = '{drs["Roll"]}' and Dyelot = '{drs["Dyelot"]}'"))
                         {
-                            DataRow[] drfail = this.dtInventory.Select(string.Format(@"poid='{0}' and seq1='{1}' and seq2='{2}'", drs["POID"].ToString(), drs["seq1"].ToString(), drs["seq2"].ToString()));
-                            foreach (var item in drfail)
-                            {
-                                item["CreateStatus"] = string.Format(
-                                    @"{2}'s balance: {0} is less than Adjust qty: {1}
-                                    Balacne Qty is not enough!!", drs["balance"].ToString(),
-                                    drs["Adjustqty"].ToString(),
-                                    tmpId[i].ToString());
-                            }
+                            item["CreateStatus"] = $@"{tmpId[i]}'s balance: {drs["balance"]} is less than Adjust qty: {drs["Adjustqty"]} Balacne Qty is not enough!!";
                         }
                     }
                 }
                 else
                 {
+                    if (!(result = Prgs.UpdateScrappAdjustFtyInventory(tmpId[i].ToString(), isConfirm: true)))
+                    {
+                        foreach (var item in this.dtInventory.Select($"poid='{listPoid[i]}' and selected=1"))
+                        {
+                            item["CreateStatus"] = $"{tmpId[i]} Confirmed Fail! " + result.ToString();
+                        }
+                    }
+
+                    if (!(result = DBProxy.Current.Execute(null, $"update Adjust set status = 'Confirmed', editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{tmpId[i]}'")))
+                    {
+                        foreach (var item in this.dtInventory.Select($"poid='{listPoid[i]}' and selected=1"))
+                        {
+                            item["CreateStatus"] = $"{tmpId[i]} Confirmed Fail! " + result.ToString();
+                        }
+                    }
+
                     // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
                     if (!(result = Prgs.UpdateWH_Barcode(true, dtDetail_Ukeys, "P45", out bool fromNewBarcode, dtOriFtyInventory)))
                     {
-                        throw result.GetException();
+                        foreach (var item in this.dtInventory.Select($"poid='{listPoid[i]}' and selected=1"))
+                        {
+                            item["CreateStatus"] = $"{tmpId[i]} Confirmed Fail! " + result.ToString();
+                        }
                     }
 
                     // AutoWHFabric WebAPI
                     Prgs_WMS.WMSprocess(false, dtDetail_Ukeys, "P45", EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
-                    DataRow[] drfound = this.dtInventory.Select(string.Format("poid='{0}' and selected=1", listPoid[i].ToString()));
-                    foreach (var item in drfound)
+                    foreach (var item in this.dtInventory.Select($"poid='{listPoid[i]}' and selected=1"))
                     {
-                        item["CreateStatus"] = string.Format("{0} Create and Confirm Success ", tmpId[i].ToString());
+                        item["CreateStatus"] = $"{tmpId[i]} Create and Confirm Success ";
                     }
                 }
             }
