@@ -708,6 +708,7 @@ where I.InventoryPOID ='{this.CurrentDetailData["poid"]}' and I.type = '3' and F
             .Numeric("qty", header: "In Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, settings: qty_setting) // 6
             .Text("stockunit", header: "Unit", iseditingreadonly: true) // 7
             .Text("TtlQty", header: "Total Qty", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("ToneGrop", header: "Tone/Grop", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), settings: sk).Get(out cbb_stocktype) // 8
             .Text("Location", header: "Location", iseditingreadonly: false, settings: ts2) // 9
             .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
@@ -1911,7 +1912,8 @@ select  ted.POID,
         [Description] = dbo.getMtlDesc(ted.poid, ted.seq1, ted.seq2,2,0),
         psd.StockUnit,
         psd.Refno,
-        [ColorID] = Color.Value
+        [ColorID] = Color.Value,
+        [ToneGrop] = 1
 from    TransferExport te with (nolock)
 inner join TransferExport_Detail ted with (nolock) on ted.ID = te.ID 
 inner join TransferExport_Detail_Carton tdc with (nolock) on ted.Ukey = tdc.TransferExport_DetailUkey
