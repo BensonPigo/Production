@@ -61,8 +61,11 @@ FROM (
                 else '1' 
               end AS SEQ
             , inv.remark
+            ,cn.SpecificDestination
             , inv.ukey
     FROM InvTrans Inv WITH (NOLOCK) 
+    left join View_WH_Orders wh  on inv.seq70poid = wh.ID
+	left join Country cn on wh.Dest = cn.ID
     inner join Po_Supp_Detail po on inv.InventoryPoid = po.id and inv.InventorySeq1 = po.seq1 and inv.InventorySeq2 = po.seq2
     left join invtransReason WITH (NOLOCK) on inv.reasonid = invtransreason.id
     LEFT JOIN TPEPASS1 WITH (NOLOCK) ON inv.ConfirmHandle = TPEPASS1.ID
@@ -99,8 +102,11 @@ FROM (
                 else '2' 
               end AS SEQ
             , inv.remark
+            ,cn.SpecificDestination
             , inv.ukey
     FROM InvTrans inv WITH (NOLOCK) 
+	left join View_WH_Orders wh  on inv.seq70poid = wh.ID
+	left join Country cn on wh.Dest = cn.ID
     inner join Po_Supp_Detail po on inv.InventoryPoid = po.id and inv.InventorySeq1 = po.seq1 and inv.InventorySeq2 = po.seq2
     left join invtransReason WITH (NOLOCK) on inv.reasonid = invtransreason.id
 	LEFT JOIN TPEPASS1 WITH (NOLOCK) ON inv.ConfirmHandle = TPEPASS1.ID
@@ -137,8 +143,11 @@ FROM (
                 else '2' 
               end AS SEQ
             , inv.remark
+            ,cn.SpecificDestination
             , inv.ukey
     FROM InvTrans inv WITH (NOLOCK) 
+	left join View_WH_Orders wh  on inv.seq70poid = wh.ID
+	left join Country cn on wh.Dest = cn.ID
     inner join Po_Supp_Detail po on inv.InventoryPoid = po.id and inv.InventorySeq1 = po.seq1 and inv.InventorySeq2 = po.seq2
     left join invtransReason WITH (NOLOCK) on inv.reasonid = invtransreason.id
 	LEFT JOIN TPEPASS1 WITH (NOLOCK) ON inv.ConfirmHandle = TPEPASS1.ID
@@ -148,7 +157,7 @@ FROM (
 			and inv.type in ('4')    
 ) TMP 
 GROUP BY    TMP.ID, TMP.TYPE, TMP.typename, TMP.ConfirmDate, TMP.ConfirmHandle, TMP.factoryid, TMP.seq70
-            , TMP.ReasonEN, TMP.SEQ, TMP.inqty, TMP.Allocated, Tmp.remark, Tmp.ukey, Tmp.UseFactory, Tmp.StockUnit",
+            , TMP.ReasonEN, TMP.SEQ, TMP.inqty, TMP.Allocated, Tmp.remark, Tmp.ukey, Tmp.UseFactory,Tmp.SpecificDestination,Tmp.StockUnit",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
                 this.dr["seq2"].ToString());
@@ -189,6 +198,7 @@ GROUP BY    TMP.ID, TMP.TYPE, TMP.typename, TMP.ConfirmDate, TMP.ConfirmHandle, 
                 .Numeric("balance", header: "Balance Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2)
                 .Text("seq70", header: "Use for SP#", width: Widths.AnsiChars(20))
                 .Text("UseFactory", header: "Use for Factory", width: Widths.AnsiChars(6))
+                .CheckBox("SpecificDestination", header: "Specific Destination", width: Widths.AnsiChars(26))
                 .Text("ReasonEN", header: "Reason", width: Widths.AnsiChars(60))
             ;
         }
