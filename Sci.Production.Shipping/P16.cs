@@ -275,7 +275,7 @@ left join Orders o WITH (NOLOCK) on o.ID = ted.PoID
 left join Supp s WITH (NOLOCK) on s.id = ted.SuppID 
 left join PO_Supp_Detail psdInv WITH (NOLOCK) on psdInv.ID = ted.InventoryPOID and psdInv.SEQ1 = ted.InventorySeq1 and psdInv.SEQ2 = ted.InventorySeq2
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ted.PoID and psd.SEQ1 = ted.Seq1 and psd.SEQ2 = ted.Seq2
-left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = ted.SCIRefno
 left join Fabric_Supp fs WITH (NOLOCK) on fs.SCIRefno = f.SCIRefno and fs.SuppID = s.ID
 outer apply(
 	SELECT [Value] = STUFF((
@@ -301,9 +301,9 @@ outer apply(
 		from (
 				select 	distinct r.ExportId
 				from TransferExport_Detail_Carton tedc with (nolock)
-				inner join Receiving_Detail rd with (nolock) on rd.PoId = tedc.POID 
-																and rd.Seq1 = tedc.Seq1
-																and rd.Seq2 = tedc.Seq2 
+				inner join Receiving_Detail rd with (nolock) on rd.PoId = ted.InventoryPOID 
+																and rd.Seq1 = ted.InventorySeq1
+																and rd.Seq2 = ted.InventorySeq2 
 																and rd.Roll = tedc.Carton
 																and rd.Dyelot = tedc.LotNo
 				inner join Receiving r with (nolock) on rd.Id = r.Id
@@ -356,7 +356,7 @@ where ted.ID = '{0}'", masterID);
                 .Numeric("WeightKg", header: "G.W.(kg)", decimal_places: 2, iseditingreadonly: true).Get(out this.col_GW)
                 .Numeric("CBM", header: "CBM", decimal_places: 4, iseditingreadonly: true).Get(out this.col_CBM)
                 .Text("ContainerType", header: "ContainerType & No", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("WK", header: "WK#", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("WK", header: "WK#", width: Ict.Win.Widths.AnsiChars(16), iseditingreadonly: true)
                 ;
 
             // 設定detailGrid Rows 是否可以編輯

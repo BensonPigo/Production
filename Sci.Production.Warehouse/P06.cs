@@ -396,9 +396,9 @@ outer apply(
 		from (
 				select 	distinct r.ExportId
 				from TransferExport_Detail_Carton tedc with (nolock)
-				inner join Receiving_Detail rd with (nolock) on rd.PoId = tedc.POID 
-																and rd.Seq1 = tedc.Seq1
-																and rd.Seq2 = tedc.Seq2 
+				inner join Receiving_Detail rd with (nolock) on rd.PoId = ted.InventoryPOID 
+																and rd.Seq1 = ted.InventorySeq1
+																and rd.Seq2 = ted.InventorySeq2 
 																and rd.Roll = tedc.Carton
 																and rd.Dyelot = tedc.LotNo
 				inner join Receiving r with (nolock) on rd.Id = r.Id
@@ -506,7 +506,7 @@ where ted.ID = '{0}'
                 .Numeric("WeightKg", header: "G.W.(kg)", decimal_places: 2, iseditingreadonly: true)
                 .Numeric("CBM", header: "CBM", decimal_places: 5, iseditingreadonly: true)
                 .Text("ContainerType", header: "ContainerType & No", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("WK", header: "WK#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("WK", header: "WK#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 ;
 
             this.detailgrid.Columns["TransferExportReason"].DefaultCellStyle.BackColor = Color.Pink;
