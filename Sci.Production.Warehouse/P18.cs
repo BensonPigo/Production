@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -247,7 +248,8 @@ where ID = @ID and Confirm != 1
                         MyUtility.Convert.GetString(row["seq2"]) != MyUtility.Convert.GetString(row["seq2", DataRowVersion.Original]) ||
                         MyUtility.Convert.GetString(row["Roll"]) != MyUtility.Convert.GetString(row["Roll", DataRowVersion.Original]) ||
                         MyUtility.Convert.GetString(row["Dyelot"]) != MyUtility.Convert.GetString(row["Dyelot", DataRowVersion.Original]) ||
-                        MyUtility.Convert.GetString(row["stocktype"]) != MyUtility.Convert.GetString(row["stocktype", DataRowVersion.Original]);
+                        MyUtility.Convert.GetString(row["stocktype"]) != MyUtility.Convert.GetString(row["stocktype", DataRowVersion.Original]) ||
+                        MyUtility.Convert.GetString(row["Tone"]) != MyUtility.Convert.GetString(row["Tone", DataRowVersion.Original]);
                 if (row.RowState == DataRowState.Modified && isTransferIn_DetailKewordChanged)
                 {
                     if (MyUtility.Check.Seek($@"select * from TransferIn_Detail where poid = '{row["poid"]}' and seq1 = '{row["seq1"]}' and seq2 = '{row["seq2"]}' and Roll = '{row["Roll"]}' and Dyelot = '{row["Dyelot"]}' and stocktype = '{row["stocktype"]}'"))
@@ -286,6 +288,8 @@ where ID = @ID and Confirm != 1
 
             return base.ClickSaveBefore();
         }
+
+
 
         /// <inheritdoc/>
         protected override void ClickSaveAfter()
@@ -708,7 +712,7 @@ where I.InventoryPOID ='{this.CurrentDetailData["poid"]}' and I.type = '3' and F
             .Numeric("qty", header: "In Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, settings: qty_setting) // 6
             .Text("stockunit", header: "Unit", iseditingreadonly: true) // 7
             .Text("TtlQty", header: "Total Qty", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            .Text("ToneGrop", header: "Tone/Grop", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("Tone", header: "Tone/Grop", width: Widths.AnsiChars(13), iseditingreadonly: false)
             .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), settings: sk).Get(out cbb_stocktype) // 8
             .Text("Location", header: "Location", iseditingreadonly: false, settings: ts2) // 9
             .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
@@ -1561,77 +1565,78 @@ where sd.id = '{this.CurrentMaintain["ID"]}'
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             string fromFty = (e.Master == null) ? string.Empty : e.Master["FromFtyID"].ToString();
             this.DetailSelectCommand = string.Format(
-                @"
-select  a.id
-        , a.PoId
-        , a.Seq1
-        , a.Seq2
-        , seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
-        , a.Roll
-        , a.Dyelot
-        , [Description] = dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0)
-        , StockUnit = p.StockUnit
-        , a.Qty
-        , TtlQty = convert(varchar(20),
-			iif(a.CombineBarcode is null , a.Qty, 
-				iif(a.Unoriginal is null , ttlQty.value, null))) +' '+ p.StockUnit
-        , a.StockType
-        , a.location
-        , a.ContainerCode
-        , a.ukey
-        , FabricType = isnull(p.FabricType,I.FabricType)
-        , DataFrom = iif(p.FabricType is null,'Invtrans','Po_Supp_Detail')
-		,a.Weight
-		,a.Remark
-        ,[Fabric] = case when p.FabricType = 'F' then 'Fabric' 
-                             when p.FabricType = 'A' then 'Accessory'
-                        else '' end
-        , p.Refno
-		, [ColorID] = Color.Value
-        ,[Barcode] = isnull(Barcode.value,'')
-        ,a.CombineBarcode
-        ,a.Unoriginal 
-        ,[ActualWeight] = isnull(a.ActualWeight, 0)
-        ,a.MDivisionID
-        ,a.CompleteTime
-        ,a.SentToWMS
-from dbo.TransferIn_Detail a WITH (NOLOCK) 
-left join Po_Supp_Detail p WITH (NOLOCK)  on a.poid = p.id
-                              and a.seq1 = p.seq1
-                              and a.seq2 = p.seq2
-LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
-outer apply ( 
-    select top 1 FabricType 
-    from Invtrans I WITH (NOLOCK)  
-    where a.poid = I.InventoryPOID and a.seq1 = I.InventorySeq1 and a.seq2 = I.InventorySeq2 
-    and I.FactoryID = '{1}' and I.type = '3' 
-) I
-outer apply(
-	select value = sum(Qty)
-	from TransferIn_Detail t WITH (NOLOCK) 
-	where t.ID=a.ID
-	and t.CombineBarcode=a.CombineBarcode
-	and t.CombineBarcode is not null
-)ttlQty
-OUTER APPLY(
- SELECT [Value]=
-	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF( isnull(p.SuppColor,'') = '',dbo.GetColorMultipleID(p.BrandID,p.ColorID),p.SuppColor)
-		 ELSE dbo.GetColorMultipleID(p.BrandID,p.ColorID)
-	 END
-)Color
-outer apply(
-	select value = ft.barcode
-	from FtyInventory ft
-	where ft.POID = a.PoId
-	and ft.Seq1 = a.Seq1 and ft.Seq2 = a.Seq2
-	and ft.StockType = a.StockType 
-	and ft.Roll =a.Roll and ft.Dyelot = a.Dyelot
-)Barcode
-Where a.id = '{0}'
-order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
-",
-                masterID,
-                fromFty);
+            @"
+            select  a.id
+            , a.PoId
+            , a.Seq1
+            , a.Seq2
+            , seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
+            , a.Roll
+            , a.Dyelot
+            , [Description] = dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0)
+            , StockUnit = p.StockUnit
+            , a.Qty
+            , TtlQty = convert(varchar(20),
+			    iif(a.CombineBarcode is null , a.Qty, 
+				    iif(a.Unoriginal is null , ttlQty.value, null))) +' '+ p.StockUnit
+            , a.StockType
+            , a.location
+            , a.ContainerCode
+            , a.ukey
+            , FabricType = isnull(p.FabricType,I.FabricType)
+            , DataFrom = iif(p.FabricType is null,'Invtrans','Po_Supp_Detail')
+		    ,a.Weight
+		    ,a.Remark
+            ,[Fabric] = case when p.FabricType = 'F' then 'Fabric' 
+                                 when p.FabricType = 'A' then 'Accessory'
+                            else '' end
+            , p.Refno
+		    , [ColorID] = Color.Value
+            ,[Barcode] = isnull(Barcode.value,'')
+            ,a.CombineBarcode
+            ,a.Unoriginal 
+            ,[ActualWeight] = isnull(a.ActualWeight, 0)
+            ,a.MDivisionID
+            ,a.CompleteTime
+            ,a.SentToWMS
+            ,[Tone] = a.Tone
+            from dbo.TransferIn_Detail a WITH (NOLOCK) 
+            left join Po_Supp_Detail p WITH (NOLOCK)  on a.poid = p.id
+                                          and a.seq1 = p.seq1
+                                          and a.seq2 = p.seq2
+            LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
+            outer apply ( 
+                select top 1 FabricType 
+                from Invtrans I WITH (NOLOCK)  
+                where a.poid = I.InventoryPOID and a.seq1 = I.InventorySeq1 and a.seq2 = I.InventorySeq2 
+                and I.FactoryID = '{1}' and I.type = '3' 
+            ) I
+            outer apply(
+	            select value = sum(Qty)
+	            from TransferIn_Detail t WITH (NOLOCK) 
+	            where t.ID=a.ID
+	            and t.CombineBarcode=a.CombineBarcode
+	            and t.CombineBarcode is not null
+            )ttlQty
+            OUTER APPLY(
+             SELECT [Value]=
+	             CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF( isnull(p.SuppColor,'') = '',dbo.GetColorMultipleID(p.BrandID,p.ColorID),p.SuppColor)
+		             ELSE dbo.GetColorMultipleID(p.BrandID,p.ColorID)
+	             END
+            )Color
+            outer apply(
+	            select value = ft.barcode
+	            from FtyInventory ft
+	            where ft.POID = a.PoId
+	            and ft.Seq1 = a.Seq1 and ft.Seq2 = a.Seq2
+	            and ft.StockType = a.StockType 
+	            and ft.Roll =a.Roll and ft.Dyelot = a.Dyelot
+            )Barcode
+            Where a.id = '{0}'
+            order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
+            ",
+            masterID,
+            fromFty);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -1775,6 +1780,7 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
             newrow["Location"] = lastRow["Location"];
             newrow["FabricType"] = lastRow["FabricType"];
             newrow["DataFrom"] = lastRow["DataFrom"];
+            newrow["Tone"] = lastRow["Tone"];
 
             // GridView button顯示+
             DataGridViewButtonCell next_dgbtn = (DataGridViewButtonCell)this.detailgrid.CurrentRow.Cells["btnAdd2"];
@@ -1897,7 +1903,7 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
 
             List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@ID", this.txtTransferExportID.Text) };
             string sqlGetTrasnferExport = $@"
-select  ted.POID,
+        select  ted.POID,
         [Seq] = concat(Ltrim(Rtrim(ted.Seq1)), ' ', ted.Seq2),
         ted.Seq1,
         ted.Seq2,
@@ -1913,28 +1919,28 @@ select  ted.POID,
         psd.StockUnit,
         psd.Refno,
         [ColorID] = Color.Value,
-        [ToneGrop] = 1
-from    TransferExport te with (nolock)
-inner join TransferExport_Detail ted with (nolock) on ted.ID = te.ID 
-inner join TransferExport_Detail_Carton tdc with (nolock) on ted.Ukey = tdc.TransferExport_DetailUkey
-left join Po_Supp_Detail psd with (nolock) on psd.ID = ted.POID and psd.Seq1 = ted.Seq1 and psd.Seq2 = ted.Seq2
-LEFT JOIN Fabric f WITH (NOLOCK) ON psd.SCIRefNo = f.SCIRefNo
-OUTER APPLY(
- SELECT [Value]=
-	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF( isnull(psd.SuppColor,'') = '',dbo.GetColorMultipleID(psd.BrandID,psd.ColorID),psd.SuppColor)
-		 ELSE dbo.GetColorMultipleID(psd.BrandID,psd.ColorID)
-	 END
-)Color
-where   te.ID = @ID and
-		te.Confirm  = 1 and
-		exists(select 1 from Factory f with (nolock) 
-		        where f.ID = te.FactoryID and 
-		              f.IsproduceFty = 1 and 
-		              f.MDivisionID  = '{Env.User.Keyword}' ) and
-		not exists(select 1 from TransferIn tf with (nolock) where tf.TransferExportID = te.ID and tf.ID <> '{this.CurrentMaintain["ID"]}') and
-        tdc.StockQty > 0
-group by ted.POID, ted.Seq1, ted.Seq2, tdc.Carton, tdc.LotNo, ted.FabricType, psd.StockUnit, psd.Refno, Color.Value, tdc.StockUnitID, psd.StockUnit
-";
+        [Tone] =tdc.Tone
+        from    TransferExport te with (nolock)
+        inner join TransferExport_Detail ted with (nolock) on ted.ID = te.ID 
+        inner join TransferExport_Detail_Carton tdc with (nolock) on ted.Ukey = tdc.TransferExport_DetailUkey
+        left join Po_Supp_Detail psd with (nolock) on psd.ID = ted.POID and psd.Seq1 = ted.Seq1 and psd.Seq2 = ted.Seq2
+        LEFT JOIN Fabric f WITH (NOLOCK) ON psd.SCIRefNo = f.SCIRefNo
+        OUTER APPLY(
+         SELECT [Value]=
+	         CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF( isnull(psd.SuppColor,'') = '',dbo.GetColorMultipleID(psd.BrandID,psd.ColorID),psd.SuppColor)
+		         ELSE dbo.GetColorMultipleID(psd.BrandID,psd.ColorID)
+	         END
+        )Color
+        where   te.ID = @ID and
+		        te.Confirm  = 1 and
+		        exists(select 1 from Factory f with (nolock) 
+		                where f.ID = te.FactoryID and 
+		                      f.IsproduceFty = 1 and 
+		                      f.MDivisionID  = '{Env.User.Keyword}' ) and
+		        not exists(select 1 from TransferIn tf with (nolock) where tf.TransferExportID = te.ID and tf.ID <> '{this.CurrentMaintain["ID"]}') and
+                tdc.StockQty > 0
+        group by ted.POID, ted.Seq1, ted.Seq2, tdc.Carton, tdc.LotNo, ted.FabricType, psd.StockUnit, psd.Refno, Color.Value, tdc.StockUnitID, psd.StockUnit,Tone
+        ";
 
             DataTable dtTrasnferExport;
 
@@ -1974,8 +1980,9 @@ group by ted.POID, ted.Seq1, ted.Seq2, tdc.Carton, tdc.LotNo, ted.FabricType, ps
                 drNew["StockUnit"] = drImport["StockUnit"];
                 drNew["Refno"] = drImport["Refno"];
                 drNew["ColorID"] = drImport["ColorID"];
+                drNew["Tone"] = drImport["Tone"];
 
-                dtDetail.Rows.Add(drNew);
+                    dtDetail.Rows.Add(drNew);
             }
 
             this.Change_record();
