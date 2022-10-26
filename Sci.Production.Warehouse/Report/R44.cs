@@ -172,6 +172,7 @@ outer apply (
 			and tid.POID = ted.PoID
 			and tid.Seq1 = ted.Seq1
 			and tid.Seq2 = ted.Seq2
+			and ti.Status = 'Confirmed'
 ) TransferIn
 where te.TransferType = 'Transfer In'
 {wherein}
@@ -238,9 +239,9 @@ outer apply(
 		from (
 				select 	distinct r.ExportId
 				from TransferExport_Detail_Carton tedc with (nolock)
-				inner join Receiving_Detail rd with (nolock) on rd.PoId = tedc.POID 
-																and rd.Seq1 = tedc.Seq1
-																and rd.Seq2 = tedc.Seq2 
+				inner join Receiving_Detail rd with (nolock) on rd.PoId = ted.InventoryPOID 
+																and rd.Seq1 = ted.InventorySeq1
+																and rd.Seq2 = ted.InventorySeq2 
 																and rd.Roll = tedc.Carton
 																and rd.Dyelot = tedc.LotNo
 				inner join Receiving r with (nolock) on rd.Id = r.Id
@@ -457,13 +458,14 @@ outer apply(
 		select concat(',',ExportId)
 		from (
 				select 	distinct r.ExportId
-				from Receiving_Detail rd
-				inner join Receiving r on rd.Id = r.Id
-				where rd.PoId = tod.POID 
-				and rd.Seq1 = tod.Seq1
-				and rd.Seq2 = tod.Seq2 
-				and rd.Roll = tod.Roll
-				and rd.Dyelot = tod.Dyelot
+				from TransferExport_Detail_Carton tedc with (nolock)
+				inner join Receiving_Detail rd with (nolock) on rd.PoId = ted.InventoryPOID 
+																and rd.Seq1 = ted.InventorySeq1
+																and rd.Seq2 = ted.InventorySeq2 
+																and rd.Roll = tedc.Carton
+																and rd.Dyelot = tedc.LotNo
+				inner join Receiving r with (nolock) on rd.Id = r.Id
+				where ted.Ukey = tedc.TransferExport_DetailUkey
 			) s
 		for xml path ('')
 	) , 1, 1, '')
