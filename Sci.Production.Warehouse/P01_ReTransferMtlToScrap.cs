@@ -207,12 +207,6 @@ and f.POID = '{this.poID}'
                         throw result.GetException();
                     }
 
-                    //DualResult result = PublicPrg.Prgs.ReTransferMtlToScrapByPO(subTransferId, this.poID, selectedBulk);
-                    //if (!result)
-                    //{
-                    //    throw result.GetException();
-                    //}
-
                     if (!(result = DBProxy.Current.Select(null, $"select * from SubTransfer_Detail where id = '{subTransferId}'", out dtSubTransfer_Detail)))
                     {
                         throw result.GetException();

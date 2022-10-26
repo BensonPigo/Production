@@ -279,12 +279,6 @@ drop table #ReTransferToScrapList,#ReTransferToScrapSummary
                             throw result.GetException();
                         }
 
-                        //DualResult result = PublicPrg.Prgs.ReTransferMtlToScrapByPO(subTransferId, transToScrapPO["POID"].ToString(), listMtlItem);
-                        //if (!result)
-                        //{
-                        //    throw result.GetException();
-                        //}
-
                         if (!(result = DBProxy.Current.Select(null, $"select * from SubTransfer_Detail where id = '{subTransferId}'", out dtSubTransfer_Detail)))
                         {
                             throw result.GetException();
