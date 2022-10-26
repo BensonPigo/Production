@@ -68,7 +68,7 @@ namespace Sci.Production.Warehouse
                 this.listPar.Add(new SqlParameter("@ID2", this.txtTK2.Text));
             }
 
-            if (MyUtility.Check.Empty(this.comboDropDownList1.SelectedValue))
+            if (!MyUtility.Check.Empty(this.comboDropDownList1.SelectedValue))
             {
                 sqlWhere += $"\r\nand ted.FabricType in ({this.comboDropDownList1.SelectedValue})";
             }
@@ -313,7 +313,11 @@ select [TK No.] = te.ID
 	, [REF#] = ted.Refno
 	, [Roll] = tedc.Carton
 	, [Dyelot] = tedc.LotNo
-	, [Stock Type] = tid.StockType
+	, [Stock Type] = case tid.StockType
+						when 'b' then 'Bulk'
+						when 'i' then 'Inventory'
+						when 'o' then 'Scrap'
+					end
 	, [Color] = psd.ColorID
 	, [Size] = psd.SizeSpec
 	, [Stock Unit] = psd.StockUnit
@@ -355,7 +359,7 @@ select [TK No.] = te.ID
 	, [To SP#] = tid.PoID
 	, [To SEQ] = CONCAT (tid.Seq1, ' ', tid.Seq2)
 	, [Suppier] = ted.SuppID
-	, [Desc] = ted.Description
+	, [Desc] = dbo.getMtlDesc(tid.Poid,tid.SEQ1,tid.SEQ2,2,0)
 	, [Material Type] = Concat(
             case psd.FabricType
             when 'F' then 'Fabric'
@@ -367,7 +371,11 @@ select [TK No.] = te.ID
 	, [REF#] = ted.Refno
 	, [Roll] = tid.Roll
 	, [Dyelot] = tid.Dyelot
-	, [Stock Type] = tid.StockType
+	, [Stock Type] = case tid.StockType
+						when 'b' then 'Bulk'
+						when 'i' then 'Inventory'
+						when 'o' then 'Scrap'
+					end
 	, [Color] = psd.ColorID
 	, [Size] = psd.SizeSpec
 	, [Stock Unit] = psd.StockUnit
@@ -431,7 +439,11 @@ select [TK No.] = te.ID
 		, [REF#] = ted.Refno
 		, [Roll] = tedc.Carton
 		, [Dyelot] = tedc.LotNo
-		, [Stock Type] = tod.StockType
+		, [Stock Type] = case tod.StockType
+							when 'b' then 'Bulk'
+							when 'i' then 'Inventory'
+							when 'o' then 'Scrap'
+						  end
 		, [Color] = psdinv.ColorID
 		, [Size] = psdinv.SizeSpec
 		, [Stock Unit] = psdinv.StockUnit
