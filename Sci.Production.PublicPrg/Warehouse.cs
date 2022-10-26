@@ -3328,13 +3328,16 @@ WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
             ,'O'	[ToStock]
             ,[Dyelot]
             ,Qty =  fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty
-            ,[ToLocation]=isnull(
-            (
-	            SELECT TOP 1 ID 
-	            FROM MtlLocation WITH (NOLOCK)
-	            WHERE ID in (select data from [dbo].[SplitString](dbo.Getlocation(fi.Ukey),','))
-	            AND StockType='O' AND Junk=0
-            ),'')
+			,[ToLocation] = isnull(stuff((
+                select concat(',', d.MtlLocationID)
+                from FtyInventory_Detail d WITH (NOLOCK)
+                inner join MtlLocation m WITH (NOLOCK) on m.ID = d.MtlLocationID	
+                where d.ukey = fi.Ukey 
+                and d.MtlLocationID <> ''
+                and m.StockType='O'
+                AND m.Junk=0
+			    for xml path(''))
+			, 1, 1, ''), '')
 		    from dbo.FtyInventory fi WITH (NOLOCK)
 	        where fi.Ukey = '{retransferToScrapItem["Ukey"]}'
 ";

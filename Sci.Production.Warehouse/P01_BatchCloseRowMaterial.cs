@@ -298,6 +298,7 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                         sqlPar.Add(new SqlParameter("@factoryid", Env.User.UserID));
                         sqlPar.Add(new SqlParameter("@loginid", Env.User.UserID));
                         sqlPar.Add(new SqlParameter("@NewID", subTransferId));
+                        sqlPar.Add(new SqlParameter("@FirstClose", true));
                         #endregion
                         if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_WarehouseClose", sqlPar)))
                         {
