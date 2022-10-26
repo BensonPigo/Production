@@ -711,7 +711,7 @@
             this.labelWKNo.Name = "labelWKNo";
             this.labelWKNo.Size = new System.Drawing.Size(89, 23);
             this.labelWKNo.TabIndex = 49;
-            this.labelWKNo.Text = "WK No.";
+            this.labelWKNo.Text = "TK No.";
             // 
             // dateDoxRcvDate
             // 
