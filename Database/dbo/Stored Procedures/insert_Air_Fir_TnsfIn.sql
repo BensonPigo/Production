@@ -263,7 +263,7 @@ using(
 on t.ID=s.FirID AND t.Roll=s.Roll AND t.Dyelot=s.Dyelot 
 
 WHEN MATCHED THEN
-	 UPDATE SET t.TicketYds=s.TransferInQty ,t.EditName=@LoginID, t.EditDate=GETDATE()
+	 UPDATE SET t.TicketYds=s.TransferInQty ,t.EditName=@LoginID, t.EditDate=GETDATE() ,t.tone = s.tone
 
 WHEN NOT MATCHED by TARGET THEN 
 	insert  ([ID]           ,[Roll]           ,[Dyelot]           ,[Scale]           ,[Inspdate]           ,[Inspector]           ,[Result]

@@ -1073,7 +1073,6 @@ where   d.Id = '{0}'
                                    location = b.Field<string>("location"),
                                    roll = b.Field<string>("roll"),
                                    dyelot = b.Field<string>("dyelot"),
-                                   tone= b.Field<string>("tone"),
                                }).ToList();
 
             string upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true, mtlAutoLock);
