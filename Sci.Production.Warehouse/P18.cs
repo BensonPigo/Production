@@ -248,8 +248,7 @@ where ID = @ID and Confirm != 1
                         MyUtility.Convert.GetString(row["seq2"]) != MyUtility.Convert.GetString(row["seq2", DataRowVersion.Original]) ||
                         MyUtility.Convert.GetString(row["Roll"]) != MyUtility.Convert.GetString(row["Roll", DataRowVersion.Original]) ||
                         MyUtility.Convert.GetString(row["Dyelot"]) != MyUtility.Convert.GetString(row["Dyelot", DataRowVersion.Original]) ||
-                        MyUtility.Convert.GetString(row["stocktype"]) != MyUtility.Convert.GetString(row["stocktype", DataRowVersion.Original]) ||
-                        MyUtility.Convert.GetString(row["Tone"]) != MyUtility.Convert.GetString(row["Tone", DataRowVersion.Original]);
+                        MyUtility.Convert.GetString(row["stocktype"]) != MyUtility.Convert.GetString(row["stocktype", DataRowVersion.Original]);
                 if (row.RowState == DataRowState.Modified && isTransferIn_DetailKewordChanged)
                 {
                     if (MyUtility.Check.Seek($@"select * from TransferIn_Detail where poid = '{row["poid"]}' and seq1 = '{row["seq1"]}' and seq2 = '{row["seq2"]}' and Roll = '{row["Roll"]}' and Dyelot = '{row["Dyelot"]}' and stocktype = '{row["stocktype"]}'"))
@@ -288,8 +287,6 @@ where ID = @ID and Confirm != 1
 
             return base.ClickSaveBefore();
         }
-
-
 
         /// <inheritdoc/>
         protected override void ClickSaveAfter()
@@ -1076,6 +1073,7 @@ where   d.Id = '{0}'
                                    location = b.Field<string>("location"),
                                    roll = b.Field<string>("roll"),
                                    dyelot = b.Field<string>("dyelot"),
+                                   tone= b.Field<string>("tone"),
                                }).ToList();
 
             string upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true, mtlAutoLock);
@@ -1982,7 +1980,7 @@ where sd.id = '{this.CurrentMaintain["ID"]}'
                 drNew["ColorID"] = drImport["ColorID"];
                 drNew["Tone"] = drImport["Tone"];
 
-                    dtDetail.Rows.Add(drNew);
+                dtDetail.Rows.Add(drNew);
             }
 
             this.Change_record();
