@@ -64,7 +64,7 @@
             this.txtStyle.Location = new System.Drawing.Point(77, 16);
             this.txtStyle.Name = "txtStyle";
             this.txtStyle.Size = new System.Drawing.Size(148, 26);
-            this.txtStyle.TabIndex = 3;
+            this.txtStyle.TabIndex = 0;
             this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtStyle_PopUp);
             this.txtStyle.Validating += new System.ComponentModel.CancelEventHandler(this.txtStyle_Validating);
             // 
@@ -75,7 +75,7 @@
             this.comboBrand.Location = new System.Drawing.Point(297, 15);
             this.comboBrand.Name = "comboBrand";
             this.comboBrand.Size = new System.Drawing.Size(121, 28);
-            this.comboBrand.TabIndex = 6;
+            this.comboBrand.TabIndex = 1;
             // 
             // label2
             // 
@@ -126,7 +126,7 @@
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.Location = new System.Drawing.Point(3, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(274, 51);
+            this.label4.Size = new System.Drawing.Size(275, 51);
             this.label4.TabIndex = 14;
             this.label4.Text = "TOTAL STYLES";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -136,9 +136,9 @@
             this.label5.AutoSize = true;
             this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(283, 0);
+            this.label5.Location = new System.Drawing.Point(284, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(274, 51);
+            this.label5.Size = new System.Drawing.Size(275, 51);
             this.label5.TabIndex = 15;
             this.label5.Text = "DONE DEVELOPMENT";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -148,9 +148,9 @@
             this.label6.AutoSize = true;
             this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(563, 0);
+            this.label6.Location = new System.Drawing.Point(565, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(277, 51);
+            this.label6.Size = new System.Drawing.Size(275, 51);
             this.label6.TabIndex = 16;
             this.label6.Text = "ON-GOING DEVELOPMENT";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -161,7 +161,7 @@
             this.labTtlStyles.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labTtlStyles.Location = new System.Drawing.Point(3, 51);
             this.labTtlStyles.Name = "labTtlStyles";
-            this.labTtlStyles.Size = new System.Drawing.Size(274, 86);
+            this.labTtlStyles.Size = new System.Drawing.Size(275, 86);
             this.labTtlStyles.TabIndex = 17;
             this.labTtlStyles.Text = "0";
             this.labTtlStyles.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -170,9 +170,9 @@
             // 
             this.labDone.Dock = System.Windows.Forms.DockStyle.Fill;
             this.labDone.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labDone.Location = new System.Drawing.Point(283, 51);
+            this.labDone.Location = new System.Drawing.Point(284, 51);
             this.labDone.Name = "labDone";
-            this.labDone.Size = new System.Drawing.Size(274, 86);
+            this.labDone.Size = new System.Drawing.Size(275, 86);
             this.labDone.TabIndex = 18;
             this.labDone.Text = "0%";
             this.labDone.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -181,9 +181,9 @@
             // 
             this.labonGoing.Dock = System.Windows.Forms.DockStyle.Fill;
             this.labonGoing.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labonGoing.Location = new System.Drawing.Point(563, 51);
+            this.labonGoing.Location = new System.Drawing.Point(565, 51);
             this.labonGoing.Name = "labonGoing";
-            this.labonGoing.Size = new System.Drawing.Size(277, 86);
+            this.labonGoing.Size = new System.Drawing.Size(275, 86);
             this.labonGoing.TabIndex = 19;
             this.labonGoing.Text = "0%";
             this.labonGoing.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -222,7 +222,7 @@
             this.btnDataFilter.Location = new System.Drawing.Point(703, 15);
             this.btnDataFilter.Name = "btnDataFilter";
             this.btnDataFilter.Size = new System.Drawing.Size(114, 30);
-            this.btnDataFilter.TabIndex = 32;
+            this.btnDataFilter.TabIndex = 3;
             this.btnDataFilter.Text = "Data Filter";
             this.btnDataFilter.UseVisualStyleBackColor = true;
             this.btnDataFilter.Click += new System.EventHandler(this.btnDataFilter_Click);
@@ -233,7 +233,7 @@
             this.btn_Search.Location = new System.Drawing.Point(424, 15);
             this.btn_Search.Name = "btn_Search";
             this.btn_Search.Size = new System.Drawing.Size(114, 30);
-            this.btn_Search.TabIndex = 33;
+            this.btn_Search.TabIndex = 2;
             this.btn_Search.Text = "Search";
             this.btn_Search.UseVisualStyleBackColor = true;
             this.btn_Search.Click += new System.EventHandler(this.btnFind_Click);
@@ -289,6 +289,7 @@
             this.ClientSize = new System.Drawing.Size(843, 659);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.grid);
+            this.DefaultControl = "txtStyle";
             this.Name = "P23";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P23. Handover Status";

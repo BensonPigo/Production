@@ -77,6 +77,10 @@ namespace Sci.Production.PPIC
             }
 
             DataRow dr = this.gridTemplateList.GetDataRow(this.listControlBindingSource1.Position);
+            if (dr == null)
+            {
+                return;
+            }
 
             if (!Directory.Exists(this.strPath))
             {
@@ -259,7 +263,18 @@ values('{this.styleUkey}','{onlyFileName}','{desc}','{Env.User.UserID}',GETDATE(
                 return;
             }
 
+            if (MyUtility.Check.Empty(this.strPath))
+            {
+                MyUtility.Msg.WarningBox("Path not found.");
+                return;
+            }
+
             DataRow dr = this.gridTemplateList.GetDataRow(this.listControlBindingSource1.Position);
+            if (dr == null)
+            {
+                return;
+            }
+
             string fullFileName = Path.Combine(this.strPath, dr["SourceFile"].ToString());
             if (File.Exists(fullFileName))
             {

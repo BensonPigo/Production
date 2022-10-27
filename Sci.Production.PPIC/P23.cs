@@ -114,10 +114,10 @@ namespace Sci.Production.PPIC
                 switch (dr["Status"])
                 {
                     case "DONE":
-                        this.grid.Rows[index].DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#008000");
+                        this.grid.Rows[index].Cells["Status"].Style.BackColor = ColorTranslator.FromHtml("#008000");
                         break;
                     case "ON-GOING":
-                        this.grid.Rows[index].DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#ffff00");
+                        this.grid.Rows[index].Cells["Status"].Style.BackColor = ColorTranslator.FromHtml("#ffff00");;
                         break;
                     default:
                         break;
@@ -126,10 +126,15 @@ namespace Sci.Production.PPIC
         }
 
         private P24 callP24 = null;
+
         private void Grid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             this.grid.ValidateControl();
             DataRow dr = this.grid.GetDataRow(e.RowIndex);
+            if (dr == null)
+            {
+                return;
+            }
 
             if (this.callP24 != null && this.callP24.Visible == true)
             {
@@ -144,6 +149,17 @@ namespace Sci.Production.PPIC
 
         private void P24FormOpen(string style, string season, string brand)
         {
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form is P24)
+                {
+                    form.Activate();
+                    P24 activateForm = (P24)form;
+                    activateForm.P24Call(style, season, "ADIDAS");
+                    return;
+                }
+            }
+
             ToolStripMenuItem p24MenuItem = null;
             foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
             {
@@ -153,6 +169,12 @@ namespace Sci.Production.PPIC
                     {
                         if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
                         {
+                            if (((ToolStripMenuItem)subMenuItem).Text.EqualString("Style Handover"))
+                            {
+                                p24MenuItem = (ToolStripMenuItem)subMenuItem;
+                                break;
+                            }
+
                             if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P24. Query Handover List"))
                             {
                                 p24MenuItem = (ToolStripMenuItem)subMenuItem;

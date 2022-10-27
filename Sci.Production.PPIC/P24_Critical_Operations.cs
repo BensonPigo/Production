@@ -41,6 +41,11 @@ namespace Sci.Production.PPIC
             }
 
             DataRow dr = this.gridCritical_Operations.GetDataRow(this.listControlBindingSource1.Position);
+            if (dr == null)
+            {
+                return;
+            }
+
             if (!Directory.Exists(this.strPath))
             {
                 MyUtility.Msg.WarningBox("Please check the path setting.");

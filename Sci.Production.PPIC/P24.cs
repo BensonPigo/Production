@@ -280,7 +280,7 @@ namespace Sci.Production.PPIC
             this.Click_Search();
         }
 
-        private void Click_Search()
+        public void Click_Search()
         {
             if (!this.CheckParm())
             {
