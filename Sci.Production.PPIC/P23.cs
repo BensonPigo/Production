@@ -171,14 +171,14 @@ namespace Sci.Production.PPIC
                         {
                             if (((ToolStripMenuItem)subMenuItem).Text.EqualString("Style Handover"))
                             {
-                                p24MenuItem = (ToolStripMenuItem)subMenuItem;
-                                break;
-                            }
-
-                            if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P24. Query Handover List"))
-                            {
-                                p24MenuItem = (ToolStripMenuItem)subMenuItem;
-                                break;
+                                foreach (var sub2MenuItem in ((ToolStripMenuItem)subMenuItem).DropDownItems)
+                                {
+                                    if (((ToolStripMenuItem)sub2MenuItem).Text.EqualString("P24. Query Handover List"))
+                                    {
+                                        p24MenuItem = (ToolStripMenuItem)sub2MenuItem;
+                                        break;
+                                    }
+                                }
                             }
                         }
                     }
