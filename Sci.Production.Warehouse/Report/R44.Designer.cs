@@ -215,6 +215,7 @@
             this.chkExcludeJunk.TabIndex = 11;
             this.chkExcludeJunk.Text = "Exclude Junk";
             this.chkExcludeJunk.UseVisualStyleBackColor = true;
+            this.chkExcludeJunk.Checked = true;
             // 
             // txtMdivision1
             // 
