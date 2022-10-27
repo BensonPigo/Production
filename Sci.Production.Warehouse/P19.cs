@@ -545,7 +545,8 @@ FOC                        ,
 EditName                   ,
 EditDate                   ,
 StockUnitID                ,
-StockQty
+StockQty                   ,
+Tone
 )
 select  t.TransferExport_DetailUkey,
         t.TransferExportID,
@@ -559,13 +560,13 @@ select  t.TransferExport_DetailUkey,
         '{Env.User.UserID}',
         getdate(),
         isnull(psdInv.StockUnit, ''),
-        t.Qty
+        t.Qty,
+        t.Tone
 from #tmp t
 inner join TransferExport_Detail ted with (nolock) on ted.Ukey = t.TransferExport_DetailUkey
 left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID and 
 													ted.InventorySeq1 = psdInv.SEQ1 and
 													ted.InventorySeq2 = psdinv.SEQ2
-
 ";
             if (this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["TransferExportID"])))
             {
@@ -936,7 +937,7 @@ select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as se
 , p1.SizeSpec
 ,a.TransferExportID
 ,a.TransferExport_DetailUkey
-,ShadeboneTone2.Tone 
+    ,Tone = isnull(ShadeboneTone2.Tone, '')
 from dbo.TransferOut_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 left join View_WH_Orders o WITH (NOLOCK) on p1.ID = o.ID
