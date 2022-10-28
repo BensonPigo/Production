@@ -419,15 +419,6 @@ where ted.ID = '{0}'", masterID);
                 return;
             }
 
-            if (string.Compare(this.CurrentMaintain["FtyStatus"].ToString(), "New", true) != 0)
-            {
-                this.toolbar.cmdEdit.Enabled = true;
-            }
-            else
-            {
-                this.toolbar.cmdEdit.Enabled = false;
-            }
-
             if (string.Compare(this.CurrentMaintain["FtyStatus"].ToString(), "Send", true) == 0 && this.EditMode == false)
             {
                 this.toolbar.cmdConfirm.Enabled = true;
@@ -435,17 +426,6 @@ where ted.ID = '{0}'", masterID);
             else
             {
                 this.toolbar.cmdConfirm.Enabled = false;
-            }
-
-            // Confirmed and FromFactory 不可編輯
-            if (this.IsTransferOut == true &&
-                string.Compare(this.CurrentMaintain["FtyStatus"].ToString(), "Confirmed", true) == 0)
-            {
-                this.toolbar.cmdEdit.Enabled = false;
-            }
-            else
-            {
-                this.toolbar.cmdEdit.Enabled = true;
             }
         }
 
