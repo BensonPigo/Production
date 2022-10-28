@@ -611,7 +611,8 @@ begin
 			[SewingOutput] = ISNULL(SewingOutput, 0),
 			[SewingOutputCPU] = ISNULL(SewingOutputCPU, 0),
 			FtyZone,
-			TransFtyZone 
+			TransFtyZone,
+            IsCancelNeedProduction
 	from @tmpBaseBySource 
 
 	select  FtyGroup,OutputDate,[SewingOutputCPU] = sum(SewingOutputCPU) * -1,FtyZone
