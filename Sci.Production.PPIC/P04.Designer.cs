@@ -1377,6 +1377,7 @@
             // 
             this.txtcdcode.BackColor = System.Drawing.Color.White;
             this.txtcdcode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CdCodeID", true));
+            this.txtcdcode.Enabled = false;
             this.txtcdcode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtcdcode.Location = new System.Drawing.Point(108, 142);
             this.txtcdcode.Name = "txtcdcode";
