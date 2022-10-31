@@ -41,6 +41,7 @@
     [WKETA]               DATE           NULL,
     [Tone] VARCHAR(15) CONSTRAINT [DF_WorkOrder_Tone] DEFAULT ('') not NULL,
     [UnfinishedCuttingReason] VARCHAR(50) CONSTRAINT [DF_WorkOrder_UnfinishedCuttingReason] DEFAULT ('') not NULL,
+    [Remark] NVARCHAR(MAX) NULL DEFAULT (''), 
     CONSTRAINT [PK_WorkOrder] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

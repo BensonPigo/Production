@@ -4,14 +4,11 @@ using Sci.Data;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
@@ -239,7 +236,7 @@ where   ted.ID = @ID and
 
             base.ClickSend();
 
-            string sqlUpdateStatus = @"update TransferExport set FtyStatus = 'Send' where ID = @ID";
+            string sqlUpdateStatus = @"update TransferExport set FtyStatus = 'Send', FtySendDate = Getdate() where ID = @ID";
             List<SqlParameter> listParUpdateStatus = new List<SqlParameter>() { new SqlParameter("@ID", this.CurrentMaintain["ID"]) };
 
             result = DBProxy.Current.Execute(null, sqlUpdateStatus, listParUpdateStatus);
@@ -264,7 +261,7 @@ where   ted.ID = @ID and
 
             base.ClickRecall();
 
-            string sqlUpdateStatus = @"update TransferExport set FtyStatus = 'New' where ID = @ID";
+            string sqlUpdateStatus = @"update TransferExport set FtyStatus = 'New',FtySendDate = Null where ID = @ID";
             List<SqlParameter> listParUpdateStatus = new List<SqlParameter>() { new SqlParameter("@ID", this.CurrentMaintain["ID"]) };
 
             DualResult result = DBProxy.Current.Execute(null, sqlUpdateStatus, listParUpdateStatus);
@@ -358,7 +355,15 @@ select	ted.InventoryPOID,
         ted.Ukey,
         PoidSeq1 = rtrim(ted.InventoryPOID) + Ltrim(Rtrim(ted.InventorySeq1)),
         PoidSeq = rtrim(ted.InventoryPOID)+(Ltrim(Rtrim(ted.InventorySeq1)) + ' ' + ted.InventorySeq2),
-        ted.Refno
+        ted.Refno,
+        MaterialType = Concat(
+            case ted.FabricType
+            when 'F' then 'Fabric'
+            when 'A' then 'Accessory'
+            when 'O' then 'Other'
+            end
+            , '-' +  f.MtlTypeID),
+        WK = WK.ExportId
 from TransferExport_Detail ted with (nolock) 
 inner join TransferExport te with(nolock) on ted.ID = te.ID
 left join Orders o with (nolock) on ted.PoID = o.ID
@@ -385,6 +390,23 @@ OUTER APPLY(
 		 ELSE dbo.GetColorMultipleID(psd.BrandID,psd.ColorID)
 	 END
 ) Color
+outer apply(
+	select ExportId = Stuff((
+		select concat(',',ExportId)
+		from (
+				select 	distinct r.ExportId
+				from TransferExport_Detail_Carton tedc with (nolock)
+				inner join Receiving_Detail rd with (nolock) on rd.PoId = ted.InventoryPOID 
+																and rd.Seq1 = ted.InventorySeq1
+																and rd.Seq2 = ted.InventorySeq2 
+																and rd.Roll = tedc.Carton
+																and rd.Dyelot = tedc.LotNo
+				inner join Receiving r with (nolock) on rd.Id = r.Id
+				where ted.Ukey = tedc.TransferExport_DetailUkey
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) WK
 where ted.ID = '{0}'
 ", masterID);
             return base.OnDetailSelectCommandPrepare(e);
@@ -471,6 +493,7 @@ where ted.ID = '{0}'
                 .Text("ToSEQ", header: "To SEQ", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("SuppID", header: "Supplier", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("MaterialType", header: "Material Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("ColorID", header: "Color", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("PoQty", header: "Po Q'ty" + Environment.NewLine + "(Stock Unit)", decimal_places: 2, width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -482,7 +505,9 @@ where ted.ID = '{0}'
                 .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2, iseditingreadonly: true)
                 .Numeric("WeightKg", header: "G.W.(kg)", decimal_places: 2, iseditingreadonly: true)
                 .Numeric("CBM", header: "CBM", decimal_places: 5, iseditingreadonly: true)
-                .Text("ContainerType", header: "ContainerType & No", width: Widths.AnsiChars(15), iseditingreadonly: true);
+                .Text("ContainerType", header: "ContainerType & No", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("WK", header: "WK#", width: Widths.AnsiChars(16), iseditingreadonly: true)
+                ;
 
             this.detailgrid.Columns["TransferExportReason"].DefaultCellStyle.BackColor = Color.Pink;
             this.ChangeRowColor();
@@ -638,7 +663,5 @@ where ted.ID = '{0}'
                 this.detailgridbs.Position = index;
             }
         }
-
-        
     }
 }

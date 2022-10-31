@@ -348,7 +348,7 @@
             this.labWkNo.Name = "labWkNo";
             this.labWkNo.Size = new System.Drawing.Size(96, 23);
             this.labWkNo.TabIndex = 101;
-            this.labWkNo.Text = "WK No.";
+            this.labWkNo.Text = "TK No.";
             // 
             // labETA
             // 

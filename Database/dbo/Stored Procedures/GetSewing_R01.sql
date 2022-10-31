@@ -444,7 +444,7 @@ tmpAllSubprocess as (
 --	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
 --												 and sl.Location = a.ComboType
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O')) 
-          and o.LocalOrder <> 1
+       -- and o.LocalOrder <> 1
 		  and ot.Price > 0         
 		  and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
 			  or ot.ArtworkTypeID <> 'SP_THREAD')
