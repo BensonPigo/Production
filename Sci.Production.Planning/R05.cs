@@ -157,10 +157,11 @@ select Date
     , BalanceCPU = iif(TransFtyZone = '{ftyZone}', 0, OrderCPU-sum(SewingOutputCPU))
     , OrderShortageCPU = iif(TransFtyZone = '{ftyZone}', 0,  OrderShortageCPU)
     , TransFtyZone
+    , BalanceExcludeCancelledStillNeedProd = iif(IsCancelNeedProduction  = 'Y', 0, OrderCPU - sum(SewingOutputCPU))
 into #tmp2_0
 from #tmp
 where (FtyZone = '{ftyZone}' or TransFtyZone = '{ftyZone}')
-group by Date,ID,OrderCPU,CanceledCPU,OrderShortageCPU, TransFtyZone
+group by Date,ID,OrderCPU,CanceledCPU,OrderShortageCPU, TransFtyZone, IsCancelNeedProduction
 
 select  Date
     , [SeqDate] = Cast(isnull(Replace(Date, '/', ''),'0') as int)
@@ -170,6 +171,7 @@ select  Date
     , BalanceIrregularCPU = sum(iif(BalanceCPU >= 0, 0, BalanceCPU))
     , [OrderShortageCPU] = sum(OrderShortageCPU)
     , [SubconOutCPU] = sum(iif(TransFtyZone = '{ftyZone}', OrderCPU, 0))
+    , BalanceExcludeCancelledStillNeedProd = sum(BalanceExcludeCancelledStillNeedProd)
 into #tmp2
 from #tmp2_0
 group by Date
@@ -205,7 +207,8 @@ select t2.SeqDate,t2.Date
     ,[Shortage] = t2.OrderShortageCPU
     ,[SubconOut] = t2.SubconOutCPU
     ,[Balance] = t2.BalanceCPU
-    ,[BalanceIrregular] = t2.BalanceIrregularCPU,
+    ,[BalanceIrregular] = t2.BalanceIrregularCPU
+    ,[BalanceExcludeCancelledStillNeedProd] = t2.BalanceExcludeCancelledStillNeedProd,
 	'+@col+N'
 into #tmp3
 from #tmp2 t2
@@ -230,25 +233,26 @@ select  Date
         ,Shortage
         ,SubconOut
         ,Balance
-        ,BalanceIrregular,
+        ,BalanceIrregular
+        ,BalanceExcludeCancelledStillNeedProd,
 	    '+@col+N' 
 from (
         select * from #tmp3 
         union all
-        select 999999999,''Total'' ,sum(Loading), sum(Canceled),sum(Shortage), sum(SubconOut), sum(Balance), sum(BalanceIrregular),'+@col2+' from #tmp3
+        select 999999999,''Total'' ,sum(Loading), sum(Canceled),sum(Shortage), sum(SubconOut), sum(Balance), sum(BalanceIrregular), sum(BalanceExcludeCancelledStillNeedProd),'+@col2+' from #tmp3
 ) a order by SeqDate
 '
 exec (@sql)
 
 if @sql is null
 begin
-	select Date='',Loading=null,Canceled = null,Shortage = null, SubconOut=null,Balance=null, BalanceIrregular=null,[ ]=''
+	select Date='',Loading=null,Canceled = null,Shortage = null, SubconOut=null,Balance=null, BalanceIrregular=null, BalanceExcludeCancelledStillNeedProd=null, [ ]=''
 end
 
 drop table #tmp,#tmp2_0,#tmp2
 ";
                 DataTable ftySummarydt;
-                DualResult dual = MyUtility.Tool.ProcessWithDatatable(this.dtAllData[1], "FtyGroup,Date,ID,OrderCPU,SewingOutputCPU,OutputDate,OrderShortageCPU,FtyZone,CanceledCPU,TransFtyZone", sqlsum, out ftySummarydt);
+                DualResult dual = MyUtility.Tool.ProcessWithDatatable(this.dtAllData[1], "FtyGroup,Date,ID,OrderCPU,SewingOutputCPU,OutputDate,OrderShortageCPU,FtyZone,CanceledCPU,TransFtyZone,IsCancelNeedProduction", sqlsum, out ftySummarydt);
                 if (!dual)
                 {
                     return dual;
@@ -327,8 +331,8 @@ drop table #tmp
             this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = "Planning_R05.xltx";
             Microsoft.Office.Interop.Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + excelFile); // 開excelapp
-            excelApp.Visible = true;
 
+            // excelApp.Visible = true;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
             if (this.Date == "1")
             {
@@ -427,7 +431,7 @@ drop table #tmp
                     worksheet.Cells[2, i] = $"As of {outputDate.ToString("MM/dd")}";
                 }
 
-                worksheet.get_Range((Excel.Range)worksheet.Cells[3, 8], (Excel.Range)worksheet.Cells[3, i]).Merge(false);
+                worksheet.get_Range((Excel.Range)worksheet.Cells[3, 9], (Excel.Range)worksheet.Cells[3, i]).Merge(false);
                 worksheet.get_Range((Excel.Range)worksheet.Cells[3, 1], (Excel.Range)worksheet.Cells[this.Summarydt[j - 1].Rows.Count + 4, i]).Borders.Weight = 3; // 設定全框線
                 worksheet.Columns.AutoFit();
             }
