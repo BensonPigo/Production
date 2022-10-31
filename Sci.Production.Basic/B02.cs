@@ -137,5 +137,41 @@ namespace Sci.Production.Basic
                 this.txtReplacementReport.Text = dir;
             }
         }
+
+        private void btnHandoverATPath_Click(object sender, EventArgs e)
+        {
+            string dir = this.GetDir();
+            if (!MyUtility.Check.Empty(dir))
+            {
+                this.txtHandoverATPath.Text = dir;
+            }
+        }
+
+        private void btnHandoverSpecialToolsPath_Click(object sender, EventArgs e)
+        {
+            string dir = this.GetDir();
+            if (!MyUtility.Check.Empty(dir))
+            {
+                this.txtHandoverSpecialToolsPath.Text = dir;
+            }
+        }
+
+        private void btnCriticalOperationPath_Click(object sender, EventArgs e)
+        {
+            string dir = this.GetDir();
+            if (!MyUtility.Check.Empty(dir))
+            {
+                this.txtCriticalOperationPath.Text = dir;
+            }
+        }
+
+        private void btnFinalPatternPath_Click(object sender, EventArgs e)
+        {
+            string dir = this.GetDir();
+            if (!MyUtility.Check.Empty(dir))
+            {
+                this.txtFinalPatternPath.Text = dir;
+            }
+        }
     }
 }
