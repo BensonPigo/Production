@@ -540,6 +540,11 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
         {
             if (MyUtility.Convert.GetString(this.CurrentMaintain["LocalOrder"]).ToUpper() == "TRUE")
             {
+                if (MyUtility.Convert.GetDate(this.CurrentMaintain["BuyerDelivery"]) < MyUtility.Convert.GetDate(this.CurrentMaintain["SciDelivery"]))
+                {
+                    MyUtility.Msg.ErrorBox("Local order's SciDelivery can not later than BuyerDelivery");
+                    return false;
+                }
                 #region 檢查必輸欄位
                 if (MyUtility.Check.Empty(this.CurrentMaintain["StyleID"]))
                 {
