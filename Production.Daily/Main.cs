@@ -33,6 +33,8 @@ namespace Production.Daily
         string tpeMisMail = string.Empty;
         bool isTestJobLog = false;
         bool isSkipRarCheckDate = false;
+        Int64 procedureID_Export = 250;
+        Int64 procedureID_Import = 251;
 
         public Main()
         {
@@ -267,7 +269,7 @@ namespace Production.Daily
         #endregion
 
         #region Call JobLog web api回傳執行結果
-        private void CallJobLogApi(string subject, string desc, string startDate, string endDate, bool isTest, bool succeeded)
+        private void CallJobLogApi(string subject, string desc, string startDate, string endDate, bool isTest, bool succeeded, Int64? procedureID = null)
         {
             JobLog jobLog = new JobLog()
             {
@@ -281,7 +283,8 @@ namespace Production.Daily
                 Description = desc,
                 FileName = new List<string>(),
                 FilePath = string.Empty,
-                Succeeded = succeeded
+                Succeeded = succeeded,
+                ProcedureID = procedureID,
             };
             CallTPEWebAPI callTPEWebAPI = new CallTPEWebAPI(isTest);
             callTPEWebAPI.CreateJobLogAsnc(jobLog, null);
@@ -342,7 +345,12 @@ namespace Production.Daily
             String ftpIP = this.CurrentData["FtpIP"].ToString().Trim() + "/";
             String ftpID = this.CurrentData["FtpID"].ToString().Trim();
             String ftpPwd = this.CurrentData["FtpPwd"].ToString().Trim();
+            string exangeDate = DateTime.Now.Hour >= 20 ? DateTime.Now.ToString("yyyy/MM/dd") 
+                                                        : DateTime.Now.AddDays(-1).ToString("yyyy/MM/dd");
 
+            #region 寫入ExchangeDate Table
+            this.UpdateExchangeDate(conn, exangeDate, false);
+            #endregion
             #region [File Name (with ZIP)]不可為空白
             if (String.IsNullOrEmpty(this.CurrentData["ImportDataFileName"].ToString()))
             {
@@ -477,11 +485,11 @@ namespace Production.Daily
             if (!result)
             {
                 ErrMail("Export", transferPMS.Regions_All);
-                return result;
             }
             #endregion
             #region check Export File
-            if (!File.Exists(exportRegion.DirName + exportRegion.RarName))
+            bool checkExportFile = File.Exists(exportRegion.DirName + exportRegion.RarName);
+            if (!checkExportFile)
             {
                 subject = "PMS transfer data (New) ERROR";
                 desc = $"Not found the ZIP(rar) file,pls advice Taipei's Programer: {exportRegion.DirName + exportRegion.RarName}";
@@ -489,17 +497,37 @@ namespace Production.Daily
                 this.CallJobLogApi("Daily transfer-download data", desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
             }
             #endregion
+            #region Export Job log 寫入
+            bool exportResult = result && checkExportFile;
+            string exportDest = !exportResult ? result ? desc : result.Description : string.Empty;
+            this.CallJobLogApi("Daily transfer-export", exportDest, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, exportResult, procedureID: this.procedureID_Export);
+            #endregion
 
             #region 開始執行轉入
             result = DailyImport(importRegion);
 
-            endDate = DateTime.Now;
+            #region Import Job log 寫入
+            string importDest = !result ? result.Description : string.Empty;
+            this.CallJobLogApi("Daily transfer-import", importDest, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, result, procedureID: this.procedureID_Import);
+            #endregion
+
             if (!result)
             {
                 ErrMail("Import", transferPMS.Regions_All); //importRegion);
                 return result;
             }
+
+            endDate = DateTime.Now;
+            this.UpdateExchangeDate(conn, exangeDate, result);
             #endregion
+
+            #region 當Export失敗，這邊就要結束。              
+            if (!exportResult)
+            {
+                return new DualResult(exportResult, exportDest);
+            }
+            #endregion
+
             #region check lock date
             checkLockDailyOutput();
             #endregion 
@@ -573,7 +601,7 @@ namespace Production.Daily
             SendMail(subject, desc, false);
             this.CallJobLogApi("Daily transfer", desc, startDate.ToString("yyyyMMdd HH:mm"), endDate.ToString("yyyyMMdd HH:mm"), isTestJobLog, true);
             #endregion
-
+   
             return Ict.Result.True;
         }
 
@@ -613,7 +641,7 @@ Region      Succeeded       Message
             if (!isAuto) title = "<<手動執行>> " + title;
 
             SendMail(title, formatStr);
-            this.CallJobLogApi(title_joblog, formatStr, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
+            // this.CallJobLogApi(title_joblog, formatStr, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
             #endregion
         }
 
@@ -1286,5 +1314,31 @@ where p.PulloutDate <= @PullOutLock
         {
             this.CallJobLogApi("Daily transfer-API test", "test joblog connection", DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), true, true);
         }
+
+        #region 紀錄每日資料交換結果 for 工廠
+        private void UpdateExchangeDate(SqlConnection conn, string exangeDate, bool exangeBolResult)
+        {
+            int exangeResult = exangeBolResult ? 1 : 0;
+            string sqlCmd = $@"
+if exists (select 1 
+	from DailyDataExchangeResult
+	where ExchangeDate = '{exangeDate}'
+)
+begin
+	update d
+		 set d.Result = {exangeResult}
+			, d.EditDate = iif('{exangeDate}' = format(Getdate(), 'yyyy/MM/dd'), d.EditDate, Getdate())
+	from DailyDataExchangeResult d
+	where ExchangeDate = '{exangeDate}'
+end
+else
+begin
+	insert into DailyDataExchangeResult([ExchangeDate], [Result])
+	values('{exangeDate}', {exangeResult})
+end
+";
+            DBProxy.Current.ExecuteByConn(conn, sqlCmd);
+        }
+        #endregion
     }
 }
