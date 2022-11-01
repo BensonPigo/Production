@@ -76,7 +76,7 @@ namespace Sci.Production.IE
         /// <param name="brandID">BrandID</param>
         /// <param name="seasonID">SeasonID</param>
         /// <param name="comboType">ComboType</param>
-        public P01(string styleID, string brandID, string seasonID, string comboType)
+        public P01(string styleID, string brandID, string seasonID, string comboType, bool isReadOnly = false)
         {
             this.InitializeComponent();
             StringBuilder df = new StringBuilder();
@@ -94,6 +94,25 @@ namespace Sci.Production.IE
             if (!MyUtility.Check.Empty(comboType))
             {
                 df.Append(string.Format(" and ComboType ='{0}' ", comboType));
+            }
+
+            if (isReadOnly)
+            {
+                this.IsSupportEdit = false;
+                this.IsSupportNew = false;
+                this.IsSupportConfirm = false;
+                this.IsSupportCopy = false;
+                this.IsSupportDelete = false;
+                this.IsDeleteOnBrowse = false;
+            }
+            else
+            {
+                this.IsSupportEdit = true;
+                this.IsSupportNew = true;
+                this.IsSupportConfirm = true;
+                this.IsSupportCopy = true;
+                this.IsSupportDelete = true;
+                this.IsDeleteOnBrowse = true;
             }
 
             this.DefaultFilter = df.ToString();
@@ -155,9 +174,13 @@ order by td.Seq";
         {
             MyUtility.Tool.SetupCombox(this.queryfors, 1, 1, "last 2 years modify,All");
             this.queryfors.SelectedIndex = 0;
-            if (MyUtility.Check.Empty(this.DefaultWhere))
+            if (MyUtility.Check.Empty(this.DefaultWhere) && MyUtility.Check.Empty(this.DefaultFilter))
             {
                 this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+            }
+            else
+            {
+                this.queryfors.SelectedIndex = 1;
             }
 
             base.OnFormLoaded();

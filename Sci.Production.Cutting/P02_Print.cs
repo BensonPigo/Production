@@ -762,6 +762,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                     worksheet.Cells[13, 2] = workorderArry[0]["FabricPanelCode"].ToString();
                     worksheet.Cells[3, 7] = workorderArry[0]["SpreadingNoID"].ToString();
                     worksheet.Cells[3, 12] = workorderArry[0]["CutCellid"].ToString();
+                    worksheet.Cells[22, 2] = workorderArry[0]["Tone"].ToString();
                     if (workorderPatternArry.Length > 0)
                     {
                         foreach (DataRow patDr in workorderPatternArry)

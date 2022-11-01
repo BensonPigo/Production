@@ -1,0 +1,756 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <metadata name="tooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="splitContainerMain.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="splitContainerMain.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 65</value>
+  </data>
+  <data name="left_btn_Close.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="left_btn_Close.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="left_btn_Close.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="left_btn_Close.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 531</value>
+  </data>
+  <data name="left_btn_Close.Size" type="System.Drawing.Size, System.Drawing">
+    <value>160, 59</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="left_btn_Close.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="left_btn_Close.Text" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="&gt;&gt;left_btn_Close.Name" xml:space="preserve">
+    <value>left_btn_Close</value>
+  </data>
+  <data name="&gt;&gt;left_btn_Close.Type" xml:space="preserve">
+    <value>Sci.Win.UI.Button, Sci, Version=2020.6.15.1, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;left_btn_Close.Parent" xml:space="preserve">
+    <value>splitContainerMain.Panel1</value>
+  </data>
+  <data name="&gt;&gt;left_btn_Close.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="left_btn_SpecialTools.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="left_btn_SpecialTools.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="left_btn_SpecialTools.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="left_btn_SpecialTools.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 472</value>
+  </data>
+  <data name="left_btn_SpecialTools.Size" type="System.Drawing.Size, System.Drawing">
+    <value>160, 59</value>
+  </data>
+  <data name="left_btn_SpecialTools.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="left_btn_SpecialTools.Text" xml:space="preserve">
+    <value>Special Tools</value>
+  </data>
+  <data name="&gt;&gt;left_btn_SpecialTools.Name" xml:space="preserve">
+    <value>left_btn_SpecialTools</value>
+  </data>
+  <data name="&gt;&gt;left_btn_SpecialTools.Type" xml:space="preserve">
+    <value>Sci.Win.UI.Button, Sci, Version=2020.6.15.1, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;left_btn_SpecialTools.Parent" xml:space="preserve">
+    <value>splitContainerMain.Panel1</value>
+  </data>
+  <data name="&gt;&gt;left_btn_SpecialTools.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="left_btn_LineLayoutMachine.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="left_btn_LineLayoutMachine.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="left_btn_LineLayoutMachine.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="left_btn_LineLayoutMachine.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 413</value>
+  </data>
+  <data name="left_btn_LineLayoutMachine.Size" type="System.Drawing.Size, System.Drawing">
+    <value>160, 59</value>
+  </data>
+  <data name="left_btn_LineLayoutMachine.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="left_btn_LineLayoutMachine.Text" xml:space="preserve">
+    <value>Line Layout Machine</value>
+  </data>
+  <data name="&gt;&gt;left_btn_LineLayoutMachine.Name" xml:space="preserve">
+    <value>left_btn_LineLayoutMachine</value>
+  </data>
+  <data name="&gt;&gt;left_btn_LineLayoutMachine.Type" xml:space="preserve">
+    <value>Sci.Win.UI.Button, Sci, Version=2020.6.15.1, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;left_btn_LineLayoutMachine.Parent" xml:space="preserve">
+    <value>splitContainerMain.Panel1</value>
+  </data>
+  <data name="&gt;&gt;left_btn_LineLayoutMachine.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="left_btn_SkillMatrix.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="left_btn_SkillMatrix.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="left_btn_SkillMatrix.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="left_btn_SkillMatrix.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 354</value>
+  </data>
+  <data name="left_btn_SkillMatrix.Size" type="System.Drawing.Size, System.Drawing">
+    <value>160, 59</value>
+  </data>
+  <data name="left_btn_SkillMatrix.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="left_btn_SkillMatrix.Text" xml:space="preserve">
+    <value>Skill Matrix</value>
+  </data>
+  <data name="&gt;&gt;left_btn_SkillMatrix.Name" xml:space="preserve">
+    <value>left_btn_SkillMatrix</value>
+  </data>
+  <data name="&gt;&gt;left_btn_SkillMatrix.Type" xml:space="preserve">
+    <value>Sci.Win.UI.Button, Sci, Version=2020.6.15.1, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;left_btn_SkillMatrix.Parent" xml:space="preserve">
+    <value>splitContainerMain.Panel1</value>
+  </data>
+  <data name="&gt;&gt;left_btn_SkillMatrix.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="left_btn_TemplateAutoTemplateList.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="left_btn_TemplateAutoTemplateList.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="left_btn_TemplateAutoTemplateList.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="left_btn_TemplateAutoTemplateList.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 295</value>
+  </data>
+  <data name="left_btn_TemplateAutoTemplateList.Size" type="System.Drawing.Size, System.Drawing">
+    <value>160, 59</value>
+  </data>
+  <data name="left_btn_TemplateAutoTemplateList.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="left_btn_TemplateAutoTemplateList.Text" xml:space="preserve">
+    <value>Template/Auto Template List</value>
+  </data>
+  <data name="&gt;&gt;left_btn_TemplateAutoTemplateList.Name" xml:space="preserve">
+    <value>left_btn_TemplateAutoTemplateList</value>
+  </data>
+  <data name="&gt;&gt;left_btn_TemplateAutoTemplateList.Type" xml:space="preserve">
+    <value>Sci.Win.UI.Button, Sci, Version=2020.6.15.1, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;left_btn_TemplateAutoTemplateList.Parent" xml:space="preserve">
+    <value>splitContainerMain.Panel1</value>
+  </data>
+  <data name="&gt;&gt;left_btn_TemplateAutoTemplateList.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="left_btn_CriticalOperations.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="left_btn_CriticalOperations.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="left_btn_CriticalOperations.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="left_btn_CriticalOperations.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 236</value>
+  </data>
+  <data name="left_btn_CriticalOperations.Size" type="System.Drawing.Size, System.Drawing">
+    <value>160, 59</value>
+  </data>
+  <data name="left_btn_CriticalOperations.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="left_btn_CriticalOperations.Text" xml:space="preserve">
+    <value>Critical Operations</value>
+  </data>
+  <data name="&gt;&gt;left_btn_CriticalOperations.Name" xml:space="preserve">
+    <value>left_btn_CriticalOperations</value>
+  </data>
+  <data name="&gt;&gt;left_btn_CriticalOperations.Type" xml:space="preserve">
+    <value>Sci.Win.UI.Button, Sci, Version=2020.6.15.1, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;left_btn_CriticalOperations.Parent" xml:space="preserve">
+    <value>splitContainerMain.Panel1</value>
+  </data>
+  <data name="&gt;&gt;left_btn_CriticalOperations.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="left_btn_OperationsBreakdown.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="left_btn_OperationsBreakdown.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="left_btn_OperationsBreakdown.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="left_btn_OperationsBreakdown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 177</value>
+  </data>
+  <data name="left_btn_OperationsBreakdown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>160, 59</value>
+  </data>
+  <data name="left_btn_OperationsBreakdown.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="left_btn_OperationsBreakdown.Text" xml:space="preserve">
+    <value>Operations Breakdown</value>
+  </data>
+  <data name="&gt;&gt;left_btn_OperationsBreakdown.Name" xml:space="preserve">
+    <value>left_btn_OperationsBreakdown</value>
+  </data>
+  <data name="&gt;&gt;left_btn_OperationsBreakdown.Type" xml:space="preserve">
+    <value>Sci.Win.UI.Button, Sci, Version=2020.6.15.1, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;left_btn_OperationsBreakdown.Parent" xml:space="preserve">
+    <value>splitContainerMain.Panel1</value>
+  </data>
+  <data name="&gt;&gt;left_btn_OperationsBreakdown.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="left_btn_FinalPatternAndMarkerList.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="left_btn_FinalPatternAndMarkerList.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="left_btn_FinalPatternAndMarkerList.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="left_btn_FinalPatternAndMarkerList.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 118</value>
+  </data>
+  <data name="left_btn_FinalPatternAndMarkerList.Size" type="System.Drawing.Size, System.Drawing">
+    <value>160, 59</value>
+  </data>
+  <data name="left_btn_FinalPatternAndMarkerList.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="left_btn_FinalPatternAndMarkerList.Text" xml:space="preserve">
+    <value>Final Pattern and Marker List</value>
+  </data>
+  <data name="&gt;&gt;left_btn_FinalPatternAndMarkerList.Name" xml:space="preserve">
+    <value>left_btn_FinalPatternAndMarkerList</value>
+  </data>
+  <data name="&gt;&gt;left_btn_FinalPatternAndMarkerList.Type" xml:space="preserve">
+    <value>Sci.Win.UI.Button, Sci, Version=2020.6.15.1, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;left_btn_FinalPatternAndMarkerList.Parent" xml:space="preserve">
+    <value>splitContainerMain.Panel1</value>
+  </data>
+  <data name="&gt;&gt;left_btn_FinalPatternAndMarkerList.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="left_btn_AD.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="left_btn_AD.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="left_btn_AD.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="left_btn_AD.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 59</value>
+  </data>
+  <data name="left_btn_AD.Size" type="System.Drawing.Size, System.Drawing">
+    <value>160, 59</value>
+  </data>
+  <data name="left_btn_AD.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="left_btn_AD.Text" xml:space="preserve">
+    <value>AD</value>
+  </data>
+  <data name="&gt;&gt;left_btn_AD.Name" xml:space="preserve">
+    <value>left_btn_AD</value>
+  </data>
+  <data name="&gt;&gt;left_btn_AD.Type" xml:space="preserve">
+    <value>Sci.Win.UI.Button, Sci, Version=2020.6.15.1, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;left_btn_AD.Parent" xml:space="preserve">
+    <value>splitContainerMain.Panel1</value>
+  </data>
+  <data name="&gt;&gt;left_btn_AD.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="left_btn_Sketch.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="left_btn_Sketch.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="left_btn_Sketch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="left_btn_Sketch.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="left_btn_Sketch.Size" type="System.Drawing.Size, System.Drawing">
+    <value>160, 59</value>
+  </data>
+  <data name="left_btn_Sketch.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="left_btn_Sketch.Text" xml:space="preserve">
+    <value>Sketch</value>
+  </data>
+  <data name="&gt;&gt;left_btn_Sketch.Name" xml:space="preserve">
+    <value>left_btn_Sketch</value>
+  </data>
+  <data name="&gt;&gt;left_btn_Sketch.Type" xml:space="preserve">
+    <value>Sci.Win.UI.Button, Sci, Version=2020.6.15.1, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;left_btn_Sketch.Parent" xml:space="preserve">
+    <value>splitContainerMain.Panel1</value>
+  </data>
+  <data name="&gt;&gt;left_btn_Sketch.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;splitContainerMain.Panel1.Name" xml:space="preserve">
+    <value>splitContainerMain.Panel1</value>
+  </data>
+  <data name="&gt;&gt;splitContainerMain.Panel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitContainerMain.Panel1.Parent" xml:space="preserve">
+    <value>splitContainerMain</value>
+  </data>
+  <data name="&gt;&gt;splitContainerMain.Panel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;splitContainerMain.Panel2.Name" xml:space="preserve">
+    <value>splitContainerMain.Panel2</value>
+  </data>
+  <data name="&gt;&gt;splitContainerMain.Panel2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitContainerMain.Panel2.Parent" xml:space="preserve">
+    <value>splitContainerMain</value>
+  </data>
+  <data name="&gt;&gt;splitContainerMain.Panel2.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="splitContainerMain.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1008, 647</value>
+  </data>
+  <data name="splitContainerMain.SplitterDistance" type="System.Int32, mscorlib">
+    <value>160</value>
+  </data>
+  <data name="splitContainerMain.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;splitContainerMain.Name" xml:space="preserve">
+    <value>splitContainerMain</value>
+  </data>
+  <data name="&gt;&gt;splitContainerMain.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitContainerMain.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;splitContainerMain.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="labelTop.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="labelTop.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Calibri, 9pt</value>
+  </data>
+  <data name="labelTop.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="labelTop.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="labelTop.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1008, 65</value>
+  </data>
+  <data name="labelTop.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="labelTop.Text" xml:space="preserve">
+    <value>Sintex End-line E-Inspection system</value>
+  </data>
+  <data name="labelTop.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;labelTop.Name" xml:space="preserve">
+    <value>labelTop</value>
+  </data>
+  <data name="&gt;&gt;labelTop.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelTop.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;labelTop.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="txtSeason.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="txtSeason.Location" type="System.Drawing.Point, System.Drawing">
+    <value>358, 17</value>
+  </data>
+  <data name="txtSeason.Size" type="System.Drawing.Size, System.Drawing">
+    <value>110, 26</value>
+  </data>
+  <data name="txtSeason.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;txtSeason.Name" xml:space="preserve">
+    <value>txtSeason</value>
+  </data>
+  <data name="&gt;&gt;txtSeason.Type" xml:space="preserve">
+    <value>Sci.Win.UI.TextBox, Sci, Version=2020.6.15.1, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;txtSeason.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;txtSeason.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label3.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 14.25pt</value>
+  </data>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>278, 17</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>74, 24</value>
+  </data>
+  <data name="label3.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+    <value>Season</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+    <value>label3</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 14.25pt</value>
+  </data>
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>491, 15</value>
+  </data>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>60, 24</value>
+  </data>
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Brand</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+    <value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="label2.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label2.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 14.25pt</value>
+  </data>
+  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>23, 17</value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>60, 24</value>
+  </data>
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+    <value>16</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+    <value>Style#</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+    <value>label2</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="comboBrand.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="comboBrand.Location" type="System.Drawing.Point, System.Drawing">
+    <value>557, 14</value>
+  </data>
+  <data name="comboBrand.Size" type="System.Drawing.Size, System.Drawing">
+    <value>136, 28</value>
+  </data>
+  <data name="comboBrand.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;comboBrand.Name" xml:space="preserve">
+    <value>comboBrand</value>
+  </data>
+  <data name="&gt;&gt;comboBrand.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;comboBrand.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;comboBrand.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="txtStyle.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="txtStyle.Location" type="System.Drawing.Point, System.Drawing">
+    <value>89, 17</value>
+  </data>
+  <data name="txtStyle.Size" type="System.Drawing.Size, System.Drawing">
+    <value>173, 26</value>
+  </data>
+  <data name="txtStyle.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;txtStyle.Name" xml:space="preserve">
+    <value>txtStyle</value>
+  </data>
+  <data name="&gt;&gt;txtStyle.Type" xml:space="preserve">
+    <value>Sci.Win.UI.TextBox, Sci, Version=2020.6.15.1, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;txtStyle.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;txtStyle.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="btn_Search.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="btn_Search.Location" type="System.Drawing.Point, System.Drawing">
+    <value>699, 14</value>
+  </data>
+  <data name="btn_Search.Size" type="System.Drawing.Size, System.Drawing">
+    <value>114, 30</value>
+  </data>
+  <data name="btn_Search.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="btn_Search.Text" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="&gt;&gt;btn_Search.Name" xml:space="preserve">
+    <value>btn_Search</value>
+  </data>
+  <data name="&gt;&gt;btn_Search.Type" xml:space="preserve">
+    <value>Sci.Win.UI.Button, Sci, Version=2020.6.15.1, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;btn_Search.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btn_Search.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>1008, 712</value>
+  </data>
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+    <value>CenterParent</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>P24. Query Handover List</value>
+  </data>
+  <data name="&gt;&gt;tooltip.Name" xml:space="preserve">
+    <value>tooltip</value>
+  </data>
+  <data name="&gt;&gt;tooltip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>P24</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>Sci.Win.Tems.QueryForm, Sci, Version=2020.6.15.1, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+</root>

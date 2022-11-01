@@ -34,6 +34,8 @@
             this.dateEstCutDate = new Sci.Win.UI.DateRange();
             this.btnSave = new Sci.Win.UI.Button();
             this.btnQuery = new Sci.Win.UI.Button();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.gridCuttingReasonInput)).BeginInit();
             this.SuspendLayout();
             // 
@@ -126,11 +128,35 @@
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(390, 9);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(61, 23);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "Factory";
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.BoolFtyGroupList = true;
+            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsProduceFty = false;
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(454, 9);
+            this.txtfactory.MDivision = null;
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 8;
+            // 
             // P16
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 450);
+            this.Controls.Add(this.txtfactory);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.btnQuery);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.dateEstCutDate);
@@ -146,8 +172,11 @@
             this.Controls.SetChildIndex(this.dateEstCutDate, 0);
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.btnQuery, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.txtfactory, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridCuttingReasonInput)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -159,5 +188,7 @@
         private Win.UI.DateRange dateEstCutDate;
         private Win.UI.Button btnSave;
         private Win.UI.Button btnQuery;
+        private Win.UI.Label label2;
+        private Class.Txtfactory txtfactory;
     }
 }

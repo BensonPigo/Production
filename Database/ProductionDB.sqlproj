@@ -2747,6 +2747,9 @@
     <Build Include="dbo\Tables\M360MINDDispatch.sql" />
     <Build Include="dbo\Stored Procedures\GetSewing_R01.sql" />
     <Build Include="dbo\Tables\DailyDataExchangeResult.sql" />
+    <Build Include="dbo\Tables\HandoverSpecialToolsUpload.sql" />
+    <Build Include="dbo\Tables\HandoverATUpload.sql" />
+    <Build Include="dbo\Tables\FinalPatternUpload.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
