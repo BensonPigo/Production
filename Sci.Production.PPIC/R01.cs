@@ -454,6 +454,11 @@ namespace Sci.Production.PPIC
                                 // 設置儲存格的背景色
                                 rngColor.Cells.Interior.Color = Color.FromArgb(175, 203, 154);
                             }
+                            else if (MyUtility.Convert.GetString(dr["IsFirst"]).ToUpper() == "TRUE")
+                            {
+                                // 設置儲存格的背景色
+                                rngColor.Cells.Interior.Color = Color.White;
+                            }
                             else
                             {
                                 // 設置儲存格的背景色

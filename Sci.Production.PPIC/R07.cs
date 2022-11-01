@@ -239,6 +239,7 @@ DECLARE @tempPintData TABLE (
    IsLastMonth BIT,
    IsNextMonth BIT,
    MinBuyerDelivery DATE,
+   IsFirst BIT default 0,
    IsRepeatStyle BIT,
    IsSimilarStyle BIT default 0,
    IsCrossStyle BIT default 0
@@ -271,6 +272,7 @@ DECLARE @factory VARCHAR(8),
 		@beforeIsSMS int,
 		@beforeBuyerDelivery DATE,
 		@beforedate DATE,
+		@IsFirst bit = 0,
 		@beforeIsSample bit = 1,
 		@IsRepeatStyle bit = 1,
 		@beforeIsRepeatStyle bit = 1,
@@ -287,10 +289,21 @@ BEGIN
 	--換款新增資料
 	IF @factory <> @beforefactory or @sewingline <> @beforesewingline or (@StyleID <> @beforeStyleID and @beforeStyleIDExcludeHoliday not like '%' + @StyleID + '%')
 	Begin
-		INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine,IsLastMonth ,IsNextMonth ,IsBulk, IsSample,IsSMS ,MinBuyerDelivery, IsRepeatStyle) 
-		VALUES					 (@factory, @sewingline, @StyleID,@date,@date  ,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSample,@IsSMS,@BuyerDelivery, @IsRepeatStyle);
+        if(@beforeStyleIDExcludeHoliday not like '%' + @StyleID + '%' and @sewingline = @beforesewingline)
+            set @IsFirst = 1
+        else
+			set @IsFirst = 0
+
+		INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine,IsLastMonth ,IsNextMonth ,IsBulk, IsSample,IsSMS ,MinBuyerDelivery, IsRepeatStyle, IsFirst) 
+		VALUES					 (@factory, @sewingline, @StyleID,@date,@date  ,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSample,@IsSMS,@BuyerDelivery, @IsRepeatStyle, @IsFirst);
 	END
 	--有含Sample獨立顯示 or 三個月內生產超過10天
+    ELSE IF @IsFirst = 1 and @date <> @beforedate and @StyleID <> 'Holiday' and @IsSample <> 1
+	Begin
+        set @IsFirst = 0
+		INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine,IsLastMonth ,IsNextMonth ,IsBulk, IsSample,IsSMS ,MinBuyerDelivery, IsRepeatStyle) 
+		VALUES					 (@factory, @sewingline, @StyleID,@date,@date  ,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSample,@IsSMS,@BuyerDelivery, @IsRepeatStyle);
+	end
 	else if (@IsSample <> @beforeIsSample or @beforeStyleID = 'Holiday'  or (@IsRepeatStyle <> @beforeIsRepeatStyle and @IsSample <> 1)) and @date <> @beforedate and @StyleID <> 'Holiday'
 	begin
 		INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine,IsLastMonth ,IsNextMonth ,IsBulk, IsSample,IsSMS ,MinBuyerDelivery, IsRepeatStyle) 
@@ -563,6 +576,11 @@ drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle,
                     {
                         // 設置儲存格的背景色
                         worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Cells.Interior.Color = Color.FromArgb(175, 203, 154);
+                    }
+                    else if (MyUtility.Convert.GetString(dr["IsFirst"]).ToUpper() == "TRUE")
+                    {
+                        // 設置儲存格的背景色
+                        worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Cells.Interior.Color = Color.White;
                     }
                     else
                     {

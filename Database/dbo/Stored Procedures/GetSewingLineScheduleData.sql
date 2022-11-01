@@ -1875,6 +1875,7 @@ DECLARE @tempPintData TABLE (
    IsLastMonth BIT,
    IsNextMonth BIT,
    MinBuyerDelivery DATE,
+   IsFirst BIT default 0,
    StadOutPutQtyPerDay int,
    PPH numeric(12,4),
    IsRepeatStyle BIT,
@@ -1911,6 +1912,7 @@ DECLARE @factory VARCHAR(8),
 		@beforeIsSMS int,
 		@beforeBuyerDelivery DATE,
 		@beforedate DATE,
+		@IsFirst bit = 0,
 		@beforeIsSample bit = 1,
 		@IsRepeatStyle bit = 1,
 		@beforeIsRepeatStyle bit = 1,
@@ -1925,10 +1927,21 @@ BEGIN
 
 	IF @factory <> @beforefactory or @sewingline <> @beforesewingline or (@StyleID <> @beforeStyleID and @beforeStyleIDExcludeHoliday not like '%' + @StyleID + '%')
 	Begin
+		if(@beforeStyleIDExcludeHoliday not like '%' + @StyleID + '%' and @sewingline = @beforesewingline)
+            set @IsFirst = 1
+        else
+			set @IsFirst = 0
+
+		INSERT INTO @tempPintData(FactoryID, SewingLineID, StyleID, InLine, OffLine, IsLastMonth, IsNextMonth, IsBulk, IsSMS, MinBuyerDelivery, StadOutPutQtyPerDay, PPH, IsSample, IsRepeatStyle, IsFirst) 
+		VALUES (@factory, @sewingline, @StyleID, @date, @date, @IsLastMonth, @IsNextMonth, @IsBulk, @IsSMS, @BuyerDelivery, @StadOutPutQtyPerDay, @PPH, @IsSample, @IsRepeatStyle, @IsFirst);
+	END
+	ELSE IF @IsFirst = 1 and @date <> @beforedate and @StyleID <> 'Holiday' and @IsSample <> 1
+	Begin
+        set @IsFirst = 0
 		INSERT INTO @tempPintData(FactoryID, SewingLineID, StyleID, InLine, OffLine, IsLastMonth, IsNextMonth, IsBulk, IsSMS, MinBuyerDelivery, StadOutPutQtyPerDay, PPH, IsSample, IsRepeatStyle) 
 		VALUES (@factory, @sewingline, @StyleID, @date, @date, @IsLastMonth, @IsNextMonth, @IsBulk, @IsSMS, @BuyerDelivery, @StadOutPutQtyPerDay, @PPH, @IsSample, @IsRepeatStyle);
 	END
-	--有含Sample獨立顯示 三個月內生產超過10天
+	--有含Sample獨立顯示 or 三個月內生產超過10天
 	else if (@IsSample <> @beforeIsSample or @beforeStyleID = 'Holiday' or (@IsRepeatStyle <> @beforeIsRepeatStyle and @IsSample <> 1)) and @date <> @beforedate and @StyleID <> 'Holiday'
 	begin
 		INSERT INTO @tempPintData(FactoryID, SewingLineID, StyleID, InLine, OffLine, IsLastMonth, IsNextMonth, IsBulk, IsSMS, MinBuyerDelivery, StadOutPutQtyPerDay, PPH, IsSample, IsRepeatStyle) 
@@ -1995,6 +2008,7 @@ DECLARE @tmpGantt TABLE (
    IsLastMonth BIT,
    IsNextMonth BIT,
    MinBuyerDelivery DATE,
+   IsFirst BIT default 0,
    StadOutPutQtyPerDay int,
    PPH numeric(12,4),
    IsRepeatStyle BIT,
@@ -2016,12 +2030,14 @@ insert into @tmpGantt(
 		IsLastMonth,
 		IsNextMonth,
 		MinBuyerDelivery,
+		IsFirst,
 		StadOutPutQtyPerDay,
 		PPH,
 		IsRepeatStyle,
 		IsSimilarStyle,
 		IsCrossStyle,
-        WorkDays)
+        WorkDays
+	)
 select  t.FactoryID,
 		t.SewingLineID,
 		t.StyleID,
@@ -2033,6 +2049,7 @@ select  t.FactoryID,
 		t.IsLastMonth,
 		t.IsNextMonth,
 		t.MinBuyerDelivery,
+		t.IsFirst,
 		t.StadOutPutQtyPerDay,
 		t.PPH,
 		t.IsRepeatStyle,
