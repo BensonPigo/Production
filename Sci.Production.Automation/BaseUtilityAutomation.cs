@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Sci.Data;
 using Sci.Production.Prg;
+using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using static AutomationErrMsg;
 using static PmsWebApiUtility20.WebApiTool;
@@ -407,26 +408,11 @@ select ID = @ID
         {
 
             Dictionary<string, string> requestHeaders = new Dictionary<string, string>();
-            StackTrace stackTrace = new StackTrace();
-            var sciStackTrace = stackTrace.GetFrames().Where(s => (s.GetMethod().DeclaringType.FullName.Contains("Sci.Production") ||
-                                                                   s.GetMethod().DeclaringType.FullName.Contains("ProductionWebAPI.Controllers")) &&
-                                                                  !s.GetMethod().DeclaringType.FullName.Contains("Sci.Production.Program"));
-            MethodBase methodBase = sciStackTrace.Any() ? sciStackTrace.Last().GetMethod() : stackTrace.GetFrame(7).GetMethod();
 
-            string callFrom = methodBase.DeclaringType.FullName;
-            if (callFrom.Contains("+"))
-            {
-                callFrom = callFrom.Split('+')[0];
-            }
+            CallFromInfo callFromInfo = UtilityPMS.GetCallFrom();
 
-            string activity = methodBase.Name;
-            if (activity.Contains("<") && activity.Contains(">"))
-            {
-                activity = activity.Split('<')[1].Split('>')[0];
-            }
-
-            requestHeaders.Add("CallFrom", callFrom);
-            requestHeaders.Add("Activity", activity);
+            requestHeaders.Add("CallFrom", callFromInfo.CallFrom);
+            requestHeaders.Add("Activity", callFromInfo.MethodName);
             requestHeaders.Add("User", this.UserID);
 
             return requestHeaders;
