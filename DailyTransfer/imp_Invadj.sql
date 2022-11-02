@@ -112,20 +112,37 @@ values(
       ,s.NewItem
       ,s.DiffQty);
 
+select pd.OrderID, MAX(p.PulloutDate) as PulloutDate
+into #TMPPullout2Cdate
+from Production.dbo.PackingList_Detail pd WITH (NOLOCK)
+inner join  Production.dbo.PackingList p WITH (NOLOCK) on p.ID = pd.ID
+inner join Trade_To_Pms.dbo.InvAdjust i WITH (NOLOCK) ON pd.OrderID=i.OrderID 
+where p.pulloutID <> ''
+and p.PulloutStatus <> 'New'
+and pd.ShipQty > 0
+group by pd.OrderID
 
-SELECT MAX(PulloutDate) as PulloutDate --,a.ID
-INTO #TMPPullout2Cdate
-FROM  Production.dbo.Pullout_Detail A WITH (NOLOCK)
-inner join Trade_To_Pms.dbo.InvAdjust B WITH (NOLOCK) ON A.OrderID=B.OrderID AND ShipQty <> 0
-
-
-UPDATE a
-SET  
-Status = 'C'
-from  Production.dbo.Pullout_Detail as a 
-inner join #TMPPullout2Cdate as b ON a.PulloutDate=b.PulloutDate
-inner join Trade_To_Pms.dbo.InvAdjust c ON  A.OrderID = c.OrderID
-where b.PulloutDate is not null
+UPDATE t
+SET Status = 'C'
+from  Production.dbo.Pullout_Detail as t WITH (NOLOCK)
+inner join Trade_To_Pms.dbo.InvAdjust i WITH (NOLOCK) ON t.OrderID=i.OrderID 
+inner join Production.dbo.Orders o WITH (NOLOCK) on t.OrderID = o.ID
+where  o.Qty = 
+(
+	select sum(pd.ShipQty)
+	from Production.dbo.PackingList p WITH (NOLOCK)
+	inner join Production.dbo.PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
+	where p.PulloutStatus <> 'New'
+	and p.PulloutID <> ''
+	and pd.OrderID = o.ID
+)
++
+(
+	SELECT SUM(iaq.DiffQty)
+	FROM Production.dbo.InvAdjust ia
+	INNER JOIN Production.dbo.InvAdjust_Qty iaq ON ia.ID = iaq.ID
+	WHERE ia.OrderID = o.ID
+)
 
 /*
 判斷訂單是否已出貨完畢:
@@ -134,11 +151,12 @@ where b.PulloutDate is not null
 UPDATE a
 SET  
  a.ActPulloutDate = (
-	SELECT IIF(  t.PulloutDate IS NULL
-				,(SELECT PullDate FROM Trade_To_Pms.dbo.InvAdjust b WHERE b.ID = a.ID)
-				,t.PulloutDate
-			)
-	FROM #TMPPullout2Cdate t
+
+	select iif(t.PulloutDate is null,
+                 (select PullDate from Trade_To_Pms.dbo.InvAdjust i where i.OrderID = t.OrderID),
+                 t.PulloutDate)
+    from #TMPPullout2Cdate t
+    where t.OrderID = a.ID
  )
 ,a.PulloutComplete = 1
 ,a.MDClose = GETDATE()
@@ -146,10 +164,12 @@ SET
 FROM Production.dbo.Orders as a 
 WHERE a.Qty = 
 	(
-		SELECT SUM(pd.ShipQty)
-		FROM Production.dbo.Pullout p
-		INNER JOIN Production.dbo.Pullout_Detail pd ON p.ID = pd.ID
-		WHERE p.Status != 'New' AND pd.OrderID = a.ID
+		select sum(pd.ShipQty)
+		from Production.dbo.PackingList p
+		inner join Production.dbo.PackingList_Detail pd on p.ID = pd.ID
+		where p.PulloutStatus <> 'New'
+		and p.PulloutID <> ''
+		and pd.OrderID = a.ID
 	)
 	+
 	(
