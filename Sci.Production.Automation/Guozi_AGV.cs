@@ -269,8 +269,7 @@ where bd.BundleNo = '{bundle.BundleNo}'
             dynamic bodyObject = new ExpandoObject();
             string wherePOID = listPOID.Select(s => $"'{s}'").JoinToString(",");
             string sqlGetOrders = $@"
-select  ID,
-        [Finished] = 1
+select  distinct ID
 from Orders with (nolock) where POID in ({wherePOID})
 ";
             DataTable dtSentOrderID;
@@ -280,7 +279,7 @@ from Orders with (nolock) where POID in ({wherePOID})
                 throw result.GetException();
             }
 
-            bodyObject.Orders = dtSentOrderID;
+            bodyObject.ID = dtSentOrderID.AsEnumerable().Select(s => s["ID"].ToString()).ToArray();
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Orders"));
 
             SendWebAPISaveAutomationCreateRecord(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
