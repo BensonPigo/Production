@@ -158,6 +158,7 @@ select Date
     , OrderShortageCPU = iif(TransFtyZone = '{ftyZone}', 0,  OrderShortageCPU)
     , TransFtyZone
     , BalanceExcludeCancelledStillNeedProd = iif(IsCancelNeedProduction  = 'Y', 0, OrderCPU - sum(SewingOutputCPU))
+     ,IsCancelNeedProduction
 into #tmp2_0
 from #tmp
 where (FtyZone = '{ftyZone}' or TransFtyZone = '{ftyZone}')
@@ -171,7 +172,7 @@ select  Date
     , BalanceIrregularCPU = sum(iif(BalanceCPU >= 0, 0, BalanceCPU))
     , [OrderShortageCPU] = sum(OrderShortageCPU)
     , [SubconOutCPU] = sum(iif(TransFtyZone = '{ftyZone}', OrderCPU, 0))
-    , BalanceExcludeCancelledStillNeedProd = sum(BalanceExcludeCancelledStillNeedProd)
+    , BalanceExcludeCancelledStillNeedProd =sum(iif(IsCancelNeedProduction  = 'Y', 0, iif(BalanceCPU >= 0, BalanceCPU, 0)-(iif(BalanceCPU >= 0, 0, BalanceCPU))))
 into #tmp2
 from #tmp2_0
 group by Date
