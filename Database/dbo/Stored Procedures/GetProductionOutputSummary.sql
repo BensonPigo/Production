@@ -388,7 +388,12 @@ outer apply (select [CpuRate] = case when o.IsForecast = 1 then (select CpuRate 
                                      when o.LocalOrder = 1 then 1
                                      else (select CpuRate from GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'O')) end
                      ) gcRate
-outer apply (select Qty=sum(shipQty) from Pullout_Detail where orderid = o.id) GetPulloutData
+outer apply (select Qty=sum(pd.ShipQty)
+	from PackingList p, PackingList_Detail pd 
+	where p.ID = pd.ID 
+		  and p.PulloutID <> '' 
+		  and pd.OrderID = o.ID
+) GetPulloutData
 outer apply (select [SCI] = dateadd(day,-7,o.SciDelivery),
                     [Buyer] = o.BuyerDelivery) KeyDate
 
@@ -509,11 +514,12 @@ declare @tmpPullout_Detail TABLE(
 	[PulloutQty] [INT] NULL
 )
 INSERT INTO @tmpPullout_Detail
-select  pd.OrderID, [PulloutQty] = sum(pd.shipQty)
---into #tmpPullout_Detail
-from Pullout_Detail pd with (nolock)
-where exists (select 1 from @tmpBaseByOrderID tb where tb.ID = pd.OrderID)
-group by pd.OrderID
+select pd.OrderID, [PulloutQty] = sum(pd.shipQty)
+                  from PackingList p, PackingList_Detail pd
+                  where p.ID = pd.ID
+                  and p.PulloutID <> ''
+                  and exists (select 1 from @tmpBaseByOrderID tb where tb.ID = pd.OrderID)
+                  group by pd.OrderID
 
 select
 	o.MDivisionID,
