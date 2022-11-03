@@ -151,11 +151,11 @@ from(
     inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
     inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
     outer apply(
-	    select ShipQty = sum(podd.ShipQty) 
-	    from Pullout_Detail_Detail podd WITH (NOLOCK) 
-	    inner join Order_Qty oq WITH (NOLOCK) on oq.id=podd.OrderID 
-	    and podd.Article= oq.Article and podd.SizeCode=oq.SizeCode
-	    where podd.OrderID = o.ID
+	    select ShipQty = sum(pad.ShipQty)
+        from PackingList_Detail pad
+        inner join Order_Qty oq on oq.ID = pad.OrderID and oq.Article = pad.Article and oq.SizeCode = pad.SizeCode
+        inner join PackingList p on p.ID = pad.ID
+        where pad.OrderID = o.ID and p.PulloutID <> ''
     )s
     outer apply(
 	    select combo = Stuff((
@@ -212,7 +212,6 @@ p.MDivisionID
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-left join Pullout po WITH (NOLOCK) on p.PulloutID = po.ID
 outer apply(
 	select combo = Stuff((
 	    select concat('/',SizeCode+':'+ convert(varchar(10),QtyPerCTN))
@@ -239,7 +238,7 @@ outer apply(
 )rea
 where pd.CTNQty > 0
 and pd.ReceiveDate is not null
-and (p.PulloutID = '' or po.Status = 'New')
+and (p.PulloutID = '' or p.PulloutStatus = 'New')
 and pd.DisposeFromClog= 0
 and o.PulloutComplete = 0
 ");
