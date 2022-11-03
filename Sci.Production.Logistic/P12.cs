@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -180,6 +181,7 @@ order by pld.ID,pld.CTNStartNo
                 readdt.Columns.Add("custCtn", typeof(string));
                 readdt.Columns.Add("packinglistID", typeof(string));
                 readdt.Columns.Add("CTNStartNo", typeof(string));
+                readdt.Columns.Add("SCICtnNo", typeof(string));
 
                 // 讀檔案
                 using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, System.Text.Encoding.UTF8))
@@ -209,12 +211,13 @@ order by pld.ID,pld.CTNStartNo
                         if (sl[1].Length >= 14)
                         {
                             packinglistID = sl[1].Substring(0, 13);
-                            cTNStartNo = sl[1].Substring(13).ToString().TrimStart('^');
+                            cTNStartNo = sl[1].Substring(13).ToString();
                         }
 
                         dr["custCtn"] = custCtn;
                         dr["packinglistID"] = packinglistID;
                         dr["cTNStartNo"] = cTNStartNo;
+                        dr["SCICtnNo"] = sl[1].GetPackScanContent();
                         readdt.Rows.Add(dr);
                     }
                 }
@@ -226,7 +229,14 @@ order by pld.ID,pld.CTNStartNo
                 }
 
                 // 去除重複
-                var distl = readdt.AsEnumerable().Select(s => new { PackingListID = MyUtility.Convert.GetString(s["PackingListID"]), CTNStartNo = MyUtility.Convert.GetString(s["CTNStartNo"]), custCtn = MyUtility.Convert.GetString(s["custCtn"]) }).Distinct().ToList();
+                var distl = readdt.AsEnumerable().Select(s =>
+                new
+                {
+                    PackingListID = MyUtility.Convert.GetString(s["PackingListID"]),
+                    CTNStartNo = MyUtility.Convert.GetString(s["CTNStartNo"]),
+                    custCtn = MyUtility.Convert.GetString(s["custCtn"]),
+                    SCICtnNo = MyUtility.Convert.GetString(s["SCICtnNo"]),
+                }).Distinct().ToList();
 
                 string sqlcmd = $@"
 select distinct 
@@ -248,6 +258,11 @@ outer apply (
     from PackingList_Detail pld  with(nolock)
     where pld.id = t.packinglistID
             and pld.CTNStartNo = t.cTNStartNo
+    union
+    select PackingListID = pld.id
+            , pld.CTNStartNo
+    from PackingList_Detail pld  with(nolock)
+    where pld.SCICtnNo = t.SCICtnNo
 ) findInPL
 
 select t.*,

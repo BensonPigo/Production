@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
@@ -285,8 +286,7 @@ and p2.CFAReceiveDate  is null
 and p2.TransferCFADate is not null
 and p2.DisposeFromClog= 0
 and (po.Status ='New' or po.Status is null)
-and p2.id='{sl[2].Substring(0, 13)}'
-and p2.CTNStartNo='{sl[2].Substring(13).TrimStart('^')}'
+and ((p2.id='{sl[2].Substring(0, 13)}' and p2.CTNStartNo='{sl[2].Substring(13)}') or p2.SCICtnNo = '{sl[2].GetPackScanContent()}')
 order by p2.ID,p2.CTNStartNo
 ";
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))

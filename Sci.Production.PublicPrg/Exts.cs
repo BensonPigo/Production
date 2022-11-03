@@ -323,5 +323,15 @@ namespace Sci.Production.Prg
 
             return writer.Write(strBarcode);
         }
+
+        /// <summary>
+        /// Packing 產生Barcode時會在後面補0至23位，讀取時要將後面0去掉
+        /// </summary>
+        /// <param name="srcBarcode">srcBarcode</param>
+        /// <returns>string</returns>
+        public static string GetPackScanContent(this string srcBarcode)
+        {
+            return srcBarcode.Left(16);
+        }
     }
 }

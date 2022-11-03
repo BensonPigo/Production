@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg;
 using Sci.Win.Tems;
 using System;
 using System.Collections.Generic;
@@ -137,7 +138,7 @@ left join PackingError pe with (nolock) on x.PackingErrorID=pe.ID and pe.Type='T
             }
 
             string packID = scannedBarcode.Substring(0, 13);
-            string cartonStartNo = scannedBarcode.Substring(13).TrimStart('^');
+            string cartonStartNo = scannedBarcode.Substring(13);
 
             foreach (DataGridViewRow dr in this.gridPackErrTransfer.Rows)
             {
@@ -200,7 +201,7 @@ left join PackingError pe with (nolock) on x.PackingErrorID=pe.ID and pe.Type='T
                             }
 
                             string packID = splitResult[2].Substring(0, 13).TrimEnd();
-                            string cartonStartNo = splitResult[2].Substring(13).TrimEnd().TrimStart('^');
+                            string cartonStartNo = splitResult[2].Substring(13).TrimEnd();
 
                             CheckPackResult checkPackResult = this.CheckPackID(packID, cartonStartNo, false);
 
@@ -383,12 +384,12 @@ order by pd.ID,pd.Seq
             }
             else
             {
-                keyWhere = @"   and pd.ID = @ID
-                                and pd.CTNStartNo = @CTNStartNo";
+                keyWhere = @"   and ((pd.ID = @ID and pd.CTNStartNo = @CTNStartNo) or pd.SCICtnNo = @SCICtnNo)";
                 listPar = new List<SqlParameter>()
                                             {
                                                 new SqlParameter("@ID", packID),
                                                 new SqlParameter("@CTNStartNo", cartonStartNo),
+                                                new SqlParameter("@SCICtnNo", (packID + cartonStartNo).GetPackScanContent()),
                                             };
             }
 
@@ -398,7 +399,7 @@ where	pd.CTNStartNo <> ''
 		and p.MDivisionID = '{Env.User.Keyword}' 
 		and p.Type in ('B','L') 
         and pd.CTNQty = 1
-        and pd.DisposeFromClog= 0
+        and pd.DisposeFromClog = 0
         {keyWhere}
 ";
             bool result = MyUtility.Check.Seek(checkPackSql, listPar, out drPackResult);
