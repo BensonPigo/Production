@@ -289,17 +289,52 @@ where i.Name in ('P_Import_Capacity', 'P_Import_StyleInfo')
 
             }
 
-            result = DBProxy.Current.Select("PBIReportData", sqlCmd, out transAll);
-            if (!result) { return result; }
-
-            if (transAll.Rows.Count > 0)
-            {
-                SetupData(transAll);
+            result = DBProxy.Current.Select("PBIReportData", sqlCmd, out DataTable dtAll);
+            if (!result) 
+            { 
+                return result; 
             }
 
-            #endregion
+            bool finalResutl = true;
+            this.InsertTransLog("Start Update_PoweBI_InThread", string.Empty, string.Empty, 0);
 
-            bool ByGroupStatus = Update_ByGroupID();
+            /*
+           var results = dtAll.AsEnumerable()
+                .AsParallel()
+                .Select(dr =>
+                {
+                    List<SqlParameter> parameters = new List<SqlParameter>();
+                    string functionName = dr["Name"].ToString();
+                    string region = dr["Region"].ToString();
+                    int groupID = int.Parse(dr["GroupID"].ToString());
+                    string tsql = dr["TSQL"].ToString();
+                    DualResult result_SP = DBProxy.Current.Execute("PBIReportData", tsql, parameters);
+                    string description = !result_SP ? result_SP.ToString() : string.Empty;
+                    // 寫入 Translog
+                    this.InsertTransLog(functionName, description, region, groupID);
+                    return true;
+                });
+
+            foreach (var item in results)
+            {
+                var a = item;
+            }
+            */
+
+            // 執行SP
+            foreach (DataRow dr in dtAll.Rows)
+            {
+                List<SqlParameter> parameters = new List<SqlParameter>();
+                string functionName = dr["Name"].ToString();
+                string region = dr["Region"].ToString();
+                int groupID = int.Parse(dr["GroupID"].ToString());
+                string tsql = dr["TSQL"].ToString();
+                DualResult result_SP = DBProxy.Current.Execute("PBIReportData", tsql, parameters);
+                string description = !result_SP ? result_SP.ToString() : string.Empty;
+                // 寫入 Translog
+                this.InsertTransLog(functionName, description, region, groupID);
+            }  
+            #endregion
 
             #region 只要有任一Store Procedure沒都有寫進Log, or 錯誤訊息是DeadLock,就重新執行!
 
@@ -391,34 +426,22 @@ where   i.Name in ('P_Import_Capacity') and
                     TransTask task = new TransTask(dr, tRegion);
                     task.TSQL = sqlcmd;
                     result = DBProxy.Current.OpenConnection("PBIReportData", out SqlConnection conn);
-                    this.Transfer_Task(task, conn);
+                    
+                    // 紀錄結果
+                    if (!this.Transfer_Task(task, conn))
+                    {
+                        finalResutl = false;
+                    }
                 }
             }
             #endregion
 
             #region 寫log End
-            EndTime = DateTime.Now;
-
-            List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@functionName", "End Update_PowerBI_InThread"));
-            pars.Add(new SqlParameter("@Description", ""));
-            pars.Add(new SqlParameter("@StartTime", DateTime.Now));
-            pars.Add(new SqlParameter("@EndTime", DateTime.Now));
-            pars.Add(new SqlParameter("@RegionID", ""));
-            pars.Add(new SqlParameter("@GroupID", ""));
-            pars.Add(new SqlParameter("@TransCode", intHashCode));
-
-            string cmd = @"
-insert into P_TransLog( functionName, Description, StartTime, EndTime, RegionID, GroupID, TransCode) 
-                values(@functionName,@Description,@StartTime,@EndTime,@RegionID,@GroupID,@TransCode)";
-
-            if (!(result = DBProxy.Current.Execute("", cmd, pars)))
-            {
-                ShowErr(result);
-            }
+            this.InsertTransLog("End Update_PowerBI_InThread", string.Empty, string.Empty, 0);
             #endregion
 
-            if (!ByGroupStatus)
+            // 第二段跑還是有失敗訊息，就算失敗
+            if (!finalResutl)
             {
                 return new DualResult(false, "Update failed!");
             }
@@ -452,7 +475,7 @@ insert into P_TransLog( functionName, Description, StartTime, EndTime, RegionID,
                 MyUtility.Msg.InfoBox("No task selected to do update");
                 return true;
             }
-
+             
             #region 寫log Start
             StartTime = DateTime.Now;
 
@@ -650,9 +673,9 @@ END CATCH";
                 pars.Add(new SqlParameter("@TransCode", intHashCode));
                 pars.Add(new SqlParameter("@GroupID", task.GroupID));
 
-                if (MyUtility.Check.Seek("select * from P_TransLog where TransCode = @TransCode and RegionID = @RegionID and FunctionName = @functionName ",pars))
+                if (MyUtility.Check.Seek("select * from P_TransLog with(nolock) where TransCode = @TransCode and RegionID = @RegionID and FunctionName = @functionName ",pars))
                 {
-                    cmd = $@"update P_TransLog set StartTime = @StartTime,EndTime = @EndTime,Description = @Description where TransCode = @TransCode and RegionID = @RegionID and FunctionName = @functionName";
+                    cmd = $@"update P_TransLog set StartTime = @StartTime,EndTime = @EndTime,Description = Description + @Description where TransCode = @TransCode and RegionID = @RegionID and FunctionName = @functionName";
                 }
                 else
                 {
@@ -764,6 +787,28 @@ M: TPE" + Environment.NewLine;
             SendMail(subject, desc, !issucess);
             this.CallJobLogApi("Import BI Data", desc, ((DateTime)StartTime).ToString("yyyyMMdd HH:mm:ss"), ((DateTime)EndTime).ToString("yyyyMMdd HH:mm:ss"), isTestJobLog, issucess);
             #endregion
+        }
+
+        private void InsertTransLog(string functionName, string description, string regionID, int groupID)
+        {           
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@functionName", functionName));
+            pars.Add(new SqlParameter("@Description", description));
+            pars.Add(new SqlParameter("@StartTime", DateTime.Now));
+            pars.Add(new SqlParameter("@EndTime", DateTime.Now));
+            pars.Add(new SqlParameter("@RegionID", regionID));
+            pars.Add(new SqlParameter("@GroupID", groupID));
+            pars.Add(new SqlParameter("@TransCode", intHashCode));
+
+            string cmd = @"
+insert into P_TransLog(functionName, Description, StartTime, EndTime, RegionID, GroupID, TransCode) 
+                values(@functionName,@Description,@StartTime,@EndTime,@RegionID,@GroupID,@TransCode)";
+
+            DualResult result = DBProxy.Current.Execute("", cmd, pars);
+            if (!result)
+            {
+                ShowErr(result);
+            }
         }
     }
 }
