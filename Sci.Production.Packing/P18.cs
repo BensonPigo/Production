@@ -19,6 +19,7 @@ using System.Data.SqlTypes;
 using System.Windows.Forms.VisualStyles;
 using System.Threading;
 using System.Security.AccessControl;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Packing
 {
@@ -288,7 +289,7 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
             if (this.txtScanCartonSP.Text.Length > 13)
             {
                 this.PackingListID = this.txtScanCartonSP.Text.Substring(0, 13);
-                this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13).TrimStart('^');
+                this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13);
             }
 
             this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串
@@ -371,6 +372,7 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
             string[] aLLwhere = new string[]
             {
                 this.txtScanCartonSP.Text.Length > 13 ? $" and  pd.ID = '{this.PackingListID}' and  pd.CTNStartNo = '{this.CTNStarNo}'" : " and 1=0 ",
+                $" and  pd.SCICtnNo = '{this.txtScanCartonSP.Text.GetPackScanContent()}'",
                 $" and  pd.ID = '{this.txtScanCartonSP.Text}'",
                 $" and o.ID = '{this.txtScanCartonSP.Text}' or o.CustPoNo = '{this.txtScanCartonSP.Text}'",
                 $" and pd.CustCTN = '{this.txtScanCartonSP.Text}'",
@@ -1583,16 +1585,7 @@ drop table #tmpUpdatedID
             if (this.txtScanCartonSP.Text.Length > 13)
             {
                 this.PackingListID = this.txtScanCartonSP.Text.Substring(0, 13);
-                this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13).TrimStart('^');
-            }
-
-            this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串
-            this.ClearAll("SCAN");
-
-            if (this.txtScanCartonSP.Text.Length > 13)
-            {
-                this.PackingListID = this.txtScanCartonSP.Text.Substring(0, 13);
-                this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13).TrimStart('^');
+                this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13);
             }
 
             this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串
@@ -1606,6 +1599,7 @@ drop table #tmpUpdatedID
             string[] aLLwhere = new string[]
             {
                 this.txtScanCartonSP.Text.Length > 13 ? $" and  pd.ID = '{this.PackingListID}' and  pd.CTNStartNo = '{this.CTNStarNo}'" : " and 1=0 ",
+                $" and  pd.SCICtnNo  = '{this.txtScanCartonSP.Text.GetPackScanContent()}'",
                 $" and  pd.ID = '{this.txtScanCartonSP.Text}'",
                 $@" and o.ID = '{this.txtScanCartonSP.Text}' or o.CustPoNo = '{this.txtScanCartonSP.Text}'",
                 $@" and pd.CustCTN = '{this.txtScanCartonSP.Text}'",

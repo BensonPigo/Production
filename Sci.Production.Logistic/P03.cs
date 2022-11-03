@@ -10,6 +10,7 @@ using System.IO;
 using System.Transactions;
 using Sci.Production.PublicPrg;
 using System.Linq;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Logistic
 {
@@ -357,8 +358,8 @@ from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c
                             {
                                 dr["ID"] = string.Empty;
                                 dr["selected"] = 0;
-                                dr["PackingListID"] = sl[1].Substring(0, 13);
-                                dr["CTNStartNo"] = sl[1].Substring(13).TrimStart('^');
+                                string packingListID = sl[1].Substring(0, 13);
+                                string ctnStartNo = sl[1].Substring(13);
                                 string sqlCmd = string.Format(
                                     @"
 select 
@@ -376,6 +377,8 @@ pd.OrderID
 ,[ScanQty]=ScanQty.Value
 ,pd.ScanEditDate
 ,pd.ScanName
+,pd.ID
+,pd.CTNStartNo
 from PackingList_Detail pd WITH (NOLOCK)
 inner join PackingList p (NOLOCK) on pd.id = p.id
 OUTER APPLY (
@@ -387,12 +390,12 @@ OUTER APPLY (
 			AND ppd.CTNStartNo=pd.CTNStartNo 
 			AND ppd.SCICtnNo=pd.SCICtnNo
 )ScanQty
-where pd.ID = '{0}' 
-and CTNStartNo = '{1}' 
+where ((pd.ID = '{0}' and CTNStartNo = '{1}') or pd.SCICtnNo = '{2}') 
 and pd.CTNQty > 0 
 and pd.DisposeFromClog= 0",
-                                    dr["PackingListID"].ToString(),
-                                    dr["CTNStartNo"].ToString());
+                                    packingListID,
+                                    ctnStartNo,
+                                    sl[1].GetPackScanContent());
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
                                     if (MyUtility.Check.Empty(seekData["ReturnDate"]))
@@ -426,6 +429,8 @@ and pd.DisposeFromClog= 0",
                                         dr["Remark"] = dr["Remark"] + "The order's M is not equal to login M.";
                                     }
 
+                                    dr["PackingListID"] = seekData["ID"];
+                                    dr["CTNStartNo"] = seekData["CTNStartNo"];
                                     dr["OrderID"] = seekData["OrderID"];
                                     dr["SCICtnNo"] = seekData["SCICtnNo"];
                                     dr["ClogLocationId"] = seekData["ClogLocationId"];

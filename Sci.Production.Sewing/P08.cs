@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Prg;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -48,11 +49,12 @@ namespace Sci.Production.Sewing
             if (cartonsBarcode.Length > 13)
             {
                 packingListID = cartonsBarcode.Substring(0, 13);
-                cTNStarNo = cartonsBarcode.Substring(13, cartonsBarcode.Length - 13).TrimStart('^');
+                cTNStarNo = cartonsBarcode.Substring(13, cartonsBarcode.Length - 13);
             }
 
             List<SqlParameter> sqlParameters = new List<SqlParameter>();
             sqlParameters.Add(new SqlParameter("@cartonsBarcode", cartonsBarcode));
+            sqlParameters.Add(new SqlParameter("@sciCtnNo", cartonsBarcode.GetPackScanContent()));
             sqlParameters.Add(new SqlParameter("@packingListID", packingListID));
             sqlParameters.Add(new SqlParameter("@cTNStarNo", cTNStarNo));
             sqlParameters.Add(new SqlParameter("@M", Env.User.Keyword));
@@ -91,7 +93,7 @@ outer apply
 )sl
 where ((pd.ID = @packingListID and pd.CTNStartNo = @cTNStarNo)
         or pd.CustCTN = @cartonsBarcode
-        or pd.SCICtnNo = @cartonsBarcode)
+        or pd.SCICtnNo = @sciCtnNo)
 		and p.MDivisionID =@M
 		and p.Type in ('B','L') 
         and pd.DisposeFromClog = 0 

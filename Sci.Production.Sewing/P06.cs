@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
@@ -206,11 +207,12 @@ where	pd.CTNStartNo != '' and
             string keyWhere = string.Empty;
             string packingListID = string.Empty;
             string cTNStarNo = string.Empty;
+            string sciCtnNo = packNo.GetPackScanContent();
 
             if (packNo.Length > 13)
             {
                 packingListID = packNo.Substring(0, 13);
-                cTNStarNo = packNo.Substring(13, packNo.Length - 13).TrimStart('^');
+                cTNStarNo = packNo.Substring(13, packNo.Length - 13);
             }
 
             if (fromCustCTN == true)
@@ -228,6 +230,8 @@ where	pd.CTNStartNo != '' and
                 {
                     keyWhere = $"(ID+CTNStartNo) = '{packNo}'";
                 }
+
+                keyWhere = $"(({keyWhere}) or SCICtnNo = '{sciCtnNo}')";
             }
 
             PackDataResult packDataResult = new PackDataResult();
