@@ -152,9 +152,9 @@ from(
     inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
     outer apply(
 	    select ShipQty = sum(pad.ShipQty)
-        from PackingList_Detail pad
-        inner join Order_Qty oq on oq.ID = pad.OrderID and oq.Article = pad.Article and oq.SizeCode = pad.SizeCode
-        inner join PackingList p on p.ID = pad.ID
+        from PackingList_Detail pad WITH (NOLOCK)
+        inner join Order_Qty oq WITH (NOLOCK) on oq.ID = pad.OrderID and oq.Article = pad.Article and oq.SizeCode = pad.SizeCode
+        inner join PackingList p WITH (NOLOCK) on p.ID = pad.ID
         where pad.OrderID = o.ID and p.PulloutID <> ''
     )s
     outer apply(
