@@ -213,17 +213,17 @@ group by pd.OrderID,pd.OrderShipmodeSeq
 select pd.OrderID, sum(pd.ShipQty) TtlPullGMTQty
 into #tmp_TtlPullGMTQty
 from PackingList p WITH (NOLOCK) 
-inner join PackingList_Detail pd on p.ID = pd.ID
-inner join (select distinct id from #tmp_Orders) o on pd.OrderID = o.ID
+inner join PackingList_Detail pd WITH (NOLOCK)  on p.ID = pd.ID
+inner join (select distinct id from #tmp_Orders) o WITH (NOLOCK) on pd.OrderID = o.ID
 where p.PulloutStatus <> 'New'
 and p.PulloutID <> ''
 group by pd.OrderID
 
  select pd.OrderID, pd.OrderShipmodeSeq, sum(pd.ShipQty) PullGMTQty
 into #tmp_PullGMTQty
-from PackingList p
-inner join PackingList_Detail pd on p.ID = pd.ID
-inner join #tmp_Orders o on pd.OrderID = o.ID and pd.OrderShipmodeSeq = o.Seq
+from PackingList p WITH (NOLOCK) 
+inner join PackingList_Detail pd WITH (NOLOCK)  on p.ID = pd.ID
+inner join #tmp_Orders o WITH (NOLOCK)  on pd.OrderID = o.ID and pd.OrderShipmodeSeq = o.Seq
 where p.PulloutStatus <> 'New'
 and p.PulloutID <> ''
 group by pd.OrderID, pd.OrderShipmodeSeq
