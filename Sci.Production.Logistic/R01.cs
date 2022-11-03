@@ -210,21 +210,23 @@ inner join ClogReceive c  WITH (NOLOCK) on pd.ID = c.PackingListID and pd.OrderI
 group by pd.OrderID,pd.OrderShipmodeSeq
 
 
-select pd.OrderID,sum(ShipQty) TtlPullGMTQty
+select pd.OrderID, sum(pd.ShipQty) TtlPullGMTQty
 into #tmp_TtlPullGMTQty
-from Pullout p WITH (NOLOCK) 
-inner join Pullout_Detail pd WITH (NOLOCK) on pd.ID = p.ID 
-inner join (select distinct id from #tmp_Orders) o on pd.OrderID = o.ID  
-where p.Status <> 'New'
+from PackingList p WITH (NOLOCK) 
+inner join PackingList_Detail pd on p.ID = pd.ID
+inner join (select distinct id from #tmp_Orders) o on pd.OrderID = o.ID
+where p.PulloutStatus <> 'New'
+and p.PulloutID <> ''
 group by pd.OrderID
- 
-select pd.OrderID,pd.OrderShipmodeSeq,sum(ShipQty) PullGMTQty
+
+ select pd.OrderID, pd.OrderShipmodeSeq, sum(pd.ShipQty) PullGMTQty
 into #tmp_PullGMTQty
-from Pullout p
-inner join Pullout_Detail pd WITH (NOLOCK) on pd.ID = p.ID 
-inner join #tmp_Orders o on pd.OrderID = o.ID and pd.OrderShipmodeSeq = o.Seq 
-where p.Status <> 'New'
-group by pd.OrderID,pd.OrderShipmodeSeq
+from PackingList p
+inner join PackingList_Detail pd on p.ID = pd.ID
+inner join #tmp_Orders o on pd.OrderID = o.ID and pd.OrderShipmodeSeq = o.Seq
+where p.PulloutStatus <> 'New'
+and p.PulloutID <> ''
+group by pd.OrderID, pd.OrderShipmodeSeq
 
 select Orderid=id,sewQty=sum(QAQty)
 into #tmp_sewQty
