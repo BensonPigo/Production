@@ -389,7 +389,7 @@ outer apply (select [CpuRate] = case when o.IsForecast = 1 then (select CpuRate 
                                      else (select CpuRate from GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'O')) end
                      ) gcRate
 outer apply (select Qty=sum(pd.ShipQty)
-	from PackingList p, PackingList_Detail pd 
+	from PackingList p with(nolock), PackingList_Detail pd with(nolock)
 	where p.ID = pd.ID 
 		  and p.PulloutID <> '' 
 		  and pd.OrderID = o.ID
@@ -515,7 +515,7 @@ declare @tmpPullout_Detail TABLE(
 )
 INSERT INTO @tmpPullout_Detail
 select pd.OrderID, [PulloutQty] = sum(pd.shipQty)
-                  from PackingList p, PackingList_Detail pd
+                  from PackingList p with(nolock), PackingList_Detail pd with(nolock)
                   where p.ID = pd.ID
                   and p.PulloutID <> ''
                   and exists (select 1 from @tmpBaseByOrderID tb where tb.ID = pd.OrderID)
