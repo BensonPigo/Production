@@ -213,7 +213,7 @@ namespace PowerBI.Daily
         /// <param name="endDate"></param>
         /// <param name="isTest"></param>
         /// <param name="succeeded"></param>
-        private void CallJobLogApi(string subject, string desc, string startDate, string endDate, bool isTest, bool succeeded)
+        private string CallJobLogApi(string subject, string desc, string startDate, string endDate, bool isTest, bool succeeded)
         {
             JobLog jobLog = new JobLog()
             {
@@ -230,7 +230,7 @@ namespace PowerBI.Daily
                 Succeeded = succeeded
             };
             CallTPEWebAPI callTPEWebAPI = new CallTPEWebAPI(isTest);
-            callTPEWebAPI.CreateJobLogAsnc(jobLog, null);
+            return callTPEWebAPI.CreateJobLogAsnc(jobLog, null);
         }
 
         private DualResult DailyUpdate(int type = 0)
@@ -451,7 +451,7 @@ where   i.Name in ('P_Import_Capacity') and
 
         private void btnTestWebAPI_Click(object sender, EventArgs e)
         {
-          this.CallJobLogApi("Import BI Data", "PowerBI Update DB ", DateTime.Now.ToString("yyyyMMdd HH:mm:ss"), DateTime.Now.ToString("yyyyMMdd HH:mm:ss"), true, true);
+          this.CallJobLogApi("Import BI Data", "PowerBI Update DB ", DateTime.Now.ToString("yyyyMMdd HH:mm:ss"), DateTime.Now.ToString("yyyyMMdd HH:mm:ss"), false, true);
         }
 
         private void btnTestMail_Click(object sender, EventArgs e)
@@ -746,7 +746,11 @@ M: TPE" + Environment.NewLine;
                 desc += $"[{dr["MailName"]}] " + status + Environment.NewLine;
             }
 
-            this.CallJobLogApi("Import BI Data", desc, ((DateTime)StartTime).ToString("yyyyMMdd HH:mm:ss"), ((DateTime)EndTime).ToString("yyyyMMdd HH:mm:ss"), isTestJobLog, isSucceed);
+            string rtnJoblog = this.CallJobLogApi("Import BI Data", desc, ((DateTime)StartTime).ToString("yyyyMMdd HH:mm:ss"), ((DateTime)EndTime).ToString("yyyyMMdd HH:mm:ss"), isTestJobLog, isSucceed);
+            if (!string.IsNullOrEmpty(rtnJoblog))
+            {
+                SendMail("BI Insert Job Log Error", rtnJoblog, true);
+            }
         }
 
         /// <summary>
