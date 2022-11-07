@@ -19,6 +19,7 @@ using System.Data.SqlTypes;
 using System.Windows.Forms.VisualStyles;
 using System.Threading;
 using System.Security.AccessControl;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Packing
 {
@@ -998,16 +999,22 @@ WHERE o.ID='{dr.OrderID}'");
                 if (!MyUtility.Check.Empty(this.upd_sql_barcode))
                 {
                     DataTable dtUpdateID;
-                    if (!(sql_result = DBProxy.Current.Select(null, this.upd_sql_barcode, out dtUpdateID)))
+                    using (new MethodWatch(60, "WH.P18_UpdBarCode"))
                     {
-                        this.ShowErr(sql_result);
-                        return;
+                        if (!(sql_result = DBProxy.Current.Select(null, this.upd_sql_barcode, out dtUpdateID)))
+                        {
+                            this.ShowErr(sql_result);
+                            return;
+                        }
                     }
 
                     if (dtUpdateID.Rows.Count > 0)
                     {
                         List<string> listID = dtUpdateID.AsEnumerable().Select(s => s["ID"].ToString()).ToList();
-                        this.TaskCallWebAPI(listID);
+                        using (new MethodWatch(60, "WH.P18_TaskCallWebAPI"))
+                        {
+                            this.TaskCallWebAPI(listID);
+                        }
                     }
                 }
 
@@ -1889,36 +1896,38 @@ and CTNStartNo = '{this.selecedPK.CTNStartNo}'
         private string Update_barcodestring(DataRow no_barcode_dr)
         {
             return $@"
+--先將需要update的key取出，避免update過久lock整個table
+select distinct a.Article,a.Color,a.SizeCode,o.StyleUkey
+into #tmpNeedUpdateGroup
+from PackingList_Detail a
+inner join Orders o ON o.ID = a.OrderID
+where   a.ID ='{this.selecedPK.ID}'
+        AND a.CTNStartNo =  '{this.selecedPK.CTNStartNo}'
+        AND a.Article =  '{no_barcode_dr["Article"]}'
+        and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
+
+select  pd.Ukey
+into #tmpNeedUpdPackUkeys
+from PackingList_Detail pd with (nolock)
+inner join Orders o  with (nolock) ON o.ID = pd.OrderID
+where exists(select 1 from #tmpNeedUpdateGroup t 
+                      where t.Article = pd.Article     and
+                            t.Color = pd.Color         and
+                            t.SizeCode = pd.SizeCode   and
+                            t.StyleUkey = o.StyleUkey)
+
 UPDATE pd
 SET BarCode = '{this.txtScanEAN.Text}'
 from  PackingList_Detail pd
-inner join Orders od ON od.ID = pd.OrderID
-inner join ({this.Base(no_barcode_dr)}) b ON b.Article = pd.Article
-AND b.Color = pd.Color
-AND b.SizeCode = pd.SizeCode
-AND b.StyleUkey = od.StyleUkey
+where pd.Ukey in (select Ukey from #tmpNeedUpdPackUkeys)
 
 --抓出有更新的PKID，作為後續call WebAPI 更新廠商資料用
 select distinct pd.ID
 from  PackingList_Detail pd
-inner join Orders od ON od.ID = pd.OrderID
-inner join ({this.Base(no_barcode_dr)}) b ON b.Article = pd.Article
-AND b.Color = pd.Color
-AND b.SizeCode = pd.SizeCode
-AND b.StyleUkey = od.StyleUkey
-";
-        }
+where pd.Ukey in (select Ukey from #tmpNeedUpdPackUkeys)
 
-        private string Base(DataRow no_barcode_dr)
-        {
-            return $@"
-select a.Article,a.Color,a.SizeCode,o.StyleUkey
-from PackingList_Detail a
-inner join Orders o ON o.ID = a.OrderID
-where a.ID ='{this.selecedPK.ID}'
-AND a.CTNStartNo =  '{this.selecedPK.CTNStartNo}'
-AND a.Article =  '{no_barcode_dr["Article"]}'
-and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
+drop table #tmpNeedUpdateGroup, #tmpNeedUpdPackUkeys
+
 ";
         }
 
