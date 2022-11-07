@@ -763,28 +763,9 @@ where  not exists(select 1 from bundle_Detail_Art bda with (nolock) where tda.ID
 
             if (listChangedDetail.Any())
             {
-                List<BundleToAGV_PostBody> listBundleToAGV_PostBody = listChangedDetail.Select(
-                    dr => new BundleToAGV_PostBody()
-                    {
-                        ID = dr["ID"].ToString(),
-                        POID = this.CurrentMaintain["POID"].ToString(),
-                        BundleNo = dr["BundleNo"].ToString(),
-                        CutRef = this.CurrentMaintain["CutRef"].ToString(),
-                        OrderID = this.CurrentMaintain["OrderID"].ToString(),
-                        Article = this.CurrentMaintain["Article"].ToString(),
-                        PatternPanel = this.CurrentMaintain["PatternPanel"].ToString(),
-                        FabricPanelCode = this.CurrentMaintain["FabricPanelCode"].ToString(),
-                        PatternCode = dr["PatternCode"].ToString(),
-                        PatternDesc = dr["PatternDesc"].ToString(),
-                        BundleGroup = (decimal)dr["BundleGroup"],
-                        SizeCode = dr["SizeCode"].ToString(),
-                        Qty = (decimal)dr["Qty"],
-                        SewingLineID = this.CurrentMaintain["SewingLineID"].ToString(),
-                        AddDate = (DateTime?)this.CurrentMaintain["AddDate"],
-                    })
-                    .ToList();
+                List<string> listBundleNo = listChangedDetail.Select(dr => dr["BundleNo"].ToString()).ToList();
 
-                Task.Run(() => new Guozi_AGV().SentBundleToAGV(() => listBundleToAGV_PostBody))
+                Task.Run(() => new Guozi_AGV().SentBundleToAGV(listBundleNo))
                     .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
 
