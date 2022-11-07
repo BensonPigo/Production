@@ -28,192 +28,79 @@ namespace Sci.Production.Automation
                 return;
             }
 
+            if (dtWorkOrder == null || dtWorkOrder.Rows.Count == 0)
+            {
+                return;
+            }
+
             List<WorkOrderToAGV_PostBody> listWorkOrder = new List<WorkOrderToAGV_PostBody>();
-            DataTable dtWorkOrder_Distribute;
             string apiThread = "SentWorkOrderToAGV";
             string suppAPIThread = "api/GuoziAGV/SentDataByApiTag";
-            string sqlGetData;
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
             Dictionary<string, string> requestHeaders = GetCustomHeaders();
             this.automationErrMsg.CallFrom = requestHeaders["CallFrom"];
             this.automationErrMsg.Activity = requestHeaders["Activity"];
 
-            foreach (DataRow dr in dtWorkOrder.Rows)
+            int takeCnt = 5;
+            int callApiCnt = MyUtility.Convert.GetInt(Math.Ceiling(MyUtility.Convert.GetDouble(dtWorkOrder.Rows.Count) / MyUtility.Convert.GetDouble(takeCnt)));
+
+            // 每5筆send一次給廠商
+            for (int i = 0; i < callApiCnt; i++)
             {
-                sqlGetData = $"select WorkOrderUkey,OrderID,Article,SizeCode,Qty from WorkOrder_Distribute with (nolock) where WorkOrderUkey = {dr["Ukey"]}";
-                DualResult result = DBProxy.Current.Select(null, sqlGetData, out dtWorkOrder_Distribute);
-                if (!result)
-                {
-                    this.automationErrMsg.SetErrInfo(result);
-                    UtilityAutomation.SaveAutomationErrMsg(this.automationErrMsg);
-                }
+                dynamic bodyObject = new ExpandoObject();
+                bodyObject.Ukey = dtWorkOrder.AsEnumerable()
+                    .Skip(i * takeCnt)
+                    .Take(takeCnt)
+                    .Select(s => MyUtility.Convert.GetLong(s["Ukey"]))
+                    .ToArray();
 
-                DataRow drWorkOrder;
-                MyUtility.Check.Seek($"select ColorID, MarkerNo, CutNo, FabricCombo from WorkOrder with (nolock) where Ukey = '{dr["Ukey"]}'", out drWorkOrder);
+                string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "WorkOrder"));
 
-                listWorkOrder.Add(
-                    new WorkOrderToAGV_PostBody()
-                    {
-                        WorkOrder_Distribute = dtWorkOrder_Distribute,
-                        Ukey = (long)dr["Ukey"],
-                        CutRef = dr["CutRef"].ToString(),
-                        EstCutDate = (DateTime?)dr["EstCutDate"],
-                        ID = dr["ID"].ToString(),
-                        OrderID = dr["OrderID"].ToString(),
-                        CutNo = drWorkOrder["CutNo"].ToString(),
-                        PatternPanel = drWorkOrder["FabricCombo"].ToString(),
-                        CutCellID = dr["CutCellID"].ToString(),
-                        ColorID = drWorkOrder["ColorID"].ToString(),
-                        MarkerNo = drWorkOrder["MarkerNo"].ToString(),
-                    });
+                SendWebAPISaveAutomationCreateRecord(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
             }
-
-            dynamic bodyObject = new ExpandoObject();
-            bodyObject.WorkOrder = listWorkOrder;
-
-            string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "WorkOrder"));
-
-            SendWebAPISaveAutomationCreateRecord(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
         /// SentBundleToAGV
         /// </summary>
-        /// <param name="funListBundle">List BundleToAGV_PostBody</param>
-        public void SentBundleToAGV(Func<List<BundleToAGV_PostBody>> funListBundle)
+        /// <param name="listBundleNo">List BundleToAGV_PostBody</param>
+        public void SentBundleToAGV(List<string> listBundleNo)
         {
             if (!IsModuleAutomationEnable(this.guoziSuppID, this.moduleName))
             {
                 return;
             }
 
+            if (listBundleNo == null || listBundleNo.Count == 0)
+            {
+                return;
+            }
+
             string apiThread = "SentBundleToAGV";
             string suppAPIThread = "api/GuoziAGV/SentDataByApiTag";
-            string sqlGetData;
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
-            List<BundleToAGV_PostBody> impListBundle;
             Dictionary<string, string> requestHeaders = GetCustomHeaders();
             this.automationErrMsg.CallFrom = requestHeaders["CallFrom"];
             this.automationErrMsg.Activity = requestHeaders["Activity"];
-            try
+
+            int takeCnt = 5;
+            int callApiCnt = MyUtility.Convert.GetInt(Math.Ceiling(MyUtility.Convert.GetDouble(listBundleNo.Count) / MyUtility.Convert.GetDouble(takeCnt)));
+
+            // 每5筆send一次給廠商
+            for (int i = 0; i < callApiCnt; i++)
             {
-                impListBundle = funListBundle();
+                dynamic bodyObject = new ExpandoObject();
+                bodyObject.BundleNo = listBundleNo
+                    .Skip(i * takeCnt)
+                    .Take(takeCnt)
+                    .ToArray();
+
+                string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Bundle"));
+
+                SendWebAPISaveAutomationCreateRecord(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
             }
-            catch (Exception ex)
-            {
-                this.automationErrMsg.SetErrInfo(new DualResult(false, ex));
-                SaveAutomationErrMsg(this.automationErrMsg);
-                return;
-            }
-
-            if (impListBundle == null)
-            {
-                return;
-            }
-
-            DataTable allNoDatas = null;
-
-            foreach (BundleToAGV_PostBody bundle in impListBundle)
-            {
-                if (allNoDatas == null)
-                {
-                    allNoDatas = PublicPrg.Prgs.GetNoDatas(bundle.POID, bundle.FabricPanelCode, bundle.Article, bundle.SizeCode);
-                }
-
-                string cardFromQty = PublicPrg.Prgs.GetNo(bundle.BundleNo, allNoDatas);
-                if (MyUtility.Check.Empty(cardFromQty))
-                {
-                    allNoDatas.Merge(PublicPrg.Prgs.GetNoDatas(bundle.POID, bundle.FabricPanelCode, bundle.Article, bundle.SizeCode));
-                    cardFromQty = PublicPrg.Prgs.GetNo(bundle.BundleNo, allNoDatas);
-                }
-
-                bundle.CardFromQty = cardFromQty;
-
-                sqlGetData = $@"
-select  bda.Ukey,
-        bda.BundleNo,
-        bda.SubProcessID,
-        [Seq] = isnull(Seq.Value, s.Seq),
-        bda.PostSewingSubProcess,
-        bda.NoBundleCardAfterSubprocess
-from    Bundle_Detail_Art bda with (nolock)
-left join SubProcess s with (nolock) on bda.SubProcessID = s.ID
-outer apply( select [Value] = spd.Seq
-            from orders o  with (nolock)
-            inner join SubProcessSeq_Detail spd with (nolock) on o.StyleUkey = spd.StyleUkey and spd.SubProcessID = bda.SubProcessID
-            where o.ID = '{bundle.OrderID}') Seq
-where bda.BundleNo = '{bundle.BundleNo}'
-
-select  Ukey,
-        BundleNo,
-        OrderID,
-        Qty
-from    Bundle_Detail_Order with (nolock)
-where   BundleNo = '{bundle.BundleNo}'
-
-select  bd.Tone,
-        bd.Parts,
-        b.Item,
-        bd.Dyelot,
-        b.SubCutNo
-from Bundle b with (nolock)
-inner join Bundle_Detail bd with (nolock) on bd.ID = b.ID
-where bd.BundleNo = '{bundle.BundleNo}'
-";
-                DualResult result = DBProxy.Current.Select(null, sqlGetData, out DataTable[] dtResults);
-
-                if (!result)
-                {
-                    this.automationErrMsg.SetErrInfo(result);
-                    SaveAutomationErrMsg(this.automationErrMsg);
-                    return;
-                }
-
-                bundle.Bundle_SubProcess = dtResults[0];
-                bundle.Bundle_Order = dtResults[1];
-
-                if (dtResults[2].Rows.Count > 0)
-                {
-                    bundle.Tone = dtResults[2].Rows[0]["Tone"].ToString();
-                    bundle.Parts = MyUtility.Convert.GetDecimal(dtResults[2].Rows[0]["Parts"]);
-                    bundle.Item = dtResults[2].Rows[0]["Item"].ToString();
-                    bundle.Dyelot = dtResults[2].Rows[0]["Dyelot"].ToString();
-                    bundle.SubCutNo = dtResults[2].Rows[0]["SubCutNo"].ToString();
-                }
-            }
-
-            dynamic bodyObject = new ExpandoObject();
-            bodyObject.Bundle = impListBundle.Select(s => new
-            {
-                s.Bundle_SubProcess,
-                s.Bundle_Order,
-                s.ID,
-                s.POID,
-                s.BundleNo,
-                s.CutRef,
-                s.Article,
-                s.PatternPanel,
-                s.FabricPanelCode,
-                s.PatternCode,
-                s.PatternDesc,
-                s.BundleGroup,
-                s.SizeCode,
-                s.SewingLineID,
-                s.RFUID,
-                s.AddDate,
-                s.Tone,
-                s.Parts,
-                s.Item,
-                s.CardFromQty,
-                s.Dyelot,
-                s.SubCutNo,
-            });
-
-            string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Bundle"));
-
-            SendWebAPISaveAutomationCreateRecord(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
