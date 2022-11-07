@@ -39,7 +39,11 @@ Begin
 	select s.OutputDate
 		, s.FactoryID
 		, s.SewingLineID
-		, s.Shift
+		, [Shift] = case  when s.Shift =''D'' then ''Day''
+						  when s.Shift = ''N'' then ''Night''
+						  when s.Shift = ''O'' then ''Subcon-Output''
+						  when s.Shift =''I'' then iif(o.SubconInType = ''1'' or o.SubconInType = ''2'',''Subcon-In(Sister)'',''Subcon-In(Non Sister)'') 
+						  else null end
 		, [Category] = case o.Category when ''B'' then ''Bulk''
 								   when ''S'' then ''Sample''
 								   when ''M'' then ''Material''
@@ -83,6 +87,7 @@ Begin
 					   when ''KH'' then 2
 					   when ''CN'' then 4
 					else 5 end
+		, s.Team
 	from [Production].[dbo].SewingOutput s with (nolock)
 	Inner join [Production].[dbo].SewingOutput_Detail sd with (nolock) on s.ID = sd.ID
 	Inner Join [Production].[dbo].Orders o with (nolock) on sd.OrderId = o.ID
@@ -94,7 +99,6 @@ Begin
 		where  s.OutputDate = i.InspectionDate 
 		and sd.OrderId = i.OrderID 
 		and s.SewingLineID = i.Line 
-		and s.Shift = iif(i.Shift = ''Day'', ''D'', ''N'')
 		and s.FactoryID = i.FactoryID 
 		and sd.ComboType = i.Location 
 		and s.Team = i.Team
@@ -109,7 +113,6 @@ Begin
 		and s.FactoryID = i.FactoryID 
 		and i.Status in (''Fixed'',''Dispose'',''Reject'')
 		and sd.ComboType = i.Location 
-		and s.Shift = iif(i.Shift = ''Day'', ''D'', ''N'')
 		and s.Team = i.Team 
 	)Inspection
 	Where  s.Outputdate between ''' + FORMAT(@OutPutDateS, 'yyyyMMdd') + ''' and  ''' + FORMAT(@OutPutDateE, 'yyyyMMdd') + '''
@@ -140,9 +143,19 @@ Begin
 	
 	if @Shift <> ''
 	Begin
-		set @sql = @sql + '
-	and s.SHIFT = ''' + @Shift + '''' 
-	End 
+		if @Shift = '0'
+		begin
+			set @sql = @sql + 'and (s.SHIFT = ''D'' or s.SHIFT = ''N'')'
+		end
+		else if @Shift ='1'
+		begin
+			set @sql = @sql + 'and s.SHIFT = ''I'''
+		end
+		else if @Shift ='2'
+		begin
+			set @sql = @sql + 'and s.SHIFT = ''O'''
+		end
+	end
 
 	if @BrandIDs <> ''
 	Begin
@@ -191,7 +204,7 @@ Begin
 select s.OutputDate
 	, s.FactoryID
 	, s.SewingLineID
-	, s.Shift
+	, [Shift]
 	, s.Category
 	, s.StyleID
 	, s.Manpower
@@ -218,13 +231,17 @@ select s.OutputDate
 	, s.Country
 	, s.Month
 	, s.IsGSDPro
-	, s.Orderseq
+	, s.Team
 from 
 (
 	select s.OutputDate
 		, s.FactoryID
 		, s.SewingLineID
-		, s.Shift
+		, [Shift] = case  when s.Shift =''D'' then ''Day''
+					when s.Shift = ''N'' then ''Night''
+					when s.Shift = ''O'' then ''Subcon-Output''
+					when s.Shift =''I'' then iif(o.SubconInType = ''1'' or o.SubconInType = ''2'',''Subcon-In(Sister)'',''Subcon-In(Non Sister)'') 
+					else null end
 		, o.Category
 		, o.StyleID
 		, s.Manpower
@@ -248,6 +265,7 @@ from
 					   when ''CN'' then 4
 					else 5 end
 		, st.CDCodeNew
+		, s.Team
 	from [Production].[dbo].SewingOutput s with (nolock)
 	Inner join [Production].[dbo].SewingOutput_Detail sd with (nolock) on s.ID = sd.ID
 	Inner Join [Production].[dbo].Orders o with (nolock) on sd.OrderId = o.ID
@@ -282,9 +300,19 @@ from
 	
 	if @Shift <> ''
 	Begin
-		set @sql = @sql + '
-	and s.SHIFT = ''' + @Shift + '''' 
-	End 
+		if @Shift = '0'
+		begin
+			set @sql = @sql + 'and (s.SHIFT = ''D'' or s.SHIFT = ''N'')'
+		end
+		else if @Shift ='1'
+		begin
+			set @sql = @sql + 'and s.SHIFT = ''I'''
+		end
+		else if @Shift ='2'
+		begin
+			set @sql = @sql + 'and s.SHIFT = ''O'''
+		end
+	end
 
 	if @BrandIDs <> ''
 	Begin

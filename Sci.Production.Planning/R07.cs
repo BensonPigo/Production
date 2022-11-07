@@ -41,7 +41,7 @@ namespace Sci.Production.Planning
             : base(menuitem)
         {
             this.InitializeComponent();
-            MyUtility.Tool.SetupCombox(this.comboShift, 2, 1, ",,D,Day,N,Night");
+            MyUtility.Tool.SetupCombox(this.comboShift, 2, 1, ",,0,Day+Night,1,Subcon-In,2,Subcon-Out");
             this.txtbrand1.MultiSelect = true;
             this.comboProductType1.SetDataSource();
             this.comboFabricType1.SetDataSource();
@@ -219,6 +219,7 @@ namespace Sci.Production.Planning
                         FactoryID = x.Field<string>("FactoryID"),
                         SewingLineID = x.Field<string>("SewingLineID"),
                         Shift = x.Field<string>("Shift"),
+                        Team = x.Field<string>("Team"),
                         Category = x.Field<string>("Category"),
                         StyleID = x.Field<string>("StyleID"),
                         Manpower = x.Field<decimal?>("Manpower"),

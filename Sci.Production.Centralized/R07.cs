@@ -44,7 +44,7 @@ namespace Sci.Production.Centralized
             : base(menuitem)
         {
             this.InitializeComponent();
-            MyUtility.Tool.SetupCombox(this.comboShift, 2, 1, ",,D,Day,N,Night");
+            MyUtility.Tool.SetupCombox(this.comboShift, 2, 1, ",,0,Day+Night,1,Subcon-In,2,Subcon-Out");
             this.comboM.SetDefalutIndex();
             this.comboFactory.SetDefalutIndex(string.Empty);
             this.txtbrand1.MultiSelect = true;
@@ -213,6 +213,7 @@ select t.OutputDate
 	, t.[Month]
 	, [IsGSDPro] = iif(isnull(sl.Rate, 0) = 0 or isnull(sq.TMS, 0) = 0, t.IsGSDPro, '')
 	, t.Orderseq
+    , t.Team
 from #tmp t
 left join Style s on t.StyleID = s.Id and t.BrandID = s.BrandID and t.SeasonID = s.SeasonID
 left join Style_Location sl on s.Ukey = sl.StyleUkey and RIGHT(t.CD, 1) = sl.Location
@@ -324,6 +325,7 @@ outer apply (
                         FactoryID = x.Field<string>("FactoryID"),
                         SewingLineID = x.Field<string>("SewingLineID"),
                         Shift = x.Field<string>("Shift"),
+                        Team = x.Field<string>("Team"),
                         Category = x.Field<string>("Category"),
                         StyleID = x.Field<string>("StyleID"),
                         Manpower = x.Field<decimal?>("Manpower"),
