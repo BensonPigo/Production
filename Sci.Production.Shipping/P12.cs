@@ -125,12 +125,14 @@ outer apply(
 	left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oq.Id and ou1.Article = oq.Article and ou1.SizeCode = oq.SizeCode 
 	left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oq.Id and ou2.Article = '----' and ou2.SizeCode = '----' 
 	outer apply(
-		SELECT [ShipQty]=SUM(pd.ShipQty)
-		FROM PackingList p 
-		INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-		INNER JOIN Pullout pu ON p.PulloutID=pu.ID
-		WHERE pu.Status <> 'New' AND pd.OrderID = oq.ID
-		and pd.Article = oq.Article and pd.SizeCode = oq.SizeCode
+		select [ShipQty] = sum(pd.ShipQty)
+        from PackingList p WITH (NOLOCK)
+        Inner Join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
+        where p.PulloutStatus <> 'New'
+        and p.PulloutID <> ''
+        and pd.OrderID = oq.ID
+        and pd.Article = oq.Article
+        and pd.SizeCode = oq.SizeCode
 	)C_Pullout --  總出貨數
 	outer apply(
 		SELECt [DiffQty]= SUM(iq.DiffQty)
@@ -148,12 +150,13 @@ outer apply(
 	from
 	(	
 		select 
-		[TotalNotFocShipQty] = iif(pl.Type <> 'F',sum(pod.ShipQty),0),
-		[TotalFocShipQty]=iif( pl.Type='F',sum(pod.ShipQty),0)
-		from Pullout_Detail pod with(nolock)
-		inner join PackingList pl with(nolock) on pl.ID = pod.PackingListID
-		where pod.OrderID = o.ID
-		group by pl.Type
+        [TotalNotFocShipQty] = iif(p.Type <> 'F', sum(pd.ShipQty),0),
+        [TotalFocShipQty] = iif(p.Type = 'F',sum(pd.ShipQty),0)
+        from PackingList_Detail pd WITH (NOLOCK)
+        inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
+        where pd.OrderId = o.ID
+        and p.PulloutID <> ''
+        group by p.Type
 	) a
 )ShipQty_ByType
 outer apply(
@@ -175,17 +178,10 @@ OUTER APPLY(
 	--如果 FOC 已建立了 PackingList，判斷是否『所有』的 FOC PackingList 都完成出貨（出貨的Pullout Stauts != New）。
 	SELECT  [Result]=IIF( PackingList_Chk_HasFoc.Result='false','true'
 			,IIF( COUNT(p.ID) > 0,'true','false' )) -- 有New的話表示不是全部都完成出貨
-	FROM PackingList p
-	INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+	FROM PackingList p WITH (NOLOCK)
+	INNER JOIN PackingList_Detail pd WITH (NOLOCK) ON p.ID=pd.ID
 	WHERE   p.Type = 'F' AND pd.OrderID=o.ID --AND pu.Status = 'New'
-			AND EXISTS 
-			(	--判斷有無建立 Pullout
-				SELECT 1 FROM Pullout pu WHERE  p.PulloutID=pu.ID
-			)
-			AND NOT EXISTS 
-			(	--若有建立 Pullout，判斷是不是全部出貨
-				SELECT 1 FROM Pullout pu WHERE  p.PulloutID=pu.ID AND pu.Status = 'New'
-			)
+			and p.PulloutID <> '' and p.PulloutStatus <> 'New'
 
 )PackingList_Chk_IsAllPullout
 
