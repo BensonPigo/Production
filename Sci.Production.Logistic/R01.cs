@@ -214,7 +214,7 @@ select pd.OrderID, sum(pd.ShipQty) TtlPullGMTQty
 into #tmp_TtlPullGMTQty
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK)  on p.ID = pd.ID
-inner join (select distinct id from #tmp_Orders) o WITH (NOLOCK) on pd.OrderID = o.ID
+inner join (select distinct id from #tmp_Orders) o on pd.OrderID = o.ID
 where p.PulloutStatus <> 'New'
 and p.PulloutID <> ''
 group by pd.OrderID
