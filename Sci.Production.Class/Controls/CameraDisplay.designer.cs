@@ -115,7 +115,7 @@
             this.editDesc.Name = "editDesc";
             this.editDesc.Size = new System.Drawing.Size(494, 38);
             this.editDesc.TabIndex = 3;
-            this.editDesc.Validated += new System.EventHandler(this.editDesc_Validated);
+            this.editDesc.Validated += new System.EventHandler(this.EditDesc_Validated);
             // 
             // CameraDisplay
             // 
