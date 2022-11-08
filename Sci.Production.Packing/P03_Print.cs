@@ -272,7 +272,7 @@ select * from(
 	left join Style_Article sa WITH (NOLOCK) on sa.StyleUkey = o.StyleUkey and sa.Article = pd.Article
     outer apply (
 	    select SizeCode=stuff((
-			select concat(',', isnull(x.SizeSpec,z.SizeSpec), '-', pd2.QtyPerCTN) 
+			select concat(',', isnull(z.SizeSpec,x.SizeSpec), '-', pd2.QtyPerCTN) 
 			from PackingList_Detail pd2 
 			outer apply(select SizeSpec from Order_SizeSpec os where os.SizeCode = pd2.SizeCode and os.id = o.poid and os.SizeItem = 'S01')x
 			outer apply(select SizeSpec from Order_SizeSpec_OrderCombo oso where oso.SizeCode = pd2.SizeCode and oso.id = o.poid and oso.OrderComboID = o.OrderComboID and SizeItem = 'S01')z
@@ -361,7 +361,7 @@ select * from(
     from PackingList_Detail pd
     inner join orders o on o.id = pd.orderid
     outer apply (
-	    select SizeCode=stuff((select ('/'+isnull(x.SizeSpec,z.SizeSpec)) 
+	    select SizeCode=stuff((select ('/'+isnull(z.SizeSpec,x.SizeSpec)) 
 	    from PackingList_Detail pd2 
 	    outer apply(select SizeSpec from Order_SizeSpec os where os.SizeCode = pd2.SizeCode and os.id = o.poid and os.SizeItem = 'S01')x
 		outer apply(select SizeSpec from Order_SizeSpec_OrderCombo oso where oso.SizeCode = pd2.SizeCode and oso.id = o.poid and oso.OrderComboID = o.OrderComboID and SizeItem = 'S01')z
@@ -369,7 +369,7 @@ select * from(
     )a
     outer apply (select ct = count(SizeCode) from PackingList_Detail pd2 where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo)b1
     outer apply (
-	    select qty=stuff((select concat('/',isnull(x.SizeSpec,z.SizeSpec)+'-',ShipQty) 
+	    select qty=stuff((select concat('/',isnull(z.SizeSpec,x.SizeSpec)+'-',ShipQty) 
 	    from PackingList_Detail pd2 
 	    outer apply(select SizeSpec from Order_SizeSpec os where os.SizeCode = pd2.SizeCode and os.id = o.poid and os.SizeItem = 'S01')x
 		outer apply(select SizeSpec from Order_SizeSpec_OrderCombo oso where oso.SizeCode = pd2.SizeCode and oso.id = o.poid and oso.OrderComboID = o.OrderComboID and SizeItem = 'S01')z
@@ -511,7 +511,7 @@ select * from(
     )a
     outer apply (select ct = count(SizeCode) from PackingList_Detail pd2 where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo)b1
     outer apply (
-	    select qty=stuff((select concat('/',isnull(x.SizeSpec,z.SizeSpec)+'-',ShipQty) 
+	    select qty=stuff((select concat('/',isnull(z.SizeSpec,x.SizeSpec)+'-',ShipQty) 
 	    from PackingList_Detail pd2 
 	    outer apply(select SizeSpec from Order_SizeSpec os where os.SizeCode = pd2.SizeCode and os.id = o.poid and os.SizeItem = 'S01')x
 		outer apply(select SizeSpec from Order_SizeSpec_OrderCombo oso where oso.SizeCode = pd2.SizeCode and oso.id = o.poid and oso.OrderComboID = o.OrderComboID and SizeItem = 'S01')z
@@ -652,7 +652,7 @@ select * from(
 	INNER JOIN LocalItem li ON li.RefNo=pd.RefNo
 	INNER JOIN PackingList p ON p.ID=pd.ID
     outer apply (
-	    select SizeCode=stuff((select ('/'+isnull(x.SizeSpec,z.SizeSpec)) 
+	    select SizeCode=stuff((select ('/'+isnull(z.SizeSpec,x.SizeSpec)) 
 	    from PackingList_Detail pd2 
 	    outer apply(select SizeSpec from Order_SizeSpec os where os.SizeCode = pd2.SizeCode and os.id = o.poid and os.SizeItem = 'S01')x
 		outer apply(select SizeSpec from Order_SizeSpec_OrderCombo oso where oso.SizeCode = pd2.SizeCode and oso.id = o.poid and oso.OrderComboID = o.OrderComboID and SizeItem = 'S01')z
@@ -660,7 +660,7 @@ select * from(
     )a
     outer apply (select ct = count(SizeCode) from PackingList_Detail pd2 where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo)b1
     outer apply (
-	    select qty=stuff((select concat('/',isnull(x.SizeSpec,z.SizeSpec)+'-',ShipQty) 
+	    select qty=stuff((select concat('/',isnull(z.SizeSpec,x.SizeSpec)+'-',ShipQty) 
 	    from PackingList_Detail pd2 
 	    outer apply(select SizeSpec from Order_SizeSpec os where os.SizeCode = pd2.SizeCode and os.id = o.poid and os.SizeItem = 'S01')x
 		outer apply(select SizeSpec from Order_SizeSpec_OrderCombo oso where oso.SizeCode = pd2.SizeCode and oso.id = o.poid and oso.OrderComboID = o.OrderComboID and SizeItem = 'S01')z

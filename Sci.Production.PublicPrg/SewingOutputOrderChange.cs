@@ -14,33 +14,14 @@ namespace Sci.Production.Prg
     /// <summary>
     /// SewingOutputOrderChange
     /// </summary>
-    public abstract class SewingOutputOrderChange
+    public class SewingOutputOrderChange
     {
-        /// <summary>
-        /// Select
-        /// </summary>
-        /// <param name="connname">connname</param>
-        /// <param name="sqlCmd">sqlCmd</param>
-        /// <param name="sqlPars">sqlPars</param>
-        /// <param name="dtResult">dtResult</param>
-        /// <returns>DualResult</returns>
-        public abstract DualResult Select(string connname, string sqlCmd, IList<SqlParameter> sqlPars, out DataTable dtResult);
-
-        /// <summary>
-        /// ProcessWithDatatable
-        /// </summary>
-        /// <param name="conn">conn</param>
-        /// <param name="source">source</param>
-        /// <param name="tmp_columns">tmp_columns</param>
-        /// <param name="sqlcmd">sqlcmd</param>
-        /// <param name="result">result</param>
-        /// <returns>DualResult</returns>
-        public abstract DualResult ProcessWithDatatable(string conn, DataTable source, string tmp_columns, string sqlcmd, out DataTable[] result);
 
         private DataRow CurrentMaintain;
         private DataTable dtDetail;
         private string loginUser;
-        bool isErrorReturnImmediate;
+        private bool isErrorReturnImmediate;
+        private AbstractDBProxyPMS proxyPMS;
 
         /// <summary>
         /// SewingOutputOrderChange
@@ -48,69 +29,19 @@ namespace Sci.Production.Prg
         /// <param name="currentMaintain">currentMaintain</param>
         /// <param name="dtDetail">dtDetail</param>
         /// <param name="userID">userID</param>
+        /// <param name="proxyPMS">proxyPMS</param>
         /// <param name="isErrorReturnImmediate">isErrorReturnImmediate</param>
-        public SewingOutputOrderChange(DataRow currentMaintain, DataTable dtDetail, string userID, bool isErrorReturnImmediate = true)
+        public SewingOutputOrderChange(DataRow currentMaintain, DataTable dtDetail, string userID, AbstractDBProxyPMS proxyPMS, bool isErrorReturnImmediate = true)
         {
             this.CurrentMaintain = currentMaintain;
             this.dtDetail = dtDetail;
             this.loginUser = userID;
             this.isErrorReturnImmediate = isErrorReturnImmediate;
+            this.proxyPMS = proxyPMS;
             if (!this.dtDetail.Columns.Contains("ErrMsg"))
             {
                 this.dtDetail.Columns.Add(new DataColumn("ErrMsg", typeof(string)));
             }
-        }
-
-        private bool Seek(string sql, string connName)
-        {
-            DualResult result = this.Select(connName, sql, null, out DataTable dtResult);
-
-            if (!result)
-            {
-                throw result.GetException();
-            }
-
-            return dtResult.Rows.Count > 0;
-        }
-
-        private string Lookup(string sql, string connName, IList<SqlParameter> listPar = null)
-        {
-            DualResult result = this.Select(connName, sql, listPar, out DataTable dtResult);
-
-            if (!result)
-            {
-                throw result.GetException();
-            }
-
-            return dtResult.Rows.Count > 0 ? dtResult.Rows[0][0].ToString() : string.Empty;
-        }
-
-        private DualResult Execute(string sql, string connName, IList<SqlParameter> listPar = null)
-        {
-            return this.Select(connName, sql, listPar, out DataTable dtResult);
-        }
-
-        private DualResult ProcessWithDatatable(string conn,  DataTable source, string tmp_columns, string sqlcmd, out DataTable dtResult)
-        {
-            DataTable[] dts;
-            DualResult result = this.ProcessWithDatatable(conn, source, tmp_columns, sqlcmd, out dts);
-
-            if (!result)
-            {
-                dtResult = new DataTable();
-                return result;
-            }
-
-            if (dts.Length == 0)
-            {
-                dtResult = new DataTable();
-            }
-            else
-            {
-                dtResult = dts[0];
-            }
-
-            return new DualResult(true);
         }
 
         /// <summary>
@@ -238,7 +169,7 @@ drop table #tmp,#tmpFromG,#tmpByIDCanTransQty,#tmpFromToG,#tmpUp
 ";
             DataTable[] dt;
             DBProxy.Current.DefaultTimeout = 1800;
-            DualResult result = this.ProcessWithDatatable("Production", this.dtDetail, string.Empty, sqlcmd, out dt);
+            DualResult result = this.proxyPMS.ProcessWithDatatable("Production", this.dtDetail, string.Empty, sqlcmd, out dt);
             if (!result)
             {
                 return result;
@@ -311,7 +242,7 @@ inner join SewingOutput_Detail_Detail sodd on sodd.ID = t.ID
 inner join SewingOutput_Detail sod on sodd.SewingOutput_DetailUKey = sod.Ukey
 where t.TransferredQty > 0 -- 找到有更新第3層對應第2層更新
 ";
-            result = this.ProcessWithDatatable("Production", fromDt, string.Empty, sqlcmd, out dto);
+            result = this.proxyPMS.ProcessWithDatatable("Production", fromDt, string.Empty, sqlcmd, out dto);
             if (!result)
             {
                 return result;
@@ -468,7 +399,7 @@ and sod.id in (select distinct id from #tmp t where t.WillTransferQty > 0) -- �
 group by ID
 ";
             DataTable sumQaQty;
-            result = this.ProcessWithDatatable("Production", toDt, string.Empty, sqlcmd, out sumQaQty);
+            result = this.proxyPMS.ProcessWithDatatable("Production", toDt, string.Empty, sqlcmd, out sumQaQty);
             if (!result)
             {
                 return result;
@@ -483,7 +414,7 @@ group by ID
                 decimal subSum = 0;
                 sqlcmd = $@"select * from SewingOutput sod with(nolock) where id = '{item["id"]}'";
                 DataTable dtid;
-                result = this.Select("Production", sqlcmd, null, out dtid);
+                result = this.proxyPMS.Select("Production", sqlcmd, null, out dtid);
                 if (!result)
                 {
                     return result;
@@ -491,7 +422,7 @@ group by ID
 
                 decimal workHour = MyUtility.Convert.GetDecimal(dtid.Rows[0]["WorkHour"]); // 取得表頭 WorkHour 總數
                 sqlcmd = $@"select * from SewingOutput_Detail sod with(nolock) where AutoCreate <> 1 and id = '{item["id"]}'";
-                result = this.Select("Production", sqlcmd, null, out dtid);
+                result = this.proxyPMS.Select("Production", sqlcmd, null, out dtid);
                 if (!result)
                 {
                     return result;
@@ -519,7 +450,7 @@ update sod set
 from SewingOutput_Detail sod with(nolock)
 inner join #tmp t on t.[UKey] = sod.[UKey]
 ";
-                result = this.ProcessWithDatatable("Production", dtid, string.Empty, sqlcmd, out dto);
+                result = this.proxyPMS.ProcessWithDatatable("Production", dtid, string.Empty, sqlcmd, out dto);
                 if (!result)
                 {
                     return result;
@@ -567,7 +498,7 @@ DROP TABLE #tmp{idx}
                 idx++;
             }
 
-            DualResult result = this.Execute(sqlcmd, "ManufacturingExecution");
+            DualResult result = this.proxyPMS.Execute(sqlcmd, "ManufacturingExecution");
             if (!result)
             {
                 return result;
@@ -603,11 +534,11 @@ inner join #tmp t on t.ukey = sotd.ukey and sotd.id = t.id
             DualResult result;
             if (isNeedUpdateDetail)
             {
-                result = this.ProcessWithDatatable("Production", this.dtDetail, string.Empty, sqlcmd, out dt);
+                result = this.proxyPMS.ProcessWithDatatable("Production", this.dtDetail, string.Empty, sqlcmd, out dt);
             }
             else
             {
-                result = this.Execute(sqlcmd, "Production");
+                result = this.proxyPMS.Execute(sqlcmd, "Production");
             }
 
             if (!result)
@@ -773,7 +704,7 @@ AND EXISTS(
 ";
 
                 // 判斷From To SP是否同款
-                bool isSameStyle = this.Seek(cmd, "Production");
+                bool isSameStyle = this.proxyPMS.Seek(cmd, "Production");
 
                 if (isSameStyle)
                 {
@@ -800,7 +731,7 @@ HAVING SUM(sdd.QAQty) >= '{detailDatas[i]["TransferQty"]}'
 ";
                 }
 
-                if (!this.Seek(cmd, "Production"))
+                if (!this.proxyPMS.Seek(cmd, "Production"))
                 {
                     errMsg = "Some [From SP#] sewing output already locked cannot transfer to other style!";
                     if (this.isErrorReturnImmediate)

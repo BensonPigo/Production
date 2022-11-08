@@ -42,6 +42,13 @@ namespace Sci.Production.PublicPrg
         }
 
         /// <inheritdoc/>
+        public static byte[] ImageToByte(Image img)
+        {
+            ImageConverter converter = new ImageConverter();
+            return (byte[])converter.ConvertTo(img, typeof(byte[]));
+        }
+
+        /// <inheritdoc/>
         public static byte[] ImageToByteArray(System.Drawing.Image image)
         {
             using (MemoryStream ms = new MemoryStream())

@@ -250,6 +250,7 @@ SELECT   [FirID]=f.ID
 		,[Roll]=r.Roll
 		,[Dyelot]=r.Dyelot
 		,[TransferInQty]=r.Qty
+		,[Tone] = r.Tone
 INTO #tmp_TransferIn
 FROM TransferIn_Detail r
 INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
@@ -263,13 +264,13 @@ using(
 on t.ID=s.FirID AND t.Roll=s.Roll AND t.Dyelot=s.Dyelot 
 
 WHEN MATCHED THEN
-	 UPDATE SET t.TicketYds=s.TransferInQty ,t.EditName=@LoginID, t.EditDate=GETDATE()
+	 UPDATE SET t.TicketYds=s.TransferInQty ,t.EditName=@LoginID, t.EditDate=GETDATE() ,t.tone = s.tone
 
 WHEN NOT MATCHED by TARGET THEN 
 	insert  ([ID]           ,[Roll]           ,[Dyelot]           ,[Scale]           ,[Inspdate]           ,[Inspector]           ,[Result]
-            ,[Remark]       ,[AddName]        ,[AddDate]          ,[EditName]        ,[EditDate]           ,[TicketYds])
+            ,[Remark]       ,[AddName]        ,[AddDate]          ,[EditName]        ,[EditDate]           ,[TicketYds]           ,[Tone])
 	values(  s.FirID   ,s.Roll      ,s.Dyelot      ,''                ,NULL                 ,''                    ,''
-	        ,''             ,@LoginID         ,GETDATE()          ,''                ,NULL                 ,s.TransferInQty )
+	        ,''             ,@LoginID         ,GETDATE()          ,''                ,NULL                 ,s.TransferInQty       ,s.Tone )
 ;
 
 END

@@ -529,62 +529,9 @@ order by x.[Bundle]");
                     DataView dataView = dataTable.DefaultView;
                     DataTable insert_BundleNo = dataView.ToTable(true, "BundleNo");
 
-                    List<BundleToAGV_PostBody> FunListBundle()
-                    {
-                        string sqlGetData = $@"
-            select  bd.ID          ,
-                    b.POID          ,
-                    bd.BundleNo    ,
-                    b.CutRef             ,
-                    b.OrderID            ,
-                    b.Article            ,
-                    b.PatternPanel       ,
-                    b.FabricPanelCode    ,
-                    bd.PatternCode ,
-                    bd.PatternDesc ,
-                    bd.BundleGroup ,
-                    bd.SizeCode    ,
-                    bd.Qty         ,
-                    b.SewingLineID       ,
-                    bd.RFUID,
-                    b.AddDate
-            from #tmp t
-            inner join Bundle_Detail bd with (nolock) on t.BundleNo = bd.BundleNo
-            inner join Bundle b with (nolock) on bd.ID = b.ID
-            ";
-                        result = MyUtility.Tool.ProcessWithDatatable(insert_BundleNo, "BundleNo", sqlGetData, out DataTable dtBundleGZ);
+                    List<string> listBundleNo = insert_BundleNo.AsEnumerable().Select(s => s["BundleNo"].ToString()).ToList();
 
-                        if (dtBundleGZ.Rows.Count > 0)
-                        {
-                            return dtBundleGZ.AsEnumerable().Select(
-                               dr => new BundleToAGV_PostBody()
-                               {
-                                   ID = dr["ID"].ToString(),
-                                   POID = dr["POID"].ToString(),
-                                   BundleNo = dr["BundleNo"].ToString(),
-                                   CutRef = dr["CutRef"].ToString(),
-                                   OrderID = dr["OrderID"].ToString(),
-                                   Article = dr["Article"].ToString(),
-                                   PatternPanel = dr["PatternPanel"].ToString(),
-                                   FabricPanelCode = dr["FabricPanelCode"].ToString(),
-                                   PatternCode = dr["PatternCode"].ToString(),
-                                   PatternDesc = dr["PatternDesc"].ToString(),
-                                   BundleGroup = (decimal)dr["BundleGroup"],
-                                   SizeCode = dr["SizeCode"].ToString(),
-                                   Qty = (decimal)dr["Qty"],
-                                   SewingLineID = dr["SewingLineID"].ToString(),
-                                   RFUID = dr["RFUID"].ToString(),
-                                   AddDate = (DateTime?)dr["AddDate"],
-                               })
-                               .ToList();
-                        }
-                        else
-                        {
-                            return null;
-                        }
-                    }
-
-                    Task.Run(() => new Guozi_AGV().SentBundleToAGV(FunListBundle))
+                    Task.Run(() => new Guozi_AGV().SentBundleToAGV(listBundleNo))
                         .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
 
                     #endregion
