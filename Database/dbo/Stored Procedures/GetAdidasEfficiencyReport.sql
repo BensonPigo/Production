@@ -39,11 +39,10 @@ Begin
 	select s.OutputDate
 		, s.FactoryID
 		, s.SewingLineID
-		, [Shift] = case  when s.Shift =''D'' then ''Day''
-						  when s.Shift = ''N'' then ''Night''
-						  when s.Shift = ''O'' then ''Subcon-Output''
-						  when s.Shift =''I'' then iif(o.SubconInType = ''1'' or o.SubconInType = ''2'',''Subcon-In(Sister)'',''Subcon-In(Non Sister)'') 
-						  else null end
+		,[Shift] = case  when '+@Shift+ ' = ''0'' then  iif(s.Shift = ''D'',''Day'',''Night'')
+						 when '+@Shift+ ' = ''2'' then ''Subcon-Output''
+						 when o.SubconInType in (''1'',''2'') then ''Subcon-In(Sister)''
+                         else ''Subcon-In(Non Sister)'' end
 		, [Category] = case o.Category when ''B'' then ''Bulk''
 								   when ''S'' then ''Sample''
 								   when ''M'' then ''Material''
@@ -101,6 +100,7 @@ Begin
 		and s.SewingLineID = i.Line 
 		and s.FactoryID = i.FactoryID 
 		and sd.ComboType = i.Location 
+		and s.Shift = iif(i.Shift = ''Day'' , ''D'',''N'')
 		and s.Team = i.Team
 	)InlineInspection
 	Outer apply (
@@ -113,14 +113,15 @@ Begin
 		and s.FactoryID = i.FactoryID 
 		and i.Status in (''Fixed'',''Dispose'',''Reject'')
 		and sd.ComboType = i.Location 
+		and s.Shift = iif(i.Shift = ''Day'' , ''D'',''N'')
 		and s.Team = i.Team 
 	)Inspection
 	Where  s.Outputdate between ''' + FORMAT(@OutPutDateS, 'yyyyMMdd') + ''' and  ''' + FORMAT(@OutPutDateE, 'yyyyMMdd') + '''
 	and o.category in (''B'', ''S'') 
 	and f.IsSampleRoom = 0
 	and not (sd.WorkHour = 0 and sd.QAQty = 0)
-	and s.Shift <> ''O''
-	and o.LocalOrder = 0
+	-- and s.Shift <> ''O''
+	--and o.LocalOrder = 0
 '
 
 	if @M <> ''
@@ -149,7 +150,7 @@ Begin
 		end
 		else if @Shift ='1'
 		begin
-			set @sql = @sql + 'and s.SHIFT = ''I'''
+			set @sql = @sql + 'and (s.Shift <> ''O'' and  s.Category<> ''M'' and o.LocalOrder = 1)'
 		end
 		else if @Shift ='2'
 		begin
@@ -237,11 +238,10 @@ from
 	select s.OutputDate
 		, s.FactoryID
 		, s.SewingLineID
-		, [Shift] = case  when s.Shift =''D'' then ''Day''
-					when s.Shift = ''N'' then ''Night''
-					when s.Shift = ''O'' then ''Subcon-Output''
-					when s.Shift =''I'' then iif(o.SubconInType = ''1'' or o.SubconInType = ''2'',''Subcon-In(Sister)'',''Subcon-In(Non Sister)'') 
-					else null end
+		,[Shift] = case  when '+@Shift+ ' = ''0'' then  iif(s.Shift = ''D'',''Day'',''Night'')
+						 when '+@Shift+ ' = ''2'' then ''Subcon-Output''
+						 when o.SubconInType in (''1'',''2'') then ''Subcon-In(Sister)''
+                         else ''Subcon-In(Non Sister)'' end
 		, o.Category
 		, o.StyleID
 		, s.Manpower
@@ -276,8 +276,8 @@ from
 	and o.category in (''B'', ''S'') 
 	and f.IsSampleRoom = 0
 	and not (sd.WorkHour = 0 and sd.QAQty = 0)
-	and s.Shift <> ''O''
-	and o.LocalOrder = 0
+	-- and s.Shift <> ''O''
+	--and o.LocalOrder = 0
 '
 
 	if @M <> ''
@@ -306,7 +306,7 @@ from
 		end
 		else if @Shift ='1'
 		begin
-			set @sql = @sql + 'and s.SHIFT = ''I'''
+			set @sql = @sql + 'and (s.Shift <> ''O'' and  s.Category<> ''M'' and o.LocalOrder = 1)'
 		end
 		else if @Shift ='2'
 		begin
