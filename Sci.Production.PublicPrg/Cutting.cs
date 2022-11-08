@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Prg;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -2657,12 +2658,13 @@ DROP TABLE #beforeTmp
         /// <param name="fabricPanelCode">fabricPanelCode</param>
         /// <param name="article">article</param>
         /// <param name="size">size</param>
+        /// <param name="proxyPMS">在別的專案引用時使用的db class</param>
         /// <returns>string</returns>
-        public static string GetNo(string bundleNo, DataTable dt = null, string poid = null, string fabricPanelCode = null, string article = null, string size = null)
+        public static string GetNo(string bundleNo, DataTable dt = null, string poid = null, string fabricPanelCode = null, string article = null, string size = null, AbstractDBProxyPMS proxyPMS = null)
         {
             if (dt == null)
             {
-                dt = GetNoDatas(poid, fabricPanelCode, article, size);
+                dt = GetNoDatas(poid, fabricPanelCode, article, size, proxyPMS);
             }
 
             DataRow[] drs = dt.Select($"BundleNo = '{bundleNo}'");
@@ -2683,8 +2685,9 @@ DROP TABLE #beforeTmp
         /// <param name="fabricPanelCode">fabricPanelCode</param>
         /// <param name="article">article</param>
         /// <param name="size">size</param>
+        /// <param name="proxyPMS">在別的專案引用時使用的db class</param>
         /// <returns>DataTable</returns>
-        public static DataTable GetNoDatas(string poid, string fabricPanelCode, string article, string size)
+        public static DataTable GetNoDatas(string poid, string fabricPanelCode, string article, string size, AbstractDBProxyPMS proxyPMS = null)
         {
             string sqlcmd = $@"
 SELECT 1
@@ -2693,7 +2696,9 @@ INNER JOIN BUNDLE B with(nolock) ON B.ID = bd.ID
 WHERE  B.POID ='{poid}' And B.FabricPanelCode='{fabricPanelCode}' And B.Article = '{article}' AND bd.SizeCode='{size}'
 and bd.PrintGroup is null";
 
-            if (!MyUtility.Check.Seek(sqlcmd))
+            bool existsPrintGroup = proxyPMS == null ? MyUtility.Check.Seek(sqlcmd) : proxyPMS.Seek(sqlcmd, "Production");
+
+            if (!existsPrintGroup)
             {
                 sqlcmd = $@"
 SELECT bd.id, bd.PrintGroup, DR = DENSE_RANK() over(order by  bd.id, bd.PrintGroup), bd.BundleNo, bd.Qty, bd.Patterncode
@@ -2778,7 +2783,14 @@ drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
 ";
             }
 
-            DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
+            DataTable dt;
+
+            DualResult result = proxyPMS == null ? DBProxy.Current.Select("Production", sqlcmd, out dt) : proxyPMS.Select("Production", sqlcmd, out dt);
+            if (!result)
+            {
+                throw result.GetException();
+            }
+
             return dt;
         }
     }

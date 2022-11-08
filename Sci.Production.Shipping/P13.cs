@@ -106,12 +106,13 @@ outer apply(
 	from
 	(	
 		select 
-		[TotalNotFocShipQty] = iif(pl.Type <> 'F',sum(pod.ShipQty),0),
-		[TotalFocShipQty]=iif( pl.Type='F',sum(pod.ShipQty),0)
-		from Pullout_Detail pod with(nolock)
-		inner join PackingList pl with(nolock) on pl.ID = pod.PackingListID
-		where pod.OrderID = o.ID
-		group by pl.Type
+        [TotalNotFocShipQty] = iif(p.Type <> 'F', sum(pd.ShipQty),0),
+        [TotalFocShipQty] = iif(p.Type = 'F',sum(pd.ShipQty),0)
+        from PackingList_Detail pd WITH (NOLOCK)
+        inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
+        where pd.OrderId = o.ID
+        and p.PulloutID <> ''
+        group by p.Type
 	) a
 )ShipQty_ByType
 outer apply(

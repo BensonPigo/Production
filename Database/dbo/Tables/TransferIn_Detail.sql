@@ -21,7 +21,9 @@
     [Fabric2LabBy] VARCHAR(10) CONSTRAINT [DF_TransferIn_Detail_Fabric2LabBy] DEFAULT ('') not NULL,
     [Checker] NVARCHAR(30) NOT NULL DEFAULT (''), 
     [ContainerCode] NVARCHAR(100) NULL DEFAULT (''), 
-    CONSTRAINT [PK_TransferIn_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+    [Tone] varchar (8) CONSTRAINT [DF_TransferIn_Detail_Tone] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_TransferIn_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC),
+    
 );
 
 

@@ -157,7 +157,9 @@
   <ItemGroup>
     <Compile Include="APITransfer.cs" />
     <Compile Include="DataTableToList.cs" />
+    <Compile Include="DBProxyPMS.cs" />
     <Compile Include="DllInvoke.cs" />
+    <Compile Include="Entity\CallFrom.cs" />
     <Compile Include="Entity\FtyInventory.cs" />
     <Compile Include="Entity\IssueQtyBreakdown.cs" />
     <Compile Include="Entity\WHBarcodeTransaction.cs" />
@@ -168,11 +170,13 @@
     <Compile Include="BundleRFCard.cs" />
     <Compile Include="BundleRFCardUSB.cs" />
     <Compile Include="FromTradeReport.cs" />
+    <Compile Include="AbstractDBProxyPMS.cs" />
     <Compile Include="ListToDataTable.cs" />
     <Compile Include="ConvertToPDF.cs" />
     <Compile Include="Exts.cs" />
     <Compile Include="Logistic.cs" />
     <Compile Include="MessageBoxEX.cs" />
+    <Compile Include="MethodWatch.cs" />
     <Compile Include="Packing.cs" />
     <Compile Include="PmsWebAPI.cs" />
     <Compile Include="Entity\Prgs_POSuppDetailData.cs" />
@@ -187,6 +191,7 @@
     <Compile Include="System.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Subcon.cs" />
+    <Compile Include="UtilityPMS.cs" />
     <Compile Include="VFP.cs" />
     <Compile Include="Warehouse.cs" />
     <Compile Include="Cutting.cs" />
