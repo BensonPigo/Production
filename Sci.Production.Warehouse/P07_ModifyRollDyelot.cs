@@ -619,7 +619,7 @@ and exists(
             }
             #endregion
 
-            var allDatas = modifyDrList = this.source.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted);
+            var allDatas = this.source.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted);
             if (allDatas.GroupBy(o => new
             {
                 POID = o["POID"].ToString(),
@@ -630,8 +630,6 @@ and exists(
                     .Select(g => new { g.Key.POID, g.Key.Seq, g.Key.Roll, g.Key.Dyelot, ct = g.Count() })
                     .Any(r => r.ct > 1))
             {
-                // modifyDrList.GroupBy(o => new { POID = o["POID"].ToString(), Seq = o["Seq"].ToString(), Roll = o["Roll"].ToString(), Dyelot = o["Dyelot"].ToString() })
-                //    .Select(g => new { g.Key.POID, g.Key.Seq, g.Key.Roll, g.Key.Dyelot, ct = g.Count() }).Any(r => r.ct > 1)
                 var checkList = allDatas.GroupBy(o => new { POID = o["POID"].ToString(), Seq = o["Seq"].ToString(), Roll = o["Roll"].ToString(), Dyelot = o["Dyelot"].ToString() }).Select(g => new { g.Key.POID, g.Key.Seq, g.Key.Roll, g.Key.Dyelot, ct = g.Count() }).Where(o => o.ct > 1).ToList();
 
                 List<string> duplicate_List = new List<string>();
@@ -646,8 +644,6 @@ and exists(
 + "Duplicate list SP# - Seq - Roll# - Dyelot as below."
 + Environment.NewLine
 + duplicate_List.JoinToString(Environment.NewLine));
-
-                // MyUtility.Msg.WarningBox("Roll# & Dyelot# can not  duplicate!!");
                 return;
             }
 
@@ -823,14 +819,13 @@ and seq1='{drModify["seq1"]}' and seq2='{drModify["seq2"]}'
 and roll='{original_Roll}' and dyelot='{original_Dyelot}' 
 and stocktype = '{drModify["stocktype"]}';
 
-delete FIR_Shadebone WHERE  roll='{original_Roll}' AND dyelot='{original_Dyelot}' AND ID='{firID}'
---UPDATE FIR_Shadebone SET 
---Roll = '{drModify["roll"]}'
---,Dyelot  = '{drModify["dyelot"]}'
---,TicketYds   = '{drModify["ActualQty"]}'
---,EditName = '{Env.User.UserID}'
---,EditDate = GETDATE()
---WHERE  roll='{original_Roll}' AND dyelot='{original_Dyelot}' AND ID='{firID}'
+UPDATE FIR_Shadebone SET 
+Roll = '{drModify["roll"]}'
+,Dyelot  = '{drModify["dyelot"]}'
+,TicketYds   = '{drModify["ActualQty"]}'
+,EditName = '{Env.User.UserID}'
+,EditDate = GETDATE()
+WHERE  roll='{original_Roll}' AND dyelot='{original_Dyelot}' AND ID='{firID}'
 ";
                 }
                 else if (this.gridAlias.ToUpper().EqualString("TRANSFERIN_DETAIL"))
