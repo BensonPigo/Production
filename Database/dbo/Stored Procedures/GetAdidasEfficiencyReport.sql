@@ -39,10 +39,12 @@ Begin
 	select s.OutputDate
 		, s.FactoryID
 		, s.SewingLineID
-		,[Shift] = case  when '+@Shift+ ' = ''0'' then  iif(s.Shift = ''D'',''Day'',''Night'')
-						 when '+@Shift+ ' = ''2'' then ''Subcon-Output''
-						 when o.SubconInType in (''1'',''2'') then ''Subcon-In(Sister)''
-                         else ''Subcon-In(Non Sister)'' end
+		,[Shift] = case when s.Shift <> ''O'' and o.LocalOrder <> 0 and o.SubconInType not in (1, 2) then iif(s.Shift = ''D'' ,''Day'',''Night'')
+				when s.Shift <> ''O'' and o.localOrder = 1  and o.SubconInType <> 0 and s.Category<> ''M'' then iif(o.SubconInType = 1 or o.SubconInType = 2,''Subcon-In(Sister)'',''Subcon-In(Non Sister)'')
+				when s.Shift = ''D'' then ''Day''
+				when s.Shift = ''N'' then ''Night''
+				when s.Shift = ''O'' then ''Subcon-Output'' 
+				else s.Shift end
 		, [Category] = case o.Category when ''B'' then ''Bulk''
 								   when ''S'' then ''Sample''
 								   when ''M'' then ''Material''
@@ -146,15 +148,15 @@ Begin
 	Begin
 		if @Shift = '0'
 		begin
-			set @sql = @sql + 'and (s.SHIFT = ''D'' or s.SHIFT = ''N'')'
+			set @sql = @sql + ' and s.Shift <> ''O'' and o.LocalOrder <> 0 and o.SubconInType not in (1, 2)'
 		end
 		else if @Shift ='1'
 		begin
-			set @sql = @sql + 'and (s.Shift <> ''O'' and  s.Category<> ''M'' and o.LocalOrder = 1)'
+			set @sql = @sql + ' and s.Shift <> ''O'' and o.localOrder = 1  and o.SubconInType <> 0 and s.Category<> ''M'''
 		end
 		else if @Shift ='2'
 		begin
-			set @sql = @sql + 'and s.SHIFT = ''O'''
+			set @sql = @sql + ' and s.SHIFT = ''O'''
 		end
 	end
 
@@ -195,7 +197,7 @@ Begin
 	End 
 
 	set @sql = @sql + '
-	Group by s.OutputDate, s.FactoryID, s.SewingLineID, s.Shift, o.StyleID, s.Manpower, o.CdCodeID, sd.ComboType, o.SeasonID, o.BrandID, o.Category, f.CountryID, st.CDCodeNew
+	Group by s.OutputDate, s.FactoryID, s.SewingLineID, s.Shift, o.StyleID, s.Manpower, o.CdCodeID, sd.ComboType, o.SeasonID, o.BrandID, o.Category, f.CountryID, st.CDCodeNew , s.Team , o.SubconInType , s.Category , o.localOrder
 ' 
 
 End
@@ -238,10 +240,12 @@ from
 	select s.OutputDate
 		, s.FactoryID
 		, s.SewingLineID
-		,[Shift] = case  when '+@Shift+ ' = ''0'' then  iif(s.Shift = ''D'',''Day'',''Night'')
-						 when '+@Shift+ ' = ''2'' then ''Subcon-Output''
-						 when o.SubconInType in (''1'',''2'') then ''Subcon-In(Sister)''
-                         else ''Subcon-In(Non Sister)'' end
+		,[Shift] = case when s.Shift <> ''O'' and o.LocalOrder <> 0 and o.SubconInType not in (1, 2) then iif(s.Shift = ''D'' ,''Day'',''Night'')
+						when s.Shift <> ''O'' and o.localOrder = 1  and o.SubconInType <> 0 and s.Category<> ''M'' then iif(o.SubconInType = 1 or o.SubconInType = 2,''Subcon-In(Sister)'',''Subcon-In(Non Sister)'')
+						when s.Shift = ''D'' then ''Day''
+						when s.Shift = ''N'' then ''Night''
+						when s.Shift = ''O'' then ''Subcon-Output'' 
+						else s.Shift end
 		, o.Category
 		, o.StyleID
 		, s.Manpower
@@ -302,15 +306,15 @@ from
 	Begin
 		if @Shift = '0'
 		begin
-			set @sql = @sql + 'and (s.SHIFT = ''D'' or s.SHIFT = ''N'')'
+			set @sql = @sql + ' and s.Shift <> ''O'' and o.LocalOrder <> 0 and o.SubconInType not in (1, 2)'
 		end
 		else if @Shift ='1'
 		begin
-			set @sql = @sql + 'and (s.Shift <> ''O'' and  s.Category<> ''M'' and o.LocalOrder = 1)'
+			set @sql = @sql + ' and s.Shift <> ''O'' and o.localOrder = 1  and o.SubconInType <> 0 and s.Category<> ''M'''
 		end
 		else if @Shift ='2'
 		begin
-			set @sql = @sql + 'and s.SHIFT = ''O'''
+			set @sql = @sql + ' and s.SHIFT = ''O'''
 		end
 	end
 
@@ -351,7 +355,7 @@ from
 	End 
 
 	set @sql = @sql + '
-	Group by s.OutputDate, s.FactoryID, s.SewingLineID, s.Shift, o.StyleID, s.Manpower, o.CdCodeID, sd.ComboType, o.SeasonID, o.BrandID, o.Category, f.CountryID, st.CDCodeNew
+	Group by s.OutputDate, s.FactoryID, s.SewingLineID, s.Shift, o.StyleID, s.Manpower, o.CdCodeID, sd.ComboType, o.SeasonID, o.BrandID, o.Category, f.CountryID, st.CDCodeNew , s.Team , o.SubconInType , s.Category , o.localOrder
 )s '
 End
 
