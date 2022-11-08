@@ -934,6 +934,12 @@ where id = '{newvalue}' and mDivisionid='{this.keyword}' ";
                 return;
             }
 
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OriginBundleNo"]))
+            {
+                MyUtility.Msg.WarningBox("Origin BundleNo cannot be empty!");
+                return;
+            }
+
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             this.detailgrid.ValidateControl();
             var frm = new P10_1_Generate(this.CurrentMaintain, dt, this.bundle_Detail_allpart_Tb, this.bundle_Detail_Art_Tb, this.bundle_Detail_Qty_Tb);
