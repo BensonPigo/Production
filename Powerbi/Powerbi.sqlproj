@@ -102,7 +102,6 @@
     <Build Include="dbo\Tables\P_SDPOrderDetail.sql" />
     <Build Include="dbo\Stored Procedures\P_ImportSewingLineScheduleData.sql" />
     <Build Include="dbo\Stored Procedures\FTY\ImportEfficiencyBI.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_ImportOustandingPO.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportSDPOrderDetail.sql" />
     <Build Include="dbo\Stored Procedures\FTY\ImportForecastLoadingBI.sql" />
     <Build Include="dbo\Stored Procedures\FTY\execAllPowerBISP.sql" />
@@ -160,6 +159,8 @@
     <Build Include="dbo\Tables\PurchaseList.sql" />
     <Build Include="dbo\Tables\T_MtlStatusAnalisis.sql" />
     <Build Include="dbo\Tables\T_MtltoFTYAnalysis.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_ImportOustandingPO_Fty.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_QA_R31.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
