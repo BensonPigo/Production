@@ -41,11 +41,15 @@ select [YYYYMM] = ''''' + @CreateYYYYMM + '''''
        , Mc.Remark 
        , Mc.FAID
 	   , Junk = iif(Mc.junk = 1, ''''Y'''', ''''N'''')
-from Machine.dbo.Machine Mc
-left join Machine.dbo.SciProduction_LocalSupp LS on LS.ID = Mc.LendTo
-left join Machine.dbo.MachineGroup on mc.MachineGroupID = MachineGroup.ID AND mc.MasterGroupID=MachineGroup.MasterGroupID
-left join Machine.dbo.MachineMasterGroup mmg on mmg.id = MachineGroup.masterGroupID
-left join Machine.dbo.MachineRepair r on Mc.id =r.MachineID and r.Status = ''''Repairing''''
+	   , [POID] = midi.MachinePOID
+	   , mpd.RefNo
+from Machine.dbo.Machine Mc with(nolock)
+left join Machine.dbo.SciProduction_LocalSupp LS with(nolock) on LS.ID = Mc.LendTo
+left join Machine.dbo.MachineGroup with(nolock) on mc.MachineGroupID = MachineGroup.ID AND mc.MasterGroupID=MachineGroup.MasterGroupID
+left join Machine.dbo.MachineMasterGroup mmg with(nolock) on mmg.id = MachineGroup.masterGroupID
+left join Machine.dbo.MachineRepair r with(nolock) on Mc.id =r.MachineID and r.Status = ''''Repairing''''
+left join Machine.dbo.MachineIn_Detail_Inspect midi with(nolock) on mc.ID = midi.MachineID and midi.Result = ''''P''''
+left join Machine.dbo.MachinePO_Detail mpd with(nolock) on mpd.ID = midi.MachinePOID and mpd.Seq1 = midi.SEQ1 and mpd.Seq2 = midi.SEQ2
 outer apply(
     select top 1 mp.CyApvDate 
     from Machine.dbo.MachinePending mp with(nolock)
@@ -86,6 +90,8 @@ insert into P_MachineMasterList(Month
 								,Remark
 								,FAID
 								,Junk
+								,POID
+								,RefNo
 )
 select *
 from #tmp t
@@ -99,6 +105,7 @@ from BITableInfo b
 where b.Id = ''P_MachineMasterList''
 '
 exec (@finalInsertSql)
+
 
 
 end
