@@ -40,11 +40,11 @@ Begin
 		, s.FactoryID
 		, s.SewingLineID
 		,[Shift] = case when s.Shift <> ''O'' and o.LocalOrder <> 0 and o.SubconInType not in (1, 2) then iif(s.Shift = ''D'' ,''Day'',''Night'')
-				when s.Shift <> ''O'' and o.localOrder = 1  and o.SubconInType <> 0 and s.Category<> ''M'' then iif(o.SubconInType = 1 or o.SubconInType = 2,''Subcon-In(Sister)'',''Subcon-In(Non Sister)'')
-				when s.Shift = ''D'' then ''Day''
-				when s.Shift = ''N'' then ''Night''
-				when s.Shift = ''O'' then ''Subcon-Output'' 
-				else s.Shift end
+						when s.Shift <> ''O'' and o.localOrder = 1  and o.SubconInType <> 0 and s.Category<> ''M'' then iif(o.SubconInType = 1 or o.SubconInType = 2,''Subcon-In(Sister)'',''Subcon-In(Non Sister)'')
+						when s.Shift = ''O'' then ''Subcon-Output''
+						when s.Shift = ''D'' then ''Day''
+						when s.Shift = ''N'' then ''Night''
+						else s.Shift end
 		, [Category] = case o.Category when ''B'' then ''Bulk''
 								   when ''S'' then ''Sample''
 								   when ''M'' then ''Material''
@@ -242,9 +242,9 @@ from
 		, s.SewingLineID
 		,[Shift] = case when s.Shift <> ''O'' and o.LocalOrder <> 0 and o.SubconInType not in (1, 2) then iif(s.Shift = ''D'' ,''Day'',''Night'')
 						when s.Shift <> ''O'' and o.localOrder = 1  and o.SubconInType <> 0 and s.Category<> ''M'' then iif(o.SubconInType = 1 or o.SubconInType = 2,''Subcon-In(Sister)'',''Subcon-In(Non Sister)'')
+						when s.Shift = ''O'' then ''Subcon-Output''
 						when s.Shift = ''D'' then ''Day''
 						when s.Shift = ''N'' then ''Night''
-						when s.Shift = ''O'' then ''Subcon-Output'' 
 						else s.Shift end
 		, o.Category
 		, o.StyleID
