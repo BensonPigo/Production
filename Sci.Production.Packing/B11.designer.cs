@@ -30,7 +30,6 @@
         {
             this.labFty = new Sci.Win.UI.Label();
             this.txtFty = new Sci.Production.Class.Txtfactory();
-            this.label2 = new Sci.Win.UI.Label();
             this.labToAddress = new Sci.Win.UI.Label();
             this.labCcAddress = new Sci.Win.UI.Label();
             this.editBoxToAddress = new Sci.Win.UI.EditBox();
@@ -43,7 +42,6 @@
             this.txtStartTime = new Sci.Win.UI.TextBox();
             this.txtEndTime = new Sci.Win.UI.TextBox();
             this.comboFrequency = new Sci.Win.UI.ComboBox();
-            this.dateBuyerDlv = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -54,11 +52,10 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(854, 374);
+            this.detail.Size = new System.Drawing.Size(854, 341);
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.dateBuyerDlv);
             this.detailcont.Controls.Add(this.comboFrequency);
             this.detailcont.Controls.Add(this.txtEndTime);
             this.detailcont.Controls.Add(this.txtStartTime);
@@ -71,14 +68,13 @@
             this.detailcont.Controls.Add(this.editBoxToAddress);
             this.detailcont.Controls.Add(this.labCcAddress);
             this.detailcont.Controls.Add(this.labToAddress);
-            this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.txtFty);
             this.detailcont.Controls.Add(this.labFty);
-            this.detailcont.Size = new System.Drawing.Size(854, 336);
+            this.detailcont.Size = new System.Drawing.Size(854, 303);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 336);
+            this.detailbtm.Location = new System.Drawing.Point(0, 303);
             this.detailbtm.Size = new System.Drawing.Size(854, 38);
             // 
             // browse
@@ -87,7 +83,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(862, 403);
+            this.tabs.Size = new System.Drawing.Size(862, 370);
             // 
             // labFty
             // 
@@ -112,17 +108,9 @@
             this.txtFty.Size = new System.Drawing.Size(100, 23);
             this.txtFty.TabIndex = 0;
             // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(21, 47);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(101, 23);
-            this.label2.TabIndex = 9;
-            this.label2.Text = "Buyer Delivery";
-            // 
             // labToAddress
             // 
-            this.labToAddress.Location = new System.Drawing.Point(21, 78);
+            this.labToAddress.Location = new System.Drawing.Point(21, 48);
             this.labToAddress.Name = "labToAddress";
             this.labToAddress.Size = new System.Drawing.Size(101, 23);
             this.labToAddress.TabIndex = 10;
@@ -130,7 +118,7 @@
             // 
             // labCcAddress
             // 
-            this.labCcAddress.Location = new System.Drawing.Point(21, 147);
+            this.labCcAddress.Location = new System.Drawing.Point(21, 117);
             this.labCcAddress.Name = "labCcAddress";
             this.labCcAddress.Size = new System.Drawing.Size(101, 23);
             this.labCcAddress.TabIndex = 11;
@@ -141,7 +129,7 @@
             this.editBoxToAddress.BackColor = System.Drawing.Color.White;
             this.editBoxToAddress.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ToAddress", true));
             this.editBoxToAddress.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBoxToAddress.Location = new System.Drawing.Point(125, 78);
+            this.editBoxToAddress.Location = new System.Drawing.Point(125, 48);
             this.editBoxToAddress.Multiline = true;
             this.editBoxToAddress.Name = "editBoxToAddress";
             this.editBoxToAddress.Size = new System.Drawing.Size(490, 63);
@@ -152,7 +140,7 @@
             this.editBoxCcAddress.BackColor = System.Drawing.Color.White;
             this.editBoxCcAddress.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CcAddress", true));
             this.editBoxCcAddress.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBoxCcAddress.Location = new System.Drawing.Point(125, 147);
+            this.editBoxCcAddress.Location = new System.Drawing.Point(125, 117);
             this.editBoxCcAddress.Multiline = true;
             this.editBoxCcAddress.Name = "editBoxCcAddress";
             this.editBoxCcAddress.Size = new System.Drawing.Size(490, 70);
@@ -160,7 +148,7 @@
             // 
             // labDescription
             // 
-            this.labDescription.Location = new System.Drawing.Point(21, 231);
+            this.labDescription.Location = new System.Drawing.Point(21, 201);
             this.labDescription.Name = "labDescription";
             this.labDescription.Size = new System.Drawing.Size(101, 23);
             this.labDescription.TabIndex = 12;
@@ -171,7 +159,7 @@
             this.editBoxDescription.BackColor = System.Drawing.Color.White;
             this.editBoxDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.editBoxDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBoxDescription.Location = new System.Drawing.Point(125, 231);
+            this.editBoxDescription.Location = new System.Drawing.Point(125, 201);
             this.editBoxDescription.Multiline = true;
             this.editBoxDescription.Name = "editBoxDescription";
             this.editBoxDescription.Size = new System.Drawing.Size(490, 84);
@@ -241,18 +229,9 @@
             this.comboFrequency.TabIndex = 7;
             this.comboFrequency.SelectedValueChanged += new System.EventHandler(this.ComboFrequency_SelectedValueChanged);
             // 
-            // dateBuyerDlv
-            // 
-            this.dateBuyerDlv.IsSupportEditMode = false;
-            this.dateBuyerDlv.Location = new System.Drawing.Point(125, 49);
-            this.dateBuyerDlv.Name = "dateBuyerDlv";
-            this.dateBuyerDlv.ReadOnly = true;
-            this.dateBuyerDlv.Size = new System.Drawing.Size(131, 23);
-            this.dateBuyerDlv.TabIndex = 1;
-            // 
             // B11
             // 
-            this.ClientSize = new System.Drawing.Size(862, 436);
+            this.ClientSize = new System.Drawing.Size(862, 403);
             this.DefaultControl = "txtFty";
             this.DefaultControlForEdit = "txtFty";
             this.IsSupportClip = false;
@@ -279,7 +258,6 @@
 
         private Class.Txtfactory txtFty;
         private Win.UI.Label labFty;
-        private Win.UI.Label label2;
         private Win.UI.Label labCcAddress;
         private Win.UI.Label labToAddress;
         private Win.UI.EditBox editBoxToAddress;
@@ -292,6 +270,5 @@
         private Win.UI.TextBox txtStartTime;
         private Win.UI.TextBox txtEndTime;
         private Win.UI.ComboBox comboFrequency;
-        private Win.UI.DateBox dateBuyerDlv;
     }
 }
