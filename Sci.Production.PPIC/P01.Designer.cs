@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.datePFETA = new Sci.Win.UI.DateBox();
+            this.label3 = new Sci.Win.UI.Label();
             this.btnIntendedDeliveryDate = new Sci.Win.UI.Button();
             this.dateKpiMNotice = new Sci.Win.UI.DateBox();
             this.labelKpiMNotice = new Sci.Win.UI.Label();
@@ -153,7 +155,6 @@
             this.labelDetailsStyleNo = new Sci.Win.UI.Label();
             this.labelDetailsSPNo = new Sci.Win.UI.Label();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.lineShape9 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape8 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape7 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape6 = new Microsoft.VisualBasic.PowerPacks.LineShape();
@@ -162,6 +163,7 @@
             this.txttpeuser5 = new Sci.Production.Class.Txttpeuser();
             this.PcHandleText = new Sci.Production.Class.Txttpeuser();
             this.txttpeuser4 = new Sci.Production.Class.Txttpeuser();
+            this.lineShape9 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelBuyer = new Sci.Win.UI.Label();
@@ -326,9 +328,8 @@
             this.displayFabricType = new Sci.Win.UI.DisplayBox();
             this.displayConstruction = new Sci.Win.UI.DisplayBox();
             this.checkOrganicCotton = new Sci.Win.UI.CheckBox();
-            this.datePFETA = new Sci.Win.UI.DateBox();
-            this.label3 = new Sci.Win.UI.Label();
             this.shapeContainer7 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.checkBoxDirectShip = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -338,8 +339,14 @@
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Location = new System.Drawing.Point(4, 24);
+            this.detail.Size = new System.Drawing.Size(1000, 691);
+            // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkBoxDirectShip);
             this.detailcont.Controls.Add(this.checkOrganicCotton);
             this.detailcont.Controls.Add(this.displayConstruction);
             this.detailcont.Controls.Add(this.displayFabricType);
@@ -494,13 +501,13 @@
             this.detailcont.Controls.Add(this.txtuser1);
             this.detailcont.Controls.Add(this.txttpeuser2);
             this.detailcont.Controls.Add(this.txttpeuser1);
-            this.detailcont.Size = new System.Drawing.Size(897, 395);
+            this.detailcont.Size = new System.Drawing.Size(1000, 691);
             this.detailcont.Title = "Gender";
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 395);
-            this.detailbtm.Size = new System.Drawing.Size(897, 0);
+            this.detailbtm.Location = new System.Drawing.Point(0, 691);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 0);
             // 
             // browse
             // 
@@ -667,12 +674,30 @@
             this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.PcHandleText);
             this.tabPage1.Controls.Add(this.txttpeuser4);
-            this.tabPage1.Location = new System.Drawing.Point(4, 24);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1000, 691);
+            this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
+            // 
+            // datePFETA
+            // 
+            this.datePFETA.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PFETA", true));
+            this.datePFETA.IsSupportEditMode = false;
+            this.datePFETA.Location = new System.Drawing.Point(163, 89);
+            this.datePFETA.Name = "datePFETA";
+            this.datePFETA.ReadOnly = true;
+            this.datePFETA.Size = new System.Drawing.Size(100, 21);
+            this.datePFETA.TabIndex = 17;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(5, 89);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(149, 21);
+            this.label3.TabIndex = 16;
+            this.label3.Text = "PF ETA";
             // 
             // btnIntendedDeliveryDate
             // 
@@ -1874,18 +1899,9 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(994, 685);
+            this.shapeContainer2.Size = new System.Drawing.Size(990, 649);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
-            // 
-            // lineShape9
-            // 
-            this.lineShape9.BorderColor = System.Drawing.SystemColors.ControlDark;
-            this.lineShape9.Name = "lineShape9";
-            this.lineShape9.X1 = 0;
-            this.lineShape9.X2 = 987;
-            this.lineShape9.Y1 = 417;
-            this.lineShape9.Y2 = 417;
             // 
             // lineShape8
             // 
@@ -1959,6 +1975,15 @@
             this.txttpeuser4.Name = "txttpeuser4";
             this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser4.TabIndex = 7;
+            // 
+            // lineShape9
+            // 
+            this.lineShape9.BorderColor = System.Drawing.SystemColors.ControlDark;
+            this.lineShape9.Name = "lineShape9";
+            this.lineShape9.X1 = 0;
+            this.lineShape9.X2 = 987;
+            this.lineShape9.Y1 = 417;
+            this.lineShape9.Y2 = 417;
             // 
             // lineShape10
             // 
@@ -2334,7 +2359,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape3});
-            this.shapeContainer1.Size = new System.Drawing.Size(993, 678);
+            this.shapeContainer1.Size = new System.Drawing.Size(1000, 691);
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
             // 
@@ -3653,24 +3678,6 @@
             this.checkOrganicCotton.Text = "Organic Cotton/Recycle Polyester/Recycle Nylon";
             this.checkOrganicCotton.UseVisualStyleBackColor = true;
             // 
-            // datePFETA
-            // 
-            this.datePFETA.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PFETA", true));
-            this.datePFETA.IsSupportEditMode = false;
-            this.datePFETA.Location = new System.Drawing.Point(163, 89);
-            this.datePFETA.Name = "datePFETA";
-            this.datePFETA.ReadOnly = true;
-            this.datePFETA.Size = new System.Drawing.Size(100, 21);
-            this.datePFETA.TabIndex = 17;
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(5, 89);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(149, 21);
-            this.label3.TabIndex = 16;
-            this.label3.Text = "PF ETA";
-            // 
             // shapeContainer7
             // 
             this.shapeContainer7.Location = new System.Drawing.Point(3, 3);
@@ -3679,6 +3686,18 @@
             this.shapeContainer7.Size = new System.Drawing.Size(994, 685);
             this.shapeContainer7.TabIndex = 8;
             this.shapeContainer7.TabStop = false;
+            // 
+            // checkBoxDirectShip
+            // 
+            this.checkBoxDirectShip.AutoSize = true;
+            this.checkBoxDirectShip.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DirectShip", true));
+            this.checkBoxDirectShip.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBoxDirectShip.Location = new System.Drawing.Point(709, 275);
+            this.checkBoxDirectShip.Name = "checkBoxDirectShip";
+            this.checkBoxDirectShip.Size = new System.Drawing.Size(86, 19);
+            this.checkBoxDirectShip.TabIndex = 255;
+            this.checkBoxDirectShip.Text = "Direct Ship";
+            this.checkBoxDirectShip.UseVisualStyleBackColor = true;
             // 
             // P01
             // 
@@ -4012,5 +4031,6 @@
         private Win.UI.DateBox datePFETA;
         private Win.UI.Label label3;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer7;
+        private Win.UI.CheckBox checkBoxDirectShip;
     }
 }
