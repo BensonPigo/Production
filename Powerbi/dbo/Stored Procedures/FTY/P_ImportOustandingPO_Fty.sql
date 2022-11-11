@@ -22,8 +22,8 @@ SELECT
 	,o.CustPONo
 	,o.StyleID
 	,oq.BuyerDelivery
-	,oq.Seq
-	,oq.ShipmodeID
+	,[Seq] = ISNULL(oq.Seq, '')
+	,[ShipmodeID] = ISNULL(oq.ShipmodeID, '')
 	,[Dest] = c.Alias
 	,[Category] =  CASE WHEN o.Category='B' THEN 'Bulk'
 						WHEN o.Category='G' THEN'Garment'
@@ -52,11 +52,12 @@ outer apply(
 	where podd.OrderID = o.ID
 )s
 where o.Category IN ('B','G') 
-      and isnull(ot.IsGMTMaster,0) = 0
-      AND oq.BuyerDelivery >= @SDate
-AND oq.BuyerDelivery <= @EDate
+and isnull(ot.IsGMTMaster,0) = 0
+AND ((oq.BuyerDelivery >= @SDate AND oq.BuyerDelivery <= @EDate) 
+	or (o.EditDate >= Cast(getdate()-2 as date))
+)
 AND f.IsProduceFty=1
-
+AND o.Junk = 0
 
 select 
 pd.OrderID,
@@ -233,6 +234,6 @@ from BITableInfo b
 where b.id = 'P_OustandingPO'
 
 End
-GO
+
 
 

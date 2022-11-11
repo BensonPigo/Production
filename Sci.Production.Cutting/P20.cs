@@ -24,6 +24,9 @@ namespace Sci.Production.Cutting
         {
             this.InitializeComponent();
             this.DefaultFilter = string.Format("MDivisionID = '{0}'", this.KeyWord);
+
+            // QueryFor預設帶入目前工廠範圍
+            this.DefaultWhere = $"FactoryID = '{Env.User.Factory}'";
             this.DoSubForm = new P20_Detail();
             string querySql = string.Format(
                 @"
@@ -32,7 +35,7 @@ select '' FTYGroup
 union 
 select distinct FTYGroup 
 from Factory 
-where MDivisionID = '{0}'", Env.User.Keyword);
+where Mdivisionid = '{0}'", Env.User.Keyword);
             DualResult result;
             result = DBProxy.Current.Select(null, querySql, out DataTable queryDT);
             if (!result)
@@ -41,7 +44,21 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             }
 
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
-            this.queryfors.SelectedIndex = 0;
+
+            // Query for 顯示目前工廠index
+            int index = 0;
+            if (queryDT != null || queryDT.Rows.Count > 0)
+            {
+                for (int i = 0; i < queryDT.Rows.Count; i++)
+                {
+                    if (queryDT.Rows[i]["FTYGroup"].ToString().ToUpper() == Env.User.Factory.ToString().ToUpper())
+                    {
+                        index = i;
+                    }
+                }
+            }
+            
+            this.queryfors.SelectedIndex = index;
             this.queryfors.SelectedIndexChanged += (s, e) =>
             {
                 switch (this.queryfors.SelectedIndex)

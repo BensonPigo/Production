@@ -163,7 +163,7 @@
             this.comboShift.Location = new System.Drawing.Point(115, 368);
             this.comboShift.Name = "comboShift";
             this.comboShift.OldText = "";
-            this.comboShift.Size = new System.Drawing.Size(66, 24);
+            this.comboShift.Size = new System.Drawing.Size(150, 24);
             this.comboShift.TabIndex = 139;
             // 
             // comboM
