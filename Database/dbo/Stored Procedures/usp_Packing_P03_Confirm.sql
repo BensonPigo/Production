@@ -105,16 +105,15 @@ BEGIN
 	IF NOT EXISTS(select * 
 		from PackingList_Detail pd WITH (NOLOCK) 
 	outer apply(
-		select isnull(sum(pdd.ShipQty),0) as ShipQty
-		 from Pullout p WITH (NOLOCK) , Pullout_Detail p2 WITH (NOLOCK) , Pullout_Detail_Detail pdd WITH (NOLOCK) 
-		 where p.Status != 'New'
-		 and p.id = pd.ID
-		 and p2.OrderID = pd.OrderID
-		 and p2.OrderShipmodeSeq = pd.OrderShipmodeSeq
-		 and p.ID = pdd.ID
-		 and p2.UKey = pdd.Pullout_DetailUKey
-		 and pdd.Article = pd.Article
-		 and pdd.SizeCode = pd.SizeCode
+		select isnull(sum(pad.ShipQty),0) as ShipQty
+        from PackingList p WITH (NOLOCK), PackingList_Detail pad WITH (NOLOCK)
+        where p.PulloutStatus != 'New'
+        and p.PulloutID <> ''
+        and p.id = pd.ID
+        and pad.OrderID = pd.OrderID
+        and pad.OrderShipmodeSeq = pd.OrderShipmodeSeq
+        and pad.Article = pd.Article
+        and pad.Sizecode = pd.Sizecode
 	)PulloutQty
 	outer apply	(
 		select isnull(sum(iaq.DiffQty),0) as DiffQty
