@@ -43,9 +43,13 @@
     [Clima]                  BIT             CONSTRAINT [DF_Fabric_Clima] DEFAULT ((0)) NOT NULL,
     [NLCode2]                VARCHAR (9)     CONSTRAINT [DF_Fabric_NLCode2] DEFAULT ('') NOT NULL,
     [BomTypeCalculateWeight] BIT             NULL,
-    [IsRecycled] BIT NULL DEFAULT ((0)), 
+    [IsRecycled]             BIT             DEFAULT ((0)) NULL,
+    [Finish]                 VARCHAR (5)     DEFAULT ('') NOT NULL,
+    [BrandRefNo]             VARCHAR (5)     DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Fabric] PRIMARY KEY CLUSTERED ([SCIRefno] ASC)
 );
+
+
 
 
 

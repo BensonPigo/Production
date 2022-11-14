@@ -52,29 +52,30 @@ BEGIN
 	SELECT   [Article]=oq.Article
 			,[SizeCode]=oq.SizeCode 
 			,[Price]=ISNULL(ou1.POPrice, ISNULL(ou2.POPrice,-1))
-	FROM Order_Qty oq
-	LEFT JOIN Order_UnitPrice ou1 ON ou1.Id=oq.Id AND ou1.Article=oq.Article AND ou1.SizeCode=oq.SizeCode 
-	LEFT JOIN Order_UnitPrice ou2 ON ou2.Id=oq.Id AND ou2.Article='----' AND ou2.SizeCode='----' 
+	FROM Order_Qty oq with (nolock)
+	LEFT JOIN Order_UnitPrice ou1 with (nolock) ON ou1.Id=oq.Id AND ou1.Article=oq.Article AND ou1.SizeCode=oq.SizeCode 
+	LEFT JOIN Order_UnitPrice ou2 with (nolock) ON ou2.Id=oq.Id AND ou2.Article='----' AND ou2.SizeCode='----' 
 	WHERE oq.ID = @OrderID
 	ORDER BY  oq.Article,oq.SizeCode 
 
 
 	--3. 再串回Packing，要找出價格為0的總出貨數，Status <> New代表已經出貨了，扣掉出貨剩下就是庫存
 	INSERT @Tmp2
-	SELECT pd.Article,pd.SizeCode,[ShipQty]=SUM(pd.ShipQty)
-	FROM PackingList p 
-	INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-	INNER JOIN Pullout pu ON p.PulloutID=pu.ID
-	WHERE pu.Status <> 'New' AND pd.OrderID = @OrderID
-	GROUP BY pd.Article,pd.SizeCode
-	ORDER BY  pd.Article,pd.SizeCode 
+    select pd.Article,pd.SizeCode,[ShipQty]=SUM(pd.ShipQty)
+    from PackingList p with (nolock)
+    inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
+    where p.PulloutStatus <> 'New'
+    and p.PulloutID <> ''
+    and pd.OrderID = @OrderID
+    group by pd.Article,pd.SizeCode
+    order by pd.Article,pd.SizeCode
 
 
 	--4. 台北財務調整的數量
 	INSERT @Tmp3
 	SELECt iq.Article,iq.SizeCode,[DiffQty]= SUM(iq.DiffQty)
-	FROm InvAdjust i
-	INNER JOIN InvAdjust_Qty iq ON i.ID = iq.ID
+	FROm InvAdjust i with (nolock)
+	INNER JOIN InvAdjust_Qty iq with (nolock) ON i.ID = iq.ID
 	WHERE i.OrderID = @OrderID
 	GROUP BY iq.Article,iq.SizeCode
 
