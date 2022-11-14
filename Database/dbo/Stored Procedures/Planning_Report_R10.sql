@@ -141,7 +141,8 @@ BEGIN
 	, (cCPU * SewOutputQty * CPURate) as SewCapacity
 	, Orders.Zone
 	, BrandID
-	into #tmpOrder1 from #Orders Orders
+	into #tmpOrder1 
+	from #Orders Orders
 	inner join Factory on Orders.FactoryID = Factory.ID
 	left Join Order_TmsCost on Orders.ID = Order_TmsCost.ID And Order_TmsCost.ArtworkTypeID = @ArtWorkType
 	left join ArtworkType on ArtworkType.Id = @ArtWorkType
@@ -165,8 +166,15 @@ BEGIN
 	outer apply (select format(dateadd(day,iif(@isSCIDelivery = 0, 0, -7),OrderDate),'yyyyMM') as Date1) odd1
 	outer apply (select dbo.GetHalfMonWithYear(OrderDate, @isSCIDelivery) as Date2) odd2
 	outer apply (select format(dateadd(day,iif(@isSCIDelivery = 0, 0, -7),SewLastDate),'yyyyMM') as sDate1) sodd1
-	outer apply (select dbo.GetHalfMonWithYear(SewLastDate, @isSCIDelivery) as sDate2) sodd2
-	outer apply (select Qty=sum(shipQty) from Pullout_Detail where orderid = Orders.id) GetPulloutData -- 出貨數量, PMS此處不用Function, 直接加總
+	outer apply (select dbo.GetHalfMonWithYear(SewLastDate, @isSCIDelivery) as sDate2) sodd2	
+	outer apply (
+				select Qty=sum(pd.ShipQty) 	
+				from PackingList p, PackingList_Detail pd 	
+				where p.ID = pd.ID 	
+				and p.PulloutID <> ''	
+				and p.PulloutDate is not null -- 有效出貨數一定有PulloutDate, 且Pullout Revise 取Packing.ShipQty也是用PulloutDate 串出數量
+				and pd.OrderID = Orders.ID	
+	) GetPulloutData -- 出貨數量, PMS此處不用Function, 直接加總
 	
 	---------------------------------------------------------------------------------------------------------------------------------
 	--Fty Local Order
