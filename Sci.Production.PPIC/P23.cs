@@ -210,7 +210,7 @@ namespace Sci.Production.PPIC
 select a.StyleID, a.SeasonID
 ,[ForecastQty] = sum(a.ForecastQty)
 ,[OrderQty] = sum(a.OrderQty)
-,[Status] = iif(StatusCnt.cnt > 1, 'DONE', 'ON-GOING') 
+,[Status] = iif(StatusCnt.cnt >= 1, 'DONE', 'ON-GOING') 
 ,[StyleBrand] = Ltrim(Rtrim(a.StyleID)) + Ltrim(Rtrim(a.BrandID))
 into #tmp
 from (
