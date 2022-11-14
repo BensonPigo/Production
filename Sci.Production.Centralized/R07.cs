@@ -44,7 +44,7 @@ namespace Sci.Production.Centralized
             : base(menuitem)
         {
             this.InitializeComponent();
-            MyUtility.Tool.SetupCombox(this.comboShift, 2, 1, ",,D,Day,N,Night");
+            MyUtility.Tool.SetupCombox(this.comboShift, 2, 1, ",,0,Day+Night,1,Subcon-In,2,Subcon-Out");
             this.comboM.SetDefalutIndex();
             this.comboFactory.SetDefalutIndex(string.Empty);
             this.txtbrand1.MultiSelect = true;
@@ -213,6 +213,7 @@ select t.OutputDate
 	, t.[Month]
 	, [IsGSDPro] = iif(isnull(sl.Rate, 0) = 0 or isnull(sq.TMS, 0) = 0, t.IsGSDPro, '')
 	, t.Orderseq
+    , t.Team
 from #tmp t
 left join Style s on t.StyleID = s.Id and t.BrandID = s.BrandID and t.SeasonID = s.SeasonID
 left join Style_Location sl on s.Ukey = sl.StyleUkey and RIGHT(t.CD, 1) = sl.Location
@@ -324,6 +325,7 @@ outer apply (
                         FactoryID = x.Field<string>("FactoryID"),
                         SewingLineID = x.Field<string>("SewingLineID"),
                         Shift = x.Field<string>("Shift"),
+                        Team = x.Field<string>("Team"),
                         Category = x.Field<string>("Category"),
                         StyleID = x.Field<string>("StyleID"),
                         Manpower = x.Field<decimal?>("Manpower"),
@@ -333,17 +335,17 @@ outer apply (
                         CDCodeNew = x.Field<string>("CDCodeNew"),
                         SeasonID = x.Field<string>("SeasonID"),
                         BrandID = x.Field<string>("BrandID"),
-                        Fabrication = string.Format("=IFERROR(VLOOKUP(LEFT(J{0}, 2),'Adidas data '!$A$2:$G$116, 4, FALSE), \"\")", index + 2),
-                        ProductGroup = string.Format("=IFERROR(VLOOKUP(LEFT(J{0}, 2),'Adidas data '!$A$2:$G$116, 7, FALSE), \"\")", index + 2),
-                        ProductFabrication = string.Format("=N{0}&M{0}", index + 2),
+                        Fabrication = string.Format("=IFERROR(VLOOKUP(LEFT(K{0}, 2),'Adidas data '!$A$2:$H$116, 4, FALSE), \"\")", index + 2),
+                        ProductGroup = string.Format("=IFERROR(VLOOKUP(LEFT(K{0}, 2),'Adidas data '!$A$2:$H$116, 7, FALSE), \"\")", index + 2),
+                        ProductFabrication = string.Format("=O{0}&N{0}", index + 2),
                         GSD = x.Field<decimal?>("GSD"),
-                        Earnedhours = string.Format("=IF(I{0}=\"\", \"\", IFERROR((I{0}*Q{0})/60, \"\"))", index + 2),
-                        TotalWorkingHours = string.Format("=H{0}*G{0}", index + 2),
+                        Earnedhours = string.Format("=IF(J{0}=\"\", \"\", IFERROR((J{0}*R{0})/60, \"\"))", index + 2),
+                        TotalWorkingHours = string.Format("=I{0}*H{0}", index + 2),
                         CumulateDaysofDaysinProduction = x.Field<int>("CumulateDaysofDaysinProduction"),
-                        EfficiencyLine = string.Format("=R{0}/S{0}", index + 2),
+                        EfficiencyLine = string.Format("=S{0}/T{0}", index + 2),
                         GSDProsmv = x.Field<decimal?>("GSDProsmv"),
-                        Earnedhours2 = string.Format("=IF(I{0}=\"\", \"\", IFERROR(I{0}*V{0}/60, \"\"))", index + 2),
-                        EfficiencyLine2 = string.Format("=W{0}/S{0}", index + 2),
+                        Earnedhours2 = string.Format("=IF(J{0}=\"\", \"\", IFERROR(J{0}*W{0}/60, \"\"))", index + 2),
+                        EfficiencyLine2 = string.Format("=X{0}/T{0}", index + 2),
                         NoofInlineDefects = x.Field<int>("NoofInlineDefects"),
                         NoofEndlineDefectiveGarments = x.Field<int>("NoofEndlineDefectiveGarments"),
                         WFT = string.Format("=IFERROR((Y{0}+Z{0})/I{0}, \"\")", index + 2),
@@ -428,7 +430,7 @@ outer apply (
                     wSheet: objSheets);
             }
 
-            objSheets.get_Range("AA:AD").EntireColumn.Hidden = true;
+            objSheets.get_Range("AB:AE").EntireColumn.Hidden = true;
         }
 
         private void SetExcelSheet2(Excel.Worksheet objSheets, DataTable[] dt)
