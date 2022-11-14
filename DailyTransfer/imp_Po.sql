@@ -698,6 +698,8 @@ SET
 	  , a.Clima = b.Clima
 	  , a.BomTypeCalculateWeight = b.BomTypeCalculateWeight
 	  , a.IsRecycled = b.IsRecycled
+	  , a.Finish = isnull(b.Finish,'')
+	  , a.BrandRefno = isnull(b.BrandRefno,'')
 from Production.dbo.Fabric as a 
 inner join Trade_To_Pms.dbo.Fabric as b ON a.SCIRefno=b.SCIRefno
 -------------------------- INSERT INTO §ì
@@ -737,6 +739,8 @@ INSERT INTO Production.dbo.Fabric(
 	   , Clima
 	   , BomTypeCalculateWeight
 	   , IsRecycled
+	   , Finish
+	   , BrandRefno
 )
 select 
       SCIRefno
@@ -774,6 +778,8 @@ select
 	  , Clima
 	  , BomTypeCalculateWeight
 	  , IsRecycled
+	  , isnull(Finish,'')
+	  , isnull(BrandRefno,'')
 from Trade_To_Pms.dbo.Fabric as b WITH (NOLOCK)
 where not exists(select SCIRefno from Production.dbo.Fabric as a WITH (NOLOCK) where a.SCIRefno = b.SCIRefno)
 

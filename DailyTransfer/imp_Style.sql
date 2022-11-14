@@ -1242,7 +1242,7 @@ a.ColorID	= b.ColorID
 ,a.AddDate	= b.AddDate
 ,a.EditName	= b.EditName
 ,a.EditDate	= b.EditDate
-
+,a.FabricType = isnull(b.FabricType,'')
 from Production.dbo.Style_ColorCombo as a 
 inner join Trade_To_Pms.dbo.Style_ColorCombo as b ON a. StyleUkey	= b. StyleUkey AND a.Article	= b.Article AND a.FabricPanelCode	= b.FabricPanelCode
 -------------------------- INSERT INTO 抓
@@ -1258,6 +1258,7 @@ INSERT INTO Production.dbo.Style_ColorCombo(
 ,AddDate
 ,EditName
 ,EditDate
+,FabricType
 )
 select 
  b.StyleUkey
@@ -1270,6 +1271,7 @@ select
 ,b.AddDate
 ,b.EditName
 ,b.EditDate
+,isnull(b.FabricType,'')
 from Trade_To_Pms.dbo.Style_ColorCombo as b
 where not exists(select 1 from Production.dbo.Style_ColorCombo as a WITH (NOLOCK) where a. StyleUkey	= b. StyleUkey AND a.Article	= b.Article AND a.FabricPanelCode	= b.FabricPanelCode)
 --STYLEJ
@@ -2236,5 +2238,94 @@ when not matched by target then
 			  ,s.[AddDate])
 when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
 	delete;
+
+
+------------Style_ArtworkTestDox
+----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
+Delete Production.dbo.Style_ArtworkTestDox
+from Production.dbo.Style_ArtworkTestDox as a 
+INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
+left join Trade_To_Pms.dbo.Style_ArtworkTestDox as b
+on a.Ukey = b.Ukey
+where b.Ukey is null
+
+
+UPDATE a
+   SET [StyleUkey]=isnull(b.[StyleUkey],0)
+      ,[ArtworkTypeID]=isnull(b.[ArtworkTypeID],'')
+      ,[ArtworkID]=isnull(b.[ArtworkID],'')
+      ,[Article]=isnull(b.[Article],'')
+      ,[F_FabricPanelCode]=isnull(b.[F_FabricPanelCode],'')
+      ,[F_Refno]=isnull(b.[F_Refno],'')
+      ,[A_FabricPanelCode]=isnull(b.[A_FabricPanelCode],'')
+	  ,[A_Refno]=isnull(b.[A_Refno],'')
+	  ,[FabricFaceSide]=isnull(b.[FabricFaceSide],'')
+	  ,[PrintType]=isnull(b.[PrintType],'')
+	  ,[TestNo]=isnull(b.[TestNo],'')
+	  ,[TestResult]=isnull(b.[TestResult],'')
+      ,[Remark]=isnull(b.[Remark],'')
+      ,[AddName]=isnull(b.[AddName],'')
+      ,[AddDate]=b.[AddDate]
+      ,[EditName]=isnull(b.[EditName],'')
+	  ,[EditDate]=b.[EditDate]
+	  ,[SubstrateFormSendDate]=	b.[SubstrateFormSendDate]
+	  ,[FactoryID]=isnull(b.[FactoryID],'')
+	  ,[OrderID]=isnull(b.[OrderID],'')
+	  ,[IsA_FabricPanelCodeCanEmpty]=isnull(b.[IsA_FabricPanelCodeCanEmpty],0)
+from Production.dbo.Style_ArtworkTestDox a
+inner join Trade_To_Pms.dbo.Style_ArtworkTestDox b on b.Ukey = a.Ukey
+
+
+INSERT INTO [dbo].[Style_ArtworkTestDox]
+(	   [Ukey]
+      ,[StyleUkey]
+      ,[ArtworkTypeID]
+      ,[ArtworkID]
+      ,[Article]
+      ,[F_FabricPanelCode]
+      ,[F_Refno]
+      ,[A_FabricPanelCode]
+      ,[A_Refno]
+      ,[FabricFaceSide]
+      ,[PrintType]
+      ,[TestNo]
+      ,[TestResult]
+      ,[Remark]
+      ,[AddName]
+      ,[AddDate]
+      ,[EditName]
+      ,[EditDate]
+      ,[SubstrateFormSendDate]
+      ,[FactoryID]
+      ,[OrderID]
+      ,[IsA_FabricPanelCodeCanEmpty]
+)
+select
+	   a.[Ukey]
+      ,isnull(a.[StyleUkey],0)
+      ,isnull(a.[ArtworkTypeID],'')
+      ,isnull(a.[ArtworkID],'')
+      ,isnull(a.[Article],'')
+      ,isnull(a.[F_FabricPanelCode],'')
+      ,isnull(a.[F_Refno],'')
+      ,isnull(a.[A_FabricPanelCode],'')
+      ,isnull(a.[A_Refno],'')
+      ,isnull(a.[FabricFaceSide],'')
+      ,isnull(a.[PrintType],'')
+      ,isnull(a.[TestNo],'')
+      ,isnull(a.[TestResult],'')
+      ,isnull(a.[Remark],'')
+      ,isnull(a.[AddName],'')
+      ,a.[AddDate]
+      ,isnull(a.[EditName],'')
+      ,a.[EditDate]
+      ,a.[SubstrateFormSendDate]
+      ,isnull(a.[FactoryID],'')
+      ,isnull(a.[OrderID],'')
+      ,isnull(a.[IsA_FabricPanelCodeCanEmpty],0)
+from Trade_To_Pms.dbo.Style_ArtworkTestDox a
+left join Production.dbo.Style_ArtworkTestDox b on b.Ukey = a.Ukey
+where b.Ukey is null
 
 END
