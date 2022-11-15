@@ -2750,6 +2750,7 @@
     <Build Include="dbo\Tables\HandoverSpecialToolsUpload.sql" />
     <Build Include="dbo\Tables\HandoverATUpload.sql" />
     <Build Include="dbo\Tables\FinalPatternUpload.sql" />
+    <Build Include="dbo\Tables\Style_ArtworkTestDox.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
