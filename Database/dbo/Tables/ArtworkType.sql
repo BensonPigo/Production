@@ -26,8 +26,11 @@
     [PostSewingDays]  INT            DEFAULT ((0)) NULL,
     [IsPrintToCMP]    BIT            CONSTRAINT [DF_ArtworkType_IsPrintToCMP] DEFAULT ((1)) NULL,
     [IsLocalPurchase] BIT            CONSTRAINT [DF_ArtworkType_IsLocalPurchase] DEFAULT ((0)) NULL,
+    [IsImportTestDox] BIT            DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_ArtworkType] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

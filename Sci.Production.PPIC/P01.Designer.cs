@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.btnComboType = new Sci.Win.UI.Button();
             this.datePFETA = new Sci.Win.UI.DateBox();
             this.label3 = new Sci.Win.UI.Label();
             this.btnIntendedDeliveryDate = new Sci.Win.UI.Button();
@@ -301,7 +302,6 @@
             this.chkKeepPanels = new Sci.Win.UI.CheckBox();
             this.btnQtyChangeList = new Sci.Win.UI.Button();
             this.BtnBuyBack = new Sci.Win.UI.Button();
-            this.btnComboType = new Sci.Win.UI.Button();
             this.displayBuyBackReason = new Sci.Win.UI.DisplayBox();
             this.chkNonRevenue = new Sci.Win.UI.CheckBox();
             this.chkHangerPack = new Sci.Win.UI.CheckBox();
@@ -330,6 +330,7 @@
             this.checkOrganicCotton = new Sci.Win.UI.CheckBox();
             this.shapeContainer7 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.checkBoxDirectShip = new Sci.Win.UI.CheckBox();
+            this.btn_ArtworkTestDox = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -347,6 +348,7 @@
             // detailcont
             // 
             this.detailcont.Controls.Add(this.checkBoxDirectShip);
+            this.detailcont.Controls.Add(this.btn_ArtworkTestDox);
             this.detailcont.Controls.Add(this.checkOrganicCotton);
             this.detailcont.Controls.Add(this.displayConstruction);
             this.detailcont.Controls.Add(this.displayFabricType);
@@ -363,7 +365,6 @@
             this.detailcont.Controls.Add(this.chkHangerPack);
             this.detailcont.Controls.Add(this.chkNonRevenue);
             this.detailcont.Controls.Add(this.displayBuyBackReason);
-            this.detailcont.Controls.Add(this.btnComboType);
             this.detailcont.Controls.Add(this.BtnBuyBack);
             this.detailcont.Controls.Add(this.btnQtyChangeList);
             this.detailcont.Controls.Add(this.chkKeepPanels);
@@ -544,6 +545,7 @@
             // 
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.Controls.Add(this.btnComboType);
             this.tabPage1.Controls.Add(this.datePFETA);
             this.tabPage1.Controls.Add(this.label3);
             this.tabPage1.Controls.Add(this.btnIntendedDeliveryDate);
@@ -674,12 +676,22 @@
             this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.PcHandleText);
             this.tabPage1.Controls.Add(this.txttpeuser4);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(897, 395);
+            this.tabPage1.Size = new System.Drawing.Size(1000, 691);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
+            // 
+            // btnComboType
+            // 
+            this.btnComboType.Location = new System.Drawing.Point(6, 658);
+            this.btnComboType.Name = "btnComboType";
+            this.btnComboType.Size = new System.Drawing.Size(194, 27);
+            this.btnComboType.TabIndex = 239;
+            this.btnComboType.Text = "Combo Type";
+            this.btnComboType.UseVisualStyleBackColor = true;
+            this.btnComboType.Click += new System.EventHandler(this.BtnComboType_Click);
             // 
             // datePFETA
             // 
@@ -1899,7 +1911,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(990, 649);
+            this.shapeContainer2.Size = new System.Drawing.Size(994, 685);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -3403,16 +3415,6 @@
             this.BtnBuyBack.UseVisualStyleBackColor = true;
             this.BtnBuyBack.Click += new System.EventHandler(this.BtnBuyBack_Click);
             // 
-            // btnComboType
-            // 
-            this.btnComboType.Location = new System.Drawing.Point(798, 651);
-            this.btnComboType.Name = "btnComboType";
-            this.btnComboType.Size = new System.Drawing.Size(194, 27);
-            this.btnComboType.TabIndex = 238;
-            this.btnComboType.Text = "Combo Type";
-            this.btnComboType.UseVisualStyleBackColor = true;
-            this.btnComboType.Click += new System.EventHandler(this.BtnComboType_Click);
-            // 
             // displayBuyBackReason
             // 
             this.displayBuyBackReason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -3698,6 +3700,17 @@
             this.checkBoxDirectShip.TabIndex = 255;
             this.checkBoxDirectShip.Text = "Direct Ship";
             this.checkBoxDirectShip.UseVisualStyleBackColor = true;
+            // 
+            // btn_ArtworkTestDox
+            // 
+            this.btn_ArtworkTestDox.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btn_ArtworkTestDox.Location = new System.Drawing.Point(798, 651);
+            this.btn_ArtworkTestDox.Name = "btn_ArtworkTestDox";
+            this.btn_ArtworkTestDox.Size = new System.Drawing.Size(194, 27);
+            this.btn_ArtworkTestDox.TabIndex = 255;
+            this.btn_ArtworkTestDox.Text = "Artwork Test Dox";
+            this.btn_ArtworkTestDox.UseVisualStyleBackColor = true;
+            this.btn_ArtworkTestDox.Click += new System.EventHandler(this.btn_ArtworkTestDox_Click);
             // 
             // P01
             // 
@@ -4005,7 +4018,6 @@
         private Win.UI.CheckBox chkKeepPanels;
         private Win.UI.Button btnQtyChangeList;
         private Win.UI.Button BtnBuyBack;
-        private Win.UI.Button btnComboType;
         private Win.UI.DisplayBox displayBuyBackReason;
         private Win.UI.DateBox dateKpiEachConsCheck;
         private Win.UI.Label labelKpiEachConsCheck;
@@ -4032,5 +4044,7 @@
         private Win.UI.Label label3;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer7;
         private Win.UI.CheckBox checkBoxDirectShip;
+        private Win.UI.Button btn_ArtworkTestDox;
+        private Win.UI.Button btnComboType;
     }
 }
