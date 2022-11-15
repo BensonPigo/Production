@@ -1925,7 +1925,7 @@ BEGIN
 	if(@sewingline <> @beforesewingline)
 		delete @tempSimilarStyle
 
-	IF @factory <> @beforefactory or @sewingline <> @beforesewingline or (@StyleID <> @beforeStyleID and @beforeStyleIDExcludeHoliday not like '%' + @StyleID + '%')
+	IF @factory <> @beforefactory or @sewingline <> @beforesewingline or @StyleID <> @beforeStyleID
 	Begin
 		if(@beforeStyleIDExcludeHoliday not like '%' + @StyleID + '%' and @sewingline = @beforesewingline)
             set @IsFirst = 1
