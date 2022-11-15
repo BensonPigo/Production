@@ -172,7 +172,6 @@ BEGIN
 				from PackingList p, PackingList_Detail pd 	
 				where p.ID = pd.ID 	
 				and p.PulloutID <> ''	
-				and p.PulloutDate is not null -- 有效出貨數一定有PulloutDate, 且Pullout Revise 取Packing.ShipQty也是用PulloutDate 串出數量
 				and pd.OrderID = Orders.ID	
 	) GetPulloutData -- 出貨數量, PMS此處不用Function, 直接加總
 	
