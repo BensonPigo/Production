@@ -554,7 +554,7 @@ where id = @id and CTNStartNo = @ctnStartNo;";
                         {
                             if (item.Length >= 13)
                             {
-                                string sciCtnNo = MyUtility.GetValue.Lookup($"select SCICtnNo from PackingList_Detail with (nolock) where (ID = '{item.Substring(0, 13)}' and CTNStartNo = '{item.Substring(13)}') or SCICtnNo = '{item.GetPackScanContent()}'");
+                                string sciCtnNo = MyUtility.GetValue.Lookup($"select SCICtnNo from PackingList_Detail with (nolock) where (ID = '{item.Substring(0, 13)}' and CTNStartNo = '{item.Substring(13).TrimStart('^')}') or SCICtnNo = '{item.GetPackScanContent()}'");
                                 listBarcodeImport.Add(sciCtnNo);
                             }
                         }

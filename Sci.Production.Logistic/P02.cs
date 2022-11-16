@@ -285,7 +285,7 @@ where 1=0";
                                 dr["ID"] = string.Empty;
                                 dr["selected"] = 0;
                                 string packingListID = sl[2].Substring(0, 13);
-                                string ctnStartNo = sl[2].Substring(13);
+                                string ctnStartNo = sl[2].Substring(13).TrimStart('^');
                                 dr["ClogLocationId"] = sl[1];
 
                                 string sqlCmd = string.Format(

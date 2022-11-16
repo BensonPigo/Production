@@ -211,7 +211,7 @@ order by pld.ID,pld.CTNStartNo
                         if (sl[1].Length >= 14)
                         {
                             packinglistID = sl[1].Substring(0, 13);
-                            cTNStartNo = sl[1].Substring(13).ToString();
+                            cTNStartNo = sl[1].Substring(13).ToString().TrimStart('^');
                         }
 
                         dr["custCtn"] = custCtn;

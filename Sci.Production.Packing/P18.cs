@@ -289,7 +289,7 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
             if (this.txtScanCartonSP.Text.Length > 13)
             {
                 this.PackingListID = this.txtScanCartonSP.Text.Substring(0, 13);
-                this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13);
+                this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13).TrimStart('^');
             }
 
             this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串
@@ -1585,7 +1585,7 @@ drop table #tmpUpdatedID
             if (this.txtScanCartonSP.Text.Length > 13)
             {
                 this.PackingListID = this.txtScanCartonSP.Text.Substring(0, 13);
-                this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13);
+                this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13).TrimStart('^');
             }
 
             this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串

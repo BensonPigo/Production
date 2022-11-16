@@ -204,7 +204,7 @@ namespace Sci.Production.Logistic
                                                                                       where (ID = '{0}' and CTNStartNo = '{1}' or SCICtnNo = '{2}')
                                                                                       and  CTNQty = 1",
                                     sl[1].Substring(0, 13),
-                                    sl[1].Substring(13),
+                                    sl[1].Substring(13).TrimStart('^'),
                                     sl[1].GetPackScanContent());
                                 if (MyUtility.Check.Seek(sqlCmd, out seekPacklistData))
                                 {

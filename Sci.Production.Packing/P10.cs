@@ -222,7 +222,7 @@ ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
                                     if (sl.Count > 1 && sl[1].Length > 13)
                                     {
                                         sqlParameters.Add(new SqlParameter("@ID", sl[1].Substring(0, 13)));
-                                        sqlParameters.Add(new SqlParameter("@CTNStartNo", sl[1].Substring(13, sl[1].Length - 13)));
+                                        sqlParameters.Add(new SqlParameter("@CTNStartNo", sl[1].Substring(13, sl[1].Length - 13).TrimStart('^')));
                                         sqlParameters.Add(new SqlParameter("@SCICtnNo", sl[1].GetPackScanContent()));
                                         sqlCmd = @"
 select  pd.OrderID

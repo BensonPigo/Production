@@ -138,7 +138,7 @@ left join PackingError pe with (nolock) on x.PackingErrorID=pe.ID and pe.Type='T
             }
 
             string packID = scannedBarcode.Substring(0, 13);
-            string cartonStartNo = scannedBarcode.Substring(13);
+            string cartonStartNo = scannedBarcode.Substring(13).TrimStart('^');
 
             foreach (DataGridViewRow dr in this.gridPackErrTransfer.Rows)
             {
@@ -201,7 +201,7 @@ left join PackingError pe with (nolock) on x.PackingErrorID=pe.ID and pe.Type='T
                             }
 
                             string packID = splitResult[2].Substring(0, 13).TrimEnd();
-                            string cartonStartNo = splitResult[2].Substring(13).TrimEnd();
+                            string cartonStartNo = splitResult[2].Substring(13).TrimEnd().TrimStart('^');
 
                             CheckPackResult checkPackResult = this.CheckPackID(packID, cartonStartNo, false);
 

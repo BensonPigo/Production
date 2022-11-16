@@ -359,7 +359,7 @@ from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c
                                 dr["ID"] = string.Empty;
                                 dr["selected"] = 0;
                                 string packingListID = sl[1].Substring(0, 13);
-                                string ctnStartNo = sl[1].Substring(13);
+                                string ctnStartNo = sl[1].Substring(13).TrimStart('^');
                                 string sqlCmd = string.Format(
                                     @"
 select 

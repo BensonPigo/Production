@@ -49,7 +49,7 @@ namespace Sci.Production.Sewing
             if (cartonsBarcode.Length > 13)
             {
                 packingListID = cartonsBarcode.Substring(0, 13);
-                cTNStarNo = cartonsBarcode.Substring(13, cartonsBarcode.Length - 13);
+                cTNStarNo = cartonsBarcode.Substring(13, cartonsBarcode.Length - 13).TrimStart('^');
             }
 
             List<SqlParameter> sqlParameters = new List<SqlParameter>();
