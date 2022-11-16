@@ -352,6 +352,11 @@ namespace Sci.Production.PPIC
                                 worksheet.Cells[intRowsStart + r, 1] = line;
                             }
 
+                            Excel.Range rangeStart = worksheet.Cells[intRowsStart, 3];
+                            Excel.Range rangeEnd = worksheet.Cells[intRowsStart + 4, monthDays + 3];
+                            rngToInsert = (Excel.Range)worksheet.get_Range(rangeStart, rangeEnd);
+                            rngToInsert.Cells.Interior.Color = Color.Black;
+
                             worksheet.Cells[intRowsStart, 2] = "Detail";
                             worksheet.Cells[intRowsStart + 1, 2] = "Std Q";
                             worksheet.Cells[intRowsStart + 2, 2] = "PPH";
