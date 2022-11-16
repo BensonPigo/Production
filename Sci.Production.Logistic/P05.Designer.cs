@@ -28,11 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.btnToDRExcel = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.btnQuery = new Sci.Win.UI.Button();
             this.txtSPNo = new Sci.Win.UI.TextBox();
@@ -45,8 +44,7 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridReceiveDate = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.btnToDRExcel = new Sci.Win.UI.Button();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -86,6 +84,17 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(719, 80);
             this.panel3.TabIndex = 3;
+            // 
+            // btnToDRExcel
+            // 
+            this.btnToDRExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToDRExcel.Location = new System.Drawing.Point(500, 45);
+            this.btnToDRExcel.Name = "btnToDRExcel";
+            this.btnToDRExcel.Size = new System.Drawing.Size(120, 30);
+            this.btnToDRExcel.TabIndex = 8;
+            this.btnToDRExcel.Text = "To DR(For PH)";
+            this.btnToDRExcel.UseVisualStyleBackColor = true;
+            this.btnToDRExcel.Click += new System.EventHandler(this.BtnToDRExcel_Click);
             // 
             // btnToExcel
             // 
@@ -218,14 +227,6 @@
             this.gridReceiveDate.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridReceiveDate.Location = new System.Drawing.Point(0, 0);
             this.gridReceiveDate.Name = "gridReceiveDate";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReceiveDate.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridReceiveDate.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridReceiveDate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReceiveDate.RowTemplate.Height = 24;
@@ -234,17 +235,6 @@
             this.gridReceiveDate.Size = new System.Drawing.Size(719, 327);
             this.gridReceiveDate.TabIndex = 0;
             this.gridReceiveDate.TabStop = false;
-            // 
-            // btnToDRExcel
-            // 
-            this.btnToDRExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnToDRExcel.Location = new System.Drawing.Point(500, 45);
-            this.btnToDRExcel.Name = "btnToDRExcel";
-            this.btnToDRExcel.Size = new System.Drawing.Size(120, 30);
-            this.btnToDRExcel.TabIndex = 8;
-            this.btnToDRExcel.Text = "To DR(For PH)";
-            this.btnToDRExcel.UseVisualStyleBackColor = true;
-            this.btnToDRExcel.Click += new System.EventHandler(this.BtnToDRExcel_Click);
             // 
             // P05
             // 
@@ -256,6 +246,7 @@
             this.Controls.Add(this.panel1);
             this.EditMode = true;
             this.Name = "P05";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P05. Query For Clog Receive Record";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel2, 0);
