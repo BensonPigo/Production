@@ -228,6 +228,9 @@ where T.BuyerDelivery between @SDate and @EDate
 
 	drop table #final
 
+delete P_OustandingPO
+where BuyerDelivery > @EDate
+
 update b
     set b.TransferDate = getdate()
 from BITableInfo b
