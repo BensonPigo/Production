@@ -127,7 +127,7 @@ SET @ErrorMessage = ''
 BEGIN TRY
 	set @Stime = getdate()
 	set @StartDate = CAST(DATEADD(day,-150, GETDATE()) AS date)
-	set @EndDate   = CAST(DATEADD(day,30, GETDATE()) AS date)
+	set @EndDate   = CAST(DATEADD(day,60, GETDATE()) AS date)
 	execute [dbo].[P_ImportOustandingPO_Fty] @StartDate, @EndDate
 	--DECLARE @BuyerDelivery_s as Date = '2020/01/01'
 	--DECLARE @BuyerDelivery_e as Date = '2020/07/31'
