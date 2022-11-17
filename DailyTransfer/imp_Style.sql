@@ -139,6 +139,8 @@ a.Ukey	= b.Ukey
 ,a.DevRegion = b.DevRegion
 ,a.DevOption = b.DevOption
 ,a.Teamwear = b.Teamwear
+,a.BrandGender = isnull(b.BrandGender,'')
+,a.Location = isnull(b.Location,'')
 from Production.dbo.Style as a 
 inner join Trade_To_Pms.dbo.Style as b ON a.ID	= b.ID AND a.BrandID	= b.BrandID AND a.SeasonID	= b.SeasonID
 
@@ -226,6 +228,8 @@ ID
 ,DevRegion
 ,DevOption
 ,Teamwear
+,BrandGender
+,Location
 )
 output	inserted.ID,
 		inserted.SeasonID,
@@ -301,6 +305,8 @@ select
 ,b.DevRegion
 ,b.DevOption
 ,b.Teamwear
+,isnull(b.BrandGender,'')
+,isnull(b.Location,'')
 from Trade_To_Pms.dbo.Style as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.ID=b.ID and a.BrandID=b.BrandID and a.SeasonID=b.SeasonID and a.LocalStyle=1)
 AND not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.Ukey=b.Ukey )
@@ -2327,5 +2333,48 @@ select
 from Trade_To_Pms.dbo.Style_ArtworkTestDox a
 left join Production.dbo.Style_ArtworkTestDox b on b.Ukey = a.Ukey
 where b.Ukey is null
+
+------------Style_ArtworkTestDox
+----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
+Delete Production.dbo.Style_CustOrderSize
+from Production.dbo.Style_CustOrderSize as a 
+INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
+left join Trade_To_Pms.dbo.Style_CustOrderSize as b
+on a.StyleUkey = b.StyleUkey
+where b.StyleUkey is null
+
+UPDATE a
+   SET [StyleUkey]=isnull(b.[StyleUkey],0)
+	  ,[SizeCode]=isnull(b.[SizeCode],'')
+	  ,[SizeSpec]=isnull(b.[SizeSpec],'')
+      ,[AddName]=isnull(b.[AddName],'')
+      ,[AddDate]=b.[AddDate]
+      ,[EditName]=isnull(b.[EditName],'')
+	  ,[EditDate]=b.[EditDate]
+from Production.dbo.Style_CustOrderSize a
+inner join Trade_To_Pms.dbo.Style_CustOrderSize b on b.StyleUkey = a.StyleUkey
+
+INSERT INTO [dbo].[Style_CustOrderSize]
+(	  
+      [StyleUkey]
+	  ,[SizeCode]
+	  ,[SizeSpec]
+      ,[AddName]
+      ,[AddDate]
+      ,[EditName]
+      ,[EditDate]
+)
+select	  
+      isnull(a.[StyleUkey],0)
+	  ,isnull(a.[SizeCode],'')
+	  ,isnull(a.[SizeSpec],'')
+      ,isnull(a.[AddName],'')
+      ,a.[AddDate]
+      ,isnull(a.[EditName],'')
+      ,a.[EditDate]
+from Trade_To_Pms.dbo.Style_CustOrderSize a
+left join Production.dbo.Style_CustOrderSize b on b.StyleUkey = a.StyleUkey
+where b.StyleUkey is null
 
 END
