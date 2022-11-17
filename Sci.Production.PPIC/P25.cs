@@ -16,6 +16,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             InitializeComponent();
+            this.EditMode = true;
         }
 
         protected override void OnFormLoaded()
@@ -26,7 +27,7 @@ namespace Sci.Production.PPIC
             this.grid.IsEditingReadOnly = false;
             this.grid.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.grid)
-                .Text("Brand", header: "Brand", width: Widths.Auto(),iseditingreadonly: true)
+                .Text("BrandID", header: "Brand", width: Widths.Auto(),iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("SeasonID", header: "Season", width: Widths.Auto(), iseditingreadonly: true)
@@ -34,7 +35,7 @@ namespace Sci.Production.PPIC
                 .Date("SCIDelivery", header: "SCIDelivery", width: Widths.Auto(), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "BuyerDelivery", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("FactoryID", header: "FactoryID", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("PadPrintGroup", header: "Region", width: Widths.Auto(), iseditingreadonly: true)
+                .Text("Region", header: "Region", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("SizePage", header: "Size Page", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("BrandGender", header: "Gender", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("SizeCode", header: "Sourcing Size", width: Widths.Auto(), iseditingreadonly: true)
@@ -61,13 +62,8 @@ namespace Sci.Production.PPIC
                     return;
                 }
 
-                if (true)
-                {
-
-                }
-
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
-                var frm = new Sci.Trade.Mms.P53_PadPrintInUse(dr);
+                var frm = new Sci.Production.PPIC.P25_PadPrintInUse(dr);
                 frm.ShowDialog();
             };
             return settings;
@@ -93,7 +89,7 @@ namespace Sci.Production.PPIC
         {
             this.ShowWaitMessage("Data Loading...");
             string sqlcmd = $@"
-select o.BrandID
+select distinct o.BrandID
 ,[OrderID] = o.ID
 ,o.StyleID
 ,o.SeasonID
@@ -161,7 +157,7 @@ where 1=1
 
             if (!MyUtility.Check.Empty(this.dateSCIDel.Value1) || !MyUtility.Check.Empty(this.dateSCIDel.Value2))
             {
-                sqlcmd += $" and o.SciDelivery between '{this.dateSCIDel.Value1}' and '{this.dateSCIDel.Value2}'";
+                sqlcmd += $" and o.SciDelivery between '{((DateTime)this.dateSCIDel.Value1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateSCIDel.Value2).ToString("yyyy/MM/dd")}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtstyle.Text))

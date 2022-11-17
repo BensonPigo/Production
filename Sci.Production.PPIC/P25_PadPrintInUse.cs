@@ -1,4 +1,5 @@
 ﻿using Ict;
+using Ict.Win;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,28 @@ namespace Sci.Production.PPIC
         public P25_PadPrintInUse(DataRow dr)
         {
             InitializeComponent();
+            this.EditMode = true;
             this.dataRow = dr;
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            this.Helper.Controls.Grid.Generator(this.grid)
+                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("Refno", header: "Refno", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("MoldID", header: "Mold#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("Season", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("LabelFor", header: "Label For", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("Gender", header: "Gender", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("AgeGroup", header: "AgeGroup", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("Part", header: "Part", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("Region", header: "Region", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("SizePage", header: "Size Page", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("SourceSize", header: "Source Size", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("CustomerSize", header: "Cust Order Size", width: Widths.AnsiChars(5), iseditingreadonly: true);
+            this.Find();
+            this.grid.DataSource = this.tmpFindNow;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -37,7 +59,8 @@ namespace Sci.Production.PPIC
         {
             this.ShowWaitMessage("Data Loading...");
             string sqlcmd = $@"
-select p.BrandID
+select distinct
+p.BrandID
 ,pm.Refno
 ,pm.MoldID
 ,pm.Season
@@ -55,7 +78,7 @@ left join PadPrint_Mold_Spec pms on pms.PadPrint_ukey = pm.PadPrint_ukey
 where 1=1
 and p.BrandID = '{this.dataRow["BrandID"]}'
 and pm.Region = '{this.dataRow["Region"]}'
-and pm.Refno  = '{this.dataRow["Refno]"]}'
+and pm.Refno  = '{this.dataRow["Refno"]}'
 ";
             if (this.chkSizePage.Checked)
             {
@@ -80,40 +103,40 @@ and pm.Refno  = '{this.dataRow["Refno]"]}'
 
             if (this.chkGender.Checked)
             {
-                string ID = MyUtility.GetValue.Lookup($@"select Top 1 ID from DropDownList where Type = 'PadPrint_Gender' and Name = '{this.dataRow["BrandGender"].ToString()}'");
-                if (ID == null)
+                string iD = MyUtility.GetValue.Lookup($@"select Top 1 ID from DropDownList where Type = 'PadPrint_Gender' and Name = '{this.dataRow["BrandGender"]}'");
+                if (iD == null)
                 {
-                    ID = string.Empty;
+                    iD = string.Empty;
                 }
 
-                sqlcmd += $" and pm.Gender = '{ID}'";
+                sqlcmd += $" and pm.Gender = '{iD}'";
             }
 
             if (this.chkAgeGroup.Checked)
             {
-                string ID = MyUtility.GetValue.Lookup($@"
+                string iD = MyUtility.GetValue.Lookup($@"
 select Top 1 ID from DropDownList where Type = 'PadPrint_AgeGroup' and Name = '{this.dataRow["AgeGroup"]}'");
-                if (ID == null)
+                if (iD == null)
                 {
-                    ID = string.Empty;
+                    iD = string.Empty;
                 }
 
-                sqlcmd += $" and pm.AgeGroup = '{ID}'";
+                sqlcmd += $" and pm.AgeGroup = '{iD}'";
             }
 
             if (this.chkPart.Checked)
             {
-                string ID = MyUtility.GetValue.Lookup($@"
+                string iD = MyUtility.GetValue.Lookup($@"
 select top 1 d.ID 
 from DropDownList d
 Left join DropDownList dd on dd.Type = 'Location' and dd.id = '{this.dataRow["Location"]}'
 where d.Type = 'PadPrint_Part' and d.Name = dd.Name");
-                if (ID == null)
+                if (iD == null)
                 {
-                    ID = string.Empty;
+                    iD = string.Empty;
                 }
 
-                sqlcmd += $" and pm.Part  = '{ID}'";
+                sqlcmd += $" and pm.Part  = '{iD}'";
             }
 
             if (this.chkCustOrderSize.Checked)
