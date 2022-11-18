@@ -300,6 +300,11 @@ where fwd.UKey ='{this.CurrentMaintain["ForwarderWhse_DetailUKey"]}'", out DataR
                 this.txtTerminalWhse.Text = dr["WhseCode"].ToString();
                 this.txtTerminalWhseName.Text = dr["WhseName"].ToString();
             }
+            else
+            {
+                this.txtTerminalWhse.Text = string.Empty;
+                this.txtTerminalWhseName.Text = string.Empty;
+            }
 
             this.displayBoxDeclarationID.Text = MyUtility.GetValue.Lookup("ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "VNExportDeclaration", "INVNo");
             this.displayBoxCustomsNo.Text = MyUtility.GetValue.Lookup("DeclareNo", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "VNExportDeclaration", "INVNo");
