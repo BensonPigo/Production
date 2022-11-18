@@ -28,10 +28,11 @@ namespace Sci.Production.PPIC
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            this.grid.DataSource = this.listControlBindingSource1.DataSource;
             this.Helper.Controls.Grid.Generator(this.grid)
-                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("Refno", header: "Refno", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Text("MoldID", header: "Mold#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("Refno", header: "Refno", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("MoldID", header: "Mold#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Season", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("LabelFor", header: "Label For", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Gender", header: "Gender", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -42,7 +43,6 @@ namespace Sci.Production.PPIC
                 .Text("SourceSize", header: "Source Size", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("CustomerSize", header: "Cust Order Size", width: Widths.AnsiChars(5), iseditingreadonly: true);
             this.Find();
-            this.grid.DataSource = this.tmpFindNow;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -64,7 +64,9 @@ p.BrandID
 ,pm.Refno
 ,pm.MoldID
 ,pm.Season
-,pm.LabelFor
+,[LabelFor] = case pm.LabelFor 
+				when 'O' then 'One Asia' 
+				when 'E' then 'EMEA' else pm.LabelFor end
 ,pm.Gender
 ,pm.AgeGroup
 ,pm.Part
@@ -74,11 +76,12 @@ p.BrandID
 ,pms.CustomerSize
 from PadPrint p
 left join PadPrint_Mold pm on p.Ukey = pm.PadPrint_ukey
-left join PadPrint_Mold_Spec pms on pms.PadPrint_ukey = pm.PadPrint_ukey
+left join PadPrint_Mold_Spec pms on pms.PadPrint_ukey = pm.PadPrint_ukey and pm.MoldID = pms.MoldID 
 where 1=1
+and p.junk = 0
 and p.BrandID = '{this.dataRow["BrandID"]}'
 and pm.Region = '{this.dataRow["Region"]}'
-and pm.Refno  = '{this.dataRow["Refno"]}'
+and pm.Refno  = '{this.dataRow["Refno"].ToString().Replace("-PAD PRINT", string.Empty)}'
 ";
             if (this.chkSizePage.Checked)
             {
@@ -151,7 +154,7 @@ where d.Type = 'PadPrint_Part' and d.Name = dd.Name");
             }
 
             this.listControlBindingSource1.DataSource = gridData;
-            this.grid.AutoResizeColumns();
+            this.grid.DataSource = this.listControlBindingSource1.DataSource;
             this.HideWaitMessage();
         }
     }

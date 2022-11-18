@@ -32,22 +32,23 @@ namespace Sci.Production.PPIC
                 .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("SeasonID", header: "Season", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("Category", header: "Category", width: Widths.Auto(), iseditingreadonly: true)
-                .Date("SCIDelivery", header: "SCIDelivery", width: Widths.Auto(), iseditingreadonly: true)
-                .Date("BuyerDelivery", header: "BuyerDelivery", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("FactoryID", header: "FactoryID", width: Widths.Auto(), iseditingreadonly: true)
+                .Date("SCIDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditingreadonly: true)
+                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditingreadonly: true)
+                .Text("FactoryID", header: "Factory", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("Region", header: "Region", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("SizePage", header: "Size Page", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("BrandGender", header: "Gender", width: Widths.Auto(), iseditingreadonly: true)
+                .Text("Refno", header: "Refno", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("SizeCode", header: "Sourcing Size", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("SizeSpec", header: "CustOrderSize", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("Location", header: "Location", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("MoldRef", header: "Mold#Refno", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("LabelFor ", header: "Label For", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("AgeGroup ", header: "Age Group", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("SuppID ", header: "SuppID", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("MainSize ", header: "Main Size", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("SizeSpec ", header: "SizeSpec", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("Remark ", header: "Remark", width: Widths.Auto(), iseditingreadonly: true)
+                .Text("LabelFor", header: "Label For", width: Widths.Auto(), iseditingreadonly: true)
+                .Text("AgeGroup", header: "Age Group", width: Widths.Auto(), iseditingreadonly: true)
+                .Text("SuppID", header: "Supplier", width: Widths.Auto(), iseditingreadonly: true)
+                .Text("MainSize", header: "Main Size", width: Widths.Auto(), iseditingreadonly: true)
+                .Text("SizeSpec", header: "SizeSpec", width: Widths.Auto(), iseditingreadonly: true)
+                .Text("Remark", header: "Remark", width: Widths.Auto(), iseditingreadonly: true)
                 .Image("...", header: "   ", image: Sci.Properties.Resources.WZLOCATE, settings: this.ColButtonSettings())
                 ;
         }
@@ -122,7 +123,7 @@ select distinct o.BrandID
 from orders o
 left join Factory f on f.ID = o.FactoryID
 left join Style s on s.Ukey = o.StyleUkey
-left join Order_QtyShip_Detail oqs on oqs.Id = o.ID
+inner join Order_QtyShip_Detail oqs on oqs.Id = o.ID and o.Qty > 0
 left join Style_CustOrderSize sco on sco.StyleUkey = o.StyleUkey
 left join Order_BOA ob on ob.Id = o.POID and ob.Refno like '%PAD PRINT%'
 left join Brand_SizeCode bsc on bsc.BrandID = o.BrandID and bsc.SizeCode = oqs.SizeCode
@@ -136,7 +137,7 @@ left join (
 )dd2 on dd2.LocationID = (select top 1 Location from Style_Location sl where sl.StyleUkey = s.Ukey)
 left join DropDownList dd3 on dd3.ID = bsc.AgeGroupID and dd3.Type = 'PadPrint_AgeGroup'
 left join PadPrint p on o.BrandID = p.BrandID and p.Junk = 0
-left join PadPrint_Mold pm on pm.PadPrint_ukey = p.Ukey
+inner join PadPrint_Mold pm on pm.PadPrint_ukey = p.Ukey
 	and pm.Region = f.PadPrintGroup
 	and pm.Refno = SUBSTRING(ob.Refno,0,CHARINDEX('-',ob.refno))
 	and pm.Gender   = (case when pm.LabelFor = 'O' then dd1.ID else pm.Gender end)
@@ -147,38 +148,42 @@ left join PadPrint_Mold_Spec pms on pms.PadPrint_ukey = pm.PadPrint_ukey
 	and pms.SourceSize = oqs.SizeCode
 	and pms.SizePage = s.SizePage
 	and isnull(pms.CustomerSize,'') = (case when pm.LabelFor = 'O' then sco.SizeSpec else  isnull(pms.CustomerSize,'') end)
-left join DropDownList dd4 on dd4.ID = pm.MainSize and dd4.Type = 'PadPrint_ MainSize'
+left join DropDownList dd4 on dd4.ID = pm.MainSize and dd4.Type = 'PadPrint_MainSize'
 where 1=1
+and o.Category in ('S','B') 
+and o.junk = 0
 ";
             if (!MyUtility.Check.Empty(this.txtbrand.Text))
             {
-                sqlcmd += $" and o.BrandID = '{this.txtbrand.Text}'";
+                sqlcmd += Environment.NewLine + $" and o.BrandID = '{this.txtbrand.Text}'";
             }
 
             if (!MyUtility.Check.Empty(this.dateSCIDel.Value1) || !MyUtility.Check.Empty(this.dateSCIDel.Value2))
             {
-                sqlcmd += $" and o.SciDelivery between '{((DateTime)this.dateSCIDel.Value1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateSCIDel.Value2).ToString("yyyy/MM/dd")}'";
+                sqlcmd += Environment.NewLine + $" and o.SciDelivery between '{((DateTime)this.dateSCIDel.Value1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateSCIDel.Value2).ToString("yyyy/MM/dd")}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtstyle.Text))
             {
-                sqlcmd += $" and o.StyleID = '{this.txtstyle.Text}'";
+                sqlcmd += Environment.NewLine + $" and o.StyleID = '{this.txtstyle.Text}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtfactory.Text))
             {
-                sqlcmd += $" and o.FactoryID = '{this.txtfactory.Text}'";
+                sqlcmd += Environment.NewLine + $" and o.FactoryID = '{this.txtfactory.Text}'";
             }
 
-            if (!MyUtility.Check.Empty(this.txtSMR.Text))
+            if (!MyUtility.Check.Empty(this.txtSMR.TextBox1Binding))
             {
-                sqlcmd += $" and o.SMR = '{this.txtSMR.Text}'";
+                sqlcmd += Environment.NewLine + $" and o.SMR = '{this.txtSMR.Text}'";
             }
 
-            if (!MyUtility.Check.Empty(this.txtHandle.Text))
+            if (!MyUtility.Check.Empty(this.txtHandle.TextBox1Binding))
             {
-                sqlcmd += $" and o.MRHandle = '{this.txtHandle.Text}'";
+                sqlcmd += Environment.NewLine + $" and o.MRHandle = '{this.txtHandle.Text}'";
             }
+
+            sqlcmd += Environment.NewLine + " order by o.ID,ob.Refno,oqs.SizeCode";
 
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable gridData);
             if (!result)
@@ -186,7 +191,15 @@ where 1=1
                 MyUtility.Msg.WarningBox("Query data fail.\r\n" + result.ToString());
             }
 
+            if (gridData.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("No data found!!");
+                this.HideWaitMessage();
+                return;
+            }
+
             this.listControlBindingSource1.DataSource = gridData;
+            this.grid.DataSource = this.listControlBindingSource1.DataSource;
             this.grid.AutoResizeColumns();
             this.HideWaitMessage();
         }
@@ -194,7 +207,6 @@ where 1=1
         private void BtnToExcel_Click(object sender, EventArgs e)
         {
             DataTable excelTable = (DataTable)this.listControlBindingSource1.DataSource;
-            DataTable printDT = excelTable.Clone();
 
             // 判斷是否有資料
             if (excelTable == null || excelTable.Rows.Count <= 0)
@@ -206,7 +218,7 @@ where 1=1
             this.ShowWaitMessage("Excel Processing...");
 
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_P25.xltx"); // 預先開啟excel app
-            MyUtility.Excel.CopyToXls(printDT, string.Empty, "PPIC_P25.xltx", 2, false, null, objApp); // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(excelTable, string.Empty, "PPIC_P25.xltx", 1, false, null, objApp); // 將datatable copy to excel
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             #region Save & Show Excel

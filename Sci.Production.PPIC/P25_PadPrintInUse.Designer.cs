@@ -33,15 +33,15 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.grid = new Sci.Win.UI.Grid();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.lab1 = new Sci.Win.UI.Label();
-            this.btnFindNow = new Sci.Win.UI.Button();
+            this.chkCustOrderSize = new Sci.Win.UI.CheckBox();
+            this.chkPart = new Sci.Win.UI.CheckBox();
             this.chkAgeGroup = new Sci.Win.UI.CheckBox();
             this.chkSizePage = new Sci.Win.UI.CheckBox();
             this.chkGender = new Sci.Win.UI.CheckBox();
             this.chkSourceSize = new Sci.Win.UI.CheckBox();
+            this.lab1 = new Sci.Win.UI.Label();
+            this.btnFindNow = new Sci.Win.UI.Button();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.chkCustOrderSize = new Sci.Win.UI.CheckBox();
-            this.chkPart = new Sci.Win.UI.CheckBox();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
@@ -77,6 +77,7 @@
             this.grid.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid.DataSource = this.listControlBindingSource1;
             this.grid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
@@ -109,24 +110,29 @@
             this.panel3.Size = new System.Drawing.Size(1064, 57);
             this.panel3.TabIndex = 9;
             // 
-            // lab1
+            // chkCustOrderSize
             // 
-            this.lab1.Location = new System.Drawing.Point(9, 15);
-            this.lab1.Name = "lab1";
-            this.lab1.Size = new System.Drawing.Size(123, 23);
-            this.lab1.TabIndex = 8;
-            this.lab1.Text = "Search Condition";
+            this.chkCustOrderSize.AutoSize = true;
+            this.chkCustOrderSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkCustOrderSize.IsSupportEditMode = false;
+            this.chkCustOrderSize.Location = new System.Drawing.Point(609, 17);
+            this.chkCustOrderSize.Name = "chkCustOrderSize";
+            this.chkCustOrderSize.Size = new System.Drawing.Size(119, 21);
+            this.chkCustOrderSize.TabIndex = 246;
+            this.chkCustOrderSize.Text = "CustOrderSize";
+            this.chkCustOrderSize.UseVisualStyleBackColor = true;
             // 
-            // btnFindNow
+            // chkPart
             // 
-            this.btnFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnFindNow.Location = new System.Drawing.Point(947, 8);
-            this.btnFindNow.Name = "btnFindNow";
-            this.btnFindNow.Size = new System.Drawing.Size(105, 30);
-            this.btnFindNow.TabIndex = 6;
-            this.btnFindNow.Text = "Find Now";
-            this.btnFindNow.UseVisualStyleBackColor = true;
-            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
+            this.chkPart.AutoSize = true;
+            this.chkPart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkPart.IsSupportEditMode = false;
+            this.chkPart.Location = new System.Drawing.Point(550, 17);
+            this.chkPart.Name = "chkPart";
+            this.chkPart.Size = new System.Drawing.Size(53, 21);
+            this.chkPart.TabIndex = 245;
+            this.chkPart.Text = "Part";
+            this.chkPart.UseVisualStyleBackColor = true;
             // 
             // chkAgeGroup
             // 
@@ -180,6 +186,25 @@
             this.chkSourceSize.Text = "SourceSize";
             this.chkSourceSize.UseVisualStyleBackColor = true;
             // 
+            // lab1
+            // 
+            this.lab1.Location = new System.Drawing.Point(9, 15);
+            this.lab1.Name = "lab1";
+            this.lab1.Size = new System.Drawing.Size(123, 23);
+            this.lab1.TabIndex = 8;
+            this.lab1.Text = "Search Condition";
+            // 
+            // btnFindNow
+            // 
+            this.btnFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFindNow.Location = new System.Drawing.Point(947, 8);
+            this.btnFindNow.Name = "btnFindNow";
+            this.btnFindNow.Size = new System.Drawing.Size(105, 30);
+            this.btnFindNow.TabIndex = 6;
+            this.btnFindNow.Text = "Find Now";
+            this.btnFindNow.UseVisualStyleBackColor = true;
+            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
+            // 
             // shapeContainer1
             // 
             this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
@@ -188,30 +213,6 @@
             this.shapeContainer1.Size = new System.Drawing.Size(1000, 691);
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
-            // 
-            // chkCustOrderSize
-            // 
-            this.chkCustOrderSize.AutoSize = true;
-            this.chkCustOrderSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkCustOrderSize.IsSupportEditMode = false;
-            this.chkCustOrderSize.Location = new System.Drawing.Point(609, 17);
-            this.chkCustOrderSize.Name = "chkCustOrderSize";
-            this.chkCustOrderSize.Size = new System.Drawing.Size(119, 21);
-            this.chkCustOrderSize.TabIndex = 246;
-            this.chkCustOrderSize.Text = "CustOrderSize";
-            this.chkCustOrderSize.UseVisualStyleBackColor = true;
-            // 
-            // chkPart
-            // 
-            this.chkPart.AutoSize = true;
-            this.chkPart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkPart.IsSupportEditMode = false;
-            this.chkPart.Location = new System.Drawing.Point(550, 17);
-            this.chkPart.Name = "chkPart";
-            this.chkPart.Size = new System.Drawing.Size(53, 21);
-            this.chkPart.TabIndex = 245;
-            this.chkPart.Text = "Part";
-            this.chkPart.UseVisualStyleBackColor = true;
             // 
             // P25_PadPrintInUse
             // 
