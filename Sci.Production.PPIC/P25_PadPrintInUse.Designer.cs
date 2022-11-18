@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             this.panel4 = new Sci.Win.UI.Panel();
             this.btnClose = new Sci.Win.UI.Button();
-            this.grid = new Sci.Win.UI.Grid();
             this.panel3 = new Sci.Win.UI.Panel();
             this.chkCustOrderSize = new Sci.Win.UI.CheckBox();
             this.chkPart = new Sci.Win.UI.CheckBox();
@@ -43,10 +42,11 @@
             this.btnFindNow = new Sci.Win.UI.Button();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.grid = new Sci.Win.UI.Grid();
             this.panel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             this.SuspendLayout();
             // 
             // panel4
@@ -68,31 +68,6 @@
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-            // 
-            // grid
-            // 
-            this.grid.AllowUserToAddRows = false;
-            this.grid.AllowUserToDeleteRows = false;
-            this.grid.AllowUserToResizeRows = false;
-            this.grid.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid.DataSource = this.listControlBindingSource1;
-            this.grid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid.Location = new System.Drawing.Point(0, 57);
-            this.grid.Name = "grid";
-            this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid.RowTemplate.Height = 24;
-            this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid.ShowCellToolTips = false;
-            this.grid.Size = new System.Drawing.Size(1064, 389);
-            this.grid.TabIndex = 8;
-            this.grid.TabStop = false;
             // 
             // panel3
             // 
@@ -214,20 +189,45 @@
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
             // 
+            // grid
+            // 
+            this.grid.AllowUserToAddRows = false;
+            this.grid.AllowUserToDeleteRows = false;
+            this.grid.AllowUserToResizeRows = false;
+            this.grid.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid.DataSource = this.listControlBindingSource1;
+            this.grid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grid.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.grid.Location = new System.Drawing.Point(0, 57);
+            this.grid.Name = "grid";
+            this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.grid.RowTemplate.Height = 24;
+            this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid.ShowCellToolTips = false;
+            this.grid.Size = new System.Drawing.Size(1064, 342);
+            this.grid.TabIndex = 11;
+            this.grid.TabStop = false;
+            // 
             // P25_PadPrintInUse
             // 
             this.ClientSize = new System.Drawing.Size(1064, 446);
-            this.Controls.Add(this.panel4);
             this.Controls.Add(this.grid);
+            this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
             this.Name = "P25_PadPrintInUse";
             this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "P25. PadPrint In Use";
             this.panel4.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -236,7 +236,6 @@
 
         private Win.UI.Panel panel4;
         private Win.UI.Button btnClose;
-        private Win.UI.Grid grid;
         private Win.UI.Panel panel3;
         private Win.UI.Label lab1;
         private Win.UI.Button btnFindNow;
@@ -248,5 +247,6 @@
         private Win.UI.CheckBox chkCustOrderSize;
         private Win.UI.CheckBox chkPart;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.Grid grid;
     }
 }
