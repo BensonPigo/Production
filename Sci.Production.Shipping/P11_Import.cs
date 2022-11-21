@@ -214,6 +214,11 @@ drop table #tmpUnitPriceUSD
 
         private void CountSelectQty()
         {
+            if (this.gridGMTbs.DataSource == null)
+            {
+                return;
+            }
+
             var upd_list = ((DataTable)this.gridGMTbs.DataSource).AsEnumerable().Where(x => x["selected"].EqualDecimal(1)).ToList();
             if (upd_list.Count == 0)
             {
@@ -222,8 +227,8 @@ drop table #tmpUnitPriceUSD
                 return;
             }
 
-            this.numbTtlQty.Value = upd_list.Sum(r => Convert.ToDecimal(r["TotalShipQty"]));
-            this.numbTtlAmount.Value = upd_list.Sum(r => Convert.ToDecimal(r["Amount"]));
+            this.numbTtlQty.Value = upd_list.Sum(r => MyUtility.Convert.GetDecimal(r["TotalShipQty"]));
+            this.numbTtlAmount.Value = upd_list.Sum(r => MyUtility.Convert.GetDecimal(r["Amount"]));
         }
 
         private void GridGMTBooking_ColumnHeaderMouseClick(object sender, System.Windows.Forms.DataGridViewCellMouseEventArgs e)

@@ -425,7 +425,7 @@ namespace Sci.Production.Planning
                 	              Cross Apply getOutputInformation(o.ID, '{3}') si
                 	              Where o.BuyerDelivery between '{2}' and '{3}'
                 	              And o.Junk = 0
-                	              And o.SubconInType in ('1','2')
+                	              And o.SubconInType not in ('1','2')
                 	              " + load + @"
                 	              ) a
                             Group by a.CountryID, a.Alias, a.MDivisionID, a.FactoryID, a.Capacity
