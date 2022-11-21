@@ -31,11 +31,18 @@ BEGIN
 	and (@Brand = 'All' or Orders.BrandID = @Brand)
 	--and Junk = 0
 
+	-- 資料來源Pullout更換成PackingList by ISP20220386
+	select p.PulloutDate, pd.OrderID, ShipQty = sum(pd.ShipQty)
+	into #tmpPullout 
+	from PackingList p, PackingList_Detail pd
+	where p.ID = pd.ID
+	and p.PulloutID <> ''
+	and exists(
+		select 1 from #tmpOrders tmp
+		where tmp.ID = pd.OrderID
+	)
+	group by p.PulloutDate, pd.OrderID
 
-	--select * from AdidasKPITarget
-
-	select PulloutDate,ShipQty,OrderID into #tmpPullout from Pullout_Detail WITH (NOLOCK) where OrderID in (select tmp.ID from #tmpOrders tmp) --order by PulloutDate,
-	--select pd.LastDate as PulloutDate, pd.Qty as ShipQty, o.ID as OrderID into #tmpPullout from #tmpOrders o outer apply (select LastDate,Qty from dbo.GetPulloutData_All(o.ID)) pd
 
 	declare @dNow date = getdate()
 

@@ -9,7 +9,12 @@ BEGIN
 		END
 	ELSE
 		BEGIN
-			Select @string = Count(Distinct ID) from Pullout_Detail WITH (NOLOCK) where OrderID = @id and ShipQty > 0
+			Select @string = Count(Distinct pd.ID) 
+            from PackingList p with(nolock), PackingList_Detail pd with(nolock)
+            where p.PulloutID <> ''
+            and p.ID = pd.ID
+            and pd.ShipQty > 0
+            and pd.OrderID = @id
 		END
 
 	RETURN @string
