@@ -112,19 +112,16 @@ values(
       ,s.NewItem
       ,s.DiffQty);
 
-
-SELECT MAX(PulloutDate) as PulloutDate --,a.ID
+SELECT A.OrderID,MAX(PulloutDate) as PulloutDate --,a.ID
 INTO #TMPPullout2Cdate
 FROM  Production.dbo.Pullout_Detail A WITH (NOLOCK)
 inner join Trade_To_Pms.dbo.InvAdjust B WITH (NOLOCK) ON A.OrderID=B.OrderID AND ShipQty <> 0
-
+group by a.OrderID
 
 UPDATE a
-SET  
-Status = 'C'
-from  Production.dbo.Pullout_Detail as a 
-inner join #TMPPullout2Cdate as b ON a.PulloutDate=b.PulloutDate
-inner join Trade_To_Pms.dbo.InvAdjust c ON  A.OrderID = c.OrderID
+SET Status = 'C'
+from Production.dbo.Pullout_Detail as a 
+inner join #TMPPullout2Cdate as b ON a.PulloutDate=b.PulloutDate and a.OrderID = b.OrderID
 where b.PulloutDate is not null
 
 /*
@@ -134,11 +131,12 @@ where b.PulloutDate is not null
 UPDATE a
 SET  
  a.ActPulloutDate = (
-	SELECT IIF(  t.PulloutDate IS NULL
-				,(SELECT PullDate FROM Trade_To_Pms.dbo.InvAdjust b WHERE b.ID = a.ID)
-				,t.PulloutDate
-			)
-	FROM #TMPPullout2Cdate t
+
+	select iif(t.PulloutDate is null,
+                 (select PullDate from Trade_To_Pms.dbo.InvAdjust i where i.OrderID = t.OrderID),
+                 t.PulloutDate)
+    from #TMPPullout2Cdate t
+    where t.OrderID = a.ID
  )
 ,a.PulloutComplete = 1
 ,a.MDClose = GETDATE()
@@ -146,10 +144,29 @@ SET
 FROM Production.dbo.Orders as a 
 WHERE a.Qty = 
 	(
-		SELECT SUM(pd.ShipQty)
-		FROM Production.dbo.Pullout p
-		INNER JOIN Production.dbo.Pullout_Detail pd ON p.ID = pd.ID
-		WHERE p.Status != 'New' AND pd.OrderID = a.ID
+		case when 
+		(
+			SELECT Qty = SUM(pd.ShipQty)
+			FROM Production.dbo.Pullout p
+			INNER JOIN Production.dbo.Pullout_Detail pd ON p.ID = pd.ID
+			WHERE p.Status != 'New' AND pd.OrderID = a.ID
+		) = 0 
+		then
+		(
+			select sum(pd.ShipQty)
+			from Production.dbo.PackingList p
+			inner join Production.dbo.PackingList_Detail pd on p.ID = pd.ID
+			where p.PulloutStatus <> 'New'
+			and p.PulloutID <> ''
+			and pd.OrderID = a.ID
+		) else
+		(
+			SELECT Qty = SUM(pd.ShipQty)
+			FROM Production.dbo.Pullout p
+			INNER JOIN Production.dbo.Pullout_Detail pd ON p.ID = pd.ID
+			WHERE p.Status != 'New' AND pd.OrderID = a.ID
+		)
+		end
 	)
 	+
 	(

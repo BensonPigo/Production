@@ -68,7 +68,8 @@ CREATE TABLE [dbo].[P_SewingLineSchedule](
 	[TtlQtyEMB] [int] NULL,
 	[PrintPcs] [int] NULL,
 	[Ukey] [bigint] NOT NULL,
- CONSTRAINT [PK_P_SewingLineSchedule] PRIMARY KEY CLUSTERED 
+    [InlineCategory] VARCHAR(80) NULL, 
+    CONSTRAINT [PK_P_SewingLineSchedule] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC,
 	[FactoryID] ASC
