@@ -77,7 +77,9 @@ namespace Sci.Production.Packing
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(15))
                 .Numeric("QtyPerCTN", header: "Qty")
                 .Text("Barcode", header: "Hangtag Barcode", width: Widths.AnsiChars(15))
-                .Numeric("ScanQty", header: "Scan Qty");
+                .Numeric("ScanQty", header: "Scan Qty")
+                .Text("MDStatus", header: "MD Status", width: Widths.AnsiChars(10))
+                ;
             this.Tab_Focus("CARTON");
 
             // 重啟P18 必須重新判斷校正記錄
@@ -403,6 +405,7 @@ select distinct
 	,pd.Ukey
 	,[IsFirstTimeScan] = Cast(1 as bit)
     ,o.CustCDID
+    ,[MDStatus] = IIF(pd.ScanPackMDDate is null, '1st MD', '2rd MD')
 from PackingList_Detail pd WITH (NOLOCK)
 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -1035,6 +1038,8 @@ WHERE o.ID='{dr.OrderID}'");
                 , ScanName = '{Env.User.UserID}'   
                 , Lacking = 0
                 , ActCTNWeight = {this.numWeight.Value}
+                , ScanPackMDDate = IIF(ScanPackMDDate is null, GETDATE(), ScanPackMDDate)
+                , ClogScanPackMDDate = IIF(ScanPackMDDate is not null , GETDATE(), ClogScanPackMDDate)
                 where id = '{this.selecedPK.ID}' 
                 and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
 
@@ -1465,6 +1470,8 @@ ScanQty = {(MyUtility.Check.Empty(dr["ScanQty"]) ? "0" : dr["ScanQty"])}
 , PackingReasonERID = '{P18_PackingError}'
 , ErrQty = '{P18_PackingErrorQty}'
 , AuditQCName = '{P18_PackingAuditQC}'
+, ScanPackMDDate = IIF(ScanPackMDDate is null, GETDATE(), ScanPackMDDate)
+, ClogScanPackMDDate = IIF(ScanPackMDDate is not null , GETDATE(), ClogScanPackMDDate)
 output	inserted.ID
 into #tmpUpdatedID
 where Ukey={dr["Ukey"]}
@@ -1873,6 +1880,8 @@ set ScanQty = QtyPerCTN
 , ScanName = '{Env.User.UserID}'   
 , Lacking = 0
 , ActCTNWeight = {this.numWeight.Value}
+, ScanPackMDDate = IIF(ScanPackMDDate is null, GETDATE(), ScanPackMDDate)
+, ClogScanPackMDDate = IIF(ScanPackMDDate is not null , GETDATE(), ClogScanPackMDDate)
 where id = '{this.selecedPK.ID}' 
 and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
 
