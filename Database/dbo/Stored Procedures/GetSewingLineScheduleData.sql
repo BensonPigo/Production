@@ -1126,7 +1126,7 @@ declare  @APSResult TABLE(
 	Colorway varchar(1000) null,
 	ColorwayCount int null,
 	CDCode varchar(6) null,
-	CDCodeNew varchar(10) null,
+	CDCodeNew [varchar](Max) null,
 	ProductType varchar(100) null,
 	FabricType varchar(100) null,
 	Lining varchar(100) null,
