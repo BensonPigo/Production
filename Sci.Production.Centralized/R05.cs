@@ -10,6 +10,7 @@ using System.Configuration;
 using System.Linq;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Sci.Production.Centralized
 {
@@ -47,7 +48,7 @@ namespace Sci.Production.Centralized
         private bool FtyLocalOrder;
         private bool ExcludeSampleFactory;
         private DataTable[] printData;
-        private DataTable[] dtAllData;
+        private DataTable[] dtAllData = new DataTable[3];
         private List<DataTable> Summarydt;
         private List<string> listFtyZone;
         private DataTable dtAllDetail;
@@ -87,7 +88,7 @@ namespace Sci.Production.Centralized
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
-            this.dtAllData = null;
+            this.dtAllData = new DataTable[3];
             this.Summarydt = new List<DataTable>();
             this.listFtyZone = new List<string>();
             string smmmaryDateCol = this.radioMonthly.Checked ? "SUBSTRING(Date,1,4)+'/'+SUBSTRING(Date,5,6)" : "DateByHalfMonth";
@@ -136,7 +137,7 @@ namespace Sci.Production.Centralized
 
             DualResult result = new DualResult(true);
 
-            foreach (string conString in connectionString)
+            List<DualResult> results = connectionString.AsParallel().WithDegreeOfParallelism(3).Select(conString =>
             {
                 SqlConnection conn;
                 using (conn = new SqlConnection(conString))
@@ -146,7 +147,7 @@ namespace Sci.Production.Centralized
 #if DEBUG
                     if (!result && result.ToString().Contains("has too many arguments specified"))
                     {
-                        continue;
+                        return result;
                     }
 #endif
                     if (!result)
@@ -155,20 +156,30 @@ namespace Sci.Production.Centralized
                         return failResult;
                     }
 
-                    if (this.printData != null && this.printData[0].Rows.Count > 0)
+                    lock (this.dtAllData)
                     {
-                        if (this.dtAllData == null)
+                        if (this.printData != null && this.printData[0].Rows.Count > 0)
                         {
-                            this.dtAllData = this.printData;
-                        }
-                        else
-                        {
-                            this.dtAllData[0].Merge(this.printData[0]);
-                            this.dtAllData[1].Merge(this.printData[1]);
-                            this.dtAllData[2].Merge(this.printData[2]);
+                            if (this.dtAllData[0] == null)
+                            {
+                                this.dtAllData = this.printData;
+                            }
+                            else
+                            {
+                                this.dtAllData[0].Merge(this.printData[0]);
+                                this.dtAllData[1].Merge(this.printData[1]);
+                                this.dtAllData[2].Merge(this.printData[2]);
+                            }
                         }
                     }
+
+                    return new DualResult(true);
                 }
+            }).ToList();
+
+            if (results.Any(s => !s))
+            {
+                return results.Where(s => !s).First();
             }
 
             if (this.dtAllData == null || this.dtAllData[0].Rows.Count == 0)
@@ -431,8 +442,6 @@ drop table #tmp
             #region detail data
             MyUtility.Excel.CopyToXls(this.dtAllDetail, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: excelApp, wSheet: excelApp.Sheets[this.listFtyZone.Count + 1], showExcel: false, DisplayAlerts_ForSaveFile: true);
             worksheet = excelApp.ActiveWorkbook.Worksheets[this.listFtyZone.Count + 1]; // 取得工作表
-
-            worksheet.Columns.AutoFit();
 
             worksheet.Columns[1].ColumnWidth = 5.5;
             worksheet.Columns[2].ColumnWidth = 5.5;
