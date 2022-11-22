@@ -376,7 +376,8 @@ drop table #tmp
 
             this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = "Centralized_R05.xltx";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + excelFile); // 開excelapp
+            Excel.Application excelApp = new Excel.Application();
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + excelFile, excelApp);
 
             // excelApp.Visible = true;
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
@@ -440,7 +441,8 @@ drop table #tmp
             }
 
             #region detail data
-            MyUtility.Excel.CopyToXls(this.dtAllDetail, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: excelApp, wSheet: excelApp.Sheets[this.listFtyZone.Count + 1], showExcel: false, DisplayAlerts_ForSaveFile: true);
+            ((Excel.Worksheet)excelApp.Sheets[this.listFtyZone.Count + 1]).Activate();
+            com.WriteTable(this.dtAllDetail, 2);
             worksheet = excelApp.ActiveWorkbook.Worksheets[this.listFtyZone.Count + 1]; // 取得工作表
 
             worksheet.Columns[1].ColumnWidth = 5.5;
