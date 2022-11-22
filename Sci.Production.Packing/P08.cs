@@ -57,134 +57,56 @@ namespace Sci.Production.Packing
                 return;
             }
 
-            StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"
-select distinct
-	Selected = cast(0 as bit),
-	pl.id,
-	pl.EstCTNBooking,
-	pl.EstCTNArrive,
-    pl.CTNQty,
-	Type = case when pl.Type = 'B' then 'Bulk'
-	                   when pl.Type = 'S' then 'Sample'
-	                   when pl.Type = 'L' then 'Local'
-		               end, 
-    pld.OrderID, -- 表身只取 OrderID
-	o.SciDelivery,
-	o.SewInLine,
-    [Supp] = s.Supp,
-	[ReferenceNo] = r.RefNoList,
-	d.Description,
-    pl.FactoryID
-from PackingList pl WITH (NOLOCK)
-inner join PackingList_Detail pld WITH (NOLOCK) on pld.ID = pl.ID
-inner join Orders o WITH (NOLOCK) on o.ID = pld.OrderID
-outer apply(
-	select RefNoList = Stuff((
-		select concat(',',RefNo)
-		from (
-				select 	distinct RefNo
-				from dbo.PackingList_Detail pd
-				--where pd.Ukey = pld.Ukey
-				where pd.ID = pld.ID
-				and pd.OrderID = pld.OrderID
-			) s
-		for xml path ('')
-	) , 1, 1, '')
-) r
-outer apply(
-	select Description =
-	REPLACE(
-		REPLACE(
-			(select stuff((
-				select n=Description
-				from(
-					select distinct l.Description -- ISP20201882 LocalItem.Description 直接對應 PackingList 以[斷行]合併
-					from LocalItem l WITH (NOLOCK)
-					inner join PackingList_Detail pld2  WITH (NOLOCK) on pld2.RefNo = l.RefNo
-					where pld2.ID = pl.ID
-				)d  order by Description
-				for xml path('')
-			),1,3,''))
-		,'</n>','')
-	,'<n>',CHAR(13)+char(10))
-)d
-outer apply(
-	select Supp =
-	REPLACE(
-		REPLACE(
-			(select stuff((
-				select n = Supp
-				from(
-					SELECT distinct Supp = CONCAT( LI.LocalSuppid,'-',LS.Abb) 
-					FROM LocalItem LI
-					INNER JOIN LocalSupp LS ON LS.ID=LI.LocalSuppid
-					inner join PackingList_Detail pld2  WITH (NOLOCK) on pld2.RefNo = LI.RefNo
-					where pld2.ID = pld.ID
-					and pld2.OrderID = pld.OrderID
-				)d  order by Description
-				for xml path('')
-			),1,3,''))
-		,'</n>','')
-	,'<n>',CHAR(13)+char(10))
-)s
-where pl.MDivisionID = @mdivisionid
-and (pl.Type = 'B' or pl.Type = 'S' or pl.Type = 'L')
-and pl.ApvToPurchase = 0
-and pl.EstCTNBooking is not null
-and pl.EstCTNArrive is not null
-and pld.ID = pl.ID
-and o.ID = pld.OrderID
-and o.Junk = 0");
+            string sqlWhere = string.Empty;
             #region 組條件
             if (!MyUtility.Check.Empty(this.txtSPStart.Text))
             {
-                sqlCmd.Append("\r\nand o.ID >= @orderid1");
+                sqlWhere += "\r\nand o.ID >= @orderid1";
             }
 
             if (!MyUtility.Check.Empty(this.txtSPEnd.Text))
             {
-                sqlCmd.Append("\r\nand o.ID <= @orderid2");
+                sqlWhere += "\r\nand o.ID <= @orderid2";
             }
 
             if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
             {
-                sqlCmd.Append("\r\nand o.SciDelivery >= @scidelivery1");
+                sqlWhere += "\r\nand o.SciDelivery >= @scidelivery1";
             }
 
             if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
             {
-                sqlCmd.Append("\r\nand o.SciDelivery <= @scidelivery2");
+                sqlWhere += "\r\nand o.SciDelivery <= @scidelivery2";
             }
 
             if (!MyUtility.Check.Empty(this.dateSewingInlineDate.Value1))
             {
-                sqlCmd.Append("\r\nand o.SewInLine >= @sewinline1");
+                sqlWhere += "\r\nand o.SewInLine >= @sewinline1";
             }
 
             if (!MyUtility.Check.Empty(this.dateSewingInlineDate.Value2))
             {
-                sqlCmd.Append("\r\nand o.SewInLine <= @sewinline2");
+                sqlWhere += "\r\nand o.SewInLine <= @sewinline2";
             }
 
             if (!MyUtility.Check.Empty(this.dateCartonEstBooking.Value1))
             {
-                sqlCmd.Append("\r\nand pl.EstCTNBooking >= @estbooking1");
+                sqlWhere += "\r\nand pl.EstCTNBooking >= @estbooking1";
             }
 
             if (!MyUtility.Check.Empty(this.dateCartonEstBooking.Value2))
             {
-                sqlCmd.Append("\r\nand pl.EstCTNBooking <= @estbooking2");
+                sqlWhere += "\r\nand pl.EstCTNBooking <= @estbooking2";
             }
 
             if (!MyUtility.Check.Empty(this.dateCartonEstArrived.Value1))
             {
-                sqlCmd.Append("\r\nand pl.EstCTNArrive >= @estarrive1");
+                sqlWhere += "\r\nand pl.EstCTNArrive >= @estarrive1";
             }
 
             if (!MyUtility.Check.Empty(this.dateCartonEstArrived.Value2))
             {
-                sqlCmd.Append("\r\nand pl.EstCTNArrive <= @estarrive2");
+                sqlWhere += "\r\nand pl.EstCTNArrive <= @estarrive2";
             }
             #endregion
 
@@ -257,7 +179,102 @@ and o.Junk = 0");
             };
             #endregion
 
-            sqlCmd.Append("\r\n order by pl.EstCTNBooking, o.SewInLine, pl.id");
+            string sqlCmd = string.Empty;
+            sqlCmd = $@"
+select  distinct
+        pl.id,
+	    pl.EstCTNBooking,
+	    pl.EstCTNArrive,
+        pl.CTNQty,
+	    Type = case when pl.Type = 'B' then 'Bulk'
+	                       when pl.Type = 'S' then 'Sample'
+	                       when pl.Type = 'L' then 'Local'
+	    	               end, 
+        pld.OrderID, -- 表身只取 OrderID
+	    o.SciDelivery,
+	    o.SewInLine,
+        pl.FactoryID
+into    #tmpPack
+from    PackingList pl WITH (NOLOCK)
+inner   join PackingList_Detail pld WITH (NOLOCK) on pld.ID = pl.ID
+inner   join Orders o WITH (NOLOCK) on o.ID = pld.OrderID
+where pl.MDivisionID = @mdivisionid
+and (pl.Type = 'B' or pl.Type = 'S' or pl.Type = 'L')
+and pl.ApvToPurchase = 0
+and pl.EstCTNBooking is not null
+and pl.EstCTNArrive is not null
+and pld.ID = pl.ID
+and o.ID = pld.OrderID
+and o.Junk = 0
+{sqlWhere}
+
+select distinct
+	Selected = cast(0 as bit),
+	pl.id,
+	pl.EstCTNBooking,
+	pl.EstCTNArrive,
+    pl.CTNQty,
+	pl.Type, 
+    pl.OrderID, 
+	pl.SciDelivery,
+	pl.SewInLine,
+    [Supp] = s.Supp,
+	[ReferenceNo] = r.RefNoList,
+	d.Description,
+    pl.FactoryID
+from #tmpPack pl WITH (NOLOCK)
+outer apply(
+	select RefNoList = Stuff((
+		select concat(',',RefNo)
+		from (
+				select 	distinct RefNo
+				from dbo.PackingList_Detail pd
+				where pd.ID = pl.ID
+				and pd.OrderID = pl.OrderID
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) r
+outer apply(
+	select Description =
+	REPLACE(
+		REPLACE(
+			(select stuff((
+				select n=Description
+				from(
+					select distinct l.Description -- ISP20201882 LocalItem.Description 直接對應 PackingList 以[斷行]合併
+					from LocalItem l WITH (NOLOCK)
+					inner join PackingList_Detail pld2  WITH (NOLOCK) on pld2.RefNo = l.RefNo
+					where pld2.ID = pl.ID
+				)d  order by Description
+				for xml path('')
+			),1,3,''))
+		,'</n>','')
+	,'<n>',CHAR(13)+char(10))
+)d
+outer apply(
+	select Supp =
+	REPLACE(
+		REPLACE(
+			(select stuff((
+				select n = Supp
+				from(
+					SELECT distinct Supp = CONCAT( LI.LocalSuppid,'-',LS.Abb) 
+					FROM LocalItem LI
+					INNER JOIN LocalSupp LS ON LS.ID=LI.LocalSuppid
+					inner join PackingList_Detail pld2  WITH (NOLOCK) on pld2.RefNo = LI.RefNo
+					where pld2.ID = pl.ID
+					and pld2.OrderID = pl.OrderID
+				)d  order by Description
+				for xml path('')
+			),1,3,''))
+		,'</n>','')
+	,'<n>',CHAR(13)+char(10))
+)s
+order by pl.EstCTNBooking, pl.SewInLine, pl.id
+
+drop table #tmpPack
+";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.gridData);
             if (!result)
