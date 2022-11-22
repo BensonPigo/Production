@@ -375,7 +375,7 @@ declare @APSColumnGroup TABLE(
 	[SCIDelivery] [date] NULL,
 	[MaxBuyerDelivery] [date] NULL,
 	[MinBuyerDelivery] [date] NULL,
-	[BrandID] [nvarchar](8) NULL,
+	[BrandID] [varchar](500) NULL,
 	[OrderID] [varchar](13) NULL
 )
 insert into @APSColumnGroup
@@ -1126,7 +1126,7 @@ declare  @APSResult TABLE(
 	Colorway varchar(1000) null,
 	ColorwayCount int null,
 	CDCode varchar(6) null,
-	CDCodeNew [varchar](Max) null,
+	CDCodeNew varchar(max) null,
 	ProductType varchar(100) null,
 	FabricType varchar(100) null,
 	Lining varchar(100) null,
@@ -1162,7 +1162,7 @@ declare  @APSResult TABLE(
 	SewingOutput int null,
 	ScannedQty int null,
 	ClogQty int null,
-	BrandID varchar(8) null,
+	BrandID varchar(500) null,
     [TTL_PRINTING (PCS)] numeric(12,5) null,
     [TTL_PRINTING PPU (PPU)] numeric(12,5) null,
     SubCon varchar(100) null,
