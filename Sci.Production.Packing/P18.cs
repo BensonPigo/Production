@@ -1650,6 +1650,7 @@ drop table #tmpUpdatedID
 										   ,pd.Ukey
 										   ,[IsFirstTimeScan] = Cast(1 as bit)
                                            ,o.CustCDID
+                                           ,[MDStatus] = IIF(pd.ScanPackMDDate is null, '1st MD', '2rd MD')
                                 from PackingList_Detail pd WITH (NOLOCK)
                                 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
                                 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
