@@ -10,6 +10,7 @@ using System.Configuration;
 using System.Linq;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Sci.Production.Centralized
 {
@@ -47,7 +48,7 @@ namespace Sci.Production.Centralized
         private bool FtyLocalOrder;
         private bool ExcludeSampleFactory;
         private DataTable[] printData;
-        private DataTable[] dtAllData;
+        private DataTable[] dtAllData = new DataTable[3];
         private List<DataTable> Summarydt;
         private List<string> listFtyZone;
         private DataTable dtAllDetail;
@@ -87,7 +88,7 @@ namespace Sci.Production.Centralized
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
-            this.dtAllData = null;
+            this.dtAllData = new DataTable[3];
             this.Summarydt = new List<DataTable>();
             this.listFtyZone = new List<string>();
             string smmmaryDateCol = this.radioMonthly.Checked ? "SUBSTRING(Date,1,4)+'/'+SUBSTRING(Date,5,6)" : "DateByHalfMonth";
@@ -117,7 +118,11 @@ namespace Sci.Production.Centralized
             #region --由 appconfig 抓各個連線路徑
             this.SetLoadingText("Load connections... ");
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' }).Where(s => !s.Contains("testing_PMS")).ToArray();
+            List<string> strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' }).Where(s => !s.Contains("testing_PMS") && !s.Contains("testing_HXG")).ToList();
+
+            // HXG 關閉移到台北 另外加入連線字串
+            strSevers.Add("HXG_Formal:XXX");
+
             List<string> connectionString = new List<string>(); // ←主要是要重組 List connectionString
             foreach (string ss in strSevers)
             {
@@ -128,6 +133,8 @@ namespace Sci.Production.Centralized
                 }
             }
 
+
+
             if (connectionString == null || connectionString.Count == 0)
             {
                 return new DualResult(false, "no connection loaded.");
@@ -136,7 +143,7 @@ namespace Sci.Production.Centralized
 
             DualResult result = new DualResult(true);
 
-            foreach (string conString in connectionString)
+            List<DualResult> results = connectionString.AsParallel().WithDegreeOfParallelism(3).Select(conString =>
             {
                 SqlConnection conn;
                 using (conn = new SqlConnection(conString))
@@ -146,7 +153,7 @@ namespace Sci.Production.Centralized
 #if DEBUG
                     if (!result && result.ToString().Contains("has too many arguments specified"))
                     {
-                        continue;
+                        return result;
                     }
 #endif
                     if (!result)
@@ -155,20 +162,30 @@ namespace Sci.Production.Centralized
                         return failResult;
                     }
 
-                    if (this.printData != null && this.printData[0].Rows.Count > 0)
+                    lock (this.dtAllData)
                     {
-                        if (this.dtAllData == null)
+                        if (this.printData != null && this.printData[0].Rows.Count > 0)
                         {
-                            this.dtAllData = this.printData;
-                        }
-                        else
-                        {
-                            this.dtAllData[0].Merge(this.printData[0]);
-                            this.dtAllData[1].Merge(this.printData[1]);
-                            this.dtAllData[2].Merge(this.printData[2]);
+                            if (this.dtAllData[0] == null)
+                            {
+                                this.dtAllData = this.printData;
+                            }
+                            else
+                            {
+                                this.dtAllData[0].Merge(this.printData[0]);
+                                this.dtAllData[1].Merge(this.printData[1]);
+                                this.dtAllData[2].Merge(this.printData[2]);
+                            }
                         }
                     }
+
+                    return new DualResult(true);
                 }
+            }).ToList();
+
+            if (results.Any(s => !s))
+            {
+                return results.Where(s => !s).First();
             }
 
             if (this.dtAllData == null || this.dtAllData[0].Rows.Count == 0)
@@ -365,7 +382,8 @@ drop table #tmp
 
             this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = "Centralized_R05.xltx";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + excelFile); // 開excelapp
+            Excel.Application excelApp = new Excel.Application();
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + excelFile, excelApp);
 
             // excelApp.Visible = true;
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
@@ -429,10 +447,9 @@ drop table #tmp
             }
 
             #region detail data
-            MyUtility.Excel.CopyToXls(this.dtAllDetail, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: excelApp, wSheet: excelApp.Sheets[this.listFtyZone.Count + 1], showExcel: false, DisplayAlerts_ForSaveFile: true);
+            ((Excel.Worksheet)excelApp.Sheets[this.listFtyZone.Count + 1]).Activate();
+            com.WriteTable(this.dtAllDetail, 2);
             worksheet = excelApp.ActiveWorkbook.Worksheets[this.listFtyZone.Count + 1]; // 取得工作表
-
-            worksheet.Columns.AutoFit();
 
             worksheet.Columns[1].ColumnWidth = 5.5;
             worksheet.Columns[2].ColumnWidth = 5.5;
