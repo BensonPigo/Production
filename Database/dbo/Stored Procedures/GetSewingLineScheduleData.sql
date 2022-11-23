@@ -1114,7 +1114,7 @@ declare  @APSResult TABLE(
 	SewingEndTime datetime null,
 	MDivisionID varchar(10) null,
 	FactoryID varchar(10) null,
-	PO varchar(1000) null,
+	PO varchar(max) null,
 	POCount int null,
 	SP varchar(max) null,
 	SPCount int null,
