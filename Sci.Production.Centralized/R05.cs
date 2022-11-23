@@ -118,7 +118,11 @@ namespace Sci.Production.Centralized
             #region --由 appconfig 抓各個連線路徑
             this.SetLoadingText("Load connections... ");
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' }).Where(s => !s.Contains("testing_PMS")).ToArray();
+            List<string> strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' }).Where(s => !s.Contains("testing_PMS") && !s.Contains("testing_HXG")).ToList();
+
+            // HXG 關閉移到台北 另外加入連線字串
+            strSevers.Add("HXG_Formal:XXX");
+
             List<string> connectionString = new List<string>(); // ←主要是要重組 List connectionString
             foreach (string ss in strSevers)
             {
@@ -128,6 +132,8 @@ namespace Sci.Production.Centralized
                     connectionString.Add(connections);
                 }
             }
+
+
 
             if (connectionString == null || connectionString.Count == 0)
             {
