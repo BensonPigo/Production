@@ -135,6 +135,12 @@ select
 					when (id.NeedUnroll = 1 and id.UnrollStatus = 'Done' and id.RelaxationStartTime is null) then 100
 					when (id.NeedUnroll = 1 and id.UnrollStatus = 'Done' and id.RelaxationStartTime is not null and id.RelaxationEndTime <= GETDATE()) then 100
 					else 0 end
+	,[MIND Dispatch Scan By] = CONCAT(id.DispatchScanner,'-',(select Name from Pass1 where Pass1.id =id.DispatchScanner ))
+	,[Scan Time] = id.DispatchScanTime
+	,[Register Time] = m360.RegisterTime
+	,[Dispatch Time]= m360.DispatchTime
+	,[MIND Receiving Factory Scan By]= CONCAT(m360.FactoryReceivedName,'-',(select name from Pass1 where Pass1.ID = m360.FactoryReceivedName))
+	,[Receive Time]= m360.FactoryReceivedTime
 from issue i WITH (NOLOCK) 
 inner join issue_detail id WITH (NOLOCK) on i.id = id.id
 inner join Orders o WITH (NOLOCK) on id.POID = o.id
@@ -147,6 +153,7 @@ left join (
 	from [ExtendServer].ManufacturingExecution.dbo.FabricRelaxation fr
 	left join [ExtendServer].ManufacturingExecution.dbo.RefnoRelaxtime rr on fr.ID = rr.FabricRelaxationID
 )r on r.Refno = psd.Refno
+left join M360MINDDispatch m360 on m360.Ukey = id.M360MINDDispatchUkey
 outer apply(
 	select cutref = stuff((
 		Select concat(' / ', w.FabricCombo,'-',x1.CutNo)
