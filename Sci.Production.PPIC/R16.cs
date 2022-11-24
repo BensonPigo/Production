@@ -17,6 +17,7 @@ namespace Sci.Production.PPIC
         private string FactoryID;
         private bool IsOutstanding;
         private bool IsExcludeSister;
+        private bool IsExcludeCancelShortage;
         private DateTime? BuyerDev_S;
         private DateTime? BuyerDev_E;
 
@@ -66,6 +67,7 @@ namespace Sci.Production.PPIC
             this.FactoryID = this.txtfactory.Text;
             this.IsOutstanding = this.chkOutstanding.Checked;
             this.IsExcludeSister = this.chkExcludeSis.Checked;
+            this.IsExcludeCancelShortage = this.chkExcludeCancelShortage.Checked;
 
             return base.ValidateInput();
         }
@@ -112,6 +114,10 @@ namespace Sci.Production.PPIC
                 sqlWhere.Append($"AND f.IsProduceFty=1" + Environment.NewLine);
             }
 
+            if (this.IsExcludeCancelShortage)
+            {
+                sqlWhere.Append($"AND o.Junk = 0 and o.GMTComplete <> 'S'" + Environment.NewLine);
+            }
             #endregion
 
             #region 組SQL
@@ -157,7 +163,7 @@ outer apply(
 )s
 where o.Category IN ('B','G') 
       and isnull(ot.IsGMTMaster,0) = 0
-      {sqlWhere.ToString()}
+      {sqlWhere}
 
 select 
 pd.OrderID,
@@ -189,7 +195,7 @@ from openquery([ExtendServer],'select   ins.OrderId,
                                                 where o.ID = ins.OrderID 
                                                       {sqlWhere.ToString().Replace("'", "''")}
                                                 )
-                                and ins.Status !=''Dispose''
+                                and ins.Status in (''Pass'',''Fixed'')
                                 group by ins.OrderId,ins.Location
                                 ')
 
