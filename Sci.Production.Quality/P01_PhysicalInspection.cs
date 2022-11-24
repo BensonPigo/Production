@@ -1312,11 +1312,53 @@ and id = '{this.maindr["Receivingid"]}'
                 DataTable dtRealTime;
 
                 string cmd = $@"
-SELECT Yards,FabricdefectID,count(1) cnt
-FROM [Production].[dbo].[FIR_Physical_Defect_Realtime] 
-where FIR_PhysicalDetailUkey={dtGrid.Rows[rowcount - 1]["detailUkey"]} 
-group by Yards,FabricdefectID
+declare @ttlYds numeric(8,2)= (
+select ActualYds+1 from FIR_Physical where DetailUkey = {dtGrid.Rows[rowcount - 1]["detailUkey"]})
+
+;with cte as
+(
+	select 0 a, 1 b , @ttlYds [total_yds]
+	union all
+	select b,b+1, @ttlYds [total_yds] from cte where b<=[total_yds]
+)
+, rnk as 
+(
+	select *
+	,row_number() over ( partition by a,b order by adddate) as rnk
+	from cte inner join 
+	(
+		select * from dbo.FIR_Physical_Defect_Realtime t 
+		where t.FIR_PhysicalDetailUkey= {dtGrid.Rows[rowcount - 1]["detailUkey"]}
+	) x on x.Yards >= cte.a and x.Yards < cte.b
+)
+, top_4_each_yds as 
+(
+	select * from rnk WHERE rnk <=20
+)
+, range_5 as
+(
+	select 0 a2, 0+5-1 b2 , @ttlYds [total_yds]
+	union all
+	select b2+1,b2+5, @ttlYds[total_yds] from range_5 where b2<=[total_yds]
+)
+,d_Location as
+(
+	SELECT 
+	 _range = right('000'+cast(a2 as varchar),3)+'-'+right('000'+cast(b2 as varchar),3) 
+	,n.a2,iif(n.b2 >= n.total_yds,FLOOR(n.total_yds - 0.01),n.b2) b2,m.Yards,m.FabricdefectID ,m.Id
+	from top_4_each_yds m 
+	inner join range_5 n on m.Yards>= n.a2 and m.Yards<=iif(n.b2 >= n.total_yds,n.total_yds - 1,n.b2)
+)
+select  a.Yards,a.FabricdefectID,cnt = count(1),T2 = isnull(fpd.T2,0)
+from dbo.FIR_Physical_Defect_Realtime a 
+inner join d_Location d on d.Id = a.Id
+left join dbo.FIR_Physical_Defect fpd on fpd.FIR_PhysicalDetailUKey = a.FIR_PhysicalDetailUkey
+	and fpd.DefectLocation = d._range
+where a.FIR_PhysicalDetailUkey = {dtGrid.Rows[rowcount - 1]["detailUkey"]}
+group by a.Yards,a.FabricdefectID,fpd.T2
 order by Yards
+option(MAXRECURSION 0)--預設為0不限遞迴次數
+
 ";
 
                 if (!(result = DBProxy.Current.Select("Production", cmd, out dtRealTime)))
@@ -1326,6 +1368,8 @@ order by Yards
                 }
 
                 // 依照Type來匯出Excel
+                string strT2 = string.Empty;
+
                 if (type == "DefectYds" && dtRealTime.Rows.Count > 0)
                 {
                     int cntRealTime = 0;
@@ -1357,7 +1401,8 @@ order by Yards
                                 excel.Cells[20 + (i * 8) + addline, ii] = "Defect";
                             }
 
-                            excel.Cells[21 + (i * 8) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime - 1]["FabricdefectID"].ToString() + dtRealTime.Rows[cntRealTime - 1]["cnt"].ToString();
+                            strT2 = MyUtility.Check.Empty(dtRealTime.Rows[cntRealTime - 1]["T2"]) ? string.Empty : "-T2";
+                            excel.Cells[21 + (i * 8) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime - 1]["FabricdefectID"].ToString() + dtRealTime.Rows[cntRealTime - 1]["cnt"].ToString() + strT2;
 
                             Microsoft.Office.Interop.Excel.Range formatRange = worksheet.get_Range($"{MyExcelPrg.GetExcelColumnName(cntX - (cntnextline * 10))}{21 + (i * 8) + addline}");
                             formatRange.NumberFormat = "0.00";
@@ -1409,7 +1454,8 @@ order by Yards
                         }
                         else
                         {
-                            excel.Cells[21 + (i * 8) + addline, ii - (nextline * 10)] = dtDefect.Rows[pDrowcount - 1]["DefectRecord"];
+                            strT2 = MyUtility.Check.Empty(dtDefect.Rows[pDrowcount - 1]["T2"]) ? string.Empty : "-T2";
+                            excel.Cells[21 + (i * 8) + addline, ii - (nextline * 10)] = dtDefect.Rows[pDrowcount - 1]["DefectRecord"] + strT2;
                         }
                     }
                 }
