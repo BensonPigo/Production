@@ -142,7 +142,7 @@ select	ID = '',
         [ShipQty] = 0,
         [Dest] = ''
 from GMTBooking gb
-inner join GMTBooking_Detail gbd with (nolock) on gbd.ID = gb.ID
+left join GMTBooking_Detail gbd with (nolock) on gbd.ID = gb.ID
 where	1=1
         {sqlInvDateWhere}
 		{sqlShipperWhere}
@@ -183,6 +183,7 @@ where	1=1
             }
 
             DataTable dtA2BResult = new DataTable();
+            dtA2BResult = dtA2BGMT.Copy();
 
             if (dtA2BGMT.Rows.Count > 0)
             {
@@ -219,6 +220,11 @@ group by    t.ID,
 ";
                 foreach (var groupA2BGMT in dtA2BGMT.AsEnumerable().GroupBy(s => s["PLFromRgCode"].ToString()))
                 {
+                    if (MyUtility.Check.Empty(groupA2BGMT.Key))
+                    {
+                        continue;
+                    }
+
                     PackingA2BWebAPI_Model.DataBySql dataBySql = new PackingA2BWebAPI_Model.DataBySql()
                     {
                         SqlString = sqlGetPackingA2B,
@@ -235,10 +241,6 @@ group by    t.ID,
 
                     dtA2BPAcking.MergeTo(ref dtA2BResult);
                 }
-            }
-            else
-            {
-                dtA2BResult = dtA2BGMT.Clone();
             }
 
             #endregion
