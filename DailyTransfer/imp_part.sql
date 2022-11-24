@@ -1108,8 +1108,6 @@ where b.ID is null
 	inner join SciPms_To_Trade_MachinePending b on b.id = s.ID
 	WHERE s.SendToTPE IS NULL
 
-	END
-	
 	---------------MMSProject--------------
 	update t set t.Name             = s.Name
 				,t.Description      = s.Description
@@ -1151,3 +1149,5 @@ where b.ID is null
 	delete t
 	from dbo.MMSProject t
 	where not exists(select 1 from dbo.SciTrade_To_Pms_MMSProject s with(nolock) where t.id=s.id) and t.LocalProject = 0
+
+	END
