@@ -360,6 +360,7 @@ and ExchangeCurrency = 'PHP' order by BeginDate desc
                 this.gridPOListbs.DataSource = null;
                 return;
             }
+
             DualResult result;
             string whereInvNo = this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["InvNo"])).Select(s => $"'{s["InvNo"].ToString()}'").JoinToString(",");
 
