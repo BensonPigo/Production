@@ -101,6 +101,22 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
+            if (this.chkIsWMS.Checked)
+            {
+                string strid = this.txtCode.Text;
+                if (!MyUtility.Check.Empty(strid))
+                {
+                    if (strid.Length >= 4)
+                    {
+                        if (strid.Substring(0, 4) != "WMS_")
+                        {
+                            MyUtility.Msg.WarningBox("WMS Location must input \"WMS_\" front.");
+                            return false;
+                        }
+                    }
+                }
+            }
+
             if (string.IsNullOrWhiteSpace(this.CurrentMaintain["Stocktype"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Stock Type > can not be empty!");
@@ -125,12 +141,6 @@ namespace Sci.Production.Warehouse
 
             this.CurrentMaintain["ID"] = this.CurrentMaintain["ID"].ToString().Trim();
             return base.ClickSaveBefore();
-        }
-
-        /// <inheritdoc/>
-        protected override void ClickSaveAfter()
-        {
-            base.ClickSaveAfter();
         }
 
         private bool CheckCode()
@@ -165,23 +175,6 @@ namespace Sci.Production.Warehouse
             B02_BatchCreate form = new B02_BatchCreate();
             form.ShowDialog();
             this.ReloadDatas();
-        }
-
-        private void TxtCode_Validating(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            string strid = this.txtCode.Text;
-            if (!MyUtility.Check.Empty(strid))
-            {
-                if (strid.Length >= 4)
-                {
-                    if (strid.Substring(0, 4) == "WMS_")
-                    {
-                        MyUtility.Msg.WarningBox("Cannot type in \"WMS_\" words in <Code> !");
-                        e.Cancel = true;
-                        return;
-                    }
-                }
-            }
         }
     }
 }
