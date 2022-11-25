@@ -206,7 +206,7 @@ BEGIN
 			   , SewingLineID
 			   , OrderId
 			   , Style = IIF(Category='M',MockupStyle,OrderStyle) 
-			   , CDNo = IIF(Category = 'M', MockupCDCodeID, OrderCdCodeID) + '-' + ComboType
+			   , ComboType
 			   , CDCodeNew
 			   , ProductType
 			   , FabricType

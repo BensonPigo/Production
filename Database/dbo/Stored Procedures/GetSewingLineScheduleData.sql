@@ -362,6 +362,7 @@ declare @APSColumnGroup TABLE(
 	[APSNo] [int] NULL INDEX IDX_TMP_APSColumnGroup CLUSTERED,
 	[CustPONo] [varchar](30) NULL,
 	[SP] [varchar](16) NULL,
+	[SP_ComboType][varchar](15) NULL,
 	[CdCodeID] [varchar](6) NULL,
 	[ProductionFamilyID] [varchar](20) NULL,
 	[StyleID] [varchar](15) NULL,
@@ -383,6 +384,7 @@ select
 APSNo,
 o.CustPONo,
 [SP] = s.OrderID+'(' + s.ComboType + ')',
+[SP_ComboType] = s.ComboType,
 o.CdCodeID,
 [ProductionFamilyID] = '',
 o.StyleID,
@@ -537,6 +539,7 @@ declare @APSMain TABLE(
 	[CustPO] [nvarchar](max) NULL,
 	[CustPoCnt] [bigint] NULL,
 	[SP] [nvarchar](max) NULL,
+	[SP_Combotype][varchar](15) NULL,
 	[SpCnt] [int] NULL,
 	[Colorway] [nvarchar](max) NULL,
 	[ColorwayCnt] [bigint] NULL,
@@ -592,6 +595,7 @@ select
 	[CustPO] = CustPO.val,
 	[CustPoCnt] =  iif(LEN(CustPO.val) > 0,(LEN(CustPO.val) - LEN(REPLACE(CustPO.val, ',', ''))) / LEN(',') + 1,0),  --��,�ƶq�p��CustPO�ƶq
 	[SP] = SP.val,
+	[SP_Combotype] = SP.SP_Combotype,
 	[SpCnt] = (select count(1) from SewingSchedule where APSNo = al.APSNo),
 	[Colorway] = Colorway.val,
 	[ColorwayCnt] = iif(LEN(Colorway.val) > 0,(LEN(Colorway.val) - LEN(REPLACE(Colorway.val, ',', ''))) / LEN(',') + 1,0),  --��,�ƶq�p��Colorway�ƶq
@@ -647,6 +651,7 @@ left join @StyleDatabyAPSNo sty on al.APSNo = sty.APSNo
 outer apply (SELECT val =  Stuff((select distinct concat( ',',CustPONo)   from @APSColumnGroup where APSNo = al.APSNo and CustPONo <> '' FOR XML PATH('')),1,1,'') ) as CustPO
 outer apply (
 	SELECT val =  Stuff((select distinct concat( ',',SP)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') 
+		  ,[SP_Combotype] = Stuff((select distinct concat( ',',SP_ComboType)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'')
 			,FirststCuttingOutputDate=(
 				SELECT [Date]=MIN(co2.cDate)
 				FROM  WorkOrder_Distribute wd2 WITH (NOLOCK)
@@ -1117,6 +1122,7 @@ declare  @APSResult TABLE(
 	PO varchar(max) null,
 	POCount int null,
 	SP varchar(max) null,
+	SP_ComboType varchar(15) null,
 	SPCount int null,
 	EarliestSCIdelivery date null,
 	LatestSCIdelivery date null,
@@ -1193,6 +1199,7 @@ insert into @APSResult(
 	PO,
 	POCount,
 	SP,
+	SP_ComboType,
 	SPCount,
 	EarliestSCIdelivery,
 	LatestSCIdelivery,
@@ -1263,6 +1270,7 @@ select
 	[PO]=apm.CustPO,
 	[POCount]=apm.CustPoCnt,
 	[SP]=apm.SP,
+	[SP_Combotype] = apm.SP_Combotype,
 	[SPCount]=apm.SpCnt,
 	[EarliestSCIdelivery]=apm.MinSCIDelivery,
 	[LatestSCIdelivery]=apm.MaxSCIDelivery,
@@ -2081,6 +2089,7 @@ select
 	apm.PO,
 	apm.POCount,
 	apm.SP,
+	apm.SP_ComboType,
 	apm.SPCount,
 	apm.EarliestSCIdelivery,
 	apm.LatestSCIdelivery,
