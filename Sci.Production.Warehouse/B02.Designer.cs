@@ -119,7 +119,6 @@
             this.txtCode.Name = "txtCode";
             this.txtCode.Size = new System.Drawing.Size(121, 23);
             this.txtCode.TabIndex = 7;
-            this.txtCode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCode_Validating);
             // 
             // comboStockType
             // 

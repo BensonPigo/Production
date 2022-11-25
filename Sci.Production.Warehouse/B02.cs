@@ -1,13 +1,11 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using Sci.Production.PublicPrg;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Windows.Forms;
-using Ict;
-using Sci.Data;
 using System.Data.SqlClient;
-using Sci.Production.PublicPrg;
-using System.Threading.Tasks;
-using Sci.Production.Automation;
+using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
@@ -101,6 +99,25 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
+            if (this.chkIsWMS.Checked)
+            {
+                string strid = this.txtCode.Text;
+                if (!MyUtility.Check.Empty(strid))
+                {
+                    bool hasWMS_ = false;
+                    if (strid.Length >= 4)
+                    {
+                        hasWMS_ = strid.Substring(0, 4) == "WMS_";
+                    }
+
+                    if (!hasWMS_)
+                    {
+                        MyUtility.Msg.WarningBox("WMS Location must input \"WMS_\" front.");
+                        return false;
+                    }
+                }
+            }
+
             if (string.IsNullOrWhiteSpace(this.CurrentMaintain["Stocktype"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Stock Type > can not be empty!");
@@ -125,12 +142,6 @@ namespace Sci.Production.Warehouse
 
             this.CurrentMaintain["ID"] = this.CurrentMaintain["ID"].ToString().Trim();
             return base.ClickSaveBefore();
-        }
-
-        /// <inheritdoc/>
-        protected override void ClickSaveAfter()
-        {
-            base.ClickSaveAfter();
         }
 
         private bool CheckCode()
@@ -165,23 +176,6 @@ namespace Sci.Production.Warehouse
             B02_BatchCreate form = new B02_BatchCreate();
             form.ShowDialog();
             this.ReloadDatas();
-        }
-
-        private void TxtCode_Validating(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            string strid = this.txtCode.Text;
-            if (!MyUtility.Check.Empty(strid))
-            {
-                if (strid.Length >= 4)
-                {
-                    if (strid.Substring(0, 4) == "WMS_")
-                    {
-                        MyUtility.Msg.WarningBox("Cannot type in \"WMS_\" words in <Code> !");
-                        e.Cancel = true;
-                        return;
-                    }
-                }
-            }
         }
     }
 }
