@@ -1,13 +1,11 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using Sci.Production.PublicPrg;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Windows.Forms;
-using Ict;
-using Sci.Data;
 using System.Data.SqlClient;
-using Sci.Production.PublicPrg;
-using System.Threading.Tasks;
-using Sci.Production.Automation;
+using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
@@ -106,13 +104,16 @@ namespace Sci.Production.Warehouse
                 string strid = this.txtCode.Text;
                 if (!MyUtility.Check.Empty(strid))
                 {
+                    bool hasWMS_ = false;
                     if (strid.Length >= 4)
                     {
-                        if (strid.Substring(0, 4) != "WMS_")
-                        {
-                            MyUtility.Msg.WarningBox("WMS Location must input \"WMS_\" front.");
-                            return false;
-                        }
+                        hasWMS_ = strid.Substring(0, 4) == "WMS_";
+                    }
+
+                    if (!hasWMS_)
+                    {
+                        MyUtility.Msg.WarningBox("WMS Location must input \"WMS_\" front.");
+                        return false;
                     }
                 }
             }
