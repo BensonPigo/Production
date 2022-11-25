@@ -147,6 +147,7 @@ namespace Sci.Production.Quality
                  .DateTime("PasteTime", header: "Paste Shadeband Time", width: Widths.AnsiChars(20))
                  .DateTime("PassQATime", header: "Pass QA Time", width: Widths.AnsiChars(20))
                  .Text("ShadebandDocLocationID", header: "Shadeband Location", width: Widths.AnsiChars(10), settings: cellShadebandDocLocationID)
+                 .Text("ToneGroup", header: "Tone/Group", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("ShadeBond", header: "shade \r\n Band", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: cellShadeBand)
                  .Date("ShadeBondDate", header: "Last Shade \r\n Test Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(15))
@@ -431,6 +432,7 @@ select
     , [oldShadebandDocLocationID] = fs.ShadebandDocLocationID
     , [oldRemark] = fs.Remark
     , [FIRID] = f.ID
+    , [ToneGroup] = fs.Tone
 from  Receiving r with (nolock)
 inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
 inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
@@ -477,6 +479,7 @@ select
     , [oldShadebandDocLocationID] = fs.ShadebandDocLocationID
     , [oldRemark] = fs.Remark
     , [FIRID] = f.ID
+    , [ToneGroup] = fs.Tone
 FROM TransferIn t with (nolock)
 INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
 INNER JOIN PO_Supp_Detail psd with (nolock) on td.PoId = psd.ID and td.Seq1 = psd.SEQ1 and td.Seq2 = psd.SEQ2
