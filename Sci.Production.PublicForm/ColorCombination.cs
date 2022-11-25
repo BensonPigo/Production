@@ -77,23 +77,6 @@ namespace Sci.Production.PublicForm
                 .Text(headername, header: headername, width: Widths.AnsiChars(8), iseditingreadonly: true);
             }
 
-            // BOA
-            headersql = string.Format("Select distinct PatternPanel from Order_BOA WITH (NOLOCK) where id = '{0}' and patternpanel!='' order by PatternPanel", this.cutid);
-            sqlresult = DBProxy.Current.Select(null, headersql, out headertb);
-            if (!sqlresult)
-            {
-                this.ShowErr(headersql, sqlresult);
-                return;
-            }
-
-            foreach (DataRow dr in headertb.Rows)
-            {
-                headername = dr["PatternPanel"].ToString().Trim();
-                createheader = createheader + string.Format(",case when a.PatternPanel='{0}' then Colorid end '{0}' ", headername);
-                this.Helper.Controls.Grid.Generator(this.gridColCombin)
-                .Text(headername, header: headername, width: Widths.AnsiChars(8), iseditingreadonly: true);
-            }
-
             string createtable = createheader + string.Format(" From Order_ColorCombo a WITH (NOLOCK) where id ='{0}' ", this.cutid); // create data
             createheader = createheader + " From Order_ColorCombo a WITH (NOLOCK) where 1=0"; // empty table
 
