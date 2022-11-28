@@ -11,6 +11,7 @@ using System.Linq;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime;
 
 namespace Sci.Production.Centralized
 {
@@ -47,7 +48,6 @@ namespace Sci.Production.Centralized
         private bool Forecast;
         private bool FtyLocalOrder;
         private bool ExcludeSampleFactory;
-        private DataTable[] printData;
         private DataTable[] dtAllData = new DataTable[3];
         private List<DataTable> Summarydt;
         private List<string> listFtyZone;
@@ -118,10 +118,7 @@ namespace Sci.Production.Centralized
             #region --由 appconfig 抓各個連線路徑
             this.SetLoadingText("Load connections... ");
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-            List<string> strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' }).Where(s => !s.Contains("testing_PMS") && !s.Contains("testing_HXG")).ToList();
-
-            // HXG 關閉移到台北 另外加入連線字串
-            strSevers.Add("HXG_Formal:XXX");
+            List<string> strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' }).Where(s => !s.Contains("testing_PMS")).ToList();
 
             List<string> connectionString = new List<string>(); // ←主要是要重組 List connectionString
             foreach (string ss in strSevers)
@@ -132,8 +129,6 @@ namespace Sci.Production.Centralized
                     connectionString.Add(connections);
                 }
             }
-
-
 
             if (connectionString == null || connectionString.Count == 0)
             {
@@ -149,7 +144,7 @@ namespace Sci.Production.Centralized
                 using (conn = new SqlConnection(conString))
                 {
                     conn.Open();
-                    result = DBProxy.Current.SelectByConn(conn, sqlcmdSP.ToString().Substring(0, sqlcmdSP.Length - 1), null, out this.printData);
+                    result = DBProxy.Current.SelectByConn(conn, sqlcmdSP.ToString().Substring(0, sqlcmdSP.Length - 1), null, out DataTable[] printData);
 #if DEBUG
                     if (!result && result.ToString().Contains("has too many arguments specified"))
                     {
@@ -164,17 +159,17 @@ namespace Sci.Production.Centralized
 
                     lock (this.dtAllData)
                     {
-                        if (this.printData != null && this.printData[0].Rows.Count > 0)
+                        if (printData != null && printData[0].Rows.Count > 0)
                         {
                             if (this.dtAllData[0] == null)
                             {
-                                this.dtAllData = this.printData;
+                                this.dtAllData = printData;
                             }
                             else
                             {
-                                this.dtAllData[0].Merge(this.printData[0]);
-                                this.dtAllData[1].Merge(this.printData[1]);
-                                this.dtAllData[2].Merge(this.printData[2]);
+                                this.dtAllData[0].Merge(printData[0]);
+                                this.dtAllData[1].Merge(printData[1]);
+                                this.dtAllData[2].Merge(printData[2]);
                             }
                         }
                     }
@@ -380,10 +375,16 @@ drop table #tmp
 
             this.SetCount(this.dtAllData[0].Rows.Count);
 
+            // .net 4.5.1才可以用
+            // GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+            GC.Collect();
+
             this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = "Centralized_R05.xltx";
             Excel.Application excelApp = new Excel.Application();
             Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + excelFile, excelApp);
+            com.ColumnsAutoFit = false;
+            com.TransferArray_Limit = 2500;
 
             // excelApp.Visible = true;
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
