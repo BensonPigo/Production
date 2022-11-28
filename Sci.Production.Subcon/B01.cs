@@ -612,11 +612,6 @@ DROP TABLE #tmp
                 return;
             }
 
-            if (this.CurrentMaintain["CtnUnit"].ToString().EqualString(this.comboCartonDimension.SelectedValue))
-            {
-                return;
-            }
-
             this.GetCBM();
         }
 

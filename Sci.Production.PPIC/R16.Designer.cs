@@ -39,6 +39,7 @@
             this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.chkExcludeSis = new Sci.Win.UI.CheckBox();
+            this.chkExcludeCancelShortage = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -186,11 +187,23 @@
             this.chkExcludeSis.Text = "Exclude sister transfer out";
             this.chkExcludeSis.UseVisualStyleBackColor = true;
             // 
+            // chkExcludeCancelShortage
+            // 
+            this.chkExcludeCancelShortage.AutoSize = true;
+            this.chkExcludeCancelShortage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkExcludeCancelShortage.Location = new System.Drawing.Point(257, 111);
+            this.chkExcludeCancelShortage.Name = "chkExcludeCancelShortage";
+            this.chkExcludeCancelShortage.Size = new System.Drawing.Size(185, 21);
+            this.chkExcludeCancelShortage.TabIndex = 556;
+            this.chkExcludeCancelShortage.Text = "Exclude Cancel/Shortage";
+            this.chkExcludeCancelShortage.UseVisualStyleBackColor = true;
+            // 
             // R16
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(552, 254);
+            this.Controls.Add(this.chkExcludeCancelShortage);
             this.Controls.Add(this.chkExcludeSis);
             this.Controls.Add(this.chkOutstanding);
             this.Controls.Add(this.dateRangeByerDev);
@@ -223,6 +236,7 @@
             this.Controls.SetChildIndex(this.dateRangeByerDev, 0);
             this.Controls.SetChildIndex(this.chkOutstanding, 0);
             this.Controls.SetChildIndex(this.chkExcludeSis, 0);
+            this.Controls.SetChildIndex(this.chkExcludeCancelShortage, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -241,5 +255,6 @@
         private Win.UI.DateRange dateRangeByerDev;
         private Win.UI.CheckBox chkOutstanding;
         private Win.UI.CheckBox chkExcludeSis;
+        private Win.UI.CheckBox chkExcludeCancelShortage;
     }
 }
