@@ -82,7 +82,7 @@ namespace Sci.Production.Quality
                     ndr["DetailUkey"] = this.CurrentData["DetailUkey"];
                     if (ary.Length > 0)
                     {
-                        strT2 = MyUtility.Check.Empty(ary[0]["DefectRecord"]) ? string.Empty : "-T2";
+                        strT2 = MyUtility.Check.Empty(ary[0]["T2"]) ? string.Empty : "-T2";
                         ndr["def1"] = ary[0]["DefectRecord"].ToString() + strT2;
                         ndr["point1"] = ary[0]["point"];
                     }
@@ -98,7 +98,7 @@ namespace Sci.Production.Quality
                     dr["yds2"] = cStr;
                     if (ary.Length > 0)
                     {
-                        strT2 = MyUtility.Check.Empty(ary[0]["DefectRecord"]) ? string.Empty : "-T2";
+                        strT2 = MyUtility.Check.Empty(ary[0]["T2"]) ? string.Empty : "-T2";
                         dr["def2"] = ary[0]["DefectRecord"] + strT2;
                         dr["point2"] = ary[0]["point"];
                     }
@@ -110,7 +110,7 @@ namespace Sci.Production.Quality
                     dr["yds3"] = cStr;
                     if (ary.Length > 0)
                     {
-                        strT2 = MyUtility.Check.Empty(ary[0]["DefectRecord"]) ? string.Empty : "-T2";
+                        strT2 = MyUtility.Check.Empty(ary[0]["T2"]) ? string.Empty : "-T2";
                         dr["def3"] = ary[0]["DefectRecord"] + strT2;
                         dr["point3"] = ary[0]["point"];
                     }
