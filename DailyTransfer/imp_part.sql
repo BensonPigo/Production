@@ -24,31 +24,36 @@ AND t.Formula<> s.Formula
 IF EXISTS (SELECT 1 FROM #Formula_Change_Table)
 BEGIN
 	INSERT INTO dbo.PartFormula_History ([PartID],[OldFormula],[NewFormula],[AddName],[AddDate])
-	SELECT [PartID],[OldFormula],[NewFormula],[AddName],[AddDate] FROM #Formula_Change_Table
+    SELECT isnull([partid],    ''),
+           isnull([oldformula],0),
+           isnull([newformula],0),
+           isnull([addname],   ''),
+           [adddate]
+    FROM #Formula_Change_Table
 END
 ;
 DROP TABLE #Formula_Change_Table
 ;
 	--Step.2. Merge
-update t set t.Description = s.Description
-			 , t.Partno= s.Partno
-			 , t.UseUnit= s.UnitID
-			 , t.PoUnit= s.PoUnitID
-			 , t.Price= s.Price
-			 , t.PurchaseBatchQty= s.BatchQty
-			 , t.Junk= s.Junk
-			 , t.SuppID= s.SuppID
-			 , t.CurrencyID= s.CurrencyID
-			 , t.Formula= s.Formula
-			 , t.Fix= s.Fix
-			 , t.AddName= s.AddName
-			 , t.AddDate= s.AddDate
-			 , t.Lock = s.Lock
-			 , t.MasterGroupID = s.MasterGroupID
-			 , t.MachineGroupID = s.MachineGroupID		
-			 , t.MachineBrandID = s.MachineBrandID
-			 , t.Needle = s.Needle
-			 , t.ControlPart = s.ControlParts
+update t set t.Description = isnull( s.Description         ,'')
+			 , t.Partno= isnull( s.Partno                  ,'')
+			 , t.UseUnit= isnull( s.UnitID                 ,'')
+			 , t.PoUnit= isnull( s.PoUnitID                ,'')
+			 , t.Price= isnull( s.Price                    ,0)
+			 , t.PurchaseBatchQty= isnull( s.BatchQty      ,0)
+			 , t.Junk= isnull( s.Junk                      ,0)
+			 , t.SuppID= isnull( s.SuppID                  ,'')
+			 , t.CurrencyID= isnull( s.CurrencyID          ,'')
+			 , t.Formula= isnull( s.Formula                ,0)
+			 , t.Fix= isnull( s.Fix                        ,0)
+			 , t.AddName= isnull( s.AddName                ,'')
+			 , t.AddDate=  s.AddDate   
+			 , t.Lock = isnull( s.Lock                     ,0)
+			 , t.MasterGroupID = isnull( s.MasterGroupID   ,'')
+			 , t.MachineGroupID = isnull( s.MachineGroupID ,'')
+			 , t.MachineBrandID = isnull( s.MachineBrandID ,'')
+			 , t.Needle = isnull( s.Needle                 ,0)
+			 , t.ControlPart = isnull( s.ControlParts      ,0)
 			 , t.MOQ = isnull(convert(int, s.MOQ),0)
 from dbo.Part t
 inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = 'P' ) as s on t.id = s.Refno 
@@ -58,36 +63,55 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 			 , PurchaseFrom 	, SuppID 		, CurrencyID 	, Formula	 		, Fix
 			 , AddName  		, AddDate 		, EditName 		, EditDate 			, Lock , Needle , ControlPart
 			 ,	MOQ)
-			 select s.refno 			, s.Description , s.Partno 		, s.MasterGroupID 	, s.MachineGroupID 	, s.MachineBrandID
-					, s.UnitID 		, s.POUnitID 	, s.Price 		, s.BatchQty 		, s.Junk
-					, 'T'  			, s.SuppID 		, s.CurrencyID 	, s.Formula 		, s.Fix
-					, s.AddName 		, s.AddDate  	, s.EditName  	, s.EditDate 		, s.Lock , s.Needle , s.ControlParts
-					, isnull(convert(int, s.MOQ),0)
-			 from dbo.SciTrade_To_Pms_Part s WITH (NOLOCK) 
-			 where s.type = 'P' and not exists(select 1 from dbo.Part t where t.id=s.Refno)
+SELECT isnull(s.refno,          ''),
+       isnull(s.description,    ''),
+       isnull(s.partno,         ''),
+       isnull(s.mastergroupid,  ''),
+       isnull(s.machinegroupid, ''),
+       isnull(s.machinebrandid, ''),
+       isnull(s.unitid,         ''),
+       isnull(s.pounitid,       ''),
+       isnull(s.price,          0),
+       isnull(s.batchqty,       0),
+       isnull(s.junk,           0),
+       isnull('T',              ''),
+       isnull(s.suppid,         ''),
+       isnull(s.currencyid,     ''),
+       isnull(s.formula,        0),
+       isnull(s.fix,            0),
+       isnull(s.addname,        ''),
+       s.adddate,
+       isnull(s.editname,       ''),
+       s.editdate,
+       isnull(s.lock,           0),
+       isnull(s.needle,         0),
+       isnull(s.controlparts,   0),
+       Isnull(CONVERT(INT, s.moq), 0)
+from dbo.SciTrade_To_Pms_Part s WITH (NOLOCK) 
+where s.type = 'P' and not exists(select 1 from dbo.Part t where t.id=s.Refno)
 
 	---------- Misc, type='O'---------------------
-	update t set t.Model= s.Model,
-				 t.MiscBrandID= s.MachineBrandID,
-				 t.Description= s.Description,
-				 t.UnitID= s.PoUnitID,
-				 t.CurrencyID= s.CurrencyID,
-				 t.Price= s.Price,
-				 t.SuppID= iif(t.PurchaseFrom = 'T', s.SuppID, t.SuppID), --PurchaseFrom='T'時才需要更新
-				 t.IsMachine= s.IsMachine,
-				 t.IsAsset= s.IsAsset,
-				 t.Remark= s.Remark,
-				 t.InspLeadTime= s.Leadtime,
-				 t.AccountID= s.AccountID,
-				 t.Junk= s.Junk,
-				 t.AddName= s.AddName,
-				 t.AddDate= s.AddDate,
-				 t.EditName= s.EditName,
-				 t.EditDate= s.EditDate,
-				 t.DescriptionDetail = s.DescriptionDetail,
-				 t.PurchaseBatchQty = s.BatchQty,
-				 t.AssetTypeID = s.AssetTypeID,
-				 t.Improvement = s.Improvement
+	update t set t.Model= isnull( s.Model,                ''),
+				 t.MiscBrandID= isnull( s.MachineBrandID, ''),
+				 t.Description= isnull( s.Description,    ''),
+				 t.UnitID= isnull( s.PoUnitID,            ''),
+				 t.CurrencyID= isnull( s.CurrencyID,      ''),
+				 t.Price= isnull( s.Price,                0),
+				 t.SuppID= isnull( iif(t.PurchaseFrom = 'T', s.SuppID, t.SuppID),''), --PurchaseFrom= isnull('T'時才需要更新
+				 t.IsMachine= isnull( s.IsMachine,                  0),
+				 t.IsAsset= isnull( s.IsAsset,                      0),
+				 t.Remark= isnull( s.Remark,                        ''),
+				 t.InspLeadTime= isnull( s.Leadtime,                0),
+				 t.AccountID= isnull( s.AccountID,                  ''),
+				 t.Junk= isnull( s.Junk,                            0),
+				 t.AddName= isnull( s.AddName,                      ''),
+				 t.AddDate=  s.AddDate,
+				 t.EditName= isnull( s.EditName,                    ''),
+				 t.EditDate=  s.EditDate,
+				 t.DescriptionDetail = isnull( s.DescriptionDetail, ''),
+				 t.PurchaseBatchQty = isnull( s.BatchQty,           0),
+				 t.AssetTypeID = isnull( s.AssetTypeID,             ''),
+				 t.Improvement = isnull( s.Improvement,             0)
 	from dbo.Misc  t
 	inner join dbo.SciTrade_To_Pms_Part s on t.id=s.Refno and s.type='O' 
 
@@ -114,49 +138,49 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 												,PurchaseBatchQty
 												,AssetTypeID
 												,Improvement)
-				select	s.refno,
-						s.Model,
-						s.MachineBrandID,
-						s.Description,
-						s.PoUnitID,
-						s.CurrencyID,
-						s.Price,
-						s.SuppID,
-						'T',
-						s.IsMachine,
-						s.IsAsset,
-						s.Remark,
-						s.Leadtime,
-						s.AccountID,
-						s.Junk,
-						s.AddName,
+				select	isnull(s.refno,             ''),
+						isnull(s.Model,             ''),
+						isnull(s.MachineBrandID,    ''),
+						isnull(s.Description,       ''),
+						isnull(s.PoUnitID,          ''),
+						isnull(s.CurrencyID,        ''),
+						isnull(s.Price,             0),
+						isnull(s.SuppID,            ''),
+						isnull('T',                 ''),
+						isnull(s.IsMachine,         0),
+						isnull(s.IsAsset,           0),
+						isnull(s.Remark,            ''),
+						isnull(s.Leadtime,          0),
+						isnull(s.AccountID,         ''),
+						isnull(s.Junk,              0),
+						isnull(s.AddName,           ''),
 						s.AddDate,
-						s.EditName,
+						isnull(s.EditName,          ''),
 						s.EditDate,
-						s.DescriptionDetail,
-						s.BatchQty,
-						s.AssetTypeID,
-						s.Improvement
+						isnull(s.DescriptionDetail, ''),
+						isnull(s.BatchQty,          0),
+						isnull(s.AssetTypeID,       ''),
+						isnull(s.Improvement,       0)
 				from dbo.SciTrade_To_Pms_Part s
 				where s.type='O'  and not exists(select 1 from dbo.Misc t where t.id = s.Refno)
 
 				
     ---------- MiscOther, type='R'---------------------
-    update t set t.Model= s.Model,
-                 t.MtlTypeID=s.MtlTypeID,
-                 t.Description= s.Description,
-                 t.UnitID= s.PoUnitID,
-                 t.CurrencyID= s.CurrencyID,
-                 t.Price= s.Price,
-                 t.IsMachine= s.IsMachine,
-                 t.IsAsset= s.IsAsset,
-                 t.Remark= s.Remark,
-                 t.Junk= s.Junk,
-                 t.AddName= s.AddName,
-                 t.AddDate= s.AddDate,
-                 t.EditName= s.EditName,
-                 t.EditDate= s.EditDate,
-                 t.DescriptionDetail = s.DescriptionDetail
+    update t set t.Model= isnull( s.Model,                         ''),
+                 t.MtlTypeID= isnull(s.MtlTypeID,                  ''),
+                 t.Description= isnull( s.Description,             ''),
+                 t.UnitID= isnull( s.PoUnitID,                     ''),
+                 t.CurrencyID= isnull( s.CurrencyID,               ''),
+                 t.Price= isnull( s.Price,                         0),
+                 t.IsMachine= isnull( s.IsMachine,                 0),
+                 t.IsAsset= isnull( s.IsAsset,                     0),
+                 t.Remark= isnull( s.Remark,                       ''),
+                 t.Junk= isnull( s.Junk,                           0),
+                 t.AddName= isnull( s.AddName,                     ''),
+                 t.AddDate=  s.AddDate,
+                 t.EditName= isnull( s.EditName,                   ''),
+                 t.EditDate=  s.EditDate,
+                 t.DescriptionDetail = isnull( s.DescriptionDetail,'')
     from dbo.MiscOther  t
     inner join dbo.SciTrade_To_Pms_Part s on t.id=s.Refno and t.BrandID = s.BrandID and t.SuppID = s.SuppID and s.type='R' 
 
@@ -179,25 +203,25 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
                             ,EditName
                             ,EditDate
                             ,DescriptionDetail)
-                select  s.refno,
-                        s.Model,
-                        s.BrandID,
-                        s.MtlTypeID,
-                        s.Description,
-                        s.PoUnitID,
-                        s.CurrencyID,
-                        s.Price,
-                        s.SuppID,
-                        'T',
-                        s.IsMachine,
-                        s.IsAsset,
-                        s.Remark,
-                        s.Junk,
-                        s.AddName,
+                select  isnull(s.refno,            ''),
+                        isnull(s.Model,            ''),
+                        isnull(s.BrandID,          ''),
+                        isnull(s.MtlTypeID,        ''),
+                        isnull(s.Description,      ''),
+                        isnull(s.PoUnitID,         ''),
+                        isnull(s.CurrencyID,       ''),
+                        isnull(s.Price,            0),
+                        isnull(s.SuppID,           ''),
+                        isnull('T',                ''),
+                        isnull(s.IsMachine,        0),
+                        isnull(s.IsAsset,          0),
+                        isnull(s.Remark,           ''),
+                        isnull(s.Junk,             0),
+                        isnull(s.AddName,          ''),
                         s.AddDate,
-                        s.EditName,
+                        isnull(s.EditName,         ''),
                         s.EditDate,
-                        s.DescriptionDetail
+                        isnull(s.DescriptionDetail,'')
                 from dbo.SciTrade_To_Pms_Part s
                 where s.type='R' and not exists(select 1 from dbo.MiscOther t where t.id = s.Refno and t.BrandID = s.BrandID and t.SuppID = s.SuppID)
 
@@ -210,13 +234,13 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 
 	update t set
 		t.purchaseFrom='T',
-		t.CurrencyID=s.CurrencyID,
-		t.Price=s.Price,
-		t.AddName=s.AddName,
-		t.AddDate=s.AddDate,
-		t.EditName=s.EditName,
-		t.EditDate=s.EditDate,
-		T.ldefault = S.IsDefault
+		t.CurrencyID= isnull(s.CurrencyID,''),
+		t.Price= isnull(s.Price,          0),
+		t.AddName= isnull(s.AddName,      ''),
+		t.AddDate= s.AddDate,
+		t.EditName= isnull(s.EditName,    ''),
+		t.EditDate= s.EditDate,
+		T.ldefault = isnull( S.IsDefault, 0)
 	from dbo.PartQuot t
 	inner join #tmpPartQuot s on t.id=s.refno and  t.PartBrandID = s.mmsBrandID and t.SuppID = s.SuppID
 	where t.PurchaseFrom = 'T'
@@ -232,17 +256,17 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 													EditDate,
 													PartBrandID,
 													ldefault)
-										select		s.Refno,
+										select		isnull(s.Refno,''),
 													'T',
-													s.suppid,
-													s.CurrencyID,
-													s.Price,
-													s.AddName,
+													isnull(s.suppid,    ''),
+													isnull(s.CurrencyID,''),
+													isnull(s.Price,     0),
+													isnull(s.AddName,   ''),
 													s.AddDate,
-													s.EditName,
+													isnull(s.EditName,  ''),
 													s.EditDate,
-													s.mmsBrandID,
-													S.IsDefault
+													isnull(s.mmsBrandID,''),
+													isnull(S.IsDefault,0)
 										from #tmpPartQuot s
 										where not exists(select 1 from dbo.PartQuot t where		t.id=s.refno and  
 																								t.PartBrandID = s.mmsBrandID and 
@@ -264,11 +288,11 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	into #tmpTrade_To_PmsPartBrand
 	from SciTrade_To_Pms_MmsBrand with (nolock) where type='P'
 
-	update t set t.Name= 	      s.Name 
-				,t.Junk= 	      s.Junk 
-				,t.AddName= 	      s.AddName 
-				,t.AddDate= 	      s.AddDate 
-				,t.EditName= 	      s.EditName 
+	update t set t.Name= isnull( 	      s.Name         ,'')
+				,t.Junk= isnull( 	      s.Junk         ,0)
+				,t.AddName= isnull( 	      s.AddName  ,'')
+				,t.AddDate=       s.AddDate
+				,t.EditName= isnull( 	      s.EditName ,'')
 				,t.EditDate= 	      s.EditDate 
 	from dbo.PartBrand t
 	inner join #tmpTrade_To_PmsPartBrand s on t.id=s.id
@@ -280,12 +304,12 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 													,AddDate 
 													,EditName 
 													,EditDate)
-						select	s.ID
-								,s.Name 
-								,s.Junk 
-								,s.AddName 
+						select	 isnull(s.ID,'')
+								,isnull(s.Name ,'')
+								,isnull(s.Junk ,0)
+								,isnull(s.AddName ,'')
 								,s.AddDate 
-								,s.EditName 
+								,isnull(s.EditName ,'')
 								,s.EditDate
 						from #tmpTrade_To_PmsPartBrand s
 						where not exists(select 1 from dbo.PartBrand t where t.id=s.id)
@@ -301,9 +325,9 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	into #tmpTrade_To_PmsMiscBrand
 	from SciTrade_To_Pms_MmsBrand with (nolock) where type='O'
 
-	update t set t.AddName= 	      s.AddName   
+	update t set t.AddName= 	      isnull(s.AddName   ,'')
 				,t.AddDate= 	      s.AddDate   
-				,t.EditName= 	      s.EditName   
+				,t.EditName= 	      isnull(s.EditName   ,'')
 				,t.EditDate= 	      s.EditDate 
 	from dbo.MiscBrand t
 	inner join #tmpTrade_To_PmsMiscBrand s on t.id=s.id
@@ -316,12 +340,12 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 													,EditName 
 													,EditDate ,
 													[LOCAL])
-					select	s.id  ,
-							s.Name  , 
-							s.Junk   ,
-							s.AddName ,  
+					select	isnull(s.id  ,      ''),
+							isnull(s.Name  ,    ''),
+							isnull(s.Junk   ,   0),
+							isnull(s.AddName ,  ''),
 							s.AddDate  , 
-							s.EditName  , 
+							isnull(s.EditName  , ''),
 							s.EditDate,   
 							0
 					from #tmpTrade_To_PmsMiscBrand s
@@ -337,11 +361,11 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	select * into #tmpTrade_To_PmsMachineBrand
 	from SciTrade_To_Pms_MmsBrand WITH (NOLOCK) where type='M'
 
-	update t set t.Name= 	      s.Name   
-				,t.Junk= 	      s.Junk   
-				,t.AddName= 	      s.AddName   
+	update t set t.Name= 	      isnull(s.Name   ,'')
+				,t.Junk= 	      isnull(s.Junk   ,0)
+				,t.AddName= 	      isnull(s.AddName   ,'')
 				,t.AddDate= 	      s.AddDate   
-				,t.EditName= 	      s.EditName   
+				,t.EditName= 	      isnull(s.EditName   ,'')
 				,t.EditDate= 	      s.EditDate   
 	from dbo.MachineBrand t
 	inner join #tmpTrade_To_PmsMachineBrand s on t.id=s.id
@@ -353,12 +377,12 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 		  ,AddDate 
 		  ,EditName 
 		  ,EditDate )
-		  select s.ID   ,
-				 s.Name  , 
-				 s.Junk   ,
-				 s.AddName ,  
+		  select isnull(s.ID   ,     ''),
+				 isnull(s.Name  ,    ''),
+				 isnull(s.Junk   ,   0),
+				 isnull(s.AddName ,  ''),
 				 s.AddDate  , 
-				 s.EditName  , 
+				 isnull(s.EditName  , ''),
 				 s.EditDate 
 		  from #tmpTrade_To_PmsMachineBrand s
 		  where not exists(select 1 from dbo.MachineBrand t where t.id=s.id)
@@ -367,26 +391,26 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 
 	----------------RepairPO-------------------------
 	update a
-		set a.Status = case when b.Status is null and a.Status = 'Complete' then 'Confirmed'
+		set a.Status =isnull( case when b.Status is null and a.Status = 'Complete' then 'Confirmed'
 						when b.Status in ('Complete', 'Junk') then b.Status
 				   else a.Status
-				   end 
+				   end ,'')
 	from RepairPO a
 	inner join SciTrade_To_Pms_RepairReq b on a.ID = b.ID
 	
 	----------------RepairPO_Detail-------------------------
 
 	update dbo.RepairPO_Detail
-	set ShipQty = b.ShipQty ,
-		ShipFoc = b.ShipFoc ,
-		EstCost = b.EstCost ,
-		ActCost = b.ActCost ,
-		NewCost = b.NewCost ,
-		ETA = b.ETA ,
-		Cancel = b.Cancel ,
-		Complete = b.Complete ,
-		TPEPOID = b.TradePOID ,
-		ResponsibleFTY  = b.ResponsibleFTY 
+	set ShipQty = isnull( b.ShipQty ,  0),
+		ShipFoc = isnull( b.ShipFoc ,  0),
+		EstCost = isnull( b.EstCost ,  0),
+		ActCost = isnull( b.ActCost ,  0),
+		NewCost = isnull( b.NewCost ,  0),
+		ETA =  b.ETA ,
+		Cancel = isnull( b.Cancel ,    0),
+		Complete = isnull( b.Complete ,0),
+		TPEPOID = isnull( b.TradePOID ,''),
+		ResponsibleFTY  = isnull( b.ResponsibleFTY ,'')
 	from dbo.RepairPO_Detail a
 	inner join SciTrade_To_Pms_RepairReq_Detail b on a.id=b.ID and a.Seq2=b.Seq2
 
@@ -394,9 +418,9 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 
 	update dbo.PartPO_Detail
 	set 
-		Junk = b.Cancel 
-		,TPEPOID = b.MmsPoID
-		,FinalBrand = b.FinalBrand
+		Junk = isnull( b.Cancel           ,0)
+		,TPEPOID = isnull( b.MmsPoID      ,'')
+		,FinalBrand = isnull( b.FinalBrand,'')
 	from dbo.PartPO_Detail a
 	inner join SciTrade_To_Pms_MmsReq_Detail b on a.id=b.ID and a.SEQ2=b.Seq2
 
@@ -436,17 +460,17 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 
 	UPDATE A
 	SET
-	A.SEQ1=b.NewSeq1,
-	A.SuppDelivery=b.SuppDelivery,
-	A.EstETA=b.EstETA,
-	A.Complete = ISNULL(b.Complete,0),
-	A.TPEQty=B.Qty,
-	A.Foc=B.Foc,
-	A.ShipQty=B.ShipQty,
-	A.ShipFoc=B.ShipFoc,
-	A.ShipETA=B.ShipETA,
-	A.TPECurrencyID = B.CurrencyID,
-	A.TPEPrice = B.Price
+	    A.SEQ1= isnull(b.NewSeq1,''),
+	    A.SuppDelivery= b.SuppDelivery,
+	    A.EstETA= b.EstETA,
+	    A.Complete =  ISNULL(b.Complete,0),
+	    A.TPEQty= isnull(B.Qty,0),
+	    A.Foc= isnull(B.Foc,0),
+	    A.ShipQty= isnull(B.ShipQty,0),
+	    A.ShipFoc= isnull(B.ShipFoc,0),
+	    A.ShipETA= B.ShipETA,
+	    A.TPECurrencyID = isnull( B.CurrencyID,''),
+	    A.TPEPrice = isnull( B.Price,0)
 	FROM dbo.PartPO_Detail A
 	INNER JOIN #tmpMmsPO_Detail B  on	A.ID = B.ID and 
 										A.Seq1 = B.Seq1 and 
@@ -457,17 +481,18 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	drop table #tmpMmsPO_Detail
 
 	UPDATE dbo.MiscPO_Detail
-	SET TPEPOID = B.id,
-	SEQ1=b.Seq1,
-	SuppDelivery=b.SuppDelivery,
-	EstETA=b.EstETA,
-	TPEQty = B.Qty,
-	Foc = B.Foc,
-	ShipQty = B.ShipQty,
-	ShipFoc = B.ShipFoc,
-	ShipETA = B.ShipETA,
-	TPECurrencyID = c.CurrencyID,
-	TPEPrice = b.Price
+	SET
+        TPEPOID = isnull( B.id,''),
+	    SEQ1= isnull(b.Seq1,''),
+	    SuppDelivery= b.SuppDelivery,
+	    EstETA= b.EstETA,
+	    TPEQty = isnull( B.Qty,0),
+	    Foc = isnull( B.Foc,0),
+	    ShipQty = isnull( B.ShipQty,0),
+	    ShipFoc = isnull( B.ShipFoc,0),
+	    ShipETA =  B.ShipETA,
+	    TPECurrencyID = isnull( c.CurrencyID,''),
+	    TPEPrice = isnull( b.Price,0)
 	FROM dbo.MiscPO_Detail A
 	INNER JOIN dbo.SciTrade_To_Pms_MmsPO_Detail B  on  a.MiscID=b.Refno 
 													and  a.SEQ2=b.Seq2 
@@ -477,7 +502,7 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	and C.FactoryID in (select id from @Sayfty)
 
 	UPDATE a
-	SET Junk = b.Cancel
+	SET Junk = isnull( b.Cancel,0)
 	FROM dbo.MiscPO_Detail a
 	INNER JOIN dbo.SciTrade_To_Pms_MmsReq_Detail b ON a.ID = b.ID and a.Seq2 = b.Seq2
 
@@ -504,22 +529,22 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	from dbo.SciTrade_To_Pms_MmsPO a WITH (NOLOCK) left join Production.dbo.scifty b WITH (NOLOCK) on a.factoryid = b.id
 	where a.factoryid in (select id from @Sayfty) and a.type = 'M'
 
-	update t set	t.CDate = s.CDate ,
-					t.PurchaseFrom = 'T' ,		
-					t.FactoryID = s.FactoryID ,
-					t.MDivisionID = s.MDivisionID,
-					t.CurrencyID = s.CurrencyID ,
+	update t set	t.CDate =  s.CDate ,
+					t.PurchaseFrom = 'T' ,
+					t.FactoryID = isnull( s.FactoryID ,''),
+					t.MDivisionID = isnull( s.MDivisionID,''),
+					t.CurrencyID = isnull( s.CurrencyID ,''),
 					t.Status= IIF(s.Junk = 1,'Junked',IIF(s.ApvName != '','Approved','New')),
-					t.Handle = s.Handle ,
-					t.Amount = s.Amount ,
-					t.Vatrate = s.Vatrate ,
-					t.Vat = s.Vat ,
-					t.Remark = s.Remark ,
-					t.Approve = s.ApvName ,		
-					t.ApproveDate = s.ApvDate ,
-					t.AddName = s.AddName ,
+					t.Handle = isnull( s.Handle ,''),
+					t.Amount = isnull( s.Amount ,0),
+					t.Vatrate = isnull( s.Vatrate ,0),
+					t.Vat = isnull( s.Vat ,0),
+					t.Remark = isnull( s.Remark ,''),
+					t.Approve = isnull( s.ApvName ,''),
+					t.ApproveDate =  s.ApvDate ,
+					t.AddName = isnull( s.AddName ,''),
 					t.AddDate = s.AddDate ,
-					t.EditName = s.EditName ,
+					t.EditName = isnull( s.EditName ,''),
 					t.EditDate = s.EditDate 
 	from dbo.MachinePO t
 	inner join #tmpTrade_To_PmsMachinePO s on t.id=s.id
@@ -527,9 +552,25 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 
 	insert into dbo.MachinePO(ID ,	  CDate ,PurchaseFrom ,  FactoryID ,   CurrencyID ,   Handle,    LocalSuppID ,  Amount ,   Vatrate ,   Vat ,        Remark ,        Approve ,        ApproveDate ,        AddName ,        AddDate ,        EditName ,        EditDate
 		 ,MDivisionID,Status)
-	select
-	s.ID ,	s.CDate , 'T' ,	s.FactoryID ,s.CurrencyID ,	s.Handle,s.SuppID ,		s.Amount ,		s.Vatrate ,	Vat ,		s.Remark ,		s.ApvName ,		s.ApvDate ,		s.AddName ,		s.AddDate ,		s.EditName ,		s.EditDate
-,MDivisionID, IIF(s.Junk = 1,'Junked',IIF(s.ApvName != '',ApvName,'New'))
+	SELECT
+        isnull(s.id,''),
+        s.cdate,
+        'T',
+        isnull(s.factoryid,''),
+        isnull(s.currencyid,''),
+        isnull(s.handle,   ''),
+        isnull(s.suppid,   ''),
+        isnull(s.amount,   0),
+        isnull(s.vatrate,  0),
+        isnull(vat,        0),
+        isnull(s.remark,   ''),
+        isnull(s.apvname,  ''),
+        s.apvdate,
+        isnull(s.addname,''),
+        s.adddate,
+        isnull(s.editname,''),
+        s.editdate 
+        ,MDivisionID, IIF(s.Junk = 1,'Junked',IIF(s.ApvName != '',ApvName,'New'))
 	from #tmpTrade_To_PmsMachinePO s
 	where not exists(select 1 from dbo.MachinePO t where t.id=s.id)
 	and not (s.junk = 0 and s.ApvDate is null)
@@ -545,17 +586,17 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 -----------------MachinePO_Detail Type <>'M'---------------------
 		update t
 		set 
-		t.seq1=s.seq1,
-		t.SuppDelivery=s.SuppDelivery,
-		t.EstETA=s.EstETA,
-		t.Complete = isnull(s.Complete,0),
-		t.TPEQty=s.Qty,
-		t.Foc=s.Foc,
-		t.ShipQty=s.ShipQty,
-		t.ShipFoc=s.ShipFoc,
-		t.ShipETA=s.ShipETA,
-		t.TPECurrencyID = s1.CurrencyID,
-		t.TPEPrice = s.Price
+		    t.seq1= isnull(s.seq1,''),
+		    t.SuppDelivery= s.SuppDelivery,
+		    t.EstETA= s.EstETA,
+		    t.Complete = isnull(s.Complete,0),
+		    t.TPEQty= isnull(s.Qty,0),
+		    t.Foc= isnull(s.Foc,0),
+		    t.ShipQty= isnull(s.ShipQty,0),
+		    t.ShipFoc= isnull(s.ShipFoc,0),
+		    t.ShipETA= s.ShipETA,
+		    t.TPECurrencyID = isnull( s1.CurrencyID,''),
+		    t.TPEPrice = isnull( s.Price,0)
 		from  dbo.PartPO_Detail as  t
 		inner join dbo.SciTrade_To_Pms_MmsPO_Detail s on t.id=s.MmsReqID and t.seq2=s.seq2 and s.Junk=0 AND s.ID=t.TPEPOID
 		inner join dbo.SciTrade_To_Pms_MmsPO s1 on s1.ID=s.ID
@@ -564,18 +605,19 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 		where 1=1
 		
 		update t
-		set t.TpePOID = s.id,
-		t.seq1=s.seq1,
-		t.SuppDelivery=s.SuppDelivery,
-		t.EstETA=s.EstETA,
-		t.Complete = isnull(s.Complete,0),
-		t.TPEQty=s.Qty,
-		t.Foc=s.Foc,
-		t.ShipQty=s.ShipQty,
-		t.ShipFoc=s.ShipFoc,
-		t.ShipETA=s.ShipETA,
-		t.TPECurrencyID = a.CurrencyID,
-		t.TPEPrice = s.Price
+		set
+            t.TpePOID = isnull( s.id,''),
+		    t.seq1= isnull(s.seq1,''),
+		    t.SuppDelivery= s.SuppDelivery,
+		    t.EstETA= s.EstETA,
+		    t.Complete = isnull(s.Complete,0),
+		    t.TPEQty= isnull(s.Qty,0),
+		    t.Foc= isnull(s.Foc,0),
+		    t.ShipQty= isnull(s.ShipQty,0),
+		    t.ShipFoc= isnull(s.ShipFoc,0),
+		    t.ShipETA= s.ShipETA,
+		    t.TPECurrencyID = isnull( a.CurrencyID,''),
+		    t.TPEPrice = isnull( s.Price,0)
 		from  dbo.MiscPO_Detail as  t
 		inner join dbo.SciTrade_To_Pms_MmsPO_Detail s on t.id=s.MmsReqID  and t.seq2=s.seq2
 		inner join dbo.SciTrade_To_Pms_MmsPO a on s.id=a.ID
@@ -583,23 +625,23 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 		where a.Type='O'
 		
 ------------------MachinePO_Detail Type='M'----------------------
-	update t set t.MachineGroupID= s.MachineGroupID,
-				t.MasterGroupID= s.MasterGroupID,
-				t.MachineBrandID= s.MachineBrandID,
-				t.Model= s.Model,
-				t.Description= s.Description,
-				t.Qty= s.Qty,
-				t.FOC= s.FOC,
-				t.Price= s.Price,				
-				t.Remark= s.Remark,
-				t.MachineReqID= s.MmsReqID,
-				t.Junk= s.Junk,
+	update t set t.MachineGroupID= isnull( s.MachineGroupID,''),
+				t.MasterGroupID= isnull( s.MasterGroupID,   ''),
+				t.MachineBrandID= isnull( s.MachineBrandID, ''),
+				t.Model= isnull( s.Model,                   ''),
+				t.Description= isnull( s.Description,       ''),
+				t.Qty= isnull( s.Qty,                       0),
+				t.FOC= isnull( s.FOC,                       0),
+				t.Price= isnull( s.Price,				    0),
+				t.Remark= isnull( s.Remark,                 ''),
+				t.MachineReqID= isnull( s.MmsReqID,         ''),
+				t.Junk= isnull( s.Junk,                     0),
 				t.RefNo = ISNULL(s.RefNo,''),
-				t.DescriptionDetail = s.DescriptionDetail,
-				t.UnitID = s.UnitID,
+				t.DescriptionDetail = isnull( s.DescriptionDetail,''),
+				t.UnitID = isnull( s.UnitID,''),
 				t.Delivery = s.Delivery,
 				t.SuppEstETA = s.SuppEstETA,
-				t.Complete = s.Complete,
+				t.Complete = isnull( s.Complete,0),
 				t.ShipQty = isnull(s.ShipQty,0),
 				t.ShipFOC = isnull(s.ShipFOC,0),
 				t.ShipETA = s.ShipETA 
@@ -611,9 +653,29 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	insert into dbo.MachinePO_Detail(ID ,Seq1 ,Seq2 ,MasterGroupID ,MachineGroupID ,MachineBrandID ,Model ,Description 
 				,Qty ,FOC ,Price ,Remark ,MachineReqID ,Junk ,RefNo ,DescriptionDetail ,UnitID ,Delivery ,SuppEstETA
 				,Complete , ShipQty, ShipFOC,ShipETA)
-	select	s.ID ,s.Seq1 ,s.Seq2 ,s.MasterGroupID ,s.MachineGroupID ,s.MachineBrandID ,s.Model ,s.Description
-				,s.Qty ,s.FOC ,s.Price ,s.Remark ,s.MmsReqID ,s.Junk ,ISNULL(s.RefNo ,'') ,s.DescriptionDetail ,s.UnitID ,s.Delivery ,s.SuppEstETA
-				,s.Complete ,s.ShipQty ,s.ShipFOC ,s.ShipETA
+    SELECT isnull(s.id,            ''),
+           isnull(s.seq1,          ''),
+           isnull(s.seq2,          ''),
+           isnull(s.mastergroupid, ''),
+           isnull(s.machinegroupid,''),
+           isnull(s.machinebrandid,''),
+           isnull(s.model,         ''),
+           isnull(s.description,   ''),
+           isnull(s.qty,           0),
+           isnull(s.foc,           0),
+           isnull(s.price,         0),
+           isnull(s.remark,        ''),
+           isnull(s.mmsreqid,      ''),
+           isnull(s.junk,          0),
+           Isnull(s.refno, ''),
+           isnull(s.descriptiondetail,''),
+           isnull(s.unitid,          ''),
+           s.delivery,
+           s.suppesteta,
+           isnull(s.complete,        0),
+           isnull(s.shipqty,         0),
+           isnull(s.shipfoc,         0),
+           s.shipeta
 	from dbo.SciTrade_To_Pms_MachinePO_Detail s
 	inner join dbo.SciTrade_To_Pms_MmsPO sM WITH (NOLOCK) on sM.id = s.ID
 	where not exists(select 1 from dbo.MachinePO_Detail t where t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2)
@@ -631,19 +693,19 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 ------------------MachinePO_Detail Type='R'----------------------
 	update t set
          [Cdate]        = sM.[Cdate]
-        ,[FactoryID]	= sM.[FactoryID]
-        ,[MDivisionID]	= b.MDivisionID
-        ,[CurrencyID]	= sM.[CurrencyID]
-        ,[Amount]		= sM.[Amount]
-        ,[Vatrate]		= sM.[Vatrate]
-        ,[Vat]			= sM.[Vat]
-        ,[Remark]		= sM.[Remark]
-        ,[ApvName]		= sM.[ApvName]
+        ,[FactoryID]	= isnull( sM.[FactoryID] ,'')
+        ,[MDivisionID]	= isnull( b.MDivisionID  ,'')
+        ,[CurrencyID]	= isnull( sM.[CurrencyID],'')
+        ,[Amount]		= isnull( sM.[Amount]    ,0)
+        ,[Vatrate]		= isnull( sM.[Vatrate]   ,0)
+        ,[Vat]			= isnull( sM.[Vat]       ,0)
+        ,[Remark]		= isnull( sM.[Remark]    ,'')
+        ,[ApvName]		= isnull( sM.[ApvName]   ,'')
         ,[ApvDate]		= sM.[ApvDate]
-		,[Junk]			= sM.[Junk]
-        ,[AddName]		= sM.[AddName]
+		,[Junk]			= isnull( sM.[Junk]      ,0)
+        ,[AddName]		= isnull( sM.[AddName]   ,'')
         ,[AddDate]		= sM.[AddDate]
-        ,[EditName]		= sM.[EditName]
+        ,[EditName]		= isnull( sM.[EditName],'')
         ,[EditDate]		= sM.[EditDate]
 	from MiscOtherPO t
 	inner join dbo.SciTrade_To_Pms_MmsPO sM WITH (NOLOCK) on sM.id = t.ID
@@ -651,16 +713,16 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	where sM.type = 'R'
 
 	update t set 
-         [MiscOtherID] = s.RefNo
-        ,[BrandID]	   = sM.[BrandID]
-        ,[SuppID]	   = sM.[SuppID]
-        ,[UnitID]	   = s.[UnitID]
-		,Qty		   = s.Qty
-        ,[TPEPrice]	   = s.Price
-        ,[TPEQty]	   = s.ShipQty
-        ,[TPEFoc]	   = s.Foc
-		,MachineReqID  = s.MmsReqID
-		,Junk		   = s.Junk
+         [MiscOtherID] = isnull( s.RefNo       ,'')
+        ,[BrandID]	   = isnull( sM.[BrandID]  ,'')
+        ,[SuppID]	   = isnull( sM.[SuppID]   ,'')
+        ,[UnitID]	   = isnull( s.[UnitID]    ,'')
+		,Qty		   = isnull( s.Qty         ,0)
+        ,[TPEPrice]	   = isnull( s.Price       ,0)
+        ,[TPEQty]	   = isnull( s.ShipQty     ,0)
+        ,[TPEFoc]	   = isnull( s.Foc         ,0)
+		,MachineReqID  = isnull( s.MmsReqID    ,'')
+		,Junk		   = isnull( s.Junk        ,0)
 	from dbo.MiscOtherPO_Detail t
 	inner join dbo.SciTrade_To_Pms_MmsPO_Detail s WITH (NOLOCK) on t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2
 	inner join dbo.SciTrade_To_Pms_MmsPO sM WITH (NOLOCK) on sM.id = s.ID
@@ -685,22 +747,22 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
            ,[EditName]
            ,[EditDate])
 	select
-		 sM.[ID]
+		 isnull(sM.[ID]       ,'')
         ,sM.[Cdate]
-        ,sM.[FactoryID]
-        ,b.[MDivisionID]
+        ,isnull(sM.[FactoryID],'')
+        ,isnull(b.[MDivisionID],'')
         ,'T'
-        ,sM.[CurrencyID]
-        ,sM.[Amount]
-        ,sM.[Vatrate]
-        ,sM.[Vat]
-        ,sM.[Remark]
-		,sM.[ApvName]
+        ,isnull(sM.[CurrencyID],'')
+        ,isnull(sM.[Amount]    ,0)
+        ,isnull(sM.[Vatrate]   ,0)
+        ,isnull(sM.[Vat]       ,0)
+        ,isnull(sM.[Remark]    ,'')
+		,isnull(sM.[ApvName]   ,'')
         ,sM.[ApvDate]
-		,sM.[Junk]
-        ,sM.[AddName]
+		,isnull(sM.[Junk]      ,0)
+        ,isnull(sM.[AddName]   ,'')
         ,sM.[AddDate]
-        ,sM.[EditName]
+        ,isnull(sM.[EditName],'')
         ,sM.[EditDate]
 	from dbo.SciTrade_To_Pms_MmsPO sM
 	left join MiscOtherPO t WITH (NOLOCK) on sM.id = t.ID
@@ -723,19 +785,19 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 			,MachineReqID
 			,Junk)
 	select
-		 s.[ID]
-		,s.[Seq1]
-		,s.[Seq2]
-		,s.RefNo
-		,sM.[BrandID]
-		,sM.[SuppID]
-		,s.[UnitID]
-		,s.[Qty]
-		,s.Price
-		,s.ShipQty
-		,s.Foc
-		,s.MmsReqID
-		,s.Junk
+		 isnull(s.[ID]      ,'')
+		,isnull(s.[Seq1]    ,'')
+		,isnull(s.[Seq2]    ,'')
+		,isnull(s.RefNo     ,'')
+		,isnull(sM.[BrandID],'')
+		,isnull(sM.[SuppID] ,'')
+		,isnull(s.[UnitID]  ,'')
+		,isnull(s.[Qty]     ,0)
+		,isnull(s.Price     ,0)
+		,isnull(s.ShipQty   ,0)
+		,isnull(s.Foc       ,0)
+		,isnull(s.MmsReqID  ,'')
+		,isnull(s.Junk      ,0)
 	from dbo.SciTrade_To_Pms_MmsPO sM 
 	inner join dbo.SciTrade_To_Pms_MmsPO_Detail s WITH (NOLOCK) on sM.id = s.ID
 	left join dbo.MiscOtherPO_Detail t on t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2
@@ -750,14 +812,23 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	group by b.ID,a.Seq1,a.Seq2,b.POID,b.APDATE,b.VoucherID,b.Price, b.ExportID
 
 	update t set	t.APDATE = s.APDATE,
-					t.VoucherID = s.VoucherID,
-					t.Price = s.Price,
-					t.Qty = s.Qty
+					t.VoucherID = isnull( s.VoucherID,''),
+					t.Price = isnull( s.Price,        0),
+					t.Qty = isnull( s.Qty,            0)
 	from dbo.MachinePO_Detail_TPEAP t
 	inner join #tmpMachinePO_Detail_TPEAP s on t.ID = s.ID and t.Seq1 = s.Seq1 and t.Seq2 = s.Seq2 and t.TPEPOID = s.TPEPOID and t.ExportID = s.ExportID
 
 	insert into dbo.MachinePO_Detail_TPEAP(ID,Seq1,Seq2,TPEPOID,APDATE,VoucherID,Price,Qty,ExportID)
-		select s.ID,s.Seq1,s.Seq2,s.TPEPOID,s.APDATE,s.VoucherID,s.Price,s.Qty,s.ExportID
+		SELECT
+            isnull(s.id,       ''),
+            isnull(s.seq1,     ''),
+            isnull(s.seq2,     ''),
+            isnull(s.tpepoid,  ''),
+            s.apdate,
+            isnull(s.voucherid,''),
+            isnull(s.price,    0),
+            isnull(s.qty,      0),
+            isnull(s.exportid, '')
 		from #tmpMachinePO_Detail_TPEAP s
 		where not exists(select 1 from dbo.MachinePO_Detail_TPEAP t where t.ID = s.ID and t.Seq1 = s.Seq1 and t.Seq2 = s.Seq2 and t.TPEPOID = s.TPEPOID and t.ExportID = s.ExportID)
 
@@ -766,7 +837,10 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	
 ------------------MachinePO_Detail_TPETTbefore----------------------
 INSERT INTO [dbo].MachinePO_Detail_TPETTbefore([ID],[APDate],[VoucherID],TPEPOID)
-select a.[ID],a.[APDate],a.[VoucherID],a.[POID]
+SELECT isnull(a.[ID],''),
+       a.[APDate],
+       isnull(a.[VoucherID],''),
+       isnull(a.[POID] ,'')
 from SciTrade_To_Pms_MmsTTbefore a
 left join MachinePO_Detail_TPETTbefore b on a.ID = b.ID and a.[APDate] = b.[APDate] and a.[VoucherID] = b.[VoucherID] and a.[POID] = b.TPEPOID
 where b.ID is null
@@ -774,7 +848,12 @@ where b.ID is null
 ------------------MachinePO_Detail_TPESurcharge----------------------
 
 INSERT INTO [dbo].[MachinePO_Detail_TPESurcharge]([ID],[APDate],[VoucherID],TPEPOID,[Seq1],[Seq2])
-select a.[ID],a.[APDate],a.[VoucherID],a.[POID],a.[Seq1],a.[Seq2]
+SELECT isnull(a.[ID],''),
+       a.[APDate],
+       isnull(a.[VoucherID],''),
+       isnull(a.[POID],     ''),
+       isnull(a.[Seq1],     ''),
+       isnull(a.[Seq2],     '')
 from SciTrade_To_Pms_MmsSurcharge a
 left join MachinePO_Detail_TPESurcharge b on a.ID = b.ID and a.[APDate] = b.[APDate] and a.[VoucherID] = b.[VoucherID] and a.[POID] = b.TPEPOID
 and a.[Seq1] = b.[Seq1] and a.[Seq2] = b.[Seq2]
@@ -789,18 +868,26 @@ where b.ID is null
 	inner join dbo.SciTrade_To_Pms_MmsAP b on a.ID = b.POID and a.Seq1 = b.Seq1 and a.Seq2 = b.Seq2
 	group by b.ID,a.Seq1,a.Seq2,b.POID,b.APDATE,b.VoucherID,b.Price
 
-	update t set t.TPEPOID = s.TPEPOID,
+	update t set t.TPEPOID = isnull( s.TPEPOID,''),
 					t.APDATE = s.APDATE,
-					t.VoucherID = s.VoucherID,
-					t.Price = s.Price,
-					t.Qty = s.Qty
+					t.VoucherID = isnull( s.VoucherID,''),
+					t.Price = isnull( s.Price,0),
+					t.Qty = isnull( s.Qty,0)
 	from dbo.MiscPO_Detail_TPEAP t
 	inner join #tmpMiscPO_Detail s on t.ID = s.ID and t.Seq1 = s.Seq1 and t.Seq2 = s.Seq2
 
 	insert into dbo.MiscPO_Detail_TPEAP(ID,Seq1,Seq2,TPEPOID,APDATE,VoucherID,Price,Qty)
-		select s.ID,s.Seq1,s.Seq2,s.TPEPOID,s.APDATE,s.VoucherID,s.Price,s.Qty
-		from #tmpMiscPO_Detail s
-		where not exists(select 1 from dbo.MiscPO_Detail_TPEAP t where t.ID = s.ID and t.Seq1 = s.Seq1 and t.Seq2 = s.Seq2)
+    SELECT
+            isnull(s.id,       ''),
+            isnull(s.seq1,     ''),
+            isnull(s.seq2,     ''),
+            isnull(s.tpepoid,  ''),
+            s.apdate,
+            isnull(s.voucherid,''),
+            isnull(s.price,    0),
+            isnull(s.qty,      0)
+	from #tmpMiscPO_Detail s
+	where not exists(select 1 from dbo.MiscPO_Detail_TPEAP t where t.ID = s.ID and t.Seq1 = s.Seq1 and t.Seq2 = s.Seq2)
 
 	drop table #tmpMiscPO_Detail
 
@@ -811,26 +898,34 @@ where b.ID is null
 	inner join dbo.SciTrade_To_Pms_MmsAP b on a.ID = b.POID and a.Seq1 = b.Seq1 and a.Seq2 = b.Seq2
 	group by b.ID,a.Seq1,a.Seq2,b.POID,b.APDATE,b.VoucherID,b.Price
 
-	update t set t.TPEPOID = s.TPEPOID,
-					t.APDATE = s.APDATE,
-					t.VoucherID = s.VoucherID,
-					t.Price = s.Price,
-					t.Qty = s.Qty
+	update t set t.TPEPOID = isnull( s.TPEPOID,''),
+					t.APDATE =  s.APDATE,
+					t.VoucherID = isnull( s.VoucherID,''),
+					t.Price = isnull( s.Price,0),
+					t.Qty = isnull( s.Qty,0)
 	from dbo.PartPO_Detail_TPEAP t
 	inner join #tmpPartPO_Detail_TPEAP s on t.ID = s.ID and t.Seq1 = s.Seq1 and t.Seq2 = s.Seq2
 
 	insert into dbo.PartPO_Detail_TPEAP(ID,Seq1,Seq2,TPEPOID,APDATE,VoucherID,Price,Qty)
-			select s.ID,s.Seq1,s.Seq2,s.TPEPOID,s.APDATE,s.VoucherID,s.Price,s.Qty
-			from #tmpPartPO_Detail_TPEAP s
-			where not exists(select 1 from dbo.PartPO_Detail_TPEAP t where t.ID = s.ID and t.Seq1 = s.Seq1 and t.Seq2 = s.Seq2)
+	SELECT
+            isnull(s.id,        ''),
+            isnull(s.seq1,      ''),
+            isnull(s.seq2,      ''),
+            isnull(s.tpepoid,   ''),
+            s.apdate,
+            isnull(s.voucherid, ''),
+            isnull(s.price,     0),
+            isnull(s.qty,       0)
+	from #tmpPartPO_Detail_TPEAP s
+	where not exists(select 1 from dbo.PartPO_Detail_TPEAP t where t.ID = s.ID and t.Seq1 = s.Seq1 and t.Seq2 = s.Seq2)
 	
 	drop table #tmpPartPO_Detail_TPEAP
 
 	--------------Partunit-------------------------------
 
-	update t set t.addname=s.addname,
+	update t set t.addname=isnull(s.addname,''),
 				 t.adddate=s.adddate,
-				 t.editname=s.editname,
+				 t.editname=isnull(s.editname,''),
 				 t.editdate=s.editdate
 	from dbo.MMSUnit t
 	inner join SciTrade_To_Pms_MmsUnit s on t.id=s.id
@@ -840,22 +935,22 @@ where b.ID is null
 												,[AddDate]
 												,[EditName]
 												,[EditDate])
-				select  s.[ID]     
-						,s.[AddName]
+				select   isnull(s.[ID]     ,'')
+						,isnull(s.[AddName],'')
 						,s.[AddDate]
-						,s.[EditName]
+						,isnull(s.[EditName],'')
 						,s.[EditDate]
 				from SciTrade_To_Pms_MmsUnit s
 				where not exists(select 1 from dbo.MMSUnit t where t.id=s.id)
 
 	  -----------MachineMasterGroup------------------------
-	  update t set t.ID				 = s.ID,				
-				t.Description		 = s.Description,		
-				t.DescriptionCH	 = s.DescriptionCH	,
-				t.Junk			 = s.Junk	,		
-				t.AddName			 = s.AddName,			
-				t.AddDate			 = s.AddDate,			
-				t.EditName		 = s.EditName,		
+	  update t set t.ID				 = isnull( s.ID,				''),
+				t.Description		 = isnull( s.Description,		''),
+				t.DescriptionCH	 = isnull( s.DescriptionCH	,       ''),
+				t.Junk			 = isnull( s.Junk	,		        0),
+				t.AddName			 = isnull( s.AddName,			''),
+				t.AddDate			 =  s.AddDate,
+				t.EditName		 = isnull( s.EditName,		        ''),
 				t.EditDate		 = s.EditDate	
 	  from dbo.MachineMasterGroup t
 	  inner join dbo.SciTrade_To_Pms_MachineMasterGroup s on t.id=s.id
@@ -869,33 +964,34 @@ where b.ID is null
 						AddDate		 ,
 						EditName		 ,
 						EditDate		)
-					select s.ID			 ,
-					   s.Description	 ,
-					   s.DescriptionCH,	
-					   s.Junk			 ,
-					   s.AddName		 ,
+					select
+                       isnull(s.ID			 ,''),
+					   isnull(s.Description	 ,''),
+					   isnull(s.DescriptionCH,''),
+					   isnull(s.Junk		,0),
+					   isnull(s.AddName		 ,''),
 					   s.AddDate		 ,
-					   s.EditName		 ,
+					   isnull(s.EditName		,''),
 					   s.EditDate	
 					from dbo.SciTrade_To_Pms_MachineMasterGroup s
 					where not exists(select 1 from dbo.MachineMasterGroup t where t.id=s.id)
 
 	  -----------MachineGroup------------------------
-		update t set t.ID= s.ID,
-					 t.Description= s.Description,
-					 t.DescCH= s.DescriptionCH,
-					 t.Substitute= s.Substitute,
-					 t.Junk= s.Junk,
-					 t.Picture1= s.Picture1,
-					 t.Picture2= s.Picture2,				
-					 t.AddName= s.AddName,
-					 t.AddDate= s.AddDate,
-					 t.EditName= s.EditName,
-					 t.EditDate= s.EditDate,
-					 t.MasterGroupID = s.MasterGroupID,
-					 t.IsBD= s.IsBD,
-					 t.IsSew= s.IsSew,
-					 t.IsDP= s.IsDP
+		update t set t.ID= isnull( s.ID,''),
+					 t.Description= isnull( s.Description,      ''),
+					 t.DescCH= isnull( s.DescriptionCH,         ''),
+					 t.Substitute= isnull( s.Substitute,        ''),
+					 t.Junk= isnull( s.Junk,                    0),
+					 t.Picture1= isnull( s.Picture1,            ''),
+					 t.Picture2= isnull( s.Picture2,			''),
+					 t.AddName= isnull( s.AddName,              ''),
+					 t.AddDate=  s.AddDate,
+					 t.EditName= isnull( s.EditName,            ''),
+					 t.EditDate=  s.EditDate,
+					 t.MasterGroupID = isnull( s.MasterGroupID, ''),
+					 t.IsBD= isnull( s.IsBD,                    0),
+					 t.IsSew= isnull( s.IsSew,                  0),
+					 t.IsDP= isnull( s.IsDP,0)
 		from dbo.MachineGroup t
 		inner join dbo.SciTrade_To_Pms_MachineGroup s on t.id=s.id AND t.MasterGroupID = s.MasterGroupID
 
@@ -914,33 +1010,34 @@ where b.ID is null
 				,IsBD
 				,IsSew
 				,IsDP)
-				select s.ID,
-				s.Description,
-				s.DescriptionCH,
-				s.Substitute,
-				s.Junk,
-				s.Picture1,
-				s.Picture2,
-				s.AddName,
-				s.AddDate,
-				s.EditName,
-				s.EditDate,
-				s.MasterGroupID,
-				s.IsBD,
-				s.IsSew,
-				s.IsDP
+				select
+                    isnull(s.ID,            ''),    
+				    isnull(s.Description,   ''),
+				    isnull(s.DescriptionCH, ''),
+				    isnull(s.Substitute,    ''),
+				    isnull(s.Junk,          0),
+				    isnull(s.Picture1,      ''),
+				    isnull(s.Picture2,      ''),
+				    isnull(s.AddName,       ''),
+				    s.AddDate,
+				    isnull(s.EditName,      ''),
+				    s.EditDate,
+				    isnull(s.MasterGroupID, ''),
+				    isnull(s.IsBD,          0),
+				    isnull(s.IsSew,         0),
+				    isnull(s.IsDP,          0)
 				from dbo.SciTrade_To_Pms_MachineGroup s
 				where not exists(select 1 from dbo.MachineGroup t where t.id=s.id AND t.MasterGroupID = s.MasterGroupID)
 		
 		-----------RepairType------------------------
-		update t set t.ID= s.ID,
-					 t.Name		   = s.Name			,
-					 t.Description  = s.Description	,
-					 t.Junk		   = s.Junk			,
-					 t.AddDate	   = s.AddDate		,
-					 t.AddName	   = s.AddName		,
-					 t.EditDate	   = s.EditDate		,
-					 t.EditName	   = s.EditName
+		update t set t.ID= isnull( s.ID,                        ''),
+					 t.Name		   = isnull( s.Name			,   ''),
+					 t.Description  = isnull( s.Description	,   ''),
+					 t.Junk		   = isnull( s.Junk			,   0),
+					 t.AddDate	   =  s.AddDate,
+					 t.AddName	   = isnull( s.AddName		,   ''),
+					 t.EditDate	   =  s.EditDate,
+					 t.EditName	   = isnull( s.EditName,        '')
 		from dbo.RepairType t
 		inner join dbo.SciTrade_To_Pms_RepairType s on t.id=s.id
 
@@ -952,14 +1049,14 @@ where b.ID is null
 					  ,AddName
 					  ,EditDate
 					  ,EditName)
-				select s.Id
-					  ,s.Name
-					  ,s.Description
-					  ,s.Junk
+				select isnull(s.Id           ,'')
+					  ,isnull(s.Name         ,'')
+					  ,isnull(s.Description  ,'')
+					  ,isnull(s.Junk         ,0)
 					  ,s.AddDate
-					  ,s.AddName
+					  ,isnull(s.AddName      ,'')
 					  ,s.EditDate
-					  ,s.EditName
+					  ,isnull(s.EditName     ,'')
 				from dbo.SciTrade_To_Pms_RepairType s
 				where not exists(select 1 from dbo.RepairType t where t.id=s.id)
 
@@ -968,17 +1065,17 @@ where b.ID is null
 	 from dbo.SciTrade_To_Pms_Part 
 	 where type = 'M'
 
-	 update t set	t.MasterGroupID		    = s.MasterGroupID
-					,t.MachineGroupID		= s.MachineGroupID
-					,t.Model				= s.Model
-					,t.MachineBrandID		= s.MachineBrandID
-					,t.Description			= s.Description
-					,t.DescriptionDetail	= s.DescriptionDetail
-					,t.Origin				= s.Origin
-					,t.Junk					= s.Junk
-					,t.AddName				= s.AddName
-					,t.AddDate				= s.AddDate
-					,t.EditName				= s.EditName
+	 update t set	t.MasterGroupID		    = isnull( s.MasterGroupID       ,'')
+					,t.MachineGroupID		= isnull( s.MachineGroupID      ,'')
+					,t.Model				= isnull( s.Model               ,'')
+					,t.MachineBrandID		= isnull( s.MachineBrandID      ,'')
+					,t.Description			= isnull( s.Description         ,'')
+					,t.DescriptionDetail	= isnull( s.DescriptionDetail   ,'')
+					,t.Origin				= isnull( s.Origin              ,'')
+					,t.Junk					= isnull( s.Junk                ,0)
+					,t.AddName				= isnull( s.AddName             ,'')
+					,t.AddDate				=  s.AddDate
+					,t.EditName				= isnull( s.EditName,'')
 					,t.EditDate				= s.EditDate
 	 from dbo.TPEMachine t
 	 inner join #tmpTPEMachine s on t.ID = s.Refno 
@@ -986,11 +1083,23 @@ where b.ID is null
 	 insert into dbo.TPEMachine(ID,MasterGroupID,MachineGroupID,Model,MachineBrandID,Description
 			,DescriptionDetail,Origin,Picture1,Picture2,Junk
 			,AddName,AddDate,EditName,EditDate)
-			select s.Refno 			, s.MasterGroupID  , s.MachineGroupID , s.Model 		, s.MachineBrandID 	, s.Description
-			 , s.DescriptionDetail 		, s.Origin 	, '' 		, '' 		, s.Junk
-			 , s.AddName 		, s.AddDate  	, s.EditName  	, s.EditDate
-			from #tmpTPEMachine s
-			where not exists(select 1 from dbo.TPEMachine t where t.ID = s.Refno )
+    SELECT isnull(s.refno,              ''),
+           isnull(s.mastergroupid,      ''),
+           isnull(s.machinegroupid,     ''),
+           isnull(s.model,              ''),
+           isnull(s.machinebrandid,     ''),
+           isnull(s.description,        ''),
+           isnull(s.descriptiondetail,  ''),
+           isnull(s.origin,             ''),
+           '',
+           '',
+           isnull(s.junk,               0),
+           isnull(s.addname,            ''),
+           s.adddate,
+           isnull(s.editname,           ''),
+           s.editdate
+    from #tmpTPEMachine s
+    where not exists(select 1 from dbo.TPEMachine t where t.ID = s.Refno )
 
 	drop table #tmpTPEMachine
 	
@@ -1000,27 +1109,33 @@ where b.ID is null
 	from dbo.SciTrade_To_Pms_TradeHIS_MMS WITH (NOLOCK) 
 	where TableName = 'Part' and HisType = 'ControlParts' 
 
-	 update t set t.PartID 		= s.RefNo  
-				,t.HisType		= s.HisType
-				,t.OldValue		= s.OldValue
-				,t.NewValue		= s.NewValue
-				,t.Remark		= s.Remark
-				,t.AddName		= s.AddName
+	 update t set t.PartID 		= isnull( s.RefNo   ,'')
+				,t.HisType		= isnull( s.HisType ,'')
+				,t.OldValue		= isnull( s.OldValue,'')
+				,t.NewValue		= isnull( s.NewValue,'')
+				,t.Remark		= isnull( s.Remark  ,'')
+				,t.AddName		= isnull( s.AddName ,'')
 				,t.AddDate		= s.AddDate
 	 from dbo.PartPrice_History t
 	 inner join #tmpPartPrice_History s on t.TradeHisMMSUkey = s.Ukey  
 
 	 insert into dbo.PartPrice_History(TradeHisMMSUkey,  PartID,  HisType,  OldValue,  NewValue
 		   ,Remark,  AddName,  AddDate)
-		   select s.Ukey    , s.RefNo , s.HisType 	, s.OldValue , s.NewValue 		
-			, s.Remark 	 , s.AddName , s.AddDate 
-		   from #tmpPartPrice_History s
-		   where not exists(select 1 from dbo.PartPrice_History t where t.TradeHisMMSUkey = s.Ukey  )
+    SELECT  isnull(s.ukey,    0),
+            isnull(s.refno,   ''),
+            isnull(s.histype, ''),
+            isnull(s.oldvalue,''),
+            isnull(s.newvalue,''),
+            isnull(s.remark,  ''),
+            isnull(s.addname, ''),
+            s.adddate 
+	from #tmpPartPrice_History s
+	where not exists(select 1 from dbo.PartPrice_History t where t.TradeHisMMSUkey = s.Ukey  )
 
 	drop table #tmpPartPrice_History
 
 	------------MachinePending------------------
-	update t set t.TPEComplete = s.TPEComplete
+	update t set t.TPEComplete = isnull(s.TPEComplete,0)
 	from dbo.MachinePending t
 	inner join dbo.SciTrade_To_Pms_MachinePending s on t.id=s.id
 	where t.status = 'Confirmed'
@@ -1028,7 +1143,7 @@ where b.ID is null
 	------------MachinePending_Detail------------------
 	declare @Tdebit table(id varchar(13),MachineID varchar(16),TPEReject int,TPEApvDate datetime)
 
-	select	md.id
+	select	 md.id
 			,md.seq
 			,md.TPEApvDate
 			,md.TPEApvName
@@ -1039,15 +1154,19 @@ where b.ID is null
 	inner join dbo.MachinePending m on m.id = md.id
 
 	update t 
-	set t.TPEReject = s.TPEReject
-	,t.TPEApvName = s.TPEApvName 
+	set t.TPEReject = isnull(s.TPEReject,0)
+	,t.TPEApvName = isnull(s.TPEApvName ,'')
 	,t.TPEApvDate = s.TPEApvDate 
 	from dbo.MachinePending_Detail t
 	inner join #tmpMachinePending_Detail s on t.id=s.id and t.seq = s.seq
 	where s.status = 'Confirmed' and s.TPEApvDate is not null
 
 	insert into @Tdebit(id, MachineID, TPEReject,TPEApvDate)
-	select t.ID, t.MachineID, s.TPEReject,s.TPEApvDate
+	SELECT
+        isnull(t.id,       ''),
+        isnull(t.machineid,''),
+        isnull(s.tpereject, 0),
+        s.TPEApvDate
 	from dbo.MachinePending_Detail t
 	inner join #tmpMachinePending_Detail s on t.id=s.id and t.seq = s.seq
 	where s.status = 'Confirmed' and s.TPEApvDate is not null

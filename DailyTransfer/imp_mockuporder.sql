@@ -264,10 +264,3 @@ else
 	
 	drop table #temp_MockupOrder_Trade,#MockuporderANGIN,#temp_MockupOrder_PMS
 END
-
-
-
-
-
-
-

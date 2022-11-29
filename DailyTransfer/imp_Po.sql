@@ -82,42 +82,42 @@ else
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	    =b.ID	
-      ,a.StyleID	      =b.StyleID	
-      ,a.SeasonId	      =b.SeasonId	
-      ,a.StyleUkey	      =b.StyleUkey	
-      ,a.BrandID	      =b.BrandID	
-      ,a.POSMR	      =b.POSMR	
-      ,a.POHandle	      =b.POHandle	
-      ,a.PCHandle	      =b.PCHandle	
-      ,a.PCSMR	      =b.PCSMR	
-      --,a.McHandle	      =b.McHandle	
-      ,a.ShipMark	      =b.ShipMark	
-      ,a.FTYMark	      =b.FTYMark	
-      ,a.Complete	      =b.Complete	
-      ,a.PoRemark	      =b.PoRemark	
-      ,a.CostRemark	      =b.CostRemark	
-      ,a.IrregularRemark	      =b.IrregularRemark	
-      ,a.FirstPoError	      =b.FirstPoError	
-      ,a.FirstEditName	      =b.FirstEditName	
-      ,a.FirstEditDate	      =b.FirstEditDate	
-      ,a.FirstAddDate	      =b.FirstAddDate	
-      ,a.FirstCostDate	      =b.FirstCostDate	
-      ,a.LastPoError	      =b.LastPoError	
-      ,a.LastEditName	      =b.LastEditName	
-      ,a.LastEditDate	      =b.LastEditDate	
-      ,a.LastAddDate	      =b.LastAddDate	
-      ,a.LastCostDate	      =b.LastCostDate	
-      ,a.AddName	      =b.AddName	
-      ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
-      ,a.EditDate	      =b.EditDate	
-      ,a.MTLDelay	      =b.MtlDelay
+       a.ID	    = isnull(b.ID	                             ,'')
+      ,a.StyleID	      = isnull(b.StyleID	             ,'')
+      ,a.SeasonId	      = isnull(b.SeasonId	             ,'')
+      ,a.StyleUkey	      = isnull(b.StyleUkey	             ,0)
+      ,a.BrandID	      = isnull(b.BrandID	             ,'')
+      ,a.POSMR	      = isnull(b.POSMR	                     ,'')
+      ,a.POHandle	      = isnull(b.POHandle	             ,'')
+      ,a.PCHandle	      = isnull(b.PCHandle	             ,'')
+      ,a.PCSMR	      = isnull(b.PCSMR	                     ,'')
+      --,a.McHandle	      = isnull(b.McHandle	             ,'')
+      ,a.ShipMark	      = isnull(b.ShipMark	             ,'')
+      ,a.FTYMark	      = isnull(b.FTYMark	             ,'')
+      ,a.Complete	      = isnull(b.Complete	             ,0)
+      ,a.PoRemark	      = isnull(b.PoRemark	             ,'')
+      ,a.CostRemark	      = isnull(b.CostRemark	             ,'')
+      ,a.IrregularRemark	      = isnull(b.IrregularRemark,'')
+      ,a.FirstPoError	      = isnull(b.FirstPoError	     ,'')
+      ,a.FirstEditName	      = isnull(b.FirstEditName	     ,'')
+      ,a.FirstEditDate	      = b.FirstEditDate
+      ,a.FirstAddDate	      = b.FirstAddDate
+      ,a.FirstCostDate	      = b.FirstCostDate
+      ,a.LastPoError	      = isnull(b.LastPoError	     ,'')
+      ,a.LastEditName	      = isnull(b.LastEditName	     ,'')
+      ,a.LastEditDate	      = b.LastEditDate
+      ,a.LastAddDate	      = b.LastAddDate
+      ,a.LastCostDate	      = b.LastCostDate
+      ,a.AddName	      = isnull(b.AddName	             ,'')
+      ,a.AddDate	      = b.AddDate
+      ,a.EditName	      = isnull(b.EditName	             ,'')
+      ,a.EditDate	      = b.EditDate
+      ,a.MTLDelay	      = b.MtlDelay
 	  ,a.MinSciDelivery   = (select TOP 1 MinSciDelivery from [dbo].[Getsci](a.ID
 																	   ,(SELECT Category FROM Orders WHERE ID = a.ID)
 																	  )
 							)
-	  ,a.ThreadVersion    =b.ThreadVersion
+	  ,a.ThreadVersion    = isnull(b.ThreadVersion,'')
 from Production.dbo.PO as a inner join #Trade_To_Pms_PO as b ON a.id=b.id
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.PO(
@@ -156,42 +156,41 @@ INSERT INTO Production.dbo.PO(
 	  ,ThreadVersion
 )
 select 
-       ID
-     , StyleID
-      ,SeasonId
-      ,StyleUkey
-      ,BrandID
-      ,POSMR
-      ,POHandle
-      ,PCHandle
-      ,PCSMR
-      --,McHandle
-      ,ShipMark
-      ,FTYMark
-      ,Complete
-      ,PoRemark
-      ,CostRemark
-      ,IrregularRemark
-      ,FirstPoError
-      ,FirstEditName
+       isnull(ID                ,'')
+     , isnull(StyleID           ,'')
+      ,isnull(SeasonId          ,'')
+      ,isnull(StyleUkey         ,0)
+      ,isnull(BrandID           ,'')
+      ,isnull(POSMR             ,'')
+      ,isnull(POHandle          ,'')
+      ,isnull(PCHandle          ,'')
+      ,isnull(PCSMR             ,'')
+      ,isnull(ShipMark          ,'')
+      ,isnull(FTYMark           ,'')
+      ,isnull(Complete          ,0)
+      ,isnull(PoRemark          ,'')
+      ,isnull(CostRemark        ,'')
+      ,isnull(IrregularRemark   ,'')
+      ,isnull(FirstPoError      ,'')
+      ,isnull(FirstEditName     ,'')
       ,FirstEditDate
       ,FirstAddDate
       ,FirstCostDate
-      ,LastPoError
-      ,LastEditName
+      ,isnull(LastPoError       ,'')
+      ,isnull(LastEditName      ,'')
       ,LastEditDate
-      ,LastAddDate
+      ,LastAddDate 
       ,LastCostDate
-      ,AddName
+      ,isnull(AddName           ,'')
       ,AddDate
-      ,EditName
+      ,isnull(EditName          ,'')
       ,EditDate
-      ,MTLDelay	  
+      ,MTLDelay
 	  ,MinSciDelivery   = (select TOP 1 MinSciDelivery from [dbo].[Getsci](b.ID
 																	   ,(SELECT Category FROM Orders WHERE ID = b.ID)
 																	  )
 							)
-	  ,ThreadVersion
+	  ,isnull(ThreadVersion,'')
 from #Trade_To_Pms_PO as b WITH (NOLOCK)
 where not exists(
 select id from Production.dbo.PO as a WITH (NOLOCK) where a.id = b.id )
@@ -210,14 +209,14 @@ and not exists (select 1 from Trade_To_Pms.dbo.PO_Supp_Detail where a.ID = id an
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	          =b.ID	
-      ,a.SEQ1	      =b.SEQ1	
-      ,a.SuppID	      =b.SuppID	
-      ,a.Remark	      =b.Remark	
-      ,a.Description	      =b.Description	
-      ,a.AddName	      =b.AddName	
-      ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
+       a.ID	          = isnull(b.ID	    ,'')
+      ,a.SEQ1	      = isnull(b.SEQ1	,'')
+      ,a.SuppID	      = isnull(b.SuppID	,'')
+      ,a.Remark	      = isnull(b.Remark	,'')
+      ,a.Description	      = isnull(b.Description	,'')
+      ,a.AddName	      = isnull(b.AddName	,'')
+      ,a.AddDate	      = b.AddDate	
+      ,a.EditName	      = isnull(b.EditName	,'')
       ,a.EditDate	      =b.EditDate	
 
 from Production.dbo.PO_Supp as a inner join Trade_To_Pms.dbo.PO_Supp as b ON a.id=b.id and a.SEQ1=b.SEQ1
@@ -238,14 +237,14 @@ INSERT INTO Production.dbo.PO_Supp(
 
 )
 select 
-       b.ID
-      ,SEQ1
-      ,SuppID
-      ,Remark
-      ,Description
-      ,b.AddName
+       isnull(b.ID       ,'')
+      ,isnull(SEQ1       ,'')
+      ,isnull(SuppID     ,'')
+      ,isnull(Remark     ,'')
+      ,isnull(Description,'')
+      ,isnull(b.AddName,'')
       ,b.AddDate
-      ,b.EditName
+      ,isnull(b.EditName,'')
       ,b.EditDate
 
 from Trade_To_Pms.dbo.PO_Supp as b WITH (NOLOCK) inner join  #Trade_To_Pms_PO c WITH (NOLOCK) ON b.ID = c.ID
@@ -269,67 +268,67 @@ SET
       -- a.ID	     =b.ID	
       --,a.Seq1	      =b.Seq1	
       --,a.Seq2	      =b.Seq2	
-      a.FactoryID	      =(select top 1 a.FactoryID from Orders a where a.POID=b.ID)
-      ,a.RefNo	      =b.RefNo	
-      ,a.SCIRefNo	      =b.SCIRefNo	
-      ,a.FabricType	      =b.FabricType	
-      ,a.Price	      =b.Price	
-      ,a.UsedQty	      =b.UsedQty	
-      ,a.Qty	      =b.Qty	
-      ,a.POUnit	      =b.POUnit	
-      ,a.Complete	      =b.Complete	
-      ,a.SystemETD	      =b.SystemETD	
-      ,a.CFMETD	      =b.CFMETD	
-      ,a.RevisedETA	      =b.RevisedETA	
-      ,a.FinalETD	      =b.FinalETD	
-      ,a.ShipETA	      =b.ShipETA	
-      ,a.ETA	      =b.EstETA	
-      ,a.FinalETA	      =b.FinalETA	
-      ,a.ShipModeID	      =b.ShipModeID	
-      ,a.SystemLock	      =b.SystemLock	
-      ,a.PrintDate	      =b.PrintDate	
-      ,a.PINO	      =b.PINO	
-      ,a.PIDate	      =b.PIDate	
-      ,a.ColorID	      =b.ColorID	
-      ,a.SuppColor	      =b.SuppColor	
-      ,a.SizeSpec	      =b.SizeSpec	
-      ,a.SizeUnit	      =b.SizeUnit	
-      ,a.Remark	      =b.Remark	
-      ,a.Special	      =b.Special	
-      ,a.Width	      =b.Width	
-      ,a.StockQty	      =b.StockQty	
-      ,a.NetQty	      =b.NetQty	
-      ,a.LossQty	      =b.LossQty	
-      ,a.SystemNetQty	      =b.SystemNetQty	
-      ,a.StockPOID	      =b.StockPOID	
-      ,a.StockSeq1	      =b.StockSeq1	
-      ,a.StockSeq2	      =b.StockSeq2	
-      ,a.InventoryUkey	      =b.InventoryUkey	
-      ,a.OutputSeq1	      =b.OutputSeq1	
-      ,a.OutputSeq2	      =b.OutputSeq2	
-      ,a.SystemCreate	      =b.SystemCreate	
-      ,a.FOC	      =b.FOC	
-      ,a.Junk	      =b.Junk	
-      ,a.ColorDetail	      =b.ColorDetail	
-      ,a.BomZipperInsert	      =b.BomZipperInsert	
-      ,a.BomCustPONo	      =b.BomCustPONo	
-      ,a.ShipQty	      =b.ShipQty	
-      ,a.Shortage	      =b.Shortage	
-      ,a.ShipFOC	      =b.ShipFOC	
-      ,a.ApQty	      =b.ApQty	
-      ,a.Spec	      =b.Spec	
-      ,a.InputQty	      =b.InputQty	
-      ,a.OutputQty	      =b.OutputQty	
-      ,a.AddName	      =b.AddName	
-      ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
+      a.FactoryID	      =isnull((select top 1 a.FactoryID from Orders a where a.POID=b.ID),'')
+      ,a.RefNo	      = isnull(b.RefNo	                       ,'')
+      ,a.SCIRefNo	      = isnull(b.SCIRefNo	               ,'')
+      ,a.FabricType	      = isnull(b.FabricType	               ,'')
+      ,a.Price	      = isnull(b.Price	                       ,0)
+      ,a.UsedQty	      = isnull(b.UsedQty	               ,0)
+      ,a.Qty	      = isnull(b.Qty	                       ,0)
+      ,a.POUnit	      = isnull(b.POUnit	                       ,'')
+      ,a.Complete	      = isnull(b.Complete	               ,0)
+      ,a.SystemETD	      = b.SystemETD
+      ,a.CFMETD	      = b.CFMETD
+      ,a.RevisedETA	      = b.RevisedETA
+      ,a.FinalETD	      = b.FinalETD
+      ,a.ShipETA	      = b.ShipETA
+      ,a.ETA	      = b.EstETA
+      ,a.FinalETA	      = b.FinalETA
+      ,a.ShipModeID	      = isnull(b.ShipModeID	               ,'')
+      ,a.SystemLock	      = b.SystemLock
+      ,a.PrintDate	      = b.PrintDate
+      ,a.PINO	      = isnull(b.PINO	                       ,'')
+      ,a.PIDate	      = b.PIDate
+      ,a.ColorID	      = isnull(b.ColorID	               ,'')
+      ,a.SuppColor	      = isnull(b.SuppColor	               ,'')
+      ,a.SizeSpec	      = isnull(b.SizeSpec	               ,'')
+      ,a.SizeUnit	      = isnull(b.SizeUnit	               ,'')
+      ,a.Remark	      = isnull(b.Remark	                       ,'')
+      ,a.Special	      = isnull(b.Special	               ,'')
+      ,a.Width	      = isnull(b.Width	                       ,0)
+      ,a.StockQty	      = isnull(b.StockQty	               ,0)
+      ,a.NetQty	      = isnull(b.NetQty	                       ,0)
+      ,a.LossQty	      = isnull(b.LossQty	               ,0)
+      ,a.SystemNetQty	      = isnull(b.SystemNetQty	       ,0)
+      ,a.StockPOID	      = isnull(b.StockPOID	               ,'')
+      ,a.StockSeq1	      = isnull(b.StockSeq1	               ,'')
+      ,a.StockSeq2	      = isnull(b.StockSeq2	               ,'')
+      ,a.InventoryUkey	      = isnull(b.InventoryUkey	       ,0)
+      ,a.OutputSeq1	      = isnull(b.OutputSeq1	               ,'')
+      ,a.OutputSeq2	      = isnull(b.OutputSeq2	               ,'')
+      ,a.SystemCreate	      = isnull(b.SystemCreate	       ,0)
+      ,a.FOC	      = isnull(b.FOC	                       ,0)
+      ,a.Junk	      = isnull(b.Junk	                       ,0)
+      ,a.ColorDetail	      = isnull(b.ColorDetail	       ,'')
+      ,a.BomZipperInsert	      = isnull(b.BomZipperInsert	,'')
+      ,a.BomCustPONo	      = isnull(b.BomCustPONo	       ,'')
+      ,a.ShipQty	      = isnull(b.ShipQty	               ,0)
+      ,a.Shortage	      = isnull(b.Shortage	               ,0)
+      ,a.ShipFOC	      = isnull(b.ShipFOC	               ,0)
+      ,a.ApQty	      = isnull(b.ApQty	                       ,0)
+      ,a.Spec	      = isnull(b.Spec	                       ,'')
+      ,a.InputQty	      = isnull(b.InputQty	               ,0)
+      ,a.OutputQty	      = isnull(b.OutputQty	               ,0)
+      ,a.AddName	      = isnull(b.AddName	               ,'')
+      ,a.AddDate	      = b.AddDate
+      ,a.EditName	      = isnull(b.EditName	               ,'')
       ,a.EditDate	      =b.EditDate	
 	  ,a.RevisedETD = b.RevisedETD
 	  ,a.CfmETA =b.CfmETA
-	  ,a.BrandId = (select top 1 a.BrandID from Orders a where a.POID=b.ID)
-	  ,a.POAmt			=b.POAmt
-	  ,a.ShipAmt		=b.ShipAmt
-	  ,a.StockSuppID	=b.StockSuppID
+	  ,a.BrandId = isnull((select top 1 a.BrandID from Orders a where a.POID=b.ID),'')
+	  ,a.POAmt			= isnull(b.POAmt      ,0)
+	  ,a.ShipAmt		= isnull(b.ShipAmt    ,0)
+	  ,a.StockSuppID	= isnull(b.StockSuppID,'')
 	  ,a.StockOrdersFactory = isnull(b.StockOrdersFactory,'')
 from Production.dbo.PO_Supp_Detail as a 
 inner join Trade_To_Pms.dbo.PO_Supp_Detail as b ON a.id=b.id and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
@@ -405,70 +404,70 @@ ID
 	  ,StockOrdersFactory
 )
 select 
-       b.ID
-      ,Seq1
-      ,Seq2
-      ,(select top 1 a.FactoryID from Orders a where a.POID=b.ID)
-      ,RefNo
-      ,SCIRefNo
-      ,FabricType
-      ,Price
-      ,UsedQty
-      ,Qty
-      ,POUnit
-      ,b.Complete
-      ,SystemETD
-      ,CFMETD
+       isnull(b.ID,'')
+      ,isnull(Seq1,'')
+      ,isnull(Seq2,'')
+      ,isnull((select top 1 a.FactoryID from Orders a where a.POID=b.ID),'')
+      ,isnull(RefNo            ,'')
+      ,isnull(SCIRefNo         ,'')
+      ,isnull(FabricType       ,'')
+      ,isnull(Price            ,0)
+      ,isnull(UsedQty          ,0)
+      ,isnull(Qty              ,0)
+      ,isnull(POUnit           ,'')
+      ,isnull(b.Complete       ,0)
+      ,SystemETD 
+      ,CFMETD    
       ,RevisedETA
-      ,FinalETD
-      ,ShipETA
-      ,EstETA
-      ,FinalETA
-      ,ShipModeID
+      ,FinalETD  
+      ,ShipETA   
+      ,EstETA    
+      ,FinalETA  
+      ,isnull(ShipModeID       ,'')
       ,SystemLock
       ,PrintDate
-      ,PINO
+      ,isnull(PINO             ,'')
       ,PIDate
-      ,ColorID
-      ,SuppColor
-      ,SizeSpec
-      ,SizeUnit
-      ,Remark
-      ,Special
-      ,Width
-      ,StockQty
-      ,NetQty
-      ,LossQty
-      ,SystemNetQty
-      ,StockPOID
-      ,StockSeq1
-      ,StockSeq2
-      ,InventoryUkey
-      ,OutputSeq1
-      ,OutputSeq2
-      ,SystemCreate
-      ,FOC
-      ,Junk
-      ,ColorDetail
-      ,BomZipperInsert
-      ,BomCustPONo
-      ,ShipQty
-      ,Shortage
-      ,ShipFOC
-      ,ApQty
-      ,Spec
-      ,InputQty
-      ,OutputQty
-      ,b.AddName
+      ,isnull(ColorID          ,'')
+      ,isnull(SuppColor        ,'')
+      ,isnull(SizeSpec         ,'')
+      ,isnull(SizeUnit         ,'')
+      ,isnull(Remark           ,'')
+      ,isnull(Special          ,'')
+      ,isnull(Width            ,0)
+      ,isnull(StockQty         ,0)
+      ,isnull(NetQty           ,0)
+      ,isnull(LossQty          ,0)
+      ,isnull(SystemNetQty     ,0)
+      ,isnull(StockPOID        ,'')
+      ,isnull(StockSeq1        ,'')
+      ,isnull(StockSeq2        ,'')
+      ,isnull(InventoryUkey    ,0)
+      ,isnull(OutputSeq1       ,'')
+      ,isnull(OutputSeq2       ,'')
+      ,isnull(SystemCreate     ,0)
+      ,isnull(FOC              ,0)
+      ,isnull(Junk             ,0)
+      ,isnull(ColorDetail      ,'')
+      ,isnull(BomZipperInsert  ,'')
+      ,isnull(BomCustPONo      ,'')
+      ,isnull(ShipQty          ,0)
+      ,isnull(Shortage         ,0)
+      ,isnull(ShipFOC          ,0)
+      ,isnull(ApQty            ,0)
+      ,isnull(Spec             ,'')
+      ,isnull(InputQty         ,0)
+      ,isnull(OutputQty        ,0)
+      ,isnull(b.AddName,'')
       ,b.AddDate
-      ,b.EditName
+      ,isnull(b.EditName,'')
       ,b.EditDate
 	  ,b.RevisedETD
 	  ,b.CfmETA 
-	  ,(select top 1 a.BrandID from Orders a WITH (NOLOCK) where a.POID=b.ID)
-	  ,b.POAmt
-	  ,b.ShipAmt
-	  ,b.StockSuppID
+	  ,isnull((select top 1 a.BrandID from Orders a WITH (NOLOCK) where a.POID=b.ID),'')
+	  ,isnull(b.POAmt      ,0)
+	  ,isnull(b.ShipAmt    ,0)
+	  ,isnull(b.StockSuppID,'')
 	  ,isnull(b.StockOrdersFactory,'')
 from Trade_To_Pms.dbo.PO_Supp_Detail as b WITH (NOLOCK) inner join  #Trade_To_Pms_PO c ON b.ID = c.ID
 where not exists(select id from Production.dbo.PO_Supp_Detail as a WITH (NOLOCK) where a.id = b.id and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2	)
@@ -498,7 +497,7 @@ and InputQty <> 0
 -------比對欄位　　 => Poid, Seq1, Seq2
 -------ISP20190607 去除判斷 Exists FtyInventory
 update po
-set po.StockUnit = Production.dbo.GetStockUnitBySPSeq(po.ID, po.SEQ1, po.SEQ2)
+set po.StockUnit =isnull( Production.dbo.GetStockUnitBySPSeq(po.ID, po.SEQ1, po.SEQ2),'')
 from Production.dbo.PO_Supp_Detail po With(NoLock)
 WHERE po.StockUnit = '' OR po.StockUnit IS NULL
 ------------------------------------------------------------------PO3 END
@@ -602,13 +601,9 @@ and exists (select 1 from #TransOrderList where #TransOrderList.POID=a.ID)
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       --a.ID	     =b.ID		
-      --,a.SEQ1	             =b.SEQ1		
-      --,a.SEQ2	      =b.SEQ2		
-      --,a.OrderID	      =b.OrderID		
-      a.AddName	      =b.AddName		
+      a.AddName	      = isnull(b.AddName,'')
       ,a.AddDate	      =b.AddDate		
-      ,a.EditName	      =b.EditName		
+      ,a.EditName	      =isnull(b.EditName,'')
       ,a.EditDate	      =b.EditDate		
 
 from Production.dbo.PO_Supp_Detail_OrderList as a inner join Trade_To_Pms.dbo.PO_Supp_Detail_OrderList as b 
@@ -630,13 +625,13 @@ INSERT INTO Production.dbo.PO_Supp_Detail_OrderList(
 
 )
 select 
-       b.ID
-      ,SEQ1
-      ,SEQ2
-      ,OrderID
-      ,b.AddName
+       isnull(b.ID     ,'')
+      ,isnull(SEQ1     ,'')
+      ,isnull(SEQ2     ,'')
+      ,isnull(OrderID  ,'')
+      ,isnull(b.AddName,'')
       ,b.AddDate
-      ,b.EditName
+      ,isnull(b.EditName,'')
       ,b.EditDate
 
 
@@ -648,56 +643,43 @@ where not exists(select id from Production.dbo.PO_Supp_Detail_OrderList as a WIT
 
 ------------最後要清空多的TEMP TABLE
 drop table #Trade_To_Pms_PO 
---Fabric
---PMS多的欄位
---,[NLCode]
---      ,[HSCode]
---      ,[CustomsUnit]
---      ,[PcsWidth]
---      ,[PcsLength]
---      ,[PcsKg]
---      ,[NoDeclare]
---      ,[NLCodeEditName]
---      ,[NLCodeEditDate]
-
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       -- a.SCIRefno	 =b.SCIRefno
-      a.BrandID	            = b.BrandID
-      , a.Refno	            = b.Refno
-      , a.Width	            = b.Width
-      , a.Junk	            = b.Junk
-      , a.Type	            = b.Type
-      , a.MtltypeId	      = b.MtltypeId
-      , a.BomTypeCalculate	= b.BomTypeCalculate
-      , a.Description	      = b.Description
-      , a.DescDetail	      = b.DescDetail
-      , a.LossType	      = b.LossType
-      , a.LossPercent	      = b.LossPercent
-      , a.LossQty	            = b.LossQty
-      , a.LossStep	      = b.LossStep
-      , a.UsageUnit	      = b.UsageUnit
-      , a.Weight	            = b.Weight
-      , a.WeightM2	      = b.WeightM2
-      , a.CBMWeight	      = b.CBMWeight
-      , a.CBM	            = b.CBM
-      , a.NoSizeUnit	      = b.NoSizeUnit
-      , a.BomTypeSize	      = b.BomTypeSize
-      , a.BomTypeColor	      = b.BomTypeColor
-      , a.ConstructionID	= b.ConstructionID
-      , a.MatchFabric	      = b.MatchFabric
-      , a.WeaveTypeID	      = b.WeaveTypeID
-      , a.AddName	            = b.AddName
-      , a.AddDate	            = b.AddDate
-      , a.EditName	      = b.EditName
-      , a.EditDate	      = b.EditDate
-      , a.preshrink           = b.preshrink
+      a.BrandID	            = isnull( b.BrandID           ,'')
+      , a.Refno	            = isnull( b.Refno             ,'')
+      , a.Width	            = isnull( b.Width             ,0)
+      , a.Junk	            = isnull( b.Junk              ,0)
+      , a.Type	            = isnull( b.Type              ,'')
+      , a.MtltypeId	      = isnull( b.MtltypeId           ,'')
+      , a.BomTypeCalculate	= isnull( b.BomTypeCalculate  ,0)
+      , a.Description	      = isnull( b.Description     ,'')
+      , a.DescDetail	      = isnull( b.DescDetail      ,'')
+      , a.LossType	      = isnull( b.LossType            ,0)
+      , a.LossPercent	      = isnull( b.LossPercent     ,0)
+      , a.LossQty	            = isnull( b.LossQty       ,0)
+      , a.LossStep	      = isnull( b.LossStep            ,0)
+      , a.UsageUnit	      = isnull( b.UsageUnit           ,'')
+      , a.Weight	            = isnull( b.Weight        ,0)
+      , a.WeightM2	      = isnull( b.WeightM2            ,0)
+      , a.CBMWeight	      = isnull( b.CBMWeight           ,0)
+      , a.CBM	            = isnull( b.CBM               ,0)
+      , a.NoSizeUnit	      = isnull( b.NoSizeUnit      ,0)
+      , a.BomTypeSize	      = isnull( b.BomTypeSize     ,0)
+      , a.BomTypeColor	      = isnull( b.BomTypeColor    ,0)
+      , a.ConstructionID	= isnull( b.ConstructionID    ,'')
+      , a.MatchFabric	      = isnull( b.MatchFabric     ,'')
+      , a.WeaveTypeID	      = isnull( b.WeaveTypeID     ,'')
+      , a.AddName	            = isnull( b.AddName       ,'')
+      , a.AddDate	            =  b.AddDate
+      , a.EditName	      = isnull( b.EditName            ,'')
+      , a.EditDate	      =  b.EditDate 
+      , a.preshrink           = isnull( b.preshrink       ,0)
 	  , a.DWR = isnull(b.DWR,0)
-      , a.RibItem           = b.RibItem 
-	  , a.Clima = b.Clima
-	  , a.BomTypeCalculateWeight = b.BomTypeCalculateWeight
-	  , a.IsRecycled = b.IsRecycled
+      , a.RibItem           = isnull( b.RibItem ,0)
+	  , a.Clima = isnull( b.Clima,0)
+	  , a.BomTypeCalculateWeight = isnull( b.BomTypeCalculateWeight,0)
+	  , a.IsRecycled = isnull( b.IsRecycled,0)
 	  , a.Finish = isnull(b.Finish,'')
 	  , a.BrandRefno = isnull(b.BrandRefno,'')
 from Production.dbo.Fabric as a 
@@ -743,41 +725,41 @@ INSERT INTO Production.dbo.Fabric(
 	   , BrandRefno
 )
 select 
-      SCIRefno
-      , BrandID
-      , Refno
-      , Width
-      , Junk
-      , Type
-      , MtltypeId
-      , BomTypeCalculate
-      , Description
-      , DescDetail
-      , LossType
-      , LossPercent
-      , LossQty
-      , LossStep
-      , UsageUnit
-      , Weight
-      , WeightM2
-      , CBMWeight
-      , CBM
-      , NoSizeUnit
-      , BomTypeSize
-      , BomTypeColor
-      , ConstructionID
-      , MatchFabric
-      , WeaveTypeID
-      , AddName
+        isnull(SCIRefno          ,'')
+      , isnull(BrandID           ,'')
+      , isnull(Refno             ,'')
+      , isnull(Width             ,0)
+      , isnull(Junk              ,0)
+      , isnull(Type              ,'')
+      , isnull(MtltypeId         ,'')
+      , isnull(BomTypeCalculate  ,0)
+      , isnull(Description       ,'')
+      , isnull(DescDetail        ,'')
+      , isnull(LossType          ,0)
+      , isnull(LossPercent       ,0)
+      , isnull(LossQty           ,0)
+      , isnull(LossStep          ,0)
+      , isnull(UsageUnit         ,'')
+      , isnull(Weight            ,0)
+      , isnull(WeightM2          ,0)
+      , isnull(CBMWeight         ,0)
+      , isnull(CBM               ,0)
+      , isnull(NoSizeUnit        ,0)
+      , isnull(BomTypeSize       ,0)
+      , isnull(BomTypeColor      ,0)
+      , isnull(ConstructionID    ,'')
+      , isnull(MatchFabric       ,'')
+      , isnull(WeaveTypeID       ,'')
+      , isnull(AddName           ,'')
       , AddDate
-      , EditName
+      , isnull(EditName          ,'')
       , EditDate
-      , preshrink
+      , isnull(preshrink         ,0)
 	  , isnull(DWR,0)
-      , RibItem
-	  , Clima
-	  , BomTypeCalculateWeight
-	  , IsRecycled
+      , isnull(RibItem,0)
+	  , isnull(Clima  ,0)
+	  , isnull(BomTypeCalculateWeight,0)
+	  , isnull(IsRecycled,0)
 	  , isnull(Finish,'')
 	  , isnull(BrandRefno,'')
 from Trade_To_Pms.dbo.Fabric as b WITH (NOLOCK)
@@ -795,16 +777,15 @@ where b.Ukey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.SCIRefno	    =b.SCIRefno	
-      --,a.Ukey	      =b.Ukey	
-      ,a.Layerno	      =b.Layerno	
-      ,a.percentage	      =b.percentage	
-      ,a.MtltypeId	      =b.MtltypeId	
-      ,a.AddName	      =b.AddName	
-      ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
-      ,a.EditDate	      =b.EditDate	
-      ,a.OldSys_GroupKey	      =b.OldSys_GroupKey	
+       a.SCIRefno	    = isnull(b.SCIRefno	,'')
+      ,a.Layerno	      = isnull(b.Layerno	,0)
+      ,a.percentage	      = isnull(b.percentage	,0)
+      ,a.MtltypeId	      = isnull(b.MtltypeId	,'')
+      ,a.AddName	      = isnull(b.AddName	,'')
+      ,a.AddDate	      = b.AddDate	
+      ,a.EditName	      = isnull(b.EditName	,'')
+      ,a.EditDate	      = b.EditDate	
+      ,a.OldSys_GroupKey	      = isnull(b.OldSys_GroupKey	,0)
 
 from Production.dbo.Fabric_Content as a inner join Trade_To_Pms.dbo.Fabric_Content as b ON a.Ukey=b.Ukey
 -------------------------- INSERT INTO 抓
@@ -821,16 +802,16 @@ INSERT INTO Production.dbo.Fabric_Content(
       ,OldSys_GroupKey
 )
 select 
-      SCIRefno
-      ,Ukey
-      ,Layerno
-      ,percentage
-      ,MtltypeId
-      ,AddName
+       isnull(SCIRefno       ,'')
+      ,isnull(Ukey           ,0)
+      ,isnull(Layerno        ,0)
+      ,isnull(percentage     ,0)
+      ,isnull(MtltypeId      ,'')
+      ,isnull(AddName        ,'')
       ,AddDate
-      ,EditName
+      ,isnull(EditName       ,'')
       ,EditDate
-      ,OldSys_GroupKey
+      ,isnull(OldSys_GroupKey,'')
 from Trade_To_Pms.dbo.Fabric_Content as b WITH (NOLOCK)
 where not exists(select Ukey from Production.dbo.Fabric_Content as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 
@@ -851,20 +832,17 @@ where b.SCIRefno is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-      -- a.SCIRefno	     =b.SCIRefno	
-      a.Ukey	      =b.Ukey	
-      --,a.SuppID	      =b.SuppID	
-      --,a.Year	      =b.Year	
-      ,a.HsCode	      =b.HsCode	
-      ,a.ImportDuty	      =b.ImportDuty	
-      ,a.ECFADuty	      =b.ECFADuty	
-      ,a.ASEANDuty	      =b.ASEANDuty	
-      ,a.AddName	      =b.AddName	
-      ,a.AddDate	      =b.AddDate	
-      ,a.EditName	      =b.EditName	
-      ,a.EditDate	      =b.EditDate	
-      ,a.OldSys_Ukey	      =b.OldSys_Ukey	
-      ,a.OldSys_Ver	      =b.OldSys_Ver	
+      a.Ukey	      = isnull(b.Ukey	            ,0)
+      ,a.HsCode	      = isnull(b.HsCode	            ,'')
+      ,a.ImportDuty	      = isnull(b.ImportDuty	    ,0)
+      ,a.ECFADuty	      = isnull(b.ECFADuty	    ,0)
+      ,a.ASEANDuty	      = isnull(b.ASEANDuty	    ,0)
+      ,a.AddName	      = isnull(b.AddName	    ,'')
+      ,a.AddDate	      = b.AddDate
+      ,a.EditName	      = isnull(b.EditName	    ,'')
+      ,a.EditDate	      = b.EditDate
+      ,a.OldSys_Ukey	      = isnull(b.OldSys_Ukey,'')
+      ,a.OldSys_Ver	      = isnull(b.OldSys_Ver	    ,'')
 	  ,a.HSCodeT2         =ISNULL(b.HSCodeT2,'')
 
 from Production.dbo.Fabric_HsCode as a inner join Trade_To_Pms.dbo.Fabric_HsCode as b ON a.SCIRefno=b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year and a.HSType =b.HSType
@@ -888,21 +866,21 @@ INSERT INTO Production.dbo.Fabric_HsCode(
 	  ,HSCodeT2
 )
 select
-       SCIRefno
-      ,Ukey
-      ,SuppID
-      ,Year
-      ,HsCode
-      ,ImportDuty
-      ,ECFADuty
-      ,ASEANDuty
-      ,AddName
+       isnull(SCIRefno   ,'')
+      ,isnull(Ukey       ,0)
+      ,isnull(SuppID     ,'')
+      ,isnull(Year       ,0)
+      ,isnull(HsCode     ,'')
+      ,isnull(ImportDuty ,0)
+      ,isnull(ECFADuty   ,0)
+      ,isnull(ASEANDuty  ,0)
+      ,isnull(AddName    ,'')
       ,AddDate
-      ,EditName
+      ,isnull(EditName   ,'')
       ,EditDate
-      ,OldSys_Ukey
-      ,OldSys_Ver
-	  ,HSType
+      ,isnull(OldSys_Ukey,'')
+      ,isnull(OldSys_Ver ,'')
+	  ,isnull(HSType     ,'')
 	  ,ISNULL(HSCodeT2,'')
 from Trade_To_Pms.dbo.Fabric_HsCode as b WITH (NOLOCK)
 where not exists(select SCIRefno from Production.dbo.Fabric_HsCode as a WITH (NOLOCK) where a.SCIRefno = b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year and a.HSType =b.HSType)
@@ -949,10 +927,10 @@ INSERT INTO Production.dbo.CuttingTape_Detail(
       ,Seq2
 )
 select      
-      b.MDivisionID
-	  ,b.POID
-      ,b.Seq1
-      ,b.Seq2
+       isnull(b.MDivisionID,'')
+	  ,isnull(b.POID       ,'')
+      ,isnull(b.Seq1       ,'')
+      ,isnull(b.Seq2       ,'')
 from #tmpCuttingTape as b WITH (NOLOCK) 
 where not exists(select POID from Production.dbo.CuttingTape_Detail as a WITH (NOLOCK) where a.MDivisionID = b.MDivisionID and  a.POID=b.POID and a.Seq1=b.Seq1 and a.Seq2=b.Seq2)
 
@@ -982,17 +960,17 @@ and a.id is null
 
 update a
 set
-	 [FactoryID]   = b.[FactoryID]
-	,[BrandID]	   = b.[BrandID]
-	,[Handle]	   = b.[Handle]
-	,[ReqDate]	   = b.[ReqDate]
-	,[Status]	   = b.[Status]
-	,[ApproveName] = b.[ApproveName]
-	,[ApproveDate] = b.[ApproveDate]
-	,[Remark]	   = b.[Remark]
-	,[AddName]	   = b.[AddName]
-	,[AddDate]	   = b.[AddDate]
-	,[EditName]	   = b.[EditName]
+	 [FactoryID]   = isnull( b.[FactoryID]  ,'')
+	,[BrandID]	   = isnull( b.[BrandID]    ,'')
+	,[Handle]	   = isnull( b.[Handle]     ,'')
+	,[ReqDate]	   =  b.[ReqDate]
+	,[Status]	   = isnull( b.[Status]     ,'')
+	,[ApproveName] = isnull( b.[ApproveName],'')
+	,[ApproveDate] =  b.[ApproveDate]
+	,[Remark]	   = isnull( b.[Remark]     ,'')
+	,[AddName]	   = isnull( b.[AddName]    ,'')
+	,[AddDate]	   =  b.[AddDate]
+	,[EditName]	   = isnull( b.[EditName]   ,'')
 	,[EditDate]	   = b.[EditDate]
 from Production.dbo.PadPrintReq a
 inner join Trade_To_Pms.dbo.PadPrintReq b on a.ID = b.ID
@@ -1031,20 +1009,20 @@ from #tmpPadPrintReq
 
 update a
 set
-	 [Refno]      = b.[Refno]
-	,[SourceID]	  = b.[SourceID]
-	,[Price]	  = b.[Price]
-	,[Qty]		  = b.[Qty]
-	,[Foc]		  = b.[Foc]
-	,[ShipModeID] = b.[ShipModeID]
-	,[SuppID]	  = b.[SuppID]
-	,[CurrencyID] = b.[CurrencyID]
-	,[Junk]		  = b.[Junk]
-	,[Remark]	  = b.[Remark]
-	,[POID]		  = b.[POID]
-	,[AddName]	  = b.[AddName]
-	,[AddDate]	  = b.[AddDate]
-	,[EditName]	  = b.[EditName]
+	 [Refno]      = isnull( b.[Refno]      ,'')
+	,[SourceID]	  = isnull( b.[SourceID]   ,'')
+	,[Price]	  = isnull( b.[Price]      ,0)
+	,[Qty]		  = isnull( b.[Qty]        ,0)
+	,[Foc]		  = isnull( b.[Foc]        ,0)
+	,[ShipModeID] = isnull( b.[ShipModeID] ,'')
+	,[SuppID]	  = isnull( b.[SuppID]     ,'')
+	,[CurrencyID] = isnull( b.[CurrencyID] ,0)
+	,[Junk]		  = isnull( b.[Junk]       ,0)
+	,[Remark]	  = isnull( b.[Remark]     ,'')
+	,[POID]		  = isnull( b.[POID]       ,'')
+	,[AddName]	  = isnull( b.[AddName]    ,'')
+	,[AddDate]	  =  b.[AddDate]
+	,[EditName]	  = isnull( b.[EditName]   ,'')
 	,[EditDate]	  = b.[EditDate]
 from Production.dbo.PadPrintReq_Detail a
 inner join Trade_To_Pms.dbo.PadPrintReq_Detail b on a.ID = b.ID and a.Seq2 = b.Seq2 and a.PadPrint_Ukey = b.PadPrint_Ukey and a.MoldID = b.MoldID
@@ -1076,25 +1054,25 @@ INSERT INTO [dbo].[PadPrintReq_Detail]
            ,[EditName]
            ,[EditDate])
 select
-	 b.[ID]
-	,b.[Seq2]
-	,b.[PadPrint_Ukey]
-	,b.[Refno]
-	,b.[MoldID]
-	,b.[SourceID]
-	,b.[Price]
-	,b.[Qty]
-	,b.[Foc]
-	,b.[ShipModeID]
-	,b.[SuppID]
-	,b.[CurrencyID]
-	,b.[Junk]
-	,b.[Remark]
-	,b.[POID]
-	,b.[AddName]
-	,b.[AddDate]
-	,b.[EditName]
-	,b.[EditDate]
+         isnull(b.[ID]           ,'')
+        ,isnull(b.[Seq2]         ,'')
+        ,isnull(b.[PadPrint_Ukey],0)
+        ,isnull(b.[Refno]        ,'')
+        ,isnull(b.[MoldID]       ,'')
+        ,isnull(b.[SourceID]     ,'')
+        ,isnull(b.[Price]        ,0)
+        ,isnull(b.[Qty]          ,0)
+        ,isnull(b.[Foc]          ,0)
+        ,isnull(b.[ShipModeID]   ,'')
+        ,isnull(b.[SuppID]       ,'')
+        ,isnull(b.[CurrencyID]   ,'')
+        ,isnull(b.[Junk]         ,0)
+        ,isnull(b.[Remark]       ,'')
+        ,isnull(b.[POID]         ,'')
+        ,isnull(b.[AddName]      ,'')
+        ,b.[AddDate]
+        ,isnull(b.[EditName]     ,'')
+        ,b.[EditDate]
 from #tmpPadPrintReq a
 inner join Trade_To_Pms.dbo.PadPrintReq_Detail b on a.ID = b.ID
 where not exists(select 1 from Production.dbo.PadPrintReq_Detail p where p.id = b.id and p.seq2 = b.seq2 and p.[PadPrint_Ukey] = b.[PadPrint_Ukey] and p.[MoldID] = b.[MoldID])
@@ -1104,9 +1082,9 @@ where not exists(select 1 from Production.dbo.PadPrintReq_Detail p where p.id = 
 
 update a
 set
-	 [AddName]		 = b.[AddName]
+	 [AddName]		 = isnull(b.[AddName],'')
 	,[AddDate]		 = b.[AddDate]
-	,[EditName]		 = b.[EditName]
+	,[EditName]		 = isnull(b.[EditName],'')
 	,[EditDate]		 = b.[EditDate]
 from Production.dbo.PadPrintReq_Detail_spec a
 inner join Trade_To_Pms.dbo.PadPrintReq_Detail_spec b on a.ID = b.ID and a.Seq2 = b.Seq2 and a.PadPrint_Ukey = b.PadPrint_Ukey and a.MoldID = b.MoldID and a.Side = b.Side
@@ -1128,14 +1106,14 @@ INSERT INTO [dbo].PadPrintReq_Detail_spec
            ,[EditName]
            ,[EditDate])
 select
-	b.[ID]
-	,b.[Seq2]
-	,b.[PadPrint_Ukey]
-	,b.[MoldID]
-	,b.[Side]
-	,b.[AddName]
+	 isnull(b.[ID]            ,'')
+	,isnull(b.[Seq2]          ,'')
+	,isnull(b.[PadPrint_Ukey] ,0)
+	,isnull(b.[MoldID]        ,'')
+	,isnull(b.[Side]          ,'')
+	,isnull(b.[AddName]       ,'')
 	,b.[AddDate]
-	,b.[EditName]
+	,isnull(b.[EditName]      ,'')
 	,b.[EditDate]
 from #tmpPadPrintReq a
 inner join Trade_To_Pms.dbo.PadPrintReq_Detail_spec b on a.ID = b.ID

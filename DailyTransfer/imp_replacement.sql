@@ -20,21 +20,21 @@ BEGIN
 	on t.id=s.id 
 		When matched then
 		update set
-		t.TPECFMName = s.TPECFMName,
-		t.TPECFMDate =s.TPECFMDate,
-		t.TPEEditName=s.EditName,
-		t.TPEEditDate=s.EditDate,
-		t.Status = s.Status,
-		t.RMtlAmt = iif(t.LockDate is not null,t.RMtlAmt, s.RMtlAmt),
-		t.ActFreight = iif(t.LockDate is not null, t.ActFreight,s.ActFreight),
-		t.EstFreight = iif(t.LockDate is not null, t.EstFreight,s.EstFreight),
-		t.SurchargeAmt = iif(t.LockDate is not null, t.SurchargeAmt,s.SurchargeAmt),
+		t.TPECFMName = isnull( s.TPECFMName,''),
+		t.TPECFMDate = s.TPECFMDate,
+		t.TPEEditName= isnull(s.EditName,   ''),
+		t.TPEEditDate= s.EditDate,
+		t.Status = isnull( s.Status,        ''),
+		t.RMtlAmt = isnull(iif(t.LockDate is not null,t.RMtlAmt, s.RMtlAmt),0),
+		t.ActFreight = isnull(iif(t.LockDate is not null, t.ActFreight,s.ActFreight),0),
+		t.EstFreight = isnull(iif(t.LockDate is not null, t.EstFreight,s.EstFreight),0),
+		t.SurchargeAmt = isnull(iif(t.LockDate is not null, t.SurchargeAmt,s.SurchargeAmt),0),
 		t.LockDate = s.LockDate,
 		t.CompleteDate = s.CompleteDate,
-		t.TransferName = s.TransferName,
+		t.TransferName = isnull( s.TransferName,''),
 		t.TransferDate = s.TransferDate,
-		t.TransferResponsible = s.TransferResponsible,
-		t.TransferNo = s.TransferNo,
+		t.TransferResponsible = isnull( s.TransferResponsible,''),
+		t.TransferNo = isnull( s.TransferNo,''),
 		t.CompleteName = isnull (s.CompleteName, ''),
 		t.isComplete = isnull (s.isComplete, 0)
 	output inserted.id into @tReplace;
@@ -45,17 +45,17 @@ BEGIN
 	on t.ukey=s.ukey
 		when matched then
 		update set
-	    t.EstInQty = s.EstInQty,
-		t.ActInQty = s.ActInQty, 
-		t.AGradeRequest = s.AGradeRequest, 
-		t.BGradeRequest = s.BGradeRequest, 
-		t.NarrowRequest = s.NarrowRequest, 
-		t.TotalRequest = s.TotalRequest, 
-		t.AfterCuttingRequest = s.AfterCuttingRequest,
-		t.Junk = s.Junk,
-		t.NewSeq1 = s.NewSeq1,
-		t.NewSeq2 = s.NewSeq2,
-		t.PurchaseID = s.PurchaseID
+	    t.EstInQty = isnull( s.EstInQty,                       0),
+		t.ActInQty = isnull( s.ActInQty,                       0),
+		t.AGradeRequest = isnull( s.AGradeRequest,             0),
+		t.BGradeRequest = isnull( s.BGradeRequest,             0),
+		t.NarrowRequest = isnull( s.NarrowRequest,             0),
+		t.TotalRequest = isnull( s.TotalRequest,               0),
+		t.AfterCuttingRequest = isnull( s.AfterCuttingRequest, 0),
+		t.Junk = isnull( s.Junk,                               0),
+		t.NewSeq1 = isnull( s.NewSeq1,                         ''),
+		t.NewSeq2 = isnull( s.NewSeq2,                         ''),
+		t.PurchaseID = isnull( s.PurchaseID,                   '')
 		;
 
 	Merge Production.dbo.Clip as t
@@ -63,15 +63,24 @@ BEGIN
 	on t.Pkey=s.Pkey
 	when matched then
 		update set
-			 t.[TableName]	=s.[TableName]
-			,t.[UniqueKey]	=s.[UniqueKey]
-			,t.[SourceFile]	=s.[SourceFile]
-			,t.[Description]=s.[Description]
-			,t.[AddName]	=s.[AddName]
+			 t.[TableName]	= isnull(s.[TableName]  ,'')
+			,t.[UniqueKey]	= isnull(s.[UniqueKey]  ,'')
+			,t.[SourceFile]	= isnull(s.[SourceFile] ,'')
+			,t.[Description]= isnull(s.[Description],'')
+			,t.[AddName]	= isnull(s.[AddName]    ,'')
 			,t.[AddDate]	=s.[AddDate]
 	when not matched by target then
 	insert ([PKey],[TableName],[UniqueKey],[SourceFile],[Description],[AddName],[AddDate]	)
-	values(s.[PKey],s.[TableName],s.[UniqueKey],s.[SourceFile],s.[Description],s.[AddName],s.[AddDate])
+    VALUES
+    (
+            isnull(s.[PKey],        ''),
+            isnull(s.[TableName],   ''),
+            isnull(s.[UniqueKey],   ''),
+            isnull(s.[SourceFile],  ''),
+            isnull(s.[Description], ''),
+            isnull(s.[AddName],     ''),
+            s.[AddDate]
+    )
 	;
 END
 

@@ -26,10 +26,10 @@ where b.StyleUkey is null
 RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
-      a.Rate	      =b.Rate
-      ,a.AddName	      =b.AddName
+      a.Rate	      =isnull(b.Rate,0)
+      ,a.AddName	      =isnull(b.AddName,'')
       ,a.AddDate	      =b.AddDate
-      ,a.EditName	      =b.EditName
+      ,a.EditName	      =isnull(b.EditName,'')
       ,a.EditDate	      =b.EditDate
       ,a.ApparelType	  =isnull(b.ApparelType, '')
       ,a.FabricType	      =isnull(b.FabricType, '')
@@ -49,12 +49,12 @@ StyleUkey
 	  ,FabricType
 )
 select 
-	   b.StyleUkey
-      ,b.Location
-      ,b.Rate
-      ,b.AddName
+	   isnull(b.StyleUkey   ,0)
+      ,isnull(b.Location    ,'')
+      ,isnull(b.Rate        ,0)
+      ,isnull(b.AddName     ,'')
       ,b.AddDate
-      ,b.EditName
+      ,isnull(b.EditName    ,'')
       ,b.EditDate
 	  ,isnull(b.ApparelType, '')
 	  ,isnull(b.FabricType, '')
@@ -73,72 +73,72 @@ where not exists(select 1 from Production.dbo.Style_Location as a WITH (NOLOCK) 
 RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
-a.Ukey	= b.Ukey
-,a.ProgramID	= b.ProgramID
+a.Ukey	= isnull( b.Ukey             ,0)
+,a.ProgramID	= isnull( b.ProgramID,'')
 ,a.Model	= IsNull(b.Model,'')
-,a.Description	= b.Description
-,a.StyleName	= b.StyleName
-,a.CdCodeID	= b.CdCodeID
-,a.ApparelType	= b.ApparelType
-,a.FabricType	= b.FabricType
-,a.Contents	= b.Contents
-,a.GMTLT	= b.GMTLT
-,a.CPU	= b.CPU
-,a.Factories	= b.Factories
-,a.FTYRemark	= b.FTYRemark
-,a.Phase	= b.Phase
-,a.SampleSMR	= b.SampleSMR
-,a.SampleMRHandle	= b.SampleMRHandle
-,a.BulkSMR	= b.BulkSMR
-,a.BulkMRHandle	= b.BulkMRHandle
-,a.Junk	= b.Junk
-,a.RainwearTestPassed	= b.RainwearTestPassed
-,a.SizePage	= b.SizePage
-,a.SizeRange	= b.SizeRange
-,a.Gender	= b.Gender
-,a.CTNQty	= b.CTNQty
-,a.StdCost	= b.StdCost
-,a.Processes	= b.Processes
-,a.ArtworkCost	= b.ArtworkCost
-,a.Picture1	= b.Picture1
-,a.Picture2	= b.Picture2
-,a.Label	= b.Label
-,a.Packing	= b.Packing
-,a.IETMSID	= b.IETMSID
-,a.IETMSVersion	= b.IETMSVersion
-,a.IEImportName	= b.IEImportName
+,a.Description	= isnull( b.Description                   ,'')
+,a.StyleName	= isnull( b.StyleName                     ,'')
+,a.CdCodeID	= isnull( b.CdCodeID                          ,'')
+,a.ApparelType	= isnull( b.ApparelType                   ,'')
+,a.FabricType	= isnull( b.FabricType                    ,'')
+,a.Contents	= isnull( b.Contents                          ,'')
+,a.GMTLT	= isnull( b.GMTLT                             ,0)
+,a.CPU	= isnull( b.CPU                                   ,0)
+,a.Factories	= isnull( b.Factories                     ,'')
+,a.FTYRemark	= isnull( b.FTYRemark                     ,'')
+,a.Phase	= isnull( b.Phase                             ,'')
+,a.SampleSMR	= isnull( b.SampleSMR                     ,'')
+,a.SampleMRHandle	= isnull( b.SampleMRHandle            ,'')
+,a.BulkSMR	= isnull( b.BulkSMR                           ,'')
+,a.BulkMRHandle	= isnull( b.BulkMRHandle                  ,'')
+,a.Junk	= isnull( b.Junk                                  ,0)
+,a.RainwearTestPassed	= isnull( b.RainwearTestPassed    ,0)
+,a.SizePage	= isnull( b.SizePage                          ,'')
+,a.SizeRange	= isnull( b.SizeRange                     ,'')
+,a.Gender	= isnull( b.Gender                            ,'')
+,a.CTNQty	= isnull( b.CTNQty                            ,0)
+,a.StdCost	= isnull( b.StdCost                           ,0)
+,a.Processes	= isnull( b.Processes                     ,'')
+,a.ArtworkCost	= isnull( b.ArtworkCost                   ,'')
+,a.Picture1	= isnull( b.Picture1                          ,'')
+,a.Picture2	= isnull( b.Picture2                          ,'')
+,a.Label	= isnull( b.Label                             ,'')
+,a.Packing	= isnull( b.Packing                           ,'')
+,a.IETMSID	= isnull( b.IETMSID                           ,'')
+,a.IETMSVersion	= isnull( b.IETMSVersion                  ,'')
+,a.IEImportName	= isnull( b.IEImportName                  ,'')
 ,a.IEImportDate	= b.IEImportDate
 ,a.ApvDate	= b.ApvDate
-,a.ApvName	= b.ApvName
-,a.CareCode	= b.CareCode
-,a.SpecialMark	= b.SpecialMark
-,a.Lining	= b.Lining
-,a.StyleUnit	= b.StyleUnit
-,a.ExpectionForm	= b.ExpectionForm
-,a.ExpectionFormRemark	= b.ExpectionFormRemark
-,a.ComboType	= b.ComboType
-,a.AddName	= b.AddName
+,a.ApvName	= isnull( b.ApvName                           ,'')
+,a.CareCode	= isnull( b.CareCode                          ,'')
+,a.SpecialMark	= isnull( b.SpecialMark                   ,'')
+,a.Lining	= isnull( b.Lining                            ,'')
+,a.StyleUnit	= isnull( b.StyleUnit                     ,'')
+,a.ExpectionForm	= isnull( b.ExpectionForm             ,0)
+,a.ExpectionFormRemark	= isnull( b.ExpectionFormRemark   ,'')
+,a.ComboType	= isnull( b.ComboType                     ,'')
+,a.AddName	= isnull( b.AddName                           ,'')
 ,a.AddDate	= b.AddDate
-,a.TPEEditName	= b.EditName
+,a.TPEEditName	= isnull( b.EditName                      ,'')
 ,a.TPEEditDate 	= b.EditDate
-,a.SizeUnit	= b.SizeUnit
-,a.ModularParent	= b.ModularParent
-,a.CPUAdjusted	= b.CPUAdjusted
+,a.SizeUnit	= isnull( b.SizeUnit                          ,'')
+,a.ModularParent	= isnull( b.ModularParent             ,'')
+,a.CPUAdjusted	= isnull( b.CPUAdjusted                   ,0)
 ,a.LocalStyle = 0
-,a.ThickFabric = b.ThickFabric
-,a.DyeingID   = b.DyeingID
-,a.ExpectionFormStatus   = b.ExpectionFormStatus
-,a.ExpectionFormDate   = b.ExpectionFormDate
-,a.ThickFabricBulk = b.ThickFabricBulk
-,a.HangerPack	= b.HangerPack
-,a.Construction	= b.Construction
-,a.CDCodeNew	= b.CDCodeNew
-,a.FitType	= b.FitType
-,a.GearLine	= b.GearLine
-,a.ThreadVersion = b.ThreadVersion
-,a.DevRegion = b.DevRegion
-,a.DevOption = b.DevOption
-,a.Teamwear = b.Teamwear
+,a.ThickFabric = isnull( b.ThickFabric                    ,0)
+,a.DyeingID   = isnull( b.DyeingID                        ,'')
+,a.ExpectionFormStatus   = isnull( b.ExpectionFormStatus  ,'')
+,a.ExpectionFormDate   =  b.ExpectionFormDate
+,a.ThickFabricBulk = isnull( b.ThickFabricBulk            ,0)
+,a.HangerPack	= isnull( b.HangerPack                    ,0)
+,a.Construction	= isnull( b.Construction                  ,'')
+,a.CDCodeNew	= isnull( b.CDCodeNew                     ,'')
+,a.FitType	= isnull( b.FitType                           ,'')
+,a.GearLine	= isnull( b.GearLine                          ,'')
+,a.ThreadVersion = isnull( b.ThreadVersion                ,'')
+,a.DevRegion = isnull( b.DevRegion                        ,'')
+,a.DevOption = isnull( b.DevOption                        ,0)
+,a.Teamwear = isnull(b.Teamwear, '')
 from Production.dbo.Style as a 
 inner join Trade_To_Pms.dbo.Style as b ON a.ID	= b.ID AND a.BrandID	= b.BrandID AND a.SeasonID	= b.SeasonID
 
@@ -146,7 +146,7 @@ inner join Trade_To_Pms.dbo.Style as b ON a.ID	= b.ID AND a.BrandID	= b.BrandID 
 RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
-a.Ukey=b.Ukey
+a.Ukey=isnull(b.Ukey, 0)
 from Production.dbo.Style_Artwork_Quot as a 
 inner join Trade_To_Pms.dbo.Style as b ON a. StyleUkey=b.Ukey
 inner join Production.dbo.Style as c ON c.ID=b.ID and c.BrandID=b.BrandID and c.SeasonID=b.SeasonID
@@ -232,75 +232,75 @@ output	inserted.ID,
 		inserted.BrandID
 into AutomationStyle(ID, SeasonID, BrandID)
 select 
- b.ID
-,b.Ukey
-,b.BrandID
-,b.ProgramID
-,b.SeasonID
+ isnull(b.ID       ,'')
+,isnull(b.Ukey     ,0)
+,isnull(b.BrandID  ,'')
+,isnull(b.ProgramID,'')
+,isnull(b.SeasonID ,'')
 ,IsNull(b.Model,'')
-,b.Description
-,b.StyleName
-,b.CdCodeID
-,b.ApparelType
-,b.FabricType
-,b.Contents
-,b.GMTLT
-,b.CPU
-,b.Factories
-,b.FTYRemark
-,b.Phase
-,b.SampleSMR
-,b.SampleMRHandle
-,b.BulkSMR
-,b.BulkMRHandle
-,b.Junk
-,b.RainwearTestPassed
-,b.SizePage
-,b.SizeRange
-,b.Gender
-,b.CTNQty
-,b.StdCost
-,b.Processes
-,b.ArtworkCost
-,b.Label
-,b.Packing
-,b.IETMSID
-,b.IETMSVersion
-,b.IEImportName
+,isnull(b.Description        ,'')
+,isnull(b.StyleName          ,'')
+,isnull(b.CdCodeID           ,'')
+,isnull(b.ApparelType        ,'')
+,isnull(b.FabricType         ,'')
+,isnull(b.Contents           ,'')
+,isnull(b.GMTLT              ,0)
+,isnull(b.CPU                ,0)
+,isnull(b.Factories          ,'')
+,isnull(b.FTYRemark          ,'')
+,isnull(b.Phase              ,'')
+,isnull(b.SampleSMR          ,'')
+,isnull(b.SampleMRHandle     ,'')
+,isnull(b.BulkSMR            ,'')
+,isnull(b.BulkMRHandle       ,'')
+,isnull(b.Junk               ,0)
+,isnull(b.RainwearTestPassed ,0)
+,isnull(b.SizePage           ,'')
+,isnull(b.SizeRange          ,'')
+,isnull(b.Gender             ,'')
+,isnull(b.CTNQty             ,0)
+,isnull(b.StdCost            ,0)
+,isnull(b.Processes          ,'')
+,isnull(b.ArtworkCost        ,'')
+,isnull(b.Label              ,'')
+,isnull(b.Packing            ,'')
+,isnull(b.IETMSID            ,'')
+,isnull(b.IETMSVersion       ,'')
+,isnull(b.IEImportName       ,'')
 ,b.IEImportDate
 ,b.ApvDate
-,b.ApvName
-,b.CareCode
-,b.SpecialMark
-,b.Lining
-,b.StyleUnit
-,b.ExpectionForm
-,b.ExpectionFormRemark
-,b.ComboType
-,b.AddName
+,isnull(b.ApvName            ,'')
+,isnull(b.CareCode           ,'')
+,isnull(b.SpecialMark        ,'')
+,isnull(b.Lining             ,'')
+,isnull(b.StyleUnit          ,'')
+,isnull(b.ExpectionForm      ,0)
+,isnull(b.ExpectionFormRemark,'')
+,isnull(b.ComboType          ,'')
+,isnull(b.AddName            ,'')
 ,b.AddDate
-,b.EditName
+,isnull(b.EditName           ,'')
 ,b.EditDate
-,b.SizeUnit
-,b.ModularParent
-,b.CPUAdjusted
+,isnull(b.SizeUnit           ,'')
+,isnull(b.ModularParent      ,'')
+,isnull(b.CPUAdjusted        ,0)
 ,0
-,b.ThickFabric
-,b.DyeingID
-,b.Picture1
-,b.Picture2
-,b.ExpectionFormStatus
+,isnull(b.ThickFabric        ,0)
+,isnull(b.DyeingID           ,'')
+,isnull(b.Picture1           ,'')
+,isnull(b.Picture2           ,'')
+,isnull(b.ExpectionFormStatus,'')
 ,b.ExpectionFormDate
-,b.ThickFabricBulk
-,b.HangerPack
-,b.Construction
-,b.CDCodeNew
-,b.FitType
-,b.GearLine
-,b.ThreadVersion
-,b.DevRegion
-,b.DevOption
-,b.Teamwear
+,isnull(b.ThickFabricBulk    ,0)
+,isnull(b.HangerPack         ,0)
+,isnull(b.Construction       ,'')
+,isnull(b.CDCodeNew          ,'')
+,isnull(b.FitType            ,'')
+,isnull(b.GearLine           ,'')
+,isnull(b.ThreadVersion      ,'')
+,isnull(b.DevRegion          ,'')
+,isnull(b.DevOption          ,0)
+,isnull(b.Teamwear,'')
 from Trade_To_Pms.dbo.Style as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.ID=b.ID and a.BrandID=b.BrandID and a.SeasonID=b.SeasonID and a.LocalStyle=1)
 AND not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.Ukey=b.Ukey )
@@ -322,14 +322,14 @@ UPDATE a
 SET  
 --a.StyleUkey	= b.StyleUkey
 --,a.ArtworkTypeID	= b.ArtworkTypeID
-a.Seq	= b.Seq
-,a.Qty	= b.Qty
-,a.ArtworkUnit	= b.ArtworkUnit
-,a.TMS	= b.TMS
-,a.Price	= b.Price
-,a.AddName	= b.AddName
+a.Seq	= isnull( b.Seq                 ,'')
+,a.Qty	= isnull( b.Qty                 ,0)
+,a.ArtworkUnit	= isnull( b.ArtworkUnit ,'')
+,a.TMS	= isnull( b.TMS                 ,0)
+,a.Price	= isnull( b.Price           ,0)
+,a.AddName	= isnull( b.AddName         ,'')
 ,a.AddDate	= b.AddDate
-,a.EditName	= b.EditName
+,a.EditName	= isnull( b.EditName        ,'')
 ,a.EditDate	= b.EditDate
 from Production.dbo.Style_TmsCost as a 
 inner join Trade_To_Pms.dbo.Style_TmsCost as b ON a.StyleUkey=b.StyleUkey AND a.ArtworkTypeID	= b.ArtworkTypeID
@@ -350,16 +350,16 @@ StyleUkey
 
 )
 select 
- b.StyleUkey
-,b.ArtworkTypeID
-,b.Seq
-,b.Qty
-,b.ArtworkUnit
-,b.TMS
-,b.Price
-,b.AddName
+ isnull(b.StyleUkey     ,0)
+,isnull(b.ArtworkTypeID ,'')
+,isnull(b.Seq           ,'')
+,isnull(b.Qty           ,0)
+,isnull(b.ArtworkUnit   ,'')
+,isnull(b.TMS           ,0)
+,isnull(b.Price         ,0)
+,isnull(b.AddName       ,'')
 ,b.AddDate
-,b.EditName
+,isnull(b.EditName,'')
 ,b.EditDate
 
 from Trade_To_Pms.dbo.Style_TmsCost as b
@@ -381,34 +381,34 @@ where b.Ukey is null
 RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
- a.StyleUkey	= b.StyleUkey
-,a.ArtworkTypeID	= b.ArtworkTypeID
-,a.Article	= b.Article
-,a.PatternCode	= b.PatternCode
-,a.PatternDesc	= b.PatternDesc
-,a.ArtworkID	= b.ArtworkID
-,a.ArtworkName	= b.ArtworkName
-,a.Qty	= b.Qty
-,a.Price	= b.Price
-,a.Cost	= b.Cost
-,a.Remark	= b.Remark
-,a.AddName	= b.AddName
+ a.StyleUkey	= isnull( b.StyleUkey        ,0)
+,a.ArtworkTypeID	= isnull( b.ArtworkTypeID,'')
+,a.Article	= isnull( b.Article              ,'')
+,a.PatternCode	= isnull( b.PatternCode      ,'')
+,a.PatternDesc	= isnull( b.PatternDesc      ,'')
+,a.ArtworkID	= isnull( b.ArtworkID        ,'')
+,a.ArtworkName	= isnull( b.ArtworkName      ,'')
+,a.Qty	= isnull( b.Qty                      ,0)
+,a.Price	= isnull( b.Price                ,0)
+,a.Cost	= isnull( b.Cost                     ,0)
+,a.Remark	= isnull( b.Remark               ,'')
+,a.AddName	= isnull( b.AddName              ,'')
 ,a.AddDate	= b.AddDate
-,a.EditName	= b.EditName
+,a.EditName	= isnull( b.EditName             ,'')
 ,a.EditDate	= b.EditDate
-,a.TMS	= b.TMS
-,a.SMNoticeID = b.SMNoticeID
-,a.PatternVersion = b.PatternVersion
-,a.PPU = b.PPU
-,a.InkType = b.InkType
-,a.Colors = b.Colors
-,a.Length = b.Length
-,a.Width = b.Width
+,a.TMS	= isnull( b.TMS                      ,0)
+,a.SMNoticeID = isnull( b.SMNoticeID         ,'')
+,a.PatternVersion = isnull( b.PatternVersion ,'')
+,a.PPU = isnull( b.PPU                       ,0)
+,a.InkType = isnull( b.InkType               ,'')
+,a.Colors = isnull( b.Colors                 ,'')
+,a.Length = isnull( b.Length                 ,0)
+,a.Width = isnull( b.Width                   ,0)
 ,a.AntiMigration = isnull(b.AntiMigration,0)
-,a.PrintType = b.PrintType
-,a.PatternAnnotation = b.PatternAnnotation
-,a.InkTypePPU = b.InkTypePPU
-,a.PatternCodeSize = b.PatternCodeSize
+,a.PrintType = isnull( b.PrintType                  ,'')
+,a.PatternAnnotation = isnull( b.PatternAnnotation  ,'')
+,a.InkTypePPU = isnull( b.InkTypePPU                ,'')
+,a.PatternCodeSize = isnull( b.PatternCodeSize      ,'')
 from Production.dbo.Style_Artwork as a 
 inner join Trade_To_Pms.dbo.Style_Artwork as b ON a.TradeUkey=b.Ukey
 -------------------------- INSERT INTO 抓
@@ -446,36 +446,36 @@ INSERT INTO Production.dbo.Style_Artwork(
 ,PatternCodeSize
 )
 select 
- b.StyleUkey
-,b.ArtworkTypeID
-,b.Article
-,b.PatternCode
-,b.PatternDesc
-,b.ArtworkID
-,b.ArtworkName
-,b.Qty
-,b.Price
-,b.Cost
-,b.Remark
+ isnull(b.StyleUkey     ,0)
+,isnull(b.ArtworkTypeID ,'')
+,isnull(b.Article       ,'')
+,isnull(b.PatternCode   ,'')
+,isnull(b.PatternDesc   ,'')
+,isnull(b.ArtworkID     ,'')
+,isnull(b.ArtworkName   ,'')
+,isnull(b.Qty           ,0)
+,isnull(b.Price         ,0)
+,isnull(b.Cost          ,0)
+,isnull(b.Remark        ,'')
 --,Ukey
-,b.AddName
+,isnull(b.AddName       ,'')
 ,b.AddDate
-,b.EditName
+,isnull(b.EditName      ,'')
 ,b.EditDate
-,b.TMS
-,b.Ukey
-,b.SMNoticeID
-,b.PatternVersion
-,b.PPU
-,b.InkType
-,b.Colors
-,b.Length
-,b.Width
+,isnull(b.TMS           ,0)
+,isnull(b.Ukey          ,0)
+,isnull(b.SMNoticeID    ,'')
+,isnull(b.PatternVersion,'')
+,isnull(b.PPU           ,0)
+,isnull(b.InkType       ,'')
+,isnull(b.Colors        ,'')
+,isnull(b.Length        ,0)
+,isnull(b.Width         ,0)
 ,isnull(b.AntiMigration,0)
-,b.PrintType
-,b.PatternAnnotation
-,b.InkTypePPU
-,b.PatternCodeSize
+,isnull(b.PrintType        ,'')
+,isnull(b.PatternAnnotation,'')
+,isnull(b.InkTypePPU       ,'')
+,isnull(b.PatternCodeSize  ,'')
 from Trade_To_Pms.dbo.Style_Artwork as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_Artwork as a WITH (NOLOCK) where a.TradeUkey = b.Ukey)
 
@@ -486,14 +486,14 @@ where not exists(select 1 from Production.dbo.Style_Artwork as a WITH (NOLOCK) w
 RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
- a.StyleUkey	= b.StyleUkey
-,a.CustCDID	= b.CustCDID
-,a.Qty	= b.Qty
-,a.CountryID	= b.CountryID
-,a.Continent	= b.Continent
-,a.AddName	= b.AddName
+ a.StyleUkey	= isnull( b.StyleUkey,0)
+,a.CustCDID	= isnull( b.CustCDID     ,'')
+,a.Qty	= isnull( b.Qty              ,0)
+,a.CountryID	= isnull( b.CountryID,'')
+,a.Continent	= isnull( b.Continent,'')
+,a.AddName	= isnull( b.AddName      ,'')
 ,a.AddDate	= b.AddDate
-,a.EditName	= b.EditName
+,a.EditName	= isnull( b.EditName,'')
 ,a.EditDate	= b.EditDate
 --,a.UKey	= b.UKey
 
@@ -515,16 +515,16 @@ StyleUkey
 
 )
 select 
- b.StyleUkey
-,b.CustCDID
-,b.Qty
-,b.CountryID
-,b.Continent
-,b.AddName
+ isnull(b.StyleUkey,0)
+,isnull(b.CustCDID ,'')
+,isnull(b.Qty      ,0)
+,isnull(b.CountryID,'')
+,isnull(b.Continent,'')
+,isnull(b.AddName  ,'')
 ,b.AddDate
-,b.EditName
+,isnull(b.EditName ,'')
 ,b.EditDate
-,b.UKey
+,isnull(b.UKey     ,0)
 
 from Trade_To_Pms.dbo.Style_QtyCTN as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_QtyCTN as a WITH (NOLOCK) where a.UKey = b.UKey)
@@ -543,10 +543,10 @@ where b.Ukey is null
 RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
-a.StyleUkey	= b.StyleUkey
-,a.Seq	= b.Seq
-,a.SizeGroup	= b.SizeGroup
-,a.SizeCode	= b.SizeCode
+a.StyleUkey	= isnull( b.StyleUkey    ,0)
+,a.Seq	= isnull( b.Seq              ,'')
+,a.SizeGroup	= isnull( b.SizeGroup,'')
+,a.SizeCode	= isnull( b.SizeCode     ,'')
 --,a.UKey	= b.UKey
 from Production.dbo.Style_SizeCode as a 
 inner join Trade_To_Pms.dbo.Style_SizeCode as b ON a.Ukey=b.Ukey
@@ -561,11 +561,11 @@ StyleUkey
 
 )
 select 
- b.StyleUkey
-,b.Seq
-,b.SizeGroup
-,b.SizeCode
-,b.UKey
+ isnull(b.StyleUkey,0)
+,isnull(b.Seq      ,'')
+,isnull(b.SizeGroup,'')
+,isnull(b.SizeCode ,'')
+,isnull(b.UKey     ,0)
 
 from Trade_To_Pms.dbo.Style_SizeCode as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_SizeCode as a WITH (NOLOCK) where a.Ukey = b.Ukey)
@@ -599,11 +599,11 @@ StyleUkey
 ,Upper
 )
 select 
- b.StyleUkey
-,b.SizeGroup
-,b.SizeItem
-,b.Lower
-,b.Upper
+ isnull(b.StyleUkey,0)
+,isnull(b.SizeGroup,'')
+,isnull(b.SizeItem ,'')
+,isnull(b.Lower    ,'')
+,isnull(b.Upper    ,'')
 from Trade_To_Pms.dbo.Style_SizeTol as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_SizeTol as a WITH (NOLOCK) where a.StyleUkey = b.StyleUkey and a.SizeGroup = b.SizeGroup and a.SizeItem = b.SizeItem)
 
@@ -621,10 +621,10 @@ where b.Ukey is null
 RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
-a.StyleUkey	= b.StyleUkey
-,a.SizeItem	= b.SizeItem
-,a.SizeCode	= b.SizeCode
-,a.SizeSpec	= b.SizeSpec
+a.StyleUkey	= isnull( b.StyleUkey,0)
+,a.SizeItem	= isnull( b.SizeItem ,'')
+,a.SizeCode	= isnull( b.SizeCode ,'')
+,a.SizeSpec	= isnull( b.SizeSpec ,'')
 --,a.UKey	= b.UKey
 from Production.dbo.Style_SizeSpec as a 
 inner join Trade_To_Pms.dbo.Style_SizeSpec as b ON a.Ukey=b.Ukey
@@ -639,11 +639,11 @@ StyleUkey
 
 )
 select 
- b.StyleUkey
-,b.SizeItem
-,b.SizeCode
-,b.SizeSpec
-,b.UKey
+ isnull(b.StyleUkey,0)
+,isnull(b.SizeItem ,'')
+,isnull(b.SizeCode ,'')
+,isnull(b.SizeSpec ,'')
+,isnull(b.UKey     ,0)
 
 from Trade_To_Pms.dbo.Style_SizeSpec as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_SizeSpec as a WITH (NOLOCK) where a.Ukey = b.Ukey)
@@ -662,11 +662,11 @@ RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
 --a.StyleUkey	= b.StyleUkey
-a.Seq	= b.Seq
+a.Seq	= isnull(b.Seq,0)
 --,a.Article	= b.Article
-,a.TissuePaper	= b.TissuePaper
-,a.ArticleName	= b.ArticleName
-,a.Contents		= b.Contents
+,a.TissuePaper	= isnull(b.TissuePaper,0)
+,a.ArticleName	= isnull(b.ArticleName,'')
+,a.Contents	= isnull(b.Contents,'')
 ,a.BuyReadyDate = b.BuyReadyDate
 from Production.dbo.Style_Article as a 
 inner join Trade_To_Pms.dbo.Style_Article as b ON a.StyleUkey	= b.StyleUkey AND a.Article	= b.Article
@@ -684,15 +684,15 @@ StyleUkey
 ,FDUploadDate
 ,BuyReadyDate
 )
-select 
- b.StyleUkey
-,b.Seq
-,b.Article
-,b.TissuePaper
-,b.ArticleName
-,b.Contents
-,b.SourceFile
-,b.Description
+select
+ isnull(b.StyleUkey  ,0)
+,isnull(b.Seq        ,0)
+,isnull(b.Article    ,'')
+,isnull(b.TissuePaper,0)
+,isnull(b.ArticleName,'')
+,isnull(b.Contents   ,'')
+,isnull(b.SourceFile ,'')
+,isnull(b.Description,'')
 ,b.FDUploadDate
 ,b.BuyReadyDate
 from Trade_To_Pms.dbo.Style_Article as b WITH (NOLOCK)
@@ -704,13 +704,18 @@ Using (select a.* from Trade_To_Pms.dbo.Style_Article_PadPrint a ) as s
 on t.Styleukey=s.Styleukey and t.article=s.article and t.colorid = s.colorid
 when matched then 
 	update set 
-		t.qty			= s.qty
+		t.qty			= isnull(s.qty,0)
 when not matched by target then
 	insert (
 		Styleukey	, Article	, colorid,  qty
-	) values (
-		s.Styleukey , s.Article , s.colorid, s.qty
 	)
+    VALUES
+    (
+            isnull(s.styleukey ,0),
+            isnull(s.article ,  ''),
+            isnull(s.colorid,   ''),
+            isnull(s.qty,       0)
+    )
 when not matched by source AND T.Styleukey IN (SELECT ukey FROM Trade_To_Pms.dbo.Style) then  
 	delete;
 --STYLEA
@@ -727,36 +732,36 @@ where b.Ukey is null
 RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
-a. StyleUkey	= b. StyleUkey
+a. StyleUkey	= isnull( b. StyleUkey                   ,0)
 --,a.Ukey	= b.Ukey
-,a.Seq	= b.Seq
-,a.MarkerName	= b.MarkerName
-,a.FabricCode	= b.FabricCode
-,a.FabricCombo	= b.FabricCombo
-,a.FabricPanelCode	= b.FabricPanelCode
-,a.MarkerLength	= b.MarkerLength
-,a.ConsPC	= b.ConsPC
-,a.CuttingPiece	= b.CuttingPiece
-,a.ActCuttingPerimeter	= b.ActCuttingPerimeter
-,a.StraightLength	= b.StraightLength
-,a.CurvedLength	= b.CurvedLength
-,a.Efficiency	= b.Efficiency
-,a.Remark	= b.Remark
-,a.MixedSizeMarker	= b.MixedSizeMarker
-,a.MarkerNo	= b.MarkerNo
+,a.Seq	= isnull( b.Seq                                  ,0)
+,a.MarkerName	= isnull( b.MarkerName                   ,'')
+,a.FabricCode	= isnull( b.FabricCode                   ,'')
+,a.FabricCombo	= isnull( b.FabricCombo                  ,'')
+,a.FabricPanelCode	= isnull( b.FabricPanelCode          ,'')
+,a.MarkerLength	= isnull( b.MarkerLength                 ,'')
+,a.ConsPC	= isnull( b.ConsPC                           ,0)
+,a.CuttingPiece	= isnull( b.CuttingPiece                 ,0)
+,a.ActCuttingPerimeter	= isnull( b.ActCuttingPerimeter  ,'')
+,a.StraightLength	= isnull( b.StraightLength           ,'')
+,a.CurvedLength	= isnull( b.CurvedLength                 ,'')
+,a.Efficiency	= isnull( b.Efficiency                   ,'')
+,a.Remark	= isnull( b.Remark                           ,'')
+,a.MixedSizeMarker	= isnull( b.MixedSizeMarker          ,'')
+,a.MarkerNo	= isnull( b.MarkerNo                         ,'')
 ,a.MarkerUpdate	= b.MarkerUpdate
-,a.MarkerUpdateName	= b.MarkerUpdateName
-,a.AllSize	= b.AllSize
-,a.PhaseID	= b.PhaseID
-,a.SMNoticeID	= b.SMNoticeID
-,a.MarkerVersion	= b.MarkerVersion
-,a.Direction	= b.Direction
-,a.CuttingWidth	= b.CuttingWidth
-,a.Width	= b.Width
-,a.Type	= b.Type
-,a.AddName	= b.AddName
+,a.MarkerUpdateName	= isnull( b.MarkerUpdateName         ,'')
+,a.AllSize	= isnull( b.AllSize                          ,0)
+,a.PhaseID	= isnull( b.PhaseID                          ,'')
+,a.SMNoticeID	= isnull( b.SMNoticeID                   ,'')
+,a.MarkerVersion	= isnull( b.MarkerVersion            ,'')
+,a.Direction	= isnull( b.Direction                    ,'')
+,a.CuttingWidth	= isnull( b.CuttingWidth                 ,'')
+,a.Width	= isnull( b.Width                            ,'')
+,a.Type	= isnull( b.Type                                 ,'')
+,a.AddName	= isnull( b.AddName                          ,'')
 ,a.AddDate	= b.AddDate
-,a.EditName	= b.EditName
+,a.EditName	= isnull( b.EditName                         ,'')
 ,a.EditDate	= b.EditDate
 
 from Production.dbo.Style_MarkerList as a 
@@ -798,36 +803,36 @@ INSERT INTO Production.dbo.Style_MarkerList(
 
 )
 select 
- b.StyleUkey
-,b.Ukey
-,b.Seq
-,b.MarkerName
-,b.FabricCode
-,b.FabricCombo
-,b.FabricPanelCode
-,b.MarkerLength
-,b.ConsPC
-,b.CuttingPiece
-,b.ActCuttingPerimeter
-,b.StraightLength
-,b.CurvedLength
-,b.Efficiency
-,b.Remark
-,b.MixedSizeMarker
-,b.MarkerNo
+ isnull(b.StyleUkey          ,0)
+,isnull(b.Ukey               ,0)
+,isnull(b.Seq                ,0)
+,isnull(b.MarkerName         ,'')
+,isnull(b.FabricCode         ,'')
+,isnull(b.FabricCombo        ,'')
+,isnull(b.FabricPanelCode    ,'')
+,isnull(b.MarkerLength       ,'')
+,isnull(b.ConsPC             ,0)
+,isnull(b.CuttingPiece       ,0)
+,isnull(b.ActCuttingPerimeter,'')
+,isnull(b.StraightLength     ,'')
+,isnull(b.CurvedLength       ,'')
+,isnull(b.Efficiency         ,'')
+,isnull(b.Remark             ,'')
+,isnull(b.MixedSizeMarker    ,'')
+,isnull(b.MarkerNo           ,'')
 ,b.MarkerUpdate
-,b.MarkerUpdateName
-,b.AllSize
-,b.PhaseID
-,b.SMNoticeID
-,b.MarkerVersion
-,b.Direction
-,b.CuttingWidth
-,b.Width
-,b.Type
-,b.AddName
+,isnull(b.MarkerUpdateName   ,'')
+,isnull(b.AllSize            ,0)
+,isnull(b.PhaseID            ,'')
+,isnull(b.SMNoticeID         ,'')
+,isnull(b.MarkerVersion      ,'')
+,isnull(b.Direction          ,'')
+,isnull(b.CuttingWidth       ,'')
+,isnull(b.Width              ,'')
+,isnull(b.Type               ,'')
+,isnull(b.AddName            ,'')
 ,b.AddDate
-,b.EditName
+,isnull(b.EditName,'')
 ,b.EditDate
 
 from Trade_To_Pms.dbo.Style_MarkerList as b WITH (NOLOCK)
@@ -840,12 +845,12 @@ RAISERROR('imp_Style - Starts',0,0)
 	on t.style_MarkerListUkey=s.style_MarkerListUkey and t.article=s.article
 	when matched then 
 		update set
-		t.StyleUkey= s.StyleUkey,
+		t.StyleUkey= isnull(s.StyleUkey,0),
 		--t.Style_MarkerListUkey= s.Style_MarkerListUkey,
 		--t.Article= s.Article,
-		t.AddName= s.AddName,
+		t.AddName= isnull(s.AddName,''),
 		t.AddDate= s.AddDate,
-		t.EditName= s.EditName,
+		t.EditName= isnull(s.EditName,''),
 		t.EditDate= s.EditDate
 	when not matched by target then
 		insert(StyleUkey
@@ -855,12 +860,12 @@ RAISERROR('imp_Style - Starts',0,0)
 				,AddDate
 				,EditName
 				,EditDate)
-		values(s.StyleUkey,
-				s.Style_MarkerListUkey,
-				s.Article,
-				s.AddName,
+		values( isnull(s.StyleUkey,0),
+				isnull(s.Style_MarkerListUkey,0),
+				isnull(s.Article,''),
+				isnull(s.AddName,''),
 				s.AddDate,
-				s.EditName,
+				isnull(s.EditName,''),
 				s.EditDate)
 	when not matched by source and t.styleUkey in (select distinct styleUkey from production.dbo.style_markerlist) then
 		delete;
@@ -873,13 +878,13 @@ RAISERROR('imp_Style - Starts',0,0)
 	On t.Style_MarkerListUkey=s.Style_MarkerListUkey and t.FabricPanelCode=s.FabricPanelCode
 	when matched then 
 		update set
-		t.StyleUkey= s.StyleUkey,
+		t.StyleUkey= isnull(s.StyleUkey,0),
 		--t.Style_MarkerListUkey= s.Style_MarkerListUkey,
-		t.PatternPanel= s.PatternPanel,
+		t.PatternPanel= isnull(s.PatternPanel,''),
 		--t.FabricPanelCode= s.FabricPanelCode,
-		t.AddName= s.AddName,
+		t.AddName= isnull(s.AddName,''),
 		t.AddDate= s.AddDate,
-		t.EditName= s.EditName,
+		t.EditName= isnull(s.EditName,''),
 		t.EditDate= s.EditDate
 	when not matched by target then 
 		insert(StyleUkey
@@ -890,13 +895,14 @@ RAISERROR('imp_Style - Starts',0,0)
 			,AddDate
 			,EditName
 			,EditDate			)
-		values(s.StyleUkey,
-			s.Style_MarkerListUkey,
-			s.PatternPanel,
-			s.FabricPanelCode,
-			s.AddName,
+		values(
+            isnull(s.StyleUkey,0),
+			isnull(s.Style_MarkerListUkey,0),
+			isnull(s.PatternPanel,''),
+			isnull(s.FabricPanelCode,''),
+			isnull(s.AddName,''),
 			s.AddDate,
-			s.EditName,
+			isnull(s.EditName,''),
 			s.EditDate			)
 	when not matched by source  and t.styleUkey in (select distinct styleUkey from production.dbo.style_markerlist) then
 		delete;
@@ -909,18 +915,19 @@ RAISERROR('imp_Style - Starts',0,0)
 	when matched then
 		update set
 		--t.Style_MarkerListUkey= s.Style_MarkerListUkey,
-		t.StyleUkey= s.StyleUkey,
+		t.StyleUkey= isnull(s.StyleUkey,0),
 		--t.SizeCode= s.SizeCode,
-		t.Qty= s.Qty
+		t.Qty= isnull(s.Qty,0)
 	when not matched by target then
 		insert(Style_MarkerListUkey
 				,StyleUkey
 				,SizeCode
 				,Qty				)
-		values(s.Style_MarkerListUkey,
-				s.StyleUkey,
-				s.SizeCode,
-				s.Qty				)
+		values( isnull(s.Style_MarkerListUkey,0),
+				isnull(s.StyleUkey,0),
+				isnull(s.SizeCode,''),
+				isnull(s.Qty,0)
+                )
 	when not matched by source and t.styleUkey in (select distinct styleUkey from production.dbo.style_markerlist) then
 		delete;
 
@@ -949,13 +956,13 @@ UPDATE a
 SET  
 --a.StyleUkey	= b.StyleUkey
 --,a.FabricPanelCode	= b.FabricPanelCode
-a.FabricCode	= b.FabricCode
-,a.PatternPanel	= b.PatternPanel
-,a.AddName	= b.AddName
+a.FabricCode	= isnull(b.FabricCode,'')
+,a.PatternPanel	= isnull(b.PatternPanel,'')
+,a.AddName	= isnull(b.AddName,'')
 ,a.AddDate	= b.AddDate
-,a.EditName	= b.EditName
+,a.EditName	= isnull(b.EditName,'')
 ,a.EditDate	= b.EditDate
-,a.QTWidth	= b.QTWidth
+,a.QTWidth	= isnull(b.QTWidth,0)
 from Production.dbo.Style_FabricCode as a 
 inner join Trade_To_Pms.dbo.Style_FabricCode as b ON a.StyleUkey = b.StyleUkey AND a.FabricPanelCode	= b.FabricPanelCode
 -------------------------- INSERT INTO 抓
@@ -972,15 +979,15 @@ StyleUkey
 ,QTWidth
 )
 select 
- b.StyleUkey
-,b.FabricPanelCode
-,b.FabricCode
-,b.PatternPanel
-,b.AddName
+ isnull(b.StyleUkey       ,0)
+,isnull(b.FabricPanelCode ,'')
+,isnull(b.FabricCode      ,'')
+,isnull(b.PatternPanel    ,'')
+,isnull(b.AddName         ,'')
 ,b.AddDate
-,b.EditName
+,isnull(b.EditName        ,'')
 ,b.EditDate
-,b.QTWidth
+,isnull(b.QTWidth         ,0)
 from Trade_To_Pms.dbo.Style_FabricCode as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_FabricCode as a WITH (NOLOCK) where a.StyleUkey = b.StyleUkey AND a.FabricPanelCode	= b.FabricPanelCode)
 --STYLE8
@@ -997,21 +1004,21 @@ where b.Ukey is null
 RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
-a.StyleUkey	= b.StyleUkey
-,a.FabricCode	= b.FabricCode
-,a.Refno	= b.Refno
-,a.SCIRefno	= b.SCIRefno
-,a.Kind	= b.Kind
+a.StyleUkey	= isnull( b.StyleUkey       ,0)
+,a.FabricCode	= isnull( b.FabricCode  ,'')
+,a.Refno	= isnull( b.Refno           ,'')
+,a.SCIRefno	= isnull( b.SCIRefno        ,'')
+,a.Kind	= isnull( b.Kind                ,'')
 --,a.Ukey	= b.Ukey
-,a.SuppIDBulk	= b.SuppIDBulk
-,a.SuppIDSample	= b.SuppIDSample
-,a.consPc = b.consPc
-,a.MatchFabric = b.MatchFabric
-,a.HRepeat = b.HRepeat
-,a.VRepeat = b.VRepeat
-,a.OneTwoWay = b.OneTwoWay
-,a.HorizontalCutting = b.HorizontalCutting
-,a.VRepeat_C = b.VRepeat_C
+,a.SuppIDBulk	= isnull( b.SuppIDBulk              ,'')
+,a.SuppIDSample	= isnull( b.SuppIDSample            ,'')
+,a.consPc = isnull( b.consPc                        ,0)
+,a.MatchFabric = isnull( b.MatchFabric              ,'')
+,a.HRepeat = isnull( b.HRepeat                      ,0)
+,a.VRepeat = isnull( b.VRepeat                      ,0)
+,a.OneTwoWay = isnull( b.OneTwoWay                  ,'')
+,a.HorizontalCutting = isnull( b.HorizontalCutting  ,0)
+,a.VRepeat_C = isnull( b.VRepeat_C                  ,0)
 from Production.dbo.Style_BOF as a 
 inner join Trade_To_Pms.dbo.Style_BOF as b ON a.Ukey=b.Ukey
 -------------------------- INSERT INTO 抓
@@ -1034,21 +1041,21 @@ StyleUkey
 ,VRepeat_C
 )
 select 
- b.StyleUkey
-,b.FabricCode
-,b.Refno
-,b.SCIRefno
-,b.Kind
-,b.Ukey
-,b.SuppIDBulk
-,b.SuppIDSample
-,b.consPc
-,b.MatchFabric
-,b.HRepeat
-,b.VRepeat
-,b.OneTwoWay 
-,b.HorizontalCutting
-,b.VRepeat_C
+ isnull(b.StyleUkey        ,0)
+,isnull(b.FabricCode       ,'')
+,isnull(b.Refno            ,'')
+,isnull(b.SCIRefno         ,'')
+,isnull(b.Kind             ,'')
+,isnull(b.Ukey             ,0)
+,isnull(b.SuppIDBulk       ,'')
+,isnull(b.SuppIDSample     ,'')
+,isnull(b.consPc           ,0)
+,isnull(b.MatchFabric      ,'')
+,isnull(b.HRepeat          ,0)
+,isnull(b.VRepeat          ,0)
+,isnull(b.OneTwoWay        ,'')
+,isnull(b.HorizontalCutting,0)
+,isnull(b.VRepeat_C        ,0)
 from Trade_To_Pms.dbo.Style_BOF as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_BOF as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 --STYLE9
@@ -1072,29 +1079,29 @@ where b.Ukey is null
 RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
-a.StyleUkey	= b.StyleUkey
+a.StyleUkey	= isnull( b.StyleUkey,0)
 --,a.Ukey	= b.Ukey
-,a.Refno	= b.Refno
-,a.SCIRefno	= b.SCIRefno
-,a.SEQ1	= b.SEQ1
-,a.ConsPC	= b.ConsPC
-,a.PatternPanel	= b.PatternPanel
-,a.SizeItem	= b.SizeItem
-,a.ProvidedPatternRoom	= b.ProvidedPatternRoom
-,a.Remark	= b.Remark
-,a.ColorDetail	= b.ColorDetail
-,a.IsCustCD	= b.IsCustCD
-,a.BomTypeZipper	= b.BomTypeZipper
-,a.BomTypeSize	= b.BomTypeSize
-,a.BomTypeColor	= b.BomTypeColor
-,a.BomTypePo	= b.BomTypePo
-,a.SuppIDBulk	= b.SuppIDBulk
-,a.SuppIDSample	= b.SuppIDSample
-,a.AddName	= b.AddName
+,a.Refno	= isnull( b.Refno                          ,'')
+,a.SCIRefno	= isnull( b.SCIRefno                       ,'')
+,a.SEQ1	= isnull( b.SEQ1                               ,'')
+,a.ConsPC	= isnull( b.ConsPC                         ,0)
+,a.PatternPanel	= isnull( b.PatternPanel               ,'')
+,a.SizeItem	= isnull( b.SizeItem                       ,'')
+,a.ProvidedPatternRoom	= isnull( b.ProvidedPatternRoom,0)
+,a.Remark	= isnull( b.Remark                         ,'')
+,a.ColorDetail	= isnull( b.ColorDetail                ,'')
+,a.IsCustCD	= isnull( b.IsCustCD                       ,0)
+,a.BomTypeZipper	= isnull( b.BomTypeZipper          ,0)
+,a.BomTypeSize	= isnull( b.BomTypeSize                ,0)
+,a.BomTypeColor	= isnull( b.BomTypeColor               ,0)
+,a.BomTypePo	= isnull( b.BomTypePo                  ,0)
+,a.SuppIDBulk	= isnull( b.SuppIDBulk                 ,'')
+,a.SuppIDSample	= isnull( b.SuppIDSample               ,'')
+,a.AddName	= isnull( b.AddName,'')
 ,a.AddDate	= b.AddDate
-,a.EditName	= b.EditName
+,a.EditName	= isnull( b.EditName,'')
 ,a.EditDate	= b.EditDate
-,a.FabricPanelCode = b.FabricPanelCode
+,a.FabricPanelCode = isnull( b.FabricPanelCode,'')
 
 from Production.dbo.Style_BOA as a 
 inner join Trade_To_Pms.dbo.Style_BOA as b ON a.Ukey=b.Ukey
@@ -1126,29 +1133,29 @@ StyleUkey
 ,FabricPanelCode
 )
 select 
- b.StyleUkey
-,b.Ukey
-,b.Refno
-,b.SCIRefno
-,b.SEQ1
-,b.ConsPC
-,b.PatternPanel
-,b.SizeItem
-,b.ProvidedPatternRoom
-,b.Remark
-,b.ColorDetail
-,b.IsCustCD
-,b.BomTypeZipper
-,b.BomTypeSize
-,b.BomTypeColor
-,b.BomTypePo
-,b.SuppIDBulk
-,b.SuppIDSample
-,b.AddName
+ isnull(b.StyleUkey           ,0)
+,isnull(b.Ukey                ,0)
+,isnull(b.Refno               ,'')
+,isnull(b.SCIRefno            ,'')
+,isnull(b.SEQ1                ,'')
+,isnull(b.ConsPC              ,0)
+,isnull(b.PatternPanel        ,'')
+,isnull(b.SizeItem            ,'')
+,isnull(b.ProvidedPatternRoom ,0)
+,isnull(b.Remark              ,'')
+,isnull(b.ColorDetail         ,'')
+,isnull(b.IsCustCD            ,0)
+,isnull(b.BomTypeZipper       ,0)
+,isnull(b.BomTypeSize         ,0)
+,isnull(b.BomTypeColor        ,0)
+,isnull(b.BomTypePo           ,0)
+,isnull(b.SuppIDBulk          ,'')
+,isnull(b.SuppIDSample        ,'')
+,isnull(b.AddName             ,'')
 ,b.AddDate
-,b.EditName
+,isnull(b.EditName            ,'')
 ,b.EditDate
-,b.FabricPanelCode
+,isnull(b.FabricPanelCode     ,'')
 from Trade_To_Pms.dbo.Style_BOA as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_BOA as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 
@@ -1199,11 +1206,11 @@ where not exists(select 1 from Production.dbo.Style_BOA as a WITH (NOLOCK) where
 	on t.Style_BOAUkey=s.Style_BOAUkey and t.KeyWordID=s.KeyWordID 
 	when matched then
 		update set 
-		t.StyleUkey= s.StyleUkey,
+		t.StyleUkey= isnull(s.StyleUkey,0),
 		--t.Style_BOAUkey= s.Style_BOAUkey,
 		--t.SEQ= '',
 		--t.Prefix= s.Prefix,
-		t.KeyWordID= s.KeyWordID
+		t.KeyWordID= isnull(s.KeyWordID,'')
 		--t.Postfix= s.Postfix,
 		--t.Code= s.Code,
 		--t.AddName= s.AddName,
@@ -1212,7 +1219,12 @@ where not exists(select 1 from Production.dbo.Style_BOA as a WITH (NOLOCK) where
 		--t.EditDate= s.EditDate,
 	when not matched by target then 
 		insert(StyleUkey,Style_BOAUkey,KeyWordID)
-		values(s.StyleUkey,s.Style_BOAUkey,s.KeyWordID)
+       VALUES
+       (
+              isnull(s.styleukey,0),
+              isnull(s.style_boaukey,0),
+              isnull(s.keywordid,'')
+       )
 	when not matched by source and t.styleUkey in (select distinct styleUkey from production.dbo.style_markerlist) then
 		delete;
 
@@ -1234,13 +1246,13 @@ UPDATE a
 SET  
 --a. StyleUkey	= b. StyleUkey
 --,a.Article	= b.Article
-a.ColorID	= b.ColorID
-,a.FabricCode	= b.FabricCode
+a.ColorID	= isnull(b.ColorID,'')
+,a.FabricCode	= isnull(b.FabricCode,'')
 --,a.FabricPanelCode	= b.FabricPanelCode
-,a.PatternPanel	= b.PatternPanel
-,a.AddName	= b.AddName
+,a.PatternPanel	= isnull(b.PatternPanel,'')
+,a.AddName	= isnull(b.AddName,'')
 ,a.AddDate	= b.AddDate
-,a.EditName	= b.EditName
+,a.EditName	= isnull(b.EditName,'')
 ,a.EditDate	= b.EditDate
 ,a.FabricType = isnull(b.FabricType,'')
 from Production.dbo.Style_ColorCombo as a 
@@ -1261,15 +1273,15 @@ INSERT INTO Production.dbo.Style_ColorCombo(
 ,FabricType
 )
 select 
- b.StyleUkey
-,b.Article
-,b.ColorID
-,b.FabricCode
-,b.FabricPanelCode
-,b.PatternPanel
-,b.AddName
+ isnull(b.StyleUkey      ,0)
+,isnull(b.Article        ,'')
+,isnull(b.ColorID        ,'')
+,isnull(b.FabricCode     ,'')
+,isnull(b.FabricPanelCode,'')
+,isnull(b.PatternPanel   ,'')
+,isnull(b.AddName        ,'')
 ,b.AddDate
-,b.EditName
+,isnull(b.EditName,'')
 ,b.EditDate
 ,isnull(b.FabricType,'')
 from Trade_To_Pms.dbo.Style_ColorCombo as b
@@ -1288,18 +1300,18 @@ where b.UKEY is null
 RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
-a.StyleUkey	= b.StyleUkey
+a.StyleUkey	= isnull( b.StyleUkey,0)
 --,a.UKEY	= b.UKEY
-,a.Article	= b.Article
-,a.CountryID	= b.CountryID
-,a.Continent	= b.Continent
-,a.HSCode1	= b.HSCode1
-,a.HSCode2	= b.HSCode2
-,a.CATNo1	= b.CATNo1
-,a.CATNo2	= b.CATNo2
-,a.AddName	= b.AddName
+,a.Article	= isnull( b.Article,'')
+,a.CountryID	= isnull( b.CountryID,'')
+,a.Continent	= isnull( b.Continent,'')
+,a.HSCode1	= isnull( b.HSCode1      ,'')
+,a.HSCode2	= isnull( b.HSCode2      ,'')
+,a.CATNo1	= isnull( b.CATNo1       ,'')
+,a.CATNo2	= isnull( b.CATNo2       ,'')
+,a.AddName	= isnull( b.AddName      ,'')
 ,a.AddDate	= b.AddDate
-,a.EditName	= b.EditName
+,a.EditName	= isnull( b.EditName     ,'')
 ,a.EditDate	= b.EditDate
 
 from Production.dbo.Style_HSCode as a 
@@ -1323,18 +1335,18 @@ StyleUkey
 
 )
 select 
- b.StyleUkey
-,b.UKEY
-,b.Article
-,b.CountryID
-,b.Continent
-,b.HSCode1
-,b.HSCode2
-,b.CATNo1
-,b.CATNo2
-,b.AddName
+ isnull(b.StyleUkey,0)
+,isnull(b.UKEY     ,0)
+,isnull(b.Article  ,'')
+,isnull(b.CountryID,'')
+,isnull(b.Continent,'')
+,isnull(b.HSCode1  ,'')
+,isnull(b.HSCode2  ,'')
+,isnull(b.CATNo1   ,'')
+,isnull(b.CATNo2   ,'')
+,isnull(b.AddName  ,'')
 ,b.AddDate
-,b.EditName
+,isnull(b.EditName,'')
 ,b.EditDate
 
 from Trade_To_Pms.dbo.Style_HSCode as b WITH (NOLOCK)
@@ -1355,10 +1367,10 @@ UPDATE a
 SET  
 --a.StyleUkey	= b.StyleUkey
 --,a.FabricPanelCode	= b.FabricPanelCode
-a.SetupID	= b.SetupID
-,a.AddName	= b.AddName
+a.SetupID	= isnull(b.SetupID,'')
+,a.AddName	= isnull(b.AddName,'')
 ,a.AddDate	= b.AddDate
-,a.EditName	= b.EditName
+,a.EditName	= isnull(b.EditName,'')
 ,a.EditDate	= b.EditDate
 --,a.Ukey_old	= b.Ukey_old
 
@@ -1377,14 +1389,14 @@ StyleUkey
 ,Ukey_old
 )
 select 
- b.StyleUkey
-,b.FabricPanelCode
-,b.SetupID
-,b.AddName
+ isnull(b.StyleUkey       ,0)
+,isnull(b.FabricPanelCode ,'')
+,isnull(b.SetupID         ,'')
+,isnull(b.AddName         ,'')
 ,b.AddDate
-,b.EditName
+,isnull(b.EditName        ,'')
 ,b.EditDate
-,b.Ukey_old
+,isnull(b.Ukey_old        ,'')
 
 from Trade_To_Pms.dbo.Style_MiAdidasColorCombo as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_MiAdidasColorCombo as a WITH (NOLOCK) where a.StyleUkey	= b.StyleUkey AND a.FabricPanelCode	= b.FabricPanelCode AND a.Ukey_old	= b.Ukey_old)
@@ -1423,12 +1435,12 @@ StyleUkey
 ,EditDate
 )
 select 
- b.StyleUkey
-,b.FactoryID
-,b.GMTLT
-,b.AddName
+ isnull(b.StyleUkey,0)
+,isnull(b.FactoryID,'')
+,isnull(b.GMTLT    ,0)
+,isnull(b.AddName  ,'')
 ,b.AddDate
-,b.EditName
+,isnull(b.EditName,'')
 ,b.EditDate
 from Trade_To_Pms.dbo.Style_GMTLTFty as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_GMTLTFty as a WITH (NOLOCK) where a.StyleUkey	= b.StyleUkey AND a.FactoryID	= b.FactoryID)
@@ -1445,9 +1457,9 @@ where b.MasterStyleID is null
 RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
-a.AddName	= b.AddName
+a.AddName	= isnull(b.AddName,'')
 ,a.AddDate	= b.AddDate
-,a.EditName	= b.EditName
+,a.EditName	= isnull(b.EditName,'')
 ,a.EditDate	= b.EditDate
 from Production.dbo.Style_SimilarStyle as a 
 inner join Trade_To_Pms.dbo.Style_SimilarStyle as b ON a.MasterBrandID	= b.MasterBrandID AND a.MasterStyleID	= b.MasterStyleID and a.ChildrenBrandID = b.ChildrenBrandID and a.ChildrenStyleID = b.ChildrenStyleID
@@ -1465,13 +1477,13 @@ MasterBrandID
 
 )
 select 
- b.MasterBrandID
-,b.MasterStyleID
-,b.ChildrenBrandID
-,b.ChildrenStyleID
-,b.AddName
+ isnull(b.MasterBrandID  ,'')
+,isnull(b.MasterStyleID  ,'')
+,isnull(b.ChildrenBrandID,'')
+,isnull(b.ChildrenStyleID,'')
+,isnull(b.AddName,'')
 ,b.AddDate
-,b.EditName
+,isnull(b.EditName,'')
 ,b.EditDate
 from Trade_To_Pms.dbo.Style_SimilarStyle as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_SimilarStyle as a WITH (NOLOCK) 
@@ -1485,18 +1497,27 @@ Using (select a.* from Trade_To_Pms.dbo.Style_SizeItem a ) as s
 on t.Ukey=s.Ukey 
 when matched then 
 	update set 
-		t.StyleUkey= s.StyleUkey,
-		t.StyleUkey_Old= s.StyleUkey_Old,
-		t.SizeItem= s.SizeItem,
-		t.SizeUnit= s.SizeUnit,
-		t.Description= s.Description,
-		t.TolMinus= s.TolMinus,
-		t.TolPlus= s.TolPlus
+		t.StyleUkey= isnull( s.StyleUkey,        0),
+		t.StyleUkey_Old= isnull( s.StyleUkey_Old,''),
+		t.SizeItem= isnull( s.SizeItem,          ''),
+		t.SizeUnit= isnull( s.SizeUnit,          ''),
+		t.Description= isnull( s.Description,    ''),
+		t.TolMinus= isnull( s.TolMinus,          ''),
+		t.TolPlus= isnull( s.TolPlus,            '')
 when not matched by target then
 	insert (
 		StyleUkey,StyleUkey_Old,SizeItem,SizeUnit,Description,Ukey,TolMinus,TolPlus	) 
-		values (
-		s.StyleUkey,s.StyleUkey_Old,s.SizeItem,s.SizeUnit,s.Description,s.Ukey,s.TolMinus,s.TolPlus	)
+       VALUES
+       (
+              isnull(s.styleukey,     0),
+              isnull(s.styleukey_old, ''),
+              isnull(s.sizeitem,      ''),
+              isnull(s.sizeunit,      ''),
+              isnull(s.description,   ''),
+              isnull(s.ukey,          0),
+              isnull(s.tolminus,      ''),
+              isnull(s.tolplus,       '')
+       )
 when not matched by source  AND T.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
 	delete;
 
@@ -1505,15 +1526,15 @@ Merge Production.dbo.Style_ThreadColorCombo_Detail as t
 Using (select a.* from Trade_To_Pms.dbo.Style_ThreadColorCombo_Detail a ) as s
 on t.Style_ThreadColorComboUkey=s.Style_ThreadColorComboUkey and t.Seq = s.Seq and t.Article = s.Article
 when matched then 
-	update set	t.SCIRefNo	= s.SCIRefNo   ,
-				t.SuppId	= s.SuppId	   ,
-				t.ColorID	= s.ColorID	   ,
-				t.SuppColor	= s.SuppColor  ,
-				t.AddName	= s.AddName	   ,
+	update set	t.SCIRefNo	= isnull( s.SCIRefNo   ,''),
+				t.SuppId	= isnull( s.SuppId	   ,''),
+				t.ColorID	= isnull( s.ColorID	   ,''),
+				t.SuppColor	= isnull( s.SuppColor  ,''),
+				t.AddName	= isnull( s.AddName	   ,''),
 				t.AddDate	= s.AddDate	   ,
-				t.EditName	= s.EditName   ,
+				t.EditName	= isnull( s.EditName   ,''),
 				t.EditDate	= s.EditDate   ,
-				t.Ukey		= s.Ukey
+				t.Ukey		= isnull( s.Ukey,0)
 when not matched by target then
 	insert (Style_ThreadColorComboUkey ,
 			Seq						   ,
@@ -1528,18 +1549,20 @@ when not matched by target then
 			EditDate				   ,
 			Ukey
 			) 
-		values (s.Style_ThreadColorComboUkey ,
-				s.Seq						   ,
-				s.SCIRefNo				   ,
-				s.SuppId					   ,
-				s.Article					   ,
-				s.ColorID					   ,
-				s.SuppColor				   ,
-				s.AddName					   ,
-				s.AddDate					   ,
-				s.EditName				   ,
-				s.EditDate				   ,
-				s.Ukey	)
+		values (
+                 isnull(s.Style_ThreadColorComboUkey,0)
+				,isnull(s.Seq                       ,'')
+				,isnull(s.SCIRefNo                  ,'')
+				,isnull(s.SuppId                    ,'')
+				,isnull(s.Article                   ,'')
+				,isnull(s.ColorID                   ,'')
+				,isnull(s.SuppColor                 ,'')
+				,isnull(s.AddName                   ,'')
+				,s.AddDate
+				,isnull(s.EditName                  ,'')
+				,s.EditDate
+				,isnull(s.Ukey                      ,0)
+                )
 ;
 ----刪除條件：Trade不存在，且表頭還存在
 DELETE t
@@ -1560,13 +1583,13 @@ Merge Production.dbo.Style_ThreadColorCombo_Operation as t
 Using (select a.* from Trade_To_Pms.dbo.Style_ThreadColorCombo_Operation a ) as s
 on t.Style_ThreadColorComboUkey=s.Style_ThreadColorComboUkey and t.Seq = s.Seq and t.OperationID = s.OperationID
 when matched then 
-	update set	t.ComboType	= s.ComboType	,
-				t.Frequency	= s.Frequency	,
-				t.AddName	= s.AddName		,
+	update set	t.ComboType	= isnull( s.ComboType	,''),
+				t.Frequency	= isnull( s.Frequency	,0),
+				t.AddName	= isnull( s.AddName		,''),
 				t.AddDate	= s.AddDate		,
-				t.EditName	= s.EditName	,
+				t.EditName	= isnull( s.EditName	,''),
 				t.EditDate	= s.EditDate	,
-				t.Ukey		= s.Ukey
+				t.Ukey		= isnull( s.Ukey,0)
 when not matched by target then
 	insert (Style_ThreadColorComboUkey ,
 			Seq						   ,
@@ -1578,16 +1601,17 @@ when not matched by target then
 			EditName				   ,
 			EditDate				   ,
 			Ukey) 
-		values (s.Style_ThreadColorComboUkey ,
-				s.Seq						   ,
-				s.OperationID				   ,
-				s.ComboType				   ,
-				s.Frequency				   ,
-				s.AddName					   ,
+		values (isnull(s.Style_ThreadColorComboUkey ,       0),
+				isnull(s.Seq						   ,    ''),
+				isnull(s.OperationID				   ,    ''),
+				isnull(s.ComboType				   ,        ''),
+				isnull(s.Frequency				   ,        0),
+				isnull(s.AddName					   ,    ''),
 				s.AddDate					   ,
-				s.EditName				   ,
+				isnull(s.EditName				   ,''),
 				s.EditDate				   ,
-				s.Ukey	)
+				isnull(s.Ukey,0)
+                )
 ;
 ----刪除條件：Trade不存在，且表頭還存在
 DELETE t
@@ -1609,13 +1633,13 @@ Merge Production.dbo.Style_ThreadColorCombo as t
 Using (select a.* from Trade_To_Pms.dbo.Style_ThreadColorCombo a ) as s
 on t.StyleUkey=s.StyleUkey and t.Thread_ComboID = s.Thread_ComboID and t.MachineTypeID = s.MachineTypeID
 when matched then 
-	update set	t.SeamLength	  = s.SeamLength	,
-				t.ConsPC		  = s.ConsPC		,
-				t.AddName		  = s.AddName		,
-				t.AddDate		  = s.AddDate		,
-				t.EditName		  = s.EditName		,
-				t.EditDate		  = s.EditDate		,
-				t.Ukey			  = s.Ukey
+	update set	t.SeamLength	  = isnull(s.SeamLength	,0),
+				t.ConsPC		  = isnull(s.ConsPC		,0),
+				t.AddName		  = isnull(s.AddName	,''),
+				t.AddDate		  = s.AddDate	,
+				t.EditName		  = isnull(s.EditName	,''),
+				t.EditDate		  = s.EditDate	,
+				t.Ukey			  = isnull(s.Ukey,0)
 when not matched by target then
 	insert (StyleUkey		,
 			Thread_ComboID,
@@ -1628,16 +1652,17 @@ when not matched by target then
 			EditDate		,
 			Ukey
 			) 
-		values (s.StyleUkey		,
-				s.Thread_ComboID,
-				s.MachineTypeID	,
-				s.SeamLength	,
-				s.ConsPC		,
-				s.AddName		,
-				s.AddDate		,
-				s.EditName		,
-				s.EditDate		,
-				s.Ukey	)
+		values (isnull(s.StyleUkey		,0),
+				isnull(s.Thread_ComboID, ''),
+				isnull(s.MachineTypeID	,''),
+				isnull(s.SeamLength	,    0),
+				isnull(s.ConsPC		,    0),
+				isnull(s.AddName		,''),
+				s.AddDate,
+				isnull(s.EditName		,''),
+				s.EditDate,
+				isnull(s.Ukey,           '')
+                )
 when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
 	delete;
 	
@@ -1649,18 +1674,18 @@ on t.Style_ThreadColorCombo_HistoryUkey=s.Style_ThreadColorCombo_HistoryUkey
 	and t.Seq = s.Seq 
 	and t.Article = s.Article 
 when matched then 
-   update SET t.SCIRefNo = s.SCIRefNo
-      ,t.SuppId = s.SuppId
-      ,t.ColorID = s.ColorID
-      ,t.SuppColor = s.SuppColor
-      ,t.AddName = s.AddName
-      ,t.AddDate = s.AddDate
-      ,t.EditName = s.EditName
-      ,t.EditDate = s.EditDate	  
-      ,t.UseRatio = s.UseRatio
-      ,t.Ukey = s.Ukey
-      ,t.Allowance = s.Allowance
-      ,t.AllowanceTubular = s.AllowanceTubular
+   update SET t.SCIRefNo = isnull( s.SCIRefNo         ,'')
+      ,t.SuppId = isnull( s.SuppId                    ,'')
+      ,t.ColorID = isnull( s.ColorID                  ,'')
+      ,t.SuppColor = isnull( s.SuppColor              ,'')
+      ,t.AddName = isnull( s.AddName                  ,'')
+      ,t.AddDate =  s.AddDate
+      ,t.EditName = isnull( s.EditName                ,'')
+      ,t.EditDate =  s.EditDate
+      ,t.UseRatio = isnull( s.UseRatio                ,0)
+      ,t.Ukey = isnull( s.Ukey                        ,0)
+      ,t.Allowance = isnull( s.Allowance              ,0)
+      ,t.AllowanceTubular = isnull( s.AllowanceTubular,0)
 when not matched by target then
 	INSERT (Style_ThreadColorCombo_HistoryUkey
            ,Seq
@@ -1677,21 +1702,22 @@ when not matched by target then
 		   ,Ukey
            ,Allowance
            ,AllowanceTubular)
-		VALUES  (s.Style_ThreadColorCombo_HistoryUkey
-           ,s.Seq
-           ,s.SCIRefNo
-           ,s.SuppId
-           ,s.Article
-           ,s.ColorID
-           ,s.SuppColor
-           ,s.AddName
+		VALUES  (
+            isnull(s.Style_ThreadColorCombo_HistoryUkey,0)
+           ,isnull(s.Seq                               ,'')
+           ,isnull(s.SCIRefNo                          ,'')
+           ,isnull(s.SuppId                            ,'')
+           ,isnull(s.Article                           ,'')
+           ,isnull(s.ColorID                           ,'')
+           ,isnull(s.SuppColor                         ,'')
+           ,isnull(s.AddName                           ,'')
            ,s.AddDate
-           ,s.EditName
+           ,isnull(s.EditName                          ,'')
            ,s.EditDate
-           ,s.UseRatio
-		   ,s.Ukey
-           ,s.Allowance
-           ,s.AllowanceTubular
+           ,isnull(s.UseRatio                          ,0)
+		   ,isnull(s.Ukey                              ,0)
+           ,isnull(s.Allowance                         ,0)
+           ,isnull(s.AllowanceTubular                  ,0)
 		   )
 ;
 
@@ -1718,18 +1744,18 @@ on t.Style_ThreadColorCombo_HistoryUkey=s.Style_ThreadColorCombo_HistoryUkey
 	and t.Seq = s.Seq 
 	and t.OperationID = s.OperationID 
 when matched then 
-   update SET t.ComboType = s.ComboType
-      ,t.Frequency = s.Frequency
-      ,t.AddName = s.AddName
-      ,t.AddDate = s.AddDate
-      ,t.EditName = s.EditName
-      ,t.EditDate = s.EditDate
-      ,t.Ukey = s.Ukey
-	  ,t.MachineTypeHem = s.MachineTypeHem
-	  ,t.OperationHem = s.OperationHem
-	  ,t.Tubular = s.Tubular
-	  ,t.Segment = s.Segment
-	  ,t.SeamLength = s.SeamLength
+   update SET t.ComboType = isnull( s.ComboType     ,'')
+      ,t.Frequency = isnull( s.Frequency            ,0)
+      ,t.AddName = isnull( s.AddName                ,'')
+      ,t.AddDate =  s.AddDate
+      ,t.EditName = isnull( s.EditName              ,'')
+      ,t.EditDate =  s.EditDate
+      ,t.Ukey = isnull( s.Ukey                      ,0)
+	  ,t.MachineTypeHem = isnull( s.MachineTypeHem  ,0)
+	  ,t.OperationHem = isnull( s.OperationHem      ,0)
+	  ,t.Tubular = isnull( s.Tubular                ,0)
+	  ,t.Segment = isnull( s.Segment                ,0)
+	  ,t.SeamLength = isnull( s.SeamLength          ,0)
 when not matched by target then
 	INSERT (Style_ThreadColorCombo_HistoryUkey
            ,Seq
@@ -1746,21 +1772,23 @@ when not matched by target then
 		   ,Tubular
 		   ,Segment
 		   ,SeamLength)
-		VALUES  (s.Style_ThreadColorCombo_HistoryUkey
-           ,s.Seq
-           ,s.OperationID
-           ,s.ComboType
-           ,s.Frequency
-           ,s.AddName
+		VALUES  (
+            isnull(s.Style_ThreadColorCombo_HistoryUkey,0)
+           ,isnull(s.Seq                               ,'')
+           ,isnull(s.OperationID                       ,'')
+           ,isnull(s.ComboType                         ,'')
+           ,isnull(s.Frequency                         ,0)
+           ,isnull(s.AddName                           ,'')
            ,s.AddDate
-           ,s.EditName
+           ,isnull(s.EditName                          ,'')
            ,s.EditDate
-		   ,s.Ukey
-		   ,s.MachineTypeHem
-		   ,s.OperationHem
-		   ,s.Tubular
-		   ,s.Segment
-		   ,s.SeamLength)
+		   ,isnull(s.Ukey                              ,0)
+		   ,isnull(s.MachineTypeHem                    ,0)
+		   ,isnull(s.OperationHem                      ,0)
+		   ,isnull(s.Tubular                           ,0)
+		   ,isnull(s.Segment                           ,0)
+		   ,isnull(s.SeamLength                        ,0)
+           )
 ;
 ----刪除條件：Trade不存在，且表頭還存在
 DELETE t
@@ -1782,18 +1810,18 @@ Merge Production.dbo.Style_ThreadColorCombo_History_Version as t
 Using (select a.* from Trade_To_Pms.dbo.Style_ThreadColorCombo_History_Version a ) as s
 on t.Ukey=s.Ukey 
 when matched then 
-   update SET t.StyleUkey = s.StyleUkey
-      ,t.Version = s.Version
-      ,t.UseRatioRule = s.UseRatioRule
-      ,t.ThickFabricBulk = s.ThickFabricBulk
-      ,t.FarmOutQuilting = s.FarmOutQuilting
-      ,t.LockHandle = s.LockHandle
+   update SET t.StyleUkey = isnull( s.StyleUkey             ,0)
+      ,t.Version = isnull( s.Version                        ,'')
+      ,t.UseRatioRule = isnull( s.UseRatioRule              ,'')
+      ,t.ThickFabricBulk = isnull( s.ThickFabricBulk        ,0)
+      ,t.FarmOutQuilting = isnull( s.FarmOutQuilting        ,0)
+      ,t.LockHandle = isnull( s.LockHandle                  ,'')
       ,t.LockDate = s.LockDate
-      ,t.Category = s.Category
-      ,t.TPDate = s.TPDate
-      ,t.IETMSID_Thread = s.IETMSID_Thread
-      ,t.IETMSVersion_Thread = s.IETMSVersion_Thread
-	  ,t.AddName = s.AddName
+      ,t.Category = isnull( s.Category                      ,'')
+      ,t.TPDate =  s.TPDate
+      ,t.IETMSID_Thread = isnull( s.IETMSID_Thread          ,'')
+      ,t.IETMSVersion_Thread = isnull( s.IETMSVersion_Thread,'')
+	  ,t.AddName = isnull( s.AddName                        ,'')
 	  ,t.AddDate = s.AddDate
 when not matched by target then
 	INSERT (StyleUkey
@@ -1810,18 +1838,18 @@ when not matched by target then
 		   ,AddName
 		   ,AddDate)
 		VALUES (
-			s.StyleUkey
-           ,s.Version
-           ,s.UseRatioRule
-           ,s.ThickFabricBulk
-           ,s.FarmOutQuilting
-           ,s.LockHandle
+			isnull(s.StyleUkey          ,0)
+           ,isnull(s.Version            ,'')
+           ,isnull(s.UseRatioRule       ,'')
+           ,isnull(s.ThickFabricBulk    ,0)
+           ,isnull(s.FarmOutQuilting    ,0)
+           ,isnull(s.LockHandle         ,'')
            ,s.LockDate
-           ,s.Category
+           ,isnull(s.Category           ,'')
            ,s.TPDate
-           ,s.IETMSID_Thread
-           ,s.IETMSVersion_Thread
-		   ,s.AddName
+           ,isnull(s.IETMSID_Thread     ,'')
+           ,isnull(s.IETMSVersion_Thread,'')
+		   ,isnull(s.AddName            ,'')
 		   ,s.AddDate)
 when not matched by source AND t.StyleUkey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
 	delete
@@ -1835,18 +1863,18 @@ on t.StyleUkey=s.StyleUkey
 	and t.MachineTypeID = s.MachineTypeID 
 	and t.LockDate = s.LockDate
 when matched then 
-   update SET t.SeamLength = s.SeamLength
-      ,t.ConsPC = s.ConsPC
-      ,t.AddName = s.AddName
+   update SET t.SeamLength = isnull( s.SeamLength           ,0)
+      ,t.ConsPC = isnull( s.ConsPC                          ,0)
+      ,t.AddName = isnull( s.AddName                        ,'')
       ,t.AddDate = s.AddDate
-      ,t.EditName = s.EditName
+      ,t.EditName = isnull( s.EditName                      ,'')
       ,t.EditDate = s.EditDate
-      ,t.Category = s.Category
-      ,t.Ukey = s.Ukey
-      ,t.TPDate = s.TPDate
-      ,t.IETMSID_Thread = s.IETMSID_Thread
-      ,t.IETMSVersion_Thread = s.IETMSVersion_Thread
-	  ,t.Version = s.Version
+      ,t.Category = isnull( s.Category                      ,'')
+      ,t.Ukey = isnull( s.Ukey                              ,0)
+      ,t.TPDate =  s.TPDate
+      ,t.IETMSID_Thread = isnull( s.IETMSID_Thread          ,'')
+      ,t.IETMSVersion_Thread = isnull( s.IETMSVersion_Thread,'')
+	  ,t.Version = isnull( s.Version                        ,'')
 when not matched by target then
 	INSERT (StyleUkey
            ,Thread_ComboID
@@ -1865,22 +1893,23 @@ when not matched by target then
            ,IETMSVersion_Thread
 		   ,Version)
 		VALUES (
-			s.StyleUkey
-           ,s.Thread_ComboID
-           ,s.MachineTypeID
-           ,s.SeamLength
-           ,s.ConsPC
-           ,s.AddName
+			isnull(s.StyleUkey          ,0)
+           ,isnull(s.Thread_ComboID     ,'')
+           ,isnull(s.MachineTypeID      ,'')
+           ,isnull(s.SeamLength         ,0)
+           ,isnull(s.ConsPC             ,0)
+           ,isnull(s.AddName            ,'')
            ,s.AddDate
-           ,s.EditName
+           ,isnull(s.EditName           ,'')
            ,s.EditDate
-           ,s.Ukey
+           ,isnull(s.Ukey               ,0)
            ,s.LockDate
-           ,s.Category
+           ,isnull(s.Category           ,'')
            ,s.TPDate
-           ,s.IETMSID_Thread
-           ,s.IETMSVersion_Thread
-		   ,s.Version )
+           ,isnull(s.IETMSID_Thread     ,'')
+           ,isnull(s.IETMSVersion_Thread,'')
+		   ,isnull(s.Version,'')
+           )
 when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
 	delete
 ;
@@ -1892,16 +1921,16 @@ on t.Style_QTThreadColorCombo_HistoryUkey = s.Style_QTThreadColorCombo_HistoryUk
 	AND t.Seq = s.Seq 
 	AND t.Article =s.Article 
 when matched then 
-	update set t.SCIRefNo = s.SCIRefNo
-      ,t.SuppId = s.SuppId
-      ,t.ColorID = s.ColorID
-      ,t.SuppColor = s.SuppColor
-      ,t.AddName = s.AddName
-      ,t.AddDate = s.AddDate
-      ,t.EditName = s.EditName
+	update set t.SCIRefNo = isnull( s.SCIRefNo,'')
+      ,t.SuppId = isnull( s.SuppId            ,'')
+      ,t.ColorID = isnull( s.ColorID          ,'')
+      ,t.SuppColor = isnull( s.SuppColor      ,'')
+      ,t.AddName = isnull( s.AddName          ,'')
+      ,t.AddDate =  s.AddDate
+      ,t.EditName = isnull( s.EditName        ,'')
       ,t.EditDate = s.EditDate
-      ,t.Ratio = s.Ratio
-      ,t.Ukey = s.Ukey
+      ,t.Ratio = isnull( s.Ratio              ,0)
+      ,t.Ukey = isnull( s.Ukey                ,0)
 when not matched by target then
 	insert  (Style_QTThreadColorCombo_HistoryUkey
            ,Seq
@@ -1916,19 +1945,21 @@ when not matched by target then
            ,EditDate
            ,Ratio
            ,Ukey)
-		values  (s.Style_QTThreadColorCombo_HistoryUkey
-           ,s.Seq
-           ,s.SCIRefNo
-           ,s.SuppId
-           ,s.Article
-           ,s.ColorID
-           ,s.SuppColor
-           ,s.AddName
+		values  (
+            isnull(s.Style_QTThreadColorCombo_HistoryUkey,0)
+           ,isnull(s.Seq                                 ,'')
+           ,isnull(s.SCIRefNo                            ,'')
+           ,isnull(s.SuppId                              ,'')
+           ,isnull(s.Article                             ,'')
+           ,isnull(s.ColorID                             ,'')
+           ,isnull(s.SuppColor                           ,'')
+           ,isnull(s.AddName                             ,'')
            ,s.AddDate
-           ,s.EditName
+           ,isnull(s.EditName                            ,'')
            ,s.EditDate
-           ,s.Ratio
-           ,s.Ukey)
+           ,isnull(s.Ratio                               ,0)
+           ,isnull(s.Ukey                                ,0)
+           )
 ;
 
 ----刪除條件：Trade不存在，且表頭還存在
@@ -1953,19 +1984,19 @@ on t.StyleUkey = s.StyleUkey
 	AND t.FabricPanelCode =s.FabricPanelCode 
 	AND t.LockDate =s.LockDate 
 when matched then 
-	update set t.AddName = s.AddName
-		  ,t.AddDate = s.AddDate
-		  ,t.EditName = s.EditName
-		  ,t.EditDate = s.EditDate
-		  ,t.HSize = s.HSize
-		  ,t.VSize = s.VSize
-		  ,t.ASize = s.ASize
-		  ,t.NeedleDistance = s.NeedleDistance
-		  ,t.FabricCode = s.FabricCode
-		  ,t.SCIRefno = s.SCIRefno
-		  ,t.Width = s.Width
-		  ,t.Ukey = s.Ukey
-		  ,t.Version = s.Version
+	update set t.AddName = isnull( s.AddName,'')
+		  ,t.AddDate =  s.AddDate
+		  ,t.EditName = isnull( s.EditName,'')
+		  ,t.EditDate =  s.EditDate
+		  ,t.HSize = isnull( s.HSize,0)
+		  ,t.VSize = isnull( s.VSize,0)
+		  ,t.ASize = isnull( s.ASize,0)
+		  ,t.NeedleDistance = isnull( s.NeedleDistance,0)
+		  ,t.FabricCode = isnull( s.FabricCode        ,'')
+		  ,t.SCIRefno = isnull( s.SCIRefno            ,'')
+		  ,t.Width = isnull( s.Width                  ,0)
+		  ,t.Ukey = isnull( s.Ukey                    ,0)
+		  ,t.Version = isnull( s.Version              ,'')
 when not matched by target then
 	insert (StyleUkey
            ,Thread_Quilting_SizeUkey
@@ -1984,23 +2015,25 @@ when not matched by target then
            ,Width
            ,Ukey
 		   ,Version)
-		values (s.StyleUkey
-           ,s.Thread_Quilting_SizeUkey
-           ,s.FabricPanelCode
-           ,s.AddName
+		values (
+            isnull(s.StyleUkey               ,0)
+           ,isnull(s.Thread_Quilting_SizeUkey,0)
+           ,isnull(s.FabricPanelCode         ,'')
+           ,isnull(s.AddName                 ,'')
            ,s.AddDate
-           ,s.EditName
+           ,isnull(s.EditName                ,'')
            ,s.EditDate
            ,s.LockDate
-           ,s.HSize
-           ,s.VSize
-           ,s.ASize
-           ,s.NeedleDistance
-           ,s.FabricCode
-           ,s.SCIRefno
-           ,s.Width
-           ,s.Ukey
-		   ,s.Version)
+           ,isnull(s.HSize                   ,0)
+           ,isnull(s.VSize                   ,0)
+           ,isnull(s.ASize                   ,0)
+           ,isnull(s.NeedleDistance          ,0)
+           ,isnull(s.FabricCode              ,'')
+           ,isnull(s.SCIRefno                ,'')
+           ,isnull(s.Width                   ,0)
+           ,isnull(s.Ukey                    ,0)
+		   ,isnull(s.Version                 ,'')
+           )
 when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
 	delete
 ;
@@ -2010,15 +2043,15 @@ Merge Production.dbo.Style_QTThreadColorCombo_Detail as t
 Using (select a.* from Trade_To_Pms.dbo.Style_QTThreadColorCombo_Detail a ) as s
 on t.Style_QTThreadColorComboUkey = s.Style_QTThreadColorComboUkey AND t.Seq = s.Seq AND t.Article =s.Article 
 when matched then 
-	update set t.SCIRefNo = s.SCIRefNo
-			  ,t.SuppId = s.SuppId
-			  ,t.ColorID = s.ColorID
-			  ,t.SuppColor = s.SuppColor
-			  ,t.AddName = s.AddName
+	update set t.SCIRefNo = isnull( s.SCIRefNo  ,'')
+			  ,t.SuppId = isnull( s.SuppId      ,'')
+			  ,t.ColorID = isnull( s.ColorID    ,'')
+			  ,t.SuppColor = isnull( s.SuppColor,'')
+			  ,t.AddName = isnull( s.AddName    ,'')
 			  ,t.AddDate = s.AddDate
-			  ,t.EditName = s.EditName
+			  ,t.EditName = isnull( s.EditName  ,'')
 			  ,t.EditDate = s.EditDate
-			  ,t.Ukey = s.Ukey
+			  ,t.Ukey = isnull( s.Ukey          ,0)
 when not matched by target then
 	insert  (Style_QTThreadColorComboUkey
            ,Seq
@@ -2032,18 +2065,20 @@ when not matched by target then
            ,EditName
            ,EditDate
            ,Ukey)
-		values (s.Style_QTThreadColorComboUkey
-           ,s.Seq
-           ,s.SCIRefNo
-           ,s.SuppId
-           ,s.Article
-           ,s.ColorID
-           ,s.SuppColor
-           ,s.AddName
+		values (
+            isnull(s.Style_QTThreadColorComboUkey,0)
+           ,isnull(s.Seq                         ,'')
+           ,isnull(s.SCIRefNo                    ,'')
+           ,isnull(s.SuppId                      ,'')
+           ,isnull(s.Article                     ,'')
+           ,isnull(s.ColorID                     ,'')
+           ,isnull(s.SuppColor                   ,'')
+           ,isnull(s.AddName                     ,'')
            ,s.AddDate
-           ,s.EditName
+           ,isnull(s.EditName                    ,'')
            ,s.EditDate
-           ,s.Ukey)
+           ,isnull(s.Ukey                        ,0)
+           )
 ;
 ----刪除條件：Trade不存在，且表頭還存在
 DELETE t
@@ -2064,11 +2099,11 @@ Merge Production.dbo.Style_QTThreadColorCombo as t
 Using (select a.* from Trade_To_Pms.dbo.Style_QTThreadColorCombo a ) as s
 on t.Ukey=s.Ukey
 when matched then 
-	update set	t.Thread_Quilting_SizeUkey	  = s.Thread_Quilting_SizeUkey	,
-				t.FabricPanelCode		  = s.FabricPanelCode		,
-				t.AddName		  = s.AddName		,
-				t.AddDate		  = s.AddDate		,
-				t.EditName		  = s.EditName		,
+	update set	t.Thread_Quilting_SizeUkey	  = isnull( s.Thread_Quilting_SizeUkey	,0),
+				t.FabricPanelCode		  = isnull( s.FabricPanelCode		,        ''),
+				t.AddName		  = isnull( s.AddName		,                        ''),
+				t.AddDate		  = s.AddDate,
+				t.EditName		  = isnull( s.EditName		,                        ''),
 				t.EditDate		  = s.EditDate		
 when not matched by target then
 	insert  (StyleUkey
@@ -2079,27 +2114,29 @@ when not matched by target then
            ,EditName
            ,EditDate
 		   ,Ukey)
-		values  (s.StyleUkey
-			   ,s.Thread_Quilting_SizeUkey
-			   ,s.FabricPanelCode
-			   ,s.AddName
+		values  (
+                isnull(s.StyleUkey,0)
+			   ,isnull(s.Thread_Quilting_SizeUkey,0)
+			   ,isnull(s.FabricPanelCode,'')
+			   ,isnull(s.AddName,'')
 			   ,s.AddDate
-			   ,s.EditName
+			   ,isnull(s.EditName,'')
 			   ,s.EditDate
-			   ,s.Ukey)
+			   ,isnull(s.Ukey,0)
+               )
 when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
 	delete;
 	
 ------------Thread_Replace_Detail_Detail
 UPDATE a
-   SET [Thread_Replace_DetailUkey] =b.[Thread_Replace_DetailUkey]
-      ,[SuppID] = 					b.[SuppID]
-      ,[ToSCIRefno] = 				b.[ToSCIRefno]
-      ,[ToBrandColorID] = 			b.[ToBrandColorID]
-      ,[ToBrandSuppColor] = 		b.[ToBrandSuppColor]
-      ,[AddName] = 					b.[AddName]
+   SET [Thread_Replace_DetailUkey] =isnull(b.[Thread_Replace_DetailUkey],0)
+      ,[SuppID] = 					isnull(b.[SuppID]                   ,'')
+      ,[ToSCIRefno] = 				isnull(b.[ToSCIRefno]               ,'')
+      ,[ToBrandColorID] = 			isnull(b.[ToBrandColorID]           ,'')
+      ,[ToBrandSuppColor] = 		isnull(b.[ToBrandSuppColor]         ,'')
+      ,[AddName] = 					isnull(b.[AddName]                  ,'')
       ,[AddDate] = 					b.[AddDate]
-      ,[EditName] =					b.[EditName]
+      ,[EditName] =					isnull(b.[EditName]                 ,'')
       ,[EditDate] = 				b.[EditDate]
 from Production.dbo.Thread_Replace_Detail_Detail a
 inner join Trade_To_Pms.dbo.Thread_Replace_Detail_Detail b on b.Ukey = a.Ukey
@@ -2116,14 +2153,14 @@ INSERT INTO [dbo].[Thread_Replace_Detail_Detail]
            ,[EditName]
            ,[EditDate])
 select
-	 a.[Thread_Replace_DetailUkey]
-	,a.[SuppID]
-	,a.[ToSCIRefno]
-	,a.[ToBrandColorID]
-	,a.[ToBrandSuppColor]
-	,a.[AddName]
+	 isnull(a.[Thread_Replace_DetailUkey],0)
+	,isnull(a.[SuppID]                   ,'')
+	,isnull(a.[ToSCIRefno]               ,'')
+	,isnull(a.[ToBrandColorID]           ,'')
+	,isnull(a.[ToBrandSuppColor]         ,'')
+	,isnull(a.[AddName]                  ,'')
 	,a.[AddDate]
-	,a.[EditName]
+	,isnull(a.[EditName],'')
 	,a.[EditDate]
 from Trade_To_Pms.dbo.Thread_Replace_Detail_Detail a
 left join Production.dbo.Thread_Replace_Detail_Detail b on b.Ukey = a.Ukey
@@ -2131,12 +2168,12 @@ where b.Ukey is null
 
 ------------Thread_Replace_Detail
 UPDATE a
-   SET [Thread_ReplaceUkey]=b.[Thread_ReplaceUkey]
+   SET [Thread_ReplaceUkey]=isnull(b.[Thread_ReplaceUkey],0)
       ,[StartDate]		   =b.[StartDate]
       ,[EndDate]		   =b.[EndDate]
-      ,[AddName]		   =b.[AddName]
+      ,[AddName]		   =isnull(b.[AddName]           ,'')
       ,[AddDate]		   =b.[AddDate]
-      ,[EditName]		   =b.[EditName]
+      ,[EditName]		   =isnull(b.[EditName],'')
       ,[EditDate]		   =b.[EditDate]
 from Production.dbo.Thread_Replace_Detail a
 inner join Trade_To_Pms.dbo.Thread_Replace_Detail b on b.Ukey = a.Ukey
@@ -2151,12 +2188,12 @@ INSERT INTO [dbo].[Thread_Replace_Detail]
            ,[EditName]
            ,[EditDate])
 select
-	 a.[Thread_ReplaceUkey]
+	 isnull(a.[Thread_ReplaceUkey],0)
 	,a.[StartDate]
 	,a.[EndDate]
-	,a.[AddName]
+	,isnull(a.[AddName],'')
 	,a.[AddDate]
-	,a.[EditName]
+	,isnull(a.[EditName],'')
 	,a.[EditDate]
 from Trade_To_Pms.dbo.Thread_Replace_Detail a
 left join Production.dbo.Thread_Replace_Detail b on b.Ukey = a.Ukey
@@ -2165,12 +2202,12 @@ where b.Ukey is null
 
 ------------Thread_Replace
 UPDATE a
-   SET [BrandID]      =b.[BrandID]
-      ,[FromSCIRefno] =b.[FromSCIRefno]
-      ,[FromSuppColor]=b.[FromSuppColor]
-      ,[AddName]	  =b.[AddName]
-      ,[AddDate]	  =b.[AddDate]
-      ,[EditName]	  =b.[EditName]
+   SET [BrandID]      = isnull(b.[BrandID],'')
+      ,[FromSCIRefno] = isnull(b.[FromSCIRefno],'')
+      ,[FromSuppColor]= isnull(b.[FromSuppColor],'')
+      ,[AddName]	  = isnull(b.[AddName],'')
+      ,[AddDate]	  = b.[AddDate]
+      ,[EditName]	  = isnull(b.[EditName],'')
       ,[EditDate]	  =b.[EditDate]
 from Production.dbo.Thread_Replace a
 inner join Trade_To_Pms.dbo.Thread_Replace b on b.Ukey = a.Ukey
@@ -2185,12 +2222,12 @@ INSERT INTO [dbo].[Thread_Replace]
            ,[EditName]
            ,[EditDate])
 select
-		a.[BrandID]
-	,a.[FromSCIRefno]
-	,a.[FromSuppColor]
-	,a.[AddName]
+	 isnull(a.[BrandID]      ,'')
+	,isnull(a.[FromSCIRefno] ,'')
+	,isnull(a.[FromSuppColor],'')
+	,isnull(a.[AddName]      ,'')
 	,a.[AddDate]
-	,a.[EditName]
+	,isnull(a.[EditName],'')
 	,a.[EditDate]
 from Trade_To_Pms.dbo.Thread_Replace a
 left join Production.dbo.Thread_Replace b on b.Ukey = a.Ukey
@@ -2210,7 +2247,7 @@ when matched then
 				t.LifecycleState = ISNULL(s.LifecycleState,''),
 				t.LR = IIF(s.LR IS NULL OR TRY_CONVERT(bit, s.LR) IS NULL,  0  ,s.LR),	  --NULL or 非bit值的東西，塞0
 				t.AddName		  = ISNULL(s.AddName,'')		,
-				t.AddDate		  = ISNULL(s.AddDate,'')		
+				t.AddDate		  = s.AddDate
 when not matched by target then
 	insert  (  [StyleUkey]
 			  ,[SuppID]
@@ -2224,7 +2261,7 @@ when not matched by target then
 			  ,[LR]
 			  ,[AddName]
 			  ,[AddDate])
-	  values  (s.[StyleUkey]
+	  values  (isnull(s.[StyleUkey],0)
 			  ,ISNULL(s.[SuppID],'')
 			  ,ISNULL(s.[Refno],'')
 			  ,ISNULL(s.[Material],'')
