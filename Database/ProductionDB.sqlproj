@@ -2751,6 +2751,10 @@
     <Build Include="dbo\Tables\HandoverATUpload.sql" />
     <Build Include="dbo\Tables\FinalPatternUpload.sql" />
     <Build Include="dbo\Tables\Style_ArtworkTestDox.sql" />
+    <Build Include="dbo\Tables\Marker_ML_SizeCode.sql" />
+    <Build Include="dbo\Tables\Marker_ML.sql" />
+    <Build Include="dbo\Tables\Marker.sql" />
+    <Build Include="dbo\Functions\ActCuttingPerimeterToInch.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
