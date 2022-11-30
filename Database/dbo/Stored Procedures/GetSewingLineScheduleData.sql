@@ -1169,8 +1169,8 @@ declare  @APSResult TABLE(
 	[Subcon Qty] int null,
 	[Std Qty for printing] int null,
 	StyleName varchar(max) null,
-	StdQtyEMB numeric(12,2) null,
-	EMBStitch int null,
+	StdQtyEMB varchar(50) null,
+	EMBStitch varchar(20) null,
 	EMBStitchCnt int null,
 	TtlQtyEMB int null,
 	PrintPcs int null
