@@ -207,6 +207,7 @@ and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternP
 
         private void Query()
         {
+            DBProxy.Current.DefaultTimeout = 1800; // timeout時間改為30分鐘
             this.listControlBindingSource1.DataSource = null;
             if (MyUtility.Check.Empty(this.txtSp1.Text) && !MyUtility.Check.Empty(this.txtSp2.Text))
             {
@@ -938,6 +939,7 @@ from #tmp t
 
                 this.listControlBindingSource1.DataSource = dt[0];
                 this.GridSetup(summaryType);
+                DBProxy.Current.DefaultTimeout = 300; // timeout時間改回5分鐘
             }
         }
 
