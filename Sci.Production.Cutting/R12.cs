@@ -107,7 +107,7 @@ from Orders o
 left join Style s on s.Ukey = o.StyleUkey
 left join Marker m on  m.StyleUkey = o.StyleUkey
 left join Marker_ML ml on ml.MarkerUkey = m.UKey 
-left join Marker_ML_SizeCode mls on mls.MarkerUkey = m.UKey and mls.MarkerName = ml.MarkerName
+left join Marker_ML_SizeQty mls on mls.MarkerUkey = m.UKey and mls.MarkerName = ml.MarkerName
 left join SMNotice sm on sm.ID = m.ID
 left join SMNotice_Detail smd on smd.ID = sm.ID and smd.Type = 'M' and  PhaseID in ('BULK','SIZE/S','PP SAMPLE')
 left join Fabric f on f.SCIRefno = ml.SCIRefno

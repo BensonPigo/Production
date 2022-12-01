@@ -2413,7 +2413,7 @@ select
       ,ISNULL(a.[StyleID],'')
       ,ISNULL(a.[SeasonID],'')
       ,ISNULL(a.[MarkerNo],'')
-      ,ISNULL(a.[ActFtyMarker]v
+      ,ISNULL(a.[ActFtyMarker]
       ,ISNULL(a.[PatternID],'')
       ,ISNULL(a.[PatternNo],'')
       ,ISNULL(a.[PatternVersion],'')
@@ -2549,12 +2549,12 @@ from Trade_To_Pms.dbo.Marker_ML a
 left join Production.dbo.Marker_ML b on b.MarkerUkey = a.MarkerUkey
 where b.MarkerUkey is null
 
-------------Marker_ML_SizeCode
+------------Marker_ML_SizeQty
 ----------------------刪除主TABLE多的資料
 RAISERROR('imp_Style - Starts',0,0)
-Delete Production.dbo.Marker_ML_SizeCode
-from Production.dbo.Marker_ML_SizeCode as a 
-left join Trade_To_Pms.dbo.Marker_ML_SizeCode as b
+Delete Production.dbo.Marker_ML_SizeQty
+from Production.dbo.Marker_ML_SizeQty as a 
+left join Trade_To_Pms.dbo.Marker_ML_SizeQty as b
 on a.MarkerUkey = b.MarkerUkey
 where b.MarkerUkey is null
 
@@ -2567,11 +2567,11 @@ UPDATE a
       ,[SizeCode] = ISNULL(b.[SizeCode],'')
       ,[Qty] = ISNULL(b.[Qty],0)
       ,[UKey_Old] = ISNULL(b.[UKey_Old],'')
-	from Production.dbo.Marker_ML_SizeCode a
-inner join Trade_To_Pms.dbo.Marker_ML_SizeCode b on b.MarkerUkey = a.MarkerUkey
+	from Production.dbo.Marker_ML_SizeQty a
+inner join Trade_To_Pms.dbo.Marker_ML_SizeQty b on b.MarkerUkey = a.MarkerUkey
 
 
-INSERT INTO [dbo].[Marker_ML_SizeCode]
+INSERT INTO [dbo].[Marker_ML_SizeQty]
 (	   [ID]
       ,[Version]
       ,[MarkerUkey]
@@ -2581,15 +2581,14 @@ INSERT INTO [dbo].[Marker_ML_SizeCode]
       ,[UKey_Old]
 )
 select
-	   ISNULL(a.[ID],'')
-      ,ISNULL(a.[Version],'')
+	   ISNULL(a.[ID],'')    ,ISNULL(a.[Version],'')
       ,ISNULL(a.[MarkerUkey],0)
       ,ISNULL(a.[MarkerName],'')
       ,ISNULL(a.[SizeCode],'')
       ,ISNULL(a.[Qty],0)
       ,ISNULL(a.[UKey_Old],'')
-from Trade_To_Pms.dbo.Marker_ML_SizeCode a
-left join Production.dbo.Marker_ML_SizeCode b on b.MarkerUkey = a.MarkerUkey
+from Trade_To_Pms.dbo.Marker_ML_SizeQty a
+left join Production.dbo.Marker_ML_SizeQty b on b.MarkerUkey = a.MarkerUkey
 where b.MarkerUkey is null
 
 END
