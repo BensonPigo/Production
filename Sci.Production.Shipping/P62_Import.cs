@@ -145,6 +145,16 @@ namespace Sci.Production.Shipping
 Declare @ID varchar(15) = '{this.dr_master["ID"]}'
 Declare @ShipMode varchar(60) = '{this.dr_master["ShipModeID"]}'
 
+select ShipQty = sum(pd2.ShipQty),pd2.OrderID,oup.SizeCode,oup.Article ,oup.POPrice
+into #tmp_PackingList_Detail
+from PackingList_Detail pd2 with (nolock)
+inner join PackingList p2 with (nolock) on pd2.ID = p2.ID
+inner join Order_UnitPrice oup with (nolock) on oup.Id= pd2.OrderID
+											and oup.Article = pd2.Article 
+											and oup.SizeCode = pd2.SizeCode
+where exists (select 1 from {"{0}"} g with (nolock) where g.id = p2.INVNo)
+group by pd2.OrderID,oup.SizeCode,oup.Article,oup.POPrice
+
 select
 	selected = 0 
 	, [INVNo] = g.id
@@ -204,20 +214,11 @@ left join Order_Location OL with (nolock) on OL.OrderID = pd.OrderID
 outer apply (
 	select kd.status 
 		from KHExportDeclaration kd 
-		where 1=1
-		and kd.id=@ID
+		where kd.id = @ID
 ) kd_status
 outer apply(
 	select OrderID,AvgPrice = sum(ShipQty*POPrice)/sum(ShipQty)
-	from (
-		select ShipQty = sum(pd2.ShipQty),pd2.OrderID,oup.SizeCode,oup.Article ,oup.POPrice
-		from PackingList_Detail pd2 with (nolock)
-		inner join PackingList p1 with (nolock) on pd2.ID = p1.ID
-		inner join Order_UnitPrice oup with (nolock) on oup.Id= pd2.OrderID
-		and oup.Article = pd2.Article and oup.SizeCode = pd2.SizeCode
-		where INVNo = g.ID
-		group by pd2.OrderID,oup.SizeCode,oup.Article,oup.POPrice
-	) a
+	from #tmp_PackingList_Detail a
 	where OrderID = o.ID
 	group by OrderID
 )POPrice
@@ -265,8 +266,7 @@ inner join GMTBooking_Detail gd with (nolock) on gd.ID = g.ID
 outer apply (
 	select kd.status 
 		from KHExportDeclaration kd 
-		where 1=1
-		and kd.id=@ID
+		where kd.id = @ID
 ) kd_status
 where   g.ShipModeID = @ShipMode and
         g.NonDeclare = 0 and
