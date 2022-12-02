@@ -337,8 +337,9 @@ namespace Sci.Production.Planning
                 #region --組WHERE--
                 if (!this.txtMDivision.Text.Empty())
                 {
-                    sqlWheres.Add(" f.MDivisionID = '" + this.mDivisionID + "'");
+                    sqlWheres.Add(" f.ProduceM = '" + this.mDivisionID + "'");
                     loadingWheres.Add("o.MDivisionID ='" + this.mDivisionID + "'");
+                    loadingWheres.Add("f.ProduceM ='" + this.mDivisionID + "'");
 
                     if (!this.txtFactory.Text.Empty())
                     {
@@ -347,7 +348,7 @@ namespace Sci.Production.Planning
 
                     if (this.txtFactory.Text.Empty())
                     {
-                        workWheres.Add(" exists (select 1 from Factory WITH (NOLOCK) where MDivisionID = '" + this.mDivisionID + "' and ID = w.FactoryID)");
+                        workWheres.Add(" exists (select 1 from Factory WITH (NOLOCK) where ProduceM = '" + this.mDivisionID + "' and ID = w.FactoryID)");
                     }
                 }
 
@@ -425,6 +426,7 @@ namespace Sci.Production.Planning
                 	              Cross Apply getOutputInformation(o.ID, '{3}') si
                 	              Where o.BuyerDelivery between '{2}' and '{3}'
                 	              And o.Junk = 0
+                                  And f.Junk = 0
                 	              And o.SubconInType not in ('1','2')
                 	              " + load + @"
                 	              ) a
