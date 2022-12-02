@@ -2755,6 +2755,7 @@
     <Build Include="dbo\Tables\Marker_ML.sql" />
     <Build Include="dbo\Tables\Marker.sql" />
     <Build Include="dbo\Functions\ActCuttingPerimeterToInch.sql" />
+    <Build Include="dbo\Functions\MarkerLengthSampleTOTrade.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

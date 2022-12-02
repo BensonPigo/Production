@@ -75,7 +75,6 @@ namespace Sci.Production.Cutting
             }
 
             this.sqlcmd.Append($@"
-
 select m.BrandID
 ,m.SeasonID
 ,s.ProgramID
@@ -91,13 +90,19 @@ select m.BrandID
 ,f.WeightM2
 ,mls.Qty
 ,ml.MarkerLength
-,[MarkerLength_inch] = Cast(IIF(isnull(ml.MarkerLength, '') = '', 0, dbo.MarkerLengthToYDS(ml.MarkerLength)) as numeric(7,4))
+,[MarkerLength_inch] = Cast(IIF(isnull(ml.MarkerLength, '') = '', 0, dbo.MarkerLengthToYDS(dbo.MarkerLengthSampleTOTrade(ml.MarkerLength,sb.MatchFabric))) as numeric(7,4))
 ,ml.Width
 ,ml.Efficiency
 ,ml.ConsPC
 ,ml.OneTwoWay
 ,[CutPertmeter] = ISNULL(ml.ActCuttingPerimeter,'')
-,[CutPertmeter_inch] = Cast(IIF(isnull(ml.ActCuttingPerimeter, '') = '', 0, dbo.ActCuttingPerimeterToInch(ml.ActCuttingPerimeter)) as numeric(20,4))
+,[CutPertmeter_inch] = 
+Cast(
+	case when isnull(ml.ActCuttingPerimeter, '') = '' then 0
+	when isnull(ml.ActCuttingPerimeter, '') not like '%Y%""%' then 0　--不加判斷會掛掉
+	else dbo.ActCuttingPerimeterToInch(ml.ActCuttingPerimeter) end
+	as numeric(20,4)
+)
 ,m.ActFtyMarker
 ,[CO] = (select Name from DropDownList where Type = 'NewCO_Type' and ID = s.CDCodeNew)
 ,[MarkMarker] = (select ID + '-' + Name from TPEPass1 where ID = m.MarkerName)
@@ -117,7 +122,7 @@ where  1=1
 group by m.BrandID,m.SeasonID,s.ProgramID,s.CDCodeNew,s.ApparelType,smd.PhaseID,m.MarkerNo
 ,s.ID,mls.SizeCode,mls.MarkerName,sb.Refno,ml.FabricPanelCode,f.WeightM2,mls.Qty
 ,ml.MarkerLength,ml.Width,ml.Efficiency,ml.ConsPC,ml.OneTwoWay,ml.ActCuttingPerimeter
-,m.ActFtyMarker, s.CDCodeNew,sm.MR,m.MarkerName
+,m.ActFtyMarker, s.CDCodeNew,sm.MR,m.MarkerName,sb.MatchFabric
 ");
 
             return base.ValidateInput();
@@ -140,6 +145,7 @@ group by m.BrandID,m.SeasonID,s.ProgramID,s.CDCodeNew,s.ApparelType,smd.PhaseID,
                 return false;
             }
 
+            this.printData.Columns.Remove("ActFinDate");
             string filename = "Cutting_R12.xltx";
             Excel.Application excelapp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, filename, 1, false, null, excelapp, wSheet: excelapp.Sheets[1]);
