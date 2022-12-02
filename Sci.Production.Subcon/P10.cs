@@ -728,6 +728,12 @@ update ArtworkAP set amount = @Amount, vat = @Vat  where ID = '{this.CurrentMain
         /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["VoucherID"]))
+            {
+                MyUtility.Msg.WarningBox("Transfer A/C already has value, can not unconfirm !!");
+                return;
+            }
+
             base.ClickUnconfirm();
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unapprove it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
             if (dResult.ToString().ToUpper() == "NO")
