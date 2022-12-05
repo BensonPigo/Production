@@ -108,7 +108,9 @@ namespace Sci.Production.Cutting
                 .Text("FabricCombo", header: "Combination", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("ColorWay", header: "Color Way", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("ColorID", header: "Color", width: Widths.Auto(), iseditingreadonly: true)
+                .Text("Layer", header: "Layer", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("LackingLayers", header: "Lacking Layer", width: Widths.AnsiChars(12), iseditingreadonly: true)
+                .Text("Size", header: "Size", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .Numeric("BalanceCons", header: "Balance Cons.", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 5, iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("UnfinishedCuttingReasonDesc", width: Widths.AnsiChars(30), header: "Reason", settings: unfinishedCuttingReasonSetting)
@@ -159,7 +161,9 @@ select
 	w.FabricCombo,
 	[ColorWay] = stuff(Article.Article,1,1,''),
 	w.ColorID,   
+    w.Layer,
     Artwork.Artwork,
+    [Size] = Size.Size,
     [LackingLayers] = w.Layer - isnull(acc.AccuCuttingLayer,0),  
     w.UnfinishedCuttingReason,
     [BalanceCons] = w.Cons - [ActConsOutput],
@@ -176,6 +180,14 @@ left join PO_Supp_Detail psd with(nolock) on psd.id = w.id and psd.seq1 = w.seq1
 outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa WITH (NOLOCK) where aa.WorkOrderUkey = w.Ukey)acc
 outer apply(select YDSMarkerLength = dbo.MarkerLengthToYDS(w.MarkerLength)) ML
 outer apply(select ActConsOutput = cast(isnull(iif(w.Layer - isnull(acc.AccuCuttingLayer,0) = 0, w.Cons, acc.AccuCuttingLayer * ML.YDSMarkerLength),0) as numeric(9,4)))ActConsOutput
+outer apply(
+select Size = stuff((
+	Select concat(', ' , c.sizecode, '/ ', c.qty)
+	From WorkOrder_SizeRatio c WITH (NOLOCK)
+	Where c.WorkOrderUkey =w.Ukey
+	For XML path('')
+	),1,1,'')
+)Size
 outer apply(
 	select Article = (
 		select distinct concat('/',Article)

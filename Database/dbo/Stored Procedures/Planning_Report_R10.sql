@@ -90,6 +90,7 @@ BEGIN
 	Where ISsci = 1 /* And Factory.Junk = 0 */ And Artworktype.ReportDropdown = 1 
 	And Artworktype.ID = @ArtWorkType
 	And (@MDivisionID = '' or Factory.MDivisionID = @MDivisionID)
+	and Factory.ProduceM = Factory.MDivisionID
 	And (@Fty = '' or Factory.FtyZone = @Fty )
 	And (@Zone = '' or Factory.Zone = @Zone)
 
@@ -395,6 +396,7 @@ BEGIN
 		inner join Country on Factory.CountryID = Country.ID
 		where Type in ('B','S') and isnull(FactorySort,'') <> ''		
 		And (@MDivisionID = '' or Factory.MDivisionID = @MDivisionID)
+		and Factory.ProduceM = Factory.MDivisionID
 		And (@Fty = '' or Factory.FtyZone = @Fty) -- PMS這才有
 		And (@Zone = '' or Factory.Zone = @Zone)
 		
@@ -545,6 +547,7 @@ BEGIN
 		inner join Country on Factory.CountryID = Country.ID
 		where Type in ('B','S') and isnull(FactorySort,'') <> ''		
 		And (@MDivisionID = '' or Factory.MDivisionID = @MDivisionID)
+		and Factory.ProduceM = Factory.MDivisionID
 		And (@Fty = '' or Factory.FtyZone = @Fty) -- PMS這才有
 		And (@Zone = '' or Factory.Zone = @Zone)		
 		

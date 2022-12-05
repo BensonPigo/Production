@@ -9,6 +9,7 @@ using System.IO;
 using System.Transactions;
 using Sci.Production.PublicPrg;
 using System.Linq;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Logistic
 {
@@ -283,18 +284,19 @@ where 1=0";
                             {
                                 dr["ID"] = string.Empty;
                                 dr["selected"] = 0;
-                                dr["PackingListID"] = sl[2].Substring(0, 13);
-                                dr["CTNStartNo"] = sl[2].Substring(13).TrimStart('^');
+                                string packingListID = sl[2].Substring(0, 13);
+                                string ctnStartNo = sl[2].Substring(13).TrimStart('^');
                                 dr["ClogLocationId"] = sl[1];
 
                                 string sqlCmd = string.Format(
                                     @"
-select pd.OrderID,pd.OrderShipmodeSeq,TransferDate,ReceiveDate ,p.MDivisionID,pd.SCICtnNo
+select pd.ID,pd.CTNStartNo,pd.OrderID,pd.OrderShipmodeSeq,TransferDate,ReceiveDate ,p.MDivisionID,pd.SCICtnNo
 from PackingList_Detail pd WITH (NOLOCK) 
 inner join PackingList p (NOLOCK) on pd.id = p.id
-where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0",
-                                    dr["PackingListID"].ToString(),
-                                    dr["CTNStartNo"].ToString());
+where ((pd.ID = '{0}' and pd.CTNStartNo = '{1}') or pd.SCICtnNo = '{2}') and pd.CTNQty > 0 and pd.DisposeFromClog= 0",
+                                    packingListID,
+                                    ctnStartNo,
+                                    sl[2].GetPackScanContent());
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
                                     if (MyUtility.Check.Empty(seekData["ReceiveDate"]))
@@ -313,6 +315,8 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0 and pd.DisposeFr
                                         dr["Remark"] = "This carton already in clog.";
                                     }
 
+                                    dr["PackingListID"] = seekData["ID"];
+                                    dr["CTNStartNo"] = seekData["CTNStartNo"];
                                     dr["OrderID"] = seekData["OrderID"];
                                     dr["SCICtnNo"] = seekData["SCICtnNo"];
                                     dr["TransferDate"] = seekData["TransferDate"];

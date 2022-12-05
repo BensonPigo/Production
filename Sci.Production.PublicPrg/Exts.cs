@@ -372,5 +372,15 @@ namespace Sci.Production.Prg
                 return range.Cells[indexRow, indexCol].Value.ToString();
             }
         }
+
+        /// <summary>
+        /// GetPackScanContent
+        /// </summary>
+        /// <param name="srcBarcode">srcBarcode</param>
+        /// <returns>string</returns>
+        public static string GetPackScanContent(this string srcBarcode)
+        {
+            return srcBarcode.Left(16);
+        }
     }
 }

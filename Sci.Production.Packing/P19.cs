@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg;
 using Sci.Win.Tems;
 using System;
 using System.Collections.Generic;
@@ -628,12 +629,12 @@ order by pd.ID,pd.Seq
             }
             else
             {
-                keyWhere = @"   and pd.ID = @ID
-                                and pd.CTNStartNo = @CTNStartNo";
+                keyWhere = @"   and ((pd.ID = @ID and pd.CTNStartNo = @CTNStartNo) or pd.SCICtnNo = @SCICtnNo)";
                 listPar = new List<SqlParameter>()
                                             {
                                                 new SqlParameter("@ID", packID),
                                                 new SqlParameter("@CTNStartNo", cartonStartNo),
+                                                new SqlParameter("@SCICtnNo ", (packID + cartonStartNo).GetPackScanContent()),
                                             };
             }
 
