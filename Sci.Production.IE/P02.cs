@@ -487,7 +487,7 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                 inline.ToShortDateString()));
             #endregion
 
-            string cDCodeID = this.dt1.Rows[0]["CDCodeID"].ToString().Trim();
+            string cDCodeID = MyUtility.Convert.GetString(this.displayCDCodeNew.Value);
             DataRow tYPE = this.GetType(comboType, cDCodeID);
             #region 找出上一筆
 
@@ -504,10 +504,12 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                        c.Inline,
                        c.CDCodeID,
                        cd.TopProductionType,
-                       cd.TopFabricType    
+                       cd.TopFabricType,    
+					   newCDCode.CDCodeNew    
                 FROM ChgOver C WITH (NOLOCK) 
                 OUTER APPLY(SELECT S.SewingCell FROM SewingLine S WITH (NOLOCK) WHERE S.ID=C.SewingLineID AND S.FactoryID=C.FactoryID)CELL
                 outer apply(select  * from CDCode_Content cd WITH (NOLOCK) where c.CDCodeID=cd.ID)cd
+                outer apply(select CDCodeNew from Style where id = c.StyleID) newCDCode
                 WHERE Inline >= '{0}'
 		        AND OrderID !='{1}' and StyleID <='{2}' and FactoryID >= '{3}' and SewingLineID >='{4}' and CELL.SewingCell >='{5}'
                 ORDER BY C.FactoryID,C.SewingLineID,C.Inline asc
@@ -558,7 +560,7 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                 {
                     objSheet.Cells[12, 9] = this.dt2.Rows[0]["StyleID"].ToString().Trim();  // Style No.
                     objSheet.Cells[13, 9] = previous_CPU;  // CPU/pc
-                    objSheet.Cells[14, 9] = this.dt2.Rows[0]["CDCodeID"].ToString().Trim();  // CD Code
+                    objSheet.Cells[14, 9] = this.dt2.Rows[0]["CDCodeNew"].ToString().Trim();  // CD Code
                     objSheet.Cells[14, 10] = this.dt2.Rows[0]["TopProductionType"];  // Prod. Type
                     objSheet.Cells[14, 11] = this.dt2.Rows[0]["TopFabricType"];  // Fab. Type
                 }

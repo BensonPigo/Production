@@ -178,6 +178,9 @@ namespace Sci.Production.Planning
             {
                 this.SetExcelSheet1(objApp, objSheets1, this.printData[0]);
                 objSheets2.Visible = Excel.XlSheetVisibility.xlSheetHidden;
+
+                // 移除CD Code欄位
+                objSheets3.get_Range("A:A").EntireColumn.Delete();
             }
             else
             {
@@ -225,7 +228,7 @@ namespace Sci.Production.Planning
                         Manpower = x.Field<decimal?>("Manpower"),
                         ManHour = x.Field<decimal?>("ManHour"),
                         TotalOutput = x.Field<int>("TotalOutput"),
-                        CD = x.Field<string>("CD"),
+                        CD = x.Field<string>("ComboType"),
                         CDCodeNew = x.Field<string>("CDCodeNew"),
                         SeasonID = x.Field<string>("SeasonID"),
                         BrandID = x.Field<string>("BrandID"),

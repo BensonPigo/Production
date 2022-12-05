@@ -242,6 +242,9 @@ left join ATData a2 on a2.FakeID = st.Seq+'Pri'";
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
 
+            // 移除 CD Code欄位
+            worksheet.get_Range("H:H").EntireColumn.Delete();
+
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("PPIC_P04_Print");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;

@@ -266,6 +266,9 @@ namespace Sci.Production.Planning
                 // 客製化欄位，記得設定this.IsSupportCopy = true
                 this.CreateCustomizedExcel(ref objSheets);
 
+                // 移除 CD Code欄位
+                objSheets.get_Range("V:V").EntireColumn.Delete();
+
                 #region Save & Show Excel
                 string strExcelName = Class.MicrosoftFile.GetName("Planning_R15_WIP");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
@@ -325,6 +328,9 @@ namespace Sci.Production.Planning
                 // 客製化欄位，記得設定this.IsSupportCopy = true
                 this.CreateCustomizedExcel(ref objSheets);
 
+                // 移除 CD Code欄位
+                objSheets.get_Range("V:V").EntireColumn.Delete();
+
                 #region Save & Show Excel
                 string strExcelName = Class.MicrosoftFile.GetName("Planning_R15_WIP_byArticleSize");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
@@ -380,6 +386,9 @@ namespace Sci.Production.Planning
 
                 // 客製化欄位，記得設定this.IsSupportCopy = true
                 this.CreateCustomizedExcel(ref objSheets);
+
+                // 移除 CD Code欄位
+                objSheets.get_Range("V:V").EntireColumn.Delete();
                 #region Save & Show Excel
                 string strExcelName = Class.MicrosoftFile.GetName(filename);
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;

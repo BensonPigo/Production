@@ -2529,6 +2529,9 @@ drop table #tmp,#tmp2,#tmp3
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(maxRow);
 
+            // 移除CD CODE
+            worksheet.get_Range("AZ:AZ").EntireColumn.Delete();
+
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("PPIC_R03_PPICMasterList");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;

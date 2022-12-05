@@ -986,6 +986,8 @@ drop table #tmpall
                 objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬
                 objApp.Cells.EntireRow.AutoFit();       ////自動欄高
 
+                // 移除CD CODE 欄位
+                objSheets.get_Range("H:H").EntireColumn.Delete();
                 #region Save & Show Excel
                 string strExcelName = Class.MicrosoftFile.GetName("Quality_R20_AllData");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
