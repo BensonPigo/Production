@@ -1010,6 +1010,7 @@ SET
 	  ,a.Foundry	  =b.Foundry
 	  ,a.ProduceM	  =b.MDivisionID
 	  ,a.LoadingFactoryGroup	  =b.LoadingFactoryGroup
+	  ,a.PadPrintGroup	=	isnull(b.PadPrintGroup,'')
 from Production.dbo.Factory as a inner join Trade_To_Pms.dbo.Factory as b ON a.id=b.id
 --Factory1
 --Factory_TMS
@@ -5129,5 +5130,41 @@ on t.ID=s.ID
 		,s.EditName
 		,s.EditDate
 		);
+
+
+-- Brand_SizeCode
+delete a
+from production.dbo.Brand_SizeCode a
+left join Trade_To_Pms.dbo.Brand_SizeCode b on a.BrandID = b.BrandID  and a.SizeCode = b.SizeCode
+where b.BrandID is null
+
+update a set 
+	[AgeGroupID]  = isnull(b.AgeGroupID,'')
+	,[AddName]	  = isnull(b.[AddName],'')
+	,[AddDate]	  = b.[AddDate]
+	,[EditName]	  = isnull(b.[EditName],'')
+	,[EditDate]	  = b.[EditDate]
+from production.dbo.[Brand_SizeCode] a
+inner join Trade_To_Pms.dbo.[Brand_SizeCode] b on a.BrandID = b.BrandID  and a.SizeCode = b.SizeCode
+
+insert production.dbo.[Brand_SizeCode] 
+           ([BrandID] 
+		   ,[SizeCode]
+           ,[AgeGroupID]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate])
+select
+	 isnull(a.[BrandID],'')
+	,isnull(a.[SizeCode],'')
+    ,isnull(a.[AgeGroupID],'')
+    ,isnull(a.[AddName],'')
+    ,a.[AddDate]
+    ,isnull(a.[EditName],'')
+    ,a.[EditDate]
+from Trade_To_Pms.dbo.[Brand_SizeCode] a
+left join production.dbo.[Brand_SizeCode] b on  a.BrandID = b.BrandID  and a.SizeCode = b.SizeCode
+where b.BrandID is null
 
 END

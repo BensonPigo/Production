@@ -339,6 +339,7 @@
             this.Controls.Add(this.panel3);
             this.DefaultControl = "txtSP";
             this.Name = "P07";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P07.Carton Transfer to CFA Input";
             this.Controls.SetChildIndex(this.panel3, 0);
             this.Controls.SetChildIndex(this.gridDetail, 0);
