@@ -8,6 +8,7 @@ using System.Transactions;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Logistic
 {
@@ -193,21 +194,22 @@ namespace Sci.Production.Logistic
                             {
                                 DataRow dr1 = this.grid2Data.NewRow();
                                 dr1["ID"] = string.Empty;
-                                dr1["PackingListID"] = sl[1].Substring(0, 13);
-                                dr1["CTNStartNo"] = sl[1].Substring(13).TrimStart('^');
 
                                 // dr1["FactoryID"] = sl[1].Substring(0, 3);
                                 dr1["MDivisionID"] = Env.User.Keyword;
                                 dr1["InsertData"] = 1;
                                 string sqlCmd = string.Format(
-                                    @"select OrderID, TransferToClogID, ClogReceiveID, ClogLocationId, ReceiveDate,ClogReturnID 
+                                    @"select OrderID, TransferToClogID, ClogReceiveID, ClogLocationId, ReceiveDate, ClogReturnID, ID, CTNStartNo
                                                                                       from PackingList_Detail WITH (NOLOCK) 
-                                                                                      where ID = '{0}' and CTNStartNo = '{1}' 
+                                                                                      where (ID = '{0}' and CTNStartNo = '{1}' or SCICtnNo = '{2}')
                                                                                       and  CTNQty = 1",
-                                    dr1["PackingListID"].ToString(),
-                                    dr1["CTNStartNo"].ToString());
+                                    sl[1].Substring(0, 13),
+                                    sl[1].Substring(13).TrimStart('^'),
+                                    sl[1].GetPackScanContent());
                                 if (MyUtility.Check.Seek(sqlCmd, out seekPacklistData))
                                 {
+                                    dr1["PackingListID"] = seekPacklistData["ID"];
+                                    dr1["CTNStartNo"] = seekPacklistData["CTNStartNo"];
                                     dr1["OrderID"] = seekPacklistData["OrderID"].ToString().Trim();
                                     dr1["ClogReceiveID"] = seekPacklistData["ClogReceiveID"].ToString().Trim();
                                     dr1["TransferToClogId"] = seekPacklistData["TransferToClogID"].ToString().Trim();

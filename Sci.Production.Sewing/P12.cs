@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
@@ -220,6 +221,7 @@ where	pd.CTNStartNo != '' and
             string keyWhere = string.Empty;
             string PackingListID = string.Empty;
             string CTNStarNo = string.Empty;
+            string sciCtnNo = PackNo.GetPackScanContent();
 
             if (PackNo.Length > 13)
             {
@@ -241,6 +243,8 @@ where	pd.CTNStartNo != '' and
                 {
                     keyWhere = $"(ID+CTNStartNo) = '{PackNo}'";
                 }
+
+                keyWhere = $"(({keyWhere}) or SCICtnNo = '{sciCtnNo}')";
             }
 
             PackDataResult packDataResult = new PackDataResult();

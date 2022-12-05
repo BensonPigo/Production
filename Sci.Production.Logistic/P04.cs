@@ -11,6 +11,8 @@ using Sci.Win;
 using System.Reflection;
 using System.IO;
 using System.Data.SqlClient;
+using System.Linq;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Logistic
 {
@@ -173,7 +175,7 @@ namespace Sci.Production.Logistic
             this.gridData = null;
             this.listControlBindingSource1.DataSource = null;
 
-            if (this.Query(false))
+            if (this.Query())
             {
                 return;
             }
@@ -527,8 +529,6 @@ where id = @id and CTNStartNo = @ctnStartNo;";
             }
         }
 
-        private string whereS;
-
         private void BtnImportFromBarcode_Click(object sender, EventArgs e)
         {
             // 設定只能選txt檔
@@ -541,8 +541,7 @@ where id = @id and CTNStartNo = @ctnStartNo;";
                 this.numTTLCTNQty.Value = 0;
 
                 // 讀檔案
-                string wheresql = string.Empty;
-                this.whereS = string.Empty;
+                List<string> listBarcodeImport = new List<string>();
                 using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, Encoding.UTF8))
                 {
                     string line;
@@ -555,27 +554,20 @@ where id = @id and CTNStartNo = @ctnStartNo;";
                         {
                             if (item.Length >= 13)
                             {
-                                wheresql += $" or (PL.ID = '{item.Substring(0, 13)}' and PLD.CTNStartNo = '{item.Substring(13).TrimStart('^')}') ";
+                                string sciCtnNo = MyUtility.GetValue.Lookup($"select SCICtnNo from PackingList_Detail with (nolock) where (ID = '{item.Substring(0, 13)}' and CTNStartNo = '{item.Substring(13).TrimStart('^')}') or SCICtnNo = '{item.GetPackScanContent()}'");
+                                listBarcodeImport.Add(sciCtnNo);
                             }
                         }
                     }
 
-                    if (MyUtility.Check.Empty(wheresql))
-                    {
-                        MyUtility.Msg.WarningBox("Connection faile.!");
-                        return;
-                    }
-
-                    this.whereS = $" and(1=0 {wheresql} )";
-
                     this.gridData = null;
                     this.listControlBindingSource1.DataSource = null;
-                    this.Query(true);
+                    this.Query(listBarcodeImport);
                 }
             }
         }
 
-        private bool Query(bool isimport)
+        private bool Query(List<string> listBarcodeImport = null)
         {
             StringBuilder sqlCmd = new StringBuilder();
 
@@ -646,7 +638,7 @@ from (
                 and PLD.CTNQty = 1
                 and orders.MDivisionID =  '{0}'", Env.User.Keyword));
             #region 組條件
-            if (!isimport)
+            if (listBarcodeImport == null)
             {
                 if (!MyUtility.Check.Empty(this.txtSPNoStart.Text))
                 {
@@ -685,7 +677,9 @@ from (
             }
             else
             {
-                sqlCmd.Append(this.whereS);
+                string whereSCICtnNo = listBarcodeImport.Count == 0 ? " and 1 = 0" :
+                                                                      $" and PLD.SCICtnNo in ({listBarcodeImport.Select(s => $"'{s}'").JoinToString(",")})";
+                sqlCmd.Append(whereSCICtnNo);
             }
             #endregion
             sqlCmd.Append(@"

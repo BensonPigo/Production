@@ -294,7 +294,10 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
                 this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13).TrimStart('^');
             }
 
-            this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串
+            // 換箱清空更新barcode字串
+            this.upd_sql_barcode = string.Empty; 
+            this.intTmpNo = 0;
+
             this.ClearAll("SCAN");
             #region 檢查是否有資料，三個角度
             if (!this.LoadDatas())
@@ -314,7 +317,7 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
             srcPKFilter.AddRange(this.dt_scanDetail.AsEnumerable().Select(s => s["ID"].ToString()).Distinct().ToList());
             this.comboPKFilter.DataSource = srcPKFilter;
 
-            // 產生select Carton資料
+            // 產生select Carton資料    
             int cnt_selectCarton = this.LoadSelectCarton();
 
             if (cnt_selectCarton == 1)
@@ -374,6 +377,7 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
             string[] aLLwhere = new string[]
             {
                 this.txtScanCartonSP.Text.Length > 13 ? $" and  pd.ID = '{this.PackingListID}' and  pd.CTNStartNo = '{this.CTNStarNo}'" : " and 1=0 ",
+                $" and  pd.SCICtnNo = '{this.txtScanCartonSP.Text.GetPackScanContent()}'",
                 $" and  pd.ID = '{this.txtScanCartonSP.Text}'",
                 $" and o.ID = '{this.txtScanCartonSP.Text}' or o.CustPoNo = '{this.txtScanCartonSP.Text}'",
                 $" and pd.CustCTN = '{this.txtScanCartonSP.Text}'",
@@ -594,7 +598,9 @@ where p.Type in ('B','L')
                 this.ShowErr(result);
             }
 
-            this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串
+            // 換箱清空更新barcode字串
+            this.upd_sql_barcode = string.Empty; 
+            this.intTmpNo = 0;
         }
 
         /// <summary>
@@ -855,6 +861,7 @@ WHERE o.ID='{dr.OrderID}'");
         }
 
         private string upd_sql_barcode = string.Empty;
+        private int intTmpNo = 0;
 
         private void TxtScanEAN_Validating(object sender, CancelEventArgs e)
         {
@@ -1600,7 +1607,9 @@ drop table #tmpUpdatedID
                 this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13).TrimStart('^');
             }
 
-            this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串
+            // 換箱清空更新barcode字串
+            this.upd_sql_barcode = string.Empty; 
+            this.intTmpNo = 0;
             this.ClearAll("SCAN");
 
             if (this.txtScanCartonSP.Text.Length > 13)
@@ -1609,9 +1618,10 @@ drop table #tmpUpdatedID
                 this.CTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13).TrimStart('^');
             }
 
-            this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串
+            // 換箱清空更新barcode字串
+            this.upd_sql_barcode = string.Empty; 
+            this.intTmpNo = 0;
             this.ClearAll("SCAN");
-
             #region 檢查是否有資料，三個角度
 
             // 1.=PackingList_Detail.ID+PackingList_Detail.CTNStartNo
@@ -1620,6 +1630,7 @@ drop table #tmpUpdatedID
             string[] aLLwhere = new string[]
             {
                 this.txtScanCartonSP.Text.Length > 13 ? $" and  pd.ID = '{this.PackingListID}' and  pd.CTNStartNo = '{this.CTNStarNo}'" : " and 1=0 ",
+                $" and  pd.SCICtnNo  = '{this.txtScanCartonSP.Text.GetPackScanContent()}'",
                 $" and  pd.ID = '{this.txtScanCartonSP.Text}'",
                 $@" and o.ID = '{this.txtScanCartonSP.Text}' or o.CustPoNo = '{this.txtScanCartonSP.Text}'",
                 $@" and pd.CustCTN = '{this.txtScanCartonSP.Text}'",
@@ -1905,10 +1916,15 @@ and CTNStartNo = '{this.selecedPK.CTNStartNo}'
 
         private string Update_barcodestring(DataRow no_barcode_dr)
         {
+            if (!MyUtility.Check.Empty(this.upd_sql_barcode))
+            {
+                this.intTmpNo += 1;
+            }
+
             return $@"
 --先將需要update的key取出，避免update過久lock整個table
 select distinct a.Article,a.Color,a.SizeCode,o.StyleUkey
-into #tmpNeedUpdateGroup
+into #tmpNeedUpdateGroup{this.intTmpNo}
 from PackingList_Detail a
 inner join Orders o ON o.ID = a.OrderID
 where   a.ID ='{this.selecedPK.ID}'
@@ -1917,10 +1933,10 @@ where   a.ID ='{this.selecedPK.ID}'
         and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
 
 select  pd.Ukey
-into #tmpNeedUpdPackUkeys
+into #tmpNeedUpdPackUkeys{this.intTmpNo}
 from PackingList_Detail pd with (nolock)
 inner join Orders o  with (nolock) ON o.ID = pd.OrderID
-where exists(select 1 from #tmpNeedUpdateGroup t 
+where exists(select 1 from #tmpNeedUpdateGroup{this.intTmpNo} t 
                       where t.Article = pd.Article     and
                             t.Color = pd.Color         and
                             t.SizeCode = pd.SizeCode   and
@@ -1929,14 +1945,14 @@ where exists(select 1 from #tmpNeedUpdateGroup t
 UPDATE pd
 SET BarCode = '{this.txtScanEAN.Text}'
 from  PackingList_Detail pd
-where pd.Ukey in (select Ukey from #tmpNeedUpdPackUkeys)
+where pd.Ukey in (select Ukey from #tmpNeedUpdPackUkeys{this.intTmpNo})
 
 --抓出有更新的PKID，作為後續call WebAPI 更新廠商資料用
 select distinct pd.ID
 from  PackingList_Detail pd
-where pd.Ukey in (select Ukey from #tmpNeedUpdPackUkeys)
+where pd.Ukey in (select Ukey from #tmpNeedUpdPackUkeys{this.intTmpNo})
 
-drop table #tmpNeedUpdateGroup, #tmpNeedUpdPackUkeys
+drop table #tmpNeedUpdateGroup{this.intTmpNo}, #tmpNeedUpdPackUkeys{this.intTmpNo}
 
 ";
         }
