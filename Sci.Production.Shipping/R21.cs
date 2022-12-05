@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -188,6 +189,11 @@ group by pd.OrderID, pd.OrderShipmodeSeq
                         OrderID = s["OrderID"].ToString(),
                         OrderShipmodeSeq = s["OrderShipmodeSeq"].ToString(),
                     });
+
+                if (listOrderInfo.Count() == 0)
+                {
+                    return result;
+                }
 
                 PackingA2BWebAPI_Model.DataBySql dataBySql = new PackingA2BWebAPI_Model.DataBySql()
                 {
