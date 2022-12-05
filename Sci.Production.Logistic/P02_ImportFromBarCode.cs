@@ -8,6 +8,7 @@ using System.Transactions;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Logistic
 {
@@ -204,7 +205,7 @@ namespace Sci.Production.Logistic
                             IList<string> sl = line.Split(" \t\r\n".ToCharArray());
 
                             // 如果有資料重複就不再匯入重複的資料
-                            findRow = this.grid2Data.Select(string.Format("PackingListID = '{0}' and CTNStartNo = '{1}'", sl[2].Substring(0, 13), sl[2].Substring(13).Trim().TrimStart('^')));
+                            findRow = this.grid2Data.Select(string.Format("PackingListID = '{0}' and CTNStartNo = '{1}' or SCICtnNo = '{2}'", sl[2].Substring(0, 13), sl[2].Substring(13).Trim().TrimStart('^'), sl[2].GetPackScanContent()));
                             if (findRow.Length == 0)
                             {
                                 DataRow dr1 = this.grid2Data.NewRow();

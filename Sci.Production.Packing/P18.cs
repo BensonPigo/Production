@@ -377,6 +377,7 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
             string[] aLLwhere = new string[]
             {
                 this.txtScanCartonSP.Text.Length > 13 ? $" and  pd.ID = '{this.PackingListID}' and  pd.CTNStartNo = '{this.CTNStarNo}'" : " and 1=0 ",
+                $" and  pd.SCICtnNo = '{this.txtScanCartonSP.Text.GetPackScanContent()}'",
                 $" and  pd.ID = '{this.txtScanCartonSP.Text}'",
                 $" and o.ID = '{this.txtScanCartonSP.Text}' or o.CustPoNo = '{this.txtScanCartonSP.Text}'",
                 $" and pd.CustCTN = '{this.txtScanCartonSP.Text}'",
@@ -1621,7 +1622,6 @@ drop table #tmpUpdatedID
             this.upd_sql_barcode = string.Empty; 
             this.intTmpNo = 0;
             this.ClearAll("SCAN");
-
             #region 檢查是否有資料，三個角度
 
             // 1.=PackingList_Detail.ID+PackingList_Detail.CTNStartNo
@@ -1630,6 +1630,7 @@ drop table #tmpUpdatedID
             string[] aLLwhere = new string[]
             {
                 this.txtScanCartonSP.Text.Length > 13 ? $" and  pd.ID = '{this.PackingListID}' and  pd.CTNStartNo = '{this.CTNStarNo}'" : " and 1=0 ",
+                $" and  pd.SCICtnNo  = '{this.txtScanCartonSP.Text.GetPackScanContent()}'",
                 $" and  pd.ID = '{this.txtScanCartonSP.Text}'",
                 $@" and o.ID = '{this.txtScanCartonSP.Text}' or o.CustPoNo = '{this.txtScanCartonSP.Text}'",
                 $@" and pd.CustCTN = '{this.txtScanCartonSP.Text}'",

@@ -11,6 +11,7 @@ using Sci.Production.PublicPrg;
 using System.Transactions;
 using System.Linq;
 using Ict.Win;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Logistic
 {
@@ -264,8 +265,7 @@ and p2.DisposeFromClog= 0
 and p2.TransferCFADate is null
 and p2.CFAReturnClogDate is null
 and (po.Status = 'New' or po.Status is null)
-and p2.id='{sl[1].Substring(0, 13)}'
-and p2.CTNStartNo='{sl[1].Substring(13).TrimStart('^')}'
+and ((p2.id='{sl[1].Substring(0, 13)}' and p2.CTNStartNo='{sl[1].Substring(13).TrimStart('^')}') or p2.SCICtnNo = '{sl[1].GetPackScanContent()}')
 order by p2.ID,p2.CTNStartNo
 ";
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
