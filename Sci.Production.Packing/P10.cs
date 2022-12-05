@@ -110,10 +110,6 @@ from (
     and a.MDivisionID = '{0}' 
     and (a.Type = 'B' or a.Type = 'L')
 	and b.CTNQty=1
-    and (HaulingDate is null or
-        (HaulingDate is not null
-         and PackingAuditStatus ='Pass'
-         and MDStatus ='Pass'))
 ", Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtSP.Text))
             {
