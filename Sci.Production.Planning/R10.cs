@@ -403,7 +403,12 @@ namespace Sci.Production.Planning
                             Select f.CountryID, f.ID, (ft.TMS*3600)/(select StdTMS from System WITH (NOLOCK)) as Capacity 
                             into  #tmpFtyCapacity
                             From Factory f WITH (NOLOCK), Factory_TMS ft WITH (NOLOCK)
-                            where f.ID = ft.ID and f.Junk = 0 and ft.Year = '{0}' and ft.Month ='{1}' and ft.ArtworkTypeID = 'SEWING'" + sqlWhere +
+                            where f.ID = ft.ID
+                                  and f.Junk = 0
+                                  and ft.Year = '{0}'
+                                  and ft.Month ='{1}'
+                                  and ft.ArtworkTypeID = 'SEWING'
+                                  and f.ProduceM = f.MDivisionID " + sqlWhere +
 
                 @" 
                             -- 撈出各工廠的Loading
@@ -428,6 +433,7 @@ namespace Sci.Production.Planning
                 	              And o.Junk = 0
                                   And f.Junk = 0
                 	              And o.SubconInType not in ('1','2')
+                                  and f.ProduceM = f.MDivisionID 
                 	              " + load + @"
                 	              ) a
                             Group by a.CountryID, a.Alias, a.MDivisionID, a.FactoryID, a.Capacity
