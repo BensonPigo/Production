@@ -73,6 +73,17 @@ namespace Sci.Production.Quality
                 // 將存在DefectFilterTb的資料填入Grid
                 #region 填入對的位置 % 去找位置
                 string strT2 = string.Empty;
+                string sqlcmd = $@"
+select 1 
+from FIR_Physical_Defect_Realtime t
+where FIR_PhysicalDetailUkey = {this.CurrentData["DetailUkey"]}
+and t.Yards between (select Data from SplitString('{ary[0]["DefectRecord"].ToString()}','-') where no = '1')　
+and (select Data from SplitString('{ary[0]["DefectRecord"].ToString()}','-') where no = '2')　
+and t.T2 = 1";
+                if (!MyUtility.Check.Seek(sqlcmd))
+                {
+                    strT2 = "-T2";
+                }
 
                 // 新增一筆從頭開始
                 if (j % 3 == 1)
@@ -82,7 +93,6 @@ namespace Sci.Production.Quality
                     ndr["DetailUkey"] = this.CurrentData["DetailUkey"];
                     if (ary.Length > 0)
                     {
-                        strT2 = MyUtility.Check.Empty(ary[0]["T2"]) ? string.Empty : "-T2";
                         ndr["def1"] = ary[0]["DefectRecord"].ToString() + strT2;
                         ndr["point1"] = ary[0]["point"];
                     }
@@ -98,7 +108,6 @@ namespace Sci.Production.Quality
                     dr["yds2"] = cStr;
                     if (ary.Length > 0)
                     {
-                        strT2 = MyUtility.Check.Empty(ary[0]["T2"]) ? string.Empty : "-T2";
                         dr["def2"] = ary[0]["DefectRecord"] + strT2;
                         dr["point2"] = ary[0]["point"];
                     }
@@ -110,7 +119,6 @@ namespace Sci.Production.Quality
                     dr["yds3"] = cStr;
                     if (ary.Length > 0)
                     {
-                        strT2 = MyUtility.Check.Empty(ary[0]["T2"]) ? string.Empty : "-T2";
                         dr["def3"] = ary[0]["DefectRecord"] + strT2;
                         dr["point3"] = ary[0]["point"];
                     }
