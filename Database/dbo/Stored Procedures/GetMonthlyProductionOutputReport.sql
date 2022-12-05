@@ -8,7 +8,8 @@
 	@EndSewingLine varchar(5) = '',
 	@OrderBy int = 1, -- reporttype = 2的時候用的
 	@ExcludeNonRevenue bit = 0,
-	@ExcludeSampleFactory bit = 0
+	@ExcludeSampleFactory bit = 0,
+	@ExcludeOfMockUp bit = 0
 AS
 begin
 
@@ -52,7 +53,8 @@ where	(o.CateGory NOT IN ('G','A') or s.Category='M') and
 		s.FactoryID = iif(isnull(@Factory, '') = '', s.FactoryID, @Factory) and
 		s.MDivisionID = iif(isnull(@M, '') = '', s.MDivisionID, @M) and
 		(@ExcludeSampleFactory = 0 or f.type <> 'S') and
-		(@ExcludeNonRevenue = 0 or isnull(o.NonRevenue, 0) = 0)
+		(@ExcludeNonRevenue = 0 or isnull(o.NonRevenue, 0) = 0) and 
+		(@ExcludeOfMockUp = 0 or s.Category = 'O')
 
 select OutputDate,Category
 	   , Shift

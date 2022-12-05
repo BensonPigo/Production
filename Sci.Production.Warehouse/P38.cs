@@ -5,10 +5,12 @@ using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Transactions;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
@@ -656,23 +658,33 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_WashLab,#tmp_Air,#tmp_Air_Lab
                 return;
             }
 
-            StringBuilder sqlcmd = new StringBuilder();
-            foreach (DataRow item in find)
+            using (TransactionScope transaction = new TransactionScope())
             {
-                sqlcmd.Append(string.Format(@"update dbo.ftyinventory set lock={1},lockname='{2}',lockdate=GETDATE(),Remark='{3}' where ukey ={0};", MyUtility.Convert.GetLong(item["ukey"]), flag, Env.User.UserID, item["Remark"]));
+                StringBuilder sqlcmd = new StringBuilder();
+                foreach (DataRow item in find)
+                {
+                    List<SqlParameter> listSQLParameter = new List<SqlParameter>()
+                    {
+                        new SqlParameter("@Lock", flag),
+                        new SqlParameter("@LockName", Env.User.UserID),
+                        new SqlParameter("@Remark", item["Remark"]),
+                        new SqlParameter("@uKey", MyUtility.Convert.GetLong(item["ukey"])),
+                    };
+                    sqlcmd.Append(@"update dbo.ftyinventory set lock=@Lock,lockname=@LockName,lockdate=GETDATE(),Remark=@Remark where ukey =@uKey;");
+                    DualResult result1 = DBProxy.Current.Execute(null, sqlcmd.ToString(), listSQLParameter);
+                    if (!result1)
+                    {
+                        this.ShowErr(result1);
+                        transaction.Dispose();
+                        return;
+                    }
+                }
+
+                transaction.Complete();
             }
 
-            DualResult result = DBProxy.Current.Execute(null, sqlcmd.ToString());
-            if (!result)
-            {
-                this.ShowErr(result);
-                return;
-            }
-            else
-            {
-                this.SendExcel();
-                MyUtility.Msg.InfoBox($"{keyword} successful!!");
-            }
+            this.SendExcel();
+            MyUtility.Msg.InfoBox($"{keyword} successful!!");
 
             this.BtnQuery_Click(null, null);
         }

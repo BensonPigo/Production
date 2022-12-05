@@ -71,7 +71,11 @@ namespace Sci.Production.Cutting
             DBProxy.Current.Select(null, cmd_art, out this.artTb);
             #endregion
 
-            string cutref = MyUtility.Convert.GetString(maindr["cutref"]);
+            string cutref = MyUtility.GetValue.Lookup($@"
+select CutRef = b.CutRef 
+from Bundle b
+inner join Bundle_Detail bd on b.ID = bd.Id
+where bd.BundleNo = '{maindr["OriginBundleNo"]}'");
 
             #region Size-CutQty
 

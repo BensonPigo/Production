@@ -1224,7 +1224,7 @@ outer apply (
             string sqlCmd;
             if (this.CurrentMaintain["ToTag"].ToString() == "2")
             {
-                sqlCmd = "select ID from SCIFty WITH (NOLOCK) where Junk = 0 AND ExpressGroup <> ''";
+                sqlCmd = "select distinct FtyZone from SCIFty WITH (NOLOCK) where Junk = 0 AND ExpressGroup <> '' and FtyZone <> ''";
                 item = new SelectItem(sqlCmd, "10", this.txtTO.Text);
             }
             else

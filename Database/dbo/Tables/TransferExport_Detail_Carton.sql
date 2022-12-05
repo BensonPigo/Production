@@ -13,6 +13,7 @@
     [EditDate] DATETIME NULL, 
     [StockUnitID] VARCHAR(8) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Carton_StockUnitID] DEFAULT (''),  
     [StockQty] NUMERIC(11, 2) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Carton_StockQty] DEFAULT (0),  
+    [Tone] VARCHAR(8) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_TransferExport_Detail_Carton] PRIMARY KEY CLUSTERED ([TransferExport_DetailUkey],[Carton],[LotNo] ASC)
 )
 

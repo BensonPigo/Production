@@ -164,7 +164,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(947, 414);
+            this.browse.Size = new System.Drawing.Size(985, 414);
             // 
             // tabs
             // 
@@ -529,7 +529,7 @@
             this.DefaultControl = "numWorkingHourPerDay";
             this.DefaultControlForEdit = "numWorkingHourPerDay";
             this.DefaultDetailOrder = "Cutref,OrderID";
-            this.DefaultOrder = "cDate";
+            this.DefaultOrder = "cDate desc";
             this.ExpressQuery = true;
             this.GridAlias = "CuttingOutput_Detail";
             this.GridNew = 0;

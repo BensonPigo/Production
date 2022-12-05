@@ -26,7 +26,6 @@ namespace Sci.Production.Packing
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.dateBuyerDlv.Value = DateTime.Now.AddDays(-3);
         }
 
         protected override void ClickNewAfter()

@@ -501,13 +501,13 @@ having f.balanceQty - sum(d.Qty) < 0
                        }).ToList();
             var bs1I = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                         .Where(w => w.Field<string>("stocktype").Trim() == "I" && !MyUtility.Check.Empty(w["qty"]))
-                       group b by new
-                       {
-                           poid = b.Field<string>("poid").Trim(),
-                           seq1 = b.Field<string>("seq1").Trim(),
-                           seq2 = b.Field<string>("seq2").Trim(),
-                           stocktype = b.Field<string>("stocktype").Trim(),
-                       }
+                        group b by new
+                        {
+                            poid = b.Field<string>("poid").Trim(),
+                            seq1 = b.Field<string>("seq1").Trim(),
+                            seq2 = b.Field<string>("seq2").Trim(),
+                            stocktype = b.Field<string>("stocktype").Trim(),
+                        }
                         into m
                         select new Prgs_POSuppDetailData
                         {
@@ -545,7 +545,8 @@ FOC                        ,
 EditName                   ,
 EditDate                   ,
 StockUnitID                ,
-StockQty
+StockQty                   ,
+Tone
 )
 select  t.TransferExport_DetailUkey,
         t.TransferExportID,
@@ -559,13 +560,13 @@ select  t.TransferExport_DetailUkey,
         '{Env.User.UserID}',
         getdate(),
         isnull(psdInv.StockUnit, ''),
-        t.Qty
+        t.Qty,
+        t.Tone
 from #tmp t
 inner join TransferExport_Detail ted with (nolock) on ted.Ukey = t.TransferExport_DetailUkey
 left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID and 
 													ted.InventorySeq1 = psdInv.SEQ1 and
 													ted.InventorySeq2 = psdinv.SEQ2
-
 ";
             if (this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["TransferExportID"])))
             {
@@ -663,6 +664,27 @@ left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID a
             // 取得 FtyInventory 資料
             DualResult result = Prgs.GetFtyInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtOriFtyInventory);
             string ids = string.Empty;
+
+            // 檢查 Transfer WK# factory warehouse team already confirmed
+            var detailFromTransferExport = this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["TransferExportID"]));
+            if (detailFromTransferExport.Any())
+            {
+                string whereTransferExportID = detailFromTransferExport.Select(s => $"'{s["TransferExportID"]}'").Distinct().JoinToString(",");
+                string sqlCheckTransferExportStatus = $@"select ID from TransferExport with (nolock) where ID in ({whereTransferExportID}) and FtyStatus <> 'New'";
+                result = DBProxy.Current.Select(null, sqlCheckTransferExportStatus, out DataTable dt);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                if (dt.Rows.Count > 0)
+                {
+                    string wks = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["ID"])).Distinct().JoinToString(",");
+                    MyUtility.Msg.WarningBox($"Transfer WK# factory warehouse team already confirmed, cannot UncConfirm transfer out record.\r\n{wks}");
+                    return;
+                }
+            }
 
             #region 檢查庫存項lock
             string sqlcmd = string.Format(
@@ -936,7 +958,7 @@ select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as se
 , p1.SizeSpec
 ,a.TransferExportID
 ,a.TransferExport_DetailUkey
-,ShadeboneTone2.Tone 
+    ,Tone = isnull(ShadeboneTone2.Tone, '')
 from dbo.TransferOut_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 left join View_WH_Orders o WITH (NOLOCK) on p1.ID = o.ID

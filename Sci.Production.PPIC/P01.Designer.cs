@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.btnComboType = new Sci.Win.UI.Button();
+            this.datePFETA = new Sci.Win.UI.DateBox();
+            this.label3 = new Sci.Win.UI.Label();
             this.btnIntendedDeliveryDate = new Sci.Win.UI.Button();
             this.dateKpiMNotice = new Sci.Win.UI.DateBox();
             this.labelKpiMNotice = new Sci.Win.UI.Label();
@@ -153,7 +156,6 @@
             this.labelDetailsStyleNo = new Sci.Win.UI.Label();
             this.labelDetailsSPNo = new Sci.Win.UI.Label();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.lineShape9 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape8 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape7 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape6 = new Microsoft.VisualBasic.PowerPacks.LineShape();
@@ -162,6 +164,7 @@
             this.txttpeuser5 = new Sci.Production.Class.Txttpeuser();
             this.PcHandleText = new Sci.Production.Class.Txttpeuser();
             this.txttpeuser4 = new Sci.Production.Class.Txttpeuser();
+            this.lineShape9 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelBuyer = new Sci.Win.UI.Label();
@@ -299,7 +302,6 @@
             this.chkKeepPanels = new Sci.Win.UI.CheckBox();
             this.btnQtyChangeList = new Sci.Win.UI.Button();
             this.BtnBuyBack = new Sci.Win.UI.Button();
-            this.btnComboType = new Sci.Win.UI.Button();
             this.displayBuyBackReason = new Sci.Win.UI.DisplayBox();
             this.chkNonRevenue = new Sci.Win.UI.CheckBox();
             this.chkHangerPack = new Sci.Win.UI.CheckBox();
@@ -326,9 +328,9 @@
             this.displayFabricType = new Sci.Win.UI.DisplayBox();
             this.displayConstruction = new Sci.Win.UI.DisplayBox();
             this.checkOrganicCotton = new Sci.Win.UI.CheckBox();
-            this.datePFETA = new Sci.Win.UI.DateBox();
-            this.label3 = new Sci.Win.UI.Label();
             this.shapeContainer7 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.checkBoxDirectShip = new Sci.Win.UI.CheckBox();
+            this.btn_ArtworkTestDox = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -338,8 +340,15 @@
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Location = new System.Drawing.Point(4, 24);
+            this.detail.Size = new System.Drawing.Size(1000, 691);
+            // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkBoxDirectShip);
+            this.detailcont.Controls.Add(this.btn_ArtworkTestDox);
             this.detailcont.Controls.Add(this.checkOrganicCotton);
             this.detailcont.Controls.Add(this.displayConstruction);
             this.detailcont.Controls.Add(this.displayFabricType);
@@ -356,7 +365,6 @@
             this.detailcont.Controls.Add(this.chkHangerPack);
             this.detailcont.Controls.Add(this.chkNonRevenue);
             this.detailcont.Controls.Add(this.displayBuyBackReason);
-            this.detailcont.Controls.Add(this.btnComboType);
             this.detailcont.Controls.Add(this.BtnBuyBack);
             this.detailcont.Controls.Add(this.btnQtyChangeList);
             this.detailcont.Controls.Add(this.chkKeepPanels);
@@ -494,13 +502,13 @@
             this.detailcont.Controls.Add(this.txtuser1);
             this.detailcont.Controls.Add(this.txttpeuser2);
             this.detailcont.Controls.Add(this.txttpeuser1);
-            this.detailcont.Size = new System.Drawing.Size(897, 395);
+            this.detailcont.Size = new System.Drawing.Size(1000, 691);
             this.detailcont.Title = "Gender";
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 395);
-            this.detailbtm.Size = new System.Drawing.Size(897, 0);
+            this.detailbtm.Location = new System.Drawing.Point(0, 691);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 0);
             // 
             // browse
             // 
@@ -537,6 +545,7 @@
             // 
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.Controls.Add(this.btnComboType);
             this.tabPage1.Controls.Add(this.datePFETA);
             this.tabPage1.Controls.Add(this.label3);
             this.tabPage1.Controls.Add(this.btnIntendedDeliveryDate);
@@ -673,6 +682,34 @@
             this.tabPage1.Size = new System.Drawing.Size(1000, 691);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
+            // 
+            // btnComboType
+            // 
+            this.btnComboType.Location = new System.Drawing.Point(6, 658);
+            this.btnComboType.Name = "btnComboType";
+            this.btnComboType.Size = new System.Drawing.Size(194, 27);
+            this.btnComboType.TabIndex = 239;
+            this.btnComboType.Text = "Combo Type";
+            this.btnComboType.UseVisualStyleBackColor = true;
+            this.btnComboType.Click += new System.EventHandler(this.BtnComboType_Click);
+            // 
+            // datePFETA
+            // 
+            this.datePFETA.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PFETA", true));
+            this.datePFETA.IsSupportEditMode = false;
+            this.datePFETA.Location = new System.Drawing.Point(163, 89);
+            this.datePFETA.Name = "datePFETA";
+            this.datePFETA.ReadOnly = true;
+            this.datePFETA.Size = new System.Drawing.Size(100, 21);
+            this.datePFETA.TabIndex = 17;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(5, 89);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(149, 21);
+            this.label3.TabIndex = 16;
+            this.label3.Text = "PF ETA";
             // 
             // btnIntendedDeliveryDate
             // 
@@ -1878,15 +1915,6 @@
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
-            // lineShape9
-            // 
-            this.lineShape9.BorderColor = System.Drawing.SystemColors.ControlDark;
-            this.lineShape9.Name = "lineShape9";
-            this.lineShape9.X1 = 0;
-            this.lineShape9.X2 = 987;
-            this.lineShape9.Y1 = 417;
-            this.lineShape9.Y2 = 417;
-            // 
             // lineShape8
             // 
             this.lineShape8.BorderColor = System.Drawing.SystemColors.ControlDark;
@@ -1959,6 +1987,15 @@
             this.txttpeuser4.Name = "txttpeuser4";
             this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser4.TabIndex = 7;
+            // 
+            // lineShape9
+            // 
+            this.lineShape9.BorderColor = System.Drawing.SystemColors.ControlDark;
+            this.lineShape9.Name = "lineShape9";
+            this.lineShape9.X1 = 0;
+            this.lineShape9.X2 = 987;
+            this.lineShape9.Y1 = 417;
+            this.lineShape9.Y2 = 417;
             // 
             // lineShape10
             // 
@@ -2334,7 +2371,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape3});
-            this.shapeContainer1.Size = new System.Drawing.Size(993, 678);
+            this.shapeContainer1.Size = new System.Drawing.Size(1000, 691);
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
             // 
@@ -3378,16 +3415,6 @@
             this.BtnBuyBack.UseVisualStyleBackColor = true;
             this.BtnBuyBack.Click += new System.EventHandler(this.BtnBuyBack_Click);
             // 
-            // btnComboType
-            // 
-            this.btnComboType.Location = new System.Drawing.Point(798, 651);
-            this.btnComboType.Name = "btnComboType";
-            this.btnComboType.Size = new System.Drawing.Size(194, 27);
-            this.btnComboType.TabIndex = 238;
-            this.btnComboType.Text = "Combo Type";
-            this.btnComboType.UseVisualStyleBackColor = true;
-            this.btnComboType.Click += new System.EventHandler(this.BtnComboType_Click);
-            // 
             // displayBuyBackReason
             // 
             this.displayBuyBackReason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -3653,24 +3680,6 @@
             this.checkOrganicCotton.Text = "Organic Cotton/Recycle Polyester/Recycle Nylon";
             this.checkOrganicCotton.UseVisualStyleBackColor = true;
             // 
-            // datePFETA
-            // 
-            this.datePFETA.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PFETA", true));
-            this.datePFETA.IsSupportEditMode = false;
-            this.datePFETA.Location = new System.Drawing.Point(163, 89);
-            this.datePFETA.Name = "datePFETA";
-            this.datePFETA.ReadOnly = true;
-            this.datePFETA.Size = new System.Drawing.Size(100, 21);
-            this.datePFETA.TabIndex = 17;
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(5, 89);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(149, 21);
-            this.label3.TabIndex = 16;
-            this.label3.Text = "PF ETA";
-            // 
             // shapeContainer7
             // 
             this.shapeContainer7.Location = new System.Drawing.Point(3, 3);
@@ -3679,6 +3688,29 @@
             this.shapeContainer7.Size = new System.Drawing.Size(994, 685);
             this.shapeContainer7.TabIndex = 8;
             this.shapeContainer7.TabStop = false;
+            // 
+            // checkBoxDirectShip
+            // 
+            this.checkBoxDirectShip.AutoSize = true;
+            this.checkBoxDirectShip.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DirectShip", true));
+            this.checkBoxDirectShip.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBoxDirectShip.Location = new System.Drawing.Point(709, 275);
+            this.checkBoxDirectShip.Name = "checkBoxDirectShip";
+            this.checkBoxDirectShip.Size = new System.Drawing.Size(86, 19);
+            this.checkBoxDirectShip.TabIndex = 255;
+            this.checkBoxDirectShip.Text = "Direct Ship";
+            this.checkBoxDirectShip.UseVisualStyleBackColor = true;
+            // 
+            // btn_ArtworkTestDox
+            // 
+            this.btn_ArtworkTestDox.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btn_ArtworkTestDox.Location = new System.Drawing.Point(798, 651);
+            this.btn_ArtworkTestDox.Name = "btn_ArtworkTestDox";
+            this.btn_ArtworkTestDox.Size = new System.Drawing.Size(194, 27);
+            this.btn_ArtworkTestDox.TabIndex = 255;
+            this.btn_ArtworkTestDox.Text = "Artwork Test Dox";
+            this.btn_ArtworkTestDox.UseVisualStyleBackColor = true;
+            this.btn_ArtworkTestDox.Click += new System.EventHandler(this.btn_ArtworkTestDox_Click);
             // 
             // P01
             // 
@@ -3986,7 +4018,6 @@
         private Win.UI.CheckBox chkKeepPanels;
         private Win.UI.Button btnQtyChangeList;
         private Win.UI.Button BtnBuyBack;
-        private Win.UI.Button btnComboType;
         private Win.UI.DisplayBox displayBuyBackReason;
         private Win.UI.DateBox dateKpiEachConsCheck;
         private Win.UI.Label labelKpiEachConsCheck;
@@ -4012,5 +4043,8 @@
         private Win.UI.DateBox datePFETA;
         private Win.UI.Label label3;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer7;
+        private Win.UI.CheckBox checkBoxDirectShip;
+        private Win.UI.Button btn_ArtworkTestDox;
+        private Win.UI.Button btnComboType;
     }
 }

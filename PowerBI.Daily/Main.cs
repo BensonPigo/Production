@@ -66,9 +66,7 @@ namespace PowerBI.Daily
         public Main()
         {
             InitializeComponent();
-            isAuto = false;
-            StartTime = DateTime.Now;
-            EndTime = DateTime.Now;
+            isAuto = false;       
         }
 
         public Main(String _isAuto)
@@ -86,6 +84,8 @@ namespace PowerBI.Daily
 
             OnRequery();
 
+            StartTime = DateTime.Now;
+            EndTime = DateTime.Now;
             //transferPMS.fromSystem = "PowerBI";
 
             if (isAuto)
@@ -159,6 +159,7 @@ namespace PowerBI.Daily
             {
                 return AsyncUpdateExport(conn, 0);
             });
+           
             endDate = DateTime.Now;
 
             // 手動才彈談窗顯示
@@ -187,7 +188,7 @@ namespace PowerBI.Daily
         #region Export/Update (非同步)
         private DualResult AsyncUpdateExport(SqlConnection conn, int type = 0)
         {
-            DualResult result = new DualResult(true);
+            DualResult result;
             try
             {
                 intHashCode = Guid.NewGuid().GetHashCode();
@@ -196,8 +197,7 @@ namespace PowerBI.Daily
             }
             catch (SqlException se)
             {
-                issucess = false;
-                return Ict.Result.F(se);
+                result = new DualResult(false, se);
             }
 
             return result;
@@ -213,7 +213,7 @@ namespace PowerBI.Daily
         /// <param name="endDate"></param>
         /// <param name="isTest"></param>
         /// <param name="succeeded"></param>
-        private void CallJobLogApi(string subject, string desc, string startDate, string endDate, bool isTest, bool succeeded)
+        private void CallJobLogApi(string subject, string desc, string startDate, string endDate, bool isTest, bool succeeded, Int64? procedureID = null)
         {
             JobLog jobLog = new JobLog()
             {
@@ -227,7 +227,8 @@ namespace PowerBI.Daily
                 Description = desc,
                 FileName = new List<string>(),
                 FilePath = string.Empty,
-                Succeeded = succeeded
+                Succeeded = succeeded,
+                ProcedureID = procedureID,
             };
             CallTPEWebAPI callTPEWebAPI = new CallTPEWebAPI(isTest);
             callTPEWebAPI.CreateJobLogAsnc(jobLog, null);
@@ -446,12 +447,12 @@ where   i.Name in ('P_Import_Capacity') and
                 return new DualResult(false, "Update failed!");
             }
 
-            return Ict.Result.True;
+            return new DualResult(true);
         }
 
         private void btnTestWebAPI_Click(object sender, EventArgs e)
         {
-          this.CallJobLogApi("Import BI Data", "PowerBI Update DB ", DateTime.Now.ToString("yyyyMMdd HH:mm:ss"), DateTime.Now.ToString("yyyyMMdd HH:mm:ss"), true, true);
+          this.CallJobLogApi("Import BI Data", "PowerBI Update DB ", DateTime.Now.ToString("yyyyMMdd HH:mm:ss"), DateTime.Now.ToString("yyyyMMdd HH:mm:ss"), false, true);
         }
 
         private void btnTestMail_Click(object sender, EventArgs e)

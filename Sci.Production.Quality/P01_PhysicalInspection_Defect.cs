@@ -319,7 +319,7 @@ order by a.FabricdefectID,a.FIR_PhysicalDetailUkey
 
             if (this.picList.Count() != 0)
             {
-                var frm = new Camera_ShowNew("Physical Defect Picture", this.picList.ToList(), Type: "ShowOnly");
+                var frm = new Camera_ShowNew("Physical Defect Picture", this.picList.ToList(), type: "ShowOnly");
                 frm.ShowDialog();
             }
         }

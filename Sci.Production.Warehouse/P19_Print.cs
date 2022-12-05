@@ -172,25 +172,42 @@ order by b.id, b.seq1, b.seq2, a.Dyelot, Len(a.Roll), a.Roll
             else
             {
                 string sql = $@"
-select
-	ToPOID,
-	ToSeq1,
-	ToSeq2,
-	Roll,
-	Dyelot,
-	[GW] = '',
-	Qty,	
-    [StockType]='',
-    [Location]='',
-    [ContainerCode] = '',
-    [Remark]='',
-	POID,
-	Seq1,
-	Seq2
-from TransferOut_Detail with (nolock)
-where ID = '{this.mainCurrentMaintain["ID"]}'
-order by Dyelot, Len(Roll), Roll
-";
+                select
+	                ToPOID,
+	                ToSeq1,
+	                ToSeq2,
+	                td.Roll,
+	                td.Dyelot,
+	                [GW] = '',
+	                td.Qty,	
+                    [StockType]='',
+                    [Location]='',
+                    [ContainerCode] = '',
+                    [Remark]='',
+	                td.POID,
+	                td.Seq1,
+	                td.Seq2,
+	                [TONGrp] = FIRT.TONGrp
+                from TransferOut_Detail td with (nolock)
+                left join FtyInventory a with (nolock) on td.POID = a.POID and
+										                    td.Seq1 = a.Seq1 and
+										                    td.Seq2 = a.Seq2 and
+										                    td.Dyelot = a.Dyelot and
+										                    td.Roll = a.Roll and
+										                    td.StockType = a.StockType
+                outer apply
+                (
+	                select Max(fs.Tone) as TONGrp from FIR f
+	                left join FIR_Shadebone fs on f.ID = fs.ID
+	                where f.POID = a.POID
+			                and f.SEQ1 = a.SEQ1
+			                and f.SEQ2 = a.SEQ2
+			                and fs.Roll = a.Roll
+			                and fs.Dyelot = a.Dyelot
+                )FIRT
+                where ID = '{this.mainCurrentMaintain["ID"]}'
+                order by Dyelot, Len(td.Roll), Roll
+                ";
                 DualResult result = DBProxy.Current.Select(null, sql, out this.dtResult);
                 if (!result)
                 {

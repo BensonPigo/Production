@@ -1172,15 +1172,26 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                     string cmd = $@"
 SET XACT_ABORT ON
 
-UPDATE b
-SET Image = NULL
-from ShippingMarkPic a 
-inner join SciPMSFile_ShippingMarkPic_Detail b on a.Ukey = b.ShippingMarkPicUkey
-where a.PackingListID IN ('{packingID}')
-";
-                    DBProxy.Current.Execute(null, cmd);
+delete from PMSFile.dbo.ShippingMarkPic_Detail
+where ShippingMarkPicUkey IN (
+    select ukey
+    from MainServer.Production.dbo.ShippingMarkPic
+    where PackingListID IN ('{packingID}')
+)
 
+delete from MainServer.Production.dbo.ShippingMarkPicUkey
+where ShippingMarkPicUkey IN (
+    select ukey
+    from ShippingMarkPic
+    where PackingListID IN ('{packingID}')
+)
+
+delete from MainServer.Production.dbo.ShippingMarkPic
+where PackingListID IN ('{packingID}')
+";
+                    DBProxy.Current.Execute("ManufacturingExecution", cmd);
                     this.ShowErr(ex);
+                    continue;
                 }
             }
 
@@ -1201,7 +1212,7 @@ where a.PackingListID IN ('{packingID}')
                 string finalSQL = string.Empty;
 
                 // SqlParameter上限是2100個，因此訂一個上限值，超過的話就分段
-                int sqlParameterLimit = 1000;
+                int sqlParameterLimit = 100;
                 int limitCounter = 0;
 
                 List<Task<DualResult>> dualResults = new List<Task<DualResult>>();
@@ -1221,7 +1232,7 @@ where a.PackingListID IN ('{packingID}')
                     limitCounter += 2;
                     if (limitCounter >= sqlParameterLimit || total == sQLs.Count)
                     {
-                        result = DBProxy.Current.Execute(null, finalSQL, para);
+                        result = DBProxy.Current.Execute("ManufacturingExecution", finalSQL, para);
                         if (!result)
                         {
                             //transactionscope.Dispose();
@@ -2094,15 +2105,15 @@ select a.PackingListID
 , b.Seq
 , [Rank]=RANK() OVER (PARTITION BY b.ShippingMarkPicUkey,b.SCICtnNo  ORDER BY b.Seq)
 INTO #tmp{counter}
-from ShippingMarkPic a with(nolock)
-inner join ShippingMarkPic_Detail b with(nolock) on a.Ukey = b.ShippingMarkPicUkey
+from MainServer.Production.dbo.ShippingMarkPic a with(nolock)
+inner join MainServer.Production.dbo.ShippingMarkPic_Detail b with(nolock) on a.Ukey = b.ShippingMarkPicUkey
 where a.PackingListID = '{packingListID}'  and b.SCICtnNo ='{sCICtnNo}'
 
 
 ----寫入圖片
 
 ----寫入圖片 (Image寫進PMSFile)
-UPDATE PmsFile
+/*UPDATE PmsFile
 SET PmsFile.Image=@Image{counter}
 FROM ShippingMarkPic_Detail sd 
 INNER JOIN SciPMSFile_ShippingMarkPic_Detail PmsFile on  sd.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
@@ -2113,12 +2124,28 @@ INNER JOIN #tmp{counter} t on sd.ShippingMarkPicUkey = t.ShippingMarkPicUkey
                     AND sd.ShippingMarkTypeUkey = t.ShippingMarkTypeUkey
                     AND sd.Seq = t.Seq
 WHERE t.Rank = {rank}
+*/
+update PmsFile
+SET Image = @Image{counter}
+from PMSFile.dbo.ShippingMarkPic_Detail PmsFile
+where exists (
+	select 1
+	from MainServer.Production.dbo.ShippingMarkPic_Detail sd
+	inner join #tmp{counter} t on sd.ShippingMarkPicUkey = t.ShippingMarkPicUkey 
+						AND sd.SCICtnNo = t.SCICtnNo 
+						AND sd.ShippingMarkTypeUkey = t.ShippingMarkTypeUkey
+						AND sd.Seq = t.Seq
+	where  sd.ShippingMarkPicUkey=PmsFile.ShippingMarkPicUkey 
+            AND sd.SCICtnNo=PmsFile.SCICtnNo 
+            AND sd.ShippingMarkTypeUkey=PmsFile.ShippingMarkTypeUkey 
+			and t.Rank = {rank}
+)
 
 ---- 更新P24表頭
 UPDATE s
 SET s.EditDate=GETDATE() , s.EditName='{Sci.Env.User.UserID}'
-FROM ShippingMarkPic s WITH(NOLOCK)
-INNER JOIN ShippingMarkPic_Detail sd WITH(NOLOCK) ON s.Ukey=sd.ShippingMarkPicUkey
+FROM MainServer.Production.dbo.ShippingMarkPic s WITH(NOLOCK)
+INNER JOIN MainServer.Production.dbo.ShippingMarkPic_Detail sd WITH(NOLOCK) ON s.Ukey=sd.ShippingMarkPicUkey
 INNER JOIN #tmp{counter} t on sd.ShippingMarkPicUkey = t.ShippingMarkPicUkey 
                     AND sd.SCICtnNo = t.SCICtnNo 
                     AND sd.ShippingMarkTypeUkey = t.ShippingMarkTypeUkey

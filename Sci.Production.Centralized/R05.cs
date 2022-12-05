@@ -10,6 +10,8 @@ using System.Configuration;
 using System.Linq;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Text;
+using System.Threading.Tasks;
+using System.Runtime;
 
 namespace Sci.Production.Centralized
 {
@@ -46,8 +48,7 @@ namespace Sci.Production.Centralized
         private bool Forecast;
         private bool FtyLocalOrder;
         private bool ExcludeSampleFactory;
-        private DataTable[] printData;
-        private DataTable[] dtAllData;
+        private DataTable[] dtAllData = new DataTable[3];
         private List<DataTable> Summarydt;
         private List<string> listFtyZone;
         private DataTable dtAllDetail;
@@ -87,7 +88,7 @@ namespace Sci.Production.Centralized
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
-            this.dtAllData = null;
+            this.dtAllData = new DataTable[3];
             this.Summarydt = new List<DataTable>();
             this.listFtyZone = new List<string>();
             string smmmaryDateCol = this.radioMonthly.Checked ? "SUBSTRING(Date,1,4)+'/'+SUBSTRING(Date,5,6)" : "DateByHalfMonth";
@@ -117,7 +118,8 @@ namespace Sci.Production.Centralized
             #region --由 appconfig 抓各個連線路徑
             this.SetLoadingText("Load connections... ");
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' }).Where(s => !s.Contains("testing_PMS")).ToArray();
+            List<string> strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' }).Where(s => !s.Contains("testing_PMS")).ToList();
+
             List<string> connectionString = new List<string>(); // ←主要是要重組 List connectionString
             foreach (string ss in strSevers)
             {
@@ -136,17 +138,17 @@ namespace Sci.Production.Centralized
 
             DualResult result = new DualResult(true);
 
-            foreach (string conString in connectionString)
+            List<DualResult> results = connectionString.AsParallel().WithDegreeOfParallelism(3).Select(conString =>
             {
                 SqlConnection conn;
                 using (conn = new SqlConnection(conString))
                 {
                     conn.Open();
-                    result = DBProxy.Current.SelectByConn(conn, sqlcmdSP.ToString().Substring(0, sqlcmdSP.Length - 1), null, out this.printData);
+                    result = DBProxy.Current.SelectByConn(conn, sqlcmdSP.ToString().Substring(0, sqlcmdSP.Length - 1), null, out DataTable[] printData);
 #if DEBUG
                     if (!result && result.ToString().Contains("has too many arguments specified"))
                     {
-                        continue;
+                        return result;
                     }
 #endif
                     if (!result)
@@ -155,20 +157,30 @@ namespace Sci.Production.Centralized
                         return failResult;
                     }
 
-                    if (this.printData != null && this.printData[0].Rows.Count > 0)
+                    lock (this.dtAllData)
                     {
-                        if (this.dtAllData == null)
+                        if (printData != null && printData[0].Rows.Count > 0)
                         {
-                            this.dtAllData = this.printData;
-                        }
-                        else
-                        {
-                            this.dtAllData[0].Merge(this.printData[0]);
-                            this.dtAllData[1].Merge(this.printData[1]);
-                            this.dtAllData[2].Merge(this.printData[2]);
+                            if (this.dtAllData[0] == null)
+                            {
+                                this.dtAllData = printData;
+                            }
+                            else
+                            {
+                                this.dtAllData[0].Merge(printData[0]);
+                                this.dtAllData[1].Merge(printData[1]);
+                                this.dtAllData[2].Merge(printData[2]);
+                            }
                         }
                     }
+
+                    return new DualResult(true);
                 }
+            }).ToList();
+
+            if (results.Any(s => !s))
+            {
+                return results.Where(s => !s).First();
             }
 
             if (this.dtAllData == null || this.dtAllData[0].Rows.Count == 0)
@@ -192,6 +204,7 @@ select Date
     , OrderShortageCPU = iif(TransFtyZone = '{ftyZone}', 0,  OrderShortageCPU)
     , TransFtyZone
     , BalanceExcludeCancelledStillNeedProd = iif(IsCancelNeedProduction  = 'Y', 0, OrderCPU - sum(SewingOutputCPU))
+    ,IsCancelNeedProduction
 into #tmp2_0
 from #tmp
 where (FtyZone = '{ftyZone}' or TransFtyZone = '{ftyZone}')
@@ -205,7 +218,7 @@ select  Date
     , BalanceIrregularCPU = sum(iif(BalanceCPU >= 0, 0, BalanceCPU))
     , [OrderShortageCPU] = sum(OrderShortageCPU)
     , [SubconOutCPU] = sum(iif(TransFtyZone = '{ftyZone}', OrderCPU, 0))
-    , BalanceExcludeCancelledStillNeedProd = sum(BalanceExcludeCancelledStillNeedProd)
+    ,BalanceExcludeCancelledStillNeedProd = sum(BalanceExcludeCancelledStillNeedProd) - (sum(iif(BalanceCPU >= 0, 0, BalanceCPU)))
 into #tmp2
 from #tmp2_0
 group by Date
@@ -362,9 +375,16 @@ drop table #tmp
 
             this.SetCount(this.dtAllData[0].Rows.Count);
 
+            // .net 4.5.1才可以用
+            // GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+            GC.Collect();
+
             this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = "Centralized_R05.xltx";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + excelFile); // 開excelapp
+            Excel.Application excelApp = new Excel.Application();
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + excelFile, excelApp);
+            com.ColumnsAutoFit = false;
+            com.TransferArray_Limit = 2500;
 
             // excelApp.Visible = true;
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
@@ -428,10 +448,9 @@ drop table #tmp
             }
 
             #region detail data
-            MyUtility.Excel.CopyToXls(this.dtAllDetail, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: excelApp, wSheet: excelApp.Sheets[this.listFtyZone.Count + 1], showExcel: false, DisplayAlerts_ForSaveFile: true);
+            ((Excel.Worksheet)excelApp.Sheets[this.listFtyZone.Count + 1]).Activate();
+            com.WriteTable(this.dtAllDetail, 2);
             worksheet = excelApp.ActiveWorkbook.Worksheets[this.listFtyZone.Count + 1]; // 取得工作表
-
-            worksheet.Columns.AutoFit();
 
             worksheet.Columns[1].ColumnWidth = 5.5;
             worksheet.Columns[2].ColumnWidth = 5.5;

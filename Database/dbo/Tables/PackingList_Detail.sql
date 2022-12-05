@@ -80,6 +80,8 @@
     ClogPackingErrorDate date null,
     ClogPackingErrorID varchar(8) not null constraint [DF_PackingList_Detail_ClogPackingErrorID] DEFAULT '',
     ClogPackingErrorQty smallint not null constraint [DF_PackingList_Detail_ClogPackingErrorQty] DEFAULT 0,
+    [ScanPackMDDate] DATETIME NULL, 
+    [ClogScanPackMDDate] DATETIME NULL, 
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -299,3 +301,20 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'包裝異�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'包裝異常的數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'ClogPackingErrorQty';
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'記錄第一次過MD的時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ScanPackMDDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'用來記錄第二次過MD的時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ClogScanPackMDDate'

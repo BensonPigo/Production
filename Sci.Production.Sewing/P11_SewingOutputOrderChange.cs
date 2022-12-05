@@ -23,20 +23,9 @@ namespace Sci.Production.Sewing
         /// <param name="dtDetail">dtDetail</param>
         /// <param name="userID">userID</param>
         /// <param name="isErrorReturnImmediate">isErrorReturnImmediate</param>
-        public P11_SewingOutputOrderChange(DataRow currentMaintain, DataTable dtDetail, string userID, bool isErrorReturnImmediate = true) : base(currentMaintain, dtDetail, userID, isErrorReturnImmediate)
+        public P11_SewingOutputOrderChange(DataRow currentMaintain, DataTable dtDetail, string userID, bool isErrorReturnImmediate = true)
+            : base(currentMaintain, dtDetail, userID, new DBProxyPMS(), isErrorReturnImmediate)
         {
-        }
-
-        /// <inheritdoc/>
-        public override DualResult ProcessWithDatatable(string conn, DataTable source, string tmp_columns, string sqlcmd, out DataTable[] result)
-        {
-            return MyUtility.Tool.ProcessWithDatatable(source, tmp_columns, sqlcmd, out result);
-        }
-
-        /// <inheritdoc/>
-        public override DualResult Select(string connname, string sqlCmd, IList<SqlParameter> sqlPars, out DataTable dtResult)
-        {
-            return DBProxy.Current.Select(connname, sqlCmd, sqlPars, out dtResult);
         }
     }
 }
