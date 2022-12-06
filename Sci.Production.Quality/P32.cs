@@ -2108,20 +2108,24 @@ WHERE ID = '{MaxSP}'
         private void CauculateTimesSPSEQ()
         {
             string sqlcmd = $@"
-select distinct cfa.id,OrderID,SEQ,AddDate
-from CFAInspectionRecord cfa
-inner join CFAInspectionRecord_OrderSEQ co on cfa.ID = co.ID
-where co.OrderID = '{this.topOrderID}' and co.SEQ = '{this.topSeq}'
-order by OrderID,AddDate asc
+select No = case x.no
+            when 1 then '1st'
+            when 2 then '2nd'
+            when 3 then '3rd'
+            else concat(x.no, 'th') end
+            + ' Insepetion'
+from(
+    select x.ID, no = ROW_NUMBER() over(order by AddDate)
+    from(
+        select distinct cfa.id,co.OrderID,co.SEQ,cfa.AddDate
+        from CFAInspectionRecord cfa
+        inner join CFAInspectionRecord_OrderSEQ co on cfa.ID = co.ID
+        where co.OrderID = '{this.topOrderID}' and co.SEQ = '{this.topSeq}'
+    )x
+)x
+where x.id = '{this.CurrentMaintain["ID"]}'
 ";
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return;
-            }
-
-            this.numTimes.Value = dt.Rows.Count;
+            this.labelTimes.Text = MyUtility.GetValue.Lookup(sqlcmd);
         }
     }
 
