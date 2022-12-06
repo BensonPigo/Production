@@ -85,6 +85,8 @@
             this.comboSewingTeam1 = new Sci.Production.Class.ComboSewingTeam(this.components);
             this.numInspectionFailCount = new Sci.Win.UI.NumericBox();
             this.txtPO = new Sci.Win.UI.TextBox();
+            this.numTimes = new Sci.Win.UI.NumericBox();
+            this.label11 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -104,6 +106,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numTimes);
+            this.masterpanel.Controls.Add(this.label11);
             this.masterpanel.Controls.Add(this.txtPO);
             this.masterpanel.Controls.Add(this.numInspectionFailCount);
             this.masterpanel.Controls.Add(this.comboSewingTeam1);
@@ -214,6 +218,8 @@
             this.masterpanel.Controls.SetChildIndex(this.comboSewingTeam1, 0);
             this.masterpanel.Controls.SetChildIndex(this.numInspectionFailCount, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtPO, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label11, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTimes, 0);
             // 
             // detailpanel
             // 
@@ -693,7 +699,7 @@
             this.labelStatus.BackColor = System.Drawing.Color.Transparent;
             this.labelStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
             this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.labelStatus.Location = new System.Drawing.Point(630, 6);
+            this.labelStatus.Location = new System.Drawing.Point(826, 8);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(125, 25);
             this.labelStatus.TabIndex = 69;
@@ -779,6 +785,8 @@
             this.gridSpSeq.AllowUserToAddRows = false;
             this.gridSpSeq.AllowUserToDeleteRows = false;
             this.gridSpSeq.AllowUserToResizeRows = false;
+            this.gridSpSeq.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gridSpSeq.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridSpSeq.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridSpSeq.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -859,6 +867,37 @@
             this.txtPO.Size = new System.Drawing.Size(100, 23);
             this.txtPO.TabIndex = 81;
             this.txtPO.Validating += new System.ComponentModel.CancelEventHandler(this.TxtPO_Validating);
+            // 
+            // numTimes
+            // 
+            this.numTimes.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTimes.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTimes.IsSupportEditMode = false;
+            this.numTimes.Location = new System.Drawing.Point(649, 11);
+            this.numTimes.MaxLength = 7;
+            this.numTimes.Name = "numTimes";
+            this.numTimes.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTimes.ReadOnly = true;
+            this.numTimes.Size = new System.Drawing.Size(65, 23);
+            this.numTimes.TabIndex = 83;
+            this.numTimes.TabStop = false;
+            this.numTimes.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label11
+            // 
+            this.label11.Location = new System.Drawing.Point(604, 11);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(42, 23);
+            this.label11.TabIndex = 82;
+            this.label11.Text = "Times";
             // 
             // P32
             // 
@@ -959,5 +998,7 @@
         private Class.ComboSewingTeam comboSewingTeam1;
         private Win.UI.NumericBox numInspectionFailCount;
         private Win.UI.TextBox txtPO;
+        private Win.UI.NumericBox numTimes;
+        private Win.UI.Label label11;
     }
 }

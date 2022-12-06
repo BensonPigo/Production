@@ -124,6 +124,8 @@ namespace Sci.Production.Quality
 
             this.CalInsepectionCtn(this.IsDetailInserting, MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]));
 
+            this.CauculateTimesSPSEQ();
+
             this.txtSpSeq.TextBoxSPBinding = this.topOrderID;
 
             this.txtSpSeq.TextBoxSeqBinding = this.topSeq;
@@ -151,7 +153,6 @@ namespace Sci.Production.Quality
             this.gridSpSeq.DataSource = null;
             this.gridSpSeq.DataSource = dt_GridSpSeq;
             #endregion 欄位設定
-
 
             this.numInspectionFailCount.Text = MyUtility.Check.Empty(this.CurrentMaintain["InspectionFailCount"]) ? string.Empty : this.CurrentMaintain["InspectionFailCount"].ToString();
         }
@@ -2102,6 +2103,25 @@ WHERE ID = '{MaxSP}'
             {
                 this.CurrentMaintain["InspectionFailCount"] = 0;
             }
+        }
+
+        private void CauculateTimesSPSEQ()
+        {
+            string sqlcmd = $@"
+select distinct cfa.id,OrderID,SEQ,AddDate
+from CFAInspectionRecord cfa
+inner join CFAInspectionRecord_OrderSEQ co on cfa.ID = co.ID
+where co.OrderID = '{this.topOrderID}' and co.SEQ = '{this.topSeq}'
+order by OrderID,AddDate asc
+";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.numTimes.Value = dt.Rows.Count;
         }
     }
 
