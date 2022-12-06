@@ -73,16 +73,19 @@ namespace Sci.Production.Quality
                 // 將存在DefectFilterTb的資料填入Grid
                 #region 填入對的位置 % 去找位置
                 string strT2 = string.Empty;
-                string sqlcmd = $@"
+                if (ary.Length > 0)
+                {
+                    string sqlcmd = $@"
 select 1 
 from FIR_Physical_Defect_Realtime t
 where FIR_PhysicalDetailUkey = {this.CurrentData["DetailUkey"]}
-and t.Yards between (select Data from SplitString('{ary[0]["DefectRecord"].ToString()}','-') where no = '1')　
-and (select Data from SplitString('{ary[0]["DefectRecord"].ToString()}','-') where no = '2')　
+and CONVERT(int, t.Yards) between (select Data from SplitString('{ary[0]["DefectLocation"].ToString()}','-') where no = '1')　
+and (select Data from SplitString('{ary[0]["DefectLocation"].ToString()}','-') where no = '2')　
 and t.T2 = 1";
-                if (!MyUtility.Check.Seek(sqlcmd))
-                {
-                    strT2 = "-T2";
+                    if (MyUtility.Check.Seek(sqlcmd))
+                    {
+                        strT2 = "-T2";
+                    }
                 }
 
                 // 新增一筆從頭開始

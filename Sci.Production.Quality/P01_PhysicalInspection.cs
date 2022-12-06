@@ -1423,10 +1423,10 @@ drop table #tmp
 select 1 
 from FIR_Physical_Defect_Realtime t
 where FIR_PhysicalDetailUkey = {dtGrid.Rows[rowcount - 1]["detailUkey"]}
-and t.Yards between (select Data from SplitString('{dtDefect.Rows[pDrowcount - 1]["DefectRecord"]}','-') where no = '1')　
-and (select Data from SplitString('{dtDefect.Rows[pDrowcount - 1]["DefectRecord"]}','-') where no = '2')　
+and CONVERT(int, t.Yards) between (select Data from SplitString('{dtDefect.Rows[pDrowcount - 1]["DefectLocation"]}','-') where no = '1')　
+and (select Data from SplitString('{dtDefect.Rows[pDrowcount - 1]["DefectLocation"]}','-') where no = '2')　
 and t.T2 = 1";
-                            string strT2 = !MyUtility.Check.Seek(sqlcmd) ? "-T2" : string.Empty;
+                            string strT2 = MyUtility.Check.Seek(sqlcmd) ? "-T2" : string.Empty;
                             excel.Cells[21 + (i * 8) + addline, ii - (nextline * 10)] = dtDefect.Rows[pDrowcount - 1]["DefectRecord"] + strT2;
                         }
                     }
