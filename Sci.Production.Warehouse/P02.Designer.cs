@@ -393,7 +393,7 @@
             this.displayContainerType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayContainerType.Location = new System.Drawing.Point(98, 141);
             this.displayContainerType.Name = "displayContainerType";
-            this.displayContainerType.Size = new System.Drawing.Size(30, 23);
+            this.displayContainerType.Size = new System.Drawing.Size(120, 23);
             this.displayContainerType.TabIndex = 14;
             // 
             // displayShipModeID
