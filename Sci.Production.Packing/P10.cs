@@ -11,6 +11,7 @@ using System.Transactions;
 using Sci.Production.PublicPrg;
 using System.Linq;
 using System.Data.SqlClient;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Packing
 {
@@ -110,10 +111,6 @@ from (
     and a.MDivisionID = '{0}' 
     and (a.Type = 'B' or a.Type = 'L')
 	and b.CTNQty=1
-    and (HaulingDate is null or
-        (HaulingDate is not null
-         and PackingAuditStatus ='Pass'
-         and MDStatus ='Pass'))
 ", Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtSP.Text))
             {
@@ -220,20 +217,20 @@ ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
                                     List<SqlParameter> sqlParameters = new List<SqlParameter>();
                                     if (sl.Count > 1 && sl[1].Length > 13)
                                     {
-                                        dr["PackingListID"] = sl[1].Substring(0, 13);
-                                        dr["CTNStartNo"] = sl[1].Substring(13, sl[1].Length - 13).TrimStart('^');
-                                        sqlParameters.Add(new SqlParameter("@ID", dr["PackingListID"]));
-                                        sqlParameters.Add(new SqlParameter("@CTNStartNo", dr["CTNStartNo"]));
+                                        sqlParameters.Add(new SqlParameter("@ID", sl[1].Substring(0, 13)));
+                                        sqlParameters.Add(new SqlParameter("@CTNStartNo", sl[1].Substring(13, sl[1].Length - 13).TrimStart('^')));
+                                        sqlParameters.Add(new SqlParameter("@SCICtnNo", sl[1].GetPackScanContent()));
                                         sqlCmd = @"
 select  pd.OrderID
         , pd.OrderShipmodeSeq  
         , p.MDivisionID
         , pd.TransferDate
         , pd.SCICtnNo
+        , pd.ID
+        , pd.CTNStartNo
 from    PackingList_Detail pd WITH (NOLOCK) 
 inner join PackingList p WITH (NOLOCK) on pd.id = p.id
-where   pd.ID = @ID
-        and pd.CTNStartNo = @CTNStartNo
+where   ((pd.ID = @ID and pd.CTNStartNo = @CTNStartNo) or pd.SCICtnNo = @SCICtnNo) 
         and pd.CTNQty > 0 
         and pd.DisposeFromClog= 0
         and ((
@@ -260,7 +257,8 @@ where   pd.ID = @ID
                                             continue;
                                         }
                                         #endregion
-
+                                        dr["PackingListID"] = seekData["ID"].ToString().Trim();
+                                        dr["CTNStartNo"] = seekData["CTNStartNo"].ToString().Trim();
                                         dr["OrderID"] = seekData["OrderID"].ToString().Trim();
                                         dr["SCICtnNo"] = seekData["SCICtnNo"].ToString().Trim();
                                         string seq = seekData["OrderShipmodeSeq"].ToString().Trim();

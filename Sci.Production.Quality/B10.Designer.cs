@@ -51,6 +51,7 @@
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
+            this.radioOption3 = new Sci.Win.UI.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -94,7 +95,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(712, 464);
+            this.browse.Size = new System.Drawing.Size(712, 441);
             // 
             // tabs
             // 
@@ -102,13 +103,14 @@
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.radioOption3);
             this.radioPanel1.Controls.Add(this.radioOption1);
             this.radioPanel1.Controls.Add(this.radioOption2);
             this.radioPanel1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PointRateOption", true));
             this.radioPanel1.Location = new System.Drawing.Point(164, 63);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.ReadOnly = true;
-            this.radioPanel1.Size = new System.Drawing.Size(189, 28);
+            this.radioPanel1.Size = new System.Drawing.Size(268, 28);
             this.radioPanel1.TabIndex = 8;
             this.radioPanel1.ValueChanged += new System.EventHandler(this.RadioPanel1_ValueChanged);
             // 
@@ -349,6 +351,19 @@
             this.label7.TabIndex = 13;
             this.label7.Text = "Skewness Option";
             // 
+            // radioOption3
+            // 
+            this.radioOption3.AutoCheck = false;
+            this.radioOption3.AutoSize = true;
+            this.radioOption3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.radioOption3.Location = new System.Drawing.Point(173, 4);
+            this.radioOption3.Name = "radioOption3";
+            this.radioOption3.Size = new System.Drawing.Size(76, 21);
+            this.radioOption3.TabIndex = 2;
+            this.radioOption3.Text = "Option3";
+            this.radioOption3.UseVisualStyleBackColor = true;
+            this.radioOption3.Value = "3";
+            // 
             // B10
             // 
             this.ClientSize = new System.Drawing.Size(720, 503);
@@ -407,5 +422,6 @@
         private Win.UI.Label label6;
         private Win.UI.Label label7;
         private Win.UI.RadioButton SkewnessOption3;
+        private Win.UI.RadioButton radioOption3;
     }
 }

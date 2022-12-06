@@ -24,6 +24,7 @@ namespace Sci.Production.Quality
         private readonly string keyWord = Env.User.Keyword;
         private string excelFile = string.Empty;
         private DataTable Fir_physical_Defect;
+        private string FirID;
 
         /// <inheritdoc/>
         public P01_PhysicalInspection(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
@@ -36,7 +37,7 @@ namespace Sci.Production.Quality
             this.txtuserApprover.TextBox1.IsSupportEditMode = false;
             this.txtuserApprover.TextBox1.ReadOnly = true;
             this.maindr = mainDr;
-            this.textID.Text = keyvalue1;
+            this.FirID = keyvalue1;
             this.QueryHeader();
         }
 
@@ -204,6 +205,11 @@ namespace Sci.Production.Quality
             double actualYdsT = Math.Floor(MyUtility.Convert.GetDouble(this.CurrentData["ActualYds"]) - 0.01);
             double actualWidth = MyUtility.Convert.GetDouble(this.CurrentData["actualwidth"]);
             double actualYdsF = actualYdsT - (actualYdsT % 5);
+            double cutWidth = MyUtility.Convert.GetDouble(MyUtility.GetValue.Lookup($@"
+select width
+from Fabric 
+inner join Fir on Fabric.SCIRefno = fir.SCIRefno
+where Fir.ID = '{this.FirID}'"));
             double def_locT = 0d;
             double def_locF = 0d;
 
@@ -261,9 +267,24 @@ namespace Sci.Production.Quality
             DataRow drPoint;
             string pointRateID = MyUtility.Check.Seek($@"select * from QABrandSetting where Brandid='{this.displayBrand.Text}'", out drPoint) ? drPoint["PointRateOption"].ToString() : "1";
 
-            this.CurrentData["PointRate"] = (pointRateID == "2") ?
-                ((double_ActualYds == 0 || actualWidth == 0) ? 0 : Math.Round((sumPoint * 3600) / (double_ActualYds * actualWidth), 2)) :
-                (double_ActualYds == 0) ? 0 : Math.Round((sumPoint / double_ActualYds) * 100, 2);
+            decimal pointRate = 0;
+            switch (pointRateID)
+            {
+                case "1":
+                    pointRate = (double_ActualYds == 0) ? 0 : MyUtility.Convert.GetDecimal(Math.Round((sumPoint / double_ActualYds) * 100, 2));
+                    break;
+                case "2":
+                    pointRate = (double_ActualYds == 0 || actualWidth == 0) ? 0 : MyUtility.Convert.GetDecimal(Math.Round((sumPoint * 3600) / (double_ActualYds * actualWidth), 2));
+                    break;
+                case "3":
+                    pointRate = (double_ActualYds == 0 || cutWidth == 0) ? 0 : MyUtility.Convert.GetDecimal(Math.Round((sumPoint * 3600) / (double_ActualYds * cutWidth), 2));
+                    break;
+                default:
+                    pointRate = 0;
+                    break;
+            }
+
+            this.CurrentData["PointRate"] = pointRate;
 
             #endregion
 
@@ -1074,7 +1095,7 @@ and not exists
 
             // FIR_Physical_Defect DB
             DataTable dt;
-            if (result = DBProxy.Current.Select("Production", string.Format("select * from FIR_Physical A WITH (NOLOCK) left JOIN FIR_Physical_Defect B WITH (NOLOCK) ON A.DetailUkey = B.FIR_PhysicalDetailUKey WHERE A.ID='{0}'", this.textID.Text), out dt))
+            if (result = DBProxy.Current.Select("Production", string.Format("select * from FIR_Physical A WITH (NOLOCK) left JOIN FIR_Physical_Defect B WITH (NOLOCK) ON A.DetailUkey = B.FIR_PhysicalDetailUKey WHERE A.ID='{0}'", this.FirID), out dt))
             {
                 if (dt.Rows.Count < 1)
                 {
@@ -1085,7 +1106,7 @@ and not exists
 
             DataTable dt1;
             if (result = DBProxy.Current.Select("Production", string.Format(
-               "select Roll,Dyelot,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID,B.TotalInspYds,B.ArriveQty,B.PhysicalEncode  from FIR_Physical a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", this.textID.Text), out dt1))
+               "select Roll,Dyelot,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID,B.TotalInspYds,B.ArriveQty,B.PhysicalEncode  from FIR_Physical a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", this.FirID), out dt1))
             {
                 if (dt1.Rows.Count <= 0)
                 {
@@ -1105,7 +1126,7 @@ and not exists
             }
 
             DataTable dtSumQty;
-            if (result = DBProxy.Current.Select("Production", string.Format("select sum(ticketYds) as TotalTicketYds from FIR_Physical WITH (NOLOCK) where id='{0}'", this.textID.Text), out dtSumQty))
+            if (result = DBProxy.Current.Select("Production", string.Format("select sum(ticketYds) as TotalTicketYds from FIR_Physical WITH (NOLOCK) where id='{0}'", this.FirID), out dtSumQty))
             {
                 if (dtSumQty.Rows.Count <= 0)
                 {
@@ -1210,7 +1231,7 @@ from Production.dbo.FIR_Physical fp
 left join Receiving_Detail rd on rd.PoId = '{this.maindr["POID"]}' 
 and rd.Seq1 = '{this.maindr["Seq1"]}' and rd.Seq2= '{this.maindr["Seq2"]}'
 and fp.Roll = rd.Roll and fp.Dyelot = rd.Dyelot
-where fp.id = {this.textID.Text}";
+where fp.id = {this.FirID}";
                 if (result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtGrid))
                 {
                     gridCounts = dtGrid.Rows.Count;
@@ -1456,7 +1477,7 @@ from FIR_Physical a WITH (NOLOCK)
 left join FIR_Shadebone b WITH (NOLOCK) on a.ID=b.ID and a.Roll=b.Roll
 left join FIR_Weight c WITH (NOLOCK) on a.ID=c.ID and a.Roll=c.Roll
 left join FIR_Continuity d WITH (NOLOCK) on a.id=d.ID and a.Roll=d.roll
-where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", this.textID.Text, dtGrid.Rows[rowcount - 1]["Roll"].ToString()), out dtcombo))
+where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", this.FirID, dtGrid.Rows[rowcount - 1]["Roll"].ToString()), out dtcombo))
                 {
                     if (dtcombo.Rows.Count < 1)
                     {
