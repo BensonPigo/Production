@@ -499,11 +499,6 @@ drop table #tmp
             worksheet.Columns[46].ColumnWidth = 60;
             #endregion
 
-            #region 移除 CD Code
-            worksheet = excelApp.ActiveWorkbook.Worksheets[2];
-            worksheet.get_Range("AM:AM").EntireColumn.Delete();
-            #endregion
-
             excelApp.Visible = true;
             this.HideWaitMessage();
             return true;
