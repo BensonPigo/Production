@@ -29,16 +29,16 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.labFactory = new Sci.Win.UI.Label();
-            this.labM = new Sci.Win.UI.Label();
             this.txtstyle1 = new Sci.Production.Class.Txtstyle();
             this.txtbrand1 = new Sci.Production.Class.Txtbrand();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
             this.txtSeason = new Sci.Win.UI.TextBox();
             this.comboFactory1 = new Sci.Production.Class.ComboFactory(this.components);
             this.comboMDivision1 = new Sci.Production.Class.ComboMDivision(this.components);
+            this.labelWKNoETA = new Sci.Win.UI.Label();
+            this.labelETA = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -69,28 +69,12 @@
             this.txtVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtVersion.Location = new System.Drawing.Point(326, 48);
             // 
-            // labFactory
-            // 
-            this.labFactory.Location = new System.Drawing.Point(9, 122);
-            this.labFactory.Name = "labFactory";
-            this.labFactory.Size = new System.Drawing.Size(101, 23);
-            this.labFactory.TabIndex = 100;
-            this.labFactory.Text = "Factory";
-            // 
-            // labM
-            // 
-            this.labM.Location = new System.Drawing.Point(9, 93);
-            this.labM.Name = "labM";
-            this.labM.Size = new System.Drawing.Size(101, 23);
-            this.labM.TabIndex = 99;
-            this.labM.Text = "M";
-            // 
             // txtstyle1
             // 
             this.txtstyle1.BackColor = System.Drawing.Color.White;
             this.txtstyle1.BrandObjectName = null;
             this.txtstyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle1.Location = new System.Drawing.Point(113, 35);
+            this.txtstyle1.Location = new System.Drawing.Point(113, 36);
             this.txtstyle1.Name = "txtstyle1";
             this.txtstyle1.Size = new System.Drawing.Size(130, 23);
             this.txtstyle1.TabIndex = 5;
@@ -105,30 +89,6 @@
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(66, 23);
             this.txtbrand1.TabIndex = 6;
-            // 
-            // label6
-            // 
-            this.label6.Location = new System.Drawing.Point(9, 35);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(101, 23);
-            this.label6.TabIndex = 134;
-            this.label6.Text = "Style";
-            // 
-            // label7
-            // 
-            this.label7.Location = new System.Drawing.Point(9, 64);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(101, 23);
-            this.label7.TabIndex = 135;
-            this.label7.Text = "Brand";
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(9, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(101, 23);
-            this.label1.TabIndex = 137;
-            this.label1.Text = "Season";
             // 
             // txtSeason
             // 
@@ -172,53 +132,123 @@
             this.comboMDivision1.Size = new System.Drawing.Size(95, 24);
             this.comboMDivision1.TabIndex = 140;
             // 
+            // labelWKNoETA
+            // 
+            this.labelWKNoETA.Location = new System.Drawing.Point(9, 9);
+            this.labelWKNoETA.Name = "labelWKNoETA";
+            this.labelWKNoETA.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelWKNoETA.RectStyle.BorderWidth = 1F;
+            this.labelWKNoETA.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.labelWKNoETA.RectStyle.ExtBorderWidth = 1F;
+            this.labelWKNoETA.Size = new System.Drawing.Size(101, 23);
+            this.labelWKNoETA.TabIndex = 141;
+            this.labelWKNoETA.Text = "Season";
+            this.labelWKNoETA.TextStyle.BorderColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.labelWKNoETA.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // labelETA
+            // 
+            this.labelETA.Location = new System.Drawing.Point(9, 36);
+            this.labelETA.Name = "labelETA";
+            this.labelETA.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelETA.RectStyle.BorderWidth = 1F;
+            this.labelETA.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelETA.RectStyle.ExtBorderWidth = 1F;
+            this.labelETA.Size = new System.Drawing.Size(101, 23);
+            this.labelETA.TabIndex = 142;
+            this.labelETA.Text = "Style";
+            this.labelETA.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelETA.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(9, 64);
+            this.label1.Name = "label1";
+            this.label1.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.RectStyle.BorderWidth = 1F;
+            this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label1.RectStyle.ExtBorderWidth = 1F;
+            this.label1.Size = new System.Drawing.Size(101, 23);
+            this.label1.TabIndex = 143;
+            this.label1.Text = "Brand";
+            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(9, 93);
+            this.label2.Name = "label2";
+            this.label2.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label2.RectStyle.BorderWidth = 1F;
+            this.label2.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label2.RectStyle.ExtBorderWidth = 1F;
+            this.label2.Size = new System.Drawing.Size(101, 23);
+            this.label2.TabIndex = 144;
+            this.label2.Text = "M";
+            this.label2.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label2.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(9, 123);
+            this.label3.Name = "label3";
+            this.label3.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label3.RectStyle.BorderWidth = 1F;
+            this.label3.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label3.RectStyle.ExtBorderWidth = 1F;
+            this.label3.Size = new System.Drawing.Size(101, 23);
+            this.label3.TabIndex = 145;
+            this.label3.Text = "Factory";
+            this.label3.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label3.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // R12
             // 
             this.ClientSize = new System.Drawing.Size(538, 177);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labelETA);
+            this.Controls.Add(this.labelWKNoETA);
             this.Controls.Add(this.comboMDivision1);
             this.Controls.Add(this.comboFactory1);
             this.Controls.Add(this.txtSeason);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
             this.Controls.Add(this.txtbrand1);
             this.Controls.Add(this.txtstyle1);
-            this.Controls.Add(this.labFactory);
-            this.Controls.Add(this.labM);
             this.Name = "R12";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
-            this.Text = "R12. Marker list detail";
+            this.Text = "R12. Marker List Detail";
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.labM, 0);
-            this.Controls.SetChildIndex(this.labFactory, 0);
             this.Controls.SetChildIndex(this.txtstyle1, 0);
             this.Controls.SetChildIndex(this.txtbrand1, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.label7, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.txtSeason, 0);
             this.Controls.SetChildIndex(this.comboFactory1, 0);
             this.Controls.SetChildIndex(this.comboMDivision1, 0);
+            this.Controls.SetChildIndex(this.labelWKNoETA, 0);
+            this.Controls.SetChildIndex(this.labelETA, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.label3, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-        private Win.UI.Label labFactory;
-        private Win.UI.Label labM;
         private Class.Txtstyle txtstyle1;
         private Class.Txtbrand txtbrand1;
-        private Win.UI.Label label6;
-        private Win.UI.Label label7;
-        private Win.UI.Label label1;
         private Win.UI.TextBox txtSeason;
         private Class.ComboFactory comboFactory1;
         private Class.ComboMDivision comboMDivision1;
+        private Win.UI.Label labelWKNoETA;
+        private Win.UI.Label labelETA;
+        private Win.UI.Label label1;
+        private Win.UI.Label label2;
+        private Win.UI.Label label3;
     }
 }

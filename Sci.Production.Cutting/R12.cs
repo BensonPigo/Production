@@ -104,13 +104,13 @@ Cast(
 	as numeric(20,4)
 )
 ,m.ActFtyMarker
-,[CO] = (select Name from DropDownList where Type = 'NewCO_Type' and ID = s.CDCodeNew)
+,[CO] = (select Name from DropDownList where Type = 'NewCO_Type' and ID = s.NEWCO)
 ,[MarkMarker] = (select ID + '-' + Name from TPEPass1 where ID = m.MarkerName)
 ,[MR]  = (select ID + '-' + Name from TPEPass1 where ID = sm.MR)
 ,ActFinDate = MAX(m.ActFinDate)
 from Orders o
 left join Style s on s.Ukey = o.StyleUkey
-left join Marker m on  m.StyleUkey = o.StyleUkey
+inner join Marker m on  m.StyleUkey = o.StyleUkey
 left join Marker_ML ml on ml.MarkerUkey = m.UKey 
 left join Marker_ML_SizeQty mls on mls.MarkerUkey = m.UKey and mls.MarkerName = ml.MarkerName
 left join SMNotice sm on sm.ID = m.ID
@@ -119,10 +119,10 @@ left join Fabric f on f.SCIRefno = ml.SCIRefno
 left join Style_BOF sb on sb.StyleUkey = s.Ukey and sb.FabricCode = ml.FabricCode
 where  1=1
 {where}
-group by m.BrandID,m.SeasonID,s.ProgramID,s.CDCodeNew,s.ApparelType,smd.PhaseID,m.MarkerNo
+group by m.BrandID,m.SeasonID,s.ProgramID,s.NEWCO,s.ApparelType,smd.PhaseID,m.MarkerNo
 ,s.ID,mls.SizeCode,mls.MarkerName,sb.Refno,ml.FabricPanelCode,f.WeightM2,mls.Qty
 ,ml.MarkerLength,ml.Width,ml.Efficiency,ml.ConsPC,ml.OneTwoWay,ml.ActCuttingPerimeter
-,m.ActFtyMarker, s.CDCodeNew,sm.MR,m.MarkerName,sb.MatchFabric
+,m.ActFtyMarker, sm.MR,m.MarkerName,sb.MatchFabric,s.CDCodeNew
 ");
 
             return base.ValidateInput();
