@@ -1426,8 +1426,17 @@ where FIR_PhysicalDetailUkey = {dtGrid.Rows[rowcount - 1]["detailUkey"]}
 and CONVERT(int, t.Yards) between (select Data from SplitString('{dtDefect.Rows[pDrowcount - 1]["DefectLocation"]}','-') where no = '1')　
 and (select Data from SplitString('{dtDefect.Rows[pDrowcount - 1]["DefectLocation"]}','-') where no = '2')　
 and t.T2 = 1";
+                            DataTable dtSelect = dtDefect.Clone();
+                            dtSelect.ImportRow(dtDefect.Rows[pDrowcount - 1]);
                             string strT2 = MyUtility.Check.Seek(sqlcmd) ? "-T2" : string.Empty;
-                            excel.Cells[21 + (i * 8) + addline, ii - (nextline * 10)] = dtDefect.Rows[pDrowcount - 1]["DefectRecord"] + strT2;
+                            if (dtDefect.Rows[pDrowcount - 1]["DefectRecord"].ToString().IndexOf('/') != -1)
+                            {
+                                excel.Cells[21 + (i * 8) + addline, ii - (nextline * 10)] = P01_PhysicalInspection_Defect.GetNewDefectRecord_T2(dtSelect);
+                            }
+                            else
+                            {
+                                excel.Cells[21 + (i * 8) + addline, ii - (nextline * 10)] = dtDefect.Rows[pDrowcount - 1]["DefectRecord"] + strT2;
+                            }
                         }
                     }
                 }

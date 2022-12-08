@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Globalization;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Quality
 {
@@ -70,6 +71,7 @@ namespace Sci.Production.Quality
                 }
 
                 DataRow[] ary = this.DefectFilterTb.Select(string.Format("DefectLocationF >= {0} and DefectLocationT <= {1}", Convert.ToInt32(cStr.Split('-')[0]), Convert.ToInt32(cStr.Split('-')[1])));
+                DataTable dtary = this.DefectFilterTb.Select(string.Format("DefectLocationF >= {0} and DefectLocationT <= {1}", Convert.ToInt32(cStr.Split('-')[0]), Convert.ToInt32(cStr.Split('-')[1]))).TryCopyToDataTable(this.DefectFilterTb);
 
                 // 將存在DefectFilterTb的資料填入Grid
                 #region 填入對的位置 % 去找位置
@@ -100,7 +102,7 @@ and t.T2 = 1";
                         // 如果有多筆,那要拆開檢查並塞入T2
                         if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
                         {
-                            ndr["def1"] = this.GetNewDefectRecord_T2(ary);
+                            ndr["def1"] = GetNewDefectRecord_T2(dtary);
                         }
                         else
                         {
@@ -124,7 +126,7 @@ and t.T2 = 1";
                         // 如果有多筆,那要拆開檢查並塞入T2
                         if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
                         {
-                            dr["def2"] = this.GetNewDefectRecord_T2(ary);
+                            dr["def2"] = GetNewDefectRecord_T2(dtary);
                         }
                         else
                         {
@@ -144,7 +146,7 @@ and t.T2 = 1";
                         // 如果有多筆,那要拆開檢查並塞入T2
                         if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
                         {
-                            dr["def3"] = this.GetNewDefectRecord_T2(ary);
+                            dr["def3"] = GetNewDefectRecord_T2(dtary);
                         }
                         else
                         {
@@ -167,18 +169,18 @@ and t.T2 = 1";
         /// </summary>
         /// <param name="drAry">DataRow</param>
         /// <returns>New DefectRecord 包含-T2</returns>
-        private string GetNewDefectRecord_T2(DataRow[] drAry)
+        public static string GetNewDefectRecord_T2(DataTable dtAry)
         {
             string newDefectRecord = string.Empty;
-            string[] split = drAry[0]["DefectRecord"].ToString().Split('/');
+            string[] split = dtAry.Rows[0]["DefectRecord"].ToString().Split('/');
             foreach (var item in split)
             {
                 string sqlchk = $@"
 select 1
 from FIR_Physical_Defect_Realtime t
-where FIR_PhysicalDetailUkey = {this.CurrentData["DetailUkey"]}
-and CONVERT(int, t.Yards) between (select Data from SplitString('{drAry[0]["DefectLocation"]}','-') where no = '1')　
-and (select Data from SplitString('{drAry[0]["DefectLocation"]}','-') where no = '2')　
+where FIR_PhysicalDetailUkey = {dtAry.Rows[0]["FIR_PhysicalDetailUKey"]}
+and CONVERT(int, t.Yards) between (select Data from SplitString('{dtAry.Rows[0]["DefectLocation"]}','-') where no = '1')　
+and (select Data from SplitString('{dtAry.Rows[0]["DefectLocation"]}','-') where no = '2')　
 and t.T2 = 1
 and '{item}' like '%'+t.FabricdefectID+'%'
 ";
