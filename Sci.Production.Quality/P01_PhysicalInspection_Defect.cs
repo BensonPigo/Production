@@ -9,6 +9,7 @@ using System.IO;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace Sci.Production.Quality
 {
@@ -79,8 +80,8 @@ namespace Sci.Production.Quality
 select 1 
 from FIR_Physical_Defect_Realtime t
 where FIR_PhysicalDetailUkey = {this.CurrentData["DetailUkey"]}
-and CONVERT(int, t.Yards) between (select Data from SplitString('{ary[0]["DefectLocation"].ToString()}','-') where no = '1')　
-and (select Data from SplitString('{ary[0]["DefectLocation"].ToString()}','-') where no = '2')　
+and CONVERT(int, t.Yards) between (select Data from SplitString('{ary[0]["DefectLocation"]}','-') where no = '1')　
+and (select Data from SplitString('{ary[0]["DefectLocation"]}','-') where no = '2')　
 and t.T2 = 1";
                     if (MyUtility.Check.Seek(sqlcmd))
                     {
@@ -96,7 +97,16 @@ and t.T2 = 1";
                     ndr["DetailUkey"] = this.CurrentData["DetailUkey"];
                     if (ary.Length > 0)
                     {
-                        ndr["def1"] = ary[0]["DefectRecord"].ToString() + strT2;
+                        // 如果有多筆,那要拆開檢查並塞入T2
+                        if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
+                        {
+                            ndr["def1"] = this.GetNewDefectRecord_T2(ary);
+                        }
+                        else
+                        {
+                            ndr["def1"] = ary[0]["DefectRecord"].ToString() + strT2;
+                        }
+
                         ndr["point1"] = ary[0]["point"];
                     }
 
@@ -111,7 +121,16 @@ and t.T2 = 1";
                     dr["yds2"] = cStr;
                     if (ary.Length > 0)
                     {
-                        dr["def2"] = ary[0]["DefectRecord"] + strT2;
+                        // 如果有多筆,那要拆開檢查並塞入T2
+                        if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
+                        {
+                            dr["def2"] = this.GetNewDefectRecord_T2(ary);
+                        }
+                        else
+                        {
+                            dr["def2"] = ary[0]["DefectRecord"].ToString() + strT2;
+                        }
+
                         dr["point2"] = ary[0]["point"];
                     }
                 }
@@ -122,7 +141,16 @@ and t.T2 = 1";
                     dr["yds3"] = cStr;
                     if (ary.Length > 0)
                     {
-                        dr["def3"] = ary[0]["DefectRecord"] + strT2;
+                        // 如果有多筆,那要拆開檢查並塞入T2
+                        if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
+                        {
+                            dr["def3"] = this.GetNewDefectRecord_T2(ary);
+                        }
+                        else
+                        {
+                            dr["def3"] = ary[0]["DefectRecord"].ToString() + strT2;
+                        }
+
                         dr["point3"] = ary[0]["point"];
                     }
                 }
@@ -132,6 +160,39 @@ and t.T2 = 1";
 
             #endregion
             this.gridFabricInspection.DataSource = this.gridTb;
+        }
+
+        /// <summary>
+        /// 如果有多筆,那要拆開檢查並塞入T2
+        /// </summary>
+        /// <param name="drAry">DataRow</param>
+        /// <returns>New DefectRecord 包含-T2</returns>
+        private string GetNewDefectRecord_T2(DataRow[] drAry)
+        {
+            string newDefectRecord = string.Empty;
+            string[] split = drAry[0]["DefectRecord"].ToString().Split('/');
+            foreach (var item in split)
+            {
+                string sqlchk = $@"
+select 1
+from FIR_Physical_Defect_Realtime t
+where FIR_PhysicalDetailUkey = {this.CurrentData["DetailUkey"]}
+and CONVERT(int, t.Yards) between (select Data from SplitString('{drAry[0]["DefectLocation"]}','-') where no = '1')　
+and (select Data from SplitString('{drAry[0]["DefectLocation"]}','-') where no = '2')　
+and t.T2 = 1
+and '{item}' like '%'+t.FabricdefectID+'%'
+";
+                if (MyUtility.Check.Seek(sqlchk))
+                {
+                    newDefectRecord += item + "-T2/";
+                }
+                else
+                {
+                    newDefectRecord += item + "/";
+                }
+            }
+
+            return newDefectRecord.Substring(0, newDefectRecord.Length - 1);
         }
 
         /// <inheritdoc/>
