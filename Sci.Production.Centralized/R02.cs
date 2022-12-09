@@ -118,11 +118,9 @@ SELECT  Orders.ID
         , Orders.OrderTypeID 
         , Orders.Qty 
         , Orders.CPU 
-        , CPURate = (Select cpurate 
-                     from dbo.GetCPURate (Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'O' )) 
+        , CPURate = Orders.CPUFactor
         , TotalCPU = (Orders.Qty 
-                      * (Select cpurate 
-                         from dbo.GetCPURate (Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'O' )) 
+                      * Orders.CPUFactor
                       * Orders.Cpu)  
         , Orders.Category 
         , LoadingMonth = Month (Dateadd (dd, -7, Orders.SCIDelivery)) 
@@ -835,16 +833,12 @@ Select  Orders.ID
         , Orders.FactoryID 
         , Orders.OrderTypeID 
         , Orders.ProgramID 
-        , CPURate = (select CpuRate 
-                     from GetCPURate (Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID,'')) 
-        --, CPURate = 0.00  
+        , CPURate = Orders.CPUFactor
         , Orders.CPU 
         , Orders.Qty as OrderQty 
         , OrderCapacity = (Orders.CPU 
                            * Orders.Qty 
-                           * (select CpuRate 
-                              from GetCPURate (Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID,'')))
-        --, OrderCapacity = 0.00 
+                           * Orders.CPUFactor)
         , OrderYYMM = CONVERT (VARCHAR, DATEPART (YEAR, DATEADD (DAY, -7, Orders.SCIDelivery))) 
                       + REPLICATE ('0', 2 - LEN (CONVERT (VARCHAR, DATEPART (MONTH, DATEADD(DAY, -7, Orders.SCIDelivery))))) 
                       + CONVERT (VARCHAR, DATEPART (MONTH, DATEADD (DAY, -7, Orders.SCIDelivery)))

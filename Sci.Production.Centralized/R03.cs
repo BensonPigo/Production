@@ -175,7 +175,7 @@ Select o.ID, o.ProgramID, o.StyleID, o.SeasonID
 , o.FactoryID
 ,o.POID , o.Category, o.CdCodeID 
 ,o.CPU
-,CPURate = (SELECT * FROM GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'Order')) * o.CPU  
+,CPURate = o.CPUFactor * o.CPU  
 ,o.BuyerDelivery, o.SCIDelivery
 ,so.SewingLineID 
 ,so.ManPower
