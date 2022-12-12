@@ -155,6 +155,7 @@ SELECT [Inspected Date] = FP.InspDate
        ,[QCMachineStopTime] = case when fp.AddDate is null or fp.StartTime is null then fp.QCTime
 								   else DATEDIFF(SECOND,fp.StartTime,fp.AddDate) - fp.QCTime end
 	   ,[QCMachineRunTime] = fp.QCTime
+       ,[ActualInspectionTimeFinish] = fp.EditDate
 into #tmp
 FROM System,FIR_Physical AS FP
 LEFT JOIN FIR AS F ON FP.ID=F.ID
@@ -200,6 +201,7 @@ select
        ,[Grade]
        ,[ActualInspectionTimeStart]
 	   ,[inspectionTimeStart] 
+       ,[ActualInspectionTimeFinish]
 	   ,[inspectionTimeFinish]
        ,[QCMachineStopTime]
 	   ,[QCMachineRunTime]
