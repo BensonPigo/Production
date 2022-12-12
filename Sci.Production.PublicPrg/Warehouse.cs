@@ -3548,10 +3548,9 @@ select top 1 Barcode
 from(
 	select Barcode
 	from FtyInventory_Barcode
-	where Barcode like 'F%'
+	where Barcode like '{keyWord}%'
 	and Barcode not like '%-%'
-	and Barcode like '{keyWord}%'
-	and len(Barcode) = 13
+	and len(Barcode) = 16
     
 	union all
 	select From_OldBarcode
@@ -3559,7 +3558,7 @@ from(
 	where From_OldBarcode<>''
 	and From_OldBarcode not like '%-%'
 	and From_OldBarcode like '{keyWord}%'
-	and len(From_OldBarcode) = 13
+	and len(From_OldBarcode) = 16
 
 	union all
 	select To_OldBarcode
@@ -3567,7 +3566,7 @@ from(
 	where To_OldBarcode<>''
 	and To_OldBarcode not like '%-%'
 	and To_OldBarcode like '{keyWord}%'
-	and len(To_OldBarcode) = 13
+	and len(To_OldBarcode) = 16
 
 	union all
 	select From_NewBarcode
@@ -3575,7 +3574,7 @@ from(
 	where From_NewBarcode<>''
 	and From_NewBarcode not like '%-%'
 	and From_NewBarcode like '{keyWord}%'
-	and len(From_NewBarcode) = 13
+	and len(From_NewBarcode) = 16
 
 	union all
 	select To_NewBarcode
@@ -3583,7 +3582,7 @@ from(
 	where To_NewBarcode<>''
 	and To_NewBarcode not like '%-%'
 	and To_NewBarcode like '{keyWord}%'
-	and len(To_NewBarcode) = 13
+	and len(To_NewBarcode) = 16
 )x
 order by Barcode desc
 ";
