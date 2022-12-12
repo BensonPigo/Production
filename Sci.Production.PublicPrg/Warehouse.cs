@@ -3505,9 +3505,12 @@ where td.ID = '{transcationID}'
         /// <inheritdoc/>
         public static List<string> GetBarcodeNo_WH(string keyWord, int batchNumber = 1, int dateType = 3, string connectionName = null, int sequenceMode = 1, int sequenceLength = 0, DataTable dtBarcodeSource = null)
         {
+            string localRgcode = MyUtility.GetValue.Lookup("select RgCode from system");
             List<string> iDList = new List<string>();
             DateTime today = DateTime.Today;
             string taiwanYear;
+
+            keyWord = localRgcode + keyWord;
             switch (dateType)
             {
                 case 1: // A yy xxxx
@@ -3545,10 +3548,9 @@ select top 1 Barcode
 from(
 	select Barcode
 	from FtyInventory_Barcode
-	where Barcode like 'F%'
+	where Barcode like '{keyWord}%'
 	and Barcode not like '%-%'
-	and Barcode like '{keyWord}%'
-	and len(Barcode) = 13
+	and len(Barcode) = 16
     
 	union all
 	select From_OldBarcode
@@ -3556,7 +3558,7 @@ from(
 	where From_OldBarcode<>''
 	and From_OldBarcode not like '%-%'
 	and From_OldBarcode like '{keyWord}%'
-	and len(From_OldBarcode) = 13
+	and len(From_OldBarcode) = 16
 
 	union all
 	select To_OldBarcode
@@ -3564,7 +3566,7 @@ from(
 	where To_OldBarcode<>''
 	and To_OldBarcode not like '%-%'
 	and To_OldBarcode like '{keyWord}%'
-	and len(To_OldBarcode) = 13
+	and len(To_OldBarcode) = 16
 
 	union all
 	select From_NewBarcode
@@ -3572,7 +3574,7 @@ from(
 	where From_NewBarcode<>''
 	and From_NewBarcode not like '%-%'
 	and From_NewBarcode like '{keyWord}%'
-	and len(From_NewBarcode) = 13
+	and len(From_NewBarcode) = 16
 
 	union all
 	select To_NewBarcode
@@ -3580,13 +3582,14 @@ from(
 	where To_NewBarcode<>''
 	and To_NewBarcode not like '%-%'
 	and To_NewBarcode like '{keyWord}%'
-	and len(To_NewBarcode) = 13
+	and len(To_NewBarcode) = 16
 )x
 order by Barcode desc
 ";
 
             // 固定最大長度13, 雖然結構是開16, 但長度要留3
-            int columnTypeLength = 13;
+            // ISP20221525 一律16碼
+            int columnTypeLength = 16;
             List<string> userInputBarcodes = new List<string>();
 
             if (dtBarcodeSource != null && dtBarcodeSource.Columns.Contains("Barcode") && dtBarcodeSource.Rows.Count > 0)
@@ -6344,7 +6347,7 @@ and ml.IsWMS = 1
         /// <returns>bool</returns>
         public static bool IsQRCodeCreatedByPMS(this string checkQRCode)
         {
-            if (Regex.IsMatch(checkQRCode, "^F[0-9]{12}"))
+            if (Regex.IsMatch(checkQRCode, "^([a-zA-Z0-9]{3}F|F)[0-9]{12}"))
             {
                 return true;
             }
