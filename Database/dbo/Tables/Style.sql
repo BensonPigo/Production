@@ -80,6 +80,7 @@
     Teamwear bit not null CONSTRAINT [DF_Style_Teamwear] default 0,
     [BrandGender] VARCHAR(10) NOT NULL DEFAULT (''), 
     [Location] VARCHAR(MAX) NOT NULL DEFAULT (''), 
+    [NEWCO] VARCHAR NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC, [SeasonID] ASC)
 );
 GO
