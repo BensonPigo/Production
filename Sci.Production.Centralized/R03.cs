@@ -808,6 +808,7 @@ order by ProgramID,StyleID,FtyZone,FactoryID,BrandID,CdCodeID";
                     MyUtility.Excel.CopyToXls(this.gdtData1, string.Empty,  excelFileName, headerRow: 1, showExcel: false, fieldList: null, excelApp: this.excel, showSaveMsg: false, wSheet: wsSheet);
                     wsSheet.Columns.WrapText = false;
                     wsSheet.Columns.AutoFit();
+                    wsSheet.get_Range("AA:AA").EntireColumn.Delete();
                 }
                 #endregion 1.   By Factory
 
@@ -890,6 +891,29 @@ order by ProgramID,StyleID,FtyZone,FactoryID,BrandID,CdCodeID";
                     wsSheet.Columns.AutoFit();
                 }
                 #endregion 9.   By Program
+
+                #region 刪除 CD Code
+
+                // By Style
+                wsSheet = this.excel.ActiveWorkbook.Worksheets[4];
+                wsSheet.get_Range("C:C").EntireColumn.Delete();
+
+                // By CD
+                wsSheet = this.excel.ActiveWorkbook.Worksheets[5];
+                wsSheet.get_Range("A:A").EntireColumn.Delete();
+
+                // By Brand Factory CD
+                wsSheet = this.excel.ActiveWorkbook.Worksheets[7];
+                wsSheet.get_Range("D:D").EntireColumn.Delete();
+
+                // By PO Combo
+                wsSheet = this.excel.ActiveWorkbook.Worksheets[8];
+                wsSheet.get_Range("E:E").EntireColumn.Delete();
+
+                // By Program
+                wsSheet = this.excel.ActiveWorkbook.Worksheets[9];
+                wsSheet.get_Range("F:F").EntireColumn.Delete();
+                #endregion
 
                 #region Save & Show Excel
                 this.excel.Visible = true;

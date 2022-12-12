@@ -511,6 +511,12 @@ namespace Sci.Production.PPIC
 
                 // 移動Sheet: Detail]
                 worksheet = mWorkBook.Sheets[3];
+                // 移除Sheet: [Detail] CD Code欄位
+                worksheet.get_Range("U:U").EntireColumn.Delete();
+
+                // 移除Sheet: [Detail] Production Family ID Code欄位
+                worksheet.get_Range("AA:AA").EntireColumn.Delete();
+
                 worksheet.Move(After: mWorkBook.Sheets[mWorkBook.Sheets.Count]);
 
                 // 移動Sheet: [Columns Description]
@@ -574,7 +580,11 @@ namespace Sci.Production.PPIC
                     // Summary By = SP# 則刪除欄位Size
                     if (this.type == "SP#")
                     {
-                        worksheet.get_Range("I:I").EntireColumn.Delete();
+                        worksheet.get_Range("I:J").EntireColumn.Delete();
+                    }
+                    else
+                    {
+                        worksheet.get_Range("J:J").EntireColumn.Delete();
                     }
                     #region Set Excel Title
                     string factoryName = MyUtility.GetValue.Lookup(
@@ -635,6 +645,7 @@ where id = '{0}'", Env.User.Factory), null);
                     worksheet.Activate();
 
                     // Summary By = SP# 則刪除欄位Size
+                    worksheet.get_Range("L:L").EntireColumn.Delete();
                     if (this.type == "SP#")
                     {
                         worksheet.get_Range("K:K").EntireColumn.Delete();

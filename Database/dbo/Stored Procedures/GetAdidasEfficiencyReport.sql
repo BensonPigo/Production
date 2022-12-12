@@ -56,7 +56,7 @@ Begin
 		, s.Manpower
 		, [ManHour] = sum(sd.WorkHour)
 		, [TotalOutput] = sum(sd.QAQty)
-		, [CD] = concat(o.CdCodeID, ''-'', sd.ComboType)
+		, sd.ComboType
 		, st.CDCodeNew
 		, o.SeasonID
 		, o.BrandID
@@ -210,7 +210,7 @@ select s.OutputDate
 	, s.Manpower
 	, s.ManHour
 	, s.TotalOutput
-	, s.CD
+	, s.ComboType
 	, s.CDCodeNew
 	, s.SeasonID
 	, s.BrandID
@@ -247,7 +247,7 @@ from
 		, s.Manpower
 		, [ManHour] = sum(sd.WorkHour)
 		, [TotalOutput] = sum(sd.QAQty)
-		, [CD] = concat(o.CdCodeID, ''-'', sd.ComboType)
+		, sd.ComboType
 		, o.SeasonID
 		, o.BrandID 
 		, [TotalWorkingHours] = sum(sd.WorkHour) * s.Manpower
