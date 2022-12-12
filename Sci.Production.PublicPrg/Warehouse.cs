@@ -3505,9 +3505,12 @@ where td.ID = '{transcationID}'
         /// <inheritdoc/>
         public static List<string> GetBarcodeNo_WH(string keyWord, int batchNumber = 1, int dateType = 3, string connectionName = null, int sequenceMode = 1, int sequenceLength = 0, DataTable dtBarcodeSource = null)
         {
+            string localRgcode = MyUtility.GetValue.Lookup("select RgCode from system");
             List<string> iDList = new List<string>();
             DateTime today = DateTime.Today;
             string taiwanYear;
+
+            keyWord = localRgcode + keyWord;
             switch (dateType)
             {
                 case 1: // A yy xxxx
@@ -3586,7 +3589,8 @@ order by Barcode desc
 ";
 
             // 固定最大長度13, 雖然結構是開16, 但長度要留3
-            int columnTypeLength = 13;
+            // ISP20221525 一律16碼
+            int columnTypeLength = 16;
             List<string> userInputBarcodes = new List<string>();
 
             if (dtBarcodeSource != null && dtBarcodeSource.Columns.Contains("Barcode") && dtBarcodeSource.Rows.Count > 0)
@@ -6344,7 +6348,7 @@ and ml.IsWMS = 1
         /// <returns>bool</returns>
         public static bool IsQRCodeCreatedByPMS(this string checkQRCode)
         {
-            if (Regex.IsMatch(checkQRCode, "^F[0-9]{12}"))
+            if (Regex.IsMatch(checkQRCode, "^([a-zA-Z0-9]{3}F|F)[0-9]{12}"))
             {
                 return true;
             }
