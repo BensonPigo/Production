@@ -9,6 +9,8 @@ using System.IO;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Globalization;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Quality
 {
@@ -69,9 +71,25 @@ namespace Sci.Production.Quality
                 }
 
                 DataRow[] ary = this.DefectFilterTb.Select(string.Format("DefectLocationF >= {0} and DefectLocationT <= {1}", Convert.ToInt32(cStr.Split('-')[0]), Convert.ToInt32(cStr.Split('-')[1])));
+                DataTable dtary = this.DefectFilterTb.Select(string.Format("DefectLocationF >= {0} and DefectLocationT <= {1}", Convert.ToInt32(cStr.Split('-')[0]), Convert.ToInt32(cStr.Split('-')[1]))).TryCopyToDataTable(this.DefectFilterTb);
 
                 // 將存在DefectFilterTb的資料填入Grid
                 #region 填入對的位置 % 去找位置
+                string strT2 = string.Empty;
+                if (ary.Length > 0)
+                {
+                    string sqlcmd = $@"
+select 1 
+from FIR_Physical_Defect_Realtime t
+where FIR_PhysicalDetailUkey = {this.CurrentData["DetailUkey"]}
+and CONVERT(int, t.Yards) between (select Data from SplitString('{ary[0]["DefectLocation"]}','-') where no = '1')　
+and (select Data from SplitString('{ary[0]["DefectLocation"]}','-') where no = '2')　
+and t.T2 = 1";
+                    if (MyUtility.Check.Seek(sqlcmd))
+                    {
+                        strT2 = "-T2";
+                    }
+                }
 
                 // 新增一筆從頭開始
                 if (j % 3 == 1)
@@ -81,7 +99,16 @@ namespace Sci.Production.Quality
                     ndr["DetailUkey"] = this.CurrentData["DetailUkey"];
                     if (ary.Length > 0)
                     {
-                        ndr["def1"] = ary[0]["DefectRecord"];
+                        // 如果有多筆,那要拆開檢查並塞入T2
+                        if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
+                        {
+                            ndr["def1"] = GetNewDefectRecord_T2(dtary);
+                        }
+                        else
+                        {
+                            ndr["def1"] = ary[0]["DefectRecord"].ToString() + strT2;
+                        }
+
                         ndr["point1"] = ary[0]["point"];
                     }
 
@@ -96,7 +123,16 @@ namespace Sci.Production.Quality
                     dr["yds2"] = cStr;
                     if (ary.Length > 0)
                     {
-                        dr["def2"] = ary[0]["DefectRecord"];
+                        // 如果有多筆,那要拆開檢查並塞入T2
+                        if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
+                        {
+                            dr["def2"] = GetNewDefectRecord_T2(dtary);
+                        }
+                        else
+                        {
+                            dr["def2"] = ary[0]["DefectRecord"].ToString() + strT2;
+                        }
+
                         dr["point2"] = ary[0]["point"];
                     }
                 }
@@ -107,7 +143,16 @@ namespace Sci.Production.Quality
                     dr["yds3"] = cStr;
                     if (ary.Length > 0)
                     {
-                        dr["def3"] = ary[0]["DefectRecord"];
+                        // 如果有多筆,那要拆開檢查並塞入T2
+                        if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
+                        {
+                            dr["def3"] = GetNewDefectRecord_T2(dtary);
+                        }
+                        else
+                        {
+                            dr["def3"] = ary[0]["DefectRecord"].ToString() + strT2;
+                        }
+
                         dr["point3"] = ary[0]["point"];
                     }
                 }
@@ -117,6 +162,39 @@ namespace Sci.Production.Quality
 
             #endregion
             this.gridFabricInspection.DataSource = this.gridTb;
+        }
+
+        /// <summary>
+        /// 如果有多筆,那要拆開檢查並塞入T2
+        /// </summary>
+        /// <param name="drAry">DataRow</param>
+        /// <returns>New DefectRecord 包含-T2</returns>
+        public static string GetNewDefectRecord_T2(DataTable dtAry)
+        {
+            string newDefectRecord = string.Empty;
+            string[] split = dtAry.Rows[0]["DefectRecord"].ToString().Split('/');
+            foreach (var item in split)
+            {
+                string sqlchk = $@"
+select 1
+from FIR_Physical_Defect_Realtime t
+where FIR_PhysicalDetailUkey = {dtAry.Rows[0]["FIR_PhysicalDetailUKey"]}
+and CONVERT(int, t.Yards) between (select Data from SplitString('{dtAry.Rows[0]["DefectLocation"]}','-') where no = '1')　
+and (select Data from SplitString('{dtAry.Rows[0]["DefectLocation"]}','-') where no = '2')　
+and t.T2 = 1
+and '{item}' like '%'+t.FabricdefectID+'%'
+";
+                if (MyUtility.Check.Seek(sqlchk))
+                {
+                    newDefectRecord += item + "-T2/";
+                }
+                else
+                {
+                    newDefectRecord += item + "/";
+                }
+            }
+
+            return newDefectRecord.Substring(0, newDefectRecord.Length - 1);
         }
 
         /// <inheritdoc/>

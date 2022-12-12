@@ -1334,10 +1334,20 @@ and id = '{this.maindr["Receivingid"]}'
 
                 string cmd = $@"
 SELECT Yards,FabricdefectID,count(1) cnt
+into #tmp
 FROM [Production].[dbo].[FIR_Physical_Defect_Realtime] 
-where FIR_PhysicalDetailUkey={dtGrid.Rows[rowcount - 1]["detailUkey"]} 
+where FIR_PhysicalDetailUkey={dtGrid.Rows[rowcount - 1]["detailUkey"]}
 group by Yards,FabricdefectID
 order by Yards
+
+select t.* ,T2 = iif(isnull(s.T2,0)!='','-T2','')
+from #tmp t
+left join [Production].[dbo].[FIR_Physical_Defect_Realtime]  s
+on t.FabricdefectID = s.FabricdefectID  and t.Yards = s.Yards and s.T2=1
+and s.FIR_PhysicalDetailUkey = {dtGrid.Rows[rowcount - 1]["detailUkey"]}
+order by Yards
+
+drop table #tmp
 ";
 
                 if (!(result = DBProxy.Current.Select("Production", cmd, out dtRealTime)))
@@ -1378,7 +1388,7 @@ order by Yards
                                 excel.Cells[20 + (i * 8) + addline, ii] = "Defect";
                             }
 
-                            excel.Cells[21 + (i * 8) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime - 1]["FabricdefectID"].ToString() + dtRealTime.Rows[cntRealTime - 1]["cnt"].ToString();
+                            excel.Cells[21 + (i * 8) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime - 1]["FabricdefectID"].ToString() + dtRealTime.Rows[cntRealTime - 1]["cnt"].ToString() + dtRealTime.Rows[cntRealTime - 1]["T2"].ToString();
 
                             Microsoft.Office.Interop.Excel.Range formatRange = worksheet.get_Range($"{MyExcelPrg.GetExcelColumnName(cntX - (cntnextline * 10))}{21 + (i * 8) + addline}");
                             formatRange.NumberFormat = "0.00";
@@ -1430,7 +1440,24 @@ order by Yards
                         }
                         else
                         {
-                            excel.Cells[21 + (i * 8) + addline, ii - (nextline * 10)] = dtDefect.Rows[pDrowcount - 1]["DefectRecord"];
+                            string sqlcmd = $@"
+select 1 
+from FIR_Physical_Defect_Realtime t
+where FIR_PhysicalDetailUkey = {dtGrid.Rows[rowcount - 1]["detailUkey"]}
+and CONVERT(int, t.Yards) between (select Data from SplitString('{dtDefect.Rows[pDrowcount - 1]["DefectLocation"]}','-') where no = '1')　
+and (select Data from SplitString('{dtDefect.Rows[pDrowcount - 1]["DefectLocation"]}','-') where no = '2')　
+and t.T2 = 1";
+                            DataTable dtSelect = dtDefect.Clone();
+                            dtSelect.ImportRow(dtDefect.Rows[pDrowcount - 1]);
+                            string strT2 = MyUtility.Check.Seek(sqlcmd) ? "-T2" : string.Empty;
+                            if (dtDefect.Rows[pDrowcount - 1]["DefectRecord"].ToString().IndexOf('/') != -1)
+                            {
+                                excel.Cells[21 + (i * 8) + addline, ii - (nextline * 10)] = P01_PhysicalInspection_Defect.GetNewDefectRecord_T2(dtSelect);
+                            }
+                            else
+                            {
+                                excel.Cells[21 + (i * 8) + addline, ii - (nextline * 10)] = dtDefect.Rows[pDrowcount - 1]["DefectRecord"] + strT2;
+                            }
                         }
                     }
                 }
