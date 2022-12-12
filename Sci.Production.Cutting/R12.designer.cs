@@ -35,10 +35,10 @@
             this.comboFactory1 = new Sci.Production.Class.ComboFactory(this.components);
             this.comboMDivision1 = new Sci.Production.Class.ComboMDivision(this.components);
             this.labelWKNoETA = new Sci.Win.UI.Label();
-            this.labelETA = new Sci.Win.UI.Label();
+            this.label6 = new Sci.Win.UI.Label();
+            this.label4 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -113,7 +113,7 @@
             this.comboFactory1.FormattingEnabled = true;
             this.comboFactory1.IssupportJunk = false;
             this.comboFactory1.IsSupportUnselect = true;
-            this.comboFactory1.Location = new System.Drawing.Point(113, 122);
+            this.comboFactory1.Location = new System.Drawing.Point(113, 120);
             this.comboFactory1.Name = "comboFactory1";
             this.comboFactory1.OldText = "";
             this.comboFactory1.Size = new System.Drawing.Size(95, 24);
@@ -126,7 +126,7 @@
             this.comboMDivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboMDivision1.FormattingEnabled = true;
             this.comboMDivision1.IsSupportUnselect = true;
-            this.comboMDivision1.Location = new System.Drawing.Point(113, 93);
+            this.comboMDivision1.Location = new System.Drawing.Point(113, 92);
             this.comboMDivision1.Name = "comboMDivision1";
             this.comboMDivision1.OldText = "";
             this.comboMDivision1.Size = new System.Drawing.Size(95, 24);
@@ -146,69 +146,45 @@
             this.labelWKNoETA.TextStyle.BorderColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.labelWKNoETA.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // labelETA
+            // label6
             // 
-            this.labelETA.Location = new System.Drawing.Point(9, 36);
-            this.labelETA.Name = "labelETA";
-            this.labelETA.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.labelETA.RectStyle.BorderWidth = 1F;
-            this.labelETA.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.labelETA.RectStyle.ExtBorderWidth = 1F;
-            this.labelETA.Size = new System.Drawing.Size(101, 23);
-            this.labelETA.TabIndex = 142;
-            this.labelETA.Text = "Style";
-            this.labelETA.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.labelETA.TextStyle.Color = System.Drawing.Color.Black;
+            this.label6.Location = new System.Drawing.Point(9, 36);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(101, 23);
+            this.label6.TabIndex = 146;
+            this.label6.Text = "Style";
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(9, 64);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(101, 23);
+            this.label4.TabIndex = 147;
+            this.label4.Text = "Brand";
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(9, 64);
+            this.label1.Location = new System.Drawing.Point(9, 92);
             this.label1.Name = "label1";
-            this.label1.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.label1.RectStyle.BorderWidth = 1F;
-            this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label1.RectStyle.ExtBorderWidth = 1F;
             this.label1.Size = new System.Drawing.Size(101, 23);
-            this.label1.TabIndex = 143;
-            this.label1.Text = "Brand";
-            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            this.label1.TabIndex = 148;
+            this.label1.Text = "M";
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(9, 93);
+            this.label2.Location = new System.Drawing.Point(9, 120);
             this.label2.Name = "label2";
-            this.label2.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.label2.RectStyle.BorderWidth = 1F;
-            this.label2.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label2.RectStyle.ExtBorderWidth = 1F;
             this.label2.Size = new System.Drawing.Size(101, 23);
-            this.label2.TabIndex = 144;
-            this.label2.Text = "M";
-            this.label2.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label2.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(9, 123);
-            this.label3.Name = "label3";
-            this.label3.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.label3.RectStyle.BorderWidth = 1F;
-            this.label3.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label3.RectStyle.ExtBorderWidth = 1F;
-            this.label3.Size = new System.Drawing.Size(101, 23);
-            this.label3.TabIndex = 145;
-            this.label3.Text = "Factory";
-            this.label3.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label3.TextStyle.Color = System.Drawing.Color.Black;
+            this.label2.TabIndex = 149;
+            this.label2.Text = "Factory";
             // 
             // R12
             // 
             this.ClientSize = new System.Drawing.Size(538, 177);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.labelETA);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.labelWKNoETA);
             this.Controls.Add(this.comboMDivision1);
             this.Controls.Add(this.comboFactory1);
@@ -230,10 +206,10 @@
             this.Controls.SetChildIndex(this.comboFactory1, 0);
             this.Controls.SetChildIndex(this.comboMDivision1, 0);
             this.Controls.SetChildIndex(this.labelWKNoETA, 0);
-            this.Controls.SetChildIndex(this.labelETA, 0);
+            this.Controls.SetChildIndex(this.label6, 0);
+            this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -246,9 +222,9 @@
         private Class.ComboFactory comboFactory1;
         private Class.ComboMDivision comboMDivision1;
         private Win.UI.Label labelWKNoETA;
-        private Win.UI.Label labelETA;
+        private Win.UI.Label label6;
+        private Win.UI.Label label4;
         private Win.UI.Label label1;
         private Win.UI.Label label2;
-        private Win.UI.Label label3;
     }
 }
