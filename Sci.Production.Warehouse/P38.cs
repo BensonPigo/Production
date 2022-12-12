@@ -658,7 +658,7 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_WashLab,#tmp_Air,#tmp_Air_Lab
                 return;
             }
 
-            using (TransactionScope transaction = new TransactionScope())
+            using (TransactionScope transaction = new TransactionScope(TransactionScopeOption.Required, TimeSpan.FromMinutes(3)))
             {
                 StringBuilder sqlcmd = new StringBuilder();
                 foreach (DataRow item in find)
