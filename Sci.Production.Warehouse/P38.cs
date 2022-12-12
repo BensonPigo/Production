@@ -660,24 +660,21 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_WashLab,#tmp_Air,#tmp_Air_Lab
 
             using (TransactionScope transaction = new TransactionScope(TransactionScopeOption.Required, TimeSpan.FromMinutes(3)))
             {
-                StringBuilder sqlcmd = new StringBuilder();
-                foreach (DataRow item in find)
+                string sqlCmd = $@"
+update f 
+    set f.lock = '{flag}'
+        , f.lockname = '{Env.User.UserID}'
+        , f.Remark = t.Remark
+from ftyinventory f
+inner join #tmp t on f.ukey = t.ukey
+where t.Selected = 1
+";
+                DualResult result1 = MyUtility.Tool.ProcessWithDatatable(find.CopyToDataTable(), string.Empty, sqlCmd, out DataTable dt_T, "#tmp");
+                if (!result1)
                 {
-                    List<SqlParameter> listSQLParameter = new List<SqlParameter>()
-                    {
-                        new SqlParameter("@Lock", flag),
-                        new SqlParameter("@LockName", Env.User.UserID),
-                        new SqlParameter("@Remark", item["Remark"]),
-                        new SqlParameter("@uKey", MyUtility.Convert.GetLong(item["ukey"])),
-                    };
-                    sqlcmd.Append(@"update dbo.ftyinventory set lock=@Lock,lockname=@LockName,lockdate=GETDATE(),Remark=@Remark where ukey =@uKey;");
-                    DualResult result1 = DBProxy.Current.Execute(null, sqlcmd.ToString(), listSQLParameter);
-                    if (!result1)
-                    {
-                        this.ShowErr(result1);
-                        transaction.Dispose();
-                        return;
-                    }
+                    this.ShowErr(result1);
+                    transaction.Dispose();
+                    return;
                 }
 
                 transaction.Complete();
