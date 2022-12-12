@@ -18,6 +18,7 @@ namespace Sci.Production.Quality
         {
             this.ht.Add("Formula1", "(Total Points / Act. Yds Inspected ) x 100");
             this.ht.Add("Formula2", "(Total Points × 3600) ÷ (Act. Yds Inspected × Actual Width)");
+            this.ht.Add("Formula3", "(Total Points × 3600) ÷ (Act. Yds Inspected × Cut. Width)");
 
             // HashTabe add key,Value
             this.SkewnessHt.Add("Formula1", "100 × [ 2 × ( AC - BD ) / ( AC + BD ) ]");
@@ -154,7 +155,23 @@ namespace Sci.Production.Quality
 
         private void RadioPanel1_ValueChanged(object sender, EventArgs e)
         {
-            this.txtFormula.Text = this.radioPanel1.Value == "1" ? this.ht["Formula1"].ToString() : this.ht["Formula2"].ToString();
+            string strFormula = string.Empty;
+            switch (this.radioPanel1.Value)
+            {
+                case "1":
+                    strFormula = this.ht["Formula1"].ToString();
+                    break;
+                case "2":
+                    strFormula = this.ht["Formula2"].ToString();
+                    break;
+                case "3":
+                    strFormula = this.ht["Formula3"].ToString();
+                    break;
+                default:
+                    break;
+            }
+
+            this.txtFormula.Text = strFormula;
         }
 
         private void BtnMoistureStandardList_Click(object sender, EventArgs e)
@@ -165,25 +182,19 @@ namespace Sci.Production.Quality
 
         private void RadioPanel3_ValueChanged(object sender, EventArgs e)
         {
-
             string formula = string.Empty;
-            //string skewnessOption = MyUtility.Check.Empty(this.CurrentMaintain) ? "1" : this.CurrentMaintain["SkewnessOption"].ToString();
-            //this.radioPanel3.Value = skewnessOption;
             switch (this.radioPanel3.Value)
             {
                 case "1":
                     formula = this.SkewnessHt["Formula1"].ToString();
-                    //this.SkewnessOption1.Checked = true;
                     this.pictureBox1.ImageLocation = this.SkewnessHt["Picture1"].ToString();
                     break;
                 case "2":
                     formula = this.SkewnessHt["Formula2"].ToString();
-                    //this.SkewnessOption2.Checked = true;
                     this.pictureBox1.ImageLocation = this.SkewnessHt["Picture2"].ToString();
                     break;
                 case "3":
                     formula = this.SkewnessHt["Formula3"].ToString();
-                    //this.SkewnessOption3.Checked = true;
                     this.pictureBox1.ImageLocation = this.SkewnessHt["Picture3"].ToString();
                     break;
                 default:

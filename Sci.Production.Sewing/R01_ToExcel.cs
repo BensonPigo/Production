@@ -115,7 +115,7 @@ namespace Sci.Production.Sewing
                     objArray[0, 0] = dr["SewingLineID"];
                     objArray[0, 1] = dr["OrderId"];
                     objArray[0, 2] = dr["Style"];
-                    objArray[0, 3] = dr["CDNo"];
+                    objArray[0, 3] = dr["ComboType"];
                     objArray[0, 4] = dr["CDCodeNew"];
                     objArray[0, 5] = dr["ProductType"];
                     objArray[0, 6] = dr["FabricType"];

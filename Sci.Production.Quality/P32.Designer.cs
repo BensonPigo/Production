@@ -85,6 +85,7 @@
             this.comboSewingTeam1 = new Sci.Production.Class.ComboSewingTeam(this.components);
             this.numInspectionFailCount = new Sci.Win.UI.NumericBox();
             this.txtPO = new Sci.Win.UI.TextBox();
+            this.labelTimes = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -104,6 +105,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.labelTimes);
             this.masterpanel.Controls.Add(this.txtPO);
             this.masterpanel.Controls.Add(this.numInspectionFailCount);
             this.masterpanel.Controls.Add(this.comboSewingTeam1);
@@ -214,6 +216,7 @@
             this.masterpanel.Controls.SetChildIndex(this.comboSewingTeam1, 0);
             this.masterpanel.Controls.SetChildIndex(this.numInspectionFailCount, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtPO, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTimes, 0);
             // 
             // detailpanel
             // 
@@ -693,7 +696,7 @@
             this.labelStatus.BackColor = System.Drawing.Color.Transparent;
             this.labelStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
             this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.labelStatus.Location = new System.Drawing.Point(630, 6);
+            this.labelStatus.Location = new System.Drawing.Point(826, 8);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(125, 25);
             this.labelStatus.TabIndex = 69;
@@ -779,6 +782,8 @@
             this.gridSpSeq.AllowUserToAddRows = false;
             this.gridSpSeq.AllowUserToDeleteRows = false;
             this.gridSpSeq.AllowUserToResizeRows = false;
+            this.gridSpSeq.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gridSpSeq.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridSpSeq.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridSpSeq.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -859,6 +864,16 @@
             this.txtPO.Size = new System.Drawing.Size(100, 23);
             this.txtPO.TabIndex = 81;
             this.txtPO.Validating += new System.ComponentModel.CancelEventHandler(this.TxtPO_Validating);
+            // 
+            // labelTimes
+            // 
+            this.labelTimes.AutoSize = true;
+            this.labelTimes.ForeColor = System.Drawing.Color.Blue;
+            this.labelTimes.Location = new System.Drawing.Point(601, 11);
+            this.labelTimes.Name = "labelTimes";
+            this.labelTimes.Size = new System.Drawing.Size(85, 17);
+            this.labelTimes.TabIndex = 82;
+            this.labelTimes.Text = "0 Insepetion";
             // 
             // P32
             // 
@@ -959,5 +974,6 @@
         private Class.ComboSewingTeam comboSewingTeam1;
         private Win.UI.NumericBox numInspectionFailCount;
         private Win.UI.TextBox txtPO;
+        private System.Windows.Forms.Label labelTimes;
     }
 }

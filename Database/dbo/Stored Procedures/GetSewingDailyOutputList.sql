@@ -391,7 +391,7 @@ select	MDivisionID
 		,CPURate
 		,Style
 		,Season
-		,CDNo
+		,ComboType
         ,CDCodeNew
 	    ,ProductType
 	    ,FabricType
@@ -461,7 +461,7 @@ from(
 		,CPURate = IIF(t.Category=''M'',MockupCPUFactor,OrderCPUFactor)
 		,Style = IIF(t.Category=''M'',MockupStyle,OrderStyle)
 		,Season = IIF(t.Category=''M'',MockupSeason,OrderSeason)
-		,CDNo = IIF(t.Category=''M'',MockupCDCodeID,OrderCdCodeID)+''-''+t.ComboType
+		,t.ComboType
         ,sty.CDCodeNew
 	    ,sty.ProductType
 	    ,sty.FabricType

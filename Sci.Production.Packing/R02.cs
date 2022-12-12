@@ -404,6 +404,9 @@ drop table #tmp
             worksheet.Cells[4, 11] = strcategory.Substring(0, strcategory.Length - 1);
             MyUtility.Excel.CopyToXls(this._printData[1], string.Empty, $"{excelName}.xltx", 5, false, null, excelApp, wSheet: excelApp.Sheets[2]);
             worksheet = excelApp.Sheets[1];
+
+            // 移除CD Code欄位
+            worksheet.get_Range("L:L").EntireColumn.Delete();
             worksheet.Columns.AutoFit();
             #region 釋放上面開啟過excel物件
             string strExcelName = Class.MicrosoftFile.GetName(excelName);

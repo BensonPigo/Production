@@ -58,7 +58,6 @@
             this.displayApprover = new Sci.Win.UI.DisplayBox();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.displayResult = new Sci.Win.UI.DisplayBox();
-            this.textID = new Sci.Win.UI.TextBox();
             this.dateLastInspectionDate = new Sci.Win.UI.DateBox();
             this.dateArriveWHDate = new Sci.Win.UI.DateBox();
             this.displaydescDetail = new Sci.Win.UI.DisplayBox();
@@ -80,7 +79,7 @@
             this.btmcont.Controls.Add(this.btnToExcel_defect);
             this.btmcont.Controls.Add(this.btnToExcel);
             this.btmcont.Location = new System.Drawing.Point(0, 693);
-            this.btmcont.Size = new System.Drawing.Size(1008, 40);
+            this.btmcont.Size = new System.Drawing.Size(993, 40);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
@@ -92,15 +91,15 @@
             // gridcont
             // 
             this.gridcont.Location = new System.Drawing.Point(12, 229);
-            this.gridcont.Size = new System.Drawing.Size(984, 454);
+            this.gridcont.Size = new System.Drawing.Size(969, 454);
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(918, 5);
+            this.undo.Location = new System.Drawing.Point(903, 5);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(838, 5);
+            this.save.Location = new System.Drawing.Point(823, 5);
             // 
             // displayBrand
             // 
@@ -391,17 +390,6 @@
             this.displayResult.Size = new System.Drawing.Size(101, 21);
             this.displayResult.TabIndex = 132;
             // 
-            // textID
-            // 
-            this.textID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textID.Location = new System.Drawing.Point(996, 119);
-            this.textID.Name = "textID";
-            this.textID.ReadOnly = true;
-            this.textID.Size = new System.Drawing.Size(100, 23);
-            this.textID.TabIndex = 1;
-            this.textID.Visible = false;
-            // 
             // dateLastInspectionDate
             // 
             this.dateLastInspectionDate.IsSupportEditMode = false;
@@ -507,7 +495,7 @@
             // 
             // P01_PhysicalInspection
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 733);
+            this.ClientSize = new System.Drawing.Size(993, 733);
             this.Controls.Add(this.txtCustInspNumber);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtPhysicalInspector);
@@ -516,7 +504,6 @@
             this.Controls.Add(this.displaydescDetail);
             this.Controls.Add(this.dateArriveWHDate);
             this.Controls.Add(this.dateLastInspectionDate);
-            this.Controls.Add(this.textID);
             this.Controls.Add(this.displayResult);
             this.Controls.Add(this.txtuserApprover);
             this.Controls.Add(this.displayApprover);
@@ -590,7 +577,6 @@
             this.Controls.SetChildIndex(this.displayApprover, 0);
             this.Controls.SetChildIndex(this.txtuserApprover, 0);
             this.Controls.SetChildIndex(this.displayResult, 0);
-            this.Controls.SetChildIndex(this.textID, 0);
             this.Controls.SetChildIndex(this.dateLastInspectionDate, 0);
             this.Controls.SetChildIndex(this.dateArriveWHDate, 0);
             this.Controls.SetChildIndex(this.displaydescDetail, 0);
@@ -641,7 +627,6 @@
         private Win.UI.DisplayBox displayApprover;
         private Class.Txtuser txtuserApprover;
         private Win.UI.DisplayBox displayResult;
-        private Win.UI.TextBox textID;
         private Win.UI.DateBox dateLastInspectionDate;
         private Win.UI.DateBox dateArriveWHDate;
         private Win.UI.DisplayBox displaydescDetail;

@@ -2751,6 +2751,13 @@
     <Build Include="dbo\Tables\HandoverATUpload.sql" />
     <Build Include="dbo\Tables\FinalPatternUpload.sql" />
     <Build Include="dbo\Tables\Style_ArtworkTestDox.sql" />
+    <Build Include="dbo\Tables\Style_CustOrderSize.sql" />
+    <Build Include="dbo\Tables\Brand_SizeCode.sql" />
+    <Build Include="dbo\Tables\Marker_ML_SizeQty.sql" />
+    <Build Include="dbo\Tables\Marker_ML.sql" />
+    <Build Include="dbo\Tables\Marker.sql" />
+    <Build Include="dbo\Functions\ActCuttingPerimeterToInch.sql" />
+    <Build Include="dbo\Functions\MarkerLengthSampleTOTrade.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
