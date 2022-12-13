@@ -317,7 +317,7 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
             srcPKFilter.AddRange(this.dt_scanDetail.AsEnumerable().Select(s => s["ID"].ToString()).Distinct().ToList());
             this.comboPKFilter.DataSource = srcPKFilter;
 
-            // 產生select Carton資料    
+            // 產生select Carton資料
             int cnt_selectCarton = this.LoadSelectCarton();
 
             if (cnt_selectCarton == 1)
