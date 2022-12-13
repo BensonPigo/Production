@@ -139,12 +139,9 @@ a.Ukey	= b.Ukey
 ,a.DevRegion = b.DevRegion
 ,a.DevOption = b.DevOption
 ,a.Teamwear = b.Teamwear
-<<<<<<< HEAD
 ,a.BrandGender = isnull(b.BrandGender,'')
 ,a.Location = isnull(b.Location,'')
-=======
 ,a.NEWCO = isnull(b.NEWCO,'')
->>>>>>> Mantis/ISP20221466
 from Production.dbo.Style as a 
 inner join Trade_To_Pms.dbo.Style as b ON a.ID	= b.ID AND a.BrandID	= b.BrandID AND a.SeasonID	= b.SeasonID
 
@@ -232,12 +229,9 @@ ID
 ,DevRegion
 ,DevOption
 ,Teamwear
-<<<<<<< HEAD
 ,BrandGender
 ,Location
-=======
 ,NEWCO
->>>>>>> Mantis/ISP20221466
 )
 output	inserted.ID,
 		inserted.SeasonID,
@@ -313,12 +307,9 @@ select
 ,b.DevRegion
 ,b.DevOption
 ,b.Teamwear
-<<<<<<< HEAD
 ,isnull(b.BrandGender,'')
 ,isnull(b.Location,'')
-=======
 ,isnull(b.NEWCO,'')
->>>>>>> Mantis/ISP20221466
 from Trade_To_Pms.dbo.Style as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.ID=b.ID and a.BrandID=b.BrandID and a.SeasonID=b.SeasonID and a.LocalStyle=1)
 AND not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.Ukey=b.Ukey )
