@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Linq;
 using System.Transactions;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Sci.Production.Warehouse
 {
@@ -141,6 +142,7 @@ namespace Sci.Production.Warehouse
                  .CheckBox("select", header: string.Empty, trueValue: 1, falseValue: 0, settings: col_Select)
                  .Text("ID", header: "Receiving ID", width: Widths.AnsiChars(14), iseditingreadonly: true)
                  .Text("ExportID", header: "WK#", width: Widths.AnsiChars(14), iseditingreadonly: true)
+                 .Date("WhseArrival", header: "Arrive WH Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("Seq", header: "Seq", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -148,7 +150,8 @@ namespace Sci.Production.Warehouse
                  .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Button(propertyname: "Barcode", header: "Print Barcode", width: Widths.AnsiChars(16), onclick: this.PrintBarcode)
-                 .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Text("Stocktransfer", header: "Stock Transfer", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Numeric("StockQty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                  .Text("StockTypeDesc", header: "Stock Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -161,7 +164,8 @@ namespace Sci.Production.Warehouse
                  .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
                  .Numeric("ActualWeight", header: "Act.(kg)", width: Widths.AnsiChars(8), decimal_places: 2, settings: cellActWeight)
                  .Numeric("Differential", header: "Differential", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
-                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(15))
+                 .EditText("ReceivingRemark", header: "Receiving Remark", width: Widths.AnsiChars(20))
+                 .Text("Remark", header: "Create P26 Remark", width: Widths.AnsiChars(15))
                  .Text("LastRemark", header: "Last P26 Remark data", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .DateTime("LastEditDate", header: "Last Edit Date", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Numeric("rid", header: "rid", width: Widths.AnsiChars(8), decimal_places: 0, iseditingreadonly: true)
@@ -170,6 +174,7 @@ namespace Sci.Production.Warehouse
             this.gridReceiving.Columns["Location"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["Checker"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["ActualWeight"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridReceiving.Columns["ReceivingRemark"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["CutShadebandTime"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["Fabric2LabTime"].DefaultCellStyle.BackColor = Color.Pink;
@@ -419,6 +424,9 @@ from
         ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd')
         ,[FirRemark] = fp.Remark
         ,o.FactoryID
+        ,OldReceivingRemark = rd.remark
+        ,ReceivingRemark = rd.remark
+        ,WhseArrival = r.WhseArrival
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
     inner join View_WH_Orders o with (nolock) on o.ID = rd.POID 
@@ -513,6 +521,9 @@ from
         ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd hh:mmtt')
         ,[FirRemark] = fp.Remark
         ,o.FactoryID
+        ,OldReceivingRemark = td.Remark
+        ,ReceivingRemark = td.Remark
+        ,WhseArrival = t.IssueDate
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
     INNER JOIN View_WH_Orders o with (nolock) ON o.ID = td.POID
@@ -565,7 +576,7 @@ from
 select  t.*
         ,[LastRemark] = LastEditDate.Remark
         ,[LastEditDate]=LastEditDate.EditDate
-		,[Description] = dbo.getmtldesc(t.POID, t.Seq1, t.Seq2, 2, 0)
+		,[StockTransfer] = dbo.getmtldesc(t.POID, t.Seq1, t.Seq2, null, 0)
         ,[Color] = case when t.MtlTypeID = 'EMB THREAD' OR t.MtlTypeID = 'SP THREAD' OR t.MtlTypeID = 'THREAD' and t.SuppColor = '' then dbo.GetColorMultipleID (t.BrandID, t.ColorID)
 						when t.MtlTypeID = 'EMB THREAD' OR t.MtlTypeID = 'SP THREAD' OR t.MtlTypeID = 'THREAD' and t.SuppColor <> '' then t.SuppColor
 						else t.ColorID end
@@ -692,7 +703,9 @@ drop table #tmp
             var listUpdateReceivingTransferIn = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
                                                                              && (x.Field<decimal>("ActualWeight") != x.Field<decimal>("OldActualWeight") ||
                                                                                  !MyUtility.Convert.GetDate(x["Fabric2LabTime"]).EqualString(MyUtility.Convert.GetDate(x["OldFabric2LabTime"])) ||
-                                                                                 x.Field<string>("Checker") != x.Field<string>("OldChecker")))
+                                                                                 x.Field<string>("Checker") != x.Field<string>("OldChecker") ||
+                                                                                 x.Field<string>("ReceivingRemark") != x.Field<string>("OldReceivingRemark")
+                                                                                 ))
                                                                                 .Select(s => new
                                                                                 {
                                                                                     ReceivingSource = s["ReceivingSource"].ToString(),
@@ -701,6 +714,7 @@ drop table #tmp
                                                                                     Fabric2LabTime = s["Fabric2LabTime"],
                                                                                     IsNeedUpdateFabric2LabBy = !MyUtility.Convert.GetDate(s["Fabric2LabTime"]).EqualString(MyUtility.Convert.GetDate(s["OldFabric2LabTime"])),
                                                                                     Checker = s["Checker"],
+                                                                                    ReceivingRemark = s["ReceivingRemark"],
                                                                                 });
 
             DataRow[] drArryCutShadebandTime = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
@@ -864,14 +878,14 @@ Insert into LocationTrans_Detail(   ID,
 
                 if (updateItem.ReceivingSource == "Receiving")
                 {
-                    sqlUpdateReceiving_Detail += $@"update Receiving_Detail set ActualWeight  = {updateItem.ActualWeight} {updateFabric2Lab}, Checker = '{updateItem.Checker}'
+                    sqlUpdateReceiving_Detail += $@"update Receiving_Detail set ActualWeight  = {updateItem.ActualWeight} {updateFabric2Lab}, Checker = '{updateItem.Checker}', Remark = '{updateItem.ReceivingRemark}'
                                                     where   UKey = '{updateItem.Ukey}'
 ";
                 }
 
                 if (updateItem.ReceivingSource == "TransferIn")
                 {
-                    sqlUpdateReceiving_Detail += $@"update TransferIn_Detail set ActualWeight  = {updateItem.ActualWeight} {updateFabric2Lab}, Checker = '{updateItem.Checker}'
+                    sqlUpdateReceiving_Detail += $@"update TransferIn_Detail set ActualWeight  = {updateItem.ActualWeight} {updateFabric2Lab}, Checker = '{updateItem.Checker}', Remark = '{updateItem.ReceivingRemark}'
                                                     where   UKey = '{updateItem.Ukey}'
 ";
                 }
