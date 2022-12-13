@@ -2464,7 +2464,7 @@ select
       ,ISNULL(a.[StyleID],'')
       ,ISNULL(a.[SeasonID],'')
       ,ISNULL(a.[MarkerNo],'')
-      ,ISNULL(a.[ActFtyMarker]
+      ,ISNULL(a.[ActFtyMarker],'')
       ,ISNULL(a.[PatternID],'')
       ,ISNULL(a.[PatternNo],'')
       ,ISNULL(a.[PatternVersion],'')
@@ -2588,7 +2588,7 @@ select
       ,ISNULL(a.[AllSize],0)
       ,ISNULL(a.[OneTwoWay],0)
       ,ISNULL(a.[V_Repeat],0)
-      ,ISNULL(a.[H_Repeat],0)
+      ,ISNULL(a.[H_Repeat],0) 
       ,ISNULL(a.[MatchFabric],'')
       ,ISNULL(a.[HorizontalCutting],0)
       ,ISNULL(a.[UKey_Old],'')
