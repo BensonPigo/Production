@@ -664,6 +664,12 @@
     <Compile Include="R13.Designer.cs">
       <DependentUpon>R13.cs</DependentUpon>
     </Compile>
+    <Compile Include="R14.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R14.Designer.cs">
+      <DependentUpon>R14.cs</DependentUpon>
+    </Compile>
     <Compile Include="R33.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1097,6 +1103,9 @@
     <EmbeddedResource Include="R13_ShadeBond8.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R14.resx">
+      <DependentUpon>R14.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R33.resx">
       <DependentUpon>R33.cs</DependentUpon>

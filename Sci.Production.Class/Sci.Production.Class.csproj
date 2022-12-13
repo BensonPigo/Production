@@ -154,6 +154,12 @@
     <Compile Include="ComboRFIDProcessLocation.Designer.cs">
       <DependentUpon>ComboRFIDProcessLocation.cs</DependentUpon>
     </Compile>
+    <Compile Include="ComboShift.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ComboShift.Designer.cs">
+      <DependentUpon>ComboShift.cs</DependentUpon>
+    </Compile>
     <Compile Include="ComboxMaterialTypeAndID.cs">
       <SubType>UserControl</SubType>
     </Compile>

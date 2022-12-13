@@ -962,6 +962,18 @@ where	i.Id = '{this.CurrentMaintain["ID"]}' and
         {
             this.RenewData(); // 先重載資料, 避免雙開程式狀況
             base.ClickUnconfirm();
+
+            string strSeek = $@"select * 
+                                from SciProduction_Issue_Detail pms_id with(nolock)
+                                inner join SpreadingInspection_InsCutRef_Fabric sif with(nolock) on sif.IssueDetailUkey = pms_id.Ukey
+                                where pms_id.id = '{this.CurrentMaintain["ID"]}'";
+
+            if (MyUtility.Check.Seek(strSeek, "ManufacturingExecution"))
+            {
+                MyUtility.Msg.WarningBox("QA_R14. Spreading Inspection data already exists, cannot unconfirm.");
+                return;
+            }
+
             if (this.CurrentMaintain == null ||
                 MyUtility.Msg.QuestionBox("Do you want to unconfirme it?") == DialogResult.No)
             {
