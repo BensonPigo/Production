@@ -403,12 +403,11 @@ select
 	[RejectQty] = A.REJECTQTY,
 	[RFT (%)] = iif(isnull(a.InspectQty,0)=0,0,round((a.InspectQty-a.RejectQty)/a.InspectQty * 100,2)),
 	[Over] = A.Status,
-	[QC] = D.CpuRate * C.CPU * A.RejectQty 
+	[QC] = C.CPUFactor * C.CPU * A.RejectQty 
     , [Remark] = A.Remark
 From DBO.Rft A WITH (NOLOCK) 
 INNER JOIN DBO.ORDERS C ON C.ID = A.OrderID
 INNEr JOIN Country ct WITH (NOLOCK)  ON ct.ID=c.Dest
-OUTER APPLY DBO.GetCPURate(C.OrderTypeID,C.ProgramID,C.Category,C.BrandID,'O')D
 Outer Apply (
 	SELECT SewingCell 
 	FROM SewingLine WITH (NOLOCK) 
@@ -495,13 +494,12 @@ select
 	[Defaect code] = B.GarmentDefectCodeID,
 	[Description] = F.Description,
 	[Qty] = B.Qty,
-	[QC] = D.CpuRate * C.CPU * A.RejectQty 
+	[QC] = c.CPUFactor * C.CPU * A.RejectQty 
     , [Remark] = A.Remark
 From DBO.Rft A WITH (NOLOCK) 
 INNER JOIN DBO.Rft_Detail B WITH (NOLOCK) ON B.ID = A.ID
 INNER JOIN DBO.ORDERS C WITH (NOLOCK) ON C.ID = A.OrderID
 INNER JOIN Country ct WITH (NOLOCK)  ON ct.ID=c.Dest
-OUTER APPLY DBO.GetCPURate(C.OrderTypeID,C.ProgramID,C.Category,C.BrandID,'O')D
 Outer Apply (
 	SELECT SewingCell 
 	FROM SewingLine WITH (NOLOCK) 

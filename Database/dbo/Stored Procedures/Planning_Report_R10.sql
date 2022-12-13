@@ -89,19 +89,20 @@ BEGIN
 	outer apply (select cast(Factory_TMS.Year as varchar(4)) + cast(Factory_TMS.Month as varchar(2)) as Date2) odd2
 	Where ISsci = 1 /* And Factory.Junk = 0 */ And Artworktype.ReportDropdown = 1 
 	And Artworktype.ID = @ArtWorkType
-	And (@MDivisionID = '' or Factory.MDivisionID = @MDivisionID)
 	and Factory.ProduceM = Factory.MDivisionID
+	and (@MDivisionID = '' or Factory.ProduceM = @MDivisionID)
 	And (@Fty = '' or Factory.FtyZone = @Fty )
 	And (@Zone = '' or Factory.Zone = @Zone)
 
 	---------------------------------------------------------------------------------------------------------------------------------
 	--Order
 	
-	select Orders.id, FactoryID, Orders.CPU, OrderTypeID, ProgramID, Qty, Category, BrandID, BuyerDelivery, SciDelivery, CpuRate, SewLastDate, GMTComplete
+	select Orders.id, FactoryID, Orders.CPU, OrderTypeID, ProgramID, Qty, Category, BrandID, BuyerDelivery, SciDelivery, SewLastDate, GMTComplete
 		, Factory.Zone,Orders.MDivisionID
-	into #Orders From Orders
-	inner join Factory on Orders.FactoryID = Factory.ID	
-	outer apply (select CpuRate from GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'O') ) gcRate
+		, [CpuRate] = Orders.CPUFactor
+	into #Orders 
+	From Orders
+	inner join Factory on Orders.FactoryID = Factory.ID		
 	outer apply (select SewLastDate = MAX(OutputDate) from SewingOutput s join SewingOutput_Detail sd on s.ID = sd.ID where sd.OrderId = Orders.ID )so -- 在trade是 Orders.SewLastDate (從PMS轉過去)
 	Where ((@isSCIDelivery = 0 and Orders.BuyerDelivery between @date_s_by and @date_e_by)
 	or (@isSCIDelivery = 1 and Orders.SciDelivery between @date_s and @date_e))
@@ -270,8 +271,8 @@ BEGIN
 	, Style.CPU, cTms, cCPU
 	, Orders.Qty as ForecastQty
 	, Style_TmsCost.ArtworkTypeID
-	, CpuRate
-	, (cCPU * Orders.Qty * CpuRate) as ForecastCapacity
+	, [CpuRate] = Orders.CPUFactor
+	, (cCPU * Orders.Qty * Orders.CPUFactor) as ForecastCapacity
 	, Orders.BuyerDelivery
 	, iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	, FactorySort
@@ -287,8 +288,7 @@ BEGIN
 						iif(ArtworkType.ArtworkUnit = 'PPU', Style_TmsCost.Price,
 						iif(ArtworkType.ProductionUnit = 'Qty', Style_TMSCost.Qty,
 						IIF(@CalculateCPU = 1, Style_TMSCost.Tms / @mStandardTMS, Style_TMSCost.Tms / 60 )))) as cTms) amt
-	outer apply (select iif(@ArtWorkType = 'SEWING', IIF(Orders.Category = 'B', Style.CPU, Orders.CPU), cTms) as cCPU) ccpu
-	outer apply (select CpuRate from dbo.GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'S') ) gcRate
+	outer apply (select iif(@ArtWorkType = 'SEWING', IIF(Orders.Category = 'B', Style.CPU, Orders.CPU), cTms) as cCPU) ccpu	
 	outer apply (select format(dateadd(day,iif(@isSCIDelivery = 0, 0, -7),Orders.BuyerDelivery),'yyyyMM') as Date1) odd1
 	outer apply (select dbo.GetHalfMonWithYear(Orders.BuyerDelivery, @isSCIDelivery) as Date2) odd2
 	where ((@isSCIDelivery = 0 and Orders.BuyerDelivery between @date_s_by and @date_e_by)
@@ -395,9 +395,9 @@ BEGIN
 		from Factory
 		inner join Country on Factory.CountryID = Country.ID
 		where Type in ('B','S') and isnull(FactorySort,'') <> ''		
-		And (@MDivisionID = '' or Factory.MDivisionID = @MDivisionID)
 		and Factory.ProduceM = Factory.MDivisionID
 		And (@Fty = '' or Factory.FtyZone = @Fty) -- PMS這才有
+		and (@MDivisionID = '' or Factory.ProduceM = @MDivisionID)
 		And (@Zone = '' or Factory.Zone = @Zone)
 		
 		select FactoryID = Factory.LoadingFactoryGroup, BrandID
@@ -546,9 +546,9 @@ BEGIN
 		from Factory
 		inner join Country on Factory.CountryID = Country.ID
 		where Type in ('B','S') and isnull(FactorySort,'') <> ''		
-		And (@MDivisionID = '' or Factory.MDivisionID = @MDivisionID)
 		and Factory.ProduceM = Factory.MDivisionID
 		And (@Fty = '' or Factory.FtyZone = @Fty) -- PMS這才有
+		and (@MDivisionID = '' or Factory.ProduceM = @MDivisionID)
 		And (@Zone = '' or Factory.Zone = @Zone)		
 		
 		select FactoryID = Factory.LoadingFactoryGroup, BrandID
