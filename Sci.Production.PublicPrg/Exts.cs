@@ -380,6 +380,11 @@ namespace Sci.Production.Prg
         /// <returns>string</returns>
         public static string GetPackScanContent(this string srcBarcode)
         {
+            if (MyUtility.Check.Seek($"select 1 from Packinglist_Detail with (nolock) where SCICtnNo = '{srcBarcode.Left(15)}'"))
+            {
+                return srcBarcode.Left(15);
+            }
+
             return srcBarcode.Left(16);
         }
     }
