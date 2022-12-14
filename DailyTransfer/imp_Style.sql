@@ -2498,8 +2498,8 @@ RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Marker_ML
 from Production.dbo.Marker_ML as a 
 left join Trade_To_Pms.dbo.Marker_ML as b
-on a.MarkerUkey = b.MarkerUkey
-where b.MarkerUkey is null
+on a.ID = b.ID and a.Version = b.Version and a.MarkerName = b.MarkerName
+where b.ID is null
 
 UPDATE a
    SET 
@@ -2532,7 +2532,8 @@ UPDATE a
       ,[Mtl_Key] = ISNULL(b.[Mtl_Key],'')
       ,[Mtl_Ver] = ISNULL(b.[Mtl_Ver],'')
 	from Production.dbo.Marker_ML a
-inner join Trade_To_Pms.dbo.Marker_ML b on b.MarkerUkey = a.MarkerUkey
+inner join Trade_To_Pms.dbo.Marker_ML b 
+on a.ID = b.ID and a.Version = b.Version and a.MarkerName = b.MarkerName
 
 
 INSERT INTO [dbo].[Marker_ML]
@@ -2595,8 +2596,9 @@ select
       ,ISNULL(a.[Mtl_Key],'')
       ,ISNULL(a.[Mtl_Ver],'')
 from Trade_To_Pms.dbo.Marker_ML a
-left join Production.dbo.Marker_ML b on b.MarkerUkey = a.MarkerUkey
-where b.MarkerUkey is null
+left join Production.dbo.Marker_ML b 
+on a.ID = b.ID and a.Version = b.Version and a.MarkerName = b.MarkerName
+where b.ID is null
 
 ------------Marker_ML_SizeQty
 ----------------------刪除主TABLE多的資料
@@ -2604,8 +2606,9 @@ RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Marker_ML_SizeQty
 from Production.dbo.Marker_ML_SizeQty as a 
 left join Trade_To_Pms.dbo.Marker_ML_SizeQty as b
-on a.MarkerUkey = b.MarkerUkey
-where b.MarkerUkey is null
+on a.ID = b.ID and a.Version = b.Version and a.MarkerName = b.MarkerName
+and a.SizeCode = b.SizeCode
+where b.ID is null
 
 
 UPDATE a
@@ -2617,7 +2620,9 @@ UPDATE a
       ,[Qty] = ISNULL(b.[Qty],0)
       ,[UKey_Old] = ISNULL(b.[UKey_Old],'')
 	from Production.dbo.Marker_ML_SizeQty a
-inner join Trade_To_Pms.dbo.Marker_ML_SizeQty b on b.MarkerUkey = a.MarkerUkey
+inner join Trade_To_Pms.dbo.Marker_ML_SizeQty b 
+on a.ID = b.ID and a.Version = b.Version and a.MarkerName = b.MarkerName
+and a.SizeCode = b.SizeCode
 
 
 INSERT INTO [dbo].[Marker_ML_SizeQty]
@@ -2637,8 +2642,10 @@ select
       ,ISNULL(a.[Qty],0)
       ,ISNULL(a.[UKey_Old],'')
 from Trade_To_Pms.dbo.Marker_ML_SizeQty a
-left join Production.dbo.Marker_ML_SizeQty b on b.MarkerUkey = a.MarkerUkey
-where b.MarkerUkey is null
+left join Production.dbo.Marker_ML_SizeQty b 
+on a.ID = b.ID and a.Version = b.Version and a.MarkerName = b.MarkerName
+and a.SizeCode = b.SizeCode
+where b.ID is null
 
 END
  
