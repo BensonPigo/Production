@@ -66,6 +66,7 @@ namespace Sci.Production.Logistic
         /// <returns>Result</returns>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            DBProxy.Current.DefaultTimeout = 900; // 15分鐘
             StringBuilder sqlWHERE = new StringBuilder();
             StringBuilder sqlcmd = new StringBuilder();
 
@@ -245,13 +246,13 @@ and o.PulloutComplete = 0
             sqlcmd.Append(sqlWHERE);
             sqlcmd.Append(@" )a
 order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, ID, Seq");
-
             DualResult result = DBProxy.Current.Select(null, sqlcmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+            DBProxy.Current.DefaultTimeout = 300; // 改回原本設定
 
             return Ict.Result.True;
         }
