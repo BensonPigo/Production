@@ -2615,7 +2615,7 @@ UPDATE a
    SET 
        [ID] = ISNULL(b.[ID],'')
       ,[Version] = ISNULL(b.[Version],'')
-      ,[MarkerName] = ISNULL(b.[Version],'')
+      ,[MarkerName] = ISNULL(b.[MarkerName],'')
       ,[SizeCode] = ISNULL(b.[SizeCode],'')
       ,[Qty] = ISNULL(b.[Qty],0)
       ,[UKey_Old] = ISNULL(b.[UKey_Old],'')
