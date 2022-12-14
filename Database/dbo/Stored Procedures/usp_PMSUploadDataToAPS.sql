@@ -1,4 +1,6 @@
 ﻿
+
+
 CREATE PROCEDURE [dbo].[usp_PMSUploadDataToAPS]
 
 AS
@@ -59,7 +61,7 @@ Select
 ,[sLOT] = 1
 ,[sCRNM] = concat(o.LocalMR ,''-'', P1.Name)
 ,[sPRIO] = 1
-,[sODST] = o.CDCodeID
+,[sODST] = o.CDCodeNew
 ,[sNCTR] = o.FtyGroup
 ,[sCSSE] = o.SeasonID
 ,[sCSNM] = o.BrandID
@@ -155,7 +157,7 @@ outer apply(
 outer apply(select top 1 MasterStyleID from Style_SimilarStyle WITH (NOLOCK) where MasterStyleID = o.StyleID and MasterBrandID = o.BrandID)MasterStyleID1
 outer apply(select top 1 MasterStyleID from Style_SimilarStyle WITH (NOLOCK) where ChildrenStyleID = o.StyleID and ChildrenBrandID = o.BrandID)MasterStyleID2
 Where 
-(o.SCIDelivery >= DATEADD(DAY, -15, CONVERT(date,GETDATE())) or o.EditDate >= DATEADD(DAY, -7, CONVERT(date,GETDATE())))
+(o.SCIDelivery >= DATEADD(DAY, -7, CONVERT(date,GETDATE())) or o.Buyerdelivery >= CONVERT(date,GETDATE()) or o.EditDate >= DATEADD(DAY, -7, CONVERT(date,GETDATE())))
 and (o.Category = ''B'' or o.Category = ''S'')
 
 IF OBJECT_ID(''tempdb.dbo.#tmp2'', ''U'') IS NOT NULL DROP TABLE #tmp2
