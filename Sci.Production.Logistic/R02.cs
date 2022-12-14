@@ -126,7 +126,11 @@ select a.MDivisionID,a.FactoryID,a.OrderID,a.StyleID,a.PackingID,a.CTNStartNo,a.
 ,a.ClogLocationId
 ,a.BrandID
 ,a.Cancelled
-,TTLQty,[QtyPerSize],a.PulloutComplete,ActPulloutDate,reason
+,TTLQty
+,[QtyPerSize]
+,a.PulloutComplete
+,ActPulloutDate
+,reason
 from(
     select 
     p.MDivisionID
@@ -246,14 +250,15 @@ and o.PulloutComplete = 0
             sqlcmd.Append(sqlWHERE);
             sqlcmd.Append(@" )a
 order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, ID, Seq");
+
             DualResult result = DBProxy.Current.Select(null, sqlcmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
-            DBProxy.Current.DefaultTimeout = 300; // 改回原本設定
 
+            DBProxy.Current.DefaultTimeout = 300; // 改回原本設定
             return Ict.Result.True;
         }
 
@@ -289,44 +294,12 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
             worksheet.Cells[2, 10] = this.brand;
             worksheet.Cells[3, 10] = this.mDivision;
 
-            // 填內容值
-            int intRowsStart = 6;
-            object[,] objArray = new object[1, 17];
-            foreach (DataRow dr in this.printData.Rows)
-            {
-                objArray[0, 0] = dr["MDivisionID"];
-                objArray[0, 1] = dr["FactoryID"];
-                objArray[0, 2] = dr["OrderID"];
-                objArray[0, 3] = dr["StyleID"];
-                objArray[0, 4] = dr["PackingID"];
-                objArray[0, 5] = dr["CTNStartNo"];
-                objArray[0, 6] = dr["ReceiveDate"];
-                objArray[0, 7] = dr["CustPONo"];
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, strXltName, 5, false, null, excel); // 將datatable copy to excel
 
-                objArray[0, 8] = dr["OriClogLocationId"];
-
-                objArray[0, 9] = dr["ClogLocationId"];
-                objArray[0, 10] = dr["BrandID"];
-                objArray[0, 11] = dr["Cancelled"];
-                if (this.Perm.Confirm)
-                {
-                    objArray[0, 12] = dr["TTLQty"];
-                    objArray[0, 13] = dr["QtyPerSize"];
-                    objArray[0, 14] = dr["PulloutComplete"];
-                    objArray[0, 15] = dr["ActPulloutDate"];
-                    objArray[0, 16] = dr["reason"];
-                }
-
-                worksheet.Range[string.Format("A{0}:Q{0}", intRowsStart)].Value2 = objArray;
-                intRowsStart++;
-            }
-
+            // 此欄位只有 Clog R02 擁有 Confirm 權限的使用者可以『看到』，其餘的則移除該欄位。
             if (!this.Perm.Confirm)
             {
-                worksheet.Cells[5, 13] = string.Empty;
-                worksheet.Cells[5, 14] = string.Empty;
-                worksheet.Cells[5, 15] = string.Empty;
-                worksheet.Cells[5, 16] = string.Empty;
+                worksheet.get_Range("M:P").EntireColumn.Delete();
             }
 
             #region Save & Show Excel
