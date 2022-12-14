@@ -61,7 +61,7 @@ Select
 ,[sLOT] = 1
 ,[sCRNM] = concat(o.LocalMR ,''-'', P1.Name)
 ,[sPRIO] = 1
-,[sODST] = o.CDCodeNew
+,[sODST] = st.CDCodeNew
 ,[sNCTR] = o.FtyGroup
 ,[sCSSE] = o.SeasonID
 ,[sCSNM] = o.BrandID
