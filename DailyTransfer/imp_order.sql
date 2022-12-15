@@ -858,7 +858,8 @@ else
 				t.DelayDesc = s.DelayDesc,
 				t.SizeUnitWeight = s.SizeUnitWeight,
 				t.OrganicCotton = isnull(s.OrganicCotton, 0),
-				t.DirectShip = isnull(s.DirectShip,0)
+				t.DirectShip = isnull(s.DirectShip,0),
+				t.ScheETANoReplace = s.ScheETANoReplace
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -891,7 +892,7 @@ else
 			, ForecastCategory		, OnSiteSample			, PulloutCmplDate		, NeedProduction		, KeepPanels
 			, IsBuyBack				, BuyBackReason			, IsBuyBackCrossArticle , IsBuyBackCrossSizeCode
 			, KpiEachConsCheck		, CMPLTDATE				, HangerPack			, DelayCode				, DelayDesc
-			, SizeUnitWeight		, OrganicCotton         , DirectShip
+			, SizeUnitWeight		, OrganicCotton         , DirectShip			,ScheETANoReplace
 		) values (
 			s.ID					, s.BrandID				, s.ProgramID			, s.StyleID				, s.SeasonID 
 			, s.ProjectID			, s.Category			, s.OrderTypeID			, s.BuyMonth			, s.Dest 
@@ -923,7 +924,7 @@ else
 			, s.ForecastCategory	, s.OnSiteSample		, s.PulloutCmplDate		, isnull (s.NeedProduction, 0)		, isnull (s.KeepPanels, 0)
 			, isnull (s.IsBuyBack, 0), isnull (s.BuyBackReason, '')		, isnull (s.IsBuyBackCrossArticle, 0) , isnull (s.IsBuyBackCrossSizeCode, 0)
 			, s.KpiEachConsCheck	, s.CMPLTDATE			, s.HangerPack			,s.DelayCode			,s.DelayDesc
-			, s.SizeUnitWeight		, isnull(s.OrganicCotton, 0) ,isnull(s.DirectShip,0)
+			, s.SizeUnitWeight		, isnull(s.OrganicCotton, 0) ,isnull(s.DirectShip,0),s.ScheETANoReplace
 		)
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 

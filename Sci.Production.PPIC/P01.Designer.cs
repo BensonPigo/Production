@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.dateBox1 = new Sci.Win.UI.DateBox();
+            this.label4 = new Sci.Win.UI.Label();
             this.btnComboType = new Sci.Win.UI.Button();
             this.datePFETA = new Sci.Win.UI.DateBox();
             this.label3 = new Sci.Win.UI.Label();
@@ -545,6 +547,8 @@
             // 
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.Controls.Add(this.dateBox1);
+            this.tabPage1.Controls.Add(this.label4);
             this.tabPage1.Controls.Add(this.btnComboType);
             this.tabPage1.Controls.Add(this.datePFETA);
             this.tabPage1.Controls.Add(this.label3);
@@ -676,12 +680,30 @@
             this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.PcHandleText);
             this.tabPage1.Controls.Add(this.txttpeuser4);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(897, 395);
+            this.tabPage1.Size = new System.Drawing.Size(1000, 691);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
+            // 
+            // dateBox1
+            // 
+            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ScheETANoReplace", true));
+            this.dateBox1.IsSupportEditMode = false;
+            this.dateBox1.Location = new System.Drawing.Point(179, 140);
+            this.dateBox1.Name = "dateBox1";
+            this.dateBox1.ReadOnly = true;
+            this.dateBox1.Size = new System.Drawing.Size(100, 21);
+            this.dateBox1.TabIndex = 17;
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(5, 140);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(170, 21);
+            this.label4.TabIndex = 240;
+            this.label4.Text = "SCHD L/ETA(SP excl. Repl.)";
             // 
             // btnComboType
             // 
@@ -725,15 +747,15 @@
             // 
             this.dateKpiMNotice.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "KpiMNotice", true));
             this.dateKpiMNotice.IsSupportEditMode = false;
-            this.dateKpiMNotice.Location = new System.Drawing.Point(449, 224);
+            this.dateKpiMNotice.Location = new System.Drawing.Point(672, 219);
             this.dateKpiMNotice.Name = "dateKpiMNotice";
             this.dateKpiMNotice.ReadOnly = true;
-            this.dateKpiMNotice.Size = new System.Drawing.Size(100, 21);
+            this.dateKpiMNotice.Size = new System.Drawing.Size(97, 21);
             this.dateKpiMNotice.TabIndex = 18;
             // 
             // labelKpiMNotice
             // 
-            this.labelKpiMNotice.Location = new System.Drawing.Point(304, 224);
+            this.labelKpiMNotice.Location = new System.Drawing.Point(527, 219);
             this.labelKpiMNotice.Name = "labelKpiMNotice";
             this.labelKpiMNotice.Size = new System.Drawing.Size(142, 21);
             this.labelKpiMNotice.TabIndex = 200;
@@ -743,7 +765,7 @@
             // 
             this.dateKpiEachConsCheck.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "KpiEachConsCheck", true));
             this.dateKpiEachConsCheck.IsSupportEditMode = false;
-            this.dateKpiEachConsCheck.Location = new System.Drawing.Point(163, 224);
+            this.dateKpiEachConsCheck.Location = new System.Drawing.Point(424, 221);
             this.dateKpiEachConsCheck.Name = "dateKpiEachConsCheck";
             this.dateKpiEachConsCheck.ReadOnly = true;
             this.dateKpiEachConsCheck.Size = new System.Drawing.Size(100, 21);
@@ -751,9 +773,9 @@
             // 
             // labelKpiEachConsCheck
             // 
-            this.labelKpiEachConsCheck.Location = new System.Drawing.Point(5, 224);
+            this.labelKpiEachConsCheck.Location = new System.Drawing.Point(304, 221);
             this.labelKpiEachConsCheck.Name = "labelKpiEachConsCheck";
-            this.labelKpiEachConsCheck.Size = new System.Drawing.Size(149, 21);
+            this.labelKpiEachConsCheck.Size = new System.Drawing.Size(117, 21);
             this.labelKpiEachConsCheck.TabIndex = 198;
             this.labelKpiEachConsCheck.Text = "Est Each Con Apv.";
             // 
@@ -1755,7 +1777,7 @@
             // 
             this.dateRMTLETAMasterSP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MTLETA", true));
             this.dateRMTLETAMasterSP.IsSupportEditMode = false;
-            this.dateRMTLETAMasterSP.Location = new System.Drawing.Point(163, 200);
+            this.dateRMTLETAMasterSP.Location = new System.Drawing.Point(163, 219);
             this.dateRMTLETAMasterSP.Name = "dateRMTLETAMasterSP";
             this.dateRMTLETAMasterSP.ReadOnly = true;
             this.dateRMTLETAMasterSP.Size = new System.Drawing.Size(100, 21);
@@ -1765,7 +1787,7 @@
             // 
             this.datePkgMTLETASP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PackETA", true));
             this.datePkgMTLETASP.IsSupportEditMode = false;
-            this.datePkgMTLETASP.Location = new System.Drawing.Point(163, 173);
+            this.datePkgMTLETASP.Location = new System.Drawing.Point(163, 192);
             this.datePkgMTLETASP.Name = "datePkgMTLETASP";
             this.datePkgMTLETASP.ReadOnly = true;
             this.datePkgMTLETASP.Size = new System.Drawing.Size(100, 21);
@@ -1775,7 +1797,7 @@
             // 
             this.dateSewMTLETASP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewETA", true));
             this.dateSewMTLETASP.IsSupportEditMode = false;
-            this.dateSewMTLETASP.Location = new System.Drawing.Point(163, 146);
+            this.dateSewMTLETASP.Location = new System.Drawing.Point(163, 165);
             this.dateSewMTLETASP.Name = "dateSewMTLETASP";
             this.dateSewMTLETASP.ReadOnly = true;
             this.dateSewMTLETASP.Size = new System.Drawing.Size(100, 21);
@@ -1811,7 +1833,7 @@
             // 
             // labelRMTLETAMasterSP
             // 
-            this.labelRMTLETAMasterSP.Location = new System.Drawing.Point(5, 200);
+            this.labelRMTLETAMasterSP.Location = new System.Drawing.Point(5, 219);
             this.labelRMTLETAMasterSP.Name = "labelRMTLETAMasterSP";
             this.labelRMTLETAMasterSP.Size = new System.Drawing.Size(149, 21);
             this.labelRMTLETAMasterSP.TabIndex = 13;
@@ -1819,7 +1841,7 @@
             // 
             // labelPkgMTLETASP
             // 
-            this.labelPkgMTLETASP.Location = new System.Drawing.Point(5, 173);
+            this.labelPkgMTLETASP.Location = new System.Drawing.Point(5, 192);
             this.labelPkgMTLETASP.Name = "labelPkgMTLETASP";
             this.labelPkgMTLETASP.Size = new System.Drawing.Size(149, 21);
             this.labelPkgMTLETASP.TabIndex = 12;
@@ -1827,7 +1849,7 @@
             // 
             // labelSewMTLETASP
             // 
-            this.labelSewMTLETASP.Location = new System.Drawing.Point(5, 146);
+            this.labelSewMTLETASP.Location = new System.Drawing.Point(5, 165);
             this.labelSewMTLETASP.Name = "labelSewMTLETASP";
             this.labelSewMTLETASP.Size = new System.Drawing.Size(149, 21);
             this.labelSewMTLETASP.TabIndex = 11;
@@ -1839,7 +1861,7 @@
             this.labelSCHDLETAMasterSP.Name = "labelSCHDLETAMasterSP";
             this.labelSCHDLETAMasterSP.Size = new System.Drawing.Size(149, 21);
             this.labelSCHDLETAMasterSP.TabIndex = 10;
-            this.labelSCHDLETAMasterSP.Text = "SCHD L/ETA(Master SP)";
+            this.labelSCHDLETAMasterSP.Text = "SCHD L/ETA";
             // 
             // labelKPILETA
             // 
@@ -1911,7 +1933,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(990, 679);
+            this.shapeContainer2.Size = new System.Drawing.Size(994, 685);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -4046,5 +4068,7 @@
         private Win.UI.CheckBox checkBoxDirectShip;
         private Win.UI.Button btn_ArtworkTestDox;
         private Win.UI.Button btnComboType;
+        private Win.UI.DateBox dateBox1;
+        private Win.UI.Label label4;
     }
 }

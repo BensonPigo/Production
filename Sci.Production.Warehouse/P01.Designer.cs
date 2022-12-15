@@ -1358,7 +1358,7 @@
             this.labelSCHDLETAMasterSP.Name = "labelSCHDLETAMasterSP";
             this.labelSCHDLETAMasterSP.Size = new System.Drawing.Size(142, 21);
             this.labelSCHDLETAMasterSP.TabIndex = 139;
-            this.labelSCHDLETAMasterSP.Text = "SCHD L/ETA(Master SP)";
+            this.labelSCHDLETAMasterSP.Text = "SCHD L/ETA";
             // 
             // labelKPILETA
             // 
