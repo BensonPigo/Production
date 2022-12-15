@@ -42,17 +42,15 @@ namespace Sci.Production.Win
             // Sci.Production.SCHEMAS.PASS1Row data;
             if (ConfigurationManager.AppSettings["TaipeiServer"] != string.Empty)
             {
-                // Assembly a = typeof(Module1).Assembly;
                 this.label4.Visible = true;
                 this.comboBox2.Visible = true;
                 this.checkBoxTestEnvironment.Visible = true;
                 this.ChangeTaipeiServer();
 
-                string MachineName = Environment.MachineName;
-                string LoginAccount = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
-                string[] IPAddress = System.Net.Dns.GetHostAddresses(MachineName).Select(i => i.ToString()).ToArray();
+                // 抓電腦登入名稱
+                string loginAccount = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
                 string[] strSevers = ConfigurationManager.AppSettings["PMSTeam_LoginAccount"].Split(new char[] { ',' });
-                var result = strSevers.Where(c => c.ToUpper().Contains(LoginAccount.ToUpper()));
+                var result = strSevers.Where(c => c.ToUpper().Contains(loginAccount.ToUpper()));
                 if (result.Any())
                 {
                     this.act.Text = "SCIMIS";
@@ -144,7 +142,7 @@ namespace Sci.Production.Win
             this.comboBox1.DataSource = null;
             if (MyUtility.Check.Empty(this.act.Text.Trim()))
             {
-                return false;
+                return true;
             }
 
             DataTable dtPass1;
