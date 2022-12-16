@@ -46,6 +46,8 @@ namespace Sci.Production.Packing
                  .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(4), iseditingreadonly: true)
+                 .Text("SIZE", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("Qty", header: "Qty/Ctn", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -80,6 +82,8 @@ select	ID
 		, Alias
 		, BuyerDelivery 
         , SCICtnNo
+        ,[SIZE]
+        ,[Qty]
 from (
     Select  Distinct ID = ''
             , selected = 1
@@ -95,10 +99,38 @@ from (
             , c.BuyerDelivery 
             , orderByCTNStartNo = TRY_CONVERT(int, CTNStartNo)
             , b.SCICtnNo
+            ,[SIZE] = size.val
+            ,[Qty] =qty.val
     from PackingList a WITH (NOLOCK)
     inner join PackingList_Detail b WITH (NOLOCK) on a.Id = b.Id 
     left join Orders c WITH (NOLOCK) on b.OrderId = c.Id 
     left join Country d WITH (NOLOCK) on c.Dest = d.ID 
+    outer apply
+	(
+		select val = stuff(
+		(
+			select concat('/',tmp.SizeCode) 
+			from
+			(
+				select distinct SizeCode 
+				from PackingList_Detail
+				where CTNStartNo in(b.CTNStartNo) and id = a.id
+			)tmp for xml path('')
+		),1,1,'')
+	)size
+	outer apply
+	(
+		select val = stuff(
+		(
+			select concat('/',tmp.ShipQty) 
+			from
+			(
+				select distinct ShipQty 
+				from PackingList_Detail
+				where CTNStartNo in(b.CTNStartNo) and id = a.id
+			)tmp for xml path('')
+		),1,1,'')
+	)Qty
     where b.CTNStartNo != ''  
     and b.PackErrTransferDate is null
     and b.DisposeFromClog= 0 
@@ -174,7 +206,7 @@ ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
                 if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
                 {
                     // 先將Grid的結構給開出來
-                    string selectCommand = @"Select distinct '' as ID, 1 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery ,b.CustCTN,b.SCICtnNo
+                    string selectCommand = @"Select distinct '' as ID, 1 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery ,b.CustCTN,b.SCICtnNo,[SIZE] = '',[QTY] = ''
                                                              from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
                     DataTable selectDataTable;
                     DualResult selectResult;
@@ -228,8 +260,36 @@ select  pd.OrderID
         , pd.SCICtnNo
         , pd.ID
         , pd.CTNStartNo
+		,[SIZE] = size.val
+		,[Qty] = qty.val
 from    PackingList_Detail pd WITH (NOLOCK) 
 inner join PackingList p WITH (NOLOCK) on pd.id = p.id
+outer apply
+(
+	select val = stuff(
+	(
+		select concat('/',tmp.SizeCode) 
+		from
+		(
+			select distinct SizeCode 
+			from PackingList_Detail
+			where CTNStartNo in(pd.CTNStartNo) and p.id = id
+	)
+	tmp for xml path('')),1,1,'')
+)size
+outer apply
+(
+	select val = stuff(
+	(
+		select concat('/',tmp.ShipQty) 
+		from
+		(
+			select distinct ShipQty 
+			from PackingList_Detail
+			where CTNStartNo in(pd.CTNStartNo) and p.id = id
+		)tmp for xml path('')
+	),1,1,'')
+)Qty
 where   ((pd.ID = @ID and pd.CTNStartNo = @CTNStartNo) or pd.SCICtnNo = @SCICtnNo) 
         and pd.CTNQty > 0 
         and pd.DisposeFromClog= 0
@@ -261,6 +321,8 @@ where   ((pd.ID = @ID and pd.CTNStartNo = @CTNStartNo) or pd.SCICtnNo = @SCICtnN
                                         dr["CTNStartNo"] = seekData["CTNStartNo"].ToString().Trim();
                                         dr["OrderID"] = seekData["OrderID"].ToString().Trim();
                                         dr["SCICtnNo"] = seekData["SCICtnNo"].ToString().Trim();
+                                        dr["SIZE"] = seekData["SIZE"].ToString().Trim();
+                                        dr["QTY"] = seekData["Qty"].ToString().Trim();
                                         string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
                                         sqlCmd = string.Format(
                                             @"
@@ -306,8 +368,36 @@ select  pd.OrderID
         , pd.TransferDate
 		,pd.id,pd.CTNStartNo
         ,pd.SCICtnNo
+		,[size] = size.val
+		,[qty] = qty.val
 from    PackingList_Detail pd WITH (NOLOCK) 
 inner join PackingList p WITH (NOLOCK) on pd.id = p.id
+outer apply
+(
+	select val = stuff(
+	(
+		select concat('/',tmp.SizeCode) 
+		from
+		(
+			select distinct SizeCode 
+			from PackingList_Detail
+			where CTNStartNo in(pd.CTNStartNo) and p.id = id
+	)
+	tmp for xml path('')),1,1,'')
+)size
+outer apply
+(
+	select val = stuff(
+	(
+		select concat('/',tmp.ShipQty) 
+		from
+		(
+			select distinct ShipQty 
+			from PackingList_Detail
+			where CTNStartNo in(pd.CTNStartNo) and p.id = id
+		)tmp for xml path('')
+	),1,1,'')
+)Qty
 where   pd.CustCTN= '{dr["CustCTN"]}' 
         and pd.CTNQty > 0 
         and pd.DisposeFromClog= 0
@@ -340,6 +430,9 @@ where   pd.CustCTN= '{dr["CustCTN"]}'
                                                 string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
                                                 string packinglistid = seekData["id"].ToString().Trim();
                                                 string cTNStartNo = seekData["CTNStartNo"].ToString().Trim();
+                                                string size = seekData["SIZE"].ToString().Trim();
+                                                string qty = seekData["Qty"].ToString().Trim();
+
                                                 sqlCmd = string.Format(
                                                     @"
 select  a.StyleID
@@ -366,6 +459,8 @@ where   a.ID = '{0}'",
                                                     dr["BuyerDelivery"] = seekData["BuyerDelivery"];
                                                     dr["packinglistid"] = packinglistid.Trim();
                                                     dr["CTNStartNo"] = cTNStartNo.Trim();
+                                                    dr["SIZE"] = size.Trim();
+                                                    dr["QTY"] = qty.Trim();
                                                 }
 
                                                 selectDataTable.Rows.Add(dr);
@@ -398,8 +493,36 @@ select  pd.OrderID
         , pd.TransferDate
 		,pd.id,pd.CTNStartNo
         ,pd.SCICtnNo
+        ,[size] = size.val
+		,[qty] = qty.val
 from    PackingList_Detail pd WITH (NOLOCK) 
 inner join PackingList p WITH (NOLOCK) on pd.id = p.id
+outer apply
+(
+	select val = stuff(
+	(
+		select concat('/',tmp.SizeCode) 
+		from
+		(
+			select distinct SizeCode 
+			from PackingList_Detail
+			where CTNStartNo in(pd.CTNStartNo) and p.id = id
+	)
+	tmp for xml path('')),1,1,'')
+)size
+outer apply
+(
+	select val = stuff(
+	(
+		select concat('/',tmp.ShipQty) 
+		from
+		(
+			select distinct ShipQty 
+			from PackingList_Detail
+			where CTNStartNo in(pd.CTNStartNo) and p.id = id
+		)tmp for xml path('')
+	),1,1,'')
+)Qty
 where   pd.CustCTN= '{dr["CustCTN"]}' 
         and pd.CTNQty > 0 
         and pd.DisposeFromClog= 0
@@ -429,6 +552,8 @@ where   pd.CustCTN= '{dr["CustCTN"]}'
 
                                             dr["OrderID"] = seekData["OrderID"].ToString().Trim();
                                             dr["SCICtnNo"] = seekData["SCICtnNo"].ToString().Trim();
+                                            string size = seekData["SIZE"].ToString().Trim();
+                                            string qty = seekData["Qty"].ToString().Trim();
                                             string packinglistid = seekData["id"].ToString().Trim();
                                             string cTNStartNo = seekData["CTNStartNo"].ToString().Trim();
                                             string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
@@ -458,6 +583,8 @@ where   a.ID = '{0}'",
                                                 dr["BuyerDelivery"] = seekData["BuyerDelivery"];
                                                 dr["packinglistid"] = packinglistid.Trim();
                                                 dr["CTNStartNo"] = cTNStartNo.Trim();
+                                                dr["SIZE"] = size.Trim();
+                                                dr["QTY"] = qty.Trim();
                                             }
 
                                             insertCount++;
