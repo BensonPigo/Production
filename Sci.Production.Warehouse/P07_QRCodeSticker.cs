@@ -22,6 +22,9 @@ namespace Sci.Production.Warehouse
         private string printType;
         private string callFrom;
 
+        // P07 或者 P18
+        private bool IsShow;
+
         /// <summary>
         /// P07_QRCodeSticker
         /// </summary>
@@ -35,8 +38,9 @@ namespace Sci.Production.Warehouse
             this.dtP07_QRCodeSticker = dtSource;
             this.printType = printType;
             this.callFrom = callFrom;
-            this.labSortBy.Visible = callFrom == "P07";
-            this.radioPanel1.Visible = callFrom == "P07";
+            this.IsShow = callFrom == "P07" || callFrom == "P18";
+            this.labSortBy.Visible = this.IsShow;
+            this.radioPanel1.Visible = this.IsShow;
             this.listControlBindingSource.DataSource = dtSource;
 
             this.dtP07_QRCodeSticker.Columns.Add("IsQRCodeCreatedByPMS", typeof(bool));
@@ -46,7 +50,7 @@ namespace Sci.Production.Warehouse
                 dr["IsQRCodeCreatedByPMS"] = dr["MINDQRCode"].ToString().IsQRCodeCreatedByPMS();
             }
 
-            if (callFrom == "P07")
+            if (this.IsShow)
             {
                 MyUtility.Tool.SetupCombox(this.comboFilterQRCode, 1, 1, "All,Create by PMS,Not create by PMS");
                 this.comboFilterQRCode.Text = "Create by PMS";
@@ -101,6 +105,22 @@ namespace Sci.Production.Warehouse
                                 .Text("MINDQRCode", header: "QR Code", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 ;
             }
+            else if (this.callFrom == "P18")
+            {
+                this.Helper.Controls.Grid.Generator(this.grid1)
+                                .CheckBox("Sel", header: string.Empty, trueValue: 1, falseValue: 0)
+                                .Text("POID", header: "SP#", iseditingreadonly: true)
+                                .Text("SEQ", header: "Seq", iseditingreadonly: true)
+                                .Text("FabricType", header: "Fabric" + Environment.NewLine + "Type", iseditingreadonly: true)
+                                .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                                .Numeric("ActualWeight", header: "Act.(kg)", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                                .Text("Roll", header: "Roll#", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                                .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                                .Numeric("StockQty", header: "In Qty", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                                .Text("StockUnit", header: "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                                .Text("MINDQRCode", header: "QR Code", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                ;
+            }
             else
             {
                 this.Helper.Controls.Grid.Generator(this.grid1)
@@ -139,7 +159,7 @@ namespace Sci.Production.Warehouse
 
                 PrintQRCode_RDLC(barcodeDatas, type);
 
-                if (this.callFrom == "P07")
+                if (this.IsShow)
                 {
                     string ukeys = barcodeDatas.Select(s => s["Ukey"].ToString()).JoinToString(",");
                     WHTableName detailTableName = Prgs.GetWHDetailTableName(this.callFrom);
@@ -239,7 +259,7 @@ namespace Sci.Production.Warehouse
 
         private void RadioPanel1_ValueChanged(object sender, EventArgs e)
         {
-            if (this.callFrom == "P07" && this.listControlBindingSource.DataSource != null)
+            if (this.IsShow && this.listControlBindingSource.DataSource != null)
             {
                 if (this.radioPanel1.Value == "1")
                 {

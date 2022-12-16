@@ -96,6 +96,18 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
+        protected override bool ClickEditBefore()
+        {
+            if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
+            {
+                MyUtility.Msg.WarningBox("Data is confirmed, can't modify.", "Warning");
+                return false;
+            }
+
+            return base.ClickEditBefore();
+        }
+
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -305,15 +317,6 @@ where ID = @ID and Confirm != 1
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-
-            if (this.CurrentMaintain["status"].EqualString("Confirmed"))
-            {
-                this.toolbar.cmdEdit.Enabled = false;
-            }
-            else
-            {
-                this.toolbar.cmdEdit.Enabled = true;
-            }
 
             #region Status Label
 
@@ -716,6 +719,9 @@ where I.InventoryPOID ='{this.CurrentDetailData["poid"]}' and I.type = '3' and F
             .Text("Remark", header: "Remark", iseditingreadonly: false) // 10
             .Text("RefNo", header: "Ref#", iseditingreadonly: true)
             .Text("ColorID", header: "Color", iseditingreadonly: true)
+            .Text("MINDQRCode", header: "MIND QR Code", width: Widths.AnsiChars(30), iseditingreadonly: true)
+            .Text("MINDChecker", header: "Checker", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .DateTime("CheckDate", header: "Check Date", width: Widths.AnsiChars(20), iseditingreadonly: true)
             ;
             #endregion 欄位設定
 
@@ -1172,6 +1178,40 @@ and NOT EXISTS(select 1 from AIR_Laboratory b    where a.ID = b.ID AND a.POID=b.
             }
             #endregion
 
+            #region 檢查MINDQRCode是否有在其他單子重複，有重複就update成空白, where 拆開來是因為效能(有index但有時候無效)
+            string sqlCheckMINDQRCode = $@"
+update rd set rd.MINDQRCode = ''
+from TransferIn_Detail rd
+where ID = '{this.CurrentMaintain["ID"]}'
+and exists(select 1 from TransferIn_Detail rd2 with (nolock) where rd2.ID <> rd.ID and rd2.MINDQRCode = rd.MINDQRCode)
+
+update rd set rd.MINDQRCode = ''
+from TransferIn_Detail rd
+where ID = '{this.CurrentMaintain["ID"]}'
+and exists(select 1 from WHBarcodeTransaction wht with (nolock) where wht.Action = 'Confirm' and [Function] = 'P18' and wht.TransactionID <> rd.ID and wht.To_NewBarcode = rd.MINDQRCode)
+
+update rd set rd.MINDQRCode = ''
+from TransferIn_Detail rd
+where ID = '{this.CurrentMaintain["ID"]}'
+and exists(select 1 from WHBarcodeTransaction wht with (nolock) where [Function] != 'P18' and wht.From_OldBarcode = rd.MINDQRCode)
+
+update rd set rd.MINDQRCode = ''
+from TransferIn_Detail rd
+where ID = '{this.CurrentMaintain["ID"]}'
+and exists(select 1 from WHBarcodeTransaction wht with (nolock) where [Function] != 'P18' and wht.From_NewBarcode = rd.MINDQRCode)
+
+update rd set rd.MINDQRCode = ''
+from TransferIn_Detail rd
+where ID = '{this.CurrentMaintain["ID"]}'
+and exists(select 1 from WHBarcodeTransaction wht with (nolock) where [Function] != 'P18' and wht.To_OldBarcode = rd.MINDQRCode)
+
+update rd set rd.MINDQRCode = ''
+from TransferIn_Detail rd
+where ID = '{this.CurrentMaintain["ID"]}'
+and exists(select 1 from WHBarcodeTransaction wht with (nolock) where [Function] != 'P18' and wht.To_NewBarcode = rd.MINDQRCode)
+";
+            #endregion
+
             Exception errMsg = null;
             using (TransactionScope transactionscope = new TransactionScope())
             {
@@ -1188,6 +1228,13 @@ and NOT EXISTS(select 1 from AIR_Laboratory b    where a.ID = b.ID AND a.POID=b.
                         // FtyInventory 庫存
                         DataTable resulttb;
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out resulttb, "#TmpSource", conn: sqlConn)))
+                        {
+                            throw result.GetException();
+                        }
+
+                        // 檢查MINDQRCode是否有在其他單子重複，有的畫清空，UpdateWH_Barcode會重編新的
+                        result = DBProxy.Current.ExecuteByConn(sqlConn, sqlCheckMINDQRCode);
+                        if (!result)
                         {
                             throw result.GetException();
                         }
@@ -1564,40 +1611,52 @@ where sd.id = '{this.CurrentMaintain["ID"]}'
             this.DetailSelectCommand = string.Format(
             @"
             select  a.id
-            , a.PoId
-            , a.Seq1
-            , a.Seq2
-            , seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
-            , a.Roll
-            , a.Dyelot
-            , [Description] = dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0)
-            , StockUnit = p.StockUnit
-            , a.Qty
-            , TtlQty = convert(varchar(20),
-			    iif(a.CombineBarcode is null , a.Qty, 
-				    iif(a.Unoriginal is null , ttlQty.value, null))) +' '+ p.StockUnit
-            , a.StockType
-            , a.location
-            , a.ContainerCode
-            , a.ukey
-            , FabricType = isnull(p.FabricType,I.FabricType)
-            , DataFrom = iif(p.FabricType is null,'Invtrans','Po_Supp_Detail')
-		    ,a.Weight
-		    ,a.Remark
-            ,[Fabric] = case when p.FabricType = 'F' then 'Fabric' 
-                                 when p.FabricType = 'A' then 'Accessory'
-                            else '' end
-            , p.Refno
-		    , [ColorID] = Color.Value
-            ,[Barcode] = isnull(Barcode.value,'')
-            ,a.CombineBarcode
-            ,a.Unoriginal 
-            ,[ActualWeight] = isnull(a.ActualWeight, 0)
-            ,a.MDivisionID
-            ,a.CompleteTime
-            ,a.SentToWMS
-            ,[Tone] = a.Tone
+                , a.PoId
+                , a.Seq1
+                , a.Seq2
+                , seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
+                , a.Roll
+                , a.Dyelot
+                , [Description] = dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0)
+                , StockUnit = p.StockUnit
+                , a.Qty
+                , TtlQty = convert(varchar(20),
+			        iif(a.CombineBarcode is null , a.Qty, 
+				        iif(a.Unoriginal is null , ttlQty.value, null))) +' '+ p.StockUnit
+                , a.StockType
+                , a.location
+                , a.ContainerCode
+                , a.ukey
+                , FabricType = isnull(p.FabricType,I.FabricType)
+                , DataFrom = iif(p.FabricType is null,'Invtrans','Po_Supp_Detail')
+		        ,a.Weight
+		        ,a.Remark
+                ,[Fabric] = case when p.FabricType = 'F' then 'Fabric' 
+                                     when p.FabricType = 'A' then 'Accessory'
+                                else '' end
+                , p.Refno
+		        , [ColorID] = Color.Value
+                ,[Barcode] = isnull(Barcode.value,'')
+                ,a.CombineBarcode
+                ,a.Unoriginal 
+                ,[ActualWeight] = isnull(a.ActualWeight, 0)
+                ,a.MDivisionID
+                ,a.CompleteTime
+                ,a.SentToWMS
+                ,[Tone] = a.Tone
+                ,[MINDQRCode] = case when b.Status = 'New' then a.MINDQRCode
+                                     when b.Status = 'Confirmed' and a.MINDQRCode <> '' then a.MINDQRCode
+                                     else ( select top 1 case  when    wbt.To_NewBarcodeSeq = '' then wbt.To_NewBarcode
+                                                               when    wbt.To_NewBarcode = ''  then ''
+                                                               else    Concat(wbt.To_NewBarcode, '-', wbt.To_NewBarcodeSeq)    end
+                                            from   WHBarcodeTransaction wbt with (nolock)
+                                            where  wbt.TransactionUkey = a.Ukey and
+                                                   wbt.Action = 'Confirm'
+                                            order by wbt.CommitTime desc) end
+                ,[MINDChecker] = a.MINDChecker+'-'+(select name from [ExtendServer].ManufacturingExecution.dbo.Pass1 where id = a.MINDChecker)
+                ,[CheckDate] = IIF(a.MINDCheckEditDate IS NULL, a.MINDCheckAddDate,a.MINDCheckEditDate)
             from dbo.TransferIn_Detail a WITH (NOLOCK) 
+            inner join TransferIn b WITH (NOLOCK) on a.id = b.id
             left join Po_Supp_Detail p WITH (NOLOCK)  on a.poid = p.id
                                           and a.seq1 = p.seq1
                                           and a.seq2 = p.seq2
@@ -1901,22 +1960,23 @@ where sd.id = '{this.CurrentMaintain["ID"]}'
             List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@ID", this.txtTransferExportID.Text) };
             string sqlGetTrasnferExport = $@"
         select  ted.POID,
-        [Seq] = concat(Ltrim(Rtrim(ted.Seq1)), ' ', ted.Seq2),
-        ted.Seq1,
-        ted.Seq2,
-        [Roll] = tdc.Carton,
-        [Dyelot] = tdc.LotNo,
-        [StockType] = 'B',
-        [Qty] = isnull(dbo.GetUnitQty(tdc.StockUnitID, psd.StockUnit, sum(isnull(tdc.StockQty, 0))), 0),
-        ted.FabricType,
-        [Fabric] = case when ted.FabricType = 'F' then 'Fabric' 
-                             when ted.FabricType = 'A' then 'Accessory'
-                        else '' end,
-        [Description] = dbo.getMtlDesc(ted.poid, ted.seq1, ted.seq2,2,0),
-        psd.StockUnit,
-        psd.Refno,
-        [ColorID] = Color.Value,
-        [Tone] =tdc.Tone
+            [Seq] = concat(Ltrim(Rtrim(ted.Seq1)), ' ', ted.Seq2),
+            ted.Seq1,
+            ted.Seq2,
+            [Roll] = tdc.Carton,
+            [Dyelot] = tdc.LotNo,
+            [StockType] = 'B',
+            [Qty] = isnull(dbo.GetUnitQty(tdc.StockUnitID, psd.StockUnit, sum(isnull(tdc.StockQty, 0))), 0),
+            ted.FabricType,
+            [Fabric] = case when ted.FabricType = 'F' then 'Fabric' 
+                                 when ted.FabricType = 'A' then 'Accessory'
+                            else '' end,
+            [Description] = dbo.getMtlDesc(ted.poid, ted.seq1, ted.seq2,2,0),
+            psd.StockUnit,
+            psd.Refno,
+            [ColorID] = Color.Value,
+            [Tone] =tdc.Tone,
+            [MINDQRCode] = tdc.MINDQRCode
         from    TransferExport te with (nolock)
         inner join TransferExport_Detail ted with (nolock) on ted.ID = te.ID 
         inner join TransferExport_Detail_Carton tdc with (nolock) on ted.Ukey = tdc.TransferExport_DetailUkey
@@ -1979,6 +2039,7 @@ where sd.id = '{this.CurrentMaintain["ID"]}'
                 drNew["Refno"] = drImport["Refno"];
                 drNew["ColorID"] = drImport["ColorID"];
                 drNew["Tone"] = drImport["Tone"];
+                drNew["MINDQRCode"] = drImport["MINDQRCode"];
 
                 dtDetail.Rows.Add(drNew);
             }

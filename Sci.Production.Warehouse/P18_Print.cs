@@ -27,28 +27,35 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
             this.mainCurrentMaintain = drMain;
             this.radioPanel.Value = "1";
+            this.ComboType_Init();
+        }
+
+        private void ComboType_Init()
+        {
+            DataTable dtPMS_FabricQRCode_LabelSize;
+            DualResult result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_Fab_LabSize' order by Seq", out dtPMS_FabricQRCode_LabelSize);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.comboType.DisplayMember = "Name";
+            this.comboType.ValueMember = "ID";
+            this.comboType.DataSource = dtPMS_FabricQRCode_LabelSize;
+            this.comboType.SelectedValue = MyUtility.GetValue.Lookup("select PMS_FabricQRCode_LabelSize from system");
         }
 
         private void RadioPanel_ValueChanged(object sender, EventArgs e)
         {
-            if (this.radioPanel.Value == string.Empty)
-            {
-                this.radioPanel.Value = "1";
-            }
+            this.ReportResourceNamespace = typeof(P18_PrintData);
+            this.ReportResourceAssembly = this.ReportResourceNamespace.Assembly;
+            this.ReportResourceName = "P18_Print.rdlc";
 
-            switch (this.radioPanel.Value)
-            {
-                case "1":
-                    this.IsSupportToPrint = true;
-                    this.IsSupportToExcel = false;
-                    break;
-                case "2":
-                    this.IsSupportToPrint = false;
-                    this.IsSupportToExcel = true;
-                    break;
-                default:
-                    break;
-            }
+            this.IsSupportToPrint = !this.radioP18ExcelImport.Checked;
+            this.IsSupportToExcel = this.radioP18ExcelImport.Checked;
+            this.comboType.Enabled = this.radioQRCodeSticker.Checked;
         }
 
         /// <inheritdoc/>
@@ -147,6 +154,37 @@ where a.id = @ID";
                 this.dtResult = dtDetail;
 
                 #endregion
+
+                #region -- 整理表頭資料 --
+
+                // 抓M的EN NAME
+                e.Report.ReportParameters.Add(new ReportParameter("RptTitle", rptTitle));
+                e.Report.ReportParameters.Add(new ReportParameter("ID", id));
+                e.Report.ReportParameters.Add(new ReportParameter("FromFtyID", fromFactory));
+                e.Report.ReportParameters.Add(new ReportParameter("Remark", remark));
+                e.Report.ReportParameters.Add(new ReportParameter("IssueDate", issuedate));
+
+                #endregion
+
+                #region -- 整理表身資料 --
+
+                // 傳 list 資料
+                List<P18_PrintData> data = this.dtResult.AsEnumerable()
+                    .Select(row1 => new P18_PrintData()
+                    {
+                        POID = row1["POID"].ToString().Trim(),
+                        SEQ = row1["SEQ"].ToString().Trim(),
+                        Roll = row1["Roll"].ToString().Trim(),
+                        DYELOT = row1["DYELOT"].ToString().Trim(),
+                        DESC = row1["Description"].ToString().Trim(),
+                        Unit = row1["StockUnit"].ToString().Trim(),
+                        QTY = row1["QTY"].ToString().Trim(),
+                        GW = row1["Weight"].ToString().Trim(),
+                        Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
+                    }).ToList();
+
+                e.Report.ReportDataSource = data;
+                #endregion
             }
             else
             {
@@ -194,78 +232,118 @@ WHERE a.ID = '{id}'
         }
 
         /// <inheritdoc/>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
-        protected override bool OnToPrint(ReportDefinition report)
+        protected override bool ToPrint()
         {
-            this.SetCount(this.dtResult.Rows.Count);
-
-            DualResult result;
-            DataRow row = this.mainCurrentMaintain;
-            string id = row["ID"].ToString();
-            string fromFactory = row["FromFtyID"].ToString();
-            string remark = row["Remark"].ToString();
-            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["IssueDate"])).ToShortDateString();
-
-            #region -- 整理表頭資料 --
-
-            // 抓M的EN NAME
-            DataTable dtNAME;
-            DBProxy.Current.Select(
-                string.Empty,
-                string.Format(@"select NameEN from MDivision where ID='{0}'", Env.User.Keyword), out dtNAME);
-            string rptTitle = dtNAME.Rows[0]["NameEN"].ToString();
-
-            report.ReportParameters.Add(new ReportParameter("RptTitle", rptTitle));
-            report.ReportParameters.Add(new ReportParameter("ID", id));
-            report.ReportParameters.Add(new ReportParameter("FromFtyID", fromFactory));
-            report.ReportParameters.Add(new ReportParameter("Remark", remark));
-            report.ReportParameters.Add(new ReportParameter("IssueDate", issuedate));
-
-            #endregion
-
-            #region -- 整理表身資料 --
-
-            // 傳 list 資料
-            List<P18_PrintData> data = this.dtResult.AsEnumerable()
-                .Select(row1 => new P18_PrintData()
-                {
-                    POID = row1["POID"].ToString().Trim(),
-                    SEQ = row1["SEQ"].ToString().Trim(),
-                    Roll = row1["Roll"].ToString().Trim(),
-                    DYELOT = row1["DYELOT"].ToString().Trim(),
-                    DESC = row1["Description"].ToString().Trim(),
-                    Unit = row1["StockUnit"].ToString().Trim(),
-                    QTY = row1["QTY"].ToString().Trim(),
-                    GW = row1["Weight"].ToString().Trim(),
-                    Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
-                }).ToList();
-
-            report.ReportDataSource = data;
-            #endregion
-
-            // 指定是哪個 RDLC
-            // DualResult result;
-            Type reportResourceNamespace = typeof(P18_PrintData);
-            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
-            string reportResourceName = "P18_Print.rdlc";
-
-            IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
+            if (!this.radioQRCodeSticker.Checked)
             {
-                // this.ShowException(result);
-                return false;
+                return base.ToPrint();
             }
 
-            report.ReportResource = reportresource;
-
-            // 開啟 report view
-            var frm = new Win.Subs.ReportView(report)
+            if (this.radioQRCodeSticker.Checked && this.mainCurrentMaintain["Status"].ToString() != "Confirmed")
             {
-                MdiParent = this.MdiParent,
-            };
-            frm.Show();
+                MyUtility.Msg.WarningBox("Data is not confirmed, cannot print.");
+                return false;
+            }
+            DataTable dataTable_QRCode= new DataTable();
+            this.ValidateInput();
+            this.ShowWaitMessage("Loading...");
+            DualResult result = this.LoadData_QRCode(out dataTable_QRCode);
+            this.HideWaitMessage();
+            if (!result)
+            {
+                this.ShowErr(result);
+                return true;
+            }
+
+            var barcodeDatas = dataTable_QRCode.AsEnumerable().Where(s => !MyUtility.Check.Empty(s["MINDQRCode"]));
+
+            if (barcodeDatas.Count() == 0)
+            {
+                MyUtility.Msg.InfoBox("No Data can print");
+                return true;
+            }
+
+            new P07_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboType.Text).ShowDialog();
 
             return true;
+        }
+
+        private DualResult LoadData_QRCode(out DataTable dt)
+        {
+            List<SqlParameter> pars = new List<SqlParameter>()
+            {
+                new SqlParameter("@ID" , this.mainCurrentMaintain["ID"].ToString()),
+            };
+
+            string sqlCmd = @"
+select [Sel] = 0
+	, td.POID
+	, [SEQ] = concat(td.Seq1,'-', td.Seq2)
+	, [FabricType] = Case p.FabricType
+					When 'F' then 'Fabric'
+					When 'A' then 'Accessory'
+					When 'O' then 'Other'
+					Else p.FabricType
+				end
+	, td.Weight
+	, td.ActualWeight
+	, td.Roll
+	, td.Dyelot
+	, [StockQty] = td.Qty
+	, p.StockUnit
+	, [MINDQRCode] = iif(td.MINDQRCode <> '', 
+               td.MINDQRCode,
+               (select top 1 case  when    wbt.To_NewBarcodeSeq = '' then wbt.To_NewBarcode
+                                   when    wbt.To_NewBarcode = ''  then ''
+                                   else    Concat(wbt.To_NewBarcode, '-', wbt.To_NewBarcodeSeq)    end
+                from   WHBarcodeTransaction wbt with (nolock)
+                where  wbt.TransactionUkey = td.Ukey and
+                       wbt.Action = 'Confirm'
+                order by CommitTime desc)
+           )
+	, [Location] = Location.MtlLocationID
+	, [RefNo] = p.RefNo
+	, [ColorID] = Color.Value 
+	, [FactoryID] = o.FactoryID
+    , [SortCmbPOID] = ISNULL(cmb.PoId, td.PoId)
+	, [SortCmbSeq1] = ISNULL(cmb.Seq1, td.Seq1)
+	, [SortCmbSeq2] = ISNULL(cmb.Seq2, td.Seq2)
+	, [SortCmbRoll] = ISNULL(cmb.Roll, td.Roll)
+	, [SortCmbDyelot] = ISNULL(cmb.Dyelot, td.Dyelot)
+    , td.Unoriginal
+    , td.Ukey
+from TransferIn_Detail td WITH (NOLOCK) 
+left join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = td.POID and  p.SEQ1 = td.Seq1 and P.seq2 = td.Seq2 
+left join Ftyinventory  fi with (nolock) on td.POID = fi.POID and
+                                            td.Seq1 = fi.Seq1 and
+                                            td.Seq2 = fi.Seq2 and
+                                            td.Roll = fi.Roll and
+                                            td.Dyelot  = fi.Dyelot and
+                                            td.StockType = fi.StockType
+left join View_WH_Orders o WITH (NOLOCK) on o.ID = td.PoId
+LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
+left join Receiving_Detail cmb on  td.Id = cmb.Id
+									and td.CombineBarcode = cmb.CombineBarcode
+									and cmb.CombineBarcode is not null
+									and ISNULL(cmb.Unoriginal,0) = 0
+OUTER APPLY(
+ SELECT [Value]=
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(p.SuppColor = '' or p.SuppColor is null, dbo.GetColorMultipleID(o.BrandID,p.ColorID),p.SuppColor)
+		 ELSE dbo.GetColorMultipleID(o.BrandID,p.ColorID)
+	 END
+)Color
+OUTER APPLY(
+	    SELECT [MtlLocationID] = STUFF(
+			    (
+					SELECT DISTINCT IIF(fid.MtlLocationID IS NULL OR fid.MtlLocationID = '' ,'' , ','+fid.MtlLocationID)
+					FROM FtyInventory_Detail fid
+					WHERE fid.Ukey = fi.Ukey
+					FOR XML PATH('') )
+				, 1, 1, '')
+)Location
+where td.id = @ID";
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlCmd, pars, out dt);
+            return result;
         }
 
         /// <inheritdoc/>
