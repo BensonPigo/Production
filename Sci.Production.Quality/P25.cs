@@ -130,7 +130,7 @@ from (
     from CFAReceive cr WITH (NOLOCK) 
     left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
-    left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = cr.SCICtnNo 
+    left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = cr.SCICtnNo and pd.CTNQty = 1
     where   cr.MDivisionID = '{0}'
 ", Env.User.Keyword));
 

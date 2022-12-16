@@ -92,7 +92,7 @@ namespace Sci.Production.Quality
             #region Sql Command
 
             string strCmd = $@"
-select distinct
+select 
 CFANeedInsp
 ,p2.ID
 ,p2.CTNStartNo
@@ -110,7 +110,6 @@ CFANeedInsp
 ,o.BuyerDelivery
 ,p2.ClogLocationId
 ,p2.remark
-,p2.Seq
 ,p2.ReceiveDate as ClogCFM
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
@@ -165,8 +164,9 @@ and p1.Type in ('B','L')
 and p2.TransferCFADate is null
 and p2.DisposeFromClog= 0
 and (po.Status ='New' or po.Status is null)
+and p2.CTNQty = 1 
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
-order by p2.ID,p2.Seq";
+order by p2.ID,case when ISNUMERIC(p2.CTNStartNo) = 1 then CONVERT(int,p2.CTNStartNo) else 9999 end ";
             #endregion
             DualResult result = DBProxy.Current.Select(string.Empty, strCmd, listSQLParameter, out this.dtDBSource);
 
