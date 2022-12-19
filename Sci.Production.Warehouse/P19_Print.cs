@@ -196,7 +196,7 @@ left join FtyInventory a with (nolock) on td.POID = a.POID and
 						                    td.Dyelot = a.Dyelot and
 						                    td.Roll = a.Roll and
 						                    td.StockType = a.StockType
-left join WHBarcodeTransaction w with (nolock) on td.Ukey = w.TransactionUkey and [Function] = 'P18'
+left join WHBarcodeTransaction w with (nolock) on td.Ukey = w.TransactionUkey and [Function] = 'P19'
 outer apply
 (
     select Max(fs.Tone) as TONGrp from FIR f
