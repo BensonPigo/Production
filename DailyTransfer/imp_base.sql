@@ -4840,10 +4840,11 @@ where b.BrandID is null
 
 --PadPrint
 delete a
-from production.dbo.PadPrint a
+from Production.dbo.PadPrint a
 left join Trade_To_Pms.dbo.PadPrint b on a.Ukey = b.Ukey 
 where b.Ukey is null
-
+and (a.AddDate >= (select DateStart from Trade_To_Pms.dbo.DateInfo where Name = 'PadPrint')
+ or a.EditDate >= (select DateStart from Trade_To_Pms.dbo.DateInfo where Name = 'PadPrint'))
 update a set 
 	 [Refno]      = b.[Refno]
 	,[BrandID]	  = b.[BrandID]
@@ -4891,9 +4892,11 @@ where b.Ukey is null
 
 --PadPrint_Mold
 delete a
-from production.dbo.PadPrint_Mold a
+from Production.dbo.PadPrint_Mold a
 left join Trade_To_Pms.dbo.PadPrint_Mold b on a.[PadPrint_ukey] = b.[PadPrint_ukey] and a.[MoldID] = b.[MoldID]
 where b.[PadPrint_ukey] is null
+and (a.AddDate >= (select DateStart from Trade_To_Pms.dbo.DateInfo where Name = 'PadPrint')
+ or a.EditDate >= (select DateStart from Trade_To_Pms.dbo.DateInfo where Name = 'PadPrint'))
 
 update a set 
 	 [Refno]		 = b.[Refno]
@@ -4956,9 +4959,11 @@ where b.[PadPrint_ukey] is null
 
 --PadPrint_Mold_Spec
 delete a
-from production.dbo.PadPrint_Mold_Spec a
+from Production.dbo.PadPrint_Mold_Spec a
 left join Trade_To_Pms.dbo.PadPrint_Mold_Spec b on a.PadPrint_ukey = b.PadPrint_ukey and a.MoldID = b.MoldID and a.Side = b.Side
 where b.PadPrint_ukey is null
+and (a.AddDate >= (select DateStart from Trade_To_Pms.dbo.DateInfo where Name = 'PadPrint')
+ or a.EditDate >= (select DateStart from Trade_To_Pms.dbo.DateInfo where Name = 'PadPrint'))
 
 update a set 
 	 [SizePage]		 = b.[SizePage]
