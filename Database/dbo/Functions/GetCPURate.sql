@@ -19,9 +19,9 @@ Begin
 	Select Top 1 @SampleRate = System.SampleRate
 	  From dbo.System;
 	
-	If (@TableType = 'M')	--固定三倍. 
+	If (@TableType = 'M')	--固定一倍. 
 	Begin
-		Set @CpuRate = 3;
+		Set @CpuRate = 1;
 	End;
 	Else
 	Begin

@@ -384,9 +384,9 @@ from @tmpBaseStep1 tbs
 inner join Orders o with(nolock) on o.ID = tbs.ID
 inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
 left join @tmpSewingOutput sdd on sdd.OrderId = o.ID
-outer apply (select [CpuRate] = case when o.IsForecast = 1 then (select CpuRate from GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'O'))
+outer apply (select [CpuRate] = case when o.IsForecast = 1 then o.CPUFactor
                                      when o.LocalOrder = 1 then 1
-                                     else (select CpuRate from GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'O')) end
+                                     else o.CPUFactor end
                      ) gcRate
 outer apply (select Qty=sum(pd.ShipQty)
 	from PackingList p with(nolock), PackingList_Detail pd with(nolock)
