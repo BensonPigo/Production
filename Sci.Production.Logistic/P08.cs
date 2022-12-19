@@ -167,7 +167,7 @@ outer apply
 		select concat('/',tmp.SizeCode) 
 		from
 		(
-			select distinct SizeCode 
+			select SizeCode 
 			from PackingList_Detail
 			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
 		)tmp for xml path('')
@@ -180,7 +180,7 @@ outer apply
 		select concat('/',tmp.ShipQty) 
 		from
 		(
-			select distinct ShipQty 
+			select ShipQty 
 			from PackingList_Detail
 			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
 		)tmp for xml path('')
@@ -193,7 +193,7 @@ outer apply
 		select concat('/',tmp.QtyPerCTN) 
 		from
 		(
-			select distinct QtyPerCTN 
+			select QtyPerCTN 
 			from PackingList_Detail
 			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
 		)tmp for xml path('')
@@ -327,7 +327,7 @@ outer apply
 		select concat('/',tmp.SizeCode) 
 		from
 		(
-			select distinct SizeCode 
+			select SizeCode 
 			from PackingList_Detail
 			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
 		)tmp for xml path('')
@@ -340,7 +340,7 @@ outer apply
 		select concat('/',tmp.ShipQty) 
 		from
 		(
-			select distinct ShipQty 
+			select ShipQty 
 			from PackingList_Detail
 			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
 		)tmp for xml path('')
@@ -353,7 +353,7 @@ outer apply
 		select concat('/',tmp.QtyPerCTN) 
 		from
 		(
-			select distinct QtyPerCTN 
+			select QtyPerCTN 
 			from PackingList_Detail
 			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
 		)tmp for xml path('')
@@ -439,7 +439,7 @@ outer apply
 		select concat('/',tmp.SizeCode) 
 		from
 		(
-			select distinct SizeCode 
+			select SizeCode 
 			from PackingList_Detail
 			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
 		)tmp for xml path('')
@@ -452,7 +452,7 @@ outer apply
 		select concat('/',tmp.ShipQty) 
 		from
 		(
-			select distinct ShipQty 
+			select ShipQty 
 			from PackingList_Detail
 			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
 		)tmp for xml path('')
@@ -465,7 +465,7 @@ outer apply
 		select concat('/',tmp.QtyPerCTN) 
 		from
 		(
-			select distinct QtyPerCTN 
+			select QtyPerCTN 
 			from PackingList_Detail
 			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
 		)tmp for xml path('')
@@ -557,7 +557,7 @@ outer apply
 		select concat('/',tmp.SizeCode) 
 		from
 		(
-			select distinct SizeCode 
+			select SizeCode 
 			from PackingList_Detail
 			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
 		)tmp for xml path('')
@@ -570,7 +570,7 @@ outer apply
 		select concat('/',tmp.ShipQty) 
 		from
 		(
-			select distinct ShipQty 
+			select ShipQty 
 			from PackingList_Detail
 			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
 		)tmp for xml path('')
@@ -583,7 +583,7 @@ outer apply
 		select concat('/',tmp.QtyPerCTN) 
 		from
 		(
-			select distinct QtyPerCTN 
+			select QtyPerCTN 
 			from PackingList_Detail
 			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
 		)tmp for xml path('')
