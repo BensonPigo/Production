@@ -112,7 +112,7 @@ from (
 			select concat('/',tmp.SizeCode) 
 			from
 			(
-				select distinct SizeCode 
+				select SizeCode 
 				from PackingList_Detail
 				where CTNStartNo in(b.CTNStartNo) and id = a.id
 			)tmp for xml path('')
@@ -125,7 +125,7 @@ from (
 			select concat('/',tmp.ShipQty) 
 			from
 			(
-				select distinct ShipQty 
+				select ShipQty 
 				from PackingList_Detail
 				where CTNStartNo in(b.CTNStartNo) and id = a.id
 			)tmp for xml path('')
@@ -271,7 +271,7 @@ outer apply
 		select concat('/',tmp.SizeCode) 
 		from
 		(
-			select distinct SizeCode 
+			select SizeCode 
 			from PackingList_Detail
 			where CTNStartNo in(pd.CTNStartNo) and p.id = id
 	)
@@ -284,7 +284,7 @@ outer apply
 		select concat('/',tmp.ShipQty) 
 		from
 		(
-			select distinct ShipQty 
+			select ShipQty 
 			from PackingList_Detail
 			where CTNStartNo in(pd.CTNStartNo) and p.id = id
 		)tmp for xml path('')
@@ -379,7 +379,7 @@ outer apply
 		select concat('/',tmp.SizeCode) 
 		from
 		(
-			select distinct SizeCode 
+			select SizeCode 
 			from PackingList_Detail
 			where CTNStartNo in(pd.CTNStartNo) and p.id = id
 	)
@@ -392,7 +392,7 @@ outer apply
 		select concat('/',tmp.ShipQty) 
 		from
 		(
-			select distinct ShipQty 
+			select ShipQty 
 			from PackingList_Detail
 			where CTNStartNo in(pd.CTNStartNo) and p.id = id
 		)tmp for xml path('')
@@ -504,7 +504,7 @@ outer apply
 		select concat('/',tmp.SizeCode) 
 		from
 		(
-			select distinct SizeCode 
+			select SizeCode 
 			from PackingList_Detail
 			where CTNStartNo in(pd.CTNStartNo) and p.id = id
 	)
@@ -517,7 +517,7 @@ outer apply
 		select concat('/',tmp.ShipQty) 
 		from
 		(
-			select distinct ShipQty 
+			select ShipQty 
 			from PackingList_Detail
 			where CTNStartNo in(pd.CTNStartNo) and p.id = id
 		)tmp for xml path('')
