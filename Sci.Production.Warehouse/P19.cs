@@ -572,7 +572,7 @@ left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID a
 outer apply (
 	select [MINDQRCode] = iif(isnull(w.To_NewBarcodeSeq, '') = '', w.To_NewBarcode, concat(w.To_NewBarcode, '-', w.To_NewBarcodeSeq))
 	from TransferOut_Detail td with (nolock)
-	inner join WHBarcodeTransaction w with (nolock) on td.Ukey = w.TransactionUkey and [Function] = 'P19'
+	inner join WHBarcodeTransaction w with (nolock) on td.Ukey = w.TransactionUkey and w.Action = 'Confirm' and [Function] = 'P19'
 	where td.TransferExport_DetailUkey = ted.Ukey
 )w
 ";
