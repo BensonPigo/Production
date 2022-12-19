@@ -546,7 +546,8 @@ EditName                   ,
 EditDate                   ,
 StockUnitID                ,
 StockQty                   ,
-Tone
+Tone                       ,
+MINDQRCode
 )
 select  t.TransferExport_DetailUkey,
         t.TransferExportID,
@@ -561,12 +562,19 @@ select  t.TransferExport_DetailUkey,
         getdate(),
         isnull(psdInv.StockUnit, ''),
         t.Qty,
-        t.Tone
+        t.Tone,
+        w.MINDQRCode
 from #tmp t
 inner join TransferExport_Detail ted with (nolock) on ted.Ukey = t.TransferExport_DetailUkey
 left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID and 
 													ted.InventorySeq1 = psdInv.SEQ1 and
 													ted.InventorySeq2 = psdinv.SEQ2
+outer apply (
+	select [MINDQRCode] = iif(isnull(w.To_NewBarcodeSeq, '') = '', w.To_NewBarcode, concat(w.To_NewBarcode, '-', w.To_NewBarcodeSeq))
+	from TransferOut_Detail td with (nolock)
+	inner join WHBarcodeTransaction w with (nolock) on td.Ukey = w.TransactionUkey and [Function] = 'P18'
+	where td.TransferExport_DetailUkey = ted.Ukey
+)w
 ";
             if (this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["TransferExportID"])))
             {
