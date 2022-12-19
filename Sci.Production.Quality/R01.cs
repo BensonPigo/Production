@@ -440,8 +440,7 @@ Qty
 outer apply
 (
 	select
-		[sCount] = cast(Qty.Roll as float) / cast(s.Roll as float) ,
-		s.Roll
+		[sCount] = iif(isnull(s.Roll,0) = 0 , 0, cast(Qty.Roll as float) / cast(s.Roll as float)) 
 	from
 	(
 		select Roll = count(Roll+Dyelot) 
