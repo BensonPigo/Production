@@ -571,9 +571,10 @@ left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID a
 													ted.InventorySeq2 = psdinv.SEQ2
 outer apply (
 	select [MINDQRCode] = iif(isnull(w.To_NewBarcodeSeq, '') = '', w.To_NewBarcode, concat(w.To_NewBarcode, '-', w.To_NewBarcodeSeq))
-	from TransferOut_Detail td with (nolock)
-	inner join WHBarcodeTransaction w with (nolock) on td.Ukey = w.TransactionUkey and w.Action = 'Confirm' and [Function] = 'P19'
-	where td.TransferExport_DetailUkey = ted.Ukey
+	from WHBarcodeTransaction w with (nolock) 
+	where t.Ukey = w.TransactionUkey 
+	and w.Action = 'Confirm' 
+	and [Function] = 'P19'
 )w
 ";
             if (this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["TransferExportID"])))
