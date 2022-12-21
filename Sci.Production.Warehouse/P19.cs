@@ -618,17 +618,6 @@ outer apply (
                         }
                     }
 
-                    if (dtTransferExportDetail.Rows.Count > 0)
-                    {
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(
-                            dtTransferExportDetail, string.Empty, sqlInsertTransferExport_Detail_Carton, out resulttb)))
-                        {
-                            transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return;
-                        }
-                    }
-
                     if (!(result = DBProxy.Current.Execute(null, $"update TransferOut set status = 'Confirmed', editname = '{Env.User.UserID}' , editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
                     {
                         throw result.GetException();
@@ -638,6 +627,18 @@ outer apply (
                     if (!(result = Prgs.UpdateWH_Barcode(true, dtQty, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
                     {
                         throw result.GetException();
+                    }
+
+                    // Barcode 產生後再寫入 TransferExport_Detail_Carton
+                    if (dtTransferExportDetail.Rows.Count > 0)
+                    {
+                        if (!(result = MyUtility.Tool.ProcessWithDatatable(
+                            dtTransferExportDetail, string.Empty, sqlInsertTransferExport_Detail_Carton, out resulttb)))
+                        {
+                            transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
                     }
 
                     transactionscope.Complete();
