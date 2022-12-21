@@ -1996,7 +1996,7 @@ where sd.id = '{this.CurrentMaintain["ID"]}'
 		                      f.MDivisionID  = '{Env.User.Keyword}' ) and
 		        not exists(select 1 from TransferIn tf with (nolock) where tf.TransferExportID = te.ID and tf.ID <> '{this.CurrentMaintain["ID"]}') and
                 tdc.StockQty > 0
-        group by ted.POID, ted.Seq1, ted.Seq2, tdc.Carton, tdc.LotNo, ted.FabricType, psd.StockUnit, psd.Refno, Color.Value, tdc.StockUnitID, psd.StockUnit,Tone
+        group by ted.POID, ted.Seq1, ted.Seq2, tdc.Carton, tdc.LotNo, ted.FabricType, psd.StockUnit, psd.Refno, Color.Value, tdc.StockUnitID, psd.StockUnit,Tone, tdc.MINDQRCode
         ";
 
             DataTable dtTrasnferExport;

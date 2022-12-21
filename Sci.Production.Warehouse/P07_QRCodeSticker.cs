@@ -23,7 +23,9 @@ namespace Sci.Production.Warehouse
         private string callFrom;
 
         // P07 或者 P18
-        private bool IsShow;
+        private bool IsP07;
+        private bool IsP18;
+        private string rgCode;
 
         /// <summary>
         /// P07_QRCodeSticker
@@ -38,22 +40,36 @@ namespace Sci.Production.Warehouse
             this.dtP07_QRCodeSticker = dtSource;
             this.printType = printType;
             this.callFrom = callFrom;
-            this.IsShow = callFrom == "P07" || callFrom == "P18";
-            this.labSortBy.Visible = this.IsShow;
-            this.radioPanel1.Visible = this.IsShow;
+            this.IsP07 = callFrom == "P07";
+            this.IsP18 = callFrom == "P18";
+            this.labSortBy.Visible = this.IsP07;
+            this.radioPanel1.Visible = this.IsP07;
             this.listControlBindingSource.DataSource = dtSource;
-
+            this.rgCode = MyUtility.GetValue.Lookup("select RgCode from system");
             this.dtP07_QRCodeSticker.Columns.Add("IsQRCodeCreatedByPMS", typeof(bool));
-
             foreach (DataRow dr in this.dtP07_QRCodeSticker.Rows)
             {
-                dr["IsQRCodeCreatedByPMS"] = dr["MINDQRCode"].ToString().IsQRCodeCreatedByPMS();
+                if (this.IsP07)
+                {
+                    dr["IsQRCodeCreatedByPMS"] = dr["MINDQRCode"].ToString().IsQRCodeCreatedByPMS();
+                }
+                else if (this.IsP18) 
+                {
+                    dr["IsQRCodeCreatedByPMS"] = dr["MINDQRCode"].ToString().IsQRCodeCreatedByPMS() && dr["MINDQRCode"].ToString().Left(3) == this.rgCode;
+                }
             }
 
-            if (this.IsShow)
+            if (this.IsP07)
             {
                 MyUtility.Tool.SetupCombox(this.comboFilterQRCode, 1, 1, "All,Create by PMS,Not create by PMS");
                 this.comboFilterQRCode.Text = "Create by PMS";
+                this.grid1.ColumnHeaderMouseClick += this.Grid1_ColumnHeaderMouseClick;
+                this.RadioPanel1_ValueChanged(null, null);
+            }
+            else if (this.IsP18)
+            {
+                MyUtility.Tool.SetupCombox(this.comboFilterQRCode, 1, 1, $"All,Create by {this.rgCode},Not Create by {this.rgCode}");
+                this.comboFilterQRCode.Text = $"Create by {this.rgCode}";
                 this.grid1.ColumnHeaderMouseClick += this.Grid1_ColumnHeaderMouseClick;
                 this.RadioPanel1_ValueChanged(null, null);
             }
@@ -86,7 +102,7 @@ namespace Sci.Production.Warehouse
             #region Set Grid Columns
             this.grid1.IsEditingReadOnly = false;
 
-            if (this.callFrom == "P07")
+            if (this.IsP07)
             {
                 this.Helper.Controls.Grid.Generator(this.grid1)
                                 .CheckBox("Sel", header: string.Empty, trueValue: 1, falseValue: 0)
@@ -105,7 +121,7 @@ namespace Sci.Production.Warehouse
                                 .Text("MINDQRCode", header: "QR Code", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 ;
             }
-            else if (this.callFrom == "P18")
+            else if (this.IsP18)
             {
                 this.Helper.Controls.Grid.Generator(this.grid1)
                                 .CheckBox("Sel", header: string.Empty, trueValue: 1, falseValue: 0)
@@ -159,7 +175,7 @@ namespace Sci.Production.Warehouse
 
                 PrintQRCode_RDLC(barcodeDatas, type);
 
-                if (this.IsShow)
+                if (this.IsP07 || this.IsP18)
                 {
                     string ukeys = barcodeDatas.Select(s => s["Ukey"].ToString()).JoinToString(",");
                     WHTableName detailTableName = Prgs.GetWHDetailTableName(this.callFrom);
@@ -240,16 +256,19 @@ namespace Sci.Production.Warehouse
                 return;
             }
 
-            switch (this.comboFilterQRCode.Text)
+            switch (this.comboFilterQRCode.SelectedIndex)
             {
-                case "Create by PMS":
-                    this.listControlBindingSource.Filter = "IsQRCodeCreatedByPMS = true";
+                case 1:
+                    if (this.IsP07 || this.IsP18) {
+                        this.listControlBindingSource.Filter = "IsQRCodeCreatedByPMS = true";
+                    }
+                    else {
+                        this.listControlBindingSource.Filter = "MINDQRCode <> From_OldBarcode";
+                    }
+
                     break;
-                case "Not create by PMS":
+                case 2:
                     this.listControlBindingSource.Filter = "IsQRCodeCreatedByPMS = false";
-                    break;
-                case "Partial Release":
-                    this.listControlBindingSource.Filter = "MINDQRCode <> From_OldBarcode";
                     break;
                 default:
                     this.listControlBindingSource.Filter = string.Empty;
@@ -259,7 +278,7 @@ namespace Sci.Production.Warehouse
 
         private void RadioPanel1_ValueChanged(object sender, EventArgs e)
         {
-            if (this.IsShow && this.listControlBindingSource.DataSource != null)
+            if (this.IsP07 && this.listControlBindingSource.DataSource != null)
             {
                 if (this.radioPanel1.Value == "1")
                 {

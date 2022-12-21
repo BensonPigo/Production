@@ -263,7 +263,7 @@ WHERE a.ID = '{id}'
                 return true;
             }
 
-            new P07_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboType.Text).ShowDialog();
+            new P07_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboType.Text, "P18").ShowDialog();
 
             return true;
         }
