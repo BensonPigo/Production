@@ -196,12 +196,12 @@ select
 	, [Remark] = g.Remark
 	, g.CustCDID
 	, o.StyleUnit
-    , Location
+    , OL.Location
 	, LocationDisp = case
-		when Location = 'T' then 'TOP' 
-        when Location = 'B' then 'BOTTOM' 
-        when Location = 'I' then 'INNER'   
-        when Location = 'O' then 'OUTER'
+		when OL.Location = 'T' then 'TOP' 
+        when OL.Location = 'B' then 'BOTTOM' 
+        when OL.Location = 'I' then 'INNER'   
+        when OL.Location = 'O' then 'OUTER'
         else '' end
 from {"{0}"} g with (nolock)
 inner join PackingList p with (nolock) on g.ID = p.INVNo
@@ -229,7 +229,7 @@ and g.NonDeclare =0
 and (kd_status.status = 'New' or kd_status.Status is null)
 and not exists (select * from KHExportDeclaration_Detail kdd2 where (kdd2.Invno=g.id or kdd2.LocalInvno=g.id) and  kdd2.OrderID=o.ID) 
 {where}
-group by pd.OrderID,o.StyleID,s.Description,o.PoPrice,o.SeasonID,g.ID,s.Ukey,g.BrandID,g.ShipModeID,o.POPrice,g.Forwarder,g.InvDate,g.Shipper,g.Dest,g.SONo,g.Remark,PoPrice.AvgPrice,g.ETD,o.CustPONo,g.CustCDID, o.StyleUnit,r.FOB, isnull(OL.rate, 1),Location
+group by pd.OrderID,o.StyleID,s.Description,o.PoPrice,o.SeasonID,g.ID,s.Ukey,g.BrandID,g.ShipModeID,o.POPrice,g.Forwarder,g.InvDate,g.Shipper,g.Dest,g.SONo,g.Remark,PoPrice.AvgPrice,g.ETD,o.CustPONo,g.CustCDID, o.StyleUnit,r.FOB, isnull(OL.rate, 1),OL.Location
 
 ";
 
