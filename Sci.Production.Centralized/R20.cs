@@ -177,22 +177,24 @@ namespace Sci.Production.Centralized
             this.tsql_Production = string.Format(
 @"
 --Production
-select o.FactoryID,o.ID,o.CurrencyID,Qty = pld.ShipQty,CpuRate,TotalCpu = round(o.CPU*pld.ShipQty*CpuRate,2),pld.OrderID,pld.Article,pld.SizeCode
+select o.FactoryID,o.ID,o.CurrencyID,Qty = pld.ShipQty
+    ,[CpuRate] = o.CPUFactor
+    ,TotalCpu = round(o.CPU*pld.ShipQty*o.CPUFactor,2),pld.OrderID,pld.Article,pld.SizeCode
 from PackingList pl
 inner join PackingList_Detail pld on pl.ID = pld.ID
 inner join #tmpOrders o on pld.OrderID = o.ID
 left join pullout p on pl.PulloutID = p.ID
-outer apply(select CpuRate from dbo.GetCPURate(o.OrderTypeID,o.ProgramID,o.Category,o.BrandID,'O')) as CPURate
 where pl.AddDate <= '{0}' and pld.ReceiveDate < '{0}' and (p.Status = 'New' or p.Status is null) and o.GMTComplete not in ('S','C')" + this.WhereStockStr +
 @"
 union all
-select o.FactoryID,o.ID,o.CurrencyID,Qty = pld.ShipQty,CpuRate,TotalCpu = round(o.CPU*pld.ShipQty*CpuRate,2),pld.OrderID,pld.Article,pld.SizeCode
+select o.FactoryID,o.ID,o.CurrencyID,Qty = pld.ShipQty
+    ,[CpuRate] = o.CPUFactor
+    ,TotalCpu = round(o.CPU*pld.ShipQty*o.CPUFactor,2),pld.OrderID,pld.Article,pld.SizeCode
 from PackingList pl
 inner join PackingList_Detail pld on pl.ID = pld.ID
 inner join #tmpOrders o on pld.OrderID = o.ID
 left join pullout p on pl.PulloutID = p.ID
 inner join #tmpGMTBooking tGI ON INVNo = tGI.ID
-outer apply(select CpuRate from dbo.GetCPURate(o.OrderTypeID,o.ProgramID,o.Category,o.BrandID,'O')) as CPURate
 where pl.AddDate < '{0}' and pld.ReceiveDate < '{0}' and p.Status <> 'New' and ( tGi.ETD > '{0}' or tGi.ETD is null ) " + this.WhereStockStr, queryDateEnd);
 
             this.tsql_Stock =
@@ -231,8 +233,8 @@ END
 --Sewing
 select so.FactoryID,o.ID,o.CurrencyID,
        Qty = sum(iif(o.StyleUnit = 'SETS',sodd.QAQty*SuitRate,sodd.QAQty)),
-       CpuRate,
-       TotalCpu = sum(round(sodd.QAQty*o.CPU*CpuRate*SuitRate,2)),
+       [CpuRate] = o.CPUFactor,
+       TotalCpu = sum(round(sodd.QAQty*o.CPU*o.CPUFactor*SuitRate,2)),
 	   TotalFOB = sum(round(iif(o.StyleUnit = 'SETS',sodd.QAQty*SuitRate,sodd.QAQty)*price,2)),
        TotalUSD = sum(round(iif(o.StyleUnit = 'SETS',sodd.QAQty*SuitRate,sodd.QAQty)*price,2))/IIF(o.CurrencyID = 'CNY',6.1,1)
 into #Sewing
@@ -240,12 +242,11 @@ from SewingOutput so
 inner join SewingOutput_Detail_Detail sodd on sodd.ID = so.ID
 inner join Orders o on o.ID = sodd.OrderId and o.LocalOrder=0 
 left join CDCode cd on o.CdCodeID = cd.id
-outer apply(select CpuRate from dbo.GetCPURate(o.OrderTypeID,o.ProgramID,o.Category,o.BrandID,'O')) as CPURate
 outer apply(select dbo.GetSuitRate(cd.ComboPcs,sodd.ComboType) as SuitRate where cd.ID = o.CdCodeID) as GetSuitRate
 outer apply(select dbo.GetPoPriceByArticleSize(sodd.OrderId,sodd.Article,sodd.SizeCode)as price) as price
 where so.FactoryID <> 'TSR' " + this.WhereSewingStr +
 @"
-group by so.FactoryID,o.ID,o.CurrencyID,CpuRate
+group by so.FactoryID,o.ID,o.CurrencyID,o.CPUFactor
 
 --OnBoard
 IF Object_id('tempdb.dbo.#tmpFtyBooking1') IS NOT NULL 
@@ -301,8 +302,8 @@ FROM   (SELECT DISTINCT id,
 
 select o.FactoryID,o.ID,o.CurrencyID,
        Qty = sum(pdd.ShipQty),
-       CpuRate,
-       TotalCpu = sum(round(pdd.ShipQty*o.CPU*CpuRate,2)),
+       [CpuRate] = o.CPUFactor,
+       TotalCpu = sum(round(pdd.ShipQty*o.CPU*o.CPUFactor,2)),
 	   TotalFOB = sum(round(pdd.ShipQty*price.price,2)),
        TotalUSD = sum(round(pdd.ShipQty*price.price,2))/IIF(o.CurrencyID = 'CNY',6.1,1)
 into #OnBoard 
@@ -311,17 +312,16 @@ inner join Pullout_Detail pd on gi.ID=pd.INVNo
 inner join Pullout p on pd.ID=p.ID
 inner join Pullout_Detail_Detail pdd on pd.Ukey = pdd.Pullout_DetailUKey
 inner join Orders o on pd.OrderID = o.ID and o.LocalOrder=0
-outer apply(select CpuRate from dbo.GetCPURate(o.OrderTypeID,o.ProgramID,o.Category,o.BrandID,'O')) as CPURate
 outer apply(select dbo.GetPoPriceByArticleSize(pdd.OrderId,pdd.Article,pdd.SizeCode)as price) as price
 where o.FactoryID <> 'TSR' and p.Status<>'New' " + this.WhereOnBoardStr +
 @"
-group by o.FactoryID,o.ID,o.CurrencyID,CpuRate
+group by o.FactoryID,o.ID,o.CurrencyID,o.CPUFactor
 
 --Pullout
 select o.FactoryID,o.ID,o.CurrencyID,
        Qty = sum(pdd.ShipQty),
-       CpuRate,
-       TotalCpu = sum(round(pdd.ShipQty*o.CPU*CpuRate,2)),
+       [CpuRate] = o.CPUFactor,
+       TotalCpu = sum(round(pdd.ShipQty*o.CPU*o.CPUFactor,2)),
 	   TotalFOB = sum(round(pdd.ShipQty*price.price,2)),
        TotalUSD = sum(round(pdd.ShipQty*price.price,2))/IIF(o.CurrencyID = 'CNY',6.1,1)
 into #Pullout
@@ -329,11 +329,10 @@ from Pullout p
 inner join Pullout_Detail pd on p.ID=pd.ID
 inner join Pullout_Detail_Detail pdd on pd.Ukey = pdd.Pullout_DetailUKey
 inner join Orders o on pd.OrderID = o.ID and o.LocalOrder=0 
-outer apply(select CpuRate from dbo.GetCPURate(o.OrderTypeID,o.ProgramID,o.Category,o.BrandID,'O')) as CPURate
 outer apply(select dbo.GetPoPriceByArticleSize(pdd.OrderId,pdd.Article,pdd.SizeCode)as price) as price
 where o.FactoryID <> 'TSR' and p.Status<>'New' " + this.WherePulloutStr +
 @"
-group by o.FactoryID,o.ID,o.CurrencyID,CpuRate";
+group by o.FactoryID,o.ID,o.CurrencyID,o.CPUFactor";
 
             this.tsql_Trade +=
 @"
@@ -385,11 +384,12 @@ with #Query as (
 select d.Factory,d.CurrencyID,d.OrderID,d.Sewing_Qty,d.Sewing_TotalCpu,d.Sewing_TotalFOB,d.Sewing_TotalUSD,d.Onboard_Qty,d.Onboard_TotalCpu,
        d.Onboard_TotalFOB,d.Onboard_TotalUSD,d.Stock_Qty,d.Stock_TotalCpu,d.Stock_TotalFOB,d.Stock_TotalUSD,d.Pullout_Qty,d.Pullout_TotalCpu,
        d.Pullout_TotalFOB,d.Pullout_TotalUSD,d.Start_Qty,d.Start_TotalCPU,d.Start_TotalFOB,d.Start_TotalUSD,o.BuyerDelivery,name,o.BrandID,
-       o.Qty,o.StyleUnit,PoPrice = round(o.PoPrice,2),o.CPU,CpuRate,CPUAmount = o.Qty * o.CPU * CpuRate
+       o.Qty,o.StyleUnit,PoPrice = round(o.PoPrice,2),o.CPU
+        ,[CpuRate] = o.CPUFactor
+        ,CPUAmount = o.Qty * o.CPU * o.CPUFactor
 from #Detail d
 inner join Orders o on d.OrderID = o.ID and o.LocalOrder=0
 outer apply(select name from DropDownList where ID = o.Category and Type = 'Category') as typename
-outer apply(select CpuRate from dbo.GetCPURate(o.OrderTypeID,o.ProgramID,o.Category,o.BrandID,'O')) as CPURate
 )";
             #endregion
 
@@ -575,7 +575,7 @@ select DISTINCT ID,ETD from #GarmentInvoice";
                         return result;
                     }
 
-                    result = DBProxy.Current.SelectByConn(conn, @" select FactoryID,ID,CurrencyID,CPU,OrderTypeID,ProgramID,Category,BrandID,GMTComplete from Orders where LocalOrder=0", out dtOrders);
+                    result = DBProxy.Current.SelectByConn(conn, @" select FactoryID,ID,CurrencyID,CPU,OrderTypeID,ProgramID,Category,BrandID,GMTComplete,CPUFactor from Orders where LocalOrder=0", out dtOrders);
                     if (!result)
                     {
                         return result;
@@ -594,7 +594,7 @@ select DISTINCT ID,ETD from #GarmentInvoice";
                         return result;
                     }
 
-                    result = MyUtility.Tool.ProcessWithDatatable(dtOrders, "FactoryID,ID,CurrencyID,CPU,OrderTypeID,ProgramID,Category,BrandID,GMTComplete", "select 1", out dtProduction, "#tmpOrders", conn);
+                    result = MyUtility.Tool.ProcessWithDatatable(dtOrders, "FactoryID,ID,CurrencyID,CPU,OrderTypeID,ProgramID,Category,BrandID,GMTComplete,CPUFactor", "select 1", out dtProduction, "#tmpOrders", conn);
                     if (!result)
                     {
                         return result;

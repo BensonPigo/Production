@@ -701,10 +701,9 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                 }
 
                 string efficiency_A = MyUtility.GetValue.Lookup(string.Format(
-                    @"Select IIF('{6}'=0,0,sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour)*3600 / '{6}'/100)
+                    @"Select IIF('{6}'=0,0,sum(b.QAQty * {5} * c.CPUFactor) / Sum(a.Manpower * b.WorkHour)*3600 / '{6}'/100)
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK)  
                                                                     left join Orders c WITH (NOLOCK) on c.ID=b.OrderId
-                                                                    cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                     where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'A' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
                                                                     and b.OrderID = '{3}' and b.ComboType = '{4}' ",
                     sewingDate,
@@ -715,10 +714,9 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                     cPU,
                     this.StdTMS));
                 string efficiency_B = MyUtility.GetValue.Lookup(string.Format(
-                    @"Select  IIF('{6}'=0,0,sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour)*3600 / '{6}'/100)  
+                    @"Select  IIF('{6}'=0,0,sum(b.QAQty * {5} * c.CPUFactor) / Sum(a.Manpower * b.WorkHour)*3600 / '{6}'/100)  
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK) 
                                                                     left join Orders c WITH (NOLOCK) on c.ID=b.OrderId
-                                                                    cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                     where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'B' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
                                                                     and b.OrderID = '{3}' and b.ComboType = '{4}' ",
                     sewingDate,
@@ -729,10 +727,9 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                     cPU,
                     this.StdTMS));
                 string pPH_A = MyUtility.GetValue.Lookup(string.Format(
-                    @"Select  sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour) 
+                    @"Select  sum(b.QAQty * {5} * c.CPUFactor) / Sum(a.Manpower * b.WorkHour) 
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK)  
                                                                     left join Orders c WITH (NOLOCK) on c.ID=b.OrderId
-                                                                    cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                     where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'A' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
                                                                     and b.OrderID = '{3}' and b.ComboType = '{4}' ",
                     sewingDate,
@@ -742,10 +739,9 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                     comboType,
                     cPU));
                 string pPH_B = MyUtility.GetValue.Lookup(string.Format(
-                    @"Select  sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour) 
+                    @"Select  sum(b.QAQty * {5} * c.CPUFactor) / Sum(a.Manpower * b.WorkHour) 
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK) 
                                                                     left join Orders c WITH (NOLOCK) on c.ID=b.OrderId
-                                                                    cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                     where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'B' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
                                                                     and b.OrderID = '{3}' and b.ComboType = '{4}' ",
                     sewingDate,
