@@ -45,7 +45,6 @@ namespace Sci.Production.Win
                 this.label4.Visible = true;
                 this.comboBox2.Visible = true;
                 this.checkBoxTestEnvironment.Visible = true;
-                this.ChangeTaipeiServer();
 
                 // 抓電腦登入名稱
                 string loginAccount = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
@@ -61,6 +60,8 @@ namespace Sci.Production.Win
                     this.ok.Focus();
                     this.ok.Select();
                 }
+
+                this.ChangeTaipeiServer();
             }
         }
 
