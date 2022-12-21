@@ -530,13 +530,11 @@ select distinct
 	sr.ContinuityCard,
 	sr.TPEContinuityCard,
 	FirstDyelot.FirstDyelot,
-	TPEFirstDyelot = IIF(FirstDyelot.TPEFirstDyelot is null and f.RibItem = 1
-                        ,'RIB no need first dye lot'
-                        ,IIF(FirstDyelot.SeasonSCIID is null
-                                ,'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
-                                ,format(FirstDyelot.TPEFirstDyelot,'yyyy/MM/dd')
-                            )
-                    ),
+	TPEFirstDyelot = case when isnull(fty.TestDocFactoryGroup,'') = '' then 'This issue is becoz received fty is sps not sxr, so once you ensure received T2 reports & 1st dyelot, you need ask received fty help to key in recevied date. ps: as long as you fully maintain P09, your T2 dashboard KPI will be 100%.' 
+	    when FirstDyelot.TPEFirstDyelot is null and f.RibItem = 1 then 'RIB no need first dye lot'
+	    when FirstDyelot.SeasonSCIID is null then 'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
+	    else format(FirstDyelot.TPEFirstDyelot,'yyyy/MM/dd') 
+        end,	
 	sr.T2InspYds,
 	sr.T2DefectPoint,
 	sr.T2Grade,
