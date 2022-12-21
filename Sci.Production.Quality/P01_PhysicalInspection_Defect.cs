@@ -288,9 +288,21 @@ and '{item}' like '%'+t.FabricdefectID+'%'
                     }
                     else
                     {
+                        // 排除掉T2字串
+                        // 如果有多筆,那要拆開檢查並塞入T2
+                        string newDefect = string.Empty;
+                        if (dr["def" + str_col].ToString().IndexOf("-T2") != -1)
+                        {
+                            newDefect = dr["def" + str_col].ToString().Replace("-T2", string.Empty);
+                        }
+                        else
+                        {
+                            newDefect = dr["def" + str_col].ToString();
+                        }
+
                         if (ary.Length > 0)
                         {
-                            ary[0]["DefectRecord"] = dr["def" + str_col];
+                            ary[0]["DefectRecord"] = newDefect;
                             ary[0]["Point"] = dr["point" + str_col];
                         }
                         else
@@ -301,7 +313,7 @@ and '{item}' like '%'+t.FabricdefectID+'%'
                             ndr["NewKey"] = this.CurrentData["NewKey"];
                             ndr["Fir_PhysicalDetailUkey"] = this.CurrentData["DetailUkey"];
                             ndr["DefectLocation"] = dr["yds" + str_col];
-                            ndr["DefectRecord"] = dr["def" + str_col];
+                            ndr["DefectRecord"] = newDefect;
                             ndr["Point"] = dr["point" + str_col];
                             this.DefectTb.Rows.Add(ndr);
                         }
