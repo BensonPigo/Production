@@ -246,7 +246,6 @@
             this.DefaultControlForEdit = "dateUpdatedDate";
             this.EditMode = true;
             this.Name = "P02";
-            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P02. Comparison List for updated order";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel2, 0);
