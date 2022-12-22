@@ -4107,7 +4107,8 @@ and sd.FabricType = 'F'
             }
             else
             {
-                if (detailTableName == WHTableName.Receiving_Detail)
+                if (detailTableName == WHTableName.Receiving_Detail ||
+                    detailTableName == WHTableName.TransferIn_Detail)
                 {
                     sqlcmd = $@"
 select
@@ -4122,7 +4123,7 @@ select
     ,RankFtyInventory = RANK() over(order by f.Ukey)
     ,countFtyInventory = count(1) over(order by f.Ukey)
 {columns}
-from Receiving_Detail sd with (nolock)
+from {detailTableName} sd with (nolock)
 {ftytable}
 {othertables}
 where 1=1

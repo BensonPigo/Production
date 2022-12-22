@@ -443,6 +443,24 @@ where pd.id=@poid and pd.seq1 =@seq1 and pd.seq2 = @seq2";
                     this.grid2Data.Rows.Add(newRow);
                 }
 
+                var dupMINDQRCode = this.grid2Data.AsEnumerable()
+                    .Where(w => !MyUtility.Check.Empty(w["MINDQRCode"]))
+                    .GroupBy(g => MyUtility.Convert.GetString(g["MINDQRCode"]))
+                    .Select(s => new { MINDQRCode = s.Key, ct = s.Count() })
+                    .Where(w => w.ct > 1).ToList();
+                foreach (var item in dupMINDQRCode)
+                {
+                    foreach (var dupqr in this.grid2Data.Select($"MINDQRCode = '{item.MINDQRCode}'"))
+                    {
+                        if (MyUtility.Check.Empty(dupqr["ErrMsg"]))
+                        {
+                            count--;
+                        }
+
+                        dupqr["ErrMsg"] += "\r\n" + $"This QR Code already exist WK#{this.master["InvNo"]}, cannot import.";
+                    }
+                }
+
                 dr["Status"] = (intRowsCount - 2 == count) ? "Check & Import Completed." : "Some Data Faild. Please check Error Message.";
                 dr["Count"] = count;
 
@@ -510,6 +528,14 @@ where pd.id=@poid and pd.seq1 =@seq1 and pd.seq2 = @seq2";
                     }
 
                     MyUtility.Msg.WarningBox(warning, "Roll# are duplicated!!");
+                    return;
+                }
+
+                if (tmpPacking.AsEnumerable().Where(w => w["ErrMsg"].ToString().Contains("This QR Code aleady exist")).Any() ||
+                    tmpPacking.AsEnumerable().GroupBy(g => MyUtility.Convert.GetString(g["MINDQRCode"].ToString()))
+                    .Any(a => !MyUtility.Check.Empty(a.Key) && a.Count() > 1))
+                {
+                    MyUtility.Msg.WarningBox("QR Code are duplicated!!");
                     return;
                 }
 
