@@ -576,7 +576,8 @@ into #tmp_LineMaxOutputDatePOID
 from #tmp t
 group by t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.POID, t.FtyZone
 
-select  POID
+select  FtyZone
+        ,POID
         , StyleID
         , BrandID
         , CdCodeID
@@ -665,6 +666,8 @@ group by t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.FtyZone
 
 select  ProgramID
         , StyleID
+        , FtyZone
+        , FactoryID
         , BrandID
         , CdCodeID
         , CDCodeNew
@@ -720,15 +723,16 @@ from (
             , StyleDesc
             , SeasonID
             , FtyZone
+            ,FactoryID
             , StdTMS
             , sum(Output) AS TtlQty
             , SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
     from #tmp, System
-    group by ProgramID, StyleID, BrandID, CdCodeID, StyleDesc, SeasonID, FtyZone
+    group by ProgramID, StyleID, BrandID, CdCodeID, StyleDesc, SeasonID, FtyZone,FactoryID
            , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction, StdTMS 
 )t
 group by  ProgramID, StyleID, BrandID, CdCodeID, CDCodeNew, ProductType, FabricType
-	    , Lining, Gender, Construction, StyleDesc, SeasonID, FtyZone
+	    , Lining, Gender, Construction, StyleDesc, SeasonID, FtyZone,FactoryID
 Order by ProgramID, StyleID, BrandID, CdCodeID, SeasonID";
 
             result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, querySql, out this.Program);
@@ -1003,25 +1007,26 @@ Order by FtyZone, FactoryID, SewingLineID, CdCodeID, StyleDesc";
             objArray = new object[1, 20];
             foreach (DataRow dr in this.POCombo.Rows)
             {
-                objArray[0, 0] = dr["POID"];
-                objArray[0, 1] = dr["StyleID"];
-                objArray[0, 2] = dr["BrandID"];
-                objArray[0, 3] = dr["CdCodeID"];
-                objArray[0, 4] = dr["CDCodeNew"];
-                objArray[0, 5] = dr["ProductType"];
-                objArray[0, 6] = dr["FabricType"];
-                objArray[0, 7] = dr["Lining"];
-                objArray[0, 8] = dr["Gender"];
-                objArray[0, 9] = dr["Construction"];
-                objArray[0, 10] = dr["StyleDesc"];
-                objArray[0, 11] = dr["SeasonID"];
-                objArray[0, 12] = dr["ProgramID"];
-                objArray[0, 13] = dr["TtlQty"];
-                objArray[0, 14] = dr["TtlCPU"];
-                objArray[0, 15] = dr["TtlManhour"];
-                objArray[0, 16] = dr["PPH"];
-                objArray[0, 17] = dr["EFF"];
-                objArray[0, 18] = dr["Remark"];
+                objArray[0, 0] = dr["FtyZone"];
+                objArray[0, 1] = dr["POID"];
+                objArray[0, 2] = dr["StyleID"];
+                objArray[0, 3] = dr["BrandID"];
+                objArray[0, 4] = dr["CdCodeID"];
+                objArray[0, 5] = dr["CDCodeNew"];
+                objArray[0, 6] = dr["ProductType"];
+                objArray[0, 7] = dr["FabricType"];
+                objArray[0, 8] = dr["Lining"];
+                objArray[0, 9] = dr["Gender"];
+                objArray[0, 10] = dr["Construction"];
+                objArray[0, 11] = dr["StyleDesc"];
+                objArray[0, 12] = dr["SeasonID"];
+                objArray[0, 13] = dr["ProgramID"];
+                objArray[0, 14] = dr["TtlQty"];
+                objArray[0, 15] = dr["TtlCPU"];
+                objArray[0, 16] = dr["TtlManhour"];
+                objArray[0, 17] = dr["PPH"];
+                objArray[0, 18] = dr["EFF"];
+                objArray[0, 19] = dr["Remark"];
                 worksheet.Range[string.Format("A{0}:T{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
@@ -1034,28 +1039,30 @@ Order by FtyZone, FactoryID, SewingLineID, CdCodeID, StyleDesc";
             worksheet = excel.ActiveWorkbook.Worksheets[9];
             worksheet.Select();
             intRowsStart = 2;
-            objArray = new object[1, 19];
+            objArray = new object[1, 20];
             foreach (DataRow dr in this.Program.Rows)
             {
                 objArray[0, 0] = dr["ProgramID"];
                 objArray[0, 1] = dr["StyleID"];
-                objArray[0, 2] = dr["BrandID"];
-                objArray[0, 3] = dr["CdCodeID"];
-                objArray[0, 4] = dr["CDCodeNew"];
-                objArray[0, 5] = dr["ProductType"];
-                objArray[0, 6] = dr["FabricType"];
-                objArray[0, 7] = dr["Lining"];
-                objArray[0, 8] = dr["Gender"];
-                objArray[0, 9] = dr["Construction"];
-                objArray[0, 10] = dr["StyleDesc"];
-                objArray[0, 11] = dr["SeasonID"];
-                objArray[0, 12] = dr["TtlQty"];
-                objArray[0, 13] = dr["TtlCPU"];
-                objArray[0, 14] = dr["TtlManhour"];
-                objArray[0, 15] = dr["PPH"];
-                objArray[0, 16] = dr["EFF"];
-                objArray[0, 17] = dr["Remark"];
-                worksheet.Range[string.Format("A{0}:S{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 2] = dr["FtyZone"];
+                objArray[0, 3] = dr["FactoryID"];
+                objArray[0, 4] = dr["BrandID"];
+                objArray[0, 5] = dr["CdCodeID"];
+                objArray[0, 6] = dr["CDCodeNew"];
+                objArray[0, 7] = dr["ProductType"];
+                objArray[0, 8] = dr["FabricType"];
+                objArray[0, 9] = dr["Lining"];
+                objArray[0, 10] = dr["Gender"];
+                objArray[0, 11] = dr["Construction"];
+                objArray[0, 12] = dr["StyleDesc"];
+                objArray[0, 13] = dr["SeasonID"];
+                objArray[0, 14] = dr["TtlQty"];
+                objArray[0, 15] = dr["TtlCPU"];
+                objArray[0, 16] = dr["TtlManhour"];
+                objArray[0, 17] = dr["PPH"];
+                objArray[0, 18] = dr["EFF"];
+                objArray[0, 19] = dr["Remark"];
+                worksheet.Range[string.Format("A{0}:T{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
