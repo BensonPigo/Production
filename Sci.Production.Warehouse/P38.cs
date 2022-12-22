@@ -665,6 +665,7 @@ update f
     set f.lock = '{flag}'
         , f.lockname = '{Env.User.UserID}'
         , f.Remark = t.Remark
+        , f.LockDate = Getdate()
 from ftyinventory f
 inner join #tmp t on f.ukey = t.ukey
 where t.Selected = 1
