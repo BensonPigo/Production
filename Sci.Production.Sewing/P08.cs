@@ -61,7 +61,7 @@ namespace Sci.Production.Sewing
 
             string sqlcmd =
                 @"
-select MDFailQty = max (pd.MDFailQty)
+select MDFailQty = max (pd.DryRoomMDFailQty)
 	,pd.OrderID
 	,o.CustPONo
 	,o.StyleID
@@ -98,7 +98,7 @@ where ((pd.ID = @packingListID and pd.CTNStartNo = @cTNStarNo)
 		and p.Type in ('B','L') 
         and pd.DisposeFromClog = 0 
 		and pd.TransferDate  is null 
-group by pd.MDFailQty,pd.OrderID,o.CustPONo,o.StyleID,o.SeasonID,o.BrandID
+group by pd.DryRoomMDFailQty,pd.OrderID,o.CustPONo,o.StyleID,o.SeasonID,o.BrandID
 	,c.Alias,os.BuyerDelivery,ol.LocationQty, sl.LocationQty,p.ID
     ,pd.CTNStartNo,pd.SCICtnNo
 ";
@@ -130,12 +130,12 @@ group by pd.MDFailQty,pd.OrderID,o.CustPONo,o.StyleID,o.SeasonID,o.BrandID
                 this.displayDestination.Text = MyUtility.Convert.GetString(row["Alias"]);
                 this.displayBuyerDelivery.Text = MyUtility.Convert.GetString(row["BuyerDelivery"]);
                 this.displayCartonQty.Text = MyUtility.Convert.GetString(row["CartonQty"]);
-                this.numericBoxDiscrepancy.Text = MyUtility.Convert.GetString(row["MDFailQty"]);
+                this.numericBoxDiscrepancy.Text = MyUtility.Convert.GetString(row["DryRoomMDFailQty"]);
                 this.numericBoxDiscrepancy.Maximum = MyUtility.Convert.GetInt(row["CartonQty"]);
             }
 
             string sqlcmdChk = $@"
-select 1    from MDScan_Detail md     where md.MDScanUKey = (        select top 1 m.Ukey        from MDScan m        where exists(			select 1 from PackingList_Detail pd 			where (pd.ID = '{this.dt.Rows[0]["ID"]}'             and pd.CTNStartNo = '{this.dt.Rows[0]["CTNStartNo"]}')			and  pd.ID = m.PackingListID and pd.OrderID = m.OrderID  and pd.CTNStartNo = m.CTNStartNo and pd.MDStatus <> 'Pass')        order by m.AddDate desc    )
+select 1    from MDScan_Detail md     where md.MDScanUKey = (        select top 1 m.Ukey        from MDScan m        where exists(			select 1 from PackingList_Detail pd 			where (pd.ID = '{this.dt.Rows[0]["ID"]}'             and pd.CTNStartNo = '{this.dt.Rows[0]["CTNStartNo"]}')			and  pd.ID = m.PackingListID and pd.OrderID = m.OrderID  and pd.CTNStartNo = m.CTNStartNo and pd.DryRoomMDStatus <> 'Pass')        order by m.AddDate desc    )
 ";
 
             if (MyUtility.Check.Seek(sqlcmdChk))
@@ -180,11 +180,11 @@ select 1    from MDScan_Detail md     where md.MDScanUKey = (        select t
             string mDScan_Ukey = string.Empty;
             string sqlcmd = $@"
 update PackingList_Detail
-set MDFailQty = {this.numericBoxDiscrepancy.Text}, MDScanDate = getdate(), MDScanName = '{Env.User.UserID}'
-,MDStatus  = '{strMDStatus}'
+set DryRoomMDFailQty = {this.numericBoxDiscrepancy.Text}, DryRoomMDScanDate = getdate(), DryRoomMDScanName = '{Env.User.UserID}'
+,DryRoomMDStatus  = '{strMDStatus}'
 where ID = '{dr["ID"]}' and CTNStartNo = '{dr["CTNStartNo"]}';
 
-insert into MDScan([ScanDate], [MDivisionID], [OrderID], [PackingListID], [CTNStartNo], [AddName], [AddDate], [SCICtnNo], [MDFailQty], [CartonQty], [DataRemark])
+insert into MDScan([ScanDate], [MDivisionID], [OrderID], [PackingListID], [CTNStartNo], [AddName], [AddDate], [SCICtnNo], [DryRoomMDFailQty], [CartonQty], [DataRemark])
 values(getdate(), '{Env.User.Keyword}', '{dr["OrderID"]}', '{dr["ID"]}', '{dr["CTNStartNo"]}', '{Env.User.UserID}', getdate(), '{dr["SCICtnNo"]}', {this.numericBoxDiscrepancy.Text}, {dr["CartonQty"]}, 'Create from PMS');
 
 declare @MDScan_Ukey bigint

@@ -148,7 +148,7 @@ order by pd.id,iif(ISNUMERIC(CTNStartno)=0,'ZZZZZZZZ',RIGHT(REPLICATE('0', 8) + 
 select pe.PackingListID,pe.CTNStartNo,pe.AddDate,pe.AddName,pe.ErrQty, ErrorType = concat(pe.PackingErrorID, '-' + per.Description)
 from #tmp pd
 inner join PackErrTransfer pe with(nolock) on pe.PackingListID = pd.id and pe.CTNStartNo = pd.CTNStartNo
-left join PackingError per on per.ID = pe.PackingErrorID and per.Type = 'TP'
+left join PackingErrorTypeReason per on per.ID = pe.PackingErrorID and per.Type = 'TP'
 order by AddDate
 
 drop table #tmp

@@ -108,7 +108,7 @@ outer apply(
 	where pt.PackingListID=pe.PackingListID and pe.CTNStartNo = pt.CTNStartNo and pe.OrderID=pt.OrderID and pe.MDivisionID=pt.MDivisionID and pt.AddDate<pe.AddDate
 	order by pt.AddDate desc
 )x
-left join PackingError pr with(nolock) on pr.ID=x.PackingErrorID and pr.Type='TP'
+left join PackingErrorTypeReason pr with(nolock) on pr.ID=x.PackingErrorID and pr.Type='TP'
 left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = pe.SCICtnNo 
 where 1=1
 {sqlwhere}
