@@ -54,9 +54,10 @@ namespace Sci.Production.Win
                 {
                     this.act.Text = "SCIMIS";
                     this.pwd.Text = "SCIMIS888";
-                    this.Account_Valid();
                     this.comboBox1.SelectedValue = "MAI";
                     this.checkBoxTestEnvironment.Checked = true;
+                    this.ChangeTaipeiServer();
+                    this.Account_Valid();
                     this.ok.Focus();
                     this.ok.Select();
                 }
