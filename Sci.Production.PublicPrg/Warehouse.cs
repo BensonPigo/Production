@@ -4737,11 +4737,12 @@ and w.Action = '{item.Action}'";
                         return result;
                     }
 
-                    if (detailTableName == WHTableName.Receiving_Detail)
+                    if (detailTableName == WHTableName.Receiving_Detail ||
+                        detailTableName == WHTableName.TransferIn_Detail)
                     {
-                        string sqlUpdateReceiving_Detail = @"
+                        string sqlUpdateReceiving_Detail = $@"
     update rd set rd.MINDQRCode = t.To_NewBarcode
-    from Receiving_Detail rd 
+    from {detailTableName} rd 
     inner join #tmp t on rd.Ukey = t.TransactionUkey
     where rd.MINDQRCode = ''
 ";
