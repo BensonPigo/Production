@@ -5,6 +5,7 @@
     [RealLength]  NUMERIC (2)    CONSTRAINT [DF_DropDownList_RealLength] DEFAULT ((0)) NOT NULL,
     [Description] NVARCHAR (200) CONSTRAINT [DF_DropDownList_Description] DEFAULT ('') NULL,
     [Seq]         INT            CONSTRAINT [DF_DropDownList_Seq] DEFAULT ((0)) NOT NULL,
+    [Conditions] VARCHAR(500) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_DropDownList] PRIMARY KEY CLUSTERED ([Type] ASC, [ID] ASC)
 );
 

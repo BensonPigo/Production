@@ -70,7 +70,8 @@ and d.Name in (
 	'CMP Absent',
 	'Subprocess CPU',
 	'TTL DL Working Hour',
-	'Direct Manpower'
+	'Direct Manpower',
+	'Subcon out(3rd)'
 )
 
 --Basic
@@ -890,6 +891,21 @@ Begin
 		insert into tradedb.trade.dbo.PulseCheck
 		([ItemID],[Year],[Month],[Region],[FtyZone],[Value],[AddName],[AddDate],[EditName],[EditDate])
 		select @ItemID, @Year, @Month, @_CountryID, @_FtyZone, @TTLDLWorkingHour, @UserID, GETDATE(), null, null
+	end
+
+	--Subcon out(3rd)
+	select @ItemID = ID from #tmp_Dropdownlist where [Name] = 'Subcon out(3rd)' and [Description] = 'Monthly CMP Report'
+	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone)
+	begin
+		update tradedb.trade.dbo.PulseCheck
+		set value = @AvgWorkingHours, EditName = @UserID, EditDate =GETDATE()
+		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and FtyZone = @_FtyZone
+	end
+	else
+	begin
+		insert into tradedb.trade.dbo.PulseCheck
+		([ItemID],[Year],[Month],[Region],[FtyZone],[Value],[AddName],[AddDate],[EditName],[EditDate])
+		select @ItemID, @Year, @Month, @_CountryID, @_FtyZone, @AvgWorkingHours, @UserID, GETDATE(), null, null
 	end
 FETCH NEXT FROM CURSOR_ INTO @_CountryID, @_FtyZone, @SewingCPU, @WorkingDays, @AvgWorkingHours, @PPH, @Efficiency, @DirectManpower, @PerformedLoading, @PerformedCapacity, @CMPAbsent, @SubprocessCPU, @TTLDLWorkingHour
 End
