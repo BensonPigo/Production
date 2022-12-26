@@ -90,7 +90,7 @@ select
 ,c.COName
 ,c.ReceiveDate
 ,c.SendDate
-,psd.SCIRefno
+,[SCIRefno] = iif(ed.PoType = 'M',ed.Refno,psd.SCIRefno)
 from Export_Detail ed WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 left join Supp s WITH (NOLOCK) on s.id = ed.SuppID 
