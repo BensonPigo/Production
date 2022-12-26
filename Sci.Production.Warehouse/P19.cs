@@ -563,7 +563,7 @@ select  t.TransferExport_DetailUkey,
         isnull(psdInv.StockUnit, ''),
         t.Qty,
         t.Tone,
-        w.MINDQRCode
+        [MINDQRCode] = iif(t.Qty = 0, '', ISNULL(w.MINDQRCode, ''))
 from #tmp t
 inner join TransferExport_Detail ted with (nolock) on ted.Ukey = t.TransferExport_DetailUkey
 left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID and 

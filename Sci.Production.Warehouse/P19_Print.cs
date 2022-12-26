@@ -188,7 +188,7 @@ select
     td.Seq1,
     td.Seq2,
     [TONGrp] = FIRT.TONGrp,
-	[MINDQRCode] = iif(isnull(w.To_NewBarcodeSeq, '') = '', w.To_NewBarcode, concat(w.To_NewBarcode, '-', w.To_NewBarcodeSeq))
+	[MINDQRCode] = iif(td.Qty = 0, '', iif(isnull(w.To_NewBarcodeSeq, '') = '', w.To_NewBarcode, concat(w.To_NewBarcode, '-', w.To_NewBarcodeSeq)))
 from TransferOut_Detail td with (nolock)
 left join FtyInventory a with (nolock) on td.POID = a.POID and
 						                    td.Seq1 = a.Seq1 and
