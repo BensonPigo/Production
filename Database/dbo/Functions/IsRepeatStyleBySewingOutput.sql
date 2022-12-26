@@ -65,11 +65,11 @@ BEGIN
 	from @tmp t
 	where date > (
 		-- 找最近未產出日
-		select [Date] = ISNULL(a.[Date], dateadd(day, -1, t.Date))
+		select a.[Date]
 		from (select [Date] = MAX(Date) from @tmp where IsOutPut = 0) a 
 	)
 
-	if @MinOutPutDate = @OutputDate
+	if @MinOutPutDate = @OutputDate　or @MinOutPutDate is null
 	begin
 		return 'New Style'
 	end
