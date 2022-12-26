@@ -15,6 +15,8 @@ SELECT
 ,[NewFormula]=ISNULL(s.Formula,0)
 ,[AddName]=t.EditName
 ,[AddDate]=t.EditDate
+,[Paper] =t.Paper
+,[DescriptionDetail] = t.DescriptionDetail
 INTO #Formula_Change_Table
 FROM dbo.Part t
 INNER JOIN dbo.SciTrade_To_Pms_Part s
@@ -24,7 +26,7 @@ AND t.Formula<> s.Formula
 IF EXISTS (SELECT 1 FROM #Formula_Change_Table)
 BEGIN
 	INSERT INTO dbo.PartFormula_History ([PartID],[OldFormula],[NewFormula],[AddName],[AddDate])
-	SELECT [PartID],[OldFormula],[NewFormula],[AddName],[AddDate] FROM #Formula_Change_Table
+	SELECT [PartID],[OldFormula],[NewFormula],[AddName],[AddDate],[Paper],[DescriptionDetail] FROM #Formula_Change_Table
 END
 ;
 DROP TABLE #Formula_Change_Table
@@ -50,19 +52,23 @@ update t set t.Description = s.Description
 			 , t.Needle = s.Needle
 			 , t.ControlPart = s.ControlParts
 			 , t.MOQ = isnull(convert(int, s.MOQ),0)
+			 , t.Paper = isnull(s.Paper,0)
+			 , t.DescriptionDetail = isnull(s.DescriptionDetail,'')
 from dbo.Part t
 inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = 'P' ) as s on t.id = s.Refno 
 
-insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, MachineGroupID 	, MachineBrandID
+insert into dbo.Part(ID 		, Description 	, Partno 		, MasterGroupID 	, MachineGroupID 	, MachineBrandID
 	 	 	 , UseUnit 			, PoUnit 		, Price 		, PurchaseBatchQty 	, Junk
 			 , PurchaseFrom 	, SuppID 		, CurrencyID 	, Formula	 		, Fix
-			 , AddName  		, AddDate 		, EditName 		, EditDate 			, Lock , Needle , ControlPart
-			 ,	MOQ)
+			 , AddName  		, AddDate 		, EditName 		, EditDate 			, Lock, Needle , ControlPart
+			 ,	MOQ             , Paper			, DescriptionDetail)
 			 select s.refno 			, s.Description , s.Partno 		, s.MasterGroupID 	, s.MachineGroupID 	, s.MachineBrandID
 					, s.UnitID 		, s.POUnitID 	, s.Price 		, s.BatchQty 		, s.Junk
 					, 'T'  			, s.SuppID 		, s.CurrencyID 	, s.Formula 		, s.Fix
 					, s.AddName 		, s.AddDate  	, s.EditName  	, s.EditDate 		, s.Lock , s.Needle , s.ControlParts
 					, isnull(convert(int, s.MOQ),0)
+					,isnull(s.Paper,0)
+					,isnull(s.DescriptionDetail,'')
 			 from dbo.SciTrade_To_Pms_Part s WITH (NOLOCK) 
 			 where s.type = 'P' and not exists(select 1 from dbo.Part t where t.id=s.Refno)
 

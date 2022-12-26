@@ -52,7 +52,10 @@ namespace Sci.Production.Logistic
                  .Text("Alias", header: "Destination", width: Widths.AnsiChars(7), iseditingreadonly: true)
                  .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(12), iseditingreadonly: true)
                  .Text("ClogLocationID", header: "Location No", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true);
+                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("Size", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("Qty", header: "Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("PCCTN", header: "PC/CTN", width: Widths.AnsiChars(10), iseditingreadonly: true);
         }
 
         private void BtnFind_Click(object sender, EventArgs e)
@@ -124,6 +127,9 @@ select distinct
 ,p2.ClogLocationId
 ,p2.remark
 ,p2.SCICtnNo
+,[Size] = size.val
+,[Qty] = Qty.val
+,[PCCTN] = QtyPer.val
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -139,6 +145,46 @@ outer apply(
 		for xml path('')
 	),1,1,'')
 ) o1
+outer apply
+(
+	select val = stuff(
+	(
+		select concat('/',tmp.SizeCode) 
+		from
+		(
+			select SizeCode 
+			from PackingList_Detail
+			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
+		)tmp for xml path('')
+	),1,1,'')
+)size
+outer apply
+(
+	select val = stuff(
+	(
+		select concat('/',tmp.ShipQty) 
+		from
+		(
+			select ShipQty 
+			from PackingList_Detail
+			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
+		)tmp for xml path('')
+	),1,1,'')
+)Qty
+outer apply
+(
+	select val = stuff(
+	(
+		select concat('/',tmp.QtyPerCTN) 
+		from
+		(
+			select QtyPerCTN 
+			from PackingList_Detail
+			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
+		)tmp for xml path('')
+	),1,1,'')
+)QtyPer
+
 where p2.CTNStartNo<>''
 and p1.Mdivisionid='{Env.User.Keyword}'
 and p1.Type in ('B','L')
@@ -188,7 +234,7 @@ order by p2.ID,p2.CTNStartNo";
                 string selectCommand = @"
 Select distinct '' as CFANeedInsp, 1 as selected, b.Id, b.OrderID, b.CTNStartNo,
 c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, d.Alias,
-c.BuyerDelivery , b.ClogLocationId , b.remark, b.CustCTN,b.SCICtnNo
+c.BuyerDelivery , b.ClogLocationId , b.remark, b.CustCTN,b.SCICtnNo,[Size] = '',[Qty] = '',[PCCTN] = ''
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) 
 , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
                 DataTable selectDataTable;
@@ -242,6 +288,9 @@ select distinct
 ,p2.ClogLocationId
 ,p2.remark
 ,p2.SCICtnNo
+,[Size] = size.val
+,[Qty] = Qty.val
+,[PCCTN] = QtyPer.val
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -257,6 +306,46 @@ outer apply(
 		for xml path('')
 	),1,1,'')
 ) o1
+outer apply
+(
+	select val = stuff(
+	(
+		select concat('/',tmp.SizeCode) 
+		from
+		(
+			select SizeCode 
+			from PackingList_Detail
+			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
+		)tmp for xml path('')
+	),1,1,'')
+)size
+outer apply
+(
+	select val = stuff(
+	(
+		select concat('/',tmp.ShipQty) 
+		from
+		(
+			select ShipQty 
+			from PackingList_Detail
+			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
+		)tmp for xml path('')
+	),1,1,'')
+)Qty
+outer apply
+(
+	select val = stuff(
+	(
+		select concat('/',tmp.QtyPerCTN) 
+		from
+		(
+			select QtyPerCTN 
+			from PackingList_Detail
+			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
+		)tmp for xml path('')
+	),1,1,'')
+)QtyPer
+
 where p2.CTNStartNo<>''
 and p1.Mdivisionid='{Env.User.Keyword}'
 and p1.Type in ('B','L')
@@ -284,6 +373,9 @@ order by p2.ID,p2.CTNStartNo
                                     dr["BuyerDelivery"] = seekData["BuyerDelivery"];
                                     dr["ClogLocationId"] = seekData["ClogLocationId"];
                                     dr["remark"] = seekData["remark"];
+                                    dr["Size"] = seekData["Size"];
+                                    dr["Qty"] = seekData["Qty"];
+                                    dr["PCCTN"] = seekData["PCCTN"];
                                     selectDataTable.Rows.Add(dr);
                                     insertCount++;
                                 }
@@ -305,6 +397,9 @@ select distinct
 ,p2.ClogLocationId
 ,p2.remark
 ,p2.SCICtnNo
+,[Size] = size.val
+,[Qty] = Qty.val
+,[PCCTN] = QtyPer.val
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -320,6 +415,45 @@ outer apply(
 		for xml path('')
 	),1,1,'')
 ) o1
+outer apply
+(
+	select val = stuff(
+	(
+		select concat('/',tmp.SizeCode) 
+		from
+		(
+			select SizeCode 
+			from PackingList_Detail
+			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
+		)tmp for xml path('')
+	),1,1,'')
+)size
+outer apply
+(
+	select val = stuff(
+	(
+		select concat('/',tmp.ShipQty) 
+		from
+		(
+			select ShipQty 
+			from PackingList_Detail
+			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
+		)tmp for xml path('')
+	),1,1,'')
+)Qty
+outer apply
+(
+	select val = stuff(
+	(
+		select concat('/',tmp.QtyPerCTN) 
+		from
+		(
+			select QtyPerCTN 
+			from PackingList_Detail
+			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
+		)tmp for xml path('')
+	),1,1,'')
+)QtyPer
 where p2.CTNStartNo<>''
 and p1.Mdivisionid='{Env.User.Keyword}'
 and p1.Type in ('B','L')
@@ -347,6 +481,9 @@ order by p2.ID,p2.CTNStartNo
                                         dr["BuyerDelivery"] = seekData["BuyerDelivery"];
                                         dr["ClogLocationId"] = seekData["ClogLocationId"];
                                         dr["remark"] = seekData["remark"];
+                                        dr["Size"] = seekData["Size"];
+                                        dr["Qty"] = seekData["Qty"];
+                                        dr["PCCTN"] = seekData["PCCTN"];
                                         selectDataTable.Rows.Add(dr);
                                         insertCount++;
                                     }
@@ -374,6 +511,9 @@ select distinct
 ,p2.ClogLocationId
 ,p2.remark
 ,p2.SCICtnNo
+,[Size] = size.val
+,[Qty] = Qty.val
+,[PCCTN] = QtyPer.val
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -389,6 +529,45 @@ outer apply(
 		for xml path('')
 	),1,1,'')
 ) o1
+outer apply
+(
+	select val = stuff(
+	(
+		select concat('/',tmp.SizeCode) 
+		from
+		(
+			select SizeCode 
+			from PackingList_Detail
+			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
+		)tmp for xml path('')
+	),1,1,'')
+)size
+outer apply
+(
+	select val = stuff(
+	(
+		select concat('/',tmp.ShipQty) 
+		from
+		(
+			select ShipQty 
+			from PackingList_Detail
+			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
+		)tmp for xml path('')
+	),1,1,'')
+)Qty
+outer apply
+(
+	select val = stuff(
+	(
+		select concat('/',tmp.QtyPerCTN) 
+		from
+		(
+			select QtyPerCTN 
+			from PackingList_Detail
+			where  CTNStartNo in(p2.CTNStartNo) and p1.ID = ID
+		)tmp for xml path('')
+	),1,1,'')
+)QtyPer
 where p2.CTNStartNo<>''
 and p1.Mdivisionid='{Env.User.Keyword}'
 and p1.Type in ('B','L')
@@ -416,6 +595,9 @@ order by p2.ID,p2.CTNStartNo
                                     dr["BuyerDelivery"] = seekData["BuyerDelivery"];
                                     dr["ClogLocationId"] = seekData["ClogLocationId"];
                                     dr["remark"] = seekData["remark"];
+                                    dr["Size"] = seekData["Size"];
+                                    dr["Qty"] = seekData["Qty"];
+                                    dr["PCCTN"] = seekData["PCCTN"];
                                     selectDataTable.Rows.Add(dr);
                                     insertCount++;
                                 }
