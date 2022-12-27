@@ -25,7 +25,7 @@ AND t.Formula<> s.Formula
 ;
 IF EXISTS (SELECT 1 FROM #Formula_Change_Table)
 BEGIN
-	INSERT INTO dbo.PartFormula_History ([PartID],[OldFormula],[NewFormula],[AddName],[AddDate])
+	INSERT INTO dbo.PartFormula_History ([PartID],[OldFormula],[NewFormula],[AddName],[AddDate],[Paper],[DescriptionDetail])
 	SELECT [PartID],[OldFormula],[NewFormula],[AddName],[AddDate],[Paper],[DescriptionDetail] FROM #Formula_Change_Table
 END
 ;
