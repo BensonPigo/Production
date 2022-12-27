@@ -546,7 +546,8 @@ EditName                   ,
 EditDate                   ,
 StockUnitID                ,
 StockQty                   ,
-Tone
+Tone                       ,
+MINDQRCode
 )
 select  t.TransferExport_DetailUkey,
         t.TransferExportID,
@@ -561,12 +562,20 @@ select  t.TransferExport_DetailUkey,
         getdate(),
         isnull(psdInv.StockUnit, ''),
         t.Qty,
-        t.Tone
+        t.Tone,
+        [MINDQRCode] = iif(t.Qty = 0, '', ISNULL(w.MINDQRCode, ''))
 from #tmp t
 inner join TransferExport_Detail ted with (nolock) on ted.Ukey = t.TransferExport_DetailUkey
 left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID and 
 													ted.InventorySeq1 = psdInv.SEQ1 and
 													ted.InventorySeq2 = psdinv.SEQ2
+outer apply (
+	select [MINDQRCode] = iif(isnull(w.To_NewBarcodeSeq, '') = '', w.To_NewBarcode, concat(w.To_NewBarcode, '-', w.To_NewBarcodeSeq))
+	from WHBarcodeTransaction w with (nolock) 
+	where t.Ukey = w.TransactionUkey 
+	and w.Action = 'Confirm' 
+	and [Function] = 'P19'
+)w
 ";
             if (this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["TransferExportID"])))
             {
@@ -609,17 +618,6 @@ left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID a
                         }
                     }
 
-                    if (dtTransferExportDetail.Rows.Count > 0)
-                    {
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(
-                            dtTransferExportDetail, string.Empty, sqlInsertTransferExport_Detail_Carton, out resulttb)))
-                        {
-                            transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return;
-                        }
-                    }
-
                     if (!(result = DBProxy.Current.Execute(null, $"update TransferOut set status = 'Confirmed', editname = '{Env.User.UserID}' , editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
                     {
                         throw result.GetException();
@@ -629,6 +627,18 @@ left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID a
                     if (!(result = Prgs.UpdateWH_Barcode(true, dtQty, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
                     {
                         throw result.GetException();
+                    }
+
+                    // Barcode 產生後再寫入 TransferExport_Detail_Carton
+                    if (dtTransferExportDetail.Rows.Count > 0)
+                    {
+                        if (!(result = MyUtility.Tool.ProcessWithDatatable(
+                            dtTransferExportDetail, string.Empty, sqlInsertTransferExport_Detail_Carton, out resulttb)))
+                        {
+                            transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
                     }
 
                     transactionscope.Complete();

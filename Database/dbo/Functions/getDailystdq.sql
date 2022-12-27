@@ -94,7 +94,7 @@ declare @WorkDate TABLE(
 )
 
 Insert Into @WorkDate
---�եX�Ҧ��p�e�̤jInline,�̤pOffline�����Ҧ�������A�᭱�i�}�ӭp�e�C���ƨϥ�
+--組出所有計畫最大Inline,最小Offline之間所有的日期，後面展開個計畫每日資料使用
 SELECT f.FactoryID,cast(DATEADD(DAY,number,(select CAST(min(Inline)AS date) from @APSListWorkDay)) as datetime) [WorkDate]
 FROM master..spt_values s
 cross join (select distinct FactoryID from @APSListWorkDay) f
@@ -123,7 +123,7 @@ declare @Workhour_step1 TABLE(
 	[Sewer] int,
 	[SwitchTime] [int] NULL
 )
---�i�}�p�e������
+--展開計畫日期資料
 Insert Into @Workhour_step1
 select  al.APSNo,
         al.LearnCurveID,
@@ -151,7 +151,7 @@ inner join Workhour_Detail wkd with (nolock) on wkd.FactoryID = al.FactoryID and
                                                 wkd.SewingLineID = al.SewingLineID and 
                                                 wkd.Date = wd.WorkDate
 
---�R���C�ӭp�einline,offline��ѶW�L�ɶ����Z��                                                
+--刪除每個計畫inline,offline當天超過時間的班表                                               
 delete @Workhour_step1 where WorkDate = InlineDate and EndHour <= InlineHour
 delete @Workhour_step1 where WorkDate = OfflineDate and StartHour >= OfflineHour
 declare @Workhour_step2 TABLE(
