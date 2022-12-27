@@ -8,7 +8,7 @@
     [AddName]      VARCHAR (10)   NULL,
     [EditDate]     DATETIME       NULL,
     [Editname]     VARCHAR (10)   NULL,
-    [Serial#]      VARCHAR(50)    CONSTRAINT [DF_SubProMachinel_Serial#] DEFAULT ('') NOT NULL , 
+    [Serial]      VARCHAR(50)    CONSTRAINT [DF_SubProMachinel_Serial] DEFAULT ('') NOT NULL , 
     CONSTRAINT [PK_SubProMachine] PRIMARY KEY CLUSTERED ([ID] ASC, [FactoryID] ASC, [SubProcessID] ASC)
 );
 
