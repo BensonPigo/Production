@@ -107,22 +107,64 @@ Cast(
 ,[CO] = (select Name from DropDownList where Type = 'NewCO_Type' and ID = s.NEWCO)
 ,[MarkMarker] = (select ID + '-' + Name from TPEPass1 where ID = m.MarkerName)
 ,[MR]  = (select ID + '-' + Name from TPEPass1 where ID = sm.MR)
-,ActFinDate = MAX(m.ActFinDate)
+,ActFinDate = m.ActFinDate
+,o.StyleUkey
+,destRank = DENSE_RANK() over (Partition by o.StyleUkey order by 
+   case when smd.PhaseID = 'BULK' then 1 
+        when smd.PhaseID = 'PP SAMPLE' then 2
+        when smd.PhaseID = 'SIZE/S' then 3
+    else 99 end)
+into #tmp
 from Orders o
-left join Style s on s.Ukey = o.StyleUkey
-inner join Marker m on  m.StyleUkey = o.StyleUkey
+inner join Style s on s.Ukey = o.StyleUkey
+outer apply(
+	select ActFinDate = MAX(ActFinDate),PhaseID
+	from Marker m
+	inner join SMNotice sm on m.ID = sm.ID
+	inner join SMNotice_Detail smd on smd.ID = sm.ID and smd.Type='M'
+	where m.StyleUkey = s.Ukey
+	group by PhaseID
+)MaxActFinDate
+inner join Marker m on  m.ActFinDate = MaxActFinDate.ActFinDate
 left join Marker_ML ml on ml.MarkerUkey = m.UKey 
 left join Marker_ML_SizeQty mls on mls.MarkerUkey = m.UKey and mls.MarkerName = ml.MarkerName
 left join SMNotice sm on sm.ID = m.ID
-left join SMNotice_Detail smd on smd.ID = sm.ID and smd.Type = 'M' and  PhaseID in ('BULK','SIZE/S','PP SAMPLE')
-left join Fabric f on f.SCIRefno = ml.SCIRefno
+left join SMNotice_Detail smd on smd.ID = sm.ID and smd.Type = 'M' and  smd.PhaseID in ('BULK','SIZE/S','PP SAMPLE')
 left join Style_BOF sb on sb.StyleUkey = s.Ukey and sb.FabricCode = ml.FabricCode
+left join Fabric f on f.SCIRefno = sb.SCIRefno
 where  1=1
+and smd.PhaseID in ('BULK','SIZE/S','PP SAMPLE')
 {where}
-group by m.BrandID,m.SeasonID,s.ProgramID,s.NEWCO,s.ApparelType,smd.PhaseID,m.MarkerNo
-,s.ID,mls.SizeCode,mls.MarkerName,sb.Refno,ml.FabricPanelCode,f.WeightM2,mls.Qty
-,ml.MarkerLength,ml.Width,ml.Efficiency,ml.ConsPC,ml.OneTwoWay,ml.ActCuttingPerimeter
-,m.ActFtyMarker, sm.MR,m.MarkerName,sb.MatchFabric,s.CDCodeNew
+
+select distinct BrandID ,SeasonID
+,ProgramID
+,CDCodeNew
+,[ProductType]
+,PhaseID
+,MarkerNo
+,ID
+,SizeCode
+,MarkerName
+,Refno
+,FabricPanelCode
+,WeightM2
+,Qty
+,MarkerLength
+,[MarkerLength_inch]
+,Width
+,Efficiency
+,ConsPC
+,OneTwoWay
+,[CutPertmeter]
+,[CutPertmeter_inch]
+,ActFtyMarker
+,[CO]
+,[MarkMarker]
+,[MR]
+,ActFinDate
+from #tmp where destRank = 1
+
+drop table #tmp
 ");
 
             return base.ValidateInput();

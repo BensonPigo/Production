@@ -145,7 +145,7 @@ BEGIN
 	, BrandID
 	into #tmpOrder1 
 	from #Orders Orders
-	inner join Factory on Orders.FactoryID = Factory.ID
+	inner join Factory on Orders.FactoryID = Factory.ID and Factory.ProduceM = Factory.MDivisionID and Factory.Junk = 0
 	left Join Order_TmsCost on Orders.ID = Order_TmsCost.ID And Order_TmsCost.ArtworkTypeID = @ArtWorkType
 	left join ArtworkType on ArtworkType.Id = @ArtWorkType
 	outer apply (
@@ -206,6 +206,7 @@ BEGIN
 	AND @HasFtyLocalOrder = 1
 	AND Orders.LocalOrder = 1 -- PMS此處才加, 當地訂單在trade是記錄在Table:FactoryOrder
 	AND Orders.IsForecast = 0
+	and Factory.ProduceM = Factory.MDivisionID and Factory.Junk = 0
 	and 
 	(
 		(
@@ -297,6 +298,7 @@ BEGIN
 	And Orders.Qty > 0
 	AND @HasForecast = 1
 	And localorder = 0
+	and Factory.ProduceM = Factory.MDivisionID and Factory.Junk = 0
 	AND Orders.IsForecast = 1 -- PMS此處才加, 預估單 在trade是記錄在Table:FactoryOrder
 	and 
 	(
