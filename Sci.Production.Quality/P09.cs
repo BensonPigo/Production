@@ -189,7 +189,7 @@ namespace Sci.Production.Quality
             .Date("TPEContinuityCard", header: "Continuity Card\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("AWBNo", header: "Continuity Card\r\nAWB#", width: Widths.AnsiChars(16), iseditingreadonly: true)
             .Date("FirstDyelot", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("TPEFirstDyelot", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("TPEFirstDyelot1", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("T2InspYds", header: "T2 Inspected Yards", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: t2IY) // W
             .Numeric("T2DefectPoint", header: "T2 Defect Points", width: Widths.AnsiChars(8), integer_places: 5, settings: t2DP) // W
             .Text("T2Grade", header: "Grade", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -515,11 +515,11 @@ select distinct
     Export.WhseArrival,
 	ed.PoID,
 	seq=ed.seq1+'-'+ed.seq2,
-	--ps.SuppID,
+	ps.SuppID,
 	Supp.AbbEN,
-	--psd.Refno,
+	psd.Refno,
     f.WeaveTypeID,
-	--psd.ColorID,
+	psd.ColorID,
     [ColorName] = c.ColorName,
 	Qty = isnull(ed.Qty,0) + isnull(ed.Foc,0),
 	sr.InspectionReport,
@@ -529,14 +529,7 @@ select distinct
 	sr.TPETestReport,
 	sr.ContinuityCard,
 	sr.TPEContinuityCard,
-	FirstDyelot.FirstDyelot,
-	
-
-	--TPEFirstDyelot = case when isnull(fty.TestDocFactoryGroup,'') = '' then 'This issue is becoz received fty is sps not sxr, so once you ensure received T2 reports & 1st dyelot, you need ask received fty help to key in recevied date. ps: as long as you fully maintain P09, your T2 dashboard KPI will be 100%.' 
-	--    when FirstDyelot.TPEFirstDyelot is null and f.RibItem = 1 then 'RIB no need first dye lot'
-	--    when FirstDyelot.SeasonSCIID is null then 'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
-	--    else format(FirstDyelot.TPEFirstDyelot,'yyyy/MM/dd') 
- --       end,	
+	FirstDyelot.FirstDyelot,	
 	sr.T2InspYds,
 	sr.T2DefectPoint,
 	sr.T2Grade,
@@ -548,9 +541,11 @@ select distinct
     o.BrandID,
     f.Clima,
     sr.AWBNo,
-	ps.SuppID, psd.Refno, psd.ColorID,Export.CloseDate,
     [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, psd.ColorID, Format(Export.CloseDate,'yyyyMM') order by Export.CloseDate) else 0 end,
-    o.SeasonID
+    o.SeasonID,
+    FirstDyelot.TPEFirstDyelot,
+	f.RibItem,
+	FirstDyelot.SeasonSCIID
 	into #tmp
 from Export_Detail ed with(nolock)
 inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
@@ -621,8 +616,13 @@ and o.Category in('B','M')
 
 -- 用temp table提高效率
 select * 
-,TPEFirstDyelot = case when isnull(cons.Consignee,'') !='' then 'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
-	else 'Shipping mark in ' + NotCons.ConsigneeList end
+,TPEFirstDyelot1 = 
+	case 
+	when TPEFirstDyelot is not null then FORMAT(TPEFirstDyelot,'yyyy/MM/dd')
+	when RibItem = 1 then 'RIB no need first dye lot'
+	when isnull(cons.Consignee,'') = '' and  isnull(NotCons.ConsigneeList,'') != '' then  'Shipping mark in ' + NotCons.ConsigneeList
+	when SeasonSCIID is null then 'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
+	end
 from #tmp t
 outer apply(
 	select top 1 e2.Consignee
@@ -897,7 +897,7 @@ and (ed.qty + ed.Foc)>0
 and o.Category in('B','M') 
 and oFty.IsProduceFty = 1
 
-select 
+select distinct
 a.IsProduceFty,
 [TestDocFactoryGroup] = iif(a.TestDocFactoryGroup is null, b.TestDocFactoryGroup, a.TestDocFactoryGroup)
 ,[suppid] = iif(a.SuppID is null, b.SuppID,a.Suppid)
@@ -915,6 +915,7 @@ a.IsProduceFty,
     ,format(b.TPEFirstDyelot,'yyyy/MM/dd')
 ),
 a.[TPEFirstDyelot])
+into #tmp1
 from #tmp a
 --inner join Factory fty with (nolock) on fty.ID = a.Consignee
 full join FirstDyelot b on a.TestDocFactoryGroup = b.TestDocFactoryGroup 
@@ -928,9 +929,11 @@ select *
 from Factory fdFty 
 where b.TestDocFactoryGroup = fdFty.TestDocFactoryGroup
 and fdFty.IsProduceFty = 1)
-Order by SuppID, Refno, ColorID, a.SeasonSCIID
 
-drop table #tmp
+select * from #tmp1
+Order by SuppID, Refno, ColorID, SeasonSCIID
+
+drop table #tmp,#tmp1
 ";
             #endregion Sqlcmd
             DualResult result = DBProxy.Current.Select(null, sqlcmd, listSQLParameter, out this.dt2);
