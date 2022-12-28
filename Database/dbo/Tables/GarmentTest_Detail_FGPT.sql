@@ -12,6 +12,7 @@
     [TypeSelection_VersionID] INT            CONSTRAINT [DF_GarmentTest_Detail_FGPT_TypeSelection_VersionID] DEFAULT ((0)) NOT NULL,
     [TypeSelection_Seq]       INT            CONSTRAINT [DF_GarmentTest_Detail_FGPT_TypeSelection_Seq] DEFAULT ((0)) NOT NULL,
     IsOriginal BIT NOT NULL CONSTRAINT [DF_GarmentTest_Detail_FGPT_IsOriginal] DEFAULT 0,
+    StandardRemark nvarchar(3000) not null CONSTRAINT [DF_GarmentTest_Detail_FGPT_StandardRemark] default '',
     CONSTRAINT [PK_GarmentTest_Detail_FGPT] PRIMARY KEY CLUSTERED ([ID] ASC, [No] ASC, [Location] ASC, [Type] ASC, [TestName] ASC, [Seq] ASC)
 );
 
