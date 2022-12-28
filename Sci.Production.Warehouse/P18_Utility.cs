@@ -158,6 +158,7 @@ where   InventoryPOID = '{0}'
             {
                 // CurrentDetailData["Roll"] = "";
                 // CurrentDetailData["Dyelot"] = "";
+                currentDetailData["MINDQRCode"] = string.Empty;
             }
 
             return new DualResult(true);

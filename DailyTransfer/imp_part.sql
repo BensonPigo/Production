@@ -23,11 +23,8 @@ INNER JOIN dbo.SciTrade_To_Pms_Part s
 ON t.id=s.Refno  AND s.Type='P'
 AND t.Formula<> s.Formula
 ;
-IF EXISTS (SELECT 1 FROM #Formula_Change_Table)
-BEGIN
-	INSERT INTO dbo.PartFormula_History ([PartID],[OldFormula],[NewFormula],[AddName],[AddDate],[Paper],[DescriptionDetail])
-	SELECT [PartID],[OldFormula],[NewFormula],[AddName],[AddDate],[Paper],[DescriptionDetail] FROM #Formula_Change_Table
-END
+	INSERT INTO dbo.PartFormula_History ([PartID],[OldFormula],[NewFormula],[AddName],[AddDate])
+	SELECT [PartID],[OldFormula],[NewFormula],[AddName],[AddDate] FROM #Formula_Change_Table
 ;
 DROP TABLE #Formula_Change_Table
 ;

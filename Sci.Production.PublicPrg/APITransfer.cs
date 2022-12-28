@@ -63,7 +63,8 @@ select
 	EditDate,
 	StockUnitID,
 	StockQty,
-    Tone
+    Tone,
+    MINDQRCode
 from TransferExport_Detail_Carton
 where ID = '{id}'
 ";

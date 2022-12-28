@@ -75,6 +75,7 @@ namespace Sci.Production.Warehouse
             this.grid2Data.Columns.Add("Refno", typeof(string));
             this.grid2Data.Columns.Add("ColorID", typeof(string));
             this.grid2Data.Columns.Add("Tone", typeof(string));
+            this.grid2Data.Columns.Add("MINDQRCode", typeof(string));
 
             this.listControlBindingSource2.DataSource = this.grid2Data;
             this.gridPoid.DataSource = this.listControlBindingSource2;
@@ -91,7 +92,8 @@ namespace Sci.Production.Warehouse
                 .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(8), iseditingreadonly: false) // 4
                 .Text("stocktype", header: "Stock Type", iseditingreadonly: true) // 7
                 .Text("Location", header: "Location", iseditingreadonly: true) // 8
-                .Text("Remark", header: "Remark", iseditingreadonly: true) // 8
+                .Text("Remark", header: "Remark", iseditingreadonly: true) // 9
+                .Text("MINDQRCode", header: "MIND QR Code", iseditingreadonly: true) // 10
                 .EditText("ErrMsg", header: "Error Message", width: Widths.AnsiChars(100), iseditingreadonly: true);
 
             for (int i = 0; i < this.gridPoid.ColumnCount; i++)
@@ -199,7 +201,7 @@ namespace Sci.Production.Warehouse
                 // 檢查Excel格式
                 Excel.Range range = worksheet.Range[string.Format("A{0}:AE{0}", 2)];
                 object[,] objCellArray = range.Value;
-                string[] itemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "G.W(kg)", "Qty", "Stock Type", "Location", "Remark", "Tone/Grp" };
+                string[] itemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "G.W(kg)", "Qty", "Stock Type", "Location", "Remark", "Tone/Grp", "MIND QR Code" };
                 int[] itemPosition = new int[itemCheck.Length];
                 string[] excelItem = new string[intColumnsCount + 1];
 
@@ -278,6 +280,7 @@ namespace Sci.Production.Warehouse
                     newRow["location"] = (objCellArray[1, itemPosition[8]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[8]].ToString().Replace("'", string.Empty).Trim(), "C");
                     newRow["Remark"] = (objCellArray[1, itemPosition[9]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[9]].ToString().Trim(), "C");
                     newRow["CanWriteIn"] = true;
+                    newRow["MINDQRCode"] = (objCellArray[1, itemPosition[11]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[11]].ToString().Replace("'", string.Empty).Trim(), "C");
 
                     List<SqlParameter> sqlpar = new List<SqlParameter>();
                     sqlpar.Add(new SqlParameter("@poid", newRow["poid"].ToString().Trim()));
